@@ -2,11 +2,13 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   computed,
   inject,
   signal
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -80,6 +82,7 @@ export class ReplenishmentBoardComponent implements OnInit {
   private readonly exportService = inject(ReplenishmentExportService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly filters = signal<ReplenishmentFilters>({ status: 'pending' });
   readonly rows = signal<ReplenishmentRecommendation[]>([]);
@@ -157,6 +160,12 @@ export class ReplenishmentBoardComponent implements OnInit {
 
   ngOnInit(): void {
     // The filters component emits its initial state in ngOnInit which triggers our first load.
+    this.forecastingService.recomputeCompleted$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        void this.load();
+        void this.refreshKpi();
+      });
   }
 
   // ─────────────────────────────── Loading ────────────────────────────────
