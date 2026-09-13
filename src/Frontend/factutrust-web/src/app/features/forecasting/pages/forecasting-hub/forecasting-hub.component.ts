@@ -154,6 +154,7 @@ export class ForecastingHubComponent implements OnInit {
             `${result.classificationsUpdated} classifications, ` +
             `${result.replenishmentsGenerated} réappros, ${result.promotionsGenerated} promos.`
         });
+        this.forecastingService.notifyRecomputeCompleted();
         await this.loadAudit();
       } else {
         this.toast.add({ severity: 'error', summary: 'Recalcul échoué', detail: result.errorMessage ?? 'Erreur inconnue' });

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { ApiResponse } from '@core/services/auth.service';
@@ -43,6 +43,14 @@ interface PagedResult<T> {
 export class ForecastingService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/forecasting`;
+
+  /** Emitted after a successful hub-level « Recalculer tout » so open child tabs reload their data. */
+  private readonly recomputeCompletedSubject = new Subject<void>();
+  readonly recomputeCompleted$ = this.recomputeCompletedSubject.asObservable();
+
+  notifyRecomputeCompleted(): void {
+    this.recomputeCompletedSubject.next();
+  }
 
   // ────────────────────── Revenue / demand ──────────────────────────────
 

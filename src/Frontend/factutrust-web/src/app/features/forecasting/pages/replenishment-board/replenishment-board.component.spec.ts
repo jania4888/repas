@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { NEVER, of, Subject, throwError } from 'rxjs';
 import { ReplenishmentBoardComponent } from './replenishment-board.component';
 import { ForecastingService } from '../../services/forecasting.service';
 import { ReplenishmentExportService } from '../../services/replenishment-export.service';
@@ -59,6 +59,7 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     createPurchaseOrdersFromReplenishment: jasmine.Spy;
     getReplenishment: jasmine.Spy;
     getReplenishmentKpi: jasmine.Spy;
+    recomputeCompleted$: typeof NEVER;
   };
   let toast: { add: jasmine.Spy };
 
@@ -71,7 +72,8 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
       getReplenishment: jasmine.createSpy('getReplenishment')
         .and.returnValue(of({ items: [], totalCount: 0 })),
       getReplenishmentKpi: jasmine.createSpy('getReplenishmentKpi')
-        .and.returnValue(of(null))
+        .and.returnValue(of(null)),
+      recomputeCompleted$: NEVER
     };
     toast = { add: jasmine.createSpy('add') };
 
@@ -162,5 +164,48 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
 
     expect(component.selectedIds().size).toBe(0);
     expect(forecasting.getReplenishment).toHaveBeenCalled();
+  });
+});
+
+describe('ReplenishmentBoardComponent — recompute refresh', () => {
+  let component: ReplenishmentBoardComponent;
+  let recomputeCompleted$: Subject<void>;
+  let forecasting: {
+    getReplenishment: jasmine.Spy;
+    getReplenishmentKpi: jasmine.Spy;
+    recomputeCompleted$: ReturnType<Subject<void>['asObservable']>;
+  };
+
+  beforeEach(() => {
+    recomputeCompleted$ = new Subject<void>();
+    forecasting = {
+      getReplenishment: jasmine.createSpy('getReplenishment')
+        .and.returnValue(of({ items: [], totalCount: 0 })),
+      getReplenishmentKpi: jasmine.createSpy('getReplenishmentKpi')
+        .and.returnValue(of(null)),
+      recomputeCompleted$: recomputeCompleted$.asObservable()
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: ForecastingService, useValue: forecasting },
+        { provide: ReplenishmentExportService, useValue: {} },
+        { provide: ToastService, useValue: { add: jasmine.createSpy('add') } },
+        { provide: AuthService, useValue: { hasAllPermissions: () => true } }
+      ]
+    });
+
+    component = TestBed.runInInjectionContext(() => new ReplenishmentBoardComponent());
+    component.ngOnInit();
+  });
+
+  it('reloads list and KPI when hub recompute completes', () => {
+    forecasting.getReplenishment.calls.reset();
+    forecasting.getReplenishmentKpi.calls.reset();
+
+    recomputeCompleted$.next();
+
+    expect(forecasting.getReplenishment).toHaveBeenCalled();
+    expect(forecasting.getReplenishmentKpi).toHaveBeenCalled();
   });
 });

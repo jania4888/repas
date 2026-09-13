@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { ToastService } from '@core/services/toast.service';
 import { AuthService } from '@core/services/auth.service';
@@ -143,7 +144,14 @@ export class AbcXyzMatrixComponent implements OnInit {
 
   canManage(): boolean { return this.auth.hasAllPermissions(['forecasting:manage']); }
 
-  ngOnInit(): void { this.load(); }
+  private readonly destroyRef = inject(DestroyRef);
+
+  ngOnInit(): void {
+    this.load();
+    this.forecastingService.recomputeCompleted$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => { void this.load(); });
+  }
 
   async load() {
     this.loading.set(true);

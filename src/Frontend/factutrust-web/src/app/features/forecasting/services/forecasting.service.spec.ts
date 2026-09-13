@@ -348,4 +348,13 @@ describe('ForecastingService — Replenishment V2', () => {
       });
     });
   });
+
+  describe('recomputeCompleted$', () => {
+    it('notifies subscribers when notifyRecomputeCompleted is called', () => {
+      let notified = false;
+      service.recomputeCompleted$.subscribe(() => { notified = true; });
+      service.notifyRecomputeCompleted();
+      expect(notified).toBe(true);
+    });
+  });
 });
