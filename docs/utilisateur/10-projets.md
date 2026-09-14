@@ -97,7 +97,7 @@ La **vue Liste** affiche une barre d'outils (filtres actifs, tri, actualisation)
 
 Le bouton **play** sur une ligne ouvre une saisie rapide de **temps** (projet **Actif** et permission requise) — ce n'est pas un chronomètre. Le menu **…** permet d'ouvrir la fiche ou de saisir du temps.
 
-Glissez une carte Kanban pour changer de colonne : le **statut** de la tâche est aligné automatiquement sur la colonne. Ouvrez une tâche pour accéder aux onglets **Aperçu**, **Sous-tâches**, **Fichiers**, **Temps passé** et **Historique**, avec une **modale de changement de statut** (commentaire recommandé pour « En attente » ou « Terminé »). La **suppression** est possible si aucun temps n'est saisi sur la tâche.
+Glissez une carte Kanban pour changer de colonne : le **statut** de la tâche est aligné automatiquement sur la colonne. Ouvrez une tâche pour accéder aux onglets **Aperçu**, **Sous-tâches**, **Fichiers**, **Temps passé** et **Historique**, avec une **modale de changement de statut** (commentaire recommandé pour « En attente » ou « Terminé »). L'onglet **Temps passé** reste disponible pour consulter l'historique des saisies sur la tâche dès qu'il existe du temps enregistré, y compris si la saisie est désactivée sur le projet (consultation seule). La **suppression** est possible si aucun temps n'est saisi sur la tâche.
 
 ---
 

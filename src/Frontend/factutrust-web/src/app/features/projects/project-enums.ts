@@ -246,6 +246,19 @@ export function showTimeTab(project: ProjectTimeLoggingContext | null | undefine
   return canProcessExistingTime(project.status);
 }
 
+export interface ProjectTaskTimeTabContext {
+  loggedHours: number;
+}
+
+/** Onglet « Temps passé » sur la fiche tâche : saisie projet ou historique sur la tâche. */
+export function showTaskTimeTab(
+  project: ProjectTimeLoggingContext | null | undefined,
+  task: ProjectTaskTimeTabContext | null | undefined
+): boolean {
+  if (showTimeTab(project)) return true;
+  return (task?.loggedHours ?? 0) > 0;
+}
+
 export function canProcessTimeEntries(project: ProjectTimeLoggingContext | null | undefined): boolean {
   return showTimeTab(project);
 }
