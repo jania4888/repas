@@ -337,4 +337,52 @@ describe('PreparePoConfirmModalComponent', () => {
       { recommendationId: 'r-1', manualQty: 50, manualSupplierId: 'sup-A' }
     ]);
   });
+
+  it('initializes draft qty with list rounding for discrete units', () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        recommendedQty: 569.74,
+        productUnit: 'Pièce'
+      })
+    ];
+    expect(component.draftQtyValue('r-1')).toBe(570);
+    expect(component.groups()[0].totalQty).toBe(570);
+  });
+
+  it('buildLineUpdates persists rounded qty on confirm without user edit', () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        recommendedQty: 569.74,
+        productUnit: 'Pièce'
+      })
+    ];
+    expect(component.buildLineUpdates()).toEqual([
+      { recommendationId: 'r-1', manualQty: 570, manualSupplierId: null }
+    ]);
+  });
+
+  it('shows integer group total in template for discrete unit lines', async () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        recommendedQty: 569.74,
+        productUnit: 'Pièce'
+      })
+    ];
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const count = fixture.nativeElement.querySelector('.group-count')!.textContent!;
+    expect(count).toContain('570');
+    expect(count).not.toContain('569,74');
+  });
 });

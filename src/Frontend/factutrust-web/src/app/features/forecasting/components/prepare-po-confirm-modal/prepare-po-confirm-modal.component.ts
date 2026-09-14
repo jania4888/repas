@@ -93,7 +93,7 @@ export interface PreparePoLineUpdate {
                     </span>
                     <span class="group-count">
                       {{ g.recommendations.length }} ligne(s) — total
-                      {{ g.totalQty | qtyFmt: null }} u.
+                      {{ g.totalQty | qtyFmt: groupFormatUnit(g) }} u.
                     </span>
                   </header>
                   <!-- Bulk assign — one supplier for every still-unassigned line (≥2 lines). -->
@@ -125,7 +125,7 @@ export interface PreparePoLineUpdate {
                                 type="number"
                                 class="po-qty-input"
                                 min="0"
-                                step="any"
+                                [attr.step]="isDiscreteUnit(r) ? 1 : 'any'"
                                 [ngModel]="draftQtyValue(r.id)"
                                 (ngModelChange)="setDraftQty(r.id, $event)"
                                 [class.invalid]="qtyInvalidFor(r.id)"
@@ -260,7 +260,8 @@ export class PreparePoConfirmModalComponent implements OnInit {
     const draft = new Map<string, number>();
     const initial = new Map<string, number>();
     for (const r of list) {
-      const q = r.manualQtyOverride ?? r.recommendedQty;
+      const raw = r.manualQtyOverride ?? r.recommendedQty;
+      const q = QuantityFormatPipe.toEditableQuantity(raw, r.productUnit);
       draft.set(r.id, q);
       initial.set(r.id, q);
     }
@@ -306,7 +307,10 @@ export class PreparePoConfirmModalComponent implements OnInit {
           ? (nameById.get(assigned) ?? 'Fournisseur')
           : (r.preferredSupplierName ?? nameById.get(supplierId) ?? 'Fournisseur');
       const existing = grouped.get(supplierId);
-      const qty = draft.get(r.id) ?? (r.manualQtyOverride ?? r.recommendedQty);
+      const qty = draft.get(r.id) ?? QuantityFormatPipe.toEditableQuantity(
+        r.manualQtyOverride ?? r.recommendedQty,
+        r.productUnit
+      );
       if (existing) {
         existing.recommendations.push(r);
         existing.totalQty += qty;
@@ -400,7 +404,19 @@ export class PreparePoConfirmModalComponent implements OnInit {
   }
 
   effectiveQty(r: ReplenishmentRecommendation): number {
-    return r.manualQtyOverride ?? r.recommendedQty;
+    const raw = r.manualQtyOverride ?? r.recommendedQty;
+    return QuantityFormatPipe.toEditableQuantity(raw, r.productUnit);
+  }
+
+  isDiscreteUnit(r: ReplenishmentRecommendation): boolean {
+    return QuantityFormatPipe.isDiscreteUnit(r.productUnit);
+  }
+
+  /** Unit passed to qtyFmt for a supplier group total (null when units differ). */
+  groupFormatUnit(g: SupplierGroup): string | null {
+    const units = g.recommendations.map(r => r.productUnit ?? '');
+    const first = units[0];
+    return units.every(u => u === first) ? (first || null) : null;
   }
 
   draftQtyValue(recommendationId: string): number {
@@ -409,9 +425,13 @@ export class PreparePoConfirmModalComponent implements OnInit {
   }
 
   setDraftQty(recommendationId: string, value: number | string | null): void {
+    const r = this._recs().find(x => x.id === recommendationId);
     const parsed = value === null || value === '' ? NaN : Number(value);
+    const normalized = r && Number.isFinite(parsed)
+      ? QuantityFormatPipe.toEditableQuantity(parsed, r.productUnit)
+      : parsed;
     const next = new Map(this.qtyDraft());
-    next.set(recommendationId, parsed);
+    next.set(recommendationId, normalized);
     this.qtyDraft.set(next);
   }
 
@@ -433,14 +453,17 @@ export class PreparePoConfirmModalComponent implements OnInit {
 
     for (const r of this._recs()) {
       const supplierAssigned = assigns.has(r.id);
-      const finalQty = draft.get(r.id) ?? this.effectiveQty(r);
-      const initialQty = initial.get(r.id) ?? this.effectiveQty(r);
+      const rawEffective = r.manualQtyOverride ?? r.recommendedQty;
+      const displayEffective = QuantityFormatPipe.toEditableQuantity(rawEffective, r.productUnit);
+      const finalQty = draft.get(r.id) ?? displayEffective;
+      const initialQty = initial.get(r.id) ?? displayEffective;
       const qtyDirty = finalQty !== initialQty;
-      if (!supplierAssigned && !qtyDirty) continue;
+      const needsRoundingPersist = displayEffective !== rawEffective && finalQty === displayEffective;
+      if (!supplierAssigned && !qtyDirty && !needsRoundingPersist) continue;
 
       let manualQty: number | null;
-      if (qtyDirty) {
-        manualQty = finalQty === r.recommendedQty ? null : finalQty;
+      if (qtyDirty || needsRoundingPersist) {
+        manualQty = finalQty === r.recommendedQty && !needsRoundingPersist ? null : finalQty;
       } else {
         manualQty = r.manualQtyOverride ?? null;
       }

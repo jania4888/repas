@@ -36,4 +36,13 @@ export class QuantityFormatPipe implements PipeTransform {
     if (!unit) return false;
     return QuantityFormatPipe.DISCRETE_UNITS.has(unit.trim().toLowerCase());
   }
+
+  /** Numeric qty for editable fields — mirrors {@link transform} rounding rules. */
+  static toEditableQuantity(qty: number, unit: string | null | undefined): number {
+    if (!isFinite(qty)) return 0;
+    if (QuantityFormatPipe.isDiscreteUnit(unit)) {
+      return Math.round(qty);
+    }
+    return Math.round(qty * 100) / 100;
+  }
 }
