@@ -9,6 +9,7 @@ import {
   canCreateTimeEntry,
   canLogTime,
   showTimeTab,
+  showTaskTimeTab,
   canProcessTimeEntries,
   canEditTimeEntry,
   canDeleteTimeEntry,
@@ -145,6 +146,13 @@ describe('project-enums', () => {
     expect(showTimeTab({ status: 'Draft', timesheetsEnabled: true })).toBe(false);
     expect(showTimeTab({ status: 'Cancelled', timesheetsEnabled: true })).toBe(false);
     expect(canProcessTimeEntries({ status: 'Completed', timesheetsEnabled: true })).toBe(true);
+  });
+
+  it('shows task time tab when project time tab is hidden but task has logged hours', () => {
+    const projectOff = { status: 'Active', timesheetsEnabled: false };
+    expect(showTaskTimeTab(projectOff, { loggedHours: 0 })).toBe(false);
+    expect(showTaskTimeTab(projectOff, { loggedHours: 2.5 })).toBe(true);
+    expect(showTaskTimeTab({ status: 'Active', timesheetsEnabled: true }, { loggedHours: 0 })).toBe(true);
   });
 
   it('derives time entry actions and invoiced display', () => {
