@@ -33,6 +33,13 @@ export interface PreparePoAssignment {
   supplierId: string;
 }
 
+/** Persisted via POST override before create-purchase-orders (qty and/or supplier). */
+export interface PreparePoLineUpdate {
+  recommendationId: string;
+  manualQty: number | null;
+  manualSupplierId: string | null;
+}
+
 /**
  * Confirmation modal shown before creating draft purchase orders from selected recommendations.
  * Groups the selection by effective supplier (manual override > preferred) and warns about
@@ -67,6 +74,7 @@ export interface PreparePoAssignment {
         <div class="modal-body">
           @if (groups().length > 0) {
             <p class="hint">
+              Vérifiez les quantités ci-dessous.
               {{ linkableCount() }} bon(s) de commande sera(seront) créé(s) en statut <strong>Brouillon</strong>,
               regroupé(s) par fournisseur. Vous pourrez les valider ensuite depuis le module Achats.
             </p>
@@ -110,7 +118,23 @@ export interface PreparePoAssignment {
                         <div class="po-line__head">
                           <span class="po-code">{{ r.productCode }}</span>
                           <span class="po-name">{{ r.productName }}</span>
-                          <span class="po-qty">{{ effectiveQty(r) | qtyFmt: r.productUnit }} u.</span>
+                          <div class="po-qty-block">
+                            <label class="po-qty-field">
+                              <span class="po-qty-label">Qté</span>
+                              <input
+                                type="number"
+                                class="po-qty-input"
+                                min="0"
+                                step="any"
+                                [ngModel]="draftQtyValue(r.id)"
+                                (ngModelChange)="setDraftQty(r.id, $event)"
+                                [class.invalid]="qtyInvalidFor(r.id)"
+                                [attr.aria-label]="'Quantité à commander pour ' + r.productCode" />
+                            </label>
+                            <span class="po-rec-hint" title="Quantité recommandée par le moteur">
+                              Rec. {{ r.recommendedQty | qtyFmt: r.productUnit }}
+                            </span>
+                          </div>
                         </div>
                         @if (g.supplierId === null) {
                           <div class="po-assign-row">
@@ -139,6 +163,12 @@ export interface PreparePoAssignment {
                 </li>
               }
             </ul>
+
+            @if (anyQtyInvalid()) {
+              <p class="qty-error" role="alert">
+                Chaque quantité doit être un nombre strictement supérieur à 0.
+              </p>
+            }
 
             @if (skippedCount() > 0) {
               <div class="warning" role="alert">
@@ -197,7 +227,14 @@ export interface PreparePoAssignment {
     .po-line__head { display: flex; align-items: center; gap: .5rem; min-width: 0; }
     .po-code { flex: 0 0 auto; font-family: monospace; font-size: .75rem; color: var(--color-neutral-500, #6b7280); }
     .po-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .po-qty { flex: 0 0 auto; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--color-primary-700, #1e40af); white-space: nowrap; }
+    .po-qty-block { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; min-width: 5.5rem; }
+    .po-qty-field { display: flex; align-items: center; gap: .35rem; margin: 0; }
+    .po-qty-label { font-size: .7rem; color: var(--color-neutral-500, #6b7280); text-transform: uppercase; }
+    .po-qty-input { width: 4.5rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+    .po-qty-input:focus { outline: 2px solid var(--color-primary-400, #60a5fa); outline-offset: 1px; }
+    .po-qty-input.invalid { border-color: #f87171; background: #fef2f2; }
+    .po-rec-hint { font-size: .7rem; color: var(--color-neutral-500, #6b7280); white-space: nowrap; }
+    .qty-error { margin: .75rem 0 0; padding: .5rem .75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; color: #991b1b; font-size: .85rem; }
     .po-assign-row { display: flex; align-items: center; gap: .4rem; width: 100%; min-width: 0; color: #92400e; }
     .po-bulk-assign { display: flex; align-items: center; gap: .4rem; padding: .5rem .85rem; background: #fffaf0; border-bottom: 1px dashed #fcd34d; color: #92400e; }
     .assign-select, .po-bulk-select { flex: 1 1 auto; min-width: 0; padding: .35rem .5rem; border: 1px solid #fcd34d; border-radius: 6px; font: inherit; background: white; }
@@ -218,17 +255,33 @@ export interface PreparePoAssignment {
 export class PreparePoConfirmModalComponent implements OnInit {
   /** Selected recommendations sent in for grouping & confirmation. */
   @Input() set selection(value: ReplenishmentRecommendation[]) {
-    this._recs.set(value ?? []);
+    const list = value ?? [];
+    this._recs.set(list);
+    const draft = new Map<string, number>();
+    const initial = new Map<string, number>();
+    for (const r of list) {
+      const q = r.manualQtyOverride ?? r.recommendedQty;
+      draft.set(r.id, q);
+      initial.set(r.id, q);
+    }
+    this.qtyDraft.set(draft);
+    this.initialQtyById.set(initial);
+    this.assignments.set(new Map());
   }
   get recommendations(): ReplenishmentRecommendation[] { return this._recs(); }
 
-  /** Emits suppliers chosen in-modal for lines that had none, so the parent can persist them first. */
-  @Output() confirm = new EventEmitter<{ assignments: PreparePoAssignment[] }>();
+  /** Emits line overrides to persist before create-purchase-orders. */
+  @Output() confirm = new EventEmitter<{ lineUpdates: PreparePoLineUpdate[] }>();
   @Output() cancel = new EventEmitter<void>();
 
   private readonly supplierService = inject(SupplierService);
 
   private readonly _recs = signal<ReplenishmentRecommendation[]>([]);
+
+  /** Editable order qty per recommendation (initialized from effective qty at open). */
+  readonly qtyDraft = signal<Map<string, number>>(new Map());
+  /** Snapshot at open — used to detect qty edits without persisting unchanged lines. */
+  private readonly initialQtyById = signal<Map<string, number>>(new Map());
 
   /** In-modal supplier choices for recommendations lacking a preferred/manual supplier (recId → supplierId). */
   readonly assignments = signal<Map<string, string>>(new Map());
@@ -241,6 +294,7 @@ export class PreparePoConfirmModalComponent implements OnInit {
   /** Recommendations grouped by effective supplier (in-modal assignment > manual override > preferred). */
   readonly groups = computed<SupplierGroup[]>(() => {
     const assigns = this.assignments();
+    const draft = this.qtyDraft();
     const nameById = new Map(this.suppliers().map(s => [s.id, s.name]));
     const grouped = new Map<string | null, SupplierGroup>();
     for (const r of this._recs()) {
@@ -252,7 +306,7 @@ export class PreparePoConfirmModalComponent implements OnInit {
           ? (nameById.get(assigned) ?? 'Fournisseur')
           : (r.preferredSupplierName ?? nameById.get(supplierId) ?? 'Fournisseur');
       const existing = grouped.get(supplierId);
-      const qty = this.effectiveQty(r);
+      const qty = draft.get(r.id) ?? (r.manualQtyOverride ?? r.recommendedQty);
       if (existing) {
         existing.recommendations.push(r);
         existing.totalQty += qty;
@@ -282,8 +336,14 @@ export class PreparePoConfirmModalComponent implements OnInit {
 
   readonly linkableCount = computed(() => this.groups().filter(g => g.supplierId !== null).length);
 
-  /** A PO can only be created if at least one line resolves to a supplier (blocks the no-op call). */
-  readonly canConfirm = computed(() => this.linkableCount() > 0);
+  readonly anyQtyInvalid = computed(() =>
+    this._recs().some(r => this.qtyInvalidForId(r.id)));
+
+  /** A PO can only be created if at least one line resolves to a supplier and all qtys are valid. */
+  readonly canConfirm = computed(() => {
+    if (this.linkableCount() <= 0) return false;
+    return !this.anyQtyInvalid();
+  });
 
   ngOnInit(): void {
     // Fetch suppliers only when at least one selected line lacks a resolvable supplier —
@@ -343,11 +403,63 @@ export class PreparePoConfirmModalComponent implements OnInit {
     return r.manualQtyOverride ?? r.recommendedQty;
   }
 
+  draftQtyValue(recommendationId: string): number {
+    const r = this._recs().find(x => x.id === recommendationId);
+    return this.qtyDraft().get(recommendationId) ?? (r ? this.effectiveQty(r) : 0);
+  }
+
+  setDraftQty(recommendationId: string, value: number | string | null): void {
+    const parsed = value === null || value === '' ? NaN : Number(value);
+    const next = new Map(this.qtyDraft());
+    next.set(recommendationId, parsed);
+    this.qtyDraft.set(next);
+  }
+
+  qtyInvalidFor(recommendationId: string): boolean {
+    return this.qtyInvalidForId(recommendationId);
+  }
+
+  private qtyInvalidForId(recommendationId: string): boolean {
+    const v = this.qtyDraft().get(recommendationId);
+    return v === undefined || !Number.isFinite(v) || v <= 0;
+  }
+
+  /** Builds override payloads for lines with in-modal supplier and/or qty changes. */
+  buildLineUpdates(): PreparePoLineUpdate[] {
+    const assigns = this.assignments();
+    const draft = this.qtyDraft();
+    const initial = this.initialQtyById();
+    const updates: PreparePoLineUpdate[] = [];
+
+    for (const r of this._recs()) {
+      const supplierAssigned = assigns.has(r.id);
+      const finalQty = draft.get(r.id) ?? this.effectiveQty(r);
+      const initialQty = initial.get(r.id) ?? this.effectiveQty(r);
+      const qtyDirty = finalQty !== initialQty;
+      if (!supplierAssigned && !qtyDirty) continue;
+
+      let manualQty: number | null;
+      if (qtyDirty) {
+        manualQty = finalQty === r.recommendedQty ? null : finalQty;
+      } else {
+        manualQty = r.manualQtyOverride ?? null;
+      }
+
+      let manualSupplierId: string | null;
+      if (supplierAssigned) {
+        manualSupplierId = assigns.get(r.id)!;
+      } else {
+        manualSupplierId = r.manualSupplierOverride ?? null;
+      }
+
+      updates.push({ recommendationId: r.id, manualQty, manualSupplierId });
+    }
+    return updates;
+  }
+
   onConfirm(): void {
     if (!this.canConfirm()) return;
-    const assignments: PreparePoAssignment[] = [...this.assignments().entries()]
-      .map(([recommendationId, supplierId]) => ({ recommendationId, supplierId }));
-    this.confirm.emit({ assignments });
+    this.confirm.emit({ lineUpdates: this.buildLineUpdates() });
   }
 
   onCancel(): void { this.cancel.emit(); }

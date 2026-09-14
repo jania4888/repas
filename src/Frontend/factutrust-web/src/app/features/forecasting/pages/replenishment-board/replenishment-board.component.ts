@@ -26,7 +26,7 @@ import { AnalyzeWithAiButtonComponent } from '@features/ai-assistant/components/
 import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen-payload.factory';
 import { ProductDemandModalComponent } from '../../components/product-demand-modal/product-demand-modal.component';
 import { DismissReasonModalComponent } from '../../components/dismiss-reason-modal/dismiss-reason-modal.component';
-import { PreparePoConfirmModalComponent, PreparePoAssignment } from '../../components/prepare-po-confirm-modal/prepare-po-confirm-modal.component';
+import { PreparePoConfirmModalComponent, PreparePoLineUpdate } from '../../components/prepare-po-confirm-modal/prepare-po-confirm-modal.component';
 import { OverrideQuantityModalComponent } from '../../components/override-quantity-modal/override-quantity-modal.component';
 import { DecisionHistoryModalComponent } from '../../components/decision-history-modal/decision-history-modal.component';
 import { ReplenishmentKpiBarComponent } from './replenishment-kpi-bar/replenishment-kpi-bar.component';
@@ -431,30 +431,28 @@ export class ReplenishmentBoardComponent implements OnInit {
     this.preparePoModal.set({ selection: targets });
   }
 
-  async onPreparePoConfirmed(payload: { assignments: PreparePoAssignment[] }): Promise<void> {
+  async onPreparePoConfirmed(payload: { lineUpdates: PreparePoLineUpdate[] }): Promise<void> {
     const targets = this.preparePoModal()?.selection ?? [];
     this.preparePoModal.set(null);
     if (targets.length === 0) return;
 
-    const assignments = payload?.assignments ?? [];
+    const lineUpdates = payload?.lineUpdates ?? [];
     this.bulkActionInFlight.set(true);
     try {
-      // ── Step 1: persist in-modal supplier choices first (a PO can't be built without one). ──
-      // Each override is independent: allSettled so one failure never aborts the rest.
-      if (assignments.length > 0) {
-        const byId = new Map(targets.map(t => [t.id, t]));
-        const overrideResults = await Promise.allSettled(assignments.map(a =>
-          firstValueFrom(this.forecastingService.overrideReplenishment(a.recommendationId, {
-            manualQty: byId.get(a.recommendationId)?.manualQtyOverride ?? null,
-            manualSupplierId: a.supplierId
+      // ── Step 1: persist in-modal qty / supplier overrides (PO lines use effective qty). ──
+      if (lineUpdates.length > 0) {
+        const overrideResults = await Promise.allSettled(lineUpdates.map(u =>
+          firstValueFrom(this.forecastingService.overrideReplenishment(u.recommendationId, {
+            manualQty: u.manualQty,
+            manualSupplierId: u.manualSupplierId
           }))
         ));
         const failed = overrideResults.filter(r => r.status === 'rejected').length;
         if (failed > 0) {
           this.toast.add({
             severity: 'warn',
-            summary: 'Assignation partielle',
-            detail: `${failed} affectation(s) de fournisseur en échec — ces lignes resteront sans bon de commande.`,
+            summary: 'Enregistrement partiel',
+            detail: `${failed} ligne(s) : quantité ou fournisseur non enregistré(s) — vérifiez avant de renvoyer.`,
             life: 6000
           });
         }

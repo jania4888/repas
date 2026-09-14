@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { PreparePoConfirmModalComponent, PreparePoAssignment } from './prepare-po-confirm-modal.component';
+import { PreparePoConfirmModalComponent, PreparePoLineUpdate } from './prepare-po-confirm-modal.component';
 import { ReplenishmentRecommendation } from '../../models/forecasting.models';
 import { SupplierService, SupplierListItem } from '@core/services/supplier.service';
 
@@ -127,7 +127,7 @@ describe('PreparePoConfirmModalComponent', () => {
     component.selection = [buildRec({ preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })];
     spyOn(component.confirm, 'emit');
     component.onConfirm();
-    expect(component.confirm.emit).toHaveBeenCalled();
+    expect(component.confirm.emit).toHaveBeenCalledWith({ lineUpdates: [] });
   });
 
   // ─── Regression for the reported bug: honest count + no-op guard + inline assignment ───
@@ -195,7 +195,7 @@ describe('PreparePoConfirmModalComponent', () => {
     expect(component.canConfirm()).toBe(false);
   });
 
-  it('emits only the newly-assigned lines in the confirm payload', () => {
+  it('emits only changed lines in the confirm payload (supplier assignment)', () => {
     component.selection = [
       buildRec({ id: 'r-1', preferredSupplierId: null }),
       buildRec({ id: 'r-2', preferredSupplierId: 'sup-B', preferredSupplierName: 'Beta' })
@@ -203,13 +203,14 @@ describe('PreparePoConfirmModalComponent', () => {
     component.suppliers.set([supplier('sup-A', 'Alpha')]);
     component.assign('r-1', 'sup-A');
 
-    let emitted: { assignments: PreparePoAssignment[] } | undefined;
+    let emitted: { lineUpdates: PreparePoLineUpdate[] } | undefined;
     component.confirm.subscribe(v => (emitted = v));
     component.onConfirm();
 
     expect(emitted).toBeDefined();
-    // r-2 already had a preferred supplier, so only r-1 (assigned in-modal) is reported.
-    expect(emitted!.assignments).toEqual([{ recommendationId: 'r-1', supplierId: 'sup-A' }]);
+    expect(emitted!.lineUpdates).toEqual([
+      { recommendationId: 'r-1', manualQty: null, manualSupplierId: 'sup-A' }
+    ]);
   });
 
   it('fetches suppliers on open only when a line lacks a supplier', async () => {
@@ -282,14 +283,58 @@ describe('PreparePoConfirmModalComponent', () => {
     component.suppliers.set([supplier('sup-A', 'Alpha')]);
     component.onBulkAssign('sup-A');
 
-    let emitted: { assignments: PreparePoAssignment[] } | undefined;
+    let emitted: { lineUpdates: PreparePoLineUpdate[] } | undefined;
     component.confirm.subscribe(v => (emitted = v));
     component.onConfirm();
 
     expect(emitted).toBeDefined();
-    expect(emitted!.assignments).toEqual([
-      { recommendationId: 'r-1', supplierId: 'sup-A' },
-      { recommendationId: 'r-2', supplierId: 'sup-A' }
+    expect(emitted!.lineUpdates).toEqual([
+      { recommendationId: 'r-1', manualQty: null, manualSupplierId: 'sup-A' },
+      { recommendationId: 'r-2', manualQty: null, manualSupplierId: 'sup-A' }
+    ]);
+  });
+
+  it('updates group total when draft qty changes', () => {
+    component.selection = [
+      buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha', recommendedQty: 100 })
+    ];
+    expect(component.groups()[0].totalQty).toBe(100);
+    component.setDraftQty('r-1', 75);
+    expect(component.groups()[0].totalQty).toBe(75);
+  });
+
+  it('emits lineUpdates when only qty is edited', () => {
+    component.selection = [
+      buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha', recommendedQty: 100 })
+    ];
+    component.setDraftQty('r-1', 80);
+
+    let emitted: { lineUpdates: PreparePoLineUpdate[] } | undefined;
+    component.confirm.subscribe(v => (emitted = v));
+    component.onConfirm();
+
+    expect(emitted!.lineUpdates).toEqual([
+      { recommendationId: 'r-1', manualQty: 80, manualSupplierId: null }
+    ]);
+  });
+
+  it('canConfirm is false when draft qty is zero or invalid', () => {
+    component.selection = [buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })];
+    expect(component.canConfirm()).toBe(true);
+    component.setDraftQty('r-1', 0);
+    expect(component.canConfirm()).toBe(false);
+  });
+
+  it('combines supplier assignment and qty change in one lineUpdate', () => {
+    component.selection = [
+      buildRec({ id: 'r-1', preferredSupplierId: null, recommendedQty: 100, manualQtyOverride: 42 })
+    ];
+    component.assign('r-1', 'sup-A');
+    component.setDraftQty('r-1', 50);
+
+    const updates = component.buildLineUpdates();
+    expect(updates).toEqual([
+      { recommendationId: 'r-1', manualQty: 50, manualSupplierId: 'sup-A' }
     ]);
   });
 });
