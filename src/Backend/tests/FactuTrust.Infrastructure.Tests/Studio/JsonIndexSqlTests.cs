@@ -88,4 +88,42 @@ public sealed class JsonIndexSqlTests
         Assert.NotNull(JsonIndexSql.CreateIndexSql("valid_key_1"));
         Assert.NotNull(JsonIndexSql.ColumnExistsSql("valid_key_1"));
     }
+
+    // ---- PR 3.1 : suppression (changement de type de champ) ----
+
+    [Fact]
+    public void DropIndex_is_idempotent_and_targets_the_same_index_name()
+    {
+        var sql = JsonIndexSql.DropIndexSql("statut");
+        Assert.Contains("IF EXISTS", sql);
+        Assert.Contains("sys.indexes", sql);
+        Assert.Contains("DROP INDEX [IX_CustomRecords_jx_statut] ON [dbo].[CustomRecords]", sql);
+    }
+
+    [Fact]
+    public void DropColumn_is_idempotent_and_targets_the_same_column_name()
+    {
+        var sql = JsonIndexSql.DropColumnSql("statut");
+        Assert.Contains("IF EXISTS", sql);
+        Assert.Contains("sys.columns", sql);
+        Assert.Contains("ALTER TABLE [dbo].[CustomRecords] DROP COLUMN [jx_statut]", sql);
+    }
+
+    [Theory]
+    [InlineData("email'; DROP TABLE CustomRecords; --")]
+    [InlineData("email]")]
+    [InlineData("Email")]
+    public void DropIndexSql_rejects_invalid_key_shape(string key)
+    {
+        Assert.Throws<ArgumentException>(() => JsonIndexSql.DropIndexSql(key));
+    }
+
+    [Theory]
+    [InlineData("email'; DROP TABLE CustomRecords; --")]
+    [InlineData("email]")]
+    [InlineData("Email")]
+    public void DropColumnSql_rejects_invalid_key_shape(string key)
+    {
+        Assert.Throws<ArgumentException>(() => JsonIndexSql.DropColumnSql(key));
+    }
 }

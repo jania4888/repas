@@ -450,6 +450,148 @@ public sealed class UpdateCustomFieldCommandHandler
     }
 }
 
+// ---- Change field type (PR 3.1) : point de vérité unique FieldTypeConversionPolicy ----
+
+/// <summary>Vérifie SANS RIEN MODIFIER si un changement de type serait accepté (utilisé par le bouton « Changer de type » et l'IA avant proposition).</summary>
+public sealed record CheckCustomFieldTypeChangeQuery(Guid EntityId, Guid FieldId, CustomFieldType To)
+    : IRequest<Result<FieldTypeChangeCheckDto>>;
+
+public sealed class CheckCustomFieldTypeChangeQueryHandler
+    : IRequestHandler<CheckCustomFieldTypeChangeQuery, Result<FieldTypeChangeCheckDto>>
+{
+    private readonly ICustomFieldRepository _fields;
+    private readonly ICustomRecordRepository _records;
+    private readonly ICurrentUser _currentUser;
+
+    public CheckCustomFieldTypeChangeQueryHandler(ICustomFieldRepository fields, ICustomRecordRepository records, ICurrentUser currentUser)
+    {
+        _fields = fields;
+        _records = records;
+        _currentUser = currentUser;
+    }
+
+    public async Task<Result<FieldTypeChangeCheckDto>> Handle(CheckCustomFieldTypeChangeQuery request, CancellationToken cancellationToken)
+    {
+        if (!StudioContext.TryGet(_currentUser, out var tenantId, out _, out var err))
+            return Result.Failure<FieldTypeChangeCheckDto>(err);
+
+        var field = await _fields.GetByIdAsync(tenantId, request.FieldId, cancellationToken);
+        if (field is null || field.EntityDefinitionId != request.EntityId)
+            return Result.Failure<FieldTypeChangeCheckDto>(Error.NotFound("CustomField", request.FieldId));
+
+        var policy = FieldTypeConversionPolicy.Classify(field.FieldType, request.To);
+        var recordCount = policy == FieldTypeConversion.RequiresEmptyTable
+            ? await _records.CountAsync(tenantId, request.EntityId, cancellationToken)
+            : 0;
+
+        var allowed = policy == FieldTypeConversion.Lossless
+            || (policy == FieldTypeConversion.RequiresEmptyTable && recordCount == 0);
+
+        return Result.Success(new FieldTypeChangeCheckDto(
+            field.FieldType.ToString(),
+            request.To.ToString(),
+            FieldTypeConversionPolicy.PolicyCode(policy),
+            recordCount,
+            FieldTypeConversionPolicy.Describe(field.FieldType, request.To, recordCount),
+            allowed));
+    }
+}
+
+public sealed record ChangeCustomFieldTypeCommand(Guid EntityId, Guid FieldId, ChangeCustomFieldTypeRequest Request)
+    : IRequest<Result<CustomFieldDto>>;
+
+public sealed class ChangeCustomFieldTypeCommandHandler : IRequestHandler<ChangeCustomFieldTypeCommand, Result<CustomFieldDto>>
+{
+    private readonly ICustomFieldRepository _fields;
+    private readonly ICustomRecordRepository _records;
+    private readonly IJsonIndexManager _jsonIndex;
+    private readonly IAuditService _audit;
+    private readonly ICurrentUser _currentUser;
+
+    public ChangeCustomFieldTypeCommandHandler(
+        ICustomFieldRepository fields, ICustomRecordRepository records, IJsonIndexManager jsonIndex,
+        IAuditService audit, ICurrentUser currentUser)
+    {
+        _fields = fields;
+        _records = records;
+        _jsonIndex = jsonIndex;
+        _audit = audit;
+        _currentUser = currentUser;
+    }
+
+    public async Task<Result<CustomFieldDto>> Handle(ChangeCustomFieldTypeCommand command, CancellationToken cancellationToken)
+    {
+        if (!StudioContext.TryGet(_currentUser, out var tenantId, out var userId, out var err))
+            return Result.Failure<CustomFieldDto>(err);
+
+        var field = await _fields.GetByIdAsync(tenantId, command.FieldId, cancellationToken);
+        if (field is null || field.EntityDefinitionId != command.EntityId)
+            return Result.Failure<CustomFieldDto>(Error.NotFound("CustomField", command.FieldId));
+
+        var req = command.Request;
+        var policy = FieldTypeConversionPolicy.Classify(field.FieldType, req.FieldType);
+
+        if (policy == FieldTypeConversion.Forbidden)
+            return Result.Failure<CustomFieldDto>(Error.Validation("fieldType", FieldTypeConversionPolicy.Describe(field.FieldType, req.FieldType)));
+
+        var recordCount = 0;
+        if (policy == FieldTypeConversion.RequiresEmptyTable)
+        {
+            recordCount = await _records.CountAsync(tenantId, command.EntityId, cancellationToken);
+            if (recordCount > 0)
+                return Result.Failure<CustomFieldDto>(Error.Validation("fieldType", FieldTypeConversionPolicy.Describe(field.FieldType, req.FieldType, recordCount)));
+        }
+
+        var optionsJson = CreateCustomFieldCommandHandler.BuildOptionsJson(req.FieldType, req.Options, req.Relation, req.Config, out var optionError);
+        if (optionError is not null)
+            return Result.Failure<CustomFieldDto>(optionError);
+
+        var oldType = field.FieldType;
+        var wasUnique = field.IsUnique;
+        var oldOptionsJson = field.OptionsJson;
+        var oldRulesJson = field.ValidationRulesJson;
+        var oldDefaultJson = field.DefaultValueJson;
+
+        field.ChangeType(req.FieldType, optionsJson, StudioFieldJson.SerializeRules(req.Rules), userId);
+        if (wasUnique && !FieldTypeConversionPolicy.UniqueCapable.Contains(req.FieldType))
+        {
+            field.Update(field.Label, field.IsRequired, isUnique: false,
+                field.ValidationRulesJson, field.OptionsJson, field.DefaultValueJson, field.IsActive, userId);
+        }
+
+        await _fields.UpdateAsync(field, cancellationToken);
+
+        // Fenêtre de course (table vide exigée) : aucune transaction n'englobe le comptage et la
+        // mise à jour. On recompte APRÈS la persistance ; si des enregistrements sont apparus entre
+        // les deux, le changement est annulé (retour à l'ancien type) et refusé.
+        if (policy == FieldTypeConversion.RequiresEmptyTable)
+        {
+            var afterCount = await _records.CountAsync(tenantId, command.EntityId, cancellationToken);
+            if (afterCount > 0)
+            {
+                field.ChangeType(oldType, oldOptionsJson, oldRulesJson, userId);
+                field.Update(field.Label, field.IsRequired, wasUnique,
+                    oldRulesJson, oldOptionsJson, oldDefaultJson, field.IsActive, userId);
+                await _fields.UpdateAsync(field, cancellationToken);
+                return Result.Failure<CustomFieldDto>(Error.Validation("fieldType", FieldTypeConversionPolicy.Describe(oldType, req.FieldType, afterCount)));
+            }
+        }
+
+        // La colonne calculée jx_<clé> est un CAST(JSON_VALUE(...) AS nvarchar) indépendant du type
+        // de champ et partagée par toutes les tables du tenant utilisant la même clé : elle n'est
+        // jamais supprimée ici. Seul l'index d'unicité est (ré)assuré si le champ reste unique.
+        if (field.IsUnique)
+            await _jsonIndex.EnsureUniqueFieldIndexAsync(tenantId, field.Key, cancellationToken);
+
+        await StudioAudit.SafeLogAsync(_audit, "Studio.Field.TypeChanged", "CustomField", field.Id,
+            new { From = oldType.ToString() },
+            new { To = req.FieldType.ToString(), Policy = FieldTypeConversionPolicy.PolicyCode(policy) },
+            cancellationToken);
+
+        return Result.Success(StudioMappers.ToDto(field));
+    }
+}
+
 // ---- Delete field (hard delete of a definition row; records keep stale keys harmlessly) ----
 
 public sealed record DeleteCustomFieldCommand(Guid Id) : IRequest<Result>;

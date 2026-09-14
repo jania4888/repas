@@ -103,6 +103,22 @@ public sealed class CustomFieldDefinition
         Touch(updatedBy);
     }
 
+    /// <summary>
+    /// PR 3.1 : change le type du champ (sous la politique <c>FieldTypeConversionPolicy</c>, appliquée
+    /// par l'appelant AVANT d'invoquer cette méthode). <see cref="DefaultValueJson"/> est toujours
+    /// réinitialisé : une valeur par défaut sérialisée pour l'ancien type n'a aucun sens dans le nouveau.
+    /// L'appelant est responsable de remettre <see cref="IsUnique"/> à false (via <see cref="Update"/>)
+    /// quand le nouveau type ne supporte pas l'unicité.
+    /// </summary>
+    public void ChangeType(CustomFieldType newType, string? optionsJson, string? validationRulesJson, Guid? updatedBy)
+    {
+        FieldType = newType;
+        OptionsJson = optionsJson;
+        ValidationRulesJson = validationRulesJson;
+        DefaultValueJson = null;
+        Touch(updatedBy);
+    }
+
     private void Touch(Guid? updatedBy)
     {
         UpdatedBy = updatedBy;

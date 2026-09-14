@@ -29,18 +29,24 @@ import { StudioBuildStep } from '../studio-ai.models';
         @for (step of steps(); track step.phase + step.label; let i = $index) {
           <li class="saip__step" [class.saip__step--running]="step.status === 'running'"
               [class.saip__step--done]="step.status === 'done'"
-              [class.saip__step--error]="step.status === 'error'">
+              [class.saip__step--error]="step.status === 'error'"
+              [class.saip__step--skipped]="step.status === 'skipped'">
             <span class="saip__icon" aria-hidden="true">
               @switch (step.status) {
                 @case ('running') { <i class="fa-solid fa-spinner fa-spin"></i> }
                 @case ('done') { <i class="fa-solid fa-circle-check"></i> }
                 @case ('error') { <i class="fa-solid fa-circle-xmark"></i> }
+                @case ('skipped') { <i class="fa-solid fa-forward"></i> }
                 @default { <i class="fa-regular fa-circle"></i> }
               }
             </span>
             <span class="saip__body">
               <span class="saip__label">{{ step.label }}</span>
-              @if (step.detail) { <span class="saip__detail">{{ step.detail }}</span> }
+              @if (step.detail) {
+                <span class="saip__detail">{{ step.detail }}</span>
+              } @else if (step.status === 'skipped') {
+                <span class="saip__detail">{{ labels.progress.stepSkipped }}</span>
+              }
               <span class="saip__position">{{ stepPosition(i) }}</span>
             </span>
           </li>
@@ -88,10 +94,12 @@ import { StudioBuildStep } from '../studio-ai.models';
     .saip__step--done { background: var(--color-success-50, #f0fdf4); }
     .saip__step--running { background: var(--color-primary-50, #eef2ff); }
     .saip__step--error { background: var(--color-danger-50, #fef2f2); }
+    .saip__step--skipped { background: var(--color-neutral-100, #f1f5f9); opacity: 0.75; }
     .saip__icon { color: var(--color-neutral-500); }
     .saip__step--done .saip__icon { color: var(--color-success-600, #16a34a); }
     .saip__step--running .saip__icon { color: var(--color-primary-600); }
     .saip__step--error .saip__icon { color: var(--color-danger-600, #dc2626); }
+    .saip__step--skipped .saip__icon { color: var(--color-neutral-400, #94a3b8); }
     .saip__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .saip__label { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); }
     .saip__detail, .saip__position, .saip__live { font-size: var(--font-size-sm); color: var(--color-neutral-500); }
@@ -105,7 +113,8 @@ export class StudioAiProgressComponent {
   protected readonly labels = STUDIO_AI_LABELS;
 
   protected readonly total = computed(() => this.steps().length);
-  protected readonly doneCount = computed(() => this.steps().filter(s => s.status === 'done').length);
+  // `skipped` (PR 2.5) compte comme terminé : la barre ne reste jamais bloquée sur une étape ignorée.
+  protected readonly doneCount = computed(() => this.steps().filter(s => s.status === 'done' || s.status === 'skipped').length);
   protected readonly percent = computed(() => {
     const total = this.total();
     return total === 0 ? 0 : Math.round((this.doneCount() / total) * 100);

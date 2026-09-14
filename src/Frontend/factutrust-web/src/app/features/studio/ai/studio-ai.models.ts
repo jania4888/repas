@@ -373,11 +373,15 @@ export interface StudioTemplateDetailDto extends StudioTemplateListItemDto {
   specJson: string;
 }
 
-/** Miroir de `StudioBuildStep` (contenu JSON des événements SSE `studio_progress` du flux `confirm`). */
+/** Miroir de `StudioBuildStep` (contenu JSON des événements SSE `studio_progress` du flux `confirm`).
+ *  `skipped` (PR 2.5) : étape non exécutée (ex. relation N-N ignorée si `manyToManyEnabled=false`) —
+ *  comptée comme terminée dans la barre de progression, au même titre que `done`. */
+export type StudioBuildStepStatus = 'running' | 'done' | 'error' | 'skipped' | string;
+
 export interface StudioBuildStep {
   phase: string;
   label: string;
-  status: 'running' | 'done' | 'error' | string;
+  status: StudioBuildStepStatus;
   entityRef?: string | null;
   detail?: string | null;
 }

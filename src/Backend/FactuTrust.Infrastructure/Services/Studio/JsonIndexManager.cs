@@ -93,6 +93,36 @@ public sealed class JsonIndexManager : IJsonIndexManager
         return exists;
     }
 
+    /// <summary>
+    /// PR 3.1 : DROP INDEX puis DROP COLUMN (idempotents), dans cet ordre (l'index dépend de la
+    /// colonne). Best-effort : une colonne calculée orpheline (ancien type) ne bloque jamais le
+    /// changement de type — elle ralentit seulement de futures requêtes tant qu'elle n'est pas
+    /// recréée par <see cref="EnsureFieldIndexAsync"/>.
+    /// </summary>
+    public async Task DropFieldIndexAsync(Guid tenantId, string fieldKey, CancellationToken cancellationToken = default)
+    {
+        if (!StudioKey.IsValidShape(fieldKey))
+            return;
+
+        try
+        {
+            await using var ctx = _contextFactory.CreateContext();
+            var conn = ctx.Database.GetDbConnection();
+            await EnsureOpenAsync(conn, cancellationToken);
+
+            await ExecuteAsync(conn, JsonIndexSql.DropIndexSql(fieldKey), cancellationToken);
+            await ExecuteAsync(conn, JsonIndexSql.DropColumnSql(fieldKey), cancellationToken);
+
+            _cache.Remove(CacheKey(tenantId, fieldKey));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex,
+                "Studio JSON index could not be dropped for field key {Key} (tenant {Tenant}); a stale computed column may remain.",
+                fieldKey, tenantId);
+        }
+    }
+
     private static async Task ExecuteAsync(DbConnection conn, string sql, CancellationToken ct)
     {
         await using var cmd = conn.CreateCommand();

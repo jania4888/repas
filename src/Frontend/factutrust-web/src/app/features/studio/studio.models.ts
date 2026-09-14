@@ -18,6 +18,11 @@ export type {
 } from '@shared/studio-runtime/studio-runtime.models';
 
 import { CustomFieldType, CustomField, FormLayout, SelectOption, RelationRef, FieldValidationRules } from '@shared/studio-runtime/studio-runtime.models';
+import type { EntityRelationDto } from './relations/studio-relations.models';
+import type { CustomRecordViewDto } from './views/studio-record-views.models';
+
+/** Miroir de `CustomEntityKind` (backend) : jonction N-N invisible par défaut dans la liste des tables. */
+export type CustomEntityKind = 'Standard' | 'Junction';
 
 export interface CustomEntity {
   id: string;
@@ -31,12 +36,25 @@ export interface CustomEntity {
   systemId?: string | null;
   createdAt: string;
   updatedAt: string;
+  /** `Standard` par défaut ; `Junction` pour les tables de liaison créées par une relation N-N (PR 2.1). */
+  kind?: CustomEntityKind;
 }
 
 export interface CustomEntitySchema {
   entity: CustomEntity;
   fields: CustomField[];
   form: FormLayout;
+  /** Relations dans lesquelles la table intervient (PR 2.1) ; vide si `manyToManyEnabled=false`. */
+  relations?: EntityRelationDto[] | null;
+  /** Vues enregistrées actives, vue par défaut en tête (PR 2.3) ; vide si `recordViewsEnabled=false`. */
+  views?: CustomRecordViewDto[] | null;
+}
+
+/** Résultat de `POST entities/{id}/relations/many-to-many` : la jonction et ses deux champs de relation. */
+export interface ManyToManyRelationDto {
+  junction: CustomEntity;
+  sourceField: CustomField;
+  targetField: CustomField;
 }
 
 export interface CustomRecord {

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { permissionGuard } from '@core/guards/permission.guard';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { StudioShellComponent } from './shared/studio-shell.component';
+import { capabilityGuard } from './shared/capability.guard';
 
 /**
  * Routes enfants du module Studio. Elles sont enveloppées par `StudioShellComponent`
@@ -113,6 +114,22 @@ export const STUDIO_CHILD_ROUTES: Routes = [
     loadComponent: () => import('./studio-record-form.component').then(m => m.StudioRecordFormComponent),
     title: 'Nouvel enregistrement - InstaFact'
   },
+  // Déclarées avant `d/:key/:id/edit` pour que `views` ne soit pas capturé comme `:id` (V4/spec).
+  // Stub 2.5a (« Concepteur de vue — bientôt ») ; remplacé par le vrai concepteur en 2.5c.
+  {
+    path: 'd/:key/views/new',
+    canActivate: [permissionGuard, capabilityGuard('recordViewsEnabled', r => '/studio/d/' + r.paramMap.get('key'))],
+    data: { permissions: [PERMISSIONS.studio.designForms] },
+    loadComponent: () => import('./views/studio-record-view-designer.component').then(m => m.StudioRecordViewDesignerComponent),
+    title: 'Nouvelle vue - InstaFact'
+  },
+  {
+    path: 'd/:key/views/:viewId',
+    canActivate: [permissionGuard, capabilityGuard('recordViewsEnabled', r => '/studio/d/' + r.paramMap.get('key'))],
+    data: { permissions: [PERMISSIONS.studio.designForms] },
+    loadComponent: () => import('./views/studio-record-view-designer.component').then(m => m.StudioRecordViewDesignerComponent),
+    title: 'Modifier la vue - InstaFact'
+  },
   {
     path: 'd/:key/:id/edit',
     canActivate: [permissionGuard],
@@ -141,6 +158,14 @@ export const STUDIO_CHILD_ROUTES: Routes = [
     data: { permissions: [PERMISSIONS.studio.designEntities] },
     loadComponent: () => import('./studio-automations.component').then(m => m.StudioAutomationsComponent),
     title: 'Pont ERP - InstaFact'
+  },
+  // Déclarée avant `:id` pour que `relations` ne soit pas capturé comme un identifiant de table (V5/E5).
+  {
+    path: 'relations',
+    canActivate: [permissionGuard, capabilityGuard('manyToManyEnabled', () => '/studio')],
+    data: { permissions: [PERMISSIONS.studio.designEntities] },
+    loadComponent: () => import('./relations/studio-relations-page.component').then(m => m.StudioRelationsPageComponent),
+    title: 'Relations - InstaFact'
   },
   {
     path: ':id',

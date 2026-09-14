@@ -15,6 +15,7 @@ import {
   CustomRecord,
   CustomReport,
   CustomView,
+  ManyToManyRelationDto,
   ReportFieldMeta,
   ReportPreset,
   ReportResult,
@@ -36,6 +37,7 @@ import {
   AutomationRun,
   SaveAutomationRequest
 } from './studio.models';
+import { CreateManyToManyRelationRequest, EntityRelationDto } from './relations/studio-relations.models';
 
 @Injectable({ providedIn: 'root' })
 export class StudioService {
@@ -86,6 +88,24 @@ export class StudioService {
     return this.http.put<ApiResponse<unknown>>(`${this.base}/entities/${entityId}/fields/reorder`, { orderedFieldIds });
   }
 
+  // ---- Relations (PR 2.1/2.2 — plusieurs-à-plusieurs) ----
+
+  /**
+   * `GET entities/{id}/relations` — policy `StudioDesignEntities` (l'écran concepteur de table
+   * l'exige déjà) ; 404 tant que `Ollama:EnableStudioManyToMany` est coupé (E5 : la fiche
+   * d'enregistrement lit `schema.relations` à la place, jamais cet endpoint, pour éviter un 403).
+   */
+  listEntityRelations(entityId: string): Observable<ApiResponse<EntityRelationDto[]>> {
+    return this.http.get<ApiResponse<EntityRelationDto[]>>(
+      `${this.base}/entities/${entityId}/relations`, { context: createHttpContextSkipGlobalErrorUi() });
+  }
+
+  /** `POST entities/{id}/relations/many-to-many` : 409 si la clé de jonction est déjà prise. */
+  createManyToMany(entityId: string, request: CreateManyToManyRelationRequest): Observable<ApiResponse<ManyToManyRelationDto>> {
+    return this.http.post<ApiResponse<ManyToManyRelationDto>>(
+      `${this.base}/entities/${entityId}/relations/many-to-many`, request, { context: createHttpContextSkipGlobalErrorUi() });
+  }
+
   // ---- Form (default layout per entity) ----
   getForm(entityId: string): Observable<ApiResponse<CustomForm>> {
     return this.http.get<ApiResponse<CustomForm>>(`${this.base}/entities/${entityId}/form`);
@@ -107,10 +127,20 @@ export class StudioService {
     );
   }
 
-  listRecords(entityKey: string, search: string | null, page: number, pageSize: number): Observable<ApiResponse<PagedResult<CustomRecord>>> {
+  /**
+   * `filter` (PR 2.1) ajoute un filtre exact sur un champ actif via `filterField`/`filterValue`
+   * (ex. lignes de jonction du dossier courant pour l'onglet « Liés ») ; cumulatif avec `search`.
+   */
+  listRecords(
+    entityKey: string, search: string | null, page: number, pageSize: number,
+    filter?: { field: string; value: string } | null
+  ): Observable<ApiResponse<PagedResult<CustomRecord>>> {
     let params = new HttpParams().set('page', page).set('pageSize', pageSize);
     if (search) {
       params = params.set('search', search);
+    }
+    if (filter) {
+      params = params.set('filterField', filter.field).set('filterValue', filter.value);
     }
     return this.http.get<ApiResponse<PagedResult<CustomRecord>>>(`${this.base}/records/${entityKey}`, { params });
   }

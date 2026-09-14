@@ -74,6 +74,29 @@ public sealed record UpdateCustomFieldRequest(
 
 public sealed record ReorderCustomFieldsRequest(IReadOnlyList<Guid> OrderedFieldIds);
 
+// ---- Changement de type de champ (PR 3.1) ----
+
+/// <summary>Corps de <c>PATCH api/studio/entities/{entityId}/fields/{fieldId}/type</c>.</summary>
+public sealed record ChangeCustomFieldTypeRequest(
+    CustomFieldType FieldType,
+    IReadOnlyList<SelectOptionDto>? Options = null,
+    FieldValidationRules? Rules = null,
+    RelationRefDto? Relation = null,
+    Dictionary<string, JsonNode?>? Config = null);
+
+/// <summary>
+/// Réponse de <c>GET …/fields/{fieldId}/type-check?to=</c> : la politique appliquée par
+/// <see cref="FieldTypeConversionPolicy.Classify"/> sans rien modifier.
+/// </summary>
+public sealed record FieldTypeChangeCheckDto(
+    string From,
+    string To,
+    string Policy,
+    int RecordCount,
+    string Message,
+    bool Allowed);
+
+
 /// <summary>
 /// The entity, its active fields, the default form layout — used by the runtime form/table renderer —
 /// and (R2, PR 2.1) the relations the entity takes part in (empty when

@@ -331,7 +331,8 @@ export const STUDIO_AI_LABELS = {
     of: 'sur',
     stepCount: 'Étape {current} sur {total}',
     stepsPending: 'En attente…',
-    stepRunning: 'En cours…'
+    stepRunning: 'En cours…',
+    stepSkipped: 'Ignoré'
   },
 
   result: {

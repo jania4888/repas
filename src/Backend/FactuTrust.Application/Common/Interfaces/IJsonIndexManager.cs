@@ -20,4 +20,13 @@ public interface IJsonIndexManager
 
     /// <summary>True if the indexed computed column exists for the field key (cached). Used to decide whether to seek the index.</summary>
     Task<bool> IndexedColumnExistsAsync(Guid tenantId, string fieldKey, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// PR 3.1 (changement de type de champ) : supprime l'index filtré puis la colonne calculée
+    /// <c>jx_&lt;key&gt;</c> (unique ou non, même mécanisme) si elles existent, et invalide le cache de
+    /// <see cref="IndexedColumnExistsAsync"/>. Idempotent, best-effort (jamais d'exception) : la colonne
+    /// calculée est typée par l'ancien type de champ, elle doit disparaître avant qu'un nouveau type ne
+    /// la recrée (<c>Ensure*FieldIndexAsync</c>) pour éviter des erreurs de conversion en lecture.
+    /// </summary>
+    Task DropFieldIndexAsync(Guid tenantId, string fieldKey, CancellationToken cancellationToken = default);
 }

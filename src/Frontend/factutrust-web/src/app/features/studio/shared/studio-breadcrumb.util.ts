@@ -48,4 +48,16 @@ export const STUDIO_BREADCRUMBS = {
       { label: name, route: `/studio/d/${key}` },
       { label: editing ? 'Modifier' : 'Nouveau' }
     ),
+  recordViewNew: (name: string, key: string): BreadcrumbItem[] =>
+    studioBreadcrumb(
+      { label: name, route: `/studio/d/${key}` },
+      { label: 'Nouvelle vue' }
+    ),
+  recordViewEdit: (name: string, key: string, viewName?: string): BreadcrumbItem[] =>
+    studioBreadcrumb(
+      { label: name, route: `/studio/d/${key}` },
+      { label: viewName ?? 'Modifier la vue' }
+    ),
+  relations: (): BreadcrumbItem[] =>
+    studioBreadcrumb({ label: 'Relations' }),
 };

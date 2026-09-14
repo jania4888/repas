@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import { StudioShellComponent } from './shared/studio-shell.component';
+import { permissionGuard } from '@core/guards/permission.guard';
 import { STUDIO_CHILD_ROUTES, STUDIO_ROUTES } from './studio.routes';
 
 describe('STUDIO_ROUTES', () => {
@@ -18,9 +19,10 @@ describe('STUDIO_ROUTES', () => {
     expect(STUDIO_CHILD_ROUTES.length).toBeGreaterThan(10);
   });
 
-  it('protège chaque page par permissionGuard avec une liste de permissions', () => {
+  it('protège chaque page par permissionGuard (premier de la liste) avec une liste de permissions (V4)', () => {
     for (const r of STUDIO_CHILD_ROUTES) {
-      expect(r.canActivate?.length).withContext(r.path ?? '').toBe(1);
+      expect(r.canActivate?.length).withContext(r.path ?? '').toBeGreaterThanOrEqual(1);
+      expect(r.canActivate?.[0]).withContext(r.path ?? '').toBe(permissionGuard);
       expect(Array.isArray(r.data?.['permissions'])).withContext(r.path ?? '').toBeTrue();
     }
   });
@@ -42,4 +44,32 @@ describe('STUDIO_ROUTES', () => {
     expect(typeof child('ai/projects').loadComponent).toBe('function');
     expect(typeof child('ai/templates').loadComponent).toBe('function');
   });
+
+  it('déclare d/:key/views/new et d/:key/views/:viewId avant d/:key/:id/edit (sinon `views` serait capturé comme :id)', () => {
+    const paths = STUDIO_CHILD_ROUTES.map(r => r.path);
+    const idx = (p: string) => paths.indexOf(p);
+    expect(idx('d/:key/views/new')).toBeGreaterThan(-1);
+    expect(idx('d/:key/views/:viewId')).toBeGreaterThan(-1);
+    expect(idx('d/:key/views/new')).toBeLessThan(idx('d/:key/:id/edit'));
+    expect(idx('d/:key/views/:viewId')).toBeLessThan(idx('d/:key/:id/edit'));
+  });
+
+  it('garde les routes de vues par permissionGuard + capabilityGuard(recordViewsEnabled)', () => {
+    for (const path of ['d/:key/views/new', 'd/:key/views/:viewId']) {
+      const route = child(path);
+      expect(route.canActivate?.length).withContext(path).toBe(2);
+      expect(route.canActivate?.[0]).withContext(path).toBe(permissionGuard);
+    }
+  });
+
+  it('déclare relations avant :id (sinon :id capturerait le segment) et la garde par capabilityGuard(manyToManyEnabled)', () => {
+    const paths = STUDIO_CHILD_ROUTES.map(r => r.path);
+    const idx = (p: string) => paths.indexOf(p);
+    expect(idx('relations')).toBeGreaterThan(-1);
+    expect(idx('relations')).toBeLessThan(idx(':id'));
+    const relations = child('relations');
+    expect(relations.canActivate?.length).toBe(2);
+    expect(relations.canActivate?.[0]).toBe(permissionGuard);
+  });
 });
+

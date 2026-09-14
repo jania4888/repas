@@ -125,3 +125,8 @@
   padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--color-border-subtle, #e2e8f0);
 }
+
+// ---- Runtime des vues enregistrées (2.5) ----
+// Les styles du sélecteur de vue et du runner vivent désormais dans leurs composants
+// (`studio-view-switcher.component.ts`, `studio-record-view-runner.component.ts`) : cette feuille
+// est partagée par de nombreux composants et Angular la duplique dans chaque bundle.

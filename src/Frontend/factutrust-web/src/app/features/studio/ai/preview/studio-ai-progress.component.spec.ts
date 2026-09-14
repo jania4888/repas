@@ -43,4 +43,16 @@ describe('StudioAiProgressComponent', () => {
     expect(fixture.nativeElement.querySelector('.saip__step--error')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('.fa-circle-xmark')).toBeTruthy();
   });
+
+  it('marque une étape ignorée (skipped) et la compte comme terminée dans l’avancement', () => {
+    const fixture = create([
+      { phase: 'creating_system', label: 'Système', status: 'done' },
+      { phase: 'creating_relation', label: 'Relation N-N', status: 'skipped' }
+    ]);
+    expect(fixture.nativeElement.querySelector('.saip__step--skipped')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.fa-forward')).toBeTruthy();
+    expect(fixture.nativeElement.textContent).toContain('Ignoré');
+    expect(fixture.nativeElement.querySelector('.saip__count').textContent).toContain('2 / 2');
+    expect(fixture.nativeElement.querySelector('.saip__bar-fill').style.width).toBe('100%');
+  });
 });

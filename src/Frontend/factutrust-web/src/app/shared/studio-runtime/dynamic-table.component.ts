@@ -146,7 +146,15 @@ export class DynamicTableComponent implements OnChanges {
     }
   }
 
+  // Sans sélecteur de colonnes, l'ordre/masquage fournis via `columns` (ex. vue enregistrée)
+  // priment sur `allFields` et aucune préférence localStorage n'est appliquée (partagée avec la
+  // vue « Liste » brute).
   private initVisibleColumns(): void {
+    if (!this.columnPicker && this.columns.length) {
+      this.visibleKeys = this.columns.map(f => f.key);
+      this.visibleColumns = [...this.columns];
+      return;
+    }
     const fields = this.allFields.length ? this.allFields : this.columns;
     const stored = this.entityKey ? localStorage.getItem(this.storageKey()) : null;
     if (stored) {
