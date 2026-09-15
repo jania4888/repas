@@ -84,7 +84,7 @@ export class ReplenishmentBoardComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly filters = signal<ReplenishmentFilters>({ status: 'pending' });
+  readonly filters = signal<ReplenishmentFilters>({});
   readonly rows = signal<ReplenishmentRecommendation[]>([]);
   readonly totalCount = signal(0);
   readonly page = signal(1);

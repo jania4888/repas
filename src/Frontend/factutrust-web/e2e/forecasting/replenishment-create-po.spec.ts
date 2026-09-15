@@ -28,6 +28,7 @@ test.describe('Replenishment V2 — Create Purchase Orders', () => {
     await expect(modal.locator('.supplier-group')).toHaveCount(2);
     await expect(modal).toContainText('Alpha Distribution');
     await expect(modal).toContainText('Beta Wholesale');
+    await expect(modal.locator('select.po-supplier-select').first()).toBeVisible();
   });
 
   test('warns about recommendations missing a supplier', async ({ page }) => {
@@ -85,9 +86,8 @@ test.describe('Replenishment V2 — Create Purchase Orders', () => {
     await expect(confirmBtn).toBeDisabled();
     await expect(confirmBtn).toContainText('(0 BC)');
 
-    // 2) Assign a supplier inline (the suppliers list is fetched lazily because a line lacks one).
-    //    Select by visible label: Angular's [ngValue] encodes the option's value attribute.
-    const select = modal.locator('.supplier-group.has-issue select.assign-select');
+    // 2) Assign a supplier via the per-line column (suppliers list loaded when the modal opens).
+    const select = modal.locator('.supplier-group.has-issue select.po-supplier-select');
     await expect(select).toBeVisible();
     await select.selectOption({ label: 'Alpha Distribution' });
 
