@@ -220,11 +220,11 @@ describe('PreparePoConfirmModalComponent', () => {
     expect(getSuppliersSpy).toHaveBeenCalled();
   });
 
-  it('does NOT fetch suppliers when every line already has one (happy path stays free of the call)', async () => {
+  it('fetches suppliers on open even when every line already has one', async () => {
     component.selection = [buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })];
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(getSuppliersSpy).not.toHaveBeenCalled();
+    expect(getSuppliersSpy).toHaveBeenCalled();
   });
 
   it('fetches only ACTIVE suppliers (isActive: true) — inactive ones are silently rejected by the backend', async () => {
@@ -365,6 +365,60 @@ describe('PreparePoConfirmModalComponent', () => {
     expect(component.buildLineUpdates()).toEqual([
       { recommendationId: 'r-1', manualQty: 570, manualSupplierId: null }
     ]);
+  });
+
+  it('displaySupplierId reflects preferred supplier without an in-modal assignment', () => {
+    const rec = buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' });
+    component.selection = [rec];
+    expect(component.displaySupplierId(rec)).toBe('sup-A');
+  });
+
+  it('changing supplier on a preferred line emits override and regroups', () => {
+    component.selection = [
+      buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' }),
+      buildRec({ id: 'r-2', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })
+    ];
+    component.suppliers.set([supplier('sup-A', 'Alpha'), supplier('sup-B', 'Beta')]);
+
+    component.assign('r-1', 'sup-B');
+
+    const groups = component.groups();
+    expect(groups.length).toBe(2);
+    expect(groups.find(g => g.supplierId === 'sup-B')!.recommendations.map(r => r.id)).toEqual(['r-1']);
+
+    const updates = component.buildLineUpdates();
+    expect(updates).toEqual([
+      { recommendationId: 'r-1', manualQty: null, manualSupplierId: 'sup-B' }
+    ]);
+  });
+
+  it('reverting manual override to preferred emits null manualSupplierId', () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        manualSupplierOverride: 'sup-B'
+      })
+    ];
+    component.suppliers.set([supplier('sup-A', 'Alpha'), supplier('sup-B', 'Beta')]);
+    component.assign('r-1', 'sup-A');
+
+    expect(component.buildLineUpdates()).toEqual([
+      { recommendationId: 'r-1', manualQty: null, manualSupplierId: null }
+    ]);
+  });
+
+  it('shows supplier select for lines that already have a preferred supplier', async () => {
+    component.selection = [buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })];
+    component.suppliers.set([supplier('sup-A', 'Alpha')]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const selects = fixture.nativeElement.querySelectorAll('select.po-supplier-select');
+    expect(selects.length).toBe(1);
+    expect(fixture.nativeElement.textContent).toContain('Fournisseur');
   });
 
   it('shows integer group total in template for discrete unit lines', async () => {
