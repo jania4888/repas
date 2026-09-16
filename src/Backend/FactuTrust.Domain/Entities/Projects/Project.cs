@@ -19,7 +19,6 @@ public sealed class Project : AggregateRoot
 
     public string? SiteAddress { get; private set; }
     public string? ContractNumber { get; private set; }
-    public bool IsBillable { get; private set; }
     public bool TimesheetsEnabled { get; private set; }
     public Guid? SalesOrderId { get; private set; }
     public string? AnalyticAccountCode { get; private set; }
@@ -41,7 +40,6 @@ public sealed class Project : AggregateRoot
         string? siteAddress = null,
         string? contractNumber = null,
         string currency = "TND",
-        bool isBillable = true,
         bool timesheetsEnabled = true,
         Guid? salesOrderId = null,
         string? analyticAccountCode = null,
@@ -78,7 +76,6 @@ public sealed class Project : AggregateRoot
             OwnerUserId = ownerUserId,
             SiteAddress = siteAddress?.Trim(),
             ContractNumber = contractNumber?.Trim(),
-            IsBillable = isBillable,
             TimesheetsEnabled = timesheetsEnabled,
             SalesOrderId = salesOrderId == Guid.Empty ? null : salesOrderId,
             AnalyticAccountCode = analyticAccountCode?.Trim(),
@@ -108,13 +105,6 @@ public sealed class Project : AggregateRoot
         TimesheetsEnabled = enabled;
         MilestonesEnabled = milestonesEnabled;
         AllocatedHours = decimal.Round(Math.Max(0, allocatedHours), 2);
-        IncrementVersion();
-        return Result.Success();
-    }
-
-    public Result SetBillable(bool isBillable)
-    {
-        IsBillable = isBillable;
         IncrementVersion();
         return Result.Success();
     }

@@ -85,7 +85,7 @@ public sealed class ProjectTimeEntryServiceTests
 
         var project = Project.Create(
             client.Id, "Mission", ProjectKind.Esn, ProjectBillingMode.TimeAndMaterials,
-            null, null, null, 5000m, isBillable: true, timesheetsEnabled: timesheetsEnabled).Value;
+            null, null, null, 5000m, timesheetsEnabled: timesheetsEnabled).Value;
         Assert.True(project.Activate().IsSuccess);
 
         await using (var ctx = factory.CreateContext())
@@ -229,6 +229,30 @@ public sealed class ProjectTimeEntryServiceTests
     }
 
     [Fact]
+    public async Task CreateTimeEntry_PersistsRequestedBillableFlag()
+    {
+        var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
+        var (project, client, userId) = await SeedActiveProjectAsync(factory);
+        var taskId = await SeedTaskAsync(factory, project);
+
+        await using var sut = CreateService(factory, client, userId);
+        var result = await sut.CreateTimeEntryAsync(new UpsertProjectTimeEntryDto
+        {
+            ProjectId = project.Id,
+            UserId = userId,
+            WorkDate = new DateTime(2026, 8, 1),
+            Hours = 4m,
+            IsBillable = true,
+            TaskId = taskId
+        });
+
+        Assert.True(result.IsSuccess);
+        await using var ctx = factory.CreateContext();
+        var entry = await ctx.ProjectTimeEntries.FirstAsync(e => e.Id == result.Value);
+        Assert.True(entry.IsBillable);
+    }
+
+    [Fact]
     public async Task ValidateTimeEntry_BlocksWhenTimesheetsDisabled()
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
@@ -322,7 +346,7 @@ public sealed class ProjectTimeEntryServiceTests
 
         var project = Project.Create(
             client.Id, "Mission", ProjectKind.Esn, ProjectBillingMode.TimeAndMaterials,
-            null, null, null, 5000m, isBillable: true, timesheetsEnabled: true).Value;
+            null, null, null, 5000m, timesheetsEnabled: true).Value;
         Assert.True(project.Activate().IsSuccess);
         Assert.True(project.Complete(hasOpenTimeEntries: false).IsSuccess);
         var phase = ProjectPhase.Create(project.Id, "Phase", 0).Value;
