@@ -98,6 +98,19 @@ public sealed class ProjectTimeEntryServiceTests
         return (project, client, userId);
     }
 
+    private static async Task<Guid> SeedTaskAsync(InMemoryTenantDbContextFactory factory, Project project)
+    {
+        var phase = ProjectPhase.Create(project.Id, "Phase", 0).Value;
+        var task = ProjectTask.Create(project.Id, phase.Id, "Tâche test", null, ProjectTaskPriority.Normal, null, null, null, 0m).Value;
+        await using (var ctx = factory.CreateContext())
+        {
+            ctx.ProjectPhases.Add(phase);
+            ctx.ProjectTasks.Add(task);
+            await ctx.SaveChangesAsync();
+        }
+        return task.Id;
+    }
+
     [Theory]
     [InlineData(ProjectStatus.Draft)]
     [InlineData(ProjectStatus.OnHold)]
@@ -137,6 +150,7 @@ public sealed class ProjectTimeEntryServiceTests
             await ctx.SaveChangesAsync();
         }
 
+        var taskId = await SeedTaskAsync(factory, project);
         await using var sut = CreateService(factory, client, userId);
         var result = await sut.CreateTimeEntryAsync(new UpsertProjectTimeEntryDto
         {
@@ -144,7 +158,8 @@ public sealed class ProjectTimeEntryServiceTests
             UserId = userId,
             WorkDate = new DateTime(2026, 8, 1),
             Hours = 4m,
-            IsBillable = true
+            IsBillable = true,
+            TaskId = taskId
         });
 
         Assert.True(result.IsFailure);
@@ -155,6 +170,7 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory, timesheetsEnabled: false);
+        var taskId = await SeedTaskAsync(factory, project);
 
         await using var sut = CreateService(factory, client, userId);
         var result = await sut.CreateTimeEntryAsync(new UpsertProjectTimeEntryDto
@@ -163,7 +179,8 @@ public sealed class ProjectTimeEntryServiceTests
             UserId = userId,
             WorkDate = new DateTime(2026, 8, 1),
             Hours = 4m,
-            IsBillable = true
+            IsBillable = true,
+            TaskId = taskId
         });
 
         Assert.True(result.IsFailure);
@@ -171,7 +188,7 @@ public sealed class ProjectTimeEntryServiceTests
     }
 
     [Fact]
-    public async Task CreateTimeEntry_SucceedsOnActiveProjectWithTimesheetsEnabled()
+    public async Task CreateTimeEntry_RequiresTask()
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory);
@@ -186,6 +203,28 @@ public sealed class ProjectTimeEntryServiceTests
             IsBillable = true
         });
 
+        Assert.True(result.IsFailure);
+        Assert.Contains("tâche", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task CreateTimeEntry_SucceedsOnActiveProjectWithTimesheetsEnabled()
+    {
+        var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
+        var (project, client, userId) = await SeedActiveProjectAsync(factory);
+        var taskId = await SeedTaskAsync(factory, project);
+
+        await using var sut = CreateService(factory, client, userId);
+        var result = await sut.CreateTimeEntryAsync(new UpsertProjectTimeEntryDto
+        {
+            ProjectId = project.Id,
+            UserId = userId,
+            WorkDate = new DateTime(2026, 8, 1),
+            Hours = 4m,
+            IsBillable = true,
+            TaskId = taskId
+        });
+
         Assert.True(result.IsSuccess);
     }
 
@@ -194,7 +233,8 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory, timesheetsEnabled: false);
-        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, null).Value;
+        var taskId = await SeedTaskAsync(factory, project);
+        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, taskId).Value;
         Assert.True(entry.Submit().IsSuccess);
 
         await using (var ctx = factory.CreateContext())
@@ -215,7 +255,8 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory);
-        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, null).Value;
+        var taskId = await SeedTaskAsync(factory, project);
+        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, taskId).Value;
         Assert.True(entry.Submit().IsSuccess);
 
         await using (var ctx = factory.CreateContext())
@@ -284,12 +325,16 @@ public sealed class ProjectTimeEntryServiceTests
             null, null, null, 5000m, isBillable: true, timesheetsEnabled: true).Value;
         Assert.True(project.Activate().IsSuccess);
         Assert.True(project.Complete(hasOpenTimeEntries: false).IsSuccess);
-        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, null).Value;
+        var phase = ProjectPhase.Create(project.Id, "Phase", 0).Value;
+        var task = ProjectTask.Create(project.Id, phase.Id, "Tâche test", null, ProjectTaskPriority.Normal, null, null, null, 0m).Value;
+        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, task.Id).Value;
 
         await using (var ctx = factory.CreateContext())
         {
             ctx.Clients.Add(client);
             ctx.Projects.Add(project);
+            ctx.ProjectPhases.Add(phase);
+            ctx.ProjectTasks.Add(task);
             ctx.ProjectTimeEntries.Add(entry);
             await ctx.SaveChangesAsync();
         }
@@ -302,8 +347,9 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory);
-        var draft = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, null).Value;
-        var submitted = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 2), 2m, true, null, null).Value;
+        var taskId = await SeedTaskAsync(factory, project);
+        var draft = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, taskId).Value;
+        var submitted = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 2), 2m, true, null, taskId).Value;
         Assert.True(submitted.Submit().IsSuccess);
 
         await using (var ctx = factory.CreateContext())
@@ -322,8 +368,9 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory);
+        var taskId = await SeedTaskAsync(factory, project);
         var member = ProjectMember.Create(project.Id, userId, ProjectMemberRole.Member, 320m, 100m, 40m).Value;
-        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 2m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 2m, true, null, taskId).Value;
         Assert.True(entry.Submit().IsSuccess);
 
         await using (var ctx = factory.CreateContext())
@@ -348,8 +395,9 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory);
+        var taskId = await SeedTaskAsync(factory, project);
         var member = ProjectMember.Create(project.Id, userId, ProjectMemberRole.Member, 320m, null, 40m).Value;
-        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 2m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 2m, true, null, taskId).Value;
         Assert.True(entry.Submit().IsSuccess);
 
         await using (var ctx = factory.CreateContext())
@@ -373,8 +421,9 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory);
+        var taskId = await SeedTaskAsync(factory, project);
         var member = ProjectMember.Create(project.Id, userId, ProjectMemberRole.Member, 640m, 80m, 40m).Value;
-        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, null).Value;
+        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, taskId).Value;
         Assert.True(entry.Submit().IsSuccess);
 
         await using (var ctx = factory.CreateContext())
@@ -407,7 +456,8 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory);
-        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, null).Value;
+        var taskId = await SeedTaskAsync(factory, project);
+        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, taskId).Value;
         Assert.True(entry.Submit().IsSuccess);
         Assert.True(entry.Validate().IsSuccess);
         Assert.True(entry.MarkInvoiced(Guid.NewGuid()).IsSuccess);
@@ -428,7 +478,8 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory);
-        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, null).Value;
+        var taskId = await SeedTaskAsync(factory, project);
+        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, taskId).Value;
         Assert.True(entry.Submit().IsSuccess);
 
         await using (var ctx = factory.CreateContext())
@@ -446,7 +497,8 @@ public sealed class ProjectTimeEntryServiceTests
     {
         var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
         var (project, client, userId) = await SeedActiveProjectAsync(factory);
-        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, null).Value;
+        var taskId = await SeedTaskAsync(factory, project);
+        var entry = ProjectTimeEntry.Create(project.Id, userId, new DateTime(2026, 8, 1), 4m, true, null, taskId).Value;
         Assert.True(entry.Submit().IsSuccess);
         Assert.True(entry.Validate().IsSuccess);
 

@@ -301,6 +301,12 @@ public sealed class TimesheetService : ITimesheetService, IAsyncDisposable
             return Result.Failure<TimesheetTimerStateDto>(Error.NotFound("Project", dto.ProjectId));
         if (!project.TimesheetsEnabled || !project.Status.CanReceiveTime())
             return Result.Failure<TimesheetTimerStateDto>(Error.Validation("Project", "Ce projet n'accepte pas de saisie de temps"));
+        if (!dto.TaskId.HasValue || dto.TaskId == Guid.Empty)
+            return Result.Failure<TimesheetTimerStateDto>(Error.Validation("TaskId", "La tâche est obligatoire"));
+        var taskExists = await _db.ProjectTasks.AsNoTracking()
+            .AnyAsync(t => t.Id == dto.TaskId.Value && t.ProjectId == dto.ProjectId, cancellationToken);
+        if (!taskExists)
+            return Result.Failure<TimesheetTimerStateDto>(Error.Validation("TaskId", "La tâche n'appartient pas à ce projet"));
 
         var isBillable = project.IsBillable && dto.SalesOrderLineId.HasValue;
         var created = ProjectTimeEntry.Create(
