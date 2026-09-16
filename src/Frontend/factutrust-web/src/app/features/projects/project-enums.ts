@@ -254,6 +254,16 @@ export function showTimeTab(project: ProjectTimeLoggingContext | null | undefine
   return canProcessExistingTime(project.status);
 }
 
+export interface ProjectProfitabilityTabContext {
+  billingMode?: ProjectBillingModeCode | number | string | null;
+}
+
+export function showProfitabilityTab(project: ProjectProfitabilityTabContext | null | undefined): boolean {
+  if (!project) return false;
+  const mode = parseProjectBillingMode(project.billingMode);
+  return mode !== null && mode !== 'None';
+}
+
 export interface ProjectTaskTimeTabContext {
   loggedHours: number;
 }

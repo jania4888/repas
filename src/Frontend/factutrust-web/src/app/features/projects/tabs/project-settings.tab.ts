@@ -31,9 +31,6 @@ import {
     @if (project) {
       <div class="proj-settings">
         <div class="proj-meta-chips" aria-label="Paramètres actifs">
-          @if (project.isBillable) {
-            <span class="proj-chip"><i class="pi pi-check-circle"></i> Facturable</span>
-          }
           @if (project.timesheetsEnabled) {
             <span class="proj-chip"><i class="pi pi-clock"></i> Feuilles de temps</span>
           }
@@ -45,21 +42,6 @@ import {
 
         <app-form-section title="Facturation" icon="pi-sliders-h" variant="compact">
           <div class="ft-form-grid">
-            <div class="ft-field ft-field--full">
-              <div class="proj-create-options">
-                <div class="proj-create-options__item">
-                  <p-checkbox
-                    [(ngModel)]="settingsDraft.isBillable"
-                    [binary]="true"
-                    inputId="settingsIsBillable"
-                    [disabled]="!canUpdate" />
-                  <label for="settingsIsBillable">
-                    <strong>Facturable</strong>
-                    <span class="text-sm text-color-secondary">Le temps saisi pourra être facturé au client.</span>
-                  </label>
-                </div>
-              </div>
-            </div>
             <div class="ft-field ft-field--full">
               <label for="settingsBillingMode">Mode de facturation</label>
               <p-select
@@ -147,7 +129,6 @@ export class ProjectSettingsTabComponent implements OnChanges {
 
   settingsDraft: ProjectSettingsPayload = {
     billingMode: 'None',
-    isBillable: false,
     timesheetsEnabled: false,
     milestonesEnabled: false,
     allocatedHours: 0
@@ -186,7 +167,6 @@ export class ProjectSettingsTabComponent implements OnChanges {
     const p = this.project!;
     this.settingsDraft = {
       billingMode: parseProjectBillingMode(p.billingMode) ?? 'None',
-      isBillable: p.isBillable,
       timesheetsEnabled: p.timesheetsEnabled,
       milestonesEnabled: p.milestonesEnabled ?? false,
       allocatedHours: p.allocatedHours ?? 0

@@ -23,11 +23,10 @@ Devis/Commande (SalesOrder)
 | Delivered quantities | `BasedOnDeliveredQuantities` |
 | BTP (extension) | `ProgressSituations` |
 
-## Facturable — 3 niveaux
+## Facturable — 2 niveaux
 
-1. **Projet** : `Project.IsBillable` — bloque saisie facturable et billing si false
-2. **Ligne commande** : `ProjectTimeEntry.SalesOrderLineId` — requis si projet lié à une commande
-3. **Saisie** : `ProjectTimeEntry.IsBillable` — pré-rempli selon projet + ligne
+1. **Saisie** : `ProjectTimeEntry.IsBillable` — choix par ligne de temps (case à cocher)
+2. **Ligne commande** : `ProjectTimeEntry.SalesOrderLineId` — requis pour une saisie facturable si le projet est lié à une commande (`SalesOrderId`)
 
 ## Rentabilité — 3 colonnes
 

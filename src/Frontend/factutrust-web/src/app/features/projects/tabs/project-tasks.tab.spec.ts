@@ -38,7 +38,6 @@ describe('ProjectTasksTabComponent', () => {
       statusDisplay: String(status),
       budgetHt: 0,
       currency: 'EUR',
-      isBillable: true,
       timesheetsEnabled: true,
       milestonesEnabled: false,
       allocatedHours: 0,

@@ -9,6 +9,7 @@ import {
   canCreateTimeEntry,
   canLogTime,
   showTimeTab,
+  showProfitabilityTab,
   showTaskTimeTab,
   canProcessTimeEntries,
   canEditTimeEntry,
@@ -137,6 +138,12 @@ describe('project-enums', () => {
     expect(canCreateTimeEntry({ status: 'Completed', timesheetsEnabled: true })).toBe(false);
     expect(timesheetsDisabledMessage()).toContain('désactivée');
     expect(cannotReceiveTimeMessage('OnHold')).toContain('pause');
+  });
+
+  it('shows profitability tab when billing mode is not None', () => {
+    expect(showProfitabilityTab({ billingMode: 'TimeAndMaterials' })).toBe(true);
+    expect(showProfitabilityTab({ billingMode: 'None' })).toBe(false);
+    expect(showProfitabilityTab({ billingMode: 0 })).toBe(false);
   });
 
   it('shows time tab when timesheets enabled on active, on hold or completed projects', () => {

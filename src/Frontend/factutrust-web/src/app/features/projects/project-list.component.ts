@@ -405,13 +405,6 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           <div class="ft-field ft-field--full">
             <div class="proj-create-options">
               <div class="proj-create-options__item">
-                <p-checkbox [(ngModel)]="draft.isBillable" [binary]="true" inputId="createIsBillable" />
-                <label for="createIsBillable">
-                  <strong>Facturable</strong>
-                  <span class="text-sm text-color-secondary">Le temps saisi pourra être facturé au client.</span>
-                </label>
-              </div>
-              <div class="proj-create-options__item">
                 <p-checkbox [(ngModel)]="draft.timesheetsEnabled" [binary]="true" inputId="createTimesheets" />
                 <label for="createTimesheets">
                   <strong>Feuilles de temps</strong>
@@ -532,7 +525,7 @@ export class ProjectListComponent implements OnInit {
   endDate: Date | null = null;
   draft: UpsertProjectPayload = {
     clientId: '', name: '', kind: 'Generic', billingMode: 'None', budgetHt: 0,
-    isBillable: true, timesheetsEnabled: true, milestonesEnabled: false, allocatedHours: 0, analyticAccountCode: null
+    timesheetsEnabled: true, milestonesEnabled: false, allocatedHours: 0, analyticAccountCode: null
   };
 
   readonly statusOptions = PROJECT_STATUS_OPTIONS;
@@ -733,10 +726,8 @@ export class ProjectListComponent implements OnInit {
     this.draft.billingMode = defaultBillingForKind(this.draft.kind);
     const kind = this.draft.kind;
     if (kind === 'Esn') {
-      this.draft.isBillable = true;
       this.draft.timesheetsEnabled = true;
     } else {
-      this.draft.isBillable = false;
       this.draft.timesheetsEnabled = false;
     }
   }
@@ -835,7 +826,6 @@ export class ProjectListComponent implements OnInit {
       ownerUserId: null,
       siteAddress: '',
       contractNumber: '',
-      isBillable: false,
       timesheetsEnabled: false,
       milestonesEnabled: false,
       allocatedHours: 0,

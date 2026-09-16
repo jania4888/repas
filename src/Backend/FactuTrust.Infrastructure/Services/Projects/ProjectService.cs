@@ -711,7 +711,6 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         var created = Project.Create(
             dto.ClientId, dto.Name, dto.Kind, dto.BillingMode, dto.OwnerUserId,
             dto.StartDate, dto.EndDate, dto.BudgetHt, dto.Description, dto.SiteAddress, dto.ContractNumber,
-            isBillable: dto.IsBillable,
             timesheetsEnabled: dto.TimesheetsEnabled,
             milestonesEnabled: dto.MilestonesEnabled,
             allocatedHours: dto.AllocatedHours,
@@ -739,7 +738,6 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         if (project is null) return Result.Failure(Error.NotFound("Project", id));
         var updated = project.Update(dto.Name, dto.Description, dto.BillingMode, dto.OwnerUserId, dto.StartDate, dto.EndDate, dto.BudgetHt, dto.SiteAddress, dto.ContractNumber);
         if (updated.IsFailure) return updated;
-        project.SetBillable(dto.IsBillable);
         project.ConfigureTimesheets(dto.TimesheetsEnabled, dto.MilestonesEnabled, dto.AllocatedHours);
         project.SetAnalyticAccountCode(dto.AnalyticAccountCode);
         Audit(project, true);
@@ -1146,7 +1144,7 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         var taskGuard = await EnsureTimeEntryTaskBelongsToProjectAsync(dto.ProjectId, dto.TaskId, cancellationToken);
         if (taskGuard is not null) return Result.Failure<Guid>(taskGuard);
 
-        var isBillable = ResolveEntryBillable(project, dto.IsBillable, dto.SalesOrderLineId);
+        var isBillable = ProjectTimeBillablePolicy.Resolve(dto.IsBillable, project.SalesOrderId, dto.SalesOrderLineId);
         if (isBillable && project.SalesOrderId.HasValue && !dto.SalesOrderLineId.HasValue)
             return Result.Failure<Guid>(Error.Validation("SalesOrderLineId", "Une ligne de commande est requise pour le temps facturable"));
 
@@ -1170,7 +1168,11 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         if (guard is not null) return Result.Failure(guard);
         var taskGuard = await EnsureTimeEntryTaskBelongsToProjectAsync(dto.ProjectId, dto.TaskId, cancellationToken);
         if (taskGuard is not null) return Result.Failure(taskGuard);
-        var updated = entry.Update(dto.WorkDate, dto.Hours, dto.IsBillable, dto.Notes, dto.TaskId);
+        var salesOrderLineId = dto.SalesOrderLineId ?? entry.SalesOrderLineId;
+        var isBillable = ProjectTimeBillablePolicy.Resolve(dto.IsBillable, project.SalesOrderId, salesOrderLineId);
+        if (isBillable && project.SalesOrderId.HasValue && !salesOrderLineId.HasValue)
+            return Result.Failure(Error.Validation("SalesOrderLineId", "Une ligne de commande est requise pour le temps facturable"));
+        var updated = entry.Update(dto.WorkDate, dto.Hours, isBillable, dto.Notes, dto.TaskId);
         if (updated.IsFailure) return updated;
         await _db.SaveChangesAsync(cancellationToken);
         return Result.Success();
@@ -1363,8 +1365,6 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
             .ToList();
 
         var blockers = new List<string>();
-        if (!project.IsBillable)
-            blockers.Add("Ce projet n'est pas facturable.");
         if (!project.Status.CanBeBilled())
             blockers.Add(project.Status.CannotBeBilledMessage());
         if (hours <= 0)
@@ -1374,8 +1374,8 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
 
         return new ProjectBillingReadinessDto
         {
-            CanBill = project.IsBillable && project.Status.CanBeBilled(),
-            CanInvoiceTime = project.IsBillable && project.Status.CanBeBilled() && hours > 0 && withoutRate.Count == 0,
+            CanBill = project.Status.CanBeBilled(),
+            CanInvoiceTime = project.Status.CanBeBilled() && hours > 0 && withoutRate.Count == 0,
             CanReceiveTime = project.Status.CanReceiveTime() && project.TimesheetsEnabled,
             Status = project.Status,
             StatusDisplay = project.Status.ToDisplayString(),
@@ -1392,8 +1392,6 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
 
         var project = await _db.Projects.FirstOrDefaultAsync(p => p.Id == projectId, cancellationToken);
         if (project is null) return Result.Failure<ProjectInvoiceResultDto>(Error.NotFound("Project", projectId));
-        if (!project.IsBillable)
-            return Result.Failure<ProjectInvoiceResultDto>(Error.Validation("IsBillable", "Ce projet n'est pas facturable"));
         if (!project.Status.CanBeBilled())
             return Result.Failure<ProjectInvoiceResultDto>(Error.Validation("Status", project.Status.CannotBeBilledMessage()));
 
@@ -2329,7 +2327,6 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         OwnerUserName = ownerName,
         SiteAddress = p.SiteAddress,
         ContractNumber = p.ContractNumber,
-        IsBillable = p.IsBillable,
         TimesheetsEnabled = p.TimesheetsEnabled,
         SalesOrderId = p.SalesOrderId,
         AnalyticAccountCode = p.AnalyticAccountCode,
@@ -2458,14 +2455,6 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         return Result.Success(id);
     }
 
-    private static bool ResolveEntryBillable(Project project, bool requestedBillable, Guid? salesOrderLineId)
-    {
-        if (!project.IsBillable) return false;
-        if (!requestedBillable) return false;
-        if (project.SalesOrderId.HasValue && !salesOrderLineId.HasValue) return false;
-        return true;
-    }
-
     private async Task<Result> RecordTimesheetDeliveryOnSalesOrderAsync(
         Project project, Guid salesOrderLineId, decimal hours, CancellationToken cancellationToken)
     {
@@ -2498,8 +2487,7 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
     private async Task<List<ProjectTimeEntry>> LoadEligibleMemberBillingEntriesAsync(
         Guid projectId, CancellationToken cancellationToken)
     {
-        var project = await _db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == projectId, cancellationToken);
-        if (project is null || !project.IsBillable)
+        if (!await _db.Projects.AsNoTracking().AnyAsync(p => p.Id == projectId, cancellationToken))
             return new List<ProjectTimeEntry>();
 
         var entries = await _db.ProjectTimeEntries

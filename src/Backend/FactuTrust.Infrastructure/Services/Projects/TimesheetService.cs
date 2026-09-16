@@ -308,7 +308,7 @@ public sealed class TimesheetService : ITimesheetService, IAsyncDisposable
         if (!taskExists)
             return Result.Failure<TimesheetTimerStateDto>(Error.Validation("TaskId", "La tâche n'appartient pas à ce projet"));
 
-        var isBillable = project.IsBillable && dto.SalesOrderLineId.HasValue;
+        var isBillable = ProjectTimeBillablePolicy.Resolve(true, project.SalesOrderId, dto.SalesOrderLineId);
         var created = ProjectTimeEntry.Create(
             dto.ProjectId, userId.Value, DateTime.UtcNow.Date, 0m, isBillable, dto.Notes, dto.TaskId,
             dto.SalesOrderLineId, TimesheetEntrySource.Timer);

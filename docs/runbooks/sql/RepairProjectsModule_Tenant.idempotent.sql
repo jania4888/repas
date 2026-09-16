@@ -339,8 +339,6 @@ IF NOT EXISTS (
     WHERE [InvoicedInvoiceId] IS NOT NULL;
 GO
 
-IF COL_LENGTH(N'dbo.Projects', N'IsBillable') IS NULL
-    ALTER TABLE [Projects] ADD [IsBillable] bit NOT NULL CONSTRAINT [DF_Projects_IsBillable] DEFAULT (1);
 IF COL_LENGTH(N'dbo.Projects', N'TimesheetsEnabled') IS NULL
     ALTER TABLE [Projects] ADD [TimesheetsEnabled] bit NOT NULL CONSTRAINT [DF_Projects_TimesheetsEnabled] DEFAULT (1);
 GO
