@@ -1143,6 +1143,9 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         if (userId is null || userId == Guid.Empty)
             return Result.Failure<Guid>(Error.Validation("UserId", "L'utilisateur est obligatoire"));
 
+        var taskGuard = await EnsureTimeEntryTaskBelongsToProjectAsync(dto.ProjectId, dto.TaskId, cancellationToken);
+        if (taskGuard is not null) return Result.Failure<Guid>(taskGuard);
+
         var isBillable = ResolveEntryBillable(project, dto.IsBillable, dto.SalesOrderLineId);
         if (isBillable && project.SalesOrderId.HasValue && !dto.SalesOrderLineId.HasValue)
             return Result.Failure<Guid>(Error.Validation("SalesOrderLineId", "Une ligne de commande est requise pour le temps facturable"));
@@ -1165,6 +1168,8 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         if (project is null) return Result.Failure(Error.NotFound("Project", entry.ProjectId));
         var guard = EnsureProjectAllowsTimeWorkflow(project);
         if (guard is not null) return Result.Failure(guard);
+        var taskGuard = await EnsureTimeEntryTaskBelongsToProjectAsync(dto.ProjectId, dto.TaskId, cancellationToken);
+        if (taskGuard is not null) return Result.Failure(taskGuard);
         var updated = entry.Update(dto.WorkDate, dto.Hours, dto.IsBillable, dto.Notes, dto.TaskId);
         if (updated.IsFailure) return updated;
         await _db.SaveChangesAsync(cancellationToken);
@@ -2401,6 +2406,20 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         return await _master.Users.AsNoTracking()
             .Where(u => list.Contains(u.Id))
             .ToDictionaryAsync(u => u.Id, u => u.FirstName + " " + u.LastName, cancellationToken);
+    }
+
+    private async Task<Error?> EnsureTimeEntryTaskBelongsToProjectAsync(
+        Guid projectId,
+        Guid? taskId,
+        CancellationToken cancellationToken)
+    {
+        if (taskId is null || taskId == Guid.Empty)
+            return Error.Validation("TaskId", "La tâche est obligatoire");
+        var exists = await _db.ProjectTasks.AsNoTracking()
+            .AnyAsync(t => t.Id == taskId.Value && t.ProjectId == projectId, cancellationToken);
+        if (!exists)
+            return Error.Validation("TaskId", "La tâche n'appartient pas à ce projet");
+        return null;
     }
 
     private static Error? EnsureProjectAllowsNewTimeEntry(Project project)

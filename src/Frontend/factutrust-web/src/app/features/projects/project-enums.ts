@@ -235,6 +235,14 @@ export function canCreateTimeEntry(project: ProjectTimeLoggingContext | null | u
   return canReceiveTime(project.status) && project.timesheetsEnabled !== false;
 }
 
+/** Valide les champs minimaux d'une ligne de temps projet (saisie manuelle). */
+export function canSaveProjectTimeLine(
+  taskId: string | null | undefined,
+  hours: number | null | undefined
+): boolean {
+  return !!taskId && typeof hours === 'number' && hours > 0 && hours <= 24;
+}
+
 /** @deprecated Use canCreateTimeEntry for new time entry; showTimeTab for tab visibility. */
 export function canLogTime(project: ProjectTimeLoggingContext | null | undefined): boolean {
   return canCreateTimeEntry(project);
