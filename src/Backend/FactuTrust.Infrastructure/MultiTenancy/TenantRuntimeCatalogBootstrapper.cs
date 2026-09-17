@@ -29,6 +29,11 @@ public static class TenantRuntimeCatalogBootstrapper
         await WithholdingFiscalYearParameterInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
         await IncomeTaxYearParameterInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
         await WithholdingChartAccountsInitializer.EnsureAccountsAsync(context, cancellationToken);
+
+        // Catalogue standard des rubriques de la déclaration mensuelle. Ce point d'appel unique
+        // couvre à la fois la création d'un dossier et le rattrapage des dossiers existants à leur
+        // première requête après déploiement. Données inertes tant qu'aucune famille n'est cochée.
+        await MonthlyDeclarationRubricInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
     }
 
     /// <summary>

@@ -89,6 +89,11 @@ public static class Nct01ChartMigrationService
             ("PayrollPaymentLines", "EmployeeAuxiliaryAccount"),
             ("AccountingAnomalies", "AccountRef"),
             ("AccountingAnomalyLines", "AccountNumber"),
+            // Comptes sélectionnés sur les rubriques de la déclaration mensuelle. Une ligne = un
+            // numéro (ou une racine), ce qui suffit à la réécriture générique : c'est précisément
+            // pour éviter le traitement spécial de BudgetPosts.AccountPrefixes que cette colonne
+            // n'agrège pas plusieurs numéros.
+            ("MonthlyDeclarationRubricAccounts", "AccountNumber"),
         };
 
         foreach (var (table, column) in targets)
@@ -307,6 +312,7 @@ public static class Nct01ChartMigrationService
             ("AccountingAnomalies", "AccountRef"),
             ("AccountingAnomalyLines", "AccountNumber"),
             ("BudgetPosts", "AccountPrefixes"),
+            ("MonthlyDeclarationRubricAccounts", "AccountNumber"),
         };
 
     /// <summary>

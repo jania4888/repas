@@ -1,0 +1,244 @@
+{
+  "formVersion": "mensuelle-2026",
+  "_note": "Correspondance code rapport -> cases du formulaire officiel. Le code rapport est celui que le comptable lit sur le formulaire ; les cles de cases appartiennent au millesime et vivent donc ici, PAS dans la configuration des dossiers. Un nouveau millesime se traite en remplacant le triplet (gabarit PDF, carte geometrique, cette carte). reportCode '*' = repli de famille : la famille n'a pas de case de detail dans ce millesime, son montant ne rejoint que la ligne du recapitulatif. La famille OtherInformation est absente a dessein : declarative, elle ne porte aucun montant a payer et n'a pas de case calibree.",
+  "targets": [
+    {
+      "family": "Withholding",
+      "reportCode": "1",
+      "base": "Withholding.Line1.Base",
+      "amount": "Withholding.Line1.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "3",
+      "base": "Withholding.Line3.Base",
+      "amount": "Withholding.Line3.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "4.1",
+      "base": "Withholding.Line4Individuals.Base",
+      "amount": "Withholding.Line4Individuals.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "4.2",
+      "base": "Withholding.Line4Entities.Base",
+      "amount": "Withholding.Line4Entities.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "5",
+      "base": "Withholding.Line5.Base",
+      "amount": "Withholding.Line5.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "6",
+      "base": "Withholding.Line6.Base",
+      "amount": "Withholding.Line6.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "8",
+      "base": "Withholding.Line8.Base",
+      "amount": "Withholding.Line8.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "10",
+      "base": "Withholding.Line10.Base",
+      "amount": "Withholding.Line10.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "12",
+      "base": "Withholding.Line12.Base",
+      "amount": "Withholding.Line12.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "16",
+      "base": "Withholding.Line16.Base",
+      "amount": "Withholding.Line16.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "17.1",
+      "base": "Withholding.Line17Rate1.Base",
+      "amount": "Withholding.Line17Rate1.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "17.2",
+      "base": "Withholding.Line17Rate05.Base",
+      "amount": "Withholding.Line17Rate05.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "17.3",
+      "base": "Withholding.Line17Rate15.Base",
+      "amount": "Withholding.Line17Rate15.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "18",
+      "base": "Withholding.Line18.Base",
+      "amount": "Withholding.Line18.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "19",
+      "base": "Withholding.Line19.Base",
+      "amount": "Withholding.Line19.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "24",
+      "base": "Withholding.Line24.Base",
+      "amount": "Withholding.Line24.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Withholding",
+      "reportCode": "25",
+      "base": "Withholding.Line25.Base",
+      "amount": "Withholding.Line25.Amount",
+      "recap": "Withholding"
+    },
+    {
+      "family": "Tfp",
+      "reportCode": "1",
+      "base": "Tfp.Manufacturing.Base",
+      "amount": "Tfp.Manufacturing.Amount",
+      "recap": "Tfp"
+    },
+    {
+      "family": "Tfp",
+      "reportCode": "2",
+      "base": "Tfp.Other.Base",
+      "amount": "Tfp.Other.Amount",
+      "recap": "Tfp"
+    },
+    {
+      "family": "Foprolos",
+      "reportCode": "1",
+      "base": "Foprolos.Base",
+      "amount": "Foprolos.Amount",
+      "recap": "Foprolos"
+    },
+    {
+      "family": "Vat",
+      "reportCode": "1.1",
+      "base": "Vat.Rate7.Base",
+      "amount": "Vat.Rate7.Due",
+      "recap": "Vat"
+    },
+    {
+      "family": "Vat",
+      "reportCode": "1.2",
+      "base": "Vat.Rate13.Base",
+      "amount": "Vat.Rate13.Due",
+      "recap": "Vat"
+    },
+    {
+      "family": "Vat",
+      "reportCode": "1.3",
+      "base": "Vat.Rate19.Base",
+      "amount": "Vat.Rate19.Due",
+      "recap": "Vat"
+    },
+    {
+      "family": "Vat",
+      "reportCode": "2.1",
+      "base": "Vat.Purchase.RealEstate.Base",
+      "amount": "Vat.Purchase.RealEstate.Deductible",
+      "recap": "Vat"
+    },
+    {
+      "family": "Vat",
+      "reportCode": "2.2",
+      "base": "Vat.Purchase.EquipmentLocal.Base",
+      "amount": "Vat.Purchase.EquipmentLocal.Deductible",
+      "recap": "Vat"
+    },
+    {
+      "family": "Vat",
+      "reportCode": "2.3",
+      "base": "Vat.Purchase.EquipmentImported.Base",
+      "amount": "Vat.Purchase.EquipmentImported.Deductible",
+      "recap": "Vat"
+    },
+    {
+      "family": "Vat",
+      "reportCode": "2.4",
+      "base": "Vat.Purchase.OtherLocal.Base",
+      "amount": "Vat.Purchase.OtherLocal.Deductible",
+      "recap": "Vat"
+    },
+    {
+      "family": "Vat",
+      "reportCode": "2.5",
+      "base": "Vat.Purchase.OtherImported.Base",
+      "amount": "Vat.Purchase.OtherImported.Deductible",
+      "recap": "Vat"
+    },
+    {
+      "family": "OtherTurnoverTaxes",
+      "reportCode": "1",
+      "base": "Fodec.Base",
+      "amount": "Fodec.Amount",
+      "recap": "OtherDuties"
+    },
+    {
+      "family": "ConsumptionDuty",
+      "reportCode": "*",
+      "base": null,
+      "amount": null,
+      "recap": "ConsumptionDuty"
+    },
+    {
+      "family": "StampDuty",
+      "reportCode": "*",
+      "base": null,
+      "amount": null,
+      "recap": "StampDuty"
+    },
+    {
+      "family": "HotelTax",
+      "reportCode": "*",
+      "base": null,
+      "amount": null,
+      "recap": "HotelTax"
+    },
+    {
+      "family": "Tcl",
+      "reportCode": "*",
+      "base": null,
+      "amount": null,
+      "recap": "Tcl"
+    },
+    {
+      "family": "LicenceFee",
+      "reportCode": "*",
+      "base": null,
+      "amount": null,
+      "recap": "LicenceFee"
+    }
+  ]
+}

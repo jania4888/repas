@@ -118,6 +118,56 @@ export const ACCOUNTING_ROUTES: Routes = [
     title: 'Déclaration TVA - InstaFact'
   },
   {
+    // Paramétrage du calcul de la déclaration mensuelle, rubrique par rubrique. Lecture sous
+    // `accounting:read` ; chaque écriture est gardée côté serveur par `accounting:declare` ET par
+    // le contexte cabinet délégué. Exiger `declare` ici fermerait l'écran à la simple consultation.
+    path: 'dm/configuration',
+    loadComponent: () =>
+      import('./monthly-declaration/monthly-declaration-config.component').then(
+        m => m.MonthlyDeclarationConfigComponent
+      ),
+    canActivate: [permissionGuard],
+    data: { permissions: [PERMISSIONS.accounting.read] },
+    title: 'Configuration DM - InstaFact'
+  },
+  {
+    // « Calcul DM ». Même garde que la configuration : `accounting:read` à l'entrée, le serveur
+    // exigeant `accounting:declare` ET le contexte cabinet délégué sur le calcul lui-même.
+    path: 'dm/calcul',
+    loadComponent: () =>
+      import('./monthly-declaration/monthly-declaration-compute.component').then(
+        m => m.MonthlyDeclarationComputeComponent
+      ),
+    canActivate: [permissionGuard],
+    data: { permissions: [PERMISSIONS.accounting.read] },
+    title: 'Calcul DM - InstaFact'
+  },
+  {
+    // « Modèle Intégration DM ». `accounting:read` à l'entrée : l'export est ouvert à la
+    // consultation, seul l'import exige `accounting:declare` et le contexte cabinet délégué.
+    path: 'dm/modele',
+    loadComponent: () =>
+      import('./monthly-declaration/monthly-declaration-model.component').then(
+        m => m.MonthlyDeclarationModelComponent
+      ),
+    canActivate: [permissionGuard],
+    data: { permissions: [PERMISSIONS.accounting.read] },
+    title: 'Modèle Intégration DM - InstaFact'
+  },
+  {
+    // « Suivi DM ». Lecture seule : le suivi ne dit rien qu'un dossier ne puisse savoir de ses
+    // propres dépôts. Reste néanmoins hors de la liste autorisée aux sociétés, comme tout
+    // `/accounting/dm/*` — l'ouvrir serait une décision de navigation à prendre pour elle-même.
+    path: 'dm/suivi',
+    loadComponent: () =>
+      import('./monthly-declaration/monthly-declaration-tracking.component').then(
+        m => m.MonthlyDeclarationTrackingComponent
+      ),
+    canActivate: [permissionGuard],
+    data: { permissions: [PERMISSIONS.accounting.read] },
+    title: 'Suivi DM - InstaFact'
+  },
+  {
     path: 'fiscal-schedule',
     loadComponent: () =>
       import('./fiscal-schedule/fiscal-schedule.component').then(m => m.FiscalScheduleComponent),

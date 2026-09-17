@@ -1,0 +1,340 @@
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { ButtonComponent } from '@shared/components/button/button.component';
+import { AuthService } from '@core/services/auth.service';
+import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { ToastService } from '@core/services/toast.service';
+import { AccountingStatusBannerComponent } from '../shared/accounting-status-banner.component';
+import {
+  AccountingService,
+  MonthlyDeclarationDiagnosticDto,
+  MonthlyDeclarationMode,
+  MonthlyDeclarationSettingsDto,
+  VatDeclarationDto
+} from '../services/accounting.service';
+import { DmComputeLinesComponent } from './dm-compute-lines.component';
+import { DmModePanelComponent } from './dm-mode-panel.component';
+import { modeLabel } from './monthly-declaration-config.view-model';
+import { formatPeriodLabel } from '../vat-declaration/vat-declaration.view-model';
+import {
+  DmModeForm,
+  buildFamilyViews,
+  countBySeverity,
+  defaultComputePeriod,
+  describeComputeOutcome,
+  describeDiagnostic,
+  diagnosticSeverity,
+  distinctDiagnostics,
+  isCleanParityRun,
+  isComputablePeriod,
+  newModeForm,
+  toModeRequest,
+  validateModeForm
+} from './monthly-declaration-compute.view-model';
+
+/**
+ * Calcul DM — évalue la configuration du dossier sur une période et rend le détail obtenu, sans
+ * rien déposer. C'est l'écran de recette de la déclaration paramétrable : on y compare, on y lit
+ * les signalements, et c'est de là qu'on fait avancer la rampe de bascule.
+ *
+ * Le calcul **écrit** quand même quelque chose : en contrôle de parité, il consigne le résultat de
+ * la comparaison sur les réglages du dossier. C'est cette série, et elle seule, qui autorise
+ * ensuite le passage en calcul paramétré — d'où le rechargement des réglages après chaque calcul.
+ */
+@Component({
+  selector: 'app-monthly-declaration-compute',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    PageHeaderComponent,
+    ButtonComponent,
+    AccountingStatusBannerComponent,
+    DmComputeLinesComponent,
+    DmModePanelComponent
+  ],
+  template: `
+    <app-page-header
+      title="Calcul DM"
+      subtitle="Évalue la configuration du dossier sur une période et rend le détail obtenu. Rien n’est déposé." />
+
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
+
+    @if (settings(); as s) {
+      @if (!s.configurableLinesEnabled) {
+        <app-accounting-status-banner
+          variant="info"
+          title="Calcul paramétré non activé"
+          message="Le calcul reste indisponible tant que le drapeau serveur n’est pas activé pour ce dossier." />
+      }
+    }
+
+    @if (!canWrite()) {
+      <app-accounting-status-banner
+        variant="info"
+        message="Calcul réservé au cabinet comptable ouvrant le dossier : une société ne recalcule pas sa propre déclaration." />
+    }
+
+    <div class="card dm-period">
+      <div class="dm-field">
+        <label class="dm-lbl" for="dm-year">Exercice</label>
+        <input
+          id="dm-year"
+          type="number"
+          class="dm-inp dm-narrow"
+          min="2000"
+          max="2100"
+          [(ngModel)]="year"
+          [disabled]="!canWrite()" />
+      </div>
+      <div class="dm-field">
+        <label class="dm-lbl" for="dm-month">Mois</label>
+        <input
+          id="dm-month"
+          type="number"
+          class="dm-inp dm-narrow"
+          min="1"
+          max="12"
+          [(ngModel)]="month"
+          [disabled]="!canWrite()" />
+      </div>
+      <app-button
+        variant="primary"
+        icon="pi-calculator"
+        type="button"
+        [disabled]="!canWrite() || !periodValid() || computing()"
+        (click)="compute()">
+        {{ computing() ? 'Calcul…' : 'Calculer' }}
+      </app-button>
+    </div>
+
+    @if (result(); as r) {
+      <div class="card dm-outcome" [class.dm-outcome--clean]="cleanRun()">
+        <div class="dm-outcome__head">
+          <h2 class="dm-outcome__title">{{ periodLabel() }}</h2>
+          <span class="dm-badge">{{ resultModeLabel(r) }}</span>
+        </div>
+        <p class="dm-outcome__text">{{ outcome(r) }}</p>
+        @if (cleanRun()) {
+          <p class="dm-outcome__text">
+            Ce contrôle allonge la série qui ouvre la bascule vers le calcul paramétré.
+          </p>
+        }
+      </div>
+
+      @if (diagnostics(r); as list) {
+        @if (list.length) {
+          <section class="card dm-diags">
+            <h3 class="dm-diags__title">
+              Signalements du calcul
+              <span class="dm-diags__counts">
+                {{ errorCount(r) }} erreur(s), {{ warningCount(r) }} avertissement(s)
+              </span>
+            </h3>
+            <ul class="dm-diags__list">
+              @for (d of list; track $index) {
+                <li [class.dm-diags__item--error]="severity(d) === 'error'">{{ describe(d) }}</li>
+              }
+            </ul>
+          </section>
+        }
+      }
+
+      <app-dm-compute-lines [views]="familyViews()" />
+    }
+
+    <app-dm-mode-panel
+      [settings]="settings()"
+      [form]="modeForm()"
+      [disabled]="!canWrite()"
+      [saving]="savingMode()"
+      (apply)="applyMode()" />
+  `,
+  styles: `
+    .dm-period { display: flex; flex-wrap: wrap; gap: var(--spacing-3); align-items: flex-end; }
+    .dm-field { display: flex; flex-direction: column; gap: var(--spacing-1); }
+    .dm-lbl { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
+    .dm-inp { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-background-elevated); color: var(--color-text-primary); font-size: var(--font-size-sm); }
+    .dm-narrow { width: 7rem; }
+    .dm-outcome { display: flex; flex-direction: column; gap: var(--spacing-2); border-left: 3px solid var(--color-border-default); }
+    .dm-outcome--clean { border-left-color: var(--color-success-500, #22c55e); }
+    .dm-outcome__head { display: flex; flex-wrap: wrap; gap: var(--spacing-3); align-items: center; justify-content: space-between; }
+    .dm-outcome__title { margin: 0; font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); }
+    .dm-outcome__text { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+    .dm-badge { padding: 0.15rem 0.6rem; border-radius: var(--radius-pill, 999px); background: var(--color-background-subtle, #f1f5f9); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+    .dm-diags { margin-bottom: var(--spacing-4); }
+    .dm-diags__title { margin: 0 0 var(--spacing-2); font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); display: flex; flex-wrap: wrap; gap: var(--spacing-2); align-items: baseline; }
+    .dm-diags__counts { font-size: var(--font-size-xs); font-weight: var(--font-weight-normal); color: var(--color-text-tertiary); }
+    .dm-diags__list { margin: 0; padding-left: var(--spacing-5); font-size: var(--font-size-sm); color: var(--color-warning-700, #a16207); }
+    .dm-diags__item--error { color: var(--color-error-700, #b91c1c); }
+  `
+})
+export class MonthlyDeclarationComputeComponent implements OnInit {
+  private readonly api = inject(AccountingService);
+  private readonly auth = inject(AuthService);
+  private readonly errors = inject(ErrorHandlerService);
+  private readonly toast = inject(ToastService);
+
+  readonly settings = signal<MonthlyDeclarationSettingsDto | null>(null);
+  readonly result = signal<VatDeclarationDto | null>(null);
+  readonly modeForm = signal<DmModeForm | null>(null);
+
+  readonly computing = signal(false);
+  readonly savingMode = signal(false);
+  readonly error = signal<string | null>(null);
+
+  year = 0;
+  month = 0;
+
+  /**
+   * Miroir du verrou serveur `IsAccountingFirmDelegatedContext`. Le calcul est une écriture : il
+   * consigne le contrôle de parité sur les réglages du dossier.
+   */
+  readonly canWrite = computed(() => this.auth.isAccountingFirm() && this.auth.isDelegatedMode());
+
+  readonly familyViews = computed(() => {
+    const r = this.result();
+    return r ? buildFamilyViews(r) : [];
+  });
+
+  readonly cleanRun = computed(() => {
+    const r = this.result();
+    return !!r && isCleanParityRun(r);
+  });
+
+  ngOnInit(): void {
+    const period = defaultComputePeriod(new Date());
+    this.year = period.year;
+    this.month = period.month;
+    this.loadSettings();
+  }
+
+  periodValid(): boolean {
+    return isComputablePeriod({ year: Number(this.year), month: Number(this.month) });
+  }
+
+  periodLabel(): string {
+    return formatPeriodLabel(Number(this.year), Number(this.month));
+  }
+
+  outcome(d: VatDeclarationDto): string {
+    return describeComputeOutcome(d);
+  }
+
+  resultModeLabel(d: VatDeclarationDto): string {
+    return modeLabel(d.monthlyDeclarationMode ?? MonthlyDeclarationMode.Legacy);
+  }
+
+  diagnostics(d: VatDeclarationDto): MonthlyDeclarationDiagnosticDto[] {
+    return distinctDiagnostics(d.monthlyDeclarationDiagnostics);
+  }
+
+  errorCount(d: VatDeclarationDto): number {
+    return countBySeverity(d.monthlyDeclarationDiagnostics, 'error');
+  }
+
+  warningCount(d: VatDeclarationDto): number {
+    return countBySeverity(d.monthlyDeclarationDiagnostics, 'warning');
+  }
+
+  describe(d: MonthlyDeclarationDiagnosticDto): string {
+    return describeDiagnostic(d);
+  }
+
+  severity(d: MonthlyDeclarationDiagnosticDto): string {
+    return diagnosticSeverity(d.kind);
+  }
+
+  /**
+   * @param clearError `false` lorsqu'un appel vient de poser un message : une relecture destinée à
+   * réaligner l'écran sur le serveur ne doit pas effacer le refus qui l'a motivée.
+   */
+  loadSettings(clearError = true): void {
+    if (clearError) {
+      this.error.set(null);
+    }
+    // `includeInactive: false` — cet écran n'affiche pas les rubriques, seulement les réglages.
+    this.api.getMonthlyDeclarationConfiguration(false).subscribe({
+      next: res => {
+        if (res.success && res.data) {
+          this.settings.set(res.data.settings);
+          this.modeForm.set(newModeForm(res.data.settings, new Date()));
+        } else if (clearError) {
+          this.error.set(res.error ?? 'Erreur de chargement des réglages de la déclaration.');
+        }
+      },
+      error: err => {
+        if (clearError) {
+          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        }
+      }
+    });
+  }
+
+  compute(): void {
+    if (this.computing() || !this.periodValid()) {
+      return;
+    }
+    this.computing.set(true);
+    this.error.set(null);
+    this.api.computeMonthlyDeclaration(Number(this.year), Number(this.month)).subscribe({
+      next: res => {
+        this.computing.set(false);
+        if (res.success && res.data) {
+          this.result.set(res.data);
+          // Le contrôle de parité vient peut-être d'allonger la série : relire les réglages plutôt
+          // que d'afficher une rampe périmée à côté de son propre résultat.
+          this.loadSettings(false);
+        } else {
+          this.result.set(null);
+          this.error.set(res.error ?? 'Le calcul a échoué.');
+        }
+      },
+      error: err => {
+        this.computing.set(false);
+        this.result.set(null);
+        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+      }
+    });
+  }
+
+  applyMode(): void {
+    const form = this.modeForm();
+    const settings = this.settings();
+    if (!form || !settings || this.savingMode()) {
+      return;
+    }
+    const invalid = validateModeForm(form, settings);
+    if (invalid) {
+      this.error.set(invalid);
+      return;
+    }
+
+    this.savingMode.set(true);
+    this.error.set(null);
+    this.api.setMonthlyDeclarationMode(toModeRequest(form)).subscribe({
+      next: res => {
+        this.savingMode.set(false);
+        if (res.success) {
+          this.toast.add({
+            severity: 'success',
+            summary: 'Régime de calcul modifié',
+            detail: modeLabel(form.mode),
+            life: 4000
+          });
+          this.loadSettings();
+        } else {
+          this.error.set(res.error ?? 'Le changement de régime a été refusé.');
+          this.loadSettings(false);
+        }
+      },
+      error: err => {
+        this.savingMode.set(false);
+        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.loadSettings(false);
+      }
+    });
+  }
+}

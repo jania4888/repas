@@ -57,3 +57,28 @@ describe('accounting.routes — gardes des écrans de devises', () => {
     expect(detail).toBeGreaterThan(list);
   });
 });
+
+describe('accounting.routes — écrans DM', () => {
+  for (const path of ['dm/configuration', 'dm/calcul', 'dm/modele', 'dm/suivi']) {
+    describe(path, () => {
+      const route = ACCOUNTING_ROUTES.find(r => r.path === path);
+
+      it('est déclarée et gardée par permissionGuard sur accounting:read', () => {
+        expect(route).toBeTruthy();
+        expect(route?.canActivate).toEqual([permissionGuard]);
+        expect(route?.data?.['permissions']).toEqual([PERMISSIONS.accounting.read]);
+      });
+
+      it("n'exige pas accounting:declare au niveau route", () => {
+        // Les écritures sont gardées endpoint par endpoint (`accounting:declare` + contexte
+        // cabinet délégué). Porter `declare` sur la route fermerait l'écran à la simple
+        // consultation, que le serveur autorise sous `accounting:read`.
+        expect(route?.data?.['permissions']).not.toContain(PERMISSIONS.accounting.declare);
+      });
+
+      it('charge son écran en lazy plutôt que de le lier au module', () => {
+        expect(route?.loadComponent).toBeDefined();
+      });
+    });
+  }
+});

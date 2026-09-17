@@ -10,6 +10,7 @@ using FactuTrust.Application.Features.Accounting.Commands;
 using FactuTrust.Application.Features.Accounting.Fiscal;
 using FactuTrust.Application.Features.Accounting.JournalCatalog;
 using FactuTrust.Application.Features.Accounting.Loans;
+using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Application.Features.Accounting.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -1464,6 +1465,181 @@ public sealed class AccountingController : ControllerBase
         if (r.IsFailure)
             return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
         return Ok(ApiResponse<Guid>.Ok(r.Value));
+    }
+
+    // ── Déclaration mensuelle paramétrable ──────────────────────────────────
+
+    /// <summary>
+    /// Configuration de la déclaration mensuelle du dossier : régime de calcul, inclusion
+    /// des onze familles et rubriques avec leurs comptes.
+    /// </summary>
+    /// <remarks>
+    /// Lisible même drapeau éteint : la réponse porte <c>Settings.ConfigurableLinesEnabled</c>, que
+    /// l'écran utilise pour expliquer l'inactivité plutôt que d'afficher une erreur.
+    /// </remarks>
+    [HttpGet("monthly-declaration/configuration")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    public async Task<IActionResult> GetMonthlyDeclarationConfiguration(
+        [FromQuery] bool includeInactive = true, CancellationToken cancellationToken = default)
+    {
+        var r = await _mediator.Send(
+            new GetMonthlyDeclarationConfigurationQuery(includeInactive), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<MonthlyDeclarationConfigurationDto>.Ok(r.Value));
+    }
+
+    [HttpPost("monthly-declaration/rubrics")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> CreateMonthlyDeclarationRubric(
+        [FromBody] CreateMonthlyDeclarationRubricRequest request, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new CreateMonthlyDeclarationRubricCommand(request), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<Guid>.Ok(r.Value));
+    }
+
+    [HttpPut("monthly-declaration/rubrics/{id:guid}")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> UpdateMonthlyDeclarationRubric(
+        Guid id, [FromBody] UpdateMonthlyDeclarationRubricRequest request, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new UpdateMonthlyDeclarationRubricCommand(id, request), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<bool>.Ok(true));
+    }
+
+    [HttpPatch("monthly-declaration/rubrics/{id:guid}/toggle")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> ToggleMonthlyDeclarationRubric(Guid id, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new ToggleMonthlyDeclarationRubricCommand(id), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<bool>.Ok(true));
+    }
+
+    [HttpDelete("monthly-declaration/rubrics/{id:guid}")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> DeleteMonthlyDeclarationRubric(Guid id, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new DeleteMonthlyDeclarationRubricCommand(id), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<bool>.Ok(true));
+    }
+
+    [HttpPut("monthly-declaration/families")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> SetMonthlyDeclarationFamily(
+        [FromBody] SetMonthlyDeclarationFamilyRequest request, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new SetMonthlyDeclarationFamilyCommand(request), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<bool>.Ok(true));
+    }
+
+    /// <summary>
+    /// « Calcul DM » : évalue la configuration du dossier sur une période et rend le détail obtenu,
+    /// sans rien déposer. En contrôle de parité, consigne l'écart avec le calcul historique.
+    /// </summary>
+    [HttpPost("monthly-declaration/compute")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> ComputeMonthlyDeclaration(
+        [FromQuery] int year, [FromQuery] int month, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new ComputeMonthlyDeclarationCommand(year, month), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<VatDeclarationDto>.Ok(r.Value));
+    }
+
+    /// <summary>
+    /// Reprend la configuration DM d'un autre dossier du cabinet. Le dossier source est vérifié
+    /// côté serveur contre le portefeuille du cabinet appelant.
+    /// </summary>
+    [HttpPost("monthly-declaration/duplicate")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> DuplicateMonthlyDeclarationConfig(
+        [FromBody] DuplicateMonthlyDeclarationConfigRequest request, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new DuplicateMonthlyDeclarationConfigCommand(request), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<MonthlyDeclarationDuplicationResultDto>.Ok(r.Value));
+    }
+
+    /// <summary>
+    /// « Suivi DM » : les douze mois d'un exercice — ce qui est déposé, ce qui ne l'est pas, sous
+    /// quel régime, et où en est la rampe du dossier.
+    /// </summary>
+    /// <remarks>
+    /// Lecture seule, ouverte à la société comme au cabinet : le suivi ne dit rien qu'un dossier ne
+    /// puisse savoir de ses propres dépôts. Disponible drapeau éteint.
+    /// </remarks>
+    [HttpGet("monthly-declaration/tracking")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    public async Task<IActionResult> GetMonthlyDeclarationTracking(
+        [FromQuery] int year, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new GetMonthlyDeclarationTrackingQuery(year), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<MonthlyDeclarationTrackingDto>.Ok(r.Value));
+    }
+
+    /// <summary>
+    /// « Modèle Intégration DM » — export : rend la configuration du dossier au format d'échange.
+    /// </summary>
+    /// <remarks>
+    /// Sous <c>accounting:read</c> et disponible drapeau éteint : le fichier ne fait que refléter
+    /// des données déjà lisibles à l'écran.
+    /// </remarks>
+    [HttpGet("monthly-declaration/model")]
+    [Authorize(Policy = PermissionPolicies.AccountingRead)]
+    public async Task<IActionResult> ExportMonthlyDeclarationModel(CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new ExportMonthlyDeclarationModelQuery(), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<MonthlyDeclarationModelFileDto>.Ok(r.Value));
+    }
+
+    /// <summary>
+    /// « Modèle Intégration DM » — import : applique un fichier de modèle au dossier courant.
+    /// </summary>
+    /// <remarks>
+    /// Tout ou rien à l'analyse : une seule entrée fautive fait échouer le fichier entier, et le
+    /// refus nomme les entrées en cause. L'écriture, elle, n'insère et ne remplace que des codes
+    /// présents dans le fichier — rien n'est supprimé en masse.
+    /// </remarks>
+    [HttpPost("monthly-declaration/model")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> ImportMonthlyDeclarationModel(
+        [FromBody] ImportMonthlyDeclarationModelRequest request, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new ImportMonthlyDeclarationModelCommand(request), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<MonthlyDeclarationModelImportResultDto>.Ok(r.Value));
+    }
+
+    /// <summary>
+    /// Change le régime de calcul du dossier (historique / contrôle de parité / configuré).
+    /// Le passage en configuré exige une série de contrôles sans écart, ou une dérogation motivée.
+    /// </summary>
+    [HttpPut("monthly-declaration/mode")]
+    [Authorize(Policy = PermissionPolicies.AccountingDeclare)]
+    public async Task<IActionResult> SetMonthlyDeclarationMode(
+        [FromBody] SetMonthlyDeclarationModeRequest request, CancellationToken cancellationToken)
+    {
+        var r = await _mediator.Send(new SetMonthlyDeclarationModeCommand(request), cancellationToken);
+        if (r.IsFailure)
+            return BadRequest(ApiResponse<object>.Fail(r.Error.Description));
+        return Ok(ApiResponse<bool>.Ok(true));
     }
 
     // ── Comptabilité budgétaire ─────────────────────────────────────────────

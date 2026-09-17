@@ -4,6 +4,7 @@ using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting.FiscalSchedule;
+using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Application.Features.Accounting.Queries;
 using FactuTrust.Domain.Authorization;
 using FactuTrust.Domain.Common;
@@ -376,7 +377,8 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
     /// </summary>
     private decimal ComputeSavedTotalToPay(VatDeclarationDto dto, SaveVatDeclarationRequest r) =>
         _settings.MonthlyDeclarationV2Enabled
-            ? Math.Max(0m, dto.VatDue + r.Fodec + r.DroitTimbre + r.Tcl + r.Tfp + r.Foprolos + r.WithholdingTax - r.Acomptes)
+            ? Math.Max(0m, dto.VatDue + r.Fodec + r.DroitTimbre + r.Tcl + r.Tfp + r.Foprolos + r.WithholdingTax
+                           + dto.ConsumptionDuty + dto.HotelTax + dto.LicenceFee - r.Acomptes)
             : dto.VatDue;
 
     /// <summary>Synchro échéancier best-effort : ne fait JAMAIS échouer la sauvegarde.</summary>
@@ -435,6 +437,11 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
 
                 if (v2)
                     existing.SetAdditionalTaxes(r.Fodec, r.DroitTimbre, r.Tcl, r.Tfp, r.Foprolos, r.WithholdingTax, r.Acomptes);
+                    // Droit de consommation, taxe hôtelière et droit de licence n'ont pas de champ
+                    // de saisie : leur seule source est le moteur paramétré, donc le recalcul en
+                    // direct — comme la TVA. Valent 0 pour un dossier en calcul historique.
+                    existing.SetConfiguredFamilyTaxes(dto.ConsumptionDuty, dto.HotelTax, dto.LicenceFee);
+                    existing.ReplaceLines(MonthlyDeclarationLineSnapshot.Freeze(dto.Lines));
                 if (r.Submit)
                     existing.Submit();
                 existing.SetAuditInfo(user, isUpdate: true);
@@ -466,6 +473,10 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
                 Money.Create(dto.DeductibleVatAssets, currency),
                 Money.Create(dto.PreviousCredit, currency),
                 r.Fodec, r.DroitTimbre, r.Tcl, r.Tfp, r.Foprolos, r.WithholdingTax, r.Acomptes);
+            existing.SetConfiguredFamilyTaxes(dto.ConsumptionDuty, dto.HotelTax, dto.LicenceFee);
+            // Une rectificative produit un NOUVEAU détail : les lignes de la version précédente
+            // sont remplacées, la version étant portée par RevisionNumber.
+            existing.ReplaceLines(MonthlyDeclarationLineSnapshot.Freeze(dto.Lines));
             if (r.Submit)
                 existing.Submit();
             existing.SetAuditInfo(user, isUpdate: true);
@@ -497,6 +508,8 @@ public sealed class SaveVatDeclarationCommandHandler : IRequestHandler<SaveVatDe
 
         if (v2)
             draft.SetAdditionalTaxes(r.Fodec, r.DroitTimbre, r.Tcl, r.Tfp, r.Foprolos, r.WithholdingTax, r.Acomptes);
+            draft.SetConfiguredFamilyTaxes(dto.ConsumptionDuty, dto.HotelTax, dto.LicenceFee);
+            draft.ReplaceLines(MonthlyDeclarationLineSnapshot.Freeze(dto.Lines));
 
         draft.SetAuditInfo(user, false);
         if (r.Submit)

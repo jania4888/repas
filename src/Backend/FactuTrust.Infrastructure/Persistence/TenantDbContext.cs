@@ -180,6 +180,14 @@ public partial class TenantDbContext : DbContext
     public DbSet<BudgetPost> BudgetPosts => Set<BudgetPost>();
     public DbSet<BudgetYear> BudgetYears => Set<BudgetYear>();
     public DbSet<BudgetLine> BudgetLines => Set<BudgetLine>();
+
+    // Déclaration mensuelle paramétrable (« Configuration DM »).
+    public DbSet<VatDeclarationLine> VatDeclarationLines => Set<VatDeclarationLine>();
+    public DbSet<MonthlyDeclarationSettings> MonthlyDeclarationSettings => Set<MonthlyDeclarationSettings>();
+    public DbSet<MonthlyDeclarationFamilySetting> MonthlyDeclarationFamilySettings => Set<MonthlyDeclarationFamilySetting>();
+    public DbSet<MonthlyDeclarationRubric> MonthlyDeclarationRubrics => Set<MonthlyDeclarationRubric>();
+    public DbSet<MonthlyDeclarationRubricAccount> MonthlyDeclarationRubricAccounts => Set<MonthlyDeclarationRubricAccount>();
+    public DbSet<MonthlyDeclarationRubricSeedLog> MonthlyDeclarationRubricSeedLogs => Set<MonthlyDeclarationRubricSeedLog>();
     public DbSet<ThirdPartyAccountingProfile> ThirdPartyAccountingProfiles => Set<ThirdPartyAccountingProfile>();
     public DbSet<Currency> Currencies => Set<Currency>();
     public DbSet<CurrencyExchangeRate> CurrencyExchangeRates => Set<CurrencyExchangeRate>();
@@ -458,6 +466,8 @@ public partial class TenantDbContext : DbContext
         ConfigureVatDeclaration(builder);
         ConfigureFiscalSchedule(builder);
         ConfigureBudgeting(builder);
+        ConfigureVatDeclarationLine(builder);
+        ConfigureMonthlyDeclarationConfig(builder);
         ConfigureThirdPartyAccountingProfile(builder);
         ConfigureCurrency(builder);
         ConfigureCurrencyExchangeRate(builder);
@@ -3929,6 +3939,113 @@ public partial class TenantDbContext : DbContext
         });
     }
 
+    /// <summary>
+    /// Configuration paramétrable de la déclaration mensuelle : régime du dossier, inclusion des
+    /// familles, rubriques et comptes sélectionnés.
+    /// </summary>
+    /// <summary>
+    /// Détail par rubrique d'une déclaration déposée. Code, libellé, famille et code rapport sont
+    /// dénormalisés : le dépôt fait foi, y compris sur les intitulés.
+    /// </summary>
+    private static void ConfigureVatDeclarationLine(ModelBuilder builder)
+    {
+        builder.Entity<VatDeclarationLine>(entity =>
+        {
+            entity.ToTable("VatDeclarationLines");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.RubricCode)
+                .HasMaxLength(VatDeclarationLine.MaxCodeLength).IsRequired();
+            entity.Property(e => e.Label).HasMaxLength(VatDeclarationLine.MaxLabelLength);
+            entity.Property(e => e.ReportCode).HasMaxLength(VatDeclarationLine.MaxReportCodeLength);
+            entity.Property(e => e.Family).HasConversion<int>();
+            entity.Property(e => e.Origin).HasConversion<int>();
+            entity.Property(e => e.GrossAmount).HasPrecision(18, 3);
+            entity.Property(e => e.WithheldAmount).HasPrecision(18, 3);
+            entity.Property(e => e.ComputedGrossAmount).HasPrecision(18, 3);
+            entity.Property(e => e.ComputedWithheldAmount).HasPrecision(18, 3);
+            entity.Property(e => e.RatePercentApplied).HasPrecision(9, 4);
+            entity.HasIndex(e => new { e.VatDeclarationId, e.RubricCode }).IsUnique();
+            // Aucune contrainte vers MonthlyDeclarationRubrics : supprimer une rubrique ne doit ni
+            // emporter ni bloquer les déclarations qu'elle a servi à produire.
+            entity.Property(e => e.RubricId);
+        });
+    }
+
+    private static void ConfigureMonthlyDeclarationConfig(ModelBuilder builder)
+    {
+        builder.Entity<MonthlyDeclarationSettings>(entity =>
+        {
+            entity.ToTable("MonthlyDeclarationSettings");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Mode).HasConversion<int>();
+            entity.Property(e => e.ParityOverrideBy).HasMaxLength(256);
+            entity.Property(e => e.ParityOverrideReason)
+                .HasMaxLength(Domain.Entities.MonthlyDeclarationSettings.MaxOverrideReasonLength);
+        });
+
+        builder.Entity<MonthlyDeclarationFamilySetting>(entity =>
+        {
+            entity.ToTable("MonthlyDeclarationFamilySettings");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Family).HasConversion<int>();
+            entity.HasIndex(e => e.Family).IsUnique();
+        });
+
+        builder.Entity<MonthlyDeclarationRubric>(entity =>
+        {
+            entity.ToTable("MonthlyDeclarationRubrics");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Family).HasConversion<int>();
+            entity.Property(e => e.Code)
+                .HasMaxLength(MonthlyDeclarationRubric.MaxCodeLength).IsRequired();
+            entity.Property(e => e.Label)
+                .HasMaxLength(MonthlyDeclarationRubric.MaxLabelLength).IsRequired();
+            entity.Property(e => e.ReportCode)
+                .HasMaxLength(MonthlyDeclarationRubric.MaxReportCodeLength).IsRequired();
+            entity.Property(e => e.GrossKind).HasConversion<int>();
+            entity.Property(e => e.WithheldKind).HasConversion<int>();
+            entity.Property(e => e.GrossSide).HasConversion<int>();
+            entity.Property(e => e.WithheldSide).HasConversion<int>();
+            entity.Property(e => e.PayrollComponent).HasConversion<int>();
+            entity.Property(e => e.WithheldPayrollComponent).HasConversion<int>();
+            entity.Property(e => e.RatePercent).HasPrecision(9, 4);
+            entity.Property(e => e.FixedGrossAmount).HasPrecision(18, 3);
+            entity.Property(e => e.FixedWithheldAmount).HasPrecision(18, 3);
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => new { e.Family, e.DisplayOrder });
+
+            entity.HasMany(e => e.Accounts)
+                .WithOne()
+                .HasForeignKey(a => a.RubricId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.Metadata
+                .FindNavigation(nameof(MonthlyDeclarationRubric.Accounts))!
+                .SetPropertyAccessMode(PropertyAccessMode.Field);
+        });
+
+        builder.Entity<MonthlyDeclarationRubricSeedLog>(entity =>
+        {
+            entity.ToTable("MonthlyDeclarationRubricSeedLogs");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CatalogVersion)
+                .HasMaxLength(MonthlyDeclarationRubricSeedLog.MaxVersionLength).IsRequired();
+            entity.HasIndex(e => e.CatalogVersion).IsUnique();
+        });
+
+        builder.Entity<MonthlyDeclarationRubricAccount>(entity =>
+        {
+            entity.ToTable("MonthlyDeclarationRubricAccounts");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Role).HasConversion<int>();
+            entity.Property(e => e.MatchMode).HasConversion<int>();
+            entity.Property(e => e.AccountNumber)
+                .HasMaxLength(MonthlyDeclarationRubricAccount.MaxAccountNumberLength).IsRequired();
+            entity.HasIndex(e => new { e.RubricId, e.Role, e.AccountNumber }).IsUnique();
+            // Index de service : la renumérotation du plan comptable balaie cette colonne.
+            entity.HasIndex(e => e.AccountNumber);
+        });
+    }
+
     private static void ConfigureThirdPartyAccountingProfile(ModelBuilder builder)
     {
         builder.Entity<ThirdPartyAccountingProfile>(entity =>
@@ -4181,6 +4298,19 @@ public partial class TenantDbContext : DbContext
             entity.Property(e => e.Foprolos).HasPrecision(18, 3).HasDefaultValue(0m);
             entity.Property(e => e.WithholdingTax).HasPrecision(18, 3).HasDefaultValue(0m);
             entity.Property(e => e.Acomptes).HasPrecision(18, 3).HasDefaultValue(0m);
+            // Familles produites uniquement par le moteur paramétré : 0 pour tout dossier resté en
+            // calcul historique, donc sans effet sur le total à payer.
+            entity.Property(e => e.ConsumptionDuty).HasPrecision(18, 3).HasDefaultValue(0m);
+            entity.Property(e => e.HotelTax).HasPrecision(18, 3).HasDefaultValue(0m);
+            entity.Property(e => e.LicenceFee).HasPrecision(18, 3).HasDefaultValue(0m);
+
+            entity.HasMany(e => e.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.VatDeclarationId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.Metadata
+                .FindNavigation(nameof(VatDeclaration.Lines))!
+                .SetPropertyAccessMode(PropertyAccessMode.Field);
             entity.Property(e => e.RevisionNumber).HasDefaultValue(1);
             entity.Property(e => e.IsRectificative).HasDefaultValue(false);
         });

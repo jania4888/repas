@@ -42,10 +42,32 @@ public sealed class VatDeclaration : AggregateRoot
     /// <summary>Acomptes provisionnels (IS) déduits du total à payer.</summary>
     public decimal Acomptes { get; private set; }
 
+    // ── Familles sans ligne dédiée avant la déclaration paramétrable ──────────
+    // Le formulaire officiel a leurs cases depuis toujours ; le domaine ne les portait pas, faute
+    // d'une source de calcul. Elles valent 0 pour tout dossier resté en calcul historique, ce qui
+    // laisse « TotalToPay » inchangé à l'octet près.
+
+    /// <summary>Droit de consommation.</summary>
+    public decimal ConsumptionDuty { get; private set; }
+
+    /// <summary>Taxe hôtelière.</summary>
+    public decimal HotelTax { get; private set; }
+
+    /// <summary>Droit de licence.</summary>
+    public decimal LicenceFee { get; private set; }
+
     /// <summary>Version de la déclaration : 1 = initiale ; incrémentée à chaque rectificative.</summary>
     public int RevisionNumber { get; private set; } = 1;
     /// <summary>Vrai si la déclaration est une rectificative (au moins une révision appliquée).</summary>
     public bool IsRectificative { get; private set; }
+
+    private readonly List<VatDeclarationLine> _lines = new();
+
+    /// <summary>
+    /// Détail par rubrique figé au dépôt. Vide pour une déclaration produite par le calcul
+    /// historique : il n'y a alors pas de rubrique à consigner.
+    /// </summary>
+    public IReadOnlyCollection<VatDeclarationLine> Lines => _lines.AsReadOnly();
 
     private VatDeclaration() { }
 
@@ -109,6 +131,20 @@ public sealed class VatDeclaration : AggregateRoot
     }
 
     /// <summary>
+    /// Renseigne les familles que seul le moteur paramétré sait produire (droit de consommation,
+    /// taxe hôtelière, droit de licence). Méthode distincte de
+    /// <see cref="SetAdditionalTaxes(decimal, decimal, decimal, decimal, decimal, decimal, decimal)"/>
+    /// pour que le chemin historique n'ait pas à la connaître : un appelant qui ne l'invoque pas
+    /// laisse les trois montants à zéro, et le total à payer strictement inchangé.
+    /// </summary>
+    public void SetConfiguredFamilyTaxes(decimal consumptionDuty, decimal hotelTax, decimal licenceFee)
+    {
+        ConsumptionDuty = Math.Max(0m, consumptionDuty);
+        HotelTax = Math.Max(0m, hotelTax);
+        LicenceFee = Math.Max(0m, licenceFee);
+    }
+
+    /// <summary>
     /// Applique une rectificative EN PLACE : recalcule la TVA à partir des nouveaux montants, met à jour
     /// les autres taxes, incrémente la version, repasse en brouillon (re-soumission possible).
     /// </summary>
@@ -167,6 +203,28 @@ public sealed class VatDeclaration : AggregateRoot
         (VatDue, CreditToCarry) = ComputeNet(sumCollected, sumDed, currency);
 
         return Result.Success();
+    }
+
+    /// <summary>
+    /// Remplace le détail par rubrique de la déclaration.
+    /// </summary>
+    /// <remarks>
+    /// Purge puis réinsertion, plutôt qu'un rapprochement ligne à ligne : le détail est un
+    /// instantané, pas un objet qu'on modifie. Une rectificative en produit un nouveau, et
+    /// <see cref="RevisionNumber"/> suffit à distinguer les versions — un historique de lignes
+    /// ferait double emploi avec le journal d'audit.
+    /// </remarks>
+    public void ReplaceLines(IReadOnlyList<VatDeclarationLine>? lines)
+    {
+        _lines.Clear();
+        if (lines is null)
+            return;
+
+        foreach (var line in lines)
+        {
+            line.AttachTo(Id);
+            _lines.Add(line);
+        }
     }
 
     /// <summary>Calcule (TVA due, crédit à reporter) : si le net est positif, TVA due ; sinon, crédit reporté.</summary>

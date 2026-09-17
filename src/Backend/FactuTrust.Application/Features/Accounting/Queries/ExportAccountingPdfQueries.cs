@@ -92,6 +92,28 @@ public sealed class ExportMonthlyDeclarationOfficialFormQueryHandler
         if (declaration.IsFailure)
             return Result.Failure<byte[]>(declaration.Error);
 
+        var dto = declaration.Value;
+
+        // Détail issu des rubriques paramétrées, projeté sur les cases du millésime en cours.
+        var configuredBoxes = MonthlyDeclarationLineFormBinder.Project(
+            dto.Lines,
+            MonthlyDeclarationLineFormBinder.DeclaredFamilyTotals(dto),
+            MonthlyDeclarationFormBinder.FormVersion);
+
+        // Quand la configuration produit déjà la ventilation de la retenue à la source, la
+        // correspondance interne (factures + salaires + loyers) est SAUTÉE. Les deux chemins sont
+        // exclusifs par construction : les faire cohabiter compterait deux fois les mêmes montants
+        // sur les mêmes cases.
+        var withholdingIsConfigured = configuredBoxes.Keys
+            .Any(k => k.StartsWith("Withholding.", StringComparison.Ordinal));
+
+        if (withholdingIsConfigured)
+        {
+            var configuredBytes = await _pdf.GenerateMonthlyDeclarationOfficialFormPdfAsync(
+                dto, WithholdingFormLineMapper.Empty, configuredBoxes, cancellationToken);
+            return Result.Success(configuredBytes);
+        }
+
         // Ventilation de la retenue à la source sur les lignes réglementaires. Best-effort : une
         // indisponibilité du rapport RS ne doit jamais empêcher l'édition de la déclaration, le
         // montant total restant porté par la page 4 et le récapitulatif.
@@ -125,7 +147,7 @@ public sealed class ExportMonthlyDeclarationOfficialFormQueryHandler
             declaration.Value.RentWithholdingAmount);
 
         var bytes = await _pdf.GenerateMonthlyDeclarationOfficialFormPdfAsync(
-            declaration.Value, withholdingLines, cancellationToken);
+            dto, withholdingLines, configuredBoxes, cancellationToken);
 
         return Result.Success(bytes);
     }

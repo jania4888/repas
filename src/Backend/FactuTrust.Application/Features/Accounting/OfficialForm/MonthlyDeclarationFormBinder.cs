@@ -18,6 +18,17 @@ namespace FactuTrust.Application.Features.Accounting.OfficialForm;
 public static class MonthlyDeclarationFormBinder
 {
     /// <summary>
+    /// Millésime du formulaire officiel en vigueur.
+    /// </summary>
+    /// <remarks>
+    /// Source unique : le gabarit PDF, la carte de coordonnées et la carte des codes rapport sont
+    /// tous trois nommés d'après cette constante. Un nouveau millésime DGI se traite en déposant le
+    /// triplet correspondant et en faisant évoluer cette seule valeur. Elle vit côté application
+    /// parce que la traduction des codes rapport en a besoin autant que le tamponnage.
+    /// </remarks>
+    public const string FormVersion = "mensuelle-2026";
+
+    /// <summary>
     /// Format des montants du formulaire : séparateur de milliers = espace, décimale = virgule,
     /// 3 décimales (millime).
     ///
@@ -44,9 +55,15 @@ public static class MonthlyDeclarationFormBinder
     /// Ventilation de la retenue à la source par ligne officielle (clé = suffixe de ligne,
     /// ex. <c>"Line1"</c>). Vide = seul le total de la page 4 est reporté.
     /// </param>
+    /// <param name="configuredBoxes">
+    /// Cases issues des rubriques paramétrées (<c>MonthlyDeclarationLineFormBinder.Project</c>).
+    /// Fusionnées en dernier : sur un dossier passé au calcul paramétré, c'est la configuration qui
+    /// décrit la ventilation, et elle prime donc sur les correspondances internes.
+    /// </param>
     public static IReadOnlyDictionary<string, string?> Bind(
         VatDeclarationDto declaration,
-        IReadOnlyDictionary<string, decimal>? withholdingLines = null)
+        IReadOnlyDictionary<string, decimal>? withholdingLines = null,
+        IReadOnlyDictionary<string, decimal>? configuredBoxes = null)
     {
         ArgumentNullException.ThrowIfNull(declaration);
 
@@ -60,8 +77,27 @@ public static class MonthlyDeclarationFormBinder
         BindVat(values, declaration);
         BindOtherDuties(values, declaration);
         BindRecap(values, declaration);
+        BindConfiguredBoxes(values, configuredBoxes);
 
         return values;
+    }
+
+    /// <summary>
+    /// Fusionne les cases produites par les rubriques paramétrées.
+    /// </summary>
+    /// <remarks>
+    /// <c>Amount</c> rendant <c>null</c> pour zéro, la règle transverse « un montant nul ne produit
+    /// aucune valeur » vaut ici comme ailleurs : une rubrique à zéro laisse sa case vierge plutôt
+    /// que d'y inscrire « 0,000 ».
+    /// </remarks>
+    private static void BindConfiguredBoxes(
+        IDictionary<string, string?> values, IReadOnlyDictionary<string, decimal>? configuredBoxes)
+    {
+        if (configuredBoxes is null || configuredBoxes.Count == 0)
+            return;
+
+        foreach (var (key, amount) in configuredBoxes)
+            values[key] = Amount(amount);
     }
 
     // ── En-tête ───────────────────────────────────────────────────────────────
@@ -133,6 +169,9 @@ public static class MonthlyDeclarationFormBinder
         Check(values, "Check.OtherDuties", d.Fodec);
         Check(values, "Check.StampDuty", d.DroitTimbre);
         Check(values, "Check.Tcl", d.Tcl);
+        Check(values, "Check.ConsumptionDuty", d.ConsumptionDuty);
+        Check(values, "Check.HotelTax", d.HotelTax);
+        Check(values, "Check.LicenceFee", d.LicenceFee);
 
         // La TVA se déclare dès qu'il y a une opération, même si le solde est nul ou créditeur.
         var hasVatActivity = d.CollectedVat19 != 0m || d.CollectedVat13 != 0m || d.CollectedVat7 != 0m
@@ -283,9 +322,15 @@ public static class MonthlyDeclarationFormBinder
         RecapRow(values, "OtherDuties", d.Fodec);
         RecapRow(values, "StampDuty", d.DroitTimbre);
         RecapRow(values, "Tcl", d.Tcl);
+        // Familles que seul le moteur paramétré alimente : nulles sur un dossier resté en calcul
+        // historique, donc sans effet sur le récapitulatif existant.
+        RecapRow(values, "ConsumptionDuty", d.ConsumptionDuty);
+        RecapRow(values, "HotelTax", d.HotelTax);
+        RecapRow(values, "LicenceFee", d.LicenceFee);
 
         var principal = d.WithholdingTax + d.Tfp + d.Foprolos + d.VatDue
-                        + d.Fodec + d.DroitTimbre + d.Tcl;
+                        + d.Fodec + d.DroitTimbre + d.Tcl
+                        + d.ConsumptionDuty + d.HotelTax + d.LicenceFee;
 
         // Les acomptes provisionnels n'ont pas de ligne propre sur le formulaire mensuel : ils ne
         // sont reportés en colonne « الطرح (الأداء المدفوع) » que sur une rectificative, seul cas

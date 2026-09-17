@@ -48,6 +48,41 @@ public sealed class AccountingSettings
     public bool MonthlyDeclarationOfficialFormEnabled { get; set; }
 
     /// <summary>
+    /// Active la déclaration mensuelle <b>paramétrable</b> : chaque rubrique des onze familles
+    /// (retenue à la source, TFP, FOPROLOS, droit de consommation, TVA, autres taxes sur chiffre
+    /// d'affaires, droit de timbre, taxe hôtelière, TCL, droit de licence, autres informations)
+    /// tire son montant brut et sa retenue d'une configuration portée par le dossier — valeur fixe,
+    /// valeur de paie, solde d'un ensemble de comptes, ou dérivation par un taux.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// OFF par défaut. Drapeau éteint, <c>MonthlyDeclarationLineComposer</c> sort sur un test
+    /// booléen sans émettre la moindre requête : le calcul de la déclaration est <b>strictement</b>
+    /// celui d'avant le chantier.
+    /// </para>
+    /// <para>
+    /// Ce drapeau n'est qu'un interrupteur de code. Le passage effectif d'un dossier au moteur
+    /// paramétré se décide dossier par dossier via <c>MonthlyDeclarationSettings.Mode</c>
+    /// (<c>Legacy</c> → <c>Parity</c> → <c>Configured</c>) : allumer le drapeau ne change donc
+    /// aucun montant tant qu'aucun dossier n'a quitté le mode <c>Legacy</c>.
+    /// </para>
+    /// </remarks>
+    public bool MonthlyDeclarationConfigurableLinesEnabled { get; set; }
+
+    /// <summary>
+    /// Vrai quand la déclaration paramétrable est réellement exploitable. Source unique de la
+    /// conjonction, pour qu'aucun site d'appel ne puisse l'oublier.
+    /// </summary>
+    /// <remarks>
+    /// La conjonction avec <see cref="MonthlyDeclarationV2Enabled"/> n'est pas une précaution de
+    /// style : tous les scalaires alimentés par le moteur (FODEC, timbre, TCL, TFP, FOPROLOS,
+    /// retenue à la source, acomptes) ne sont calculés — <c>ComputeLiveAsync</c> retourne plus tôt —
+    /// et ne sont persistés — <c>SetAdditionalTaxes</c> n'est appelé — que sous V2. Sans V2, une
+    /// configuration paramétrée n'aurait nulle part où se déverser.
+    /// </remarks>
+    public bool ConfigurableLinesActive => MonthlyDeclarationV2Enabled && MonthlyDeclarationConfigurableLinesEnabled;
+
+    /// <summary>
     /// Active les états financiers au format NCT (bilan/résultat structurés + flux + variation des
     /// capitaux propres + notes). Quand false, seuls les états historiques sont exposés.
     /// </summary>

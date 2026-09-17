@@ -103,6 +103,14 @@ export const ACCOUNTING_MODULES: AccountingModuleDef[] = [
     description: 'Declarations fiscales, echeancier et paiements',
     links: [
       { label: 'Declaration mensuelle', route: '/accounting/vat-declaration', icon: 'fa-solid fa-file-invoice', perms: ['accounting:read'] },
+      // Paramétrage du calcul de la déclaration mensuelle. Volontairement dans « Declarations »
+      // et non dans « États » : la liste des routes autorisées aux sociétés est construite à
+      // partir des liens d'« États » (voir company-accounting-nav.config.ts), et cet écran est
+      // réservé au cabinet.
+      { label: 'Configuration DM', route: '/accounting/dm/configuration', icon: 'fa-solid fa-sliders', perms: ['accounting:read'] },
+      { label: 'Calcul DM', route: '/accounting/dm/calcul', icon: 'fa-solid fa-calculator', perms: ['accounting:read'] },
+      { label: 'Suivi DM', route: '/accounting/dm/suivi', icon: 'fa-solid fa-list-check', perms: ['accounting:read'] },
+      { label: 'Modèle Intégration DM', route: '/accounting/dm/modele', icon: 'fa-solid fa-file-arrow-down', perms: ['accounting:read'] },
       { label: 'Echeancier fiscal', route: '/accounting/fiscal-schedule', icon: 'fa-solid fa-calendar-days', perms: ['accounting:read'] },
       // `/treasury` redirige vers `/treasury/cash-forecast`, gardée par `treasury_forecast:view` ;
       // `treasury:read` n'existe dans aucune policy backend (lien invisible pour tout le monde, bug corrigé).

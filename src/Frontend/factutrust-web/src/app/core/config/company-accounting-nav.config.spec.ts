@@ -6,6 +6,7 @@ import {
   buildCompanyEtatsComptablesNavChildren,
   canManageVatDeclaration,
   canShowVatDeclarationDocLinks,
+  COMPANY_ACCOUNTING_ALLOWED_ROUTE_PREFIXES,
   COMPANY_ACCOUNTING_SIDEBAR_CHILDREN,
   isCompanyAllowedAccountingPath,
   isCompanyVatDeclarationReadOnly
@@ -72,6 +73,21 @@ describe('company-accounting-nav.config', () => {
     expect(isCompanyAllowedAccountingPath('/accounting/manual-entry')).toBe(false);
     expect(isCompanyAllowedAccountingPath('/accounting/home')).toBe(false);
     expect(isCompanyAllowedAccountingPath('/accounting/chart')).toBe(false);
+  });
+
+  it('blocks the DM screens for a company user', () => {
+    // L'absence de `/accounting/dm/*` de la liste autorisée est DÉLIBÉRÉE : le paramétrage du
+    // calcul fiscal appartient au cabinet. Ce test existe pour qu'on ne « corrige » pas cet oubli
+    // apparent. Le garde front n'est pas la frontière de sécurité — le contexte cabinet délégué
+    // exigé par chaque commande serveur l'est — mais les deux doivent dire la même chose.
+    expect(isCompanyAllowedAccountingPath('/accounting/dm/configuration')).toBe(false);
+    expect(isCompanyAllowedAccountingPath('/accounting/dm/calcul')).toBe(false);
+    expect(isCompanyAllowedAccountingPath('/accounting/dm/modele')).toBe(false);
+    expect(isCompanyAllowedAccountingPath('/accounting/dm/suivi')).toBe(false);
+    expect(isCompanyAllowedAccountingPath('/accounting/dm')).toBe(false);
+    expect(
+      COMPANY_ACCOUNTING_ALLOWED_ROUTE_PREFIXES.some(prefix => prefix.startsWith('/accounting/dm'))
+    ).toBe(false);
   });
 
   it('allows fixed-assets sub-routes', () => {

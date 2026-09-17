@@ -25,6 +25,7 @@ public sealed class Nct01ChartMigrationServiceAllowListTests
     [InlineData("JournalEntryLines", "AccountNumber")]
     [InlineData("BudgetPosts", "AccountPrefixes")]
     [InlineData("AccountingAnomalyLines", "AccountNumber")]
+    [InlineData("MonthlyDeclarationRubricAccounts", "AccountNumber")]
     public void Allow_list_contains_known_call_site_pairs(string table, string column)
     {
         Assert.Contains((table, column), Nct01ChartMigrationService.DistinctValuesAllowList);

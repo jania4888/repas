@@ -381,6 +381,23 @@ public static class AuditActions
         public const string BudgetPostToggled = "Accounting.BudgetPostToggled";
         public const string BudgetYearSaved = "Accounting.BudgetYearSaved";
         public const string BudgetInitialValidated = "Accounting.BudgetInitialValidated";
+
+        // ── Déclaration mensuelle paramétrable ───────────────────────────────
+        public const string MonthlyDeclarationRubricCreated = "Accounting.MonthlyDeclarationRubricCreated";
+        public const string MonthlyDeclarationRubricUpdated = "Accounting.MonthlyDeclarationRubricUpdated";
+        public const string MonthlyDeclarationRubricToggled = "Accounting.MonthlyDeclarationRubricToggled";
+        public const string MonthlyDeclarationRubricDeleted = "Accounting.MonthlyDeclarationRubricDeleted";
+        public const string MonthlyDeclarationFamilyToggled = "Accounting.MonthlyDeclarationFamilyToggled";
+        /// <summary>Changement de régime de calcul du dossier (Legacy / Parity / Configured).</summary>
+        public const string MonthlyDeclarationModeChanged = "Accounting.MonthlyDeclarationModeChanged";
+        public const string MonthlyDeclarationConfigDuplicated = "Accounting.MonthlyDeclarationConfigDuplicated";
+        public const string MonthlyDeclarationConfigImported = "Accounting.MonthlyDeclarationConfigImported";
+        /// <summary>
+        /// Exécution du calcul paramétré sur une période. La charge utile porte les totaux par
+        /// famille <b>et</b> les codes de diagnostic : c'est la trace qui expliquera, des mois plus
+        /// tard, pourquoi un montant déposé diffère d'un recalcul.
+        /// </summary>
+        public const string MonthlyDeclarationComputed = "Accounting.MonthlyDeclarationComputed";
         public const string ThirdPartyProfileSaved = "Accounting.ThirdPartyProfileSaved";
         public const string ThirdPartyCodesGenerated = "Accounting.ThirdPartyCodesGenerated";
         public const string FecExported = "Accounting.FecExported";

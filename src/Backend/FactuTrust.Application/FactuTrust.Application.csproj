@@ -40,6 +40,7 @@
        StudioTemplateCatalog depuis les ressources de l'assembly et validées au chargement. -->
   <ItemGroup>
     <EmbeddedResource Include="Features\Studio\Templates\Builtin\*.json" />
+    <EmbeddedResource Include="Features\Accounting\OfficialForm\Builtin\*.json" />
   </ItemGroup>
 
 </Project>

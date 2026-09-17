@@ -301,6 +301,28 @@ export interface VatDeclarationDto {
   version: number;
   isRectificative: boolean;
   monthlyDeclarationV2Enabled: boolean;
+  // ── Déclaration mensuelle paramétrable ───────────────────────────────
+  // Valent 0 / vide pour tout dossier resté en calcul historique.
+  /** Droit de consommation. */
+  consumptionDuty?: number;
+  /** Taxe hôtelière. */
+  hotelTax?: number;
+  /** Droit de licence. */
+  licenceFee?: number;
+  /**
+   * Régime appliqué à **cette période**, qui n'est pas forcément le régime courant du dossier :
+   * une période antérieure à la date d'effet reste calculée à l'ancienne.
+   */
+  monthlyDeclarationMode?: MonthlyDeclarationMode;
+  /** Détail par rubrique produit par le moteur paramétré. Vide en calcul historique. */
+  lines?: MonthlyDeclarationLineDto[];
+  /** Signalements du calcul (compte inconnu, paie non arrêtée…). Vide en calcul historique. */
+  monthlyDeclarationDiagnostics?: MonthlyDeclarationDiagnosticDto[];
+  /**
+   * Écart maximal, en millimes, entre calcul historique et calcul paramétré sur la période.
+   * C'est la mesure qui autorise — ou non — la bascule du dossier.
+   */
+  parityMaxGapMillimes?: number;
   // Métadonnées enrichies (additif).
   createdAt?: string | null;
   updatedAt?: string | null;
@@ -548,6 +570,310 @@ export interface UpdateJournalRequest {
 export interface CreateJournalFamilyRequest {
   code: string;
   label: string;
+}
+
+// ── Déclaration mensuelle paramétrable (Configuration DM) ────────────────────
+
+/** Familles de la déclaration mensuelle. Miroir de `MonthlyDeclarationFamily` côté serveur. */
+export enum MonthlyDeclarationFamily {
+  Withholding = 1,
+  Tfp = 2,
+  Foprolos = 3,
+  ConsumptionDuty = 4,
+  Vat = 5,
+  OtherTurnoverTaxes = 6,
+  StampDuty = 7,
+  HotelTax = 8,
+  Tcl = 9,
+  LicenceFee = 10,
+  OtherInformation = 99
+}
+
+/** Régime de calcul du dossier. */
+export enum MonthlyDeclarationMode {
+  /** Calcul historique câblé. */
+  Legacy = 0,
+  /** Les deux calculs tournent ; le déclaré reste l'historique. */
+  Parity = 1,
+  /** Le moteur paramétré est la source unique. */
+  Configured = 2
+}
+
+/** Origine du montant brut d'une rubrique. */
+export enum RubricGrossKind {
+  Fixed = 0,
+  Payroll = 1,
+  Account = 2,
+  WithheldOverRate = 3
+}
+
+/** Origine de la retenue d'une rubrique. `WithheldOverRate` n'est pas implémenté côté serveur. */
+export enum RubricWithheldKind {
+  Fixed = 0,
+  Account = 1,
+  GrossTimesRate = 2,
+  WithheldOverRate = 3,
+  Payroll = 4
+}
+
+/** Sens retenu pour lire le mouvement d'un compte sur la période. */
+export enum AccountBalanceSide {
+  Debit = 0,
+  Credit = 1
+}
+
+/** Colonne de la rubrique qu'un compte alimente. */
+export enum RubricAccountRole {
+  Gross = 0,
+  Withheld = 1
+}
+
+/** Rapprochement d'un compte avec les numéros du plan. */
+export enum RubricAccountMatchMode {
+  /** Le numéro exact, et lui seul. */
+  Exact = 0,
+  /** Le numéro et toute sa descendance. */
+  Prefix = 1
+}
+
+/** Valeur du cycle de paie reprise par une rubrique « Paie ». */
+export enum PayrollContributionComponent {
+  SalariesGrossBase = 0,
+  SalariesNetTaxableBase = 1,
+  PayrollTaxBase = 2,
+  WithholdingIrpp = 3,
+  WithholdingCss = 4,
+  WithholdingTotal = 5,
+  Tfp = 6,
+  Foprolos = 7
+}
+
+export interface MonthlyDeclarationRubricAccountDto {
+  role: RubricAccountRole;
+  accountNumber: string;
+  matchMode: RubricAccountMatchMode;
+}
+
+export interface MonthlyDeclarationRubricDto {
+  id: string;
+  family: MonthlyDeclarationFamily;
+  code: string;
+  label: string;
+  reportCode: string;
+  grossKind: RubricGrossKind;
+  withheldKind: RubricWithheldKind;
+  grossSide: AccountBalanceSide;
+  withheldSide: AccountBalanceSide;
+  ratePercent: number;
+  /** `null` ne vaut pas zéro : la ligne attend une saisie au Calcul DM. */
+  fixedGrossAmount: number | null;
+  fixedWithheldAmount: number | null;
+  payrollComponent: PayrollContributionComponent | null;
+  withheldPayrollComponent: PayrollContributionComponent | null;
+  effectiveFrom: string | null;
+  /** « Maximum date d'application » : la rubrique s'applique à tout le mois de cette date. */
+  effectiveTo: string | null;
+  isActive: boolean;
+  displayOrder: number;
+  accounts: MonthlyDeclarationRubricAccountDto[];
+}
+
+export interface MonthlyDeclarationFamilySettingDto {
+  family: MonthlyDeclarationFamily;
+  isIncluded: boolean;
+}
+
+export interface MonthlyDeclarationSettingsDto {
+  mode: MonthlyDeclarationMode;
+  configuredSince: string | null;
+  lastParityRunAt: string | null;
+  lastParityMaxGapMillimes: number;
+  parityCleanStreak: number;
+  requiredCleanParityPeriods: number;
+  canSwitchToConfigured: boolean;
+  parityOverrideBy: string | null;
+  parityOverrideReason: string | null;
+  /** Reflet du drapeau serveur : pilote l'affichage, jamais l'autorisation. */
+  configurableLinesEnabled: boolean;
+}
+
+export interface MonthlyDeclarationConfigurationDto {
+  settings: MonthlyDeclarationSettingsDto;
+  families: MonthlyDeclarationFamilySettingDto[];
+  rubrics: MonthlyDeclarationRubricDto[];
+}
+
+export interface CreateMonthlyDeclarationRubricRequest {
+  family: MonthlyDeclarationFamily;
+  code: string;
+  label: string;
+  reportCode: string;
+  grossKind: RubricGrossKind;
+  withheldKind: RubricWithheldKind;
+  grossSide: AccountBalanceSide;
+  withheldSide: AccountBalanceSide;
+  ratePercent: number;
+  fixedGrossAmount: number | null;
+  fixedWithheldAmount: number | null;
+  payrollComponent: PayrollContributionComponent | null;
+  withheldPayrollComponent: PayrollContributionComponent | null;
+  effectiveFrom: string | null;
+  effectiveTo: string | null;
+  displayOrder: number;
+  accounts: MonthlyDeclarationRubricAccountDto[];
+}
+
+/**
+ * Modification d'une rubrique. Ni la famille ni le code n'y figurent : le code relie la rubrique
+ * aux lignes déjà déposées, et changer de famille déplacerait un montant d'un impôt à un autre.
+ */
+export type UpdateMonthlyDeclarationRubricRequest = Omit<
+  CreateMonthlyDeclarationRubricRequest,
+  'family' | 'code'
+>;
+
+export interface SetMonthlyDeclarationFamilyRequest {
+  family: MonthlyDeclarationFamily;
+  isIncluded: boolean;
+}
+
+export interface DuplicateMonthlyDeclarationConfigRequest {
+  /** Dossier source, vérifié côté serveur contre le portefeuille du cabinet appelant. */
+  sourceCompanyTenantId: string;
+  /** Remplacer les rubriques de même code au lieu de les ignorer. */
+  overwrite: boolean;
+}
+
+export interface MonthlyDeclarationDuplicationResultDto {
+  inserted: number;
+  replaced: number;
+  /** Codes déjà présents et laissés intacts (mode sans remplacement). */
+  skippedCodes: string[];
+  /** Comptes copiés absents du plan de destination : créés quand même, et signalés. */
+  unknownAccounts: string[];
+}
+
+/** Nature d'un signalement émis par le moteur. Miroir de `RubricDiagnosticKind`. */
+export enum RubricDiagnosticKind {
+  /** Un compte sélectionné n'existe pas (ou plus) au plan comptable du dossier. */
+  UnknownAccount = 0,
+  /** Un calcul dépendant du taux a rencontré un taux nul. */
+  RateRequired = 1,
+  /** Le cycle de paie du mois n'est ni validé ni clôturé : ses montants sont ignorés. */
+  PayrollRunNotUsable = 2,
+  /** Combinaison de types de calcul sans sémantique fiscale établie. */
+  UnsupportedCombination = 3,
+  /** Le code rapport ne correspond à aucune case du millésime de formulaire en cours. */
+  UnmappedReportCode = 4,
+  /** Ligne écartée du formulaire par le garde-fou de total de famille. */
+  SuppressedFromForm = 5,
+  /** Famille incluse dans la déclaration sans aucune rubrique applicable à la période. */
+  MissingRubricForFamily = 6
+}
+
+export interface MonthlyDeclarationDiagnosticDto {
+  kind: RubricDiagnosticKind;
+  /** Précision affichable : numéro de compte fautif, code de famille… */
+  detail?: string | null;
+}
+
+/** Ligne de déclaration produite par le moteur paramétré pour une période. */
+export interface MonthlyDeclarationLineDto {
+  /** Rubrique d'origine. Vide sur une ligne déposée devenue orpheline. */
+  rubricId: string;
+  code: string;
+  label: string;
+  family: MonthlyDeclarationFamily;
+  reportCode: string;
+  /** Colonne « Montant brut ». Peut être négative sur une période d'extourne. */
+  gross: number;
+  /** Colonne « Retenue ». */
+  withheld: number;
+  ratePercentApplied: number;
+  /** La rubrique attend une saisie : type « Fixe » sans constante enregistrée. */
+  requiresManualInput: boolean;
+  diagnostics: MonthlyDeclarationDiagnosticDto[];
+}
+
+/** Changement de régime de calcul du dossier. */
+export interface SetMonthlyDeclarationModeRequest {
+  mode: MonthlyDeclarationMode;
+  /** Premier jour du mois d'effet ; requis pour passer en mode configuré. */
+  configuredSince?: string | null;
+  /**
+   * Motif de dérogation, exigé lorsque la série de contrôles sans écart n'est pas atteinte.
+   * Conservé dans l'audit : c'est la trace de qui a décidé de passer outre.
+   */
+  overrideReason?: string | null;
+}
+
+/** Fichier de modèle produit par l'export de la configuration DM. */
+export interface MonthlyDeclarationModelFileDto {
+  /** Nom proposé au téléchargement. */
+  fileName: string;
+  /** Contenu JSON du modèle. */
+  content: string;
+}
+
+export interface ImportMonthlyDeclarationModelRequest {
+  content: string;
+  /** Remplacer les rubriques de même code au lieu de les ignorer. */
+  overwrite: boolean;
+}
+
+export interface MonthlyDeclarationModelRejectionDto {
+  code: string;
+  reason: string;
+}
+
+/** Compte rendu d'un import de modèle. */
+export interface MonthlyDeclarationModelImportResultDto {
+  inserted: number;
+  replaced: number;
+  /** Codes déjà présents et laissés intacts (mode sans remplacement). */
+  skippedCodes: string[];
+  /** Comptes cités par le fichier qui n'existent pas au plan du dossier. */
+  unknownAccounts: string[];
+  /** Nombre d'inclusions de familles réellement modifiées. */
+  familiesChanged: number;
+  /** Toujours vide sur un import réussi : un fichier fautif est refusé en entier. */
+  rejected: MonthlyDeclarationModelRejectionDto[];
+}
+
+/** Statut d'une déclaration : miroir de `VatDeclarationStatus`. */
+export enum VatDeclarationStatus {
+  Draft = 0,
+  Submitted = 1,
+  Locked = 2
+}
+
+/** Un mois de l'exercice, vu par le « Suivi DM ». */
+export interface MonthlyDeclarationTrackingRowDto {
+  month: number;
+  /** Une déclaration est-elle enregistrée pour cette période ? */
+  exists: boolean;
+  /** Sans objet si `exists` vaut faux. */
+  status: VatDeclarationStatus;
+  submittedAt?: string | null;
+  updatedAt?: string | null;
+  totalToPay: number;
+  vatDue: number;
+  revisionNumber: number;
+  isRectificative: boolean;
+  filingDeadline: string;
+  /**
+   * Régime de **cette** période, et non le régime courant du dossier : une période antérieure à
+   * la date d'effet reste calculée à l'ancienne.
+   */
+  mode: MonthlyDeclarationMode;
+}
+
+/** Les douze mois d'un exercice, et l'état de la rampe du dossier. */
+export interface MonthlyDeclarationTrackingDto {
+  year: number;
+  settings: MonthlyDeclarationSettingsDto;
+  /** Toujours douze lignes, même sans aucun dépôt. */
+  months: MonthlyDeclarationTrackingRowDto[];
 }
 
 // ── Comptabilité budgétaire ──────────────────────────────────────────────────
@@ -2230,6 +2556,134 @@ export class AccountingService {
   exportMonthlyDeclarationOfficialForm(year: number, month: number): Observable<Blob> {
     const p = new HttpParams().set('year', year).set('month', month);
     return this.http.get(`${this.base}/vat-declaration/official-pdf`, { params: p, responseType: 'blob' });
+  }
+
+  // ── Déclaration mensuelle paramétrable (Configuration DM) ──────────────────
+
+  /**
+   * Configuration DM du dossier : régime, inclusion des onze familles, rubriques et comptes.
+   * Lisible même drapeau éteint — la réponse porte `settings.configurableLinesEnabled`, que
+   * l'écran utilise pour expliquer l'inactivité plutôt que d'afficher une erreur.
+   */
+  getMonthlyDeclarationConfiguration(
+    includeInactive = true
+  ): Observable<ApiResponse<MonthlyDeclarationConfigurationDto>> {
+    const p = new HttpParams().set('includeInactive', String(includeInactive));
+    return this.http.get<ApiResponse<MonthlyDeclarationConfigurationDto>>(
+      `${this.base}/monthly-declaration/configuration`,
+      { params: p }
+    );
+  }
+
+  createMonthlyDeclarationRubric(
+    request: CreateMonthlyDeclarationRubricRequest
+  ): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.base}/monthly-declaration/rubrics`, request);
+  }
+
+  updateMonthlyDeclarationRubric(
+    id: string,
+    request: UpdateMonthlyDeclarationRubricRequest
+  ): Observable<ApiResponse<boolean>> {
+    return this.http.put<ApiResponse<boolean>>(
+      `${this.base}/monthly-declaration/rubrics/${id}`,
+      request
+    );
+  }
+
+  toggleMonthlyDeclarationRubric(id: string): Observable<ApiResponse<boolean>> {
+    return this.http.patch<ApiResponse<boolean>>(
+      `${this.base}/monthly-declaration/rubrics/${id}/toggle`,
+      {}
+    );
+  }
+
+  deleteMonthlyDeclarationRubric(id: string): Observable<ApiResponse<boolean>> {
+    return this.http.delete<ApiResponse<boolean>>(`${this.base}/monthly-declaration/rubrics/${id}`);
+  }
+
+  /** Case « Inclure cette famille dans déclaration mensuelle ? ». */
+  setMonthlyDeclarationFamily(
+    request: SetMonthlyDeclarationFamilyRequest
+  ): Observable<ApiResponse<boolean>> {
+    return this.http.put<ApiResponse<boolean>>(`${this.base}/monthly-declaration/families`, request);
+  }
+
+  /**
+   * Reprend la configuration DM d'un autre dossier du cabinet. Le dossier source est revalidé
+   * côté serveur contre le portefeuille du cabinet : la liste envoyée d'ici n'autorise rien.
+   */
+  duplicateMonthlyDeclarationConfig(
+    request: DuplicateMonthlyDeclarationConfigRequest
+  ): Observable<ApiResponse<MonthlyDeclarationDuplicationResultDto>> {
+    return this.http.post<ApiResponse<MonthlyDeclarationDuplicationResultDto>>(
+      `${this.base}/monthly-declaration/duplicate`,
+      request
+    );
+  }
+
+  /**
+   * « Calcul DM » : évalue la configuration du dossier sur une période et rend le détail obtenu.
+   * Ne dépose rien — l'enregistrement reste l'affaire de `saveVatDeclaration`, ce qui permet de
+   * relancer le calcul autant de fois qu'il le faut sans toucher au document.
+   */
+  computeMonthlyDeclaration(
+    year: number,
+    month: number
+  ): Observable<ApiResponse<VatDeclarationDto>> {
+    const p = new HttpParams().set('year', year).set('month', month);
+    return this.http.post<ApiResponse<VatDeclarationDto>>(
+      `${this.base}/monthly-declaration/compute`,
+      {},
+      { params: p }
+    );
+  }
+
+  /**
+   * Change le régime de calcul du dossier. Les règles de rampe (série de contrôles sans écart,
+   * dérogation motivée, date d'effet au premier du mois) sont revalidées côté serveur.
+   */
+  setMonthlyDeclarationMode(
+    request: SetMonthlyDeclarationModeRequest
+  ): Observable<ApiResponse<boolean>> {
+    return this.http.put<ApiResponse<boolean>>(`${this.base}/monthly-declaration/mode`, request);
+  }
+
+  /**
+   * « Modèle Intégration DM » — export. Lisible drapeau éteint : le fichier ne fait que refléter
+   * des données déjà affichées par l'écran de configuration.
+   */
+  exportMonthlyDeclarationModel(): Observable<ApiResponse<MonthlyDeclarationModelFileDto>> {
+    return this.http.get<ApiResponse<MonthlyDeclarationModelFileDto>>(
+      `${this.base}/monthly-declaration/model`
+    );
+  }
+
+  /**
+   * « Modèle Intégration DM » — import. Tout ou rien à l'analyse côté serveur : une seule entrée
+   * fautive fait échouer le fichier entier, et le refus nomme les entrées en cause.
+   */
+  importMonthlyDeclarationModel(
+    request: ImportMonthlyDeclarationModelRequest
+  ): Observable<ApiResponse<MonthlyDeclarationModelImportResultDto>> {
+    return this.http.post<ApiResponse<MonthlyDeclarationModelImportResultDto>>(
+      `${this.base}/monthly-declaration/model`,
+      request
+    );
+  }
+
+  /**
+   * « Suivi DM » : les douze mois d'un exercice. Lecture seule, ouverte à la société comme au
+   * cabinet, et disponible drapeau éteint — voir les trous de dépôt ne dépend d'aucun drapeau.
+   */
+  getMonthlyDeclarationTracking(
+    year: number
+  ): Observable<ApiResponse<MonthlyDeclarationTrackingDto>> {
+    const p = new HttpParams().set('year', year);
+    return this.http.get<ApiResponse<MonthlyDeclarationTrackingDto>>(
+      `${this.base}/monthly-declaration/tracking`,
+      { params: p }
+    );
   }
 
   /** PDF de la liasse NCT (téléchargement blob). */

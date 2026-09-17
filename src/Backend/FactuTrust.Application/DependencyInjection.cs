@@ -39,6 +39,11 @@ public static class DependencyInjection
 
         // Apport du module paie à la déclaration mensuelle (TFP, FOPROLOS, RS sur salaires)
         services.AddScoped<PayrollDeclarationContributionProvider>();
+        // Composition des lignes paramétrées de la déclaration mensuelle. Enregistré
+        // inconditionnellement : les handlers MediatR sont validés au démarrage
+        // (ValidateOnBuild), un enregistrement conditionnel ferait échouer la construction du
+        // conteneur dès que le drapeau est éteint.
+        services.AddScoped<Features.Accounting.MonthlyDeclaration.MonthlyDeclarationLineComposer>();
 
         services.AddScoped<ISupplierInvoiceNumberService, SupplierInvoiceNumberService>();
         services.AddScoped<ITrackedDocumentStockService, TrackedDocumentStockService>();

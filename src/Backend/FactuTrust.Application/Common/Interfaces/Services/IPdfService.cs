@@ -22,9 +22,13 @@ public interface IPdfService
     /// Ventilation de la retenue à la source par ligne officielle du formulaire. Null ou vide =
     /// seul le total est reporté.
     /// </param>
+    /// <param name="configuredBoxes">
+    /// Cases issues des rubriques paramétrées. Null ou vide = aucune ventilation configurée.
+    /// </param>
     Task<byte[]> GenerateMonthlyDeclarationOfficialFormPdfAsync(
         VatDeclarationDto declaration,
         IReadOnlyDictionary<string, decimal>? withholdingLines = null,
+        IReadOnlyDictionary<string, decimal>? configuredBoxes = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>Génère le PDF de la liasse NCT (bilan, résultat, flux, capitaux, notes agrégées) — chemin legacy.</summary>

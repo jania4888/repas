@@ -143,7 +143,7 @@ public sealed class GetVatDeclarationV2Tests
 
         var tenantSummary = CreateTenantSummaryMock();
         var handler = new GetVatDeclarationQueryHandler(
-            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), settings);
+            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), MonthlyDeclarationTestComposer.Inactive(settings), settings);
 
         var result = await handler.Handle(new GetVatDeclarationQuery(2026, 7), CancellationToken.None);
 
@@ -207,7 +207,7 @@ public sealed class GetVatDeclarationV2Tests
         var tenantSummary = CreateTenantSummaryMock();
 
         var handler = new GetVatDeclarationQueryHandler(
-            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), settings);
+            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), MonthlyDeclarationTestComposer.Inactive(settings), settings);
 
         var result = await handler.Handle(new GetVatDeclarationQuery(2026, 7), CancellationToken.None);
 
@@ -251,7 +251,7 @@ public sealed class GetVatDeclarationV2Tests
         var tenantSummary = CreateTenantSummaryMock();
 
         var handler = new GetVatDeclarationQueryHandler(
-            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), settings);
+            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), MonthlyDeclarationTestComposer.Inactive(settings), settings);
 
         var result = await handler.Handle(new GetVatDeclarationQuery(2026, 7), CancellationToken.None);
 
@@ -300,7 +300,7 @@ public sealed class GetVatDeclarationV2Tests
         var tenantSummary = CreateTenantSummaryMock();
 
         var handler = new GetVatDeclarationQueryHandler(
-            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), settings);
+            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), MonthlyDeclarationTestComposer.Inactive(settings), settings);
         var result = await handler.Handle(new GetVatDeclarationQuery(2024, 5), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -341,7 +341,7 @@ public sealed class GetVatDeclarationV2Tests
         var tenantSummary = CreateTenantSummaryMock();
 
         var handler = new GetVatDeclarationQueryHandler(
-            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), settings);
+            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object, tenantSummary.Object, CreatePayrollProvider(), MonthlyDeclarationTestComposer.Inactive(settings), settings);
 
         var result = await handler.Handle(new GetVatDeclarationQuery(2026, 7), CancellationToken.None);
 
@@ -397,7 +397,7 @@ public sealed class GetVatDeclarationV2Tests
 
         return new GetVatDeclarationQueryHandler(
             mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object,
-            CreateTenantSummaryMock().Object, CreatePayrollProvider(payrollRun, parameters), settings);
+            CreateTenantSummaryMock().Object, CreatePayrollProvider(payrollRun, parameters), MonthlyDeclarationTestComposer.Inactive(settings), settings);
     }
 
     [Theory]
@@ -551,7 +551,7 @@ public sealed class GetVatDeclarationV2Tests
         var settings = Options.Create(new AccountingSettings { MonthlyDeclarationV2Enabled = true });
         var handler = new GetVatDeclarationQueryHandler(
             mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object,
-            CreateTenantSummaryMock().Object, CreatePayrollProvider(), settings);
+            CreateTenantSummaryMock().Object, CreatePayrollProvider(), MonthlyDeclarationTestComposer.Inactive(settings), settings);
 
         var result = await handler.Handle(new GetVatDeclarationQuery(2026, 8), CancellationToken.None);
 

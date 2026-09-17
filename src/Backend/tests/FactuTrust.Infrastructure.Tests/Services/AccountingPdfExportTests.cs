@@ -64,7 +64,7 @@ public sealed class AccountingPdfExportTests
             null, 156.393m, netTaxable: 1_185.201m, irpp: 150.467m, css: 5.926m);
 
         var bytes = await BuildPdfService().GenerateMonthlyDeclarationOfficialFormPdfAsync(
-            dto, lines, CancellationToken.None);
+            dto, lines, configuredBoxes: null, CancellationToken.None);
 
         AssertIsPdf(bytes);
     }

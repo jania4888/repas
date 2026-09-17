@@ -1,9 +1,12 @@
+using System.Linq.Expressions;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Features.Accounting;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.MultiTenancy;
+using FactuTrust.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -324,6 +327,140 @@ public sealed class JournalEntryRepository : IJournalEntryRepository
             // Consommé par la déclaration mensuelle (RS loyers) : jamais de brouillons.
             .Where(l => l.JournalEntry!.Status != Domain.Enums.JournalEntryStatus.Brouillon)
             .SumAsync(l => l.DebitAmount.Amount, cancellationToken);
+    }
+
+    /// <summary>
+    /// Nombre maximal de comptes envoyés en une requête. SQL Server plafonne une commande à 2100
+    /// paramètres ; on reste très en deçà, quitte à découper. Un découpage coûte quelques
+    /// allers-retours supplémentaires, jamais une requête par rubrique.
+    /// </summary>
+    private const int MaxAccountsPerQuery = 500;
+
+    private static readonly IReadOnlyDictionary<string, AccountPeriodMovement> EmptyMovements =
+        new Dictionary<string, AccountPeriodMovement>(StringComparer.Ordinal);
+
+    public async Task<IReadOnlyDictionary<string, AccountPeriodMovement>> SumMovementsByAccountsAsync(
+        IReadOnlyCollection<string> exactAccounts,
+        IReadOnlyCollection<string> accountPrefixes,
+        DateTime from,
+        DateTime to,
+        CancellationToken cancellationToken = default)
+    {
+        var exact = NormalizeAccountKeys(exactAccounts);
+        var prefixes = NormalizeAccountKeys(accountPrefixes);
+
+        // Court-circuit avant toute ouverture de contexte : une configuration sans le moindre compte
+        // (familles entièrement en valeurs fixes ou issues de la paie) ne doit rien coûter.
+        if (exact.Length == 0 && prefixes.Length == 0)
+            return EmptyMovements;
+
+        var fromDate = from.Date;
+        var toDate = to.Date;
+        var accumulated = new Dictionary<string, AccountPeriodMovement>(StringComparer.Ordinal);
+
+        await using var context = _contextFactory.CreateContext();
+
+        foreach (var batch in Chunk(exact))
+        {
+            await AccumulateAsync(
+                context, accumulated, fromDate, toDate,
+                l => batch.Contains(l.AccountNumber), cancellationToken);
+        }
+
+        foreach (var batch in Chunk(prefixes))
+        {
+            await AccumulateAsync(
+                context, accumulated, fromDate, toDate,
+                BuildPrefixPredicate(batch), cancellationToken);
+        }
+
+        return accumulated;
+    }
+
+    /// <summary>
+    /// Exécute une requête groupée par compte et fusionne le résultat dans l'accumulateur.
+    /// </summary>
+    /// <remarks>
+    /// Un même compte peut retomber dans deux passes — demandé en exact <i>et</i> couvert par une
+    /// racine. Les deux passes rendent alors le mouvement COMPLET du compte, pas une part : on
+    /// retient donc la valeur, on ne l'additionne pas, faute de quoi le montant doublerait.
+    /// </remarks>
+    private static async Task AccumulateAsync(
+        TenantDbContext context,
+        Dictionary<string, AccountPeriodMovement> accumulated,
+        DateTime fromDate,
+        DateTime toDate,
+        Expression<Func<JournalEntryLine, bool>> accountFilter,
+        CancellationToken cancellationToken)
+    {
+        var rows = await context.JournalEntryLines
+            .Where(l => l.JournalEntry!.EntryDate >= fromDate && l.JournalEntry.EntryDate <= toDate)
+            .Where(l => !l.JournalEntry!.IsReversed)
+            // Sortie légale : jamais de brouillons, quelle que soit la politique d'affichage des
+            // états de consultation (AccountingSettings.IncludeBrouillardInReports).
+            .Where(l => l.JournalEntry!.Status != JournalEntryStatus.Brouillon)
+            .Where(accountFilter)
+            .GroupBy(l => l.AccountNumber)
+            .Select(g => new
+            {
+                AccountNumber = g.Key,
+                Debit = g.Sum(l => l.DebitAmount.Amount),
+                Credit = g.Sum(l => l.CreditAmount.Amount)
+            })
+            .ToListAsync(cancellationToken);
+
+        foreach (var row in rows)
+            accumulated[row.AccountNumber] = new AccountPeriodMovement(row.Debit, row.Credit);
+    }
+
+    /// <summary>
+    /// Construit <c>l =&gt; l.AccountNumber.StartsWith(p1) || … || l.AccountNumber.StartsWith(pN)</c>.
+    /// </summary>
+    /// <remarks>
+    /// Une chaîne de <c>StartsWith</c> sur des paramètres scalaires, et non
+    /// <c>prefixes.Any(p =&gt; …StartsWith(p))</c> : cette dernière forme n'est traduisible ni par le
+    /// fournisseur en mémoire ni de façon fiable en SQL. Chaque racine est capturée dans un objet
+    /// dont on lit une propriété, de sorte qu'EF la transmette en <b>paramètre</b> (<c>LIKE @p + '%'</c>)
+    /// plutôt que de l'inscrire en dur dans le texte de la requête.
+    /// </remarks>
+    private static Expression<Func<JournalEntryLine, bool>> BuildPrefixPredicate(string[] prefixes)
+    {
+        var parameter = Expression.Parameter(typeof(JournalEntryLine), "l");
+        var accountNumber = Expression.Property(parameter, nameof(JournalEntryLine.AccountNumber));
+        var startsWith = typeof(string).GetMethod(nameof(string.StartsWith), new[] { typeof(string) })!;
+
+        Expression? body = null;
+        foreach (var prefix in prefixes)
+        {
+            var captured = Expression.Property(
+                Expression.Constant(new PrefixParameter(prefix)), nameof(PrefixParameter.Value));
+            var call = Expression.Call(accountNumber, startsWith, captured);
+            body = body is null ? call : Expression.OrElse(body, call);
+        }
+
+        return Expression.Lambda<Func<JournalEntryLine, bool>>(body!, parameter);
+    }
+
+    /// <summary>Porte une racine pour qu'EF la traite en paramètre et non en littéral.</summary>
+    private sealed record PrefixParameter(string Value);
+
+    /// <summary>Normalise, déduplique et ordonne les clés de compte reçues.</summary>
+    private static string[] NormalizeAccountKeys(IReadOnlyCollection<string>? keys) =>
+        (keys ?? Array.Empty<string>())
+            .Select(k => (k ?? string.Empty).Trim())
+            .Where(k => k.Length > 0)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(k => k, StringComparer.Ordinal)
+            .ToArray();
+
+    /// <summary>
+    /// Découpe en lots respectant <see cref="MaxAccountsPerQuery"/>. Le cas courant — quelques
+    /// dizaines de comptes — produit un lot unique, donc une requête unique.
+    /// </summary>
+    private static IEnumerable<string[]> Chunk(string[] keys)
+    {
+        for (var i = 0; i < keys.Length; i += MaxAccountsPerQuery)
+            yield return keys.Skip(i).Take(MaxAccountsPerQuery).ToArray();
     }
 
     /// <summary>

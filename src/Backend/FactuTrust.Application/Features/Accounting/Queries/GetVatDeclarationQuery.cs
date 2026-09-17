@@ -4,6 +4,7 @@ using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Accounting;
+using FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 using FactuTrust.Application.Features.Accounting.OfficialForm;
 using FactuTrust.Application.Features.Accounting.Services;
 using FactuTrust.Application.Features.Reports.Queries;
@@ -60,6 +61,7 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
     private readonly ISupplierInvoiceRepository _supplierInvoices;
     private readonly ITenantCompanySummaryProvider _tenantCompanySummary;
     private readonly PayrollDeclarationContributionProvider _payroll;
+    private readonly MonthlyDeclarationLineComposer _composer;
     private readonly AccountingSettings _settings;
 
     public GetVatDeclarationQueryHandler(
@@ -70,6 +72,7 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         ISupplierInvoiceRepository supplierInvoices,
         ITenantCompanySummaryProvider tenantCompanySummary,
         PayrollDeclarationContributionProvider payroll,
+        MonthlyDeclarationLineComposer composer,
         IOptions<AccountingSettings> settings)
     {
         _mediator = mediator;
@@ -79,6 +82,7 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         _supplierInvoices = supplierInvoices;
         _tenantCompanySummary = tenantCompanySummary;
         _payroll = payroll;
+        _composer = composer;
         _settings = settings.Value;
     }
 
@@ -103,13 +107,24 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
 
         // Ce que les modules produisent aujourd'hui. Calculé dans tous les cas : même quand la
         // déclaration est déposée et fait foi, l'écart doit rester visible.
-        var live = await ComputeLiveAsync(request, context, v2, cancellationToken);
+        // Composition paramétrée, faite UNE fois : elle alimente à la fois la remontée vers les
+        // scalaires et le détail par ligne exposé à l'écran. Inerte — et sans requête — quand le
+        // drapeau est éteint ou le dossier en calcul historique.
+        var composed = v2
+            ? await _composer.ComposeAsync(request.Year, request.Month, context.Payroll, cancellationToken)
+            : ComposedDeclarationLines.Inactive;
+
+        var live = await ComputeLiveAsync(request, context, v2, composed, cancellationToken);
 
         // Ce que la déclaration porte réellement. Une déclaration enregistrée fait foi, y compris
         // pour la TVA : un document déposé ne se réécrit pas tout seul entre deux affichages.
         var declared = saved is not null && request.Valuation == VatDeclarationValuation.Declared
             ? TaxAmounts.FromEntity(saved)
             : live;
+
+        var declaredLines = saved is { Lines.Count: > 0 } && request.Valuation == VatDeclarationValuation.Declared
+            ? MonthlyDeclarationLineSnapshot.Read(saved.Lines)
+            : null;
 
         var tenantSummary = await _tenantCompanySummary.GetCurrentTenantSummaryAsync(cancellationToken);
 
@@ -134,6 +149,16 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             Foprolos = declared.Foprolos,
             WithholdingTax = declared.WithholdingTax,
             Acomptes = declared.Acomptes,
+            ConsumptionDuty = declared.ConsumptionDuty,
+            HotelTax = declared.HotelTax,
+            LicenceFee = declared.LicenceFee,
+            MonthlyDeclarationMode = (int)composed.Mode,
+            // Le dépôt fait foi jusque dans le détail : tant qu'une déclaration enregistrée porte
+            // des lignes, ce sont elles qui s'affichent, même si la configuration a changé depuis.
+            // Le recalcul reste visible dans la section « suggéré ».
+            Lines = declaredLines ?? MapLines(composed),
+            MonthlyDeclarationDiagnostics = MapDiagnostics(composed.Diagnostics),
+            ParityMaxGapMillimes = MaxGapMillimes(live, composed),
             TotalToPay = TotalToPay(declared, v2),
             Version = saved?.RevisionNumber ?? 1,
             IsRectificative = saved?.IsRectificative ?? false,
@@ -320,7 +345,11 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
     // ── Recalcul temps réel ────────────────────────────────────────────────────
 
     private async Task<TaxAmounts> ComputeLiveAsync(
-        GetVatDeclarationQuery request, PeriodContext context, bool v2, CancellationToken cancellationToken)
+        GetVatDeclarationQuery request,
+        PeriodContext context,
+        bool v2,
+        ComposedDeclarationLines composed,
+        CancellationToken cancellationToken)
     {
         var start = new DateTime(request.Year, request.Month, 1);
         var end = start.AddMonths(1).AddDays(-1);
@@ -362,7 +391,7 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         var withholdingFromSalaries = context.Payroll.WithholdingTotal;
         var withholdingFromRentJournal = context.RentWithholdingAmount;
 
-        return vat with
+        var legacy = vat with
         {
             Fodec = await _invoices.SumFodecAsync(start, end, cancellationToken),
             DroitTimbre = await _invoices.SumFiscalStampAsync(start, end, cancellationToken),
@@ -375,11 +404,128 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             WithholdingTax = withholdingFromInvoices + withholdingFromSalaries + withholdingFromRentJournal
             // Acomptes provisionnels : aucune source automatique, saisie manuelle uniquement.
         };
+
+        // Déclaration paramétrable. Hors mode configuré — drapeau éteint, dossier en calcul
+        // historique, ou contrôle de parité — `legacy` est rendu tel quel : c'est la garantie de
+        // non-régression, vérifiable à l'octet près.
+        return composed.Mode switch
+        {
+            // Contrôle de parité : les deux calculs tournent, mais ce sont les montants
+            // historiques qui font foi. Seul l'écart est exposé, pour que la bascule se constate
+            // avant de se subir.
+            MonthlyDeclarationMode.Configured => ApplyRollUp(legacy, composed),
+            _ => legacy
+        };
     }
 
-    private static decimal TotalToPay(TaxAmounts a, bool v2) => v2
-        ? Math.Max(0m, a.VatDue + a.Fodec + a.DroitTimbre + a.Tcl + a.Tfp + a.Foprolos + a.WithholdingTax - a.Acomptes)
+    /// <summary>
+    /// Remplace, famille par famille, les scalaires historiques par le total des rubriques.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Fonction pure et cloisonnée par famille : une famille sans rubrique applicable conserve sa
+    /// valeur historique, de sorte qu'un paramétrage partiel ne fabrique jamais un montant hybride.
+    /// </para>
+    /// <para>
+    /// La T.V.A est délibérément exclue. Ses montants ne viennent pas du journal mais des documents
+    /// de facture, l'enregistrement les redérive systématiquement, et <c>VatDue</c> /
+    /// <c>CreditToCarry</c> sont le produit d'une arithmétique de solde chaînée d'un mois sur
+    /// l'autre — pas d'une ligne paramétrable. La famille reste donc calculée par le chemin
+    /// historique tant qu'un lot dédié n'aura pas traité le chaînage du crédit.
+    /// </para>
+    /// </remarks>
+    internal static TaxAmounts ApplyRollUp(TaxAmounts legacy, ComposedDeclarationLines composed)
+    {
+        decimal Resolve(MonthlyDeclarationFamily family, decimal fallback) =>
+            composed.ActiveFamilies.Contains(family) ? composed.WithheldFor(family) : fallback;
+
+        var withholding = Resolve(MonthlyDeclarationFamily.Withholding, legacy.WithholdingTax);
+        var withholdingIsConfigured = composed.ActiveFamilies.Contains(MonthlyDeclarationFamily.Withholding);
+
+        return legacy with
+        {
+            Fodec = Resolve(MonthlyDeclarationFamily.OtherTurnoverTaxes, legacy.Fodec),
+            DroitTimbre = Resolve(MonthlyDeclarationFamily.StampDuty, legacy.DroitTimbre),
+            Tcl = Resolve(MonthlyDeclarationFamily.Tcl, legacy.Tcl),
+            Tfp = Resolve(MonthlyDeclarationFamily.Tfp, legacy.Tfp),
+            Foprolos = Resolve(MonthlyDeclarationFamily.Foprolos, legacy.Foprolos),
+            ConsumptionDuty = Resolve(MonthlyDeclarationFamily.ConsumptionDuty, legacy.ConsumptionDuty),
+            HotelTax = Resolve(MonthlyDeclarationFamily.HotelTax, legacy.HotelTax),
+            LicenceFee = Resolve(MonthlyDeclarationFamily.LicenceFee, legacy.LicenceFee),
+            WithholdingTax = withholding,
+            // La ventilation historique de la retenue (factures / salaires / loyers) n'a plus de
+            // sens dès que les rubriques la produisent : la laisser renseignée ferait apparaître à
+            // l'écran une décomposition qui ne totalise pas le montant affiché.
+            WithholdingFromInvoices = withholdingIsConfigured ? 0m : legacy.WithholdingFromInvoices,
+            WithholdingFromSalaries = withholdingIsConfigured ? 0m : legacy.WithholdingFromSalaries,
+            WithholdingFromRentJournal = withholdingIsConfigured ? 0m : legacy.WithholdingFromRentJournal,
+            WithholdingFromRubrics = withholdingIsConfigured ? withholding : 0m
+        };
+    }
+
+    /// <summary>
+    /// Écart, en millimes, entre le calcul historique et le calcul paramétré pour chaque famille
+    /// prise en charge. Sert de preuve chiffrée avant la bascule d'un dossier.
+    /// </summary>
+    /// <remarks>
+    /// N'a de sens qu'en <b>contrôle de parité</b>, seul régime où les deux calculs coexistent. Une
+    /// fois le dossier basculé, le montant paramétré <i>est</i> le montant : il n'y a plus rien à
+    /// comparer, et l'écart vaut zéro par construction.
+    /// </remarks>
+    internal static long MaxGapMillimes(TaxAmounts legacy, ComposedDeclarationLines composed)
+    {
+        if (composed.Mode != MonthlyDeclarationMode.Parity || composed.ActiveFamilies.Count == 0)
+            return 0;
+
+        var configured = ApplyRollUp(legacy, composed);
+        var gaps = new[]
+        {
+            configured.Fodec - legacy.Fodec,
+            configured.DroitTimbre - legacy.DroitTimbre,
+            configured.Tcl - legacy.Tcl,
+            configured.Tfp - legacy.Tfp,
+            configured.Foprolos - legacy.Foprolos,
+            configured.WithholdingTax - legacy.WithholdingTax,
+            configured.ConsumptionDuty - legacy.ConsumptionDuty,
+            configured.HotelTax - legacy.HotelTax,
+            configured.LicenceFee - legacy.LicenceFee
+        };
+
+        return gaps.Select(g => (long)Math.Round(Math.Abs(g) * 1000m, MidpointRounding.AwayFromZero)).Max();
+    }
+
+    /// <summary>
+    /// Total net à payer. Les trois familles ajoutées par la déclaration paramétrable valent 0 pour
+    /// tout dossier resté en calcul historique : l'expression est donc, en valeur, identique à
+    /// celle d'avant le chantier — propriété vérifiée par
+    /// <c>GetVatDeclarationV2Tests</c>.
+    /// </summary>
+    internal static decimal TotalToPay(TaxAmounts a, bool v2) => v2
+        ? Math.Max(0m, a.VatDue + a.Fodec + a.DroitTimbre + a.Tcl + a.Tfp + a.Foprolos + a.WithholdingTax
+                       + a.ConsumptionDuty + a.HotelTax + a.LicenceFee - a.Acomptes)
         : a.VatDue;
+
+    private static IReadOnlyList<MonthlyDeclarationLineDto> MapLines(ComposedDeclarationLines composed) =>
+        composed.Lines
+            .Select(l => new MonthlyDeclarationLineDto
+            {
+                Code = l.Code,
+                Label = l.Label,
+                Family = (int)l.Family,
+                ReportCode = l.ReportCode,
+                Gross = l.Gross,
+                Withheld = l.Withheld,
+                RatePercentApplied = l.RatePercentApplied,
+                RequiresManualInput = l.RequiresManualInput,
+                Diagnostics = MapDiagnostics(l.Diagnostics)
+            })
+            .ToList();
+
+    private static IReadOnlyList<MonthlyDeclarationDiagnosticDto> MapDiagnostics(
+        IReadOnlyList<RubricDiagnostic> diagnostics) =>
+        diagnostics
+            .Select(d => new MonthlyDeclarationDiagnosticDto { Kind = (int)d.Kind, Detail = d.Detail })
+            .ToList();
 
     private static VatDeclarationComputedDto MapComputed(TaxAmounts live, PeriodContext context, bool v2) => new()
     {
@@ -400,6 +546,10 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         WithholdingFromInvoices = live.WithholdingFromInvoices,
         WithholdingFromSalaries = live.WithholdingFromSalaries,
         WithholdingFromRentJournal = live.WithholdingFromRentJournal,
+        WithholdingFromRubrics = live.WithholdingFromRubrics,
+        ConsumptionDuty = live.ConsumptionDuty,
+        HotelTax = live.HotelTax,
+        LicenceFee = live.LicenceFee,
         TotalToPay = TotalToPay(live, v2),
         PayrollRunExists = context.Payroll.RunExists,
         PayrollRunStatus = context.Payroll.Status is { } s ? (int)s : null,
@@ -411,7 +561,7 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
     /// Jeu de montants d'une déclaration, qu'il vienne du recalcul ou du dépôt enregistré. Deux
     /// instances de même forme rendent l'écart calculable ligne à ligne.
     /// </summary>
-    private sealed record TaxAmounts
+    internal sealed record TaxAmounts
     {
         public decimal CollectedVat19 { get; init; }
         public decimal CollectedVat13 { get; init; }
@@ -430,6 +580,19 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
         public decimal WithholdingFromInvoices { get; init; }
         public decimal WithholdingFromSalaries { get; init; }
         public decimal WithholdingFromRentJournal { get; init; }
+
+        /// <summary>Part de la RS produite par les rubriques paramétrées (0 hors mode configuré).</summary>
+        public decimal WithholdingFromRubrics { get; init; }
+
+        /// <summary>Droit de consommation — famille produite uniquement par le moteur paramétré.</summary>
+        public decimal ConsumptionDuty { get; init; }
+
+        /// <summary>Taxe hôtelière — famille produite uniquement par le moteur paramétré.</summary>
+        public decimal HotelTax { get; init; }
+
+        /// <summary>Droit de licence — famille produite uniquement par le moteur paramétré.</summary>
+        public decimal LicenceFee { get; init; }
+
         public decimal Acomptes { get; init; }
 
         public static TaxAmounts FromEntity(VatDeclaration d) => new()
@@ -448,6 +611,9 @@ public sealed class GetVatDeclarationQueryHandler : IRequestHandler<GetVatDeclar
             Tfp = d.Tfp,
             Foprolos = d.Foprolos,
             WithholdingTax = d.WithholdingTax,
+            ConsumptionDuty = d.ConsumptionDuty,
+            HotelTax = d.HotelTax,
+            LicenceFee = d.LicenceFee,
             // La déclaration ne mémorise pas la répartition de la RS : seul le total est déposé.
             Acomptes = d.Acomptes
         };

@@ -1,5 +1,6 @@
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
+using FactuTrust.Domain.ValueObjects;
 
 namespace FactuTrust.Application.Common.Interfaces.Repositories;
 
@@ -106,6 +107,30 @@ public interface IJournalEntryRepository
     /// mensuelle (assiette RS loyers 613) : brouillons exclus, comme <see cref="SumDebitsByAccountAsync"/>.
     /// </summary>
     Task<decimal> SumDebitsByAccountPrefixAsync(string accountPrefix, DateTime from, DateTime to, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Débits ET crédits agrégés par compte sur une période, pour un ENSEMBLE de comptes exacts et
+    /// de racines, en UNE seule requête. Brouillons et extournes exclus : c'est une sortie légale,
+    /// pas un état de consultation.
+    /// </summary>
+    /// <param name="exactAccounts">Numéros à rapprocher à l'identique.</param>
+    /// <param name="accountPrefixes">Racines : le compte et toute sa descendance.</param>
+    /// <returns>
+    /// Mouvement par numéro de compte <b>réellement rencontré</b> : un compte demandé mais sans
+    /// mouvement sur la période est simplement absent du dictionnaire, il ne vaut pas zéro par
+    /// défaut — c'est à l'appelant de distinguer « pas de mouvement » de « compte inexistant ».
+    /// </returns>
+    /// <remarks>
+    /// Une seule requête, quel que soit le nombre de rubriques : l'appelant réunit les comptes de
+    /// toutes les rubriques avant d'appeler. Découper par rubrique ramènerait une requête par ligne
+    /// de déclaration, soit une centaine d'allers-retours pour un seul calcul.
+    /// </remarks>
+    Task<IReadOnlyDictionary<string, AccountPeriodMovement>> SumMovementsByAccountsAsync(
+        IReadOnlyCollection<string> exactAccounts,
+        IReadOnlyCollection<string> accountPrefixes,
+        DateTime from,
+        DateTime to,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Mouvements de TVA caisse comptabilisés sur la période, en montants SIGNÉS :

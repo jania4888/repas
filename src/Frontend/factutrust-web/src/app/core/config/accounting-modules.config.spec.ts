@@ -33,6 +33,42 @@ describe('accounting-modules.config', () => {
     });
   });
 
+  for (const DM_ROUTE of [
+    '/accounting/dm/configuration',
+    '/accounting/dm/calcul',
+    '/accounting/dm/modele',
+    '/accounting/dm/suivi'
+  ]) {
+    describe(`écran DM ${DM_ROUTE}`, () => {
+      it('est rattachée à Declarations, sous accounting:read', () => {
+        const declarations = ACCOUNTING_MODULES.find(m => m.title === 'Declarations');
+        const link = declarations?.links.find(l => l.route === DM_ROUTE);
+
+        expect(link).toBeDefined();
+        expect(link?.perms).toEqual(['accounting:read']);
+      });
+
+      it("n'est rattachée à aucun autre module que Declarations", () => {
+        // Décisif : la liste des routes autorisées aux sociétés est construite à partir des liens du
+        // module « États ». Y déplacer cet écran l'ouvrirait aux sociétés sans que personne ne
+        // touche à la configuration de navigation société.
+        const owners = ACCOUNTING_MODULES.filter(m => m.links.some(l => l.route === DM_ROUTE)).map(
+          m => m.title
+        );
+
+        expect(owners).toEqual(['Declarations']);
+      });
+
+      it('reste visible dans le rail cabinet délégué', () => {
+        const delegated = getFirmDelegatedAccountingModules()
+          .flatMap(m => m.links)
+          .map(l => l.route);
+
+        expect(delegated).toContain(DM_ROUTE);
+      });
+    });
+  }
+
   describe('États icons', () => {
     it('uses a Free Font Awesome glyph for Journaux auxiliaires and unique icons', () => {
       const etatsModule = ACCOUNTING_MODULES.find(m => m.title === 'États');
