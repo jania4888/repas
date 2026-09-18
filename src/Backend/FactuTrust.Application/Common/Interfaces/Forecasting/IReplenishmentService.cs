@@ -63,6 +63,15 @@ public interface IReplenishmentService
     /// </summary>
     Task<CreatePurchaseOrdersResultDto> CreatePurchaseOrdersAsync(
         IReadOnlyList<Guid> recommendationIds,
+        IReadOnlyList<CreatePurchaseOrderLinePriceDto>? linePrices,
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Builds line prices from product purchase price for recommendations that would become PO lines.
+    /// Throws when a linkable line has no purchase price on the product (assistant / non-UI flows).
+    /// </summary>
+    Task<IReadOnlyList<CreatePurchaseOrderLinePriceDto>> SuggestPurchaseOrderLinePricesAsync(
+        IReadOnlyList<Guid> recommendationIds,
         CancellationToken ct = default);
 
     /// <summary>Returns the immutable decision history (oldest → newest) for one recommendation.</summary>

@@ -192,10 +192,22 @@ public sealed partial class AiToolExecutor
             .Distinct()
             .ToList();
         if (ids.Count == 0) return AiToolResult.Error("Aucun GUID valide trouvé dans recommendation_ids_csv.");
+        IReadOnlyList<CreatePurchaseOrderLinePriceDto> linePrices;
+        try
+        {
+            linePrices = await _replenishment!.SuggestPurchaseOrderLinePricesAsync(ids, ct);
+        }
+        catch (ArgumentException ex)
+        {
+            return AiToolResult.Error(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return AiToolResult.Error(ex.Message);
+        }
+
         // V2 service actually creates draft POs (vs. V1 which only flipped statuses to Approved).
-        // Keep the LLM-facing summary compact: count + qty + a human readable note so existing
-        // prompt expectations (count, qty, notes) are preserved while exposing the warnings if any.
-        var dto = await _replenishment!.CreatePurchaseOrdersAsync(ids, ct);
+        var dto = await _replenishment.CreatePurchaseOrdersAsync(ids, linePrices, ct);
         var notes = dto.CreatedPurchaseOrdersCount == 0
             ? "Aucun bon de commande créé. Voir warnings."
             : $"{dto.CreatedPurchaseOrdersCount} bon(s) de commande créé(s), {dto.LinkedRecommendationsCount} recommandation(s) liée(s).";

@@ -33,6 +33,18 @@ export interface PreparePoAssignment {
   supplierId: string;
 }
 
+/** Persisted via POST override before create-purchase-orders (qty and/or supplier). */
+export interface PreparePoLineUpdate {
+  recommendationId: string;
+  manualQty: number | null;
+  manualSupplierId: string | null;
+}
+
+export interface PreparePoLinePrice {
+  recommendationId: string;
+  unitPrice: number;
+}
+
 /**
  * Confirmation modal shown before creating draft purchase orders from selected recommendations.
  * Groups the selection by effective supplier (manual override > preferred) and warns about
@@ -67,6 +79,7 @@ export interface PreparePoAssignment {
         <div class="modal-body">
           @if (groups().length > 0) {
             <p class="hint">
+              Vérifiez les quantités et les fournisseurs ci-dessous.
               {{ linkableCount() }} bon(s) de commande sera(seront) créé(s) en statut <strong>Brouillon</strong>,
               regroupé(s) par fournisseur. Vous pourrez les valider ensuite depuis le module Achats.
             </p>
@@ -85,7 +98,7 @@ export interface PreparePoAssignment {
                     </span>
                     <span class="group-count">
                       {{ g.recommendations.length }} ligne(s) — total
-                      {{ g.totalQty | qtyFmt: null }} u.
+                      {{ g.totalQty | qtyFmt: groupFormatUnit(g) }} u.
                     </span>
                   </header>
                   <!-- Bulk assign — one supplier for every still-unassigned line (≥2 lines). -->
@@ -105,40 +118,89 @@ export interface PreparePoAssignment {
                     </div>
                   }
                   <ul class="po-lines">
+                    <li class="po-lines-header" aria-hidden="true">
+                      <span class="po-col-code">Code</span>
+                      <span class="po-col-name">Produit</span>
+                      <span class="po-col-supplier">Fournisseur</span>
+                      <span class="po-col-price">PU HT</span>
+                      <span class="po-col-qty">Qté</span>
+                    </li>
                     @for (r of g.recommendations; track r.id) {
-                      <li class="po-line" [class.po-line--unassigned]="g.supplierId === null">
+                      <li class="po-line" [class.po-line--unassigned]="effectiveSupplierId(r) === null">
                         <div class="po-line__head">
                           <span class="po-code">{{ r.productCode }}</span>
                           <span class="po-name">{{ r.productName }}</span>
-                          <span class="po-qty">{{ effectiveQty(r) | qtyFmt: r.productUnit }} u.</span>
-                        </div>
-                        @if (g.supplierId === null) {
-                          <div class="po-assign-row">
+                          <div class="po-supplier-block">
                             @if (loadingSuppliers()) {
-                              <span class="assign-state">Chargement des fournisseurs…</span>
+                              <span class="assign-state">Chargement…</span>
                             } @else if (suppliers().length === 0) {
-                              <span class="assign-state">Aucun fournisseur disponible — créez-en un dans le module Achats.</span>
+                              <span class="assign-state">Aucun fournisseur — module Achats.</span>
                             } @else {
-                              <i class="pi pi-truck" aria-hidden="true"></i>
-                              <select
-                                class="assign-select"
-                                [ngModel]="selectedSupplierId(r.id)"
-                                (ngModelChange)="assign(r.id, $event)"
-                                [attr.aria-label]="'Assigner un fournisseur à ' + r.productCode">
-                                <option [ngValue]="null">— Choisir un fournisseur —</option>
-                                @for (s of suppliers(); track s.id) {
-                                  <option [ngValue]="s.id">{{ s.name }}</option>
-                                }
-                              </select>
+                              <label class="po-supplier-field">
+                                <select
+                                  class="assign-select po-supplier-select"
+                                  [class.po-supplier-select--issue]="effectiveSupplierId(r) === null"
+                                  [ngModel]="displaySupplierId(r)"
+                                  (ngModelChange)="assign(r.id, $event)"
+                                  [attr.aria-label]="'Fournisseur pour ' + r.productCode">
+                                  <option [ngValue]="null">— Choisir un fournisseur —</option>
+                                  @for (s of suppliers(); track s.id) {
+                                    <option [ngValue]="s.id">{{ s.name }}</option>
+                                  }
+                                </select>
+                              </label>
                             }
                           </div>
-                        }
+                          <div class="po-price-block">
+                            <label class="po-price-field">
+                              <input
+                                type="number"
+                                class="po-price-input"
+                                min="0"
+                                step="0.001"
+                                [ngModel]="draftPriceValue(r.id)"
+                                (ngModelChange)="setDraftPrice(r.id, $event)"
+                                [class.invalid]="priceInvalidForLinkable(r)"
+                                [attr.aria-label]="'Prix unitaire HT pour ' + r.productCode"
+                                placeholder="—" />
+                            </label>
+                            <span class="po-price-suffix">TND</span>
+                          </div>
+                          <div class="po-qty-block">
+                            <label class="po-qty-field">
+                              <input
+                                type="number"
+                                class="po-qty-input"
+                                min="0"
+                                [attr.step]="isDiscreteUnit(r) ? 1 : 'any'"
+                                [ngModel]="draftQtyValue(r.id)"
+                                (ngModelChange)="setDraftQty(r.id, $event)"
+                                [class.invalid]="qtyInvalidFor(r.id)"
+                                [attr.aria-label]="'Quantité à commander pour ' + r.productCode" />
+                            </label>
+                            <span class="po-rec-hint" title="Quantité recommandée par le moteur">
+                              Rec. {{ r.recommendedQty | qtyFmt: r.productUnit }}
+                            </span>
+                          </div>
+                        </div>
                       </li>
                     }
                   </ul>
                 </li>
               }
             </ul>
+
+            @if (anyQtyInvalid()) {
+              <p class="qty-error" role="alert">
+                Chaque quantité doit être un nombre strictement supérieur à 0.
+              </p>
+            }
+
+            @if (anyPriceMissing()) {
+              <p class="qty-error" role="alert">
+                Chaque ligne avec fournisseur doit avoir un prix unitaire HT strictement supérieur à 0.
+              </p>
+            }
 
             @if (skippedCount() > 0) {
               <div class="warning" role="alert">
@@ -173,7 +235,7 @@ export interface PreparePoAssignment {
   `,
   styles: [`
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-    .modal-panel { background: white; border-radius: 10px; width: 100%; max-width: 640px; box-shadow: 0 20px 60px rgba(0,0,0,.18); display: flex; flex-direction: column; max-height: 90vh; }
+    .modal-panel { background: white; border-radius: 10px; width: 100%; max-width: 920px; box-shadow: 0 20px 60px rgba(0,0,0,.18); display: flex; flex-direction: column; max-height: 90vh; }
     .modal-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 1.25rem 1.25rem .75rem; border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); }
     .modal-header h3 { margin: 0 0 .15rem; font-size: 1.1rem; font-weight: 600; color: var(--color-neutral-900, #111827); }
     .modal-subtitle { font-size: .8rem; color: var(--color-neutral-500, #9ca3af); }
@@ -192,13 +254,29 @@ export interface PreparePoAssignment {
     /* Namespaced (.po-*) so generic global rules (.line/.code/.name/.qty) can't leak in and
        break the layout — the cause of the overlapping rows reported in the bug. */
     .po-lines { list-style: none; margin: 0; padding: .35rem .85rem .55rem; display: flex; flex-direction: column; gap: .3rem; font-size: .85rem; }
+    .po-lines-header { display: grid; grid-template-columns: 4.5rem 1fr minmax(9rem, 1.2fr) 5.5rem 5.5rem; gap: .5rem; padding: 0 .1rem .25rem; font-size: .7rem; font-weight: 600; text-transform: uppercase; color: var(--color-neutral-500, #6b7280); border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); }
     .po-line { display: flex; flex-direction: column; gap: .3rem; padding: .15rem 0; min-width: 0; }
     .po-line--unassigned { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: .4rem .55rem; }
-    .po-line__head { display: flex; align-items: center; gap: .5rem; min-width: 0; }
-    .po-code { flex: 0 0 auto; font-family: monospace; font-size: .75rem; color: var(--color-neutral-500, #6b7280); }
-    .po-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .po-qty { flex: 0 0 auto; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--color-primary-700, #1e40af); white-space: nowrap; }
-    .po-assign-row { display: flex; align-items: center; gap: .4rem; width: 100%; min-width: 0; color: #92400e; }
+    .po-line__head { display: grid; grid-template-columns: 4.5rem 1fr minmax(9rem, 1.2fr) 5.5rem 5.5rem; align-items: center; gap: .5rem; min-width: 0; }
+    .po-code { font-family: monospace; font-size: .75rem; color: var(--color-neutral-500, #6b7280); align-self: center; }
+    .po-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; align-self: center; }
+    .po-supplier-block { min-width: 0; }
+    .po-supplier-field { display: block; margin: 0; min-width: 0; }
+    .po-supplier-select { border-color: var(--color-neutral-300, #d1d5db); width: 100%; }
+    .po-supplier-select--issue { border-color: #fcd34d; }
+    .po-price-block { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; min-width: 0; }
+    .po-price-field { display: block; margin: 0; }
+    .po-price-input { width: 4.75rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; text-align: right; }
+    .po-price-input:focus { outline: 2px solid var(--color-primary-400, #60a5fa); outline-offset: 1px; }
+    .po-price-input.invalid { border-color: #f87171; background: #fef2f2; }
+    .po-price-suffix { font-size: .65rem; color: var(--color-neutral-500, #6b7280); }
+    .po-qty-block { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; min-width: 0; }
+    .po-qty-field { display: block; margin: 0; }
+    .po-qty-input { width: 4.5rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+    .po-qty-input:focus { outline: 2px solid var(--color-primary-400, #60a5fa); outline-offset: 1px; }
+    .po-qty-input.invalid { border-color: #f87171; background: #fef2f2; }
+    .po-rec-hint { font-size: .7rem; color: var(--color-neutral-500, #6b7280); white-space: nowrap; }
+    .qty-error { margin: .75rem 0 0; padding: .5rem .75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; color: #991b1b; font-size: .85rem; }
     .po-bulk-assign { display: flex; align-items: center; gap: .4rem; padding: .5rem .85rem; background: #fffaf0; border-bottom: 1px dashed #fcd34d; color: #92400e; }
     .assign-select, .po-bulk-select { flex: 1 1 auto; min-width: 0; padding: .35rem .5rem; border: 1px solid #fcd34d; border-radius: 6px; font: inherit; background: white; }
     .po-bulk-select { border-color: #f59e0b; font-weight: 500; }
@@ -218,19 +296,54 @@ export interface PreparePoAssignment {
 export class PreparePoConfirmModalComponent implements OnInit {
   /** Selected recommendations sent in for grouping & confirmation. */
   @Input() set selection(value: ReplenishmentRecommendation[]) {
-    this._recs.set(value ?? []);
+    const list = value ?? [];
+    this._recs.set(list);
+    const draft = new Map<string, number>();
+    const initial = new Map<string, number>();
+    for (const r of list) {
+      const raw = r.manualQtyOverride ?? r.recommendedQty;
+      const q = QuantityFormatPipe.toEditableQuantity(raw, r.productUnit);
+      draft.set(r.id, q);
+      initial.set(r.id, q);
+    }
+    this.qtyDraft.set(draft);
+    this.initialQtyById.set(initial);
+    const initialSuppliers = new Map<string, string | null>();
+    for (const r of list) {
+      initialSuppliers.set(r.id, r.manualSupplierOverride ?? r.preferredSupplierId ?? null);
+    }
+    this.initialSupplierById.set(initialSuppliers);
+    this.assignments.set(new Map());
+    const priceDraft = new Map<string, number | null>();
+    for (const r of list) {
+      const suggested = r.suggestedPurchaseUnitPrice;
+      priceDraft.set(
+        r.id,
+        suggested != null && Number.isFinite(suggested) && suggested > 0 ? suggested : null
+      );
+    }
+    this.priceDraft.set(priceDraft);
   }
   get recommendations(): ReplenishmentRecommendation[] { return this._recs(); }
 
-  /** Emits suppliers chosen in-modal for lines that had none, so the parent can persist them first. */
-  @Output() confirm = new EventEmitter<{ assignments: PreparePoAssignment[] }>();
+  /** Emits line overrides to persist before create-purchase-orders. */
+  @Output() confirm = new EventEmitter<{ lineUpdates: PreparePoLineUpdate[]; linePrices: PreparePoLinePrice[] }>();
   @Output() cancel = new EventEmitter<void>();
 
   private readonly supplierService = inject(SupplierService);
 
   private readonly _recs = signal<ReplenishmentRecommendation[]>([]);
 
-  /** In-modal supplier choices for recommendations lacking a preferred/manual supplier (recId → supplierId). */
+  /** Editable order qty per recommendation (initialized from effective qty at open). */
+  readonly qtyDraft = signal<Map<string, number>>(new Map());
+  /** Editable unit purchase price HT per recommendation. */
+  readonly priceDraft = signal<Map<string, number | null>>(new Map());
+  /** Snapshot at open — used to detect qty edits without persisting unchanged lines. */
+  private readonly initialQtyById = signal<Map<string, number>>(new Map());
+  /** Effective supplier at open (manual override > preferred) — used to detect supplier edits. */
+  private readonly initialSupplierById = signal<Map<string, string | null>>(new Map());
+
+  /** In-modal supplier choices (recId → supplierId); only user edits are stored here. */
   readonly assignments = signal<Map<string, string>>(new Map());
   readonly suppliers = signal<SupplierListItem[]>([]);
   readonly loadingSuppliers = signal<boolean>(false);
@@ -241,18 +354,19 @@ export class PreparePoConfirmModalComponent implements OnInit {
   /** Recommendations grouped by effective supplier (in-modal assignment > manual override > preferred). */
   readonly groups = computed<SupplierGroup[]>(() => {
     const assigns = this.assignments();
+    const draft = this.qtyDraft();
     const nameById = new Map(this.suppliers().map(s => [s.id, s.name]));
     const grouped = new Map<string | null, SupplierGroup>();
     for (const r of this._recs()) {
-      const assigned = assigns.get(r.id) ?? null;
-      const supplierId = assigned ?? r.manualSupplierOverride ?? r.preferredSupplierId ?? null;
+      const supplierId = this.effectiveSupplierId(r);
       const supplierName = supplierId === null
         ? 'Sans fournisseur'
-        : assigned
-          ? (nameById.get(assigned) ?? 'Fournisseur')
-          : (r.preferredSupplierName ?? nameById.get(supplierId) ?? 'Fournisseur');
+        : (nameById.get(supplierId) ?? r.preferredSupplierName ?? 'Fournisseur');
       const existing = grouped.get(supplierId);
-      const qty = this.effectiveQty(r);
+      const qty = draft.get(r.id) ?? QuantityFormatPipe.toEditableQuantity(
+        r.manualQtyOverride ?? r.recommendedQty,
+        r.productUnit
+      );
       if (existing) {
         existing.recommendations.push(r);
         existing.totalQty += qty;
@@ -282,15 +396,20 @@ export class PreparePoConfirmModalComponent implements OnInit {
 
   readonly linkableCount = computed(() => this.groups().filter(g => g.supplierId !== null).length);
 
-  /** A PO can only be created if at least one line resolves to a supplier (blocks the no-op call). */
-  readonly canConfirm = computed(() => this.linkableCount() > 0);
+  readonly anyQtyInvalid = computed(() =>
+    this._recs().some(r => this.qtyInvalidForId(r.id)));
+
+  readonly anyPriceMissing = computed(() =>
+    this._recs().some(r => this.effectiveSupplierId(r) !== null && this.priceInvalidForLinkable(r)));
+
+  /** A PO can only be created if at least one line resolves to a supplier and all qtys are valid. */
+  readonly canConfirm = computed(() => {
+    if (this.linkableCount() <= 0) return false;
+    return !this.anyQtyInvalid() && !this.anyPriceMissing();
+  });
 
   ngOnInit(): void {
-    // Fetch suppliers only when at least one selected line lacks a resolvable supplier —
-    // the happy path (every line already has one) stays free of an extra request.
-    const needsSupplier = this._recs().some(
-      r => (r.manualSupplierOverride ?? r.preferredSupplierId ?? null) === null);
-    if (needsSupplier) void this.loadSuppliers();
+    void this.loadSuppliers();
   }
 
   private async loadSuppliers(): Promise<void> {
@@ -306,11 +425,21 @@ export class PreparePoConfirmModalComponent implements OnInit {
     }
   }
 
-  /** Current in-modal supplier choice for a line (null when none). Kept in the component so the
-   *  template binding avoids the nullish-coalescing operator, which Angular 17's JIT control-flow
-   *  compiler mis-handles inside @for/@if (emits an undeclared tmp_N temporary). */
-  selectedSupplierId(recommendationId: string): string | null {
-    return this.assignments().get(recommendationId) ?? null;
+  /** System-resolved supplier at open (manual override > preferred). */
+  resolvedSupplierId(r: ReplenishmentRecommendation): string | null {
+    return r.manualSupplierOverride ?? r.preferredSupplierId ?? null;
+  }
+
+  /** Effective supplier for grouping / PO prep (in-modal choice > resolved). */
+  effectiveSupplierId(r: ReplenishmentRecommendation): string | null {
+    const assigned = this.assignments().get(r.id);
+    if (assigned !== undefined) return assigned;
+    return this.resolvedSupplierId(r);
+  }
+
+  /** Bound value for the per-line supplier select (avoids ?? in the template). */
+  displaySupplierId(r: ReplenishmentRecommendation): string | null {
+    return this.effectiveSupplierId(r);
   }
 
   /** Records (or clears) the in-modal supplier choice for a recommendation. */
@@ -340,14 +469,122 @@ export class PreparePoConfirmModalComponent implements OnInit {
   }
 
   effectiveQty(r: ReplenishmentRecommendation): number {
-    return r.manualQtyOverride ?? r.recommendedQty;
+    const raw = r.manualQtyOverride ?? r.recommendedQty;
+    return QuantityFormatPipe.toEditableQuantity(raw, r.productUnit);
+  }
+
+  isDiscreteUnit(r: ReplenishmentRecommendation): boolean {
+    return QuantityFormatPipe.isDiscreteUnit(r.productUnit);
+  }
+
+  /** Unit passed to qtyFmt for a supplier group total (null when units differ). */
+  groupFormatUnit(g: SupplierGroup): string | null {
+    const units = g.recommendations.map(r => r.productUnit ?? '');
+    const first = units[0];
+    return units.every(u => u === first) ? (first || null) : null;
+  }
+
+  draftQtyValue(recommendationId: string): number {
+    const r = this._recs().find(x => x.id === recommendationId);
+    return this.qtyDraft().get(recommendationId) ?? (r ? this.effectiveQty(r) : 0);
+  }
+
+  draftPriceValue(recommendationId: string): number | null {
+    const v = this.priceDraft().get(recommendationId);
+    return v === undefined ? null : v;
+  }
+
+  setDraftPrice(recommendationId: string, value: number | string | null): void {
+    const parsed = value === null || value === '' ? null : Number(value);
+    const normalized = parsed !== null && Number.isFinite(parsed) ? parsed : null;
+    const next = new Map(this.priceDraft());
+    next.set(recommendationId, normalized);
+    this.priceDraft.set(next);
+  }
+
+  priceInvalidForLinkable(r: ReplenishmentRecommendation): boolean {
+    if (this.effectiveSupplierId(r) === null) return false;
+    const v = this.priceDraft().get(r.id);
+    return v === undefined || v === null || !Number.isFinite(v) || v <= 0;
+  }
+
+  buildLinePrices(): PreparePoLinePrice[] {
+    const prices: PreparePoLinePrice[] = [];
+    for (const r of this._recs()) {
+      if (this.effectiveSupplierId(r) === null) continue;
+      const v = this.priceDraft().get(r.id);
+      if (v != null && Number.isFinite(v) && v > 0) {
+        prices.push({ recommendationId: r.id, unitPrice: v });
+      }
+    }
+    return prices;
+  }
+
+  setDraftQty(recommendationId: string, value: number | string | null): void {
+    const r = this._recs().find(x => x.id === recommendationId);
+    const parsed = value === null || value === '' ? NaN : Number(value);
+    const normalized = r && Number.isFinite(parsed)
+      ? QuantityFormatPipe.toEditableQuantity(parsed, r.productUnit)
+      : parsed;
+    const next = new Map(this.qtyDraft());
+    next.set(recommendationId, normalized);
+    this.qtyDraft.set(next);
+  }
+
+  qtyInvalidFor(recommendationId: string): boolean {
+    return this.qtyInvalidForId(recommendationId);
+  }
+
+  private qtyInvalidForId(recommendationId: string): boolean {
+    const v = this.qtyDraft().get(recommendationId);
+    return v === undefined || !Number.isFinite(v) || v <= 0;
+  }
+
+  /** Builds override payloads for lines with in-modal supplier and/or qty changes. */
+  buildLineUpdates(): PreparePoLineUpdate[] {
+    const assigns = this.assignments();
+    const draft = this.qtyDraft();
+    const initialQty = this.initialQtyById();
+    const initialSuppliers = this.initialSupplierById();
+    const updates: PreparePoLineUpdate[] = [];
+
+    for (const r of this._recs()) {
+      const supplierDirty = assigns.has(r.id);
+      const rawEffective = r.manualQtyOverride ?? r.recommendedQty;
+      const displayEffective = QuantityFormatPipe.toEditableQuantity(rawEffective, r.productUnit);
+      const finalQty = draft.get(r.id) ?? displayEffective;
+      const initialQtyVal = initialQty.get(r.id) ?? displayEffective;
+      const qtyDirty = finalQty !== initialQtyVal;
+      const needsRoundingPersist = displayEffective !== rawEffective && finalQty === displayEffective;
+      if (!supplierDirty && !qtyDirty && !needsRoundingPersist) continue;
+
+      let manualQty: number | null;
+      if (qtyDirty || needsRoundingPersist) {
+        manualQty = finalQty === r.recommendedQty && !needsRoundingPersist ? null : finalQty;
+      } else {
+        manualQty = r.manualQtyOverride ?? null;
+      }
+
+      let manualSupplierId: string | null;
+      if (supplierDirty) {
+        const chosen = assigns.get(r.id) ?? null;
+        const preferred = r.preferredSupplierId ?? null;
+        manualSupplierId = chosen === preferred || chosen === null ? null : chosen;
+      } else {
+        manualSupplierId = r.manualSupplierOverride ?? null;
+      }
+
+      updates.push({ recommendationId: r.id, manualQty, manualSupplierId });
+    }
+    return updates;
   }
 
   onConfirm(): void {
     if (!this.canConfirm()) return;
-    const assignments: PreparePoAssignment[] = [...this.assignments().entries()]
-      .map(([recommendationId, supplierId]) => ({ recommendationId, supplierId }));
-    this.confirm.emit({ assignments });
+    this.confirm.emit({
+      lineUpdates: this.buildLineUpdates(),
+      linePrices: this.buildLinePrices()
+    });
   }
 
   onCancel(): void { this.cancel.emit(); }

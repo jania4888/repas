@@ -63,6 +63,7 @@ describe('ForecastingService — Replenishment V2', () => {
       daysOfStockRemaining: 1,
       userNotes: null,
       urgencyLevel: 'Urgent',
+      suggestedPurchaseUnitPrice: 15,
       ...over
     };
   }
@@ -189,13 +190,17 @@ describe('ForecastingService — Replenishment V2', () => {
         }],
         warnings: []
       };
-      service.createPurchaseOrdersFromReplenishment(ids).subscribe(res => {
+      const linePrices = [
+        { recommendationId: 'rec-1', unitPrice: 10 },
+        { recommendationId: 'rec-2', unitPrice: 12 }
+      ];
+      service.createPurchaseOrdersFromReplenishment(ids, linePrices).subscribe(res => {
         expect(res.createdPurchaseOrdersCount).toBe(1);
         expect(res.linkedRecommendationsCount).toBe(2);
       });
       const req = httpMock.expectOne(`${base}/replenishment/create-purchase-orders`);
       expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual({ recommendationIds: ids });
+      expect(req.request.body).toEqual({ recommendationIds: ids, linePrices });
       req.flush({ success: true, data: expected });
     });
   });
@@ -346,6 +351,15 @@ describe('ForecastingService — Replenishment V2', () => {
           page: 1, pageSize: 50, totalCount: 1
         }
       });
+    });
+  });
+
+  describe('recomputeCompleted$', () => {
+    it('notifies subscribers when notifyRecomputeCompleted is called', () => {
+      let notified = false;
+      service.recomputeCompleted$.subscribe(() => { notified = true; });
+      service.notifyRecomputeCompleted();
+      expect(notified).toBe(true);
     });
   });
 });

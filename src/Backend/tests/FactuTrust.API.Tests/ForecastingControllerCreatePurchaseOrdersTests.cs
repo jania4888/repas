@@ -50,12 +50,12 @@ public sealed class ForecastingControllerCreatePurchaseOrdersTests
     {
         var recId = Guid.NewGuid();
         var service = new Mock<IReplenishmentService>();
-        service.Setup(s => s.CreatePurchaseOrdersAsync(It.IsAny<IReadOnlyList<Guid>>(), It.IsAny<CancellationToken>()))
+        service.Setup(s => s.CreatePurchaseOrdersAsync(It.IsAny<IReadOnlyList<Guid>>(), It.IsAny<IReadOnlyList<CreatePurchaseOrderLinePriceDto>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result(created: 0, linked: 0, unlinked: new[] { recId }));
         var controller = CreateController(service.Object);
 
         var result = await controller.CreatePurchaseOrders(
-            new CreatePurchaseOrdersRequestDto(new[] { recId }), CancellationToken.None);
+            new CreatePurchaseOrdersRequestDto(new[] { recId }, null), CancellationToken.None);
 
         var ok = Assert.IsType<OkObjectResult>(result);
         var payload = Assert.IsType<PoApiResponse>(ok.Value);
@@ -69,12 +69,12 @@ public sealed class ForecastingControllerCreatePurchaseOrdersTests
     public async Task CreatePurchaseOrders_WhenNoneCreatedAndNoUnlinked_ReturnsGenericMessage()
     {
         var service = new Mock<IReplenishmentService>();
-        service.Setup(s => s.CreatePurchaseOrdersAsync(It.IsAny<IReadOnlyList<Guid>>(), It.IsAny<CancellationToken>()))
+        service.Setup(s => s.CreatePurchaseOrdersAsync(It.IsAny<IReadOnlyList<Guid>>(), It.IsAny<IReadOnlyList<CreatePurchaseOrderLinePriceDto>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result(created: 0, linked: 0));
         var controller = CreateController(service.Object);
 
         var result = await controller.CreatePurchaseOrders(
-            new CreatePurchaseOrdersRequestDto(new[] { Guid.NewGuid() }), CancellationToken.None);
+            new CreatePurchaseOrdersRequestDto(new[] { Guid.NewGuid() }, null), CancellationToken.None);
 
         var ok = Assert.IsType<OkObjectResult>(result);
         var payload = Assert.IsType<PoApiResponse>(ok.Value);
@@ -85,12 +85,12 @@ public sealed class ForecastingControllerCreatePurchaseOrdersTests
     public async Task CreatePurchaseOrders_WhenCreated_ReturnsCountMessage()
     {
         var service = new Mock<IReplenishmentService>();
-        service.Setup(s => s.CreatePurchaseOrdersAsync(It.IsAny<IReadOnlyList<Guid>>(), It.IsAny<CancellationToken>()))
+        service.Setup(s => s.CreatePurchaseOrdersAsync(It.IsAny<IReadOnlyList<Guid>>(), It.IsAny<IReadOnlyList<CreatePurchaseOrderLinePriceDto>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result(created: 1, linked: 1));
         var controller = CreateController(service.Object);
 
         var result = await controller.CreatePurchaseOrders(
-            new CreatePurchaseOrdersRequestDto(new[] { Guid.NewGuid() }), CancellationToken.None);
+            new CreatePurchaseOrdersRequestDto(new[] { Guid.NewGuid() }, null), CancellationToken.None);
 
         var ok = Assert.IsType<OkObjectResult>(result);
         var payload = Assert.IsType<PoApiResponse>(ok.Value);
@@ -106,11 +106,11 @@ public sealed class ForecastingControllerCreatePurchaseOrdersTests
         var controller = CreateController(service.Object);
 
         var result = await controller.CreatePurchaseOrders(
-            new CreatePurchaseOrdersRequestDto(Array.Empty<Guid>()), CancellationToken.None);
+            new CreatePurchaseOrdersRequestDto(Array.Empty<Guid>(), null), CancellationToken.None);
 
         Assert.IsType<BadRequestObjectResult>(result);
         service.Verify(
-            s => s.CreatePurchaseOrdersAsync(It.IsAny<IReadOnlyList<Guid>>(), It.IsAny<CancellationToken>()),
+            s => s.CreatePurchaseOrdersAsync(It.IsAny<IReadOnlyList<Guid>>(), It.IsAny<IReadOnlyList<CreatePurchaseOrderLinePriceDto>>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 }

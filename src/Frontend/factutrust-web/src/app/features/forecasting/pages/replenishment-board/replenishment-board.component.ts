@@ -2,11 +2,13 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   computed,
   inject,
   signal
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -24,7 +26,7 @@ import { AnalyzeWithAiButtonComponent } from '@features/ai-assistant/components/
 import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen-payload.factory';
 import { ProductDemandModalComponent } from '../../components/product-demand-modal/product-demand-modal.component';
 import { DismissReasonModalComponent } from '../../components/dismiss-reason-modal/dismiss-reason-modal.component';
-import { PreparePoConfirmModalComponent, PreparePoAssignment } from '../../components/prepare-po-confirm-modal/prepare-po-confirm-modal.component';
+import { PreparePoConfirmModalComponent, PreparePoLineUpdate } from '../../components/prepare-po-confirm-modal/prepare-po-confirm-modal.component';
 import { OverrideQuantityModalComponent } from '../../components/override-quantity-modal/override-quantity-modal.component';
 import { DecisionHistoryModalComponent } from '../../components/decision-history-modal/decision-history-modal.component';
 import { ReplenishmentKpiBarComponent } from './replenishment-kpi-bar/replenishment-kpi-bar.component';
@@ -80,8 +82,9 @@ export class ReplenishmentBoardComponent implements OnInit {
   private readonly exportService = inject(ReplenishmentExportService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly filters = signal<ReplenishmentFilters>({ status: 'pending' });
+  readonly filters = signal<ReplenishmentFilters>({});
   readonly rows = signal<ReplenishmentRecommendation[]>([]);
   readonly totalCount = signal(0);
   readonly page = signal(1);
@@ -157,6 +160,12 @@ export class ReplenishmentBoardComponent implements OnInit {
 
   ngOnInit(): void {
     // The filters component emits its initial state in ngOnInit which triggers our first load.
+    this.forecastingService.recomputeCompleted$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        void this.load();
+        void this.refreshKpi();
+      });
   }
 
   // ─────────────────────────────── Loading ────────────────────────────────
@@ -422,30 +431,28 @@ export class ReplenishmentBoardComponent implements OnInit {
     this.preparePoModal.set({ selection: targets });
   }
 
-  async onPreparePoConfirmed(payload: { assignments: PreparePoAssignment[] }): Promise<void> {
+  async onPreparePoConfirmed(payload: { lineUpdates: PreparePoLineUpdate[]; linePrices: { recommendationId: string; unitPrice: number }[] }): Promise<void> {
     const targets = this.preparePoModal()?.selection ?? [];
     this.preparePoModal.set(null);
     if (targets.length === 0) return;
 
-    const assignments = payload?.assignments ?? [];
+    const lineUpdates = payload?.lineUpdates ?? [];
     this.bulkActionInFlight.set(true);
     try {
-      // ── Step 1: persist in-modal supplier choices first (a PO can't be built without one). ──
-      // Each override is independent: allSettled so one failure never aborts the rest.
-      if (assignments.length > 0) {
-        const byId = new Map(targets.map(t => [t.id, t]));
-        const overrideResults = await Promise.allSettled(assignments.map(a =>
-          firstValueFrom(this.forecastingService.overrideReplenishment(a.recommendationId, {
-            manualQty: byId.get(a.recommendationId)?.manualQtyOverride ?? null,
-            manualSupplierId: a.supplierId
+      // ── Step 1: persist in-modal qty / supplier overrides (PO lines use effective qty). ──
+      if (lineUpdates.length > 0) {
+        const overrideResults = await Promise.allSettled(lineUpdates.map(u =>
+          firstValueFrom(this.forecastingService.overrideReplenishment(u.recommendationId, {
+            manualQty: u.manualQty,
+            manualSupplierId: u.manualSupplierId
           }))
         ));
         const failed = overrideResults.filter(r => r.status === 'rejected').length;
         if (failed > 0) {
           this.toast.add({
             severity: 'warn',
-            summary: 'Assignation partielle',
-            detail: `${failed} affectation(s) de fournisseur en échec — ces lignes resteront sans bon de commande.`,
+            summary: 'Enregistrement partiel',
+            detail: `${failed} ligne(s) : quantité ou fournisseur non enregistré(s) — vérifiez avant de renvoyer.`,
             life: 6000
           });
         }
@@ -454,7 +461,10 @@ export class ReplenishmentBoardComponent implements OnInit {
       // ── Step 2: create the draft POs (backend builds them for resolved suppliers and
       //            reports which recommendations it could not link). ──
       const result: CreatePurchaseOrdersResult = await firstValueFrom(
-        this.forecastingService.createPurchaseOrdersFromReplenishment(targets.map(r => r.id))
+        this.forecastingService.createPurchaseOrdersFromReplenishment(
+          targets.map(r => r.id),
+          payload.linePrices ?? []
+        )
       );
 
       const unlinkedCount = result.unlinkedRecommendationIds?.length ?? 0;

@@ -77,7 +77,6 @@ export interface ProjectDetail {
   ownerUserName?: string | null;
   siteAddress?: string | null;
   contractNumber?: string | null;
-  isBillable: boolean;
   timesheetsEnabled: boolean;
   milestonesEnabled: boolean;
   allocatedHours: number;
@@ -408,7 +407,6 @@ export interface UpsertProjectPayload {
   ownerUserId?: string | null;
   siteAddress?: string | null;
   contractNumber?: string | null;
-  isBillable: boolean;
   timesheetsEnabled: boolean;
   milestonesEnabled: boolean;
   allocatedHours: number;
@@ -417,7 +415,6 @@ export interface UpsertProjectPayload {
 
 export interface ProjectSettingsPayload {
   billingMode: ProjectBillingModeCode | number;
-  isBillable: boolean;
   timesheetsEnabled: boolean;
   milestonesEnabled: boolean;
   allocatedHours: number;

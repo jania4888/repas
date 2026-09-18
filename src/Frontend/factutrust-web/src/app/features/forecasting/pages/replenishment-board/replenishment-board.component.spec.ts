@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { NEVER, of, Subject, throwError } from 'rxjs';
 import { ReplenishmentBoardComponent } from './replenishment-board.component';
 import { ForecastingService } from '../../services/forecasting.service';
 import { ReplenishmentExportService } from '../../services/replenishment-export.service';
@@ -36,6 +36,7 @@ function buildRec(over: Partial<ReplenishmentRecommendation> = {}): Replenishmen
     daysOfStockRemaining: null,
     userNotes: null,
     urgencyLevel: 'Normal',
+    suggestedPurchaseUnitPrice: 15,
     ...over
   };
 }
@@ -59,6 +60,7 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     createPurchaseOrdersFromReplenishment: jasmine.Spy;
     getReplenishment: jasmine.Spy;
     getReplenishmentKpi: jasmine.Spy;
+    recomputeCompleted$: typeof NEVER;
   };
   let toast: { add: jasmine.Spy };
 
@@ -71,7 +73,8 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
       getReplenishment: jasmine.createSpy('getReplenishment')
         .and.returnValue(of({ items: [], totalCount: 0 })),
       getReplenishmentKpi: jasmine.createSpy('getReplenishmentKpi')
-        .and.returnValue(of(null))
+        .and.returnValue(of(null)),
+      recomputeCompleted$: NEVER
     };
     toast = { add: jasmine.createSpy('add') };
 
@@ -99,13 +102,24 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
       of(poResult({ createdPurchaseOrdersCount: 2, linkedRecommendationsCount: 2 }))
     );
 
-    await component.onPreparePoConfirmed({ assignments: [{ recommendationId: 'r-1', supplierId: 'sup-A' }] });
+    await component.onPreparePoConfirmed({
+      lineUpdates: [{ recommendationId: 'r-1', manualQty: 42, manualSupplierId: 'sup-A' }],
+      linePrices: [
+        { recommendationId: 'r-1', unitPrice: 15 },
+        { recommendationId: 'r-2', unitPrice: 15 }
+      ]
+    });
 
-    // The assigned supplier is persisted first, carrying the existing manual qty override.
     expect(forecasting.overrideReplenishment).toHaveBeenCalledWith('r-1', { manualQty: 42, manualSupplierId: 'sup-A' });
     expect(forecasting.overrideReplenishment).toHaveBeenCalledTimes(1);
     // Then every target is sent to the create endpoint.
-    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(['r-1', 'r-2']);
+    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(
+      ['r-1', 'r-2'],
+      [
+        { recommendationId: 'r-1', unitPrice: 15 },
+        { recommendationId: 'r-2', unitPrice: 15 }
+      ]
+    );
     expect(component.preparePoModal()).toBeNull();
   });
 
@@ -113,10 +127,16 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     const targets = [buildRec({ id: 'r-1', preferredSupplierId: 'sup-X', preferredSupplierName: 'X' })];
     component.preparePoModal.set({ selection: targets });
 
-    await component.onPreparePoConfirmed({ assignments: [] });
+    await component.onPreparePoConfirmed({
+      lineUpdates: [],
+      linePrices: [{ recommendationId: 'r-1', unitPrice: 15 }]
+    });
 
     expect(forecasting.overrideReplenishment).not.toHaveBeenCalled();
-    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(['r-1']);
+    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(
+      ['r-1'],
+      [{ recommendationId: 'r-1', unitPrice: 15 }]
+    );
     expect(toast.add).toHaveBeenCalledWith(jasmine.objectContaining({ severity: 'success', summary: 'Bons de commande' }));
   });
 
@@ -125,12 +145,18 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     const targets = [buildRec({ id: 'r-1', preferredSupplierId: null })];
     component.preparePoModal.set({ selection: targets });
 
-    await component.onPreparePoConfirmed({ assignments: [{ recommendationId: 'r-1', supplierId: 'sup-A' }] });
+    await component.onPreparePoConfirmed({
+      lineUpdates: [{ recommendationId: 'r-1', manualQty: null, manualSupplierId: 'sup-A' }],
+      linePrices: [{ recommendationId: 'r-1', unitPrice: 15 }]
+    });
 
     // The failed override does not abort the flow — creation is still attempted.
-    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(['r-1']);
+    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(
+      ['r-1'],
+      [{ recommendationId: 'r-1', unitPrice: 15 }]
+    );
     expect(toast.add).toHaveBeenCalledWith(
-      jasmine.objectContaining({ severity: 'warn', summary: 'Assignation partielle' })
+      jasmine.objectContaining({ severity: 'warn', summary: 'Enregistrement partiel' })
     );
   });
 
@@ -144,7 +170,7 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
       unlinkedRecommendationIds: ['r-1']
     })));
 
-    await component.onPreparePoConfirmed({ assignments: [] });
+    await component.onPreparePoConfirmed({ lineUpdates: [], linePrices: [] });
 
     expect(toast.add).toHaveBeenCalledWith(jasmine.objectContaining({
       severity: 'warn',
@@ -158,9 +184,73 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     component.selectedIds.set(new Set(['r-1']));
     component.preparePoModal.set({ selection: [buildRec({ id: 'r-1', preferredSupplierId: 'sup-X', preferredSupplierName: 'X' })] });
 
-    await component.onPreparePoConfirmed({ assignments: [] });
+    await component.onPreparePoConfirmed({
+      lineUpdates: [],
+      linePrices: [{ recommendationId: 'r-1', unitPrice: 15 }]
+    });
 
     expect(component.selectedIds().size).toBe(0);
     expect(forecasting.getReplenishment).toHaveBeenCalled();
+  });
+
+  it('persists qty-only lineUpdates then creates POs', async () => {
+    const targets = [
+      buildRec({ id: 'r-1', preferredSupplierId: 'sup-X', preferredSupplierName: 'X', recommendedQty: 100 })
+    ];
+    component.preparePoModal.set({ selection: targets });
+
+    await component.onPreparePoConfirmed({
+      lineUpdates: [{ recommendationId: 'r-1', manualQty: 80, manualSupplierId: null }],
+      linePrices: [{ recommendationId: 'r-1', unitPrice: 15 }]
+    });
+
+    expect(forecasting.overrideReplenishment).toHaveBeenCalledWith('r-1', { manualQty: 80, manualSupplierId: null });
+    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(
+      ['r-1'],
+      [{ recommendationId: 'r-1', unitPrice: 15 }]
+    );
+  });
+});
+
+describe('ReplenishmentBoardComponent — recompute refresh', () => {
+  let component: ReplenishmentBoardComponent;
+  let recomputeCompleted$: Subject<void>;
+  let forecasting: {
+    getReplenishment: jasmine.Spy;
+    getReplenishmentKpi: jasmine.Spy;
+    recomputeCompleted$: ReturnType<Subject<void>['asObservable']>;
+  };
+
+  beforeEach(() => {
+    recomputeCompleted$ = new Subject<void>();
+    forecasting = {
+      getReplenishment: jasmine.createSpy('getReplenishment')
+        .and.returnValue(of({ items: [], totalCount: 0 })),
+      getReplenishmentKpi: jasmine.createSpy('getReplenishmentKpi')
+        .and.returnValue(of(null)),
+      recomputeCompleted$: recomputeCompleted$.asObservable()
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: ForecastingService, useValue: forecasting },
+        { provide: ReplenishmentExportService, useValue: {} },
+        { provide: ToastService, useValue: { add: jasmine.createSpy('add') } },
+        { provide: AuthService, useValue: { hasAllPermissions: () => true } }
+      ]
+    });
+
+    component = TestBed.runInInjectionContext(() => new ReplenishmentBoardComponent());
+    component.ngOnInit();
+  });
+
+  it('reloads list and KPI when hub recompute completes', () => {
+    forecasting.getReplenishment.calls.reset();
+    forecasting.getReplenishmentKpi.calls.reset();
+
+    recomputeCompleted$.next();
+
+    expect(forecasting.getReplenishment).toHaveBeenCalled();
+    expect(forecasting.getReplenishmentKpi).toHaveBeenCalled();
   });
 });

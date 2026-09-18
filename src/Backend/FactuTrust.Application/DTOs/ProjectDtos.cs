@@ -62,7 +62,6 @@ public sealed record ProjectDto
     public string? OwnerUserName { get; init; }
     public string? SiteAddress { get; init; }
     public string? ContractNumber { get; init; }
-    public bool IsBillable { get; init; }
     public bool TimesheetsEnabled { get; init; }
     public Guid? SalesOrderId { get; init; }
     public string? AnalyticAccountCode { get; init; }
@@ -84,7 +83,6 @@ public sealed record UpsertProjectDto
     public Guid? OwnerUserId { get; init; }
     public string? SiteAddress { get; init; }
     public string? ContractNumber { get; init; }
-    public bool IsBillable { get; init; }
     public bool TimesheetsEnabled { get; init; }
     public bool MilestonesEnabled { get; init; }
     public decimal AllocatedHours { get; init; }

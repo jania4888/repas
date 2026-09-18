@@ -65,6 +65,11 @@ public sealed class PurchaseOrderDraftFactoryTests
             purchasePrice: unitPrice).Value;
     }
 
+    private static Dictionary<Guid, Money> UnitPricesFor(
+        IEnumerable<ReplenishmentRecommendation> recs,
+        decimal amount = 42.5m) =>
+        recs.ToDictionary(r => r.Id, _ => Money.Create(amount, Money.DefaultCurrency));
+
     /// <summary>Builds a recommendation for <paramref name="productId"/>, optionally giving it a
     /// preferred supplier (mirrors the real V2 enrichment path).</summary>
     private static ReplenishmentRecommendation CreateRec(
@@ -93,15 +98,18 @@ public sealed class PurchaseOrderDraftFactoryTests
         var warehouseId = Guid.NewGuid();
         var rec = CreateRec(product.Id, supplier.Id, supplier.Name, warehouseId);
 
+        var unitPrices = UnitPricesFor(new[] { rec }, 25m);
         var result = await factory.BuildDraftPurchaseOrdersAsync(
             new[] { rec },
             new Dictionary<Guid, Product> { [product.Id] = product },
             new Dictionary<Guid, Supplier> { [supplier.Id] = supplier },
+            unitPrices,
             actorUserId: "user-1",
             tenantId: TenantId);
 
         var draft = Assert.Single(result.Drafts);
         Assert.Equal(PurchaseOrderStatus.Draft, draft.PurchaseOrder.Status);
+        Assert.Equal(25m, draft.PurchaseOrder.Lines.Single().UnitPrice.Amount);
         Assert.Equal(supplier.Id, draft.PurchaseOrder.SupplierId);
         // C1 regression pin: the PO must carry the recommendation's warehouse so the next
         // generation run counts its lines as on-order stock (no duplicate recommendation).
@@ -127,6 +135,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             new[] { recA, recB },
             new Dictionary<Guid, Product> { [product.Id] = product },
             new Dictionary<Guid, Supplier> { [supplier.Id] = supplier },
+            UnitPricesFor(new[] { recA, recB }),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -156,6 +165,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             new[] { recA, recB },
             new Dictionary<Guid, Product> { [productA.Id] = productA, [productB.Id] = productB },
             new Dictionary<Guid, Supplier> { [supplier.Id] = supplier },
+            UnitPricesFor(new[] { recA, recB }),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -178,6 +188,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             new[] { rec },
             new Dictionary<Guid, Product> { [product.Id] = product },
             new Dictionary<Guid, Supplier>(),
+            UnitPricesFor(new[] { rec }),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -198,6 +209,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             new[] { rec },
             new Dictionary<Guid, Product> { [product.Id] = product },
             new Dictionary<Guid, Supplier>(),
+            UnitPricesFor(new[] { rec }),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -218,6 +230,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             new[] { rec },
             new Dictionary<Guid, Product> { [product.Id] = product },
             new Dictionary<Guid, Supplier> { [supplier.Id] = supplier },
+            UnitPricesFor(new[] { rec }),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -239,6 +252,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             new[] { recLinked, recUnlinked },
             new Dictionary<Guid, Product> { [withSupplier.Id] = withSupplier, [withoutSupplier.Id] = withoutSupplier },
             new Dictionary<Guid, Supplier> { [supplier.Id] = supplier },
+            UnitPricesFor(new[] { recLinked }),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -256,6 +270,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             Array.Empty<ReplenishmentRecommendation>(),
             new Dictionary<Guid, Product>(),
             new Dictionary<Guid, Supplier>(),
+            new Dictionary<Guid, Money>(),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -280,6 +295,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             new[] { recA, recB },
             new Dictionary<Guid, Product> { [product.Id] = product },
             new Dictionary<Guid, Supplier> { [supplier.Id] = supplier },
+            UnitPricesFor(new[] { recA, recB }),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -312,6 +328,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             new[] { rec },
             new Dictionary<Guid, Product> { [product.Id] = product },
             new Dictionary<Guid, Supplier>(),
+            UnitPricesFor(new[] { rec }),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -338,6 +355,7 @@ public sealed class PurchaseOrderDraftFactoryTests
             new[] { rec },
             new Dictionary<Guid, Product>(),
             new Dictionary<Guid, Supplier> { [supplier.Id] = supplier },
+            UnitPricesFor(new[] { rec }),
             actorUserId: "user-1",
             tenantId: TenantId);
 
@@ -348,5 +366,26 @@ public sealed class PurchaseOrderDraftFactoryTests
                 It.IsAny<Guid>(), It.IsAny<NumberingDocumentType>(), It.IsAny<int>(),
                 It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
             Times.Never);
+    }
+
+    [Fact]
+    public async Task BuildDraftPurchaseOrders_WithoutUnitPrice_ReportsUnlinked()
+    {
+        var factory = CreateFactory();
+        var supplier = CreateSupplier();
+        var product = CreateProduct();
+        var rec = CreateRec(product.Id, supplier.Id, supplier.Name);
+
+        var result = await factory.BuildDraftPurchaseOrdersAsync(
+            new[] { rec },
+            new Dictionary<Guid, Product> { [product.Id] = product },
+            new Dictionary<Guid, Supplier> { [supplier.Id] = supplier },
+            new Dictionary<Guid, Money>(),
+            actorUserId: "user-1",
+            tenantId: TenantId);
+
+        Assert.Empty(result.Drafts);
+        Assert.Equal(rec.Id, Assert.Single(result.UnlinkedRecommendationIds));
+        Assert.Contains(result.Warnings, w => w.Contains("prix unitaire", StringComparison.OrdinalIgnoreCase));
     }
 }

@@ -369,6 +369,7 @@ function buildRec(over: Partial<ReplenishmentRecV2> = {}): ReplenishmentRecV2 {
     daysOfStockRemaining: null,
     userNotes: null,
     urgencyLevel: 'Normal',
+    suggestedPurchaseUnitPrice: 15,
     ...over
   };
 }
@@ -418,6 +419,7 @@ export interface ReplenishmentRecV2 {
   daysOfStockRemaining: number | null;
   userNotes: string | null;
   urgencyLevel: 'OutOfStock' | 'Urgent' | 'Warning' | 'Normal';
+  suggestedPurchaseUnitPrice: number | null;
 }
 
 export interface ReplenishmentKpi {

@@ -82,6 +82,11 @@ public sealed record ProductDetailDto
     /// </summary>
     public Guid? PreferredSupplierId { get; init; }
 
+    /// <summary>
+    /// Stock minimum configuré sur l'entrepôt par défaut (optionnel). Null si non renseigné ou 0.
+    /// </summary>
+    public decimal? MinimumStock { get; init; }
+
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
     public Guid? ParentProductId { get; init; }
@@ -140,6 +145,9 @@ public sealed record CreateProductDto
     /// <summary>Fournisseur préféré (optionnel) ; null = aucun.</summary>
     public Guid? PreferredSupplierId { get; init; }
 
+    /// <summary>Stock minimum sur l'entrepôt par défaut (optionnel).</summary>
+    public decimal? MinimumStock { get; init; }
+
     /// <summary>FODEC applicable (1% sur le HT) sur les ventes.</summary>
     public bool IsFodecApplicable { get; init; }
 
@@ -181,6 +189,9 @@ public sealed record UpdateProductDto
 
     /// <summary>Fournisseur préféré (optionnel) ; null = aucun (efface la préférence).</summary>
     public Guid? PreferredSupplierId { get; init; }
+
+    /// <summary>Stock minimum sur l'entrepôt par défaut (optionnel ; null = ne pas modifier).</summary>
+    public decimal? MinimumStock { get; init; }
 
     /// <summary>FODEC applicable (1% sur le HT) sur les ventes.</summary>
     public bool IsFodecApplicable { get; init; }

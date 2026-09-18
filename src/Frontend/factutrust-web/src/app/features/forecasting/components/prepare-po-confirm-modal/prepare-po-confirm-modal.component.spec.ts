@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { PreparePoConfirmModalComponent, PreparePoAssignment } from './prepare-po-confirm-modal.component';
+import { PreparePoConfirmModalComponent, PreparePoLineUpdate } from './prepare-po-confirm-modal.component';
 import { ReplenishmentRecommendation } from '../../models/forecasting.models';
 import { SupplierService, SupplierListItem } from '@core/services/supplier.service';
 
@@ -33,6 +33,7 @@ function buildRec(over: Partial<ReplenishmentRecommendation> = {}): Replenishmen
     daysOfStockRemaining: null,
     userNotes: null,
     urgencyLevel: 'Normal',
+    suggestedPurchaseUnitPrice: 15,
     ...over
   };
 }
@@ -127,7 +128,7 @@ describe('PreparePoConfirmModalComponent', () => {
     component.selection = [buildRec({ preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })];
     spyOn(component.confirm, 'emit');
     component.onConfirm();
-    expect(component.confirm.emit).toHaveBeenCalled();
+    expect(component.confirm.emit).toHaveBeenCalledWith(jasmine.objectContaining({ lineUpdates: [] }));
   });
 
   // ─── Regression for the reported bug: honest count + no-op guard + inline assignment ───
@@ -195,7 +196,7 @@ describe('PreparePoConfirmModalComponent', () => {
     expect(component.canConfirm()).toBe(false);
   });
 
-  it('emits only the newly-assigned lines in the confirm payload', () => {
+  it('emits only changed lines in the confirm payload (supplier assignment)', () => {
     component.selection = [
       buildRec({ id: 'r-1', preferredSupplierId: null }),
       buildRec({ id: 'r-2', preferredSupplierId: 'sup-B', preferredSupplierName: 'Beta' })
@@ -203,13 +204,14 @@ describe('PreparePoConfirmModalComponent', () => {
     component.suppliers.set([supplier('sup-A', 'Alpha')]);
     component.assign('r-1', 'sup-A');
 
-    let emitted: { assignments: PreparePoAssignment[] } | undefined;
+    let emitted: { lineUpdates: PreparePoLineUpdate[] } | undefined;
     component.confirm.subscribe(v => (emitted = v));
     component.onConfirm();
 
     expect(emitted).toBeDefined();
-    // r-2 already had a preferred supplier, so only r-1 (assigned in-modal) is reported.
-    expect(emitted!.assignments).toEqual([{ recommendationId: 'r-1', supplierId: 'sup-A' }]);
+    expect(emitted!.lineUpdates).toEqual([
+      { recommendationId: 'r-1', manualQty: null, manualSupplierId: 'sup-A' }
+    ]);
   });
 
   it('fetches suppliers on open only when a line lacks a supplier', async () => {
@@ -219,11 +221,27 @@ describe('PreparePoConfirmModalComponent', () => {
     expect(getSuppliersSpy).toHaveBeenCalled();
   });
 
-  it('does NOT fetch suppliers when every line already has one (happy path stays free of the call)', async () => {
+  it('fetches suppliers on open even when every line already has one', async () => {
     component.selection = [buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })];
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(getSuppliersSpy).not.toHaveBeenCalled();
+    expect(getSuppliersSpy).toHaveBeenCalled();
+  });
+
+  it('blocks confirm when a linkable line has no purchase unit price', () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        suggestedPurchaseUnitPrice: null
+      })
+    ];
+    fixture.detectChanges();
+    expect(component.canConfirm()).toBeFalse();
+    component.setDraftPrice('r-1', 12.5);
+    fixture.detectChanges();
+    expect(component.canConfirm()).toBeTrue();
   });
 
   it('fetches only ACTIVE suppliers (isActive: true) — inactive ones are silently rejected by the backend', async () => {
@@ -282,14 +300,160 @@ describe('PreparePoConfirmModalComponent', () => {
     component.suppliers.set([supplier('sup-A', 'Alpha')]);
     component.onBulkAssign('sup-A');
 
-    let emitted: { assignments: PreparePoAssignment[] } | undefined;
+    let emitted: { lineUpdates: PreparePoLineUpdate[] } | undefined;
     component.confirm.subscribe(v => (emitted = v));
     component.onConfirm();
 
     expect(emitted).toBeDefined();
-    expect(emitted!.assignments).toEqual([
-      { recommendationId: 'r-1', supplierId: 'sup-A' },
-      { recommendationId: 'r-2', supplierId: 'sup-A' }
+    expect(emitted!.lineUpdates).toEqual([
+      { recommendationId: 'r-1', manualQty: null, manualSupplierId: 'sup-A' },
+      { recommendationId: 'r-2', manualQty: null, manualSupplierId: 'sup-A' }
     ]);
+  });
+
+  it('updates group total when draft qty changes', () => {
+    component.selection = [
+      buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha', recommendedQty: 100 })
+    ];
+    expect(component.groups()[0].totalQty).toBe(100);
+    component.setDraftQty('r-1', 75);
+    expect(component.groups()[0].totalQty).toBe(75);
+  });
+
+  it('emits lineUpdates when only qty is edited', () => {
+    component.selection = [
+      buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha', recommendedQty: 100 })
+    ];
+    component.setDraftQty('r-1', 80);
+
+    let emitted: { lineUpdates: PreparePoLineUpdate[] } | undefined;
+    component.confirm.subscribe(v => (emitted = v));
+    component.onConfirm();
+
+    expect(emitted!.lineUpdates).toEqual([
+      { recommendationId: 'r-1', manualQty: 80, manualSupplierId: null }
+    ]);
+  });
+
+  it('canConfirm is false when draft qty is zero or invalid', () => {
+    component.selection = [buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })];
+    expect(component.canConfirm()).toBe(true);
+    component.setDraftQty('r-1', 0);
+    expect(component.canConfirm()).toBe(false);
+  });
+
+  it('combines supplier assignment and qty change in one lineUpdate', () => {
+    component.selection = [
+      buildRec({ id: 'r-1', preferredSupplierId: null, recommendedQty: 100, manualQtyOverride: 42 })
+    ];
+    component.assign('r-1', 'sup-A');
+    component.setDraftQty('r-1', 50);
+
+    const updates = component.buildLineUpdates();
+    expect(updates).toEqual([
+      { recommendationId: 'r-1', manualQty: 50, manualSupplierId: 'sup-A' }
+    ]);
+  });
+
+  it('initializes draft qty with list rounding for discrete units', () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        recommendedQty: 569.74,
+        productUnit: 'Pièce'
+      })
+    ];
+    expect(component.draftQtyValue('r-1')).toBe(570);
+    expect(component.groups()[0].totalQty).toBe(570);
+  });
+
+  it('buildLineUpdates persists rounded qty on confirm without user edit', () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        recommendedQty: 569.74,
+        productUnit: 'Pièce'
+      })
+    ];
+    expect(component.buildLineUpdates()).toEqual([
+      { recommendationId: 'r-1', manualQty: 570, manualSupplierId: null }
+    ]);
+  });
+
+  it('displaySupplierId reflects preferred supplier without an in-modal assignment', () => {
+    const rec = buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' });
+    component.selection = [rec];
+    expect(component.displaySupplierId(rec)).toBe('sup-A');
+  });
+
+  it('changing supplier on a preferred line emits override and regroups', () => {
+    component.selection = [
+      buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' }),
+      buildRec({ id: 'r-2', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })
+    ];
+    component.suppliers.set([supplier('sup-A', 'Alpha'), supplier('sup-B', 'Beta')]);
+
+    component.assign('r-1', 'sup-B');
+
+    const groups = component.groups();
+    expect(groups.length).toBe(2);
+    expect(groups.find(g => g.supplierId === 'sup-B')!.recommendations.map(r => r.id)).toEqual(['r-1']);
+
+    const updates = component.buildLineUpdates();
+    expect(updates).toEqual([
+      { recommendationId: 'r-1', manualQty: null, manualSupplierId: 'sup-B' }
+    ]);
+  });
+
+  it('reverting manual override to preferred emits null manualSupplierId', () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        manualSupplierOverride: 'sup-B'
+      })
+    ];
+    component.suppliers.set([supplier('sup-A', 'Alpha'), supplier('sup-B', 'Beta')]);
+    component.assign('r-1', 'sup-A');
+
+    expect(component.buildLineUpdates()).toEqual([
+      { recommendationId: 'r-1', manualQty: null, manualSupplierId: null }
+    ]);
+  });
+
+  it('shows supplier select for lines that already have a preferred supplier', async () => {
+    component.selection = [buildRec({ id: 'r-1', preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })];
+    component.suppliers.set([supplier('sup-A', 'Alpha')]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const selects = fixture.nativeElement.querySelectorAll('select.po-supplier-select');
+    expect(selects.length).toBe(1);
+    expect(fixture.nativeElement.textContent).toContain('Fournisseur');
+  });
+
+  it('shows integer group total in template for discrete unit lines', async () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        recommendedQty: 569.74,
+        productUnit: 'Pièce'
+      })
+    ];
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const count = fixture.nativeElement.querySelector('.group-count')!.textContent!;
+    expect(count).toContain('570');
+    expect(count).not.toContain('569,74');
   });
 });

@@ -121,7 +121,7 @@ export class ReplenishmentFiltersComponent implements OnInit {
 
   private static readonly STORAGE_KEY = 'forecasting-repl-v2-filters';
 
-  readonly filters = signal<ReplenishmentFilters>(this.readFromStorage() ?? { status: 'pending' });
+  readonly filters = signal<ReplenishmentFilters>(this.readFromStorage() ?? {});
   readonly warehouses = signal<Warehouse[]>([]);
   readonly suppliers = signal<SupplierListItem[]>([]);
 
@@ -157,7 +157,7 @@ export class ReplenishmentFiltersComponent implements OnInit {
   }
 
   onReset(): void {
-    this.filters.set({ status: 'pending' });
+    this.filters.set({});
     this.persist(this.filters());
     this.change.emit(this.filters());
   }

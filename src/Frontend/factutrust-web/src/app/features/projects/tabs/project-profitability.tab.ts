@@ -58,7 +58,6 @@ export class ProjectProfitabilityTabComponent implements OnInit {
   data = signal<ProjectProfitability | null>(null);
 
   ngOnInit(): void {
-    if (!this.project.isBillable) return;
     this.api.getProfitability(this.project.id).subscribe({
       next: r => { if (r.success && r.data) this.data.set(r.data); },
       error: e => this.toast.add({

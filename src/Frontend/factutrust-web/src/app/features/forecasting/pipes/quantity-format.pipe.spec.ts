@@ -40,4 +40,14 @@ describe('QuantityFormatPipe', () => {
     expect(QuantityFormatPipe.isDiscreteUnit('Kg')).toBe(false);
     expect(QuantityFormatPipe.isDiscreteUnit(null)).toBe(false);
   });
+
+  it('toEditableQuantity rounds discrete units to integers', () => {
+    expect(QuantityFormatPipe.toEditableQuantity(569.74, 'Pièce')).toBe(570);
+    expect(QuantityFormatPipe.toEditableQuantity(10.4, 'Pcs')).toBe(10);
+  });
+
+  it('toEditableQuantity rounds continuous units to 2 decimals', () => {
+    expect(QuantityFormatPipe.toEditableQuantity(12.556, 'Kg')).toBe(12.56);
+    expect(QuantityFormatPipe.toEditableQuantity(7, null)).toBe(7);
+  });
 });
