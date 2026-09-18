@@ -298,7 +298,8 @@ public class ForecastingController : ControllerBase
                 "Au moins une recommandation est requise.", "RecommendationIdsRequired"));
         try
         {
-            var dto = await _replenishment.CreatePurchaseOrdersAsync(body.RecommendationIds, ct);
+            var dto = await _replenishment.CreatePurchaseOrdersAsync(
+                body.RecommendationIds, body.LinePrices, ct);
             string msg;
             if (dto.CreatedPurchaseOrdersCount == 0)
             {

@@ -36,6 +36,7 @@ function buildRec(over: Partial<ReplenishmentRecommendation> = {}): Replenishmen
     daysOfStockRemaining: null,
     userNotes: null,
     urgencyLevel: 'Normal',
+    suggestedPurchaseUnitPrice: 15,
     ...over
   };
 }
@@ -102,13 +103,23 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     );
 
     await component.onPreparePoConfirmed({
-      lineUpdates: [{ recommendationId: 'r-1', manualQty: 42, manualSupplierId: 'sup-A' }]
+      lineUpdates: [{ recommendationId: 'r-1', manualQty: 42, manualSupplierId: 'sup-A' }],
+      linePrices: [
+        { recommendationId: 'r-1', unitPrice: 15 },
+        { recommendationId: 'r-2', unitPrice: 15 }
+      ]
     });
 
     expect(forecasting.overrideReplenishment).toHaveBeenCalledWith('r-1', { manualQty: 42, manualSupplierId: 'sup-A' });
     expect(forecasting.overrideReplenishment).toHaveBeenCalledTimes(1);
     // Then every target is sent to the create endpoint.
-    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(['r-1', 'r-2']);
+    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(
+      ['r-1', 'r-2'],
+      [
+        { recommendationId: 'r-1', unitPrice: 15 },
+        { recommendationId: 'r-2', unitPrice: 15 }
+      ]
+    );
     expect(component.preparePoModal()).toBeNull();
   });
 
@@ -116,10 +127,16 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     const targets = [buildRec({ id: 'r-1', preferredSupplierId: 'sup-X', preferredSupplierName: 'X' })];
     component.preparePoModal.set({ selection: targets });
 
-    await component.onPreparePoConfirmed({ lineUpdates: [] });
+    await component.onPreparePoConfirmed({
+      lineUpdates: [],
+      linePrices: [{ recommendationId: 'r-1', unitPrice: 15 }]
+    });
 
     expect(forecasting.overrideReplenishment).not.toHaveBeenCalled();
-    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(['r-1']);
+    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(
+      ['r-1'],
+      [{ recommendationId: 'r-1', unitPrice: 15 }]
+    );
     expect(toast.add).toHaveBeenCalledWith(jasmine.objectContaining({ severity: 'success', summary: 'Bons de commande' }));
   });
 
@@ -129,11 +146,15 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     component.preparePoModal.set({ selection: targets });
 
     await component.onPreparePoConfirmed({
-      lineUpdates: [{ recommendationId: 'r-1', manualQty: null, manualSupplierId: 'sup-A' }]
+      lineUpdates: [{ recommendationId: 'r-1', manualQty: null, manualSupplierId: 'sup-A' }],
+      linePrices: [{ recommendationId: 'r-1', unitPrice: 15 }]
     });
 
     // The failed override does not abort the flow — creation is still attempted.
-    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(['r-1']);
+    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(
+      ['r-1'],
+      [{ recommendationId: 'r-1', unitPrice: 15 }]
+    );
     expect(toast.add).toHaveBeenCalledWith(
       jasmine.objectContaining({ severity: 'warn', summary: 'Enregistrement partiel' })
     );
@@ -149,7 +170,7 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
       unlinkedRecommendationIds: ['r-1']
     })));
 
-    await component.onPreparePoConfirmed({ lineUpdates: [] });
+    await component.onPreparePoConfirmed({ lineUpdates: [], linePrices: [] });
 
     expect(toast.add).toHaveBeenCalledWith(jasmine.objectContaining({
       severity: 'warn',
@@ -163,7 +184,10 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     component.selectedIds.set(new Set(['r-1']));
     component.preparePoModal.set({ selection: [buildRec({ id: 'r-1', preferredSupplierId: 'sup-X', preferredSupplierName: 'X' })] });
 
-    await component.onPreparePoConfirmed({ lineUpdates: [] });
+    await component.onPreparePoConfirmed({
+      lineUpdates: [],
+      linePrices: [{ recommendationId: 'r-1', unitPrice: 15 }]
+    });
 
     expect(component.selectedIds().size).toBe(0);
     expect(forecasting.getReplenishment).toHaveBeenCalled();
@@ -176,11 +200,15 @@ describe('ReplenishmentBoardComponent — onPreparePoConfirmed (two-phase create
     component.preparePoModal.set({ selection: targets });
 
     await component.onPreparePoConfirmed({
-      lineUpdates: [{ recommendationId: 'r-1', manualQty: 80, manualSupplierId: null }]
+      lineUpdates: [{ recommendationId: 'r-1', manualQty: 80, manualSupplierId: null }],
+      linePrices: [{ recommendationId: 'r-1', unitPrice: 15 }]
     });
 
     expect(forecasting.overrideReplenishment).toHaveBeenCalledWith('r-1', { manualQty: 80, manualSupplierId: null });
-    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(['r-1']);
+    expect(forecasting.createPurchaseOrdersFromReplenishment).toHaveBeenCalledWith(
+      ['r-1'],
+      [{ recommendationId: 'r-1', unitPrice: 15 }]
+    );
   });
 });
 

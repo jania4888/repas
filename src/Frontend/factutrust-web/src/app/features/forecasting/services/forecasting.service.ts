@@ -141,11 +141,14 @@ export class ForecastingService {
       .pipe(map(r => this.normalizeRecStatus(r.data!)));
   }
 
-  createPurchaseOrdersFromReplenishment(recommendationIds: string[]): Observable<CreatePurchaseOrdersResult> {
+  createPurchaseOrdersFromReplenishment(
+    recommendationIds: string[],
+    linePrices: { recommendationId: string; unitPrice: number }[]
+  ): Observable<CreatePurchaseOrdersResult> {
     return this.http
       .post<ApiResponse<CreatePurchaseOrdersResult>>(
         `${this.base}/replenishment/create-purchase-orders`,
-        { recommendationIds }
+        { recommendationIds, linePrices }
       )
       .pipe(map(r => r.data!));
   }

@@ -431,7 +431,7 @@ export class ReplenishmentBoardComponent implements OnInit {
     this.preparePoModal.set({ selection: targets });
   }
 
-  async onPreparePoConfirmed(payload: { lineUpdates: PreparePoLineUpdate[] }): Promise<void> {
+  async onPreparePoConfirmed(payload: { lineUpdates: PreparePoLineUpdate[]; linePrices: { recommendationId: string; unitPrice: number }[] }): Promise<void> {
     const targets = this.preparePoModal()?.selection ?? [];
     this.preparePoModal.set(null);
     if (targets.length === 0) return;
@@ -461,7 +461,10 @@ export class ReplenishmentBoardComponent implements OnInit {
       // ── Step 2: create the draft POs (backend builds them for resolved suppliers and
       //            reports which recommendations it could not link). ──
       const result: CreatePurchaseOrdersResult = await firstValueFrom(
-        this.forecastingService.createPurchaseOrdersFromReplenishment(targets.map(r => r.id))
+        this.forecastingService.createPurchaseOrdersFromReplenishment(
+          targets.map(r => r.id),
+          payload.linePrices ?? []
+        )
       );
 
       const unlinkedCount = result.unlinkedRecommendationIds?.length ?? 0;

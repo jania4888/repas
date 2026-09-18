@@ -85,7 +85,9 @@ public sealed record ReplenishmentRecommendationDto(
     Guid? ManualSupplierOverride,
     decimal? DaysOfStockRemaining,
     string? UserNotes,
-    string UrgencyLevel);
+    string UrgencyLevel,
+    /// <summary>Prix d'achat HT produit pour préremplissage modale BC (null si non renseigné sur la fiche).</summary>
+    decimal? SuggestedPurchaseUnitPrice);
 
 /// <summary>
 /// Filters accepted by the V2 list endpoint. All fields are optional. When omitted, the corresponding
@@ -110,7 +112,11 @@ public sealed record OverrideReplenishmentRequestDto(decimal? ManualQty, Guid? M
 
 public sealed record AttachNotesRequestDto(string? Notes);
 
-public sealed record CreatePurchaseOrdersRequestDto(IReadOnlyList<Guid> RecommendationIds);
+public sealed record CreatePurchaseOrderLinePriceDto(Guid RecommendationId, decimal UnitPrice);
+
+public sealed record CreatePurchaseOrdersRequestDto(
+    IReadOnlyList<Guid> RecommendationIds,
+    IReadOnlyList<CreatePurchaseOrderLinePriceDto>? LinePrices);
 
 public sealed record CreatePurchaseOrdersResultDto(
     int CreatedPurchaseOrdersCount,

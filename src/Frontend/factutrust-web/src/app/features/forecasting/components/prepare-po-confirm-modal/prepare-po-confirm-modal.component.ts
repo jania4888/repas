@@ -40,6 +40,11 @@ export interface PreparePoLineUpdate {
   manualSupplierId: string | null;
 }
 
+export interface PreparePoLinePrice {
+  recommendationId: string;
+  unitPrice: number;
+}
+
 /**
  * Confirmation modal shown before creating draft purchase orders from selected recommendations.
  * Groups the selection by effective supplier (manual override > preferred) and warns about
@@ -117,6 +122,7 @@ export interface PreparePoLineUpdate {
                       <span class="po-col-code">Code</span>
                       <span class="po-col-name">Produit</span>
                       <span class="po-col-supplier">Fournisseur</span>
+                      <span class="po-col-price">PU HT</span>
                       <span class="po-col-qty">Qté</span>
                     </li>
                     @for (r of g.recommendations; track r.id) {
@@ -145,6 +151,21 @@ export interface PreparePoLineUpdate {
                               </label>
                             }
                           </div>
+                          <div class="po-price-block">
+                            <label class="po-price-field">
+                              <input
+                                type="number"
+                                class="po-price-input"
+                                min="0"
+                                step="0.001"
+                                [ngModel]="draftPriceValue(r.id)"
+                                (ngModelChange)="setDraftPrice(r.id, $event)"
+                                [class.invalid]="priceInvalidForLinkable(r)"
+                                [attr.aria-label]="'Prix unitaire HT pour ' + r.productCode"
+                                placeholder="—" />
+                            </label>
+                            <span class="po-price-suffix">TND</span>
+                          </div>
                           <div class="po-qty-block">
                             <label class="po-qty-field">
                               <input
@@ -172,6 +193,12 @@ export interface PreparePoLineUpdate {
             @if (anyQtyInvalid()) {
               <p class="qty-error" role="alert">
                 Chaque quantité doit être un nombre strictement supérieur à 0.
+              </p>
+            }
+
+            @if (anyPriceMissing()) {
+              <p class="qty-error" role="alert">
+                Chaque ligne avec fournisseur doit avoir un prix unitaire HT strictement supérieur à 0.
               </p>
             }
 
@@ -208,7 +235,7 @@ export interface PreparePoLineUpdate {
   `,
   styles: [`
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-    .modal-panel { background: white; border-radius: 10px; width: 100%; max-width: 800px; box-shadow: 0 20px 60px rgba(0,0,0,.18); display: flex; flex-direction: column; max-height: 90vh; }
+    .modal-panel { background: white; border-radius: 10px; width: 100%; max-width: 920px; box-shadow: 0 20px 60px rgba(0,0,0,.18); display: flex; flex-direction: column; max-height: 90vh; }
     .modal-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 1.25rem 1.25rem .75rem; border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); }
     .modal-header h3 { margin: 0 0 .15rem; font-size: 1.1rem; font-weight: 600; color: var(--color-neutral-900, #111827); }
     .modal-subtitle { font-size: .8rem; color: var(--color-neutral-500, #9ca3af); }
@@ -227,16 +254,22 @@ export interface PreparePoLineUpdate {
     /* Namespaced (.po-*) so generic global rules (.line/.code/.name/.qty) can't leak in and
        break the layout — the cause of the overlapping rows reported in the bug. */
     .po-lines { list-style: none; margin: 0; padding: .35rem .85rem .55rem; display: flex; flex-direction: column; gap: .3rem; font-size: .85rem; }
-    .po-lines-header { display: grid; grid-template-columns: 4.5rem 1fr minmax(9rem, 1.2fr) 5.5rem; gap: .5rem; padding: 0 .1rem .25rem; font-size: .7rem; font-weight: 600; text-transform: uppercase; color: var(--color-neutral-500, #6b7280); border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); }
+    .po-lines-header { display: grid; grid-template-columns: 4.5rem 1fr minmax(9rem, 1.2fr) 5.5rem 5.5rem; gap: .5rem; padding: 0 .1rem .25rem; font-size: .7rem; font-weight: 600; text-transform: uppercase; color: var(--color-neutral-500, #6b7280); border-bottom: 1px solid var(--color-neutral-200, #e5e7eb); }
     .po-line { display: flex; flex-direction: column; gap: .3rem; padding: .15rem 0; min-width: 0; }
     .po-line--unassigned { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: .4rem .55rem; }
-    .po-line__head { display: grid; grid-template-columns: 4.5rem 1fr minmax(9rem, 1.2fr) 5.5rem; align-items: center; gap: .5rem; min-width: 0; }
+    .po-line__head { display: grid; grid-template-columns: 4.5rem 1fr minmax(9rem, 1.2fr) 5.5rem 5.5rem; align-items: center; gap: .5rem; min-width: 0; }
     .po-code { font-family: monospace; font-size: .75rem; color: var(--color-neutral-500, #6b7280); align-self: center; }
     .po-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; align-self: center; }
     .po-supplier-block { min-width: 0; }
     .po-supplier-field { display: block; margin: 0; min-width: 0; }
     .po-supplier-select { border-color: var(--color-neutral-300, #d1d5db); width: 100%; }
     .po-supplier-select--issue { border-color: #fcd34d; }
+    .po-price-block { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; min-width: 0; }
+    .po-price-field { display: block; margin: 0; }
+    .po-price-input { width: 4.75rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; text-align: right; }
+    .po-price-input:focus { outline: 2px solid var(--color-primary-400, #60a5fa); outline-offset: 1px; }
+    .po-price-input.invalid { border-color: #f87171; background: #fef2f2; }
+    .po-price-suffix { font-size: .65rem; color: var(--color-neutral-500, #6b7280); }
     .po-qty-block { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; min-width: 0; }
     .po-qty-field { display: block; margin: 0; }
     .po-qty-input { width: 4.5rem; padding: .25rem .4rem; border: 1px solid var(--color-neutral-300, #d1d5db); border-radius: 6px; font: inherit; font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
@@ -281,11 +314,20 @@ export class PreparePoConfirmModalComponent implements OnInit {
     }
     this.initialSupplierById.set(initialSuppliers);
     this.assignments.set(new Map());
+    const priceDraft = new Map<string, number | null>();
+    for (const r of list) {
+      const suggested = r.suggestedPurchaseUnitPrice;
+      priceDraft.set(
+        r.id,
+        suggested != null && Number.isFinite(suggested) && suggested > 0 ? suggested : null
+      );
+    }
+    this.priceDraft.set(priceDraft);
   }
   get recommendations(): ReplenishmentRecommendation[] { return this._recs(); }
 
   /** Emits line overrides to persist before create-purchase-orders. */
-  @Output() confirm = new EventEmitter<{ lineUpdates: PreparePoLineUpdate[] }>();
+  @Output() confirm = new EventEmitter<{ lineUpdates: PreparePoLineUpdate[]; linePrices: PreparePoLinePrice[] }>();
   @Output() cancel = new EventEmitter<void>();
 
   private readonly supplierService = inject(SupplierService);
@@ -294,6 +336,8 @@ export class PreparePoConfirmModalComponent implements OnInit {
 
   /** Editable order qty per recommendation (initialized from effective qty at open). */
   readonly qtyDraft = signal<Map<string, number>>(new Map());
+  /** Editable unit purchase price HT per recommendation. */
+  readonly priceDraft = signal<Map<string, number | null>>(new Map());
   /** Snapshot at open — used to detect qty edits without persisting unchanged lines. */
   private readonly initialQtyById = signal<Map<string, number>>(new Map());
   /** Effective supplier at open (manual override > preferred) — used to detect supplier edits. */
@@ -355,10 +399,13 @@ export class PreparePoConfirmModalComponent implements OnInit {
   readonly anyQtyInvalid = computed(() =>
     this._recs().some(r => this.qtyInvalidForId(r.id)));
 
+  readonly anyPriceMissing = computed(() =>
+    this._recs().some(r => this.effectiveSupplierId(r) !== null && this.priceInvalidForLinkable(r)));
+
   /** A PO can only be created if at least one line resolves to a supplier and all qtys are valid. */
   readonly canConfirm = computed(() => {
     if (this.linkableCount() <= 0) return false;
-    return !this.anyQtyInvalid();
+    return !this.anyQtyInvalid() && !this.anyPriceMissing();
   });
 
   ngOnInit(): void {
@@ -442,6 +489,37 @@ export class PreparePoConfirmModalComponent implements OnInit {
     return this.qtyDraft().get(recommendationId) ?? (r ? this.effectiveQty(r) : 0);
   }
 
+  draftPriceValue(recommendationId: string): number | null {
+    const v = this.priceDraft().get(recommendationId);
+    return v === undefined ? null : v;
+  }
+
+  setDraftPrice(recommendationId: string, value: number | string | null): void {
+    const parsed = value === null || value === '' ? null : Number(value);
+    const normalized = parsed !== null && Number.isFinite(parsed) ? parsed : null;
+    const next = new Map(this.priceDraft());
+    next.set(recommendationId, normalized);
+    this.priceDraft.set(next);
+  }
+
+  priceInvalidForLinkable(r: ReplenishmentRecommendation): boolean {
+    if (this.effectiveSupplierId(r) === null) return false;
+    const v = this.priceDraft().get(r.id);
+    return v === undefined || v === null || !Number.isFinite(v) || v <= 0;
+  }
+
+  buildLinePrices(): PreparePoLinePrice[] {
+    const prices: PreparePoLinePrice[] = [];
+    for (const r of this._recs()) {
+      if (this.effectiveSupplierId(r) === null) continue;
+      const v = this.priceDraft().get(r.id);
+      if (v != null && Number.isFinite(v) && v > 0) {
+        prices.push({ recommendationId: r.id, unitPrice: v });
+      }
+    }
+    return prices;
+  }
+
   setDraftQty(recommendationId: string, value: number | string | null): void {
     const r = this._recs().find(x => x.id === recommendationId);
     const parsed = value === null || value === '' ? NaN : Number(value);
@@ -503,7 +581,10 @@ export class PreparePoConfirmModalComponent implements OnInit {
 
   onConfirm(): void {
     if (!this.canConfirm()) return;
-    this.confirm.emit({ lineUpdates: this.buildLineUpdates() });
+    this.confirm.emit({
+      lineUpdates: this.buildLineUpdates(),
+      linePrices: this.buildLinePrices()
+    });
   }
 
   onCancel(): void { this.cancel.emit(); }

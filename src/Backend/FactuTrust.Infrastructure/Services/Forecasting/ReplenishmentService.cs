@@ -7,6 +7,8 @@ using FactuTrust.Application.Common.Interfaces.Forecasting;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Forecasting.Dtos;
+using FactuTrust.Application.Features.Forecasting.Services;
+using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Domain.Entities.Forecasting;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.MultiTenancy;
@@ -381,12 +383,13 @@ public sealed class ReplenishmentService : IReplenishmentService
         // Phase 2 review M4: compute SUM(qty × price) directly in SQL via JOIN — V1 loaded every
         // pending row + every product price and joined in memory (O(N) round trips for big tenants).
         // PurchasePrice is the owned `Money` value object; fall back to UnitPrice when null.
+        // Only lines with an explicit product purchase price count toward the estimate (no sale-price fallback).
         var value = await (
                 from r in baseQuery
                 where r.Status == ReplenishmentStatus.Pending
                 join p in ctx.Products on r.ProductId equals p.Id
-                select (r.ManualQtyOverride ?? r.RecommendedQty) *
-                       (p.PurchasePrice != null ? p.PurchasePrice.Amount : p.UnitPrice.Amount))
+                where p.PurchasePrice != null
+                select (r.ManualQtyOverride ?? r.RecommendedQty) * p.PurchasePrice!.Amount)
             .SumAsync(ct);
 
         // Top 5 urgencies (lowest days of stock first).
@@ -549,8 +552,52 @@ public sealed class ReplenishmentService : IReplenishmentService
 
     // ───────────────────────────── Create real POs (fix F-C1, F-C2) ──────
 
+    public async Task<IReadOnlyList<CreatePurchaseOrderLinePriceDto>> SuggestPurchaseOrderLinePricesAsync(
+        IReadOnlyList<Guid> recommendationIds,
+        CancellationToken ct = default)
+    {
+        if (recommendationIds is null || recommendationIds.Count == 0)
+            throw new ArgumentException("At least one recommendation id is required.", nameof(recommendationIds));
+
+        await using var ctx = _contextFactory.CreateContext();
+        var recs = await ctx.ReplenishmentRecommendations
+            .Where(r => recommendationIds.Contains(r.Id)
+                        && (r.Status == ReplenishmentStatus.Pending || r.Status == ReplenishmentStatus.Approved))
+            .ToListAsync(ct);
+
+        if (recs.Count == 0)
+            throw new InvalidOperationException(
+                "Aucune recommandation éligible (Pending ou Approved) pour les identifiants fournis.");
+
+        var productIds = recs.Select(r => r.ProductId).Distinct().ToList();
+        var products = await ctx.Products
+            .Where(p => productIds.Contains(p.Id))
+            .ToDictionaryAsync(p => p.Id, ct);
+
+        var list = new List<CreatePurchaseOrderLinePriceDto>();
+        foreach (var rec in recs)
+        {
+            if (rec.GetEffectiveSupplierId() is null || rec.GetEffectiveOrderQty() <= 0)
+                continue;
+
+            if (!products.TryGetValue(rec.ProductId, out var product))
+                throw new ArgumentException($"Produit introuvable pour la recommandation {rec.Id}.");
+
+            var suggested = ReplenishmentPurchaseUnitPriceResolver.SuggestUnitPrice(
+                product, rec.GetEffectiveSupplierId());
+            if (suggested is null or <= 0)
+                throw new ArgumentException(
+                    $"Prix d'achat produit manquant pour « {product.Code} » — renseignez-le sur la fiche produit ou créez le BC depuis le module Réapprovisionnement.");
+
+            list.Add(new CreatePurchaseOrderLinePriceDto(rec.Id, suggested.Value));
+        }
+
+        return list;
+    }
+
     public async Task<CreatePurchaseOrdersResultDto> CreatePurchaseOrdersAsync(
         IReadOnlyList<Guid> recommendationIds,
+        IReadOnlyList<CreatePurchaseOrderLinePriceDto>? linePrices,
         CancellationToken ct = default)
     {
         if (recommendationIds is null || recommendationIds.Count == 0)
@@ -617,12 +664,15 @@ public sealed class ReplenishmentService : IReplenishmentService
             .Where(s => supplierIds.Contains(s.Id))
             .ToDictionaryAsync(s => s.Id, ct);
 
+        var priceByRecId = BuildUnitPriceMap(recs, linePrices);
+
         // ─── Step 4: build POs (no persistence) ───────────────────────────────────
         // M3: the factory reserves each BC number through the atomic unified numbering
         // service (IDocumentNumberService), which requires the tenant id.
         var tenantId = _currentUser.TenantId
             ?? throw new InvalidOperationException("Tenant courant introuvable pour la création des bons de commande.");
-        var batch = await _poFactory.BuildDraftPurchaseOrdersAsync(recs, products, suppliers, actor, tenantId, ct);
+        var batch = await _poFactory.BuildDraftPurchaseOrdersAsync(
+            recs, products, suppliers, priceByRecId, actor, tenantId, ct);
 
         // ─── Step 5: attach + link + audit in the service's DbContext ─────────────
         foreach (var draft in batch.Drafts)
@@ -737,7 +787,7 @@ public sealed class ReplenishmentService : IReplenishmentService
 
         var products = await ctx.Products
             .Where(p => productIds.Contains(p.Id))
-            .Select(p => new { p.Id, p.Code, p.Name, p.Unit })
+            .Select(p => new { p.Id, p.Code, p.Name, p.Unit, PurchasePriceAmount = p.PurchasePrice != null ? (decimal?)p.PurchasePrice.Amount : null })
             .ToDictionaryAsync(x => x.Id, ct);
         var warehouses = await ctx.Warehouses
             .Where(w => warehouseIds.Contains(w.Id))
@@ -770,8 +820,39 @@ public sealed class ReplenishmentService : IReplenishmentService
                 r.ManualSupplierOverride,
                 r.DaysOfStockRemaining,
                 r.UserNotes,
-                urgency);
+                urgency,
+                p?.PurchasePriceAmount);
         }).ToList();
+    }
+
+    /// <summary>
+    /// Validates client-supplied unit prices for recommendations that can become PO lines
+    /// (resolved supplier + positive effective qty).
+    /// </summary>
+    private static Dictionary<Guid, Money> BuildUnitPriceMap(
+        IReadOnlyList<ReplenishmentRecommendation> recs,
+        IReadOnlyList<CreatePurchaseOrderLinePriceDto>? linePrices)
+    {
+        var submitted = (linePrices ?? Array.Empty<CreatePurchaseOrderLinePriceDto>())
+            .GroupBy(p => p.RecommendationId)
+            .ToDictionary(g => g.Key, g => g.Last().UnitPrice);
+
+        var map = new Dictionary<Guid, Money>();
+        foreach (var rec in recs)
+        {
+            var supplierId = rec.GetEffectiveSupplierId();
+            var qty = rec.GetEffectiveOrderQty();
+            if (supplierId is null || qty <= 0)
+                continue;
+
+            if (!submitted.TryGetValue(rec.Id, out var amount) || amount <= 0)
+                throw new ArgumentException(
+                    $"Prix unitaire manquant ou invalide pour la recommandation {rec.Id}.");
+
+            map[rec.Id] = Money.Create(amount, Currency);
+        }
+
+        return map;
     }
 
     private static string ComputeUrgency(decimal onHand, decimal? daysOfStock, int leadTimeDays, int threshold)

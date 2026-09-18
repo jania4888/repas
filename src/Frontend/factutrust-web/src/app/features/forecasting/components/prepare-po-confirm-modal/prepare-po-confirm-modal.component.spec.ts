@@ -33,6 +33,7 @@ function buildRec(over: Partial<ReplenishmentRecommendation> = {}): Replenishmen
     daysOfStockRemaining: null,
     userNotes: null,
     urgencyLevel: 'Normal',
+    suggestedPurchaseUnitPrice: 15,
     ...over
   };
 }
@@ -127,7 +128,7 @@ describe('PreparePoConfirmModalComponent', () => {
     component.selection = [buildRec({ preferredSupplierId: 'sup-A', preferredSupplierName: 'Alpha' })];
     spyOn(component.confirm, 'emit');
     component.onConfirm();
-    expect(component.confirm.emit).toHaveBeenCalledWith({ lineUpdates: [] });
+    expect(component.confirm.emit).toHaveBeenCalledWith(jasmine.objectContaining({ lineUpdates: [] }));
   });
 
   // ─── Regression for the reported bug: honest count + no-op guard + inline assignment ───
@@ -225,6 +226,22 @@ describe('PreparePoConfirmModalComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(getSuppliersSpy).toHaveBeenCalled();
+  });
+
+  it('blocks confirm when a linkable line has no purchase unit price', () => {
+    component.selection = [
+      buildRec({
+        id: 'r-1',
+        preferredSupplierId: 'sup-A',
+        preferredSupplierName: 'Alpha',
+        suggestedPurchaseUnitPrice: null
+      })
+    ];
+    fixture.detectChanges();
+    expect(component.canConfirm()).toBeFalse();
+    component.setDraftPrice('r-1', 12.5);
+    fixture.detectChanges();
+    expect(component.canConfirm()).toBeTrue();
   });
 
   it('fetches only ACTIVE suppliers (isActive: true) — inactive ones are silently rejected by the backend', async () => {
