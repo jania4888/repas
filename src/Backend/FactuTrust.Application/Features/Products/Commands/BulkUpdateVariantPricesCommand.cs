@@ -1,9 +1,12 @@
+﻿using FactuTrust.Application.Common.Barcodes;
 using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace FactuTrust.Application.Features.Products.Commands;
 
@@ -17,13 +20,16 @@ public sealed class BulkUpdateVariantPricesCommandHandler
 {
     private readonly IProductRepository _products;
     private readonly ICurrentUser _currentUser;
+    private readonly BarcodeOptions _barcodeOptions;
 
     public BulkUpdateVariantPricesCommandHandler(
         IProductRepository products,
-        ICurrentUser currentUser)
+        ICurrentUser currentUser,
+        IOptions<BarcodeOptions> barcodeOptions)
     {
         _products = products;
         _currentUser = currentUser;
+        _barcodeOptions = barcodeOptions.Value;
     }
 
     public async Task<Result<int>> Handle(
@@ -75,8 +81,15 @@ public sealed class BulkUpdateVariantPricesCommandHandler
             if (item.PurchasePrice.HasValue)
                 child.UpdatePurchasePrice(Money.Create(item.PurchasePrice.Value, child.UnitPrice.Currency));
 
+            // Troisième point d'écriture du code-barres, avec la même chaîne de contrôles
+            // que la création et la mise à jour d'article. Ici, null signifie « ne touche pas »
+            // (la matrice n'efface donc jamais un code existant) ; chaîne vide signifie effacer.
             if (item.Barcode is not null)
             {
+                var barcodeCheck = await ValidateBarcodeAsync(item.Barcode, child.Id, cancellationToken);
+                if (barcodeCheck.IsFailure)
+                    return Result.Failure<int>(barcodeCheck.Error);
+
                 var barcodeResult = child.SetBarcode(item.Barcode);
                 if (barcodeResult.IsFailure)
                     return Result.Failure<int>(barcodeResult.Error);
@@ -88,5 +101,33 @@ public sealed class BulkUpdateVariantPricesCommandHandler
         }
 
         return Result.Success(updated);
+    }
+
+    /// <summary>
+    /// Même chaîne de contrôles que les handlers de création et de mise à jour : format,
+    /// symbologie autorisée par le déploiement, puis absence de conflit avec un autre article.
+    /// </summary>
+    private async Task<Result> ValidateBarcodeAsync(
+        string? rawBarcode,
+        Guid excludeProductId,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(rawBarcode))
+            return Result.Success();
+
+        var parsed = Barcode.Create(rawBarcode);
+        if (parsed.IsFailure)
+            return Result.Failure(parsed.Error);
+
+        var writable = BarcodePolicy.EnsureWritable(parsed.Value, _barcodeOptions);
+        if (writable.IsFailure)
+            return writable;
+
+        var taken = await _products.BarcodeExistsAsync(
+            parsed.Value.Value, excludeProductId, cancellationToken);
+
+        return taken
+            ? Result.Failure(Error.Conflict("Ce code-barres est déjà utilisé par un autre article."))
+            : Result.Success();
     }
 }

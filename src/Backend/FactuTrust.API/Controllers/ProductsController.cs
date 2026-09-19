@@ -1,4 +1,4 @@
-using FactuTrust.API.Authorization;
+﻿using FactuTrust.API.Authorization;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
@@ -13,6 +13,7 @@ using FactuTrust.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 
 namespace FactuTrust.API.Controllers;
@@ -37,6 +38,7 @@ public class ProductsController : ControllerBase
     private readonly IProductImageStorageService _imageStorageService;
     private readonly ITenantContext _tenantContext;
     private readonly StockTraceabilityOptions _stockOptions;
+    private readonly IOptions<BarcodeOptions> _barcodeOptions;
     private readonly ILogger<ProductsController> _logger;
 
     public ProductsController(
@@ -46,6 +48,7 @@ public class ProductsController : ControllerBase
         IProductImageStorageService imageStorageService,
         ITenantContext tenantContext,
         IOptions<StockTraceabilityOptions> stockOptions,
+        IOptions<BarcodeOptions> barcodeOptions,
         ILogger<ProductsController> logger)
     {
         _mediator = mediator;
@@ -54,6 +57,7 @@ public class ProductsController : ControllerBase
         _imageStorageService = imageStorageService;
         _tenantContext = tenantContext;
         _stockOptions = stockOptions.Value;
+        _barcodeOptions = barcodeOptions;
         _logger = logger;
     }
 
@@ -196,6 +200,96 @@ public class ProductsController : ControllerBase
         }
 
         return Ok(ApiResponse<ProductDetailDto>.Ok(result.Value));
+    }
+
+    /// <summary>
+    /// Drapeaux de déploiement des codes-barres (IOptions), pas des données du dossier.
+    /// Réservé aux appelants authentifiés — [Authorize] de classe, sans permission fine,
+    /// comme <c>GET /api/stock/features</c>.
+    /// </summary>
+    [HttpGet("barcode-features")]
+    [ProducesResponseType(typeof(ApiResponse<BarcodeFeaturesDto>), StatusCodes.Status200OK)]
+    public ActionResult<BarcodeFeaturesDto> GetBarcodeFeatures()
+    {
+        var options = _barcodeOptions.Value;
+        return Ok(ApiResponse<BarcodeFeaturesDto>.Ok(new BarcodeFeaturesDto
+        {
+            ExtendedSymbologiesEnabled = options.ExtendedSymbologiesEnabled,
+            LabelPrintingEnabled = options.LabelPrintingEnabled
+        }));
+    }
+
+    /// <summary>
+    /// Propose un code-barres interne pour un article sans code fournisseur.
+    ///
+    /// <para>
+    /// Le code n'est PAS enregistré : il est seulement proposé. C'est l'enregistrement de la
+    /// fiche qui le persiste, en repassant par les mêmes contrôles que toute autre saisie.
+    /// </para>
+    /// </summary>
+    [HttpPost("barcode/generate")]
+    [Authorize(Policy = PermissionPolicies.ProductsCreate)]
+    [ProducesResponseType(typeof(ApiResponse<GeneratedBarcodeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> GenerateBarcode(
+        [FromQuery] Guid? excludeProductId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GenerateProductBarcodeCommand(excludeProductId), cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return result.Error.Code == "Conflict"
+                ? Conflict(ApiResponse<GeneratedBarcodeDto>.Fail(result.Error.Description))
+                : BadRequest(ApiResponse<GeneratedBarcodeDto>.Fail(result.Error.Description));
+        }
+
+        return Ok(ApiResponse<GeneratedBarcodeDto>.Ok(result.Value));
+    }
+
+    /// <summary>
+    /// Gabarits de planches d'étiquettes disponibles.
+    /// </summary>
+    [HttpGet("label-layouts")]
+    [Authorize(Policy = PermissionPolicies.ProductsRead)]
+    [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<LabelLayoutDto>>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetLabelLayouts(CancellationToken cancellationToken)
+    {
+        var layouts = await _mediator.Send(new GetLabelLayoutsQuery(), cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<LabelLayoutDto>>.Ok(layouts));
+    }
+
+    /// <summary>
+    /// Produit une planche d'étiquettes code-barres en PDF.
+    ///
+    /// <para>
+    /// POST et non GET : la sélection peut porter deux cents identifiants, qui n'ont rien à
+    /// faire dans une URL. La permission reste <c>products:read</c> — l'étiquette n'expose
+    /// aucune donnée que la fiche article ne montre déjà. Le vrai garde-fou est volumétrique.
+    /// </para>
+    /// </summary>
+    [HttpPost("labels/pdf")]
+    [Authorize(Policy = PermissionPolicies.ProductsRead)]
+    [EnableRateLimiting("labels")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ExportLabels(
+        [FromBody] ProductLabelRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new ExportProductLabelsPdfQuery(request), cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return result.Error.Code is "NotFound" or "Product.NotFound"
+                ? NotFound(ApiResponse<object>.Fail(result.Error.Description))
+                : BadRequest(ApiResponse<object>.Fail(result.Error.Description));
+        }
+
+        return File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
     }
 
     /// <summary>

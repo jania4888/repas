@@ -30,6 +30,10 @@ export interface Product {
   maxDiscountPercent?: number | null;
   isActive: boolean;
   isStockManaged: boolean;
+  /** Code-barres de l'article. Distinct du code produit interne. */
+  barcode?: string | null;
+  /** Symbologie déduite du code-barres : Ean8, UpcA, Ean13, Gtin14, Code128. Lecture seule. */
+  barcodeSymbology?: string | null;
   /** URL of product image (uploaded or from external search) */
   imageUrl?: string | null;
   /** Fournisseur préféré (réapprovisionnement) ; null = aucun. */
@@ -69,6 +73,8 @@ export interface ProductListItem {
   maxDiscountPercent?: number | null;
   isActive: boolean;
   isStockManaged: boolean;
+  /** Code-barres de l'article. Distinct du code produit interne. */
+  barcode?: string | null;
   /** URL of product image from external search (Unsplash/Google) */
   imageUrl?: string | null;
   /** Quantité disponible (entrepôt par défaut) ; null si pas de gestion de stock ou indisponible côté API */
@@ -94,6 +100,8 @@ export interface ProductSelectItem {
   attributeSummary?: string | null;
   isVariantTemplate?: boolean;
   parentProductId?: string | null;
+  /** Code-barres, pour résoudre un scan directement dans l'autocomplétion. */
+  barcode?: string | null;
 }
 
 export interface ProductFodecFlag {
@@ -137,6 +145,14 @@ export interface CreateProductRequest {
   isFodecApplicable?: boolean;
   isDiscountEnabled?: boolean;
   maxDiscountPercent?: number | null;
+  /**
+   * Code-barres de l'article. Chaîne vide ou null = aucun.
+   *
+   * ⚠️ Ce champ DOIT figurer dans la charge utile de mise à jour, même vide. Le serveur
+   * applique `SetBarcode(dto.Barcode)` sans condition : omettre la clé revient à envoyer
+   * null, donc à effacer le code-barres de l'article à chaque enregistrement de la fiche.
+   */
+  barcode?: string | null;
   /** Fournisseur préféré (optionnel) ; null/undefined = aucun. */
   preferredSupplierId?: string | null;
   isVariantTemplate?: boolean;
@@ -351,6 +367,8 @@ export class ProductService {
           maxDiscountPercent: response.data.maxDiscountPercent ?? null,
           isActive: response.data.isActive,
           isStockManaged: response.data.isStockManaged ?? false,
+          barcode: response.data.barcode ?? null,
+          barcodeSymbology: response.data.barcodeSymbology ?? null,
           imageUrl: response.data.imageUrl ?? null,
           preferredSupplierId: response.data.preferredSupplierId ?? null,
           createdAt: response.data.createdAt,
@@ -415,6 +433,7 @@ export class ProductService {
             maxDiscountPercent: d.maxDiscountPercent ?? null,
             isActive: d.isActive,
             isStockManaged: d.isStockManaged ?? false,
+            barcode: d.barcode ?? null,
             imageUrl: d.imageUrl ?? null,
             isVariantTemplate: d.isVariantTemplate ?? false,
             parentProductId: d.parentProductId ?? null,
@@ -454,6 +473,7 @@ export class ProductService {
       isFodecApplicable: request.isFodecApplicable ?? false,
       isDiscountEnabled: request.isDiscountEnabled ?? false,
       maxDiscountPercent: request.isDiscountEnabled ? request.maxDiscountPercent ?? undefined : undefined,
+      barcode: request.barcode ?? null,
       preferredSupplierId: request.preferredSupplierId ?? undefined,
       isVariantTemplate: request.isVariantTemplate ?? false,
       trackingMode: request.trackingMode ?? 0,
@@ -480,6 +500,9 @@ export class ProductService {
       isFodecApplicable: request.isFodecApplicable ?? false,
       isDiscountEnabled: request.isDiscountEnabled ?? false,
       maxDiscountPercent: request.isDiscountEnabled ? request.maxDiscountPercent ?? undefined : undefined,
+      // Toujours transmis, y compris vide : le serveur applique SetBarcode(dto.Barcode) sans
+      // condition, donc omettre la clé effacerait le code-barres à chaque enregistrement.
+      barcode: request.barcode ?? null,
       categoryId: request.productCategoryId,
       preferredSupplierId: request.preferredSupplierId ?? null,
       isVariantTemplate: request.isVariantTemplate ?? false,
@@ -630,6 +653,44 @@ export class ProductService {
     return this.http.get<ApiResponse<ProductSelectItem[]>>(`${this.API_URL}/templates/select`, { params });
   }
 
+  /**
+   * Demande au serveur un code-barres interne libre pour un article sans code fournisseur.
+   *
+   * Le code n'est PAS enregistré par cet appel : il est seulement proposé. C'est
+   * l'enregistrement de la fiche qui le persiste, en repassant par les mêmes contrôles que
+   * toute autre saisie. `excludeProductId` évite qu'une régénération sur une fiche existante
+   * se heurte à son propre code.
+   */
+  generateProductBarcode(excludeProductId?: string): Observable<ApiResponse<GeneratedBarcode>> {
+    let params = new HttpParams();
+    if (excludeProductId) params = params.set('excludeProductId', excludeProductId);
+    return this.http.post<ApiResponse<GeneratedBarcode>>(
+      `${this.API_URL}/barcode/generate`, null, { params });
+  }
+
+  /**
+   * Drapeaux de déploiement des codes-barres. Sert à ne pas offrir une saisie que le serveur
+   * refuserait — la validation faisant autorité reste côté serveur.
+   */
+  getBarcodeFeatures(): Observable<ApiResponse<BarcodeFeatures>> {
+    return this.http.get<ApiResponse<BarcodeFeatures>>(`${this.API_URL}/barcode-features`);
+  }
+
+  /** Gabarits de planches d'étiquettes proposés par le serveur. */
+  getLabelLayouts(): Observable<ApiResponse<LabelLayout[]>> {
+    return this.http.get<ApiResponse<LabelLayout[]>>(`${this.API_URL}/label-layouts`);
+  }
+
+  /**
+   * Produit une planche d'étiquettes.
+   *
+   * POST et réponse binaire : la sélection peut porter plusieurs centaines d'identifiants,
+   * qui n'ont rien à faire dans une URL, et la réponse est un PDF, pas du JSON.
+   */
+  exportProductLabels(request: ProductLabelRequest): Observable<Blob> {
+    return this.http.post(`${this.API_URL}/labels/pdf`, request, { responseType: 'blob' });
+  }
+
   bulkUpdateVariantPrices(
     parentId: string,
     request: BulkUpdateVariantPricesRequest
@@ -724,4 +785,32 @@ export interface ProductVariantProfileDto {
 export interface BulkUpdateVariantPricesRequest {
   mode: 'absolute' | 'copyFromParent' | 'percentDelta';
   items?: { childId: string; unitPrice?: number; purchasePrice?: number; barcode?: string | null }[];
+}
+
+/** Code-barres proposé par le serveur, avec sa symbologie pour l'affichage. */
+export interface GeneratedBarcode {
+  barcode: string;
+  symbology: string;
+}
+
+/** Drapeaux de déploiement des codes-barres exposés par le serveur. */
+export interface BarcodeFeatures {
+  extendedSymbologiesEnabled: boolean;
+  labelPrintingEnabled: boolean;
+}
+
+/** Gabarit de planche d'étiquettes. */
+export interface LabelLayout {
+  key: string;
+  label: string;
+  labelsPerPage: number;
+  isRoll: boolean;
+}
+
+/** Demande d'impression d'étiquettes. */
+export interface ProductLabelRequest {
+  layout: string;
+  includePrice: boolean;
+  includeCode: boolean;
+  items: Array<{ productId: string; quantity: number }>;
 }

@@ -1,6 +1,10 @@
 import { Injectable, inject, OnDestroy, signal } from '@angular/core';
 import { ProductService, ProductListItem } from '@core/services/product.service';
 import { WarehouseContextService } from '@core/services/warehouse-context.service';
+import {
+  BarcodeScannerService,
+  ScannerRegistration
+} from '@shared/services/barcode-scanner.service';
 import { PosStateService } from './pos-state.service';
 import { canSellProduct } from './pos-stock-guard';
 
@@ -15,6 +19,11 @@ export interface BarcodeScanEvent {
 /**
  * Detects barcode scanner input (rapid keypresses ending with Enter)
  * and adds the matching product to the order.
+ *
+ * La détection clavier elle-même vit dans {@link BarcodeScannerService}, partagé avec les
+ * écrans de document. Le point de vente garde la capture GLOBALE : il occupe l'écran entier
+ * et n'a pas d'autre champ de saisie à protéger, contrairement aux grilles de lignes où un
+ * champ de scan dédié est le seul moyen sûr de ne pas voler les frappes.
  */
 @Injectable({
   providedIn: 'root'
@@ -23,76 +32,34 @@ export class PosBarcodeService implements OnDestroy {
   private readonly productService = inject(ProductService);
   private readonly warehouseContext = inject(WarehouseContextService);
   private readonly posState = inject(PosStateService);
+  private readonly scanner = inject(BarcodeScannerService);
 
   readonly lastScannedCode = signal<string | null>(null);
   readonly lastScanResult = signal<BarcodeScanResult | null>(null);
 
-  private buffer = '';
-  private bufferTimeout: ReturnType<typeof setTimeout> | null = null;
-  private readonly BUFFER_MS = 50;
-  private readonly MIN_LENGTH = 3;
-
-  private boundHandler: (e: KeyboardEvent) => void = this.handleKeydown.bind(this);
+  private registration: ScannerRegistration | null = null;
 
   startListening(): void {
-    if (typeof document === 'undefined') return;
-    document.addEventListener('keydown', this.boundHandler, true);
+    if (this.registration) return;
+
+    this.registration = this.scanner.register({
+      minLength: 3,
+      bufferMs: 50,
+      ignoreWhenFocusInEditable: true,
+      onScan: code => {
+        this.lastScannedCode.set(code);
+        this.searchAndAdd(code);
+      }
+    });
   }
 
   stopListening(): void {
-    if (typeof document === 'undefined') return;
-    document.removeEventListener('keydown', this.boundHandler, true);
-    this.clearBuffer();
+    this.registration?.unregister();
+    this.registration = null;
   }
 
   ngOnDestroy(): void {
     this.stopListening();
-  }
-
-  private handleKeydown(event: KeyboardEvent): void {
-    const isInput = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement;
-    if (isInput && event.key !== 'Enter') return;
-
-    if (event.key === 'Enter') {
-      if (isInput) return;
-      event.preventDefault();
-      this.flushBuffer();
-      return;
-    }
-
-    if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey && !isInput) {
-      this.appendToBuffer(event.key);
-    }
-  }
-
-  private appendToBuffer(char: string): void {
-    if (this.bufferTimeout) {
-      clearTimeout(this.bufferTimeout);
-    }
-    this.buffer += char;
-    this.bufferTimeout = setTimeout(() => this.clearBuffer(), this.BUFFER_MS);
-  }
-
-  private clearBuffer(): void {
-    this.buffer = '';
-    if (this.bufferTimeout) {
-      clearTimeout(this.bufferTimeout);
-      this.bufferTimeout = null;
-    }
-  }
-
-  private flushBuffer(): void {
-    if (this.bufferTimeout) {
-      clearTimeout(this.bufferTimeout);
-      this.bufferTimeout = null;
-    }
-    const code = this.buffer.trim();
-    this.clearBuffer();
-
-    if (code.length < this.MIN_LENGTH) return;
-
-    this.lastScannedCode.set(code);
-    this.searchAndAdd(code);
   }
 
   /**

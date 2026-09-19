@@ -34,6 +34,10 @@ import {
 } from '@shared/utils/stock-traceability.utils';
 import { StockFeatures } from '@core/services/stock.service';
 import { ProductListItem, ProductService } from '@core/services/product.service';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { StockService } from '@core/services/stock.service';
 import { WarehouseContextService } from '@core/services/warehouse-context.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
@@ -74,6 +78,7 @@ interface VoucherLine {
   selector: 'app-stock-voucher-form',
   standalone: true,
   imports: [
+    BarcodeScanFieldComponent,
     CommonModule,
     FormsModule,
     RouterModule,
@@ -107,6 +112,9 @@ export class StockVoucherFormComponent implements OnInit {
   private messageService = inject(MessageService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
   private productSearchSeq = 0;
   private readonly productSearch$ = new Subject<ProductSearchRequest>();
 
@@ -566,5 +574,39 @@ export class StockVoucherFormComponent implements OnInit {
       catchError(() => of(new Map<string, { qty: number; avgCost: number }>())),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe((mapValue) => this.stockByProductId.set(mapValue));
+  }
+
+  /**
+   * Scan d'un code-barres sur un bon d'entrée ou de sortie.
+   *
+   * Un bon de stock ne peut porter que des articles GÉRÉS EN STOCK : un service scanné est
+   * refusé, comme il l'est déjà à la sélection manuelle. La douchette ne doit jamais servir à
+   * contourner ce garde-fou, sous peine d'un mouvement de stock sur un article qui n'en a pas.
+   *
+   * Un article déjà présent voit sa quantité augmenter — le même geste que modifier la
+   * quantité à la main, ce que l'écran autorise déjà, allocations de lots comprises.
+   */
+  onBarcodeScanned(code: string): void {
+    this.barcodeLookup
+      .resolve(code, { requireStockManaged: true, warehouseId: this.warehouseId })
+      .subscribe(result => {
+        if (result.status !== 'found' || !result.product) {
+          this.barcodeFeedback.report(result);
+          return;
+        }
+
+        const product = result.product;
+        const existing = this.lines.find(l => l.productId === product.id);
+
+        if (existing) {
+          existing.quantity = (existing.quantity || 0) + 1;
+        } else {
+          this.selectedProduct = product;
+          this.selectedQuantity = 1;
+          this.addLine();
+        }
+
+        this.barcodeFeedback.success(product.name);
+      });
   }
 }

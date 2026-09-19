@@ -16,6 +16,10 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 import { WarehouseSelectorComponent } from '@shared/components/warehouse-selector/warehouse-selector.component';
 import { StockTransferService, CreateStockTransferRequest } from '@core/services/stock-transfer.service';
 import { ProductService, ProductListItem } from '@core/services/product.service';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { StockService } from '@core/services/stock.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -34,6 +38,7 @@ interface TransferLine {
   selector: 'app-transfer-create',
   standalone: true,
   imports: [
+    BarcodeScanFieldComponent,
     CommonModule,
     FormsModule,
     RouterModule,
@@ -217,6 +222,15 @@ interface TransferLine {
               </app-button>
             </div>
           </div>
+
+          @if (barcodeScanEnabled) {
+            <div class="barcode-scan-row">
+              <ft-barcode-scan-field
+                placeholder="Scanner un code-barres pour ajouter une ligne"
+                [autoFocus]="false"
+                (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+            </div>
+          }
         </div>
 
         @if (lines.length > 0) {
@@ -592,6 +606,18 @@ interface TransferLine {
       font-size: 0.875rem;
     }
 
+    // Les champs natifs du bandeau « Informations » ne sont PAS couverts par les
+    // règles ::ng-deep ci-dessous : ils vivent dans ce template, pas dans un composant
+    // enfant. Sans cette règle ils restent à leur largeur intrinsèque (~185 px) pendant
+    // que les widgets PrimeNG voisins occupent toute la colonne — les « class="w-full" »
+    // posées sur eux ne portent rien (Tailwind est préfixé « tw- », cf. tailwind.config.js).
+    // Le sélecteur enfant direct laisse volontairement de côté « .notes-input » des
+    // cellules de lignes, qui a sa propre largeur.
+    .form-group > input[pInputText],
+    .form-group > textarea[pTextarea] {
+      width: 100%;
+    }
+
     :host ::ng-deep .product-search-wrap .p-autocomplete {
       width: 100%;
     }
@@ -678,6 +704,9 @@ export class TransferCreateComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
 
   private readonly productSearch$ = new Subject<string>();
   private readonly stockPageSize = 1000;
@@ -922,5 +951,36 @@ export class TransferCreateComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((map) => this.sourceStockByProductId.set(map));
+  }
+
+  /**
+   * Scan d'un code-barres sur un transfert inter-dépôts.
+   *
+   * Seuls les articles gérés en stock sont recevables : on ne transfère pas un service. La
+   * disponibilité est évaluée sur l'entrepôt SOURCE, celui d'où part la marchandise, et reste
+   * un avertissement — l'écran affiche déjà « Supérieur au disponible » sans bloquer.
+   */
+  onBarcodeScanned(code: string): void {
+    this.barcodeLookup
+      .resolve(code, { requireStockManaged: true, warehouseId: this.sourceWarehouseId })
+      .subscribe(result => {
+        if (result.status !== 'found' || !result.product) {
+          this.barcodeFeedback.report(result);
+          return;
+        }
+
+        const product = result.product;
+        const existing = this.lines.find(l => l.productId === product.id);
+
+        if (existing) {
+          existing.requestedQuantity = (existing.requestedQuantity || 0) + 1;
+        } else {
+          this.selectedProduct = product;
+          this.selectedQuantity = 1;
+          this.addLine();
+        }
+
+        this.barcodeFeedback.success(product.name);
+      });
   }
 }

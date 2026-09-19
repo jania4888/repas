@@ -158,9 +158,30 @@ export class ProductVariantMatrixComponent implements OnChanges {
             detail: `${res.data ?? 0} variante(s) mise(s) à jour.`
           });
           this.load();
+          return;
         }
+
+        // Un refus arrivait ici sans rien afficher : le bouton se déverrouillait et l'écran
+        // restait tel quel, laissant croire à un enregistrement. C'est devenu bloquant depuis
+        // que le serveur refuse un code-barres en doublon ou d'une symbologie non activée.
+        this.toastService.add({
+          severity: 'warn',
+          summary: 'Enregistrement refusé',
+          detail: res.message || res.errors?.[0] || 'Vérifiez les prix et les codes-barres saisis.'
+        });
       },
-      error: () => this.saving.set(false)
+      error: (err: unknown) => {
+        this.saving.set(false);
+        const detail =
+          (err as { error?: { message?: string; error?: string } })?.error?.message ??
+          (err as { error?: { message?: string; error?: string } })?.error?.error ??
+          'Vérifiez les prix et les codes-barres saisis.';
+        this.toastService.add({
+          severity: 'error',
+          summary: 'Enregistrement refusé',
+          detail
+        });
+      }
     });
   }
 }

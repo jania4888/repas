@@ -208,6 +208,15 @@
             </span>
         </div>
 
+        @if (barcodeScanEnabled) {
+            <div class="barcode-scan-row">
+                <ft-barcode-scan-field
+                    placeholder="Scanner un code-barres pour aller à l'article"
+                    [autoFocus]="false"
+                    (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+            </div>
+        }
+
         <div class="count-layout">
             <!-- Left: progress + product list -->
             <aside class="count-sidebar">

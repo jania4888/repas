@@ -113,7 +113,7 @@ Un **inventaire physique** consiste à compter réellement les produits en stock
 
 ## Variantes de produit (SKU)
 
-Certaines familles (textile, chaussure, etc.) se déclinent en **taille, couleur** ou autre axe. Dans FactuTrust, chaque combinaison est un **produit à part** (un SKU), avec son code, son code-barres et son stock.
+Certaines familles (textile, chaussure, etc.) se déclinent en **taille, couleur** ou autre axe. Dans FactuTrust, chaque combinaison est un **produit à part** (un SKU), avec son code, son code-barres et son stock (voir [14 - Codes-barres](14-codes-barres.md)).
 
 1. Créez les **axes de variantes** (Paramètres > Axes de variantes) : ex. Taille (S, M, L) et Couleur (Bleu, Rouge).
 2. Créez un produit **modèle** et activez **Modèle de variantes**.

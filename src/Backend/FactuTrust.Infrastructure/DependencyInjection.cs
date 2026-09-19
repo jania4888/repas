@@ -1,4 +1,5 @@
 ﻿using FactuTrust.Application.Configuration;
+using FactuTrust.Infrastructure.Services.Barcodes;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Forecasting;
 using FactuTrust.Application.Common.Interfaces.Treasury;
@@ -573,6 +574,16 @@ public static class DependencyInjection
         services.Configure<StorefrontOptions>(configuration.GetSection(StorefrontOptions.SectionName));
         services.Configure<SalesOrderOptions>(configuration.GetSection(SalesOrderOptions.SectionName));
         services.Configure<StockTraceabilityOptions>(configuration.GetSection(StockTraceabilityOptions.SectionName));
+
+        // Enregistrement inconditionnel : les handlers MediatR sont validés au démarrage
+        // (ValidateOnBuild), un enregistrement conditionnel ferait échouer la construction
+        // du conteneur dès que le drapeau est éteint. La garde est à l'exécution.
+        services.Configure<BarcodeOptions>(configuration.GetSection(BarcodeOptions.SectionName));
+
+        // Sans état (tables de motifs constantes, encodage pur) : un singleton suffit.
+        // Enregistrement inconditionnel, comme tout le reste — la garde est à l'exécution.
+        services.AddSingleton<IBarcodeEncoder, BarcodeEncoder>();
+        services.AddSingleton<IProductLabelPdfRenderer, ProductLabelPdfRenderer>();
         services.Configure<ChannelsSettings>(configuration.GetSection(ChannelsSettings.SectionName));
         // Canaux externes (WhatsApp) : liaison d'identité en base tenant/master. Le pont Node et
         // l'envoi sortant (IChannelOutboundSender) sont hébergés côté API (processus enfant piloté).

@@ -1877,6 +1877,16 @@ body .refund-invoice-autocomplete-panel .p-autocomplete-option.p-focus {
   background: var(--color-primary-50);
 }
 
+// Panneau de suggestions d'articles — lignes de facture fournisseur.
+// `appendTo="body"` sort le panneau hors du composant : sa largeur ne peut donc pas
+// être réglée depuis le SCSS scopé, d'où cette règle globale. Le nom de classe est
+// unique à cet écran, le rayon d'action est nul.
+// NB : PrimeNG 19 rend `p-autocomplete-overlay`. `p-autocomplete-panel` (utilisé par
+// le bloc ci-dessus) n'existe plus — cette règle-là est inopérante.
+body .si-line-product-panel.p-autocomplete-overlay {
+  min-width: min(420px, calc(100vw - 2rem));
+}
+
 // --------------------------------------------
 // InstaFact app shell — overrides thème Pluto (#content / .topbar)
 // style.css Pluto suppose une sidebar en position fixed et compense avec un

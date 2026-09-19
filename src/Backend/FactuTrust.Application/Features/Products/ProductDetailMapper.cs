@@ -1,4 +1,4 @@
-using FactuTrust.Application.DTOs;
+﻿using FactuTrust.Application.DTOs;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.Services;
@@ -34,6 +34,7 @@ internal static class ProductDetailMapper
             VatRateDisplay = product.VatRate.ToDisplayString(),
             Unit = product.Unit,
             Barcode = product.Barcode?.Value,
+            BarcodeSymbology = product.Barcode?.Symbology.ToString(),
             IsActive = product.IsActive,
             IsStockManaged = product.IsStockManaged,
             IsFodecApplicable = product.IsFodecApplicable,
@@ -80,6 +81,7 @@ internal static class ProductDetailMapper
             VatRateDisplay = product.VatRate.ToShortString(),
             Unit = product.Unit,
             Barcode = product.Barcode?.Value,
+            BarcodeSymbology = product.Barcode?.Symbology.ToString(),
             IsActive = product.IsActive,
             IsStockManaged = product.IsStockManaged,
             IsFodecApplicable = product.IsFodecApplicable,
@@ -112,7 +114,8 @@ internal static class ProductDetailMapper
             MaxDiscountPercent = product.MaxDiscountPercent,
             AttributeSummary = attributeSummary,
             IsVariantTemplate = product.IsVariantTemplate,
-            ParentProductId = product.ParentProductId
+            ParentProductId = product.ParentProductId,
+            Barcode = product.Barcode?.Value
         };
     }
 

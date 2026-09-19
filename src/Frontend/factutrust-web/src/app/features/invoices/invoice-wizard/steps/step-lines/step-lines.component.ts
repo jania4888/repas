@@ -25,6 +25,9 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 // Services & Models
 import { InvoiceWizardService } from '../../services/invoice-wizard.service';
 import { ProductListItem } from '@core/services/product.service';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
 import { PriceSource, PricingService } from '@core/services/pricing.service';
 import { DocumentLinePricingService, mapResolvedPricePromotion } from '@shared/utils/document-line-pricing.helper';
 import {
@@ -72,6 +75,7 @@ interface WizardProductSuggestion {
   selector: 'app-step-lines',
   standalone: true,
   imports: [
+    BarcodeScanFieldComponent,
     CommonModule,
     FormsModule,
     TableModule,
@@ -121,6 +125,14 @@ interface WizardProductSuggestion {
               (click)="addNewLine()">
             </p-button>
           </div>
+          @if (barcodeScanEnabled) {
+            <div class="barcode-scan-row">
+              <ft-barcode-scan-field
+                placeholder="Scanner un code-barres pour ajouter une ligne"
+                [autoFocus]="false"
+                (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+            </div>
+          }
         </div>
       </section>
 
@@ -1227,6 +1239,10 @@ export class StepLinesComponent implements OnInit, OnDestroy {
   editingLineId: string | null = null;
   editLine: Partial<InvoiceLine> = {};
   editSelectedProduct: WizardProductSuggestion | string | null = null;
+
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
   productSuggestions = signal<any[]>([]);
   quickCreateProductVisible = false;
   variantPickerVisible = false;
@@ -1726,5 +1742,61 @@ export class StepLinesComponent implements OnInit, OnDestroy {
         },
         error: err => this.errorHandler.logError('Price resolution failed', err)
       });
+  }
+
+  /**
+   * Scan d'un code-barres dans le wizard de facture.
+   *
+   * Le wizard n'a pas de ligne modifiable « en place » : il faut ouvrir l'édition d'une ligne
+   * avant d'y poser un article. On réutilise donc la ligne vierge en attente s'il y en a une,
+   * plutôt que d'en empiler une nouvelle à chaque scan.
+   *
+   * Aucun contrôle de disponibilité n'est ajouté ici : le scan doit se comporter exactement
+   * comme le choix manuel du même article dans l'autocomplétion, ni plus strict ni plus
+   * permissif. (L'article résolu ne porte de toute façon pas de quantité disponible.)
+   */
+  onBarcodeScanned(code: string): void {
+    this.barcodeLookup.resolve(code).subscribe(result => {
+      if (result.status !== 'found' || !result.product) {
+        this.barcodeFeedback.report(result);
+        return;
+      }
+
+      const product = result.product;
+      const existing = this.lines().find(l => l.productId === product.id);
+
+      if (existing) {
+        const quantity = (existing.quantity || 0) + 1;
+        this.wizardService.updateLine(existing.id, { quantity });
+        this.resolveLinePrice(existing.id, product.id, quantity, existing.id === this.editingLineId);
+      } else {
+        const blank = this.lines().find(
+          l => !l.productId && !normalizeDesignation(l.designation)
+        );
+        if (blank) {
+          this.startEditLine(blank);
+        } else {
+          this.addNewLine();
+        }
+        this.applyProductToEditingLine(this.toBarcodeSuggestion(product));
+      }
+
+      this.barcodeFeedback.success(product.name);
+    });
+  }
+
+  private toBarcodeSuggestion(product: ProductListItem): ProductSuggestion {
+    return {
+      id: product.id,
+      code: product.code,
+      name: product.name,
+      unitPrice: product.unitPrice,
+      vatRate: product.vatRate,
+      unit: product.unit || 'Unité',
+      isFodecApplicable: product.isFodecApplicable ?? false,
+      isDiscountEnabled: product.isDiscountEnabled ?? false,
+      maxDiscountPercent: product.maxDiscountPercent ?? null,
+      barcode: product.barcode ?? null
+    };
   }
 }

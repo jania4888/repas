@@ -42,7 +42,15 @@ public sealed class GetProductByBarcodeQueryHandler
         var product = await _productRepository.GetByBarcodeAsync(normalized, cancellationToken);
 
         if (product is null)
-            return Result.Failure<ProductDetailDto>(Error.NotFound("Product", Guid.Empty));
+        {
+            // Le code doit valoir exactement « NotFound » : c'est sur lui que le contrôleur
+            // s'appuie pour renvoyer 404 plutôt que 400. La surcharge Error.NotFound(entité, id)
+            // produirait « Product.NotFound », ce qui ferait tomber la réponse dans la branche
+            // 400 avec un message technique — et empêcherait les écrans de distinguer un code
+            // inconnu d'un code mal formé, seul cas où il faut corriger la saisie.
+            return Result.Failure<ProductDetailDto>(
+                Error.NotFound("Aucun article ne correspond à ce code-barres."));
+        }
 
         if (product.IsVariantTemplate)
             return Result.Failure<ProductDetailDto>(Error.Validation(

@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using FactuTrust.API.Authorization;
 using FactuTrust.API.Middleware;
 using FactuTrust.API.Services.Background;
@@ -310,6 +310,24 @@ builder.Services.AddRateLimiter(options =>
                 PermitLimit = isDevelopment ? 2000 : 60,
                 Window = TimeSpan.FromMinutes(1)
             }));
+
+    options.AddPolicy("labels", context =>
+    {
+        // Partition par utilisateur authentifié, comme « ai » : une planche d'étiquettes est
+        // un rendu PDF de plusieurs centaines de symboles vectoriels, donc coûteux. Le quota
+        // vise le clic répété sur « Imprimer », pas un abus.
+        var userId = context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var partitionKey = string.IsNullOrEmpty(userId)
+            ? $"ip:{context.Connection.RemoteIpAddress?.ToString() ?? "unknown"}"
+            : $"user:{userId}";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 60 : 10,
+                Window = TimeSpan.FromMinutes(1)
+            });
+    });
 
     options.OnRejected = async (context, _) =>
     {

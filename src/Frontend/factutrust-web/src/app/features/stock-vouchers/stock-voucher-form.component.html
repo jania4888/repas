@@ -188,6 +188,15 @@
           Ajouter
         </app-button>
       </div>
+
+      @if (barcodeScanEnabled) {
+        <div class="ft-field barcode-scan-row">
+          <ft-barcode-scan-field
+            placeholder="Scanner un code-barres pour ajouter une ligne"
+            [autoFocus]="false"
+            (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+        </div>
+      }
     </div>
 
     @if (lines.length === 0) {

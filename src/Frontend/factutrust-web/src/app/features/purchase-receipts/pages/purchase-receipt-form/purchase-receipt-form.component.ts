@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -33,6 +33,10 @@ import {
 } from '@shared/utils/stock-traceability.utils';
 import { StockFeatures } from '@core/services/stock.service';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { formatLocalDate } from '@core/utils/date.util';
 import { WarehouseContextService } from '@core/services/warehouse-context.service';
 import {
@@ -101,7 +105,7 @@ interface ReceiptLineRow {
     DialogModule, ToastModule,
     PageHeaderComponent, BreadcrumbComponent, FormSectionComponent,
     WarehouseSelectorComponent, ButtonComponent,
-    StockAllocationEditorComponent
+    StockAllocationEditorComponent, BarcodeScanFieldComponent
   ],
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
@@ -209,10 +213,12 @@ interface ReceiptLineRow {
                 (clicked)="addLine()">
                 Ajouter une ligne
               </app-button>
+            @if (barcodeScanEnabled) {
               <app-button variant="outline" icon="pi-barcode" iconPos="left" size="sm"
-                (clicked)="openBarcodeDialog()">
+                (clicked)="focusBarcodeField()">
                 Scanner un code-barres
               </app-button>
+            }
               <app-button variant="outline" icon="pi-file-import" iconPos="left" size="sm"
                 (clicked)="openImportBlDialog()">
                 Importer depuis BL
@@ -223,6 +229,17 @@ interface ReceiptLineRow {
                 Supprimer toutes les lignes
               </app-button>
             </div>
+
+            @if (barcodeScanEnabled) {
+              <div class="barcode-scan-row">
+                <ft-barcode-scan-field
+                  #barcodeField
+                  placeholder="Scanner un code-barres pour ajouter une ligne"
+                  [autoFocus]="false"
+                  [disabled]="barcodeLookingUp()"
+                  (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+              </div>
+            }
 
             <div class="lines-table-wrap">
               <table class="lines-table">
@@ -508,30 +525,6 @@ interface ReceiptLineRow {
         </app-button>
       </div>
     }
-
-    <p-dialog
-      header="Scanner un code-barres"
-      [(visible)]="barcodeDialogVisible"
-      [modal]="true"
-      [style]="{ width: '420px' }"
-      [draggable]="false">
-      <p class="dialog-hint">Saisissez ou scannez le code-barres du produit.</p>
-      <input
-        pInputText
-        [(ngModel)]="barcodeInput"
-        (keyup.enter)="lookupBarcode()"
-        placeholder="Code-barres…"
-        class="w-full"
-        autofocus />
-      <ng-template pTemplate="footer">
-        <app-button variant="outline" (clicked)="barcodeDialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" icon="pi-search" iconPos="left"
-          [disabled]="!barcodeInput.trim() || barcodeLookingUp()"
-          (clicked)="lookupBarcode()">
-          Rechercher
-        </app-button>
-      </ng-template>
-    </p-dialog>
 
     <p-dialog
       header="Importer depuis BL fournisseur"
@@ -909,6 +902,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
   private errorHandler = inject(ErrorHandlerService);
   private warehouseContext = inject(WarehouseContextService);
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
   private readonly searchSubject$ = new Subject<string>();
   private readonly destroy$ = new Subject<void>();
 
@@ -946,9 +941,10 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   totalOrderedHT = signal(0);
   remainingHT = signal(0);
 
-  barcodeDialogVisible = false;
-  barcodeInput = '';
   barcodeLookingUp = signal(false);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
+
+  @ViewChild('barcodeField') private barcodeField?: BarcodeScanFieldComponent;
   importBlDialogVisible = false;
   importBlNumber = '';
 
@@ -1598,9 +1594,8 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     this.router.navigate(['/purchase-receipts', id, 'edit'], { replaceUrl: true });
   }
 
-  openBarcodeDialog(): void {
-    this.barcodeInput = '';
-    this.barcodeDialogVisible = true;
+  focusBarcodeField(): void {
+    this.barcodeField?.focus();
   }
 
   openImportBlDialog(): void {
@@ -1623,57 +1618,46 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  lookupBarcode(): void {
-    const code = this.barcodeInput.trim();
-    if (!code) return;
-
+  /**
+   * Scan sur le bon de réception.
+   *
+   * La résolution du code passe désormais par le socle partagé — il n'y avait aucune raison
+   * que cet écran ait sa propre implémentation, divergente de celle de la caisse : un
+   * correctif n'en aurait atteint qu'une moitié. La sémantique métier, elle, est conservée
+   * telle quelle : un article déjà présent voit sa quantité reçue incrémentée, sinon une
+   * ligne est créée au prix d'achat.
+   */
+  onBarcodeScanned(code: string): void {
     this.barcodeLookingUp.set(true);
-    this.productService.getProductByBarcode(code).subscribe({
-      next: (res) => {
-        this.barcodeLookingUp.set(false);
-        if (!res.success || !res.data) {
-          this.toastService.add({
-            severity: 'warn',
-            summary: 'Introuvable',
-            detail: 'Aucun produit avec ce code-barres'
-          });
-          return;
-        }
 
-        const product = res.data;
-        const existing = this.lines.find(l => l.productId === product.id);
-        if (existing) {
-          existing.receivedQuantity = (existing.receivedQuantity || 0) + 1;
-        } else {
-          const line = this.createEmptyLine();
-          line.product = product;
-          line.productId = product.id;
-          line.productCode = product.code;
-          line.productName = product.name;
-          line.designation = product.name;
-          line.unit = product.unit ?? '';
-          line.unitPriceHT = product.purchasePrice ?? product.unitPrice ?? 0;
-          line.vatRate = product.vatRate ?? 19;
-          line.receivedQuantity = 1;
-          this.lines.push(line);
-        }
+    this.barcodeLookup.resolve(code, { requireActive: true }).subscribe(result => {
+      this.barcodeLookingUp.set(false);
 
-        this.recalculateTotals();
-        this.barcodeDialogVisible = false;
-        this.toastService.add({
-          severity: 'success',
-          summary: 'Article ajouté',
-          detail: product.name
-        });
-      },
-      error: () => {
-        this.barcodeLookingUp.set(false);
-        this.toastService.add({
-          severity: 'warn',
-          summary: 'Introuvable',
-          detail: 'Aucun produit avec ce code-barres'
-        });
+      if (result.status !== 'found' || !result.product) {
+        this.barcodeFeedback.report(result);
+        return;
       }
+
+      const product = result.product;
+      const existing = this.lines.find(l => l.productId === product.id);
+      if (existing) {
+        existing.receivedQuantity = (existing.receivedQuantity || 0) + 1;
+      } else {
+        const line = this.createEmptyLine();
+        line.product = product;
+        line.productId = product.id;
+        line.productCode = product.code;
+        line.productName = product.name;
+        line.designation = product.name;
+        line.unit = product.unit ?? '';
+        line.unitPriceHT = product.purchasePrice ?? product.unitPrice ?? 0;
+        line.vatRate = product.vatRate ?? 19;
+        line.receivedQuantity = 1;
+        this.lines.push(line);
+      }
+
+      this.recalculateTotals();
+      this.barcodeFeedback.success(product.name);
     });
   }
 

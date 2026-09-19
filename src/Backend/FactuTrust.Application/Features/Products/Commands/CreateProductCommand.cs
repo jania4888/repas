@@ -1,3 +1,4 @@
+﻿using FactuTrust.Application.Common.Barcodes;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
@@ -60,6 +61,7 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
     private readonly IAuditService _auditService;
     private readonly ITenantContext _tenantContext;
     private readonly StockTraceabilityOptions _traceabilityOptions;
+    private readonly BarcodeOptions _barcodeOptions;
 
     public CreateProductCommandHandler(
         IProductRepository productRepository,
@@ -69,7 +71,8 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
         ICurrentUser currentUser,
         IAuditService auditService,
         ITenantContext tenantContext,
-        IOptions<StockTraceabilityOptions> traceabilityOptions)
+        IOptions<StockTraceabilityOptions> traceabilityOptions,
+        IOptions<BarcodeOptions> barcodeOptions)
     {
         _productRepository = productRepository;
         _productCategoryRepository = productCategoryRepository;
@@ -79,6 +82,7 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
         _auditService = auditService;
         _tenantContext = tenantContext;
         _traceabilityOptions = traceabilityOptions.Value;
+        _barcodeOptions = barcodeOptions.Value;
     }
 
     public async Task<Result<Guid>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
@@ -133,8 +137,13 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
 
         var product = productResult.Value;
 
-        // Code-barres : la clé de contrôle est vérifiée ici, de sorte qu'un code mal recopié
-        // soit refusé à la saisie plutôt que découvert au premier scan en caisse.
+        // Code-barres : format, puis drapeau de déploiement, puis unicité — toujours dans
+        // cet ordre. La clé de contrôle est vérifiée ici, de sorte qu'un code mal recopié soit
+        // refusé à la saisie plutôt que découvert au premier scan en caisse.
+        var barcodeCheck = await ValidateBarcodeAsync(dto.Barcode, null, cancellationToken);
+        if (barcodeCheck.IsFailure)
+            return Result.Failure<Guid>(barcodeCheck.Error);
+
         var barcodeResult = product.SetBarcode(dto.Barcode);
         if (barcodeResult.IsFailure)
             return Result.Failure<Guid>(barcodeResult.Error);
@@ -192,5 +201,40 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
             cancellationToken: cancellationToken);
 
         return Result.Success(product.Id);
+    }
+
+    /// <summary>
+    /// Contrôle un code-barres avant de le poser sur l'article : format (clé de contrôle),
+    /// symbologie autorisée par le déploiement, puis absence de conflit avec un autre article.
+    ///
+    /// <para>
+    /// L'unicité est vérifiée ici et non par une contrainte de base : l'index reste NON unique
+    /// tant que le parc n'a pas été balayé, une migration UNIQUE en échec bloquant le tenant au
+    /// démarrage. Ce contrôle arrête la production de nouveaux doublons, ce qui est la
+    /// condition préalable au futur index — voir docs/runbooks/barcode-cutover.md.
+    /// </para>
+    /// </summary>
+    private async Task<Result> ValidateBarcodeAsync(
+        string? rawBarcode,
+        Guid? excludeProductId,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(rawBarcode))
+            return Result.Success();
+
+        var parsed = Barcode.Create(rawBarcode);
+        if (parsed.IsFailure)
+            return Result.Failure(parsed.Error);
+
+        var writable = BarcodePolicy.EnsureWritable(parsed.Value, _barcodeOptions);
+        if (writable.IsFailure)
+            return writable;
+
+        var taken = await _productRepository.BarcodeExistsAsync(
+            parsed.Value.Value, excludeProductId, cancellationToken);
+
+        return taken
+            ? Result.Failure(Error.Conflict("Ce code-barres est déjà utilisé par un autre article."))
+            : Result.Success();
     }
 }

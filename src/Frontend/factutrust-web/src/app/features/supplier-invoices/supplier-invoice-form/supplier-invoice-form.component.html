@@ -4,56 +4,28 @@
   title="Nouvelle facture fournisseur"
   subtitle="Saisissez une facture de charges ou de services. Le stock n'est pas mis à jour.">
   <app-button variant="outline" icon="pi-times" iconPos="left" (click)="cancel()">Annuler</app-button>
+  <app-button
+    variant="primary"
+    [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
+    iconPos="left"
+    [disabled]="submitting() || !canSubmit()"
+    (click)="submit()">
+    Créer la facture
+  </app-button>
 </app-page-header>
-
-<div class="submit-readiness" role="status" aria-live="polite">
-  <p class="submit-readiness__title">Étapes pour créer la facture</p>
-  <ul class="submit-readiness__list">
-    <li [class.submit-readiness__item--done]="hasSupplier()">
-      <i class="pi" [class.pi-check-circle]="hasSupplier()" [class.pi-circle]="!hasSupplier()"></i>
-      @if (hasSupplier()) {
-        <span>Fournisseur sélectionné</span>
-      } @else {
-        <button type="button" class="submit-readiness__link" (click)="scrollToSection('section-infos')">
-          Sélectionnez un fournisseur
-        </button>
-      }
-    </li>
-    <li [class.submit-readiness__item--done]="hasInvoiceNumber()">
-      <i class="pi" [class.pi-check-circle]="hasInvoiceNumber()" [class.pi-circle]="!hasInvoiceNumber()"></i>
-      @if (hasInvoiceNumber()) {
-        <span>Numéro interne renseigné</span>
-      } @else {
-        <button type="button" class="submit-readiness__link" (click)="scrollToSection('section-numero')">
-          Indiquez un numéro interne ou utilisez le n° suggéré
-        </button>
-      }
-    </li>
-    <li [class.submit-readiness__item--done]="hasValidLines()">
-      <i class="pi" [class.pi-check-circle]="hasValidLines()" [class.pi-circle]="!hasValidLines()"></i>
-      @if (hasValidLines()) {
-        <span>{{ validLineCount() }} ligne(s) valide(s)</span>
-      } @else {
-        <button type="button" class="submit-readiness__link" (click)="scrollToSection('section-lignes')">
-          Ajoutez au moins une ligne (section Lignes)
-        </button>
-      }
-    </li>
-  </ul>
-</div>
 
 <div class="info-banner" role="status">
   <i class="pi pi-info-circle" aria-hidden="true"></i>
   <div class="info-banner__content">
     <p>Cette facture ne met pas à jour le stock. Pour les marchandises gérées en stock, passez par un bon de réception.</p>
-    <a routerLink="/purchase-receipts/new" class="info-banner__link">Créer un bon de réception →</a>
+    <a routerLink="/purchase-receipts/new" class="info-banner__link">Créer un bon de réception</a>
   </div>
 </div>
 
 <div class="form-layout">
   <app-form-section title="Informations générales" icon="pi-building" [number]="1">
-    <div id="section-infos" class="ft-form-grid ft-form-grid--compact">
-      <div class="ft-field ft-field--full">
+    <div class="ft-form-grid">
+      <div class="ft-field">
         <label for="supplier">Fournisseur <span class="ft-required">*</span></label>
         <p-select
           id="supplier"
@@ -66,8 +38,7 @@
           [filter]="true"
           filterBy="name"
           [showClear]="true"
-          (onChange)="onSupplierChange()"
-          styleClass="w-full">
+          (onChange)="onSupplierChange()">
         </p-select>
       </div>
 
@@ -79,7 +50,6 @@
           name="invoiceDate"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
-          appendTo="body"
           (ngModelChange)="onInvoiceDateChange()"
           styleClass="w-full">
         </p-datepicker>
@@ -93,68 +63,34 @@
           [(ngModel)]="paymentTermDays"
           name="paymentTermDays"
           optionLabel="label"
-          optionValue="value"
-          styleClass="w-full">
+          optionValue="value">
         </p-select>
-        <small class="ft-hint">
-          <i class="pi pi-calendar" aria-hidden="true"></i>
-          Échéance : {{ dueDate() | date:'dd/MM/yyyy' }}
-        </small>
+        <small class="ft-hint">Échéance : {{ dueDate() | date:'dd/MM/yyyy' }}</small>
       </div>
 
-      <div class="ft-field">
-        <label for="externalReference">N° facture fournisseur</label>
-        <input
-          pInputText
-          id="externalReference"
-          [(ngModel)]="externalReference"
-          name="externalReference"
-          maxlength="100"
-          placeholder="N° papier du fournisseur">
-      </div>
-
-      <div id="section-numero" class="ft-field">
+      <div class="ft-field ft-field--span2">
         <label for="invoiceNumber">N° interne</label>
-        @if (useSuggestedNumber) {
-          <div class="invoice-number-row">
-            <div class="ft-readonly" aria-live="polite">{{ invoiceNumber || '—' }}</div>
-            <app-button
-              type="button"
-              variant="outline"
-              size="sm"
-              [icon]="regenerating() ? 'pi-spin pi-spinner' : 'pi-refresh'"
-              iconPos="left"
-              [disabled]="regenerating()"
-              (click)="generateInvoiceNumber()">
-              Générer
-            </app-button>
-            <app-button type="button" variant="ghost" size="sm" (click)="enableManualInvoiceNumber()">
-              Modifier
-            </app-button>
-          </div>
-        } @else {
-          <div class="invoice-number-row">
-            <input
-              pInputText
-              id="invoiceNumber"
-              [(ngModel)]="invoiceNumber"
-              name="invoiceNumber"
-              maxlength="50"
-              placeholder="FS-2026-000001"
-              (ngModelChange)="onInvoiceNumberEdited()">
-            <app-button
-              type="button"
-              variant="outline"
-              size="sm"
-              [icon]="regenerating() ? 'pi-spin pi-spinner' : 'pi-refresh'"
-              iconPos="left"
-              [disabled]="regenerating()"
-              (click)="generateInvoiceNumber()">
-              Générer
-            </app-button>
-          </div>
-        }
-        <label class="invoice-number-check ft-hint">
+        <div class="input-group">
+          <input
+            pInputText
+            id="invoiceNumber"
+            [(ngModel)]="invoiceNumber"
+            name="invoiceNumber"
+            placeholder="FS-2026-000001"
+            [disabled]="useSuggestedNumber"
+            (ngModelChange)="onInvoiceNumberEdited()">
+          <app-button
+            type="button"
+            variant="outline"
+            size="sm"
+            [icon]="regenerating() ? 'pi-spin pi-spinner' : 'pi-refresh'"
+            iconPos="left"
+            [disabled]="regenerating()"
+            (click)="generateInvoiceNumber()">
+            Générer
+          </app-button>
+        </div>
+        <label class="hint-check">
           <p-checkbox
             [(ngModel)]="useSuggestedNumber"
             name="useSuggestedNumber"
@@ -167,6 +103,16 @@
       </div>
 
       <div class="ft-field">
+        <label for="externalReference">N° facture fournisseur</label>
+        <input
+          pInputText
+          id="externalReference"
+          [(ngModel)]="externalReference"
+          name="externalReference"
+          placeholder="N° papier du fournisseur">
+      </div>
+
+      <div class="ft-field">
         <label for="paymentMethod">Mode de paiement prévu</label>
         <p-select
           id="paymentMethod"
@@ -176,15 +122,23 @@
           optionLabel="label"
           optionValue="value"
           [showClear]="true"
-          placeholder="Optionnel"
-          styleClass="w-full">
+          placeholder="Optionnel">
         </p-select>
       </div>
 
+      <!--
+        Le libellé « Entrepôt » est rendu ici, et non par <app-warehouse-selector>, afin
+        qu'il hérite de `.ft-field label` comme ses voisins (le libellé interne du composant
+        partagé est encapsulé, donc hors de portée de nos styles).
+        Le composant partagé n'est PAS modifié : `showLabel=false` met son aria-labelledby
+        interne à null, si bien que le <label for="si-warehouse"> ci-dessous devient le seul
+        nom accessible du select — les deux mécanismes sont exclusifs par construction.
+      -->
       <div class="ft-field">
+        <label for="si-warehouse">Entrepôt</label>
         <app-warehouse-selector
           inputId="si-warehouse"
-          label="Entrepôt"
+          [showLabel]="false"
           [required]="false"
           [value]="selectedWarehouseId"
           (valueChange)="selectedWarehouseId = $event">
@@ -193,217 +147,121 @@
 
       <div class="ft-field ft-field--full">
         <label for="notes">Notes</label>
-        <textarea
-          pTextarea
-          id="notes"
-          [(ngModel)]="notes"
-          name="notes"
-          rows="3"
-          maxlength="2000"
-          class="w-full">
-        </textarea>
+        <textarea pTextarea id="notes" [(ngModel)]="notes" name="notes" rows="3"></textarea>
       </div>
     </div>
   </app-form-section>
 
-  <div
-    id="section-lignes"
-    class="lines-section-wrap"
-    [class.lines-section-wrap--empty]="!hasValidLines()">
-    <app-form-section title="Lignes" icon="pi-list" [number]="2">
-      <div class="lines-toolbar">
-        <app-button type="button" variant="secondary" size="sm" icon="pi-plus" iconPos="left" (click)="addLine()">
-          Ajouter une ligne
-        </app-button>
-        <app-button
-          type="button"
-          variant="ghost"
-          size="sm"
-          icon="pi-plus-circle"
-          iconPos="left"
-          pTooltip="Créer rapidement un article ou service hors stock"
-          tooltipPosition="top"
-          (click)="quickCreateVisible = true">
-          Créer un article / service
-        </app-button>
+  <app-form-section title="Lignes" icon="pi-list" [number]="2">
+    <div class="lines-toolbar">
+      <app-button type="button" variant="outline" size="sm" icon="pi-plus" iconPos="left" (click)="addLine()">
+        Ajouter une ligne
+      </app-button>
+      <app-button type="button" variant="ghost" size="sm" icon="pi-plus-circle" iconPos="left" (click)="quickCreateVisible = true">
+        Créer un article / service
+      </app-button>
+    </div>
+
+    <!-- Doit rester HORS de .lines-table-wrap : l'overflow-x du conteneur le rognerait. -->
+    @if (barcodeScanEnabled) {
+      <div class="barcode-scan-row">
+        <ft-barcode-scan-field
+          placeholder="Scanner un code-barres pour ajouter une ligne"
+          [autoFocus]="false"
+          (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
       </div>
+    }
 
-      @if (!hasValidLines()) {
-        <div class="ft-empty-inline">
-          <i class="pi pi-inbox" aria-hidden="true"></i>
-          <p>Aucune ligne valide pour le moment.</p>
-          <p class="ft-hint">
-            Sélectionnez un article ou service (hors stock) ci-dessous, avec une quantité supérieure à 0.
-          </p>
-        </div>
-      }
-
-      <div class="lines-table-wrap">
-          <table class="lines-table ft-table-like">
-            <colgroup>
-              <col class="col-row-num">
-              <col class="col-article">
-              <col class="col-qty">
-              <col class="col-price">
-              <col class="col-disc">
-              <col class="col-vat">
-              <col class="col-ht">
+    <div class="lines-table-wrap">
+      <table class="lines-table">
+        <thead>
+          <tr>
+            <th class="col-row">#</th>
+            <th>Article</th>
+            <th class="col-qty ft-num">Qté</th>
+            <th class="col-price ft-num">PU HT</th>
+            <th class="col-disc ft-num">Remise %</th>
+            <th class="col-vat ft-num">TVA</th>
+            <th class="col-ht ft-num">HT</th>
+            @if (fixedAssetsEnabled()) {
+              <th class="col-immo">Immo</th>
+            }
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of lines; track $index; let i = $index) {
+            <tr>
+              <td class="col-row">{{ i + 1 }}</td>
+              <td>
+                <p-autoComplete
+                  [(ngModel)]="line.product"
+                  [ngModelOptions]="{ standalone: true }"
+                  [suggestions]="productSuggestions()"
+                  (completeMethod)="searchProducts($event)"
+                  (onSelect)="onProductSelect(line, $event)"
+                  field="name"
+                  [dropdown]="true"
+                  [forceSelection]="true"
+                  [minLength]="0"
+                  appendTo="body"
+                  panelStyleClass="si-line-product-panel"
+                  placeholder="Service ou charge (hors stock)">
+                  <ng-template let-product pTemplate="item">
+                    <div class="product-item">
+                      <span class="product-item__code">{{ product.code }}</span>
+                      <span class="product-item__name">{{ product.name }}</span>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+              </td>
+              <td class="ft-num">
+                <p-inputNumber [(ngModel)]="line.quantity" [ngModelOptions]="{ standalone: true }" [min]="0" [minFractionDigits]="0" [maxFractionDigits]="3" (ngModelChange)="recalculateTotals()"></p-inputNumber>
+              </td>
+              <td class="ft-num">
+                <p-inputNumber [(ngModel)]="line.unitPriceHT" [ngModelOptions]="{ standalone: true }" [min]="0" [minFractionDigits]="3" [maxFractionDigits]="3" mode="decimal" (ngModelChange)="recalculateTotals()"></p-inputNumber>
+              </td>
+              <td class="ft-num">
+                <p-inputNumber [(ngModel)]="line.discountPercent" [ngModelOptions]="{ standalone: true }" [min]="0" [max]="100" [minFractionDigits]="0" [maxFractionDigits]="2" (ngModelChange)="recalculateTotals()"></p-inputNumber>
+              </td>
+              <td class="ft-num ft-muted">{{ line.vatRate }} %</td>
+              <td class="ft-num amount">{{ lineTotalHT(line) | currency:'TND':'symbol':'1.3-3' }}</td>
               @if (fixedAssetsEnabled()) {
-                <col class="col-immo">
+                <td class="col-immo">
+                  <p-checkbox [(ngModel)]="line.isFixedAsset" [ngModelOptions]="{ standalone: true }" [binary]="true" [inputId]="'immo-' + i"></p-checkbox>
+                </td>
               }
-              <col class="col-actions">
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="ft-row-number-col">#</th>
-                <th>Article</th>
-                <th class="ft-num">Qté</th>
-                <th class="ft-num">PU HT</th>
-                <th class="ft-num">Remise %</th>
-                <th class="ft-num">TVA</th>
-                <th class="ft-num">HT</th>
-                @if (fixedAssetsEnabled()) {
-                  <th class="col-immo">Immo</th>
-                }
-                <th class="ft-actions-col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (line of lines; track $index; let i = $index) {
-                <tr>
-                  <td class="ft-row-number">{{ i + 1 }}</td>
-                  <td class="col-article-cell">
-                    <p-autoComplete
-                      [(ngModel)]="line.product"
-                      [ngModelOptions]="{ standalone: true }"
-                      [suggestions]="productSuggestions()"
-                      (completeMethod)="searchProducts($event)"
-                      (onSelect)="onProductSelect(line, $event)"
-                      field="name"
-                      [dropdown]="true"
-                      [forceSelection]="true"
-                      [minLength]="0"
-                      appendTo="body"
-                      placeholder="Service ou charge (hors stock)"
-                      styleClass="w-full"
-                      inputStyleClass="w-full">
-                      <ng-template let-product pTemplate="item">
-                        <div class="product-item">
-                          <span class="product-item__code">{{ product.code }}</span>
-                          <span class="product-item__name">{{ product.name }}</span>
-                        </div>
-                      </ng-template>
-                    </p-autoComplete>
-                  </td>
-                  <td class="ft-num">
-                    <p-inputNumber
-                      [(ngModel)]="line.quantity"
-                      [ngModelOptions]="{ standalone: true }"
-                      [min]="0"
-                      [minFractionDigits]="0"
-                      [maxFractionDigits]="3"
-                      (ngModelChange)="recalculateTotals()"
-                      styleClass="ft-inline-input w-full">
-                    </p-inputNumber>
-                  </td>
-                  <td class="ft-num">
-                    <p-inputNumber
-                      [(ngModel)]="line.unitPriceHT"
-                      [ngModelOptions]="{ standalone: true }"
-                      [min]="0"
-                      [minFractionDigits]="3"
-                      [maxFractionDigits]="3"
-                      mode="decimal"
-                      (ngModelChange)="recalculateTotals()"
-                      styleClass="ft-inline-input w-full">
-                    </p-inputNumber>
-                  </td>
-                  <td class="ft-num">
-                    <p-inputNumber
-                      [(ngModel)]="line.discountPercent"
-                      [ngModelOptions]="{ standalone: true }"
-                      [min]="0"
-                      [max]="100"
-                      [minFractionDigits]="0"
-                      [maxFractionDigits]="2"
-                      (ngModelChange)="recalculateTotals()"
-                      styleClass="ft-inline-input w-full">
-                    </p-inputNumber>
-                  </td>
-                  <td class="ft-num ft-muted">{{ line.vatRate }} %</td>
-                  <td class="ft-num amount">{{ lineTotalHT(line) | currency:'TND':'symbol':'1.3-3' }}</td>
-                  @if (fixedAssetsEnabled()) {
-                    <td class="col-immo-cell">
-                      <p-checkbox
-                        [(ngModel)]="line.isFixedAsset"
-                        [ngModelOptions]="{ standalone: true }"
-                        [binary]="true"
-                        [inputId]="'immo-' + i"
-                        pTooltip="Comptabiliser en immobilisation"
-                        tooltipPosition="top">
-                      </p-checkbox>
-                    </td>
-                  }
-                  <td class="ft-actions-col">
-                    <app-button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      icon="pi-trash"
-                      [iconOnly]="true"
-                      [ariaLabel]="'Supprimer la ligne ' + (i + 1)"
-                      (click)="removeLine(i)">
-                    </app-button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+              <td class="col-actions">
+                <app-button type="button" variant="ghost" size="sm" icon="pi-trash" [iconOnly]="true" [ariaLabel]="'Supprimer la ligne ' + (i + 1)" (click)="removeLine(i)"></app-button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="lines-empty" [attr.colspan]="fixedAssetsEnabled() ? 9 : 8">
+                Aucune ligne. Utilisez « Ajouter une ligne » pour commencer.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
-      <div class="ft-totals" aria-live="polite" aria-atomic="true">
-        <div class="ft-totals__row">
-          <span>Total HT</span>
-          <strong>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</strong>
-        </div>
-        <div class="ft-totals__row">
-          <span>TVA</span>
-          <strong>{{ totalVat() | currency:'TND':'symbol':'1.3-3' }}</strong>
-        </div>
-        <div class="ft-totals__row ft-totals__row--grand">
-          <span>Total TTC</span>
-          <strong>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</strong>
-        </div>
+    <div class="ft-totals" aria-live="polite" aria-atomic="true">
+      <div class="ft-totals__row">
+        <span>Total HT</span>
+        <strong>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</strong>
       </div>
-    </app-form-section>
-  </div>
+      <div class="ft-totals__row">
+        <span>TVA</span>
+        <strong>{{ totalVat() | currency:'TND':'symbol':'1.3-3' }}</strong>
+      </div>
+      <div class="ft-totals__row ft-totals__row--grand">
+        <span>Total TTC</span>
+        <strong>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</strong>
+      </div>
+    </div>
+  </app-form-section>
 </div>
-
-@if (hasValidLines()) {
-  <div class="sticky-action-bar" role="region" aria-label="Actions de création">
-    <div class="sticky-action-bar__total">
-      <span class="sticky-action-bar__label">Total TTC</span>
-      <span class="sticky-action-bar__amount">{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</span>
-    </div>
-    <div class="sticky-action-bar__actions">
-      <app-button variant="outline" icon="pi-times" iconPos="left" (click)="cancel()">Annuler</app-button>
-      <span
-        class="create-btn-wrap"
-        [pTooltip]="submitBlockersTooltip()"
-        [tooltipDisabled]="canSubmit() || submitting()"
-        tooltipPosition="top">
-        <app-button
-          variant="primary"
-          [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
-          iconPos="left"
-          [disabled]="submitting() || !canSubmit()"
-          (click)="submit()">
-          {{ submitting() ? 'Création…' : 'Créer la facture' }}
-        </app-button>
-      </span>
-    </div>
-  </div>
-}
 
 <app-quick-create-product-dialog
   [(visible)]="quickCreateVisible"

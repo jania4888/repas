@@ -1,4 +1,4 @@
-using FactuTrust.Domain.Entities;
+﻿using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 
 namespace FactuTrust.Application.DTOs;
@@ -22,8 +22,15 @@ public sealed record ProductListDto
     public int VatRatePercent { get; init; }
     public string VatRateDisplay { get; init; } = null!;
     public string? Unit { get; init; }
-    /// <summary>Code-barres EAN-8 / EAN-13. Distinct du code produit interne.</summary>
+    /// <summary>Code-barres de l'article. Distinct du code produit interne.</summary>
     public string? Barcode { get; init; }
+
+    /// <summary>
+    /// Symbologie deduite du code-barres : Ean8, UpcA, Ean13, Gtin14 ou Code128. Chaine et non
+    /// entier : c'est un libelle d'affichage, pas un contrat numerique a maintenir cote front.
+    /// Null lorsque l'article n'a pas de code-barres.
+    /// </summary>
+    public string? BarcodeSymbology { get; init; }
     public bool IsActive { get; init; }
     public bool IsStockManaged { get; init; }
     public bool IsFodecApplicable { get; init; }
@@ -65,8 +72,15 @@ public sealed record ProductDetailDto
     public int VatRatePercent { get; init; }
     public string VatRateDisplay { get; init; } = null!;
     public string? Unit { get; init; }
-    /// <summary>Code-barres EAN-8 / EAN-13. Distinct du code produit interne.</summary>
+    /// <summary>Code-barres de l'article. Distinct du code produit interne.</summary>
     public string? Barcode { get; init; }
+
+    /// <summary>
+    /// Symbologie deduite du code-barres : Ean8, UpcA, Ean13, Gtin14 ou Code128. Chaine et non
+    /// entier : c'est un libelle d'affichage, pas un contrat numerique a maintenir cote front.
+    /// Null lorsque l'article n'a pas de code-barres.
+    /// </summary>
+    public string? BarcodeSymbology { get; init; }
     public bool IsActive { get; init; }
     public bool IsStockManaged { get; init; }
     public bool IsFodecApplicable { get; init; }
@@ -111,6 +125,12 @@ public sealed record ProductSelectDto
     public string? AttributeSummary { get; init; }
     public bool IsVariantTemplate { get; init; }
     public Guid? ParentProductId { get; init; }
+
+    /// <summary>
+    /// Code-barres de l'article. Exposé ici pour que l'autocomplétion d'une ligne de document
+    /// puisse resoudre un code scanné sans aller-retour supplémentaire.
+    /// </summary>
+    public string? Barcode { get; init; }
 }
 
 /// <summary>
@@ -259,4 +279,17 @@ public sealed record BulkUpdateVariantPriceItem
     public decimal? UnitPrice { get; init; }
     public decimal? PurchasePrice { get; init; }
     public string? Barcode { get; init; }
+}
+
+/// <summary>
+/// Drapeaux de déploiement des codes-barres, exposés au front pour qu'il n'offre pas une
+/// saisie que le serveur refuserait. Ce ne sont pas des données du dossier.
+/// </summary>
+public sealed record BarcodeFeaturesDto
+{
+    /// <summary>UPC-A, GTIN-14 et Code 128 acceptés à l'enregistrement.</summary>
+    public bool ExtendedSymbologiesEnabled { get; init; }
+
+    /// <summary>Impression d'étiquettes ouverte.</summary>
+    public bool LabelPrintingEnabled { get; init; }
 }

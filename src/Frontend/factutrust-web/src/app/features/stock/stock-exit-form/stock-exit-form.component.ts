@@ -266,9 +266,19 @@ import { ConfirmationService } from '@core/services/confirmation.service';
       border-top: 1px solid var(--color-border-subtle);
     }
 
+    // Le <textarea> natif n'est PAS couvert par le bloc ::ng-deep ci-dessous : il vit
+    // dans ce template, pas dans un composant enfant. Sans cette règle il reste à sa
+    // largeur intrinsèque pendant que les p-select et p-inputNumber voisins occupent
+    // toute la colonne — la « class="w-full" » posée dessus ne porte rien (Tailwind est
+    // préfixé « tw- », cf. tailwind.config.js).
+    .form-group > input[pInputText],
+    .form-group > textarea[pTextarea] {
+      width: 100%;
+    }
+
     :host ::ng-deep {
       .p-inputnumber, .p-select { width: 100%; }
-      
+
       .danger-button .btn {
         background-color: var(--color-error-600) !important;
         border-color: var(--color-error-600) !important;

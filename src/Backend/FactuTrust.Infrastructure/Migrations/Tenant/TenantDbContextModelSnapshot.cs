@@ -10709,8 +10709,8 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                             b1.Property<string>("Value")
                                 .IsRequired()
-                                .HasMaxLength(13)
-                                .HasColumnType("nvarchar(13)")
+                                .HasMaxLength(48)
+                                .HasColumnType("nvarchar(48)")
                                 .HasColumnName("Barcode");
 
                             b1.HasKey("ProductId");

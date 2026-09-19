@@ -67,7 +67,18 @@ export const environment = {
     /** Sector-aware 4-step registration wizard at /auth/register. Set false to serve the legacy 3-step form. */
     registrationWizardV2: true,
     /** Phase 2 sector rules: fetch GET /api/public/sector-catalog once per session. 404/error/off ⇒ silent static fallback. */
-    sectorCatalogHttp: true
+    sectorCatalogHttp: true,
+    /**
+     * Champ de scan de code-barres sur les écrans de document (achats, ventes, stock,
+     * inventaire). N'affecte PAS le point de vente, dont le scan est inchangé.
+     */
+    barcodeScanOnDocuments: false,
+    /**
+     * Impression d'étiquettes code-barres. À basculer CONJOINTEMENT avec
+     * `Features:Barcodes:LabelPrintingEnabled` côté API : si le back est off, l'endpoint
+     * d'étiquettes répond 404.
+     */
+    barcodeLabelPrinting: false
   },
   /** First-login product tour + checklist. Mirror of ProductOnboarding:Enabled. */
   productOnboardingEnabled: true

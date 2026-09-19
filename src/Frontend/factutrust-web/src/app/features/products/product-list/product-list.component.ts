@@ -11,6 +11,11 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService } from '@core/services/confirmation.service';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { PrintLabelsDialogComponent, LabelPrintTarget } from '../components/print-labels-dialog/print-labels-dialog.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { ToastService } from '@core/services/toast.service';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
@@ -35,6 +40,8 @@ interface CategoryOption {
   selector: 'app-product-list',
   standalone: true,
   imports: [
+    BarcodeScanFieldComponent,
+    PrintLabelsDialogComponent,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -95,6 +102,14 @@ interface CategoryOption {
             (input)="onSearch()"
             class="w-full">
         </span>
+        @if (barcodeScanEnabled) {
+          <span class="flex-1">
+            <ft-barcode-scan-field
+              placeholder="Scanner un code-barres"
+              [autoFocus]="false"
+              (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+          </span>
+        }
 
         <p-select 
           [options]="categoryOptions" 
@@ -243,6 +258,18 @@ interface CategoryOption {
                     ariaLabel="Modifier le produit">
                   </app-button>
                 }
+                @if (labelPrintingEnabled) {
+                  <app-button
+                    variant="ghost"
+                    size="sm"
+                    icon="pi-print"
+                    [iconOnly]="true"
+                    (clicked)="openLabelDialog(product)"
+                    pTooltip="Imprimer les étiquettes"
+                    tooltipPosition="top"
+                    ariaLabel="Imprimer les étiquettes">
+                  </app-button>
+                }
                 @if (canDeleteProduct()) {
                   <app-button 
                     variant="ghost"
@@ -276,6 +303,11 @@ interface CategoryOption {
       }
     </div>
 
+
+    <ft-print-labels-dialog
+      [visible]="labelDialogVisible()"
+      (visibleChange)="labelDialogVisible.set($event)"
+      [target]="labelTarget()"></ft-print-labels-dialog>
   `,
   styles: [`
     .product-code {
@@ -339,6 +371,12 @@ export class ProductListComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private auth = inject(AuthService);
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
+  readonly labelPrintingEnabled = environment.featureFlags?.barcodeLabelPrinting === true;
+  readonly labelDialogVisible = signal(false);
+  readonly labelTarget = signal<LabelPrintTarget | null>(null);
 
   /** Stock module + product update (toggle uses PATCH product via update). */
   canToggleStockOnProduct = computed(() =>
@@ -623,5 +661,37 @@ export class ProductListComponent implements OnInit {
         });
       }
     });
+  }
+
+  /**
+   * Scan d'un code-barres depuis la liste des articles.
+   *
+   * Écran de consultation : le scan ne modifie rien. Un article reconnu ouvre directement sa
+   * fiche, ce qui répond au besoin réel — « quel est cet article que j'ai en main ». Sinon, le
+   * code est versé dans la recherche pour que l'utilisateur voie ce qui s'en approche plutôt
+   * que de rester devant un refus sec.
+   */
+  onBarcodeScanned(code: string): void {
+    this.barcodeLookup
+      .resolve(code, { requireActive: false })
+      .subscribe(result => {
+        if (result.status === 'found' && result.product) {
+          this.router.navigate(['/products', result.product.id]);
+          return;
+        }
+
+        this.searchTerm = code;
+        this.onSearch();
+        this.barcodeFeedback.report(result);
+      });
+  }
+
+  openLabelDialog(product: ProductListItem): void {
+    this.labelTarget.set({
+      id: product.id,
+      name: product.name,
+      hasBarcode: !!product.barcode
+    });
+    this.labelDialogVisible.set(true);
   }
 }

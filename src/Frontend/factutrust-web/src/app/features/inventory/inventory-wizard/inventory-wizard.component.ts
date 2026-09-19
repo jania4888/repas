@@ -13,6 +13,10 @@ import {
     RecordCountResult,
     StartInventoryRequest
 } from '@core/services/inventory.service';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { StockService, SimpleStockItem, Warehouse } from '@core/services/stock.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
@@ -40,6 +44,7 @@ type WizardStep = 'start' | 'count' | 'summary' | 'success';
     selector: 'app-inventory-wizard',
     standalone: true,
     imports: [
+        BarcodeScanFieldComponent,
         CommonModule,
         FormsModule,
         RouterModule,
@@ -68,6 +73,9 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
     private confirmationService = inject(ConfirmationService);
     private errorHandler = inject(ErrorHandlerService);
     private router = inject(Router);
+    private readonly barcodeLookup = inject(BarcodeLookupService);
+    private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+    readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
 
     readonly InventoryType = InventoryType;
 
@@ -598,5 +606,44 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
         this.activeInventory.set(null);
         this.inventorySummary.set(null);
         this.step.set('start');
+    }
+
+    /**
+     * Scan d'un code-barres pendant le comptage.
+     *
+     * Contrairement aux écrans de document, le scan ne CRÉE rien : le périmètre de
+     * l'inventaire est arrêté à son ouverture, et y ajouter une ligne fausserait l'écart
+     * théorique/compté. Le scan sert à se positionner — il amène directement sur l'article à
+     * compter et met le focus dans le champ de quantité, ce qui évite de le chercher dans une
+     * liste de plusieurs centaines de références.
+     *
+     * Un article hors périmètre est signalé, jamais ajouté silencieusement.
+     */
+    onBarcodeScanned(code: string): void {
+        if (this.step() !== 'count') return;
+
+        this.barcodeLookup
+            .resolve(code, { warehouseId: this.activeInventory()?.warehouseId ?? null })
+            .subscribe(result => {
+                if (result.status !== 'found' || !result.product) {
+                    this.barcodeFeedback.report(result);
+                    return;
+                }
+
+                const product = result.product;
+                const products = this.activeInventory()?.products ?? [];
+                const index = products.findIndex(p => p.productId === product.id);
+
+                if (index === -1) {
+                    this.barcodeFeedback.failure(
+                        `« ${product.name} » ne fait pas partie du périmètre de cet inventaire.`,
+                        'Hors périmètre'
+                    );
+                    return;
+                }
+
+                this.navigateToProduct(index);
+                this.barcodeFeedback.success(product.name);
+            });
     }
 }

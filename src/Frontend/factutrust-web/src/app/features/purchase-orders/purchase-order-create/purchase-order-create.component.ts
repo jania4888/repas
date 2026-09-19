@@ -9,6 +9,10 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DatePickerModule } from 'primeng/datepicker';
 import { Textarea } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { ToastService } from '@core/services/toast.service';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
@@ -35,6 +39,7 @@ interface OrderLine {
   selector: 'app-purchase-order-create',
   standalone: true,
   imports: [
+    BarcodeScanFieldComponent,
     CommonModule, RouterModule, FormsModule, CurrencyPipe,
     TableModule, SelectModule, InputTextModule, InputNumberModule,
     DatePickerModule, Textarea, ToastModule,
@@ -142,6 +147,14 @@ interface OrderLine {
           (click)="addLine()">
           Ajouter une ligne
         </app-button>
+        @if (barcodeScanEnabled) {
+          <div class="barcode-scan-row">
+            <ft-barcode-scan-field
+              placeholder="Scanner un code-barres pour ajouter une ligne"
+              [autoFocus]="false"
+              (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+          </div>
+        }
       </div>
 
       @if (lines.length === 0) {
@@ -495,6 +508,9 @@ export class PurchaseOrderCreateComponent implements OnInit {
   private productService = inject(ProductService);
   private toastService = inject(ToastService);
   private warehouseContext = inject(WarehouseContextService);
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
 
   suppliers = signal<SupplierListItem[]>([]);
   products = signal<ProductListItem[]>([]);
@@ -639,5 +655,40 @@ export class PurchaseOrderCreateComponent implements OnInit {
 
   private formatDate(date: Date): string {
     return formatLocalDate(date);
+  }
+
+  /**
+   * Scan d'un code-barres sur une commande fournisseur.
+   *
+   * Les services sont acceptés : une commande fournisseur peut légitimement porter sur une
+   * prestation. Seuls un modèle de variantes et un article désactivé sont refusés, par le
+   * socle de résolution.
+   */
+  onBarcodeScanned(code: string): void {
+    this.barcodeLookup.resolve(code).subscribe(result => {
+      if (result.status !== 'found' || !result.product) {
+        this.barcodeFeedback.report(result);
+        return;
+      }
+
+      const product = result.product;
+      const index = this.lines.findIndex(l => l.product?.id === product.id);
+
+      if (index >= 0) {
+        this.lines[index].quantity = (this.lines[index].quantity || 0) + 1;
+        this.recalculateLine(index);
+      } else {
+        let target = this.lines.findIndex(l => !l.product);
+        if (target < 0) {
+          this.addLine();
+          target = this.lines.length - 1;
+        }
+        this.lines[target].product = product;
+        this.lines[target].quantity = 1;
+        this.onProductChange(target);
+      }
+
+      this.barcodeFeedback.success(product.name);
+    });
   }
 }

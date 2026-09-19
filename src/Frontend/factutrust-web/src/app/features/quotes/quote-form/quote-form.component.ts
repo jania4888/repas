@@ -16,6 +16,10 @@ import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { ToastService } from '@core/services/toast.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { QuickCreateProductDialogComponent } from '@shared/components/quick-create-product-dialog/quick-create-product-dialog.component';
@@ -62,6 +66,7 @@ interface LineRow extends LinePromotionPreview {
   selector: 'app-quote-form',
   standalone: true,
   imports: [
+    BarcodeScanFieldComponent,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -180,6 +185,15 @@ interface LineRow extends LinePromotionPreview {
           <div class="lines-actions">
             <app-button variant="secondary" icon="pi-plus" iconPos="left" (click)="addLine()">Ajouter une ligne</app-button>
           </div>
+          @if (barcodeScanEnabled) {
+            <div class="barcode-scan-row">
+              <ft-barcode-scan-field
+                placeholder="Scanner un code-barres pour ajouter une ligne"
+                [autoFocus]="false"
+                (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+            </div>
+          }
+
           <div class="lines-table-wrap">
             <table class="lines-table">
               <thead>
@@ -696,6 +710,9 @@ export class QuoteFormComponent implements OnInit {
   private auth = inject(AuthService);
   private productService = inject(ProductService);
   private readonly productAutocomplete = inject(ProductAutocompleteService);
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
   readonly linePricing = inject(DocumentLinePricingService);
   private crm = inject(CrmService);
   private route = inject(ActivatedRoute);
@@ -1100,6 +1117,37 @@ export class QuoteFormComponent implements OnInit {
           detail,
         });
       },
+    });
+  }
+
+  /**
+   * Scan d'un code-barres : incrémente la ligne existante, sinon en crée une.
+   *
+   * La ligne vierge que le formulaire pose à l'ouverture est réutilisée plutôt que doublée —
+   * sans quoi un premier scan laisserait une ligne vide au-dessus de la sienne.
+   */
+  onBarcodeScanned(code: string): void {
+    this.barcodeLookup.resolve(code).subscribe(result => {
+      if (result.status !== 'found' || !result.product) {
+        this.barcodeFeedback.report(result);
+        return;
+      }
+
+      const product = result.product;
+      const existing = this.lines.find(l => l.product?.id === product.id);
+
+      if (existing) {
+        existing.quantity = (existing.quantity || 0) + 1;
+        this.onQuantityChange(existing);
+      } else {
+        const blank = this.lines.find(l => !l.product);
+        const line = blank ?? this.createEmptyLine();
+        this.applyProductToLine(line, product);
+        line.quantity = 1;
+        if (!blank) this.lines.push(line);
+      }
+
+      this.barcodeFeedback.success(product.name);
     });
   }
 }

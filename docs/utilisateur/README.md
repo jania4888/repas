@@ -27,6 +27,7 @@ Ce guide est conçu pour les **utilisateurs novices** et les **personnes non-inf
 | [11 - Contrats récurrents](11-contrats-recurrents.md) | Abonnements B2B, facturation périodique, usage, prorata |
 | [12 - Point de vente](12-pos.md) | Caisse POS, à terme, avoir, clôture Z, multi-caisse |
 | [13 - Studio IA](13-studio-ia.md) | Créer tables, formulaires, données et rapports en décrivant votre besoin |
+| [14 - Codes-barres](14-codes-barres.md) | Renseigner les codes-barres, scanner sur les documents, imprimer des étiquettes |
 | [Glossaire](glossaire.md) | Définitions des termes utilisés |
 
 ---

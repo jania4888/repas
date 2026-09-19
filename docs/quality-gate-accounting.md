@@ -29,6 +29,7 @@ dotnet test src/Backend/tests/FactuTrust.Infrastructure.Tests/FactuTrust.Infrast
 | API / DTO / lettrage | + `dotnet test` projets ci-dessus |
 | Immobilisations / FF achats | + `fixed-assets.service.spec.ts` + tests `FixedAsset*` / `SupplierInvoiceJournalLineBuilder` backend |
 | **Règle d'audit / moteur de contrôle** | + `dotnet test --filter "FullyQualifiedName~AccountingAudit"` |
+| **Codes-barres (value object, scan, étiquettes)** | + `dotnet test --filter "FullyQualifiedName~Barcode"` + `ng test --include='**/barcode-*.spec.ts' --include='**/*.barcode.spec.ts' --include='**/pos-barcode.service.spec.ts'` |
 
 ### Ajouter une règle de contrôle — points de passage obligés
 
@@ -45,6 +46,24 @@ dotnet test src/Backend/tests/FactuTrust.Infrastructure.Tests/FactuTrust.Infrast
    (fournisseur, matricule, n° de pièce). `Fingerprint` porte un index unique — sans discriminant,
    la seconde anomalie écrase la première.
 5. **Lien de correction** dans `AuditCorrectionLinkBuilder` (à défaut, repli générique).
+
+### Toucher aux codes-barres — points de passage obligés
+
+1. **`pos-barcode.service.spec.ts` ne se modifie pas.** C'est une spec de *caractérisation* :
+   elle a été écrite avant toute refonte pour prouver que la caisse ne change pas. Si elle
+   échoue, c'est le code qui a bougé, pas elle.
+2. **La symbologie ne se persiste jamais.** Elle se dérive de la valeur. Ajouter une colonne au
+   type possédé `Barcode` rendrait illisibles les articles déjà en base — voir
+   `docs/architecture/adr-barcode-symbologies.md`.
+3. **Un numérique de longueur GTIN à clé fausse ne se replie pas sur Code 128.** Sinon fausser
+   un chiffre suffirait à contourner le contrôle de clé.
+4. **Le drapeau garde l'écriture, jamais la lecture.** L'éteindre ne doit jamais rendre
+   introuvable un code déjà enregistré.
+5. **Toute charge utile de mise à jour d'article transmet `barcode`, même vide.** Le serveur
+   applique `SetBarcode(dto.Barcode)` sans condition : omettre la clé efface le code-barres.
+   C'est le défaut qui a vidé le catalogue pendant des mois.
+6. **L'encodeur se vérifie par aller-retour**, jamais en épinglant des motifs recopiés depuis
+   lui-même.
 
 ## Scénarios manuels rapides (smoke)
 

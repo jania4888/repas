@@ -16,6 +16,10 @@ import { AutoCompleteModule, AutoCompleteCompleteEvent, AutoCompleteSelectEvent 
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { WarehouseSelectorComponent } from '@shared/components/warehouse-selector/warehouse-selector.component';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { ToastService } from '@core/services/toast.service';
 import { QuickCreateProductDialogComponent } from '@shared/components/quick-create-product-dialog/quick-create-product-dialog.component';
 import { VariantProductPickerComponent } from '@shared/components/variant-product-picker/variant-product-picker.component';
@@ -60,6 +64,7 @@ interface LineRow extends LinePromotionPreview {
   selector: 'app-delivery-note-form',
   standalone: true,
   imports: [
+    BarcodeScanFieldComponent,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -170,6 +175,15 @@ interface LineRow extends LinePromotionPreview {
           <div class="lines-actions">
             <app-button variant="secondary" icon="pi-plus" iconPos="left" (click)="addLine()">Ajouter une ligne</app-button>
           </div>
+          @if (barcodeScanEnabled) {
+            <div class="barcode-scan-row">
+              <ft-barcode-scan-field
+                placeholder="Scanner un code-barres pour ajouter une ligne"
+                [autoFocus]="false"
+                (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+            </div>
+          }
+
           <div class="lines-table-wrap">
             <table class="lines-table">
               <colgroup>
@@ -686,6 +700,9 @@ export class DeliveryNoteFormComponent implements OnInit {
   private clientService = inject(ClientService);
   private auth = inject(AuthService);
   private readonly productAutocomplete = inject(ProductAutocompleteService);
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
   private router = inject(Router);
   private toastService = inject(ToastService);
   private errorHandler = inject(ErrorHandlerService);
@@ -991,6 +1008,37 @@ export class DeliveryNoteFormComponent implements OnInit {
           detail: fullDetail,
         });
       },
+    });
+  }
+
+  /**
+   * Scan d'un code-barres : incrémente la ligne existante, sinon en crée une.
+   *
+   * La ligne vierge que le formulaire pose à l'ouverture est réutilisée plutôt que doublée —
+   * sans quoi un premier scan laisserait une ligne vide au-dessus de la sienne.
+   */
+  onBarcodeScanned(code: string): void {
+    this.barcodeLookup.resolve(code).subscribe(result => {
+      if (result.status !== 'found' || !result.product) {
+        this.barcodeFeedback.report(result);
+        return;
+      }
+
+      const product = result.product;
+      const existing = this.lines.find(l => l.product?.id === product.id);
+
+      if (existing) {
+        existing.orderedQuantity = (existing.orderedQuantity || 0) + 1;
+        this.onQuantityChange(existing);
+      } else {
+        const blank = this.lines.find(l => !l.product);
+        const line = blank ?? this.createEmptyLine();
+        this.applyProductToLine(line, product);
+        line.orderedQuantity = 1;
+        if (!blank) this.lines.push(line);
+      }
+
+      this.barcodeFeedback.success(product.name);
     });
   }
 }

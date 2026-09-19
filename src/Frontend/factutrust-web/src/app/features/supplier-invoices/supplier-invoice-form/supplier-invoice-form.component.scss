@@ -1,21 +1,11 @@
-// SupplierInvoiceFormComponent — styles alignés sur sales-order-create (ft-*)
+// SupplierInvoiceFormComponent — charte ft-* (cf. sales-order-create).
+//
+// Les primitives `.ft-form-grid`, `.ft-field`, `.ft-field--full`, `.ft-required`,
+// `.ft-hint` et `.ft-muted` viennent de src/styles/_form-layout.scss, qui est un
+// stylesheet GLOBAL : il traverse l'encapsulation, aucun ::ng-deep n'est requis
+// pour elles. On ne surcharge ici que ce qui est propre à cet écran.
 
-:host {
-  display: block;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-bottom: var(--spacing-4, 1rem);
-}
-
-:host:has(.sticky-action-bar) {
-  padding-bottom: 5.5rem;
-}
-
-:host ::ng-deep app-form-section .form-section {
-  margin-bottom: var(--spacing-4, 1rem);
-}
-
-// ─── Info banner ─────────────────────────────────────────────────────────────
+// ─── Bandeau d'information ───────────────────────────────────────────────────
 .info-banner {
   display: flex;
   gap: var(--spacing-3);
@@ -46,6 +36,7 @@
 }
 
 .info-banner__link {
+  align-self: flex-start;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-primary-700);
@@ -60,80 +51,12 @@
   max-width: 1100px;
 }
 
-// ─── Submit readiness ────────────────────────────────────────────────────────
-.submit-readiness {
-  margin-bottom: var(--spacing-4, 1rem);
-  padding: var(--spacing-4, 1rem) var(--spacing-5, 1.25rem);
-  background: var(--color-neutral-50, #f8fafc);
-  border: 1px solid var(--color-border-subtle, #e2e8f0);
-  border-radius: var(--radius-lg, 0.5rem);
-}
-
-.submit-readiness__title {
-  margin: 0 0 var(--spacing-3, 0.75rem);
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-text-primary, #0f172a);
-}
-
-.submit-readiness__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2, 0.5rem);
-}
-
-.submit-readiness__list li {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2, 0.5rem);
-  font-size: var(--font-size-sm, 0.875rem);
-  color: var(--color-text-secondary, #475569);
-}
-
-.submit-readiness__list li .pi-circle {
-  color: var(--color-neutral-400, #94a3b8);
-}
-
-.submit-readiness__item--done {
-  color: var(--color-success-700, #15803d);
-}
-
-.submit-readiness__item--done .pi-check-circle {
-  color: var(--color-success-600, #16a34a);
-}
-
-.submit-readiness__link {
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  color: var(--color-primary-600, #2563eb);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.submit-readiness__link:hover {
-  color: var(--color-primary-700, #1d4ed8);
-}
-
-.create-btn-wrap {
-  display: inline-flex;
-}
-
-// ─── Section lignes vide ───────────────────────────────────────────────────────
-.lines-section-wrap--empty ::ng-deep app-form-section .form-section {
-  border-left-color: var(--color-warning-400, #fbbf24);
-  background: var(--color-warning-50, #fffbeb);
-}
-
-// ─── Grille formulaire ─────────────────────────────────────────────────────────
+// ─── Grille « Informations générales » ───────────────────────────────────────
+// `align-items: start` est ce qui répare l'alignement des rangées : sans lui,
+// le champ « N° interne » (input + bouton + case à cocher) étire ses voisins.
 .ft-form-grid {
-  display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
+  align-items: start;
 }
 
 @media (max-width: 1024px) {
@@ -148,31 +71,21 @@
   }
 }
 
-.ft-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1, 0.25rem);
-  min-width: 0;
+.ft-field--span2 {
+  grid-column: span 2;
 }
 
-.ft-field label {
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-medium, 500);
-  color: var(--color-text-primary, #0f172a);
+@media (max-width: 640px) {
+  .ft-field--span2 {
+    grid-column: auto;
+  }
 }
 
-.ft-field--full {
-  grid-column: 1 / -1;
-}
-
-.ft-field input[pInputText],
-.ft-field textarea[pTextarea] {
-  width: 100%;
-}
-
-:host ::ng-deep .ft-field .p-inputnumber,
+// _form-layout.scss couvre input[pInputText], textarea[pTextarea], .p-autocomplete
+// et .p-inputnumber, mais pas p-select ni p-datepicker : on complète localement.
+:host ::ng-deep .ft-field .p-select,
 :host ::ng-deep .ft-field .p-datepicker,
-:host ::ng-deep .ft-field .p-select {
+:host ::ng-deep .ft-field .p-inputnumber {
   width: 100%;
 }
 
@@ -180,55 +93,29 @@
   width: 100%;
 }
 
-.ft-required {
-  color: var(--color-error-600, #dc2626);
-}
-
-.ft-hint {
-  font-size: var(--font-size-xs, 0.75rem);
-  color: var(--color-text-secondary, #475569);
-  line-height: 1.4;
-}
-
-.ft-muted {
-  color: var(--color-neutral-600, #475569);
-}
-
-// ─── N° interne ────────────────────────────────────────────────────────────────
-.invoice-number-row {
+.input-group {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  flex-wrap: wrap;
 }
 
-.invoice-number-row input[pInputText] {
+.input-group input {
   flex: 1;
   min-width: 140px;
 }
 
-.ft-readonly {
-  flex: 1;
-  min-width: 140px;
-  padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
-  background: var(--color-neutral-100, #f1f5f9);
-  border: 1px solid var(--color-border-subtle, #e2e8f0);
-  border-radius: var(--radius-md, 0.375rem);
-  font-size: var(--font-size-sm, 0.875rem);
-  font-family: var(--font-family-mono, monospace);
-  color: var(--color-text-primary, #0f172a);
-}
-
-.invoice-number-check {
+.hint-check {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
   margin-top: var(--spacing-1);
   cursor: pointer;
-  font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
 }
 
-// ─── Lignes toolbar ────────────────────────────────────────────────────────────
+// ─── Lignes ──────────────────────────────────────────────────────────────────
 .lines-toolbar {
   display: flex;
   gap: var(--spacing-2);
@@ -236,109 +123,158 @@
   flex-wrap: wrap;
 }
 
-.ft-empty-inline {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-2, 0.5rem);
-  margin: var(--spacing-4, 1rem) 0 0;
-  padding: var(--spacing-8, 2rem) var(--spacing-6, 1.5rem);
-  text-align: center;
-  font-size: var(--font-size-sm, 0.875rem);
-  color: var(--color-text-tertiary, #64748b);
-  border: 1px dashed var(--color-border-default, #cbd5e1);
-  border-radius: var(--radius-lg, 0.5rem);
-  background: var(--color-neutral-50, #f8fafc);
+.barcode-scan-row {
+  margin-bottom: var(--spacing-3);
 }
 
-.ft-empty-inline i {
-  font-size: 2rem;
-  color: var(--color-text-tertiary, #64748b);
-}
-
-.ft-empty-inline p {
-  margin: 0;
-}
-
-// ─── Table lignes ────────────────────────────────────────────────────────────────
 .lines-table-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  margin-top: var(--spacing-4, 1rem);
-  border: 1px solid var(--color-border-subtle, #e2e8f0);
-  border-radius: var(--radius-lg, 0.5rem);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
 }
 
-.lines-table.ft-table-like {
+// `table-layout: fixed` + une largeur px sur CHAQUE colonne SAUF « Article »,
+// qui absorbe l'espace restant. L'arithmétique reste donc juste quand la colonne
+// « Immo » apparaît/disparaît selon `fixedAssetsEnabled()`.
+//
+// NE PAS introduire de <colgroup> ni de règle :nth-child ici : le nombre et
+// l'index des cellules changent à l'exécution avec ce drapeau — une règle
+// indexée serait juste en test (drapeau à false) et fausse en production.
+.lines-table {
   width: 100%;
-  min-width: 880px;
+  min-width: 960px;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
+// `box-sizing: border-box` est INDISPENSABLE ici : en `table-layout: fixed`, la
+// largeur déclarée sur une cellule est sinon une largeur de CONTENU, et le padding
+// (2 × var(--spacing-3) = 24 px) s'y ajoute. Les colonnes fixes consommeraient alors
+// 7 × 24 px de plus que prévu et, drapeau `fixedAssetsEnabled` actif au plancher de
+// 960 px, la colonne Article retomberait à ~54 px — exactement le défaut d'origine.
+.lines-table th,
+.lines-table td {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--spacing-2) var(--spacing-3);
+  vertical-align: middle;
+}
+
 .lines-table th {
-  padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-  background: var(--color-neutral-50, #f8fafc);
-  border-bottom: 1px solid var(--color-border-subtle, #e2e8f0);
-  font-size: var(--font-size-xs, 0.75rem);
-  font-weight: var(--font-weight-semibold, 600);
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--color-text-secondary, #475569);
-  text-align: left;
+  color: var(--color-text-secondary);
+  background: var(--color-neutral-50);
+  border-bottom: 1px solid var(--color-border-subtle);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .lines-table td {
-  padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
-  border-bottom: 1px solid var(--color-border-subtle, #e2e8f0);
-  vertical-align: middle;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .lines-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.col-row-num { width: 48px; }
-.col-article { min-width: 240px; }
+.col-row { width: 44px; }
 .col-qty { width: 110px; }
 .col-price { width: 130px; }
-.col-disc { width: 90px; }
-.col-vat { width: 80px; }
-.col-ht { width: 120px; }
-.col-immo { width: 56px; }
+.col-disc { width: 96px; }
+.col-vat { width: 84px; }
+.col-ht { width: 130px; }
+.col-immo { width: 64px; }
 .col-actions { width: 56px; }
 
-.ft-row-number-col,
-.ft-row-number {
-  width: 48px;
+.lines-table th.col-row,
+.lines-table td.col-row {
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.lines-table th.col-immo,
+.lines-table td.col-immo,
+.lines-table th.col-actions,
+.lines-table td.col-actions {
   text-align: center;
 }
 
-.ft-row-number {
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-text-tertiary, #64748b);
-}
-
-.ft-num,
 .lines-table th.ft-num,
 .lines-table td.ft-num {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-.ft-actions-col,
-.lines-table th.ft-actions-col,
-.lines-table td.ft-actions-col,
-.col-immo-cell {
-  text-align: center;
+// Empêche « 19 % » et les montants de passer sur deux lignes.
+.lines-table td.ft-num {
+  white-space: nowrap;
 }
 
-.lines-table td.ft-num.amount {
+.lines-table td.amount {
   font-family: var(--font-family-mono, 'JetBrains Mono', 'SF Mono', monospace);
   font-weight: var(--font-weight-semibold, 600);
 }
 
+.lines-empty {
+  text-align: center;
+  padding: var(--spacing-6) var(--spacing-4);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+// ─── Widgets PrimeNG dans les cellules ───────────────────────────────────────
+// Sans ces règles la colonne « Article » s'effondre à la largeur du chevron :
+// le CSS de base PrimeNG applique `.p-autocomplete-input { flex:1 1 auto; width:1% }`
+// dès que [dropdown]="true", et `.p-autocomplete` est `inline-flex` — la largeur de
+// l'input dépend alors du <td>, qui dépend de son contenu (dépendance circulaire).
+//
+// <p-autoComplete> porte l'attribut d'encapsulation (sélecteur scopé possible), mais
+// `.p-autocomplete` est posé sur un <div> interne qui, lui, ne le porte pas : d'où le
+// ::ng-deep. <p-inputNumber> porte `.p-inputnumber` sur son hôte ; seul son input
+// interne nécessite ::ng-deep.
+.lines-table p-autocomplete {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+:host ::ng-deep .lines-table p-autocomplete .p-autocomplete {
+  width: 100%;
+  min-width: 0;
+}
+
+:host ::ng-deep .lines-table p-autocomplete .p-autocomplete-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.lines-table p-inputnumber {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+:host ::ng-deep .lines-table p-inputnumber .p-inputnumber-input {
+  width: 100%;
+  min-width: 0;
+  text-align: right;
+}
+
+// `appendTo="body"` sort le panneau de suggestions du composant : sa largeur ne
+// peut pas être réglée ici. Voir `body .si-line-product-panel` dans src/styles.scss.
+//
+// En revanche `.product-item` est déclaré dans <ng-template pTemplate="item"> : ces
+// nœuds portent l'attribut d'encapsulation et restent stylés même déplacés dans
+// <body>. NE PAS ré-ancrer ces sélecteurs sous .lines-table — ils cesseraient de
+// s'appliquer, et seulement à l'ouverture du menu.
 .product-item {
   display: flex;
   gap: var(--spacing-2);
@@ -349,138 +285,46 @@
   color: var(--color-text-tertiary);
 }
 
-:host ::ng-deep .lines-table .ft-inline-input {
-  width: 110px;
-}
-
-:host ::ng-deep .lines-table td:nth-child(4) .ft-inline-input {
-  width: 130px;
-}
-
-:host ::ng-deep .lines-table td:nth-child(6) .ft-inline-input {
-  width: 90px;
-}
-
-:host ::ng-deep .lines-table .ft-inline-input .p-inputnumber-input {
-  width: 100%;
-  text-align: right;
-}
-
-:host ::ng-deep .col-article-cell .p-autocomplete {
-  width: 100%;
-  min-width: 200px;
-}
-
-// ─── Totaux ──────────────────────────────────────────────────────────────────────
+// ─── Totaux ──────────────────────────────────────────────────────────────────
 .ft-totals {
-  margin-top: var(--spacing-4, 1rem);
+  margin-top: var(--spacing-4);
   margin-left: auto;
   min-width: 280px;
   max-width: 360px;
   width: 100%;
-  background: var(--color-primary-50, #eff6ff);
-  border: 1px solid var(--color-primary-100, #dbeafe);
-  border-radius: var(--radius-lg, 0.5rem);
-  padding: var(--spacing-4, 1rem);
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-primary-100);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2, 0.5rem);
+  gap: var(--spacing-2);
 }
 
 .ft-totals__row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: var(--spacing-3, 0.75rem);
-  font-size: var(--font-size-sm, 0.875rem);
-  color: var(--color-text-secondary, #475569);
+  gap: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.ft-totals__row strong {
+  font-variant-numeric: tabular-nums;
 }
 
 .ft-totals__row--grand {
   margin-top: var(--spacing-1);
   padding-top: var(--spacing-2);
-  border-top: 1px solid var(--color-primary-200, #bfdbfe);
-  font-size: var(--font-size-lg, 1.125rem);
-  font-weight: var(--font-weight-bold, 700);
-  color: var(--color-primary-700, #1d4ed8);
-  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--color-primary-200);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-700);
 }
 
 @media (max-width: 640px) {
   .ft-totals {
     max-width: none;
   }
-}
-
-// ─── Sticky action bar ───────────────────────────────────────────────────────────
-.sticky-action-bar {
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-4, 1rem);
-  margin-top: var(--spacing-4, 1rem);
-  padding: var(--spacing-3, 0.75rem) var(--spacing-5, 1.25rem);
-  background: var(--color-background-elevated, #ffffff);
-  border: 1px solid var(--color-border-subtle, #e2e8f0);
-  border-radius: var(--radius-lg, 0.5rem);
-  box-shadow: var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
-}
-
-.sticky-action-bar__total {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1, 0.25rem);
-}
-
-.sticky-action-bar__label {
-  font-size: var(--font-size-xs, 0.75rem);
-  color: var(--color-text-secondary, #475569);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.sticky-action-bar__amount {
-  font-size: var(--font-size-xl, 1.25rem);
-  font-weight: var(--font-weight-bold, 700);
-  color: var(--color-primary-700, #1d4ed8);
-  font-variant-numeric: tabular-nums;
-}
-
-.sticky-action-bar__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3, 0.75rem);
-  flex-shrink: 0;
-}
-
-@media (max-width: 640px) {
-  .sticky-action-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .sticky-action-bar__actions {
-    justify-content: stretch;
-  }
-
-  .sticky-action-bar__actions > span,
-  .sticky-action-bar__actions app-button {
-    flex: 1;
-  }
-}
-
-// ─── Focus accessibilité ─────────────────────────────────────────────────────────
-.ft-field input:focus-visible,
-.ft-field textarea:focus-visible,
-:host ::ng-deep .lines-table .ft-inline-input .p-inputnumber-input:focus-visible {
-  outline: 2px solid var(--color-primary-400, #60a5fa);
-  outline-offset: 1px;
-}
-
-.submit-readiness__link:focus-visible {
-  outline: 2px solid var(--color-primary-400, #60a5fa);
-  outline-offset: 2px;
 }

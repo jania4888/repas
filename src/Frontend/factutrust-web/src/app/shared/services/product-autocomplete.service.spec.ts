@@ -22,7 +22,8 @@ describe('ProductAutocompleteService', () => {
       unit: 'Unité',
       isFodecApplicable: true,
       isDiscountEnabled: false,
-      maxDiscountPercent: null
+      maxDiscountPercent: null,
+      barcode: '4006381333931'
     },
     {
       id: '2',
@@ -33,7 +34,8 @@ describe('ProductAutocompleteService', () => {
       unit: 'Unité',
       isFodecApplicable: false,
       isDiscountEnabled: true,
-      maxDiscountPercent: 10
+      maxDiscountPercent: 10,
+      barcode: 'REF-CHA-001'
     }
   ];
 
@@ -179,5 +181,92 @@ describe('ProductAutocompleteService', () => {
     expect(list.id).toBe('1');
     expect(list.name).toBe('Alpha');
     expect(list.isFodecApplicable).toBeTrue();
+  });
+
+  // ─────────────────────── Code-barres ───────────────────────
+
+  it('filterLocal résout un code-barres scanné en entier', (done) => {
+    service.prefetch().subscribe(() => {
+      const local = service.filterLocal('4006381333931');
+
+      expect(local.length).toBe(1);
+      expect(local[0].code).toBe('TAB001');
+      done();
+    });
+  });
+
+  it('filterLocal ne résout JAMAIS un code-barres par préfixe', (done) => {
+    // On ne tape pas un morceau de code-barres, on le scanne en entier. Un « includes » ici
+    // rouvrirait la correspondance partielle que le scan a précisément corrigée : « 1234 »
+    // désignerait « 12345 », et la caisse encaisserait le mauvais article.
+    service.prefetch().subscribe(() => {
+      expect(service.filterLocal('400638133393').length).toBe(0);
+      expect(service.filterLocal('40063813339311').length).toBe(0);
+      done();
+    });
+  });
+
+  it('filterLocal respecte la casse d’un Code 128', (done) => {
+    // Le nom et le code interne se cherchent sans tenir compte de la casse. Un Code 128, lui,
+    // la distingue : « REF-CHA-001 » et « ref-cha-001 » sont deux symboles différents, et une
+    // douchette restitue exactement ce qui est imprimé. Rabattre la casse ferait correspondre
+    // deux codes qui, physiquement, n'en sont pas un seul.
+    service.prefetch().subscribe(() => {
+      expect(service.filterLocal('REF-CHA-001').length).toBe(1);
+      expect(service.filterLocal('ref-cha-001').length).toBe(0);
+      done();
+    });
+  });
+
+  it('filterLocal laisse intacte la recherche par nom et par code', (done) => {
+    // Non-régression : le troisième prédicat ne doit rien retirer aux deux autres.
+    service.prefetch().subscribe(() => {
+      expect(service.filterLocal('chaise').length).toBe(1);
+      expect(service.filterLocal('TAB').length).toBe(1);
+      expect(service.filterLocal('introuvable').length).toBe(0);
+      done();
+    });
+  });
+
+  it('upsertSuggestion conserve le code-barres dans le cache', (done) => {
+    // Sans cela, un article créé à la volée deviendrait introuvable au scan jusqu'à
+    // l'expiration du cache — un défaut intermittent, donc pénible à diagnostiquer.
+    service.prefetch().subscribe(() => {
+      service.upsertSuggestion({
+        id: '3',
+        code: 'NEW001',
+        name: 'Article créé à la volée',
+        unitPrice: 30,
+        vatRate: 19,
+        unit: 'Unité',
+        isFodecApplicable: false,
+        isDiscountEnabled: false,
+        maxDiscountPercent: null,
+        barcode: '5901234123457'
+      });
+
+      const local = service.filterLocal('5901234123457');
+
+      expect(local.length).toBe(1);
+      expect(local[0].id).toBe('3');
+      done();
+    });
+  });
+
+  it('suggestionToListItem propage le code-barres', () => {
+    const list = suggestionToListItem({
+      id: '1',
+      code: 'A',
+      name: 'Alpha',
+      unitPrice: 10,
+      vatRate: 19,
+      unit: 'u',
+      isFodecApplicable: true,
+      isDiscountEnabled: false,
+      maxDiscountPercent: null,
+      barcode: '4006381333931'
+    });
+
+    expect(list.barcode).toBe('4006381333931');
   });
 });

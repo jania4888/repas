@@ -1,4 +1,6 @@
 import { Component, OnInit, inject, signal, computed, ViewChild } from '@angular/core';
+import { environment } from '@environments/environment';
+import { PrintLabelsDialogComponent, LabelPrintTarget } from '../components/print-labels-dialog/print-labels-dialog.component';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -71,6 +73,7 @@ interface VatOption {
   selector: 'app-product-form',
   standalone: true,
   imports: [
+    PrintLabelsDialogComponent,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -159,6 +162,52 @@ interface VatOption {
               </p-select>
               <small class="form-hint">Classification du produit. Par défaut: General</small>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="barcode">Code-barres</label>
+            <div class="barcode-input-row">
+              <span class="p-input-icon-left barcode-input-row__field">
+                <i class="pi pi-barcode" aria-hidden="true"></i>
+                <input
+                  pInputText
+                  id="barcode"
+                  formControlName="barcode"
+                  placeholder="Scannez ou saisissez le code-barres"
+                  class="w-full"
+                  autocomplete="off"
+                  spellcheck="false">
+              </span>
+              <app-button
+                variant="outline"
+                icon="pi-sync"
+                iconPos="left"
+                size="sm"
+                [disabled]="generatingBarcode()"
+                (clicked)="generateBarcode()">
+                Générer un code interne
+              </app-button>
+              @if (labelPrintingEnabled && isEditMode()) {
+                <app-button
+                  variant="outline"
+                  icon="pi-print"
+                  iconPos="left"
+                  size="sm"
+                  (clicked)="openLabelDialog()">
+                  Étiquettes
+                </app-button>
+              }
+            </div>
+            @if (barcodeSymbologyLabel()) {
+              <small class="form-hint">
+                <i class="pi pi-check-circle" aria-hidden="true"></i>
+                {{ barcodeSymbologyLabel() }}
+              </small>
+            } @else {
+              <small class="form-hint">
+                Distinct du code produit. Laissez vide si l'article n'en a pas.
+              </small>
+            }
           </div>
 
           <div class="form-group">
@@ -684,6 +733,11 @@ interface VatOption {
       </div>
     </form>
 
+
+    <ft-print-labels-dialog
+      [visible]="labelDialogVisible()"
+      (visibleChange)="labelDialogVisible.set($event)"
+      [target]="labelTarget()"></ft-print-labels-dialog>
   `,
   styles: [`
     .form-grid {
@@ -1012,6 +1066,16 @@ interface VatOption {
       }
     }
 
+    // Les champs natifs ne sont PAS couverts par le bloc ::ng-deep ci-dessus : ils
+    // vivent dans ce template, pas dans un composant enfant. Sans cette règle ils
+    // restent à leur largeur intrinsèque (~185 px) pendant que les p-select et
+    // p-inputNumber voisins occupent toute la colonne — les « class="w-full" » posées
+    // sur eux ne portent rien (Tailwind est préfixé « tw- », cf. tailwind.config.js).
+    .form-group > input[pInputText],
+    .form-group > textarea[pTextarea] {
+      width: 100%;
+    }
+
     .variant-values {
       display: flex;
       flex-wrap: wrap;
@@ -1222,6 +1286,33 @@ export class ProductFormComponent implements OnInit {
     { label: '0% - Exonéré', value: 0 }
   ];
 
+  readonly generatingBarcode = signal(false);
+  readonly labelPrintingEnabled = environment.featureFlags?.barcodeLabelPrinting === true;
+  readonly labelDialogVisible = signal(false);
+  readonly labelTarget = signal<LabelPrintTarget | null>(null);
+
+  /**
+   * Symbologie déduite du code-barres saisi, pour confirmer d'un coup d'œil que la saisie est
+   * reconnue. La validation qui fait autorité reste celle du serveur : ce libellé est un
+   * confort d'affichage, pas un contrôle.
+   */
+  readonly barcodeSymbologyLabel = computed(() => {
+    const value = this.barcodeValue();
+    if (!value) return null;
+
+    const digitsOnly = /^[0-9]+$/.test(value);
+    if (digitsOnly) {
+      switch (value.length) {
+        case 8: return 'EAN-8';
+        case 12: return 'UPC-A';
+        case 13: return 'EAN-13';
+        case 14: return 'GTIN-14';
+        default: return 'Code 128';
+      }
+    }
+    return 'Code 128';
+  });
+
   form: FormGroup = this.fb.group({
     code: ['', [Validators.required, Validators.minLength(2)]],
     name: ['', [Validators.required, Validators.minLength(2)]],
@@ -1233,6 +1324,7 @@ export class ProductFormComponent implements OnInit {
     profitMarginPercent: [null as number | null],
     salePriceTtc: [0, [Validators.required, Validators.min(0)]],
     unit: ['Unité', Validators.required],
+    barcode: [''],
     vatRate: [19, Validators.required],
     isFodecApplicable: [false],
     isDiscountEnabled: [false],
@@ -1249,6 +1341,7 @@ export class ProductFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.watchBarcodeControl();
     this.loadProductCategories();
     this.loadSuppliers();
     this.loadStockFeatures();
@@ -1433,6 +1526,7 @@ export class ProductFormComponent implements OnInit {
               product.isFodecApplicable ?? false
             ),
             unit: product.unit || 'Unité',
+            barcode: product.barcode ?? '',
             vatRate: product.vatRate,
             isFodecApplicable: product.isFodecApplicable ?? false,
             isDiscountEnabled: product.isDiscountEnabled ?? false,
@@ -1510,6 +1604,9 @@ export class ProductFormComponent implements OnInit {
         purchasePrice: formValue.purchasePrice ?? null,
         profitMarginPercent: formValue.profitMarginPercent ?? null,
         unit: formValue.unit,
+        // Toujours transmis, y compris vide : le serveur applique SetBarcode sans condition,
+        // donc omettre ce champ effacerait le code-barres à chaque enregistrement de la fiche.
+        barcode: (formValue.barcode ?? '').trim() || null,
         vatRate: formValue.vatRate,
         isFodecApplicable: formValue.isFodecApplicable ?? false,
         isDiscountEnabled: formValue.isDiscountEnabled ?? false,
@@ -1603,6 +1700,7 @@ export class ProductFormComponent implements OnInit {
         purchasePrice: formValue.purchasePrice ?? null,
         profitMarginPercent: formValue.profitMarginPercent ?? null,
         unit: formValue.unit,
+        barcode: (formValue.barcode ?? '').trim() || null,
         vatRate: formValue.vatRate,
         isFodecApplicable: formValue.isFodecApplicable ?? false,
         isDiscountEnabled: formValue.isDiscountEnabled ?? false,
@@ -1901,5 +1999,53 @@ export class ProductFormComponent implements OnInit {
     } else {
       this.navigateToProducts();
     }
+  }
+
+  /** Miroir du contrôle, pour que le libellé de symbologie se recalcule à la frappe. */
+  private readonly barcodeValue = signal<string>('');
+
+  private watchBarcodeControl(): void {
+    this.form.get('barcode')?.valueChanges.subscribe((value: string | null) => {
+      this.barcodeValue.set((value ?? '').trim());
+    });
+  }
+
+  /**
+   * Demande au serveur un code-barres interne libre.
+   *
+   * Le code obtenu n'est pas enregistré : il remplit le champ, et c'est l'enregistrement de la
+   * fiche qui le persiste, en repassant par les mêmes contrôles que toute autre saisie.
+   */
+  generateBarcode(): void {
+    if (this.generatingBarcode()) return;
+
+    this.generatingBarcode.set(true);
+    this.productService.generateProductBarcode(this.productId() ?? undefined).subscribe({
+      next: response => {
+        this.generatingBarcode.set(false);
+        if (response.success && response.data) {
+          this.form.patchValue({ barcode: response.data.barcode });
+          this.form.get('barcode')?.markAsDirty();
+          this.toastService.add({
+            severity: 'success',
+            summary: 'Code-barres engendré',
+            detail: response.data.barcode
+          });
+        }
+      },
+      error: () => this.generatingBarcode.set(false)
+    });
+  }
+
+  openLabelDialog(): void {
+    const id = this.productId();
+    if (!id) return;
+
+    this.labelTarget.set({
+      id,
+      name: this.form.get('name')?.value || 'Article',
+      hasBarcode: !!(this.form.get('barcode')?.value ?? '').trim()
+    });
+    this.labelDialogVisible.set(true);
   }
 }

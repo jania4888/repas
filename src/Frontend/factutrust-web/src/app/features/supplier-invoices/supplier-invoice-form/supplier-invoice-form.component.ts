@@ -18,6 +18,10 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 import { QuickCreateProductDialogComponent } from '@shared/components/quick-create-product-dialog/quick-create-product-dialog.component';
 import { formatLocalDate } from '@core/utils/date.util';
 import { WarehouseContextService } from '@core/services/warehouse-context.service';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { ToastService } from '@core/services/toast.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { SupplierService, SupplierListItem } from '@core/services/supplier.service';
@@ -43,309 +47,15 @@ interface InvoiceLineRow {
   selector: 'app-supplier-invoice-form',
   standalone: true,
   imports: [
+    BarcodeScanFieldComponent,
     CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
     SelectModule, InputTextModule, InputNumberModule, DatePickerModule,
     Textarea, AutoCompleteModule, CheckboxModule,
     PageHeaderComponent, BreadcrumbComponent, FormSectionComponent,
     WarehouseSelectorComponent, ButtonComponent, QuickCreateProductDialogComponent
   ],
-  template: `
-    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
-
-    <app-page-header
-      title="Nouvelle facture fournisseur"
-      subtitle="Saisissez une facture de charges ou de services. Le stock n'est pas mis à jour.">
-      <app-button variant="outline" icon="pi-times" iconPos="left" (click)="cancel()">Annuler</app-button>
-      <app-button
-        variant="primary"
-        [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
-        iconPos="left"
-        [disabled]="submitting() || !canSubmit()"
-        (click)="submit()">
-        Créer la facture
-      </app-button>
-    </app-page-header>
-
-    <div class="info-banner" role="status">
-      <i class="pi pi-info-circle"></i>
-      <p>Cette facture ne met pas à jour le stock. Pour les marchandises gérées en stock, passez par un bon de réception.</p>
-    </div>
-
-    <div class="form-layout">
-      <app-form-section title="Informations générales" icon="pi-building" [number]="1">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="supplier">Fournisseur <span class="required">*</span></label>
-            <p-select
-              id="supplier"
-              [options]="suppliers()"
-              [(ngModel)]="selectedSupplierId"
-              name="supplierId"
-              optionLabel="name"
-              optionValue="id"
-              placeholder="Sélectionnez un fournisseur"
-              [filter]="true"
-              filterBy="name"
-              [showClear]="true"
-              (onChange)="onSupplierChange()"
-              styleClass="w-full">
-            </p-select>
-          </div>
-
-          <div class="form-group">
-            <label for="invoiceDate">Date de facture <span class="required">*</span></label>
-            <p-datepicker
-              id="invoiceDate"
-              [(ngModel)]="invoiceDate"
-              name="invoiceDate"
-              dateFormat="dd/mm/yy"
-              [showIcon]="true"
-              (ngModelChange)="onInvoiceDateChange()"
-              styleClass="w-full">
-            </p-datepicker>
-          </div>
-
-          <div class="form-group">
-            <label for="paymentTermDays">Conditions de paiement</label>
-            <p-select
-              id="paymentTermDays"
-              [options]="paymentTermOptions"
-              [(ngModel)]="paymentTermDays"
-              name="paymentTermDays"
-              optionLabel="label"
-              optionValue="value"
-              styleClass="w-full">
-            </p-select>
-            <small class="hint">Échéance : {{ dueDate() | date:'dd/MM/yyyy' }}</small>
-          </div>
-
-          <div class="form-group">
-            <label for="invoiceNumber">N° interne</label>
-            <div class="input-group">
-              <input
-                pInputText
-                id="invoiceNumber"
-                [(ngModel)]="invoiceNumber"
-                name="invoiceNumber"
-                placeholder="FS-2026-000001"
-                class="w-full"
-                [disabled]="useSuggestedNumber"
-                (ngModelChange)="onInvoiceNumberEdited()">
-              <app-button
-                type="button"
-                variant="outline"
-                size="sm"
-                [icon]="regenerating() ? 'pi-spin pi-spinner' : 'pi-refresh'"
-                iconPos="left"
-                [disabled]="regenerating()"
-                (click)="generateInvoiceNumber()">
-                Générer
-              </app-button>
-            </div>
-            <label class="hint-check">
-              <p-checkbox
-                [(ngModel)]="useSuggestedNumber"
-                name="useSuggestedNumber"
-                [binary]="true"
-                inputId="useSuggestedNumber"
-                (ngModelChange)="onUseSuggestedChange()">
-              </p-checkbox>
-              Utiliser le n° suggéré
-            </label>
-          </div>
-
-          <div class="form-group">
-            <label for="externalReference">N° facture fournisseur</label>
-            <input
-              pInputText
-              id="externalReference"
-              [(ngModel)]="externalReference"
-              name="externalReference"
-              placeholder="N° papier du fournisseur"
-              class="w-full">
-          </div>
-
-          <div class="form-group">
-            <label for="paymentMethod">Mode de paiement prévu</label>
-            <p-select
-              id="paymentMethod"
-              [options]="paymentMethodOptions"
-              [(ngModel)]="paymentMethod"
-              name="paymentMethod"
-              optionLabel="label"
-              optionValue="value"
-              [showClear]="true"
-              placeholder="Optionnel"
-              styleClass="w-full">
-            </p-select>
-          </div>
-
-          <div class="form-group">
-            <app-warehouse-selector
-              inputId="si-warehouse"
-              label="Entrepôt"
-              [required]="false"
-              [value]="selectedWarehouseId"
-              (valueChange)="selectedWarehouseId = $event">
-            </app-warehouse-selector>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="notes">Notes</label>
-          <textarea pTextarea id="notes" [(ngModel)]="notes" name="notes" rows="2" class="w-full"></textarea>
-        </div>
-      </app-form-section>
-
-      <app-form-section title="Lignes" icon="pi-list" [number]="2">
-        <div class="lines-toolbar">
-          <app-button type="button" variant="outline" size="sm" icon="pi-plus" iconPos="left" (click)="addLine()">
-            Ajouter une ligne
-          </app-button>
-          <app-button type="button" variant="ghost" size="sm" icon="pi-plus-circle" iconPos="left" (click)="quickCreateVisible = true">
-            Créer un article / service
-          </app-button>
-        </div>
-
-        <table class="lines-table">
-          <thead>
-            <tr>
-              <th>Article</th>
-              <th class="col-qty">Qté</th>
-              <th class="col-price">PU HT</th>
-              <th class="col-disc">Remise %</th>
-              <th class="col-vat">TVA</th>
-              <th class="col-ht">HT</th>
-              @if (fixedAssetsEnabled()) {
-                <th class="col-immo">Immo</th>
-              }
-              <th class="col-actions"></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (line of lines; track $index; let i = $index) {
-              <tr>
-                <td>
-                  <p-autoComplete
-                    [(ngModel)]="line.product"
-                    [ngModelOptions]="{ standalone: true }"
-                    [suggestions]="productSuggestions()"
-                    (completeMethod)="searchProducts($event)"
-                    (onSelect)="onProductSelect(line, $event)"
-                    field="name"
-                    [dropdown]="true"
-                    [forceSelection]="true"
-                    [minLength]="0"
-                    appendTo="body"
-                    placeholder="Service ou charge (hors stock)"
-                    styleClass="w-full"
-                    inputStyleClass="w-full">
-                    <ng-template let-product pTemplate="item">
-                      <div class="product-item">
-                        <span class="product-item__code">{{ product.code }}</span>
-                        <span class="product-item__name">{{ product.name }}</span>
-                      </div>
-                    </ng-template>
-                  </p-autoComplete>
-                </td>
-                <td>
-                  <p-inputNumber [(ngModel)]="line.quantity" [ngModelOptions]="{ standalone: true }" [min]="0" [minFractionDigits]="0" [maxFractionDigits]="3" (ngModelChange)="recalculateTotals()" styleClass="w-full"></p-inputNumber>
-                </td>
-                <td>
-                  <p-inputNumber [(ngModel)]="line.unitPriceHT" [ngModelOptions]="{ standalone: true }" [min]="0" [minFractionDigits]="3" [maxFractionDigits]="3" mode="decimal" (ngModelChange)="recalculateTotals()" styleClass="w-full"></p-inputNumber>
-                </td>
-                <td>
-                  <p-inputNumber [(ngModel)]="line.discountPercent" [ngModelOptions]="{ standalone: true }" [min]="0" [max]="100" [minFractionDigits]="0" [maxFractionDigits]="2" (ngModelChange)="recalculateTotals()" styleClass="w-full"></p-inputNumber>
-                </td>
-                <td class="muted">{{ line.vatRate }} %</td>
-                <td class="amount">{{ lineTotalHT(line) | currency:'TND':'symbol':'1.3-3' }}</td>
-                @if (fixedAssetsEnabled()) {
-                  <td>
-                    <p-checkbox [(ngModel)]="line.isFixedAsset" [ngModelOptions]="{ standalone: true }" [binary]="true"></p-checkbox>
-                  </td>
-                }
-                <td>
-                  <app-button type="button" variant="ghost" size="sm" icon="pi-trash" [iconOnly]="true" ariaLabel="Supprimer" (click)="removeLine(i)"></app-button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-
-        <div class="totals">
-          <div><span>Total HT</span><strong>{{ totalHT() | currency:'TND':'symbol':'1.3-3' }}</strong></div>
-          <div><span>TVA</span><strong>{{ totalVat() | currency:'TND':'symbol':'1.3-3' }}</strong></div>
-          <div class="ttc"><span>Total TTC</span><strong>{{ totalTTC() | currency:'TND':'symbol':'1.3-3' }}</strong></div>
-        </div>
-      </app-form-section>
-    </div>
-
-    <app-quick-create-product-dialog
-      [(visible)]="quickCreateVisible"
-      (productCreated)="onQuickProductCreated($event)">
-    </app-quick-create-product-dialog>
-  `,
-  styles: [`
-    .info-banner {
-      display: flex;
-      gap: var(--spacing-3);
-      align-items: flex-start;
-      padding: var(--spacing-3) var(--spacing-4);
-      margin-bottom: var(--spacing-5);
-      border-radius: var(--radius-lg);
-      background: var(--color-primary-50);
-      border: 1px solid var(--color-primary-200);
-      color: var(--color-text-secondary);
-    }
-    .info-banner i { color: var(--color-primary-600); margin-top: 2px; }
-    .info-banner p { margin: 0; font-size: var(--font-size-sm); }
-    .form-layout { max-width: 1100px; }
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: var(--spacing-4);
-    }
-    .form-group { display: flex; flex-direction: column; gap: var(--spacing-2); }
-    .form-group label {
-      font-weight: var(--font-weight-semibold);
-      font-size: var(--font-size-xs);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--color-text-secondary);
-    }
-    .required { color: var(--color-error-600); }
-    .hint { color: var(--color-text-tertiary); font-size: var(--font-size-xs); }
-    .hint-check { display: inline-flex; align-items: center; gap: var(--spacing-2); margin-top: var(--spacing-2); font-size: var(--font-size-xs); color: var(--color-text-secondary); font-weight: var(--font-weight-medium); text-transform: none; letter-spacing: 0; }
-    .input-group { display: flex; gap: var(--spacing-2); }
-    .input-group input { flex: 1; }
-    .lines-toolbar { display: flex; gap: var(--spacing-2); margin-bottom: var(--spacing-3); }
-    .lines-table { width: 100%; border-collapse: collapse; }
-    .lines-table th {
-      text-align: left;
-      font-size: var(--font-size-xs);
-      text-transform: uppercase;
-      color: var(--color-text-secondary);
-      padding: var(--spacing-2);
-    }
-    .lines-table td { padding: var(--spacing-2); vertical-align: middle; }
-    .col-qty, .col-price, .col-disc { width: 110px; }
-    .col-vat, .col-ht { width: 100px; }
-    .col-immo, .col-actions { width: 56px; text-align: center; }
-    .muted { color: var(--color-text-tertiary); font-size: var(--font-size-sm); }
-    .amount { font-family: var(--font-family-mono, monospace); font-weight: 600; }
-    .product-item { display: flex; gap: var(--spacing-2); }
-    .product-item__code { font-family: monospace; color: var(--color-text-tertiary); }
-    .totals {
-      display: flex;
-      justify-content: flex-end;
-      gap: var(--spacing-6);
-      margin-top: var(--spacing-4);
-      padding-top: var(--spacing-3);
-      border-top: 1px solid var(--color-border-subtle);
-    }
-    .totals div { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-    .totals .ttc strong { font-size: var(--font-size-lg); }
-  `]
+  templateUrl: './supplier-invoice-form.component.html',
+  styleUrls: ['./supplier-invoice-form.component.scss']
 })
 export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
   private router = inject(Router);
@@ -356,6 +66,9 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
   private errors = inject(ErrorHandlerService);
   private warehouseContext = inject(WarehouseContextService);
   private accountingFlags = inject(AccountingFeatureFlagsService);
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
   private readonly destroy$ = new Subject<void>();
   private readonly search$ = new Subject<string>();
 
@@ -630,5 +343,46 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
       ...this.paymentTermOptions,
       { label: `${days} jours`, value: days }
     ];
+  }
+
+  /**
+   * Scan d'un code-barres sur une facture fournisseur directe.
+   *
+   * Cet écran REFUSE les articles gérés en stock — ils doivent passer par un bon de réception,
+   * seul document qui mouvemente le stock. Le scan applique la même règle que la sélection
+   * manuelle : sans cela, la douchette deviendrait un moyen de contourner un garde-fou
+   * comptable.
+   */
+  onBarcodeScanned(code: string): void {
+    this.barcodeLookup.resolve(code).subscribe(result => {
+      if (result.status !== 'found' || !result.product) {
+        this.barcodeFeedback.report(result);
+        return;
+      }
+
+      const product = result.product;
+
+      if (product.isStockManaged) {
+        this.barcodeFeedback.failure(
+          'Cet article est géré en stock. Utilisez un bon de réception.',
+          'Stock'
+        );
+        return;
+      }
+
+      const existing = this.lines.find(l => l.productId === product.id);
+      if (existing) {
+        existing.quantity = (existing.quantity || 0) + 1;
+      } else {
+        const empty = this.lines.find(l => !l.productId) ?? this.addEmptyAndReturn();
+        empty.product = product;
+        empty.productId = product.id;
+        empty.unitPriceHT = product.purchasePrice ?? product.unitPrice ?? 0;
+        empty.vatRate = product.vatRate ?? 19;
+      }
+
+      this.recalculateTotals();
+      this.barcodeFeedback.success(product.name);
+    });
   }
 }

@@ -35,7 +35,11 @@ export const environment = {
     /** Trésorerie prévisionnelle par IA. OFF tant que la migration tenant n'est pas appliquée. */
     treasuryCashForecast: false,
     registrationWizardV2: true,
-    sectorCatalogHttp: true
+    sectorCatalogHttp: true,
+    /** Scan de code-barres sur les documents. OFF tant que la rampe de déploiement n'est pas engagée. */
+    barcodeScanOnDocuments: false,
+    /** Impression d'étiquettes. OFF tant que Features:Barcodes:LabelPrintingEnabled l'est côté API. */
+    barcodeLabelPrinting: false
   },
   productOnboardingEnabled: true
 };

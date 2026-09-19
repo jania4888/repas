@@ -112,7 +112,7 @@ Les pièces jointes (PDF, JPG, PNG) peuvent être ajoutées après le premier en
 Selon le statut et vos droits : **PDF**, **Modifier**, **Valider**, **Annuler** (motif obligatoire) ou **Supprimer** (brouillon uniquement).
 
 Astuces de saisie sur le formulaire :
-- **Scanner un code-barres** pour ajouter rapidement un article.
+- **Scanner un code-barres** pour ajouter rapidement un article — voir [14 - Codes-barres](14-codes-barres.md).
 - **Importer depuis BL** pour reporter le numéro de bon de livraison fournisseur.
 
 ### Créer une facture fournisseur

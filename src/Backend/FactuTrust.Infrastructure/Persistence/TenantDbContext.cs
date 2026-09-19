@@ -1052,15 +1052,23 @@ public partial class TenantDbContext : DbContext
             entity.HasIndex(p => p.IsActive);
 
             entity.Property(p => p.IsPubliclyListed).HasDefaultValue(false);
-            // Code-barres EAN. Type possédé : une colonne nullable, contrainte de format
-            // portée par le value object. L'index est NON unique à ce stade — l'unicité par
-            // tenant ne sera livrée qu'après balayage des doublons sur tout le parc, comme
-            // pour l'unicité des numéros de facture (docs/runbooks/invoice-number-uniqueness.md).
+            // Code-barres. Type possédé : une colonne nullable, contrainte de format portée
+            // par le value object. La symbologie n'est PAS stockée : elle se dérive de la
+            // valeur. Ajouter une colonne non-nullable à un type possédé optionnel rendrait
+            // illisibles les articles déjà en base (EF utilise Value comme sentinelle de
+            // présence) — voir docs/architecture/adr-barcode-symbologies.md.
+            //
+            // 48 caractères : EAN-8/13, UPC-A, GTIN-14 et Code128 alphanumérique. La clé
+            // d'index reste à 96 octets, très en-deçà de la limite de 1700.
+            //
+            // L'index est NON unique à ce stade — l'unicité par tenant ne sera livrée
+            // qu'après balayage des doublons sur tout le parc, comme pour l'unicité des
+            // numéros de facture (docs/runbooks/invoice-number-uniqueness.md).
             entity.OwnsOne(p => p.Barcode, bc =>
             {
                 bc.Property(x => x.Value)
                     .HasColumnName("Barcode")
-                    .HasMaxLength(13);
+                    .HasMaxLength(48);
 
                 bc.HasIndex(x => x.Value)
                     .HasDatabaseName("IX_Products_Barcode")

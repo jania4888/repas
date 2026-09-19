@@ -20,6 +20,10 @@ import { PriceSource } from '@core/services/pricing.service';
 import { DocumentLinePricingService, EMPTY_LINE_PROMOTION, LinePromotionPreview, lineTotalWithPromotion, mapResolvedPricePromotion } from '@shared/utils/document-line-pricing.helper';
 import { ClientService } from '@core/services/client.service';
 import { ProductService } from '@core/services/product.service';
+import { BarcodeScanFieldComponent } from '@shared/components/barcode-scan-field/barcode-scan-field.component';
+import { BarcodeLookupService } from '@shared/services/barcode-lookup.service';
+import { BarcodeFeedbackService } from '@shared/services/barcode-feedback.service';
+import { environment } from '@environments/environment';
 import { ToastService } from '@core/services/toast.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { formatLocalDate } from '@core/utils/date.util';
@@ -51,6 +55,7 @@ interface DraftLine extends LinePromotionPreview {
   selector: 'app-sales-order-create',
   standalone: true,
   imports: [
+    BarcodeScanFieldComponent,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -237,6 +242,15 @@ interface DraftLine extends LinePromotionPreview {
           </div>
         </div>
 
+        @if (barcodeScanEnabled) {
+          <div class="barcode-scan-row">
+            <ft-barcode-scan-field
+              placeholder="Scanner un code-barres pour ajouter une ligne"
+              [autoFocus]="false"
+              (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
+          </div>
+        }
+
         @if (lines().length === 0) {
           <div class="ft-empty-inline">
             <i class="pi pi-inbox"></i>
@@ -388,6 +402,9 @@ export class SalesOrderCreateComponent {
   private readonly router = inject(Router);
   private readonly salesOrderService = inject(SalesOrderService);
   readonly linePricing = inject(DocumentLinePricingService);
+  private readonly barcodeLookup = inject(BarcodeLookupService);
+  private readonly barcodeFeedback = inject(BarcodeFeedbackService);
+  readonly barcodeScanEnabled = environment.featureFlags?.barcodeScanOnDocuments === true;
   private readonly clientService = inject(ClientService);
   private readonly productService = inject(ProductService);
   private readonly toastService = inject(ToastService);
@@ -661,5 +678,48 @@ export class SalesOrderCreateComponent {
           this.saving.set(false);
         }
       });
+  }
+
+  /**
+   * Scan d'un code-barres sur une commande client.
+   *
+   * L'écran ajoute les lignes par un couple « article + quantité » plutôt que par une grille
+   * modifiable : le scan emprunte donc le même chemin, en renseignant ce couple puis en
+   * appelant addLine(). L'article déjà commandé voit simplement sa quantité augmenter.
+   *
+   * La disponibilité n'est pas bloquante ici — une commande peut légitimement porter sur du
+   * stock à venir.
+   */
+  onBarcodeScanned(code: string): void {
+    this.barcodeLookup.resolve(code).subscribe(result => {
+      if (result.status !== 'found' || !result.product) {
+        this.barcodeFeedback.report(result);
+        return;
+      }
+
+      const product = result.product;
+      const index = this.lines().findIndex(l => l.product?.id === product.id);
+
+      if (index >= 0) {
+        this.lines.update(list =>
+          list.map((l, i) => (i === index ? { ...l, quantity: (l.quantity || 0) + 1 } : l))
+        );
+        this.onQuantityChange(index);
+      } else {
+        // La zone d'ajout attend un ProductOption (avec son libellé d'affichage), pas le DTO
+        // de liste : on l'adapte comme le fait la recherche par autocomplétion.
+        this.newProduct = {
+          id: product.id,
+          code: product.code,
+          name: product.name,
+          label: `${product.code} — ${product.name}`,
+          unitPrice: product.unitPrice
+        };
+        this.newQuantity = 1;
+        this.addLine();
+      }
+
+      this.barcodeFeedback.success(product.name);
+    });
   }
 }

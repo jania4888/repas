@@ -1,4 +1,4 @@
-using FactuTrust.Application.Common.Interfaces.Repositories;
+﻿using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Infrastructure.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +10,12 @@ namespace FactuTrust.Infrastructure.Repositories;
 /// </summary>
 public sealed class ProductRepository : IProductRepository
 {
-    private readonly TenantDbContextFactory _contextFactory;
+    private readonly ITenantDbContextFactory _contextFactory;
 
-    public ProductRepository(TenantDbContextFactory contextFactory)
+    // Dépendance sur l'interface et non sur la fabrique concrète : c'est ce qui permet de
+    // vérifier les prédicats de recherche sur une base en mémoire, comme le fait déjà
+    // StockMovementRepository. La résolution DI est inchangée, les deux étant enregistrées.
+    public ProductRepository(ITenantDbContextFactory contextFactory)
     {
         _contextFactory = contextFactory;
     }
@@ -38,13 +41,63 @@ public sealed class ProductRepository : IProductRepository
             return null;
 
         var normalized = barcode.Trim();
+        var alternate = UpcEanEquivalent(normalized);
 
         await using var context = _contextFactory.CreateContext();
         return await context.Products
             .Include(p => p.Category)
             .FirstOrDefaultAsync(
-                p => p.Barcode!.Value == normalized && !p.IsVariantTemplate,
+                p => (p.Barcode!.Value == normalized || p.Barcode!.Value == alternate)
+                     && !p.IsVariantTemplate,
                 cancellationToken);
+    }
+
+    public async Task<bool> BarcodeExistsAsync(
+        string barcode,
+        Guid? excludeProductId = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(barcode))
+            return false;
+
+        var normalized = barcode.Trim();
+        var alternate = UpcEanEquivalent(normalized);
+
+        await using var context = _contextFactory.CreateContext();
+        return await context.Products
+            .AsNoTracking()
+            .AnyAsync(
+                p => (p.Barcode!.Value == normalized || p.Barcode!.Value == alternate)
+                     && (excludeProductId == null || p.Id != excludeProductId),
+                cancellationToken);
+    }
+
+    /// <summary>
+    /// Forme équivalente d'un UPC-A et d'un EAN-13 : un UPC-A est un EAN-13 préfixé d'un zéro.
+    ///
+    /// <para>
+    /// Le code est stocké tel qu'il a été scanné — normaliser en base casserait la douchette,
+    /// qui renvoie 12 chiffres sur un UPC-A dans sa configuration par défaut, et changerait la
+    /// largeur physique de l'étiquette réimprimée. L'équivalence est donc résolue ici, à la
+    /// lecture, en interrogeant les deux formes.
+    /// </para>
+    ///
+    /// <para>
+    /// Renvoie la valeur elle-même lorsqu'il n'y a pas d'équivalent : les deux égalités portent
+    /// alors sur le même paramètre, ce qui reste un <i>seek</i> sur l'index filtré. Aucune des
+    /// deux comparaisons ne peut être satisfaite par NULL, donc l'optimiseur conserve le
+    /// filtre <c>[Barcode] IS NOT NULL</c>.
+    /// </para>
+    /// </summary>
+    private static string UpcEanEquivalent(string normalized)
+    {
+        if (normalized.Length == 12 && normalized.All(char.IsAsciiDigit))
+            return "0" + normalized;
+
+        if (normalized.Length == 13 && normalized[0] == '0' && normalized.All(char.IsAsciiDigit))
+            return normalized[1..];
+
+        return normalized;
     }
 
     public async Task<IReadOnlyList<Product>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -102,9 +155,16 @@ public sealed class ProductRepository : IProductRepository
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            query = query.Where(p => 
+            // Le code-barres se compare en égalité STRICTE, jamais en Contains : on ne tape
+            // pas un morceau de code-barres, on le scanne en entier. Un Contains rouvrirait
+            // le défaut de correspondance partielle que le scan a précisément corrigé
+            // (« 1234 » trouvant « 12345 »). Le coût est nul : la requête est déjà un balayage
+            // à cause de Name.Contains, on n'ajoute qu'une comparaison par ligne.
+            var exact = searchTerm.Trim();
+            query = query.Where(p =>
                 p.Name.Contains(searchTerm) ||
-                p.Code.Contains(searchTerm));
+                p.Code.Contains(searchTerm) ||
+                p.Barcode!.Value == exact);
         }
 
         if (type.HasValue)
@@ -212,9 +272,12 @@ public sealed class ProductRepository : IProductRepository
         {
             var term = searchTerm.Trim();
             // Prefix on Code uses the unique index; Contains on Name for free-text matching.
+            // Le code-barres se compare en égalité stricte (voir SearchAsync) : c'est ce qui
+            // permet de scanner directement dans l'autocomplétion d'une ligne de document.
             query = query.Where(p =>
                 p.Code.StartsWith(term) ||
-                p.Name.Contains(term));
+                p.Name.Contains(term) ||
+                p.Barcode!.Value == term);
         }
 
         return await query

@@ -20,6 +20,8 @@ export interface ProductSuggestion {
   isDiscountEnabled: boolean;
   maxDiscountPercent: number | null;
   attributeSummary?: string | null;
+  /** Code-barres, pour résoudre un code scanné sans aller-retour serveur. */
+  barcode?: string | null;
 }
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -154,16 +156,25 @@ export class ProductAutocompleteService {
     return this.serverSearch(q, startedAt);
   }
 
-  /** Case-insensitive filter on cached code/name. Exposed for unit tests. */
+  /**
+   * Case-insensitive filter on cached code/name. Exposed for unit tests.
+   *
+   * Le code-barres, lui, se compare en égalité STRICTE et sensible à la casse : on ne tape
+   * jamais un morceau de code-barres, on le scanne en entier, et un Code 128 distingue les
+   * majuscules. Un `includes` ici rouvrirait la correspondance partielle que le scan a
+   * précisément corrigée — « 1234 » ne doit jamais désigner « 12345 ».
+   */
   filterLocal(query: string): ProductSuggestion[] {
-    const q = query.trim().toLowerCase();
+    const raw = query.trim();
+    const q = raw.toLowerCase();
     if (!q) {
       return [...this.cachedActiveProducts];
     }
     return this.cachedActiveProducts.filter(
       p =>
         p.name.toLowerCase().includes(q) ||
-        p.code.toLowerCase().includes(q)
+        p.code.toLowerCase().includes(q) ||
+        (!!p.barcode && p.barcode === raw)
     );
   }
 
@@ -244,7 +255,8 @@ export class ProductAutocompleteService {
             unit: p.unit || 'Unité',
             isFodecApplicable: p.isFodecApplicable ?? false,
             isDiscountEnabled: p.isDiscountEnabled ?? false,
-            maxDiscountPercent: p.maxDiscountPercent ?? null
+            maxDiscountPercent: p.maxDiscountPercent ?? null,
+            barcode: p.barcode ?? null
           }));
         }),
         tap(items => {
@@ -273,7 +285,8 @@ export class ProductAutocompleteService {
       isFodecApplicable: item.isFodecApplicable ?? false,
       isDiscountEnabled: item.isDiscountEnabled ?? false,
       maxDiscountPercent: item.maxDiscountPercent ?? null,
-      attributeSummary: item.attributeSummary ?? null
+      attributeSummary: item.attributeSummary ?? null,
+      barcode: item.barcode ?? null
     };
   }
 }
@@ -295,6 +308,7 @@ export function suggestionToListItem(s: ProductSuggestion): import('@core/servic
     isDiscountEnabled: s.isDiscountEnabled,
     maxDiscountPercent: s.maxDiscountPercent,
     isActive: true,
-    isStockManaged: false
+    isStockManaged: false,
+    barcode: s.barcode ?? null
   };
 }

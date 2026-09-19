@@ -16,8 +16,34 @@ public interface IProductRepository : IRepository<Product>
     /// <summary>
     /// Recherche par code-barres, en correspondance EXACTE. Aucune approximation : un scan
     /// qui ne correspond à rien doit échouer, jamais deviner.
+    ///
+    /// <para>
+    /// Seule tolérance : l'équivalence entre un UPC-A (12 chiffres) et le même code stocké en
+    /// EAN-13 préfixé d'un zéro, et réciproquement. Les modèles de variantes sont exclus.
+    /// </para>
     /// </summary>
     Task<Product?> GetByBarcodeAsync(string barcode, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Indique si un code-barres est déjà porté par un article, hors celui dont l'identifiant
+    /// est fourni (pour qu'une mise à jour ne se voie pas refuser son propre code).
+    ///
+    /// <para>
+    /// C'est la garde d'unicité applicative. L'index de base reste NON unique tant que le parc
+    /// n'a pas été balayé — voir <c>docs/runbooks/barcode-cutover.md</c>. Ce contrôle arrête la
+    /// production de nouveaux doublons, ce qui est la condition préalable au futur index.
+    /// </para>
+    ///
+    /// <para>
+    /// Il tolère la même équivalence UPC-A / EAN-13 que <see cref="GetByBarcodeAsync"/> :
+    /// enregistrer « 036000291452 » sur un article alors qu'un autre porte « 0036000291452 »
+    /// produirait deux articles indiscernables au scan.
+    /// </para>
+    /// </summary>
+    Task<bool> BarcodeExistsAsync(
+        string barcode,
+        Guid? excludeProductId = null,
+        CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Gets all active products.

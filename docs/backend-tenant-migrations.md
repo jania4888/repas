@@ -625,6 +625,52 @@ DROP TABLE #drift;
 > `INTERNAL_ERROR` : `ExceptionHandlingMiddleware` renvoie 503 avec le code `TENANT_MIGRATION_FAILED`,
 > déjà interprété par le client (bannière « mise à jour de la base de données »).
 
+## Élargir une colonne portée par un index FILTRÉ — `20260918120000_WidenProductBarcode_Tenant`
+
+Migration d'élargissement de `Products.Barcode` (`nvarchar(13)` → `nvarchar(48)`) pour accueillir
+UPC-A, GTIN-14 et Code 128.
+
+### Le piège
+
+`IX_Products_Barcode` porte le prédicat `WHERE [Barcode] IS NOT NULL`. **La colonne est donc
+référencée par la définition de l'index**, ce qui crée une dépendance de schéma : un
+`ALTER TABLE … ALTER COLUMN` direct échoue (erreur SQL 5074, « The index is dependent on
+column »).
+
+C'est contre-intuitif, parce qu'élargir un `nvarchar` qui n'est *que* clé d'index est
+normalement toléré. C'est la présence de la colonne **dans le filtre** qui change tout.
+
+Une migration qui se contenterait de l'`ALTER` échouerait au démarrage, donc **bloquerait le
+tenant** (503 `TENANT_MIGRATION_FAILED`). Le défaut ne se voit ni à la relecture du diff ni sur
+une base de développement encore vide d'index.
+
+### La forme correcte
+
+Trois instructions, gardées **indépendamment** :
+
+1. `DROP INDEX` puis `ALTER COLUMN`, sous une garde sur la largeur actuelle
+   (`sys.columns … AND [max_length] < 96` pour `nvarchar(48)`) — le rejeu est ainsi inerte ;
+2. `CREATE INDEX` sous sa propre garde `NOT EXISTS sys.indexes` — cela rattrape un `Up`
+   interrompu entre la suppression et la recréation, cas qui laisserait sinon la table sans son
+   index ;
+3. un `Down` qui **refuse de rétrécir** si une valeur dépasse déjà la largeur d'origine
+   (`IF NOT EXISTS (SELECT 1 … WHERE LEN([Barcode]) > 13)`). Un retour arrière ne doit jamais
+   tronquer : mieux vaut laisser la colonne large, ce qui est sans conséquence fonctionnelle.
+
+`WidenProductBarcodeMigrationTests` vérifie sur le **texte source** que le `DROP INDEX` précède
+l'`ALTER COLUMN`, qu'aucun `CREATE UNIQUE INDEX` ne s'est glissé dans la migration, et que le
+`Down` porte bien sa garde de non-troncature.
+
+### Ordre de déploiement
+
+La migration doit être appliquée **avant** le déploiement du binaire. L'inverse expose à une
+troncature SQL silencieuse sur tout tenant non encore migré dès qu'un code de plus de 13
+caractères est enregistré. Le sens retenu est sans risque : élargir un `nvarchar` est une
+opération de métadonnées seules, et une instance non encore déployée continue d'écrire des
+valeurs courtes dans une colonne large.
+
+Rampe complète : `docs/runbooks/barcode-cutover.md`.
+
 ---
 
 ## En résumé

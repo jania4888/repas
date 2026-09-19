@@ -246,6 +246,16 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     :host ::ng-deep .p-inputnumber {
       width: 100%;
     }
+
+    // Les champs natifs ne sont PAS couverts par la règle ::ng-deep ci-dessus : ils
+    // vivent dans ce template, pas dans un composant enfant. Sans cette règle ils
+    // restent à leur largeur intrinsèque (~185 px) pendant que le p-inputNumber
+    // voisin occupe toute la colonne — les « class="w-full" » posées sur eux ne
+    // portent rien (Tailwind est préfixé « tw- », cf. tailwind.config.js).
+    .form-group > input[pInputText],
+    .form-group > textarea[pTextarea] {
+      width: 100%;
+    }
   `]
 })
 export class ProductCategoryFormComponent implements OnInit {

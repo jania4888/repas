@@ -1,4 +1,4 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using FactuTrust.Domain.Common;
 
@@ -180,6 +180,9 @@ public static class AuditActions
         public const string Created = "Product.Created";
         public const string Updated = "Product.Updated";
         public const string Deleted = "Product.Deleted";
+
+        /// <summary>Impression d'une planche d'étiquettes code-barres.</summary>
+        public const string LabelsExported = "Product.LabelsExported";
     }
 
     public static class User

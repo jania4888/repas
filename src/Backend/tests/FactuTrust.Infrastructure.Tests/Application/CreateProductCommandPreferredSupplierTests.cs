@@ -1,4 +1,4 @@
-using FactuTrust.Application.Common.Interfaces;
+﻿using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
@@ -62,7 +62,8 @@ public sealed class CreateProductCommandPreferredSupplierTests
                 SerialTrackingEnabled = true,
                 ExpiryTrackingEnabled = true,
                 FifoLifoValuationEnabled = true
-            }));
+            }),
+            Options.Create(new BarcodeOptions()));
     }
 
     private CreateProductDto Dto(Guid? preferredSupplierId) => new()
