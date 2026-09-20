@@ -379,6 +379,14 @@ export interface BillableProjectTimeEntry {
   blockReason?: string | null;
 }
 
+export interface ProjectDraftInvoice {
+  invoiceId: string;
+  number: string;
+  issueDate: string;
+  amountHT: number;
+  lineCount: number;
+}
+
 export interface ProjectLinkedInvoice {
   invoiceId: string;
   number: string;
@@ -726,10 +734,19 @@ export class ProjectApiService {
     return this.http.get<ApiResponse<BillableProjectTimeEntry[]>>(`${this.base}/${projectId}/billing/billable-time-entries`);
   }
 
-  invoiceTime(projectId: string, timeEntryIds: string[], notes?: string): Observable<ApiResponse<{ invoiceId: string; billingId: string }>> {
+  compatibleDraftInvoices(projectId: string): Observable<ApiResponse<ProjectDraftInvoice[]>> {
+    return this.http.get<ApiResponse<ProjectDraftInvoice[]>>(`${this.base}/${projectId}/billing/draft-invoices`);
+  }
+
+  invoiceTime(
+    projectId: string,
+    timeEntryIds: string[],
+    notes?: string,
+    targetInvoiceId?: string
+  ): Observable<ApiResponse<{ invoiceId: string; billingId: string }>> {
     return this.http.post<ApiResponse<{ invoiceId: string; billingId: string }>>(
       `${this.base}/${projectId}/billing/time`,
-      { groupBy: 'member', notes, timeEntryIds }
+      { groupBy: 'member', notes, timeEntryIds, targetInvoiceId }
     );
   }
 
@@ -737,9 +754,13 @@ export class ProjectApiService {
     projectId: string,
     method: 'fixed' | 'hourly',
     tasks: { taskId: string; amountHt?: number; hourlyRate?: number }[],
-    notes?: string
+    notes?: string,
+    targetInvoiceId?: string
   ): Observable<ApiResponse<{ invoiceId: string; billingId: string }>> {
-    return this.http.post<ApiResponse<{ invoiceId: string; billingId: string }>>(`${this.base}/${projectId}/billing/tasks`, { method, notes, tasks });
+    return this.http.post<ApiResponse<{ invoiceId: string; billingId: string }>>(
+      `${this.base}/${projectId}/billing/tasks`,
+      { method, notes, tasks, targetInvoiceId }
+    );
   }
 
   invoiceMilestone(projectId: string, milestoneId: string, notes?: string): Observable<ApiResponse<{ invoiceId: string; billingId: string }>> {

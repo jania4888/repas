@@ -346,6 +346,7 @@ public sealed record InvoiceTimeDto
     public string? Notes { get; init; }
     /// <summary>Entrées à facturer. Si vide : toutes les saisies éligibles (comportement legacy).</summary>
     public IReadOnlyList<Guid> TimeEntryIds { get; init; } = Array.Empty<Guid>();
+    public Guid? TargetInvoiceId { get; init; }
 }
 
 public sealed record InvoiceTaskLineDto
@@ -360,6 +361,7 @@ public sealed record InvoiceTasksDto
     public string Method { get; init; } = "hourly";
     public string? Notes { get; init; }
     public IReadOnlyList<InvoiceTaskLineDto> Tasks { get; init; } = Array.Empty<InvoiceTaskLineDto>();
+    public Guid? TargetInvoiceId { get; init; }
 }
 
 public sealed record BillableProjectTaskDto
@@ -410,6 +412,15 @@ public sealed record ProjectInvoiceResultDto
 {
     public Guid InvoiceId { get; init; }
     public Guid BillingId { get; init; }
+}
+
+public sealed record ProjectDraftInvoiceDto
+{
+    public Guid InvoiceId { get; init; }
+    public string Number { get; init; } = null!;
+    public DateTime IssueDate { get; init; }
+    public decimal AmountHT { get; init; }
+    public int LineCount { get; init; }
 }
 
 /// <summary>Facture commerciale émise depuis un projet (GET /projects/{id}/linked-invoices).</summary>

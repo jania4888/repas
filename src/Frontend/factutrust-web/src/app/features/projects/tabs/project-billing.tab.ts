@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 
@@ -29,8 +29,14 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 
 import { ProjectInvoicesSectionComponent } from '../components/project-invoices-section.component';
+import {
+  ProjectInvoiceTargetChoice,
+  ProjectInvoiceTargetDialogComponent
+} from '../components/project-invoice-target-dialog.component';
 
 import {
+
+  ProjectApiService,
 
   ProjectBillingReadiness,
 
@@ -39,6 +45,8 @@ import {
   BillableProjectTimeEntry,
 
   ProjectDetail,
+
+  ProjectDraftInvoice,
 
   ProjectMilestone,
 
@@ -138,7 +146,8 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
     StatusBadgeComponent,
 
-    ProjectInvoicesSectionComponent
+    ProjectInvoicesSectionComponent,
+    ProjectInvoiceTargetDialogComponent
 
   ],
 
@@ -242,7 +251,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
             </label>
 
-            <app-button variant="primary" [disabled]="!canInvoiceSelectedTime" (click)="emitInvoiceTime()">Facturer la sélection</app-button>
+            <app-button variant="primary" [disabled]="!canInvoiceSelectedTime || invoiceTargetLoading" (click)="openInvoiceTargetDialog('time')">Facturer la sélection</app-button>
 
           }
 
@@ -378,7 +387,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
             </label>
 
-            <app-button variant="primary" [disabled]="!canInvoiceTasks" (click)="emitInvoiceTasks()">Facturer les tâches sélectionnées</app-button>
+            <app-button variant="primary" [disabled]="!canInvoiceTasks || invoiceTargetLoading" (click)="openInvoiceTargetDialog('tasks')">Facturer les tâches sélectionnées</app-button>
 
           </div>
 
@@ -821,6 +830,13 @@ const TASK_BILLING_METHOD_OPTIONS = [
         [refreshToken]="invoicesRefreshToken" />
     }
 
+    @if (project) {
+      <app-project-invoice-target-dialog
+        [(visible)]="invoiceTargetVisible"
+        [preloadedDrafts]="preloadedDraftInvoices"
+        (chosen)="onInvoiceTargetChosen($event)" />
+    }
+
   `,
 
   styles: [`
@@ -843,7 +859,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
 export class ProjectBillingTabComponent implements OnChanges {
 
-
+  private readonly api = inject(ProjectApiService);
 
   @Input() project: ProjectDetail | null = null;
 
@@ -869,9 +885,11 @@ export class ProjectBillingTabComponent implements OnChanges {
 
   @Output() activate = new EventEmitter<void>();
 
-  @Output() invoiceTime = new EventEmitter<{ groupBy: string; notes?: string; timeEntryIds: string[] }>();
+  @Output() invoiceTime = new EventEmitter<{ groupBy: string; notes?: string; timeEntryIds: string[]; targetInvoiceId?: string }>();
 
-  @Output() invoiceTasks = new EventEmitter<{ method: 'fixed' | 'hourly'; notes?: string; tasks: { taskId: string; amountHt?: number; hourlyRate?: number }[] }>();
+  @Output() invoiceTasks = new EventEmitter<{ method: 'fixed' | 'hourly'; notes?: string; tasks: { taskId: string; amountHt?: number; hourlyRate?: number }[]; targetInvoiceId?: string }>();
+
+  @Output() invoiceDraftLoadError = new EventEmitter<string>();
 
   @Output() refreshBillableTasks = new EventEmitter<'fixed' | 'hourly'>();
 
@@ -1179,7 +1197,51 @@ export class ProjectBillingTabComponent implements OnChanges {
 
 
 
-  emitInvoiceTime(): void {
+  invoiceTargetVisible = false;
+  invoiceTargetLoading = false;
+  preloadedDraftInvoices: ProjectDraftInvoice[] = [];
+  private pendingInvoiceAction: 'time' | 'tasks' | null = null;
+
+  openInvoiceTargetDialog(action: 'time' | 'tasks'): void {
+    if (!this.project || this.invoiceTargetLoading) return;
+    this.pendingInvoiceAction = action;
+    this.invoiceTargetLoading = true;
+    this.api.compatibleDraftInvoices(this.project.id).subscribe({
+      next: res => {
+        this.invoiceTargetLoading = false;
+        if (!res.success) {
+          this.invoiceDraftLoadError.emit(res.message || 'Impossible de charger les factures brouillon.');
+          this.pendingInvoiceAction = null;
+          return;
+        }
+        const drafts = res.data ?? [];
+        if (drafts.length === 0) {
+          this.onInvoiceTargetChosen({});
+          return;
+        }
+        this.preloadedDraftInvoices = drafts;
+        this.invoiceTargetVisible = true;
+      },
+      error: () => {
+        this.invoiceTargetLoading = false;
+        this.pendingInvoiceAction = null;
+        this.invoiceDraftLoadError.emit('Impossible de charger les factures brouillon.');
+      }
+    });
+  }
+
+  onInvoiceTargetChosen(choice: ProjectInvoiceTargetChoice): void {
+    const targetInvoiceId = choice.targetInvoiceId;
+    if (this.pendingInvoiceAction === 'time') {
+      this.emitInvoiceTime(targetInvoiceId);
+    } else if (this.pendingInvoiceAction === 'tasks') {
+      this.emitInvoiceTasks(targetInvoiceId);
+    }
+    this.pendingInvoiceAction = null;
+    this.preloadedDraftInvoices = [];
+  }
+
+  emitInvoiceTime(targetInvoiceId?: string): void {
 
     this.invoiceTime.emit({
 
@@ -1187,7 +1249,9 @@ export class ProjectBillingTabComponent implements OnChanges {
 
       notes: this.timeNotes || undefined,
 
-      timeEntryIds: [...this.selectedTimeEntryIds]
+      timeEntryIds: [...this.selectedTimeEntryIds],
+
+      targetInvoiceId
 
     });
 
@@ -1316,7 +1380,7 @@ export class ProjectBillingTabComponent implements OnChanges {
 
 
 
-  emitInvoiceTasks(): void {
+  emitInvoiceTasks(targetInvoiceId?: string): void {
 
     const tasks = [...this.selectedTaskIds].map(taskId => ({
 
@@ -1334,7 +1398,9 @@ export class ProjectBillingTabComponent implements OnChanges {
 
       notes: this.timeNotes || undefined,
 
-      tasks
+      tasks,
+
+      targetInvoiceId
 
     });
 
