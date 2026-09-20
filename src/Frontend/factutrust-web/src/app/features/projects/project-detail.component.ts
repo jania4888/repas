@@ -234,6 +234,7 @@ import { ProjectFavoritesService } from './project-favorites.service';
               [canBill]="canCreateBilling" [canUpdate]="canUpdate"
               [invoicesRefreshToken]="billingRefreshToken()"
               (activate)="activate()" (invoiceTime)="invoiceTime($event)" (invoiceTasks)="invoiceTasks($event)"
+              (invoiceDraftLoadError)="onInvoiceDraftLoadError($event)"
               (refreshBillableTasks)="loadBillableTasks($event)" (refreshBillableTimeEntries)="loadBillableTimeEntries()"
               (invoiceFixedPrice)="invoiceFixedPrice($event)"
               (addMilestone)="addMilestone($event)" (invoiceMilestone)="invoiceMilestone($event)"
@@ -841,8 +842,12 @@ export class ProjectDetailComponent implements OnInit {
     });
   }
 
-  invoiceTime(ev: { groupBy: string; notes?: string; timeEntryIds: string[] }): void {
-    this.api.invoiceTime(this.id, ev.timeEntryIds, ev.notes).subscribe({
+  onInvoiceDraftLoadError(message: string): void {
+    this.toast.add({ severity: 'error', summary: 'Facturation', detail: message });
+  }
+
+  invoiceTime(ev: { groupBy: string; notes?: string; timeEntryIds: string[]; targetInvoiceId?: string }): void {
+    this.api.invoiceTime(this.id, ev.timeEntryIds, ev.notes, ev.targetInvoiceId).subscribe({
       next: r => {
         if (r.success && r.data) {
           this.loadBillableTimeEntries();
@@ -872,8 +877,8 @@ export class ProjectDetailComponent implements OnInit {
     });
   }
 
-  invoiceTasks(ev: { method: 'fixed' | 'hourly'; notes?: string; tasks: { taskId: string; amountHt?: number; hourlyRate?: number }[] }): void {
-    this.api.invoiceTasks(this.id, ev.method, ev.tasks, ev.notes).subscribe({
+  invoiceTasks(ev: { method: 'fixed' | 'hourly'; notes?: string; tasks: { taskId: string; amountHt?: number; hourlyRate?: number }[]; targetInvoiceId?: string }): void {
+    this.api.invoiceTasks(this.id, ev.method, ev.tasks, ev.notes, ev.targetInvoiceId).subscribe({
       next: r => {
         if (r.success && r.data) {
           this.loadBillableTasks(ev.method);

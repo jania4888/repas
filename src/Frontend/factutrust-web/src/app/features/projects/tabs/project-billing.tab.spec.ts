@@ -1,17 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of, throwError } from 'rxjs';
 import { ProjectBillingTabComponent } from './project-billing.tab';
-import { BillableProjectTask, BillableProjectTimeEntry } from '../project-api.service';
+import { BillableProjectTask, BillableProjectTimeEntry, ProjectApiService } from '../project-api.service';
 
 describe('ProjectBillingTabComponent', () => {
   let component: ProjectBillingTabComponent;
+  let apiSpy: jasmine.SpyObj<ProjectApiService>;
 
   beforeEach(async () => {
+    apiSpy = jasmine.createSpyObj<ProjectApiService>('ProjectApiService', ['compatibleDraftInvoices']);
+    apiSpy.compatibleDraftInvoices.and.returnValue(of({ success: true, data: [] }));
+
     await TestBed.configureTestingModule({
-      imports: [ProjectBillingTabComponent]
+      imports: [ProjectBillingTabComponent],
+      providers: [{ provide: ProjectApiService, useValue: apiSpy }]
     }).compileComponents();
 
     const fixture: ComponentFixture<ProjectBillingTabComponent> = TestBed.createComponent(ProjectBillingTabComponent);
     component = fixture.componentInstance;
+    component.project = {
+      id: 'proj-1',
+      name: 'P',
+      clientId: 'c1',
+      clientName: 'Client',
+      status: 'Active',
+      currency: 'TND'
+    } as never;
   });
 
   const sampleTimeEntry = (id: string, eligible = true): BillableProjectTimeEntry => ({
@@ -79,7 +93,7 @@ describe('ProjectBillingTabComponent', () => {
     component.toggleTimeEntrySelected('e1', true);
     component.toggleTimeEntrySelected('e2', true);
     component.emitInvoiceTime();
-    expect(spy).toHaveBeenCalledWith({ groupBy: 'member', notes: 'note', timeEntryIds: ['e1', 'e2'] });
+    expect(spy).toHaveBeenCalledWith({ groupBy: 'member', notes: 'note', timeEntryIds: ['e1', 'e2'], targetInvoiceId: undefined });
   });
 
   it('onTimeGroupByChange to member emits refreshBillableTimeEntries', () => {
@@ -120,7 +134,8 @@ describe('ProjectBillingTabComponent', () => {
     expect(spy).toHaveBeenCalledWith({
       method: 'fixed',
       notes: 'forfait',
-      tasks: [{ taskId: 't1', amountHt: 250, hourlyRate: undefined }]
+      tasks: [{ taskId: 't1', amountHt: 250, hourlyRate: undefined }],
+      targetInvoiceId: undefined
     });
   });
 
@@ -142,7 +157,54 @@ describe('ProjectBillingTabComponent', () => {
     expect(spy).toHaveBeenCalledWith({
       method: 'hourly',
       notes: undefined,
-      tasks: [{ taskId: 't1', amountHt: undefined, hourlyRate: 100 }]
+      tasks: [{ taskId: 't1', amountHt: undefined, hourlyRate: 100 }],
+      targetInvoiceId: undefined
     });
+  });
+
+  it('openInvoiceTargetDialog with no drafts emits invoiceTime without opening modal', () => {
+    const spy = jasmine.createSpy('invoiceTime');
+    component.invoiceTime.subscribe(spy);
+    component.billableTimeEntries = [sampleTimeEntry('e1')];
+    component.toggleTimeEntrySelected('e1', true);
+    apiSpy.compatibleDraftInvoices.and.returnValue(of({ success: true, data: [] }));
+
+    component.openInvoiceTargetDialog('time');
+
+    expect(component.invoiceTargetVisible).toBeFalse();
+    expect(spy).toHaveBeenCalledWith({
+      groupBy: 'member',
+      notes: undefined,
+      timeEntryIds: ['e1'],
+      targetInvoiceId: undefined
+    });
+  });
+
+  it('openInvoiceTargetDialog with drafts opens modal without immediate emit', () => {
+    const spy = jasmine.createSpy('invoiceTime');
+    component.invoiceTime.subscribe(spy);
+    apiSpy.compatibleDraftInvoices.and.returnValue(
+      of({
+        success: true,
+        data: [{ invoiceId: 'inv-1', number: 'FAC-1', issueDate: '2026-01-01', amountHT: 100, lineCount: 1 }]
+      })
+    );
+
+    component.openInvoiceTargetDialog('time');
+
+    expect(component.invoiceTargetVisible).toBeTrue();
+    expect(spy).not.toHaveBeenCalled();
+    expect(component.preloadedDraftInvoices.length).toBe(1);
+  });
+
+  it('openInvoiceTargetDialog on API error emits invoiceDraftLoadError', () => {
+    const errSpy = jasmine.createSpy('draftLoadError');
+    component.invoiceDraftLoadError.subscribe(errSpy);
+    apiSpy.compatibleDraftInvoices.and.returnValue(throwError(() => new Error('network')));
+
+    component.openInvoiceTargetDialog('time');
+
+    expect(errSpy).toHaveBeenCalled();
+    expect(component.invoiceTargetVisible).toBeFalse();
   });
 });
