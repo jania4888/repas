@@ -180,6 +180,28 @@ describe('ProjectBillingTabComponent', () => {
     });
   });
 
+  it('openInvoiceTargetDialog with no drafts emits invoiceTasks without opening modal', () => {
+    const spy = jasmine.createSpy('invoiceTasks');
+    component.invoiceTasks.subscribe(spy);
+    component.taskBillingMethod = 'fixed';
+    component.billableTasks = [
+      { id: 't1', title: 'A', uninvoicedBillableHours: 0, hourlyRate: 0, previewAmountHt: 0, isEligible: true }
+    ];
+    component.toggleTaskSelected('t1', true);
+    component.taskAmounts['t1'] = 150;
+    apiSpy.compatibleDraftInvoices.and.returnValue(of({ success: true, data: [] }));
+
+    component.openInvoiceTargetDialog('tasks');
+
+    expect(component.invoiceTargetVisible).toBeFalse();
+    expect(spy).toHaveBeenCalledWith({
+      method: 'fixed',
+      notes: undefined,
+      tasks: [{ taskId: 't1', amountHt: 150, hourlyRate: undefined }],
+      targetInvoiceId: undefined
+    });
+  });
+
   it('openInvoiceTargetDialog with drafts opens modal without immediate emit', () => {
     const spy = jasmine.createSpy('invoiceTime');
     component.invoiceTime.subscribe(spy);
