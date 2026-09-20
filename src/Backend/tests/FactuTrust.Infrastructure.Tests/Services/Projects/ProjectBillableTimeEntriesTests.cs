@@ -108,6 +108,34 @@ public sealed class ProjectBillableTimeEntriesTests
         return new Fixture(project.Id, entry1.Id, entry2.Id, taskHourly.Id, client);
     }
 
+    private static async Task<Guid> SeedDraftProjectInvoiceAsync(
+        InMemoryTenantDbContextFactory factory,
+        Guid projectId,
+        Client client,
+        int invoiceSequence)
+    {
+        await using var ctx = factory.CreateContext();
+        var trackedClient = await ctx.Clients.FirstAsync(c => c.Id == client.Id);
+        var issueDate = new DateTime(2026, 8, 1);
+        var invoice = Invoice.Create(
+            InvoiceNumber.Create("FAC", issueDate.Year, invoiceSequence),
+            trackedClient,
+            issueDate,
+            issueDate.AddDays(30),
+            "PRJ-test",
+            "Brouillon projet").Value;
+        Assert.True(invoice.AddCustomLine("Ligne initiale", null, 1m, "h", Money.Create(100m), VatRate.Standard).IsSuccess);
+
+        var billing = ProjectBilling.Create(projectId, ProjectBillingKind.TimeAndMaterials, invoice.Id, 100m, null);
+        Assert.True(billing.IsSuccess);
+        invoice.SetProjectBillingSource(projectId, billing.Value.Id);
+
+        ctx.Invoices.Add(invoice);
+        ctx.ProjectBillings.Add(billing.Value);
+        await ctx.SaveChangesAsync();
+        return invoice.Id;
+    }
+
     [Fact]
     public async Task GetBillableTimeEntries_NoValidatedTime_ReturnsEmpty()
     {
@@ -351,5 +379,121 @@ public sealed class ProjectBillableTimeEntriesTests
         await using var verify = factory.CreateContext();
         var invoice = await verify.Invoices.Include(i => i.Lines).FirstAsync(i => i.Id == result.Value.InvoiceId);
         Assert.Equal(2, invoice.Lines.Count);
+    }
+
+    [Fact]
+    public async Task GetCompatibleDraftInvoices_ReturnsOnlyDraftSameClientProject()
+    {
+        var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
+        var fx = await SeedTwoEntriesAsync(factory);
+        await using var sut = CreateService(factory, fx.Client);
+
+        var first = await sut.InvoiceTimeAsync(fx.ProjectId, new InvoiceTimeDto
+        {
+            GroupBy = "member",
+            TimeEntryIds = new[] { fx.Entry1Id }
+        });
+        Assert.True(first.IsSuccess, first.IsFailure ? first.Error.Description : "");
+
+        var drafts = await sut.GetCompatibleDraftInvoicesAsync(fx.ProjectId);
+        Assert.Single(drafts);
+        Assert.Equal(first.Value.InvoiceId, drafts[0].InvoiceId);
+
+        await using var verify = factory.CreateContext();
+        var status = await verify.Invoices.Where(i => i.Id == drafts[0].InvoiceId).Select(i => i.Status).FirstAsync();
+        Assert.Equal(InvoiceStatus.Draft, status);
+    }
+
+    [Fact]
+    public async Task InvoiceTime_WithTargetInvoiceId_AppendsToExisting_DoesNotCreateSecondInvoice()
+    {
+        var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
+        var fx = await SeedTwoEntriesAsync(factory);
+        await using var sut = CreateService(factory, fx.Client);
+
+        var first = await sut.InvoiceTimeAsync(fx.ProjectId, new InvoiceTimeDto
+        {
+            GroupBy = "member",
+            TimeEntryIds = new[] { fx.Entry1Id }
+        });
+        Assert.True(first.IsSuccess, first.IsFailure ? first.Error.Description : "");
+
+        var second = await sut.InvoiceTimeAsync(fx.ProjectId, new InvoiceTimeDto
+        {
+            GroupBy = "member",
+            TimeEntryIds = new[] { fx.Entry2Id },
+            TargetInvoiceId = first.Value.InvoiceId
+        });
+        Assert.True(second.IsSuccess, second.IsFailure ? second.Error.Description : "");
+        Assert.Equal(first.Value.InvoiceId, second.Value.InvoiceId);
+
+        await using var verify = factory.CreateContext();
+        var projectInvoices = await verify.Invoices
+            .Where(i => i.SourceProjectId == fx.ProjectId && i.Type == InvoiceType.Standard)
+            .ToListAsync();
+        Assert.Single(projectInvoices);
+
+        var invoice = await verify.Invoices.Include(i => i.Lines).FirstAsync(i => i.Id == first.Value.InvoiceId);
+        Assert.Equal(2, invoice.Lines.Count);
+
+        var entry2 = await verify.ProjectTimeEntries.FirstAsync(e => e.Id == fx.Entry2Id);
+        Assert.Equal(first.Value.InvoiceId, entry2.InvoicedInvoiceId);
+    }
+
+    [Fact]
+    public async Task InvoiceTime_WithTargetInvoiceId_WrongProject_Fails_NoMarking()
+    {
+        var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
+        var fx = await SeedTwoEntriesAsync(factory);
+
+        var otherProject = Project.Create(fx.Client.Id, "Autre mission", ProjectKind.Esn, ProjectBillingMode.TimeAndMaterials, null, null, null, 3000m).Value;
+        Assert.True(otherProject.Activate().IsSuccess);
+        await using (var ctx = factory.CreateContext())
+        {
+            ctx.Projects.Add(otherProject);
+            await ctx.SaveChangesAsync();
+        }
+
+        var foreignDraftId = await SeedDraftProjectInvoiceAsync(factory, otherProject.Id, fx.Client, 200);
+        await using var sut = CreateService(factory, fx.Client);
+
+        var result = await sut.InvoiceTimeAsync(fx.ProjectId, new InvoiceTimeDto
+        {
+            GroupBy = "member",
+            TimeEntryIds = new[] { fx.Entry2Id },
+            TargetInvoiceId = foreignDraftId
+        });
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("projet", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+
+        await using var verify = factory.CreateContext();
+        var entry2 = await verify.ProjectTimeEntries.FirstAsync(e => e.Id == fx.Entry2Id);
+        Assert.Null(entry2.InvoicedInvoiceId);
+    }
+
+    [Fact]
+    public async Task InvoiceTime_AlreadyInvoicedEntry_Fails()
+    {
+        var factory = new InMemoryTenantDbContextFactory(Guid.NewGuid().ToString());
+        var fx = await SeedTwoEntriesAsync(factory);
+        await using var sut = CreateService(factory, fx.Client);
+
+        var first = await sut.InvoiceTimeAsync(fx.ProjectId, new InvoiceTimeDto
+        {
+            GroupBy = "member",
+            TimeEntryIds = new[] { fx.Entry1Id }
+        });
+        Assert.True(first.IsSuccess, first.IsFailure ? first.Error.Description : "");
+
+        var retry = await sut.InvoiceTimeAsync(fx.ProjectId, new InvoiceTimeDto
+        {
+            GroupBy = "member",
+            TimeEntryIds = new[] { fx.Entry1Id },
+            TargetInvoiceId = first.Value.InvoiceId
+        });
+
+        Assert.True(retry.IsFailure);
+        Assert.Contains("facturables", retry.Error.Description, StringComparison.OrdinalIgnoreCase);
     }
 }
