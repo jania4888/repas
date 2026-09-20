@@ -89,7 +89,7 @@ public sealed class SalesReturnNoteRepository : ISalesReturnNoteRepository
         var items = await query
             .OrderByDescending(n => n.ReturnDate)
             .ThenByDescending(n => n.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

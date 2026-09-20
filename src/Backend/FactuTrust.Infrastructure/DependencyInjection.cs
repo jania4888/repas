@@ -7,6 +7,7 @@ using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Features.Stock.Queries;
 using FactuTrust.Application.Features.Studio.Common;
+using FactuTrust.Application.Features.Studio.Workflows.Engine;
 using FactuTrust.Application.Features.AI;
 using FactuTrust.Application.Features.AI.Commands;
 using FactuTrust.Application.Features.AI.DTOs;
@@ -312,7 +313,15 @@ public static class DependencyInjection
         services.AddScoped<IStorefrontTenantWriter, StorefrontTenantWriter>();
         services.AddScoped<IPublicStorefrontReadRepository, PublicStorefrontReadRepository>();
         services.AddScoped<IStorefrontOrderRepository, StorefrontOrderRepository>();
-        services.AddScoped<IStorefrontCaptchaValidator, StorefrontCaptchaValidator>();
+        services.AddHttpClient<IStorefrontCaptchaValidator, StorefrontCaptchaValidator>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(5);
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            AllowAutoRedirect = false,
+            UseCookies = false,
+            MaxResponseHeadersLength = 16
+        }).RemoveAllLoggers();
 
         services.AddScoped<IAccountingPeriodService, AccountingPeriodService>();
         // Enregistrement inconditionnel : les handlers MediatR le prennent en dépendance et
@@ -397,6 +406,22 @@ public static class DependencyInjection
         // Studio IA — plans « aperçu → confirmation » (flux EnableStudioAiPlanPreview).
         services.AddScoped<IStudioAiBuildPlanRepository, Repositories.Studio.StudioAiBuildPlanRepository>();
         services.AddScoped<FactuTrust.Application.Features.Studio.Ai.IStudioAiPlanExecutor, Services.Studio.StudioAiPlanExecutor>();
+        // Workflows Studio (PR 4.1) — dépôt SQL multi-tenant.
+        services.AddScoped<IStudioWorkflowRepository, Repositories.Studio.StudioWorkflowRepository>();
+        // 4.5a1 — noms d'utilisateurs en lot (StartedByName des DTO workflow) ; requis par ListMyApprovalsQueryHandler (ValidateOnBuild).
+        services.AddScoped<IStudioUserNameResolver, Services.Studio.StudioUserNameResolver>();
+        services.AddScoped<IStudioWorkflowEngine, Services.Studio.Workflows.StudioWorkflowEngine>();
+        // Runner runtime (PR 4.2c2) : bail + impersonation autour du moteur.
+        services.AddScoped<IStudioWorkflowRunner, Services.Studio.Workflows.StudioWorkflowRunner>();
+        // 4.7b2 / D-47-B03 — ordonnancement Hangfire des déclencheurs planifiés (best-effort aux écritures).
+        services.AddScoped<IStudioWorkflowScheduleService, Services.Studio.Workflows.StudioWorkflowScheduleService>();
+        services.AddScoped<IStudioWorkflowStepHandler, Services.Studio.Workflows.Steps.ConditionStepHandler>();
+        services.AddScoped<IStudioWorkflowStepHandler, Services.Studio.Workflows.Steps.UpdateFieldStepHandler>();
+        services.AddScoped<IStudioWorkflowStepHandler, Services.Studio.Workflows.Steps.ErpActionStepHandler>();
+        services.AddScoped<IStudioWorkflowStepHandler, Services.Studio.Workflows.Steps.NotifyStepHandler>();
+        services.AddScoped<IStudioWorkflowStepHandler, Services.Studio.Workflows.Steps.ApprovalStepHandler>();
+        services.AddScoped<IStudioWorkflowStepHandler, Services.Studio.Workflows.Steps.WaitStepHandler>();
+        services.AddScoped<IStudioWorkflowStepHandler, Services.Studio.Workflows.Steps.CreateRecordStepHandler>();
         // Digest de contexte Studio (schéma du tenant + dernier plan) injecté dans le prompt StudioBuilder.
         services.AddScoped<IStudioContextDigestService, Services.Studio.StudioContextDigestService>();
         services.AddScoped<IDocumentTemplateResolver, DocumentTemplateResolver>();
@@ -428,6 +453,8 @@ public static class DependencyInjection
         services.AddScoped<IEmailMessageQueryService, EmailMessageQueryService>();
         services.AddScoped<SendEmailJob>();
         services.AddScoped<IEffectivePermissionService, EffectivePermissionService>();
+        // Studio IA 4.2a — identité impersonnée fail-closed des reprises de workflows (sans HTTP ni canal).
+        services.AddScoped<FactuTrust.Application.Common.Identity.IImpersonationSnapshotResolver, FactuTrust.Infrastructure.Services.Identity.ImpersonationSnapshotResolver>();
         // Phase 2 — moteur de règles sectorielles en base (plan §WP-B2). Static provider is a
         // process-lifetime singleton (zero-alloc snapshot); DB provider is scoped (uses the
         // per-request MasterDbContext); the composite (registered as ISectorCatalogProvider) picks
@@ -490,6 +517,11 @@ public static class DependencyInjection
         // Enregistré inconditionnellement : le job porte lui-même la garde du flag, comme les
         // autres jobs Hangfire du produit.
         services.AddScoped<FactuTrust.Infrastructure.Services.Background.CashFlowRecomputationJob>();
+        // Job récurrent des workflows Studio (PR 4.2d) : même garde de flag (EnableStudioWorkflows).
+        services.AddScoped<Services.Studio.Workflows.StudioWorkflowResumeJob>();
+        // 4.7★3 (D-47-79, S16) : job des déclencheurs planifiés (4.7b2) — enregistré explicitement comme
+        // les autres jobs Hangfire, au lieu de dépendre de la construction implicite de l'activateur.
+        services.AddScoped<Services.Studio.Workflows.StudioWorkflowScheduledJob>();
 
         // Lot C5 — Providers paiement (Konnect / Paymee / Virement) + webhooks signés HMAC
         services.AddScoped<FactuTrust.Infrastructure.Services.Billing.PaymentProviderConfigService>();

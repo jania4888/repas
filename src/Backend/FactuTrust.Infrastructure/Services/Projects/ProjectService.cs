@@ -62,7 +62,7 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
     public async Task<PagedResult<ProjectListItemDto>> ListAsync(
         ProjectListQuery query, CancellationToken cancellationToken = default)
     {
-        var page = Math.Max(1, query.Page);
+        var page = Math.Clamp(query.Page, 1, int.MaxValue / 100);
         var pageSize = Math.Clamp(query.PageSize, 1, 100);
         var q = ApplyListFilters(_db.Projects.AsNoTracking().AsQueryable(), query);
         if (query.OverdueOnly == true)

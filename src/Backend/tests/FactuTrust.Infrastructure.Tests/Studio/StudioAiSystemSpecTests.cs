@@ -584,4 +584,46 @@ public sealed class StudioAiSystemSpecTests
         Assert.Empty(spec!.Entities[0].Views);
         Assert.Contains(spec.Warnings!, w => w.Contains("tableau de vues"));
     }
+
+    // PR 3.3 — « specVersion » racine : absent ⇒ accepté (rétro-compatibilité), 1 ⇒ accepté,
+    // toute autre valeur (entier ou chaîne non convertible) ⇒ rejet au message figé.
+
+    [Fact]
+    public void TryParse_accepts_spec_without_version()
+    {
+        const string json = """
+        { "system": { "displayName": "T" }, "entities": [
+          { "ref": "taches", "displayName": "Taches", "fields": [ { "label": "Titre" } ] }
+        ] }
+        """;
+        Assert.True(StudioAiSystemSpec.TryParse(json, out var spec, out var error), error);
+        Assert.NotNull(spec);
+    }
+
+    [Fact]
+    public void TryParse_accepts_spec_version_1()
+    {
+        const string json = """
+        { "specVersion": 1, "system": { "displayName": "T" }, "entities": [
+          { "ref": "taches", "displayName": "Taches", "fields": [ { "label": "Titre" } ] }
+        ] }
+        """;
+        Assert.True(StudioAiSystemSpec.TryParse(json, out var spec, out var error), error);
+        Assert.NotNull(spec);
+    }
+
+    [Theory]
+    [InlineData("2", "2")]
+    [InlineData("\"x\"", "x")]
+    [InlineData("0", "0")]
+    public void TryParse_rejects_unsupported_spec_version(string versionJson, string raw)
+    {
+        var json = $$"""
+        { "specVersion": {{versionJson}}, "system": { "displayName": "T" }, "entities": [
+          { "ref": "taches", "displayName": "Taches", "fields": [ { "label": "Titre" } ] }
+        ] }
+        """;
+        Assert.False(StudioAiSystemSpec.TryParse(json, out _, out var error));
+        Assert.Equal($"Version de spécification non prise en charge : {raw}.", error);
+    }
 }

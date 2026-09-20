@@ -95,6 +95,11 @@ public sealed class CustomRecordViewFeaturesTests
         new(_entities.Object, _fields.Object, _views.Object, _records.Object, _currentUser.Object,
             Options.Create(settings ?? Settings()));
 
+    /// <summary>Fabrique de l'aperçu (4.7v1) : ni vues, ni quota, ni audit — lecture seule bornée (D-47-20).</summary>
+    private PreviewCustomRecordViewQueryHandler PreviewHandler(OllamaSettings? settings = null) =>
+        new(_entities.Object, _fields.Object, _records.Object, _currentUser.Object,
+            Options.Create(settings ?? Settings()));
+
     // ---- CRUD ----
 
     [Fact]
@@ -311,6 +316,133 @@ public sealed class CustomRecordViewFeaturesTests
                     && f.Value!.GetValue<string>() == "2026-03-01")
                 && !s.Filters.Any(f => f.Op == "between")),
             It.IsAny<IReadOnlyDictionary<string, CustomFieldType>>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    // ---- Preview (4.7v1, R3 : exécution d'une définition NON enregistrée) ----
+
+    [Fact]
+    public async Task Preview_executes_the_draft_without_persisting_anything()
+    {
+        var rows = new List<CustomRecord> { Rec("""{"nom":"t1","statut":"encours"}""") };
+        _records.Setup(r => r.QueryAsync(It.IsAny<RecordQuerySpec>(), It.IsAny<IReadOnlyDictionary<string, CustomFieldType>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((rows, Total: 1));
+
+        var handler = PreviewHandler();
+        var result = await handler.Handle(
+            new PreviewCustomRecordViewQuery("chantiers", new PreviewRecordViewRequest(CustomRecordViewMode.List, ListDef())),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        var run = result.Value;
+        Assert.Equal(CustomRecordViewMode.List, run.Mode);
+        Assert.Single(run.Items);
+        Assert.Equal(1, run.Total);
+
+        // Invariant R3 : lecture seule — la définition n'est ni lue ni écrite, ni quota ni audit.
+        _records.Verify(r => r.QueryAsync(It.IsAny<RecordQuerySpec>(), It.IsAny<IReadOnlyDictionary<string, CustomFieldType>>(), It.IsAny<CancellationToken>()), Times.Once);
+        _views.VerifyNoOtherCalls();
+        _quota.VerifyNoOtherCalls();
+        _audit.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task Preview_returns_400_when_the_definition_fails_the_save_time_validator()
+    {
+        // Colonne inconnue : même validateur qu'à l'enregistrement et au run (D-47-20).
+        var def = ListDef() with { Columns = new[] { new RecordViewColumn("inconnu") } };
+
+        var handler = PreviewHandler();
+        var result = await handler.Handle(
+            new PreviewCustomRecordViewQuery("chantiers", new PreviewRecordViewRequest(CustomRecordViewMode.List, def)),
+            CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.StartsWith("Validation.", result.Error.Code);
+        _records.Verify(r => r.QueryAsync(It.IsAny<RecordQuerySpec>(), It.IsAny<IReadOnlyDictionary<string, CustomFieldType>>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Preview_bounds_page_size_like_run()
+    {
+        var handler = PreviewHandler();
+
+        var zero = await handler.Handle(new PreviewCustomRecordViewQuery("chantiers",
+            new PreviewRecordViewRequest(CustomRecordViewMode.List, ListDef(), PageSize: 0)), CancellationToken.None);
+        Assert.True(zero.IsFailure);
+        Assert.Equal("Validation.pageSize", zero.Error.Code);
+
+        var tooBig = await handler.Handle(new PreviewCustomRecordViewQuery("chantiers",
+            new PreviewRecordViewRequest(CustomRecordViewMode.List, ListDef(), PageSize: 201)), CancellationToken.None);
+        Assert.True(tooBig.IsFailure);
+        Assert.Equal("Validation.pageSize", tooBig.Error.Code);
+
+        _records.Verify(r => r.QueryAsync(It.IsAny<RecordQuerySpec>(), It.IsAny<IReadOnlyDictionary<string, CustomFieldType>>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        // null ⇒ Definition.PageSize (25) ; page < 1 ⇒ 1 (skip 0).
+        _records.Setup(r => r.QueryAsync(It.IsAny<RecordQuerySpec>(), It.IsAny<IReadOnlyDictionary<string, CustomFieldType>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((new List<CustomRecord>(), 0));
+        var ok = await handler.Handle(new PreviewCustomRecordViewQuery("chantiers",
+            new PreviewRecordViewRequest(CustomRecordViewMode.List, ListDef(), Page: 0)), CancellationToken.None);
+        Assert.True(ok.IsSuccess);
+        _records.Verify(r => r.QueryAsync(
+            It.Is<RecordQuerySpec>(sp => sp.Skip == 0 && sp.Take == 25),
+            It.IsAny<IReadOnlyDictionary<string, CustomFieldType>>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Preview_kanban_groups_like_run()
+    {
+        // Miroir du fait run (ordre des options puis « Sans valeur », borne 500) — sans vue persistée.
+        var rows = new List<CustomRecord>
+        {
+            Rec("""{"nom":"t1","statut":"termine"}"""),
+            Rec("""{"nom":"t2","statut":"encours"}"""),
+            Rec("""{"nom":"t3"}""")
+        };
+        _records.Setup(r => r.QueryAsync(It.IsAny<RecordQuerySpec>(), It.IsAny<IReadOnlyDictionary<string, CustomFieldType>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((rows, Total: 501));
+
+        var handler = PreviewHandler(Settings(kanban: 500));
+        var result = await handler.Handle(
+            new PreviewCustomRecordViewQuery("chantiers", new PreviewRecordViewRequest(CustomRecordViewMode.Kanban, KanbanDef())),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.True(result.Value.Truncated);
+        Assert.Equal(new[] { "encours", "termine", null }, result.Value.Groups!.Select(g => g.Value).ToArray());
+    }
+
+    [Fact]
+    public async Task Preview_calendar_requires_a_date_range_and_bounds_it()
+    {
+        var handler = PreviewHandler();
+
+        var missing = await handler.Handle(
+            new PreviewCustomRecordViewQuery("chantiers", new PreviewRecordViewRequest(CustomRecordViewMode.Calendar, CalendarDef())),
+            CancellationToken.None);
+        Assert.True(missing.IsFailure);
+        Assert.Equal("Validation.range", missing.Error.Code);
+
+        var tooWide = await handler.Handle(
+            new PreviewCustomRecordViewQuery("chantiers", new PreviewRecordViewRequest(CustomRecordViewMode.Calendar, CalendarDef(),
+                RangeStart: new DateOnly(2026, 1, 1), RangeEnd: new DateOnly(2026, 6, 30))),
+            CancellationToken.None);
+        Assert.True(tooWide.IsFailure);
+        Assert.Equal("Validation.range", tooWide.Error.Code);
+
+        _records.Verify(r => r.QueryAsync(It.IsAny<RecordQuerySpec>(), It.IsAny<IReadOnlyDictionary<string, CustomFieldType>>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Preview_returns_not_found_for_an_unknown_entity()
+    {
+        var handler = PreviewHandler();
+        var result = await handler.Handle(
+            new PreviewCustomRecordViewQuery("inconnue", new PreviewRecordViewRequest(CustomRecordViewMode.List, ListDef())),
+            CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Validation.entityKey", result.Error.Code); // RecordEntityResolver : clé inconnue ⇒ 400
     }
 
     private static CustomRecord Rec(string json) => CustomRecord.Create(Tid, EntityId, json, UserId);

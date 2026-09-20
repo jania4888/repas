@@ -230,7 +230,7 @@ public sealed class HonorairesBillingService : IHonorairesBillingService
         HonorairesDocumentType? type, HonorairesInvoiceStatus? status, Guid? assignmentId, string? search,
         int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / 100);
         pageSize = Math.Clamp(pageSize, 1, 100);
         await using var db = _tenantFactory.CreateIsolatedContext();
         var q = db.HonorairesInvoices.AsNoTracking().AsQueryable();
@@ -435,7 +435,7 @@ public sealed class HonorairesBillingService : IHonorairesBillingService
         HonorairesQuoteStatus? status, Guid? assignmentId, string? search,
         int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / 100);
         pageSize = Math.Clamp(pageSize, 1, 100);
         await using var db = _tenantFactory.CreateIsolatedContext();
         var q = db.HonorairesQuotes.AsNoTracking().AsQueryable();

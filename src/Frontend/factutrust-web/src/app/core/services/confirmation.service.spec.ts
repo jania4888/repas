@@ -1,8 +1,27 @@
 import { TestBed } from '@angular/core/testing';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationService } from './confirmation.service';
+import { ConfirmationService, normalizeConfirmButtonClass } from './confirmation.service';
 import { ConfirmModalComponent } from '@shared/components/confirm-modal/confirm-modal.component';
 import { PromptModalComponent } from '@shared/components/confirm-modal/prompt-modal.component';
+
+describe('normalizeConfirmButtonClass (4.6T1, D-44-91)', () => {
+  it('convertit chaque classe PrimeNG connue en classe Bootstrap globale', () => {
+    expect(normalizeConfirmButtonClass('p-button-danger')).toBe('btn-danger');
+    expect(normalizeConfirmButtonClass('p-button-success')).toBe('btn-success');
+    expect(normalizeConfirmButtonClass('p-button-secondary')).toBe('btn-secondary');
+    expect(normalizeConfirmButtonClass('p-button-primary')).toBe('btn-primary');
+    expect(normalizeConfirmButtonClass('p-button-warning')).toBe('btn-warning');
+    expect(normalizeConfirmButtonClass('p-button-info')).toBe('btn-info');
+    expect(normalizeConfirmButtonClass('p-button-help')).toBe('btn-secondary');
+  });
+
+  it('retourne telle quelle une valeur inconnue ou déjà Bootstrap, et undefined si absente', () => {
+    expect(normalizeConfirmButtonClass('btn-danger')).toBe('btn-danger');
+    expect(normalizeConfirmButtonClass('btn-outline-secondary')).toBe('btn-outline-secondary');
+    expect(normalizeConfirmButtonClass('p-button-rounded')).toBe('p-button-rounded'); // inconnu ⇒ tel quel
+    expect(normalizeConfirmButtonClass(undefined)).toBeUndefined();
+  });
+});
 
 describe('ConfirmationService', () => {
   let service: ConfirmationService;
@@ -50,6 +69,12 @@ describe('ConfirmationService', () => {
       ConfirmModalComponent,
       jasmine.objectContaining({ size: 'sm' })
     );
+  });
+
+  it('normalise la classe du bouton de confirmation (p-button-danger ⇒ btn-danger, D-44-91)', () => {
+    service.confirm({ message: 'Supprimer ?', acceptButtonStyleClass: 'p-button-danger' });
+
+    expect(modalRef.componentInstance.acceptButtonStyleClass).toBe('btn-danger');
   });
 
   it('opens confirm modal with size md when requested', () => {

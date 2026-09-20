@@ -1,0 +1,13 @@
+# Work products are local staging, never a public catalogue or tracked delivery.
+/build/
+__pycache__/
+*.pyc
+*.blend1
+*.blend2
+
+# Do not store private inspiration, masters or legal evidence in this repository.
+# Prefer the restricted store outside the checkout; these are defence in depth.
+**/references/
+**/highres/
+**/rights/
+**/restricted/

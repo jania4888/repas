@@ -55,6 +55,8 @@ export interface ManyToManyRelationDto {
   junction: CustomEntity;
   sourceField: CustomField;
   targetField: CustomField;
+  /** v1.1 / D-47-40 : champ attribut créé (optionnel — tolère un backend pas encore déployé). */
+  attributeField?: CustomField | null;
 }
 
 export interface CustomRecord {
@@ -144,6 +146,28 @@ export interface UpdateCustomFieldRequest {
   relation?: RelationRef | null;
   isActive: boolean;
   /** Per-type settings (money.currency, rating.max, render.format) keyed for backend BuildOptionsJson. */
+  config?: Record<string, unknown> | null;
+}
+
+/** Politique de conversion de type (`FieldTypeConversionPolicy.Classify`). */
+export type StudioFieldTypePolicy = 'lossless' | 'requires_empty_table' | 'forbidden';
+
+/** Miroir de `FieldTypeChangeCheckDto` (`GET entities/{id}/fields/{fieldId}/type-check?to=`) — D18. */
+export interface StudioFieldTypeCheckDto {
+  from: string;
+  to: string;
+  policy: StudioFieldTypePolicy | string;
+  recordCount: number;
+  message: string;
+  allowed: boolean;
+}
+
+/** Miroir de `ChangeCustomFieldTypeRequest` (`PATCH entities/{id}/fields/{fieldId}/type`) ; réponse `CustomField`. */
+export interface ChangeCustomFieldTypeRequest {
+  fieldType: CustomFieldType;
+  options?: SelectOption[] | null;
+  rules?: FieldValidationRules | null;
+  relation?: RelationRef | null;
   config?: Record<string, unknown> | null;
 }
 
@@ -333,7 +357,7 @@ export interface AutomationAction {
 
 export interface BridgeParamMapping {
   param: string;
-  source: 'field' | 'const';
+  source: 'field' | 'const' | 'template';
   value: string | null;
 }
 

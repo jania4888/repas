@@ -458,7 +458,7 @@ export class ChannelsSettingsComponent implements OnInit, OnDestroy {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Délier',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => this.unlink()
     });
   }
@@ -525,7 +525,7 @@ export class ChannelsSettingsComponent implements OnInit, OnDestroy {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Déconnecter',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => this.logoutBridge()
     });
   }

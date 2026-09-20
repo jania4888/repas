@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using FactuTrust.Application.Features.Studio.Common;
+using FactuTrust.Application.Features.Studio.RecordViews;
+using FactuTrust.Application.Features.Studio.Relations;
 using FactuTrust.Domain.Enums;
 
 namespace FactuTrust.Application.Features.Studio.Ai;
@@ -30,7 +32,17 @@ public static class StudioAiAmendmentPlanner
 {
     private static readonly JsonSerializerOptions SummaryOptions = new(JsonSerializerDefaults.Web);
 
-    public static AmendmentPreview BuildPreview(ParsedAmendmentSpec spec, CustomEntitySchemaDto schema)
+    /// <param name="manyToManyEnabled">
+    /// Garde <c>EnableStudioManyToMany</c> (PR 3.1b) : une opération <c>add_relation</c> de type
+    /// plusieurs-à-plusieurs est écartée avec un avertissement explicite quand le drapeau est coupé.
+    /// </param>
+    /// <param name="recordViewsEnabled">
+    /// Garde <c>EnableStudioRecordViews</c> (PR 3.1b) : une opération <c>set_view</c> est écartée avec
+    /// un avertissement explicite quand le drapeau est coupé.
+    /// </param>
+    public static AmendmentPreview BuildPreview(
+        ParsedAmendmentSpec spec, CustomEntitySchemaDto schema,
+        bool manyToManyEnabled = false, bool recordViewsEnabled = false)
     {
         var items = new List<AmendmentPreviewItem>();
         var warnings = new List<string>(spec.Warnings);
@@ -106,6 +118,118 @@ public static class StudioAiAmendmentPlanner
                     }
                     items.Add(new AmendmentPreviewItem("set_report", report.DisplayName ?? "Rapport",
                         null, DescribeReport(def), "info", null));
+                    break;
+                }
+                case ReorderFieldsOp reorder:
+                {
+                    var orderedKeys = new List<string>();
+                    foreach (var raw in reorder.FieldRefs)
+                    {
+                        var target = ResolveField(raw, activeFields);
+                        if (target is null)
+                        {
+                            warnings.Add($"Champ « {raw} » introuvable : retiré de la réorganisation.");
+                            continue;
+                        }
+                        if (!orderedKeys.Contains(target.Key)) orderedKeys.Add(target.Key);
+                    }
+                    if (orderedKeys.Count == 0)
+                    {
+                        warnings.Add("Réorganisation des champs ignorée : aucun champ reconnu.");
+                        break;
+                    }
+                    // Ordre EFFECTIF promis à l'exécution : les champs cités d'abord (dans l'ordre
+                    // demandé), puis les champs non cités dans leur ordre actuel.
+                    var effectiveOrder = orderedKeys
+                        .Concat(activeFields.Select(f => f.Key).Where(k => !orderedKeys.Contains(k)))
+                        .Select(k => activeFields.First(f => f.Key == k).Label);
+                    items.Add(new AmendmentPreviewItem("reorder_fields", schema.Entity.DisplayName,
+                        string.Join(", ", activeFields.Select(f => f.Label)),
+                        string.Join(", ", effectiveOrder), "info", null));
+                    break;
+                }
+                case ChangeFieldTypeOp changeType:
+                {
+                    var target = ResolveField(changeType.FieldRef, activeFields);
+                    if (target is null)
+                    {
+                        warnings.Add($"Champ « {changeType.FieldRef} » introuvable : changement de type ignoré.");
+                        break;
+                    }
+                    var policy = FieldTypeConversionPolicy.Classify(target.FieldType, changeType.FieldType);
+                    var severity = policy switch
+                    {
+                        FieldTypeConversion.Lossless => "info",
+                        FieldTypeConversion.RequiresEmptyTable => "warning",
+                        _ => "error"
+                    };
+                    // Le planificateur est pur : le nombre d'enregistrements n'est connu qu'à
+                    // l'application (recomptage dans ChangeCustomFieldTypeCommand). Le message de
+                    // l'aperçu ne doit donc PAS citer un compte qui serait fabriqué.
+                    var message = policy == FieldTypeConversion.RequiresEmptyTable
+                        ? "Ce changement exige une table vide : le nombre d'enregistrements sera vérifié à l'application."
+                        : FieldTypeConversionPolicy.Describe(target.FieldType, changeType.FieldType);
+                    items.Add(new AmendmentPreviewItem("change_field_type", target.Label,
+                        TypeLabel(target.FieldType), TypeLabel(changeType.FieldType), severity, message));
+                    break;
+                }
+                case AddRelationOp relation:
+                {
+                    if (relation.Kind == EntityRelationKinds.ManyToMany && !manyToManyEnabled)
+                    {
+                        warnings.Add($"Relation vers « {relation.TargetRef} » ignorée : les relations plusieurs-à-plusieurs ne sont pas activées.");
+                        break;
+                    }
+                    var label = string.IsNullOrWhiteSpace(relation.Label) ? relation.TargetRef : relation.Label!;
+                    var kindLabel = relation.Kind == EntityRelationKinds.ManyToMany ? "plusieurs-à-plusieurs" : "plusieurs-à-un";
+                    // Contraintes de la jonction vérifiables sur le seul schéma de la table modifiée
+                    // (miroir de CreateManyToManyRelationCommand) ; l'existence et le caractère
+                    // « standard » de la CIBLE sont revérifiés à l'exécution.
+                    string? blocking = null;
+                    if (relation.Kind == EntityRelationKinds.ManyToMany)
+                    {
+                        if (string.Equals(relation.TargetRef, schema.Entity.Key, StringComparison.OrdinalIgnoreCase))
+                            blocking = "La table cible doit être différente de la table source.";
+                        else if (schema.Entity.Kind == CustomEntityKind.Junction)
+                            blocking = "La table source doit être une table standard active.";
+                    }
+                    items.Add(new AmendmentPreviewItem("add_relation", label, null,
+                        $"relation {kindLabel} vers « {relation.TargetRef} »",
+                        blocking is null ? "info" : "error", blocking));
+                    break;
+                }
+                case AssignSystemOp assign:
+                {
+                    items.Add(new AmendmentPreviewItem("assign_system", assign.SystemRef ?? string.Empty, null,
+                        assign.SystemRef is null
+                            ? "détachée de son système actuel"
+                            : $"rattachée au système « {assign.SystemRef} »",
+                        "info", null));
+                    break;
+                }
+                case SetViewOp view:
+                {
+                    if (!recordViewsEnabled)
+                    {
+                        warnings.Add($"Vue « {view.View.DisplayName} » ignorée : les vues enregistrées ne sont pas activées.");
+                        break;
+                    }
+                    // Résolution contre le schéma RÉEL (mêmes règles qu'à l'enregistrement manuel et
+                    // qu'à l'outil studio_plan_record_view) : clés inconnues écartées avec
+                    // avertissement, kanban sans liste de choix / calendrier sans champ date
+                    // dégradés en liste avec avertissement.
+                    var (viewMode, viewDefinition, viewWarnings) =
+                        StudioAiRecordViewSpec.ResolveAgainstSchema(view.View, schema.Fields);
+                    foreach (var viewWarning in viewWarnings) warnings.Add(viewWarning);
+                    items.Add(new AmendmentPreviewItem("set_view", view.View.DisplayName, null,
+                        DescribeResolvedView(viewMode, viewDefinition), "info", null));
+                    break;
+                }
+                case SetAutomationOp:
+                {
+                    items.Add(new AmendmentPreviewItem("set_automation", "Automatisation", null,
+                        "déclarée mais non appliquée", "info",
+                        "Les automatisations ne sont pas encore créées par l'assistant : étape ignorée."));
                     break;
                 }
             }
@@ -221,6 +345,14 @@ public static class StudioAiAmendmentPlanner
         "update_entity" => "Renommer la table",
         "set_form" => "Réorganiser le formulaire",
         "set_report" => $"État « {item.Target} »",
+        "reorder_fields" => "Réordonner les champs",
+        "change_field_type" => $"Changer le type de « {item.Target} »",
+        "add_relation" => $"Relier à « {item.Target} »",
+        "assign_system" => item.Target.Length == 0
+            ? "Détacher la table de son système"
+            : $"Rattacher au système « {item.Target} »",
+        "set_view" => $"Vue « {item.Target} »",
+        "set_automation" => "Automatisation (non appliquée)",
         _ => item.Target
     };
 
@@ -268,7 +400,26 @@ public static class StudioAiAmendmentPlanner
         return parts.Count > 0 ? string.Join(", ", parts) : "état vide";
     }
 
-    private static string TypeLabel(CustomFieldType type) => type switch
+    /// <summary>
+    /// Décrit la vue RÉELLEMENT enregistrée après résolution (mode éventuellement dégradé en liste,
+    /// colonnes/filtres/tris effectifs) — l'aperçu promet ce que <c>ResolveAgainstSchema</c> produit.
+    /// </summary>
+    private static string DescribeResolvedView(CustomRecordViewMode mode, RecordViewDefinition definition)
+    {
+        var parts = new List<string>
+        {
+            $"vue {StudioAiRecordViewSpec.ModeLabel(StudioAiRecordViewSpec.ModeKey(mode))}",
+            $"{definition.Columns.Count} colonne(s)"
+        };
+        if (definition.Kanban is not null) parts.Add($"regroupée par « {definition.Kanban.GroupByFieldKey} »");
+        if (definition.Calendar is not null) parts.Add($"début « {definition.Calendar.StartFieldKey} »");
+        if (definition.Filters.Count > 0) parts.Add($"{definition.Filters.Count} filtre(s)");
+        if (definition.Sort.Count > 0) parts.Add($"{definition.Sort.Count} tri(s)");
+        return string.Join(", ", parts);
+    }
+
+    /// <summary>Libellé français d'un type de champ (aperçu ET messages d'exécution).</summary>
+    public static string TypeLabel(CustomFieldType type) => type switch
     {
         CustomFieldType.Text => "texte",
         CustomFieldType.MultilineText => "texte long",
@@ -287,6 +438,11 @@ public static class StudioAiAmendmentPlanner
         CustomFieldType.QrCode => "QR code",
         CustomFieldType.Barcode => "code-barres",
         CustomFieldType.AutoNumber => "numéro auto",
+        CustomFieldType.RelationCustom => "relation",
+        CustomFieldType.RelationExisting => "relation ERP",
+        CustomFieldType.Formula => "formule",
+        CustomFieldType.Lookup => "recherche",
+        CustomFieldType.Rollup => "agrégat",
         _ => type.ToString().ToLowerInvariant()
     };
 

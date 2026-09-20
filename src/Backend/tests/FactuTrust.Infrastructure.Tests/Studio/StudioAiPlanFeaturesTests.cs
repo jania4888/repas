@@ -126,6 +126,22 @@ public sealed class StudioAiPlanFeaturesTests
     }
 
     [Fact]
+    public async Task An_exception_escaping_the_executor_marks_the_plan_failed_instead_of_wedging_it_executing()
+    {
+        var plan = PendingPlan();
+        SetupGet(plan);
+        _executor.Setup(e => e.ExecuteAsync(plan, It.IsAny<IStudioBuildProgress?>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("op inconnue"));
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            ConfirmHandler().Handle(new ConfirmStudioAiPlanCommand(plan.Id), CancellationToken.None));
+
+        // Le plan est marqué Failed (et donc ni annulable à tort ni figé) malgré l'exception.
+        Assert.Equal(StudioAiPlanStatus.Failed, plan.Status);
+        _plans.Verify(p => p.TryUpdateAsync(plan, It.IsAny<CancellationToken>(), It.IsAny<byte[]?>()), Times.Exactly(2));
+    }
+
+    [Fact]
     public async Task Failed_execution_marks_the_plan_failed_and_surfaces_the_real_error()
     {
         var plan = PendingPlan();
@@ -192,6 +208,33 @@ public sealed class StudioAiPlanFeaturesTests
     public void RequiredPermission_maps_each_plan_kind(StudioAiPlanKind kind, string expected) =>
         Assert.Equal(expected, StudioAiPlanDefaults.RequiredPermission(kind));
 
+    // PR 3.2 : tout état terminal est rejouable ; un Pending échu l'est aussi, un Pending vivant non.
+    [Theory]
+    [InlineData(StudioAiPlanStatus.Completed, false, true)]
+    [InlineData(StudioAiPlanStatus.Failed, false, true)]
+    [InlineData(StudioAiPlanStatus.Cancelled, false, true)]
+    [InlineData(StudioAiPlanStatus.Expired, false, true)]
+    [InlineData(StudioAiPlanStatus.Pending, false, false)]
+    [InlineData(StudioAiPlanStatus.Pending, true, true)]
+    [InlineData(StudioAiPlanStatus.Executing, false, false)]
+    [InlineData(StudioAiPlanStatus.Executing, true, false)]
+    public void IsReplayable_follows_status_and_expiry(StudioAiPlanStatus status, bool pastExpiry, bool expected)
+    {
+        var plan = PendingPlan();
+        switch (status)
+        {
+            case StudioAiPlanStatus.Completed: plan.MarkCompleted(null); break;
+            case StudioAiPlanStatus.Failed: plan.MarkFailed("échec"); break;
+            case StudioAiPlanStatus.Cancelled: plan.MarkCancelled(); break;
+            case StudioAiPlanStatus.Expired: plan.MarkExpired(); break;
+            case StudioAiPlanStatus.Executing: plan.MarkExecuting(); break;
+        }
+
+        var utcNow = pastExpiry ? plan.ExpiresAt.AddMinutes(1) : DateTime.UtcNow;
+
+        Assert.Equal(expected, StudioAiPlanDefaults.IsReplayable(plan, utcNow));
+    }
+
     private static StudioAiBuildPlan PendingPlan(TimeSpan? lifetime = null) =>
         StudioAiBuildPlan.Create(TenantId, StudioAiPlanKind.CreateSystem, "{\"system\":{}}", "{}", UserId,
             lifetime ?? StudioAiPlanDefaults.Lifetime);
@@ -201,6 +244,17 @@ public sealed class StudioAiPlanFeaturesTests
 
     private CreateStudioAiPlanCommandHandler CreateHandler() =>
         new(_plans.Object, _audit.Object, _currentUser.Object);
+
+    /// <summary>
+    /// PR 4.3 : la nature Workflow vaut 6 (persistée en <c>int</c>, sans migration) et relève de la
+    /// conception des tables (D-11 — cas explicite, pas le cas par défaut).
+    /// </summary>
+    [Fact]
+    public void Workflow_kind_has_value_6_and_requires_design_entities()
+    {
+        Assert.Equal(6, (int)StudioAiPlanKind.Workflow);
+        Assert.Equal(Permissions.Studio.DesignEntities, StudioAiPlanDefaults.RequiredPermission(StudioAiPlanKind.Workflow));
+    }
 
     private ConfirmStudioAiPlanCommandHandler ConfirmHandler() =>
         new(_plans.Object, _executor.Object, _audit.Object, _currentUser.Object);

@@ -36,6 +36,21 @@ public static class StudioAiPlanDefaults
     /// <summary>Durée de vie d'un plan en attente : au-delà, la confirmation est refusée.</summary>
     public static readonly TimeSpan Lifetime = TimeSpan.FromMinutes(60);
 
+    /// <summary>Statuts depuis lesquels un plan peut être REJOUÉ (PR 3.2) : tout état terminal.</summary>
+    public static readonly IReadOnlySet<StudioAiPlanStatus> ReplayableStatuses =
+        new HashSet<StudioAiPlanStatus>
+        {
+            StudioAiPlanStatus.Completed, StudioAiPlanStatus.Failed,
+            StudioAiPlanStatus.Cancelled, StudioAiPlanStatus.Expired
+        };
+
+    /// <summary>
+    /// Un plan est rejouable s'il est dans un état terminal (succès, échec, annulation, expiration)
+    /// — y compris un plan Pending échu, présenté « Expired » sans écriture.
+    /// </summary>
+    public static bool IsReplayable(StudioAiBuildPlan plan, DateTime utcNow) =>
+        ReplayableStatuses.Contains(plan.Status) || plan.IsExpired(utcNow);
+
     public static StudioAiPlanDto ToDto(StudioAiBuildPlan plan)
     {
         // Un plan Pending dont l'échéance est passée est présenté « Expired » sans écriture
@@ -54,6 +69,9 @@ public static class StudioAiPlanDefaults
         // comme une fenêtre — pas de la définition du modèle de données.
         StudioAiPlanKind.RecordView => Permissions.Studio.DesignForms,
         StudioAiPlanKind.Report => Permissions.Studio.DesignReports,
+        // PR 4.3 (D-11) : cas explicite — un plan de workflows relève de la conception des tables,
+        // comme les créations ; ne pas le laisser au cas par défaut.
+        StudioAiPlanKind.Workflow => Permissions.Studio.DesignEntities,
         _ => Permissions.Studio.DesignEntities
     };
 
@@ -210,7 +228,19 @@ public sealed class ConfirmStudioAiPlanCommandHandler
         if (!await _plans.TryUpdateAsync(plan, cancellationToken))
             return Result.Failure<StudioAiPlanDto>(Error.Conflict("Ce plan est déjà en cours d'exécution."));
 
-        var (success, error, payload) = await _executor.ExecuteAsync(plan, command.Progress, cancellationToken);
+        // Une exception qui s'échappe de l'exécuteur (défaut bruyant, erreur d'infrastructure) ne
+        // doit pas laisser le plan figé en Executing — il deviendrait inannulable et inconfirmable.
+        bool success; string? error; object? payload;
+        try
+        {
+            (success, error, payload) = await _executor.ExecuteAsync(plan, command.Progress, cancellationToken);
+        }
+        catch (Exception)
+        {
+            plan.MarkFailed("Échec inattendu de l'exécution du plan.");
+            await _plans.TryUpdateAsync(plan, cancellationToken);
+            throw;
+        }
         if (success)
             plan.MarkCompleted(payload is null ? null : System.Text.Json.JsonSerializer.Serialize(payload));
         else

@@ -87,7 +87,7 @@ public sealed class PurchaseReceiptRepository : IPurchaseReceiptRepository
         var items = await query
             .OrderByDescending(r => r.ReceiptDate)
             .ThenByDescending(r => r.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

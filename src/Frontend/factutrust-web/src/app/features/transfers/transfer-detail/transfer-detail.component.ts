@@ -247,7 +247,7 @@ export class TransferDetailComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Terminer',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-success',
+      acceptButtonStyleClass: 'btn-success',
       accept: () => this.runComplete()
     });
   }

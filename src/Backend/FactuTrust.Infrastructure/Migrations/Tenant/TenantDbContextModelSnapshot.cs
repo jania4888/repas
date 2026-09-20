@@ -454,6 +454,9 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
 
                     b.HasIndex("CreatedAt", "Id");
 
+                    b.HasIndex("EntityType", "EntityId", "CreatedAt")
+                        .HasDatabaseName("IX_AuditLogs_EntityHistory");
+
                     b.ToTable("AuditLogs", (string)null);
                 });
 
@@ -7973,6 +7976,313 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.HasIndex("TenantId", "Status", "CreatedAt");
 
                     b.ToTable("StudioAiBuildPlans", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Studio.Workflows.StudioWorkflowApproval", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AssigneeRole")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<Guid?>("AssigneeUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DecidedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DecidedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DueAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("InstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StepKey")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "AssigneeRole", "Status")
+                        .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_AssigneeRole_Status");
+
+                    b.HasIndex("TenantId", "AssigneeUserId", "Status")
+                        .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_AssigneeUser_Status");
+
+                    b.HasIndex("TenantId", "InstanceId")
+                        .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_Instance");
+
+                    b.ToTable("StudioWorkflowApprovals", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Studio.Workflows.StudioWorkflowDefinition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<Guid>("EntityDefinitionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("StepsJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Trigger")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TriggerConfigJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)")
+                        .HasDefaultValue("{}");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Version")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "EntityDefinitionId", "Key")
+                        .IsUnique()
+                        .HasDatabaseName("UX_StudioWorkflowDefinitions_Tenant_Entity_Key")
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.HasIndex("TenantId", "EntityDefinitionId", "Trigger", "IsActive")
+                        .HasDatabaseName("IX_StudioWorkflowDefinitions_Tenant_Entity_Trigger_Active");
+
+                    b.ToTable("StudioWorkflowDefinitions", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Studio.Workflows.StudioWorkflowInstance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ContextJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CurrentStepIndex")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CurrentStepKey")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int>("DefinitionVersion")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Depth")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("DueAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EntityDefinitionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime?>("LastRemindedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LeasedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("OriginInstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RecordId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("StartedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TriggerKind")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("WorkflowDefinitionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "RecordId", "StartedAt")
+                        .HasDatabaseName("IX_StudioWorkflowInstances_Tenant_Record_StartedAt");
+
+                    b.HasIndex("TenantId", "Status", "DueAt")
+                        .HasDatabaseName("IX_StudioWorkflowInstances_Tenant_Status_DueAt");
+
+                    b.HasIndex("TenantId", "WorkflowDefinitionId", "StartedAt")
+                        .HasDatabaseName("IX_StudioWorkflowInstances_Tenant_Definition_StartedAt");
+
+                    b.ToTable("StudioWorkflowInstances", (string)null);
+                });
+
+            modelBuilder.Entity("FactuTrust.Domain.Entities.Studio.Workflows.StudioWorkflowStepRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("FinishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InputJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("InstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Outcome")
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("ResultJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RunBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StepIndex")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StepKey")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("StepType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "InstanceId", "StepIndex")
+                        .HasDatabaseName("IX_StudioWorkflowStepRuns_Tenant_Instance_Step");
+
+                    b.ToTable("StudioWorkflowStepRuns", (string)null);
                 });
 
             modelBuilder.Entity("FactuTrust.Domain.Entities.Supplier", b =>

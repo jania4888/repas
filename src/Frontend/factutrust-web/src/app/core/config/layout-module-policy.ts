@@ -71,7 +71,10 @@ export const PERMISSIONS_ALL_REQUIRED_BY_FIRST_SEGMENT: Record<string, string[]>
   audit: ['audit:read'],
   crm: ['crm:read'],
   'withholding-tax': ['withholding_tax:read'],
-  studio: ['studio:design_entities'],
+  // Studio (4.5d1, D11 levée) : le segment s'ouvre à tout lecteur `custom_records:read`
+  // (fiches `/studio/d/<key>`, « Mes approbations ») ; la granularité concepteur/lecteur
+  // reste portée par `permissionGuard` sur chacune des routes Studio.
+  studio: ['custom_records:read'],
   payroll: ['payroll:read'],
   projects: ['projects:read'],
   'recurring-contracts': ['recurring_contracts:read']

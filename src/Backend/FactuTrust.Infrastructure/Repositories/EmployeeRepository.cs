@@ -137,7 +137,7 @@ public sealed class EmployeeRepository : IEmployeeRepository
 
         var items = await query
             .OrderBy(e => e.LastName).ThenBy(e => e.FirstName)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

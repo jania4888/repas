@@ -86,6 +86,7 @@ export class Street3dCanvasComponent implements AfterViewInit, OnChanges, OnDest
     );
     this.runtime = scene;
     void scene.mount(this.map).then(() => {
+      if (!this.runtime) return;
       this.mounted = true;
       scene.setSelectedSlug(this.selectedSlug ?? null);
     });

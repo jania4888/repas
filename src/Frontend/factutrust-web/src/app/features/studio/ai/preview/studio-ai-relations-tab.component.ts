@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { TagModule } from 'primeng/tag';
 import { STUDIO_AI_LABELS, formatLabel } from '../studio-ai-labels';
 import { StudioSystemSpec, relationTargetName } from '../studio-ai.models';
+import { specToDiagram } from '../studio-ai-diagram.adapter';
+import { StudioRelationDiagramComponent } from '../../relations/studio-relation-diagram.component';
 
 /** Une ligne du tableau des relations, dérivée d'un champ `type: 'relation'`. */
 interface StudioAiRelationRow {
@@ -16,7 +18,8 @@ interface StudioAiRelationRow {
 }
 
 /**
- * Onglet « Relations » (lecture, P1a) : tableau dérivé des champs `relation` de la spec.
+ * Onglet « Relations » (lecture, P1a) : diagramme dérivé de la spec (3.4e, inclut les jonctions
+ * N-N de `spec.relations[]`) au-dessus du tableau dérivé des champs `relation` de la spec.
  *
  * Les cibles ERP (`clients`, `products`) portent un badge : ce sont des données existantes de l'ERP,
  * pas des tables créées par le plan. La colonne « À la suppression de la cible » des maquettes est
@@ -25,13 +28,14 @@ interface StudioAiRelationRow {
 @Component({
   selector: 'app-studio-ai-relations-tab',
   standalone: true,
-  imports: [TagModule],
+  imports: [TagModule, StudioRelationDiagramComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './studio-ai-preview.scss',
   template: `
     @if (!rows().length) {
       <p class="sai-hint">{{ labels.noRelations }}</p>
     } @else {
+      <app-studio-relation-diagram [model]="diagram()" size="full" [emptyLabel]="labels.noRelations" />
       <div class="sai-table__scroll">
         <table class="sai-table">
           <caption class="sai-hint" style="caption-side: top; text-align: left">
@@ -86,6 +90,9 @@ export class StudioAiRelationsTabComponent {
   readonly editable = input(false);
 
   readonly labels = STUDIO_AI_LABELS.preview;
+
+  /** Diagramme des relations dérivé de la spec (3.4e) : champs `relation` + jonctions N-N. */
+  readonly diagram = computed(() => specToDiagram(this.spec()));
 
   readonly rows = computed<StudioAiRelationRow[]>(() => {
     const spec = this.spec();

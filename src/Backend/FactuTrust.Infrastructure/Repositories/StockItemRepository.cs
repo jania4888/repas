@@ -138,7 +138,7 @@ public sealed class StockItemRepository : IStockItemRepository
 
         var items = await query
             .OrderBy(s => s.ProductId)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

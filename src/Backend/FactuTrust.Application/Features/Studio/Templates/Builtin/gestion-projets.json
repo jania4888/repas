@@ -1,0 +1,196 @@
+{
+  "system": {
+    "displayName": "Gestion de projets",
+    "icon": "pi pi-briefcase",
+    "description": "Pilotage des projets : tâches par statut, jalons au calendrier et équipe affectée à chaque projet.",
+    "onboarding": [
+      "Complétez l'équipe préchargée dans Membres",
+      "Créez un projet et affectez-lui une équipe",
+      "Ajoutez des tâches et des jalons, puis suivez-les dans les vues kanban et calendrier"
+    ],
+    "menu": { "label": "Projets", "icon": "pi pi-briefcase" }
+  },
+  "entities": [
+    {
+      "ref": "projets",
+      "displayName": "Projet",
+      "displayNamePlural": "Projets",
+      "icon": "briefcase",
+      "fields": [
+        { "key": "nom", "label": "Nom", "type": "text", "required": true, "unique": true },
+        { "key": "client", "label": "Client", "type": "relation", "relationTo": "clients" },
+        { "key": "statut", "label": "Statut", "type": "select",
+          "options": [
+            { "value": "actif", "label": "Actif" },
+            { "value": "en_pause", "label": "En pause" },
+            { "value": "termine", "label": "Terminé" },
+            { "value": "annule", "label": "Annulé" }
+          ]
+        },
+        { "key": "date_debut", "label": "Date de début", "type": "date" },
+        { "key": "date_fin", "label": "Date de fin", "type": "date" },
+        { "key": "budget", "label": "Budget", "type": "money", "config": { "currency": "TND" } },
+        { "key": "description", "label": "Description", "type": "multilinetext" }
+      ],
+      "form": {
+        "sections": [
+          { "title": "Général", "fields": [
+            "nom",
+            { "field": "client", "width": "half" },
+            { "field": "statut", "width": "half" },
+            "description"
+          ] },
+          { "title": "Planning", "fields": [
+            { "field": "date_debut", "width": "half" },
+            { "field": "date_fin", "width": "half" },
+            "budget"
+          ] }
+        ]
+      },
+      "views": [
+        {
+          "name": "Projets actifs",
+          "mode": "list",
+          "columns": [ "nom", "client", "statut", "date_fin" ],
+          "filters": [ { "field": "statut", "op": "eq", "value": "actif" } ],
+          "sort": [ { "field": "date_fin", "desc": false } ],
+          "isDefault": true
+        }
+      ]
+    },
+    {
+      "ref": "taches",
+      "displayName": "Tâche",
+      "displayNamePlural": "Tâches",
+      "icon": "check-square",
+      "fields": [
+        { "key": "titre", "label": "Titre", "type": "text", "required": true },
+        { "key": "projet", "label": "Projet", "type": "relation", "relationTo": "projets", "required": true },
+        { "key": "statut", "label": "Statut", "type": "select",
+          "options": [
+            { "value": "a_faire", "label": "À faire" },
+            { "value": "en_cours", "label": "En cours" },
+            { "value": "en_revue", "label": "En revue" },
+            { "value": "termine", "label": "Terminé" }
+          ]
+        },
+        { "key": "priorite", "label": "Priorité", "type": "select",
+          "options": [
+            { "value": "basse", "label": "Basse" },
+            { "value": "normale", "label": "Normale" },
+            { "value": "haute", "label": "Haute" }
+          ]
+        },
+        { "key": "echeance", "label": "Échéance", "type": "date" },
+        { "key": "responsable", "label": "Responsable", "type": "text" },
+        { "key": "estimation_h", "label": "Estimation (h)", "type": "number" }
+      ],
+      "form": {
+        "sections": [
+          { "title": "Tâche", "fields": [
+            "titre",
+            "projet",
+            { "field": "statut", "width": "half" },
+            { "field": "priorite", "width": "half" },
+            { "field": "echeance", "width": "half" },
+            { "field": "estimation_h", "width": "half" },
+            "responsable"
+          ] }
+        ]
+      },
+      "report": {
+        "displayName": "Tâches par statut",
+        "groupBy": [ "statut" ],
+        "measures": [ { "fn": "count" }, { "field": "estimation_h", "fn": "sum" } ]
+      },
+      "views": [
+        {
+          "name": "Par statut",
+          "mode": "kanban",
+          "groupBy": "statut",
+          "title": "titre"
+        },
+        {
+          "name": "Mes tâches",
+          "mode": "list",
+          "columns": [ "titre", "projet", "priorite", "echeance" ],
+          "sort": [ { "field": "echeance", "desc": false } ]
+        }
+      ]
+    },
+    {
+      "ref": "jalons",
+      "displayName": "Jalon",
+      "displayNamePlural": "Jalons",
+      "icon": "flag",
+      "fields": [
+        { "key": "titre", "label": "Titre", "type": "text", "required": true },
+        { "key": "projet", "label": "Projet", "type": "relation", "relationTo": "projets", "required": true },
+        { "key": "date_prevue", "label": "Date prévue", "type": "date", "required": true },
+        { "key": "atteint", "label": "Atteint", "type": "boolean" }
+      ],
+      "form": {
+        "sections": [
+          { "title": "Jalon", "fields": [
+            "titre",
+            "projet",
+            { "field": "date_prevue", "width": "half" },
+            { "field": "atteint", "width": "half" }
+          ] }
+        ]
+      },
+      "views": [
+        {
+          "name": "Jalons",
+          "mode": "calendar",
+          "start": "date_prevue",
+          "title": "titre"
+        }
+      ]
+    },
+    {
+      "ref": "membres",
+      "displayName": "Membre",
+      "displayNamePlural": "Membres",
+      "icon": "users",
+      "isReferenceData": true,
+      "fields": [
+        { "key": "nom", "label": "Nom", "type": "text", "required": true },
+        { "key": "prenom", "label": "Prénom", "type": "text" },
+        { "key": "role", "label": "Rôle", "type": "select",
+          "options": [
+            { "value": "chef_de_projet", "label": "Chef de projet" },
+            { "value": "developpeur", "label": "Développeur" },
+            { "value": "consultant", "label": "Consultant" },
+            { "value": "designer", "label": "Designer" }
+          ]
+        },
+        { "key": "e_mail", "label": "E-mail", "type": "text" }
+      ],
+      "form": {
+        "sections": [
+          { "title": "Membre", "fields": [
+            { "field": "nom", "width": "half" },
+            { "field": "prenom", "width": "half" },
+            "role",
+            "e_mail"
+          ] }
+        ]
+      }
+    }
+  ],
+  "relations": [
+    { "kind": "many_to_many", "from": "membres", "to": "projets", "label": "Équipe", "junctionName": "Équipe projet" }
+  ],
+  "seed": [
+    { "entityRef": "membres", "records": [
+      { "nom": "Ben Salah", "prenom": "Amira", "role": "chef_de_projet" },
+      { "nom": "Trabelsi", "prenom": "Karim", "role": "developpeur" },
+      { "nom": "Gharbi", "prenom": "Sana", "role": "designer" }
+    ] },
+    { "entityRef": "projets", "records": [
+      { "nom": "Refonte du site web", "statut": "actif", "date_debut": "2026-09-01" },
+      { "nom": "Migration ERP", "statut": "en_pause", "date_debut": "2026-06-15" }
+    ] }
+  ]
+}

@@ -10,6 +10,7 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from '@core/services/auth.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
+import { ButtonComponent } from '@shared/components/button/button.component';
 import { StudioRecordListComponent } from './studio-record-list.component';
 import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service';
 import { STUDIO_AI_CAPABILITIES_FALLBACK, StudioAiCapabilitiesDto } from './ai/studio-ai.models';
@@ -55,7 +56,8 @@ describe('StudioRecordListComponent', () => {
   let router: Router;
   let queryParamMap$: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
 
-  function setup(recordViewsEnabled: boolean, canDesignForms = true, state: 'unknown' | 'loading' | 'ready' | 'unavailable' = 'ready'): void {
+  function setup(recordViewsEnabled: boolean, canDesignForms = true, state: 'unknown' | 'loading' | 'ready' | 'unavailable' = 'ready',
+    canDesign = false, workflowsEnabled = false, recordsWrite = true): void {
     queryParamMap$ = new BehaviorSubject(convertToParamMap({}));
 
     TestBed.configureTestingModule({
@@ -70,11 +72,12 @@ describe('StudioRecordListComponent', () => {
           provide: AuthService,
           useValue: {
             hasPermission: (p: string) =>
-              p === PERMISSIONS.customData.recordsWrite ? true :
-              p === PERMISSIONS.studio.designForms ? canDesignForms : false
+              p === PERMISSIONS.customData.recordsWrite ? recordsWrite :
+              p === PERMISSIONS.studio.designForms ? canDesignForms :
+              p === PERMISSIONS.studio.designEntities ? canDesign : false
           }
         },
-        { provide: StudioAiCapabilitiesService, useValue: capabilitiesStub({ recordViewsEnabled }, state) },
+        { provide: StudioAiCapabilitiesService, useValue: capabilitiesStub({ recordViewsEnabled, workflowsEnabled }, state) },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -95,18 +98,19 @@ describe('StudioRecordListComponent', () => {
 
   afterEach(() => httpMock.verify());
 
-  it('masque le sélecteur de vues quand recordViewsEnabled=false (régression)', () => {
+  it('reste strictement sur la liste brute quand le schéma ne porte aucune vue (régression, capacités ignorées)', () => {
     setup(false);
-    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(true), message: null, errors: [] });
+    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(false), message: null, errors: [] });
     httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
       .flush({ success: true, data: { items: [], totalCount: 0 }, message: null, errors: [] });
     fixture.detectChanges();
 
+    httpMock.expectNone(req => req.url.includes('/run'));
     expect(fixture.debugElement.query(By.css('app-studio-view-switcher'))).toBeNull();
     expect(fixture.debugElement.query(By.css('app-dynamic-table'))).not.toBeNull();
   });
 
-  it('affiche le sélecteur de vues quand recordViewsEnabled=true et qu’il existe des vues', () => {
+  it('affiche le sélecteur de vues dès que le schéma expose des vues', () => {
     setup(true);
     httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(true, false), message: null, errors: [] });
     httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
@@ -116,7 +120,7 @@ describe('StudioRecordListComponent', () => {
     expect(fixture.debugElement.query(By.css('app-studio-view-switcher'))).not.toBeNull();
   });
 
-  it('masque le sélecteur quand recordViewsEnabled=true mais qu’aucune vue n’existe', () => {
+  it('masque le sélecteur quand aucune vue n’existe', () => {
     setup(true);
     httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(false), message: null, errors: [] });
     httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
@@ -173,44 +177,60 @@ describe('StudioRecordListComponent', () => {
     }));
   });
 
-  // ---- Repli capacités (zéro régression) ----
+  // ---- Runtime piloté par le schéma (A-Q1) : les capacités ne conditionnent que la conception ----
 
-  it('ignore ?view= tant que les capacités sont en chargement (aucun runner, aucun /run)', () => {
+  /** Bouton « Nouvelle vue » / « Modifier la vue » (conception), s'il est rendu. */
+  function viewDesignButton() {
+    return fixture.debugElement.queryAll(By.css('app-button'))
+      .find(b => /Nouvelle vue|Modifier la vue/.test(b.nativeElement.textContent));
+  }
+
+  function flushSchemaWithViewsAndRun(): void {
+    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(true), message: null, errors: [] });
+    httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
+      .flush({ success: true, data: { items: [], totalCount: 0 }, message: null, errors: [] });
+    fixture.detectChanges();
+    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/v1/run`)
+      .flush({ success: true, data: { mode: 'List', items: [], total: 0, page: 1, pageSize: 25, truncated: false }, message: null, errors: [] });
+    fixture.detectChanges();
+  }
+
+  it('monte le runner sur ?view= même quand les capacités sont encore en chargement (sans bouton de conception)', () => {
     setup(true, true, 'loading');
     queryParamMap$.next(convertToParamMap({ view: 'v1' }));
-    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(true), message: null, errors: [] });
-    httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
-      .flush({ success: true, data: { items: [], totalCount: 0 }, message: null, errors: [] });
-    fixture.detectChanges();
+    flushSchemaWithViewsAndRun();
 
-    httpMock.expectNone(req => req.url.includes('/run'));
-    expect(fixture.debugElement.query(By.css('app-studio-record-view-runner'))).toBeNull();
-    expect(fixture.debugElement.query(By.css('app-dynamic-table'))).not.toBeNull();
+    expect(fixture.debugElement.query(By.css('app-studio-record-view-runner'))).not.toBeNull();
+    expect(fixture.debugElement.query(By.css('app-studio-view-switcher'))).not.toBeNull();
+    // Une seule instance de app-dynamic-table : celle imbriquée dans le runner (mode Liste).
+    expect(fixture.debugElement.queryAll(By.css('app-dynamic-table')).length).toBe(1);
+    expect(viewDesignButton()).toBeUndefined();
   });
 
-  it('ignore ?view= quand les capacités sont indisponibles', () => {
+  it('monte le runner quand les capacités sont indisponibles (rôle « données » sans accès Studio, 403 sur /capabilities)', () => {
     setup(true, true, 'unavailable');
     queryParamMap$.next(convertToParamMap({ view: 'v1' }));
-    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(true), message: null, errors: [] });
-    httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
-      .flush({ success: true, data: { items: [], totalCount: 0 }, message: null, errors: [] });
-    fixture.detectChanges();
+    flushSchemaWithViewsAndRun();
 
-    httpMock.expectNone(req => req.url.includes('/run'));
-    expect(fixture.debugElement.query(By.css('app-studio-record-view-runner'))).toBeNull();
-    expect(fixture.debugElement.query(By.css('app-studio-view-switcher'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('app-studio-record-view-runner'))).not.toBeNull();
+    expect(fixture.debugElement.query(By.css('app-studio-view-switcher'))).not.toBeNull();
+    expect(viewDesignButton()).toBeUndefined();
   });
 
-  it('ignore ?view= quand la capacité est false', () => {
+  it('monte le runner quand la capacité est false mais que le schéma porte des vues ; seul le bouton de conception est masqué', () => {
     setup(false);
     queryParamMap$.next(convertToParamMap({ view: 'v1' }));
-    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(true), message: null, errors: [] });
-    httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
-      .flush({ success: true, data: { items: [], totalCount: 0 }, message: null, errors: [] });
-    fixture.detectChanges();
+    flushSchemaWithViewsAndRun();
 
-    httpMock.expectNone(req => req.url.includes('/run'));
-    expect(fixture.debugElement.query(By.css('app-studio-record-view-runner'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('app-studio-record-view-runner'))).not.toBeNull();
+    expect(viewDesignButton()).toBeUndefined();
+  });
+
+  it('affiche le bouton de conception uniquement quand les capacités sont prêtes et la permission accordée', () => {
+    setup(true, true, 'ready');
+    flushSchemaWithViewsAndRun();
+
+    expect(viewDesignButton()).toBeDefined();
   });
 
   // ---- Sélection effective de la vue ----
@@ -245,6 +265,21 @@ describe('StudioRecordListComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.debugElement.query(By.css('app-studio-record-view-runner'))).not.toBeNull();
+  });
+
+  it('lecteur sans recordsWrite : l’œil « Voir » pointe vers /view (D-47-94)', () => {
+    setup(false, true, 'ready', false, false, false);
+    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(false), message: null, errors: [] });
+    httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
+      .flush({ success: true, data: { items: [{ id: 'r1', data: { nom: 'X' } }], totalCount: 1 }, message: null, errors: [] });
+    fixture.detectChanges();
+
+    const cmp = fixture.componentInstance;
+    expect(cmp.canWrite()).toBe(false);
+    cmp.view({ id: 'r1', data: {} } as never);
+    expect(router.navigate).toHaveBeenCalledWith(['/studio/d', 'interventions', 'r1', 'view']);
+    cmp.edit({ id: 'r1', data: {} } as never);
+    expect(router.navigate).toHaveBeenCalledWith(['/studio/d', 'interventions', 'r1', 'edit']);
   });
 
   it('reste sur la « Liste » brute quand aucune vue n’est par défaut', () => {
@@ -298,5 +333,33 @@ describe('StudioRecordListComponent', () => {
     expect(fixture.componentInstance.subtitleTotal()).toBe(3);
     expect(fixture.nativeElement.textContent).toContain('3 enregistrement(s)');
     expect(fixture.debugElement.query(By.css('p-menu'))).toBeNull();
+  });
+
+  // ---- Accès workflows (4.4i) : capacité workflowsEnabled + studio:design_entities ----
+
+  it('affiche le bouton Workflows pour un concepteur quand la capacité est vraie', () => {
+    setup(false, true, 'ready', true, true);
+    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(false), message: null, errors: [] });
+    httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
+      .flush({ success: true, data: { items: [], totalCount: 0 }, message: null, errors: [] });
+    fixture.detectChanges();
+
+    const btn = fixture.debugElement.query(By.css('[data-testid="wf-open"]'));
+    expect(btn).not.toBeNull();
+    expect(btn.nativeElement.textContent).toContain('Workflows');
+    const button = btn.componentInstance as ButtonComponent;
+    // Le hub 4.4d pré-filtre sur l'identifiant de table (?entity=<id>, H-5 / D-44-85).
+    expect(button.routerLink).toEqual(['/studio', 'workflows']);
+    expect(button.queryParams).toEqual({ entity: 'e1' });
+  });
+
+  it('masque le bouton Workflows sans studio:design_entities même capacité vraie', () => {
+    setup(false, true, 'ready', false, true);
+    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/schema`).flush({ success: true, data: schema(false), message: null, errors: [] });
+    httpMock.expectOne(req => req.url === `${environment.apiUrl}/studio/records/interventions`)
+      .flush({ success: true, data: { items: [], totalCount: 0 }, message: null, errors: [] });
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('[data-testid="wf-open"]'))).toBeNull();
   });
 });

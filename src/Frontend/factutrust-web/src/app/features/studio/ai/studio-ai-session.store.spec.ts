@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subject, of, throwError } from 'rxjs';
@@ -8,7 +8,8 @@ import { ChatAttachment, ChatStreamEvent } from '@features/ai-assistant/models/a
 import { StudioAiBuildService, StudioPlanSummary } from '../studio-ai-build.service';
 import { StudioNavService } from '../studio-nav.service';
 import { STUDIO_AI_LABELS } from './studio-ai-labels';
-import { StudioAppSpec, StudioDuplicateHint, StudioSystemSpec } from './studio-ai.models';
+import { STUDIO_SPEC_LIMITS, StudioAppSpec, StudioDuplicateHint, StudioSystemSpec } from './studio-ai.models';
+import { studioAiPlanPreviewFixture } from './preview/testing/studio-ai-spec.fixture';
 import {
   STUDIO_AI_ADVANCED_MODEL_STORAGE_KEY,
   StudioAiSessionStore,
@@ -66,7 +67,8 @@ describe('StudioAiSessionStore', () => {
   beforeEach(() => {
     stream = jasmine.createSpyObj<AiStreamService>('AiStreamService', ['streamChat']);
     builds = jasmine.createSpyObj<StudioAiBuildService>('StudioAiBuildService', [
-      'confirm', 'cancel', 'cancelPending', 'getPlanSpec', 'updatePlanSpec', 'listPlans', 'createFromTemplate', 'getPlan'
+      'confirm', 'cancel', 'cancelPending', 'getPlanSpec', 'updatePlanSpec', 'listPlans', 'createFromTemplate', 'getPlan',
+      'getPlanPreview', 'replayPlan', 'importSystem', 'duplicateSystem'
     ]);
     nav = jasmine.createSpyObj<StudioNavService>('StudioNavService', ['refresh']);
     chat = jasmine.createSpyObj<AiChatService>('AiChatService', ['deleteConversation']);
@@ -187,6 +189,27 @@ describe('StudioAiSessionStore', () => {
       expect(store.spec()).toBeNull();
     });
 
+    it('tolère un plan Workflow sans spec lisible : pas d’erreur, spec nulle, canConfirm vrai', () => {
+      const events = new Subject<ChatStreamEvent>();
+      stream.streamChat.and.returnValue(events.asObservable());
+      builds.getPlanSpec.and.returnValue(of({
+        success: true,
+        data: { kind: 'Workflow', spec: '{"workflows":[]}', rowVersion: 'v2', expiresAt: null },
+        message: null,
+        errors: []
+      }) as never);
+
+      store.send('Créer un workflow');
+      events.next({ type: 'studio_plan', content: JSON.stringify({ planId: 'p-1', summary: summary({ kind: 'Workflow' }) }) });
+
+      expect(store.error()).withContext('D12 : un plan Workflow n’a pas de StudioSystemSpec').toBeNull();
+      expect(store.spec()).toBeNull();
+      expect(store.plan()?.kind).toBe('Workflow');
+      expect(store.plan()?.rowVersion).toBe('v2');
+      expect(store.canConfirm()).withContext('canConfirm ne dépend pas de la spec').toBeTrue();
+      expect(store.canEdit()).toBeFalse();
+    });
+
     it('keeps the plan when the chat stream fails after the plan arrived', () => {
       const events = new Subject<ChatStreamEvent>();
       stream.streamChat.and.returnValue(events.asObservable());
@@ -295,6 +318,20 @@ describe('StudioAiSessionStore', () => {
       expect(store.resultUrl()).toBe('/studio/systems/conges');
       expect(store.timeline().some(i => i.kind === 'system' && i.text === STUDIO_AI_LABELS.status.created)).toBeTrue();
       expect(nav.refresh).toHaveBeenCalled();
+    });
+
+    it('resultUrl pointe vers le premier workflow créé pour un résultat workflow', () => {
+      store.result.set({
+        success: true,
+        workflows: [{ id: 'w1', key: 'validation_conges', entityKey: 'demandes_conge', name: 'Validation des congés', stepCount: 3 }],
+        openUrl: '/studio/workflows',
+        warnings: [],
+        message: 'Workflow créé.'
+      });
+      expect(store.resultUrl()).toBe('/studio/workflows/w1');
+
+      store.result.set({ workflows: [] });
+      expect(store.resultUrl()).toBeNull();
     });
 
     it('fails and clears the plan when the execution stream errors', () => {
@@ -753,10 +790,308 @@ describe('StudioAiSessionStore', () => {
     });
   });
 
+  it('un seul `studio_plan` rendu par événement (2.5i) : deux événements successifs ⇒ remplacement, pas de doublon', () => {
+    const events = new Subject<ChatStreamEvent>();
+    stream.streamChat.and.returnValue(events.asObservable());
+    builds.getPlanSpec.and.returnValue(of({
+      success: true,
+      data: { spec: JSON.stringify({ entities: [{ key: 'conges' }] }), rowVersion: 'rv-1', expiresAt: '2026-09-09T10:00:00Z' },
+      message: null, errors: []
+    }) as never);
+
+    store.send('Créer un système de congés');
+    events.next(planEvent('p-1'));
+    events.next(planEvent('p-1'));
+    events.next(planEvent('p-2'));
+
+    // Chaque événement est appliqué une fois : un seul plan courant, la dernière émission gagne.
+    expect(store.phase()).toBe('awaiting_confirmation');
+    expect(store.plan()?.planId).toBe('p-2');
+    expect(builds.getPlanSpec.calls.count()).toBe(3);
+    expect(store.draft()?.entities.length).toBe(1);
+  });
+
+  describe('aperçu enrichi (3.4b) : mode, aperçu serveur, compte à rebours, rejeu', () => {
+    const previewResponse = () => ({ success: true, data: studioAiPlanPreviewFixture(), message: null, errors: [] });
+    const creationResponse = (planId = 'p-r') => ({
+      success: true, message: null, errors: [],
+      data: {
+        plan: { id: planId, kind: 'CreateSystem', status: 'Pending', summaryJson: JSON.stringify(summary({ title: 'Rejoué' })), expiresAt: '2026-09-16T10:00:00Z', createdAt: '2026-09-15T10:00:00Z' },
+        spec: { id: planId, kind: 'CreateSystem', status: 'Pending', expiresAt: '2026-09-16T10:00:00Z', rowVersion: 'rv-r', spec: spec() }
+      }
+    });
+    /** Plan ouvert depuis « Mes projets » : `GET {id}/spec` répond immédiatement avec `spec()`. */
+    function openPlan(expiresAt: string | null = null): void {
+      store.openPlan('p-1', 'CreateSystem', summary(), expiresAt);
+    }
+
+    it('setMode(customize) démarre l’édition et changeCount suit diffSpec', () => {
+      openPlan();
+      expect(store.mode()).toBe('preview');
+      expect(store.changeCount()).toBe(0);
+
+      store.setMode('customize');
+      expect(store.mode()).toBe('customize');
+      expect(store.phase()).toBe('editing');
+
+      const draft = structuredClone(store.draft()!);
+      draft.entities[0].fields.push({ key: 'email', label: 'E-mail', type: 'text', required: false, unique: false });
+      store.updateDraft(draft);
+      expect(store.changeCount()).toBe(1);
+      expect(store.changes()[0].kind).toBe('added');
+
+      // Revenir à « Aperçu » conserve le brouillon : le badge `dirty` reste visible.
+      store.setMode('preview');
+      expect(store.mode()).toBe('preview');
+      expect(store.dirty()).toBeTrue();
+      expect(store.changeCount()).toBe(1);
+    });
+
+    it('setMode(test) charge l’aperçu serveur une seule fois', () => {
+      builds.getPlanPreview.and.returnValue(of(previewResponse()) as never);
+      openPlan();
+
+      store.setMode('test');
+      store.setMode('preview');
+      store.setMode('test');
+
+      expect(builds.getPlanPreview).toHaveBeenCalledTimes(1);
+      expect(builds.getPlanPreview).toHaveBeenCalledWith('p-1');
+      expect(store.preview()?.planId).toBe('p-preview-1');
+      expect(store.previewLoading()).toBeFalse();
+      expect(store.previewUnavailable()).toBeFalse();
+    });
+
+    it('aperçu 404 ⇒ previewUnavailable sans erreur globale', () => {
+      builds.getPlanPreview.and.returnValue(throwError(() => new HttpErrorResponse({ status: 404 })) as never);
+      openPlan();
+
+      store.setMode('test');
+      store.setMode('test');
+
+      expect(builds.getPlanPreview).toHaveBeenCalledTimes(1);
+      expect(store.mode()).toBe('test');
+      expect(store.previewUnavailable()).toBeTrue();
+      expect(store.preview()).toBeNull();
+      expect(store.previewLoading()).toBeFalse();
+      expect(store.error()).toBeNull();
+    });
+
+    it('le compte à rebours décroît depuis expiresAt et expired passe à vrai à 0', fakeAsync(() => {
+      openPlan(new Date(Date.now() + 3000).toISOString());
+
+      expect(store.expiresInSeconds()).toBe(3);
+      expect(store.expired()).toBeFalse();
+
+      tick(1000);
+      expect(store.expiresInSeconds()).toBe(2);
+      tick(2000);
+      expect(store.expiresInSeconds()).toBe(0);
+      expect(store.expired()).toBeTrue();
+      // Jamais négatif : la valeur est recalculée depuis l'échéance, pas décrémentée.
+      tick(5000);
+      expect(store.expiresInSeconds()).toBe(0);
+
+      discardPeriodicTasks();
+    }));
+
+    it('un plan expiré ne peut plus être validé', fakeAsync(() => {
+      openPlan(new Date(Date.now() + 1000).toISOString());
+      expect(store.canConfirm()).toBeTrue();
+
+      tick(1000);
+
+      expect(store.expired()).toBeTrue();
+      expect(store.canConfirm()).toBeFalse();
+      discardPeriodicTasks();
+    }));
+
+    it('replay 201 ouvre le nouveau plan comme un modèle', () => {
+      builds.replayPlan.and.returnValue(of(creationResponse('p-r')) as never);
+
+      store.replay('p-old');
+
+      expect(builds.replayPlan).toHaveBeenCalledWith('p-old');
+      expect(store.phase()).toBe('awaiting_confirmation');
+      expect(store.plan()?.planId).toBe('p-r');
+      expect(store.plan()?.rowVersion).toBe('rv-r');
+      expect(store.spec()?.entities.length).toBe(1);
+      expect(store.timeline().pop()).toEqual({ kind: 'system', text: STUDIO_AI_LABELS.replay.done });
+    });
+
+    it('replay 409 affiche le message de conflit', () => {
+      builds.replayPlan.and.returnValue(throwError(() => new HttpErrorResponse({ status: 409 })) as never);
+
+      store.replay('p-old');
+
+      expect(store.phase()).toBe('idle');
+      expect(store.plan()).toBeNull();
+      expect(store.error()).toBe(STUDIO_AI_LABELS.replay.conflict);
+    });
+
+    it('clearPlanState arrête le compte à rebours', fakeAsync(() => {
+      builds.getPlanPreview.and.returnValue(of(previewResponse()) as never);
+      openPlan(new Date(Date.now() + 60_000).toISOString());
+      store.setMode('test');
+      expect(store.expiresInSeconds()).toBe(60);
+
+      // `cancelPlan` passe par `clearPlanState()` : plus de plan, plus d'échéance, mode et aperçu remis à zéro.
+      store.cancelPlan();
+
+      expect(store.expiresInSeconds()).toBeNull();
+      expect(store.expired()).toBeFalse();
+      expect(store.mode()).toBe('preview');
+      expect(store.preview()).toBeNull();
+      tick(2000);
+      expect(store.expiresInSeconds()).toBeNull();
+      discardPeriodicTasks();
+    }));
+  });
+
+  describe('mode Personnaliser : mutations du brouillon (3.4g1)', () => {
+    /** Plan ouvert avec la spec chargée (`GET {id}/spec` répond immédiatement avec `spec()`). */
+    function openPlan(): void {
+      store.openPlan('p-1', 'CreateSystem', summary());
+    }
+
+    it('updateField/addField/removeField mutent le brouillon et changeCount suit', () => {
+      openPlan();
+      store.setMode('customize');
+      expect(store.changeCount()).toBe(0);
+
+      // Renommage inline : la clé ne change jamais, le diff compte un « changed ».
+      store.updateField('employe', 'nom', { label: 'Nom complet' });
+      expect(store.draft()?.entities[0].fields[0]).toEqual(jasmine.objectContaining({ key: 'nom', label: 'Nom complet' }));
+      expect(store.changeCount()).toBe(1);
+      expect(store.changes()[0].kind).toBe('changed');
+
+      // Ajout explicite : la clé fournie est conservée (sans doublon), le diff compte un « added ».
+      store.addField('employe', { key: 'email', label: 'E-mail', type: 'text', required: false, unique: false });
+      expect(store.draft()?.entities[0].fields.map(f => f.key)).toEqual(['nom', 'email']);
+      expect(store.changeCount()).toBe(2);
+
+      // « Retirer » un champ connu du serveur : marqué removed (restaurable), le rename disparaît du diff.
+      store.removeField('employe', 'nom');
+      expect(store.draft()?.entities[0].fields.map(f => f.key)).toEqual(['email']);
+      expect(store.changeCount()).toBe(2);
+      expect(store.changes().map(c => c.kind).sort()).toEqual(['added', 'removed']);
+
+      // « Rétablir » : le champ revient à sa position d'origine, avec son renommage (« changed » à nouveau).
+      store.removeField('employe', 'nom');
+      expect(store.draft()?.entities[0].fields.map(f => f.key)).toEqual(['nom', 'email']);
+      expect(store.draft()?.entities[0].fields[0].label).toBe('Nom complet');
+      expect(store.changeCount()).toBe(2);
+
+      // Un champ ajouté pendant cette session est supprimé définitivement (rien à rétablir).
+      store.removeField('employe', 'email');
+      expect(store.draft()?.entities[0].fields.map(f => f.key)).toEqual(['nom']);
+      expect(store.changeCount()).toBe(1);
+
+      // Sans champ fourni, « Ajouter un champ » crée « Nouveau champ » avec une clé slugifiée unique.
+      store.addField('employe');
+      store.addField('employe');
+      expect(store.draft()?.entities[0].fields.map(f => f.key)).toEqual(['nom', 'nouveau_champ', 'nouveau_champ_2']);
+      expect(store.draft()?.entities[0].fields[1]).toEqual(jasmine.objectContaining({
+        label: STUDIO_AI_LABELS.customize.newField, type: 'text', required: false, unique: false
+      }));
+
+      // Une table existante (`existingKey`) est verrouillée : aucune mutation n'aboutit.
+      const before = store.draft();
+      store.updateField('inconnue', 'nom', { label: 'X' });
+      expect(store.draft()).toBe(before);
+    });
+
+    it('reorderFields et updateView mutent le brouillon', () => {
+      // Spec dédiée : 3 champs et une vue filtrée sur la table « employe ».
+      const custom = spec();
+      custom.entities[0].fields = [
+        { key: 'a', label: 'A', type: 'text', required: false, unique: false },
+        { key: 'b', label: 'B', type: 'text', required: false, unique: false },
+        { key: 'c', label: 'C', type: 'text', required: false, unique: false }
+      ];
+      custom.entities[0].views = [{ name: 'Tout', mode: 'list', filters: [{ field: 'a', op: 'eq', value: 'x' }] }];
+      builds.getPlanSpec.and.returnValue(of({
+        success: true,
+        data: { id: 'p-1', kind: 'CreateSystem', status: 'Pending', expiresAt: '2026-09-09T10:00:00Z', rowVersion: 'rv-1', spec: custom },
+        message: null,
+        errors: []
+      }) as never);
+      openPlan();
+      store.setMode('customize');
+      expect(store.changeCount()).toBe(0);
+
+      // Réordonnancement : déplacement immuable 0 → 2, les clés ne changent pas ; le diff signale
+      // l'ordre des champs (sinon un réordonnancement seul resterait impossible à enregistrer).
+      store.reorderFields('employe', 0, 2);
+      expect(store.draft()?.entities[0].fields.map(f => f.key)).toEqual(['b', 'c', 'a']);
+      expect(store.changes().map(c => c.path)).toEqual(['entities.employe.fields']);
+      expect(store.changeCount()).toBe(1);
+
+      // Patch d'une vue : les clés non visées par le patch sont conservées.
+      store.updateView('employe', 0, { filters: [{ field: 'b', op: 'neq', value: 'y' }] });
+      expect(store.draft()?.entities[0].views?.[0]).toEqual({
+        name: 'Tout', mode: 'list', filters: [{ field: 'b', op: 'neq', value: 'y' }]
+      });
+      expect(store.changes().map(c => c.path).sort()).toEqual(['entities.employe.fields', 'entities.employe.views']);
+      expect(store.changeCount()).toBe(2);
+
+      // Index hors bornes, table inconnue ou positions invalides : aucun effet (même référence).
+      const before = store.draft();
+      store.updateView('employe', 5, { filters: [] });
+      store.updateView('employe', -1, { filters: [] });
+      store.reorderFields('employe', 0, 9);
+      store.reorderFields('employe', 1, 1);
+      store.reorderFields('inconnue', 0, 1);
+      expect(store.draft()).toBe(before);
+      expect(store.changeCount()).toBe(2);
+    });
+  });
+
+  describe('mode Personnaliser : import CSV des données de départ (3.4h)', () => {
+    /** Plan ouvert avec la spec chargée (`GET {id}/spec` répond immédiatement avec `spec()`). */
+    function openPlan(): void {
+      store.openPlan('p-1', 'CreateSystem', summary());
+    }
+
+    it('replaceSeed remplace le bloc seed et changeCount suit', () => {
+      // Spec dédiée : un bloc seed existant sur la table « employe ».
+      const custom = spec();
+      custom.seed = [{ entityRef: 'employe', records: [{ nom: 'Dupont' }] }];
+      builds.getPlanSpec.and.returnValue(of({
+        success: true,
+        data: { id: 'p-1', kind: 'CreateSystem', status: 'Pending', expiresAt: '2026-09-09T10:00:00Z', rowVersion: 'rv-1', spec: custom },
+        message: null,
+        errors: []
+      }) as never);
+      openPlan();
+      store.setMode('customize');
+      expect(store.changeCount()).toBe(0);
+
+      // Remplacement : l'ancien bloc est retiré, le nouveau ajouté ; le diff voit « seed.employe »,
+      // ce qui alimente le compteur du pied et « Enregistrer le brouillon ».
+      store.replaceSeed('employe', [{ nom: 'Martin' }, { nom: 'Bernard' }]);
+      expect(store.draft()?.seed).toEqual([{ entityRef: 'employe', records: [{ nom: 'Martin' }, { nom: 'Bernard' }] }]);
+      expect(store.changeCount()).toBe(1);
+      expect(store.changes()[0].path).toBe('seed.employe');
+      // La spec de base (serveur) n'est jamais touchée.
+      expect(store.spec()?.seed).toEqual([{ entityRef: 'employe', records: [{ nom: 'Dupont' }] }]);
+
+      // Table inconnue : aucun effet (même référence de brouillon).
+      const before = store.draft();
+      store.replaceSeed('inconnue', [{ nom: 'X' }]);
+      expect(store.draft()).toBe(before);
+
+      // Borne serveur : au-delà de `maxSeedRecords`, le bloc est tronqué.
+      const many = Array.from({ length: STUDIO_SPEC_LIMITS.maxSeedRecords + 50 }, (_, i) => ({ nom: `N${i}` }));
+      store.replaceSeed('employe', many);
+      expect(store.draft()?.seed?.[0].records.length).toBe(STUDIO_SPEC_LIMITS.maxSeedRecords);
+    });
+  });
+
   describe('pure helpers', () => {
     it('normalizeSummary fills the missing collections', () => {
       const normalized = normalizeSummary({ title: 'X' } as StudioPlanSummary);
-      expect(normalized).toEqual({ kind: '', title: 'X', steps: [], entities: [], warnings: [], duplicates: [] });
+      expect(normalized).toEqual({ kind: '', title: 'X', steps: [], entities: [], warnings: [], duplicates: [], workflows: [] });
     });
 
     it('parsePlanSummary reads a JSON summary and rejects junk', () => {

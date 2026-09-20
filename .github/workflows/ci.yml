@@ -1,5 +1,6 @@
 name: CI
 
+# checkout/setup-node utilisent Node.js 24 ; les builds applicatifs restent sur Node.js 20.
 # Dépôt actuellement sans remote : ce workflow s'activera automatiquement
 # dès que le dépôt sera poussé sur GitHub. En attendant, utiliser
 # scripts/verify-all.ps1 en local (mêmes étapes).
@@ -19,7 +20,7 @@ jobs:
     env:
       FACTUTRUST_TEST_MASTER_CONNECTION: Server=(localdb)\MSSQLLocalDB;Database=FactuTrust_Master_CI;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
@@ -31,8 +32,13 @@ jobs:
       # tests provide their own keys, including negative startup-validation cases.
       # Environment variables have higher precedence than the factories' in-memory
       # configuration and would invalidate those tests (or make forged JWTs return 401).
+      # Both test projects share one LocalDB server, even with per-test databases.
+      # Serialize projects (-m:1) AND xUnit collections to avoid concurrent SQL
+      # provisioning/login bursts. Either control alone still allows overlap.
+      # This only changes test scheduling: competing connections/tasks inside a
+      # concurrency test still run concurrently; no test, retry or timeout changes.
       - name: Tests
-        run: dotnet test src/Backend/FactuTrust.sln --configuration Release --no-build --verbosity minimal --logger "trx;LogFileName=backend-tests.trx"
+        run: dotnet test src/Backend/FactuTrust.sln --configuration Release --no-build --verbosity minimal --logger "trx;LogFileName=backend-tests.trx" -m:1 -- xUnit.ParallelizeTestCollections=false
       - name: Upload backend test results
         if: failure()
         uses: actions/upload-artifact@v4
@@ -48,8 +54,8 @@ jobs:
       run:
         working-directory: src/Frontend/factutrust-web
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: npm
@@ -92,8 +98,8 @@ jobs:
       run:
         working-directory: src/Frontend/factutrust-web
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: npm
@@ -159,8 +165,8 @@ jobs:
       run:
         working-directory: src/Frontend/factutrust-backoffice
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: npm

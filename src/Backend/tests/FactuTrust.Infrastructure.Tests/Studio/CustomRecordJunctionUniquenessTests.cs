@@ -176,6 +176,36 @@ public sealed class CustomRecordJunctionUniquenessTests
         Assert.Null(JunctionPairChecker.ResolvePairFields(new[] { text, first }));
     }
 
+    [Fact]
+    public async Task Pair_check_still_applies_when_the_junction_has_an_attribute_field()
+    {
+        // v1.1 / D-47-40 : l'attribut de liaison (Number, SortOrder après les deux liaisons) ne déplace
+        // pas la paire — le contrôle lit toujours les deux premiers RelationCustom actifs par SortOrder.
+        var quantite = CustomFieldDefinition.Create(Tid, _junction.Id, "quantite", "Quantité", CustomFieldType.Number, false, false, 2, null, null, null, Uid);
+        _fields.Setup(r => r.ListByEntityAsync(Tid, _junction.Id, false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<CustomFieldDefinition>
+            {
+                Relation(_junction.Id, "employes", "employes", 0),
+                Relation(_junction.Id, "projets", "projets", 1),
+                quantite
+            });
+        _records.Setup(r => r.ExistsWithFieldPairAsync(Tid, _junction.Id, "employes", EmployeId, "projets", ProjetId, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        var payload = new SaveCustomRecordRequest(new Dictionary<string, JsonNode?>
+        {
+            ["employes"] = JsonValue.Create(EmployeId),
+            ["projets"] = JsonValue.Create(ProjetId),
+            ["quantite"] = JsonValue.Create(3)
+        });
+        var result = await CreateHandler().Handle(new CreateCustomRecordCommand(_junction.Key, payload), CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(StudioErrorCodes.RecordDuplicateLink, result.Error.Code);
+        _records.Verify(r => r.ExistsWithFieldPairAsync(Tid, _junction.Id, "employes", EmployeId, "projets", ProjetId, null, It.IsAny<CancellationToken>()), Times.Once);
+        _records.Verify(r => r.AddAsync(It.IsAny<CustomRecord>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
     // ---- helpers ----
 
     private CreateCustomRecordCommandHandler CreateHandler() => new(

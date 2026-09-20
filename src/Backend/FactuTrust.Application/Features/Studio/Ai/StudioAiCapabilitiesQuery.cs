@@ -28,8 +28,8 @@ public sealed record StudioAiCapabilitiesDto(
     string StandardModelLabel,
     string? AdvancedModelLabel,
     // Programme « Studio IA » (contrat A6, figé dès la PR 2.1) : ManyToManyEnabled (PR 2.1),
-    // RecordViewsEnabled (PR 2.3) et RecordViewToolsEnabled (PR 2.4) sont câblés ; les trois autres
-    // restent false tant que leur drapeau n'existe pas (PR 3.x, 4.x).
+    // RecordViewsEnabled (PR 2.3), RecordViewToolsEnabled (PR 2.4), SystemExportEnabled (PR 3.3) et
+    // WorkflowsEnabled (PR 4.1) sont câblés ; WorkflowToolsEnabled est câblé en PR 4.3 (règle centralisée).
     bool ManyToManyEnabled = false,
     bool RecordViewsEnabled = false,
     bool RecordViewToolsEnabled = false,
@@ -100,9 +100,10 @@ public sealed class StudioAiCapabilitiesQueryHandler
             RecordViewsEnabled: _settings.EnableStudioRecordViews,
             // PR 2.4 : règle centralisée (propre drapeau + vues enregistrées + flux d'aperçu).
             RecordViewToolsEnabled: StudioAiPlanCreation.RecordViewToolsEnabled(_settings),
-            SystemExportEnabled: false,
-            WorkflowsEnabled: false,
-            WorkflowToolsEnabled: false));
+            SystemExportEnabled: _settings.EnableStudioSystemExport,
+            WorkflowsEnabled: _settings.EnableStudioWorkflows,
+            // PR 4.3 : règle centralisée (workflows + propre drapeau + flux d'aperçu).
+            WorkflowToolsEnabled: StudioAiPlanCreation.WorkflowToolsEnabled(_settings)));
     }
 
     /// <summary>

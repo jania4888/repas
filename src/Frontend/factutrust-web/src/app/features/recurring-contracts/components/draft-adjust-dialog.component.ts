@@ -254,7 +254,7 @@ export class DraftAdjustDialogComponent {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Émettre la facture',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-success',
+      acceptButtonStyleClass: 'btn-success',
       size: 'md',
       accept: () => this.issue()
     });

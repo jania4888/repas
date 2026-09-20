@@ -1954,6 +1954,11 @@ public partial class TenantDbContext : DbContext
             entity.HasIndex(a => a.Action);
             entity.HasIndex(a => a.EntityType);
             entity.HasIndex(a => a.UserId);
+            // Couvre la lecture paginée de l'historique d'un enregistrement (Studio 4.7 « v1.1 », D5) :
+            // WHERE EntityType = … AND EntityId = … ORDER BY CreatedAt DESC. Nom figé : jumeau SQL
+            // docs/runbooks/sql/AddAuditLogsEntityHistoryIndex_Tenant.idempotent.sql.
+            entity.HasIndex(a => new { a.EntityType, a.EntityId, a.CreatedAt })
+                .HasDatabaseName("IX_AuditLogs_EntityHistory");
         });
     }
 

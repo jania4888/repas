@@ -34,7 +34,9 @@ public sealed class StudioAiPlansController : ControllerBase
         _ollamaSettings = ollamaSettings.Value;
     }
 
-    // ---- Endpoints « workbench » (P0) : tous gardés par EnableStudioAiWorkbench (flag off ⇒ 404).
+    // ---- Endpoints « workbench » (P0) : gardés par EnableStudioAiWorkbench (flag off ⇒ 404),
+    // SAUF l'historique (List) et la purge (CancelPending) qui relèvent du flux d'aperçu
+    // (EnableStudioAiPlanPreview, PR 3.2 — même garde que la confirmation SSE).
     // Les routes fixes (« cancel-pending », « validate », …) sont déclarées avant « {id:guid} »
     // par lisibilité ; la contrainte :guid empêche de toute façon toute collision.
 
@@ -47,7 +49,7 @@ public sealed class StudioAiPlansController : ControllerBase
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
-        if (WorkbenchUnavailableOrNull() is { } unavailable)
+        if (PlanPreviewUnavailableOrNull() is { } unavailable)
             return unavailable;
 
         var result = await _mediator.Send(
@@ -60,7 +62,7 @@ public sealed class StudioAiPlansController : ControllerBase
     [HttpPost("cancel-pending")]
     public async Task<IActionResult> CancelPending(CancellationToken cancellationToken)
     {
-        if (WorkbenchUnavailableOrNull() is { } unavailable)
+        if (PlanPreviewUnavailableOrNull() is { } unavailable)
             return unavailable;
 
         var result = await _mediator.Send(new CancelPendingStudioAiPlansCommand(), cancellationToken);
@@ -152,6 +154,52 @@ public sealed class StudioAiPlansController : ControllerBase
         _ollamaSettings.EnableStudioAiWorkbench
             ? null
             : NotFound(ApiResponse<object>.Fail("Le workbench Studio IA n'est pas activé."));
+
+    /// <summary>
+    /// Garde du flux d'aperçu (PR 3.2) : 404 tant que <c>EnableStudioAiPlanPreview</c> est coupé.
+    /// Message identique à celui du refus SSE de <c>Confirm</c> — figé par test de contrat.
+    /// </summary>
+    private IActionResult? PlanPreviewUnavailableOrNull() =>
+        _ollamaSettings.EnableStudioAiPlanPreview
+            ? null
+            : NotFound(ApiResponse<object>.Fail("Le flux d'aperçu Studio n'est pas activé."));
+
+    /// <summary>
+    /// Aperçu structuré d'un plan persisté (PR 3.2) : la spec stockée est re-projetée en DTO
+    /// (entités, relations, amendement, avertissements, doublons) sans aucune écriture ni appel
+    /// LLM. 200 / 400 (spec incanonisable) / 401 / 404 (flag coupé, autre tenant, autre
+    /// propriétaire) — un amendement dont la table cible est introuvable reste un 200 dégradé.
+    /// </summary>
+    [HttpGet("{id:guid}/preview")]
+    public async Task<IActionResult> Preview(Guid id, CancellationToken cancellationToken)
+    {
+        if (PlanPreviewUnavailableOrNull() is { } unavailable)
+            return unavailable;
+
+        var result = await _mediator.Send(new GetStudioAiPlanPreviewQuery(id), cancellationToken);
+        return StudioErrorMapping.ToActionResult(this, result,
+            value => Ok(ApiResponse<StudioAiPlanPreviewDto>.Ok(value)));
+    }
+
+    /// <summary>
+    /// Rejoue un plan en état terminal (terminé, échoué, annulé ou expiré) : la spec persistée est
+    /// re-canonicalisée (doublons et schéma relus) puis un plan NEUF Pending est créé — le plan
+    /// d'origine n'est jamais modifié. 201 + <c>Location</c> (première 201 du contrôleur, E5) /
+    /// 409 (statut non rejouable) / 400 (spec incanonisable) / 401 / 404 (flag, tenant,
+    /// propriétaire).
+    /// </summary>
+    [HttpPost("{id:guid}/replay")]
+    public async Task<IActionResult> Replay(Guid id, CancellationToken cancellationToken)
+    {
+        if (PlanPreviewUnavailableOrNull() is { } unavailable)
+            return unavailable;
+
+        var result = await _mediator.Send(new ReplayStudioAiPlanCommand(id), cancellationToken);
+        return StudioErrorMapping.ToActionResult(this, result,
+            value => Created(
+                $"/api/studio/ai/plans/{value.Plan.Id}",
+                ApiResponse<StudioAiPlanCreationResponse>.Ok(value)));
+    }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)

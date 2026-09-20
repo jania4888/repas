@@ -1,4 +1,5 @@
 import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
+import { STUDIO_WORKFLOW_LABELS } from '../workflows/studio-workflow-labels';
 
 const STUDIO_ROOT: BreadcrumbItem = { label: 'Studio', route: '/studio', icon: 'fa-solid fa-shapes' };
 
@@ -43,10 +44,10 @@ export const STUDIO_BREADCRUMBS = {
     ),
   records: (name: string, key: string): BreadcrumbItem[] =>
     studioBreadcrumb({ label: name, route: `/studio/d/${key}` }),
-  recordForm: (name: string, key: string, editing: boolean): BreadcrumbItem[] =>
+  recordForm: (name: string, key: string, editing: boolean, viewing = false): BreadcrumbItem[] =>
     studioBreadcrumb(
       { label: name, route: `/studio/d/${key}` },
-      { label: editing ? 'Modifier' : 'Nouveau' }
+      { label: viewing ? 'Consulter' : editing ? 'Modifier' : 'Nouveau' }
     ),
   recordViewNew: (name: string, key: string): BreadcrumbItem[] =>
     studioBreadcrumb(
@@ -60,4 +61,13 @@ export const STUDIO_BREADCRUMBS = {
     ),
   relations: (): BreadcrumbItem[] =>
     studioBreadcrumb({ label: 'Relations' }),
+  workflows: (): BreadcrumbItem[] =>
+    studioBreadcrumb({ label: STUDIO_WORKFLOW_LABELS.nav.workflows }),
+  workflowDesigner: (name?: string | null): BreadcrumbItem[] =>
+    studioBreadcrumb(
+      { label: STUDIO_WORKFLOW_LABELS.nav.workflows, route: '/studio/workflows' },
+      { label: name?.trim() || STUDIO_WORKFLOW_LABELS.designer.newTitle }
+    ),
+  approvals: (): BreadcrumbItem[] =>
+    studioBreadcrumb({ label: STUDIO_WORKFLOW_LABELS.nav.approvals }),
 };

@@ -5,8 +5,10 @@ using FactuTrust.Application.Features.AI.DTOs;
 using FactuTrust.Application.Features.AI.Tools;
 using FactuTrust.Application.Features.Studio.Ai;
 using FactuTrust.Application.Features.Studio.Common;
+using FactuTrust.Application.Features.Studio.Records;
 using FactuTrust.Application.Features.Studio.RecordViews;
 using FactuTrust.Domain.Enums;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace FactuTrust.Infrastructure.Tests.Studio;
@@ -261,5 +263,120 @@ public sealed class StudioSilentFailureGuardsTests
 
         Assert.Equal(CustomRecordViewMode.Kanban, mode);
         Assert.Empty(warnings);
+    }
+
+    // ---- PR 3.1b : une opération d'amendement ignorée ou inapplicable n'est JAMAIS silencieuse ----
+
+    private static CustomEntitySchemaDto AmendmentSchema() => new(
+        new CustomEntityDto(Guid.NewGuid(), "contrats", "Contrat", "Contrats", null, null, true, 2, null,
+            DateTime.UtcNow, DateTime.UtcNow),
+        new[]
+        {
+            new CustomFieldDto(Guid.NewGuid(), "nom", "Nom", CustomFieldType.Text, false, false, 1, null, null, null, true),
+            new CustomFieldDto(Guid.NewGuid(), "statut", "Statut", CustomFieldType.Select, false, false, 2, null,
+                new List<SelectOptionDto> { new("actif", "Actif") }, null, true)
+        },
+        new FormLayout());
+
+    /// <summary>Chaque op 3.1b mal formée est écartée au parsing avec un avertissement non vide.</summary>
+    [Theory]
+    [InlineData("""{ "op": "reorder_fields", "fields": [] }""")]
+    [InlineData("""{ "op": "change_field_type", "key": "nom", "type": "wizard" }""")]
+    [InlineData("""{ "op": "change_field_type" }""")]
+    [InlineData("""{ "op": "add_relation", "kind": "one_to_one", "target": "clients" }""")]
+    [InlineData("""{ "op": "add_relation" }""")]
+    [InlineData("""{ "op": "assign_system" }""")]
+    [InlineData("""{ "op": "set_view", "mode": "kanban" }""")]
+    public void A_malformed_pr31b_amendment_op_is_dropped_with_a_warning(string opJson)
+    {
+        var json = $$"""{ "target": { "entityKey": "contrats" }, "operations": [ {{opJson}}, { "op": "remove_field", "key": "nom" } ] }""";
+
+        Assert.True(StudioAiAmendmentSpec.TryParse(json, out var spec, out var error), error);
+
+        Assert.Single(spec!.Operations); // seule l'opération valide survit
+        Assert.NotEmpty(spec.Warnings);
+        Assert.All(spec.Warnings, w => Assert.False(string.IsNullOrWhiteSpace(w)));
+    }
+
+    /// <summary>
+    /// Chaque op 3.1b inapplicable (référence inconnue, drapeau fonctionnel coupé) produit un
+    /// avertissement non vide à l'aperçu — jamais une disparition silencieuse.
+    /// </summary>
+    [Theory]
+    // référence de champ inconnue
+    [InlineData("""{ "op": "reorder_fields", "fields": ["fantome"] }""")]
+    [InlineData("""{ "op": "change_field_type", "key": "fantome", "type": "decimal" }""")]
+    // drapeaux fonctionnels coupés (EnableStudioManyToMany / EnableStudioRecordViews)
+    [InlineData("""{ "op": "add_relation", "kind": "many_to_many", "target": "clients" }""")]
+    [InlineData("""{ "op": "set_view", "mode": "list", "displayName": "Toutes" }""")]
+    public void An_inapplicable_pr31b_amendment_op_warns_in_the_preview(string opJson)
+    {
+        Assert.True(StudioAiAmendmentSpec.TryParse(
+            $$"""{ "target": { "entityKey": "contrats" }, "operations": [ {{opJson}} ] }""",
+            out var spec, out var error), error);
+
+        var preview = StudioAiAmendmentPlanner.BuildPreview(spec!, AmendmentSchema());
+
+        Assert.NotEmpty(preview.Warnings);
+        Assert.All(preview.Warnings, w => Assert.False(string.IsNullOrWhiteSpace(w)));
+    }
+
+    // ---- PR 4.1i : la publication des workflows n'est JAMAIS silencieuse (P15) ----
+
+    /// <summary>
+    /// Les 3 handlers d'enregistrements (Create/Update/Patch) acceptent un
+    /// <c>ILogger&lt;T&gt;?</c> en dernier paramètre OPTIONNEL (défaut null) : la publication des
+    /// workflows est journalisée quand un logger est injecté, sans casser les ctors existants (R7).
+    /// </summary>
+    [Fact]
+    public void Record_handlers_accept_an_optional_logger_for_workflow_publication()
+    {
+        var handlerTypes = new[]
+        {
+            typeof(CreateCustomRecordCommandHandler),
+            typeof(UpdateCustomRecordCommandHandler),
+            typeof(PatchCustomRecordCommandHandler)
+        };
+
+        foreach (var handlerType in handlerTypes)
+        {
+            var ctor = Assert.Single(handlerType.GetConstructors());
+            var last = ctor.GetParameters().Last();
+            Assert.Equal(typeof(ILogger<>).MakeGenericType(handlerType), last.ParameterType);
+            Assert.True(last.IsOptional, $"{handlerType.Name} : le logger doit être optionnel (P15).");
+            Assert.Null(last.DefaultValue);
+        }
+    }
+
+    /// <summary>
+    /// Garde-fou source : <c>StudioWorkflowLifecycle</c> journalise tout échec de publication en
+    /// <c>LogWarning</c> et ne contient aucun <c>catch { }</c> vide (contrairement au Pont legacy,
+    /// dont le catch vide est assumé — cf. <c>StudioRecordLifecycle</c>).
+    /// </summary>
+    [Fact]
+    public void Workflow_lifecycle_never_swallows_silently()
+    {
+        var source = File.ReadAllText(LocateStudioWorkflowLifecycleFile());
+
+        Assert.Contains("LogWarning", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("catch { }", source, StringComparison.Ordinal);
+    }
+
+    private static string LocateStudioWorkflowLifecycleFile()
+    {
+        // Remonte depuis le dossier du binaire de test jusqu'à trouver
+        // src/Backend/FactuTrust.Application/Features/Studio/Workflows/StudioWorkflowLifecycle.cs.
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null)
+        {
+            var candidate = Path.Combine(
+                dir.FullName, "src", "Backend", "FactuTrust.Application", "Features", "Studio",
+                "Workflows", "StudioWorkflowLifecycle.cs");
+            if (File.Exists(candidate))
+                return candidate;
+            dir = dir.Parent;
+        }
+        throw new FileNotFoundException(
+            "StudioWorkflowLifecycle.cs introuvable (remontée depuis AppContext.BaseDirectory).");
     }
 }

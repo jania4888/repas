@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { Subject, of } from 'rxjs';
 import { AiStreamService } from '@features/ai-assistant/services/ai-stream.service';
 import { AiChatService } from '@features/ai-assistant/services/ai-chat.service';
@@ -14,7 +14,7 @@ import { StudioNavService } from '../studio-nav.service';
 import { StudioAiPageComponent } from './studio-ai-page.component';
 import { StudioAiCapabilitiesService } from './studio-ai-capabilities.service';
 import { STUDIO_AI_LABELS } from './studio-ai-labels';
-import { STUDIO_AI_CAPABILITIES_FALLBACK, StudioAiCapabilitiesDto } from './studio-ai.models';
+import { STUDIO_AI_CAPABILITIES_FALLBACK, StudioAiCapabilitiesDto, StudioAiPlanListItemDto } from './studio-ai.models';
 import { studioAiSpecFixture } from './preview/testing/studio-ai-spec.fixture';
 
 const ALL_ENABLED: StudioAiCapabilitiesDto = {
@@ -45,11 +45,13 @@ describe('StudioAiPageComponent', () => {
     capabilitiesResponse = ALL_ENABLED;
   });
 
-  async function setup(): Promise<void> {
+  /** `beforeCreate` : espions à poser après la configuration du module mais avant la création (ex. `Router.navigate`). */
+  async function setup(beforeCreate?: () => void): Promise<void> {
     stream = jasmine.createSpyObj<AiStreamService>('AiStreamService', ['streamChat']);
     stream.streamChat.and.returnValue(of());
     builds = jasmine.createSpyObj<StudioAiBuildService>('StudioAiBuildService', [
-      'getPlanSpec', 'confirm', 'cancel', 'cancelPending', 'getCapabilities', 'listPlans', 'listTemplates', 'getPlan', 'createFromTemplate'
+      'getPlanSpec', 'confirm', 'cancel', 'cancelPending', 'getCapabilities', 'listPlans', 'listTemplates', 'getPlan', 'createFromTemplate',
+      'importSystem', 'duplicateSystem', 'replayPlan'
     ]);
     builds.getPlanSpec.and.returnValue(of());
     builds.cancel.and.returnValue(of({ success: true, data: null, message: null, errors: [] }) as never);
@@ -89,6 +91,7 @@ describe('StudioAiPageComponent', () => {
 
     // La page n'est rendue par l'entrée `/studio/ai` qu'une fois les capacités chargées.
     TestBed.inject(StudioAiCapabilitiesService).ensureLoaded();
+    beforeCreate?.();
     fixture = TestBed.createComponent(StudioAiPageComponent);
     fixture.detectChanges();
   }
@@ -141,6 +144,12 @@ describe('StudioAiPageComponent', () => {
       expect(fixture.componentInstance.prefill()).toBe(card.prompt);
       expect(fixture.componentInstance.pendingIntent()).toBe('report');
       expect(fixture.componentInstance.previewTab()).toBe('reports');
+    });
+
+    it('présélectionne l’onglet Workflow quand la carte Workflow est choisie', () => {
+      const card = STUDIO_AI_LABELS.intents.find(c => c.intent === 'workflow')!;
+      fixture.componentInstance.pickIntent({ ...card, available: true, prompt: 'x' });
+      expect(fixture.componentInstance.previewTab()).toBe('workflow');
     });
 
     it('ignore les cartes « Bientôt »', () => {
@@ -293,6 +302,26 @@ describe('StudioAiPageComponent', () => {
       expect(fixture.componentInstance.store.phase()).toBe('awaiting_confirmation');
       expect(builds.getPlanSpec).toHaveBeenCalledWith('p-7');
     });
+
+    it('Rejouer depuis le rail ⇒ store.replay ⇒ builds.replayPlan(id)', () => {
+      builds.replayPlan.and.returnValue(of());
+      const item: StudioAiPlanListItemDto = {
+        id: 'p-9', kind: 'CreateSystem', status: 'Completed', title: 'Congés', entityCount: 2,
+        createdAt: '2026-09-12T10:00:00Z', expiresAt: '2026-09-13T10:00:00Z', replayable: true
+      };
+
+      fixture.componentInstance.replayHistoryPlan(item);
+      expect(builds.replayPlan).toHaveBeenCalledWith('p-9');
+      expect(confirmation.confirm).not.toHaveBeenCalled();
+
+      withPendingPlan();
+      fixture.componentInstance.replayHistoryPlan(item);
+      expect(builds.replayPlan).toHaveBeenCalledTimes(1);
+      expect(lastConfirmation().message).toBe(STUDIO_AI_LABELS.rail.replaceCurrent);
+      expect(lastConfirmation().acceptLabel).toBe(STUDIO_AI_LABELS.replay.action);
+      lastConfirmation().accept!();
+      expect(builds.replayPlan).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe('modèle avancé (D3)', () => {
@@ -347,6 +376,109 @@ describe('StudioAiPageComponent', () => {
       queryParams = { plan: 'p-42' };
       await setup();
       expect(builds.getPlan).toHaveBeenCalledWith('p-42');
+    });
+  });
+
+  describe('import / duplication (3.4j2)', () => {
+    const WITH_EXPORT: StudioAiCapabilitiesDto = { ...ALL_ENABLED, systemExportEnabled: true };
+
+    function creationResponse(title: string) {
+      return of({
+        success: true, message: null, errors: [],
+        data: {
+          plan: {
+            id: 'p-new', kind: 'CreateSystem', status: 'Pending', createdAt: '2026-09-15T10:00:00Z', expiresAt: '2026-09-16T10:00:00Z',
+            summaryJson: JSON.stringify({ kind: 'CreateSystem', title, steps: [], entities: [], warnings: [] })
+          },
+          spec: { id: 'p-new', kind: 'CreateSystem', status: 'Pending', expiresAt: '2026-09-16T10:00:00Z', rowVersion: 'v1', spec: studioAiSpecFixture() }
+        }
+      }) as never;
+    }
+
+    function railAction(action: string): HTMLButtonElement | null {
+      return fixture.nativeElement.querySelector(`app-studio-ai-quick-actions button[data-action="${action}"]`);
+    }
+
+    it('?duplicate=gestion_des_conges ouvre le dialog Dupliquer prérempli puis efface le paramètre', async () => {
+      queryParams = { duplicate: 'gestion_des_conges' };
+      capabilitiesResponse = WITH_EXPORT;
+      let navigate!: jasmine.Spy;
+      await setup(() => { navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true); });
+
+      expect(fixture.componentInstance.duplicateVisible()).toBeTrue();
+      expect(fixture.componentInstance.duplicateKey()).toBe('gestion_des_conges');
+      expect(navigate).toHaveBeenCalledWith([], jasmine.objectContaining({
+        queryParams: { intent: null, template: null, plan: null, duplicate: null }, replaceUrl: true
+      }));
+    });
+
+    it('?duplicate= avec export désactivé ⇒ rien ne s’ouvre, paramètre effacé', async () => {
+      queryParams = { duplicate: 'gestion_des_conges' };
+      capabilitiesResponse = ALL_ENABLED; // systemExportEnabled = false (fail-closed)
+      let navigate!: jasmine.Spy;
+      await setup(() => { navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true); });
+
+      expect(fixture.componentInstance.duplicateVisible()).toBeFalse();
+      expect(fixture.componentInstance.duplicateKey()).toBeNull();
+      expect(navigate).toHaveBeenCalledWith([], jasmine.objectContaining({
+        queryParams: { intent: null, template: null, plan: null, duplicate: null }
+      }));
+    });
+
+    it('Importer depuis le rail ouvre le dialog ; soumission ⇒ builds.importSystem puis plan en attente', async () => {
+      capabilitiesResponse = WITH_EXPORT;
+      await setup();
+      builds.importSystem.and.returnValue(creationResponse('Congés importés'));
+
+      expect(fixture.componentInstance.importVisible()).toBeFalse();
+      railAction('import')!.click();
+      fixture.detectChanges();
+      expect(fixture.componentInstance.importVisible()).toBeTrue();
+      expect(document.querySelector('app-studio-ai-import-dialog p-dialog')).toBeTruthy();
+
+      const req = { spec: studioAiSpecFixture() as unknown as Record<string, unknown>, displayNameOverride: 'Congés importés', includeSeed: true };
+      fixture.componentInstance.submitImport(req);
+      fixture.detectChanges();
+
+      expect(builds.importSystem).toHaveBeenCalledWith(req);
+      expect(fixture.componentInstance.store.phase()).toBe('awaiting_confirmation');
+      expect(fixture.componentInstance.store.plan()?.planId).toBe('p-new');
+      // Plan ouvert sans erreur ⇒ le dialog se ferme.
+      expect(fixture.componentInstance.importVisible()).toBeFalse();
+    });
+
+    it('Dupliquer depuis le rail ⇒ builds.duplicateSystem(clé, nom)', async () => {
+      capabilitiesResponse = WITH_EXPORT;
+      await setup();
+      builds.duplicateSystem.and.returnValue(creationResponse('Congés (copie)'));
+
+      railAction('duplicate')!.click();
+      fixture.detectChanges();
+      expect(fixture.componentInstance.duplicateVisible()).toBeTrue();
+      // Depuis le rail : aucune clé préréglée ⇒ p-select dans le dialog.
+      expect(fixture.componentInstance.duplicateKey()).toBeNull();
+
+      fixture.componentInstance.submitDuplicate({ key: 'gestion_des_conges', displayName: 'Congés 2027' });
+      fixture.detectChanges();
+
+      expect(builds.duplicateSystem).toHaveBeenCalledWith('gestion_des_conges', 'Congés 2027');
+      expect(fixture.componentInstance.duplicateVisible()).toBeFalse();
+      expect(fixture.componentInstance.store.phase()).toBe('awaiting_confirmation');
+    });
+
+    it('Exporter depuis le rail ouvre le dialog Exporter sans clé (p-select)', async () => {
+      capabilitiesResponse = WITH_EXPORT;
+      await setup();
+
+      expect(fixture.componentInstance.exportVisible()).toBeFalse();
+      railAction('export')!.click();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.exportVisible()).toBeTrue();
+      expect(fixture.componentInstance.exportKey()).toBeNull();
+      expect(document.querySelector('app-studio-ai-export-dialog p-select')).toBeTruthy();
+      expect(builds.duplicateSystem).not.toHaveBeenCalled();
+      expect(builds.importSystem).not.toHaveBeenCalled();
     });
   });
 

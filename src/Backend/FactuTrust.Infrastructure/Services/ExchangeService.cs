@@ -889,7 +889,7 @@ public sealed class ExchangeService : IExchangeService
         if (access.IsFailure)
             return Result.Failure<IReadOnlyList<ExchangeAuditEventDto>>(access.Error);
 
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / 100);
         pageSize = Math.Clamp(pageSize, 1, 100);
         var rows = await ctx.ExchangeAuditEvents.AsNoTracking()
             .Where(e => e.ThreadId == threadId)

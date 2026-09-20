@@ -126,6 +126,24 @@ public sealed class StudioRecordsController : ControllerBase
             record => Ok(ApiResponse<CustomRecordDto>.Ok(record)));
     }
 
+    /// <summary>
+    /// Historique paginé de l'enregistrement (Studio 4.7 « v1.1 » — D5), le plus récent d'abord,
+    /// alimenté par le journal d'audit (4.7h1). AUCUN drapeau de fonctionnalité. Entité
+    /// introuvable/inactive ⇒ 400 ; enregistrement inconnu ⇒ 404 (via <see cref="StudioErrorMapping"/>).
+    /// </summary>
+    [HttpGet("{id:guid}/history")]
+    [Authorize(Policy = PermissionPolicies.CustomRecordsRead)]
+    public async Task<IActionResult> History(
+        string entityKey, Guid id,
+        [FromQuery] int page = 1, [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _mediator.Send(
+            new ListCustomRecordHistoryQuery(entityKey, id, page, pageSize), cancellationToken);
+        return StudioErrorMapping.ToActionResult(this, result,
+            history => Ok(ApiResponse<PagedResult<RecordHistoryEntryDto>>.Ok(history)));
+    }
+
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = PermissionPolicies.CustomRecordsWrite)]
     public async Task<IActionResult> Delete(string entityKey, Guid id, CancellationToken cancellationToken)

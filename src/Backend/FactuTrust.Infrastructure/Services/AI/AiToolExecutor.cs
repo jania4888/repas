@@ -308,6 +308,7 @@ public sealed partial class AiToolExecutor : IAiToolExecutor
                 "studio_get_table_schema" => await HandleStudioGetTableSchema(arguments, cancellationToken),
                 "studio_plan_view" => await HandleStudioPlanView(arguments, cancellationToken),
                 "studio_plan_record_view" => await HandleStudioPlanRecordView(arguments, cancellationToken),
+                "studio_plan_workflow" => await HandleStudioPlanWorkflow(arguments, cancellationToken),
                 "studio_list_sql_tables" => await HandleStudioListSqlTables(arguments, cancellationToken),
                 // ── Studio : états sur les tables réelles ──
                 "studio_list_report_sources" => await HandleStudioListReportSources(arguments, cancellationToken),

@@ -47,7 +47,7 @@ public sealed class FirmAssignmentService : IFirmAssignmentService
     public async Task<IReadOnlyList<AccountingFirmDirectoryItemDto>> SearchDirectoryAsync(
         string? search, int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / 50);
         pageSize = Math.Clamp(pageSize, 1, 50);
 
         var query = from profile in _masterContext.AccountingFirmProfiles.AsNoTracking()

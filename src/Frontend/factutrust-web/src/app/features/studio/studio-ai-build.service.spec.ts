@@ -5,6 +5,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideRouter } from '@angular/router';
 import { environment } from '@environments/environment';
 import { StudioAiBuildService, StudioAiPlanDto } from './studio-ai-build.service';
+import { ImportCustomSystemRequest, StudioAiPlanPreviewDto, StudioSystemExportDto } from './ai/studio-ai.models';
+import { studioAiPlanPreviewFixture, studioSystemExportFixture } from './ai/preview/testing/studio-ai-spec.fixture';
 
 describe('StudioAiBuildService', () => {
   let service: StudioAiBuildService;
@@ -98,6 +100,7 @@ describe('StudioAiBuildService (workbench P0)', () => {
 
   const plansUrl = `${environment.apiUrl}/studio/ai/plans`;
   const templatesUrl = `${environment.apiUrl}/studio/templates`;
+  const systemsUrl = `${environment.apiUrl}/studio/systems`;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -224,5 +227,68 @@ describe('StudioAiBuildService (workbench P0)', () => {
     const req = http.expectOne(`${templatesUrl}/gestion%20conges%2F2`);
     expect(req.request.method).toBe('GET');
     req.flush({ success: true, data: null, message: null, errors: [] });
+  });
+
+  // ---- Aperçu enrichi (PR 3.4a) ----
+
+  it('getPlanPreview appelle GET plans/{id}/preview', () => {
+    let received: StudioAiPlanPreviewDto | undefined;
+    service.getPlanPreview('p-9').subscribe(r => (received = r.data ?? undefined));
+
+    const req = http.expectOne(`${plansUrl}/p-9/preview`);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.context.get(SKIP_ERROR_TOAST)).toBeTrue();
+    req.flush({ success: true, data: studioAiPlanPreviewFixture(), message: null, errors: [] });
+
+    expect(received?.entities.length).toBe(2);
+    expect(received?.relations[0].junctionName).toBe('employes_demandes');
+  });
+
+  it('replayPlan appelle POST plans/{id}/replay', () => {
+    service.replayPlan('p-9').subscribe();
+
+    const req = http.expectOne(`${plansUrl}/p-9/replay`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({});
+    expect(req.request.context.get(SKIP_ERROR_TOAST)).toBeTrue();
+    req.flush({ success: true, data: null, message: null, errors: [] });
+  });
+
+  it('exportSystem encode la clé et passe includeSeed', () => {
+    let received: StudioSystemExportDto | undefined;
+    service.exportSystem('gestion des/conges', true).subscribe(r => (received = r.data ?? undefined));
+
+    const req = http.expectOne(r => r.url === `${systemsUrl}/gestion%20des%2Fconges/export`);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.params.get('includeSeed')).toBe('true');
+    expect(req.request.context.get(SKIP_ERROR_TOAST)).toBeTrue();
+    req.flush({ success: true, data: studioSystemExportFixture(), message: null, errors: [] });
+    expect(received?.viewCount).toBe(2);
+
+    service.exportSystem('conges').subscribe();
+    const noSeed = http.expectOne(r => r.url === `${systemsUrl}/conges/export`);
+    expect(noSeed.request.params.get('includeSeed')).toBe('false');
+    noSeed.flush({ success: true, data: null, message: null, errors: [] });
+  });
+
+  it('duplicateSystem et importSystem postent sur systems', () => {
+    service.duplicateSystem('conges', 'Congés 2027').subscribe();
+    const dup = http.expectOne(`${systemsUrl}/conges/duplicate`);
+    expect(dup.request.method).toBe('POST');
+    expect(dup.request.body).toEqual({ displayName: 'Congés 2027' });
+    dup.flush({ success: true, data: null, message: null, errors: [] });
+
+    service.duplicateSystem('conges').subscribe();
+    const dupDefault = http.expectOne(`${systemsUrl}/conges/duplicate`);
+    expect(dupDefault.request.body).toEqual({ displayName: null });
+    dupDefault.flush({ success: true, data: null, message: null, errors: [] });
+
+    const importReq: ImportCustomSystemRequest = { spec: studioSystemExportFixture().spec, displayNameOverride: 'Copie', includeSeed: false };
+    service.importSystem(importReq).subscribe();
+    const imp = http.expectOne(`${systemsUrl}/import`);
+    expect(imp.request.method).toBe('POST');
+    expect(imp.request.body).toEqual(importReq);
+    expect(imp.request.context.get(SKIP_ERROR_TOAST)).toBeTrue();
+    imp.flush({ success: true, data: null, message: null, errors: [] });
   });
 });

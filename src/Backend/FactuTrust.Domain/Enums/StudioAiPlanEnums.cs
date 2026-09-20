@@ -25,8 +25,14 @@ public enum StudioAiPlanKind
     /// Création d'une VUE ENREGISTRÉE (liste / kanban / calendrier) sur une table Studio existante
     /// (PR 2.4). Ajouté en fin d'énumération : valeur persistée en <c>int</c>, aucune migration requise.
     /// </summary>
-    RecordView = 5
-    // Workflow = 6 réservé (Phase 4)
+    RecordView = 5,
+
+    /// <summary>
+    /// Création de WORKFLOWS (déclencheur + étapes : validation, relance, facturation automatique) sur
+    /// des tables Studio existantes — plan de création de workflows, PR 4.3.
+    /// Ajouté en fin d'énumération : valeur persistée en <c>int</c>, aucune migration requise.
+    /// </summary>
+    Workflow = 6
 }
 
 /// <summary>Cycle de vie d'un plan Studio IA : proposé → confirmé/annulé → exécuté.</summary>

@@ -291,7 +291,8 @@ public sealed class ReplenishmentService : IReplenishmentService
         ReplenishmentFiltersDto filters,
         CancellationToken ct = default)
     {
-        var page = filters.Page < 1 ? 1 : filters.Page;
+        // 4.7 suite (R52, motif D-45-28) : borne haute pour que (page - 1) * pageSize reste un int.
+        var page = filters.Page < 1 ? 1 : Math.Min(filters.Page, int.MaxValue / 200);
         var pageSize = filters.PageSize is < 1 or > 200 ? 50 : filters.PageSize;
 
         await using var ctx = _contextFactory.CreateContext();

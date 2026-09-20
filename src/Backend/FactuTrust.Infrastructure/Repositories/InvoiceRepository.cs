@@ -566,7 +566,7 @@ public sealed class InvoiceRepository : IInvoiceRepository
 
         var items = await query
             .OrderByDescending(i => i.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

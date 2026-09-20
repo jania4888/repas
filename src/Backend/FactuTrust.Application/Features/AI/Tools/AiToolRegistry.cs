@@ -120,11 +120,20 @@ public static class AiToolRegistry
     };
 
     /// <summary>
+    /// Workflows proposés par l'IA (PR 4.3, <c>EnableStudioAiWorkflowTools</c>) : un seul outil de plan,
+    /// exposé seulement dans le flux d'aperçu (comme <c>studio_plan_record_view</c>).
+    /// </summary>
+    public static readonly HashSet<string> StudioWorkflowToolNames = new(StringComparer.Ordinal)
+    {
+        "studio_plan_workflow"
+    };
+
+    /// <summary>
     /// R7 — outils dont le résultat est poussé au frontend comme événement <c>studio_plan</c>
     /// (carte d'aperçu Valider/Annuler). PR 2.4 : la liste est centralisée ici et couvre désormais
     /// AUSSI <c>studio_plan_changes</c> et <c>studio_plan_view</c> (ils produisaient déjà un plan
     /// confirmable mais leur événement n'était pas émis — changement observable voulu, un seul
-    /// événement par appel d'outil).
+    /// événement par appel d'outil). PR 4.3 : + <c>studio_plan_workflow</c>.
     /// </summary>
     public static readonly HashSet<string> StudioPlanEmittingTools = new(StringComparer.Ordinal)
     {
@@ -133,7 +142,8 @@ public static class AiToolRegistry
         "studio_plan_report",
         "studio_plan_changes",
         "studio_plan_view",
-        "studio_plan_record_view"
+        "studio_plan_record_view",
+        "studio_plan_workflow"
     };
 
     /// <param name="enableMutationTools">When false, tools with <see cref="AiToolDefinition.IsMutating"/> are excluded.</param>
@@ -160,6 +170,11 @@ public static class AiToolRegistry
     /// existants (positionnels jusqu'à <paramref name="studioFocus"/>) restent valides.
     /// False (défaut) = catalogue strictement inchangé.
     /// </param>
+    /// <param name="studioWorkflowTools">
+    /// Workflows proposés par l'IA (PR 4.3). Additif, en fin de signature, même garde que
+    /// <paramref name="studioRecordViewTools"/> : exposé seulement avec le flux d'aperçu.
+    /// False (défaut) = catalogue strictement inchangé.
+    /// </param>
     public static IReadOnlyList<AiToolDefinition> GetDefinitionsForMode(
         AssistantMode mode,
         bool enableMutationTools,
@@ -169,7 +184,8 @@ public static class AiToolRegistry
         bool studioViewTools = false,
         bool studioReportTools = false,
         StudioToolFocus studioFocus = StudioToolFocus.None,
-        bool studioRecordViewTools = false)
+        bool studioRecordViewTools = false,
+        bool studioWorkflowTools = false)
     {
         var studioSet = studioPlanPreview ? StudioBuilderPlanToolNames : StudioBuilderToolNames;
         // Modification et fenêtres ne sont proposées qu'en mode aperçu (rien ne s'applique sans validation).
@@ -185,6 +201,13 @@ public static class AiToolRegistry
         {
             var expanded = new HashSet<string>(studioSet, StringComparer.Ordinal);
             expanded.UnionWith(StudioRecordViewToolNames);
+            studioSet = expanded;
+        }
+        // Workflows (PR 4.3) : même garde que les vues enregistrées — le plan exige le flux d'aperçu.
+        if (studioPlanPreview && studioWorkflowTools)
+        {
+            var expanded = new HashSet<string>(studioSet, StringComparer.Ordinal);
+            expanded.UnionWith(StudioWorkflowToolNames);
             studioSet = expanded;
         }
         if (studioReportTools)
@@ -1674,7 +1697,13 @@ public static class AiToolRegistry
                 + "{ \"op\": \"remove_field\", \"key\": clé } | "
                 + "{ \"op\": \"update_entity\", \"displayName\"?: string, \"icon\"?: string, \"description\"?: string } | "
                 + "{ \"op\": \"set_form\", \"sections\": [ { \"title\"?: string, \"fields\": [ clé | { \"field\": clé, \"width\": \"half|full\" } ] } ] } | "
-                + "{ \"op\": \"set_report\", \"displayName\": string, \"definition\": { \"groupBy\"?, \"measures\"?, \"columns\"?, \"filters\"?, \"sort\"? } } ] }. "
+                + "{ \"op\": \"set_report\", \"displayName\": string, \"definition\": { \"groupBy\"?, \"measures\"?, \"columns\"?, \"filters\"?, \"sort\"? } } | "
+                + "{ \"op\": \"reorder_fields\", \"fields\": [ clé… ] } | "
+                + "{ \"op\": \"change_field_type\", \"key\": clé, \"type\": string, \"options\"?: [...] } (refusé si des données seraient perdues) | "
+                + "{ \"op\": \"add_relation\", \"kind\": \"many_to_one\"|\"many_to_many\", \"target\": clé, \"label\"?: string, \"junctionName\"?: string } | "
+                + "{ \"op\": \"assign_system\", \"system\": clé | \"none\" } | "
+                + "{ \"op\": \"set_view\", \"mode\": \"list\"|\"kanban\"|\"calendar\", \"displayName\": string, \"columns\"?: [...], \"groupBy\"?: clé Select, \"start\"?: clé Date } | "
+                + "{ \"op\": \"set_automation\", … } (acceptée mais ignorée : non prise en charge en v1) ] }. "
                 + "Maximum 20 opérations. La SUPPRESSION d'une table ou d'un système est IMPOSSIBLE par cet outil. "
                 + "Retirer un champ le masque seulement : les données saisies sont conservées.",
             Parameters = new Dictionary<string, AiToolParameter>
@@ -1755,6 +1784,33 @@ public static class AiToolRegistry
             RequiredParameters = new() { "spec_json" },
             IsMutating = true,
             RequiredPermission = Permissions.Studio.DesignForms
+        },
+        new()
+        {
+            Name = "studio_plan_workflow",
+            Description =
+                "PRÉPARE un plan de WORKFLOWS (automatisations « quand X arrive, fais Y puis Z ») sur des tables "
+                + "Studio EXISTANTES, soumis à validation utilisateur (rien n'est créé immédiatement ; les workflows "
+                + "sont créés INACTIFS, l'utilisateur les active après relecture). UTILISER pour « validation d'une "
+                + "dépense au-delà de 1000 », « relance 7 jours après échéance », « facturer à la fin d'une intervention ». "
+                + "Appelle d'abord studio_get_table_schema pour connaître les VRAIES clés de champ. Fournir UN seul "
+                + "argument `spec_json` : { \"workflows\": [ { \"entityKey\": clé de la table, \"name\": libellé, "
+                + "\"trigger\": \"on_create\"|\"on_update\"|\"field_changed\"|\"manual\"|\"scheduled\", "
+                + "\"triggerConfig\"?: pour field_changed { \"field\", \"from\"?, \"to\"? } ; pour scheduled { \"cron\", \"filters\"? } "
+                + "(déclencheur planifié : cron de 5 champs REQUIS, fuseau UTC — ex. \"0 6 * * 1\" = chaque lundi à 06:00 UTC), "
+                + "\"steps\": [ { \"type\": \"condition\"|\"update_field\"|\"erp_action\"|\"notify\"|\"approval\"|\"wait\"|\"create_record\", … } ] } ] } "
+                + "(5 workflows max).",
+            Parameters = new Dictionary<string, AiToolParameter>
+            {
+                ["spec_json"] = new()
+                {
+                    Type = "string",
+                    Description = "Spécification JSON des workflows ({ workflows: [ { entityKey, name, trigger, steps } ] })."
+                }
+            },
+            RequiredParameters = new() { "spec_json" },
+            IsMutating = true,
+            RequiredPermission = Permissions.Studio.DesignEntities
         },
 
         // ════════════════════════════════════════════════════════════════════

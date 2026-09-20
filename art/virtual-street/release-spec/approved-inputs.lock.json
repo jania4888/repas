@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Approved V4 A0 input drift detection, not asset or rights acceptance",
+  "plan": "V4 — Continuation des façades et intérieurs 3D réalistes, Volet II and Annex II-A",
+  "approvedOn": "2026-09-17",
+  "baseCommit": "30f4361852c036e1428110ed2110e91d2760e18d",
+  "files": {
+    "source/canonical36.csv": "4b5cd59e4f9f09786af04155d56484f68a7024c1456dd22306ea1e97c7ef05be",
+    "source/v3-matrix-canonical.md": "42c62613bb2b4b0406729e376456d986bdbeb98bd51df662c762e31c134e6820"
+  }
+}

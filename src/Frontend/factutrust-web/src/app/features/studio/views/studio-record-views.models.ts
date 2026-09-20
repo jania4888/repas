@@ -83,6 +83,20 @@ export interface RecordViewRunRequest {
   rangeEnd?: string | null;
 }
 
+/**
+ * Miroir de `PreviewRecordViewRequest` (4.7v1, R3) : exécution d'un brouillon de définition,
+ * sans identifiant de vue. Ni `search` ni `extraFilters` — le concepteur édite les filtres
+ * de la définition. Corps camelCase, `mode` en chaîne PascalCase (JsonStringEnumConverter global).
+ */
+export interface RecordViewPreviewRequest {
+  mode: RecordViewMode;
+  definition: RecordViewDefinition;
+  page?: number;
+  pageSize?: number | null;
+  rangeStart?: string | null;
+  rangeEnd?: string | null;
+}
+
 export interface RecordViewKanbanGroupDto {
   value: string | null;
   label: string;
@@ -125,8 +139,16 @@ export const RECORD_VIEW_LIMITS = {
   maxCalendarDays: 92,
   maxCardFields: 6,
   maxInValues: 100,
-  maxExtraFilters: 5
+  maxExtraFilters: 5,
+  /** Forme d'une clé de vue (`StudioKey.IsValidShape` : minuscule initiale, `[a-z0-9_]`, 2–64). */
+  keyPattern: /^[a-z][a-z0-9_]{1,63}$/
 } as const;
+
+/**
+ * Clés « système » acceptées en colonne ou en tri sans champ correspondant
+ * (`RecordViewDefinitionValidator.PersistedKeys`) — jamais en filtre.
+ */
+export const RECORD_VIEW_PERSISTED_KEYS: readonly string[] = ['createdAt', 'updatedAt'];
 
 /**
  * Table de compatibilité opérateur / type de champ, miroir exact de

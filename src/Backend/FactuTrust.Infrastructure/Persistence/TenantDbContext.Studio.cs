@@ -1,4 +1,5 @@
 using FactuTrust.Domain.Entities.Studio;
+using FactuTrust.Domain.Entities.Studio.Workflows;
 using Microsoft.EntityFrameworkCore;
 
 namespace FactuTrust.Infrastructure.Persistence;
@@ -22,6 +23,10 @@ public partial class TenantDbContext
     public DbSet<CustomEntityAutomation> CustomEntityAutomations => Set<CustomEntityAutomation>();
     public DbSet<CustomAutomationRun> CustomAutomationRuns => Set<CustomAutomationRun>();
     public DbSet<StudioAiBuildPlan> StudioAiBuildPlans => Set<StudioAiBuildPlan>();
+    public DbSet<StudioWorkflowDefinition> StudioWorkflowDefinitions => Set<StudioWorkflowDefinition>();
+    public DbSet<StudioWorkflowInstance> StudioWorkflowInstances => Set<StudioWorkflowInstance>();
+    public DbSet<StudioWorkflowStepRun> StudioWorkflowStepRuns => Set<StudioWorkflowStepRun>();
+    public DbSet<StudioWorkflowApproval> StudioWorkflowApprovals => Set<StudioWorkflowApproval>();
 
     private static void ConfigureStudio(ModelBuilder builder)
     {
@@ -240,6 +245,99 @@ public partial class TenantDbContext
             entity.Property(e => e.RowVersion).IsRowVersion();
 
             entity.HasIndex(e => new { e.TenantId, e.Status, e.CreatedAt });
+        });
+
+        // PR 4.1 (workflows Studio) : définitions, instances, exécutions d'étapes (append-only) et
+        // approbations. Tables NOUVELLES et autonomes : aucune FK, aucune navigation (S-contract),
+        // enums stockés en int. Noms d'index figés (annexe A-41 §0.4).
+        builder.Entity<StudioWorkflowDefinition>(entity =>
+        {
+            entity.ToTable("StudioWorkflowDefinitions");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Key).HasMaxLength(64).IsRequired();
+            entity.Property(e => e.Name).HasMaxLength(128).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(512);
+            entity.Property(e => e.Trigger).HasConversion<int>();
+            entity.Property(e => e.TriggerConfigJson).HasMaxLength(2048).IsRequired().HasDefaultValue("{}");
+            entity.Property(e => e.StepsJson).HasColumnType("nvarchar(max)").IsRequired();
+            entity.Property(e => e.Version).HasDefaultValue(1);
+
+            entity.Property(e => e.RowVersion).IsRowVersion();
+
+            entity.HasIndex(e => new { e.TenantId, e.EntityDefinitionId, e.Key })
+                .IsUnique()
+                .HasDatabaseName("UX_StudioWorkflowDefinitions_Tenant_Entity_Key")
+                .HasFilter("[IsDeleted] = 0");
+            entity.HasIndex(e => new { e.TenantId, e.EntityDefinitionId, e.Trigger, e.IsActive })
+                .HasDatabaseName("IX_StudioWorkflowDefinitions_Tenant_Entity_Trigger_Active");
+
+            // Soft-delete filter on this NEW table only.
+            entity.HasQueryFilter(e => !e.IsDeleted);
+        });
+
+        builder.Entity<StudioWorkflowInstance>(entity =>
+        {
+            entity.ToTable("StudioWorkflowInstances");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.TriggerKind).HasConversion<int>();
+            entity.Property(e => e.Status).HasConversion<int>();
+            entity.Property(e => e.CurrentStepKey).HasMaxLength(64);
+            entity.Property(e => e.ContextJson).HasColumnType("nvarchar(max)").IsRequired();
+            entity.Property(e => e.Error).HasMaxLength(2000);
+            entity.Property(e => e.Depth).HasDefaultValue(0);
+
+            // Le bail (TryLease/ReleaseLease) du job de reprise s'appuie sur ce jeton.
+            entity.Property(e => e.RowVersion).IsRowVersion();
+
+            entity.HasIndex(e => new { e.TenantId, e.Status, e.DueAt })
+                .HasDatabaseName("IX_StudioWorkflowInstances_Tenant_Status_DueAt");
+            entity.HasIndex(e => new { e.TenantId, e.RecordId, e.StartedAt })
+                .HasDatabaseName("IX_StudioWorkflowInstances_Tenant_Record_StartedAt");
+            entity.HasIndex(e => new { e.TenantId, e.WorkflowDefinitionId, e.StartedAt })
+                .HasDatabaseName("IX_StudioWorkflowInstances_Tenant_Definition_StartedAt");
+        });
+
+        builder.Entity<StudioWorkflowStepRun>(entity =>
+        {
+            entity.ToTable("StudioWorkflowStepRuns");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.StepKey).HasMaxLength(64).IsRequired();
+            entity.Property(e => e.StepType).HasMaxLength(32).IsRequired();
+            entity.Property(e => e.Status).HasConversion<int>();
+            entity.Property(e => e.Outcome).HasMaxLength(16);
+            entity.Property(e => e.InputJson).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.ResultJson).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.Error).HasMaxLength(2000);
+
+            // Table append-only : pas de RowVersion, pas de filtre de suppression logique.
+            entity.HasIndex(e => new { e.TenantId, e.InstanceId, e.StepIndex })
+                .HasDatabaseName("IX_StudioWorkflowStepRuns_Tenant_Instance_Step");
+        });
+
+        builder.Entity<StudioWorkflowApproval>(entity =>
+        {
+            entity.ToTable("StudioWorkflowApprovals");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.StepKey).HasMaxLength(64).IsRequired();
+            entity.Property(e => e.AssigneeRole).HasMaxLength(32);
+            entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Message).HasMaxLength(1000);
+            entity.Property(e => e.Status).HasConversion<int>();
+            entity.Property(e => e.Comment).HasMaxLength(2000);
+
+            // La décision (Decide depuis Pending) s'appuie sur ce jeton contre les doubles clics.
+            entity.Property(e => e.RowVersion).IsRowVersion();
+
+            entity.HasIndex(e => new { e.TenantId, e.AssigneeUserId, e.Status })
+                .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_AssigneeUser_Status");
+            entity.HasIndex(e => new { e.TenantId, e.AssigneeRole, e.Status })
+                .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_AssigneeRole_Status");
+            entity.HasIndex(e => new { e.TenantId, e.InstanceId })
+                .HasDatabaseName("IX_StudioWorkflowApprovals_Tenant_Instance");
         });
     }
 }

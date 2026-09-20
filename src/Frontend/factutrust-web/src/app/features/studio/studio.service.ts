@@ -6,6 +6,7 @@ import { createHttpContextSkipGlobalErrorUi } from '@core/http-context';
 import { ApiResponse, PagedResult } from '@core/services/client.service';
 import { parseFieldType } from '@shared/studio-runtime/studio-runtime.models';
 import {
+  ChangeCustomFieldTypeRequest,
   CreateCustomEntityRequest,
   CreateCustomFieldRequest,
   CustomEntity,
@@ -27,6 +28,7 @@ import {
   SqlColumn,
   SqlQueryResult,
   SqlTable,
+  StudioFieldTypeCheckDto,
   CustomSystem,
   CustomSystemDetail,
   StudioNavNode,
@@ -38,6 +40,7 @@ import {
   SaveAutomationRequest
 } from './studio.models';
 import { CreateManyToManyRelationRequest, EntityRelationDto } from './relations/studio-relations.models';
+import { STUDIO_RECORD_HISTORY_PAGE_SIZE, StudioRecordHistoryEntry } from './records/studio-record-history.models';
 
 @Injectable({ providedIn: 'root' })
 export class StudioService {
@@ -86,6 +89,22 @@ export class StudioService {
 
   reorderFields(entityId: string, orderedFieldIds: string[]): Observable<ApiResponse<unknown>> {
     return this.http.put<ApiResponse<unknown>>(`${this.base}/entities/${entityId}/fields/reorder`, { orderedFieldIds });
+  }
+
+  /**
+   * `GET entities/{id}/fields/{fieldId}/type-check?to=` — `to` est le NOM d'enum (`CustomFieldType[type]`),
+   * jamais la valeur numérique. Lecture seule ; erreurs 400/404/409 gérées par l'appelant.
+   */
+  checkFieldTypeChange(entityId: string, fieldId: string, to: string): Observable<ApiResponse<StudioFieldTypeCheckDto>> {
+    const params = new HttpParams().set('to', to);
+    return this.http.get<ApiResponse<StudioFieldTypeCheckDto>>(
+      `${this.base}/entities/${entityId}/fields/${fieldId}/type-check`, { params, context: createHttpContextSkipGlobalErrorUi() });
+  }
+
+  /** `PATCH entities/{id}/fields/{fieldId}/type` : 400 `Validation` / 404 / 409 via `StudioErrorMapping`. */
+  changeFieldType(entityId: string, fieldId: string, req: ChangeCustomFieldTypeRequest): Observable<ApiResponse<CustomField>> {
+    return this.http.patch<ApiResponse<CustomField>>(
+      `${this.base}/entities/${entityId}/fields/${fieldId}/type`, req, { context: createHttpContextSkipGlobalErrorUi() });
   }
 
   // ---- Relations (PR 2.1/2.2 — plusieurs-à-plusieurs) ----
@@ -159,6 +178,22 @@ export class StudioService {
 
   deleteRecord(entityKey: string, id: string): Observable<ApiResponse<unknown>> {
     return this.http.delete<ApiResponse<unknown>>(`${this.base}/records/${entityKey}/${id}`);
+  }
+
+  /**
+   * Historique d'un enregistrement (4.7h3, D-47-64) : `GET records/{entityKey}/{id}/history`, page 1 de 20 par défaut,
+   * du plus récent au plus ancien. Erreurs (400/403/404/500) gérées en ligne par l'onglet : pas de toast global.
+   */
+  listRecordHistory(
+    entityKey: string,
+    id: string,
+    page = 1,
+    pageSize = STUDIO_RECORD_HISTORY_PAGE_SIZE
+  ): Observable<ApiResponse<PagedResult<StudioRecordHistoryEntry>>> {
+    const params = new HttpParams().set('page', String(page)).set('pageSize', String(pageSize));
+    return this.http.get<ApiResponse<PagedResult<StudioRecordHistoryEntry>>>(
+      `${this.base}/records/${encodeURIComponent(entityKey)}/${id}/history`,
+      { params, context: createHttpContextSkipGlobalErrorUi() });
   }
 
   // ---- Reports ----

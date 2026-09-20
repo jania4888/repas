@@ -58,6 +58,26 @@ public sealed class RecordQuerySqlTests
         Assert.Contains("r.[Id] ASC", result.OrderBySql);
     }
 
+    /// <summary>4.7★2 (S7) : un filtre de déclencheur planifié dont le champ a été supprimé depuis (clé absente du
+    /// dictionnaire des types) ne fait pas échouer le tick — repli en comparaison texte sur le chemin JSON, paramétrée.</summary>
+    [Fact]
+    public void Eq_on_a_field_that_no_longer_exists_falls_back_to_a_parameterized_text_comparison()
+    {
+        var result = RecordQuerySql.Build(Spec(
+            filters: new[] { new RecordViewFilter("ancien_statut", "eq", JsonValue.Create("archive")) }), Types);
+
+        Assert.Contains("JSON_VALUE(r.[DataJson], '$.ancien_statut') = @p0", result.WhereSql);
+        Assert.DoesNotContain("TRY_CONVERT", result.WhereSql);
+        var p = result.Parameters.Single(x => x.Name == "@p0");
+        Assert.Equal("archive", p.Value);
+        Assert.Equal(SqlDbType.NVarChar, p.Type);
+
+        // Les opérateurs numériques / de date sur un champ disparu restent eux aussi une comparaison texte sans exception.
+        var gt = RecordQuerySql.Build(Spec(
+            filters: new[] { new RecordViewFilter("ancien_montant", "gt", JsonValue.Create(10)) }), Types);
+        Assert.Contains("'$.ancien_montant'", gt.WhereSql);
+    }
+
     [Fact]
     public void Eq_on_text_uses_json_value_with_a_parameter()
     {

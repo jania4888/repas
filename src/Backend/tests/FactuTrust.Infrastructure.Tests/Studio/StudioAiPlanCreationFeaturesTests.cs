@@ -230,6 +230,22 @@ public sealed class StudioAiPlanCreationFeaturesTests
         VerifyNoCreation();
     }
 
+    /// <summary>
+    /// PR 4.3 : la nature Workflow est connue de l'enum mais reste HORS de la création depuis une
+    /// spec (ratifié) — même refus <c>Validation.kind</c> que les autres natures hors création.
+    /// </summary>
+    [Fact]
+    public async Task Create_from_spec_refuses_kind_Workflow()
+    {
+        var result = await FromSpecHandler().Handle(
+            new CreateStudioAiPlanFromSpecCommand("Workflow", "{ \"workflows\": [] }"),
+            CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Validation.kind", result.Error.Code);
+        VerifyNoCreation();
+    }
+
     [Fact]
     public async Task FromSpec_without_design_permission_is_unauthorized()
     {

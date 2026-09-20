@@ -71,7 +71,7 @@ public sealed class SalesOrderRepository : ISalesOrderRepository
         var items = await query
             .OrderByDescending(o => o.OrderDate)
             .ThenByDescending(o => o.Number.Sequence)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

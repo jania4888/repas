@@ -23,6 +23,15 @@ public sealed class StorefrontOptions
     /// <summary>Polling interval of the background projection sync service.</summary>
     public int ProjectionPollIntervalSeconds { get; set; } = 10;
 
-    /// <summary>When <c>true</c>, public order submissions require a valid Turnstile / reCAPTCHA token.</summary>
+    /// <summary>When <c>true</c>, public order submissions require server-verified Cloudflare Turnstile.</summary>
     public bool OrderSubmissionRequiresCaptcha { get; set; } = true;
+
+    /// <summary>Server-only Turnstile secret. Supply through the deployment secret store, never the frontend.</summary>
+    public string TurnstileSecretKey { get; set; } = string.Empty;
+
+    /// <summary>Exact permitted widget DNS hostnames (no schemes, ports, paths or wildcards).</summary>
+    public string[] TurnstileAllowedHostnames { get; set; } = Array.Empty<string>();
+
+    /// <summary>Optional exact widget action. Empty disables action checking, not hostname checking.</summary>
+    public string? TurnstileExpectedAction { get; set; }
 }

@@ -3,6 +3,24 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '@shared/components/confirm-modal/confirm-modal.component';
 import { PromptModalComponent } from '@shared/components/confirm-modal/prompt-modal.component';
 
+/**
+ * 4.6T1 / D-44-91 — les appelants passaient des classes PrimeNG (`p-button-danger`, …) au wrapper
+ * ng-bootstrap : sans effet sur un `<button class="btn …">`. Normalise en classe Bootstrap globale ;
+ * une valeur inconnue (ou déjà `btn-*`) est retournée telle quelle.
+ */
+export function normalizeConfirmButtonClass(cls?: string): string {
+  const map: Record<string, string> = {
+    'p-button-danger': 'btn-danger',
+    'p-button-success': 'btn-success',
+    'p-button-secondary': 'btn-secondary',
+    'p-button-primary': 'btn-primary',
+    'p-button-warning': 'btn-warning',
+    'p-button-info': 'btn-info',
+    'p-button-help': 'btn-secondary'
+  };
+  return cls ? (map[cls] ?? cls) : cls!;
+}
+
 export interface Confirmation {
   message?: string;
   header?: string;
@@ -61,7 +79,7 @@ export class ConfirmationService {
    *   icon: 'pi pi-exclamation-triangle',
    *   acceptLabel: 'Supprimer',
    *   rejectLabel: 'Annuler',
-   *   acceptButtonStyleClass: 'p-button-danger',
+   *   acceptButtonStyleClass: 'btn-danger',
    *   accept: () => { this.deleteItem(); },
    *   reject: () => { console.log('Cancelled'); }
    * });
@@ -94,7 +112,7 @@ export class ConfirmationService {
     ref.componentInstance.icon = confirmation.icon ?? '';
     ref.componentInstance.acceptLabel = confirmation.acceptLabel ?? 'Oui';
     ref.componentInstance.rejectLabel = confirmation.rejectLabel ?? 'Non';
-    ref.componentInstance.acceptButtonStyleClass = confirmation.acceptButtonStyleClass ?? 'btn-primary';
+    ref.componentInstance.acceptButtonStyleClass = normalizeConfirmButtonClass(confirmation.acceptButtonStyleClass) ?? 'btn-primary';
 
     // Gestion des résultats
     ref.result.then(
@@ -186,7 +204,7 @@ export class ConfirmationService {
     ref.componentInstance.placeholder = config.placeholder ?? '';
     ref.componentInstance.acceptLabel = config.acceptLabel ?? 'Confirmer';
     ref.componentInstance.rejectLabel = config.rejectLabel ?? 'Annuler';
-    ref.componentInstance.acceptButtonStyleClass = config.acceptButtonStyleClass ?? 'btn-primary';
+    ref.componentInstance.acceptButtonStyleClass = normalizeConfirmButtonClass(config.acceptButtonStyleClass) ?? 'btn-primary';
     ref.componentInstance.required = config.required ?? true;
     ref.componentInstance.maxLength = config.maxLength ?? 500;
 

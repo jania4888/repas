@@ -24,6 +24,8 @@ export interface NavSubItem {
   platformSettingsOnly?: boolean;
   /** Visible only to FirmManager in native accounting-firm mode. */
   managerOnly?: boolean;
+  /** Compteur affiché à droite du libellé (ex. approbations en attente). */
+  badge?: number | null;
   /** One nesting level max (e.g. secondary-nav flyout). UI must not recurse further. */
   children?: NavSubItem[];
 }

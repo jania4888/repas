@@ -49,7 +49,8 @@ import { StudioAiTemplatesCardComponent } from './studio-ai-templates-card.compo
           [loading]="historyLoading()"
           [error]="historyError()"
           [busy]="busy()"
-          (open)="openPlan.emit($event)" />
+          (open)="openPlan.emit($event)"
+          (replay)="replayPlan.emit($event)" />
       }
 
       <app-studio-ai-promo-card [busy]="busy()" (tryPrompt)="tryPrompt.emit($event)" />
@@ -75,6 +76,7 @@ export class StudioAiRailComponent {
   readonly duplicate = output<void>();
   readonly exportSystem = output<void>();
   readonly openPlan = output<StudioAiPlanListItemDto>();
+  readonly replayPlan = output<StudioAiPlanListItemDto>();
   readonly tryPrompt = output<string>();
 
   protected readonly panelLabel = STUDIO_AI_LABELS.rail.panelLabel;

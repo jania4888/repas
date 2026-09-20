@@ -1,0 +1,264 @@
+// Calendrier des vues enregistrées (2.5b). Aucune couleur de statut codée en dur : palette
+// cyclique sw-0..sw-5 pilotée par `colorScaleIndex` (hash déterministe de la valeur de champ).
+:host {
+  display: block;
+}
+
+.cal {
+  display: flex;
+  flex-direction: column;
+  gap: .625rem;
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+  }
+
+  &__title {
+    flex: 1 1 auto;
+    margin: 0;
+    font-size: .9375rem;
+    font-weight: 600;
+    color: #1e293b;
+    text-transform: capitalize;
+  }
+
+  &__legend {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    flex-wrap: wrap;
+    font-size: .75rem;
+    color: #475569;
+  }
+
+  &__legend-title {
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  &__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .3125rem;
+  }
+}
+
+.swatch {
+  width: .625rem;
+  height: .625rem;
+  border-radius: 50%;
+  display: inline-block;
+  background: var(--sw-color, #94a3b8);
+}
+
+@for $i from 0 through 5 {
+  .sw-#{$i} {
+    --sw-color: nth((#4f46e5, #0ea5e9, #16a34a, #d97706, #dc2626, #7c3aed), $i + 1);
+  }
+}
+
+.cal-grid {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+  border-radius: .5rem;
+  overflow: hidden;
+
+  &__dow {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #f8fafc;
+    font-size: .75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-align: center;
+    padding: .375rem 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid #f1f5f9;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.cal-day {
+  min-height: 92px;
+  padding: .25rem .3125rem;
+  border-right: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: .125rem;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &--outside {
+    background: #fafbfc;
+    color: #cbd5e1;
+  }
+
+  &--weekend {
+    background: #fcfcfd;
+  }
+
+  &--today .cal-day__num {
+    background: #4f46e5;
+    color: #fff;
+    border-radius: 50%;
+  }
+
+  &__num {
+    font-size: .75rem;
+    font-weight: 600;
+    color: #475569;
+    width: 1.375rem;
+    height: 1.375rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__more {
+    font-size: .6875rem;
+    color: #64748b;
+    background: transparent;
+    border: none;
+    text-align: left;
+    padding: 0;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.cal-ev {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-radius: .25rem;
+  padding: .0625rem .3125rem;
+  font-size: .6875rem;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--sw-color, #94a3b8);
+
+  &--span {
+    font-weight: 600;
+  }
+}
+
+@for $i from 0 through 5 {
+  .cal-ev--color-#{$i} {
+    --sw-color: nth((#4f46e5, #0ea5e9, #16a34a, #d97706, #dc2626, #7c3aed), $i + 1);
+  }
+}
+
+.cal-ev--color-6 {
+  --sw-color: #94a3b8;
+}
+
+// Variante semaine : événements plus lisibles avec le libellé de couleur en second plan.
+.week-day__body .cal-ev {
+  padding: .25rem .375rem;
+  white-space: normal;
+
+  small {
+    display: block;
+    font-weight: 400;
+    opacity: .85;
+  }
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: .5rem;
+}
+
+.week-day {
+  border: 1px solid #e2e8f0;
+  border-radius: .5rem;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+
+  &--weekend {
+    background: #fafbfc;
+  }
+
+  &--today {
+    border-color: #4f46e5;
+  }
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: .375rem 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  &__dow {
+    font-size: .6875rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+  }
+
+  &__date {
+    font-size: .9375rem;
+    font-weight: 700;
+    color: #1e293b;
+  }
+
+  &__body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: .1875rem;
+    padding: .375rem;
+    overflow-y: auto;
+  }
+}
+
+.cal-popover {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: .375rem;
+
+  h4 {
+    margin: 0;
+    font-size: .875rem;
+    color: #1e293b;
+  }
+
+  p {
+    margin: 0;
+    font-size: .8125rem;
+    color: #475569;
+  }
+}

@@ -47,25 +47,39 @@ public sealed class StudioBridgeExecutor : IStudioBridgeExecutor
             return await RecordAsync(tenantId, automation.Id, recordId, StudioAutomationRunStatus.Failed,
                 null, mapError, runBy, cancellationToken);
 
+        var outcome = await ExecuteActionAsync(automation.ActionKey, args, $"studio-bridge:{automation.Id:N}", cancellationToken);
+        return await RecordAsync(
+            tenantId, automation.Id, recordId,
+            outcome.Success ? StudioAutomationRunStatus.Success : StudioAutomationRunStatus.Failed,
+            outcome.ResultJson,
+            outcome.Error,
+            runBy, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<StudioBridgeOutcome> ExecuteActionAsync(
+        string actionKey, IReadOnlyDictionary<string, object?> args, string correlationId,
+        CancellationToken cancellationToken = default)
+    {
+        var tool = AiToolRegistry.GetToolDefinition(actionKey);
+        if (tool is null || !tool.IsMutating)
+            return new StudioBridgeOutcome(false, $"Action ERP « {actionKey} » inconnue ou non autorisée.", null);
+
         AiToolResult result;
         try
         {
             result = await _toolExecutor.ExecuteAsync(
-                tool.Name, args, new AiToolExecutionContext($"studio-bridge:{automation.Id:N}"), cancellationToken);
+                tool.Name, new Dictionary<string, object?>(args), new AiToolExecutionContext(correlationId), cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Studio bridge action {Action} threw for automation {AutomationId}", tool.Name, automation.Id);
-            return await RecordAsync(tenantId, automation.Id, recordId, StudioAutomationRunStatus.Failed,
-                null, ex.Message, runBy, cancellationToken);
+            _logger.LogWarning(ex, "Studio bridge action {Action} threw (correlation {CorrelationId})", tool.Name, correlationId);
+            return new StudioBridgeOutcome(false, ex.Message, null);
         }
 
-        return await RecordAsync(
-            tenantId, automation.Id, recordId,
-            result.Success ? StudioAutomationRunStatus.Success : StudioAutomationRunStatus.Failed,
-            result.Success ? result.Data : null,
-            result.Success ? null : result.ErrorMessage,
-            runBy, cancellationToken);
+        return result.Success
+            ? new StudioBridgeOutcome(true, null, result.Data)
+            : new StudioBridgeOutcome(false, result.ErrorMessage, null);
     }
 
     private async Task<CustomAutomationRun> RecordAsync(

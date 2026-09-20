@@ -307,7 +307,7 @@ export class EmployeeGarnishmentsTabComponent implements OnInit {
       header: 'Confirmation',
       acceptLabel: 'Annuler la saisie',
       rejectLabel: 'Fermer',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => this.cancel(g.id)
     });
   }

@@ -81,6 +81,12 @@ public static class SubscriptionLimits
         public const int MaxCustomRecordsPerEntity = 1000;
         /// <summary>Vues enregistrées par table Studio (PR 2.3).</summary>
         public const int MaxCustomRecordViewsPerEntity = 20;
+        /// <summary>Workflows par table Studio (PR 4.1).</summary>
+        public const int MaxWorkflowsPerEntity = 20;
+        /// <summary>Étapes maximales par workflow Studio (PR 4.1).</summary>
+        public const int MaxWorkflowSteps = 30;
+        /// <summary>Instances de workflow conservées par enregistrement (PR 4.1).</summary>
+        public const int MaxWorkflowInstancesPerRecord = 200;
     }
 
     public static class Monthly

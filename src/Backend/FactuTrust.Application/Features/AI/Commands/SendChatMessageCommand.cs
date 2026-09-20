@@ -519,7 +519,8 @@ public sealed class SendChatMessageHandler
             _ollamaSettings.EnableStudioAiViewTools,
             _ollamaSettings.EnableStudioAiReportTools && _ollamaSettings.EnableStudioSqlReportEngine,
             studioToolFocus,
-            studioRecordViewTools: _ollamaSettings.EnableStudioAiRecordViewTools && _ollamaSettings.EnableStudioRecordViews);
+            studioRecordViewTools: _ollamaSettings.EnableStudioAiRecordViewTools && _ollamaSettings.EnableStudioRecordViews,
+            studioWorkflowTools: StudioAiPlanCreation.WorkflowToolsEnabled(_ollamaSettings));
         // Les schémas d'outils sont injectés dans le contexte du modèle : on les compte dans
         // l'estimation de taille pour dimensionner num_ctx (sinon Ollama tronque silencieusement
         // l'invite quand de nombreux outils sont exposés → réponses dégradées / hors-sujet).
@@ -778,6 +779,7 @@ public sealed class SendChatMessageHandler
                     _ollamaSettings.EnableStudioAiReportTools && _ollamaSettings.EnableStudioSqlReportEngine,
                     studioToolFocus,
                     studioRecordViewTools: _ollamaSettings.EnableStudioAiRecordViewTools && _ollamaSettings.EnableStudioRecordViews,
+                    studioWorkflowTools: StudioAiPlanCreation.WorkflowToolsEnabled(_ollamaSettings),
                     preExecutedToolNamesToExclude: firmPreExecutedToolNames);
                 toolsApproxChars = tools.Count > 0 ? JsonSerializer.Serialize(tools).Length : 0;
             }
@@ -1689,7 +1691,7 @@ public sealed class SendChatMessageHandler
                             SourcesJsonOptions);
                     }
                     else if ((toolCall.Function.Name == "studio_plan_app" || toolCall.Function.Name == "studio_plan_system"
-                                || toolCall.Function.Name == "studio_plan_record_view")
+                                || toolCall.Function.Name == "studio_plan_record_view" || toolCall.Function.Name == "studio_plan_workflow")
                         && !toolResult.Success && assistantMode == AssistantMode.StudioBuilder)
                     {
                         studioBuilderToolError = string.IsNullOrWhiteSpace(toolResult.ErrorMessage)
@@ -2993,7 +2995,8 @@ public sealed class SendChatMessageHandler
         IReadOnlyCollection<string>? preExecutedToolNamesToExclude = null,
         // PR 2.4 : vues enregistrées proposées par l'IA — en fin de signature, les appels
         // positionnels existants (jusqu'à studioFocus) restent valides.
-        bool studioRecordViewTools = false)
+        bool studioRecordViewTools = false,
+        bool studioWorkflowTools = false)
     {
         var isCpuOnly = inferenceProfile?.Device == OllamaInferenceDevice.CpuOnly;
         var isScoped = mode == AssistantMode.Default && agentScope != AssistantAgentScope.None;
@@ -3015,7 +3018,7 @@ public sealed class SendChatMessageHandler
         var useCpuIntentSubset = cpuSubsetApplies && effectiveIntent is AiToolIntentRouter.AiToolIntent.Sales
             or AiToolIntentRouter.AiToolIntent.Stock
             or AiToolIntentRouter.AiToolIntent.Accounting;
-        var definitions = AiToolRegistry.GetDefinitionsForMode(mode, enableMutationTools, agentScope, studioPlanPreview, studioModifyTools, studioViewTools, studioReportTools, studioFocus, studioRecordViewTools: studioRecordViewTools)
+        var definitions = AiToolRegistry.GetDefinitionsForMode(mode, enableMutationTools, agentScope, studioPlanPreview, studioModifyTools, studioViewTools, studioReportTools, studioFocus, studioRecordViewTools: studioRecordViewTools, studioWorkflowTools: studioWorkflowTools)
             .Where(tool => AiToolIntentRouter.ShouldIncludeTool(
                 tool.Name,
                 effectiveIntent,
@@ -3037,7 +3040,7 @@ public sealed class SendChatMessageHandler
             {
                 // Synthesis ∩ scope trop étroit : repli déterministe sur la variante CPU du scope (lecture seule).
                 var cpuScopeTools = AiAgentScopeCatalog.GetCpuToolNames(agentScope);
-                definitions = AiToolRegistry.GetDefinitionsForMode(mode, enableMutationTools, agentScope, studioRecordViewTools: studioRecordViewTools)
+                definitions = AiToolRegistry.GetDefinitionsForMode(mode, enableMutationTools, agentScope, studioRecordViewTools: studioRecordViewTools, studioWorkflowTools: studioWorkflowTools)
                     .Where(t => cpuScopeTools.Contains(t.Name))
                     .ToList();
             }

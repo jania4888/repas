@@ -180,7 +180,7 @@ public sealed class SupplierInvoiceRepository : ISupplierInvoiceRepository
         var items = await query
             .OrderByDescending(si => si.InvoiceDate)
             .ThenByDescending(si => si.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

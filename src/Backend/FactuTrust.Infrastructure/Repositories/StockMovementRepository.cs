@@ -41,7 +41,7 @@ public sealed class StockMovementRepository : IStockMovementRepository
 
         var items = await query
             .OrderByDescending(m => m.OccurredAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
@@ -109,7 +109,7 @@ public sealed class StockMovementRepository : IStockMovementRepository
 
         var items = await query
             .OrderByDescending(m => m.OccurredAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
@@ -223,7 +223,7 @@ public sealed class StockMovementRepository : IStockMovementRepository
 
         var items = await query
             .OrderByDescending(x => x.m.OccurredAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

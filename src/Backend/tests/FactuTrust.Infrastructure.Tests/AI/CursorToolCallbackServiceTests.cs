@@ -78,6 +78,7 @@ public sealed class CursorToolCallbackServiceTests
     [InlineData("studio_plan_changes")]
     [InlineData("studio_plan_view")]
     [InlineData("studio_plan_record_view")]
+    [InlineData("studio_plan_workflow")]
     public async Task Plan_tool_success_enqueues_exactly_one_studio_plan_event(string toolName)
     {
         // La liste AiToolRegistry.StudioPlanEmittingTools est la SEULE condition d'émission :

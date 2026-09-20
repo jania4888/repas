@@ -212,7 +212,8 @@ public sealed class PromotionRecommendationService : IPromotionRecommendationSer
     public async Task<PagedResult<PromotionRecommendationDto>> GetActiveAsync(
         Guid? productId, Guid? categoryId, DateTime? periodStart, DateTime? periodEnd, int page, int pageSize, CancellationToken ct = default)
     {
-        if (page < 1) page = 1;
+        // 4.7 suite (R52, motif D-45-28) : borne haute pour que (page - 1) * pageSize reste un int.
+        if (page < 1) page = 1; else if (page > int.MaxValue / 200) page = int.MaxValue / 200;
         if (pageSize < 1 || pageSize > 200) pageSize = 50;
 
         await using var ctx = _contextFactory.CreateContext();

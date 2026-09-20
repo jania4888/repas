@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "kind": "offline-production-requirements",
+  "milestone": "A0",
+  "publicationAllowed": false,
+  "productionScope": "four-pilots-only",
+  "pilotOrder": ["C12", "C17", "C19", "C05"],
+  "extensionGate": "written-human-review-of-all-four-real-pilots",
+  "extensionAuthorized": false,
+  "styles": ["Classic", "Modern", "Vintage", "Minimal", "Artisan"],
+  "qualities": ["economy", "standard"],
+  "aliases": {
+    "entreprise": "C10",
+    "commerce": "C16",
+    "services": "C22",
+    "btp-construction": "C26",
+    "association": "C31",
+    "etablissement-educatif": "C36"
+  },
+  "global": {
+    "profileKeyProposed": "vp-neutral-global",
+    "editorialRevisionProposed": "r1",
+    "dimensionsProposedLxPxHMetres": [6, 8, 3.2],
+    "brief": "Accueil polyvalent, seuil, banquette, table, sortie ; aucun signal sectoriel.",
+    "renderKeys": ["vp-neutral-global-r1-exterior", "vp-neutral-global-r1-interior"]
+  },
+  "expectedPlanningCounts": {
+    "specializedCompositions": 36,
+    "families": 8,
+    "pilots": 4,
+    "largeLocalExteriors": 8,
+    "reviewCards": 43,
+    "canonicalPairImages": 72,
+    "minimumDistinctImageCompositions": 74,
+    "businessStyleResolutions": 180,
+    "businessStyleQualityConfigurations": 360,
+    "baseRuntimeCaptures": 720,
+    "theoreticalExportsBeforeSharingOrPartition": 164
+  },
+  "toolchain": {
+    "blenderVersion": null,
+    "gltfExporterVersion": null,
+    "runtimeTarget": "three/161",
+    "compressionBaseline": "none-core-gltf-pbr-png-jpeg"
+  },
+  "dcc": {
+    "collections": ["Architecture", "Props", "BrandingAnchors", "CollisionGuides", "CameraGuides", "BakeSources"],
+    "exportCollections": ["Architecture", "Props", "BrandingAnchors"],
+    "metresPerUnit": 1,
+    "gltfUp": "+Y",
+    "gltfFacade": "+Z",
+    "origin": "threshold",
+    "lightmap": {"gltfSemantic": "TEXCOORD_1", "threeAttribute": "uv1", "channel": 1},
+    "canonicalImages": {"quality": "standard", "lighting": "daylight", "longEdgePixels": 1600, "targetMaxKiB": 300}
+  },
+  "navigationProposedMetres": {
+    "cameraHeight": 1.65,
+    "capsuleRadius": 0.3,
+    "usualPassageMinimum": 1.2,
+    "turningArea": 1.5
+  },
+  "subBudgetsProposed": {
+    "rule": "Smallest applicable limit wins; not measured, not additive allocations.",
+    "connectorBothQualities": {"lod0Triangles": 7800, "lod1Triangles": 780, "geometryKiB": 256, "ownDependenciesMiB": 1, "sharedStreetAtlasesMiB": 2},
+    "ordinaryInterior": {
+      "economy": {"triangles": 30000, "geometryMiB": 1, "textureFilesMiB": 2},
+      "standard": {"triangles": 60000, "geometryMiB": 1.5, "textureFilesMiB": 4}
+    },
+    "hall": {
+      "economy": {"triangles": 50000, "geometryMiB": 1.5, "textureFilesMiB": 3},
+      "standard": {"triangles": 100000, "geometryMiB": 2.5, "textureFilesMiB": 6}
+    },
+    "localExterior": {
+      "economy": {"triangles": 25000, "geometryMiB": 0.7, "textureFilesMiB": 1.5},
+      "standard": {"triangles": 50000, "geometryMiB": 1, "textureFilesMiB": 2}
+    },
+    "transitiveSceneTransferMiB": {
+      "economy": {"street": 6, "ordinaryInterior": 4, "hall": 6},
+      "standard": {"street": 10, "ordinaryInterior": 6, "hall": 10}
+    }
+  }
+}

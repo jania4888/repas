@@ -71,7 +71,8 @@ public sealed class AiToolRegistryStudioRecordViewToolsTests
             new[]
             {
                 "studio_plan_app", "studio_plan_system", "studio_plan_report",
-                "studio_plan_changes", "studio_plan_view", "studio_plan_record_view"
+                "studio_plan_changes", "studio_plan_view", "studio_plan_record_view",
+                "studio_plan_workflow"
             }.OrderBy(n => n),
             AiToolRegistry.StudioPlanEmittingTools.OrderBy(n => n));
     }

@@ -41,7 +41,9 @@ existants ne changent pas.
 ### 2.2 Création d'une relation N‑N (`CreateManyToManyRelationCommand`)
 
 `POST api/studio/entities/{id}/relations/many-to-many` (policy `StudioDesignEntities`), corps
-`CreateManyToManyRelationRequest { targetEntityId, label?, junctionKey?, junctionDisplayName? }`.
+`CreateManyToManyRelationRequest { targetEntityId, label?, junctionKey?, junctionDisplayName?,
+junctionAttributeLabel? }` (le dernier champ est ajouté en **fin** de DTO pour préserver le
+constructeur positionnel — v1.1, D‑47‑40).
 
 Le handler **compose les commandes existantes** (`CreateCustomEntityCommand`, `CreateCustomFieldCommand`)
 plutôt que d'écrire directement dans les dépôts, pour bénéficier des mêmes validations, quotas et
@@ -52,17 +54,29 @@ audits :
    (`Validation.source` / `Validation.target`), quota d'entités (`StudioQuotas.MaxEntitiesKey`).
 2. Clé de jonction : `junctionKey` explicite (slugifiée) ou `{source}_{target}` ; en collision, la clé
    par défaut est suffixée `_2` … `_9`, une clé **explicite** en collision renvoie `Conflict` (409).
+   Le dialogue propose la même clé par défaut `{source}_{target}` **sans préfixe** (4.6e, D-46-09 — le
+   préfixe de repli `v_`, réservé aux vues, n'est plus utilisé ; les jonctions `v_*` existantes restent
+   valides, aucune migration).
    Nom : `junctionDisplayName` ou « Source – Cible » ; icône `link` ; `SystemId` = celui de la source.
 3. Deux champs `RelationCustom` **requis, non uniques**, clés = clés des entités liées
    (`employes`, `projets`) ; `_ref` si la clé est réservée (`id`…), `_a` / `_b` pour un auto‑lien
    (source == cible n'est pas permis aujourd'hui, la règle protège l'avenir).
+3bis. **Attribut de liaison optionnel** (v1.1, D‑47‑40) : si `junctionAttributeLabel` est non vide,
+   un **troisième** champ `Number` (non requis, non unique, sans règles) est créé **après** les deux
+   champs de liaison, dans le même périmètre de compensation. Sa clé = `StudioKey.Slugify(label)`
+   (« Quantité » ⇒ `quantit`) ; la garde a lieu **avant toute écriture** : label vide après trim,
+   clé de forme invalide, clé réservée (`id`…), ou collision avec l'une des deux clés de liaison
+   (casse ignorée) ⇒ `400 Validation.junctionAttributeLabel`. La réponse embarque
+   `attributeField?: CustomFieldDto` (dernier champ du DTO, `null` en v1). `FieldCount` de la
+   jonction passe à 3. L'audit `Studio.Relation.ManyToManyCreated` porte `junctionAttributeKey`.
 4. Best‑effort : `IJsonIndexManager.EnsureFieldIndexAsync` sur les deux clés de champ (colonne calculée
    `jx_<clé>` + index) — un échec est journalisé, jamais remonté.
 5. Compensation : si le second champ échoue, la jonction est supprimée
    (`DeleteCustomEntityCommand`) et l'erreur d'origine est renvoyée ; aucun audit ni index.
 6. Audit `Studio.Relation.ManyToManyCreated` (entité `CustomEntity`, id de la jonction).
 
-Réponse : `ManyToManyRelationDto { junction: CustomEntityDto (Kind = Junction), sourceField, targetField }`.
+Réponse : `ManyToManyRelationDto { junction: CustomEntityDto (Kind = Junction), sourceField,
+targetField, attributeField? }`.
 
 ### 2.3 Lecture des relations (`ListEntityRelationsQuery`, `EntityRelationResolver`)
 
@@ -111,11 +125,15 @@ deux colonnes calculées serait fragile (nullabilité, longueur, tenants sans in
 applicatif est **best‑effort face à la concurrence** (deux écritures simultanées peuvent passer) :
 acceptable pour un lien métier, documenté comme tel.
 
-> **La « paire » = les deux premiers `RelationCustom` actifs par `SortOrder`.** Une jonction reste
+> **La « paire » = les deux premiers `RelationCustom` actifs par `SortOrder`.** L'attribut de
+> liaison (v1.1) est un champ `Number` créé **après** les deux champs de liaison : il ne fait
+> **pas** partie de la paire et l'unicité reste inchangée (couvert par
+> `CustomRecordJunctionUniquenessTests`). Une jonction reste
 > éditable via son URL dans le concepteur de formulaires : ajouter un champ relation avant les deux
 > premiers, ou les réordonner, **déplace silencieusement** la contrainte d'unicité (et l'onglet
-> « Liés » lit les mêmes deux champs). Le designer N‑N devra masquer/verrouiller ces champs
-> (suivi produit, pas de garde technique en v1).
+> « Liés » lit les mêmes deux champs, tandis que l'attribut affiché = premier champ actif
+> **non-relation** par `SortOrder` — le même réordonnancement peut donc changer l'attribut résolu).
+> Le designer N‑N devra masquer/verrouiller ces champs (suivi produit, pas de garde technique).
 
 > **Contrat client.** Le type `FactuTrust.API.Controllers.ApiResponse<T>` n'expose pas de propriété
 > `code` : le **statut 409** est le seul discriminant de `record.duplicate_link` côté frontend ; le
@@ -155,6 +173,37 @@ acceptable pour un lien métier, documenté comme tel.
 
 ---
 
+## 5bis. Frontend (PR 2.5)
+
+- **Dialog de création** (2.5f) : `relations/studio-many-to-many-dialog.component.ts` (concepteur de
+  table, capability `manyToManyEnabled`) ; section « Relations » de la table (type FR, cible,
+  jonction liée). **v1.1 (D‑47‑40)** : champ « Attribut de liaison » actif, envoyé en
+  `junctionAttributeLabel` (vide ⇒ `null`).
+- **Onglet « Liés »** (2.5e) : `relations/studio-linked-records.service.ts` **compose les endpoints
+  CRUD de la jonction** (aucun endpoint « linked » dédié) : liste = `GET records/{jonction}?filterField/
+  filterValue`, ajout = `POST records/{jonction}` (409 `record.duplicate_link` en ligne), retrait =
+  `DELETE records/{jonction}/{id}` ; `studio-record-form` montre les onglets Fiche / Liés — ⟨cible⟩
+  (`shared/studio-record-tabs.component.ts`, contrat réutilisé par 4.4h) uniquement en édition.
+  **v1.1 (D‑47‑40)** : la **quantité** (attribut de liaison) est résolue par
+  `GET records/{jonction}/schema` — premier champ actif **non-relation** par `SortOrder`, mis en cache
+  par jonction (`shareReplay(1)`), 404 ⇒ dégradé silencieux — puis affichée par ligne, saisissable à
+  l'ajout et éditable en ligne (`PATCH records/{jonction}/{id}` avec `rowVersion` ; 409 ⇒
+  « Modifié entre-temps — liste rechargée. »). Arbitrage n° 5 : le `PATCH` reste gardé par le
+  drapeau **`EnableStudioRecordViews`** (historique 4.6) et non par `manyToManyEnabled` — le frontend
+  signale l'échec **en ligne** si l'appel répond 404 (l'édition n'est pas masquée à l'avance, comme
+  partout ailleurs pour ce drapeau).
+- **Puces inline dans la fiche** (v1.1 r4) : `relations/studio-link-chips-editor.component.ts`, monté
+  par `studio-record-form` sous la carte du formulaire (`@for (rel of manyToMany())`, **édition
+  seulement** — `recordId` requis ; `DynamicFormComponent` n'est pas modifié, une relation N-N n'est
+  pas un champ, arbitrage n° 6). Mêmes opérations que l'onglet « Liés » (ajout avec quantité, retrait,
+  édition de la quantité au clic), erreurs en ligne dans la carte.
+- **Page Relations + diagramme** (2.5g) : `relations/studio-relations-page.component.ts` (N-N
+  dédoublonnées par `junctionEntityId`) et `studio-relation-diagram` (SVG en template Angular,
+  `DiagramModel`/`toDiagram` — contrat consommé par 3.4e) ; les jonctions sont masquées par défaut
+  dans la liste des tables (badge « Jonction »).
+- **E2E (2.5h, v1.1)** : `e2e/studio-many-to-many.spec.ts` (5 cas, API mockée) — dont l'ajout avec
+  quantité via les puces inline.
+
 ## 6. Sécurité
 
 - Isolation tenant sur chaque lecture/écriture (`tenantId` partout, `Unauthorized` sans tenant).
@@ -169,7 +218,8 @@ acceptable pour un lien métier, documenté comme tel.
 
 ## 7. Ce que ça ne fait pas (suite du programme)
 
-- Pas d'écran de saisie des liens ni d'onglet « Relations » : PR 2.5 (frontend).
+- Écran de saisie des liens et page « Relations » : **livrés en PR 2.5 (frontend)** — onglet « Liés »
+  de la fiche, dialog de création N-N, page `/studio/relations` + diagramme (voir §5bis).
 - Pas de suppression/édition d'une relation N‑N par endpoint dédié : on supprime la jonction comme
   toute entité (`DELETE api/studio/entities/{id}`).
 - Pas d'unicité SQL stricte de la paire (voir §3).
@@ -201,6 +251,9 @@ Parsé par `StudioAiSystemSpec.ParseRelations` (`FactuTrust.Application/Features
   comme champ — il devient une relation `relations[]` (dédoublonnée avec les relations explicites).
 - `relations` n'apparaît dans la forme canonique (`StudioAiSpecCanonical.CanonicalSystem`) que si la
   liste est non vide ; `label`/`junctionName` sont omis (jamais `null`) quand absents.
+- **v1.1 (D‑47‑40, arbitrage n° 8)** : l'attribut de liaison (`junctionAttributeLabel`) n'est
+  **pas** exposé au spec IA — la génération d'un attribut de jonction par l'assistant est reportée
+  (le champ se saisit au dialogue N-N après génération).
 
 ### 8.2 Orchestrateur multi‑passes (`StudioAiSystemOrchestrator`)
 

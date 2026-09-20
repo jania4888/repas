@@ -115,15 +115,18 @@ public sealed class AiContextBuilderFirmPromptTests
     }
 
     [Fact]
-    public void System_prompt_cache_revision_is_incremented_to_v6()
+    public void System_prompt_cache_revision_is_incremented_to_v9()
     {
         // Sans incrément, la clé de cache ne hashe pas le contenu : l'ancien prompt resterait servi
         // jusqu'au TTL. Le digest Studio (PR 1.2) imposait "v3" → "v4" ; la règle 11 « existingKey »
-        // (PR 1.3) "v4" → "v5" ; la règle 13 « vues enregistrées » (PR 2.4) impose "v5" → "v6".
+        // (PR 1.3) "v4" → "v5" ; la règle 13 « vues enregistrées » (PR 2.4) "v5" → "v6" ; la règle 8
+        // enrichie (amendements PR 3.1b) "v6" → "v7" ; la règle 14 « workflows » (PR 4.3e) impose
+        // "v7" → "v8" ; la règle 14 qui propose le déclencheur planifié (4.7 suite, clôture de
+        // l'écart D-47-73) impose "v8" → "v9".
         var field = typeof(AiContextBuilder).GetField(
             "SystemPromptCacheRevision",
             BindingFlags.NonPublic | BindingFlags.Static);
         Assert.NotNull(field);
-        Assert.Equal("v6", (string)field!.GetRawConstantValue()!);
+        Assert.Equal("v9", (string)field!.GetRawConstantValue()!);
     }
 }

@@ -3,7 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
-import { AppNotification, NotificationService } from '../../services/notification.service';
+import {
+  AppNotification,
+  NotificationService,
+  isStudioWorkflowNotification
+} from '../../services/notification.service';
+import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-approvals-badge.service';
 import { WarehouseContextService } from '../../services/warehouse-context.service';
 import { FirmContextService } from '../../services/firm-context.service';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
@@ -651,6 +656,7 @@ export class HeaderComponent {
   readonly firmContext = inject(FirmContextService);
   readonly notifications = inject(NotificationService);
   private readonly productOnboarding = inject(ProductOnboardingApiService);
+  private readonly approvalsBadge = inject(StudioApprovalsBadgeService);
   private readonly router = inject(Router);
   warehouseContext = inject(WarehouseContextService);
   breadcrumbService = inject(BreadcrumbService);
@@ -664,6 +670,13 @@ export class HeaderComponent {
   openNotification(notification: AppNotification): void {
     if (!notification.readAt) {
       this.notifications.markRead(notification.id);
+    }
+    if (isStudioWorkflowNotification(notification.type)) {
+      this.approvalsBadge.refresh(); // g1 : requête immédiate hors cadence
+      if (!notification.linkUrl) {
+        this.router.navigateByUrl('/studio/approvals');
+        return;
+      }
     }
     if (notification.linkUrl) {
       this.router.navigateByUrl(notification.linkUrl);

@@ -5,7 +5,7 @@ import { environment } from '@environments/environment';
 import { createHttpContextSkipGlobalErrorUi } from '@core/http-context';
 import { ApiResponse } from '@core/services/client.service';
 import { CustomRecord } from '../studio.models';
-import { CustomRecordViewDto, RecordViewRunRequest, RecordViewRunResultDto, SaveCustomRecordViewRequest } from './studio-record-views.models';
+import { CustomRecordViewDto, RecordViewPreviewRequest, RecordViewRunRequest, RecordViewRunResultDto, SaveCustomRecordViewRequest } from './studio-record-views.models';
 
 /**
  * CRUD des vues enregistrées d'une table Studio + exécution serveur + PATCH partiel d'un
@@ -51,6 +51,16 @@ export class StudioRecordViewsService {
   runRecordView(entityKey: string, viewId: string, request: RecordViewRunRequest): Observable<ApiResponse<RecordViewRunResultDto>> {
     return this.http.post<ApiResponse<RecordViewRunResultDto>>(
       `${this.viewsBase(entityKey)}/${viewId}/run`, request, this.skipErrorUi);
+  }
+
+  /**
+   * Aperçu du concepteur (4.7v2, R3) : exécute le brouillon SANS identifiant — rien n'est persisté
+   * côté serveur. `skipErrorUi` : le 400 (validateur plus strict que le client) est rendu en ligne
+   * dans le panneau, jamais en toast global pendant la frappe.
+   */
+  previewRecordView(entityKey: string, request: RecordViewPreviewRequest): Observable<ApiResponse<RecordViewRunResultDto>> {
+    return this.http.post<ApiResponse<RecordViewRunResultDto>>(
+      `${this.viewsBase(entityKey)}/preview`, request, this.skipErrorUi);
   }
 
   /** PATCH partiel (R5) : fusion des seules clés fournies ; `rowVersion` obligatoire (409 si périmé). */

@@ -21,7 +21,7 @@ public sealed class PlatformTenantQueryService : IPlatformTenantQueryService
 
     public async Task<PlatformTenantListPageDto> ListAsync(PlatformTenantListQuery query, CancellationToken cancellationToken = default)
     {
-        var page = Math.Max(1, query.Page);
+        var page = Math.Clamp(query.Page, 1, int.MaxValue / MaxPageSize);
         var pageSize = Math.Clamp(query.PageSize, 1, MaxPageSize);
 
         var filtered = from t in _db.Tenants.AsNoTracking()

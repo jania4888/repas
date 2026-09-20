@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { WritableSignal, signal } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
@@ -8,6 +9,8 @@ import { FirmContextService } from '@core/services/firm-context.service';
 import { FirmAssignmentService } from '@core/services/firm-assignment.service';
 import { AccountingFeatureFlagsService } from '@features/accounting/shared/accounting-feature-flags.service';
 import { StudioNavService } from '@features/studio/studio-nav.service';
+import { StudioAiCapabilitiesService } from '@features/studio/ai/studio-ai-capabilities.service';
+import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-approvals-badge.service';
 import { SidebarComponent } from './sidebar.component';
 
 const firmUser: User = {
@@ -39,8 +42,37 @@ function setUser(auth: AuthService, u: User | null): void {
   (auth as unknown as { userSignal: { set: (x: User | null) => void } }).userSignal.set(u);
 }
 
+/** Utilisateur entreprise avec le module Studio (13) et les droits workflows (4.4j). */
+const studioCompanyUser: User = {
+  ...firmUser,
+  id: 'u-studio',
+  email: 'studio@test.c',
+  role: 'Administrator',
+  roleDisplay: 'Administrateur',
+  tenantId: '00000000-0000-0000-0000-000000000004',
+  companyName: 'Ste Studio',
+  tenantKind: 'Company',
+  enabledModuleIds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+  effectivePermissions: ['studio:design_entities', 'custom_records:read']
+};
+
+// Stubs systématiques (4.4j) : évitent tout appel GET /ai/studio/capabilities ou
+// workflows/approvals/mine/count pendant le rendu de la navigation.
+function makeCapsStub(): { ensureLoaded: jasmine.Spy; workflowsEnabled: WritableSignal<boolean> } {
+  return { ensureLoaded: jasmine.createSpy('ensureLoaded'), workflowsEnabled: signal(false) };
+}
+
+function makeBadgeStub(): { start: jasmine.Spy; count: WritableSignal<number>; available: WritableSignal<boolean> } {
+  return { start: jasmine.createSpy('start'), count: signal(0), available: signal(false) };
+}
+
 describe('SidebarComponent — firm navigation', () => {
+  let capsStub: ReturnType<typeof makeCapsStub>;
+  let badgeStub: ReturnType<typeof makeBadgeStub>;
+
   beforeEach(() => {
+    capsStub = makeCapsStub();
+    badgeStub = makeBadgeStub();
     TestBed.configureTestingModule({
       imports: [SidebarComponent],
       providers: [
@@ -61,6 +93,14 @@ describe('SidebarComponent — firm navigation', () => {
         {
           provide: StudioNavService,
           useValue: { items: () => [] }
+        },
+        {
+          provide: StudioAiCapabilitiesService,
+          useValue: capsStub
+        },
+        {
+          provide: StudioApprovalsBadgeService,
+          useValue: badgeStub
         }
       ]
     });
@@ -115,6 +155,14 @@ describe('SidebarComponent — firm navigation', () => {
         {
           provide: StudioNavService,
           useValue: { items: () => [] }
+        },
+        {
+          provide: StudioAiCapabilitiesService,
+          useValue: makeCapsStub()
+        },
+        {
+          provide: StudioApprovalsBadgeService,
+          useValue: makeBadgeStub()
         }
       ]
     });
@@ -331,6 +379,14 @@ describe('SidebarComponent — firm navigation', () => {
         {
           provide: StudioNavService,
           useValue: { items: () => [] }
+        },
+        {
+          provide: StudioAiCapabilitiesService,
+          useValue: makeCapsStub()
+        },
+        {
+          provide: StudioApprovalsBadgeService,
+          useValue: makeBadgeStub()
         }
       ]
     });
@@ -353,6 +409,51 @@ describe('SidebarComponent — firm navigation', () => {
       'États comptables',
       'Déclaration mensuelle'
     ]);
+  });
+
+  it("affiche le badge d'un sous-menu Studio quand count > 0", () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, studioCompanyUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+    capsStub.workflowsEnabled.set(true);
+    badgeStub.count.set(4);
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.detectChanges();
+
+    const studio = fixture.componentInstance.navItems().find(i => i.label === 'Studio');
+    expect(studio).toBeTruthy();
+    fixture.componentInstance.toggleSubmenu(studio!);
+    fixture.detectChanges();
+
+    const badges = fixture.nativeElement.querySelectorAll(
+      '[data-testid="nav-child-badge"]'
+    ) as NodeListOf<HTMLElement>;
+    expect(badges.length).toBe(1);
+    expect(badges[0].textContent?.trim()).toBe('4');
+    expect(badges[0].getAttribute('aria-label')).toBe('4 en attente');
+  });
+
+  it("n'affiche pas de badge de sous-menu à 0", () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, studioCompanyUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+    capsStub.workflowsEnabled.set(true);
+
+    const fixture = TestBed.createComponent(SidebarComponent);
+    fixture.detectChanges();
+
+    const studio = fixture.componentInstance.navItems().find(i => i.label === 'Studio');
+    expect(studio).toBeTruthy();
+    fixture.componentInstance.toggleSubmenu(studio!);
+    fixture.detectChanges();
+
+    const labels = Array.from(
+      fixture.nativeElement.querySelectorAll('.submenu-link') as NodeListOf<HTMLElement>
+    ).map(a => a.textContent?.trim());
+    expect(labels.some(l => l?.includes('Workflows'))).toBeTrue();
+    expect(labels.some(l => l?.includes('Mes approbations'))).toBeTrue();
+    expect(fixture.nativeElement.querySelector('[data-testid="nav-child-badge"]')).toBeNull();
   });
 });
 
@@ -378,6 +479,14 @@ describe('SidebarComponent — collapse', () => {
         {
           provide: StudioNavService,
           useValue: { items: () => [] }
+        },
+        {
+          provide: StudioAiCapabilitiesService,
+          useValue: makeCapsStub()
+        },
+        {
+          provide: StudioApprovalsBadgeService,
+          useValue: makeBadgeStub()
         }
       ]
     });

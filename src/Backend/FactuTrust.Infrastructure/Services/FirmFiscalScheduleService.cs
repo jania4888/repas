@@ -124,7 +124,8 @@ public sealed class FirmFiscalScheduleService : IFirmFiscalScheduleService
             .ToList();
 
         var totalCount = rows.Count;
-        var page = Math.Max(filters.Page, 1);
+        // 4.7 suite (R52, motif D-45-28) : borne haute pour que (page - 1) * pageSize reste un int.
+        var page = Math.Clamp(filters.Page, 1, int.MaxValue / 200);
         var pageSize = Math.Clamp(filters.PageSize, 1, 200);
         var items = rows.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 

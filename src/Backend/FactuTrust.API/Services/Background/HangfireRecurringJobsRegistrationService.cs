@@ -131,6 +131,16 @@ internal sealed class HangfireRecurringJobsRegistrationService : BackgroundServi
                 job => job.ExecuteAsync(CancellationToken.None),
                 Cron.Daily(10),
                 UtcOptions)),
+        new(
+            // Toutes les 10 minutes : reaper de baux, expiration des approbations, reprise des
+            // instances dues et purge des instances terminales (workflows Studio, 4.2d).
+            // Sort immédiatement si EnableStudioWorkflows est faux.
+            "studio-workflow-resume",
+            () => RecurringJob.AddOrUpdate<FactuTrust.Infrastructure.Services.Studio.Workflows.StudioWorkflowResumeJob>(
+                "studio-workflow-resume",
+                job => job.ExecuteAsync(CancellationToken.None),
+                FactuTrust.Infrastructure.Services.Studio.Workflows.StudioWorkflowResumeJob.StudioWorkflowResumeCron,
+                UtcOptions)),
     };
 
     private readonly ILogger<HangfireRecurringJobsRegistrationService> _logger;

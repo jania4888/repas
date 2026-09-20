@@ -423,7 +423,9 @@ public sealed class OdooTimesheetAlignmentDomainTests
     [Fact]
     public void TimeEntry_TimerLifecycle()
     {
-        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow.Date, 0m, true, null, null).Value;
+        // Le domaine exige des heures initiales > 0 (StopTimer y AJOUTE le temps chronométré) :
+        // une entrée à 0 h est rejetée par construction — on part donc d'un solde minimal.
+        var entry = ProjectTimeEntry.Create(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow.Date, 0.01m, true, null, null).Value;
         Assert.True(entry.StartTimer().IsSuccess);
         Assert.True(entry.IsTimerRunning);
         Assert.True(entry.StartTimer().IsFailure);

@@ -8,7 +8,7 @@ import { StudioPageShellComponent } from '../../shared/studio-page-shell.compone
 import { studioBreadcrumb } from '../../shared/studio-breadcrumb.util';
 import { StudioAiCapabilitiesService } from '../studio-ai-capabilities.service';
 import { STUDIO_AI_LABELS, formatLabel } from '../studio-ai-labels';
-import { StudioTemplateListItemDto } from '../studio-ai.models';
+import { StudioTemplateListItemDto, normalizeViewMode } from '../studio-ai.models';
 
 export interface StudioTemplateGroup {
   category: string;
@@ -80,10 +80,21 @@ export function groupTemplates(templates: readonly StudioTemplateListItemDto[]):
                     <p-tag
                       [value]="template.source === 'builtin' ? labels.sourceBuiltin : labels.sourceTenant"
                       [severity]="template.source === 'builtin' ? 'secondary' : 'info'" />
+                    @if (template.moduleTag) {
+                      <p-tag class="sat__module" [value]="template.moduleTag" severity="secondary" />
+                    }
                   </header>
                   <p class="sat__card-desc">{{ template.description }}</p>
                   <footer class="sat__card-foot">
-                    <span class="sat__card-meta">{{ entitiesText(template) }}</span>
+                    <span class="sat__card-meta">
+                      <span>{{ entitiesText(template) }}</span>
+                      @if (relationsText(template); as relations) {
+                        <span class="sat__card-relations">{{ relations }}</span>
+                      }
+                      @if (viewModesText(template); as views) {
+                        <span class="sat__card-views">{{ views }}</span>
+                      }
+                    </span>
                     <a
                       pButton
                       class="sat__use"
@@ -115,11 +126,12 @@ export function groupTemplates(templates: readonly StudioTemplateListItemDto[]):
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
     .sat__card:hover { border-color: var(--color-primary-300, #a5b4fc); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08); }
-    .sat__card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+    .sat__card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+    .sat__card-head .sat__card-title { flex: 1 1 auto; }
     .sat__card-title { margin: 0; font-size: 1rem; font-weight: 600; color: var(--color-neutral-900, #111827); }
     .sat__card-desc { margin: 0; flex: 1 1 auto; font-size: 0.875rem; color: var(--color-neutral-600, #4b5563); }
     .sat__card-foot { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-    .sat__card-meta { font-size: 0.8125rem; color: var(--color-neutral-500, #6b7280); }
+    .sat__card-meta { display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; font-size: 0.8125rem; color: var(--color-neutral-500, #6b7280); }
     .sat__use { text-decoration: none; }
     .sat__empty { padding: 2rem 1rem; text-align: center; color: var(--color-neutral-500, #6b7280); }
     .sat__notice {
@@ -136,6 +148,7 @@ export class StudioAiTemplatesPageComponent {
 
   readonly labels = STUDIO_AI_LABELS.templates;
   readonly retryLabel = STUDIO_AI_LABELS.conversation.retry;
+  readonly viewLabels = STUDIO_AI_LABELS.views;
   readonly breadcrumbs = studioBreadcrumb({ label: 'Assistant IA', route: '/studio/ai' }, { label: STUDIO_AI_LABELS.templates.title });
 
   readonly templates = signal<StudioTemplateListItemDto[]>([]);
@@ -153,6 +166,18 @@ export class StudioAiTemplatesPageComponent {
 
   entitiesText(template: StudioTemplateListItemDto): string {
     return formatLabel(this.labels.entities, { count: template.entityCount ?? 0 });
+  }
+
+  /** « {n} relation(s) » ; chaîne vide quand `relationCount` est absent ou nul (mention masquée). */
+  relationsText(template: StudioTemplateListItemDto): string {
+    const count = template.relationCount ?? 0;
+    return count > 0 ? formatLabel(this.labels.relations, { count }) : '';
+  }
+
+  /** Modes de vue normalisés (`normalizeViewMode`), dédoublonnés, traduits et joints par « · » — D19. */
+  viewModesText(template: StudioTemplateListItemDto): string {
+    const modes = Array.from(new Set((template.viewModes ?? []).map(normalizeViewMode)));
+    return modes.map(mode => this.viewLabels[mode]).join(' · ');
   }
 
   load(): void {

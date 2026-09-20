@@ -405,7 +405,7 @@ public sealed class ClientPortalService : IClientPortalService
         if (gate.IsFailure)
             return Result.Failure<PagedResult<PortalInvoiceListItemDto>>(gate.Error);
 
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / 100);
         pageSize = Math.Clamp(pageSize, 1, 100);
 
         var invoices = await VisibleInvoicesAsync(gate.Value, cancellationToken);

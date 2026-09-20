@@ -25,7 +25,7 @@ public sealed class TenantCreditAdminService : ITenantCreditAdminService
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / MaxPageSize);
         pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
 
         var query = _db.TenantCredits.AsNoTracking().Where(c => c.TenantId == tenantId);
@@ -38,7 +38,7 @@ public sealed class TenantCreditAdminService : ITenantCreditAdminService
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / MaxPageSize);
         pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
 
         var query = _db.TenantCredits.AsNoTracking().AsQueryable();

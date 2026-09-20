@@ -19,5 +19,9 @@ public enum NotificationType
     ExchangeDocumentShared = 11,
     ExchangeTaskCreated = 12,
     FirmLeaveRequestSubmitted = 13,
-    FirmTimeSheetSubmitted = 14
+    FirmTimeSheetSubmitted = 14,
+    StudioWorkflowApprovalRequested = 15,
+    StudioWorkflowApprovalDecided = 16,
+    StudioWorkflowStepFailed = 17,
+    StudioWorkflowMessage = 18
 }

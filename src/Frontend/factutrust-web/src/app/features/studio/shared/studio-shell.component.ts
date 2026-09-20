@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { StudioApprovalsBadgeService } from '../approvals/studio-approvals-badge.service';
 
 /**
  * Coquille du module Studio (`/studio/**`).
@@ -19,4 +20,9 @@ import { RouterOutlet } from '@angular/router';
   host: { class: 'studio-theme' },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StudioShellComponent {}
+export class StudioShellComponent {
+  constructor() {
+    // Badge « Mes approbations » (4.4j, D2) : idempotent ; 404 (module coupé) ou 403 ⇒ arrêt définitif.
+    inject(StudioApprovalsBadgeService).start();
+  }
+}

@@ -1070,6 +1070,21 @@ public sealed record AuditLogEntryDto
     public string? EntityLabel { get; init; }
 }
 
+/// <summary>
+/// Projection interne de l'historique paginé d'une entité précise (Studio 4.7 — D5, historique
+/// d'enregistrement) : jamais d'IP, d'agent utilisateur ni de hash d'intégrité (réservés à la
+/// console d'audit). Le nom affichable de l'auteur est résolu par l'appelant (couche Application).
+/// </summary>
+public sealed record AuditEntityHistoryRowDto
+{
+    public Guid Id { get; init; }
+    public string Action { get; init; } = null!;
+    public DateTime CreatedAt { get; init; }
+    public Guid? UserId { get; init; }
+    public string? OldValues { get; init; }
+    public string? NewValues { get; init; }
+}
+
 public sealed record AuditLogDetailDto
 {
     public Guid Id { get; init; }

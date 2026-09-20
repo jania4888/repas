@@ -39,7 +39,7 @@ public sealed class ThirdPartyDirectoryService : IThirdPartyDirectoryService
         ThirdPartyKind? kind, string? search, bool includeInactive, int page, int pageSize,
         CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / 200);
         pageSize = Math.Clamp(pageSize, 1, 200);
 
         await using var ctx = _contextFactory.CreateContext();

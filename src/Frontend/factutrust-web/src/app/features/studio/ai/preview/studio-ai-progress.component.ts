@@ -19,6 +19,9 @@ import { StudioBuildStep } from '../studio-ai.models';
       <header class="saip__head">
         <h4 class="saip__title"><i class="fa-solid fa-hammer" aria-hidden="true"></i> {{ labels.progress.title }}</h4>
         <span class="saip__count">{{ doneCount() }} / {{ total() }}</span>
+        @if (viewSteps().length > 0) {
+          <span class="saip__chip" data-phase="views">{{ labels.progress.views }} {{ viewsDone() }}/{{ viewSteps().length }}</span>
+        }
       </header>
 
       <div class="saip__bar" role="progressbar" [attr.aria-valuenow]="doneCount()" aria-valuemin="0" [attr.aria-valuemax]="total()">
@@ -75,6 +78,14 @@ import { StudioBuildStep } from '../studio-ai.models';
       color: var(--color-neutral-800, #1e293b);
     }
     .saip__count { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-primary-600); }
+    .saip__chip {
+      padding: 1px var(--spacing-2);
+      border-radius: 999px;
+      background: var(--color-primary-50, #eef2ff);
+      color: var(--color-primary-700, #4338ca);
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: var(--font-weight-medium);
+    }
     .saip__bar {
       height: 6px;
       border-radius: 999px;
@@ -115,6 +126,9 @@ export class StudioAiProgressComponent {
   protected readonly total = computed(() => this.steps().length);
   // `skipped` (PR 2.5) compte comme terminé : la barre ne reste jamais bloquée sur une étape ignorée.
   protected readonly doneCount = computed(() => this.steps().filter(s => s.status === 'done' || s.status === 'skipped').length);
+  /** Étapes de vues (`creating_views`, nom de phase émis par `StudioAiSystemOrchestrator`). */
+  protected readonly viewSteps = computed(() => this.steps().filter(s => s.phase === 'creating_views'));
+  protected readonly viewsDone = computed(() => this.viewSteps().filter(s => s.status === 'done' || s.status === 'skipped').length);
   protected readonly percent = computed(() => {
     const total = this.total();
     return total === 0 ? 0 : Math.round((this.doneCount() / total) * 100);

@@ -8,14 +8,18 @@ import { ApiResponse } from '@core/services/client.service';
 import { ChatStreamEvent } from '@features/ai-assistant/models/ai-chat.models';
 import { ReportResult } from '@shared/studio-runtime/studio-runtime.models';
 import {
+  ImportCustomSystemRequest,
   StudioAiCapabilitiesDto,
   StudioAiPlanCreationResponse,
   StudioAiPlanListItemDto,
   StudioAiPlanListQuery,
+  StudioAiPlanPreviewDto,
   StudioAiPlanSpecDto,
   StudioAiSpecValidationDto,
   StudioDuplicateHint,
   StudioPagedResult,
+  StudioSummaryRelation,
+  StudioSystemExportDto,
   StudioTemplateDetailDto,
   StudioTemplateListItemDto,
   UpdateStudioAiPlanSpecResponse
@@ -34,6 +38,15 @@ export interface StudioPlanEntity {
   relationCount: number;
   /** Clé de la table existante réutilisée (omise par le serveur si null). */
   existingKey?: string | null;
+  /** Vues enregistrées proposées (PR 2.5) ; omis par les résumés antérieurs. */
+  viewCount?: number;
+}
+
+export interface StudioSummaryWorkflowStep { key: string; type: string; label: string; }
+export interface StudioSummaryWorkflow {
+  key: string; name: string; trigger: string; stepCount: number; steps: StudioSummaryWorkflowStep[]; isActive: boolean;
+  /** Additifs (D-43-03, Q-1) : table cible du workflow ; `summary.entities[0]` reste le repli. */
+  entityKey?: string; entityDisplayName?: string;
 }
 
 /** Contenu de `summaryJson` — miroir de `StudioAiPlanSummary.PlanSummary` côté backend. */
@@ -47,6 +60,10 @@ export interface StudioPlanSummary {
   sample?: ReportResult | null;
   /** Doublons probables avec des tables existantes (PR 1.3) ; toujours émis, vide par défaut. */
   duplicates?: StudioDuplicateHint[];
+  /** Relations N-N déclarées (PR 2.2) ; `null`/omis avant. */
+  relations?: StudioSummaryRelation[] | null;
+  /** Workflows proposés (PR 4.3c, plan `Workflow`) ; `[]` sinon. Contrat figé A-43/A-44b. */
+  workflows?: StudioSummaryWorkflow[] | null;
 }
 
 /** Payload de l'événement SSE `studio_report_result` (retour de l'outil studio_run_report). */
@@ -122,6 +139,7 @@ export class StudioAiBuildService {
   private readonly baseUrl = `${environment.apiUrl}/studio/ai/plans`;
   private readonly templatesUrl = `${environment.apiUrl}/studio/templates`;
   private readonly capabilitiesUrl = `${environment.apiUrl}/ai/studio/capabilities`;
+  private readonly systemsUrl = `${environment.apiUrl}/studio/systems`;
 
   getPlan(planId: string): Observable<ApiResponse<StudioAiPlanDto>> {
     return this.http.get<ApiResponse<StudioAiPlanDto>>(`${this.baseUrl}/${encodeURIComponent(planId)}`);
@@ -274,6 +292,51 @@ export class StudioAiBuildService {
 
       return () => abort.abort();
     });
+  }
+
+  // ---- Aperçu enrichi (PR 3.4) : preview / replay de plan, export / duplication / import de système. ----
+
+  /** `GET {id}/preview` — 404 tant que `EnableStudioAiPlanPreview` est coupé (géré localement). */
+  getPlanPreview(planId: string): Observable<ApiResponse<StudioAiPlanPreviewDto>> {
+    return this.http.get<ApiResponse<StudioAiPlanPreviewDto>>(`${this.baseUrl}/${encodeURIComponent(planId)}/preview`, {
+      context: createHttpContextSkipGlobalErrorUi()
+    });
+  }
+
+  /** `POST {id}/replay` ⇒ 201, même enveloppe que `from-template` ; 409 si le plan n'est pas rejouable. */
+  replayPlan(planId: string): Observable<ApiResponse<StudioAiPlanCreationResponse>> {
+    return this.http.post<ApiResponse<StudioAiPlanCreationResponse>>(
+      `${this.baseUrl}/${encodeURIComponent(planId)}/replay`,
+      {},
+      { context: createHttpContextSkipGlobalErrorUi() }
+    );
+  }
+
+  /** `GET systems/{key}/export?includeSeed=` — 404 tant que `EnableStudioSystemExport` est coupé. */
+  exportSystem(key: string, includeSeed = false): Observable<ApiResponse<StudioSystemExportDto>> {
+    const params = new HttpParams().set('includeSeed', includeSeed);
+    return this.http.get<ApiResponse<StudioSystemExportDto>>(`${this.systemsUrl}/${encodeURIComponent(key)}/export`, {
+      params,
+      context: createHttpContextSkipGlobalErrorUi()
+    });
+  }
+
+  /** `POST systems/{key}/duplicate` ⇒ 201 `StudioAiPlanCreationResponse` (plan « (copie) » en attente). */
+  duplicateSystem(key: string, displayName?: string | null): Observable<ApiResponse<StudioAiPlanCreationResponse>> {
+    return this.http.post<ApiResponse<StudioAiPlanCreationResponse>>(
+      `${this.systemsUrl}/${encodeURIComponent(key)}/duplicate`,
+      { displayName: displayName ?? null },
+      { context: createHttpContextSkipGlobalErrorUi() }
+    );
+  }
+
+  /** `POST systems/import` ⇒ 201 ; 400 `Validation.spec`, 413 au-delà de 512 Ko. */
+  importSystem(req: ImportCustomSystemRequest): Observable<ApiResponse<StudioAiPlanCreationResponse>> {
+    return this.http.post<ApiResponse<StudioAiPlanCreationResponse>>(
+      `${this.systemsUrl}/import`,
+      req,
+      { context: createHttpContextSkipGlobalErrorUi() }
+    );
   }
 
   private post(url: string, signal: AbortSignal): Promise<Response> {

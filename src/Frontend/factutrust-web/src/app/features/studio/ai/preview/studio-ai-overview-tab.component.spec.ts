@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { STUDIO_SPEC_LIMITS, countSpec } from '../studio-ai.models';
 import { STUDIO_AI_LABELS } from '../studio-ai-labels';
 import { StudioAiOverviewTabComponent } from './studio-ai-overview-tab.component';
-import { studioAiSpecFixture } from './testing/studio-ai-spec.fixture';
+import { studioAiSpecFixture, studioAiSpecWithViewsFixture } from './testing/studio-ai-spec.fixture';
 
 describe('StudioAiOverviewTabComponent', () => {
   let fixture: ComponentFixture<StudioAiOverviewTabComponent>;
@@ -32,8 +32,10 @@ describe('StudioAiOverviewTabComponent', () => {
     ).toBeTrue();
   });
 
-  it('renders the counter cards, the ER placeholder and the limits hint', () => {
-    expect(text()).toContain(STUDIO_AI_LABELS.preview.diagramSoon);
+  it('renders the counter cards, the relation diagram and the limits hint', () => {
+    expect(text()).toContain(STUDIO_AI_LABELS.preview.diagram);
+    expect(fixture.nativeElement.querySelector('svg[role="img"]')).not.toBeNull();
+    expect(text()).not.toContain(STUDIO_AI_LABELS.preview.diagramSoon);
     expect(text()).toContain(`${STUDIO_SPEC_LIMITS.maxEntities} tables max`);
     expect(text()).toContain(`${STUDIO_SPEC_LIMITS.maxFields} champs par table`);
 
@@ -45,6 +47,22 @@ describe('StudioAiOverviewTabComponent', () => {
   it('shows the warnings to review', () => {
     expect(text()).toContain(STUDIO_AI_LABELS.preview.warningsTitle);
     expect(text()).toContain('Vérifiez la devise');
+  });
+
+  it('la vue d’ensemble rend le diagramme SVG role=img', () => {
+    fixture.componentRef.setInput('spec', studioAiSpecWithViewsFixture());
+    fixture.detectChanges();
+
+    const svg: SVGSVGElement | null = fixture.nativeElement.querySelector('svg[role="img"]');
+    expect(svg).not.toBeNull();
+    expect(svg?.classList.contains('srd--compact')).toBeTrue();
+    const nodeLabels = Array.from(svg?.querySelectorAll('.srd__label') ?? []).map(el => el.textContent);
+    expect(nodeLabels).toEqual(['Employé', 'Demande de congé', 'Clients', 'employes_demandes']);
+    expect(svg?.querySelectorAll('line.srd__edge').length).toBe(4);
+
+    const srText = (fixture.nativeElement as HTMLElement).querySelector('.sr-only')?.textContent ?? '';
+    expect(srText).toContain('Demande de congé → Employé (many_to_one)');
+    expect(srText).toContain('employes_demandes → Demande de congé (many_to_many)');
   });
 
   it('emits openEntity with the entity ref when a table is clicked', () => {

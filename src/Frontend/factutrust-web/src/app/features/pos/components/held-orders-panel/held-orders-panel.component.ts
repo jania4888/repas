@@ -250,7 +250,7 @@ export class HeldOrdersPanelComponent {
       header: 'Supprimer la commande ?',
       message: 'Supprimer cette commande en attente ?',
       icon: 'pi pi-trash',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
       accept: () => this.heldService.deleteHeldOrder(id)

@@ -58,6 +58,42 @@ export interface VirtualStreetSceneCallbacks {
   onHoverSlugChange?: (slug: string | null) => void;
 }
 
+/** Inputs of the scene-readiness decision (pure, unit-tested). */
+export interface StreetSceneReadinessInput {
+  /** Frames actually rendered by the WebGL loop for the current street build. */
+  renderedFrames: number;
+  /** Storefronts whose legacy GLB visual (with real meshes) is attached. */
+  readyFacades: number;
+  /** Storefronts expected on the current map (wrapper count). */
+  expectedFacades: number;
+  /** Readiness must be announced at most once per street build. */
+  alreadyAnnounced: boolean;
+}
+
+/**
+ * The scene is "ready" only once at least one real frame has been rendered AND
+ * every expected storefront has its GLB visual attached. An empty street, a
+ * missing frame or a fallback-only (procedural/skeleton) facade never qualifies.
+ */
+export function shouldAnnounceSceneReady(input: StreetSceneReadinessInput): boolean {
+  if (input.alreadyAnnounced) return false;
+  if (input.renderedFrames < 1) return false;
+  if (input.expectedFacades < 1) return false;
+  return input.readyFacades >= input.expectedFacades;
+}
+
+/**
+ * Guards the readiness counter: a GLB clone only counts when it actually
+ * contains renderable meshes (an empty or skeleton-only root does not).
+ */
+export function gltfVisualHasRenderableMesh(root: Object3D): boolean {
+  let found = false;
+  root.traverse(node => {
+    if ((node as Mesh).isMesh) found = true;
+  });
+  return found;
+}
+
 export class VirtualStreetScene {
   private renderer: WebGLRenderer | null = null;
   private scene: Scene | null = null;
@@ -86,6 +122,9 @@ export class VirtualStreetScene {
   private postFx: PostFxBundle | null = null;
   private keyShadowLight: DirectionalLight | null = null;
   private currentLodSwapDistance = 24;
+  private readyFacadeCount = 0;
+  private readyAnnounced = false;
+  private renderedFrameCount = 0;
   private readonly reducedMotion: boolean =
     typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -97,6 +136,26 @@ export class VirtualStreetScene {
 
   async mount(map: StreetMapEntry[]): Promise<void> {
     if (this.disposed) return;
+    try {
+      await this.mountInternal(map);
+    } catch (err) {
+      this.markSceneUnavailable(err);
+    }
+  }
+
+  /**
+   * WebGL can be unavailable (old device, blocked driver) or a lazy chunk can
+   * fail to load. Surface a plain non-sensitive marker instead of an unhandled
+   * rejection; the page keeps the accessible list as the independent fallback.
+   */
+  private markSceneUnavailable(err: unknown): void {
+    this.canvasEl.dataset['sceneUnavailable'] = 'true';
+    if (!vsEnv.production) {
+      console.warn('[VirtualStreet] Scène 3D indisponible (WebGL ou chargement).', err);
+    }
+  }
+
+  private async mountInternal(map: StreetMapEntry[]): Promise<void> {
     const three = await import('three');
     const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js');
     this.three = three;
@@ -223,6 +282,8 @@ export class VirtualStreetScene {
         }
         if (this.postFx) this.postFx.render();
         else renderer.render(scene, camera);
+        this.renderedFrameCount += 1;
+        this.announceSceneReadyWhenRendered();
       }
     };
     loop();
@@ -245,6 +306,14 @@ export class VirtualStreetScene {
   }
 
   private buildStreet(three: ThreeModule, map: StreetMapEntry[], streetRoot: Group): void {
+    this.readyFacadeCount = 0;
+    this.readyAnnounced = false;
+    this.renderedFrameCount = 0;
+    if (this.canvas) {
+      // A rebuild re-arms readiness: a stale "ready" marker must not survive it.
+      delete this.canvas.dataset['sceneReady'];
+      delete this.canvas.dataset['sceneReadyFacades'];
+    }
     while (streetRoot.children.length) {
       streetRoot.remove(streetRoot.children[0]!);
     }
@@ -454,6 +523,8 @@ export class VirtualStreetScene {
       }
       return;
     }
+    // Late loads from a previous street build must not count for the current one.
+    if (this.slugToGroup.get(entry.slug) !== wrapper) return;
     const stillHas = wrapper.children.some(c => c === procedural && c.name === '__procedural');
     if (!stillHas) return;
 
@@ -467,6 +538,9 @@ export class VirtualStreetScene {
     deepDisposeObject3D(procedural);
 
     this.collectAnimationTargets(high);
+
+    // A GLB without renderable meshes (empty/skeleton-only) never counts as ready.
+    const countsForReadiness = gltfVisualHasRenderableMesh(high);
 
     if (enableLod) {
       const lod = new three.LOD();
@@ -489,9 +563,11 @@ export class VirtualStreetScene {
         lod.addLevel(low, swapAt);
       }
       wrapper.add(lod);
+      if (countsForReadiness) this.readyFacadeCount += 1;
     } else {
       high.name = '__gltf';
       wrapper.add(high);
+      if (countsForReadiness) this.readyFacadeCount += 1;
       if (lod1) deepDisposeObject3D(lod1);
     }
 
@@ -628,6 +704,26 @@ export class VirtualStreetScene {
     if (slug && this.slugToGroup.has(slug)) {
       setGroupHighlight(three, this.slugToGroup.get(slug)!, true);
     }
+  }
+
+  /**
+   * Exposes a plain UI readiness marker for assistive automation and the
+   * baseline E2E only after real GLB geometry is attached and rendered.
+   * Non-sensitive: a boolean plus the public storefront count already visible
+   * on the page. No scene/graph/GPU object ever leaves the runtime.
+   */
+  private announceSceneReadyWhenRendered(): void {
+    if (!this.canvas) return;
+    const announce = shouldAnnounceSceneReady({
+      renderedFrames: this.renderedFrameCount,
+      readyFacades: this.readyFacadeCount,
+      expectedFacades: this.slugToGroup.size,
+      alreadyAnnounced: this.readyAnnounced
+    });
+    if (!announce) return;
+    this.readyAnnounced = true;
+    this.canvas.dataset['sceneReady'] = 'true';
+    this.canvas.dataset['sceneReadyFacades'] = String(this.readyFacadeCount);
   }
 
   private bindPointer(): void {

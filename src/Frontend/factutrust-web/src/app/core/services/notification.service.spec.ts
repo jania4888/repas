@@ -4,7 +4,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { SKIP_ERROR_TOAST } from '@core/http-context';
 import { environment } from '@environments/environment';
 import { FirmAssignmentService } from './firm-assignment.service';
-import { NotificationList, NotificationService } from './notification.service';
+import {
+  NotificationList,
+  NotificationService,
+  STUDIO_WORKFLOW_NOTIFICATION_TYPES,
+  isStudioWorkflowNotification
+} from './notification.service';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -86,5 +91,31 @@ describe('NotificationService', () => {
 
     expect(service.unreadCount()).toBe(0);
     expect(service.latest()).toEqual([]);
+  });
+
+  it('reconnaît les notifications de workflow Studio (types 15 à 18)', () => {
+    expect(STUDIO_WORKFLOW_NOTIFICATION_TYPES).toEqual({
+      approvalRequested: 15,
+      approvalDecided: 16,
+      stepFailed: 17,
+      message: 18
+    });
+    for (const type of [15, 16, 17, 18]) {
+      expect(isStudioWorkflowNotification(type)).withContext(`type ${type}`).toBeTrue();
+    }
+    for (const type of [-1, 0, 14, 19, 100]) {
+      expect(isStudioWorkflowNotification(type)).withContext(`type ${type}`).toBeFalse();
+    }
+  });
+
+  // D-44-94 : l'API sérialise `NotificationType` en chaîne PascalCase (JsonStringEnumConverter global,
+  // Program.cs) — la seule forme numérique laissait le badge d'approbations sans rafraîchissement immédiat.
+  it("reconnaît la forme chaîne PascalCase émise par l'API pour les types 15 à 18", () => {
+    for (const type of ['StudioWorkflowApprovalRequested', 'StudioWorkflowApprovalDecided', 'StudioWorkflowStepFailed', 'StudioWorkflowMessage']) {
+      expect(isStudioWorkflowNotification(type)).withContext(type).toBeTrue();
+    }
+    for (const type of ['FirmAssignmentRequested', 'ExchangeMessageReceived', 'FirmTimeSheetSubmitted', '', 'studioWorkflowMessage']) {
+      expect(isStudioWorkflowNotification(type)).withContext(`type ${type}`).toBeFalse();
+    }
   });
 });

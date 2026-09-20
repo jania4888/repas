@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { STUDIO_AI_LABELS, formatLabel } from '../studio-ai-labels';
 import { STUDIO_SPEC_LIMITS, StudioSpecCounters, StudioSystemSpec } from '../studio-ai.models';
+import { specToDiagram } from '../studio-ai-diagram.adapter';
 import { counterChips } from '../studio-ai-spec.util';
+import { StudioRelationDiagramComponent } from '../../relations/studio-relation-diagram.component';
 
 /** Une entité de l'arbre « Structure du système ». */
 interface StudioAiOverviewNode {
@@ -16,12 +18,13 @@ interface StudioAiOverviewNode {
  * Onglet « Vue d'ensemble » (lecture, P1a) : arbre des tables à gauche, compteurs et points à
  * vérifier à droite.
  *
- * Le diagramme ER interactif est livré en P1b : sa place est tenue par un encart explicite plutôt
- * qu'un blanc, et les relations restent consultables dans l'onglet Relations.
+ * Le diagramme des relations (3.4e) est dérivé de la spec par `specToDiagram` ; il est décrit en
+ * texte (`sr-only`) pour les lecteurs d'écran et détaillé dans l'onglet Relations.
  */
 @Component({
   selector: 'app-studio-ai-overview-tab',
   standalone: true,
+  imports: [StudioRelationDiagramComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './studio-ai-preview.scss',
   template: `
@@ -63,10 +66,10 @@ interface StudioAiOverviewNode {
 
         <div class="sai-block" style="margin-top: var(--spacing-4, 1rem)">
           <div class="sai-block__head">{{ labels.diagram }}</div>
-          <div class="sai-placeholder">
-            <i class="fa-solid fa-diagram-project" aria-hidden="true"></i>
-            <span>{{ labels.diagramSoon }}</span>
-          </div>
+          <app-studio-relation-diagram [model]="diagram()" size="compact" [emptyLabel]="labels.noRelations" />
+          @if (diagramDescription()) {
+            <p class="sr-only">{{ diagramDescription() }}</p>
+          }
         </div>
 
         <p class="sai-hint">{{ limitsHint }}</p>
@@ -116,4 +119,16 @@ export class StudioAiOverviewTabComponent {
   );
 
   readonly cards = computed(() => counterChips(this.counters()));
+
+  /** Diagramme des relations dérivé de la spec (3.4e). */
+  readonly diagram = computed(() => specToDiagram(this.spec()));
+
+  /** Description textuelle « A → B (kind) » du diagramme (le SVG est restitué comme une image). */
+  readonly diagramDescription = computed(() => {
+    const model = this.diagram();
+    const labelOf = (id: string): string => model.nodes.find(n => n.id === id)?.label ?? id;
+    return model.edges
+      .map(e => formatLabel(STUDIO_AI_LABELS.preview.diagramEdge, { from: labelOf(e.from), to: labelOf(e.to), kind: e.kind }))
+      .join(' ; ');
+  });
 }

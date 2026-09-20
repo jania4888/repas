@@ -1,0 +1,28 @@
+// Dialogue « Tester sur un enregistrement » (4.7c2, simulation pure) — styles déplacés du concepteur
+// (`studio-workflow-designer.scss`) avec le composant en 4.7★3 (D-47-80) : mêmes sélecteurs, mêmes valeurs.
+
+.wf-test-banner { width: 100%; margin-bottom: 0.75rem; }
+.wf-test-picker { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.wf-test-search { flex: 1; }
+.wf-test-hint { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.wf-test-records { list-style: none; margin: 0 0 0.75rem; padding: 0; max-height: 12rem; overflow: auto; display: flex; flex-direction: column; gap: 0.25rem; }
+.wf-test-record { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; width: 100%; padding: 0.4rem 0.6rem; border: 1px solid var(--p-content-border-color); border-radius: 6px; background: transparent; cursor: pointer; text-align: left; }
+.wf-test-record:hover { background: var(--p-content-hover-background); }
+.wf-test-record--selected { border-color: var(--p-primary-color); background: var(--p-primary-50, var(--p-content-hover-background)); }
+.wf-test-record-id { color: var(--p-text-muted-color); font-family: monospace; }
+.wf-test-msg { width: 100%; margin-top: 0.75rem; }
+.wf-test-trace { margin-top: 0.75rem; border-top: 1px solid var(--p-content-border-color); padding-top: 0.5rem; }
+.wf-test-warnings { list-style: none; margin: 0 0 0.5rem; padding: 0; color: var(--p-warn-color, #b45309); font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.wf-trace { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.wf-trace-row { display: grid; grid-template-columns: 1.25rem 1fr auto; gap: 0.25rem 0.5rem; align-items: baseline; padding: 0.35rem 0.5rem; border-radius: 6px; border: 1px solid var(--p-content-border-color); }
+.wf-trace-row--run i { color: var(--p-green-500); }
+.wf-trace-row--skip i { color: var(--p-text-muted-color); }
+.wf-trace-row--suspend i { color: var(--p-amber-500, #d97706); }
+.wf-trace-row--fail i { color: var(--p-red-500); }
+.wf-trace-row--skip { opacity: 0.75; }
+.wf-trace-name small { color: var(--p-text-muted-color); }
+.wf-trace-verdict { font-size: 0.8rem; font-weight: 600; }
+.wf-trace-detail { grid-column: 2 / -1; font-size: 0.85rem; color: var(--p-text-muted-color); }
+.wf-trace-rendered { grid-column: 2 / -1; font-size: 0.8rem; }
+.wf-trace-rendered pre { margin: 0.25rem 0 0; padding: 0.4rem; border-radius: 4px; background: var(--p-content-hover-background); font-size: 0.75rem; overflow: auto; max-height: 10rem; }
+.wf-trace-summary { margin-top: 0.5rem; font-size: 0.85rem; color: var(--p-text-muted-color); }

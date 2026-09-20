@@ -55,4 +55,21 @@ describe('StudioAiProgressComponent', () => {
     expect(fixture.nativeElement.querySelector('.saip__count').textContent).toContain('2 / 2');
     expect(fixture.nativeElement.querySelector('.saip__bar-fill').style.width).toBe('100%');
   });
+
+  it('puce Vues = étapes creating_views terminées / total', () => {
+    const fixture = create([
+      { phase: 'creating_system', label: 'Système', status: 'done' },
+      { phase: 'creating_views', label: 'Vue Kanban', status: 'done' },
+      { phase: 'creating_views', label: 'Vue Calendrier', status: 'skipped' },
+      { phase: 'creating_views', label: 'Vue Liste', status: 'running' }
+    ]);
+    const chip = fixture.nativeElement.querySelector('.saip__chip[data-phase="views"]') as HTMLElement;
+    expect(chip).not.toBeNull();
+    expect(chip.textContent!.replace(/\s+/g, ' ').trim()).toBe('Vues 2/3');
+  });
+
+  it('sans étape de vue ⇒ pas de puce Vues', () => {
+    const fixture = create();
+    expect(fixture.nativeElement.querySelector('[data-phase="views"]')).toBeNull();
+  });
 });

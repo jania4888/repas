@@ -468,6 +468,12 @@
 
                       <span>{{ child.label }}</span>
 
+                      @if (child.badge) {
+
+                        <span class="badge bg-danger ms-auto" data-testid="nav-child-badge" [attr.aria-label]="child.badge + ' en attente'">{{ child.badge }}</span>
+
+                      }
+
                     </button>
 
                   } @else {
@@ -489,6 +495,12 @@
                       }
 
                       <span>{{ child.label }}</span>
+
+                      @if (child.badge) {
+
+                        <span class="badge bg-danger ms-auto" data-testid="nav-child-badge" [attr.aria-label]="child.badge + ' en attente'">{{ child.badge }}</span>
+
+                      }
 
                     </a>
 

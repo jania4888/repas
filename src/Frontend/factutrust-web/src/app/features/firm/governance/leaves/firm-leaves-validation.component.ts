@@ -99,7 +99,7 @@ export class FirmLeavesValidationComponent implements OnInit {
       header: 'Accepter',
       message: `Accepter la demande de ${r.collaboratorName} (${r.days} j.) ?`,
       acceptLabel: 'Accepter',
-      acceptButtonStyleClass: 'p-button-success',
+      acceptButtonStyleClass: 'btn-success',
       accept: () => {
         this.api.process(r.id, true).subscribe({
           next: res => {

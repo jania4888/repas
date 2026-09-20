@@ -429,7 +429,7 @@ export class EmployeeDetailComponent implements OnInit {
       header: 'Confirmation',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.employees.deleteContract(c.id).subscribe({
           next: () => {
@@ -460,7 +460,7 @@ export class EmployeeDetailComponent implements OnInit {
       header: 'Confirmation de suppression',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.employees.delete(this.employee()!.id).subscribe({
           next: () => {

@@ -123,6 +123,8 @@ public sealed class CreateCustomSystemCommandHandler
         var key = req.Key?.Trim().ToLowerInvariant() ?? string.Empty;
         if (!StudioKey.IsValidShape(key))
             return Result.Failure<CustomSystemDto>(Error.Validation("key", "Clé système invalide."));
+        if (StudioKey.IsReservedSystemKey(key))
+            return Result.Failure<CustomSystemDto>(Error.Validation("key", "Clé système réservée."));
         if (string.IsNullOrWhiteSpace(req.DisplayName))
             return Result.Failure<CustomSystemDto>(Error.Validation("displayName", "Le nom est obligatoire."));
         if (await _systems.KeyExistsAsync(tenantId, key, cancellationToken))

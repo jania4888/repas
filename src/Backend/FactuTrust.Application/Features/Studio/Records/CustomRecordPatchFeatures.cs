@@ -1,13 +1,16 @@
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
+using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.Studio.Automations;
 using FactuTrust.Application.Features.Studio.Common;
+using FactuTrust.Application.Features.Studio.Workflows;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities.Studio;
 using FactuTrust.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Text.Json.Nodes;
 
 namespace FactuTrust.Application.Features.Studio.Records;
@@ -37,10 +40,13 @@ public sealed class PatchCustomRecordCommandHandler : IRequestHandler<PatchCusto
     private readonly IStudioComputedFieldWriter _computedWriter;
     private readonly IPublisher _publisher;
     private readonly ICurrentUser _currentUser;
+    private readonly ILogger<PatchCustomRecordCommandHandler>? _logger;
+    private readonly IAuditService? _audit;
 
     public PatchCustomRecordCommandHandler(
         ICustomEntityRepository entities, ICustomFieldRepository fields, ICustomRecordRepository records,
-        IStudioComputedFieldWriter computedWriter, IPublisher publisher, ICurrentUser currentUser)
+        IStudioComputedFieldWriter computedWriter, IPublisher publisher, ICurrentUser currentUser,
+        IAuditService? audit = null, ILogger<PatchCustomRecordCommandHandler>? logger = null)
     {
         _entities = entities;
         _fields = fields;
@@ -48,6 +54,8 @@ public sealed class PatchCustomRecordCommandHandler : IRequestHandler<PatchCusto
         _computedWriter = computedWriter;
         _publisher = publisher;
         _currentUser = currentUser;
+        _logger = logger;
+        _audit = audit;
     }
 
     public async Task<Result<CustomRecordDto>> Handle(PatchCustomRecordCommand command, CancellationToken cancellationToken)
@@ -104,6 +112,9 @@ public sealed class PatchCustomRecordCommandHandler : IRequestHandler<PatchCusto
         if (pairError is not null)
             return Result.Failure<CustomRecordDto>(pairError);
 
+        // PR 4.1i : capture AVANT SetData pour le déclencheur « field_changed » des workflows.
+        var previousDataJson = record.DataJson;
+
         record.SetData(canonicalJson, userId);
 
         try
@@ -116,9 +127,16 @@ public sealed class PatchCustomRecordCommandHandler : IRequestHandler<PatchCusto
             return Result.Failure<CustomRecordDto>(Error.Conflict("L'enregistrement a été modifié entre-temps. Rechargez-le avant de réessayer."));
         }
 
+        // 4.7 « v1.1 » (D-47-63) : audit des seules clés modifiées — aucune ligne si le PATCH est sans effet.
+        await StudioRecordAudit.LogUpdatedAsync(_audit, record.Id, previousDataJson, canonicalJson, cancellationToken);
+
         // Pont ERP : déclenche OnUpdate (best-effort, l'enregistrement est déjà persisté).
         await StudioRecordLifecycle.PublishAsync(
             _publisher, tenantId, entity.Id, record.Id, canonicalJson, StudioAutomationTrigger.OnUpdate, userId, cancellationToken);
+
+        // Workflows Studio (PR 4.1i) : notification séparée (D5) avec l'état précédent, best-effort journalisée (P15).
+        await StudioWorkflowLifecycle.PublishAsync(
+            _publisher, tenantId, entity.Id, record.Id, canonicalJson, previousDataJson, StudioAutomationTrigger.OnUpdate, userId, _logger, cancellationToken);
 
         return Result.Success(StudioMappers.ToDto(record));
     }

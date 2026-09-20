@@ -155,13 +155,18 @@ public sealed record CreateManyToManyRelationRequest(
     Guid TargetEntityId,
     string? Label,
     string? JunctionKey,
-    string? JunctionDisplayName);
+    string? JunctionDisplayName,
+    // v1.1 / D-47-40 (R4) : attribut de liaison optionnel — un champ `Number` portant ce libellé est
+    // ajouté à la jonction (clé slugifiée) APRÈS les deux champs de liaison ; non fourni ⇒ comportement v1.
+    string? JunctionAttributeLabel = null);
 
-/// <summary>Result of a many-to-many creation: the junction entity and its two relation fields.</summary>
+/// <summary>Result of a many-to-many creation: the junction entity, its two relation fields, and the optional link attribute field.</summary>
 public sealed record ManyToManyRelationDto(
     CustomEntityDto Junction,
     CustomFieldDto SourceField,
-    CustomFieldDto TargetField);
+    CustomFieldDto TargetField,
+    // v1.1 / D-47-40 : le champ attribut créé, null quand `JunctionAttributeLabel` n'est pas fourni.
+    CustomFieldDto? AttributeField = null);
 
 // ---- Records ----
 
@@ -219,3 +224,21 @@ public sealed record UpdateCustomSystemRequest(
     string? Description,
     IReadOnlyList<string>? OnboardingSteps,
     bool IsActive);
+
+/// <summary>
+/// Un changement d'une clé de premier niveau du document canonique (Studio 4.7 — D5) : valeurs en
+/// texte, tronquées à 200 caractères. <c>OldValue</c> nul à la création, <c>NewValue</c> nul au retrait.
+/// </summary>
+public sealed record RecordHistoryChangeDto(string Key, string? OldValue, string? NewValue);
+
+/// <summary>
+/// Entrée de l'historique d'un enregistrement (Studio 4.7 — D5) : action, date, nom affichable de
+/// l'auteur (nul si indisponible — jamais d'identifiant ni d'email exposé) et liste des changements
+/// (vide à la suppression).
+/// </summary>
+public sealed record RecordHistoryEntryDto(
+    Guid Id,
+    string Action,
+    DateTime CreatedAt,
+    string? UserName,
+    IReadOnlyList<RecordHistoryChangeDto> Changes);

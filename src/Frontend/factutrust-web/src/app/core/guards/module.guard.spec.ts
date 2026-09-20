@@ -90,6 +90,21 @@ describe('moduleGuard', () => {
     expect(result).toBe(true);
   });
 
+  it('allows /studio/approvals for a custom_records:read user without studio:design_entities', async () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, {
+      ...baseUser,
+      enabledModuleIds: [...baseUser.enabledModuleIds!, AppModule.Studio],
+      effectivePermissions: ['custom_records:read']
+    });
+
+    const result = await TestBed.runInInjectionContext(() =>
+      moduleGuard({} as never, { url: '/studio/approvals' } as never)
+    );
+
+    expect(result).toBe(true);
+  });
+
   it('never blocks /settings/profile regardless of module grants (own-profile carve-out)', async () => {
     const auth = TestBed.inject(AuthService);
     setUser(auth, baseUser);

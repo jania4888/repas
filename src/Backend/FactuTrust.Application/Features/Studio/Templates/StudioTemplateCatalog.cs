@@ -13,7 +13,15 @@ public sealed record StudioBuiltinTemplate(
     string Description,
     string Category,
     string ModuleTag,
-    string SpecJson);
+    string SpecJson,
+    StudioTemplateStats Stats);
+
+/// <summary>
+/// Statistiques d'un modèle embarqué, calculées une fois au chargement du catalogue (source de
+/// vérité unique pour la bibliothèque) : nombre de tables, de relations plusieurs-à-plusieurs et
+/// modes de vue distincts (<c>kanban</c> / <c>calendar</c> / <c>list</c>) dans l'ordre d'apparition.
+/// </summary>
+public sealed record StudioTemplateStats(int EntityCount, int RelationCount, IReadOnlyList<string> ViewModes);
 
 /// <summary>
 /// Catalogue statique des modèles de systèmes embarqués (tâches B-P0-06/B-P0-07). Les specs JSON
@@ -37,6 +45,8 @@ public static class StudioTemplateCatalog
         ("catalogue-produits", "Achats", "Achats / Stock"),
         ("gestion-formations", "RH", "RH & Compétences"),
         ("suivi-reclamations", "Services", "Services / Support"),
+        ("gestion-projets", "Projets", "Projets / Services"),
+        ("gestion-evenements", "Événements", "Marketing / Événements"),
     };
 
     private static readonly IReadOnlyList<StudioBuiltinTemplate> Catalog = Load();
@@ -49,6 +59,15 @@ public static class StudioTemplateCatalog
         string.IsNullOrWhiteSpace(key)
             ? null
             : Catalog.FirstOrDefault(t => string.Equals(t.Key, key.Trim(), StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Calcule les statistiques d'une spec analysée (pur, réutilisable par les tests) : les modes de
+    /// vue sont dédoublonnés en conservant leur ordre d'apparition.
+    /// </summary>
+    public static StudioTemplateStats ComputeStats(ParsedSystemSpec spec) => new(
+        spec.Entities.Count,
+        spec.Relations.Count,
+        spec.Entities.SelectMany(e => e.Views).Select(v => v.Mode).Distinct(StringComparer.Ordinal).ToList());
 
     private static IReadOnlyList<StudioBuiltinTemplate> Load()
     {
@@ -83,7 +102,8 @@ public static class StudioTemplateCatalog
                 parsed.SystemDescription ?? string.Empty,
                 category,
                 moduleTag,
-                json));
+                json,
+                ComputeStats(parsed)));
         }
 
         return templates

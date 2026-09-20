@@ -1,23 +1,37 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { AuthService } from '@core/services/auth.service';
+import { PERMISSIONS } from '@core/config/permission-keys';
 import { StudioService } from './studio.service';
 import { CustomSystemDetail } from './studio.models';
 import { StudioPageShellComponent } from './shared/studio-page-shell.component';
 import { STUDIO_BREADCRUMBS } from './shared/studio-breadcrumb.util';
+import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service';
+import { STUDIO_AI_LABELS } from './ai/studio-ai-labels';
+import { StudioAiExportDialogComponent } from './ai/import-export/studio-ai-export-dialog.component';
 import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-studio-system-hub',
   standalone: true,
-  imports: [CommonModule, RouterModule, ButtonModule, StudioPageShellComponent],
+  imports: [CommonModule, RouterModule, ButtonModule, StudioPageShellComponent, StudioAiExportDialogComponent],
   template: `
     @if (detail(); as d) {
       <app-studio-page-shell
         [title]="d.system.displayName"
         [subtitle]="d.system.description ?? (d.entities.length + ' table(s)')"
         [breadcrumbs]="breadcrumbs()">
+        @if (exportEnabled()) {
+          <div studioActions class="studio-head-actions">
+            <button pButton type="button" class="p-button-outlined" icon="fa-solid fa-file-export"
+              data-action="export" [label]="labels.result.exportJson" (click)="exportVisible.set(true)"></button>
+            <a pButton class="p-button-outlined" icon="fa-solid fa-copy"
+              data-action="duplicate" [label]="labels.result.duplicate"
+              [routerLink]="['/studio/ai']" [queryParams]="{ duplicate: d.system.key }"></a>
+          </div>
+        }
         <div class="hub">
           @if (d.system.onboardingSteps?.length) {
             <section class="hub-onboard">
@@ -45,6 +59,10 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
           </section>
         </div>
       </app-studio-page-shell>
+
+      @if (exportEnabled()) {
+        <app-studio-ai-export-dialog [(visible)]="exportVisible" [systemKey]="d.system.key" />
+      }
     }
   `,
   styles: [`
@@ -62,11 +80,27 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
 export class StudioSystemHubComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly studio = inject(StudioService);
+  private readonly capabilities = inject(StudioAiCapabilitiesService);
+  private readonly auth = inject(AuthService);
+
+  protected readonly labels = STUDIO_AI_LABELS;
 
   readonly detail = signal<CustomSystemDetail | null>(null);
   readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.systemHub('Système'));
+  readonly exportVisible = signal(false);
+
+  /**
+   * Exporter / Dupliquer : fail-closed sur le flag `systemExportEnabled` ET la permission
+   * `studio:design_entities` (la route du hub n'exige que `custom_data:records_read`).
+   */
+  readonly exportEnabled = computed(() =>
+    this.capabilities.state() === 'ready'
+    && this.capabilities.capabilities().systemExportEnabled
+    && this.auth.hasPermission(PERMISSIONS.studio.designEntities)
+  );
 
   ngOnInit(): void {
+    this.capabilities.ensureLoaded();
     const key = this.route.snapshot.paramMap.get('key');
     if (!key) return;
     this.studio.getSystem(key).subscribe({

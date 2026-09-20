@@ -81,6 +81,49 @@ describe('StudioAiTemplatesPageComponent', () => {
     expect(fixture.nativeElement.querySelector('[data-testid="templates-disabled"]').textContent).toContain(STUDIO_AI_LABELS.templates.disabled);
   });
 
+  it('affiche le module, le nombre de relations et les modes de vue normalisés d\'un modèle', () => {
+    builds.listTemplates.and.returnValue(of({
+      success: true, message: null, errors: [],
+      data: [template('paie', { moduleTag: 'RH & Paie', relationCount: 3, viewModes: ['list', 'kanban', 'calendar'] })]
+    }) as never);
+    create();
+
+    const card = cards()[0];
+    expect(card.querySelector('.sat__module')?.textContent).toContain('RH & Paie');
+    expect(card.querySelector('.sat__card-relations')?.textContent).toContain('3 relation(s)');
+    expect(card.querySelector('.sat__card-views')?.textContent?.trim()).toBe(
+      `${STUDIO_AI_LABELS.views.list} · ${STUDIO_AI_LABELS.views.kanban} · ${STUDIO_AI_LABELS.views.calendar}`
+    );
+    expect(card.textContent).toContain('4 table(s)');
+  });
+
+  it('modes de vue dédoublonnés et traduits (List/kanban ⇒ Liste · Kanban)', () => {
+    builds.listTemplates.and.returnValue(of({
+      success: true, message: null, errors: [],
+      data: [template('crm', { viewModes: ['List', 'liste', 'kanban', 'Kanban', 'table'] })]
+    }) as never);
+    create();
+
+    expect(fixture.componentInstance.viewModesText(template('x', { viewModes: ['List', 'kanban'] }))).toBe('Liste · Kanban');
+    expect(cards()[0].querySelector('.sat__card-views')?.textContent?.trim()).toBe('Liste · Kanban');
+  });
+
+  it('relationCount absent ou 0 ⇒ pas de mention de relation', () => {
+    builds.listTemplates.and.returnValue(of({
+      success: true, message: null, errors: [],
+      data: [template('a'), template('b', { relationCount: 0, viewModes: null }), template('c', { relationCount: 2, viewModes: [] })]
+    }) as never);
+    create();
+
+    expect(fixture.componentInstance.relationsText(template('a'))).toBe('');
+    expect(cards()[0].querySelector('.sat__card-relations')).toBeNull();
+    expect(cards()[0].textContent).not.toContain('relation(s)');
+    expect(cards()[1].querySelector('.sat__card-relations')).toBeNull();
+    expect(cards()[1].querySelector('.sat__card-views')).toBeNull();
+    expect(cards()[2].querySelector('.sat__card-relations')?.textContent).toContain('2 relation(s)');
+    expect(cards()[2].querySelector('.sat__card-views')).toBeNull();
+  });
+
   it('groupTemplates keeps the first-seen category order', () => {
     const groups = groupTemplates([template('a', { category: 'B' }), template('b', { category: 'A' }), template('c', { category: 'B' })]);
     expect(groups.map(g => g.category)).toEqual(['B', 'A']);

@@ -143,7 +143,7 @@ public sealed class QuoteRepository : IQuoteRepository
 
         var items = await query
             .OrderByDescending(q => q.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

@@ -1,4 +1,5 @@
 using FactuTrust.Application.Common.Interfaces;
+using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.Features.Studio.Ai;
 using FactuTrust.Application.Features.Studio.Common;
@@ -17,7 +18,8 @@ namespace FactuTrust.Infrastructure.Services.Studio;
 /// <summary>
 /// Exécute un plan Studio IA confirmé par l'utilisateur. Routage par nature de plan :
 /// CreateSystem → <see cref="StudioAiSystemOrchestrator"/> (rollback conservé) ;
-/// CreateApp → création directe table + champs + rapport (mêmes commandes que studio_generate_app).
+/// CreateApp → création directe table + champs + rapport (mêmes commandes que studio_generate_app) ;
+/// Workflow → <see cref="StudioAiWorkflowExecutor"/> (tout-ou-rien, workflows créés inactifs, PR 4.3f).
 /// Orchestration mince uniquement — toute la validation/quotas/permissions/audit reste dans les
 /// commandes CQRS Studio sous-jacentes.
 /// </summary>
@@ -28,19 +30,22 @@ public sealed class StudioAiPlanExecutor : IStudioAiPlanExecutor
     private readonly IStudioQuotaService? _quota;
     private readonly ISqlSchemaProvider? _sqlSchema;
     private readonly OllamaSettings? _settings;
+    private readonly ICustomEntityRepository? _entities;
 
     public StudioAiPlanExecutor(
         IMediator mediator,
         ICurrentUser currentUser,
         IStudioQuotaService? quota = null,
         ISqlSchemaProvider? sqlSchema = null,
-        IOptions<OllamaSettings>? settings = null)
+        IOptions<OllamaSettings>? settings = null,
+        ICustomEntityRepository? entities = null)
     {
         _mediator = mediator;
         _currentUser = currentUser;
         _quota = quota;
         _sqlSchema = sqlSchema;
         _settings = settings?.Value;
+        _entities = entities;
     }
 
     public async Task<(bool Success, string? Error, object? Payload)> ExecuteAsync(
@@ -65,7 +70,7 @@ public sealed class StudioAiPlanExecutor : IStudioAiPlanExecutor
             {
                 if (!StudioAiAmendmentSpec.TryParse(plan.SpecJson, out var spec, out var error) || spec is null)
                     return (false, error ?? "Spécification de modification invalide.", null);
-                var executor = new StudioAiAmendmentExecutor(_mediator, _currentUser);
+                var executor = new StudioAiAmendmentExecutor(_mediator, _currentUser, _settings, _entities);
                 return await executor.ExecuteAsync(spec, progress, cancellationToken);
             }
             case StudioAiPlanKind.View:
@@ -85,6 +90,17 @@ public sealed class StudioAiPlanExecutor : IStudioAiPlanExecutor
                 if (!StudioAiRecordViewSpec.TryParse(plan.SpecJson, out var spec, out var error) || spec is null)
                     return (false, error ?? "Spécification de vue enregistrée invalide.", null);
                 return await ExecuteRecordViewAsync(spec, progress, cancellationToken);
+            }
+            case StudioAiPlanKind.Workflow:
+            {
+                // PR 4.3f — fail-closed (D-43-22, D-43-29) : règle UNIQUE des trois drapeaux (moteur, outil IA,
+                // aperçu) — un plan confirmé (ou rejoué) après l'extinction de l'un d'eux ne crée rien.
+                if (_settings is null || !StudioAiPlanCreation.WorkflowToolsEnabled(_settings))
+                    return (false, "Les workflows Studio ne sont pas activés.", null);
+                if (!StudioAiWorkflowSpec.TryParse(plan.SpecJson, out var spec, out var error) || spec is null)
+                    return (false, error ?? "Spécification de workflows invalide.", null);
+                var executor = new StudioAiWorkflowExecutor(_mediator);
+                return await executor.ExecuteAsync(spec, progress, cancellationToken);
             }
             default:
                 return (false, $"Type de plan non pris en charge : {plan.Kind}.", null);

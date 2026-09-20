@@ -34,7 +34,7 @@ export class FirmInvitationActionsService {
         icon: 'pi pi-check-circle',
         acceptLabel: 'Accepter',
         rejectLabel: 'Annuler',
-        acceptButtonStyleClass: 'p-button-success',
+        acceptButtonStyleClass: 'btn-success',
         accept: () => {
           this.assignments.acceptInvitation(inv.id).subscribe({
             next: r => {

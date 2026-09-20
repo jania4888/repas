@@ -87,7 +87,7 @@ public sealed class FixedAssetRepository : IFixedAssetRepository
         var total = await query.CountAsync(cancellationToken);
         var items = await query
             .OrderByDescending(a => a.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .Include(a => a.DepreciationRateCategory)
             .ToListAsync(cancellationToken);
@@ -121,7 +121,7 @@ public sealed class FixedAssetRepository : IFixedAssetRepository
 
         var items = await query
             .OrderBy(a => a.InventoryNumber)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .Select(a => new
             {

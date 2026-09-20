@@ -110,7 +110,7 @@ public sealed class AccountingAuditQueryService : IAccountingAuditQueryService
                              && a.Status != AnomalyStatus.Corrected
                              && a.Status != AnomalyStatus.Ignored, cancellationToken);
 
-        var page = Math.Max(1, filter.Page);
+        var page = Math.Clamp(filter.Page, 1, int.MaxValue / 100);
         var pageSize = Math.Clamp(filter.PageSize, 1, 100);
         var items = await q.OrderByDescending(a => a.Severity)
             .ThenByDescending(a => a.Amount)

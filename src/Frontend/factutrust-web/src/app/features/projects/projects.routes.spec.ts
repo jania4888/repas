@@ -12,6 +12,7 @@ describe('projects.routes', () => {
   });
 
   it('exposes native FactuTrust screens including dashboard', () => {
-    expect(PROJECTS_ROUTES.every(r => r.loadComponent)).toBe(true);
+    // Les routes de pure redirection (ex. « time » → /timesheets) n'ont pas de composant par nature.
+    expect(PROJECTS_ROUTES.filter(r => !r.redirectTo).every(r => r.loadComponent)).toBe(true);
   });
 });

@@ -78,7 +78,7 @@ public sealed class InvoiceDraftRepository : IInvoiceDraftRepository
 
         var items = await query
             .OrderByDescending(d => d.LastModifiedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

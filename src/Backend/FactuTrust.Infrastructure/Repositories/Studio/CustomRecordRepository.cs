@@ -7,6 +7,7 @@ using FactuTrust.Domain.Entities.Studio;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
+using FactuTrust.Infrastructure.Repositories;
 
 namespace FactuTrust.Infrastructure.Repositories.Studio;
 
@@ -68,7 +69,7 @@ public sealed class CustomRecordRepository : ICustomRecordRepository
         var total = await query.CountAsync(cancellationToken);
         var items = await query
             .OrderByDescending(r => r.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

@@ -45,6 +45,19 @@ public sealed class AiToolRegistryMutationToolsTests
     }
 
     [Fact]
+    public void Studio_plan_changes_description_documents_the_enriched_amendment_operations()
+    {
+        // PR 3.1b : les six opérations d'amendement enrichies figurent dans la description exposée
+        // au modèle (sinon il ne les devinerait jamais).
+        var tool = AiToolRegistry.GetToolDefinition("studio_plan_changes");
+
+        Assert.NotNull(tool);
+        foreach (var op in new[]
+                 { "reorder_fields", "change_field_type", "add_relation", "assign_system", "set_view", "set_automation" })
+            Assert.Contains(op, tool!.Description);
+    }
+
+    [Fact]
     public void GetToolDefinition_is_case_insensitive()
     {
         Assert.NotNull(AiToolRegistry.GetToolDefinition("CREATE_PRODUCT"));

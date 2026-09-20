@@ -51,6 +51,9 @@ public static class StudioAiSpecCanonical
             case StudioAiPlanKind.RecordView:
                 if (!StudioAiRecordViewSpec.TryParse(specJson, out var recordView, out error) || recordView is null) return null;
                 return CanonicalRecordView(recordView);
+            case StudioAiPlanKind.Workflow:
+                if (!StudioAiWorkflowSpec.TryParse(specJson, out var workflow, out error) || workflow is null) return null;
+                return CanonicalWorkflow(workflow);
             default:
                 error = $"Nature de plan « {kind} » non prise en charge.";
                 return null;
@@ -60,7 +63,16 @@ public static class StudioAiSpecCanonical
     // ---- Système multi-tables -------------------------------------------------------------
 
     /// <summary>Ordre fixe des clés : system{displayName,icon,description,onboarding(,menu P2)}, entities[], seed[].</summary>
-    public static string CanonicalSystem(ParsedSystemSpec spec)
+    public static string CanonicalSystem(ParsedSystemSpec spec) => Serialize(CanonicalSystemNode(spec));
+
+    /// <summary>
+    /// Nœud canonique d'une spec système (E9, PR 3.3) : même construction que
+    /// <see cref="CanonicalSystem"/> (désormais un one-liner), exposée pour les ré-émetteurs qui
+    /// enrichissent la racine avant sérialisation (<c>specVersion</c>, <c>exportedFrom</c> — export
+    /// de systèmes). La sortie sérialisée de <see cref="CanonicalSystem"/> reste identique à
+    /// l'octet près (test de non-régression sur le modèle <c>suivi-reclamations</c>).
+    /// </summary>
+    public static JsonObject CanonicalSystemNode(ParsedSystemSpec spec)
     {
         var system = new JsonObject { ["displayName"] = spec.SystemDisplayName };
         if (spec.SystemIcon is not null) system["icon"] = spec.SystemIcon;
@@ -132,7 +144,7 @@ public static class StudioAiSpecCanonical
                 ["records"] = new JsonArray(batch.Records.Select(r => (JsonNode)RecordJson(r)).ToArray())
             }).ToArray());
         }
-        return Serialize(root);
+        return root;
     }
 
     // ---- Table simple ----------------------------------------------------------------------
@@ -219,6 +231,57 @@ public static class StudioAiSpecCanonical
                     operations.Add(node);
                     break;
                 }
+                case ReorderFieldsOp reorder:
+                    operations.Add(new JsonObject { ["op"] = "reorder_fields", ["fields"] = StringArray(reorder.FieldRefs) });
+                    break;
+                case ChangeFieldTypeOp changeType:
+                {
+                    var node = new JsonObject
+                    {
+                        ["op"] = "change_field_type",
+                        ["field"] = changeType.FieldRef,
+                        ["type"] = CanonicalChangeFieldTypeName(changeType.FieldType)
+                    };
+                    if (changeType.Options is { Count: > 0 }) node["options"] = OptionsJson(changeType.Options);
+                    if (changeType.Relation is not null)
+                        node["relation"] = new JsonObject { ["kind"] = changeType.Relation.Kind, ["ref"] = changeType.Relation.Ref };
+                    if (changeType.Config is { Count: > 0 }) node["config"] = RawConfigJson(changeType.Config);
+                    operations.Add(node);
+                    break;
+                }
+                case AddRelationOp addRelation:
+                {
+                    var node = new JsonObject { ["op"] = "add_relation", ["kind"] = addRelation.Kind, ["target"] = addRelation.TargetRef };
+                    if (addRelation.Label is not null) node["label"] = addRelation.Label;
+                    if (addRelation.JunctionName is not null) node["junctionName"] = addRelation.JunctionName;
+                    operations.Add(node);
+                    break;
+                }
+                case AssignSystemOp assignSystem:
+                {
+                    // Détachement émis « none » (jamais de clé absente : au re-parse une clé absente
+                    // est une OUBLI du modèle ⇒ op ignorée — l'aller-retour ne serait pas stable).
+                    var node = new JsonObject { ["op"] = "assign_system" };
+                    node["system"] = assignSystem.SystemRef ?? "none";
+                    operations.Add(node);
+                    break;
+                }
+                case SetViewOp setView:
+                {
+                    var node = new JsonObject { ["op"] = "set_view" };
+                    foreach (var kv in RecordViewJson(setView.View))
+                        node[kv.Key] = kv.Value?.DeepClone();
+                    operations.Add(node);
+                    break;
+                }
+                case SetAutomationOp setAutomation:
+                {
+                    var node = new JsonObject { ["op"] = "set_automation" };
+                    foreach (var kv in setAutomation.Node)
+                        if (kv.Key != "op") node[kv.Key] = kv.Value?.DeepClone();
+                    operations.Add(node);
+                    break;
+                }
             }
         }
 
@@ -288,6 +351,40 @@ public static class StudioAiSpecCanonical
         if (spec.TitleFieldKey is not null) root["title"] = spec.TitleFieldKey;
         root["isDefault"] = spec.IsDefault;
         return Serialize(root);
+    }
+
+    // ---- Workflows (PR 4.3) -----------------------------------------------------------------
+
+    /// <summary>
+    /// Forme canonique d'une spec de workflows : <c>{ "workflows": [ … ] }</c> triée par
+    /// <c>entityKey</c> puis <c>key</c> ; chaque workflow dans l'ordre fixe
+    /// <c>entityKey, key, name, description?, trigger (snake_case), triggerConfig, steps, isActive</c>
+    /// avec <c>triggerConfig</c> et <c>steps</c> à clés triées récursivement (les tableaux gardent
+    /// leur ordre — il est significatif). Jamais d'avertissements ici : la forme canonique est la
+    /// clé du cache d'aperçu et la forme rejouée à la confirmation (4.3f).
+    /// </summary>
+    public static string CanonicalWorkflow(ParsedWorkflowPlanSpec spec)
+    {
+        var workflows = spec.Workflows
+            .OrderBy(w => w.EntityKey, StringComparer.Ordinal)
+            .ThenBy(w => w.Key, StringComparer.Ordinal)
+            .Select(w =>
+            {
+                var node = new JsonObject
+                {
+                    ["entityKey"] = w.EntityKey,
+                    ["key"] = w.Key,
+                    ["name"] = w.Name
+                };
+                if (w.Description is not null) node["description"] = w.Description;
+                node["trigger"] = StudioWorkflowEnumNames.TriggerName(w.Trigger);
+                node["triggerConfig"] = SortedDeep(w.TriggerConfig);
+                node["steps"] = SortedDeep(w.Steps);
+                node["isActive"] = false; // D-08 : toujours inactif, quelle que soit la spec émise.
+                return node;
+            })
+            .ToArray();
+        return Serialize(new JsonObject { ["workflows"] = new JsonArray(workflows) });
     }
 
     /// <summary>Vue embarquée dans une spec système : jamais de clé « entity » (entité implicite).</summary>
@@ -388,6 +485,22 @@ public static class StudioAiSpecCanonical
         return node;
     }
 
+    /// <summary>
+    /// Nom EXACT de l'énumération (minuscule) — round-trippable via <c>StudioAiAppSpec.TryMapType</c>,
+    /// y compris les types interdits en cible (Formula/Lookup/Rollup/…) que <c>change_field_type</c>
+    /// doit pouvoir désigner pour être classé Forbidden par la matrice D4, jamais collapsés vers
+    /// "text" comme le fait <see cref="CanonicalTypeName"/> (réservé à add_field).
+    /// </summary>
+    private static string CanonicalChangeFieldTypeName(CustomFieldType type) => type.ToString().ToLowerInvariant();
+
+    /// <summary>Repasse un config arbitraire (change_field_type) tel que reçu, sans en filtrer les clés.</summary>
+    private static JsonObject RawConfigJson(IReadOnlyDictionary<string, JsonNode?> config)
+    {
+        var node = new JsonObject();
+        foreach (var kv in config) node[kv.Key] = kv.Value?.DeepClone();
+        return node;
+    }
+
     /// <summary>Formulaire : <c>{"sections":[{"title","fields":[{"field","width"?,"label"?}]}]}</c>, clé résolue.</summary>
     private static JsonObject FormJson(ParsedFormSpec form)
     {
@@ -453,6 +566,29 @@ public static class StudioAiSpecCanonical
 
     private static JsonArray SortJson(IReadOnlyList<ReportSort> sorts) =>
         new(sorts.Select(s => (JsonNode)new JsonObject { ["field"] = s.Field, ["dir"] = s.Dir }).ToArray());
+
+    /// <summary>
+    /// Copie profonde à clés d'objets triées (ordinal) récursivement ; les tableaux conservent leur
+    /// ordre (significatif : étapes, colonnes). Base des formes canoniques à JSON imbriqué libre (4.3).
+    /// </summary>
+    private static JsonNode? SortedDeep(JsonNode? node)
+    {
+        switch (node)
+        {
+            case JsonObject obj:
+                var sorted = new JsonObject();
+                foreach (var prop in obj.OrderBy(p => p.Key, StringComparer.Ordinal))
+                    sorted[prop.Key] = SortedDeep(prop.Value);
+                return sorted;
+            case JsonArray arr:
+                var copy = new JsonArray();
+                foreach (var item in arr)
+                    copy.Add(SortedDeep(item));
+                return copy;
+            default:
+                return node?.DeepClone();
+        }
+    }
 
     private static JsonArray StringArray(IReadOnlyList<string> values) =>
         new(values.Select(v => (JsonNode)JsonValue.Create(v)).ToArray());

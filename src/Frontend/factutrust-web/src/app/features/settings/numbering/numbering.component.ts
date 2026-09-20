@@ -828,7 +828,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Réinitialiser',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => this.resetScheme()
     });
   }

@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
@@ -51,8 +52,17 @@ public static class StudioAiPlanWorkbench
 
 public sealed record StudioAiPlanSpecDto(Guid Id, string Kind, string Status, DateTime ExpiresAt, string RowVersion, JsonNode Spec);
 
+/// <summary>
+/// Ligne d'historique d'un plan. Les 5 derniers champs (PR 3.2) sont ajoutés EN FIN avec défauts
+/// (<c>null</c>/<c>0</c>/<c>false</c>) : les clients anciens compilent sans changement.
+/// <c>ViewCount</c> est omis du JSON quand 0 (<c>WhenWritingDefault</c>) — le client normalise en 0.
+/// </summary>
 public sealed record StudioAiPlanListItemDto(Guid Id, string Kind, string Status, string Title, int EntityCount,
-    DateTime CreatedAt, DateTime ExpiresAt, DateTime? ExecutedAt, string? SystemKey);
+    DateTime CreatedAt, DateTime ExpiresAt, DateTime? ExecutedAt, string? SystemKey,
+    string? ErrorMessage = null, string? OpenUrl = null,
+    int RelationCount = 0,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] int ViewCount = 0,
+    bool Replayable = false);
 
 public sealed record UpdateStudioAiPlanSpecRequest(string SpecJson, string RowVersion);
 
@@ -234,14 +244,20 @@ public sealed class ListStudioAiPlansQueryHandler
     private static StudioAiPlanListItemDto ToListItemDto(StudioAiBuildPlan plan, DateTime utcNow)
     {
         var status = plan.IsExpired(utcNow) ? StudioAiPlanStatus.Expired : plan.Status;
-        var (title, entityCount) = ReadSummaryHeader(plan.SummaryJson);
+        var (title, entityCount, relationCount, viewCount) = ReadSummaryHeader(plan.SummaryJson);
         return new StudioAiPlanListItemDto(
             plan.Id, plan.Kind.ToString(), status.ToString(), title, entityCount,
-            plan.CreatedAt, plan.ExpiresAt, plan.ExecutedAt, ReadSystemKey(plan.ResultJson));
+            plan.CreatedAt, plan.ExpiresAt, plan.ExecutedAt, ReadSystemKey(plan.ResultJson),
+            plan.ErrorMessage, ReadOpenUrl(plan.ResultJson), relationCount, viewCount,
+            StudioAiPlanDefaults.IsReplayable(plan, utcNow));
     }
 
-    /// <summary>Titre et nombre de tables extraits du résumé (<c>title</c>, <c>entities.Count</c>) — jamais de SpecJson ici.</summary>
-    private static (string Title, int EntityCount) ReadSummaryHeader(string? summaryJson)
+    /// <summary>
+    /// Titre et compteurs extraits du résumé (<c>title</c>, <c>entities.Count</c>, <c>relations.Count</c>,
+    /// somme des <c>entities[].viewCount</c>) — jamais de SpecJson ici. Tolérant : clés absentes ⇒ 0
+    /// (<c>viewCount</c> n'est émis que lorsqu'il est non nul, cf. <c>WhenWritingDefault</c> côté résumé).
+    /// </summary>
+    private static (string Title, int EntityCount, int RelationCount, int ViewCount) ReadSummaryHeader(string? summaryJson)
     {
         if (!string.IsNullOrWhiteSpace(summaryJson))
         {
@@ -249,15 +265,24 @@ public sealed class ListStudioAiPlansQueryHandler
             {
                 var node = JsonNode.Parse(summaryJson);
                 var title = node?["title"] is JsonValue value && value.TryGetValue<string>(out var text) ? text : string.Empty;
-                var entityCount = node?["entities"] is JsonArray entities ? entities.Count : 0;
-                return (title ?? string.Empty, entityCount);
+                var entities = node?["entities"] as JsonArray;
+                var relationCount = node?["relations"] is JsonArray relations ? relations.Count : 0;
+                var viewCount = 0;
+                if (entities is not null)
+                    foreach (var entity in entities)
+                        if (entity is JsonObject entityObject
+                            && entityObject.TryGetPropertyValue("viewCount", out var viewCountNode)
+                            && viewCountNode is JsonValue viewCountValue
+                            && viewCountValue.TryGetValue<int>(out var entityViews))
+                            viewCount += entityViews;
+                return (title ?? string.Empty, entities?.Count ?? 0, relationCount, viewCount);
             }
             catch (JsonException)
             {
-                // Résumé illisible : la ligne de liste reste rendue, sans titre.
+                // Résumé illisible : la ligne de liste reste rendue, sans titre ni compteurs.
             }
         }
-        return (string.Empty, 0);
+        return (string.Empty, 0, 0, 0);
     }
 
     private static string? ReadSystemKey(string? resultJson)
@@ -274,6 +299,33 @@ public sealed class ListStudioAiPlansQueryHandler
             return null;
         }
     }
+
+    /// <summary>
+    /// URL d'ouverture du résultat (PR 3.2) : <c>openUrl</c> direct, puis <c>systemUrl</c>, puis repli
+    /// <c>/studio/systems/{systemKey}</c> (CreateSystem n'émet que <c>systemKey</c>). Jamais calculé ailleurs.
+    /// </summary>
+    private static string? ReadOpenUrl(string? resultJson)
+    {
+        if (string.IsNullOrWhiteSpace(resultJson)) return null;
+        try
+        {
+            if (JsonNode.Parse(resultJson) is not JsonObject obj) return null;
+            var openUrl = ReadString(obj, "openUrl") ?? ReadString(obj, "systemUrl");
+            if (openUrl is not null) return openUrl;
+            var systemKey = ReadString(obj, "systemKey");
+            return systemKey is null ? null : $"/studio/systems/{systemKey}";
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    private static string? ReadString(JsonObject obj, string key) =>
+        obj.FirstOrDefault(p => string.Equals(p.Key, key, StringComparison.OrdinalIgnoreCase)).Value
+            is JsonValue value && value.TryGetValue<string>(out var text) && !string.IsNullOrWhiteSpace(text)
+            ? text
+            : null;
 }
 
 // ---- CancelPending (« Réinitialiser la conversation » : purge des plans en attente) ----

@@ -1,6 +1,5 @@
 using FactuTrust.API.Authorization;
 using FactuTrust.Application.Configuration;
-using FactuTrust.Application.Features.Studio.Ai;
 using FactuTrust.Application.Features.Studio.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +20,6 @@ namespace FactuTrust.API.Controllers.Studio;
 [Authorize(Policy = PermissionPolicies.StudioDesignEntities)]
 public sealed class StudioTemplatesController : ControllerBase
 {
-    // Nombre de tables de chaque modèle, calculé UNE FOIS — les specs embarquées sont immuables
-    // et déjà validées au chargement du catalogue (TryParse ne peut pas échouer ici).
-    private static readonly IReadOnlyDictionary<string, int> EntityCounts = ComputeEntityCounts();
-
     private readonly OllamaSettings _ollamaSettings;
 
     public StudioTemplatesController(IOptions<OllamaSettings> ollamaSettings) =>
@@ -61,7 +56,8 @@ public sealed class StudioTemplatesController : ControllerBase
         var item = ToListItem(template);
         return Ok(ApiResponse<StudioTemplateDetailDto>.Ok(new StudioTemplateDetailDto(
             item.Key, item.Id, item.DisplayName, item.Description, item.Category, item.ModuleTag,
-            item.Source, item.Visibility, item.EntityCount, item.UpdatedAt, template.SpecJson)));
+            item.Source, item.Visibility, item.EntityCount, item.UpdatedAt, template.SpecJson,
+            template.Stats.RelationCount, template.Stats.ViewModes)));
     }
 
     /// <summary>
@@ -84,19 +80,10 @@ public sealed class StudioTemplatesController : ControllerBase
         template.ModuleTag,
         Source: "builtin",
         Visibility: null,      // le partage Privé/Équipe n'existe que pour les modèles tenant (P3)
-        EntityCounts[template.Key],
-        UpdatedAt: null);
-
-    private static IReadOnlyDictionary<string, int> ComputeEntityCounts()
-    {
-        var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        foreach (var template in StudioTemplateCatalog.All)
-            counts[template.Key] =
-                StudioAiSystemSpec.TryParse(template.SpecJson, out var spec, out _) && spec is not null
-                    ? spec.Entities.Count
-                    : 0;
-        return counts;
-    }
+        template.Stats.EntityCount,   // statistiques calculées une fois au chargement du catalogue
+        UpdatedAt: null,
+        template.Stats.RelationCount,
+        template.Stats.ViewModes);
 }
 
 /// <summary>Ligne de la bibliothèque de modèles (contrat stable, complété côté tenant en P3).</summary>
@@ -110,7 +97,9 @@ public sealed record StudioTemplateListItemDto(
     string Source,
     string? Visibility,
     int EntityCount,
-    DateTime? UpdatedAt);
+    DateTime? UpdatedAt,
+    int RelationCount = 0,
+    IReadOnlyList<string>? ViewModes = null);
 
 /// <summary>Détail d'un modèle : la ligne + la spec canonique prête pour « Utiliser ce modèle ».</summary>
 public sealed record StudioTemplateDetailDto(
@@ -124,4 +113,6 @@ public sealed record StudioTemplateDetailDto(
     string? Visibility,
     int EntityCount,
     DateTime? UpdatedAt,
-    string SpecJson);
+    string SpecJson,
+    int RelationCount = 0,
+    IReadOnlyList<string>? ViewModes = null);

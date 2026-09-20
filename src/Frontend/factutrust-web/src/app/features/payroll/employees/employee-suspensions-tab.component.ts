@@ -233,7 +233,7 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
       header: 'Confirmation',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(suspension.id)
     });
   }

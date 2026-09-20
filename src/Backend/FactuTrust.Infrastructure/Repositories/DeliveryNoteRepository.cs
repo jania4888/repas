@@ -78,7 +78,7 @@ public sealed class DeliveryNoteRepository : IDeliveryNoteRepository
 
         var items = await query
             .OrderByDescending(d => d.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

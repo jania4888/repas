@@ -94,7 +94,7 @@ public sealed class ClientRepository : IClientRepository
 
         var items = await query
             .OrderBy(c => c.Name)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

@@ -52,7 +52,7 @@ public sealed class NotificationService : INotificationService
         Guid? currentUserId = null,
         CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / 50);
         pageSize = Math.Clamp(pageSize, 1, 50);
 
         var query = VisibleTo(_masterContext.UserNotifications.AsNoTracking(), tenantId, role, currentUserId);

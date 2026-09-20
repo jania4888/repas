@@ -221,7 +221,7 @@ export class PayrollVariableAllowanceGridComponent implements OnInit {
       header: 'Confirmation',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(line.id)
     });
   }

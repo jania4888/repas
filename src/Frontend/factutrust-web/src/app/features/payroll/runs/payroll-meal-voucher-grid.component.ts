@@ -450,7 +450,7 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
       rejectLabel: 'Annuler',
 
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
 
       accept: () => this.delete(line.id)
 

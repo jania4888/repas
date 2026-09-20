@@ -83,7 +83,7 @@ public sealed class PurchaseOrderRepository : IPurchaseOrderRepository
         var items = await query
             .OrderByDescending(po => po.OrderDate)
             .ThenByDescending(po => po.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

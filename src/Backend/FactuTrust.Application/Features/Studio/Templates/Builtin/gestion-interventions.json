@@ -93,7 +93,24 @@
         "fields": [ "titre", "client", "technicien", "date_prevue", "statut" ],
         "filters": [ { "field": "statut", "op": "eq", "value": "planifiee" } ],
         "sort": [ { "field": "date_prevue", "dir": "asc" } ]
-      }
+      },
+      "views": [
+        {
+          "name": "Planning",
+          "mode": "calendar",
+          "start": "date_prevue",
+          "title": "titre",
+          "columns": [ "titre", "technicien", "statut" ],
+          "isDefault": true
+        },
+        {
+          "name": "Par statut",
+          "mode": "kanban",
+          "groupBy": "statut",
+          "title": "titre",
+          "columns": [ "titre", "technicien", "date_prevue" ]
+        }
+      ]
     },
     {
       "ref": "pieces_consommees",

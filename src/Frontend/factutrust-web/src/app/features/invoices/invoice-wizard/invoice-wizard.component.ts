@@ -805,7 +805,7 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
           icon: 'pi pi-exclamation-triangle',
           acceptLabel: isCreditNote ? "Émettre l'avoir" : 'Émettre la facture',
           rejectLabel: 'Annuler',
-          acceptButtonStyleClass: 'p-button-success',
+          acceptButtonStyleClass: 'btn-success',
           accept: () => {
             this.submitInvoice();
           }
@@ -854,7 +854,7 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: 'Quitter',
         rejectLabel: 'Rester',
-        acceptButtonStyleClass: 'p-button-danger',
+        acceptButtonStyleClass: 'btn-danger',
         accept: () => {
           this.router.navigate(['/invoices']);
         }

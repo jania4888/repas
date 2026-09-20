@@ -121,7 +121,52 @@ export interface StudioSpecEntity {
    * `reuse`) : champs, formulaire et état de cette entité sont alors ignorés à l'exécution (R21).
    */
   existingKey?: string | null;
+  /** Vues enregistrées proposées (canonique `StudioAiSpecCanonical` l.352–370 ; alias du plan maître tolérés en lecture). */
+  views?: StudioSpecRecordView[];
   [k: string]: unknown;
+}
+
+/** Filtre d'une vue (`{ field, op, value? }`). */
+export interface StudioSpecViewFilter {
+  field: string;
+  op: string;
+  value?: unknown;
+}
+
+/** Tri d'une vue : canonique `desc`, alias plan maître `descending`. */
+export interface StudioSpecViewSort {
+  field: string;
+  desc?: boolean;
+  descending?: boolean;
+}
+
+/**
+ * Vue enregistrée d'une entité (D17). Forme canonique : `{ name, mode, columns[], filters[], sort[],
+ * groupBy?, start?, end?, title?, isDefault }` ; les alias du plan maître (`displayName`, `dateField`,
+ * `endDateField`, `titleField`) sont conservés via la signature d'index et lus par `viewDisplayName`.
+ */
+export interface StudioSpecRecordView {
+  name?: string;
+  displayName?: string;
+  mode: 'list' | 'kanban' | 'calendar' | 'liste' | 'calendrier' | string;
+  columns?: string[];
+  filters?: StudioSpecViewFilter[];
+  sort?: StudioSpecViewSort[];
+  groupBy?: string;
+  start?: string;
+  end?: string;
+  title?: string;
+  isDefault?: boolean;
+  [k: string]: unknown;
+}
+
+/** Relation racine plusieurs-à-plusieurs de la spec canonique (`relations[]`, l.121–135). */
+export interface StudioSpecRelation {
+  kind: 'many_to_many' | string;
+  from: string;
+  to: string;
+  label?: string;
+  junctionName?: string;
 }
 
 export interface StudioSpecSeed {
@@ -142,6 +187,8 @@ export interface StudioSystemSpec {
   system: StudioSpecSystem;
   entities: StudioSpecEntity[];
   seed?: StudioSpecSeed[];
+  /** Relations racine N-N (PR 2.2) ; omises par les specs P0. */
+  relations?: StudioSpecRelation[];
   [k: string]: unknown;
 }
 
@@ -262,6 +309,12 @@ export interface StudioAiPlanListItemDto {
   expiresAt: string;
   executedAt?: string | null;
   systemKey?: string | null;
+  errorMessage?: string | null;
+  openUrl?: string | null;
+  relationCount?: number;
+  /** Omis par le serveur quand 0 (`JsonIgnore WhenWritingDefault`). */
+  viewCount?: number;
+  replayable?: boolean;
 }
 
 export interface StudioAiPlanListQuery {
@@ -366,11 +419,136 @@ export interface StudioTemplateListItemDto {
   visibility?: string | null;
   entityCount: number;
   updatedAt?: string | null;
+  /** `StudioTemplateStats` (PR 3.3e2) — défauts `0` / `null` côté serveur. */
+  relationCount?: number;
+  viewModes?: string[] | null;
 }
 
 /** Miroir de `StudioTemplateDetailDto` (`GET api/studio/templates/{key}`). */
 export interface StudioTemplateDetailDto extends StudioTemplateListItemDto {
   specJson: string;
+}
+
+// ---- Aperçu structuré d'un plan (`GET {id}/preview`, StudioAiPlanPreviewBuilder.cs — D11) ----------
+
+export interface StudioPreviewField {
+  key: string;
+  label: string;
+  fieldType: string;
+  required: boolean;
+  unique: boolean;
+  options?: string[] | null;
+  relationToRef?: string | null;
+}
+
+/** `PreviewFormFieldRef(Key, Width: string?, LabelOverride)` — `width` est une chaîne (`half`/`full`). */
+export interface StudioPreviewFormFieldRef {
+  key: string;
+  width?: string | null;
+  labelOverride?: string | null;
+}
+
+export interface StudioPreviewFormSection {
+  title: string;
+  fields: StudioPreviewFormFieldRef[];
+}
+
+export interface StudioPreviewFormLayout {
+  sections: StudioPreviewFormSection[];
+}
+
+export interface StudioPreviewView {
+  mode: 'list' | 'kanban' | 'calendar' | string;
+  displayName: string;
+}
+
+export interface StudioPreviewEntity {
+  ref: string;
+  displayName: string;
+  existingKey?: string | null;
+  fields: StudioPreviewField[];
+  formLayout?: StudioPreviewFormLayout | null;
+  views: StudioPreviewView[];
+  seedCount: number;
+  seedSample: Record<string, string | null>[];
+}
+
+export interface StudioPreviewRelation {
+  kind: string;
+  fromRef: string;
+  toRef: string;
+  label?: string | null;
+  junctionName?: string | null;
+}
+
+export interface StudioPreviewAmendmentItem {
+  op: string;
+  target?: string | null;
+  before?: string | null;
+  after?: string | null;
+  severity: string;
+  warning?: string | null;
+}
+
+export interface StudioPreviewAmendment {
+  targetEntityRef: string;
+  entityKey?: string | null;
+  entityDisplayName?: string | null;
+  degraded: boolean;
+  items: StudioPreviewAmendmentItem[];
+}
+
+/** Miroir de `StudioAiPlanPreviewDto` ; `workflows` toujours vide en 3.x (404 si `EnableStudioAiPlanPreview` off). */
+export interface StudioAiPlanPreviewDto {
+  planId: string;
+  kind: string;
+  status: string;
+  title: string;
+  entities: StudioPreviewEntity[];
+  relations: StudioPreviewRelation[];
+  amendment?: StudioPreviewAmendment | null;
+  workflows: unknown[];
+  warnings: string[];
+  duplicates: StudioDuplicateHint[];
+}
+
+/** Relation N-N du `summaryJson` (`StudioAiPlanSummary.SummaryRelation`). */
+export interface StudioSummaryRelation {
+  fromDisplayName: string;
+  toDisplayName: string;
+  kind: string;
+  junctionName?: string | null;
+}
+
+// ---- Export / duplication / import de système (`api/studio/systems`, CustomSystemExportFeatures.cs) ----
+
+/** `GET systems/{key}/export?includeSeed=` — 404 si `EnableStudioSystemExport` off. */
+export interface StudioSystemExportDto {
+  specVersion: number;
+  systemKey: string;
+  systemDisplayName: string;
+  exportedAt: string;
+  entityCount: number;
+  relationCount: number;
+  viewCount: number;
+  includesSeed: boolean;
+  warnings: string[];
+  spec: StudioSystemSpec;
+}
+
+/** Corps de `POST systems/{key}/duplicate`. */
+export interface DuplicateCustomSystemRequest {
+  displayName?: string | null;
+}
+
+/**
+ * Corps de `POST systems/import` (`ImportCustomSystemRequest(JsonNode? Spec, DisplayNameOverride, IncludeSeed = true)`) :
+ * `spec` accepte un objet JSON ou une chaîne JSON ; 400 `Validation.spec` ; 413 au-delà de 512 Ko.
+ */
+export interface ImportCustomSystemRequest {
+  spec: unknown;
+  displayNameOverride?: string | null;
+  includeSeed?: boolean;
 }
 
 /** Miroir de `StudioBuildStep` (contenu JSON des événements SSE `studio_progress` du flux `confirm`).
@@ -410,10 +588,18 @@ export interface StudioAppBuildResult {
   message: string;
 }
 
-export type StudioBuildResult = StudioSystemBuildResult | StudioAppBuildResult;
+/** Résultat d'exécution d'un plan `Workflow` (PR 4.3f) — contrat figé A-43/A-44b. */
+export interface StudioWorkflowBuildResultItem { id: string; key: string; entityKey: string; name: string; stepCount: number; }
+export interface StudioWorkflowBuildResult { success?: boolean; workflows: StudioWorkflowBuildResultItem[]; openUrl?: string; warnings?: string[]; message?: string; }   // forme 4.3f1 (N-10) ; `openUrl` non utilisé (D-44-73)
+
+export type StudioBuildResult = StudioSystemBuildResult | StudioAppBuildResult | StudioWorkflowBuildResult;
 
 export function isSystemBuildResult(result: StudioBuildResult | null | undefined): result is StudioSystemBuildResult {
   return !!result && typeof (result as StudioSystemBuildResult).systemKey === 'string';
+}
+
+export function isWorkflowBuildResult(result: StudioBuildResult | null | undefined): result is StudioWorkflowBuildResult {
+  return !!result && Array.isArray((result as StudioWorkflowBuildResult).workflows) && !isSystemBuildResult(result);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -439,9 +625,13 @@ export type StudioAiPreviewTab =
   | 'forms'
   | 'seed'
   | 'reports'
+  | 'views'
   | 'workflow'
   | 'pages'
   | 'menu';
+
+/** Modes de l'aperçu (barre de modes 3.4c) : lecture, simulation, édition du brouillon. */
+export type StudioAiPreviewMode = 'preview' | 'test' | 'customize';
 
 /** Phases de la session d'atelier (machine à états du `StudioAiSessionStore`). */
 export type StudioAiSessionPhase =
@@ -461,6 +651,9 @@ export interface StudioSpecCounters {
   forms: number;
   seedRecords: number;
   reports: number;
+  views: number;
+  /** Toujours 0 en 3.x (`entity.workflow` + `spec.workflows[]`, programme 4.x). */
+  workflows: number;
 }
 
 export function isSystemSpec(spec: unknown): spec is StudioSystemSpec {
@@ -522,17 +715,43 @@ export function specPayloadForKind(kind: string, view: StudioSystemSpec): Studio
 }
 
 export function countSpec(spec: StudioSystemSpec | null | undefined): StudioSpecCounters {
-  if (!spec) return { entities: 0, fields: 0, relations: 0, forms: 0, seedRecords: 0, reports: 0 };
+  if (!spec) return { entities: 0, fields: 0, relations: 0, forms: 0, seedRecords: 0, reports: 0, views: 0, workflows: 0 };
   let fields = 0;
   let relations = 0;
   let forms = 0;
   let reports = 0;
+  let views = 0;
+  let workflows = 0;
   for (const e of spec.entities) {
     fields += e.fields.length;
     relations += e.fields.filter(f => f.type === 'relation').length;
     if (e.form?.sections?.length) forms++;
     if (e.report) reports++;
+    views += e.views?.length ?? 0;
+    if (e['workflow']) workflows++;
   }
   const seedRecords = (spec.seed ?? []).reduce((acc, s) => acc + (s.records?.length ?? 0), 0);
-  return { entities: spec.entities.length, fields, relations, forms, seedRecords, reports };
+  const rootWorkflows = spec['workflows'];
+  if (Array.isArray(rootWorkflows)) workflows += rootWorkflows.length;
+  return { entities: spec.entities.length, fields, relations, forms, seedRecords, reports, views, workflows };
+}
+
+/** Mode de vue normalisé : `liste|list|table` → `list`, `calendrier|calendar|planning|agenda` → `calendar`, `kanban` → `kanban`, défaut `list`. */
+export function normalizeViewMode(mode: string | undefined): 'list' | 'kanban' | 'calendar' {
+  switch ((mode ?? '').trim().toLowerCase()) {
+    case 'kanban':
+      return 'kanban';
+    case 'calendrier':
+    case 'calendar':
+    case 'planning':
+    case 'agenda':
+      return 'calendar';
+    default:
+      return 'list';
+  }
+}
+
+/** Nom affiché d'une vue : `name` (canonique) puis `displayName` (alias plan maître), sinon chaîne vide. */
+export function viewDisplayName(view: StudioSpecRecordView): string {
+  return view.name ?? view.displayName ?? '';
 }

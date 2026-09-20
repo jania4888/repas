@@ -71,9 +71,16 @@
           <app-studio-ai-result-card
             [result]="store.result()!"
             [actions]="store.actions()"
+            [counters]="store.counters()"
+            [summary]="store.plan()?.summary ?? null"
+            [exportEnabled]="capabilities.capabilities().systemExportEnabled"
+            [replayable]="!!store.plan()"
             (open)="store.openCreated($event)"
             (navigate)="store.go($event)"
-            (newRequest)="newRequest()" />
+            (newRequest)="newRequest()"
+            (exportSystem)="openExport($event)"
+            (duplicate)="openDuplicate($event)"
+            (replay)="replayCurrent()" />
         }
       }
 
@@ -105,10 +112,11 @@
       [busy]="store.busy()"
       (useTemplate)="useTemplate($event)"
       (reset)="resetFromRail()"
-      (importTemplate)="comingSoon()"
-      (duplicate)="comingSoon()"
-      (exportSystem)="comingSoon()"
+      (importTemplate)="openImport()"
+      (duplicate)="openDuplicate(null)"
+      (exportSystem)="openExport(null)"
       (openPlan)="openHistoryPlan($event)"
+      (replayPlan)="replayHistoryPlan($event)"
       (tryPrompt)="tryPrompt($event)" />
   </div>
 </app-studio-page-shell>
@@ -121,3 +129,19 @@
   [busy]="store.busy()"
   (confirmed)="confirm()"
   (cancelled)="confirmVisible.set(false)" />
+
+<app-studio-ai-export-dialog
+  [(visible)]="exportVisible"
+  [systemKey]="exportKey()" />
+
+<app-studio-ai-import-dialog
+  [(visible)]="importVisible"
+  [busy]="store.busy()"
+  [serverError]="store.error()"
+  (submitted)="submitImport($event)" />
+
+<app-studio-ai-duplicate-dialog
+  [(visible)]="duplicateVisible"
+  [busy]="store.busy()"
+  [systemKey]="duplicateKey()"
+  (submitted)="submitDuplicate($event)" />

@@ -16,4 +16,13 @@ public static class StudioQuotas
     public const int MaxFieldsFallback = 100;
     public const int MaxRecordsFallback = 100_000;
     public const int MaxRecordViewsFallback = 20;
+
+    /// <summary>Workflows Studio (PR 4.1).</summary>
+    public const string MaxWorkflowsKey = "MaxWorkflowsPerEntity";
+    public const string MaxWorkflowStepsKey = "MaxWorkflowSteps";
+    public const string MaxWorkflowInstancesPerRecordKey = "MaxWorkflowInstancesPerRecord";
+
+    public const int MaxWorkflowsFallback = 20;
+    public const int MaxWorkflowStepsFallback = 30;
+    public const int MaxWorkflowInstancesPerRecordFallback = 200;
 }

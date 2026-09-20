@@ -316,7 +316,7 @@ export class StockVoucherDetailComponent implements OnInit {
       icon: 'pi pi-trash',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.voucherService.delete(v.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {

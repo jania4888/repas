@@ -1,0 +1,21 @@
+// Concepteur de vue enregistrée (2.5d2) — colonne d'aperçu collante (maquette kanban-two-column),
+// panneaux de mode Kanban/Calendrier. Les classes génériques viennent de `shared/studio-layout.scss`.
+
+:host .rvd-preview {
+  position: sticky;
+  top: var(--spacing-4);
+  max-height: calc(100vh - 2 * var(--spacing-4));
+  overflow: auto;
+  @media (max-width: 900px) { position: static; max-height: none; }
+}
+
+:host .rvd-mode-section {
+  display: block;
+  padding: var(--spacing-3);
+  margin-top: var(--spacing-3);
+
+  .studio-section-title {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-2);
+  }
+}

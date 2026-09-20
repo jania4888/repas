@@ -1,10 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { CustomFieldType } from '@shared/studio-runtime/studio-runtime.models';
 import { STUDIO_AI_LABELS } from './studio-ai-labels';
-import { STUDIO_SPEC_LIMITS, StudioSystemSpec } from './studio-ai.models';
+import { STUDIO_SPEC_LIMITS, StudioSystemSpec, countSpec } from './studio-ai.models';
+import { studioAiSpecFixture, studioAiSpecWithViewsFixture } from './preview/testing/studio-ai-spec.fixture';
 import {
   checkSpecBounds,
   cloneSpec,
+  counterChips,
   diffSpec,
   ensureIntegrity,
   parseCsv,
@@ -57,6 +59,18 @@ function baseSpec(): StudioSystemSpec {
 }
 
 describe('studio-ai-spec.util', () => {
+  describe('counterChips', () => {
+    it('counterChips ajoute la puce Vues seulement si la spec en contient', () => {
+      const without = counterChips(countSpec(studioAiSpecFixture()));
+      expect(without.length).toBe(6);
+      expect(without.some(c => c.label === STUDIO_AI_LABELS.views.title)).toBeFalse();
+
+      const withViews = counterChips(countSpec(studioAiSpecWithViewsFixture()));
+      expect(withViews.length).toBe(7);
+      expect(withViews[6]).toEqual({ label: STUDIO_AI_LABELS.views.title, value: 2 });
+    });
+  });
+
   describe('slugify', () => {
     it('lowercases, strips accents and collapses separators', () => {
       expect(slugify('Congés payés')).toBe('conges_payes');

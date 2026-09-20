@@ -19,7 +19,7 @@ const PLAN: StudioAiActivePlan = {
 };
 
 const COUNTERS: StudioSpecCounters = {
-  entities: 4, fields: 28, relations: 3, forms: 4, seedRecords: 5, reports: 2
+  entities: 4, fields: 28, relations: 3, forms: 4, seedRecords: 5, reports: 2, views: 0, workflows: 0
 };
 
 describe('StudioAiConfirmDialogComponent', () => {

@@ -148,7 +148,7 @@ public sealed class PhysicalInventoryRepository : IPhysicalInventoryRepository
         var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

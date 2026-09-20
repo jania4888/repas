@@ -34,4 +34,15 @@ export interface CreateManyToManyRelationRequest {
   label?: string | null;
   junctionKey?: string | null;
   junctionDisplayName?: string | null;
+  /** v1.1 / D-47-40 (R4) : attribut de liaison optionnel — champ `Number` ajouté à la jonction. */
+  junctionAttributeLabel?: string | null;
+}
+
+/** Libellé FR du type de relation (partagé : page Relations + concepteur de table). */
+export function relationKindLabel(kind: EntityRelationDto['kind']): string {
+  switch (kind) {
+    case 'many_to_many': return 'Plusieurs-à-plusieurs';
+    case 'many_to_one': return 'Plusieurs-à-un';
+    default: return 'Un-à-plusieurs';
+  }
 }

@@ -301,7 +301,7 @@ export class FirmPermanentFilesComponent implements OnInit {
       icon: 'pi pi-inbox',
       acceptLabel: 'Archiver',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-secondary',
+      acceptButtonStyleClass: 'btn-secondary',
       accept: () => {
         this.api.archivePermanentFile(f.firmClientAssignmentId).subscribe({
           next: r => {

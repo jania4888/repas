@@ -564,7 +564,7 @@ export class ProductListComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Oui, activer',
       rejectLabel: 'Non, annuler',
-      acceptButtonStyleClass: 'p-button-primary',
+      acceptButtonStyleClass: 'btn-primary',
       accept: () => {
         const currentSet = new Set(this.stockToggleLoading());
         currentSet.add(product.id);
@@ -630,7 +630,7 @@ export class ProductListComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Oui, supprimer',
       rejectLabel: 'Non, annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.productService.deleteProduct(product.id).subscribe({
           next: (response) => {

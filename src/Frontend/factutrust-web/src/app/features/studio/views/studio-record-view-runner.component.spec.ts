@@ -1,10 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { environment } from '@environments/environment';
 import { MessageService } from 'primeng/api';
+import { AuthService } from '@core/services/auth.service';
 import { StudioRecordViewRunnerComponent } from './studio-record-view-runner.component';
+import { StudioKanbanBoardComponent } from './studio-kanban-board.component';
+import { StudioCalendarComponent } from './studio-calendar.component';
 import { CustomRecordViewDto, RecordViewDefinition, RecordViewRunResultDto } from './studio-record-views.models';
 import { CustomField } from '@shared/studio-runtime/studio-runtime.models';
 
@@ -29,8 +34,27 @@ const view: CustomRecordViewDto = {
 };
 
 const fields: CustomField[] = [
-  { id: 'f1', key: 'nom', label: 'Nom', fieldType: 0, isRequired: false, isActive: true } as CustomField
+  { id: 'f1', key: 'nom', label: 'Nom', fieldType: 0, isRequired: false, isActive: true } as CustomField,
+  { id: 'f2', key: 'statut', label: 'Statut', fieldType: 7, isRequired: false, isActive: true, options: [{ value: 'a', label: 'À planifier' }, { value: 'b', label: 'Terminé' }] } as unknown as CustomField
 ];
+
+const kanbanView: CustomRecordViewDto = {
+  ...view,
+  id: 'vk',
+  key: 'vk',
+  displayName: 'Kanban par statut',
+  mode: 'Kanban',
+  definition: { ...definition, kanban: { groupByFieldKey: 'statut', titleFieldKey: 'nom', cardFieldKeys: [], showEmptyGroup: true } }
+};
+
+const calendarView: CustomRecordViewDto = {
+  ...view,
+  id: 'vc',
+  key: 'vc',
+  displayName: 'Calendrier des échéances',
+  mode: 'Calendar',
+  definition: { ...definition, calendar: { startFieldKey: 'debut', endFieldKey: null, titleFieldKey: 'nom', colorFieldKey: 'statut' } }
+};
 
 describe('StudioRecordViewRunnerComponent', () => {
   let fixture: ComponentFixture<StudioRecordViewRunnerComponent>;
@@ -40,7 +64,14 @@ describe('StudioRecordViewRunnerComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StudioRecordViewRunnerComponent],
-      providers: [MessageService, provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        MessageService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        provideNoopAnimations(),
+        { provide: AuthService, useValue: { hasPermission: () => true } }
+      ],
     }).compileComponents();
     fixture = TestBed.createComponent(StudioRecordViewRunnerComponent);
     component = fixture.componentInstance;
@@ -90,11 +121,119 @@ describe('StudioRecordViewRunnerComponent', () => {
     expect(fixture.debugElement.query(By.css('app-empty-state'))).not.toBeNull();
   });
 
-  it('affiche un panneau « Bientôt » pour les modes Kanban et Calendrier, sans appel réseau', () => {
-    setInputs({ ...view, mode: 'Kanban' });
-    httpMock.expectNone(`${environment.apiUrl}/studio/records/interventions/views/v1/run`);
+  // ---- 4.7v2 : mode aperçu du concepteur (POST /views/preview, R3) ----
 
-    expect(fixture.debugElement.query(By.css('.runner-soon'))?.nativeElement.textContent).toContain('Kanban');
+  it('mode preview : POST /views/preview avec { mode, definition, page, pageSize } et sans id de vue', () => {
+    fixture.componentRef.setInput('entityKey', 'interventions');
+    fixture.componentRef.setInput('allFields', fields);
+    fixture.componentRef.setInput('view', view);
+    fixture.componentRef.setInput('preview', true);
+    fixture.detectChanges();
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/preview`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.url).not.toContain('/views/v1/');
+    expect(req.request.body.mode).toBe('List');
+    expect(req.request.body.definition).toEqual(definition);
+    expect(req.request.body.page).toBe(1);
+    expect(req.request.body.pageSize).toBe(25);
+    req.flush({ success: true, data: { mode: 'List', items: [], total: 0, page: 1, pageSize: 25, truncated: false }, message: null, errors: [] });
+    fixture.detectChanges();
+    expect(component['result']()?.total).toBe(0);
+  });
+
+  it('mode preview : erreur réseau ⇒ état d’erreur inline SANS toast global', () => {
+    const toastSpy = spyOn(TestBed.inject(MessageService), 'add');
+    fixture.componentRef.setInput('entityKey', 'interventions');
+    fixture.componentRef.setInput('allFields', fields);
+    fixture.componentRef.setInput('view', view);
+    fixture.componentRef.setInput('preview', true);
+    fixture.detectChanges();
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/preview`);
+    req.flush({ message: 'erreur' }, { status: 500, statusText: 'Server Error' });
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('app-empty-state'))).not.toBeNull();
+    expect(toastSpy).not.toHaveBeenCalled();
+  });
+
+  it('mode Kanban : exécute /run avec pageSize=500 et rend le tableau kanban', () => {
+    setInputs(kanbanView);
+    const req = httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/vk/run`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body.page).toBe(1);
+    expect(req.request.body.pageSize).toBe(200); // borne serveur (le serveur ignore pageSize en Kanban)
+    req.flush({
+      success: true,
+      data: {
+        mode: 'Kanban', items: [], total: 1, page: 1, pageSize: 500, truncated: false,
+        groups: [
+          { value: 'a', label: 'À planifier', count: 1, items: [{ id: 'r1', data: { nom: 'Fiche 1', statut: 'a' }, createdAt: '', updatedAt: '' }] },
+          { value: null, label: 'Sans valeur', count: 0, items: [] }
+        ]
+      },
+      message: null, errors: []
+    });
+    fixture.detectChanges();
+
+    const board = fixture.debugElement.query(By.directive(StudioKanbanBoardComponent));
+    expect(board).not.toBeNull();
+    expect(fixture.debugElement.query(By.css('.runner-soon'))).toBeNull();
+    expect(board.nativeElement.textContent).toContain('Fiche 1');
+    expect(board.nativeElement.textContent).toContain('Sans valeur');
+  });
+
+  it('mode Kanban : la sortie `reload` du tableau relance un /run', () => {
+    setInputs(kanbanView);
+    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/vk/run`)
+      .flush({ success: true, data: { mode: 'Kanban', items: [], total: 0, page: 1, pageSize: 500, groups: [], truncated: false }, message: null, errors: [] });
+    fixture.detectChanges();
+
+    const board = fixture.debugElement.query(By.directive(StudioKanbanBoardComponent));
+    board.componentInstance.reload.emit();
+    const req = httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/vk/run`);
+    expect(req.request.body.pageSize).toBe(200); // borne serveur (le serveur ignore pageSize en Kanban)
+    req.flush({ success: true, data: { mode: 'Kanban', items: [], total: 0, page: 1, pageSize: 500, groups: [], truncated: false }, message: null, errors: [] });
+  });
+
+  it('mode Calendrier : envoie la plage ISO émise par le calendrier avec pageSize borné à 200', () => {
+    setInputs(calendarView);
+    const req = httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/vc/run`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body.page).toBe(1);
+    expect(req.request.body.pageSize).toBe(200); // borne serveur (le serveur ignore pageSize en Calendar)
+    expect(req.request.body.rangeStart).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(req.request.body.rangeEnd).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    req.flush({
+      success: true,
+      data: {
+        mode: 'Calendar', items: [], total: 1, page: 1, pageSize: 1000, truncated: false,
+        events: [{ recordId: 'r1', title: 'Réunion', start: req.request.body.rangeStart, end: null, colorValue: 'a' }]
+      },
+      message: null, errors: []
+    });
+    fixture.detectChanges();
+
+    const cal = fixture.debugElement.query(By.directive(StudioCalendarComponent));
+    expect(cal).not.toBeNull();
+    expect(cal.nativeElement.textContent).toContain('Réunion');
+  });
+
+  it('mode Calendrier : un changement de plage relance /run avec les nouvelles bornes', () => {
+    setInputs(calendarView);
+    httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/vc/run`)
+      .flush({ success: true, data: { mode: 'Calendar', items: [], total: 0, page: 1, pageSize: 1000, events: [], truncated: false }, message: null, errors: [] });
+
+    component.onCalendarRange({ rangeStart: '2026-10-05', rangeEnd: '2026-10-11' });
+    const req = httpMock.expectOne(`${environment.apiUrl}/studio/records/interventions/views/vc/run`);
+    expect(req.request.body.rangeStart).toBe('2026-10-05');
+    expect(req.request.body.rangeEnd).toBe('2026-10-11');
+    req.flush({ success: true, data: { mode: 'Calendar', items: [], total: 0, page: 1, pageSize: 1000, events: [], truncated: false }, message: null, errors: [] });
+
+    // Réémission de la même plage (recréation du calendrier) : aucune requête en double.
+    component.onCalendarRange({ rangeStart: '2026-10-05', rangeEnd: '2026-10-11' });
+    httpMock.expectNone(`${environment.apiUrl}/studio/records/interventions/views/vc/run`);
   });
 
   it('applique les colonnes de la vue (ordre et masquage), pas tous les champs', () => {

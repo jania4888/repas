@@ -439,6 +439,11 @@ public sealed class StudioContextDigestServiceTests
     public void Field_type_tokens_match_spec_vocabulary(CustomFieldType type, string expected) =>
         Assert.Equal(expected, StudioContextDigestService.FieldTypeToken(type));
 
+    /// <summary>PR 4.3 : un plan de workflows est libellé « Workflow » dans la ligne « dernier plan » du digest.</summary>
+    [Fact]
+    public void Workflow_plan_kind_is_labelled_Workflow() =>
+        Assert.Equal("Workflow", StudioContextDigestService.KindLabel(StudioAiPlanKind.Workflow));
+
     public sealed class FixedTimeProvider : TimeProvider
     {
         private DateTimeOffset _utcNow;

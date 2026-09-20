@@ -1,0 +1,147 @@
+{
+  "system": {
+    "displayName": "Gestion d'événements",
+    "icon": "pi pi-calendar-plus",
+    "description": "Organisation d'événements : lieux, agenda des événements par statut et inscriptions des participants.",
+    "onboarding": [
+      "Vérifiez les lieux préchargés",
+      "Créez un événement et placez-le dans l'agenda",
+      "Inscrivez des participants à l'événement"
+    ],
+    "menu": { "label": "Événements", "icon": "pi pi-calendar-plus" }
+  },
+  "entities": [
+    {
+      "ref": "lieux",
+      "displayName": "Lieu",
+      "displayNamePlural": "Lieux",
+      "icon": "map-marker",
+      "isReferenceData": true,
+      "fields": [
+        { "key": "nom", "label": "Nom", "type": "text", "required": true, "unique": true },
+        { "key": "adresse", "label": "Adresse", "type": "text" },
+        { "key": "ville", "label": "Ville", "type": "text" },
+        { "key": "capacite", "label": "Capacité", "type": "number" }
+      ],
+      "form": {
+        "sections": [
+          { "title": "Lieu", "fields": [
+            "nom",
+            "adresse",
+            { "field": "ville", "width": "half" },
+            { "field": "capacite", "width": "half" }
+          ] }
+        ]
+      }
+    },
+    {
+      "ref": "evenements",
+      "displayName": "Événement",
+      "displayNamePlural": "Événements",
+      "icon": "calendar",
+      "fields": [
+        { "key": "titre", "label": "Titre", "type": "text", "required": true },
+        { "key": "type", "label": "Type", "type": "select",
+          "options": [
+            { "value": "conference", "label": "Conférence" },
+            { "value": "atelier", "label": "Atelier" },
+            { "value": "webinaire", "label": "Webinaire" },
+            { "value": "salon", "label": "Salon" }
+          ]
+        },
+        { "key": "lieu", "label": "Lieu", "type": "relation", "relationTo": "lieux" },
+        { "key": "date_debut", "label": "Date de début", "type": "date", "required": true },
+        { "key": "date_fin", "label": "Date de fin", "type": "date" },
+        { "key": "statut", "label": "Statut", "type": "select",
+          "options": [
+            { "value": "brouillon", "label": "Brouillon" },
+            { "value": "publie", "label": "Publié" },
+            { "value": "complet", "label": "Complet" },
+            { "value": "annule", "label": "Annulé" }
+          ]
+        },
+        { "key": "budget", "label": "Budget", "type": "money", "config": { "currency": "TND" } },
+        { "key": "description", "label": "Description", "type": "multilinetext" }
+      ],
+      "form": {
+        "sections": [
+          { "title": "Événement", "fields": [
+            "titre",
+            { "field": "type", "width": "half" },
+            { "field": "statut", "width": "half" },
+            "lieu",
+            "description"
+          ] },
+          { "title": "Planning et budget", "fields": [
+            { "field": "date_debut", "width": "half" },
+            { "field": "date_fin", "width": "half" },
+            "budget"
+          ] }
+        ]
+      },
+      "report": {
+        "displayName": "Événements par statut",
+        "groupBy": [ "statut" ],
+        "measures": [ { "fn": "count" }, { "field": "budget", "fn": "sum" } ]
+      },
+      "views": [
+        {
+          "name": "Agenda",
+          "mode": "calendar",
+          "start": "date_debut",
+          "end": "date_fin",
+          "title": "titre",
+          "isDefault": true
+        },
+        {
+          "name": "Par statut",
+          "mode": "kanban",
+          "groupBy": "statut",
+          "title": "titre"
+        }
+      ]
+    },
+    {
+      "ref": "participants",
+      "displayName": "Participant",
+      "displayNamePlural": "Participants",
+      "icon": "users",
+      "fields": [
+        { "key": "nom", "label": "Nom", "type": "text", "required": true },
+        { "key": "prenom", "label": "Prénom", "type": "text" },
+        { "key": "e_mail", "label": "E-mail", "type": "text" },
+        { "key": "societe", "label": "Société", "type": "text" },
+        { "key": "telephone", "label": "Téléphone", "type": "text" }
+      ],
+      "form": {
+        "sections": [
+          { "title": "Participant", "fields": [
+            { "field": "nom", "width": "half" },
+            { "field": "prenom", "width": "half" },
+            "e_mail",
+            { "field": "societe", "width": "half" },
+            { "field": "telephone", "width": "half" }
+          ] }
+        ]
+      },
+      "views": [
+        {
+          "name": "Participants",
+          "mode": "list",
+          "columns": [ "nom", "prenom", "e_mail", "societe" ],
+          "sort": [ { "field": "nom", "desc": false } ]
+        }
+      ]
+    }
+  ],
+  "relations": [
+    { "kind": "many_to_many", "from": "participants", "to": "evenements", "label": "Inscriptions", "junctionName": "Inscriptions" }
+  ],
+  "seed": [
+    { "entityRef": "lieux", "records": [
+      { "nom": "Palais des congrès", "adresse": "Avenue Mohamed V", "ville": "Tunis", "capacite": 800 },
+      { "nom": "Espace Le Colisée", "adresse": "Rue de Marseille", "ville": "Tunis", "capacite": 250 },
+      { "nom": "Centre d'affaires Sousse", "adresse": "Boulevard du 14 Janvier", "ville": "Sousse", "capacite": 120 }
+    ] }
+  ]
+}

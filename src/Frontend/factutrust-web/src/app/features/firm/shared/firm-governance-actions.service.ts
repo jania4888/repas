@@ -56,7 +56,7 @@ export class FirmGovernanceActionsService {
         message: 'Soumettre cette note de frais pour approbation ?',
         icon: 'pi pi-send',
         acceptLabel: 'Soumettre',
-        acceptButtonStyleClass: 'p-button-primary'
+        acceptButtonStyleClass: 'btn-primary'
       },
       () => this.governance.submitExpenseNote(noteId),
       'Note soumise.',
@@ -72,7 +72,7 @@ export class FirmGovernanceActionsService {
           message: 'Approuver cette note de frais dirigeant ?',
           icon: 'pi pi-check-circle',
           acceptLabel: 'Approuver',
-          acceptButtonStyleClass: 'p-button-success'
+          acceptButtonStyleClass: 'btn-success'
         },
         () => this.governance.processExpenseNote(noteId, true),
         'Note approuvée.',
@@ -86,7 +86,7 @@ export class FirmGovernanceActionsService {
         message: 'Rejeter cette note de frais ? Le dirigeant pourra la corriger et la resoumettre.',
         icon: 'pi pi-times-circle',
         acceptLabel: 'Rejeter',
-        acceptButtonStyleClass: 'p-button-danger'
+        acceptButtonStyleClass: 'btn-danger'
       },
       () => this.governance.processExpenseNote(noteId, false),
       'Note rejetée.',
@@ -101,7 +101,7 @@ export class FirmGovernanceActionsService {
         message: 'Confirmer le remboursement de cette note de frais ?',
         icon: 'pi pi-wallet',
         acceptLabel: 'Confirmer',
-        acceptButtonStyleClass: 'p-button-success'
+        acceptButtonStyleClass: 'btn-success'
       },
       () => this.governance.markExpenseNoteReimbursed(noteId),
       'Note marquée remboursée.',

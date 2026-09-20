@@ -192,6 +192,26 @@ public static class StudioAiAppSpec
         return CustomFieldType.Text;
     }
 
+    /// <summary>
+    /// Résolution STRICTE d'un type déclaré (alias FR/EN ou nom d'énumération exact), SANS repli sur
+    /// Texte : contrairement à <see cref="MapType"/> (add_field, où un type inconnu peut dégrader sans
+    /// risque), <c>change_field_type</c> (PR 3.1b) doit signaler une valeur inconnue plutôt que la
+    /// masquer, et accepter aussi les cibles interdites (Formula/Lookup/Rollup/…) pour que la matrice
+    /// D4 puisse les classer <c>Forbidden</c> au lieu de les voir disparaître ici.
+    /// </summary>
+    public static bool TryMapType(string? raw, out CustomFieldType type)
+    {
+        type = CustomFieldType.Text;
+        if (string.IsNullOrWhiteSpace(raw)) return false;
+        var key = raw.Trim();
+        if (TypeAliases.TryGetValue(key, out type)) return true;
+        // Contrat "nom uniquement" : Enum.TryParse accepte aussi les entiers (ex. "3" → Money), ce qui
+        // laisserait un modèle IA deviner une valeur numérique d'énumération. On l'exclut explicitement.
+        if (!int.TryParse(key, out _) && Enum.TryParse(key, ignoreCase: true, out type)) return true;
+        type = CustomFieldType.Text;
+        return false;
+    }
+
     private static bool IsSafeAiType(CustomFieldType t) => t is not (
         CustomFieldType.RelationCustom or CustomFieldType.RelationExisting or
         CustomFieldType.Formula or CustomFieldType.Lookup or CustomFieldType.Rollup);

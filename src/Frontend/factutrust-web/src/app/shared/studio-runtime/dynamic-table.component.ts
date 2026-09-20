@@ -56,7 +56,7 @@ export interface DynamicRow {
               @for (f of visibleColumns; track f.key) {
                 <th>{{ f.label }}</th>
               }
-              @if (showActions) {
+              @if (showActions || showView) {
                 <th class="dt-actions-col">Actions</th>
               }
             </tr>
@@ -89,19 +89,26 @@ export interface DynamicRow {
                   }
                 </td>
               }
-              @if (showActions) {
+              @if (showActions || showView) {
                 <td class="dt-actions">
-                  <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm"
-                    pTooltip="Modifier" (click)="editRow.emit(row)"></button>
-                  <button pButton type="button" icon="fa-solid fa-trash" class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Supprimer" (click)="deleteRow.emit(row)"></button>
+                  <!-- 4.7 suite (D-47-94) : œil « Voir » pour un lecteur pur (showView sans showActions). -->
+                  @if (showView) {
+                    <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm"
+                      pTooltip="Voir" (click)="viewRow.emit(row)"></button>
+                  }
+                  @if (showActions) {
+                    <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm"
+                      pTooltip="Modifier" (click)="editRow.emit(row)"></button>
+                    <button pButton type="button" icon="fa-solid fa-trash" class="p-button-text p-button-sm p-button-danger"
+                      pTooltip="Supprimer" (click)="deleteRow.emit(row)"></button>
+                  }
                 </td>
               }
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td [attr.colspan]="visibleColumns.length + (showActions ? 1 : 0)">
+              <td [attr.colspan]="visibleColumns.length + (showActions || showView ? 1 : 0)">
                 <app-empty-state icon="pi-table" title="Aucun enregistrement" description="Aucune donnée ne correspond à votre recherche." />
               </td>
             </tr>
@@ -131,10 +138,13 @@ export class DynamicTableComponent implements OnChanges {
   @Input() pageSize = 25;
   @Input() loading = false;
   @Input() showActions = true;
+  /** 4.7 suite (D-47-94) : affiche l'œil « Voir » (fiche en lecture seule) même sans showActions. */
+  @Input() showView = false;
 
   @Output() lazyLoad = new EventEmitter<TableLazyLoadEvent>();
   @Output() editRow = new EventEmitter<DynamicRow>();
   @Output() deleteRow = new EventEmitter<DynamicRow>();
+  @Output() viewRow = new EventEmitter<DynamicRow>();
   @Output() visibleColumnsChange = new EventEmitter<CustomField[]>();
 
   visibleColumns: CustomField[] = [];

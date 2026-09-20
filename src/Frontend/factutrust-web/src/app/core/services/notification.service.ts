@@ -9,12 +9,32 @@ import { ExchangeBadgeService } from './exchange-badge.service';
 
 export interface AppNotification {
   id: string;
-  type: number;
+  /** `NotificationType` backend : l'API l'émet en chaîne PascalCase (`JsonStringEnumConverter` global) ; la forme numérique reste tolérée. */
+  type: number | string;
   title: string;
   body: string;
   linkUrl?: string;
   createdAt: string;
   readAt?: string;
+}
+
+/** `NotificationType` backend 15–18 (Studio workflows, U1). */
+export const STUDIO_WORKFLOW_NOTIFICATION_TYPES = {
+  approvalRequested: 15,
+  approvalDecided: 16,
+  stepFailed: 17,
+  message: 18
+} as const;
+
+/** Noms PascalCase des mêmes valeurs, tels que sérialisés par l'API (D-44-94). */
+const STUDIO_WORKFLOW_NOTIFICATION_NAMES: ReadonlySet<string> = new Set([
+  'StudioWorkflowApprovalRequested', 'StudioWorkflowApprovalDecided', 'StudioWorkflowStepFailed', 'StudioWorkflowMessage'
+]);
+
+export function isStudioWorkflowNotification(type: number | string): boolean {
+  if (typeof type === 'string') return STUDIO_WORKFLOW_NOTIFICATION_NAMES.has(type);
+  return type >= STUDIO_WORKFLOW_NOTIFICATION_TYPES.approvalRequested &&
+    type <= STUDIO_WORKFLOW_NOTIFICATION_TYPES.message;
 }
 
 export interface NotificationList {

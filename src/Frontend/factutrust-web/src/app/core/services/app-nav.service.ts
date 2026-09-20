@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal, untracked } from '@angular/core';
 import { AuthService } from '@core/services/auth.service';
 import {
   ALL_NAV_ITEMS,
@@ -34,6 +34,8 @@ import { AccountingFeatureFlagsService } from '@features/accounting/shared/accou
 import { AppModule } from '@core/models/app-module';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { StudioNavService } from '@features/studio/studio-nav.service';
+import { StudioAiCapabilitiesService } from '@features/studio/ai/studio-ai-capabilities.service';
+import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-approvals-badge.service';
 import { StockFeaturesStore } from '@core/services/stock-features-store.service';
 import { VARIANT_AXES_PATH } from '@features/settings/variant-axes/variant-axes.paths';
 import {
@@ -55,9 +57,18 @@ export class AppNavService {
   private readonly firmFeatureFlags = inject(FirmFeatureFlagsService);
   private readonly accountingFlags = inject(AccountingFeatureFlagsService);
   private readonly studioNav = inject(StudioNavService);
+  private readonly studioCapabilities = inject(StudioAiCapabilitiesService);
+  private readonly approvalsBadge = inject(StudioApprovalsBadgeService);
   private readonly stockFeaturesStore = inject(StockFeaturesStore);
 
   private readonly activeClients = signal<FirmClientDossier[]>([]);
+
+  /** Concepteur : la capacité `workflowsEnabled` fait foi. Lecteur : la sonde du badge (seul endpoint accessible), 4.5d1. */
+  private readonly approvalsVisible = computed(() =>
+    this.auth.hasPermission(PERMISSIONS.studio.designEntities)
+      ? this.studioCapabilities.workflowsEnabled()
+      : this.approvalsBadge.available()
+  );
 
   readonly dashboardHomeLink = computed(() =>
     this.auth.isAccountingFirm() ? '/firm/dashboard' : '/dashboard'
@@ -73,6 +84,16 @@ export class AppNavService {
 
     this.stockFeaturesStore.ensureLoaded();
     this.stockFeaturesStore.features();
+
+    const isDesigner = this.auth.hasPermission(PERMISSIONS.studio.designEntities);
+    const isReader = this.auth.hasPermission(PERMISSIONS.customData.recordsRead);
+    if (isDesigner || isReader) {
+      // NG0600 : écritures de signaux interdites dans un computed — différées hors tracking.
+      untracked(() => {
+        if (isDesigner) this.studioCapabilities.ensureLoaded(); // 403 pour les autres profils : on ne l'appelle pas
+        this.approvalsBadge.start(); // D23 : idempotent ; 403/404 ⇒ arrêt définitif jusqu'à reset() (4.5d1 : lecteurs aussi)
+      });
+    }
 
     if (this.auth.isAccountingFirm()) {
       if (this.auth.isDelegatedMode()) {
@@ -346,6 +367,29 @@ export class AppNavService {
         modules: [AppModule.Studio],
         permissionsAll: [PERMISSIONS.studio.designEntities]
       },
+      ...(this.studioCapabilities.workflowsEnabled()
+        ? ([
+            {
+              label: 'Workflows',
+              route: '/studio/workflows',
+              icon: 'fa-solid fa-route',
+              modules: [AppModule.Studio],
+              permissionsAll: [PERMISSIONS.studio.designEntities]
+            }
+          ] satisfies NavSubItem[])
+        : []),
+      ...(this.approvalsVisible()
+        ? ([
+            {
+              label: 'Mes approbations',
+              route: '/studio/approvals',
+              icon: 'fa-solid fa-inbox',
+              modules: [AppModule.Studio],
+              permissionsAll: [PERMISSIONS.customData.recordsRead],
+              badge: this.approvalsBadge.count() || null
+            }
+          ] satisfies NavSubItem[])
+        : []),
       ...this.studioNav.items().map<NavSubItem>(e => ({
         label: e.label,
         route: e.route.startsWith('/') ? e.route : `/studio/d/${e.key}`,

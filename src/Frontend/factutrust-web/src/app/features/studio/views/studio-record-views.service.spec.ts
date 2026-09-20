@@ -88,6 +88,21 @@ describe('StudioRecordViewsService', () => {
     req.flush({ success: true, data: null, message: null, errors: [] });
   });
 
+  it('prévisualise un brouillon (POST /views/preview, sans id, contexte skipErrorUi) — 4.7v2', () => {
+    service.previewRecordView('interventions', {
+      mode: 'List',
+      definition: { columns: [{ fieldKey: 'nom', hidden: false }], filters: [], sort: [], searchEnabled: true, pageSize: 25 },
+      page: 1,
+      pageSize: 25
+    }).subscribe();
+    const req = http.expectOne(`${base}/views/preview`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body.mode).toBe('List');
+    expect(req.request.body.definition.pageSize).toBe(25);
+    expect(req.request.body).not.toEqual(jasmine.objectContaining({ search: jasmine.anything() }));
+    req.flush({ success: true, data: null, message: null, errors: [] });
+  });
+
   it('exécute une vue calendrier avec rangeStart/rangeEnd dans le corps', () => {
     const request: RecordViewRunRequest = { rangeStart: '2026-09-01', rangeEnd: '2026-09-30' };
     service.runRecordView('interventions', 'v1', request).subscribe();

@@ -56,6 +56,7 @@ public sealed class StudioRecordViewsControllerContractTests
         Assert.Equal(PermissionPolicies.StudioDesignForms, PolicyOf(nameof(StudioRecordViewsController.Update)));
         Assert.Equal(PermissionPolicies.StudioDesignForms, PolicyOf(nameof(StudioRecordViewsController.Delete)));
         Assert.Equal(PermissionPolicies.StudioDesignForms, PolicyOf(nameof(StudioRecordViewsController.SetDefault)));
+        Assert.Equal(PermissionPolicies.StudioDesignForms, PolicyOf(nameof(StudioRecordViewsController.Preview)));
 
         // Routes
         Assert.Null(typeof(StudioRecordViewsController).GetMethod(nameof(StudioRecordViewsController.List))!
@@ -65,6 +66,8 @@ public sealed class StudioRecordViewsControllerContractTests
         Assert.Equal("{id:guid}/default", typeof(StudioRecordViewsController).GetMethod(nameof(StudioRecordViewsController.SetDefault))!
             .GetCustomAttributes(typeof(HttpPostAttribute), true).Cast<HttpPostAttribute>().Single().Template);
         Assert.Equal("{id:guid}/run", typeof(StudioRecordViewsController).GetMethod(nameof(StudioRecordViewsController.Run))!
+            .GetCustomAttributes(typeof(HttpPostAttribute), true).Cast<HttpPostAttribute>().Single().Template);
+        Assert.Equal("preview", typeof(StudioRecordViewsController).GetMethod(nameof(StudioRecordViewsController.Preview))!
             .GetCustomAttributes(typeof(HttpPostAttribute), true).Cast<HttpPostAttribute>().Single().Template);
     }
 
@@ -81,6 +84,7 @@ public sealed class StudioRecordViewsControllerContractTests
         Assert.IsType<NotFoundObjectResult>(await controller.Delete(EntityKey, ViewId, CancellationToken.None));
         Assert.IsType<NotFoundObjectResult>(await controller.SetDefault(EntityKey, ViewId, CancellationToken.None));
         Assert.IsType<NotFoundObjectResult>(await controller.Run(EntityKey, ViewId, new RunRecordViewRequest(), CancellationToken.None));
+        Assert.IsType<NotFoundObjectResult>(await controller.Preview(EntityKey, Preview(), CancellationToken.None));
 
         mediator.VerifyNoOtherCalls();
     }
@@ -135,6 +139,24 @@ public sealed class StudioRecordViewsControllerContractTests
     }
 
     [Fact]
+    public async Task Preview_returns_400_for_a_validation_error()
+    {
+        // Miroir de Create_returns_400 : le 400 du validateur (définition du brouillon refusée)
+        // est mappé par StudioErrorMapping comme au run.
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<PreviewCustomRecordViewQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<RecordViewRunResultDto>(Error.Validation("pageSize", "La taille de page doit être comprise entre 1 et 200.")));
+
+        var result = await CreateController(mediator, recordViewsEnabled: true)
+            .Preview(EntityKey, Preview(), CancellationToken.None);
+
+        var bad = Assert.IsType<BadRequestObjectResult>(result);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<string>>(bad.Value);
+        Assert.False(body.Success);
+        Assert.Equal("La taille de page doit être comprise entre 1 et 200.", body.Error);
+    }
+
+    [Fact]
     public async Task Update_returns_409_when_the_row_version_is_stale()
     {
         var mediator = new Mock<IMediator>();
@@ -185,6 +207,9 @@ public sealed class StudioRecordViewsControllerContractTests
             .ReturnsAsync(Result.Failure<CustomRecordViewDto>(error));
         return await CreateController(mediator, recordViewsEnabled: true).Create(EntityKey, Save(), CancellationToken.None);
     }
+
+    private static PreviewRecordViewRequest Preview() =>
+        new(CustomRecordViewMode.List, ListDefinition);
 
     private static SaveCustomRecordViewRequest Save() =>
         new("encours", "En cours", CustomRecordViewMode.List, ListDefinition);

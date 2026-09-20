@@ -164,7 +164,10 @@ public static class PlanSeeder
             ("MaxCustomEntities", SubscriptionLimits.Free.MaxCustomEntities.ToString()),
             ("MaxCustomFieldsPerEntity", SubscriptionLimits.Free.MaxCustomFieldsPerEntity.ToString()),
             ("MaxCustomRecordsPerEntity", SubscriptionLimits.Free.MaxCustomRecordsPerEntity.ToString()),
-            ("MaxCustomRecordViewsPerEntity", SubscriptionLimits.Free.MaxCustomRecordViewsPerEntity.ToString())
+            ("MaxCustomRecordViewsPerEntity", SubscriptionLimits.Free.MaxCustomRecordViewsPerEntity.ToString()),
+            ("MaxWorkflowsPerEntity", SubscriptionLimits.Free.MaxWorkflowsPerEntity.ToString()),
+            ("MaxWorkflowSteps", SubscriptionLimits.Free.MaxWorkflowSteps.ToString()),
+            ("MaxWorkflowInstancesPerRecord", SubscriptionLimits.Free.MaxWorkflowInstancesPerRecord.ToString())
         });
 
         plan.ReplaceFeatures(new[]
@@ -206,7 +209,10 @@ public static class PlanSeeder
             ("MaxCustomEntities", "∞"),
             ("MaxCustomFieldsPerEntity", "∞"),
             ("MaxCustomRecordsPerEntity", "∞"),
-            ("MaxCustomRecordViewsPerEntity", "∞")
+            ("MaxCustomRecordViewsPerEntity", "∞"),
+            ("MaxWorkflowsPerEntity", "∞"),
+            ("MaxWorkflowSteps", "∞"),
+            ("MaxWorkflowInstancesPerRecord", "∞")
         });
 
         plan.ReplaceFeatures(new[]
@@ -245,7 +251,10 @@ public static class PlanSeeder
             ("MaxCustomEntities", "∞"),
             ("MaxCustomFieldsPerEntity", "∞"),
             ("MaxCustomRecordsPerEntity", "∞"),
-            ("MaxCustomRecordViewsPerEntity", "∞")
+            ("MaxCustomRecordViewsPerEntity", "∞"),
+            ("MaxWorkflowsPerEntity", "∞"),
+            ("MaxWorkflowSteps", "∞"),
+            ("MaxWorkflowInstancesPerRecord", "∞")
         });
 
         plan.ReplaceFeatures(new[]

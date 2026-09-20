@@ -49,7 +49,7 @@ public sealed class UserSessionService : IUserSessionService
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / MaxPageSize);
         pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
 
         var query = _db.UserSessions.AsNoTracking().Where(s => s.UserId == userId);
@@ -62,7 +62,7 @@ public sealed class UserSessionService : IUserSessionService
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        page = Math.Clamp(page, 1, int.MaxValue / MaxPageSize);
         pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
 
         var query = _db.UserSessions.AsNoTracking()

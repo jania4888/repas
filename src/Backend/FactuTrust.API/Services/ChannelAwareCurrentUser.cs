@@ -1,14 +1,23 @@
 using FactuTrust.API.Services.Channels;
+using FactuTrust.Application.Common.Identity;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Domain.Enums;
 
 namespace FactuTrust.API.Services;
 
 /// <summary>
-/// Décorateur d'<see cref="ICurrentUser"/> : sert l'instantané <see cref="ChannelUserContext"/>
-/// quand un traitement de canal (WhatsApp) est en cours — le pipeline IA et ses outils lisent
-/// alors l'identité impersonnée — et délègue sinon au <see cref="CurrentUser"/> HTTP historique
-/// (chemin web strictement inchangé : l'AsyncLocal n'est jamais posé hors traitement de canal).
+/// Décorateur d'<see cref="ICurrentUser"/> à trois niveaux de priorité :
+/// <list type="number">
+///   <item><see cref="ImpersonatedUserContext"/> — segment de workflow Studio rejoué par un job Hangfire
+///   sous l'identité de l'utilisateur lanceur (ni HTTP ni canal disponibles) ;</item>
+///   <item><see cref="ChannelUserContext"/> — traitement de canal (WhatsApp) : le pipeline IA et ses
+///   outils lisent l'identité impersonnée du canal ;</item>
+///   <item><see cref="CurrentUser"/> HTTP historique — chemin web strictement inchangé : aucun des deux
+///   AsyncLocal n'est posé hors traitement de canal ou de workflow.</item>
+/// </list>
+/// Sous un instantané (impersonation ou canal), les notions purement HTTP (portail client, contexte
+/// délégué cabinet, IP, User-Agent) sont neutralisées : elles ne doivent jamais « fuir » du contexte
+/// web appelant vers le traitement impersonné.
 /// </summary>
 public sealed class ChannelAwareCurrentUser : ICurrentUser
 {
@@ -19,29 +28,39 @@ public sealed class ChannelAwareCurrentUser : ICurrentUser
         _inner = inner;
     }
 
-    private static ChannelUserSnapshot? Snapshot => ChannelUserContext.Current;
+    private static ImpersonatedUserSnapshot? Impersonated => ImpersonatedUserContext.Current;
 
-    public Guid? UserId => Snapshot is { } s ? s.UserId : _inner.UserId;
+    private static ChannelUserSnapshot? ChannelSnapshot => ChannelUserContext.Current;
 
-    public string? Email => Snapshot is { } s ? s.Email : _inner.Email;
+    private static bool HasSnapshot => Impersonated is not null || ChannelSnapshot is not null;
 
-    public Guid? TenantId => Snapshot is { } s ? s.TenantId : _inner.TenantId;
+    public Guid? UserId => Impersonated is { } i ? i.UserId : ChannelSnapshot is { } s ? s.UserId : _inner.UserId;
 
-    public UserRole? Role => Snapshot is { } s ? s.Role : _inner.Role;
+    public string? Email => Impersonated is { } i ? i.Email : ChannelSnapshot is { } s ? s.Email : _inner.Email;
 
-    public bool IsAuthenticated => Snapshot is not null || _inner.IsAuthenticated;
+    public Guid? TenantId => Impersonated is { } i ? i.TenantId : ChannelSnapshot is { } s ? s.TenantId : _inner.TenantId;
+
+    public UserRole? Role => Impersonated is { } i ? i.Role : ChannelSnapshot is { } s ? s.Role : _inner.Role;
+
+    public bool IsAuthenticated => HasSnapshot || _inner.IsAuthenticated;
 
     public bool IsAccountingFirmDelegatedContext =>
-        Snapshot is null && _inner.IsAccountingFirmDelegatedContext;
+        !HasSnapshot && _inner.IsAccountingFirmDelegatedContext;
 
-    public Guid? PortalClientId => Snapshot is not null ? null : _inner.PortalClientId;
+    public Guid? PortalClientId => HasSnapshot ? null : _inner.PortalClientId;
 
-    public bool IsClientPortal => Snapshot is null && _inner.IsClientPortal;
+    public bool IsClientPortal => !HasSnapshot && _inner.IsClientPortal;
 
+    /// <summary>
+    /// Le premier instantané présent tranche seul : sous impersonation, on ne retombe jamais sur le canal
+    /// ni sur les claims HTTP.
+    /// </summary>
     public bool HasPermission(string permission) =>
-        Snapshot is { } s ? s.Permissions.Contains(permission) : _inner.HasPermission(permission);
+        Impersonated is { } i ? i.Permissions.Contains(permission)
+        : ChannelSnapshot is { } s ? s.Permissions.Contains(permission)
+        : _inner.HasPermission(permission);
 
-    public string? IpAddress => Snapshot is not null ? null : _inner.IpAddress;
+    public string? IpAddress => HasSnapshot ? null : _inner.IpAddress;
 
-    public string? UserAgent => Snapshot is not null ? null : _inner.UserAgent;
+    public string? UserAgent => HasSnapshot ? null : _inner.UserAgent;
 }

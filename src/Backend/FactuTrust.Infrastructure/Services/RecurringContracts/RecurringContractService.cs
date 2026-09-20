@@ -51,7 +51,7 @@ public sealed partial class RecurringContractService : IRecurringContractService
     public async Task<PagedResult<RecurringContractListItemDto>> ListAsync(
         RecurringContractListQuery query, CancellationToken cancellationToken = default)
     {
-        var page = Math.Max(1, query.Page);
+        var page = Math.Clamp(query.Page, 1, int.MaxValue / 100);
         var pageSize = Math.Clamp(query.PageSize, 1, 100);
         var q = _db.RecurringContracts.AsNoTracking().AsQueryable();
 

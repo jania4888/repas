@@ -3,6 +3,7 @@ using FactuTrust.Domain.Entities.Studio;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
+using FactuTrust.Infrastructure.Repositories;
 
 namespace FactuTrust.Infrastructure.Repositories.Studio;
 
@@ -70,7 +71,7 @@ public sealed class StudioAiBuildPlanRepository : IStudioAiBuildPlanRepository
         var total = await query.CountAsync(cancellationToken);
         var items = await query
             .OrderByDescending(p => p.CreatedAt)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

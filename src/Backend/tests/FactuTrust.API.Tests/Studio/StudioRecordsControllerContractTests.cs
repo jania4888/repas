@@ -8,6 +8,7 @@ using FactuTrust.Application.Features.Studio.Records;
 using FactuTrust.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using Xunit;
 
@@ -43,6 +44,69 @@ public sealed class StudioRecordsControllerContractTests
         Assert.Equal(PermissionPolicies.CustomRecordsRead, PolicyOf(nameof(StudioRecordsController.Schema)));
         Assert.Equal(PermissionPolicies.CustomRecordsWrite, PolicyOf(nameof(StudioRecordsController.Create)));
         Assert.Equal(PermissionPolicies.CustomRecordsWrite, PolicyOf(nameof(StudioRecordsController.Update)));
+        Assert.Equal(PermissionPolicies.CustomRecordsRead, PolicyOf(nameof(StudioRecordsController.History)));
+
+        static string? GetTemplateOf(string method) => typeof(StudioRecordsController).GetMethod(method)!
+            .GetCustomAttributes(typeof(HttpGetAttribute), true)
+            .Cast<HttpGetAttribute>()
+            .Single(a => a.Template is not null)
+            .Template;
+        Assert.Equal("{id:guid}/history", GetTemplateOf(nameof(StudioRecordsController.History)));
+    }
+
+    /// <summary>
+    /// 4.7★2 (S1) : surface d'autorisation figée — exactement 8 actions HTTP, chacune avec sa policy explicite
+    /// (lecture / écriture), gabarits inchangés ; seule <c>Patch</c> lit le drapeau <c>EnableStudioRecordViews</c>,
+    /// <c>History</c> (4.7h2) est servie sans drapeau (complète <c>History_forwards_paging_and_maps_success_without_any_flag</c>).
+    /// </summary>
+    [Fact]
+    public void Action_surface_is_frozen_with_an_explicit_policy_per_action_and_history_reads_no_flag()
+    {
+        var actions = typeof(StudioRecordsController)
+            .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly)
+            .Select(m => (Method: m, Http: m.GetCustomAttributes(typeof(HttpMethodAttribute), true).Cast<HttpMethodAttribute>().SingleOrDefault()))
+            .Where(x => x.Http is not null)
+            .ToDictionary(x => x.Method.Name, x => x);
+
+        var expected = new Dictionary<string, (string Verb, string? Template, string Policy)>
+        {
+            [nameof(StudioRecordsController.Schema)] = ("GET", "schema", PermissionPolicies.CustomRecordsRead),
+            [nameof(StudioRecordsController.List)] = ("GET", null, PermissionPolicies.CustomRecordsRead),
+            [nameof(StudioRecordsController.Get)] = ("GET", "{id:guid}", PermissionPolicies.CustomRecordsRead),
+            [nameof(StudioRecordsController.Create)] = ("POST", null, PermissionPolicies.CustomRecordsWrite),
+            [nameof(StudioRecordsController.Update)] = ("PUT", "{id:guid}", PermissionPolicies.CustomRecordsWrite),
+            [nameof(StudioRecordsController.Patch)] = ("PATCH", "{id:guid}", PermissionPolicies.CustomRecordsWrite),
+            [nameof(StudioRecordsController.History)] = ("GET", "{id:guid}/history", PermissionPolicies.CustomRecordsRead),
+            [nameof(StudioRecordsController.Delete)] = ("DELETE", "{id:guid}", PermissionPolicies.CustomRecordsWrite)
+        };
+
+        Assert.Equal(expected.Keys.OrderBy(k => k, StringComparer.Ordinal), actions.Keys.OrderBy(k => k, StringComparer.Ordinal));
+        foreach (var (name, (verb, template, policy)) in expected)
+        {
+            var (method, http) = actions[name];
+            Assert.Equal(verb, Assert.Single(http!.HttpMethods));
+            Assert.Equal(template, http.Template);
+            var authorize = Assert.Single(method.GetCustomAttributes(typeof(Microsoft.AspNetCore.Authorization.AuthorizeAttribute), true)
+                .Cast<Microsoft.AspNetCore.Authorization.AuthorizeAttribute>());
+            Assert.Equal(policy, authorize.Policy);
+            Assert.Empty(method.GetCustomAttributes(typeof(Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute), true));
+        }
+
+        // Classe : [Authorize] sans policy (authentification), la policy fine est portée par chaque action.
+        var classAuthorize = Assert.Single(typeof(StudioRecordsController)
+            .GetCustomAttributes(typeof(Microsoft.AspNetCore.Authorization.AuthorizeAttribute), false)
+            .Cast<Microsoft.AspNetCore.Authorization.AuthorizeAttribute>());
+        Assert.Null(classAuthorize.Policy);
+
+        // Drapeau : seule Patch dépend d'EnableStudioRecordViews (off ⇒ 404 sans MediatR) ; History n'en lit aucun —
+        // preuve comportementale : un contrôleur « tous drapeaux à false » sert quand même l'historique.
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<ListCustomRecordHistoryQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(PagedResult<RecordHistoryEntryDto>.Create(Array.Empty<RecordHistoryEntryDto>(), 1, 20, 0)));
+        var controller = CreateController(mediator); // EnableStudioRecordViews = false
+        Assert.IsType<OkObjectResult>(controller.History(EntityKey, Guid.NewGuid(), 1, 20, CancellationToken.None).GetAwaiter().GetResult());
+        Assert.IsType<NotFoundObjectResult>(controller.Patch(EntityKey, Guid.NewGuid(), new PatchCustomRecordRequest(new Dictionary<string, JsonNode?>(), "AAAAAAAAB9E="), CancellationToken.None).GetAwaiter().GetResult());
+        mediator.VerifyAll();
     }
 
     [Fact]
@@ -189,6 +253,47 @@ public sealed class StudioRecordsControllerContractTests
         var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<CustomRecordDto>>(ok.Value);
         Assert.True(body.Success);
         Assert.Equal(dto.Id, body.Data!.Id);
+    }
+
+    [Fact]
+    public async Task History_forwards_paging_and_maps_success_without_any_flag()
+    {
+        ListCustomRecordHistoryQuery? captured = null;
+        var entry = new RecordHistoryEntryDto(Guid.NewGuid(), "Studio.Record.Created",
+            new DateTime(2026, 9, 18, 12, 0, 0, DateTimeKind.Utc), "Alice Martin",
+            new[] { new RecordHistoryChangeDto("nom", null, "Alpha") });
+        var mediator = new Mock<IMediator>(MockBehavior.Strict);
+        mediator.Setup(m => m.Send(It.IsAny<ListCustomRecordHistoryQuery>(), It.IsAny<CancellationToken>()))
+            .Callback((IRequest<Result<PagedResult<RecordHistoryEntryDto>>> q, CancellationToken _) => captured = (ListCustomRecordHistoryQuery)q)
+            .ReturnsAsync(Result.Success(PagedResult<RecordHistoryEntryDto>.Create(new[] { entry }, 2, 5, 11)));
+        var recordId = Guid.NewGuid();
+
+        // Pas de drapeau : le contrôleur par défaut (recordViewsEnabled: false) sert l'historique.
+        var result = await CreateController(mediator).History(EntityKey, recordId, 2, 5, CancellationToken.None);
+
+        Assert.IsType<OkObjectResult>(result);
+        Assert.NotNull(captured);
+        Assert.Equal(EntityKey, captured!.EntityKey);
+        Assert.Equal(recordId, captured.RecordId);
+        Assert.Equal(2, captured.Page);
+        Assert.Equal(5, captured.PageSize);
+        mediator.VerifyAll();
+    }
+
+    [Fact]
+    public async Task History_maps_notfound_to_404_and_validation_to_400()
+    {
+        var notFound = new Mock<IMediator>();
+        notFound.Setup(m => m.Send(It.IsAny<ListCustomRecordHistoryQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<PagedResult<RecordHistoryEntryDto>>(Error.NotFound("CustomRecord", Guid.NewGuid())));
+        Assert.IsType<NotFoundObjectResult>(
+            await CreateController(notFound).History(EntityKey, Guid.NewGuid(), 1, 20, CancellationToken.None));
+
+        var invalid = new Mock<IMediator>();
+        invalid.Setup(m => m.Send(It.IsAny<ListCustomRecordHistoryQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<PagedResult<RecordHistoryEntryDto>>(Error.Validation("entityKey", "Table inconnue.")));
+        Assert.IsType<BadRequestObjectResult>(
+            await CreateController(invalid).History(EntityKey, Guid.NewGuid(), 1, 20, CancellationToken.None));
     }
 
     private static StudioRecordsController CreateController(Mock<IMediator> mediator, bool recordViewsEnabled = false) =>

@@ -26,7 +26,11 @@
     "virtual-street:build-assets": "npm run virtual-street:build-textures && npm run virtual-street:build-glbs",
     "vendor:draco": "node scripts/copy-draco-decoder-to-assets.mjs",
     "validate:facade-glb": "node scripts/validate-facade-glbs.mjs",
-    "quality:gate": "npm run virtual-street:build-assets && npm run validate:facade-glb && npm run build:prod"
+    "quality:gate": "npm run virtual-street:build-assets && npm run validate:facade-glb && npm run build:prod",
+    "test:street-catalog": "node scripts/test-street-catalog.mjs",
+    "validate:street-catalog": "node scripts/validate-street-catalog.mjs",
+    "test:e2e:street": "playwright test e2e/playwright.virtual-street.spec.ts --project=chromium",
+    "quality:gate:street-catalog": "npm run validate:facade-glb && npm run validate:street-catalog"
   },
   "private": true,
   "dependencies": {

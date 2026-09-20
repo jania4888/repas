@@ -1,7 +1,9 @@
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { ToastService } from '@core/services/toast.service';
 import { ButtonModule } from 'primeng/button';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { SelectModule } from 'primeng/select';
@@ -11,7 +13,9 @@ import { TooltipModule } from 'primeng/tooltip';
 import { StudioAiBuildService } from '../../studio-ai-build.service';
 import { StudioPageShellComponent } from '../../shared/studio-page-shell.component';
 import { studioBreadcrumb } from '../../shared/studio-breadcrumb.util';
+import { StudioAiCapabilitiesService } from '../studio-ai-capabilities.service';
 import { STUDIO_AI_LABELS, formatLabel } from '../studio-ai-labels';
+import { studioAiHttpError } from '../studio-ai-spec.util';
 import { StudioAiPlanKind, StudioAiPlanListItemDto, StudioAiPlanStatus, StudioPagedResult } from '../studio-ai.models';
 import { planKindLabel, planStatusLabel, planStatusSeverity } from '../rail/studio-ai-rail.util';
 
@@ -26,7 +30,9 @@ const KIND_ORDER: StudioAiPlanKind[] = ['CreateSystem', 'CreateApp', 'Amendment'
  * « Mes projets » (`/studio/ai/projects`) : toutes les générations Studio IA du cabinet, paginées
  * côté serveur (`GET api/ai/studio/plans`, 20 par page), filtrables par statut et genre.
  * « Reprendre » rouvre un plan encore à valider dans l'atelier (`/studio/ai?plan=<id>`) ;
- * « Ouvrir le système » mène au hub du système créé.
+ * « Ouvrir le système » mène au hub du système créé ; « Rejouer » (`replayable`) crée un nouveau plan
+ * (`POST {id}/replay` ⇒ 201) puis ouvre l'atelier sur celui-ci (`/studio/ai?plan=<nouvel id>`) ;
+ * « Dupliquer » (N7, si `systemExportEnabled`) ouvre l'atelier avec `?duplicate=<systemKey>`.
  */
 @Component({
   selector: 'app-studio-ai-projects-page',
@@ -96,6 +102,8 @@ const KIND_ORDER: StudioAiPlanKind[] = ['CreateSystem', 'CreateApp', 'Amendment'
               <th>{{ labels.columns.createdAt }}</th>
               <th>{{ labels.columns.expiresAt }}</th>
               <th>{{ labels.columns.system }}</th>
+              <th class="sap-projects__num">{{ labels.columns.relations }}</th>
+              <th class="sap-projects__num">{{ labels.columns.views }}</th>
               <th class="sap-projects__actions-col">{{ labels.columns.actions }}</th>
             </tr>
           </ng-template>
@@ -103,10 +111,17 @@ const KIND_ORDER: StudioAiPlanKind[] = ['CreateSystem', 'CreateApp', 'Amendment'
             <tr [attr.data-plan-id]="item.id">
               <td class="sap-projects__title">{{ item.title || planKindLabel(item.kind) }}</td>
               <td>{{ planKindLabel(item.kind) }}</td>
-              <td><p-tag [value]="planStatusLabel(item.status)" [severity]="planStatusSeverity(item.status)" /></td>
+              <td>
+                <p-tag
+                  [value]="planStatusLabel(item.status)"
+                  [severity]="planStatusSeverity(item.status)"
+                  [pTooltip]="item.status === 'Failed' ? (item.errorMessage ?? undefined) : undefined" />
+              </td>
               <td>{{ item.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
               <td>{{ item.status === 'Pending' && item.expiresAt ? (item.expiresAt | date: 'dd/MM/yyyy HH:mm') : '—' }}</td>
               <td class="sap-projects__system">{{ item.systemKey || '—' }}</td>
+              <td class="sap-projects__num" data-col="relations">{{ item.relationCount ?? 0 }}</td>
+              <td class="sap-projects__num" data-col="views">{{ item.viewCount ?? 0 }}</td>
               <td class="sap-projects__actions">
                 @if (item.status === 'Pending') {
                   <a
@@ -127,13 +142,39 @@ const KIND_ORDER: StudioAiPlanKind[] = ['CreateSystem', 'CreateApp', 'Amendment'
                     [outlined]="true"
                     [routerLink]="['/studio/systems', item.systemKey]"
                     data-action="open-system"></a>
+                  @if (item.status === 'Completed' && duplicateEnabled()) {
+                    <a
+                      pButton
+                      [label]="labels.duplicate"
+                      icon="fa-solid fa-clone"
+                      size="small"
+                      severity="secondary"
+                      [outlined]="true"
+                      [routerLink]="['/studio/ai']"
+                      [queryParams]="{ duplicate: item.systemKey }"
+                      data-action="duplicate"></a>
+                  }
+                }
+                @if (item.replayable) {
+                  <button
+                    pButton
+                    type="button"
+                    [label]="labels.replay"
+                    icon="fa-solid fa-rotate-right"
+                    size="small"
+                    severity="secondary"
+                    [outlined]="true"
+                    [disabled]="replaying() === item.id"
+                    [loading]="replaying() === item.id"
+                    data-action="replay"
+                    (click)="replay(item)"></button>
                 }
               </td>
             </tr>
           </ng-template>
           <ng-template #emptymessage>
             <tr>
-              <td colspan="7" class="sap-projects__empty" data-testid="projects-empty">
+              <td colspan="9" class="sap-projects__empty" data-testid="projects-empty">
                 @if (!loading() && !error()) { {{ labels.empty }} }
               </td>
             </tr>
@@ -160,7 +201,9 @@ const KIND_ORDER: StudioAiPlanKind[] = ['CreateSystem', 'CreateApp', 'Amendment'
     .sap-projects__count { margin-left: auto; font-size: 0.8125rem; color: var(--color-neutral-500, #6b7280); }
     .sap-projects__title { font-weight: 500; }
     .sap-projects__system { font-family: ui-monospace, monospace; font-size: 0.8125rem; color: var(--color-neutral-600, #4b5563); }
+    .sap-projects__num { text-align: right; font-variant-numeric: tabular-nums; }
     .sap-projects__actions { white-space: nowrap; text-align: right; }
+    .sap-projects__actions > * + * { margin-left: 0.5rem; }
     .sap-projects__actions a { text-decoration: none; }
     .sap-projects__actions-col { text-align: right; }
     .sap-projects__empty { text-align: center; padding: 2rem 1rem; color: var(--color-neutral-500, #6b7280); }
@@ -173,9 +216,13 @@ const KIND_ORDER: StudioAiPlanKind[] = ['CreateSystem', 'CreateApp', 'Amendment'
 })
 export class StudioAiProjectsPageComponent {
   private readonly builds = inject(StudioAiBuildService);
+  private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
+  private readonly capabilities = inject(StudioAiCapabilitiesService);
 
   readonly labels = STUDIO_AI_LABELS.history;
   readonly retryLabel = STUDIO_AI_LABELS.conversation.retry;
+  readonly replayLabels = STUDIO_AI_LABELS.replay;
   readonly breadcrumbs = studioBreadcrumb({ label: 'Assistant IA', route: '/studio/ai' }, { label: STUDIO_AI_LABELS.history.title });
   readonly pageSize = STUDIO_AI_PROJECTS_PAGE_SIZE;
 
@@ -195,8 +242,12 @@ export class StudioAiProjectsPageComponent {
   readonly totalCount = signal(0);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  /** Identifiant du plan en cours de rejeu (désactive son bouton). */
+  readonly replaying = signal<string | null>(null);
 
   readonly countText = computed(() => formatLabel(this.labels.count, { count: this.totalCount() }));
+  /** N7 : « Dupliquer » (⇒ `/studio/ai?duplicate=<key>`) — fail-closed sur `systemExportEnabled`. */
+  readonly duplicateEnabled = computed(() => this.capabilities.state() === 'ready' && this.capabilities.capabilities().systemExportEnabled);
 
   readonly planKindLabel = planKindLabel;
   readonly planStatusLabel = planStatusLabel;
@@ -205,6 +256,7 @@ export class StudioAiProjectsPageComponent {
   private requestSeq = 0;
 
   constructor() {
+    this.capabilities.ensureLoaded();
     this.load();
   }
 
@@ -225,6 +277,32 @@ export class StudioAiProjectsPageComponent {
     if (next === this.page()) return;
     this.page.set(next);
     this.load();
+  }
+
+  /** « Rejouer » : 201 ⇒ atelier sur le nouveau plan ; 409 ⇒ toast « conflit » ; 2xx sans plan ou autre erreur ⇒ message d'erreur. */
+  replay(item: StudioAiPlanListItemDto): void {
+    if (this.replaying()) return;
+    this.replaying.set(item.id);
+    this.builds.replayPlan(item.id).subscribe({
+      next: res => {
+        this.replaying.set(null);
+        const planId = res?.success ? res.data?.plan?.id : null;
+        if (!planId) {
+          // 2xx sans plan : réponse inattendue, pas un conflit.
+          this.error.set(STUDIO_AI_LABELS.page.templateFailed);
+          return;
+        }
+        void this.router.navigate(['/studio/ai'], { queryParams: { plan: planId } });
+      },
+      error: (err: unknown) => {
+        this.replaying.set(null);
+        if (err instanceof HttpErrorResponse && err.status === 409) {
+          this.toast.add({ severity: 'warn', summary: this.replayLabels.conflict });
+          return;
+        }
+        this.error.set(studioAiHttpError(err, 'plan'));
+      }
+    });
   }
 
   load(): void {

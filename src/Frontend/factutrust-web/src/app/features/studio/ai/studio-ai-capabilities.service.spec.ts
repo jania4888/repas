@@ -37,13 +37,13 @@ describe('StudioAiCapabilitiesService', () => {
 
   afterEach(() => http.verify());
 
-  it('starts unknown with the fallback capabilities', () => {
+  it('démarre en état inconnu avec les capacités de repli', () => {
     expect(service.state()).toBe('unknown');
     expect(service.workbenchEnabled()).toBeFalse();
     expect(service.loading()).toBeTrue();
   });
 
-  it('loads the capabilities once and exposes them', () => {
+  it('charge les capacités une seule fois et les expose', () => {
     service.ensureLoaded();
     service.ensureLoaded();
 
@@ -57,7 +57,7 @@ describe('StudioAiCapabilitiesService', () => {
     expect(service.capabilities().standardModelLabel).toBe('Standard');
   });
 
-  it('marks the workbench unavailable on error (legacy fallback)', () => {
+  it("marque l'atelier indisponible sur erreur (repli historique)", () => {
     service.ensureLoaded();
     http.expectOne(url).flush('nope', { status: 404, statusText: 'Not Found' });
 
@@ -66,7 +66,7 @@ describe('StudioAiCapabilitiesService', () => {
     expect(service.capabilities().workbenchEnabled).toBeFalse();
   });
 
-  it('marks the workbench unavailable when the envelope is not successful', () => {
+  it("marque l'atelier indisponible quand l'enveloppe n'est pas success", () => {
     service.ensureLoaded();
     http.expectOne(url).flush({ success: false, data: null, message: 'ko', errors: [] });
 
@@ -74,7 +74,7 @@ describe('StudioAiCapabilitiesService', () => {
     expect(service.workbenchEnabled()).toBeFalse();
   });
 
-  it('completes missing flags with the fallback values', () => {
+  it('complète les drapeaux manquants avec les valeurs de repli', () => {
     service.ensureLoaded();
     http.expectOne(url).flush({
       success: true,
@@ -87,7 +87,7 @@ describe('StudioAiCapabilitiesService', () => {
     expect(service.capabilities().workbenchEnabled).toBeTrue();
   });
 
-  it('reloads after reset', () => {
+  it('recharge après reset()', () => {
     service.ensureLoaded();
     http.expectOne(url).flush({ success: true, data: capabilities, message: null, errors: [] });
 
@@ -98,5 +98,35 @@ describe('StudioAiCapabilitiesService', () => {
     service.ensureLoaded();
     http.expectOne(url).flush({ success: true, data: capabilities, message: null, errors: [] });
     expect(service.state()).toBe('ready');
+  });
+
+  it('expose workflowsEnabled à true seulement quand l\'état est prêt et la capacité vraie', () => {
+    expect(service.workflowsEnabled()).toBeFalse();
+
+    service.ensureLoaded();
+    http.expectOne(url).flush({ success: true, data: { ...capabilities, workflowsEnabled: true }, message: null, errors: [] });
+    expect(service.workflowsEnabled()).toBeTrue();
+
+    service.reset();
+    service.ensureLoaded();
+    http.expectOne(url).flush({ success: true, data: { ...capabilities, workflowsEnabled: false }, message: null, errors: [] });
+    expect(service.workflowsEnabled()).toBeFalse();
+  });
+
+  it('expose workflowToolsEnabled à false quand le serveur répond 403 (fail-closed)', () => {
+    service.ensureLoaded();
+    http.expectOne(url).flush('', { status: 403, statusText: 'Forbidden' });
+
+    expect(service.state()).toBe('unavailable');
+    expect(service.workflowToolsEnabled()).toBeFalse();
+  });
+
+  it('remet workflowsEnabled à false après reset()', () => {
+    service.ensureLoaded();
+    http.expectOne(url).flush({ success: true, data: { ...capabilities, workflowsEnabled: true }, message: null, errors: [] });
+    expect(service.workflowsEnabled()).toBeTrue();
+
+    service.reset();
+    expect(service.workflowsEnabled()).toBeFalse();
   });
 });

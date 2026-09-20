@@ -558,7 +558,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.deleteClient(client.id);
       }

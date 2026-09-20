@@ -398,6 +398,80 @@ public sealed class StudioAiPlanWorkbenchFeaturesTests
         Assert.DoesNotContain("specJson", serialized, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public async Task List_maps_relation_and_view_counts_from_summary()
+    {
+        var plan = StudioAiBuildPlan.Create(TenantId, StudioAiPlanKind.CreateSystem, LegacySpec,
+            "{ \"title\": \"Congés\", \"entities\": [ { \"viewCount\": 1 }, {} ], \"relations\": [ {}, {} ] }",
+            UserId, StudioAiPlanDefaults.Lifetime);
+        _plans.Setup(p => p.ListByOwnerAsync(TenantId, UserId.ToString(), null, null, 1, 20, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((new StudioAiBuildPlan[] { plan }, 1));
+
+        var result = await ListHandler().Handle(new ListStudioAiPlansQuery(null, null, 1, 20), CancellationToken.None);
+
+        var item = Assert.Single(result.Value.Items);
+        Assert.Equal(2, item.EntityCount);
+        Assert.Equal(2, item.RelationCount);
+        Assert.Equal(1, item.ViewCount); // somme des entities[].viewCount (le second est absent ⇒ 0)
+    }
+
+    [Fact]
+    public async Task List_tolerates_missing_view_count_and_relations()
+    {
+        var plan = StudioAiBuildPlan.Create(TenantId, StudioAiPlanKind.CreateSystem, LegacySpec,
+            "{ \"title\": \"Congés\", \"entities\": [ {} ] }", UserId, StudioAiPlanDefaults.Lifetime);
+        _plans.Setup(p => p.ListByOwnerAsync(TenantId, UserId.ToString(), null, null, 1, 20, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((new StudioAiBuildPlan[] { plan }, 1));
+
+        var result = await ListHandler().Handle(new ListStudioAiPlansQuery(null, null, 1, 20), CancellationToken.None);
+
+        var item = Assert.Single(result.Value.Items);
+        Assert.Equal(0, item.RelationCount);
+        Assert.Equal(0, item.ViewCount);
+        Assert.False(item.Replayable); // Pending non expiré
+    }
+
+    [Fact]
+    public async Task List_reads_open_url_from_result_json_or_system_url()
+    {
+        var withOpenUrl = PendingPlan();
+        withOpenUrl.MarkCompleted("{\"openUrl\":\"/studio/d/tickets\"}");
+        var withSystemUrl = PendingPlan();
+        withSystemUrl.MarkCompleted("{\"systemUrl\":\"/studio/systems/conges\"}");
+        var withSystemKeyOnly = PendingPlan();
+        withSystemKeyOnly.MarkCompleted("{\"systemKey\":\"conges\"}");
+        var withoutResult = PendingPlan();
+        withoutResult.MarkCancelled();
+        _plans.Setup(p => p.ListByOwnerAsync(TenantId, UserId.ToString(), null, null, 1, 20, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((new StudioAiBuildPlan[] { withOpenUrl, withSystemUrl, withSystemKeyOnly, withoutResult }, 4));
+
+        var result = await ListHandler().Handle(new ListStudioAiPlansQuery(null, null, 1, 20), CancellationToken.None);
+
+        Assert.Equal("/studio/d/tickets", result.Value.Items[0].OpenUrl);
+        Assert.Equal("/studio/systems/conges", result.Value.Items[1].OpenUrl);
+        // CreateSystem n'émet que systemKey : repli déterministe côté lecture.
+        Assert.Equal("/studio/systems/conges", result.Value.Items[2].OpenUrl);
+        Assert.Null(result.Value.Items[3].OpenUrl);
+    }
+
+    [Fact]
+    public async Task List_exposes_error_message_and_replayable_flag()
+    {
+        var failed = PendingPlan();
+        failed.MarkFailed("Échec de création de la colonne.");
+        var pending = PendingPlan();
+        var overdue = PendingPlan(lifetime: TimeSpan.FromMinutes(-5));
+        _plans.Setup(p => p.ListByOwnerAsync(TenantId, UserId.ToString(), null, null, 1, 20, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((new StudioAiBuildPlan[] { failed, pending, overdue }, 3));
+
+        var result = await ListHandler().Handle(new ListStudioAiPlansQuery(null, null, 1, 20), CancellationToken.None);
+
+        Assert.Equal("Échec de création de la colonne.", result.Value.Items[0].ErrorMessage);
+        Assert.True(result.Value.Items[0].Replayable); // Failed ⇒ rejouable
+        Assert.False(result.Value.Items[1].Replayable); // Pending non expiré ⇒ non rejouable
+        Assert.True(result.Value.Items[2].Replayable); // Pending échu (présenté Expired) ⇒ rejouable
+    }
+
     // ---- CancelPending ----
 
     [Fact]

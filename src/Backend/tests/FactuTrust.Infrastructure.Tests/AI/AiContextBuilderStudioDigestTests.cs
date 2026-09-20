@@ -18,7 +18,8 @@ namespace FactuTrust.Infrastructure.Tests.AI;
 /// PR 1.2 — digest de contexte dans le prompt StudioBuilder. Le prompt n'expose le « SCHÉMA EXISTANT »
 /// que si <see cref="OllamaSettings.EnableStudioAiSchemaDigest"/> est actif ; le budget de caractères
 /// transmis au service dépend du modèle retenu (CPU 1200 / avancé 4000) ; l'intention connue ajoute un
-/// préambule, une intention inconnue n'ajoute rien ; la révision de cache suit les ajouts de règles (PR 2.4 ⇒ « v6 »)
+/// préambule, une intention inconnue n'ajoute rien ; la révision de cache suit les ajouts de règles (PR 2.4 ⇒ « v6 », PR 3.1b ⇒ « v7 »,
+/// PR 4.3e ⇒ « v8 » : règle 14 « workflows » conditionnelle + préambule d'intention « workflow » cohérent)
 /// (PR 1.3 : la règle 11 enseigne « existingKey » pour réutiliser une table existante).
 /// </summary>
 public sealed class AiContextBuilderStudioDigestTests
@@ -114,6 +115,8 @@ public sealed class AiContextBuilderStudioDigestTests
 
         var prompt = await builder.BuildSystemPromptAsync(
             AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts());
+        // StringBuilder.AppendLine émet \r\n sous Windows : les aiguilles multi-lignes sont en LF.
+        prompt = prompt.Replace("\r\n", "\n");
 
         Assert.Contains("11. Le SCHÉMA EXISTANT liste les tables déjà présentes avec leurs VRAIES clés.", prompt);
         Assert.Contains("12. Le DERNIER PLAN décrit ce qui vient d'être préparé ou créé.", prompt);
@@ -135,6 +138,8 @@ public sealed class AiContextBuilderStudioDigestTests
 
         var prompt = await builder.BuildSystemPromptAsync(
             AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts());
+        // StringBuilder.AppendLine émet \r\n sous Windows : les aiguilles multi-lignes sont en LF.
+        prompt = prompt.Replace("\r\n", "\n");
 
         Assert.Contains("SCHÉMA EXISTANT (tables Studio de ce client) :\nAucune table Studio pour l'instant.", prompt);
         Assert.Contains("11. Le SCHÉMA EXISTANT", prompt);
@@ -267,14 +272,46 @@ public sealed class AiContextBuilderStudioDigestTests
     }
 
     [Fact]
-    public void System_prompt_cache_revision_is_v6()
+    public void System_prompt_cache_revision_is_v9()
     {
         // PR 2.4 : règle 13 « vues enregistrées » ajoutée au prompt StudioBuilder ⇒ « v5 » → « v6 ».
+        // PR 3.1b : règle 8 enrichie (amendements reorder_fields / change_field_type / add_relation /
+        // assign_system / set_view) ⇒ « v6 » → « v7 ».
+        // PR 4.3e : règle 14 « workflows » (outil studio_plan_workflow) + préambule d'intention
+        // « workflow » conditionnel ⇒ « v7 » → « v8 ».
+        // 4.7 suite : règle 14 propose le déclencheur planifié (clôture de l'écart D-47-73)
+        // ⇒ « v8 » → « v9 ».
         var field = typeof(AiContextBuilder).GetField(
             "SystemPromptCacheRevision",
             BindingFlags.NonPublic | BindingFlags.Static);
         Assert.NotNull(field);
-        Assert.Equal("v6", (string)field!.GetRawConstantValue()!);
+        Assert.Equal("v9", (string)field!.GetRawConstantValue()!);
+    }
+
+    [Fact]
+    public async Task Rule_8_mentions_the_enriched_amendment_operations_only_when_modify_tools_are_on()
+    {
+        var digest = DigestMock("- t « T » : a:text", null);
+        var onBuilder = Build(Settings(digestEnabled: true), digest.Object);
+        var offSettings = Settings(digestEnabled: true);
+        offSettings.EnableStudioAiModifyTools = false;
+        var offBuilder = Build(offSettings, digest.Object);
+
+        var onPrompt = await onBuilder.BuildSystemPromptAsync(
+            AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts());
+        var offPrompt = await offBuilder.BuildSystemPromptAsync(
+            AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts());
+
+        Assert.Contains("8. MODIFIER L'EXISTANT", onPrompt);
+        Assert.Contains("reorder_fields", onPrompt);
+        Assert.Contains("change_field_type", onPrompt);
+        Assert.Contains("add_relation", onPrompt);
+        Assert.Contains("assign_system", onPrompt);
+        Assert.Contains("set_view", onPrompt);
+
+        Assert.DoesNotContain("8. MODIFIER L'EXISTANT", offPrompt);
+        Assert.DoesNotContain("change_field_type", offPrompt);
+        Assert.DoesNotContain("reorder_fields", offPrompt);
     }
 
     [Fact]
@@ -353,5 +390,92 @@ public sealed class AiContextBuilderStudioDigestTests
 
         var rule = prompt.Split('\n').First(l => l.StartsWith("13.", StringComparison.Ordinal));
         Assert.True(rule.Length <= 480, $"règle 13 trop longue : {rule.Length} caractères");
+    }
+
+    // ---------- PR 4.3e — règle 14 « workflows » ----------
+
+    private static OllamaSettings WorkflowSettings()
+    {
+        var settings = Settings(digestEnabled: true);
+        settings.EnableStudioWorkflows = true;
+        settings.EnableStudioAiWorkflowTools = true;
+        return settings;
+    }
+
+    private static string? Rule14Line(string prompt) =>
+        prompt.Split('\n').FirstOrDefault(l => l.StartsWith("14.", StringComparison.Ordinal));
+
+    [Fact]
+    public async Task Workflow_rule_14_appears_only_with_both_workflow_flags()
+    {
+        var digest = DigestMock(string.Empty, null);
+
+        // Aucun drapeau workflow.
+        var offPrompt = await Build(Settings(digestEnabled: true), digest.Object).BuildSystemPromptAsync(
+            AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts());
+
+        // Fonctionnalité seule, sans l'outil IA : la règle reste absente (règle unique WorkflowToolsEnabled).
+        var featureOnly = Settings(digestEnabled: true);
+        featureOnly.EnableStudioWorkflows = true;
+        var featureOnlyPrompt = await Build(featureOnly, digest.Object).BuildSystemPromptAsync(
+            AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts());
+
+        // Les deux drapeaux (plus l'aperçu déjà actif dans Settings()).
+        var onPrompt = await Build(WorkflowSettings(), digest.Object).BuildSystemPromptAsync(
+            AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts());
+
+        Assert.Null(Rule14Line(offPrompt));
+        Assert.DoesNotContain("studio_plan_workflow", offPrompt);
+        Assert.Null(Rule14Line(featureOnlyPrompt));
+        Assert.DoesNotContain("studio_plan_workflow", featureOnlyPrompt);
+
+        var rule = Rule14Line(onPrompt);
+        Assert.NotNull(rule);
+        Assert.StartsWith("14. WORKFLOWS", rule);
+        Assert.Contains("studio_plan_workflow", rule);
+    }
+
+    [Fact]
+    public async Task Workflow_rule_14_stays_short_and_names_the_scheduled_trigger_with_a_utc_cron()
+    {
+        // Clôture de l'écart D-47-73 : la règle propose le déclencheur planifié (accepté par la spec et
+        // validé par le planificateur de revue) ; budget porté à ≤ 560 caractères (cron requis, UTC,
+        // exemple) ; rappel « INACTIFS » ; l'interdiction « pas de déclencheur planifié » a disparu.
+        var prompt = await Build(WorkflowSettings(), DigestMock("- t « T » : a:text", null).Object)
+            .BuildSystemPromptAsync(AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts());
+
+        var rule = Rule14Line(prompt);
+        Assert.NotNull(rule);
+        Assert.True(rule!.Length <= 560, $"règle 14 trop longue : {rule.Length} caractères");
+        Assert.Contains("trigger: on_create|on_update|field_changed|manual|scheduled", rule);
+        Assert.Contains("cron", rule, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("UTC", rule);
+        Assert.Contains("requis si scheduled", rule);
+        Assert.DoesNotContain("pas de déclencheur planifié", rule);
+        Assert.Contains("INACTIFS", rule);
+    }
+
+    [Fact]
+    public async Task Workflow_intent_preamble_points_to_the_tool_when_workflow_tools_are_enabled()
+    {
+        var digest = DigestMock(string.Empty, null);
+
+        var onPrompt = await Build(WorkflowSettings(), digest.Object).BuildSystemPromptAsync(
+            AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts(intent: "workflow"));
+        var offPrompt = await Build(Settings(digestEnabled: true), digest.Object).BuildSystemPromptAsync(
+            AssistantMode.StudioBuilder, null, AssistantAgentScope.None, Opts(intent: "workflow"));
+
+        var onLines = onPrompt.Split('\n');
+        Assert.Equal(
+            "INTENTION DE L'UTILISATEUR : automatiser un enchaînement d'étapes (outil studio_plan_workflow, règle 14).",
+            onLines[1].TrimEnd());
+        Assert.DoesNotContain("bientôt disponible", onLines[1]);
+
+        // Drapeaux éteints : libellé « bientôt disponible » inchangé (cohérent avec l'absence de règle 14).
+        var offLines = offPrompt.Split('\n');
+        Assert.Equal(
+            "INTENTION DE L'UTILISATEUR : automatiser un enchaînement d'étapes (bientôt disponible : explique-le sans inventer d'outil).",
+            offLines[1].TrimEnd());
+        Assert.Null(Rule14Line(offPrompt));
     }
 }

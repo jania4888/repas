@@ -44,6 +44,17 @@ public static class StudioAiPlanCreation
         && settings.EnableStudioRecordViews
         && settings.EnableStudioAiPlanPreview;
 
+    /// <summary>
+    /// Garde des workflows proposés par l'IA (PR 4.3) : les TROIS drapeaux doivent être levés — la
+    /// fonctionnalité cible (workflows), l'outil (propre drapeau) et le flux d'aperçu. Règle UNIQUE,
+    /// motif <see cref="RecordViewToolsEnabled"/> — réutilisée par la capability, le prompt (règle 14),
+    /// l'outil de chat et l'exécuteur de plan.
+    /// </summary>
+    public static bool WorkflowToolsEnabled(OllamaSettings settings) =>
+        settings.EnableStudioWorkflows
+        && settings.EnableStudioAiWorkflowTools
+        && settings.EnableStudioAiPlanPreview;
+
     /// <summary>Nature de plan parsée par NOM exact d'enum, insensible à la casse (jamais par valeur numérique).</summary>
     public static bool TryParseKind(string? raw, out StudioAiPlanKind kind)
     {

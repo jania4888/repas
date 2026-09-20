@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using FactuTrust.Application.Features.Studio.Ai;
+using FactuTrust.Application.Features.Studio.Templates;
 using FactuTrust.Domain.Enums;
 using Xunit;
 
@@ -106,6 +107,80 @@ public sealed class StudioAiSpecCanonicalTests
 
         Assert.Null(canonical);
         Assert.NotNull(error);
+    }
+
+    /// <summary>Spec d'amendement avec les six opérations de la PR 3.1b (alias, libellés, désordre).</summary>
+    private const string AmendmentSpecPr31b = """
+    { "target": { "entityKey": "Interventions" }, "operations": [
+      { "op": "reordonner_champs", "fields": [ "reference", "client", "statut", "reference" ] },
+      { "op": "change_field_type", "key": "duree_estimee", "type": "Decimal",
+        "options": [ { "value": "h", "label": "Heures" } ], "config": { "max": 12, "custom": true } },
+      { "op": "add_relation", "kind": "N-N", "target": "Compétences", "label": "Compétences requises", "junctionName": "Affectations" },
+      { "op": "assign_system", "system": "Gestion Interventions" },
+      { "op": "set_view", "mode": "kanban", "displayName": "Kanban par statut", "columns": ["reference"],
+        "groupBy": "statut", "isDefault": true },
+      { "op": "set_automation", "trigger": "on_create", "action": "notify" } ] }
+    """;
+
+    [Fact]
+    public void Amendment_with_the_pr31b_operations_round_trips_byte_stable()
+    {
+        var canonical = StudioAiSpecCanonical.CanonicalFor(StudioAiPlanKind.Amendment, AmendmentSpecPr31b, out var error);
+        Assert.NotNull(canonical);
+
+        var canonicalAgain = StudioAiSpecCanonical.CanonicalFor(StudioAiPlanKind.Amendment, canonical!, out var reparseError);
+
+        Assert.Null(reparseError);
+        Assert.Equal(canonical, canonicalAgain);
+    }
+
+    [Fact]
+    public void Amendment_canonical_normalizes_the_pr31b_operations()
+    {
+        var canonical = StudioAiSpecCanonical.CanonicalFor(StudioAiPlanKind.Amendment, AmendmentSpecPr31b, out var error);
+        Assert.NotNull(canonical);
+
+        var node = JsonNode.Parse(canonical!)!;
+        // Clé de table slugifiée ; alias d'op absorbés ; doublon de réordonnancement éliminé.
+        Assert.Equal("interventions", node["target"]!["entityKey"]!.GetValue<string>());
+        var ops = node["operations"]!.AsArray();
+        Assert.Equal("reorder_fields", ops[0]!["op"]!.GetValue<string>());
+        Assert.Equal(new[] { "reference", "client", "statut" },
+            ops[0]!["fields"]!.AsArray().Select(f => f!.GetValue<string>()).ToArray());
+        // Type émis en nom d'énumération minuscule exact (rejouable par TryMapType).
+        Assert.Equal("change_field_type", ops[1]!["op"]!.GetValue<string>());
+        Assert.Equal("decimal", ops[1]!["type"]!.GetValue<string>());
+        Assert.Equal("h", ops[1]!["options"]!.AsArray()[0]!["value"]!.GetValue<string>());
+        Assert.Equal("true", ops[1]!["config"]!["custom"]!.ToString());
+        // Relation : kind canonique, cible et clé de jonction slugifiées.
+        Assert.Equal("many_to_many", ops[2]!["kind"]!.GetValue<string>());
+        Assert.Equal("competences", ops[2]!["target"]!.GetValue<string>());
+        Assert.Equal("affectations", ops[2]!["junctionName"]!.GetValue<string>());
+        Assert.Equal("gestion_interventions", ops[3]!["system"]!.GetValue<string>());
+        // Vue : jamais de clé « entity » dans un amendement (la table cible est implicite).
+        Assert.Equal("set_view", ops[4]!["op"]!.GetValue<string>());
+        Assert.Null(ops[4]!["entity"]);
+        Assert.Equal("kanban", ops[4]!["mode"]!.GetValue<string>());
+        // Automatisation : contenu repassé tel quel (hors alias d'op).
+        Assert.Equal("set_automation", ops[5]!["op"]!.GetValue<string>());
+        Assert.Equal("on_create", ops[5]!["trigger"]!.GetValue<string>());
+    }
+
+    [Fact]
+    public void Amendment_assign_system_detach_round_trips_byte_stable()
+    {
+        const string json = """
+        { "target": { "entityKey": "contrats" }, "operations": [ { "op": "assign_system", "system": "aucun" } ] }
+        """;
+
+        var canonical = StudioAiSpecCanonical.CanonicalFor(StudioAiPlanKind.Amendment, json, out var error);
+        Assert.NotNull(canonical);
+        // Le détachement est émis « none » : une clé absente serait relue comme un oubli du modèle.
+        Assert.Contains("\"system\": \"none\"", canonical, StringComparison.Ordinal);
+
+        var canonicalAgain = StudioAiSpecCanonical.CanonicalFor(StudioAiPlanKind.Amendment, canonical!, out var reparseError);
+        Assert.Null(reparseError);
+        Assert.Equal(canonical, canonicalAgain);
     }
 
     [Fact]
@@ -506,5 +581,448 @@ public sealed class StudioAiSpecCanonicalTests
         Assert.Contains(steps, s => s.key == "filters" && s.detail == "1");
         Assert.Contains(steps, s => s.key == "default");
         Assert.Equal("Colonne « x » inconnue, ignorée.", doc.RootElement.GetProperty("warnings")[0].GetString());
+    }
+
+    // ---------- PR 3.3b1 — extraction CanonicalSystemNode (E9) ----------
+
+    [Fact]
+    public void CanonicalSystem_equals_serialized_canonical_node()
+    {
+        Assert.True(StudioAiSystemSpec.TryParse(SystemSpecLegacy, out var spec, out var error), error);
+
+        var viaString = StudioAiSpecCanonical.CanonicalSystem(spec!);
+        var viaNode = StudioAiSpecCanonical.Serialize(StudioAiSpecCanonical.CanonicalSystemNode(spec!));
+
+        Assert.Equal(viaString, viaNode);
+    }
+
+    /// <summary>
+    /// Sortie de <see cref="StudioAiSpecCanonical.CanonicalSystem"/> sur le modèle embarqué
+    /// <c>suivi-reclamations</c>, capturée AVANT l'extraction de <c>CanonicalSystemNode</c> (3.3b1)
+    /// et figée ici : toute dérive de la forme canonique fait échouer le test de non-régression.
+    /// </summary>
+    private const string SuiviReclamationsCanonicalGolden = """
+    {
+      "system": {
+        "displayName": "Suivi des réclamations",
+        "icon": "headset",
+        "description": "Traitement des réclamations clients : motifs, réclamations et actions correctives.",
+        "onboarding": [
+          "Vérifiez les motifs préchargés",
+          "Enregistrez une réclamation",
+          "Affectez une action corrective"
+        ]
+      },
+      "entities": [
+        {
+          "ref": "motifs",
+          "displayName": "Motif",
+          "displayNamePlural": "Motifs",
+          "icon": "tags",
+          "fields": [
+            {
+              "key": "libelle",
+              "label": "Libellé",
+              "type": "text",
+              "required": true,
+              "unique": true
+            }
+          ]
+        },
+        {
+          "ref": "reclamations",
+          "displayName": "Réclamation",
+          "displayNamePlural": "Réclamations",
+          "icon": "headset",
+          "fields": [
+            {
+              "key": "reference",
+              "label": "Référence",
+              "type": "text",
+              "required": true,
+              "unique": true
+            },
+            {
+              "key": "client",
+              "label": "Client",
+              "type": "relation",
+              "required": true,
+              "unique": false,
+              "relationTo": "clients"
+            },
+            {
+              "key": "motif",
+              "label": "Motif",
+              "type": "relation",
+              "required": true,
+              "unique": false,
+              "relationTo": "motifs"
+            },
+            {
+              "key": "description",
+              "label": "Description",
+              "type": "multilinetext",
+              "required": false,
+              "unique": false
+            },
+            {
+              "key": "priorite",
+              "label": "Priorité",
+              "type": "select",
+              "required": true,
+              "unique": false,
+              "options": [
+                {
+                  "value": "basse",
+                  "label": "Basse"
+                },
+                {
+                  "value": "normale",
+                  "label": "Normale"
+                },
+                {
+                  "value": "haute",
+                  "label": "Haute"
+                }
+              ]
+            },
+            {
+              "key": "date_d_ouverture",
+              "label": "Date d'ouverture",
+              "type": "date",
+              "required": true,
+              "unique": false
+            },
+            {
+              "key": "statut",
+              "label": "Statut",
+              "type": "select",
+              "required": true,
+              "unique": false,
+              "options": [
+                {
+                  "value": "ouverte",
+                  "label": "Ouverte"
+                },
+                {
+                  "value": "en_cours",
+                  "label": "En cours"
+                },
+                {
+                  "value": "resolue",
+                  "label": "Résolue"
+                },
+                {
+                  "value": "cloturee",
+                  "label": "Clôturée"
+                }
+              ]
+            }
+          ],
+          "form": {
+            "sections": [
+              {
+                "title": "Réclamation",
+                "fields": [
+                  {
+                    "field": "reference"
+                  },
+                  {
+                    "field": "client"
+                  },
+                  {
+                    "field": "motif"
+                  },
+                  {
+                    "field": "description"
+                  },
+                  {
+                    "field": "priorite",
+                    "width": "half"
+                  },
+                  {
+                    "field": "date_d_ouverture",
+                    "width": "half"
+                  },
+                  {
+                    "field": "statut"
+                  }
+                ]
+              }
+            ]
+          },
+          "report": {
+            "displayName": "Réclamations ouvertes",
+            "columns": [
+              "reference",
+              "client",
+              "motif",
+              "priorite",
+              "date_d_ouverture",
+              "statut"
+            ],
+            "filters": [
+              {
+                "field": "statut",
+                "op": "neq",
+                "value": "cloturee"
+              }
+            ],
+            "sort": [
+              {
+                "field": "date_d_ouverture",
+                "dir": "desc"
+              }
+            ]
+          },
+          "views": [
+            {
+              "name": "Par statut",
+              "mode": "kanban",
+              "columns": [
+                "reference",
+                "client",
+                "priorite"
+              ],
+              "filters": [],
+              "sort": [],
+              "groupBy": "statut",
+              "title": "reference",
+              "isDefault": false
+            },
+            {
+              "name": "Ouvertes",
+              "mode": "list",
+              "columns": [
+                "reference",
+                "client",
+                "motif",
+                "priorite",
+                "statut",
+                "date_d_ouverture"
+              ],
+              "filters": [
+                {
+                  "field": "statut",
+                  "op": "neq",
+                  "value": "cloturee"
+                }
+              ],
+              "sort": [
+                {
+                  "field": "date_d_ouverture",
+                  "desc": true
+                }
+              ],
+              "isDefault": true
+            }
+          ]
+        },
+        {
+          "ref": "actions_correctives",
+          "displayName": "Action corrective",
+          "displayNamePlural": "Actions correctives",
+          "icon": "check",
+          "fields": [
+            {
+              "key": "reclamation",
+              "label": "Réclamation",
+              "type": "relation",
+              "required": true,
+              "unique": false,
+              "relationTo": "reclamations"
+            },
+            {
+              "key": "description",
+              "label": "Description",
+              "type": "text",
+              "required": true,
+              "unique": false
+            },
+            {
+              "key": "responsable",
+              "label": "Responsable",
+              "type": "text",
+              "required": false,
+              "unique": false
+            },
+            {
+              "key": "date_limite",
+              "label": "Date limite",
+              "type": "date",
+              "required": false,
+              "unique": false
+            },
+            {
+              "key": "terminee",
+              "label": "Terminée",
+              "type": "boolean",
+              "required": false,
+              "unique": false
+            }
+          ],
+          "form": {
+            "sections": [
+              {
+                "title": "Action corrective",
+                "fields": [
+                  {
+                    "field": "reclamation"
+                  },
+                  {
+                    "field": "description"
+                  },
+                  {
+                    "field": "responsable",
+                    "width": "half"
+                  },
+                  {
+                    "field": "date_limite",
+                    "width": "half"
+                  },
+                  {
+                    "field": "terminee"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "seed": [
+        {
+          "entityRef": "motifs",
+          "records": [
+            {
+              "libelle": "Retard de livraison"
+            },
+            {
+              "libelle": "Produit défectueux"
+            },
+            {
+              "libelle": "Erreur de facturation"
+            },
+            {
+              "libelle": "Qualité de service"
+            }
+          ]
+        }
+      ]
+    }
+    """;
+
+    [Fact]
+    public void CanonicalSystem_on_suivi_reclamations_template_matches_golden_output()
+    {
+        var template = StudioTemplateCatalog.TryGet("suivi-reclamations");
+        Assert.NotNull(template);
+        Assert.True(StudioAiSystemSpec.TryParse(template!.SpecJson, out var spec, out var error), error);
+
+        var canonical = StudioAiSpecCanonical.CanonicalSystem(spec!);
+
+        // Repli LF des deux côtés : la constante survivrait à une conversion CRLF du fichier au checkout Windows,
+        // et WriteIndented émet Environment.NewLine (CRLF sur l'agent CI Windows). La forme (clés, ordre, indentation) reste comparée à l'octet près.
+        Assert.Equal(
+            SuiviReclamationsCanonicalGolden.Replace("\r\n", "\n"),
+            canonical.Replace("\r\n", "\n"));
+    }
+
+    /// <summary>Spec telle que le LLM la produit (anglais, clés dans le désordre).</summary>
+    private const string WorkflowSpecEnglish = """
+    { "workflows": [
+        { "entityKey": "invoices", "key": "relance", "name": "Relance", "description": "Après échéance.",
+          "trigger": "manual", "triggerConfig": {},
+          "steps": [ { "key": "s1", "type": "notify", "label": "Prévenir", "title": "T", "to": { "kind": "startedBy" } } ] },
+        { "entityKey": "clients", "key": "accueil", "name": "Accueil", "trigger": "on_create",
+          "steps": [ { "type": "wait", "hours": 2 } ] } ] }
+    """;
+
+    /// <summary>La MÊME spec avec alias FR/accents, ordre différent et clés d'étape dérivées.</summary>
+    private const string WorkflowSpecFrenchAliases = """
+    { "automatisations": [
+        { "entite": "Clients", "cle": "accueil", "nom": "Accueil", "déclencheur": "creation",
+          "etapes": [ { "type": "attendre", "heures": 2 } ] },
+        { "table": "invoices", "key": "relance", "nom": "Relance", "description": "Après échéance.",
+          "trigger": "manuel", "config": {},
+          "steps": [ { "label": "Prévenir", "type": "notifier", "titre": "T", "destinataire": { "kind": "startedBy" }, "key": "s1" } ] } ] }
+    """;
+
+    /// <summary>Forme canonique attendue, en dur : tri entityKey puis key, clés triées récursivement.</summary>
+    private const string WorkflowCanonicalGolden = """
+    {
+      "workflows": [
+        {
+          "entityKey": "clients",
+          "key": "accueil",
+          "name": "Accueil",
+          "trigger": "on_create",
+          "triggerConfig": {},
+          "steps": {
+            "steps": [
+              {
+                "hours": 2,
+                "key": "etape_1",
+                "type": "wait"
+              }
+            ],
+            "version": 1
+          },
+          "isActive": false
+        },
+        {
+          "entityKey": "invoices",
+          "key": "relance",
+          "name": "Relance",
+          "description": "Après échéance.",
+          "trigger": "manual",
+          "triggerConfig": {},
+          "steps": {
+            "steps": [
+              {
+                "key": "s1",
+                "label": "Prévenir",
+                "title": "T",
+                "to": {
+                  "kind": "startedBy"
+                },
+                "type": "notify"
+              }
+            ],
+            "version": 1
+          },
+          "isActive": false
+        }
+      ]
+    }
+    """;
+
+    /// <summary>
+    /// PR 4.3 : deux specs équivalentes (alias ≠, ordre ≠, espaces ≠, clés d'étape dérivées ou non)
+    /// produisent la MÊME forme canonique, à l'octet près (clé du cache d'aperçu et forme rejouée en 4.3f).
+    /// </summary>
+    [Fact]
+    public void CanonicalWorkflow_is_byte_stable_for_equivalent_specs()
+    {
+        var canonical1 = StudioAiSpecCanonical.CanonicalFor(StudioAiPlanKind.Workflow, WorkflowSpecEnglish, out var e1);
+        var canonical2 = StudioAiSpecCanonical.CanonicalFor(StudioAiPlanKind.Workflow, WorkflowSpecFrenchAliases, out var e2);
+
+        Assert.Null(e1);
+        Assert.Null(e2);
+        Assert.NotNull(canonical1);
+        Assert.Equal(canonical1, canonical2);
+        // Repli LF des deux côtés (motif suivi-reclamations) : WriteIndented émet Environment.NewLine.
+        Assert.Equal(
+            WorkflowCanonicalGolden.Replace("\r\n", "\n"),
+            canonical1!.Replace("\r\n", "\n"));
+    }
+
+    /// <summary>PR 4.3 : une spec workflows invalide ⇒ null + erreur en clair (jamais de canonique partielle).</summary>
+    [Fact]
+    public void CanonicalFor_Workflow_returns_null_and_error_on_invalid_spec()
+    {
+        var result = StudioAiSpecCanonical.CanonicalFor(StudioAiPlanKind.Workflow, "{ \"workflows\": [] }", out var error);
+
+        Assert.Null(result);
+        Assert.NotNull(error);
     }
 }

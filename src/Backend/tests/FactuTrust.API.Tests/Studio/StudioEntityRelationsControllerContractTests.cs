@@ -119,6 +119,40 @@ public sealed class StudioEntityRelationsControllerContractTests
     }
 
     [Fact]
+    public async Task Create_accepts_junction_attribute_label_and_returns_the_attribute_field()
+    {
+        // v1.1 / D-47-40 : le corps accepte `junctionAttributeLabel` (5ᵉ membre optionnel) et la
+        // réponse expose `attributeField` (null par défaut quand l'attribut n'est pas demandé).
+        var junction = new CustomEntityDto(Guid.NewGuid(), "employes_projets", "Employé – Projet", "Employé – Projet", "link", null,
+            true, 3, null, DateTime.UtcNow, DateTime.UtcNow, CustomEntityKind.Junction);
+        var source = new CustomFieldDto(Guid.NewGuid(), "employes", "Employé", CustomFieldType.RelationCustom, true, false, 0, null, null, new RelationRefDto("custom", "employes"), true);
+        var target = new CustomFieldDto(Guid.NewGuid(), "projets", "Projet", CustomFieldType.RelationCustom, true, false, 1, null, null, new RelationRefDto("custom", "projets"), true);
+        var attribute = new CustomFieldDto(Guid.NewGuid(), "quantit", "Quantité", CustomFieldType.Number, false, false, 2, null, null, null, true);
+        var request = new CreateManyToManyRelationRequest(TargetId, "Affectations", null, null, "Quantité");
+
+        var mediator = new Mock<IMediator>();
+        mediator.Setup(m => m.Send(
+                It.Is<CreateManyToManyRelationCommand>(c => c.SourceEntityId == EntityId && ReferenceEquals(c.Request, request)),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new ManyToManyRelationDto(junction, source, target, attribute)));
+        var controller = CreateController(mediator, manyToManyEnabled: true);
+
+        var result = await controller.CreateManyToMany(EntityId, request, CancellationToken.None);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var body = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<ManyToManyRelationDto>>(ok.Value);
+        Assert.True(body.Success);
+        Assert.Equal(3, body.Data!.Junction.FieldCount);
+        Assert.NotNull(body.Data.AttributeField);
+        Assert.Equal("quantit", body.Data.AttributeField!.Key);
+        Assert.Equal(CustomFieldType.Number, body.Data.AttributeField.FieldType);
+
+        // Sans attribut : AttributeField reste null (contrat v1 inchangé, membre optionnel en fin).
+        var legacy = new ManyToManyRelationDto(junction, source, target);
+        Assert.Null(legacy.AttributeField);
+    }
+
+    [Fact]
     public async Task Create_returns_404_when_the_source_entity_is_unknown()
     {
         var result = await CreateFailingWith(Error.NotFound("CustomEntity", EntityId));

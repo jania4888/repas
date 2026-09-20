@@ -55,9 +55,9 @@ describe('layout-module-policy — Phase 2 audit: previously-missing routed segm
     expect(PERMISSIONS_ALL_REQUIRED_BY_FIRST_SEGMENT['forecasting']).toEqual(['forecasting:view']);
   });
 
-  it('gates studio behind Studio + studio:design_entities', () => {
+  it('gates studio behind Studio + custom_records:read (D11 lifted in 4.5)', () => {
     expect(MODULES_REQUIRED_BY_FIRST_SEGMENT['studio']).toEqual([AppModule.Studio]);
-    expect(PERMISSIONS_ALL_REQUIRED_BY_FIRST_SEGMENT['studio']).toEqual(['studio:design_entities']);
+    expect(PERMISSIONS_ALL_REQUIRED_BY_FIRST_SEGMENT['studio']).toEqual(['custom_records:read']);
   });
 
   it('gates recurring-contracts behind RecurringContracts + recurring_contracts:read', () => {

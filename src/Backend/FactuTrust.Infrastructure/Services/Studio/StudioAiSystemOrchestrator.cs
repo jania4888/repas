@@ -463,7 +463,9 @@ public sealed class StudioAiSystemOrchestrator
         var used = list.IsSuccess
             ? list.Value.Select(s => s.Key).ToHashSet(StringComparer.Ordinal)
             : new HashSet<string>(StringComparer.Ordinal);
-        return UniqueEntityKey(displayName, used);
+        var key = UniqueEntityKey(displayName, used);
+        // Un nom « Import » slugifierait vers la clé réservée (route littérale, PR 3.3) ⇒ suffixe.
+        return StudioKey.IsReservedSystemKey(key) ? $"{key}_2" : key;
     }
 
     private static string UniqueEntityKey(string displayName, HashSet<string> used)

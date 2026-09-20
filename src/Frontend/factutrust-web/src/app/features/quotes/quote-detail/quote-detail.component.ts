@@ -886,7 +886,7 @@ export class QuoteDetailComponent implements OnInit {
       icon: 'pi pi-file-export',
       acceptLabel: 'Créer la facture',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-success',
+      acceptButtonStyleClass: 'btn-success',
       accept: () => this.convertToInvoice(),
     });
   }
@@ -899,7 +899,7 @@ export class QuoteDetailComponent implements OnInit {
       icon: 'pi pi-shopping-cart',
       acceptLabel: 'Créer la commande',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-success',
+      acceptButtonStyleClass: 'btn-success',
       accept: () => this.convertToSalesOrder(),
     });
   }

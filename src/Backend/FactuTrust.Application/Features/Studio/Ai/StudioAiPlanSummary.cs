@@ -1,5 +1,8 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using FactuTrust.Application.Features.Studio.Common;
+using FactuTrust.Application.Features.Studio.Workflows.Spec;
 using FactuTrust.Domain.Enums;
 
 namespace FactuTrust.Application.Features.Studio.Ai;
@@ -32,6 +35,24 @@ public static class StudioAiPlanSummary
     /// </summary>
     public sealed record SummaryRelation(string FromDisplayName, string ToDisplayName, string Kind, string? JunctionName);
 
+    /// <summary>Une étape d'un workflow proposé : clé, type figé (StudioWorkflowStepTypes) et libellé FR.</summary>
+    public sealed record SummaryWorkflowStep(string Key, string Type, string Label);
+
+    /// <summary>
+    /// Un workflow proposé par l'IA (PR 4.3c) : contrat figé lu par l'onglet « Workflows » de l'aperçu (4.4k).
+    /// <c>IsActive</c> est toujours false — l'utilisateur active après relecture. <c>Trigger</c> = nom snake_case
+    /// figé (StudioWorkflowEnumNames.TriggerName).
+    /// </summary>
+    public sealed record SummaryWorkflow(
+        string Key,
+        string Name,
+        string EntityKey,
+        string EntityDisplayName,
+        string Trigger,
+        int StepCount,
+        IReadOnlyList<SummaryWorkflowStep> Steps,
+        bool IsActive);
+
     /// <summary>
     /// <paramref name="Sample"/> : quelques VRAIES lignes déjà calculées, jointes à l'aperçu d'un état.
     /// L'utilisateur valide alors sur des chiffres, pas sur une promesse. Paramètre optionnel en fin de
@@ -41,6 +62,8 @@ public static class StudioAiPlanSummary
     /// que le bandeau d'aperçu ait une forme stable.
     /// <paramref name="Relations"/> : relations plusieurs-à-plusieurs déclarées (PR 2.2) ; comme
     /// <c>duplicates</c>, la clé <c>relations</c> est TOUJOURS émise en tableau (vide par défaut).
+    /// <paramref name="Workflows"/> : workflows proposés (PR 4.3c, contrat brief §D) ; comme
+    /// <c>duplicates</c>, la clé <c>workflows</c> est TOUJOURS émise en tableau (vide par défaut).
     /// </summary>
     public sealed record PlanSummary(
         string Kind,
@@ -50,7 +73,8 @@ public static class StudioAiPlanSummary
         IReadOnlyList<string> Warnings,
         Common.ReportResultDto? Sample = null,
         IReadOnlyList<DuplicateHint>? Duplicates = null,
-        IReadOnlyList<SummaryRelation>? Relations = null);
+        IReadOnlyList<SummaryRelation>? Relations = null,
+        IReadOnlyList<SummaryWorkflow>? Workflows = null);
 
     /// <summary>
     /// Un avertissement en clair par indice de doublon : l'utilisateur voit POURQUOI la table est
@@ -236,12 +260,65 @@ public static class StudioAiPlanSummary
             steps, Array.Empty<SummaryEntity>(), warnings));
     }
 
-    /// <summary><c>duplicates</c> et <c>relations</c> sont TOUJOURS présents dans le JSON (tableau vide par défaut).</summary>
+    /// <summary>
+    /// Résumé d'un plan Workflow (PR 4.3c) : une ligne de checklist par workflow, la clé <c>workflows</c>
+    /// remplie (contrat figé brief §D), <c>entities</c> = tables touchées (existantes : <c>existingKey</c>
+    /// renseigné, lu par la carte d'aperçu 4.4k). Pur : les schémas réels sont passés en paramètre ;
+    /// table absente du dictionnaire ⇒ clé affichée telle quelle, 0 champ.
+    /// </summary>
+    public static string ForWorkflow(
+        ParsedWorkflowPlanSpec spec,
+        IReadOnlyDictionary<string, CustomEntitySchemaDto> schemasByEntityKey,
+        IReadOnlyList<string> warnings)
+    {
+        var workflows = spec.Workflows.Select(w => ToSummaryWorkflow(w, DisplayNameOf(w.EntityKey, schemasByEntityKey))).ToList();
+        var steps = workflows.Select(w => new SummaryStep(
+            w.Key, w.Name,
+            $"{w.EntityDisplayName} · {TriggerLabel(w.Trigger)} · {w.StepCount} étape(s) · créé inactif")).ToList();
+        var entities = spec.Workflows.Select(w => w.EntityKey).Distinct(StringComparer.Ordinal)
+            .Select(key => schemasByEntityKey.TryGetValue(key, out var schema)
+                ? new SummaryEntity(schema.Entity.DisplayName, schema.Fields.Count, schema.Relations?.Count ?? 0, ExistingKey: key)
+                : new SummaryEntity(key, 0, 0, ExistingKey: key))
+            .ToList();
+        var title = $"{workflows.Count} workflow{(workflows.Count > 1 ? "s" : "")} sur {string.Join(", ", entities.Select(e => e.DisplayName))}";
+        return Serialize(new PlanSummary(
+            StudioAiPlanKind.Workflow.ToString(), title, steps, entities, warnings,
+            Workflows: workflows));
+    }
+
+    private static SummaryWorkflow ToSummaryWorkflow(ParsedWorkflowItem item, string entityDisplayName)
+    {
+        var steps = new List<SummaryWorkflowStep>();
+        if (item.Steps["steps"] is JsonArray array)
+            foreach (var node in array.OfType<JsonObject>())
+            {
+                var type = node["type"]?.GetValue<string>() ?? "";
+                var label = node["label"]?.GetValue<string>() ?? StepTypeLabel(type);
+                steps.Add(new SummaryWorkflowStep(node["key"]?.GetValue<string>() ?? "", type, label));
+            }
+        return new SummaryWorkflow(item.Key, item.Name, item.EntityKey, entityDisplayName,
+            StudioWorkflowEnumNames.TriggerName(item.Trigger), steps.Count, steps, IsActive: false);
+    }
+
+    private static string StepTypeLabel(string type) =>
+        StudioWorkflowStepTypes.Catalog().FirstOrDefault(e => e.Type == type)?.Label ?? type;
+
+    private static string TriggerLabel(string trigger) => trigger switch
+    {
+        "on_create" => "à la création", "on_update" => "à la modification",
+        "field_changed" => "au changement d'un champ", "manual" => "manuel", _ => trigger
+    };
+
+    private static string DisplayNameOf(string entityKey, IReadOnlyDictionary<string, CustomEntitySchemaDto> schemas) =>
+        schemas.TryGetValue(entityKey, out var s) && !string.IsNullOrWhiteSpace(s.Entity.DisplayName) ? s.Entity.DisplayName : entityKey;
+
+    /// <summary><c>duplicates</c>, <c>relations</c> et <c>workflows</c> sont TOUJOURS présents dans le JSON (tableau vide par défaut).</summary>
     private static string Serialize(PlanSummary summary) => JsonSerializer.Serialize(
         summary with
         {
             Duplicates = summary.Duplicates ?? Array.Empty<DuplicateHint>(),
-            Relations = summary.Relations ?? Array.Empty<SummaryRelation>()
+            Relations = summary.Relations ?? Array.Empty<SummaryRelation>(),
+            Workflows = summary.Workflows ?? Array.Empty<SummaryWorkflow>()
         },
         Options);
 }

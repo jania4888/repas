@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { WritableSignal, signal } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
@@ -9,6 +10,8 @@ import { FirmContextService } from '@core/services/firm-context.service';
 import { FirmAssignmentService } from '@core/services/firm-assignment.service';
 import { AccountingFeatureFlagsService } from '@features/accounting/shared/accounting-feature-flags.service';
 import { StudioNavService } from '@features/studio/studio-nav.service';
+import { StudioAiCapabilitiesService } from '@features/studio/ai/studio-ai-capabilities.service';
+import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-approvals-badge.service';
 import { AppModule } from '@core/models/app-module';
 import { SECONDARY_NAV_SECTION_ORDER } from '@core/config/secondary-nav.config';
 import { AppNavService } from './app-nav.service';
@@ -110,8 +113,45 @@ function setUser(auth: AuthService, u: User | null): void {
   (auth as unknown as { userSignal: { set: (x: User | null) => void } }).userSignal.set(u);
 }
 
+/** Concepteur Studio : droits de conception + lecture des enregistrements (4.4j). */
+const studioDesignerUser: User = {
+  ...companyUser,
+  id: 'u-studio-designer',
+  effectivePermissions: [
+    ...companyUser.effectivePermissions!,
+    'studio:design_entities',
+    'custom_records:read'
+  ]
+};
+
+interface CapsStub {
+  ensureLoaded: jasmine.Spy;
+  workflowsEnabled: WritableSignal<boolean>;
+}
+
+interface BadgeStub {
+  start: jasmine.Spy;
+  count: WritableSignal<number>;
+  available: WritableSignal<boolean>;
+}
+
+// Stubs systématiques (4.4j) : évitent tout appel GET /ai/studio/capabilities ou
+// workflows/approvals/mine/count que l'afterEach ne draine pas.
+function makeCapsStub(): CapsStub {
+  return { ensureLoaded: jasmine.createSpy('ensureLoaded'), workflowsEnabled: signal(false) };
+}
+
+function makeBadgeStub(): BadgeStub {
+  return { start: jasmine.createSpy('start'), count: signal(0), available: signal(false) };
+}
+
 describe('AppNavService — secondary nav parity', () => {
+  let capsStub: CapsStub;
+  let badgeStub: BadgeStub;
+
   beforeEach(() => {
+    capsStub = makeCapsStub();
+    badgeStub = makeBadgeStub();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
@@ -131,6 +171,14 @@ describe('AppNavService — secondary nav parity', () => {
         {
           provide: StudioNavService,
           useValue: { items: () => [] }
+        },
+        {
+          provide: StudioAiCapabilitiesService,
+          useValue: capsStub
+        },
+        {
+          provide: StudioApprovalsBadgeService,
+          useValue: badgeStub
         }
       ]
     });
@@ -467,6 +515,139 @@ describe('AppNavService — secondary nav parity', () => {
     const nav = TestBed.inject(AppNavService);
     expect(settingsChildRoutes(nav)).toContain(VARIANT_AXES_PATH);
   });
+
+  function studioChildLabels(nav: AppNavService): string[] {
+    return nav.navItems().find(i => i.label === 'Studio')?.children?.map(c => c.label) ?? [];
+  }
+
+  it('ajoute Workflows et Mes approbations à la section Studio quand workflowsEnabled est vrai', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, studioDesignerUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+    capsStub.workflowsEnabled.set(true);
+
+    const nav = TestBed.inject(AppNavService);
+    const labels = studioChildLabels(nav);
+
+    expect(labels).toEqual(['Concepteur de tables', 'Assistant IA', 'Workflows', 'Mes approbations']);
+    const studio = nav.navItems().find(i => i.label === 'Studio');
+    const workflows = studio?.children?.find(c => c.label === 'Workflows');
+    expect(workflows?.route).toBe('/studio/workflows');
+    expect(workflows?.permissionsAll).toEqual(['studio:design_entities']);
+    const approvals = studio?.children?.find(c => c.label === 'Mes approbations');
+    expect(approvals?.route).toBe('/studio/approvals');
+    expect(approvals?.permissionsAll).toEqual(['custom_records:read']);
+    expect(approvals?.badge).toBeNull(); // compteur à 0 ⇒ pas de badge
+  });
+
+  it('masque ces entrées quand la capacité est fausse', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, studioDesignerUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    const nav = TestBed.inject(AppNavService);
+    const labels = studioChildLabels(nav);
+
+    expect(labels).toEqual(['Concepteur de tables', 'Assistant IA']);
+    expect(labels).not.toContain('Workflows');
+    expect(labels).not.toContain('Mes approbations');
+  });
+
+  it('porte le compteur du badge sur Mes approbations et démarre le polling pour un concepteur', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, studioDesignerUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+    capsStub.workflowsEnabled.set(true);
+    badgeStub.count.set(4);
+
+    const nav = TestBed.inject(AppNavService);
+    const approvals = nav
+      .navItems()
+      .find(i => i.label === 'Studio')
+      ?.children?.find(c => c.label === 'Mes approbations');
+
+    expect(approvals?.badge).toBe(4);
+    expect(badgeStub.start).toHaveBeenCalled();
+    expect(capsStub.ensureLoaded).toHaveBeenCalled();
+
+    // Sans studio:design_entities : ni chargement des capacités ni polling (403 évités).
+    badgeStub.start.calls.reset();
+    capsStub.ensureLoaded.calls.reset();
+    setUser(auth, companyUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+
+    nav.navItems();
+
+    expect(badgeStub.start).not.toHaveBeenCalled();
+    expect(capsStub.ensureLoaded).not.toHaveBeenCalled();
+  });
+
+  // 4.5d1 (D11 levée) : un lecteur `custom_records:read` sans `studio:design_entities` voit
+  // « Mes approbations » dès que la sonde du badge a répondu 200 (`available`), sans jamais
+  // charger les capacités (403 pour ce profil) ; « Workflows » reste réservé au concepteur.
+  it("affiche « Mes approbations » avec son badge pour un lecteur custom_records:read sans design_entities quand la sonde du badge répond", () => {
+    const auth = TestBed.inject(AuthService);
+    const readerUser: User = {
+      ...companyUser,
+      id: 'u-studio-reader',
+      effectivePermissions: [...(companyUser.effectivePermissions ?? []), 'custom_records:read']
+    };
+    setUser(auth, readerUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+    capsStub.workflowsEnabled.set(false);
+    badgeStub.available.set(true);
+    badgeStub.count.set(2);
+
+    const nav = TestBed.inject(AppNavService);
+    const studio = nav.navItems().find(i => i.label === 'Studio');
+    const approvals = studio?.children?.find(c => c.label === 'Mes approbations');
+
+    expect(approvals).toBeDefined();
+    expect(approvals?.badge).toBe(2);
+    expect(studioChildLabels(nav)).not.toContain('Workflows');
+    expect(badgeStub.start).toHaveBeenCalled();
+    expect(capsStub.ensureLoaded).not.toHaveBeenCalled();
+  });
+
+  it("masque « Mes approbations » pour un lecteur quand la sonde a répondu 404 (drapeau coupé)", () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, {
+      ...companyUser,
+      id: 'u-studio-reader',
+      effectivePermissions: [...(companyUser.effectivePermissions ?? []), 'custom_records:read']
+    });
+    TestBed.inject(FirmContextService).syncFromUser();
+    capsStub.workflowsEnabled.set(true); // ignorée pour un lecteur : seule la sonde fait foi
+    badgeStub.available.set(false);
+
+    const nav = TestBed.inject(AppNavService);
+
+    expect(studioChildLabels(nav)).not.toContain('Mes approbations');
+    expect(studioChildLabels(nav)).not.toContain('Workflows');
+    expect(badgeStub.start).toHaveBeenCalled();
+    expect(capsStub.ensureLoaded).not.toHaveBeenCalled();
+  });
+
+  // D-44-88 / D-44-92 : les vrais services écrivent un signal de façon synchrone
+  // (`_state.set(…)` dans ensureLoaded(), `polling.set(true)` dans start()). Appelés
+  // directement dans le computed navItems, ils levaient NG0600 (page blanche pour un
+  // concepteur, 4.4j). Des stubs qui écrivent un signal reproduisent ce comportement :
+  // le test échoue si les appels sortent du bloc `untracked(...)`.
+  it("n'écrit aucun signal dans le computed navItems (NG0600) quand ensureLoaded() et start() écrivent des signaux", () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, studioDesignerUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+    const capsState = signal(0);
+    const polling = signal(false);
+    capsStub.ensureLoaded.and.callFake(() => capsState.set(1));
+    badgeStub.start.and.callFake(() => polling.set(true));
+
+    const nav = TestBed.inject(AppNavService);
+
+    expect(() => nav.navItems()).not.toThrow();
+    expect(capsState()).toBe(1);
+    expect(polling()).toBeTrue();
+  });
 });
 
 function makeRegisterTestJwt(): string {
@@ -501,6 +682,14 @@ describe('AppNavService — sidebar freshness right after register()', () => {
         {
           provide: StudioNavService,
           useValue: { items: () => [] }
+        },
+        {
+          provide: StudioAiCapabilitiesService,
+          useValue: makeCapsStub()
+        },
+        {
+          provide: StudioApprovalsBadgeService,
+          useValue: makeBadgeStub()
         }
       ]
     });

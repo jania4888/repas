@@ -36,6 +36,36 @@
       }
     },
     {
+      "ref": "employes",
+      "displayName": "Employé",
+      "displayNamePlural": "Employés",
+      "icon": "users",
+      "isReferenceData": true,
+      "fields": [
+        { "key": "nom", "label": "Nom", "type": "text", "required": true },
+        { "key": "prenom", "label": "Prénom", "type": "text" },
+        { "key": "service", "label": "Service", "type": "select",
+          "options": [
+            { "value": "rh", "label": "RH" },
+            { "value": "technique", "label": "Technique" },
+            { "value": "commercial", "label": "Commercial" },
+            { "value": "direction", "label": "Direction" }
+          ]
+        },
+        { "key": "e_mail", "label": "E-mail", "type": "text" }
+      ],
+      "form": {
+        "sections": [
+          { "title": "Employé", "fields": [
+            { "field": "nom", "width": "half" },
+            { "field": "prenom", "width": "half" },
+            "service",
+            "e_mail"
+          ] }
+        ]
+      }
+    },
+    {
       "ref": "sessions",
       "displayName": "Session",
       "displayNamePlural": "Sessions",
@@ -46,7 +76,15 @@
         { "key": "date_debut", "label": "Date de début", "type": "date", "required": true },
         { "key": "date_fin", "label": "Date de fin", "type": "date" },
         { "key": "lieu", "label": "Lieu", "type": "text" },
-        { "key": "capacite", "label": "Capacité", "type": "number" }
+        { "key": "capacite", "label": "Capacité", "type": "number" },
+        { "key": "statut", "label": "Statut", "type": "select",
+          "options": [
+            { "value": "planifiee", "label": "Planifiée" },
+            { "value": "confirmee", "label": "Confirmée" },
+            { "value": "terminee", "label": "Terminée" },
+            { "value": "annulee", "label": "Annulée" }
+          ]
+        }
       ],
       "form": {
         "sections": [
@@ -56,7 +94,8 @@
             { "field": "date_debut", "width": "half" },
             { "field": "date_fin", "width": "half" },
             { "field": "lieu", "width": "half" },
-            { "field": "capacite", "width": "half" }
+            { "field": "capacite", "width": "half" },
+            "statut"
           ] }
         ]
       },
@@ -64,7 +103,25 @@
         "displayName": "Sessions planifiées",
         "fields": [ "formation", "formateur", "date_debut", "lieu", "capacite" ],
         "sort": [ { "field": "date_debut", "dir": "asc" } ]
-      }
+      },
+      "views": [
+        {
+          "name": "Par statut",
+          "mode": "kanban",
+          "groupBy": "statut",
+          "title": "lieu",
+          "columns": [ "formation", "date_debut", "lieu" ]
+        },
+        {
+          "name": "Calendrier",
+          "mode": "calendar",
+          "start": "date_debut",
+          "end": "date_fin",
+          "title": "lieu",
+          "columns": [ "formation", "formateur" ],
+          "isDefault": true
+        }
+      ]
     },
     {
       "ref": "inscriptions",
@@ -86,7 +143,7 @@
       },
       "fields": [
         { "key": "session", "label": "Session", "type": "relation", "relationTo": "sessions", "required": true },
-        { "key": "participant", "label": "Participant", "type": "text", "required": true },
+        { "key": "participant", "label": "Participant", "type": "relation", "relationTo": "employes", "required": true },
         { "key": "e_mail", "label": "E-mail", "type": "text" },
         { "key": "statut", "label": "Statut", "type": "select", "required": true,
           "options": [
@@ -102,6 +159,9 @@
         ]
       }
     }
+  ],
+  "relations": [
+    { "kind": "many_to_many", "from": "employes", "to": "formations", "label": "Participants", "junctionName": "Participations" }
   ],
   "seed": [
     { "entityRef": "formations", "records": [

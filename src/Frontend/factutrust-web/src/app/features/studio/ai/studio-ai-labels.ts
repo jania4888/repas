@@ -153,7 +153,7 @@ export const STUDIO_AI_LABELS = {
       icon: 'fa-solid fa-sitemap',
       prompt: '',
       available: false,
-      soonTooltip: 'Disponible dans une prochaine version (workflow de statut).'
+      soonTooltip: 'Génération de workflows désactivée par l’administrateur.'
     },
     {
       intent: 'page',
@@ -187,13 +187,8 @@ export const STUDIO_AI_LABELS = {
     { id: 'forms', label: 'Formulaires', icon: 'fa-solid fa-file-lines', available: true },
     { id: 'seed', label: 'Données de référence', icon: 'fa-solid fa-database', available: true },
     { id: 'reports', label: 'Rapports', icon: 'fa-solid fa-chart-column', available: true },
-    {
-      id: 'workflow',
-      label: 'Workflow',
-      icon: 'fa-solid fa-route',
-      available: false,
-      soonTooltip: 'Disponible dans une prochaine version (workflow de statut).'
-    },
+    { id: 'views', label: 'Vues', icon: 'fa-solid fa-eye', available: true },
+    { id: 'workflow', label: 'Workflow', icon: 'fa-solid fa-route', available: true },
     {
       id: 'pages',
       label: 'Pages',
@@ -221,7 +216,9 @@ export const STUDIO_AI_LABELS = {
     systemChanged: 'Paramètres du système modifiés',
     seedChanged: 'Données de référence de « {entity} » modifiées',
     formChanged: 'Formulaire de « {entity} » modifié',
-    reportChanged: 'Rapport de « {entity} » modifié'
+    reportChanged: 'Rapport de « {entity} » modifié',
+    fieldsReordered: 'Ordre des champs de « {entity} » modifié',
+    viewsChanged: 'Vues de « {entity} » modifiées'
   },
 
   /** Zone de saisie : pièces jointes et raccourcis clavier. */
@@ -264,6 +261,8 @@ export const STUDIO_AI_LABELS = {
     structure: 'Structure du système',
     diagram: 'Diagramme des relations',
     diagramSoon: 'Le diagramme interactif arrive dans la prochaine livraison ; les relations sont listées dans l’onglet Relations.',
+    diagramMore: '+{n}',
+    diagramEdge: '{from} → {to} ({kind})',
     stepsTitle: 'Étapes prévues',
     unsaved: 'Modifications non enregistrées',
     changes: 'changements',
@@ -332,17 +331,23 @@ export const STUDIO_AI_LABELS = {
     stepCount: 'Étape {current} sur {total}',
     stepsPending: 'En attente…',
     stepRunning: 'En cours…',
-    stepSkipped: 'Ignoré'
+    stepSkipped: 'Ignoré',
+    views: 'Vues'
   },
 
   result: {
     systemCreated: 'Système « {name} » créé',
     tableCreated: 'Table « {name} » créée',
+    workflowCreated: 'Workflow « {name} » créé',
+    workflowsCreated: '{count} workflows créés',
     stepsDone: 'étapes terminées',
+    steps: 'étapes',
     open: 'Ouvrir',
     newRequest: 'Nouvelle demande',
     openSystem: 'Ouvrir le système',
     openTable: 'Ouvrir la table',
+    openWorkflow: 'Ouvrir le workflow',
+    workflowsInactiveHint: 'Créé inactif : relisez-le puis activez-le depuis le hub Workflows.',
     newRecord: 'Saisir une fiche',
     viewReports: 'Voir les rapports',
     vigilance: 'Points de vigilance',
@@ -351,7 +356,12 @@ export const STUDIO_AI_LABELS = {
     duplicate: 'Dupliquer',
     share: 'Partager',
     failedTitle: 'La création a échoué',
-    failedHint: 'Rien n’a été conservé. Reformulez votre demande ou réessayez plus tard.'
+    failedHint: 'Rien n’a été conservé. Reformulez votre demande ou réessayez plus tard.',
+    exportJson: 'Exporter (JSON)',
+    replay: 'Rejouer',
+    views: 'vues',
+    workflows: 'workflows',
+    counters: 'Contenu créé'
   },
 
   conversation: {
@@ -399,7 +409,11 @@ export const STUDIO_AI_LABELS = {
     hoursAgo: 'il y a {count} h',
     daysAgo: 'il y a {count} j',
     panelLabel: 'Panneau latéral',
-    comingSoon: 'Cette action arrive dans une prochaine version.'
+    comingSoon: 'Cette action arrive dans une prochaine version.',
+    replay: 'Rejouer',
+    openSystem: 'Ouvrir le système',
+    relationsShort: '{count} rel.',
+    viewsShort: '{count} vues'
   },
 
   /** Page « Mes projets » (`/studio/ai/projects`). */
@@ -413,6 +427,8 @@ export const STUDIO_AI_LABELS = {
       createdAt: 'Créé',
       expiresAt: 'Expire',
       system: 'Système',
+      relations: 'Relations',
+      views: 'Vues',
       actions: 'Actions'
     },
     filters: {
@@ -426,7 +442,9 @@ export const STUDIO_AI_LABELS = {
     empty: 'Aucun projet pour le moment. Décrivez un besoin dans l’atelier pour démarrer.',
     loadFailed: 'Impossible de charger vos projets.',
     backToStudio: 'Retour à l’atelier',
-    count: '{count} projet(s)'
+    count: '{count} projet(s)',
+    replay: 'Rejouer',
+    duplicate: 'Dupliquer'
   },
 
   /** Page « Bibliothèque de modèles » (`/studio/ai/templates`). */
@@ -438,6 +456,7 @@ export const STUDIO_AI_LABELS = {
     loadFailed: 'Impossible de charger la bibliothèque de modèles.',
     disabled: 'La bibliothèque de modèles est désactivée par l’administrateur.',
     entities: '{count} table(s)',
+    relations: '{count} relation(s)',
     uncategorized: 'Autres',
     sourceBuiltin: 'Intégré',
     sourceTenant: 'Votre espace',
@@ -516,12 +535,182 @@ export const STUDIO_AI_LABELS = {
   capabilities: {
     previewDisabled: 'L’aperçu avant création est désactivé par l’administrateur : les demandes sont exécutées directement.',
     workbenchRequired: 'Cette fonction nécessite le workbench Studio IA (désactivé sur cet environnement).'
+  },
+
+  // ---- Aperçu enrichi (PR 3.4) --------------------------------------------------------------------
+
+  /** Barre de modes Aperçu / Tester / Personnaliser (3.4c). */
+  modes: {
+    toolbar: 'Mode de l’aperçu',
+    preview: 'Aperçu',
+    test: 'Tester',
+    customize: 'Personnaliser',
+    expiresIn: 'Expire dans',
+    expired: 'Expiré',
+    regenerate: 'Régénérer',
+    previewUnavailable: 'Disponible après mise à jour du serveur.',
+    changes: 'modifications',
+    saveDraft: 'Enregistrer le brouillon'
+  },
+
+  /** Onglet « Vues » (3.4d). */
+  views: {
+    title: 'Vues',
+    empty: 'Aucune vue proposée.',
+    list: 'Liste',
+    kanban: 'Kanban',
+    calendar: 'Calendrier',
+    groupBy: 'Regroupement',
+    dateField: 'Champ date',
+    endField: 'Fin',
+    titleField: 'Titre',
+    columns: 'Colonnes',
+    filters: 'Filtres',
+    sort: 'Tri',
+    isDefault: 'Par défaut',
+    count: '{count} vues',
+    addFilter: 'Filtres de la vue'
+  },
+
+  /** Onglet « Workflows » de l'aperçu (cartes depuis `summary.workflows[]`, 4.4k1 ; état vide sinon). */
+  workflows: {
+    title: 'Workflows',
+    emptyTitle: 'Aucun workflow dans cette proposition',
+    emptyHint: 'Décrivez le circuit souhaité (déclencheur, étapes, approbation) pour obtenir une proposition.',
+    steps: '{count} étapes',
+    trigger: 'Déclencheur',
+    /** Clés = `WorkflowTrigger` snake_case (Q-6) ; l'onglet lit `triggers[trigger] ?? trigger`. */
+    triggers: {
+      on_create: 'À la création',
+      on_update: 'À la modification',
+      field_changed: 'Au changement d’un champ',
+      manual: 'Manuel',
+      /** 4.7★1 (D-47-76) : le déclencheur planifié est livré (4.7b1 → b5) — même libellé que le concepteur. */
+      scheduled: 'Planifié'
+    },
+    active: 'Actif',
+    inactive: 'Inactif',
+    inactiveNote: 'Les workflows créés par l’assistant sont inactifs : activez-les depuis le hub Workflows après relecture.',
+    soonForWorkflows: 'Indisponible pour une proposition de workflow.'
+  },
+
+  /** Mode Tester : formulaire / rapport simulés, 0 écriture (3.4f). */
+  simulation: {
+    banner: 'Simulation — rien n’est enregistré.',
+    entity: 'Table à tester',
+    saveSimulated: 'Enregistrer (simulation)',
+    saved: 'Enregistrement simulé : aucune donnée écrite.',
+    reportUnavailable: 'Rapport indisponible : aucune donnée d’exemple.',
+    sampleFromSeed: 'Calculé sur les données de départ',
+    sampleFromServer: 'Échantillon fourni par le serveur',
+    exportUnavailable: 'Export indisponible en simulation.'
+  },
+
+  /** Mode Personnaliser : édition inline des champs (3.4g). */
+  customize: {
+    changes: '{count} modifications',
+    noChanges: 'Aucune modification',
+    addField: 'Ajouter un champ',
+    removeField: 'Retirer',
+    restoreField: 'Rétablir',
+    addOption: 'Ajouter une option',
+    fieldLabel: 'Libellé',
+    fieldType: 'Type',
+    required: 'Requis',
+    unique: 'Unique',
+    options: 'Options',
+    moveUp: 'Monter',
+    moveDown: 'Descendre',
+    dragHandle: 'Réordonner',
+    locked: 'Table existante : non modifiable',
+    keyTaken: 'Cette clé existe déjà.',
+    maxFields: 'Nombre maximal de champs atteint.',
+    newField: 'Nouveau champ',
+    newOption: 'Option {index}',
+    optionsCount: '{count} options',
+    removeOption: 'Retirer l’option {option}',
+    actions: 'Actions',
+    addedTag: 'Ajouté',
+    changedTag: 'Modifié',
+    removedTag: 'Retiré'
+  },
+
+  /** Import CSV des données de départ (panneau inline, D20 — 3.4h). */
+  csv: {
+    title: 'Importer un CSV',
+    hint: 'Fichier ≤ 512 Ko, 500 lignes maximum ; les colonnes sont rapprochées des champs.',
+    choose: 'Choisir un fichier',
+    drop: 'Déposez un fichier CSV ici',
+    paste: 'ou collez le texte',
+    tooLarge: 'Fichier trop volumineux (512 Ko maximum).',
+    notCsv: 'Seuls les fichiers .csv sont acceptés.',
+    mapping: 'Correspondance colonnes → champs',
+    ignore: '— ignorer —',
+    preview: 'Aperçu ({count} lignes)',
+    truncated: 'Tronqué à {count} lignes.',
+    apply: 'Remplacer les données de départ',
+    cancel: 'Annuler',
+    applied: '{count} lignes importées.'
+  },
+
+  /** Export / import / duplication de système (3.4i, 3.4j). */
+  importExport: {
+    exportTitle: 'Exporter le système',
+    includeSeed: 'Inclure les données de départ',
+    copy: 'Copier',
+    copied: 'Copié.',
+    download: 'Télécharger',
+    importTitle: 'Importer un système (JSON)',
+    dropJson: 'Déposez un fichier .json ou collez son contenu',
+    tooLarge: 'Fichier trop volumineux (256 Ko maximum).',
+    invalidJson: 'JSON invalide.',
+    badVersion: 'specVersion non pris en charge (1 attendu).',
+    counters: '{entities} tables · {relations} relations · {views} vues',
+    displayName: 'Nom du système (optionnel)',
+    import: 'Importer',
+    duplicateTitle: 'Dupliquer un système',
+    duplicate: 'Dupliquer',
+    chooseSystem: 'Système à dupliquer',
+    copySuffix: '{name} (copie)',
+    opened: 'Plan ouvert : vérifiez la proposition puis validez.',
+    exportLoading: 'Préparation de l’export…',
+    exportWarnings: 'Points à vérifier',
+    exportFile: 'Fichier : {name}',
+    exportFailed: 'Export impossible.',
+    noSystem: 'Aucun système à exporter.',
+    close: 'Fermer',
+    pasteJson: 'Ou collez le JSON ici',
+    remove: 'Retirer',
+    recognized: 'Spécification reconnue',
+    notObject: 'La spécification doit être un objet JSON.',
+    invalidShape: 'Le fichier ne ressemble pas à une spécification de système (tables et champs attendus).',
+    seedRecords: '{count} lignes de départ',
+    duplicateSource: 'Système source',
+    copyName: 'Nom de la copie',
+    createCopy: 'Créer la copie',
+    duplicateNote: 'La copie est proposée dans l’aperçu IA ; les données de départ sont reprises.',
+    nameCounter: '{count}/{max}',
+    entitiesCount: '{count} tables'
+  },
+
+  /** Rejeu d'un plan terminé / échoué / annulé / expiré (3.4k). */
+  replay: {
+    action: 'Rejouer',
+    conflict: 'Ce plan ne peut pas être rejoué maintenant.',
+    done: 'Plan rejoué : une nouvelle proposition est ouverte.'
+  },
+
+  /** Changement de type d'un champ (3.4l). */
+  typeChange: {
+    checking: 'Vérification…',
+    lossless: 'Conversion sans perte.',
+    requiresEmpty: 'Videz la table avant de changer le type.',
+    forbidden: 'Changement de type impossible.',
+    changed: 'Type modifié.'
   }
 } as const;
 
 export type StudioAiLabels = typeof STUDIO_AI_LABELS;
 
-/** Remplace les `{jetons}` d'un libellé. */
-export function formatLabel(template: string, values: Record<string, string | number>): string {
-  return template.replace(/\{(\w+)\}/g, (_, k: string) => (values[k] !== undefined ? String(values[k]) : `{${k}}`));
-}
+/** Remplace les `{jetons}` d'un libellé — ré-export de `formatLabel` (shared/studio-text.util.ts, 4.5h). */
+export { formatLabel } from '../shared/studio-text.util';

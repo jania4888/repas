@@ -312,7 +312,7 @@ export class PayrollSocialFundsSettingsComponent implements OnInit {
       header: 'Confirmation',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(s)
     });
   }

@@ -160,6 +160,49 @@ public sealed class StudioAiCapabilitiesQueryTests
         }
     }
 
+    /// <summary>
+    /// PR 3.3 : <c>SystemExportEnabled</c> suit <c>Ollama:EnableStudioSystemExport</c>
+    /// (indépendant du workbench) — levé ⇒ vrai, coupé ou absent ⇒ faux.
+    /// </summary>
+    [Fact]
+    public async Task SystemExport_follows_its_flag()
+    {
+        var enabled = await CreateHandler(new OllamaSettings
+        {
+            EnableStudioSystemExport = true
+        }).Handle(new StudioAiCapabilitiesQuery(), CancellationToken.None);
+        Assert.True(enabled.Value.SystemExportEnabled);
+
+        var disabled = await CreateHandler(new OllamaSettings
+        {
+            EnableStudioSystemExport = false
+        }).Handle(new StudioAiCapabilitiesQuery(), CancellationToken.None);
+        Assert.False(disabled.Value.SystemExportEnabled);
+    }
+
+    /// <summary>
+    /// PR 4.1i : <c>WorkflowsEnabled</c> suit <c>Ollama:EnableStudioWorkflows</c> ; les outils de
+    /// workflows (<c>WorkflowToolsEnabled</c>) restent faux tant que 4.3a n'est pas livrée.
+    /// </summary>
+    [Fact]
+    public async Task Workflows_follow_their_flag_and_workflow_tools_stay_false()
+    {
+        var enabled = await CreateHandler(new OllamaSettings
+        {
+            EnableStudioWorkflows = true
+        }).Handle(new StudioAiCapabilitiesQuery(), CancellationToken.None);
+
+        Assert.True(enabled.Value.WorkflowsEnabled);
+        Assert.False(enabled.Value.WorkflowToolsEnabled);
+
+        var disabled = await CreateHandler(new OllamaSettings
+        {
+            EnableStudioWorkflows = false
+        }).Handle(new StudioAiCapabilitiesQuery(), CancellationToken.None);
+        Assert.False(disabled.Value.WorkflowsEnabled);
+        Assert.False(disabled.Value.WorkflowToolsEnabled);
+    }
+
     [Fact]
     public async Task Workbench_requires_both_workbench_flag_and_plan_preview()
     {
@@ -311,6 +354,29 @@ public sealed class StudioAiCapabilitiesQueryTests
         Assert.True(result.Value.AdvancedModelAvailable);
         Assert.Equal("qwen/qwen-2.5-72b-instruct", result.Value.AdvancedModelLabel);
         Assert.Equal("qwen2.5:7b-instruct", result.Value.StandardModelLabel);
+    }
+
+    /// <summary>
+    /// PR 4.3 : les outils de workflows ne s'annoncent que si les TROIS drapeaux sont levés
+    /// (<c>EnableStudioWorkflows</c> + <c>EnableStudioAiWorkflowTools</c> +
+    /// <c>EnableStudioAiPlanPreview</c> — règle centralisée <c>StudioAiPlanCreation.WorkflowToolsEnabled</c>).
+    /// </summary>
+    [Theory]
+    [InlineData(true, true, true, true)]
+    [InlineData(false, true, true, false)]
+    [InlineData(true, false, true, false)]
+    [InlineData(true, true, false, false)]
+    public async Task Workflow_tools_enabled_only_when_workflows_ai_workflow_tools_and_preview_flags_are_all_on(
+        bool workflows, bool workflowTools, bool preview, bool expected)
+    {
+        var result = await CreateHandler(new OllamaSettings
+        {
+            EnableStudioWorkflows = workflows,
+            EnableStudioAiWorkflowTools = workflowTools,
+            EnableStudioAiPlanPreview = preview
+        }).Handle(new StudioAiCapabilitiesQuery(), CancellationToken.None);
+
+        Assert.Equal(expected, result.Value.WorkflowToolsEnabled);
     }
 
     private StudioAiCapabilitiesQueryHandler CreateHandler(OllamaSettings settings) => new(

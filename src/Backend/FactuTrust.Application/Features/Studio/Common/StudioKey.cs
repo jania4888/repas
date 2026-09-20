@@ -20,6 +20,15 @@ public static partial class StudioKey
         "updatedby", "updated_by", "datajson", "data_json"
     };
 
+    /// <summary>
+    /// Reserved system keys: route literals under <c>api/studio/systems/</c> that would otherwise
+    /// shadow a system (e.g. <c>POST api/studio/systems/import</c>, PR 3.3).
+    /// </summary>
+    public static readonly IReadOnlySet<string> ReservedSystemKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "import"
+    };
+
     [GeneratedRegex("^[a-z][a-z0-9_]{1,63}$")]
     private static partial Regex KeyPattern();
 
@@ -27,6 +36,8 @@ public static partial class StudioKey
         !string.IsNullOrWhiteSpace(key) && KeyPattern().IsMatch(key);
 
     public static bool IsReservedFieldKey(string key) => ReservedFieldKeys.Contains(key);
+
+    public static bool IsReservedSystemKey(string key) => ReservedSystemKeys.Contains(key);
 
     /// <summary>
     /// Normalizes a free-text label into a candidate key (lowercase, non-alnum → underscore).

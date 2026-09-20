@@ -1,4 +1,6 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, Subject, catchError, of, switchMap, tap, timer } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -9,16 +11,23 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { SelectModule } from 'primeng/select';
+import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { StudioService } from './studio.service';
 import {
-  CustomEntity, CustomField, CustomFieldType, FIELD_TYPE_OPTIONS, SelectOption
+  ChangeCustomFieldTypeRequest, CustomEntity, CustomField, CustomFieldType, FIELD_TYPE_OPTIONS, SelectOption,
+  StudioFieldTypeCheckDto
 } from './studio.models';
+import { STUDIO_AI_LABELS } from './ai/studio-ai-labels';
 import { StudioPageShellComponent } from './shared/studio-page-shell.component';
 import { STUDIO_BREADCRUMBS } from './shared/studio-breadcrumb.util';
+import { StudioManyToManyDialogComponent } from './relations/studio-many-to-many-dialog.component';
+import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
+import { EntityRelationDto, relationKindLabel } from './relations/studio-relations.models';
+import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service';
 
 @Component({
   selector: 'app-studio-entity-designer',
@@ -26,7 +35,7 @@ import { STUDIO_BREADCRUMBS } from './shared/studio-breadcrumb.util';
   imports: [
     CommonModule, FormsModule, RouterModule,
     TableModule, ButtonModule, DialogModule, InputTextModule, InputNumberModule, InputSwitchModule, SelectModule,
-    TooltipModule, ToastModule, StudioPageShellComponent
+    MessageModule, TooltipModule, ToastModule, StudioPageShellComponent, StudioManyToManyDialogComponent
   ],
   template: `
     <p-toast></p-toast>
@@ -44,6 +53,14 @@ import { STUDIO_BREADCRUMBS } from './shared/studio-breadcrumb.util';
           class="p-button-outlined p-button-sm" [routerLink]="['/studio/d', e.key]"></button>
         <button pButton type="button" label="Pont ERP" icon="fa-solid fa-bolt"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio', e.id, 'automations']"></button>
+        @if (workflowsEnabled()) {
+          <button pButton type="button" label="Workflows" icon="fa-solid fa-route"
+            class="p-button-outlined p-button-sm" [routerLink]="['/studio', 'workflows']" [queryParams]="{ entity: e.id }" data-testid="wf-open"></button>
+        }
+        @if (manyToManyEnabled()) {
+          <button pButton type="button" [label]="runtimeLabels.relations.addManyToMany" icon="fa-solid fa-diagram-project"
+            class="p-button-outlined p-button-sm" (click)="m2mVisible.set(true)" data-testid="m2m-open"></button>
+        }
         <button pButton type="button" label="Ajouter un champ" icon="fa-solid fa-plus" (click)="openAdd()"></button>
       </div>
 
@@ -82,9 +99,39 @@ import { STUDIO_BREADCRUMBS } from './shared/studio-breadcrumb.util';
         </ng-template>
       </p-table>
       </div>
+
+      @if (manyToManyEnabled()) {
+        <div class="ft-table-card" data-testid="relations-section">
+          <h3 class="studio-section-title">{{ runtimeLabels.relations.title }}</h3>
+          <p-table [value]="relations()" [loading]="relationsLoading()" styleClass="p-datatable-sm">
+            <ng-template pTemplate="header">
+              <tr><th>Type</th><th>Cible</th><th>Jonction</th></tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rel>
+              <tr>
+                <td>{{ relationKindLabel(rel.kind) }}</td>
+                <td>{{ rel.kind === 'many_to_many' ? rel.targetLabel : (rel.sourceEntityKey === e.key ? rel.targetLabel : rel.sourceLabel) }}</td>
+                <td>
+                  @if (rel.junctionEntityKey) {
+                    <a [routerLink]="['/studio', rel.junctionEntityId]">{{ rel.junctionEntityKey }}</a>
+                  } @else { — }
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr><td colspan="3" class="ft-empty">{{ runtimeLabels.relations.empty }}</td></tr>
+            </ng-template>
+          </p-table>
+        </div>
+      }
     </app-studio-page-shell>
 
-    <p-dialog [header]="editing() ? 'Modifier le champ' : 'Nouveau champ'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '34rem' }">
+    @if (manyToManyEnabled() && entity()) {
+      <app-studio-many-to-many-dialog [sourceEntity]="entity()!" [entities]="allEntities()"
+        [(visible)]="m2mVisible" (created)="onRelationCreated()" />
+    }
+
+    <p-dialog [header]="editing() ? 'Modifier le champ' : 'Nouveau champ'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '34rem' }" (onHide)="resetTypeCheck()">
       <div class="ft-form">
         <label>Libellé *</label>
         <input pInputText [(ngModel)]="fLabel" (ngModelChange)="onLabelChange($event)" />
@@ -93,8 +140,13 @@ import { STUDIO_BREADCRUMBS } from './shared/studio-breadcrumb.util';
         <input pInputText [(ngModel)]="fKey" [disabled]="editing()" />
 
         <label>Type *</label>
-        <p-select [options]="typeOptions" [(ngModel)]="fType" optionLabel="label" optionValue="value"
-          [disabled]="editing()" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"></p-select>
+        <p-select [options]="typeOptions" [(ngModel)]="fType" (ngModelChange)="onTypeChange($event)" optionLabel="label" optionValue="value"
+          appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" data-testid="field-type-select"></p-select>
+        @if (editing() && typeChecking()) {
+          <small class="ft-hint" data-testid="type-checking">{{ labels.typeChange.checking }}</small>
+        } @else if (editing() && typeCheck()) {
+          <p-message [severity]="typeSeverity()" [text]="typeCheck()!.message" data-testid="type-check-message" />
+        }
 
         <div class="ft-row">
           <div><p-inputSwitch [(ngModel)]="fRequired"></p-inputSwitch> <span>Obligatoire</span></div>
@@ -218,8 +270,8 @@ import { STUDIO_BREADCRUMBS } from './shared/studio-breadcrumb.util';
         </ng-container>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Annuler" class="p-button-text" (click)="dialogVisible = false"></button>
-        <button pButton type="button" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
+        <button pButton type="button" label="Annuler" class="p-button-text" (click)="closeDialog()"></button>
+        <button pButton type="button" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving() || typeBlocked() || typeChecking()" (click)="save()" data-testid="field-save"></button>
       </ng-template>
     </p-dialog>
   `,
@@ -243,6 +295,79 @@ export class StudioEntityDesignerComponent implements OnInit {
   private readonly toast = inject(MessageService);
   private readonly confirmation = inject(ConfirmationService);
   private readonly route = inject(ActivatedRoute);
+  private readonly capabilities = inject(StudioAiCapabilitiesService);
+
+  readonly runtimeLabels = STUDIO_RUNTIME_LABELS;
+  readonly labels = STUDIO_AI_LABELS;
+  readonly manyToManyEnabled = computed(() =>
+    this.capabilities.state() === 'ready' && this.capabilities.capabilities().manyToManyEnabled === true);
+  readonly workflowsEnabled = computed(() =>
+    this.capabilities.state() === 'ready' && this.capabilities.capabilities().workflowsEnabled === true);
+  readonly relations = signal<EntityRelationDto[]>([]);
+  readonly relationsLoading = signal(false);
+  readonly m2mVisible = signal(false);
+
+  /** 3.4l — vérification du changement de type (débounce 300 ms, `to` = nom d'enum). */
+  readonly typeCheck = signal<StudioFieldTypeCheckDto | null>(null);
+  readonly typeChecking = signal(false);
+  private originalType: CustomFieldType | null = null;
+  /** `null` annule la vérification en cours (retour au type d'origine, ouverture, fermeture). */
+  private readonly typeCheck$ = new Subject<{ fieldId: string; type: CustomFieldType } | null>();
+
+  constructor() {
+    effect(() => { if (this.manyToManyEnabled() && this.entityId) this.loadRelations(); });
+    this.typeCheck$.pipe(
+      switchMap(req => req === null ? EMPTY : timer(300).pipe(
+        switchMap(() => this.studio.checkFieldTypeChange(this.entityId, req.fieldId, CustomFieldType[req.type])),
+        catchError(err => of({
+          success: false,
+          data: {
+            from: '', to: CustomFieldType[req.type], policy: 'forbidden', recordCount: 0, allowed: false,
+            message: err?.error?.message ?? this.labels.typeChange.forbidden
+          } as StudioFieldTypeCheckDto
+        }))
+      )),
+      takeUntilDestroyed(inject(DestroyRef))
+    ).subscribe(res => {
+      this.typeCheck.set(res.data ?? null);
+      this.typeChecking.set(false);
+    });
+  }
+
+  typeChanged(): boolean {
+    return this.editing() && this.originalType !== null && this.fType !== this.originalType;
+  }
+
+  typeBlocked(): boolean {
+    return this.typeChanged() && this.typeCheck()?.allowed === false;
+  }
+
+  typeSeverity(): 'info' | 'warn' | 'error' {
+    const c = this.typeCheck();
+    if (!c || c.policy === 'lossless') return 'info';
+    return c.policy === 'requires_empty_table' ? 'warn' : 'error';
+  }
+
+  onTypeChange(type: CustomFieldType): void {
+    if (!this.editing() || !this.editId) return;
+    if (type === this.originalType) {
+      this.resetTypeCheck();
+      return;
+    }
+    this.typeChecking.set(true);
+    this.typeCheck$.next({ fieldId: this.editId, type });
+  }
+
+  protected resetTypeCheck(): void {
+    this.typeCheck$.next(null);
+    this.typeCheck.set(null);
+    this.typeChecking.set(false);
+  }
+
+  protected closeDialog(): void {
+    this.dialogVisible = false;
+    this.resetTypeCheck();
+  }
 
   breadcrumbs = STUDIO_BREADCRUMBS.entities();
 
@@ -304,7 +429,24 @@ export class StudioEntityDesignerComponent implements OnInit {
     this.entityId = this.route.snapshot.paramMap.get('id') ?? '';
     this.loadEntity();
     this.loadFields();
+    this.capabilities.ensureLoaded();
     this.studio.listEntities(false).subscribe({ next: res => { if (res.success) this.allEntities.set(res.data ?? []); } });
+  }
+
+  loadRelations(): void {
+    this.relationsLoading.set(true);
+    this.studio.listEntityRelations(this.entityId).subscribe({
+      next: res => { this.relationsLoading.set(false); if (res.success) this.relations.set(res.data ?? []); },
+      error: () => this.relationsLoading.set(false)
+    });
+  }
+
+  protected readonly relationKindLabel = relationKindLabel;
+
+  onRelationCreated(): void {
+    this.toast.add({ severity: 'success', summary: this.runtimeLabels.relations.title, detail: this.runtimeLabels.relations.created });
+    this.loadRelations();
+    this.loadFields();
   }
 
   loadEntity(): void {
@@ -368,6 +510,8 @@ export class StudioEntityDesignerComponent implements OnInit {
   openAdd(): void {
     this.editing.set(false);
     this.editId = null;
+    this.originalType = null;
+    this.resetTypeCheck();
     this.fLabel = this.fKey = this.fOptionsText = '';
     this.fType = CustomFieldType.Text;
     this.fRequired = this.fUnique = false;
@@ -392,6 +536,8 @@ export class StudioEntityDesignerComponent implements OnInit {
     this.fLabel = f.label;
     this.fKey = f.key;
     this.fType = f.fieldType;
+    this.originalType = f.fieldType;
+    this.resetTypeCheck();
     this.fRequired = f.isRequired;
     this.fUnique = f.isUnique;
     this.fOptionsText = (f.options ?? []).map(o => `${o.value}|${o.label}`).join('\n');
@@ -461,6 +607,7 @@ export class StudioEntityDesignerComponent implements OnInit {
   }
 
   save(): void {
+    if (this.typeBlocked() || this.typeChecking()) return;
     if (!this.fLabel.trim() || (!this.editing() && !this.fKey.trim())) {
       this.toast.add({ severity: 'warn', summary: 'Champs requis', detail: 'Libellé et clé obligatoires.' });
       return;
@@ -508,12 +655,29 @@ export class StudioEntityDesignerComponent implements OnInit {
     };
 
     if (this.editing() && this.editId) {
-      this.studio.updateField(this.entityId, this.editId, {
+      const fieldId = this.editId;
+      const update$ = this.studio.updateField(this.entityId, fieldId, {
         label: this.fLabel.trim(), isRequired: this.fRequired, isUnique: this.fUnique,
         rules: rules as any, options, relation, isActive: true, config
-      }).subscribe({
+      });
+      const typeReq: ChangeCustomFieldTypeRequest = { fieldType: this.fType, options, rules: rules as any, relation, config };
+      /** PATCH type réussi puis PUT en échec : la liste doit refléter le nouveau type. */
+      let typeApplied = false;
+      const save$ = this.typeChanged()
+        ? this.studio.changeFieldType(this.entityId, fieldId, typeReq).pipe(
+            tap(res => { typeApplied = res.success !== false; }),
+            switchMap(() => update$)
+          )
+        : update$;
+      save$.subscribe({
         next: res => done(res.success, res.errors?.[0] ?? res.message ?? undefined),
-        error: err => done(false, err?.error?.message)
+        error: err => {
+          if (typeApplied) {
+            this.loadFields();
+            this.loadEntity();
+          }
+          done(false, err?.error?.message);
+        }
       });
     } else {
       this.studio.createField(this.entityId, {

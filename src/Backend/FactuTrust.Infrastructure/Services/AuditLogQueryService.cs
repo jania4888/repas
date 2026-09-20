@@ -10,6 +10,9 @@ namespace FactuTrust.Infrastructure.Services;
 
 public sealed class AuditLogQueryService : IAuditLogQueryService
 {
+    /// <summary>Taille de page maximale de l'historique d'une entité (4.7h2 ; clamp 1..100, défaut 20).</summary>
+    private const int EntityHistoryMaxPageSize = 100;
+
     private const int MaxPageSize = 200;
     private const int DefaultPageSize = 25;
 
@@ -30,7 +33,9 @@ public sealed class AuditLogQueryService : IAuditLogQueryService
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        page = Math.Max(1, page);
+        // 4.7 suite (R52, D-47-75) : même borne haute que GetEntityHistoryAsync, sur la taille max 200,
+        // pour que (page - 1) * pageSize ne déborde jamais (motif D-45-28, StudioWorkflowFeatures).
+        page = Math.Clamp(page, 1, int.MaxValue / MaxPageSize);
         pageSize = Math.Clamp(pageSize <= 0 ? DefaultPageSize : pageSize, 1, MaxPageSize);
 
         await using var ctx = _contextFactory.CreateContext();
@@ -57,6 +62,37 @@ public sealed class AuditLogQueryService : IAuditLogQueryService
         await ApplyEntityLabelsAsync(ctx, list, cancellationToken);
 
         return Result.Success(PagedResult<AuditLogEntryDto>.Create(list, page, pageSize, total));
+    }
+
+    public async Task<Result<PagedResult<AuditEntityHistoryRowDto>>> GetEntityHistoryAsync(
+        string entityType, Guid entityId, int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        // 4.7★1 (D-47-75, R52) : borne haute = int.MaxValue / taille max (100) pour que
+        // (page - 1) * pageSize ne déborde jamais (motif D-45-28, StudioWorkflowFeatures).
+        page = Math.Clamp(page, 1, int.MaxValue / EntityHistoryMaxPageSize);
+        pageSize = Math.Clamp(pageSize <= 0 ? 20 : pageSize, 1, EntityHistoryMaxPageSize);
+
+        await using var ctx = _contextFactory.CreateContext();
+        var q = ctx.AuditLogs.AsNoTracking()
+            .Where(a => a.EntityType == entityType && a.EntityId == entityId);
+
+        var total = await q.CountAsync(cancellationToken);
+
+        var list = await q.OrderByDescending(a => a.CreatedAt).ThenByDescending(a => a.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(a => new AuditEntityHistoryRowDto
+            {
+                Id = a.Id,
+                Action = a.Action,
+                CreatedAt = a.CreatedAt,
+                UserId = a.UserId,
+                OldValues = a.OldValues,
+                NewValues = a.NewValues
+            })
+            .ToListAsync(cancellationToken);
+
+        return Result.Success(PagedResult<AuditEntityHistoryRowDto>.Create(list, page, pageSize, total));
     }
 
     public async Task<Result<AuditLogDetailDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

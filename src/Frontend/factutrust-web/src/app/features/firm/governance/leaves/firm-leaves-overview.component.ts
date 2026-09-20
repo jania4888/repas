@@ -138,7 +138,7 @@ export class FirmLeavesOverviewComponent implements OnInit {
       header: 'Accepter',
       message: 'Accepter cette demande ?',
       acceptLabel: 'Accepter',
-      acceptButtonStyleClass: 'p-button-success',
+      acceptButtonStyleClass: 'btn-success',
       accept: () => this.api.process(id, true).subscribe({
         next: r => {
           if (r.success) {
@@ -157,7 +157,7 @@ export class FirmLeavesOverviewComponent implements OnInit {
       header: 'Refuser',
       message: 'Refuser cette demande ?',
       acceptLabel: 'Refuser',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => this.api.process(id, false).subscribe({
         next: r => {
           if (r.success) { this.toast.add({ severity: 'info', summary: 'Congés', detail: 'Refusée' }); this.reload(); }

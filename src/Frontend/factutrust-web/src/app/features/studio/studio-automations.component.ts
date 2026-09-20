@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -15,10 +15,9 @@ import {
   CustomEntity, CustomField, SaveAutomationRequest
 } from './studio.models';
 import { StudioPageShellComponent } from './shared/studio-page-shell.component';
+import { StudioBridgeActionPickerComponent } from './shared/studio-bridge-action-picker.component';
 import { STUDIO_BREADCRUMBS } from './shared/studio-breadcrumb.util';
 import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
-
-interface MapState { source: 'field' | 'const'; value: string; }
 
 /**
  * "ERP bridge" automations for a custom entity: bind a record lifecycle event (or a manual run) to a
@@ -30,7 +29,8 @@ interface MapState { source: 'field' | 'const'; value: string; }
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule, TableModule, ButtonModule, DialogModule,
-    SelectModule, InputTextModule, InputSwitchModule, StudioPageShellComponent
+    SelectModule, InputTextModule, InputSwitchModule, StudioPageShellComponent,
+    StudioBridgeActionPickerComponent
   ],
   template: `
     <app-studio-page-shell
@@ -75,30 +75,9 @@ interface MapState { source: 'field' | 'const'; value: string; }
             <p-select [options]="triggerOptions" [(ngModel)]="fTrigger" optionLabel="label" optionValue="value"
               appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"></p-select>
           </div>
-          <div>
-            <label>Action ERP *</label>
-            <p-select [options]="actions()" [(ngModel)]="fAction" optionLabel="name" optionValue="name"
-              (onChange)="onActionChange()" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"
-              placeholder="Choisir une action"></p-select>
-          </div>
         </div>
 
-        <small class="ft-hint" *ngIf="selectedAction() as act">{{ act.description }}</small>
-
-        <ng-container *ngIf="selectedAction() as act">
-          <label class="ft-section-lbl">Correspondance des paramètres</label>
-          <div class="ft-map" *ngFor="let p of act.parameters">
-            <div class="ft-map-name">{{ p.name }} <span *ngIf="p.required" class="ft-req">*</span></div>
-            <p-select [options]="sourceOptions" [(ngModel)]="mapState[p.name].source" optionLabel="label" optionValue="value"
-              appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-src"></p-select>
-            <p-select *ngIf="mapState[p.name].source === 'field'" [options]="fieldOptions()" [(ngModel)]="mapState[p.name].value"
-              optionLabel="label" optionValue="value" [showClear]="true" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-val"
-              placeholder="Champ…"></p-select>
-            <input *ngIf="mapState[p.name].source === 'const'" pInputText [(ngModel)]="mapState[p.name].value"
-              class="ft-map-val" [placeholder]="p.allowedValues?.length ? p.allowedValues!.join(' | ') : 'Valeur fixe'" />
-            <small class="ft-map-desc">{{ p.description }}</small>
-          </div>
-        </ng-container>
+        <app-studio-bridge-action-picker [actions]="actions()" [fields]="fields()" [(action)]="fAction" [(mapping)]="fMapping" />
 
         <div class="ft-row ft-switches">
           <div><p-inputSwitch [(ngModel)]="fRunOnce"></p-inputSwitch> <span>Exécuter une seule fois par enregistrement</span></div>
@@ -120,13 +99,7 @@ interface MapState { source: 'field' | 'const'; value: string; }
     .ft-row > div { flex: 1; display: flex; flex-direction: column; gap: .25rem; }
     .ft-switches { margin-top: .75rem; align-items: center; }
     .ft-switches > div { flex-direction: row; align-items: center; gap: .4rem; }
-    .ft-section-lbl { margin-top: 1rem; }
-    .ft-hint { color: var(--text-color-secondary); }
-    .ft-req { color: var(--red-500); }
-    .ft-map { display: grid; grid-template-columns: 9rem 8rem 1fr; gap: .5rem; align-items: center; padding: .35rem 0; border-bottom: 1px solid var(--surface-100); }
-    .ft-map-name { font-family: monospace; font-size: .82rem; }
-    .ft-map-desc { grid-column: 1 / -1; color: var(--text-color-secondary); font-size: .75rem; }
-    :host ::ng-deep .ft-w-full, :host ::ng-deep .ft-map-src, :host ::ng-deep .ft-map-val { width: 100%; }
+    :host ::ng-deep .ft-w-full { width: 100%; }
   `]
 })
 export class StudioAutomationsComponent implements OnInit {
@@ -148,22 +121,16 @@ export class StudioAutomationsComponent implements OnInit {
     { label: 'À la modification', value: AutomationTrigger.OnUpdate },
     { label: 'Manuel (bouton)', value: AutomationTrigger.Manual }
   ];
-  readonly sourceOptions = [
-    { label: 'Champ', value: 'field' },
-    { label: 'Constante', value: 'const' }
-  ];
-  readonly fieldOptions = computed(() => this.fields().map(f => ({ label: `${f.label} (${f.key})`, value: f.key })));
-  readonly selectedAction = computed(() => this.actions().find(a => a.name === this.fAction) ?? null);
 
   private entityId = '';
   dialogVisible = false;
   private editId: string | null = null;
   fName = '';
   fTrigger: AutomationTrigger = AutomationTrigger.OnCreate;
-  fAction = '';
+  readonly fAction = signal<string | null>(null);
+  readonly fMapping = signal<BridgeParamMapping[]>([]);
   fRunOnce = true;
   fActive = true;
-  mapState: Record<string, MapState> = {};
 
   ngOnInit(): void {
     this.entityId = this.route.snapshot.paramMap.get('id') ?? '';
@@ -192,24 +159,15 @@ export class StudioAutomationsComponent implements OnInit {
     return this.triggerOptions.find(o => o.value === t)?.label ?? String(t);
   }
 
-  onActionChange(): void {
-    const act = this.selectedAction();
-    const next: Record<string, MapState> = {};
-    for (const p of act?.parameters ?? []) {
-      next[p.name] = this.mapState[p.name] ?? { source: 'field', value: '' };
-    }
-    this.mapState = next;
-  }
-
   openAdd(): void {
     this.editing.set(false);
     this.editId = null;
     this.fName = '';
     this.fTrigger = AutomationTrigger.OnCreate;
-    this.fAction = '';
+    this.fAction.set(null);
+    this.fMapping.set([]);
     this.fRunOnce = true;
     this.fActive = true;
-    this.mapState = {};
     this.dialogVisible = true;
   }
 
@@ -218,28 +176,22 @@ export class StudioAutomationsComponent implements OnInit {
     this.editId = a.id;
     this.fName = a.name;
     this.fTrigger = a.trigger;
-    this.fAction = a.actionKey;
+    this.fAction.set(a.actionKey);
+    this.fMapping.set([...(a.mapping ?? [])]);
     this.fRunOnce = a.runOnce;
     this.fActive = a.isActive;
-    this.onActionChange();
-    for (const m of a.mapping ?? []) {
-      this.mapState[m.param] = { source: m.source, value: m.value ?? '' };
-    }
     this.dialogVisible = true;
   }
 
   save(): void {
-    if (!this.fName.trim() || !this.fAction) {
+    if (!this.fName.trim() || !this.fAction()) {
       this.toast.add({ severity: 'warn', summary: 'Champs requis', detail: 'Nom et action obligatoires.' });
       return;
     }
-    const mapping: BridgeParamMapping[] = Object.entries(this.mapState)
-      .filter(([, s]) => s.value != null && s.value !== '')
-      .map(([param, s]) => ({ param, source: s.source, value: s.value }));
 
     const req: SaveAutomationRequest = {
-      name: this.fName.trim(), trigger: this.fTrigger, actionKey: this.fAction,
-      mapping, runOnce: this.fRunOnce, isActive: this.fActive
+      name: this.fName.trim(), trigger: this.fTrigger, actionKey: this.fAction()!,
+      mapping: this.fMapping(), runOnce: this.fRunOnce, isActive: this.fActive
     };
     this.saving.set(true);
     const obs = this.editing() && this.editId

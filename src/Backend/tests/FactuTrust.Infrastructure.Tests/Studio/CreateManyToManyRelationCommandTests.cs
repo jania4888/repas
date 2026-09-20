@@ -475,6 +475,127 @@ public sealed class CreateManyToManyRelationCommandTests
 
     // ---- helpers ----
 
+    // ---- v1.1 / D-47-40 (R4) : attribut de liaison optionnel — 3ᵉ champ Number sur la jonction ----
+
+    [Fact]
+    public async Task Nominal_with_attribute_creates_a_third_number_field_after_the_two_relation_fields()
+    {
+        var result = await Handler().Handle(
+            new CreateManyToManyRelationCommand(_employes.Id,
+                new CreateManyToManyRelationRequest(_projets.Id, null, null, null, "Quantité")),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess, result.Error.Description);
+
+        var fieldCommands = _sent.OfType<CreateCustomFieldCommand>().ToList();
+        Assert.Equal(3, fieldCommands.Count);
+        // Sequencing: entity, source link, target link, THEN the attribute (SortOrder = max + 1 ⇒ the
+        // pair check on the first two RelationCustom is never displaced).
+        Assert.Collection(_sent,
+            c => Assert.IsType<CreateCustomEntityCommand>(c),
+            c => Assert.IsType<CreateCustomFieldCommand>(c),
+            c => Assert.IsType<CreateCustomFieldCommand>(c),
+            c => Assert.IsType<CreateCustomFieldCommand>(c));
+
+        var attribute = fieldCommands[2].Request;
+        Assert.Equal(result.Value.Junction.Id, fieldCommands[2].EntityId);
+        Assert.Equal(CustomFieldType.Number, attribute.FieldType);
+        Assert.False(attribute.IsRequired);
+        Assert.False(attribute.IsUnique);
+        Assert.Null(attribute.Relation);
+        Assert.Null(attribute.Options);
+        Assert.Equal("Quantité", attribute.Label);
+
+        Assert.Equal(3, result.Value.Junction.FieldCount);
+        Assert.NotNull(result.Value.AttributeField);
+        Assert.Equal(attribute.Key, result.Value.AttributeField!.Key);
+
+        // Audit payload carries the attribute key.
+        _audit.Verify(a => a.LogAsync(
+                CreateManyToManyRelationCommandHandler.AuditAction, "CustomEntity", result.Value.Junction.Id, null,
+                It.Is<object?>(o => o != null && o.ToString()!.Contains(attribute.Key)),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Attribute_label_is_slugified_and_trimmed()
+    {
+        var result = await Handler().Handle(
+            new CreateManyToManyRelationCommand(_employes.Id,
+                new CreateManyToManyRelationRequest(_projets.Id, null, null, null, "  Quantité  ")),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess, result.Error.Description);
+        var attribute = _sent.OfType<CreateCustomFieldCommand>().Last().Request;
+        Assert.Equal("quantit", attribute.Key); // StudioKey.Slugify : accents → _, 8 car. conservés
+        Assert.Equal("Quantité", attribute.Label);
+    }
+
+    [Theory]
+    [InlineData("employes")]   // collision avec le champ de liaison source
+    [InlineData("PROJETS")]    // collision avec le champ cible, casse ignorée par prudence
+    [InlineData("!!!")]        // clé vide après slugification
+    [InlineData("id")]         // clé réservée
+    public async Task Invalid_attribute_key_is_rejected_before_any_write(string label)
+    {
+        var result = await Handler().Handle(
+            new CreateManyToManyRelationCommand(_employes.Id,
+                new CreateManyToManyRelationRequest(_projets.Id, null, null, null, label)),
+            CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Validation.junctionAttributeLabel", result.Error.Code);
+        Assert.Empty(_sent); // aucune écriture : pas de compensation pour une simple validation
+        _audit.Verify(a => a.LogAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<object?>(), It.IsAny<object?>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Attribute_field_failure_compensates_the_junction_and_returns_the_original_error()
+    {
+        var quotaError = Error.Validation("quota", "Limite du plan atteinte : nombre de champs.");
+        var calls = 0;
+        _mediator.Setup(m => m.Send(It.IsAny<CreateCustomFieldCommand>(), It.IsAny<CancellationToken>()))
+            .Returns((CreateCustomFieldCommand c, CancellationToken _) =>
+            {
+                _sent.Add(c);
+                calls++;
+                return Task.FromResult(calls <= 2
+                    ? Result.Success(FieldDto(c.Request, calls))
+                    : Result.Failure<CustomFieldDto>(quotaError));
+            });
+
+        var result = await Handler().Handle(
+            new CreateManyToManyRelationCommand(_employes.Id,
+                new CreateManyToManyRelationRequest(_projets.Id, null, null, null, "Quantité")),
+            CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal(quotaError, result.Error);
+        var delete = Assert.Single(_sent.OfType<DeleteCustomEntityCommand>());
+        var captured = _capturedEntities.Single(e => e.Key == "employes_projets");
+        Assert.Equal(captured.Id, delete.Id);
+        _audit.Verify(a => a.LogAsync(CreateManyToManyRelationCommandHandler.AuditAction, It.IsAny<string>(), It.IsAny<Guid?>(), It.IsAny<object?>(), It.IsAny<object?>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Without_attribute_the_contract_is_unchanged()
+    {
+        foreach (var label in new string?[] { null, "", "   " })
+        {
+            _sent.Clear();
+            var result = await Handler().Handle(
+                new CreateManyToManyRelationCommand(_employes.Id,
+                    new CreateManyToManyRelationRequest(_projets.Id, null, null, null, label)),
+                CancellationToken.None);
+
+            Assert.True(result.IsSuccess, result.Error.Description);
+            Assert.Null(result.Value.AttributeField);
+            Assert.Equal(2, result.Value.Junction.FieldCount);
+            Assert.Equal(2, _sent.OfType<CreateCustomFieldCommand>().Count());
+        }
+    }
+
     private CreateManyToManyRelationCommandHandler Handler() => new(
         _entities.Object, _audit.Object, _currentUser.Object, _mediator.Object, _jsonIndex.Object);
 

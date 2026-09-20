@@ -243,7 +243,7 @@ export class FirmLeavesRequestsComponent implements OnInit {
       header: 'Annuler la demande',
       message: 'Confirmer l’annulation de cette demande ?',
       acceptLabel: 'Annuler la demande',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.api.cancel(s.id).subscribe({
           next: r => {

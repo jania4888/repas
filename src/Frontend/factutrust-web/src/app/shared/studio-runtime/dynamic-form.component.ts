@@ -91,7 +91,8 @@ interface RenderSection {
 
       <p *ngIf="sections.length === 0" class="ft-empty">Aucun champ à afficher.</p>
 
-      <div class="ft-form-actions" *ngIf="sections.length > 0">
+      <!-- 4.7 suite (D-47-94) : en lecture seule, les actions d'écriture disparaissent. -->
+      <div class="ft-form-actions" *ngIf="sections.length > 0 && !readOnly">
         <button pButton type="button" label="Annuler" class="p-button-text" (click)="formCancel.emit()"></button>
         <button pButton type="submit" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving"></button>
       </div>
@@ -123,6 +124,9 @@ export class DynamicFormComponent implements OnChanges {
   @Input() saving = false;
   /** Entity key used to scope file uploads (Attachment / Signature fields). */
   @Input() entityKey = '';
+  /** 4.7 suite (D-47-94) : fiche en lecture seule — tous les champs désactivés, pas de validateurs,
+   *  pas de barre d'actions. Le modèle reste patché (affichage des valeurs). */
+  @Input() readOnly = false;
 
   @Output() save = new EventEmitter<Record<string, unknown>>();
   @Output() formCancel = new EventEmitter<void>();
@@ -133,7 +137,7 @@ export class DynamicFormComponent implements OnChanges {
   private rendered: CustomField[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['fields'] || changes['layout']) {
+    if (changes['fields'] || changes['layout'] || changes['readOnly']) {
       this.buildSections();
       this.buildForm();
     }
@@ -180,13 +184,17 @@ export class DynamicFormComponent implements OnChanges {
         group[f.key] = [{ value: null, disabled: true }, []];
         continue;
       }
+      // D-47-94 : en lecture seule, aucun validateur et le champ est désactivé (les champs calculés
+      // le sont déjà ci-dessus) — la fiche affiche les valeurs sans proposer la saisie.
       const validators = [];
-      if (f.isRequired) validators.push(Validators.required);
-      if (f.rules?.minLength != null) validators.push(Validators.minLength(f.rules.minLength));
-      if (f.rules?.maxLength != null) validators.push(Validators.maxLength(f.rules.maxLength));
-      if (f.rules?.min != null) validators.push(Validators.min(f.rules.min));
-      if (f.rules?.max != null) validators.push(Validators.max(f.rules.max));
-      group[f.key] = [f.fieldType === CustomFieldType.Boolean ? false : null, validators];
+      if (!this.readOnly) {
+        if (f.isRequired) validators.push(Validators.required);
+        if (f.rules?.minLength != null) validators.push(Validators.minLength(f.rules.minLength));
+        if (f.rules?.maxLength != null) validators.push(Validators.maxLength(f.rules.maxLength));
+        if (f.rules?.min != null) validators.push(Validators.min(f.rules.min));
+        if (f.rules?.max != null) validators.push(Validators.max(f.rules.max));
+      }
+      group[f.key] = [{ value: f.fieldType === CustomFieldType.Boolean ? false : null, disabled: this.readOnly }, validators];
     }
     this.form = this.fb.group(group);
     if (this.model) this.patchModel();

@@ -75,7 +75,7 @@ public sealed class SupplierRepository : ISupplierRepository
 
         var items = await query
             .OrderBy(s => s.Name)
-            .Skip((page - 1) * pageSize)
+            .Skip(PagingBounds.SafeSkip(page, pageSize))
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 

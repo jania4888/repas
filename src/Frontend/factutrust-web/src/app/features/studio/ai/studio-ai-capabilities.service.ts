@@ -23,6 +23,8 @@ export class StudioAiCapabilitiesService {
   readonly capabilities = this._capabilities.asReadonly();
   readonly loading = computed(() => this._state() === 'unknown' || this._state() === 'loading');
   readonly workbenchEnabled = computed(() => this._state() === 'ready' && this._capabilities().workbenchEnabled);
+  readonly workflowsEnabled = computed(() => this._state() === 'ready' && this._capabilities().workflowsEnabled === true);
+  readonly workflowToolsEnabled = computed(() => this._state() === 'ready' && this._capabilities().workflowToolsEnabled === true);
 
   /** Charge une fois ; les appels suivants sont sans effet tant que `reset()` n'est pas invoqué. */
   ensureLoaded(): void {

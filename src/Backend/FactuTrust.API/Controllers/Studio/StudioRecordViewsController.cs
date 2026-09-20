@@ -107,6 +107,20 @@ public sealed class StudioRecordViewsController : ControllerBase
             run => Ok(ApiResponse<RecordViewRunResultDto>.Ok(run)));
     }
 
+    /// <summary>
+    /// Exécute une définition non enregistrée (aperçu du concepteur, R3 / 4.7v1) : rien n'est
+    /// persisté, ni quota ni audit ; mêmes bornes que <c>run</c>. Réservée aux concepteurs.
+    /// </summary>
+    [HttpPost("preview")]
+    [Authorize(Policy = PermissionPolicies.StudioDesignForms)]
+    public async Task<IActionResult> Preview(string entityKey, [FromBody] PreviewRecordViewRequest request, CancellationToken cancellationToken)
+    {
+        if (Unavailable() is { } unavailable) return unavailable;
+        var result = await _mediator.Send(new PreviewCustomRecordViewQuery(entityKey, request), cancellationToken);
+        return StudioErrorMapping.ToActionResult(this, result,
+            run => Ok(ApiResponse<RecordViewRunResultDto>.Ok(run)));
+    }
+
     // ---- helpers ----
 
     /// <summary>Renvoie 404 tant que le drapeau est coupé (avant tout appel MediatR) ; sinon null.</summary>

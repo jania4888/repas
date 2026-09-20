@@ -252,7 +252,7 @@ export class FirmClientsComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Résilier',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.assignments.revokeClient(row.assignmentId).subscribe({
           next: r => {

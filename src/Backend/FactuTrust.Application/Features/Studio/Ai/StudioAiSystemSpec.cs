@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using FactuTrust.Application.Features.Studio.Ai;
@@ -90,6 +91,12 @@ public sealed record ParsedSystemSpec(
 /// </summary>
 public static class StudioAiSystemSpec
 {
+    /// <summary>Version de spécification prise en charge (champ racine <c>specVersion</c>, PR 3.3).</summary>
+    public const int SupportedSpecVersion = 1;
+
+    /// <summary>Message de rejet d'une <c>specVersion</c> non prise en charge ({0} = valeur brute lue).</summary>
+    public const string UnsupportedSpecVersionMessage = "Version de spécification non prise en charge : {0}.";
+
     /// <summary>Borne de tables NOUVELLES par système (les tables réutilisées ne comptent pas).</summary>
     public const int MaxEntities = 8;
     /// <summary>Borne de tables existantes réutilisées par système (<c>existingKey</c>).</summary>
@@ -142,6 +149,20 @@ public static class StudioAiSystemSpec
         JsonNode? root;
         try { root = JsonNode.Parse(specJson); }
         catch (JsonException) { error = "spec_json n'est pas un JSON valide."; return false; }
+
+        // Contrôle de version (PR 3.3) : « specVersion » absent ⇒ accepté (rétro-compatibilité avec
+        // les modèles intégrés et les specs LLM existantes) ; présent mais ≠ SupportedSpecVersion
+        // (entier ou chaîne non convertible) ⇒ rejet avec le message partagé.
+        if (root?["specVersion"] is { } versionNode)
+        {
+            var raw = Str(versionNode) ?? versionNode.ToJsonString();
+            if (!int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var version)
+                || version != SupportedSpecVersion)
+            {
+                error = string.Format(CultureInfo.InvariantCulture, UnsupportedSpecVersionMessage, raw);
+                return false;
+            }
+        }
 
         var systemNode = root?["system"];
         var displayName = Str(systemNode?["displayName"]) ?? Str(root?["displayName"]) ?? Str(root?["name"]);

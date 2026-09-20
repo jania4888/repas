@@ -794,7 +794,7 @@ export class FirmPermanentFileWizardComponent implements OnInit, OnDestroy {
       icon: 'pi pi-inbox',
       acceptLabel: 'Archiver',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-secondary',
+      acceptButtonStyleClass: 'btn-secondary',
       accept: () => {
         this.api.archivePermanentFile(this.assignmentId).subscribe({
           next: r => {

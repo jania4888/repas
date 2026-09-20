@@ -81,7 +81,24 @@
         "fields": [ "reference", "client", "motif", "priorite", "date_d_ouverture", "statut" ],
         "filters": [ { "field": "statut", "op": "neq", "value": "cloturee" } ],
         "sort": [ { "field": "date_d_ouverture", "dir": "desc" } ]
-      }
+      },
+      "views": [
+        {
+          "name": "Par statut",
+          "mode": "kanban",
+          "groupBy": "statut",
+          "title": "reference",
+          "columns": [ "reference", "client", "priorite" ]
+        },
+        {
+          "name": "Ouvertes",
+          "mode": "list",
+          "columns": [ "reference", "client", "motif", "priorite", "statut", "date_d_ouverture" ],
+          "filters": [ { "field": "statut", "op": "neq", "value": "cloturee" } ],
+          "sort": [ { "field": "date_d_ouverture", "desc": true } ],
+          "isDefault": true
+        }
+      ]
     },
     {
       "ref": "actions_correctives",

@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
+import { StudioApprovalsBadgeService } from '../approvals/studio-approvals-badge.service';
 import { StudioShellComponent } from './studio-shell.component';
 
 const INDIGO_600 = '#4f46e5';
@@ -25,11 +26,18 @@ class HostComponent {}
 describe('StudioShellComponent (thème indigo scopé — D2)', () => {
   let fixture: ComponentFixture<HostComponent>;
   let shell: HTMLElement;
+  let badgeStart: jasmine.Spy;
 
   beforeEach(async () => {
+    badgeStart = jasmine.createSpy('start');
     await TestBed.configureTestingModule({
       imports: [HostComponent],
-      providers: [provideRouter([]), provideNoopAnimations(), providePrimeNG({ theme: { preset: Aura } })]
+      providers: [
+        provideRouter([]),
+        provideNoopAnimations(),
+        providePrimeNG({ theme: { preset: Aura } }),
+        { provide: StudioApprovalsBadgeService, useValue: { start: badgeStart } }
+      ]
     }).compileComponents();
     fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
@@ -65,6 +73,10 @@ describe('StudioShellComponent (thème indigo scopé — D2)', () => {
     expect(style.getPropertyValue('--p-tabs-tab-active-color').trim()).toBe(INDIGO_600);
     expect(style.getPropertyValue('--p-highlight-background').trim()).toBe('#eef2ff');
     expect(style.getPropertyValue('--p-focus-ring-color').trim()).toBe(INDIGO_600);
+  });
+
+  it("démarre le badge d'approbations à l'ouverture du shell", () => {
+    expect(badgeStart).toHaveBeenCalledTimes(1);
   });
 
   it('peint un bouton primaire en indigo dans la coquille et laisse le bouton extérieur inchangé', () => {

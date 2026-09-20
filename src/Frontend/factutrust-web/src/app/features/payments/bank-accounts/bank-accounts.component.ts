@@ -344,7 +344,7 @@ export class BankAccountsComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Supprimer',
       rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.bankAccountService.delete(a.id).subscribe({
           next: res => {

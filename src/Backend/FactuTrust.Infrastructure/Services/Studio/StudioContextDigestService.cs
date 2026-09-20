@@ -260,6 +260,7 @@ public sealed class StudioContextDigestService : IStudioContextDigestService
         StudioAiPlanKind.View => "Fenêtre",
         StudioAiPlanKind.Report => "État",
         StudioAiPlanKind.RecordView => "Vue enregistrée",
+        StudioAiPlanKind.Workflow => "Workflow",
         _ => kind.ToString()
     };
 

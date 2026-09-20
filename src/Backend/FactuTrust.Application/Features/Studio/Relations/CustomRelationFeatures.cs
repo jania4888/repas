@@ -24,7 +24,8 @@ public static class EntityRelationKinds
 /// <summary>
 /// Crée une relation plusieurs‑à‑plusieurs entre <see cref="SourceEntityId"/> et
 /// <c>Request.TargetEntityId</c> : une table de jonction <see cref="CustomEntityKind.Junction"/> portant
-/// deux champs <see cref="CustomFieldType.RelationCustom"/> requis (source, cible).
+/// deux champs <see cref="CustomFieldType.RelationCustom"/> requis (source, cible), plus un champ
+/// attribut <see cref="CustomFieldType.Number"/> optionnel quand <c>JunctionAttributeLabel</c> est fourni.
 /// Réutilise <see cref="CreateCustomEntityCommand"/> et <see cref="CreateCustomFieldCommand"/> via
 /// MediatR (chemin unique IA / manuel : quotas, audit, index JSON).
 /// </summary>
@@ -98,6 +99,24 @@ public sealed class CreateManyToManyRelationCommandHandler
             return Result.Failure<ManyToManyRelationDto>(junctionKeyResult.Error);
         var junctionKey = junctionKeyResult.Value;
 
+        // (3bis) Junction attribute (v1.1 / D-47-40, R4): optional 3rd Number field. The key is derived
+        // from the label and validated BEFORE any write — a validation failure creates nothing at all.
+        var (sourceFieldKey, targetFieldKey) = ResolveFieldKeys(source.Key, target.Key);
+        string? attributeKey = null;
+        string? attributeLabel = null;
+        if (!string.IsNullOrWhiteSpace(req.JunctionAttributeLabel))
+        {
+            attributeLabel = req.JunctionAttributeLabel.Trim();
+            attributeKey = StudioKey.Slugify(attributeLabel);
+            if (attributeKey.Length == 0
+                || !StudioKey.IsValidShape(attributeKey)
+                || StudioKey.IsReservedFieldKey(attributeKey)
+                || string.Equals(attributeKey, sourceFieldKey, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(attributeKey, targetFieldKey, StringComparison.OrdinalIgnoreCase))
+                return Result.Failure<ManyToManyRelationDto>(Error.Validation("junctionAttributeLabel",
+                    "Le libellé de l'attribut de liaison ne produit pas une clé de champ valide (ou entre en collision avec un champ de liaison)."));
+        }
+
         // (4) Junction entity (Kind = Junction), inheriting the source's system. CreateCustomEntityCommand
         // applies the custom-entity quota (a junction IS a table) before any write.
         var displayName = string.IsNullOrWhiteSpace(req.JunctionDisplayName)
@@ -124,11 +143,10 @@ public sealed class CreateManyToManyRelationCommandHandler
         // (5) Two required RelationCustom fields, strictly sequential; compensate on failure (7) —
         // on a failed Result AND on an exception (timeout SQL, DbUpdateException, cancellation):
         // otherwise the junction would stay active with 0 or 1 field (hidden from the nav, unprotected
-        // by the pair check).
-        var (sourceFieldKey, targetFieldKey) = ResolveFieldKeys(source.Key, target.Key);
-
+        // by the pair check). Field keys resolved at (3bis).
         Result<CustomFieldDto> sourceFieldResult;
         Result<CustomFieldDto> targetFieldResult;
+        Result<CustomFieldDto>? attributeFieldResult = null;
         try
         {
             sourceFieldResult = await _mediator.Send(new CreateCustomFieldCommand(junction.Id, new CreateCustomFieldRequest(
@@ -144,6 +162,18 @@ public sealed class CreateManyToManyRelationCommandHandler
                 Relation: new RelationRefDto("custom", target.Key))), cancellationToken);
             if (targetFieldResult.IsFailure)
                 return await CompensateAsync(junction.Id, targetFieldResult.Error, cancellationToken);
+
+            // Junction attribute: created AFTER the two link fields (SortOrder = max + 1, so the pair
+            // check is never displaced); inside the same try ⇒ covered by the same compensation.
+            if (attributeKey is not null)
+            {
+                attributeFieldResult = await _mediator.Send(new CreateCustomFieldCommand(junction.Id, new CreateCustomFieldRequest(
+                    attributeKey, attributeLabel!, CustomFieldType.Number,
+                    IsRequired: false, IsUnique: false, Rules: null, Options: null,
+                    Relation: null)), cancellationToken);
+                if (attributeFieldResult.IsFailure)
+                    return await CompensateAsync(junction.Id, attributeFieldResult.Error, cancellationToken);
+            }
         }
         catch
         {
@@ -158,10 +188,11 @@ public sealed class CreateManyToManyRelationCommandHandler
 
         // (6) Audit.
         await StudioAudit.SafeLogAsync(_audit, AuditAction, "CustomEntity", junction.Id,
-            null, new { sourceKey = source.Key, targetKey = target.Key, junctionKey }, cancellationToken);
+            null, new { sourceKey = source.Key, targetKey = target.Key, junctionKey, junctionAttributeKey = attributeKey }, cancellationToken);
 
-        var junctionDto = junction with { FieldCount = 2 };
-        return Result.Success(new ManyToManyRelationDto(junctionDto, sourceFieldResult.Value, targetFieldResult.Value));
+        var junctionDto = junction with { FieldCount = attributeFieldResult is null ? 2 : 3 };
+        return Result.Success(new ManyToManyRelationDto(
+            junctionDto, sourceFieldResult.Value, targetFieldResult.Value, attributeFieldResult?.Value));
     }
 
     /// <summary>

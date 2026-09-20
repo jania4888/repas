@@ -380,6 +380,52 @@ public sealed class OllamaSettings
     /// </summary>
     public bool EnableStudioRecordViews { get; set; }
 
+    /// <summary>Active les workflows Studio (moteur d'étapes, API de conception). Flag off ⇒ routes 404, déclencheurs inertes.</summary>
+    public bool EnableStudioWorkflows { get; set; } = false;
+
+    /// <summary>Durée max (s) d'un segment d'exécution synchrone du moteur de workflows (borné 1..30).</summary>
+    public int StudioWorkflowMaxSegmentSeconds { get; set; } = 5;
+
+    /// <summary>
+    /// Durée (minutes) du bail posé sur une instance de workflow avant sa reprise (D-01, D-19 : ajouté en
+    /// 4.2c2 — 4.2d le consomme tel quel). Un worker mort sans relâcher son bail laisse l'instance
+    /// récupérable par le reaper après ce délai. Borné 5..120 — voir <see cref="StudioWorkflowLeaseDuration"/>.
+    /// </summary>
+    public int StudioWorkflowLeaseMinutes { get; set; } = 30;
+
+    /// <summary>
+    /// Durée effective du bail de reprise : <see cref="StudioWorkflowLeaseMinutes"/> bornée à 5..120 minutes.
+    /// Source unique partagée par le runner (pose du bail) et le job (reaper) — calculée, jamais liée à la configuration.
+    /// </summary>
+    public TimeSpan StudioWorkflowLeaseDuration => TimeSpan.FromMinutes(Math.Clamp(StudioWorkflowLeaseMinutes, 5, 120));
+
+    /// <summary>
+    /// Active l'outil IA <c>studio_plan_workflow</c> (PR 4.3) : préparation de plans de workflows à
+    /// confirmer. Exige AUSSI <see cref="EnableStudioWorkflows"/> et le flux d'aperçu — règle unique
+    /// <c>StudioAiPlanCreation.WorkflowToolsEnabled</c>. <c>false</c> jusqu'à validation manuelle (QA 86–90).
+    /// </summary>
+    public bool EnableStudioAiWorkflowTools { get; set; } = false;
+
+    /// <summary>
+    /// Taille de lot par tenant et par tick du job <c>studio-workflow-resume</c> (reaper, expirations,
+    /// reprises, purge). Borné 10..500 par le job (4.2d).
+    /// </summary>
+    public int StudioWorkflowResumeBatchSize { get; set; } = 100;
+
+    /// <summary>
+    /// Rétention (jours) des instances de workflow terminales avant purge par le job
+    /// <c>studio-workflow-resume</c>. Borné 30..3650 par le job (4.2d).
+    /// </summary>
+    public int StudioWorkflowRetentionDays { get; set; } = 180;
+
+    /// <summary>
+    /// Taille de lot du balayage d'un déclencheur planifié (4.7b3 / D-47-B05) : au plus ce nombre
+    /// d'enregistrements correspondants sont démarrés par tick et par définition ; si le total dépasse
+    /// le lot, un avertissement est journalisé et la suite est traitée au prochain tick.
+    /// Borné 10..500 par le job. Défaut 100.
+    /// </summary>
+    public int StudioWorkflowScheduledBatchSize { get; set; } = 100;
+
     /// <summary>Cartes maximales chargées par une vue Kanban (au-delà, <c>truncated = true</c>). Défaut 500.</summary>
     public int StudioRecordViewMaxKanbanCards { get; set; } = 500;
 
@@ -389,6 +435,12 @@ public sealed class OllamaSettings
     /// <summary>PR 2.4 — outil IA <c>studio_plan_record_view</c> et <c>entities[].views[]</c> dans les specs système.
     /// Effectif seulement si <see cref="EnableStudioRecordViews"/> et <see cref="EnableStudioAiPlanPreview"/> sont actifs.</summary>
     public bool EnableStudioAiRecordViewTools { get; set; } = false;
+
+    /// <summary>Export/duplication/import de systèmes Studio (PR 3.3).</summary>
+    public bool EnableStudioSystemExport { get; set; } = false;
+
+    /// <summary>Lignes de seed exportées par table (borne).</summary>
+    public int StudioExportMaxSeedRows { get; set; } = 200;
 
     /// <summary>
     /// Budget de tours d'outils quand la requête Studio utilise le modèle avancé (GPU / cloud) :

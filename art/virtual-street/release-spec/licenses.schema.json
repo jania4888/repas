@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "kind": "csv-ledger-schema",
+  "description": "Validated by source/production.py. A review declaration is not automated legal approval. Empty is valid for A0 only, never release-ready.",
+  "columns": [
+    "asset_id", "origin", "author_public", "source_url", "source_version", "sha256",
+    "license_id", "license_url", "license_cost", "commercial_use", "modification",
+    "web_redistribution", "extractable_redistribution", "review_status", "reviewed_on",
+    "reviewer_public", "evidence_ref"
+  ],
+  "enums": {
+    "origin": ["original", "free-third-party"],
+    "license_cost": ["0"],
+    "commercial_use": ["yes", "no", "unknown"],
+    "modification": ["yes", "no", "unknown"],
+    "web_redistribution": ["yes", "no", "unknown"],
+    "extractable_redistribution": ["yes", "no", "unknown"],
+    "review_status": ["pending", "reviewed", "rejected"]
+  },
+  "reviewedRequires": ["author_public", "source_version", "sha256", "license_id", "license_url", "reviewed_on", "reviewer_public", "evidence_ref"],
+  "reviewedRightsMustBeYes": ["commercial_use", "modification", "web_redistribution", "extractable_redistribution"],
+  "evidenceReference": "Opaque restricted-store identifier only; never a contract, local path, personal contact or signed download URL.",
+  "additionalReview": "Verify the exact file and its extractable redistribution, derivative and commercial terms, fonts/web/rasterization where applicable; rights do not replace owner visual consent."
+}

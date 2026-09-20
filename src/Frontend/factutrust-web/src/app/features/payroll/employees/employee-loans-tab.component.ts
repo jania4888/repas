@@ -254,7 +254,7 @@ export class EmployeeLoansTabComponent implements OnInit {
       header: 'Confirmation',
       acceptLabel: 'Annuler le prêt',
       rejectLabel: 'Fermer',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'btn-danger',
       accept: () => this.cancel(loan.id)
     });
   }
