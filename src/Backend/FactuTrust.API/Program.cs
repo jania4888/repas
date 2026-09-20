@@ -248,6 +248,30 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromHours(1)
             }));
 
+    options.AddPolicy("platform-tenant-create", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+            ?? context.Connection.RemoteIpAddress?.ToString()
+            ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 100 : 10,
+                Window = TimeSpan.FromMinutes(1)
+            }));
+
+    // Reprise de provisionnement : operation lourde (DROP + CREATE + migrations) et rare.
+    // Plafond volontairement bas, partitionne par operateur.
+    options.AddPolicy("platform-tenant-retry", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+            ?? context.Connection.RemoteIpAddress?.ToString()
+            ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 50 : 3,
+                Window = TimeSpan.FromMinutes(1)
+            }));
+
     options.AddPolicy("password-reset", context =>
         RateLimitPartition.GetFixedWindowLimiter(
             context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
@@ -617,6 +641,21 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 
 // Controllers
 app.MapControllers();
+
+// Drapeaux d'ouverture consignes au demarrage : ce qui est ouvert au public doit etre lisible
+// dans les logs de boot, sans avoir a interroger l'API ni deviner quel appsettings a gagne.
+{
+    var featureLogger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup.Features");
+    var publicRegistration = app.Services.GetRequiredService<IPublicRegistrationFeature>();
+    var accountingFirms = app.Services.GetRequiredService<IAccountingFirmsFeature>();
+
+    featureLogger.LogInformation(
+        "Effective feature flags: PublicRegistration.Company={CompanyEnabled} PublicRegistration.Firm={FirmEnabled} AccountingFirms={AccountingFirmsEnabled} Environment={Environment}",
+        publicRegistration.IsCompanyEnabled,
+        publicRegistration.IsFirmEnabled,
+        accountingFirms.IsEnabled,
+        app.Environment.EnvironmentName);
+}
 
 // Note : l'enregistrement des jobs récurrents Hangfire (anciennement ici, en inline) est
 // désormais effectué de manière résiliente par HangfireRecurringJobsRegistrationService

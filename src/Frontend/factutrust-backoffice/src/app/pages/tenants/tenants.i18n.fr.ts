@@ -16,6 +16,7 @@ export const TENANTS_FR = {
     'Annuaire des entreprises onboardées. Filtrez par abonnement, régime fiscal et statut.',
   'list.actions.export': 'Exporter',
   'list.actions.create': 'Nouvelle entreprise',
+  'list.actions.createFirm': 'Nouveau cabinet comptable',
 
   // ----- KPIs --------------------------------------------------------------
   'kpi.total': 'Entreprises',
@@ -173,7 +174,122 @@ export const TENANTS_FR = {
   'sector.confirm.tenantWarning': 'Cette action modifie la configuration de {tenant}.',
   'sector.toast.apply.success': 'Reconfiguration sectorielle appliquée',
   'sector.toast.preview.error': 'Impossible de calculer la prévisualisation',
-  'sector.readonly.hint': 'Vous n’avez pas la permission de modifier la configuration sectorielle.'
+  'sector.readonly.hint': 'Vous n’avez pas la permission de modifier la configuration sectorielle.',
+
+  // ---------------------------------------------------------------------------
+  // Assistant de creation d'entreprise (/tenants/new/company)
+  // ---------------------------------------------------------------------------
+  'create.title': 'Nouvelle entreprise',
+  'create.subtitle': 'Création d’un dossier client par un opérateur plateforme.',
+  'create.step.sector': 'Secteur',
+  'create.step.identity': 'Identité',
+  'create.step.modules': 'Modules',
+  'create.step.address': 'Adresse & forfait',
+  'create.step.recap': 'Récapitulatif',
+
+  'create.catalog.loading': 'Chargement du catalogue sectoriel…',
+  'create.catalog.disabled':
+    'La configuration sectorielle est désactivée sur cette instance : le dossier sera créé avec la configuration par défaut.',
+  'create.catalog.fallback':
+    'Catalogue sectoriel indisponible — recommandations par défaut. Vérifiez la sélection avant de valider.',
+
+  'create.field.segment': 'Type de société',
+  'create.field.domain': 'Domaine d’activité',
+  'create.field.email': 'Email de l’administrateur',
+  'create.field.password': 'Mot de passe',
+  'create.field.confirmPassword': 'Confirmation du mot de passe',
+  'create.field.firstName': 'Prénom',
+  'create.field.lastName': 'Nom',
+  'create.field.companyName': 'Raison sociale',
+  'create.field.nif': 'Matricule fiscal (NIF)',
+  'create.field.companyEmail': 'Email de la société',
+  'create.field.phone': 'Téléphone',
+  'create.field.street': 'Rue',
+  'create.field.streetLine2': 'Complément d’adresse',
+  'create.field.city': 'Ville',
+  'create.field.governorate': 'Gouvernorat',
+  'create.field.postalCode': 'Code postal',
+  'create.field.taxRegime': 'Régime fiscal',
+  'create.field.warehouseName': 'Entrepôt par défaut',
+  'create.field.website': 'Site web',
+  'create.field.plan': 'Forfait',
+
+  'create.placeholder.segment': 'Sélectionnez un type de société',
+  'create.placeholder.domain': 'Sélectionnez un domaine',
+  'create.placeholder.governorate': 'Sélectionnez un gouvernorat',
+  'create.placeholder.nif': '1234567/A/B/C/000',
+
+  'create.hint.segmentFirst': 'Choisissez d’abord un type de société.',
+  'create.hint.password':
+    'Le mot de passe est défini par vous et n’est envoyé à personne. Transmettez-le au dirigeant par un canal sûr.',
+  'create.hint.plan':
+    'Le forfait reste modifiable à tout moment depuis la fiche entreprise.',
+  'create.hint.warehouse': 'Pré-rempli d’après le type de société ; modifiable.',
+
+  'create.modules.core': 'Modules du socle',
+  'create.modules.core.hint': 'Toujours actifs, non modifiables.',
+  'create.modules.recommended': 'Modules recommandés',
+  'create.modules.optional': 'Autres modules',
+  'create.modules.premium': 'Forfait supérieur requis',
+  'create.modules.autoAdded': 'Prérequis ajouté automatiquement : {modules}',
+  'create.modules.blocked': 'Impossible de retirer ce module : {modules} en dépend(ent).',
+
+  'create.recap.sector': 'Secteur',
+  'create.recap.identity': 'Identité',
+  'create.recap.modules': 'Modules activés',
+  'create.recap.address': 'Adresse & forfait',
+  'create.recap.edit': 'Modifier',
+  'create.recap.none': 'Non renseigné',
+  'create.confirm.checkbox':
+    'Je confirme créer ce dossier pour le compte du client, avec les informations ci-dessus.',
+
+  'create.action.prev': 'Précédent',
+  'create.action.next': 'Suivant',
+  'create.action.submit': 'Créer l’entreprise',
+  'create.action.cancel': 'Annuler',
+
+  'create.success.title': 'Entreprise créée',
+  'create.success.titlePending': 'Entreprise enregistrée — base de données en cours de création',
+  'create.success.titleFailed': 'Entreprise enregistrée — la création de la base a échoué',
+  'create.success.pendingHint':
+    'Le dossier existe mais sa base n’est pas encore utilisable : l’utilisateur ne peut pas encore se connecter.',
+  'create.success.failedHint':
+    'Le dossier existe mais sa base n’a pas pu être créée. Relancez le provisionnement depuis la fiche entreprise.',
+  'create.success.credentials':
+    'Communiquez ces identifiants au dirigeant. Le compte est pré-vérifié : aucun email n’a été envoyé par la plateforme.',
+  'create.success.managerEmail': 'Identifiant',
+  'create.success.password': 'Mot de passe : celui que vous venez de saisir.',
+  'create.success.warnings': 'Avertissements',
+  'create.success.openTenant': 'Voir la fiche entreprise',
+  'create.success.createAnother': 'Créer une autre entreprise',
+  'create.success.reference': 'Référence support',
+
+  'create.error.title': 'La création a échoué',
+  'create.error.stepInvalid': 'Corrigez les champs en erreur avant de continuer.',
+
+  // ---------------------------------------------------------------------------
+  // Statut de provisionnement
+  // ---------------------------------------------------------------------------
+  'provisioning.ready': 'Prêt',
+  'provisioning.pending': 'Provisionnement…',
+  'provisioning.failed': 'Échec de provisionnement',
+
+  // ---------------------------------------------------------------------------
+  // Creation de cabinet comptable (/tenants/new/firm)
+  // ---------------------------------------------------------------------------
+  'createFirm.title': 'Nouveau cabinet comptable',
+  'createFirm.subtitle': 'Création d’un cabinet par un opérateur plateforme.',
+  'createFirm.section.manager': 'Compte responsable',
+  'createFirm.section.firm': 'Cabinet',
+  'createFirm.section.address': 'Adresse',
+  'createFirm.field.firmName': 'Nom du cabinet',
+  'createFirm.field.firmEmail': 'Email du cabinet',
+  'createFirm.field.description': 'Description',
+  'createFirm.field.registrationNumber': 'Numéro d’inscription à l’ordre',
+  'createFirm.field.directory': 'Visible dans l’annuaire public',
+  'createFirm.action.submit': 'Créer le cabinet',
+  'createFirm.success.title': 'Cabinet créé',
+  'createFirm.error.title': 'La création du cabinet a échoué',
 } as const satisfies Record<string, string>;
 
 export type TenantsFrKey = keyof typeof TENANTS_FR;

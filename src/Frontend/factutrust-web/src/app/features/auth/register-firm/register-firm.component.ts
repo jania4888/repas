@@ -48,6 +48,10 @@ import {
   trimRequired,
   validateFirmRegisterFormData
 } from '../shared/auth-registration.helpers';
+import {
+  REGISTRATION_FIRM_MODE,
+  type FirmRegistrationSubmitRequest
+} from '@core/registration/registration-wizard-mode';
 
 @Component({
   selector: 'app-register-firm',
@@ -104,6 +108,10 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
   private readonly warehouseContext = inject(WarehouseContextService);
   private readonly errorHandler = inject(ErrorHandlerService);
   readonly errorMessageService = inject(ErrorMessageService);
+  readonly firmMode = inject(REGISTRATION_FIRM_MODE);
+  readonly hidePublicCrossLinks = computed(
+    () => this.firmMode.mode === 'platform' || !!this.firmMode.hidePublicCrossLinks
+  );
 
   readonly loading = signal(false);
   readonly loadingMessage = signal('Création de votre espace cabinet...');
@@ -335,6 +343,40 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
       isPublicInDirectory: formValue.isPublicInDirectory ?? true
     };
 
+    if (this.firmMode.mode === 'platform' && this.firmMode.submitFirm) {
+      this.firmMode
+        .submitFirm(payload as FirmRegistrationSubmitRequest)
+        .pipe(
+          timeout(RegisterFirmComponent.REGISTRATION_TIMEOUT_MS),
+          catchError(err => {
+            if (err instanceof TimeoutError) {
+              return throwError(() => ({
+                status: 0,
+                message: 'La création du cabinet prend plus de temps que prévu.'
+              }));
+            }
+            return throwError(() => err);
+          })
+        )
+        .subscribe({
+          next: result => {
+            this.stopLoading();
+            if (result.success && result.tenantId && this.firmMode.onFirmSuccess) {
+              this.firmMode.onFirmSuccess(result.tenantId);
+            } else if (result.success) {
+              this.error.set('Cabinet créé mais identifiant tenant manquant.');
+            } else {
+              this.error.set(result.errors?.join(', ') ?? result.message ?? 'Création impossible.');
+            }
+          },
+          error: (err: HttpErrorResponse | { status?: number; message?: string }) => {
+            this.stopLoading();
+            this.error.set(this.extractSubmitError(err));
+          }
+        });
+      return;
+    }
+
     this.auth.registerFirm(payload).pipe(
       timeout(RegisterFirmComponent.REGISTRATION_TIMEOUT_MS),
       catchError(err => {
@@ -394,6 +436,19 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
         this.loadingMessage.set('Finalisation en cours, merci de patienter...');
       }
     }, 1_000);
+  }
+
+  private extractSubmitError(err: HttpErrorResponse | { status?: number; message?: string }): string {
+    let errorMessage =
+      err instanceof HttpErrorResponse
+        ? this.errorHandler.extractErrorMessage(err)
+        : 'message' in err && err.message
+          ? err.message
+          : this.errorHandler.extractErrorMessage(err as HttpErrorResponse);
+    if (!errorMessage || errorMessage === 'undefined' || errorMessage.trim() === '') {
+      errorMessage = 'La création du cabinet a échoué. Veuillez réessayer.';
+    }
+    return errorMessage;
   }
 
   private clearLoadingMessageTimer(): void {

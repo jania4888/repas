@@ -414,7 +414,9 @@
         </form>
 
         <div class="login-prompt">
-          <p>Inscription société ? <a routerLink="/auth/register" class="link-primary fw-semibold">Créer un compte entreprise</a></p>
+          @if (!hidePublicCrossLinks()) {
+            <p>Inscription société ? <a routerLink="/auth/register" class="link-primary fw-semibold">Créer un compte entreprise</a></p>
+          }
         </div>
       }
 </app-auth-shell>

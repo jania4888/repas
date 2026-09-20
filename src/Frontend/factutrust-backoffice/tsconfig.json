@@ -5,6 +5,7 @@
     "outDir": "./dist/out-tsc",
     "baseUrl": ".",
     "paths": {
+      "@core/registration/*": ["src/app/core/registration/*"],
       "@core/*": ["src/app/core/*"],
       "@environments/*": ["src/environments/*"]
     },

@@ -407,6 +407,13 @@ export type TaxRegimeValue = 0 | 1 | 2;
 export type SubscriptionPlanValue = 0 | 1 | 2;
 export type SubscriptionStatusValue = 0 | 1 | 2 | 3 | 4 | 5;
 
+/**
+ * Statut de provisionnement de la base d'un tenant, serialise en chaine par l'API.
+ * `Pending` / `Failed` : le dossier existe en base maitre mais sa base n'est pas exploitable,
+ * l'utilisateur ne peut pas se connecter.
+ */
+export type TenantProvisioningStatusValue = 'Ready' | 'Pending' | 'Failed';
+
 export interface PlatformTenantListItemDto {
   tenantId: string;
   companyName: string;
@@ -433,8 +440,10 @@ export interface PlatformTenantListItemDto {
   // ----- Phase 2 (WP-F6 / D8) additions (optionnels, nullable) ------------
   /** Segment sectoriel déclaré à l'onboarding (kebab-case, ex: "commerce"). */
   companySegment?: string | null;
-  /** Domaine d'activité déclaré à l'onboarding (kebab-case, ex: "vente-detail"). */
+  /** Domaine d'activité déclaré à l'onboarding (kebab-case, ex: "alimentation-agroalimentaire"). */
   businessDomain?: string | null;
+  /** Statut de provisionnement ; absent des réponses antérieures à son exposition. */
+  provisioningStatus?: TenantProvisioningStatusValue | null;
 }
 
 export interface PlatformTenantListPageDto {
@@ -519,8 +528,10 @@ export interface PlatformTenantDetailDto {
   // ----- Phase 2 (WP-F6 / D8) additions (optionnels, nullable) ------------
   /** Segment sectoriel déclaré à l'onboarding (kebab-case, ex: "commerce"). */
   companySegment?: string | null;
-  /** Domaine d'activité déclaré à l'onboarding (kebab-case, ex: "vente-detail"). */
+  /** Domaine d'activité déclaré à l'onboarding (kebab-case, ex: "alimentation-agroalimentaire"). */
   businessDomain?: string | null;
+  /** Statut de provisionnement ; absent des réponses antérieures à son exposition. */
+  provisioningStatus?: TenantProvisioningStatusValue | null;
 }
 
 export interface SubscriptionDto {

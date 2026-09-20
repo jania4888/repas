@@ -37,6 +37,7 @@ public sealed class ProductBarcodeUniquenessTests
     private readonly Mock<IProductCategoryRepository> _categories = new();
     private readonly Mock<ISupplierRepository> _suppliers = new();
     private readonly Mock<IStockItemRepository> _stockItems = new();
+    private readonly Mock<IWarehouseRepository> _warehouses = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<ICurrentUser> _currentUser = new();
     private readonly Mock<IAuditService> _audit = new();
@@ -91,6 +92,7 @@ public sealed class ProductBarcodeUniquenessTests
 
     private CreateProductCommandHandler CreateHandler(bool extended = true) =>
         new(_products.Object, _categories.Object, _suppliers.Object,
+            _stockItems.Object, _warehouses.Object,
             _unitOfWork.Object, _currentUser.Object, _audit.Object, _tenant.Object,
             Traceability(), Barcodes(extended));
 
@@ -183,6 +185,7 @@ public sealed class ProductBarcodeUniquenessTests
 
         return new UpdateProductCommandHandler(
             _products.Object, _categories.Object, _suppliers.Object, _stockItems.Object,
+            _warehouses.Object,
             _unitOfWork.Object, _currentUser.Object, _audit.Object, Traceability(), Barcodes());
     }
 

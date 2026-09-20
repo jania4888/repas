@@ -216,7 +216,9 @@
       <div class="login-prompt">
         <p>Vous avez déjà un compte ? <a routerLink="/auth/login" class="link-primary fw-semibold">Connectez-vous</a></p>
         @if (environment.accountingFirmsEnabled) {
-          <p class="mt-2">Cabinet comptable ? <a routerLink="/auth/register-firm" class="link-primary fw-semibold">Inscription cabinet</a></p>
+          @if (!hidePublicCrossLinks()) {
+            <p class="mt-2">Cabinet comptable ? <a routerLink="/auth/register-firm" class="link-primary fw-semibold">Inscription cabinet</a></p>
+          }
         }
       </div>
       }

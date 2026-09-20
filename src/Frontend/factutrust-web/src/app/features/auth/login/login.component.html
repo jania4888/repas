@@ -109,12 +109,23 @@
     </div>
   </form>
 
-  <div class="login-footer" aria-label="Création de compte">
-    <p class="login-footer__intro">Pas encore de compte ?</p>
-    <a routerLink="/auth/register" class="login-footer__cta">Créer un compte gratuitement</a>
-    @if (environment.accountingFirmsEnabled) {
-      <p class="login-footer__intro login-footer__intro--block">Vous êtes un cabinet comptable ?</p>
-      <a routerLink="/auth/register-firm" class="login-footer__cta login-footer__cta--secondary">Créer un compte cabinet</a>
-    }
-  </div>
+  @if (registrationClosedNotice()) {
+    <p-message severity="info" [text]="registrationClosedNotice()!" styleClass="w-full mt-3" />
+  }
+  @if (showPublicRegistrationLinks()) {
+    <div class="login-footer" aria-label="Création de compte">
+      <p class="login-footer__intro">Pas encore de compte ?</p>
+      @if (environment.publicRegistration.companyEnabled) {
+        <a routerLink="/auth/register" class="login-footer__cta">Créer un compte gratuitement</a>
+      }
+      @if (environment.accountingFirmsEnabled && environment.publicRegistration.firmEnabled) {
+        <p class="login-footer__intro login-footer__intro--block">Vous êtes un cabinet comptable ?</p>
+        <a routerLink="/auth/register-firm" class="login-footer__cta login-footer__cta--secondary">Créer un compte cabinet</a>
+      }
+    </div>
+  } @else if (!registrationClosedNotice()) {
+    <p class="login-footer__intro login-footer__intro--block">
+      L’ouverture de compte est réservée à l’équipe InstaFact. Contactez le support pour accéder à la plateforme.
+    </p>
+  }
 </app-auth-shell>

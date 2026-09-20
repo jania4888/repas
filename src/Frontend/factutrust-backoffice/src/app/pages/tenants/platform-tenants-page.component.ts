@@ -38,6 +38,7 @@ import { FtChipComponent } from '@core/ui/chip/ft-chip.component';
 import { FtEmptyStateComponent } from '@core/ui/empty-state/ft-empty-state.component';
 import { FtSkeletonComponent } from '@core/ui/skeleton/ft-skeleton.component';
 import { FtCellTenantComponent } from '@core/ui/table-cells/ft-cell-tenant.component';
+import { FtBadgeComponent } from '@core/ui/badge/ft-badge.component';
 import { FtCellMoneyComponent } from '@core/ui/table-cells/ft-cell-money.component';
 import { FtCellRelativeDateComponent } from '@core/ui/table-cells/ft-cell-relative-date.component';
 import { FtCellStatusComponent } from '@core/ui/table-cells/ft-cell-status.component';
@@ -72,6 +73,7 @@ interface ActiveChip {
     FtChipComponent,
     FtEmptyStateComponent,
     FtSkeletonComponent,
+    FtBadgeComponent,
     FtCellTenantComponent,
     FtCellMoneyComponent,
     FtCellRelativeDateComponent,
@@ -91,13 +93,22 @@ interface ActiveChip {
           pTooltip="Export CSV — bientôt"
           tooltipPosition="bottom"
         />
-        <p-button
-          [label]="t('list.actions.create')"
-          icon="pi pi-plus"
-          [disabled]="true"
-          pTooltip="Onboarding manuel — bientôt"
-          tooltipPosition="bottom"
-        />
+        @if (canCreateTenant()) {
+          <p-splitButton
+            [label]="t('list.actions.create')"
+            icon="pi pi-plus"
+            [model]="createTenantMenuItems()"
+            (onClick)="goCreateCompany()"
+          />
+        } @else {
+          <p-button
+            [label]="t('list.actions.create')"
+            icon="pi pi-plus"
+            [disabled]="true"
+            pTooltip="Permission platform.tenants:write requise"
+            tooltipPosition="bottom"
+          />
+        }
       </ng-container>
     </ft-page-header>
 
@@ -315,6 +326,13 @@ interface ActiveChip {
               [email]="row.companyEmail"
               [seed]="row.tenantId"
             />
+            <!-- Affiche uniquement l'anomalie : un dossier Pending/Failed existe mais sa base
+                 n'est pas exploitable. Le cas nominal reste invisible pour ne pas alourdir la table. -->
+            @if (row.provisioningStatus === 'Pending') {
+              <ft-badge tone="warning" size="sm">{{ t('provisioning.pending') }}</ft-badge>
+            } @else if (row.provisioningStatus === 'Failed') {
+              <ft-badge tone="danger" size="sm">{{ t('provisioning.failed') }}</ft-badge>
+            }
           </td>
           <td><code class="cell-mono">{{ row.nif ?? '—' }}</code></td>
           <td>{{ row.taxRegimeDisplay }}</td>
@@ -466,6 +484,26 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
 
   protected t(key: keyof typeof TENANTS_FR): string {
     return TENANTS_FR[key];
+  }
+
+  readonly canCreateTenant = computed(
+    () => this.permissions.isLoaded() && this.permissions.has(PlatformPermission.TenantsWrite)
+  );
+
+  createTenantMenuItems(): MenuItem[] {
+    return [
+      {
+        label: TENANTS_FR['list.actions.createFirm'],
+        icon: 'pi pi-briefcase',
+        command: () => {
+          void this.router.navigate(['/tenants/new/firm']);
+        }
+      }
+    ];
+  }
+
+  goCreateCompany(): void {
+    void this.router.navigate(['/tenants/new/company']);
   }
 
   // ----- Filter state (signals) -----

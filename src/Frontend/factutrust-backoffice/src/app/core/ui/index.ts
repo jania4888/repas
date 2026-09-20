@@ -23,6 +23,8 @@ export type { FtSkeletonShape } from './skeleton/ft-skeleton.component';
 
 export { FtStatusDotComponent } from './status-dot/ft-status-dot.component';
 
+export { FtFieldErrorComponent } from './field-error/ft-field-error.component';
+
 // Layout/structure
 export { FtPageHeaderComponent } from './page-header/ft-page-header.component';
 export { FtBreadcrumbComponent } from './breadcrumb/ft-breadcrumb.component';

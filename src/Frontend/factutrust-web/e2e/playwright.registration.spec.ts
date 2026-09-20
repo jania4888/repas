@@ -73,6 +73,10 @@ async function checkBackendAvailable(page: Page): Promise<{ available: boolean; 
 }
 
 test.describe('Tests Playwright - Inscription FactuTrust (wizard 4 étapes)', () => {
+  test.skip(
+    () => process.env['E2E_PUBLIC_REGISTRATION'] === 'false',
+    'Public registration disabled (staging build)'
+  );
   test.beforeEach(async ({ page }) => {
     await page.goto('/auth/register');
     await page.waitForSelector('form', { timeout: 15000 });

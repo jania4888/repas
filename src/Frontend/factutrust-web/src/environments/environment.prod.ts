@@ -41,5 +41,10 @@ export const environment = {
     /** Impression d'étiquettes. OFF tant que Features:Barcodes:LabelPrintingEnabled l'est côté API. */
     barcodeLabelPrinting: false
   },
-  productOnboardingEnabled: true
+  productOnboardingEnabled: true,
+  /** Staging/production : inscription self-service désactivée (création via backoffice). */
+  publicRegistration: {
+    companyEnabled: false,
+    firmEnabled: false
+  }
 };

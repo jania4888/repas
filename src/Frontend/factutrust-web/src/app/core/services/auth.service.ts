@@ -65,7 +65,11 @@ export type RegistrationWarningCode =
   | 'MODULES_DENIED_BY_PLAN'
   | 'MODULES_ACTIVATION_FAILED'
   | 'MODULES_IGNORED_AT_REGISTRATION'
+  | 'SUBSCRIPTION_PLAN_NOT_APPLIED'
   | 'UNKNOWN';
+
+/** Sévérités stables (miroir de `RegistrationWarningSeverities` côté API). */
+export type RegistrationWarningSeverity = 'info' | 'warning';
 
 /**
  * Avertissement non bloquant typé (miroir de `RegistrationWarningDto` côté API).
@@ -75,7 +79,80 @@ export type RegistrationWarningCode =
 export interface RegistrationWarningDetail {
   code: RegistrationWarningCode;
   message: string;
-  severity: 'info' | 'warning';
+  severity: RegistrationWarningSeverity;
+}
+
+/**
+ * Table d'appartenance dérivée de l'union. `Record<RegistrationWarningCode, true>` force le
+ * compilateur à exiger une entrée par membre : ajouter un code à `RegistrationWarningCode`
+ * sans l'inscrire ici ne compile pas, ce qui empêche l'union de redériver du backend en silence.
+ */
+const REGISTRATION_WARNING_CODES: Readonly<Record<RegistrationWarningCode, true>> = {
+  SECTOR_SELECTION_IGNORED: true,
+  NIF_SEGMENT_MISMATCH: true,
+  MODULES_SELECTION_IGNORED: true,
+  MODULES_DENIED_BY_PLAN: true,
+  MODULES_ACTIVATION_FAILED: true,
+  MODULES_IGNORED_AT_REGISTRATION: true,
+  SUBSCRIPTION_PLAN_NOT_APPLIED: true,
+  UNKNOWN: true
+};
+
+function normalizeRegistrationWarningCode(raw: unknown): RegistrationWarningCode {
+  if (typeof raw !== 'string') {
+    return 'UNKNOWN';
+  }
+  const s = raw.trim();
+  if (!s) {
+    return 'UNKNOWN';
+  }
+  // `hasOwnProperty` et non `in` : `'constructor'` ne doit pas passer pour un code connu.
+  if (Object.prototype.hasOwnProperty.call(REGISTRATION_WARNING_CODES, s)) {
+    return s as RegistrationWarningCode;
+  }
+  console.warn('[AuthService] Unknown registration warning code; degrading to UNKNOWN:', s);
+  return 'UNKNOWN';
+}
+
+/** Forme brute d'un avertissement tel qu'il arrive du réseau (ensemble OUVERT, non narrowé). */
+export interface RawRegistrationWarning {
+  code?: unknown;
+  message?: unknown;
+  severity?: unknown;
+}
+
+/**
+ * Narrowing UNIQUE des avertissements d'inscription. Le contrat réseau est un ensemble OUVERT
+ * (`{ code: string; severity: string; message: string }` : le serveur peut ajouter un code sans
+ * casser le client) alors que l'UI branche sur une union fermée — tout ce qui entre passe donc
+ * par ici, y compris `warningDetails`, qui n'est typé qu'à l'interface mais reste du JSON.
+ *
+ * Replis : message vide/absent ⇒ `null` (rien à afficher) ; code inconnu ⇒ `UNKNOWN` (le message
+ * reste affiché, seule l'action ciblée est perdue) ; sévérité inconnue ⇒ `warning`, le repli le
+ * plus visible — on ne dégrade jamais un avis en `info` par accident.
+ */
+export function normalizeRegistrationWarning(
+  raw: RawRegistrationWarning | null | undefined
+): RegistrationWarningDetail | null {
+  const message = typeof raw?.message === 'string' ? raw.message : '';
+  if (!message.trim()) {
+    return null;
+  }
+
+  return {
+    code: normalizeRegistrationWarningCode(raw?.code),
+    message,
+    severity: raw?.severity === 'info' ? 'info' : 'warning'
+  };
+}
+
+/** Narrowing d'une liste brute : mêmes replis, entrées sans message écartées. */
+export function toRegistrationWarningList(
+  raw: readonly (RawRegistrationWarning | null | undefined)[] | null | undefined
+): RegistrationWarningDetail[] {
+  return (raw ?? [])
+    .map(normalizeRegistrationWarning)
+    .filter((w): w is RegistrationWarningDetail => w !== null);
 }
 
 export interface AuthResponse {
@@ -109,13 +186,13 @@ export function toRegistrationWarnings(response: AuthResponse | null | undefined
     return [];
   }
 
-  if (response.warningDetails?.length) {
-    return response.warningDetails.filter(w => !!w?.message?.trim());
-  }
-
-  return (response.warnings ?? [])
-    .filter(message => !!message?.trim())
-    .map(message => ({ code: 'UNKNOWN' as const, message, severity: 'warning' as const }));
+  // Les deux contrats convergent : une entrée héritée est un avertissement sans code ni sévérité,
+  // que `normalizeRegistrationWarning` ramène à `UNKNOWN` / `warning`.
+  return toRegistrationWarningList(
+    response.warningDetails?.length
+      ? response.warningDetails
+      : (response.warnings ?? []).map(message => ({ message }))
+  );
 }
 
 export interface ApiResponse<T> {

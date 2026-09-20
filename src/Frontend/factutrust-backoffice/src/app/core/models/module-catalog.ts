@@ -1,5 +1,5 @@
 /**
- * Phase 2 (WP-F6) — Catalogue centralisé des modules `AppModule` (mirror backend, valeurs 0–16).
+ * Phase 2 (WP-F6) — Catalogue centralisé des modules `AppModule` (mirror backend, valeurs 0–17).
  *
  * Extrait de la copie précédemment dupliquée dans `tenant-modules-tab.component.ts` afin que
  * les nouveaux écrans « Règles sectorielles » et le tab « Configuration sectorielle » du tenant
@@ -27,7 +27,8 @@ export const MODULE_CATALOG: ModuleCatalogOption[] = [
   { value: 13, label: 'Studio (low-code)' },
   { value: 14, label: 'RH & Paie' },
   { value: 15, label: 'Honoraires' },
-  { value: 16, label: 'Projets' }
+  { value: 16, label: 'Projets' },
+  { value: 17, label: 'Contrats récurrents' }
 ];
 
 /** Résout le libellé FR d'un module par son id ; retombe sur `Module {id}` si inconnu. */

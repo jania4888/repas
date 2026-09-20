@@ -37,6 +37,15 @@ public sealed record PlatformTenantListItemDto
     /// </summary>
     public decimal? MrrTnd { get; init; }
 
+    /// <summary>
+    /// Statut de provisionnement de la base du tenant. Additif et par défaut
+    /// <see cref="TenantProvisioningStatus.Ready"/> (= 0), donc les tenants antérieurs au saga en
+    /// deux temps se lisent « Prêt », ce qui est correct. Un tenant <c>Pending</c> ou
+    /// <c>Failed</c> existe en base maître mais n'a pas de base exploitable : son utilisateur ne
+    /// peut pas se connecter.
+    /// </summary>
+    public TenantProvisioningStatus ProvisioningStatus { get; init; }
+
     // ----- Phase 2 additions (plan §WP-B8, D8) — nullable + additive -----------------
     /// <summary>Tenant sector classification (null for legacy/firm tenants).</summary>
     public string? CompanySegment { get; init; }
@@ -125,6 +134,15 @@ public sealed record PlatformTenantDetailDto
 
     /// <summary>Filled by the API layer after checking tenant database migrations.</summary>
     public bool HasMigrationsApplied { get; init; }
+
+    /// <summary>
+    /// Statut de provisionnement de la base du tenant. Additif et par défaut
+    /// <see cref="TenantProvisioningStatus.Ready"/> (= 0), donc les tenants antérieurs au saga en
+    /// deux temps se lisent « Prêt », ce qui est correct. Un tenant <c>Pending</c> ou
+    /// <c>Failed</c> existe en base maître mais n'a pas de base exploitable : son utilisateur ne
+    /// peut pas se connecter.
+    /// </summary>
+    public TenantProvisioningStatus ProvisioningStatus { get; init; }
 
     // ----- Phase 2 additions (plan §WP-B8, D8) — nullable + additive -----------------
     /// <summary>Tenant sector classification (null for legacy/firm tenants).</summary>

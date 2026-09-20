@@ -7,7 +7,6 @@ using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.ValueObjects;
 using DomainEmail = FactuTrust.Domain.ValueObjects.Email;
 using FactuTrust.Infrastructure.Persistence;
-using FactuTrust.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -16,10 +15,14 @@ namespace FactuTrust.Infrastructure.Services;
 
 public sealed class AccountingFirmRegistrationService : IAccountingFirmRegistrationService
 {
+    private const string DuplicateNifMessage =
+        "Une société avec ce matricule fiscal existe déjà. Contactez le support si vous pensez qu'il s'agit d'une erreur.";
+
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly MasterDbContext _masterContext;
     private readonly ITenantService _tenantService;
     private readonly ITenantAuthTokenService _tokenService;
+    private readonly ISubscriptionAdminService _subscriptionAdminService;
     private readonly ILogger<AccountingFirmRegistrationService> _logger;
 
     public AccountingFirmRegistrationService(
@@ -27,17 +30,20 @@ public sealed class AccountingFirmRegistrationService : IAccountingFirmRegistrat
         MasterDbContext masterContext,
         ITenantService tenantService,
         ITenantAuthTokenService tokenService,
+        ISubscriptionAdminService subscriptionAdminService,
         ILogger<AccountingFirmRegistrationService> logger)
     {
         _userManager = userManager;
         _masterContext = masterContext;
         _tenantService = tenantService;
         _tokenService = tokenService;
+        _subscriptionAdminService = subscriptionAdminService;
         _logger = logger;
     }
 
     public async Task<AccountingFirmRegistrationResult> RegisterAsync(
         RegisterAccountingFirmDto dto,
+        AccountingFirmRegistrationContext context,
         CancellationToken cancellationToken = default)
     {
         var correlationId = Guid.NewGuid().ToString("N");
@@ -64,14 +70,23 @@ public sealed class AccountingFirmRegistrationService : IAccountingFirmRegistrat
 
         var emailCheckSw = Stopwatch.StartNew();
         var existingUser = await _userManager.FindByEmailAsync(dto.Email);
-        LogStep("EmailPrecheck", emailCheckSw.ElapsedMilliseconds, null, correlationId);
+        LogStep("EmailPrecheck", emailCheckSw.ElapsedMilliseconds, null, correlationId, context);
         if (existingUser is not null)
             return AccountingFirmRegistrationResult.DuplicateEmailFailure();
+
+        var nifValue = nifResult.Value.Value;
+        var nifExists = await _masterContext.Tenants.AsNoTracking()
+            .AnyAsync(t => t.IsActive && t.NIF.Value == nifValue, cancellationToken);
+        if (nifExists)
+            return AccountingFirmRegistrationResult.ConflictNifFailure(DuplicateNifMessage);
 
         string? provisionedDatabaseName = null;
         Guid? tenantId = null;
 
         await using var transaction = await _masterContext.Database.BeginTransactionAsync(cancellationToken);
+
+        Tenant tenant;
+        ApplicationUser user;
 
         try
         {
@@ -89,7 +104,7 @@ public sealed class AccountingFirmRegistrationService : IAccountingFirmRegistrat
                 return AccountingFirmRegistrationResult.ValidationFailure(tenantResult.Error.Description);
             }
 
-            var tenant = tenantResult.Value;
+            tenant = tenantResult.Value;
             tenantId = tenant.Id;
             provisionedDatabaseName = tenant.DatabaseName;
 
@@ -118,16 +133,16 @@ public sealed class AccountingFirmRegistrationService : IAccountingFirmRegistrat
 
             _masterContext.AccountingFirmProfiles.Add(profileResult.Value);
             await _masterContext.SaveChangesAsync(cancellationToken);
-            LogStep("MasterEntities", masterSw.ElapsedMilliseconds, tenant.Id, correlationId);
+            LogStep("MasterEntities", masterSw.ElapsedMilliseconds, tenant.Id, correlationId, context);
 
-            var user = new ApplicationUser
+            user = new ApplicationUser
             {
                 UserName = dto.Email,
                 Email = dto.Email,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 TenantId = tenant.Id,
-                EmailConfirmed = true
+                EmailConfirmed = context.ForceEmailConfirmed
             };
             user.ApplyNewInteractiveProductOnboarding();
 
@@ -140,31 +155,43 @@ public sealed class AccountingFirmRegistrationService : IAccountingFirmRegistrat
                 return AccountingFirmRegistrationResult.ValidationFailure(errorMessage);
             }
 
-            await _userManager.AddToRoleAsync(user, UserRole.FirmManager.ToString());
-            LogStep("IdentityCreate", identitySw.ElapsedMilliseconds, tenant.Id, correlationId);
+            // Aligne sur le chemin entreprise : un gerant sans role ne peut pas utiliser son
+            // espace cabinet. Echouer ici est sans risque de base orpheline, la creation de la
+            // base intervient quelques lignes plus bas.
+            var addToRoleResult = await _userManager.AddToRoleAsync(user, UserRole.FirmManager.ToString());
+            if (!addToRoleResult.Succeeded)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                _logger.LogError(
+                    "Firm registration failed: could not assign the {Role} role to {Email}. Source={Source} CorrelationId={CorrelationId} Errors={Errors}",
+                    UserRole.FirmManager,
+                    LogSanitizer.MaskEmail(dto.Email),
+                    context.Source,
+                    correlationId,
+                    string.Join(" | ", addToRoleResult.Errors.Select(e => e.Code)));
+
+                return AccountingFirmRegistrationResult.ValidationFailure(
+                    IdentityErrorTranslator.TranslateToFrench(addToRoleResult.Errors));
+            }
+
+            LogStep("IdentityCreate", identitySw.ElapsedMilliseconds, tenant.Id, correlationId, context);
 
             var provisionSw = Stopwatch.StartNew();
             await _tenantService.CreateAccountingFirmDatabaseAsync(tenant.Id, tenant.DatabaseName, cancellationToken);
-            LogStep("DatabaseProvision", provisionSw.ElapsedMilliseconds, tenant.Id, correlationId);
+            LogStep("DatabaseProvision", provisionSw.ElapsedMilliseconds, tenant.Id, correlationId, context);
 
             await _masterContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
-
-            var tokenSw = Stopwatch.StartNew();
-            var tokens = await _tokenService.GenerateTokensAsync(user.Id, tenant.Id, cancellationToken: cancellationToken);
-            LogStep("TokenGeneration", tokenSw.ElapsedMilliseconds, tenant.Id, correlationId);
-
-            totalSw.Stop();
-            LogStep("Total", totalSw.ElapsedMilliseconds, tenant.Id, correlationId);
-
-            _logger.LogInformation(
-                "Accounting firm {FirmName} registered by {Email}. CorrelationId={CorrelationId} DurationMs={DurationMs}",
-                dto.FirmName,
+        }
+        catch (DbUpdateException ex) when (IsNifUniqueViolation(ex))
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            _logger.LogWarning(
+                "Firm registration rejected: duplicate NIF for {Email}. Source={Source} CorrelationId={CorrelationId}",
                 LogSanitizer.MaskEmail(dto.Email),
-                correlationId,
-                totalSw.ElapsedMilliseconds);
-
-            return AccountingFirmRegistrationResult.Ok(tokens, totalSw.ElapsedMilliseconds);
+                context.Source,
+                correlationId);
+            return AccountingFirmRegistrationResult.ConflictNifFailure(DuplicateNifMessage);
         }
         catch (Exception ex)
         {
@@ -175,21 +202,122 @@ public sealed class AccountingFirmRegistrationService : IAccountingFirmRegistrat
 
             _logger.LogError(
                 ex,
-                "Firm registration failed for {Email}. CorrelationId={CorrelationId}",
+                "Firm registration failed for {Email}. Source={Source} CorrelationId={CorrelationId}",
                 LogSanitizer.MaskEmail(dto.Email),
+                context.Source,
                 correlationId);
 
             return AccountingFirmRegistrationResult.InternalFailure(correlationId);
         }
+
+        var warnings = new List<RegistrationWarningDto>();
+
+        // Phase 3 : forfait applique APRES le commit, via le service d'administration existant.
+        // Un echec n'invalide jamais un cabinet deja cree.
+        await ApplySubscriptionPlanAsync(tenant.Id, context, warnings, correlationId, cancellationToken);
+
+        AuthResponseDto? tokens = null;
+        if (context.IssueAuthTokens)
+        {
+            var tokenSw = Stopwatch.StartNew();
+            tokens = await _tokenService.GenerateTokensAsync(user.Id, tenant.Id, cancellationToken: cancellationToken);
+            LogStep("TokenGeneration", tokenSw.ElapsedMilliseconds, tenant.Id, correlationId, context);
+        }
+
+        totalSw.Stop();
+        LogStep("Total", totalSw.ElapsedMilliseconds, tenant.Id, correlationId, context);
+
+        if (context.PlatformActorUserId is not null)
+        {
+            _logger.LogInformation(
+                "Platform tenant provision: actor={ActorId} tenant={TenantId} kind=AccountingFirm source={Source} CorrelationId={CorrelationId} DurationMs={DurationMs}",
+                context.PlatformActorUserId,
+                tenant.Id,
+                context.Source,
+                correlationId,
+                totalSw.ElapsedMilliseconds);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "Accounting firm {FirmName} registered by {Email}. CorrelationId={CorrelationId} DurationMs={DurationMs}",
+                dto.FirmName,
+                LogSanitizer.MaskEmail(dto.Email),
+                correlationId,
+                totalSw.ElapsedMilliseconds);
+        }
+
+        var provision = new PlatformProvisionTenantResultDto
+        {
+            TenantId = tenant.Id,
+            TenantKind = TenantKind.AccountingFirm,
+            DisplayName = dto.FirmName,
+            ProvisioningStatus = tenant.ProvisioningStatus,
+            ManagerUserId = user.Id,
+            ManagerEmail = user.Email!,
+            RegistrationWarnings = warnings,
+            CorrelationId = correlationId
+        };
+
+        return AccountingFirmRegistrationResult.Ok(tokens, provision, totalSw.ElapsedMilliseconds);
     }
 
-    private void LogStep(string step, long durationMs, Guid? tenantId, string correlationId)
+    private async Task ApplySubscriptionPlanAsync(
+        Guid tenantId,
+        AccountingFirmRegistrationContext context,
+        List<RegistrationWarningDto> warnings,
+        string correlationId,
+        CancellationToken cancellationToken)
+    {
+        if (context.Plan == SubscriptionPlan.Free)
+            return;
+
+        try
+        {
+            var planResult = await _subscriptionAdminService.ChangePlanAsync(tenantId, context.Plan, cancellationToken);
+            if (planResult.IsSuccess)
+                return;
+
+            _logger.LogError(
+                "Subscription plan {Plan} could not be applied to firm tenant {TenantId}: {Reason}. Source={Source} CorrelationId={CorrelationId}",
+                context.Plan,
+                tenantId,
+                planResult.Error.Description,
+                context.Source,
+                correlationId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Subscription plan {Plan} could not be applied to firm tenant {TenantId}. Source={Source} CorrelationId={CorrelationId}",
+                context.Plan,
+                tenantId,
+                context.Source,
+                correlationId);
+        }
+
+        warnings.Add(RegistrationWarningDto.Warning(
+            RegistrationWarningCodes.SubscriptionPlanNotApplied,
+            $"Le cabinet a bien été créé mais le forfait « {context.Plan} » n'a pas pu être appliqué. Ajustez-le depuis la fiche."));
+    }
+
+    private static bool IsNifUniqueViolation(DbUpdateException ex)
+    {
+        if (ex.InnerException is not Microsoft.Data.SqlClient.SqlException sqlEx)
+            return false;
+
+        return (sqlEx.Number is 2601 or 2627) && sqlEx.Message.Contains("IX_Tenants_NIF", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void LogStep(string step, long durationMs, Guid? tenantId, string correlationId, AccountingFirmRegistrationContext context)
     {
         _logger.LogInformation(
-            "FirmRegistration.Step={Step} DurationMs={DurationMs} TenantId={TenantId} CorrelationId={CorrelationId}",
+            "FirmRegistration.Step={Step} DurationMs={DurationMs} TenantId={TenantId} CorrelationId={CorrelationId} Source={Source}",
             step,
             durationMs,
             tenantId,
-            correlationId);
+            correlationId,
+            context.Source);
     }
 }

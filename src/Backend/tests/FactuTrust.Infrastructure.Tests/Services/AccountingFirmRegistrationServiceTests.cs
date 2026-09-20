@@ -28,10 +28,11 @@ public sealed class AccountingFirmRegistrationServiceTests
             db,
             tenantService.Object,
             Mock.Of<ITenantAuthTokenService>(),
+            Mock.Of<ISubscriptionAdminService>(),
             Mock.Of<ILogger<AccountingFirmRegistrationService>>());
 
         var dto = ValidDto() with { Email = "dup@example.com" };
-        var result = await service.RegisterAsync(dto);
+        var result = await service.RegisterAsync(dto, AccountingFirmRegistrationContext.Public());
 
         Assert.False(result.Success);
         Assert.Equal(AccountingFirmRegistrationFailureKind.DuplicateEmail, result.FailureKind);
@@ -51,10 +52,11 @@ public sealed class AccountingFirmRegistrationServiceTests
             db,
             tenantService.Object,
             Mock.Of<ITenantAuthTokenService>(),
+            Mock.Of<ISubscriptionAdminService>(),
             Mock.Of<ILogger<AccountingFirmRegistrationService>>());
 
         var dto = ValidDto() with { Nif = "invalid" };
-        var result = await service.RegisterAsync(dto);
+        var result = await service.RegisterAsync(dto, AccountingFirmRegistrationContext.Public());
 
         Assert.False(result.Success);
         Assert.Equal(AccountingFirmRegistrationFailureKind.Validation, result.FailureKind);

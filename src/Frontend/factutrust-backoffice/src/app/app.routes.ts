@@ -24,6 +24,22 @@ export const routes: Routes = [
           import('./pages/tenants/platform-tenants-page.component').then(m => m.PlatformTenantsPageComponent)
       },
       {
+        path: 'tenants/new/company',
+        canActivate: [platformPermissionGuard(PlatformPermission.TenantsWrite)],
+        loadComponent: () =>
+          import('./pages/tenants/create-company/platform-tenant-create-company-page.component').then(
+            m => m.PlatformTenantCreateCompanyPageComponent
+          )
+      },
+      {
+        path: 'tenants/new/firm',
+        canActivate: [platformPermissionGuard(PlatformPermission.TenantsWrite)],
+        loadComponent: () =>
+          import('./pages/tenants/platform-tenant-create-firm-page.component').then(
+            m => m.PlatformTenantCreateFirmPageComponent
+          )
+      },
+      {
         path: 'tenants/:tenantId',
         loadComponent: () =>
           import('./pages/tenants/platform-tenant-detail-page.component').then(

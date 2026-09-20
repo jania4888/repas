@@ -14,6 +14,9 @@ import { TabsModule } from 'primeng/tabs';
 import { MessageService } from 'primeng/api';
 import { PlatformTenantService } from '@core/services/platform-tenant.service';
 import { PlatformPermissionsService } from '@core/services/platform-permissions.service';
+import { PlatformTenantProvisioningService } from '@core/services/platform-tenant-provisioning.service';
+import { FtConfirmActionComponent } from '@core/ui/confirm-action/ft-confirm-action.component';
+import { TENANTS_FR } from './tenants.i18n.fr';
 import { PlatformDunningService } from '@core/services/platform-dunning.service';
 import {
   DunningOutcomeValue,
@@ -45,7 +48,8 @@ import { FtSkeletonComponent } from '@core/ui/skeleton/ft-skeleton.component';
     TenantModulesTabComponent,
     TenantModalSettingsTabComponent,
     TenantSectorTabComponent,
-    FtSkeletonComponent
+    FtSkeletonComponent,
+    FtConfirmActionComponent
   ],
   template: `
     <p-button
@@ -72,6 +76,41 @@ import { FtSkeletonComponent } from '@core/ui/skeleton/ft-skeleton.component';
           [severity]="d.isPayingSubscriber ? 'success' : 'secondary'"
           [value]="d.isPayingSubscriber ? 'Abonné payant' : 'Non abonné'" />
       </div>
+
+      <!-- Le saga de provisionnement se termine APRES le commit des lignes maîtres : un dossier
+           peut donc exister sans base exploitable. Sans ce bandeau, l'anomalie reste invisible et
+           l'utilisateur ne comprend pas pourquoi il ne peut pas se connecter. -->
+      @if (d.provisioningStatus === 'Pending' || d.provisioningStatus === 'Failed') {
+        <div class="provisioning-banner" [class.provisioning-banner--failed]="d.provisioningStatus === 'Failed'">
+          <i class="pi pi-database" aria-hidden="true"></i>
+          <div class="provisioning-text">
+            <strong>
+              {{ d.provisioningStatus === 'Failed' ? tr('provisioning.failed') : tr('provisioning.pending') }}
+            </strong>
+            <span>
+              La base de données de cette entreprise n'est pas opérationnelle : son administrateur ne
+              peut pas se connecter tant que le provisionnement n'a pas abouti.
+            </span>
+          </div>
+          @if (canRetryProvisioning()) {
+            <p-button
+              label="Relancer le provisionnement"
+              icon="pi pi-refresh"
+              size="small"
+              [loading]="retryingProvisioning()"
+              (onClick)="askRetryProvisioning()" />
+          }
+        </div>
+      }
+
+      <ft-confirm-action
+        [(visible)]="retryConfirmVisible"
+        title="Relancer le provisionnement"
+        [description]="'Cette opération recrée la base de données du dossier. Elle est réservée aux dossiers en attente ou en échec.'"
+        variant="destructive"
+        [confirmKeyword]="d.companyName"
+        [busy]="retryingProvisioning()"
+        (confirmed)="confirmRetryProvisioning()" />
 
       <!-- Lot C6 (complément) — Bandeau cycle dunning actif -->
       @if (activeDunning(); as dn) {
@@ -295,6 +334,32 @@ import { FtSkeletonComponent } from '@core/ui/skeleton/ft-skeleton.component';
       }
 
       /* Lot C6 (complément) — Bandeau d'alerte cycle dunning actif */
+      .provisioning-banner {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--ft-warning-border, rgba(187, 128, 9, 0.4));
+        background: var(--ft-warning-surface, rgba(187, 128, 9, 0.16));
+        border-radius: var(--ft-radius, 8px);
+        margin-bottom: var(--ft-space-4, 1rem);
+        color: var(--ft-warning-text, #d29922);
+      }
+      .provisioning-banner--failed {
+        border-color: var(--ft-danger-border, rgba(248, 81, 73, 0.4));
+        background: var(--ft-danger-surface, rgba(248, 81, 73, 0.16));
+        color: var(--ft-danger-text, #f85149);
+      }
+      .provisioning-banner i {
+        font-size: 1.2rem;
+      }
+      .provisioning-text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        flex: 1;
+        font-size: 0.875rem;
+      }
       .dunning-banner {
         display: flex;
         align-items: center;
@@ -453,6 +518,7 @@ export class PlatformTenantDetailPageComponent implements OnInit {
   private readonly dunningApi = inject(PlatformDunningService);
   private readonly messages = inject(MessageService);
   private readonly permissions = inject(PlatformPermissionsService);
+  private readonly provisioning = inject(PlatformTenantProvisioningService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly detail = signal<PlatformTenantDetailDto | null>(null);
@@ -471,6 +537,42 @@ export class PlatformTenantDetailPageComponent implements OnInit {
   }
 
   /** Visible si l'admin a la permission de lire les factures plateforme. */
+  readonly retryConfirmVisible = signal(false);
+  readonly retryingProvisioning = signal(false);
+
+  readonly canRetryProvisioning = computed(() => this.permissions.has(PlatformPermission.TenantsWrite));
+
+  protected tr(key: keyof typeof TENANTS_FR): string {
+    return TENANTS_FR[key];
+  }
+
+  protected askRetryProvisioning(): void {
+    this.retryConfirmVisible.set(true);
+  }
+
+  protected confirmRetryProvisioning(): void {
+    const tenantId = this.detail()?.tenantId;
+    if (!tenantId) return;
+
+    this.retryingProvisioning.set(true);
+    this.provisioning.retryProvisioning(tenantId).subscribe(result => {
+      this.retryingProvisioning.set(false);
+      this.retryConfirmVisible.set(false);
+
+      if (result.success) {
+        this.messages.add({ severity: 'success', summary: 'Provisionnement relancé' });
+        this.load(tenantId);
+        return;
+      }
+
+      this.messages.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: result.message ?? 'La reprise du provisionnement a échoué.'
+      });
+    });
+  }
+
   readonly canSeeInvoices = computed(() => this.permissions.has(PlatformPermission.InvoiceRead));
   /** Visible si l'admin a la permission de gérer les plans (donc les overrides modules). */
   readonly canSeeModules = computed(() => this.permissions.has(PlatformPermission.PlansManage));

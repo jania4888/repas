@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/guards/auth.guard';
 import { accountingFirmsFeatureGuard } from '@core/guards/accounting-firms.guard';
+import { publicRegistrationGuard } from '@core/guards/public-registration.guard';
 import { environment } from '@environments/environment';
 
 export const AUTH_ROUTES: Routes = [
@@ -32,6 +33,7 @@ export const AUTH_ROUTES: Routes = [
   },
   {
     path: 'register',
+    canActivate: [publicRegistrationGuard('company')],
     loadComponent: () =>
       environment.featureFlags.registrationWizardV2
         ? import('./register-wizard/register-wizard.component').then(m => m.RegisterWizardComponent)
@@ -40,7 +42,7 @@ export const AUTH_ROUTES: Routes = [
   },
   {
     path: 'register-firm',
-    canActivate: [accountingFirmsFeatureGuard],
+    canActivate: [publicRegistrationGuard('firm'), accountingFirmsFeatureGuard],
     loadComponent: () => import('./register-firm/register-firm.component').then(m => m.RegisterFirmComponent),
     title: 'Inscription cabinet - InstaFact'
   },

@@ -38,6 +38,14 @@ import { environment } from '@environments/environment';
 export class LoginComponent implements OnInit {
   readonly environment = environment;
   readonly shellConfig = LOGIN_AUTH_SHELL_CONFIG;
+  readonly registrationClosedNotice = signal<string | null>(null);
+
+  showPublicRegistrationLinks(): boolean {
+    const pr = environment.publicRegistration;
+    return (
+      (pr.companyEnabled || (environment.accountingFirmsEnabled && pr.firmEnabled)) ?? false
+    );
+  }
   readonly rememberMeHint =
     'Sans cette option, chaque fenêtre garde sa propre session. Avec cette option, la session est partagée entre tous les onglets de ce navigateur.';
 
@@ -59,6 +67,11 @@ export class LoginComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (this.route.snapshot.queryParams['registration'] === 'closed') {
+      this.registrationClosedNotice.set(
+        'L’inscription en ligne est temporairement fermée. Contactez le support InstaFact.'
+      );
+    }
     if (this.route.snapshot.queryParams['reset'] === 'success') {
       this.toastService.add({
         severity: 'success',

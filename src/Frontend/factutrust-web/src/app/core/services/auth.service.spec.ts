@@ -3,7 +3,15 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
 import { environment } from '@environments/environment';
-import { AuthService, AuthResponse, User, normalizeTenantRole, normalizeTenantKind } from './auth.service';
+import {
+  AuthService,
+  AuthResponse,
+  User,
+  normalizeTenantRole,
+  normalizeTenantKind,
+  normalizeRegistrationWarning,
+  toRegistrationWarnings
+} from './auth.service';
 
 function makeJwt(expOffsetSec = 3600): string {
   const exp = Math.floor(Date.now() / 1000) + expOffsetSec;
@@ -74,6 +82,91 @@ describe('normalizeTenantRole', () => {
 
   it('defaults unknown strings to Accountant', () => {
     expect(normalizeTenantRole('not-a-role')).toBe('Accountant');
+  });
+});
+
+describe('normalizeRegistrationWarning', () => {
+  it('keeps a known code and severity untouched', () => {
+    expect(normalizeRegistrationWarning({
+      code: 'NIF_SEGMENT_MISMATCH',
+      message: 'Vérifiez votre NIF.',
+      severity: 'info'
+    })).toEqual({ code: 'NIF_SEGMENT_MISMATCH', message: 'Vérifiez votre NIF.', severity: 'info' });
+  });
+
+  // Garde anti-dérive : ce code a été ajouté côté API (provisionnement plateforme) longtemps
+  // avant d'exister dans l'union front, et tombait donc silencieusement en dehors du type.
+  it('keeps SUBSCRIPTION_PLAN_NOT_APPLIED, the platform provisioning code', () => {
+    expect(normalizeRegistrationWarning({
+      code: 'SUBSCRIPTION_PLAN_NOT_APPLIED',
+      message: 'Offre non appliquée.',
+      severity: 'warning'
+    })?.code).toBe('SUBSCRIPTION_PLAN_NOT_APPLIED');
+  });
+
+  it('degrades an unknown code to UNKNOWN but keeps the message', () => {
+    const warning = normalizeRegistrationWarning({
+      code: 'SOME_FUTURE_SERVER_CODE',
+      message: 'Message à afficher quand même.',
+      severity: 'warning'
+    });
+
+    expect(warning).toEqual({ code: 'UNKNOWN', message: 'Message à afficher quand même.', severity: 'warning' });
+  });
+
+  it('does not mistake an Object.prototype key for a known code', () => {
+    expect(normalizeRegistrationWarning({ code: 'constructor', message: 'x' })?.code).toBe('UNKNOWN');
+  });
+
+  // `warning` et non `info` : on ne dégrade jamais un avis en simple information par accident.
+  it('falls back to warning for an unknown severity', () => {
+    expect(normalizeRegistrationWarning({
+      code: 'NIF_SEGMENT_MISMATCH',
+      message: 'x',
+      severity: 'error'
+    })?.severity).toBe('warning');
+  });
+
+  it('maps a bare legacy message to UNKNOWN / warning', () => {
+    expect(normalizeRegistrationWarning({ message: 'Module refusé par votre plan' }))
+      .toEqual({ code: 'UNKNOWN', message: 'Module refusé par votre plan', severity: 'warning' });
+  });
+
+  it('drops entries with no displayable message', () => {
+    expect(normalizeRegistrationWarning({ code: 'NIF_SEGMENT_MISMATCH', message: '   ' })).toBeNull();
+    expect(normalizeRegistrationWarning({ code: 'NIF_SEGMENT_MISMATCH' })).toBeNull();
+    expect(normalizeRegistrationWarning(null)).toBeNull();
+  });
+});
+
+describe('toRegistrationWarnings', () => {
+  it('prefers warningDetails and narrows every entry', () => {
+    const response = {
+      warnings: ['ignoré'],
+      warningDetails: [
+        { code: 'SOME_FUTURE_SERVER_CODE', message: 'Nouveau', severity: 'error' },
+        { code: 'NIF_SEGMENT_MISMATCH', message: 'NIF', severity: 'info' }
+      ]
+    } as unknown as AuthResponse;
+
+    expect(toRegistrationWarnings(response)).toEqual([
+      { code: 'UNKNOWN', message: 'Nouveau', severity: 'warning' },
+      { code: 'NIF_SEGMENT_MISMATCH', message: 'NIF', severity: 'info' }
+    ]);
+  });
+
+  // Compatibilité descendante : API antérieure aux avertissements typés.
+  it('falls back to plain warnings and skips blank ones', () => {
+    const response = { warnings: ['Module refusé', '  '] } as unknown as AuthResponse;
+
+    expect(toRegistrationWarnings(response)).toEqual([
+      { code: 'UNKNOWN', message: 'Module refusé', severity: 'warning' }
+    ]);
+  });
+
+  it('returns an empty list for a missing response', () => {
+    expect(toRegistrationWarnings(null)).toEqual([]);
+    expect(toRegistrationWarnings({} as AuthResponse)).toEqual([]);
   });
 });
 

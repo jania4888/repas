@@ -39,7 +39,9 @@ public class AuthController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly IEffectivePermissionService _effectivePermissionService;
     private readonly IAccountingFirmsFeature _accountingFirmsFeature;
+    private readonly IPublicRegistrationFeature _publicRegistrationFeature;
     private readonly IAccountingFirmRegistrationService _accountingFirmRegistrationService;
+    private readonly ICompanyRegistrationService _companyRegistrationService;
     private readonly FirmGovernanceOptions _firmGovernanceOptions;
     private readonly AccountingFirmsOptions _accountingFirmsOptions;
     private readonly AccountingSettings _accountingSettings;
@@ -60,7 +62,9 @@ public class AuthController : ControllerBase
         IConfiguration configuration,
         IEffectivePermissionService effectivePermissionService,
         IAccountingFirmsFeature accountingFirmsFeature,
+        IPublicRegistrationFeature publicRegistrationFeature,
         IAccountingFirmRegistrationService accountingFirmRegistrationService,
+        ICompanyRegistrationService companyRegistrationService,
         IOptions<FirmGovernanceOptions> firmGovernanceOptions,
         IOptions<AccountingFirmsOptions> accountingFirmsOptions,
         IOptions<AccountingSettings> accountingSettings,
@@ -80,7 +84,9 @@ public class AuthController : ControllerBase
         _configuration = configuration;
         _effectivePermissionService = effectivePermissionService;
         _accountingFirmsFeature = accountingFirmsFeature;
+        _publicRegistrationFeature = publicRegistrationFeature;
         _accountingFirmRegistrationService = accountingFirmRegistrationService;
+        _companyRegistrationService = companyRegistrationService;
         _firmGovernanceOptions = firmGovernanceOptions.Value;
         _accountingFirmsOptions = accountingFirmsOptions.Value;
         _accountingSettings = accountingSettings.Value;
@@ -103,422 +109,49 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto, CancellationToken cancellationToken)
     {
-        var correlationId = Guid.NewGuid().ToString("N");
-        var totalSw = Stopwatch.StartNew();
+        if (!_publicRegistrationFeature.IsCompanyEnabled)
+            return NotFound();
 
-        var validationSw = Stopwatch.StartNew();
-        var nifResult = NIF.Create(dto.Nif);
-        if (nifResult.IsFailure)
-            return BadRequest(ApiResponse<AuthResponseDto>.Fail(nifResult.Error.Description));
+        var result = await _companyRegistrationService.RegisterAsync(
+            dto,
+            CompanyRegistrationContext.Public(),
+            cancellationToken);
 
-        var addressResult = Address.Create(dto.Street, dto.City, dto.Governorate, dto.StreetLine2, dto.PostalCode);
-        if (addressResult.IsFailure)
-            return BadRequest(ApiResponse<AuthResponseDto>.Fail(addressResult.Error.Description));
-
-        var emailResult = Email.Create(dto.CompanyEmail);
-        if (emailResult.IsFailure)
-            return BadRequest(ApiResponse<AuthResponseDto>.Fail(emailResult.Error.Description));
-
-        var phoneResult = PhoneNumber.Create(dto.Phone);
-        if (phoneResult.IsFailure)
-            return BadRequest(ApiResponse<AuthResponseDto>.Fail(phoneResult.Error.Description));
-
-        // Plan §1.2 (no silent rejections): reject unknown module ids up front with a clear 400
-        // instead of letting SectorModuleSetCalculator drop them silently. Honoraires (firm-native,
-        // never offered through the wizard) is a DEFINED enum value so it is NOT caught here — it is
-        // still dropped downstream by design and surfaced as a non-blocking warning instead of a 400.
-        if (dto.EnabledModules is { Count: > 0 })
-        {
-            var invalidModuleIds = dto.EnabledModules
-                .Where(id => !Enum.IsDefined(typeof(AppModule), id))
-                .Distinct()
-                .ToList();
-            if (invalidModuleIds.Count > 0)
-            {
-                return BadRequest(ApiResponse<AuthResponseDto>.Fail(
-                    $"Modules invalides : {string.Join(", ", invalidModuleIds)}. Veuillez sélectionner des modules valides."));
-            }
-        }
-
-        // Sector-aware registration wizard (plan §3 C1/C5, §6.1 B5) — optional fields; a legacy
-        // payload (both codes absent) resolves to a null profile and behaves byte-identically to
-        // today.
-        var sectorProfileResult = _registrationSectorService.ResolveProfile(dto.CompanySegment, dto.BusinessDomain);
-        if (sectorProfileResult.IsFailure)
-            return BadRequest(ApiResponse<AuthResponseDto>.Fail(sectorProfileResult.Error.Description));
-        var sectorProfile = sectorProfileResult.Value;
-
-        // Plan §1.2: the sector kill-switch silently returns a null profile — surface it as a
-        // non-blocking warning rather than pretending the client's segment/domain choice was applied.
-        var warnings = new List<RegistrationWarningDto>();
-        if (!_registrationSectorOptions.Enabled
-            && (!string.IsNullOrWhiteSpace(dto.CompanySegment) || !string.IsNullOrWhiteSpace(dto.BusinessDomain)))
-        {
-            warnings.Add(RegistrationWarningDto.Info(
-                RegistrationWarningCodes.SectorSelectionIgnored,
-                "La sélection du type de société/domaine d'activité n'a pas été appliquée (fonctionnalité désactivée) ; la configuration par défaut est active."));
-        }
-
-        // Plan §3.2: non-blocking coherence check between the NIF's taxpayer category and the
-        // chosen segment. Never blocks registration — fail-open by design (see checker doc).
-        // Gated by NifSegmentCoherenceWarningEnabled: the A–G taxpayer-category mapping is an
-        // unsourced assumption (docs/fiscal/nif-taxpayer-category.md), so the notice must be
-        // switchable off without a redeploy.
-        if (_registrationSectorOptions.NifSegmentCoherenceWarningEnabled)
-        {
-            var nifCoherenceWarning = NifCategorySegmentCoherenceChecker.CheckCoherence(nifResult.Value, dto.CompanySegment);
-            if (nifCoherenceWarning is not null)
-            {
-                warnings.Add(RegistrationWarningDto.Warning(
-                    RegistrationWarningCodes.NifSegmentMismatch,
-                    nifCoherenceWarning));
-            }
-        }
-
-        LogCompanyRegistrationStep("Validation", validationSw.ElapsedMilliseconds, null, correlationId);
-
-        var emailCheckSw = Stopwatch.StartNew();
-        var existingUser = await _userManager.FindByEmailAsync(dto.Email);
-        LogCompanyRegistrationStep("EmailPrecheck", emailCheckSw.ElapsedMilliseconds, null, correlationId);
-        if (existingUser is not null)
-            return BadRequest(ApiResponse<AuthResponseDto>.Fail("Un compte existe déjà avec cette adresse e-mail."));
-
-        // Plan §1.4 (NIF uniqueness): pre-check before opening the transaction so the common case
-        // returns a clean 409 without ever touching the database write path. Mirrors the
-        // IsActive-scoped uniqueness FirmManagedClientService already enforces, and the filtered
-        // unique index (MasterDbContext) that backstops the race between this check and the insert.
-        const string duplicateNifMessage =
-            "Une société avec ce matricule fiscal existe déjà. Contactez le support si vous pensez qu'il s'agit d'une erreur.";
-        var nifCheckSw = Stopwatch.StartNew();
-        var nifValue = nifResult.Value.Value;
-        var nifExists = await _masterContext.Tenants.AsNoTracking()
-            .AnyAsync(t => t.IsActive && t.NIF.Value == nifValue, cancellationToken);
-        LogCompanyRegistrationStep("NifPrecheck", nifCheckSw.ElapsedMilliseconds, null, correlationId);
-        if (nifExists)
-            return Conflict(ApiResponse<AuthResponseDto>.Fail(duplicateNifMessage));
-
-        string? provisionedDatabaseName = null;
-        Guid? tenantId = null;
-
-        await using var transaction = await _masterContext.Database.BeginTransactionAsync(cancellationToken);
-
-        Tenant tenant;
-        ApplicationUser user;
-
-        try
-        {
-            var tenantResult = Tenant.Create(
-                dto.CompanyName,
-                nifResult.Value,
-                addressResult.Value,
-                emailResult.Value,
-                phoneResult.Value,
-                dto.TaxRegime,
-                dto.Website);
-
-            if (tenantResult.IsFailure)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-                return BadRequest(ApiResponse<AuthResponseDto>.Fail(tenantResult.Error.Description));
-            }
-
-            tenant = tenantResult.Value;
-            if (tenant.Id == Guid.Empty)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-                return BadRequest(ApiResponse<AuthResponseDto>.Fail("Erreur interne : identifiant entreprise invalide."));
-            }
-
-            tenantId = tenant.Id;
-            provisionedDatabaseName = tenant.DatabaseName;
-            // Persist the RESOLVED profile's codes, never the raw dto values: when the
-            // Features:RegistrationSector kill-switch is off (or the payload didn't resolve to a
-            // known profile) sectorProfile is null and both columns stay NULL — this is the
-            // kill-switch gate for storage, mirroring the gate already applied in ResolveProfile.
-            tenant.SetSectorClassification(sectorProfile?.SegmentCode, sectorProfile?.DomainCode);
-
-            // Plan §2.1 — records the catalog version tag active when the classification above was
-            // resolved (null when sectorProfile itself is null, matching CompanySegment/BusinessDomain
-            // staying null in that same case: kill-switch off, or an unresolved/legacy payload).
-            if (sectorProfile is not null)
-            {
-                var catalogSnapshot = _sectorCatalogProvider.GetSnapshot();
-                tenant.SetSectorCatalogVersion(catalogSnapshot.CatalogVersionTag);
-            }
-
-            // Lot 3 — réponses de profilage : simplement normalisées et enregistrées. Elles ne sont
-            // jamais rejouées pour dériver des modules (le client a déjà envoyé sa sélection dans
-            // EnabledModules, qui reste seule soumise au plafond du plan et aux dépendances), donc
-            // elles ne peuvent en aucun cas élargir les droits de l'espace créé. La tranche
-            // d'effectif est filtrée par liste blanche dans SetRegistrationProfile : aucune chaîne
-            // libre venue du client n'atteint la base.
-            tenant.SetRegistrationProfile(
-                dto.ProfileAnswers?.HasPhysicalStock,
-                dto.ProfileAnswers?.SellsToConsumers,
-                dto.ProfileAnswers?.HeadcountBand,
-                dto.ProfileAnswers?.AccountingDelegatedToFirm);
-
-            var masterSw = Stopwatch.StartNew();
-            _masterContext.Tenants.Add(tenant);
-
-            var subscription = Subscription.CreateFree(tenant.Id);
-            _masterContext.Subscriptions.Add(subscription);
-            await _masterContext.SaveChangesAsync(cancellationToken);
-            LogCompanyRegistrationStep("MasterEntities", masterSw.ElapsedMilliseconds, tenant.Id, correlationId);
-
-            user = new ApplicationUser
-            {
-                UserName = dto.Email,
-                Email = dto.Email,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                TenantId = tenant.Id,
-                // Plan §1.6 (D3 "mode doux") : Enabled=false (défaut) conserve le comportement
-                // historique EmailConfirmed=true ; à true, la vérification devient effective et
-                // l'email est envoyé après la fin de la mini-saga (voir plus bas), sans bloquer la
-                // connexion tant que BlockLoginIfUnverified reste à false.
-                EmailConfirmed = !_emailVerificationOptions.Enabled
-            };
-            user.ApplyNewInteractiveProductOnboarding();
-
-            var identitySw = Stopwatch.StartNew();
-            var createResult = await _userManager.CreateAsync(user, dto.Password);
-            if (!createResult.Succeeded)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-                var errors = IdentityErrorTranslator.TranslateToFrench(createResult.Errors);
-                return BadRequest(ApiResponse<AuthResponseDto>.Fail(errors));
-            }
-
-            // Le résultat est vérifié comme celui de CreateAsync ci-dessus : sans le rôle
-            // Administrator, EffectivePermissionService.ResolveRoleAsync retombe sur son défaut
-            // (UserRole.Accountant) et le fondateur se retrouverait silencieusement comptable de
-            // son propre espace. Un échec ici (rôle absent de AspNetRoles, concurrence) doit donc
-            // annuler l'inscription plutôt que produire un espace dégradé.
-            var addToRoleResult = await _userManager.AddToRoleAsync(user, UserRole.Administrator.ToString());
-            if (!addToRoleResult.Succeeded)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-                _logger.LogError(
-                    "Registration failed: could not assign the {Role} role to {Email}. CorrelationId={CorrelationId} Errors={Errors}",
-                    UserRole.Administrator,
-                    LogSanitizer.MaskEmail(dto.Email),
-                    correlationId,
-                    string.Join(" | ", addToRoleResult.Errors.Select(e => e.Code)));
-
-                return BadRequest(ApiResponse<AuthResponseDto>.Fail(
-                    IdentityErrorTranslator.TranslateToFrench(addToRoleResult.Errors)));
-            }
-
-            LogCompanyRegistrationStep("IdentityCreate", identitySw.ElapsedMilliseconds, tenant.Id, correlationId);
-
-            // Sector-aware registration wizard (plan §3 C4, §6.1 B5) — restriction-only; null/empty
-            // dto.EnabledModules writes no grant rows (exact legacy "all modules enabled" behavior).
-            // Rides this same transaction/SaveChanges — no separate commit. Plan §1.2: the outcome is
-            // inspected below (after commit) to build non-blocking warnings for the response.
-            var moduleOutcome = await _registrationSectorService.ApplyModuleSelectionAsync(
-                user.Id,
-                sectorProfile,
-                dto.EnabledModules,
-                SubscriptionPlan.Free,
-                cancellationToken);
-
-            await _masterContext.SaveChangesAsync(cancellationToken);
-
-            // Plan §1.5 (provisioning mini-saga): commit the master rows (tenant starts
-            // ProvisioningStatus=Pending) BEFORE the tenant database is provisioned. If provisioning
-            // fails afterwards, these master rows stay committed as a Failed tenant (cleaned up by
-            // OrphanTenantDatabaseCleanupJob) instead of being silently rolled back — so a failed
-            // provisioning attempt is always observable, and the physical tenant database it may have
-            // partially created is never left with zero trace in the master DB.
-            await transaction.CommitAsync(cancellationToken);
-
-            AppendModuleSelectionWarnings(warnings, moduleOutcome, tenant.Id, correlationId);
-        }
-        catch (DbUpdateException ex) when (IsNifUniqueViolation(ex))
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            _logger.LogWarning(
-                "Registration rejected: concurrent duplicate NIF for {Email}. CorrelationId={CorrelationId}",
-                LogSanitizer.MaskEmail(dto.Email),
-                correlationId);
-            return Conflict(ApiResponse<AuthResponseDto>.Fail(duplicateNifMessage));
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync(cancellationToken);
-
-            if (!string.IsNullOrEmpty(provisionedDatabaseName))
-                await _tenantService.TryDropDatabaseAsync(provisionedDatabaseName, cancellationToken);
-
-            _logger.LogError(
-                ex,
-                "Registration failed for {Email}. CorrelationId: {CorrelationId}. TenantId: {TenantId}. Detail: {Detail}",
-                LogSanitizer.MaskEmail(dto.Email),
-                correlationId,
-                tenantId,
-                ex.InnerException?.Message ?? ex.Message);
-
-            const string userMessage =
-                "L'inscription n'a pas pu être finalisée. Réessayez plus tard ou contactez le support.";
-            return StatusCode(
-                StatusCodes.Status500InternalServerError,
-                ApiResponse<AuthResponseDto>.Fail(userMessage, $"REG-{correlationId}"));
-        }
-
-        // Plan §1.5 — phase 2 of the mini-saga: the master transaction above already committed with
-        // the tenant Pending, so a failure from here on never rolls back or hides the Failed tenant —
-        // it is left for the orphan cleanup job, and the client is asked to retry (not silently given
-        // a broken/half-provisioned account).
-        try
-        {
-            var provisionSw = Stopwatch.StartNew();
-            var effectiveWarehouseName = !string.IsNullOrWhiteSpace(dto.WarehouseName)
-                ? dto.WarehouseName
-                : sectorProfile?.DefaultWarehouseName;
-            await _tenantService.CreateTenantDatabaseAsync(tenant.Id, tenant.DatabaseName, effectiveWarehouseName, cancellationToken);
-            LogCompanyRegistrationStep("DatabaseProvision", provisionSw.ElapsedMilliseconds, tenant.Id, correlationId);
-
-            tenant.MarkProvisioningReady();
-            await _masterContext.SaveChangesAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(
-                ex,
-                "Tenant database provisioning failed after master commit for {Email}. CorrelationId: {CorrelationId}. TenantId: {TenantId}. Detail: {Detail}",
-                LogSanitizer.MaskEmail(dto.Email),
-                correlationId,
-                tenant.Id,
-                ex.InnerException?.Message ?? ex.Message);
-
-            try
-            {
-                tenant.MarkProvisioningFailed();
-                await _masterContext.SaveChangesAsync(cancellationToken);
-            }
-            catch (Exception markFailedEx)
-            {
-                _logger.LogError(
-                    markFailedEx,
-                    "Failed to mark tenant {TenantId} as provisioning-failed. CorrelationId: {CorrelationId}",
-                    tenant.Id,
-                    correlationId);
-            }
-
-            await _tenantService.TryDropDatabaseAsync(tenant.DatabaseName, cancellationToken);
-
-            const string userMessage =
-                "L'inscription n'a pas pu être finalisée. Réessayez plus tard ou contactez le support.";
-            return StatusCode(
-                StatusCodes.Status500InternalServerError,
-                ApiResponse<AuthResponseDto>.Fail(userMessage, $"REG-{correlationId}"));
-        }
-
-        if (_emailVerificationOptions.Enabled)
-            await SendVerificationEmailAsync(user, cancellationToken);
-
-        var tokenSw = Stopwatch.StartNew();
-        var tokens = await _tokenService.GenerateTokensAsync(user.Id, tenant.Id, cancellationToken: cancellationToken);
-        LogCompanyRegistrationStep("TokenGeneration", tokenSw.ElapsedMilliseconds, tenant.Id, correlationId);
-
-        // `Warnings` (contrat historique, string[]) est DÉRIVÉ de `WarningDetails` : une seule
-        // source de vérité, donc aucune dérive possible entre les deux vues.
-        if (warnings.Count > 0)
-        {
-            tokens = tokens with
-            {
-                Warnings = warnings.Select(w => w.Message).ToList(),
-                WarningDetails = warnings
-            };
-        }
-
-        totalSw.Stop();
-        LogCompanyRegistrationStep("Total", totalSw.ElapsedMilliseconds, tenant.Id, correlationId);
-
-        _logger.LogInformation(
-            "User {Email} registered with tenant {TenantId}. CorrelationId={CorrelationId} DurationMs={DurationMs}",
-            LogSanitizer.MaskEmail(dto.Email),
-            tenant.Id,
-            correlationId,
-            totalSw.ElapsedMilliseconds);
-
-        return CreatedAtAction(nameof(Login), ApiResponse<AuthResponseDto>.Ok(tokens, "Inscription réussie"));
+        return MapCompanyRegistrationToActionResult(result);
     }
 
-    /// <summary>Plan §1.2 — turns a <see cref="ModuleSelectionOutcome"/> into French, non-blocking warnings (also logged).</summary>
-    private void AppendModuleSelectionWarnings(List<RegistrationWarningDto> warnings, ModuleSelectionOutcome outcome, Guid tenantId, string correlationId)
+    /// <summary>
+    /// Suffixe le message d'une référence de corrélation exploitable par le support. Le format
+    /// <c>(réf. REG-xxxx)</c> est celui que le backoffice sait extraire (<c>api-error.ts</c>).
+    /// </summary>
+    private static string WithSupportReference(string message, string? correlationId) =>
+        string.IsNullOrWhiteSpace(correlationId)
+            ? message
+            : $"{message} (réf. REG-{correlationId})";
+
+    private IActionResult MapCompanyRegistrationToActionResult(CompanyRegistrationResult result)
     {
-        if (outcome.Ignored)
+        if (result.Success && result.Tokens is not null)
+            return CreatedAtAction(nameof(Login), ApiResponse<AuthResponseDto>.Ok(result.Tokens, "Inscription réussie"));
+
+        return result.FailureKind switch
         {
-            warnings.Add(RegistrationWarningDto.Info(
-                RegistrationWarningCodes.ModulesSelectionIgnored,
-                "La sélection de modules n'a pas été appliquée (fonctionnalité désactivée) ; les modules par défaut sont actifs."));
-            _logger.LogWarning(
-                "Register: module selection ignored (kill-switch off) for tenant {TenantId}. CorrelationId={CorrelationId}",
-                tenantId,
-                correlationId);
-        }
-
-        if (outcome.DeniedByPlan.Count > 0)
-        {
-            // Deux causes très différentes se cachaient derrière un message unique. Un module
-            // réellement réservé aux offres payantes relève de l'argumentaire commercial ; tout
-            // autre refus est une anomalie de configuration du plan côté serveur, et dire au client
-            // « ce n'est pas inclus dans votre offre » est alors faux (Stock, CRM ou Fiscal SONT
-            // inclus dans l'offre Free). On sépare donc les deux, et seul le premier cas parle d'offre.
-            var premiumDenied = outcome.DeniedByPlan.Where(m => m.IsPaidPlanOnly()).ToList();
-            var misconfiguredDenied = outcome.DeniedByPlan.Where(m => !m.IsPaidPlanOnly()).ToList();
-
-            if (premiumDenied.Count > 0)
-            {
-                var premiumNames = string.Join(", ", premiumDenied.Select(m => m.ToDisplayString()));
-                warnings.Add(RegistrationWarningDto.Info(
-                    RegistrationWarningCodes.ModulesDeniedByPlan,
-                    $"Certains modules choisis nécessitent une offre supérieure et n'ont pas été activés : {premiumNames}."));
-                _logger.LogInformation(
-                    "Register: premium modules denied by plan for tenant {TenantId}: {Modules}. CorrelationId={CorrelationId}",
-                    tenantId,
-                    premiumNames,
-                    correlationId);
-            }
-
-            if (misconfiguredDenied.Count > 0)
-            {
-                var misconfiguredNames = string.Join(", ", misconfiguredDenied.Select(m => m.ToDisplayString()));
-                warnings.Add(RegistrationWarningDto.Warning(
-                    RegistrationWarningCodes.ModulesActivationFailed,
-                    $"Certains modules choisis n'ont pas pu être activés et le seront prochainement : {misconfiguredNames}. Nos équipes en sont informées."));
-                _logger.LogError(
-                    "Register: plan {Plan} denies non-premium module(s) for tenant {TenantId}: {Modules}. This is a PLAN MISCONFIGURATION, not a subscription limit — check the PlanModules rows. CorrelationId={CorrelationId}",
-                    SubscriptionPlan.Free,
-                    tenantId,
-                    misconfiguredNames,
-                    correlationId);
-            }
-        }
-
-        if (outcome.DroppedInvalidIds.Count > 0)
-        {
-            warnings.Add(RegistrationWarningDto.Info(
-                RegistrationWarningCodes.ModulesIgnoredAtRegistration,
-                "Certains modules sélectionnés ne sont pas disponibles à l'inscription et ont été ignorés."));
-            _logger.LogWarning(
-                "Register: dropped invalid/disallowed module id(s) for tenant {TenantId}: {Ids}. CorrelationId={CorrelationId}",
-                tenantId,
-                string.Join(",", outcome.DroppedInvalidIds),
-                correlationId);
-        }
-    }
-
-    /// <summary>Plan §1.4 — detects the filtered unique index violation on Tenants.NIF (race between the pre-check and the insert).</summary>
-    private static bool IsNifUniqueViolation(DbUpdateException ex)
-    {
-        if (ex.InnerException is not Microsoft.Data.SqlClient.SqlException sqlEx)
-            return false;
-
-        // 2601 = "Cannot insert duplicate key row" (unique index); 2627 = "Violation of UNIQUE KEY constraint".
-        return (sqlEx.Number is 2601 or 2627) && sqlEx.Message.Contains("IX_Tenants_NIF", StringComparison.OrdinalIgnoreCase);
+            CompanyRegistrationFailureKind.Validation or CompanyRegistrationFailureKind.IdentityError or CompanyRegistrationFailureKind.DuplicateEmail =>
+                BadRequest(ApiResponse<AuthResponseDto>.Fail(string.Join(", ", result.Errors))),
+            CompanyRegistrationFailureKind.ConflictNif =>
+                Conflict(ApiResponse<AuthResponseDto>.Fail(result.ErrorMessage ?? "Conflit matricule fiscal.")),
+            CompanyRegistrationFailureKind.ProvisioningFailed or CompanyRegistrationFailureKind.Internal =>
+                StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    // Le 2e paramètre de Fail() n'est pas sérialisé (cf. ApiResponse<T>) : la
+                    // référence support était calculée puis perdue. On l'inclut dans le message,
+                    // comme le fait déjà le provisionnement plateforme.
+                    ApiResponse<AuthResponseDto>.Fail(
+                        WithSupportReference(
+                            result.ErrorMessage ?? "L'inscription n'a pas pu être finalisée.",
+                            result.CorrelationId))),
+            _ => StatusCode(StatusCodes.Status500InternalServerError, ApiResponse<AuthResponseDto>.Fail("Erreur inattendue."))
+        };
     }
 
     /// <summary>
@@ -625,16 +258,6 @@ public class AuthController : ControllerBase
         return Ok(ApiResponse<object>.Ok(
             null!,
             "Si un compte non vérifié existe avec cette adresse email, un nouvel email de vérification a été envoyé."));
-    }
-
-    private void LogCompanyRegistrationStep(string step, long durationMs, Guid? tenantId, string correlationId)
-    {
-        _logger.LogInformation(
-            "CompanyRegistration.Step={Step} DurationMs={DurationMs} TenantId={TenantId} CorrelationId={CorrelationId}",
-            step,
-            durationMs,
-            tenantId,
-            correlationId);
     }
 
     /// <summary>
@@ -943,10 +566,16 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RegisterFirm([FromBody] RegisterAccountingFirmDto dto, CancellationToken cancellationToken)
     {
+        if (!_publicRegistrationFeature.IsFirmEnabled)
+            return NotFound();
+
         if (!_accountingFirmsFeature.IsEnabled)
             return NotFound();
 
-        var result = await _accountingFirmRegistrationService.RegisterAsync(dto, cancellationToken);
+        var result = await _accountingFirmRegistrationService.RegisterAsync(
+            dto,
+            AccountingFirmRegistrationContext.Public(),
+            cancellationToken);
 
         if (result.Success && result.Tokens is not null)
         {
@@ -962,6 +591,9 @@ public class AuthController : ControllerBase
                     string.Join(", ", result.Errors))),
             AccountingFirmRegistrationFailureKind.DuplicateEmail =>
                 BadRequest(ApiResponse<AuthResponseDto>.Fail(
+                    string.Join(", ", result.Errors))),
+            AccountingFirmRegistrationFailureKind.ConflictNif =>
+                Conflict(ApiResponse<AuthResponseDto>.Fail(
                     string.Join(", ", result.Errors))),
             _ => StatusCode(
                 StatusCodes.Status500InternalServerError,

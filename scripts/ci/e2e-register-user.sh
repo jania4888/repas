@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Inscription idempotente d'un utilisateur tenant pour les smoke tests Playwright en CI.
+# Nécessite Features:PublicRegistration:CompanyEnabled=true (appsettings Development / CI).
+# Si l'inscription publique est désactivée, provisionner via POST /api/platform/tenants/companies.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"

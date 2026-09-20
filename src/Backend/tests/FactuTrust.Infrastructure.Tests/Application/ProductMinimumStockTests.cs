@@ -64,7 +64,8 @@ public sealed class ProductMinimumStockTests
             _products.Object, _categories.Object, _suppliers.Object,
             _stockItems.Object, _warehouses.Object,
             _unitOfWork.Object, _currentUser.Object, _audit.Object, _tenant.Object,
-            Options.Create(new StockTraceabilityOptions()));
+            Options.Create(new StockTraceabilityOptions()),
+            Options.Create(new BarcodeOptions()));
 
         var result = await handler.Handle(new CreateProductCommand(new CreateProductDto
         {
@@ -95,7 +96,8 @@ public sealed class ProductMinimumStockTests
             _products.Object, _categories.Object, _suppliers.Object,
             _stockItems.Object, _warehouses.Object,
             _unitOfWork.Object, _currentUser.Object, _audit.Object, _tenant.Object,
-            Options.Create(new StockTraceabilityOptions()));
+            Options.Create(new StockTraceabilityOptions()),
+            Options.Create(new BarcodeOptions()));
 
         var result = await handler.Handle(new CreateProductCommand(new CreateProductDto
         {

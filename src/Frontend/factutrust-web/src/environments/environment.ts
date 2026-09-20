@@ -81,5 +81,10 @@ export const environment = {
     barcodeLabelPrinting: false
   },
   /** First-login product tour + checklist. Mirror of ProductOnboarding:Enabled. */
-  productOnboardingEnabled: true
+  productOnboardingEnabled: true,
+  /** Self-service signup on /auth/register* — mirror Features:PublicRegistration (backend is source of truth). */
+  publicRegistration: {
+    companyEnabled: true,
+    firmEnabled: true
+  }
 };

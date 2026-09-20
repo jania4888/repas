@@ -43,6 +43,13 @@ public static class RegistrationWarningCodes
 
     /// <summary>Module ids not offered at registration and therefore ignored.</summary>
     public const string ModulesIgnoredAtRegistration = "MODULES_IGNORED_AT_REGISTRATION";
+
+    /// <summary>
+    /// Platform provisioning only: the tenant was created but the requested subscription plan
+    /// could not be applied afterwards. Never blocking — the plan is adjustable from the tenant
+    /// detail page.
+    /// </summary>
+    public const string SubscriptionPlanNotApplied = "SUBSCRIPTION_PLAN_NOT_APPLIED";
 }
 
 /// <summary>Severity values for <see cref="RegistrationWarningDto.Severity"/> (lowercase, stable).</summary>

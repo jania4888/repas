@@ -5,6 +5,10 @@ import { test, expect } from '@playwright/test';
  * Requires Features:AccountingFirms:Enabled and a running API for authenticated flows.
  */
 test.describe('Cabinet comptable — workflow', () => {
+  test.skip(
+    () => process.env['E2E_PUBLIC_REGISTRATION'] === 'false',
+    'Public firm registration disabled (staging build)'
+  );
   test('register firm page is reachable', async ({ page }) => {
     await page.goto('/auth/register-firm');
     await expect(page.getByRole('heading', { name: /cabinet comptable/i })).toBeVisible();

@@ -30,6 +30,7 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public DbSet<TenantConnectionString> TenantConnectionStrings => Set<TenantConnectionString>();
     public DbSet<UserModuleGrant> UserModuleGrants => Set<UserModuleGrant>();
     public DbSet<ModuleGrantAuditEntry> ModuleGrantAuditEntries => Set<ModuleGrantAuditEntry>();
+    public DbSet<PlatformActionAuditEntry> PlatformActionAuditEntries => Set<PlatformActionAuditEntry>();
 
     /// <summary>Plan §3.3 — per-tenant dismissals of module usage recommendations.</summary>
     public DbSet<ModuleRecommendationDismissal> ModuleRecommendationDismissals => Set<ModuleRecommendationDismissal>();
@@ -412,6 +413,21 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.Property(e => e.Action).HasMaxLength(100).IsRequired();
             entity.Property(e => e.DiffJson).HasColumnType("nvarchar(max)").IsRequired();
             entity.HasIndex(e => new { e.TenantId, e.CreatedAtUtc });
+        });
+
+        // Audit des actions d'administration plateforme (creation de dossier, reprise de
+        // provisionnement). En base maitre car l'action precede l'existence de la base du tenant.
+        builder.Entity<PlatformActionAuditEntry>(entity =>
+        {
+            entity.ToTable("PlatformActionAuditEntries");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Action).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Outcome).HasMaxLength(32).IsRequired();
+            entity.Property(e => e.ActorEmail).HasMaxLength(256);
+            entity.Property(e => e.CorrelationId).HasMaxLength(64);
+            entity.Property(e => e.DetailsJson).HasColumnType("nvarchar(max)").IsRequired();
+            entity.HasIndex(e => e.CreatedAtUtc);
+            entity.HasIndex(e => e.TargetTenantId);
         });
 
         // Plan §3.3 — per-tenant dismissal of module usage recommendations; never resurfaces once dismissed.

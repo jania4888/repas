@@ -136,7 +136,8 @@ public sealed class PlatformTenantQueryService : IPlatformTenantQueryService
                     r.Sub?.Plan, r.Sub?.Status, monthlyPrice, annualPrice),
                 // Phase 2 (§WP-B8) — sector classification propagation
                 CompanySegment = r.Tenant.CompanySegment,
-                BusinessDomain = r.Tenant.BusinessDomain
+                BusinessDomain = r.Tenant.BusinessDomain,
+                ProvisioningStatus = r.Tenant.ProvisioningStatus
             };
         }).ToList();
 
@@ -304,7 +305,8 @@ public sealed class PlatformTenantQueryService : IPlatformTenantQueryService
             IsPayingSubscriber = PlatformSubscriptionSegmentHelper.IsPayingSubscriber(subscription?.Plan, subscription?.Status),
             // Phase 2 (§WP-B8) — sector classification propagation
             CompanySegment = tenant.CompanySegment,
-            BusinessDomain = tenant.BusinessDomain
+            BusinessDomain = tenant.BusinessDomain,
+            ProvisioningStatus = tenant.ProvisioningStatus
         };
     }
 

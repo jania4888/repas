@@ -9,6 +9,7 @@ import {
   AuthService,
   RegisterRequest,
   RegistrationWarningDetail,
+  toRegistrationWarningList,
   toRegistrationWarnings
 } from '@core/services/auth.service';
 import { WarehouseContextService } from '@core/services/warehouse-context.service';
@@ -44,6 +45,10 @@ import { StepCompanyTypeComponent } from './steps/step-company-type/step-company
 import { StepInformationsComponent } from './steps/step-informations/step-informations.component';
 import { StepConfigurationComponent } from './steps/step-configuration/step-configuration.component';
 import { StepFinalisationComponent } from './steps/step-finalisation/step-finalisation.component';
+import {
+  REGISTRATION_WIZARD_MODE,
+  type CompanyRegistrationSubmitRequest,
+} from '@core/registration/registration-wizard-mode';
 
 interface WizardStepMeta {
   name: string;
@@ -99,6 +104,12 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
   private warehouseContext = inject(WarehouseContextService);
   private errorHandler = inject(ErrorHandlerService);
   private draftService = inject(RegistrationDraftService);
+  readonly wizardMode = inject(REGISTRATION_WIZARD_MODE);
+
+  readonly isPlatformMode = computed(() => this.wizardMode.mode === 'platform');
+  readonly hidePublicCrossLinks = computed(
+    () => this.isPlatformMode() || !!this.wizardMode.hidePublicCrossLinks
+  );
 
   loading = signal(false);
   loadingMessage = signal('Création de votre espace...');
@@ -113,6 +124,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
    * avertissement (un avis NIF n'est pas un échec d'activation de module).
    */
   registrationWarningDetails = signal<RegistrationWarningDetail[]>([]);
+  private pendingPlatformTenantId = signal<string | null>(null);
   /** Vue « messages seuls » — contrat historique conservé pour les appelants existants. */
   readonly registrationWarnings = computed(() => this.registrationWarningDetails().map(w => w.message));
   /**
@@ -622,6 +634,11 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
       }
     };
 
+    if (this.isPlatformMode()) {
+      this.submitPlatformCompany(request);
+      return;
+    }
+
     this.authService.register(request).pipe(
       timeout(RegisterWizardComponent.REGISTRATION_TIMEOUT_MS),
       catchError(err => {
@@ -637,15 +654,9 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.success) {
           console.log('[RegisterWizardComponent] Registration successful');
-          // L'espace existe : état terminal. Le formulaire n'est plus rendu ni modifiable,
-          // l'autosave du brouillon est arrêtée, et le brouillon (qui contient des
-          // coordonnées personnelles) est supprimé.
           this.finalizeAccountCreation();
           const warnings = toRegistrationWarnings(response.data);
           if (warnings.length > 0) {
-            // Avertissement non bloquant (ex. module refusé par le plan) : on
-            // laisse l'utilisateur le lire avant de le rediriger vers le
-            // tableau de bord, plutôt que de le faire disparaître aussitôt.
             this.registrationWarningDetails.set(warnings);
             this.stopLoading();
             return;
@@ -661,28 +672,101 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
         this.stopLoading();
       },
       error: (err: HttpErrorResponse | { status?: number; message?: string }) => {
-        let errorMessage = err instanceof HttpErrorResponse
-          ? this.errorHandler.extractErrorMessage(err)
-          : ('message' in err && err.message ? err.message : this.errorHandler.extractErrorMessage(err as HttpErrorResponse));
-
-        if (!errorMessage || errorMessage === 'undefined' || errorMessage.trim() === '' || errorMessage.includes('undefined')) {
-          const status = 'status' in err ? err.status : (err as HttpErrorResponse)?.status;
-          if (!status) {
-            errorMessage = 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.';
-          } else {
-            errorMessage = `Une erreur est survenue lors de l'inscription (${status || 'erreur inconnue'}). Veuillez réessayer.`;
-          }
-        }
-
-        if (!errorMessage || errorMessage === 'undefined') {
-          errorMessage = 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.';
-        }
-
-        this.error.set(errorMessage);
+        this.error.set(this.resolveSubmitErrorMessage(err));
         this.errorHandler.logError('Registration HTTP error', err);
         this.stopLoading();
       }
     });
+  }
+
+  private submitPlatformCompany(request: RegisterRequest): void {
+    const handler = this.wizardMode.submitCompany;
+    if (!handler) {
+      this.error.set('Configuration plateforme manquante pour la création d\'entreprise.');
+      this.stopLoading();
+      return;
+    }
+
+    const payload: CompanyRegistrationSubmitRequest = { ...request };
+    handler(payload)
+      .pipe(
+        timeout(RegisterWizardComponent.REGISTRATION_TIMEOUT_MS),
+        catchError(err => {
+          if (err instanceof TimeoutError) {
+            return throwError(() => ({
+              status: 0,
+              message: 'La création prend plus de temps que prévu. Veuillez patienter ou réessayer.'
+            }));
+          }
+          return throwError(() => err);
+        })
+      )
+      .subscribe({
+        next: result => {
+          if (result.success) {
+            this.finalizeAccountCreation();
+            // Le serveur peut renvoyer un code hors union (p. ex. un ajout postérieur à ce build) :
+            // le narrowing vit dans `auth.service`, jamais dans un `as` ici.
+            const warnings = toRegistrationWarningList(result.registrationWarnings);
+            this.pendingPlatformTenantId.set(result.tenantId ?? null);
+            if (warnings.length > 0) {
+              this.registrationWarningDetails.set(warnings);
+              this.stopLoading();
+              return;
+            }
+            this.navigateAfterCompanySuccess(result.tenantId);
+          } else {
+            this.error.set(
+              result.errors?.length ? result.errors.join(', ') : result.message ?? 'Création impossible.'
+            );
+          }
+          this.stopLoading();
+        },
+        error: (err: HttpErrorResponse | { status?: number; message?: string }) => {
+          this.error.set(this.resolveSubmitErrorMessage(err, true));
+          this.stopLoading();
+        }
+      });
+  }
+
+  private resolveSubmitErrorMessage(
+    err: HttpErrorResponse | { status?: number; message?: string },
+    platform = false
+  ): string {
+    let errorMessage =
+      err instanceof HttpErrorResponse
+        ? this.errorHandler.extractErrorMessage(err)
+        : 'message' in err && err.message
+          ? err.message
+          : this.errorHandler.extractErrorMessage(err as HttpErrorResponse);
+
+    if (!errorMessage || errorMessage === 'undefined' || errorMessage.trim() === '' || errorMessage.includes('undefined')) {
+      const status = 'status' in err ? err.status : (err as HttpErrorResponse)?.status;
+      if (!status) {
+        errorMessage = platform
+          ? 'Impossible de joindre l\'API plateforme.'
+          : 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.';
+      } else {
+        errorMessage = platform
+          ? `Erreur lors de la création (${status}).`
+          : `Une erreur est survenue lors de l'inscription (${status || 'erreur inconnue'}). Veuillez réessayer.`;
+      }
+    }
+
+    if (!errorMessage || errorMessage === 'undefined') {
+      errorMessage = platform
+        ? 'La création n\'a pas pu être finalisée.'
+        : 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.';
+    }
+    return errorMessage;
+  }
+
+  private navigateAfterCompanySuccess(tenantId?: string): void {
+    if (tenantId && this.wizardMode.onCompanySuccess) {
+      this.wizardMode.onCompanySuccess(tenantId);
+      return;
+    }
+    this.warehouseContext.navigateAfterSuccessfulAuth('/dashboard');
   }
 
   private startLoadingMessageTimer(): void {
@@ -714,6 +798,12 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
   /** L'utilisateur a pris connaissance des avertissements : on continue vers le tableau de bord. */
   continueAfterWarnings(): void {
     this.registrationWarningDetails.set([]);
+    const tenantId = this.pendingPlatformTenantId();
+    this.pendingPlatformTenantId.set(null);
+    if (this.isPlatformMode()) {
+      this.navigateAfterCompanySuccess(tenantId ?? undefined);
+      return;
+    }
     this.warehouseContext.navigateAfterSuccessfulAuth('/dashboard');
   }
 

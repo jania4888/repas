@@ -126,6 +126,9 @@ public static class DependencyInjection
             // de Program.cs sur chaque requête authentifiée, quel que soit l'émetteur du token.
             services.AddScoped<ISecurityStampTokenValidator, SecurityStampTokenValidator>();
             services.AddScoped<IAccountingFirmRegistrationService, AccountingFirmRegistrationService>();
+            services.AddScoped<ICompanyRegistrationService, CompanyRegistrationService>();
+            services.AddScoped<ITenantProvisioningRetryService, TenantProvisioningRetryService>();
+            services.AddScoped<IPlatformActionAuditWriter, PlatformActionAuditWriter>();
             services.AddScoped<ICompanyProfileSnapshotProvider, CompanyProfileSnapshotProvider>();
             // Enregistrement en 2 temps : la classe concrète est scopée (une instance par
             // requête) ET l'interface pointe sur la MÊME instance via la lambda ci-dessous.
@@ -175,6 +178,7 @@ public static class DependencyInjection
             services.AddScoped<IExchangeOppositePartyNotifier, ExchangeOppositePartyNotifier>();
             services.AddScoped<IExchangeService, ExchangeService>();
             services.AddSingleton<IAccountingFirmsFeature, AccountingFirmsFeature>();
+            services.AddSingleton<IPublicRegistrationFeature, PublicRegistrationFeature>();
             services.AddSingleton<IFirmGovernanceFeature, FirmGovernanceFeature>();
             services.AddSingleton<IFirmFiscalOpsFeature, FirmFiscalOpsFeature>();
             services.AddScoped<ITunisianFiscalDeadlineService, TunisianFiscalDeadlineService>();
@@ -571,6 +575,7 @@ public static class DependencyInjection
         services.Configure<FixedAssetsOptions>(configuration.GetSection(FixedAssetsOptions.SectionName));
         services.Configure<AccountingAttachmentsOptions>(configuration.GetSection(AccountingAttachmentsOptions.SectionName));
         services.Configure<AccountingFirmsOptions>(configuration.GetSection(AccountingFirmsOptions.SectionName));
+        services.Configure<PublicRegistrationOptions>(configuration.GetSection(PublicRegistrationOptions.SectionName));
         services.Configure<RegistrationSectorOptions>(configuration.GetSection(RegistrationSectorOptions.SectionName));
         services.Configure<EmailVerificationOptions>(configuration.GetSection(EmailVerificationOptions.SectionName));
         services.Configure<PayrollOptions>(configuration.GetSection(PayrollOptions.SectionName));

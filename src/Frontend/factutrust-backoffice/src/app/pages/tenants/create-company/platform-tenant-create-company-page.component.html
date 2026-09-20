@@ -1,0 +1,436 @@
+<ft-page-header [title]="t('create.title')" [subtitle]="t('create.subtitle')" />
+
+@if (success(); as done) {
+  <!-- Écran de succès : remplace la navigation immédiate, qui faisait disparaître
+       les avertissements et le rappel de transmission des identifiants. -->
+  <section class="create-success">
+    <h2 class="create-success__title">{{ successTitle() }}</h2>
+
+    @if (successHint(); as hint) {
+      <p-message [severity]="done.provisioningStatus === 'Failed' ? 'error' : 'warn'" [text]="hint" />
+    }
+
+    <div class="create-success__credentials">
+      <p class="ft-wizard__hint">{{ t('create.success.credentials') }}</p>
+      <p><strong>{{ t('create.success.managerEmail') }} :</strong> {{ done.managerEmail }}</p>
+      <p class="ft-wizard__hint">{{ t('create.success.password') }}</p>
+    </div>
+
+    @if (done.warnings.length > 0) {
+      <div class="create-success__warnings">
+        <h3>{{ t('create.success.warnings') }}</h3>
+        @for (warning of done.warnings; track warning.code) {
+          <p-message [severity]="warningSeverity(warning)" [text]="warning.message" />
+        }
+      </div>
+    }
+
+    @if (done.reference) {
+      <p class="ft-wizard__hint">{{ t('create.success.reference') }} : <code>{{ done.reference }}</code></p>
+    }
+
+    <div class="ft-wizard__actions">
+      <p-button [label]="t('create.success.openTenant')" (onClick)="openTenant()" />
+      <p-button [label]="t('create.success.createAnother')" [outlined]="true" (onClick)="createAnother()" />
+    </div>
+  </section>
+} @else {
+  <p-steps [model]="steps()" [activeIndex]="stepIndex()" [readonly]="true" styleClass="create-steps" />
+
+  @if (catalog.isDisabled()) {
+    <p-message severity="info" [text]="t('create.catalog.disabled')" styleClass="create-banner" />
+  } @else if (catalog.usedStaticFallback()) {
+    <p-message severity="warn" [text]="t('create.catalog.fallback')" styleClass="create-banner" />
+  }
+
+  @if (submitError(); as err) {
+    <p-message severity="error" styleClass="create-banner">
+      <span>{{ err.message }}</span>
+      @if (err.reference) {
+        <span class="create-banner__ref"> — {{ t('create.success.reference') }} : <code>{{ err.reference }}</code></span>
+      }
+    </p-message>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    @switch (currentStep()) {
+      @case ('sector') {
+        <fieldset class="ft-wizard__grid" formGroupName="sector">
+          <div class="ft-wizard__field">
+            <label for="companySegment">{{ t('create.field.segment') }}</label>
+            <p-select
+              inputId="companySegment"
+              formControlName="companySegment"
+              [options]="segmentOptions()"
+              optionLabel="label"
+              optionValue="value"
+              [placeholder]="t('create.placeholder.segment')"
+              (onChange)="onSegmentChange($event.value)"
+            />
+            <ft-field-error [control]="sectorGroup.get('companySegment')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="businessDomain">{{ t('create.field.domain') }}</label>
+            <p-select
+              inputId="businessDomain"
+              formControlName="businessDomain"
+              [options]="domainOptions()"
+              optionLabel="label"
+              optionValue="value"
+              [placeholder]="t('create.placeholder.domain')"
+              [disabled]="domainOptions().length === 0"
+              (onChange)="onDomainChange($event.value)"
+            />
+            @if (domainOptions().length === 0) {
+              <span class="ft-wizard__hint">{{ t('create.hint.segmentFirst') }}</span>
+            }
+          </div>
+
+          @if (taxRegimeSuggestion(); as suggestion) {
+            <p class="ft-wizard__hint ft-wizard__grid--full">{{ suggestion.noteFr }}</p>
+          }
+        </fieldset>
+      }
+
+      @case ('identity') {
+        <fieldset class="ft-wizard__grid" formGroupName="identity">
+          <div class="ft-wizard__field">
+            <label for="companyName">{{ t('create.field.companyName') }}</label>
+            <input id="companyName" pInputText formControlName="companyName" autocomplete="off" />
+            <ft-field-error [control]="identityGroup.get('companyName')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="nif">{{ t('create.field.nif') }}</label>
+            <input
+              id="nif"
+              pInputText
+              formControlName="nif"
+              [placeholder]="t('create.placeholder.nif')"
+              autocomplete="off"
+            />
+            <ft-field-error [control]="identityGroup.get('nif')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="companyEmail">{{ t('create.field.companyEmail') }}</label>
+            <input id="companyEmail" pInputText type="email" formControlName="companyEmail" autocomplete="off" />
+            <ft-field-error [control]="identityGroup.get('companyEmail')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="phone">{{ t('create.field.phone') }}</label>
+            <input id="phone" pInputText formControlName="phone" autocomplete="off" />
+            <ft-field-error [control]="identityGroup.get('phone')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="firstName">{{ t('create.field.firstName') }}</label>
+            <input id="firstName" pInputText formControlName="firstName" autocomplete="off" />
+            <ft-field-error [control]="identityGroup.get('firstName')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="lastName">{{ t('create.field.lastName') }}</label>
+            <input id="lastName" pInputText formControlName="lastName" autocomplete="off" />
+            <ft-field-error [control]="identityGroup.get('lastName')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="email">{{ t('create.field.email') }}</label>
+            <input id="email" pInputText type="email" formControlName="email" autocomplete="off" />
+            <ft-field-error [control]="identityGroup.get('email')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="password">{{ t('create.field.password') }}</label>
+            <p-password
+              inputId="password"
+              formControlName="password"
+              [feedback]="false"
+              [toggleMask]="true"
+              autocomplete="new-password"
+            />
+            <ul class="password-rules">
+              @for (rule of passwordRules(); track rule.key) {
+                <li [class.password-rules__item--ok]="rule.satisfied">
+                  <i [class]="rule.satisfied ? 'pi pi-check' : 'pi pi-circle'"></i>
+                  <span>{{ rule.label }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="confirmPassword">{{ t('create.field.confirmPassword') }}</label>
+            <p-password
+              inputId="confirmPassword"
+              formControlName="confirmPassword"
+              [feedback]="false"
+              [toggleMask]="true"
+              autocomplete="new-password"
+            />
+            <ft-field-error [control]="identityGroup.get('confirmPassword')" />
+          </div>
+
+          <p class="ft-wizard__hint ft-wizard__grid--full">{{ t('create.hint.password') }}</p>
+        </fieldset>
+      }
+
+      @case ('modules') {
+        <div class="modules-step">
+          @if (moduleNotice(); as notice) {
+            <p-message severity="info" [text]="notice" styleClass="create-banner" />
+          }
+
+          <section class="modules-group">
+            <h3>{{ t('create.modules.core') }}</h3>
+            <p class="ft-wizard__hint">{{ t('create.modules.core.hint') }}</p>
+            <div class="modules-group__list">
+              @for (moduleId of coreModuleIds(); track moduleId) {
+                <ft-badge tone="accent">{{ moduleLabel(moduleId) }}</ft-badge>
+              }
+            </div>
+          </section>
+
+          @if (recommendedModuleIds().length > 0) {
+            <section class="modules-group">
+              <h3>{{ t('create.modules.recommended') }}</h3>
+              <div class="modules-group__list modules-group__list--stack">
+                @for (moduleId of recommendedModuleIds(); track moduleId) {
+                  <label class="module-toggle">
+                    <input
+                      type="checkbox"
+                      [checked]="isModuleSelected(moduleId)"
+                      (change)="toggleModule(moduleId)"
+                    />
+                    <span>{{ moduleLabel(moduleId) }}</span>
+                  </label>
+                }
+              </div>
+            </section>
+          }
+
+          @if (optionalModuleIds().length > 0) {
+            <section class="modules-group">
+              <h3>{{ t('create.modules.optional') }}</h3>
+              <div class="modules-group__list modules-group__list--stack">
+                @for (moduleId of optionalModuleIds(); track moduleId) {
+                  <label class="module-toggle">
+                    <input
+                      type="checkbox"
+                      [checked]="isModuleSelected(moduleId)"
+                      (change)="toggleModule(moduleId)"
+                    />
+                    <span>{{ moduleLabel(moduleId) }}</span>
+                  </label>
+                }
+              </div>
+            </section>
+          }
+
+          @if (premiumModuleIds().length > 0) {
+            <section class="modules-group">
+              <h3>{{ t('create.modules.premium') }}</h3>
+              <div class="modules-group__list">
+                @for (moduleId of premiumModuleIds(); track moduleId) {
+                  <ft-badge tone="warning">{{ moduleLabel(moduleId) }}</ft-badge>
+                }
+              </div>
+            </section>
+          }
+        </div>
+      }
+
+      @case ('address') {
+        <fieldset class="ft-wizard__grid" formGroupName="address">
+          <div class="ft-wizard__field">
+            <label for="street">{{ t('create.field.street') }}</label>
+            <input id="street" pInputText formControlName="street" autocomplete="off" />
+            <ft-field-error [control]="addressGroup.get('street')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="streetLine2">{{ t('create.field.streetLine2') }}</label>
+            <input id="streetLine2" pInputText formControlName="streetLine2" autocomplete="off" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="city">{{ t('create.field.city') }}</label>
+            <input id="city" pInputText formControlName="city" autocomplete="off" />
+            <ft-field-error [control]="addressGroup.get('city')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="governorate">{{ t('create.field.governorate') }}</label>
+            <p-select
+              inputId="governorate"
+              formControlName="governorate"
+              [options]="governorateOptions"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [placeholder]="t('create.placeholder.governorate')"
+            />
+            <ft-field-error [control]="addressGroup.get('governorate')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="postalCode">{{ t('create.field.postalCode') }}</label>
+            <input id="postalCode" pInputText formControlName="postalCode" inputmode="numeric" maxlength="4" />
+            <ft-field-error [control]="addressGroup.get('postalCode')" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="website">{{ t('create.field.website') }}</label>
+            <input id="website" pInputText formControlName="website" autocomplete="off" />
+          </div>
+
+          <div class="ft-wizard__field">
+            <label for="taxRegime">{{ t('create.field.taxRegime') }}</label>
+            <p-select
+              inputId="taxRegime"
+              formControlName="taxRegime"
+              [options]="taxRegimeOptions"
+              optionLabel="label"
+              optionValue="value"
+            />
+          </div>
+
+          @if (sectorEnabled()) {
+            <div class="ft-wizard__field">
+              <label for="warehouseName">{{ t('create.field.warehouseName') }}</label>
+              <input id="warehouseName" pInputText formControlName="warehouseName" autocomplete="off" />
+              <span class="ft-wizard__hint">{{ t('create.hint.warehouse') }}</span>
+            </div>
+          }
+
+          @if (canChoosePlan()) {
+            <div class="ft-wizard__field">
+              <label for="plan">{{ t('create.field.plan') }}</label>
+              <p-select
+                inputId="plan"
+                formControlName="plan"
+                [options]="planOptions"
+                optionLabel="label"
+                optionValue="value"
+              />
+              <span class="ft-wizard__hint">{{ t('create.hint.plan') }}</span>
+            </div>
+          }
+        </fieldset>
+      }
+
+      @case ('recap') {
+        <div class="recap" formGroupName="recap">
+          <section class="recap__block">
+            <header>
+              <h3>{{ t('create.recap.identity') }}</h3>
+              <p-button
+                [label]="t('create.recap.edit')"
+                [text]="true"
+                size="small"
+                type="button"
+                (onClick)="goToStep('identity')"
+              />
+            </header>
+            <dl>
+              <dt>{{ t('create.field.companyName') }}</dt>
+              <dd>{{ identityGroup.get('companyName')?.value }}</dd>
+              <dt>{{ t('create.field.nif') }}</dt>
+              <dd>{{ identityGroup.get('nif')?.value }}</dd>
+              <dt>{{ t('create.field.email') }}</dt>
+              <dd>{{ identityGroup.get('email')?.value }}</dd>
+              <dt>{{ t('create.field.phone') }}</dt>
+              <dd>{{ identityGroup.get('phone')?.value }}</dd>
+            </dl>
+          </section>
+
+          @if (sectorEnabled()) {
+            <section class="recap__block">
+              <header>
+                <h3>{{ t('create.recap.sector') }}</h3>
+                <p-button
+                  [label]="t('create.recap.edit')"
+                  [text]="true"
+                  size="small"
+                  type="button"
+                  (onClick)="goToStep('sector')"
+                />
+              </header>
+              <dl>
+                <dt>{{ t('create.field.segment') }}</dt>
+                <dd>{{ sectorGroup.get('companySegment')?.value || t('create.recap.none') }}</dd>
+                <dt>{{ t('create.field.domain') }}</dt>
+                <dd>{{ sectorGroup.get('businessDomain')?.value || t('create.recap.none') }}</dd>
+              </dl>
+            </section>
+
+            <section class="recap__block">
+              <header>
+                <h3>{{ t('create.recap.modules') }}</h3>
+                <p-button
+                  [label]="t('create.recap.edit')"
+                  [text]="true"
+                  size="small"
+                  type="button"
+                  (onClick)="goToStep('modules')"
+                />
+              </header>
+              <div class="modules-group__list">
+                @for (moduleId of coreModuleIds(); track moduleId) {
+                  <ft-badge tone="accent">{{ moduleLabel(moduleId) }}</ft-badge>
+                }
+                @for (moduleId of selectedModuleIds(); track moduleId) {
+                  <ft-badge tone="success">{{ moduleLabel(moduleId) }}</ft-badge>
+                }
+              </div>
+            </section>
+          }
+
+          <section class="recap__block">
+            <header>
+              <h3>{{ t('create.recap.address') }}</h3>
+              <p-button
+                [label]="t('create.recap.edit')"
+                [text]="true"
+                size="small"
+                type="button"
+                (onClick)="goToStep('address')"
+              />
+            </header>
+            <dl>
+              <dt>{{ t('create.field.street') }}</dt>
+              <dd>{{ addressGroup.get('street')?.value }}</dd>
+              <dt>{{ t('create.field.city') }}</dt>
+              <dd>{{ addressGroup.get('city')?.value }}</dd>
+              <dt>{{ t('create.field.governorate') }}</dt>
+              <dd>{{ addressGroup.get('governorate')?.value }}</dd>
+              <dt>{{ t('create.field.postalCode') }}</dt>
+              <dd>{{ addressGroup.get('postalCode')?.value || t('create.recap.none') }}</dd>
+            </dl>
+          </section>
+
+          <div class="recap__confirm">
+            <p-checkbox formControlName="acceptResponsibility" [binary]="true" inputId="acceptResponsibility" />
+            <label for="acceptResponsibility">{{ t('create.confirm.checkbox') }}</label>
+          </div>
+          <ft-field-error [control]="recapGroup.get('acceptResponsibility')" />
+        </div>
+      }
+    }
+
+    <div class="ft-wizard__actions">
+      @if (stepIndex() > 0) {
+        <p-button [label]="t('create.action.prev')" [outlined]="true" type="button" (onClick)="prev()" />
+      }
+      @if (!isLastStep()) {
+        <p-button [label]="t('create.action.next')" type="button" (onClick)="next()" />
+      } @else {
+        <p-button [label]="t('create.action.submit')" type="submit" [loading]="submitting()" />
+      }
+      <p-button [label]="t('create.action.cancel')" [text]="true" type="button" (onClick)="cancel()" />
+    </div>
+  </form>
+}
