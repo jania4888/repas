@@ -45,6 +45,10 @@ public sealed class UpdateProductCommandValidator : AbstractValidator<UpdateProd
             .NotNull()
             .When(x => x.Dto.IsDiscountEnabled)
             .WithMessage("La remise maximale est obligatoire lorsque la remise produit est activée");
+        RuleFor(x => x.Dto.MinimumStock)
+            .GreaterThanOrEqualTo(0)
+            .When(x => x.Dto.MinimumStock.HasValue)
+            .WithMessage("Le stock minimum ne peut pas être négatif");
     }
 }
 
@@ -57,6 +61,7 @@ public sealed class UpdateProductCommandHandler : IRequestHandler<UpdateProductC
     private readonly IProductCategoryRepository _productCategoryRepository;
     private readonly ISupplierRepository _supplierRepository;
     private readonly IStockItemRepository _stockItemRepository;
+    private readonly IWarehouseRepository _warehouseRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUser _currentUser;
     private readonly IAuditService _auditService;
@@ -68,6 +73,7 @@ public sealed class UpdateProductCommandHandler : IRequestHandler<UpdateProductC
         IProductCategoryRepository productCategoryRepository,
         ISupplierRepository supplierRepository,
         IStockItemRepository stockItemRepository,
+        IWarehouseRepository warehouseRepository,
         IUnitOfWork unitOfWork,
         ICurrentUser currentUser,
         IAuditService auditService,
@@ -78,6 +84,7 @@ public sealed class UpdateProductCommandHandler : IRequestHandler<UpdateProductC
         _productCategoryRepository = productCategoryRepository;
         _supplierRepository = supplierRepository;
         _stockItemRepository = stockItemRepository;
+        _warehouseRepository = warehouseRepository;
         _unitOfWork = unitOfWork;
         _currentUser = currentUser;
         _auditService = auditService;
@@ -233,6 +240,17 @@ public sealed class UpdateProductCommandHandler : IRequestHandler<UpdateProductC
         product.SetAuditInfo(_currentUser.UserId?.ToString() ?? "system", isUpdate: true);
 
         await _productRepository.UpdateAsync(product, cancellationToken);
+
+        var minimumStockResult = await ProductMinimumStockApplicator.ApplyAsync(
+            _stockItemRepository,
+            _warehouseRepository,
+            product.Id,
+            product.IsStockManaged,
+            dto.MinimumStock,
+            cancellationToken);
+        if (minimumStockResult.IsFailure)
+            return Result.Failure<ProductDetailDto>(minimumStockResult.Error);
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         await _auditService.LogAsync(
@@ -242,7 +260,19 @@ public sealed class UpdateProductCommandHandler : IRequestHandler<UpdateProductC
             newValues: new { product.Code, product.Name, product.UnitPrice.Amount },
             cancellationToken: cancellationToken);
 
-        var detail = ProductDetailMapper.ToDetailDto(product);
+        decimal? minimumStock = null;
+        if (product.IsStockManaged)
+        {
+            var defaultWarehouse = await _warehouseRepository.GetDefaultAsync(cancellationToken);
+            if (defaultWarehouse is not null)
+            {
+                var stockItem = await _stockItemRepository.GetByProductAndWarehouseAsync(
+                    product.Id, defaultWarehouse.Id, cancellationToken);
+                minimumStock = stockItem?.MinimumStock;
+            }
+        }
+
+        var detail = ProductDetailMapper.ToDetailDto(product, minimumStock: minimumStock);
         return Result.Success(detail);
     }
 

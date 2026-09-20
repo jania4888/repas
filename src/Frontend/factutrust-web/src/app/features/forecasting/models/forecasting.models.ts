@@ -110,6 +110,8 @@ export interface ReplenishmentRecommendation {
   daysOfStockRemaining: number | null;
   userNotes: string | null;
   urgencyLevel: ReplenishmentUrgency;
+  /** Prix d'achat HT produit pour préremplissage modale BC (null si non renseigné). */
+  suggestedPurchaseUnitPrice: number | null;
 }
 
 /** Query-string filters accepted by GET /forecasting/replenishment. */
@@ -140,8 +142,14 @@ export interface AttachNotesRequest {
   notes: string | null;
 }
 
+export interface CreatePurchaseOrderLinePrice {
+  recommendationId: string;
+  unitPrice: number;
+}
+
 export interface CreatePurchaseOrdersRequest {
   recommendationIds: string[];
+  linePrices: CreatePurchaseOrderLinePrice[];
 }
 
 export interface CreatePurchaseOrdersResult {

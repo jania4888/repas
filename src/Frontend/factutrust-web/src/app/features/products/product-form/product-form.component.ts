@@ -280,6 +280,25 @@ interface VatOption {
                 </div>
               }
             </div>
+
+            @if (isProductCategory() && form.get('isStockManaged')?.value) {
+              <div class="form-group">
+                <label for="minimumStock">Stock minimum</label>
+                <p-inputNumber
+                  id="minimumStock"
+                  formControlName="minimumStock"
+                  [min]="0"
+                  [minFractionDigits]="0"
+                  [maxFractionDigits]="3"
+                  placeholder="Non renseigné"
+                  styleClass="w-full">
+                </p-inputNumber>
+                <small class="form-hint">
+                  Optionnel — seuil d'alerte sur l'entrepôt par défaut. Utilisé par les alertes stock
+                  et le réapprovisionnement (« Sous le stock min. configuré »).
+                </small>
+              </div>
+            }
           }
 
           @if (isProductCategory() && canMutateProduct()) {
@@ -1330,6 +1349,7 @@ export class ProductFormComponent implements OnInit {
     isDiscountEnabled: [false],
     maxDiscountPercent: [null as number | null, [Validators.min(0), Validators.max(100)]],
     isStockManaged: [false],
+    minimumStock: [null as number | null, [Validators.min(0)]],
     preferredSupplierId: [null as string | null],
     isActive: [true],
     isVariantTemplate: [false],
@@ -1532,6 +1552,7 @@ export class ProductFormComponent implements OnInit {
             isDiscountEnabled: product.isDiscountEnabled ?? false,
             maxDiscountPercent: product.maxDiscountPercent ?? null,
             isStockManaged: product.isStockManaged ?? false,
+            minimumStock: product.minimumStock ?? null,
             preferredSupplierId: product.preferredSupplierId ?? null,
             isActive: product.isActive ?? true,
             isVariantTemplate: product.isVariantTemplate ?? false,
@@ -1577,6 +1598,14 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
+  /** Sends null when stock management is off or the field is left empty (optional). */
+  private resolveMinimumStockPayload(formValue: { isStockManaged?: boolean; minimumStock?: number | null }): number | null {
+    if (!formValue.isStockManaged) return null;
+    const value = formValue.minimumStock;
+    if (value === null || value === undefined || Number.isNaN(value)) return null;
+    return value;
+  }
+
   private navigateToProducts(): void {
     this.router.navigate(['/products']);
   }
@@ -1612,6 +1641,7 @@ export class ProductFormComponent implements OnInit {
         isDiscountEnabled: formValue.isDiscountEnabled ?? false,
         maxDiscountPercent: formValue.isDiscountEnabled ? formValue.maxDiscountPercent ?? null : null,
         isStockManaged: formValue.isStockManaged ?? false,
+        minimumStock: this.resolveMinimumStockPayload(formValue),
         preferredSupplierId: formValue.preferredSupplierId || null,
         isActive: formValue.isActive ?? true,
         isVariantTemplate: formValue.isVariantTemplate ?? false,
@@ -1706,6 +1736,7 @@ export class ProductFormComponent implements OnInit {
         isDiscountEnabled: formValue.isDiscountEnabled ?? false,
         maxDiscountPercent: formValue.isDiscountEnabled ? formValue.maxDiscountPercent ?? null : null,
         isStockManaged: formValue.isStockManaged ?? false,
+        minimumStock: this.resolveMinimumStockPayload(formValue),
         preferredSupplierId: formValue.preferredSupplierId || null,
         isVariantTemplate: formValue.isVariantTemplate ?? false,
         trackingMode: formValue.trackingMode ?? 0,

@@ -166,6 +166,13 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
             </div>
           }
 
+          @if (p.isStockManaged && p.minimumStock != null && p.minimumStock > 0) {
+            <div class="form-group">
+              <span class="field-label">Stock minimum</span>
+              <p class="field-value">{{ p.minimumStock | number:'1.0-3' }} {{ p.unit || 'u' }}</p>
+            </div>
+          }
+
           @if (isProductType(p)) {
             <div class="form-group product-image-group">
               <span class="field-label">Image produit</span>

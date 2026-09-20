@@ -45,6 +45,10 @@ public sealed class CreateProductCommandValidator : AbstractValidator<CreateProd
             .NotNull()
             .When(x => x.Dto.IsDiscountEnabled)
             .WithMessage("La remise maximale est obligatoire lorsque la remise produit est activée");
+        RuleFor(x => x.Dto.MinimumStock)
+            .GreaterThanOrEqualTo(0)
+            .When(x => x.Dto.MinimumStock.HasValue)
+            .WithMessage("Le stock minimum ne peut pas être négatif");
     }
 }
 
@@ -56,6 +60,8 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
     private readonly IProductRepository _productRepository;
     private readonly IProductCategoryRepository _productCategoryRepository;
     private readonly ISupplierRepository _supplierRepository;
+    private readonly IStockItemRepository _stockItemRepository;
+    private readonly IWarehouseRepository _warehouseRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUser _currentUser;
     private readonly IAuditService _auditService;
@@ -67,6 +73,8 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
         IProductRepository productRepository,
         IProductCategoryRepository productCategoryRepository,
         ISupplierRepository supplierRepository,
+        IStockItemRepository stockItemRepository,
+        IWarehouseRepository warehouseRepository,
         IUnitOfWork unitOfWork,
         ICurrentUser currentUser,
         IAuditService auditService,
@@ -77,6 +85,8 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
         _productRepository = productRepository;
         _productCategoryRepository = productCategoryRepository;
         _supplierRepository = supplierRepository;
+        _stockItemRepository = stockItemRepository;
+        _warehouseRepository = warehouseRepository;
         _unitOfWork = unitOfWork;
         _currentUser = currentUser;
         _auditService = auditService;
@@ -191,6 +201,17 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
             return Result.Failure<Guid>(trace.Error);
 
         await _productRepository.AddAsync(product, cancellationToken);
+
+        var minimumStockResult = await ProductMinimumStockApplicator.ApplyAsync(
+            _stockItemRepository,
+            _warehouseRepository,
+            product.Id,
+            product.IsStockManaged,
+            dto.MinimumStock,
+            cancellationToken);
+        if (minimumStockResult.IsFailure)
+            return Result.Failure<Guid>(minimumStockResult.Error);
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         await _auditService.LogAsync(

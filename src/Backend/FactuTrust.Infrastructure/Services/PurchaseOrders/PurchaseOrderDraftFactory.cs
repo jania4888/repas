@@ -3,6 +3,7 @@ using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Entities.Forecasting;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.Services;
+using FactuTrust.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace FactuTrust.Infrastructure.Services.PurchaseOrders;
@@ -35,6 +36,7 @@ public sealed class PurchaseOrderDraftFactory : IPurchaseOrderDraftFactory
         IReadOnlyList<ReplenishmentRecommendation> recommendations,
         IReadOnlyDictionary<Guid, Product> products,
         IReadOnlyDictionary<Guid, Supplier> suppliers,
+        IReadOnlyDictionary<Guid, Money> unitPriceByRecommendationId,
         string actorUserId,
         Guid tenantId,
         CancellationToken ct = default)
@@ -155,7 +157,14 @@ public sealed class PurchaseOrderDraftFactory : IPurchaseOrderDraftFactory
             var linkedIds = new List<Guid>();
             foreach (var (rec, product, qty) in candidates)
             {
-                var addLine = po.AddLine(product, qty);
+                if (!unitPriceByRecommendationId.TryGetValue(rec.Id, out var unitPrice))
+                {
+                    warnings.Add($"Recommandation {rec.Id} non liée : prix unitaire manquant.");
+                    unlinked.Add(rec.Id);
+                    continue;
+                }
+
+                var addLine = po.AddLine(product, qty, unitPrice);
                 if (addLine.IsFailure)
                 {
                     warnings.Add($"Recommandation {rec.Id} non liée : {addLine.Error.Description}.");

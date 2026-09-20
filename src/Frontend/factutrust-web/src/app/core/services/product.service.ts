@@ -38,6 +38,8 @@ export interface Product {
   imageUrl?: string | null;
   /** Fournisseur préféré (réapprovisionnement) ; null = aucun. */
   preferredSupplierId?: string | null;
+  /** Stock minimum sur l'entrepôt par défaut (optionnel). */
+  minimumStock?: number | null;
   createdAt?: string;
   updatedAt?: string | null;
   parentProductId?: string | null;
@@ -155,6 +157,8 @@ export interface CreateProductRequest {
   barcode?: string | null;
   /** Fournisseur préféré (optionnel) ; null/undefined = aucun. */
   preferredSupplierId?: string | null;
+  /** Stock minimum sur l'entrepôt par défaut (optionnel). */
+  minimumStock?: number | null;
   isVariantTemplate?: boolean;
   trackingMode?: number;
   hasExpiryTracking?: boolean;

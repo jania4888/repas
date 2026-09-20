@@ -45,7 +45,8 @@ import {
   timeEntryCreationBlockedMessage,
   timeEntryStatusBadge,
   timeEntryStatusLabel,
-  toIsoDate
+  toIsoDate,
+  canSaveProjectTimeLine
 } from '../project-enums';
 
 
@@ -202,7 +203,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
           </label>
 
-          <app-button variant="primary" (click)="submit()">Enregistrer</app-button>
+          <app-button variant="primary" [disabled]="!canSaveLine" (click)="submit()">Enregistrer</app-button>
 
         </div>
 
@@ -337,7 +338,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <app-button variant="secondary" (click)="editVisible = false">Annuler</app-button>
 
-        <app-button variant="primary" (click)="saveEdit()">Enregistrer</app-button>
+        <app-button variant="primary" [disabled]="!canSaveEditLine" (click)="saveEdit()">Enregistrer</app-button>
 
       </ng-template>
 
@@ -432,6 +433,14 @@ export class ProjectTimeTabComponent {
     return timeEntryCreationBlockedMessage(this.project.status);
   }
 
+  get canSaveLine(): boolean {
+    return canSaveProjectTimeLine(this.taskId, this.hours);
+  }
+
+  get canSaveEditLine(): boolean {
+    return canSaveProjectTimeLine(this.editTaskId, this.editHours);
+  }
+
   isDraftProject(project: ProjectDetail): boolean {
     return parseProjectStatus(project.status) === 'Draft';
   }
@@ -458,7 +467,7 @@ export class ProjectTimeTabComponent {
 
   submit(): void {
 
-    if (!this.project) return;
+    if (!this.project || !this.canSaveLine) return;
 
     const workDate = toIsoDate(this.workDate);
 
@@ -508,7 +517,7 @@ export class ProjectTimeTabComponent {
 
   saveEdit(): void {
 
-    if (!this.project) return;
+    if (!this.project || !this.canSaveEditLine) return;
 
     const workDate = toIsoDate(this.editWorkDate);
 

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { ToastService } from '@core/services/toast.service';
@@ -178,7 +179,14 @@ export class PromotionsBoardComponent implements OnInit {
 
   canManage(): boolean { return this.auth.hasAllPermissions(['forecasting:manage']); }
 
-  ngOnInit(): void { this.load(); }
+  private readonly destroyRef = inject(DestroyRef);
+
+  ngOnInit(): void {
+    this.load();
+    this.forecastingService.recomputeCompleted$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => { void this.load(); });
+  }
 
   async load() {
     this.loading.set(true);

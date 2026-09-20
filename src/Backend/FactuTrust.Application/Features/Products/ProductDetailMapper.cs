@@ -12,7 +12,8 @@ internal static class ProductDetailMapper
 {
     public static ProductDetailDto ToDetailDto(
         Product product,
-        decimal? weightedAverageCost = null)
+        decimal? weightedAverageCost = null,
+        decimal? minimumStock = null)
     {
         return new ProductDetailDto
         {
@@ -44,6 +45,7 @@ internal static class ProductDetailMapper
             CategoryName = product.Category.Name,
             ImageUrl = product.ImageUrl,
             PreferredSupplierId = product.PreferredSupplierId,
+            MinimumStock = minimumStock is > 0 ? minimumStock : null,
             CreatedAt = product.CreatedAt,
             UpdatedAt = product.UpdatedAt,
             ParentProductId = product.ParentProductId,

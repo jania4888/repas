@@ -58,6 +58,7 @@ import {
   projectStatusBadge,
   projectUiProfile,
   showTimeTab,
+  showProfitabilityTab,
   TabKey,
   toIsoDate
 } from './project-enums';
@@ -147,7 +148,7 @@ import { ProjectFavoritesService } from './project-favorites.service';
           <p-tab value="budget" [class.proj-tab-emphasis]="isEmphasizedTab('budget')">
             <i class="pi pi-wallet"></i> Budget
           </p-tab>
-          @if (p.isBillable) {
+          @if (showProfitabilityTab(p)) {
           <p-tab value="profitability" [class.proj-tab-emphasis]="isEmphasizedTab('profitability')">
             <i class="pi pi-chart-line"></i> Rentabilité
           </p-tab>
@@ -210,7 +211,7 @@ import { ProjectFavoritesService } from './project-favorites.service';
               [canUpdate]="canUpdate" (cost)="addCost($event)"
               (stockExit)="stockExit($event)" (assignPurchaseOrder)="assignPurchaseOrder($event)" />
           </p-tabpanel>
-          @if (p.isBillable) {
+          @if (showProfitabilityTab(p)) {
           <p-tabpanel value="profitability">
             <app-project-profitability-tab [project]="p" />
           </p-tabpanel>
@@ -337,7 +338,7 @@ export class ProjectDetailComponent implements OnInit {
   editEnd: Date | null = null;
   editDraft: UpsertProjectPayload = {
     clientId: '', name: '', kind: 'Generic', billingMode: 'None', budgetHt: 0,
-    isBillable: true, timesheetsEnabled: true, milestonesEnabled: false, allocatedHours: 0, analyticAccountCode: null
+    timesheetsEnabled: true, milestonesEnabled: false, allocatedHours: 0, analyticAccountCode: null
   };
   timeFrom?: string;
   timeTo?: string;
@@ -378,6 +379,7 @@ export class ProjectDetailComponent implements OnInit {
   get canCreateBilling(): boolean { return this.auth.hasPermission(PERMISSIONS.projectBilling.create); }
 
   readonly showTimeTab = showTimeTab;
+  readonly showProfitabilityTab = showProfitabilityTab;
 
   breadcrumbItems(): BreadcrumbItem[] {
     return [
@@ -433,7 +435,7 @@ export class ProjectDetailComponent implements OnInit {
           if (this.tab() === 'time' && !showTimeTab(r.data)) {
             this.goTab('overview');
           }
-          if (this.tab() === 'profitability' && !r.data.isBillable) {
+          if (this.tab() === 'profitability' && !showProfitabilityTab(r.data)) {
             this.goTab('overview');
           }
         }
@@ -599,7 +601,6 @@ export class ProjectDetailComponent implements OnInit {
       ownerUserId: p.ownerUserId,
       siteAddress: p.siteAddress,
       contractNumber: p.contractNumber,
-      isBillable: p.isBillable,
       timesheetsEnabled: p.timesheetsEnabled,
       milestonesEnabled: p.milestonesEnabled ?? false,
       allocatedHours: p.allocatedHours ?? 0,
@@ -637,7 +638,6 @@ export class ProjectDetailComponent implements OnInit {
       ownerUserId: p.ownerUserId,
       siteAddress: p.siteAddress,
       contractNumber: p.contractNumber,
-      isBillable: settings.isBillable,
       timesheetsEnabled: settings.timesheetsEnabled,
       milestonesEnabled: settings.milestonesEnabled,
       allocatedHours: settings.allocatedHours,

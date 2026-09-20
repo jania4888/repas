@@ -1,5 +1,6 @@
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Entities.Forecasting;
+using FactuTrust.Domain.ValueObjects;
 
 namespace FactuTrust.Application.Common.Interfaces;
 
@@ -47,6 +48,7 @@ public interface IPurchaseOrderDraftFactory
         IReadOnlyList<ReplenishmentRecommendation> recommendations,
         IReadOnlyDictionary<Guid, Product> products,
         IReadOnlyDictionary<Guid, Supplier> suppliers,
+        IReadOnlyDictionary<Guid, Money> unitPriceByRecommendationId,
         string actorUserId,
         Guid tenantId,
         CancellationToken ct = default);

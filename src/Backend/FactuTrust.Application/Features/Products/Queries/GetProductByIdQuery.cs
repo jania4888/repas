@@ -37,6 +37,7 @@ public sealed class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQ
             return Result.Failure<ProductDetailDto>(Error.NotFound("Product", request.Id));
 
         decimal? weightedAverageCost = null;
+        decimal? minimumStock = null;
         if (product.IsStockManaged)
         {
             var defaultWarehouse = await _warehouseRepository.GetDefaultAsync(cancellationToken);
@@ -47,9 +48,10 @@ public sealed class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQ
                     defaultWarehouse.Id,
                     cancellationToken);
                 weightedAverageCost = stockItem?.AverageCost;
+                minimumStock = stockItem?.MinimumStock;
             }
         }
 
-        return Result.Success(ProductDetailMapper.ToDetailDto(product, weightedAverageCost));
+        return Result.Success(ProductDetailMapper.ToDetailDto(product, weightedAverageCost, minimumStock));
     }
 }

@@ -120,6 +120,8 @@ public sealed class ProjectTimeEntry : Entity
             return Result.Failure(Error.Validation("Status", "Seuls les temps en brouillon peuvent être soumis"));
         if (Hours <= 0)
             return Result.Failure(Error.Validation("Hours", "Les heures doivent être strictement supérieures à 0"));
+        if (!TaskId.HasValue && EntrySource != TimesheetEntrySource.TimeOff)
+            return Result.Failure(Error.Validation("TaskId", "La tâche est obligatoire"));
         Status = ProjectTimeEntryStatus.Submitted;
         SubmittedAt = DateTime.UtcNow;
         return Result.Success();

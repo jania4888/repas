@@ -53,7 +53,8 @@ public sealed class ReplenishmentDtoSerializationTests
             ManualSupplierOverride: null,
             DaysOfStockRemaining: 2m,
             UserNotes: "Urgent: supplier confirmed.",
-            UrgencyLevel: "Urgent");
+            UrgencyLevel: "Urgent",
+            SuggestedPurchaseUnitPrice: 12.5m);
 
         var json = JsonSerializer.Serialize(dto, Options());
 
@@ -64,6 +65,7 @@ public sealed class ReplenishmentDtoSerializationTests
         Assert.Contains("\"daysOfStockRemaining\":2", json);
         Assert.Contains("\"preferredSupplierName\":\"Fournisseur X\"", json);
         Assert.Contains("\"userNotes\":\"Urgent: supplier confirmed.\"", json);
+        Assert.Contains("\"suggestedPurchaseUnitPrice\":12.5", json);
 
         var roundtrip = JsonSerializer.Deserialize<ReplenishmentRecommendationDto>(json, Options())!;
         Assert.Equal(dto.Id, roundtrip.Id);
@@ -87,6 +89,24 @@ public sealed class ReplenishmentDtoSerializationTests
         var roundtrip = JsonSerializer.Deserialize<OverrideReplenishmentRequestDto>(json, Options())!;
         Assert.Null(roundtrip.ManualQty);
         Assert.Null(roundtrip.ManualSupplierId);
+    }
+
+    [Fact]
+    public void CreatePurchaseOrdersRequestDto_RoundtripsLinePrices()
+    {
+        var recId = Guid.NewGuid();
+        var dto = new CreatePurchaseOrdersRequestDto(
+            new[] { recId },
+            new[] { new CreatePurchaseOrderLinePriceDto(recId, 19.5m) });
+
+        var json = JsonSerializer.Serialize(dto, Options());
+        Assert.Contains("\"linePrices\"", json);
+        Assert.Contains("\"unitPrice\":19.5", json);
+
+        var roundtrip = JsonSerializer.Deserialize<CreatePurchaseOrdersRequestDto>(json, Options())!;
+        Assert.Single(roundtrip.RecommendationIds);
+        Assert.Single(roundtrip.LinePrices!);
+        Assert.Equal(19.5m, roundtrip.LinePrices![0].UnitPrice);
     }
 
     [Fact]

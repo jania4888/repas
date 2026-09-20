@@ -9,6 +9,8 @@ import {
   canCreateTimeEntry,
   canLogTime,
   showTimeTab,
+  showProfitabilityTab,
+  showTaskTimeTab,
   canProcessTimeEntries,
   canEditTimeEntry,
   canDeleteTimeEntry,
@@ -138,6 +140,12 @@ describe('project-enums', () => {
     expect(cannotReceiveTimeMessage('OnHold')).toContain('pause');
   });
 
+  it('shows profitability tab when billing mode is not None', () => {
+    expect(showProfitabilityTab({ billingMode: 'TimeAndMaterials' })).toBe(true);
+    expect(showProfitabilityTab({ billingMode: 'None' })).toBe(false);
+    expect(showProfitabilityTab({ billingMode: 0 })).toBe(false);
+  });
+
   it('shows time tab when timesheets enabled on active, on hold or completed projects', () => {
     expect(showTimeTab({ status: 'Active', timesheetsEnabled: true })).toBe(true);
     expect(showTimeTab({ status: 'Active', timesheetsEnabled: false })).toBe(false);
@@ -146,6 +154,13 @@ describe('project-enums', () => {
     expect(showTimeTab({ status: 'Draft', timesheetsEnabled: true })).toBe(false);
     expect(showTimeTab({ status: 'Cancelled', timesheetsEnabled: true })).toBe(false);
     expect(canProcessTimeEntries({ status: 'Completed', timesheetsEnabled: true })).toBe(true);
+  });
+
+  it('shows task time tab when project time tab is hidden but task has logged hours', () => {
+    const projectOff = { status: 'Active', timesheetsEnabled: false };
+    expect(showTaskTimeTab(projectOff, { loggedHours: 0 })).toBe(false);
+    expect(showTaskTimeTab(projectOff, { loggedHours: 2.5 })).toBe(true);
+    expect(showTaskTimeTab({ status: 'Active', timesheetsEnabled: true }, { loggedHours: 0 })).toBe(true);
   });
 
   it('derives time entry actions and invoiced display', () => {

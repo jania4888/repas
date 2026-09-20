@@ -48,7 +48,7 @@ import {
   parseProjectTaskPriority,
   parseProjectTaskStatus,
   parseProjectTimeStatus,
-  showTimeTab,
+  showTaskTimeTab,
   taskStatusBadge,
   timeEntryCreationBlockedMessage,
   timeEntryStatusBadge,
@@ -124,7 +124,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
               <p-tab value="overview">Aperçu</p-tab>
               <p-tab value="subtasks">Sous-tâches {{ doneSubtasks() }}/{{ subtasks().length }}</p-tab>
               <p-tab value="files">Fichiers {{ taskFiles().length }}</p-tab>
-              @if (showTimeTab(project())) {
+              @if (showTaskTimeTab(project(), t)) {
               <p-tab value="time">Temps passé</p-tab>
               }
               <p-tab value="history">Historique</p-tab>
@@ -212,9 +212,13 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   }
                 </div>
               </p-tabpanel>
-              @if (showTimeTab(project())) {
+              @if (showTaskTimeTab(project(), t)) {
               <p-tabpanel value="time">
                 <div class="card p-3">
+                  @if (!canReadTime) {
+                    <p-message severity="info" styleClass="w-full mb-3"
+                      text="Vous n'avez pas l'accès aux feuilles de temps." />
+                  }
                   @if (project() && !canCreateTimeEntry && !editTimeId) {
                     <p-message severity="warn" styleClass="w-full mb-3"
                       [text]="timeLoggingBlockedMessage()" />
@@ -427,10 +431,11 @@ export class ProjectTaskDetailComponent implements OnInit {
   readonly canReopenValidatedTimeEntry = canReopenValidatedTimeEntry;
   readonly timeEntryStatusBadge = timeEntryStatusBadge;
   readonly timeEntryStatusLabel = timeEntryStatusLabel;
-  readonly showTimeTab = showTimeTab;
+  readonly showTaskTimeTab = showTaskTimeTab;
   readonly formatSize = formatFileSize;
 
   get canUpdate(): boolean { return this.auth.hasPermission(PERMISSIONS.projectTasks.update); }
+  get canReadTime(): boolean { return this.auth.hasPermission(PERMISSIONS.projectTime.read); }
   get canCreateTime(): boolean { return this.auth.hasPermission(PERMISSIONS.projectTime.create); }
   get canSubmitTime(): boolean { return this.auth.hasPermission(PERMISSIONS.projectTime.submit); }
   get canValidateTime(): boolean { return this.auth.hasPermission(PERMISSIONS.projectTime.validate); }
@@ -632,11 +637,15 @@ export class ProjectTaskDetailComponent implements OnInit {
           this.api.attachments(t.projectId).subscribe(a => {
             if (a.success && a.data) this.attachments.set(a.data);
           });
-          this.api.time({ projectId: t.projectId }).subscribe(te => {
-            if (te.success && te.data) {
-              this.timeEntries.set(te.data.filter(e => e.taskId === t.id));
-            }
-          });
+          if (this.canReadTime) {
+            this.api.time({ projectId: t.projectId }).subscribe(te => {
+              if (te.success && te.data) {
+                this.timeEntries.set(te.data.filter(e => this.timeEntryMatchesTask(e, t.id)));
+              }
+            });
+          } else {
+            this.timeEntries.set([]);
+          }
           this.api.activity(t.projectId).subscribe(act => {
             if (act.success && act.data) this.activities.set(act.data);
           });
@@ -714,6 +723,11 @@ export class ProjectTaskDetailComponent implements OnInit {
       },
       error: err => this.toast.add({ severity: 'error', summary: 'Téléchargement', detail: this.errors.extractErrorMessage(err) })
     });
+  }
+
+  private timeEntryMatchesTask(entry: ProjectTimeEntry, taskId: string): boolean {
+    if (!entry.taskId) return false;
+    return entry.taskId.toLowerCase() === taskId.toLowerCase();
   }
 
   deleteTask(): void {

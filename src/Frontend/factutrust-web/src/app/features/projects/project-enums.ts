@@ -235,6 +235,14 @@ export function canCreateTimeEntry(project: ProjectTimeLoggingContext | null | u
   return canReceiveTime(project.status) && project.timesheetsEnabled !== false;
 }
 
+/** Valide les champs minimaux d'une ligne de temps projet (saisie manuelle). */
+export function canSaveProjectTimeLine(
+  taskId: string | null | undefined,
+  hours: number | null | undefined
+): boolean {
+  return !!taskId && typeof hours === 'number' && hours > 0 && hours <= 24;
+}
+
 /** @deprecated Use canCreateTimeEntry for new time entry; showTimeTab for tab visibility. */
 export function canLogTime(project: ProjectTimeLoggingContext | null | undefined): boolean {
   return canCreateTimeEntry(project);
@@ -244,6 +252,29 @@ export function showTimeTab(project: ProjectTimeLoggingContext | null | undefine
   if (!project) return false;
   if (project.timesheetsEnabled === false) return false;
   return canProcessExistingTime(project.status);
+}
+
+export interface ProjectProfitabilityTabContext {
+  billingMode?: ProjectBillingModeCode | number | string | null;
+}
+
+export function showProfitabilityTab(project: ProjectProfitabilityTabContext | null | undefined): boolean {
+  if (!project) return false;
+  const mode = parseProjectBillingMode(project.billingMode);
+  return mode !== null && mode !== 'None';
+}
+
+export interface ProjectTaskTimeTabContext {
+  loggedHours: number;
+}
+
+/** Onglet « Temps passé » sur la fiche tâche : saisie projet ou historique sur la tâche. */
+export function showTaskTimeTab(
+  project: ProjectTimeLoggingContext | null | undefined,
+  task: ProjectTaskTimeTabContext | null | undefined
+): boolean {
+  if (showTimeTab(project)) return true;
+  return (task?.loggedHours ?? 0) > 0;
 }
 
 export function canProcessTimeEntries(project: ProjectTimeLoggingContext | null | undefined): boolean {
