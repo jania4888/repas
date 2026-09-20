@@ -1430,10 +1430,32 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
             lines.Add(($"Régie — {names.GetValueOrDefault(group.Key, "Intervenant")}", hours, rate));
         }
 
+        var linePayload = lines.Select(l => (l.Designation, l.Hours, l.UnitPrice, "h")).ToList();
+        if (dto.TargetInvoiceId is Guid targetInvoiceId)
+        {
+            return await AppendLinesToProjectDraftInvoiceAsync(
+                project,
+                ProjectBillingKind.TimeAndMaterials,
+                targetInvoiceId,
+                linePayload,
+                dto.Notes,
+                invoiceId =>
+                {
+                    foreach (var entry in entries)
+                    {
+                        var marked = entry.MarkInvoiced(invoiceId);
+                        if (marked.IsFailure) return marked;
+                    }
+                    return Result.Success();
+                },
+                async () => await RecordTimesheetInvoicingOnSalesOrderAsync(project, entries, cancellationToken),
+                cancellationToken);
+        }
+
         var emitted = await EmitProjectInvoiceAsync(
             project,
             ProjectBillingKind.TimeAndMaterials,
-            lines.Select(l => (l.Designation, l.Hours, l.UnitPrice, "h")).ToList(),
+            linePayload,
             dto.Notes,
             invoiceId =>
             {
@@ -1451,6 +1473,36 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
         if (soInvoiced.IsFailure) return Result.Failure<ProjectInvoiceResultDto>(soInvoiced.Error);
         await _db.SaveChangesAsync(cancellationToken);
         return emitted;
+    }
+
+    public async Task<IReadOnlyList<ProjectDraftInvoiceDto>> GetCompatibleDraftInvoicesAsync(
+        Guid projectId, CancellationToken cancellationToken = default)
+    {
+        var project = await _db.Projects.AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == projectId, cancellationToken);
+        if (project is null)
+            return Array.Empty<ProjectDraftInvoiceDto>();
+
+        var invoices = await _db.Invoices.AsNoTracking()
+            .Include(i => i.Lines)
+            .Where(i => i.Status == InvoiceStatus.Draft
+                && i.Type == InvoiceType.Standard
+                && i.SourceProjectId == projectId
+                && i.ClientId == project.ClientId)
+            .OrderByDescending(i => i.IssueDate)
+            .ThenByDescending(i => i.CreatedAt)
+            .ToListAsync(cancellationToken);
+
+        return invoices
+            .Select(i => new ProjectDraftInvoiceDto
+            {
+                InvoiceId = i.Id,
+                Number = i.Number.Value,
+                IssueDate = i.IssueDate,
+                AmountHT = i.SubTotal.Amount,
+                LineCount = i.Lines.Count
+            })
+            .ToList();
     }
 
     public async Task<IReadOnlyList<BillableProjectTimeEntryDto>> GetBillableTimeEntriesAsync(
@@ -1658,6 +1710,33 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
             }
 
             tasksToMark.Add((task, taskEntries));
+        }
+
+        if (dto.TargetInvoiceId is Guid targetInvoiceId)
+        {
+            return await AppendLinesToProjectDraftInvoiceAsync(
+                project,
+                billingKind,
+                targetInvoiceId,
+                lines,
+                dto.Notes,
+                invoiceId =>
+                {
+                    foreach (var (task, taskEntries) in tasksToMark)
+                    {
+                        var markedTask = task.MarkInvoiced(invoiceId, billingMethod);
+                        if (markedTask.IsFailure) return markedTask;
+
+                        foreach (var entry in taskEntries)
+                        {
+                            var markedEntry = entry.MarkInvoiced(invoiceId);
+                            if (markedEntry.IsFailure) return markedEntry;
+                        }
+                    }
+                    return Result.Success();
+                },
+                null,
+                cancellationToken);
         }
 
         return await EmitProjectInvoiceAsync(
@@ -2168,6 +2247,67 @@ public sealed class ProjectService : IProjectService, IAsyncDisposable
             .OrderByDescending(d => d.IssueDate)
             .ThenByDescending(d => d.CreatedAt)
             .ToList();
+    }
+
+    private async Task<Result<ProjectInvoiceResultDto>> AppendLinesToProjectDraftInvoiceAsync(
+        Project project,
+        ProjectBillingKind kind,
+        Guid targetInvoiceId,
+        IReadOnlyList<(string Designation, decimal Quantity, decimal UnitPrice, string Unit)> lines,
+        string? notes,
+        Func<Guid, Result> afterInvoice,
+        Func<Task<Result>>? afterMarkAsync,
+        CancellationToken cancellationToken,
+        VatRate vatRate = VatRate.Standard)
+    {
+        if (lines.Count == 0)
+            return Result.Failure<ProjectInvoiceResultDto>(Error.Validation("Lines", "Aucune ligne à facturer"));
+
+        if (!project.Status.CanBeBilled())
+            return Result.Failure<ProjectInvoiceResultDto>(Error.Validation("Status", project.Status.CannotBeBilledMessage()));
+
+        var invoice = await _db.Invoices
+            .Include(i => i.Lines)
+            .FirstOrDefaultAsync(i => i.Id == targetInvoiceId, cancellationToken);
+        if (invoice is null)
+            return Result.Failure<ProjectInvoiceResultDto>(Error.NotFound("Invoice", targetInvoiceId));
+        if (invoice.Status != InvoiceStatus.Draft)
+            return Result.Failure<ProjectInvoiceResultDto>(Error.Validation("Status", "Seules les factures brouillon peuvent recevoir des lignes"));
+        if (invoice.Type != InvoiceType.Standard)
+            return Result.Failure<ProjectInvoiceResultDto>(Error.Validation("Type", "Cette facture n'est pas une facture de vente"));
+        if (invoice.ClientId != project.ClientId)
+            return Result.Failure<ProjectInvoiceResultDto>(Error.Validation("Client", "La facture doit appartenir au même client que le projet"));
+        if (invoice.SourceProjectId != project.Id)
+            return Result.Failure<ProjectInvoiceResultDto>(Error.Validation("Project", "La facture doit être rattachée à ce projet"));
+
+        var batchHt = 0m;
+        foreach (var line in lines)
+        {
+            var added = invoice.AddCustomLine(line.Designation, null, line.Quantity, line.Unit, Money.Create(line.UnitPrice), vatRate);
+            if (added.IsFailure)
+                return Result.Failure<ProjectInvoiceResultDto>(added.Error);
+            batchHt += decimal.Round(line.Quantity * line.UnitPrice, 3, MidpointRounding.AwayFromZero);
+        }
+
+        var tagged = afterInvoice(invoice.Id);
+        if (tagged.IsFailure)
+            return Result.Failure<ProjectInvoiceResultDto>(tagged.Error);
+
+        if (afterMarkAsync is not null)
+        {
+            var post = await afterMarkAsync();
+            if (post.IsFailure)
+                return Result.Failure<ProjectInvoiceResultDto>(post.Error);
+        }
+
+        var billing = ProjectBilling.Create(project.Id, kind, invoice.Id, batchHt, notes);
+        if (billing.IsFailure)
+            return Result.Failure<ProjectInvoiceResultDto>(billing.Error);
+
+        _db.ProjectBillings.Add(billing.Value);
+        AddActivity(project.Id, "invoiced", $"Lignes ajoutées à la facture brouillon {invoice.Number.Value}");
+        await _db.SaveChangesAsync(cancellationToken);
+        return Result.Success(new ProjectInvoiceResultDto { InvoiceId = invoice.Id, BillingId = billing.Value.Id });
     }
 
     private async Task<Result<ProjectInvoiceResultDto>> EmitProjectInvoiceAsync(

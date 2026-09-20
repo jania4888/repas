@@ -551,6 +551,18 @@ public sealed class ProjectsController : ControllerBase
         return Ok(ApiResponse<IReadOnlyList<BillableProjectTimeEntryDto>>.Ok(items));
     }
 
+    [HttpGet("{id:guid}/billing/draft-invoices")]
+    [Authorize(Policy = PermissionPolicies.ProjectBillingRead)]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<ProjectDraftInvoiceDto>>>> CompatibleDraftInvoices(
+        Guid id, CancellationToken cancellationToken = default)
+    {
+        if (GuardEnabled() is { } guard) return guard;
+        if (await _service.GetAsync(id, cancellationToken) is null)
+            return NotFound(ApiResponse<IReadOnlyList<ProjectDraftInvoiceDto>>.Fail("Projet introuvable"));
+        var items = await _service.GetCompatibleDraftInvoicesAsync(id, cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<ProjectDraftInvoiceDto>>.Ok(items));
+    }
+
     [HttpPost("{id:guid}/billing/tasks")]
     [Authorize(Policy = PermissionPolicies.ProjectBillingCreate)]
     public async Task<ActionResult<ApiResponse<ProjectInvoiceResultDto>>> InvoiceTasks(Guid id, [FromBody] InvoiceTasksDto dto, CancellationToken cancellationToken)
