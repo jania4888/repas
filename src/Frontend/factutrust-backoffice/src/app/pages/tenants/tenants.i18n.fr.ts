@@ -17,6 +17,9 @@ export const TENANTS_FR = {
   'list.actions.export': 'Exporter',
   'list.actions.create': 'Nouvelle entreprise',
   'list.actions.createFirm': 'Nouveau cabinet comptable',
+  'kind.accountingFirm': 'Cabinet',
+  'kind.company': 'Entreprise',
+  'filters.kind': 'Type de dossier',
 
   // ----- KPIs --------------------------------------------------------------
   'kpi.total': 'Entreprises',

@@ -38,6 +38,7 @@ public sealed class PlatformAuthController : ControllerBase
     private readonly IPlatformMfaService _mfaService;
     private readonly IUserSessionService _sessionService;
     private readonly IFailedLoginAttemptService _failedLogins;
+    private readonly IAccountingFirmsFeature _accountingFirmsFeature;
     private readonly ILogger<PlatformAuthController> _logger;
 
     public PlatformAuthController(
@@ -48,6 +49,7 @@ public sealed class PlatformAuthController : ControllerBase
         IPlatformMfaService mfaService,
         IUserSessionService sessionService,
         IFailedLoginAttemptService failedLogins,
+        IAccountingFirmsFeature accountingFirmsFeature,
         ILogger<PlatformAuthController> logger)
     {
         _userManager = userManager;
@@ -57,6 +59,7 @@ public sealed class PlatformAuthController : ControllerBase
         _mfaService = mfaService;
         _sessionService = sessionService;
         _failedLogins = failedLogins;
+        _accountingFirmsFeature = accountingFirmsFeature;
         _logger = logger;
     }
 
@@ -221,7 +224,13 @@ public sealed class PlatformAuthController : ControllerBase
             UserId = user.Id,
             Email = user.Email!,
             Roles = roles,
-            Permissions = permissions
+            Permissions = permissions,
+            Features = new Dictionary<string, bool>
+            {
+                // Consommé par le backoffice pour ne pas offrir la création de cabinet quand
+                // l'endpoint répondrait 404 (PlatformTenantProvisioningController.CreateAccountingFirm).
+                ["accountingFirms"] = _accountingFirmsFeature.IsEnabled
+            }
         }));
     }
 

@@ -275,6 +275,14 @@ public sealed record PlatformMePermissionsDto
     public string Email { get; init; } = null!;
     public IReadOnlyList<string> Roles { get; init; } = Array.Empty<string>();
     public IReadOnlyList<string> Permissions { get; init; } = Array.Empty<string>();
+
+    /// <summary>
+    /// Drapeaux de fonctionnalité de l'instance, booléens uniquement (ex. <c>accountingFirms</c>).
+    /// Permet au backoffice de ne pas proposer une action que le serveur refusera par un 404 nu ;
+    /// la garde qui fait autorité reste côté serveur.
+    /// </summary>
+    public IReadOnlyDictionary<string, bool> Features { get; init; } =
+        new Dictionary<string, bool>();
 }
 
 /// <summary>Platform operator profile (no tenant context).</summary>

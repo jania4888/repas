@@ -7,6 +7,12 @@ namespace FactuTrust.Application.DTOs;
 public sealed record PlatformTenantListItemDto
 {
     public Guid TenantId { get; init; }
+    /// <summary>
+    /// Nature du dossier : entreprise ou cabinet comptable. Additif ; la valeur par défaut
+    /// <see cref="TenantKind.Company"/> (= 0) correspond à ce qu'étaient tous les tenants avant
+    /// que les cabinets existent, donc aucune réponse antérieure n'en est changée.
+    /// </summary>
+    public TenantKind Kind { get; init; }
     public string CompanyName { get; init; } = null!;
     public string CompanyEmail { get; init; } = null!;
     public string TaxRegimeDisplay { get; init; } = null!;
@@ -95,6 +101,8 @@ public sealed record PlatformTenantListQuery
     public SubscriptionStatus? SubscriptionStatus { get; init; }
     public bool? IsActive { get; init; }
     public TaxRegime? TaxRegime { get; init; }
+    /// <summary>Filtre optionnel sur la nature du dossier (entreprise / cabinet comptable).</summary>
+    public TenantKind? Kind { get; init; }
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 50;
 

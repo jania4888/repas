@@ -30,6 +30,9 @@ export class PlatformPermissionsService {
   /** Set effectif des rôles. */
   private readonly roleSet = computed(() => new Set(this.state()?.roles ?? []));
 
+  /** Drapeaux de fonctionnalité de l'instance ; objet vide tant que rien n'est chargé. */
+  private readonly featureMap = computed<Record<string, boolean>>(() => this.state()?.features ?? {});
+
   /** Indique si les permissions ont été chargées au moins une fois. */
   readonly isLoaded = computed(() => this.state() !== null);
 
@@ -71,5 +74,17 @@ export class PlatformPermissionsService {
   /** Vérifie si l'utilisateur courant a un rôle donné. */
   hasRole(role: string): boolean {
     return this.roleSet().has(role);
+  }
+
+  /**
+   * Drapeau de fonctionnalité de l'instance, tel que remonté par l'API.
+   *
+   * Défaut `true` quand le drapeau est inconnu : une API antérieure au champ `features` — ou pas
+   * encore chargée — ne doit pas faire disparaître des actions qui fonctionnent. Comme pour les
+   * permissions, ce n'est qu'ergonomique : le serveur reste seul juge et répond 404 sur une
+   * fonctionnalité désactivée.
+   */
+  hasFeature(key: string): boolean {
+    return this.featureMap()[key] ?? true;
   }
 }
