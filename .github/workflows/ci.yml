@@ -1,17 +1,49 @@
 name: CI
 
 # checkout/setup-node utilisent Node.js 24 ; les builds applicatifs restent sur Node.js 20.
-# Dépôt actuellement sans remote : ce workflow s'activera automatiquement
-# dès que le dépôt sera poussé sur GitHub. En attendant, utiliser
-# scripts/verify-all.ps1 en local (mêmes étapes).
+# Avant de pousser, passer la porte locale : scripts/verify-all.ps1 (mêmes étapes, plus
+# la parité sectorielle). Un run complet coûte ~47 minutes facturées — voir ci-dessous.
 #
 # Secrets GitHub requis :
 #   CI_SQL_SA_PASSWORD — mot de passe SA SQL Server (politique de complexité Microsoft).
 #   TRUNK_API_TOKEN — token organisation Trunk (Settings → Organization → General) pour Flaky Tests.
+#
+# Coût mesuré sur le dernier run vert (2026-09-06) : backend Windows 16,1 min facturées ×2
+# = 32,1, plus 15,3 min d'Ubuntu, soit ~47,4 min par run. Sur un dépôt privé en plan Free
+# (2 000 min/mois), cela fait ~42 runs mensuels : d'où le filtre de chemins et le groupe
+# de concurrence ci-dessous.
+
+# Un changement purement documentaire ne déclenche pas les 47 minutes. La liste est
+# répétée volontairement : GitHub Actions n'expanse PAS les ancres YAML (`&`/`*`), un
+# workflow qui en contient est refusé au parsing.
+#
+# ATTENTION : si ce dépôt passe un jour en GitHub Pro avec des checks OBLIGATOIRES,
+# `paths-ignore` fait apparaître un check « en attente » qui ne se résout jamais et
+# bloque le merge. Aujourd'hui aucune protection de branche n'est possible (compte
+# personnel + dépôt privé + plan Free), donc le piège ne s'applique pas.
 on:
   push:
     branches: [master, main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'art/**'
   pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'art/**'
+
+# Un nouveau push sur une PR annule le run précédent de la même référence, encore en cours :
+# sur une branche active, c'est le poste d'économie le plus net.
+#
+# La condition porte sur l'ÉVÉNEMENT, pas sur le nom de la branche : un run déclenché par un
+# push n'est jamais annulé, ni sur `main` ni sur `master` (les deux sont dans le déclencheur
+# ci-dessus). On veut pouvoir dire quelle fusion a cassé quoi — une histoire d'intégration
+# trouée par des annulations ne vaut pas les minutes qu'elle économise.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   backend:
@@ -49,7 +81,7 @@ jobs:
 
   frontend-web:
     name: Web Angular (specs + build prod)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # épinglé : `ubuntu-latest` bascule sur Ubuntu 26 le 2026-10-19
     defaults:
       run:
         working-directory: src/Frontend/factutrust-web
@@ -76,7 +108,7 @@ jobs:
 
   frontend-web-e2e-smoke:
     name: Web Playwright smoke
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # épinglé : `ubuntu-latest` bascule sur Ubuntu 26 le 2026-10-19
     services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2022-latest
@@ -160,7 +192,7 @@ jobs:
 
   frontend-backoffice:
     name: Backoffice Angular (build)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # épinglé : `ubuntu-latest` bascule sur Ubuntu 26 le 2026-10-19
     defaults:
       run:
         working-directory: src/Frontend/factutrust-backoffice

@@ -577,14 +577,25 @@ conteneur — le renouvellement par webroot ne peut donc pas fonctionner en l'é
 ## 14. Validation locale avant déploiement
 
 ```powershell
-powershell -File scripts\verify-all.ps1
+powershell -File scripts\verify-all.ps1 -ContinueOnError
 ```
 
-⚠️ Ce script sort à la **première** étape en échec : avec une ligne de base de tests
-backend rouges, il n'atteint jamais les étapes frontend. Lancer les étapes une par une.
+Le script reproduit les étapes de `.github/workflows/ci.yml` (hors job Playwright, qui exige
+SQL Server et l'API démarrée). Par défaut il sort à la **première** étape en échec : avec une
+ligne de base de tests backend rouges, il n'atteint alors jamais les étapes frontend.
+`-ContinueOnError` joue toutes les étapes et rend un récapitulatif complet — c'est aussi plus
+fidèle, la CI lançant ses 4 jobs **en parallèle**.
+
+Ajouter `-CleanInstall` pour un `npm ci --legacy-peer-deps` avant les étapes Angular : la CI
+repart d'un `node_modules` vide, et c'est précisément cet écart qui a déjà fait échouer l'étape
+`npm ci` en CI alors que tout passait en local.
 
 **Capturer la liste des noms de tests en échec AVANT toute modification** et la comparer
 après : un compteur ne distingue pas un échec préexistant d'une régression.
+
+💡 Le faire systématiquement : un run CI complet coûte **~47 minutes facturées** (le job backend
+tourne sur `windows-latest`, facturé ×2), soit ~42 runs par mois dans le quota d'un dépôt privé
+en plan Free.
 
 Répéter ensuite la pile de production en local — le lab VMware ne suffit pas, il bascule
 `TenantMigrations__ApplyOnStartup` et `Features__AccountingFirms__Enabled` :
