@@ -94,3 +94,15 @@ services:
       traefik.http.routers.factutrust.tls: "true"
       traefik.http.routers.factutrust.tls.certresolver: ${TRAEFIK_CERTRESOLVER:-letsencrypt}
       traefik.http.routers.factutrust.service: factutrust
+      traefik.http.routers.factutrust.middlewares: factutrust-hsts
+
+      # --- HSTS, pose par le frontal pour couvrir TOUT le site ---
+      # `UseHsts()` cote API ne pose l'en-tete que sur les reponses de l'API : les pages
+      # des deux SPA sont servies par Nginx et n'en avaient aucune. Verifie sur le site
+      # en production : seuls cache-control, referrer-policy, x-content-type-options et
+      # x-frame-options etaient presents.
+      # 180 jours, aligne sur AddHsts() de l'application.
+      # includeSubDomains VOLONTAIREMENT ABSENT : il engagerait tout sous-domaine futur
+      # d'instafact.shop a etre en HTTPS, y compris avant qu'il n'ait un certificat.
+      # A activer plus tard, deliberement, quand le perimetre des sous-domaines est fige.
+      traefik.http.middlewares.factutrust-hsts.headers.stsSeconds: "15552000"
