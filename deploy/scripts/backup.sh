@@ -78,11 +78,17 @@ fi
 mkdir -p "${DEST}/sql"
 echo "Sauvegarde vers ${DEST}"
 
+# `</dev/null` INDISPENSABLE : `docker compose exec` lit l'entree standard meme avec -T.
+# Appele depuis une boucle `while read`, il CONSOMME le reste de la liste des bases et la
+# boucle s'arrete apres la premiere iteration. Constate en production le 21/09/2026 :
+# seule FactuTrust_Master etait sauvegardee, la base du dossier client etait ignoree, et
+# le script se terminait en annoncant « 1 base(s) sauvegardee(s) » sans la moindre erreur.
+#
 # sqlcmd lit SQLCMDPASSWORD dans l'environnement : le mot de passe n'apparaît donc pas
 # dans la table des processus du conteneur.
 sqlcmd_q() {
   compose exec -T -e "SQLCMDPASSWORD=${SA_PASSWORD}" sqlserver \
-    /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C "$@"
+    /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C "$@" </dev/null
 }
 
 # --- 0. Le répertoire de sauvegarde doit exister et appartenir à mssql -------------
@@ -103,16 +109,27 @@ fi
 # (« Backup compression is not supported on this edition of SQL Server »). CHECKSUM
 # détecte une corruption au moment de l'écriture plutôt qu'au moment du besoin.
 BACKED_UP=0
-while IFS= read -r db; do
+# Lecture sur le descripteur 3 : meme si une commande de la boucle lisait stdin,
+# elle ne pourrait plus avaler la liste.
+while IFS= read -r db <&3; do
   db="$(echo "${db}" | tr -d '[:space:]')"
   [[ -z "${db}" ]] && continue
   echo "  -> ${db}"
   sqlcmd_q -b -Q \
     "BACKUP DATABASE [${db}] TO DISK='${CONTAINER_BACKUP_DIR}/${db}_${STAMP}.bak' WITH INIT, CHECKSUM, STATS=25"
   BACKED_UP=$((BACKED_UP + 1))
-done <<< "${DATABASES}"
+done 3<<< "${DATABASES}"
 
 echo "${BACKED_UP} base(s) sauvegardée(s)."
+
+# Garde-fou contre la classe de bug ci-dessus : si le compte ne correspond pas a
+# l'inventaire, on ECHOUE au lieu d'annoncer un succes partiel.
+ATTENDU=$(grep -cE '[^[:space:]]' <<< "${DATABASES}")
+if [[ "${BACKED_UP}" -ne "${ATTENDU}" ]]; then
+  echo "ERREUR : ${BACKED_UP} base(s) sauvegardee(s) pour ${ATTENDU} inventoriee(s)." >&2
+  echo "         Sauvegarde INCOMPLETE - ne pas s'y fier." >&2
+  exit 1
+fi
 
 if ! grep -q 'FactuTrust_Master' <<< "${DATABASES}"; then
   echo "ERREUR : FactuTrust_Master absente de la sauvegarde. C'est la base qui porte le" >&2
