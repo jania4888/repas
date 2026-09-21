@@ -22,6 +22,11 @@ export interface PlatformMePermissionsDto {
   email: string;
   roles: string[];
   permissions: string[];
+  /**
+   * Drapeaux de fonctionnalité de l'instance (booléens uniquement, ex. `accountingFirms`).
+   * Optionnel : absent des réponses d'une API antérieure à son exposition.
+   */
+  features?: Record<string, boolean> | null;
 }
 
 /** Profil détaillé GET /api/platform/auth/me */
@@ -404,6 +409,8 @@ export interface TenantModuleOverrideDto {
 
 /** Query param values for GET /platform/tenants filters (numeric enums). */
 export type TaxRegimeValue = 0 | 1 | 2;
+/** `TenantKind` côté serveur : Company = 0, AccountingFirm = 1 (valeur de filtre). */
+export type TenantKindFilterValue = 0 | 1;
 export type SubscriptionPlanValue = 0 | 1 | 2;
 export type SubscriptionStatusValue = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -413,6 +420,9 @@ export type SubscriptionStatusValue = 0 | 1 | 2 | 3 | 4 | 5;
  * l'utilisateur ne peut pas se connecter.
  */
 export type TenantProvisioningStatusValue = 'Ready' | 'Pending' | 'Failed';
+
+/** Nature d'un dossier plateforme, telle que sérialisée par l'API. */
+export type TenantKindValue = 'Company' | 'AccountingFirm';
 
 export interface PlatformTenantListItemDto {
   tenantId: string;
@@ -444,6 +454,12 @@ export interface PlatformTenantListItemDto {
   businessDomain?: string | null;
   /** Statut de provisionnement ; absent des réponses antérieures à son exposition. */
   provisioningStatus?: TenantProvisioningStatusValue | null;
+  /**
+   * Nature du dossier, enum sérialisée en chaîne par l'API : `Company` | `AccountingFirm`.
+   * Optionnel : absent des réponses antérieures à son exposition — traiter l'absence comme
+   * `Company`, ce qu'étaient tous les tenants avant que les cabinets existent.
+   */
+  kind?: TenantKindValue | null;
 }
 
 export interface PlatformTenantListPageDto {
@@ -478,6 +494,8 @@ export interface PlatformTenantListParams {
   subscriptionStatus?: SubscriptionStatusValue;
   isActive?: boolean;
   taxRegime?: TaxRegimeValue;
+  /** Nature du dossier : 0 = entreprise, 1 = cabinet comptable. */
+  kind?: TenantKindFilterValue;
   page?: number;
   pageSize?: number;
   // ----- Lot A2 additions (optionnels) ------------------------------------

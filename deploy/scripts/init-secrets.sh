@@ -43,6 +43,22 @@ if ! grep -q '^JwtSettings__SecretKey=.\{32,\}' "${ENV_FILE}" 2>/dev/null; then
   echo "Generated JwtSettings__SecretKey."
 fi
 
+# --- Signature électronique des factures (>= 32 bytes) ---
+# Miroir exact du bloc JWT ci-dessus : Program.cs applique la MÊME garde fail-fast
+# aux deux clés (absente ou < 32 octets => InvalidOperationException au démarrage,
+# avant builder.Build()). Sans ce bloc, une première mise en service échoue sur
+# « La clé secrète de signature n'est pas configurée » et le conteneur boucle.
+if ! grep -q '^SignatureSettings__SecretKey=.\{32,\}' "${ENV_FILE}" 2>/dev/null; then
+  SIGNATURE_SECRET="$(openssl rand -base64 48)"
+  if grep -q '^SignatureSettings__SecretKey=' "${ENV_FILE}"; then
+    sed -i.bak "s|^SignatureSettings__SecretKey=.*|SignatureSettings__SecretKey=${SIGNATURE_SECRET}|" "${ENV_FILE}"
+    rm -f "${ENV_FILE}.bak"
+  else
+    echo "SignatureSettings__SecretKey=${SIGNATURE_SECRET}" >> "${ENV_FILE}"
+  fi
+  echo "Generated SignatureSettings__SecretKey."
+fi
+
 # --- DataProtection PFX ---
 PFX_PATH="${CERTS_DIR}/dataprotection.pfx"
 
@@ -81,6 +97,11 @@ if grep -qE '^Bootstrap__PlatformAdmin__Password=[[:space:]]*$' "${ENV_FILE}" 2>
 fi
 
 # --- Nginx self-signed TLS (bootstrap) ---
+# Le CN se lit dans .env, pas dans l'environnement shell : sans cela le certificat
+# bootstrap sortait toujours en CN=localhost. Sans objet derrière Traefik (qui fournit
+# le vrai certificat) mais trompeur en diagnostic.
+FACTUTRUST_DOMAIN="$(grep -E '^FACTUTRUST_DOMAIN=' "${ENV_FILE}" | head -n 1 | cut -d= -f2- | tr -d '\r' || true)"
+
 if [[ ! -f "${NGINX_CERTS_DIR}/fullchain.pem" ]]; then
   openssl req -x509 -nodes -newkey rsa:2048 -days 825 \
     -keyout "${NGINX_CERTS_DIR}/privkey.pem" \
@@ -92,7 +113,24 @@ if [[ ! -f "${NGINX_CERTS_DIR}/fullchain.pem" ]]; then
   echo "Replace with Let's Encrypt certs before public production traffic."
 fi
 
+chmod 600 "${ENV_FILE}"
+
 echo ""
 echo "=== init-secrets complete ==="
-echo "Edit ${ENV_FILE} : FACTUTRUST_DOMAIN, AllowedOrigins, App__FrontendBaseUrl, SMTP, admin email."
-echo "BACKUP ${PFX_PATH} — required to decrypt tenant connection strings after redeploy."
+echo ""
+echo "A EDITER dans ${ENV_FILE} :"
+echo "  FACTUTRUST_DOMAIN, AllowedOrigins (SANS espace apres la virgule), App__FrontendBaseUrl"
+echo "  Bootstrap__PlatformAdmin__Email, Smtp__* (OBLIGATOIRE en production : sans SMTP,"
+echo "    la reinitialisation de mot de passe n'envoie RIEN et l'utilisateur reste bloque)"
+echo "  MSSQL_PID (Developer = non licencie pour la production)"
+echo "  Derriere Traefik : TRAEFIK_NETWORK, TRAEFIK_ENTRYPOINT, TRAEFIK_CERTRESOLVER, TRUSTED_PROXY_CIDR"
+echo ""
+echo "A SAUVEGARDER HORS DU VPS, MAINTENANT, DANS DEUX EMPLACEMENTS :"
+echo "  1. ${PFX_PATH}"
+echo "  2. la valeur DataProtection__CertificatePassword de ${ENV_FILE}"
+echo ""
+echo "  Le trousseau DataProtection vit DANS la base master ; ce certificat ne fait que"
+echo "  le chiffrer au repos. L'ensemble recuperable est donc : sauvegarde master + PFX"
+echo "  + mot de passe du PFX. L'un sans les autres = chaines de connexion tenant,"
+echo "  secrets TOTP et cles IA definitivement illisibles. C'est le seul moment ou les"
+echo "  perdre ne coute rien."

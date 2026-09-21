@@ -28,6 +28,7 @@ import {
   type SubscriptionPlanValue,
   type SubscriptionStatusValue,
   type TaxRegimeValue,
+  type TenantKindFilterValue,
   type TenantSortKey
 } from '@core/models/platform.models';
 
@@ -93,11 +94,18 @@ interface ActiveChip {
           pTooltip="Export CSV — bientôt"
           tooltipPosition="bottom"
         />
-        @if (canCreateTenant()) {
+        @if (canCreateTenant() && canCreateFirm()) {
           <p-splitButton
             [label]="t('list.actions.create')"
             icon="pi pi-plus"
             [model]="createTenantMenuItems()"
+            (onClick)="goCreateCompany()"
+          />
+        } @else if (canCreateTenant()) {
+          <!-- Cabinets désactivés sur cette instance : pas de menu, l'entreprise reste créable. -->
+          <p-button
+            [label]="t('list.actions.create')"
+            icon="pi pi-plus"
             (onClick)="goCreateCompany()"
           />
         } @else {
@@ -223,6 +231,16 @@ interface ActiveChip {
         [showClear]="true"
         styleClass="ft-dd"
       />
+      <p-select
+        [options]="kindOptions"
+        [ngModel]="filterKind()"
+        (ngModelChange)="setFilter('kind', $event)"
+        optionLabel="label"
+        optionValue="value"
+        [placeholder]="t('filters.kind')"
+        [showClear]="true"
+        styleClass="ft-dd"
+      />
 
       <ng-container ftActions>
         <p-splitButton
@@ -326,6 +344,11 @@ interface ActiveChip {
               [email]="row.companyEmail"
               [seed]="row.tenantId"
             />
+            <!-- Un cabinet comptable siège dans la même table qu'une entreprise : sans ce badge,
+                 rien ne les distingue. Une valeur absente vaut Company (API antérieure). -->
+            @if (row.kind === 'AccountingFirm') {
+              <ft-badge tone="info" size="sm">{{ t('kind.accountingFirm') }}</ft-badge>
+            }
             <!-- Affiche uniquement l'anomalie : un dossier Pending/Failed existe mais sa base
                  n'est pas exploitable. Le cas nominal reste invisible pour ne pas alourdir la table. -->
             @if (row.provisioningStatus === 'Pending') {
@@ -490,17 +513,33 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
     () => this.permissions.isLoaded() && this.permissions.has(PlatformPermission.TenantsWrite)
   );
 
-  createTenantMenuItems(): MenuItem[] {
-    return [
-      {
-        label: TENANTS_FR['list.actions.createFirm'],
-        icon: 'pi pi-briefcase',
-        command: () => {
-          void this.router.navigate(['/tenants/new/firm']);
-        }
+  /**
+   * Drapeau serveur `Features:AccountingFirms:Enabled`, remonté par
+   * `GET /platform/auth/me/permissions`. Sans lui, l'opérateur remplit tout le formulaire cabinet
+   * pour ne découvrir qu'à la soumission que l'endpoint répond 404. Purement ergonomique : la
+   * garde qui fait autorité reste celle du serveur.
+   */
+  readonly canCreateFirm = computed(() => this.permissions.hasFeature('accountingFirms'));
+
+  /**
+   * Référence stable, et non une méthode qui rebâtit le tableau à chaque lecture.
+   *
+   * Le setter `model` du TieredMenu de PrimeNG reconstruit ses `processedItems` à chaque
+   * affectation, et son `ngFor` interne n'a pas de `trackBy` : un tableau neuf à chaque cycle de
+   * détection fait détruire puis recréer les `<li>`. Comme l'item écoute `(mouseenter)`, le
+   * survoler suffit à déclencher ce cycle ; le `<li>` disparaît entre `mousedown` et `mouseup` et
+   * le navigateur n'émet alors aucun `click` : la commande ne part jamais. Même raison que le
+   * cache de `rowActionsById`.
+   */
+  readonly createTenantMenuItems = computed<MenuItem[]>(() => [
+    {
+      label: TENANTS_FR['list.actions.createFirm'],
+      icon: 'pi pi-briefcase',
+      command: () => {
+        void this.router.navigate(['/tenants/new/firm']);
       }
-    ];
-  }
+    }
+  ]);
 
   goCreateCompany(): void {
     void this.router.navigate(['/tenants/new/company']);
@@ -514,6 +553,7 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
   readonly filterSubStatus = signal<SubscriptionStatusValue | null>(null);
   readonly filterActive = signal<boolean | null>(null);
   readonly filterTax = signal<TaxRegimeValue | null>(null);
+  readonly filterKind = signal<TenantKindFilterValue | null>(null);
 
   // ----- Pagination + sort state -----
   readonly tableFirst = signal(0);
@@ -585,6 +625,10 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
     { label: TENANTS_FR['taxRegime.flatRate'], value: 1 },
     { label: TENANTS_FR['taxRegime.exempt'], value: 2 }
   ];
+  readonly kindOptions: { label: string; value: TenantKindFilterValue }[] = [
+    { label: TENANTS_FR['kind.company'], value: 0 },
+    { label: TENANTS_FR['kind.accountingFirm'], value: 1 }
+  ];
 
   // ----- Computed: hint texts & deltas -----
   readonly hasActiveFilters = computed(
@@ -594,7 +638,8 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
       this.filterPlan() !== null ||
       this.filterSubStatus() !== null ||
       this.filterActive() !== null ||
-      this.filterTax() !== null
+      this.filterTax() !== null ||
+      this.filterKind() !== null
   );
 
   /** Convertit le delta absolu (count) en fraction pour le badge `+xx %`. */
@@ -649,6 +694,10 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
     if (this.filterTax() !== null) {
       const opt = this.taxOptions.find((o) => o.value === this.filterTax());
       chips.push({ key: 'taxRegime', label: TENANTS_FR['filters.taxRegime'], value: opt?.label ?? '?' });
+    }
+    if (this.filterKind() !== null) {
+      const opt = this.kindOptions.find((o) => o.value === this.filterKind());
+      chips.push({ key: 'kind', label: TENANTS_FR['filters.kind'], value: opt?.label ?? '?' });
     }
     return chips;
   });
@@ -755,7 +804,7 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
     this.searchInput$.next(value);
   }
 
-  setFilter<K extends 'segment' | 'plan' | 'subscriptionStatus' | 'isActive' | 'taxRegime'>(
+  setFilter<K extends 'segment' | 'plan' | 'subscriptionStatus' | 'isActive' | 'taxRegime' | 'kind'>(
     key: K,
     value: unknown
   ): void {
@@ -774,6 +823,9 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
         break;
       case 'taxRegime':
         this.filterTax.set(value as TaxRegimeValue | null);
+        break;
+      case 'kind':
+        this.filterKind.set(value as TenantKindFilterValue | null);
         break;
     }
     this.tableFirst.set(0);
@@ -801,6 +853,9 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
       case 'taxRegime':
         this.filterTax.set(null);
         break;
+      case 'kind':
+        this.filterKind.set(null);
+        break;
     }
     this.tableFirst.set(0);
     this.loadList();
@@ -814,6 +869,7 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
     this.filterSubStatus.set(null);
     this.filterActive.set(null);
     this.filterTax.set(null);
+    this.filterKind.set(null);
     this.tableFirst.set(0);
     this.loadList();
   }
@@ -843,6 +899,7 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
     this.filterSubStatus.set(f.subscriptionStatus ?? null);
     this.filterActive.set(f.isActive ?? null);
     this.filterTax.set(f.taxRegime ?? null);
+    this.filterKind.set(f.kind ?? null);
     this.tableFirst.set(0);
     this.loadList();
   }
@@ -864,7 +921,8 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
       plan: this.filterPlan() ?? undefined,
       subscriptionStatus: this.filterSubStatus() ?? undefined,
       isActive: this.filterActive() ?? undefined,
-      taxRegime: this.filterTax() ?? undefined
+      taxRegime: this.filterTax() ?? undefined,
+      kind: this.filterKind() ?? undefined
     };
     const saved = this.api.saveView(name, filters);
     this.savedViewsSig.set([...this.savedViewsSig(), saved]);
@@ -1006,6 +1064,7 @@ export class PlatformTenantsPageComponent implements OnInit, OnDestroy {
         subscriptionStatus: this.filterSubStatus() ?? undefined,
         isActive: this.filterActive() ?? undefined,
         taxRegime: this.filterTax() ?? undefined,
+        kind: this.filterKind() ?? undefined,
         page: this.currentPage(),
         pageSize: this.pageSize(),
         sortBy: this.mapSortField(),

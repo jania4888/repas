@@ -7,9 +7,18 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 COMPOSE_FILE="${COMPOSE_FILE:-deploy/docker-compose.yml}"
-SMOKE_URL="${SMOKE_URL:-https://localhost}"
+# Overlay optionnel. SUR LE VPS HOSTINGER IL EST OBLIGATOIRE :
+#   COMPOSE_EXTRA_FILE=deploy/docker-compose.vps.yml
+# Sans lui, la livraison recree un nginx qui tente de publier 80/443 (deja detenus par
+# Traefik) et qui perd le montage de son template de configuration.
+COMPOSE_EXTRA_FILE="${COMPOSE_EXTRA_FILE:-}"
+SMOKE_URL="${SMOKE_URL:-}"
 
 cd "${REPO_ROOT}"
+
+compose_args=(-f "${COMPOSE_FILE}")
+[[ -n "${COMPOSE_EXTRA_FILE}" ]] && compose_args+=(-f "${COMPOSE_EXTRA_FILE}")
+compose() { docker compose "${compose_args[@]}" "$@"; }
 
 if [[ ! -f deploy/.env ]]; then
   echo "Missing deploy/.env — run: bash deploy/scripts/init-secrets.sh"
@@ -20,35 +29,64 @@ echo "=== Pull latest (optional) ==="
 git pull --ff-only 2>/dev/null || echo "Skip git pull (not a git repo or offline)"
 
 echo "=== Rebuild static frontends ==="
-docker compose -f "${COMPOSE_FILE}" build web-static-init admin-static-init
-docker compose -f "${COMPOSE_FILE}" run --rm web-static-init
-docker compose -f "${COMPOSE_FILE}" run --rm admin-static-init
+compose build web-static-init admin-static-init
+compose run --rm web-static-init
+compose run --rm admin-static-init
 
 echo "=== Rebuild & restart API ==="
-docker compose -f "${COMPOSE_FILE}" build api
-docker compose -f "${COMPOSE_FILE}" up -d sqlserver ollama api
+compose build api
+compose up -d sqlserver ollama api
 
 echo "Waiting for API health..."
 for i in $(seq 1 60); do
-  if docker compose -f "${COMPOSE_FILE}" exec -T api curl -fsS http://localhost:8080/health/ready >/dev/null 2>&1; then
+  if compose exec -T api curl -fsS http://localhost:8080/health/ready >/dev/null 2>&1; then
     echo "API ready."
     break
   fi
   sleep 5
   if [[ "${i}" -eq 60 ]]; then
-    echo "API health timeout — check logs: docker compose -f ${COMPOSE_FILE} logs api"
+    echo "API health timeout — check logs: docker compose ${compose_args[*]} logs api"
     exit 1
   fi
 done
 
 echo "=== Restart nginx ==="
-docker compose -f "${COMPOSE_FILE}" up -d nginx
+compose up -d nginx
 
-echo "=== Smoke test ==="
-bash deploy/scripts/smoke-test.sh "${SMOKE_URL}" || true
+# Le defaut etait https://localhost, que smoke-test.sh interroge sans -k : contre le
+# certificat du frontal il echoue TOUJOURS, et le `|| true` transformait cet echec en
+# bruit de fond permanent. On exige desormais une URL explicite.
+if [[ -z "${SMOKE_URL}" ]]; then
+  echo ""
+  echo "SMOKE_URL non defini : test de fumee IGNORE."
+  echo "  Relancer : SMOKE_URL=https://votre-domaine bash deploy/scripts/smoke-test.sh https://votre-domaine"
+  SMOKE_STATUS="ignore"
+else
+  echo "=== Smoke test (${SMOKE_URL}) ==="
+  if bash deploy/scripts/smoke-test.sh "${SMOKE_URL}"; then
+    SMOKE_STATUS="ok"
+  else
+    SMOKE_STATUS="ECHEC"
+  fi
+fi
 
 echo ""
-echo "=== POST-RELEASE REMINDER ==="
-echo "If this release includes EF tenant migrations, apply them via backoffice:"
-echo "  POST /api/platform/migrations/tenants/apply-migrations"
-echo "See docs/backend-tenant-migrations.md"
+echo "=== A FAIRE MAINTENANT ==="
+echo ""
+echo "1. PORTE GO/NO-GO — une migration master en echec est journalisee puis AVALEE en"
+echo "   Production, et /health/ready (un simple SELECT 1) repond Healthy malgre tout."
+echo "   La seule porte fiable est le journal :"
+echo ""
+echo "     docker compose ${compose_args[*]} logs api | grep -E \"FATAL: Error during database migration|FATAL: Database seeding failed\""
+echo ""
+echo "   Sortie VIDE = feu vert. Sinon : restaurer, ne pas redemarrer."
+echo ""
+echo "2. Si cette livraison porte des migrations EF tenant :"
+echo "     POST /api/platform/migrations/tenants/apply-migrations"
+echo "     GET  /api/platform/migrations/tenants/migrations-status   # CHAQUE dossier a jour"
+echo "   Voir docs/backend-tenant-migrations.md (certaines migrations ont un ordre impose)."
+echo ""
+echo "3. Test de fumee : ${SMOKE_STATUS}"
+
+[[ "${SMOKE_STATUS}" == "ECHEC" ]] && exit 1
+exit 0

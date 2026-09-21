@@ -34,6 +34,7 @@ export class PlatformTenantService {
     }
     if (p.isActive === true || p.isActive === false) hp = hp.set('isActive', String(p.isActive));
     if (p.taxRegime !== undefined && p.taxRegime !== null) hp = hp.set('taxRegime', String(p.taxRegime));
+    if (p.kind !== undefined && p.kind !== null) hp = hp.set('kind', String(p.kind));
     const page = p.page ?? 1;
     const pageSize = p.pageSize ?? 25;
     hp = hp.set('page', String(page)).set('pageSize', String(pageSize));

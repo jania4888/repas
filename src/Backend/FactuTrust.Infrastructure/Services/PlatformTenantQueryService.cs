@@ -45,6 +45,9 @@ public sealed class PlatformTenantQueryService : IPlatformTenantQueryService
         if (query.TaxRegime.HasValue)
             filtered = filtered.Where(x => x.Tenant.TaxRegime == query.TaxRegime.Value);
 
+        if (query.Kind.HasValue)
+            filtered = filtered.Where(x => x.Tenant.Kind == query.Kind.Value);
+
         if (query.Plan.HasValue)
         {
             if (query.Plan.Value == SubscriptionPlan.Free)
@@ -117,6 +120,7 @@ public sealed class PlatformTenantQueryService : IPlatformTenantQueryService
             return new PlatformTenantListItemDto
             {
                 TenantId = r.Tenant.Id,
+                Kind = r.Tenant.Kind,
                 CompanyName = r.Tenant.CompanyName,
                 CompanyEmail = r.Tenant.Email.Value,
                 TaxRegimeDisplay = r.Tenant.TaxRegime.ToDisplayString(),

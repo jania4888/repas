@@ -1,0 +1,12 @@
+# Les scripts de deploiement s'executent sur Linux (VPS, conteneurs). Sans cette regle,
+# un poste Windows avec core.autocrlf=true les commite en CRLF, et bash les refuse :
+#   deploy/scripts/init-secrets.sh: line 5: set: pipefail: invalid option name
+# La premiere commande du runbook echoue alors sur tout hote Linux, apres un git clone
+# comme apres un transfert. Constate sur le VPS Hostinger.
+*.sh text eol=lf
+
+# Meme raison : rendus/lus par des outils Linux.
+*.yml text eol=lf
+*.yaml text eol=lf
+*.template text eol=lf
+Dockerfile* text eol=lf

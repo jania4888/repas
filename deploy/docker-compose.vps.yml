@@ -1,0 +1,108 @@
+# FactuTrust — overlay VPS Hostinger : Traefik en frontal TLS.
+#
+# Usage (depuis la racine du dépôt, sur le VPS) :
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.vps.yml up -d
+#
+# CONFIGURATION TRAEFIK RELEVÉE SUR LE VPS (/docker/traefik/docker-compose.yml) :
+#   network_mode: host                      <- AUCUN réseau Docker à rejoindre
+#   --entrypoints.web.address=:80
+#   --entrypoints.websecure.address=:443
+#   --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+#   --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+#        (volume nommé traefik_traefik-letsencrypt : les certificats survivent
+#         à une recréation du conteneur — vérifié)
+#   --providers.docker.exposedbydefault=false   <- traefik.enable=true obligatoire
+#   --entrypoints.web.http.redirections.entrypoint.to=websecure
+#        <- LA REDIRECTION http->https EST DÉJÀ GLOBALE. Ne pas en ajouter une ici :
+#           elle ferait double emploi, et une redirection côté Nginx boucle à l'infini.
+#
+# Conséquence du mode host : Traefik ne rejoint pas nos réseaux, il lit l'API Docker et
+# se connecte directement à l'IP du conteneur nginx sur le pont `factutrust-net`. Nginx
+# n'a donc AUCUN port publié et reste injoignable autrement que par Traefik.
+
+services:
+  sqlserver:
+    # SQL Server Express se plafonne seul (~1410 Mo de pool) : garde-fou seulement.
+    # À relever en même temps que MSSQL_PID si vous passez un jour en Standard.
+    mem_limit: 4g
+
+  ollama:
+    # Le vrai consommateur de mémoire de cet hôte : trois modèles configurés et aucune
+    # accélération GPU. L'hôte a 31 Go, dont ~29 libres avant déploiement.
+    mem_limit: 12g
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  api:
+    mem_limit: 6g
+
+  nginx:
+    mem_limit: 512m
+    # Aucun port publié sur l'hôte : Traefik y accède par l'IP du conteneur.
+    # Vérifier après déploiement que `docker port factutrust-nginx` ne renvoie rien.
+    ports: !reset []
+    environment:
+      # Sous-réseau du pont `factutrust-net`, SEUL autorisé à déclarer l'IP cliente réelle.
+      # Traefik étant en mode host, l'adresse source vue par Nginx est celle de l'hôte sur
+      # ce pont (la passerelle du sous-réseau) — pas une IP de conteneur Traefik.
+      # Se relève APRÈS le premier `up` :
+      #   docker network inspect factutrust_factutrust-net \
+      #     --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'
+      # NE JAMAIS mettre 0.0.0.0/0 : n'importe qui pourrait alors usurper son IP et
+      # contourner la limitation de débit sur /api/auth/login.
+      TRUSTED_PROXY_CIDR: ${TRUSTED_PROXY_CIDR:?TRUSTED_PROXY_CIDR requis - docker network inspect factutrust_factutrust-net}
+      # Restreint envsubst à cette seule variable : les variables nginx ($host,
+      # $remote_addr, $uri…) traversent le rendu du template intactes.
+      NGINX_ENVSUBST_FILTER: "TRUSTED_PROXY_CIDR"
+    # !override et NON !reset : `!reset` DÉTRUIT la valeur sans la remplacer — Nginx
+    # partirait alors sans fichiers statiques ni template de configuration.
+    volumes: !override
+      - web-static:/usr/share/nginx/html/app:ro
+      - admin-static:/usr/share/nginx/html/admin:ro
+      # Templates au lieu de conf.d : l'entrypoint de l'image rend
+      # /etc/nginx/templates/*.template vers /etc/nginx/conf.d/. conf.d doit donc rester
+      # inscriptible (pas de montage), et ./nginx/certs n'a plus d'objet — c'est Traefik
+      # qui porte le certificat.
+      - ./nginx/templates:/etc/nginx/templates:ro
+    healthcheck:
+      # Sonde LOCALE. Surtout pas /health, qui relaie vers l'API : Nginx se déclarerait
+      # « unhealthy » chaque fois que l'API tombe, soit l'inverse de ce qu'on attend
+      # d'un service dont le rôle inclut de servir une page d'erreur.
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/nginx-health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    labels:
+      # Obligatoire : le template Traefik tourne avec exposedbydefault=false.
+      traefik.enable: "true"
+      # Indique à Traefik sur quel réseau joindre ce conteneur. Utile même en mode host,
+      # et indispensable si nginx rejoint un jour un second réseau.
+      traefik.docker.network: factutrust_factutrust-net
+      traefik.http.services.factutrust.loadbalancer.server.port: "80"
+
+      # --- Routeur HTTPS (le seul nécessaire) ---
+      # Pas de routeur http ni de middleware de redirection : l'entrypoint `web` du
+      # template redirige déjà tout vers `websecure`, et le défi ACME HTTP reste servi
+      # avant cette redirection.
+      traefik.http.routers.factutrust.rule: 'Host(`${FACTUTRUST_DOMAIN}`) || Host(`www.${FACTUTRUST_DOMAIN}`)'
+      traefik.http.routers.factutrust.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.factutrust.tls: "true"
+      traefik.http.routers.factutrust.tls.certresolver: ${TRAEFIK_CERTRESOLVER:-letsencrypt}
+      traefik.http.routers.factutrust.service: factutrust
+      traefik.http.routers.factutrust.middlewares: factutrust-hsts
+
+      # --- HSTS, pose par le frontal pour couvrir TOUT le site ---
+      # `UseHsts()` cote API ne pose l'en-tete que sur les reponses de l'API : les pages
+      # des deux SPA sont servies par Nginx et n'en avaient aucune. Verifie sur le site
+      # en production : seuls cache-control, referrer-policy, x-content-type-options et
+      # x-frame-options etaient presents.
+      # 180 jours, aligne sur AddHsts() de l'application.
+      # includeSubDomains VOLONTAIREMENT ABSENT : il engagerait tout sous-domaine futur
+      # d'instafact.shop a etre en HTTPS, y compris avant qu'il n'ait un certificat.
+      # A activer plus tard, deliberement, quand le perimetre des sous-domaines est fige.
+      traefik.http.middlewares.factutrust-hsts.headers.stsSeconds: "15552000"

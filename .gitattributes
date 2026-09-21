@@ -1,0 +1,23 @@
+# Fins de ligne — regle volontairement etroite.
+#
+# On ne pose PAS `* text=auto` : cela renormaliserait tout le depot d'un coup et noierait
+# la prochaine revue sous des milliers de lignes de bruit. Seuls les fichiers reellement
+# executes par un interpreteur Linux sont contraints.
+#
+# Sans cette regle, un poste Windows avec core.autocrlf=true (le cas ici) commite les
+# scripts en CRLF, et bash les refuse des le premier `git clone` sur un runner :
+#   scripts/ci/wait-for-sql.sh: line 3: set: pipefail: invalid option name
+# Le job « Web Playwright smoke » de .github/workflows/ci.yml lance trois de ces scripts
+# (wait-for-sql.sh, start-api-e2e.sh, e2e-register-user.sh) : il tomberait en entier.
+#
+# La meme regle existe deja dans deploy/.gitattributes, pour les scripts du VPS. Celle-ci
+# la generalise au depot ; l'attribut le plus profond gagne, donc deploy/ reste souverain
+# sur son propre perimetre.
+#
+# Au moment de la pose : les 21 scripts .sh suivis sont deja en LF dans l'index, donc
+# aucune renormalisation n'est declenchee. La regle est purement preventive.
+*.sh text eol=lf
+
+# Scripts de portes CI executes par node sur runner Linux. Node tolere CRLF, mais pas un
+# shebang suivi de \r si l'un d'eux devient un jour directement executable.
+scripts/ci/*.mjs text eol=lf
