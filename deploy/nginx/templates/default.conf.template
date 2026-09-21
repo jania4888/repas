@@ -1,0 +1,249 @@
+# FactuTrust — Nginx DERRIÈRE un frontal TLS (Traefik Hostinger).
+#
+# LE NOM DE CE FICHIER EST SIGNIFICATIF : il doit rester `default.conf.template`.
+# L'entrypoint rend /etc/nginx/templates/<nom>.template vers /etc/nginx/conf.d/<nom>,
+# donc ce fichier ECRASE le default.conf livre dans l'image. Sous un autre nom, la page
+# d'accueil nginx de l'image resterait presente et, chargee en PREMIER dans l'ordre
+# alphabetique, deviendrait le serveur par defaut du port 80 : toute requete portant un
+# Host reel (instafact.shop) tomberait dessus au lieu d'atteindre l'application.
+# Verifie fonctionnellement : sous le nom `factutrust.conf.template`, `GET /` avec
+# `Host: instafact.shop` renvoyait la page « Welcome to nginx! » et /nginx-health un 404,
+# alors que `nginx -t` passait et que `docker compose config` validait.
+#
+# Rendu par l'entrypoint de l'image nginx : /etc/nginx/templates/*.template est passé
+# à envsubst puis écrit dans /etc/nginx/conf.d/. Seul TRUSTED_PROXY_CIDR est substitué
+# (NGINX_ENVSUBST_FILTER dans deploy/docker-compose.vps.yml) : toutes les variables
+# nginx ($host, $remote_addr, …) traversent intactes.
+#
+# Différences VOLONTAIRES avec deploy/nginx/conf.d/factutrust.conf (frontal autonome) :
+#   1. Pas de TLS et AUCUNE redirection 301 vers https. Le bloc :80 de la conf autonome
+#      redirige sans condition ; derrière Traefik (qui termine le TLS et transmet en
+#      clair sur :80) cela produit une boucle infinie ERR_TOO_MANY_REDIRECTS sur toutes
+#      les pages. La redirection appartient au frontal, jamais ici.
+#   2. real_ip : sans cela l'API voit l'IP de Traefik pour TOUT LE MONDE (voir plus bas).
+#   3. X-Forwarded-Proto repris du frontal et non de $scheme, qui vaut « http » ici.
+#   4. Relais de /uploads/ et /public-storefronts/, absents des deux confs existantes.
+#   5. Pas de /hangfire (inutilisable par navigateur, voir plus bas).
+
+upstream factutrust_api {
+    server api:8080;
+    keepalive 32;
+}
+
+# Le frontal a terminé le TLS : $scheme vaut « http » ici. Reprendre la valeur transmise
+# quand elle existe, sinon retomber sur $scheme (accès direct, diagnostic).
+map $http_x_forwarded_proto $ft_proto {
+    default   $scheme;
+    "~."      $http_x_forwarded_proto;
+}
+
+gzip              on;
+gzip_proxied      any;
+gzip_min_length   1024;
+gzip_vary         on;
+# text/html est toujours compressé, l'ajouter ici déclencherait un avertissement.
+# text/event-stream est VOLONTAIREMENT ABSENT : le compresser casse les trois endpoints
+# SSE (chat IA, chat cabinet, plans Studio), dont la réponse arriverait d'un bloc.
+gzip_types
+    application/javascript
+    application/json
+    application/xml
+    image/svg+xml
+    text/css
+    text/plain;
+
+server {
+    # default_server : ceinture ET bretelles avec le nom du fichier ci-dessus.
+    # `server_name _` ne correspond a AUCUN Host reel (ce n'est pas un joker) ;
+    # c'est default_server qui fait de ce bloc le receptacle de tout le trafic.
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+
+    # --- IP cliente réelle -----------------------------------------------------
+    # ASP.NET laisse ForwardedHeadersOptions.ForwardLimit à 1 et lit l'entrée la PLUS À
+    # DROITE de X-Forwarded-For. Avec $proxy_add_x_forwarded_for, nginx ajoute sa propre
+    # vue du pair (= le conteneur Traefik) à droite : l'API partitionne alors TOUTES ses
+    # limites de débit (200/min global, 5/min login, 3/h inscription, 20/min IA) sur une
+    # seule et même IP pour l'internet entier — auto-déni de service, et protection
+    # anti-force-brute annulée dans l'autre sens.
+    # Après traitement real_ip, $remote_addr EST l'IP cliente : on la transmet seule.
+    #
+    # TRUSTED_PROXY_CIDR doit être le sous-réseau du réseau Traefik, et RIEN DE PLUS.
+    # Avec 0.0.0.0/0 n'importe qui pourrait déclarer son IP et contourner la limitation.
+    set_real_ip_from  ${TRUSTED_PROXY_CIDR};
+    real_ip_header    X-Forwarded-For;
+    real_ip_recursive on;
+
+    # --- En-têtes transmis à l'API ---------------------------------------------
+    # Déclarés au niveau `server` et hérités par toutes les locations. ATTENTION : en
+    # nginx, un `proxy_set_header` dans une location ANNULE tous ceux hérités. Ne jamais
+    # en ajouter un seul dans un bloc ci-dessous sans les recopier tous.
+    proxy_http_version 1.1;
+    proxy_set_header Host              $host;
+    proxy_set_header X-Real-IP         $remote_addr;
+    proxy_set_header X-Forwarded-For   $remote_addr;
+    proxy_set_header X-Forwarded-Proto $ft_proto;
+    proxy_set_header X-Forwarded-Host  $host;
+    proxy_set_header Connection        "";
+
+    # Plafond de transport uniquement. Les vraies limites sont applicatives et valent
+    # 10 Mo par endpoint ([RequestSizeLimit] / MaxUploadBytes) : c'est 10 Mo (accepté)
+    # et 11 Mo (413 propre) qu'il faut tester, pas 50.
+    client_max_body_size 50M;
+
+    # Derriere un frontal qui termine le TLS, nginx croit servir en clair et construirait
+    # ses redirections en http:// (verifie : `GET /admin` renvoyait
+    # Location: http://instafact.shop/admin/). Le navigateur ferait alors un aller-retour
+    # supplementaire par le frontal, avec un saut en clair. `absolute_redirect off` emet
+    # un Location RELATIF, que le navigateur resout sur l'origine courante (https).
+    absolute_redirect off;
+
+    # Le modificateur ^~ sur les locations relayees ci-dessous empeche NGINX de leur
+    # preferer une location regex : sans lui, un fichier servi par l'API dont le nom
+    # ressemblerait a un bundle hache (<nom>.<8+ hexa>.<ext>) serait cherche sur le
+    # disque du conteneur nginx au lieu d'etre relaye, et renverrait 404. Aucun nom
+    # produit aujourd'hui ne declenche ce cas, mais cela ne doit pas dependre d'une
+    # convention de nommage cote API.
+
+    # --- Sondes ------------------------------------------------------------------
+    # Santé de CE conteneur, servie localement. Le healthcheck Docker ne doit surtout
+    # pas viser /health : celui-ci relaie vers l'API, et nginx se déclarerait alors
+    # « unhealthy » chaque fois que l'API tombe — l'inverse de ce qu'on veut d'un
+    # service dont le rôle inclut de servir une page d'erreur.
+    location = /nginx-health {
+        access_log off;
+        add_header Content-Type text/plain always;
+        return 200 "ok\n";
+    }
+
+    location ^~ /health {
+        proxy_pass http://factutrust_api/health;
+        access_log off;
+    }
+
+    location ^~ /health/ready {
+        proxy_pass http://factutrust_api/health/ready;
+        access_log off;
+    }
+
+    # --- API ---------------------------------------------------------------------
+    location ^~ /api/ {
+        proxy_pass http://factutrust_api/api/;
+        # Inférence Ollama sur CPU : le premier jeton peut tarder plusieurs secondes et
+        # l'import de facture frôle son budget de 180 s.
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+        # Indispensable aux réponses en flux (SSE) : sans cela le chat IA paraît figé
+        # puis livre tout d'un bloc.
+        proxy_buffering off;
+    }
+
+    # --- Fichiers servis par l'API ------------------------------------------------
+    # AJOUT. Sans ce bloc, /uploads/... retombe dans `location /` et try_files renvoie
+    # index.html en HTTP 200 : toutes les images produit sont cassées côté navigateur
+    # alors que le réseau affiche un succès — la pire signature à diagnostiquer.
+    # Doit rester AU-DESSUS de `location /`.
+    #
+    # Ces fichiers sont servis par UseStaticFiles(), placé AVANT UseAuthentication() :
+    # ils sont publics par conception (URL à GUID non devinable). Les pièces jointes
+    # Studio, elles, sont explicitement exclues par un middleware qui renvoie 404 sur
+    # /uploads/tenants/**/studio/** — comportement voulu, pas une erreur de proxy.
+    location ^~ /uploads/ {
+        proxy_pass http://factutrust_api/uploads/;
+    }
+
+    # Médias de la vitrine publique. Aucun consommateur backend à ce jour
+    # (StorefrontOptions.PublicMediaFolder est inutilisé, les médias passent par
+    # /uploads/) : bloc de précaution, à ne pas prendre pour une cause racine.
+    location ^~ /public-storefronts/ {
+        proxy_pass http://factutrust_api/public-storefronts/;
+    }
+
+    # Aperçus de thèmes PowerPoint : servis par l'API, pas par la SPA.
+    location ^~ /assets/powerpoint/ {
+        proxy_pass http://factutrust_api/assets/powerpoint/;
+    }
+
+    # 404 explicite sur tout le sous-arbre : sans ce bloc, /hangfire retombe dans
+    # `location /` et renvoie la SPA en HTTP 200, ce qui laisse croire a un operateur
+    # qui verifie l'exposition que quelque chose repond la.
+    location ^~ /hangfire {
+        return 404;
+    }
+
+    # Pourquoi Hangfire n'est pas relaye. En Production le filtre exige un principal
+    # authentifié PlatformAdmin porté par un en-tête Authorization: Bearer, qu'aucun
+    # navigateur n'envoie : le tableau de bord est inutilisable par le proxy PAR
+    # CONSTRUCTION. Le bloc n'apportait rien et annonçait la surface. Accès opérateur
+    # par tunnel SSH vers api:8080 quand c'est réellement nécessaire.
+
+    # --- Cache des bundles hachés ---------------------------------------------------
+    # La forme du nom compte, et elle n'est pas celle qu'on suppose. Angular 19 (builder
+    # `application`) émet `chunk-23JFJWZK.js`, `styles-LRCMCZZI.css`,
+    # `media/Flaticon-BRQ773HG.woff` : TIRET puis hash BASE32 MAJUSCULE. Une règle en
+    # `.<hexa>.` (la forme d'autres outils) ne correspondrait à RIEN et ne se verrait
+    # jamais — les bundles tomberaient simplement en `no-cache` avec la SPA.
+    #
+    # D'où deux contraintes, chacune vérifiée sur la sortie réelle du build :
+    #   * `~` et non `~*` : en insensible à la casse, `[A-Z0-9]{8,}` matcherait aussi les
+    #     minuscules, et `assets/images/home/background-dashboard.png` (NON haché) serait
+    #     servi en immutable un an — il ne changerait plus jamais chez les clients ;
+    #   * exclusion de `assets/` : ces fichiers sont copiés tels quels, sans hash. Leur
+    #     invalidation passe par un compteur applicatif (storefrontGltfFacadesVersion),
+    #     pas par leur nom.
+    # Déclaré avant les locations préfixes car une regex l'emporte sur un préfixe.
+    # Un `add_header` dans une location annule ceux hérités : les en-têtes de sécurité
+    # sont donc recopiés ici.
+    location ~ "^/admin/(?!assets/).*-[A-Z0-9]{8,}\.(js|css|woff2?|ttf|eot|png|jpe?g|gif|svg|webp)$" {
+        root /usr/share/nginx/html;
+        # Une SEULE en-tete : `expires 1y` en emettrait une seconde (max-age=31536000)
+        # a cote de celle-ci, ce que les caches intermediaires interpretent mal.
+        add_header Cache-Control          "public, max-age=31536000, immutable" always;
+        add_header X-Content-Type-Options nosniff                          always;
+        add_header X-Frame-Options        DENY                             always;
+        add_header Referrer-Policy        strict-origin-when-cross-origin  always;
+    }
+
+    location ~ "^/(?!admin/)(?!assets/).*-[A-Z0-9]{8,}\.(js|css|woff2?|ttf|eot|png|jpe?g|gif|svg|webp)$" {
+        root /usr/share/nginx/html/app;
+        # Une SEULE en-tete : `expires 1y` en emettrait une seconde (max-age=31536000)
+        # a cote de celle-ci, ce que les caches intermediaires interpretent mal.
+        add_header Cache-Control          "public, max-age=31536000, immutable" always;
+        add_header X-Content-Type-Options nosniff                          always;
+        add_header X-Frame-Options        DENY                             always;
+        add_header Referrer-Policy        strict-origin-when-cross-origin  always;
+    }
+
+    # --- Backoffice (/admin/, baseHref « /admin/ ») --------------------------------
+    location = /admin {
+        return 301 /admin/;
+    }
+
+    location /admin/ {
+        root /usr/share/nginx/html;
+        try_files $uri $uri/ /admin/index.html;
+
+        # index.html ne doit JAMAIS être mis en cache : un index périmé pointe vers des
+        # bundles hachés supprimés par la livraison suivante, et le client casse.
+        add_header Cache-Control          "no-cache"                       always;
+        add_header X-Content-Type-Options nosniff                          always;
+        add_header X-Frame-Options        DENY                             always;
+        add_header Referrer-Policy        strict-origin-when-cross-origin  always;
+        # Pas de Content-Security-Policy ici : celle de l'API est script-src 'self' sans
+        # 'unsafe-inline', or les SPA chargent des thèmes tiers et des gestionnaires
+        # onerror= en ligne. La recopier afficherait une page blanche. Passer d'abord par
+        # Content-Security-Policy-Report-Only pendant une semaine.
+    }
+
+    # --- Application web (/) -------------------------------------------------------
+    location / {
+        root /usr/share/nginx/html/app;
+        try_files $uri $uri/ /index.html;
+
+        add_header Cache-Control          "no-cache"                       always;
+        add_header X-Content-Type-Options nosniff                          always;
+        add_header X-Frame-Options        DENY                             always;
+        add_header Referrer-Policy        strict-origin-when-cross-origin  always;
+    }
+}

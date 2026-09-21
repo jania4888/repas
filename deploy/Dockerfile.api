@@ -1,4 +1,11 @@
 # FactuTrust API — multi-stage build (publish .NET, tessdata OCR, WhatsApp bridge Node deps)
+#
+# Polices : l'etape runtime installe les bibliotheques de rendu (fontconfig, freetype,
+# harfbuzz) ET des polices reelles. QuestPDF embarque Lato, donc les PDF sortaient deja,
+# mais sa chaine de repli nomme explicitement DejaVu Sans et Liberation Sans, et
+# UseEnvironmentFonts=true les utilise si elles existent. Comme
+# CheckIfAllTextGlyphsAreAvailable=false, un glyphe manquant rend un CARRE VIDE sans
+# exception ni journal. Tessdata inclut l'arabe : DejaVu le couvre, Lato non.
 # Build context: repository root (..)
 #   docker build -f deploy/Dockerfile.api -t factutrust-api .
 
@@ -30,7 +37,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          tesseract-ocr libtesseract5 \
-         libfontconfig1 libfreetype6 libharfbuzz0b libpng16-16 libjpeg62-turbo libgif7 \
+         libfontconfig1 libfreetype6 libharfbuzz0b libpng16-16 libjpeg62-turbo libgif7 fonts-dejavu-core fonts-liberation \
          curl ca-certificates \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \

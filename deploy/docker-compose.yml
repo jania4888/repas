@@ -1,9 +1,21 @@
 # FactuTrust — stack Docker production (Hostinger VPS Ubuntu)
 # Usage depuis la racine du dépôt :
 #   cp deploy/.env.example deploy/.env   # puis éditer
+#   bash deploy/scripts/init-secrets.sh  # AVANT le premier up (voir DATAPROTECTION ci-dessous)
 #   docker compose -f deploy/docker-compose.yml up -d --build
+#
+# Derrière le Traefik du VPS Hostinger, superposer deploy/docker-compose.vps.yml :
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.vps.yml up -d
 
 name: factutrust
+
+# Rotation des journaux Docker. Sans elle, `docker logs` grossit sans fin sur un hôte
+# de production et finit par remplir /var/lib/docker.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "5"
 
 services:
   sqlserver:
@@ -15,9 +27,15 @@ services:
       MSSQL_PID: ${MSSQL_PID:-Developer}
     volumes:
       - sqlserver-data:/var/opt/mssql
+      # Voir le commentaire du volume `tenant-provisioning` en bas de fichier.
+      - tenant-provisioning:/var/opt/mssql/provisioning
+      # Destination des BACKUP DATABASE. Volume DÉDIÉ, pas le répertoire de données :
+      # deploy/scripts/backup.sh y écrit puis purge après extraction vérifiée.
+      - sqlserver-backups:/var/opt/mssql/backups
     networks:
       - factutrust-net
     restart: unless-stopped
+    logging: *default-logging
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" || exit 1"]
       interval: 15s
@@ -28,11 +46,15 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: factutrust-ollama
+    environment:
+      OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS:-1}
+      OLLAMA_NUM_PARALLEL: ${OLLAMA_NUM_PARALLEL:-1}
     volumes:
       - ollama-models:/root/.ollama
     networks:
       - factutrust-net
     restart: unless-stopped
+    logging: *default-logging
     # 32 Go RAM : exposer Ollama uniquement sur le réseau Docker interne
     expose:
       - "11434"
@@ -56,7 +78,13 @@ services:
       - api-appdata:/app/App_Data
       - api-logs:/app/logs
       - api-whatsapp-session:/app/whatsapp-session
+      # ATTENTION : bind de FICHIER. Si dataprotection.pfx n'existe pas, Docker crée un
+      # RÉPERTOIRE vide à sa place et l'API lève au démarrage (X509Certificate2 sur un
+      # répertoire). init-secrets.sh DOIT tourner avant le premier `up`.
       - ${DATAPROTECTION_CERT_HOST_PATH:-./certs/dataprotection.pfx}:/app/certs/dataprotection.pfx:ro
+      # Lecture seule : l'API ne fait que File.Exists / lecture du .bak de template,
+      # c'est SQL Server qui l'écrit. Même chemin des deux côtés, voir plus bas.
+      - tenant-provisioning:/var/opt/mssql/provisioning:ro
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -65,6 +93,7 @@ services:
     networks:
       - factutrust-net
     restart: unless-stopped
+    logging: *default-logging
     expose:
       - "8080"
     healthcheck:
@@ -72,7 +101,15 @@ services:
       interval: 15s
       timeout: 10s
       retries: 20
-      start_period: 120s
+      # 63 migrations master sur un SQL Server froid ne tiennent pas en 2 minutes. Un
+      # `unhealthy` prématuré est exactement la situation où un opérateur redémarre le
+      # conteneur AU MILIEU d'un MigrateAsync.
+      #
+      # RAPPEL : /health/ready ne fait qu'un SELECT 1 sur la base master. Il répond
+      # « Healthy » sur une base à MOITIÉ migrée, parce qu'en Production une migration
+      # en échec est journalisée et avalée (Program.cs). La porte de déploiement est le
+      # grep de « FATAL: » dans les journaux de l'API, jamais cette sonde.
+      start_period: 300s
 
   web-static-init:
     build:
@@ -86,6 +123,7 @@ services:
     networks:
       - factutrust-net
     restart: "no"
+    logging: *default-logging
 
   admin-static-init:
     build:
@@ -99,6 +137,7 @@ services:
     networks:
       - factutrust-net
     restart: "no"
+    logging: *default-logging
 
   nginx:
     image: nginx:alpine
@@ -121,6 +160,7 @@ services:
     networks:
       - factutrust-net
     restart: unless-stopped
+    logging: *default-logging
 
 networks:
   factutrust-net:
@@ -135,3 +175,18 @@ volumes:
   api-whatsapp-session:
   web-static:
   admin-static:
+  sqlserver-backups:
+  # Sauvegarde .bak du template de dossier, partagée entre l'API et SQL Server AU MÊME
+  # CHEMIN. Sans ce partage, deux chemins de code cassent :
+  #   1. la stratégie TemplateClone (l'API teste File.Exists sur un chemin qui n'existe
+  #      que dans SON conteneur, alors que BACKUP/RESTORE TO DISK s'exécute dans celui
+  #      de SQL Server) ;
+  #   2. le job Hangfire hebdomadaire `tenant-template-maintenance` (dimanche 02:00 UTC),
+  #      qui appelle EnsureTenantTemplateAsync SANS regarder TenantProvisioning:Strategy
+  #      et RELANCE l'exception : 178 migrations puis erreur SQL 3201, 10 relances, base
+  #      orpheline — chaque semaine, même en stratégie Migrate.
+  # Les chemins se règlent par TenantProvisioning__TemplateBackupPath et __DataFileDirectory
+  # dans .env. Docker crée la racine du volume en root:root alors que mssqld tourne en
+  # uid 10001 : après le premier `up`, exécuter une fois
+  #   docker compose ... exec -u 0 sqlserver chown mssql:root /var/opt/mssql/provisioning
+  tenant-provisioning:
