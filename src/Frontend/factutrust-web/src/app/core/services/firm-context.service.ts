@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -33,9 +33,28 @@ export class FirmContextService {
   private readonly baseUrl = `${environment.apiUrl}/firm/context`;
   private readonly contextHttpOptions = { context: createHttpContextSkipGlobalErrorUi() };
 
-  private readonly contextSignal = signal<FirmContextState>({ accessMode: 'native' });
+  /**
+   * Etat DERIVE du jeton courant, et non recopie a la main.
+   *
+   * `syncFromUser()` n'etait appele qu'au switch, au clear et au demarrage du layout : un jeton
+   * renouvele entre-temps (refresh silencieux sur 401) laissait la pastille « Dossier : X »
+   * affichee alors que le jeton etait repasse en mode natif. Un `computed` supprime cette classe
+   * de bug : toute emission de jeton met l'etat a jour.
+   */
+  private readonly contextSignal = computed<FirmContextState>(() => {
+    const user = this.auth.user();
+    if (!user) {
+      return { accessMode: 'native' };
+    }
+    return {
+      accessMode: (user.accessMode as 'native' | 'delegated') ?? 'native',
+      clientTenantId: user.contextTenantId,
+      clientCompanyName: user.contextCompanyName,
+      isFirmManaged: !!user.isFirmManaged
+    };
+  });
 
-  readonly context = this.contextSignal.asReadonly();
+  readonly context = this.contextSignal;
   readonly activeClient = computed(() => {
     const c = this.contextSignal();
     return c.accessMode === 'delegated' && c.clientTenantId
@@ -43,18 +62,12 @@ export class FirmContextService {
       : null;
   });
 
+  /**
+   * Conserve pour les appelants existants : l'etat est desormais derive du jeton, il n'y a plus
+   * rien a recopier. Ne pas retirer sans nettoyer les appels (switch, clear, main-layout).
+   */
   syncFromUser(): void {
-    const user = this.auth.user();
-    if (!user) {
-      this.contextSignal.set({ accessMode: 'native' });
-      return;
-    }
-    this.contextSignal.set({
-      accessMode: (user.accessMode as 'native' | 'delegated') ?? 'native',
-      clientTenantId: user.contextTenantId,
-      clientCompanyName: user.contextCompanyName,
-      isFirmManaged: !!user.isFirmManaged
-    });
+    // no-op : `context` est un computed sur `auth.user()`.
   }
 
   async switchClient(clientTenantId: string): Promise<void> {

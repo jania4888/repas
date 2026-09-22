@@ -31,6 +31,25 @@ public interface IFirmContextService
 {
     Task<AuthResponseDto> SwitchToClientAsync(Guid userId, Guid homeTenantId, Guid clientTenantId, CancellationToken cancellationToken = default);
     Task<AuthResponseDto> ClearContextAsync(Guid userId, Guid homeTenantId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Rétablit le contexte dossier d'une session déléguée lors d'un rafraîchissement de jeton.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Mêmes contrôles que <see cref="SwitchToClientAsync"/> — cabinet, affectation active, portée du
+    /// collaborateur, dossier actif — mais <b>sans exception</b> : le refresh ne doit pas échouer
+    /// parce qu'une affectation a été révoquée entre-temps. Renvoie <c>null</c> dans ce cas, et
+    /// l'appelant émet alors un jeton natif qui ramène l'utilisateur au cabinet.
+    /// </para>
+    /// <para>
+    /// Le rôle est relu en base : l'endpoint de refresh est anonyme, le principal HTTP courant est
+    /// expiré ou absent, et se replier sur <c>FirmAccountant</c> ferait perdre son dossier à un
+    /// responsable toutes les 15 minutes.
+    /// </para>
+    /// </remarks>
+    Task<AuthResponseDto?> TryRestoreDelegatedContextAsync(
+        Guid userId, Guid homeTenantId, Guid clientTenantId, CancellationToken cancellationToken = default);
     Task<FirmContextDto> GetCurrentContextAsync(System.Security.Claims.ClaimsPrincipal principal, CancellationToken cancellationToken = default);
 }
 

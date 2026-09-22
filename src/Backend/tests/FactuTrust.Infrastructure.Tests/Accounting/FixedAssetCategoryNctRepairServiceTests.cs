@@ -72,7 +72,7 @@ public sealed class FixedAssetCategoryNctRepairServiceTests : IDisposable
         // Simulate the ordering that happens for a fresh tenant: NCT01 remap runs first (categories were
         // seeded after the nct01-v1 log row, so it does not touch them), then the corrective step.
         await using (var db = CreateContext())
-            await Nct01ChartMigrationService.EnsureMigratedAsync(db);
+            await Nct01ChartMigrationService.EnsureMigratedAsync(db, ChartMigrationMode.Authorized);
 
         await using (var db = CreateContext())
             await FixedAssetCategoryNctRepairService.EnsureAppliedAsync(db);

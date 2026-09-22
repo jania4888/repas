@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Domain.Common;
+using FactuTrust.Infrastructure.Accounting;
 using FactuTrust.Infrastructure.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -192,6 +193,7 @@ public sealed class TenantMigrationGuard : ITenantMigrationGuard
             .Options;
 
         await using var context = new TenantDbContext(options);
-        await TenantRuntimeCatalogBootstrapper.EnsureAsync(context, cancellationToken, logger);
+        await TenantRuntimeCatalogBootstrapper.EnsureAsync(
+            context, ChartMigrationMode.AutoSafe, cancellationToken, logger);
     }
 }

@@ -1592,6 +1592,26 @@ public class ApplicationUser : IdentityUser<Guid>
     public DateTime? RefreshTokenExpiryTime { get; set; }
 
     /// <summary>
+    /// Dossier client sur lequel la session d'un cabinet était positionnée quand ce refresh token a
+    /// été émis, ou <c>null</c> en mode natif.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Sans cette colonne, <c>POST /api/auth/refresh</c> ne disposait d'aucun moyen de retrouver le
+    /// contexte délégué : il ré-émettait un jeton natif sur le tenant du cabinet, et l'intercepteur
+    /// front rejouait la requête en silence. Un collaborateur qui consultait un dossier se
+    /// retrouvait donc, au bout de 15 minutes, à lire la base DU CABINET en croyant être dans le
+    /// dossier.
+    /// </para>
+    /// <para>
+    /// Elle est écrite à chaque émission de jeton, en même temps que la rotation du refresh token, et
+    /// remise à <c>null</c> dès qu'un jeton natif est émis. Elle ne donne aucun droit par elle-même :
+    /// l'affectation cabinet-dossier est revalidée à chaque rafraîchissement.
+    /// </para>
+    /// </remarks>
+    public Guid? RefreshContextTenantId { get; set; }
+
+    /// <summary>
     /// SQL default is <see cref="ProductOnboardingStatus.Completed"/> so existing rows are not
     /// prompted. Call <see cref="ApplyNewInteractiveProductOnboarding"/> for new interactive users.
     /// </summary>

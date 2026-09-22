@@ -1,4 +1,5 @@
 using System.Data;
+using FactuTrust.Application.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Infrastructure.Accounting;
@@ -37,7 +38,7 @@ public sealed class Nct01ChartMigrationServiceTests : IDisposable
         }
 
         await using (var db = CreateContext())
-            await Nct01ChartMigrationService.EnsureMigratedAsync(db);
+            await Nct01ChartMigrationService.EnsureMigratedAsync(db, ChartMigrationMode.Authorized);
 
         await using (var db = CreateContext())
         {
@@ -70,7 +71,7 @@ public sealed class Nct01ChartMigrationServiceTests : IDisposable
         }
 
         await using (var db = CreateContext())
-            await Nct01ChartMigrationService.EnsureMigratedAsync(db);
+            await Nct01ChartMigrationService.EnsureMigratedAsync(db, ChartMigrationMode.Authorized);
 
         await using (var db = CreateContext())
         {
@@ -79,6 +80,128 @@ public sealed class Nct01ChartMigrationServiceTests : IDisposable
             Assert.Equal(2000m, SumCredit(lines, "425"));
             Assert.Equal(150m, SumDebit(lines, "421"));
             Assert.Equal(50m, SumCredit(lines, "43652"));
+        }
+    }
+
+    /// <summary>
+    /// Mode automatique (provisionnement, premier appel HTTP) sur un dossier qui a déjà des
+    /// écritures : le remap doit être <b>différé</b>, sans toucher au plan ni aux écritures. Il
+    /// réécrirait sinon l'historique comptable — périodes clôturées comprises — au premier appel qui
+    /// passe, sans sauvegarde ni décision humaine.
+    /// </summary>
+    [Fact]
+    public async Task EnsureMigrated_AutoSafe_DefersWhenTheDossierAlreadyHasEntries()
+    {
+        if (!_canRun) return;
+
+        await using (var db = CreateContext())
+        {
+            SeedOldChartAndJournal(db);
+            await db.SaveChangesAsync();
+        }
+
+        TenantRuntimeCatalogReport report;
+        await using (var db = CreateContext())
+            report = await Nct01ChartMigrationService.EnsureMigratedAsync(db);
+
+        Assert.Equal(ChartCatalogOutcome.DeferredHasAccountingData, report.ChartOutcome);
+        Assert.Equal("deferred", report.Verdict);
+
+        await using (var db = CreateContext())
+        {
+            // Plan inchangé : ni renumérotation, ni UPSERT du catalogue, ni estampille.
+            var numbers = await db.ChartOfAccounts.AsNoTracking()
+                .Select(a => a.AccountNumber)
+                .ToListAsync();
+
+            Assert.Contains("4477", numbers);
+            Assert.Contains("412", numbers);
+            Assert.DoesNotContain("43652", numbers);
+            Assert.True(numbers.Count < 100, $"Le catalogue a été appliqué malgré le mode sûr : {numbers.Count}");
+            Assert.Equal(0, await LogCountAsync(db));
+
+            var lines = await db.JournalEntryLines.AsNoTracking().ToListAsync();
+            Assert.Equal(50m, SumCredit(lines, "4477"));
+            Assert.Equal(2000m, SumCredit(lines, "421"));
+        }
+
+        // La même base, bascule autorisée : le remap s'applique normalement.
+        await using (var db = CreateContext())
+        {
+            var authorized = await Nct01ChartMigrationService.EnsureMigratedAsync(
+                db, ChartMigrationMode.Authorized);
+            Assert.Equal(ChartCatalogOutcome.Applied, authorized.ChartOutcome);
+            Assert.Equal("nct01", authorized.Verdict);
+        }
+
+        await using (var db = CreateContext())
+        {
+            var lines = await db.JournalEntryLines.AsNoTracking().ToListAsync();
+            Assert.DoesNotContain(lines, l => l.AccountNumber == "4477");
+            Assert.Equal(1, await LogCountAsync(db));
+        }
+    }
+
+    /// <summary>
+    /// Un dossier vierge — cas d'un dossier tout juste provisionné — bascule <b>sans</b> autorisation
+    /// explicite : c'est ce qui garantit qu'un nouveau dossier naît en NCT 01.
+    /// </summary>
+    [Fact]
+    public async Task EnsureMigrated_AutoSafe_AppliesOnAFreshDossier()
+    {
+        if (!_canRun) return;
+
+        await using (var db = CreateContext())
+        {
+            db.ChartOfAccounts.AddRange(
+                Acc("10", "Capital et réserves assimilées", null, AccountNatureType.Credit),
+                Acc("101", "Capital social", "10", AccountNatureType.Credit));
+            await db.SaveChangesAsync();
+        }
+
+        TenantRuntimeCatalogReport report;
+        await using (var db = CreateContext())
+            report = await Nct01ChartMigrationService.EnsureMigratedAsync(db);
+
+        Assert.Equal(ChartCatalogOutcome.Applied, report.ChartOutcome);
+        Assert.Equal("nct01", report.Verdict);
+        Assert.True(report.AccountCount >= 600, $"Catalogue incomplet : {report.AccountCount}");
+
+        await using (var db = CreateContext())
+        {
+            var capital = await db.ChartOfAccounts.AsNoTracking()
+                .SingleAsync(a => a.AccountNumber == "10");
+
+            // Le libellé hérité est remplacé par celui du catalogue : c'est la signature visible
+            // d'un plan réellement migré.
+            Assert.Equal("Capital", capital.Label);
+        }
+    }
+
+    /// <summary>
+    /// Deuxième passage avec une empreinte de catalogue déjà à jour : aucun travail, et surtout
+    /// aucun second remap (les cycles 421↔425 et 231↔232 le rendraient destructeur).
+    /// </summary>
+    [Fact]
+    public async Task EnsureMigrated_SecondRun_IsAlreadyApplied()
+    {
+        if (!_canRun) return;
+
+        await using (var db = CreateContext())
+        {
+            db.ChartOfAccounts.Add(Acc("10", "Capital", null, AccountNatureType.Credit));
+            await db.SaveChangesAsync();
+        }
+
+        await using (var db = CreateContext())
+            await Nct01ChartMigrationService.EnsureMigratedAsync(db);
+
+        await using (var db = CreateContext())
+        {
+            var second = await Nct01ChartMigrationService.EnsureMigratedAsync(db);
+            Assert.Equal(ChartCatalogOutcome.AlreadyApplied, second.ChartOutcome);
+            Assert.Equal(SceChartCatalog.CatalogHash, second.AppliedCatalogHash);
+            Assert.Equal(1, await LogCountAsync(db));
         }
     }
 

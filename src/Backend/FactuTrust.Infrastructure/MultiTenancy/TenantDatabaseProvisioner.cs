@@ -60,7 +60,9 @@ public sealed class TenantDatabaseProvisioner
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(
+                // LogError et non LogWarning : c'est ce repli silencieux qui a masqué pendant des
+                // semaines le fait que les dossiers naissaient sur le plan comptable hérité.
+                _logger.LogError(
                     ex,
                     "Template clone failed for {DatabaseName}; falling back to Migrate. TenantId={TenantId}",
                     databaseName,
@@ -237,7 +239,8 @@ WITH
             .Options;
 
         await using var context = new TenantDbContext(options);
-        await TenantRuntimeCatalogBootstrapper.EnsureAsync(context, cancellationToken);
+        await TenantRuntimeCatalogBootstrapper.EnsureAsync(
+            context, ChartMigrationMode.AutoSafe, cancellationToken, _logger);
         LogStep("SeedTemplateCatalogs", sw.ElapsedMilliseconds, null);
     }
 

@@ -342,6 +342,70 @@ SMOKE_URL=https://VOTRE_DOMAINE bash deploy/scripts/smoke-test.sh https://VOTRE_
 > **Ne pas tuer de conteneur pendant ce temps** : c'est exactement la fenêtre où l'on
 > interrompt un `MigrateAsync`.
 
+### Modèle de vision d'import — installation manuelle obligatoire
+
+`pull-ollama-models.sh` **ne télécharge pas** `hf.co/ggml-org/GLM-OCR-GGUF:Q8_0` : il se
+contente de vérifier sa présence. Ollama refuse la redirection de Hugging Face vers son CDN
+Xet (`blocked redirect to a different host`), donc `ollama pull hf.co/...` échoue sur cet
+hôte. Le modèle s'installe en trois temps.
+
+**1. Télécharger les DEUX fichiers.** Le projecteur `mmproj` n'est pas optionnel : sans lui,
+le modèle démarre mais **ignore les images** — il produirait alors un JSON inventé, ce qui
+est pire qu'une erreur.
+
+```bash
+BASE=https://huggingface.co/ggml-org/GLM-OCR-GGUF/resolve/main
+mkdir -p /opt/factutrust/glm-ocr && cd /opt/factutrust/glm-ocr
+curl -L -o GLM-OCR-Q8_0.gguf        "$BASE/GLM-OCR-Q8_0.gguf"          # ~950 Mo
+curl -L -o mmproj-GLM-OCR-Q8_0.gguf "$BASE/mmproj-GLM-OCR-Q8_0.gguf"   # ~484 Mo
+sha256sum *.gguf
+curl -s https://huggingface.co/api/models/ggml-org/GLM-OCR-GGUF/tree/main | tr ',' '
+' | grep -E 'oid|path'
+```
+
+Les empreintes doivent correspondre aux `oid` LFS renvoyés par l'API. C'est le seul contrôle
+d'approvisionnement de la chaîne : ne pas le sauter.
+
+**2. Créer le modèle sous le nom exact attendu par `appsettings.Production.json`.**
+
+```bash
+docker exec factutrust-ollama mkdir -p /root/.ollama/import
+docker cp GLM-OCR-Q8_0.gguf        factutrust-ollama:/root/.ollama/import/
+docker cp mmproj-GLM-OCR-Q8_0.gguf factutrust-ollama:/root/.ollama/import/
+docker exec factutrust-ollama sh -c 'printf "FROM /root/.ollama/import/GLM-OCR-Q8_0.gguf
+FROM /root/.ollama/import/mmproj-GLM-OCR-Q8_0.gguf
+" > /root/.ollama/import/Modelfile'
+docker exec factutrust-ollama ollama create 'hf.co/ggml-org/GLM-OCR-GGUF:Q8_0' -f /root/.ollama/import/Modelfile
+```
+
+**3. Prouver que la vision fonctionne — porte bloquante.**
+
+```bash
+docker exec factutrust-ollama ollama show 'hf.co/ggml-org/GLM-OCR-GGUF:Q8_0'   # doit annoncer « vision »
+```
+
+Puis un test différentiel : le même prompt envoyé **avec** puis **sans** `images:[...]` doit
+donner des réponses **différentes**, et la première doit restituer du texte réellement
+présent sur l'image. Si ce n'est pas le cas, le projecteur n'est pas câblé.
+
+**Repli** si la porte échoue : `ollama pull glm-ocr:q8_0` — mêmes poids, même quantification,
+distribué par la bibliothèque officielle Ollama et étiqueté `vision`, projecteur inclus. Il
+faut alors aligner `Ollama__InvoiceImportVisionModel=glm-ocr:q8_0` dans `deploy/.env`.
+
+Enfin, libérer les ~1,4 Go de fichiers intermédiaires des deux côtés :
+
+```bash
+docker exec factutrust-ollama rm -rf /root/.ollama/import
+rm -rf /opt/factutrust/glm-ocr
+```
+
+> **Déclarer la mémoire du moteur.** Ajouter dans `deploy/.env` :
+> `Ollama__EngineRamBudgetGiB=<mem_limit du service ollama, en Go>`.
+> Sans cette valeur, l'API ne peut pas connaître la mémoire d'un Ollama déporté et
+> **renonce** au contrôle de faisabilité mémoire (le contrôle « modèle installé » demeure).
+> Avec une valeur *fausse* — par exemple la RAM de l'hôte au lieu de la limite du conteneur —
+> le contrôle laisserait passer des modèles qu'Ollama ne peut pas charger.
+
 ---
 
 ## 5. Accès et premier login

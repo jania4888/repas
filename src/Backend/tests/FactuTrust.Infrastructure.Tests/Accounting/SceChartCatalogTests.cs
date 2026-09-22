@@ -38,6 +38,28 @@ public sealed class SceChartCatalogTests
             Assert.True(byNumber.ContainsKey(posting), $"Compte de posting absent du catalogue : {posting}");
     }
 
+    /// <summary>
+    /// L'empreinte du catalogue est ce qui rend l'idempotence sensible au CONTENU : une base
+    /// estampillée avec la seule constante <c>nct01-v1</c> ne reverrait jamais un catalogue corrigé.
+    /// </summary>
+    [Fact]
+    public void CatalogHash_IsStable_AndMatchesTheEmbeddedResourceBytes()
+    {
+        var hash = SceChartCatalog.CatalogHash;
+
+        Assert.False(string.IsNullOrWhiteSpace(hash));
+        Assert.Equal(16, hash.Length);
+        Assert.Matches("^[0-9a-f]{16}$", hash);
+        Assert.Equal(hash, SceChartCatalog.CatalogHash);
+
+        using var stream = typeof(SceChartCatalog).Assembly
+            .GetManifestResourceStream(SceChartCatalog.CatalogResourceName)!;
+        var expected = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(stream))[..16]
+            .ToLowerInvariant();
+
+        Assert.Equal(expected, hash);
+    }
+
     [Fact]
     public void CatalogAndRemapShareTheSameMapVersion()
     {

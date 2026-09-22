@@ -1,4 +1,5 @@
 using FactuTrust.Application.Configuration;
+using FactuTrust.Infrastructure.Tests.MultiTenancy;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Infrastructure.MultiTenancy;
 using FactuTrust.Infrastructure.Persistence;
@@ -34,7 +35,8 @@ public sealed class TenantServiceConnectionStringCacheTests
             new ConfigurationBuilder().Build(),
             cache,
             NullLogger<TenantService>.Instance,
-            provisioner);
+            provisioner,
+            new RecordingCatalogSeeder());
     }
 
     [Fact]

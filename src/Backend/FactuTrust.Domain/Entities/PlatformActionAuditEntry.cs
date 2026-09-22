@@ -83,6 +83,13 @@ public static class PlatformAuditActions
     public const string TenantCreateCompany = "tenant.create.company";
     public const string TenantCreateFirm = "tenant.create.firm";
     public const string TenantProvisioningRetry = "tenant.provisioning.retry";
+
+    /// <summary>
+    /// Bascule du plan comptable d'un dossier vers la NCT 01. Action <b>irréversible</b> hors
+    /// restauration de sauvegarde : elle réécrit les numéros de compte, y compris dans les périodes
+    /// clôturées. Consignée en <c>dryRun</c> comme en application réelle.
+    /// </summary>
+    public const string ChartOfAccountsNct01Apply = "chart-of-accounts.nct01.apply";
 }
 
 /// <summary>Valeurs stables de <see cref="PlatformActionAuditEntry.Outcome"/>.</summary>
