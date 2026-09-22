@@ -226,6 +226,13 @@ public sealed class TenantAuthTokenService : ITenantAuthTokenService
 
         user.RefreshToken = RefreshTokenHasher.Hash(refreshToken);
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+        // Le contexte dossier suit la rotation du refresh token : c'est la seule façon pour
+        // /api/auth/refresh — endpoint anonyme, qui ne reçoit que le refresh token — de savoir sur
+        // quel dossier la session était positionnée. Remise à null en mode natif : sortir du dossier
+        // ne doit pas pouvoir être défait par un rafraîchissement.
+        user.RefreshContextTenantId = isDelegated ? contextTenantId : null;
+
         await _userManager.UpdateAsync(user);
 
         totalSw.Stop();

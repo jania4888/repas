@@ -1,3 +1,4 @@
+using FactuTrust.Application.Common;
 using FactuTrust.Infrastructure.Accounting;
 using FactuTrust.Infrastructure.Persistence;
 
@@ -6,17 +7,52 @@ using Microsoft.Extensions.Logging;
 namespace FactuTrust.Infrastructure.MultiTenancy;
 
 /// <summary>
-/// Idempotent NCT + withholding catalog bootstrap shared by template maintenance
-/// and <see cref="TenantMigrationGuard"/>.
+/// Idempotent NCT + withholding catalog bootstrap shared by tenant provisioning, template
+/// maintenance and <see cref="TenantMigrationGuard"/>.
 /// </summary>
+/// <remarks>
+/// <para>
+/// <b>C'est le seul endroit qui pose le plan comptable NCT 01</b> (623 comptes) : les migrations EF
+/// ne sèment que le plan « hybride PCG » historique (~210 comptes). Il doit donc être appelé à la
+/// fin de tout provisionnement, quelle que soit la stratégie, et pas seulement à la construction du
+/// template ou au premier appel HTTP.
+/// </para>
+/// </remarks>
 public static class TenantRuntimeCatalogBootstrapper
 {
-    public static async Task EnsureAsync(
+    public static async Task<TenantRuntimeCatalogReport> EnsureAsync(
         TenantDbContext context,
+        ChartMigrationMode chartMode = ChartMigrationMode.AutoSafe,
         CancellationToken cancellationToken = default,
         ILogger? logger = null)
     {
-        await Nct01ChartMigrationService.EnsureMigratedAsync(context, cancellationToken);
+        var report = await Nct01ChartMigrationService.EnsureMigratedAsync(context, chartMode, cancellationToken);
+
+        if (report.ChartOutcome == ChartCatalogOutcome.DeferredHasAccountingData)
+        {
+            logger?.LogWarning(
+                "Plan comptable : bascule NCT 01 différée sur ce dossier — {Lines} ligne(s) d'écriture "
+                + "déjà saisies sur le plan hérité ({Accounts} comptes). Le remap réécrirait "
+                + "l'historique, périodes clôturées comprises : il doit être déclenché par un "
+                + "administrateur plateforme après sauvegarde "
+                + "(POST /api/platform/migrations/tenants/{{tenantId}}/chart-of-accounts/apply, "
+                + "cf. docs/runbooks/coa-nct01-migration.md).",
+                report.AccountingLineCount,
+                report.AccountCount);
+
+            // Étapes volontairement limitées à ce qui ne dépend PAS du plan comptable. La réparation
+            // des catégories d'amortissement et les comptes de retenue à la source visent des
+            // numéros NCT (221/2821/68112, parent 432) qui n'existent pas dans le plan hérité :
+            // les poser ici créerait des références suspendues. Le plan du dossier reste donc
+            // exactement dans l'état où l'exploitation l'a laissé.
+            await WithholdingTaxCatalogInitializer.EnsureSystemTypesSeededAsync(context, cancellationToken);
+            await WithholdingFiscalYearParameterInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
+            await IncomeTaxYearParameterInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
+            await MonthlyDeclarationRubricInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
+
+            return report;
+        }
+
         await FixedAssetCategoryNctRepairService.EnsureAppliedAsync(context, cancellationToken);
 
         // Après le remap NCT 01 et la réparation des catégories, qui l'un comme l'autre créent ou
@@ -34,6 +70,17 @@ public static class TenantRuntimeCatalogBootstrapper
         // couvre à la fois la création d'un dossier et le rattrapage des dossiers existants à leur
         // première requête après déploiement. Données inertes tant qu'aucune famille n'est cochée.
         await MonthlyDeclarationRubricInitializer.EnsureDefaultsSeededAsync(context, cancellationToken);
+
+        if (report.ChartOutcome is ChartCatalogOutcome.Applied or ChartCatalogOutcome.CatalogResynced)
+        {
+            logger?.LogInformation(
+                "Plan comptable : {Outcome} — {Accounts} comptes, catalogue {Hash}.",
+                report.ChartOutcome,
+                report.AccountCount,
+                report.CurrentCatalogHash);
+        }
+
+        return report;
     }
 
     /// <summary>

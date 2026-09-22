@@ -6,6 +6,7 @@ import { environment } from '@environments/environment';
 import { AppModule } from '@core/models/app-module';
 import { createHttpContextSkipGlobalErrorUi } from '@core/http-context';
 import { clearWarehouseStorage } from './warehouse-storage';
+import { ToastService } from './toast.service';
 import {
   ProductOnboardingChecklist,
   ProductOnboardingStatus,
@@ -458,7 +459,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) {
     this.migrateLegacyLocalToSessionIfNeeded();
     this.userSignal.set(this.getStoredUser());
@@ -565,11 +567,14 @@ export class AuthService {
       return this.refreshInFlight$;
     }
     const refreshToken = this.getRefreshToken();
+    const previousContextTenantId =
+      this.userSignal()?.accessMode === 'delegated' ? this.userSignal()?.contextTenantId : undefined;
     this.refreshInFlight$ = this.http.post<ApiResponse<AuthResponse>>(`${this.API_URL}/refresh`, { refreshToken })
       .pipe(
         tap(response => {
           if (response.success && response.data) {
             this.handleAuthResponse(response.data, this.isRememberMeBrowserScope());
+            this.handleDelegatedContextLoss(previousContextTenantId);
           }
         }),
         catchError(error => {
@@ -582,6 +587,34 @@ export class AuthService {
         shareReplay(1)
       );
     return this.refreshInFlight$;
+  }
+
+  /**
+   * Un rafraichissement qui perd le contexte dossier ramene l'utilisateur au cabinet.
+   *
+   * Le serveur rejoue desormais `context_tenant_id` au refresh, mais il refuse de le faire quand
+   * l'affectation a ete revoquee entre-temps. Dans ce cas l'ecran comptable ouvert continuerait
+   * d'interroger l'API avec un jeton natif : les memes URL repondraient 200 avec les donnees DU
+   * CABINET. Le garde de route ne se rejoue pas sans navigation : c'est donc ici qu'on force le
+   * retour, plutot que de laisser l'utilisateur lire la mauvaise base sans le savoir.
+   */
+  private handleDelegatedContextLoss(previousContextTenantId: string | undefined): void {
+    if (!previousContextTenantId) {
+      return;
+    }
+
+    const user = this.userSignal();
+    if (user?.accessMode === 'delegated' && user.contextTenantId === previousContextTenantId) {
+      return;
+    }
+
+    this.toast.add({
+      severity: 'warn',
+      summary: 'Dossier fermé',
+      detail: "Votre accès à ce dossier client n'est plus actif. Retour à l'espace cabinet."
+    });
+
+    void this.router.navigate(['/firm/dashboard']);
   }
 
   /**

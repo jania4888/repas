@@ -29,17 +29,20 @@ public sealed class OllamaModelRecommender : IAiModelRecommender
 
     private readonly IOllamaClient _ollamaClient;
     private readonly IPlatformAiSettingsService _platformAiSettings;
+    private readonly IAiEngineMemoryProbe _memoryProbe;
     private readonly IMemoryCache _cache;
     private readonly ILogger<OllamaModelRecommender> _logger;
 
     public OllamaModelRecommender(
         IOllamaClient ollamaClient,
         IPlatformAiSettingsService platformAiSettings,
+        IAiEngineMemoryProbe memoryProbe,
         IMemoryCache cache,
         ILogger<OllamaModelRecommender> logger)
     {
         _ollamaClient = ollamaClient;
         _platformAiSettings = platformAiSettings;
+        _memoryProbe = memoryProbe;
         _cache = cache;
         _logger = logger;
     }
@@ -78,6 +81,7 @@ public sealed class OllamaModelRecommender : IAiModelRecommender
         }
 
         var hardwareProfile = BuildHardwareProfile(
+            await _memoryProbe.ReadAsync(ct),
             await _ollamaClient.ListRunningModelsAsync(ct));
         var inferenceDevice = await _platformAiSettings.GetInferenceDeviceAsync(ct);
 
@@ -123,13 +127,13 @@ public sealed class OllamaModelRecommender : IAiModelRecommender
                 hardwareProfile.Gpu));
     }
 
-    private static AiHardwareSnapshot BuildHardwareProfile(OllamaProcessListResponse? runningModels)
+    private static AiHardwareSnapshot BuildHardwareProfile(
+        AiEngineMemorySnapshot memory,
+        OllamaProcessListResponse? runningModels)
     {
-        var gcInfo = GC.GetGCMemoryInfo();
-        var totalRam = gcInfo.TotalAvailableMemoryBytes;
-        var currentProcess = Process.GetCurrentProcess();
-        var usedByProcess = currentProcess.WorkingSet64;
-        var availableRam = Math.Max(0, totalRam - usedByProcess);
+        // Mémoire du MOTEUR, et non celle de ce processus : voir IAiEngineMemoryProbe.
+        var totalRam = memory.TotalBytes;
+        var availableRam = memory.AvailableBytes;
         var cpuCores = Environment.ProcessorCount;
 
         AiGpuInfoDto? gpuInfo = null;
@@ -152,12 +156,18 @@ public sealed class OllamaModelRecommender : IAiModelRecommender
             }
         }
 
-        return new AiHardwareSnapshot(totalRam, availableRam, cpuCores, gpuInfo, maxVram);
+        return new AiHardwareSnapshot(
+            totalRam, availableRam, cpuCores, gpuInfo, maxVram, memory.IsMeaningful);
     }
 
     private static bool IsEligible(OllamaModelInfo model, AiHardwareSnapshot hw)
     {
         if (model.Size <= 0)
+            return true;
+
+        // Sans mesure portant sur le moteur, écarter un modèle reviendrait à le juger sur la
+        // mémoire d'un autre processus : on laisse passer, Ollama reste le juge du chargement.
+        if (!hw.RamIsMeaningful)
             return true;
 
         var ramThreshold = (long)(hw.AvailableRamBytes * 0.7);
@@ -369,7 +379,8 @@ public sealed class OllamaModelRecommender : IAiModelRecommender
         long AvailableRamBytes,
         int CpuCores,
         AiGpuInfoDto? Gpu,
-        long MaxVramBytes);
+        long MaxVramBytes,
+        bool RamIsMeaningful);
 
     private sealed record ModelScore(
         double Total,

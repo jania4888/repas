@@ -47,6 +47,7 @@ public class AuthController : ControllerBase
     private readonly AccountingSettings _accountingSettings;
     private readonly IEmailService _emailService;
     private readonly IClientPortalService _clientPortalService;
+    private readonly IFirmContextService _firmContextService;
     private readonly IRegistrationSectorService _registrationSectorService;
     private readonly ISectorCatalogProvider _sectorCatalogProvider;
     private readonly RegistrationSectorOptions _registrationSectorOptions;
@@ -70,6 +71,7 @@ public class AuthController : ControllerBase
         IOptions<AccountingSettings> accountingSettings,
         IEmailService emailService,
         IClientPortalService clientPortalService,
+        IFirmContextService firmContextService,
         IRegistrationSectorService registrationSectorService,
         ISectorCatalogProvider sectorCatalogProvider,
         IOptions<RegistrationSectorOptions> registrationSectorOptions,
@@ -92,6 +94,7 @@ public class AuthController : ControllerBase
         _accountingSettings = accountingSettings.Value;
         _emailService = emailService;
         _clientPortalService = clientPortalService;
+        _firmContextService = firmContextService;
         _registrationSectorService = registrationSectorService;
         _sectorCatalogProvider = sectorCatalogProvider;
         _registrationSectorOptions = registrationSectorOptions.Value;
@@ -493,6 +496,28 @@ public class AuthController : ControllerBase
         var portalGate = await _clientPortalService.EnsurePortalLoginAllowedAsync(user.Id, cancellationToken);
         if (portalGate.IsFailure)
             return StatusCode(StatusCodes.Status403Forbidden, ApiResponse<AuthResponseDto>.Fail(portalGate.Error.Description));
+
+        // Session de cabinet positionnée sur un dossier client : le contexte délégué doit survivre au
+        // rafraîchissement. Sans cela, le nouveau jeton repartait en mode « native » sur le tenant du
+        // cabinet, et l'intercepteur front rejouait la requête en silence : au bout de 15 minutes, le
+        // collaborateur lisait la base DU CABINET en croyant être resté dans le dossier.
+        if (user.RefreshContextTenantId is { } contextTenantId && contextTenantId != Guid.Empty)
+        {
+            var restored = await _firmContextService.TryRestoreDelegatedContextAsync(
+                user.Id, tenant.Id, contextTenantId, cancellationToken);
+
+            if (restored is not null)
+                return Ok(ApiResponse<AuthResponseDto>.Ok(restored));
+
+            // Affectation révoquée, portée retirée ou dossier désactivé entre-temps : on ne bloque pas
+            // la session, on la ramène au cabinet. La colonne est remise à null par l'émission du
+            // jeton natif ci-dessous.
+            _logger.LogInformation(
+                "Refresh: contexte dossier {ContextTenantId} non rétabli pour l'utilisateur {UserId} "
+                + "(affectation révoquée, portée retirée ou dossier inactif) — retour au cabinet.",
+                contextTenantId,
+                user.Id);
+        }
 
         var tokens = await _tokenService.GenerateTokensAsync(user.Id, tenant.Id, cancellationToken: cancellationToken);
 

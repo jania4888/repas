@@ -117,6 +117,7 @@ public static class DependencyInjection
         {
             services.AddScoped<ITenantContext, TenantContext>();
             services.AddScoped<TenantDatabaseProvisioner>();
+            services.AddScoped<ITenantRuntimeCatalogSeeder, TenantRuntimeCatalogSeeder>();
             services.AddScoped<ITenantService, TenantService>();
             services.AddScoped<ITenantAuthTokenService, TenantAuthTokenService>();
             // Nettoyage des artefacts orphelins de la mini-saga d'inscription (bases sans Tenant,
@@ -685,6 +686,9 @@ public static class DependencyInjection
         services.AddScoped<FactuTrust.Application.Features.AI.IAiStructuredExtractionPipeline,
             FactuTrust.Application.Features.AI.AiStructuredExtractionPipeline>();
         services.AddScoped<ImportInvoiceFromFileHandler>();
+        // Enregistrement INCONDITIONNEL : les handlers MediatR sont validés au démarrage
+        // (ValidateOnBuild), une dépendance conditionnelle ferait échouer le boot.
+        services.AddScoped<IAiEngineMemoryProbe, AiEngineMemoryProbe>();
         services.AddScoped<IOllamaModelReadinessChecker, OllamaModelReadinessChecker>();
         services.AddScoped<IAiModelRecommender, OllamaModelRecommender>();
         services.AddScoped<IPlatformAiSettingsService, FactuTrust.Infrastructure.Services.AI.PlatformAiSettingsService>();

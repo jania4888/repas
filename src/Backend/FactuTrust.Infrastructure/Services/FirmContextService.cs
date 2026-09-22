@@ -57,6 +57,50 @@ public sealed class FirmContextService : IFirmContextService
             userId, homeTenantId, clientTenantId, clientTenant.CompanyName, cancellationToken);
     }
 
+    public async Task<AuthResponseDto?> TryRestoreDelegatedContextAsync(
+        Guid userId, Guid homeTenantId, Guid clientTenantId, CancellationToken cancellationToken = default)
+    {
+        var homeTenant = await _masterContext.Tenants.AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == homeTenantId, cancellationToken);
+
+        if (homeTenant is null || homeTenant.Kind != TenantKind.AccountingFirm)
+            return null;
+
+        if (!await _assignmentService.HasActiveAssignmentAsync(homeTenantId, clientTenantId, cancellationToken))
+            return null;
+
+        var scope = await ResolveScopeFromStoreAsync(userId, cancellationToken);
+        if (!await _dossierAccess.CanAccessClientDossierAsync(homeTenantId, scope, clientTenantId, cancellationToken))
+            return null;
+
+        var clientTenant = await _masterContext.Tenants.AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == clientTenantId && t.IsActive, cancellationToken);
+
+        if (clientTenant is null)
+            return null;
+
+        return await _tokenService.GenerateTokensAsync(
+            userId, homeTenantId, clientTenantId, clientTenant.CompanyName, cancellationToken);
+    }
+
+    /// <summary>
+    /// Portée du collaborateur déduite de son rôle <b>en base</b>, et non du principal HTTP : au
+    /// rafraîchissement, celui-ci est expiré ou absent. <c>PlatformAdmin</c> est ignoré, comme dans
+    /// la fabrique de jetons, et l'absence de rôle retombe sur <c>FirmAccountant</c> (fail-closed).
+    /// </summary>
+    private async Task<FirmDossierAccessScope> ResolveScopeFromStoreAsync(
+        Guid userId, CancellationToken cancellationToken)
+    {
+        var roleName = await (
+                from userRole in _masterContext.UserRoles
+                join role in _masterContext.Roles on userRole.RoleId equals role.Id
+                where userRole.UserId == userId && role.Name != PlatformRoles.PlatformAdmin
+                select role.Name)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return FirmDossierAccessScope.ForUser(userId, roleName ?? nameof(UserRole.FirmAccountant));
+    }
+
     private FirmDossierAccessScope ResolveScope(Guid userId)
     {
         if (_currentUser.TryGetAccessScope(out var scope) && scope.UserId == userId)

@@ -32,6 +32,7 @@ public sealed class TenantService : ITenantService
     private readonly IMemoryCache _cache;
     private readonly ILogger<TenantService> _logger;
     private readonly TenantDatabaseProvisioner _provisioner;
+    private readonly ITenantRuntimeCatalogSeeder _runtimeCatalogSeeder;
     private readonly ISectorDataTemplateApplier? _sectorTemplateApplier;
 
     public TenantService(
@@ -41,6 +42,7 @@ public sealed class TenantService : ITenantService
         IMemoryCache cache,
         ILogger<TenantService> logger,
         TenantDatabaseProvisioner provisioner,
+        ITenantRuntimeCatalogSeeder runtimeCatalogSeeder,
         ISectorDataTemplateApplier? sectorTemplateApplier = null)
     {
         _masterContext = masterContext;
@@ -49,6 +51,7 @@ public sealed class TenantService : ITenantService
         _cache = cache;
         _logger = logger;
         _provisioner = provisioner;
+        _runtimeCatalogSeeder = runtimeCatalogSeeder;
         _sectorTemplateApplier = sectorTemplateApplier;
     }
 
@@ -109,6 +112,12 @@ public sealed class TenantService : ITenantService
         await SeedWithholdingTaxSystemTypesAsync(tenantConnectionString, cancellationToken);
         LogProvisionStep("SeedWithholding", sw.ElapsedMilliseconds, tenantId, databaseName);
 
+        // AVANT les modèles sectoriels : ceux-ci n'ajoutent un compte que s'il est absent, et
+        // certains (341) figurent déjà dans le catalogue NCT 01.
+        sw.Restart();
+        var catalogsSeeded = await TrySeedRuntimeCatalogsAsync(tenantId, tenantConnectionString, cancellationToken);
+        LogProvisionStep("SeedRuntimeCatalogs", sw.ElapsedMilliseconds, tenantId, databaseName);
+
         sw.Restart();
         await ApplySectorDataTemplatesAsync(tenantId, tenantConnectionString, cancellationToken);
         LogProvisionStep("SectorTemplates", sw.ElapsedMilliseconds, tenantId, databaseName);
@@ -126,7 +135,7 @@ public sealed class TenantService : ITenantService
         _masterContext.TenantConnectionStrings.Add(tenantConnection);
         await _masterContext.SaveChangesAsync(cancellationToken);
         _cache.Remove($"{ConnectionStringCacheKeyPrefix}{tenantId}");
-        TenantMigrationGuard.MarkApplied(_cache, tenantId);
+        MarkAppliedIfComplete(tenantId, catalogsSeeded);
 
         _logger.LogInformation(
             "Created database {DatabaseName} for tenant {TenantId} with default warehouse, passenger client, and withholding tax catalog",
@@ -153,6 +162,11 @@ public sealed class TenantService : ITenantService
             tenantId,
             cancellationToken);
 
+        // La base du cabinet porte sa propre comptabilité (paie interne, échéancier fiscal) : elle a
+        // besoin du plan NCT 01 comme n'importe quel dossier, alors qu'elle ne sortait jusqu'ici que
+        // des migrations EF.
+        var catalogsSeeded = await TrySeedRuntimeCatalogsAsync(tenantId, tenantConnectionString, cancellationToken);
+
         var encryptedConnectionString = _protector.Protect(tenantConnectionString);
 
         var tenantConnection = new TenantConnectionString
@@ -166,7 +180,7 @@ public sealed class TenantService : ITenantService
         _masterContext.TenantConnectionStrings.Add(tenantConnection);
         await _masterContext.SaveChangesAsync(cancellationToken);
         _cache.Remove($"{ConnectionStringCacheKeyPrefix}{tenantId}");
-        TenantMigrationGuard.MarkApplied(_cache, tenantId);
+        MarkAppliedIfComplete(tenantId, catalogsSeeded);
 
         _logger.LogInformation("Created lightweight database {DatabaseName} for accounting firm tenant {TenantId}", databaseName, tenantId);
 
@@ -318,6 +332,73 @@ public sealed class TenantService : ITenantService
             throw new InvalidOperationException($"Chaîne de connexion introuvable pour l'entreprise {tenantId}");
 
         await ApplyMigrationsToNewDatabaseAsync(connectionString, cancellationToken);
+        _cache.Remove($"{TenantMigrationGuard.CacheKeyPrefix}{tenantId}");
+    }
+
+    /// <summary>
+    /// Pose les catalogues que les migrations EF ne sèment pas — au premier rang le plan comptable
+    /// NCT 01 (623 comptes) — sur la base tout juste provisionnée.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Indispensable quelle que soit la stratégie de provisionnement.</b> En
+    /// <c>Strategy=Migrate</c> (valeur de production), la base ne contient que la seed « hybride
+    /// PCG » d'environ 210 comptes ; en <c>TemplateClone</c>, elle peut hériter d'un <c>.bak</c>
+    /// antérieur au catalogue. Sans cet appel, le dossier naît — et reste — sur le plan hérité.
+    /// </para>
+    /// <para>
+    /// <b>Un échec ne fait jamais échouer la création du dossier</b> : le provisionnement tourne à
+    /// l'intérieur de la transaction master de l'inscription, et lever ici détruirait la base tout
+    /// juste créée pour un défaut rattrapable. L'échec est journalisé en <c>LogError</c> et le
+    /// garde de migration reprend la main au premier appel du dossier.
+    /// </para>
+    /// </remarks>
+    /// <returns><c>true</c> si le plan du dossier est bien en NCT 01 à la sortie.</returns>
+    internal async Task<bool> TrySeedRuntimeCatalogsAsync(
+        Guid tenantId, string connectionString, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var report = await _runtimeCatalogSeeder.EnsureAsync(
+                connectionString, authorizeChartRemap: false, cancellationToken);
+
+            _logger.LogInformation(
+                "Catalogues runtime posés pour {TenantId} : plan {Verdict} ({Outcome}), {Accounts} comptes.",
+                tenantId,
+                report.Verdict,
+                report.ChartOutcome,
+                report.AccountCount);
+
+            return string.Equals(report.Verdict, "nct01", StringComparison.Ordinal);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Catalogues runtime non posés pour {TenantId} : le dossier reste sur le plan comptable "
+                + "hérité jusqu'au rattrapage par TenantMigrationGuard au premier appel.",
+                tenantId);
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Ne court-circuite le garde de migration que si le dossier est réellement complet. Le marquer
+    /// systématiquement — ce qu'on faisait — neutralisait pendant une heure le seul rattrapage
+    /// capable de poser le plan comptable NCT 01.
+    /// </summary>
+    internal void MarkAppliedIfComplete(Guid tenantId, bool catalogsSeeded)
+    {
+        if (catalogsSeeded)
+        {
+            TenantMigrationGuard.MarkApplied(_cache, tenantId);
+            return;
+        }
+
         _cache.Remove($"{TenantMigrationGuard.CacheKeyPrefix}{tenantId}");
     }
 

@@ -5,6 +5,21 @@ public sealed class OllamaSettings
     public const string SectionName = "Ollama";
 
     public string BaseUrl { get; set; } = "http://localhost:11434";
+
+    /// <summary>
+    /// Mémoire allouable au MOTEUR d'inférence, en Go (base 1024). <c>0</c> = non déclaré.
+    ///
+    /// <para>Sans cette valeur, l'API n'a aucun moyen de connaître la mémoire d'un Ollama
+    /// déporté : elle mesurait la sienne, ce qui refusait des modèles qu'Ollama pouvait
+    /// charger sans peine. Renseignez ici la limite réellement accordée au moteur — en
+    /// conteneur, le <c>mem_limit</c> du service <c>ollama</c>, pas la RAM de l'hôte.</para>
+    ///
+    /// <para>Non renseigné et moteur distant : le contrôle de faisabilité mémoire est
+    /// <b>ignoré</b> (le contrôle « modèle installé », lui, demeure). Non renseigné et moteur
+    /// local : ancienne heuristique conservée.</para>
+    /// </summary>
+    public double EngineRamBudgetGiB { get; set; }
+
     public string DefaultModel { get; set; } = "mistral";
 
     /// <summary>

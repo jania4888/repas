@@ -1,3 +1,4 @@
+using FactuTrust.Application.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
 
@@ -198,6 +199,47 @@ public sealed record StorefrontStatsDto
     public int Rejected { get; init; }
     /// <summary>Vitrines suspendues (Suspended).</summary>
     public int Suspended { get; init; }
+}
+
+/// <summary>
+/// État du plan comptable d'une base tenant. <see cref="Verdict"/> : <c>nct01</c> (conforme),
+/// <c>legacy</c> (plan hybride hérité, bascule possible sans risque), <c>deferred</c> (plan hérité
+/// mais le dossier contient déjà des écritures : bascule à déclencher après sauvegarde),
+/// <c>catalog-drift</c> (remap posé mais catalogue plus ancien que celui de l'API),
+/// <c>no-chart</c> / <c>no-database</c> (base non comptable ou introuvable).
+/// </summary>
+public sealed record TenantChartOfAccountsStatusDto
+{
+    public Guid TenantId { get; init; }
+    public string TenantName { get; init; } = null!;
+    public string TenantKind { get; init; } = null!;
+    public string Verdict { get; init; } = null!;
+    public int AccountCount { get; init; }
+    public int AccountingLineCount { get; init; }
+    public string? AppliedMapVersion { get; init; }
+    public string? AppliedCatalogHash { get; init; }
+    public string? CurrentCatalogHash { get; init; }
+
+    /// <summary>Différentiel attendu si la bascule était appliquée. Nul pour un dossier déjà en NCT 01.</summary>
+    public ChartMigrationPreview? Preview { get; init; }
+
+    /// <summary>Renseigné quand la base n'a pas pu être interrogée (le diagnostic continue).</summary>
+    public string? Error { get; init; }
+}
+
+/// <summary>Résultat d'une bascule NCT 01, en simulation (<c>dryRun</c>) comme en réel.</summary>
+public sealed record ChartOfAccountsApplyResultDto
+{
+    public Guid TenantId { get; init; }
+    public string TenantName { get; init; } = null!;
+    public bool DryRun { get; init; }
+    public string Outcome { get; init; } = null!;
+    public string Verdict { get; init; } = null!;
+    public int AccountCountBefore { get; init; }
+    public int AccountCountAfter { get; init; }
+    public int AccountingLineCount { get; init; }
+    public ChartMigrationPreview? Preview { get; init; }
+    public string Message { get; init; } = null!;
 }
 
 /// <summary>Migration status for one tenant database.</summary>
