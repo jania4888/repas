@@ -30,6 +30,6 @@ public static partial class PublicContactReference
     /// <summary>Vrai si la chaîne a la forme exacte d'une référence générée par <see cref="Generate"/>.</summary>
     public static bool IsWellFormed(string? value) => value is not null && WellFormedRegex().IsMatch(value);
 
-    [GeneratedRegex("^CR-[A-HJ-NP-Z2-9]{6}$", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"\ACR-[A-HJ-NP-Z2-9]{6}\z", RegexOptions.CultureInvariant)]
     private static partial Regex WellFormedRegex();
 }
