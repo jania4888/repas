@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { HomeThemeService } from '@core/services/home-theme.service';
 import { PublicHeaderComponent } from './public-header/public-header.component';
 import { environment } from '../../../environments/environment';
 import { BRAND } from '@core/constants/brand';
@@ -451,18 +450,10 @@ import { CtaSectionComponent } from './sections/cta-section/cta-section.componen
     }
   `]
 })
-export class HomeComponent implements OnInit, OnDestroy {
+/** Le thème Chain, la langue et le SEO sont gérés par `LandingShellComponent` (route parente). */
+export class HomeComponent {
   readonly storefrontEnabled = environment.storefrontEnabled;
   readonly brand = BRAND;
-  private readonly homeThemeService = inject(HomeThemeService);
 
   currentYear = new Date().getFullYear();
-
-  ngOnInit(): void {
-    this.homeThemeService.loadChainTheme();
-  }
-
-  ngOnDestroy(): void {
-    this.homeThemeService.unloadChainTheme();
-  }
 }
