@@ -4,6 +4,7 @@ using FactuTrust.Domain.Communications;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Entities.AI;
 using FactuTrust.Domain.Entities.Channels;
+using FactuTrust.Domain.Entities.PublicContact;
 using FactuTrust.Domain.Entities.Storefront;
 using FactuTrust.Domain.Enums;
 using FactuTrust.Domain.Events;
@@ -31,6 +32,9 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public DbSet<UserModuleGrant> UserModuleGrants => Set<UserModuleGrant>();
     public DbSet<ModuleGrantAuditEntry> ModuleGrantAuditEntries => Set<ModuleGrantAuditEntry>();
     public DbSet<PlatformActionAuditEntry> PlatformActionAuditEntries => Set<PlatformActionAuditEntry>();
+
+    /// <summary>Lot C — anonymous contact / demo requests submitted from the public landing page.</summary>
+    public DbSet<PublicContactRequest> PublicContactRequests => Set<PublicContactRequest>();
 
     /// <summary>Plan §3.3 — per-tenant dismissals of module usage recommendations.</summary>
     public DbSet<ModuleRecommendationDismissal> ModuleRecommendationDismissals => Set<ModuleRecommendationDismissal>();
@@ -855,6 +859,7 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
         ConfigureStorefrontOrderItem(builder);
         ConfigureStorefrontPublishingConsent(builder);
         ConfigureStorefrontOutboxInboxEntry(builder);
+        ConfigurePublicContactRequest(builder);
 
         // DOIT rester la dernière étape : normalise toutes les clés Guid.Id des entités du domaine
         // en ValueGenerated.Never (le constructeur d'Entity a déjà positionné l'Id). Voir
@@ -933,6 +938,41 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
                 .WithMany()
                 .HasForeignKey(p => p.StorefrontProfileId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    /// <summary>
+    /// Lot C — <c>PublicContactRequests</c> (landing-page leads). Not an <c>Entity</c> subclass; the
+    /// unique index on <c>PublicReference</c> backs the collision retry in the submit handler and the
+    /// composite index backs the duplicate window (e-mail + subject + date).
+    /// </summary>
+    private static void ConfigurePublicContactRequest(ModelBuilder builder)
+    {
+        builder.Entity<PublicContactRequest>(entity =>
+        {
+            entity.ToTable("PublicContactRequests");
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Id).ValueGeneratedNever();
+
+            entity.Property(r => r.PublicReference).HasMaxLength(PublicContactRequest.ReferenceMaxLength).IsRequired();
+            entity.Property(r => r.Subject).HasConversion<int>();
+            entity.Property(r => r.FullName).HasMaxLength(PublicContactRequest.FullNameMaxLength).IsRequired();
+            entity.Property(r => r.Organization).HasMaxLength(PublicContactRequest.OrganizationMaxLength).IsRequired();
+            entity.Property(r => r.Email).HasMaxLength(PublicContactRequest.EmailMaxLength).IsRequired();
+            entity.Property(r => r.Phone).HasMaxLength(PublicContactRequest.PhoneMaxLength).IsRequired();
+            entity.Property(r => r.Size).HasMaxLength(PublicContactRequest.SizeMaxLength);
+            entity.Property(r => r.Message).HasMaxLength(PublicContactRequest.MessageMaxLength).IsRequired();
+            entity.Property(r => r.Locale).HasMaxLength(PublicContactRequest.LocaleMaxLength).IsRequired();
+            entity.Property(r => r.ConsentTextVersion).HasMaxLength(PublicContactRequest.ConsentTextVersionMaxLength).IsRequired();
+            entity.Property(r => r.ClientIpHash).HasMaxLength(PublicContactRequest.IpHashMaxLength);
+            entity.Property(r => r.UserAgent).HasMaxLength(PublicContactRequest.UserAgentMaxLength);
+            entity.Property(r => r.Status).HasConversion<int>();
+
+            entity.HasIndex(r => r.PublicReference).IsUnique();
+            entity.HasIndex(r => r.CreatedAtUtc);
+            entity.HasIndex(r => r.Status);
+            entity.HasIndex(r => r.RetentionUntilUtc);
+            entity.HasIndex(r => new { r.Email, r.Subject, r.CreatedAtUtc });
         });
     }
 

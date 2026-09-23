@@ -1605,6 +1605,103 @@ namespace FactuTrust.Infrastructure.Migrations
                     b.ToTable("PlatformActionAuditEntries", (string)null);
                 });
 
+            modelBuilder.Entity("FactuTrust.Domain.Entities.PublicContact.PublicContactRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("CaptchaVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ClientIpHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<bool>("Consent")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ConsentTextVersion")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<bool>("NotificationEnqueued")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Organization")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime?>("ProcessedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PublicReference")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<DateTime>("RetentionUntilUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Size")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Subject")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.HasIndex("PublicReference")
+                        .IsUnique();
+
+                    b.HasIndex("RetentionUntilUtc");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("Email", "Subject", "CreatedAtUtc");
+
+                    b.ToTable("PublicContactRequests", (string)null);
+                });
+
             modelBuilder.Entity("FactuTrust.Domain.Entities.ModuleRecommendationDismissal", b =>
                 {
                     b.Property<Guid>("Id")
