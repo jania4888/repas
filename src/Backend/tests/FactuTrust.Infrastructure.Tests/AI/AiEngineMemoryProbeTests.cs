@@ -1,51 +1,33 @@
-using FactuTrust.Application.Common.Interfaces.Services;
 using FactuTrust.Application.Configuration;
-using FactuTrust.Application.Features.AI.DTOs;
 using FactuTrust.Infrastructure.Services.AI;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Moq;
 using Xunit;
 
 namespace FactuTrust.Infrastructure.Tests.AI;
 
 public sealed class AiEngineMemoryProbeTests
 {
-    private readonly Mock<IOllamaClient> _ollamaClient = new();
+    private static AiEngineMemoryProbe CreateSut(OllamaSettings settings) =>
+        new(Options.Create(settings), NullLogger<AiEngineMemoryProbe>.Instance);
 
-    private AiEngineMemoryProbe CreateSut(OllamaSettings settings) =>
-        new(_ollamaClient.Object, Options.Create(settings), NullLogger<AiEngineMemoryProbe>.Instance);
-
+    /// <summary>
+    /// Le budget est le plafond qu'UN modèle doit respecter. Les modèles résidents ne sont pas
+    /// déduits : Ollama en évince un inactif pour charger le suivant, et les déduire refusait à
+    /// tort gemma3:4b quand deux autres modèles étaient en mémoire.
+    /// </summary>
     [Fact]
-    public async Task DeclaredBudget_SubtractsAlreadyLoadedModels()
+    public async Task DeclaredBudget_IsTheCeilingForASingleModel()
     {
-        _ollamaClient.Setup(c => c.ListRunningModelsAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new OllamaProcessListResponse
-            {
-                Models = new List<OllamaRunningModel>
-                {
-                    new() { Name = "a", Size = 2L << 30 },
-                    new() { Name = "b", Size = 1L << 30 }
-                }
-            });
-
-        var snapshot = await CreateSut(new OllamaSettings { EngineRamBudgetGiB = 12 }).ReadAsync();
+        var snapshot = await CreateSut(new OllamaSettings
+        {
+            BaseUrl = "http://ollama:11434",
+            EngineRamBudgetGiB = 12
+        }).ReadAsync();
 
         Assert.True(snapshot.IsMeaningful);
         Assert.Equal(12L << 30, snapshot.TotalBytes);
-        Assert.Equal(9L << 30, snapshot.AvailableBytes);
-    }
-
-    [Fact]
-    public async Task DeclaredBudget_RunningModelsUnreadable_TreatsBudgetAsFree()
-    {
-        _ollamaClient.Setup(c => c.ListRunningModelsAsync(It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new HttpRequestException("moteur injoignable"));
-
-        var snapshot = await CreateSut(new OllamaSettings { EngineRamBudgetGiB = 8 }).ReadAsync();
-
-        Assert.True(snapshot.IsMeaningful);
-        Assert.Equal(8L << 30, snapshot.AvailableBytes);
+        Assert.Equal(12L << 30, snapshot.AvailableBytes);
     }
 
     /// <summary>

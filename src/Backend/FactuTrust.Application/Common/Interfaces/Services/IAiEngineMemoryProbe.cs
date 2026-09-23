@@ -13,7 +13,11 @@ namespace FactuTrust.Application.Common.Interfaces.Services;
 /// et seulement ici.</para>
 /// </summary>
 /// <param name="TotalBytes">Capacité mémoire du moteur d'inférence.</param>
-/// <param name="AvailableBytes">Capacité restante, modèles déjà chargés déduits.</param>
+/// <param name="AvailableBytes">
+/// Mémoire qu'un modèle peut occuper pour être chargeable. Avec un budget déclaré, elle vaut le
+/// budget entier : les modèles résidents ne sont pas déduits, Ollama évinçant un modèle inactif
+/// pour charger le suivant.
+/// </param>
 /// <param name="IsMeaningful">
 /// Faux quand l'API n'a aucun moyen fiable de connaître la mémoire du moteur (moteur distant
 /// et aucun budget déclaré). Les appelants doivent alors <b>renoncer au verdict mémoire</b>
