@@ -542,25 +542,81 @@ Sur un hôte jetable :
 
 ## 9. Mise à jour (livraison)
 
-```bash
-cd /opt/factutrust/src
-bash deploy/scripts/backup.sh                      # vérifier qu'il se termine
-COMPOSE_FILE=deploy/docker-compose.yml \
-COMPOSE_EXTRA_FILE=deploy/docker-compose.vps.yml \
-SMOKE_URL=https://VOTRE_DOMAINE bash deploy/scripts/release.sh
+**Toute livraison passe par `deploy/scripts/deploy.sh`**, lancé depuis le poste par
+`deploy/scripts/Deploy-Hostinger.ps1` — directement ou depuis Visual Studio (ci-dessous).
+`release.sh` est **désactivé** : il faisait un `git pull` sur l'arbre en service, ne sauvegardait
+rien avant les migrations et publiait les fronts avant l'API.
+
+### Ce que fait un déploiement
+
+| Étape | Détail |
+|---|---|
+| 1. Contrôles | verrou, pile entièrement en service, disque, cible **descendante** de la version en service et **fusionnée** dans `origin/main`, **aucun changement d'infrastructure** (compose, Dockerfiles, Nginx → livraison manuelle) |
+| 2. Delta | images à reconstruire (API / front tenant / back-office, selon les fichiers modifiés), migrations EF ajoutées |
+| 3. Préparation | clone de la cible dans `src-next`, réinjection de `.env` et du PFX, scripts en LF, compose valide |
+| 4. Construction | seulement les images concernées ; la production continue de tourner |
+| 5. Sauvegarde | **toutes** les bases (garde-fou de comptage de `backup.sh`) |
+| 6. Archivage | image API en service exportée (`docker save`) et volumes statiques archivés dans `/opt/factutrust/rollback/` — la purge nocturne Hostinger efface les anciennes images |
+| 7. Bascule | `src` → `src-old`, `src-next` → `src`, redémarrage de l'**API seule** |
+| 8. Porte GO/NO-GO | 0 `FATAL`, migration et semis confirmés, nouvelles migrations master **présentes en base**, refresh bidon → **401**, drapeaux en `Production`, 0 `ERR`/`FTL`, bonne image en service |
+| 9. Fronts | publiés **après** l'API |
+| 10. Internet | `/`, `/admin/`, `/health/ready` → 200, `/api/auth/me` → 401, `/hangfire` → 404 |
+
+**Un échec aux étapes 7 à 10 déclenche le retour automatique** à la version précédente
+(arbre, image API, volumes statiques). **Limite** : une migration de base déjà appliquée n'est
+pas défaite ; la sauvegarde de l'étape 5 est alors le point de reprise.
+
+Le script serveur tourne **détaché** (`nohup`) : une coupure SSH ou la fermeture de Visual
+Studio n'interrompt pas un déploiement. Journal : `/opt/factutrust/logs/deploy-<sha>-<date>.log` ;
+historique : `/opt/factutrust/deploys.log`.
+
+### Migrations
+
+Si la version ajoute des migrations EF, le déploiement réel **refuse** de partir sans
+`-AcceptMigrations`. Ce n'est pas une formalité : avant de l'ajouter, revoir les migrations et
+**pré-contrôler leurs conditions d'échec sur les données de production** (collisions, doublons,
+index uniques). Les migrations tenant s'appliquent au premier accès de chaque dossier.
+
+### Depuis un terminal
+
+```powershell
+.\deploy\scripts\Deploy-Hostinger.ps1 -DryRun            # à blanc : rien ne bascule
+.\deploy\scripts\Deploy-Hostinger.ps1                    # déploie origin/main
+.\deploy\scripts\Deploy-Hostinger.ps1 -AcceptMigrations  # idem, migrations revues
+.\deploy\scripts\Deploy-Hostinger.ps1 -Ref origin/ma-branche -DryRun -AllowUnmerged  # tester une PR
 ```
 
-Puis **rejouer la porte GO/NO-GO du § 4** sur les journaux du nouveau démarrage, et les
-migrations tenant du § 6 si la version en contient.
+Le lanceur refuse de partir si `instafact.shop` ne pointe pas sur le serveur visé
+(`187.124.214.123`, utilisateur `deploy`), ou si l'empreinte SSH de l'hôte a changé.
 
-> **Fenêtre de bascule des statiques** : `web-static-init` fait `rm -rf /out/* && cp -a`
-> sur un volume que Nginx sert en direct. Les navigateurs en cours de session prennent
-> quelques 404 sur des bundles hachés et devront rafraîchir une fois. À annoncer.
+### Depuis Visual Studio
 
-**Retour arrière** : `ftc down` (**jamais `-v`** — cela détruirait `sqlserver-data`,
-`api-wwwroot`, `api-appdata`), `git checkout <tag précédent>`, restauration des bases,
-`ftc up -d --build`. Une migration master en échec se rattrape par **restauration**, pas
-par redémarrage : `MigrateAsync` n'a pas de chemin inverse.
+*Outils → Outils externes… → Ajouter*, deux fois :
+
+| Champ | « Hostinger — à blanc » | « Hostinger — déployer » |
+|---|---|---|
+| Commande | `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe` | idem |
+| Arguments | `-NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)..\..\deploy\scripts\Deploy-Hostinger.ps1" -DryRun` | `-NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)..\..\deploy\scripts\Deploy-Hostinger.ps1"` |
+| Répertoire initial | `$(SolutionDir)` | `$(SolutionDir)` |
+| Utiliser la fenêtre Sortie | ☑ | ☑ |
+| Demander les arguments | ☐ | ☑ — pour ajouter `-AcceptMigrations` **délibérément** |
+
+Les deux entrées apparaissent dans le menu *Outils* ; la sortie défile dans la fenêtre
+**Sortie**. `-ExecutionPolicy Bypass` ne vaut que pour ce processus et ne modifie pas la
+stratégie du poste. **Toujours lancer « à blanc » avant « déployer ».**
+
+> La page *Publier* de Visual Studio (Azure, dossier, FTP, IIS, registre Docker) ne convient
+> pas à cette pile : aucune de ses cibles ne sait sauvegarder, contrôler les migrations,
+> construire les fronts Angular ni revenir en arrière.
+
+> **Fenêtre de bascule des statiques** : les navigateurs restés ouverts peuvent prendre des 404
+> sur des bundles hachés (l'application ne gère pas `ChunkLoadError`) et devront rafraîchir une
+> fois. À annoncer.
+
+**Retour arrière manuel**, si le retour automatique ne suffit pas : **jamais `down -v`** (cela
+détruirait `sqlserver-data`, `api-wwwroot`, `api-appdata`). Restaurer l'arbre (`src-old`),
+recharger l'image exportée (`docker load < /opt/factutrust/rollback/<sha>-<date>/api.tar.gz`),
+restaurer les volumes statiques depuis leurs archives, puis les bases si une migration l'exige.
 
 ---
 

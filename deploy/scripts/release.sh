@@ -2,7 +2,19 @@
 # Release : rebuild images, refresh static assets, restart API, smoke test.
 # Usage (depuis la racine du dépôt) :
 #   bash deploy/scripts/release.sh
+#
+# REMPLACE par deploy/scripts/deploy.sh (lance via deploy/scripts/Deploy-Hostinger.ps1).
+# Ce script fait un `git pull` sur l'arbre EN SERVICE (aucun retour arriere possible), ne
+# sauvegarde rien avant les migrations, publie les fronts AVANT l'API, et ne juge la reussite
+# que sur /health/ready, qui repond Healthy sur une base a moitie migree.
 set -euo pipefail
+
+if [[ "${FORCE_LEGACY_RELEASE:-0}" != 1 ]]; then
+  echo "release.sh est remplace par deploy/scripts/deploy.sh (via Deploy-Hostinger.ps1)." >&2
+  echo "Il ne sauvegarde rien, publie les fronts avant l'API et ne permet aucun retour arriere." >&2
+  echo "Pour l'executer malgre tout, en connaissance de cause : FORCE_LEGACY_RELEASE=1." >&2
+  exit 1
+fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
