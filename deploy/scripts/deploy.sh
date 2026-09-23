@@ -47,7 +47,11 @@ SWITCHED=0; API_RESTARTED=0; WEB_PUBLISHED=0; ADMIN_PUBLISHED=0
 CUR=""; CUR_SHORT="?"; TGT=""; TGT_SHORT="?"; T0=""
 RUN_API_ID=""; RB_DIR=""; BACKUP_DIR=""; MASTER_MIGS=""; TENANT_MIGS=""
 TS=$(date -u +%Y%m%d-%H%M%S)
-declare -A OLD_TAG_ID=()
+# Images d'avant la construction, protegees par un NOM et non par un identifiant : avec le
+# magasin d'images containerd de Docker, une image disparait des qu'elle perd sa derniere
+# etiquette. Deplacer :latest vers une candidate rendait l'ancien identifiant introuvable
+# ("No such image"), et une restauration par identifiant echouait donc en silence.
+declare -A OLD_REF=()
 
 say()  { printf '%s\n' "$*"; }
 step() { printf '\n==== %s ====\n' "$*"; }
@@ -81,15 +85,39 @@ wait_healthy() { # conteneur, delai maximal en secondes
   return 1
 }
 
-restore_tags() { # remet :latest sur les images d'avant la construction
-  local img
-  for img in "${!OLD_TAG_ID[@]}"; do
-    if [ -n "${OLD_TAG_ID[$img]}" ]; then
-      docker tag "${OLD_TAG_ID[$img]}" "$img:latest" >/dev/null 2>&1
+protect_tags() { # SERVICES... : nomme les images :latest actuelles avant de les remplacer
+  local s img
+  for s in "$@"; do
+    img="factutrust-$s"
+    if docker image inspect "$img:latest" >/dev/null 2>&1; then
+      docker tag "$img:latest" "$img:pre-deploy-$TS" || die "protection de $img:latest impossible"
+      OLD_REF[$img]="$img:pre-deploy-$TS"
     else
-      docker image rm "$img:latest" >/dev/null 2>&1 || true
+      OLD_REF[$img]=""
     fi
   done
+}
+
+restore_tags() { # remet :latest sur les images protegees, et le VERIFIE ; 1 si un echec
+  local img ref fail=0
+  for img in "${!OLD_REF[@]}"; do
+    ref="${OLD_REF[$img]}"
+    if [ -n "$ref" ]; then
+      if docker tag "$ref" "$img:latest" 2>/dev/null \
+         && [ "$(docker image inspect -f '{{.Id}}' "$ref" 2>/dev/null)" = "$(docker image inspect -f '{{.Id}}' "$img:latest" 2>/dev/null)" ]; then
+        docker image rm "$ref" >/dev/null 2>&1   # retire le nom de protection ; l'image reste sous :latest
+        ok "$img:latest restaure"
+      else
+        ko "$img:latest NON restaure : l'image precedente reste disponible sous $ref"
+        fail=1
+      fi
+    else
+      docker image rm "$img:latest" >/dev/null 2>&1 || true
+      ok "$img:latest retire (il n'existait pas avant la construction)"
+    fi
+  done
+  OLD_REF=()
+  return $fail
 }
 
 cleanup_preparation() {
@@ -116,8 +144,8 @@ rollback() {
     [ -d "$ROOT/src" ] && mv "$ROOT/src" "$ROOT/src-echec-$TGT_SHORT-$TS"
     mv "$ROOT/src-old" "$ROOT/src" && ok "arbre $CUR_SHORT remis en service (l'arbre en echec est conserve sous src-echec-$TGT_SHORT-$TS)"
   fi
+  restore_tags || ko "etiquettes non restaurees : ne PAS relancer docker compose up avant verification"
   if [ "$API_RESTARTED" = 1 ]; then
-    docker tag "$RUN_API_ID" factutrust-api:latest
     compose_in src up -d --no-deps --force-recreate api >/dev/null 2>&1
     wait_healthy factutrust-api 360 || ko "L'API precedente ne redemarre pas : INTERVENTION MANUELLE REQUISE"
   fi
@@ -200,6 +228,18 @@ for c in factutrust-sqlserver factutrust-ollama factutrust-api factutrust-nginx;
   esac
 done
 
+# Invariant du retour arriere : :latest doit designer l'image qui tourne. Sinon, l'image en
+# service n'a peut-etre plus aucun nom (magasin containerd) et ne pourrait ni etre exportee ni
+# etre remise en service.
+RUN_API_ID=$(docker inspect -f '{{.Image}}' factutrust-api)
+if [ "$RUN_API_ID" = "$(docker image inspect -f '{{.Id}}' factutrust-api:latest 2>/dev/null)" ]; then
+  ok "factutrust-api:latest designe bien l'image en service"
+elif [ "$DRY" = 1 ]; then
+  say "  [ATTENTION] factutrust-api:latest ne designe pas l'image en service : un deploiement reel serait refuse"
+else
+  die "factutrust-api:latest ne designe pas l'image en service : le retour arriere n'aurait pas d'image valide. Recreer le conteneur api depuis :latest (deploy/README.md, section 9) avant de deployer"
+fi
+
 FREE=$(df --output=avail -BG / | tail -1 | tr -dc 0-9)
 [ "${FREE:-0}" -ge 10 ] || die "espace disque insuffisant : ${FREE:-?} Go libres, 10 requis"
 ok "disque : $FREE Go libres"
@@ -268,13 +308,10 @@ SERVICES=()
 [ "$NEED_API" = 1 ] && SERVICES+=(api)
 [ "$NEED_WEB" = 1 ] && SERVICES+=(web-static-init)
 [ "$NEED_ADMIN" = 1 ] && SERVICES+=(admin-static-init)
-RUN_API_ID=$(docker inspect -f '{{.Image}}' factutrust-api)
 
 if [ ${#SERVICES[@]} -gt 0 ]; then
   step "4. CONSTRUCTION : ${SERVICES[*]} (la production continue de tourner)"
-  for s in "${SERVICES[@]}"; do
-    OLD_TAG_ID["factutrust-$s"]=$(docker image inspect -f '{{.Id}}' "factutrust-$s:latest" 2>/dev/null || true)
-  done
+  protect_tags "${SERVICES[@]}"
   compose_in src-next build "${SERVICES[@]}" > "$ROOT/logs/build-$TGT_SHORT-$TS.log" 2>&1 \
     || die "construction en echec, journal : $ROOT/logs/build-$TGT_SHORT-$TS.log"
   for s in "${SERVICES[@]}"; do
@@ -287,8 +324,15 @@ fi
 
 if [ "$DRY" = 1 ]; then
   step "FIN DU MODE A BLANC"
-  cleanup_preparation
-  ok "etiquettes :latest restaurees et src-next supprime : production intacte"
+  if ! restore_tags; then
+    [ -f "$ROOT/src-next/.deploy-staging" ] && rm -rf "$ROOT/src-next"
+    say ""
+    say "A BLANC : construction reussie MAIS etiquettes non restaurees. Ne lancer aucun docker compose up avant verification."
+    record "A_BLANC_ETIQUETTES_KO"
+    exit 1
+  fi
+  [ -f "$ROOT/src-next/.deploy-staging" ] && rm -rf "$ROOT/src-next"
+  ok "src-next supprime : aucun conteneur touche, production intacte"
   say ""
   say "A BLANC REUSSI : $TGT_SHORT peut etre deploye."
   [ -n "$MASTER_MIGS$TENANT_MIGS" ] && say "Le deploiement reel exigera --accept-migrations."
@@ -308,10 +352,10 @@ if [ ${#SERVICES[@]} -gt 0 ]; then
   RB_DIR="$ROOT/rollback/$CUR_SHORT-$TS"
   mkdir -p "$RB_DIR" || die "creation de $RB_DIR impossible"
   if [ "$NEED_API" = 1 ]; then
-    docker tag "$RUN_API_ID" "factutrust-api:rollback-$CUR_SHORT" \
-      && docker save "factutrust-api:rollback-$CUR_SHORT" | gzip > "$RB_DIR/api.tar.gz" \
+    [ -n "${OLD_REF[factutrust-api]:-}" ] || die "l'image API en service n'a pas ete protegee avant la construction"
+    docker save "${OLD_REF[factutrust-api]}" | gzip > "$RB_DIR/api.tar.gz" \
       || die "export de l'image API en service impossible"
-    ok "image API $CUR_SHORT exportee"
+    ok "image API $CUR_SHORT exportee (${OLD_REF[factutrust-api]})"
   fi
   for v in web-static admin-static; do
     if [ "$v" = web-static ] && [ "$NEED_WEB" != 1 ]; then continue; fi

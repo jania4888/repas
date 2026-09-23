@@ -613,6 +613,15 @@ stratégie du poste. **Toujours lancer « à blanc » avant « déployer ».**
 > sur des bundles hachés (l'application ne gère pas `ChunkLoadError`) et devront rafraîchir une
 > fois. À annoncer.
 
+**Refus « factutrust-api:latest ne désigne pas l'image en service »** : le serveur utilise le
+magasin d'images **containerd** de Docker, où une image **disparaît dès qu'elle perd sa dernière
+étiquette**. Si `:latest` a été déplacé hors du script (construction manuelle, test interrompu),
+l'image qui tourne n'a plus de nom : elle ne pourrait être ni exportée ni remise en service, et
+le script refuse donc de basculer. Après avoir vérifié que `:latest` correspond bien au code de
+`/opt/factutrust/src` (`docker image inspect -f '{{.Created}}' factutrust-api:latest`), recréer
+l'API depuis `:latest` (≈ 20 s d'indisponibilité de `/api`) :
+`cd /opt/factutrust/src && docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.vps.yml up -d --no-deps --force-recreate api`.
+
 **Retour arrière manuel**, si le retour automatique ne suffit pas : **jamais `down -v`** (cela
 détruirait `sqlserver-data`, `api-wwwroot`, `api-appdata`). Restaurer l'arbre (`src-old`),
 recharger l'image exportée (`docker load < /opt/factutrust/rollback/<sha>-<date>/api.tar.gz`),
