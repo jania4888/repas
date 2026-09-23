@@ -79,7 +79,7 @@ describe('RegisterComponent', () => {
   });
 
   describe('cleanNifValue', () => {
-    const expectedNif = '1234567/A/B/C/000';
+    const expectedNif = '1234567A/B/C/000';
 
     it('should remove underscores (placeholders) from NIF', () => {
       const result = cleanNifValue('1234567A/B/C/000_');
@@ -310,7 +310,7 @@ describe('RegisterComponent', () => {
 
       expect(authService.register).toHaveBeenCalled();
       const callArgs = authService.register.calls.mostRecent().args[0] as RegisterRequest;
-      expect(callArgs.nif).toBe('1234567/A/B/C/000'); // Should be cleaned and normalized
+      expect(callArgs.nif).toBe('1234567A/B/C/000');
     });
 
     it('should clean phone number before submission', () => {
@@ -414,7 +414,7 @@ describe('RegisterComponent', () => {
   });
 
   describe('onNifBlur', () => {
-    const expectedNif = '1234567/A/B/C/000';
+    const expectedNif = '1234567A/B/C/000';
 
     it('should clean NIF value on blur', () => {
       const nifControl = component.form.get('nif');
@@ -435,13 +435,22 @@ describe('RegisterComponent', () => {
       expect(nifControl?.touched).toBe(true);
     });
 
-    it('should not update if value is already normalized', () => {
+    it('should rewrite the historical spelling to the carte form', () => {
       const nifControl = component.form.get('nif');
       nifControl?.setValue('1234567/A/B/C/000');
 
       component.onNifBlur();
 
-      expect(nifControl?.value).toBe(expectedNif);
+      expect(nifControl?.value).toBe('1234567A/B/C/000');
+    });
+
+    it('should not update if value is already the carte form', () => {
+      const nifControl = component.form.get('nif');
+      nifControl?.setValue('1234567A/B/C/000');
+
+      component.onNifBlur();
+
+      expect(nifControl?.value).toBe('1234567A/B/C/000');
     });
 
     it('should handle empty value', () => {

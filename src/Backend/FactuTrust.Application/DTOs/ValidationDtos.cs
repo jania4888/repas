@@ -155,7 +155,7 @@ public sealed record FieldError
         => new()
         {
             Code = ValidationErrorCodes.InvalidNif,
-            Message = "Matricule fiscal invalide. Format attendu: NNNNNNN/L/A/M/NNN"
+            Message = "Matricule fiscal invalide. Format attendu: 1772793W/A/M/000"
         };
 
     /// <summary>Create an invalid email error.</summary>

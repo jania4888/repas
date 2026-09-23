@@ -8,7 +8,7 @@ import { FirmManagedClientsService, CreateFirmManagedClient, FirmManagedClientCr
 import { FirmGovernanceService, FirmAssignableAccountant } from '@core/services/firm-governance.service';
 import { FirmContextService } from '@core/services/firm-context.service';
 import { ToastService } from '@core/services/toast.service';
-import { TUNISIAN_GOVERNORATE_OPTIONS } from '@shared/validation/validation-rules';
+import { canonicalizeNif, TUNISIAN_GOVERNORATE_OPTIONS } from '@shared/validation/validation-rules';
 import { TunisianValidators } from '@shared/validation/tunisian-validators';
 import {
   ProvisioningStep,
@@ -153,7 +153,7 @@ const MONTH_OPTIONS: Option<number>[] = [
               </div>
               <div class="mc-field">
                 <label>Matricule fiscal (NIF) <span class="req">*</span></label>
-                <input pInputText formControlName="nif" placeholder="1234567A/M/000" />
+                <input pInputText formControlName="nif" placeholder="1772793W/A/M/000" (blur)="canonicalizeNifField()" />
               </div>
               <div class="mc-field">
                 <label>Forme juridique</label>
@@ -198,7 +198,7 @@ const MONTH_OPTIONS: Option<number>[] = [
                 <input pInputText formControlName="phone" placeholder="+216 71 123 456" />
               </div>
               <div class="mc-field">
-                <label>Email <span class="req">*</span></label>
+                <label>Email</label>
                 <input pInputText formControlName="email" placeholder="contact@exemple.com" />
               </div>
               <div class="mc-field">
@@ -541,7 +541,7 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
     city: ['', Validators.required],
     governorate: ['', Validators.required],
     phone: ['', [Validators.required, TunisianValidators.tunisianPhone()]],
-    email: ['', [Validators.required, TunisianValidators.email()]],
+    email: ['', [TunisianValidators.email()]],
     website: ['']
   });
 
@@ -699,6 +699,14 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
     return parts.length ? parts.join(', ') : '—';
   }
 
+  canonicalizeNifField(): void {
+    const control = this.generalForm.controls.nif;
+    const canonical = canonicalizeNif(control.value);
+    if (canonical && canonical !== control.value) {
+      control.setValue(canonical);
+    }
+  }
+
   recapExercice(): string {
     const a = this.accountingForm.value;
     const start = MONTH_OPTIONS.find(m => m.value === a.fiscalYearStartMonth)?.label;
@@ -722,7 +730,7 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
 
     return {
       companyName: g.companyName.trim(),
-      nif: g.nif.trim(),
+      nif: canonicalizeNif(g.nif.trim()) || g.nif.trim(),
       legalForm: g.legalForm,
       rneIdentifier: g.rneIdentifier?.trim() || null,
       incorporationDate: g.incorporationDate ? g.incorporationDate.toISOString() : null,
@@ -732,7 +740,7 @@ export class FirmManagedClientWizardComponent implements OnInit, OnDestroy {
       city: g.city.trim(),
       governorate: g.governorate,
       postalCode: g.postalCode?.trim() || null,
-      email: g.email.trim(),
+      email: g.email?.trim() || null,
       phone: g.phone.trim(),
       website: g.website?.trim() || null,
       fiscalYearStartMonth: a.fiscalYearStartMonth,

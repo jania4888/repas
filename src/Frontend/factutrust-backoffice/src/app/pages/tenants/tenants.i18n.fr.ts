@@ -220,7 +220,7 @@ export const TENANTS_FR = {
   'create.placeholder.segment': 'Sélectionnez un type de société',
   'create.placeholder.domain': 'Sélectionnez un domaine',
   'create.placeholder.governorate': 'Sélectionnez un gouvernorat',
-  'create.placeholder.nif': '1234567/A/B/C/000',
+  'create.placeholder.nif': '1772793W/A/M/000',
 
   'create.hint.segmentFirst': 'Choisissez d’abord un type de société.',
   'create.hint.password':

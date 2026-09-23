@@ -30,6 +30,7 @@ import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { EMAIL_PATTERN, NIF_PATTERN, TUNISIAN_GOVERNORATES } from '@shared/validation';
 import { cleanNif } from './quick-create-client.utils';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 
 export interface QuickCreatedClient {
   listItem: ClientListItem;
@@ -75,6 +76,7 @@ const FIELD_IDS = {
     DialogModule,
     InputTextModule,
     InputMaskModule,
+    NifMaskPasteDirective,
     SelectModule,
     ButtonComponent,
   ],
@@ -129,8 +131,9 @@ const FIELD_IDS = {
                   [ngModel]="nif()"
                   (ngModelChange)="nif.set($event)"
                   (onBlur)="onNifBlur()"
-                  mask="9999999/a/a/a/999"
-                  placeholder="Ex. 1234567/A/B/C/000"
+                  appNifMaskPaste
+                  mask="9999999a/a/a/999"
+                  placeholder="Ex. 1772793W/A/M/000"
                   styleClass="w-full"
                   [class.ng-invalid]="showNifError()" />
                 @if (showNifError()) {
@@ -145,7 +148,7 @@ const FIELD_IDS = {
           <div class="form-block">
             <h4 class="form-block-title">Contact</h4>
             <div class="form-group">
-              <label for="quick-client-email">Email <span class="required">*</span></label>
+              <label for="quick-client-email">Email</label>
               <input
                 pInputText
                 id="quick-client-email"
@@ -467,7 +470,7 @@ export class QuickCreateClientDialogComponent {
   readonly nameValid = computed(() => this.name().trim().length >= 2);
   readonly emailValid = computed(() => {
     const v = this.email().trim();
-    return v.length > 0 && EMAIL_PATTERN.test(v);
+    return v.length === 0 || EMAIL_PATTERN.test(v);
   });
   readonly streetValid = computed(() => this.street().trim().length > 0);
   readonly cityValid = computed(() => this.city().trim().length > 0);
@@ -503,16 +506,12 @@ export class QuickCreateClientDialogComponent {
     return v.length === 0 ? 'Ce champ est obligatoire' : 'Min. 2 caractères';
   });
 
-  readonly emailErrorMessage = computed(() => {
-    const v = this.email().trim();
-    if (v.length === 0) return 'Ce champ est obligatoire';
-    return 'Adresse email invalide';
-  });
+  readonly emailErrorMessage = computed(() => 'Adresse email invalide');
 
   readonly nifErrorMessage = computed(() => {
     const normalized = cleanNif(this.nif());
     if (normalized.length === 0) return 'Le matricule fiscal est obligatoire pour une entreprise';
-    return 'Matricule fiscal invalide. Format attendu: NNNNNNN/L/A/M/NNN';
+    return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';
   });
 
   readonly missingFieldsMessage = computed(() => {
@@ -621,7 +620,7 @@ export class QuickCreateClientDialogComponent {
     const normalizedNif = cleanNif(this.nif());
     const request: CreateClientRequest = {
       name: this.name().trim(),
-      email: this.email().trim(),
+      email: this.email().trim() || null,
       phone: this.phone().trim() || undefined,
       nif: normalizedNif || undefined,
       type: this.type(),

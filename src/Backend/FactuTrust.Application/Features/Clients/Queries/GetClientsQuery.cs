@@ -59,7 +59,7 @@ public sealed class GetClientsQueryHandler : IRequestHandler<GetClientsQuery, Pa
                 Type = c.Type.ToString(),
                 TypeDisplay = c.Type.ToDisplayString(),
                 Nif = c.NIF?.Value,
-                Email = c.Email.Value,
+                Email = c.Email?.Value,
                 Phone = c.Phone?.Value,
                 Street = c.Address.Street,
                 StreetLine2 = c.Address.StreetLine2,

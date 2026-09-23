@@ -289,9 +289,9 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
             {
                 email.Property(e => e.Value)
                     .HasColumnName("Email")
-                    .HasMaxLength(256)
-                    .IsRequired();
+                    .HasMaxLength(256);
             });
+            entity.Navigation(t => t.Email).IsRequired(false);
 
             entity.OwnsOne(t => t.Phone, phone =>
             {

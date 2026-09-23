@@ -24,7 +24,7 @@ public static class DocumentRenderMappers
         Name = client.Name,
         TaxId = client.NIF?.Value,
         AddressLines = PdfRenderHelpers.SplitAddressLines(client.Address.ToMultiLine()),
-        Email = client.Email.Value,
+        Email = client.Email?.Value,
         Phone = client.Phone?.Value
     };
 
@@ -33,7 +33,7 @@ public static class DocumentRenderMappers
         Name = supplier.Name,
         TaxId = supplier.NIF?.Value,
         AddressLines = PdfRenderHelpers.SplitAddressLines(supplier.Address.ToMultiLine()),
-        Email = supplier.Email.Value,
+        Email = supplier.Email?.Value,
         Phone = supplier.Phone?.Value
     };
 
@@ -134,7 +134,7 @@ public static class DocumentRenderMappers
                 Name = invoice.Client.Name,
                 TaxId = invoice.Client.NIF?.Value,
                 AddressLines = PdfRenderHelpers.SplitAddressLines(invoice.Client.Address.ToMultiLine()),
-                Email = invoice.Client.Email.Value
+                Email = invoice.Client.Email?.Value
             },
             MetaItems = meta,
             Lines = lines,

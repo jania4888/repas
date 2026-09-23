@@ -532,7 +532,7 @@ describe('RegisterWizardComponent', () => {
     it('should clean and normalize the NIF value on blur', () => {
       component.form.get('nif')?.setValue('1234567a/b/c/000_');
       component.onNifBlur();
-      expect(component.form.get('nif')?.value).toBe('1234567/A/B/C/000');
+      expect(component.form.get('nif')?.value).toBe('1234567A/B/C/000');
     });
   });
 
@@ -664,7 +664,7 @@ describe('RegisterWizardComponent', () => {
       expect(request.lastName).toBe('Doe');
       expect(request.companyName).toBe('Test Company');
       expect(request.phone).toBe('98455112');
-      expect(request.nif).toBe('1234567/A/B/C/000');
+      expect(request.nif).toBe('1234567A/B/C/000');
       expect(request.taxRegime).toBe(0);
       expect(request.companyEmail).toBe('contact@test.tn');
       expect(request.street).toBe('155 Rue Test');
@@ -685,7 +685,7 @@ describe('RegisterWizardComponent', () => {
       component.onSubmit();
 
       const request = authService.register.calls.mostRecent().args[0] as RegisterRequest;
-      expect(request.nif).toBe('1234567/A/B/C/000');
+      expect(request.nif).toBe('1234567A/B/C/000');
     });
 
     it('should surface pre-submit validation errors (e.g. invalid phone) without calling the API', () => {

@@ -30,7 +30,6 @@ public sealed class UpdateSupplierCommandValidator : AbstractValidator<UpdateSup
         {
             RuleFor(x => x.Dto!.Name).NotEmpty().WithMessage("Le nom du fournisseur est obligatoire.");
             RuleFor(x => x.Dto!.Name).MaximumLength(200).WithMessage("Le nom ne peut pas dépasser 200 caractères.");
-            RuleFor(x => x.Dto!.Email).NotEmpty().WithMessage("L'email est obligatoire.");
             RuleFor(x => x.Dto!.Street).NotEmpty().WithMessage("L'adresse (rue) est obligatoire.");
             RuleFor(x => x.Dto!.City).NotEmpty().WithMessage("La ville est obligatoire.");
             RuleFor(x => x.Dto!.Governorate).NotEmpty().WithMessage("Le gouvernorat est obligatoire.");
@@ -88,9 +87,11 @@ public sealed class UpdateSupplierCommandHandler : IRequestHandler<UpdateSupplie
         if (!dto.IsResident && string.IsNullOrWhiteSpace(dto.CountryCode))
             return Result.Failure<SupplierDetailDto>(Error.Validation("CountryCode", "Le code pays est obligatoire pour un fournisseur non résident."));
 
-        var emailResult = Email.Create(dto.Email);
+        var emailResult = Email.CreateOptional(dto.Email);
         if (emailResult.IsFailure)
             return Result.Failure<SupplierDetailDto>(emailResult.Error);
+
+        var email = emailResult.Value;
 
         var addressResult = Address.Create(dto.Street, dto.City, dto.Governorate, dto.StreetLine2, dto.PostalCode);
         if (addressResult.IsFailure)
@@ -108,7 +109,7 @@ public sealed class UpdateSupplierCommandHandler : IRequestHandler<UpdateSupplie
         supplier.Update(
             dto.Name,
             addressResult.Value,
-            emailResult.Value,
+            email,
             phone,
             dto.ContactPerson,
             dto.PaymentTermDays,

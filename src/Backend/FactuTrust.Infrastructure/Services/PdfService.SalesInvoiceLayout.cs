@@ -155,7 +155,8 @@ public partial class PdfService
                             left.Item().Text(addressLine.Trim()).FontSize(9);
                     }
 
-                    left.Item().Text(invoice.Client.Email.Value).FontSize(9);
+                    if (invoice.Client.Email != null)
+                        left.Item().Text(invoice.Client.Email.Value).FontSize(9);
                 });
 
                 row.RelativeItem().AlignRight().Column(right =>

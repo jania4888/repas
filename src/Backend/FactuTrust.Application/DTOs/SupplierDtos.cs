@@ -24,7 +24,7 @@ public sealed record SupplierListDto
     public string Type { get; init; } = null!;
     public string TypeDisplay { get; init; } = null!;
     public string? Nif { get; init; }
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
     public string City { get; init; } = null!;
     public string Governorate { get; init; } = null!;
@@ -46,7 +46,7 @@ public sealed record SupplierDetailDto
     public string? Nif { get; init; }
 
     public AddressDto Address { get; init; } = null!;
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
 
     public string? ContactPerson { get; init; }
@@ -80,7 +80,7 @@ public sealed record SupplierSummaryDto
     public Guid Id { get; init; }
     public string Name { get; init; } = null!;
     public string? Nif { get; init; }
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string Address { get; init; } = null!;
 }
 
@@ -99,7 +99,7 @@ public sealed record CreateSupplierDto
     public string? PostalCode { get; init; }
     public string Governorate { get; init; } = null!;
 
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
     public string? ContactPerson { get; init; }
     public int PaymentTermDays { get; init; } = 30;
@@ -129,7 +129,7 @@ public sealed record UpdateSupplierDto
     public string? PostalCode { get; init; }
     public string Governorate { get; init; } = null!;
 
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
     public string? ContactPerson { get; init; }
     public int PaymentTermDays { get; init; }

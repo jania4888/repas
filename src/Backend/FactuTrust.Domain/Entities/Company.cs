@@ -15,7 +15,7 @@ public sealed class Company : AggregateRoot
     public NIF Nif { get; private set; } = null!;
     public string? CommerceRegistry { get; private set; }
     public string? VatCode { get; private set; }
-    public Email Email { get; private set; } = null!;
+    public Email? Email { get; private set; }
     public PhoneNumber? Phone { get; private set; }
     public string? LogoUrl { get; private set; }
     public bool IsDefault { get; private set; }
@@ -46,7 +46,7 @@ public sealed class Company : AggregateRoot
         string name,
         Address address,
         NIF nif,
-        Email email,
+        Email? email,
         string? tradeName = null,
         string? commerceRegistry = null,
         string? vatCode = null,

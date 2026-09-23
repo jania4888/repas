@@ -621,9 +621,9 @@ public partial class TenantDbContext : DbContext
             {
                 email.Property(e => e.Value)
                     .HasColumnName("Email")
-                    .HasMaxLength(256)
-                    .IsRequired();
+                    .HasMaxLength(256);
             });
+            entity.Navigation(c => c.Email).IsRequired(false);
 
             entity.OwnsOne(c => c.Phone, phone =>
             {
@@ -886,9 +886,9 @@ public partial class TenantDbContext : DbContext
             {
                 email.Property(e => e.Value)
                     .HasColumnName("Email")
-                    .HasMaxLength(256)
-                    .IsRequired();
+                    .HasMaxLength(256);
             });
+            entity.Navigation(c => c.Email).IsRequired(false);
 
             entity.OwnsOne(c => c.Phone, phone =>
             {
@@ -3041,9 +3041,9 @@ public partial class TenantDbContext : DbContext
             {
                 email.Property(e => e.Value)
                     .HasColumnName("Email")
-                    .HasMaxLength(256)
-                    .IsRequired();
+                    .HasMaxLength(256);
             });
+            entity.Navigation(s => s.Email).IsRequired(false);
 
             entity.OwnsOne(s => s.Phone, phone =>
             {

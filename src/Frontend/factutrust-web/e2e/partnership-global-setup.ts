@@ -30,7 +30,7 @@ async function registerDemoUser(): Promise<{ email: string; password: string }> 
     firstName: 'Demo',
     lastName: 'Partenariat',
     companyName: 'Cabinet Partenaire Demo SARL',
-    nif: '1234567/A/B/C/000',
+    nif: '1234567A/B/C/000',
     taxRegime: 0,
     street: '10 Avenue Habib Bourguiba',
     city: 'Tunis',

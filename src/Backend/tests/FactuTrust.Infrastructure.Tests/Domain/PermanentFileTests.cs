@@ -97,7 +97,7 @@ public sealed class PermanentFileTests
         Assert.True(result.IsSuccess);
         Assert.Equal(PermanentFileStatus.Complete, file.Status);
         Assert.Equal(6, file.WizardStep);
-        Assert.Equal("1234567/A/B/C/000", file.Nif);
+        Assert.Equal("1234567A/B/C/000", file.Nif);
     }
 
     [Fact]

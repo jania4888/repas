@@ -24,7 +24,9 @@ import {
   CLIENT_TAX_TYPE_OPTIONS,
   TUNISIAN_GOVERNORATES 
 } from '../../models/invoice-wizard.models';
-import { NIF_PATTERN, isValidNif } from '@shared/validation';
+import { canonicalizeNif, isValidNif, NIF_PATTERN } from '@shared/validation';
+import { nifAcceptsEitherSpelling } from '@shared/validation/tunisian-validators';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 
 /**
  * Étape 3 - Informations du client
@@ -54,7 +56,8 @@ import { NIF_PATTERN, isValidNif } from '@shared/validation';
     DividerModule,
     ButtonModule,
     DialogModule,
-    InputMaskModule
+    InputMaskModule,
+    NifMaskPasteDirective
   ],
   template: `
     <div class="step-client">
@@ -235,14 +238,15 @@ import { NIF_PATTERN, isValidNif } from '@shared/validation';
                   <p-inputMask
                     id="nif"
                     formControlName="nif"
-                    mask="9999999/a/a/a/999"
-                    placeholder="Ex. 1234567/A/B/C/000"
+                    appNifMaskPaste
+                    mask="9999999a/a/a/999"
+                    placeholder="Ex. 1772793W/A/M/000"
                     styleClass="w-full"
                     [style]="{'text-transform': 'uppercase'}"
                     [class.ng-invalid]="isFieldInvalid('nif')"
                     (onBlur)="normalizeNif()">
                   </p-inputMask>
-                  <small class="form-hint">Format : 1234567/A/B/C/000</small>
+                  <small class="form-hint">Format : 1772793W/A/M/000</small>
                   @if (isFieldInvalid('nif')) {
                     <small class="form-error">{{ getNifErrorMessage() }}</small>
                   }
@@ -319,7 +323,7 @@ import { NIF_PATTERN, isValidNif } from '@shared/validation';
             
             <div class="form-grid">
               <div class="form-group">
-                <label for="email" class="required">Email</label>
+                <label for="email">Email</label>
                 <input 
                   pInputText 
                   type="email"
@@ -861,7 +865,7 @@ export class StepClientComponent implements OnInit {
       postalCode: [''],
       city: ['', Validators.required],
       governorate: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.email]],
       phone: [''],
       contactPerson: ['']
     });
@@ -1159,7 +1163,7 @@ export class StepClientComponent implements OnInit {
     const nifControl = this.clientForm.get('nif');
     const taxType = this.clientForm.get('taxType')?.value;
     if (taxType === ClientTaxType.TaxSubject) {
-      nifControl?.setValidators([Validators.required, Validators.pattern(NIF_PATTERN)]);
+      nifControl?.setValidators([Validators.required, nifAcceptsEitherSpelling]);
     } else {
       nifControl?.clearValidators();
     }
@@ -1174,25 +1178,10 @@ export class StepClientComponent implements OnInit {
     const nifControl = this.clientForm.get('nif');
     if (!nifControl) return;
 
-    let value = nifControl.value as string;
+    const value = nifControl.value as string;
     if (!value || typeof value !== 'string') return;
 
-    let normalized = value.replace(/_/g, '').trim().replace(/\s+/g, '').toUpperCase();
-    if (!normalized || normalized === '/////' || normalized === '///') {
-      normalized = '';
-    }
-
-    if (normalized.length > 0 && !normalized.includes('/')) {
-      const match = normalized.match(/^(\d{7})([A-Z0-9])([A-Z0-9])([A-Z0-9])(\d{3})$/);
-      if (match) {
-        normalized = `${match[1]}/${match[2]}/${match[3]}/${match[4]}/${match[5]}`;
-      }
-    }
-
-    const missingFirstSlash = normalized.match(/^(\d{7})([A-Z])\/([A-Z])\/([A-Z])\/(\d{3})$/);
-    if (missingFirstSlash) {
-      normalized = `${missingFirstSlash[1]}/${missingFirstSlash[2]}/${missingFirstSlash[3]}/${missingFirstSlash[4]}/${missingFirstSlash[5]}`;
-    }
+    const normalized = canonicalizeNif(value);
 
     const isEmpty = normalized === '';
     const isValidComplete = normalized.length > 0 && NIF_PATTERN.test(normalized);
@@ -1212,7 +1201,7 @@ export class StepClientComponent implements OnInit {
       return 'Le matricule fiscal est obligatoire pour un client assujetti';
     }
     if (control.errors['pattern']) {
-      return 'Matricule fiscal invalide. Format attendu: NNNNNNN/L/A/M/NNN';
+      return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';
     }
     return '';
   }

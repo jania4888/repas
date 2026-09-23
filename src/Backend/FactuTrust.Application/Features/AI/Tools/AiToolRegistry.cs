@@ -732,11 +732,11 @@ public static class AiToolRegistry
         new()
         {
             Name = "create_client",
-            Description = "Créer un client. Champs obligatoires : name, email, street, city, governorate. type : Individual ou Business (défaut Individual). nif obligatoire pour Business.",
+            Description = "Créer un client. Champs obligatoires : name, street, city, governorate. email est facultatif. type : Individual ou Business (défaut Individual). nif obligatoire pour Business.",
             Parameters = new Dictionary<string, AiToolParameter>
             {
                 ["name"] = new() { Type = "string", Description = "Nom ou raison sociale." },
-                ["email"] = new() { Type = "string", Description = "Email du client." },
+                ["email"] = new() { Type = "string", Description = "Email du client (optionnel)." },
                 ["type"] = new() { Type = "string", Description = "Individual ou Business.", AllowedValues = new() { "Individual", "Business" } },
                 ["nif"] = new() { Type = "string", Description = "Matricule fiscal (obligatoire pour Business)." },
                 ["street"] = new() { Type = "string", Description = "Adresse (rue)." },
@@ -746,7 +746,7 @@ public static class AiToolRegistry
                 ["contact_person"] = new() { Type = "string", Description = "Personne de contact (optionnel)." },
                 ["notes"] = new() { Type = "string", Description = "Notes (optionnel)." }
             },
-            RequiredParameters = new() { "name", "email", "street", "city", "governorate" },
+            RequiredParameters = new() { "name", "street", "city", "governorate" },
             IsMutating = true,
             RequiredPermission = Permissions.Clients.Create
         },
@@ -767,7 +767,7 @@ public static class AiToolRegistry
                 ["notes"] = new() { Type = "string", Description = "Notes (optionnel)." },
                 ["is_active"] = new() { Type = "boolean", Description = "Actif/inactif (optionnel)." }
             },
-            RequiredParameters = new() { "client_id", "name", "email", "street", "city", "governorate" },
+            RequiredParameters = new() { "client_id", "name", "street", "city", "governorate" },
             IsMutating = true,
             RequiredPermission = Permissions.Clients.Update
         },
@@ -828,7 +828,7 @@ public static class AiToolRegistry
                 ["payment_term_days"] = new() { Type = "integer", Description = "Délai de paiement en jours (défaut 30)." },
                 ["notes"] = new() { Type = "string", Description = "Notes (optionnel)." }
             },
-            RequiredParameters = new() { "name", "email", "street", "city", "governorate" },
+            RequiredParameters = new() { "name", "street", "city", "governorate" },
             IsMutating = true,
             RequiredPermission = Permissions.Suppliers.Create
         },
@@ -849,7 +849,7 @@ public static class AiToolRegistry
                 ["payment_term_days"] = new() { Type = "integer", Description = "Délai de paiement en jours." },
                 ["notes"] = new() { Type = "string", Description = "Notes (optionnel)." }
             },
-            RequiredParameters = new() { "supplier_id", "name", "email", "street", "city", "governorate" },
+            RequiredParameters = new() { "supplier_id", "name", "street", "city", "governorate" },
             IsMutating = true,
             RequiredPermission = Permissions.Suppliers.Update
         },

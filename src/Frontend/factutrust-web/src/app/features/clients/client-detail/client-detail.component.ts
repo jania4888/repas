@@ -156,7 +156,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   <h3>Coordonnées</h3>
                   <div class="info-row">
                     <span class="label">Email</span>
-                    <a [href]="'mailto:' + client()!.email" class="value link">{{ client()!.email }}</a>
+                    @if (client()!.email) {
+                      <a [href]="'mailto:' + client()!.email" class="value link">{{ client()!.email }}</a>
+                    } @else {
+                      <span class="value">—</span>
+                    }
                   </div>
                   <div class="info-row">
                     <span class="label">Téléphone</span>
@@ -951,7 +955,7 @@ export class ClientDetailComponent implements OnInit {
 
   sendEmail(): void {
     const client = this.client();
-    if (client) {
+    if (client?.email) {
       window.location.href = `mailto:${client.email}`;
     }
   }

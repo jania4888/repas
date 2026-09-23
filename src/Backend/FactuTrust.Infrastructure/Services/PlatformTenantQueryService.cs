@@ -35,7 +35,7 @@ public sealed class PlatformTenantQueryService : IPlatformTenantQueryService
             var pattern = $"%{term}%";
             filtered = filtered.Where(x =>
                 EF.Functions.Like(x.Tenant.CompanyName, pattern)
-                || EF.Functions.Like(x.Tenant.Email.Value, pattern)
+                || (x.Tenant.Email != null && EF.Functions.Like(x.Tenant.Email.Value, pattern))
                 || EF.Functions.Like(x.Tenant.NIF.Value, pattern));
         }
 
@@ -122,7 +122,7 @@ public sealed class PlatformTenantQueryService : IPlatformTenantQueryService
                 TenantId = r.Tenant.Id,
                 Kind = r.Tenant.Kind,
                 CompanyName = r.Tenant.CompanyName,
-                CompanyEmail = r.Tenant.Email.Value,
+                CompanyEmail = r.Tenant.Email?.Value ?? string.Empty,
                 TaxRegimeDisplay = r.Tenant.TaxRegime.ToDisplayString(),
                 IsActive = r.Tenant.IsActive,
                 DatabaseName = r.Tenant.DatabaseName,
@@ -291,7 +291,7 @@ public sealed class PlatformTenantQueryService : IPlatformTenantQueryService
         {
             TenantId = tenant.Id,
             CompanyName = tenant.CompanyName,
-            CompanyEmail = tenant.Email.Value,
+            CompanyEmail = tenant.Email?.Value ?? string.Empty,
             Nif = tenant.NIF.Value,
             Phone = tenant.Phone.Value,
             City = tenant.Address.City,

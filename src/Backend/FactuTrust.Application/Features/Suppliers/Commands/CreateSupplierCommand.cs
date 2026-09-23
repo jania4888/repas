@@ -30,7 +30,6 @@ public sealed class CreateSupplierCommandValidator : AbstractValidator<CreateSup
         {
             RuleFor(x => x.Dto!.Name).NotEmpty().WithMessage("Le nom du fournisseur est obligatoire.");
             RuleFor(x => x.Dto!.Name).MaximumLength(200).WithMessage("Le nom ne peut pas dépasser 200 caractères.");
-            RuleFor(x => x.Dto!.Email).NotEmpty().WithMessage("L'email est obligatoire.");
             RuleFor(x => x.Dto!.Street).NotEmpty().WithMessage("L'adresse (rue) est obligatoire.");
             RuleFor(x => x.Dto!.City).NotEmpty().WithMessage("La ville est obligatoire.");
             RuleFor(x => x.Dto!.Governorate).NotEmpty().WithMessage("Le gouvernorat est obligatoire.");
@@ -80,15 +79,17 @@ public sealed class CreateSupplierCommandHandler : IRequestHandler<CreateSupplie
         if (_tenantContext.TenantId is null)
             return Result.Failure<Guid>(Error.Unauthorized("Aucun contexte d'entreprise disponible."));
 
-        if (string.IsNullOrWhiteSpace(dto.Email))
-            return Result.Failure<Guid>(Error.Validation("Email", "L'email est obligatoire."));
-        var emailResult = Email.Create(dto.Email!);
+        var emailResult = Email.CreateOptional(dto.Email);
         if (emailResult.IsFailure)
             return Result.Failure<Guid>(emailResult.Error);
 
-        var existingByEmail = await _supplierRepository.GetByEmailAsync(emailResult.Value.Value, cancellationToken);
-        if (existingByEmail is not null)
-            return DuplicateConflict(existingByEmail.Id, "email", "Un fournisseur existe déjà avec cet email.");
+        var email = emailResult.Value;
+        if (email is not null)
+        {
+            var existingByEmail = await _supplierRepository.GetByEmailAsync(email.Value, cancellationToken);
+            if (existingByEmail is not null)
+                return DuplicateConflict(existingByEmail.Id, "email", "Un fournisseur existe déjà avec cet email.");
+        }
 
         NIF? nif = null;
         if (!string.IsNullOrWhiteSpace(dto.Nif))
@@ -137,7 +138,7 @@ public sealed class CreateSupplierCommandHandler : IRequestHandler<CreateSupplie
             name,
             dto.Type,
             addressResult.Value,
-            emailResult.Value,
+            email,
             nif,
             phone,
             dto.ContactPerson?.Trim(),
@@ -178,7 +179,7 @@ public sealed class CreateSupplierCommandHandler : IRequestHandler<CreateSupplie
             AuditActions.Supplier.Created,
             "Supplier",
             supplier.Id,
-            newValues: new { supplier.Name, supplier.Email.Value },
+            newValues: new { supplier.Name, Email = supplier.Email?.Value },
             cancellationToken: cancellationToken);
 
         return Result.Success(supplier.Id);

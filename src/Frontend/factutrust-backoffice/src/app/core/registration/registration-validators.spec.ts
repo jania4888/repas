@@ -68,13 +68,19 @@ describe('registration-validators', () => {
   });
 
   describe('matricule fiscal', () => {
-    it('accepte le format officiel', () => {
+    it('accepte la forme carte et l\'écriture historique', () => {
+      expect(nifValidator(new FormControl('1772793W/A/M/000'))).toBeNull();
       expect(nifValidator(new FormControl('1234567/A/B/C/000'))).toBeNull();
     });
 
     it('accepte une saisie en minuscules ou espacée, via normalisation', () => {
       expect(nifValidator(new FormControl(' 1234567/a/b/c/000 '))).toBeNull();
-      expect(normalizeNif(' 1234567/a/b/c/000 ')).toBe('1234567/A/B/C/000');
+      expect(normalizeNif(' 1234567/a/b/c/000 ')).toBe('1234567A/B/C/000');
+      expect(normalizeNif('1772793w/a/m/000')).toBe('1772793W/A/M/000');
+    });
+
+    it('refuse une forme incomplète', () => {
+      expect(nifValidator(new FormControl('1234567A/M/000'))?.['nifFormat']).toBeTrue();
     });
 
     it('refuse un NIF tronqué', () => {

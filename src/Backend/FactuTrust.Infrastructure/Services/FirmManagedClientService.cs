@@ -60,7 +60,7 @@ public sealed class FirmManagedClientService : IFirmManagedClientService
         if (addressResult.IsFailure)
             return Result.Failure<FirmManagedClientCreatedDto>(addressResult.Error);
 
-        var emailResult = EmailAddress.Create(dto.Email);
+        var emailResult = EmailAddress.CreateOptional(dto.Email);
         if (emailResult.IsFailure)
             return Result.Failure<FirmManagedClientCreatedDto>(emailResult.Error);
 
@@ -74,8 +74,9 @@ public sealed class FirmManagedClientService : IFirmManagedClientService
 
         // ── Unicité du NIF parmi les tenants actifs ──────────────────────────────
         var nifValue = nifResult.Value.Value;
+        var nifLegacy = nifResult.Value.LegacySpelling;
         var nifExists = await _masterContext.Tenants.AsNoTracking()
-            .AnyAsync(t => t.NIF.Value == nifValue && t.IsActive, cancellationToken);
+            .AnyAsync(t => t.IsActive && (t.NIF.Value == nifValue || t.NIF.Value == nifLegacy), cancellationToken);
         if (nifExists)
             return Result.Failure<FirmManagedClientCreatedDto>(
                 Error.Validation("NIF", "Une société avec ce matricule fiscal existe déjà sur la plateforme"));

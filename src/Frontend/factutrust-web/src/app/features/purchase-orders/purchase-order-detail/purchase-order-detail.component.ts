@@ -60,7 +60,11 @@ import {
           <ng-container *ngIf="po() && po()!.status != null && po()!.status != undefined">
             <ng-container *ngIf="po()!.status != PurchaseOrderStatus.Draft && po()!.status != PurchaseOrderStatus.Cancelled">
               <app-button variant="outline" icon="pi-envelope" iconPos="left"
-                [disabled]="sending()" (click)="sendByEmail()">
+                [disabled]="sending() || !po()!.supplier.email"
+                pTooltip="Le fournisseur n'a pas d'adresse email."
+                [tooltipDisabled]="!!po()!.supplier.email"
+                tooltipPosition="bottom"
+                (click)="sendByEmail()">
                 {{ sending() ? 'Envoi...' : 'Envoyer par email' }}
               </app-button>
             </ng-container>
@@ -193,10 +197,12 @@ import {
               <span class="label">Nom</span>
               <a [routerLink]="['/suppliers', po()!.supplier.id]" class="value link">{{ po()!.supplier.name }}</a>
             </div>
-            <div class="info-item">
-              <span class="label">Email</span>
-              <a [href]="'mailto:' + po()!.supplier.email" class="value link">{{ po()!.supplier.email }}</a>
-            </div>
+            @if (po()!.supplier.email) {
+              <div class="info-item">
+                <span class="label">Email</span>
+                <a [href]="'mailto:' + po()!.supplier.email" class="value link">{{ po()!.supplier.email }}</a>
+              </div>
+            }
             @if (po()!.supplier.nif) {
               <div class="info-item">
                 <span class="label">NIF</span>
@@ -842,6 +848,14 @@ export class PurchaseOrderDetailComponent implements OnInit {
   sendByEmail(): void {
     const order = this.po();
     if (!order) return;
+    if (!order.supplier.email) {
+      this.toastService.add({
+        severity: 'warn',
+        summary: 'Email manquant',
+        detail: "Le fournisseur n'a pas d'adresse email."
+      });
+      return;
+    }
 
     this.confirmationService.confirm({
       message: `Envoyer le bon de commande ${order.number} par email à ${order.supplier.email} ?`,

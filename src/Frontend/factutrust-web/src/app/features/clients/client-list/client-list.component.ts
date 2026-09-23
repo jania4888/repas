@@ -176,7 +176,11 @@ interface StatusOption {
             </td>
             <td>
               <div class="contact-info">
-                <a [href]="'mailto:' + client.email" class="email">{{ client.email }}</a>
+                @if (client.email) {
+                  <a [href]="'mailto:' + client.email" class="email">{{ client.email }}</a>
+                } @else {
+                  <span class="email">—</span>
+                }
                 <span class="phone">{{ client.phone || '-' }}</span>
               </div>
             </td>

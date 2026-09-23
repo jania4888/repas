@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using FactuTrust.Domain.ValueObjects;
 
 namespace FactuTrust.Application.Common.Validation;
 
@@ -13,12 +14,8 @@ public static partial class TunisianValidationRules
     // ============================================
 
     /// <summary>
-    /// Tunisian NIF (Matricule Fiscal) pattern: NNNNNNN/L/A/M/NNN
-    /// - 7 digits
-    /// - 1 letter (category)
-    /// - 1 letter (activity)
-    /// - 1 letter (municipality)
-    /// - 3 digits (sequence)
+    /// Forme stockée du matricule fiscal : <c>NNNNNNNL/A/M/NNN</c> (ex. <c>1772793W/A/M/000</c>).
+    /// La validation d'une saisie passe par <see cref="IsValidNif"/>, qui accepte aussi l'écriture historique.
     /// </summary>
     public static readonly Regex NifPattern = NifRegex();
 
@@ -146,14 +143,8 @@ public static partial class TunisianValidationRules
     // VALIDATION METHODS
     // ============================================
 
-    /// <summary>Validates a Tunisian NIF (Matricule Fiscal).</summary>
-    public static bool IsValidNif(string? nif)
-    {
-        if (string.IsNullOrWhiteSpace(nif))
-            return false;
-
-        return NifPattern.IsMatch(nif.ToUpperInvariant());
-    }
+    /// <summary>Validates a Tunisian NIF (forme officielle ou historique).</summary>
+    public static bool IsValidNif(string? nif) => NIF.IsValid(nif);
 
     /// <summary>Validates a Tunisian phone number.</summary>
     public static bool IsValidTunisianPhone(string? phone)
@@ -270,13 +261,13 @@ public static partial class TunisianValidationRules
         return string.Equals(taxType, "TAX_EXEMPT", StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary>Formats NIF to uppercase standard format.</summary>
+    /// <summary>Ramène un matricule à la forme stockée, ou trim + majuscules s'il n'est pas reconnu.</summary>
     public static string? NormalizeNif(string? nif)
     {
         if (string.IsNullOrWhiteSpace(nif))
             return null;
 
-        return nif.Trim().ToUpperInvariant();
+        return NIF.TryCanonicalize(nif, out var canonical) ? canonical : nif.Trim().ToUpperInvariant();
     }
 
     /// <summary>Formats phone number to standard format.</summary>
@@ -316,7 +307,7 @@ public static partial class TunisianValidationRules
     // REGEX GENERATORS
     // ============================================
 
-    [GeneratedRegex(@"^\d{7}/[A-Z]/[A-Z]/[A-Z]/\d{3}$", RegexOptions.Compiled)]
+    [GeneratedRegex(@"^[0-9]{7}[A-Z]/[A-Z]/[A-Z]/[0-9]{3}$", RegexOptions.CultureInvariant | RegexOptions.Compiled)]
     private static partial Regex NifRegex();
 
     [GeneratedRegex(@"^(\+?216)?[2-57-9]\d{7}$", RegexOptions.Compiled)]

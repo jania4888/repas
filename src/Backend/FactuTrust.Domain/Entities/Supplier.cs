@@ -14,7 +14,7 @@ public sealed class Supplier : AggregateRoot
     public SupplierType Type { get; private set; }
     public NIF? NIF { get; private set; }
     public Address Address { get; private set; } = null!;
-    public Email Email { get; private set; } = null!;
+    public Email? Email { get; private set; }
     public PhoneNumber? Phone { get; private set; }
     public string? ContactPerson { get; private set; }
     public int PaymentTermDays { get; private set; }
@@ -40,7 +40,7 @@ public sealed class Supplier : AggregateRoot
         string name,
         SupplierType type,
         Address address,
-        Email email,
+        Email? email,
         NIF? nif = null,
         PhoneNumber? phone = null,
         string? contactPerson = null,
@@ -79,7 +79,7 @@ public sealed class Supplier : AggregateRoot
     public void Update(
         string name,
         Address address,
-        Email email,
+        Email? email,
         PhoneNumber? phone,
         string? contactPerson,
         int paymentTermDays,

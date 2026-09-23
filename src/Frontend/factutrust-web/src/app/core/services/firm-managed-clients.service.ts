@@ -21,7 +21,7 @@ export interface CreateFirmManagedClient {
   city: string;
   governorate: string;
   postalCode?: string | null;
-  email: string;
+  email?: string | null;
   phone: string;
   website?: string | null;
   // Étape 2 — Options comptables

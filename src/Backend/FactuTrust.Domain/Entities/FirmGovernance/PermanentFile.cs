@@ -148,7 +148,7 @@ public sealed class PermanentFile : AggregateRoot
 
             CompanyName = companyName?.Trim(),
 
-            Nif = nif?.Trim(),
+            Nif = CanonicalNifOrTrim(nif),
 
             TaxRegime = taxRegime,
 
@@ -190,7 +190,7 @@ public sealed class PermanentFile : AggregateRoot
 
         CompanyName = companyName?.Trim();
 
-        Nif = nif?.Trim();
+        Nif = CanonicalNifOrTrim(nif);
 
         RneIdentifier = rneIdentifier?.Trim();
 
@@ -492,6 +492,19 @@ public sealed class PermanentFile : AggregateRoot
 
             Status = PermanentFileStatus.InProgress;
 
+    }
+
+
+
+    /// <summary>
+    /// Valid company NIFs are stored on the fiscal card. Incomplete drafts stay as typed.
+    /// </summary>
+    private static string? CanonicalNifOrTrim(string? nif)
+    {
+        if (string.IsNullOrWhiteSpace(nif))
+            return nif?.Trim();
+
+        return NIF.TryCanonicalize(nif, out var canonical) ? canonical : nif.Trim();
     }
 
 }

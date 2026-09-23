@@ -23,7 +23,7 @@ public sealed record CreateFirmManagedClientDto
     public string Governorate { get; init; } = null!;
     public string? PostalCode { get; init; }
 
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string Phone { get; init; } = null!;
     public string? Website { get; init; }
 

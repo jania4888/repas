@@ -13,7 +13,7 @@ public sealed class Client : AggregateRoot
     public ClientType Type { get; private set; }
     public NIF? NIF { get; private set; }
     public Address Address { get; private set; } = null!;
-    public Email Email { get; private set; } = null!;
+    public Email? Email { get; private set; }
     public PhoneNumber? Phone { get; private set; }
     public string? ContactPerson { get; private set; }
     public string? Notes { get; private set; }
@@ -59,7 +59,7 @@ public sealed class Client : AggregateRoot
         string name,
         ClientType type,
         Address address,
-        Email email,
+        Email? email,
         NIF? nif = null,
         PhoneNumber? phone = null,
         string? contactPerson = null,
@@ -93,7 +93,7 @@ public sealed class Client : AggregateRoot
     public void Update(
         string name,
         Address address,
-        Email email,
+        Email? email,
         PhoneNumber? phone,
         string? contactPerson,
         string? notes)

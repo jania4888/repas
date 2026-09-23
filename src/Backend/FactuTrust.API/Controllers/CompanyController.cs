@@ -356,7 +356,7 @@ public class CompanyController : ControllerBase
                 Country = tenant.Address.Country,
                 FullAddress = tenant.Address.ToSingleLine()
             },
-            Email = tenant.Email.Value,
+            Email = tenant.Email?.Value ?? string.Empty,
             Phone = tenant.Phone.Value,
             Website = tenant.Website,
             LogoUrl = tenant.LogoUrl ?? company?.LogoUrl,

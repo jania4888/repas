@@ -115,7 +115,7 @@ public sealed class WizardNewClientValidator : AbstractValidator<WizardNewClient
         RuleFor(x => x.Nif)
             .Must(TunisianValidationRules.IsValidNif)
             .When(x => !string.IsNullOrEmpty(x.Nif))
-            .WithMessage("Le format du matricule fiscal est invalide (attendu: NNNNNNN/L/A/M/NNN)")
+            .WithMessage("Le format du matricule fiscal est invalide (attendu: 1772793W/A/M/000)")
             .WithErrorCode(ValidationErrorCodes.InvalidNif);
 
         // Address validation
@@ -125,12 +125,9 @@ public sealed class WizardNewClientValidator : AbstractValidator<WizardNewClient
             .WithErrorCode(ValidationErrorCodes.Required)
             .SetValidator(new WizardAddressValidator());
 
-        // Email validation
+        // Email facultatif : format contrôlé seulement s'il est renseigné.
         RuleFor(x => x.Email)
-            .NotEmpty()
-            .WithMessage("L'email est obligatoire")
-            .WithErrorCode(ValidationErrorCodes.Required)
-            .Must(TunisianValidationRules.IsValidEmail)
+            .Must(email => string.IsNullOrEmpty(email) || TunisianValidationRules.IsValidEmail(email))
             .When(x => !string.IsNullOrEmpty(x.Email))
             .WithMessage("L'adresse email est invalide")
             .WithErrorCode(ValidationErrorCodes.InvalidEmail)

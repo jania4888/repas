@@ -4,13 +4,13 @@ import type { CompanySegmentCode } from '../register-wizard/registration-catalog
 /**
  * V1 (plan §3.2, no external API) — client-side NIF taxpayer-category parsing, mirroring
  * `FactuTrust.Domain.ValueObjects.NIF` / `TaxpayerCategories` exactly: on a normalized
- * `NNNNNNN/L/A/M/NNN` NIF, the taxpayer category is the single letter `L` right after the
- * first `/` (index 8 of the normalized string).
+ * `NNNNNNNL/A/M/NNN` NIF (after `cleanNifValue`), the taxpayer category is the key letter
+ * glued to the seven digits (`W` in `1772793W/A/M/000`).
  */
 export type NifTaxpayerCategory = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
 
-/** Full-format NIF pattern, capturing the taxpayer category letter. Mirrors `NIF.FullFormatPattern`. */
-export const NIF_CATEGORY_PATTERN = /^\d{7}\/([A-Z])\/[A-Z]\/[A-Z]\/\d{3}$/;
+/** Canonical NIF pattern, capturing the key letter. Mirrors `NIF` official form. */
+export const NIF_CATEGORY_PATTERN = /^[0-9]{7}([A-Z])\/[A-Z]\/[A-Z]\/[0-9]{3}$/;
 
 /** Mirrors `TaxpayerCategories.GetDescription()` (backend `NIF.cs`) — French labels, one per category. */
 export const NIF_CATEGORY_LABELS_FR: Record<NifTaxpayerCategory, string> = {
@@ -45,7 +45,7 @@ export interface NifCategoryInfo {
 /**
  * Parses the taxpayer category out of a raw (possibly PrimeNG-mask-shaped) NIF value.
  * Returns `null` when the value is empty/nullish or doesn't yet match the full
- * `NNNNNNN/L/A/M/NNN` format (e.g. while the user is still typing).
+ * `NNNNNNNL/A/M/NNN` format (e.g. while the user is still typing).
  */
 export function parseNifCategory(value: string | null | undefined): NifCategoryInfo | null {
   const normalized = cleanNifValue(value);

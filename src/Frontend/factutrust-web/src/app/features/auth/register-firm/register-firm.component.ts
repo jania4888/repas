@@ -24,6 +24,7 @@ import { timeout, TimeoutError, catchError, throwError } from 'rxjs';
 import { AuthShellComponent } from '../auth-shell/auth-shell.component';
 import { REGISTER_FIRM_AUTH_SHELL_CONFIG } from '../auth-shell/auth-shell.config';
 import { TunisianValidators } from '@shared/validation/tunisian-validators';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 import { MAX_LENGTHS } from '@shared/validation/validation-rules';
 import { environment } from '@environments/environment';
 import { GOVERNORATE_OPTIONS } from '../shared/auth-governorate.options';
@@ -66,6 +67,7 @@ import {
     ButtonModule,
     SelectModule,
     InputMaskModule,
+    NifMaskPasteDirective,
     StepsModule,
     MessageModule,
     DividerModule,

@@ -1,5 +1,6 @@
 using System.Globalization;
 using FactuTrust.Application.DTOs;
+using FactuTrust.Domain.ValueObjects;
 
 namespace FactuTrust.Application.Features.Accounting.OfficialForm;
 
@@ -120,29 +121,25 @@ public static class MonthlyDeclarationFormBinder
     }
 
     /// <summary>
-    /// Éclate le matricule fiscal <c>NNNNNNN/L/A/M/NNN</c> dans les cases de l'en-tête.
+    /// Éclate le matricule fiscal dans les cases de l'en-tête.
+    /// Accepte la forme stockée <c>NNNNNNNL/A/M/NNN</c> et l'écriture historique
+    /// <c>NNNNNNN/L/A/M/NNN</c> : les deux remplissent les mêmes cases.
     ///
-    /// Les 8 cases de « المعرف الجبائي » reçoivent les 7 chiffres puis la lettre de catégorie ;
-    /// « رمز الأداء على القيمة المضافة » reçoit le code TVA et « رمز الصنف » le code
-    /// d'établissement. Correspondance à faire confirmer par un fiscaliste.
+    /// Les 8 cases de « المعرف الجبائي » reçoivent les 7 chiffres puis la première lettre
+    /// (clé) ; « رمز الأداء على القيمة المضافة » reçoit la deuxième lettre et « رمز الصنف »
+    /// la troisième. Correspondance à faire confirmer par un fiscaliste.
     /// </summary>
     private static void BindNif(IDictionary<string, string?> values, string? nif)
     {
-        if (string.IsNullOrWhiteSpace(nif))
+        if (!NIF.TryGetParts(nif, out var parts))
             return;
 
-        var parts = nif.Split('/', StringSplitOptions.TrimEntries);
-        var digits = parts[0];
+        for (var i = 0; i < parts.Digits.Length && i < 7; i++)
+            values[$"Header.Nif.D{i + 1}"] = parts.Digits[i].ToString();
 
-        for (var i = 0; i < 7 && i < digits.Length; i++)
-            values[$"Header.Nif.D{i + 1}"] = digits[i].ToString();
-
-        if (parts.Length > 1 && parts[1].Length > 0)
-            values["Header.Nif.D8"] = parts[1][..1];       // lettre de catégorie contribuable
-        if (parts.Length > 2 && parts[2].Length > 0)
-            values["Header.VatCode"] = parts[2][..1];      // code TVA
-        if (parts.Length > 3 && parts[3].Length > 0)
-            values["Header.CategoryCode"] = parts[3][..1]; // code établissement secondaire
+        values["Header.Nif.D8"] = parts.Key.ToString();
+        values["Header.VatCode"] = parts.Second.ToString();
+        values["Header.CategoryCode"] = parts.Third.ToString();
     }
 
     private static void BindIdentity(IDictionary<string, string?> values, VatDeclarationDto d)

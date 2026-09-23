@@ -5427,8 +5427,7 @@ namespace FactuTrust.Infrastructure.Migrations
                     b.Navigation("Address")
                         .IsRequired();
 
-                    b.Navigation("Email")
-                        .IsRequired();
+                    b.Navigation("Email");
 
                     b.Navigation("NIF")
                         .IsRequired();

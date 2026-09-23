@@ -281,7 +281,7 @@ public sealed class Quote : AggregateRoot
         SentAt = DateTime.UtcNow;
         Status = QuoteStatus.Sent;
 
-        AddDomainEvent(new QuoteSentEvent(Id, Number.Value, Client.Email.Value));
+        AddDomainEvent(new QuoteSentEvent(Id, Number.Value, Client.Email?.Value ?? string.Empty));
 
         return Result.Success();
     }

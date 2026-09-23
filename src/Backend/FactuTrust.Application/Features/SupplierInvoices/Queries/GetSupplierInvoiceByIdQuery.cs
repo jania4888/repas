@@ -59,7 +59,7 @@ public sealed class GetSupplierInvoiceByIdQueryHandler : IRequestHandler<GetSupp
                 Id = si.Supplier.Id,
                 Name = si.Supplier.Name,
                 Nif = si.Supplier.NIF?.Value,
-                Email = si.Supplier.Email.Value,
+                Email = si.Supplier.Email?.Value,
                 Address = si.Supplier.Address.ToString()
             },
             PurchaseOrderId = si.PurchaseOrderId,

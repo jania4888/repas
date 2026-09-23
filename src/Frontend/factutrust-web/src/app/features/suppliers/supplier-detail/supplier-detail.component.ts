@@ -76,7 +76,11 @@ import {
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Email</span>
-              <a [href]="'mailto:' + supplier()!.email" class="value link">{{ supplier()!.email }}</a>
+              @if (supplier()!.email) {
+                <a [href]="'mailto:' + supplier()!.email" class="value link">{{ supplier()!.email }}</a>
+              } @else {
+                <span class="value">—</span>
+              }
             </div>
             <div class="info-item">
               <span class="label">Téléphone</span>

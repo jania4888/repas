@@ -96,6 +96,20 @@ public sealed class MonthlyDeclarationFormBinderTests
     }
 
     [Theory]
+    [InlineData("4555965/P/M/L/000")]
+    [InlineData("4555965P/M/L/000")]
+    public void Bind_NifSpellings_FillTheSameHeaderBoxes(string nif)
+    {
+        var values = MonthlyDeclarationFormBinder.Bind(Declaration(d => d.Nif = nif));
+
+        Assert.Equal("4", values["Header.Nif.D1"]);
+        Assert.Equal("5", values["Header.Nif.D7"]);
+        Assert.Equal("P", values["Header.Nif.D8"]);
+        Assert.Equal("M", values["Header.VatCode"]);
+        Assert.Equal("L", values["Header.CategoryCode"]);
+    }
+
+    [Theory]
     [InlineData(false, "0")]  // تلقائي — déclaration spontanée
     [InlineData(true, "2")]   // تصحيح — déclaration rectificative
     public void Bind_SetsDeclarationCodeFromRectificativeFlag(bool rectificative, string expected)

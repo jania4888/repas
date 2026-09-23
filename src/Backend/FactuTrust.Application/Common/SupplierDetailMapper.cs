@@ -50,7 +50,7 @@ internal static class SupplierDetailMapper
                 Country = supplier.Address.Country,
                 FullAddress = supplier.Address.ToString()
             },
-            Email = supplier.Email.Value,
+            Email = supplier.Email?.Value,
             Phone = supplier.Phone?.Value,
             ContactPerson = supplier.ContactPerson,
             PaymentTermDays = supplier.PaymentTermDays,

@@ -9647,8 +9647,7 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("Address")
                         .IsRequired();
 
-                    b.Navigation("Email")
-                        .IsRequired();
+                    b.Navigation("Email");
 
                     b.Navigation("NIF");
 
@@ -9766,8 +9765,7 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("Address")
                         .IsRequired();
 
-                    b.Navigation("Email")
-                        .IsRequired();
+                    b.Navigation("Email");
 
                     b.Navigation("Nif")
                         .IsRequired();
@@ -12711,8 +12709,7 @@ namespace FactuTrust.Infrastructure.Migrations.Tenant
                     b.Navigation("Address")
                         .IsRequired();
 
-                    b.Navigation("Email")
-                        .IsRequired();
+                    b.Navigation("Email");
 
                     b.Navigation("NIF");
 

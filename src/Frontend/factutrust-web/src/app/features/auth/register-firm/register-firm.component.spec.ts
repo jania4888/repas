@@ -83,7 +83,7 @@ describe('RegisterFirmComponent', () => {
 
     expect(authService.registerFirm).toHaveBeenCalled();
     const payload = authService.registerFirm.calls.mostRecent().args[0];
-    expect(payload.nif).toBe('1234567/A/B/C/000');
+    expect(payload.nif).toBe('1234567A/B/C/000');
     expect(payload.phone).toBe('98455112');
     expect(payload.email).toBe('manager@example.com');
     expect(payload.firmName).toBe('Cabinet Test');

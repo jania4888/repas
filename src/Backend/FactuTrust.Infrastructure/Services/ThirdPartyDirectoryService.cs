@@ -48,14 +48,14 @@ public sealed class ThirdPartyDirectoryService : IThirdPartyDirectoryService
         if (kind is null or ThirdPartyKind.Client)
         {
             var clients = await ctx.Clients.AsNoTracking()
-                .Select(c => new { c.Id, c.Name, Email = c.Email.Value, c.IsActive })
+                .Select(c => new { c.Id, c.Name, Email = c.Email != null ? c.Email.Value : null, c.IsActive })
                 .ToListAsync(cancellationToken);
             rows.AddRange(clients.Select(c => (c.Id, ThirdPartyKind.Client, c.Name, (string?)c.Email, c.IsActive)));
         }
         if (kind is null or ThirdPartyKind.Supplier)
         {
             var suppliers = await ctx.Suppliers.AsNoTracking()
-                .Select(s => new { s.Id, s.Name, Email = s.Email.Value, s.IsActive })
+                .Select(s => new { s.Id, s.Name, Email = s.Email != null ? s.Email.Value : null, s.IsActive })
                 .ToListAsync(cancellationToken);
             rows.AddRange(suppliers.Select(s => (s.Id, ThirdPartyKind.Supplier, s.Name, (string?)s.Email, s.IsActive)));
         }

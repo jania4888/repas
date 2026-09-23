@@ -55,7 +55,7 @@ public sealed class DeleteClientCommandHandler : IRequestHandler<DeleteClientCom
             AuditActions.Client.Deleted,
             "Client",
             request.Id,
-            oldValues: new { client.Name, client.Email.Value },
+            oldValues: new { client.Name, Email = client.Email?.Value },
             cancellationToken: cancellationToken);
 
         return Result.Success(Unit.Value);

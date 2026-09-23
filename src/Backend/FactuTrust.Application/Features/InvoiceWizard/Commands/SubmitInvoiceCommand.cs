@@ -530,7 +530,7 @@ public sealed class SubmitInvoiceCommandHandler
         if (addressResult.IsFailure)
             return null;
 
-        var emailResult = Email.Create(newClientData.Email);
+        var emailResult = Email.CreateOptional(newClientData.Email);
         if (emailResult.IsFailure)
             return null;
 

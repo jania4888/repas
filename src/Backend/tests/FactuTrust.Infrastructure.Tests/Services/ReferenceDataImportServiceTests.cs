@@ -17,7 +17,8 @@ namespace FactuTrust.Infrastructure.Tests.Services;
 
 /// <summary>
 /// Import étendu (référentiels). Exigences : dry-run bloquant par cible, commit additif idempotent
-/// (ré-import ⇒ 0 création), invariants du domaine respectés (tiers sans email/adresse rejeté),
+/// (ré-import ⇒ 0 création), invariants du domaine respectés (adresse obligatoire, email facultatif
+/// mais format invalide rejeté),
 /// balance d'ouverture équilibrée et mutuellement exclusive avec la génération d'à-nouveaux.
 /// </summary>
 public sealed class ReferenceDataImportServiceTests
@@ -102,14 +103,33 @@ public sealed class ReferenceDataImportServiceTests
     // ── Plan tiers ────────────────────────────────────────────────────────────
 
     [Fact]
-    public async Task ThirdParties_MissingEmailOrAddress_IsBlocked()
+    public async Task ThirdParties_BlankEmail_IsAllowed_InvalidEmailOrMissingAddress_IsBlocked()
     {
-        var csv = Csv("type;nom;email;rue;ville;gouvernorat\nclient;Sans Email;;Rue A;Tunis;Tunis\nfournisseur;Bon;bon@x.tn;Rue B;Sfax;Sfax\n");
-        var preview = await BuildService().PreviewAsync(csv, ReferenceImportTarget.ThirdParties, JournalImportFormat.Csv);
+        var blank = Csv("type;nom;email;rue;ville;gouvernorat\nclient;Sans Email;;Rue A;Tunis;Tunis\nfournisseur;Bon;bon@x.tn;Rue B;Sfax;Sfax\n");
+        var blankPreview = await BuildService().PreviewAsync(blank, ReferenceImportTarget.ThirdParties, JournalImportFormat.Csv);
+        Assert.True(blankPreview.IsSuccess);
+        Assert.True(blankPreview.Value.CanCommit);
+        Assert.DoesNotContain(blankPreview.Value.Issues, i => i.Message.Contains("Email"));
 
-        Assert.True(preview.IsSuccess);
-        Assert.False(preview.Value.CanCommit);               // ligne 2 : email manquant
-        Assert.Contains(preview.Value.Issues, i => i.Message.Contains("Email"));
+        var committed = await BuildService().CommitAsync(blank, ReferenceImportTarget.ThirdParties, JournalImportFormat.Csv);
+        Assert.True(committed.IsSuccess);
+        using (var ctx = _factory.CreateContext())
+        {
+            var client = await ctx.Clients.SingleAsync();
+            Assert.Null(client.Email);
+        }
+
+        var invalid = Csv("type;nom;email;rue;ville;gouvernorat\nclient;Mauvais;pas-un-email;Rue A;Tunis;Tunis\n");
+        var invalidPreview = await BuildService().PreviewAsync(invalid, ReferenceImportTarget.ThirdParties, JournalImportFormat.Csv);
+        Assert.True(invalidPreview.IsSuccess);
+        Assert.False(invalidPreview.Value.CanCommit);
+        Assert.Contains(invalidPreview.Value.Issues, i => i.Message.Contains("Email invalide"));
+
+        var noAddress = Csv("type;nom;email;rue;ville;gouvernorat\nclient;Sans Adresse;ok@x.tn;;;\n");
+        var addressPreview = await BuildService().PreviewAsync(noAddress, ReferenceImportTarget.ThirdParties, JournalImportFormat.Csv);
+        Assert.True(addressPreview.IsSuccess);
+        Assert.False(addressPreview.Value.CanCommit);
+        Assert.Contains(addressPreview.Value.Issues, i => i.Message.Contains("Adresse"));
     }
 
     [Fact]

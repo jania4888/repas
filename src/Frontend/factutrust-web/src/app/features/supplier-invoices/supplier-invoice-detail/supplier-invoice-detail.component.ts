@@ -110,7 +110,9 @@ import { formatLocalDate } from '@core/utils/date.util';
           <h3 class="card-title"><i class="pi pi-building"></i> Fournisseur</h3>
           <div class="info-grid">
             <div class="info-item"><span class="label">Nom</span><a [routerLink]="['/suppliers', inv()!.supplier.id]" class="value link">{{ inv()!.supplier.name }}</a></div>
-            <div class="info-item"><span class="label">Email</span><a [href]="'mailto:' + inv()!.supplier.email" class="value link">{{ inv()!.supplier.email }}</a></div>
+            @if (inv()!.supplier.email) {
+              <div class="info-item"><span class="label">Email</span><a [href]="'mailto:' + inv()!.supplier.email" class="value link">{{ inv()!.supplier.email }}</a></div>
+            }
             @if (inv()!.supplier.nif) {
               <div class="info-item"><span class="label">NIF</span><span class="value mono">{{ inv()!.supplier.nif }}</span></div>
             }

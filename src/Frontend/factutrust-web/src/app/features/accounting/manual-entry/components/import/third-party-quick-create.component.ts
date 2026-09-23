@@ -59,11 +59,11 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
             <label class="tpq-field">
               <span>Matricule fiscal</span>
               <input type="text" [(ngModel)]="form.nif" name="nif"
-                     placeholder="1234567/A/B/C/000" />
+                     placeholder="1772793W/A/M/000" />
             </label>
             <label class="tpq-field">
-              <span>E-mail <abbr title="obligatoire">*</abbr></span>
-              <input type="email" [(ngModel)]="form.email" name="email" required />
+              <span>E-mail</span>
+              <input type="email" [(ngModel)]="form.email" name="email" />
             </label>
             <label class="tpq-field">
               <span>Téléphone</span>
@@ -183,7 +183,6 @@ export class ThirdPartyQuickCreateComponent {
   isValid(): boolean {
     return (
       this.form.name.trim().length > 0 &&
-      this.form.email.trim().length > 0 &&
       this.form.street.trim().length > 0 &&
       this.form.city.trim().length > 0 &&
       this.form.governorate.trim().length > 0
@@ -205,7 +204,7 @@ export class ThirdPartyQuickCreateComponent {
 
     const request = {
       name: this.form.name.trim(),
-      email: this.form.email.trim(),
+      email: this.form.email.trim() || null,
       phone: this.form.phone.trim() || undefined,
       nif: this.form.nif.trim() || undefined,
       street: this.form.street.trim(),
