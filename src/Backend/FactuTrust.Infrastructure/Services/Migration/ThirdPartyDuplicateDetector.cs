@@ -1,3 +1,5 @@
+using FactuTrust.Domain.ValueObjects;
+
 namespace FactuTrust.Infrastructure.Services.Migration;
 
 /// <summary>Vue aplatie d'un tiers (importé ou existant) pour la détection de doublons.</summary>
@@ -73,8 +75,7 @@ internal static class ThirdPartyDuplicateDetector
     private static DuplicateMatch? Score(ThirdPartySnapshot a, ThirdPartySnapshot b)
     {
         // Signaux forts (quasi-certitude).
-        if (!string.IsNullOrWhiteSpace(a.Nif) && !string.IsNullOrWhiteSpace(b.Nif)
-            && string.Equals(a.Nif.Trim(), b.Nif.Trim(), StringComparison.OrdinalIgnoreCase))
+        if (SameNif(a.Nif, b.Nif))
             return new DuplicateMatch(a, b, 1.0, "Même matricule fiscal");
 
         if (!string.IsNullOrWhiteSpace(a.Email) && !string.IsNullOrWhiteSpace(b.Email)
@@ -115,6 +116,23 @@ internal static class ThirdPartyDuplicateDetector
     /// retrait des formes juridiques (STE, SARL, SUARL…), recomposition. Le retrait se fait AVANT
     /// la concaténation pour ne pas corrompre les noms contenant « sa » ou « ste » (ex. « Santé »).
     /// </summary>
+    /// <summary>
+    /// Compare deux matricules sur leur forme CANONIQUE. Depuis la canonicalisation du NIF, la base
+    /// stocke la forme carte (<c>NNNNNNNL/A/M/NNN</c>) alors qu'un fichier importé porte souvent la
+    /// forme historique (<c>NNNNNNN/L/A/M/NNN</c>) : comparées brutes, elles ne se reconnaissaient
+    /// plus, et un doublon certain retombait au mieux sur la similarité de nom (0,85). Une valeur
+    /// non reconnue comme NIF garde l'ancienne comparaison, pour ne rien perdre des cas existants.
+    /// </summary>
+    internal static bool SameNif(string? a, string? b)
+    {
+        if (string.IsNullOrWhiteSpace(a) || string.IsNullOrWhiteSpace(b))
+            return false;
+
+        var left = NIF.TryCanonicalize(a, out var canonicalA) ? canonicalA : a.Trim();
+        var right = NIF.TryCanonicalize(b, out var canonicalB) ? canonicalB : b.Trim();
+        return string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
+    }
+
     internal static string NormalizeName(string name)
     {
         var tokens = name
