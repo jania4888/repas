@@ -28,6 +28,53 @@ public sealed class ThirdPartyDuplicateDetectorTests
         Assert.Contains("matricule fiscal", m.Reason);
     }
 
+    /// <summary>
+    /// Régression de la canonicalisation du NIF : la base stocke désormais la forme carte, le
+    /// fichier importé porte la forme historique. Le doublon doit rester certain (1,0), et non
+    /// retomber sur la similarité de nom (0,85).
+    /// </summary>
+    [Theory]
+    [InlineData("1234567/A/M/P/000", "1234567A/M/P/000")]
+    [InlineData("1234567A/M/P/000", "1234567/A/M/P/000")]
+    [InlineData("1234567/a/m/p/000", "1234567A/M/P/000")]
+    [InlineData(" 1234567/A/M/P/000 ", "1234567A/M/P/000")]
+    public void SameNif_LegacyAndOfficialSpellings_IsQuasiCertainMatch(string importedNif, string existingNif)
+    {
+        var imported = new[] { Snap("Alpha", nif: importedNif) };
+        var existing = new[] { Snap("Société totalement différente", nif: existingNif) };
+
+        var matches = ThirdPartyDuplicateDetector.Detect(imported, existing, 0.6, 200);
+
+        var m = Assert.Single(matches);
+        Assert.Equal(1.0, m.Score);
+        Assert.Contains("matricule fiscal", m.Reason);
+    }
+
+    /// <summary>Deux matricules réellement différents ne doivent pas être rapprochés par le NIF.</summary>
+    [Fact]
+    public void DifferentNif_SameDigits_IsNotANifMatch()
+    {
+        var imported = new[] { Snap("Alpha", nif: "1234567/A/M/P/000") };
+        var existing = new[] { Snap("Gamma Services", nif: "1234567B/M/P/000") };
+
+        var matches = ThirdPartyDuplicateDetector.Detect(imported, existing, 0.6, 200);
+
+        Assert.DoesNotContain(matches, m => m.Reason.Contains("matricule fiscal"));
+    }
+
+    /// <summary>Une valeur qui n'est pas un NIF garde la comparaison historique (brute, insensible à la casse).</summary>
+    [Fact]
+    public void UnparseableNif_FallsBackToRawComparison()
+    {
+        var imported = new[] { Snap("Alpha", nif: "ABC-123") };
+        var existing = new[] { Snap("Zeta Holding", nif: "abc-123") };
+
+        var matches = ThirdPartyDuplicateDetector.Detect(imported, existing, 0.6, 200);
+
+        var m = Assert.Single(matches);
+        Assert.Equal(1.0, m.Score);
+    }
+
     [Fact]
     public void SameEmail_IsStrongMatch()
     {
