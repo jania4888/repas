@@ -107,7 +107,11 @@ export class LandingSeoService {
     }
   }
 
-  /** Rétablit le titre et la description d'origine et retire toutes les balises posées par `apply()`. */
+  /**
+   * Retire toutes les balises posées par `apply()` et restaure titre/description initiaux.
+   * Les balises statiques d'`index.html` (canonical, OG, Twitter) sont des replis pour les
+   * crawlers sans JavaScript : elles restent en place (seules les valeurs sont restaurées).
+   */
   restore(): void {
     if (!this.applied) {
       return;
