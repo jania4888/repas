@@ -10,3 +10,16 @@ export const SKIP_ERROR_TOAST = new HttpContextToken<boolean>(() => false);
 export function createHttpContextSkipGlobalErrorUi(): HttpContext {
   return new HttpContext().set(SKIP_ERROR_TOAST, true);
 }
+
+/**
+ * When set to true, `authInterceptor` never attaches `Authorization: Bearer` (and never attempts a
+ * refresh on 401). Reserved for anonymous public endpoints called from the landing
+ * (`GET /api/public/registration-status`, `POST /api/public/contact-requests`): a signed-in visitor
+ * browsing the landing must not leak their JWT to endpoints that do not need it.
+ */
+export const SKIP_AUTH_HEADER = new HttpContextToken<boolean>(() => false);
+
+/** Context for anonymous public landing calls: no global error UI, no JWT. */
+export function createHttpContextPublicAnonymous(): HttpContext {
+  return new HttpContext().set(SKIP_ERROR_TOAST, true).set(SKIP_AUTH_HEADER, true);
+}

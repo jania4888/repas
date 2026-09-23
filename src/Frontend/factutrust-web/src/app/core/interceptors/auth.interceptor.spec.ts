@@ -4,6 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { of, throwError } from 'rxjs';
 import { authInterceptor } from './auth.interceptor';
 import { AuthService, User } from '../services/auth.service';
+import { SKIP_AUTH_HEADER, createHttpContextPublicAnonymous } from '../http-context';
 
 const minimalUser: User = {
   id: 'u1',
@@ -268,6 +269,48 @@ describe('authInterceptor', () => {
     expect(authService.refreshToken).toHaveBeenCalledTimes(1);
     expect(authService.invalidateSession).toHaveBeenCalled();
     expect(authService.logout).not.toHaveBeenCalled();
+    httpMock.verify();
+  });
+
+  it("n'attache jamais le Bearer ni ne rafraîchit quand SKIP_AUTH_HEADER est posé (endpoints publics de la landing)", () => {
+    const authService = jasmine.createSpyObj('AuthService', [
+      'getAccessToken',
+      'getRefreshToken',
+      'refreshToken',
+      'logout',
+      'invalidateSession',
+      'isAuthenticated'
+    ]);
+    authService.getAccessToken.and.returnValue('tok');
+    authService.getRefreshToken.and.returnValue('refresh');
+    authService.isAuthenticated.and.returnValue(true);
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(withInterceptors([authInterceptor])),
+        provideHttpClientTesting(),
+        { provide: AuthService, useValue: authService }
+      ]
+    });
+
+    const http = TestBed.inject(HttpClient);
+    const httpMock = TestBed.inject(HttpTestingController);
+
+    let status = 0;
+    http
+      .get('/api/public/registration-status', { context: createHttpContextPublicAnonymous() })
+      .subscribe({ error: (e) => (status = e.status) });
+    const req = httpMock.expectOne('/api/public/registration-status');
+    expect(req.request.headers.has('Authorization')).toBe(false);
+    expect(req.request.context.get(SKIP_AUTH_HEADER)).toBeTrue();
+    expect(authService.getAccessToken).not.toHaveBeenCalled();
+
+    // Un 401 sur un appel public ne déclenche ni refresh ni invalidation de session.
+    req.flush({}, { status: 401, statusText: 'Unauthorized' });
+    expect(status).toBe(401);
+    expect(authService.refreshToken).not.toHaveBeenCalled();
+    expect(authService.invalidateSession).not.toHaveBeenCalled();
     httpMock.verify();
   });
 });
