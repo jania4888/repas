@@ -228,18 +228,6 @@ for c in factutrust-sqlserver factutrust-ollama factutrust-api factutrust-nginx;
   esac
 done
 
-# Invariant du retour arriere : :latest doit designer l'image qui tourne. Sinon, l'image en
-# service n'a peut-etre plus aucun nom (magasin containerd) et ne pourrait ni etre exportee ni
-# etre remise en service.
-RUN_API_ID=$(docker inspect -f '{{.Image}}' factutrust-api)
-if [ "$RUN_API_ID" = "$(docker image inspect -f '{{.Id}}' factutrust-api:latest 2>/dev/null)" ]; then
-  ok "factutrust-api:latest designe bien l'image en service"
-elif [ "$DRY" = 1 ]; then
-  say "  [ATTENTION] factutrust-api:latest ne designe pas l'image en service : un deploiement reel serait refuse"
-else
-  die "factutrust-api:latest ne designe pas l'image en service : le retour arriere n'aurait pas d'image valide. Recreer le conteneur api depuis :latest (deploy/README.md, section 9) avant de deployer"
-fi
-
 FREE=$(df --output=avail -BG / | tail -1 | tr -dc 0-9)
 [ "${FREE:-0}" -ge 10 ] || die "espace disque insuffisant : ${FREE:-?} Go libres, 10 requis"
 ok "disque : $FREE Go libres"
@@ -261,6 +249,20 @@ printf '%s\n' "$CHANGED" | grep -qE '^src/Frontend/factutrust-backoffice/' && NE
 if [ "$BUILD_ALL" = 1 ]; then NEED_API=1; NEED_WEB=1; NEED_ADMIN=1; fi
 label() { [ "$1" = 1 ] && printf 'a reconstruire' || printf 'inchange'; }
 say "  API : $(label $NEED_API) | front tenant : $(label $NEED_WEB) | back-office : $(label $NEED_ADMIN)"
+
+# Invariant du retour arriere de l'API : :latest doit designer l'image qui tourne. Sinon, l'image
+# en service n'a peut-etre plus aucun nom (magasin containerd) et ne pourrait ni etre exportee ni
+# etre remise en service. Exige seulement si l'API est reconstruite.
+RUN_API_ID=$(docker inspect -f '{{.Image}}' factutrust-api)
+if [ "$NEED_API" = 1 ]; then
+  if [ "$RUN_API_ID" = "$(docker image inspect -f '{{.Id}}' factutrust-api:latest 2>/dev/null)" ]; then
+    ok "factutrust-api:latest designe bien l'image en service"
+  elif [ "$DRY" = 1 ]; then
+    say "  [ATTENTION] factutrust-api:latest ne designe pas l'image en service : un deploiement reel serait refuse"
+  else
+    die "factutrust-api:latest ne designe pas l'image en service : le retour arriere n'aurait pas d'image valide. Recreer le conteneur api depuis :latest (deploy/README.md, section 9) avant de deployer"
+  fi
+fi
 
 mig_ids() { # master | tenant : identifiants des migrations AJOUTEES par le delta
   local f
