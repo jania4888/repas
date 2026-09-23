@@ -63,6 +63,9 @@ public sealed class ExceptionHandlingMiddleware
             SecurityException securityEx => HandleSecurityException(securityEx),
             ConflictException conflictEx => HandleConflictException(conflictEx),
             ComplianceException complianceEx => HandleComplianceException(complianceEx),
+            // Kestrel/MVC : corps trop volumineux ([RequestSizeLimit] → 413), en-têtes ou corps malformés.
+            // Sans ce cas, un corps > limite produirait un 500 + log Error au lieu d'un 4xx + Warning.
+            Microsoft.AspNetCore.Http.BadHttpRequestException badRequest => (badRequest.StatusCode, ValidationErrorResponse.FromGlobalErrors("Requête invalide.")),
             Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException concurrencyEx => HandleDbUpdateConcurrencyException(concurrencyEx),
             Microsoft.EntityFrameworkCore.DbUpdateException dbEx => HandleDbUpdateException(dbEx),
             _ when SqlExceptionHelper.IsSchemaDrift(exception) => HandleTenantSchemaOutdatedException(exception),
