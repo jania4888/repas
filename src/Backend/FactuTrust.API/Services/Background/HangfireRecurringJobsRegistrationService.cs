@@ -141,6 +141,14 @@ internal sealed class HangfireRecurringJobsRegistrationService : BackgroundServi
                 job => job.ExecuteAsync(CancellationToken.None),
                 FactuTrust.Infrastructure.Services.Studio.Workflows.StudioWorkflowResumeJob.StudioWorkflowResumeCron,
                 UtcOptions)),
+        // Lot C — purge des demandes de contact publiques échues (11h UTC : créneau libre).
+        new(
+            "purge-public-contact-requests",
+            () => RecurringJob.AddOrUpdate<PublicContactRequestsPurgeJob>(
+                "purge-public-contact-requests",
+                job => job.ExecuteAsync(CancellationToken.None),
+                Cron.Daily(11),
+                UtcOptions)),
     };
 
     private readonly ILogger<HangfireRecurringJobsRegistrationService> _logger;

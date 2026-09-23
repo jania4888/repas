@@ -22,6 +22,7 @@ using FactuTrust.Infrastructure.Services.AI;
 using FactuTrust.Infrastructure.Services.Forecasting;
 using FactuTrust.Infrastructure.Services.Forecasting.Background;
 using FactuTrust.Infrastructure.Services.Forecasting.Calendar;
+using FactuTrust.Infrastructure.Services.PublicContact;
 using FactuTrust.Infrastructure.Services.Storefront;
 using FactuTrust.Infrastructure.Services.Treasury;
 using FactuTrust.Infrastructure.Services.Treasury.Collectors;
@@ -318,15 +319,12 @@ public static class DependencyInjection
         services.AddScoped<IStorefrontTenantWriter, StorefrontTenantWriter>();
         services.AddScoped<IPublicStorefrontReadRepository, PublicStorefrontReadRepository>();
         services.AddScoped<IStorefrontOrderRepository, StorefrontOrderRepository>();
-        services.AddHttpClient<IStorefrontCaptchaValidator, StorefrontCaptchaValidator>(client =>
-        {
-            client.Timeout = TimeSpan.FromSeconds(5);
-        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-        {
-            AllowAutoRedirect = false,
-            UseCookies = false,
-            MaxResponseHeadersLength = 16
-        }).RemoveAllLoggers();
+        AddHardenedTurnstileHttpClient<IStorefrontCaptchaValidator, StorefrontCaptchaValidator>(services);
+
+        // Lot C — formulaire de contact public (landing). Enregistrement inconditionnel, garde à l'exécution.
+        services.AddScoped<IPublicContactRequestRepository, PublicContactRequestRepository>();
+        AddHardenedTurnstileHttpClient<IPublicContactCaptchaValidator, PublicContactCaptchaValidator>(services);
+        services.AddScoped<FactuTrust.Infrastructure.Services.Background.PublicContactRequestsPurgeJob>();
 
         services.AddScoped<IAccountingPeriodService, AccountingPeriodService>();
         // Enregistrement inconditionnel : les handlers MediatR le prennent en dépendance et
@@ -610,6 +608,18 @@ public static class DependencyInjection
         services.Configure<ModuleRecommendationsOptions>(configuration.GetSection(ModuleRecommendationsOptions.SectionName));
         services.Configure<MigrationAiSettings>(configuration.GetSection(MigrationAiSettings.SectionName));
         services.Configure<StorefrontOptions>(configuration.GetSection(StorefrontOptions.SectionName));
+        // Lot C — échec au démarrage (comme JwtSettings) plutôt qu'un formulaire qui « marche » sans prévenir personne.
+        services.AddOptions<PublicContactOptions>()
+            .Bind(configuration.GetSection(PublicContactOptions.SectionName))
+            .Validate(
+                o => o.RecipientEmails is not null && o.RecipientEmails.All(e => System.Net.Mail.MailAddress.TryCreate(e, out _)),
+                "Features:PublicContact:RecipientEmails contient une adresse e-mail invalide.")
+            .Validate(
+                o => o.MinElapsedMs >= 0 && o.MaxMessageLength > 0 && o.RetentionDays > 0 && o.SpamRetentionDays > 0
+                     && o.DuplicateWindowMinutes >= 0 && o.MaxAcceptedPerHour > 0 && !string.IsNullOrWhiteSpace(o.ConsentTextVersion)
+                     && o.ConsentTextVersion.Length <= FactuTrust.Domain.Entities.PublicContact.PublicContactRequest.ConsentTextVersionMaxLength,
+                "Bornes Features:PublicContact invalides (MinElapsedMs >= 0, MaxMessageLength/RetentionDays/SpamRetentionDays/MaxAcceptedPerHour > 0, DuplicateWindowMinutes >= 0, ConsentTextVersion 1-32 caractères).")
+            .ValidateOnStart();
         services.Configure<SalesOrderOptions>(configuration.GetSection(SalesOrderOptions.SectionName));
         services.Configure<StockTraceabilityOptions>(configuration.GetSection(StockTraceabilityOptions.SectionName));
 
@@ -810,6 +820,26 @@ public static class DependencyInjection
             services.AddScoped<ICashFlowAiAdvisor, CashFlowAiAdvisor>();
 
         return services;
+    }
+
+    /// <summary>
+    /// Typed HttpClient for Cloudflare Turnstile siteverify (storefront and public contact form):
+    /// 5 s timeout, no redirects, no cookies, bounded response headers, no HTTP logging (the form
+    /// body carries the secret key).
+    /// </summary>
+    private static void AddHardenedTurnstileHttpClient<TInterface, TImplementation>(IServiceCollection services)
+        where TInterface : class
+        where TImplementation : class, TInterface
+    {
+        services.AddHttpClient<TInterface, TImplementation>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(5);
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            AllowAutoRedirect = false,
+            UseCookies = false,
+            MaxResponseHeadersLength = 16
+        }).RemoveAllLoggers();
     }
 
     private static bool IsDesignTime()

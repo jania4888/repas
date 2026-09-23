@@ -212,6 +212,55 @@ Réactivez votre compte en réglant la facture en attente.
 Activez votre accès : {{ inviteUrl }}
 
 Ce lien expire après 7 jours.
+"),
+
+        // Lot C — formulaire de contact public. Le handler fournit deux clés par champ saisi :
+        // xHtml (HtmlEncode, message avec <br>) pour la partie HTML, xText pour la partie texte.
+        // Aucune valeur saisie dans le sujet ; aucun mailto:/URL construit à partir des saisies.
+        ["contact-request-received"] = new(
+            Code: "contact-request-received",
+            SubjectTemplate: "[InstaFact] Nouvelle demande — {{ subjectLabel }} — {{ reference }}",
+            HtmlBodyTemplate: WrapHtml(
+                "Nouvelle demande de contact",
+                @"<p>Référence <strong>{{ reference }}</strong> · Objet : <strong>{{ subjectLabel }}</strong> · Langue : {{ locale }}</p>
+<table cellpadding=""4"">
+<tr><th align=""left"">Nom</th><td>{{ fullNameHtml }}</td></tr>
+<tr><th align=""left"">Organisation</th><td>{{ organizationHtml }}</td></tr>
+<tr><th align=""left"">E-mail</th><td>{{ emailHtml }}</td></tr>
+<tr><th align=""left"">Téléphone</th><td>{{ phoneHtml }}</td></tr>
+<tr><th align=""left"">Taille</th><td>{{ sizeHtml }}</td></tr>
+</table>
+<p><strong>Message</strong></p>
+<blockquote style=""border-left:3px solid #ccc;padding-left:8px"">{{ messageHtml }}</blockquote>
+<p style=""color:#666;font-size:12px"">Reçue le {{ createdAt }} (UTC) · anti-bot : {{ captcha }} · consentement {{ consentVersion }} · IP (hachage) {{ ipHashPrefix }}</p>"),
+            TextBodyTemplate: @"Nouvelle demande de contact {{ reference }} ({{ subjectLabel }}, {{ locale }})
+Nom : {{ fullNameText }}
+Organisation : {{ organizationText }}
+E-mail : {{ emailText }}
+Téléphone : {{ phoneText }}
+Taille : {{ sizeText }}
+
+Message :
+{{ messageText }}
+
+Reçue le {{ createdAt }} (UTC) - anti-bot : {{ captcha }} - consentement {{ consentVersion }}
+"),
+
+        // Lot C — accusé de réception au demandeur : contenu fixe FR/AR fourni par le handler
+        // (title/body/referenceLabel), aucune reprise du nom ni du message saisis.
+        ["contact-request-ack"] = new(
+            Code: "contact-request-ack",
+            SubjectTemplate: "InstaFact — {{ title }} ({{ reference }})",
+            HtmlBodyTemplate: WrapHtml(
+                "InstaFact",
+                @"<p><strong>{{ title }}</strong></p>
+<p>{{ body }}</p>
+<p>{{ referenceLabel }} : <strong>{{ reference }}</strong></p>"),
+            TextBodyTemplate: @"{{ title }}
+
+{{ body }}
+
+{{ referenceLabel }} : {{ reference }}
 ")
     };
 
