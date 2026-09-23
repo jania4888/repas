@@ -10,6 +10,7 @@ using FactuTrust.Application.Features.Suppliers.Queries;
 using FactuTrust.Domain.Common;
 using FactuTrust.Domain.Entities;
 using FactuTrust.Domain.Enums;
+using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.MultiTenancy;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -146,14 +147,10 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
             return (DocumentDirections.Purchase, null);
         }
 
-        var ourNif = InvoiceImportParsing.NormalizeNif(company.Nif?.Value);
-        var sellerNif = InvoiceImportParsing.NormalizeNif(document.Seller?.Nif);
-        var buyerNif = InvoiceImportParsing.NormalizeNif(document.Buyer?.Nif);
-
-        if (ourNif.Length > 0 && sellerNif.Length > 0 && ourNif == sellerNif)
+        if (SameMatricule(company.Nif?.Value, document.Seller?.Nif))
             return (DocumentDirections.Sale, "Émetteur = votre société (matricule fiscal identique).");
 
-        if (ourNif.Length > 0 && buyerNif.Length > 0 && ourNif == buyerNif)
+        if (SameMatricule(company.Nif?.Value, document.Buyer?.Nif))
             return (DocumentDirections.Purchase, "Destinataire = votre société (matricule fiscal identique).");
 
         var sellerScore = InvoiceImportParsing.Similarity(company.Name, document.Seller?.Name);
@@ -250,6 +247,20 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
 
     private readonly record struct ThirdPartyMatch(Guid Id, string Name, string MatchedBy);
 
+    /// <summary>
+    /// Même matricule si les deux côtés se canonisent vers la forme carte, sinon repli sur la
+    /// comparaison alphanumérique (saisie incomplète déjà tolérée à l'import).
+    /// </summary>
+    private static bool SameMatricule(string? left, string? right)
+    {
+        if (NIF.TryCanonicalize(left, out var canonicalLeft) && NIF.TryCanonicalize(right, out var canonicalRight))
+            return string.Equals(canonicalLeft, canonicalRight, StringComparison.Ordinal);
+
+        var normalizedLeft = InvoiceImportParsing.NormalizeNif(left);
+        var normalizedRight = InvoiceImportParsing.NormalizeNif(right);
+        return normalizedLeft.Length > 0 && normalizedLeft == normalizedRight;
+    }
+
     private async Task<ThirdPartyMatch?> MatchClientAsync(
         string name, string nif, CancellationToken cancellationToken)
     {
@@ -257,10 +268,8 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
         {
             if (nif.Length > 0)
             {
-                var normalized = InvoiceImportParsing.NormalizeNif(nif);
                 var byNif = await _mediator.Send(new GetClientsQuery(Search: nif, PageSize: 10), cancellationToken);
-                var hit = byNif.Items.FirstOrDefault(
-                    c => InvoiceImportParsing.NormalizeNif(c.Nif) == normalized && normalized.Length > 0);
+                var hit = byNif.Items.FirstOrDefault(c => SameMatricule(c.Nif, nif));
                 if (hit is not null)
                     return new ThirdPartyMatch(hit.Id, hit.Name, "nif");
             }
@@ -291,10 +300,8 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
         {
             if (nif.Length > 0)
             {
-                var normalized = InvoiceImportParsing.NormalizeNif(nif);
                 var byNif = await _mediator.Send(new GetSuppliersQuery(Search: nif, PageSize: 10), cancellationToken);
-                var hit = byNif.Items.FirstOrDefault(
-                    s => InvoiceImportParsing.NormalizeNif(s.Nif) == normalized && normalized.Length > 0);
+                var hit = byNif.Items.FirstOrDefault(s => SameMatricule(s.Nif, nif));
                 if (hit is not null)
                     return new ThirdPartyMatch(hit.Id, hit.Name, "nif");
             }

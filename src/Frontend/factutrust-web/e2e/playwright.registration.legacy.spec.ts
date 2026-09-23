@@ -250,7 +250,7 @@ test.describe('Tests Playwright - Inscription FactuTrust (LEGACY, flag OFF only)
     await fillField(page, 'input[formcontrolname="companyName"]', testData.companyName);
 
     // Saisir le NIF avec underscore (p-inputmask)
-    await fillMaskedField(page, 'p-inputmask[formcontrolname="nif"]', '1234567/A/B/C/000_'); // Avec underscore
+    await fillMaskedField(page, 'p-inputmask[formcontrolname="nif"]', '1234567A/B/C/000_'); // Avec underscore
     const nifInput = page.locator('p-inputmask[formcontrolname="nif"] input');
 
     // Quitter le champ (blur) - cliquer ailleurs
@@ -264,7 +264,7 @@ test.describe('Tests Playwright - Inscription FactuTrust (LEGACY, flag OFF only)
     console.log(`NIF après blur: ${nifValue}`);
 
     expect(nifValue).not.toContain('_');
-    expect(nifValue.toUpperCase().replace(/\s/g, '')).toBe('1234567/A/B/C/000');
+    expect(nifValue.toUpperCase().replace(/\s/g, '')).toBe('1234567A/B/C/000');
   });
 
   /**
@@ -976,7 +976,7 @@ test.describe('Tests Playwright - Inscription FactuTrust (LEGACY, flag OFF only)
         console.log('📤 Payload capturé:', msg.text());
         const payloadText = msg.text();
         if (payloadText.includes('nif')) {
-          expect(payloadText).toContain('1234567/A/B/C/000');
+          expect(payloadText).toContain('1234567A/B/C/000');
           expect(payloadText).not.toContain('_');
         }
       }
@@ -995,7 +995,7 @@ test.describe('Tests Playwright - Inscription FactuTrust (LEGACY, flag OFF only)
     await fillField(page, 'input[formcontrolname="companyName"]', testData.companyName);
 
     // NIF avec underscore pour tester le nettoyage (p-inputmask)
-    await fillMaskedField(page, 'p-inputmask[formcontrolname="nif"]', '1234567/A/B/C/000_');
+    await fillMaskedField(page, 'p-inputmask[formcontrolname="nif"]', '1234567A/B/C/000_');
 
     // Régime fiscal (p-select)
     await selectDropdownOption(page, 'p-select[formcontrolname="taxRegime"]', 'Régime réel');

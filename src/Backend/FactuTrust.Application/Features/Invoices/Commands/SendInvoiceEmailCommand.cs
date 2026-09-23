@@ -60,7 +60,8 @@ public sealed class SendInvoiceEmailCommandHandler : IRequestHandler<SendInvoice
         if (invoice is null)
             return Result.Failure(Error.NotFound("Facture", request.InvoiceId));
 
-        if (invoice.Client?.Email is null)
+        var recipientEmail = invoice.Client?.Email?.Value;
+        if (string.IsNullOrWhiteSpace(recipientEmail))
             return Result.Failure(Error.Validation("Client", "Le client n'a pas d'adresse email."));
 
         // Generate PDF
@@ -70,7 +71,7 @@ public sealed class SendInvoiceEmailCommandHandler : IRequestHandler<SendInvoice
 
         // Compose email
         var subject = $"Facture {invoice.Number.Value}";
-        var clientName = invoice.Client.Name;
+        var clientName = invoice.Client!.Name;
         var htmlBody = $@"
             <h2>Facture {invoice.Number.Value}</h2>
             <p>Bonjour {clientName},</p>
@@ -94,7 +95,7 @@ public sealed class SendInvoiceEmailCommandHandler : IRequestHandler<SendInvoice
 
         // Send Email
         await _emailService.SendEmailAsync(
-            invoice.Client.Email.Value,
+            recipientEmail,
             subject,
             htmlBody,
             attachments,
@@ -113,7 +114,7 @@ public sealed class SendInvoiceEmailCommandHandler : IRequestHandler<SendInvoice
             newValues: new
             {
                 Number = invoice.Number.Value,
-                ClientEmail = invoice.Client.Email.Value
+                ClientEmail = recipientEmail
             },
             cancellationToken: cancellationToken);
 

@@ -120,7 +120,7 @@ export function passwordsMatchValidator(
 export const REGISTRATION_ERROR_MESSAGES: Record<string, string> = {
   required: 'Ce champ est obligatoire.',
   email: 'Adresse e-mail invalide.',
-  nifFormat: 'Format attendu : 1234567/A/B/C/000.',
+  nifFormat: 'Format attendu : 1772793W/A/M/000.',
   phoneFormat: 'Numéro tunisien attendu (ex. 71123456 ou +21671123456).',
   postalCodeFormat: 'Le code postal doit comporter 4 chiffres.',
   governorateUnknown: 'Sélectionnez un gouvernorat dans la liste.',

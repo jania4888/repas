@@ -421,7 +421,8 @@ public partial class PdfService : IPdfService
                             c.Item().Text(addressLine.Trim());
                     }
                     
-                    c.Item().Text(quote.Client.Email.Value);
+                    if (quote.Client.Email != null)
+                        c.Item().Text(quote.Client.Email.Value);
                 });
             });
 

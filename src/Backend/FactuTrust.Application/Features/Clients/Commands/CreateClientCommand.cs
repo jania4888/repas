@@ -24,7 +24,6 @@ public sealed class CreateClientCommandValidator : AbstractValidator<CreateClien
     public CreateClientCommandValidator()
     {
         RuleFor(x => x.Dto.Name).NotEmpty().WithMessage("Le nom ou la raison sociale est obligatoire");
-        RuleFor(x => x.Dto.Email).NotEmpty().WithMessage("L'email est obligatoire");
         RuleFor(x => x.Dto.Street).NotEmpty().WithMessage("L'adresse est obligatoire");
         RuleFor(x => x.Dto.City).NotEmpty().WithMessage("La ville est obligatoire");
         RuleFor(x => x.Dto.Governorate).NotEmpty().WithMessage("Le gouvernorat est obligatoire");
@@ -73,13 +72,17 @@ public sealed class CreateClientCommandHandler : IRequestHandler<CreateClientCom
         if (_tenantContext.TenantId is null)
             return Result.Failure<Guid>(Error.Unauthorized("Aucun contexte d'entreprise disponible."));
 
-        var emailResult = Email.Create(dto.Email);
+        var emailResult = Email.CreateOptional(dto.Email);
         if (emailResult.IsFailure)
             return Result.Failure<Guid>(emailResult.Error);
 
-        var existingByEmail = await _clientRepository.GetByEmailAsync(emailResult.Value.Value, cancellationToken);
-        if (existingByEmail is not null)
-            return Result.Failure<Guid>(Error.Conflict("Un client existe déjà avec cet email. Souhaitez-vous l'utiliser ?"));
+        var email = emailResult.Value;
+        if (email is not null)
+        {
+            var existingByEmail = await _clientRepository.GetByEmailAsync(email.Value, cancellationToken);
+            if (existingByEmail is not null)
+                return Result.Failure<Guid>(Error.Conflict("Un client existe déjà avec cet email. Souhaitez-vous l'utiliser ?"));
+        }
 
         NIF? nif = null;
         if (!string.IsNullOrWhiteSpace(dto.Nif))
@@ -115,7 +118,7 @@ public sealed class CreateClientCommandHandler : IRequestHandler<CreateClientCom
             dto.Name.Trim(),
             dto.Type,
             addressResult.Value,
-            emailResult.Value,
+            email,
             nif,
             phone,
             dto.ContactPerson?.Trim(),
@@ -142,7 +145,7 @@ public sealed class CreateClientCommandHandler : IRequestHandler<CreateClientCom
             newValues: new
             {
                 client.Name,
-                client.Email.Value,
+                Email = client.Email?.Value,
                 client.CreditLimit,
                 client.DefaultPaymentTermDays
             },

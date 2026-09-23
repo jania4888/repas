@@ -23,7 +23,8 @@ import { ErrorMessageService } from '@core/services/error-message.service';
 import { CompanyService, UpdateCompanyRequest, Company } from '@core/services/company.service';
 import { StockService, Warehouse, UpdateWarehouseRequest } from '@core/services/stock.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
-import { TUNISIAN_GOVERNORATE_OPTIONS } from '@shared/validation/validation-rules';
+import { canonicalizeNif, TUNISIAN_GOVERNORATE_OPTIONS } from '@shared/validation/validation-rules';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 import { AuthService } from '@core/services/auth.service';
 import { computeCompanyProfileCompletion } from './company-profile-completion.helpers';
 import {
@@ -42,6 +43,7 @@ import {
     RouterModule,
     InputTextModule,
     InputMaskModule,
+    NifMaskPasteDirective,
     Textarea,
     SelectModule,
     ButtonModule,
@@ -159,8 +161,9 @@ import {
               <p-inputMask
                 id="nif"
                 formControlName="nif"
-                mask="9999999/a/a/a/999"
-                placeholder="1234567/A/B/C/000"
+                appNifMaskPaste
+                mask="9999999a/a/a/999"
+                placeholder="1772793W/A/M/000"
                 styleClass="w-full"
                 (onBlur)="onNifBlur()">
               </p-inputMask>
@@ -977,14 +980,14 @@ export class CompanyComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Nettoie et normalise le NIF au blur (aligné sur register.component).
-   * Ex: 1234567A/B/C/000 → 1234567/A/B/C/000
+   * Nettoie et ramène le NIF au blur vers la forme carte.
+   * Ex: 1234567/A/B/C/000 → 1234567A/B/C/000
    */
   onNifBlur(): void {
     const nifControl = this.form.get('nif');
     if (nifControl) {
       const currentValue = nifControl.value || '';
-      const cleaned = this.cleanNifValue(currentValue);
+      const cleaned = canonicalizeNif(currentValue);
       if (cleaned !== currentValue) {
         nifControl.setValue(cleaned, { emitEvent: false });
         nifControl.updateValueAndValidity({ emitEvent: false });
@@ -993,26 +996,6 @@ export class CompanyComponent implements OnInit, OnDestroy {
         nifControl.updateValueAndValidity({ emitEvent: false });
       }
     }
-  }
-
-  private cleanNifValue(value: string | null | undefined): string {
-    if (!value) return '';
-    let cleaned = value
-      .replace(/_/g, '')
-      .replace(/\s/g, '')
-      .replace(/[\u2044\u2215\/]/g, '/')
-      .toUpperCase()
-      .trim();
-    if (!cleaned || cleaned === '/////' || cleaned === '///') return '';
-    const noSlashMatch = cleaned.match(/^(\d{7})([A-Z])([A-Z])([A-Z])(\d{3})$/);
-    if (noSlashMatch) {
-      return `${noSlashMatch[1]}/${noSlashMatch[2]}/${noSlashMatch[3]}/${noSlashMatch[4]}/${noSlashMatch[5]}`;
-    }
-    const missingFirstSlash = cleaned.match(/^(\d{7})([A-Z])\/([A-Z])\/([A-Z])\/(\d{3})$/);
-    if (missingFirstSlash) {
-      return `${missingFirstSlash[1]}/${missingFirstSlash[2]}/${missingFirstSlash[3]}/${missingFirstSlash[4]}/${missingFirstSlash[5]}`;
-    }
-    return cleaned;
   }
 
   loadCompanyData(): void {
@@ -1153,8 +1136,8 @@ export class CompanyComponent implements OnInit, OnDestroy {
     // Remove spaces from phone number (backend expects 8 digits without spaces)
     const phoneCleaned = formValue.phone?.replace(/\s/g, '') || '';
 
-    // Normaliser le NIF avant envoi (format 1234567/A/B/C/000)
-    const nifCleaned = this.cleanNifValue(formValue.nif ?? this.form.get('nif')?.value ?? '') || (formValue.nif || '').trim();
+    const nifSource = formValue.nif ?? this.form.get('nif')?.value ?? '';
+    const nifCleaned = canonicalizeNif(nifSource) || String(nifSource).trim();
 
     const request: UpdateCompanyRequest = {
       companyName: (formValue.companyName || '').trim(),

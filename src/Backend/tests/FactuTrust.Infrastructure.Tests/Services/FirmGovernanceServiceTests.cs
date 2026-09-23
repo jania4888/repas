@@ -310,7 +310,7 @@ public sealed class FirmGovernanceServiceTests
         var file = await db.PermanentFiles.SingleAsync();
         Assert.Equal("12 rue Test", file.Street);
         Assert.Equal("Tunis", file.City);
-        Assert.Equal("1234567/A/B/C/000", file.Nif);
+        Assert.Equal("1234567A/B/C/000", file.Nif);
     }
 
     [Fact]
@@ -602,7 +602,7 @@ public sealed class FirmGovernanceServiceTests
             "test@example.com");
 
         var file = await db.PermanentFiles.SingleAsync();
-        Assert.Equal("1234567/A/B/C/000", file.Nif);
+        Assert.Equal("1234567A/B/C/000", file.Nif);
         Assert.Equal(TaxRegime.RealRegime, file.TaxRegime);
     }
 
@@ -644,7 +644,7 @@ public sealed class FirmGovernanceServiceTests
 
         var file = await db.PermanentFiles.SingleAsync();
         Assert.Equal("Ste Test Renommée", file.CompanyName);
-        Assert.Equal("1234567/A/B/C/000", file.Nif);
+        Assert.Equal("1234567A/B/C/000", file.Nif);
     }
 
     [Fact]
@@ -678,7 +678,7 @@ public sealed class FirmGovernanceServiceTests
             "test@example.com");
 
         var file = await db.PermanentFiles.SingleAsync();
-        Assert.Equal("7654321/A/B/C/000", file.Nif);
+        Assert.Equal("7654321A/B/C/000", file.Nif);
         Assert.Equal("Legacy street", file.Street);
     }
 

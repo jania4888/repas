@@ -91,7 +91,7 @@ test.describe('Capture screenshots pour documentation', () => {
     await page.click('button:has-text("Suivant")');
     await page.waitForSelector('input[formcontrolname="companyName"]', { timeout: 5000 });
     await page.fill('input[formcontrolname="companyName"]', 'Ma Société');
-    await page.locator('p-inputmask[formcontrolname="nif"] input').fill('1234567/A/B/C/000');
+    await page.locator('p-inputmask[formcontrolname="nif"] input').fill('1234567A/B/C/000');
     await page.fill('input[formcontrolname="companyEmail"]', 'contact@entreprise.tn');
     await page.locator('p-inputmask[formcontrolname="phone"] input').fill('98123456');
     await page.click('p-select[formcontrolname="taxRegime"]');

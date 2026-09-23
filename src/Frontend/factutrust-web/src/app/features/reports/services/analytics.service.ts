@@ -587,7 +587,7 @@ export class AnalyticsService {
       return {
         id: c.id,
         name: c.name,
-        email: c.email,
+        email: c.email ?? '',
         isActive: c.isActive,
         totalInvoices: stats.invoiceCount,
         totalRevenue: stats.totalRevenue,

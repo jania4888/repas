@@ -1,5 +1,6 @@
 import { isConfiguredDocumentNumber } from '@core/utils/numbering-validation';
 import { createClientUuid } from '@core/utils/safe-random-uuid.util';
+import { isValidEmail } from '@shared/validation';
 import { normalizeDesignation } from '../utils/invoice-line.utils';
 import { Injectable, inject, computed, signal, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -37,6 +38,7 @@ import {
   CreateInvoiceWizardRequest
 } from '../models/invoice-wizard.models';
 import { isClientReadyForSubmission, normalizeClientInfo } from './invoice-wizard-client.utils';
+import { isValidNif } from '@shared/validation/validation-rules';
 import { InvoiceImportResult } from '../models/invoice-import.models';
 import { FeatureFlagsService } from '@core/services/feature-flags.service';
 import { WizardValidationService } from './wizard-validation.service';
@@ -697,7 +699,7 @@ export class InvoiceWizardService {
         country: client.address?.country || 'Tunisie'
       },
       nif: client.nif || null,
-      email: client.email,
+      email: client.email ?? '',
       phone: client.phone || null,
       contactPerson: client.contactPerson || null
     });
@@ -1752,8 +1754,7 @@ export class InvoiceWizardService {
   }
 
   private isValidNIF(nif: string): boolean {
-    const pattern = /^\d{7}\/[A-Z]\/[A-Z]\/[A-Z]\/\d{3}$/;
-    return pattern.test(nif);
+    return isValidNif(nif);
   }
 
   // ============================================
@@ -1824,7 +1825,7 @@ export class InvoiceWizardService {
       if (!client.nif || !this.isValidNIF(client.nif)) return false;
     }
     if (client.isNewClient) {
-      if (!client.email) return false;
+      if (client.email && !isValidEmail(client.email)) return false;
       if (!client.address?.street) return false;
       if (!client.address?.city) return false;
       if (!client.address?.governorate) return false;

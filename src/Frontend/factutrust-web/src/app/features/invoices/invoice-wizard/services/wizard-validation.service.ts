@@ -192,10 +192,8 @@ export class WizardValidationService {
       errors['nif'] = [this.createError('INVALID_NIF', ERROR_MESSAGES.nif())];
     }
 
-    // Email validation
-    if (!client.email) {
-      errors['email'] = [this.createError('REQUIRED', ERROR_MESSAGES.required("L'email"))];
-    } else if (!isValidEmail(client.email)) {
+    // Email facultatif : format contrôlé seulement s'il est renseigné.
+    if (client.email && !isValidEmail(client.email)) {
       errors['email'] = [this.createError('INVALID_EMAIL', ERROR_MESSAGES.email())];
     }
 

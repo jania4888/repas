@@ -197,7 +197,7 @@ xdescribe('Tests Selenium - Inscription FactuTrust (LEGACY, flag OFF only)', () 
     console.log(`NIF après blur: ${nifValue}`);
     
     expect(nifValue).not.toContain('_');
-    expect(nifValue.toUpperCase().replace(/\s/g, '')).toBe('1234567/A/B/C/000');
+    expect(nifValue.toUpperCase().replace(/\s/g, '')).toBe('1234567A/B/C/000');
   }, 60000);
 
   /**

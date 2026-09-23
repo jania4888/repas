@@ -253,8 +253,8 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
     confirmPassword: ['', Validators.required],
     // Step 2 §Votre société
     companyName: ['', [Validators.required, Validators.minLength(2)]],
-    // `nifFormatValidator` valide la valeur NETTOYÉE (le contrôle porte la valeur masquée
-    // `1234567A/B/C/000`, qu'un `Validators.pattern(NIF_PATTERN)` rejetterait à tort).
+    // `nifFormatValidator` valide la valeur canonisée (forme carte `1234567A/B/C/000`
+    // ou écriture historique encore présente avant le blur).
     // Effet : le format est signalé à l'étape 2, sous le champ, au lieu de l'être en
     // bandeau à l'étape 4 (validateCompanyRegisterFormData reste le filet de sécurité).
     nif: ['', [Validators.required, nifFormatValidator]],

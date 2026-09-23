@@ -11,14 +11,14 @@
 // ============================================
 
 /**
- * Tunisian NIF (Matricule Fiscal) pattern: NNNNNNN/L/A/M/NNN
- * - 7 digits
- * - 1 letter (category)
- * - 1 letter (activity)
- * - 1 letter (municipality)
- * - 3 digits (sequence)
+ * Forme stockée du matricule fiscal : NNNNNNNL/A/M/NNN (ex. 1772793W/A/M/000).
+ * La saisie historique NNNNNNN/L/A/M/NNN est ramenée à cette forme par canonicalizeNif.
  */
-export const NIF_PATTERN = /^\d{7}\/[A-Z]\/[A-Z]\/[A-Z]\/\d{3}$/;
+export const NIF_PATTERN = /^[0-9]{7}[A-Z]\/[A-Z]\/[A-Z]\/[0-9]{3}$/;
+
+const NIF_COMPACT_PATTERN = /^([0-9]{7})([A-Z])([A-Z])([A-Z])([0-9]{3})$/;
+const NIF_LEGACY_PATTERN = /^([0-9]{7})\/([A-Z])\/([A-Z])\/([A-Z])\/([0-9]{3})$/;
+const NIF_MAX_INPUT_LENGTH = 40;
 
 /**
  * Tunisian phone number pattern.
@@ -137,11 +137,55 @@ export const NUMERIC_LIMITS = {
 // ============================================
 
 /**
- * Validates a Tunisian NIF (Matricule Fiscal).
+ * Ramène une saisie à la forme carte `1772793W/A/M/000`.
+ * Accepte la forme historique, la forme sans slash `1772793WAM000`, les espaces,
+ * les underscores de masque et les slashs Unicode. Idempotent.
+ * Une chaîne vide, trop longue ou d'une autre forme est renvoyée nettoyée mais non réécrite
+ * (ou vide si elle dépasse 40 caractères).
+ */
+export function canonicalizeNif(value: string | null | undefined): string {
+  if (!value) return '';
+  if (value.length > NIF_MAX_INPUT_LENGTH) return '';
+
+  const cleaned = value
+    .replace(/_/g, '')
+    .replace(/[\s\t]/g, '')
+    .replace(/[\u2044\u2215/]/g, '/')
+    .toUpperCase()
+    .trim();
+
+  if (!cleaned || cleaned === '/////' || cleaned === '///') return '';
+  if (cleaned.length > NIF_MAX_INPUT_LENGTH) return '';
+
+  const compact = cleaned.match(NIF_COMPACT_PATTERN);
+  if (compact) {
+    return `${compact[1]}${compact[2]}/${compact[3]}/${compact[4]}/${compact[5]}`;
+  }
+
+  const legacy = cleaned.match(NIF_LEGACY_PATTERN);
+  if (legacy) {
+    return `${legacy[1]}${legacy[2]}/${legacy[3]}/${legacy[4]}/${legacy[5]}`;
+  }
+
+  return cleaned;
+}
+
+/**
+ * Validates a Tunisian NIF after canonisation (forme carte ou historique).
  */
 export function isValidNif(nif: string | null | undefined): boolean {
-  if (!nif || typeof nif !== 'string') return false;
-  return NIF_PATTERN.test(nif.toUpperCase().trim());
+  const canonical = canonicalizeNif(nif);
+  return canonical.length > 0 && NIF_PATTERN.test(canonical);
+}
+
+/**
+ * Valeur à écrire dans le masque `9999999a/a/a/999` lors d'un collage.
+ * L'écriture historique est ramenée à la forme carte avant que le masque ne la rejette.
+ * Retourne null si le collage n'est pas un matricule valide.
+ */
+export function nifValueFromPaste(raw: string | null | undefined): string | null {
+  const canonical = canonicalizeNif(raw);
+  return NIF_PATTERN.test(canonical) ? canonical : null;
 }
 
 /**
@@ -374,7 +418,7 @@ export const ERROR_MESSAGES = {
   max: (field: string, max: number) => `${field} doit être inférieur ou égal à ${max}`,
   pattern: (field: string) => `Format invalide pour ${field}`,
   email: () => 'Adresse email invalide',
-  nif: () => 'Matricule fiscal invalide. Format attendu: NNNNNNN/L/A/M/NNN',
+  nif: () => 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000',
   phone: () => 'Numéro de téléphone invalide. Format attendu: +216 XX XXX XXX',
   postalCode: () => 'Code postal invalide. 4 chiffres attendus',
   iban: () => 'IBAN invalide. Format tunisien attendu: TN59XXXX...',

@@ -75,8 +75,9 @@ public sealed class AccountingFirmRegistrationService : IAccountingFirmRegistrat
             return AccountingFirmRegistrationResult.DuplicateEmailFailure();
 
         var nifValue = nifResult.Value.Value;
+        var nifLegacy = nifResult.Value.LegacySpelling;
         var nifExists = await _masterContext.Tenants.AsNoTracking()
-            .AnyAsync(t => t.IsActive && t.NIF.Value == nifValue, cancellationToken);
+            .AnyAsync(t => t.IsActive && (t.NIF.Value == nifValue || t.NIF.Value == nifLegacy), cancellationToken);
         if (nifExists)
             return AccountingFirmRegistrationResult.ConflictNifFailure(DuplicateNifMessage);
 

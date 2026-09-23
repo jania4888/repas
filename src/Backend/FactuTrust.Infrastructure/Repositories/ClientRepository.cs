@@ -1,6 +1,7 @@
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Domain.Entities;
+using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,11 +27,10 @@ public sealed class ClientRepository : IClientRepository
 
     public async Task<Client?> GetByNifAsync(string nif, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(nif)) return null;
-        var normalized = nif.Trim().ToUpperInvariant();
+        if (!NIF.TryGetLookupSpellings(nif, out var canonical, out var legacy)) return null;
         await using var context = _contextFactory.CreateContext();
         return await context.Clients
-            .FirstOrDefaultAsync(c => c.NIF != null && EF.Property<string>(c.NIF, "Value") == normalized, cancellationToken);
+            .FirstOrDefaultAsync(c => c.NIF != null && (EF.Property<string>(c.NIF, "Value") == canonical || EF.Property<string>(c.NIF, "Value") == legacy), cancellationToken);
     }
 
     public async Task<Client?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
@@ -39,7 +39,7 @@ public sealed class ClientRepository : IClientRepository
         var normalized = email.Trim().ToLowerInvariant();
         await using var context = _contextFactory.CreateContext();
         return await context.Clients
-            .FirstOrDefaultAsync(c => EF.Property<string>(c.Email, "Value") == normalized, cancellationToken);
+            .FirstOrDefaultAsync(c => EF.Property<string>(c.Email!, "Value") == normalized, cancellationToken);
     }
 
     public async Task<Client?> GetByEmailExcludingIdAsync(string email, Guid excludeId, CancellationToken cancellationToken = default)
@@ -48,16 +48,15 @@ public sealed class ClientRepository : IClientRepository
         var normalized = email.Trim().ToLowerInvariant();
         await using var context = _contextFactory.CreateContext();
         return await context.Clients
-            .FirstOrDefaultAsync(c => c.Id != excludeId && EF.Property<string>(c.Email, "Value") == normalized, cancellationToken);
+            .FirstOrDefaultAsync(c => c.Id != excludeId && EF.Property<string>(c.Email!, "Value") == normalized, cancellationToken);
     }
 
     public async Task<Client?> GetByNifExcludingIdAsync(string nif, Guid excludeId, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(nif)) return null;
-        var normalized = nif.Trim().ToUpperInvariant();
+        if (!NIF.TryGetLookupSpellings(nif, out var canonical, out var legacy)) return null;
         await using var context = _contextFactory.CreateContext();
         return await context.Clients
-            .FirstOrDefaultAsync(c => c.Id != excludeId && c.NIF != null && EF.Property<string>(c.NIF, "Value") == normalized, cancellationToken);
+            .FirstOrDefaultAsync(c => c.Id != excludeId && c.NIF != null && (EF.Property<string>(c.NIF, "Value") == canonical || EF.Property<string>(c.NIF, "Value") == legacy), cancellationToken);
     }
 
     public async Task<IReadOnlyList<Client>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -123,7 +122,7 @@ public sealed class ClientRepository : IClientRepository
 
             query = query.Where(c =>
                 c.Name.Contains(term) ||
-                EF.Property<string>(c.Email, "Value").Contains(termLower) ||
+                EF.Property<string>(c.Email!, "Value").Contains(termLower) ||
                 (c.NIF != null && EF.Property<string>(c.NIF, "Value").Contains(termUpper)) ||
                 (codeHex != null
                     && codeHex.Length >= 4

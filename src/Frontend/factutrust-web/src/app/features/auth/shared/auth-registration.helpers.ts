@@ -1,35 +1,13 @@
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
-import { NIF_PATTERN } from '@shared/validation/validation-rules';
+import { canonicalizeNif, NIF_PATTERN } from '@shared/validation/validation-rules';
 import type { RegisterRequest } from '@core/services/auth.service';
 
 /**
- * Nettoie et normalise la valeur NIF du masque PrimeNG.
+ * Nettoie et ramène la valeur NIF du masque PrimeNG à la forme carte
+ * `1772793W/A/M/000`. L'écriture historique est acceptée puis réécrite.
  */
 export function cleanNifValue(value: string | null | undefined): string {
-  if (!value) return '';
-
-  let cleaned = value
-    .replace(/_/g, '')
-    .replace(/\s/g, '')
-    .replace(/[\u2044\u2215/]/g, '/')
-    .toUpperCase()
-    .trim();
-
-  if (!cleaned || cleaned === '/////' || cleaned === '///') {
-    return '';
-  }
-
-  const noSlashMatch = cleaned.match(/^(\d{7})([A-Z])([A-Z])([A-Z])(\d{3})$/);
-  if (noSlashMatch) {
-    return `${noSlashMatch[1]}/${noSlashMatch[2]}/${noSlashMatch[3]}/${noSlashMatch[4]}/${noSlashMatch[5]}`;
-  }
-
-  const missingFirstSlash = cleaned.match(/^(\d{7})([A-Z])\/([A-Z])\/([A-Z])\/(\d{3})$/);
-  if (missingFirstSlash) {
-    return `${missingFirstSlash[1]}/${missingFirstSlash[2]}/${missingFirstSlash[3]}/${missingFirstSlash[4]}/${missingFirstSlash[5]}`;
-  }
-
-  return cleaned;
+  return canonicalizeNif(value);
 }
 
 /** Remove spaces from Tunisian phone mask value. */
@@ -90,10 +68,10 @@ export function validateCompanyRegisterFormData(
 
   if (nifToValidate && nifToValidate.length > 0) {
     if (!NIF_PATTERN.test(nifToValidate)) {
-      errors.push('Le format du NIF est invalide (format attendu: 1234567/A/B/C/000)');
+      errors.push('Le format du NIF est invalide (format attendu: 1772793W/A/M/000)');
     }
   } else if (nifTouched) {
-    errors.push('Le matricule fiscal est requis (format: 1234567/A/B/C/000)');
+    errors.push('Le matricule fiscal est requis (format: 1772793W/A/M/000)');
   }
 
   return errors;
@@ -128,10 +106,10 @@ export function validateFirmRegisterFormData(
 
   if (nifToValidate && nifToValidate.length > 0) {
     if (!NIF_PATTERN.test(nifToValidate)) {
-      errors.push('Le format du NIF est invalide (format attendu: 1234567/A/B/C/000)');
+      errors.push('Le format du NIF est invalide (format attendu: 1772793W/A/M/000)');
     }
   } else if (nifTouched) {
-    errors.push('Le matricule fiscal est requis (format: 1234567/A/B/C/000)');
+    errors.push('Le matricule fiscal est requis (format: 1772793W/A/M/000)');
   }
 
   return errors;

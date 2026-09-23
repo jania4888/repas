@@ -475,7 +475,7 @@ export class PosStateService {
     const posClient: PosClient = {
       id: client.id,
       name: client.name,
-      email: client.email,
+      email: client.email ?? '',
       phone: client.phone,
       nif: client.nif,
       isWalkIn: false,

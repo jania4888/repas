@@ -29,6 +29,35 @@ public sealed class CreateSupplierCommandHandlerTests
         repo.Verify(r => r.AddAsync(It.IsAny<Supplier>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task Handle_BlankEmail_CreatesSupplierWithoutEmail(string? email)
+    {
+        var (handler, repo) = Build();
+
+        var first = await handler.Handle(Command(email: email), CancellationToken.None);
+        var second = await handler.Handle(Command(email: email, name: "Autre"), CancellationToken.None);
+
+        Assert.True(first.IsSuccess);
+        Assert.True(second.IsSuccess);
+        repo.Verify(r => r.GetByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+        repo.Verify(r => r.AddAsync(It.Is<Supplier>(s => s.Email == null), It.IsAny<CancellationToken>()), Times.Exactly(2));
+    }
+
+    [Fact]
+    public async Task Handle_InvalidEmail_DoesNotPersist()
+    {
+        var (handler, repo) = Build();
+
+        var result = await handler.Handle(Command(email: "pas-un-email"), CancellationToken.None);
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("invalide", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+        repo.Verify(r => r.AddAsync(It.IsAny<Supplier>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
     [Fact]
     public async Task Handle_DuplicateNif_ReturnsConflictWithExistingIdAndField()
     {
@@ -85,12 +114,13 @@ public sealed class CreateSupplierCommandHandlerTests
     }
 
     private static CreateSupplierCommand Command(
-        string email,
+        string? email,
         string? nif = null,
-        SupplierType type = SupplierType.Individual) =>
+        SupplierType type = SupplierType.Individual,
+        string name = "Ste test") =>
         new(new CreateSupplierDto
         {
-            Name = "Ste test",
+            Name = name,
             Type = type,
             Nif = nif,
             Street = "1 rue",

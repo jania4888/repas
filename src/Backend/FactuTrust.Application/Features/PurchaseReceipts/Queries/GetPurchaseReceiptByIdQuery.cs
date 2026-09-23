@@ -60,7 +60,7 @@ public sealed class GetPurchaseReceiptByIdQueryHandler
                 Id = receipt.Supplier.Id,
                 Name = receipt.Supplier.Name,
                 Nif = receipt.Supplier.NIF?.Value,
-                Email = receipt.Supplier.Email.Value,
+                Email = receipt.Supplier.Email?.Value,
                 Address = receipt.Supplier.Address.ToString()
             },
             Lines = receipt.Lines.OrderBy(l => l.LineNumber).Select(l => new PurchaseReceiptLineDto

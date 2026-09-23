@@ -514,7 +514,7 @@ public sealed class MigrationAssistantService : IMigrationAssistantService
             .Select(c => new ThirdPartySnapshot(
                 c.Id.ToString(), c.Name,
                 c.NIF != null ? c.NIF.Value : null,
-                c.Email.Value,
+                c.Email != null ? c.Email.Value : null,
                 c.Phone != null ? c.Phone.Value : null,
                 c.Address.City,
                 "client"))
@@ -523,7 +523,7 @@ public sealed class MigrationAssistantService : IMigrationAssistantService
             .Select(s => new ThirdPartySnapshot(
                 s.Id.ToString(), s.Name,
                 s.NIF != null ? s.NIF.Value : null,
-                s.Email.Value,
+                s.Email != null ? s.Email.Value : null,
                 s.Phone != null ? s.Phone.Value : null,
                 s.Address.City,
                 "fournisseur"))

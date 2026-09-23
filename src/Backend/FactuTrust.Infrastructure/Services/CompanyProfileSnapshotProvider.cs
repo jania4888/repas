@@ -74,7 +74,7 @@ public sealed class CompanyProfileSnapshotProvider : ICompanyProfileSnapshotProv
             City = CoalesceAddressField(tenantAddress.City, companyAddress?.City),
             Governorate = CoalesceAddressField(tenantAddress.Governorate, companyAddress?.Governorate),
             PostalCode = CoalesceOptional(tenantAddress.PostalCode, companyAddress?.PostalCode),
-            Email = tenant.Email.Value,
+            Email = tenant.Email?.Value,
             Phone = tenant.Phone.Value ?? company?.Phone?.Value
         };
     }

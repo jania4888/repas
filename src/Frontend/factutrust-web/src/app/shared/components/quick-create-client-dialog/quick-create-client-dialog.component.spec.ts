@@ -9,9 +9,10 @@ import { DrawerOverlayService } from '@core/services/drawer-overlay.service';
 
 describe('cleanNif', () => {
   it('normalizes valid NIF values', () => {
-    expect(cleanNif('8995220/v/v/b/222')).toBe('8995220/V/V/B/222');
-    expect(cleanNif('8995220VVB222')).toBe('8995220/V/V/B/222');
-    expect(cleanNif('9622552/e/v/e/552')).toBe('9622552/E/V/E/552');
+    expect(cleanNif('8995220/v/v/b/222')).toBe('8995220V/V/B/222');
+    expect(cleanNif('8995220VVB222')).toBe('8995220V/V/B/222');
+    expect(cleanNif('9622552/e/v/e/552')).toBe('9622552E/V/E/552');
+    expect(cleanNif('1772793W/A/M/000')).toBe('1772793W/A/M/000');
   });
 });
 
@@ -76,6 +77,19 @@ describe('QuickCreateClientDialogComponent', () => {
   it('allows submit for a complete individual form', () => {
     fillValidIndividualForm();
     expect(component.canSubmit()).toBeTrue();
+  });
+
+  it('allows submit when email is empty and rejects an invalid email', () => {
+    fillValidIndividualForm();
+    component.email.set('');
+    expect(component.canSubmit()).toBeTrue();
+    expect(component.showEmailError()).toBeFalse();
+
+    component.email.set('pas-un-email');
+    component.emailTouched.set(true);
+    expect(component.emailValid()).toBeFalse();
+    expect(component.canSubmit()).toBeFalse();
+    expect(component.showEmailError()).toBeTrue();
   });
 
   it('reactively enables canSubmit when fields are filled via signals', () => {

@@ -56,7 +56,7 @@ public sealed class GetSalesOrderByIdQueryHandler
                 Id = order.Client.Id,
                 Name = order.Client.Name,
                 Nif = order.Client.NIF?.Value,
-                Email = order.Client.Email.Value,
+                Email = order.Client.Email?.Value,
                 Address = order.Client.Address.ToSingleLine()
             },
             Reference = order.Reference,

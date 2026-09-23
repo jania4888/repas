@@ -115,12 +115,47 @@ public sealed class FirmManagedClientServiceTests
 
         var file = await db.PermanentFiles.SingleAsync(p => p.FirmClientAssignmentId == assignment.Id);
         Assert.Equal("Client Géré SARL", file.CompanyName);
-        Assert.Equal("1234567/A/B/C/000", file.Nif);
+        Assert.Equal("1234567A/B/C/000", file.Nif);
         Assert.Equal(TunisianLegalForm.Sarl, file.LegalForm);
+        Assert.Equal("client@example.com", tenant.Email!.Value);
         Assert.Equal(1, file.FiscalYearStartMonth);
         Assert.Equal(12, file.FiscalYearEndMonth);
         Assert.Equal(2400m, file.AnnualFeeAmount);
         Assert.Equal(BillingFrequency.Monthly, file.BillingFrequency);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task Create_without_email_provisions_dossier(string? email)
+    {
+        await using var db = BuildMaster();
+        await SeedFirmAsync(db);
+        var service = BuildService(db);
+        var dto = ValidDto();
+        dto = dto with { Email = email, CompanyName = "Sans Email " + (email ?? "null") };
+
+        var result = await service.CreateManagedClientAsync(FirmId, FirmUserId, dto);
+
+        Assert.True(result.IsSuccess, result.IsFailure ? result.Error.Description : null);
+        var tenant = await db.Tenants.SingleAsync(t => t.Id == result.Value.CompanyTenantId);
+        Assert.Null(tenant.Email);
+    }
+
+    [Fact]
+    public async Task Create_invalid_email_is_rejected_without_tenant()
+    {
+        await using var db = BuildMaster();
+        await SeedFirmAsync(db);
+        var service = BuildService(db);
+
+        var result = await service.CreateManagedClientAsync(
+            FirmId, FirmUserId, ValidDto() with { Email = "pas-un-email" });
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("invalide", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(1, await db.Tenants.CountAsync());
     }
 
     [Fact]

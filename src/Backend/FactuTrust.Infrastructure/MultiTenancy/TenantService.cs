@@ -483,7 +483,7 @@ public sealed class TenantService : ITenantService
 
         var passengerEmail = DefaultPassengerClient.Email.Trim().ToLowerInvariant();
         var alreadyExists = await context.Clients
-            .AnyAsync(c => EF.Property<string>(c.Email, "Value") == passengerEmail, cancellationToken);
+            .AnyAsync(c => EF.Property<string>(c.Email!, "Value") == passengerEmail, cancellationToken);
         if (alreadyExists)
         {
             _logger.LogDebug("Default passenger client already exists");

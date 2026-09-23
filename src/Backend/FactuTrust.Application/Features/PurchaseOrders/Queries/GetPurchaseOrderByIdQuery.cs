@@ -54,7 +54,7 @@ public sealed class GetPurchaseOrderByIdQueryHandler : IRequestHandler<GetPurcha
                 Id = po.Supplier.Id,
                 Name = po.Supplier.Name,
                 Nif = po.Supplier.NIF?.Value,
-                Email = po.Supplier.Email.Value,
+                Email = po.Supplier.Email?.Value,
                 Address = po.Supplier.Address.ToString()
             },
             Lines = po.Lines.OrderBy(l => l.LineNumber).Select(l => new PurchaseOrderLineDto

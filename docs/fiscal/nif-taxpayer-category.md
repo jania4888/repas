@@ -6,16 +6,18 @@
 
 ## Ce que le code suppose aujourd'hui
 
-`src/Backend/FactuTrust.Domain/ValueObjects/NIF.cs` décompose un matricule
-`NNNNNNN/L/A/M/NNN` ainsi :
+`src/Backend/FactuTrust.Domain/ValueObjects/NIF.cs` stocke la forme carte
+`NNNNNNNL/A/M/NNN` (ex. `1772793W/A/M/000`) et accepte encore la saisie historique
+`NNNNNNN/L/A/M/NNN`. Les deux écritures sont le même matricule. Les segments sont lus
+par structure, pas par index brut :
 
-| Propriété | Position | Interprétation supposée |
+| Propriété | Segment | Interprétation supposée |
 |---|---|---|
-| `IdentificationNumber` | `[0..7]` | numéro d'identification |
-| `TaxpayerCategory` | `[8]` (1ʳᵉ lettre) | **catégorie de contribuable** |
-| `MainActivity` | `[10]` (2ᵉ lettre) | activité principale |
-| `SecondaryEstablishment` | `[12]` (3ᵉ lettre) | établissement secondaire |
-| `OfficeCode` | `[14..17]` | code bureau |
+| `IdentificationNumber` | 7 chiffres | numéro d'identification |
+| `TaxpayerCategory` | 1ʳᵉ lettre (clé, collée aux chiffres) | **catégorie de contribuable** (hypothèse) |
+| `MainActivity` | 2ᵉ lettre | activité principale |
+| `SecondaryEstablishment` | 3ᵉ lettre | établissement secondaire |
+| `OfficeCode` | 3 chiffres | code bureau |
 
 et `TaxpayerCategories` associe à la 1ʳᵉ lettre une table **A–G** :
 A = personne physique, B = société de personnes, C = société de capitaux, **D = association**,
@@ -23,7 +25,8 @@ E = établissement public, F = personne morale étrangère, G = autre. Toute aut
 
 ## Pourquoi cette hypothèse est douteuse
 
-Le format accepté est `^\d{7}/[A-Z]/[A-Z]/[A-Z]/\d{3}$` : **les 26 lettres sont admises**, alors que
+Le format stocké est `^[0-9]{7}[A-Z]/[A-Z]/[A-Z]/[0-9]{3}$` (la saisie historique
+`^[0-9]{7}/[A-Z]/[A-Z]/[A-Z]/[0-9]{3}$` est canonisée vers lui) : **les 26 lettres sont admises**, alors que
 la table n'en décrit que 7. Or, dans la structure couramment documentée du matricule fiscal
 tunisien, la **première lettre est la clé de contrôle** (calculée, donc quelconque) ; les lettres
 porteuses de sens sont le **code TVA** et le **code catégorie** (M, P, N, C, E…), en 2ᵉ et 3ᵉ

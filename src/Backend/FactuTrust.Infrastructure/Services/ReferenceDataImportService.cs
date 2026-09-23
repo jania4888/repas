@@ -245,8 +245,8 @@ public sealed class ReferenceDataImportService : IReferenceDataImportService
                 ["nif"] = new[] { "nif", "matricule", "matriculefiscal", "identifiant", "mf" },
                 ["telephone"] = new[] { "telephone", "tel", "phone", "gsm" }
             },
-            new[] { "type", "nom", "email", "rue", "ville", "gouvernorat" },
-            "type (client/fournisseur), nom, email, rue, ville, gouvernorat (nif, telephone optionnels)"),
+            new[] { "type", "nom", "rue", "ville", "gouvernorat" },
+            "type (client/fournisseur), nom, rue, ville, gouvernorat (email, nif, telephone optionnels)"),
 
         _ => ( // OpeningBalance
             new Dictionary<string, string[]>
@@ -317,9 +317,10 @@ public sealed class ReferenceDataImportService : IReferenceDataImportService
             if (string.IsNullOrWhiteSpace(name))
                 issues.Add(Blocking(reference, "Nom obligatoire."));
 
-            // Invariants du domaine : email valide + adresse complète, sinon anomalie (jamais d'entité malformée).
-            if (EmailVo.Create(row.GetValueOrDefault("email", string.Empty)).IsFailure)
-                issues.Add(Blocking(reference, "Email absent ou invalide (obligatoire pour créer un tiers)."));
+            // Email facultatif : une cellule vide est acceptée, un format invalide bloque la ligne.
+            var emailRaw = row.GetValueOrDefault("email", string.Empty);
+            if (!string.IsNullOrWhiteSpace(emailRaw) && EmailVo.Create(emailRaw).IsFailure)
+                issues.Add(Blocking(reference, "Email invalide."));
             if (string.IsNullOrWhiteSpace(row.GetValueOrDefault("rue", string.Empty))
                 || string.IsNullOrWhiteSpace(row.GetValueOrDefault("ville", string.Empty))
                 || string.IsNullOrWhiteSpace(row.GetValueOrDefault("gouvernorat", string.Empty)))
@@ -430,7 +431,7 @@ public sealed class ReferenceDataImportService : IReferenceDataImportService
                 row.GetValueOrDefault("rue", string.Empty).Trim(),
                 row.GetValueOrDefault("ville", string.Empty).Trim(),
                 row.GetValueOrDefault("gouvernorat", string.Empty).Trim());
-            var email = EmailVo.Create(row.GetValueOrDefault("email", string.Empty));
+            var email = EmailVo.CreateOptional(row.GetValueOrDefault("email", string.Empty));
             if (address.IsFailure || email.IsFailure)
                 return Result.Failure<ReferenceImportCommitResultDto>(Error.Validation("Import", $"Tiers « {name} » : coordonnées invalides."));
 

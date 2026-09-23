@@ -53,7 +53,7 @@ public sealed record WizardNewClientDto
     public string TaxType { get; init; } = null!; // TAX_SUBJECT, NON_TAX_SUBJECT, TAX_EXEMPT
     public string? Nif { get; init; }
     public WizardAddressDto Address { get; init; } = null!;
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
     public string? ContactPerson { get; init; }
 }
@@ -170,7 +170,7 @@ public sealed record SellerSummaryDto
     public string Nif { get; init; } = null!;
     public string? Logo { get; init; }
     public WizardAddressDto Address { get; init; } = null!;
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
 }
 
@@ -185,7 +185,7 @@ public sealed record WizardClientResponseDto
     public string TaxType { get; init; } = null!;
     public string? Nif { get; init; }
     public WizardAddressDto Address { get; init; } = null!;
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
 }
 

@@ -204,7 +204,7 @@ public sealed class ProductOnboardingService : IProductOnboardingService
 
         var passengerEmail = DefaultPassengerClient.Email.Trim().ToLowerInvariant();
         var hasClient = await tenantDb.Clients.AsNoTracking()
-            .AnyAsync(c => c.Email.Value != passengerEmail, cancellationToken);
+            .AnyAsync(c => c.Email == null || c.Email.Value != passengerEmail, cancellationToken);
         if (hasClient)
             ids.Add(ProductOnboardingDefaults.CompanyItemIds.CreateClient);
 

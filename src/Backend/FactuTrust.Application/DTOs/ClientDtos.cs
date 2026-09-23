@@ -24,7 +24,7 @@ public sealed record ClientListDto
     public string Type { get; init; } = null!;
     public string TypeDisplay { get; init; } = null!;
     public string? Nif { get; init; }
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
     public string Street { get; init; } = null!;
     public string? StreetLine2 { get; init; }
@@ -47,7 +47,7 @@ public sealed record ClientSummaryDto
     public Guid Id { get; init; }
     public string Name { get; init; } = null!;
     public string? Nif { get; init; }
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string Address { get; init; } = null!;
 }
 
@@ -64,7 +64,7 @@ public sealed record ClientDetailDto
     public string? Nif { get; init; }
     
     public AddressDto Address { get; init; } = null!;
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
     
     public string? ContactPerson { get; init; }
@@ -110,7 +110,7 @@ public sealed record CreateClientDto
     public string? PostalCode { get; init; }
     public string Governorate { get; init; } = null!;
     
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
     public string? ContactPerson { get; init; }
     public string? Notes { get; init; }
@@ -135,7 +135,7 @@ public sealed record UpdateClientDto
     public string? PostalCode { get; init; }
     public string Governorate { get; init; } = null!;
     
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
     public string? ContactPerson { get; init; }
     public string? Notes { get; init; }

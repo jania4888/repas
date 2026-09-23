@@ -1,4 +1,5 @@
 using FactuTrust.Domain.Common;
+using FactuTrust.Domain.ValueObjects;
 
 namespace FactuTrust.Domain.Billing;
 
@@ -71,7 +72,7 @@ public sealed class PlatformFiscalSettings : Entity
     {
         return new PlatformFiscalSettings
         {
-            Nif = "0000000A/A/M/000",
+            Nif = NIF.Create("0000000A/A/M/000").Value.Value,
             CodeTva = null,
             CompanyName = "FactuTrust SARL",
             Address = "Tunis, Tunisie",
@@ -112,14 +113,16 @@ public sealed class PlatformFiscalSettings : Entity
         string receiptNumberPrefix,
         string? legalMentions)
     {
-        if (string.IsNullOrWhiteSpace(nif)) throw new ArgumentException("NIF requis", nameof(nif));
+        var nifResult = NIF.Create(nif);
+        if (nifResult.IsFailure)
+            throw new ArgumentException(nifResult.Error.Description, nameof(nif));
         if (string.IsNullOrWhiteSpace(companyName)) throw new ArgumentException("Raison sociale requise", nameof(companyName));
         if (string.IsNullOrWhiteSpace(address)) throw new ArgumentException("Adresse requise", nameof(address));
         if (defaultVatRate < 0 || defaultVatRate > 100) throw new ArgumentOutOfRangeException(nameof(defaultVatRate));
         if (timbreFiscalAmount < 0) throw new ArgumentOutOfRangeException(nameof(timbreFiscalAmount));
         if (clientWithholdingRate < 0 || clientWithholdingRate > 100) throw new ArgumentOutOfRangeException(nameof(clientWithholdingRate));
 
-        Nif = nif.Trim();
+        Nif = nifResult.Value.Value;
         CodeTva = string.IsNullOrWhiteSpace(codeTva) ? null : codeTva.Trim();
         CompanyName = companyName.Trim();
         Address = address.Trim();

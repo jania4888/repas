@@ -38,7 +38,7 @@ export const seleniumConfig = {
       password: 'Test1234@Password',
       confirmPassword: 'Test1234@Password',
       companyName: 'Test Company',
-      nif: '1234567/A/B/C/000',
+      nif: '1234567A/B/C/000',
       taxRegime: 0, // Régime réel
       companyEmail: 'contact@test.tn',
       phone: '98 455 112',

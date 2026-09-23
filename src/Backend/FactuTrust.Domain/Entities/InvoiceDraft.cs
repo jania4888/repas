@@ -330,7 +330,7 @@ public sealed record DraftNewClient
     public string? PostalCode { get; init; }
     public string City { get; init; } = null!;
     public string Governorate { get; init; } = null!;
-    public string Email { get; init; } = null!;
+    public string? Email { get; init; }
     public string? Phone { get; init; }
     public string? ContactPerson { get; init; }
 }

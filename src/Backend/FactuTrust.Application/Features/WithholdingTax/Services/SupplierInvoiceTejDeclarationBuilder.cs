@@ -114,7 +114,7 @@ public sealed class SupplierInvoiceTejDeclarationBuilder : ISupplierInvoiceTejDe
         }
 
         var address = FormatAddress(supplier.Address);
-        var email = supplier.Email.Value;
+        var email = supplier.Email?.Value ?? string.Empty;
         var phone = supplier.Phone?.Value ?? "00000000";
 
         var line = new TejRsCertificatLinePayload(

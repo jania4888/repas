@@ -15,6 +15,20 @@ public sealed class NifCategorySegmentCoherenceCheckerTests
         => NIF.Create($"1234567/{category}/B/C/000").Value;
 
     [Fact]
+    public void Official_and_historical_spellings_read_the_same_key_letter()
+    {
+        var historical = NIF.Create("1234567/D/B/C/000").Value;
+        var official = NIF.Create("1234567D/B/C/000").Value;
+
+        Assert.Equal(historical, official);
+        Assert.Equal(
+            NifCategorySegmentCoherenceChecker.CheckCoherence(historical, CompanySegments.Commerce),
+            NifCategorySegmentCoherenceChecker.CheckCoherence(official, CompanySegments.Commerce));
+        Assert.Null(NifCategorySegmentCoherenceChecker.CheckCoherence(
+            NIF.Create("1772793W/A/M/000").Value, CompanySegments.Association));
+    }
+
+    [Fact]
     public void Association_category_with_non_association_segment_warns()
     {
         var nif = MakeNif('D');

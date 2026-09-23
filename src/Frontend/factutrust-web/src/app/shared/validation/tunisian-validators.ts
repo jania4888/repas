@@ -22,6 +22,13 @@ import { ValidationErrorCodes } from './validation-error.model';
  * Custom Angular validators for Tunisian fiscal compliance.
  * Provides form-level validation synchronized with backend rules.
  */
+/** Accepte la forme carte et l'écriture historique. Erreur `pattern` pour les messages existants. */
+export function nifAcceptsEitherSpelling(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+  if (value === null || value === undefined || value === '') return null;
+  return isValidNif(String(value)) ? null : { pattern: true };
+}
+
 export class TunisianValidators {
 
   // ============================================
@@ -29,7 +36,7 @@ export class TunisianValidators {
   // ============================================
 
   /**
-   * Validates Tunisian NIF format: NNNNNNN/L/A/M/NNN
+   * Validates Tunisian NIF format: 1772793W/A/M/000
    */
   static nif(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -41,7 +48,7 @@ export class TunisianValidators {
       if (!isValidNif(value)) {
         return {
           [ValidationErrorCodes.INVALID_NIF]: {
-            message: 'Matricule fiscal invalide. Format attendu: NNNNNNN/L/A/M/NNN',
+            message: 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000',
             actualValue: value
           }
         };
@@ -75,7 +82,7 @@ export class TunisianValidators {
       if (!isValidNif(value)) {
         return {
           [ValidationErrorCodes.INVALID_NIF]: {
-            message: 'Matricule fiscal invalide. Format attendu: NNNNNNN/L/A/M/NNN'
+            message: 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000'
           }
         };
       }

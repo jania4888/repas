@@ -40,7 +40,8 @@ public sealed class SendPurchaseOrderEmailCommandHandler : IRequestHandler<SendP
         if (po is null)
             return Result.Failure(Error.NotFound("PurchaseOrder", request.PurchaseOrderId));
 
-        if (po.Supplier?.Email is null)
+        var recipientEmail = po.Supplier?.Email?.Value;
+        if (string.IsNullOrWhiteSpace(recipientEmail))
             return Result.Failure(Error.Validation("Supplier", "Le fournisseur n'a pas d'adresse email."));
 
         // Generate PDF
@@ -49,7 +50,7 @@ public sealed class SendPurchaseOrderEmailCommandHandler : IRequestHandler<SendP
 
         // Compose email
         var subject = $"Bon de commande {po.Number.Value}";
-        var supplierName = po.Supplier.Name;
+        var supplierName = po.Supplier!.Name;
         var htmlBody = $@"
             <h2>Bon de commande {po.Number.Value}</h2>
             <p>Bonjour {supplierName},</p>
@@ -71,7 +72,7 @@ public sealed class SendPurchaseOrderEmailCommandHandler : IRequestHandler<SendP
         };
 
         await _emailService.SendEmailAsync(
-            po.Supplier.Email.Value,
+            recipientEmail,
             subject,
             htmlBody,
             attachments,
@@ -84,7 +85,7 @@ public sealed class SendPurchaseOrderEmailCommandHandler : IRequestHandler<SendP
             newValues: new
             {
                 Number = po.Number.Value,
-                SupplierEmail = po.Supplier.Email.Value
+                SupplierEmail = recipientEmail
             },
             cancellationToken: cancellationToken);
 

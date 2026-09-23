@@ -57,8 +57,8 @@ export class ErrorMessageService {
         'email': 'Exemple : votre@email.com'
       },
       'nif': {
-        'pattern': 'Format attendu : 1234567/A/B/C/000',
-        'required': 'Format attendu : 1234567/A/B/C/000'
+        'pattern': 'Format attendu : 1772793W/A/M/000',
+        'required': 'Format attendu : 1772793W/A/M/000'
       },
       'phone': {
         'pattern': 'Format attendu : XX XXX XXX (8 chiffres)',

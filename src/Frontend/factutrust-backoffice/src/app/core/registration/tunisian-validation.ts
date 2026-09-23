@@ -12,8 +12,12 @@
  *  - Mot de passe → configuration ASP.NET Identity dans `src/Backend/FactuTrust.API/Program.cs`
  */
 
-/** Matricule fiscal : `NNNNNNN/L/L/L/NNN`. */
-export const NIF_PATTERN = /^\d{7}\/[A-Z]\/[A-Z]\/[A-Z]\/\d{3}$/;
+/** Forme stockée : `NNNNNNNL/A/M/NNN` (ex. `1772793W/A/M/000`). */
+export const NIF_PATTERN = /^[0-9]{7}[A-Z]\/[A-Z]\/[A-Z]\/[0-9]{3}$/;
+
+const NIF_COMPACT_PATTERN = /^([0-9]{7})([A-Z])([A-Z])([A-Z])([0-9]{3})$/;
+const NIF_LEGACY_PATTERN = /^([0-9]{7})\/([A-Z])\/([A-Z])\/([A-Z])\/([0-9]{3})$/;
+const NIF_MAX_INPUT_LENGTH = 40;
 
 /** Téléphone tunisien : `+216XXXXXXXX`, `216XXXXXXXX` ou `XXXXXXXX` (préfixe 2,3,4,5,7,8,9). */
 export const TUNISIAN_PHONE_PATTERN = /^(\+?216)?[2-57-9]\d{7}$/;
@@ -47,9 +51,33 @@ export const PASSWORD_POLICY = {
   requireNonAlphanumeric: true
 } as const;
 
-/** Normalise un matricule fiscal : trim, suppression des espaces, majuscules. */
+/**
+ * Ramène un matricule à la forme carte. Jumeau de `canonicalizeNif` (factutrust-web).
+ * L'écriture historique et la forme compacte sans slash sont réécrites.
+ */
 export function normalizeNif(value: string | null | undefined): string {
-  return (value ?? '').replace(/\s+/g, '').toUpperCase().trim();
+  if (!value || value.length > NIF_MAX_INPUT_LENGTH) return '';
+
+  const cleaned = value
+    .replace(/_/g, '')
+    .replace(/[\s\t]/g, '')
+    .replace(/[\u2044\u2215/]/g, '/')
+    .toUpperCase()
+    .trim();
+
+  if (!cleaned || cleaned.length > NIF_MAX_INPUT_LENGTH) return '';
+
+  const compact = cleaned.match(NIF_COMPACT_PATTERN);
+  if (compact) {
+    return `${compact[1]}${compact[2]}/${compact[3]}/${compact[4]}/${compact[5]}`;
+  }
+
+  const legacy = cleaned.match(NIF_LEGACY_PATTERN);
+  if (legacy) {
+    return `${legacy[1]}${legacy[2]}/${legacy[3]}/${legacy[4]}/${legacy[5]}`;
+  }
+
+  return cleaned;
 }
 
 /** Normalise un téléphone tunisien vers la forme `+216XXXXXXXX` quand c'est possible. */

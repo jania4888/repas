@@ -177,7 +177,7 @@
         <label for="wiz-nif" class="sr-only">Matricule fiscal (NIF)</label>
         <div class="input-icon-wrapper p-inputmask-wrapper">
           <i class="pi pi-hashtag icon"></i>
-          <p-inputMask id="wiz-nif" formControlName="nif" mask="9999999/a/a/a/999" placeholder="NIF : 1234567/A/B/C/000"
+          <p-inputMask id="wiz-nif" formControlName="nif" appNifMaskPaste mask="9999999a/a/a/999" placeholder="NIF : 1772793W/A/M/000"
                        styleClass="w-full uppercase" (onBlur)="onNifBlur()"
                        [attr.aria-required]="true"
                        [class.ng-invalid]="isInvalid('nif')">
@@ -185,7 +185,7 @@
         </div>
         @if (isInvalid('nif')) {
           <div class="field-error" id="wiz-nif-error" role="alert" @fadeInOut>
-            <i class="pi pi-info-circle"></i> Format attendu: 1234567/A/B/C/000
+            <i class="pi pi-info-circle"></i> Format attendu: 1772793W/A/M/000
           </div>
         }
         @if (nifSegmentSuggestion()?.category) {

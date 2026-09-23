@@ -1428,8 +1428,9 @@ export class InvoiceDetailComponent implements OnInit {
         command: () => this.downloadPdf()
       },
       {
-        label: 'Envoyer par email',
+        label: invoice.client.email ? 'Envoyer par email' : 'Envoyer par email (adresse manquante)',
         icon: 'pi pi-envelope',
+        disabled: !invoice.client.email,
         command: () => this.sendByEmail()
       },
       {
@@ -2024,6 +2025,14 @@ export class InvoiceDetailComponent implements OnInit {
   sendByEmail(): void {
     const invoice = this.invoice();
     if (!invoice) return;
+    if (!invoice.client.email) {
+      this.toastService.add({
+        severity: 'warn',
+        summary: 'Email manquant',
+        detail: "Le client n'a pas d'adresse email."
+      });
+      return;
+    }
 
     this.confirmationService.confirm({
       message: `Envoyer la facture ${invoice.number} par email à ${invoice.client.email} ?`,

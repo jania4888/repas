@@ -8,7 +8,7 @@ export interface Client {
   id: string;
   code: string;
   name: string;
-  email: string;
+  email: string | null;
   phone: string;
   nif: string;
   type: ClientType;
@@ -48,7 +48,7 @@ export interface ClientListItem {
   id: string;
   code: string;
   name: string;
-  email: string;
+  email: string | null;
   phone: string;
   nif: string;
   type: ClientType;
@@ -84,7 +84,7 @@ export interface ClientListSummary {
 
 export interface CreateClientRequest {
   name: string;
-  email: string;
+  email: string | null;
   phone?: string;
   nif?: string;
   type: ClientType;

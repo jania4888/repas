@@ -23,7 +23,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
  * Conformité tunisienne:
  * - Raison sociale obligatoire
  * - Adresse complète obligatoire
- * - Matricule fiscal (NIF) obligatoire au format NNNNNNN/L/A/M/NNN
+ * - Matricule fiscal (NIF) obligatoire au format 1772793W/A/M/000
  * - Registre de commerce recommandé
  *
  * @deprecated Utilisé uniquement par le parcours legacy 6 étapes
@@ -181,7 +181,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
                   <code>{{ selectedSeller.nif }}</code>
                   <span 
                     class="nif-valid"
-                    pTooltip="Format conforme: NNNNNNN/L/A/M/NNN"
+                    pTooltip="Format conforme: 1772793W/A/M/000"
                     tooltipPosition="top">
                     <i class="pi pi-check-circle"></i>
                     Valide

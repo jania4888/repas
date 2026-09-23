@@ -33,7 +33,9 @@ import {
   serializeSupplierRs7IsBracket
 } from '@core/services/supplier-rs7-enums';
 import { WithholdingTaxService, WithholdingTaxTypeDto, IdentificationType } from '@core/services/withholding-tax.service';
-import { NIF_PATTERN } from '@shared/validation';
+import { canonicalizeNif, NIF_PATTERN } from '@shared/validation';
+import { nifAcceptsEitherSpelling } from '@shared/validation/tunisian-validators';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 
 interface GovernorateOption {
   label: string;
@@ -50,6 +52,7 @@ interface GovernorateOption {
     ReactiveFormsModule,
     InputTextModule,
     InputMaskModule,
+    NifMaskPasteDirective,
     Textarea,
     InputNumberModule,
     SelectModule,
@@ -127,15 +130,16 @@ interface GovernorateOption {
                 <p-inputMask
                   id="nif"
                   formControlName="nif"
-                  mask="9999999/a/a/a/999"
-                  placeholder="Ex. 1234567/A/B/C/000"
+                  appNifMaskPaste
+                  mask="9999999a/a/a/999"
+                  placeholder="Ex. 1772793W/A/M/000"
                   styleClass="w-full"
                   [style]="{'text-transform': 'uppercase'}"
                   [class.ng-invalid]="isInvalid('nif')"
                   (onBlur)="normalizeNif()">
                 </p-inputMask>
                 @if (form.get('type')?.value === SupplierType.Business) {
-                  <small class="form-hint">Format : 1234567/A/B/C/000</small>
+                  <small class="form-hint">Format : 1772793W/A/M/000</small>
                 }
                 @if (isInvalid('nif')) {
                   <div class="form-error">
@@ -173,7 +177,7 @@ interface GovernorateOption {
 
           <app-form-section title="Coordonnées" icon="pi-envelope" [number]="2">
             <div class="form-group">
-              <label for="email">Adresse email <span class="required">*</span></label>
+              <label for="email">Adresse email</label>
               <input
                 pInputText
                 id="email"
@@ -657,7 +661,7 @@ export class SupplierFormComponent implements OnInit {
     name: ['', [Validators.required, Validators.maxLength(200)]],
     type: [SupplierType.Business, Validators.required],
     nif: [''],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.email]],
     phone: [''],
     contactPerson: [''],
     paymentTermDays: [30, [Validators.min(0), Validators.max(365)]],
@@ -767,7 +771,7 @@ export class SupplierFormComponent implements OnInit {
     const nif = this.form.get('nif');
     const isBusiness = this.form.get('type')?.value === SupplierType.Business;
     if (isBusiness) {
-      nif?.setValidators([Validators.required, Validators.pattern(NIF_PATTERN)]);
+      nif?.setValidators([Validators.required, nifAcceptsEitherSpelling]);
     } else {
       nif?.setValidators([]);
     }
@@ -828,26 +832,10 @@ export class SupplierFormComponent implements OnInit {
     const nifControl = this.form.get('nif');
     if (!nifControl) return;
 
-    let value = nifControl.value as string;
+    const value = nifControl.value as string;
     if (!value || typeof value !== 'string') return;
 
-    // Nettoyer les placeholders du masque (_), espaces, et normaliser
-    let normalized = value.replace(/_/g, '').trim().replace(/\s+/g, '').toUpperCase();
-    if (!normalized || normalized === '/////' || normalized === '///') {
-      normalized = '';
-    }
-
-    if (normalized.length > 0 && !normalized.includes('/')) {
-      const match = normalized.match(/^(\d{7})([A-Z0-9])([A-Z0-9])([A-Z0-9])(\d{3})$/);
-      if (match) {
-        normalized = `${match[1]}/${match[2]}/${match[3]}/${match[4]}/${match[5]}`;
-      }
-    }
-
-    const missingFirstSlash = normalized.match(/^(\d{7})([A-Z])\/([A-Z])\/([A-Z])\/(\d{3})$/);
-    if (missingFirstSlash) {
-      normalized = `${missingFirstSlash[1]}/${missingFirstSlash[2]}/${missingFirstSlash[3]}/${missingFirstSlash[4]}/${missingFirstSlash[5]}`;
-    }
+    const normalized = canonicalizeNif(value);
 
     // Ne mettre à jour le contrôle que si vide ou NIF complet valide (évite conflit avec p-inputMask)
     const isEmpty = normalized === '';
@@ -865,7 +853,7 @@ export class SupplierFormComponent implements OnInit {
       return 'Le matricule fiscal est obligatoire pour un fournisseur entreprise';
     }
     if (control.errors['pattern']) {
-      return 'Matricule fiscal invalide. Format attendu: NNNNNNN/L/A/M/NNN';
+      return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';
     }
     if (control.errors['server']) {
       const server = control.errors['server'];
@@ -897,7 +885,7 @@ export class SupplierFormComponent implements OnInit {
             name: s.name,
             type: s.type,
             nif: s.nif || '',
-            email: s.email,
+            email: s.email ?? '',
             phone: s.phone || '',
             contactPerson: s.contactPerson || '',
             paymentTermDays: s.paymentTermDays,
@@ -950,7 +938,7 @@ export class SupplierFormComponent implements OnInit {
         city: val.city,
         postalCode: val.postalCode || undefined,
         governorate: val.governorate,
-        email: val.email,
+        email: val.email?.trim() || null,
         phone: val.phone || undefined,
         contactPerson: val.contactPerson || undefined,
         paymentTermDays: val.paymentTermDays,
@@ -974,15 +962,7 @@ export class SupplierFormComponent implements OnInit {
         }
       });
     } else {
-      let cleanNif = val.nif ? (val.nif as string).replace(/_/g, '').trim().replace(/\s+/g, '').toUpperCase() : '';
-      const missingFirstSlash = cleanNif.match(/^(\d{7})([A-Z])\/([A-Z])\/([A-Z])\/(\d{3})$/);
-      if (missingFirstSlash) {
-        cleanNif = `${missingFirstSlash[1]}/${missingFirstSlash[2]}/${missingFirstSlash[3]}/${missingFirstSlash[4]}/${missingFirstSlash[5]}`;
-      }
-      const noSlashMatch = cleanNif.match(/^(\d{7})([A-Z])([A-Z])([A-Z])(\d{3})$/);
-      if (noSlashMatch) {
-        cleanNif = `${noSlashMatch[1]}/${noSlashMatch[2]}/${noSlashMatch[3]}/${noSlashMatch[4]}/${noSlashMatch[5]}`;
-      }
+      const cleanNif = val.nif ? canonicalizeNif(val.nif as string) : '';
       const request: CreateSupplierRequest = {
         name: val.name,
         type: val.type,
@@ -992,7 +972,7 @@ export class SupplierFormComponent implements OnInit {
         city: val.city,
         postalCode: val.postalCode || undefined,
         governorate: val.governorate,
-        email: val.email,
+        email: val.email?.trim() || null,
         phone: val.phone || undefined,
         contactPerson: val.contactPerson || undefined,
         paymentTermDays: val.paymentTermDays ?? 30,

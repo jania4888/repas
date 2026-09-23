@@ -52,7 +52,7 @@ public sealed class CompanyProfileSnapshotProviderTests
         var snapshot = await provider.CaptureForCompanyTenantAsync(CompanyId);
 
         Assert.Equal("Société Hadad", snapshot.CompanyName);
-        Assert.Equal("1234567/A/B/C/000", snapshot.Nif);
+        Assert.Equal("1234567A/B/C/000", snapshot.Nif);
         Assert.Equal((int)TaxRegime.RealRegime, snapshot.TaxRegime);
         Assert.Equal("12 rue Habib Bourguiba", snapshot.Street);
         Assert.Equal("Tunis", snapshot.City);

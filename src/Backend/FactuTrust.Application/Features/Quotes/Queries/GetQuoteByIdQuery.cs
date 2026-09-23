@@ -46,7 +46,7 @@ public sealed class GetQuoteByIdQueryHandler : IRequestHandler<GetQuoteByIdQuery
                 Id = quote.Client.Id,
                 Name = quote.Client.Name,
                 Nif = quote.Client.NIF?.Value,
-                Email = quote.Client.Email.Value,
+                Email = quote.Client.Email?.Value,
                 Address = quote.Client.Address.ToSingleLine()
             },
             Reference = quote.Reference,

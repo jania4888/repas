@@ -219,9 +219,9 @@ public sealed class DunningExecutorJob
                 {
                     var tenant = await _db.Tenants.AsNoTracking()
                         .Where(t => t.Id == state.TenantId)
-                        .Select(t => new { t.CompanyName, EmailValue = t.Email.Value })
+                        .Select(t => new { t.CompanyName, EmailValue = t.Email != null ? t.Email.Value : null })
                         .FirstOrDefaultAsync(cancellationToken);
-                    if (tenant is not null)
+                    if (tenant is not null && !string.IsNullOrWhiteSpace(tenant.EmailValue))
                     {
                         var variables = new Dictionary<string, object?>
                         {

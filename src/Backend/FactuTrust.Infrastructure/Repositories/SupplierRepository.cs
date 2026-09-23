@@ -1,6 +1,7 @@
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Domain.Entities;
+using FactuTrust.Domain.ValueObjects;
 using FactuTrust.Infrastructure.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,11 +27,10 @@ public sealed class SupplierRepository : ISupplierRepository
 
     public async Task<Supplier?> GetByNifAsync(string nif, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(nif)) return null;
-        var normalized = nif.Trim().ToUpperInvariant();
+        if (!NIF.TryGetLookupSpellings(nif, out var canonical, out var legacy)) return null;
         await using var context = _contextFactory.CreateContext();
         return await context.Suppliers
-            .FirstOrDefaultAsync(s => s.NIF != null && EF.Property<string>(s.NIF, "Value") == normalized, cancellationToken);
+            .FirstOrDefaultAsync(s => s.NIF != null && (EF.Property<string>(s.NIF, "Value") == canonical || EF.Property<string>(s.NIF, "Value") == legacy), cancellationToken);
     }
 
     public async Task<Supplier?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
@@ -39,7 +39,7 @@ public sealed class SupplierRepository : ISupplierRepository
         var normalized = email.Trim().ToLowerInvariant();
         await using var context = _contextFactory.CreateContext();
         return await context.Suppliers
-            .FirstOrDefaultAsync(s => EF.Property<string>(s.Email, "Value") == normalized, cancellationToken);
+            .FirstOrDefaultAsync(s => EF.Property<string>(s.Email!, "Value") == normalized, cancellationToken);
     }
 
     public async Task<IReadOnlyList<Supplier>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -99,7 +99,7 @@ public sealed class SupplierRepository : ISupplierRepository
             var termUpper = term.ToUpperInvariant();
             query = query.Where(s =>
                 s.Name.Contains(term) ||
-                EF.Property<string>(s.Email, "Value").Contains(termLower) ||
+                EF.Property<string>(s.Email!, "Value").Contains(termLower) ||
                 (s.NIF != null && EF.Property<string>(s.NIF, "Value").Contains(termUpper)));
         }
 

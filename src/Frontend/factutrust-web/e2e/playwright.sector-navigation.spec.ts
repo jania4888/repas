@@ -120,7 +120,7 @@ test.describe('Tests Playwright - Navigation sectorielle (module scoping BTP & C
     await fillPasswordField(page, 'p-password[formcontrolname="password"]', 'Test1234@Password');
     await fillPasswordField(page, 'p-password[formcontrolname="confirmPassword"]', 'Test1234@Password');
     await fillField(page, '#wiz-companyName', 'BTP Test Company');
-    await fillMaskedField(page, 'p-inputmask[formcontrolname="nif"]', '1234567/A/B/C/000');
+    await fillMaskedField(page, 'p-inputmask[formcontrolname="nif"]', '1234567A/B/C/000');
     await selectDropdownOption(page, 'p-select[formcontrolname="taxRegime"]', 'Régime réel');
     await fillField(page, '#wiz-companyEmail', 'contact@btp-test.tn');
     await fillMaskedField(page, 'p-inputmask[formcontrolname="phone"]', '98 455 112');

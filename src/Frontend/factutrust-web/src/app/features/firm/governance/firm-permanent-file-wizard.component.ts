@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { FirmGovernanceService, PermanentFile, LegalRepresentative, Shareholder } from '@core/services/firm-governance.service';
 import { FirmAssignmentService } from '@core/services/firm-assignment.service';
-import { TUNISIAN_GOVERNORATE_OPTIONS } from '@shared/validation/validation-rules';
+import { canonicalizeNif, TUNISIAN_GOVERNORATE_OPTIONS } from '@shared/validation/validation-rules';
 import { TunisianValidators } from '@shared/validation/tunisian-validators';
 import { ToastService } from '@core/services/toast.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
@@ -208,7 +208,7 @@ interface FirmUserOption {
                 <input pInputText formControlName="companyName" />
               </label>
               <label>Matricule fiscal (NIF) *
-                <input pInputText formControlName="nif" placeholder="1234567/A/B/C/000" />
+                <input pInputText formControlName="nif" placeholder="1772793W/A/M/000" (blur)="canonicalizeNifField()" />
               </label>
               <label>Identifiant RNE
                 <input pInputText formControlName="rneIdentifier" />
@@ -887,6 +887,14 @@ export class FirmPermanentFileWizardComponent implements OnInit, OnDestroy {
     });
   }
 
+  canonicalizeNifField(): void {
+    const control = this.form.controls.nif;
+    const canonical = canonicalizeNif(control.value);
+    if (canonical && canonical !== control.value) {
+      control.setValue(canonical);
+    }
+  }
+
   private validateStep1(): boolean {
     this.step1Tried.set(true);
     this.form.controls.companyName.markAsTouched();
@@ -912,7 +920,7 @@ export class FirmPermanentFileWizardComponent implements OnInit, OnDestroy {
     const body: Record<string, unknown> = {
       wizardStep: this.step(),
       companyName: raw.companyName ?? undefined,
-      nif: raw.nif ?? undefined,
+      nif: raw.nif ? (canonicalizeNif(raw.nif) || raw.nif) : undefined,
       rneIdentifier: raw.rneIdentifier ?? undefined,
       legalForm: raw.legalForm ?? undefined,
       incorporationDate: raw.incorporationDate

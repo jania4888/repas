@@ -21,6 +21,7 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ErrorMessageService } from '@core/services/error-message.service';
 import { AuthShellComponent } from '../auth-shell/auth-shell.component';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 import { REGISTER_AUTH_SHELL_CONFIG } from '../auth-shell/auth-shell.config';
 import { environment } from '@environments/environment';
 import { GOVERNORATE_OPTIONS } from '../shared/auth-governorate.options';
@@ -64,6 +65,7 @@ interface TaxRegime {
     ButtonModule,
     SelectModule,
     InputMaskModule,
+    NifMaskPasteDirective,
     StepsModule,
     MessageModule,
     DividerModule,

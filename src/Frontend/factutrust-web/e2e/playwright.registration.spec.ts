@@ -227,7 +227,7 @@ test.describe('Tests Playwright - Inscription FactuTrust (wizard 4 étapes)', ()
     await fillField(page, '#wiz-companyName', testData.companyName);
 
     // Saisir le NIF avec underscore (p-inputmask)
-    await fillMaskedField(page, 'p-inputmask[formcontrolname="nif"]', '1234567/A/B/C/000_');
+    await fillMaskedField(page, 'p-inputmask[formcontrolname="nif"]', '1234567A/B/C/000_');
     const nifInput = page.locator('p-inputmask[formcontrolname="nif"] input');
 
     // Quitter le champ (blur) en cliquant ailleurs
@@ -238,7 +238,31 @@ test.describe('Tests Playwright - Inscription FactuTrust (wizard 4 étapes)', ()
     console.log(`NIF après blur: ${nifValue}`);
 
     expect(nifValue).not.toContain('_');
-    expect(nifValue.toUpperCase().replace(/\s/g, '')).toBe('1234567/A/B/C/000');
+    expect(nifValue.toUpperCase().replace(/\s/g, '')).toBe('1234567A/B/C/000');
+  });
+
+  /**
+   * Coller l'écriture historique : le masque reçoit la forme carte.
+   */
+  test('devrait réécrire un matricule collé au format historique', async ({ page }) => {
+    const testData = config.testData.validUser;
+
+    await completeStepCompanyType(page, testData.companySegmentLabel, testData.businessDomainLabel);
+    await page.waitForSelector('#wiz-nif', { timeout: 5000 });
+
+    const nifHost = page.locator('p-inputmask[formcontrolname="nif"]');
+    await nifHost.locator('input').click();
+    await nifHost.evaluate((el) => {
+      const data = new DataTransfer();
+      data.setData('text/plain', '1234567/A/B/C/000');
+      el.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, cancelable: true, clipboardData: data }));
+    });
+
+    await fillField(page, '#wiz-companyEmail', '');
+    await page.waitForTimeout(300);
+
+    const nifValue = await nifHost.locator('input').inputValue();
+    expect(nifValue.toUpperCase().replace(/\s/g, '')).toBe('1234567A/B/C/000');
   });
 
   /**

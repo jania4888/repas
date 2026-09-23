@@ -153,8 +153,9 @@ public sealed class CompanyRegistrationService : ICompanyRegistrationService
 
         var nifCheckSw = Stopwatch.StartNew();
         var nifValue = nifResult.Value.Value;
+        var nifLegacy = nifResult.Value.LegacySpelling;
         var nifExists = await _masterContext.Tenants.AsNoTracking()
-            .AnyAsync(t => t.IsActive && t.NIF.Value == nifValue, cancellationToken);
+            .AnyAsync(t => t.IsActive && (t.NIF.Value == nifValue || t.NIF.Value == nifLegacy), cancellationToken);
         LogStep("NifPrecheck", nifCheckSw.ElapsedMilliseconds, null, correlationId, context);
         if (nifExists)
             return CompanyRegistrationResult.ConflictNifFailure(DuplicateNifMessage);

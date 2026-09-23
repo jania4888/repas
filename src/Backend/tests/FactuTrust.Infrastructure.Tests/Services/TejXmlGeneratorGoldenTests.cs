@@ -88,4 +88,50 @@ public sealed class TejXmlGeneratorGoldenTests
         var errors = validator.Validate(export.XmlContent);
         Assert.Empty(errors);
     }
+
+    [Fact]
+    public async Task GenerateAsync_MissingBeneficiaryEmail_WritesEmptyAdresseMail()
+    {
+        var address = Address.Create("1 rue Test", "Tunis", "Tunis", null, null);
+        Assert.True(address.IsSuccess);
+        var nif = NIF.Create("1234567/A/B/C/000");
+        Assert.True(nif.IsSuccess);
+        var email = Email.Create("declarant@test.tn");
+        Assert.True(email.IsSuccess);
+        var company = Company.Create("Société Déclarante", address.Value, nif.Value, email.Value).Value;
+
+        var line = new TejRsCertificatLinePayload(
+            "RS7_000001", 100m, 19m, 19m, 119m, 1.5m, 1.5m, 117.5m,
+            null, null, null, null, null);
+
+        var payload = new TejRsCertificatPayload(
+            "CERT-NO-MAIL",
+            new DateTime(2026, 1, 20),
+            2026,
+            false,
+            false,
+            BeneficiaryCategory.PersonneMorale,
+            IdentificationType.MatriculeFiscal,
+            "8988998A",
+            true,
+            "TN",
+            null,
+            "TECHNO TEST",
+            "Adresse",
+            BeneficiaryEmail: null,
+            BeneficiaryPhone: "71123456",
+            BeneficiaryActivity: "Commerce",
+            Lines: new List<TejRsCertificatLinePayload> { line },
+            TotalAmountHT: 100m,
+            TotalAmountTVA: 19m,
+            TotalAmountTTC: 119m,
+            TotalAmountWithheld: 1.5m,
+            TotalNetPaid: 117.5m);
+
+        var sut = new TejXmlGeneratorService(new TejXmlValidatorService());
+        var export = await sut.GenerateAsync(company, new List<TejRsCertificatPayload> { payload }, 2026, 1, TejSubmissionType.Initial);
+        var doc = XDocument.Parse(Encoding.UTF8.GetString(export.XmlContent));
+        var mail = doc.Descendants("AdresseMail").Single();
+        Assert.Equal(string.Empty, mail.Value);
+    }
 }

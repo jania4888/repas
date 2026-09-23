@@ -4,21 +4,40 @@ using FactuTrust.Domain.Common;
 namespace FactuTrust.Domain.ValueObjects;
 
 /// <summary>
-/// Represents a Tunisian Numéro d'Identification Fiscale (NIF).
-/// Also known as Matricule Fiscal.
-/// Format: NNNNNNN/L/A/M/NNN (ex: 1234567/A/B/C/000).
+/// Segments d'un matricule fiscal tunisien, indépendants de l'écriture stockée.
+/// La première lettre (<see cref="Key"/>) est celle que <see cref="NIF.TaxpayerCategory"/> expose :
+/// c'est la clé collée aux 7 chiffres sur la carte (<c>W</c> dans <c>1772793W/A/M/000</c>),
+/// pas une catégorie réinterprétée.
+/// </summary>
+public readonly record struct NifParts(string Digits, char Key, char Second, char Third, string Office);
+
+/// <summary>
+/// Numéro d'identification fiscale tunisien (matricule fiscal).
+/// Forme stockée : <c>NNNNNNNL/A/M/NNN</c> (ex. <c>1772793W/A/M/000</c>).
+/// La forme historique <c>NNNNNNN/L/A/M/NNN</c> est acceptée en saisie et ramenée à la forme stockée.
+/// Les deux écritures désignent le même matricule.
 /// </summary>
 public sealed partial class NIF : ValueObject
 {
-    private const string FullFormatPattern = @"^\d{7}/[A-Z]/[A-Z]/[A-Z]/\d{3}$";
+    public const int MaxInputLength = 40;
+
+    private const string OfficialPattern = @"^([0-9]{7})([A-Z])/([A-Z])/([A-Z])/([0-9]{3})$";
+    private const string LegacyPattern = @"^([0-9]{7})/([A-Z])/([A-Z])/([A-Z])/([0-9]{3})$";
+
+    public const string FormatError =
+        "Format du NIF invalide. Format attendu: NNNNNNNL/A/M/NNN (ex: 1772793W/A/M/000).";
 
     public string Value { get; private set; }
 
-    public string IdentificationNumber => Value.Length >= 7 ? Value[..7] : string.Empty;
-    public char TaxpayerCategory => Value.Length >= 9 ? Value[8] : ' ';
-    public char MainActivity => Value.Length >= 11 ? Value[10] : ' ';
-    public char SecondaryEstablishment => Value.Length >= 13 ? Value[12] : ' ';
-    public string OfficeCode => Value.Length >= 17 ? Value[14..17] : string.Empty;
+    public string IdentificationNumber => TryGetParts(Value, out var parts) ? parts.Digits : string.Empty;
+    public char TaxpayerCategory => TryGetParts(Value, out var parts) ? parts.Key : ' ';
+    public char MainActivity => TryGetParts(Value, out var parts) ? parts.Second : ' ';
+    public char SecondaryEstablishment => TryGetParts(Value, out var parts) ? parts.Third : ' ';
+    public string OfficeCode => TryGetParts(Value, out var parts) ? parts.Office : string.Empty;
+
+    /// <summary>Écriture historique <c>NNNNNNN/L/A/M/NNN</c> du même matricule.</summary>
+    public string LegacySpelling =>
+        TryGetParts(Value, out var parts) ? FormatLegacy(parts) : Value;
 
     // Required for EF Core
     private NIF()
@@ -26,9 +45,9 @@ public sealed partial class NIF : ValueObject
         Value = string.Empty;
     }
 
-    private NIF(string value)
+    private NIF(string canonical)
     {
-        Value = value.ToUpperInvariant();
+        Value = canonical;
     }
 
     public static Result<NIF> Create(string value)
@@ -36,23 +55,66 @@ public sealed partial class NIF : ValueObject
         if (string.IsNullOrWhiteSpace(value))
             return Result.Failure<NIF>(Error.Validation("NIF", "Le NIF est obligatoire"));
 
-        // Normalisation : trim, suppression des espaces, conversion en majuscules
-        var normalizedValue = value.Trim().Replace(" ", "").ToUpperInvariant();
+        if (!TryCanonicalize(value, out var canonical))
+            return Result.Failure<NIF>(Error.Validation("NIF", FormatError));
 
-        if (!FullFormatRegex().IsMatch(normalizedValue))
-            return Result.Failure<NIF>(Error.Validation("NIF",
-                "Format du NIF invalide. Format attendu: NNNNNNN/L/A/M/NNN (ex: 1234567/A/B/C/000)."));
-
-        return Result.Success(new NIF(normalizedValue));
+        return Result.Success(new NIF(canonical));
     }
 
-    public static bool IsValid(string value)
+    public static bool IsValid(string? value) => TryCanonicalize(value, out _);
+
+    /// <summary>
+    /// Ramène une saisie à la forme stockée. Idempotent.
+    /// Rejette toute chaîne vide, trop longue, ou qui n'est ni la forme officielle ni la forme historique.
+    /// </summary>
+    public static bool TryCanonicalize(string? value, out string canonical)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        canonical = string.Empty;
+        if (!TryGetParts(value, out var parts))
             return false;
 
-        var normalized = value.Trim().Replace(" ", "").ToUpperInvariant();
-        return FullFormatRegex().IsMatch(normalized);
+        canonical = FormatOfficial(parts);
+        return true;
+    }
+
+    /// <summary>
+    /// Lit les cinq segments depuis la forme officielle ou historique.
+    /// Les index bruts ne sont pas utilisés : une valeur historique encore en base reste lisible.
+    /// </summary>
+    public static bool TryGetParts(string? value, out NifParts parts)
+    {
+        parts = default;
+        if (!TryPrepare(value, out var prepared))
+            return false;
+
+        var official = OfficialRegex().Match(prepared);
+        if (official.Success)
+        {
+            parts = FromMatch(official);
+            return true;
+        }
+
+        var legacy = LegacyRegex().Match(prepared);
+        if (legacy.Success)
+        {
+            parts = FromMatch(legacy);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Forme officielle et forme historique, pour une recherche d'unicité.</summary>
+    public static bool TryGetLookupSpellings(string? value, out string canonical, out string legacy)
+    {
+        canonical = string.Empty;
+        legacy = string.Empty;
+        if (!TryGetParts(value, out var parts))
+            return false;
+
+        canonical = FormatOfficial(parts);
+        legacy = FormatLegacy(parts);
+        return true;
     }
 
     public override string ToString() => Value;
@@ -62,8 +124,36 @@ public sealed partial class NIF : ValueObject
         yield return Value;
     }
 
-    [GeneratedRegex(FullFormatPattern)]
-    private static partial Regex FullFormatRegex();
+    private static bool TryPrepare(string? value, out string prepared)
+    {
+        prepared = string.Empty;
+        if (string.IsNullOrWhiteSpace(value) || value.Length > MaxInputLength)
+            return false;
+
+        prepared = value.Trim()
+            .Replace(" ", string.Empty)
+            .Replace("\t", string.Empty)
+            .Replace("\u2044", "/")
+            .Replace("\u2215", "/")
+            .ToUpperInvariant();
+
+        return prepared.Length > 0 && prepared.Length <= MaxInputLength;
+    }
+
+    private static NifParts FromMatch(Match match) =>
+        new(match.Groups[1].Value, match.Groups[2].Value[0], match.Groups[3].Value[0], match.Groups[4].Value[0], match.Groups[5].Value);
+
+    private static string FormatOfficial(NifParts parts) =>
+        $"{parts.Digits}{parts.Key}/{parts.Second}/{parts.Third}/{parts.Office}";
+
+    private static string FormatLegacy(NifParts parts) =>
+        $"{parts.Digits}/{parts.Key}/{parts.Second}/{parts.Third}/{parts.Office}";
+
+    [GeneratedRegex(OfficialPattern, RegexOptions.CultureInvariant)]
+    private static partial Regex OfficialRegex();
+
+    [GeneratedRegex(LegacyPattern, RegexOptions.CultureInvariant)]
+    private static partial Regex LegacyRegex();
 }
 
 /// <summary>

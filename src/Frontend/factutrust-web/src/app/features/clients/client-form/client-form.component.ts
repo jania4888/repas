@@ -18,7 +18,9 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
 import { FormSectionComponent } from '@shared/components/form-section/form-section.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { ErrorMessageService } from '@core/services/error-message.service';
-import { NIF_PATTERN } from '@shared/validation';
+import { canonicalizeNif, NIF_PATTERN } from '@shared/validation';
+import { nifAcceptsEitherSpelling } from '@shared/validation/tunisian-validators';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 import { ClientService, Client, ClientType, CreateClientRequest, UpdateClientRequest } from '@core/services/client.service';
 
 interface TypeOption {
@@ -40,6 +42,7 @@ interface GovernorateOption {
     RouterModule,
     InputTextModule,
     InputMaskModule,
+    NifMaskPasteDirective,
     InputNumberModule,
     Textarea,
     SelectModule,
@@ -120,15 +123,16 @@ interface GovernorateOption {
                 <p-inputMask
                   id="nif"
                   formControlName="nif"
-                  mask="9999999/a/a/a/999"
-                  placeholder="Ex. 1234567/A/B/C/000"
+                  appNifMaskPaste
+                  mask="9999999a/a/a/999"
+                  placeholder="Ex. 1772793W/A/M/000"
                   styleClass="w-full"
                   [style]="{'text-transform': 'uppercase'}"
                   [class.ng-invalid]="isInvalid('nif')"
                   (onBlur)="normalizeNif()">
                 </p-inputMask>
                 @if (form.get('type')?.value === ClientType.Business) {
-                  <small class="form-hint">Format : 1234567/A/B/C/000</small>
+                  <small class="form-hint">Format : 1772793W/A/M/000</small>
                 }
                 @if (isInvalid('nif')) {
                   <div class="form-error">
@@ -158,7 +162,7 @@ interface GovernorateOption {
           <!-- Contact Information -->
           <app-form-section title="Coordonnées" icon="pi-envelope" [number]="2">
             <div class="form-group">
-              <label for="email">Adresse email <span class="required">*</span></label>
+              <label for="email">Adresse email</label>
               <input 
                 pInputText 
                 id="email" 
@@ -568,7 +572,7 @@ export class ClientFormComponent implements OnInit {
     name: ['', [Validators.required, Validators.minLength(2)]],
     type: [ClientType.Business, Validators.required],
     nif: [''],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.email]],
     phone: [''],
     contactPerson: [''],
     street: ['', Validators.required],
@@ -596,7 +600,7 @@ export class ClientFormComponent implements OnInit {
     const nif = this.form.get('nif');
     const isCompany = this.form.get('type')?.value === ClientType.Business;
     if (isCompany) {
-      nif?.setValidators([Validators.required, Validators.pattern(NIF_PATTERN)]);
+      nif?.setValidators([Validators.required, nifAcceptsEitherSpelling]);
     } else {
       nif?.setValidators([]);
     }
@@ -611,26 +615,10 @@ export class ClientFormComponent implements OnInit {
     const nifControl = this.form.get('nif');
     if (!nifControl) return;
 
-    let value = nifControl.value as string;
+    const value = nifControl.value as string;
     if (!value || typeof value !== 'string') return;
 
-    // Nettoyer les placeholders du masque (_), espaces, et normaliser
-    let normalized = value.replace(/_/g, '').trim().replace(/\s+/g, '').toUpperCase();
-    if (!normalized || normalized === '/////' || normalized === '///') {
-      normalized = '';
-    }
-
-    if (normalized.length > 0 && !normalized.includes('/')) {
-      const match = normalized.match(/^(\d{7})([A-Z0-9])([A-Z0-9])([A-Z0-9])(\d{3})$/);
-      if (match) {
-        normalized = `${match[1]}/${match[2]}/${match[3]}/${match[4]}/${match[5]}`;
-      }
-    }
-
-    const missingFirstSlash = normalized.match(/^(\d{7})([A-Z])\/([A-Z])\/([A-Z])\/(\d{3})$/);
-    if (missingFirstSlash) {
-      normalized = `${missingFirstSlash[1]}/${missingFirstSlash[2]}/${missingFirstSlash[3]}/${missingFirstSlash[4]}/${missingFirstSlash[5]}`;
-    }
+    const normalized = canonicalizeNif(value);
 
     // Ne mettre à jour le contrôle que si vide ou NIF complet valide (évite conflit avec p-inputMask)
     const isEmpty = normalized === '';
@@ -656,7 +644,7 @@ export class ClientFormComponent implements OnInit {
       return 'Le matricule fiscal est obligatoire pour un client assujetti';
     }
     if (control.errors['pattern']) {
-      return 'Matricule fiscal invalide. Format attendu: NNNNNNN/L/A/M/NNN';
+      return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';
     }
     return '';
   }
@@ -695,7 +683,7 @@ export class ClientFormComponent implements OnInit {
       name: client.name,
       type: client.type,
       nif: client.nif ?? '',
-      email: client.email,
+      email: client.email ?? '',
       phone: client.phone ?? '',
       contactPerson: client.contactPerson ?? '',
       street: client.address.street,
@@ -722,20 +710,11 @@ export class ClientFormComponent implements OnInit {
     const formValue = this.form.value;
 
     if (this.isEditMode()) {
-      // Nettoyer le NIF comme formulaire fournisseur (_, espaces, slashes)
-      let cleanNif = formValue.nif ? (formValue.nif as string).replace(/_/g, '').trim().replace(/\s+/g, '').toUpperCase() : '';
-      const missingFirstSlash = cleanNif.match(/^(\d{7})([A-Z])\/([A-Z])\/([A-Z])\/(\d{3})$/);
-      if (missingFirstSlash) {
-        cleanNif = `${missingFirstSlash[1]}/${missingFirstSlash[2]}/${missingFirstSlash[3]}/${missingFirstSlash[4]}/${missingFirstSlash[5]}`;
-      }
-      const noSlashMatch = cleanNif.match(/^(\d{7})([A-Z])([A-Z])([A-Z])(\d{3})$/);
-      if (noSlashMatch) {
-        cleanNif = `${noSlashMatch[1]}/${noSlashMatch[2]}/${noSlashMatch[3]}/${noSlashMatch[4]}/${noSlashMatch[5]}`;
-      }
+      const cleanNif = formValue.nif ? canonicalizeNif(formValue.nif as string) : '';
 
       const request: UpdateClientRequest = {
         name: formValue.name.trim(),
-        email: formValue.email.trim(),
+        email: formValue.email?.trim() || null,
         phone: (formValue.phone as string)?.trim() || undefined,
         nif: cleanNif || undefined,
         type: formValue.type,
@@ -779,20 +758,11 @@ export class ClientFormComponent implements OnInit {
         }
       });
     } else {
-      // Nettoyer le NIF comme formulaire fournisseur (_, espaces, slashes)
-      let cleanNif = formValue.nif ? (formValue.nif as string).replace(/_/g, '').trim().replace(/\s+/g, '').toUpperCase() : '';
-      const missingFirstSlash = cleanNif.match(/^(\d{7})([A-Z])\/([A-Z])\/([A-Z])\/(\d{3})$/);
-      if (missingFirstSlash) {
-        cleanNif = `${missingFirstSlash[1]}/${missingFirstSlash[2]}/${missingFirstSlash[3]}/${missingFirstSlash[4]}/${missingFirstSlash[5]}`;
-      }
-      const noSlashMatch = cleanNif.match(/^(\d{7})([A-Z])([A-Z])([A-Z])(\d{3})$/);
-      if (noSlashMatch) {
-        cleanNif = `${noSlashMatch[1]}/${noSlashMatch[2]}/${noSlashMatch[3]}/${noSlashMatch[4]}/${noSlashMatch[5]}`;
-      }
+      const cleanNif = formValue.nif ? canonicalizeNif(formValue.nif as string) : '';
 
       const request: CreateClientRequest = {
         name: formValue.name.trim(),
-        email: formValue.email.trim(),
+        email: formValue.email?.trim() || null,
         phone: (formValue.phone as string)?.trim() || undefined,
         nif: cleanNif || undefined,
         type: formValue.type,

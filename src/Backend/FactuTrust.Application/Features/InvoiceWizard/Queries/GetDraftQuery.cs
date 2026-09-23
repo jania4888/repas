@@ -87,7 +87,7 @@ public sealed class GetDraftQueryHandler : IRequestHandler<GetDraftQuery, Result
                         City = company.Address.City,
                         Governorate = company.Address.Governorate
                     },
-                    Email = company.Email.Value,
+                    Email = company.Email?.Value,
                     Phone = company.Phone?.Value
                 };
             }
@@ -117,7 +117,7 @@ public sealed class GetDraftQueryHandler : IRequestHandler<GetDraftQuery, Result
                         City = clientEntity.Address.City,
                         Governorate = clientEntity.Address.Governorate
                     },
-                    Email = clientEntity.Email.Value,
+                    Email = clientEntity.Email?.Value,
                     Phone = clientEntity.Phone?.Value
                 };
             }

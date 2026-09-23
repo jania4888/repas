@@ -48,7 +48,7 @@ public sealed class GetSuppliersQueryHandler : IRequestHandler<GetSuppliersQuery
             Type = s.Type.ToString(),
             TypeDisplay = s.Type.ToDisplayString(),
             Nif = s.NIF?.Value,
-            Email = s.Email.Value,
+            Email = s.Email?.Value,
             Phone = s.Phone?.Value,
             City = s.Address.City,
             Governorate = s.Address.Governorate,

@@ -14,7 +14,7 @@ public sealed class Tenant : AggregateRoot
     public string CompanyName { get; private set; } = null!;
     public NIF NIF { get; private set; } = null!;
     public Address Address { get; private set; } = null!;
-    public Email Email { get; private set; } = null!;
+    public Email? Email { get; private set; }
     public PhoneNumber Phone { get; private set; } = null!;
     public string? Website { get; private set; }
     public string? LogoUrl { get; private set; }
@@ -97,6 +97,23 @@ public sealed class Tenant : AggregateRoot
         TaxRegime taxRegime,
         string? website = null)
     {
+        // Self-registration is the only flow provisioning the tenant database in a second,
+        // separate step after this master row is committed (plan §1.5 mini-saga) — starts
+        // Pending until AuthController.Register marks it Ready/Failed.
+        return BuildCompanyTenant(
+            companyName, nif, address, email, phone, taxRegime, website, TenantProvisioningStatus.Pending);
+    }
+
+    private static Result<Tenant> BuildCompanyTenant(
+        string companyName,
+        NIF nif,
+        Address address,
+        Email? email,
+        PhoneNumber phone,
+        TaxRegime taxRegime,
+        string? website,
+        TenantProvisioningStatus provisioningStatus)
+    {
         if (string.IsNullOrWhiteSpace(companyName))
             return Result.Failure<Tenant>(Error.Validation("CompanyName", "La raison sociale est obligatoire"));
 
@@ -115,10 +132,7 @@ public sealed class Tenant : AggregateRoot
             Website = website?.Trim(),
             DatabaseName = GenerateDatabaseName(),
             IsActive = true,
-            // Self-registration is the only flow provisioning the tenant database in a second,
-            // separate step after this master row is committed (plan §1.5 mini-saga) — starts
-            // Pending until AuthController.Register marks it Ready/Failed.
-            ProvisioningStatus = TenantProvisioningStatus.Pending
+            ProvisioningStatus = provisioningStatus
         };
 
         tenant.AddDomainEvent(new TenantCreatedEvent(tenant.Id, tenant.CompanyName, tenant.DatabaseName));
@@ -128,13 +142,14 @@ public sealed class Tenant : AggregateRoot
 
     /// <summary>
     /// Crée un tenant société géré par un cabinet comptable (client sans compte utilisateur sur la plateforme).
+    /// L'email de contact est facultatif : seul ce chemin peut persister <c>null</c>.
     /// </summary>
     public static Result<Tenant> CreateFirmManaged(
         Guid managedByFirmTenantId,
         string companyName,
         NIF nif,
         Address address,
-        Email email,
+        Email? email,
         PhoneNumber phone,
         TaxRegime taxRegime,
         string? website = null)
@@ -142,14 +157,12 @@ public sealed class Tenant : AggregateRoot
         if (managedByFirmTenantId == Guid.Empty)
             return Result.Failure<Tenant>(Error.Validation("ManagedByFirmTenantId", "Le cabinet gestionnaire est obligatoire"));
 
-        var result = Create(companyName, nif, address, email, phone, taxRegime, website);
+        var result = BuildCompanyTenant(
+            companyName, nif, address, email, phone, taxRegime, website, TenantProvisioningStatus.Ready);
         if (result.IsFailure)
             return result;
 
         result.Value.ManagedByFirmTenantId = managedByFirmTenantId;
-        // Unlike self-registration, firm-managed client provisioning stays fully synchronous
-        // within one transaction (FirmManagedClientService) — restore the historical Ready default.
-        result.Value.ProvisioningStatus = TenantProvisioningStatus.Ready;
         return result;
     }
 

@@ -19,7 +19,7 @@ export interface Supplier {
     type: SupplierType;
     typeDisplay: string;
     nif: string | null;
-    email: string;
+    email: string | null;
     phone: string | null;
     contactPerson: string | null;
     paymentTermDays: number;
@@ -63,7 +63,7 @@ export interface SupplierListItem {
     type: string;
     typeDisplay: string;
     nif: string | null;
-    email: string;
+    email: string | null;
     phone: string | null;
     city: string;
     governorate: string;
@@ -99,7 +99,7 @@ export interface CreateSupplierRequest {
     city: string;
     postalCode?: string;
     governorate: string;
-    email: string;
+    email: string | null;
     phone?: string;
     contactPerson?: string;
     paymentTermDays: number;
@@ -122,7 +122,7 @@ export interface UpdateSupplierRequest {
     city: string;
     postalCode?: string;
     governorate: string;
-    email: string;
+    email: string | null;
     phone?: string;
     contactPerson?: string;
     paymentTermDays: number;

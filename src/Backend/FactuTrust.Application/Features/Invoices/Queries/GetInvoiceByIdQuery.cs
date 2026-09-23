@@ -65,7 +65,7 @@ public sealed class GetInvoiceByIdQueryHandler : IRequestHandler<GetInvoiceByIdQ
                 Id = invoice.Client.Id,
                 Name = invoice.Client.Name,
                 Nif = invoice.Client.NIF?.Value,
-                Email = invoice.Client.Email.Value,
+                Email = invoice.Client.Email?.Value,
                 Address = invoice.Client.Address.ToSingleLine()
             },
             WarehouseId = invoice.WarehouseId,

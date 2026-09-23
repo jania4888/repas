@@ -39,6 +39,21 @@ public sealed partial class Email : ValueObject
         return Result.Success(new Email(normalizedValue));
     }
 
+    /// <summary>
+    /// Absent (null, vide ou blancs) devient <c>null</c>. Toute valeur non vide reste validée par <see cref="Create"/>.
+    /// </summary>
+    public static Result<Email?> CreateOptional(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return Result.Success<Email?>(null);
+
+        var created = Create(value);
+        if (created.IsFailure)
+            return Result.Failure<Email?>(created.Error);
+
+        return Result.Success<Email?>(created.Value);
+    }
+
     public static bool IsValid(string value)
     {
         if (string.IsNullOrWhiteSpace(value) || value.Length > 256)

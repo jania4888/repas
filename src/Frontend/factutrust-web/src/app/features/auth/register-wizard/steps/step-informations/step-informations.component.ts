@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
 import { InputMaskModule } from 'primeng/inputmask';
+import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directive';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { ErrorMessageService } from '@core/services/error-message.service';
 import {
@@ -32,6 +33,7 @@ import { TaxRegime } from '../../tax-regime.types';
     PasswordModule,
     SelectModule,
     InputMaskModule,
+    NifMaskPasteDirective,
     InputSwitchModule
   ],
   animations: [

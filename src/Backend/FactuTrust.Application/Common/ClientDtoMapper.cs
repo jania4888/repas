@@ -28,7 +28,7 @@ internal static class ClientDtoMapper
                 Country = client.Address.Country,
                 FullAddress = client.Address.ToSingleLine()
             },
-            Email = client.Email.Value,
+            Email = client.Email?.Value,
             Phone = client.Phone?.Value,
             ContactPerson = client.ContactPerson,
             Notes = client.Notes,

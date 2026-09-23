@@ -25,7 +25,6 @@ public sealed class UpdateClientCommandValidator : AbstractValidator<UpdateClien
     {
         RuleFor(x => x.Id).NotEqual(Guid.Empty).WithMessage("Identifiant client invalide.");
         RuleFor(x => x.Dto.Name).NotEmpty().WithMessage("Le nom ou la raison sociale est obligatoire");
-        RuleFor(x => x.Dto.Email).NotEmpty().WithMessage("L'email est obligatoire");
         RuleFor(x => x.Dto.Street).NotEmpty().WithMessage("L'adresse est obligatoire");
         RuleFor(x => x.Dto.City).NotEmpty().WithMessage("La ville est obligatoire");
         RuleFor(x => x.Dto.Governorate).NotEmpty().WithMessage("Le gouvernorat est obligatoire");
@@ -72,13 +71,17 @@ public sealed class UpdateClientCommandHandler : IRequestHandler<UpdateClientCom
 
         var dto = request.Dto;
 
-        var emailResult = Email.Create(dto.Email);
+        var emailResult = Email.CreateOptional(dto.Email);
         if (emailResult.IsFailure)
             return Result.Failure<ClientDetailDto>(emailResult.Error);
 
-        var existingByEmail = await _clientRepository.GetByEmailExcludingIdAsync(emailResult.Value.Value, request.Id, cancellationToken);
-        if (existingByEmail is not null)
-            return Result.Failure<ClientDetailDto>(Error.Conflict("Un client existe déjà avec cet email."));
+        var email = emailResult.Value;
+        if (email is not null)
+        {
+            var existingByEmail = await _clientRepository.GetByEmailExcludingIdAsync(email.Value, request.Id, cancellationToken);
+            if (existingByEmail is not null)
+                return Result.Failure<ClientDetailDto>(Error.Conflict("Un client existe déjà avec cet email."));
+        }
 
         var addressResult = Address.Create(dto.Street, dto.City, dto.Governorate, dto.StreetLine2, dto.PostalCode);
         if (addressResult.IsFailure)
@@ -96,7 +99,7 @@ public sealed class UpdateClientCommandHandler : IRequestHandler<UpdateClientCom
         client.Update(
             dto.Name.Trim(),
             addressResult.Value,
-            emailResult.Value,
+            email,
             phone,
             dto.ContactPerson?.Trim(),
             dto.Notes?.Trim());
@@ -123,7 +126,7 @@ public sealed class UpdateClientCommandHandler : IRequestHandler<UpdateClientCom
             newValues: new
             {
                 client.Name,
-                client.Email.Value,
+                Email = client.Email?.Value,
                 client.CreditLimit,
                 client.DefaultPaymentTermDays
             },
