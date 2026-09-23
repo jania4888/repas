@@ -1,6 +1,6 @@
 using System.Net;
 using FactuTrust.API.Controllers;
-using ApiResponseOfT = FactuTrust.Application.DTOs.ApiResponse<object>;
+using ApiResponseOfT = FactuTrust.API.Controllers.ApiResponse<object>;
 using FactuTrust.Application.Configuration;
 using FactuTrust.Application.DTOs;
 using FactuTrust.Application.Features.PublicContact.Commands;
@@ -58,14 +58,14 @@ public sealed class PublicContactRequestsControllerTests
         var mediator = new Mock<IMediator>(MockBehavior.Strict);
         SubmitPublicContactRequestCommand? captured = null;
         mediator.Setup(m => m.Send(It.IsAny<SubmitPublicContactRequestCommand>(), It.IsAny<CancellationToken>()))
-            .Callback<SubmitPublicContactRequestCommand, CancellationToken>((command, _) => captured = command)
+            .Callback<IRequest<Result<SubmitPublicContactRequestResponse>>, CancellationToken>((command, _) => captured = (SubmitPublicContactRequestCommand)command)
             .ReturnsAsync(Result.Success(new SubmitPublicContactRequestResponse("CR-ABCDEF")));
         var sut = NewController(mediator, Enabled(true), remoteIp: "203.0.113.7", userAgent: "Mozilla/5.0");
 
         var result = await sut.Submit(ValidDto, CancellationToken.None);
 
         var accepted = Assert.IsType<AcceptedResult>(result);
-        var response = Assert.IsType<ApiResponse<SubmitPublicContactRequestResponse>>(accepted.Value);
+        var response = Assert.IsType<FactuTrust.API.Controllers.ApiResponse<SubmitPublicContactRequestResponse>>(accepted.Value);
         Assert.True(response.Success);
         Assert.Equal("Demande enregistrée.", response.Message);
         Assert.Equal("CR-ABCDEF", response.Data!.Reference);
