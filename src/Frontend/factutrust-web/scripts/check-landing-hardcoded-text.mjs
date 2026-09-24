@@ -65,10 +65,23 @@ for (const file of walk(ROOT)) {
   for (const template of extractTemplates(source)) {
     // Retire interpolations, commentaires HTML, micro-syntaxe et balises.
     const stripped = template
-      .replace(/\{\{[^}]*\}\}/g, ' ')
+      // Interpolations : la valeur peut contenir un littéral d'objet — on retire la paire
+      // d'accolades internes puis l'interpolation (deux passes suffisent pour la profondeur 1).
+      .replace(/\{\{([^{}]|\{[^{}]*\})*\}\}/g, ' ')
       .replace(/<!--[\s\S]*?-->/g, ' ')
-      .replace(/@(if|for|switch|case|else|empty|defer|placeholder|loading|error)\b[^>{)]*(\([^)]*\))?/g, ' ')
-      .replace(/<\/?[A-Za-z][^>]*>?/g, ' ');
+      // Micro-syntaxe : @for (item of expr; track x) { … } — supprime la parenthèse la plus
+      // large (le « track » suit un « ; »), puis les restes (« @if … { », « } », « track …) »).
+      .replace(/@(for|if|switch|case|else|empty|defer|placeholder|loading|error)\s*\([^;]*(;[^)]*)?\)/g, ' ')
+      .replace(/@(for|if|switch|case|else|empty|defer|placeholder|loading|error)\b[^>{]*/g, ' ')
+      .replace(/\btrack\s+[^){]*\)?/g, ' ')
+      // Attributs techniques (valeurs sans lettre traduisible) : class, id, fragment, data-*, role…
+      .replace(/\b(class|id|fragment|role|aria-hidden|tabindex|target|rel|loading|fetchpriority|width|height|colspan|rowspan|dir|lang|hreflang|data-[\w-]+)\s*=\s*"[^"]*"/g, ' ')
+      // Expressions de méthodes : format(…), cabinetsPath(…)… — deux passes pour l'imbrication
+      // (format(t().x, { … }) : la passe interne retire t().x, la seconde retire format(…)).
+      .replace(/\b[A-Za-z_$][\w$]*\([^;{}]*\)/g, ' ')
+      .replace(/\b[A-Za-z_$][\w$]*\([^;{}]*\)/g, ' ')
+      .replace(/<\/?[A-Za-z][^>]*>?/g, ' ')
+      .replace(/[{};]/g, ' ');
     for (const chunk of stripped.split(/\n|>/)) {
       const text = chunk.replace(/&[a-z]+;|&#\d+;/g, ' ').trim();
       if (!text) continue;

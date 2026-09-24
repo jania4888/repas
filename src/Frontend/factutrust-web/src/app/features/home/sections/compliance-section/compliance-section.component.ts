@@ -1,137 +1,42 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { LandingCopyService } from '../../content/landing-copy.service';
+import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
 
+/**
+ * Conformité (plan A.4.16) : 6 cartes « ce qui existe dans l'application ».
+ * Textes : `t().home.compliance`. `#conformite` est chargé à l'affichage (e2e).
+ */
 @Component({
   selector: 'app-compliance-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [LandingRichComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section id="conformite" class="compliance-section" aria-labelledby="compliance-title">
+    <section id="conformite" class="compliance-section" tabindex="-1" aria-labelledby="compliance-title">
       <div class="section-container">
         <div class="section-header">
           <span class="eyebrow">
             <i class="pi pi-verified" aria-hidden="true"></i>
-            CONFORMITÉ RÉGLEMENTAIRE
+            {{ t().home.compliance.kicker }}
           </span>
-          <h2 id="compliance-title" class="section-title">
-            Conformité réglementaire <span class="gradient-text">garantie</span>
-          </h2>
+          <h2 id="compliance-title" class="section-title">{{ t().home.compliance.title }}</h2>
           <p class="section-description">
-            InstaFact intègre nativement les standards fiscaux, comptables et réglementaires.
-            Vous restez en règle, sans avoir à y penser.
+            <app-landing-rich [segments]="rich(t().home.compliance.subtitle)" />
           </p>
         </div>
 
         <div class="compliance-grid">
-          <article class="compliance-card flag-tn">
-            <div class="card-header">
-              <span class="card-flag" aria-hidden="true">🇹🇳</span>
-              <span class="card-label">TUNISIE</span>
-            </div>
-            <h3 class="card-title">TEJ — Retenues à la source</h3>
-            <p class="card-description">
-              Calcul automatique des retenues à la source par nature de paiement, génération des certificats RS,
-              déclarations XML conformes au format TEJ. <strong>Validé par les autorités fiscales tunisiennes.</strong>
-            </p>
-            <ul class="card-features">
-              <li><i class="pi pi-check"></i> Configuration TEJ par fournisseur</li>
-              <li><i class="pi pi-check"></i> Certificats RS automatiques</li>
-              <li><i class="pi pi-check"></i> Export XML conforme</li>
-            </ul>
-          </article>
-
-          <article class="compliance-card flag-fr">
-            <div class="card-header">
-              <span class="card-flag" aria-hidden="true">🇫🇷</span>
-              <span class="card-label">FRANCE</span>
-            </div>
-            <h3 class="card-title">FEC — Fichier des Écritures Comptables</h3>
-            <p class="card-description">
-              Export du Fichier des Écritures Comptables au format réglementaire français, prêt à transmettre à votre expert-comptable
-              ou à l'administration en cas de contrôle.
-            </p>
-            <ul class="card-features">
-              <li><i class="pi pi-check"></i> Format réglementaire respecté</li>
-              <li><i class="pi pi-check"></i> Export annuel ou par exercice</li>
-              <li><i class="pi pi-check"></i> Compatible expert-comptable</li>
-            </ul>
-          </article>
-
-          <article class="compliance-card">
-            <div class="card-header">
-              <div class="card-icon"><i class="pi pi-pencil"></i></div>
-              <span class="card-label">SIGNATURE</span>
-            </div>
-            <h3 class="card-title">Signature électronique légale</h3>
-            <p class="card-description">
-              Signature de vos factures conforme aux standards eIDAS. Horodatage certifié, intégrité garantie.
-              <strong>Vos factures électroniques ont la même valeur légale que les factures papier signées.</strong>
-            </p>
-            <ul class="card-features">
-              <li><i class="pi pi-check"></i> Compatible eIDAS</li>
-              <li><i class="pi pi-check"></i> Horodatage certifié</li>
-              <li><i class="pi pi-check"></i> Validité juridique garantie</li>
-            </ul>
-          </article>
-
-          <article class="compliance-card">
-            <div class="card-header">
-              <div class="card-icon"><i class="pi pi-database"></i></div>
-              <span class="card-label">ARCHIVAGE</span>
-            </div>
-            <h3 class="card-title">Archivage légal 10 ans</h3>
-            <p class="card-description">
-              Vos factures et documents comptables sont automatiquement archivés et conservés
-              pendant la durée légale (10 ans). Hash chain immuable pour garantir l'intégrité.
-            </p>
-            <ul class="card-features">
-              <li><i class="pi pi-check"></i> Conservation 10 ans automatique</li>
-              <li><i class="pi pi-check"></i> Hash chain immuable</li>
-              <li><i class="pi pi-check"></i> Recherche instantanée</li>
-            </ul>
-          </article>
-
-          <article class="compliance-card">
-            <div class="card-header">
-              <div class="card-icon"><i class="pi pi-shield"></i></div>
-              <span class="card-label">RGPD</span>
-            </div>
-            <h3 class="card-title">RGPD ready</h3>
-            <p class="card-description">
-              Gestion du consentement utilisateur, droit à l'oubli, droit à la portabilité.
-              Vous pouvez exporter ou supprimer toutes les données d'un client en quelques clics.
-            </p>
-            <ul class="card-features">
-              <li><i class="pi pi-check"></i> Export complet des données</li>
-              <li><i class="pi pi-check"></i> Suppression sur demande</li>
-              <li><i class="pi pi-check"></i> Journal des consentements</li>
-            </ul>
-          </article>
-
-          <article class="compliance-card highlight">
-            <div class="card-header">
-              <div class="card-icon"><i class="pi pi-lock"></i></div>
-              <span class="card-label">AUDIT</span>
-            </div>
-            <h3 class="card-title">Audit chain — Piste d'audit infalsifiable</h3>
-            <p class="card-description">
-              Chaque modification est tracée et chaînée par hash cryptographique.
-              <strong>Impossible de modifier l'historique sans laisser de trace.</strong> Idéal pour les contrôles fiscaux et les audits internes.
-            </p>
-            <ul class="card-features">
-              <li><i class="pi pi-check"></i> Hash chain cryptographique</li>
-              <li><i class="pi pi-check"></i> Traçabilité complète des actions</li>
-              <li><i class="pi pi-check"></i> Auditeurs validés</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="compliance-footer">
-          <p>
-            <i class="pi pi-info-circle" aria-hidden="true"></i>
-            InstaFact est conçu pour évoluer avec la réglementation. Les mises à jour de conformité sont incluses dans tous les plans.
-          </p>
+          @for (card of t().home.compliance.cards; track card.title) {
+            <article class="compliance-card">
+              <div class="card-icon" aria-hidden="true">
+                <i [class]="'pi ' + card.icon"></i>
+              </div>
+              <h3 class="card-title">{{ card.title }}</h3>
+              <p class="card-description">
+                <app-landing-rich [segments]="rich(card.text)" />
+              </p>
+            </article>
+          }
         </div>
       </div>
     </section>
@@ -139,8 +44,11 @@ import { CommonModule } from '@angular/common';
   styles: [`
     .compliance-section {
       padding: var(--spacing-20) var(--spacing-6);
-      background: linear-gradient(180deg, white 0%, #f8fafc 100%);
-      position: relative;
+      background: white;
+    }
+
+    .compliance-section:focus {
+      outline: none;
     }
 
     .section-container {
@@ -152,8 +60,7 @@ import { CommonModule } from '@angular/common';
       text-align: center;
       margin-bottom: var(--spacing-12);
       max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-inline: auto;
     }
 
     .eyebrow {
@@ -163,17 +70,12 @@ import { CommonModule } from '@angular/common';
       padding: var(--spacing-2) var(--spacing-4);
       background: var(--color-success-50);
       color: var(--color-success-700);
-      border: 1px solid var(--color-success-200);
       border-radius: var(--radius-full);
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-semibold);
       letter-spacing: 0.08em;
+      text-transform: uppercase;
       margin-bottom: var(--spacing-4);
-
-      i {
-        font-size: 0.875rem;
-        color: var(--color-success-600);
-      }
     }
 
     .section-title {
@@ -182,13 +84,6 @@ import { CommonModule } from '@angular/common';
       color: var(--color-neutral-900);
       line-height: var(--line-height-tight);
       margin: 0 0 var(--spacing-4) 0;
-    }
-
-    .gradient-text {
-      background: linear-gradient(135deg, var(--color-success-600) 0%, var(--color-success-700) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
 
     .section-description {
@@ -200,157 +95,70 @@ import { CommonModule } from '@angular/common';
 
     .compliance-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--spacing-5);
-      margin-bottom: var(--spacing-10);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--spacing-6);
     }
 
     .compliance-card {
-      background: white;
+      background: var(--color-neutral-50);
       border: 1px solid var(--color-neutral-200);
-      border-radius: var(--radius-xl);
+      border-radius: var(--radius-2xl);
       padding: var(--spacing-6);
-      transition: all var(--transition-normal);
-      position: relative;
-      overflow: hidden;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--color-primary-500), var(--color-success-500));
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform var(--transition-normal);
-      }
-
-      &:hover {
-        border-color: var(--color-primary-300);
-        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.1);
-        transform: translateY(-4px);
-
-        &::before {
-          transform: scaleX(1);
-        }
-      }
-
-      &.highlight {
-        background: linear-gradient(135deg, var(--color-primary-50) 0%, white 100%);
-        border-color: var(--color-primary-300);
-
-        &::before {
-          transform: scaleX(1);
-        }
-      }
+      transition: box-shadow var(--transition-normal), transform var(--transition-normal), border-color var(--transition-normal);
     }
 
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-3);
-      margin-bottom: var(--spacing-4);
+    .compliance-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+      border-color: var(--color-success-200);
     }
 
-    .card-flag {
-      font-size: 2rem;
-      line-height: 1;
+    @media (prefers-reduced-motion: reduce) {
+      .compliance-card {
+        transition: none;
+      }
+      .compliance-card:hover {
+        transform: none;
+      }
     }
 
     .card-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-md);
-      background: linear-gradient(135deg, var(--color-primary-100), var(--color-primary-200));
-      display: flex;
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-lg);
+      background: var(--color-success-50);
+      color: var(--color-success-600);
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: var(--color-primary-700);
+      margin-bottom: var(--spacing-4);
 
       i {
-        font-size: 1.25rem;
+        font-size: 1.35rem;
       }
-    }
-
-    .card-label {
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-neutral-500);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
     }
 
     .card-title {
       font-size: var(--font-size-lg);
       font-weight: var(--font-weight-semibold);
       color: var(--color-neutral-900);
-      margin: 0 0 var(--spacing-3) 0;
+      margin: 0 0 var(--spacing-2) 0;
     }
 
     .card-description {
       font-size: var(--font-size-sm);
       line-height: var(--line-height-relaxed);
       color: var(--color-neutral-600);
-      margin: 0 0 var(--spacing-4) 0;
-    }
-
-    .card-features {
-      list-style: none;
-      padding: 0;
       margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-
-      li {
-        display: flex;
-        align-items: flex-start;
-        gap: var(--spacing-2);
-        font-size: var(--font-size-sm);
-        color: var(--color-neutral-700);
-
-        i {
-          color: var(--color-success-600);
-          font-size: 0.875rem;
-          margin-top: 3px;
-          flex-shrink: 0;
-        }
-      }
-    }
-
-    .compliance-footer {
-      text-align: center;
-      padding: var(--spacing-5) var(--spacing-6);
-      background: var(--color-primary-50);
-      border: 1px solid var(--color-primary-200);
-      border-radius: var(--radius-xl);
-      max-width: 800px;
-      margin: 0 auto;
-
-      p {
-        margin: 0;
-        font-size: var(--font-size-sm);
-        color: var(--color-primary-800);
-        display: inline-flex;
-        align-items: center;
-        gap: var(--spacing-2);
-
-        i {
-          color: var(--color-primary-600);
-          font-size: 1rem;
-        }
-      }
     }
 
     @media (max-width: 1024px) {
       .compliance-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 640px) {
       .compliance-section {
         padding: var(--spacing-12) var(--spacing-4);
       }
@@ -361,4 +169,12 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class ComplianceSectionComponent {}
+export class ComplianceSectionComponent {
+  private readonly copy = inject(LandingCopyService);
+
+  protected readonly t = this.copy.t;
+
+  protected rich(text: string) {
+    return this.copy.rich(text);
+  }
+}

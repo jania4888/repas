@@ -1,6 +1,6 @@
 import type { LandingSharedCopy } from '../landing-copy.types';
 
-/** Zone partagée FR (header, footer, CTA, sélecteur de langue). Texte final — TD1. */
+/** Zone partagée FR (header, footer, CTA, sélecteur de langue). Texte final — TA3 (plan § 5.2 / A.3.3 / A.4.19). */
 export const SHARED_FR: LandingSharedCopy = {
   brand: {
     name: 'InstaFact',
@@ -43,7 +43,7 @@ export const SHARED_FR: LandingSharedCopy = {
   virtualTour: {
     link: 'Visite virtuelle',
     title: 'Rue InstaFact',
-    text: 'Parcourez la rue virtuelle des entreprises qui utilisent InstaFact.'
+    text: 'Parcourez les vitrines publiques des entreprises partenaires (opt-in, données publiques uniquement).'
   },
   footer: {
     baseline: 'InstaFact — gestion commerciale, comptabilité et paie pour les entreprises tunisiennes.',

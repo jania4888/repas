@@ -1,32 +1,63 @@
-// TODO-AR : traduction arabe à livrer par TD7 (copie FR provisoire, structure figée par TD1).
+// TODO-AR : traduction arabe à livrer par TD7 — copie provisoire de la copy FR finale (TB7), structure figée par TD1.
 import type { LandingContactCopy } from '../landing-copy.types';
 
 /**
- * Formulaire de contact FR — SQUELETTE TYPÉ (TD1). Structure définitive (plan § 6.4 / B.6) ;
- * texte brouillon finalisé par TB3. Les messages d'erreur utilisent {min}/{max}/{seconds}/{email}.
+ * Formulaire de demande d'accès / de démo — copy FR finale (TB7 ; plan § 6.4, part B § B.6).
+ *
+ * Placeholders injectés par `LandingCopyService.format()` : {min}, {max}, {count},
+ * {seconds}, {reference}, {email}. Aucune promesse de délai de réponse (exclusion § 6.1) ;
+ * la ligne de réassurance ne contient que des engagements contrôlés par l'équipe.
  */
 export const CONTACT_AR: LandingContactCopy = {
   title: 'Demander un accès ou une démo',
-  lead: 'Décrivez votre besoin en quelques lignes : nous vous répondons sous 48 heures ouvrées.',
+  lead: 'Décrivez votre besoin en quelques lignes : nous vous recontactons rapidement.',
   subjects: {
-    'acces-entreprise': 'Demander un accès entreprise',
-    'demo-cabinet': 'Demander une démo cabinet',
-    entreprise: 'Plan Entreprise / sur mesure',
+    'acces-entreprise': 'Demander un accès (entreprise)',
+    'demo-cabinet': 'Demander une démo (cabinet comptable)',
+    entreprise: 'Projet sur mesure (grande entreprise)',
     autre: 'Autre demande'
   },
   fields: {
-    subject: { label: 'Objet de la demande', placeholder: 'Choisissez un objet', hint: 'Nous orientons votre demande vers la bonne équipe.' },
-    fullName: { label: 'Nom complet', placeholder: 'Prénom Nom', hint: 'Tel qu’il apparaîtra dans nos échanges.' },
-    organization: { label: 'Société ou cabinet', placeholder: 'Nom de votre société ou cabinet', hint: 'Raison sociale ou nom commercial.' },
-    email: { label: 'Adresse e-mail', placeholder: 'vous@exemple.tn', hint: 'Nous répondons à cette adresse.' },
-    phone: { label: 'Téléphone', placeholder: '+216 XX XXX XXX', hint: 'Numéro tunisien, avec ou sans +216.' },
-    size: { label: 'Taille', placeholder: 'Sélectionnez', hint: 'Facultatif.' },
-    message: { label: 'Votre message', placeholder: 'Décrivez votre activité et vos besoins.', hint: 'Activité, nombre de dossiers ou d’employés, outils actuels.' },
+    subject: {
+      label: 'Objet de la demande',
+      placeholder: 'Choisissez un objet',
+      hint: 'Nous orientons votre demande vers la bonne équipe.'
+    },
+    fullName: {
+      label: 'Nom complet',
+      placeholder: 'Prénom Nom',
+      hint: 'Tel qu’il apparaîtra dans nos échanges.'
+    },
+    organization: {
+      label: 'Société ou cabinet',
+      placeholder: 'Nom de votre société ou cabinet',
+      hint: 'Raison sociale ou nom commercial.'
+    },
+    email: {
+      label: 'E-mail professionnel',
+      placeholder: 'vous@exemple.tn',
+      hint: 'Nous répondons à cette adresse.'
+    },
+    phone: {
+      label: 'Téléphone',
+      placeholder: '+216 XX XXX XXX',
+      hint: 'Numéro tunisien, avec ou sans +216.'
+    },
+    size: {
+      label: 'Taille',
+      placeholder: 'Sélectionnez',
+      hint: 'Facultatif : une estimation suffit.'
+    },
+    message: {
+      label: 'Message',
+      placeholder: 'Décrivez votre activité, vos outils actuels et vos besoins.',
+      hint: 'Entre 10 et 2000 caractères.'
+    },
     consent: {
       label: 'J’accepte que mes informations soient utilisées pour traiter ma demande.',
-      linkLabel: 'Mentions légales'
+      linkLabel: 'Conditions d’utilisation'
     },
-    website: { label: 'Site web (ne pas remplir)' }
+    website: { label: 'Site web' }
   },
   sizes: {
     none: 'Non précisé',
@@ -43,35 +74,43 @@ export const CONTACT_AR: LandingContactCopy = {
       { value: 'employes:100+', label: 'Plus de 100 employés' }
     ]
   },
-  messageCounter: '{count} / {max} caractères',
+  messageCounter: '{count} / {max}',
   submit: {
     idle: 'Envoyer ma demande',
     submitting: 'Envoi en cours…',
     retry: 'Réessayer',
     another: 'Envoyer une autre demande'
   },
-  reassurance: ['Réponse sous 48 h ouvrées', 'Aucune carte bancaire', 'Vos données ne sont pas revendues'],
+  reassurance: ['Aucune carte bancaire requise', 'Vos données ne sont jamais revendues'],
   success: {
-    title: 'Demande bien reçue',
+    title: 'Demande enregistrée',
     reference: 'Référence : {reference}',
-    text: 'Nous vous recontactons à l’adresse indiquée. Conservez cette référence pour tout échange.'
+    text: 'Nous vous recontactons rapidement.'
   },
   errors: {
     required: 'Ce champ est obligatoire.',
     minLength: 'Saisissez au moins {min} caractères.',
-    maxLength: 'Limité à {max} caractères.',
+    maxLength: 'Saisissez au plus {max} caractères.',
     email: 'Saisissez une adresse e-mail valide.',
     phone: 'Saisissez un numéro tunisien valide (8 chiffres, avec ou sans +216).',
     consent: 'Votre accord est nécessaire pour traiter la demande.',
-    validationGlobal: 'Certains champs sont incorrects. Corrigez-les puis réessayez.',
-    rateLimited: 'Trop de demandes envoyées. Réessayez dans {seconds} secondes.',
-    rateLimitedFallback: 'Trop de demandes envoyées. Réessayez dans quelques instants.',
-    disabled: 'Le formulaire est momentanément indisponible. Écrivez-nous à {email}.',
-    network: 'Connexion impossible. Vérifiez votre réseau puis réessayez.',
-    unknown: 'Une erreur inattendue s’est produite. Réessayez dans quelques instants.',
-    turnstileUnavailable: 'La vérification anti-robot n’a pas pu se charger. Rechargez la page puis réessayez.'
+    validationGlobal: 'Certains champs sont incorrects. Corrigez-les, puis réessayez.',
+    rateLimited: 'Trop de demandes. Réessayez dans {seconds} s.',
+    rateLimitedFallback: 'Trop de demandes. Réessayez dans quelques instants.',
+    disabled: 'Le formulaire est temporairement indisponible. Écrivez-nous à {email}.',
+    network: 'Connexion impossible. Vérifiez votre connexion, puis réessayez.',
+    unknown: 'Une erreur est survenue. Réessayez dans un instant.',
+    turnstileUnavailable: 'La vérification anti-robot n’a pas pu se charger. Rechargez la page, puis réessayez.'
   },
   turnstile: {
     ariaLabel: 'Vérification anti-robot'
   }
 };
+
+/**
+ * Adresse e-mail de repli affichée quand le formulaire est indisponible (503) : le composant
+ * l'injecte dans `errors.disabled` via le placeholder `{email}`.
+ * NOTE : la clé `fallbackEmail` n'existe pas dans le type `LandingContactCopy` (figé par TD1) ;
+ * la constante est exportée ici en attendant une extension additive du type.
+ */
+export const CONTACT_FALLBACK_EMAIL = 'contact@instafact.shop';

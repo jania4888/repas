@@ -1,36 +1,56 @@
-import { Component, OnInit, OnDestroy, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
+import { LandingCopyService } from '../../content/landing-copy.service';
+import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
+import { LANDING_FACTS } from '../../content/landing-facts';
 
-interface ModuleTab {
-  id: string;
+type Accent = 'blue' | 'teal' | 'purple' | 'amber' | 'pink' | 'green';
+
+interface TabVisual {
   icon: string;
-  title: string;
-  tagline: string;
-  description: string;
-  features: string[];
-  highlight: string;
-  accent: 'blue' | 'teal' | 'purple' | 'amber' | 'pink' | 'green';
+  accent: Accent;
 }
 
+/** Habillage visuel des onglets (icône + accent couleur), indexé par `tab.id` — pas de texte ici. */
+const TAB_VISUALS: Record<string, TabVisual> = {
+  invoices: { icon: 'pi-file-edit', accent: 'blue' },
+  pos: { icon: 'pi-shopping-cart', accent: 'amber' },
+  stock: { icon: 'pi-box', accent: 'teal' },
+  treasury: { icon: 'pi-credit-card', accent: 'blue' },
+  accounting: { icon: 'pi-calculator', accent: 'pink' },
+  fiscal: { icon: 'pi-receipt', accent: 'purple' },
+  payroll: { icon: 'pi-id-card', accent: 'green' },
+  assets: { icon: 'pi-building', accent: 'amber' },
+  projects: { icon: 'pi-briefcase', accent: 'teal' },
+  crm: { icon: 'pi-address-book', accent: 'green' },
+  ai: { icon: 'pi-bolt', accent: 'purple' },
+  forecasting: { icon: 'pi-chart-line', accent: 'amber' }
+};
+
+const FALLBACK_VISUAL: TabVisual = { icon: 'pi-th-large', accent: 'blue' };
+
+/**
+ * Vitrine des modules (plan A.4.7) : 12 onglets issus de `t().home.modules.tabs`,
+ * clavier (flèches/Home/End), rotation automatique 5 s (désactivée si reduced-motion).
+ */
 @Component({
   selector: 'app-module-showcase-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [LandingRichComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section id="modules" class="modules-section" aria-labelledby="modules-title" (mouseenter)="pauseRotation()" (mouseleave)="resumeRotation()">
+    <section id="modules" class="modules-section" tabindex="-1" aria-labelledby="modules-title" (mouseenter)="pauseRotation()" (mouseleave)="resumeRotation()">
       <div class="section-container">
         <div class="section-header">
-          <span class="eyebrow">TOUT EST INCLUS · 10 MODULES</span>
-          <h2 id="modules-title" class="section-title">Une plateforme, dix modules métier intégrés</h2>
+          <span class="eyebrow">{{ format(t().home.modules.kicker, { count: facts.modulesCount }) }}</span>
+          <h2 id="modules-title" class="section-title">{{ t().home.modules.title }}</h2>
           <p class="section-description">
-            Explorez les modules clés de InstaFact. Tous les modules communiquent entre eux pour vous offrir une vision unifiée de votre activité.
+            <app-landing-rich [segments]="rich(t().home.modules.subtitle)" />
           </p>
         </div>
 
         <div class="showcase-layout">
           <div class="tabs-list" role="tablist" aria-orientation="vertical">
-            @for (tab of modules; track tab.id; let i = $index) {
+            @for (tab of t().home.modules.tabs; track tab.id; let i = $index) {
               <button
                 type="button"
                 role="tab"
@@ -38,20 +58,13 @@ interface ModuleTab {
                 [attr.aria-selected]="activeIndex() === i"
                 [attr.aria-controls]="'panel-' + tab.id"
                 [attr.tabindex]="activeIndex() === i ? 0 : -1"
-                class="tab-button"
-                [class.active]="activeIndex() === i"
-                [class.accent-blue]="tab.accent === 'blue'"
-                [class.accent-teal]="tab.accent === 'teal'"
-                [class.accent-purple]="tab.accent === 'purple'"
-                [class.accent-amber]="tab.accent === 'amber'"
-                [class.accent-pink]="tab.accent === 'pink'"
-                [class.accent-green]="tab.accent === 'green'"
+                [class]="'tab-button accent-' + visual(tab.id).accent + (activeIndex() === i ? ' active' : '')"
                 (click)="selectTab(i)"
                 (keydown)="onKeydown($event, i)">
                 <span class="tab-icon" aria-hidden="true">
-                  <i [class]="'pi ' + tab.icon"></i>
+                  <i [class]="'pi ' + visual(tab.id).icon"></i>
                 </span>
-                <span class="tab-title">{{ tab.title }}</span>
+                <span class="tab-title">{{ tab.label }}</span>
                 <span class="tab-arrow" aria-hidden="true">
                   <i class="pi pi-chevron-right"></i>
                 </span>
@@ -64,30 +77,24 @@ interface ModuleTab {
             role="tabpanel"
             [id]="'panel-' + activeTab().id"
             [attr.aria-labelledby]="'tab-' + activeTab().id">
-            <div class="panel-content" [@.disabled]="false" [class]="'accent-' + activeTab().accent">
+            <div [class]="'panel-content accent-' + visual(activeTab().id).accent">
               <div class="panel-header">
-                <span class="panel-eyebrow">{{ activeTab().tagline }}</span>
                 <h3 class="panel-title">{{ activeTab().title }}</h3>
-                <p class="panel-description">{{ activeTab().description }}</p>
+                <p class="panel-tagline">{{ activeTab().tagline }}</p>
               </div>
 
               <ul class="panel-features">
-                @for (feature of activeTab().features; track feature) {
+                @for (point of activeTab().points; track point) {
                   <li>
                     <i class="pi pi-check-circle" aria-hidden="true"></i>
-                    <span>{{ feature }}</span>
+                    <span><app-landing-rich [segments]="rich(fillCounts(point))" /></span>
                   </li>
                 }
               </ul>
 
-              <div class="panel-highlight">
-                <i class="pi pi-bolt" aria-hidden="true"></i>
-                <span>{{ activeTab().highlight }}</span>
-              </div>
-
               <div class="panel-visual" aria-hidden="true">
                 <div class="visual-icon">
-                  <i [class]="'pi ' + activeTab().icon"></i>
+                  <i [class]="'pi ' + visual(activeTab().id).icon"></i>
                 </div>
                 <div class="visual-orbit"></div>
                 <div class="visual-orbit visual-orbit-2"></div>
@@ -97,12 +104,13 @@ interface ModuleTab {
         </div>
 
         <div class="rotation-status" aria-hidden="true">
-          @for (tab of modules; track tab.id; let i = $index) {
+          @for (tab of t().home.modules.tabs; track tab.id; let i = $index) {
             <button
               type="button"
               class="rotation-dot"
               [class.active]="activeIndex() === i"
-              [attr.aria-label]="'Aller à ' + tab.title"
+              [attr.aria-label]="tab.label"
+              [attr.tabindex]="-1"
               (click)="selectTab(i)"></button>
           }
         </div>
@@ -116,6 +124,10 @@ interface ModuleTab {
       position: relative;
     }
 
+    .modules-section:focus {
+      outline: none;
+    }
+
     .section-container {
       max-width: 1280px;
       margin: 0 auto;
@@ -125,8 +137,7 @@ interface ModuleTab {
       text-align: center;
       margin-bottom: var(--spacing-12);
       max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-inline: auto;
     }
 
     .eyebrow {
@@ -138,6 +149,7 @@ interface ModuleTab {
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-semibold);
       letter-spacing: 0.08em;
+      text-transform: uppercase;
       margin-bottom: var(--spacing-4);
     }
 
@@ -187,7 +199,7 @@ interface ModuleTab {
       font-size: var(--font-size-base);
       font-weight: var(--font-weight-medium);
       color: var(--color-neutral-700);
-      text-align: left;
+      text-align: start;
       transition: all var(--transition-normal);
       width: 100%;
 
@@ -214,7 +226,6 @@ interface ModuleTab {
 
         .tab-arrow {
           opacity: 1;
-          transform: translateX(2px);
         }
       }
     }
@@ -244,7 +255,7 @@ interface ModuleTab {
     .tab-arrow {
       opacity: 0;
       color: var(--color-primary-600);
-      transition: all var(--transition-normal);
+      transition: opacity var(--transition-normal);
     }
 
     .tab-panel {
@@ -254,7 +265,7 @@ interface ModuleTab {
       padding: var(--spacing-10);
       position: relative;
       overflow: hidden;
-      min-height: 460px;
+      min-height: 320px;
     }
 
     .panel-content {
@@ -279,24 +290,14 @@ interface ModuleTab {
       margin-bottom: var(--spacing-6);
     }
 
-    .panel-eyebrow {
-      display: inline-block;
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-primary-700);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: var(--spacing-2);
-    }
-
     .panel-title {
       font-size: clamp(1.5rem, 2.5vw, 1.875rem);
       font-weight: var(--font-weight-bold);
       color: var(--color-neutral-900);
-      margin: 0 0 var(--spacing-3) 0;
+      margin: 0 0 var(--spacing-2) 0;
     }
 
-    .panel-description {
+    .panel-tagline {
       font-size: var(--font-size-base);
       line-height: var(--line-height-relaxed);
       color: var(--color-neutral-600);
@@ -306,9 +307,9 @@ interface ModuleTab {
     .panel-features {
       list-style: none;
       padding: 0;
-      margin: 0 0 var(--spacing-6) 0;
+      margin: 0;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: var(--spacing-3);
       max-width: 600px;
 
@@ -329,27 +330,10 @@ interface ModuleTab {
       }
     }
 
-    .panel-highlight {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--spacing-2);
-      padding: var(--spacing-3) var(--spacing-5);
-      background: var(--color-primary-50);
-      color: var(--color-primary-700);
-      border: 1px solid var(--color-primary-200);
-      border-radius: var(--radius-full);
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-semibold);
-
-      i {
-        color: var(--color-primary-600);
-      }
-    }
-
     .panel-visual {
       position: absolute;
       top: 50%;
-      right: var(--spacing-8);
+      inset-inline-end: var(--spacing-8);
       transform: translateY(-50%);
       width: 220px;
       height: 220px;
@@ -406,24 +390,10 @@ interface ModuleTab {
     }
 
     .accent-teal .visual-icon { background: linear-gradient(135deg, #14b8a6, #0d9488); box-shadow: 0 16px 40px rgba(20, 184, 166, 0.25); }
-    .accent-teal .panel-eyebrow { color: #0d9488; }
-    .accent-teal .panel-highlight { background: #ccfbf1; color: #115e59; border-color: #99f6e4; i { color: #0d9488; } }
-
     .accent-purple .visual-icon { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 16px 40px rgba(139, 92, 246, 0.25); }
-    .accent-purple .panel-eyebrow { color: #6d28d9; }
-    .accent-purple .panel-highlight { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; i { color: #7c3aed; } }
-
     .accent-amber .visual-icon { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 16px 40px rgba(245, 158, 11, 0.25); }
-    .accent-amber .panel-eyebrow { color: #b45309; }
-    .accent-amber .panel-highlight { background: #fef3c7; color: #92400e; border-color: #fde68a; i { color: #d97706; } }
-
     .accent-pink .visual-icon { background: linear-gradient(135deg, #ec4899, #be185d); box-shadow: 0 16px 40px rgba(236, 72, 153, 0.25); }
-    .accent-pink .panel-eyebrow { color: #be185d; }
-    .accent-pink .panel-highlight { background: #fce7f3; color: #9d174d; border-color: #fbcfe8; i { color: #db2777; } }
-
     .accent-green .visual-icon { background: linear-gradient(135deg, #10b981, #047857); box-shadow: 0 16px 40px rgba(16, 185, 129, 0.25); }
-    .accent-green .panel-eyebrow { color: #047857; }
-    .accent-green .panel-highlight { background: #d1fae5; color: #065f46; border-color: #a7f3d0; i { color: #059669; } }
 
     .rotation-status {
       display: flex;
@@ -481,9 +451,9 @@ interface ModuleTab {
       .panel-visual {
         position: relative;
         top: auto;
-        right: auto;
+        inset-inline-end: auto;
         transform: none;
-        margin: var(--spacing-6) auto 0;
+        margin: var(--spacing-8) auto 0;
       }
     }
 
@@ -495,10 +465,6 @@ interface ModuleTab {
       .tab-panel {
         padding: var(--spacing-6);
         min-height: auto;
-      }
-
-      .panel-features {
-        grid-template-columns: 1fr;
       }
 
       .panel-visual {
@@ -518,179 +484,17 @@ interface ModuleTab {
   `]
 })
 export class ModuleShowcaseSectionComponent implements OnInit, OnDestroy {
-  readonly modules: ModuleTab[] = [
-    {
-      id: 'invoices',
-      icon: 'pi-file-edit',
-      title: 'Factures & Devis',
-      tagline: 'CŒUR MÉTIER',
-      description: 'Créez des factures et devis conformes en quelques clics. Wizard 6 étapes, conversion devis→facture, signature électronique, envoi multi-canal.',
-      features: [
-        'Wizard guidé en 6 étapes',
-        'Conversion devis → facture en 1 clic',
-        'Numérotation automatique conforme',
-        'Signature électronique légale',
-        'Export PDF professionnel',
-        'Envoi WhatsApp / Email / Telegram'
-      ],
-      highlight: 'Une facture créée en moins de 2 minutes',
-      accent: 'blue'
-    },
-    {
-      id: 'pos',
-      icon: 'pi-shopping-cart',
-      title: 'POS / Caisse',
-      tagline: 'POINT DE VENTE',
-      description: 'Encaissez rapidement avec une caisse moderne tactile. Sessions, multi-moyens de paiement, suivi des fonds en temps réel.',
-      features: [
-        'Interface tactile moderne',
-        'Sessions de caisse avec ouverture/clôture',
-        'Multi-moyens : espèces, CB, virement, chèque',
-        'Auto-linking facture ↔ caisse',
-        'Suivi des fonds en temps réel',
-        'Tickets clients personnalisables'
-      ],
-      highlight: 'Conçu pour les boutiques et restaurants',
-      accent: 'amber'
-    },
-    {
-      id: 'stock',
-      icon: 'pi-box',
-      title: 'Stock & Inventaire',
-      tagline: 'GESTION D\'ENTREPÔT',
-      description: 'Gérez plusieurs entrepôts depuis une seule interface. Mouvements en temps réel, comptages physiques, alertes intelligentes.',
-      features: [
-        'Multi-entrepôts et magasins',
-        'Mouvements de stock temps réel',
-        'Transferts inter-entrepôts',
-        'Comptages physiques avec variance',
-        'Alertes de stock bas',
-        'Valuation FIFO automatique'
-      ],
-      highlight: 'Visibilité complète sur vos stocks',
-      accent: 'teal'
-    },
-    {
-      id: 'purchasing',
-      icon: 'pi-shopping-bag',
-      title: 'Achats & Fournisseurs',
-      tagline: 'APPROVISIONNEMENT',
-      description: 'Pilotez vos achats : bons de commande, factures fournisseurs, retenues à la source TEJ. Workflow complet de la commande à la réception.',
-      features: [
-        'Bons de commande workflow complet',
-        'Factures fournisseurs auto-linkées',
-        'Retenues à la source TEJ',
-        'Certificats RS automatiques',
-        'Suivi des dettes fournisseurs',
-        'Lettrage comptable automatique'
-      ],
-      highlight: 'Conformité TEJ Tunisie intégrée',
-      accent: 'purple'
-    },
-    {
-      id: 'banking',
-      icon: 'pi-credit-card',
-      title: 'Banking & Trésorerie',
-      tagline: 'TRÉSORERIE',
-      description: 'Connectez vos 10+ banques tunisiennes. Versements, dépôts, réconciliation automatique. Maîtrisez votre cash flow.',
-      features: [
-        'Comptes multi-devises',
-        'Dépôts et versements bancaires',
-        'Réconciliation automatique',
-        'Suivi du cash flow temps réel',
-        'Lettrage des écritures bancaires'
-      ],
-      highlight: 'BIAT, STB, Attijari, BH, Amen et plus',
-      accent: 'blue'
-    },
-    {
-      id: 'accounting',
-      icon: 'pi-calculator',
-      title: 'Comptabilité',
-      tagline: 'COMPTA & FISCAL',
-      description: 'Plan comptable, journaux, grand livre, lettrage. Audit chain immuable.',
-      features: [
-        'Plan comptable configurable',
-        'Journaux (ventes, achats, caisse, banque)',
-        'Grand livre et balance',
-        'Saisie manuelle d\'écritures',
-        'Lettrage des dettes'
-      ],
-      highlight: 'Compatible expert-comptable tunisien',
-      accent: 'pink'
-    },
-    {
-      id: 'crm',
-      icon: 'pi-users',
-      title: 'CRM Commercial',
-      tagline: 'PIPELINE DE VENTES',
-      description: 'Suivez vos opportunités, activités et objectifs commerciaux. Top clients, top produits, rapports équipe en un coup d\'œil.',
-      features: [
-        'Pipeline d\'opportunités',
-        'Activités commerciales (calls, RDV)',
-        'Sales targets par commercial',
-        'Top clients et top produits',
-        'Rapports équipe automatisés',
-        'Liaison avec devis/factures'
-      ],
-      highlight: 'Augmentez vos taux de conversion',
-      accent: 'green'
-    },
-    {
-      id: 'ai',
-      icon: 'pi-bolt',
-      title: 'IA Assistant',
-      tagline: 'INTELLIGENCE INTÉGRÉE',
-      description: 'Chat conversationnel, OCR de documents, recommandations intelligentes. Tout est conçu pour protéger vos données : IA local, pas de cloud, confidentialité maximale.',
-      features: [
-        'Chat IA contextuel sur vos données',
-        'OCR factures fournisseurs (PDF → données)',
-        'Recommandations clients/produits',
-        'IA local',
-        'Données 100% privées',
-        'Suggestions automatiques formulaires'
-      ],
-      highlight: 'Les seules questions, des réponses immédiates',
-      accent: 'purple'
-    },
-    {
-      id: 'forecasting',
-      icon: 'pi-chart-line',
-      title: 'Forecasting & Prévisions',
-      tagline: 'SCIENCE DES DONNÉES',
-      description: 'Prévisions de ventes, classification ABC/XYZ, recommandations d\'achat. Calendrier commercial tunisien intégré (Ramadan, Aïd…).',
-      features: [
-        'Prévisions de ventes (statistique + ML)',
-        'Classification ABC/XYZ produits ',
-        'Recommandations replenishment',
-        'Détection des fenêtres promotionnelles',
-        'Calendrier commercial tunisien intégré',
-        'Saisonnalité Ramadan, Aïd, fêtes'
-      ],
-      highlight: 'Anticipez Ramadan et l\'Aïd automatiquement',
-      accent: 'amber'
-    },
-    {
-      id: 'reporting',
-      icon: 'pi-chart-bar',
-      title: 'Reporting & Analytics',
-      tagline: 'TABLEAUX DE BORD',
-      description: 'Tableaux de bord, exports PDF/Excel, KPIs en temps réel. Comprenez votre activité d\'un coup d\'œil.',
-      features: [
-        'Dashboard avec KPIs en temps réel',
-        'Rapports ventes, achats, stock, trésorerie',
-        'Top clients, top produits, top vendeurs',
-        'Évolution du CA',
-        'Export PDF / Excel',
-        'Filtres par période, entrepôt, équipe'
-      ],
-      highlight: 'Toutes vos données, prêtes à analyser',
-      accent: 'teal'
-    }
-  ];
+  private readonly copy = inject(LandingCopyService);
 
-  readonly activeIndex = signal(0);
-  readonly activeTab = computed(() => this.modules[this.activeIndex()]);
+  protected readonly t = this.copy.t;
+  protected readonly facts = LANDING_FACTS;
+
+  protected readonly tabs = computed(() => this.t().home.modules.tabs);
+  protected readonly activeIndex = signal(0);
+  protected readonly activeTab = computed(() => {
+    const tabs = this.tabs();
+    return tabs[Math.min(this.activeIndex(), tabs.length - 1)];
+  });
 
   private rotationTimer?: ReturnType<typeof setInterval>;
   private isPaused = false;
@@ -703,6 +507,10 @@ export class ModuleShowcaseSectionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopRotation();
+  }
+
+  protected visual(tabId: string): TabVisual {
+    return TAB_VISUALS[tabId] ?? FALLBACK_VISUAL;
   }
 
   selectTab(index: number): void {
@@ -723,33 +531,47 @@ export class ModuleShowcaseSectionComponent implements OnInit, OnDestroy {
   }
 
   onKeydown(event: KeyboardEvent, index: number): void {
+    const count = this.tabs().length;
     let newIndex = index;
     if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
       event.preventDefault();
-      newIndex = (index + 1) % this.modules.length;
+      newIndex = (index + 1) % count;
     } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
       event.preventDefault();
-      newIndex = (index - 1 + this.modules.length) % this.modules.length;
+      newIndex = (index - 1 + count) % count;
     } else if (event.key === 'Home') {
       event.preventDefault();
       newIndex = 0;
     } else if (event.key === 'End') {
       event.preventDefault();
-      newIndex = this.modules.length - 1;
+      newIndex = count - 1;
     } else {
       return;
     }
     this.selectTab(newIndex);
-    const tabId = `tab-${this.modules[newIndex].id}`;
+    const tabId = `tab-${this.tabs()[newIndex].id}`;
     requestAnimationFrame(() => {
       document.getElementById(tabId)?.focus();
     });
   }
 
+  protected rich(text: string) {
+    return this.copy.rich(text);
+  }
+
+  protected format(template: string, params: Record<string, string | number>): string {
+    return this.copy.format(template, params);
+  }
+
+  /** `{toolsCount}` (onglet IA) → constante vérifiable. */
+  protected fillCounts(text: string): string {
+    return this.copy.format(text, { toolsCount: LANDING_FACTS.aiToolsCount });
+  }
+
   private startRotation(): void {
     this.rotationTimer = setInterval(() => {
       if (this.isPaused) return;
-      const next = (this.activeIndex() + 1) % this.modules.length;
+      const next = (this.activeIndex() + 1) % this.tabs().length;
       this.activeIndex.set(next);
     }, 5000);
   }

@@ -1,33 +1,49 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { LandingLocaleService } from '@core/services/landing-locale.service';
+import { PublicRegistrationStatusService } from '@core/services/public-registration-status.service';
+import { LandingCopyService } from '../../content/landing-copy.service';
+import { homePath } from '../../i18n/landing-locale.util';
+import { LANDING_PRICING } from '../../content/landing-pricing';
 
-const STORAGE_KEY = 'factutrust_promo_banner_dismissed_v1';
+/** v2 : la valeur a changé (bandeau « Nouveautés » quand les inscriptions sont fermées). */
+const STORAGE_KEY = 'factutrust_promo_banner_dismissed_v2';
 const REAPPEAR_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
 
+/**
+ * Bandeau d'annonce (plan A.5.11) :
+ * - inscriptions ouvertes → offre de lancement + lien `/auth/register` (jamais mort : le statut est connu) ;
+ * - fermées → « Nouveautés {year} » + lien vers `#nouveautes`.
+ * Fermeture persistée 7 jours dans localStorage.
+ */
 @Component({
   selector: 'app-promo-banner',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
-      <aside class="promo-banner" role="region" aria-label="Promotion de lancement">
+      <aside class="promo-banner" role="region" [attr.aria-label]="t().home.promo.region">
         <div class="promo-banner-inner">
-          <span class="promo-emoji" aria-hidden="true">🎁</span>
           <p class="promo-text">
-            <strong>Lancement Tunisie 2026</strong> —
-            <span class="promo-detail">10 factures/mois gratuites + Configuration assistée. <strong>Aucune CB requise.</strong></span>
+            @if (registrationOpen()) {
+              {{ openText() }}
+            } @else {
+              {{ closedText() }}
+            }
           </p>
-          <a routerLink="/auth/register" class="promo-cta">
-            Démarrer
-            <span class="promo-cta-arrow" aria-hidden="true">→</span>
-          </a>
-          <button
-            type="button"
-            class="promo-close"
-            aria-label="Fermer le bandeau de promotion"
-            (click)="dismiss()">
+          @if (registrationOpen()) {
+            <a routerLink="/auth/register" class="promo-cta">
+              {{ t().home.promo.open.cta }}
+              <i class="pi pi-arrow-right" aria-hidden="true"></i>
+            </a>
+          } @else {
+            <a [routerLink]="homeUrl()" fragment="nouveautes" class="promo-cta">
+              {{ t().home.promo.closed.cta }}
+              <i class="pi pi-arrow-right" aria-hidden="true"></i>
+            </a>
+          }
+          <button type="button" class="promo-close" [attr.aria-label]="t().home.promo.dismiss" (click)="dismiss()">
             <span aria-hidden="true">×</span>
           </button>
         </div>
@@ -37,7 +53,7 @@ const REAPPEAR_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
   styles: [`
     .promo-banner {
       width: 100%;
-      background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+      background: linear-gradient(90deg, #5b68eb 0%, #1d4ed8 100%);
       color: #ffffff;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
       position: relative;
@@ -53,27 +69,12 @@ const REAPPEAR_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
       padding: 0.65rem 1.25rem;
     }
 
-    .promo-emoji {
-      font-size: 1.25rem;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-
     .promo-text {
       flex: 1;
       margin: 0;
       font-size: 0.92rem;
       line-height: 1.45;
       color: #ffffff;
-    }
-
-    .promo-text strong {
-      color: #ffffff;
-      font-weight: 700;
-    }
-
-    .promo-detail {
-      opacity: 0.95;
     }
 
     .promo-cta {
@@ -89,6 +90,11 @@ const REAPPEAR_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
       font-size: 0.9rem;
       flex-shrink: 0;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      i {
+        font-size: 0.8rem;
+        transition: transform 0.2s ease;
+      }
     }
 
     .promo-cta:hover {
@@ -96,17 +102,13 @@ const REAPPEAR_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
       box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
     }
 
+    .promo-cta:hover i {
+      transform: translateX(2px); /* rtl-ok : micro-mouvement décoratif */
+    }
+
     .promo-cta:focus-visible {
       outline: 2px solid #ffffff;
       outline-offset: 2px;
-    }
-
-    .promo-cta-arrow {
-      transition: transform 0.2s ease;
-    }
-
-    .promo-cta:hover .promo-cta-arrow {
-      transform: translateX(2px);
     }
 
     .promo-close {
@@ -135,6 +137,18 @@ const REAPPEAR_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
       outline-offset: 2px;
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      .promo-cta,
+      .promo-cta i,
+      .promo-close {
+        transition: none;
+      }
+      .promo-cta:hover,
+      .promo-cta:hover i {
+        transform: none;
+      }
+    }
+
     @media (max-width: 768px) {
       .promo-banner-inner {
         flex-wrap: wrap;
@@ -146,10 +160,6 @@ const REAPPEAR_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
         flex: 1 1 100%;
         order: 2;
         font-size: 0.85rem;
-      }
-
-      .promo-emoji {
-        order: 1;
       }
 
       .promo-cta {
@@ -164,15 +174,29 @@ const REAPPEAR_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
         height: 28px;
         font-size: 1.2rem;
       }
-
-      .promo-detail {
-        display: block;
-      }
     }
   `]
 })
 export class PromoBannerComponent implements OnInit {
-  readonly visible = signal(true);
+  private readonly copy = inject(LandingCopyService);
+  private readonly status = inject(PublicRegistrationStatusService);
+  private readonly localeService = inject(LandingLocaleService);
+
+  protected readonly t = this.copy.t;
+  protected readonly visible = signal(true);
+  protected readonly registrationOpen = computed(() => this.status.companyOpen() || this.status.firmOpen());
+  protected readonly homeUrl = computed(() => homePath(this.localeService.locale()));
+  protected readonly closedText = computed(() =>
+    this.copy.format(this.t().home.promo.closed.text, { year: new Date().getFullYear() })
+  );
+  /** Texte ouvert : les deux `{count}` = quotas gratuits (factures = devis = 10). */
+  protected readonly openText = computed(() =>
+    this.copy.format(this.t().home.promo.open.text, { count: LANDING_PRICING.free.maxInvoicesPerMonth })
+  );
+
+  constructor() {
+    this.status.ensureLoaded();
+  }
 
   ngOnInit(): void {
     if (typeof window === 'undefined') return;

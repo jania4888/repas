@@ -1,7 +1,7 @@
 // TODO-AR : traduction arabe à livrer par TD7 (copie FR provisoire, structure figée par TD1).
 import type { LandingSharedCopy } from '../landing-copy.types';
 
-/** Zone partagée FR (header, footer, CTA, sélecteur de langue). Texte final — TD1. */
+/** Copie provisoire du FR (TA3) — la traduction arabe (TD7) remplace les valeurs, pas la structure. */
 export const SHARED_AR: LandingSharedCopy = {
   brand: {
     name: 'InstaFact',
@@ -44,7 +44,7 @@ export const SHARED_AR: LandingSharedCopy = {
   virtualTour: {
     link: 'Visite virtuelle',
     title: 'Rue InstaFact',
-    text: 'Parcourez la rue virtuelle des entreprises qui utilisent InstaFact.'
+    text: 'Parcourez les vitrines publiques des entreprises partenaires (opt-in, données publiques uniquement).'
   },
   footer: {
     baseline: 'InstaFact — gestion commerciale, comptabilité et paie pour les entreprises tunisiennes.',

@@ -1,15 +1,17 @@
 // TODO-AR : traduction arabe à livrer par TD7 (copie FR provisoire, structure figée par TD1).
 import type { LandingHomeCopy } from '../landing-copy.types';
 
+/** Copie provisoire du FR (TA3) — la traduction arabe (TD7) remplace les valeurs, pas la structure. */
 /**
- * Accueil FR — SQUELETTE TYPÉ (TD1). La structure est définitive ; le texte est un brouillon
- * fidèle au plan § 5.2 / A.4 que TA3 finalise (termes interdits : plan § 5.3).
- * Les nombres (prix, statistiques) restent dans `landing-pricing.ts` / `landing-facts.ts`.
+ * Accueil FR — copy finale (TA3), conforme au plan § 5.2 / A.4 (termes interdits : § 5.3).
+ * Aucun prix ni statistique en dur : `{count}`, `{amount}`, `{percent}` et `{year}` sont
+ * injectés par les composants depuis `landing-pricing.ts` et les constantes de faits
+ * (modules activables, rôles, outils IA).
  */
 export const HOME_AR: LandingHomeCopy = {
   promo: {
     open: {
-      text: 'Offre de lancement Tunisie — factures et devis gratuits chaque mois, sans carte bancaire.',
+      text: 'Offre de lancement Tunisie — {count} factures et {count} devis par mois gratuits, sans carte bancaire.',
       cta: 'Créer un compte gratuit'
     },
     closed: {
@@ -141,7 +143,7 @@ export const HOME_AR: LandingHomeCopy = {
         title: 'IA & Studio',
         tagline: 'Un assistant qui agit dans vos données, sur vos serveurs',
         points: [
-          'Plus de {count} outils métier',
+          'Plus de {toolsCount} outils métier',
           'Modèles locaux (Ollama) ou cloud au choix (OpenRouter)',
           'Studio : tables, formulaires, workflows sans code'
         ]
@@ -158,7 +160,7 @@ export const HOME_AR: LandingHomeCopy = {
   features: {
     kicker: 'Fonctionnalités',
     title: 'Tout ce dont une entreprise tunisienne a besoin',
-    subtitle: 'Des documents commerciaux à la paie, chaque fonction est prouvée dans l’application.',
+    subtitle: 'Des documents commerciaux à la paie, chaque fonction est disponible dans l’application.',
     items: [
       {
         icon: 'pi-file',
@@ -178,12 +180,12 @@ export const HOME_AR: LandingHomeCopy = {
       {
         icon: 'pi-microchip-ai',
         title: 'Assistant IA souverain',
-        text: 'Posez vos questions, laissez l’IA créer ou retrouver des documents : plus de {count} outils, modèles hébergés chez vous.'
+        text: 'Posez vos questions, laissez l’IA créer ou retrouver des documents : plus de {toolsCount} outils, modèles hébergés chez vous.'
       },
       { icon: 'pi-box', title: 'Stock multi-dépôts', text: 'Réceptions, transferts, inventaires et alertes.' },
       {
         icon: 'pi-users',
-        title: '{count} rôles et permissions fines',
+        title: '{rolesCount} rôles et permissions fines',
         text: 'De l’administrateur au caissier, chaque profil ne voit que ce dont il a besoin.'
       },
       {
@@ -206,7 +208,7 @@ export const HOME_AR: LandingHomeCopy = {
     providers: [
       {
         title: 'Local (Ollama)',
-        text: 'Modèles Qwen et Gemma exécutés sur votre serveur : vos données ne sortent pas.'
+        text: 'Modèles Qwen 2.5 et Gemma 3 exécutés sur votre serveur : vos données ne sortent pas.'
       },
       {
         title: 'Cloud en option (OpenRouter)',
@@ -343,10 +345,14 @@ export const HOME_AR: LandingHomeCopy = {
         highlight: 'Factures, devis, clients & produits illimités',
         features: [
           'Factures, devis, clients & produits illimités',
-          'Export XML TEJ et certificats de retenue',
+          'Achats, stock multi-dépôts, trésorerie & banque',
+          'Comptabilité NCT, CRM et fiscalité',
+          'Assistant IA — chat et outils métier',
+          'Prévisions de ventes et de stock',
+          'Export PDF & XML TEJ, certificats de retenue',
           'Scellement des documents (HMAC-SHA256)',
-          'Archivage — {amount} inclus',
-          'Utilisateurs illimités'
+          'Suivi des paiements et rapports',
+          '{amount} de stockage documents'
         ],
         disabledFeatures: ['Support prioritaire'],
         cta: 'Choisir Mensuel'
@@ -357,9 +363,14 @@ export const HOME_AR: LandingHomeCopy = {
         highlight: 'Tout le plan Mensuel, moins cher',
         features: [
           'Factures, devis, clients & produits illimités',
-          'Export XML TEJ et certificats de retenue',
+          'Achats, stock multi-dépôts, trésorerie & banque',
+          'Comptabilité NCT, CRM et fiscalité',
+          'Assistant IA — chat et outils métier',
+          'Prévisions de ventes et de stock',
+          'Export PDF & XML TEJ, certificats de retenue',
           'Scellement des documents (HMAC-SHA256)',
-          'Archivage — {amount} inclus',
+          'Suivi des paiements et rapports',
+          '{amount} de stockage documents',
           'Support prioritaire'
         ],
         disabledFeatures: [],
@@ -377,7 +388,7 @@ export const HOME_AR: LandingHomeCopy = {
     },
     enterprise: {
       title: 'Plan Entreprise — sur mesure',
-      text: 'Volumes, intégrations, hébergement dédié et accompagnement renforcé.',
+      text: 'Volumes, intégrations, hébergement dédié.',
       cta: 'Discuter de votre projet'
     },
     faqTitle: 'Questions sur les tarifs',
@@ -387,7 +398,10 @@ export const HOME_AR: LandingHomeCopy = {
         question: 'Que se passe-t-il si je dépasse le quota de factures ?',
         answer: 'La création est bloquée jusqu’au mois suivant ou au passage à un plan payant.'
       },
-      { question: 'Les prix incluent-ils la TVA ?', answer: 'Les prix sont affichés hors taxes ; la TVA applicable est précisée sur la facture.' },
+      {
+        question: 'Les prix incluent-ils la TVA ?',
+        answer: 'Les prix sont en dinars tunisiens ; la TVA sera précisée à la facturation si applicable.'
+      },
       { question: 'Puis-je exporter mes données ?', answer: 'Oui : PDF, Excel, FEC et XML TEJ selon votre plan.' }
     ]
   },
@@ -433,7 +447,7 @@ export const HOME_AR: LandingHomeCopy = {
       'Paie CNSS/IRPP intégrée',
       'Déclaration mensuelle préparée',
       'Assistant IA hébergé chez vous',
-      'Rôles et journal d’audit chaîné',
+      '{count} rôles et journal d’audit chaîné',
       'Portail client',
       'Prévisions avec calendrier tunisien',
       'Prix en TND, plan gratuit'
@@ -481,12 +495,12 @@ export const HOME_AR: LandingHomeCopy = {
     title: 'Des accès maîtrisés, une trace de chaque action',
     subtitle: 'Authentification forte, permissions par rôle et journal d’audit chaîné.',
     points: [
-      { title: 'Authentification', text: 'Authentification JWT avec double facteur (2FA) et verrouillage après échecs.' },
-      { title: 'Permissions', text: 'Permissions par rôle et journal d’audit chaîné.' },
-      { title: 'Isolation', text: 'Une base de données par entreprise ; aucun mélange entre sociétés.' },
+      { title: 'Authentification renforcée', text: 'JWT avec double facteur (2FA) et verrouillage après échecs.' },
+      { title: 'Accès par rôle', text: 'Permissions par rôle ({count} rôles) et journal d’audit chaîné.' },
+      { title: 'Isolation par entreprise', text: 'Une base de données par entreprise : aucun mélange entre sociétés.' },
       {
-        title: 'Points d’entrée publics',
-        text: 'Limitation de débit sur les points d’entrée publics et en-têtes de sécurité HTTP.'
+        title: 'Limitation de débit',
+        text: 'Les points d’entrée publics sont limités en débit et servis avec des en-têtes de sécurité HTTP.'
       },
       { title: 'Vos documents', text: 'Vos documents et exports restent téléchargeables tant que votre compte est actif.' }
     ]
@@ -519,7 +533,11 @@ export const HOME_AR: LandingHomeCopy = {
     cards: [
       { icon: 'pi-flag', title: 'Conçu pour la Tunisie', text: 'TEJ, NCT, CNSS, IRPP, déclaration mensuelle et calendrier local.' },
       { icon: 'pi-money-bill', title: 'Prix en dinars', text: 'Des tarifs en TND, sans conversion ni surprise.' },
-      { icon: 'pi-server', title: 'Vos données restent chez vous', text: 'IA hébergée sur nos serveurs, une base par entreprise.' },
+      {
+        icon: 'pi-server',
+        title: 'Vos données restent chez vous',
+        text: 'L’assistant IA s’exécute sur votre instance, sans envoi à un fournisseur externe ; une base de données par entreprise.'
+      },
       { icon: 'pi-comments', title: 'Support en français', text: 'Une équipe qui parle votre langue et connaît vos obligations.' },
       { icon: 'pi-history', title: 'Journal d’audit chaîné', text: 'Chaque action est tracée et vérifiable.' },
       { icon: 'pi-gift', title: 'Un plan gratuit pour démarrer', text: 'Testez sans carte bancaire.' }
@@ -549,7 +567,7 @@ export const HOME_AR: LandingHomeCopy = {
       {
         question: 'Combien d’utilisateurs et de rôles ?',
         answer:
-          '{count} rôles (administrateur, comptable, commercial, caissier, magasinier, auditeur…). Le plan gratuit inclut plusieurs utilisateurs ; les plans payants n’ont pas de limite.'
+          '{rolesCount} rôles (administrateur, comptable, commercial, caissier, magasinier, auditeur…). Le plan gratuit inclut plusieurs utilisateurs ; les plans payants n’ont pas de limite.'
       },
       {
         question: 'Gérez-vous la paie tunisienne ?',
@@ -582,7 +600,7 @@ export const HOME_AR: LandingHomeCopy = {
   finalCta: {
     titleOpen: 'Prêt à facturer en dinars, en conformité ?',
     titleClosed: 'Parlons de votre entreprise ou de votre cabinet',
-    subtitle: 'Créez votre compte ou décrivez-nous votre besoin : nous vous répondons rapidement.',
+    subtitle: 'Créez votre compte ou décrivez votre besoin : nous vous répondons rapidement.',
     loginLink: 'J’ai déjà un compte'
   }
 };

@@ -1,148 +1,116 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
+import { LandingLocaleService } from '@core/services/landing-locale.service';
+import { LandingCopyService } from '../../content/landing-copy.service';
+import { LandingCtaComponent } from '../../shared/landing-cta/landing-cta.component';
+import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
+import { ANNUAL_SAVING_PERCENT, ANNUAL_SAVING_TND, LANDING_PRICING } from '../../content/landing-pricing';
+import { cabinetsPath } from '../../i18n/landing-locale.util';
+
+type PlanKey = 'free' | 'monthly' | 'annual';
 
 /**
- * Copy des forfaits : garder aligné avec GET api/subscription/plans (SubscriptionController.GetAvailablePlans)
- * et SubscriptionLimits (InstaFact.Domain) pour limites et flags XmlExport / signature / support.
+ * Tarifs (plan A.4.13 / TA7) : 3 plans dont les montants viennent de `LANDING_PRICING`
+ * (jamais en dur dans le template), bloc « Version Cabinet — sur devis », bannière
+ * Entreprise (CTA contact forcé, objet `entreprise`) et FAQ tarifaire (4 Q/R).
+ * Les montants sont rendus dans des `span[dir="ltr"]` pour rester lisibles en RTL.
  */
 @Component({
   selector: 'app-pricing-section',
   standalone: true,
-  imports: [CommonModule, RouterModule, ButtonModule, CardModule],
+  imports: [RouterModule, LandingCtaComponent, LandingRichComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section id="tarifs" class="pricing-section">
+    <section id="tarifs" class="pricing-section" tabindex="-1" aria-labelledby="tarifs-title">
       <div class="section-container">
         <div class="section-header">
-          <h2 class="section-title">Une suite ERP complète, des tarifs transparents</h2>
+          <span class="eyebrow">{{ t().home.pricing.kicker }}</span>
+          <h2 id="tarifs-title" class="section-title">{{ t().home.pricing.title }}</h2>
           <p class="section-description">
-            Facturation conforme TEJ, modules métier intégrés, <strong>assistant IA</strong> et prévisions — testez la plateforme avec des quotas généreux, sans carte bancaire.
+            <app-landing-rich [segments]="rich(t().home.pricing.subtitle)" />
           </p>
-          <p class="section-modules-cta">
-            <a href="#modules" class="modules-anchor">Voir le détail des modules</a>
-          </p>
-          <p class="section-reassurance">
-            <strong>Sans CB. Sans engagement. Annulation en un clic depuis votre espace.</strong>
-          </p>
+          <p class="section-reassurance">{{ t().home.pricing.reassurance }}</p>
         </div>
 
         <div class="pricing-grid">
-          <div class="pricing-card">
-            <div class="pricing-header">
-              <h3 class="pricing-name">Gratuit</h3>
-              <div class="pricing-badge">Idéal pour tester pendant 1 mois</div>
-              <div class="pricing-price">
-                <span class="price-amount">0</span>
-                <span class="price-currency">TND</span>
-                <span class="price-period">/mois</span>
+          @for (key of planKeys; track key) {
+            <article class="pricing-card" [class.featured]="key === 'annual'">
+              @if (key === 'annual') {
+                <div class="pricing-badge-featured">{{ t().home.pricing.plans.annual.badge }}</div>
+              }
+              <div class="pricing-header">
+                <h3 class="pricing-name">{{ t().home.pricing.plans[key].name }}</h3>
+                @if (key !== 'annual' && t().home.pricing.plans[key].badge) {
+                  <div class="pricing-badge">{{ t().home.pricing.plans[key].badge }}</div>
+                }
+                @if (key === 'annual') {
+                  <div class="pricing-badge savings">{{ format(t().home.pricing.savingsBadge, { percent: savingPercent }) }}</div>
+                }
+                <div class="pricing-price">
+                  <span class="price-amount" dir="ltr">{{ priceOf(key) }}</span>
+                  <span class="price-currency">{{ currency }}</span>
+                  <span class="price-period">{{ t().shared.common.perMonth }}</span>
+                </div>
+                @if (key === 'annual') {
+                  <div class="pricing-billing">
+                    <app-landing-rich [segments]="richWithAmount(t().home.pricing.billedYearly, pricing.annual.priceAnnual + ' ' + currency)" />
+                  </div>
+                }
+                @if (t().home.pricing.plans[key].highlight) {
+                  <div class="pricing-highlight">
+                    <app-landing-rich [segments]="rich(fillPlan(t().home.pricing.plans[key].highlight, key))" />
+                  </div>
+                }
               </div>
-              <div class="pricing-highlight">10 factures gratuites par mois</div>
-            </div>
-            <div class="pricing-body">
-              <ul class="pricing-features">
-                <li><i class="pi pi-check"></i> <strong>10 factures</strong> / mois</li>
-                <li><i class="pi pi-check"></i> <strong>10 devis</strong> / mois</li>
-                <li><i class="pi pi-check"></i> Jusqu'à <strong>20 clients</strong></li>
-                <li><i class="pi pi-check"></i> Jusqu'à <strong>50 produits</strong> ou services</li>
-                <li><i class="pi pi-check"></i> <strong>100 Mo</strong> de stockage documents</li>
-                <li><i class="pi pi-check"></i> Jusqu'à <strong>5 utilisateurs</strong></li>
-                <li><i class="pi pi-check"></i> Export <strong>PDF</strong> (factures & devis)</li>
-                <li><i class="pi pi-check"></i> Découverte des <strong>modules</strong> InstaFact (sous quotas)</li>
-                <li class="feature-disabled">
-                  <span class="icon-cross-3d" aria-hidden="true"></span>
-                  Export XML / dossiers TEJ avancés
-                </li>
-                <li class="feature-disabled">
-                  <span class="icon-cross-3d" aria-hidden="true"></span>
-                  Signature électronique
-                </li>
-                <li class="feature-disabled">
-                  <span class="icon-cross-3d" aria-hidden="true"></span>
-                  Suivi des paiements avancé
-                </li>
-                <li class="feature-disabled">
-                  <span class="icon-cross-3d" aria-hidden="true"></span>
-                  Archivage sécurisé étendu
-                </li>
-                <li class="feature-disabled">
-                  <span class="icon-cross-3d" aria-hidden="true"></span>
-                  Support prioritaire
-                </li>
-              </ul>
-              <a routerLink="/auth/register" class="pricing-button">
-                Commencer gratuitement
-              </a>
-              <p class="pricing-note"><strong>Aucune carte bancaire requise</strong> • Configuration en 5 minutes</p>
-            </div>
-          </div>
-
-          <div class="pricing-card">
-            <div class="pricing-header">
-              <h3 class="pricing-name">Mensuel</h3>
-              <div class="pricing-price">
-                <span class="price-amount">49</span>
-                <span class="price-currency">TND</span>
-                <span class="price-period">/mois</span>
+              <div class="pricing-body">
+                <ul class="pricing-features">
+                  @for (feature of t().home.pricing.plans[key].features; track feature; let i = $index) {
+                    <li>
+                      <i class="pi pi-check" aria-hidden="true"></i>
+                      <span><app-landing-rich [segments]="rich(fillPlan(feature, key, i))" /></span>
+                    </li>
+                  }
+                  @for (disabled of t().home.pricing.plans[key].disabledFeatures; track disabled) {
+                    <li class="feature-disabled">
+                      <i class="pi pi-times" aria-hidden="true"></i>
+                      <span>{{ disabled }}</span>
+                    </li>
+                  }
+                </ul>
+                <app-landing-cta
+                  audience="company"
+                  [cssClass]="key === 'annual' ? 'pricing-button primary' : 'pricing-button'"
+                  [openLabelOverride]="t().home.pricing.plans[key].cta" />
+                @if (key === 'annual') {
+                  <p class="pricing-note">
+                    <app-landing-rich [segments]="richWithAmount(t().home.pricing.annualSaving, savingTnd + ' ' + currency)" />
+                  </p>
+                }
               </div>
-            </div>
-            <div class="pricing-body">
-              <ul class="pricing-features">
-                <li><i class="pi pi-check"></i> <strong>Factures, devis, clients & produits</strong> illimités</li>
-                <li><i class="pi pi-check"></i> <strong>Achats</strong>, <strong>stock</strong> multi-entrepôts, <strong>trésorerie</strong> & banques</li>
-                <li><i class="pi pi-check"></i> <strong>Comptabilité</strong>, <strong>CRM</strong>, <strong>fiscal / TEJ</strong></li>
-                <li><i class="pi pi-check"></i> <strong>Assistant IA</strong> — chat, OCR, recommandations</li>
-                <li><i class="pi pi-check"></i> <strong>Prévisions</strong> intelligentes (forecasting)</li>
-                <li><i class="pi pi-check"></i> Signature électronique</li>
-                <li><i class="pi pi-check"></i> Export PDF & <strong>XML TEJ</strong></li>
-                <li><i class="pi pi-check"></i> Suivi des paiements & rapports avancés</li>
-                <li><i class="pi pi-check"></i> Archivage sécurisé — <strong>5 Go</strong> inclus</li>
-                <li class="feature-disabled">
-                  <span class="icon-cross-3d" aria-hidden="true"></span>
-                  Support prioritaire (forfait Annuel)
-                </li>
-              </ul>
-              <a routerLink="/auth/register" class="pricing-button">
-                Choisir Mensuel
-              </a>
-              <p class="pricing-note">Facturé mensuellement • Annulation à tout moment</p>
-            </div>
-          </div>
-
-          <div class="pricing-card featured">
-            <div class="pricing-badge-featured">Le plus populaire</div>
-            <div class="pricing-header">
-              <h3 class="pricing-name">Annuel</h3>
-              <div class="pricing-badge savings">Économisez 20%</div>
-              <div class="pricing-price">
-                <span class="price-amount">39</span>
-                <span class="price-currency">TND</span>
-                <span class="price-period">/mois</span>
-              </div>
-              <div class="pricing-billing">Facturé 468 TND par an</div>
-            </div>
-            <div class="pricing-body">
-              <ul class="pricing-features">
-                <li><i class="pi pi-check"></i> <strong>Factures, devis, clients & produits</strong> illimités</li>
-                <li><i class="pi pi-check"></i> <strong>Achats</strong>, <strong>stock</strong> multi-entrepôts, <strong>trésorerie</strong> & banques</li>
-                <li><i class="pi pi-check"></i> <strong>Comptabilité</strong>, <strong>CRM</strong>, <strong>fiscal / TEJ</strong></li>
-                <li><i class="pi pi-check"></i> <strong>Assistant IA</strong> — chat, OCR, recommandations</li>
-                <li><i class="pi pi-check"></i> <strong>Prévisions</strong> intelligentes (forecasting)</li>
-                <li><i class="pi pi-check"></i> Signature électronique</li>
-                <li><i class="pi pi-check"></i> Export PDF & <strong>XML TEJ</strong></li>
-                <li><i class="pi pi-check"></i> Suivi des paiements & rapports avancés</li>
-                <li><i class="pi pi-check"></i> Archivage sécurisé — <strong>20 Go</strong> inclus</li>
-                <li><i class="pi pi-check"></i> <strong>Support prioritaire</strong></li>
-                <li><i class="pi pi-check"></i> <strong>Économie de 120 TND/an</strong> vs mensuel</li>
-              </ul>
-              <a routerLink="/auth/register" class="pricing-button primary">
-                Choisir Annuel — Économisez 120 TND
-              </a>
-              <p class="pricing-note">Paiement annuel unique • Annulation possible</p>
-            </div>
-          </div>
+            </article>
+          }
         </div>
+
+        <aside class="cabinet-block" aria-labelledby="cabinet-block-title">
+          <div class="cabinet-block-text">
+            <h3 id="cabinet-block-title">{{ t().home.pricing.cabinet.title }}</h3>
+            <p>
+              <app-landing-rich [segments]="rich(t().home.pricing.cabinet.text)" />
+            </p>
+          </div>
+          <div class="cabinet-block-actions">
+            <app-landing-cta
+              audience="firm"
+              [forceContact]="true"
+              subjectOverride="demo-cabinet"
+              cssClass="cabinet-cta"
+              [closedLabelOverride]="t().home.pricing.cabinet.cta" />
+            <a class="cabinet-link" [routerLink]="cabinetsUrl()">
+              {{ t().home.pricing.cabinet.link }}
+              <i class="pi pi-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </aside>
 
         <div class="enterprise-banner">
           <div class="enterprise-content">
@@ -150,45 +118,28 @@ import { CardModule } from 'primeng/card';
               <i class="pi pi-building"></i>
             </div>
             <div class="enterprise-text">
-              <h3>Plan Entreprise — Sur mesure</h3>
+              <h3>{{ t().home.pricing.enterprise.title }}</h3>
               <p>
-                Gouvernance multi-sociétés, formation dédiée, SLA, intégrations sur mesure (API, webhooks) et accompagnement renforcé sur les modules ERP et l'IA.
-                Idéal pour les groupes, cabinets comptables et entreprises réglementées.
+                <app-landing-rich [segments]="rich(t().home.pricing.enterprise.text)" />
               </p>
-              <ul class="enterprise-features">
-                <li><i class="pi pi-check"></i> Tout le plan Annuel inclus</li>
-                <li><i class="pi pi-check"></i> Multi-tenant (plusieurs entreprises)</li>
-                <li><i class="pi pi-check"></i> Formation et accompagnement</li>
-                <li><i class="pi pi-check"></i> SLA garanti et support prioritaire</li>
-                <li><i class="pi pi-check"></i> Intégrations personnalisées (API, webhooks)</li>
-              </ul>
             </div>
-            <a href="#newsletter" class="enterprise-cta">
-              Nous contacter
-              <i class="pi pi-arrow-right"></i>
-            </a>
+            <app-landing-cta
+              [forceContact]="true"
+              subjectOverride="entreprise"
+              cssClass="enterprise-cta"
+              [closedLabelOverride]="t().home.pricing.enterprise.cta" />
           </div>
         </div>
 
         <div class="pricing-faq">
-          <h3 class="faq-title">Questions fréquentes sur les tarifs</h3>
+          <h3 class="faq-title">{{ t().home.pricing.faqTitle }}</h3>
           <div class="faq-grid">
-            <div class="faq-item">
-              <h4>Puis-je changer de plan à tout moment ?</h4>
-              <p>Oui, depuis <strong>Paramètres &gt; Abonnement</strong> vous pouvez passer d'un forfait à l'autre. Le nouveau plafond de quotas et les fonctionnalités associées s'appliquent dès la mise à jour confirmée dans l'application.</p>
-            </div>
-            <div class="faq-item">
-              <h4>Que se passe-t-il si je dépasse la limite du plan gratuit ?</h4>
-              <p>La création de nouvelles factures ou devis peut être bloquée jusqu'au renouvellement mensuel du quota, ou vous pouvez passer à un forfait payant pour lever les plafonds sur la vente et l'ensemble des modules.</p>
-            </div>
-            <div class="faq-item">
-              <h4>Puis-je annuler mon abonnement ?</h4>
-              <p>Oui, vous pouvez annuler à tout moment depuis votre espace. Aucun engagement, aucun frais caché.</p>
-            </div>
-            <div class="faq-item">
-              <h4>Les données sont-elles conservées après annulation ?</h4>
-              <p>Oui, vos données restent accessibles pendant 30 jours après annulation. Vous pouvez les exporter à tout moment.</p>
-            </div>
+            @for (item of t().home.pricing.faq; track item.question) {
+              <div class="faq-item">
+                <h4>{{ item.question }}</h4>
+                <p><app-landing-rich [segments]="rich(item.answer)" /></p>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -199,7 +150,10 @@ import { CardModule } from 'primeng/card';
       padding: var(--spacing-20) var(--spacing-6);
       background: rgba(255, 255, 255, 0.85);
       position: relative;
-      backdrop-filter: blur(0.5px);
+    }
+
+    .pricing-section:focus {
+      outline: none;
     }
 
     .section-container {
@@ -211,8 +165,20 @@ import { CardModule } from 'primeng/card';
       text-align: center;
       margin-bottom: var(--spacing-16);
       max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-inline: auto;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: var(--spacing-2) var(--spacing-4);
+      background: var(--color-primary-50);
+      color: var(--color-primary-700);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: var(--spacing-4);
     }
 
     .section-title {
@@ -230,32 +196,8 @@ import { CardModule } from 'primeng/card';
       margin: 0;
     }
 
-    .section-modules-cta {
-      margin: var(--spacing-4) 0 0 0;
-    }
-
-    .modules-anchor {
-      font-size: var(--font-size-base);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-primary-700);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: color 0.2s ease, border-color 0.2s ease;
-    }
-
-    .modules-anchor:hover {
-      color: var(--color-primary-800);
-      border-bottom-color: var(--color-primary-400);
-    }
-
-    .modules-anchor:focus-visible {
-      outline: 2px solid var(--color-primary-500);
-      outline-offset: 2px;
-      border-radius: var(--radius-sm);
-    }
-
     .section-reassurance {
-      margin: var(--spacing-3) 0 0 0;
+      margin: var(--spacing-4) 0 0 0;
       display: inline-block;
       padding: 0.45rem 1rem;
       background: var(--color-success-50);
@@ -270,7 +212,7 @@ import { CardModule } from 'primeng/card';
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--spacing-6);
-      margin-bottom: var(--spacing-16);
+      margin-bottom: var(--spacing-12);
     }
 
     .pricing-card {
@@ -279,7 +221,7 @@ import { CardModule } from 'primeng/card';
       border-radius: var(--radius-2xl);
       padding: var(--spacing-6);
       position: relative;
-      transition: all var(--transition-normal);
+      transition: border-color var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-normal);
       display: flex;
       flex-direction: column;
 
@@ -294,9 +236,27 @@ import { CardModule } from 'primeng/card';
         box-shadow: var(--shadow-xl);
         transform: scale(1.05);
 
+        &:hover {
+          transform: scale(1.05) translateY(-4px);
+        }
+
         @media (max-width: 1024px) {
           transform: scale(1);
+
+          &:hover {
+            transform: translateY(-4px);
+          }
         }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pricing-card,
+      .pricing-card:hover,
+      .pricing-card.featured,
+      .pricing-card.featured:hover {
+        transition: none;
+        transform: none;
       }
     }
 
@@ -311,6 +271,7 @@ import { CardModule } from 'primeng/card';
       border-radius: var(--radius-full);
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-semibold);
+      white-space: nowrap;
     }
 
     .pricing-header {
@@ -409,7 +370,7 @@ import { CardModule } from 'primeng/card';
         color: var(--color-neutral-700);
         line-height: var(--line-height-relaxed);
 
-        i {
+        > i {
           color: var(--color-success-600);
           font-size: 1rem;
           margin-top: 2px;
@@ -417,103 +378,56 @@ import { CardModule } from 'primeng/card';
         }
 
         &.feature-disabled {
-          opacity: 0.9;
           color: var(--color-neutral-500);
-          display: flex;
-          align-items: flex-start;
-          gap: var(--spacing-2);
+
+          > i {
+            color: var(--color-error-600);
+          }
         }
       }
     }
 
-    .icon-cross-3d {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      position: relative;
-      flex-shrink: 0;
-      margin-top: 2px;
-      vertical-align: middle;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        background: #dc2626;
-        border-radius: 1px;
-        width: 14px;
-        height: 2.5px;
-        margin-left: -7px;
-        margin-top: -1.25px;
-        transform: translate(-50%, -50%) rotate(45deg);
-        box-shadow: 
-          0 1px 3px rgba(220, 38, 38, 0.8),
-          0 2px 5px rgba(220, 38, 38, 0.6),
-          0 0 2px rgba(0, 0, 0, 0.5),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      }
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        background: #dc2626;
-        border-radius: 1px;
-        width: 14px;
-        height: 2.5px;
-        margin-left: -7px;
-        margin-top: -1.25px;
-        transform: translate(-50%, -50%) rotate(-45deg);
-        box-shadow: 
-          0 1px 3px rgba(220, 38, 38, 0.8),
-          0 2px 5px rgba(220, 38, 38, 0.6),
-          0 0 2px rgba(0, 0, 0, 0.5),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      }
-
-      // Ombre globale pour effet 3D
-      filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.6))
-              drop-shadow(0 1px 2px rgba(220, 38, 38, 0.5));
-    }
-
-    .pricing-features li.feature-disabled .icon-cross-3d {
-      margin-right: var(--spacing-2);
-    }
-
-    .pricing-button {
+    /* Boutons des plans (le <a> est rendu par app-landing-cta). */
+    .pricing-card ::ng-deep .landing-cta.pricing-button {
       display: block;
       text-align: center;
       padding: var(--spacing-4) var(--spacing-6);
       border-radius: var(--radius-lg);
       text-decoration: none;
       font-weight: var(--font-weight-semibold);
-      transition: all var(--transition-normal);
+      transition: background var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-normal);
       margin-bottom: var(--spacing-3);
+      background: var(--color-neutral-100);
+      color: var(--color-neutral-700);
+      border: 2px solid var(--color-neutral-300);
+    }
 
-      &:not(.primary) {
-        background: var(--color-neutral-100);
-        color: var(--color-neutral-700);
-        border: 2px solid var(--color-neutral-300);
+    .pricing-card ::ng-deep .landing-cta.pricing-button:hover {
+      background: var(--color-neutral-200);
+      border-color: var(--color-neutral-400);
+    }
 
-        &:hover {
-          background: var(--color-neutral-200);
-          border-color: var(--color-neutral-400);
-        }
-      }
+    .pricing-card ::ng-deep .landing-cta.pricing-button.primary {
+      background: var(--color-primary-600);
+      color: white;
+      border-color: var(--color-primary-600);
+      box-shadow: var(--shadow-md);
+    }
 
-      &.primary {
-        background: var(--color-primary-600);
-        color: white;
-        box-shadow: var(--shadow-md);
+    .pricing-card ::ng-deep .landing-cta.pricing-button.primary:hover {
+      background: var(--color-primary-700);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
 
-        &:hover {
-          background: var(--color-primary-700);
-          box-shadow: var(--shadow-lg);
-          transform: translateY(-2px);
-        }
-      }
+    .pricing-card ::ng-deep .landing-cta.pricing-button:focus-visible {
+      outline: 3px solid var(--color-primary-300);
+      outline-offset: 2px;
+    }
+
+    .pricing-card ::ng-deep .landing-cta.pricing-button.landing-cta--skeleton {
+      display: block;
+      min-inline-size: 100%;
     }
 
     .pricing-note {
@@ -523,8 +437,82 @@ import { CardModule } from 'primeng/card';
       margin: 0;
     }
 
+    /* Bloc Version Cabinet — sur devis */
+    .cabinet-block {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--spacing-8);
+      align-items: center;
+      background: var(--color-primary-50);
+      border: 1px solid var(--color-primary-200);
+      border-radius: var(--radius-2xl);
+      padding: var(--spacing-8);
+      margin-bottom: var(--spacing-12);
+    }
+
+    .cabinet-block-text {
+      h3 {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-neutral-900);
+        margin: 0 0 var(--spacing-2) 0;
+      }
+
+      p {
+        font-size: var(--font-size-base);
+        line-height: var(--line-height-relaxed);
+        color: var(--color-neutral-600);
+        margin: 0;
+      }
+    }
+
+    .cabinet-block-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--spacing-3);
+      min-width: 240px;
+    }
+
+    .cabinet-block-actions ::ng-deep .landing-cta.cabinet-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-3) var(--spacing-6);
+      background: var(--color-primary-600);
+      color: white;
+      border-radius: var(--radius-full);
+      font-weight: var(--font-weight-semibold);
+      text-decoration: none;
+      transition: background var(--transition-normal);
+    }
+
+    .cabinet-block-actions ::ng-deep .landing-cta.cabinet-cta:hover {
+      background: var(--color-primary-700);
+    }
+
+    .cabinet-block-actions ::ng-deep .landing-cta.cabinet-cta:focus-visible {
+      outline: 3px solid var(--color-primary-300);
+      outline-offset: 2px;
+    }
+
+    .cabinet-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-2);
+      color: var(--color-primary-700);
+      font-weight: var(--font-weight-semibold);
+      font-size: var(--font-size-sm);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    /* Bannière Entreprise */
     .enterprise-banner {
-      margin-top: var(--spacing-12);
       background: linear-gradient(135deg, var(--color-neutral-900) 0%, #1e3a8a 100%);
       border-radius: var(--radius-2xl);
       padding: var(--spacing-10);
@@ -538,7 +526,7 @@ import { CardModule } from 'primeng/card';
       content: '';
       position: absolute;
       top: -50%;
-      right: -10%;
+      inset-inline-end: -10%;
       width: 400px;
       height: 400px;
       background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
@@ -572,8 +560,6 @@ import { CardModule } from 'primeng/card';
     }
 
     .enterprise-text {
-      flex: 1;
-
       h3 {
         font-size: var(--font-size-2xl);
         font-weight: var(--font-weight-bold);
@@ -585,35 +571,14 @@ import { CardModule } from 'primeng/card';
         font-size: var(--font-size-base);
         line-height: var(--line-height-relaxed);
         color: rgba(255, 255, 255, 0.85);
-        margin: 0 0 var(--spacing-4) 0;
+        margin: 0;
       }
     }
 
-    .enterprise-features {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--spacing-2);
-
-      li {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-2);
-        font-size: var(--font-size-sm);
-        color: rgba(255, 255, 255, 0.9);
-
-        i {
-          color: #14b8a6;
-          font-size: 0.875rem;
-        }
-      }
-    }
-
-    .enterprise-cta {
+    .enterprise-content ::ng-deep .landing-cta.enterprise-cta {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: var(--spacing-2);
       padding: var(--spacing-4) var(--spacing-6);
       background: white;
@@ -621,40 +586,27 @@ import { CardModule } from 'primeng/card';
       text-decoration: none;
       font-weight: var(--font-weight-semibold);
       border-radius: var(--radius-lg);
-      transition: all var(--transition-normal);
+      transition: box-shadow var(--transition-normal), transform var(--transition-normal);
       flex-shrink: 0;
       white-space: nowrap;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-
-        i {
-          transform: translateX(4px);
-        }
-      }
-
-      i {
-        transition: transform var(--transition-normal);
-      }
     }
 
-    @media (max-width: 1024px) {
-      .enterprise-content {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
+    .enterprise-content ::ng-deep .landing-cta.enterprise-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
 
-      .enterprise-icon {
-        margin: 0 auto;
-      }
+    .enterprise-content ::ng-deep .landing-cta.enterprise-cta:focus-visible {
+      outline: 3px solid #7dd3fc;
+      outline-offset: 2px;
+    }
 
-      .enterprise-features {
-        grid-template-columns: 1fr;
+    @media (prefers-reduced-motion: reduce) {
+      .enterprise-content ::ng-deep .landing-cta.enterprise-cta {
+        transition: none;
       }
-
-      .enterprise-cta {
-        margin: 0 auto;
+      .enterprise-content ::ng-deep .landing-cta.enterprise-cta:hover {
+        transform: none;
       }
     }
 
@@ -703,8 +655,28 @@ import { CardModule } from 'primeng/card';
       .pricing-grid {
         grid-template-columns: 1fr;
         max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
+        margin-inline: auto;
+      }
+
+      .cabinet-block {
+        grid-template-columns: 1fr;
+      }
+
+      .cabinet-block-actions {
+        min-width: 0;
+      }
+
+      .enterprise-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .enterprise-icon {
+        margin-inline: auto;
+      }
+
+      .enterprise-content ::ng-deep .landing-cta.enterprise-cta {
+        margin-inline: auto;
       }
 
       .faq-grid {
@@ -719,4 +691,68 @@ import { CardModule } from 'primeng/card';
     }
   `]
 })
-export class PricingSectionComponent {}
+export class PricingSectionComponent {
+  private readonly copy = inject(LandingCopyService);
+  private readonly localeService = inject(LandingLocaleService);
+
+  protected readonly t = this.copy.t;
+  protected readonly pricing = LANDING_PRICING;
+  protected readonly currency = LANDING_PRICING.currency;
+  protected readonly savingPercent = ANNUAL_SAVING_PERCENT;
+  protected readonly savingTnd = ANNUAL_SAVING_TND;
+  protected readonly planKeys: readonly PlanKey[] = ['free', 'monthly', 'annual'];
+  protected readonly cabinetsUrl = computed(() => cabinetsPath(this.localeService.locale()));
+
+  /** Valeurs `{count}` du plan gratuit, dans l'ordre des lignes `features` du dictionnaire. */
+  private readonly freeFeatureCounts: readonly number[] = [
+    LANDING_PRICING.free.maxInvoicesPerMonth,
+    LANDING_PRICING.free.maxQuotesPerMonth,
+    LANDING_PRICING.free.maxClients,
+    LANDING_PRICING.free.maxProducts,
+    LANDING_PRICING.free.maxInvoicesPerMonth, // ligne « {amount} de stockage » — {count} inutilisé
+    LANDING_PRICING.free.maxUsers
+  ];
+
+  protected priceOf(key: PlanKey): number {
+    return key === 'free'
+      ? LANDING_PRICING.free.priceMonthly
+      : key === 'monthly'
+        ? LANDING_PRICING.monthly.priceMonthly
+        : LANDING_PRICING.annual.priceMonthly;
+  }
+
+  protected rich(text: string) {
+    return this.copy.rich(text);
+  }
+
+  protected format(template: string, params: Record<string, string | number>): string {
+    return this.copy.format(template, params);
+  }
+
+  /** Formate `{amount}` puis l'isole en LTR (`[[…]]` → `rich()` → `span[dir="ltr"]`). */
+  protected richWithAmount(template: string, amount: string) {
+    return this.copy.rich(this.copy.format(template, { amount: `[[${amount}]]` }));
+  }
+
+  /**
+   * Injecte les valeurs du plan dans `{count}` / `{amount}` (+ jetons nommés
+   * `{invoices}` `{quotes}` `{clients}` `{products}` `{users}` si le dictionnaire les utilise).
+   */
+  protected fillPlan(text: string, key: PlanKey, featureIndex = 0): string {
+    const storage =
+      key === 'free'
+        ? LANDING_PRICING.free.storageLabel
+        : key === 'monthly'
+          ? LANDING_PRICING.monthly.storageLabel
+          : LANDING_PRICING.annual.storageLabel;
+    return this.copy.format(text, {
+      count: key === 'free' ? (this.freeFeatureCounts[featureIndex] ?? LANDING_PRICING.free.maxInvoicesPerMonth) : 0,
+      amount: `[[${storage}]]`,
+      invoices: LANDING_PRICING.free.maxInvoicesPerMonth,
+      quotes: LANDING_PRICING.free.maxQuotesPerMonth,
+      clients: LANDING_PRICING.free.maxClients,
+      products: LANDING_PRICING.free.maxProducts,
+      users: LANDING_PRICING.free.maxUsers
+    });
+  }
+}
