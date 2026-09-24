@@ -131,6 +131,7 @@ import { CtaSectionComponent } from './sections/cta-section/cta-section.componen
       </div>
 
       @if (storefrontEnabled) {
+        <!-- h2 (et non h3) : l'ordre des titres ne saute pas de niveau (a11y Lighthouse). -->
         <section class="section virtual-street-cta" aria-labelledby="virtual-street-heading">
           <div class="container">
             <div class="row align-items-center gy-4">
@@ -142,7 +143,7 @@ import { CtaSectionComponent } from './sections/cta-section/cta-section.componen
                 </div>
               </div>
               <div class="col-lg-7 order-lg-1">
-                <h3 id="virtual-street-heading">{{ t().shared.virtualTour.title }}</h3>
+                <h2 id="virtual-street-heading">{{ t().shared.virtualTour.title }}</h2>
                 <p>{{ t().shared.virtualTour.text }}</p>
                 <a class="virtual-street-link" routerLink="/visite-virtuelle">
                   {{ t().shared.virtualTour.link }}
@@ -427,7 +428,7 @@ import { CtaSectionComponent } from './sections/cta-section/cta-section.componen
       border-bottom: 1px solid #bae6fd;
     }
 
-    .virtual-street-cta h3 {
+    .virtual-street-cta h2 {
       font-size: 1.35rem;
       font-weight: 700;
       margin-bottom: 0.75rem;
@@ -445,7 +446,7 @@ import { CtaSectionComponent } from './sections/cta-section/cta-section.componen
       gap: 0.5rem;
       margin-top: 0.75rem;
       padding: 0.75rem 1.5rem;
-      background: #0284c7;
+      background: #0369a1; /* contraste AA avec texte blanc (Lighthouse color-contrast) */
       color: #ffffff;
       border-radius: 999px;
       font-weight: 600;
@@ -454,7 +455,7 @@ import { CtaSectionComponent } from './sections/cta-section/cta-section.componen
     }
 
     .virtual-street-link:hover {
-      background: #0369a1;
+      background: #075985;
     }
 
     .virtual-street-link:focus-visible {

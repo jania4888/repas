@@ -443,6 +443,8 @@ type ContactControlName =
       .cr-check a {
         color: #1d4ed8;
         font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
       }
       .cr-check input[aria-invalid='true'] {
         outline: 2px solid #dc2626;

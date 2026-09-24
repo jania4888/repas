@@ -35,7 +35,7 @@ interface NavAnchor {
           <div class="col-12">
             <nav class="main-nav" [attr.aria-label]="t().shared.nav.menuLabel">
               <a [routerLink]="homeUrl()" class="logo" [attr.aria-current]="isHomePage() ? 'page' : null">
-                <img [src]="brand.logoLockup" [alt]="t().shared.brand.logoAlt" width="1984" height="793">
+                <img [src]="brand.logoLockup" [alt]="t().shared.brand.logoAlt" width="992" height="397">
               </a>
               <ul class="nav">
                 @for (link of navAnchors(); track link.fragment) {
