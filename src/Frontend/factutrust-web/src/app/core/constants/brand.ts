@@ -5,10 +5,11 @@ export const BRAND = {
   taglineShort: 'GESTION COMMERCIALE',
   taglineLong: 'Plateforme de gestion commerciale intelligente',
   streetName: 'Rue InstaFact',
-  logoLockup: 'assets/branding/instafact-lockup.png',
-  logoIcon: 'assets/branding/instafact-icon.png',
-  logoLockupOnDark: 'assets/branding/instafact-lockup-on-dark.png',
-  logoIconOnDark: 'assets/branding/instafact-icon-on-dark.png',
+  // Variantes WebP à taille d'affichage (les PNG d'origine font ~950 Ko pour 56 px de haut).
+  logoLockup: 'assets/branding/instafact-lockup.webp',
+  logoIcon: 'assets/branding/instafact-icon.webp',
+  logoLockupOnDark: 'assets/branding/instafact-lockup-on-dark.webp',
+  logoIconOnDark: 'assets/branding/instafact-icon-on-dark.webp',
 } as const;
 
 export function pageTitle(page: string): string {

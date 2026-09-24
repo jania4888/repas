@@ -101,6 +101,9 @@ jobs:
       # au fichier qui fait foi — sans lui, une dérive entre les deux arbres passe inaperçue.
       - name: Parité catalogue sectoriel (backend ↔ fixture frontend)
         run: node ../../../scripts/ci/check-sector-catalog-parity.mjs
+      # Gardes landing (lot D) : texte en dur interdit hors dictionnaires, CSS logique (RTL-safe).
+      - name: Gardes landing (copy + CSS physique)
+        run: npm run test:landing
       - name: Specs Jasmine (headless)
         run: npx ng test --watch=false --browsers=ChromeHeadless
       - name: Build production
@@ -178,7 +181,7 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Smoke e2e (Chromium)
-        run: npx playwright test e2e/sidebar-collapse.spec.ts e2e/test-backend-connection.spec.ts --project=chromium
+        run: npx playwright test e2e/sidebar-collapse.spec.ts e2e/test-backend-connection.spec.ts e2e/landing-smoke.spec.ts e2e/landing-cabinets.spec.ts e2e/landing-contact.spec.ts e2e/landing-i18n.spec.ts --project=chromium
       - name: Upload Test Results to Trunk.io
         if: ${{ !cancelled() }}
         continue-on-error: true

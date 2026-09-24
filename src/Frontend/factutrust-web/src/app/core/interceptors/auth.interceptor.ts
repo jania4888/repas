@@ -3,9 +3,15 @@ import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { environment } from '@environments/environment';
+import { SKIP_AUTH_HEADER } from '../http-context';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const authService = inject(AuthService);
+
+  // Endpoints publics anonymes de la landing : jamais de JWT, jamais de refresh sur 401.
+  if (req.context.get(SKIP_AUTH_HEADER)) {
+    return next(req);
+  }
 
   // Le Bearer ne part QUE vers notre API (même modèle que le backoffice) :
   // toute future intégration tierce via HttpClient ne recevra jamais le JWT.

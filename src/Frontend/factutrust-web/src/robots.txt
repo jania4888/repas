@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /portal/
+Disallow: /dashboard
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://instafact.shop/sitemap.xml

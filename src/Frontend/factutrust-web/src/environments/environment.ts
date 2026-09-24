@@ -86,5 +86,20 @@ export const environment = {
   publicRegistration: {
     companyEnabled: true,
     firmEnabled: true
-  }
+  },
+  /** Base absolue (sans slash final) des `canonical` / `hreflang` / `og:url` / sitemap de la landing. */
+  publicSiteOrigin: 'http://localhost:4200',
+  /** Landing publique (`features/home`). */
+  landing: {
+    /** Route `/ar`, sélecteur FR/AR, hreflang `ar-TN`, feuille RTL. Prod : `true` seulement après revue client du texte AR. */
+    arabicEnabled: true,
+    /** Délai (ms) de `GET /api/public/registration-status` avant repli « inscription fermée ». */
+    registrationStatusTimeoutMs: 2500
+  },
+  /** Formulaire public de demande d'accès / de démo (`POST /api/public/contact-requests`). Le 503 backend reste géré. */
+  publicContact: {
+    enabled: true
+  },
+  /** Clé de site Cloudflare Turnstile (publique). Vide = widget jamais chargé, aucun script tiers. */
+  turnstileSiteKey: ''
 };

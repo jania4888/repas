@@ -46,5 +46,19 @@ export const environment = {
   publicRegistration: {
     companyEnabled: false,
     firmEnabled: false
-  }
+  },
+  /** Base absolue (sans slash final) des `canonical` / `hreflang` / `og:url` / sitemap de la landing. */
+  publicSiteOrigin: 'https://instafact.shop',
+  /** Landing publique (`features/home`). */
+  landing: {
+    /** OFF tant que le texte arabe n'a pas été validé par le client (plan § 8.4). */
+    arabicEnabled: false,
+    registrationStatusTimeoutMs: 2500
+  },
+  /** Formulaire public de demande d'accès / de démo. Le backend répond 503 tant que `Features:PublicContact:Enabled` est faux. */
+  publicContact: {
+    enabled: true
+  },
+  /** Clé de site Cloudflare Turnstile (publique, optionnelle). Vide = widget jamais chargé. */
+  turnstileSiteKey: ''
 };

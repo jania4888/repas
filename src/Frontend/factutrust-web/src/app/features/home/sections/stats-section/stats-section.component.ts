@@ -1,64 +1,39 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, AfterViewInit, ElementRef, ViewChild, inject, ChangeDetectionStrategy, computed } from '@angular/core';
+import { LANDING_FACTS } from '../../content/landing-facts';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
+interface StatItem {
+  value: number;
+  suffix: string;
+  label: string;
+}
+
+/**
+ * Bandeau de chiffres (plan A.4.16) : valeurs depuis `landing-facts.ts` (jamais en dur),
+ * libellés depuis `t().home.stats`. Compteurs animés à l'entrée dans le viewport
+ * (désactivés si prefers-reduced-motion).
+ */
 @Component({
   selector: 'app-stats-section',
   standalone: true,
-  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="stats-section" aria-labelledby="stats-title">
+    <section class="stats-section">
       <div class="stats-container" #statsContainer>
-        <div class="stats-header">
-          <h2 id="stats-title" class="stats-title">Une plateforme complète, sans compromis</h2>
-          <p class="stats-subtitle">Tout ce qu'il faut pour gérer votre activité, regroupé dans une seule solution.</p>
-        </div>
-
         <div class="stats-grid">
-          <div class="stat-item" role="group" aria-label="150+ Fonctionnalités">
-            <div class="stat-number" data-count="150" data-suffix="+">0</div>
-            <div class="stat-label">Fonctionnalités intégrées</div>
-          </div>
-          <div class="stat-item" role="group" aria-label="28 Modules">
-            <div class="stat-number" data-count="28">0</div>
-            <div class="stat-label">Modules métier</div>
-          </div>
-          <div class="stat-item" role="group" aria-label="10 Rôles">
-            <div class="stat-number" data-count="10">0</div>
-            <div class="stat-label">Rôles utilisateurs prédéfinis</div>
-          </div>
-          <div class="stat-item" role="group" aria-label="3 Canaux">
-            <div class="stat-number" data-count="3">0</div>
-            <div class="stat-label">Canaux de communication</div>
-          </div>
-        </div>
-
-        <div class="capabilities-line">
-          <span>Multi-tenant</span>
-          <span class="dot">·</span>
-          <span>Conformité TEJ</span>
-          <span class="dot">·</span>
-          <span>IA intégrée</span>
-          <span class="dot">·</span>
-          <span>Visite virtuelle 3D</span>
-          <span class="dot">·</span>
-          <span>Forecasting ML</span>
-          <span class="dot">·</span>
-          <span>POS</span>
-          <span class="dot">·</span>
-          <span>CRM</span>
-          <span class="dot">·</span>
-          <span>Comptabilité</span>
-          <span class="dot">·</span>
-          <span>Banking</span>
-          <span class="dot">·</span>
-          <span>Stock multi-entrepôts</span>
+          @for (stat of stats(); track stat.label) {
+            <div class="stat-item">
+              <div class="stat-number" dir="ltr" [attr.data-count]="stat.value" [attr.data-suffix]="stat.suffix">0{{ stat.suffix }}</div>
+              <div class="stat-label">{{ stat.label }}</div>
+            </div>
+          }
         </div>
       </div>
     </section>
   `,
   styles: [`
     .stats-section {
-      padding: var(--spacing-20) var(--spacing-6);
+      padding: var(--spacing-16) var(--spacing-6);
       background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-800) 100%);
       color: white;
       position: relative;
@@ -69,7 +44,7 @@ import { CommonModule } from '@angular/common';
       content: '';
       position: absolute;
       top: -50%;
-      right: -10%;
+      inset-inline-end: -10%;
       width: 600px;
       height: 600px;
       background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
@@ -81,7 +56,7 @@ import { CommonModule } from '@angular/common';
       content: '';
       position: absolute;
       bottom: -50%;
-      left: -10%;
+      inset-inline-start: -10%;
       width: 500px;
       height: 500px;
       background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
@@ -96,34 +71,11 @@ import { CommonModule } from '@angular/common';
       z-index: 1;
     }
 
-    .stats-header {
-      text-align: center;
-      margin-bottom: var(--spacing-12);
-      max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .stats-title {
-      font-size: clamp(1.875rem, 4vw, 2.5rem);
-      font-weight: var(--font-weight-bold);
-      color: white;
-      line-height: var(--line-height-tight);
-      margin: 0 0 var(--spacing-3) 0;
-    }
-
-    .stats-subtitle {
-      font-size: var(--font-size-lg);
-      color: rgba(255, 255, 255, 0.85);
-      margin: 0;
-    }
-
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: var(--spacing-8);
       text-align: center;
-      margin-bottom: var(--spacing-12);
     }
 
     .stat-item {
@@ -150,26 +102,6 @@ import { CommonModule } from '@angular/common';
       font-weight: var(--font-weight-medium);
     }
 
-    .capabilities-line {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: var(--spacing-2);
-      max-width: 960px;
-      margin: 0 auto;
-      padding: var(--spacing-6) var(--spacing-4);
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      color: rgba(255, 255, 255, 0.85);
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-medium);
-      text-align: center;
-    }
-
-    .capabilities-line .dot {
-      color: rgba(255, 255, 255, 0.4);
-    }
-
     @media (max-width: 1024px) {
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -189,11 +121,20 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class StatsSectionComponent implements OnInit, AfterViewInit {
+export class StatsSectionComponent extends LandingCopyBase implements AfterViewInit {
+
   @ViewChild('statsContainer') statsContainer?: ElementRef<HTMLElement>;
   private countersAnimated = false;
 
-  ngOnInit(): void {}
+  protected readonly stats = computed<StatItem[]>(() => {
+    const labels = this.copy.t().home.stats;
+    return [
+      { value: LANDING_FACTS.modulesCount, suffix: '', label: labels.modules },
+      { value: LANDING_FACTS.rolesCount, suffix: '', label: labels.roles },
+      { value: LANDING_FACTS.aiToolsCount, suffix: LANDING_FACTS.aiToolsSuffix, label: labels.aiTools },
+      { value: 1, suffix: '', label: labels.dedicatedDb }
+    ];
+  });
 
   ngAfterViewInit(): void {
     if (typeof window === 'undefined') return;
@@ -202,6 +143,10 @@ export class StatsSectionComponent implements OnInit, AfterViewInit {
 
   private setupCounterAnimation(): void {
     if (!this.statsContainer) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.setFinalValues();
+      return;
+    }
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && !this.countersAnimated) {
@@ -228,7 +173,7 @@ export class StatsSectionComponent implements OnInit, AfterViewInit {
       const updateCounter = () => {
         current += step;
         if (current < target) {
-          counter.textContent = Math.floor(current).toString();
+          counter.textContent = Math.floor(current).toString() + suffix;
           requestAnimationFrame(updateCounter);
         } else {
           counter.textContent = target.toString() + suffix;
@@ -236,6 +181,13 @@ export class StatsSectionComponent implements OnInit, AfterViewInit {
       };
 
       updateCounter();
+    });
+  }
+
+  private setFinalValues(): void {
+    const counters = this.statsContainer?.nativeElement.querySelectorAll<HTMLElement>('.stat-number');
+    counters?.forEach(counter => {
+      counter.textContent = (counter.getAttribute('data-count') || '0') + (counter.getAttribute('data-suffix') || '');
     });
   }
 }

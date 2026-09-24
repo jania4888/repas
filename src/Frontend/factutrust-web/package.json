@@ -30,7 +30,10 @@
     "test:street-catalog": "node scripts/test-street-catalog.mjs",
     "validate:street-catalog": "node scripts/validate-street-catalog.mjs",
     "test:e2e:street": "playwright test e2e/playwright.virtual-street.spec.ts --project=chromium",
-    "quality:gate:street-catalog": "npm run validate:facade-glb && npm run validate:street-catalog"
+    "quality:gate:street-catalog": "npm run validate:facade-glb && npm run validate:street-catalog",
+    "check:landing-copy": "node scripts/check-landing-hardcoded-text.mjs",
+    "check:landing-css": "node scripts/check-landing-physical-css.mjs",
+    "test:landing": "npm run check:landing-copy && npm run check:landing-css"
   },
   "private": true,
   "dependencies": {

@@ -1,156 +1,40 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
+import { LANDING_FACTS } from '../../content/landing-facts';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
+/**
+ * Grille des 9 fonctionnalités (plan A.4.7). Textes : `t().home.features`
+ * (`{count}` → constantes de `landing-facts.ts`).
+ */
 @Component({
   selector: 'app-features-section',
   standalone: true,
-  imports: [CommonModule, CardModule],
+  imports: [LandingRichComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section id="fonctionnalites" class="features-section">
+    <section id="fonctionnalites" class="features-section" tabindex="-1" aria-labelledby="fonctionnalites-title">
       <div class="section-container">
         <div class="section-header">
-          <h2 class="section-title">Ce que vous obtenez avec InstaFact</h2>
+          <span class="eyebrow">{{ t().home.features.kicker }}</span>
+          <h2 id="fonctionnalites-title" class="section-title">{{ t().home.features.title }}</h2>
           <p class="section-description">
-            <strong>9 fonctionnalités essentielles</strong>, présentées simplement et sans jargon. Tout ce qu'il faut pour facturer, encaisser, suivre et grandir — au sein d'une seule plateforme.
+            <app-landing-rich [segments]="rich(t().home.features.subtitle)" />
           </p>
         </div>
 
         <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="pi pi-file-edit"></i>
-            </div>
-            <h3 class="feature-title">Création de factures en 2 minutes</h3>
-            <p class="feature-description">
-              Créez des factures professionnelles en quelques clics. <strong>La TVA se calcule toute seule</strong>, la numérotation est automatique, les erreurs sont impossibles.
-            </p>
-            <ul class="feature-list">
-              <li><i class="pi pi-check"></i> <strong>2 minutes</strong> pour créer une facture</li>
-              <li><i class="pi pi-check"></i> TVA calculée <strong>automatiquement</strong></li>
-              <li><i class="pi pi-check"></i> Numérotation <strong>conforme</strong> automatique</li>
-            </ul>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="pi pi-pencil"></i>
-            </div>
-            <h3 class="feature-title">Signature électronique légale</h3>
-            <p class="feature-description">
-              Signez vos factures en un clic. <strong>Conforme à la réglementation tunisienne.</strong> Vos factures sont valides légalement, sans papier, sans stress.
-            </p>
-            <ul class="feature-list">
-              <li><i class="pi pi-check"></i> Signature <strong>légale</strong> en un clic</li>
-              <li><i class="pi pi-check"></i> Horodatage <strong>certifié</strong></li>
-              <li><i class="pi pi-check"></i> <strong>Zéro papier</strong>, zéro archivage manuel</li>
-            </ul>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="pi pi-database"></i>
-            </div>
-            <h3 class="feature-title">Archivage automatique sécurisé</h3>
-            <p class="feature-description">
-              Vos factures sont archivées <strong>automatiquement</strong> et <strong>sécurisées</strong> pendant 10 ans (obligation légale). Plus besoin de classeurs, plus de risque de perte.
-            </p>
-            <ul class="feature-list">
-              <li><i class="pi pi-check"></i> Archivage <strong>automatique</strong></li>
-              <li><i class="pi pi-check"></i> Recherche <strong>instantanée</strong></li>
-              <li><i class="pi pi-check"></i> Conservation <strong>légale 10 ans</strong></li>
-            </ul>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="pi pi-download"></i>
-            </div>
-            <h3 class="feature-title">Export PDF / XML en un clic</h3>
-            <p class="feature-description">
-              Envoyez une facture à votre client (PDF) ou à votre comptable (XML) <strong>en un clic</strong>. Formats standards, compatibilité garantie.
-            </p>
-            <ul class="feature-list">
-              <li><i class="pi pi-check"></i> PDF <strong>professionnel</strong> pour vos clients</li>
-              <li><i class="pi pi-check"></i> XML <strong>comptable</strong> standard</li>
-              <li><i class="pi pi-check"></i> Export <strong>instantané</strong></li>
-            </ul>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="pi pi-wallet"></i>
-            </div>
-            <h3 class="feature-title">Suivi des paiements simplifié</h3>
-            <p class="feature-description">
-              Voyez d'un coup d'œil qui a payé, qui doit payer, qui est en retard. <strong>Plus besoin de tableaux Excel</strong> ou de notes éparpillées.
-            </p>
-            <ul class="feature-list">
-              <li><i class="pi pi-check"></i> Vue d'ensemble <strong>instantanée</strong></li>
-              <li><i class="pi pi-check"></i> Alertes <strong>automatiques</strong> de retard</li>
-              <li><i class="pi pi-check"></i> <strong>Zéro oubli</strong> de relance</li>
-            </ul>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="pi pi-users"></i>
-            </div>
-            <h3 class="feature-title">Gestion des clients centralisée</h3>
-            <p class="feature-description">
-              Toutes les infos de vos clients au même endroit. <strong>Créez une facture en 2 clics</strong> : sélectionnez le client, c'est tout. Plus besoin de ressaisir les données.
-            </p>
-            <ul class="feature-list">
-              <li><i class="pi pi-check"></i> Fiches clients <strong>complètes</strong></li>
-              <li><i class="pi pi-check"></i> Historique <strong>automatique</strong> des factures</li>
-              <li><i class="pi pi-check"></i> Facturation <strong>ultra-rapide</strong></li>
-            </ul>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="pi pi-id-card"></i>
-            </div>
-            <h3 class="feature-title">Multi-utilisateurs et rôles avancés</h3>
-            <p class="feature-description">
-              <strong>10 rôles prédéfinis</strong> (Admin, Comptable, Commercial, Caissier, Magasinier, Acheteur, Auditeur…) avec permissions granulaires. Chaque utilisateur voit uniquement ce dont il a besoin.
-            </p>
-            <ul class="feature-list">
-              <li><i class="pi pi-check"></i> <strong>10 rôles</strong> prêts à l'emploi</li>
-              <li><i class="pi pi-check"></i> Permissions <strong>granulaires</strong> par module</li>
-              <li><i class="pi pi-check"></i> Audit complet <strong>des actions</strong></li>
-            </ul>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="pi pi-warehouse"></i>
-            </div>
-            <h3 class="feature-title">Multi-entrepôts et points de vente</h3>
-            <p class="feature-description">
-              Gérez plusieurs <strong>magasins, dépôts et points de vente</strong> depuis une seule plateforme. Transferts inter-entrepôts, valuation FIFO, alertes de stock bas en temps réel.
-            </p>
-            <ul class="feature-list">
-              <li><i class="pi pi-check"></i> Stocks <strong>multi-entrepôts</strong></li>
-              <li><i class="pi pi-check"></i> <strong>Transferts</strong> inter-magasins</li>
-              <li><i class="pi pi-check"></i> Alertes <strong>temps réel</strong></li>
-            </ul>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="pi pi-send"></i>
-            </div>
-            <h3 class="feature-title">Notifications multi-canal</h3>
-            <p class="feature-description">
-              Envoyez factures et relances par <strong>WhatsApp, Telegram ou Email</strong>. Vos clients reçoivent leurs documents là où ils sont actifs. <strong>Plus de retards de paiement.</strong>
-            </p>
-            <ul class="feature-list">
-              <li><i class="pi pi-check"></i> <strong>WhatsApp Business</strong> intégré</li>
-              <li><i class="pi pi-check"></i> Bot <strong>Telegram</strong> natif</li>
-              <li><i class="pi pi-check"></i> <strong>Email</strong> transactionnel</li>
-            </ul>
-          </div>
+          @for (item of t().home.features.items; track item.title) {
+            <article class="feature-card">
+              <div class="feature-icon" aria-hidden="true">
+                <i [class]="'pi ' + item.icon"></i>
+              </div>
+              <h3 class="feature-title">{{ fillCounts(item.title) }}</h3>
+              <p class="feature-description">
+                <app-landing-rich [segments]="rich(fillCounts(item.text))" />
+              </p>
+            </article>
+          }
         </div>
       </div>
     </section>
@@ -158,9 +42,11 @@ import { CardModule } from 'primeng/card';
   styles: [`
     .features-section {
       padding: var(--spacing-20) var(--spacing-6);
-      background: rgba(249, 250, 251, 0.85);
-      position: relative;
-      backdrop-filter: blur(0.5px);
+      background: var(--color-neutral-50);
+    }
+
+    .features-section:focus {
+      outline: none;
     }
 
     .section-container {
@@ -170,10 +56,22 @@ import { CardModule } from 'primeng/card';
 
     .section-header {
       text-align: center;
-      margin-bottom: var(--spacing-16);
+      margin-bottom: var(--spacing-12);
       max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-inline: auto;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: var(--spacing-2) var(--spacing-4);
+      background: var(--color-primary-50);
+      color: var(--color-primary-700);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: var(--spacing-4);
     }
 
     .section-title {
@@ -193,122 +91,71 @@ import { CardModule } from 'primeng/card';
 
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: var(--spacing-6);
     }
 
     .feature-card {
       background: white;
-      border-radius: var(--radius-xl);
-      padding: var(--spacing-8);
       border: 1px solid var(--color-neutral-200);
-      box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.04),
-        0 0 0 1px var(--color-neutral-100);
-      transition: all var(--transition-normal);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-6);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--transition-normal), transform var(--transition-normal), border-color var(--transition-normal);
+    }
 
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-600));
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform var(--transition-normal);
+    .feature-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+      border-color: var(--color-primary-200);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .feature-card {
+        transition: none;
       }
-
-      &:hover {
-        box-shadow: 
-          0 12px 32px rgba(37, 99, 235, 0.12),
-          0 0 0 1px var(--color-primary-200);
-        transform: translateY(-6px);
-        border-color: var(--color-primary-300);
-
-        &::before {
-          transform: scaleX(1);
-        }
-
-        .feature-icon {
-          transform: scale(1.1);
-          background: linear-gradient(135deg, var(--color-primary-200), var(--color-primary-300));
-        }
+      .feature-card:hover {
+        transform: none;
       }
     }
 
     .feature-icon {
-      width: 72px;
-      height: 72px;
-      background: linear-gradient(135deg, var(--color-primary-100), var(--color-primary-200));
-      border-radius: var(--radius-xl);
-      display: flex;
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-lg);
+      background: var(--color-primary-50);
+      color: var(--color-primary-600);
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: var(--spacing-5);
-      transition: all var(--transition-normal);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+      margin-bottom: var(--spacing-4);
 
       i {
-        font-size: 2.25rem;
-        color: var(--color-primary-600);
-        transition: transform var(--transition-normal);
+        font-size: 1.35rem;
       }
-    }
-
-    .feature-card:hover .feature-icon i {
-      transform: scale(1.1) rotate(5deg);
     }
 
     .feature-title {
-      font-size: var(--font-size-xl);
+      font-size: var(--font-size-lg);
       font-weight: var(--font-weight-semibold);
       color: var(--color-neutral-900);
-      margin: 0 0 var(--spacing-3) 0;
+      margin: 0 0 var(--spacing-2) 0;
     }
 
     .feature-description {
-      font-size: var(--font-size-base);
+      font-size: var(--font-size-sm);
       line-height: var(--line-height-relaxed);
       color: var(--color-neutral-600);
-      margin: 0 0 var(--spacing-4) 0;
-      flex: 1;
-    }
-
-    .feature-list {
-      list-style: none;
-      padding: 0;
       margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-
-      li {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-2);
-        font-size: var(--font-size-sm);
-        color: var(--color-neutral-700);
-
-        i {
-          color: var(--color-success-600);
-          font-size: 0.875rem;
-        }
-      }
     }
 
     @media (max-width: 1024px) {
       .features-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 640px) {
       .features-section {
         padding: var(--spacing-12) var(--spacing-4);
       }
@@ -319,4 +166,17 @@ import { CardModule } from 'primeng/card';
     }
   `]
 })
-export class FeaturesSectionComponent {}
+export class FeaturesSectionComponent extends LandingCopyBase {
+
+
+
+  /** Remplace `{count}` (rôles ou outils IA) par les constantes vérifiables. */
+  /** `{count}`/`{rolesCount}` → rôles, `{toolsCount}` → outils IA. */
+  protected fillCounts(text: string): string {
+    return this.copy.format(text, {
+      count: LANDING_FACTS.rolesCount,
+      rolesCount: LANDING_FACTS.rolesCount,
+      toolsCount: LANDING_FACTS.aiToolsCount
+    });
+  }
+}

@@ -1,99 +1,57 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { LandingLocaleService } from '@core/services/landing-locale.service';
+import { LandingCtaComponent } from '../../shared/landing-cta/landing-cta.component';
+import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
+import { cabinetsPath } from '../../i18n/landing-locale.util';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
+/** Emoji par persona (visuel uniquement), indexé par `persona.cssClass` (classes conservées pour l'e2e). */
+const PERSONA_EMOJI: Record<string, string> = {
+  'persona-services': '🏢',
+  'persona-retail': '🛒',
+  'persona-distrib': '📦',
+  'persona-accountant': '📊'
+};
+
+/**
+ * Cas d'usage (plan A.4.14) : 4 personas. Les 3 profils entreprise → `<app-landing-cta>` ;
+ * le persona cabinet (`persona-accountant`) → page « Cabinets comptables ».
+ */
 @Component({
   selector: 'app-use-cases-section',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule, LandingCtaComponent, LandingRichComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section id="cas-usage" class="usecases-section" aria-labelledby="usecases-title">
+    <section id="cas-usage" class="usecases-section" tabindex="-1" aria-labelledby="usecases-title">
       <div class="section-container">
         <div class="section-header">
-          <span class="eyebrow">CAS D'USAGE</span>
-          <h2 id="usecases-title" class="section-title">Une plateforme qui s'adapte à votre métier</h2>
+          <span class="eyebrow">{{ t().home.useCases.kicker }}</span>
+          <h2 id="usecases-title" class="section-title">{{ t().home.useCases.title }}</h2>
           <p class="section-description">
-            Que vous soyez prestataire de services, commerçant, distributeur ou comptable, InstaFact répond à vos besoins spécifiques.
+            <app-landing-rich [segments]="rich(t().home.useCases.subtitle)" />
           </p>
         </div>
 
         <div class="usecases-grid">
-          <article class="usecase-card persona-services">
-            <div class="usecase-emoji" aria-hidden="true">🏢</div>
-            <h3 class="usecase-title">PME de services</h3>
-            <p class="usecase-subtitle">Cabinets conseil, agences digitales, consultants</p>
-            <p class="usecase-description">
-              Des devis professionnels, facturation rapide, suivi des paiements et CRM léger pour piloter votre activité commerciale.
-            </p>
-            <ul class="usecase-modules">
-              <li><i class="pi pi-file-edit"></i> Factures & Devis</li>
-              <li><i class="pi pi-users"></i> CRM Commercial</li>
-              <li><i class="pi pi-wallet"></i> Suivi paiements</li>
-              <li><i class="pi pi-chart-bar"></i> Reporting</li>
-            </ul>
-            <a routerLink="/auth/register" class="usecase-cta">
-              Démarrer
-              <i class="pi pi-arrow-right"></i>
-            </a>
-          </article>
-
-          <article class="usecase-card persona-retail">
-            <div class="usecase-emoji" aria-hidden="true">🛒</div>
-            <h3 class="usecase-title">Commerce / Retail</h3>
-            <p class="usecase-subtitle">Boutiques, restaurants, points de vente</p>
-            <p class="usecase-description">
-              Caisse moderne tactile, gestion de stock multi-entrepôts, encaissement multi-moyens, sessions de caisse.
-            </p>
-            <ul class="usecase-modules">
-              <li><i class="pi pi-shopping-cart"></i> POS / Caisse</li>
-              <li><i class="pi pi-box"></i> Stock & Inventaire</li>
-              <li><i class="pi pi-credit-card"></i> Encaissement</li>
-              <li><i class="pi pi-chart-line"></i> Forecasting</li>
-            </ul>
-            <a routerLink="/auth/register" class="usecase-cta">
-              Démarrer
-              <i class="pi pi-arrow-right"></i>
-            </a>
-          </article>
-
-          <article class="usecase-card persona-distrib">
-            <div class="usecase-emoji" aria-hidden="true">📦</div>
-            <h3 class="usecase-title">Distributeur B2B</h3>
-            <p class="usecase-subtitle">Importateurs, grossistes, négociants</p>
-            <p class="usecase-description">
-              Bons de commande, factures fournisseurs, retenues à la source TEJ, réconciliation bancaire et prévisions de réapprovisionnement.
-            </p>
-            <ul class="usecase-modules">
-              <li><i class="pi pi-shopping-bag"></i> Achats & Fournisseurs</li>
-              <li><i class="pi pi-warehouse"></i> Multi-entrepôts</li>
-              <li><i class="pi pi-credit-card"></i> Banking</li>
-              <li><i class="pi pi-chart-line"></i> Forecasting ABC/XYZ</li>
-            </ul>
-            <a routerLink="/auth/register" class="usecase-cta">
-              Démarrer
-              <i class="pi pi-arrow-right"></i>
-            </a>
-          </article>
-
-          <article class="usecase-card persona-accountant">
-            <div class="usecase-emoji" aria-hidden="true">📊</div>
-            <h3 class="usecase-title">Comptable indépendant</h3>
-            <p class="usecase-subtitle">Cabinets comptables, auditeurs, fiscalistes</p>
-            <p class="usecase-description">
-              Multi-tenant pour gérer plusieurs clients, exports FEC, lettrage, audit chain et journaux comptables conformes.
-            </p>
-            <ul class="usecase-modules">
-              <li><i class="pi pi-calculator"></i> Comptabilité complète</li>
-              <li><i class="pi pi-id-card"></i> Multi-tenant</li>
-              <li><i class="pi pi-lock"></i> Audit chain</li>
-              <li><i class="pi pi-download"></i> Export FEC</li>
-            </ul>
-            <a routerLink="/auth/register" class="usecase-cta">
-              Démarrer
-              <i class="pi pi-arrow-right"></i>
-            </a>
-          </article>
+          @for (persona of t().home.useCases.personas; track persona.cssClass) {
+            <article class="usecase-card" [class]="'usecase-card ' + persona.cssClass">
+              <div class="usecase-emoji" aria-hidden="true">{{ emoji(persona.cssClass) }}</div>
+              <h3 class="usecase-title">{{ persona.title }}</h3>
+              <p class="usecase-description">
+                <app-landing-rich [segments]="rich(persona.text)" />
+              </p>
+              @if (persona.cssClass === 'persona-accountant') {
+                <a class="usecase-cta" [routerLink]="cabinetsUrl()">
+                  {{ persona.cta }}
+                  <i class="pi pi-arrow-right" aria-hidden="true"></i>
+                </a>
+              } @else {
+                <app-landing-cta audience="company" cssClass="usecase-cta" [openLabelOverride]="persona.cta" />
+              }
+            </article>
+          }
         </div>
       </div>
     </section>
@@ -105,6 +63,10 @@ import { RouterModule } from '@angular/router';
       position: relative;
     }
 
+    .usecases-section:focus {
+      outline: none;
+    }
+
     .section-container {
       max-width: 1280px;
       margin: 0 auto;
@@ -114,8 +76,7 @@ import { RouterModule } from '@angular/router';
       text-align: center;
       margin-bottom: var(--spacing-12);
       max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-inline: auto;
     }
 
     .eyebrow {
@@ -127,6 +88,7 @@ import { RouterModule } from '@angular/router';
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-semibold);
       letter-spacing: 0.08em;
+      text-transform: uppercase;
       margin-bottom: var(--spacing-4);
     }
 
@@ -167,12 +129,11 @@ import { RouterModule } from '@angular/router';
         content: '';
         position: absolute;
         top: 0;
-        left: 0;
-        right: 0;
+        inset-inline: 0;
         height: 4px;
-        background: linear-gradient(90deg, var(--color-primary-400), var(--color-primary-600));
+        background: linear-gradient(90deg, var(--color-primary-400), var(--color-primary-600)); /* rtl-ok : dégradé décoratif */
         transform: scaleX(0);
-        transform-origin: left;
+        transform-origin: left; /* rtl-ok : barre de survol décorative */
         transition: transform var(--transition-normal);
       }
 
@@ -188,29 +149,31 @@ import { RouterModule } from '@angular/router';
         .usecase-emoji {
           transform: scale(1.15) rotate(-5deg);
         }
+      }
+    }
 
-        .usecase-cta {
-          background: var(--color-primary-600);
-          color: white;
-          border-color: var(--color-primary-600);
-
-          i {
-            transform: translateX(4px);
-          }
-        }
+    @media (prefers-reduced-motion: reduce) {
+      .usecase-card,
+      .usecase-card::before,
+      .usecase-emoji {
+        transition: none;
+      }
+      .usecase-card:hover,
+      .usecase-card:hover .usecase-emoji {
+        transform: none;
       }
     }
 
     .persona-retail::before {
-      background: linear-gradient(90deg, #f59e0b, #d97706);
+      background: linear-gradient(90deg, #f59e0b, #d97706); /* rtl-ok : dégradé décoratif */
     }
 
     .persona-distrib::before {
-      background: linear-gradient(90deg, #8b5cf6, #6d28d9);
+      background: linear-gradient(90deg, #8b5cf6, #6d28d9); /* rtl-ok : dégradé décoratif */
     }
 
     .persona-accountant::before {
-      background: linear-gradient(90deg, #ec4899, #be185d);
+      background: linear-gradient(90deg, #ec4899, #be185d); /* rtl-ok : dégradé décoratif */
     }
 
     .usecase-emoji {
@@ -226,13 +189,6 @@ import { RouterModule } from '@angular/router';
       margin: 0;
     }
 
-    .usecase-subtitle {
-      font-size: var(--font-size-sm);
-      color: var(--color-neutral-500);
-      margin: 0;
-      font-style: italic;
-    }
-
     .usecase-description {
       font-size: var(--font-size-sm);
       line-height: var(--line-height-relaxed);
@@ -241,29 +197,8 @@ import { RouterModule } from '@angular/router';
       flex: 1;
     }
 
-    .usecase-modules {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 var(--spacing-4) 0;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-
-      li {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-2);
-        font-size: var(--font-size-sm);
-        color: var(--color-neutral-700);
-
-        i {
-          color: var(--color-primary-600);
-          font-size: 0.875rem;
-        }
-      }
-    }
-
-    .usecase-cta {
+    .usecase-cta,
+    .usecase-card ::ng-deep .landing-cta.usecase-cta {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -277,10 +212,25 @@ import { RouterModule } from '@angular/router';
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-semibold);
       transition: all var(--transition-normal);
+    }
 
-      i {
-        transition: transform var(--transition-normal);
-      }
+    .usecase-cta:hover,
+    .usecase-card:hover ::ng-deep .landing-cta.usecase-cta,
+    .usecase-card ::ng-deep .landing-cta.usecase-cta:hover {
+      background: var(--color-primary-600);
+      color: white;
+      border-color: var(--color-primary-600);
+    }
+
+    .usecase-cta:focus-visible,
+    .usecase-card ::ng-deep .landing-cta.usecase-cta:focus-visible {
+      outline: 3px solid var(--color-primary-300);
+      outline-offset: 2px;
+    }
+
+    .usecase-card ::ng-deep .landing-cta.usecase-cta.landing-cta--skeleton {
+      min-inline-size: 8rem;
+      min-block-size: 2.4rem;
     }
 
     @media (max-width: 1024px) {
@@ -300,4 +250,13 @@ import { RouterModule } from '@angular/router';
     }
   `]
 })
-export class UseCasesSectionComponent {}
+export class UseCasesSectionComponent extends LandingCopyBase {
+  private readonly localeService = inject(LandingLocaleService);
+
+  protected readonly cabinetsUrl = computed(() => cabinetsPath(this.localeService.locale()));
+
+
+  protected emoji(cssClass: string): string {
+    return PERSONA_EMOJI[cssClass] ?? '🏢';
+  }
+}

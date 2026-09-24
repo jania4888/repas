@@ -32,6 +32,8 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.svg",
+              "src/robots.txt",
+              "src/sitemap.xml",
               "src/assets",
               {
                 "glob": "**/*.md",
@@ -45,6 +47,11 @@
               }
             ],
             "styles": [
+              {
+                "input": "src/landing-rtl.scss",
+                "inject": false,
+                "bundleName": "landing-rtl"
+              },
               "src/assets/theme/pluto/css/bootstrap.min.css",
               "src/assets/theme/pluto/style.css",
               "src/assets/theme/pluto/css/custom.css",

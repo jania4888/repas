@@ -1,0 +1,147 @@
+// ============================================================================
+// landing-rtl.scss — surcharges RTL de la landing publique (lot D, TD4).
+// Chargé UNIQUEMENT en arabe par HomeThemeService (link id « factutrust-landing-rtl »,
+// bundle non injecté `landing-rtl.css`, angular.json styles). Portée stricte
+// `[dir="rtl"] .chain-theme-root` : l'ERP n'hérite de rien.
+// C'est ici — et seulement ici — que les propriétés physiques directionnelles sont
+// permises dans les fichiers landing (elles CONTRE-CARRENT le CSS vendeur Chain,
+// écrit en LTR physique ; le script check-landing-physical-css exclut ce fichier).
+// ============================================================================
+
+[dir="rtl"] .chain-theme-root {
+  // --- Typographie arabe ---------------------------------------------------
+  font-family: var(--landing-font-ar);
+
+  h1, h2, h3, h4, h5, h6,
+  p, li, a, span, button, input, textarea, select, label, summary, details, blockquote {
+    font-family: var(--landing-font-ar);
+    // L'arabe ne supporte ni crénage de petites capitales ni capitales :
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    line-height: 1.85;
+  }
+
+  h1, h2, h3, h4 {
+    line-height: 1.45;
+    font-weight: 700;
+  }
+
+  // --- En-tête Chain : le CSS vendeur flotte le logo à gauche et la nav à droite.
+  .header-area .logo {
+    float: right;
+  }
+
+  .header-area .main-nav,
+  .header-area .nav {
+    float: left;
+  }
+
+  .header-area .main-nav .nav li {
+    margin-left: 0;
+    margin-right: 20px;
+  }
+
+  // Le CSS Chain applique un padding spécifique au bouton de connexion (li:last-child) ;
+  // en RTL la zone utile s'inverse.
+  .header-area .main-nav .nav li:last-child a,
+  .header-area .main-nav .nav li:nth-last-child(2) a {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  // Déclencheur du tiroir mobile : l'icône burger passe à gauche.
+  .menu-trigger {
+    left: 40px;
+    right: auto;
+  }
+
+  // Tiroir mobile : glisse depuis la gauche (miroir du `translateX(100%)` LTR).
+  .header-area .main-nav .nav {
+    left: 0;
+    right: auto;
+    transform: translateX(-100%);
+  }
+
+  .header-area.header-sticky .main-nav .nav,
+  .header-area .main-nav .nav.active,
+  .header-area .main-nav .nav.visible {
+    transform: translateX(0);
+  }
+
+  // --- Hero : décor latéral du thème Chain miroir. --------------------------
+  .main-banner:after {
+    transform: scaleX(-1);
+    transform-origin: center;
+  }
+
+  .main-banner .left-content {
+    margin-right: 0;
+    margin-left: 45px;
+  }
+
+  .main-banner .right-image {
+    text-align: left;
+  }
+
+  .first-button {
+    margin-right: 0;
+    margin-left: 15px;
+  }
+
+  // --- Icônes directionnelles : retournées (flèches « suivant » pointent à gauche).
+  .pi-arrow-right,
+  .pi-chevron-right,
+  .promo-cta-arrow,
+  .cta-arrow,
+  .scroll-to-section .pi-angle-down {
+    transform: scaleX(-1);
+    display: inline-block;
+  }
+
+  // --- WOW : fadeInLeft ↔ fadeInRight (le JS charge les keyframes LTR). -----
+  .wow.fadeInLeft {
+    animation-name: fadeInRight;
+  }
+
+  .wow.fadeInRight {
+    animation-name: fadeInLeft;
+  }
+
+  // --- Nombres, prix, e-mails, téléphones : toujours LTR, isolés. -----------
+  .ltr-inline,
+  .price-amount,
+  .stat-value,
+  .landing-tel,
+  .landing-email {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
+  // --- Tableaux et listes : puce à droite. ----------------------------------
+  ul {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  // --- Alignements de secours pour le texte courant. ------------------------
+  text-align: right;
+
+  .text-center,
+  [class*="text-center"] {
+    text-align: center;
+  }
+}
+
+// Le tiroir mobile Chain est positionné sous .header-area (hors .chain-theme-root
+// selon la version du thème) : sélecteur doublé à la racine pour couvrir les deux.
+[dir="rtl"] body .header-area .menu-trigger {
+  left: 40px;
+  right: auto;
+}
+
+// --- Honeypot du formulaire de contact : le retrait hors écran par la gauche
+// étend le canvas en RTL (origine de défilement à droite) — on le renvoie à droite.
+[dir="rtl"] .cr-honeypot {
+  left: auto;
+  right: -9999px;
+}
