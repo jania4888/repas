@@ -45,8 +45,9 @@ export class LandingSeoService {
   private readonly doc = inject(DOCUMENT);
 
   private previousTitle: string | null = null;
-  private previousDescription: string | null = null;
   private previousCanonical: { el: Element; href: string | null } | null = null;
+  /** Contenus d'origine des balises meta préexistantes (index.html) mises à jour en place. */
+  private previousMetaContent: Array<{ el: HTMLMetaElement; content: string | null }> = [];
   private created: Element[] = [];
   private applied = false;
 
@@ -70,7 +71,6 @@ export class LandingSeoService {
     this.applied = true;
 
     this.previousTitle = this.title.getTitle();
-    this.previousDescription = this.meta.getTag('name="description"')?.getAttribute('content') ?? null;
     this.title.setTitle(input.title);
 
     const url = this.absoluteUrl(input.page, input.locale);
@@ -138,23 +138,30 @@ export class LandingSeoService {
       this.previousCanonical = null;
     }
 
-    for (const tag of this.meta.getTags(`${LANDING_SEO_ATTR}="1"`)) {
-      if (tag.getAttribute('name') === 'description') {
-        if (this.previousDescription !== null) {
-          tag.setAttribute('content', this.previousDescription);
-          delete tag.dataset[LANDING_SEO_MARKER];
+    // Balises préexistantes (replis statiques d'index.html) : restauration de la valeur.
+    // Balises créées par apply() : retrait pur et simple.
+    for (const tag of this.meta.getTags(`${LANDING_SEO_ATTR}="1"`) ?? []) {
+      const entry = this.previousMetaContent.find(e => e.el === tag);
+      if (entry) {
+        if (entry.content === null) {
+          tag.removeAttribute('content');
         } else {
-          tag.remove();
+          tag.setAttribute('content', entry.content);
         }
+        delete (tag as HTMLMetaElement).dataset[LANDING_SEO_MARKER];
       } else {
         tag.remove();
       }
     }
-    this.previousDescription = null;
+    this.previousMetaContent = [];
   }
 
   private upsertMeta(def: { name?: string; property?: string; content: string }): void {
     const selector = def.name ? `name="${def.name}"` : `property="${def.property}"`;
+    const existing = this.meta.getTag(selector);
+    if (existing && existing.dataset[LANDING_SEO_MARKER] !== '1') {
+      this.previousMetaContent.push({ el: existing, content: existing.getAttribute('content') });
+    }
     const el = this.meta.updateTag(def, selector);
     if (el) {
       el.dataset[LANDING_SEO_MARKER] = '1';

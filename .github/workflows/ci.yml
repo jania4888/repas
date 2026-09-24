@@ -101,6 +101,9 @@ jobs:
       # au fichier qui fait foi — sans lui, une dérive entre les deux arbres passe inaperçue.
       - name: Parité catalogue sectoriel (backend ↔ fixture frontend)
         run: node ../../../scripts/ci/check-sector-catalog-parity.mjs
+      # Gardes landing (lot D) : texte en dur interdit hors dictionnaires, CSS logique (RTL-safe).
+      - name: Gardes landing (copy + CSS physique)
+        run: npm run test:landing
       - name: Specs Jasmine (headless)
         run: npx ng test --watch=false --browsers=ChromeHeadless
       - name: Build production

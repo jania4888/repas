@@ -106,6 +106,10 @@ type ContactControlName =
             @for (message of alertMessages(); track message) {
               <p>{{ message }}</p>
             }
+            @if (error()?.kind === 'rateLimited' && blockedSecondsLeft() > 0) {
+              <!-- Décompte visuel hors live-region : ne pas ré-annoncer chaque seconde (WCAG). -->
+              <p class="cr-alert__countdown" aria-hidden="true">{{ rateLimitMessage() }}</p>
+            }
           </div>
         }
 
@@ -761,7 +765,9 @@ export class ContactRequestFormComponent extends LandingCopyBase implements OnIn
         return messages;
       }
       case 'rateLimited':
-        return [this.rateLimitMessage()];
+        // Message statique : le décompte des secondes vit dans un élément aria-hidden
+        // séparé pour ne pas spammer les lecteurs d'écran à chaque tick.
+        return [this.t().contact.errors.rateLimitedFallback];
       case 'network':
         return [this.t().contact.errors.network];
       case 'unknown':

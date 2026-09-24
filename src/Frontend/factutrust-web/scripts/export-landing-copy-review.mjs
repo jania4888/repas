@@ -37,6 +37,15 @@ function extractStrings(file) {
   return entries;
 }
 
+/** Empreinte courte et stable d'une chaîne (djb2, base 36) — clé de relecture. */
+function hashText(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i += 1) {
+    h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  }
+  return h.toString(36);
+}
+
 function parseExistingReview() {
   try {
     const md = readFileSync(OUT, 'utf8');
@@ -76,10 +85,16 @@ for (const zone of ZONES) {
   lines.push('| --- | --- | --- | --- | --- |');
   const frValues = [...fr.values()];
   const arValues = [...ar.values()];
+  const seenKeys = new Map();
   for (let i = 0; i < frValues.length; i += 1) {
     const frValue = frValues[i].replaceAll('|', '\\|');
     const arValue = (arValues[i] ?? '').replaceAll('|', '\\|');
-    const key = `${zone}#${i}`;
+    // Clé stable = empreinte du texte FR : insérer/retirer une chaîne ne re-pointe pas
+    // les validations existantes vers un autre texte (porte d'activation §8.4).
+    const base = `${zone}#${hashText(frValues[i])}`;
+    const occurrence = (seenKeys.get(base) ?? 0) + 1;
+    seenKeys.set(base, occurrence);
+    const key = occurrence === 1 ? base : `${base}.${occurrence}`;
     const status = validated.has(key) && arValues[i] !== undefined ? 'Validé' : 'À relire';
     if (status !== 'Validé') remaining += 1;
     total += 1;

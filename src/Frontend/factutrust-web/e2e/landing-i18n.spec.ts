@@ -36,17 +36,21 @@ test.describe('Landing — i18n FR/AR', () => {
   });
 
   test('le sélecteur de langue conserve l’ancre et bascule / ↔ /ar', async ({ page }) => {
-    await page.goto('/#tarifs');
+    await page.goto('/');
+    // Navigation intra-page APRÈS le premier rendu : l'en-tête n'est pas recréé,
+    // l'ancre doit être relue au moment du basculement (régression : computed gelé).
+    await page.locator('footer a[href="/#tarifs"], footer a[href$="#tarifs"]').first().click();
+    await expect(page).toHaveURL(/#tarifs$/);
     const switcher = page.locator('a[hreflang="ar-TN"], a:has-text("العربية")').first();
     await expect(switcher).toBeVisible();
-    const href = await switcher.getAttribute('href');
-    expect(href).toMatch(/^\/ar/);
+    expect(await switcher.getAttribute('href')).toBe('/ar#tarifs');
     await switcher.click();
-    await expect(page).toHaveURL(/\/ar/);
+    await expect(page).toHaveURL(/\/ar#tarifs$/);
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-    // Retour en FR.
+    // Retour en FR, ancre conservée dans l'autre sens.
     const back = page.locator('a[hreflang="fr-TN"], a:has-text("FR")').first();
     await back.click();
+    await expect(page).toHaveURL(/\/#tarifs$/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
     await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   });
@@ -69,10 +73,10 @@ test.describe('Landing — i18n FR/AR', () => {
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     // Le déclencheur du menu est à gauche en RTL.
     const trigger = page.locator('.menu-trigger, [aria-controls][aria-expanded], button.menu').first();
-    if (await trigger.count()) {
-      const box = await trigger.boundingBox();
-      if (box) expect(box.x).toBeLessThan(195);
-    }
+    // Le déclencheur doit exister : le test échoue s'il disparaît du DOM mobile.
+    await expect(trigger).toBeAttached();
+    const box = await trigger.boundingBox();
+    if (box) expect(box.x).toBeLessThan(195);
   });
 
   test('pas d’erreur console sur /ar', async ({ page }) => {

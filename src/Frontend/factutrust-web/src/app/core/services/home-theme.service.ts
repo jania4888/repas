@@ -127,6 +127,12 @@ export class HomeThemeService {
     const next = this.appendLink(CHAIN_BOOTSTRAP_NEXT_LINK_ID, BOOTSTRAP_CSS[dir], old ?? undefined);
 
     const finalize = (): void => {
+      // Le shell a quitté la landing pendant le préchargement (unloadChainTheme) :
+      // ne rien réinjecter — la feuille « next » n'est plus suivie, on la retire.
+      if (!this.loaded) {
+        next.remove();
+        return;
+      }
       if (old) {
         old.remove();
         this.elements = this.elements.filter(e => e !== old);

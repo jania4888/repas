@@ -52,6 +52,14 @@ test.describe('Landing — page d’accueil', () => {
     expect(await page.locator('.p-toast, .p-toast-message').count()).toBe(0);
   });
 
+  test('API lente (> registrationStatusTimeoutMs) : repli fermé sans attendre la réponse', async ({ page }) => {
+    // Réponse différée de 6 s : le garde-fou de 2,5 s doit basculer les CTA en « fermé » avant.
+    await mockRegistrationStatus(page, 'slow');
+    await page.goto('/');
+    await waitForCtaState(page, 'closed');
+    expect(await page.locator('.p-toast, .p-toast-message').count()).toBe(0);
+  });
+
   test('un seul H1, la bannière « Nouveautés » mène à #nouveautés quand fermé', async ({ page }) => {
     await mockRegistrationStatus(page, 'closed');
     await page.goto('/');

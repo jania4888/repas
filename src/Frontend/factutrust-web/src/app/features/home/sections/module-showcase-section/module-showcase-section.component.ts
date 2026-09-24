@@ -38,7 +38,7 @@ const FALLBACK_VISUAL: TabVisual = { icon: 'pi-th-large', accent: 'blue' };
   imports: [LandingRichComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section id="modules" class="modules-section" tabindex="-1" aria-labelledby="modules-title" (mouseenter)="pauseRotation()" (mouseleave)="resumeRotation()">
+    <section id="modules" class="modules-section" tabindex="-1" aria-labelledby="modules-title" (mouseenter)="pauseRotation()" (mouseleave)="resumeRotation()" (focusin)="pauseRotationOnFocus()" (focusout)="resumeRotationOnFocus()">
       <div class="section-container">
         <div class="section-header">
           <span class="eyebrow">{{ format(t().home.modules.kicker, { count: facts.modulesCount }) }}</span>
@@ -495,7 +495,13 @@ export class ModuleShowcaseSectionComponent extends LandingCopyBase implements O
   });
 
   private rotationTimer?: ReturnType<typeof setInterval>;
-  private isPaused = false;
+  private hoverPaused = false;
+  private focusPaused = false;
+
+  /** Rotation en pause si le pointeur OU le focus clavier est dans la section (WCAG 2.2.2). */
+  private get isPaused(): boolean {
+    return this.hoverPaused || this.focusPaused;
+  }
 
   ngOnInit(): void {
     if (typeof window === 'undefined') return;
@@ -521,11 +527,19 @@ export class ModuleShowcaseSectionComponent extends LandingCopyBase implements O
   }
 
   pauseRotation(): void {
-    this.isPaused = true;
+    this.hoverPaused = true;
   }
 
   resumeRotation(): void {
-    this.isPaused = false;
+    this.hoverPaused = false;
+  }
+
+  pauseRotationOnFocus(): void {
+    this.focusPaused = true;
+  }
+
+  resumeRotationOnFocus(): void {
+    this.focusPaused = false;
   }
 
   onKeydown(event: KeyboardEvent, index: number): void {

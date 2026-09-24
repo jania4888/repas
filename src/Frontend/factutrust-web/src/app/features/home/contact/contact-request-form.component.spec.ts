@@ -311,6 +311,47 @@ describe('ContactRequestFormComponent', () => {
     tick(500); // purge le debounce du brouillon
   }));
 
+  it('429 → le message alerté est statique, le décompte vit hors live-region (WCAG)', fakeAsync(() => {
+    const fixture = create();
+    fillValid(fixture);
+    submitForm(fixture);
+    httpMock
+      .expectOne(SUBMIT_URL)
+      .flush(
+        { success: false, message: 'Too many requests' },
+        { status: 429, statusText: 'Too Many Requests', headers: { 'Retry-After': '3' } }
+      );
+    tick(0);
+    fixture.detectChanges();
+
+    const banner: HTMLElement = fixture.nativeElement.querySelector('.cr-alert[role="alert"]');
+    // Le nœud alerté reste identique d'un tick à l'autre (pas de ré-annonce chaque seconde).
+    const announced = Array.from(
+      banner.querySelectorAll<HTMLElement>('p:not([aria-hidden])')
+    );
+    expect(announced).toHaveSize(1);
+    expect(announced[0].textContent).toContain('Réessayez dans quelques instants');
+
+    const countdown = banner.querySelector<HTMLElement>('.cr-alert__countdown');
+    expect(countdown).not.toBeNull();
+    expect(countdown!.getAttribute('aria-hidden')).toBe('true');
+    expect(countdown!.textContent).toContain('3');
+
+    tick(1000);
+    fixture.detectChanges();
+    const bannerAfter: HTMLElement = fixture.nativeElement.querySelector('.cr-alert[role="alert"]');
+    const announcedAfter = Array.from(
+      bannerAfter.querySelectorAll<HTMLElement>('p:not([aria-hidden])')
+    );
+    expect(announcedAfter).toHaveSize(1);
+    expect(announcedAfter[0].textContent).toContain('Réessayez dans quelques instants');
+    expect(
+      fixture.nativeElement.querySelector('.cr-alert__countdown').textContent
+    ).toContain('2');
+    tick(3000);
+    tick(500); // purge le debounce du brouillon
+  }));
+
   it('429 sans en-tête Retry-After → repli 60 s', fakeAsync(() => {
     const fixture = create();
     fillValid(fixture);

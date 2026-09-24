@@ -130,6 +130,11 @@ describe('Parité des dictionnaires landing FR/AR', () => {
       if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(value)) {
         offenders.push(`${path}: caractère de contrôle`);
       }
+      // Contrôles bidirectionnels interdits : le balisage [[ltr]] et dir=rtl suffisent,
+      // ces caractères invisibles rendraient la relecture client imprévisible.
+      if (/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/.test(value)) {
+        offenders.push(`${path}: caractère de contrôle bidirectionnel interdit`);
+      }
     }
     expect(offenders).toEqual([]);
   });

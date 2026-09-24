@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter } from 'rxjs';
 import { environment } from '@environments/environment';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
 import { LandingCopyService } from '../../content/landing-copy.service';
@@ -78,7 +80,25 @@ export class LandingLangSwitcherComponent {
   readonly enabled = environment.landing?.arabicEnabled === true;
   readonly locales = LANDING_LOCALES;
   readonly current = this.loc.locale;
-  readonly fragment = computed(() => this.router.parseUrl(this.router.url).fragment ?? undefined);
+  /**
+   * Ancre courante, portée par un signal : une navigation intra-page (fragment seul)
+   * ne recrée pas l'en-tête et ne déclenche pas de CD OnPush — sans signal, l'ancre
+   * resterait celle du premier rendu.
+   */
+  readonly fragment = signal<string | undefined>(undefined);
+
+  constructor() {
+    const readFragment = (): void => {
+      this.fragment.set(this.router.parseUrl(this.router.url).fragment ?? undefined);
+    };
+    readFragment();
+    this.router.events
+      .pipe(
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        takeUntilDestroyed()
+      )
+      .subscribe(readFragment);
+  }
 
   targetPath(l: LandingLocale): string {
     return localizedPath(this.router.url.split(/[?#]/)[0] ?? '/', l);
