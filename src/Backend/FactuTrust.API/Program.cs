@@ -335,6 +335,19 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(1)
             }));
 
+    // Lot C — demande de contact anonyme : 5 envois / heure / IP en production (un humain n'en
+    // fait pas plus), QueueLimit = 0 → rejet immédiat en 429 avec Retry-After. Le GlobalLimiter
+    // (par IP, par minute) reste actif en amont ; le plafond global est la garde D7 du handler.
+    options.AddPolicy("public-contact", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 100 : 5,
+                Window = TimeSpan.FromHours(1),
+                QueueLimit = 0
+            }));
+
     options.AddPolicy("labels", context =>
     {
         // Partition par utilisateur authentifié, comme « ai » : une planche d'étiquettes est
@@ -357,7 +370,14 @@ builder.Services.AddRateLimiter(options =>
     {
         context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
         context.HttpContext.Response.ContentType = "application/json";
-        
+        // Comportement HTTP standard, toutes politiques : temps restant avant la prochaine fenêtre
+        // (FixedWindowRateLimiter fournit la métadonnée sur un bail refusé ; sinon pas d'en-tête).
+        if (context.Lease.TryGetMetadata(System.Threading.RateLimiting.MetadataName.RetryAfter, out var retryAfter))
+        {
+            context.HttpContext.Response.Headers.RetryAfter =
+                Math.Max(1, (int)Math.Ceiling(retryAfter.TotalSeconds)).ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
         var response = System.Text.Json.JsonSerializer.Serialize(new
         {
             success = false,
@@ -655,6 +675,25 @@ app.MapControllers();
         publicRegistration.IsFirmEnabled,
         accountingFirms.IsEnabled,
         app.Environment.EnvironmentName);
+
+    // Lot C — formulaire de contact public (aucun secret journalisé, seulement des booléens/compteurs).
+    var publicContact = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<FactuTrust.Application.Configuration.PublicContactOptions>>().Value;
+    featureLogger.LogInformation(
+        "Effective feature flags: PublicContact.Enabled={PublicContactEnabled} PublicContact.RequireCaptcha={PublicContactRequireCaptcha} PublicContact.Recipients={PublicContactRecipients}",
+        publicContact.Enabled,
+        publicContact.RequireCaptcha,
+        publicContact.RecipientEmails.Length);
+    if (publicContact.Enabled && publicContact.RecipientEmails.Length == 0)
+    {
+        featureLogger.LogWarning(
+            "Features:PublicContact:Enabled=true sans RecipientEmails : les demandes sont enregistrées en base mais personne n'est notifié.");
+    }
+    if (publicContact.RequireCaptcha
+        && (string.IsNullOrWhiteSpace(publicContact.TurnstileSecretKey) || publicContact.TurnstileAllowedHostnames.Length == 0))
+    {
+        featureLogger.LogWarning(
+            "Features:PublicContact:RequireCaptcha=true sans TurnstileSecretKey/TurnstileAllowedHostnames : toutes les soumissions seront refusées (fail-closed).");
+    }
 }
 
 // Note : l'enregistrement des jobs récurrents Hangfire (anciennement ici, en inline) est
