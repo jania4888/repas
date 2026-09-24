@@ -47,6 +47,11 @@
               }
             ],
             "styles": [
+              {
+                "input": "src/landing-rtl.scss",
+                "inject": false,
+                "bundleName": "landing-rtl"
+              },
               "src/assets/theme/pluto/css/bootstrap.min.css",
               "src/assets/theme/pluto/style.css",
               "src/assets/theme/pluto/css/custom.css",

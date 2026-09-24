@@ -44,6 +44,42 @@
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+// ============================================
+// POLICE ARABE DE LA LANDING — Noto Sans Arabic (OFL-1.1, @fontsource/noto-sans-arabic 5.3.0).
+// Sous-ensemble « arabic » uniquement + unicode-range : aucun octet téléchargé en FR ni dans
+// l'ERP (les glyphes latins restent servis par Inter). Utilisée via --landing-font-ar,
+// appliquée par landing-rtl.css sous [dir="rtl"] .chain-theme-root. Préchargement (400/700)
+// posé par HomeThemeService sur /ar uniquement. Licence : assets/fonts/noto-sans-arabic/LICENSE.
+// ============================================
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/noto-sans-arabic/noto-sans-arabic-arabic-400-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+0660-0669, U+200C-200D, U+25CC, U+0640;
+}
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./assets/fonts/noto-sans-arabic/noto-sans-arabic-arabic-600-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+0660-0669, U+200C-200D, U+25CC, U+0640;
+}
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/noto-sans-arabic/noto-sans-arabic-arabic-700-normal.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+0660-0669, U+200C-200D, U+25CC, U+0640;
+}
+
+:root {
+  --landing-font-ar: 'Noto Sans Arabic', 'Segoe UI', Tahoma, 'Arial', system-ui, sans-serif;
+}
+
 // Alias « Inter var » — la famille déclarée par le thème PrimeNG lara (:root font-family).
 // Le woff2 variable livré par PrimeNG (Inter-roman.var.woff2) échoue au parsing OTS de Chrome
 // (« Failed to decode / OTS parsing error »). En redéclarant la MÊME famille APRÈS PrimeNG, sans
