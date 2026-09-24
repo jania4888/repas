@@ -22,7 +22,14 @@ public static class IdentityErrorTranslator
             "InvalidToken" => "Le token n'est pas valide.",
             "InvalidRoleName" => "Le nom du rôle n'est pas valide.",
             "LoginAlreadyAssociated" => "Cette connexion est déjà associée à un compte.",
-            "PasswordTooShort" => "Le mot de passe doit contenir au moins {0} caractères.",
+            "PasswordTooShort" => FormatWithRequiredCount(
+                error.Description,
+                "Le mot de passe doit contenir au moins {0} caractères.",
+                "Le mot de passe est trop court."),
+            "PasswordRequiresUniqueChars" => FormatWithRequiredCount(
+                error.Description,
+                "Le mot de passe doit contenir au moins {0} caractères différents.",
+                "Le mot de passe doit contenir davantage de caractères différents."),
             "PasswordRequiresNonAlphanumeric" => "Le mot de passe doit contenir au moins un caractère non alphanumérique.",
             "PasswordRequiresDigit" => "Le mot de passe doit contenir au moins un chiffre.",
             "PasswordRequiresLower" => "Le mot de passe doit contenir au moins une lettre minuscule.",
@@ -66,9 +73,14 @@ public static class IdentityErrorTranslator
             return $"Le nom d'utilisateur '{userName}' et l'adresse email '{email}' sont déjà utilisés.";
         }
         
-        // Translate each error and join with proper French punctuation
-        var translatedErrors = errorList.Select(TranslateToFrench).Where(e => !string.IsNullOrWhiteSpace(e));
-        return string.Join(". ", translatedErrors) + (translatedErrors.Any() ? "." : string.Empty);
+        // Translate each error and join with proper French punctuation. Each translation already ends
+        // with a period: strip it before joining, or every sentence would end with "..".
+        var translatedErrors = errorList
+            .Select(TranslateToFrench)
+            .Select(e => e.TrimEnd().TrimEnd('.'))
+            .Where(e => !string.IsNullOrWhiteSpace(e))
+            .ToList();
+        return translatedErrors.Count == 0 ? string.Empty : string.Join(". ", translatedErrors) + ".";
     }
 
     private static string TranslateByDescription(IdentityError error)
@@ -110,6 +122,17 @@ public static class IdentityErrorTranslator
 
         // Default: return original description if no translation found
         return error.Description;
+    }
+
+    /// <summary>
+    /// Carries over the threshold from the Identity description ("Passwords must be at least 12
+    /// characters."): the error code alone does not hold it, and translating without it left a raw
+    /// "{0}" in front of the user.
+    /// </summary>
+    private static string FormatWithRequiredCount(string description, string template, string fallback)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(description ?? string.Empty, @"\d+");
+        return match.Success ? string.Format(template, match.Value) : fallback;
     }
 
     private static string ExtractValueFromDescription(string description, string fieldName)

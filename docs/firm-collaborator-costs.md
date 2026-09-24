@@ -73,13 +73,13 @@ La paie **client** (`/payroll` en contexte délégué) reste distincte de la **p
 }
 ```
 
-- `false` (défaut du code, `appsettings.json`) : comportement inchangé — pas de module Paie dans le JWT cabinet natif.
+- `false` (défaut du code) : comportement inchangé — pas de module Paie dans le JWT cabinet natif.
 - `true` : le manager reçoit le module `Payroll` et les permissions `payroll:*` ; **re-login obligatoire**.
 
-> **Valeurs réellement déployées** — `appsettings.Development.json` **et**
-> `appsettings.Production.json` positionnent `EnableFirmInternalPayroll: true`. La paie interne est
-> donc **active en production**. (Le développement ajoute `AutoProvisionPayrollOnCollaboratorCreate: true`,
-> que la production laisse à `false`.)
+> **Valeurs réellement déployées** — `appsettings.json`, `appsettings.Development.json` **et**
+> `appsettings.Production.json` positionnent `EnableFirmInternalPayroll: true` et
+> `AutoProvisionPayrollOnCollaboratorCreate: true`. La paie interne **et** la provision automatique
+> à la création d'un collaborateur sont donc **actives en production**.
 
 **Permissions accordées** (`DelegatedPermissionCatalog.FirmNativePayrollManagerPermissions`) — le
 cabinet est l'employeur de ses propres salariés et dispose du cycle complet : `payroll:read`,
@@ -165,11 +165,29 @@ Lorsque `AutoProvisionPayrollOnCollaboratorCreate` est activé **avec** `EnableF
 | Flag | Défaut du code | Valeur en prod | Effet |
 |------|----------------|----------------|-------|
 | `EnableFirmInternalPayroll` | `false` | **`true`** | Module paie interne |
-| `AutoProvisionPayrollOnCollaboratorCreate` | `false` | `false` (`true` en dev) | Provision auto à la création |
+| `AutoProvisionPayrollOnCollaboratorCreate` | `false` | **`true`** | Provision auto à la création |
 
 **Règle d'activation :** les deux flags doivent être `true` (et `Enabled` = `true`). Sinon, comportement inchangé.
 
 **Politique fail-closed :** si la provision échoue (base paie absente, email ambigu, salarié déjà lié, etc.), le collaborateur Master est supprimé (rollback) et l'API renvoie `400` avec un message `Impossible de créer le salarié paie : …`.
+
+### Contrôles du compte à la création
+
+- **Mot de passe** facultatif. Vide, le compte est créé sur invitation. Renseigné, il doit respecter la
+  politique Identity (`Program.cs`) : 12 caractères minimum, une majuscule, une minuscule, un chiffre,
+  un caractère spécial et 4 caractères distincts. Le formulaire l'applique à la saisie
+  (`optionalAuthPasswordValidator`) avant que le serveur la vérifie à son tour.
+- **E-mail** : il sert d'identifiant de connexion et n'accepte donc que les caractères autorisés par
+  Identity (lettres sans accent, chiffres, `. _ - + @`). Il est contrôlé avant toute écriture.
+- **Codes d'erreur** : le champ `code` de la réponse `400` désigne le champ fautif —
+  `Validation.Password`, `Validation.Email`, `Validation.Role`, `Validation.PayrollProvision`,
+  `Validation.Create`. L'écran s'en sert pour marquer le champ et revenir sur son onglet.
+- **Compensation** : tout échec survenu après l'écriture du compte le supprime, y compris sur exception
+  (profil, stockage de la CNI). Le compte ne reste donc jamais bloqué en « e-mail déjà utilisé ».
+- **Erreur technique de provision** : le client reçoit une référence (`réf. XXXXXXXX`) et non le message
+  de l'exception ; la même référence figure dans le journal `Payroll auto-provision failed … (ref. …)`.
+- **Journal** : chaque refus émet `Collaborator creation refused: {ErrorCode} (firm {TenantId})`, sans
+  donnée personnelle.
 
 ### Dossier paie à la création (auto-provision active)
 

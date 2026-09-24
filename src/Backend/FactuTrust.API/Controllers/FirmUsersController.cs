@@ -17,11 +17,16 @@ public sealed class FirmUsersController : ControllerBase
 {
     private readonly IFirmCollaboratorService _collaborators;
     private readonly ICurrentUser _currentUser;
+    private readonly ILogger<FirmUsersController> _logger;
 
-    public FirmUsersController(IFirmCollaboratorService collaborators, ICurrentUser currentUser)
+    public FirmUsersController(
+        IFirmCollaboratorService collaborators,
+        ICurrentUser currentUser,
+        ILogger<FirmUsersController> logger)
     {
         _collaborators = collaborators;
         _currentUser = currentUser;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -138,7 +143,14 @@ public sealed class FirmUsersController : ControllerBase
             var result = await _collaborators.CreateAsync(
                 tenantId.Value, dto, cniStream, cniFileName, cniContentType, cancellationToken);
             if (!result.IsSuccess)
-                return BadRequest(ApiResponse<FirmUserDto>.Fail(result.Error.Description));
+            {
+                // Seul le code est journalisé : le message peut contenir l'e-mail saisi.
+                _logger.LogWarning(
+                    "Collaborator creation refused: {ErrorCode} (firm {TenantId})",
+                    result.Error.Code, tenantId.Value);
+                // Le code permet à l'écran de signaler le champ fautif sans analyser le texte.
+                return BadRequest(ApiResponse<FirmUserDto>.Fail(result.Error.Description, result.Error.Code));
+            }
 
             return Ok(ApiResponse<FirmUserDto>.Ok(result.Value, "Utilisateur créé"));
         }

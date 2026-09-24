@@ -154,7 +154,17 @@ public sealed class FirmCollaboratorService : IFirmCollaboratorService
 
         var validation = ValidateCreate(dto);
         if (validation is not null)
-            return Result.Failure<FirmUserDto>(Error.Validation("Create", validation));
+            return Result.Failure<FirmUserDto>(validation);
+
+        // AddToRoleAsync lève sur un rôle absent, alors que le compte est déjà inséré : on le vérifie
+        // tant que rien n'est écrit.
+        var roleName = dto.Role.ToString();
+        var normalizedRoleName = _userManager.NormalizeName(roleName);
+        if (!await _db.Roles.AsNoTracking().AnyAsync(r => r.NormalizedName == normalizedRoleName, cancellationToken))
+        {
+            _logger.LogError("Role {Role} is missing: cannot create collaborator for firm {TenantId}", roleName, firmTenantId);
+            return Result.Failure<FirmUserDto>(Error.Validation("Role", "Rôle cabinet indisponible. Contactez le support."));
+        }
 
         if (FirmGovernanceNativeAccess.ShouldAutoProvisionPayrollOnCollaboratorCreate(_governanceOptions))
         {
@@ -204,76 +214,108 @@ public sealed class FirmCollaboratorService : IFirmCollaboratorService
 
         var createResult = await _userManager.CreateAsync(user, password);
         if (!createResult.Succeeded)
-            return Result.Failure<FirmUserDto>(Error.Validation("Identity", IdentityErrorTranslator.TranslateToFrench(createResult.Errors)));
+            return Result.Failure<FirmUserDto>(Error.Validation(
+                ClassifyIdentityErrors(createResult.Errors),
+                IdentityErrorTranslator.TranslateToFrench(createResult.Errors)));
 
-        await _userManager.AddToRoleAsync(user, dto.Role.ToString());
-
-        var profile = new FirmCollaboratorProfile
+        // Le compte est écrit : toute sortie en échec doit désormais le retirer, sinon l'e-mail reste
+        // pris et chaque nouvelle tentative échoue en doublon.
+        FirmCollaboratorProfile? profile = null;
+        try
         {
-            UserId = user.Id,
-            Civility = dto.Civility,
-            Qualification = (dto.Qualification ?? string.Empty).Trim(),
-            PhoneLandline = string.IsNullOrWhiteSpace(dto.PhoneLandline) ? null : dto.PhoneLandline.Trim(),
-            UseFirmAddress = dto.UseFirmAddress,
-            UpdatedAt = DateTime.UtcNow
-        };
-
-        await ApplyAddressSnapshotAsync(firmTenantId, profile, dto.UseFirmAddress, dto.AddressLine, dto.PostalCode, dto.City, dto.Country, cancellationToken);
-
-        if (cniContent is not null)
-        {
-            var cniResult = await StoreCniFileAsync(
-                firmTenantId,
-                user.Id,
-                cniContent,
-                cniFileName ?? "cni.pdf",
-                cniContentType ?? "application/pdf",
-                cniContent.CanSeek ? cniContent.Length : -1,
-                cancellationToken);
-            if (!cniResult.IsSuccess)
+            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+            if (!roleResult.Succeeded)
             {
-                await _userManager.DeleteAsync(user);
-                return Result.Failure<FirmUserDto>(cniResult.Error);
-            }
-
-            profile.CniFileName = cniResult.Value.FileName;
-            profile.CniContentType = cniResult.Value.ContentType;
-            profile.CniUploadedAt = DateTime.UtcNow;
-        }
-
-        _db.FirmCollaboratorProfiles.Add(profile);
-        await _db.SaveChangesAsync(cancellationToken);
-
-        if (FirmGovernanceNativeAccess.ShouldAutoProvisionPayrollOnCollaboratorCreate(_governanceOptions))
-        {
-            try
-            {
-                var provision = await _provisioning.ProvisionCollaboratorAsync(
-                    firmTenantId,
-                    isManager: true,
-                    user.Id,
-                    dto.Payroll,
-                    cancellationToken);
-
-                if (provision.IsFailure || provision.Value is { Created: 0, Linked: 0 })
-                {
-                    await RollbackCreatedCollaboratorAsync(firmTenantId, user, profile);
-                    var reason = provision.IsFailure
-                        ? provision.Error.Description
-                        : provision.Value!.Messages.FirstOrDefault() ?? "Provision paie impossible.";
-                    return Result.Failure<FirmUserDto>(Error.Validation(
-                        "PayrollProvision",
-                        $"Impossible de créer le salarié paie : {reason}"));
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Payroll auto-provision failed for collaborator {UserId}", user.Id);
+                _logger.LogError(
+                    "Role {Role} could not be assigned to collaborator {UserId} ({ErrorCodes})",
+                    roleName, user.Id, string.Join(", ", roleResult.Errors.Select(e => e.Code)));
                 await RollbackCreatedCollaboratorAsync(firmTenantId, user, profile);
                 return Result.Failure<FirmUserDto>(Error.Validation(
-                    "PayrollProvision",
-                    $"Impossible de créer le salarié paie : {ex.Message}"));
+                    "Role",
+                    "Le rôle cabinet n'a pas pu être attribué. Réessayez ou contactez le support."));
             }
+
+            profile = new FirmCollaboratorProfile
+            {
+                UserId = user.Id,
+                Civility = dto.Civility,
+                Qualification = (dto.Qualification ?? string.Empty).Trim(),
+                PhoneLandline = string.IsNullOrWhiteSpace(dto.PhoneLandline) ? null : dto.PhoneLandline.Trim(),
+                UseFirmAddress = dto.UseFirmAddress,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await ApplyAddressSnapshotAsync(firmTenantId, profile, dto.UseFirmAddress, dto.AddressLine, dto.PostalCode, dto.City, dto.Country, cancellationToken);
+
+            if (cniContent is not null)
+            {
+                var cniResult = await StoreCniFileAsync(
+                    firmTenantId,
+                    user.Id,
+                    cniContent,
+                    cniFileName ?? "cni.pdf",
+                    cniContentType ?? "application/pdf",
+                    cniContent.CanSeek ? cniContent.Length : -1,
+                    cancellationToken);
+                if (!cniResult.IsSuccess)
+                {
+                    await RollbackCreatedCollaboratorAsync(firmTenantId, user, profile);
+                    return Result.Failure<FirmUserDto>(cniResult.Error);
+                }
+
+                profile.CniFileName = cniResult.Value.FileName;
+                profile.CniContentType = cniResult.Value.ContentType;
+                profile.CniUploadedAt = DateTime.UtcNow;
+            }
+
+            _db.FirmCollaboratorProfiles.Add(profile);
+            await _db.SaveChangesAsync(cancellationToken);
+
+            if (FirmGovernanceNativeAccess.ShouldAutoProvisionPayrollOnCollaboratorCreate(_governanceOptions))
+            {
+                try
+                {
+                    var provision = await _provisioning.ProvisionCollaboratorAsync(
+                        firmTenantId,
+                        isManager: true,
+                        user.Id,
+                        dto.Payroll,
+                        cancellationToken);
+
+                    if (provision.IsFailure || provision.Value is { Created: 0, Linked: 0 })
+                    {
+                        await RollbackCreatedCollaboratorAsync(firmTenantId, user, profile);
+                        var reason = provision.IsFailure
+                            ? provision.Error.Description
+                            : provision.Value!.Messages.FirstOrDefault() ?? "Provision paie impossible.";
+                        return Result.Failure<FirmUserDto>(Error.Validation(
+                            "PayrollProvision",
+                            $"Impossible de créer le salarié paie : {reason}"));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Le message d'une exception peut exposer la base (SQL, colonnes, serveur) : le
+                    // client ne reçoit qu'une référence, retrouvable dans ce journal.
+                    var reference = NewErrorReference();
+                    _logger.LogError(
+                        ex,
+                        "Payroll auto-provision failed for collaborator {UserId} (ref. {ErrorReference})",
+                        user.Id, reference);
+                    await RollbackCreatedCollaboratorAsync(firmTenantId, user, profile);
+                    return Result.Failure<FirmUserDto>(Error.Validation(
+                        "PayrollProvision",
+                        "Impossible de créer le salarié paie : erreur technique. "
+                        + $"Réessayez ou contactez le support (réf. {reference})."));
+                }
+            }
+        }
+        catch
+        {
+            // Échec imprévu (enregistrement du profil, stockage de la CNI…) : on retire le compte puis
+            // on relaie l'exception, dont la traduction HTTP reste celle du middleware.
+            await RollbackCreatedCollaboratorAsync(firmTenantId, user, profile);
+            throw;
         }
 
         if (sendInvite)
@@ -673,29 +715,39 @@ public sealed class FirmCollaboratorService : IFirmCollaboratorService
             return Result.Failure<(string, string)>(Error.Validation("CNI", "Chemin de stockage invalide."));
 
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
-        await using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, useAsync: true))
+        try
         {
-            long total = 0;
-            var buffer = new byte[81920];
-            int read;
-            while ((read = await content.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)) > 0)
+            await using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, useAsync: true))
             {
-                total += read;
-                if (total > MaxCniBytes)
+                long total = 0;
+                var buffer = new byte[81920];
+                int read;
+                while ((read = await content.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)) > 0)
+                {
+                    total += read;
+                    if (total > MaxCniBytes)
+                    {
+                        fs.Close();
+                        TryDeleteCniFile(firmTenantId, userId, safeName);
+                        return Result.Failure<(string, string)>(Error.Validation("CNI", "Le fichier CNI ne doit pas dépasser 10 Mo."));
+                    }
+                    await fs.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+                }
+
+                if (total == 0)
                 {
                     fs.Close();
                     TryDeleteCniFile(firmTenantId, userId, safeName);
-                    return Result.Failure<(string, string)>(Error.Validation("CNI", "Le fichier CNI ne doit pas dépasser 10 Mo."));
+                    return Result.Failure<(string, string)>(Error.Validation("CNI", "Fichier vide."));
                 }
-                await fs.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
             }
-
-            if (total == 0)
-            {
-                fs.Close();
-                TryDeleteCniFile(firmTenantId, userId, safeName);
-                return Result.Failure<(string, string)>(Error.Validation("CNI", "Fichier vide."));
-            }
+        }
+        catch
+        {
+            // Copie interrompue (flux coupé, disque plein…) : ne pas laisser un fichier tronqué
+            // qu'aucun profil ne référence.
+            TryDeleteCniFile(firmTenantId, userId, safeName);
+            throw;
         }
 
         return Result.Success((safeName, ct));
@@ -732,15 +784,41 @@ public sealed class FirmCollaboratorService : IFirmCollaboratorService
         }
     }
 
+    /// <summary>
+    /// Retire un compte collaborateur dont la création n'a pas abouti.
+    /// </summary>
+    /// <remarks>
+    /// Ne lève jamais : elle s'exécute sur un chemin d'échec, dont l'erreur d'origine doit rester
+    /// celle rapportée. Un échec est journalisé avec l'identifiant du compte, seul moyen de le
+    /// retrouver pour le supprimer à la main.
+    /// </remarks>
     private async Task RollbackCreatedCollaboratorAsync(
         Guid firmTenantId,
         ApplicationUser user,
-        FirmCollaboratorProfile profile)
+        FirmCollaboratorProfile? profile)
     {
-        if (!string.IsNullOrWhiteSpace(profile.CniFileName))
-            TryDeleteCniFile(firmTenantId, user.Id, profile.CniFileName);
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(profile?.CniFileName))
+                TryDeleteCniFile(firmTenantId, user.Id, profile.CniFileName);
 
-        await _userManager.DeleteAsync(user);
+            // Un profil ou un rôle dont l'écriture vient d'échouer est encore suivi « Added » : la
+            // suppression en cascade du compte le détache, DeleteAsync ne le rejoue donc pas.
+            var deletion = await _userManager.DeleteAsync(user);
+            if (!deletion.Succeeded)
+            {
+                _logger.LogError(
+                    "Rollback failed: collaborator {UserId} of firm {TenantId} could not be deleted ({ErrorCodes})",
+                    user.Id, firmTenantId, string.Join(", ", deletion.Errors.Select(e => e.Code)));
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Rollback failed: collaborator {UserId} of firm {TenantId} could not be deleted",
+                user.Id, firmTenantId);
+        }
     }
 
     private async Task TrySendInviteAsync(ApplicationUser user, string initialPassword, Guid firmTenantId, CancellationToken cancellationToken)
@@ -776,14 +854,45 @@ public sealed class FirmCollaboratorService : IFirmCollaboratorService
         return null;
     }
 
-    private static string? ValidateCreate(CreateFirmUserDto dto)
+    private Error? ValidateCreate(CreateFirmUserDto dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.Email)) return "L'email est requis";
-        if (string.IsNullOrWhiteSpace(dto.FirstName)) return "Le prénom est requis";
-        if (string.IsNullOrWhiteSpace(dto.LastName)) return "Le nom est requis";
-        if (dto.Role is not (UserRole.FirmManager or UserRole.FirmAccountant)) return "Rôle cabinet invalide";
+        if (string.IsNullOrWhiteSpace(dto.Email)) return Error.Validation("Create", "L'email est requis");
+        if (string.IsNullOrWhiteSpace(dto.FirstName)) return Error.Validation("Create", "Le prénom est requis");
+        if (string.IsNullOrWhiteSpace(dto.LastName)) return Error.Validation("Create", "Le nom est requis");
+        if (dto.Role is not (UserRole.FirmManager or UserRole.FirmAccountant)) return Error.Validation("Create", "Rôle cabinet invalide");
+
+        // L'e-mail sert aussi d'identifiant de connexion : Identity le refuserait ensuite par un
+        // « nom d'utilisateur non valide » que l'utilisateur, qui n'a saisi aucun identifiant, ne
+        // peut pas comprendre. Même règle que Identity, lue dans sa configuration.
+        var allowed = _userManager.Options.User.AllowedUserNameCharacters;
+        if (!string.IsNullOrEmpty(allowed) && dto.Email.Trim().Any(c => !allowed.Contains(c)))
+        {
+            return Error.Validation(
+                "Email",
+                "L'adresse email contient des caractères non autorisés (lettres sans accent, chiffres et . _ - + @ uniquement).");
+        }
+
         return null;
     }
+
+    /// <summary>
+    /// Rattache un refus Identity au champ fautif, pour que l'écran le signale au bon endroit.
+    /// </summary>
+    /// <remarks>
+    /// Identity valide le mot de passe avant le compte et s'arrête au premier échec : les deux
+    /// familles d'erreurs ne se mélangent jamais dans un même résultat.
+    /// </remarks>
+    private static string ClassifyIdentityErrors(IEnumerable<IdentityError> errors)
+    {
+        var codes = errors.Select(e => e.Code).ToList();
+        if (codes.Count > 0 && codes.All(c => c.StartsWith("Password", StringComparison.Ordinal)))
+            return "Password";
+        if (codes.Any(c => c is "DuplicateEmail" or "DuplicateUserName" or "InvalidEmail" or "InvalidUserName"))
+            return "Email";
+        return "Identity";
+    }
+
+    private static string NewErrorReference() => Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
 
     private static string GenerateSecurePassword()
     {

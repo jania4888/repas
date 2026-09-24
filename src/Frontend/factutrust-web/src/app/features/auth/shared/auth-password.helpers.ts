@@ -1,3 +1,9 @@
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+
+/** Backend Identity password policy (`Program.cs`): minimum length and distinct characters. */
+export const AUTH_PASSWORD_MIN_LENGTH = 12;
+export const AUTH_PASSWORD_MIN_UNIQUE_CHARS = 4;
+
 export interface PasswordCriteria {
   minLength: boolean;
   hasUpper: boolean;
@@ -22,7 +28,7 @@ export function passwordMatches(password: string | null | undefined, confirm: st
 export function passwordCriteria(password: string | null | undefined): PasswordCriteria {
   const p = password ?? '';
   return {
-    minLength: p.length >= 12,
+    minLength: p.length >= AUTH_PASSWORD_MIN_LENGTH,
     hasUpper: /[A-Z]/.test(p),
     hasLower: /[a-z]/.test(p),
     hasDigit: /\d/.test(p),
@@ -43,6 +49,38 @@ export function passwordStrengthLevel(password: string | null | undefined, crite
   if (n === 3) return 'fair';
   if (n === 4) return 'good';
   return 'strong';
+}
+
+/**
+ * Server policy rules the password does not meet yet, worded for the user.
+ * Same checks as Identity: ASCII letters and digits, distinct characters counted in UTF-16 units.
+ */
+export function passwordPolicyMissingRules(password: string | null | undefined): string[] {
+  const p = password ?? '';
+  const criteria = passwordCriteria(p);
+  const missing: string[] = [];
+  if (!criteria.minLength) missing.push(`${AUTH_PASSWORD_MIN_LENGTH} caractères minimum`);
+  if (!criteria.hasUpper) missing.push('une majuscule');
+  if (!criteria.hasLower) missing.push('une minuscule');
+  if (!criteria.hasDigit) missing.push('un chiffre');
+  if (!criteria.hasSpecial) missing.push('un caractère spécial');
+  if (new Set(p.split('')).size < AUTH_PASSWORD_MIN_UNIQUE_CHARS) {
+    missing.push(`${AUTH_PASSWORD_MIN_UNIQUE_CHARS} caractères différents`);
+  }
+  return missing;
+}
+
+/**
+ * Optional password: empty (after trimming, as the server does) is accepted — the account is then
+ * created by invitation; otherwise it must meet the server policy.
+ */
+export function optionalAuthPasswordValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = typeof control.value === 'string' ? control.value.trim() : '';
+    if (!value) return null;
+    const missing = passwordPolicyMissingRules(value);
+    return missing.length ? { passwordPolicy: { missing } } : null;
+  };
 }
 
 export function passwordStrengthLabel(level: PasswordStrengthLevel): string {
