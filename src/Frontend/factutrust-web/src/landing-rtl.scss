@@ -138,3 +138,10 @@
   left: 40px;
   right: auto;
 }
+
+// --- Honeypot du formulaire de contact : le retrait hors écran par la gauche
+// étend le canvas en RTL (origine de défilement à droite) — on le renvoie à droite.
+[dir="rtl"] .cr-honeypot {
+  left: auto;
+  right: -9999px;
+}

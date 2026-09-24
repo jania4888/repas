@@ -54,13 +54,18 @@ describe('PublicHeaderComponent', () => {
     expect(login?.getAttribute('href')).toBe('/auth/login');
   });
 
-  it('réserve le slot du sélecteur de langue (TD3) masqué avant le login', () => {
+  it('monte le sélecteur de langue (TD3) dans le slot avant le login', () => {
     const fixture = create();
     const slot = fixture.nativeElement.querySelector('.landing-lang-slot') as HTMLElement;
-    expect(slot).toBeNull(); // rendu désactivé (*ngIf="false") jusqu'à TD3 — le commentaire SLOT est dans le template
+    expect(slot).not.toBeNull();
+    expect(slot.querySelector('app-landing-lang-switcher')).not.toBeNull();
     const items = Array.from(fixture.nativeElement.querySelectorAll('ul.nav > li')) as HTMLElement[];
     const ctaItem = items.find(li => li.classList.contains('landing-header-cta-item'));
     expect(ctaItem).toBeTruthy();
+    // Le sélecteur précède le <li> du bouton « Se connecter » (Chain stylise li:last-child a).
+    const langIndex = items.findIndex(li => li.classList.contains('landing-lang-slot'));
+    expect(langIndex).toBeGreaterThanOrEqual(0);
+    expect(langIndex).toBeLessThan(items.length - 1);
   });
 
   it('le logo pointe vers l’accueil localisé avec un alt de marque', () => {
@@ -103,8 +108,8 @@ describe('PublicHeaderComponent', () => {
     expect(hrefs).toContain('/#modules');
     expect(hrefs).toContain('/cabinets-comptables');
     expect(hrefs).toContain('/auth/login');
-    // Fermeture au clic sur un lien
-    (drawer.querySelector('a') as HTMLAnchorElement).click();
+    // Fermeture au clic sur un lien de navigation (le sélecteur de langue n'est pas un lien de tiroir)
+    (drawer.querySelector('a.mobile-nav-link') as HTMLAnchorElement).click();
     fixture.detectChanges();
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
   });

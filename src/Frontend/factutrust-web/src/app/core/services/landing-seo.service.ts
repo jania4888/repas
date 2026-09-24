@@ -46,6 +46,7 @@ export class LandingSeoService {
 
   private previousTitle: string | null = null;
   private previousDescription: string | null = null;
+  private previousCanonical: { el: Element; href: string | null } | null = null;
   private created: Element[] = [];
   private applied = false;
 
@@ -93,7 +94,7 @@ export class LandingSeoService {
     this.upsertMeta({ name: 'twitter:description', content: input.description });
     this.upsertMeta({ name: 'twitter:image', content: image });
 
-    this.addLink({ rel: 'canonical', href: url });
+    this.upsertCanonical(url);
     this.addLink({ rel: 'alternate', hreflang: LANDING_LANG_TAG.fr, href: this.absoluteUrl(input.page, 'fr') });
     if (environment.landing.arabicEnabled) {
       this.addLink({ rel: 'alternate', hreflang: LANDING_LANG_TAG.ar, href: this.absoluteUrl(input.page, 'ar') });
@@ -127,6 +128,16 @@ export class LandingSeoService {
     }
     this.created = [];
 
+    if (this.previousCanonical) {
+      if (this.previousCanonical.href === null) {
+        this.previousCanonical.el.removeAttribute('href');
+      } else {
+        this.previousCanonical.el.setAttribute('href', this.previousCanonical.href);
+      }
+      delete (this.previousCanonical.el as HTMLElement).dataset[LANDING_SEO_MARKER];
+      this.previousCanonical = null;
+    }
+
     for (const tag of this.meta.getTags(`${LANDING_SEO_ATTR}="1"`)) {
       if (tag.getAttribute('name') === 'description') {
         if (this.previousDescription !== null) {
@@ -148,6 +159,21 @@ export class LandingSeoService {
     if (el) {
       el.dataset[LANDING_SEO_MARKER] = '1';
     }
+  }
+
+  /**
+   * Canonical unique : si la balise statique d'`index.html` existe, elle est mise à jour
+   * en place (marquée pour restauration) ; sinon une balise est créée. Jamais de doublon.
+   */
+  private upsertCanonical(href: string): void {
+    const existing = this.doc.head.querySelector(`link[rel="canonical"]:not([${LANDING_SEO_ATTR}])`);
+    if (existing) {
+      this.previousCanonical = { el: existing, href: existing.getAttribute('href') };
+      existing.setAttribute('href', href);
+      (existing as HTMLElement).dataset[LANDING_SEO_MARKER] = '1';
+      return;
+    }
+    this.addLink({ rel: 'canonical', href });
   }
 
   private addLink(attrs: Record<string, string>): void {

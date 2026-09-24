@@ -7,6 +7,7 @@ import { BRAND } from '@core/constants/brand';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
 import { LandingCopyService } from '../content/landing-copy.service';
 import { LandingCtaComponent } from '../shared/landing-cta/landing-cta.component';
+import { LandingLangSwitcherComponent } from '../shared/landing-lang-switcher/landing-lang-switcher.component';
 import { cabinetsPath, homePath, isLandingHome } from '../i18n/landing-locale.util';
 
 interface NavAnchor {
@@ -23,7 +24,7 @@ interface NavAnchor {
 @Component({
   selector: 'app-public-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, LandingCtaComponent],
+  imports: [CommonModule, RouterModule, LandingCtaComponent, LandingLangSwitcherComponent],
   template: `
     <header
       class="header-area header-sticky"
@@ -50,8 +51,9 @@ interface NavAnchor {
                 <li class="landing-header-cta-item">
                   <app-landing-cta audience="company" cssClass="gradient-button secondary" />
                 </li>
-                <!-- SLOT TD3 : sélecteur de langue (app-landing-lang-switcher) -->
-                <li class="landing-lang-slot" *ngIf="false"></li>
+                <li class="landing-lang-slot">
+                  <app-landing-lang-switcher />
+                </li>
                 <li>
                   <div class="gradient-button">
                     <a routerLink="/auth/login"><i class="fa fa-sign-in-alt" aria-hidden="true"></i> {{ t().shared.nav.login }}</a>
@@ -83,6 +85,9 @@ interface NavAnchor {
         (keydown)="onDrawerKeydown($event)">
         <div class="mobile-menu-overlay" (click)="closeMobileMenu()"></div>
         <div class="mobile-menu-content" #drawerContent>
+          <div class="drawer-lang">
+            <app-landing-lang-switcher />
+          </div>
           @for (link of navAnchors(); track link.fragment) {
             <a [routerLink]="homeUrl()" [fragment]="link.fragment" class="mobile-nav-link" (click)="closeMobileMenu()">{{ link.label }}</a>
             @if (link.fragment === 'tarifs') {
