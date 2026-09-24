@@ -20,8 +20,14 @@ namespace FactuTrust.Application.Features.Accounting.MonthlyDeclaration;
 
 internal static class MonthlyDeclarationGuard
 {
+    /// <summary>
+    /// Refus quand l'interrupteur serveur est éteint. Il est global à la plateforme, pas propre au
+    /// dossier : le message le dit, sans nommer la clé de configuration à l'utilisateur final.
+    /// </summary>
     public static Error Disabled { get; } = Error.Validation(
-        "MonthlyDeclaration", "La déclaration mensuelle paramétrable n'est pas activée pour ce dossier.");
+        "MonthlyDeclaration",
+        "La déclaration mensuelle paramétrable est désactivée sur la plateforme : aucun dossier ne "
+        + "peut l'utiliser. Contactez l'administrateur de la plateforme.");
 
     /// <summary>
     /// Même verrou que l'enregistrement de la déclaration elle-même : une société ne doit pas plus

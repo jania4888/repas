@@ -330,6 +330,66 @@ describe('MonthlyDeclarationConfigComponent render', () => {
     expect(text()).toContain('Calcul paramétré non activé');
   });
 
+  describe('drapeau serveur éteint, cabinet délégué', () => {
+    beforeEach(() => {
+      api.getMonthlyDeclarationConfiguration.and.returnValue(
+        of({
+          success: true,
+          data: configuration({
+            settings: { ...configuration().settings, configurableLinesEnabled: false }
+          })
+        })
+      );
+    });
+
+    it('ne promet pas une modification que le serveur refuserait', async () => {
+      await renderForUser(firmDelegatedUser);
+
+      expect(text()).toContain('reste consultable');
+      expect(text()).toContain('administrateur de la plateforme');
+      expect(text()).not.toContain('reste modifiable');
+    });
+
+    it('désactive les écritures et retire la duplication, sans se dire « lecture seule société »', async () => {
+      await renderForUser(firmDelegatedUser);
+
+      const create: HTMLButtonElement | null =
+        fixture.nativeElement.querySelector('.dm-family__toolbar button');
+      const include: HTMLInputElement | null =
+        fixture.nativeElement.querySelector('.dm-family__include input');
+      expect(fixture.componentInstance.canWrite()).toBe(true);
+      expect(fixture.componentInstance.editable()).toBe(false);
+      expect(create?.disabled).toBe(true);
+      expect(include?.disabled).toBe(true);
+      expect(text()).not.toContain('Dupliquer la configuration DM');
+      expect(text()).not.toContain('réservée au cabinet comptable');
+    });
+
+    it('n’appelle aucune écriture, même sollicitée directement', async () => {
+      await renderForUser(firmDelegatedUser);
+      const instance = fixture.componentInstance;
+
+      instance.startCreate();
+      instance.startEdit(tclRubric);
+      instance.saveRubric();
+      instance.toggleFamily({ target: { checked: true } } as unknown as Event);
+      instance.toggleRubric(tclRubric);
+      instance.confirmRemove(tclRubric);
+      instance.duplicate({
+        sourceCompanyTenantId: '00000000-0000-0000-0000-000000000004',
+        overwrite: false
+      });
+
+      expect(instance.form()).toBeNull();
+      expect(api.createMonthlyDeclarationRubric).not.toHaveBeenCalled();
+      expect(api.updateMonthlyDeclarationRubric).not.toHaveBeenCalled();
+      expect(api.setMonthlyDeclarationFamily).not.toHaveBeenCalled();
+      expect(api.toggleMonthlyDeclarationRubric).not.toHaveBeenCalled();
+      expect(confirmation.confirm).not.toHaveBeenCalled();
+      expect(api.duplicateMonthlyDeclarationConfig).not.toHaveBeenCalled();
+    });
+  });
+
   it('affiche le régime du dossier', async () => {
     await renderForUser(firmDelegatedUser);
     expect(text()).toContain('Calcul historique');
@@ -352,6 +412,7 @@ describe('MonthlyDeclarationConfigComponent render', () => {
     const body = text();
 
     expect(fixture.componentInstance.canWrite()).toBe(true);
+    expect(fixture.componentInstance.editable()).toBe(true);
     expect(body).toContain('Nouvelle rubrique');
     expect(body).toContain('Dupliquer la configuration DM');
   });

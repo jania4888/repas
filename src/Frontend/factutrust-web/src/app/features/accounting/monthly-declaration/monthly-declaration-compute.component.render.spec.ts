@@ -392,14 +392,68 @@ describe('MonthlyDeclarationComputeComponent render', () => {
   });
 
   describe('drapeau serveur éteint', () => {
-    it('explique l’inactivité au lieu d’afficher une erreur', () => {
+    beforeEach(() => {
       api.getMonthlyDeclarationConfiguration.and.returnValue(
         of({ success: true, data: configuration({ configurableLinesEnabled: false }) })
       );
+    });
+
+    it('explique l’inactivité au lieu d’afficher une erreur', () => {
       fixture.detectChanges();
 
       expect(text()).toContain('Calcul paramétré non activé');
       expect(fixture.componentInstance.error()).toBeNull();
+    });
+
+    it('dit que l’interrupteur est celui de la plateforme, pas celui du dossier', () => {
+      fixture.detectChanges();
+
+      expect(text()).toContain('pour tous les dossiers');
+      expect(text()).toContain('administrateur de la plateforme');
+      expect(text()).not.toContain('pour ce dossier');
+    });
+
+    it('ne propose ni le calcul ni le changement de régime, voués au refus', () => {
+      fixture.detectChanges();
+
+      const compute: HTMLButtonElement | null =
+        fixture.nativeElement.querySelector('.dm-period button');
+      const apply: HTMLButtonElement | null =
+        fixture.nativeElement.querySelector('.dm-mode__form .dm-actions button');
+      expect(fixture.componentInstance.canCompute()).toBe(false);
+      expect(compute?.disabled).toBe(true);
+      expect(apply?.disabled).toBe(true);
+    });
+
+    it('n’appelle pas le serveur, même sollicité directement', () => {
+      fixture.detectChanges();
+      fixture.componentInstance.modeForm.set({
+        mode: MonthlyDeclarationMode.Configured,
+        configuredSince: '2026-10-01',
+        overrideReason: 'Motif.'
+      });
+
+      fixture.componentInstance.compute();
+      fixture.componentInstance.applyMode();
+
+      expect(api.computeMonthlyDeclaration).not.toHaveBeenCalled();
+      expect(api.setMonthlyDeclarationMode).not.toHaveBeenCalled();
+      expect(fixture.componentInstance.error()).toBeNull();
+    });
+  });
+
+  describe('réglages indisponibles', () => {
+    it('ne propose pas le calcul tant que l’état de l’interrupteur est inconnu', () => {
+      api.getMonthlyDeclarationConfiguration.and.returnValue(
+        throwError(() => ({ error: { error: 'Service indisponible.' } }))
+      );
+      fixture.detectChanges();
+
+      fixture.componentInstance.compute();
+
+      expect(fixture.componentInstance.canCompute()).toBe(false);
+      expect(api.computeMonthlyDeclaration).not.toHaveBeenCalled();
+      expect(text()).toContain('Service indisponible.');
     });
   });
 });

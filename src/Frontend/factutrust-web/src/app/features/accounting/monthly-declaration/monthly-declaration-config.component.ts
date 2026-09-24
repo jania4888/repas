@@ -32,6 +32,7 @@ import {
   describeMode,
   familyNeedsAttention,
   familyTab,
+  isConfigurableLinesActive,
   isFamilyIncluded,
   isFamilyOutOfEngineScope,
   modeLabel,
@@ -49,9 +50,9 @@ import {
  * mensuelle : onze familles, origine du montant brut et de la retenue, comptes et sens par
  * colonne, taux et période d'application.
  *
- * Deux verrous, et un seul compte vraiment : le serveur exige un contexte cabinet délégué sur
- * chaque écriture. Le drapeau `configurableLinesEnabled` et l'état `canWrite` de cet écran ne
- * font qu'expliquer une indisponibilité ; ils n'accordent rien.
+ * Deux verrous, tous deux tenus par le serveur à chaque écriture : l'interrupteur de la plateforme
+ * et le contexte cabinet délégué. L'écran les reflète dans `editable` pour ne pas proposer une
+ * écriture vouée au refus ; il n'accorde rien.
  */
 @Component({
   selector: 'app-monthly-declaration-config',
@@ -80,7 +81,7 @@ import {
         <app-accounting-status-banner
           variant="info"
           title="Calcul paramétré non activé"
-          message="La configuration reste modifiable et sera reprise dès l’activation, mais aucun montant n’en dépend pour l’instant." />
+          message="La configuration reste consultable. Sa modification sera possible dès l’activation par l’administrateur de la plateforme ; aucun montant n’en dépend pour l’instant." />
       }
 
       <div class="card dm-state">
@@ -133,7 +134,7 @@ import {
                 <input
                   type="checkbox"
                   [checked]="included()"
-                  [disabled]="!canWrite() || savingFamily()"
+                  [disabled]="!editable() || savingFamily()"
                   (change)="toggleFamily($event)" />
                 <span>Inclure cette famille dans la déclaration mensuelle</span>
               </label>
@@ -157,7 +158,7 @@ import {
                 size="sm"
                 icon="pi pi-plus"
                 type="button"
-                [disabled]="!canWrite() || loading()"
+                [disabled]="!editable() || loading()"
                 (click)="startCreate()">
                 Nouvelle rubrique
               </app-button>
@@ -170,7 +171,7 @@ import {
                   [form]="draft"
                   [accountOptions]="accountOptions()"
                   [saving]="savingRubric()"
-                  [disabled]="!canWrite()"
+                  [disabled]="!editable()"
                   (save)="saveRubric()"
                   (cancel)="form.set(null)" />
               </div>
@@ -180,7 +181,7 @@ import {
               <app-dm-rubric-table
                 [rubrics]="visibleRubrics()"
                 [loading]="loading()"
-                [readOnly]="!canWrite()"
+                [readOnly]="!editable()"
                 [knownAccounts]="knownAccounts()"
                 (edit)="startEdit($event)"
                 (toggle)="toggleRubric($event)"
@@ -190,7 +191,7 @@ import {
         }
       </div>
 
-      @if (canWrite()) {
+      @if (editable()) {
         <div class="card dm-panel">
           <app-dm-duplicate-panel
             [sources]="duplicateSources()"
@@ -250,6 +251,17 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
    * sa propre déclaration.
    */
   readonly canWrite = computed(() => this.auth.isAccountingFirm() && this.auth.isDelegatedMode());
+
+  /** Reflet de l'interrupteur serveur, global à la plateforme — `false` tant que non chargé. */
+  readonly linesEnabled = computed(() =>
+    isConfigurableLinesActive(this.configuration()?.settings)
+  );
+
+  /**
+   * Écritures proposées : cabinet délégué ET interrupteur allumé. `canWrite` seul reste l'origine
+   * du bandeau « lecture seule » destiné à la société, qui ne dépend pas de l'interrupteur.
+   */
+  readonly editable = computed(() => this.canWrite() && this.linesEnabled());
 
   readonly currentTab = computed(() => familyTab(this.activeFamily()));
 
@@ -362,18 +374,24 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
   }
 
   startCreate(): void {
+    if (!this.editable()) {
+      return;
+    }
     const family = this.activeFamily();
     const order = nextDisplayOrder(this.configuration()?.rubrics ?? [], family);
     this.form.set(newRubricForm(family, order));
   }
 
   startEdit(rubric: MonthlyDeclarationRubricDto): void {
+    if (!this.editable()) {
+      return;
+    }
     this.form.set(toRubricForm(rubric));
   }
 
   saveRubric(): void {
     const draft = this.form();
-    if (!draft || this.savingRubric()) {
+    if (!this.editable() || !draft || this.savingRubric()) {
       return;
     }
     const invalid = validateRubricForm(draft);
@@ -415,6 +433,9 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
   }
 
   toggleFamily(event: Event): void {
+    if (!this.editable()) {
+      return;
+    }
     const isIncluded = (event.target as HTMLInputElement).checked;
     this.savingFamily.set(true);
     this.error.set(null);
@@ -441,6 +462,9 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
   }
 
   toggleRubric(rubric: MonthlyDeclarationRubricDto): void {
+    if (!this.editable()) {
+      return;
+    }
     this.api.toggleMonthlyDeclarationRubric(rubric.id).subscribe({
       next: res => {
         if (res.success) {
@@ -454,6 +478,9 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
   }
 
   confirmRemove(rubric: MonthlyDeclarationRubricDto): void {
+    if (!this.editable()) {
+      return;
+    }
     this.confirmation.confirm({
       header: 'Supprimer la rubrique',
       message: `Supprimer définitivement « ${rubric.code} — ${rubric.label} » ? Les déclarations déjà déposées gardent leurs lignes ; les périodes suivantes ne la calculeront plus.`,
@@ -485,7 +512,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
   }
 
   duplicate(request: DuplicateMonthlyDeclarationConfigRequest): void {
-    if (this.duplicating()) {
+    if (!this.editable() || this.duplicating()) {
       return;
     }
     this.duplicating.set(true);

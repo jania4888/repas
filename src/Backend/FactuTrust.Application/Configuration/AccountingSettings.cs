@@ -56,15 +56,22 @@ public sealed class AccountingSettings
     /// </summary>
     /// <remarks>
     /// <para>
-    /// OFF par défaut. Drapeau éteint, <c>MonthlyDeclarationLineComposer</c> sort sur un test
-    /// booléen sans émettre la moindre requête : le calcul de la déclaration est <b>strictement</b>
-    /// celui d'avant le chantier.
+    /// Défaut du code : <c>false</c>, filet si la clé venait à disparaître. <b>Allumé par
+    /// <c>appsettings.json</c> depuis le 2026-09-24</b>, pour toute la plateforme. Drapeau éteint,
+    /// <c>MonthlyDeclarationLineComposer</c> sort sur un test booléen sans émettre la moindre
+    /// requête : le calcul de la déclaration est <b>strictement</b> celui d'avant le chantier.
     /// </para>
     /// <para>
-    /// Ce drapeau n'est qu'un interrupteur de code. Le passage effectif d'un dossier au moteur
-    /// paramétré se décide dossier par dossier via <c>MonthlyDeclarationSettings.Mode</c>
-    /// (<c>Legacy</c> → <c>Parity</c> → <c>Configured</c>) : allumer le drapeau ne change donc
-    /// aucun montant tant qu'aucun dossier n'a quitté le mode <c>Legacy</c>.
+    /// Ce drapeau n'est qu'un interrupteur de code, global au serveur. Le passage effectif d'un
+    /// dossier au moteur paramétré se décide dossier par dossier via
+    /// <c>MonthlyDeclarationSettings.Mode</c> (<c>Legacy</c> → <c>Parity</c> → <c>Configured</c>) :
+    /// allumé, il ne coûte à un dossier resté en <c>Legacy</c> qu'une lecture de ses réglages, et ne
+    /// change aucun montant tant que ce dossier n'a pas quitté ce régime.
+    /// </para>
+    /// <para>
+    /// Retour arrière sans reconstruire l'image : la variable d'environnement
+    /// <c>Accounting__MonthlyDeclarationConfigurableLinesEnabled=false</c> prime sur le fichier. Les
+    /// écrans DM désactivent alors leurs actions au lieu d'échouer.
     /// </para>
     /// </remarks>
     public bool MonthlyDeclarationConfigurableLinesEnabled { get; set; }

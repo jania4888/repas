@@ -16,7 +16,7 @@ import {
 } from '../services/accounting.service';
 import { DmComputeLinesComponent } from './dm-compute-lines.component';
 import { DmModePanelComponent } from './dm-mode-panel.component';
-import { modeLabel } from './monthly-declaration-config.view-model';
+import { isConfigurableLinesActive, modeLabel } from './monthly-declaration-config.view-model';
 import { formatPeriodLabel } from '../vat-declaration/vat-declaration.view-model';
 import {
   DmModeForm,
@@ -67,7 +67,7 @@ import {
         <app-accounting-status-banner
           variant="info"
           title="Calcul paramétré non activé"
-          message="Le calcul reste indisponible tant que le drapeau serveur n’est pas activé pour ce dossier." />
+          message="Le calcul et le changement de régime sont indisponibles pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité." />
       }
     }
 
@@ -87,7 +87,7 @@ import {
           min="2000"
           max="2100"
           [(ngModel)]="year"
-          [disabled]="!canWrite()" />
+          [disabled]="!canCompute()" />
       </div>
       <div class="dm-field">
         <label class="dm-lbl" for="dm-month">Mois</label>
@@ -98,13 +98,13 @@ import {
           min="1"
           max="12"
           [(ngModel)]="month"
-          [disabled]="!canWrite()" />
+          [disabled]="!canCompute()" />
       </div>
       <app-button
         variant="primary"
         icon="pi-calculator"
         type="button"
-        [disabled]="!canWrite() || !periodValid() || computing()"
+        [disabled]="!canCompute() || !periodValid() || computing()"
         (click)="compute()">
         {{ computing() ? 'Calcul…' : 'Calculer' }}
       </app-button>
@@ -148,7 +148,7 @@ import {
     <app-dm-mode-panel
       [settings]="settings()"
       [form]="modeForm()"
-      [disabled]="!canWrite()"
+      [disabled]="!canCompute()"
       [saving]="savingMode()"
       (apply)="applyMode()" />
   `,
@@ -193,6 +193,15 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
    * consigne le contrôle de parité sur les réglages du dossier.
    */
   readonly canWrite = computed(() => this.auth.isAccountingFirm() && this.auth.isDelegatedMode());
+
+  /** Reflet de l'interrupteur serveur, global à la plateforme — `false` tant que non chargé. */
+  readonly linesEnabled = computed(() => isConfigurableLinesActive(this.settings()));
+
+  /**
+   * Calcul et changement de régime : cabinet délégué ET interrupteur allumé. Sans le second, le
+   * serveur refuserait à coup sûr ; mieux vaut ne pas proposer l'action que d'afficher son échec.
+   */
+  readonly canCompute = computed(() => this.canWrite() && this.linesEnabled());
 
   readonly familyViews = computed(() => {
     const r = this.result();
@@ -274,7 +283,7 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
   }
 
   compute(): void {
-    if (this.computing() || !this.periodValid()) {
+    if (!this.canCompute() || this.computing() || !this.periodValid()) {
       return;
     }
     this.computing.set(true);
@@ -303,7 +312,7 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
   applyMode(): void {
     const form = this.modeForm();
     const settings = this.settings();
-    if (!form || !settings || this.savingMode()) {
+    if (!this.canCompute() || !form || !settings || this.savingMode()) {
       return;
     }
     const invalid = validateModeForm(form, settings);
