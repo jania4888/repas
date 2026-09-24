@@ -6,7 +6,7 @@ namespace FactuTrust.Application.Common.Interfaces;
 
 public interface IFirmAssignmentService
 {
-    Task<IReadOnlyList<AccountingFirmDirectoryItemDto>> SearchDirectoryAsync(string? search, int page, int pageSize, CancellationToken cancellationToken = default);
+    Task<Result<AccountingFirmDirectoryPageDto>> SearchDirectoryAsync(AccountingFirmDirectoryQuery query, Guid companyTenantId, CancellationToken cancellationToken = default);
     Task<FirmClientAssignmentDto?> GetCompanyCurrentAssignmentAsync(Guid companyTenantId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<FirmClientAssignmentDto>> GetCompanyAssignmentHistoryAsync(Guid companyTenantId, CancellationToken cancellationToken = default);
     Task<Result<FirmClientAssignmentDto>> RequestAssignmentAsync(Guid companyTenantId, Guid requestedByUserId, RequestFirmAssignmentDto dto, CancellationToken cancellationToken = default);

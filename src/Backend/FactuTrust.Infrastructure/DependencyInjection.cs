@@ -179,6 +179,9 @@ public static class DependencyInjection
                 configuration.GetSection(ExchangeAttachmentsOptions.SectionName));
             services.AddScoped<IExchangeOppositePartyNotifier, ExchangeOppositePartyNotifier>();
             services.AddScoped<IExchangeService, ExchangeService>();
+            services.Configure<CompanySupportAttachmentsOptions>(
+                configuration.GetSection(CompanySupportAttachmentsOptions.SectionName));
+            services.AddScoped<ICompanySupportService, CompanySupportService>();
             services.AddSingleton<IAccountingFirmsFeature, AccountingFirmsFeature>();
             services.AddSingleton<IPublicRegistrationFeature, PublicRegistrationFeature>();
             services.AddSingleton<IFirmGovernanceFeature, FirmGovernanceFeature>();

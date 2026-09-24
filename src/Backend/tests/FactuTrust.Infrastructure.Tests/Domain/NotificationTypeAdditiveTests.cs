@@ -12,6 +12,7 @@ public sealed class NotificationTypeAdditiveTests
         Assert.Equal(16, (int)NotificationType.StudioWorkflowApprovalDecided);
         Assert.Equal(17, (int)NotificationType.StudioWorkflowStepFailed);
         Assert.Equal(18, (int)NotificationType.StudioWorkflowMessage);
+        Assert.Equal(19, (int)NotificationType.CompanySupportReplyReceived);
     }
 
     [Fact]

@@ -90,6 +90,8 @@ public static class PlatformAuditActions
     /// clôturées. Consignée en <c>dryRun</c> comme en application réelle.
     /// </summary>
     public const string ChartOfAccountsNct01Apply = "chart-of-accounts.nct01.apply";
+    public const string CompanySupportReply = "company-support.reply";
+    public const string CompanySupportDownload = "company-support.download";
 }
 
 /// <summary>Valeurs stables de <see cref="PlatformActionAuditEntry.Outcome"/>.</summary>

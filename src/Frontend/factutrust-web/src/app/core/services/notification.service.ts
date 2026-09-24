@@ -6,6 +6,7 @@ import { environment } from '@environments/environment';
 import { ApiResponse, AuthService } from './auth.service';
 import { FirmBadgeService } from './firm-badge.service';
 import { ExchangeBadgeService } from './exchange-badge.service';
+import { CompanySupportBadgeService } from './company-support-badge.service';
 
 export interface AppNotification {
   id: string;
@@ -60,6 +61,7 @@ export class NotificationService {
   private readonly auth = inject(AuthService);
   private readonly firmBadge = inject(FirmBadgeService);
   private readonly exchangeBadge = inject(ExchangeBadgeService);
+  private readonly assistanceBadge = inject(CompanySupportBadgeService);
   private readonly baseUrl = `${environment.apiUrl}/notifications`;
 
   readonly unreadCount = signal(0);
@@ -67,6 +69,7 @@ export class NotificationService {
 
   private pollSub: Subscription | null = null;
   private exchangeBadgePollSub: Subscription | null = null;
+  private assistanceBadgePollSub: Subscription | null = null;
 
   constructor() {
     effect(() => {
@@ -131,6 +134,9 @@ export class NotificationService {
     this.exchangeBadgePollSub = timer(EXCHANGE_BADGE_INITIAL_DELAY_MS, POLL_INTERVAL_MS).subscribe(() => {
       this.exchangeBadge.refresh();
     });
+    this.assistanceBadgePollSub = timer(EXCHANGE_BADGE_INITIAL_DELAY_MS, POLL_INTERVAL_MS).subscribe(() => {
+      this.assistanceBadge.refresh();
+    });
   }
 
   private stopPolling(): void {
@@ -138,5 +144,7 @@ export class NotificationService {
     this.pollSub = null;
     this.exchangeBadgePollSub?.unsubscribe();
     this.exchangeBadgePollSub = null;
+    this.assistanceBadgePollSub?.unsubscribe();
+    this.assistanceBadgePollSub = null;
   }
 }

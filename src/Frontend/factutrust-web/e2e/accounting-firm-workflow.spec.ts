@@ -160,15 +160,16 @@ test.describe('Cabinet comptable — invitation & acceptation (staging)', () => 
 
   test.skip(!authEnabled, 'Set E2E_FIRM_AUTH=1 with two dedicated test tenants (company + firm)');
 
-  test('company sends a request with rich autocomplete, no dropdown overlap', async ({ page }) => {
+  test('company compares directory cards then sends one request', async ({ page }) => {
     // 1. Login admin société → /settings/accounting-firm
     // 2. await expect(page.getByRole('heading', { name: /cabinet comptable/i })).toBeVisible();
-    // 3. Type ≥2 chars in the autocomplete; the panel (appendTo body) lists
-    //    name + city/governorate and does NOT overlap "Envoyer la demande".
-    // 4. Select a firm, fill the optional notes, click "Envoyer la demande".
+    // 3. Filter by governorate. Cards show name, city, domains and "N° d'inscription"
+    //    (never a raw phone). No autocomplete panel.
+    // 4. Click "Choisir ce cabinet", fill optional notes, click "Envoyer la demande".
     // 5. Confirm in the confirmation dialog.
     // 6. await expect(page.getByText(/en attente d'acceptation/i)).toBeVisible();
     // 7. await expect(page.getByRole('button', { name: /annuler la demande/i })).toBeVisible();
+    // 8. The directory cards are hidden while the request is pending.
   });
 
   test('company can cancel a pending request', async ({ page }) => {

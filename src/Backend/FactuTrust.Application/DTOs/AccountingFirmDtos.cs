@@ -24,6 +24,26 @@ public sealed record RegisterAccountingFirmDto
     public bool IsPublicInDirectory { get; init; } = true;
 }
 
+public sealed record AccountingFirmDirectoryQuery
+{
+    public string? Search { get; init; }
+    public string? Governorate { get; init; }
+    public string? PracticeArea { get; init; }
+    public string? Language { get; init; }
+    public string? ClientSegment { get; init; }
+    public bool? Remote { get; init; }
+    public int Page { get; init; } = 1;
+    public int PageSize { get; init; } = 20;
+}
+
+public sealed record AccountingFirmDirectoryPageDto
+{
+    public IReadOnlyList<AccountingFirmDirectoryItemDto> Items { get; init; } = Array.Empty<AccountingFirmDirectoryItemDto>();
+    public int Page { get; init; }
+    public int TotalCount { get; init; }
+    public string? CompanyGovernorate { get; init; }
+}
+
 public sealed record AccountingFirmDirectoryItemDto
 {
     public Guid FirmTenantId { get; init; }
@@ -32,6 +52,14 @@ public sealed record AccountingFirmDirectoryItemDto
     public string Governorate { get; init; } = null!;
     public string? Description { get; init; }
     public string? ProfessionalRegistrationNumber { get; init; }
+    public IReadOnlyList<string> PracticeAreas { get; init; } = Array.Empty<string>();
+    public IReadOnlyList<string> ClientSegments { get; init; } = Array.Empty<string>();
+    public IReadOnlyList<string> Languages { get; init; } = Array.Empty<string>();
+    public string? TeamSizeBand { get; init; }
+    public bool? AcceptsRemote { get; init; }
+    public int? YearsOfExperience { get; init; }
+    public string? PublicWebsite { get; init; }
+    public bool SameGovernorate { get; init; }
 }
 
 public sealed record AccountingFirmProfileDto
@@ -45,6 +73,16 @@ public sealed record AccountingFirmProfileDto
     public string? ProfessionalRegistrationNumber { get; init; }
     public string ContactEmail { get; init; } = null!;
     public string ContactPhone { get; init; } = null!;
+    public IReadOnlyList<string> PracticeAreas { get; init; } = Array.Empty<string>();
+    public IReadOnlyList<string> ClientSegments { get; init; } = Array.Empty<string>();
+    public IReadOnlyList<string> Languages { get; init; } = Array.Empty<string>();
+    public string? TeamSizeBand { get; init; }
+    public bool? AcceptsRemote { get; init; }
+    public int? YearsOfExperience { get; init; }
+    public string? PublicWebsite { get; init; }
+    /// <summary>Guidage cabinet uniquement. Jamais exposé dans l'annuaire.</summary>
+    public int Completeness { get; init; }
+    public IReadOnlyList<string> Missing { get; init; } = Array.Empty<string>();
 }
 
 public sealed record UpdateAccountingFirmProfileDto
@@ -57,6 +95,13 @@ public sealed record UpdateAccountingFirmProfileDto
     public string? ProfessionalRegistrationNumber { get; init; }
     public string ContactEmail { get; init; } = null!;
     public string ContactPhone { get; init; } = null!;
+    public IReadOnlyList<string>? PracticeAreas { get; init; }
+    public IReadOnlyList<string>? ClientSegments { get; init; }
+    public IReadOnlyList<string>? Languages { get; init; }
+    public string? TeamSizeBand { get; init; }
+    public bool? AcceptsRemote { get; init; }
+    public int? YearsOfExperience { get; init; }
+    public string? PublicWebsite { get; init; }
 }
 
 public sealed record RequestFirmAssignmentDto
@@ -99,6 +144,13 @@ public sealed record FirmClientAssignmentDto
     public string? Notes { get; init; }
     public string? RejectionReason { get; init; }
     public CompanyProfileSnapshotDto? CompanyProfile { get; init; }
+    /// <summary>Ville publique du cabinet. Renseignée seulement sur la liaison courante.</summary>
+    public string? FirmCity { get; init; }
+    public string? FirmGovernorate { get; init; }
+    public IReadOnlyList<string> FirmPracticeAreas { get; init; } = Array.Empty<string>();
+    /// <summary>Coordonnées du cabinet. Uniquement sur la liaison courante au statut Active.</summary>
+    public string? FirmContactEmail { get; init; }
+    public string? FirmContactPhone { get; init; }
     /// <summary>True si la société est un dossier créé et géré par le cabinet (sans compte plateforme).</summary>
     public bool IsFirmManaged { get; init; }
 }

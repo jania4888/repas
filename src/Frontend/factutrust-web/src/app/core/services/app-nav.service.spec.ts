@@ -770,3 +770,57 @@ describe('AppNavService — sidebar freshness right after register()', () => {
     expect(labels).toContain('Stock');
   });
 });
+
+describe('AppNavService — Assistance société', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: FirmAssignmentService,
+          useValue: {
+            getActiveClients: () => of({ success: true, data: [] }),
+            getIncomingInvitations: () => of({ success: true, data: [] })
+          }
+        },
+        {
+          provide: AccountingFeatureFlagsService,
+          useValue: { flags: () => ({ fixedAssetsEnabled: true }) }
+        },
+        { provide: StudioNavService, useValue: { items: () => [] } },
+        { provide: StudioAiCapabilitiesService, useValue: makeCapsStub() },
+        { provide: StudioApprovalsBadgeService, useValue: makeBadgeStub() }
+      ]
+    });
+  });
+
+  it('shows Assistance to a company administrator and supervisor', () => {
+    const auth = TestBed.inject(AuthService);
+    setUser(auth, companyUser);
+    expect(TestBed.inject(AppNavService).navItems().map(i => i.label)).toContain('Assistance');
+
+    setUser(auth, { ...companyUser, role: 'Supervisor', roleDisplay: 'Superviseur' });
+    expect(TestBed.inject(AppNavService).navItems().map(i => i.label)).toContain('Assistance');
+  });
+
+  it('hides Assistance from accountant, firm, delegated and portal users', () => {
+    const auth = TestBed.inject(AuthService);
+    const nav = TestBed.inject(AppNavService);
+
+    setUser(auth, { ...companyUser, role: 'Accountant', roleDisplay: 'Comptable' });
+    expect(nav.navItems().map(i => i.label)).not.toContain('Assistance');
+
+    setUser(auth, firmUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+    expect(nav.navItems().map(i => i.label)).not.toContain('Assistance');
+
+    setUser(auth, delegatedUser);
+    TestBed.inject(FirmContextService).syncFromUser();
+    expect(nav.navItems().map(i => i.label)).not.toContain('Assistance');
+
+    setUser(auth, { ...companyUser, role: 'Client', roleDisplay: 'Client' });
+    expect(nav.navItems().map(i => i.label)).not.toContain('Assistance');
+  });
+});

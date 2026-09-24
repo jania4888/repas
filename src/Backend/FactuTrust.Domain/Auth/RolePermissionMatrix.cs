@@ -45,7 +45,9 @@ public static class RolePermissionMatrix
         PlatformPermissions.StorefrontReject,
         PlatformPermissions.StorefrontSuspend,
         PlatformPermissions.AuditRead,
-        PlatformPermissions.NotificationsRead
+        PlatformPermissions.NotificationsRead,
+        PlatformPermissions.CompanySupportRead,
+        PlatformPermissions.CompanySupportWrite
     };
 
     /// <summary>Permissions pour le rôle MigrationOperator.</summary>
@@ -69,7 +71,8 @@ public static class RolePermissionMatrix
         PlatformPermissions.SecurityRead,
         PlatformPermissions.AdminsRead,
         PlatformPermissions.NotificationsRead,
-        PlatformPermissions.SectorRulesRead
+        PlatformPermissions.SectorRulesRead,
+        PlatformPermissions.CompanySupportRead
     };
 
     /// <summary>

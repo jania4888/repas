@@ -16,6 +16,17 @@ import { AuthService } from '@core/services/auth.service';
 
     <div class="fs-cards">
       @if (isFirmManager()) {
+        <a routerLink="/firm/settings/profile" class="fs-card-link">
+          <div class="fs-card">
+            <div class="fs-card__icon"><i class="pi pi-id-card"></i></div>
+            <div class="fs-card__body">
+              <h2 class="fs-card__title">Fiche annuaire</h2>
+              <p class="fs-card__desc">Présentez votre cabinet pour être choisi par les sociétés.</p>
+            </div>
+            <i class="pi pi-chevron-right fs-card__chevron"></i>
+          </div>
+        </a>
+
         <a routerLink="/firm/collaborateurs" class="fs-card-link">
           <div class="fs-card">
             <div class="fs-card__icon"><i class="pi pi-users"></i></div>

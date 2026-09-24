@@ -264,6 +264,7 @@
 </div>
 
 <app-quick-create-product-dialog
+  [stockExcludedFromLine]="true"
   [(visible)]="quickCreateVisible"
   (productCreated)="onQuickProductCreated($event)">
 </app-quick-create-product-dialog>

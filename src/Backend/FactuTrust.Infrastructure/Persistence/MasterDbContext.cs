@@ -52,6 +52,13 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public DbSet<Domain.Entities.Exchange.ExchangeDocument> ExchangeDocuments => Set<Domain.Entities.Exchange.ExchangeDocument>();
     public DbSet<Domain.Entities.Exchange.ExchangeAuditEvent> ExchangeAuditEvents => Set<Domain.Entities.Exchange.ExchangeAuditEvent>();
 
+    // Company ↔ platform support (one conversation per company). Distinct from Exchange.
+    public DbSet<Domain.Entities.CompanySupport.CompanySupportConversation> CompanySupportConversations => Set<Domain.Entities.CompanySupport.CompanySupportConversation>();
+    public DbSet<Domain.Entities.CompanySupport.CompanySupportMessage> CompanySupportMessages => Set<Domain.Entities.CompanySupport.CompanySupportMessage>();
+    public DbSet<Domain.Entities.CompanySupport.CompanySupportAttachment> CompanySupportAttachments => Set<Domain.Entities.CompanySupport.CompanySupportAttachment>();
+    public DbSet<Domain.Entities.CompanySupport.CompanySupportReadCursor> CompanySupportReadCursors => Set<Domain.Entities.CompanySupport.CompanySupportReadCursor>();
+    public DbSet<Domain.Entities.CompanySupport.CompanySupportAuditEvent> CompanySupportAuditEvents => Set<Domain.Entities.CompanySupport.CompanySupportAuditEvent>();
+
     // Firm governance (cabinet TN)
     public DbSet<Domain.Entities.FirmGovernance.PermanentFile> PermanentFiles => Set<Domain.Entities.FirmGovernance.PermanentFile>();
     public DbSet<Domain.Entities.FirmGovernance.LegalRepresentative> LegalRepresentatives => Set<Domain.Entities.FirmGovernance.LegalRepresentative>();
@@ -360,7 +367,13 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.Property(p => p.ProfessionalRegistrationNumber).HasMaxLength(100);
             entity.Property(p => p.ContactEmail).HasMaxLength(256).IsRequired();
             entity.Property(p => p.ContactPhone).HasMaxLength(20).IsRequired();
+            entity.Property(p => p.PracticeAreasJson).HasMaxLength(400);
+            entity.Property(p => p.ClientSegmentsJson).HasMaxLength(200);
+            entity.Property(p => p.LanguagesJson).HasMaxLength(80);
+            entity.Property(p => p.TeamSizeBand).HasMaxLength(20);
+            entity.Property(p => p.PublicWebsite).HasMaxLength(200);
             entity.HasIndex(p => new { p.IsPublicInDirectory, p.City });
+            entity.HasIndex(p => new { p.IsPublicInDirectory, p.Governorate });
         });
 
         builder.Entity<FirmClientAssignment>(entity =>
@@ -1445,6 +1458,86 @@ public class MasterDbContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.Property(e => e.ActorDisplayName).HasMaxLength(Domain.Entities.Exchange.ExchangeAuditEvent.ActorDisplayNameMaxLength).IsRequired();
             entity.Property(e => e.PayloadJson).HasMaxLength(Domain.Entities.Exchange.ExchangeAuditEvent.PayloadMaxLength);
             entity.Property(e => e.EventType).HasConversion<int>();
+        });
+
+        builder.Entity<Domain.Entities.CompanySupport.CompanySupportConversation>(entity =>
+        {
+            entity.ToTable("CompanySupportConversations");
+            entity.HasKey(c => c.Id);
+            entity.HasIndex(c => c.CompanyTenantId).IsUnique();
+            entity.HasIndex(c => c.LastMessageAt);
+            entity.Property(c => c.LastMessagePreview)
+                .HasMaxLength(Domain.Entities.CompanySupport.CompanySupportConversation.PreviewMaxLength);
+            entity.Property(c => c.LastMessageCategory).HasConversion<int>();
+            entity.Property(c => c.LastAuthorSide).HasConversion<int>();
+            entity.HasOne<Tenant>()
+                .WithMany()
+                .HasForeignKey(c => c.CompanyTenantId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<Domain.Entities.CompanySupport.CompanySupportMessage>(entity =>
+        {
+            entity.ToTable("CompanySupportMessages");
+            entity.HasKey(m => m.Id);
+            entity.HasIndex(m => new { m.ConversationId, m.SentAt });
+            entity.HasIndex(m => new { m.ConversationId, m.ClientRequestId })
+                .IsUnique()
+                .HasFilter("[ClientRequestId] IS NOT NULL");
+            entity.Property(m => m.AuthorDisplayName)
+                .HasMaxLength(Domain.Entities.CompanySupport.CompanySupportMessage.AuthorDisplayNameMaxLength)
+                .IsRequired();
+            entity.Property(m => m.Body)
+                .HasMaxLength(Domain.Entities.CompanySupport.CompanySupportMessage.BodyMaxLength)
+                .IsRequired();
+            entity.Property(m => m.AuthorSide).HasConversion<int>();
+            entity.Property(m => m.Category).HasConversion<int>();
+            entity.HasOne<Domain.Entities.CompanySupport.CompanySupportConversation>()
+                .WithMany()
+                .HasForeignKey(m => m.ConversationId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<Domain.Entities.CompanySupport.CompanySupportAttachment>(entity =>
+        {
+            entity.ToTable("CompanySupportAttachments");
+            entity.HasKey(a => a.Id);
+            entity.HasIndex(a => a.MessageId);
+            entity.Property(a => a.FileName)
+                .HasMaxLength(Domain.Entities.CompanySupport.CompanySupportAttachment.FileNameMaxLength)
+                .IsRequired();
+            entity.Property(a => a.StoragePath)
+                .HasMaxLength(Domain.Entities.CompanySupport.CompanySupportAttachment.StoragePathMaxLength)
+                .IsRequired();
+            entity.Property(a => a.ContentType)
+                .HasMaxLength(Domain.Entities.CompanySupport.CompanySupportAttachment.ContentTypeMaxLength)
+                .IsRequired();
+            entity.HasOne<Domain.Entities.CompanySupport.CompanySupportMessage>()
+                .WithMany()
+                .HasForeignKey(a => a.MessageId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<Domain.Entities.CompanySupport.CompanySupportReadCursor>(entity =>
+        {
+            entity.ToTable("CompanySupportReadCursors");
+            entity.HasKey(r => r.Id);
+            entity.HasIndex(r => new { r.ConversationId, r.UserId }).IsUnique();
+            entity.HasOne<Domain.Entities.CompanySupport.CompanySupportConversation>()
+                .WithMany()
+                .HasForeignKey(r => r.ConversationId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<Domain.Entities.CompanySupport.CompanySupportAuditEvent>(entity =>
+        {
+            entity.ToTable("CompanySupportAuditEvents");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.ConversationId, e.OccurredAt });
+            entity.Property(e => e.Action)
+                .HasMaxLength(Domain.Entities.CompanySupport.CompanySupportAuditEvent.ActionMaxLength)
+                .IsRequired();
+            entity.Property(e => e.ActorSide).HasConversion<int>();
         });
 
         // Phase 2 — moteur de règles sectorielles en base (plan §WP-B1). Ces tables restent sans

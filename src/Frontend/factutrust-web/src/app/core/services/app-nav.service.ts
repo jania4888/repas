@@ -28,6 +28,7 @@ import { FirmContextService } from '@core/services/firm-context.service';
 import { FirmAssignmentService, FirmClientDossier } from '@core/services/firm-assignment.service';
 import { FirmBadgeService } from '@core/services/firm-badge.service';
 import { ExchangeBadgeService } from '@core/services/exchange-badge.service';
+import { CompanySupportBadgeService } from '@core/services/company-support-badge.service';
 import { FirmFeatureFlagsService } from '@core/services/firm-feature-flags.service';
 import { environment } from '@environments/environment';
 import { AccountingFeatureFlagsService } from '@features/accounting/shared/accounting-feature-flags.service';
@@ -54,6 +55,7 @@ export class AppNavService {
   private readonly firmAssignments = inject(FirmAssignmentService);
   private readonly firmBadge = inject(FirmBadgeService);
   private readonly exchangeBadge = inject(ExchangeBadgeService);
+  private readonly assistanceBadge = inject(CompanySupportBadgeService);
   private readonly firmFeatureFlags = inject(FirmFeatureFlagsService);
   private readonly accountingFlags = inject(AccountingFeatureFlagsService);
   private readonly studioNav = inject(StudioNavService);
@@ -81,6 +83,7 @@ export class AppNavService {
     this.activeClients();
     this.firmBadge.pendingInvitationsCount();
     this.exchangeBadge.unreadCount();
+    this.assistanceBadge.unreadCount();
 
     this.stockFeaturesStore.ensureLoaded();
     this.stockFeaturesStore.features();
@@ -106,6 +109,8 @@ export class AppNavService {
     let items = filterNavItems(this.auth, ALL_NAV_ITEMS);
     items = this.filterProductAttributesNav(items);
     items = this.filterCompanyExchangesNav(items);
+    items = this.filterCompanyAssistanceNav(items);
+    items = this.applyAssistanceBadge(items);
     items = applyCompanyAccountingSidebar(items);
     items = filterNavItems(this.auth, items);
     if (!fixedAssetsEnabled) {
@@ -272,6 +277,25 @@ export class AppNavService {
       !this.auth.isAccountingFirm();
     if (show) return items;
     return items.filter(i => i.label !== 'Échanges');
+  }
+
+  private filterCompanyAssistanceNav(items: NavItem[]): NavItem[] {
+    const show =
+      this.auth.canAccessPlatformSettings() &&
+      !this.auth.isAccountingFirm() &&
+      !this.auth.isDelegatedMode() &&
+      !this.auth.isClientPortal();
+    if (show) return items;
+    return items.filter(i => i.label !== 'Assistance');
+  }
+
+  private applyAssistanceBadge(items: NavItem[]): NavItem[] {
+    const unread = this.assistanceBadge.unreadCount();
+    return items.map(item =>
+      item.route === '/assistance'
+        ? { ...item, badge: unread > 0 ? unread : undefined }
+        : item
+    );
   }
 
   private buildDelegatedNav(): NavItem[] {

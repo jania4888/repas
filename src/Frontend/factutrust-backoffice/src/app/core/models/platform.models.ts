@@ -120,7 +120,9 @@ export const PlatformPermission = {
   // Doit rester en phase avec PlatformPermissions.cs
   SectorRulesRead: 'platform.sector-rules:read',
   SectorRulesManage: 'platform.sector-rules:manage',
-  SectorRulesApply: 'platform.sector-rules:apply'
+  SectorRulesApply: 'platform.sector-rules:apply',
+  CompanySupportRead: 'platform.company-support:read',
+  CompanySupportWrite: 'platform.company-support:write'
 } as const;
 
 export type PlatformPermissionKey = (typeof PlatformPermission)[keyof typeof PlatformPermission];

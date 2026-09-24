@@ -80,6 +80,12 @@ export const FIRM_ROUTES: Routes = [
         pathMatch: 'full'
       },
       {
+        path: 'settings/profile',
+        canActivate: [firmManagerGuard],
+        loadComponent: () => import('./firm-profile/firm-profile.component').then(m => m.FirmProfileComponent),
+        title: 'Cabinet — Fiche annuaire'
+      },
+      {
         path: 'settings/activity-codes',
         canActivate: [firmManagerGuard],
         loadComponent: () =>

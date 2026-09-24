@@ -1,12 +1,19 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from 'primeng/autocomplete';
 import {
   FirmAssignmentService,
   AccountingFirmDirectoryItem,
   FirmClientAssignment
 } from '@core/services/firm-assignment.service';
+import { FirmDirectoryCardComponent } from '@shared/accounting-firm/firm-directory-card.component';
+import {
+  CLIENT_SEGMENT_OPTIONS,
+  LANGUAGE_OPTIONS,
+  PRACTICE_AREA_OPTIONS,
+  firmCodeLabel
+} from '@shared/accounting-firm/firm-directory.labels';
+import { GOVERNORATE_OPTIONS } from '@features/auth/shared/auth-governorate.options';
 import { ToastService } from '@core/services/toast.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -28,10 +35,10 @@ const NOTES_MAX = 1000;
   imports: [
     CommonModule,
     FormsModule,
-    AutoCompleteModule,
     PageHeaderComponent,
     StatusBadgeComponent,
-    SkeletonComponent
+    SkeletonComponent,
+    FirmDirectoryCardComponent
   ],
   template: `
     <app-page-header
@@ -81,6 +88,24 @@ const NOTES_MAX = 1000;
                 <dd>{{ assignment.requestedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
               </div>
             }
+            @if (isActive(assignment.status) && (assignment.firmCity || assignment.firmGovernorate)) {
+              <div class="af-meta__row">
+                <dt>Localisation</dt>
+                <dd>{{ assignment.firmCity }}{{ assignment.firmCity && assignment.firmGovernorate ? ', ' : '' }}{{ assignment.firmGovernorate }}</dd>
+              </div>
+            }
+            @if (isActive(assignment.status) && assignment.firmPracticeAreas?.length) {
+              <div class="af-meta__row">
+                <dt>Domaines</dt>
+                <dd>{{ practiceLabels(assignment.firmPracticeAreas) }}</dd>
+              </div>
+            }
+            @if (isActive(assignment.status) && (assignment.firmContactPhone || assignment.firmContactEmail)) {
+              <div class="af-meta__row">
+                <dt>Contact</dt>
+                <dd>{{ assignment.firmContactPhone }}{{ assignment.firmContactPhone && assignment.firmContactEmail ? ' · ' : '' }}{{ assignment.firmContactEmail }}</dd>
+              </div>
+            }
             @if (assignment.notes) {
               <div class="af-meta__row">
                 <dt>Message envoyé</dt>
@@ -116,41 +141,90 @@ const NOTES_MAX = 1000;
 
       <div class="af-card">
         <h2 class="af-card__title">Rechercher un cabinet</h2>
-        <p class="af-card__subtitle">Recherchez un cabinet partenaire par son nom ou sa ville.</p>
+        <p class="af-card__subtitle">Comparez les cabinets, puis envoyez une seule demande.</p>
 
-        <div class="af-field">
-          <label for="firmSearch">Cabinet</label>
-          <p-autoComplete
-            inputId="firmSearch"
-            [(ngModel)]="selectedFirm"
-            [suggestions]="suggestions()"
-            (completeMethod)="search($event)"
-            [dropdown]="true"
-            [forceSelection]="true"
-            field="displayName"
-            placeholder="Nom ou ville du cabinet"
-            [minLength]="2"
-            emptyMessage="Aucun cabinet trouvé"
-            appendTo="body"
-            [style]="{ width: '100%' }"
-            [showEmptyMessage]="true">
-            <ng-template let-firm pTemplate="item">
-              <div class="af-suggestion">
-                <span class="af-suggestion__name">{{ firm?.displayName }}</span>
-                <span class="af-suggestion__meta">
-                  @if (firm?.city || firm?.governorate) {
-                    <span><i class="pi pi-map-marker"></i> {{ firm?.city }}{{ firm?.city && firm?.governorate ? ', ' : '' }}{{ firm?.governorate }}</span>
-                  }
-                  @if (firm?.professionalRegistrationNumber) {
-                    <span><i class="pi pi-id-card"></i> {{ firm?.professionalRegistrationNumber }}</span>
-                  }
-                </span>
-              </div>
-            </ng-template>
-          </p-autoComplete>
-          <small class="af-hint-inline">Sélectionnez un cabinet dans la liste des résultats.</small>
-        </div>
+        <button type="button" class="af-filters__toggle" (click)="filtersOpen.set(!filtersOpen())">
+          <i class="pi" [ngClass]="filtersOpen() ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
+          Filtres
+        </button>
 
+          <div class="af-filters" [class.af-filters--open]="filtersOpen()">
+            <div class="af-field">
+              <label for="firmSearch">Nom, ville ou présentation</label>
+              <input id="firmSearch" class="af-input" [(ngModel)]="searchText" (ngModelChange)="onFilterChange()" placeholder="Ex. TVA, Sousse, cabinet" />
+            </div>
+            <div class="af-field">
+              <label for="firmGovernorate">Gouvernorat</label>
+              <select id="firmGovernorate" class="af-input" [(ngModel)]="governorate" (ngModelChange)="onFilterChange()">
+                <option value="">Tous les gouvernorats</option>
+                @for (g of governorates; track g.value) {
+                  <option [value]="g.value">{{ g.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="af-field">
+              <label for="firmPractice">Domaine</label>
+              <select id="firmPractice" class="af-input" [(ngModel)]="practiceArea" (ngModelChange)="onFilterChange()">
+                <option value="">Tous les domaines</option>
+                @for (o of practiceOptions; track o.value) {
+                  <option [value]="o.value">{{ o.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="af-field">
+              <label for="firmLanguage">Langue</label>
+              <select id="firmLanguage" class="af-input" [(ngModel)]="language" (ngModelChange)="onFilterChange()">
+                <option value="">Toutes les langues</option>
+                @for (o of languageOptions; track o.value) {
+                  <option [value]="o.value">{{ o.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="af-field">
+              <label for="firmSegment">Type de société</label>
+              <select id="firmSegment" class="af-input" [(ngModel)]="clientSegment" (ngModelChange)="onFilterChange()">
+                <option value="">Tous</option>
+                @for (o of segmentOptions; track o.value) {
+                  <option [value]="o.value">{{ o.label }}</option>
+                }
+              </select>
+            </div>
+            <label class="af-check" for="firmRemote">
+              <input id="firmRemote" type="checkbox" [(ngModel)]="remoteOnly" (ngModelChange)="onFilterChange()" />
+              Accepte le distanciel
+            </label>
+            <button type="button" class="af-btn af-btn--ghost" (click)="resetFilters()">Réinitialiser</button>
+          </div>
+
+        @if (directoryLoading()) {
+          <div class="af-grid">
+            <app-skeleton height="9rem" shape="rounded"></app-skeleton>
+            <app-skeleton height="9rem" shape="rounded"></app-skeleton>
+          </div>
+        } @else if (directoryError()) {
+          <p class="af-empty">La liste des cabinets n’a pas pu être chargée.</p>
+          <button type="button" class="af-btn af-btn--ghost" (click)="loadDirectory(true)">Réessayer</button>
+        } @else if (firms().length === 0) {
+          <p class="af-empty">
+            {{ hasActiveFilters() ? 'Aucun cabinet ne correspond à ces filtres. Élargissez la recherche.' : 'Aucun cabinet public n’est disponible pour le moment.' }}
+          </p>
+        } @else {
+          <div class="af-grid">
+            @for (firm of firms(); track firm.firmTenantId) {
+              <app-firm-directory-card
+                [firm]="firm"
+                [selectable]="true"
+                [selected]="selectedFirm?.firmTenantId === firm.firmTenantId"
+                (choose)="selectFirm($event)">
+              </app-firm-directory-card>
+            }
+          </div>
+          @if (canLoadMore()) {
+            <button type="button" class="af-btn af-btn--ghost" (click)="loadMore()" [disabled]="directoryLoading()">Afficher plus</button>
+          }
+        }
+
+        @if (selectedFirm) {
         <div class="af-field">
           <label for="firmNotes">Message au cabinet <span class="af-optional">(facultatif)</span></label>
           <textarea
@@ -172,6 +246,7 @@ const NOTES_MAX = 1000;
             <i class="pi pi-send"></i> Envoyer la demande
           </button>
         </div>
+        }
       </div>
 
       @if (history().length > 0) {
@@ -335,6 +410,43 @@ const NOTES_MAX = 1000;
     .af-suggestion__meta i { margin-right: 4px; }
 
     .af-actions { display: flex; justify-content: flex-end; }
+    .af-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; align-items: end; }
+    .af-filters__toggle {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--color-text-primary, #0f172a);
+    }
+    .af-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--color-border, #cbd5e1);
+      border-radius: 12px;
+      font: inherit;
+      color: var(--color-text-primary, #0f172a);
+      background: var(--color-surface, #fff);
+    }
+    .af-input:focus-visible { outline: 2px solid var(--color-primary-600, #2563eb); outline-offset: 2px; }
+    .af-check { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; }
+    .af-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+    .af-empty { margin: 0; color: var(--color-text-secondary, #64748b); }
+    .af-btn--ghost {
+      background: transparent;
+      color: var(--color-primary-700, #1d4ed8);
+      border-color: var(--color-primary-200, #bfdbfe);
+    }
+    @media (max-width: 720px) {
+      .af-filters { display: none; }
+      .af-filters--open { display: grid; }
+      .af-filters__toggle { display: inline-flex; }
+      .af-actions { justify-content: stretch; }
+      .af-actions .af-btn { width: 100%; justify-content: center; }
+    }
 
     /* Boutons */
     .af-btn {
@@ -402,11 +514,30 @@ export class AccountingFirmSettingsComponent implements OnInit {
   readonly acting = signal(false);
   readonly current = signal<FirmClientAssignment | null>(null);
   readonly history = signal<FirmClientAssignment[]>([]);
-  readonly suggestions = signal<AccountingFirmDirectoryItem[]>([]);
+  readonly firms = signal<AccountingFirmDirectoryItem[]>([]);
+  readonly directoryLoading = signal(false);
+  readonly directoryError = signal(false);
   readonly historyOpen = signal(false);
+  readonly filtersOpen = signal(true);
+  readonly totalCount = signal(0);
+  readonly page = signal(1);
+
+  readonly governorates = GOVERNORATE_OPTIONS;
+  readonly practiceOptions = PRACTICE_AREA_OPTIONS;
+  readonly languageOptions = LANGUAGE_OPTIONS;
+  readonly segmentOptions = CLIENT_SEGMENT_OPTIONS;
+  readonly pageSize = 20;
 
   selectedFirm: AccountingFirmDirectoryItem | null = null;
   notes = '';
+  searchText = '';
+  governorate = '';
+  practiceArea = '';
+  language = '';
+  clientSegment = '';
+  remoteOnly = false;
+  private governoratePrefilled = false;
+  private searchTimer: ReturnType<typeof setTimeout> | null = null;
 
   /** Dernière demande close (refusée/révoquée/annulée) — pour le bandeau, quand aucune liaison n'est ouverte. */
   readonly lastClosed = computed(() => {
@@ -415,6 +546,7 @@ export class AccountingFirmSettingsComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (typeof window !== 'undefined' && window.innerWidth <= 720) this.filtersOpen.set(false);
     this.reload();
   }
 
@@ -434,12 +566,81 @@ export class AccountingFirmSettingsComponent implements OnInit {
     return isRejectedAssignment(status);
   }
 
-  search(event: { query: string }): void {
-    this.assignments.searchDirectory(event.query).subscribe({
-      next: r => {
-        if (r.success) this.suggestions.set(r.data);
+  practiceLabels(codes: string[] | undefined): string {
+    return (codes ?? []).map(code => firmCodeLabel(PRACTICE_AREA_OPTIONS, code)).join(', ');
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.searchText.trim() || this.governorate || this.practiceArea || this.language || this.clientSegment || this.remoteOnly);
+  }
+
+  canLoadMore(): boolean {
+    return this.firms().length < this.totalCount();
+  }
+
+  selectFirm(firm: AccountingFirmDirectoryItem): void {
+    this.selectedFirm = this.selectedFirm?.firmTenantId === firm.firmTenantId ? null : firm;
+  }
+
+  onFilterChange(): void {
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => this.loadDirectory(true), 300);
+  }
+
+  resetFilters(): void {
+    this.searchText = '';
+    this.governorate = '';
+    this.practiceArea = '';
+    this.language = '';
+    this.clientSegment = '';
+    this.remoteOnly = false;
+    this.governoratePrefilled = true;
+    this.loadDirectory(true);
+  }
+
+  loadMore(): void {
+    this.loadDirectory(false);
+  }
+
+  loadDirectory(reset: boolean): void {
+    const nextPage = reset ? 1 : this.page() + 1;
+    this.directoryLoading.set(true);
+    this.directoryError.set(false);
+    this.assignments.searchDirectory({
+      search: this.searchText.trim() || undefined,
+      governorate: this.governorate || undefined,
+      practiceArea: this.practiceArea || undefined,
+      language: this.language || undefined,
+      clientSegment: this.clientSegment || undefined,
+      remote: this.remoteOnly || undefined,
+      page: nextPage,
+      pageSize: this.pageSize
+    }).subscribe({
+      next: page => {
+        this.directoryLoading.set(false);
+        if (!page.success) {
+          this.directoryError.set(true);
+          return;
+        }
+        if (!this.governoratePrefilled && page.companyGovernorate && !this.governorate) {
+          this.governoratePrefilled = true;
+          this.governorate = page.companyGovernorate;
+          this.loadDirectory(true);
+          return;
+        }
+        this.governoratePrefilled = true;
+        this.page.set(page.page);
+        this.totalCount.set(page.totalCount);
+        this.firms.set(reset ? page.items : [...this.firms(), ...page.items]);
+        if (this.selectedFirm && !this.firms().some(f => f.firmTenantId === this.selectedFirm?.firmTenantId)) {
+          this.selectedFirm = null;
+        }
       },
-      error: () => this.suggestions.set([])
+      error: () => {
+        this.directoryLoading.set(false);
+        this.directoryError.set(true);
+        if (reset) this.firms.set([]);
+      }
     });
   }
 
@@ -556,10 +757,12 @@ export class AccountingFirmSettingsComponent implements OnInit {
       next: r => {
         this.history.set(r.success ? r.data : []);
         this.loading.set(false);
+        if (!this.current()) this.loadDirectory(true);
       },
       error: () => {
         this.history.set([]);
         this.loading.set(false);
+        if (!this.current()) this.loadDirectory(true);
       }
     });
   }

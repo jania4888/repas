@@ -24,6 +24,7 @@ describe('FirmSettingsComponent', () => {
   it('shows Collaborateurs card for FirmManager', async () => {
     const fixture = await setup(true);
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('Fiche annuaire');
     expect(text).toContain('Collaborateurs');
     expect(text).toContain('Types d’activité');
     expect(fixture.nativeElement.querySelector('a[href="/firm/collaborateurs"]')).toBeTruthy();

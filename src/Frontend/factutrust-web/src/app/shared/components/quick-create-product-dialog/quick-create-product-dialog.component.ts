@@ -16,11 +16,15 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { CheckboxModule } from 'primeng/checkbox';
+import { InputSwitchModule } from 'primeng/inputswitch';
 import { OverlayOptions } from 'primeng/api';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { ProductService, CreateProductRequest, Product, ProductListItem } from '@core/services/product.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { DrawerOverlayService } from '@core/services/drawer-overlay.service';
+import { AuthService } from '@core/services/auth.service';
+import { AppModule } from '@core/models/app-module';
+import { PERMISSIONS } from '@core/config/permission-keys';
 import { HttpErrorResponse } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -70,7 +74,7 @@ const VAT_OPTIONS: VatOption[] = [
 ];
 
 /**
- * Dialog to create a product with minimal fields (code, name, type, unit price, VAT, unit).
+ * Dialog to create a product with minimal fields (code, name, type, unit price, VAT, unit, stock).
  * Used when adding a line in quote, delivery note or invoice and the product does not exist yet.
  * On success emits the created product as ProductListItem and closes.
  */
@@ -86,6 +90,7 @@ const VAT_OPTIONS: VatOption[] = [
     SelectModule,
     Textarea,
     CheckboxModule,
+    InputSwitchModule,
     ButtonComponent,
   ],
   template: `
@@ -145,7 +150,7 @@ const VAT_OPTIONS: VatOption[] = [
                   id="quick-type"
                   [options]="typeOptions"
                   [ngModel]="category()"
-                  (ngModelChange)="category.set($event)"
+                  (ngModelChange)="onCategoryChange($event)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Type"
@@ -168,6 +173,33 @@ const VAT_OPTIONS: VatOption[] = [
                   styleClass="w-full" />
               </div>
             </div>
+
+            @if (showStockManagement()) {
+              <div class="form-group">
+                <label for="quick-stock">Gestion de stock</label>
+                <div class="status-switch">
+                  <p-inputSwitch
+                    id="quick-stock"
+                    [ngModel]="isStockManaged()"
+                    (ngModelChange)="isStockManaged.set(!!$event)"
+                    [disabled]="!isProductCategory()"
+                    [attr.aria-describedby]="stockDescribedBy()">
+                  </p-inputSwitch>
+                  <span [class.active]="resolveIsStockManaged()">
+                    {{ resolveIsStockManaged() ? 'Activée' : 'Désactivée' }}
+                  </span>
+                </div>
+                @if (!isProductCategory()) {
+                  <small class="form-hint" id="quick-stock-type-hint">Disponible uniquement pour les produits physiques.</small>
+                }
+                @if (resolveIsStockManaged()) {
+                  <small class="form-hint" id="quick-stock-zero-hint">Le stock initial reste à zéro jusqu'à une entrée de stock.</small>
+                }
+                @if (showSupplierStockHint()) {
+                  <small class="form-hint" id="quick-stock-supplier-hint">Cet article ne sera pas ajouté à la facture fournisseur directe. Décochez Gestion de stock pour l'ajouter à la ligne.</small>
+                }
+              </div>
+            }
           </div>
 
           <div class="form-block">
@@ -400,6 +432,21 @@ const VAT_OPTIONS: VatOption[] = [
       margin-top: var(--spacing-1);
     }
 
+    .status-switch {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+    }
+
+    .status-switch span {
+      color: var(--color-neutral-600);
+    }
+
+    .status-switch span.active {
+      color: var(--color-success-600);
+      font-weight: var(--font-weight-medium);
+    }
+
     .field-error {
       display: flex;
       align-items: center;
@@ -603,6 +650,8 @@ const VAT_OPTIONS: VatOption[] = [
 })
 export class QuickCreateProductDialogComponent {
   @Input() panelMode = false;
+  /** Facture fournisseur directe : un article géré en stock n'est pas ajouté à la ligne. */
+  @Input() stockExcludedFromLine = false;
 
   @Input() set visible(value: boolean) {
     const wasVisible = this._dialogVisible;
@@ -635,6 +684,7 @@ export class QuickCreateProductDialogComponent {
   readonly productService = inject(ProductService);
   readonly errorHandler = inject(ErrorHandlerService);
   readonly drawerOverlay = inject(DrawerOverlayService);
+  private readonly auth = inject(AuthService);
   readonly drawerOverlayOptions: OverlayOptions = { baseZIndex: 1200 };
 
   readonly typeOptions = TYPE_OPTIONS;
@@ -648,7 +698,14 @@ export class QuickCreateProductDialogComponent {
   readonly unitPrice = signal(0);
   readonly vatRate = signal(19);
   readonly isFodecApplicable = signal(false);
+  readonly isStockManaged = signal(false);
   readonly description = signal('');
+
+  readonly showStockManagement = computed(
+    () => this.auth.hasModule(AppModule.Stock) && this.auth.hasPermission(PERMISSIONS.products.create)
+  );
+
+  readonly isProductCategory = computed(() => this.category() === 'Produit');
 
   readonly submitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -681,6 +738,31 @@ export class QuickCreateProductDialogComponent {
     const v = this.name().trim();
     return v.length === 0 ? 'Ce champ est obligatoire' : 'Min. 2 caractères';
   });
+
+  resolveIsStockManaged(): boolean {
+    return this.showStockManagement() && this.isProductCategory() && this.isStockManaged();
+  }
+
+  showSupplierStockHint(): boolean {
+    return this.stockExcludedFromLine && this.resolveIsStockManaged();
+  }
+
+  stockDescribedBy(): string | null {
+    const ids: string[] = [];
+    if (!this.isProductCategory()) ids.push('quick-stock-type-hint');
+    if (this.resolveIsStockManaged()) ids.push('quick-stock-zero-hint');
+    if (this.showSupplierStockHint()) ids.push('quick-stock-supplier-hint');
+    return ids.length ? ids.join(' ') : null;
+  }
+
+  onCategoryChange(value: string): void {
+    this.category.set(value);
+    this.applyStockDefaultForCategory(value);
+  }
+
+  private applyStockDefaultForCategory(category: string): void {
+    this.isStockManaged.set(this.showStockManagement() && category === 'Produit');
+  }
 
   calculateFodec(): number {
     return calculateFodecAmount(this.unitPrice(), this.isFodecApplicable());
@@ -715,6 +797,7 @@ export class QuickCreateProductDialogComponent {
     this.unitPrice.set(0);
     this.vatRate.set(19);
     this.isFodecApplicable.set(false);
+    this.applyStockDefaultForCategory('Produit');
     this.description.set('');
     this.errorMessage.set(null);
     this.submitAttempted.set(false);
@@ -737,7 +820,7 @@ export class QuickCreateProductDialogComponent {
       unitPrice: this.unitPrice(),
       unit: this.unit(),
       vatRate: this.vatRate(),
-      isStockManaged: false,
+      isStockManaged: this.resolveIsStockManaged(),
       isFodecApplicable: this.isFodecApplicable(),
     };
 

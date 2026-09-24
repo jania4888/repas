@@ -28,12 +28,40 @@ public sealed class AccountingFirmsController : ControllerBase
     [Authorize(Roles = nameof(UserRole.Administrator))]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<AccountingFirmDirectoryItemDto>>>> GetDirectory(
         [FromQuery] string? search,
+        [FromQuery] string? governorate,
+        [FromQuery] string? practiceArea,
+        [FromQuery] string? language,
+        [FromQuery] string? clientSegment,
+        [FromQuery] bool? remote,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
-        var items = await _assignmentService.SearchDirectoryAsync(search, page, pageSize, cancellationToken);
-        return Ok(ApiResponse<IReadOnlyList<AccountingFirmDirectoryItemDto>>.Ok(items));
+        var tenantId = GetHomeTenantId();
+        if (tenantId is null)
+            return Unauthorized();
+
+        var result = await _assignmentService.SearchDirectoryAsync(new AccountingFirmDirectoryQuery
+        {
+            Search = search,
+            Governorate = governorate,
+            PracticeArea = practiceArea,
+            Language = language,
+            ClientSegment = clientSegment,
+            Remote = remote,
+            Page = page,
+            PageSize = pageSize
+        }, tenantId.Value, cancellationToken);
+
+        if (result.IsFailure)
+            return BadRequest(ApiResponse<IReadOnlyList<AccountingFirmDirectoryItemDto>>.Fail(result.Error.Description));
+
+        Response.Headers["X-Total-Count"] = result.Value.TotalCount.ToString();
+        Response.Headers["X-Page"] = result.Value.Page.ToString();
+        if (!string.IsNullOrEmpty(result.Value.CompanyGovernorate))
+            Response.Headers["X-Company-Governorate"] = Uri.EscapeDataString(result.Value.CompanyGovernorate);
+
+        return Ok(ApiResponse<IReadOnlyList<AccountingFirmDirectoryItemDto>>.Ok(result.Value.Items));
     }
 
     [HttpGet("me/profile")]

@@ -71,6 +71,10 @@ public static class PlatformPermissions
     public const string SectorRulesManage = Prefix + "sector-rules:manage";
     public const string SectorRulesApply = Prefix + "sector-rules:apply";
 
+    // Assistance société ↔ opérateurs plateforme
+    public const string CompanySupportRead = Prefix + "company-support:read";
+    public const string CompanySupportWrite = Prefix + "company-support:write";
+
     /// <summary>Toutes les permissions reconnues — utile pour assigner le rôle Super-Admin.</summary>
     public static readonly IReadOnlyList<string> All = new[]
     {
@@ -85,6 +89,7 @@ public static class PlatformPermissions
         ProvidersConfigure,
         NotificationsRead,
         AiManage,
-        SectorRulesRead, SectorRulesManage, SectorRulesApply
+        SectorRulesRead, SectorRulesManage, SectorRulesApply,
+        CompanySupportRead, CompanySupportWrite
     };
 }

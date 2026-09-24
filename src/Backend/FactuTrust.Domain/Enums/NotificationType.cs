@@ -23,5 +23,6 @@ public enum NotificationType
     StudioWorkflowApprovalRequested = 15,
     StudioWorkflowApprovalDecided = 16,
     StudioWorkflowStepFailed = 17,
-    StudioWorkflowMessage = 18
+    StudioWorkflowMessage = 18,
+    CompanySupportReplyReceived = 19
 }

@@ -20,6 +20,7 @@ import { StatCardComponent } from '@shared/components/stat-card/stat-card.compon
 import { FirmInvitationActionsService } from '../shared/firm-invitation-actions.service';
 import { FirmDecisionTablesSectionComponent } from './decision-tables/firm-decision-tables-section.component';
 import { OnboardingChecklistComponent } from '@shared/onboarding/onboarding-checklist.component';
+import { FirmAssignmentService } from '@core/services/firm-assignment.service';
 
 interface GovernanceTile {
   label: string;
@@ -47,6 +48,12 @@ interface GovernanceTile {
       [subtitle]="welcomeSubtitle()" />
 
     <app-onboarding-checklist />
+
+    @if (profileNudge()) {
+      <a class="profile-nudge" routerLink="/firm/settings/profile">
+        Complétez votre fiche annuaire pour que les sociétés vous trouvent plus facilement.
+      </a>
+    }
 
     @if (loading()) {
       <p class="loading">Chargement…</p>
@@ -254,6 +261,16 @@ interface GovernanceTile {
   `,
   styles: [`
     .loading, .empty { color: var(--color-neutral-600); padding: 1rem 0; }
+    .profile-nudge {
+      display: block;
+      margin: 0 0 16px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: var(--color-primary-50, #eff6ff);
+      color: var(--color-primary-800, #1e40af);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
     .dash-section { margin-bottom: 1.5rem; }
     .section-title {
       margin: 0 0 0.75rem;
@@ -349,8 +366,10 @@ export class FirmDashboardComponent implements OnInit {
   private readonly governanceService = inject(FirmGovernanceService);
   private readonly featureFlags = inject(FirmFeatureFlagsService);
   private readonly actions = inject(FirmInvitationActionsService);
+  private readonly assignments = inject(FirmAssignmentService);
 
   readonly loading = signal(true);
+  readonly profileNudge = signal(false);
   readonly dashboard = signal<FirmDashboardData | null>(null);
   readonly governance = signal<FirmGovernanceDashboard | null>(null);
   readonly governanceEnabled = signal(false);
@@ -396,6 +415,15 @@ export class FirmDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboard();
+    if (this.auth.isFirmManager()) {
+      this.assignments.getMyProfile().subscribe({
+        next: r => {
+          const profile = r.success ? r.data : null;
+          this.profileNudge.set(!!profile && (profile.completeness < 80 || !profile.isPublicInDirectory));
+        },
+        error: () => this.profileNudge.set(false)
+      });
+    }
   }
 
   welcomeSubtitle(): string {

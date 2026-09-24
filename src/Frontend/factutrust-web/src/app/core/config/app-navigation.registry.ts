@@ -812,6 +812,11 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     route: '/exchanges'
   },
   {
+    label: 'Assistance',
+    icon: 'fa-solid fa-headset',
+    route: '/assistance'
+  },
+  {
     label: 'Paramètres',
     icon: 'fa-solid fa-gear',
     tourId: 'settings',
@@ -884,6 +889,7 @@ const ROUTE_KEYWORDS: Record<string, string[]> = {
   [VARIANT_AXES_PATH]: ['axe', 'variante', 'attribut', 'taille', 'couleur', 'déclinaison', 'sku'],
   '/settings/payment-terms': ['condition', 'règlement', 'échéance', 'escompte', 'paiement', 'délai'],
   '/exchanges': ['échange', 'echanges', 'messagerie', 'réclamation', 'reclamation', 'demande', 'cabinet'],
+  '/assistance': ['assistance', 'support', 'question', 'proposition', 'réclamation'],
   '/firm/exchanges': ['échange', 'echanges', 'messagerie', 'réclamation', 'cabinet', 'société']
 };
 

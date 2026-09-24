@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpContext } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { environment } from '@environments/environment';
 import { ApiResponse } from './auth.service';
 
@@ -11,6 +11,55 @@ export interface AccountingFirmDirectoryItem {
   governorate: string;
   description?: string;
   professionalRegistrationNumber?: string;
+  practiceAreas?: string[];
+  clientSegments?: string[];
+  languages?: string[];
+  teamSizeBand?: string | null;
+  acceptsRemote?: boolean | null;
+  yearsOfExperience?: number | null;
+  publicWebsite?: string | null;
+  sameGovernorate?: boolean;
+}
+
+export interface AccountingFirmDirectoryQuery {
+  search?: string;
+  governorate?: string;
+  practiceArea?: string;
+  language?: string;
+  clientSegment?: string;
+  remote?: boolean;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface AccountingFirmDirectoryPage {
+  success: boolean;
+  message?: string | null;
+  items: AccountingFirmDirectoryItem[];
+  totalCount: number;
+  page: number;
+  companyGovernorate?: string | null;
+}
+
+export interface AccountingFirmProfile {
+  tenantId: string;
+  displayName: string;
+  description?: string | null;
+  city: string;
+  governorate: string;
+  isPublicInDirectory: boolean;
+  professionalRegistrationNumber?: string | null;
+  contactEmail: string;
+  contactPhone: string;
+  practiceAreas: string[];
+  clientSegments: string[];
+  languages: string[];
+  teamSizeBand?: string | null;
+  acceptsRemote?: boolean | null;
+  yearsOfExperience?: number | null;
+  publicWebsite?: string | null;
+  completeness: number;
+  missing: string[];
 }
 
 export interface CompanyProfileSnapshot {
@@ -44,6 +93,11 @@ export interface FirmClientAssignment {
   notes?: string;
   rejectionReason?: string;
   companyProfile?: CompanyProfileSnapshot;
+  firmCity?: string | null;
+  firmGovernorate?: string | null;
+  firmPracticeAreas?: string[];
+  firmContactEmail?: string | null;
+  firmContactPhone?: string | null;
   /** True si le dossier a été créé et est géré par le cabinet (client sans compte plateforme). */
   isFirmManaged?: boolean;
 }
@@ -69,10 +123,54 @@ export class FirmAssignmentService {
   private readonly firmsUrl = `${environment.apiUrl}/accounting-firms`;
   private readonly assignmentsUrl = `${environment.apiUrl}/firm-assignments`;
 
-  searchDirectory(search?: string): Observable<ApiResponse<AccountingFirmDirectoryItem[]>> {
-    const params: Record<string, string> = {};
-    if (search) params['search'] = search;
-    return this.http.get<ApiResponse<AccountingFirmDirectoryItem[]>>(`${this.firmsUrl}/directory`, { params });
+  searchDirectory(query: AccountingFirmDirectoryQuery = {}): Observable<AccountingFirmDirectoryPage> {
+    let params = new HttpParams();
+    const set = (key: string, value: string | number | boolean | undefined | null) => {
+      if (value === undefined || value === null || value === '') return;
+      params = params.set(key, String(value));
+    };
+    set('search', query.search);
+    set('governorate', query.governorate);
+    set('practiceArea', query.practiceArea);
+    set('language', query.language);
+    set('clientSegment', query.clientSegment);
+    if (query.remote === true) set('remote', true);
+    set('page', query.page);
+    set('pageSize', query.pageSize);
+
+    return this.http
+      .get<ApiResponse<AccountingFirmDirectoryItem[]>>(`${this.firmsUrl}/directory`, { params, observe: 'response' })
+      .pipe(
+        map(res => {
+          const body = res.body;
+          const items = body?.success && body.data ? body.data : [];
+          const encoded = res.headers.get('X-Company-Governorate');
+          let companyGovernorate: string | null = null;
+          if (encoded) {
+            try {
+              companyGovernorate = decodeURIComponent(encoded);
+            } catch {
+              companyGovernorate = encoded;
+            }
+          }
+          return {
+            success: body?.success ?? false,
+            message: body?.message,
+            items,
+            totalCount: Number(res.headers.get('X-Total-Count') ?? items.length),
+            page: Number(res.headers.get('X-Page') ?? query.page ?? 1),
+            companyGovernorate
+          };
+        })
+      );
+  }
+
+  getMyProfile(): Observable<ApiResponse<AccountingFirmProfile>> {
+    return this.http.get<ApiResponse<AccountingFirmProfile>>(`${this.firmsUrl}/me/profile`);
+  }
+
+  updateMyProfile(profile: Partial<AccountingFirmProfile>): Observable<ApiResponse<unknown>> {
+    return this.http.put<ApiResponse<unknown>>(`${this.firmsUrl}/me/profile`, profile);
   }
 
   getCompanyCurrent(): Observable<ApiResponse<FirmClientAssignment | null>> {

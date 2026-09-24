@@ -7,6 +7,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
 import { FirmFeatureFlagsService } from '@core/services/firm-feature-flags.service';
 import { AuthService } from '@core/services/auth.service';
 import { FirmInvitationActionsService } from '../shared/firm-invitation-actions.service';
+import { FirmAssignmentService } from '@core/services/firm-assignment.service';
 import { ProductOnboardingApiService } from '@core/onboarding/product-onboarding.service';
 
 const firmPayload = {
@@ -123,6 +124,15 @@ describe('FirmDashboardComponent', () => {
             replayTick: () => 0,
             isTourRunning: () => false,
             requestReplay: () => undefined
+          }
+        },
+        {
+          provide: FirmAssignmentService,
+          useValue: {
+            getMyProfile: () => of({
+              success: true,
+              data: { completeness: 100, isPublicInDirectory: true, missing: [] }
+            })
           }
         },
         {

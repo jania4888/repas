@@ -348,6 +348,22 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0
             }));
 
+    options.AddPolicy("company-support-write", context =>
+    {
+        var userId = context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var partitionKey = string.IsNullOrEmpty(userId)
+            ? $"ip:{context.Connection.RemoteIpAddress?.ToString() ?? "unknown"}"
+            : $"user:{userId}";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 200 : 30,
+                Window = TimeSpan.FromHours(1),
+                QueueLimit = 0
+            });
+    });
+
     options.AddPolicy("labels", context =>
     {
         // Partition par utilisateur authentifié, comme « ai » : une planche d'étiquettes est

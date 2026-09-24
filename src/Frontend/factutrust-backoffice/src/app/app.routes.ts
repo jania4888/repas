@@ -189,6 +189,14 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'company-support',
+        canActivate: [platformPermissionGuard(PlatformPermission.CompanySupportRead)],
+        loadComponent: () =>
+          import('./pages/company-support/platform-company-support-page.component').then(
+            m => m.PlatformCompanySupportPageComponent
+          )
+      },
+      {
         path: 'ai-settings',
         canActivate: [platformPermissionGuard(PlatformPermission.AiManage)],
         loadComponent: () =>

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
+  OnDestroy,
   OnInit,
   ViewChild,
   computed,
@@ -18,6 +19,7 @@ import { PlatformPermissionsService } from '@core/services/platform-permissions.
 import { PlatformPreferencesService } from '@core/services/platform-preferences.service';
 import { FtOverlayCleanupService } from '@core/services/ft-overlay-cleanup.service';
 import { PlatformPermission } from '@core/models/platform.models';
+import { PlatformCompanySupportBadgeService } from '@core/services/platform-company-support-badge.service';
 import { FtAvatarComponent } from '@core/ui/avatar/ft-avatar.component';
 import { FtUserMenuComponent } from '@core/ui/user-menu/ft-user-menu.component';
 import { FtKeyboardShortcutsDialogComponent } from '@core/ui/keyboard-shortcuts/ft-keyboard-shortcuts-dialog.component';
@@ -124,6 +126,15 @@ const DOCS_URL = 'https://docs.instafact.tn/admin';
           <a routerLink="/security" routerLinkActive="active">
             <i class="pi pi-lock" aria-hidden="true"></i>
             Sécurité
+          </a>
+        }
+        @if (canSeeCompanySupport()) {
+          <a routerLink="/company-support" routerLinkActive="active">
+            <i class="pi pi-comments" aria-hidden="true"></i>
+            Assistance
+            @if (supportUnread() > 0) {
+              <span class="nav-badge">{{ supportUnread() }}</span>
+            }
           </a>
         }
         @if (canSeeAiConfig()) {
@@ -294,6 +305,14 @@ const DOCS_URL = 'https://docs.instafact.tn/admin';
         font-size: 0.7rem;
         color: var(--ft-text-subtle);
       }
+      .nav-badge {
+        margin-left: 0.35rem;
+        background: #c2410c;
+        color: #fff;
+        border-radius: 999px;
+        padding: 0 0.4rem;
+        font-size: 0.7rem;
+      }
       .shell-main {
         min-height: calc(100vh - 4rem);
         padding: 1.5rem 1.25rem 2.5rem;
@@ -310,11 +329,13 @@ const DOCS_URL = 'https://docs.instafact.tn/admin';
     `
   ]
 })
-export class PlatformShellComponent implements OnInit {
+export class PlatformShellComponent implements OnInit, OnDestroy {
   readonly auth = inject(PlatformAuthService);
   private readonly permissions = inject(PlatformPermissionsService);
   private readonly prefs = inject(PlatformPreferencesService);
   private readonly overlayCleanup = inject(FtOverlayCleanupService);
+  private readonly supportBadge = inject(PlatformCompanySupportBadgeService);
+  private supportTimer: ReturnType<typeof setInterval> | null = null;
 
   @ViewChild('userMenu') userMenu?: FtUserMenuComponent;
 
@@ -336,12 +357,20 @@ export class PlatformShellComponent implements OnInit {
   readonly canSeeDunning = computed(() => this.permissions.has(PlatformPermission.InvoiceIssue));
   readonly canSeeAudit = computed(() => this.permissions.has(PlatformPermission.AuditRead));
   readonly canSeeAiConfig = computed(() => this.permissions.has(PlatformPermission.AiManage));
+  readonly canSeeCompanySupport = computed(() => this.permissions.has(PlatformPermission.CompanySupportRead));
+  readonly supportUnread = this.supportBadge.unreadCount;
 
   ngOnInit(): void {
     document.documentElement.dataset['tableDensity'] = this.prefs.tableDensity();
     if (!this.permissions.isLoaded() && this.auth.isAuthenticated()) {
       this.permissions.load().subscribe({ error: () => {} });
     }
+    this.supportBadge.refresh();
+    this.supportTimer = setInterval(() => this.supportBadge.refresh(), 20_000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.supportTimer) clearInterval(this.supportTimer);
   }
 
   @HostListener('document:keydown', ['$event'])

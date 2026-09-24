@@ -39,7 +39,8 @@ describe('FirmInvitationsComponent', () => {
         {
           provide: FirmAssignmentService,
           useValue: {
-            getIncomingInvitations: () => of({ success: true, data: [invitation] })
+            getIncomingInvitations: () => of({ success: true, data: [invitation] }),
+            getMyProfile: () => of({ success: true, data: { governorate: 'Tunis', completeness: 100, isPublicInDirectory: true, missing: [] } })
           }
         },
         {

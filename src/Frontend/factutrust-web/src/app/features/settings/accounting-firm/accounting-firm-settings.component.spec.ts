@@ -26,7 +26,7 @@ describe('AccountingFirmSettingsComponent', () => {
     const service = {
       getCompanyCurrent: () => of({ success: true, data: current }),
       getCompanyHistory: () => of({ success: true, data: history }),
-      searchDirectory: () => of({ success: true, data: [] }),
+      searchDirectory: jasmine.createSpy('searchDirectory').and.returnValue(of({ success: true, items: [] as unknown[], totalCount: 0, page: 1, companyGovernorate: null })),
       requestAssignment: jasmine.createSpy('requestAssignment').and.returnValue(of({ success: true, data: current })),
       cancelPendingRequest: jasmine.createSpy('cancelPendingRequest').and.returnValue(of({ success: true, data: null })),
       revokeByCompany: jasmine.createSpy('revokeByCompany').and.returnValue(of({ success: true, data: null }))
@@ -52,7 +52,35 @@ describe('AccountingFirmSettingsComponent', () => {
     const { fixture } = setup(null, []);
     const html = fixture.nativeElement.textContent as string;
     expect(html).toContain('Rechercher un cabinet');
-    expect(html).toContain('Envoyer la demande');
+    expect(html).toContain('Comparez les cabinets');
+    expect(html).not.toContain('Envoyer la demande');
+  });
+
+  it('choisit une carte puis envoie le même POST de demande', () => {
+    const firm = {
+      firmTenantId: 'f-99',
+      displayName: 'Cabinet Ahmed',
+      city: 'Tunis',
+      governorate: 'Tunis',
+      description: 'Spécialiste TVA',
+      practiceAreas: ['tva']
+    };
+    const { fixture, service } = setup(null, []);
+    service.searchDirectory.and.returnValue(of({
+      success: true,
+      items: [firm],
+      totalCount: 1,
+      page: 1,
+      companyGovernorate: null
+    }));
+    fixture.componentInstance.loadDirectory(true);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Cabinet Ahmed');
+    expect(fixture.nativeElement.textContent).toContain('Choisir ce cabinet');
+    fixture.componentInstance.selectFirm(firm);
+    fixture.detectChanges();
+    fixture.componentInstance.confirmAndSubmit();
+    expect(service.requestAssignment).toHaveBeenCalledWith('f-99', undefined);
   });
 
   it('affiche le bouton « Annuler la demande » pour une demande en attente (number)', () => {
@@ -73,11 +101,19 @@ describe('AccountingFirmSettingsComponent', () => {
   });
 
   it('affiche « Révoquer l\'affectation » pour une liaison active avec libellé corrigé', () => {
-    const { fixture } = setup(assignment({ status: 1, respondedAt: '2026-07-18T10:00:00Z' }));
+    const { fixture } = setup(assignment({
+      status: 1,
+      respondedAt: '2026-07-18T10:00:00Z',
+      firmContactPhone: '71111222',
+      firmContactEmail: 'cabinet@example.com',
+      firmCity: 'Tunis',
+      firmPracticeAreas: ['tva']
+    }));
     const html = fixture.nativeElement.textContent as string;
     expect(html).toContain("Révoquer l'affectation");
     expect(html).toContain('Liaison active');
-    expect(html).not.toContain('Active</'); // pas le libellé backend brut
+    expect(html).toContain('71111222');
+    expect(html).not.toContain('Rechercher un cabinet');
   });
 
   it('affiche « Révoquer » et « Actif depuis » pour status PascalCase Active', () => {

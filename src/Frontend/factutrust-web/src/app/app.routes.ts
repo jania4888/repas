@@ -9,6 +9,7 @@ import { delegatedFirmNavGuard } from './core/guards/delegated-firm-nav.guard';
 import { companyAccountingNavGuard } from './core/guards/company-accounting-nav.guard';
 import { documentationAccessGuard } from './core/guards/documentation-access.guard';
 import { staffShellGuard } from './core/guards/staff-shell.guard';
+import { companyAssistanceGuard } from './core/guards/company-assistance.guard';
 
 export const routes: Routes = [
   {
@@ -178,6 +179,13 @@ export const routes: Routes = [
         path: 'exchanges',
         loadChildren: () =>
           import('./features/exchanges/exchanges.routes').then(m => m.EXCHANGES_ROUTES)
+      },
+      {
+        path: 'assistance',
+        canActivate: [companyAssistanceGuard],
+        loadComponent: () =>
+          import('./features/assistance/assistance-page.component').then(m => m.AssistancePageComponent),
+        title: 'Assistance - InstaFact'
       },
       {
         path: 'firm',

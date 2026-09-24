@@ -31,6 +31,7 @@ import { FirmInvitationActionsService } from '../shared/firm-invitation-actions.
               <th>Société</th>
               <th>NIF</th>
               <th>Localisation</th>
+              <th>Correspondance</th>
               <th>Contact</th>
               <th>Demandée le</th>
               <th>Notes</th>
@@ -50,6 +51,13 @@ import { FirmInvitationActionsService } from '../shared/firm-invitation-actions.
               </td>
               <td>{{ row.companyProfile?.nif || '—' }}</td>
               <td>{{ formatLocation(row) }}</td>
+              <td>
+                @if (sameGovernorate(row)) {
+                  <span class="fi-match"><i class="pi pi-check-circle" aria-hidden="true"></i> Même gouvernorat</span>
+                } @else {
+                  —
+                }
+              </td>
               <td>{{ formatContact(row) }}</td>
               <td>{{ row.requestedAt | date:'dd/MM/yyyy HH:mm' }}</td>
               <td>{{ row.notes || '—' }}</td>
@@ -80,6 +88,7 @@ import { FirmInvitationActionsService } from '../shared/firm-invitation-actions.
     }
     .fi-actions-col { width: 1%; }
     .fi-company { font-weight: 600; }
+    .fi-match { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; font-weight: 600; color: var(--color-primary-800, #1e40af); }
     .fi-muted { font-size: 0.8rem; color: var(--color-text-muted, #64748b); margin-top: 0.15rem; }
     .fi-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
     .fi-btn {
@@ -111,9 +120,23 @@ export class FirmInvitationsComponent implements OnInit {
 
   readonly items = signal<FirmClientAssignment[]>([]);
   readonly loading = signal(true);
+  readonly firmGovernorate = signal<string | null>(null);
 
   ngOnInit(): void {
+    if (this.auth.isFirmManager()) {
+      this.assignments.getMyProfile().subscribe({
+        next: r => this.firmGovernorate.set(r.success ? r.data?.governorate ?? null : null),
+        error: () => this.firmGovernorate.set(null)
+      });
+    }
     this.load();
+  }
+
+  sameGovernorate(row: FirmClientAssignment): boolean {
+    const firmGov = this.firmGovernorate();
+    const companyGov = row.companyProfile?.governorate;
+    if (!firmGov || !companyGov) return false;
+    return firmGov.localeCompare(companyGov, 'fr', { sensitivity: 'accent' }) === 0;
   }
 
   load(): void {

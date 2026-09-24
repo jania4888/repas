@@ -44,41 +44,130 @@ public sealed class FirmAssignmentService : IFirmAssignmentService
         _logger = logger;
     }
 
-    public async Task<IReadOnlyList<AccountingFirmDirectoryItemDto>> SearchDirectoryAsync(
-        string? search, int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<Result<AccountingFirmDirectoryPageDto>> SearchDirectoryAsync(
+        AccountingFirmDirectoryQuery query, Guid companyTenantId, CancellationToken cancellationToken = default)
     {
-        page = Math.Clamp(page, 1, int.MaxValue / 50);
-        pageSize = Math.Clamp(pageSize, 1, 50);
+        var page = Math.Clamp(query.Page, 1, int.MaxValue / 50);
+        var pageSize = Math.Clamp(query.PageSize, 1, 50);
 
-        var query = from profile in _masterContext.AccountingFirmProfiles.AsNoTracking()
-                    join tenant in _masterContext.Tenants.AsNoTracking() on profile.TenantId equals tenant.Id
-                    where profile.IsPublicInDirectory && tenant.IsActive && tenant.Kind == TenantKind.AccountingFirm
-                    select new { profile, tenant };
-
-        if (!string.IsNullOrWhiteSpace(search))
+        string? governorate = null;
+        if (!string.IsNullOrWhiteSpace(query.Governorate))
         {
-            var term = search.Trim().ToLower();
-            query = query.Where(x =>
-                x.profile.DisplayName.ToLower().Contains(term) ||
-                x.profile.City.ToLower().Contains(term) ||
-                x.profile.Governorate.ToLower().Contains(term));
+            if (!TunisianGovernorates.IsValid(query.Governorate))
+                return Result.Failure<AccountingFirmDirectoryPageDto>(Error.Validation("Governorate", "Le gouvernorat est invalide."));
+
+            governorate = TunisianGovernorates.All.First(g =>
+                string.Equals(g, query.Governorate.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
-        return await query
-            .OrderBy(x => x.profile.DisplayName)
+        if (!TryAllowlistedFilter(query.PracticeArea, AccountingFirmProfileCatalog.PracticeAreas, "PracticeArea", out var practiceArea, out var practiceError))
+            return Result.Failure<AccountingFirmDirectoryPageDto>(practiceError!);
+        if (!TryAllowlistedFilter(query.Language, AccountingFirmProfileCatalog.Languages, "Language", out var language, out var languageError))
+            return Result.Failure<AccountingFirmDirectoryPageDto>(languageError!);
+        if (!TryAllowlistedFilter(query.ClientSegment, AccountingFirmProfileCatalog.ClientSegments, "ClientSegment", out var segment, out var segmentError))
+            return Result.Failure<AccountingFirmDirectoryPageDto>(segmentError!);
+
+        var companyGovernorate = await _masterContext.Tenants.AsNoTracking()
+            .Where(t => t.Id == companyTenantId)
+            .Select(t => t.Address.Governorate)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        var rows = from profile in _masterContext.AccountingFirmProfiles.AsNoTracking()
+                   join tenant in _masterContext.Tenants.AsNoTracking() on profile.TenantId equals tenant.Id
+                   where profile.IsPublicInDirectory && tenant.IsActive && tenant.Kind == TenantKind.AccountingFirm
+                   select profile;
+
+        if (!string.IsNullOrWhiteSpace(query.Search))
+        {
+            var term = query.Search.Trim();
+            if (term.Length > AccountingFirmProfileCatalog.SearchMaxLength)
+                term = term[..AccountingFirmProfileCatalog.SearchMaxLength];
+            var lowered = term.ToLower();
+            rows = rows.Where(profile =>
+                profile.DisplayName.ToLower().Contains(lowered) ||
+                profile.City.ToLower().Contains(lowered) ||
+                profile.Governorate.ToLower().Contains(lowered) ||
+                (profile.Description != null && profile.Description.ToLower().Contains(lowered)));
+        }
+
+        if (governorate is not null)
+            rows = rows.Where(profile => profile.Governorate == governorate);
+
+        if (practiceArea is not null)
+            rows = rows.Where(profile => profile.PracticeAreasJson != null && profile.PracticeAreasJson.Contains(practiceArea));
+
+        if (language is not null)
+            rows = rows.Where(profile => profile.LanguagesJson != null && profile.LanguagesJson.Contains(language));
+
+        if (segment is not null)
+            rows = rows.Where(profile => profile.ClientSegmentsJson != null && profile.ClientSegmentsJson.Contains(segment));
+
+        if (query.Remote == true)
+            rows = rows.Where(profile => profile.AcceptsRemote == true);
+
+        var companyGov = string.IsNullOrWhiteSpace(companyGovernorate) ? null : companyGovernorate;
+        var ordered = companyGov is null
+            ? rows.OrderBy(profile => profile.DisplayName)
+            : rows.OrderByDescending(profile => profile.Governorate == companyGov)
+                .ThenBy(profile => profile.DisplayName);
+
+        var total = await ordered.CountAsync(cancellationToken);
+        var pageRows = await ordered
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(x => new AccountingFirmDirectoryItemDto
-            {
-                FirmTenantId = x.profile.TenantId,
-                DisplayName = x.profile.DisplayName,
-                City = x.profile.City,
-                Governorate = x.profile.Governorate,
-                Description = x.profile.Description,
-                ProfessionalRegistrationNumber = x.profile.ProfessionalRegistrationNumber
-            })
             .ToListAsync(cancellationToken);
+
+        var items = pageRows.Select(profile => MapDirectoryItem(profile, companyGov)).ToList();
+        return Result.Success(new AccountingFirmDirectoryPageDto
+        {
+            Items = items,
+            Page = page,
+            TotalCount = total,
+            CompanyGovernorate = companyGov
+        });
     }
+
+    private static bool TryAllowlistedFilter(
+        string? raw,
+        IReadOnlyList<string> allowed,
+        string field,
+        out string? code,
+        out Error? error)
+    {
+        code = null;
+        error = null;
+        if (string.IsNullOrWhiteSpace(raw))
+            return true;
+
+        var normalized = raw.Trim().ToLowerInvariant();
+        if (!allowed.Contains(normalized, StringComparer.Ordinal))
+        {
+            error = Error.Validation(field, "Filtre inconnu.");
+            return false;
+        }
+
+        code = normalized;
+        return true;
+    }
+
+    private static AccountingFirmDirectoryItemDto MapDirectoryItem(AccountingFirmProfile profile, string? companyGovernorate) => new()
+    {
+        FirmTenantId = profile.TenantId,
+        DisplayName = profile.DisplayName,
+        City = profile.City,
+        Governorate = profile.Governorate,
+        Description = profile.Description,
+        ProfessionalRegistrationNumber = profile.ProfessionalRegistrationNumber,
+        PracticeAreas = profile.PracticeAreas,
+        ClientSegments = profile.ClientSegments,
+        Languages = profile.Languages,
+        TeamSizeBand = profile.TeamSizeBand,
+        AcceptsRemote = profile.AcceptsRemote,
+        YearsOfExperience = profile.YearsOfExperience,
+        PublicWebsite = profile.PublicWebsite,
+        SameGovernorate = companyGovernorate is not null
+            && string.Equals(profile.Governorate, companyGovernorate, StringComparison.OrdinalIgnoreCase)
+    };
 
     public Task<FirmClientAssignmentDto?> GetCompanyCurrentAssignmentAsync(
         Guid companyTenantId, CancellationToken cancellationToken = default)
@@ -99,7 +188,36 @@ public sealed class FirmAssignmentService : IFirmAssignmentService
             .OrderByDescending(a => a.RequestedAt)
             .FirstOrDefaultAsync(cancellationToken);
 
-        return assignment is null ? null : await MapAssignmentAsync(masterContext, assignment, cancellationToken);
+        if (assignment is null)
+            return null;
+
+        var dto = await MapAssignmentAsync(masterContext, assignment, cancellationToken);
+        return await AttachCurrentFirmProfileAsync(masterContext, dto, cancellationToken);
+    }
+
+    /// <summary>
+    /// Fiche publique du cabinet sur la liaison courante. Téléphone et e-mail seulement si Active.
+    /// </summary>
+    private static async Task<FirmClientAssignmentDto> AttachCurrentFirmProfileAsync(
+        MasterDbContext masterContext,
+        FirmClientAssignmentDto dto,
+        CancellationToken cancellationToken)
+    {
+        var profile = await masterContext.AccountingFirmProfiles.AsNoTracking()
+            .FirstOrDefaultAsync(p => p.TenantId == dto.FirmTenantId, cancellationToken);
+
+        if (profile is null)
+            return dto;
+
+        var active = dto.Status == FirmAssignmentStatus.Active;
+        return dto with
+        {
+            FirmCity = profile.City,
+            FirmGovernorate = profile.Governorate,
+            FirmPracticeAreas = profile.PracticeAreas,
+            FirmContactEmail = active ? profile.ContactEmail : null,
+            FirmContactPhone = active ? profile.ContactPhone : null
+        };
     }
 
     public async Task<IReadOnlyList<FirmClientAssignmentDto>> GetCompanyAssignmentHistoryAsync(
@@ -450,15 +568,27 @@ public sealed class FirmAssignmentService : IFirmAssignmentService
         if (profile is null)
             return Result.Failure(Error.Validation("Profile", "Profil cabinet introuvable"));
 
-        profile.Update(
-            dto.DisplayName,
-            dto.City,
-            dto.Governorate,
-            dto.ContactEmail,
-            dto.ContactPhone,
-            dto.Description,
-            dto.ProfessionalRegistrationNumber,
-            dto.IsPublicInDirectory);
+        var updated = profile.Update(new AccountingFirmProfileUpdate
+        {
+            DisplayName = dto.DisplayName,
+            City = dto.City,
+            Governorate = dto.Governorate,
+            ContactEmail = dto.ContactEmail,
+            ContactPhone = dto.ContactPhone,
+            Description = dto.Description,
+            ProfessionalRegistrationNumber = dto.ProfessionalRegistrationNumber,
+            IsPublicInDirectory = dto.IsPublicInDirectory,
+            PracticeAreas = dto.PracticeAreas,
+            ClientSegments = dto.ClientSegments,
+            Languages = dto.Languages,
+            TeamSizeBand = dto.TeamSizeBand,
+            AcceptsRemote = dto.AcceptsRemote,
+            YearsOfExperience = dto.YearsOfExperience,
+            PublicWebsite = dto.PublicWebsite
+        });
+
+        if (updated.IsFailure)
+            return updated;
 
         await _masterContext.SaveChangesAsync(cancellationToken);
         return Result.Success();
@@ -597,6 +727,27 @@ public sealed class FirmAssignmentService : IFirmAssignmentService
         IsPublicInDirectory = profile.IsPublicInDirectory,
         ProfessionalRegistrationNumber = profile.ProfessionalRegistrationNumber,
         ContactEmail = profile.ContactEmail,
-        ContactPhone = profile.ContactPhone
+        ContactPhone = profile.ContactPhone,
+        PracticeAreas = profile.PracticeAreas,
+        ClientSegments = profile.ClientSegments,
+        Languages = profile.Languages,
+        TeamSizeBand = profile.TeamSizeBand,
+        AcceptsRemote = profile.AcceptsRemote,
+        YearsOfExperience = profile.YearsOfExperience,
+        PublicWebsite = profile.PublicWebsite,
+        Completeness = AccountingFirmProfileCatalog.CompletenessScore(
+            profile.Description,
+            profile.PracticeAreas,
+            profile.Languages,
+            profile.Governorate,
+            profile.ProfessionalRegistrationNumber,
+            profile.IsPublicInDirectory),
+        Missing = AccountingFirmProfileCatalog.MissingCriteria(
+            profile.Description,
+            profile.PracticeAreas,
+            profile.Languages,
+            profile.Governorate,
+            profile.ProfessionalRegistrationNumber,
+            profile.IsPublicInDirectory)
     };
 }
