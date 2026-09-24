@@ -1,109 +1,109 @@
-// TODO-AR : traduction arabe à livrer par TD7 — copie provisoire de la copy FR finale (TB7), structure figée par TD1.
 import type { LandingContactCopy } from '../landing-copy.types';
 
 /**
- * Formulaire de demande d'accès / de démo — copy FR finale (TB7 ; plan § 6.4, part B § B.6).
+ * Formulaire de demande d'accès / de démo — traduction AR (TD7) de la copy FR finale (TB7),
+ * selon docs/landing/ar-glossary.md.
  *
  * Placeholders injectés par `LandingCopyService.format()` : {min}, {max}, {count},
- * {seconds}, {reference}, {email}. Aucune promesse de délai de réponse (exclusion § 6.1) ;
- * la ligne de réassurance ne contient que des engagements contrôlés par l'équipe.
+ * {seconds}, {reference}, {email}. Les placeholders e-mail/téléphone restent en latin
+ * (saisie en `dir="ltr"`). Aucune promesse de délai de réponse (exclusion § 6.1).
  */
 export const CONTACT_AR: LandingContactCopy = {
-  title: 'Demander un accès ou une démo',
-  lead: 'Décrivez votre besoin en quelques lignes : nous vous recontactons rapidement.',
+  title: 'طلب الوصول أو عرض توضيحي',
+  lead: 'صِفوا حاجتكم في بضعة أسطر: نعاود الاتصال بكم سريعاً.',
   subjects: {
-    'acces-entreprise': 'Demander un accès (entreprise)',
-    'demo-cabinet': 'Demander une démo (cabinet comptable)',
-    entreprise: 'Projet sur mesure (grande entreprise)',
-    autre: 'Autre demande'
+    'acces-entreprise': 'طلب الوصول (مؤسسة)',
+    'demo-cabinet': 'طلب عرض توضيحي (مكتب محاسبة)',
+    entreprise: 'مشروع حسب الطلب (مؤسسة كبرى)',
+    autre: 'طلب آخر'
   },
   fields: {
     subject: {
-      label: 'Objet de la demande',
-      placeholder: 'Choisissez un objet',
-      hint: 'Nous orientons votre demande vers la bonne équipe.'
+      label: 'موضوع الطلب',
+      placeholder: 'اختاروا الموضوع',
+      hint: 'نوجّه طلبكم إلى الفريق المناسب.'
     },
     fullName: {
-      label: 'Nom complet',
-      placeholder: 'Prénom Nom',
-      hint: 'Tel qu’il apparaîtra dans nos échanges.'
+      label: 'الاسم الكامل',
+      placeholder: 'الاسم واللقب',
+      hint: 'كما سيظهر في مراسلاتنا.'
     },
     organization: {
-      label: 'Société ou cabinet',
-      placeholder: 'Nom de votre société ou cabinet',
-      hint: 'Raison sociale ou nom commercial.'
+      label: 'المؤسسة أو المكتب',
+      placeholder: 'اسم مؤسستكم أو مكتبكم',
+      hint: 'التسمية القانونية أو التجارية.'
     },
     email: {
-      label: 'E-mail professionnel',
-      placeholder: 'vous@exemple.tn',
-      hint: 'Nous répondons à cette adresse.'
+      label: 'البريد الإلكتروني المهني',
+      placeholder: 'name@example.tn',
+      hint: 'نجيبكم على هذا العنوان.'
     },
     phone: {
-      label: 'Téléphone',
+      label: 'الهاتف',
       placeholder: '+216 XX XXX XXX',
-      hint: 'Numéro tunisien, avec ou sans +216.'
+      hint: 'رقم تونسي، مع +216 أو بدونه.'
     },
     size: {
-      label: 'Taille',
-      placeholder: 'Sélectionnez',
-      hint: 'Facultatif : une estimation suffit.'
+      label: 'الحجم',
+      placeholder: 'اختاروا',
+      hint: 'اختياري: يكفي تقدير تقريبي.'
     },
     message: {
-      label: 'Message',
-      placeholder: 'Décrivez votre activité, vos outils actuels et vos besoins.',
-      hint: 'Entre 10 et 2000 caractères.'
+      label: 'الرسالة',
+      placeholder: 'صِفوا نشاطكم وأدواتكم الحالية وحاجاتكم.',
+      hint: 'بين 10 و2000 حرفاً.'
     },
     consent: {
-      label: 'J’accepte que mes informations soient utilisées pour traiter ma demande.',
-      linkLabel: 'Conditions d’utilisation'
+      label: 'أوافق على استعمال معلوماتي لمعالجة طلبي.',
+      linkLabel: 'شروط الاستخدام'
     },
-    website: { label: 'Site web' }
+    website: { label: 'الموقع الإلكتروني' }
   },
   sizes: {
-    none: 'Non précisé',
+    none: 'غير محدد',
     dossiers: [
-      { value: 'dossiers:1-5', label: '1 à 5 dossiers' },
-      { value: 'dossiers:6-20', label: '6 à 20 dossiers' },
-      { value: 'dossiers:21-50', label: '21 à 50 dossiers' },
-      { value: 'dossiers:50+', label: 'Plus de 50 dossiers' }
+      { value: 'dossiers:1-5', label: 'من 1 إلى 5 ملفات' },
+      { value: 'dossiers:6-20', label: 'من 6 إلى 20 ملفاً' },
+      { value: 'dossiers:21-50', label: 'من 21 إلى 50 ملفاً' },
+      { value: 'dossiers:50+', label: 'أكثر من 50 ملفاً' }
     ],
     employes: [
-      { value: 'employes:1-5', label: '1 à 5 employés' },
-      { value: 'employes:6-20', label: '6 à 20 employés' },
-      { value: 'employes:21-100', label: '21 à 100 employés' },
-      { value: 'employes:100+', label: 'Plus de 100 employés' }
+      { value: 'employes:1-5', label: 'من 1 إلى 5 أعوان' },
+      { value: 'employes:6-20', label: 'من 6 إلى 20 عوناً' },
+      { value: 'employes:21-100', label: 'من 21 إلى 100 عون' },
+      { value: 'employes:100+', label: 'أكثر من 100 عون' }
     ]
   },
   messageCounter: '{count} / {max}',
   submit: {
-    idle: 'Envoyer ma demande',
-    submitting: 'Envoi en cours…',
-    retry: 'Réessayer',
-    another: 'Envoyer une autre demande'
+    idle: 'إرسال طلبي',
+    submitting: 'جارٍ الإرسال…',
+    retry: 'إعادة المحاولة',
+    another: 'إرسال طلب آخر'
   },
-  reassurance: ['Aucune carte bancaire requise', 'Vos données ne sont jamais revendues'],
+  reassurance: ['دون بطاقة بنكية', 'لا تُباع بياناتكم أبداً'],
   success: {
-    title: 'Demande enregistrée',
-    reference: 'Référence : {reference}',
-    text: 'Nous vous recontactons rapidement.'
+    title: 'تم تسجيل الطلب',
+    reference: 'المرجع: {reference}',
+    text: 'نعاود الاتصال بكم سريعاً.'
   },
   errors: {
-    required: 'Ce champ est obligatoire.',
-    minLength: 'Saisissez au moins {min} caractères.',
-    maxLength: 'Saisissez au plus {max} caractères.',
-    email: 'Saisissez une adresse e-mail valide.',
-    phone: 'Saisissez un numéro tunisien valide (8 chiffres, avec ou sans +216).',
-    consent: 'Votre accord est nécessaire pour traiter la demande.',
-    validationGlobal: 'Certains champs sont incorrects. Corrigez-les, puis réessayez.',
-    rateLimited: 'Trop de demandes. Réessayez dans {seconds} s.',
-    rateLimitedFallback: 'Trop de demandes. Réessayez dans quelques instants.',
-    disabled: 'Le formulaire est temporairement indisponible. Écrivez-nous à {email}.',
-    network: 'Connexion impossible. Vérifiez votre connexion, puis réessayez.',
-    unknown: 'Une erreur est survenue. Réessayez dans un instant.',
-    turnstileUnavailable: 'La vérification anti-robot n’a pas pu se charger. Rechargez la page, puis réessayez.'
+    required: 'هذا الحقل إجباري.',
+    minLength: 'أدخلوا {min} أحرف على الأقل.',
+    maxLength: 'أدخلوا {max} حرفاً كحد أقصى.',
+    email: 'أدخلوا بريداً إلكترونياً صحيحاً.',
+    phone: 'أدخلوا رقماً تونسياً صحيحاً (8 أرقام، مع +216 أو بدونه).',
+    consent: 'موافقتكم ضرورية لمعالجة الطلب.',
+    validationGlobal: 'بعض الحقول غير صحيحة. صحّحوها ثم أعيدوا المحاولة.',
+    rateLimited: 'طلبات كثيرة. أعيدوا المحاولة بعد {seconds} ث.',
+    rateLimitedFallback: 'طلبات كثيرة. أعيدوا المحاولة بعد قليل.',
+    disabled: 'الاستمارة غير متاحة مؤقتاً. راسلونا على {email}.',
+    network: 'تعذّر الاتصال. تحققوا من اتصالكم ثم أعيدوا المحاولة.',
+    unknown: 'حدث خطأ. أعيدوا المحاولة بعد قليل.',
+    turnstileUnavailable: 'تعذّر تحميل التحقق من الروبوتات. أعيدوا تحميل الصفحة ثم حاولوا من جديد.'
   },
   turnstile: {
-    ariaLabel: 'Vérification anti-robot'
+    ariaLabel: 'التحقق من الروبوتات'
   }
 };
 
@@ -112,5 +112,6 @@ export const CONTACT_AR: LandingContactCopy = {
  * l'injecte dans `errors.disabled` via le placeholder `{email}`.
  * NOTE : la clé `fallbackEmail` n'existe pas dans le type `LandingContactCopy` (figé par TD1) ;
  * la constante est exportée ici en attendant une extension additive du type.
+ * (Adresse technique, identique en FR et AR.)
  */
 export const CONTACT_FALLBACK_EMAIL = 'contact@instafact.shop';

@@ -1,202 +1,199 @@
-// TODO-AR : traduction arabe à livrer par TD7 — copie provisoire de la copy FR finale (TB3), structure figée par TD1.
 import type { LandingCabinetsCopy } from '../landing-copy.types';
 
 /**
- * Page « Cabinets comptables » — copy FR finale (TB3 ; plan § 6.2, part B § B.3).
+ * Page « Cabinets comptables » — traduction AR (TD7) de la copy FR finale (TB3),
+ * selon docs/landing/ar-glossary.md.
  *
- * Aucun chiffre ni prix : l'offre cabinet est « sur devis » et le seul chiffre du bloc est
- * « 3 étapes » (parcours d'inscription vérifié). Les fonctions sous flag (gouvernance,
- * révision, paie, IA, immobilisations) portent l'astérisque `activationMark`, renvoyée par
- * la note unique `features.footnote`. Aucune promesse de délai de réponse (exclusion § 6.1).
+ * Aucun chiffre ni prix : l'offre cabinet est « حسب عرض الأسعار » et le seul chiffre du bloc
+ * est « 3 étapes ». Les fonctions sous flag portent l'astérisque `activationMark`, renvoyée
+ * par la note unique `features.footnote`. Aucune promesse de délai de réponse (§ 6.1).
  */
 export const CABINETS_AR: LandingCabinetsCopy = {
   hero: {
-    kicker: 'Version Cabinet comptable',
-    title: 'Vos dossiers. Votre équipe. Une vue d’ensemble.',
+    kicker: 'نسخة مكاتب المحاسبة',
+    title: 'ملفاتكم. فريقكم. رؤية شاملة.',
     subtitle:
-      'InstaFact réunit vos dossiers clients, vos collaborateurs et vos honoraires dans un espace cabinet dédié, avec une comptabilité tunisienne complète pour chaque société.',
+      'يجمع InstaFact ملفات حرفائكم ومعاونيكم وأتعابكم في فضاء مخصص للمكتب، مع محاسبة تونسية كاملة لكل مؤسسة.',
     bullets: [
-      'Une base de données par dossier client',
-      'Chaque collaborateur ne voit que ses dossiers affectés',
-      'Journal d’audit chaîné et signé (HMAC-SHA256)'
+      'قاعدة بيانات مستقلة لكل ملف حريف',
+      'كل معاون لا يرى إلا الملفات المسندة إليه',
+      'سجل تدقيق متسلسل وموقّع (HMAC-SHA256)'
     ],
-    secondaryCta: 'Voir comment ça marche',
-    openNote: 'Inscription en 3 étapes : Compte, Cabinet, Adresse & visibilité.'
+    secondaryCta: 'شاهدوا كيف يعمل',
+    openNote: 'التسجيل في 3 خطوات: الحساب، المكتب، العنوان والظهور.'
   },
   howItWorks: {
-    title: 'Comment ça marche',
+    title: 'كيف يعمل',
     steps: [
       {
-        title: 'Créez votre cabinet',
-        text: 'Un compte Responsable cabinet, les informations du cabinet (matricule fiscal, numéro d’inscription professionnelle) et votre adresse.'
+        title: 'أنشئوا مكتبكم',
+        text: 'حساب مدير المكتب، وبيانات المكتب (المعرّف الجبائي، رقم التسجيل المهني) وعنوانكم.'
       },
       {
-        title: 'Ajoutez vos dossiers clients',
-        text: 'Créez un dossier pour une société sans compte InstaFact, ou acceptez la demande de liaison d’une société déjà inscrite.'
+        title: 'أضيفوا ملفات حرفائكم',
+        text: 'أنشئوا ملفاً لمؤسسة دون حساب InstaFact، أو اقبلوا طلب الربط من مؤسسة مسجلة.'
       },
       {
-        title: 'Travaillez en équipe',
-        text: 'Invitez vos collaborateurs, affectez-leur des dossiers et ouvrez chaque dossier dans son espace comptable dédié.'
+        title: 'اشتغلوا كفريق',
+        text: 'ادعوا معاونيكم، وأسندوا إليهم الملفات، وافتحوا كل ملف في فضائه المحاسبي المخصص.'
       }
     ]
   },
   features: {
-    title: 'Tout ce qu’un cabinet gère au quotidien',
-    subtitle: 'Cinq familles de fonctions, du portefeuille aux honoraires.',
+    title: 'كل ما يديره المكتب يومياً',
+    subtitle: 'خمس عائلات من الوظائف، من محفظة الملفات إلى الأتعاب.',
     activationMark: '*',
     families: [
       {
-        title: 'Portefeuille & dossiers',
+        title: 'المحفظة والملفات',
         items: [
-          'Tableau de bord : échéances en retard, dossiers inactifs, invitations en attente',
-          'Échéancier fiscal multi-dossiers : dépôts, paiements, rappels, pièces jointes',
-          'Création de dossiers pour des sociétés sans compte InstaFact',
-          'Demandes de liaison envoyées par les sociétés déjà inscrites',
-          'Échanges cabinet-client : messages et pièces au même endroit'
+          'لوحة متابعة: آجال متأخرة، ملفات غير نشطة، دعوات معلقة',
+          'رزنامة جبائية متعددة الملفات: إيداعات، خلاص، تذكيرات، مرفقات',
+          'إنشاء ملفات لمؤسسات دون حساب InstaFact',
+          'طلبات ربط ترسلها المؤسسات المسجلة',
+          'مراسلات المكتب والحريف: رسائل ومرفقات في مكان واحد'
         ]
       },
       {
-        title: 'Équipe & gouvernance',
+        title: 'الفريق والحوكمة',
         items: [
-          'Collaborateurs et affectation des dossiers',
-          'Dossiers permanents*',
-          'Feuilles de temps avec chronomètre*',
-          'Rentabilité par dossier et par collaborateur*',
-          'Notes de frais, congés et absences*',
-          'Paie interne du cabinet*'
+          'المعاونون وإسناد الملفات',
+          'الملفات الدائمة*',
+          'جداول الساعات مع مؤقت*',
+          'المردودية حسب الملف وحسب المعاون*',
+          'مذكرات المصاريف والعطل والغيابات*',
+          'الأجور الداخلية للمكتب*'
         ]
       },
       {
-        title: 'Honoraires',
+        title: 'الأتعاب',
         items: [
-          'Devis, factures et avoirs d’honoraires',
-          'Codes d’activité et lignes détaillées',
-          'TVA et retenue à la source',
-          'Encaissements',
-          'Facturation récurrente'
+          'عروض أسعار وفواتير وفواتير دائنة للأتعاب',
+          'رموز الأنشطة وسطور مفصلة',
+          'الأداء على القيمة المضافة (TVA) والخصم من المورد',
+          'التحصيلات',
+          'الفوترة الدورية'
         ]
       },
       {
-        title: 'Comptabilité & fiscalité par dossier',
+        title: 'المحاسبة والجباية لكل ملف',
         items: [
-          'Plan comptable NCT, journaux, grand livre, balances',
-          'Lettrage et rapprochement bancaire',
-          'TVA et déclaration mensuelle',
-          'Retenues à la source et export TEJ',
-          'États financiers NCT, clôture, export FEC',
-          'Immobilisations et amortissements*',
-          'Paie des sociétés clientes : CNSS, IRPP'
+          'مخطط حسابات NCT، دفاتر يومية، دفتر أستاذ، موازين مراجعة',
+          'التسوية (التقابض) والمطابقة البنكية',
+          'الأداء على القيمة المضافة (TVA) والتصريح الشهري',
+          'الخصم من المورد وتصدير TEJ',
+          'القوائم المالية NCT، الإقفال، تصدير FEC',
+          'الأصول الثابتة والاستهلاكات*',
+          'أجور مؤسسات الحرفاء: CNSS، IRPP'
         ]
       },
       {
-        title: 'Assistant IA « Chef de mission »*',
+        title: 'المساعد الذكي «رئيس المهمة»*',
         items: [
-          'Questions en langage naturel sur le portefeuille',
-          'Réponses appuyées uniquement sur les données de vos dossiers',
-          'Rappels proposés, jamais envoyés sans votre confirmation',
-          'Une aide, pas un décideur.'
+          'أسئلة بلغة طبيعية حول المحفظة',
+          'إجابات مبنية فقط على بيانات ملفاتكم',
+          'تذكيرات مقترحة لا تُرسل أبداً دون تأكيدكم',
+          'مساعدة، لا صانع قرار.'
         ]
       }
     ],
-    footnote:
-      '* Fonctions disponibles selon leur activation et les permissions accordées par le Responsable cabinet.'
+    footnote: '* وظائف متاحة حسب تفعيلها والصلاحيات الممنوحة من مدير المكتب.'
   },
   roles: {
-    title: 'Deux rôles, des droits clairs',
+    title: 'دوران وصلاحيات واضحة',
     cards: [
       {
-        title: 'Responsable cabinet',
-        text: 'Crée les dossiers, invite les collaborateurs, affecte les dossiers, gère les honoraires et les paramètres du cabinet. Voit tous les dossiers actifs.'
+        title: 'مدير المكتب',
+        text: 'ينشئ الملفات، ويدعو المعاونين، ويسند الملفات، ويدير الأتعاب وإعدادات المكتب. يرى جميع الملفات النشطة.'
       },
       {
-        title: 'Collaborateur',
-        text: 'Travaille sur les dossiers qui lui sont affectés : comptabilité, déclarations, échanges avec le client. Ne voit que ses dossiers.'
+        title: 'المعاون',
+        text: 'يعمل على الملفات المسندة إليه: المحاسبة، التصريحات، المراسلات مع الحريف. لا يرى إلا ملفاته.'
       },
       {
-        title: 'Assistant IA « Chef de mission »*',
-        text: 'Répond aux questions du cabinet à partir des dossiers auxquels l’utilisateur a accès. Une aide, pas un décideur.'
+        title: 'المساعد الذكي «رئيس المهمة»*',
+        text: 'يجيب عن أسئلة المكتب انطلاقاً من الملفات التي يمكن للمستخدم الوصول إليها. مساعدة، لا صانع قرار.'
       }
     ],
-    banner: 'Chaque ouverture de dossier crée un accès délégué, limité au dossier choisi et tracé dans le journal d’audit.'
+    banner: 'كل فتح لملف ينشئ ولوجاً مفوضاً، محدوداً بالملف المختار ومتتبعاً في سجل التدقيق.'
   },
   security: {
-    title: 'Chaque dossier reste isolé',
+    title: 'كل ملف يبقى معزولاً',
     facts: [
       {
-        title: 'Une base de données par dossier client',
-        text: 'Les écritures d’une société ne partagent jamais la base d’une autre.'
+        title: 'قاعدة بيانات لكل ملف حريف',
+        text: 'قيود أي مؤسسة لا تشارك أبداً قاعدة بيانات مؤسسة أخرى.'
       },
       {
-        title: 'Accès délégué et tracé',
-        text: 'L’ouverture d’un dossier génère un jeton limité à ce dossier ; les actions sont journalisées.'
+        title: 'ولوج مفوض ومتتبع',
+        text: 'فتح الملف يولّد رمز ولوج محدوداً بذلك الملف؛ وتُسجَّل جميع الإجراءات.'
       },
       {
-        title: 'Journal d’audit inviolable',
-        text: 'Chaque entrée est chaînée et signée (HMAC-SHA256) : toute altération est détectable.'
+        title: 'سجل تدقيق غير قابل للتلاعب',
+        text: 'كل مدخل متسلسل وموقّع (HMAC-SHA256): أي تعديل قابل للكشف.'
       },
       {
-        title: 'Authentification renforcée',
-        text: 'Connexion JWT et double authentification (2FA).'
+        title: 'مصادقة معززة',
+        text: 'دخول JWT ومصادقة ثنائية (2FA).'
       }
     ],
-    aiNote:
-      'L’assistant peut fonctionner sur un modèle exécuté sur nos serveurs (Ollama), avec une option cloud selon la configuration.',
-    moreLink: 'En savoir plus sur la sécurité'
+    aiNote: 'يمكن للمساعد أن يعمل على نموذج يُشغَّل على خوادمنا (Ollama)، مع خيار سحابي حسب الإعدادات.',
+    moreLink: 'اعرفوا المزيد عن الأمان'
   },
   offer: {
-    title: 'Offre Cabinet — sur devis',
-    text: 'Une offre cabinet distincte des forfaits entreprise, adaptée au nombre de dossiers et de collaborateurs.',
+    title: 'عرض المكتب — حسب عرض الأسعار',
+    text: 'عرض للمكاتب مستقل عن صيغ المؤسسات، ملائم لعدد الملفات والمعاونين.',
     bullets: [
-      'Démonstration personnalisée sur vos cas réels',
-      'Formation de vos collaborateurs',
-      'Conditions partenaires dédiées pour les cabinets qui accompagnent leurs clients sur InstaFact'
+      'عرض توضيحي مخصص على حالاتكم الفعلية',
+      'تكوين معاونيكم',
+      'شروط شراكة مخصصة للمكاتب التي ترافق حرفاءها على InstaFact'
     ],
-    note: 'Aucune carte bancaire requise. Les forfaits entreprise restent disponibles pour vos sociétés clientes.',
-    cta: 'Demander une démo cabinet',
-    pricingLink: 'Voir les tarifs entreprise'
+    note: 'دون بطاقة بنكية. وتبقى صيغ المؤسسات متاحة لمؤسسات حرفائكم.',
+    cta: 'طلب عرض توضيحي للمكتب',
+    pricingLink: 'اطّلعوا على أسعار المؤسسات'
   },
   faq: {
-    title: 'Questions fréquentes des cabinets',
+    title: 'أسئلة شائعة للمكاتب',
     items: [
       {
-        question: 'Chaque collaborateur voit-il tous les dossiers ?',
+        question: 'هل يرى كل معاون جميع الملفات؟',
         answer:
-          'Non. Un collaborateur ne voit que les dossiers qui lui sont affectés par le Responsable cabinet. Le Responsable cabinet voit l’ensemble des dossiers actifs du cabinet.'
+          'لا. لا يرى المعاون إلا الملفات التي يسندها إليه مدير المكتب. أما مدير المكتب فيرى جميع ملفات المكتب النشطة.'
       },
       {
-        question: 'Mes clients doivent-ils avoir un compte InstaFact ?',
+        question: 'هل يجب أن يكون لحرفائي حساب InstaFact؟',
         answer:
-          'Non. Vous pouvez créer un dossier pour une société qui n’a pas de compte. Si le client utilise déjà InstaFact, il vous envoie une demande de liaison que vous acceptez depuis votre espace.'
+          'لا. يمكنكم إنشاء ملف لمؤسسة ليس لها حساب. وإذا كان الحريف يستعمل InstaFact، يرسل لكم طلب ربط تقبلونه من فضائكم.'
       },
       {
-        question: 'Puis-je facturer mes honoraires depuis InstaFact ?',
+        question: 'هل يمكنني فوترة أتعابي من InstaFact؟',
         answer:
-          'Oui : devis, factures et avoirs d’honoraires, avec TVA et retenue à la source, encaissements et facturation récurrente.'
+          'نعم: عروض أسعار وفواتير وفواتير دائنة للأتعاب، مع الأداء على القيمة المضافة (TVA) والخصم من المورد، والتحصيلات والفوترة الدورية.'
       },
       {
-        question: 'Comment fonctionne l’assistant Chef de mission ?',
+        question: 'كيف يعمل المساعد «رئيس المهمة»؟',
         answer:
-          'Il répond à partir des données de vos dossiers et refuse de répondre lorsqu’il ne dispose pas d’éléments. Il propose des actions, par exemple un rappel, que vous confirmez avant envoi. Disponible selon activation.'
+          'يجيب انطلاقاً من بيانات ملفاتكم ويمتنع عن الإجابة عندما لا تتوفر لديه العناصر. يقترح إجراءات، كإرسال تذكير مثلاً، تؤكدونها قبل الإرسال. متاح حسب التفعيل.'
       },
       {
-        question: 'Les données de mes dossiers sont-elles séparées ?',
+        question: 'هل بيانات ملفاتي منفصلة؟',
         answer:
-          'Oui. Chaque dossier client dispose de sa propre base de données et l’accès se fait par un jeton délégué limité à ce dossier.'
+          'نعم. لكل ملف حريف قاعدة بياناته الخاصة، ويتم الوصول عبر رمز مفوض محدود بذلك الملف.'
       },
       {
-        question: 'Combien coûte la version Cabinet ?',
+        question: 'كم تبلغ كلفة نسخة المكاتب؟',
         answer:
-          'L’offre Cabinet est établie sur devis, selon le nombre de dossiers et de collaborateurs. Demandez une démo : nous revenons vers vous avec une proposition.'
+          'يُعدّ عرض المكاتب حسب عرض أسعار، بحسب عدد الملفات والمعاونين. اطلبوا عرضاً توضيحياً: نعود إليكم باقتراح.'
       },
       {
-        question: 'Puis-je tester avant de m’engager ?',
+        question: 'هل يمكنني التجربة قبل الالتزام؟',
         answer:
-          'Oui, lors d’une démonstration personnalisée sur vos cas réels. Lorsque l’inscription cabinet est ouverte, vous pouvez aussi créer votre espace directement.'
+          'نعم، خلال عرض توضيحي مخصص على حالاتكم الفعلية. وعند فتح تسجيل المكاتب، يمكنكم أيضاً إنشاء فضائكم مباشرة.'
       }
     ]
   },
   contact: {
-    title: 'Parlons de votre cabinet',
-    lead: 'Décrivez votre cabinet et vos besoins : nous vous recontactons rapidement.'
+    title: 'لنتحدث عن مكتبكم',
+    lead: 'صِفوا مكتبكم وحاجاتكم: نعاود الاتصال بكم سريعاً.'
   }
 };

@@ -1,87 +1,86 @@
-// TODO-AR : traduction arabe à livrer par TD7 (copie FR provisoire, structure figée par TD1).
 import type { LandingSharedCopy } from '../landing-copy.types';
 
-/** Copie provisoire du FR (TA3) — la traduction arabe (TD7) remplace les valeurs, pas la structure. */
+/** Zone partagée AR (header, footer, CTA, sélecteur de langue). Traduction TD7 selon docs/landing/ar-glossary.md. */
 export const SHARED_AR: LandingSharedCopy = {
   brand: {
     name: 'InstaFact',
-    tagline: 'Gestion commerciale intelligente',
-    logoAlt: 'InstaFact — gestion commerciale, comptabilité et paie'
+    tagline: 'إدارة تجارية ذكية',
+    logoAlt: 'InstaFact — إدارة تجارية ومحاسبة وأجور'
   },
   nav: {
-    home: 'Accueil',
-    modules: 'Modules',
-    newFeatures: 'Nouveautés',
-    pricing: 'Tarifs',
-    cabinets: 'Cabinets comptables',
-    security: 'Sécurité',
-    faq: 'FAQ',
-    login: 'Se connecter',
-    menuOpen: 'Ouvrir le menu',
-    menuClose: 'Fermer le menu',
-    menuLabel: 'Navigation principale'
+    home: 'الرئيسية',
+    modules: 'الوحدات',
+    newFeatures: 'الجديد',
+    pricing: 'الأسعار',
+    cabinets: 'مكاتب المحاسبة',
+    security: 'الأمان',
+    faq: 'الأسئلة الشائعة',
+    login: 'تسجيل الدخول',
+    menuOpen: 'فتح القائمة',
+    menuClose: 'إغلاق القائمة',
+    menuLabel: 'التنقل الرئيسي'
   },
   langSwitcher: {
-    label: 'Choix de la langue',
+    label: 'اختيار اللغة',
     fr: 'FR',
     ar: 'العربية',
     switchTo: {
-      fr: 'Afficher la page en français',
-      ar: 'Afficher la page en arabe'
+      fr: 'عرض الصفحة بالفرنسية',
+      ar: 'عرض الصفحة بالعربية'
     }
   },
   cta: {
     company: {
-      open: 'Créer un compte gratuit',
-      closed: 'Demander un accès'
+      open: 'إنشاء حساب مجاني',
+      closed: 'طلب الوصول'
     },
     firm: {
-      open: 'Créer mon espace cabinet',
-      closed: 'Demander une démo cabinet'
+      open: 'إنشاء فضاء المكتب',
+      closed: 'طلب عرض توضيحي للمكتب'
     },
-    skeleton: 'Chargement du bouton d’action'
+    skeleton: 'جارٍ تحميل زر الإجراء'
   },
   virtualTour: {
-    link: 'Visite virtuelle',
-    title: 'Rue InstaFact',
-    text: 'Parcourez les vitrines publiques des entreprises partenaires (opt-in, données publiques uniquement).'
+    link: 'الزيارة الافتراضية',
+    title: 'شارع InstaFact',
+    text: 'تصفحوا الواجهات العمومية للمؤسسات الشريكة (باشتراك اختياري، بيانات عمومية فقط).'
   },
   footer: {
-    baseline: 'InstaFact — gestion commerciale, comptabilité et paie pour les entreprises tunisiennes.',
+    baseline: 'InstaFact — إدارة تجارية ومحاسبة وأجور للمؤسسات التونسية.',
     logoAlt: 'InstaFact',
     product: {
-      title: 'Produit',
-      modules: 'Modules',
-      newFeatures: 'Nouveautés',
-      pricing: 'Tarifs',
-      security: 'Sécurité',
-      faq: 'FAQ'
+      title: 'المنتج',
+      modules: 'الوحدات',
+      newFeatures: 'الجديد',
+      pricing: 'الأسعار',
+      security: 'الأمان',
+      faq: 'الأسئلة الشائعة'
     },
     segments: {
-      title: 'Segments',
-      sme: 'PME et commerces',
-      cabinets: 'Cabinets comptables',
-      virtualTour: 'Visite virtuelle 3D'
+      title: 'الشرائح',
+      sme: 'المؤسسات الصغرى والمتوسطة والمحلات التجارية',
+      cabinets: 'مكاتب المحاسبة',
+      virtualTour: 'الزيارة الافتراضية ثلاثية الأبعاد'
     },
     resources: {
-      title: 'Ressources',
-      faq: 'Questions fréquentes',
-      contact: 'Contact',
-      login: 'Se connecter'
+      title: 'الموارد',
+      faq: 'الأسئلة الشائعة',
+      contact: 'اتصلوا بنا',
+      login: 'تسجيل الدخول'
     },
     legal: {
-      title: 'Légal',
-      terms: 'Conditions d’utilisation',
-      legalNotice: 'Mentions légales'
+      title: 'قانوني',
+      terms: 'شروط الاستخدام',
+      legalNotice: 'البيانات القانونية'
     },
-    copyright: '© {year} InstaFact. Tous droits réservés.'
+    copyright: '© {year} InstaFact. جميع الحقوق محفوظة.'
   },
   common: {
-    skipToContent: 'Aller au contenu',
-    learnMore: 'En savoir plus',
-    uponActivation: '(selon activation)',
-    currency: 'TND',
-    perMonth: '/mois',
-    perYear: '/an'
+    skipToContent: 'الانتقال إلى المحتوى',
+    learnMore: 'اعرفوا المزيد',
+    uponActivation: '(حسب التفعيل)',
+    currency: 'د.ت',
+    perMonth: '/ شهرياً',
+    perYear: '/ سنوياً'
   }
 };

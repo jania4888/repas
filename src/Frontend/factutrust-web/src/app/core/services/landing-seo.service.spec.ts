@@ -72,7 +72,13 @@ describe('LandingSeoService', () => {
     expect(meta.getTag('property="og:url"')?.getAttribute('content')).toBe(`${service.origin}/ar/cabinets-comptables`);
     expect(meta.getTag('property="og:locale"')?.getAttribute('content')).toBe('ar_TN');
     expect(meta.getTag('property="og:locale:alternate"')?.getAttribute('content')).toBe('fr_TN');
-    expect(doc.documentElement.innerHTML).not.toContain('undefined');
+    // Aucune valeur « undefined » dans les balises gérées par le service (assertion scopée :
+    // le document Karma est partagé avec les autres suites, innerHTML global y est fragile).
+    const managedHtml = Array.from(doc.head.querySelectorAll(`[${LANDING_SEO_ATTR}="1"]`))
+      .map(el => el.outerHTML)
+      .join('|');
+    expect(managedHtml).not.toContain('undefined');
+    expect(doc.title).not.toContain('undefined');
   });
 
   it("injecte le JSON-LD de l'accueil (Organization + SoftwareApplication, 3 offres) par textContent", () => {

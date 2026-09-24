@@ -1,606 +1,605 @@
-// TODO-AR : traduction arabe à livrer par TD7 (copie FR provisoire, structure figée par TD1).
 import type { LandingHomeCopy } from '../landing-copy.types';
 
-/** Copie provisoire du FR (TA3) — la traduction arabe (TD7) remplace les valeurs, pas la structure. */
 /**
- * Accueil FR — copy finale (TA3), conforme au plan § 5.2 / A.4 (termes interdits : § 5.3).
- * Aucun prix ni statistique en dur : `{count}`, `{amount}`, `{percent}` et `{year}` sont
- * injectés par les composants depuis `landing-pricing.ts` et les constantes de faits
- * (modules activables, rôles, outils IA).
+ * Accueil AR — traduction (TD7) de la copy FR finale (TA3), selon docs/landing/ar-glossary.md.
+ * Aucun prix ni statistique en dur : `{count}`, `{toolsCount}`, `{rolesCount}`, `{amount}`,
+ * `{percent}` et `{year}` sont injectés par les composants depuis `landing-pricing.ts` et
+ * `landing-facts.ts`. Les `newFeatures.items[*].location` restent en français : ce sont les
+ * chemins de menus de l'application, dont l'interface est en français (hors périmètre AR).
  */
 export const HOME_AR: LandingHomeCopy = {
   promo: {
     open: {
-      text: 'Offre de lancement Tunisie — {count} factures et {count} devis par mois gratuits, sans carte bancaire.',
-      cta: 'Créer un compte gratuit'
+      text: 'عرض إطلاق في تونس — {count} فواتير و{count} عروض أسعار شهرياً مجاناً، دون بطاقة بنكية.',
+      cta: 'إنشاء حساب مجاني'
     },
     closed: {
-      text: 'Nouveau en {year} : RH & Paie, Immobilisations, États financiers NCT, Déclaration mensuelle et version Cabinet comptable.',
-      cta: 'Voir les nouveautés'
+      text: 'جديد {year}: الموارد البشرية والأجور، الأصول الثابتة، القوائم المالية NCT، التصريح الشهري ونسخة مكاتب المحاسبة.',
+      cta: 'اكتشفوا الجديد'
     },
-    dismiss: 'Fermer la bannière',
-    region: 'Annonce'
+    dismiss: 'إغلاق الشريط',
+    region: 'إعلان'
   },
   hero: {
-    kicker: 'Gestion commerciale, comptabilité et paie — pensé pour la Tunisie',
-    title: 'Facturez, tenez votre comptabilité et payez vos équipes dans une seule plateforme tunisienne.',
+    kicker: 'إدارة تجارية ومحاسبة وأجور — مصممة لتونس',
+    title: 'أصدروا الفواتير، وأديروا محاسبتكم، وادفعوا أجور فرقكم من منصة تونسية واحدة.',
     subtitle:
-      'Facturation conforme TEJ, comptabilité NCT, paie CNSS/IRPP, déclaration mensuelle, stock, projets et un assistant IA qui tourne sur vos serveurs. Pour les PME et les cabinets comptables.',
-    ctaOpenNote: '{count} factures par mois, sans carte bancaire.',
-    ctaClosedNote: 'L’inscription en ligne est sur invitation : décrivez votre besoin, nous vous recontactons.',
-    secondaryCta: 'Découvrir la version Cabinet comptable',
-    modulesLink: 'Voir les {count} modules',
-    imageAlt: 'Aperçu du tableau de bord InstaFact'
+      'فوترة إلكترونية مطابقة لمنظومة TEJ، محاسبة NCT، أجور CNSS/IRPP، تصريح شهري، مخزون، مشاريع، ومساعد ذكي يعمل على خوادمكم. للمؤسسات الصغرى والمتوسطة ومكاتب المحاسبة.',
+    ctaOpenNote: '{count} فواتير شهرياً، دون بطاقة بنكية.',
+    ctaClosedNote: 'التسجيل عبر الإنترنت بدعوة: صِفوا حاجتكم، نعاود الاتصال بكم.',
+    secondaryCta: 'اكتشفوا نسخة مكاتب المحاسبة',
+    modulesLink: 'اطّلعوا على الوحدات الـ{count}',
+    imageAlt: 'معاينة لوحة متابعة InstaFact'
   },
   trustStrip: {
-    modules: '{count} modules activables',
-    roles: '{count} rôles utilisateurs',
-    aiTools: '{count}+ outils IA métier',
+    modules: '{count} وحدة قابلة للتفعيل',
+    roles: '{count} دوراً للمستخدمين',
+    aiTools: '{count}+ أداة ذكاء اصطناعي مهنية',
     badges: [
-      'Facturation TEJ (XML + retenue à la source)',
-      'Plan comptable & états NCT',
-      'Journal d’audit chaîné (HMAC-SHA256)'
+      'فوترة TEJ (XML + الخصم من المورد)',
+      'مخطط حسابات وقوائم مالية NCT',
+      'سجل تدقيق متسلسل (HMAC-SHA256)'
     ]
   },
   problemSolution: {
-    title: 'Trois irritants du quotidien, trois réponses concrètes',
+    title: 'ثلاث إزعاجات يومية، ثلاث إجابات ملموسة',
     items: [
       {
-        problem: 'Facturer, relancer, exporter pour le comptable : trois outils, trois ressaisies.',
+        problem: 'الفوترة والتذكير والتصدير للمحاسب: ثلاث أدوات، وثلاث عمليات إعادة إدخال.',
         answer:
-          'Devis, factures, avoirs, encaissements et écritures comptables partagent la même base. Le comptable exporte le FEC ou travaille directement dans le dossier.'
+          'عروض الأسعار والفواتير والفواتير الدائنة والتحصيلات والقيود المحاسبية تتقاسم القاعدة نفسها. يصدّر المحاسب ملف FEC أو يعمل مباشرة في الملف.'
       },
       {
-        problem: 'La retenue à la source, la TVA et la déclaration mensuelle se calculent à la main.',
+        problem: 'الخصم من المورد والأداء على القيمة المضافة (TVA) والتصريح الشهري تُحسب يدوياً.',
         answer:
-          'InstaFact applique les taux paramétrés, génère les certificats de retenue et prépare la déclaration mensuelle avec son échéancier.'
+          'يطبّق InstaFact النسب المضبوطة، ويولّد شهادات الخصم، ويحضّر التصريح الشهري مع رزنامته.'
       },
       {
-        problem: 'La paie et les immobilisations vivent dans des fichiers Excel fragiles.',
+        problem: 'الأجور والأصول الثابتة محفوظة في ملفات Excel هشة.',
         answer:
-          'Bulletins CNSS/IRPP, soldes de tout compte, fiches d’immobilisations et dotations sont dans la même plateforme, avec un journal d’audit.'
+          'كشوف الرواتب CNSS/IRPP، والمخالصات النهائية، وبطاقات الأصول الثابتة، ومخصصات الاستهلاك كلها في المنصة نفسها، مع سجل تدقيق.'
       }
     ]
   },
   modules: {
-    kicker: 'Tout est inclus · {count} modules activables',
-    title: 'Une plateforme, des modules que vous activez selon votre activité',
-    subtitle: 'Chaque module s’active depuis les paramètres, sans changer d’outil.',
+    kicker: 'كل شيء مشمول · {count} وحدة قابلة للتفعيل',
+    title: 'منصة واحدة، ووحدات تفعّلونها حسب نشاطكم',
+    subtitle: 'كل وحدة تُفعَّل من الإعدادات، دون تغيير الأداة.',
     tabs: [
       {
         id: 'invoices',
-        label: 'Facturation & TEJ',
-        title: 'Facturation & TEJ',
-        tagline: 'Des factures conformes, envoyées et suivies',
-        points: ['Devis → facture → avoir', 'XML TEJ et certificats de retenue à la source', 'Relances et encaissements']
+        label: 'الفوترة و TEJ',
+        title: 'الفوترة و TEJ',
+        tagline: 'فواتير مطابقة، مُرسلة ومتتبعة',
+        points: ['عرض أسعار ← فاتورة ← فاتورة دائنة', 'XML TEJ وشهادات الخصم من المورد', 'التذكيرات والتحصيلات']
       },
       {
         id: 'pos',
-        label: 'Point de vente',
-        title: 'Point de vente',
-        tagline: 'Encaissez en caisse, synchronisé avec le stock',
-        points: ['Tickets, remises, clôture de caisse', 'Stock décrémenté en direct', 'Rôle Caissier dédié']
+        label: 'نقطة البيع',
+        title: 'نقطة البيع',
+        tagline: 'حصّلوا في الصندوق، بتزامن مع المخزون',
+        points: ['الوصولات، التخفيضات، إقفال الصندوق', 'المخزون يُنقَّص مباشرة', 'دور مخصص لأمين الصندوق']
       },
       {
         id: 'stock',
-        label: 'Stock & achats',
-        title: 'Stock & achats',
-        tagline: 'Du bon de commande fournisseur au transfert entre dépôts',
-        points: ['Achats et réceptions', 'Transferts inter-dépôts et bons de retour', 'Alertes de réapprovisionnement']
+        label: 'المخزون والمشتريات',
+        title: 'المخزون والمشتريات',
+        tagline: 'من طلبية المزوّد إلى التحويل بين المستودعات',
+        points: ['المشتريات والاستلامات', 'التحويلات بين المستودعات ووصولات الإرجاع', 'تنبيهات إعادة التموين']
       },
       {
         id: 'treasury',
-        label: 'Trésorerie & banque',
-        title: 'Trésorerie & banque',
-        tagline: 'Suivez encaissements, dépôts et rapprochement',
-        points: ['Comptes et dépôts', 'Rapprochement bancaire par import', 'Trésorerie prévisionnelle (selon activation)']
+        label: 'الخزينة والبنك',
+        title: 'الخزينة والبنك',
+        tagline: 'تتبعوا التحصيلات والإيداعات والمطابقة',
+        points: ['الحسابات والإيداعات', 'المطابقة البنكية عبر الاستيراد', 'توقعات الخزينة (حسب التفعيل)']
       },
       {
         id: 'accounting',
-        label: 'Comptabilité NCT',
-        title: 'Comptabilité NCT',
-        tagline: 'Une comptabilité complète, pas un simple export',
-        points: ['Écritures, lettrage, clôture', 'Bilan, compte de résultat, états NCT, livre d’inventaire', 'Export FEC']
+        label: 'المحاسبة NCT',
+        title: 'المحاسبة NCT',
+        tagline: 'محاسبة كاملة، لا مجرد تصدير',
+        points: ['القيود، التسوية (التقابض)، الإقفال', 'الميزانية، كشف النتائج، القوائم NCT، دفتر الجرد', 'تصدير FEC']
       },
       {
         id: 'fiscal',
-        label: 'Fiscalité',
-        title: 'Fiscalité',
-        tagline: 'Déclaration mensuelle et échéancier sous contrôle',
-        points: ['Configuration, calcul et suivi de la DM', 'Détermination du résultat fiscal', 'Échéancier fiscal avec rappels']
+        label: 'الجباية',
+        title: 'الجباية',
+        tagline: 'التصريح الشهري والرزنامة تحت السيطرة',
+        points: ['إعداد وحساب وتتبع التصريح الشهري', 'تحديد النتيجة الجبائية', 'رزنامة جبائية مع تذكيرات']
       },
       {
         id: 'payroll',
-        label: 'RH & Paie',
-        title: 'RH & Paie',
-        tagline: 'La paie tunisienne, de l’embauche au solde de tout compte',
-        points: ['Bulletins, CNSS, IRPP', 'Régularisation IRPP et déclarations', 'Livre et journal de paie']
+        label: 'الموارد البشرية والأجور',
+        title: 'الموارد البشرية والأجور',
+        tagline: 'الأجور التونسية، من الانتداب إلى المخالصة النهائية',
+        points: ['كشوف الرواتب، CNSS، IRPP', 'تسوية IRPP والتصريحات', 'دفتر ويومية الأجور']
       },
       {
         id: 'assets',
-        label: 'Immobilisations',
-        title: 'Immobilisations',
-        tagline: 'Amortissements calculés, écritures générées',
-        points: ['Fiches et catégories', 'Tableau d’amortissement, dotations', 'Paramétrage des méthodes']
+        label: 'الأصول الثابتة',
+        title: 'الأصول الثابتة',
+        tagline: 'استهلاكات محسوبة، وقيود مولدة',
+        points: ['البطاقات والأصناف', 'جدول الاستهلاك والمخصصات', 'ضبط الطرق']
       },
       {
         id: 'projects',
-        label: 'Projets & contrats',
-        title: 'Projets & contrats',
-        tagline: 'Suivez le temps, facturez les contrats récurrents',
-        points: ['Projets, tâches, feuilles de temps', 'Contrats récurrents et brouillons à valider', 'Commandes clients et carnet']
+        label: 'المشاريع والعقود',
+        title: 'المشاريع والعقود',
+        tagline: 'تتبعوا الوقت، وفوتروا العقود الدورية',
+        points: ['المشاريع، المهام، جداول الساعات', 'عقود دورية ومسودات للاعتماد', 'طلبيات الحرفاء ودفتر الطلبيات']
       },
       {
         id: 'crm',
-        label: 'CRM & portail client',
-        title: 'CRM & portail client',
-        tagline: 'Vos clients suivent leurs factures en libre-service',
-        points: ['Pipeline commercial', 'Portail : factures PDF, paiements, relevé', 'Tarifs négociés et promotions']
+        label: 'إدارة الحرفاء وبوابة الحريف',
+        title: 'إدارة الحرفاء وبوابة الحريف',
+        tagline: 'حرفاؤكم يتتبعون فواتيرهم ذاتياً',
+        points: ['مسار المبيعات', 'البوابة: فواتير PDF، المدفوعات، الكشف', 'أسعار متفاوض عليها وتخفيضات']
       },
       {
         id: 'ai',
-        label: 'IA & Studio',
-        title: 'IA & Studio',
-        tagline: 'Un assistant qui agit dans vos données, sur vos serveurs',
+        label: 'الذكاء الاصطناعي و Studio',
+        title: 'الذكاء الاصطناعي و Studio',
+        tagline: 'مساعد يعمل في بياناتكم، على خوادمكم',
         points: [
-          'Plus de {toolsCount} outils métier',
-          'Modèles locaux (Ollama) ou cloud au choix (OpenRouter)',
-          'Studio : tables, formulaires, workflows sans code'
+          'أكثر من {toolsCount} أداة مهنية',
+          'نماذج محلية (Ollama) أو سحابية حسب الاختيار (OpenRouter)',
+          'Studio: جداول واستمارات وسير عمل دون برمجة'
         ]
       },
       {
         id: 'forecasting',
-        label: 'Prévisions',
-        title: 'Prévisions',
-        tagline: 'Anticipez ventes et stock avec le calendrier tunisien',
-        points: ['Prévisions de ventes', 'Classification ABC/XYZ', 'Ramadan, Aïd et fêtes intégrés']
+        label: 'التوقعات',
+        title: 'التوقعات',
+        tagline: 'توقعوا المبيعات والمخزون وفق الرزنامة التونسية',
+        points: ['توقعات المبيعات', 'تصنيف ABC/XYZ', 'رمضان والعيد والأعياد مدمجة']
       }
     ]
   },
   features: {
-    kicker: 'Fonctionnalités',
-    title: 'Tout ce dont une entreprise tunisienne a besoin',
-    subtitle: 'Des documents commerciaux à la paie, chaque fonction est disponible dans l’application.',
+    kicker: 'المزايا',
+    title: 'كل ما تحتاجه المؤسسة التونسية',
+    subtitle: 'من الوثائق التجارية إلى الأجور، كل وظيفة متاحة في التطبيق.',
     items: [
       {
         icon: 'pi-file',
-        title: 'Documents commerciaux complets',
-        text: 'Devis, commandes, bons de livraison, factures, avoirs et bons de retour, numérotés et liés entre eux.'
+        title: 'وثائق تجارية كاملة',
+        text: 'عروض أسعار، طلبيات، وصولات تسليم، فواتير، فواتير دائنة ووصولات إرجاع، مرقمة ومترابطة.'
       },
       {
         icon: 'pi-lock',
-        title: 'Scellement et traçabilité',
-        text: 'Chaque document est scellé (HMAC-SHA256) et chaque action est inscrite dans un journal d’audit chaîné.'
+        title: 'الختم والتتبع',
+        text: 'كل وثيقة مختومة (HMAC-SHA256) وكل إجراء مسجل في سجل تدقيق متسلسل.'
       },
       {
         icon: 'pi-download',
-        title: 'Exports comptables et fiscaux',
-        text: 'XML TEJ, certificats de retenue à la source, FEC, PDF et Excel.'
+        title: 'تصديرات محاسبية وجبائية',
+        text: 'XML TEJ، شهادات الخصم من المورد، FEC، PDF وExcel.'
       },
       {
         icon: 'pi-microchip-ai',
-        title: 'Assistant IA souverain',
-        text: 'Posez vos questions, laissez l’IA créer ou retrouver des documents : plus de {toolsCount} outils, modèles hébergés chez vous.'
+        title: 'مساعد ذكي سيادي',
+        text: 'اطرحوا أسئلتكم ودعوا الذكاء الاصطناعي ينشئ الوثائق أو يعثر عليها: أكثر من {toolsCount} أداة، ونماذج مستضافة لديكم.'
       },
-      { icon: 'pi-box', title: 'Stock multi-dépôts', text: 'Réceptions, transferts, inventaires et alertes.' },
+      { icon: 'pi-box', title: 'مخزون متعدد المستودعات', text: 'استلامات، تحويلات، جرد وتنبيهات.' },
       {
         icon: 'pi-users',
-        title: '{rolesCount} rôles et permissions fines',
-        text: 'De l’administrateur au caissier, chaque profil ne voit que ce dont il a besoin.'
+        title: '{rolesCount} دوراً وصلاحيات دقيقة',
+        text: 'من المدير إلى أمين الصندوق، كل ملف شخصي لا يرى إلا ما يحتاجه.'
       },
       {
         icon: 'pi-send',
-        title: 'Envoi et relances par e-mail',
-        text: 'Factures et relances envoyées depuis l’application ; WhatsApp et Telegram selon activation.'
+        title: 'الإرسال والتذكير عبر البريد الإلكتروني',
+        text: 'الفواتير والتذكيرات تُرسل من التطبيق؛ WhatsApp وTelegram حسب التفعيل.'
       },
-      { icon: 'pi-wallet', title: 'Paie CNSS / IRPP', text: 'Bulletins, déclarations, régularisations et soldes de tout compte.' },
+      { icon: 'pi-wallet', title: 'الأجور CNSS / IRPP', text: 'كشوف الرواتب، التصريحات، التسويات والمخالصات النهائية.' },
       {
         icon: 'pi-globe',
-        title: 'Portail client',
-        text: 'Vos clients consultent factures, paiements et relevé sans vous appeler.'
+        title: 'بوابة الحريف',
+        text: 'حرفاؤكم يطّلعون على الفواتير والمدفوعات والكشف دون الاتصال بكم.'
       }
     ]
   },
   ai: {
-    kicker: 'Intelligence artificielle',
-    title: 'Une IA qui connaît votre entreprise — et reste chez vous',
-    subtitle: 'Un assistant métier, des modèles hébergés sur votre serveur, une option cloud activable.',
+    kicker: 'الذكاء الاصطناعي',
+    title: 'ذكاء اصطناعي يعرف مؤسستكم — ويبقى لديكم',
+    subtitle: 'مساعد مهني، ونماذج مستضافة على خادمكم، وخيار سحابي قابل للتفعيل.',
     providers: [
       {
-        title: 'Local (Ollama)',
-        text: 'Modèles Qwen 2.5 et Gemma 3 exécutés sur votre serveur : vos données ne sortent pas.'
+        title: 'محلي (Ollama)',
+        text: 'نموذجا Qwen 2.5 وGemma 3 يعملان على خادمكم: بياناتكم لا تغادر.'
       },
       {
-        title: 'Cloud en option (OpenRouter)',
-        text: 'Activable par l’administrateur si vous souhaitez un modèle plus puissant.'
+        title: 'سحابي اختياري (OpenRouter)',
+        text: 'يفعّله المدير إذا أردتم نموذجاً أقوى.'
       }
     ],
     capabilities:
-      'Plus de {count} outils : créer un devis, retrouver une facture, expliquer un solde, importer une facture fournisseur depuis une photo.',
+      'أكثر من {count} أداة: إنشاء عرض أسعار، إيجاد فاتورة، شرح رصيد، استيراد فاتورة مزوّد من صورة.',
     guardrails:
-      'L’assistant répond à partir de vos données et de règles de contrôle (grounding) ; il ne remplace pas votre comptable.',
-    availability: 'Disponible selon la configuration de votre instance.'
+      'يجيب المساعد انطلاقاً من بياناتكم وقواعد ضبط (grounding)؛ وهو لا يعوّض محاسبكم.',
+    availability: 'متاح حسب إعدادات نظامكم.'
   },
   forecasting: {
-    kicker: 'Prévisions',
-    title: 'Anticipez vos ventes et votre stock',
-    subtitle: 'Prévisions de ventes, classification ABC/XYZ et calendrier commercial tunisien.',
-    points: ['Prévisions de ventes par produit', 'Classification ABC/XYZ du stock', 'Ramadan, Aïd et fêtes intégrés au calendrier'],
-    chartCaption: 'Exemple illustratif',
-    illustrativeNote: 'Données fictives à titre d’illustration.'
+    kicker: 'التوقعات',
+    title: 'توقعوا مبيعاتكم ومخزونكم',
+    subtitle: 'توقعات المبيعات، وتصنيف ABC/XYZ، ورزنامة تجارية تونسية.',
+    points: ['توقعات المبيعات حسب المنتج', 'تصنيف ABC/XYZ للمخزون', 'رمضان والعيد والأعياد مدمجة في الرزنامة'],
+    chartCaption: 'مثال توضيحي',
+    illustrativeNote: 'بيانات افتراضية لغرض التوضيح.'
   },
   newFeatures: {
-    kicker: 'Nouveautés {year}',
-    title: 'Ce qui est arrivé dans InstaFact cette année',
-    subtitle: 'Des modules livrés, pas des promesses : chacun est disponible aujourd’hui dans l’application.',
-    inAppLabel: 'Dans l’app',
+    kicker: 'جديد {year}',
+    title: 'ما وصل إلى InstaFact هذه السنة',
+    subtitle: 'وحدات مسلّمة لا وعود: كل واحدة متاحة اليوم في التطبيق.',
+    inAppLabel: 'في التطبيق',
     items: [
       {
-        title: 'RH & Paie tunisienne',
-        text: 'Bulletins, CNSS, IRPP, régularisations, soldes de tout compte, livre et journal de paie.',
+        title: 'الموارد البشرية والأجور التونسية',
+        text: 'كشوف الرواتب، CNSS، IRPP، التسويات، المخالصات النهائية، دفتر ويومية الأجور.',
         location: 'Paie › Salariés, Cycles de paie'
       },
       {
-        title: 'Immobilisations & amortissements',
-        text: 'Fiches, tableau d’amortissement, dotations et écritures générées.',
+        title: 'الأصول الثابتة والاستهلاكات',
+        text: 'بطاقات، جدول استهلاك، مخصصات وقيود مولدة.',
         location: 'Comptabilité › Immobilisations'
       },
       {
-        title: 'États financiers NCT',
-        text: 'Bilan, compte de résultat, états NCT, livre d’inventaire, détermination du résultat fiscal.',
+        title: 'القوائم المالية NCT',
+        text: 'الميزانية، كشف النتائج، القوائم NCT، دفتر الجرد، تحديد النتيجة الجبائية.',
         location: 'Comptabilité › États financiers'
       },
       {
-        title: 'Déclaration mensuelle & échéancier',
-        text: 'Configuration, calcul et suivi de la DM (TVA, retenues, FODEC, TCL selon paramétrage) ; échéancier fiscal.',
+        title: 'التصريح الشهري والرزنامة',
+        text: 'إعداد وحساب وتتبع التصريح الشهري (TVA، الخصومات من المورد، FODEC، TCL حسب الضبط)؛ والرزنامة الجبائية.',
         location: 'Comptabilité › Déclaration mensuelle'
       },
       {
-        title: 'Contrats récurrents',
-        text: 'Abonnements et contrats : factures générées, brouillons à valider avant envoi.',
+        title: 'العقود الدورية',
+        text: 'الاشتراكات والعقود: فواتير مولدة، ومسودات تُعتمد قبل الإرسال.',
         location: 'Ventes › Contrats récurrents'
       },
       {
-        title: 'Projets & feuilles de temps',
-        text: 'Projets, tâches, temps passé et facturation du temps.',
+        title: 'المشاريع وجداول الساعات',
+        text: 'مشاريع، مهام، وقت مستغرق وفوترة الوقت.',
         location: 'Projets'
       },
       {
-        title: 'Commandes clients',
-        text: 'Carnet de commandes, confirmation, bon de livraison et facture générés depuis la commande.',
+        title: 'طلبيات الحرفاء',
+        text: 'دفتر الطلبيات، التأكيد، وصل التسليم والفاتورة تُنشأ من الطلبية.',
         location: 'Ventes › Commandes'
       },
       {
-        title: 'Tarification & promotions',
-        text: 'Grilles tarifaires, promotions et conditions de paiement par client.',
+        title: 'التسعير والتخفيضات',
+        text: 'شبكات أسعار، تخفيضات وشروط خلاص حسب الحريف.',
         location: 'Ventes › Tarification'
       },
       {
-        title: 'Portail client',
-        text: 'Vos clients consultent factures (PDF), paiements et relevé en libre-service.',
+        title: 'بوابة الحريف',
+        text: 'حرفاؤكم يطّلعون على الفواتير (PDF) والمدفوعات والكشف ذاتياً.',
         location: 'Portail client'
       },
       {
-        title: 'Studio IA (low-code)',
-        text: 'Tables, formulaires, vues et workflows d’approbation créés sans code, assistés par l’IA.',
+        title: 'Studio للذكاء الاصطناعي (دون برمجة)',
+        text: 'جداول، استمارات، عروض وسير عمل اعتماد تُنشأ دون برمجة، بمساعدة الذكاء الاصطناعي.',
         location: 'Studio'
       },
       {
-        title: 'Audit comptable continu',
-        text: 'Règles de contrôle, anomalies détectées, commentaires et planification des contrôles.',
+        title: 'التدقيق المحاسبي المستمر',
+        text: 'قواعد ضبط، أخطاء مكتشفة، ملاحظات وبرمجة عمليات الضبط.',
         location: 'Comptabilité › Contrôle d’intégrité'
       },
       {
-        title: 'Bons de retour & transferts',
-        text: 'Retours clients tracés et transferts entre dépôts.',
+        title: 'وصولات الإرجاع والتحويلات',
+        text: 'إرجاعات الحرفاء متتبعة وتحويلات بين المستودعات.',
         location: 'Stock › Transferts, Ventes › Bons de retour'
       },
       {
-        title: 'Rapprochement bancaire & lettrage',
-        text: 'Import de relevé, rapprochement et lettrage des comptes tiers.',
+        title: 'المطابقة البنكية والتسوية (التقابض)',
+        text: 'استيراد الكشف البنكي، المطابقة وتسوية حسابات الأطراف.',
         location: 'Comptabilité › Rapprochement'
       }
     ],
     footnote:
-      'Trésorerie prévisionnelle, envoi WhatsApp/Telegram et code-barres sont disponibles selon activation par votre administrateur.'
+      'توقعات الخزينة، والإرسال عبر WhatsApp/Telegram، والباركود متاحة حسب تفعيلها من مديركم.'
   },
   cabinetTeaser: {
-    kicker: 'Pour les cabinets comptables',
-    title: 'Une version pensée pour les cabinets',
-    subtitle: 'Pilotez tous vos dossiers clients, votre équipe et vos honoraires depuis un seul espace.',
+    kicker: 'لمكاتب المحاسبة',
+    title: 'نسخة مصممة للمكاتب',
+    subtitle: 'أديروا كل ملفات حرفائكم وفريقكم وأتعابكم من فضاء واحد.',
     bullets: [
-      'Un dossier par société cliente, isolé et complet',
-      'Chaque collaborateur ne voit que ses dossiers affectés',
-      'Honoraires, temps et rentabilité du cabinet'
+      'ملف لكل مؤسسة حريفة، معزول وكامل',
+      'كل معاون لا يرى إلا الملفات المسندة إليه',
+      'أتعاب المكتب وأوقاته ومردوديته'
     ],
-    cta: 'Découvrir la version Cabinet',
-    demoLink: 'Demander une démo'
+    cta: 'اكتشفوا نسخة المكاتب',
+    demoLink: 'طلب عرض توضيحي'
   },
   pricing: {
-    kicker: 'Tarifs',
-    title: 'Des tarifs simples, en dinars, sans surprise',
-    subtitle: 'Un plan gratuit pour démarrer, des plans payants sans engagement.',
-    reassurance: 'Sans carte bancaire. Sans engagement. Annulation en un clic depuis votre espace.',
+    kicker: 'الأسعار',
+    title: 'أسعار بسيطة، بالدينار، دون مفاجآت',
+    subtitle: 'خطة مجانية للانطلاق، وخطط مدفوعة دون التزام.',
+    reassurance: 'دون بطاقة بنكية. دون التزام. إلغاء بنقرة واحدة من فضائكم.',
     plans: {
       free: {
-        name: 'Gratuit',
-        badge: 'Idéal pour tester',
-        highlight: '{count} factures gratuites par mois',
+        name: 'مجاني',
+        badge: 'مثالي للتجربة',
+        highlight: '{count} فواتير مجانية شهرياً',
         features: [
-          '{count} factures par mois',
-          '{count} devis par mois',
-          'Jusqu’à {count} clients',
-          'Jusqu’à {count} produits ou services',
-          '{amount} de stockage documents',
-          'Jusqu’à {count} utilisateurs',
-          'Export PDF (factures & devis)',
-          'Découverte des modules InstaFact (sous quotas)'
+          '{count} فواتير شهرياً',
+          '{count} عروض أسعار شهرياً',
+          'حتى {count} حريفاً',
+          'حتى {count} منتجاً أو خدمة',
+          '{amount} لتخزين الوثائق',
+          'حتى {count} مستخدمين',
+          'تصدير PDF (الفواتير وعروض الأسعار)',
+          'اكتشاف وحدات InstaFact (بحصص)'
         ],
-        disabledFeatures: ['Export XML TEJ', 'Scellement des documents', 'Support prioritaire'],
-        cta: 'Commencer gratuitement'
+        disabledFeatures: ['تصدير XML TEJ', 'ختم الوثائق', 'دعم ذو أولوية'],
+        cta: 'البدء مجاناً'
       },
       monthly: {
-        name: 'Mensuel',
-        badge: 'Sans engagement',
-        highlight: 'Factures, devis, clients & produits illimités',
+        name: 'شهري',
+        badge: 'دون التزام',
+        highlight: 'فواتير وعروض أسعار وحرفاء ومنتجات غير محدودة',
         features: [
-          'Factures, devis, clients & produits illimités',
-          'Achats, stock multi-dépôts, trésorerie & banque',
-          'Comptabilité NCT, CRM et fiscalité',
-          'Assistant IA — chat et outils métier',
-          'Prévisions de ventes et de stock',
-          'Export PDF & XML TEJ, certificats de retenue',
-          'Scellement des documents (HMAC-SHA256)',
-          'Suivi des paiements et rapports',
-          '{amount} de stockage documents'
+          'فواتير وعروض أسعار وحرفاء ومنتجات غير محدودة',
+          'مشتريات، مخزون متعدد المستودعات، خزينة وبنك',
+          'محاسبة NCT، إدارة حرفاء وجباية',
+          'مساعد ذكي — محادثة وأدوات مهنية',
+          'توقعات المبيعات والمخزون',
+          'تصدير PDF وXML TEJ، شهادات الخصم من المورد',
+          'ختم الوثائق (HMAC-SHA256)',
+          'تتبع المدفوعات والتقارير',
+          '{amount} لتخزين الوثائق'
         ],
-        disabledFeatures: ['Support prioritaire'],
-        cta: 'Choisir Mensuel'
+        disabledFeatures: ['دعم ذو أولوية'],
+        cta: 'اختيار الخطة الشهرية'
       },
       annual: {
-        name: 'Annuel',
-        badge: 'Le plus avantageux',
-        highlight: 'Tout le plan Mensuel, moins cher',
+        name: 'سنوي',
+        badge: 'الأكثر توفيراً',
+        highlight: 'كل الخطة الشهرية، بسعر أقل',
         features: [
-          'Factures, devis, clients & produits illimités',
-          'Achats, stock multi-dépôts, trésorerie & banque',
-          'Comptabilité NCT, CRM et fiscalité',
-          'Assistant IA — chat et outils métier',
-          'Prévisions de ventes et de stock',
-          'Export PDF & XML TEJ, certificats de retenue',
-          'Scellement des documents (HMAC-SHA256)',
-          'Suivi des paiements et rapports',
-          '{amount} de stockage documents',
-          'Support prioritaire'
+          'فواتير وعروض أسعار وحرفاء ومنتجات غير محدودة',
+          'مشتريات، مخزون متعدد المستودعات، خزينة وبنك',
+          'محاسبة NCT، إدارة حرفاء وجباية',
+          'مساعد ذكي — محادثة وأدوات مهنية',
+          'توقعات المبيعات والمخزون',
+          'تصدير PDF وXML TEJ، شهادات الخصم من المورد',
+          'ختم الوثائق (HMAC-SHA256)',
+          'تتبع المدفوعات والتقارير',
+          '{amount} لتخزين الوثائق',
+          'دعم ذو أولوية'
         ],
         disabledFeatures: [],
-        cta: 'Choisir Annuel'
+        cta: 'اختيار الخطة السنوية'
       }
     },
-    savingsBadge: 'Économisez {percent} %',
-    billedYearly: 'Facturé {amount} par an',
-    annualSaving: 'Économie de {amount} par an vs mensuel',
+    savingsBadge: 'وفّروا {percent} %',
+    billedYearly: 'تُدفع {amount} سنوياً',
+    annualSaving: 'توفير {amount} سنوياً مقارنة بالاشتراك الشهري',
     cabinet: {
-      title: 'Version Cabinet comptable — sur devis',
-      text: 'Multi-dossiers, rôles cabinet (responsable, collaborateur), missions et honoraires. Tarif selon le nombre de dossiers.',
-      cta: 'Demander une démo',
-      link: 'En savoir plus'
+      title: 'نسخة مكاتب المحاسبة — حسب عرض الأسعار',
+      text: 'تعدد الملفات، أدوار المكتب (مدير، معاون)، مهام وأتعاب. السعر حسب عدد الملفات.',
+      cta: 'طلب عرض توضيحي',
+      link: 'اعرفوا المزيد'
     },
     enterprise: {
-      title: 'Plan Entreprise — sur mesure',
-      text: 'Volumes, intégrations, hébergement dédié.',
-      cta: 'Discuter de votre projet'
+      title: 'خطة المؤسسات — حسب الطلب',
+      text: 'أحجام كبيرة، اندماجات، استضافة مخصصة.',
+      cta: 'ناقشوا مشروعكم'
     },
-    faqTitle: 'Questions sur les tarifs',
+    faqTitle: 'أسئلة حول الأسعار',
     faq: [
-      { question: 'Puis-je changer de plan ?', answer: 'Oui, à tout moment depuis Paramètres › Abonnement.' },
+      { question: 'هل يمكنني تغيير الخطة؟', answer: 'نعم، في أي وقت من Paramètres › Abonnement.' },
       {
-        question: 'Que se passe-t-il si je dépasse le quota de factures ?',
-        answer: 'La création est bloquée jusqu’au mois suivant ou au passage à un plan payant.'
+        question: 'ماذا يحدث إذا تجاوزت حصة الفواتير؟',
+        answer: 'يتوقف الإنشاء حتى الشهر الموالي أو الانتقال إلى خطة مدفوعة.'
       },
       {
-        question: 'Les prix incluent-ils la TVA ?',
-        answer: 'Les prix sont en dinars tunisiens ; la TVA sera précisée à la facturation si applicable.'
+        question: 'هل تشمل الأسعار الأداء على القيمة المضافة (TVA)؟',
+        answer: 'الأسعار بالدينار التونسي؛ ويُوضَّح الأداء على القيمة المضافة (TVA) عند الفوترة إن انطبق.'
       },
-      { question: 'Puis-je exporter mes données ?', answer: 'Oui : PDF, Excel, FEC et XML TEJ selon votre plan.' }
+      { question: 'هل يمكنني تصدير بياناتي؟', answer: 'نعم: PDF، Excel، FEC وXML TEJ حسب خطتكم.' }
     ]
   },
   useCases: {
-    kicker: 'Cas d’usage',
-    title: 'Conçu pour votre activité',
-    subtitle: 'Quatre profils, une seule plateforme.',
+    kicker: 'حالات الاستعمال',
+    title: 'مصمم لنشاطكم',
+    subtitle: 'أربع فئات، منصة واحدة.',
     personas: [
       {
         cssClass: 'persona-services',
-        title: 'Prestataire de services',
-        text: 'Devis, projets, feuilles de temps et factures récurrentes pour vos missions.',
-        cta: 'Démarrer'
+        title: 'مقدم خدمات',
+        text: 'عروض أسعار، مشاريع، جداول ساعات وفواتير دورية لمهامكم.',
+        cta: 'الانطلاق'
       },
       {
         cssClass: 'persona-retail',
-        title: 'Commerce & point de vente',
-        text: 'Caisse, stock multi-dépôts, promotions et étiquettes (code-barres selon activation).',
-        cta: 'Démarrer'
+        title: 'تجارة ونقطة بيع',
+        text: 'صندوق، مخزون متعدد المستودعات، تخفيضات وملصقات (الباركود حسب التفعيل).',
+        cta: 'الانطلاق'
       },
       {
         cssClass: 'persona-distrib',
-        title: 'Distribution & négoce',
-        text: 'Commandes clients, carnet de commandes, transferts, achats et trésorerie.',
-        cta: 'Démarrer'
+        title: 'توزيع وتجارة جملة',
+        text: 'طلبيات الحرفاء، دفتر الطلبيات، التحويلات، المشتريات والخزينة.',
+        cta: 'الانطلاق'
       },
       {
         cssClass: 'persona-accountant',
-        title: 'Cabinet comptable',
-        text: 'Gérez plusieurs dossiers clients, missions et honoraires ; états NCT et déclarations centralisés.',
-        cta: 'Découvrir la version Cabinet'
+        title: 'مكتب محاسبة',
+        text: 'أديروا عدة ملفات حرفاء ومهام وأتعاب؛ مع قوائم NCT وتصريحات مركزة.',
+        cta: 'اكتشفوا نسخة المكاتب'
       }
     ]
   },
   comparison: {
-    kicker: 'Comparaison',
-    title: 'InstaFact face aux outils séparés',
-    subtitle: 'Ce que vous gagnez à réunir facturation, comptabilité et paie.',
+    kicker: 'مقارنة',
+    title: 'InstaFact في مواجهة الأدوات المنفصلة',
+    subtitle: 'ما تكسبونه عند جمع الفوترة والمحاسبة والأجور.',
     ourLabel: 'InstaFact',
-    otherLabel: 'Excel & outils séparés',
+    otherLabel: 'Excel وأدوات منفصلة',
     criteria: [
-      'Facturation TEJ + comptabilité NCT dans la même base',
-      'Paie CNSS/IRPP intégrée',
-      'Déclaration mensuelle préparée',
-      'Assistant IA hébergé chez vous',
-      '{count} rôles et journal d’audit chaîné',
-      'Portail client',
-      'Prévisions avec calendrier tunisien',
-      'Prix en TND, plan gratuit'
+      'فوترة TEJ + محاسبة NCT في القاعدة نفسها',
+      'أجور CNSS/IRPP مدمجة',
+      'تصريح شهري محضّر',
+      'مساعد ذكي مستضاف لديكم',
+      '{count} دوراً وسجل تدقيق متسلسل',
+      'بوابة الحريف',
+      'توقعات مع رزنامة تونسية',
+      'أسعار بالدينار التونسي، وخطة مجانية'
     ]
   },
   compliance: {
-    kicker: 'Conformité',
-    title: 'Conforme aux exigences tunisiennes',
-    subtitle: 'Chaque point ci-dessous existe dans l’application.',
+    kicker: 'المطابقة',
+    title: 'مطابق للمتطلبات التونسية',
+    subtitle: 'كل نقطة أدناه موجودة في التطبيق.',
     cards: [
       {
         icon: 'pi-file-check',
-        title: 'Facturation TEJ',
-        text: 'Génération et validation du XML TEJ, certificats de retenue à la source produits depuis vos règlements.'
+        title: 'الفوترة TEJ',
+        text: 'توليد XML TEJ والتحقق منه، وشهادات الخصم من المورد تُنتج من مدفوعاتكم.'
       },
       {
         icon: 'pi-download',
-        title: 'Export FEC & dossier de révision',
-        text: 'Export du fichier des écritures et du dossier comptable en un clic pour votre expert-comptable.'
+        title: 'تصدير FEC وملف المراجعة',
+        text: 'تصدير ملف القيود والملف المحاسبي بنقرة واحدة لخبير محاسبكم.'
       },
       {
         icon: 'pi-lock',
-        title: 'Scellement des documents',
-        text: 'Chaque facture émise est scellée par une empreinte HMAC-SHA256 versionnée : toute modification ultérieure est détectable.'
+        title: 'ختم الوثائق',
+        text: 'كل فاتورة صادرة تُختم ببصمة HMAC-SHA256 مرقمة الإصدار: أي تعديل لاحق قابل للكشف.'
       },
       {
         icon: 'pi-book',
-        title: 'États financiers NCT',
-        text: 'Bilan, compte de résultat et notes selon le système comptable des entreprises tunisien.'
+        title: 'القوائم المالية NCT',
+        text: 'الميزانية وكشف النتائج والملاحظات وفق نظام المحاسبة للمؤسسات التونسية.'
       },
       {
         icon: 'pi-database',
-        title: 'Isolation des données',
-        text: 'Une base de données par entreprise ; accès par rôles ; export complet de vos données à la demande.'
+        title: 'عزل البيانات',
+        text: 'قاعدة بيانات لكل مؤسسة؛ ولوج حسب الأدوار؛ تصدير كامل لبياناتكم عند الطلب.'
       },
       {
         icon: 'pi-history',
-        title: 'Journal d’audit chaîné',
-        text: 'Chaque action est journalisée et chaînée par hachage ; un rôle Auditeur en lecture seule est prévu.'
+        title: 'سجل تدقيق متسلسل',
+        text: 'كل إجراء مسجل ومتسلسل بالتجزئة؛ مع دور مدقق للقراءة فقط.'
       }
     ]
   },
   security: {
-    kicker: 'Sécurité',
-    title: 'Des accès maîtrisés, une trace de chaque action',
-    subtitle: 'Authentification forte, permissions par rôle et journal d’audit chaîné.',
+    kicker: 'الأمان',
+    title: 'ولوج مضبوط، وأثر لكل إجراء',
+    subtitle: 'مصادقة قوية، وصلاحيات حسب الدور، وسجل تدقيق متسلسل.',
     points: [
-      { title: 'Authentification renforcée', text: 'JWT avec double facteur (2FA) et verrouillage après échecs.' },
-      { title: 'Accès par rôle', text: 'Permissions par rôle ({count} rôles) et journal d’audit chaîné.' },
-      { title: 'Isolation par entreprise', text: 'Une base de données par entreprise : aucun mélange entre sociétés.' },
+      { title: 'مصادقة معززة', text: 'JWT مع مصادقة ثنائية (2FA) وقفل بعد محاولات فاشلة.' },
+      { title: 'ولوج حسب الدور', text: 'صلاحيات حسب الدور ({count} دوراً) وسجل تدقيق متسلسل.' },
+      { title: 'عزل حسب المؤسسة', text: 'قاعدة بيانات لكل مؤسسة: لا خلط بين المؤسسات.' },
       {
-        title: 'Limitation de débit',
-        text: 'Les points d’entrée publics sont limités en débit et servis avec des en-têtes de sécurité HTTP.'
+        title: 'تحديد معدل الطلبات',
+        text: 'نقاط الدخول العمومية محدودة المعدل وتُقدَّم مع ترويسات أمان HTTP.'
       },
-      { title: 'Vos documents', text: 'Vos documents et exports restent téléchargeables tant que votre compte est actif.' }
+      { title: 'وثائقكم', text: 'تبقى وثائقكم وتصديراتكم قابلة للتنزيل ما دام حسابكم نشطاً.' }
     ]
   },
   integrations: {
-    kicker: 'Intégrations',
-    title: 'Vos données circulent, dans les formats attendus',
-    subtitle: 'Exports, e-mail et canaux selon activation.',
+    kicker: 'الاندماجات',
+    title: 'بياناتكم تتدفق، بالصيغ المتوقعة',
+    subtitle: 'تصديرات، بريد إلكتروني وقنوات حسب التفعيل.',
     items: [
-      { icon: 'pi-envelope', title: 'E-mail', text: 'Envoi des documents et relances depuis l’application.' },
-      { icon: 'pi-file-excel', title: 'Excel & PDF', text: 'Exports de vos listes et documents.' },
-      { icon: 'pi-code', title: 'XML TEJ & FEC', text: 'Exports fiscaux et comptables.' },
-      { icon: 'pi-building-columns', title: 'Relevés bancaires', text: 'Import de relevés bancaires pour le rapprochement.' },
-      { icon: 'pi-whatsapp', title: 'WhatsApp Business', text: 'Envoi de documents et rappels (selon activation).' },
-      { icon: 'pi-telegram', title: 'Telegram', text: 'Notifications et rappels (selon activation).' },
-      { icon: 'pi-money-bill', title: 'Multi-devises', text: 'TND, EUR, USD.' },
-      { icon: 'pi-link', title: 'API REST', text: 'Sécurisée par jeton — documentation fournie aux clients Entreprise.' }
+      { icon: 'pi-envelope', title: 'البريد الإلكتروني', text: 'إرسال الوثائق والتذكيرات من التطبيق.' },
+      { icon: 'pi-file-excel', title: 'Excel وPDF', text: 'تصدير قوائمكم ووثائقكم.' },
+      { icon: 'pi-code', title: 'XML TEJ وFEC', text: 'تصديرات جبائية ومحاسبية.' },
+      { icon: 'pi-building-columns', title: 'الكشوف البنكية', text: 'استيراد كشوف بنكية للمطابقة.' },
+      { icon: 'pi-whatsapp', title: 'WhatsApp للأعمال', text: 'إرسال الوثائق والتذكيرات (حسب التفعيل).' },
+      { icon: 'pi-telegram', title: 'تيليغرام (Telegram)', text: 'إشعارات وتذكيرات (حسب التفعيل).' },
+      { icon: 'pi-money-bill', title: 'تعدد العملات', text: 'د.ت، EUR، USD.' },
+      { icon: 'pi-link', title: 'واجهة API REST', text: 'مؤمَّنة برمز — مع وثائق تُقدَّم لحرفاء خطة المؤسسات.' }
     ]
   },
   stats: {
-    modules: 'modules activables',
-    roles: 'rôles utilisateurs',
-    aiTools: 'outils IA',
-    dedicatedDb: 'base de données dédiée par entreprise'
+    modules: 'وحدات قابلة للتفعيل',
+    roles: 'أدوار للمستخدمين',
+    aiTools: 'أداة ذكاء اصطناعي',
+    dedicatedDb: 'قاعدة بيانات مخصصة لكل مؤسسة'
   },
   trust: {
-    kicker: 'Confiance',
-    title: 'Pourquoi les entreprises tunisiennes choisissent InstaFact',
-    subtitle: 'Des engagements que nous tenons dans le produit.',
+    kicker: 'الثقة',
+    title: 'لماذا تختار المؤسسات التونسية InstaFact',
+    subtitle: 'التزامات نحافظ عليها في المنتج.',
     cards: [
-      { icon: 'pi-flag', title: 'Conçu pour la Tunisie', text: 'TEJ, NCT, CNSS, IRPP, déclaration mensuelle et calendrier local.' },
-      { icon: 'pi-money-bill', title: 'Prix en dinars', text: 'Des tarifs en TND, sans conversion ni surprise.' },
+      { icon: 'pi-flag', title: 'مصمم لتونس', text: 'TEJ، NCT، CNSS، IRPP، التصريح الشهري والرزنامة المحلية.' },
+      { icon: 'pi-money-bill', title: 'أسعار بالدينار', text: 'أسعار بالدينار التونسي، دون تحويل ولا مفاجآت.' },
       {
         icon: 'pi-server',
-        title: 'Vos données restent chez vous',
-        text: 'L’assistant IA s’exécute sur votre instance, sans envoi à un fournisseur externe ; une base de données par entreprise.'
+        title: 'بياناتكم تبقى لديكم',
+        text: 'يعمل المساعد الذكي على نظامكم، دون إرسال إلى مزوّد خارجي؛ وقاعدة بيانات لكل مؤسسة.'
       },
-      { icon: 'pi-comments', title: 'Support en français', text: 'Une équipe qui parle votre langue et connaît vos obligations.' },
-      { icon: 'pi-history', title: 'Journal d’audit chaîné', text: 'Chaque action est tracée et vérifiable.' },
-      { icon: 'pi-gift', title: 'Un plan gratuit pour démarrer', text: 'Testez sans carte bancaire.' }
+      { icon: 'pi-comments', title: 'دعم بالفرنسية', text: 'فريق يتحدث لغتكم ويعرف التزاماتكم.' },
+      { icon: 'pi-history', title: 'سجل تدقيق متسلسل', text: 'كل إجراء متتبع وقابل للتحقق.' },
+      { icon: 'pi-gift', title: 'خطة مجانية للانطلاق', text: 'جرّبوا دون بطاقة بنكية.' }
     ]
   },
   faq: {
-    kicker: 'FAQ',
-    title: 'Questions fréquentes',
-    subtitle: 'Les réponses aux questions que l’on nous pose le plus.',
+    kicker: 'الأسئلة الشائعة',
+    title: 'أسئلة شائعة',
+    subtitle: 'إجابات عن أكثر الأسئلة التي تصلنا.',
     items: [
       {
-        question: 'Puis-je créer un compte aujourd’hui ?',
+        question: 'هل يمكنني إنشاء حساب اليوم؟',
         answer:
-          'L’inscription en ligne est actuellement sur invitation. Décrivez votre besoin via le formulaire de contact ; nous ouvrons votre accès.',
-        answerWhenOpen: 'Oui, le plan gratuit se crée en ligne sans carte bancaire.'
+          'التسجيل عبر الإنترنت حالياً بدعوة. صِفوا حاجتكم عبر استمارة الاتصال؛ نفتح لكم الوصول.',
+        answerWhenOpen: 'نعم، تُنشأ الخطة المجانية عبر الإنترنت دون بطاقة بنكية.'
       },
       {
-        question: 'InstaFact est-il conforme à la facturation électronique tunisienne (TEJ) ?',
+        question: 'هل InstaFact مطابق للفوترة الإلكترونية التونسية (TEJ)؟',
         answer:
-          'InstaFact génère et valide le XML TEJ et produit les certificats de retenue à la source. La transmission dépend de votre habilitation auprès de la plateforme nationale.'
+          'يولّد InstaFact ملف XML TEJ ويتحقق منه وينتج شهادات الخصم من المورد. أما الإرسال فيتوقف على ترخيصكم لدى المنصة الوطنية.'
       },
       {
-        question: 'Mes données sont-elles envoyées à une IA externe ?',
+        question: 'هل تُرسل بياناتي إلى ذكاء اصطناعي خارجي؟',
         answer:
-          'Par défaut non : les modèles tournent en local (Ollama). Un fournisseur cloud (OpenRouter) peut être activé par votre administrateur, en connaissance de cause.'
+          'افتراضياً لا: تعمل النماذج محلياً (Ollama). ويمكن لمديركم تفعيل مزوّد سحابي (OpenRouter) عن علم بذلك.'
       },
       {
-        question: 'Combien d’utilisateurs et de rôles ?',
+        question: 'كم عدد المستخدمين والأدوار؟',
         answer:
-          '{rolesCount} rôles (administrateur, comptable, commercial, caissier, magasinier, auditeur…). Le plan gratuit inclut plusieurs utilisateurs ; les plans payants n’ont pas de limite.'
+          '{rolesCount} دوراً (مدير، محاسب، مندوب مبيعات، أمين صندوق، أمين مخزن، مدقق…). تشمل الخطة المجانية عدة مستخدمين؛ أما الخطط المدفوعة فبلا حدود.'
       },
       {
-        question: 'Gérez-vous la paie tunisienne ?',
-        answer: 'Oui : bulletins, CNSS, IRPP, régularisations, soldes de tout compte, livre et journal de paie.'
+        question: 'هل تديرون الأجور التونسية؟',
+        answer: 'نعم: كشوف الرواتب، CNSS، IRPP، التسويات، المخالصات النهائية، دفتر ويومية الأجور.'
       },
       {
-        question: 'Que se passe-t-il si je dépasse le quota de factures du plan gratuit ?',
-        answer: 'La création est bloquée jusqu’au mois suivant ; passez au plan Mensuel ou Annuel pour lever la limite.'
+        question: 'ماذا يحدث إذا تجاوزت حصة فواتير الخطة المجانية؟',
+        answer: 'يتوقف الإنشاء حتى الشهر الموالي؛ انتقلوا إلى الخطة الشهرية أو السنوية لرفع الحد.'
       },
       {
-        question: 'Puis-je importer mes anciennes factures ?',
-        answer: 'Oui, par import Excel ; l’IA peut aussi lire une facture fournisseur à partir d’une photo.'
+        question: 'هل يمكنني استيراد فواتيري القديمة؟',
+        answer: 'نعم، عبر استيراد Excel؛ ويمكن للذكاء الاصطناعي أيضاً قراءة فاتورة مزوّد من صورة.'
       },
       {
-        question: 'Existe-t-il une application mobile ?',
+        question: 'هل يوجد تطبيق للهاتف؟',
         answer:
-          'InstaFact fonctionne dans le navigateur de votre téléphone et de votre tablette. Il n’y a pas d’application à installer.'
+          'يعمل InstaFact في متصفح هاتفكم ولوحتكم الإلكترونية. لا يوجد تطبيق يُثبَّت.'
       },
       {
-        question: 'Je suis expert-comptable : quelle version choisir ?',
+        question: 'أنا خبير محاسب: أي نسخة أختار؟',
         answer:
-          'La version Cabinet comptable gère plusieurs dossiers, vos collaborateurs et vos honoraires. Elle est proposée sur devis, avec une démo.'
+          'نسخة مكاتب المحاسبة تدير عدة ملفات ومعاونيكم وأتعابكم. وهي معروضة حسب عرض أسعار، مع عرض توضيحي.'
       },
       {
-        question: 'Puis-je récupérer mes données si je pars ?',
-        answer: 'Oui : exports PDF, Excel, FEC et XML TEJ depuis l’application, sans nous demander.'
+        question: 'هل يمكنني استرجاع بياناتي إذا غادرت؟',
+        answer: 'نعم: تصديرات PDF، Excel، FEC وXML TEJ من التطبيق، دون طلب منا.'
       }
     ]
   },
   finalCta: {
-    titleOpen: 'Prêt à facturer en dinars, en conformité ?',
-    titleClosed: 'Parlons de votre entreprise ou de votre cabinet',
-    subtitle: 'Créez votre compte ou décrivez votre besoin : nous vous répondons rapidement.',
-    loginLink: 'J’ai déjà un compte'
+    titleOpen: 'هل أنتم مستعدون للفوترة بالدينار بكل مطابقة؟',
+    titleClosed: 'لنتحدث عن مؤسستكم أو مكتبكم',
+    subtitle: 'أنشئوا حسابكم أو صِفوا حاجتكم: نجيبكم سريعاً.',
+    loginLink: 'لديّ حساب'
   }
 };

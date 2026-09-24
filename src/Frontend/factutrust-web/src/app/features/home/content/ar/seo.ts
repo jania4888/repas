@@ -1,16 +1,15 @@
-// TODO-AR : traduction arabe à livrer par TD7 (copie FR provisoire, structure figée par TD1).
 import type { LandingSeoCopy } from '../landing-copy.types';
 
-/** Métadonnées SEO FR (titre ≤ 60, description ≤ 160 caractères). Texte final — TD1. */
+/** Métadonnées SEO AR (titre ≤ 60, description ≤ 160 caractères). Traduction TD7 — glossaire docs/landing/ar-glossary.md. */
 export const SEO_AR: LandingSeoCopy = {
   home: {
-    title: 'InstaFact — Facturation, comptabilité et paie en Tunisie',
+    title: 'InstaFact — الفوترة والمحاسبة والأجور في تونس',
     description:
-      'Facturation conforme TEJ, comptabilité NCT, paie CNSS/IRPP, déclaration mensuelle, stock et assistant IA hébergé chez vous. Pour les PME et les cabinets.'
+      'فوترة إلكترونية مطابقة لمنظومة TEJ، محاسبة NCT، أجور CNSS/IRPP، تصريح شهري، مخزون ومساعد ذكي يعمل على خوادمكم. للمؤسسات الصغرى والمتوسطة ومكاتب المحاسبة.'
   },
   cabinets: {
-    title: 'Version Cabinet comptable — InstaFact',
+    title: 'نسخة مكاتب المحاسبة — InstaFact',
     description:
-      'Espace cabinet InstaFact : dossiers clients isolés, équipe et affectations, honoraires, comptabilité et fiscalité tunisiennes par dossier. Offre sur devis.'
+      'فضاء المكتب في InstaFact: ملفات حرفاء معزولة، فريق وإسناد ملفات، أتعاب، ومحاسبة وجباية تونسيتان لكل ملف. التسعير حسب عرض الأسعار.'
   }
 };

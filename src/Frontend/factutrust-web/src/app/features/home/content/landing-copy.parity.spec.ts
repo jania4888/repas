@@ -4,12 +4,11 @@ import { LANDING_COPY_FR } from './landing-copy.fr';
 /**
  * Garde-fou de parité FR/AR (plan D.3 / D.9).
  *
- * `ALLOW_TODO_AR` : tant que la traduction arabe n'est pas livrée (TD7), les fichiers `content/ar/*`
- * sont des copies FR marquées `// TODO-AR`. Karma n'a pas accès à l'environnement : TD7 passe
- * cette constante à `false` en livrant la traduction, ce qui active les contrôles « texte arabe
- * présent » et « AR ≠ FR ».
+ * `ALLOW_TODO_AR` : la traduction arabe est livrée (TD7) — la constante est à `false`, ce qui
+ * active les contrôles « texte arabe présent » et « AR ≠ FR ». Ne la repasser à `true` que pour
+ * une CI de branche tolérant des copies FR provisoires marquées `// TODO-AR`.
  */
-const ALLOW_TODO_AR = true;
+const ALLOW_TODO_AR = false;
 
 const PLACEHOLDER_RE = /\{\w+\}/g;
 const ARABIC_SCRIPT_RE = /[\u0600-\u06FF]/;
@@ -26,6 +25,30 @@ const IDENTICAL_ALLOWED = new Set([
   'shared.langSwitcher.ar',
   'shared.common.currency'
 ]);
+
+/**
+ * Feuilles techniques jamais traduites (TD7) :
+ *  - identifiants d'onglets, icônes PrimeIcons, classes CSS d'ancrage e2e, valeurs
+ *    d'énumération envoyées à l'API (`contact.sizes.*.value`) — toute traduction casserait
+ *    le code ou le contrat backend ;
+ *  - la marque dans le tableau comparatif, le compteur de caractères et les placeholders
+ *    e-mail/téléphone (saisie latine en `dir="ltr"`) ;
+ *  - les chemins de menus `newFeatures.*.location` : ils citent l'interface de
+ *    l'application, qui reste en français (hors périmètre AR, plan D.1/D.5.4).
+ */
+const TECHNICAL_KEY_RE = /\.(id|icon|cssClass|value)$/;
+const TECHNICAL_PATHS = new Set([
+  'home.comparison.ourLabel',
+  'contact.messageCounter',
+  'contact.fields.email.placeholder',
+  'contact.fields.phone.placeholder',
+  'cabinets.features.activationMark'
+]);
+const APP_UI_PATH_RE = /^home\.newFeatures\.items\[\d+\]\.location$/;
+
+function isTranslationExempt(path: string): boolean {
+  return IDENTICAL_ALLOWED.has(path) || TECHNICAL_KEY_RE.test(path) || TECHNICAL_PATHS.has(path) || APP_UI_PATH_RE.test(path);
+}
 
 type Leaf = { path: string; value: string };
 
@@ -141,13 +164,13 @@ describe('Parité des dictionnaires landing FR/AR', () => {
   if (!ALLOW_TODO_AR) {
     it('chaque chaîne AR contient de l’écriture arabe (sauf marque, sigles et valeurs techniques)', () => {
       const offenders = arLeaves
-        .filter(l => !IDENTICAL_ALLOWED.has(l.path) && !ARABIC_SCRIPT_RE.test(l.value))
+        .filter(l => !isTranslationExempt(l.path) && !ARABIC_SCRIPT_RE.test(l.value))
         .map(l => l.path);
       expect(offenders).toEqual([]);
     });
 
     it('aucune chaîne AR n’est une copie brute du FR (sauf exceptions listées)', () => {
-      const offenders = arLeaves.filter(l => !IDENTICAL_ALLOWED.has(l.path) && frByPath.get(l.path) === l.value).map(l => l.path);
+      const offenders = arLeaves.filter(l => !isTranslationExempt(l.path) && frByPath.get(l.path) === l.value).map(l => l.path);
       expect(offenders).toEqual([]);
     });
   }
