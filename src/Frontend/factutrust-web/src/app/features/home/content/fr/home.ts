@@ -203,16 +203,6 @@ export const HOME_FR: LandingHomeCopy = {
     kicker: 'Intelligence artificielle',
     title: 'Une IA qui connaît votre entreprise — et reste chez vous',
     subtitle: 'Un assistant métier, des modèles hébergés sur votre serveur, une option cloud activable.',
-    providers: [
-      {
-        title: 'Local',
-        text: 'Des modèles exécutés sur votre serveur : vos données ne sortent pas.'
-      },
-      {
-        title: 'Cloud en option',
-        text: 'Activable par l’administrateur si vous souhaitez un modèle plus puissant.'
-      }
-    ],
     capabilities:
       'Plus de {count} outils : créer un devis, retrouver une facture, expliquer un solde, importer une facture fournisseur depuis une photo.',
     guardrails:

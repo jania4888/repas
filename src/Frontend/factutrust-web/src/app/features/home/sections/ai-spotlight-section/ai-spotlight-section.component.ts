@@ -4,7 +4,7 @@ import { LANDING_FACTS } from '../../content/landing-facts';
 import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
- * Spotlight IA (plan A.4.9) : section sombre, 2 modes d’hébergement (local / cloud en option),
+ * Spotlight IA (plan A.4.9) : section sombre (capacités + garde-fous),
  * capacités ({count} → outils IA), garde-fous et disponibilité. Textes : `t().home.ai`.
  */
 @Component({
@@ -27,20 +27,6 @@ import { LandingCopyBase } from '../../shared/landing-copy-base';
           <p class="section-description">
             <app-landing-rich [segments]="rich(t().home.ai.subtitle)" />
           </p>
-        </div>
-
-        <div class="providers-grid">
-          @for (provider of t().home.ai.providers; track provider.title; let i = $index) {
-            <article class="provider-card">
-              <div class="provider-icon" aria-hidden="true">
-                <i [class]="'pi ' + providerIcons[i % providerIcons.length]"></i>
-              </div>
-              <h3 class="provider-title">{{ provider.title }}</h3>
-              <p class="provider-text">
-                <app-landing-rich [segments]="rich(provider.text)" />
-              </p>
-            </article>
-          }
         </div>
 
         <div class="ai-notes">
@@ -142,50 +128,6 @@ import { LandingCopyBase } from '../../shared/landing-copy-base';
       margin: 0;
     }
 
-    .providers-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--spacing-6);
-      margin-bottom: var(--spacing-8);
-    }
-
-    .provider-card {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: var(--radius-2xl);
-      padding: var(--spacing-6);
-    }
-
-    .provider-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--radius-lg);
-      background: rgba(139, 92, 246, 0.2);
-      color: #c4b5fd;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: var(--spacing-4);
-
-      i {
-        font-size: 1.35rem;
-      }
-    }
-
-    .provider-title {
-      font-size: var(--font-size-lg);
-      font-weight: var(--font-weight-semibold);
-      color: white;
-      margin: 0 0 var(--spacing-2) 0;
-    }
-
-    .provider-text {
-      font-size: var(--font-size-sm);
-      line-height: var(--line-height-relaxed);
-      color: var(--color-neutral-300);
-      margin: 0;
-    }
-
     .ai-notes {
       display: flex;
       flex-direction: column;
@@ -226,19 +168,12 @@ import { LandingCopyBase } from '../../shared/landing-copy-base';
       .ai-section {
         padding: var(--spacing-12) var(--spacing-4);
       }
-
-      .providers-grid {
-        grid-template-columns: 1fr;
-      }
     }
   `]
 })
 export class AiSpotlightSectionComponent extends LandingCopyBase {
 
   protected readonly facts = LANDING_FACTS;
-  /** Icônes des fournisseurs par position : local (serveur) puis cloud. */
-  protected readonly providerIcons = ['pi-server', 'pi-cloud'] as const;
-
 
   /** `{count}` / `{toolsCount}` → nombre d'outils IA. */
   protected fillCounts(text: string): string {

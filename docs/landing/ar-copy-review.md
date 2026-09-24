@@ -158,10 +158,6 @@ porte d'activation de `landing.arabicEnabled` en production.
 | home#bvg3lx | Intelligence artificielle | الذكاء الاصطناعي | À relire |  |
 | home#l8btxr | Une IA qui connaît votre entreprise — et reste chez vous | ذكاء اصطناعي يعرف مؤسستكم — ويبقى لديكم | À relire |  |
 | home#19wanpc | Un assistant métier, des modèles hébergés sur votre serveur, une option cloud activable. | مساعد مهني، ونماذج مستضافة على خادمكم، وخيار سحابي قابل للتفعيل. | À relire |  |
-| home#3rz0y8 | Local | محلي | À relire |  |
-| home#1epqd53 | Des modèles exécutés sur votre serveur : vos données ne sortent pas. | نماذج تعمل على خادمكم: بياناتكم لا تغادر. | À relire |  |
-| home#1oo5e94 | Cloud en option | سحابي اختياري | À relire |  |
-| home#14vk5n2 | Activable par l’administrateur si vous souhaitez un modèle plus puissant. | يفعّله المدير إذا أردتم نموذجاً أقوى. | À relire |  |
 | home#f390vk | Plus de {count} outils : créer un devis, retrouver une facture, expliquer un solde, importer une facture fournisseur depuis une photo. | أكثر من {count} أداة: إنشاء عرض أسعار، إيجاد فاتورة، شرح رصيد، استيراد فاتورة مزوّد من صورة. | À relire |  |
 | home#qwipox | L’assistant répond à partir de vos données et de règles de contrôle (grounding) ; il ne remplace pas votre comptable. | يجيب المساعد انطلاقاً من بياناتكم وقواعد ضبط (grounding)؛ وهو لا يعوّض محاسبكم. | À relire |  |
 | home#lw1q34 | Disponible selon la configuration de votre instance. | متاح حسب إعدادات نظامكم. | À relire |  |
@@ -513,4 +509,4 @@ porte d'activation de `landing.arabicEnabled` en production.
 | seo#io7euh | Version Cabinet comptable — InstaFact | نسخة مكاتب المحاسبة — InstaFact | À relire |  |
 | seo#1r8yegl | Espace cabinet InstaFact : dossiers clients isolés, équipe et affectations, honoraires, comptabilité et fiscalité tunisiennes par dossier. Offre sur devis. | فضاء المكتب في InstaFact: ملفات حرفاء معزولة، فريق وإسناد ملفات، أتعاب، ومحاسبة وجباية تونسيتان لكل ملف. التسعير حسب عرض الأسعار. | À relire |  |
 
-**Progression : 0/484 validées.**
+**Progression : 0/480 validées.**

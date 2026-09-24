@@ -176,7 +176,6 @@ export interface LandingHomeCopy {
   };
   features: LandingSectionHeading & { items: LandingIconItem[] };
   ai: LandingSectionHeading & {
-    providers: LandingTitledItem[];
     capabilities: string;
     guardrails: string;
     availability: string;
