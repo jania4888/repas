@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
 import { LANDING_FACTS } from '../../content/landing-facts';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * Comparatif (plan A.4.15) : 8 critères où InstaFact coche face aux outils séparés.
@@ -201,14 +201,9 @@ import { LANDING_FACTS } from '../../content/landing-facts';
     }
   `]
 })
-export class ComparisonSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class ComparisonSectionComponent extends LandingCopyBase {
 
-  protected readonly t = this.copy.t;
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 
   /** `{count}` / `{rolesCount}` → nombre de rôles. */
   protected fillCounts(text: string): string {

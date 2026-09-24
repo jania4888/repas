@@ -11,7 +11,8 @@ import { RouterLink } from '@angular/router';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
 import { LandingScrollService } from '@core/services/landing-scroll.service';
 import { PublicRegistrationStatusService } from '@core/services/public-registration-status.service';
-import { LandingCopyService } from '../content/landing-copy.service';
+import { splitActivationMark } from '../content/landing-copy.util';
+import { LandingCopyBase } from '../shared/landing-copy-base';
 import { cabinetsPath, homePath } from '../i18n/landing-locale.util';
 import { PublicFooterComponent } from '../public-footer/public-footer.component';
 import { PublicHeaderComponent } from '../public-header/public-header.component';
@@ -102,17 +103,19 @@ import { LandingCtaComponent } from '../shared/landing-cta/landing-cta.component
             <div class="cab-families">
               @for (family of t().cabinets.features.families; track family.title) {
                 <article class="cab-family cab-reveal">
+                  @let familyTitle = splitActivation(family.title);
                   <h3 class="cab-family__title">
-                    {{ splitActivation(family.title).text }}
-                    @if (splitActivation(family.title).flagged) {
+                    {{ familyTitle.text }}
+                    @if (familyTitle.flagged) {
                       <span class="cab-flag">{{ t().shared.common.uponActivation }}</span>
                     }
                   </h3>
                   <ul class="cab-family__list">
                     @for (item of family.items; track item) {
+                      @let itemParts = splitActivation(item);
                       <li>
-                        <span>{{ splitActivation(item).text }}</span>
-                        @if (splitActivation(item).flagged) {
+                        <span>{{ itemParts.text }}</span>
+                        @if (itemParts.flagged) {
                           <span class="cab-flag">{{ t().shared.common.uponActivation }}</span>
                         }
                       </li>
@@ -134,9 +137,10 @@ import { LandingCtaComponent } from '../shared/landing-cta/landing-cta.component
             <div class="cab-roles">
               @for (card of t().cabinets.roles.cards; track card.title) {
                 <article class="cab-role cab-reveal">
+                  @let cardTitle = splitActivation(card.title);
                   <h3 class="cab-role__title">
-                    {{ splitActivation(card.title).text }}
-                    @if (splitActivation(card.title).flagged) {
+                    {{ cardTitle.text }}
+                    @if (cardTitle.flagged) {
                       <span class="cab-flag">{{ t().shared.common.uponActivation }}</span>
                     }
                   </h3>
@@ -789,18 +793,18 @@ import { LandingCtaComponent } from '../shared/landing-cta/landing-cta.component
     `
   ]
 })
-export class CabinetsPageComponent implements AfterViewInit {
+export class CabinetsPageComponent extends LandingCopyBase implements AfterViewInit {
   private readonly host = inject(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly scroll = inject(LandingScrollService);
   private readonly localeService = inject(LandingLocaleService);
   protected readonly registration = inject(PublicRegistrationStatusService);
-  protected readonly t = inject(LandingCopyService).t;
 
   protected readonly cabinetsPath = computed(() => cabinetsPath(this.localeService.locale()));
   protected readonly homePath = computed(() => homePath(this.localeService.locale()));
 
   constructor() {
+    super();
     // L'état d'inscription pilote l'affichage de la note sous le CTA ouvert (et le CTA lui-même).
     this.registration.ensureLoaded();
   }
@@ -842,12 +846,7 @@ export class CabinetsPageComponent implements AfterViewInit {
    * (`shared.common.uponActivation`).
    */
   protected splitActivation(text: string): { text: string; flagged: boolean } {
-    const mark = this.t().cabinets.features.activationMark;
-    const trimmed = text.trimEnd();
-    if (mark && trimmed.endsWith(mark)) {
-      return { text: trimmed.slice(0, trimmed.length - mark.length).trimEnd(), flagged: true };
-    }
-    return { text, flagged: false };
+    return splitActivationMark(text, this.t().cabinets.features.activationMark);
   }
 
   /** Note de bas de section sans le marqueur d'appel en tête (remplacé par les pastilles). */

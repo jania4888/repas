@@ -3,8 +3,8 @@ import { RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { BRAND } from '@core/constants/brand';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
-import { LandingCopyService } from '../content/landing-copy.service';
 import { cabinetsPath, homePath } from '../i18n/landing-locale.util';
+import { LandingCopyBase } from '../shared/landing-copy-base';
 
 /**
  * Pied de page public partagé (plan A.3.3 / TB2) : marque + 4 colonnes
@@ -217,14 +217,12 @@ import { cabinetsPath, homePath } from '../i18n/landing-locale.util';
     }
   `]
 })
-export class PublicFooterComponent {
-  private readonly copy = inject(LandingCopyService);
+export class PublicFooterComponent extends LandingCopyBase {
   private readonly localeService = inject(LandingLocaleService);
 
   readonly storefrontEnabled = environment.storefrontEnabled;
   readonly brand = BRAND;
 
-  protected readonly t = this.copy.t;
   protected readonly homeUrl = computed(() => homePath(this.localeService.locale()));
   protected readonly cabinetsUrl = computed(() => cabinetsPath(this.localeService.locale()));
   protected readonly copyright = computed(() =>

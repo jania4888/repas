@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { PublicRegistrationStatusService } from '@core/services/public-registration-status.service';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
-import { LandingCopyService } from './content/landing-copy.service';
 import { LandingCtaComponent } from './shared/landing-cta/landing-cta.component';
 import { LandingRichComponent } from './shared/landing-rich/landing-rich.component';
 import { cabinetsPath, homePath } from './i18n/landing-locale.util';
@@ -31,6 +30,7 @@ import { StatsSectionComponent } from './sections/stats-section/stats-section.co
 import { TrustSectionComponent } from './sections/trust-section/trust-section.component';
 import { FaqSectionComponent } from './sections/faq-section/faq-section.component';
 import { CtaSectionComponent } from './sections/cta-section/cta-section.component';
+import { LandingCopyBase } from './shared/landing-copy-base';
 
 /**
  * Page d'accueil publique (plan § 5.2 / A.3.2).
@@ -518,12 +518,10 @@ import { CtaSectionComponent } from './sections/cta-section/cta-section.componen
     }
   `]
 })
-export class HomeComponent {
-  private readonly copy = inject(LandingCopyService);
+export class HomeComponent extends LandingCopyBase {
   private readonly status = inject(PublicRegistrationStatusService);
   private readonly localeService = inject(LandingLocaleService);
 
-  protected readonly t = this.copy.t;
   protected readonly storefrontEnabled = environment.storefrontEnabled;
   protected readonly homeUrl = computed(() => homePath(this.localeService.locale()));
   protected readonly cabinetsUrl = computed(() => cabinetsPath(this.localeService.locale()));
@@ -542,11 +540,8 @@ export class HomeComponent {
   );
 
   constructor() {
+    super();
     this.status.ensureLoaded();
-  }
-
-  protected rich(text: string) {
-    return this.copy.rich(text);
   }
 
   protected fillModules(text: string): string {

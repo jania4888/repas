@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * Intégrations (plan A.4.18) : 8 canaux/formats réellement disponibles.
@@ -165,12 +165,7 @@ import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.com
     }
   `]
 })
-export class IntegrationsSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class IntegrationsSectionComponent extends LandingCopyBase {
 
-  protected readonly t = this.copy.t;
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * Section « Nouveautés » (plan A.5.10, maquette home-nouveautes-variant-b) :
@@ -231,10 +231,8 @@ import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.com
     }
   `]
 })
-export class NewFeaturesSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class NewFeaturesSectionComponent extends LandingCopyBase {
 
-  protected readonly t = this.copy.t;
   protected readonly currentYear = new Date().getFullYear();
 
   /** Icônes PrimeIcons par position (visuel uniquement, pas de texte). */
@@ -254,11 +252,5 @@ export class NewFeaturesSectionComponent {
     'pi-building-columns'
   ] as const;
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 
-  protected format(template: string, params: Record<string, string | number>): string {
-    return this.copy.format(template, params);
-  }
 }

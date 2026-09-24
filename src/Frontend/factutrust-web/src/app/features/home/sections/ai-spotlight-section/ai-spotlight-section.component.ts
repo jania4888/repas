@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
 import { LANDING_FACTS } from '../../content/landing-facts';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * Spotlight IA (plan A.4.9) : section sombre, 2 fournisseurs (local Ollama / cloud OpenRouter),
@@ -233,17 +233,12 @@ import { LANDING_FACTS } from '../../content/landing-facts';
     }
   `]
 })
-export class AiSpotlightSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class AiSpotlightSectionComponent extends LandingCopyBase {
 
-  protected readonly t = this.copy.t;
   protected readonly facts = LANDING_FACTS;
   /** Icônes des fournisseurs par position : local (serveur) puis cloud. */
   protected readonly providerIcons = ['pi-server', 'pi-cloud'] as const;
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 
   /** `{count}` / `{toolsCount}` → nombre d'outils IA. */
   protected fillCounts(text: string): string {

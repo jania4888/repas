@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, ElementRef, ViewChild, inject, ChangeDetectionStrategy, computed } from '@angular/core';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LANDING_FACTS } from '../../content/landing-facts';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 interface StatItem {
   value: number;
@@ -121,8 +121,7 @@ interface StatItem {
     }
   `]
 })
-export class StatsSectionComponent implements AfterViewInit {
-  private readonly copy = inject(LandingCopyService);
+export class StatsSectionComponent extends LandingCopyBase implements AfterViewInit {
 
   @ViewChild('statsContainer') statsContainer?: ElementRef<HTMLElement>;
   private countersAnimated = false;

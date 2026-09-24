@@ -1,20 +1,12 @@
 import { test, expect, type Page } from '@playwright/test';
+import { mockRegistrationStatus } from './helpers/landing-mocks';
 
 /** E2e de la page « Cabinets comptables » (lot B) — état d'inscription simulé. */
 
-async function mockRegistration(page: Page, open: boolean): Promise<void> {
-  await page.route('**/api/public/registration-status', route =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ success: true, data: { companyEnabled: open, firmEnabled: open } })
-    })
-  );
-}
 
 test.describe('Landing — page Cabinets comptables', () => {
   test('rendu : H1 unique, 9 blocs, ancres, SEO cabinet', async ({ page }) => {
-    await mockRegistration(page, false);
+    await mockRegistrationStatus(page, 'closed');
     await page.goto('/cabinets-comptables');
 
     await expect(page.locator('h1')).toHaveCount(1);
@@ -34,7 +26,7 @@ test.describe('Landing — page Cabinets comptables', () => {
   });
 
   test('CTA fermé : « Demander une démo » pointe vers #contact?objet=demo-cabinet', async ({ page }) => {
-    await mockRegistration(page, false);
+    await mockRegistrationStatus(page, 'closed');
     await page.goto('/cabinets-comptables');
     const cta = page.locator('[data-cta-state="closed"]:visible').first();
     await expect(cta).toBeVisible({ timeout: 10_000 });
@@ -44,7 +36,7 @@ test.describe('Landing — page Cabinets comptables', () => {
   });
 
   test('CTA ouvert : mène à /auth/register-firm', async ({ page }) => {
-    await mockRegistration(page, true);
+    await mockRegistrationStatus(page, 'open');
     await page.goto('/cabinets-comptables');
     const cta = page.locator('[data-cta-state="open"]:visible').first();
     await expect(cta).toBeVisible({ timeout: 10_000 });
@@ -52,7 +44,7 @@ test.describe('Landing — page Cabinets comptables', () => {
   });
 
   test('FAQ : 7 questions en <details>, offre « sur devis » sans chiffre', async ({ page }) => {
-    await mockRegistration(page, false);
+    await mockRegistrationStatus(page, 'closed');
     await page.goto('/cabinets-comptables');
     await expect(page.locator('#faq-cabinet details')).toHaveCount(7);
     const offer = page.locator('#offre-cabinet');
@@ -61,14 +53,14 @@ test.describe('Landing — page Cabinets comptables', () => {
   });
 
   test('header : l’entrée « Cabinets comptables » est active sur la page', async ({ page }) => {
-    await mockRegistration(page, false);
+    await mockRegistrationStatus(page, 'closed');
     await page.goto('/cabinets-comptables');
     const link = page.locator('header a, .header-area a, nav a').filter({ hasText: /cabinets comptables/i }).first();
     await expect(link).toBeVisible();
   });
 
   test('navigation accueil → cabinets → retour conserve le thème (pas de flash)', async ({ page }) => {
-    await mockRegistration(page, false);
+    await mockRegistrationStatus(page, 'closed');
     await page.goto('/');
     await expect(page.locator('h1')).toBeVisible();
     await page.locator('a').filter({ hasText: /cabinets comptables/i }).first().click();

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { environment } from '@environments/environment';
-import { LandingCopyService } from '../content/landing-copy.service';
 // L'adresse de repli est locale-indépendante : la constante est exportée par les fichiers
 // `content/fr/contact.ts` et `content/ar/contact.ts` (clé hors type figé `LandingContactCopy`).
-import { CONTACT_FALLBACK_EMAIL } from '../content/fr/contact';
+import { CONTACT_FALLBACK_EMAIL, CONTACT_MAILTO_HREF } from '../content/fr/contact';
 import type { ContactRequestSubject } from './contact-request.models';
 import { ContactRequestFormComponent } from './contact-request-form.component';
+import { LandingCopyBase } from '../shared/landing-copy-base';
 
 /** En-tête de la section contact ; par défaut `t().contact.title` / `t().contact.lead`. */
 export interface ContactRequestHeading {
@@ -126,7 +126,7 @@ export interface ContactRequestHeading {
     `
   ]
 })
-export class ContactRequestSectionComponent {
+export class ContactRequestSectionComponent extends LandingCopyBase {
   /** Objet présélectionné quand l'URL ne porte pas de `?objet=` valide. */
   readonly defaultSubject = input<ContactRequestSubject>('acces-entreprise');
   /** En-tête localisé de la section (défaut : en-tête du dictionnaire contact). */
@@ -134,10 +134,8 @@ export class ContactRequestSectionComponent {
 
   protected readonly enabled = environment.publicContact.enabled;
   protected readonly fallbackEmail = CONTACT_FALLBACK_EMAIL;
-  protected readonly mailtoHref = `mailto:${CONTACT_FALLBACK_EMAIL}`;
+  protected readonly mailtoHref = CONTACT_MAILTO_HREF;
 
-  private readonly copy = inject(LandingCopyService);
-  protected readonly t = this.copy.t;
 
   protected readonly effectiveHeading = computed<ContactRequestHeading>(
     () => this.heading() ?? { title: this.t().contact.title, lead: this.t().contact.lead }

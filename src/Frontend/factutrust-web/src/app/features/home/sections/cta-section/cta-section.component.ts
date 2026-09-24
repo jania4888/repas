@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PublicRegistrationStatusService } from '@core/services/public-registration-status.service';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingCtaComponent } from '../../shared/landing-cta/landing-cta.component';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * CTA final (plan A.4.21) : titre adapté à l'état d'ouverture, CTA d'audience Entreprise,
@@ -182,11 +182,9 @@ import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.com
     }
   `]
 })
-export class CtaSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class CtaSectionComponent extends LandingCopyBase {
   private readonly status = inject(PublicRegistrationStatusService);
 
-  protected readonly t = this.copy.t;
 
   /** Titre adapté à l'état d'ouverture des inscriptions. */
   protected readonly title = computed(() => {
@@ -195,10 +193,7 @@ export class CtaSectionComponent {
   });
 
   constructor() {
+    super();
     this.status.ensureLoaded();
-  }
-
-  protected rich(text: string) {
-    return this.copy.rich(text);
   }
 }

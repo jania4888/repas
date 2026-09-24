@@ -1,23 +1,15 @@
 import { test, expect, type Page } from '@playwright/test';
+import { mockRegistrationStatus } from './helpers/landing-mocks';
 
 /**
  * E2e i18n FR/AR (lot D, TD9). L'API d'inscription est simulée (état fermé).
  * `/ar` n'existe que si `environment.landing.arabicEnabled` (vrai en développement).
  */
 
-async function mockRegistrationClosed(page: Page): Promise<void> {
-  await page.route('**/api/public/registration-status', route =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ success: true, data: { companyEnabled: false, firmEnabled: false } })
-    })
-  );
-}
 
 test.describe('Landing — i18n FR/AR', () => {
   test.beforeEach(async ({ page }) => {
-    await mockRegistrationClosed(page);
+    await mockRegistrationStatus(page, 'closed');
   });
 
   test('/ar : html[lang=ar][dir=rtl], titre arabe, canonical et hreflang', async ({ page }) => {

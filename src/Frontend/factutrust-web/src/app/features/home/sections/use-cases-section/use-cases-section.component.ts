@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingCtaComponent } from '../../shared/landing-cta/landing-cta.component';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
 import { cabinetsPath } from '../../i18n/landing-locale.util';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /** Emoji par persona (visuel uniquement), indexé par `persona.cssClass` (classes conservées pour l'e2e). */
 const PERSONA_EMOJI: Record<string, string> = {
@@ -250,16 +250,11 @@ const PERSONA_EMOJI: Record<string, string> = {
     }
   `]
 })
-export class UseCasesSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class UseCasesSectionComponent extends LandingCopyBase {
   private readonly localeService = inject(LandingLocaleService);
 
-  protected readonly t = this.copy.t;
   protected readonly cabinetsUrl = computed(() => cabinetsPath(this.localeService.locale()));
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 
   protected emoji(cssClass: string): string {
     return PERSONA_EMOJI[cssClass] ?? '🏢';

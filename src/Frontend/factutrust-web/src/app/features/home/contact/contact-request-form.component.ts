@@ -17,10 +17,9 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs';
 import { environment } from '@environments/environment';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
-import { LandingCopyService } from '../content/landing-copy.service';
 // L'adresse de repli est locale-indépendante : la constante est exportée par les fichiers
 // `content/fr/contact.ts` et `content/ar/contact.ts` (clé hors type figé `LandingContactCopy`).
-import { CONTACT_FALLBACK_EMAIL } from '../content/fr/contact';
+import { CONTACT_FALLBACK_EMAIL, CONTACT_MAILTO_HREF } from '../content/fr/contact';
 import {
   CONTACT_REQUEST_LIMITS,
   CONTACT_REQUEST_SUBJECTS,
@@ -35,6 +34,7 @@ import { mapContactSubmitError } from './contact-submit-error.mapper';
 import { PublicContactRequestsClient } from './public-contact-requests.client';
 import { ContactValidators, normalizeTunisianPhone } from './tunisian-validators';
 import { TurnstileWidgetComponent } from './turnstile-widget.component';
+import { LandingCopyBase } from '../shared/landing-copy-base';
 
 type ContactFormStatus = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -635,7 +635,7 @@ type ContactControlName =
     `
   ]
 })
-export class ContactRequestFormComponent implements OnInit, OnDestroy {
+export class ContactRequestFormComponent extends LandingCopyBase implements OnInit, OnDestroy {
   /** Objet présélectionné quand `?objet=` est absent ou invalide. */
   readonly defaultSubject = input<ContactRequestSubject>('acces-entreprise');
 
@@ -644,17 +644,15 @@ export class ContactRequestFormComponent implements OnInit, OnDestroy {
   private readonly draft = inject(ContactRequestDraftService);
   private readonly route = inject(ActivatedRoute);
   private readonly landingLocale = inject(LandingLocaleService);
-  private readonly copy = inject(LandingCopyService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly t = this.copy.t;
   protected readonly locale = this.landingLocale.locale;
   protected readonly limits = CONTACT_REQUEST_LIMITS;
   protected readonly subjects = CONTACT_REQUEST_SUBJECTS;
   /** `''` ⇒ le widget (et son script) n'est jamais chargé. */
   protected readonly turnstileSiteKey = environment.turnstileSiteKey;
   protected readonly fallbackEmail = CONTACT_FALLBACK_EMAIL;
-  protected readonly mailtoHref = `mailto:${CONTACT_FALLBACK_EMAIL}`;
+  protected readonly mailtoHref = CONTACT_MAILTO_HREF;
 
   protected readonly status = signal<ContactFormStatus>('idle');
   protected readonly error = signal<ContactSubmitError | null>(null);

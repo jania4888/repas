@@ -4,7 +4,7 @@ import { landingCopyGuard } from './i18n/landing-copy.guard';
 
 /**
  * Pages publiques partagées par les montages FR (`''`) et AR (`ar`).
- * Pas de `title` statique : `LandingSeoService` fixe le titre selon la langue (repli conservé pour l'accessibilité).
+ * Le `title` statique est un repli d'accessibilité immédiat ; `LandingSeoService` pose ensuite le titre localisé.
  */
 export const LANDING_CHILD_ROUTES: Routes = [
   {

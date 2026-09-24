@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
 import { LANDING_FACTS } from '../../content/landing-facts';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 type Accent = 'blue' | 'teal' | 'purple' | 'amber' | 'pink' | 'green';
 
@@ -483,10 +483,8 @@ const FALLBACK_VISUAL: TabVisual = { icon: 'pi-th-large', accent: 'blue' };
     }
   `]
 })
-export class ModuleShowcaseSectionComponent implements OnInit, OnDestroy {
-  private readonly copy = inject(LandingCopyService);
+export class ModuleShowcaseSectionComponent extends LandingCopyBase implements OnInit, OnDestroy {
 
-  protected readonly t = this.copy.t;
   protected readonly facts = LANDING_FACTS;
 
   protected readonly tabs = computed(() => this.t().home.modules.tabs);
@@ -555,13 +553,7 @@ export class ModuleShowcaseSectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 
-  protected format(template: string, params: Record<string, string | number>): string {
-    return this.copy.format(template, params);
-  }
 
   /** `{toolsCount}` (onglet IA) → constante vérifiable. */
   protected fillCounts(text: string): string {

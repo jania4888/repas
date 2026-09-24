@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { RouterModule } from '@angular/router';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
 import { PublicRegistrationStatusService } from '@core/services/public-registration-status.service';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { homePath } from '../../i18n/landing-locale.util';
 import { LANDING_PRICING } from '../../content/landing-pricing';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /** v2 : la valeur a changé (bandeau « Nouveautés » quand les inscriptions sont fermées). */
 const STORAGE_KEY = 'factutrust_promo_banner_dismissed_v2';
@@ -177,12 +177,10 @@ const REAPPEAR_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
     }
   `]
 })
-export class PromoBannerComponent implements OnInit {
-  private readonly copy = inject(LandingCopyService);
+export class PromoBannerComponent extends LandingCopyBase implements OnInit {
   private readonly status = inject(PublicRegistrationStatusService);
   private readonly localeService = inject(LandingLocaleService);
 
-  protected readonly t = this.copy.t;
   protected readonly visible = signal(true);
   protected readonly registrationOpen = computed(() => this.status.companyOpen() || this.status.firmOpen());
   protected readonly homeUrl = computed(() => homePath(this.localeService.locale()));
@@ -195,6 +193,7 @@ export class PromoBannerComponent implements OnInit {
   );
 
   constructor() {
+    super();
     this.status.ensureLoaded();
   }
 

@@ -1,19 +1,11 @@
 import { test, expect, type Page, type Route } from '@playwright/test';
+import { mockRegistrationStatus } from './helpers/landing-mocks';
 
 /**
  * E2e du formulaire de demande d'accès / de démo (lot B). L'API est simulée —
  * `POST /api/public/contact-requests` — pour couvrir tous les états sans backend.
  */
 
-async function mockRegistrationClosed(page: Page): Promise<void> {
-  await page.route('**/api/public/registration-status', route =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ success: true, data: { companyEnabled: false, firmEnabled: false } })
-    })
-  );
-}
 
 async function fillValidForm(page: Page): Promise<void> {
   await page.locator('#contact').scrollIntoViewIfNeeded();
@@ -38,7 +30,7 @@ function mockSubmit(page: Page, respond: (route: Route) => Promise<void>): Promi
 
 test.describe('Landing — formulaire de demande', () => {
   test.beforeEach(async ({ page }) => {
-    await mockRegistrationClosed(page);
+    await mockRegistrationStatus(page, 'closed');
   });
 
   test('succès 202 : référence affichée, focus déplacé, aucune requête avec Authorization', async ({ page }) => {

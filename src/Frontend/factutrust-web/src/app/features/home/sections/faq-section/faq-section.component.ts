@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterModule } from '@angular/router';
 import { PublicRegistrationStatusService } from '@core/services/public-registration-status.service';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingCtaComponent } from '../../shared/landing-cta/landing-cta.component';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
 import { cabinetsPath } from '../../i18n/landing-locale.util';
 import { LANDING_FACTS } from '../../content/landing-facts';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * FAQ (plan A.4.20) : 10 Q/R en `<details>` natifs. La réponse « inscription » bascule sur
@@ -246,12 +246,10 @@ import { LANDING_FACTS } from '../../content/landing-facts';
     }
   `]
 })
-export class FaqSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class FaqSectionComponent extends LandingCopyBase {
   private readonly status = inject(PublicRegistrationStatusService);
   private readonly localeService = inject(LandingLocaleService);
 
-  protected readonly t = this.copy.t;
   protected readonly cabinetsUrl = computed(() => cabinetsPath(this.localeService.locale()));
 
   /** Question « expert-comptable / cabinet » → lien vers la page Cabinets comptables. */
@@ -260,6 +258,7 @@ export class FaqSectionComponent {
   );
 
   constructor() {
+    super();
     this.status.ensureLoaded();
   }
 
@@ -271,9 +270,6 @@ export class FaqSectionComponent {
     return answer;
   }
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 
   /** `{rolesCount}` / `{count}` → nombre de rôles (question « utilisateurs et rôles »). */
   protected fillCounts(text: string): string {

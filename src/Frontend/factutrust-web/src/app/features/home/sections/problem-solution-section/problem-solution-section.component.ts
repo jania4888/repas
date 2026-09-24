@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingCtaComponent } from '../../shared/landing-cta/landing-cta.component';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * « Le problème → la réponse » (plan A.4.6) : 3 irritants appariés à 3 réponses.
@@ -196,12 +196,7 @@ import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.com
     }
   `]
 })
-export class ProblemSolutionSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class ProblemSolutionSectionComponent extends LandingCopyBase {
 
-  protected readonly t = this.copy.t;
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 }

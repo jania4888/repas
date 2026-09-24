@@ -73,6 +73,8 @@ for (const file of walk(ROOT)) {
       // large (le « track » suit un « ; »), puis les restes (« @if … { », « } », « track …) »).
       .replace(/@(for|if|switch|case|else|empty|defer|placeholder|loading|error)\s*\([^;]*(;[^)]*)?\)/g, ' ')
       .replace(/@(for|if|switch|case|else|empty|defer|placeholder|loading|error)\b[^>{]*/g, ' ')
+      // Déclarations @let (liaison de template, pas du texte visible) : `@let x = expr;`
+      .replace(/@let\s+[\w$]+\s*=\s*[^;]+;/g, ' ')
       .replace(/\btrack\s+[^){]*\)?/g, ' ')
       // Attributs techniques (valeurs sans lettre traduisible) : class, id, fragment, data-*, role…
       .replace(/\b(class|id|fragment|role|aria-hidden|tabindex|target|rel|loading|fetchpriority|width|height|colspan|rowspan|dir|lang|hreflang|data-[\w-]+)\s*=\s*"[^"]*"/g, ' ')

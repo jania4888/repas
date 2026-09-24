@@ -113,3 +113,5 @@ export const CONTACT_FR: LandingContactCopy = {
  * la constante est exportée ici en attendant une extension additive du type.
  */
 export const CONTACT_FALLBACK_EMAIL = 'contact@instafact.shop';
+/** Lien `mailto:` de repli partagé (formulaire 503 + section quand la fonctionnalité est désactivée). */
+export const CONTACT_MAILTO_HREF = `mailto:${CONTACT_FALLBACK_EMAIL}`;

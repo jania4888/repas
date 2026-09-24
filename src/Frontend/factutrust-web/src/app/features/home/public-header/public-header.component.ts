@@ -5,10 +5,10 @@ import { filter } from 'rxjs/operators';
 import { Subject, takeUntil } from 'rxjs';
 import { BRAND } from '@core/constants/brand';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
-import { LandingCopyService } from '../content/landing-copy.service';
 import { LandingCtaComponent } from '../shared/landing-cta/landing-cta.component';
 import { LandingLangSwitcherComponent } from '../shared/landing-lang-switcher/landing-lang-switcher.component';
 import { cabinetsPath, homePath, isLandingHome } from '../i18n/landing-locale.util';
+import { LandingCopyBase } from '../shared/landing-copy-base';
 
 interface NavAnchor {
   label: string;
@@ -317,18 +317,16 @@ interface NavAnchor {
     }
   `]
 })
-export class PublicHeaderComponent implements OnInit, OnDestroy {
+export class PublicHeaderComponent extends LandingCopyBase implements OnInit, OnDestroy {
   readonly brand = BRAND;
 
   private readonly router = inject(Router);
-  private readonly copy = inject(LandingCopyService);
   private readonly localeService = inject(LandingLocaleService);
   private readonly destroy$ = new Subject<void>();
 
   @ViewChild('menuTrigger') private menuTrigger?: ElementRef<HTMLButtonElement>;
   @ViewChild('drawerContent') private drawerContent?: ElementRef<HTMLElement>;
 
-  protected readonly t = this.copy.t;
   protected readonly mobileMenuOpen = signal(false);
   protected readonly isScrolled = signal(false);
   private readonly currentRoute = signal<string>('');

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
 import { LANDING_FACTS } from '../../content/landing-facts';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * Grille des 9 fonctionnalités (plan A.4.7). Textes : `t().home.features`
@@ -166,14 +166,9 @@ import { LANDING_FACTS } from '../../content/landing-facts';
     }
   `]
 })
-export class FeaturesSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class FeaturesSectionComponent extends LandingCopyBase {
 
-  protected readonly t = this.copy.t;
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 
   /** Remplace `{count}` (rôles ou outils IA) par les constantes vérifiables. */
   /** `{count}`/`{rolesCount}` → rôles, `{toolsCount}` → outils IA. */

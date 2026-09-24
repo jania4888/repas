@@ -1,35 +1,11 @@
-import { test, expect, type Page, type Route } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+import { mockRegistrationStatus } from './helpers/landing-mocks';
 
 /**
  * Smoke e2e de la page d'accueil refondue (lot A). L'API d'état d'inscription est
  * systématiquement simulée (`GET /api/public/registration-status`) : les tests ne
  * dépendent ni du backend ni de la configuration de production.
  */
-
-type RegistrationState = 'closed' | 'open' | 'error' | 'slow';
-
-async function mockRegistrationStatus(page: Page, state: RegistrationState): Promise<void> {
-  await page.route('**/api/public/registration-status', async (route: Route) => {
-    if (state === 'error') {
-      await route.abort('failed');
-      return;
-    }
-    if (state === 'slow') {
-      await new Promise(resolve => setTimeout(resolve, 6_000));
-    }
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: {
-          companyEnabled: state === 'open',
-          firmEnabled: state === 'open'
-        }
-      })
-    });
-  });
-}
 
 /** Attend la fin du chargement de l'état d'inscription (le squelette disparaît). */
 async function waitForCtaState(page: Page, state: 'open' | 'closed'): Promise<void> {

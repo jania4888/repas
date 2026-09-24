@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
 import { LANDING_FACTS } from '../../content/landing-facts';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * Sécurité détaillée (plan A.4.17) : 5 points vérifiables (2FA, rôles, isolation, rate limiting, exports).
@@ -134,14 +134,9 @@ import { LANDING_FACTS } from '../../content/landing-facts';
     }
   `]
 })
-export class SecuritySectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class SecuritySectionComponent extends LandingCopyBase {
 
-  protected readonly t = this.copy.t;
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 
   /** `{count}` / `{rolesCount}` → nombre de rôles. */
   protected fillCounts(text: string): string {

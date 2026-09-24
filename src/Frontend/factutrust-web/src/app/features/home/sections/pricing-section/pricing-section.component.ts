@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingCtaComponent } from '../../shared/landing-cta/landing-cta.component';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
 import { ANNUAL_SAVING_PERCENT, ANNUAL_SAVING_TND, LANDING_PRICING } from '../../content/landing-pricing';
 import { cabinetsPath } from '../../i18n/landing-locale.util';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 type PlanKey = 'free' | 'monthly' | 'annual';
 
@@ -691,11 +691,9 @@ type PlanKey = 'free' | 'monthly' | 'annual';
     }
   `]
 })
-export class PricingSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class PricingSectionComponent extends LandingCopyBase {
   private readonly localeService = inject(LandingLocaleService);
 
-  protected readonly t = this.copy.t;
   protected readonly pricing = LANDING_PRICING;
   protected readonly currency = LANDING_PRICING.currency;
   protected readonly savingPercent = ANNUAL_SAVING_PERCENT;
@@ -721,13 +719,7 @@ export class PricingSectionComponent {
         : LANDING_PRICING.annual.priceMonthly;
   }
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 
-  protected format(template: string, params: Record<string, string | number>): string {
-    return this.copy.format(template, params);
-  }
 
   /** Formate `{amount}` puis l'isole en LTR (`[[…]]` → `rich()` → `span[dir="ltr"]`). */
   protected richWithAmount(template: string, amount: string) {

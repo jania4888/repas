@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { LandingCopyService } from '../../content/landing-copy.service';
 import { LandingLocaleService } from '@core/services/landing-locale.service';
 import { cabinetsPath } from '../../i18n/landing-locale.util';
 import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.component';
+import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
  * Teaser « version Cabinet comptable » sur l'accueil (plan TB4, maquette cabinet-teaser-variant-a) :
@@ -221,14 +221,9 @@ import { LandingRichComponent } from '../../shared/landing-rich/landing-rich.com
     }
   `]
 })
-export class CabinetTeaserSectionComponent {
-  private readonly copy = inject(LandingCopyService);
+export class CabinetTeaserSectionComponent extends LandingCopyBase {
   private readonly localeService = inject(LandingLocaleService);
 
-  protected readonly t = this.copy.t;
   protected readonly cabinetsUrl = computed(() => cabinetsPath(this.localeService.locale()));
 
-  protected rich(text: string) {
-    return this.copy.rich(text);
-  }
 }
