@@ -26,8 +26,22 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
 import {
   FirmCollaboratorPayrollOnboardingComponent
 } from './firm-collaborator-payroll-onboarding.component';
+import {
+  AUTH_PASSWORD_MIN_LENGTH,
+  AUTH_PASSWORD_MIN_UNIQUE_CHARS,
+  optionalAuthPasswordValidator
+} from '@features/auth/shared/auth-password.helpers';
 
 type FormMode = 'create' | 'edit' | 'view';
+
+/**
+ * Characters Identity accepts in a login name — the email doubles as one. `Validators.email` alone
+ * lets `'`, `!` or `#` through, which the server then refuses.
+ */
+const IDENTITY_USERNAME_CHARSET = /^[A-Za-z0-9._@+-]*$/;
+
+/** "Informations générales" tab, which holds the email and password fields. */
+const GENERAL_TAB = 0;
 
 @Component({
   selector: 'app-firm-collaborator-form',
@@ -73,7 +87,7 @@ type FormMode = 'create' | 'edit' | 'view';
     </app-page-header>
 
     <div class="fc-card" *ngIf="!loading(); else loadingTpl">
-      <p-tabs [lazy]="true">
+      <p-tabs [(value)]="activeTab" [lazy]="true">
         <p-tablist>
           <p-tab [value]="0">Informations générales</p-tab>
           <p-tab [value]="1" *ngIf="autoProvisionEnabled()">Paie</p-tab>
@@ -101,6 +115,9 @@ type FormMode = 'create' | 'edit' | 'view';
             </label>
             <label>Email
               <input pInputText formControlName="email" placeholder="Email" [readonly]="mode !== 'create'" />
+              <small class="field-error" *ngIf="form.controls.email.hasError('pattern')">
+                Caractères autorisés : lettres sans accent, chiffres et . _ - + &#64;
+              </small>
               <small class="field-error" *ngIf="form.controls.email.hasError('server')">
                 {{ form.controls.email.getError('server') }}
               </small>
@@ -151,6 +168,13 @@ type FormMode = 'create' | 'edit' | 'view';
             </label>
             <label *ngIf="mode === 'create'">Mot de passe (optionnel — laissez vide pour invitation)
               <input pInputText type="password" formControlName="password" placeholder="Mot de passe" autocomplete="new-password" />
+              <small class="hint">{{ passwordHint }}</small>
+              <small class="field-error" *ngIf="form.controls.password.hasError('passwordPolicy')">
+                Il manque : {{ form.controls.password.getError('passwordPolicy').missing.join(', ') }}.
+              </small>
+              <small class="field-error" *ngIf="form.controls.password.hasError('server')">
+                {{ form.controls.password.getError('server') }}
+              </small>
             </label>
             <label *ngIf="mode === 'create'" class="full checkbox-row">
               <p-checkbox formControlName="sendInvite" [binary]="true" inputId="sendInvite"></p-checkbox>
@@ -274,6 +298,10 @@ export class FirmCollaboratorFormComponent implements OnInit {
   readonly autoProvisionEnabled = signal(false);
 
   selectedBinomeIds: string[] = [];
+  activeTab = GENERAL_TAB;
+  readonly passwordHint =
+    `${AUTH_PASSWORD_MIN_LENGTH} caractères minimum, dont une majuscule, une minuscule, un chiffre, `
+    + `un caractère spécial et ${AUTH_PASSWORD_MIN_UNIQUE_CHARS} caractères différents.`;
   private pendingCni: File | null = null;
   private collaboratorId: string | null = null;
 
@@ -300,7 +328,7 @@ export class FirmCollaboratorFormComponent implements OnInit {
     city: [{ value: '', disabled: true }],
     country: [{ value: 'Tunisie', disabled: true }],
     role: [12 as FirmUserRole, Validators.required],
-    password: [''],
+    password: ['', optionalAuthPasswordValidator()],
     sendInvite: [true]
   });
 
@@ -310,6 +338,9 @@ export class FirmCollaboratorFormComponent implements OnInit {
     if (this.mode === 'create') {
       this.title = "Création d'un nouveau collaborateur";
       this.subtitle = 'Informations générales';
+      // Create mode only: an existing account's email is read-only and must never block saving an edit.
+      this.form.controls.email.addValidators(Validators.pattern(IDENTITY_USERNAME_CHARSET));
+      this.form.controls.email.updateValueAndValidity({ emitEvent: false });
       this.loadFirmAddress();
       this.loadProvisioningFlags();
     } else if (this.mode === 'edit') {
@@ -328,12 +359,14 @@ export class FirmCollaboratorFormComponent implements OnInit {
       this.onUseFirmAddressChanged(!!checked);
     });
 
-    this.form.controls.email.valueChanges.subscribe(() => {
-      if (this.form.controls.email.hasError('server')) {
-        const { server: _server, ...rest } = this.form.controls.email.errors ?? {};
-        this.form.controls.email.setErrors(Object.keys(rest).length ? rest : null);
-      }
-    });
+    for (const control of [this.form.controls.email, this.form.controls.password]) {
+      control.valueChanges.subscribe(() => {
+        if (control.hasError('server')) {
+          const { server: _server, ...rest } = control.errors ?? {};
+          control.setErrors(Object.keys(rest).length ? rest : null);
+        }
+      });
+    }
   }
 
   /** Resolve create/edit/view from route data, id param, and URL suffix. */
@@ -585,7 +618,7 @@ export class FirmCollaboratorFormComponent implements OnInit {
             return;
           }
           this.showError(detail);
-          this.applyEmailServerErrorIfDuplicate(detail);
+          this.applyServerFieldError(err?.error?.code, detail);
         }
       });
       return;
@@ -669,15 +702,25 @@ export class FirmCollaboratorFormComponent implements OnInit {
     this.toast.add({ severity: 'error', summary: 'Erreur', detail });
   }
 
-  /** Surfaces duplicate email/username Identity errors on the email control. */
-  private applyEmailServerErrorIfDuplicate(detail: string): void {
-    if (!detail.toLowerCase().includes('déjà utilis')) {
+  /**
+   * Surfaces a server refusal on the offending control and brings the user back to its tab: the
+   * Save button is also reachable from the Paie tab, where the field is out of sight.
+   * The error code comes first; the duplicate-email wording remains a fallback for older responses.
+   */
+  private applyServerFieldError(code: string | undefined, detail: string): void {
+    const control = code === 'Validation.Password'
+      ? this.form.controls.password
+      : code === 'Validation.Email' || detail.toLowerCase().includes('déjà utilis')
+        ? this.form.controls.email
+        : null;
+    if (!control) {
       return;
     }
-    this.form.controls.email.setErrors({
-      ...this.form.controls.email.errors,
+    control.setErrors({
+      ...control.errors,
       server: detail
     });
-    this.form.controls.email.markAsTouched();
+    control.markAsTouched();
+    this.activeTab = GENERAL_TAB;
   }
 }

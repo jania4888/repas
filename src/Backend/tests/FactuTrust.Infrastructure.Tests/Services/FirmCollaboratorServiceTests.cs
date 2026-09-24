@@ -13,6 +13,7 @@ using FactuTrust.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -40,12 +41,15 @@ public sealed class FirmCollaboratorServiceTests
 
     private static async Task<TestContext> CreateContextAsync(
         FirmGovernanceOptions? governanceOptions = null,
-        Action<Mock<IFirmInternalPayrollProvisioningService>, MasterDbContext>? configureProvisioning = null)
+        Action<Mock<IFirmInternalPayrollProvisioningService>, MasterDbContext>? configureProvisioning = null,
+        IInterceptor? interceptor = null)
     {
         var dbName = Guid.NewGuid().ToString();
-        var options = new DbContextOptionsBuilder<MasterDbContext>()
-            .UseInMemoryDatabase(dbName)
-            .Options;
+        var optionsBuilder = new DbContextOptionsBuilder<MasterDbContext>()
+            .UseInMemoryDatabase(dbName);
+        if (interceptor is not null)
+            optionsBuilder.AddInterceptors(interceptor);
+        var options = optionsBuilder.Options;
         var db = new MasterDbContext(options);
 
         var nif = NIF.Create("1234567/A/B/C/000").Value;
@@ -328,7 +332,10 @@ public sealed class FirmCollaboratorServiceTests
 
         Assert.True(result.IsFailure);
         Assert.Equal("Validation.PayrollProvision", result.Error.Code);
-        Assert.Contains("Sequence contains no elements", result.Error.Description);
+        // Le message d'exception reste dans les journaux : le client ne reçoit qu'une référence.
+        Assert.DoesNotContain("Sequence contains no elements", result.Error.Description);
+        Assert.StartsWith("Impossible de créer le salarié paie", result.Error.Description);
+        Assert.Contains("réf.", result.Error.Description);
         Assert.False(await ctx.Db.Users.AnyAsync(u => u.Email == "payroll-ex@test.tn"));
     }
 
@@ -463,5 +470,136 @@ public sealed class FirmCollaboratorServiceTests
             .FirstAsync(p => p.UserId == created.Value.Id);
         Assert.False(string.IsNullOrWhiteSpace(profile.CniFileName));
         Assert.EndsWith(".pdf", profile.CniFileName);
+    }
+
+    [Fact]
+    public async Task Create_WithTooShortPassword_ReturnsPasswordCode_AndCreatesNoAccount()
+    {
+        var ctx = await CreateContextAsync();
+        await using var db = ctx.Db;
+
+        var result = await ctx.Service.CreateAsync(
+            FirmId, DefaultCreateDto("weak@test.tn") with { Password = "abc" }, null, null, null);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Validation.Password", result.Error.Code);
+        Assert.Equal("Le mot de passe doit contenir au moins 6 caractères.", result.Error.Description);
+        Assert.False(await db.Users.AnyAsync(u => u.Email == "weak@test.tn"));
+    }
+
+    [Fact]
+    public async Task Create_WithEmailOutsideIdentityCharset_FailsBeforeAnyWrite()
+    {
+        var ctx = await CreateContextAsync(new FirmGovernanceOptions
+        {
+            Enabled = true,
+            EnableFirmInternalPayroll = true,
+            AutoProvisionPayrollOnCollaboratorCreate = true
+        });
+        await using var db = ctx.Db;
+
+        var result = await ctx.Service.CreateAsync(
+            FirmId, CreateDtoWithPayroll("o'brien@test.tn"), null, null, null);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Validation.Email", result.Error.Code);
+        Assert.Contains("caractères non autorisés", result.Error.Description);
+        Assert.False(await db.Users.AnyAsync(u => u.Email == "o'brien@test.tn"));
+        ctx.Provisioning.Verify(
+            p => p.ProvisionCollaboratorAsync(
+                It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<Guid>(),
+                It.IsAny<FirmCollaboratorPayrollOnboardingDto?>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task Create_WithEmailAlreadyUsed_ReturnsEmailCode()
+    {
+        var ctx = await CreateContextAsync();
+        await using var db = ctx.Db;
+
+        var result = await ctx.Service.CreateAsync(FirmId, DefaultCreateDto("manager@test.tn"), null, null, null);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Validation.Email", result.Error.Code);
+        Assert.Contains("déjà utilisé", result.Error.Description);
+        Assert.Equal(1, await db.Users.CountAsync(u => u.Email == "manager@test.tn"));
+    }
+
+    [Fact]
+    public async Task Create_WhenRoleIsMissing_FailsBeforeAccountCreation()
+    {
+        var ctx = await CreateContextAsync();
+        await using var db = ctx.Db;
+        db.Roles.Remove(await db.Roles.SingleAsync(r => r.Name == UserRole.FirmAccountant.ToString()));
+        await db.SaveChangesAsync();
+
+        var result = await ctx.Service.CreateAsync(FirmId, DefaultCreateDto("no-role@test.tn"), null, null, null);
+
+        Assert.True(result.IsFailure);
+        Assert.Equal("Validation.Role", result.Error.Code);
+        Assert.False(await db.Users.AnyAsync(u => u.Email == "no-role@test.tn"));
+    }
+
+    [Fact]
+    public async Task Create_WhenProfileSaveThrows_RemovesAccount_AndRethrows()
+    {
+        var ctx = await CreateContextAsync(interceptor: new FailProfileInsertInterceptor());
+        await using var db = ctx.Db;
+
+        await Assert.ThrowsAsync<DbUpdateException>(() =>
+            ctx.Service.CreateAsync(FirmId, DefaultCreateDto("profile-ko@test.tn"), null, null, null));
+
+        // Sans compensation, l'e-mail resterait pris et chaque nouvelle tentative échouerait en doublon.
+        Assert.False(await db.Users.AnyAsync(u => u.Email == "profile-ko@test.tn"));
+    }
+
+    [Fact]
+    public async Task Create_WhenCniStreamFails_RemovesAccountAndPartialFile_AndRethrows()
+    {
+        var ctx = await CreateContextAsync();
+        await using var db = ctx.Db;
+        await using var cni = new FailingReadStream();
+
+        await Assert.ThrowsAsync<IOException>(() =>
+            ctx.Service.CreateAsync(FirmId, DefaultCreateDto("cni-ko@test.tn"), cni, "carte.pdf", "application/pdf"));
+
+        Assert.False(await db.Users.AnyAsync(u => u.Email == "cni-ko@test.tn"));
+        var leftovers = Directory.Exists(ctx.StorageRoot)
+            ? Directory.GetFiles(ctx.StorageRoot, "*", SearchOption.AllDirectories)
+            : Array.Empty<string>();
+        Assert.Empty(leftovers);
+    }
+
+    /// <summary>Fait échouer l'insertion du profil, comme une troncature SQL en production.</summary>
+    private sealed class FailProfileInsertInterceptor : SaveChangesInterceptor
+    {
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData,
+            InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
+        {
+            if (eventData.Context!.ChangeTracker.Entries<FirmCollaboratorProfile>().Any(e => e.State == EntityState.Added))
+                throw new DbUpdateException("String or binary data would be truncated.");
+
+            return base.SavingChangesAsync(eventData, result, cancellationToken);
+        }
+    }
+
+    /// <summary>Flux dont la lecture casse en cours de copie (connexion coupée pendant l'envoi).</summary>
+    private sealed class FailingReadStream : Stream
+    {
+        public override bool CanRead => true;
+        public override bool CanSeek => true;
+        public override bool CanWrite => false;
+        public override long Length => 1024;
+        public override long Position { get; set; }
+        public override void Flush() { }
+        public override int Read(byte[] buffer, int offset, int count) => throw new IOException("Connexion interrompue.");
+        public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) =>
+            throw new IOException("Connexion interrompue.");
+        public override long Seek(long offset, SeekOrigin origin) => 0;
+        public override void SetLength(long value) { }
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
     }
 }

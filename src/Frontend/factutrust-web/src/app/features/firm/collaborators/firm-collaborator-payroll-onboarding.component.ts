@@ -46,7 +46,7 @@ function toIsoDate(value: Date | null | undefined): string {
         <input pInputText [value]="identity?.email ?? ''" readonly />
       </label>
       <label>Matricule <span class="req">*</span>
-        <input pInputText formControlName="employeeNumber" placeholder="Ex. CAB-XXXXXXXX" />
+        <input pInputText formControlName="employeeNumber" placeholder="Ex. CAB-XXXXXXXX" [attr.maxlength]="employeeNumberMaxLength" />
       </label>
       <label>Date d'embauche <span class="req">*</span>
         <p-datepicker formControlName="hireDate" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" styleClass="w-full" />
@@ -102,12 +102,14 @@ export class FirmCollaboratorPayrollOnboardingComponent implements OnChanges {
   @Input() defaultBaseSalary = 1500;
   @Input() defaultWorkAccidentRate = 0.4;
 
+  /** Length of the payroll `Employees.EmployeeNumber` column. */
+  readonly employeeNumberMaxLength = 50;
   readonly contractTypeOptions = CONTRACT_TYPE_OPTIONS;
   readonly regimeOptions = SOCIAL_REGIME_OPTIONS;
   readonly weeklyRegimeOptions = WEEKLY_REGIME_OPTIONS;
 
   readonly form = this.fb.nonNullable.group({
-    employeeNumber: ['', Validators.required],
+    employeeNumber: ['', [Validators.required, Validators.maxLength(this.employeeNumberMaxLength)]],
     hireDate: [new Date(), Validators.required],
     contractType: ['Cdi', Validators.required],
     contractRegime: ['Rsna', Validators.required],

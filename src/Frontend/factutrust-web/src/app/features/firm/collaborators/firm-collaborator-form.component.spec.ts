@@ -10,6 +10,9 @@ import { ToastService } from '@core/services/toast.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 
 describe('FirmCollaboratorFormComponent', () => {
+  // Conforme à la politique Identity du serveur (12 caractères, 4 familles, 4 distincts).
+  const VALID_PASSWORD = 'Password1!23';
+
   const firmUser: FirmUser = {
     id: 'user-1',
     email: 'collab@example.com',
@@ -229,7 +232,7 @@ describe('FirmCollaboratorFormComponent', () => {
       lastName: 'Test',
       firstName: 'Payroll',
       email: 'payroll-fail@example.com',
-      password: 'Password1!'
+      password: VALID_PASSWORD
     });
     component.save();
 
@@ -261,7 +264,7 @@ describe('FirmCollaboratorFormComponent', () => {
       lastName: 'Test',
       firstName: 'Payroll',
       email: 'payroll-ok@example.com',
-      password: 'Password1!'
+      password: VALID_PASSWORD
     });
 
     const payrollPayload = {
@@ -291,5 +294,123 @@ describe('FirmCollaboratorFormComponent', () => {
       jasmine.objectContaining({ payroll: payrollPayload }),
       null
     );
+  });
+
+  describe('password policy', () => {
+    function fillIdentity(component: FirmCollaboratorFormComponent, password: string): void {
+      component.form.patchValue({
+        lastName: 'Sami',
+        firstName: 'Mango',
+        email: 'mango.sami@example.com',
+        password
+      });
+    }
+
+    it('keeps the form valid with an empty password (invitation flow)', () => {
+      const component = setup({ data: { mode: 'create' } }).componentInstance;
+      fillIdentity(component, '');
+
+      expect(component.form.valid).toBeTrue();
+    });
+
+    it('blocks a password the server would refuse, without calling the API', () => {
+      const component = setup({ data: { mode: 'create' } }).componentInstance;
+      fillIdentity(component, 'Test1234');
+
+      expect(component.form.controls.password.hasError('passwordPolicy')).toBeTrue();
+      expect(component.form.invalid).toBeTrue();
+
+      component.save();
+      expect(TestBed.inject(FirmCollaboratorsService).create).not.toHaveBeenCalled();
+    });
+
+    it('shows what the password is missing', () => {
+      const fixture = setup({ data: { mode: 'create' } });
+      fillIdentity(fixture.componentInstance, 'Test1234');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent)
+        .toContain('Il manque : 12 caractères minimum, un caractère spécial.');
+    });
+
+    it('accepts a compliant password', () => {
+      const component = setup({ data: { mode: 'create' } }).componentInstance;
+      fillIdentity(component, VALID_PASSWORD);
+
+      expect(component.form.valid).toBeTrue();
+    });
+  });
+
+  it('rejects in create mode an email with characters the server refuses as a login', () => {
+    const component = setup({ data: { mode: 'create' } }).componentInstance;
+    component.form.patchValue({ lastName: 'Brien', firstName: 'O', email: "o'brien@example.com" });
+
+    expect(component.form.controls.email.hasError('pattern')).toBeTrue();
+    expect(component.form.invalid).toBeTrue();
+  });
+
+  it('does not apply the login charset rule to the read-only email in edit mode', () => {
+    const component = setup({ id: 'user-1', url: '/firm/collaborateurs/user-1/edit' }).componentInstance;
+    component.form.controls.email.setValue("o'brien@example.com");
+
+    expect(component.form.controls.email.hasError('pattern')).toBeFalse();
+  });
+
+  it('opens the general tab on load', () => {
+    const component = setup({ data: { mode: 'create' }, autoProvisionOnCreate: true }).componentInstance;
+
+    expect(component.activeTab).toBe(0);
+  });
+
+  it('flags the password field and returns to the general tab when the server refuses the password', () => {
+    const serverMessage = 'Le mot de passe doit contenir au moins 12 caractères.';
+    const httpError = new HttpErrorResponse({
+      status: 400,
+      statusText: 'Bad Request',
+      url: 'https://localhost:7001/api/firm/users',
+      error: { success: false, data: null, message: serverMessage, errors: [serverMessage], code: 'Validation.Password' }
+    });
+    const fixture = setup({ data: { mode: 'create' }, createResult: throwError(() => httpError) });
+    const component = fixture.componentInstance;
+    component.form.patchValue({
+      lastName: 'Sami',
+      firstName: 'Mango',
+      email: 'mango.sami@example.com',
+      password: VALID_PASSWORD
+    });
+    component.activeTab = 1; // l'utilisateur enregistre depuis l'onglet Paie
+
+    component.save();
+
+    expect(component.form.controls.password.getError('server')).toBe(serverMessage);
+    expect(component.form.controls.email.hasError('server')).toBeFalse();
+    expect(component.activeTab).toBe(0);
+    expect(TestBed.inject(ToastService).add).toHaveBeenCalledWith(
+      jasmine.objectContaining({ severity: 'error', detail: serverMessage })
+    );
+  });
+
+  it('flags the email field from the Validation.Email code', () => {
+    const serverMessage = "L'adresse email contient des caractères non autorisés.";
+    const httpError = new HttpErrorResponse({
+      status: 400,
+      error: { success: false, data: null, message: serverMessage, errors: [serverMessage], code: 'Validation.Email' }
+    });
+    const component = setup({ data: { mode: 'create' }, createResult: throwError(() => httpError) }).componentInstance;
+    component.form.patchValue({ lastName: 'Sami', firstName: 'Mango', email: 'mango.sami@example.com' });
+
+    component.save();
+
+    expect(component.form.controls.email.getError('server')).toBe(serverMessage);
+    expect(component.form.controls.password.hasError('server')).toBeFalse();
+  });
+
+  it('clears the server error on the password once the user edits it', () => {
+    const component = setup({ data: { mode: 'create' } }).componentInstance;
+    component.form.controls.password.setErrors({ server: 'refusé' });
+
+    component.form.controls.password.setValue(VALID_PASSWORD);
+
+    expect(component.form.controls.password.hasError('server')).toBeFalse();
   });
 });
