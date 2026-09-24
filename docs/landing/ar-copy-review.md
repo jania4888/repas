@@ -158,9 +158,9 @@ porte d'activation de `landing.arabicEnabled` en production.
 | home#bvg3lx | Intelligence artificielle | الذكاء الاصطناعي | À relire |  |
 | home#l8btxr | Une IA qui connaît votre entreprise — et reste chez vous | ذكاء اصطناعي يعرف مؤسستكم — ويبقى لديكم | À relire |  |
 | home#19wanpc | Un assistant métier, des modèles hébergés sur votre serveur, une option cloud activable. | مساعد مهني، ونماذج مستضافة على خادمكم، وخيار سحابي قابل للتفعيل. | À relire |  |
-| home#x2rdg7 | Local (Ollama) | محلي (Ollama) | À relire |  |
-| home#x5pvwu | Modèles Qwen 2.5 et Gemma 3 exécutés sur votre serveur : vos données ne sortent pas. | نموذجا Qwen 2.5 وGemma 3 يعملان على خادمكم: بياناتكم لا تغادر. | À relire |  |
-| home#1f0slzg | Cloud en option (OpenRouter) | سحابي اختياري (OpenRouter) | À relire |  |
+| home#3rz0y8 | Local | محلي | À relire |  |
+| home#1epqd53 | Des modèles exécutés sur votre serveur : vos données ne sortent pas. | نماذج تعمل على خادمكم: بياناتكم لا تغادر. | À relire |  |
+| home#1oo5e94 | Cloud en option | سحابي اختياري | À relire |  |
 | home#14vk5n2 | Activable par l’administrateur si vous souhaitez un modèle plus puissant. | يفعّله المدير إذا أردتم نموذجاً أقوى. | À relire |  |
 | home#f390vk | Plus de {count} outils : créer un devis, retrouver une facture, expliquer un solde, importer une facture fournisseur depuis une photo. | أكثر من {count} أداة: إنشاء عرض أسعار، إيجاد فاتورة، شرح رصيد، استيراد فاتورة مزوّد من صورة. | À relire |  |
 | home#qwipox | L’assistant répond à partir de vos données et de règles de contrôle (grounding) ; il ne remplace pas votre comptable. | يجيب المساعد انطلاقاً من بياناتكم وقواعد ضبط (grounding)؛ وهو لا يعوّض محاسبكم. | À relire |  |
@@ -347,7 +347,7 @@ porte d'activation de `landing.arabicEnabled` en production.
 | home#ywnfun | InstaFact est-il conforme à la facturation électronique tunisienne (TEJ) ? | هل InstaFact مطابق للفوترة الإلكترونية التونسية (TEJ)؟ | À relire |  |
 | home#qxrvzl | InstaFact génère et valide le XML TEJ et produit les certificats de retenue à la source. La transmission dépend de votre habilitation auprès de la plateforme nationale. | يولّد InstaFact ملف XML TEJ ويتحقق منه وينتج شهادات الخصم من المورد. أما الإرسال فيتوقف على ترخيصكم لدى المنصة الوطنية. | À relire |  |
 | home#1q2iofy | Mes données sont-elles envoyées à une IA externe ? | هل تُرسل بياناتي إلى ذكاء اصطناعي خارجي؟ | À relire |  |
-| home#1d3q22l | Par défaut non : les modèles tournent en local (Ollama). Un fournisseur cloud (OpenRouter) peut être activé par votre administrateur, en connaissance de cause. | افتراضياً لا: تعمل النماذج محلياً (Ollama). ويمكن لمديركم تفعيل مزوّد سحابي (OpenRouter) عن علم بذلك. | À relire |  |
+| home#7x22gi | Par défaut non : les modèles tournent en local. Un fournisseur cloud peut être activé par votre administrateur, en connaissance de cause. | افتراضياً لا: تعمل النماذج محلياً. ويمكن لمديركم تفعيل مزوّد سحابي عن علم بذلك. | À relire |  |
 | home#1igclmg | Combien d’utilisateurs et de rôles ? | كم عدد المستخدمين والأدوار؟ | À relire |  |
 | home#1zaoxw | {rolesCount} rôles (administrateur, comptable, commercial, caissier, magasinier, auditeur…). Le plan gratuit inclut plusieurs utilisateurs ; les plans payants n’ont pas de limite. | {rolesCount} دوراً (مدير، محاسب، مندوب مبيعات، أمين صندوق، أمين مخزن، مدقق…). تشمل الخطة المجانية عدة مستخدمين؛ أما الخطط المدفوعة فبلا حدود. | À relire |  |
 | home#m9hwj1 | Gérez-vous la paie tunisienne ? | هل تديرون الأجور التونسية؟ | À relire |  |
@@ -407,7 +407,7 @@ porte d'activation de `landing.arabicEnabled` en production.
 | cabinets#8fc4d6 | Chaque entrée est chaînée et signée (HMAC-SHA256) : toute altération est détectable. | كل مدخل متسلسل وموقّع (HMAC-SHA256): أي تعديل قابل للكشف. | À relire |  |
 | cabinets#qyh0vl | Authentification renforcée | مصادقة معززة | À relire |  |
 | cabinets#1gyp10m | Connexion JWT et double authentification (2FA). | دخول JWT ومصادقة ثنائية (2FA). | À relire |  |
-| cabinets#18ntq67 | L’assistant peut fonctionner sur un modèle exécuté sur nos serveurs (Ollama), avec une option cloud selon la configuration. | يمكن للمساعد أن يعمل على نموذج يُشغَّل على خوادمنا (Ollama)، مع خيار سحابي حسب الإعدادات. | À relire |  |
+| cabinets#17fumgo | L’assistant peut fonctionner sur un modèle exécuté sur nos serveurs, avec une option cloud selon la configuration. | يمكن للمساعد أن يعمل على نموذج يُشغَّل على خوادمنا، مع خيار سحابي حسب الإعدادات. | À relire |  |
 | cabinets#v8mphf | En savoir plus sur la sécurité | اعرفوا المزيد عن الأمان | À relire |  |
 | cabinets#std40m | Offre Cabinet — sur devis | عرض المكتب — حسب عرض الأسعار | À relire |  |
 | cabinets#csq60r | Une offre cabinet distincte des forfaits entreprise, adaptée au nombre de dossiers et de collaborateurs. | عرض للمكاتب مستقل عن صيغ المؤسسات، ملائم لعدد الملفات والمعاونين. | À relire |  |

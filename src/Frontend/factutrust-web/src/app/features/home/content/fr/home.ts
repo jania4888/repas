@@ -142,7 +142,7 @@ export const HOME_FR: LandingHomeCopy = {
         tagline: 'Un assistant qui agit dans vos données, sur vos serveurs',
         points: [
           'Plus de {toolsCount} outils métier',
-          'Modèles locaux (Ollama) ou cloud au choix (OpenRouter)',
+          'Modèles locaux ou cloud au choix',
           'Studio : tables, formulaires, workflows sans code'
         ]
       },
@@ -205,11 +205,11 @@ export const HOME_FR: LandingHomeCopy = {
     subtitle: 'Un assistant métier, des modèles hébergés sur votre serveur, une option cloud activable.',
     providers: [
       {
-        title: 'Local (Ollama)',
-        text: 'Modèles Qwen 2.5 et Gemma 3 exécutés sur votre serveur : vos données ne sortent pas.'
+        title: 'Local',
+        text: 'Des modèles exécutés sur votre serveur : vos données ne sortent pas.'
       },
       {
-        title: 'Cloud en option (OpenRouter)',
+        title: 'Cloud en option',
         text: 'Activable par l’administrateur si vous souhaitez un modèle plus puissant.'
       }
     ],
@@ -560,7 +560,7 @@ export const HOME_FR: LandingHomeCopy = {
       {
         question: 'Mes données sont-elles envoyées à une IA externe ?',
         answer:
-          'Par défaut non : les modèles tournent en local (Ollama). Un fournisseur cloud (OpenRouter) peut être activé par votre administrateur, en connaissance de cause.'
+          'Par défaut non : les modèles tournent en local. Un fournisseur cloud peut être activé par votre administrateur, en connaissance de cause.'
       },
       {
         question: 'Combien d’utilisateurs et de rôles ?',

@@ -139,7 +139,7 @@ export const CABINETS_FR: LandingCabinetsCopy = {
       }
     ],
     aiNote:
-      'L’assistant peut fonctionner sur un modèle exécuté sur nos serveurs (Ollama), avec une option cloud selon la configuration.',
+      'L’assistant peut fonctionner sur un modèle exécuté sur nos serveurs, avec une option cloud selon la configuration.',
     moreLink: 'En savoir plus sur la sécurité'
   },
   offer: {

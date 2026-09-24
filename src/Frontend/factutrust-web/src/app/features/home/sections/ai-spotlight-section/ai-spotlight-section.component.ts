@@ -4,7 +4,7 @@ import { LANDING_FACTS } from '../../content/landing-facts';
 import { LandingCopyBase } from '../../shared/landing-copy-base';
 
 /**
- * Spotlight IA (plan A.4.9) : section sombre, 2 fournisseurs (local Ollama / cloud OpenRouter),
+ * Spotlight IA (plan A.4.9) : section sombre, 2 modes d’hébergement (local / cloud en option),
  * capacités ({count} → outils IA), garde-fous et disponibilité. Textes : `t().home.ai`.
  */
 @Component({
