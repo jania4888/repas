@@ -17,7 +17,8 @@ namespace FactuTrust.API.Tests;
 /// <summary>
 /// Lot C — mapping contrôleur : 503 quand désactivé (sans appeler le handler), 202 + message de
 /// succès, 400 VALIDATION_FAILED sur Validation.*, 400 générique ailleurs, RemoteIp/UserAgent
-/// passés à la commande. Le pipeline HTTP complet est couvert par les tests d'intégration.
+/// passés à la commande. Le pipeline HTTP complet (429 + Retry-After, 413, 415) reste à
+/// couvrir par des tests d'intégration — reliquat TC9, suivi dans le plan lot C.
 /// </summary>
 public sealed class PublicContactRequestsControllerTests
 {

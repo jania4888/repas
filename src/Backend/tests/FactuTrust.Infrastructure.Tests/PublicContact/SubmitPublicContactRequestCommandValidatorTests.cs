@@ -233,6 +233,10 @@ public sealed class SubmitPublicContactRequestCommandValidatorTests
     [InlineData("٧١١٢٣٤٥٦", "71123456")]
     [InlineData("+٢١٦ ٧١ ١٢٣ ٤٥٦", "+21671123456")]
     [InlineData("71\u00A0123\u2013456", "71123456")]
+    // Parité frontend : préfixe 216 nu (11 chiffres) et marques bidirectionnelles.
+    [InlineData("216 71 123 456", "+21671123456")]
+    [InlineData("21671123456", "+21671123456")]
+    [InlineData("71\u200F123\u200E456", "71123456")]
     [InlineData("", "")]
     [InlineData(null, "")]
     [InlineData("abc", "abc")]

@@ -35,7 +35,7 @@ des gabarits d'e-mail, un job de purge. Aucun comportement existant n'est modifi
 - Confidentialité : IP jamais stockée en clair (`IIpAddressHasher`, SHA-256 salé),
   User-Agent tronqué, journaux sans donnée personnelle (événements `PublicContact.*`
   avec référence, sujet, préfixe du haché IP uniquement), `ConsentTextVersion` horodaté
-  sur chaque ligne, `CreatedUtc` / `ExpiresUtcUtc` par rétention.
+  sur chaque ligne, `CreatedAtUtc` / `RetentionUntilUtc` par rétention.
 
 ## Configuration (`Features:PublicContact`, appsettings vides par défaut)
 
@@ -62,6 +62,14 @@ La validation des options au démarrage refuse une configuration incohérente
 (délais négatifs, liste de tailles inconnue…).
 
 ## Déploiement (ordre recommandé)
+
+> **Avertissement — limitation par IP et `X-Forwarded-For`.** La limite 5 envois/h/IP
+> repose sur l'IP distante réelle. L'API ne doit **jamais** être publiée directement
+> (sans le proxy nginx en frontal) : `KnownProxies`/`KnownNetworks` sont vidés, donc un
+> client qui atteint le port de l'API sans passer par nginx pourrait fournir un en-tête
+> `X-Forwarded-For` arbitraire si `ASPNETCORE_FORWARDEDHEADERS_ENABLED=true` — contournement
+> trivial de la limite. Règle : n'activer `ASPNETCORE_FORWARDEDHEADERS_ENABLED` que si
+> nginx réécrit l'en-tête, et ne jamais exposer le port de l'API sur l'hôte public.
 
 1. Déployer l'API avec `Features__PublicContact__Enabled=false`. La migration
    `AddPublicContactRequests` s'applique au démarrage (`MigrateAsync`, SQL idempotent).
@@ -104,10 +112,10 @@ La validation des options au démarrage refuse une configuration incohérente
 - **Demandes enregistrées non notifiées** (spam, garde horaire, échec SMTP) :
 
   ```sql
-  SELECT PublicReference, Subject, Status, CreatedUtc
+  SELECT PublicReference, Subject, Status, CreatedAtUtc
   FROM PublicContactRequests
   WHERE NotificationEnqueued = 0 AND Status = 0
-  ORDER BY CreatedUtc DESC;
+  ORDER BY CreatedAtUtc DESC;
   ```
 
 - Ratio `PublicContact.NotificationSuppressed Reason=time-trap` dans les journaux :
@@ -120,7 +128,14 @@ La validation des options au démarrage refuse une configuration incohérente
   inactif par défaut) ; retries SMTP 60 s / 600 s / 3 600 s via `SendEmailJob` ;
   relance possible depuis `api/platform/email-messages`.
 - Accès / effacement (RGPD) : rechercher par `PublicReference` ou `Email`, exporter
-  la ligne, puis `DELETE` ciblé (la purge finit le travail à expiration).
+  la ligne, puis `DELETE` ciblé.
+- **Copies e-mail (RGPD)** : la notification interne `contact-request-received` copie
+  nom, e-mail, téléphone et message dans `EmailMessages` (sujet =
+  `… — {{ reference }}`, donc `WHERE Subject LIKE '%CR-XXXXXX%'` pour retrouver), et la
+  purge quotidienne **ne supprime pas** ces lignes (rétention e-mail inchangée). Pour un
+  effacement complet : supprimer la ligne `PublicContactRequests` **puis** anonymiser ou
+  supprimer les `EmailMessages` correspondants (`Subject LIKE '%<référence>%'` ou corps
+  contenant l'adresse). La purge seule « ne finit pas le travail » pour ces copies.
 
 ## Tests
 
