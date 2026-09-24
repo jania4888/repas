@@ -748,3 +748,53 @@ docker compose -f deploy/docker-compose.yml logs -f api             # porte GO/N
 > ```bash
 > docker run --rm -v "C:/chemin/vers/le/depot:/repo" -w /repo alpine:3.19 >   sh -c 'apk add --no-cache bash openssl >/dev/null && bash deploy/scripts/init-secrets.sh'
 > ```
+
+---
+
+## 15. Accès aux bases depuis SQL Server Management Studio
+
+SQL Server tourne dans un conteneur **sans aucun port publié** : il n'est pas joignable depuis
+Internet, et **doit le rester** — un port 1433 exposé est attaqué en force brute en quelques
+minutes, et un port publié par Docker **contourne le pare-feu UFW**. L'accès passe par un **tunnel
+SSH** ouvert par `deploy/scripts/Open-SqlTunnel.ps1`.
+
+Le script vérifie que `instafact.shop` pointe sur le serveur visé, que le port local est libre et
+que le conteneur est sain, retrouve **lui-même** l'adresse du conteneur (elle change s'il est
+recréé), puis ouvre le tunnel **au premier plan**, lié à `127.0.0.1` uniquement. **Fermer la
+fenêtre ou `Ctrl+C` coupe l'accès.**
+
+```powershell
+.\deploy\scripts\Open-SqlTunnel.ps1                   # port local 14330
+.\deploy\scripts\Open-SqlTunnel.ps1 -LocalPort 14331   # si 14330 est pris
+```
+
+Dans SSMS :
+
+| Champ | Valeur |
+|---|---|
+| Nom du serveur | **`127.0.0.1,14330`** — virgule avant le port ; **pas `localhost`**, que Windows résout d'abord en IPv6 (connexion refusée) |
+| Authentification | Authentification SQL Server |
+| Chiffrement | Obligatoire, et cocher **« Faire confiance au certificat du serveur »** (certificat auto-signé du conteneur ; le trafic est déjà chiffré par SSH) |
+
+Seule la connexion `sa` existe : c'est celle de l'application. Son mot de passe est la ligne
+`MSSQL_SA_PASSWORD` du `.env` ; ne jamais le coller dans une conversation ou un ticket.
+
+**Depuis Visual Studio** : *Outils → Outils externes… → Ajouter* « Hostinger — SQL (tunnel) »,
+commande `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`, arguments
+`-NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)..\..\deploy\scripts\Open-SqlTunnel.ps1"`,
+répertoire initial `$(SolutionDir)`, et **« Utiliser la fenêtre Sortie » DÉCOCHÉ** : le tunnel
+s'ouvre alors dans sa propre fenêtre, qu'on ferme pour le couper. Dans la fenêtre Sortie, rien ne
+permettrait de l'arrêter et il resterait ouvert à l'insu de l'utilisateur.
+
+**C'est la production :**
+
+- lire librement ; **toute écriture manuelle contourne les règles de l'application** — une
+  modification directe des données métier n'est pas tracée dans l'audit, et `AuditLogs` est une
+  **chaîne d'empreintes** (`PreviousHash` / `Hash`) qu'une ligne modifiée ou supprimée casse ;
+- **sauvegarder avant toute écriture** :
+  `ssh deploy@187.124.214.123 "cd /opt/factutrust/src && bash deploy/scripts/backup.sh </dev/null"` ;
+- **aucun changement de structure à la main** (tables, colonnes, index) : uniquement par les
+  migrations EF, sinon les suivantes échouent ;
+- ne pas toucher aux données chiffrées du master (chaînes de connexion des dossiers, clés
+  DataProtection) : l'application ne pourrait plus les lire ;
+- ne restaurer ni détacher aucune base depuis SSMS pendant que l'API tourne.
