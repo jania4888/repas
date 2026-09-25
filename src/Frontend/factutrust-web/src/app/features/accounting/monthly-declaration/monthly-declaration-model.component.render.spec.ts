@@ -6,7 +6,11 @@ import { of, throwError } from 'rxjs';
 import { AuthService, User } from '@core/services/auth.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ToastService } from '@core/services/toast.service';
-import { AccountingService } from '../services/accounting.service';
+import {
+  AccountingService,
+  MonthlyDeclarationConfigurationDto,
+  MonthlyDeclarationMode
+} from '../services/accounting.service';
 import { MonthlyDeclarationModelComponent } from './monthly-declaration-model.component';
 import { summariseModel } from './monthly-declaration-model.view-model';
 
@@ -15,6 +19,25 @@ const MODEL_JSON = JSON.stringify({
   families: [{ family: 'Tfp', isIncluded: true }],
   rubrics: [{ code: 'F2_TFP', family: 'Tfp' }]
 });
+
+function configuration(configurableLinesEnabled = true): MonthlyDeclarationConfigurationDto {
+  return {
+    settings: {
+      mode: MonthlyDeclarationMode.Legacy,
+      configuredSince: null,
+      lastParityRunAt: null,
+      lastParityMaxGapMillimes: 0,
+      parityCleanStreak: 0,
+      requiredCleanParityPeriods: 3,
+      canSwitchToConfigured: false,
+      parityOverrideBy: null,
+      parityOverrideReason: null,
+      configurableLinesEnabled
+    },
+    families: [],
+    rubrics: []
+  };
+}
 
 const firmDelegatedUser: User = {
   id: 'u1',
@@ -58,12 +81,16 @@ function setUser(auth: AuthService, u: User | null): void {
 describe('MonthlyDeclarationModelComponent render', () => {
   let fixture: ComponentFixture<MonthlyDeclarationModelComponent>;
   let api: {
+    getMonthlyDeclarationConfiguration: jasmine.Spy;
     exportMonthlyDeclarationModel: jasmine.Spy;
     importMonthlyDeclarationModel: jasmine.Spy;
   };
 
   beforeEach(async () => {
     api = {
+      getMonthlyDeclarationConfiguration: jasmine
+        .createSpy('getMonthlyDeclarationConfiguration')
+        .and.returnValue(of({ success: true, data: configuration() })),
       exportMonthlyDeclarationModel: jasmine
         .createSpy('exportMonthlyDeclarationModel')
         .and.returnValue(
@@ -121,11 +148,66 @@ describe('MonthlyDeclarationModelComponent render', () => {
     fixture.detectChanges();
   }
 
-  it('n’appelle rien à l’ouverture : l’écran est fait de deux gestes explicites', () => {
+  it('n’exporte ni n’importe rien à l’ouverture : l’écran est fait de deux gestes explicites', () => {
     fixture.detectChanges();
 
     expect(api.exportMonthlyDeclarationModel).not.toHaveBeenCalled();
     expect(api.importMonthlyDeclarationModel).not.toHaveBeenCalled();
+    // Seule lecture : l'état de l'interrupteur, sans les rubriques dont l'écran n'a pas l'usage.
+    expect(api.getMonthlyDeclarationConfiguration).toHaveBeenCalledOnceWith(false);
+  });
+
+  describe('drapeau serveur éteint', () => {
+    beforeEach(() => {
+      api.getMonthlyDeclarationConfiguration.and.returnValue(
+        of({ success: true, data: configuration(false) })
+      );
+    });
+
+    it('ferme l’import, le dit, et laisse l’export ouvert', () => {
+      fixture.detectChanges();
+
+      const fileInput: HTMLInputElement | null =
+        fixture.nativeElement.querySelector('#dm-model-file');
+      expect(fixture.componentInstance.canImport()).toBe(false);
+      expect(fileInput?.disabled).toBe(true);
+      expect(text()).toContain('Import indisponible');
+      expect(text()).toContain('désactivée sur la plateforme');
+    });
+
+    it('n’envoie pas le fichier, même sollicité directement', () => {
+      fixture.detectChanges();
+      loadContent(MODEL_JSON);
+
+      fixture.componentInstance.importModel();
+
+      expect(api.importMonthlyDeclarationModel).not.toHaveBeenCalled();
+    });
+
+    it('laisse l’export fonctionner', () => {
+      spyOn(URL, 'createObjectURL').and.returnValue('blob:fake');
+      spyOn(URL, 'revokeObjectURL');
+      fixture.detectChanges();
+
+      fixture.componentInstance.exportModel();
+
+      expect(api.exportMonthlyDeclarationModel).toHaveBeenCalled();
+    });
+  });
+
+  it('laisse l’import ouvert quand l’état de l’interrupteur ne peut pas être lu', () => {
+    // Le serveur reste seul juge : une panne de lecture ne doit pas fermer l'écran.
+    api.getMonthlyDeclarationConfiguration.and.returnValue(
+      throwError(() => ({ error: { error: 'Service indisponible.' } }))
+    );
+    fixture.detectChanges();
+    loadContent(MODEL_JSON);
+
+    fixture.componentInstance.importModel();
+
+    expect(fixture.componentInstance.linesDisabled()).toBe(false);
+    expect(text()).not.toContain('Import indisponible');
+    expect(api.importMonthlyDeclarationModel).toHaveBeenCalled();
   });
 
   it('dit ce que le modèle ne transporte pas', () => {
@@ -276,6 +358,12 @@ describe('MonthlyDeclarationModelComponent render', () => {
       expect(fixture.componentInstance.canWrite()).toBe(false);
       expect(text()).toContain('Import réservé au cabinet comptable');
       expect(text()).toContain('L’export reste disponible.');
+    });
+
+    it('n’interroge pas l’interrupteur : la société n’importe pas, quel que soit son état', () => {
+      fixture.detectChanges();
+
+      expect(api.getMonthlyDeclarationConfiguration).not.toHaveBeenCalled();
     });
 
     it('laisse l’export fonctionner', () => {

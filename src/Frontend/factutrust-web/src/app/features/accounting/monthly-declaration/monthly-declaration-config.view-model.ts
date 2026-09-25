@@ -611,6 +611,17 @@ export function describeMode(settings: MonthlyDeclarationSettingsDto): string {
   }
 }
 
+/**
+ * Reflet de l'interrupteur serveur, global à la plateforme. Des réglages pas encore chargés valent
+ * « indisponible » : l'écran ne propose pas une écriture que le serveur pourrait refuser. Confort
+ * d'affichage seulement — le serveur revérifie l'interrupteur à chaque écriture.
+ */
+export function isConfigurableLinesActive(
+  settings: MonthlyDeclarationSettingsDto | null | undefined
+): boolean {
+  return settings?.configurableLinesEnabled === true;
+}
+
 // ── Sélecteur de comptes ─────────────────────────────────────────────────────
 
 /**

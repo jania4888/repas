@@ -23,6 +23,7 @@ import {
   describeMode,
   describeWithheld,
   familyNeedsAttention,
+  isConfigurableLinesActive,
   isFamilyIncluded,
   isFamilyOutOfEngineScope,
   isRubricUnsupported,
@@ -446,6 +447,13 @@ describe('monthly-declaration-config.view-model — régime du dossier', () => {
       settings({ mode: MonthlyDeclarationMode.Configured, configuredSince: '2026-09-01T00:00:00' })
     );
     expect(text).toContain('2026-09-01');
+  });
+
+  it('lit l’interrupteur de la plateforme, et tient des réglages absents pour « indisponible »', () => {
+    expect(isConfigurableLinesActive(settings())).toBe(true);
+    expect(isConfigurableLinesActive(settings({ configurableLinesEnabled: false }))).toBe(false);
+    expect(isConfigurableLinesActive(null)).toBe(false);
+    expect(isConfigurableLinesActive(undefined)).toBe(false);
   });
 });
 

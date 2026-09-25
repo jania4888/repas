@@ -280,4 +280,36 @@ public sealed class MonthlyDeclarationRollUpTests
         journals.VerifyNoOtherCalls();
         chart.VerifyNoOtherCalls();
     }
+
+    /// <summary>
+    /// Drapeau allumé, dossier qui n'a <b>jamais</b> touché à son régime : aucune ligne de réglages
+    /// n'existe (elle ne naît qu'au premier changement de régime). C'est l'état de tous les dossiers
+    /// à l'activation du drapeau ; il doit valoir calcul historique, sans autre lecture.
+    /// </summary>
+    [Fact]
+    public async Task Dossier_sans_reglages_le_composeur_rend_le_calcul_historique_sans_autre_lecture()
+    {
+        var config = new Mock<IMonthlyDeclarationConfigRepository>(MockBehavior.Strict);
+        config.Setup(c => c.GetSettingsAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((MonthlyDeclarationSettings?)null);
+
+        var journals = new Mock<IJournalEntryRepository>(MockBehavior.Strict);
+        var chart = new Mock<IChartOfAccountRepository>(MockBehavior.Strict);
+        var settings = Options.Create(new AccountingSettings
+        {
+            MonthlyDeclarationV2Enabled = true,
+            MonthlyDeclarationConfigurableLinesEnabled = true
+        });
+
+        var composer = new MonthlyDeclarationLineComposer(
+            config.Object, journals.Object, chart.Object, settings);
+
+        var composed = await composer.ComposeAsync(2026, 9, PayrollMonthlyContribution.None);
+
+        Assert.Same(ComposedDeclarationLines.Inactive, composed);
+        config.Verify(c => c.GetSettingsAsync(It.IsAny<CancellationToken>()), Times.Once);
+        config.VerifyNoOtherCalls();
+        journals.VerifyNoOtherCalls();
+        chart.VerifyNoOtherCalls();
+    }
 }

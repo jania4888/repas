@@ -39,6 +39,12 @@ rouverte se recalcule à l'identique.
 La série ne s'allonge que sur des périodes contiguës et ne se rallonge pas en rejouant le même mois —
 sans quoi relancer trois fois le contrôle de janvier suffirait à ouvrir la bascule.
 
+**Limite connue : l'écart ne mesure que ce qui est inclus.** Un contrôle dont les familles incluses
+ne déplacent aucun scalaire (famille sans rubrique active, T.V.A seule, hors moteur) rend un écart
+nul par construction et allonge la série sans rien prouver. Consigne d'exploitation, en attendant un
+lot dédié : inclure **toutes** les familles visées **avant** les contrôles de parité, et repasser en
+parité si une famille est incluse après la bascule.
+
 ## Ce qui reste hors du périmètre, et pourquoi
 
 **La T.V.A.** Ses montants ne viennent pas du journal mais des documents de facture ; l'enregistrement
@@ -141,11 +147,40 @@ La lecture reste ouverte drapeau éteint et se contente de le signaler
 (`Settings.ConfigurableLinesEnabled`) : un écran qui explique l'inactivité vaut mieux qu'un écran en
 erreur, et la configuration amorcée n'est que de la donnée de référence inerte.
 
+**Le drapeau est global à la plateforme, pas propre au dossier.** Le refus serveur et les bandeaux le
+disent — l'ancien libellé « n'est pas activée pour ce dossier » a fait chercher un réglage de dossier
+qui n'existe pas. Drapeau éteint, les écrans ne proposent plus d'action vouée au refus : Calcul DM
+grise le calcul et le panneau de régime, Configuration DM passe ses écritures en lecture seule,
+Modèle Intégration DM ferme l'import (l'export reste ouvert). Réglages non chargés sur Calcul et
+Configuration = indisponible ; sur Modèle, seul un « éteint » explicite ferme l'import, une panne de
+lecture laissant le serveur juge. Ce ne sont que des reflets : le serveur revérifie à chaque écriture.
+
+## Activation
+
+Depuis le **2026-09-24**, `MonthlyDeclarationConfigurableLinesEnabled` vaut `true` dans
+`appsettings.json`, à côté de `MonthlyDeclarationV2Enabled` — une seule source, héritée par les
+fichiers d'environnement. Le défaut du code reste `false`, filet si la clé disparaissait.
+`MonthlyDeclarationFlagsConfigurationTests` fait échouer la suite si l'une des deux clés manque dans
+la base ou si un fichier d'environnement la rabat à `false`.
+
+**Retour arrière** sans reconstruire l'image : `Accounting__MonthlyDeclarationConfigurableLinesEnabled=false`
+dans `deploy/.env` (la variable prime sur les fichiers), puis recréation du conteneur `api`. Les
+réglages et rubriques saisis entre-temps restent en base, inertes, et reprennent effet à la
+réactivation.
+
 ## Garantie de non-régression
 
-Drapeau `MonthlyDeclarationConfigurableLinesEnabled` à `false`, en conjonction obligatoire avec
-`MonthlyDeclarationV2Enabled` : les scalaires alimentés par le moteur ne sont calculés ni persistés
-hors V2.
+**Drapeau allumé**, un dossier qui n'a jamais quitté le calcul historique — aucune ligne
+`MonthlyDeclarationSettings`, état de tous les dossiers à l'activation puisque seul
+`SetMonthlyDeclarationModeCommand` en crée une — ne paie qu'**une** lecture de ses réglages : le
+composeur rend alors `Inactive`, et `Legacy` comme `Parity` rendent le jeu historique tel quel. La
+preuve est prise de bout en bout : `GetVatDeclarationV2Tests` compare, champ par champ, la
+déclaration d'une période pleine drapeau éteint puis allumé, dans les deux valorisations, avec et
+sans dépôt ; `MonthlyDeclarationRollUpTests` vérifie, dépôts en `MockBehavior.Strict`, qu'aucune
+autre lecture n'a lieu.
+
+**Drapeau éteint**, en conjonction obligatoire avec `MonthlyDeclarationV2Enabled` : les scalaires
+alimentés par le moteur ne sont calculés ni persistés hors V2.
 
 Les trois familles ajoutées à `TotalToPay` (droit de consommation, taxe hôtelière, droit de licence)
 valent `0` par défaut sur l'entité comme sur le jeu de montants : l'expression est **prouvablement

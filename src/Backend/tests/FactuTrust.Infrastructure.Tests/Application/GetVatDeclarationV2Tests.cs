@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FactuTrust.Application.Common;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
@@ -561,5 +562,120 @@ public sealed class GetVatDeclarationV2Tests
         var suggested = result.Value.Suggested!;
         Assert.Equal(135m, suggested.WithholdingFromRentJournal);
         Assert.Equal(135m, suggested.WithholdingTax);
+    }
+
+    // ── Activation de la déclaration paramétrable (2026-09-24) ─────────────
+
+    /// <summary>
+    /// Le drapeau <c>MonthlyDeclarationConfigurableLinesEnabled</c> est allumé pour toute la
+    /// plateforme. Pour un dossier qui n'a jamais quitté le calcul historique — aucune ligne de
+    /// réglages, l'état de tous les dossiers à l'activation —, la déclaration rendue doit être
+    /// identique <b>champ par champ</b> à celle d'avant, dans les deux valorisations, avec ou sans
+    /// dépôt enregistré. C'est la garantie de non-régression de l'activation, prise de bout en bout.
+    /// </summary>
+    [Theory]
+    [InlineData(VatDeclarationValuation.Declared, false)]
+    [InlineData(VatDeclarationValuation.Declared, true)]
+    [InlineData(VatDeclarationValuation.Live, false)]
+    [InlineData(VatDeclarationValuation.Live, true)]
+    public async Task Allumer_la_declaration_parametrable_ne_change_rien_pour_un_dossier_en_calcul_historique(
+        VatDeclarationValuation valuation, bool withSavedDeclaration)
+    {
+        // Un seul dépôt pour les deux appels : son horodatage de création fait partie du DTO.
+        VatDeclaration? saved = null;
+        if (withSavedDeclaration)
+        {
+            saved = VatDeclaration.CreateDraft(
+                2026, 7,
+                Money.Create(190m, "TND"), Money.Zero("TND"), Money.Zero("TND"),
+                Money.Create(57m, "TND"), Money.Zero("TND"), Money.Zero("TND"));
+            saved.SetAdditionalTaxes(10m, 12m, 2.38m, 1.68m, 1.68m, 40m, 0m);
+        }
+
+        var before = await HandleRichPeriodAsync(configurableLinesEnabled: false, valuation, saved);
+        var after = await HandleRichPeriodAsync(configurableLinesEnabled: true, valuation, saved);
+
+        Assert.Equal(JsonSerializer.Serialize(before), JsonSerializer.Serialize(after));
+        Assert.Equal((int)MonthlyDeclarationMode.Legacy, after.MonthlyDeclarationMode);
+        Assert.Empty(after.Lines);
+        Assert.Empty(after.MonthlyDeclarationDiagnostics);
+        Assert.Equal(0, after.ParityMaxGapMillimes);
+        // Garde-fou du test lui-même : la période porte bien des montants dans chaque famille
+        // qu'une configuration pourrait déplacer, sans quoi l'égalité ne prouverait rien.
+        Assert.NotEqual(0m, after.Suggested!.Fodec);
+        Assert.NotEqual(0m, after.Suggested.DroitTimbre);
+        Assert.NotEqual(0m, after.Suggested.Tcl);
+        Assert.NotEqual(0m, after.Suggested.Tfp);
+        Assert.NotEqual(0m, after.Suggested.WithholdingTax);
+    }
+
+    /// <summary>
+    /// Période « pleine » : TVA collectée, FODEC, timbre, RS sur factures, paie clôturée (TFP,
+    /// FOPROLOS, IRPP, CSS) et RS sur loyers du journal. Le composeur est le vrai, monté sur un
+    /// dépôt de configuration sans réglage enregistré (<c>GetSettingsAsync</c> rend <c>null</c>).
+    /// </summary>
+    private static async Task<VatDeclarationDto> HandleRichPeriodAsync(
+        bool configurableLinesEnabled, VatDeclarationValuation valuation, VatDeclaration? saved)
+    {
+        var mediator = new Mock<IMediator>();
+        mediator.Setup(m => m.Send(It.IsAny<GetSalesVatReportQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success<IReadOnlyList<SalesVatReportRowDto>>(new List<SalesVatReportRowDto>
+            {
+                new() { VatRatePercent = 19, VatRateDisplay = "19 %", TotalVatAmount = 190m, TotalTaxableAmount = 1000m, Currency = "TND" }
+            }));
+        mediator.Setup(m => m.Send(It.IsAny<GetPurchasesVatReportQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success<IReadOnlyList<PurchasesVatReportRowDto>>(new List<PurchasesVatReportRowDto>
+            {
+                new() { VatRatePercent = 19, VatRateDisplay = "19 %", TotalVatAmount = 57m, TotalTaxableAmount = 300m, Currency = "TND" }
+            }));
+        mediator.Setup(m => m.Send(It.IsAny<GetWithholdingMonthlyReportQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new WithholdingMonthlyReportDto(2026, 7, new(), 0m, 40m, 0));
+
+        var vatRepo = new Mock<IVatDeclarationRepository>();
+        vatRepo.Setup(r => r.GetByYearMonthAsync(2026, 7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(saved);
+        vatRepo.Setup(r => r.GetByYearMonthAsync(2026, 6, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((VatDeclaration?)null);
+
+        var journals = new Mock<IJournalEntryRepository>();
+        journals.Setup(r => r.SumDebitsByAccountAsync(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(0m);
+        journals.Setup(r => r.SumDebitsByAccountPrefixAsync("613", It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1_350m);
+
+        var invoices = new Mock<IInvoiceRepository>();
+        invoices.Setup(r => r.SumFiscalStampAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(12m);
+        invoices.Setup(r => r.SumFodecAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(10m);
+        invoices.Setup(r => r.SumFodecTaxableBaseAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1000m);
+
+        var supplierInvoices = new Mock<ISupplierInvoiceRepository>();
+        supplierInvoices.Setup(r => r.SumFixedAssetDeductibleVatAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(0m);
+
+        var settings = Options.Create(new AccountingSettings
+        {
+            MonthlyDeclarationV2Enabled = true,
+            MonthlyDeclarationConfigurableLinesEnabled = configurableLinesEnabled,
+            FodecRatePercent = 1.0m,
+            TclRatePercent = 0.2m
+        });
+
+        var handler = new GetVatDeclarationQueryHandler(
+            mediator.Object, vatRepo.Object, journals.Object, invoices.Object, supplierInvoices.Object,
+            CreateTenantSummaryMock().Object,
+            CreatePayrollProvider(
+                PayrollRunWith(PayrollRunStatus.Closed, irpp: 25.500m, css: 4.500m, netTaxable: 150m),
+                IndustrialParameters()),
+            MonthlyDeclarationTestComposer.Inactive(settings),
+            settings);
+
+        var result = await handler.Handle(
+            new GetVatDeclarationQuery(2026, 7, Valuation: valuation), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        return result.Value;
     }
 }

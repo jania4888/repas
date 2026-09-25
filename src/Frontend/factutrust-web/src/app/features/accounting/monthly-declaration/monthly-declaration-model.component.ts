@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -24,8 +24,8 @@ import {
  * ailleurs. Complète la duplication inter-dossiers, qui ne franchit pas les frontières du cabinet.
  *
  * L'export est ouvert sous `accounting:read`, même drapeau éteint : le fichier ne fait que refléter
- * ce que l'écran de configuration affiche déjà. L'import est une écriture, avec le même verrou
- * cabinet délégué que le reste.
+ * ce que l'écran de configuration affiche déjà. L'import est une écriture, avec les mêmes verrous
+ * que le reste — cabinet délégué et interrupteur de la plateforme allumé.
  */
 @Component({
   selector: 'app-monthly-declaration-model',
@@ -72,6 +72,12 @@ import {
           message="Import réservé au cabinet comptable ouvrant le dossier. L’export reste disponible." />
       }
 
+      @if (canWrite() && linesDisabled()) {
+        <app-accounting-status-banner
+          variant="info"
+          message="Import indisponible : la déclaration mensuelle paramétrable est désactivée sur la plateforme. L’export reste disponible." />
+      }
+
       <p class="dm-block__text">
         Les rubriques dont le code est absent du dossier sont créées. Une rubrique du dossier qui
         ne figure pas dans le fichier n’est jamais supprimée : un modèle complète une configuration,
@@ -85,7 +91,7 @@ import {
           type="file"
           accept="application/json,.json"
           class="dm-inp"
-          [disabled]="!canWrite() || importing()"
+          [disabled]="!canImport() || importing()"
           (change)="pickFile($event)" />
       </div>
 
@@ -137,7 +143,7 @@ import {
         <input
           type="checkbox"
           [(ngModel)]="overwrite"
-          [disabled]="!canWrite() || importing()" />
+          [disabled]="!canImport() || importing()" />
         Remplacer les rubriques de même code au lieu de les ignorer
       </label>
 
@@ -146,7 +152,7 @@ import {
           variant="primary"
           icon="pi-upload"
           type="button"
-          [disabled]="!canWrite() || importing() || !readyToImport()"
+          [disabled]="!canImport() || importing() || !readyToImport()"
           (click)="importModel()">
           {{ importing() ? 'Import…' : 'Importer' }}
         </app-button>
@@ -193,7 +199,7 @@ import {
     .dm-report__line { margin: 0; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); }
   `
 })
-export class MonthlyDeclarationModelComponent {
+export class MonthlyDeclarationModelComponent implements OnInit {
   private readonly api = inject(AccountingService);
   private readonly auth = inject(AuthService);
   private readonly errors = inject(ErrorHandlerService);
@@ -212,10 +218,36 @@ export class MonthlyDeclarationModelComponent {
   /** Miroir du verrou serveur `IsAccountingFirmDelegatedContext`, qui ne garde que l'import. */
   readonly canWrite = computed(() => this.auth.isAccountingFirm() && this.auth.isDelegatedMode());
 
+  /**
+   * Vrai seulement quand le serveur a dit explicitement que l'interrupteur est éteint. Un échec de
+   * lecture laisse l'import proposé : le serveur reste seul juge, et une panne passagère ne doit pas
+   * fermer l'écran.
+   */
+  readonly linesDisabled = signal(false);
+
+  readonly canImport = computed(() => this.canWrite() && !this.linesDisabled());
+
   readonly readyToImport = computed(() => {
     const s = this.summary();
     return !!this.content() && !!s && s.error === null;
   });
+
+  ngOnInit(): void {
+    // Seul l'import dépend de l'interrupteur, et seul le cabinet délégué peut importer : inutile
+    // d'interroger le serveur pour une société.
+    if (!this.canWrite()) {
+      return;
+    }
+    // `includeInactive: false` — seuls les réglages intéressent cet écran, pas les rubriques.
+    this.api.getMonthlyDeclarationConfiguration(false).subscribe({
+      next: res => {
+        if (res.success && res.data) {
+          this.linesDisabled.set(res.data.settings?.configurableLinesEnabled === false);
+        }
+      },
+      error: () => undefined
+    });
+  }
 
   outcome(result: MonthlyDeclarationModelImportResultDto): string {
     return describeImportOutcome(result);
@@ -288,7 +320,7 @@ export class MonthlyDeclarationModelComponent {
 
   importModel(): void {
     const content = this.content();
-    if (!content || this.importing() || !this.readyToImport()) {
+    if (!this.canImport() || !content || this.importing() || !this.readyToImport()) {
       return;
     }
 
