@@ -4,15 +4,17 @@ import { catchError, switchMap, throwError } from 'rxjs';
 import { normalizeHttpErrorResponse } from './http-error-normalize';
 import { SKIP_ERROR_TOAST } from '@core/http-context';
 import { ToastService } from '@core/services/toast.service';
-import { ErrorHandlerService } from '@core/services/error-handler.service';
+import {
+  ErrorHandlerService,
+  DELEGATED_CONTEXT_INVALID_CODE,
+  TENANT_CONTEXT_INVALID_CODE
+} from '@core/services/error-handler.service';
 import { HttpForbiddenDialogService } from '@core/services/http-forbidden-dialog.service';
 import { HttpValidationDialogService } from '@core/services/http-validation-dialog.service';
 import { HttpRateLimitDialogService } from '@core/services/http-rate-limit-dialog.service';
 import { AuthService } from '@core/services/auth.service';
 import { TenantSystemStatusService } from '@core/services/tenant-system-status.service';
-
-/** Message shown when session has no valid company context (403 tenant errors only). */
-const CONTEXT_ERROR_USER_MESSAGE = 'Votre session ne comporte pas d\'entreprise valide. Veuillez vous reconnecter.';
+import { CORE_COMMON, CORE_HTTP } from '@core/i18n/core-localize';
 
 /** Returns true if the error is a "context/tenant/company" error requiring re-login.
  *
@@ -24,9 +26,24 @@ const CONTEXT_ERROR_USER_MESSAGE = 'Votre session ne comporte pas d\'entreprise 
  * Doing so used to mask real bugs (e.g. EF Core tracking conflicts on delivery notes)
  * and silently log the user out on a recoverable error.
  */
-function isContextOrTenantError(status: number, message: string): boolean {
+function apiErrorCode(error: HttpErrorResponse): string | undefined {
+  const payload = error?.error;
+  if (payload && typeof payload === 'object' && payload !== null && 'code' in payload) {
+    return (payload as { code?: string }).code;
+  }
+  return undefined;
+}
+
+function isContextOrTenantError(error: HttpErrorResponse, message: string): boolean {
+  const code = apiErrorCode(error);
+  if (code === DELEGATED_CONTEXT_INVALID_CODE) {
+    return false;
+  }
+  if (code === TENANT_CONTEXT_INVALID_CODE) {
+    return true;
+  }
   const m = (message || '').toLowerCase();
-  if (status === 403) {
+  if (error.status === 403) {
     return m.includes('contexte entreprise') || m.includes('tenant') || m.includes('entreprise invalide');
   }
   return false;
@@ -52,7 +69,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const rateLimitDialog = inject(HttpRateLimitDialogService);
   const authService = inject(AuthService);
   const tenantSystemStatus = inject(TenantSystemStatusService);
-
   return next(req).pipe(
     catchError((error: HttpErrorResponse) =>
       normalizeHttpErrorResponse(error).pipe(
@@ -77,7 +93,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           const willShowForbiddenDialog =
             processedError.status === 403 &&
             !isLogoutCall &&
-            !isContextOrTenantError(processedError.status, errorMessage) &&
+            !isContextOrTenantError(processedError, errorMessage) &&
             !isRegistrationEndpoint &&
             !skipGlobalErrorUi;
 
@@ -95,11 +111,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
           // 400/403 context/tenant error: session has no valid company → show message and logout
           // Skip if this is the logout call itself to avoid loop
-          if (!isLogoutCall && isContextOrTenantError(processedError.status, errorMessage)) {
+          if (!isLogoutCall && isContextOrTenantError(processedError, errorMessage)) {
             toastService.add({
               severity: 'warn',
-              summary: 'Session invalide',
-              detail: CONTEXT_ERROR_USER_MESSAGE,
+              summary: CORE_COMMON.sessionInvalid,
+              detail: CORE_HTTP.contextError,
               life: 6000
             });
             authService.logout();
@@ -127,13 +143,13 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           if (
             processedError.status === 403 &&
             !isLogoutCall &&
-            !isContextOrTenantError(processedError.status, errorMessage)
+            !isContextOrTenantError(processedError, errorMessage)
           ) {
             if (!isRegistrationEndpoint && !skipGlobalErrorUi) {
               if (req.method === 'GET') {
                 toastService.add({
                   severity: 'warn',
-                  summary: 'Accès refusé',
+                  summary: CORE_COMMON.accessDenied,
                   detail: errorMessage,
                   life: 5000
                 });
@@ -160,8 +176,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           ) {
             toastService.add({
               severity: 'warn',
-              summary: 'Conflit de confirmation',
-              detail: 'Cette commande n’est plus confirmable dans son état actuel. Actualisez la page puis réessayez.',
+              summary: CORE_COMMON.conflictConfirm,
+              detail: CORE_HTTP.purchaseOrderConflict,
               life: 6000
             });
             return throwError(() => processedError);
@@ -192,7 +208,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             if (!isRegistrationEndpoint && !skipGlobalErrorUi) {
               toastService.add({
                 severity: 'warn',
-                summary: 'Base de données',
+                summary: CORE_COMMON.database,
                 detail: errorMessage,
                 life: 8000
               });
@@ -203,7 +219,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           if (!isRegistrationEndpoint && !skipGlobalErrorUi) {
             toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: CORE_COMMON.error,
               detail: errorMessage,
               life: 5000
             });

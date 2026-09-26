@@ -1,21 +1,27 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { isDevMode } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
-import localeFrTN from '@angular/common/locales/fr-TN';
-import localeFrTNExtra from '@angular/common/locales/extra/fr-TN';
-import { AppComponent } from './app/app.component';
-import { appConfig } from './app/app.config';
-import { installDevConsoleNoiseFilter } from './app/core/utils/dev-console-noise-filter';
-
-// Dev uniquement : masque le bruit console des extensions navigateur (MindStudio, etc.) pour que
-// les vraies erreurs restent visibles. Tree-shaken en production (garde isDevMode()).
-if (isDevMode()) {
-  installDevConsoleNoiseFilter();
-}
-
-// Locale globale fr-TN : les pipes number/currency/date rendent le format tunisien
-// (1 234,000) partout — avant, LOCALE_ID par défaut (en-US) donnait 1,234.000 dans
-// les composants utilisant DecimalPipe sans locale explicite (ex. table-totals-bar).
-registerLocaleData(localeFrTN, 'fr-TN', localeFrTNExtra);
-
-bootstrapApplication(AppComponent, appConfig).catch(err => console.error(err));
+import { isDevMode } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeFrTN from '@angular/common/locales/fr-TN';
+import localeFrTNExtra from '@angular/common/locales/extra/fr-TN';
+import localeArTN from '@angular/common/locales/ar-TN';
+import localeArTNExtra from '@angular/common/locales/extra/ar-TN';
+import { environment } from './environments/environment';
+import { installDevConsoleNoiseFilter } from './app/core/utils/dev-console-noise-filter';
+import { prepareBootLocale, resolveBootLocale } from './app/core/i18n/erp-boot-locale';
+import { registerHybridArTnLocale } from './app/core/i18n/erp-ar-tn.locale';
+
+if (isDevMode()) {
+  installDevConsoleNoiseFilter();
+}
+
+registerLocaleData(localeFrTN, 'fr-TN', localeFrTNExtra);
+registerHybridArTnLocale(localeArTN, localeArTNExtra);
+
+const requestedBootLocale = resolveBootLocale(Boolean(environment.erp?.arabicEnabled));
+
+void prepareBootLocale(requestedBootLocale)
+  .then(() => import('./bootstrap').then(m => m.bootstrap()))
+  .catch(err => {
+    console.error('[boot] échec critique, repli FR', err);
+    return import('./bootstrap').then(m => m.bootstrap());
+  });
+

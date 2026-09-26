@@ -2066,4 +2066,5 @@ button.proj-tasks-tool-btn > i {
 @include meta.load-css('styles-product-tour');
 
 @include meta.load-css('./app/features/projects/projects.scss');
+@include meta.load-css('./styles/logical-utilities');
 

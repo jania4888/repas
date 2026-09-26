@@ -9,3 +9,8 @@ test-results/
 playwright-report/
 junit.xml
 e2e/test-results/
+
+# i18n runtime généré (repli dev messages.ar.json versionné)
+src/app/core/i18n/erp-i18n-manifest.generated.ts
+src/assets/i18n/messages.ar.*.json
+!src/assets/i18n/messages.ar.json

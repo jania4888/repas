@@ -1,0 +1,4 @@
+/* Generated RTL overrides for Pluto/Bootstrap 4 — extend via scripts/i18n/build-pluto-rtl.mjs */
+[dir='rtl'] .navbar-nav {
+  flex-direction: row-reverse;
+}
