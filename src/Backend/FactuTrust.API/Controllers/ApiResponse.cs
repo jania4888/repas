@@ -12,6 +12,8 @@ public sealed record ApiResponse<T>
     public T? Data { get; init; }
     public string? Message { get; init; }
     public string? Error { get; init; }
+    /// <summary>Stable machine code when set via <see cref="FailWithCode"/>.</summary>
+    public string? Code { get; init; }
 
     public static ApiResponse<T> Ok(T data, string? message = null) => new()
     {
@@ -45,5 +47,14 @@ public sealed record ApiResponse<T>
         Success = false,
         Message = error,
         Error = error
+    };
+
+    /// <summary>Failure with a serialized <see cref="Code"/> for API clients.</summary>
+    public static ApiResponse<T> FailWithCode(string error, string code) => new()
+    {
+        Success = false,
+        Message = error,
+        Error = error,
+        Code = code
     };
 }

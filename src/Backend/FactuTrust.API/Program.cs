@@ -238,6 +238,17 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(1)
             }));
 
+    options.AddPolicy("user-preferences", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+            ?? context.Connection.RemoteIpAddress?.ToString()
+            ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = isDevelopment ? 100 : 20,
+                Window = TimeSpan.FromMinutes(1)
+            }));
+
     // L'inscription anonyme provisionne une base SQL complète : limite stricte par IP.
     options.AddPolicy("register", context =>
         RateLimitPartition.GetFixedWindowLimiter(
@@ -433,7 +444,10 @@ builder.Services.AddCors(options =>
 });
 
 // Controllers with JSON options
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<FactuTrust.API.Filters.LocalizeApiResponseFilter>();
+})
     .AddJsonOptions(options =>
     {
         // Property names follow camelCase for TypeScript ergonomics (e.g. "totalAmount", "issueDate").
@@ -562,7 +576,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 
-// Exception handling
+app.UseMiddleware<UiLanguageMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Swagger (development only) - before security headers to avoid CSP blocking

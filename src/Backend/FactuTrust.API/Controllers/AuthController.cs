@@ -684,7 +684,8 @@ public class AuthController : ControllerBase
             ProductOnboardingChecklist = ProductOnboardingUserDtoMapper.ChecklistOf(user),
             CompanySegment = tenant?.CompanySegment,
             BusinessDomain = tenant?.BusinessDomain,
-            TenantCreatedAtUtc = tenant?.CreatedAt ?? DateTime.UtcNow
+            TenantCreatedAtUtc = tenant?.CreatedAt ?? DateTime.UtcNow,
+            PreferredLanguage = user.PreferredLanguage
         };
     }
 

@@ -200,6 +200,15 @@ public sealed record UserDto
     /// happen in practice since both mapping sites populate it from the tenant row).
     /// </summary>
     public DateTime TenantCreatedAtUtc { get; init; }
+
+    /// <summary>UI language (<c>fr</c> or <c>ar</c>). Null ⇒ French.</summary>
+    public string? PreferredLanguage { get; init; }
+}
+
+/// <summary>Self-service UI language preference.</summary>
+public sealed record UpdatePreferredLanguageDto
+{
+    public string Language { get; init; } = "fr";
 }
 
 /// <summary>
