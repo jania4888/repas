@@ -34,7 +34,7 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Modèles de documents"
+      title="Modèles de documents" i18n-title="Modèles de documents"
       subtitle="Choisissez le modèle visuel utilisé pour imprimer chaque type de document">
       <div class="header-actions">
         <p-button label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
@@ -77,7 +77,7 @@ import {
               <div class="card-head">
                 <span class="card-name">{{ item.name }}</span>
                 @if (currentSavedKey() === item.key) {
-                  <span class="badge-current">Actuel</span>
+                  <span class="badge-current" i18n="@@settings.templates.actuel.8a432ab2">Actuel</span>
                 }
                 @if (selectedKey() === item.key) {
                   <i class="pi pi-check-circle check"></i>
@@ -95,11 +95,11 @@ import {
             @if (previewLoading()) { <i class="pi pi-spin pi-spinner"></i> }
           </div>
           @if (previewUrl()) {
-            <iframe [src]="previewUrl()" title="Aperçu du modèle" class="preview-frame"></iframe>
+            <iframe [src]="previewUrl()" title="Aperçu du modèle" i18n-title="Aperçu du modèle" class="preview-frame"></iframe>
           } @else {
             <div class="preview-empty">
               <i class="pi pi-file-pdf"></i>
-              <p>Sélectionnez un modèle pour afficher l'aperçu.</p>
+              <p i18n="@@settings.templates.selectionnez.un.modele.pour.afficher.l.apercu.f9616fd1">Sélectionnez un modèle pour afficher l'aperçu.</p>
             </div>
           }
         </div>

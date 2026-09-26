@@ -24,20 +24,18 @@ import {
   ],
   template: `
     <app-page-header
-      title="Analyse des commandes"
+      title="Analyse des commandes" i18n-title="Analyse des commandes"
       subtitle="Taux de conversion bons de commande → facture, délais et panier moyen">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.purchases-analytics.imprimer.5382c09d">Imprimer</app-button>
     </app-page-header>
 
     <div class="filter-bar">
       <div class="filter-group">
-        <label class="filter-label">Période</label>
+        <label class="filter-label" i18n="@@reports.purchases-analytics.periode.de2110b7">Période</label>
         <div class="period-tabs">
           @for (p of periodOptions; track p.value) {
             <button
@@ -106,7 +104,7 @@ import {
     @if (!loading() && data()) {
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Transformation bon de commande → facture</h2>
+          <h2 class="section-title" i18n="@@reports.purchases-analytics.transformation.bon.de.commande.facture.c5de5897">Transformation bon de commande → facture</h2>
           <span class="section-hint">
             <i class="pi pi-info-circle"></i>
             Proportion des commandes ayant donné lieu à une facture fournisseur
@@ -131,18 +129,18 @@ import {
     <div class="reports-grid">
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Commandes par statut</h2>
+          <h2 class="section-title" i18n="@@reports.purchases-analytics.commandes.par.statut.0f600a16">Commandes par statut</h2>
           <span class="section-hint">
             <i class="pi pi-info-circle"></i>
             Répartition des bons de commande sur la période
           </span>
         </div>
         @if (loading()) {
-          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.purchases-analytics.chargement.a209b664">Chargement...</span></div>
         } @else if (!data()?.ordersByStatus?.length) {
           <div class="empty-state-sm">
             <i class="pi pi-info-circle"></i>
-            <p>Aucune donnée disponible</p>
+            <p i18n="@@reports.purchases-analytics.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
           </div>
         } @else {
           <div class="status-list">
@@ -157,29 +155,29 @@ import {
       </div>
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Top fournisseurs (commandes)</h2>
+          <h2 class="section-title" i18n="@@reports.purchases-analytics.top.fournisseurs.commandes.68ee4399">Top fournisseurs (commandes)</h2>
           <span class="section-hint">
             <i class="pi pi-info-circle"></i>
             Par nombre de bons de commande
           </span>
         </div>
         @if (loading()) {
-          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.purchases-analytics.chargement.a209b664">Chargement...</span></div>
         } @else if (!data()?.topSuppliersByOrders?.length) {
           <div class="empty-state-sm">
             <i class="pi pi-building"></i>
-            <p>Aucune donnée disponible</p>
+            <p i18n="@@reports.purchases-analytics.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
           </div>
         } @else {
           <p-table
             [value]="data()!.topSuppliersByOrders"
             styleClass="p-datatable-sm analytics-table"
-            aria-label="Fournisseurs par nombre de commandes">
+            aria-label="Fournisseurs par nombre de commandes" i18n-aria-label="Fournisseurs par nombre de commandes">
             <ng-template pTemplate="header">
               <tr>
-                <th>Fournisseur</th>
-                <th class="text-right">Commandes</th>
-                <th class="text-right">Montant total</th>
+                <th i18n="@@reports.purchases-analytics.fournisseur.97d91d89">Fournisseur</th>
+                <th class="text-right" i18n="@@reports.purchases-analytics.commandes.17275970">Commandes</th>
+                <th class="text-right" i18n="@@reports.purchases-analytics.montant.total.dd001537">Montant total</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-row>
@@ -197,7 +195,7 @@ import {
     @if (!loading() && data()) {
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Montants moyens</h2>
+          <h2 class="section-title" i18n="@@reports.purchases-analytics.montants.moyens.9037e619">Montants moyens</h2>
         </div>
         <div class="summary-cards">
           <div class="summary-item">
@@ -205,9 +203,9 @@ import {
               <i class="pi pi-shopping-cart"></i>
             </div>
             <div class="summary-content">
-              <span class="summary-label">Panier moyen (commande)</span>
+              <span class="summary-label" i18n="@@reports.purchases-analytics.panier.moyen.commande.5b2d0d4c">Panier moyen (commande)</span>
               <span class="summary-value">{{ formatAmount(data()!.averageOrderAmount) }}</span>
-              <span class="summary-desc">Montant moyen par bon de commande</span>
+              <span class="summary-desc" i18n="@@reports.purchases-analytics.montant.moyen.par.bon.de.commande.54f46d8e">Montant moyen par bon de commande</span>
             </div>
           </div>
           <div class="summary-item">
@@ -215,9 +213,9 @@ import {
               <i class="pi pi-file"></i>
             </div>
             <div class="summary-content">
-              <span class="summary-label">Panier moyen (facture payée)</span>
+              <span class="summary-label" i18n="@@reports.purchases-analytics.panier.moyen.facture.payee.80fc8ecb">Panier moyen (facture payée)</span>
               <span class="summary-value">{{ formatAmount(data()!.averageInvoiceAmount) }}</span>
-              <span class="summary-desc">Montant moyen par facture fournisseur payée</span>
+              <span class="summary-desc" i18n="@@reports.purchases-analytics.montant.moyen.par.facture.fournisseur.payee.97e31534">Montant moyen par facture fournisseur payée</span>
             </div>
           </div>
         </div>

@@ -42,22 +42,20 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
         aria-labelledby="dismiss-modal-title">
         <header class="modal-header">
           <div>
-            <h3 id="dismiss-modal-title">Écarter la recommandation</h3>
+            <h3 id="dismiss-modal-title" i18n="@@forecasting.components.ecarter.la.recommandation.e44fd9e5">Écarter la recommandation</h3>
             <span class="modal-subtitle" *ngIf="productName">{{ productName }}</span>
           </div>
-          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer">
+          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="Fermer">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </header>
 
         <div class="modal-body">
-          <p class="hint">
-            Indiquez pourquoi cette recommandation est écartée. Cette information est conservée
-            dans l'historique des décisions et accessible aux auditeurs.
-          </p>
+          <p class="hint" i18n="@@forecasting.components.indiquez.pourquoi.cette.recommandation.est.ecart.d7371962">Indiquez pourquoi cette recommandation est écartée. Cette information est conservée
+            dans l'historique des décisions et accessible aux auditeurs.</p>
 
           <label class="field">
-            <span class="field-label">Raison <span class="required" aria-hidden="true">*</span></span>
+            <span class="field-label">Raison <span class="required" aria-hidden="true" i18n="@@forecasting.components.text.df58248c">*</span></span>
             <select
               [(ngModel)]="selectedCode"
               (ngModelChange)="onSelectCode($event)"
@@ -70,34 +68,30 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
 
           @if (selectedCode() === 'Other') {
             <label class="field">
-              <span class="field-label">Précisez <span class="required" aria-hidden="true">*</span></span>
+              <span class="field-label">Précisez <span class="required" aria-hidden="true" i18n="@@forecasting.components.text.df58248c">*</span></span>
               <textarea
                 [(ngModel)]="customText"
                 (ngModelChange)="customText.set($event)"
                 maxlength="500"
                 rows="3"
                 aria-required="true"
-                placeholder="Saisissez la raison du rejet (max 500 caractères)…">
+                placeholder="Saisissez la raison du rejet (max 500 caractères)…" i18n-placeholder="Saisissez la raison du rejet (max 500 caractères)…">
               </textarea>
             </label>
           }
 
           @if (showValidationError()) {
-            <p class="error" role="alert">
-              La raison du rejet est obligatoire. Veuillez choisir une option ou détailler votre motif.
-            </p>
+            <p class="error" role="alert" i18n="@@forecasting.components.la.raison.du.rejet.est.obligatoire.veuillez.choi.ff21bb63">La raison du rejet est obligatoire. Veuillez choisir une option ou détailler votre motif.</p>
           }
         </div>
 
         <footer class="modal-footer">
-          <button class="btn btn-secondary" type="button" (click)="onCancel()">Annuler</button>
+          <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n="@@forecasting.components.annuler.49ba3292">Annuler</button>
           <button
             class="btn btn-danger"
             type="button"
             (click)="onConfirm()"
-            [disabled]="!canConfirm()">
-            Confirmer l'abandon
-          </button>
+            [disabled]="!canConfirm()" i18n="@@forecasting.components.confirmer.l.abandon.130aa235">Confirmer l'abandon</button>
         </footer>
       </div>
     </div>

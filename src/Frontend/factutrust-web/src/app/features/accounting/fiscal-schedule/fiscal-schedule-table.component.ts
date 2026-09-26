@@ -12,7 +12,7 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
   imports: [CommonModule, FormsModule, TableModule],
   template: `
     <div class="table-panel">
-      <div class="loading-row" *ngIf="loading">Chargement de l'echeancier fiscal...</div>
+      <div class="loading-row" *ngIf="loading" i18n="@@accounting.fiscal-schedule.chargement.de.l.echeancier.fiscal.2f9a714c">Chargement de l'echeancier fiscal...</div>
       <p-table
         *ngIf="!loading"
         [value]="list?.items ?? []"
@@ -26,16 +26,16 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
         <ng-template pTemplate="header">
           <tr>
             <th class="marker-col"></th>
-            <th>Date d'echeance</th>
-            <th>Type d'obligation</th>
-            <th>Periode / Exercice</th>
-            <th>Societe</th>
-            <th class="amount-col">Montant estime (TND)</th>
-            <th>Statut</th>
-            <th>Date depot</th>
-            <th>Date paiement</th>
-            <th>Responsable</th>
-            <th>Observations</th>
+            <th i18n="@@accounting.fiscal-schedule.date.d.echeance.e0e8b824">Date d'echeance</th>
+            <th i18n="@@accounting.fiscal-schedule.type.d.obligation.790fbe09">Type d'obligation</th>
+            <th i18n="@@accounting.fiscal-schedule.periode.exercice.6e1ccc37">Periode / Exercice</th>
+            <th i18n="@@accounting.fiscal-schedule.societe.45c9ec04">Societe</th>
+            <th class="amount-col" i18n="@@accounting.fiscal-schedule.montant.estime.tnd.caf64c56">Montant estime (TND)</th>
+            <th i18n="@@accounting.fiscal-schedule.statut.659499f3">Statut</th>
+            <th i18n="@@accounting.fiscal-schedule.date.depot.bc0a1191">Date depot</th>
+            <th i18n="@@accounting.fiscal-schedule.date.paiement.715f33be">Date paiement</th>
+            <th i18n="@@accounting.fiscal-schedule.responsable.44b58814">Responsable</th>
+            <th i18n="@@accounting.fiscal-schedule.observations.461ebaa1">Observations</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -59,14 +59,14 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
         <ng-template pTemplate="emptymessage">
           <tr>
             <td colspan="11" class="empty-cell">
-              <p>Aucune echeance fiscale ne correspond aux filtres.</p>
-              <p class="empty-hint" *ngIf="showEmptyActions">Generez l'echeancier standard de l'exercice ou creez une echeance manuellement.</p>
+              <p i18n="@@accounting.fiscal-schedule.aucune.echeance.fiscale.ne.correspond.aux.filtre.2e46fc3a">Aucune echeance fiscale ne correspond aux filtres.</p>
+              <p class="empty-hint" *ngIf="showEmptyActions" i18n="@@accounting.fiscal-schedule.generez.l.echeancier.standard.de.l.exercice.ou.c.59fe6787">Generez l'echeancier standard de l'exercice ou creez une echeance manuellement.</p>
               <div class="empty-actions" *ngIf="showEmptyActions">
                 <button class="icon-button primary" type="button" (click)="generate.emit()" [disabled]="generating">
-                  <i class="fa-solid fa-wand-magic-sparkles"></i><span>Generer l'echeancier</span>
+                  <i class="fa-solid fa-wand-magic-sparkles"></i><span i18n="@@accounting.fiscal-schedule.generer.l.echeancier.6d0a87a2">Generer l'echeancier</span>
                 </button>
                 <button class="icon-button" type="button" (click)="create.emit()">
-                  <i class="fa-solid fa-plus"></i><span>Creer manuellement</span>
+                  <i class="fa-solid fa-plus"></i><span i18n="@@accounting.fiscal-schedule.creer.manuellement.525c00eb">Creer manuellement</span>
                 </button>
               </div>
             </td>
@@ -82,10 +82,10 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
       </p-table>
 
       <div class="pagination-row" *ngIf="list && list.totalCount > list.pageSize">
-        <button class="square-button" type="button" title="Premiere page" (click)="pageChange.emit(1)" [disabled]="page === 1">
+        <button class="square-button" type="button" title="Premiere page" i18n-title="Premiere page" (click)="pageChange.emit(1)" [disabled]="page === 1">
           <i class="fa-solid fa-angles-left"></i>
         </button>
-        <button class="square-button" type="button" title="Page precedente" (click)="pageChange.emit(page - 1)" [disabled]="page === 1">
+        <button class="square-button" type="button" title="Page precedente" i18n-title="Page precedente" (click)="pageChange.emit(page - 1)" [disabled]="page === 1">
           <i class="fa-solid fa-angle-left"></i>
         </button>
         <button
@@ -94,10 +94,10 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
           *ngFor="let p of pageNumbers"
           [class.active]="p === page"
           (click)="pageChange.emit(p)">{{ p }}</button>
-        <button class="square-button" type="button" title="Page suivante" (click)="pageChange.emit(page + 1)" [disabled]="page === totalPages">
+        <button class="square-button" type="button" title="Page suivante" i18n-title="Page suivante" (click)="pageChange.emit(page + 1)" [disabled]="page === totalPages">
           <i class="fa-solid fa-angle-right"></i>
         </button>
-        <button class="square-button" type="button" title="Derniere page" (click)="pageChange.emit(totalPages)" [disabled]="page === totalPages">
+        <button class="square-button" type="button" title="Derniere page" i18n-title="Derniere page" (click)="pageChange.emit(totalPages)" [disabled]="page === totalPages">
           <i class="fa-solid fa-angles-right"></i>
         </button>
         <label class="page-size-label">

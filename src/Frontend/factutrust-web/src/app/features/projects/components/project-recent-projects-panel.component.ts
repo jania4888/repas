@@ -31,14 +31,14 @@ import {
     EmptyStateComponent
   ],
   template: `
-    <app-dashboard-panel title="Projets récents" [subtitle]="tableSubtitle()" [flush]="true">
+    <app-dashboard-panel title="Projets récents" i18n-title="Projets récents" [subtitle]="tableSubtitle()" [flush]="true">
       <div panel-actions class="proj-dash-table-search">
         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
         <input
           type="search"
           [(ngModel)]="searchQuery"
-          placeholder="Rechercher…"
-          aria-label="Rechercher dans les projets récents" />
+          placeholder="Rechercher…" i18n-placeholder="Rechercher…"
+          aria-label="Rechercher dans les projets récents" i18n-aria-label="Rechercher dans les projets récents" />
       </div>
 
       <p-table
@@ -51,12 +51,12 @@ import {
         currentPageReportTemplate="Afficher {first} à {last} sur {totalRecords} projets">
         <ng-template pTemplate="header">
           <tr>
-            <th>Projet</th>
-            <th>Client</th>
-            <th>Chef de projet</th>
-            <th>Avancement</th>
-            <th>Statut</th>
-            <th>Échéance</th>
+            <th i18n="@@projects.components.projet.a9de3a26">Projet</th>
+            <th i18n="@@projects.components.client.1bdd79b1">Client</th>
+            <th i18n="@@projects.components.chef.de.projet.7a1d6008">Chef de projet</th>
+            <th i18n="@@projects.components.avancement.e1963fc4">Avancement</th>
+            <th i18n="@@projects.components.statut.659499f3">Statut</th>
+            <th i18n="@@projects.components.echeance.f9a77ff6">Échéance</th>
             <th class="proj-dash-actions-col"></th>
           </tr>
         </ng-template>
@@ -104,7 +104,7 @@ import {
         <ng-template pTemplate="emptymessage">
           <tr>
             <td colspan="7">
-              <app-empty-state icon="pi-briefcase" title="Aucun projet" [showAction]="false" />
+              <app-empty-state icon="pi-briefcase" title="Aucun projet" i18n-title="Aucun projet" [showAction]="false" />
             </td>
           </tr>
         </ng-template>

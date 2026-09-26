@@ -72,7 +72,7 @@ export interface ChatInputSubmission {
           (keydown)="onTextareaKeydown($event)"
           (input)="onTextareaInput($event)"
           [disabled]="disabled"
-          placeholder="Posez une question sur vos données..."
+          placeholder="Posez une question sur vos données..." i18n-placeholder="Posez une question sur vos données..."
           rows="1"
           [attr.aria-busy]="speech.listening()"
           [attr.aria-describedby]="speech.listening() ? 'ft-ai-dictation-hint' : null"
@@ -82,7 +82,7 @@ export interface ChatInputSubmission {
           class="attach-btn"
           [disabled]="disabled || isStreaming"
           (click)="openFilePicker()"
-          aria-label="Joindre un document texte ou PDF pour extraction">
+          aria-label="Joindre un document texte ou PDF pour extraction" i18n-aria-label="Joindre un document texte ou PDF pour extraction">
           <i class="fa-solid fa-paperclip" aria-hidden="true"></i>
         </button>
         @if (speechSupported) {
@@ -103,7 +103,7 @@ export interface ChatInputSubmission {
             type="button"
             class="stop-btn"
             (click)="emitStop()"
-            aria-label="Arrêter la génération"
+            aria-label="Arrêter la génération" i18n-aria-label="Arrêter la génération"
           >
             <i class="fa-solid fa-stop" aria-hidden="true"></i>
           </button>
@@ -113,16 +113,14 @@ export interface ChatInputSubmission {
             class="send-btn"
             [disabled]="disabled || (!text.trim() && pendingAttachments().length === 0)"
             (click)="send()"
-            aria-label="Envoyer le message"
+            aria-label="Envoyer le message" i18n-aria-label="Envoyer le message"
           >
             <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
           </button>
         }
       </div>
       @if (speech.listening()) {
-        <div id="ft-ai-dictation-hint" class="dictation-hint" role="status" aria-live="polite">
-          Dictée active — vérifiez le texte dans le champ avant d’envoyer.
-        </div>
+        <div id="ft-ai-dictation-hint" class="dictation-hint" role="status" aria-live="polite" i18n="@@ai-assistant.components.dictee.active.verifiez.le.texte.dans.le.champ.av.b6da1861">Dictée active — vérifiez le texte dans le champ avant d’envoyer.</div>
       }
       @if (speech.lastError(); as err) {
         <div class="speech-error" role="status" aria-live="polite">{{ err }}</div>
@@ -136,13 +134,11 @@ export interface ChatInputSubmission {
         } @else {
           Entrée pour envoyer &middot; Shift+Entrée pour un retour à la ligne
           @if (speechSupported) {
-            <span> &middot; Dictée via le micro (Chrome / Edge recommandés)</span>
+            <span i18n="@@ai-assistant.components.middot.dictee.via.le.micro.chrome.edge.recommand.32a2d645">&middot; Dictée via le micro (Chrome / Edge recommandés)</span>
           }
         }
       </div>
-      <p class="input-disclaimer" role="note">
-        L’IA peut se tromper. Vérifiez les réponses et les montants avant toute décision.
-      </p>
+      <p class="input-disclaimer" role="note" i18n="@@ai-assistant.components.l.ia.peut.se.tromper.verifiez.les.reponses.et.le.7d4fa22f">L’IA peut se tromper. Vérifiez les réponses et les montants avant toute décision.</p>
     </div>
   `,
   styles: [`

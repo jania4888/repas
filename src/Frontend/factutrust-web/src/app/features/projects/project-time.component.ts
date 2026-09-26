@@ -122,7 +122,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
-    <app-page-header title="Saisie des temps" subtitle="Temps projet (indépendant des feuilles cabinet)" />
+    <app-page-header title="Saisie des temps" i18n-title="Saisie des temps" subtitle="Temps projet (indépendant des feuilles cabinet)" />
 
     <div class="card p-3 mb-3">
 
@@ -130,23 +130,23 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <label>Projet
 
-          <p-select [options]="projects()" [(ngModel)]="projectId" optionLabel="name" optionValue="id" placeholder="Projet" [showClear]="true" (onChange)="onProjectChange()" />
+          <p-select [options]="projects()" [(ngModel)]="projectId" optionLabel="name" optionValue="id" placeholder="Projet" i18n-placeholder="Projet" [showClear]="true" (onChange)="onProjectChange()" />
 
         </label>
 
         <label>Période
 
-          <p-datepicker [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" placeholder="Filtrer" [showClear]="true" (onSelect)="load()" (onClear)="load()" />
+          <p-datepicker [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" placeholder="Filtrer" i18n-placeholder="Filtrer" [showClear]="true" (onSelect)="load()" (onClear)="load()" />
 
         </label>
 
         <label>Statut
 
-          <p-select [options]="statusFilterOptions" [(ngModel)]="statusFilter" optionLabel="label" optionValue="value" placeholder="Tous" [showClear]="true" (onChange)="load()" />
+          <p-select [options]="statusFilterOptions" [(ngModel)]="statusFilter" optionLabel="label" optionValue="value" placeholder="Tous" i18n-placeholder="Tous" [showClear]="true" (onChange)="load()" />
 
         </label>
 
-        <app-button variant="secondary" (click)="load()">Actualiser</app-button>
+        <app-button variant="secondary" (click)="load()" i18n="@@projects.project-time.actualiser.9d3b2a7d">Actualiser</app-button>
 
       </div>
 
@@ -161,13 +161,13 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
       <div class="card p-3 mb-3">
 
-        <h3 class="mt-0">Nouvelle ligne</h3>
+        <h3 class="mt-0" i18n="@@projects.project-time.nouvelle.ligne.21957286">Nouvelle ligne</h3>
 
         <div class="proj-field-row">
 
           <label>Date <p-datepicker [(ngModel)]="workDate" dateFormat="dd/mm/yy" /></label>
 
-          <label>Tâche <p-select [options]="tasks()" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" [showClear]="true" /></label>
+          <label>Tâche <p-select [options]="tasks()" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" i18n-placeholder="Tâche" [showClear]="true" /></label>
 
           <label>Heures <p-inputNumber [(ngModel)]="hours" [min]="0.25" [max]="24" [step]="0.25" /></label>
 
@@ -175,13 +175,13 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
             <p-checkbox [(ngModel)]="isBillable" [binary]="true" inputId="billable" />
 
-            <span>Facturable</span>
+            <span i18n="@@projects.project-time.facturable.63134237">Facturable</span>
 
           </label>
 
           <label>Notes <input pInputText [(ngModel)]="notes" /></label>
 
-          <app-button variant="primary" [disabled]="!canSaveLine" (click)="create()">Enregistrer</app-button>
+          <app-button variant="primary" [disabled]="!canSaveLine" (click)="create()" i18n="@@projects.project-time.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
         </div>
 
@@ -197,17 +197,17 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <tr>
 
-          <th>Date</th>
+          <th i18n="@@projects.project-time.date.eb9a4bc1">Date</th>
 
-          <th>Projet</th>
+          <th i18n="@@projects.project-time.projet.a9de3a26">Projet</th>
 
-          <th>Tâche</th>
+          <th i18n="@@projects.project-time.tache.43c8425c">Tâche</th>
 
-          <th>Heures</th>
+          <th i18n="@@projects.project-time.heures.b4448c06">Heures</th>
 
-          <th>Facturable</th>
+          <th i18n="@@projects.project-time.facturable.63134237">Facturable</th>
 
-          <th>Statut</th>
+          <th i18n="@@projects.project-time.statut.659499f3">Statut</th>
 
           <th></th>
 
@@ -296,7 +296,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <tr><td colspan="7">
 
-          <app-empty-state icon="pi-clock" title="Aucun temps" description="Choisissez un projet actif pour saisir une ligne." [showAction]="false" />
+          <app-empty-state icon="pi-clock" title="Aucun temps" i18n-title="Aucun temps" description="Choisissez un projet actif pour saisir une ligne." [showAction]="false" />
 
         </td></tr>
 
@@ -320,7 +320,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
           <p-checkbox [(ngModel)]="editBillable" [binary]="true" inputId="editBillableGlobal" />
 
-          <span>Facturable</span>
+          <span i18n="@@projects.project-time.facturable.63134237">Facturable</span>
 
         </label>
 
@@ -330,9 +330,9 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
       <ng-template pTemplate="footer">
 
-        <app-button variant="secondary" (click)="editVisible = false">Annuler</app-button>
+        <app-button variant="secondary" (click)="editVisible = false" i18n="@@projects.project-time.annuler.49ba3292">Annuler</app-button>
 
-        <app-button variant="primary" [disabled]="!canSaveEditLine" (click)="saveEdit()">Enregistrer</app-button>
+        <app-button variant="primary" [disabled]="!canSaveEditLine" (click)="saveEdit()" i18n="@@projects.project-time.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
       </ng-template>
 

@@ -106,7 +106,7 @@ interface TimelineEvent {
             <div class="alert-banner danger">
               <i class="pi pi-times-circle"></i>
               <div>
-                <strong>Commande annulée</strong> — {{ o.cancellationReason }}
+                <strong i18n="@@sales-orders.sales-order-detail.commande.annulee.77e9879d">Commande annulée</strong> — {{ o.cancellationReason }}
               </div>
             </div>
           }
@@ -114,8 +114,8 @@ interface TimelineEvent {
             <div class="alert-banner muted">
               <i class="pi pi-flag"></i>
               <div>
-                <strong>Commande soldée</strong> — {{ o.closureReason }}
-                <div class="hint">Le reliquat non livré a été abandonné.</div>
+                <strong i18n="@@sales-orders.sales-order-detail.commande.soldee.7abb36e2">Commande soldée</strong> — {{ o.closureReason }}
+                <div class="hint" i18n="@@sales-orders.sales-order-detail.le.reliquat.non.livre.a.ete.abandonne.4e8ee35e">Le reliquat non livré a été abandonné.</div>
               </div>
             </div>
           }
@@ -142,11 +142,11 @@ interface TimelineEvent {
               </div>
               <div class="document-dates">
                 <div class="date-item">
-                  <span class="label">Date de commande</span>
+                  <span class="label" i18n="@@sales-orders.sales-order-detail.date.de.commande.f9b0df86">Date de commande</span>
                   <span class="value">{{ o.orderDate | date: 'dd/MM/yyyy' }}</span>
                 </div>
                 <div class="date-item">
-                  <span class="label">Livraison prévue</span>
+                  <span class="label" i18n="@@sales-orders.sales-order-detail.livraison.prevue.dc15f458">Livraison prévue</span>
                   <span class="value" [class.empty]="!o.expectedDeliveryDate">
                     {{ o.expectedDeliveryDate ? (o.expectedDeliveryDate | date: 'dd/MM/yyyy') : '—' }}
                   </span>
@@ -160,7 +160,7 @@ interface TimelineEvent {
             <div class="kpi-card">
               <span class="ft-icon-badge ft-icon-badge--primary"><i class="pi pi-truck"></i></span>
               <div class="kpi-content">
-                <div class="kpi-label">Livraison</div>
+                <div class="kpi-label" i18n="@@sales-orders.sales-order-detail.livraison.5755a8fa">Livraison</div>
                 <div class="kpi-value">
                   {{ deliveryProgress() }} %
                   <small>· {{ o.totalPendingDeliveryQuantity | number: '1.0-4' }} reste à livrer</small>
@@ -174,7 +174,7 @@ interface TimelineEvent {
             <div class="kpi-card">
               <span class="ft-icon-badge ft-icon-badge--violet"><i class="pi pi-file-export"></i></span>
               <div class="kpi-content">
-                <div class="kpi-label">Facturation</div>
+                <div class="kpi-label" i18n="@@sales-orders.sales-order-detail.facturation.04716c6b">Facturation</div>
                 <div class="kpi-value">
                   {{ invoiceProgress() }} %
                   <small>· {{ o.totalPendingInvoiceQuantity | number: '1.0-4' }} reste à facturer</small>
@@ -188,9 +188,9 @@ interface TimelineEvent {
             <div class="kpi-card">
               <span class="ft-icon-badge ft-icon-badge--emerald"><i class="pi pi-book"></i></span>
               <div class="kpi-content">
-                <div class="kpi-label">Carnet</div>
+                <div class="kpi-label" i18n="@@sales-orders.sales-order-detail.carnet.5e843afe">Carnet</div>
                 <div class="kpi-value">{{ o.backlogAmountHt | number: '1.3-3' }} {{ o.currency }}</div>
-                <div class="kpi-hint">Valeur HT restant à livrer</div>
+                <div class="kpi-hint" i18n="@@sales-orders.sales-order-detail.valeur.ht.restant.a.livrer.f4640e08">Valeur HT restant à livrer</div>
               </div>
             </div>
           </div>
@@ -239,21 +239,21 @@ interface TimelineEvent {
           <!-- Lignes -->
           <div class="table-card">
             <div class="card-header">
-              <h3>Lignes de commande</h3>
+              <h3 i18n="@@sales-orders.sales-order-detail.lignes.de.commande.ca1d2a94">Lignes de commande</h3>
               <span class="ft-chip">{{ o.lines.length }} ligne(s)</span>
             </div>
             <table class="lines-table">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Produit</th>
-                  <th class="text-center">Cdé</th>
-                  <th class="text-center">Livré</th>
-                  <th class="text-center">Facturé</th>
-                  <th class="text-center">Reste à livrer</th>
-                  <th class="text-right">PU HT</th>
-                  <th class="text-center">Remise</th>
-                  <th class="text-right">Total HT</th>
+                  <th i18n="@@sales-orders.sales-order-detail.text.d08f88df">#</th>
+                  <th i18n="@@sales-orders.sales-order-detail.produit.ff673dc2">Produit</th>
+                  <th class="text-center" i18n="@@sales-orders.sales-order-detail.cde.2b9449a7">Cdé</th>
+                  <th class="text-center" i18n="@@sales-orders.sales-order-detail.livre.0a1317e9">Livré</th>
+                  <th class="text-center" i18n="@@sales-orders.sales-order-detail.facture.55e253e6">Facturé</th>
+                  <th class="text-center" i18n="@@sales-orders.sales-order-detail.reste.a.livrer.0fdaa693">Reste à livrer</th>
+                  <th class="text-right" i18n="@@sales-orders.sales-order-detail.pu.ht.79388cae">PU HT</th>
+                  <th class="text-center" i18n="@@sales-orders.sales-order-detail.remise.ce12d942">Remise</th>
+                  <th class="text-right" i18n="@@sales-orders.sales-order-detail.total.ht.2ca17ae6">Total HT</th>
                 </tr>
               </thead>
               <tbody>
@@ -314,7 +314,7 @@ interface TimelineEvent {
             <div class="totals-box">
               @if (o.globalDiscountAmount > 0) {
                 <div class="total-row">
-                  <span>Sous-total HT</span>
+                  <span i18n="@@sales-orders.sales-order-detail.sous.total.ht.724598f6">Sous-total HT</span>
                   <span class="mono">{{ o.subTotalBeforeGlobalDiscount | number: '1.3-3' }}</span>
                 </div>
                 <div class="total-row discount">
@@ -327,14 +327,14 @@ interface TimelineEvent {
                   <span class="mono">- {{ o.globalDiscountAmount | number: '1.3-3' }}</span>
                 </div>
                 <div class="total-row">
-                  <span>HT après remise</span>
+                  <span i18n="@@sales-orders.sales-order-detail.ht.apres.remise.9a858c00">HT après remise</span>
                   <span class="mono">{{ o.subTotal | number: '1.3-3' }}</span>
                 </div>
               } @else {
-                <div class="total-row"><span>Sous-total HT</span><span class="mono">{{ o.subTotal | number: '1.3-3' }}</span></div>
+                <div class="total-row"><span i18n="@@sales-orders.sales-order-detail.sous.total.ht.724598f6">Sous-total HT</span><span class="mono">{{ o.subTotal | number: '1.3-3' }}</span></div>
               }
               @if (o.fodecAmount > 0) {
-                <div class="total-row"><span>FODEC</span><span class="mono">{{ o.fodecAmount | number: '1.3-3' }}</span></div>
+                <div class="total-row"><span i18n="@@sales-orders.sales-order-detail.fodec.9a029080">FODEC</span><span class="mono">{{ o.fodecAmount | number: '1.3-3' }}</span></div>
               }
               @for (vat of o.vatBreakdown; track vat.rate) {
                 <div class="total-row">
@@ -344,12 +344,12 @@ interface TimelineEvent {
               }
               @if (o.fiscalStampAmount > 0) {
                 <div class="total-row">
-                  <span>Timbre fiscal</span>
+                  <span i18n="@@sales-orders.sales-order-detail.timbre.fiscal.1f8f7dd1">Timbre fiscal</span>
                   <span class="mono">{{ o.fiscalStampAmount | number: '1.3-3' }}</span>
                 </div>
               }
               <div class="total-row grand">
-                <span>Total TTC</span>
+                <span i18n="@@sales-orders.sales-order-detail.total.ttc.9e80ff7c">Total TTC</span>
                 <span class="mono">{{ o.totalAmount | number: '1.3-3' }} {{ o.currency }}</span>
               </div>
             </div>
@@ -418,7 +418,7 @@ interface TimelineEvent {
     } @else {
       <app-empty-state
         icon="pi-exclamation-circle"
-        title="Commande introuvable"
+        title="Commande introuvable" i18n-title="Commande introuvable"
         message="Cette commande n'existe pas ou a été supprimée.">
       </app-empty-state>
     }
@@ -431,12 +431,10 @@ interface TimelineEvent {
       [modal]="true"
       [style]="{ width: '32rem' }"
       [draggable]="false">
-      <p class="ft-dialog-intro">
-        L'annulation libère les réservations de stock. Elle suppose qu'aucune livraison n'a eu
-        lieu ; sinon, utilisez plutôt « Solder ».
-      </p>
+      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.l.annulation.libere.les.reservations.de.stock.el.cbc75f32">L'annulation libère les réservations de stock. Elle suppose qu'aucune livraison n'a eu
+        lieu ; sinon, utilisez plutôt « Solder ».</p>
       <div class="ft-field">
-        <label for="so-cancel-reason">Motif <span class="ft-required">*</span></label>
+        <label for="so-cancel-reason">Motif <span class="ft-required" i18n="@@sales-orders.sales-order-detail.text.df58248c">*</span></label>
         <textarea
           id="so-cancel-reason"
           pTextarea
@@ -446,10 +444,8 @@ interface TimelineEvent {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="cancelVisible = false">Retour</app-button>
-        <app-button variant="danger" [disabled]="!cancelReason.trim() || acting()" (clicked)="doCancel()">
-          Annuler la commande
-        </app-button>
+        <app-button variant="secondary" (clicked)="cancelVisible = false" i18n="@@sales-orders.sales-order-detail.retour.e5befb1f">Retour</app-button>
+        <app-button variant="danger" [disabled]="!cancelReason.trim() || acting()" (clicked)="doCancel()" i18n="@@sales-orders.sales-order-detail.annuler.la.commande.187515f7">Annuler la commande</app-button>
       </ng-template>
     </p-dialog>
 
@@ -460,15 +456,13 @@ interface TimelineEvent {
       [modal]="true"
       [style]="{ width: '34rem' }"
       [draggable]="false">
-      <p class="ft-dialog-intro">
-        La remise est répartie sur les lignes au prorata de leur base HT : elle réduit donc la
+      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.la.remise.est.repartie.sur.les.lignes.au.prorata.2651c62b">La remise est répartie sur les lignes au prorata de leur base HT : elle réduit donc la
         base de TVA et le FODEC. Le timbre fiscal, droit fixe, n'est pas touché.
-        Laissez les deux champs vides pour retirer la remise.
-      </p>
+        Laissez les deux champs vides pour retirer la remise.</p>
 
       <div class="ft-form-grid">
         <div class="ft-field">
-          <label for="so-disc-pct">Pourcentage</label>
+          <label for="so-disc-pct" i18n="@@sales-orders.sales-order-detail.pourcentage.e34218e3">Pourcentage</label>
           <p-inputNumber
             inputId="so-disc-pct"
             [(ngModel)]="discountPercent"
@@ -482,7 +476,7 @@ interface TimelineEvent {
         </div>
 
         <div class="ft-field">
-          <label for="so-disc-amt">ou Montant HT</label>
+          <label for="so-disc-amt" i18n="@@sales-orders.sales-order-detail.ou.montant.ht.cb1d55ac">ou Montant HT</label>
           <p-inputNumber
             inputId="so-disc-amt"
             [(ngModel)]="discountAmount"
@@ -491,15 +485,13 @@ interface TimelineEvent {
             [minFractionDigits]="3"
             [maxFractionDigits]="3"
             [min]="0"></p-inputNumber>
-          <small class="ft-hint">Un seul des deux : saisir l'un efface l'autre.</small>
+          <small class="ft-hint" i18n="@@sales-orders.sales-order-detail.un.seul.des.deux.saisir.l.un.efface.l.autre.42b5c125">Un seul des deux : saisir l'un efface l'autre.</small>
         </div>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="discountVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="acting()" (clicked)="saveDiscount()">
-          Enregistrer
-        </app-button>
+        <app-button variant="secondary" (clicked)="discountVisible = false" i18n="@@sales-orders.sales-order-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="acting()" (clicked)="saveDiscount()" i18n="@@sales-orders.sales-order-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
 
@@ -510,12 +502,10 @@ interface TimelineEvent {
       [modal]="true"
       [style]="{ width: '32rem' }"
       [draggable]="false">
-      <p class="ft-dialog-intro">
-        Solder ferme la commande en renonçant au reliquat non livré. Ce qui a déjà été livré et
-        facturé n'est pas touché.
-      </p>
+      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.solder.ferme.la.commande.en.renoncant.au.reliqua.187df3b6">Solder ferme la commande en renonçant au reliquat non livré. Ce qui a déjà été livré et
+        facturé n'est pas touché.</p>
       <div class="ft-field">
-        <label for="so-close-reason">Motif <span class="ft-required">*</span></label>
+        <label for="so-close-reason">Motif <span class="ft-required" i18n="@@sales-orders.sales-order-detail.text.df58248c">*</span></label>
         <textarea
           id="so-close-reason"
           pTextarea
@@ -525,10 +515,8 @@ interface TimelineEvent {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="closeVisible = false">Retour</app-button>
-        <app-button variant="primary" [disabled]="!closeReason.trim() || acting()" (clicked)="doClose()">
-          Solder
-        </app-button>
+        <app-button variant="secondary" (clicked)="closeVisible = false" i18n="@@sales-orders.sales-order-detail.retour.e5befb1f">Retour</app-button>
+        <app-button variant="primary" [disabled]="!closeReason.trim() || acting()" (clicked)="doClose()" i18n="@@sales-orders.sales-order-detail.solder.2663192f">Solder</app-button>
       </ng-template>
     </p-dialog>
 
@@ -539,18 +527,16 @@ interface TimelineEvent {
       [modal]="true"
       [style]="{ width: '44rem' }"
       [draggable]="false">
-      <p class="ft-dialog-intro">
-        Précisez les quantités à livrer. Par défaut, tout le reste à livrer de la commande est
-        repris.
-      </p>
+      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.precisez.les.quantites.a.livrer.par.defaut.tout..7aa1af48">Précisez les quantités à livrer. Par défaut, tout le reste à livrer de la commande est
+        repris.</p>
 
       <div class="ft-field">
-        <label for="dn-issue-date">Date d'émission</label>
+        <label for="dn-issue-date" i18n="@@sales-orders.sales-order-detail.date.d.emission.99f68857">Date d'émission</label>
         <input id="dn-issue-date" type="date" [(ngModel)]="deliveryNoteIssueDate" class="ft-input" />
       </div>
 
       <div class="ft-field" style="margin-top: var(--spacing-3);">
-        <label for="dn-address">Adresse de livraison</label>
+        <label for="dn-address" i18n="@@sales-orders.sales-order-detail.adresse.de.livraison.31eac756">Adresse de livraison</label>
         <textarea
           id="dn-address"
           pTextarea
@@ -562,9 +548,9 @@ interface TimelineEvent {
       <p-table [value]="deliveryNoteLines" [rowHover]="true" styleClass="ft-table p-datatable-sm" [style]="{ 'margin-top': 'var(--spacing-4)' }">
         <ng-template pTemplate="header">
           <tr>
-            <th>Produit</th>
-            <th class="ft-num">Reste à livrer</th>
-            <th class="ft-num">Quantité</th>
+            <th i18n="@@sales-orders.sales-order-detail.produit.ff673dc2">Produit</th>
+            <th class="ft-num" i18n="@@sales-orders.sales-order-detail.reste.a.livrer.0fdaa693">Reste à livrer</th>
+            <th class="ft-num" i18n="@@sales-orders.sales-order-detail.quantite.09a38fda">Quantité</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-line>
@@ -586,11 +572,9 @@ interface TimelineEvent {
       </p-table>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="resetDeliveryNoteQuantities()">Tout livrer</app-button>
-        <app-button variant="secondary" (clicked)="deliveryNoteDialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="acting()" (clicked)="submitGenerateDeliveryNote()">
-          Générer le BL
-        </app-button>
+        <app-button variant="secondary" (clicked)="resetDeliveryNoteQuantities()" i18n="@@sales-orders.sales-order-detail.tout.livrer.d2623b5e">Tout livrer</app-button>
+        <app-button variant="secondary" (clicked)="deliveryNoteDialogVisible = false" i18n="@@sales-orders.sales-order-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="acting()" (clicked)="submitGenerateDeliveryNote()" i18n="@@sales-orders.sales-order-detail.generer.le.bl.8968ad09">Générer le BL</app-button>
       </ng-template>
     </p-dialog>
 
@@ -602,17 +586,17 @@ interface TimelineEvent {
       [style]="{ width: '48rem' }"
       [draggable]="false">
       <p class="ft-dialog-intro">
-        Par défaut, seul le <strong>livré-non-facturé</strong> est facturé. Activez la facturation
+        Par défaut, seul le <strong i18n="@@sales-orders.sales-order-detail.livre.non.facture.eb209e11">livré-non-facturé</strong> est facturé. Activez la facturation
         d'avance pour facturer le reste à facturer indépendamment des livraisons.
       </p>
 
       <div class="ft-form-grid" style="grid-template-columns: 1fr 1fr;">
         <div class="ft-field">
-          <label for="inv-issue-date">Date d'émission</label>
+          <label for="inv-issue-date" i18n="@@sales-orders.sales-order-detail.date.d.emission.99f68857">Date d'émission</label>
           <input id="inv-issue-date" type="date" [(ngModel)]="invoiceIssueDate" class="ft-input" />
         </div>
         <div class="ft-field">
-          <label for="inv-due-date">Date d'échéance (optionnelle)</label>
+          <label for="inv-due-date" i18n="@@sales-orders.sales-order-detail.date.d.echeance.optionnelle.0a255cf4">Date d'échéance (optionnelle)</label>
           <input id="inv-due-date" type="date" [(ngModel)]="invoiceDueDate" class="ft-input" />
         </div>
       </div>
@@ -625,15 +609,15 @@ interface TimelineEvent {
       </div>
 
       @if (advanceBilling) {
-        <p class="ft-hint">Plafond de chaque ligne : reste à facturer (indépendamment des livraisons).</p>
+        <p class="ft-hint" i18n="@@sales-orders.sales-order-detail.plafond.de.chaque.ligne.reste.a.facturer.indepen.30668409">Plafond de chaque ligne : reste à facturer (indépendamment des livraisons).</p>
       }
 
       <p-table [value]="invoiceLines" [rowHover]="true" styleClass="ft-table p-datatable-sm" [style]="{ 'margin-top': 'var(--spacing-3)' }">
         <ng-template pTemplate="header">
           <tr>
-            <th>Produit</th>
-            <th class="ft-num">Assiette</th>
-            <th class="ft-num">Quantité</th>
+            <th i18n="@@sales-orders.sales-order-detail.produit.ff673dc2">Produit</th>
+            <th class="ft-num" i18n="@@sales-orders.sales-order-detail.assiette.de18e968">Assiette</th>
+            <th class="ft-num" i18n="@@sales-orders.sales-order-detail.quantite.09a38fda">Quantité</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-line>
@@ -655,11 +639,9 @@ interface TimelineEvent {
       </p-table>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="resetInvoiceQuantities()">Tout facturer</app-button>
-        <app-button variant="secondary" (clicked)="invoiceDialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="acting()" (clicked)="submitGenerateInvoice()">
-          Générer la facture
-        </app-button>
+        <app-button variant="secondary" (clicked)="resetInvoiceQuantities()" i18n="@@sales-orders.sales-order-detail.tout.facturer.580a60a2">Tout facturer</app-button>
+        <app-button variant="secondary" (clicked)="invoiceDialogVisible = false" i18n="@@sales-orders.sales-order-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="acting()" (clicked)="submitGenerateInvoice()" i18n="@@sales-orders.sales-order-detail.generer.la.facture.962ccf5c">Générer la facture</app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -719,13 +701,31 @@ export class SalesOrderDetailComponent implements OnInit {
     return `${o.client.name} · ${o.lines.length} ligne(s)`;
   });
 
+  private static readonly ACTION_CONFIRM = 'confirm';
+  private static readonly ACTION_GENERATE_BL = 'generate-bl';
+  private static readonly ACTION_GENERATE_INVOICE = 'generate-invoice';
+  private static readonly ACTION_CLOSE = 'close';
+  private static readonly ACTION_CANCEL = 'cancel';
+
   /** Action principale affichée dans l'en-tête (max 1). */
   readonly primaryAction = computed(() => {
     if (this.canConfirm()) {
-      return { label: 'Confirmer', icon: 'pi-check', variant: 'primary' as const, command: () => this.confirmOrder() };
+      return {
+        id: SalesOrderDetailComponent.ACTION_CONFIRM,
+        label: 'Confirmer',
+        icon: 'pi-check',
+        variant: 'primary' as const,
+        command: () => this.confirmOrder()
+      };
     }
     if (this.canGenerateDeliveryNote()) {
-      return { label: 'Générer un BL', icon: 'pi-truck', variant: 'primary' as const, command: () => this.openGenerateDeliveryNote() };
+      return {
+        id: SalesOrderDetailComponent.ACTION_GENERATE_BL,
+        label: 'Générer un BL',
+        icon: 'pi-truck',
+        variant: 'primary' as const,
+        command: () => this.openGenerateDeliveryNote()
+      };
     }
     return null;
   });
@@ -733,13 +733,31 @@ export class SalesOrderDetailComponent implements OnInit {
   /** Action rapide de statut affichée dans la sidebar. */
   readonly quickStatusAction = computed(() => {
     if (this.canGenerateInvoice()) {
-      return { label: 'Générer une facture', icon: 'pi-file-export', variant: 'primary' as const, command: () => this.openGenerateInvoice() };
+      return {
+        id: SalesOrderDetailComponent.ACTION_GENERATE_INVOICE,
+        label: 'Générer une facture',
+        icon: 'pi-file-export',
+        variant: 'primary' as const,
+        command: () => this.openGenerateInvoice()
+      };
     }
     if (this.canClose()) {
-      return { label: 'Solder', icon: 'pi-flag', variant: 'secondary' as const, command: () => this.openClose() };
+      return {
+        id: SalesOrderDetailComponent.ACTION_CLOSE,
+        label: 'Solder',
+        icon: 'pi-flag',
+        variant: 'secondary' as const,
+        command: () => this.openClose()
+      };
     }
     if (this.canCancel()) {
-      return { label: 'Annuler', icon: 'pi-times', variant: 'danger' as const, command: () => this.openCancel() };
+      return {
+        id: SalesOrderDetailComponent.ACTION_CANCEL,
+        label: 'Annuler',
+        icon: 'pi-times',
+        variant: 'danger' as const,
+        command: () => this.openCancel()
+      };
     }
     return null;
   });
@@ -756,29 +774,31 @@ export class SalesOrderDetailComponent implements OnInit {
       }
     };
 
+    const exposed = new Set([primary?.id, quick?.id].filter(Boolean));
+
     // Exclure les actions déjà exposées en primaire (header) ou en CTA statut (sidebar).
     add(
       'Confirmer',
       'pi-check',
       () => this.confirmOrder(),
-      this.canConfirm() && primary?.label !== 'Confirmer' && quick?.label !== 'Confirmer'
+      this.canConfirm() && !exposed.has(SalesOrderDetailComponent.ACTION_CONFIRM)
     );
     add(
       'Générer un BL',
       'pi-truck',
       () => this.openGenerateDeliveryNote(),
-      this.canGenerateDeliveryNote() && primary?.label !== 'Générer un BL' && quick?.label !== 'Générer un BL'
+      this.canGenerateDeliveryNote() && !exposed.has(SalesOrderDetailComponent.ACTION_GENERATE_BL)
     );
     add(
       'Générer une facture',
       'pi-file-export',
       () => this.openGenerateInvoice(),
-      this.canGenerateInvoice() && primary?.label !== 'Générer une facture' && quick?.label !== 'Générer une facture'
+      this.canGenerateInvoice() && !exposed.has(SalesOrderDetailComponent.ACTION_GENERATE_INVOICE)
     );
     add('Remise de pied', 'pi-percentage', () => this.openDiscount(), this.canEditDiscount());
 
-    const canCloseInMenu = this.canClose() && quick?.label !== 'Solder';
-    const canCancelInMenu = this.canCancel() && quick?.label !== 'Annuler';
+    const canCloseInMenu = this.canClose() && !exposed.has(SalesOrderDetailComponent.ACTION_CLOSE);
+    const canCancelInMenu = this.canCancel() && !exposed.has(SalesOrderDetailComponent.ACTION_CANCEL);
 
     if (canCloseInMenu || canCancelInMenu) {
       items.push({ separator: true });

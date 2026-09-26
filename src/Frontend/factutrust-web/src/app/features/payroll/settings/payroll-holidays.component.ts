@@ -55,26 +55,26 @@ function parseDate(value: string): Date | null {
   ],
   template: `
     <app-page-header
-      title="Jours fériés"
+      title="Jours fériés" i18n-title="Jours fériés"
       subtitle="Calendrier des fêtes légales tunisiennes pour le décompte des jours ouvrables." />
 
     <div class="payroll-toolbar mb-3">
-      <label for="holidayYear">Exercice</label>
+      <label for="holidayYear" i18n="@@payroll.settings.exercice.e171e2b0">Exercice</label>
       <input id="holidayYear" type="number" class="p-inputtext w-8rem" [(ngModel)]="year" (ngModelChange)="load()" min="2000" max="2100" />
-      <app-button variant="outline" icon="pi-refresh" iconPos="left" (click)="load()">Actualiser</app-button>
-      <app-button variant="outline" icon="pi-database" iconPos="left" (click)="seedDefaults()">Amorcer 2024–2028</app-button>
-      <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Nouveau jour férié</app-button>
+      <app-button variant="outline" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.settings.actualiser.9d3b2a7d">Actualiser</app-button>
+      <app-button variant="outline" icon="pi-database" iconPos="left" (click)="seedDefaults()" i18n="@@payroll.settings.amorcer.2024.2028.f4a9affc">Amorcer 2024–2028</app-button>
+      <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.settings.nouveau.jour.ferie.a4e4781c">Nouveau jour férié</app-button>
     </div>
 
     <p-table [value]="holidays()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Date</th>
-          <th>Libellé</th>
-          <th>Type</th>
-          <th>Rémunéré</th>
-          <th>Estimé</th>
-          <th>Référence</th>
+          <th i18n="@@payroll.settings.date.eb9a4bc1">Date</th>
+          <th i18n="@@payroll.settings.libelle.f5485bba">Libellé</th>
+          <th i18n="@@payroll.settings.type.3deb7456">Type</th>
+          <th i18n="@@payroll.settings.remunere.6447ac33">Rémunéré</th>
+          <th i18n="@@payroll.settings.estime.5dafc637">Estimé</th>
+          <th i18n="@@payroll.settings.reference.f8130bb0">Référence</th>
           <th></th>
         </tr>
       </ng-template>
@@ -95,48 +95,48 @@ function parseDate(value: string): Date | null {
           </td>
           <td class="text-muted">{{ h.decreeReference || '—' }}</td>
           <td class="actions">
-            <button type="button" class="p-button p-button-text p-button-sm" (click)="editHoliday(h)">Modifier</button>
-            <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(h)">Supprimer</button>
+            <button type="button" class="p-button p-button-text p-button-sm" (click)="editHoliday(h)" i18n="@@payroll.settings.modifier.f260e757">Modifier</button>
+            <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(h)" i18n="@@payroll.settings.supprimer.1acfc1c7">Supprimer</button>
           </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td colspan="7">Aucun jour férié pour cet exercice. Utilisez « Amorcer 2024–2028 » pour charger le calendrier tunisien.</td></tr>
+        <tr><td colspan="7" i18n="@@payroll.settings.aucun.jour.ferie.pour.cet.exercice.utilisez.amor.4bc9fd90">Aucun jour férié pour cet exercice. Utilisez « Amorcer 2024–2028 » pour charger le calendrier tunisien.</td></tr>
       </ng-template>
     </p-table>
 
     <p-dialog [header]="editingId ? 'Modifier le jour férié' : 'Nouveau jour férié'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '560px' }">
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Date</label>
+          <label i18n="@@payroll.settings.date.eb9a4bc1">Date</label>
           <p-datepicker [(ngModel)]="formDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Type</label>
+          <label i18n="@@payroll.settings.type.3deb7456">Type</label>
           <p-select [options]="kindOptions" optionLabel="label" optionValue="value" [(ngModel)]="formKind" appendTo="body" styleClass="w-full" />
         </div>
       </div>
       <div class="payroll-form-group">
-        <label>Libellé</label>
+        <label i18n="@@payroll.settings.libelle.f5485bba">Libellé</label>
         <input pInputText [(ngModel)]="formLabel" class="w-full" maxlength="200" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group switch-row">
-          <label for="holidayPaid">Rémunéré</label>
+          <label for="holidayPaid" i18n="@@payroll.settings.remunere.6447ac33">Rémunéré</label>
           <p-inputSwitch inputId="holidayPaid" [(ngModel)]="formIsPaid" />
         </div>
         <div class="payroll-form-group switch-row">
-          <label for="holidayEstimated">Date estimée</label>
+          <label for="holidayEstimated" i18n="@@payroll.settings.date.estimee.f9532d05">Date estimée</label>
           <p-inputSwitch inputId="holidayEstimated" [(ngModel)]="formIsEstimated" />
         </div>
       </div>
       <div class="payroll-form-group">
-        <label>Référence décret / note</label>
+        <label i18n="@@payroll.settings.reference.decret.note.a36be637">Référence décret / note</label>
         <input pInputText [(ngModel)]="formDecreeReference" class="w-full" maxlength="500" />
       </div>
       <div class="form-actions mt-3">
-        <app-button type="button" variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button type="button" variant="primary" icon="pi-check" iconPos="left" (click)="save()">Enregistrer</app-button>
+        <app-button type="button" variant="outline" (click)="dialogVisible = false" i18n="@@payroll.settings.annuler.49ba3292">Annuler</app-button>
+        <app-button type="button" variant="primary" icon="pi-check" iconPos="left" (click)="save()" i18n="@@payroll.settings.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </div>
     </p-dialog>
   `

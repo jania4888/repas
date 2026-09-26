@@ -58,16 +58,14 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Fournisseurs"
+      title="Fournisseurs" i18n-title="Fournisseurs"
       subtitle="Gérez vos fournisseurs pour les bons de commande.">
       @if (canCreateSupplier()) {
         <app-button
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Ajouter un fournisseur
-        </app-button>
+          routerLink="new" i18n="@@suppliers.supplier-list.ajouter.un.fournisseur.cfb5e618">Ajouter un fournisseur</app-button>
       }
     </app-page-header>
 
@@ -79,7 +77,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -91,7 +89,7 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par nom, email ou NIF…"
+            placeholder="Rechercher par nom, email ou NIF…" i18n-placeholder="Rechercher par nom, email ou NIF…"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -102,7 +100,7 @@ interface StatusOption {
           [(ngModel)]="selectedType"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les types"
+          placeholder="Tous les types" i18n-placeholder="Tous les types"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -112,7 +110,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -147,13 +145,13 @@ interface StatusOption {
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
-            <th>Contact</th>
-            <th>NIF</th>
-            <th>Type</th>
-            <th>Localisation</th>
-            <th style="width: 120px">Délai paiement</th>
-            <th style="width: 80px">Statut</th>
-            <th style="width: 100px">Actions</th>
+            <th i18n="@@suppliers.supplier-list.contact.b37456c4">Contact</th>
+            <th i18n="@@suppliers.supplier-list.nif.77124a3a">NIF</th>
+            <th i18n="@@suppliers.supplier-list.type.3deb7456">Type</th>
+            <th i18n="@@suppliers.supplier-list.localisation.84e3d483">Localisation</th>
+            <th style="width: 120px" i18n="@@suppliers.supplier-list.delai.paiement.bfca1de5">Délai paiement</th>
+            <th style="width: 80px" i18n="@@suppliers.supplier-list.statut.659499f3">Statut</th>
+            <th style="width: 100px" i18n="@@suppliers.supplier-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
 
@@ -172,7 +170,7 @@ interface StatusOption {
                 @if (supplier.email) {
                   <a [href]="'mailto:' + supplier.email" class="email">{{ supplier.email }}</a>
                 } @else {
-                  <span class="email">—</span>
+                  <span class="email" i18n="@@suppliers.supplier-list.text.1b93795b">—</span>
                 }
                 <span class="phone">{{ supplier.phone || '-' }}</span>
               </div>
@@ -227,7 +225,7 @@ interface StatusOption {
           <tr>
             <td colspan="8" class="text-center p-6">
               <app-empty-state
-                title="Aucun fournisseur"
+                title="Aucun fournisseur" i18n-title="Aucun fournisseur"
                 description="Ajoutez votre premier fournisseur pour créer des bons de commande."
                 [showAction]="canCreateSupplier()"
                 actionLabel="Ajouter un fournisseur"

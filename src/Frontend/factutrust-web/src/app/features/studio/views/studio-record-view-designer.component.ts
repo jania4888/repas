@@ -68,7 +68,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
       </div>
 
       @if (loading()) {
-        <p class="studio-muted">Chargement…</p>
+        <p class="studio-muted" i18n="@@studio.views.chargement.01cba1df">Chargement…</p>
       } @else {
         @if (error(); as err) {
           <div class="studio-row studio-row-section" role="alert" data-testid="designer-error">
@@ -101,12 +101,12 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
 
             @if (mode() === 'Kanban') {
               <div class="studio-row-section rvd-mode-section" data-testid="designer-kanban">
-                <h3 class="studio-section-title">Kanban</h3>
+                <h3 class="studio-section-title" i18n="@@studio.views.kanban.38955467">Kanban</h3>
                 <label class="studio-lbl" for="rvd-kanban-group">{{ labels.designer.kanbanGroupBy }} *</label>
                 <p-select inputId="rvd-kanban-group" class="studio-w-full" [options]="kanbanGroupByOptions()" [ngModel]="kanban().groupByFieldKey"
                   (ngModelChange)="patchKanban({ groupByFieldKey: $event })" optionLabel="label" optionValue="key"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" data-testid="designer-kanban-group" />
-                <label class="studio-lbl" for="rvd-kanban-title">Champ de titre</label>
+                <label class="studio-lbl" for="rvd-kanban-title" i18n="@@studio.views.champ.de.titre.ab856965">Champ de titre</label>
                 <p-select inputId="rvd-kanban-title" class="studio-w-full" [options]="fieldOptions()" [ngModel]="kanban().titleFieldKey"
                   (ngModelChange)="patchKanban({ titleFieldKey: $event })" optionLabel="label" optionValue="key" [showClear]="true"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" />
@@ -125,20 +125,20 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
 
             @if (mode() === 'Calendar') {
               <div class="studio-row-section rvd-mode-section" data-testid="designer-calendar">
-                <h3 class="studio-section-title">Calendrier</h3>
+                <h3 class="studio-section-title" i18n="@@studio.views.calendrier.4c83736b">Calendrier</h3>
                 <label class="studio-lbl" for="rvd-cal-start">{{ labels.designer.calendarStart }} *</label>
                 <p-select inputId="rvd-cal-start" class="studio-w-full" [options]="dateOptions()" [ngModel]="calendar().startFieldKey"
                   (ngModelChange)="patchCalendar({ startFieldKey: $event })" optionLabel="label" optionValue="key"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" data-testid="designer-calendar-start" />
-                <label class="studio-lbl" for="rvd-cal-end">Champ de fin</label>
+                <label class="studio-lbl" for="rvd-cal-end" i18n="@@studio.views.champ.de.fin.2f6d5bda">Champ de fin</label>
                 <p-select inputId="rvd-cal-end" class="studio-w-full" [options]="dateOptions()" [ngModel]="calendar().endFieldKey"
                   (ngModelChange)="patchCalendar({ endFieldKey: $event })" optionLabel="label" optionValue="key" [showClear]="true"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" />
-                <label class="studio-lbl" for="rvd-cal-title">Champ de titre</label>
+                <label class="studio-lbl" for="rvd-cal-title" i18n="@@studio.views.champ.de.titre.ab856965">Champ de titre</label>
                 <p-select inputId="rvd-cal-title" class="studio-w-full" [options]="fieldOptions()" [ngModel]="calendar().titleFieldKey"
                   (ngModelChange)="patchCalendar({ titleFieldKey: $event })" optionLabel="label" optionValue="key" [showClear]="true"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" />
-                <label class="studio-lbl" for="rvd-cal-color">Champ de couleur</label>
+                <label class="studio-lbl" for="rvd-cal-color" i18n="@@studio.views.champ.de.couleur.e1e1a519">Champ de couleur</label>
                 <p-select inputId="rvd-cal-color" class="studio-w-full" [options]="optionColorOptions()" [ngModel]="calendar().colorFieldKey"
                   (ngModelChange)="patchCalendar({ colorFieldKey: $event })" optionLabel="label" optionValue="key" [showClear]="true"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" />
@@ -148,7 +148,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <div class="studio-block-head">
               <span class="studio-lbl">{{ labels.designer.columns }} ({{ columns().length }}/{{ limits.maxColumns }})</span>
               <p-select [options]="availableColumnOptions()" [ngModel]="null" (ngModelChange)="addColumn($event)"
-                optionLabel="label" optionValue="key" placeholder="Ajouter une colonne" appendTo="body" panelStyleClass="studio-theme"
+                optionLabel="label" optionValue="key" placeholder="Ajouter une colonne" i18n-placeholder="Ajouter une colonne" appendTo="body" panelStyleClass="studio-theme"
                 [disabled]="!canDesign() || columns().length >= limits.maxColumns" data-testid="designer-add-column" />
             </div>
             @if (columns().length >= limits.maxColumns) {
@@ -167,7 +167,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
                   <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeColumn(i)" ariaLabel="Retirer" />
                 </div>
               } @empty {
-                <p class="studio-muted">Aucune colonne : toutes les colonnes actives seront affichées.</p>
+                <p class="studio-muted" i18n="@@studio.views.aucune.colonne.toutes.les.colonnes.actives.seron.62985248">Aucune colonne : toutes les colonnes actives seront affichées.</p>
               }
             </div>
 
@@ -177,7 +177,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <div class="studio-block-head">
               <span class="studio-lbl">{{ labels.designer.sort }} ({{ sort().length }}/{{ limits.maxSorts }})</span>
               <p-select [options]="availableSortOptions()" [ngModel]="null" (ngModelChange)="addSort($event)"
-                optionLabel="label" optionValue="key" placeholder="Ajouter un tri" appendTo="body" panelStyleClass="studio-theme"
+                optionLabel="label" optionValue="key" placeholder="Ajouter un tri" i18n-placeholder="Ajouter un tri" appendTo="body" panelStyleClass="studio-theme"
                 [disabled]="!canDesign() || sort().length >= limits.maxSorts" data-testid="designer-add-sort" />
             </div>
             @if (sort().length >= limits.maxSorts) {
@@ -199,7 +199,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             </div>
             <div class="studio-line">
               <p-inputSwitch inputId="rvd-search" [ngModel]="searchEnabled()" (ngModelChange)="searchEnabled.set($event)" [disabled]="!canDesign()" />
-              <label for="rvd-search">Recherche plein texte</label>
+              <label for="rvd-search" i18n="@@studio.views.recherche.plein.texte.0c174b56">Recherche plein texte</label>
             </div>
             <div class="studio-line">
               <p-inputSwitch inputId="rvd-default" [ngModel]="isDefault()" (ngModelChange)="isDefault.set($event)" [disabled]="!canDesign()" />
@@ -214,7 +214,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
 
           <aside class="studio-preview rvd-preview">
             <div class="studio-block-head">
-              <h3 class="studio-preview-title">Aperçu</h3>
+              <h3 class="studio-preview-title" i18n="@@studio.views.apercu.f0f53004">Aperçu</h3>
               @if (canDesign()) {
                 <p-button label="Actualiser l’aperçu" icon="pi pi-refresh" [text]="true" size="small"
                   [disabled]="saving() || !previewEligible()" (onClick)="refreshPreview()" data-testid="designer-preview-refresh" />

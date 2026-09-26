@@ -174,21 +174,17 @@ export interface PromotionFormValue {
 
       [draggable]="false">
 
-      <p class="ft-dialog-intro">
+      <p class="ft-dialog-intro" i18n="@@settings.promotions.remise.temporaire.appliquee.apres.le.prix.catalo.9c11f762">Remise temporaire appliquée après le prix catalogue ou la grille. Les documents déjà émis
 
-        Remise temporaire appliquée après le prix catalogue ou la grille. Les documents déjà émis
-
-        conservent leur remise.
-
-      </p>
+        conservent leur remise.</p>
 
 
 
-      <app-form-section title="Général" icon="pi-file-edit" variant="compact">
+      <app-form-section title="Général" i18n-title="Général" icon="pi-file-edit" variant="compact">
 
         <div class="ft-field ft-field--full">
 
-          <label for="pr-name">Nom <span class="ft-required">*</span></label>
+          <label for="pr-name">Nom <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
           <input id="pr-name" pInputText [(ngModel)]="form.name" maxlength="100" [disabled]="saving" />
 
@@ -198,7 +194,7 @@ export interface PromotionFormValue {
 
           <div class="ft-field">
 
-            <label for="pr-start">Début <span class="ft-required">*</span></label>
+            <label for="pr-start">Début <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
             <input id="pr-start" type="date" pInputText [(ngModel)]="form.startsOn" [disabled]="saving" />
 
@@ -206,7 +202,7 @@ export interface PromotionFormValue {
 
           <div class="ft-field">
 
-            <label for="pr-end">Fin <span class="ft-required">*</span></label>
+            <label for="pr-end">Fin <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
             <input id="pr-end" type="date" pInputText [(ngModel)]="form.endsOn" [disabled]="saving" />
 
@@ -216,7 +212,7 @@ export interface PromotionFormValue {
 
         @if (dateRangeInvalid()) {
 
-          <p class="ft-field-error">La fin ne peut pas précéder le début.</p>
+          <p class="ft-field-error" i18n="@@settings.promotions.la.fin.ne.peut.pas.preceder.le.debut.48ee99fb">La fin ne peut pas précéder le début.</p>
 
         }
 
@@ -224,13 +220,13 @@ export interface PromotionFormValue {
 
 
 
-      <app-form-section title="Portée" icon="pi-filter" variant="compact">
+      <app-form-section title="Portée" i18n-title="Portée" icon="pi-filter" variant="compact">
 
         <div class="ft-form-grid">
 
           <div class="ft-field">
 
-            <label for="pr-product">Produit (optionnel)</label>
+            <label for="pr-product" i18n="@@settings.promotions.produit.optionnel.149c218f">Produit (optionnel)</label>
 
             <p-autoComplete
 
@@ -256,11 +252,11 @@ export interface PromotionFormValue {
 
               [disabled]="saving || !!selectedCategoryId || loadingProductLabel()"></p-autoComplete>
 
-            <small class="ft-hint">Laisser vide pour tous les produits</small>
+            <small class="ft-hint" i18n="@@settings.promotions.laisser.vide.pour.tous.les.produits.4d7d99ee">Laisser vide pour tous les produits</small>
 
             @if (selectedCategoryId) {
 
-              <small class="ft-hint">Désactivé : une catégorie est sélectionnée</small>
+              <small class="ft-hint" i18n="@@settings.promotions.desactive.une.categorie.est.selectionnee.8767abd1">Désactivé : une catégorie est sélectionnée</small>
 
             }
 
@@ -268,7 +264,7 @@ export interface PromotionFormValue {
 
           <div class="ft-field">
 
-            <label for="pr-category">Catégorie (optionnel)</label>
+            <label for="pr-category" i18n="@@settings.promotions.categorie.optionnel.61e8316d">Catégorie (optionnel)</label>
 
             <p-select
 
@@ -286,17 +282,17 @@ export interface PromotionFormValue {
 
               [showClear]="true"
 
-              placeholder="Toutes les catégories si vide"
+              placeholder="Toutes les catégories si vide" i18n-placeholder="Toutes les catégories si vide"
 
               appendTo="body"
 
               [disabled]="saving || !!selectedProduct"></p-select>
 
-            <small class="ft-hint">Laisser vide pour toutes les catégories</small>
+            <small class="ft-hint" i18n="@@settings.promotions.laisser.vide.pour.toutes.les.categories.4768ea01">Laisser vide pour toutes les catégories</small>
 
             @if (selectedProduct) {
 
-              <small class="ft-hint">Désactivé : un produit est sélectionné</small>
+              <small class="ft-hint" i18n="@@settings.promotions.desactive.un.produit.est.selectionne.6ad5b763">Désactivé : un produit est sélectionné</small>
 
             }
 
@@ -304,7 +300,7 @@ export interface PromotionFormValue {
 
           <div class="ft-field ft-field--full">
 
-            <label for="pr-client">Client (optionnel)</label>
+            <label for="pr-client" i18n="@@settings.promotions.client.optionnel.14c8cf94">Client (optionnel)</label>
 
             <p-autoComplete
 
@@ -330,7 +326,7 @@ export interface PromotionFormValue {
 
               [disabled]="saving || loadingClientLabel()"></p-autoComplete>
 
-            <small class="ft-hint">Laisser vide pour tous les clients</small>
+            <small class="ft-hint" i18n="@@settings.promotions.laisser.vide.pour.tous.les.clients.3c108910">Laisser vide pour tous les clients</small>
 
           </div>
 
@@ -348,13 +344,13 @@ export interface PromotionFormValue {
 
 
 
-      <app-form-section title="Remise" icon="pi-percentage" variant="compact">
+      <app-form-section title="Remise" i18n-title="Remise" icon="pi-percentage" variant="compact">
 
         <div class="ft-form-grid">
 
           <div class="ft-field">
 
-            <label for="pr-type">Forme de la remise</label>
+            <label for="pr-type" i18n="@@settings.promotions.forme.de.la.remise.f75501ac">Forme de la remise</label>
 
             <p-select
 
@@ -378,7 +374,7 @@ export interface PromotionFormValue {
 
             @if (form.discountType === 'Percentage') {
 
-              <label for="pr-pct">Taux (%) <span class="ft-required">*</span></label>
+              <label for="pr-pct">Taux (%) <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
               <p-inputNumber
 
@@ -400,7 +396,7 @@ export interface PromotionFormValue {
 
             } @else {
 
-              <label for="pr-amt">Montant par unité <span class="ft-required">*</span></label>
+              <label for="pr-amt">Montant par unité <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
               <p-inputNumber
 
@@ -424,7 +420,7 @@ export interface PromotionFormValue {
 
           <div class="ft-field">
 
-            <label for="pr-minqty">Quantité minimale</label>
+            <label for="pr-minqty" i18n="@@settings.promotions.quantite.minimale.e3df8291">Quantité minimale</label>
 
             <p-inputNumber
 
@@ -446,7 +442,7 @@ export interface PromotionFormValue {
 
           <div class="ft-field">
 
-            <label for="pr-priority">Priorité</label>
+            <label for="pr-priority" i18n="@@settings.promotions.priorite.eede91d2">Priorité</label>
 
             <p-inputNumber
 
@@ -464,11 +460,7 @@ export interface PromotionFormValue {
 
         <div class="ft-field ft-field--full promotion-form-dialog__priority-hint">
 
-          <small class="ft-hint">
-
-            La plus élevée gagne ; à égalité, c'est la plus ciblée qui s'applique.
-
-          </small>
+          <small class="ft-hint" i18n="@@settings.promotions.la.plus.elevee.gagne.a.egalite.c.est.la.plus.cib.d47795fd">La plus élevée gagne ; à égalité, c'est la plus ciblée qui s'applique.</small>
 
         </div>
 
@@ -482,15 +474,11 @@ export interface PromotionFormValue {
 
           <p-inputSwitch [(ngModel)]="form.isActive" inputId="pr-active" [disabled]="saving"></p-inputSwitch>
 
-          <label for="pr-active">Promotion active</label>
+          <label for="pr-active" i18n="@@settings.promotions.promotion.active.9ee0381f">Promotion active</label>
 
         </div>
 
-        <small class="ft-hint promotion-form-dialog__status-hint">
-
-          Désactiver n'affecte aucun document déjà émis.
-
-        </small>
+        <small class="ft-hint promotion-form-dialog__status-hint" i18n="@@settings.promotions.desactiver.n.affecte.aucun.document.deja.emis.50f0b090">Désactiver n'affecte aucun document déjà émis.</small>
 
       }
 
@@ -498,13 +486,9 @@ export interface PromotionFormValue {
 
       <ng-template pTemplate="footer">
 
-        <app-button variant="secondary" (clicked)="close()">Annuler</app-button>
+        <app-button variant="secondary" (clicked)="close()" i18n="@@settings.promotions.annuler.49ba3292">Annuler</app-button>
 
-        <app-button variant="primary" [disabled]="!canSave() || saving" (clicked)="submit()">
-
-          Enregistrer
-
-        </app-button>
+        <app-button variant="primary" [disabled]="!canSave() || saving" (clicked)="submit()" i18n="@@settings.promotions.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
       </ng-template>
 

@@ -70,7 +70,7 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
     } @else if (loadError()) {
       <app-empty-state
         icon="pi-exclamation-triangle"
-        title="Impossible de charger le contrat"
+        title="Impossible de charger le contrat" i18n-title="Impossible de charger le contrat"
         description="Le contrat est introuvable ou une erreur est survenue."
         actionLabel="Réessayer"
         (actionClick)="reload()">
@@ -90,54 +90,40 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
             <app-button
               variant="primary" icon="pi-play"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmActivate()">
-              Activer
-            </app-button>
+              (clicked)="confirmActivate()" i18n="@@recurring-contracts.pages.activer.b96fa78d">Activer</app-button>
           }
           @if (c.status === 'Active' && canManage()) {
             <app-button
               variant="outline" icon="pi-pause"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmSuspend()">
-              Suspendre
-            </app-button>
+              (clicked)="confirmSuspend()" i18n="@@recurring-contracts.pages.suspendre.1e34ab4e">Suspendre</app-button>
           }
           @if (c.status === 'Suspended' && canManage()) {
             <app-button
               variant="primary" icon="pi-play"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmResume()">
-              Reprendre
-            </app-button>
+              (clicked)="confirmResume()" i18n="@@recurring-contracts.pages.reprendre.1c56710b">Reprendre</app-button>
           }
           @if (canRenew(c) && canManage()) {
             <app-button
               variant="secondary" icon="pi-refresh"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmRenew()">
-              Renouveler maintenant
-            </app-button>
+              (clicked)="confirmRenew()" i18n="@@recurring-contracts.pages.renouveler.maintenant.698440b4">Renouveler maintenant</app-button>
           }
           @if (c.status === 'Active' && canTriggerBilling()) {
             <app-button
               variant="outline" icon="pi-file-edit"
               [disabled]="!!actionInProgress()"
-              (clicked)="generateDraft()">
-              Générer brouillon
-            </app-button>
+              (clicked)="generateDraft()" i18n="@@recurring-contracts.pages.generer.brouillon.e5010c97">Générer brouillon</app-button>
           }
           @if ((c.status === 'Active' || c.status === 'Suspended') && canManage()) {
             <app-button
               variant="danger" icon="pi-times"
               [disabled]="!!actionInProgress()"
-              (clicked)="confirmCancel()">
-              Résilier
-            </app-button>
+              (clicked)="confirmCancel()" i18n="@@recurring-contracts.pages.resilier.1b922dae">Résilier</app-button>
           }
           @if (c.status === 'Draft' && canUpdate()) {
-            <app-button variant="outline" icon="pi-pencil" [routerLink]="['edit']">
-              Modifier
-            </app-button>
+            <app-button variant="outline" icon="pi-pencil" [routerLink]="['edit']" i18n="@@recurring-contracts.pages.modifier.f260e757">Modifier</app-button>
           }
           <app-document-actions-menu [items]="actionsMenuItems()"></app-document-actions-menu>
         </div>
@@ -151,13 +137,13 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
         <div class="main-content">
           <p-tabs class="ft-tabs" [lazy]="true" [(value)]="activeTab">
             <p-tablist>
-              <p-tab [value]="0"><i class="pi pi-eye"></i><span>Aperçu</span></p-tab>
-              <p-tab [value]="1"><i class="pi pi-calendar"></i><span>Échéances</span></p-tab>
-              <p-tab [value]="2"><i class="pi pi-receipt"></i><span>Factures</span></p-tab>
-              <p-tab [value]="3"><i class="pi pi-list"></i><span>Services</span></p-tab>
-              <p-tab [value]="4"><i class="pi pi-folder"></i><span>Documents</span></p-tab>
-              <p-tab [value]="5"><i class="pi pi-history"></i><span>Historique</span></p-tab>
-              <p-tab [value]="6"><i class="pi pi-comment"></i><span>Notes</span></p-tab>
+              <p-tab [value]="0"><i class="pi pi-eye"></i><span i18n="@@recurring-contracts.pages.apercu.f0f53004">Aperçu</span></p-tab>
+              <p-tab [value]="1"><i class="pi pi-calendar"></i><span i18n="@@recurring-contracts.pages.echeances.c2079408">Échéances</span></p-tab>
+              <p-tab [value]="2"><i class="pi pi-receipt"></i><span i18n="@@recurring-contracts.pages.factures.da35e4f2">Factures</span></p-tab>
+              <p-tab [value]="3"><i class="pi pi-list"></i><span i18n="@@recurring-contracts.pages.services.5cbd5840">Services</span></p-tab>
+              <p-tab [value]="4"><i class="pi pi-folder"></i><span i18n="@@recurring-contracts.pages.documents.687c8286">Documents</span></p-tab>
+              <p-tab [value]="5"><i class="pi pi-history"></i><span i18n="@@recurring-contracts.pages.historique.34f3a06a">Historique</span></p-tab>
+              <p-tab [value]="6"><i class="pi pi-comment"></i><span i18n="@@recurring-contracts.pages.notes.70440046">Notes</span></p-tab>
             </p-tablist>
             <p-tabpanels>
               <p-tabpanel [value]="0">

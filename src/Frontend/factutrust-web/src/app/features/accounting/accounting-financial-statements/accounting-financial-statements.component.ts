@@ -8,7 +8,7 @@ import {
   AccountingModuleDef,
   AccountingModuleLink
 } from '@core/config/accounting-modules.config';
-import { COMPANY_ACCOUNTING_ETATS_MODULE_TITLE } from '@core/config/company-accounting-nav.config';
+import { COMPANY_ACCOUNTING_ETATS_MODULE_ID } from '@core/config/company-accounting-nav.config';
 import { canSeeNavEntry } from '@core/utils/nav-visibility';
 import { AppModule } from '@core/models/app-module';
 
@@ -75,7 +75,7 @@ export class AccountingFinancialStatementsComponent {
   private readonly auth = inject(AuthService);
 
   private readonly etatsModule = computed<AccountingModuleDef | undefined>(() =>
-    ACCOUNTING_MODULES.find(m => m.title === COMPANY_ACCOUNTING_ETATS_MODULE_TITLE)
+    ACCOUNTING_MODULES.find(m => m.id === COMPANY_ACCOUNTING_ETATS_MODULE_ID)
   );
 
   readonly pageTitle = computed(() => 'États comptables');

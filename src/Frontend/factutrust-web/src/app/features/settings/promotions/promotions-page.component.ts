@@ -70,14 +70,12 @@ interface FilterOption<T extends string> {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Promotions"
+      title="Promotions" i18n-title="Promotions"
       subtitle="Remises temporaires appliquées après le prix. Elles ne remplacent pas les grilles : un document émis garde sa remise quand la promotion se termine.">
       <div class="header-actions">
         <p-button label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
         @if (canCreate()) {
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()">
-            Nouvelle promotion
-          </app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@settings.promotions.nouvelle.promotion.32d11180">Nouvelle promotion</app-button>
         }
       </div>
     </app-page-header>
@@ -89,10 +87,10 @@ interface FilterOption<T extends string> {
           <input
             pInputText
             type="search"
-            placeholder="Rechercher par nom ou portée…"
+            placeholder="Rechercher par nom ou portée…" i18n-placeholder="Rechercher par nom ou portée…"
             [(ngModel)]="searchQueryModel"
             (ngModelChange)="searchQuery.set($event)"
-            aria-label="Rechercher une promotion" />
+            aria-label="Rechercher une promotion" i18n-aria-label="Rechercher une promotion" />
         </p-iconfield>
         <p-select
           [options]="statusOptions"
@@ -100,7 +98,7 @@ interface FilterOption<T extends string> {
           (ngModelChange)="statusFilter.set($event)"
           optionLabel="label"
           optionValue="value"
-          placeholder="État"
+          placeholder="État" i18n-placeholder="État"
           appendTo="body"></p-select>
         <p-select
           [options]="scopeOptions"
@@ -108,7 +106,7 @@ interface FilterOption<T extends string> {
           (ngModelChange)="scopeFilter.set($event)"
           optionLabel="label"
           optionValue="value"
-          placeholder="Portée"
+          placeholder="Portée" i18n-placeholder="Portée"
           appendTo="body"></p-select>
         @if (hasActiveFilters()) {
           <button type="button" class="ft-filters__reset" (click)="resetFilters()">
@@ -124,13 +122,13 @@ interface FilterOption<T extends string> {
     } @else if (promotions().length === 0) {
       <app-empty-state
         icon="pi-megaphone"
-        title="Aucune promotion"
+        title="Aucune promotion" i18n-title="Aucune promotion"
         message="Créez une promotion datée pour appliquer une remise temporaire.">
       </app-empty-state>
     } @else if (filteredPromotions().length === 0) {
       <app-empty-state
         icon="pi-filter-slash"
-        title="Aucun résultat"
+        title="Aucun résultat" i18n-title="Aucun résultat"
         message="Aucune promotion ne correspond à vos filtres.">
       </app-empty-state>
     } @else {
@@ -144,17 +142,17 @@ interface FilterOption<T extends string> {
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
-              <th>Portée</th>
+              <th i18n="@@settings.promotions.portee.f42a1d5d">Portée</th>
               <th pSortableColumn="startsOn">Période <p-sortIcon field="startsOn"></p-sortIcon></th>
-              <th class="ft-num">Remise</th>
+              <th class="ft-num" i18n="@@settings.promotions.remise.ce12d942">Remise</th>
               <th class="ft-num" pSortableColumn="minQuantity">
                 Qté min. <p-sortIcon field="minQuantity"></p-sortIcon>
               </th>
               <th class="ft-num" pSortableColumn="priority">
                 Priorité <p-sortIcon field="priority"></p-sortIcon>
               </th>
-              <th>État</th>
-              <th class="ft-actions-col">Actions</th>
+              <th i18n="@@settings.promotions.etat.d3b28a2a">État</th>
+              <th class="ft-actions-col" i18n="@@settings.promotions.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
 

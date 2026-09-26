@@ -48,11 +48,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <app-accounting-filter-bar ariaLabel="Période du grand livre tiers">
         <div accountingFilterFields class="tpl-toolbar-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="tpl-from">Du</label>
+            <label class="accounting-filter-label" for="tpl-from" i18n="@@accounting.third-party-ledger.du.84814985">Du</label>
             <input id="tpl-from" type="date" [(ngModel)]="fromStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="tpl-to">Au</label>
+            <label class="accounting-filter-label" for="tpl-to" i18n="@@accounting.third-party-ledger.au.7a1732d5">Au</label>
             <input id="tpl-to" type="date" [(ngModel)]="toStr" class="accounting-filter-input" />
           </div>
         </div>
@@ -63,9 +63,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             iconPos="left"
             type="button"
             [routerLink]="['/accounting/auxiliary-balance']"
-            ariaLabel="Retour à la balance auxiliaire">
-            Balance auxiliaire
-          </app-button>
+            ariaLabel="Retour à la balance auxiliaire" i18n="@@accounting.third-party-ledger.balance.auxiliaire.e2a90270">Balance auxiliaire</app-button>
           <app-button
             variant="secondary"
             icon="pi pi-refresh"
@@ -73,9 +71,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading() || !thirdPartyId"
-            ariaLabel="Actualiser le grand livre du tiers">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser le grand livre du tiers" i18n="@@accounting.third-party-ledger.actualiser.9d3b2a7d">Actualiser</app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !thirdPartyId || (ledger()?.rows?.length ?? 0) === 0"
             (exportFormat)="onExport($event)" />
@@ -102,17 +98,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} mouvements">
       <ng-template pTemplate="header">
         <tr>
-          <th>Date</th>
-          <th>Journal</th>
-          <th>N°</th>
-          <th>Pièce</th>
-          <th>Compte</th>
-          <th>Libellé</th>
-          @if (hasForeignCurrency()) { <th>Devise</th> }
-          <th class="text-right">Débit</th>
-          <th class="text-right">Crédit</th>
-          <th class="text-right">Solde</th>
-          <th>Lettrage</th>
+          <th i18n="@@accounting.third-party-ledger.date.eb9a4bc1">Date</th>
+          <th i18n="@@accounting.third-party-ledger.journal.57d7f743">Journal</th>
+          <th i18n="@@accounting.third-party-ledger.n.754e6095">N°</th>
+          <th i18n="@@accounting.third-party-ledger.piece.954bbc8c">Pièce</th>
+          <th i18n="@@accounting.third-party-ledger.compte.c45740bb">Compte</th>
+          <th i18n="@@accounting.third-party-ledger.libelle.f5485bba">Libellé</th>
+          @if (hasForeignCurrency()) { <th i18n="@@accounting.third-party-ledger.devise.eb2e42c4">Devise</th> }
+          <th class="text-right" i18n="@@accounting.third-party-ledger.debit.f528224f">Débit</th>
+          <th class="text-right" i18n="@@accounting.third-party-ledger.credit.19194bdf">Crédit</th>
+          <th class="text-right" i18n="@@accounting.third-party-ledger.solde.e5977cf9">Solde</th>
+          <th i18n="@@accounting.third-party-ledger.lettrage.cfcdd333">Lettrage</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>

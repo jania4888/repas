@@ -1,3 +1,4 @@
+import { erpCollatorCompare } from '@core/i18n/erp-format';
 import { ProjectTask } from './project-api.service';
 import { computeTaskStatusBreakdown, isTaskCancelled } from './project-detail.vm';
 import {
@@ -146,11 +147,11 @@ export function sortRootTasks(tasks: ProjectTask[], sortKey: TaskSortKey): Proje
     case 'dueDesc':
       return list.sort((a, b) => dueSortKey(b, false) - dueSortKey(a, false));
     case 'priority':
-      return list.sort((a, b) => priorityRank(b) - priorityRank(a) || a.title.localeCompare(b.title, 'fr'));
+      return list.sort((a, b) => priorityRank(b) - priorityRank(a) || erpCollatorCompare(a.title, b.title));
     case 'title':
-      return list.sort((a, b) => a.title.localeCompare(b.title, 'fr'));
+      return list.sort((a, b) => erpCollatorCompare(a.title, b.title));
     case 'progress':
-      return list.sort((a, b) => b.progressPercent - a.progressPercent || a.title.localeCompare(b.title, 'fr'));
+      return list.sort((a, b) => b.progressPercent - a.progressPercent || erpCollatorCompare(a.title, b.title));
     default:
       return list;
   }

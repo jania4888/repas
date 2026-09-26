@@ -31,27 +31,23 @@ import { ToastService } from '@core/services/toast.service';
     @if (loading()) {
       <p class="form-hint"><i class="pi pi-spin pi-spinner"></i> Chargement des SKU…</p>
     } @else if (variants().length === 0) {
-      <p class="form-hint">Aucun SKU enfant généré pour ce modèle.</p>
+      <p class="form-hint" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.aucun.sku.enfant.genere.pour.ce.modele.b60126e5">Aucun SKU enfant généré pour ce modèle.</p>
     } @else {
       <div class="matrix-toolbar">
         <app-button type="button" variant="outline" size="sm" icon="pi-copy"
-                    (clicked)="copyPricesFromParent()" [disabled]="saving()">
-          Appliquer les prix du modèle
-        </app-button>
+                    (clicked)="copyPricesFromParent()" [disabled]="saving()" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.appliquer.les.prix.du.modele.b6e3445d">Appliquer les prix du modèle</app-button>
         <app-button type="button" variant="secondary" size="sm" icon="pi-save"
-                    (clicked)="saveAllPrices()" [disabled]="saving()">
-          Enregistrer les prix
-        </app-button>
+                    (clicked)="saveAllPrices()" [disabled]="saving()" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.enregistrer.les.prix.e06faf29">Enregistrer les prix</app-button>
       </div>
       <p-table [value]="variants()" styleClass="variant-matrix-table" [scrollable]="true" scrollHeight="320px">
         <ng-template pTemplate="header">
           <tr>
-            <th>Code</th>
-            <th>Axes</th>
-            <th>Prix HT</th>
-            <th>Prix TTC</th>
-            <th>Stock</th>
-            <th>Code-barres</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.code.adac6937">Code</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.axes.d75f36f8">Axes</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.prix.ht.362207ca">Prix HT</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.prix.ttc.c48d80e8">Prix TTC</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.stock.bcecf456">Stock</th>
+            <th i18n="@@shared.components.product-variant-matrix.product-variant-matrix.code.barres.a5ce859a">Code-barres</th>
             <th></th>
           </tr>
         </ng-template>
@@ -66,13 +62,11 @@ import { ToastService } from '@core/services/toast.service';
             <td>{{ row.salePriceTtc | number:'1.3-3' }}</td>
             <td>{{ row.quantityAvailable ?? '—' }}</td>
             <td>
-              <input pInputText [(ngModel)]="row.barcode" class="w-full" placeholder="EAN" />
+              <input pInputText [(ngModel)]="row.barcode" class="w-full" placeholder="EAN" i18n-placeholder="EAN" />
             </td>
             <td>
               <app-button type="button" variant="ghost" size="sm" icon="pi-external-link"
-                          [routerLink]="['/products', row.id, 'edit']">
-                Fiche
-              </app-button>
+                          [routerLink]="['/products', row.id, 'edit']" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.fiche.6ad30343">Fiche</app-button>
             </td>
           </tr>
         </ng-template>

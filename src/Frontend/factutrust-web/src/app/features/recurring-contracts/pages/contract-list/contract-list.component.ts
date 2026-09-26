@@ -38,14 +38,12 @@ interface StatusFilterOption {
   ],
   template: `
     <app-page-header
-      title="Contrats récurrents"
+      title="Contrats récurrents" i18n-title="Contrats récurrents"
       subtitle="Abonnements et facturation périodique B2B">
       <div class="actions">
-        <app-button variant="outline" icon="pi-file-edit" routerLink="pending-drafts">
-          Brouillons à valider
-        </app-button>
+        <app-button variant="outline" icon="pi-file-edit" routerLink="pending-drafts" i18n="@@recurring-contracts.pages.brouillons.a.valider.3fabaa45">Brouillons à valider</app-button>
         @if (canCreate()) {
-          <app-button variant="primary" icon="pi-plus" routerLink="new">Nouveau contrat</app-button>
+          <app-button variant="primary" icon="pi-plus" routerLink="new" i18n="@@recurring-contracts.pages.nouveau.contrat.13fabd25">Nouveau contrat</app-button>
         }
       </div>
     </app-page-header>
@@ -87,14 +85,14 @@ interface StatusFilterOption {
           class="ft-input filters__search"
           [(ngModel)]="search"
           (ngModelChange)="onSearchInput()"
-          placeholder="Rechercher (numéro, référence, client)…" />
+          placeholder="Rechercher (numéro, référence, client)…" i18n-placeholder="Rechercher (numéro, référence, client)…" />
         <select class="ft-input" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()">
           @for (opt of statusOptions; track opt.label) {
             <option [ngValue]="opt.value">{{ opt.label }}</option>
           }
         </select>
         <select class="ft-input" [(ngModel)]="clientFilter" (ngModelChange)="onFilterChange()">
-          <option [ngValue]="null">Tous les clients</option>
+          <option [ngValue]="null" i18n="@@recurring-contracts.pages.tous.les.clients.56f5092c">Tous les clients</option>
           @for (c of clients(); track c.id) {
             <option [ngValue]="c.id">{{ c.name }}</option>
           }
@@ -107,7 +105,7 @@ interface StatusFilterOption {
     } @else if (!loading() && items().length === 0) {
       <app-empty-state
         icon="pi-inbox"
-        title="Aucun contrat"
+        title="Aucun contrat" i18n-title="Aucun contrat"
         description="Créez votre premier contrat récurrent ou ajustez vos filtres."
         actionLabel="Nouveau contrat"
         actionRoute="/recurring-contracts/new"
@@ -130,13 +128,13 @@ interface StatusFilterOption {
           styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 150px">Numéro</th>
-              <th>Client</th>
-              <th style="width: 130px">Statut</th>
-              <th style="width: 120px">Périodicité</th>
-              <th style="width: 150px">Prochaine facturation</th>
-              <th style="width: 140px">Montant / mois</th>
-              <th style="width: 90px">Actions</th>
+              <th style="width: 150px" i18n="@@recurring-contracts.pages.numero.15e73db0">Numéro</th>
+              <th i18n="@@recurring-contracts.pages.client.1bdd79b1">Client</th>
+              <th style="width: 130px" i18n="@@recurring-contracts.pages.statut.659499f3">Statut</th>
+              <th style="width: 120px" i18n="@@recurring-contracts.pages.periodicite.0eb1b4d4">Périodicité</th>
+              <th style="width: 150px" i18n="@@recurring-contracts.pages.prochaine.facturation.8078b7d4">Prochaine facturation</th>
+              <th style="width: 140px" i18n="@@recurring-contracts.pages.montant.mois.54101d4b">Montant / mois</th>
+              <th style="width: 90px" i18n="@@recurring-contracts.pages.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-item>
@@ -160,9 +158,7 @@ interface StatusFilterOption {
                   size="sm"
                   icon="pi-eye"
                   [routerLink]="[item.id]"
-                  ariaLabel="Voir le contrat">
-                  Voir
-                </app-button>
+                  ariaLabel="Voir le contrat" i18n="@@recurring-contracts.pages.voir.8a754f1f">Voir</app-button>
               </td>
             </tr>
           </ng-template>

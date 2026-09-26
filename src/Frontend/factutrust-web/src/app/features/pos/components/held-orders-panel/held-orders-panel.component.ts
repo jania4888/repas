@@ -12,8 +12,8 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <div class="held-panel" (click)="onClose.emit()">
       <div class="held-panel__content" (click)="$event.stopPropagation()">
         <div class="held-panel__header">
-          <h3 class="held-panel__title">Commandes en attente</h3>
-          <button class="held-panel__close" (click)="onClose.emit()" aria-label="Fermer">
+          <h3 class="held-panel__title" i18n="@@pos.components.commandes.en.attente.d424a2c1">Commandes en attente</h3>
+          <button class="held-panel__close" (click)="onClose.emit()" aria-label="Fermer" i18n-aria-label="Fermer">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -21,7 +21,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         @if (heldService.heldOrdersList().length === 0) {
           <div class="held-panel__empty">
             <i class="pi pi-inbox"></i>
-            <p>Aucune commande en attente</p>
+            <p i18n="@@pos.components.aucune.commande.en.attente.3fe91d62">Aucune commande en attente</p>
           </div>
         } @else {
           <div class="held-panel__list">
@@ -43,7 +43,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
                     class="held-panel__btn held-panel__btn--danger"
                     (click)="deleteOrder(order.id)"
                     type="button"
-                    aria-label="Supprimer">
+                    aria-label="Supprimer" i18n-aria-label="Supprimer">
                     <i class="pi pi-trash"></i>
                   </button>
                 </div>

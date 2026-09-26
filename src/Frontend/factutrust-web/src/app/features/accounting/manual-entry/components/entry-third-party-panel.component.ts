@@ -25,7 +25,7 @@ interface ThirdPartyCard {
   template: `
     @if (card()) {
       <aside class="tp-panel card" aria-labelledby="tp-title">
-        <h3 id="tp-title" class="tp-panel__title">Auxiliaire</h3>
+        <h3 id="tp-title" class="tp-panel__title" i18n="@@accounting.manual-entry.auxiliaire.b8c6c266">Auxiliaire</h3>
         <p class="tp-panel__name">{{ card()!.name }}</p>
         @if (card()!.address) {
           <p class="tp-panel__detail">{{ card()!.address }}</p>
@@ -34,16 +34,16 @@ interface ThirdPartyCard {
           <p class="tp-panel__detail">📞 {{ card()!.phone }}</p>
         }
         @if (card()!.auxiliaryCode) {
-          <p class="tp-panel__detail"><strong>Code :</strong> {{ card()!.auxiliaryCode }}</p>
+          <p class="tp-panel__detail"><strong i18n="@@accounting.manual-entry.code.19095fe2">Code :</strong> {{ card()!.auxiliaryCode }}</p>
         }
         @if (card()!.collectiveAccount) {
-          <p class="tp-panel__detail"><strong>Collectif :</strong> {{ card()!.collectiveAccount }}</p>
+          <p class="tp-panel__detail"><strong i18n="@@accounting.manual-entry.collectif.66626f9f">Collectif :</strong> {{ card()!.collectiveAccount }}</p>
         }
         @if (card()!.paymentTermDays != null) {
-          <p class="tp-panel__detail"><strong>Délai :</strong> {{ card()!.paymentTermDays }} jours</p>
+          <p class="tp-panel__detail"><strong i18n="@@accounting.manual-entry.delai.9b5d1eb0">Délai :</strong> {{ card()!.paymentTermDays }} jours</p>
         }
         @if (card()!.profileRoute) {
-          <a [routerLink]="card()!.profileRoute" class="tp-panel__link">Voir la fiche →</a>
+          <a [routerLink]="card()!.profileRoute" class="tp-panel__link" i18n="@@accounting.manual-entry.voir.la.fiche.622736cd">Voir la fiche →</a>
         }
       </aside>
     }

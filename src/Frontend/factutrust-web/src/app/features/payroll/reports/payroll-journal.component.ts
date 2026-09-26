@@ -54,7 +54,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
   ],
   template: `
     <app-page-header
-      title="Journal de paie"
+      title="Journal de paie" i18n-title="Journal de paie"
       subtitle="Détail mensuel par salarié et ventilation comptable de l'écriture de paie.">
       @if (canExport()) {
         <app-accounting-export-menu
@@ -69,7 +69,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
         [(ngModel)]="year"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année"
+        placeholder="Année" i18n-placeholder="Année"
         styleClass="w-10rem"
         ariaLabel="Année" />
       <p-select
@@ -77,14 +77,14 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
         [(ngModel)]="month"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois"
+        placeholder="Mois" i18n-placeholder="Mois"
         styleClass="w-10rem"
         ariaLabel="Mois" />
       <label class="payroll-report-check">
         <p-checkbox [(ngModel)]="includeCalculated" [binary]="true" inputId="includeCalculatedJournal" />
-        <span>Inclure les cycles calculés (provisoire)</span>
+        <span i18n="@@payroll.reports.inclure.les.cycles.calcules.provisoire.316e039e">Inclure les cycles calculés (provisoire)</span>
       </label>
-      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()">Afficher</app-button>
+      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.reports.afficher.5e802040">Afficher</app-button>
     </div>
 
     @if (error()) {
@@ -111,7 +111,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
     } @else if (!journal()) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun journal disponible"
+        title="Aucun journal disponible" i18n-title="Aucun journal disponible"
         [description]="error() ?? 'Sélectionnez une période disposant d\\'un cycle de paie.'"
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
@@ -121,8 +121,8 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
 
       <p-tabs [(value)]="activeTabIndex" [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0">Par salarié</p-tab>
-          <p-tab [value]="1">Ventilation comptable</p-tab>
+          <p-tab [value]="0" i18n="@@payroll.reports.par.salarie.02075338">Par salarié</p-tab>
+          <p-tab [value]="1" i18n="@@payroll.reports.ventilation.comptable.00194489">Ventilation comptable</p-tab>
         </p-tablist>
         <p-tabpanels>
         <p-tabpanel [value]="0">
@@ -130,17 +130,17 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
             <p-table [value]="journal()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
               <ng-template pTemplate="header">
                 <tr>
-                  <th scope="col">Matricule</th>
-                  <th scope="col">Salarié</th>
-                  <th scope="col" class="text-right">Brut</th>
-                  <th scope="col" class="text-right">CNSS sal.</th>
-                  <th scope="col" class="text-right">Net imposable</th>
-                  <th scope="col" class="text-right">IRPP</th>
-                  <th scope="col" class="text-right">CSS</th>
-                  <th scope="col" class="text-right">Autres ret.</th>
-                  <th scope="col" class="text-right">Net à payer</th>
-                  <th scope="col" class="text-right">Charges pat.</th>
-                  <th scope="col" class="text-right">Coût employeur</th>
+                  <th scope="col" i18n="@@payroll.reports.matricule.8f74c132">Matricule</th>
+                  <th scope="col" i18n="@@payroll.reports.salarie.27f97915">Salarié</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.brut.8fc72d21">Brut</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.cnss.sal.5d831d27">CNSS sal.</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.net.imposable.2439110f">Net imposable</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.irpp.d47a1edc">IRPP</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.css.194e13da">CSS</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.autres.ret.47401df2">Autres ret.</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.net.a.payer.7835df38">Net à payer</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.charges.pat.81ada456">Charges pat.</th>
+                  <th scope="col" class="text-right" i18n="@@payroll.reports.cout.employeur.99313d1f">Coût employeur</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-l>
@@ -185,17 +185,17 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
           @if (journal()!.accountingLines.length === 0) {
             <app-payroll-empty-state
               icon="pi-book"
-              title="Aucune ventilation comptable"
+              title="Aucune ventilation comptable" i18n-title="Aucune ventilation comptable"
               description="Le cycle ne produit pas d'écriture exploitable." />
           } @else {
             <div class="payroll-table-scroll">
               <p-table [value]="journal()!.accountingLines" styleClass="p-datatable-sm" [rowHover]="true">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th scope="col">Compte</th>
-                    <th scope="col">Libellé</th>
-                    <th scope="col" class="text-right">Débit</th>
-                    <th scope="col" class="text-right">Crédit</th>
+                    <th scope="col" i18n="@@payroll.reports.compte.c45740bb">Compte</th>
+                    <th scope="col" i18n="@@payroll.reports.libelle.f5485bba">Libellé</th>
+                    <th scope="col" class="text-right" i18n="@@payroll.reports.debit.f528224f">Débit</th>
+                    <th scope="col" class="text-right" i18n="@@payroll.reports.credit.19194bdf">Crédit</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-l>
@@ -208,7 +208,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
                 </ng-template>
                 <ng-template pTemplate="footer">
                   <tr class="acc-totals-row">
-                    <td colspan="2">Totaux</td>
+                    <td colspan="2" i18n="@@payroll.reports.totaux.a1ca02f8">Totaux</td>
                     <td class="text-right">{{ journal()!.totalDebit | payrollAmount }}</td>
                     <td class="text-right">{{ journal()!.totalCredit | payrollAmount }}</td>
                   </tr>

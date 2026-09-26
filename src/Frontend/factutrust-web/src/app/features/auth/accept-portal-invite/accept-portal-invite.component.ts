@@ -17,16 +17,16 @@ import { MessageModule } from 'primeng/message';
   template: `
     <app-auth-shell [config]="shellConfig">
       <div class="auth-form-card-header">
-        <h2>Activer l’espace client</h2>
-        <p>Choisissez un mot de passe (12 caractères minimum) pour consulter vos factures.</p>
+        <h2 i18n="@@auth.accept-portal-invite.activer.l.espace.client.d7a22239">Activer l’espace client</h2>
+        <p i18n="@@auth.accept-portal-invite.choisissez.un.mot.de.passe.12.caracteres.minimum.8a188e70">Choisissez un mot de passe (12 caractères minimum) pour consulter vos factures.</p>
       </div>
       @if (error()) {
         <p-message severity="error" [text]="error()!" />
       }
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <label for="password">Mot de passe</label>
+        <label for="password" i18n="@@auth.accept-portal-invite.mot.de.passe.94e2f3ee">Mot de passe</label>
         <p-password inputId="password" formControlName="password" [toggleMask]="true" [feedback]="false" styleClass="w-full" />
-        <label for="confirmPassword">Confirmation</label>
+        <label for="confirmPassword" i18n="@@auth.accept-portal-invite.confirmation.3424edc2">Confirmation</label>
         <p-password inputId="confirmPassword" formControlName="confirmPassword" [toggleMask]="true" [feedback]="false" styleClass="w-full" />
         <p-button type="submit" label="Activer mon accès" [loading]="loading()" [disabled]="form.invalid" />
       </form>

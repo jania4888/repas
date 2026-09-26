@@ -9,7 +9,7 @@ import { computeTaskStatusBreakdown } from '../../project-detail.vm';
   imports: [CommonModule],
   template: `
     <section class="proj-detail-card">
-      <h3 class="proj-detail-card__title">Avancement des tâches</h3>
+      <h3 class="proj-detail-card__title" i18n="@@projects.components.avancement.des.taches.9ed226b4">Avancement des tâches</h3>
       @if (breakdown.total > 0) {
         <div class="proj-detail-task-bar" role="img" [attr.aria-label]="'Avancement des tâches, ' + breakdown.total + ' au total'">
           @if (breakdown.done > 0) {
@@ -36,11 +36,11 @@ import { computeTaskStatusBreakdown } from '../../project-detail.vm';
           <li><span class="dot dot--overdue"></span> En retard <strong>{{ breakdown.overdue }}</strong></li>
         </ul>
         <div class="proj-detail-task-total">
-          <span>Total</span>
+          <span i18n="@@projects.components.total.b25928c6">Total</span>
           <strong>{{ breakdown.total }}</strong>
         </div>
       } @else {
-        <p class="proj-detail-card__desc proj-detail-card__desc--muted">Aucune tâche sur ce projet.</p>
+        <p class="proj-detail-card__desc proj-detail-card__desc--muted" i18n="@@projects.components.aucune.tache.sur.ce.projet.73db24a7">Aucune tâche sur ce projet.</p>
       }
     </section>
   `

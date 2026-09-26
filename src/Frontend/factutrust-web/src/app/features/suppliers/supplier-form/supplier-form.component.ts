@@ -74,27 +74,25 @@ interface GovernorateOption {
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/suppliers">
-        Annuler
-      </app-button>
+        routerLink="/suppliers" i18n="@@suppliers.supplier-form.annuler.49ba3292">Annuler</app-button>
     </app-page-header>
 
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
-        <p>Chargement...</p>
+        <p i18n="@@suppliers.supplier-form.chargement.a209b664">Chargement...</p>
       </div>
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-grid">
-          <app-form-section title="Informations générales" icon="pi-user" [number]="1">
+          <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-user" [number]="1">
             <div class="form-group">
-              <label for="name">Nom ou raison sociale <span class="required">*</span></label>
+              <label for="name">Nom ou raison sociale <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="name"
                 formControlName="name"
-                placeholder="Ex. Jean Dupont ou ABC SARL"
+                placeholder="Ex. Jean Dupont ou ABC SARL" i18n-placeholder="Ex. Jean Dupont ou ABC SARL"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('name')">
               @if (isInvalid('name')) {
@@ -107,14 +105,14 @@ interface GovernorateOption {
 
             <div class="form-row">
               <div class="form-group">
-                <label for="type">Type <span class="required">*</span></label>
+                <label for="type">Type <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
                 <p-select
                   id="type"
                   [options]="typeOptions"
                   formControlName="type"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="Sélectionner"
                   styleClass="w-full">
                 </p-select>
                 @if (isInvalid('type')) {
@@ -126,20 +124,20 @@ interface GovernorateOption {
               </div>
 
               <div class="form-group">
-                <label for="nif">NIF / Matricule fiscal @if (form.get('type')?.value === SupplierType.Business) {<span class="required">*</span>}</label>
+                <label for="nif">NIF / Matricule fiscal @if (form.get('type')?.value === SupplierType.Business) {<span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span>}</label>
                 <p-inputMask
                   id="nif"
                   formControlName="nif"
                   appNifMaskPaste
                   mask="9999999a/a/a/999"
-                  placeholder="Ex. 1772793W/A/M/000"
+                  placeholder="Ex. 1772793W/A/M/000" i18n-placeholder="Ex. 1772793W/A/M/000"
                   styleClass="w-full"
                   [style]="{'text-transform': 'uppercase'}"
                   [class.ng-invalid]="isInvalid('nif')"
                   (onBlur)="normalizeNif()">
                 </p-inputMask>
                 @if (form.get('type')?.value === SupplierType.Business) {
-                  <small class="form-hint">Format : 1772793W/A/M/000</small>
+                  <small class="form-hint" i18n="@@suppliers.supplier-form.format.1772793w.a.m.000.953218ad">Format : 1772793W/A/M/000</small>
                 }
                 @if (isInvalid('nif')) {
                   <div class="form-error">
@@ -148,16 +146,14 @@ interface GovernorateOption {
                   </div>
                 }
                 @if (conflictSupplierId() && conflictField() === 'nif') {
-                  <a class="form-conflict-link" [routerLink]="['/suppliers', conflictSupplierId()]">
-                    Ouvrir le fournisseur existant
-                  </a>
+                  <a class="form-conflict-link" [routerLink]="['/suppliers', conflictSupplierId()]" i18n="@@suppliers.supplier-form.ouvrir.le.fournisseur.existant.8b13c3cd">Ouvrir le fournisseur existant</a>
                 }
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label for="paymentTermDays">Délai de paiement (jours)</label>
+                <label for="paymentTermDays" i18n="@@suppliers.supplier-form.delai.de.paiement.jours.586df9e3">Délai de paiement (jours)</label>
                 <p-inputNumber
                   id="paymentTermDays"
                   formControlName="paymentTermDays"
@@ -175,15 +171,15 @@ interface GovernorateOption {
             </div>
           </app-form-section>
 
-          <app-form-section title="Coordonnées" icon="pi-envelope" [number]="2">
+          <app-form-section title="Coordonnées" i18n-title="Coordonnées" icon="pi-envelope" [number]="2">
             <div class="form-group">
-              <label for="email">Adresse email</label>
+              <label for="email" i18n="@@suppliers.supplier-form.adresse.email.bdf1cc95">Adresse email</label>
               <input
                 pInputText
                 id="email"
                 type="email"
                 formControlName="email"
-                placeholder="contact@exemple.tn"
+                placeholder="contact@exemple.tn" i18n-placeholder="contact@exemple.tn"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('email')">
               @if (isInvalid('email')) {
@@ -193,42 +189,40 @@ interface GovernorateOption {
                 </div>
               }
               @if (conflictSupplierId() && conflictField() === 'email') {
-                <a class="form-conflict-link" [routerLink]="['/suppliers', conflictSupplierId()]">
-                  Ouvrir le fournisseur existant
-                </a>
+                <a class="form-conflict-link" [routerLink]="['/suppliers', conflictSupplierId()]" i18n="@@suppliers.supplier-form.ouvrir.le.fournisseur.existant.8b13c3cd">Ouvrir le fournisseur existant</a>
               }
             </div>
 
             <div class="form-group">
-              <label for="phone">Téléphone</label>
+              <label for="phone" i18n="@@suppliers.supplier-form.telephone.d3b023ea">Téléphone</label>
               <p-inputMask
                 id="phone"
                 formControlName="phone"
                 mask="99 999 999"
-                placeholder="+216 XX XXX XXX"
+                placeholder="+216 XX XXX XXX" i18n-placeholder="+216 XX XXX XXX"
                 styleClass="w-full">
               </p-inputMask>
             </div>
 
             <div class="form-group">
-              <label for="contactPerson">Personne de contact</label>
+              <label for="contactPerson" i18n="@@suppliers.supplier-form.personne.de.contact.148fdd96">Personne de contact</label>
               <input
                 pInputText
                 id="contactPerson"
                 formControlName="contactPerson"
-                placeholder="Nom du responsable"
+                placeholder="Nom du responsable" i18n-placeholder="Nom du responsable"
                 class="w-full">
             </div>
           </app-form-section>
 
-          <app-form-section title="Adresse" icon="pi-map-marker" [number]="3" class="address-card">
+          <app-form-section title="Adresse" i18n-title="Adresse" icon="pi-map-marker" [number]="3" class="address-card">
             <div class="form-group">
-              <label for="street">Adresse <span class="required">*</span></label>
+              <label for="street">Adresse <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="street"
                 formControlName="street"
-                placeholder="Numéro et nom de rue"
+                placeholder="Numéro et nom de rue" i18n-placeholder="Numéro et nom de rue"
                 maxlength="200"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('street')">
@@ -241,23 +235,23 @@ interface GovernorateOption {
             </div>
 
             <div class="form-group">
-              <label for="streetLine2">Complément d'adresse</label>
+              <label for="streetLine2" i18n="@@suppliers.supplier-form.complement.d.adresse.fba484a7">Complément d'adresse</label>
               <input
                 pInputText
                 id="streetLine2"
                 formControlName="streetLine2"
-                placeholder="Bâtiment, étage…"
+                placeholder="Bâtiment, étage…" i18n-placeholder="Bâtiment, étage…"
                 class="w-full">
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label for="city">Ville <span class="required">*</span></label>
+                <label for="city">Ville <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
                 <input
                   pInputText
                   id="city"
                   formControlName="city"
-                  placeholder="Tunis"
+                  placeholder="Tunis" i18n-placeholder="Tunis"
                   class="w-full"
                   [class.ng-invalid]="isInvalid('city')">
                 @if (isInvalid('city')) {
@@ -269,23 +263,23 @@ interface GovernorateOption {
               </div>
 
               <div class="form-group">
-                <label for="postalCode">Code postal</label>
+                <label for="postalCode" i18n="@@suppliers.supplier-form.code.postal.74779109">Code postal</label>
                 <input
                   pInputText
                   id="postalCode"
                   formControlName="postalCode"
-                  placeholder="1000"
+                  placeholder="1000" i18n-placeholder="1000"
                   class="w-full">
               </div>
             </div>
 
             <div class="form-group">
-              <label for="governorate">Gouvernorat <span class="required">*</span></label>
+              <label for="governorate">Gouvernorat <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
               <p-select
                 id="governorate"
                 [options]="governorates"
                 formControlName="governorate"
-                placeholder="Sélectionner"
+                placeholder="Sélectionner" i18n-placeholder="Sélectionner"
                 [filter]="true"
                 filterBy="label"
                 styleClass="w-full">
@@ -299,7 +293,7 @@ interface GovernorateOption {
             </div>
           </app-form-section>
 
-          <app-form-section title="Retenue à la source (TEJ)" icon="pi-percentage" [number]="4" class="tej-card">
+          <app-form-section title="Retenue à la source (TEJ)" i18n-title="Retenue à la source (TEJ)" icon="pi-percentage" [number]="4" class="tej-card">
             <div class="form-group checkbox-row">
               <label class="checkbox-label">
                 <input type="checkbox" formControlName="isSubjectToWithholding" />
@@ -315,21 +309,21 @@ interface GovernorateOption {
             }
             <div class="form-row">
               <div class="form-group">
-                <label for="rs7">Tranche IS (achats RS7)</label>
+                <label for="rs7" i18n="@@suppliers.supplier-form.tranche.is.achats.rs7.27bab91e">Tranche IS (achats RS7)</label>
                 <p-select
                   id="rs7"
                   formControlName="rs7IsBracket"
                   [options]="rs7BracketOptions"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="Sélectionner"
                   [disabled]="isExplicitRsTypeSelected()"
                   styleClass="w-full">
                 </p-select>
-                <small class="form-hint">Renseigne le code TEJ RS7 (1,5 % / 1 % / 0,5 %) selon le taux d’IS du fournisseur. Laisser « non défini » si vous choisissez un type RS précis ci-contre.</small>
+                <small class="form-hint" i18n="@@suppliers.supplier-form.renseigne.le.code.tej.rs7.1.5.1.0.5.selon.le.tau.234bfd51">Renseigne le code TEJ RS7 (1,5 % / 1 % / 0,5 %) selon le taux d’IS du fournisseur. Laisser « non défini » si vous choisissez un type RS précis ci-contre.</small>
               </div>
               <div class="form-group">
-                <label for="whType">Type RS explicite (optionnel)</label>
+                <label for="whType" i18n="@@suppliers.supplier-form.type.rs.explicite.optionnel.734c9fb6">Type RS explicite (optionnel)</label>
                 <p-select
                   id="whType"
                   formControlName="defaultWithholdingTaxTypeId"
@@ -337,7 +331,7 @@ interface GovernorateOption {
                   optionLabel="label"
                   optionValue="id"
                   [showClear]="true"
-                  placeholder="Automatique (tranche ou défaut)"
+                  placeholder="Automatique (tranche ou défaut)" i18n-placeholder="Automatique (tranche ou défaut)"
                   [filter]="true"
                   filterBy="label,code"
                   [disabled]="isRs7BracketSelected()"
@@ -347,7 +341,7 @@ interface GovernorateOption {
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="whRate">Taux RS par défaut (optionnel, %)</label>
+                <label for="whRate" i18n="@@suppliers.supplier-form.taux.rs.par.defaut.optionnel.d248ba25">Taux RS par défaut (optionnel, %)</label>
                 <p-inputNumber
                   id="whRate"
                   formControlName="defaultWithholdingRate"
@@ -366,52 +360,52 @@ interface GovernorateOption {
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="cc">Code pays (ISO, ex. TN)</label>
+                <label for="cc" i18n="@@suppliers.supplier-form.code.pays.iso.ex.tn.06ce3193">Code pays (ISO, ex. TN)</label>
                 <input pInputText id="cc" formControlName="countryCode" maxlength="3" class="w-full" style="text-transform: uppercase" />
                 @if (isInvalid('countryCode')) {
                   <div class="form-error">
                     <i class="pi pi-exclamation-circle"></i>
-                    <span>Obligatoire pour un non-résident</span>
+                    <span i18n="@@suppliers.supplier-form.obligatoire.pour.un.non.resident.f99463c2">Obligatoire pour un non-résident</span>
                   </div>
                 }
               </div>
               <div class="form-group">
-                <label for="tejId">Identifiant TEJ (type)</label>
+                <label for="tejId" i18n="@@suppliers.supplier-form.identifiant.tej.type.dcad6745">Identifiant TEJ (type)</label>
                 <p-select
                   id="tejId"
                   formControlName="tejIdentificationType"
                   [options]="tejIdTypeOptions"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="—"
+                  placeholder="—" i18n-placeholder="—"
                   styleClass="w-full">
                 </p-select>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="dob">Date de naissance (CIN / passeport)</label>
+                <label for="dob" i18n="@@suppliers.supplier-form.date.de.naissance.cin.passeport.d6f08634">Date de naissance (CIN / passeport)</label>
                 <input pInputText id="dob" type="date" formControlName="dateOfBirth" class="w-full" />
               </div>
               <div class="form-group">
-                <label for="act">Activité (TEJ)</label>
-                <input pInputText id="act" formControlName="activity" maxlength="200" class="w-full" placeholder="Secteur / libellé court" />
+                <label for="act" i18n="@@suppliers.supplier-form.activite.tej.70893f95">Activité (TEJ)</label>
+                <input pInputText id="act" formControlName="activity" maxlength="200" class="w-full" placeholder="Secteur / libellé court" i18n-placeholder="Secteur / libellé court" />
               </div>
             </div>
           </app-form-section>
 
-          <app-form-section title="Notes" icon="pi-file-edit" [number]="5" class="notes-card">
+          <app-form-section title="Notes" i18n-title="Notes" icon="pi-file-edit" [number]="5" class="notes-card">
             <div class="form-group">
-              <label for="notes">Notes internes</label>
+              <label for="notes" i18n="@@suppliers.supplier-form.notes.internes.1a81fb4e">Notes internes</label>
               <textarea
                 pTextarea
                 id="notes"
                 formControlName="notes"
-                placeholder="Préférences, instructions particulières…"
+                placeholder="Préférences, instructions particulières…" i18n-placeholder="Préférences, instructions particulières…"
                 [rows]="4"
                 class="w-full">
               </textarea>
-              <small class="form-hint">Non visibles par le fournisseur.</small>
+              <small class="form-hint" i18n="@@suppliers.supplier-form.non.visibles.par.le.fournisseur.03ee7227">Non visibles par le fournisseur.</small>
             </div>
           </app-form-section>
         </div>
@@ -421,9 +415,7 @@ interface GovernorateOption {
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/suppliers">
-            Annuler
-          </app-button>
+            routerLink="/suppliers" i18n="@@suppliers.supplier-form.annuler.49ba3292">Annuler</app-button>
           <app-button
             variant="primary"
             type="submit"

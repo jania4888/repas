@@ -22,10 +22,10 @@ import { CustomFieldType } from './studio-runtime.models';
     <ng-container [ngSwitch]="kind">
       <ng-container *ngSwitchCase="'qr'">
         <img *ngIf="qrUrl" class="ft-code-qr" [attr.src]="qrUrl" [attr.alt]="text" />
-        <span *ngIf="!qrUrl" class="ft-code-empty">—</span>
+        <span *ngIf="!qrUrl" class="ft-code-empty" i18n="@@shared.studio-runtime.studio-code-image.text.1b93795b">—</span>
       </ng-container>
       <svg *ngSwitchCase="'barcode'" #bc class="ft-code-barcode"></svg>
-      <span *ngSwitchDefault class="ft-code-empty">—</span>
+      <span *ngSwitchDefault class="ft-code-empty" i18n="@@shared.studio-runtime.studio-code-image.text.1b93795b">—</span>
     </ng-container>
   `,
   styles: [`

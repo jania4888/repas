@@ -21,17 +21,17 @@ import { ReferenceImportTarget } from '../services/accounting.service';
   imports: [CommonModule, TabsModule, PageHeaderComponent, ImportComponent, ReferenceImportComponent, DossierExportComponent, MigrationWizardComponent],
   template: `
     <app-page-header
-      title="Reprise de dossier"
+      title="Reprise de dossier" i18n-title="Reprise de dossier"
       subtitle="Importer écritures / référentiels, ou exporter l'archive du dossier" />
 
     <p-tabs [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0">Écritures</p-tab>
-        <p-tab [value]="1">Plan comptable</p-tab>
-        <p-tab [value]="2">Plan tiers</p-tab>
-        <p-tab [value]="3">Balance d'ouverture</p-tab>
-        <p-tab [value]="4">Export dossier</p-tab>
-        <p-tab [value]="5">Migration assistée</p-tab>
+        <p-tab [value]="0" i18n="@@accounting.import.ecritures.7bfac2f6">Écritures</p-tab>
+        <p-tab [value]="1" i18n="@@accounting.import.plan.comptable.b3f54c09">Plan comptable</p-tab>
+        <p-tab [value]="2" i18n="@@accounting.import.plan.tiers.7dfd7c9a">Plan tiers</p-tab>
+        <p-tab [value]="3" i18n="@@accounting.import.balance.d.ouverture.02618c43">Balance d'ouverture</p-tab>
+        <p-tab [value]="4" i18n="@@accounting.import.export.dossier.5d6a4fac">Export dossier</p-tab>
+        <p-tab [value]="5" i18n="@@accounting.import.migration.assistee.90a5d4a1">Migration assistée</p-tab>
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel [value]="0">

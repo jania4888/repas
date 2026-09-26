@@ -24,20 +24,18 @@ import {
   ],
   template: `
     <app-page-header
-      title="Analyse fournisseurs"
+      title="Analyse fournisseurs" i18n-title="Analyse fournisseurs"
       subtitle="Classement, part des achats et indicateurs par fournisseur">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.purchases-analytics.imprimer.5382c09d">Imprimer</app-button>
     </app-page-header>
 
     <div class="filter-bar">
       <div class="filter-group">
-        <label class="filter-label">Période</label>
+        <label class="filter-label" i18n="@@reports.purchases-analytics.periode.de2110b7">Période</label>
         <div class="period-tabs">
           @for (p of periodOptions; track p.value) {
             <button
@@ -98,7 +96,7 @@ import {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Classement des fournisseurs</h2>
+        <h2 class="section-title" i18n="@@reports.purchases-analytics.classement.des.fournisseurs.bfaacd1a">Classement des fournisseurs</h2>
         <span class="section-hint">
           <i class="pi pi-info-circle"></i>
           Par montant total des achats (factures payées) sur la période
@@ -107,26 +105,26 @@ import {
       @if (loading()) {
         <div class="loading-spinner">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.purchases-analytics.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!data()?.topSuppliers?.length) {
         <div class="empty-state">
           <i class="pi pi-building empty-icon"></i>
-          <p class="empty-title">Aucune donnée disponible</p>
-          <p class="empty-subtitle">Aucune facture fournisseur payée sur cette période. Créez des factures fournisseurs et enregistrez des paiements.</p>
+          <p class="empty-title" i18n="@@reports.purchases-analytics.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
+          <p class="empty-subtitle" i18n="@@reports.purchases-analytics.aucune.facture.fournisseur.payee.sur.cette.perio.59098a4b">Aucune facture fournisseur payée sur cette période. Créez des factures fournisseurs et enregistrez des paiements.</p>
         </div>
       } @else {
         <p-table
           [value]="data()!.topSuppliers"
           styleClass="p-datatable-sm analytics-table"
-          aria-label="Tableau des fournisseurs par montant">
+          aria-label="Tableau des fournisseurs par montant" i18n-aria-label="Tableau des fournisseurs par montant">
           <ng-template pTemplate="header">
             <tr>
-              <th>Rang</th>
-              <th>Fournisseur</th>
-              <th class="text-right">Factures</th>
-              <th class="text-right">Montant total</th>
-              <th class="text-right">Part</th>
+              <th i18n="@@reports.purchases-analytics.rang.dbb66acd">Rang</th>
+              <th i18n="@@reports.purchases-analytics.fournisseur.97d91d89">Fournisseur</th>
+              <th class="text-right" i18n="@@reports.purchases-analytics.factures.da35e4f2">Factures</th>
+              <th class="text-right" i18n="@@reports.purchases-analytics.montant.total.dd001537">Montant total</th>
+              <th class="text-right" i18n="@@reports.purchases-analytics.part.88be9d62">Part</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-supplier let-i="rowIndex">

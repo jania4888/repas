@@ -9,8 +9,8 @@ import { ConversationDto } from '../../models/ai-chat.models';
   template: `
     <div class="conversation-list">
       <div class="list-header">
-        <h4>Conversations</h4>
-        <button class="new-btn" (click)="newConversation.emit()" title="Nouvelle conversation">
+        <h4 i18n="@@ai-assistant.components.conversations.07c59b44">Conversations</h4>
+        <button class="new-btn" (click)="newConversation.emit()" title="Nouvelle conversation" i18n-title="Nouvelle conversation">
           <i class="fa-solid fa-plus"></i>
         </button>
       </div>
@@ -18,7 +18,7 @@ import { ConversationDto } from '../../models/ai-chat.models';
       @if (!conversations.length) {
         <div class="empty-state">
           <i class="fa-solid fa-comments"></i>
-          <p>Aucune conversation</p>
+          <p i18n="@@ai-assistant.components.aucune.conversation.57643067">Aucune conversation</p>
         </div>
       }
 
@@ -35,7 +35,7 @@ import { ConversationDto } from '../../models/ai-chat.models';
             <button
               class="delete-btn"
               (click)="onDelete($event, conv.id)"
-              title="Supprimer">
+              title="Supprimer" i18n-title="Supprimer">
               <i class="fa-solid fa-trash-can"></i>
             </button>
           </div>

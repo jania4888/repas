@@ -22,15 +22,15 @@ function downloadBlob(blob: Blob, filename: string): void {
   imports: [CommonModule, ButtonComponent, PayrollSectionComponent],
   template: `
     <app-payroll-section
-      title="Documents RH"
+      title="Documents RH" i18n-title="Documents RH"
       subtitle="Certificats et attestations issus des bulletins de paie figés (cycles validés ou clôturés)."
       icon="pi-file-pdf">
       @if (!featureReady()) {
-        <p>Chargement des options…</p>
+        <p i18n="@@payroll.employees.chargement.des.options.520e652e">Chargement des options…</p>
       } @else if (!hrDocumentsEnabled()) {
-        <p class="text-muted">La génération de documents RH n'est pas activée sur cet environnement.</p>
+        <p class="text-muted" i18n="@@payroll.employees.la.generation.de.documents.rh.n.est.pas.activee..bd362f6d">La génération de documents RH n'est pas activée sur cet environnement.</p>
       } @else if (!canDownload()) {
-        <p class="text-muted">Vous n'avez pas la permission de générer des documents RH.</p>
+        <p class="text-muted" i18n="@@payroll.employees.vous.n.avez.pas.la.permission.de.generer.des.doc.fb9fe35a">Vous n'avez pas la permission de générer des documents RH.</p>
       } @else {
         <div class="hr-doc-actions">
           <app-button
@@ -38,12 +38,10 @@ function downloadBlob(blob: Blob, filename: string): void {
             icon="pi-download"
             iconPos="left"
             [disabled]="downloading() !== null"
-            (click)="downloadEmploymentCertificate()">
-            Certificat de travail
-          </app-button>
+            (click)="downloadEmploymentCertificate()" i18n="@@payroll.employees.certificat.de.travail.02713183">Certificat de travail</app-button>
 
           <div class="salary-group">
-            <span class="group-label">Attestation de salaire</span>
+            <span class="group-label" i18n="@@payroll.employees.attestation.de.salaire.dbadd260">Attestation de salaire</span>
             <div class="salary-buttons">
               @for (months of salaryPeriods; track months) {
                 <app-button
@@ -64,9 +62,7 @@ function downloadBlob(blob: Blob, filename: string): void {
               icon="pi-download"
               iconPos="left"
               [disabled]="downloading() !== null"
-              (click)="downloadSoldeToutCompte()">
-              Solde de tout compte
-            </app-button>
+              (click)="downloadSoldeToutCompte()" i18n="@@payroll.employees.solde.de.tout.compte.93fc3ea6">Solde de tout compte</app-button>
           }
         </div>
       }

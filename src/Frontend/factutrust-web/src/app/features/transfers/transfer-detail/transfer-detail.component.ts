@@ -23,7 +23,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <p-toast></p-toast>
     <p-confirmDialog></p-confirmDialog>
     <div *ngIf="initialLoading()" class="loading-state" role="status" aria-busy="true" aria-live="polite">
-      <p-progressSpinner strokeWidth="4" aria-label="Chargement du transfert en cours"></p-progressSpinner>
+      <p-progressSpinner strokeWidth="4" aria-label="Chargement du transfert en cours" i18n-aria-label="Chargement du transfert en cours"></p-progressSpinner>
     </div>
     <div class="page-container" *ngIf="!initialLoading() && transfer()">
       <div class="page-header">
@@ -34,17 +34,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="actions">
           <button pButton type="button" label="Télécharger PDF" icon="pi pi-file-pdf" class="p-button-outlined"
                   (click)="downloadPdf()" [loading]="pdfLoading()" [disabled]="pdfLoading()"
-                  aria-label="Télécharger le transfert au format PDF"></button>
+                  aria-label="Télécharger le transfert au format PDF" i18n-aria-label="Télécharger le transfert au format PDF"></button>
           <button *ngIf="transfer()!.status === 'Draft' || transfer()!.status === '0'"
                   pButton label="Confirmer" icon="pi pi-check" (click)="confirm()" [loading]="processing()"
-                  aria-label="Confirmer le transfert"></button>
+                  aria-label="Confirmer le transfert" i18n-aria-label="Confirmer le transfert"></button>
           <button *ngIf="isConfirmedNotInTransit()"
                   pButton type="button" label="Mettre en transit" icon="pi pi-send" class="p-button-secondary"
                   (click)="startTransit()" [loading]="processing()"
-                  aria-label="Passer le transfert en statut en transit"></button>
+                  aria-label="Passer le transfert en statut en transit" i18n-aria-label="Passer le transfert en statut en transit"></button>
           <button *ngIf="transfer()!.status === 'Confirmed' || transfer()!.status === '1' || transfer()!.status === 'InTransit' || transfer()!.status === '2'"
                   pButton label="Terminer" icon="pi pi-check-circle" class="p-button-success" (click)="complete()" [loading]="processing()"
-                  aria-label="Terminer le transfert et mettre à jour les stocks"></button>
+                  aria-label="Terminer le transfert et mettre à jour les stocks" i18n-aria-label="Terminer le transfert et mettre à jour les stocks"></button>
           <button *ngIf="transfer()!.status === 'Draft' || transfer()!.status === '0' || transfer()!.status === 'Confirmed' || transfer()!.status === '1'"
                   pButton label="Annuler" icon="pi pi-times" class="p-button-danger p-button-outlined" (click)="showCancelDialog = true"></button>
         </div>
@@ -52,34 +52,34 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
       <div class="info-grid">
         <div class="card">
-          <h3>Entrepôt source</h3>
+          <h3 i18n="@@transfers.transfer-detail.entrepot.source.07ac9f4d">Entrepôt source</h3>
           <p class="warehouse-name">{{ transfer()!.sourceWarehouseName }}</p>
           <p class="warehouse-address" *ngIf="transfer()!.sourceWarehouseAddress">{{ transfer()!.sourceWarehouseAddress }}</p>
         </div>
         <div class="card">
-          <h3>Entrepôt destination</h3>
+          <h3 i18n="@@transfers.transfer-detail.entrepot.destination.edbd85df">Entrepôt destination</h3>
           <p class="warehouse-name">{{ transfer()!.destinationWarehouseName }}</p>
           <p class="warehouse-address" *ngIf="transfer()!.destinationWarehouseAddress">{{ transfer()!.destinationWarehouseAddress }}</p>
         </div>
         <div class="card">
-          <h3>Informations</h3>
-          <p><strong>Date :</strong> {{ transfer()!.transferDate | date:'dd/MM/yyyy' }}</p>
-          <p *ngIf="transfer()!.reference"><strong>Référence :</strong> {{ transfer()!.reference }}</p>
-          <p *ngIf="transfer()!.notes"><strong>Notes :</strong> {{ transfer()!.notes }}</p>
+          <h3 i18n="@@transfers.transfer-detail.informations.54937b3a">Informations</h3>
+          <p><strong i18n="@@transfers.transfer-detail.date.2e4c6fc1">Date :</strong> {{ transfer()!.transferDate | date:'dd/MM/yyyy' }}</p>
+          <p *ngIf="transfer()!.reference"><strong i18n="@@transfers.transfer-detail.reference.d3ebb895">Référence :</strong> {{ transfer()!.reference }}</p>
+          <p *ngIf="transfer()!.notes"><strong i18n="@@transfers.transfer-detail.notes.4ef03540">Notes :</strong> {{ transfer()!.notes }}</p>
         </div>
       </div>
 
       <div class="card">
-        <h3>Lignes de transfert</h3>
+        <h3 i18n="@@transfers.transfer-detail.lignes.de.transfert.7b06ae07">Lignes de transfert</h3>
         <table class="lines-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Code</th>
-              <th>Produit</th>
-              <th>Qté demandée</th>
-              <th>Qté transférée</th>
-              <th>Statut</th>
+              <th i18n="@@transfers.transfer-detail.text.d08f88df">#</th>
+              <th i18n="@@transfers.transfer-detail.code.adac6937">Code</th>
+              <th i18n="@@transfers.transfer-detail.produit.ff673dc2">Produit</th>
+              <th i18n="@@transfers.transfer-detail.qte.demandee.88026dff">Qté demandée</th>
+              <th i18n="@@transfers.transfer-detail.qte.transferee.178cc982">Qté transférée</th>
+              <th i18n="@@transfers.transfer-detail.statut.659499f3">Statut</th>
             </tr>
           </thead>
           <tbody>
@@ -90,8 +90,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               <td>{{ line.requestedQuantity }}</td>
               <td>{{ line.transferredQuantity }}</td>
               <td>
-                <span *ngIf="line.isFullyTransferred" class="status-badge status-completed">Transféré</span>
-                <span *ngIf="!line.isFullyTransferred" class="status-badge status-draft">En attente</span>
+                <span *ngIf="line.isFullyTransferred" class="status-badge status-completed" i18n="@@transfers.transfer-detail.transfere.062a36d3">Transféré</span>
+                <span *ngIf="!line.isFullyTransferred" class="status-badge status-draft" i18n="@@transfers.transfer-detail.en.attente.5231158f">En attente</span>
               </td>
             </tr>
           </tbody>
@@ -100,7 +100,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
       <p-dialog header="Annuler le transfert" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
         <div class="field">
-          <label class="field-label">Motif d'annulation</label>
+          <label class="field-label" i18n="@@transfers.transfer-detail.motif.d.annulation.f627914d">Motif d'annulation</label>
           <textarea pTextarea [(ngModel)]="cancelReason" rows="3" style="width:100%"></textarea>
         </div>
         <ng-template pTemplate="footer">

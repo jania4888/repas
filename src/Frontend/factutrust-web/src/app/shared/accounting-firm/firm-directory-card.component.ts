@@ -58,7 +58,7 @@ import {
             <span>{{ languageLabels(item) }}</span>
           }
           @if (item.acceptsRemote) {
-            <span>Accepte le distanciel</span>
+            <span i18n="@@shared.accounting-firm.firm-directory-card.accepte.le.distanciel.eabce959">Accepte le distanciel</span>
           }
           @if (item.teamSizeBand) {
             <span>{{ teamLabel(item.teamSizeBand) }}</span>

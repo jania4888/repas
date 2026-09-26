@@ -22,13 +22,13 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
     <div class="card vat-zone-card">
 
-      <h3 class="vat-zone-title">1. Informations générales</h3>
+      <h3 class="vat-zone-title" i18n="@@accounting.vat-declaration.1.informations.generales.a7d9a44c">1. Informations générales</h3>
 
       <div class="vat-info-grid">
 
         <div class="vat-info-item">
 
-          <span class="vat-info-label">Période</span>
+          <span class="vat-info-label" i18n="@@accounting.vat-declaration.periode.de2110b7">Période</span>
 
           <span class="vat-info-value">{{ periodLabel }}</span>
 
@@ -36,7 +36,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
         <div class="vat-info-item">
 
-          <span class="vat-info-label">Type de déclaration</span>
+          <span class="vat-info-label" i18n="@@accounting.vat-declaration.type.de.declaration.1cfe4f4c">Type de déclaration</span>
 
           <span class="vat-info-value">{{ declaration?.declarationTypeDisplay ?? '—' }}</span>
 
@@ -44,7 +44,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
         <div class="vat-info-item">
 
-          <span class="vat-info-label">Devise</span>
+          <span class="vat-info-label" i18n="@@accounting.vat-declaration.devise.eb2e42c4">Devise</span>
 
           <span class="vat-info-value">{{ declaration?.currency ?? '—' }}</span>
 
@@ -52,7 +52,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
         <div class="vat-info-item">
 
-          <span class="vat-info-label">Date limite de dépôt</span>
+          <span class="vat-info-label" i18n="@@accounting.vat-declaration.date.limite.de.depot.b80613d2">Date limite de dépôt</span>
 
           <span class="vat-info-value">{{ filingDeadlineLabel }}</span>
 
@@ -60,7 +60,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
         <div class="vat-info-item">
 
-          <span class="vat-info-label">Société</span>
+          <span class="vat-info-label" i18n="@@accounting.vat-declaration.societe.2c3fdad8">Société</span>
 
           <span class="vat-info-value">{{ companyDisplay.companyName }}</span>
 
@@ -68,7 +68,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
         <div class="vat-info-item">
 
-          <span class="vat-info-label">Matricule fiscal</span>
+          <span class="vat-info-label" i18n="@@accounting.vat-declaration.matricule.fiscal.304096c4">Matricule fiscal</span>
 
           <span class="vat-info-value">{{ companyDisplay.nif ?? '—' }}</span>
 
@@ -76,7 +76,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
         <div class="vat-info-item">
 
-          <span class="vat-info-label">Régime d'imposition</span>
+          <span class="vat-info-label" i18n="@@accounting.vat-declaration.regime.d.imposition.46563a5a">Régime d'imposition</span>
 
           <span class="vat-info-value">{{ companyDisplay.taxRegimeDisplay ?? '—' }}</span>
 
@@ -84,7 +84,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
         <div class="vat-info-item">
 
-          <span class="vat-info-label">Activité principale</span>
+          <span class="vat-info-label" i18n="@@accounting.vat-declaration.activite.principale.137743e2">Activité principale</span>
 
           <span class="vat-info-value">{{ companyDisplay.tradeName ?? '—' }}</span>
 

@@ -42,14 +42,14 @@ interface StageOption {
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="Opportunités" subtitle="Pipeline commercial" />
+    <app-page-header title="Opportunités" i18n-title="Opportunités" subtitle="Pipeline commercial" />
     <div class="card p-3 mb-3 opportunity-toolbar">
       <div class="toolbar-row">
         <p-select
           [options]="stageOptions"
           [(ngModel)]="selectedStageOption"
           optionLabel="label"
-          placeholder="Stage"
+          placeholder="Stage" i18n-placeholder="Stage"
           [showClear]="true"
           styleClass="toolbar-dropdown"
           inputId="oppStageFilter"
@@ -62,14 +62,10 @@ interface StageOption {
             [(ngModel)]="myOpportunitiesOnly"
             [binary]="true"
             (ngModelChange)="load()"></p-checkbox>
-          <label for="oppMineOnly">Mes opportunités</label>
+          <label for="oppMineOnly" i18n="@@crm.opportunities.mes.opportunites.a7f22363">Mes opportunités</label>
         </div>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser la liste">
-          Actualiser
-        </app-button>
-        <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle opportunité">
-          Nouvelle opportunité
-        </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser la liste" i18n="@@crm.opportunities.actualiser.9d3b2a7d">Actualiser</app-button>
+        <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle opportunité" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57">Nouvelle opportunité</app-button>
       </div>
     </div>
     @if (error()) {
@@ -79,14 +75,14 @@ interface StageOption {
     <p-table [value]="items()" [paginator]="true" [rows]="15" styleClass="p-datatable-sm opportunity-table">
       <ng-template pTemplate="header">
         <tr>
-          <th scope="col">Titre</th>
-          <th scope="col">Commercial</th>
-          <th scope="col">Stage</th>
-          <th scope="col">Montant</th>
-          <th scope="col">Prob.</th>
-          <th scope="col">Pondéré</th>
-          <th scope="col">Échéance</th>
-          <th scope="col" class="col-actions">Actions</th>
+          <th scope="col" i18n="@@crm.opportunities.titre.eb97899a">Titre</th>
+          <th scope="col" i18n="@@crm.opportunities.commercial.b48513e4">Commercial</th>
+          <th scope="col" i18n="@@crm.opportunities.stage.ca6d0e3a">Stage</th>
+          <th scope="col" i18n="@@crm.opportunities.montant.4adcd9fc">Montant</th>
+          <th scope="col" i18n="@@crm.opportunities.prob.9690cb4f">Prob.</th>
+          <th scope="col" i18n="@@crm.opportunities.pondere.c48371c8">Pondéré</th>
+          <th scope="col" i18n="@@crm.opportunities.echeance.f9a77ff6">Échéance</th>
+          <th scope="col" class="col-actions" i18n="@@crm.opportunities.actions.c3cd636a">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-o>
@@ -107,7 +103,7 @@ interface StageOption {
                   [iconOnly]="true"
                   icon="pi pi-angle-right"
                   ariaLabel="Avancer l’opportunité"
-                  title="Avancer"
+                  title="Avancer" i18n-title="Avancer"
                   [iconAlwaysVisible]="true"
                   (click)="advance(o.id)"></app-button>
                 <app-button
@@ -116,7 +112,7 @@ interface StageOption {
                   [iconOnly]="true"
                   icon="pi pi-check"
                   ariaLabel="Marquer comme gagnée"
-                  title="Gagnée"
+                  title="Gagnée" i18n-title="Gagnée"
                   [iconAlwaysVisible]="true"
                   (click)="win(o.id)"></app-button>
                 <app-button
@@ -125,7 +121,7 @@ interface StageOption {
                   [iconOnly]="true"
                   icon="pi pi-times"
                   ariaLabel="Marquer comme perdue"
-                  title="Perdue"
+                  title="Perdue" i18n-title="Perdue"
                   [iconAlwaysVisible]="true"
                   (click)="openLose(o)"></app-button>
               }
@@ -135,7 +131,7 @@ interface StageOption {
                 [iconOnly]="true"
                 icon="pi pi-pencil"
                 ariaLabel="Modifier l’opportunité"
-                title="Modifier"
+                title="Modifier" i18n-title="Modifier"
                 (click)="openEdit(o)"></app-button>
             </div>
           </td>
@@ -145,11 +141,9 @@ interface StageOption {
         <tr>
           <td colspan="8" class="empty-cell">
             <div class="empty-state">
-              <p class="empty-title">Aucune opportunité pour ces critères</p>
-              <p class="empty-hint">Créez une opportunité pour suivre un deal dans le pipeline.</p>
-              <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une opportunité">
-                Nouvelle opportunité
-              </app-button>
+              <p class="empty-title" i18n="@@crm.opportunities.aucune.opportunite.pour.ces.criteres.56b4694e">Aucune opportunité pour ces critères</p>
+              <p class="empty-hint" i18n="@@crm.opportunities.creez.une.opportunite.pour.suivre.un.deal.dans.l.5ed28c3c">Créez une opportunité pour suivre un deal dans le pipeline.</p>
+              <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une opportunité" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57">Nouvelle opportunité</app-button>
             </div>
           </td>
         </tr>
@@ -172,17 +166,17 @@ interface StageOption {
       <div class="opp-dialog-body">
         <form [formGroup]="oppForm" (ngSubmit)="saveOpportunity()" class="opp-form">
           <section class="opp-form-section" aria-labelledby="opp-section-deal">
-            <h3 id="opp-section-deal" class="form-block-title">Deal</h3>
+            <h3 id="opp-section-deal" class="form-block-title" i18n="@@crm.opportunities.deal.87078fc0">Deal</h3>
             @if (!editingId) {
               <div class="form-field">
-                <label class="field-label" for="oppClient">Client <span class="required" aria-hidden="true">*</span></label>
+                <label class="field-label" for="oppClient">Client <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
                 <p-select
                   inputId="oppClient"
                   formControlName="clientId"
                   [options]="clients"
                   optionLabel="name"
                   optionValue="id"
-                  placeholder="Sélectionner un client"
+                  placeholder="Sélectionner un client" i18n-placeholder="Sélectionner un client"
                   [filter]="true"
                   filterBy="name,code"
                   styleClass="w-full"
@@ -191,12 +185,12 @@ interface StageOption {
                   [attr.aria-invalid]="oppForm.get('clientId')?.invalid && oppForm.get('clientId')?.touched ? true : null"
                   [attr.aria-describedby]="oppForm.get('clientId')?.invalid && oppForm.get('clientId')?.touched ? 'opp-client-error' : null"></p-select>
                 @if (oppForm.get('clientId')?.invalid && oppForm.get('clientId')?.touched) {
-                  <small id="opp-client-error" class="field-error" role="alert">Sélectionnez un client.</small>
+                  <small id="opp-client-error" class="field-error" role="alert" i18n="@@crm.opportunities.selectionnez.un.client.8fb40ef8">Sélectionnez un client.</small>
                 }
               </div>
             }
             <div class="form-field">
-              <label class="field-label" for="oppTitle">Titre <span class="required" aria-hidden="true">*</span></label>
+              <label class="field-label" for="oppTitle">Titre <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="oppTitle"
@@ -206,12 +200,12 @@ interface StageOption {
                 [attr.aria-invalid]="oppForm.get('title')?.invalid && oppForm.get('title')?.touched ? true : null"
                 [attr.aria-describedby]="oppForm.get('title')?.invalid && oppForm.get('title')?.touched ? 'opp-title-error' : null" />
               @if (oppForm.get('title')?.invalid && oppForm.get('title')?.touched) {
-                <small id="opp-title-error" class="field-error" role="alert">Le titre est obligatoire.</small>
+                <small id="opp-title-error" class="field-error" role="alert" i18n="@@crm.opportunities.le.titre.est.obligatoire.27415fac">Le titre est obligatoire.</small>
               }
             </div>
             <div class="form-grid-2">
               <div class="form-field">
-                <label class="field-label" for="oppAmount">Montant attendu (TND) <span class="required" aria-hidden="true">*</span></label>
+                <label class="field-label" for="oppAmount">Montant attendu (TND) <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
                 <p-inputNumber
                   inputId="oppAmount"
                   formControlName="expectedAmount"
@@ -221,7 +215,7 @@ interface StageOption {
                   styleClass="w-full"></p-inputNumber>
               </div>
               <div class="form-field">
-                <label class="field-label" for="oppProb">Probabilité (%) <span class="required" aria-hidden="true">*</span></label>
+                <label class="field-label" for="oppProb">Probabilité (%) <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
                 <p-inputNumber
                   inputId="oppProb"
                   formControlName="probability"
@@ -231,7 +225,7 @@ interface StageOption {
               </div>
             </div>
             <div class="form-field">
-              <label class="field-label" for="oppClose">Date de clôture attendue <span class="required" aria-hidden="true">*</span></label>
+              <label class="field-label" for="oppClose">Date de clôture attendue <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
               <p-datepicker
                 inputId="oppClose"
                 formControlName="expectedCloseDate"
@@ -243,19 +237,19 @@ interface StageOption {
                 [attr.aria-invalid]="oppForm.get('expectedCloseDate')?.invalid && oppForm.get('expectedCloseDate')?.touched ? true : null"
                 [attr.aria-describedby]="oppForm.get('expectedCloseDate')?.invalid && oppForm.get('expectedCloseDate')?.touched ? 'opp-close-error' : null"></p-datepicker>
               @if (oppForm.get('expectedCloseDate')?.invalid && oppForm.get('expectedCloseDate')?.touched) {
-                <small id="opp-close-error" class="field-error" role="alert">La date de clôture est obligatoire.</small>
+                <small id="opp-close-error" class="field-error" role="alert" i18n="@@crm.opportunities.la.date.de.cloture.est.obligatoire.2cc53478">La date de clôture est obligatoire.</small>
               }
             </div>
           </section>
 
           <section class="opp-form-section opp-form-section-secondary" aria-labelledby="opp-section-extra">
-            <h3 id="opp-section-extra" class="form-block-title">Compléments</h3>
+            <h3 id="opp-section-extra" class="form-block-title" i18n="@@crm.opportunities.complements.31a9dae2">Compléments</h3>
             <div class="form-field">
-              <label class="field-label" for="oppSource">Source (optionnel)</label>
+              <label class="field-label" for="oppSource" i18n="@@crm.opportunities.source.optionnel.f8f1af37">Source (optionnel)</label>
               <input pInputText id="oppSource" class="w-full" formControlName="source" />
             </div>
             <div class="form-field">
-              <label class="field-label" for="oppNotes">Notes (optionnel)</label>
+              <label class="field-label" for="oppNotes" i18n="@@crm.opportunities.notes.optionnel.c4bb754a">Notes (optionnel)</label>
               <textarea
                 pTextarea
                 id="oppNotes"
@@ -273,9 +267,7 @@ interface StageOption {
       </div>
       <ng-template pTemplate="footer">
         <div class="opp-dialog-footer-actions">
-          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" (click)="formDialogVisible = false" ariaLabel="Annuler">
-            Annuler
-          </app-button>
+          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" (click)="formDialogVisible = false" ariaLabel="Annuler" i18n="@@crm.opportunities.annuler.49ba3292">Annuler</app-button>
           <app-button
             variant="primary"
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
@@ -301,23 +293,21 @@ interface StageOption {
       (onHide)="resetLoseDialog()">
       <div class="opp-dialog-body opp-dialog-body--lose">
         <form [formGroup]="loseForm" (ngSubmit)="confirmLose()" class="opp-form opp-form-lose">
-          <p id="lose-reason-hint" class="lose-dialog-hint">
-            Décrivez brièvement pourquoi l’opportunité est perdue (prix, concurrent, report, absence de budget…). Réservé à
-            l’équipe interne.
-          </p>
+          <p id="lose-reason-hint" class="lose-dialog-hint" i18n="@@crm.opportunities.decrivez.brievement.pourquoi.l.opportunite.est.p.a98518e5">Décrivez brièvement pourquoi l’opportunité est perdue (prix, concurrent, report, absence de budget…). Réservé à
+            l’équipe interne.</p>
           <div class="form-field">
-            <label class="field-label" for="loseReason">Motif <span class="required" aria-hidden="true">*</span></label>
+            <label class="field-label" for="loseReason">Motif <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
             <textarea
               pTextarea
               id="loseReason"
               class="w-full lose-reason-textarea"
               rows="5"
               formControlName="reason"
-              placeholder="Ex. : offre concurrente moins chère, projet gelé par le client…"
+              placeholder="Ex. : offre concurrente moins chère, projet gelé par le client…" i18n-placeholder="Ex. : offre concurrente moins chère, projet gelé par le client…"
               [attr.aria-describedby]="loseReasonAriaDescribedBy()"
               [attr.aria-invalid]="loseForm.get('reason')?.invalid && loseForm.get('reason')?.touched ? true : null"></textarea>
             @if (loseForm.get('reason')?.invalid && loseForm.get('reason')?.touched) {
-              <small id="lose-reason-error" class="field-error" role="alert">Indiquez un motif (au moins 2 caractères).</small>
+              <small id="lose-reason-error" class="field-error" role="alert" i18n="@@crm.opportunities.indiquez.un.motif.au.moins.2.caracteres.31534665">Indiquez un motif (au moins 2 caractères).</small>
             }
           </div>
           @if (loseError()) {
@@ -327,9 +317,7 @@ interface StageOption {
       </div>
       <ng-template pTemplate="footer">
         <div class="opp-dialog-footer-actions opp-dialog-footer-actions--lose">
-          <app-button variant="ghost" size="sm" type="button" (click)="loseDialogVisible = false" ariaLabel="Annuler">
-            Annuler
-          </app-button>
+          <app-button variant="ghost" size="sm" type="button" (click)="loseDialogVisible = false" ariaLabel="Annuler" i18n="@@crm.opportunities.annuler.49ba3292">Annuler</app-button>
           <app-button
             variant="primary"
             [icon]="loseSaving() ? 'pi-spin pi-spinner' : 'pi-check'"

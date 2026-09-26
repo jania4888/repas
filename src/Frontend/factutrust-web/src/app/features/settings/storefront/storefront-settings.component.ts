@@ -235,7 +235,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
-      title="Vitrine publique & rue 3D"
+      title="Vitrine publique & rue 3D" i18n-title="Vitrine publique & rue 3D"
       subtitle="Exposez une vitrine modérée sur la Rue InstaFact (opt-in, données publiques uniquement).">
     </app-page-header>
 
@@ -247,11 +247,11 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
       }
       @if (profile()) {
         <p-card header="Vitrine configurée">
-          <p><strong>Slug :</strong> {{ profile()!.slug }}</p>
-          <p><strong>Nom public :</strong> {{ profile()!.displayName }}</p>
-          <p><strong>Statut :</strong> {{ workflowStatusLabel(profile()!.workflowStatus) }}</p>
+          <p><strong i18n="@@settings.storefront.slug.c22372b0">Slug :</strong> {{ profile()!.slug }}</p>
+          <p><strong i18n="@@settings.storefront.nom.public.3e9fc9db">Nom public :</strong> {{ profile()!.displayName }}</p>
+          <p><strong i18n="@@settings.storefront.statut.b20e7fc2">Statut :</strong> {{ workflowStatusLabel(profile()!.workflowStatus) }}</p>
           @if (profile()!.rejectionReason) {
-            <p><strong>Motif refus :</strong> {{ profile()!.rejectionReason }}</p>
+            <p><strong i18n="@@settings.storefront.motif.refus.cd5d8a22">Motif refus :</strong> {{ profile()!.rejectionReason }}</p>
           }
           @if (isPendingReview(profile()!.workflowStatus)) {
             <p-message
@@ -262,7 +262,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
           <p class="mt-3">
             @if (isPublished(profile()!.workflowStatus)) {
               <a routerLink="/visite-virtuelle/{{ profile()!.slug }}" target="_blank" rel="noopener"
-                >Ouvrir la vitrine publique</a
+                 i18n="@@settings.storefront.ouvrir.la.vitrine.publique.dc25a21d">Ouvrir la vitrine publique</a
               >
             } @else {
               <p-message severity="info" [text]="publicUrlBlockedMessage(profile()!.slug)" />
@@ -299,7 +299,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
           <p-card header="Contenu et habillage publics" class="mt-3">
             <p class="lede mb-3">
               Ces champs sont visibles après modération et publication. Une
-              <strong>description</strong> et une <strong>URL de logo public</strong> sont obligatoires pour soumettre
+              <strong i18n="@@settings.storefront.description.cb329146">description</strong> et une <strong i18n="@@settings.storefront.url.de.logo.public.a9ca3375">URL de logo public</strong> sont obligatoires pour soumettre
               la vitrine.
             </p>
             @if (moderationChecklistItems().length > 0) {
@@ -316,7 +316,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
                 [text]="fieldErrors().join(' ')"></p-message>
             }
             <div class="field">
-              <label for="sf-displayName">Nom public</label>
+              <label for="sf-displayName" i18n="@@settings.storefront.nom.public.38b747b0">Nom public</label>
               <input id="sf-displayName" pInputText [(ngModel)]="editForm.displayName" autocomplete="organization" />
             </div>
             <div class="field">
@@ -330,7 +330,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
               <small id="sf-tagline-hint" class="hint">{{ editForm.tagline.length }} / {{ taglineMax }}</small>
             </div>
             <div class="field">
-              <label for="sf-desc">Description (Markdown, obligatoire pour soumission)</label>
+              <label for="sf-desc" i18n="@@settings.storefront.description.markdown.obligatoire.pour.soumission.fa4a35be">Description (Markdown, obligatoire pour soumission)</label>
               <textarea
                 id="sf-desc"
                 pTextarea
@@ -343,25 +343,25 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             </div>
             <div class="field-row">
               <div class="field grow">
-                <label for="sf-primary">Couleur primaire (#RRGGBB)</label>
+                <label for="sf-primary" i18n="@@settings.storefront.couleur.primaire.rrggbb.af10a08e">Couleur primaire (#RRGGBB)</label>
                 <input id="sf-primary" pInputText [(ngModel)]="editForm.brandPrimaryColorHex" maxlength="7" />
               </div>
               <div class="field grow">
-                <label for="sf-secondary">Couleur secondaire (#RRGGBB)</label>
+                <label for="sf-secondary" i18n="@@settings.storefront.couleur.secondaire.rrggbb.3084d45f">Couleur secondaire (#RRGGBB)</label>
                 <input id="sf-secondary" pInputText [(ngModel)]="editForm.brandSecondaryColorHex" maxlength="7" />
               </div>
             </div>
             <div class="field">
-              <label for="sf-email">Email public de contact</label>
+              <label for="sf-email" i18n="@@settings.storefront.email.public.de.contact.221f0cf6">Email public de contact</label>
               <input id="sf-email" pInputText [(ngModel)]="editForm.publicContactEmail" type="email" autocomplete="email" />
             </div>
             <div class="field-row">
               <div class="field grow">
-                <label for="sf-phone">Téléphone (optionnel)</label>
+                <label for="sf-phone" i18n="@@settings.storefront.telephone.optionnel.23768a3e">Téléphone (optionnel)</label>
                 <input id="sf-phone" pInputText [(ngModel)]="editForm.publicContactPhone" />
               </div>
               <div class="field grow">
-                <label for="sf-wa">WhatsApp (optionnel)</label>
+                <label for="sf-wa" i18n="@@settings.storefront.whatsapp.optionnel.7f2f84d5">WhatsApp (optionnel)</label>
                 <input id="sf-wa" pInputText [(ngModel)]="editForm.publicContactWhatsApp" />
               </div>
             </div>
@@ -374,7 +374,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
               <input id="sf-cover" pInputText [(ngModel)]="editForm.publicCoverImageUrl" [maxlength]="urlMax" />
             </div>
             <div class="field">
-              <label for="sf-cat">Catégorie</label>
+              <label for="sf-cat" i18n="@@settings.storefront.categorie.6b38300a">Catégorie</label>
               <p-select
                 inputId="sf-cat"
                 [options]="categories"
@@ -383,7 +383,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
                 optionValue="value" />
             </div>
             <div class="field">
-              <label for="sf-theme">Thème façade</label>
+              <label for="sf-theme" i18n="@@settings.storefront.theme.facade.8db2163f">Thème façade</label>
               <p-select
                 inputId="sf-theme"
                 [options]="themes"
@@ -392,7 +392,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
                 optionValue="value" />
             </div>
             <div class="field switch-field">
-              <label for="sf-orders">Autoriser les commandes depuis la vitrine publique</label>
+              <label for="sf-orders" i18n="@@settings.storefront.autoriser.les.commandes.depuis.la.vitrine.publiq.054fb621">Autoriser les commandes depuis la vitrine publique</label>
               <p-inputSwitch inputId="sf-orders" [(ngModel)]="editForm.orderSubmissionEnabled" />
             </div>
             <p-button label="Enregistrer" icon="pi pi-save" (onClick)="saveProfile()" [loading]="saveBusy()" />
@@ -405,31 +405,31 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             entreprise.
           </p>
           <div class="field">
-            <label for="slug">Slug URL (minuscules, tirets)</label>
+            <label for="slug" i18n="@@settings.storefront.slug.url.minuscules.tirets.9a01339c">Slug URL (minuscules, tirets)</label>
             <input id="slug" pInputText [(ngModel)]="draft.slug" />
           </div>
           <div class="field">
-            <label for="dn">Nom affiché</label>
+            <label for="dn" i18n="@@settings.storefront.nom.affiche.c3c2717f">Nom affiché</label>
             <input id="dn" pInputText [(ngModel)]="draft.displayName" />
           </div>
           <div class="field">
-            <label for="mail">Email public</label>
+            <label for="mail" i18n="@@settings.storefront.email.public.497079b4">Email public</label>
             <input id="mail" pInputText [(ngModel)]="draft.publicContactEmail" />
           </div>
           <div class="field">
-            <label>Catégorie</label>
+            <label i18n="@@settings.storefront.categorie.6b38300a">Catégorie</label>
             <p-select [options]="categories" [(ngModel)]="draft.category" optionLabel="label" optionValue="value" />
           </div>
           <div class="field">
-            <label>Thème façade</label>
+            <label i18n="@@settings.storefront.theme.facade.8db2163f">Thème façade</label>
             <p-select [options]="themes" [(ngModel)]="draft.facadeTheme" optionLabel="label" optionValue="value" />
           </div>
           <p-button label="Créer la vitrine (brouillon)" (onClick)="optIn()" [loading]="saving()" />
         </p-card>
       } @else if (!loading() && invalidStatusFromServer()) {
-        <p class="sr-only">Réponse serveur incohérente (statut vitrine).</p>
+        <p class="sr-only" i18n="@@settings.storefront.reponse.serveur.incoherente.statut.vitrine.68d1e8a9">Réponse serveur incohérente (statut vitrine).</p>
       } @else {
-        <p>Chargement du profil vitrine…</p>
+        <p i18n="@@settings.storefront.chargement.du.profil.vitrine.9373dcfc">Chargement du profil vitrine…</p>
       }
     }
   `,

@@ -51,40 +51,40 @@ interface ContractLineForm extends ContractLinePayloadSource {
       </div>
     } @else {
     <form (ngSubmit)="save()">
-      <app-form-section [number]="1" title="Client et référence" icon="pi-user">
+      <app-form-section [number]="1" title="Client et référence" i18n-title="Client et référence" icon="pi-user">
         <div class="grid">
           <label>
-            <span class="field-label required">Client</span>
+            <span class="field-label required" i18n="@@recurring-contracts.pages.client.1bdd79b1">Client</span>
             <select class="ft-input" [(ngModel)]="clientId" name="clientId" required [disabled]="!!quoteId">
-              <option value="">— Sélectionner —</option>
+              <option value="" i18n="@@recurring-contracts.pages.selectionner.7ae1afc7">— Sélectionner —</option>
               @for (c of clients(); track c.id) {
                 <option [value]="c.id">{{ c.name }}</option>
               }
             </select>
             @if (quoteId) {
-              <span class="field-hint">Client et lignes repris du devis d'origine (ajustables avant enregistrement).</span>
+              <span class="field-hint" i18n="@@recurring-contracts.pages.client.et.lignes.repris.du.devis.d.origine.ajust.674eda11">Client et lignes repris du devis d'origine (ajustables avant enregistrement).</span>
             }
           </label>
           <label>Référence
-            <input class="ft-input" [(ngModel)]="reference" name="reference" placeholder="Référence interne ou client" />
+            <input class="ft-input" [(ngModel)]="reference" name="reference" placeholder="Référence interne ou client" i18n-placeholder="Référence interne ou client" />
           </label>
         </div>
       </app-form-section>
 
-      <app-form-section [number]="2" title="Facturation" icon="pi-calendar">
+      <app-form-section [number]="2" title="Facturation" i18n-title="Facturation" icon="pi-calendar">
         <div class="grid">
           <label>Périodicité
             <select class="ft-input" [(ngModel)]="billingFrequency" name="billingFrequency">
-              <option [ngValue]="'Monthly'">Mensuel</option>
-              <option [ngValue]="'Quarterly'">Trimestriel</option>
-              <option [ngValue]="'Annual'">Annuel</option>
+              <option [ngValue]="'Monthly'" i18n="@@recurring-contracts.pages.mensuel.272c1b22">Mensuel</option>
+              <option [ngValue]="'Quarterly'" i18n="@@recurring-contracts.pages.trimestriel.d6432184">Trimestriel</option>
+              <option [ngValue]="'Annual'" i18n="@@recurring-contracts.pages.annuel.11aad2fa">Annuel</option>
             </select>
           </label>
           <label>Jour de facturation
             <input class="ft-input" type="number" min="1" max="31" [(ngModel)]="billingDayOfMonth" name="billingDay" />
           </label>
           <label>
-            <span class="field-label required">Date de début</span>
+            <span class="field-label required" i18n="@@recurring-contracts.pages.date.de.debut.706438ab">Date de début</span>
             <input class="ft-input" type="date" [(ngModel)]="startDate" name="startDate" required />
           </label>
           <label>Date de fin
@@ -92,7 +92,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
           </label>
           <label>Condition de règlement
             <select class="ft-input" [(ngModel)]="paymentTermTemplateId" name="paymentTermTemplateId">
-              <option [ngValue]="null">— Par défaut —</option>
+              <option [ngValue]="null" i18n="@@recurring-contracts.pages.par.defaut.84534de7">— Par défaut —</option>
               @for (pt of paymentTerms(); track pt.id) {
                 <option [ngValue]="pt.id">{{ pt.name }}</option>
               }
@@ -101,7 +101,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
         </div>
       </app-form-section>
 
-      <app-form-section [number]="3" title="Renouvellement" icon="pi-refresh">
+      <app-form-section [number]="3" title="Renouvellement" i18n-title="Renouvellement" icon="pi-refresh">
         <div class="grid">
           <label class="checkbox-label">
             <input type="checkbox" [(ngModel)]="autoRenew" name="autoRenew" />
@@ -113,30 +113,28 @@ interface ContractLineForm extends ContractLinePayloadSource {
         </div>
       </app-form-section>
 
-      <app-form-section [number]="4" title="Lignes du contrat" icon="pi-list">
+      <app-form-section [number]="4" title="Lignes du contrat" i18n-title="Lignes du contrat" icon="pi-list">
         @for (line of lines; track $index; let i = $index) {
           <div class="line-card">
             <div class="line-card__head">
               <label>Type
                 <select class="ft-input" [(ngModel)]="line.lineType" [name]="'lineType' + i">
-                  <option [ngValue]="'FixedRecurring'">Récurrent fixe</option>
-                  <option [ngValue]="'UsageMetered'">À la consommation</option>
-                  <option [ngValue]="'OneTimeSetup'">Frais d'installation</option>
+                  <option [ngValue]="'FixedRecurring'" i18n="@@recurring-contracts.pages.recurrent.fixe.9f36de5c">Récurrent fixe</option>
+                  <option [ngValue]="'UsageMetered'" i18n="@@recurring-contracts.pages.a.la.consommation.a9497352">À la consommation</option>
+                  <option [ngValue]="'OneTimeSetup'" i18n="@@recurring-contracts.pages.frais.d.installation.f39459df">Frais d'installation</option>
                 </select>
               </label>
-              <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)">
-                Supprimer
-              </app-button>
+              <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.pages.supprimer.1acfc1c7">Supprimer</app-button>
             </div>
             <div class="grid">
               <label class="span-2">Description
-                <input class="ft-input" placeholder="Description (optionnelle)" [(ngModel)]="line.description" [name]="'desc' + i" />
+                <input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="Description (optionnelle)" [(ngModel)]="line.description" [name]="'desc' + i" />
               </label>
               @if (line.lineType !== 'OneTimeSetup') {
                 <label>
-                  <span class="field-label required">Produit</span>
+                  <span class="field-label required" i18n="@@recurring-contracts.pages.produit.ff673dc2">Produit</span>
                   <select class="ft-input" [(ngModel)]="line.productId" [name]="'product' + i">
-                    <option [ngValue]="null" disabled>— Sélectionner —</option>
+                    <option [ngValue]="null" disabled i18n="@@recurring-contracts.pages.selectionner.7ae1afc7">— Sélectionner —</option>
                     @for (p of products(); track p.id) {
                       <option [ngValue]="p.id">{{ p.code }} — {{ p.name }}</option>
                     }
@@ -144,19 +142,19 @@ interface ContractLineForm extends ContractLinePayloadSource {
                 </label>
               }
               <label>Qté
-                <input class="ft-input" type="number" placeholder="Qté" [(ngModel)]="line.quantity" [name]="'qty' + i" />
+                <input class="ft-input" type="number" placeholder="Qté" i18n-placeholder="Qté" [(ngModel)]="line.quantity" [name]="'qty' + i" />
               </label>
               <label>Prix unitaire HT
-                <input class="ft-input" type="number" step="0.001" min="0" placeholder="Prix HT" [(ngModel)]="line.unitPriceHT" [name]="'price' + i" />
+                <input class="ft-input" type="number" step="0.001" min="0" placeholder="Prix HT" i18n-placeholder="Prix HT" [(ngModel)]="line.unitPriceHT" [name]="'price' + i" />
               </label>
               <label>TVA %
-                <input class="ft-input" type="number" step="0.001" min="0" placeholder="TVA %" [(ngModel)]="line.vatRate" [name]="'vat' + i" />
+                <input class="ft-input" type="number" step="0.001" min="0" placeholder="TVA %" i18n-placeholder="TVA %" [(ngModel)]="line.vatRate" [name]="'vat' + i" />
               </label>
               @if (line.lineType === 'UsageMetered') {
                 <label>
-                  <span class="field-label required">Métrique</span>
+                  <span class="field-label required" i18n="@@recurring-contracts.pages.metrique.066ebc60">Métrique</span>
                   <select class="ft-input" [(ngModel)]="line.usageMetricId" [name]="'metric' + i">
-                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option [ngValue]="null" i18n="@@recurring-contracts.pages.selectionner.7ae1afc7">— Sélectionner —</option>
                     @for (m of usageMetrics(); track m.id) {
                       <option [ngValue]="m.id">{{ m.name }} ({{ m.unit }})</option>
                     }
@@ -172,19 +170,19 @@ interface ContractLineForm extends ContractLinePayloadSource {
             </div>
           </div>
         }
-        <app-button type="button" variant="outline" icon="pi-plus" (clicked)="addLine()">Ajouter une ligne</app-button>
+        <app-button type="button" variant="outline" icon="pi-plus" (clicked)="addLine()" i18n="@@recurring-contracts.pages.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
 
         <app-table-totals-bar [metrics]="totalsMetrics()"></app-table-totals-bar>
       </app-form-section>
 
-      <app-form-section [number]="5" title="Notes" icon="pi-comment">
+      <app-form-section [number]="5" title="Notes" i18n-title="Notes" icon="pi-comment">
         <label>Notes internes
           <textarea class="ft-input" rows="3" [(ngModel)]="notes" name="notes"></textarea>
         </label>
       </app-form-section>
 
       <div class="actions">
-        <app-button type="button" variant="outline" [routerLink]="cancelRoute">Annuler</app-button>
+        <app-button type="button" variant="outline" [routerLink]="cancelRoute" i18n="@@recurring-contracts.pages.annuler.49ba3292">Annuler</app-button>
         <app-button type="submit" variant="primary" icon="pi-check" [disabled]="saving() || !canSave">
           {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
         </app-button>

@@ -106,9 +106,7 @@ interface TimelineEvent {
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        [routerLink]="listBackRoute">
-        Retour
-      </app-button>
+        [routerLink]="listBackRoute" i18n="@@invoices.invoice-detail.retour.e5befb1f">Retour</app-button>
       @if (primaryAction(); as action) {
         <app-button
           [variant]="action.variant"
@@ -160,12 +158,12 @@ interface TimelineEvent {
               </div>
               <div class="invoice-dates">
                 <div class="date-item">
-                  <span class="label">Date d'émission</span>
+                  <span class="label" i18n="@@invoices.invoice-detail.date.d.emission.99f68857">Date d'émission</span>
                   <span class="value">{{ invoice()!.issueDate | date:'dd/MM/yyyy' }}</span>
                 </div>
                 @if (invoice()!.dueDate) {
                   <div class="date-item">
-                    <span class="label">Échéance</span>
+                    <span class="label" i18n="@@invoices.invoice-detail.echeance.f9a77ff6">Échéance</span>
                     <span class="value" [class.overdue]="isOverdue()">
                       {{ invoice()!.dueDate | date:'dd/MM/yyyy' }}
                     </span>
@@ -179,7 +177,7 @@ interface TimelineEvent {
             <!-- Parties -->
             <div class="parties-grid">
               <div class="party-card">
-                <h4>Client</h4>
+                <h4 i18n="@@invoices.invoice-detail.client.1bdd79b1">Client</h4>
                 <p class="party-name">{{ invoice()!.client.name }}</p>
                 <p class="party-address">{{ invoice()!.client.address }}</p>
                 @if (invoice()!.client.nif) {
@@ -193,16 +191,16 @@ interface TimelineEvent {
 
             <!-- Lines -->
             <div class="lines-section">
-              <h4>Lignes de facturation</h4>
+              <h4 i18n="@@invoices.invoice-detail.lignes.de.facturation.5896ee38">Lignes de facturation</h4>
               <table class="lines-table">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Désignation</th>
-                    <th class="text-right">Quantité</th>
-                    <th class="text-right">Prix unitaire</th>
-                    <th class="text-center">TVA</th>
-                    <th class="text-right">Total HT</th>
+                    <th i18n="@@invoices.invoice-detail.text.d08f88df">#</th>
+                    <th i18n="@@invoices.invoice-detail.designation.63a9062c">Désignation</th>
+                    <th class="text-right" i18n="@@invoices.invoice-detail.quantite.09a38fda">Quantité</th>
+                    <th class="text-right" i18n="@@invoices.invoice-detail.prix.unitaire.3e848c96">Prix unitaire</th>
+                    <th class="text-center" i18n="@@invoices.invoice-detail.tva.fb62cb5d">TVA</th>
+                    <th class="text-right" i18n="@@invoices.invoice-detail.total.ht.2ca17ae6">Total HT</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -228,7 +226,7 @@ interface TimelineEvent {
             <!-- Totals -->
             <div class="totals-section">
               <div class="vat-breakdown">
-                <h5>Récapitulatif TVA</h5>
+                <h5 i18n="@@invoices.invoice-detail.recapitulatif.tva.0918d3bc">Récapitulatif TVA</h5>
                 @for (vat of invoice()!.vatBreakdown; track vat.rate) {
                   <div class="vat-row">
                     <span>{{ vat.rateDisplay }}</span>
@@ -255,7 +253,7 @@ interface TimelineEvent {
                 }
                 @if ((invoice()!.fiscalStampAmount ?? 0) > 0.0005 || (invoice()!.fiscalStampAmount ?? 0) < -0.0005) {
                   <div class="total-row">
-                    <span>Timbre fiscal</span>
+                    <span i18n="@@invoices.invoice-detail.timbre.fiscal.1f8f7dd1">Timbre fiscal</span>
                     <span class="mono">{{ invoice()!.fiscalStampAmount | number:'1.3-3' }} {{ invoice()!.currency }}</span>
                   </div>
                 }
@@ -271,12 +269,12 @@ interface TimelineEvent {
               <div class="notes-section">
                 @if (invoice()!.paymentTerms) {
                   <div class="note">
-                    <strong>Conditions de paiement:</strong> {{ invoice()!.paymentTerms }}
+                    <strong i18n="@@invoices.invoice-detail.conditions.de.paiement.34f8dab1">Conditions de paiement:</strong> {{ invoice()!.paymentTerms }}
                   </div>
                 }
                 @if (invoice()!.notes) {
                   <div class="note">
-                    <strong>Notes:</strong> {{ invoice()!.notes }}
+                    <strong i18n="@@invoices.invoice-detail.notes.9c3befe7">Notes:</strong> {{ invoice()!.notes }}
                   </div>
                 }
               </div>
@@ -348,8 +346,8 @@ interface TimelineEvent {
                         </span>
                         @if (payment.effetStatus === 0 && !payment.isRefunded && canSettleEffet()) {
                           <span class="effet-actions">
-                            <button type="button" class="effet-btn encaisse" [disabled]="settlingEffetId() === payment.id" (click)="onSettleClientEffet(payment.id, 1)">Encaisser</button>
-                            <button type="button" class="effet-btn impaye" [disabled]="settlingEffetId() === payment.id" (click)="onSettleClientEffet(payment.id, 2)">Impayé</button>
+                            <button type="button" class="effet-btn encaisse" [disabled]="settlingEffetId() === payment.id" (click)="onSettleClientEffet(payment.id, 1)" i18n="@@invoices.invoice-detail.encaisser.fec08f89">Encaisser</button>
+                            <button type="button" class="effet-btn impaye" [disabled]="settlingEffetId() === payment.id" (click)="onSettleClientEffet(payment.id, 2)" i18n="@@invoices.invoice-detail.impaye.3f8d3329">Impayé</button>
                           </span>
                         }
                       </div>
@@ -359,18 +357,18 @@ interface TimelineEvent {
               </div>
               <div class="payments-summary">
                 <div class="summary-row">
-                  <span>Total payé</span>
+                  <span i18n="@@invoices.invoice-detail.total.paye.57d30be5">Total payé</span>
                   <span class="mono">{{ (invoice()!.totalPaid ?? 0) | number:'1.3-3' }} {{ invoice()!.currency }}</span>
                 </div>
                 @if ((invoice()!.totalClientWithholding ?? 0) > 0) {
                   <div class="summary-row withholding">
-                    <span>Retenue subie</span>
+                    <span i18n="@@invoices.invoice-detail.retenue.subie.f31725ab">Retenue subie</span>
                     <span class="mono">{{ invoice()!.totalClientWithholding | number:'1.3-3' }} {{ invoice()!.currency }}</span>
                   </div>
                 }
                 @if ((invoice()!.remainingAmount ?? 0) > 0) {
                   <div class="summary-row remaining">
-                    <span>Restant dû</span>
+                    <span i18n="@@invoices.invoice-detail.restant.du.e9a8119c">Restant dû</span>
                     <span class="mono">{{ invoice()!.remainingAmount | number:'1.3-3' }} {{ invoice()!.currency }}</span>
                   </div>
                 }
@@ -378,7 +376,7 @@ interface TimelineEvent {
             } @else {
               <div class="payments-empty">
                 <i class="pi pi-wallet"></i>
-                <p>Aucun paiement enregistré</p>
+                <p i18n="@@invoices.invoice-detail.aucun.paiement.enregistre.eefa82df">Aucun paiement enregistré</p>
               </div>
             }
 
@@ -388,9 +386,7 @@ interface TimelineEvent {
                   icon="pi-wallet"
                   iconPos="left"
                   (click)="openRecordPaymentDialog()"
-                  style="width: 100%; margin-bottom: var(--spacing-2);">
-                  Enregistrer un paiement
-                </app-button>
+                  style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@invoices.invoice-detail.enregistrer.un.paiement.72dddba2">Enregistrer un paiement</app-button>
               }
           </p-card>
 
@@ -413,7 +409,7 @@ interface TimelineEvent {
               <div class="signature-info">
                 <div class="info-row">
                   <i class="pi pi-verified"></i>
-                  <span>Facture signée électroniquement</span>
+                  <span i18n="@@invoices.invoice-detail.facture.signee.electroniquement.ec353a3c">Facture signée électroniquement</span>
                 </div>
                 <div class="hash-display">
                   <code>{{ invoice()!.signatureHash!.substring(0, 20) }}...</code>
@@ -441,7 +437,7 @@ interface TimelineEvent {
             <p class="validate-warehouse-banner">
               Déduction de stock depuis : <strong>{{ validateWarehouseLabel() }}</strong>
               @if (validateWarehouseIsDefault()) {
-                <span class="validate-default-badge">par défaut</span>
+                <span class="validate-default-badge" i18n="@@invoices.invoice-detail.par.defaut.feee7660">par défaut</span>
               }
             </p>
           }
@@ -461,8 +457,8 @@ interface TimelineEvent {
                 <i class="pi pi-times-circle"></i>
                 <div>
                   <p>{{ validateStockCheck()?.summaryMessage || 'Aucun stock trouvé pour un produit dans cet entrepôt.' }}</p>
-                  <p>Ajoutez du stock dans cet entrepôt avant de valider.</p>
-                  <a routerLink="/stock" (click)="showValidateDialog = false">Ajouter du stock</a>
+                  <p i18n="@@invoices.invoice-detail.ajoutez.du.stock.dans.cet.entrepot.avant.de.vali.0fa91ed7">Ajoutez du stock dans cet entrepôt avant de valider.</p>
+                  <a routerLink="/stock" (click)="showValidateDialog = false" i18n="@@invoices.invoice-detail.ajouter.du.stock.b3d3468f">Ajouter du stock</a>
                 </div>
               </div>
             } @else if (hasMissingWarehouseLots()) {
@@ -470,11 +466,11 @@ interface TimelineEvent {
                 <i class="pi pi-times-circle"></i>
                 <div>
                   @if (hasOnlyExpiredWarehouseLots()) {
-                    <p>Tous les lots disponibles sont périmés pour au moins un article suivi. Ils ne peuvent pas sortir.</p>
-                    <p>Choisissez un lot non périmé, ou réceptionnez un lot valide avant de valider.</p>
+                    <p i18n="@@invoices.invoice-detail.tous.les.lots.disponibles.sont.perimes.pour.au.m.d7718b50">Tous les lots disponibles sont périmés pour au moins un article suivi. Ils ne peuvent pas sortir.</p>
+                    <p i18n="@@invoices.invoice-detail.choisissez.un.lot.non.perime.ou.receptionnez.un..89ff9112">Choisissez un lot non périmé, ou réceptionnez un lot valide avant de valider.</p>
                   } @else {
-                    <p>Le stock de cet entrepôt n'a pas de lots (ou de n° de série) pour au moins un article suivi.</p>
-                    <p>Réceptionnez d'abord le stock avec un n° de lot, ou faites un inventaire d'ouverture.</p>
+                    <p i18n="@@invoices.invoice-detail.le.stock.de.cet.entrepot.n.a.pas.de.lots.ou.de.n.de44cfd5">Le stock de cet entrepôt n'a pas de lots (ou de n° de série) pour au moins un article suivi.</p>
+                    <p i18n="@@invoices.invoice-detail.receptionnez.d.abord.le.stock.avec.un.n.de.lot.o.2b6eba9f">Réceptionnez d'abord le stock avec un n° de lot, ou faites un inventaire d'ouverture.</p>
                   }
                 </div>
               </div>
@@ -486,13 +482,13 @@ interface TimelineEvent {
             }
             @if (needsStockAllocationOnValidate()) {
               <div class="validate-lines-table-wrap">
-                <table class="validate-lines-table" aria-label="Lignes à déduire du stock">
+                <table class="validate-lines-table" aria-label="Lignes à déduire du stock" i18n-aria-label="Lignes à déduire du stock">
                   <thead>
                     <tr>
-                      <th>Produit</th>
-                      <th class="text-right">Quantité</th>
-                      <th class="text-right">Stock disponible</th>
-                      <th>Impact</th>
+                      <th i18n="@@invoices.invoice-detail.produit.ff673dc2">Produit</th>
+                      <th class="text-right" i18n="@@invoices.invoice-detail.quantite.09a38fda">Quantité</th>
+                      <th class="text-right" i18n="@@invoices.invoice-detail.stock.disponible.4b508081">Stock disponible</th>
+                      <th i18n="@@invoices.invoice-detail.impact.62036a70">Impact</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -555,19 +551,17 @@ interface TimelineEvent {
         }
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
-            <app-button variant="outline" icon="pi-times" (click)="showValidateDialog = false">Annuler</app-button>
-            <app-button variant="primary" icon="pi-check" [disabled]="!isValidateFormValid()" (click)="submitValidate()">
-              Valider
-            </app-button>
+            <app-button variant="outline" icon="pi-times" (click)="showValidateDialog = false" i18n="@@invoices.invoice-detail.annuler.49ba3292">Annuler</app-button>
+            <app-button variant="primary" icon="pi-check" [disabled]="!isValidateFormValid()" (click)="submitValidate()" i18n="@@invoices.invoice-detail.valider.be4220f7">Valider</app-button>
           </div>
         </ng-template>
       </p-dialog>
     } @else {
       <div class="not-found">
         <i class="pi pi-exclamation-triangle"></i>
-        <h2>Facture non trouvée</h2>
-        <p>La facture demandée n'existe pas ou a été supprimée.</p>
-        <app-button variant="primary" [routerLink]="listBackRoute">Retour à la liste</app-button>
+        <h2 i18n="@@invoices.invoice-detail.facture.non.trouvee.913f17a8">Facture non trouvée</h2>
+        <p i18n="@@invoices.invoice-detail.la.facture.demandee.n.existe.pas.ou.a.ete.suppri.09ba20fa">La facture demandée n'existe pas ou a été supprimée.</p>
+        <app-button variant="primary" [routerLink]="listBackRoute" i18n="@@invoices.invoice-detail.retour.a.la.liste.7753f531">Retour à la liste</app-button>
       </div>
     }
 

@@ -37,24 +37,24 @@ const MAX_FISCAL_YEAR = 2100;
     AccountingTableActionsComponent
   ],
   template: `
-    <app-page-header title="Gestion des devises"
+    <app-page-header title="Gestion des devises" i18n-title="Gestion des devises"
                      subtitle="Devises utilisables en comptabilité et taux de change par exercice" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card cur-toolbar">
       <div class="cur-field">
-        <label class="cur-lbl" for="cur-year">Exercice</label>
+        <label class="cur-lbl" for="cur-year" i18n="@@accounting.currencies.exercice.e171e2b0">Exercice</label>
         <input id="cur-year" class="cur-inp cur-year" type="number" [ngModel]="fiscalYear()"
                (ngModelChange)="onYearChange($event)" [min]="minYear" [max]="maxYear" />
       </div>
       <div class="cur-toolbar-actions">
         @if (canManage()) {
           <app-button variant="primary" icon="pi pi-plus" type="button"
-                      (click)="startCreate()" [disabled]="loading()">Ajouter une devise</app-button>
+                      (click)="startCreate()" [disabled]="loading()" i18n="@@accounting.currencies.ajouter.une.devise.cd33411d">Ajouter une devise</app-button>
         }
         <app-button variant="secondary" icon="pi pi-refresh" type="button"
-                    (click)="load()" [disabled]="loading()">Actualiser</app-button>
+                    (click)="load()" [disabled]="loading()" i18n="@@accounting.currencies.actualiser.9d3b2a7d">Actualiser</app-button>
       </div>
     </div>
 
@@ -63,29 +63,29 @@ const MAX_FISCAL_YEAR = 2100;
         <h3 class="cur-form-title">{{ f.id ? 'Modifier la devise' : 'Nouvelle devise' }}</h3>
         <div class="cur-fields">
           <div class="cur-field">
-            <label class="cur-lbl" for="cur-code">Code</label>
+            <label class="cur-lbl" for="cur-code" i18n="@@accounting.currencies.code.adac6937">Code</label>
             <input id="cur-code" class="cur-inp" [(ngModel)]="f.code" [disabled]="!!f.id"
-                   maxlength="3" placeholder="Ex. EUR" />
+                   maxlength="3" placeholder="Ex. EUR" i18n-placeholder="Ex. EUR" />
           </div>
           <div class="cur-field cur-grow">
-            <label class="cur-lbl" for="cur-label">Libellé</label>
+            <label class="cur-lbl" for="cur-label" i18n="@@accounting.currencies.libelle.f5485bba">Libellé</label>
             <input id="cur-label" class="cur-inp" [(ngModel)]="f.label" maxlength="60" />
           </div>
           <div class="cur-field">
-            <label class="cur-lbl" for="cur-decimals">Décimales</label>
+            <label class="cur-lbl" for="cur-decimals" i18n="@@accounting.currencies.decimales.ac27f79a">Décimales</label>
             <select id="cur-decimals" class="cur-inp" [(ngModel)]="f.decimalPlaces">
               @for (d of decimalOptions; track d) { <option [ngValue]="d">{{ d }}</option> }
             </select>
           </div>
           <div class="cur-field">
-            <label class="cur-lbl" for="cur-periodicity">Période</label>
+            <label class="cur-lbl" for="cur-periodicity" i18n="@@accounting.currencies.periode.de2110b7">Période</label>
             <select id="cur-periodicity" class="cur-inp" [(ngModel)]="f.ratePeriodicity">
-              <option [ngValue]="1">Mensuelle</option>
-              <option [ngValue]="0">Fixe (annuelle)</option>
+              <option [ngValue]="1" i18n="@@accounting.currencies.mensuelle.15af1be3">Mensuelle</option>
+              <option [ngValue]="0" i18n="@@accounting.currencies.fixe.annuelle.dc8817b4">Fixe (annuelle)</option>
             </select>
           </div>
           <div class="cur-form-actions">
-            <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()">Annuler</button>
+            <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()" i18n="@@accounting.currencies.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary" (click)="save()"
                     [disabled]="saving() || !f.code.trim() || !f.label.trim()">
               {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
@@ -100,12 +100,12 @@ const MAX_FISCAL_YEAR = 2100;
                styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Code</th>
-            <th scope="col">Libellé</th>
-            <th scope="col">Configuration</th>
-            <th scope="col">Taux de change</th>
-            <th scope="col">Actif</th>
-            <th scope="col">Actions</th>
+            <th scope="col" i18n="@@accounting.currencies.code.adac6937">Code</th>
+            <th scope="col" i18n="@@accounting.currencies.libelle.f5485bba">Libellé</th>
+            <th scope="col" i18n="@@accounting.currencies.configuration.75416485">Configuration</th>
+            <th scope="col" i18n="@@accounting.currencies.taux.de.change.d29fa782">Taux de change</th>
+            <th scope="col" i18n="@@accounting.currencies.actif.2eb75f84">Actif</th>
+            <th scope="col" i18n="@@accounting.currencies.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-c>
@@ -113,26 +113,26 @@ const MAX_FISCAL_YEAR = 2100;
             <td class="cur-mono">{{ c.code }}</td>
             <td>
               {{ c.label }}
-              @if (c.isFunctional) { <span class="cur-badge cur-badge--functional">Devise de tenue</span> }
+              @if (c.isFunctional) { <span class="cur-badge cur-badge--functional" i18n="@@accounting.currencies.devise.de.tenue.184b32cb">Devise de tenue</span> }
             </td>
             <td>
               @if (c.isFunctional) {
-                <span class="cur-muted">—</span>
+                <span class="cur-muted" i18n="@@accounting.currencies.text.1b93795b">—</span>
               } @else if (c.ratePeriodicity === 1) {
-                <span class="cur-badge">Mensuelle</span>
+                <span class="cur-badge" i18n="@@accounting.currencies.mensuelle.15af1be3">Mensuelle</span>
               } @else {
-                <span class="cur-badge">Fixe</span>
+                <span class="cur-badge" i18n="@@accounting.currencies.fixe.95d72643">Fixe</span>
               }
             </td>
             <td>
               @if (c.isFunctional) {
-                <span class="cur-muted">—</span>
+                <span class="cur-muted" i18n="@@accounting.currencies.text.1b93795b">—</span>
               } @else if (c.configuredRateCount === 0) {
-                <span class="cur-badge cur-badge--danger">Non configuré</span>
+                <span class="cur-badge cur-badge--danger" i18n="@@accounting.currencies.non.configure.309abde3">Non configuré</span>
               } @else if (c.configuredRateCount < c.expectedRateCount) {
                 <span class="cur-badge cur-badge--warn">{{ c.configuredRateCount }} / {{ c.expectedRateCount }}</span>
               } @else {
-                <span class="cur-badge cur-badge--ok">Complet</span>
+                <span class="cur-badge cur-badge--ok" i18n="@@accounting.currencies.complet.26275ebd">Complet</span>
               }
             </td>
             <td>{{ c.isActive ? 'Oui' : 'Non' }}</td>
@@ -158,7 +158,7 @@ const MAX_FISCAL_YEAR = 2100;
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="6" class="cur-empty">Aucune devise.</td></tr>
+          <tr><td colspan="6" class="cur-empty" i18n="@@accounting.currencies.aucune.devise.f24f39b3">Aucune devise.</td></tr>
         </ng-template>
       </p-table>
     </div>

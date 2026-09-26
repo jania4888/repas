@@ -76,7 +76,7 @@ import { catchError } from 'rxjs/operators';
                     [ngModelOptions]="{ standalone: true }"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Lot"
+                    placeholder="Lot" i18n-placeholder="Lot"
                     [filter]="true"
                     filterBy="label"
                     filterPlaceholder="Rechercher un lot…"
@@ -97,14 +97,12 @@ import { catchError } from 'rxjs/operators';
                     [maxFractionDigits]="3"
                     (ngModelChange)="onExitLotQtyChange(alloc, ai)">
                   </p-inputNumber>
-                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer">
+                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="Retirer">
                     <i class="pi pi-times"></i>
                   </button>
                 </div>
               }
-              <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()">
-                Ajouter un lot
-              </app-button>
+              <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.lot.5e4bc959">Ajouter un lot</app-button>
             } @else if (lotsLoaded()) {
               <span class="alloc-empty">
                 @if (excludedExpiredCount() > 0) {
@@ -117,14 +115,14 @@ import { catchError } from 'rxjs/operators';
           } @else {
             @for (alloc of allocations; track $index; let ai = $index) {
               <div class="alloc-row alloc-row--entry">
-                <input pInputText class="alloc-field-lot" placeholder="N° lot" [(ngModel)]="alloc.lotNumber" [ngModelOptions]="{ standalone: true }" />
+                <input pInputText class="alloc-field-lot" placeholder="N° lot" i18n-placeholder="N° lot" [(ngModel)]="alloc.lotNumber" [ngModelOptions]="{ standalone: true }" />
                 <p-datepicker
                   styleClass="alloc-field-dluo"
                   class="alloc-field-dluo"
                   [(ngModel)]="alloc.expiryDate"
                   [ngModelOptions]="{ standalone: true }"
                   dateFormat="dd/mm/yy"
-                  placeholder="DLUO"
+                  placeholder="DLUO" i18n-placeholder="DLUO"
                   [showIcon]="true"
                   appendTo="body">
                 </p-datepicker>
@@ -138,14 +136,12 @@ import { catchError } from 'rxjs/operators';
                   [minFractionDigits]="0"
                   [maxFractionDigits]="3">
                 </p-inputNumber>
-                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer">
+                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="Retirer">
                   <i class="pi pi-times"></i>
                 </button>
               </div>
             }
-            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()">
-              Ajouter un lot
-            </app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.lot.5e4bc959">Ajouter un lot</app-button>
           }
         }
 
@@ -162,7 +158,7 @@ import { catchError } from 'rxjs/operators';
                     [ngModelOptions]="{ standalone: true }"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="N° série"
+                    placeholder="N° série" i18n-placeholder="N° série"
                     [filter]="true"
                     filterBy="label"
                     filterPlaceholder="Rechercher un n° de série…"
@@ -170,28 +166,24 @@ import { catchError } from 'rxjs/operators';
                     appendTo="body"
                     (onChange)="onSerialPicked(alloc, $event.value)">
                   </p-select>
-                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer">
+                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="Retirer">
                     <i class="pi pi-times"></i>
                   </button>
                 </div>
               }
             } @else if (serialsLoaded()) {
-              <span class="alloc-empty">
-                Aucun numéro de série disponible dans cet entrepôt.
-              </span>
+              <span class="alloc-empty" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.aucun.numero.de.serie.disponible.dans.cet.entrep.62ba2244">Aucun numéro de série disponible dans cet entrepôt.</span>
             }
           } @else {
             @for (alloc of allocations; track $index; let ai = $index) {
               <div class="alloc-row alloc-row--serial">
-                <input pInputText class="alloc-field-lot" placeholder="N° série" [(ngModel)]="alloc.serialNumber" [ngModelOptions]="{ standalone: true }" />
-                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer">
+                <input pInputText class="alloc-field-lot" placeholder="N° série" i18n-placeholder="N° série" [(ngModel)]="alloc.serialNumber" [ngModelOptions]="{ standalone: true }" />
+                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="Retirer">
                   <i class="pi pi-times"></i>
                 </button>
               </div>
             }
-            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addSerialRow()">
-              Ajouter un n° de série
-            </app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addSerialRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.n.de.serie.e0aad4b5">Ajouter un n° de série</app-button>
           }
         }
 

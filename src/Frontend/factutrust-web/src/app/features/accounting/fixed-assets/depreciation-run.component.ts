@@ -33,19 +33,17 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
   ],
   template: `
     <app-page-header
-      title="Dotations immobilisations"
+      title="Dotations immobilisations" i18n-title="Dotations immobilisations"
       subtitle="Comptabiliser les amortissements de l'exercice (écritures 681 / 281 — journal JIM)" />
 
     <app-accounting-correction-banner />
 
     <div class="card">
-      <p class="hint">
-        Le tableau d'amortissement est généré automatiquement à la mise en service de chaque actif.
-        Si une dotation attendue n'apparaît pas, ouvrez la fiche de l'actif et générez son tableau.
-      </p>
+      <p class="hint" i18n="@@accounting.fixed-assets.le.tableau.d.amortissement.est.genere.automatiqu.e3b052ae">Le tableau d'amortissement est généré automatiquement à la mise en service de chaque actif.
+        Si une dotation attendue n'apparaît pas, ouvrez la fiche de l'actif et générez son tableau.</p>
       <app-accounting-status-banner
         *ngIf="isOffset()"
-        title="Exercice décalé"
+        title="Exercice décalé" i18n-title="Exercice décalé"
         [message]="offsetHint"
         variant="warning" />
       <label>
@@ -53,26 +51,18 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
         <select class="accounting-filter-input" [(ngModel)]="fiscalYear" [disabled]="loading()">
           <option *ngFor="let opt of fiscalYearOptions()" [ngValue]="opt.key">{{ opt.label }}</option>
         </select>
-        <span class="hint" *ngIf="!settingsLoaded()">Chargement des exercices…</span>
+        <span class="hint" *ngIf="!settingsLoaded()" i18n="@@accounting.fixed-assets.chargement.des.exercices.ade10a7b">Chargement des exercices…</span>
       </label>
       <div class="actions">
-        <app-button variant="primary" type="button" (click)="run()" [disabled]="loading()">
-          Comptabiliser les dotations
-        </app-button>
-        <app-button variant="outline" type="button" icon="pi-download" (click)="exportReport()" [disabled]="loading()">
-          Export Excel dotations
-        </app-button>
-        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets">Retour au registre</app-button>
+        <app-button variant="primary" type="button" (click)="run()" [disabled]="loading()" i18n="@@accounting.fixed-assets.comptabiliser.les.dotations.e264ad6f">Comptabiliser les dotations</app-button>
+        <app-button variant="outline" type="button" icon="pi-download" (click)="exportReport()" [disabled]="loading()" i18n="@@accounting.fixed-assets.export.excel.dotations.b3950169">Export Excel dotations</app-button>
+        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets" i18n="@@accounting.fixed-assets.retour.au.registre.aa646cbf">Retour au registre</app-button>
         <app-button
           variant="secondary"
           type="button"
           routerLink="/accounting/fixed-assets/amortization-table"
-          [queryParams]="{ refresh: 1 }">
-          Voir tableau amortissements
-        </app-button>
-        <app-button variant="secondary" type="button" icon="pi pi-cog" routerLink="/accounting/fixed-assets/settings">
-          Paramètres d'exercice
-        </app-button>
+          [queryParams]="{ refresh: 1 }" i18n="@@accounting.fixed-assets.voir.tableau.amortissements.52f1668b">Voir tableau amortissements</app-button>
+        <app-button variant="secondary" type="button" icon="pi pi-cog" routerLink="/accounting/fixed-assets/settings" i18n="@@accounting.fixed-assets.parametres.d.exercice.7fa4b6fc">Paramètres d'exercice</app-button>
       </div>
     </div>
 
@@ -82,9 +72,9 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
       <h3>Résultat — exercice {{ resultLabel() }}</h3>
       <p *ngIf="rerunMessage() as msg"><strong>{{ msg }}</strong></p>
       <ng-container *ngIf="!rerunMessage()">
-        <p><strong>Dotations comptabilisées :</strong> {{ result()!.postedCount }}</p>
-        <p><strong>Ignorées / en erreur :</strong> {{ result()!.skippedCount }}</p>
-        <p><strong>Total dotations :</strong> {{ result()!.totalDepreciationAmount | accountingAmount }}</p>
+        <p><strong i18n="@@accounting.fixed-assets.dotations.comptabilisees.c94eb1ab">Dotations comptabilisées :</strong> {{ result()!.postedCount }}</p>
+        <p><strong i18n="@@accounting.fixed-assets.ignorees.en.erreur.ced67bdb">Ignorées / en erreur :</strong> {{ result()!.skippedCount }}</p>
+        <p><strong i18n="@@accounting.fixed-assets.total.dotations.91dee0b7">Total dotations :</strong> {{ result()!.totalDepreciationAmount | accountingAmount }}</p>
         <ul *ngIf="result()!.errors?.length">
           <li *ngFor="let e of result()!.errors">{{ e }}</li>
         </ul>

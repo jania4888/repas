@@ -30,32 +30,28 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Emprunts"
+      title="Emprunts" i18n-title="Emprunts"
       subtitle="Registre des emprunts et tableaux d'amortissement" />
 
     <div class="ln-notice" role="note">
       <i class="pi pi-info-circle" aria-hidden="true"></i>
-      <span>Échéanciers <strong>indicatifs</strong> : les échéances ne sont pas comptabilisées automatiquement.</span>
+      <span>Échéanciers <strong i18n="@@accounting.loans.indicatifs.5a70502c">indicatifs</strong> : les échéances ne sont pas comptabilisées automatiquement.</span>
     </div>
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Recherche d'emprunt">
         <div accountingFilterFields class="ln-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="ln-search">Recherche</label>
+            <label class="accounting-filter-label" for="ln-search" i18n="@@accounting.loans.recherche.787b5492">Recherche</label>
             <input id="ln-search" type="text" [(ngModel)]="search" class="accounting-filter-input"
-              placeholder="Numéro, libellé, prêteur" />
+              placeholder="Numéro, libellé, prêteur" i18n-placeholder="Numéro, libellé, prêteur" />
           </div>
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Actualiser le registre des emprunts">
-            Actualiser
-          </app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Actualiser le registre des emprunts" i18n="@@accounting.loans.actualiser.9d3b2a7d">Actualiser</app-button>
           <app-button variant="primary" icon="pi pi-plus" type="button"
-            (click)="showForm.set(!showForm())" [disabled]="busy()" ariaLabel="Créer un emprunt">
-            Nouvel emprunt
-          </app-button>
+            (click)="showForm.set(!showForm())" [disabled]="busy()" ariaLabel="Créer un emprunt" i18n="@@accounting.loans.nouvel.emprunt.9ef02dcf">Nouvel emprunt</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -68,65 +64,63 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
     @if (showForm()) {
       <div class="card ln-form-card">
-        <h2 class="ln-form-title">Nouvel emprunt</h2>
+        <h2 class="ln-form-title" i18n="@@accounting.loans.nouvel.emprunt.9ef02dcf">Nouvel emprunt</h2>
         <div class="ln-form-grid">
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-label">Libellé</label>
+            <label class="accounting-filter-label" for="ln-label" i18n="@@accounting.loans.libelle.f5485bba">Libellé</label>
             <input id="ln-label" type="text" class="accounting-filter-input" [(ngModel)]="form.label" [disabled]="busy()" />
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-lender">Prêteur</label>
+            <label class="accounting-filter-label" for="ln-lender" i18n="@@accounting.loans.preteur.3b469653">Prêteur</label>
             <input id="ln-lender" type="text" class="accounting-filter-input" [(ngModel)]="form.lenderName" [disabled]="busy()" />
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-principal">Capital emprunté</label>
+            <label class="accounting-filter-label" for="ln-principal" i18n="@@accounting.loans.capital.emprunte.a40c562c">Capital emprunté</label>
             <input id="ln-principal" type="number" min="0" step="0.001" class="accounting-filter-input" [(ngModel)]="form.principal" [disabled]="busy()" />
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-rate">Taux annuel (%)</label>
+            <label class="accounting-filter-label" for="ln-rate" i18n="@@accounting.loans.taux.annuel.9de94a3b">Taux annuel (%)</label>
             <input id="ln-rate" type="number" min="0" max="100" step="0.01" class="accounting-filter-input" [(ngModel)]="form.annualRatePercent" [disabled]="busy()" />
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-start">Date de départ</label>
+            <label class="accounting-filter-label" for="ln-start" i18n="@@accounting.loans.date.de.depart.27579c25">Date de départ</label>
             <input id="ln-start" type="date" class="accounting-filter-input" [(ngModel)]="form.startDate" [disabled]="busy()" />
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-count">Nombre d'échéances</label>
+            <label class="accounting-filter-label" for="ln-count" i18n="@@accounting.loans.nombre.d.echeances.a343d39c">Nombre d'échéances</label>
             <input id="ln-count" type="number" min="1" max="600" class="accounting-filter-input" [(ngModel)]="form.installmentCount" [disabled]="busy()" />
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-periodicity">Périodicité</label>
+            <label class="accounting-filter-label" for="ln-periodicity" i18n="@@accounting.loans.periodicite.0eb1b4d4">Périodicité</label>
             <select id="ln-periodicity" class="accounting-filter-input" [(ngModel)]="form.periodicity" [disabled]="busy()">
-              <option [ngValue]="0">Mensuelle</option>
-              <option [ngValue]="1">Trimestrielle</option>
-              <option [ngValue]="2">Semestrielle</option>
-              <option [ngValue]="3">Annuelle</option>
+              <option [ngValue]="0" i18n="@@accounting.loans.mensuelle.15af1be3">Mensuelle</option>
+              <option [ngValue]="1" i18n="@@accounting.loans.trimestrielle.9379d384">Trimestrielle</option>
+              <option [ngValue]="2" i18n="@@accounting.loans.semestrielle.367a7ab5">Semestrielle</option>
+              <option [ngValue]="3" i18n="@@accounting.loans.annuelle.0e25612c">Annuelle</option>
             </select>
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-method">Amortissement</label>
+            <label class="accounting-filter-label" for="ln-method" i18n="@@accounting.loans.amortissement.403d7802">Amortissement</label>
             <select id="ln-method" class="accounting-filter-input" [(ngModel)]="form.method" [disabled]="busy()">
-              <option [ngValue]="0">Annuité constante</option>
-              <option [ngValue]="1">Amortissement constant</option>
+              <option [ngValue]="0" i18n="@@accounting.loans.annuite.constante.c6559110">Annuité constante</option>
+              <option [ngValue]="1" i18n="@@accounting.loans.amortissement.constant.ccbefc00">Amortissement constant</option>
             </select>
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-acc-loan">Compte emprunt</label>
+            <label class="accounting-filter-label" for="ln-acc-loan" i18n="@@accounting.loans.compte.emprunt.8feb2c85">Compte emprunt</label>
             <input id="ln-acc-loan" type="text" class="accounting-filter-input" [(ngModel)]="form.loanAccountNumber" [disabled]="busy()" />
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-acc-int">Compte intérêts</label>
+            <label class="accounting-filter-label" for="ln-acc-int" i18n="@@accounting.loans.compte.interets.21d9f624">Compte intérêts</label>
             <input id="ln-acc-int" type="text" class="accounting-filter-input" [(ngModel)]="form.interestAccountNumber" [disabled]="busy()" />
           </div>
           <div class="ln-field">
-            <label class="accounting-filter-label" for="ln-acc-bank">Compte trésorerie</label>
+            <label class="accounting-filter-label" for="ln-acc-bank" i18n="@@accounting.loans.compte.tresorerie.2cc84a82">Compte trésorerie</label>
             <input id="ln-acc-bank" type="text" class="accounting-filter-input" [(ngModel)]="form.bankAccountNumber" [disabled]="busy()" />
           </div>
         </div>
         <div class="ln-form-actions">
-          <app-button variant="secondary" type="button" (click)="showForm.set(false)" [disabled]="busy()" ariaLabel="Annuler">
-            Annuler
-          </app-button>
+          <app-button variant="secondary" type="button" (click)="showForm.set(false)" [disabled]="busy()" ariaLabel="Annuler" i18n="@@accounting.loans.annuler.49ba3292">Annuler</app-button>
           <app-button variant="primary" icon="pi pi-check" type="button"
             (click)="create()" [disabled]="busy() || !canSubmit()" ariaLabel="Créer l'emprunt et générer l'échéancier">
             {{ creating() ? 'Création…' : "Créer et générer l'échéancier" }}
@@ -140,14 +134,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         styleClass="p-datatable-sm accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">N°</th>
-            <th scope="col">Libellé</th>
-            <th scope="col">Prêteur</th>
-            <th scope="col" class="ln-num">Capital</th>
-            <th scope="col" class="ln-num">Taux</th>
-            <th scope="col" class="ln-num">Échéances</th>
-            <th scope="col" class="ln-num">Coût du crédit</th>
-            <th scope="col">Statut</th>
+            <th scope="col" i18n="@@accounting.loans.n.754e6095">N°</th>
+            <th scope="col" i18n="@@accounting.loans.libelle.f5485bba">Libellé</th>
+            <th scope="col" i18n="@@accounting.loans.preteur.3b469653">Prêteur</th>
+            <th scope="col" class="ln-num" i18n="@@accounting.loans.capital.2bd8d265">Capital</th>
+            <th scope="col" class="ln-num" i18n="@@accounting.loans.taux.18bc95b8">Taux</th>
+            <th scope="col" class="ln-num" i18n="@@accounting.loans.echeances.c2079408">Échéances</th>
+            <th scope="col" class="ln-num" i18n="@@accounting.loans.cout.du.credit.2f8c4b43">Coût du crédit</th>
+            <th scope="col" i18n="@@accounting.loans.statut.659499f3">Statut</th>
             <th scope="col"></th>
           </tr>
         </ng-template>
@@ -167,7 +161,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="9" style="text-align:center;padding:2rem">Aucun emprunt enregistré.</td></tr>
+          <tr><td colspan="9" style="text-align:center;padding:2rem" i18n="@@accounting.loans.aucun.emprunt.enregistre.59e3f20f">Aucun emprunt enregistré.</td></tr>
         </ng-template>
       </p-table>
     </div>

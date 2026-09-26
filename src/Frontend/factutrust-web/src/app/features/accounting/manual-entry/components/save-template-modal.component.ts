@@ -19,8 +19,8 @@ export interface SaveTemplatePayload {
       <div class="stm-backdrop" (click)="onBackdropClick($event)" role="presentation">
         <div class="stm-modal" role="dialog" aria-modal="true" aria-labelledby="stm-title" (click)="$event.stopPropagation()">
           <header class="stm-header">
-            <h2 id="stm-title" class="stm-title">Sauvegarder comme modèle</h2>
-            <button type="button" class="stm-close" (click)="onClose()" aria-label="Fermer">✕</button>
+            <h2 id="stm-title" class="stm-title" i18n="@@accounting.manual-entry.sauvegarder.comme.modele.80b765f8">Sauvegarder comme modèle</h2>
+            <button type="button" class="stm-close" (click)="onClose()" aria-label="Fermer" i18n-aria-label="Fermer" i18n="@@accounting.manual-entry.text.0951b9a0">✕</button>
           </header>
 
           <div class="stm-body">
@@ -30,37 +30,37 @@ export interface SaveTemplatePayload {
             </p>
 
             <div class="form-field">
-              <label class="field-label" for="stm-name">Nom du modèle <span class="stm-req">*</span></label>
+              <label class="field-label" for="stm-name">Nom du modèle <span class="stm-req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
               <input id="stm-name" type="text" class="stm-input"
                      [ngModel]="name()" (ngModelChange)="name.set($event)"
-                     placeholder="Ex: Paiement client par virement"
+                     placeholder="Ex: Paiement client par virement" i18n-placeholder="Ex: Paiement client par virement"
                      maxlength="200" required />
               @if (showValidation() && !nameTrimmed()) {
-                <p class="stm-error">Le nom est obligatoire.</p>
+                <p class="stm-error" i18n="@@accounting.manual-entry.le.nom.est.obligatoire.c4331d4d">Le nom est obligatoire.</p>
               }
             </div>
 
             <div class="form-field">
-              <label class="field-label" for="stm-desc">Description (optionnelle)</label>
+              <label class="field-label" for="stm-desc" i18n="@@accounting.manual-entry.description.optionnelle.27856f3e">Description (optionnelle)</label>
               <textarea id="stm-desc" class="stm-input stm-textarea"
                         [ngModel]="description()" (ngModelChange)="description.set($event)"
                         rows="2"
                         maxlength="1000"
-                        placeholder="À quoi sert ce modèle ?"></textarea>
+                        placeholder="À quoi sert ce modèle ?" i18n-placeholder="À quoi sert ce modèle ?"></textarea>
             </div>
 
             <div class="form-field stm-row">
               <div style="flex:0 0 8rem">
-                <label class="field-label" for="stm-journal">Journal</label>
+                <label class="field-label" for="stm-journal" i18n="@@accounting.manual-entry.journal.57d7f743">Journal</label>
                 <input id="stm-journal" type="text" class="stm-input stm-input-readonly" readonly
                        [value]="journalCode()" />
               </div>
               <div style="flex:1 1 200px">
-                <label class="field-label" for="stm-label">Libellé par défaut (optionnel)</label>
+                <label class="field-label" for="stm-label" i18n="@@accounting.manual-entry.libelle.par.defaut.optionnel.5cf9a2e5">Libellé par défaut (optionnel)</label>
                 <input id="stm-label" type="text" class="stm-input"
                        [ngModel]="labelTemplate()" (ngModelChange)="labelTemplate.set($event)"
                        maxlength="500"
-                       placeholder="Pré-remplit le libellé à l'application" />
+                       placeholder="Pré-remplit le libellé à l'application" i18n-placeholder="Pré-remplit le libellé à l'application" />
               </div>
             </div>
 
@@ -70,15 +70,13 @@ export interface SaveTemplatePayload {
                        [ngModel]="keepAmounts()" (ngModelChange)="keepAmounts.set($event)" />
                 Conserver les montants actuels comme valeurs par défaut du modèle
               </label>
-              <p class="stm-hint">
-                Décoché : seuls les comptes et libellés sont sauvegardés (montants vides à l'application).
-                Coché : les montants actuels seront pré-remplis.
-              </p>
+              <p class="stm-hint" i18n="@@accounting.manual-entry.decoche.seuls.les.comptes.et.libelles.sont.sauve.3d8cd4e8">Décoché : seuls les comptes et libellés sont sauvegardés (montants vides à l'application).
+                Coché : les montants actuels seront pré-remplis.</p>
             </div>
           </div>
 
           <footer class="stm-footer">
-            <button type="button" class="btn btn-outline-secondary" (click)="onClose()">Annuler</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="onClose()" i18n="@@accounting.manual-entry.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary"
                     (click)="onSave()"
                     [disabled]="saving() || !nameTrimmed()">

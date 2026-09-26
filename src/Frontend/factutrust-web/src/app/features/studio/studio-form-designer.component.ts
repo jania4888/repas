@@ -42,7 +42,7 @@ type DesignerRow =
           <div studioEditor>
             <div class="studio-add-bar">
               <p-select [options]="availableFields()" [(ngModel)]="fieldToAdd" optionLabel="label" optionValue="id"
-                placeholder="Ajouter un champ" [showClear]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="studio-add-dd"></p-select>
+                placeholder="Ajouter un champ" i18n-placeholder="Ajouter un champ" [showClear]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="studio-add-dd"></p-select>
               <button pButton type="button" icon="fa-solid fa-plus" label="Champ" [disabled]="!fieldToAdd" (click)="addField()"></button>
               <button pButton type="button" icon="fa-solid fa-heading" label="Section" class="p-button-outlined" (click)="addSection()"></button>
             </div>
@@ -53,7 +53,7 @@ type DesignerRow =
                   <i class="fa-solid fa-grip-vertical studio-drag-handle" cdkDragHandle></i>
                   @if (r.kind === 'section') {
                     <i class="fa-solid fa-heading"></i>
-                    <input pInputText [(ngModel)]="r.title" placeholder="Titre de section" class="studio-grow" />
+                    <input pInputText [(ngModel)]="r.title" placeholder="Titre de section" i18n-placeholder="Titre de section" class="studio-grow" />
                   }
                   @if (r.kind === 'field') {
                     <code class="studio-cname">{{ r.field.key }}</code>
@@ -64,7 +64,7 @@ type DesignerRow =
                 </div>
               }
               @if (rows().length === 0) {
-                <p class="studio-hint">Aucun champ. Ajoutez des champs ci-dessus.</p>
+                <p class="studio-hint" i18n="@@studio.studio-form-designer.aucun.champ.ajoutez.des.champs.ci.dessus.5cb25489">Aucun champ. Ajoutez des champs ci-dessus.</p>
               }
             </div>
           </div>

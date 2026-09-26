@@ -44,37 +44,35 @@ interface ThirdPartyProfileForm {
     AccountingTableActionsComponent
   ],
   template: `
-    <app-page-header title="Plan tiers" subtitle="Répertoire comptable des clients et fournisseurs — codes auxiliaires, comptes collectifs et soldes" />
+    <app-page-header title="Plan tiers" i18n-title="Plan tiers" subtitle="Répertoire comptable des clients et fournisseurs — codes auxiliaires, comptes collectifs et soldes" />
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Recherche et filtres du plan tiers">
         <div accountingFilterFields class="tp-toolbar-fields">
           <div class="accounting-filter-field tp-grow">
-            <label class="accounting-filter-label" for="tp-search">Recherche</label>
+            <label class="accounting-filter-label" for="tp-search" i18n="@@accounting.third-parties.recherche.787b5492">Recherche</label>
             <input id="tp-search" [(ngModel)]="search" (keyup.enter)="load()" class="accounting-filter-input"
-              placeholder="Nom, e-mail ou code auxiliaire…" />
+              placeholder="Nom, e-mail ou code auxiliaire…" i18n-placeholder="Nom, e-mail ou code auxiliaire…" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="tp-kind">Type</label>
+            <label class="accounting-filter-label" for="tp-kind" i18n="@@accounting.third-parties.type.3deb7456">Type</label>
             <select id="tp-kind" [(ngModel)]="kind" class="accounting-filter-input">
-              <option [ngValue]="null">Tous</option>
-              <option [ngValue]="1">Clients</option>
-              <option [ngValue]="2">Fournisseurs</option>
+              <option [ngValue]="null" i18n="@@accounting.third-parties.tous.b97ae3b4">Tous</option>
+              <option [ngValue]="1" i18n="@@accounting.third-parties.clients.28e22fe3">Clients</option>
+              <option [ngValue]="2" i18n="@@accounting.third-parties.fournisseurs.06b6d88c">Fournisseurs</option>
             </select>
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="tp-inactive">Inactifs</label>
+            <label class="accounting-filter-label" for="tp-inactive" i18n="@@accounting.third-parties.inactifs.41c2d03e">Inactifs</label>
             <label class="tp-check">
               <input id="tp-inactive" type="checkbox" [(ngModel)]="includeInactive" />
-              <span>Inclure</span>
+              <span i18n="@@accounting.third-parties.inclure.eca2de59">Inclure</span>
             </label>
           </div>
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" type="button"
-            (click)="load()" [disabled]="loading()" ariaLabel="Actualiser le plan tiers">
-            Actualiser
-          </app-button>
+            (click)="load()" [disabled]="loading()" ariaLabel="Actualiser le plan tiers" i18n="@@accounting.third-parties.actualiser.9d3b2a7d">Actualiser</app-button>
           <app-button variant="primary" icon="pi pi-hashtag" iconPos="left" type="button"
             (click)="generateCodes()" [disabled]="loading() || generating()"
             ariaLabel="Générer les codes auxiliaires manquants">
@@ -97,33 +95,33 @@ interface ThirdPartyProfileForm {
         </h3>
         <div class="tp-fields">
           <div class="tp-field">
-            <label class="tp-lbl" for="tp-f-code">Code auxiliaire</label>
+            <label class="tp-lbl" for="tp-f-code" i18n="@@accounting.third-parties.code.auxiliaire.44949067">Code auxiliaire</label>
             <input id="tp-f-code" class="tp-inp tp-mono" [(ngModel)]="f.auxiliaryCode" maxlength="20"
               placeholder="Ex. {{ f.kind === 1 ? 'C0001' : 'F0001' }}" />
           </div>
           <div class="tp-field">
-            <label class="tp-lbl" for="tp-f-coll">Compte collectif</label>
+            <label class="tp-lbl" for="tp-f-coll" i18n="@@accounting.third-parties.compte.collectif.f1c7e97c">Compte collectif</label>
             <input id="tp-f-coll" class="tp-inp tp-mono" [(ngModel)]="f.collectiveAccountNumber" maxlength="20"
               placeholder="Ex. {{ f.kind === 1 ? '4111' : '4011' }}" />
           </div>
           <div class="tp-field">
-            <label class="tp-lbl" for="tp-f-term">Délai de règlement (j)</label>
+            <label class="tp-lbl" for="tp-f-term" i18n="@@accounting.third-parties.delai.de.reglement.j.db50115b">Délai de règlement (j)</label>
             <input id="tp-f-term" type="number" class="tp-inp tp-narrow" [(ngModel)]="f.paymentTermDays" min="0" max="365" />
           </div>
           <div class="tp-field tp-grow">
-            <label class="tp-lbl" for="tp-f-notes">Notes comptables</label>
+            <label class="tp-lbl" for="tp-f-notes" i18n="@@accounting.third-parties.notes.comptables.6ed06924">Notes comptables</label>
             <input id="tp-f-notes" class="tp-inp" [(ngModel)]="f.accountingNotes" maxlength="500"
-              placeholder="Observations internes (facultatif)" />
+              placeholder="Observations internes (facultatif)" i18n-placeholder="Observations internes (facultatif)" />
           </div>
           <div class="tp-form-actions">
-            <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()">Annuler</button>
+            <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()" i18n="@@accounting.third-parties.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary" (click)="save()"
               [disabled]="saving() || !f.auxiliaryCode.trim() || !f.collectiveAccountNumber.trim()">
               {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
             </button>
           </div>
         </div>
-        <p class="tp-help">Le code auxiliaire (lettres, chiffres, tirets — 20 max) est unique et alimente la colonne CompAuxNum du FEC. Le compte collectif est numérique (4111 clients / 4011 fournisseurs par défaut).</p>
+        <p class="tp-help" i18n="@@accounting.third-parties.le.code.auxiliaire.lettres.chiffres.tirets.20.ma.76cdfee3">Le code auxiliaire (lettres, chiffres, tirets — 20 max) est unique et alimente la colonne CompAuxNum du FEC. Le compte collectif est numérique (4111 clients / 4011 fournisseurs par défaut).</p>
       </div>
     }
 
@@ -133,15 +131,15 @@ interface ThirdPartyProfileForm {
       [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers">
       <ng-template pTemplate="header">
         <tr>
-          <th scope="col">Code aux.</th>
-          <th scope="col">Nom</th>
-          <th scope="col">Type</th>
-          <th scope="col" pTooltip="Compte collectif de rattachement" tooltipPosition="top">Collectif</th>
-          <th scope="col" class="text-right" pTooltip="Délai de règlement (jours)" tooltipPosition="top">Délai</th>
-          <th scope="col" class="text-right">Solde D</th>
-          <th scope="col" class="text-right">Solde C</th>
-          <th scope="col">Actif</th>
-          <th scope="col">Actions</th>
+          <th scope="col" i18n="@@accounting.third-parties.code.aux.2d39a431">Code aux.</th>
+          <th scope="col" i18n="@@accounting.third-parties.nom.7ff20370">Nom</th>
+          <th scope="col" i18n="@@accounting.third-parties.type.3deb7456">Type</th>
+          <th scope="col" pTooltip="Compte collectif de rattachement" tooltipPosition="top" i18n="@@accounting.third-parties.collectif.ba912701">Collectif</th>
+          <th scope="col" class="text-right" pTooltip="Délai de règlement (jours)" tooltipPosition="top" i18n="@@accounting.third-parties.delai.be9a9403">Délai</th>
+          <th scope="col" class="text-right" i18n="@@accounting.third-parties.solde.d.3f441081">Solde D</th>
+          <th scope="col" class="text-right" i18n="@@accounting.third-parties.solde.c.81de0678">Solde C</th>
+          <th scope="col" i18n="@@accounting.third-parties.actif.2eb75f84">Actif</th>
+          <th scope="col" i18n="@@accounting.third-parties.actions.c3cd636a">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
@@ -175,7 +173,7 @@ interface ThirdPartyProfileForm {
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td colspan="9" class="tp-empty">Aucun tiers ne correspond aux filtres.</td></tr>
+        <tr><td colspan="9" class="tp-empty" i18n="@@accounting.third-parties.aucun.tiers.ne.correspond.aux.filtres.66ad4318">Aucun tiers ne correspond aux filtres.</td></tr>
       </ng-template>
     </p-table>
   `,

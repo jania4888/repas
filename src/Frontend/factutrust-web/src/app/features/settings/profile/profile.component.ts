@@ -34,7 +34,7 @@ import { AuthService } from '@core/services/auth.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Mon profil" 
+      title="Mon profil" i18n-title="Mon profil" 
       subtitle="Gérez vos informations personnelles">
       <p-button 
         label="Retour" 
@@ -65,7 +65,7 @@ import { AuthService } from '@core/services/auth.service';
         <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
           <div class="form-row">
             <div class="form-group">
-              <label for="firstName">Prénom</label>
+              <label for="firstName" i18n="@@settings.profile.prenom.e4387ade">Prénom</label>
               <input 
                 pInputText 
                 id="firstName" 
@@ -74,7 +74,7 @@ import { AuthService } from '@core/services/auth.service';
             </div>
 
             <div class="form-group">
-              <label for="lastName">Nom</label>
+              <label for="lastName" i18n="@@settings.profile.nom.7ff20370">Nom</label>
               <input 
                 pInputText 
                 id="lastName" 
@@ -84,7 +84,7 @@ import { AuthService } from '@core/services/auth.service';
           </div>
 
           <div class="form-group">
-            <label for="email">Adresse email</label>
+            <label for="email" i18n="@@settings.profile.adresse.email.bdf1cc95">Adresse email</label>
             <input 
               pInputText 
               id="email" 
@@ -109,7 +109,7 @@ import { AuthService } from '@core/services/auth.service';
       <p-card header="Sécurité" styleClass="security-card">
         <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
           <div class="form-group">
-            <label for="currentPassword">Mot de passe actuel</label>
+            <label for="currentPassword" i18n="@@settings.profile.mot.de.passe.actuel.f9242976">Mot de passe actuel</label>
             <p-password 
               id="currentPassword" 
               formControlName="currentPassword"
@@ -121,7 +121,7 @@ import { AuthService } from '@core/services/auth.service';
           </div>
 
           <div class="form-group">
-            <label for="newPassword">Nouveau mot de passe</label>
+            <label for="newPassword" i18n="@@settings.profile.nouveau.mot.de.passe.3a713829">Nouveau mot de passe</label>
             <p-password 
               id="newPassword" 
               formControlName="newPassword"
@@ -133,11 +133,11 @@ import { AuthService } from '@core/services/auth.service';
               mediumLabel="Moyen"
               strongLabel="Fort">
             </p-password>
-            <small class="form-hint">Minimum 8 caractères avec majuscule et chiffre</small>
+            <small class="form-hint" i18n="@@settings.profile.minimum.8.caracteres.avec.majuscule.et.chiffre.3751ab62">Minimum 8 caractères avec majuscule et chiffre</small>
           </div>
 
           <div class="form-group">
-            <label for="confirmPassword">Confirmer le mot de passe</label>
+            <label for="confirmPassword" i18n="@@settings.profile.confirmer.le.mot.de.passe.88362d0d">Confirmer le mot de passe</label>
             <p-password 
               id="confirmPassword" 
               formControlName="confirmPassword"
@@ -163,8 +163,8 @@ import { AuthService } from '@core/services/auth.service';
 
         <div class="two-factor-section">
           <div class="two-factor-info">
-            <h4>Authentification à deux facteurs</h4>
-            <p>Ajoutez une couche de sécurité supplémentaire à votre compte</p>
+            <h4 i18n="@@settings.profile.authentification.a.deux.facteurs.96e8851a">Authentification à deux facteurs</h4>
+            <p i18n="@@settings.profile.ajoutez.une.couche.de.securite.supplementaire.a..d93ba706">Ajoutez une couche de sécurité supplémentaire à votre compte</p>
           </div>
           <p-button 
             [label]="user()?.twoFactorEnabled ? 'Désactiver' : 'Activer'"

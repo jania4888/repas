@@ -13,18 +13,18 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <section class="recurring-tab card">
       @if (loading()) {
-        <p>Chargement…</p>
+        <p i18n="@@accounting.manual-entry.chargement.01cba1df">Chargement…</p>
       } @else if (templates().length === 0) {
-        <p class="empty">Aucune écriture récurrente configurée.</p>
-        <a routerLink="/accounting/entry-templates" class="link">Configurer des modèles récurrents →</a>
+        <p class="empty" i18n="@@accounting.manual-entry.aucune.ecriture.recurrente.configuree.e0d67d31">Aucune écriture récurrente configurée.</p>
+        <a routerLink="/accounting/entry-templates" class="link" i18n="@@accounting.manual-entry.configurer.des.modeles.recurrents.4f5d9724">Configurer des modèles récurrents →</a>
       } @else {
         <table class="recurring-table">
           <thead>
             <tr>
-              <th>Modèle</th>
-              <th>Fréquence</th>
-              <th>Prochaine exécution</th>
-              <th>Actions</th>
+              <th i18n="@@accounting.manual-entry.modele.9853170f">Modèle</th>
+              <th i18n="@@accounting.manual-entry.frequence.bafbfba7">Fréquence</th>
+              <th i18n="@@accounting.manual-entry.prochaine.execution.7969ae74">Prochaine exécution</th>
+              <th i18n="@@accounting.manual-entry.actions.c3cd636a">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -45,7 +45,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </tbody>
         </table>
       }
-      <a routerLink="/accounting/entry-templates" class="link">Gérer les modèles récurrents →</a>
+      <a routerLink="/accounting/entry-templates" class="link" i18n="@@accounting.manual-entry.gerer.les.modeles.recurrents.36d0225c">Gérer les modèles récurrents →</a>
     </section>
   `,
   styles: `

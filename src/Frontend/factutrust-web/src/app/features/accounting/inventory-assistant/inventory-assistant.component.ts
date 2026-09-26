@@ -24,12 +24,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Assistant d'écritures d'inventaire" subtitle="Régularisations de fin d'exercice (CCA/PCA, provisions…)" />
+    <app-page-header title="Assistant d'écritures d'inventaire" i18n-title="Assistant d'écritures d'inventaire" subtitle="Régularisations de fin d'exercice (CCA/PCA, provisions…)" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card inv-kinds-card">
-      <h3 class="inv-section-title">Type de régularisation</h3>
+      <h3 class="inv-section-title" i18n="@@accounting.inventory-assistant.type.de.regularisation.6318cebc">Type de régularisation</h3>
       <div class="inv-kinds">
         @for (k of kinds(); track k.kind) {
           <button
@@ -39,7 +39,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             (click)="selectKind(k)">
             <span class="inv-kind-label">{{ k.label }}</span>
             <span class="inv-kind-accounts">{{ k.defaultDebitAccount }} → {{ k.defaultCreditAccount }}</span>
-            @if (k.autoReverse) { <span class="inv-kind-tag">extournée</span> }
+            @if (k.autoReverse) { <span class="inv-kind-tag" i18n="@@accounting.inventory-assistant.extournee.97c4dbc5">extournée</span> }
           </button>
         }
       </div>
@@ -50,23 +50,23 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <p class="inv-hint">{{ k.hint }}</p>
         <div class="inv-fields">
           <div class="inv-field">
-            <label class="field-label" for="inv-date">Date de l'écriture</label>
+            <label class="field-label" for="inv-date" i18n="@@accounting.inventory-assistant.date.de.l.ecriture.509ff82c">Date de l'écriture</label>
             <input id="inv-date" type="date" class="inv-input" [(ngModel)]="form.entryDate" />
           </div>
           <div class="inv-field">
-            <label class="field-label" for="inv-debit">Compte débit</label>
-            <input id="inv-debit" class="inv-input" [(ngModel)]="form.debitAccount" list="inv-accounts" placeholder="Compte à débiter" />
+            <label class="field-label" for="inv-debit" i18n="@@accounting.inventory-assistant.compte.debit.dadbd7e8">Compte débit</label>
+            <input id="inv-debit" class="inv-input" [(ngModel)]="form.debitAccount" list="inv-accounts" placeholder="Compte à débiter" i18n-placeholder="Compte à débiter" />
           </div>
           <div class="inv-field">
-            <label class="field-label" for="inv-credit">Compte crédit</label>
-            <input id="inv-credit" class="inv-input" [(ngModel)]="form.creditAccount" list="inv-accounts" placeholder="Compte à créditer" />
+            <label class="field-label" for="inv-credit" i18n="@@accounting.inventory-assistant.compte.credit.3aec4855">Compte crédit</label>
+            <input id="inv-credit" class="inv-input" [(ngModel)]="form.creditAccount" list="inv-accounts" placeholder="Compte à créditer" i18n-placeholder="Compte à créditer" />
           </div>
           <div class="inv-field">
-            <label class="field-label" for="inv-amount">Montant</label>
+            <label class="field-label" for="inv-amount" i18n="@@accounting.inventory-assistant.montant.4adcd9fc">Montant</label>
             <input id="inv-amount" type="number" min="0" step="0.001" class="inv-input" [(ngModel)]="form.amount" />
           </div>
           <div class="inv-field inv-field-grow">
-            <label class="field-label" for="inv-label">Libellé</label>
+            <label class="field-label" for="inv-label" i18n="@@accounting.inventory-assistant.libelle.f5485bba">Libellé</label>
             <input id="inv-label" class="inv-input" [(ngModel)]="form.label" [placeholder]="k.label" />
           </div>
         </div>
@@ -78,19 +78,19 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
         <label class="inv-reverse-toggle" for="inv-reverse">
           <input id="inv-reverse" type="checkbox" [(ngModel)]="form.autoReverse" />
-          <span>Extourner automatiquement au 1er de la période suivante</span>
+          <span i18n="@@accounting.inventory-assistant.extourner.automatiquement.au.1er.de.la.periode.s.c76a75e9">Extourner automatiquement au 1er de la période suivante</span>
         </label>
 
         @if (previewValid()) {
           <div class="inv-preview" role="note">
-            <h4 class="inv-preview-title">Aperçu</h4>
+            <h4 class="inv-preview-title" i18n="@@accounting.inventory-assistant.apercu.f0f53004">Aperçu</h4>
             <p class="inv-preview-line">
-              <strong>Écriture</strong> ({{ form.entryDate }}) :
+              <strong i18n="@@accounting.inventory-assistant.ecriture.d5d8c87d">Écriture</strong> ({{ form.entryDate }}) :
               débit {{ form.debitAccount }} / crédit {{ form.creditAccount }} — {{ form.amount | number : '1.3-3' }}
             </p>
             @if (form.autoReverse) {
               <p class="inv-preview-line inv-preview-reversal">
-                <strong>Extourne</strong> (au nouvel exercice) :
+                <strong i18n="@@accounting.inventory-assistant.extourne.715f4ddc">Extourne</strong> (au nouvel exercice) :
                 débit {{ form.creditAccount }} / crédit {{ form.debitAccount }} — {{ form.amount | number : '1.3-3' }}
               </p>
             }
@@ -98,7 +98,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         }
 
         <div class="inv-actions">
-          <app-button variant="secondary" type="button" (click)="reset()" [disabled]="saving()">Réinitialiser</app-button>
+          <app-button variant="secondary" type="button" (click)="reset()" [disabled]="saving()" i18n="@@accounting.inventory-assistant.reinitialiser.e0e2ad54">Réinitialiser</app-button>
           <app-button variant="primary" icon="pi pi-check" type="button" (click)="submit()" [disabled]="saving() || !previewValid()">
             {{ saving() ? 'Enregistrement…' : 'Enregistrer l\\'écriture' }}
           </app-button>

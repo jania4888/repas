@@ -29,21 +29,19 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
   ],
   template: `
     <app-page-header
-      title="Comptes bancaires"
+      title="Comptes bancaires" i18n-title="Comptes bancaires"
       subtitle="Gérez vos comptes tunisiens (RIB / IBAN) pour la trésorerie.">
     </app-page-header>
 
     @if (!auth.isFirmDelegatedReadonly() && canCreate()) {
       <div class="page-actions">
-        <app-button variant="primary" icon="pi pi-plus" (click)="openCreate()" ariaLabel="Ajouter un compte bancaire">
-          Ajouter un compte
-        </app-button>
+        <app-button variant="primary" icon="pi pi-plus" (click)="openCreate()" ariaLabel="Ajouter un compte bancaire" i18n="@@payments.bank-accounts.ajouter.un.compte.351ab0a7">Ajouter un compte</app-button>
       </div>
     }
 
     <div class="content-card">
       @if (loading()) {
-        <div class="skeleton-grid" aria-busy="true" aria-label="Chargement">
+        <div class="skeleton-grid" aria-busy="true" aria-label="Chargement" i18n-aria-label="Chargement">
           @for (i of [1, 2, 3]; track i) {
             <p-skeleton height="180px" styleClass="skeleton-card"></p-skeleton>
           }
@@ -52,13 +50,13 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
         @if (auth.isFirmDelegatedReadonly()) {
           <app-empty-state
             icon="pi pi-building"
-            title="Vous n'avez pas encore de compte bancaire"
+            title="Vous n'avez pas encore de compte bancaire" i18n-title="Vous n'avez pas encore de compte bancaire"
             description="Aucun compte bancaire n'est configuré pour ce dossier.">
           </app-empty-state>
         } @else if (canCreate()) {
           <app-empty-state
             icon="pi pi-building"
-            title="Vous n'avez pas encore de compte bancaire"
+            title="Vous n'avez pas encore de compte bancaire" i18n-title="Vous n'avez pas encore de compte bancaire"
             description="Ajoutez un compte pour suivre vos virements et votre trésorerie."
             actionLabel="Ajouter un compte"
             (actionClick)="openCreate()">
@@ -66,7 +64,7 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
         } @else {
           <app-empty-state
             icon="pi pi-building"
-            title="Vous n'avez pas encore de compte bancaire"
+            title="Vous n'avez pas encore de compte bancaire" i18n-title="Vous n'avez pas encore de compte bancaire"
             description="Autorisation « Trésorerie — saisie » requise pour ajouter un compte.">
           </app-empty-state>
         }
@@ -82,26 +80,26 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
               </div>
               <p class="bank-sub">{{ a.bankName }}</p>
               @if (a.agencyName) {
-                <p class="bank-meta"><span class="label">Agence</span> {{ a.agencyName }}</p>
+                <p class="bank-meta"><span class="label" i18n="@@payments.bank-accounts.agence.37c58081">Agence</span> {{ a.agencyName }}</p>
               }
               <div class="bank-lines">
                 <div>
-                  <span class="label">IBAN</span>
+                  <span class="label" i18n="@@payments.bank-accounts.iban.e81566a5">IBAN</span>
                   <span class="mono">{{ formatIban(a.iban) }}</span>
                 </div>
                 <div>
-                  <span class="label">RIB</span>
+                  <span class="label" i18n="@@payments.bank-accounts.rib.61f3ea57">RIB</span>
                   <span class="mono">{{ formatRib(a.rib) }}</span>
                 </div>
                 @if (a.chartOfAccountNumber) {
                   <div>
-                    <span class="label">Compte comptable</span>
+                    <span class="label" i18n="@@payments.bank-accounts.compte.comptable.6d979a32">Compte comptable</span>
                     <span class="mono">{{ a.chartOfAccountNumber }}</span>
                   </div>
                 }
                 @if (a.swiftBic) {
                   <div>
-                    <span class="label">SWIFT</span>
+                    <span class="label" i18n="@@payments.bank-accounts.swift.19e6802b">SWIFT</span>
                     <span class="mono">{{ a.swiftBic }}</span>
                   </div>
                 }
@@ -115,26 +113,20 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
                       icon="pi pi-star"
                       (click)="setDefault(a)"
                       pTooltip="Définir comme compte par défaut"
-                      ariaLabel="Définir comme compte par défaut">
-                      Défaut
-                    </app-button>
+                      ariaLabel="Définir comme compte par défaut" i18n="@@payments.bank-accounts.defaut.47456751">Défaut</app-button>
                   }
                   <app-button
                     variant="outline"
                     size="sm"
                     icon="pi pi-pencil"
                     (click)="openEdit(a)"
-                    ariaLabel="Modifier le compte">
-                    Modifier
-                  </app-button>
+                    ariaLabel="Modifier le compte" i18n="@@payments.bank-accounts.modifier.f260e757">Modifier</app-button>
                   <app-button
                     variant="danger"
                     size="sm"
                     icon="pi pi-trash"
                     (click)="confirmDelete(a)"
-                    ariaLabel="Supprimer le compte">
-                    Supprimer
-                  </app-button>
+                    ariaLabel="Supprimer le compte" i18n="@@payments.bank-accounts.supprimer.1acfc1c7">Supprimer</app-button>
                 </div>
               }
             </article>

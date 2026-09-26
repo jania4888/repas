@@ -71,7 +71,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
   ],
   template: `
     <app-page-header
-      title="Caisse de trésorerie"
+      title="Caisse de trésorerie" i18n-title="Caisse de trésorerie"
       subtitle="Enregistrez et gérez vos opérations de caisse (encaissements et décaissements).">
       <app-analyze-with-ai-button
         screenId="cash-desk"
@@ -82,11 +82,11 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
     <div class="page-grid">
       <div class="filters-card">
         <div class="filters-header">
-          <h3 class="filters-title">Période</h3>
+          <h3 class="filters-title" i18n="@@payments.cash-desk.periode.de2110b7">Période</h3>
         </div>
         <div class="filters-row">
           <div class="filter-field">
-            <label for="month">Mois</label>
+            <label for="month" i18n="@@payments.cash-desk.mois.0d304bea">Mois</label>
             <p-select
               id="month"
               [options]="monthOptions"
@@ -99,7 +99,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             </p-select>
           </div>
           <div class="filter-field">
-            <label for="year">Année</label>
+            <label for="year" i18n="@@payments.cash-desk.annee.1f910d98">Année</label>
             <p-select
               id="year"
               [options]="yearOptions"
@@ -118,18 +118,14 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                   variant="outline"
                   icon="pi pi-building"
                   (click)="openBankDepositWizard()"
-                  ariaLabel="Remise en banque">
-                  Remise en banque
-                </app-button>
+                  ariaLabel="Remise en banque" i18n="@@payments.cash-desk.remise.en.banque.f42e5169">Remise en banque</app-button>
                 <app-button
                   variant="primary"
                   icon="pi pi-plus"
                   (click)="openAddDialog()"
-                  ariaLabel="Enregistrer une opération">
-                  Enregistrer une opération
-                </app-button>
+                  ariaLabel="Enregistrer une opération" i18n="@@payments.cash-desk.enregistrer.une.operation.f45e95b6">Enregistrer une opération</app-button>
               } @else {
-                <span class="perm-hint" role="note">Autorisation « Trésorerie — saisie » requise.</span>
+                <span class="perm-hint" role="note" i18n="@@payments.cash-desk.autorisation.tresorerie.saisie.requise.93829a0d">Autorisation « Trésorerie — saisie » requise.</span>
               }
             </div>
           }
@@ -139,7 +135,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
       <div class="balances-card" *ngIf="!loading()">
         <div class="balances-grid">
           <div class="balance-panel">
-            <h3 class="panel-title">Solde primaire (mois)</h3>
+            <h3 class="panel-title" i18n="@@payments.cash-desk.solde.primaire.mois.c5cf744d">Solde primaire (mois)</h3>
             <div class="panel-total" [class.negative]="(balances()?.primaryTotal ?? 0) < 0">
               {{ balances()?.primaryTotal | number:'1.3-3' }} {{ balances()?.currency }}
             </div>
@@ -164,7 +160,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
           </div>
 
           <div class="balance-panel">
-            <h3 class="panel-title">Solde secondaire (YTD)</h3>
+            <h3 class="panel-title" i18n="@@payments.cash-desk.solde.secondaire.ytd.b385fc21">Solde secondaire (YTD)</h3>
             <div class="panel-total" [class.negative]="(balances()?.secondaryTotal ?? 0) < 0">
               {{ balances()?.secondaryTotal | number:'1.3-3' }} {{ balances()?.currency }}
             </div>
@@ -201,13 +197,13 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             @if (auth.isFirmDelegatedReadonly()) {
               <app-empty-state
                 illustration="empty-payments.svg"
-                title="Aucune opération"
+                title="Aucune opération" i18n-title="Aucune opération"
                 description="Aucune opération trouvée pour la période sélectionnée.">
               </app-empty-state>
             } @else {
               <app-empty-state
                 illustration="empty-payments.svg"
-                title="Aucune opération"
+                title="Aucune opération" i18n-title="Aucune opération"
                 description="Aucune opération trouvée pour la période sélectionnée."
                 actionLabel="Enregistrer une opération"
                 (actionClick)="openAddDialog()">
@@ -225,14 +221,14 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
 
               <ng-template pTemplate="header">
                 <tr>
-                  <th style="width:130px">Date</th>
-                  <th style="width:100px">Type</th>
-                  <th style="width:170px">Moyen</th>
-                  <th style="min-width:200px">Catégorie</th>
-                  <th>Libellé</th>
-                  <th style="width:200px">Document</th>
-                  <th style="width:140px" class="text-right">Débit</th>
-                  <th style="width:140px" class="text-right">Crédit</th>
+                  <th style="width:130px" i18n="@@payments.cash-desk.date.eb9a4bc1">Date</th>
+                  <th style="width:100px" i18n="@@payments.cash-desk.type.3deb7456">Type</th>
+                  <th style="width:170px" i18n="@@payments.cash-desk.moyen.de03c108">Moyen</th>
+                  <th style="min-width:200px" i18n="@@payments.cash-desk.categorie.6b38300a">Catégorie</th>
+                  <th i18n="@@payments.cash-desk.libelle.f5485bba">Libellé</th>
+                  <th style="width:200px" i18n="@@payments.cash-desk.document.e214b8a2">Document</th>
+                  <th style="width:140px" class="text-right" i18n="@@payments.cash-desk.debit.f528224f">Débit</th>
+                  <th style="width:140px" class="text-right" i18n="@@payments.cash-desk.credit.19194bdf">Crédit</th>
                   @if (!auth.isFirmDelegatedReadonly()) {
                     <th style="width:80px"></th>
                   }
@@ -253,10 +249,10 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                     <div class="label-cell">
                       <span>{{ op.label }}</span>
                       @if (op.origin === CashOperationOrigin.InvoicePayment) {
-                        <span class="origin-badge">Encaissement facture</span>
+                        <span class="origin-badge" i18n="@@payments.cash-desk.encaissement.facture.a795c370">Encaissement facture</span>
                       }
                       @if (op.origin === CashOperationOrigin.SupplierPayment) {
-                        <span class="origin-badge">Paiement fournisseur</span>
+                        <span class="origin-badge" i18n="@@payments.cash-desk.paiement.fournisseur.1dd14397">Paiement fournisseur</span>
                       }
                       @if (op.vatRatePercent !== null && op.vatRatePercent !== undefined) {
                         <span class="vat-badge">TVA {{ op.vatRatePercent }} %</span>
@@ -313,7 +309,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                               class="perm-lock"
                               role="note"
                               pTooltip="Autorisation « Trésorerie — mise à jour » requise."
-                              aria-label="Autorisation « Trésorerie — mise à jour » requise.">
+                              aria-label="Autorisation « Trésorerie — mise à jour » requise." i18n-aria-label="Autorisation « Trésorerie — mise à jour » requise.">
                               <i class="pi pi-lock" aria-hidden="true"></i>
                             </span>
                           }
@@ -367,16 +363,14 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
       (onHide)="closeCancelDialog()">
 
       <div class="dialog-body">
-        <p class="dialog-message">
-          Indiquez le motif d'annulation (obligatoire).
-        </p>
+        <p class="dialog-message" i18n="@@payments.cash-desk.indiquez.le.motif.d.annulation.obligatoire.ac8edb83">Indiquez le motif d'annulation (obligatoire).</p>
         <textarea
           pTextarea
           [(ngModel)]="cancelReason"
           rows="4"
           class="w-full"
           [maxLength]="500"
-          aria-label="Motif d'annulation">
+          aria-label="Motif d'annulation" i18n-aria-label="Motif d'annulation">
         </textarea>
         @if (cancelError()) {
           <div class="alert" role="alert">{{ cancelError() }}</div>
@@ -385,15 +379,13 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
 
       <ng-template pTemplate="footer">
         <div class="dialog-footer">
-          <app-button variant="outline" (click)="closeCancelDialog()" ariaLabel="Retour">Retour</app-button>
+          <app-button variant="outline" (click)="closeCancelDialog()" ariaLabel="Retour" i18n="@@payments.cash-desk.retour.e5befb1f">Retour</app-button>
           <app-button
             variant="danger"
             icon="pi pi-times"
             iconPos="left"
             [disabled]="!cancelReason.trim() || cancelling()"
-            (click)="submitCancel()" ariaLabel="Annuler l'opération">
-            Annuler
-          </app-button>
+            (click)="submitCancel()" ariaLabel="Annuler l'opération" i18n="@@payments.cash-desk.annuler.49ba3292">Annuler</app-button>
         </div>
       </ng-template>
     </p-dialog>

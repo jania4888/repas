@@ -29,16 +29,16 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
         }
       </div>
 
-      <div class="lines-grid__actions" role="toolbar" aria-label="Actions sur les lignes">
-        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="store.addLine()">+ Ajouter une ligne</button>
+      <div class="lines-grid__actions" role="toolbar" aria-label="Actions sur les lignes" i18n-aria-label="Actions sur les lignes">
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="store.addLine()" i18n="@@accounting.manual-entry.ajouter.une.ligne.999d5dd7">+ Ajouter une ligne</button>
         <button type="button" class="btn btn-outline-secondary btn-sm"
                 (click)="store.duplicateSelectedLines()"
-                [disabled]="store.selectedLineIndexes().size === 0">Dupliquer</button>
+                [disabled]="store.selectedLineIndexes().size === 0" i18n="@@accounting.manual-entry.dupliquer.c5e1d3f1">Dupliquer</button>
         <button type="button" class="btn btn-outline-secondary btn-sm"
                 (click)="removeSelected()"
-                [disabled]="store.selectedLineIndexes().size === 0 || store.lines().length <= 2">Supprimer</button>
+                [disabled]="store.selectedLineIndexes().size === 0 || store.lines().length <= 2" i18n="@@accounting.manual-entry.supprimer.1acfc1c7">Supprimer</button>
         <button type="button" class="btn btn-outline-secondary btn-sm" disabled
-                title="Le lettrage est disponible après enregistrement de l'écriture">Lettrer</button>
+                title="Le lettrage est disponible après enregistrement de l'écriture" i18n-title="Le lettrage est disponible après enregistrement de l'écriture" i18n="@@accounting.manual-entry.lettrer.387be9d0">Lettrer</button>
         @if (!hideAnalyzeSlot()) {
           <ng-content select="[entryAnalyzeAction]"></ng-content>
         }
@@ -56,12 +56,12 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
               <th class="col-check" style="width:2.5%">
                 <input type="checkbox" [checked]="allSelected()"
                        (change)="store.selectAllLines($any($event.target).checked)"
-                       aria-label="Sélectionner toutes les lignes" />
+                       aria-label="Sélectionner toutes les lignes" i18n-aria-label="Sélectionner toutes les lignes" />
               </th>
-              <th class="col-num" style="width:2.5%">#</th>
-              <th class="col-account" style="width:14%">Compte général</th>
-              <th class="col-label" style="width:22%">Libellé</th>
-              <th class="col-aux" style="width:16%">Auxiliaire</th>
+              <th class="col-num" style="width:2.5%" i18n="@@accounting.manual-entry.text.d08f88df">#</th>
+              <th class="col-account" style="width:14%" i18n="@@accounting.manual-entry.compte.general.f5c91797">Compte général</th>
+              <th class="col-label" style="width:22%" i18n="@@accounting.manual-entry.libelle.f5485bba">Libellé</th>
+              <th class="col-aux" style="width:16%" i18n="@@accounting.manual-entry.auxiliaire.b8c6c266">Auxiliaire</th>
               <th class="col-amount text-right" style="width:11%">Débit{{ currencySuffix() }}</th>
               <th class="col-amount text-right" style="width:11%">Crédit{{ currencySuffix() }}</th>
               @if (store.isForeignCurrency()) {
@@ -69,18 +69,18 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                 <th class="col-amount text-right" style="width:11%">Crédit ({{ functionalCurrency }})</th>
               }
               @if (store.columnVisibility().piece) {
-                <th style="width:8%">Pièce <span class="assist-hint" title="Aide à la saisie — non comptabilisé">ⓘ</span></th>
+                <th style="width:8%">Pièce <span class="assist-hint" title="Aide à la saisie — non comptabilisé" i18n-title="Aide à la saisie — non comptabilisé" i18n="@@accounting.manual-entry.text.f77b6fef">ⓘ</span></th>
               }
               @if (store.columnVisibility().dueDate) {
-                <th style="width:9%">Échéance <span class="assist-hint" title="Aide à la saisie — non comptabilisé">ⓘ</span></th>
+                <th style="width:9%">Échéance <span class="assist-hint" title="Aide à la saisie — non comptabilisé" i18n-title="Aide à la saisie — non comptabilisé" i18n="@@accounting.manual-entry.text.f77b6fef">ⓘ</span></th>
               }
               @if (store.columnVisibility().vat) {
-                <th style="width:7%">TVA</th>
+                <th style="width:7%" i18n="@@accounting.manual-entry.tva.fb62cb5d">TVA</th>
               }
               @if (store.columnVisibility().lettering) {
-                <th style="width:6%">Lettrage</th>
+                <th style="width:6%" i18n="@@accounting.manual-entry.lettrage.cfcdd333">Lettrage</th>
               }
-              <th class="col-actions" style="width:5%">Actions</th>
+              <th class="col-actions" style="width:5%" i18n="@@accounting.manual-entry.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-line let-i="rowIndex">
@@ -105,7 +105,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                     [field]="'display'"
                     [minLength]="1"
                     [forceSelection]="false"
-                    placeholder="N° compte"
+                    placeholder="N° compte" i18n-placeholder="N° compte"
                     appendTo="body"
                     panelStyleClass="me-autocomplete-panel"
                     [disabled]="line.isVatGenerated"
@@ -116,7 +116,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                 </div>
               </td>
               <td class="col-label">
-                <input type="text" [(ngModel)]="line.lineLabel" class="me-line-input" placeholder="Libellé"
+                <input type="text" [(ngModel)]="line.lineLabel" class="me-line-input" placeholder="Libellé" i18n-placeholder="Libellé"
                        (ngModelChange)="store.updateLine(i, { lineLabel: $event })" />
               </td>
               <td class="col-aux">
@@ -129,7 +129,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                   [minLength]="2"
                   [forceSelection]="true"
                   [showClear]="true"
-                  placeholder="Tiers"
+                  placeholder="Tiers" i18n-placeholder="Tiers"
                   appendTo="body"
                   panelStyleClass="me-autocomplete-panel"
                   (ngModelChange)="onThirdPartyChange(i, $event)"
@@ -195,7 +195,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                 <td>
                   <select class="me-line-input" [ngModel]="line.vatRatePercent"
                           (ngModelChange)="onVatChange(i, $event)">
-                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="null" i18n="@@accounting.manual-entry.text.1b93795b">—</option>
                     @for (r of refs.vatRates(); track r.id) {
                       <option [ngValue]="r.percent">{{ r.percent }}%</option>
                     }
@@ -203,19 +203,19 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                 </td>
               }
               @if (store.columnVisibility().lettering) {
-                <td><span class="lettering-disabled" title="Après enregistrement">—</span></td>
+                <td><span class="lettering-disabled" title="Après enregistrement" i18n-title="Après enregistrement" i18n="@@accounting.manual-entry.text.1b93795b">—</span></td>
               }
               <td class="me-row-actions col-actions">
                 <button type="button" class="btn btn-sm btn-outline-secondary me-row-action-btn"
-                        (click)="store.duplicateLine(i)" title="Dupliquer">⎘</button>
+                        (click)="store.duplicateLine(i)" title="Dupliquer" i18n-title="Dupliquer" i18n="@@accounting.manual-entry.text.2bdc5ad0">⎘</button>
                 <button type="button" class="btn btn-sm btn-outline-danger me-row-action-btn"
-                        (click)="store.removeLine(i)" [disabled]="store.lines().length <= 2">✕</button>
+                        (click)="store.removeLine(i)" [disabled]="store.lines().length <= 2" i18n="@@accounting.manual-entry.text.0951b9a0">✕</button>
               </td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="lines-grid__footer-totals">
-              <td [attr.colspan]="footerColspan()">Totaux</td>
+              <td [attr.colspan]="footerColspan()" i18n="@@accounting.manual-entry.totaux.a1ca02f8">Totaux</td>
               <td class="text-right me-amount-cell">{{ store.totals().debit | number : store.amountFormat() }}</td>
               <td class="text-right me-amount-cell">{{ store.totals().credit | number : store.amountFormat() }}</td>
               @if (store.isForeignCurrency()) {

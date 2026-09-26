@@ -37,31 +37,27 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Solde par client"
+      title="Solde par client" i18n-title="Solde par client"
       subtitle="Solde commercial (facturé − payé) par client">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
         (click)="onPrint()"
-        ariaLabel="Imprimer les soldes clients">
-        Imprimer
-      </app-button>
+        ariaLabel="Imprimer les soldes clients" i18n="@@reports.client-balances.imprimer.5382c09d">Imprimer</app-button>
       <app-button
         variant="secondary"
         icon="pi-download"
         iconPos="left"
         (click)="onExport()"
-        ariaLabel="Exporter les soldes clients en CSV">
-        Exporter
-      </app-button>
+        ariaLabel="Exporter les soldes clients en CSV" i18n="@@reports.client-balances.exporter.0cd84bdc">Exporter</app-button>
     </app-page-header>
 
     <div class="ft-filters">
       <div class="ft-filters__header">
         <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -74,10 +70,10 @@ import {
             type="text"
             pInputText
             class="filter-input"
-            placeholder="Rechercher un client..."
+            placeholder="Rechercher un client..." i18n-placeholder="Rechercher un client..."
             [ngModel]="search()"
             (ngModelChange)="search.set($event)"
-            aria-label="Rechercher un client" />
+            aria-label="Rechercher un client" i18n-aria-label="Rechercher un client" />
         </span>
         <label class="filter-toggle">
           <input
@@ -112,7 +108,7 @@ import {
     <div class="ft-table-card aging-card">
       <h3 class="aging-card__title">
         <i class="pi pi-clock"></i> Balance âgée
-        <small>À partir de la date d'échéance (DueDate).</small>
+        <small i18n="@@reports.client-balances.a.partir.de.la.date.d.echeance.duedate.7ca9fa3d">À partir de la date d'échéance (DueDate).</small>
       </h3>
       <app-aging-table [rows]="filteredRows()" partyLabel="Client"></app-aging-table>
     </div>

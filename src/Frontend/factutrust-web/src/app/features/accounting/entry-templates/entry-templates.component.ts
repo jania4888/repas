@@ -38,14 +38,12 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingTableActionsComponent, AccountingAmountInputComponent],
   template: `
-    <app-page-header title="Modèles d'écriture" subtitle="Modèles réutilisables pour la saisie manuelle" />
+    <app-page-header title="Modèles d'écriture" i18n-title="Modèles d'écriture" subtitle="Modèles réutilisables pour la saisie manuelle" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card tpl-toolbar-card">
-      <app-button variant="primary" icon="pi pi-plus" type="button" (click)="startCreate()" [disabled]="loading()">
-        Nouveau modèle
-      </app-button>
+      <app-button variant="primary" icon="pi pi-plus" type="button" (click)="startCreate()" [disabled]="loading()" i18n="@@accounting.entry-templates.nouveau.modele.c5b99d5d">Nouveau modèle</app-button>
     </div>
 
     @if (form(); as f) {
@@ -53,64 +51,62 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
         <h3 class="tpl-form-title">{{ f.id ? 'Modifier le modèle' : 'Nouveau modèle' }}</h3>
         <div class="tpl-fields">
           <div class="tpl-field tpl-field-grow">
-            <label class="field-label" for="tpl-name">Nom</label>
+            <label class="field-label" for="tpl-name" i18n="@@accounting.entry-templates.nom.7ff20370">Nom</label>
             <input id="tpl-name" class="tpl-input" [(ngModel)]="f.name" [disabled]="saving()" />
           </div>
           <div class="tpl-field">
-            <label class="field-label" for="tpl-journal">Journal</label>
+            <label class="field-label" for="tpl-journal" i18n="@@accounting.entry-templates.journal.57d7f743">Journal</label>
             <select id="tpl-journal" class="tpl-input" [(ngModel)]="f.journalCode" [disabled]="saving()">
               @for (jc of journalCodes; track jc) { <option [value]="jc">{{ jc }}</option> }
             </select>
           </div>
           <div class="tpl-field tpl-field-grow">
-            <label class="field-label" for="tpl-label">Libellé type</label>
+            <label class="field-label" for="tpl-label" i18n="@@accounting.entry-templates.libelle.type.1ef6afdb">Libellé type</label>
             <input id="tpl-label" class="tpl-input" [(ngModel)]="f.labelTemplate" [disabled]="saving()" placeholder="Ex. Écriture de {{'{'}}mois{{'}'}}" />
           </div>
         </div>
         <div class="tpl-field">
-          <label class="field-label" for="tpl-desc">Description</label>
+          <label class="field-label" for="tpl-desc" i18n="@@accounting.entry-templates.description.55f8ebc8">Description</label>
           <input id="tpl-desc" class="tpl-input" [(ngModel)]="f.description" [disabled]="saving()" />
         </div>
 
-        <h4 class="tpl-lines-title">Récurrence planifiée</h4>
-        <p class="tpl-recurrence-hint">
-          Génère automatiquement l'écriture à chaque échéance (loyers, assurances…). Toutes les lignes
-          doivent porter un montant fixe et être équilibrées.
-        </p>
+        <h4 class="tpl-lines-title" i18n="@@accounting.entry-templates.recurrence.planifiee.8c97c8f6">Récurrence planifiée</h4>
+        <p class="tpl-recurrence-hint" i18n="@@accounting.entry-templates.genere.automatiquement.l.ecriture.a.chaque.echea.ed4e553f">Génère automatiquement l'écriture à chaque échéance (loyers, assurances…). Toutes les lignes
+          doivent porter un montant fixe et être équilibrées.</p>
         <div class="tpl-fields">
           <div class="tpl-field">
-            <label class="field-label" for="tpl-rec-freq">Fréquence</label>
+            <label class="field-label" for="tpl-rec-freq" i18n="@@accounting.entry-templates.frequence.bafbfba7">Fréquence</label>
             <select id="tpl-rec-freq" class="tpl-input" [(ngModel)]="f.recurrenceFrequency" [disabled]="saving()">
-              <option [ngValue]="0">Aucune</option>
-              <option [ngValue]="1">Mensuelle</option>
-              <option [ngValue]="2">Trimestrielle</option>
-              <option [ngValue]="3">Annuelle</option>
+              <option [ngValue]="0" i18n="@@accounting.entry-templates.aucune.e8f88273">Aucune</option>
+              <option [ngValue]="1" i18n="@@accounting.entry-templates.mensuelle.15af1be3">Mensuelle</option>
+              <option [ngValue]="2" i18n="@@accounting.entry-templates.trimestrielle.9379d384">Trimestrielle</option>
+              <option [ngValue]="3" i18n="@@accounting.entry-templates.annuelle.0e25612c">Annuelle</option>
             </select>
           </div>
           @if (f.recurrenceFrequency > 0) {
             <div class="tpl-field">
-              <label class="field-label" for="tpl-rec-day">Jour du mois (1–28)</label>
+              <label class="field-label" for="tpl-rec-day" i18n="@@accounting.entry-templates.jour.du.mois.1.28.19f45a35">Jour du mois (1–28)</label>
               <input id="tpl-rec-day" type="number" min="1" max="28" class="tpl-input" [(ngModel)]="f.recurrenceDayOfMonth" [disabled]="saving()" />
             </div>
             <div class="tpl-field">
-              <label class="field-label" for="tpl-rec-start">Début</label>
+              <label class="field-label" for="tpl-rec-start" i18n="@@accounting.entry-templates.debut.f0955314">Début</label>
               <input id="tpl-rec-start" type="date" class="tpl-input" [(ngModel)]="f.recurrenceStartDate" [disabled]="saving()" />
             </div>
             <div class="tpl-field">
-              <label class="field-label" for="tpl-rec-end">Fin <span class="tpl-optional">(facultatif)</span></label>
+              <label class="field-label" for="tpl-rec-end">Fin <span class="tpl-optional" i18n="@@accounting.entry-templates.facultatif.6d7d6db4">(facultatif)</span></label>
               <input id="tpl-rec-end" type="date" class="tpl-input" [(ngModel)]="f.recurrenceEndDate" [disabled]="saving()" />
             </div>
           }
         </div>
 
-        <h4 class="tpl-lines-title">Lignes</h4>
+        <h4 class="tpl-lines-title" i18n="@@accounting.entry-templates.lignes.41c7025e">Lignes</h4>
         <table class="tpl-lines">
           <thead>
             <tr>
-              <th scope="col">Compte</th>
-              <th scope="col">Libellé ligne</th>
-              <th scope="col" class="tpl-col-amount">Débit fixe</th>
-              <th scope="col" class="tpl-col-amount">Crédit fixe</th>
+              <th scope="col" i18n="@@accounting.entry-templates.compte.c45740bb">Compte</th>
+              <th scope="col" i18n="@@accounting.entry-templates.libelle.ligne.1f1cffb3">Libellé ligne</th>
+              <th scope="col" class="tpl-col-amount" i18n="@@accounting.entry-templates.debit.fixe.e62f54f3">Débit fixe</th>
+              <th scope="col" class="tpl-col-amount" i18n="@@accounting.entry-templates.credit.fixe.5eccc2d2">Crédit fixe</th>
               <th scope="col"></th>
             </tr>
           </thead>
@@ -148,7 +144,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
         <button type="button" class="tpl-add-line" (click)="addLine()" [disabled]="saving()"><i class="pi pi-plus"></i> Ajouter une ligne</button>
 
         <div class="tpl-form-actions">
-          <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="saving()">Annuler</button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="saving()" i18n="@@accounting.entry-templates.annuler.49ba3292">Annuler</button>
           <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving() || !f.name.trim() || f.lines.length < 2">
             {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
           </button>
@@ -160,13 +156,13 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
       <p-table [value]="templates()" [loading]="loading()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Nom</th>
-            <th scope="col">Journal</th>
-            <th scope="col">Lignes</th>
-            <th scope="col">Récurrence</th>
-            <th scope="col">Utilisations</th>
-            <th scope="col">Actif</th>
-            <th scope="col">Actions</th>
+            <th scope="col" i18n="@@accounting.entry-templates.nom.7ff20370">Nom</th>
+            <th scope="col" i18n="@@accounting.entry-templates.journal.57d7f743">Journal</th>
+            <th scope="col" i18n="@@accounting.entry-templates.lignes.41c7025e">Lignes</th>
+            <th scope="col" i18n="@@accounting.entry-templates.recurrence.a1e1903a">Récurrence</th>
+            <th scope="col" i18n="@@accounting.entry-templates.utilisations.67a8be8f">Utilisations</th>
+            <th scope="col" i18n="@@accounting.entry-templates.actif.2eb75f84">Actif</th>
+            <th scope="col" i18n="@@accounting.entry-templates.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-t>
@@ -181,7 +177,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
                   @if (t.nextRunDate) { · {{ t.nextRunDate | date : 'shortDate' }} }
                 </span>
               } @else {
-                <span class="tpl-rec-none">—</span>
+                <span class="tpl-rec-none" i18n="@@accounting.entry-templates.text.1b93795b">—</span>
               }
             </td>
             <td>{{ t.usageCount }}</td>
@@ -199,7 +195,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
                   (click)="runNow(t)"
                   [disabled]="runningId() === t.id"
                   ariaLabel="Générer l'écriture maintenant"
-                  title="Générer l'écriture de la prochaine échéance maintenant" />
+                  title="Générer l'écriture de la prochaine échéance maintenant" i18n-title="Générer l'écriture de la prochaine échéance maintenant" />
               }
               <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
                 type="button" (click)="startEdit(t)" ariaLabel="Modifier" />
@@ -210,7 +206,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="7" class="tpl-empty">Aucun modèle. Créez-en un avec « Nouveau modèle ».</td></tr>
+          <tr><td colspan="7" class="tpl-empty" i18n="@@accounting.entry-templates.aucun.modele.creez.en.un.avec.nouveau.modele.3a0ab35e">Aucun modèle. Créez-en un avec « Nouveau modèle ».</td></tr>
         </ng-template>
       </p-table>
     </div>

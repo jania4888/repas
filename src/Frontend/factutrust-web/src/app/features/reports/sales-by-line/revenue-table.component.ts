@@ -18,9 +18,9 @@ import { SalesRevenueReportRow } from '@core/services/reports-api.service';
         <ng-template pTemplate="header">
           <tr>
             <th>{{ showClientColumn ? 'Produit' : 'Libellé' }}</th>
-            @if (showClientColumn) { <th>Client</th> }
-            <th class="text-right">Quantité</th>
-            <th class="text-right">Chiffre d'affaires</th>
+            @if (showClientColumn) { <th i18n="@@reports.sales-by-line.client.1bdd79b1">Client</th> }
+            <th class="text-right" i18n="@@reports.sales-by-line.quantite.09a38fda">Quantité</th>
+            <th class="text-right" i18n="@@reports.sales-by-line.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>

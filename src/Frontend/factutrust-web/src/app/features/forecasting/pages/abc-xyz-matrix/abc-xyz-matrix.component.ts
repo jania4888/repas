@@ -22,7 +22,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
   template: `
     <section class="abc-xyz">
       <app-page-header
-        title="Matrice ABC × XYZ"
+        title="Matrice ABC × XYZ" i18n-title="Matrice ABC × XYZ"
         subtitle="Classification des produits par contribution au CA (ABC) et variabilité de la demande (XYZ).">
         @if (canManage()) {
           <button class="btn btn-secondary" (click)="recompute()" [disabled]="loading()">
@@ -37,7 +37,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
       </app-page-header>
 
       @if (loading()) {
-        <div class="state">Chargement…</div>
+        <div class="state" i18n="@@forecasting.pages.chargement.01cba1df">Chargement…</div>
       } @else if (matrix()) {
         @if (matrix(); as m) {
         <p class="info">
@@ -47,9 +47,9 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 
         <div class="matrix-grid">
           <div class="cell header"></div>
-          <div class="cell header">X (stable)</div>
-          <div class="cell header">Y (variable)</div>
-          <div class="cell header">Z (erratique)</div>
+          <div class="cell header" i18n="@@forecasting.pages.x.stable.3f08468f">X (stable)</div>
+          <div class="cell header" i18n="@@forecasting.pages.y.variable.80338f80">Y (variable)</div>
+          <div class="cell header" i18n="@@forecasting.pages.z.erratique.2f1094b5">Z (erratique)</div>
 
           @for (abc of ['A', 'B', 'C']; track abc) {
             <div class="cell row-header">{{ abc }}</div>
@@ -63,16 +63,16 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
           }
         </div>
 
-        <h3>Top produits</h3>
+        <h3 i18n="@@forecasting.pages.top.produits.d72363c0">Top produits</h3>
         <table class="table">
           <thead>
             <tr>
-              <th>Produit</th>
-              <th>Classe</th>
-              <th class="num">CA 12 mois</th>
-              <th class="num">% cumul</th>
-              <th class="num">CV demande</th>
-              <th class="num">Mois actifs</th>
+              <th i18n="@@forecasting.pages.produit.ff673dc2">Produit</th>
+              <th i18n="@@forecasting.pages.classe.3c38412a">Classe</th>
+              <th class="num" i18n="@@forecasting.pages.ca.12.mois.0eba3184">CA 12 mois</th>
+              <th class="num" i18n="@@forecasting.pages.cumul.076c3283">% cumul</th>
+              <th class="num" i18n="@@forecasting.pages.cv.demande.95dd2b51">CV demande</th>
+              <th class="num" i18n="@@forecasting.pages.mois.actifs.8ae2e48d">Mois actifs</th>
             </tr>
           </thead>
           <tbody>
@@ -95,7 +95,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
         </table>
         }
       } @else {
-        <div class="state empty">Aucune donnée — la matrice n'a pas encore été calculée.</div>
+        <div class="state empty" i18n="@@forecasting.pages.aucune.donnee.la.matrice.n.a.pas.encore.ete.calc.69c604dc">Aucune donnée — la matrice n'a pas encore été calculée.</div>
       }
     </section>
   `,

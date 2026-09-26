@@ -30,22 +30,22 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Contrôle d'intégrité"
+      title="Contrôle d'intégrité" i18n-title="Contrôle d'intégrité"
       subtitle="Diagnostics comptables en lecture seule — aucune modification des données" />
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Portée du diagnostic">
         <div accountingFilterFields class="hc-toolbar-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="hc-scope">Portée</label>
+            <label class="accounting-filter-label" for="hc-scope" i18n="@@accounting.health.portee.f42a1d5d">Portée</label>
             <select id="hc-scope" [(ngModel)]="scope" class="accounting-filter-input">
-              <option value="year">Exercice</option>
-              <option value="all">Tout l'historique</option>
+              <option value="year" i18n="@@accounting.health.exercice.e171e2b0">Exercice</option>
+              <option value="all" i18n="@@accounting.health.tout.l.historique.058b1093">Tout l'historique</option>
             </select>
           </div>
           @if (scope === 'year') {
             <div class="accounting-filter-field">
-              <label class="accounting-filter-label" for="hc-year">Exercice</label>
+              <label class="accounting-filter-label" for="hc-year" i18n="@@accounting.health.exercice.e171e2b0">Exercice</label>
               <input id="hc-year" type="number" min="2000" max="2100" [(ngModel)]="fiscalYear" class="accounting-filter-input" />
             </div>
           }
@@ -58,9 +58,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="run()"
             [disabled]="loading()"
-            ariaLabel="Lancer les contrôles d'intégrité">
-            Lancer les contrôles
-          </app-button>
+            ariaLabel="Lancer les contrôles d'intégrité" i18n="@@accounting.health.lancer.les.controles.521d27dd">Lancer les contrôles</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -82,11 +80,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <p-table [value]="rep.checks" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th style="width:9rem">Sévérité</th>
-            <th>Contrôle</th>
-            <th style="width:6rem" class="text-right">Nombre</th>
-            <th>Détail</th>
-            <th style="width:7rem">Action</th>
+            <th style="width:9rem" i18n="@@accounting.health.severite.62fd4ae5">Sévérité</th>
+            <th i18n="@@accounting.health.controle.e988877e">Contrôle</th>
+            <th style="width:6rem" class="text-right" i18n="@@accounting.health.nombre.e68491e9">Nombre</th>
+            <th i18n="@@accounting.health.detail.7ce06afc">Détail</th>
+            <th style="width:7rem" i18n="@@accounting.health.action.97c89a4d">Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-c>
@@ -103,7 +101,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="5" style="text-align:center;padding:2rem">Lancez les contrôles.</td></tr>
+          <tr><td colspan="5" style="text-align:center;padding:2rem" i18n="@@accounting.health.lancez.les.controles.d0416477">Lancez les contrôles.</td></tr>
         </ng-template>
       </p-table>
     }

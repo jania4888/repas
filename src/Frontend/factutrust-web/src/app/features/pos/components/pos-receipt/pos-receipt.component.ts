@@ -72,15 +72,15 @@ function escapeHtml(text: string): string {
           <div class="pos-receipt__banner">{{ receipt.documentBanner }}</div>
           <div class="pos-receipt__meta">
             <div class="pos-receipt__meta-col">
-              <p class="pos-receipt__label">Nom:</p>
+              <p class="pos-receipt__label" i18n="@@pos.components.nom.91e87d17">Nom:</p>
               <p class="pos-receipt__value">{{ receipt.clientName }}</p>
-              <p class="pos-receipt__label">Client Id:</p>
+              <p class="pos-receipt__label" i18n="@@pos.components.client.id.09b4aaeb">Client Id:</p>
               <p class="pos-receipt__value">{{ receipt.clientIdDisplay }}</p>
             </div>
             <div class="pos-receipt__meta-col pos-receipt__meta-col--right">
-              <p class="pos-receipt__label">Facture N°:</p>
+              <p class="pos-receipt__label" i18n="@@pos.components.facture.n.6f7ea1be">Facture N°:</p>
               <p class="pos-receipt__value">{{ receipt.invoiceNumber || '—' }}</p>
-              <p class="pos-receipt__label">Date:</p>
+              <p class="pos-receipt__label" i18n="@@pos.components.date.81b7d2ea">Date:</p>
               <p class="pos-receipt__value">{{ formatDate(receipt.issuedAt) }}</p>
             </div>
           </div>
@@ -88,10 +88,10 @@ function escapeHtml(text: string): string {
           <table class="pos-receipt__table">
             <thead>
               <tr>
-                <th class="pos-receipt__th-qty">Qté</th>
-                <th class="pos-receipt__th-art">Article</th>
-                <th class="pos-receipt__th-num">Prix</th>
-                <th class="pos-receipt__th-num">Total</th>
+                <th class="pos-receipt__th-qty" i18n="@@pos.components.qte.a4772129">Qté</th>
+                <th class="pos-receipt__th-art" i18n="@@pos.components.article.4360c2dc">Article</th>
+                <th class="pos-receipt__th-num" i18n="@@pos.components.prix.2d5eddef">Prix</th>
+                <th class="pos-receipt__th-num" i18n="@@pos.components.total.b25928c6">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -108,20 +108,20 @@ function escapeHtml(text: string): string {
           <div class="pos-receipt__rule"></div>
           <div class="pos-receipt__totals">
             <div class="pos-receipt__total-row">
-              <span>Sous-Total:</span>
+              <span i18n="@@pos.components.sous.total.b0825e9a">Sous-Total:</span>
               <span>{{ formatAmount(receipt.subTotalHT) }} DT</span>
             </div>
             <div class="pos-receipt__total-row">
-              <span>Remise:</span>
+              <span i18n="@@pos.components.remise.8b875876">Remise:</span>
               <span>{{ formatAmount(receipt.remise) }}</span>
             </div>
             <div class="pos-receipt__rule pos-receipt__rule--short"></div>
             <div class="pos-receipt__total-row">
-              <span>BASE TVA:</span>
+              <span i18n="@@pos.components.base.tva.2cc97a84">BASE TVA:</span>
               <span>{{ formatAmount(receipt.baseTVA) }} DT</span>
             </div>
             <div class="pos-receipt__total-row">
-              <span>TOTAL TVA:</span>
+              <span i18n="@@pos.components.total.tva.fb5256bd">TOTAL TVA:</span>
               <span>{{ formatAmount(receipt.totalTVA) }} DT</span>
             </div>
             @if (receipt.vatDetails.length > 1) {
@@ -133,20 +133,20 @@ function escapeHtml(text: string): string {
               }
             }
             <div class="pos-receipt__total-row">
-              <span>Timbre fiscal:</span>
+              <span i18n="@@pos.components.timbre.fiscal.48e05d3b">Timbre fiscal:</span>
               <span>{{ formatAmount(receipt.timbreFiscal) }} DT</span>
             </div>
             <div class="pos-receipt__rule pos-receipt__rule--short"></div>
             <div class="pos-receipt__total-row">
-              <span>Facture totale:</span>
+              <span i18n="@@pos.components.facture.totale.0d86366c">Facture totale:</span>
               <span>{{ formatAmount(receipt.grandTotal) }} DT</span>
             </div>
             <div class="pos-receipt__total-row">
-              <span>Payable :</span>
+              <span i18n="@@pos.components.payable.392b9d8a">Payable :</span>
               <span>{{ formatAmount(receipt.grandTotal) }} DT</span>
             </div>
             <div class="pos-receipt__total-row pos-receipt__total-row--strong">
-              <span>Total à payer:</span>
+              <span i18n="@@pos.components.total.a.payer.081059ba">Total à payer:</span>
               <span>{{ formatAmount(receipt.grandTotal) }} DT</span>
             </div>
           </div>

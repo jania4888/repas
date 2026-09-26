@@ -14,6 +14,8 @@ import {
 export type NavSubItemAction = 'returnToFirm' | 'changeDossier';
 
 export interface NavSubItem {
+  /** Stable key for logic / i18n. */
+  id?: string;
   label: string;
   icon?: string;
   railIconAsset?: string;
@@ -31,6 +33,8 @@ export interface NavSubItem {
 }
 
 export interface NavItem {
+  /** Stable key for logic / i18n. */
+  id?: string;
   label: string;
   icon?: string;
   railIconAsset?: string;
@@ -69,8 +73,9 @@ interface NavVisibilityFields {
 const M = AppModule;
 
 export const ALL_NAV_ITEMS: NavItem[] = [
-  { label: 'Tableau de bord', icon: 'fa-solid fa-gauge-high', route: '/dashboard', tourId: 'dashboard' },
+  { id: 'dashboard', label: 'Tableau de bord', icon: 'fa-solid fa-gauge-high', route: '/dashboard', tourId: 'dashboard' },
   {
+    id: 'ai-assistant',
     label: 'Assistant IA',
     railIconAsset: AI_ASSISTANT_MARK_SRC,
     route: '/ai-assistant',
@@ -79,12 +84,14 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     permissionsAll: ['ai:chat']
   },
   {
+    id: 'forecasting',
     label: 'Prévisions IA',
     icon: 'fa-solid fa-chart-line',
     modules: [M.Forecasting],
     permissionsAll: ['forecasting:view'],
     children: [
       {
+        id: 'forecasting--forecasting-revenue',
         label: 'Prévisions CA',
         route: '/forecasting/revenue',
         icon: 'fa-solid fa-chart-line',
@@ -92,6 +99,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['forecasting:view']
       },
       {
+        id: 'forecasting--forecasting-replenishment',
         label: 'Réapprovisionnement',
         route: '/forecasting/replenishment',
         icon: 'fa-solid fa-truck-ramp-box',
@@ -99,6 +107,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['forecasting:view']
       },
       {
+        id: 'forecasting--forecasting-promotions',
         label: 'Promotions suggérées',
         route: '/forecasting/promotions',
         icon: 'fa-solid fa-tags',
@@ -106,6 +115,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['forecasting:view']
       },
       {
+        id: 'forecasting--forecasting-abc-xyz',
         label: 'Matrice ABC × XYZ',
         route: '/forecasting/abc-xyz',
         icon: 'fa-solid fa-table-cells',
@@ -115,6 +125,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'pos',
     label: 'Point de Vente',
     icon: 'fa-solid fa-cash-register',
     route: '/pos',
@@ -122,11 +133,13 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     permissionsAll: ['invoices:create', 'products:read', 'stock:read']
   },
   {
+    id: 'sales',
     label: 'Ventes',
     icon: 'fa-solid fa-bag-shopping',
     tourId: 'ventes',
     children: [
       {
+        id: 'sales--ai-assistant-ventes',
         label: 'Assistant Ventes',
         route: '/ai-assistant/ventes',
         icon: 'fa-solid fa-wand-magic-sparkles',
@@ -134,6 +147,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['ai:chat', 'invoices:read']
       },
       {
+        id: 'sales--quotes',
         label: 'Devis',
         route: '/quotes',
         icon: 'fa-solid fa-file-lines',
@@ -141,6 +155,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['quotes:read']
       },
       {
+        id: 'sales--sales-orders',
         label: 'Commandes clients',
         route: '/sales-orders',
         icon: 'fa-solid fa-cart-shopping',
@@ -148,6 +163,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['sales_orders:read']
       },
       {
+        id: 'sales--delivery-notes',
         label: 'Bon de Livraison',
         route: '/delivery-notes',
         icon: 'fa-solid fa-truck',
@@ -155,6 +171,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['delivery_notes:read']
       },
       {
+        id: 'sales--return-notes',
         label: 'Bon de retour',
         route: '/return-notes',
         icon: 'fa-solid fa-rotate-left',
@@ -162,6 +179,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['return_notes:read']
       },
       {
+        id: 'sales--invoices',
         label: 'Factures',
         route: '/invoices',
         icon: 'fa-solid fa-file',
@@ -169,6 +187,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['invoices:read']
       },
       {
+        id: 'sales--invoices-credit-notes',
         label: 'Avoir de vente',
         route: '/invoices/credit-notes',
         icon: 'fa-solid fa-receipt',
@@ -176,6 +195,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['invoices:read']
       },
       {
+        id: 'sales--invoices-unpaid',
         label: 'Factures impayées',
         route: '/invoices/unpaid',
         icon: 'fa-solid fa-circle-exclamation',
@@ -183,6 +203,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['invoices:read']
       },
       {
+        id: 'sales--recurring-contracts',
         label: 'Contrats récurrents',
         route: '/recurring-contracts',
         icon: 'fa-solid fa-arrows-rotate',
@@ -190,6 +211,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.recurringContracts.read]
       },
       {
+        id: 'sales--reports-client-balances',
         label: 'Solde par client',
         route: '/reports/client-balances',
         icon: 'fa-solid fa-wallet',
@@ -197,6 +219,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['reports:view', 'invoices:read']
       },
       {
+        id: 'sales--reports-analytics',
         label: 'États analytiques',
         route: '/reports/analytics',
         icon: 'fa-solid fa-chart-line',
@@ -204,6 +227,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['reports:view', 'invoices:read']
       },
       {
+        id: 'sales--reports-sales',
         label: 'Rapports',
         route: '/reports/sales',
         icon: 'fa-solid fa-chart-column',
@@ -211,6 +235,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['reports:view', 'invoices:read']
       },
       {
+        id: 'sales--reports-profit',
         label: 'Rapport Bénéfices',
         route: '/reports/profit',
         icon: 'fa-solid fa-percent',
@@ -220,11 +245,13 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'purchases',
     label: 'Achats',
     icon: 'fa-solid fa-cart-shopping',
     tourId: 'achats',
     children: [
       {
+        id: 'purchases--ai-assistant-achats',
         label: 'Assistant Achats',
         route: '/ai-assistant/achats',
         icon: 'fa-solid fa-wand-magic-sparkles',
@@ -232,6 +259,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['ai:chat', 'purchase_orders:read']
       },
       {
+        id: 'purchases--suppliers',
         label: 'Fournisseurs',
         route: '/suppliers',
         icon: 'fa-solid fa-building',
@@ -239,6 +267,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['suppliers:read']
       },
       {
+        id: 'purchases--purchase-orders',
         label: 'Bons de commande',
         route: '/purchase-orders',
         icon: 'fa-solid fa-file-lines',
@@ -246,6 +275,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['purchase_orders:read']
       },
       {
+        id: 'purchases--purchase-receipts',
         label: 'Bons de réception',
         route: '/purchase-receipts',
         icon: 'fa-solid fa-dolly',
@@ -253,6 +283,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['purchase_receipts:read']
       },
       {
+        id: 'purchases--supplier-invoices',
         label: 'Factures fournisseurs',
         route: '/supplier-invoices',
         icon: 'fa-solid fa-money-bill-wave',
@@ -260,6 +291,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['supplier_invoices:read']
       },
       {
+        id: 'purchases--invoices-unpaid',
         label: 'Factures impayées',
         route: '/supplier-invoices/unpaid',
         icon: 'fa-solid fa-circle-exclamation',
@@ -267,6 +299,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['supplier_invoices:read']
       },
       {
+        id: 'purchases--reports-supplier-balances',
         label: 'Solde par fournisseur',
         route: '/reports/supplier-balances',
         icon: 'fa-solid fa-wallet',
@@ -274,6 +307,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['reports:view', 'supplier_invoices:read']
       },
       {
+        id: 'purchases--reports-analytics',
         label: 'États analytiques',
         route: '/reports/purchases-analytics',
         icon: 'fa-solid fa-chart-line',
@@ -281,6 +315,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['reports:view', 'suppliers:read']
       },
       {
+        id: 'purchases--reports-sales',
         label: 'Rapports',
         route: '/reports/purchases',
         icon: 'fa-solid fa-chart-column',
@@ -290,11 +325,13 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'records',
     label: 'Fiches',
     icon: 'fa-regular fa-folder-open',
     tourId: 'fiches',
     children: [
       {
+        id: 'records--clients',
         label: 'Clients',
         route: '/clients',
         icon: 'fa-solid fa-users',
@@ -302,6 +339,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['clients:read']
       },
       {
+        id: 'records--products',
         label: 'Produits',
         route: '/products',
         icon: 'fa-solid fa-cube',
@@ -309,6 +347,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['products:read']
       },
       {
+        id: 'records--product-categories',
         label: 'Catégories',
         route: '/product-categories',
         icon: 'fa-solid fa-tags',
@@ -316,6 +355,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['products:read']
       },
       {
+        id: 'records--reports-sales',
         label: 'Rapports',
         route: '/reports/fiches',
         icon: 'fa-solid fa-chart-column',
@@ -325,11 +365,13 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'stock',
     label: 'Stock',
     icon: 'fa-solid fa-boxes-stacked',
     tourId: 'stock',
     children: [
       {
+        id: 'stock--ai-assistant-stock',
         label: 'Assistant Stock',
         route: '/ai-assistant/stock',
         icon: 'fa-solid fa-wand-magic-sparkles',
@@ -337,6 +379,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['ai:chat', 'stock:read']
       },
       {
+        id: 'stock--stock',
         label: 'Gestion de stock',
         route: '/stock',
         icon: 'fa-solid fa-boxes-stacked',
@@ -344,6 +387,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['stock:read']
       },
       {
+        id: 'stock--stock-entries',
         label: "Bons d'entrée",
         route: '/stock/entries',
         icon: 'fa-solid fa-arrow-down',
@@ -351,6 +395,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['stock_vouchers:read']
       },
       {
+        id: 'stock--stock-issues',
         label: 'Bons de sortie',
         route: '/stock/issues',
         icon: 'fa-solid fa-arrow-up',
@@ -358,6 +403,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['stock_vouchers:read']
       },
       {
+        id: 'stock--transfers',
         label: 'Transferts',
         route: '/transfers',
         icon: 'fa-solid fa-right-left',
@@ -365,6 +411,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['stock_transfers:read']
       },
       {
+        id: 'stock--inventory',
         label: 'Inventaire',
         route: '/inventory',
         icon: 'fa-solid fa-clipboard-list',
@@ -372,6 +419,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['inventory:read']
       },
       {
+        id: 'stock--inventory-wizard',
         label: 'Mode assistant',
         route: '/inventory/wizard',
         icon: 'fa-solid fa-list-ol',
@@ -379,6 +427,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['inventory:read']
       },
       {
+        id: 'stock--reports-sales',
         label: 'Rapports',
         route: '/reports/stock',
         icon: 'fa-solid fa-chart-column',
@@ -388,11 +437,13 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'treasury',
     label: 'Trésorerie',
     icon: 'fa-solid fa-credit-card',
     tourId: 'tresorerie',
     children: [
       {
+        id: 'treasury--treasury-cash-forecast',
         label: 'Trésorerie prévisionnelle',
         route: '/treasury/cash-forecast',
         icon: 'fa-solid fa-chart-line',
@@ -400,6 +451,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.treasuryForecast.view]
       },
       {
+        id: 'treasury--ai-assistant-tresorerie',
         label: 'Assistant Trésorerie',
         route: '/ai-assistant/tresorerie',
         icon: 'fa-solid fa-wand-magic-sparkles',
@@ -407,6 +459,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['ai:chat', 'payments:read']
       },
       {
+        id: 'treasury--payments-cash-desk',
         label: 'Caisse',
         route: '/payments/cash-desk',
         icon: 'fa-solid fa-building-columns',
@@ -414,6 +467,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['payments:read']
       },
       {
+        id: 'treasury--payments-bank-accounts',
         label: 'Comptes bancaires',
         route: '/payments/bank-accounts',
         icon: 'fa-solid fa-building-columns',
@@ -421,6 +475,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['payments:read']
       },
       {
+        id: 'treasury--payments-clients',
         label: 'Paiements clients',
         route: '/payments/clients',
         icon: 'fa-solid fa-credit-card',
@@ -428,6 +483,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['payments:read']
       },
       {
+        id: 'treasury--payments-suppliers',
         label: 'Paiements fournisseurs',
         route: '/payments/suppliers',
         icon: 'fa-solid fa-building',
@@ -435,6 +491,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['payments:read']
       },
       {
+        id: 'treasury--reports-sales',
         label: 'Rapports',
         route: '/reports/payments',
         icon: 'fa-solid fa-chart-column',
@@ -444,10 +501,12 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'crm',
     label: 'CRM Commercial',
     icon: 'fa-solid fa-handshake',
     children: [
       {
+        id: 'crm--ai-assistant-crm',
         label: 'Assistant CRM',
         route: '/ai-assistant/crm',
         icon: 'fa-solid fa-wand-magic-sparkles',
@@ -455,6 +514,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['ai:chat', 'crm:read']
       },
       {
+        id: 'crm--crm-dashboard',
         label: 'Tableau de bord',
         route: '/crm/dashboard',
         icon: 'fa-solid fa-gauge-high',
@@ -462,6 +522,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['crm:read']
       },
       {
+        id: 'crm--crm-opportunities',
         label: 'Opportunités',
         route: '/crm/opportunities',
         icon: 'fa-solid fa-filter-circle-dollar',
@@ -469,6 +530,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['crm:read']
       },
       {
+        id: 'crm--crm-activities',
         label: 'Activités',
         route: '/crm/activities',
         icon: 'fa-solid fa-list-check',
@@ -476,6 +538,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['crm:read']
       },
       {
+        id: 'crm--crm-targets',
         label: 'Objectifs',
         route: '/crm/targets',
         icon: 'fa-solid fa-chart-line',
@@ -483,6 +546,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['sales_targets:read']
       },
       {
+        id: 'crm--crm-quote-templates',
         label: 'Modèles de devis',
         route: '/crm/quote-templates',
         icon: 'fa-solid fa-file-lines',
@@ -492,10 +556,12 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'projects',
     label: 'Projets',
     icon: 'fa-solid fa-diagram-project',
     children: [
       {
+        id: 'projects--crm-dashboard',
         label: 'Tableau de bord',
         route: '/projects/dashboard',
         icon: 'fa-solid fa-chart-pie',
@@ -503,6 +569,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.projects.read]
       },
       {
+        id: 'projects--projects',
         label: 'Liste des projets',
         route: '/projects',
         icon: 'fa-solid fa-list',
@@ -510,6 +577,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.projects.read]
       },
       {
+        id: 'projects--timesheets',
         label: 'Mes feuilles de temps',
         route: '/timesheets',
         icon: 'fa-solid fa-clock',
@@ -519,10 +587,12 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'fiscal-tej',
     label: 'Fiscal / TEJ',
     icon: 'fa-solid fa-file-invoice-dollar',
     children: [
       {
+        id: 'fiscal-tej--crm-dashboard',
         label: 'Tableau de bord',
         route: '/withholding-tax/dashboard',
         icon: 'fa-solid fa-gauge-high',
@@ -530,6 +600,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['withholding_tax:read']
       },
       {
+        id: 'fiscal-tej--withholding-tax-tej-export',
         label: 'Export TEJ',
         route: '/withholding-tax/tej-export',
         icon: 'fa-solid fa-file-export',
@@ -537,6 +608,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['withholding_tax:export']
       },
       {
+        id: 'fiscal-tej--withholding-tax-settings',
         label: 'Types de retenue',
         route: '/withholding-tax/settings',
         icon: 'fa-solid fa-sliders',
@@ -546,10 +618,12 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'hr-payroll',
     label: 'RH & Paie',
     icon: 'fa-solid fa-users-gear',
     children: [
       {
+        id: 'hr-payroll--payroll-employees',
         label: 'Salariés',
         route: '/payroll/employees',
         icon: 'fa-solid fa-id-card',
@@ -557,6 +631,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
+        id: 'hr-payroll--payroll-runs',
         label: 'Cycles de paie',
         route: '/payroll/runs',
         icon: 'fa-solid fa-calendar-check',
@@ -564,6 +639,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
+        id: 'hr-payroll--payroll-regularization',
         label: 'Régularisation IRPP',
         route: '/payroll/regularization',
         icon: 'fa-solid fa-scale-balanced',
@@ -571,6 +647,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
+        id: 'hr-payroll--payroll-terminations',
         label: 'Soldes de tout compte',
         route: '/payroll/terminations',
         icon: 'fa-solid fa-file-signature',
@@ -578,6 +655,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
+        id: 'hr-payroll--payroll-reports-payroll-book',
         label: 'Livre de paie',
         route: '/payroll/reports/payroll-book',
         icon: 'fa-solid fa-book',
@@ -585,6 +663,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
+        id: 'hr-payroll--payroll-reports-payroll-journal',
         label: 'Journal de paie',
         route: '/payroll/reports/payroll-journal',
         icon: 'fa-solid fa-list-check',
@@ -592,6 +671,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.read]
       },
       {
+        id: 'hr-payroll--payroll-declarations',
         label: 'Déclarations paie',
         route: '/payroll/declarations',
         icon: 'fa-solid fa-file-export',
@@ -599,6 +679,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.declare]
       },
       {
+        id: 'hr-payroll--payroll-settings',
         label: 'Paramètres paie',
         route: '/payroll/settings',
         icon: 'fa-solid fa-sliders',
@@ -606,6 +687,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.settings]
       },
       {
+        id: 'hr-payroll--payroll-settings-holidays',
         label: 'Jours fériés',
         route: '/payroll/settings/holidays',
         icon: 'fa-solid fa-calendar-day',
@@ -613,6 +695,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.payroll.settings]
       },
       {
+        id: 'hr-payroll--payroll-settings-annual-bonuses',
         label: 'Primes annuelles',
         route: '/payroll/settings/annual-bonuses',
         icon: 'fa-solid fa-gift',
@@ -622,11 +705,13 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'accounting',
     label: 'Comptabilité',
     icon: 'fa-solid fa-calculator',
     tourId: 'comptabilite',
     children: [
       {
+        id: 'accounting--ai-assistant-comptabilite',
         label: 'Assistant Comptabilité',
         route: '/ai-assistant/comptabilite',
         icon: 'fa-solid fa-wand-magic-sparkles',
@@ -634,6 +719,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['ai:chat', 'accounting:read']
       },
       {
+        id: 'accounting--accounting-home',
         label: 'Accueil comptabilité',
         route: '/accounting/home',
         icon: 'fa-solid fa-table-cells-large',
@@ -641,6 +727,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-chart',
         label: 'Plan comptable',
         route: '/accounting/chart',
         icon: 'fa-solid fa-sitemap',
@@ -648,6 +735,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-journals',
         label: 'Journaux & familles',
         route: '/accounting/journals',
         icon: 'fa-solid fa-book-bookmark',
@@ -655,6 +743,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-entry-templates',
         label: "Modèles d'écriture",
         route: '/accounting/entry-templates',
         icon: 'fa-solid fa-clone',
@@ -662,6 +751,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-journal',
         label: 'Journal',
         route: '/accounting/journal',
         icon: 'fa-solid fa-book',
@@ -669,6 +759,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-ledger',
         label: 'Grand livre',
         route: '/accounting/ledger',
         icon: 'fa-solid fa-book-open',
@@ -676,6 +767,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-sub-journals',
         label: 'Journaux auxiliaires',
         route: '/accounting/sub-journals',
         icon: 'fa-solid fa-book-bookmark',
@@ -683,6 +775,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-balance',
         label: 'Balance',
         route: '/accounting/balance',
         icon: 'fa-solid fa-scale-balanced',
@@ -690,6 +783,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-aging',
         label: 'Balance âgée',
         route: '/accounting/aging',
         icon: 'fa-solid fa-clock',
@@ -697,6 +791,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-lettering',
         label: 'Lettrage',
         route: '/accounting/lettering',
         icon: 'fa-solid fa-link',
@@ -704,6 +799,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:create']
       },
       {
+        id: 'accounting--accounting-entry-search',
         label: "Recherche d'écriture",
         route: '/accounting/entry-search',
         icon: 'fa-solid fa-magnifying-glass',
@@ -711,6 +807,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-account-replacement',
         label: 'Remplacement de compte',
         route: '/accounting/account-replacement',
         icon: 'fa-solid fa-right-left',
@@ -718,6 +815,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:create']
       },
       {
+        id: 'accounting--accounting-manual-entry',
         label: 'Saisie manuelle',
         route: '/accounting/manual-entry',
         icon: 'fa-solid fa-pen-to-square',
@@ -725,6 +823,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:create']
       },
       {
+        id: 'accounting--accounting-import',
         label: 'Reprise (import)',
         route: '/accounting/import',
         icon: 'fa-solid fa-file-import',
@@ -732,6 +831,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:import']
       },
       {
+        id: 'accounting--accounting-fixed-assets',
         label: 'Immobilisations',
         route: '/accounting/fixed-assets',
         icon: 'fa-solid fa-building',
@@ -739,6 +839,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-fixed-assets-amortization-table',
         label: 'Tableau amortissements',
         route: '/accounting/fixed-assets/amortization-table',
         icon: 'fa-solid fa-table-list',
@@ -746,6 +847,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-balance-sheet',
         label: 'Bilan',
         route: '/accounting/balance-sheet',
         icon: 'fa-solid fa-chart-pie',
@@ -753,6 +855,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-income-statement',
         label: 'Compte de résultat',
         route: '/accounting/income-statement',
         icon: 'fa-solid fa-chart-line',
@@ -760,6 +863,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-nct-statements',
         label: 'États financiers NCT',
         route: '/accounting/nct-statements',
         icon: 'fa-solid fa-file-contract',
@@ -767,6 +871,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-vat-declaration',
         label: 'Declarations · TVA',
         route: '/accounting/vat-declaration',
         icon: 'fa-solid fa-file-invoice',
@@ -774,6 +879,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--accounting-fiscal-schedule',
         label: 'Declarations · Echeancier',
         route: '/accounting/fiscal-schedule',
         icon: 'fa-solid fa-calendar-days',
@@ -781,6 +887,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:read']
       },
       {
+        id: 'accounting--treasury',
         label: 'Declarations · Paiements',
         route: '/treasury',
         icon: 'fa-solid fa-money-check-dollar',
@@ -791,6 +898,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: [PERMISSIONS.treasuryForecast.view]
       },
       {
+        id: 'accounting--accounting-closing',
         label: 'Clôture',
         route: '/accounting/closing',
         icon: 'fa-solid fa-lock',
@@ -798,6 +906,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['accounting:close']
       },
       {
+        id: 'accounting--audit',
         label: "Journal d'audit",
         route: '/audit',
         icon: 'fa-solid fa-shield-halved',
@@ -807,22 +916,26 @@ export const ALL_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
+    id: 'exchanges',
     label: 'Échanges',
     icon: 'fa-solid fa-comments',
     route: '/exchanges'
   },
   {
+    id: 'assistance',
     label: 'Assistance',
     icon: 'fa-solid fa-headset',
     route: '/assistance'
   },
   {
+    id: 'settings',
     label: 'Paramètres',
     icon: 'fa-solid fa-gear',
     tourId: 'settings',
     modules: [M.Administration],
     children: [
       {
+        id: 'settings--settings',
         label: 'Paramètres généraux',
         route: '/settings',
         icon: 'fa-solid fa-sliders',
@@ -831,6 +944,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         platformSettingsOnly: true
       },
       {
+        id: 'settings--settings-modules',
         label: 'Modules',
         route: '/settings/modules',
         icon: 'fa-solid fa-th-large',
@@ -839,6 +953,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         platformSettingsOnly: true
       },
       {
+        id: 'settings--settings-promotions',
         label: 'Promotions',
         route: '/settings/promotions',
         icon: 'fa-solid fa-bullhorn',
@@ -846,6 +961,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
         permissionsAll: ['pricing:read']
       },
       {
+        id: 'settings--settings-variant-axes',
         label: 'Axes de variantes',
         route: VARIANT_AXES_PATH,
         icon: 'fa-solid fa-th-large',

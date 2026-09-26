@@ -29,10 +29,10 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
             }
             <span class="badge badge--neutral">{{ sizeLabel }}</span>
             @if (attachment.ocrApplied) {
-              <span class="badge badge--info" title="Reconnaissance optique appliquée (document scanné)">OCR</span>
+              <span class="badge badge--info" title="Reconnaissance optique appliquée (document scanné)" i18n-title="Reconnaissance optique appliquée (document scanné)" i18n="@@ai-assistant.components.ocr.fd470836">OCR</span>
             }
             @if (attachment.truncated) {
-              <span class="badge badge--warning" title="Texte tronqué à la limite max">Tronqué</span>
+              <span class="badge badge--warning" title="Texte tronqué à la limite max" i18n-title="Texte tronqué à la limite max" i18n="@@ai-assistant.components.tronque.cf5dabd4">Tronqué</span>
             }
           </div>
         </div>
@@ -52,7 +52,7 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
               type="button"
               class="btn-ghost btn-ghost--danger"
               (click)="emitRemove()"
-              aria-label="Supprimer cette pièce jointe"
+              aria-label="Supprimer cette pièce jointe" i18n-aria-label="Supprimer cette pièce jointe"
             >
               <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>

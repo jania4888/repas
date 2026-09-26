@@ -20,7 +20,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      title="Rapports"
+      title="Rapports" i18n-title="Rapports"
       subtitle="Analysez vos tables personnalisées et vos données existantes."
       [breadcrumbs]="breadcrumbs">
       <button pButton type="button" label="Nouveau rapport" icon="fa-solid fa-plus" studioActions routerLink="/studio/reports/new"></button>
@@ -28,7 +28,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
       <div class="ft-table-card">
         <p-table [value]="reports()" [loading]="loading()" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
-            <tr><th>Nom</th><th>Source</th><th>Type</th><th style="width:9rem"></th></tr>
+            <tr><th i18n="@@studio.studio-report-list.nom.7ff20370">Nom</th><th i18n="@@studio.studio-report-list.source.6da13add">Source</th><th i18n="@@studio.studio-report-list.type.3deb7456">Type</th><th style="width:9rem"></th></tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
             <tr>
@@ -47,7 +47,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr><td colspan="4">
-              <app-empty-state icon="pi-chart-bar" title="Aucun rapport" description="Créez votre premier rapport analytique."
+              <app-empty-state icon="pi-chart-bar" title="Aucun rapport" i18n-title="Aucun rapport" description="Créez votre premier rapport analytique."
                 actionLabel="Nouveau rapport" actionRoute="/studio/reports/new" [showAction]="true" />
             </td></tr>
           </ng-template>

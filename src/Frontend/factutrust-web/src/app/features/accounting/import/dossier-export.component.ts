@@ -19,7 +19,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card de-card">
       <div class="de-fields">
         <div class="form-field">
-          <label class="field-label" for="de-year">Exercice</label>
+          <label class="field-label" for="de-year" i18n="@@accounting.import.exercice.e171e2b0">Exercice</label>
           <input id="de-year" type="number" min="2000" max="2100" class="de-input" [(ngModel)]="fiscalYear" [disabled]="busy()" />
         </div>
         <div class="de-actions">
@@ -31,9 +31,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
       </div>
       <p class="de-help">
-        L'archive réunit <code>plan_comptable.csv</code>, <code>journal_general.csv</code>,
-        <code>balance.csv</code>, <code>tiers.csv</code>, <code>fec.txt</code> et un manifeste.
-        Export en <strong>lecture seule</strong> — aucune donnée n'est modifiée.
+        L'archive réunit <code i18n="@@accounting.import.plan.comptable.csv.d2519761">plan_comptable.csv</code>, <code i18n="@@accounting.import.journal.general.csv.f981840a">journal_general.csv</code>,
+        <code i18n="@@accounting.import.balance.csv.7b3038e7">balance.csv</code>, <code i18n="@@accounting.import.tiers.csv.950afe57">tiers.csv</code>, <code i18n="@@accounting.import.fec.txt.2e506cd7">fec.txt</code> et un manifeste.
+        Export en <strong i18n="@@accounting.import.lecture.seule.a9a41b71">lecture seule</strong> — aucune donnée n'est modifiée.
       </p>
     </div>
 

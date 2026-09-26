@@ -44,25 +44,23 @@ function parseIsoDate(value?: string): Date | null {
     ButtonComponent
   ],
   template: `
-    <p class="payroll-info-text">
-      Les suspensions approuvées réduisent le brut du mois (prorata) lorsque l'option est activée sur l'exercice.
-      Une suspension rémunérée n'entraîne pas de retenue.
-    </p>
+    <p class="payroll-info-text" i18n="@@payroll.employees.les.suspensions.approuvees.reduisent.le.brut.du..a4d1ac0a">Les suspensions approuvées réduisent le brut du mois (prorata) lorsque l'option est activée sur l'exercice.
+      Une suspension rémunérée n'entraîne pas de retenue.</p>
 
     @if (!readOnly) {
       <div class="payroll-toolbar mb-3">
-        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Ajouter une suspension</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.employees.ajouter.une.suspension.e7da62de">Ajouter une suspension</app-button>
       </div>
     }
 
     <p-table [value]="items()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Type</th>
-          <th>Début</th>
-          <th>Fin</th>
-          <th>Rémunérée</th>
-          <th>Statut</th>
+          <th i18n="@@payroll.employees.type.3deb7456">Type</th>
+          <th i18n="@@payroll.employees.debut.f0955314">Début</th>
+          <th i18n="@@payroll.employees.fin.4251065f">Fin</th>
+          <th i18n="@@payroll.employees.remuneree.e95340ce">Rémunérée</th>
+          <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
           @if (!readOnly) { <th></th> }
         </tr>
       </ng-template>
@@ -77,17 +75,17 @@ function parseIsoDate(value?: string): Date | null {
           </td>
           @if (!readOnly) {
             <td class="actions">
-              <button type="button" class="p-button p-button-text p-button-sm" (click)="openDialog(s)">Modifier</button>
+              <button type="button" class="p-button p-button-text p-button-sm" (click)="openDialog(s)" i18n="@@payroll.employees.modifier.f260e757">Modifier</button>
               @if (!s.isApproved) {
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="approve(s)">Approuver</button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="approve(s)" i18n="@@payroll.employees.approuver.3033e7d6">Approuver</button>
               }
-              <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(s)">Supprimer</button>
+              <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(s)" i18n="@@payroll.employees.supprimer.1acfc1c7">Supprimer</button>
             </td>
           }
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td [attr.colspan]="readOnly ? 5 : 6">Aucune suspension enregistrée.</td></tr>
+        <tr><td [attr.colspan]="readOnly ? 5 : 6" i18n="@@payroll.employees.aucune.suspension.enregistree.7e48283d">Aucune suspension enregistrée.</td></tr>
       </ng-template>
     </p-table>
 
@@ -97,30 +95,30 @@ function parseIsoDate(value?: string): Date | null {
       [modal]="true"
       [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
-        <label>Type</label>
+        <label i18n="@@payroll.employees.type.3deb7456">Type</label>
         <p-select [options]="suspensionTypeOptions" [(ngModel)]="formType" optionLabel="label" optionValue="value" appendTo="body" styleClass="w-full" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Début</label>
+          <label i18n="@@payroll.employees.debut.f0955314">Début</label>
           <p-datepicker [(ngModel)]="formStart" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Fin</label>
+          <label i18n="@@payroll.employees.fin.4251065f">Fin</label>
           <p-datepicker [(ngModel)]="formEnd" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
       </div>
       <div class="payroll-form-group switch-row mb-2">
-        <label for="isPaid">Suspension rémunérée</label>
+        <label for="isPaid" i18n="@@payroll.employees.suspension.remuneree.fe8572b6">Suspension rémunérée</label>
         <p-inputSwitch inputId="isPaid" [(ngModel)]="formIsPaid" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Motif</label>
+        <label i18n="@@payroll.employees.motif.2a198f47">Motif</label>
         <textarea pTextarea [(ngModel)]="formReason" rows="2" class="w-full"></textarea>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

@@ -64,7 +64,7 @@ import { ApprovalDueState, ApprovalRow, approvalKpis, dueLabel, dueState, toAppr
       </div>
       <p-toast styleClass="studio-theme" />
 
-      <section class="sap-kpis" aria-label="Indicateurs">
+      <section class="sap-kpis" aria-label="Indicateurs" i18n-aria-label="Indicateurs">
         <article class="sap-kpi" data-testid="sap-kpi-pending">
           <span class="sap-kpi__value">{{ kpis().pending }}</span>
           <span class="sap-kpi__label">{{ labels.kpiPending }}</span>

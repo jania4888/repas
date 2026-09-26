@@ -19,10 +19,10 @@ import {
     @if (project) {
       <aside class="proj-sidebar-panel">
         <section class="proj-sidebar-section">
-          <h3 class="proj-sidebar-title">Résumé du projet</h3>
+          <h3 class="proj-sidebar-title" i18n="@@projects.components.resume.du.projet.56ccc4ab">Résumé du projet</h3>
           @if (budget) {
             <div class="proj-sidebar-budget">
-              <span class="proj-sidebar-label">Budget total</span>
+              <span class="proj-sidebar-label" i18n="@@projects.components.budget.total.b930ffdc">Budget total</span>
               <strong>{{ budget.budgetHt | number:'1.3-3' }} {{ project.currency }}</strong>
               @if (budget.budgetHt > 0) {
                 <p-progressBar [value]="budgetUsedPercentValue" [showValue]="false" styleClass="mt-2" />
@@ -30,16 +30,16 @@ import {
               }
             </div>
             <dl class="proj-sidebar-dl">
-              <dt>Heures saisies</dt>
+              <dt i18n="@@projects.components.heures.saisies.882ec4a1">Heures saisies</dt>
               <dd>{{ budget.loggedHours | number:'1.0-1' }} h</dd>
-              <dt>À facturer</dt>
+              <dt i18n="@@projects.components.a.facturer.acd40e67">À facturer</dt>
               <dd>{{ budget.billableUninvoicedHours | number:'1.0-1' }} h</dd>
             </dl>
           }
         </section>
 
         <section class="proj-sidebar-section">
-          <h3 class="proj-sidebar-title">Prochaines échéances</h3>
+          <h3 class="proj-sidebar-title" i18n="@@projects.components.prochaines.echeances.69960f97">Prochaines échéances</h3>
           @if (upcoming.length) {
             <ul class="proj-sidebar-list">
               @for (t of upcoming; track t.id) {
@@ -55,12 +55,12 @@ import {
               }
             </ul>
           } @else {
-            <p class="text-sm text-color-secondary m-0">Aucune échéance à venir.</p>
+            <p class="text-sm text-color-secondary m-0" i18n="@@projects.components.aucune.echeance.a.venir.2c15f4e9">Aucune échéance à venir.</p>
           }
         </section>
 
         <section class="proj-sidebar-section">
-          <h3 class="proj-sidebar-title">Activité récente</h3>
+          <h3 class="proj-sidebar-title" i18n="@@projects.components.activite.recente.524eaf8e">Activité récente</h3>
           @if (activities.length) {
             <ul class="proj-sidebar-activity">
               @for (a of activities.slice(0, 5); track a.id) {
@@ -71,7 +71,7 @@ import {
               }
             </ul>
           } @else {
-            <p class="text-sm text-color-secondary m-0">Aucune activité.</p>
+            <p class="text-sm text-color-secondary m-0" i18n="@@projects.components.aucune.activite.7407727b">Aucune activité.</p>
           }
         </section>
       </aside>

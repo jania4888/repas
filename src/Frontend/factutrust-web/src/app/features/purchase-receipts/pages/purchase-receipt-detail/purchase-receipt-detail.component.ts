@@ -40,7 +40,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@purchase-receipts.pages.chargement.a209b664">Chargement...</p>
       </div>
     } @else if (receipt()) {
       <app-page-header
@@ -48,9 +48,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
         [subtitle]="receipt()!.supplier.name">
         <div class="header-actions">
           <app-button variant="outline" icon="pi-arrow-left" iconPos="left"
-            routerLink="/purchase-receipts">
-            Retour
-          </app-button>
+            routerLink="/purchase-receipts" i18n="@@purchase-receipts.pages.retour.e5befb1f">Retour</app-button>
 
           <app-button variant="outline" icon="pi-file-pdf" iconPos="left"
             [disabled]="downloadingPdf()"
@@ -60,9 +58,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
           @if (canEdit()) {
             <app-button variant="outline" icon="pi-pencil" iconPos="left"
-              [routerLink]="['/purchase-receipts', receipt()!.id, 'edit']">
-              Modifier
-            </app-button>
+              [routerLink]="['/purchase-receipts', receipt()!.id, 'edit']" i18n="@@purchase-receipts.pages.modifier.f260e757">Modifier</app-button>
           }
 
           @if (canValidate()) {
@@ -75,23 +71,17 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
           @if (canCreateSupplierInvoice()) {
             <app-button variant="primary" icon="pi-money-bill" iconPos="left"
-              (clicked)="openCreateSupplierInvoice()">
-              Créer facture fournisseur
-            </app-button>
+              (clicked)="openCreateSupplierInvoice()" i18n="@@purchase-receipts.pages.creer.facture.fournisseur.4a82949b">Créer facture fournisseur</app-button>
           }
 
           @if (canCancel()) {
             <app-button variant="outline" icon="pi-times" iconPos="left"
-              (clicked)="openCancelDialog()">
-              Annuler
-            </app-button>
+              (clicked)="openCancelDialog()" i18n="@@purchase-receipts.pages.annuler.49ba3292">Annuler</app-button>
           }
 
           @if (canDelete()) {
             <app-button variant="danger" icon="pi-trash" iconPos="left"
-              (clicked)="deleteReceipt()">
-              Supprimer
-            </app-button>
+              (clicked)="deleteReceipt()" i18n="@@purchase-receipts.pages.supprimer.1acfc1c7">Supprimer</app-button>
           }
         </div>
       </app-page-header>
@@ -101,33 +91,33 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
           <h3 class="card-title"><i class="pi pi-file"></i> Informations générales</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Numéro</span>
+              <span class="label" i18n="@@purchase-receipts.pages.numero.15e73db0">Numéro</span>
               <span class="value mono">{{ receipt()!.number }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Date</span>
+              <span class="label" i18n="@@purchase-receipts.pages.date.eb9a4bc1">Date</span>
               <span class="value">{{ receipt()!.receiptDate | date:'dd/MM/yyyy' }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Statut</span>
+              <span class="label" i18n="@@purchase-receipts.pages.statut.659499f3">Statut</span>
               <app-status-badge
                 [status]="statusBadge()"
                 [label]="receipt()!.statusDisplay">
               </app-status-badge>
             </div>
             <div class="info-item">
-              <span class="label">Entrepôt</span>
+              <span class="label" i18n="@@purchase-receipts.pages.entrepot.c349c0bc">Entrepôt</span>
               <span class="value">{{ receipt()!.warehouseName || '—' }}</span>
             </div>
             @if (receipt()!.supplierReference) {
               <div class="info-item">
-                <span class="label">Réf. fournisseur</span>
+                <span class="label" i18n="@@purchase-receipts.pages.ref.fournisseur.98507c4b">Réf. fournisseur</span>
                 <span class="value">{{ receipt()!.supplierReference }}</span>
               </div>
             }
             @if (receipt()!.purchaseOrderId) {
               <div class="info-item">
-                <span class="label">Bon de commande</span>
+                <span class="label" i18n="@@purchase-receipts.pages.bon.de.commande.4b9aea29">Bon de commande</span>
                 <a [routerLink]="['/purchase-orders', receipt()!.purchaseOrderId]" class="value link">
                   {{ receipt()!.purchaseOrderNumber }}
                 </a>
@@ -135,7 +125,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
             }
             @if (receipt()!.isPartialRelativeToOrdered) {
               <div class="info-item">
-                <span class="label">Réception</span>
+                <span class="label" i18n="@@purchase-receipts.pages.reception.36e23897">Réception</span>
                 <p-tag value="Partielle" severity="warn"></p-tag>
               </div>
             }
@@ -146,14 +136,14 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
           <h3 class="card-title"><i class="pi pi-building"></i> Fournisseur</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Nom</span>
+              <span class="label" i18n="@@purchase-receipts.pages.nom.7ff20370">Nom</span>
               <a [routerLink]="['/suppliers', receipt()!.supplier.id]" class="value link">
                 {{ receipt()!.supplier.name }}
               </a>
             </div>
             @if (receipt()!.supplier.email) {
               <div class="info-item">
-                <span class="label">Email</span>
+                <span class="label" i18n="@@purchase-receipts.pages.email.84add5b2">Email</span>
                 <a [href]="'mailto:' + receipt()!.supplier.email" class="value link">
                   {{ receipt()!.supplier.email }}
                 </a>
@@ -161,13 +151,13 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
             }
             @if (receipt()!.transporterName) {
               <div class="info-item">
-                <span class="label">Transporteur</span>
+                <span class="label" i18n="@@purchase-receipts.pages.transporteur.7adadb36">Transporteur</span>
                 <span class="value">{{ receipt()!.transporterName }}</span>
               </div>
             }
             @if (receipt()!.deliveryNoteNumber) {
               <div class="info-item">
-                <span class="label">N° BL</span>
+                <span class="label" i18n="@@purchase-receipts.pages.n.bl.f3b7f6bc">N° BL</span>
                 <span class="value">{{ receipt()!.deliveryNoteNumber }}</span>
               </div>
             }
@@ -179,15 +169,15 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
           <p-table [value]="receipt()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 50px">#</th>
-                <th>Article</th>
-                <th style="width: 80px">Unité</th>
-                <th style="width: 100px">Qté commandée</th>
-                <th style="width: 100px">Qté reçue</th>
-                <th style="width: 120px">Prix unitaire HT</th>
-                <th style="width: 80px">Remise</th>
-                <th style="width: 80px">TVA</th>
-                <th style="width: 120px">Total HT</th>
+                <th style="width: 50px" i18n="@@purchase-receipts.pages.text.d08f88df">#</th>
+                <th i18n="@@purchase-receipts.pages.article.4360c2dc">Article</th>
+                <th style="width: 80px" i18n="@@purchase-receipts.pages.unite.388fd9c4">Unité</th>
+                <th style="width: 100px" i18n="@@purchase-receipts.pages.qte.commandee.8c1ee02c">Qté commandée</th>
+                <th style="width: 100px" i18n="@@purchase-receipts.pages.qte.recue.ec07cbe1">Qté reçue</th>
+                <th style="width: 120px" i18n="@@purchase-receipts.pages.prix.unitaire.ht.bb3f8e39">Prix unitaire HT</th>
+                <th style="width: 80px" i18n="@@purchase-receipts.pages.remise.ce12d942">Remise</th>
+                <th style="width: 80px" i18n="@@purchase-receipts.pages.tva.fb62cb5d">TVA</th>
+                <th style="width: 120px" i18n="@@purchase-receipts.pages.total.ht.2ca17ae6">Total HT</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-line>
@@ -214,15 +204,15 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
           <div class="totals-section">
             <div class="total-row">
-              <span>Sous-total HT</span>
+              <span i18n="@@purchase-receipts.pages.sous.total.ht.724598f6">Sous-total HT</span>
               <span class="amount">{{ receipt()!.subTotal | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
             <div class="total-row">
-              <span>TVA</span>
+              <span i18n="@@purchase-receipts.pages.tva.fb62cb5d">TVA</span>
               <span class="amount">{{ receipt()!.totalVat | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
             <div class="total-row grand-total">
-              <span>Total TTC</span>
+              <span i18n="@@purchase-receipts.pages.total.ttc.9e80ff7c">Total TTC</span>
               <span class="amount">{{ receipt()!.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
           </div>
@@ -285,26 +275,22 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
       [style]="{ width: '450px' }"
       [draggable]="false"
       [resizable]="false">
-      <p class="dialog-message">
-        Indiquez le motif d'annulation. Si le bon était validé, le stock et les quantités du BC seront contrepassés.
-      </p>
+      <p class="dialog-message" i18n="@@purchase-receipts.pages.indiquez.le.motif.d.annulation.si.le.bon.etait.v.0b7f771f">Indiquez le motif d'annulation. Si le bon était validé, le stock et les quantités du BC seront contrepassés.</p>
       <textarea
         pTextarea
         [(ngModel)]="cancellationReason"
-        placeholder="Motif d'annulation…"
+        placeholder="Motif d'annulation…" i18n-placeholder="Motif d'annulation…"
         [rows]="4"
         class="w-full">
       </textarea>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (clicked)="cancelDialogVisible = false">Retour</app-button>
+        <app-button variant="outline" (clicked)="cancelDialogVisible = false" i18n="@@purchase-receipts.pages.retour.e5befb1f">Retour</app-button>
         <app-button
           variant="danger"
           icon="pi-times"
           iconPos="left"
           [disabled]="!cancellationReason.trim() || cancelling()"
-          (clicked)="submitCancel()">
-          Confirmer l'annulation
-        </app-button>
+          (clicked)="submitCancel()" i18n="@@purchase-receipts.pages.confirmer.l.annulation.92040a54">Confirmer l'annulation</app-button>
       </ng-template>
     </p-dialog>
 

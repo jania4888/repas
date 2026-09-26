@@ -27,12 +27,10 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Brouillons récurrents à valider"
+      title="Brouillons récurrents à valider" i18n-title="Brouillons récurrents à valider"
       subtitle="Factures générées automatiquement en attente d'émission">
       <div class="actions">
-        <app-button variant="outline" icon="pi-arrow-left" routerLink="/recurring-contracts">
-          Retour aux contrats
-        </app-button>
+        <app-button variant="outline" icon="pi-arrow-left" routerLink="/recurring-contracts" i18n="@@recurring-contracts.pages.retour.aux.contrats.9ac8a08b">Retour aux contrats</app-button>
         @if (canTriggerBilling()) {
           <app-button
             variant="primary"
@@ -50,7 +48,7 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
     } @else if (loadError()) {
       <app-empty-state
         icon="pi-exclamation-triangle"
-        title="Impossible de charger les brouillons"
+        title="Impossible de charger les brouillons" i18n-title="Impossible de charger les brouillons"
         description="Une erreur est survenue lors du chargement."
         actionLabel="Réessayer"
         (actionClick)="reload()">
@@ -58,7 +56,7 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
     } @else if (drafts().length === 0) {
       <app-empty-state
         icon="pi-check-circle"
-        title="Aucun brouillon en attente"
+        title="Aucun brouillon en attente" i18n-title="Aucun brouillon en attente"
         description="Les prochaines factures générées automatiquement apparaîtront ici."
         [showAction]="false">
       </app-empty-state>
@@ -67,11 +65,11 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
         <p-table [value]="drafts()" styleClass="p-datatable-sm" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th>Contrat</th>
-              <th>Client</th>
-              <th>Période</th>
-              <th style="width: 140px">Montant</th>
-              <th style="width: 280px">Actions</th>
+              <th i18n="@@recurring-contracts.pages.contrat.d008bdd9">Contrat</th>
+              <th i18n="@@recurring-contracts.pages.client.1bdd79b1">Client</th>
+              <th i18n="@@recurring-contracts.pages.periode.de2110b7">Période</th>
+              <th style="width: 140px" i18n="@@recurring-contracts.pages.montant.4adcd9fc">Montant</th>
+              <th style="width: 280px" i18n="@@recurring-contracts.pages.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-d>
@@ -99,17 +97,13 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
                       variant="ghost"
                       size="sm"
                       icon="pi-file-edit"
-                      (clicked)="openAdjust(d)">
-                      Ajuster
-                    </app-button>
+                      (clicked)="openAdjust(d)" i18n="@@recurring-contracts.pages.ajuster.b65f8ead">Ajuster</app-button>
                   }
                   <app-button
                     variant="ghost"
                     size="sm"
                     icon="pi-eye"
-                    [routerLink]="['/recurring-contracts', d.recurringContractId]">
-                    Voir le contrat
-                  </app-button>
+                    [routerLink]="['/recurring-contracts', d.recurringContractId]" i18n="@@recurring-contracts.pages.voir.le.contrat.db7e606d">Voir le contrat</app-button>
                 </div>
               </td>
             </tr>

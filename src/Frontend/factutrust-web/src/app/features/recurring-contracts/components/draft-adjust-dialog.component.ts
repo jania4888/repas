@@ -52,7 +52,7 @@ interface EditableDraftLine {
       (onShow)="onShow()"
       (onHide)="close()">
       @if (loading()) {
-        <p class="status-line">Chargement du brouillon…</p>
+        <p class="status-line" i18n="@@recurring-contracts.components.chargement.du.brouillon.4c123bfd">Chargement du brouillon…</p>
       } @else if (loadError()) {
         <p class="status-line status-line--error">{{ loadError() }}</p>
       } @else {
@@ -66,7 +66,7 @@ interface EditableDraftLine {
                 <label class="span-2">Description
                   <input
                     class="ft-input"
-                    placeholder="Description"
+                    placeholder="Description" i18n-placeholder="Description"
                     [(ngModel)]="line.designation"
                     [name]="'adjDesc' + i" />
                 </label>
@@ -107,7 +107,7 @@ interface EditableDraftLine {
       }
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (clicked)="close()" [disabled]="busy()">Annuler</app-button>
+        <app-button variant="outline" (clicked)="close()" [disabled]="busy()" i18n="@@recurring-contracts.components.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="secondary"
           icon="pi-save"

@@ -36,7 +36,7 @@ import { VatDivergenceRow } from './vat-declaration.view-model';
                 <span class="vat-divergence-label">{{ row.label }}</span>
                 <span class="vat-divergence-values">
                   <span class="vat-divergence-declared">{{ format(row.declared) }}</span>
-                  <span class="vat-divergence-arrow">→</span>
+                  <span class="vat-divergence-arrow" i18n="@@accounting.vat-declaration.text.213edd25">→</span>
                   <span class="vat-divergence-computed">{{ format(row.computed) }}</span>
                 </span>
               </li>
@@ -44,9 +44,7 @@ import { VatDivergenceRow } from './vat-declaration.view-model';
           </ul>
 
           @if (canResync) {
-            <button type="button" class="vat-divergence-action" (click)="resync.emit()">
-              Resynchroniser depuis les modules
-            </button>
+            <button type="button" class="vat-divergence-action" (click)="resync.emit()" i18n="@@accounting.vat-declaration.resynchroniser.depuis.les.modules.85cff7e2">Resynchroniser depuis les modules</button>
           }
         }
       </div>

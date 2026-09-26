@@ -10,13 +10,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <div class="entry-toolbar" role="toolbar" aria-label="Actions d'écriture">
+    <div class="entry-toolbar" role="toolbar" aria-label="Actions d'écriture" i18n-aria-label="Actions d'écriture">
       <div class="entry-toolbar__left">
         <div class="dropdown">
           <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"
-                  (click)="toggleOptions($event)" [attr.aria-expanded]="optionsOpen">
-            Options d'écriture
-          </button>
+                  (click)="toggleOptions($event)" [attr.aria-expanded]="optionsOpen" i18n="@@accounting.manual-entry.options.d.ecriture.cc09b93c">Options d'écriture</button>
           @if (optionsOpen) {
             <div class="dropdown-menu show" (click)="$event.stopPropagation()">
               <label class="dropdown-item-check">
@@ -55,18 +53,12 @@ import { PERMISSIONS } from '@core/config/permission-keys';
         <div class="dropdown">
           <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"
                   (click)="toggleTemplate($event)" [attr.aria-expanded]="templateOpen"
-                  [disabled]="store.editingLocked()">
-            Modèle
-          </button>
+                  [disabled]="store.editingLocked()" i18n="@@accounting.manual-entry.modele.9853170f">Modèle</button>
           @if (templateOpen) {
             <div class="dropdown-menu show">
-              <button type="button" class="dropdown-item" (click)="loadTemplate.emit(); templateOpen = false">
-                Charger un modèle
-              </button>
+              <button type="button" class="dropdown-item" (click)="loadTemplate.emit(); templateOpen = false" i18n="@@accounting.manual-entry.charger.un.modele.09cd1181">Charger un modèle</button>
               <button type="button" class="dropdown-item" (click)="saveTemplate.emit(); templateOpen = false"
-                      [disabled]="!store.canSaveAsTemplate()">
-                Sauvegarder comme modèle
-              </button>
+                      [disabled]="!store.canSaveAsTemplate()" i18n="@@accounting.manual-entry.sauvegarder.comme.modele.80b765f8">Sauvegarder comme modèle</button>
             </div>
           }
         </div>
@@ -75,22 +67,14 @@ import { PERMISSIONS } from '@core/config/permission-keys';
         <div class="dropdown">
           <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"
                   (click)="toggleImport($event)" [attr.aria-expanded]="importOpen"
-                  title="Importer une pièce ou des écritures">
-            Import
-          </button>
+                  title="Importer une pièce ou des écritures" i18n-title="Importer une pièce ou des écritures" i18n="@@accounting.manual-entry.import.d6fbc9d2">Import</button>
           @if (importOpen) {
             <div class="dropdown-menu show">
               <button type="button" class="dropdown-item"
-                      (click)="importDocument.emit(); importOpen = false">
-                Importer une facture (PDF / image)
-              </button>
+                      (click)="importDocument.emit(); importOpen = false" i18n="@@accounting.manual-entry.importer.une.facture.pdf.image.dc57ae71">Importer une facture (PDF / image)</button>
               <div class="dropdown-divider"></div>
-              <a routerLink="/accounting/import" class="dropdown-item">
-                Import de fichier (CSV / Excel)
-              </a>
-              <a routerLink="/accounting/draft-batch" class="dropdown-item">
-                Écritures en brouillard
-              </a>
+              <a routerLink="/accounting/import" class="dropdown-item" i18n="@@accounting.manual-entry.import.de.fichier.csv.excel.77102ff0">Import de fichier (CSV / Excel)</a>
+              <a routerLink="/accounting/draft-batch" class="dropdown-item" i18n="@@accounting.manual-entry.ecritures.en.brouillard.4d98b8f8">Écritures en brouillard</a>
             </div>
           }
         </div>
@@ -100,9 +84,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
       <div class="entry-toolbar__right">
         @if (store.editingLocked()) {
           <button type="button" class="btn btn-outline-secondary"
-                  (click)="cancelEdit.emit()">
-            Annuler
-          </button>
+                  (click)="cancelEdit.emit()" i18n="@@accounting.manual-entry.annuler.49ba3292">Annuler</button>
           <button type="button" class="btn btn-primary"
                   (click)="save.emit('navigate')"
                   [disabled]="!canSave()">
@@ -120,15 +102,9 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   [disabled]="!canSave()"></button>
           @if (saveMenuOpen) {
             <div class="dropdown-menu dropdown-menu-end show">
-              <button type="button" class="dropdown-item" (click)="save.emit('navigate'); saveMenuOpen = false">
-                Enregistrer
-              </button>
-              <button type="button" class="dropdown-item" (click)="save.emit('reset'); saveMenuOpen = false">
-                Enregistrer & nouveau
-              </button>
-              <button type="button" class="dropdown-item" (click)="save.emit('duplicate'); saveMenuOpen = false">
-                Enregistrer & dupliquer
-              </button>
+              <button type="button" class="dropdown-item" (click)="save.emit('navigate'); saveMenuOpen = false" i18n="@@accounting.manual-entry.enregistrer.f7c8bcd8">Enregistrer</button>
+              <button type="button" class="dropdown-item" (click)="save.emit('reset'); saveMenuOpen = false" i18n="@@accounting.manual-entry.enregistrer.nouveau.dd728e67">Enregistrer & nouveau</button>
+              <button type="button" class="dropdown-item" (click)="save.emit('duplicate'); saveMenuOpen = false" i18n="@@accounting.manual-entry.enregistrer.dupliquer.d84f2fad">Enregistrer & dupliquer</button>
             </div>
           }
         </div>

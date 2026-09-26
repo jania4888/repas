@@ -33,7 +33,7 @@ import { ProjectPerformanceBannerComponent } from '../components/project-perform
       [canCreate]="canCreate" />
 
     @if (loading()) {
-      <p class="text-color-secondary proj-dash-loading">Chargement…</p>
+      <p class="text-color-secondary proj-dash-loading" i18n="@@projects.pages.chargement.01cba1df">Chargement…</p>
     } @else if (error()) {
       <p class="text-danger proj-dash-loading" role="alert">{{ error() }}</p>
     } @else {

@@ -45,12 +45,12 @@ type JournalFlatRow = {
     AccountingJournalTabsComponent
   ],
   template: `
-    <app-page-header title="Journaux auxiliaires" subtitle="Consultation par journal" />
+    <app-page-header title="Journaux auxiliaires" i18n-title="Journaux auxiliaires" subtitle="Consultation par journal" />
 
     <div class="card sub-journals-filters-card">
       <div class="sub-journals-toolbar">
         <div class="form-field sub-journals-field-date">
-          <label class="field-label" for="sj-from">Du</label>
+          <label class="field-label" for="sj-from" i18n="@@accounting.sub-journals.du.84814985">Du</label>
           <input
             id="sj-from"
             type="date"
@@ -60,7 +60,7 @@ type JournalFlatRow = {
             [disabled]="loading()" />
         </div>
         <div class="form-field sub-journals-field-date">
-          <label class="field-label" for="sj-to">Au</label>
+          <label class="field-label" for="sj-to" i18n="@@accounting.sub-journals.au.7a1732d5">Au</label>
           <input
             id="sj-to"
             type="date"
@@ -88,13 +88,13 @@ type JournalFlatRow = {
       role="tabpanel"
       [attr.id]="'sub-journal-panel-' + activeJournalCode"
       [attr.aria-labelledby]="'accounting-journal-tab-' + activeJournalCode">
-      <div class="accounting-kpi-row" aria-label="Totaux du journal">
+      <div class="accounting-kpi-row" aria-label="Totaux du journal" i18n-aria-label="Totaux du journal">
         <div class="accounting-kpi-item">
-          <span class="accounting-kpi-label">Total débit</span>
+          <span class="accounting-kpi-label" i18n="@@accounting.sub-journals.total.debit.ea9c4853">Total débit</span>
           <span class="accounting-kpi-value">{{ tabTotals().debit | number : '1.3-3' }}</span>
         </div>
         <div class="accounting-kpi-item">
-          <span class="accounting-kpi-label">Total crédit</span>
+          <span class="accounting-kpi-label" i18n="@@accounting.sub-journals.total.credit.98c95962">Total crédit</span>
           <span class="accounting-kpi-value">{{ tabTotals().credit | number : '1.3-3' }}</span>
         </div>
       </div>
@@ -118,13 +118,13 @@ type JournalFlatRow = {
         styleClass="p-datatable-sm sub-journals-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Journal</th>
-            <th scope="col" class="sub-journals-col-narrow">N°</th>
-            <th scope="col">Libellé</th>
-            <th scope="col" class="sub-journals-col-account">Compte</th>
-            <th scope="col" class="sub-journals-col-amount">Débit</th>
-            <th scope="col" class="sub-journals-col-amount">Crédit</th>
+            <th scope="col" i18n="@@accounting.sub-journals.date.eb9a4bc1">Date</th>
+            <th scope="col" i18n="@@accounting.sub-journals.journal.57d7f743">Journal</th>
+            <th scope="col" class="sub-journals-col-narrow" i18n="@@accounting.sub-journals.n.754e6095">N°</th>
+            <th scope="col" i18n="@@accounting.sub-journals.libelle.f5485bba">Libellé</th>
+            <th scope="col" class="sub-journals-col-account" i18n="@@accounting.sub-journals.compte.c45740bb">Compte</th>
+            <th scope="col" class="sub-journals-col-amount" i18n="@@accounting.sub-journals.debit.f528224f">Débit</th>
+            <th scope="col" class="sub-journals-col-amount" i18n="@@accounting.sub-journals.credit.19194bdf">Crédit</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
@@ -143,7 +143,7 @@ type JournalFlatRow = {
         <ng-template pTemplate="emptymessage">
           <tr>
             <td colspan="7" class="sub-journals-empty">
-              <p class="sub-journals-empty-title">Aucune écriture</p>
+              <p class="sub-journals-empty-title" i18n="@@accounting.sub-journals.aucune.ecriture.c5660ccc">Aucune écriture</p>
               <p class="sub-journals-empty-hint">
                 Aucune écriture trouvée pour le journal {{ activeJournalCode }} sur la période sélectionnée.
               </p>

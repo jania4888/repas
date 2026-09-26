@@ -18,13 +18,13 @@ interface VatDetailRow {
   imports: [CommonModule, TableModule],
   template: `
     <div class="card vat-zone-card">
-      <h3 class="vat-zone-title">4. Détail de la TVA</h3>
+      <h3 class="vat-zone-title" i18n="@@accounting.vat-declaration.4.detail.de.la.tva.4d4901c6">4. Détail de la TVA</h3>
       <p-table [value]="detailRows" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th>Désignation</th>
-            <th class="text-right">Base imposable</th>
-            <th class="text-right">Montant TVA</th>
+            <th i18n="@@accounting.vat-declaration.designation.63a9062c">Désignation</th>
+            <th class="text-right" i18n="@@accounting.vat-declaration.base.imposable.e1baa7e1">Base imposable</th>
+            <th class="text-right" i18n="@@accounting.vat-declaration.montant.tva.f0c1b7cc">Montant TVA</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>

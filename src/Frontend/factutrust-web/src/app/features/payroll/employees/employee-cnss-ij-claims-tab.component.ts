@@ -22,16 +22,14 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, TagModule, DatePickerModule, DialogModule, ButtonComponent],
   template: `
-    <p class="payroll-info-text mb-3">
-      Créances IJ CNSS générées lors de la paie (subrogation maladie ou indemnisation maternité).
-    </p>
+    <p class="payroll-info-text mb-3" i18n="@@payroll.employees.creances.ij.cnss.generees.lors.de.la.paie.subrog.6d51992e">Créances IJ CNSS générées lors de la paie (subrogation maladie ou indemnisation maternité).</p>
 
     <p-table [value]="items()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Période</th>
-          <th class="text-right">Montant</th>
-          <th>Statut</th>
+          <th i18n="@@payroll.employees.periode.de2110b7">Période</th>
+          <th class="text-right" i18n="@@payroll.employees.montant.4adcd9fc">Montant</th>
+          <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
           @if (!readOnly) { <th></th> }
         </tr>
       </ng-template>
@@ -47,27 +45,25 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
           @if (!readOnly) {
             <td>
               @if (c.status === 'Pending') {
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="openMarkPaid(c)">
-                  Marquer réglée
-                </button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="openMarkPaid(c)" i18n="@@payroll.employees.marquer.reglee.08e95b04">Marquer réglée</button>
               }
             </td>
           }
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td [attr.colspan]="readOnly ? 3 : 4">Aucune créance IJ CNSS.</td></tr>
+        <tr><td [attr.colspan]="readOnly ? 3 : 4" i18n="@@payroll.employees.aucune.creance.ij.cnss.2f845cb6">Aucune créance IJ CNSS.</td></tr>
       </ng-template>
     </p-table>
 
     <p-dialog header="Règlement IJ CNSS" [(visible)]="markPaidVisible" [modal]="true" [style]="{ width: '360px' }">
       <div class="payroll-form-group">
-        <label>Date de règlement</label>
+        <label i18n="@@payroll.employees.date.de.reglement.65e1210f">Date de règlement</label>
         <p-datepicker [(ngModel)]="paidAt" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="markPaidVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="confirmMarkPaid()">Confirmer</app-button>
+        <app-button variant="outline" (click)="markPaidVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="confirmMarkPaid()" i18n="@@payroll.employees.confirmer.80a664c8">Confirmer</app-button>
       </ng-template>
     </p-dialog>
   `,

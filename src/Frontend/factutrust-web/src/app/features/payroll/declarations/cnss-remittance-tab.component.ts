@@ -54,7 +54,7 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année"
+        placeholder="Année" i18n-placeholder="Année"
         styleClass="w-10rem" />
       <p-select
         [options]="monthOptions"
@@ -62,28 +62,28 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois"
+        placeholder="Mois" i18n-placeholder="Mois"
         styleClass="w-10rem" />
-      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()">Générer</app-button>
+      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.declarations.generer.bd221c07">Générer</app-button>
       <app-button
         variant="outline"
         icon="pi-download"
         iconPos="left"
         (click)="exportCsv()"
-        [disabled]="!canExport()">Exporter CSV</app-button>
+        [disabled]="!canExport()" i18n="@@payroll.declarations.exporter.csv.d4fc31cb">Exporter CSV</app-button>
       <app-button
         variant="outline"
         icon="pi-file-pdf"
         iconPos="left"
         (click)="exportPdf()"
-        [disabled]="!canExport()">Exporter PDF</app-button>
+        [disabled]="!canExport()" i18n="@@payroll.declarations.exporter.pdf.9a2c3956">Exporter PDF</app-button>
       @if (canPay()) {
         <app-button
           variant="success"
           icon="pi-wallet"
           iconPos="left"
           (click)="openPaymentDialog()"
-          [disabled]="!canRecordPayment()">Enregistrer le versement</app-button>
+          [disabled]="!canRecordPayment()" i18n="@@payroll.declarations.enregistrer.le.versement.abd144ad">Enregistrer le versement</app-button>
       }
     </div>
 
@@ -93,9 +93,7 @@ const MONTH_LABELS = [
           severity="warn"
           text="Le matricule employeur CNSS est manquant. Configurez-le pour exporter le bordereau ou enregistrer un versement."
           styleClass="w-full" />
-        <app-button variant="ghost" routerLink="/settings/company" icon="pi-cog" iconPos="left">
-          Configurer le matricule
-        </app-button>
+        <app-button variant="ghost" routerLink="/settings/company" icon="pi-cog" iconPos="left" i18n="@@payroll.declarations.configurer.le.matricule.189aecce">Configurer le matricule</app-button>
       </div>
     }
 
@@ -115,7 +113,7 @@ const MONTH_LABELS = [
     } @else if (!remittance()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger le bordereau"
+        title="Impossible de charger le bordereau" i18n-title="Impossible de charger le bordereau"
         description="Vérifiez que la fonctionnalité est activée et que vous disposez des droits nécessaires."
         [showAction]="true"
         actionLabel="Réessayer"
@@ -123,7 +121,7 @@ const MONTH_LABELS = [
     } @else if (!remittance()!.isEligible) {
       <app-payroll-empty-state
         icon="pi-calendar"
-        title="Cycle de paie non disponible"
+        title="Cycle de paie non disponible" i18n-title="Cycle de paie non disponible"
         [description]="'Aucun cycle validé ou clôturé pour ' + monthLabel() + '.'"
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
@@ -131,7 +129,7 @@ const MONTH_LABELS = [
     } @else if (remittance()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun salarié"
+        title="Aucun salarié" i18n-title="Aucun salarié"
         description="Le cycle ne contient aucun bulletin."
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
@@ -142,13 +140,13 @@ const MONTH_LABELS = [
       <p-table [value]="remittance()!.lines" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Salarié</th>
-            <th>CNSS</th>
-            <th class="text-right">Brut CNSS</th>
-            <th class="text-right">CNSS sal.</th>
-            <th class="text-right">CNSS pat.</th>
-            <th class="text-right">AT</th>
-            <th class="text-right">Total</th>
+            <th i18n="@@payroll.declarations.salarie.27f97915">Salarié</th>
+            <th i18n="@@payroll.declarations.cnss.a04d171a">CNSS</th>
+            <th class="text-right" i18n="@@payroll.declarations.brut.cnss.40e3c3cd">Brut CNSS</th>
+            <th class="text-right" i18n="@@payroll.declarations.cnss.sal.5d831d27">CNSS sal.</th>
+            <th class="text-right" i18n="@@payroll.declarations.cnss.pat.1d666774">CNSS pat.</th>
+            <th class="text-right" i18n="@@payroll.declarations.at.031fd11b">AT</th>
+            <th class="text-right" i18n="@@payroll.declarations.total.b25928c6">Total</th>
             <th class="col-warnings"></th>
           </tr>
         </ng-template>

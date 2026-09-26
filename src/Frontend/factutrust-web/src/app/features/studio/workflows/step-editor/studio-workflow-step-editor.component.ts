@@ -63,7 +63,7 @@ interface SetRow { field: string; value: string }
       </header>
 
       <div class="wf-prop" data-testid="wf-prop-key">
-        <label class="wf-prop__label" for="wf-step-key">{{ L.steps.key }} <span class="ft-req">*</span></label>
+        <label class="wf-prop__label" for="wf-step-key">{{ L.steps.key }} <span class="ft-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
         <input id="wf-step-key" pInputText [ngModel]="step().key" (ngModelChange)="set('key', $event)"
           [pattern]="keyPattern" [disabled]="disabled()" [attr.aria-label]="L.steps.key" autocomplete="off" />
         <small class="studio-muted">{{ L.designer.keyHint }}</small>
@@ -79,7 +79,7 @@ interface SetRow { field: string; value: string }
 
       @for (p of visibleProperties(); track p.name) {
         <div class="wf-prop" [attr.data-testid]="'wf-prop-' + p.name">
-          <label class="wf-prop__label"><code class="wf-prop__name">{{ p.name }}</code> @if (p.required) { <span class="ft-req">*</span> }</label>
+          <label class="wf-prop__label"><code class="wf-prop__name">{{ p.name }}</code> @if (p.required) { <span class="ft-req" i18n="@@studio.workflows.text.df58248c">*</span> }</label>
           @switch (p.kind) {
             @case ('filters') {
               <app-studio-filter-builder [fields]="filterFields()" [filters]="filterModel()"

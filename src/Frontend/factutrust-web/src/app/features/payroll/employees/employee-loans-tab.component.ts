@@ -45,24 +45,24 @@ const MONTH_OPTIONS = [
   ],
   template: `
     <app-payroll-section
-      title="Prêts salariés"
+      title="Prêts salariés" i18n-title="Prêts salariés"
       subtitle="Remboursement mensuel sans intérêt, retenu au calcul et soldé à la validation."
       icon="pi-credit-card">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openCreateDialog()">Nouveau prêt</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openCreateDialog()" i18n="@@payroll.employees.nouveau.pret.349e5648">Nouveau prêt</app-button>
         </div>
       }
 
       <p-table [value]="items()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Référence</th>
-            <th class="text-right">Capital</th>
-            <th class="text-right">Échéance</th>
-            <th class="text-right">Reste dû</th>
-            <th>Début</th>
-            <th>Statut</th>
+            <th i18n="@@payroll.employees.reference.f8130bb0">Référence</th>
+            <th class="text-right" i18n="@@payroll.employees.capital.2bd8d265">Capital</th>
+            <th class="text-right" i18n="@@payroll.employees.echeance.f9a77ff6">Échéance</th>
+            <th class="text-right" i18n="@@payroll.employees.reste.du.cca882d3">Reste dû</th>
+            <th i18n="@@payroll.employees.debut.f0955314">Début</th>
+            <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
             <th></th>
           </tr>
         </ng-template>
@@ -77,49 +77,49 @@ const MONTH_OPTIONS = [
               <p-tag [value]="loan.statusDisplay || loan.status" [severity]="loanStatusSeverity(loan.status)" />
             </td>
             <td class="actions">
-              <button type="button" class="p-button p-button-text p-button-sm" (click)="showSchedule(loan)">Échéancier</button>
+              <button type="button" class="p-button p-button-text p-button-sm" (click)="showSchedule(loan)" i18n="@@payroll.employees.echeancier.7930f4ee">Échéancier</button>
               @if (!readOnly && loan.status === 'Active') {
-                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmCancel(loan)">Annuler</button>
+                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmCancel(loan)" i18n="@@payroll.employees.annuler.49ba3292">Annuler</button>
               }
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="7">Aucun prêt enregistré.</td></tr>
+          <tr><td colspan="7" i18n="@@payroll.employees.aucun.pret.enregistre.de37b23a">Aucun prêt enregistré.</td></tr>
         </ng-template>
       </p-table>
     </app-payroll-section>
 
     <p-dialog header="Nouveau prêt salarié" [(visible)]="createDialogVisible" [modal]="true" [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
-        <label>Référence</label>
+        <label i18n="@@payroll.employees.reference.f8130bb0">Référence</label>
         <input pInputText [(ngModel)]="formReference" class="w-full" maxlength="50" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Montant (TND)</label>
+        <label i18n="@@payroll.employees.montant.tnd.e877352d">Montant (TND)</label>
         <p-inputNumber [(ngModel)]="formPrincipal" [min]="0.001" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Nombre d'échéances</label>
+        <label i18n="@@payroll.employees.nombre.d.echeances.a343d39c">Nombre d'échéances</label>
         <p-inputNumber [(ngModel)]="formInstallmentCount" [min]="1" [max]="120" styleClass="w-full" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Mois de début</label>
+          <label i18n="@@payroll.employees.mois.de.debut.282e76ac">Mois de début</label>
           <p-select [options]="monthOptions" optionLabel="label" optionValue="value" [(ngModel)]="formStartMonth" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Année de début</label>
+          <label i18n="@@payroll.employees.annee.de.debut.14d1b202">Année de début</label>
           <p-inputNumber [(ngModel)]="formStartYear" [useGrouping]="false" [min]="2000" [max]="2100" styleClass="w-full" />
         </div>
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Notes</label>
+        <label i18n="@@payroll.employees.notes.70440046">Notes</label>
         <textarea pTextarea [(ngModel)]="formNotes" rows="2" class="w-full"></textarea>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="createDialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="create()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="createDialogVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="create()" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
 
@@ -129,10 +129,10 @@ const MONTH_OPTIONS = [
         <p-table [value]="scheduleLines()" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>#</th>
-              <th>Période</th>
-              <th class="text-right">Montant</th>
-              <th>Statut</th>
+              <th i18n="@@payroll.employees.text.d08f88df">#</th>
+              <th i18n="@@payroll.employees.periode.de2110b7">Période</th>
+              <th class="text-right" i18n="@@payroll.employees.montant.4adcd9fc">Montant</th>
+              <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-line>
@@ -146,7 +146,7 @@ const MONTH_OPTIONS = [
         </p-table>
       }
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="scheduleDialogVisible = false">Fermer</app-button>
+        <app-button variant="outline" (click)="scheduleDialogVisible = false" i18n="@@payroll.employees.fermer.5ab4ec64">Fermer</app-button>
       </ng-template>
     </p-dialog>
   `,

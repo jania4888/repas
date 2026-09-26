@@ -12,7 +12,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
   template: `
     @if (data) {
       <div class="proj-dash-kpi-header">
-        <span class="proj-dash-kpi-header__label">Indicateurs clés</span>
+        <span class="proj-dash-kpi-header__label" i18n="@@projects.components.indicateurs.cles.ad2f0ef9">Indicateurs clés</span>
         <p-select
           [options]="periodOptions"
           [ngModel]="period"

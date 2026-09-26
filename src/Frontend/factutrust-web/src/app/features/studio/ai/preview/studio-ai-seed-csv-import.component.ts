@@ -112,7 +112,7 @@ const IGNORE = '';
                       <td>
                         <p-select
                           [options]="fieldOptions()"
-                          [ngModel]="mapping()[i] ?? ''"
+                          [ngModel]="mapping()[i]"
                           (ngModelChange)="onMappingChange(i, $event)"
                           optionLabel="label"
                           optionValue="value"

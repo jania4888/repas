@@ -40,9 +40,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/stock">
-        Retour au Stock
-      </app-button>
+        routerLink="/stock" i18n="@@stock.stock-history.retour.au.stock.5b0f5b07">Retour au Stock</app-button>
     </app-page-header>
 
     <div class="history-card">
@@ -51,7 +49,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       } @else if (movements().length === 0) {
         <app-empty-state
           illustration="empty-box.svg"
-          title="Aucun mouvement"
+          title="Aucun mouvement" i18n-title="Aucun mouvement"
           description="Aucun mouvement de stock n'a été enregistré pour ce produit."
           actionLabel="Retour au stock"
           actionRoute="/stock">
@@ -69,14 +67,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Type</th>
-              <th scope="col">Motif</th>
-              <th scope="col" class="text-right">Quantité</th>
-              <th scope="col" class="text-right">Coût Unit.</th>
-              <th scope="col" class="text-right">Total</th>
-              <th scope="col" class="text-right">Solde</th>
-              <th scope="col">Référence</th>
+              <th scope="col" i18n="@@stock.stock-history.date.eb9a4bc1">Date</th>
+              <th scope="col" i18n="@@stock.stock-history.type.3deb7456">Type</th>
+              <th scope="col" i18n="@@stock.stock-history.motif.2a198f47">Motif</th>
+              <th scope="col" class="text-right" i18n="@@stock.stock-history.quantite.09a38fda">Quantité</th>
+              <th scope="col" class="text-right" i18n="@@stock.stock-history.cout.unit.aa73bc92">Coût Unit.</th>
+              <th scope="col" class="text-right" i18n="@@stock.stock-history.total.b25928c6">Total</th>
+              <th scope="col" class="text-right" i18n="@@stock.stock-history.solde.e5977cf9">Solde</th>
+              <th scope="col" i18n="@@stock.stock-history.reference.f8130bb0">Référence</th>
             </tr>
           </ng-template>
           

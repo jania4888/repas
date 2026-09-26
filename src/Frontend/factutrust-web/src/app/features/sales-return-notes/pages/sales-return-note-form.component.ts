@@ -29,29 +29,25 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
-      title="Nouveau bon de retour"
+      title="Nouveau bon de retour" i18n-title="Nouveau bon de retour"
       subtitle="Document logistique : réintègre le stock et réduit la quantité facturable du BL. Ce n'est pas un avoir.">
-      <app-button variant="secondary" routerLink="/return-notes">Annuler</app-button>
-      <app-button variant="outline" [disabled]="saving() || !canSave()" (clicked)="save(false)">
-        Enregistrer le brouillon
-      </app-button>
+      <app-button variant="secondary" routerLink="/return-notes" i18n="@@sales-return-notes.pages.annuler.49ba3292">Annuler</app-button>
+      <app-button variant="outline" [disabled]="saving() || !canSave()" (clicked)="save(false)" i18n="@@sales-return-notes.pages.enregistrer.le.brouillon.6a319595">Enregistrer le brouillon</app-button>
       @if (canConfirm()) {
-        <app-button variant="primary" [disabled]="saving() || !canSave()" (clicked)="save(true)">
-          Enregistrer et confirmer
-        </app-button>
+        <app-button variant="primary" [disabled]="saving() || !canSave()" (clicked)="save(true)" i18n="@@sales-return-notes.pages.enregistrer.et.confirmer.cbe52895">Enregistrer et confirmer</app-button>
       }
     </app-page-header>
 
     <p class="help">
-      Un bon de retour s'applique uniquement aux articles <strong>livrés et non encore facturés</strong>.
-      Après facture, utilisez un <strong>avoir de vente</strong>.
+      Un bon de retour s'applique uniquement aux articles <strong i18n="@@sales-return-notes.pages.livres.et.non.encore.factures.7ba9aca6">livrés et non encore facturés</strong>.
+      Après facture, utilisez un <strong i18n="@@sales-return-notes.pages.avoir.de.vente.cfb2d993">avoir de vente</strong>.
       Le stock n’est réintégré qu’après confirmation sur la fiche.
     </p>
 
     <section class="card">
-      <label>Bon de livraison éligible</label>
+      <label i18n="@@sales-return-notes.pages.bon.de.livraison.eligible.1a977bce">Bon de livraison éligible</label>
       <select class="form-control" [ngModel]="selectedBlId()" (ngModelChange)="onBlSelected($event)">
-        <option value="">— Choisir un BL livré non facturé —</option>
+        <option value="" i18n="@@sales-return-notes.pages.choisir.un.bl.livre.non.facture.948c909d">— Choisir un BL livré non facturé —</option>
         @for (bl of eligible(); track bl.id) {
           <option [value]="bl.id">{{ bl.number }} — {{ bl.clientName }} (reste {{ bl.totalInvoiceableQuantity }})</option>
         }
@@ -60,10 +56,10 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
 
     @if (prefill(); as p) {
       <section class="card">
-        <p><strong>Client :</strong> {{ p.clientName }} · <strong>BL :</strong> {{ p.deliveryNoteNumber }}</p>
-        <label>Date de retour</label>
+        <p><strong i18n="@@sales-return-notes.pages.client.9c5b4ff1">Client :</strong> {{ p.clientName }} · <strong i18n="@@sales-return-notes.pages.bl.4fa58d85">BL :</strong> {{ p.deliveryNoteNumber }}</p>
+        <label i18n="@@sales-return-notes.pages.date.de.retour.f1d5eba0">Date de retour</label>
         <input class="form-control" type="date" [ngModel]="returnDate()" (ngModelChange)="returnDate.set($event)" />
-        <label for="return-reason">Motif (obligatoire)</label>
+        <label for="return-reason" i18n="@@sales-return-notes.pages.motif.obligatoire.14e480c5">Motif (obligatoire)</label>
         <input
           id="return-reason"
           class="form-control"
@@ -73,27 +69,27 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
           [attr.aria-invalid]="showErrors() && !hasValidReason()"
           [ngModel]="reason()"
           (ngModelChange)="reason.set($event)"
-          placeholder="Ex. marchandise endommagée, erreur de commande" />
+          placeholder="Ex. marchandise endommagée, erreur de commande" i18n-placeholder="Ex. marchandise endommagée, erreur de commande" />
         @if (showErrors() && !hasValidReason()) {
-          <p class="field-error">Indiquez un motif d’au moins 3 caractères.</p>
+          <p class="field-error" i18n="@@sales-return-notes.pages.indiquez.un.motif.d.au.moins.3.caracteres.f93a617f">Indiquez un motif d’au moins 3 caractères.</p>
         }
-        <label>Notes</label>
+        <label i18n="@@sales-return-notes.pages.notes.70440046">Notes</label>
         <textarea class="form-control" rows="2" [ngModel]="notes()" (ngModelChange)="notes.set($event)"></textarea>
       </section>
 
       <section class="card">
-        <h3>Quantités à retourner</h3>
+        <h3 i18n="@@sales-return-notes.pages.quantites.a.retourner.5dc26617">Quantités à retourner</h3>
         @if (showErrors() && !hasPositiveQty()) {
-          <p class="field-error">Saisissez au moins une quantité à retourner.</p>
+          <p class="field-error" i18n="@@sales-return-notes.pages.saisissez.au.moins.une.quantite.a.retourner.d54e588e">Saisissez au moins une quantité à retourner.</p>
         }
         <table class="data-table">
           <thead>
             <tr>
-              <th>Article</th>
-              <th class="text-right">Livré</th>
-              <th class="text-right">Déjà retourné</th>
-              <th class="text-right">Restant</th>
-              <th class="text-right">À retourner</th>
+              <th i18n="@@sales-return-notes.pages.article.4360c2dc">Article</th>
+              <th class="text-right" i18n="@@sales-return-notes.pages.livre.0a1317e9">Livré</th>
+              <th class="text-right" i18n="@@sales-return-notes.pages.deja.retourne.ac47573d">Déjà retourné</th>
+              <th class="text-right" i18n="@@sales-return-notes.pages.restant.8df32592">Restant</th>
+              <th class="text-right" i18n="@@sales-return-notes.pages.a.retourner.84c99781">À retourner</th>
             </tr>
           </thead>
           <tbody>

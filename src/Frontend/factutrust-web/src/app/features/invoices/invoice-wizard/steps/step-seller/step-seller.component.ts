@@ -52,9 +52,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
           <i class="pi pi-building"></i>
           Entreprise émettrice
         </h2>
-        <p class="section-description">
-          Sélectionnez l'entreprise qui émet cette facture
-        </p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.l.entreprise.qui.emet.cette.facture.0a656362">Sélectionnez l'entreprise qui émet cette facture</p>
 
         @if (loading()) {
           <div class="companies-loading">
@@ -71,8 +69,8 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
         } @else if (sellers().length === 0) {
           <div class="empty-state">
             <i class="pi pi-building"></i>
-            <h3>Aucune entreprise configurée</h3>
-            <p>Veuillez configurer au moins une entreprise dans les paramètres.</p>
+            <h3 i18n="@@invoices.invoice-wizard.aucune.entreprise.configuree.820bb234">Aucune entreprise configurée</h3>
+            <p i18n="@@invoices.invoice-wizard.veuillez.configurer.au.moins.une.entreprise.dans.1e81bf9c">Veuillez configurer au moins une entreprise dans les paramètres.</p>
           </div>
         } @else {
           <div class="companies-grid">
@@ -126,9 +124,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
             <i class="pi pi-info-circle"></i>
             Informations de l'émetteur
           </h2>
-          <p class="section-description">
-            Ces informations apparaîtront sur la facture
-          </p>
+          <p class="section-description" i18n="@@invoices.invoice-wizard.ces.informations.apparaitront.sur.la.facture.5f0da9e9">Ces informations apparaîtront sur la facture</p>
 
           <div class="details-card">
             <!-- Company Header -->
@@ -236,7 +232,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
         <div class="compliance-box success">
           <div class="compliance-header">
             <i class="pi pi-check-circle"></i>
-            <span>Informations conformes</span>
+            <span i18n="@@invoices.invoice-wizard.informations.conformes.7517e50f">Informations conformes</span>
           </div>
           <ul class="compliance-list">
             <li class="valid">

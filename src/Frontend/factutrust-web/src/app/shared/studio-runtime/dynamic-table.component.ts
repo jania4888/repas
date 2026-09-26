@@ -26,7 +26,7 @@ export interface DynamicRow {
   template: `
     @if (columnPicker && allFields.length > columns.length) {
       <div class="dt-picker">
-        <label>Colonnes visibles</label>
+        <label i18n="@@shared.studio-runtime.dynamic-table.colonnes.visibles.1dcf1ca0">Colonnes visibles</label>
         <p-multiSelect
           [options]="allFields"
           [(ngModel)]="visibleKeys"
@@ -36,7 +36,7 @@ export interface DynamicRow {
           [maxSelectedLabels]="3"
           appendTo="body"
           styleClass="dt-ms"
-          placeholder="Colonnes…" />
+          placeholder="Colonnes…" i18n-placeholder="Colonnes…" />
       </div>
     }
 
@@ -57,7 +57,7 @@ export interface DynamicRow {
                 <th>{{ f.label }}</th>
               }
               @if (showActions || showView) {
-                <th class="dt-actions-col">Actions</th>
+                <th class="dt-actions-col" i18n="@@shared.studio-runtime.dynamic-table.actions.c3cd636a">Actions</th>
               }
             </tr>
           </ng-template>
@@ -109,7 +109,7 @@ export interface DynamicRow {
           <ng-template pTemplate="emptymessage">
             <tr>
               <td [attr.colspan]="visibleColumns.length + (showActions || showView ? 1 : 0)">
-                <app-empty-state icon="pi-table" title="Aucun enregistrement" description="Aucune donnée ne correspond à votre recherche." />
+                <app-empty-state icon="pi-table" title="Aucun enregistrement" i18n-title="Aucun enregistrement" description="Aucune donnée ne correspond à votre recherche." />
               </td>
             </tr>
           </ng-template>

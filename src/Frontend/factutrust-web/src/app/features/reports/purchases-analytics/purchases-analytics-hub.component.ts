@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `
     <div class="purchases-analytics-hub">
-      <nav class="analytics-nav" aria-label="Navigation des états analytiques achats">
+      <nav class="analytics-nav" aria-label="Navigation des états analytiques achats" i18n-aria-label="Navigation des états analytiques achats">
         <div class="nav-tabs">
           @for (tab of tabs; track tab.id) {
             <a

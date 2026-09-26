@@ -22,7 +22,7 @@ export type ContractSideAction = 'invoice' | 'reminder' | 'download' | 'clone' |
   imports: [CommonModule, ChartModule, TooltipModule, ChartCardComponent, ButtonComponent, EmptyStateComponent],
   template: `
     <app-chart-card
-      title="Résumé financier"
+      title="Résumé financier" i18n-title="Résumé financier"
       [subtitle]="summary && summary.isOpenEnded ? '12 prochains mois (contrat sans fin)' : undefined">
       @if (summary; as s) {
         <div class="donut-wrap">
@@ -34,20 +34,20 @@ export type ContractSideAction = 'invoice' | 'reminder' | 'download' | 'clone' |
           </p-chart>
           <div class="donut-center" aria-hidden="true">
             <span class="donut-center__value">{{ s.percentInvoiced | number:'1.0-0' }}%</span>
-            <span class="donut-center__label">Facturé</span>
+            <span class="donut-center__label" i18n="@@recurring-contracts.components.facture.55e253e6">Facturé</span>
           </div>
         </div>
         <div class="fin-rows">
           <div class="fin-row">
-            <span>Total contrat</span>
+            <span i18n="@@recurring-contracts.components.total.contrat.4977cc50">Total contrat</span>
             <strong>{{ formatContractAmount(s.totalContractAmount, s.currency) }}</strong>
           </div>
           <div class="fin-row">
-            <span>Déjà facturé</span>
+            <span i18n="@@recurring-contracts.components.deja.facture.363ed4bc">Déjà facturé</span>
             <strong>{{ formatContractAmount(s.totalInvoicedAmount, s.currency) }}</strong>
           </div>
           <div class="fin-row">
-            <span>Reste à facturer</span>
+            <span i18n="@@recurring-contracts.components.reste.a.facturer.401f18d8">Reste à facturer</span>
             <strong>{{ formatContractAmount(s.remainingAmount, s.currency) }}</strong>
           </div>
         </div>
@@ -55,7 +55,7 @@ export type ContractSideAction = 'invoice' | 'reminder' | 'download' | 'clone' |
         <app-empty-state
           icon="pi-chart-pie"
           iconSize="1.5rem"
-          title="Résumé disponible prochainement"
+          title="Résumé disponible prochainement" i18n-title="Résumé disponible prochainement"
           description="Le résumé financier sera disponible après la mise à jour du serveur."
           [showAction]="false">
         </app-empty-state>
@@ -64,10 +64,10 @@ export type ContractSideAction = 'invoice' | 'reminder' | 'download' | 'clone' |
 
     <section class="ft-card-block">
       <h3 class="block-title"><i class="pi pi-refresh"></i> Informations de renouvellement</h3>
-      <div class="info-row"><span class="label">Mode</span><span class="value">{{ contract.autoRenew ? 'Automatique' : 'Manuel' }}</span></div>
-      <div class="info-row"><span class="label">Préavis</span><span class="value">{{ contract.noticePeriodDays }} jours</span></div>
+      <div class="info-row"><span class="label" i18n="@@recurring-contracts.components.mode.a7b93d21">Mode</span><span class="value">{{ contract.autoRenew ? 'Automatique' : 'Manuel' }}</span></div>
+      <div class="info-row"><span class="label" i18n="@@recurring-contracts.components.preavis.ccd8b5f5">Préavis</span><span class="value">{{ contract.noticePeriodDays }} jours</span></div>
       <div class="info-row">
-        <span class="label">Date limite</span>
+        <span class="label" i18n="@@recurring-contracts.components.date.limite.44cce6d3">Date limite</span>
         @let deadline = renewalDeadlineOf(contract);
         <span class="value">{{ deadline ? (deadline | date:'dd/MM/yyyy') : '—' }}</span>
       </div>
@@ -77,9 +77,7 @@ export type ContractSideAction = 'invoice' | 'reminder' | 'download' | 'clone' |
       <h3 class="block-title"><i class="pi pi-bolt"></i> Actions rapides</h3>
       <div class="quick-actions">
         @if (canTriggerBilling && contract.status === 'Active') {
-          <app-button variant="outline" size="sm" icon="pi-file-edit" [disabled]="actionInProgress" (clicked)="actionTriggered.emit('invoice')">
-            Générer une facture
-          </app-button>
+          <app-button variant="outline" size="sm" icon="pi-file-edit" [disabled]="actionInProgress" (clicked)="actionTriggered.emit('invoice')" i18n="@@recurring-contracts.components.generer.une.facture.9b204490">Générer une facture</app-button>
         }
         <app-button
           variant="outline"
@@ -87,27 +85,19 @@ export type ContractSideAction = 'invoice' | 'reminder' | 'download' | 'clone' |
           icon="pi-envelope"
           [disabled]="true"
           pTooltip="Disponible prochainement"
-          tooltipPosition="left">
-          Envoyer un rappel
-        </app-button>
+          tooltipPosition="left" i18n="@@recurring-contracts.components.envoyer.un.rappel.80e49875">Envoyer un rappel</app-button>
         <app-button
           variant="outline"
           size="sm"
           icon="pi-download"
           [disabled]="true"
           pTooltip="Disponible prochainement"
-          tooltipPosition="left">
-          Télécharger le contrat
-        </app-button>
+          tooltipPosition="left" i18n="@@recurring-contracts.components.telecharger.le.contrat.9eca7c98">Télécharger le contrat</app-button>
         @if (canCreate) {
-          <app-button variant="outline" size="sm" icon="pi-copy" [disabled]="actionInProgress" (clicked)="actionTriggered.emit('clone')">
-            Cloner le contrat
-          </app-button>
+          <app-button variant="outline" size="sm" icon="pi-copy" [disabled]="actionInProgress" (clicked)="actionTriggered.emit('clone')" i18n="@@recurring-contracts.components.cloner.le.contrat.0beaa2d4">Cloner le contrat</app-button>
         }
         @if (canManage && (contract.status === 'Active' || contract.status === 'Suspended')) {
-          <app-button variant="danger" size="sm" icon="pi-times" [disabled]="actionInProgress" (clicked)="actionTriggered.emit('cancel')">
-            Résilier le contrat
-          </app-button>
+          <app-button variant="danger" size="sm" icon="pi-times" [disabled]="actionInProgress" (clicked)="actionTriggered.emit('cancel')" i18n="@@recurring-contracts.components.resilier.le.contrat.aa98822d">Résilier le contrat</app-button>
         }
       </div>
     </section>

@@ -131,12 +131,12 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
     <!-- Filters -->
     <div class="filters-card">
       <div class="filters-header">
-        <h3 class="filters-title">Filtres</h3>
+        <h3 class="filters-title" i18n="@@payments.payments.filtres.2a8e76e0">Filtres</h3>
         @if (hasActiveFilters()) {
           <button 
             class="filters-reset" 
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -156,7 +156,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
         <p-select 
           [options]="statusOptions()" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -165,7 +165,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
           [(ngModel)]="dateRange" 
           selectionMode="range"
           [readonlyInput]="true"
-          placeholder="Période"
+          placeholder="Période" i18n-placeholder="Période"
           dateFormat="dd/mm/yy"
           (onSelect)="onFilterChange()"
           [showClear]="true">
@@ -192,13 +192,13 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
         [lazy]="false">
         <ng-template pTemplate="header">
           <tr>
-            <th style="width: 160px">Numéro facture</th>
-            <th>Contrepartie</th>
-            <th style="width: 110px">Date émission</th>
-            <th style="width: 110px">Date échéance</th>
-            <th style="width: 130px" class="text-right">Montant</th>
-            <th style="width: 120px">Statut</th>
-            <th style="width: 110px">Date paiement</th>
+            <th style="width: 160px" i18n="@@payments.payments.numero.facture.3b95a188">Numéro facture</th>
+            <th i18n="@@payments.payments.contrepartie.3dc41f76">Contrepartie</th>
+            <th style="width: 110px" i18n="@@payments.payments.date.emission.ce5148a7">Date émission</th>
+            <th style="width: 110px" i18n="@@payments.payments.date.echeance.ca5badb1">Date échéance</th>
+            <th style="width: 130px" class="text-right" i18n="@@payments.payments.montant.4adcd9fc">Montant</th>
+            <th style="width: 120px" i18n="@@payments.payments.statut.659499f3">Statut</th>
+            <th style="width: 110px" i18n="@@payments.payments.date.paiement.715f33be">Date paiement</th>
             <th style="width: 100px"></th>
           </tr>
         </ng-template>
@@ -276,7 +276,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
             <td [attr.colspan]="8" class="text-center p-4">
               <app-empty-state
                 illustration="empty-payments.svg"
-                title="Aucun paiement trouvé"
+                title="Aucun paiement trouvé" i18n-title="Aucun paiement trouvé"
                 description="Aucun paiement ne correspond à vos critères de recherche."
                 actionLabel="Voir toutes les factures"
                 [actionRoute]="emptyStateActionRoute()">

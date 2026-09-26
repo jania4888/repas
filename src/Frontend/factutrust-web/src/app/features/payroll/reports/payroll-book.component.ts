@@ -47,7 +47,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
   ],
   template: `
     <app-page-header
-      title="Livre de paie simplifié"
+      title="Livre de paie simplifié" i18n-title="Livre de paie simplifié"
       subtitle="Registre des salaires par salarié sur une plage de mois. Seuls les cycles validés ou clôturés sont inclus par défaut.">
       @if (canExport()) {
         <app-accounting-export-menu
@@ -62,7 +62,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         [(ngModel)]="year"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année"
+        placeholder="Année" i18n-placeholder="Année"
         styleClass="w-10rem"
         ariaLabel="Année" />
       <p-select
@@ -70,7 +70,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         [(ngModel)]="fromMonth"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois de"
+        placeholder="Mois de" i18n-placeholder="Mois de"
         styleClass="w-10rem"
         ariaLabel="Mois de début" />
       <p-select
@@ -78,14 +78,14 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         [(ngModel)]="toMonth"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois à"
+        placeholder="Mois à" i18n-placeholder="Mois à"
         styleClass="w-10rem"
         ariaLabel="Mois de fin" />
       <label class="payroll-report-check">
         <p-checkbox [(ngModel)]="includeCalculated" [binary]="true" inputId="includeCalculated" />
-        <span>Inclure les cycles calculés (provisoire)</span>
+        <span i18n="@@payroll.reports.inclure.les.cycles.calcules.provisoire.316e039e">Inclure les cycles calculés (provisoire)</span>
       </label>
-      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()">Afficher</app-button>
+      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.reports.afficher.5e802040">Afficher</app-button>
     </div>
 
     @if (rangeError()) {
@@ -112,7 +112,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
     } @else if (!book()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger le livre de paie"
+        title="Impossible de charger le livre de paie" i18n-title="Impossible de charger le livre de paie"
         description="Une erreur est survenue. Réessayez ou vérifiez vos droits."
         [showAction]="true"
         actionLabel="Réessayer"
@@ -120,7 +120,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
     } @else if (book()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-book"
-        title="Aucun bulletin sur la période"
+        title="Aucun bulletin sur la période" i18n-title="Aucun bulletin sur la période"
         description="Aucun cycle validé ou clôturé sur la plage sélectionnée."
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
@@ -132,18 +132,18 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         <p-table [value]="book()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Matricule</th>
-              <th scope="col">Salarié</th>
-              <th scope="col">N° CNSS</th>
-              <th scope="col" class="text-right">Mois</th>
-              <th scope="col" class="text-right">Brut</th>
-              <th scope="col" class="text-right">Brut CNSSable</th>
-              <th scope="col" class="text-right">CNSS sal.</th>
-              <th scope="col" class="text-right">Net imposable</th>
-              <th scope="col" class="text-right">IRPP</th>
-              <th scope="col" class="text-right">CSS</th>
-              <th scope="col" class="text-right">Autres ret.</th>
-              <th scope="col" class="text-right">Net à payer</th>
+              <th scope="col" i18n="@@payroll.reports.matricule.8f74c132">Matricule</th>
+              <th scope="col" i18n="@@payroll.reports.salarie.27f97915">Salarié</th>
+              <th scope="col" i18n="@@payroll.reports.n.cnss.7f5891f3">N° CNSS</th>
+              <th scope="col" class="text-right" i18n="@@payroll.reports.mois.0d304bea">Mois</th>
+              <th scope="col" class="text-right" i18n="@@payroll.reports.brut.8fc72d21">Brut</th>
+              <th scope="col" class="text-right" i18n="@@payroll.reports.brut.cnssable.fe8d5dba">Brut CNSSable</th>
+              <th scope="col" class="text-right" i18n="@@payroll.reports.cnss.sal.5d831d27">CNSS sal.</th>
+              <th scope="col" class="text-right" i18n="@@payroll.reports.net.imposable.2439110f">Net imposable</th>
+              <th scope="col" class="text-right" i18n="@@payroll.reports.irpp.d47a1edc">IRPP</th>
+              <th scope="col" class="text-right" i18n="@@payroll.reports.css.194e13da">CSS</th>
+              <th scope="col" class="text-right" i18n="@@payroll.reports.autres.ret.47401df2">Autres ret.</th>
+              <th scope="col" class="text-right" i18n="@@payroll.reports.net.a.payer.7835df38">Net à payer</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-l>
@@ -165,7 +165,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
               <td colspan="3">Totaux — {{ book()!.employeeCount }} salarié(s)</td>
-              <td class="text-right">—</td>
+              <td class="text-right" i18n="@@payroll.reports.text.1b93795b">—</td>
               <td class="text-right">{{ book()!.totalGross | payrollAmount }}</td>
               <td class="text-right">{{ book()!.totalCnssableGross | payrollAmount }}</td>
               <td class="text-right">{{ book()!.totalCnssEmployee | payrollAmount }}</td>

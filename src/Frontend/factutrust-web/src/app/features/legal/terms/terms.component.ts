@@ -9,8 +9,8 @@ import { ButtonModule } from 'primeng/button';
   template: `
     <div class="terms-page">
       <div class="terms-content">
-        <h1>Conditions d'utilisation</h1>
-        <p>Les conditions d'utilisation de InstaFact seront disponibles ici. Consultez cette page après la mise en place définitive des mentions légales.</p>
+        <h1 i18n="@@legal.terms.conditions.d.utilisation.3e2c6e00">Conditions d'utilisation</h1>
+        <p i18n="@@legal.terms.les.conditions.d.utilisation.de.instafact.seront.b251f56d">Les conditions d'utilisation de InstaFact seront disponibles ici. Consultez cette page après la mise en place définitive des mentions légales.</p>
         <p-button label="Retour" icon="pi pi-arrow-left" routerLink="/auth/register"></p-button>
       </div>
     </div>

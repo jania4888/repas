@@ -35,31 +35,27 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Solde par fournisseur"
+      title="Solde par fournisseur" i18n-title="Solde par fournisseur"
       subtitle="Solde commercial (facturé − payé) par fournisseur">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
         (click)="onPrint()"
-        ariaLabel="Imprimer les soldes fournisseurs">
-        Imprimer
-      </app-button>
+        ariaLabel="Imprimer les soldes fournisseurs" i18n="@@reports.supplier-balances.imprimer.5382c09d">Imprimer</app-button>
       <app-button
         variant="secondary"
         icon="pi-download"
         iconPos="left"
         (click)="onExport()"
-        ariaLabel="Exporter les soldes fournisseurs en CSV">
-        Exporter
-      </app-button>
+        ariaLabel="Exporter les soldes fournisseurs en CSV" i18n="@@reports.supplier-balances.exporter.0cd84bdc">Exporter</app-button>
     </app-page-header>
 
     <div class="ft-filters">
       <div class="ft-filters__header">
         <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -71,10 +67,10 @@ import {
           <input
             type="text"
             class="filter-input"
-            placeholder="Rechercher un fournisseur..."
+            placeholder="Rechercher un fournisseur..." i18n-placeholder="Rechercher un fournisseur..."
             [ngModel]="search()"
             (ngModelChange)="search.set($event)"
-            aria-label="Rechercher un fournisseur" />
+            aria-label="Rechercher un fournisseur" i18n-aria-label="Rechercher un fournisseur" />
         </span>
         <label class="filter-toggle">
           <input

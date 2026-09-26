@@ -67,9 +67,7 @@ import {
           [attr.aria-hidden]="!showDetails()">
           <div class="progress-body">
             @if (showNote()) {
-              <div class="progress-note">
-                Nous affichons les grandes &#233;tapes pour expliquer l'attente, sans exposer le raisonnement interne.
-              </div>
+              <div class="progress-note" i18n="@@ai-assistant.components.nous.affichons.les.grandes.233.tapes.pour.expliq.8ab532c8">Nous affichons les grandes &#233;tapes pour expliquer l'attente, sans exposer le raisonnement interne.</div>
             }
 
             @if (steps.length) {
@@ -104,7 +102,7 @@ import {
 
             @if (toolCalls.length) {
               <div class="tools-block">
-                <div class="tools-title">Consultations effectu&#233;es</div>
+                <div class="tools-title" i18n="@@ai-assistant.components.consultations.effectu.233.es.2202fec9">Consultations effectu&#233;es</div>
                 <div class="tools-list" role="list">
                   @for (toolCall of toolCalls; track toolCall.callId) {
                     <div

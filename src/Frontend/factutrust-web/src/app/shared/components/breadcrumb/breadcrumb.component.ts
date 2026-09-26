@@ -16,7 +16,7 @@ export interface BreadcrumbItem {
     <nav 
       class="app-breadcrumb-nav" 
       [class.on-dark]="variant === 'on-dark'" 
-      aria-label="Fil d'Ariane">
+      aria-label="Fil d'Ariane" i18n-aria-label="Fil d'Ariane">
       <ol class="app-breadcrumb-list">
         @for (item of items; track $index) {
           <li class="app-breadcrumb-item">

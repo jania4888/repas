@@ -64,16 +64,14 @@ import {
             <i class="pi pi-eye"></i>
             Aperçu et validation
           </h2>
-          <p class="section-description">
-            Vérifiez les informations puis émettez la facture lorsque tout est conforme.
-          </p>
+          <p class="section-description" i18n="@@invoices.invoice-wizard.verifiez.les.informations.puis.emettez.la.factur.515bc47d">Vérifiez les informations puis émettez la facture lorsque tout est conforme.</p>
         </div>
       </section>
 
       <p-tabs [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0"><i class="pi pi-file"></i><span>Aperçu facture</span></p-tab>
-          <p-tab [value]="1"><i class="pi pi-check-circle"></i><span>Validation conformité</span></p-tab>
+          <p-tab [value]="0"><i class="pi pi-file"></i><span i18n="@@invoices.invoice-wizard.apercu.facture.c43032fb">Aperçu facture</span></p-tab>
+          <p-tab [value]="1"><i class="pi pi-check-circle"></i><span i18n="@@invoices.invoice-wizard.validation.conformite.59efbc17">Validation conformité</span></p-tab>
         </p-tablist>
         <p-tabpanels>
         <!-- Tab 1: Preview -->
@@ -83,7 +81,7 @@ import {
             <div class="invoice-header">
               <div class="invoice-header-left">
                 @if (seller?.logo) {
-                  <img [src]="seller!.logo" alt="Logo" class="company-logo">
+                  <img [src]="seller!.logo" alt="Logo" i18n-alt="Logo" class="company-logo">
                 }
                 <div class="company-info">
                   <h3>{{ seller?.companyName }}</h3>
@@ -107,7 +105,7 @@ import {
 
             <div class="client-and-meta-row">
               <div class="party-card client facture-client-block">
-                <h4>Facturé à :</h4>
+                <h4 i18n="@@invoices.invoice-wizard.facture.a.0fcf1964">Facturé à :</h4>
                 <div class="party-name">{{ client?.name }}</div>
                 <div class="party-address">
                   {{ client?.address?.street }}<br>
@@ -119,20 +117,20 @@ import {
                 </div>
                 @if (client?.nif) {
                   <div class="party-nif">
-                    <strong>N° Fisc. :</strong> {{ client!.nif }}
+                    <strong i18n="@@invoices.invoice-wizard.n.fisc.8d1eec44">N° Fisc. :</strong> {{ client!.nif }}
                   </div>
                 }
               </div>
               <div class="invoice-dates-block">
                 <div class="dates-block-line"><strong>{{ metadata.type === InvoiceType.CreditNote ? 'AVOIR n° :' : 'FACTURE n° :' }}</strong> {{ metadata.invoiceNumber || '—' }}</div>
-                <div class="dates-block-line"><strong>Date facture :</strong> {{ metadata.issueDate | date:'dd/MM/yyyy' }}</div>
+                <div class="dates-block-line"><strong i18n="@@invoices.invoice-wizard.date.facture.6bf98d96">Date facture :</strong> {{ metadata.issueDate | date:'dd/MM/yyyy' }}</div>
                 @if (metadata.dueDate) {
-                  <div class="dates-block-line"><strong>Échéance :</strong> {{ metadata.dueDate | date:'dd/MM/yyyy' }}</div>
+                  <div class="dates-block-line"><strong i18n="@@invoices.invoice-wizard.echeance.0d63aefb">Échéance :</strong> {{ metadata.dueDate | date:'dd/MM/yyyy' }}</div>
                 }
                 @if (metadata.internalReference) {
-                  <div class="dates-block-line"><strong>Réf. :</strong> {{ metadata.internalReference }}</div>
+                  <div class="dates-block-line"><strong i18n="@@invoices.invoice-wizard.ref.2bbf9d70">Réf. :</strong> {{ metadata.internalReference }}</div>
                 }
-                <div class="dates-block-line text-muted"><strong>Devise :</strong> {{ metadata.currency }}</div>
+                <div class="dates-block-line text-muted"><strong i18n="@@invoices.invoice-wizard.devise.7f17f4ea">Devise :</strong> {{ metadata.currency }}</div>
               </div>
             </div>
 
@@ -142,15 +140,15 @@ import {
             <table class="lines-preview-table lines-preview-table--styled">
               <thead>
                 <tr>
-                  <th>N°</th>
-                  <th>RÉF.</th>
-                  <th>DESCRIPTION</th>
-                  <th class="text-right">QTÉ</th>
-                  <th>UNITÉ</th>
-                  <th class="text-right">PRIX U.</th>
-                  <th class="text-center">TAXES</th>
-                  <th class="text-right">REMISE</th>
-                  <th class="text-right">TOTAL</th>
+                  <th i18n="@@invoices.invoice-wizard.n.754e6095">N°</th>
+                  <th i18n="@@invoices.invoice-wizard.ref.6f04e404">RÉF.</th>
+                  <th i18n="@@invoices.invoice-wizard.description.0ceecbea">DESCRIPTION</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.qte.fcf8d1f1">QTÉ</th>
+                  <th i18n="@@invoices.invoice-wizard.unite.f40fb07b">UNITÉ</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.prix.u.d251c16f">PRIX U.</th>
+                  <th class="text-center" i18n="@@invoices.invoice-wizard.taxes.3101ff40">TAXES</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.remise.c3be01d2">REMISE</th>
+                  <th class="text-right" i18n="@@invoices.invoice-wizard.total.5c6505ae">TOTAL</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,7 +169,7 @@ import {
                       <span class="tax-cell">
                         <span>TVA {{ line.vatRate }}%</span>
                         @if (line.isFodecApplicable) {
-                          <span class="fodec-badge">FODEC</span>
+                          <span class="fodec-badge" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                         }
                       </span>
                     </td>
@@ -193,13 +191,13 @@ import {
               <div class="totals-left">
                 <!-- VAT Breakdown -->
                 <div class="vat-summary">
-                  <h5>Taxes</h5>
+                  <h5 i18n="@@invoices.invoice-wizard.taxes.7e36e319">Taxes</h5>
                   <table class="vat-summary-table vat-summary-table--styled">
                     <thead>
                       <tr>
-                        <th>Taxe</th>
-                        <th class="text-right">Base imposable</th>
-                        <th class="text-right">Montant</th>
+                        <th i18n="@@invoices.invoice-wizard.taxe.7acfb8ad">Taxe</th>
+                        <th class="text-right" i18n="@@invoices.invoice-wizard.base.imposable.e1baa7e1">Base imposable</th>
+                        <th class="text-right" i18n="@@invoices.invoice-wizard.montant.4adcd9fc">Montant</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -217,7 +215,7 @@ import {
 
               <div class="totals-right">
                 <div class="total-line">
-                  <span>Total HT</span>
+                  <span i18n="@@invoices.invoice-wizard.total.ht.2ca17ae6">Total HT</span>
                   <span class="amount">{{ totals.totalHT | number:'1.3-3' }} {{ metadata.currency }}</span>
                 </div>
                 @for (item of totals.vatBreakdown; track item.rate) {
@@ -236,13 +234,13 @@ import {
                 }
                 @if (totals.totalDiscount && totals.totalDiscount > 0) {
                   <div class="total-line discount">
-                    <span>Remises</span>
+                    <span i18n="@@invoices.invoice-wizard.remises.e0700e8c">Remises</span>
                     <span class="amount">-{{ totals.totalDiscount | number:'1.3-3' }} {{ metadata.currency }}</span>
                   </div>
                 }
                 @if (totals.fiscalStampAmount > 0.0005 || totals.fiscalStampAmount < -0.0005) {
                   <div class="total-line">
-                    <span>Timbre fiscal</span>
+                    <span i18n="@@invoices.invoice-wizard.timbre.fiscal.1f8f7dd1">Timbre fiscal</span>
                     <span class="amount">{{ totals.fiscalStampAmount | number:'1.3-3' }} {{ metadata.currency }}</span>
                   </div>
                 }
@@ -250,11 +248,11 @@ import {
             </div>
 
             <div class="total-ttc-banner">
-              <span>TOTAL TTC</span>
+              <span i18n="@@invoices.invoice-wizard.total.ttc.b4fb9955">TOTAL TTC</span>
               <span class="amount">{{ totals.totalTTC | number:'1.3-3' }} {{ metadata.currency }}</span>
             </div>
 
-            <p class="thanks-line">Merci de votre confiance.</p>
+            <p class="thanks-line" i18n="@@invoices.invoice-wizard.merci.de.votre.confiance.e4293139">Merci de votre confiance.</p>
 
             <p-divider></p-divider>
 
@@ -271,21 +269,21 @@ import {
 
             <!-- Payment Info -->
             <div class="payment-info-preview">
-              <h5>Conditions de paiement</h5>
-              <p><strong>Mode:</strong> {{ paymentMethodLabel }}</p>
+              <h5 i18n="@@invoices.invoice-wizard.conditions.de.paiement.a9b1c917">Conditions de paiement</h5>
+              <p><strong i18n="@@invoices.invoice-wizard.mode.fbb6d6fc">Mode:</strong> {{ paymentMethodLabel }}</p>
               @if (payment.terms) {
                 <p>{{ payment.terms }}</p>
               }
               @if (payment.bankName || payment.rib) {
                 <div class="bank-details">
                   @if (payment.bankName) {
-                    <p><strong>Banque:</strong> {{ payment.bankName }}</p>
+                    <p><strong i18n="@@invoices.invoice-wizard.banque.877baf9a">Banque:</strong> {{ payment.bankName }}</p>
                   }
                   @if (payment.rib) {
-                    <p><strong>RIB:</strong> {{ payment.rib }}</p>
+                    <p><strong i18n="@@invoices.invoice-wizard.rib.e38e5dba">RIB:</strong> {{ payment.rib }}</p>
                   }
                   @if (payment.iban) {
-                    <p><strong>IBAN:</strong> {{ payment.iban }}</p>
+                    <p><strong i18n="@@invoices.invoice-wizard.iban.71c8c232">IBAN:</strong> {{ payment.iban }}</p>
                   }
                 </div>
               }
@@ -302,10 +300,10 @@ import {
                 <div class="error-content">
                   <i class="pi pi-times-circle"></i>
                   <div class="error-text">
-                    <strong>Erreur d'émission</strong>
+                    <strong i18n="@@invoices.invoice-wizard.erreur.d.emission.e55580f9">Erreur d'émission</strong>
                     <span>{{ submissionError }}</span>
                     @if (showSubscriptionCta) {
-                      <a routerLink="/settings/subscription" class="quota-cta-link">Gérer mon abonnement</a>
+                      <a routerLink="/settings/subscription" class="quota-cta-link" i18n="@@invoices.invoice-wizard.gerer.mon.abonnement.8ba8c9cd">Gérer mon abonnement</a>
                     }
                   </div>
                 </div>
@@ -313,7 +311,7 @@ import {
                   type="button"
                   class="error-dismiss"
                   (click)="dismissError()"
-                  aria-label="Fermer">
+                  aria-label="Fermer" i18n-aria-label="Fermer">
                   <i class="pi pi-times"></i>
                 </button>
               </div>
@@ -325,7 +323,7 @@ import {
                   [style]="{ width: '50px', height: '50px' }"
                   strokeWidth="4">
                 </p-progressSpinner>
-                <p>Vérification de conformité en cours...</p>
+                <p i18n="@@invoices.invoice-wizard.verification.de.conformite.en.cours.f8f6617d">Vérification de conformité en cours...</p>
               </div>
             } @else if (validation) {
               <!-- Validation Summary -->
@@ -372,7 +370,7 @@ import {
                   <p-accordionTab header="Mentions légales" [selected]="hasErrorsInCategory('LEGAL')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
-                        <span>Mentions légales</span>
+                        <span i18n="@@invoices.invoice-wizard.mentions.legales.414291e0">Mentions légales</span>
                         {{ getCategoryStatus('LEGAL') }}
                       </div>
                     </ng-template>
@@ -391,7 +389,7 @@ import {
                   <p-accordionTab header="Conformité fiscale" [selected]="hasErrorsInCategory('FISCAL')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
-                        <span>Conformité fiscale</span>
+                        <span i18n="@@invoices.invoice-wizard.conformite.fiscale.f4dc5b52">Conformité fiscale</span>
                         {{ getCategoryStatus('FISCAL') }}
                       </div>
                     </ng-template>
@@ -410,7 +408,7 @@ import {
                   <p-accordionTab header="Calculs" [selected]="hasErrorsInCategory('CALCULATION')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
-                        <span>Calculs</span>
+                        <span i18n="@@invoices.invoice-wizard.calculs.009b0e4f">Calculs</span>
                         {{ getCategoryStatus('CALCULATION') }}
                       </div>
                     </ng-template>
@@ -451,10 +449,10 @@ import {
           <div class="error-content">
             <i class="pi pi-times-circle"></i>
             <div class="error-text">
-              <strong>Erreur</strong>
+              <strong i18n="@@invoices.invoice-wizard.erreur.ab546c23">Erreur</strong>
               <span>{{ submissionError }}</span>
               @if (showSubscriptionCta) {
-                <a routerLink="/settings/subscription" class="quota-cta-link">Gérer mon abonnement</a>
+                <a routerLink="/settings/subscription" class="quota-cta-link" i18n="@@invoices.invoice-wizard.gerer.mon.abonnement.8ba8c9cd">Gérer mon abonnement</a>
               }
             </div>
           </div>
@@ -462,7 +460,7 @@ import {
             type="button"
             class="error-dismiss"
             (click)="dismissError()"
-            aria-label="Fermer">
+            aria-label="Fermer" i18n-aria-label="Fermer">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -473,9 +471,9 @@ import {
           <div class="error-content">
             <i class="pi pi-exclamation-triangle"></i>
             <div class="error-text">
-              <strong>Quota factures</strong>
+              <strong i18n="@@invoices.invoice-wizard.quota.factures.dfc0fe56">Quota factures</strong>
               <span>{{ invoiceQuotaMessage }}</span>
-              <a routerLink="/settings/subscription" class="quota-cta-link">Gérer mon abonnement</a>
+              <a routerLink="/settings/subscription" class="quota-cta-link" i18n="@@invoices.invoice-wizard.gerer.mon.abonnement.8ba8c9cd">Gérer mon abonnement</a>
             </div>
           </div>
         </div>
@@ -491,7 +489,7 @@ import {
         <div class="actions-warning">
           <i class="pi pi-exclamation-triangle"></i>
           <span>
-            <strong>Attention :</strong> Une fois émise, cette facture ne pourra plus être modifiée.
+            <strong i18n="@@invoices.invoice-wizard.attention.4d951ea1">Attention :</strong> Une fois émise, cette facture ne pourra plus être modifiée.
             Seule une facture d'avoir permettra d'effectuer des corrections.
           </span>
         </div>

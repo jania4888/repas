@@ -56,12 +56,8 @@ interface ProductOption {
     @if (priceList(); as pl) {
       <app-page-header [title]="pl.name" [subtitle]="headerSubtitle()">
         @if (canUpdate()) {
-          <app-button variant="secondary" icon="pi-cog" iconPos="left" (clicked)="openSettings()">
-            Paramètres
-          </app-button>
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openAddItem()">
-            Ajouter un produit
-          </app-button>
+          <app-button variant="secondary" icon="pi-cog" iconPos="left" (clicked)="openSettings()" i18n="@@pricing.price-list-detail.parametres.ef8f0121">Paramètres</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openAddItem()" i18n="@@pricing.price-list-detail.ajouter.un.produit.0f13c039">Ajouter un produit</app-button>
         }
       </app-page-header>
 
@@ -69,13 +65,13 @@ interface ProductOption {
       @if (!pl.isActive) {
         <div class="ft-alert ft-alert--muted">
           <i class="pi pi-info-circle"></i>
-          Cette grille est <strong>désactivée</strong> : aucun prix n'en est tiré. Les documents
+          Cette grille est <strong i18n="@@pricing.price-list-detail.desactivee.72423e84">désactivée</strong> : aucun prix n'en est tiré. Les documents
           déjà émis conservent leur prix, qui a été figé à leur création.
         </div>
       } @else if (!pl.isApplicableToday) {
         <div class="ft-alert ft-alert--warning">
           <i class="pi pi-exclamation-triangle"></i>
-          Grille active mais <strong>hors de sa période de validité</strong> : elle n'applique
+          Grille active mais <strong i18n="@@pricing.price-list-detail.hors.de.sa.periode.de.validite.60c30c45">hors de sa période de validité</strong> : elle n'applique
           aucun prix aujourd'hui.
         </div>
       }
@@ -90,7 +86,7 @@ interface ProductOption {
       @if (pl.items.length === 0) {
         <app-empty-state
           icon="pi-tags"
-          title="Aucun prix dans cette grille"
+          title="Aucun prix dans cette grille" i18n-title="Aucun prix dans cette grille"
           message="Ajoutez des produits : ceux qui n'y figurent pas restent au prix catalogue.">
         </app-empty-state>
       } @else {
@@ -98,13 +94,13 @@ interface ProductOption {
           <p-table [value]="pl.items" [rowHover]="true" styleClass="ft-table">
             <ng-template pTemplate="header">
               <tr>
-                <th>Code</th>
-                <th>Produit</th>
-                <th class="ft-num">Prix catalogue HT</th>
-                <th class="ft-num">Prix de la grille HT</th>
-                <th class="ft-num">Écart</th>
-                <th>Paliers</th>
-                <th class="ft-actions-col">Actions</th>
+                <th i18n="@@pricing.price-list-detail.code.adac6937">Code</th>
+                <th i18n="@@pricing.price-list-detail.produit.ff673dc2">Produit</th>
+                <th class="ft-num" i18n="@@pricing.price-list-detail.prix.catalogue.ht.045abe33">Prix catalogue HT</th>
+                <th class="ft-num" i18n="@@pricing.price-list-detail.prix.de.la.grille.ht.d24eff06">Prix de la grille HT</th>
+                <th class="ft-num" i18n="@@pricing.price-list-detail.ecart.6ae8dce8">Écart</th>
+                <th i18n="@@pricing.price-list-detail.paliers.d48097c3">Paliers</th>
+                <th class="ft-actions-col" i18n="@@pricing.price-list-detail.actions.c3cd636a">Actions</th>
               </tr>
             </ng-template>
 
@@ -121,7 +117,7 @@ interface ProductOption {
                 </td>
                 <td>
                   @if (item.tiers.length === 0) {
-                    <span class="ft-muted">Prix unique</span>
+                    <span class="ft-muted" i18n="@@pricing.price-list-detail.prix.unique.9fec32e6">Prix unique</span>
                   } @else {
                     @for (tier of item.tiers; track tier.minQuantity) {
                       <p-tag
@@ -168,7 +164,7 @@ interface ProductOption {
     } @else if (!loading()) {
       <app-empty-state
         icon="pi-exclamation-circle"
-        title="Grille introuvable"
+        title="Grille introuvable" i18n-title="Grille introuvable"
         message="Cette grille tarifaire n'existe pas ou a été supprimée.">
       </app-empty-state>
     }
@@ -182,37 +178,33 @@ interface ProductOption {
       [draggable]="false">
       <div class="ft-form-grid">
         <div class="ft-field">
-          <label for="pl-name">Nom <span class="ft-required">*</span></label>
+          <label for="pl-name">Nom <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
           <input id="pl-name" pInputText [(ngModel)]="settingsForm.name" maxlength="100" />
         </div>
 
         <div class="ft-field">
-          <label for="pl-from">Début de validité</label>
+          <label for="pl-from" i18n="@@pricing.price-list-detail.debut.de.validite.10f1f74c">Début de validité</label>
           <input id="pl-from" type="date" pInputText [(ngModel)]="settingsForm.validFrom" />
         </div>
 
         <div class="ft-field">
-          <label for="pl-until">Fin de validité</label>
+          <label for="pl-until" i18n="@@pricing.price-list-detail.fin.de.validite.3cfa7402">Fin de validité</label>
           <input id="pl-until" type="date" pInputText [(ngModel)]="settingsForm.validUntil" />
         </div>
 
         <div class="ft-field ft-field--inline">
           <p-inputSwitch [(ngModel)]="settingsForm.isActive" inputId="pl-active"></p-inputSwitch>
-          <label for="pl-active">Grille active</label>
-          <small class="ft-hint">
-            Désactiver est réversible et n'affecte aucun document déjà émis.
-          </small>
+          <label for="pl-active" i18n="@@pricing.price-list-detail.grille.active.5fe0537d">Grille active</label>
+          <small class="ft-hint" i18n="@@pricing.price-list-detail.desactiver.est.reversible.et.n.affecte.aucun.doc.f76ea8fd">Désactiver est réversible et n'affecte aucun document déjà émis.</small>
         </div>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="settingsVisible = false">Annuler</app-button>
+        <app-button variant="secondary" (clicked)="settingsVisible = false" i18n="@@pricing.price-list-detail.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="primary"
           [disabled]="!settingsForm.name.trim() || saving()"
-          (clicked)="saveSettings()">
-          Enregistrer
-        </app-button>
+          (clicked)="saveSettings()" i18n="@@pricing.price-list-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
 
@@ -226,12 +218,12 @@ interface ProductOption {
       <div class="ft-form-grid">
         @if (editingItem) {
           <div class="ft-field">
-            <label>Produit</label>
+            <label i18n="@@pricing.price-list-detail.produit.ff673dc2">Produit</label>
             <div class="ft-readonly">{{ editingItem.productCode }} — {{ editingItem.productName }}</div>
           </div>
         } @else {
           <div class="ft-field">
-            <label for="pl-product">Produit <span class="ft-required">*</span></label>
+            <label for="pl-product">Produit <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
             <p-autoComplete
               inputId="pl-product"
               [(ngModel)]="selectedProduct"
@@ -240,13 +232,13 @@ interface ProductOption {
               field="label"
               [forceSelection]="true"
               [dropdown]="true"
-              placeholder="Rechercher par code ou nom"
+              placeholder="Rechercher par code ou nom" i18n-placeholder="Rechercher par code ou nom"
               appendTo="body"></p-autoComplete>
           </div>
         }
 
         <div class="ft-field">
-          <label for="pl-price">Prix HT ({{ priceList()?.currency }}) <span class="ft-required">*</span></label>
+          <label for="pl-price">Prix HT ({{ priceList()?.currency }}) <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
           <p-inputNumber
             inputId="pl-price"
             [(ngModel)]="itemPrice"
@@ -261,10 +253,8 @@ interface ProductOption {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="itemVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="!canSaveItem() || saving()" (clicked)="saveItem()">
-          Enregistrer
-        </app-button>
+        <app-button variant="secondary" (clicked)="itemVisible = false" i18n="@@pricing.price-list-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="!canSaveItem() || saving()" (clicked)="saveItem()" i18n="@@pricing.price-list-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
 
@@ -285,7 +275,7 @@ interface ProductOption {
 
       <div class="ft-form-grid">
         <div class="ft-field">
-          <label for="pl-tier-qty">À partir de la quantité <span class="ft-required">*</span></label>
+          <label for="pl-tier-qty">À partir de la quantité <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
           <p-inputNumber
             inputId="pl-tier-qty"
             [(ngModel)]="tierMinQuantity"
@@ -293,11 +283,11 @@ interface ProductOption {
             [minFractionDigits]="0"
             [maxFractionDigits]="4"
             [min]="2"></p-inputNumber>
-          <small class="ft-hint">Au moins 2 : en deçà, c'est le prix de base qui s'applique.</small>
+          <small class="ft-hint" i18n="@@pricing.price-list-detail.au.moins.2.en.deca.c.est.le.prix.de.base.qui.s.a.2d90a8c9">Au moins 2 : en deçà, c'est le prix de base qui s'applique.</small>
         </div>
 
         <div class="ft-field">
-          <label for="pl-tier-price">Prix HT du palier <span class="ft-required">*</span></label>
+          <label for="pl-tier-price">Prix HT du palier <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
           <p-inputNumber
             inputId="pl-tier-price"
             [(ngModel)]="tierPrice"
@@ -309,10 +299,8 @@ interface ProductOption {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="tierVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="!canSaveTier() || saving()" (clicked)="saveTier()">
-          Enregistrer
-        </app-button>
+        <app-button variant="secondary" (clicked)="tierVisible = false" i18n="@@pricing.price-list-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="!canSaveTier() || saving()" (clicked)="saveTier()" i18n="@@pricing.price-list-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `

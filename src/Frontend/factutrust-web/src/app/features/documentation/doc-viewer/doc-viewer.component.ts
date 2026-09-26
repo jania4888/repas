@@ -13,10 +13,10 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
 
     <div class="doc-layout">
-      <nav class="doc-sidebar" aria-label="Navigation documentation">
+      <nav class="doc-sidebar" aria-label="Navigation documentation" i18n-aria-label="Navigation documentation">
         <a routerLink="/documentation" class="doc-sidebar-home">
           <i class="fa fa-home"></i>
-          <span>Guide utilisateur</span>
+          <span i18n="@@documentation.doc-viewer.guide.utilisateur.4808a56f">Guide utilisateur</span>
         </a>
         <ul class="doc-sidebar-list">
           @for (chapter of chapters; track chapter.id) {
@@ -38,14 +38,14 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
         @if (loading()) {
           <div class="doc-loading">
             <i class="fa fa-spinner fa-spin"></i>
-            <p>Chargement...</p>
+            <p i18n="@@documentation.doc-viewer.chargement.a209b664">Chargement...</p>
           </div>
         } @else if (error()) {
           <div class="doc-error">
             <i class="fa fa-exclamation-triangle"></i>
-            <h2>Document introuvable</h2>
+            <h2 i18n="@@documentation.doc-viewer.document.introuvable.0eec5453">Document introuvable</h2>
             <p>{{ error() }}</p>
-            <a routerLink="/documentation" class="doc-back-link">Retour au guide</a>
+            <a routerLink="/documentation" class="doc-back-link" i18n="@@documentation.doc-viewer.retour.au.guide.231431d3">Retour au guide</a>
           </div>
         } @else if (content()) {
           <article class="doc-article markdown-body">

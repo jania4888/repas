@@ -64,16 +64,14 @@ interface CategoryOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Produits & Services" 
+      title="Produits & Services" i18n-title="Produits & Services" 
       subtitle="Gérez votre catalogue de produits et services">
       @if (canCreateProduct()) {
         <app-button 
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Nouveau produit
-        </app-button>
+          routerLink="new" i18n="@@products.product-list.nouveau.produit.c31ca342">Nouveau produit</app-button>
       }
     </app-page-header>
 
@@ -85,7 +83,7 @@ interface CategoryOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -97,7 +95,7 @@ interface CategoryOption {
           <input 
             pInputText 
             type="text" 
-            placeholder="Rechercher par nom ou code..." 
+            placeholder="Rechercher par nom ou code..." i18n-placeholder="Rechercher par nom ou code..." 
             [(ngModel)]="searchTerm"
             (input)="onSearch()"
             class="w-full">
@@ -105,7 +103,7 @@ interface CategoryOption {
         @if (barcodeScanEnabled) {
           <span class="flex-1">
             <ft-barcode-scan-field
-              placeholder="Scanner un code-barres"
+              placeholder="Scanner un code-barres" i18n-placeholder="Scanner un code-barres"
               [autoFocus]="false"
               (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
           </span>
@@ -114,7 +112,7 @@ interface CategoryOption {
         <p-select 
           [options]="categoryOptions" 
           [(ngModel)]="selectedCategory"
-          placeholder="Toutes les types"
+          placeholder="Toutes les types" i18n-placeholder="Toutes les types"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -122,7 +120,7 @@ interface CategoryOption {
         <p-select 
           [options]="statusOptions" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -130,7 +128,7 @@ interface CategoryOption {
         <p-select
           [options]="variantFilterOptions"
           [(ngModel)]="selectedVariantFilter"
-          placeholder="Tous les produits"
+          placeholder="Tous les produits" i18n-placeholder="Tous les produits"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -160,14 +158,14 @@ interface CategoryOption {
           <tr>
             <th pSortableColumn="code" style="width: 120px">Code <p-sortIcon field="code"></p-sortIcon></th>
             <th pSortableColumn="name">Désignation <p-sortIcon field="name"></p-sortIcon></th>
-            <th>Type</th>
-            <th>Catégorie</th>
+            <th i18n="@@products.product-list.type.3deb7456">Type</th>
+            <th i18n="@@products.product-list.categorie.6b38300a">Catégorie</th>
             <th pSortableColumn="unitPrice" class="text-right" style="width: 140px">Prix HT <p-sortIcon field="unitPrice"></p-sortIcon></th>
-            <th style="width: 80px">Unité</th>
-            <th style="width: 80px">TVA</th>
-            <th style="width: 120px">Stock</th>
-            <th style="width: 80px">Statut</th>
-            <th style="width: 140px" class="text-right">Actions</th>
+            <th style="width: 80px" i18n="@@products.product-list.unite.388fd9c4">Unité</th>
+            <th style="width: 80px" i18n="@@products.product-list.tva.fb62cb5d">TVA</th>
+            <th style="width: 120px" i18n="@@products.product-list.stock.bcecf456">Stock</th>
+            <th style="width: 80px" i18n="@@products.product-list.statut.659499f3">Statut</th>
+            <th style="width: 140px" class="text-right" i18n="@@products.product-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
 
@@ -290,7 +288,7 @@ interface CategoryOption {
             <td colspan="10" class="text-center p-6">
               <app-empty-state
                 illustration="empty-products.svg"
-                title="Aucun produit"
+                title="Aucun produit" i18n-title="Aucun produit"
                 description="Ajoutez votre premier produit ou service pour commencer à créer des factures."
                 [showAction]="canCreateProduct()"
                 actionLabel="Ajouter un produit"

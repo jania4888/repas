@@ -31,15 +31,13 @@ import {
     PayrollAmountPipe
   ],
   template: `
-    <app-payroll-section title="Prorata du mois" icon="pi-calendar-minus">
+    <app-payroll-section title="Prorata du mois" i18n-title="Prorata du mois" icon="pi-calendar-minus">
       <div class="payroll-toolbar mb-3">
-        <app-button variant="primary" icon="pi-eye" iconPos="left" (click)="load()" [disabled]="loading()">
-          Prévisualiser le prorata
-        </app-button>
+        <app-button variant="primary" icon="pi-eye" iconPos="left" (click)="load()" [disabled]="loading()" i18n="@@payroll.runs.previsualiser.le.prorata.61ca30ac">Prévisualiser le prorata</app-button>
       </div>
 
       @if (!preview() && !loading() && !loadedOnce()) {
-        <p class="payroll-info-text">Cliquez sur « Prévisualiser le prorata » pour estimer les retenues avant calcul.</p>
+        <p class="payroll-info-text" i18n="@@payroll.runs.cliquez.sur.previsualiser.le.prorata.pour.estime.d6014bd6">Cliquez sur « Prévisualiser le prorata » pour estimer les retenues avant calcul.</p>
       }
 
       @if (preview() && !preview()!.isEnabled) {
@@ -57,17 +55,17 @@ import {
         @if (preview()!.lines.length === 0) {
           <app-payroll-empty-state
             icon="pi-check-circle"
-            title="Aucune retenue prorata"
+            title="Aucune retenue prorata" i18n-title="Aucune retenue prorata"
             description="Aucun salarié concerné par une absence, suspension ou sortie sur ce mois." />
         } @else {
           <p-table [value]="preview()!.lines" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
               <tr>
-                <th>Salarié</th>
-                <th class="text-right">Jours travaillés</th>
-                <th class="text-right">Jours non travaillés</th>
-                <th class="text-right">Retenue</th>
-                <th>Motif</th>
+                <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+                <th class="text-right" i18n="@@payroll.runs.jours.travailles.4687ee29">Jours travaillés</th>
+                <th class="text-right" i18n="@@payroll.runs.jours.non.travailles.e52f44e9">Jours non travaillés</th>
+                <th class="text-right" i18n="@@payroll.runs.retenue.88cf18f4">Retenue</th>
+                <th i18n="@@payroll.runs.motif.2a198f47">Motif</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-l>

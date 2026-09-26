@@ -60,7 +60,7 @@ function linkedTabKey(r: { junctionEntityKey?: string | null; targetEntityKey: s
             } @else {
               <p class="studio-hint">
                 Cette table n'a pas encore de champ.
-                <a [routerLink]="['/studio', e.id]">Ajoutez des champs</a> avant de saisir des données.
+                <a [routerLink]="['/studio', e.id]" i18n="@@studio.studio-record-form.ajoutez.des.champs.84c59ea6">Ajoutez des champs</a> avant de saisir des données.
               </p>
             }
             @if (recordId) {

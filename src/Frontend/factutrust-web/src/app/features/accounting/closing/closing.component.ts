@@ -31,7 +31,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
   ],
   providers: [ConfirmationService],
   template: `
-    <app-page-header title="Clôture des périodes" subtitle="Verrouillage mensuel des écritures" />
+    <app-page-header title="Clôture des périodes" i18n-title="Clôture des périodes" subtitle="Verrouillage mensuel des écritures" />
     <app-accounting-correction-banner />
     <p-confirmDialog />
 
@@ -47,18 +47,14 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
 
     <div class="card closing-card">
       <div class="closing-year-bar">
-        <label class="field-label" for="fy-close">Exercice</label>
+        <label class="field-label" for="fy-close" i18n="@@accounting.closing.exercice.e171e2b0">Exercice</label>
         <input id="fy-close" type="number" [(ngModel)]="fiscalYearInput" min="2000" max="2100"
           class="closing-input" />
         <a class="btn btn-outline-secondary" [routerLink]="['/accounting/pre-closing']" [queryParams]="{ }">
           <i class="pi pi-list-check" aria-hidden="true"></i> Contrôles de pré-clôture
         </a>
-        <button type="button" class="btn btn-warning" (click)="confirmCloseYear()" [disabled]="loading() || isYearLocked(fiscalYearInput)">
-          Clôturer l'exercice
-        </button>
-        <button type="button" class="btn btn-primary" (click)="confirmGenerateOpeningEntries()" [disabled]="loading() || isYearLocked(fiscalYearInput)">
-          Ecritures d'a-nouveau
-        </button>
+        <button type="button" class="btn btn-warning" (click)="confirmCloseYear()" [disabled]="loading() || isYearLocked(fiscalYearInput)" i18n="@@accounting.closing.cloturer.l.exercice.cd0d9b56">Clôturer l'exercice</button>
+        <button type="button" class="btn btn-primary" (click)="confirmGenerateOpeningEntries()" [disabled]="loading() || isYearLocked(fiscalYearInput)" i18n="@@accounting.closing.ecritures.d.a.nouveau.d0348a61">Ecritures d'a-nouveau</button>
         <button type="button" class="btn btn-outline-danger" (click)="confirmLockYear()" [disabled]="loading() || isYearLocked(fiscalYearInput)">
           <i class="pi pi-lock" aria-hidden="true"></i> Verrouiller définitivement
         </button>
@@ -81,10 +77,10 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
       [rowHover]="true" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Exercice</th>
-          <th>Mois</th>
-          <th>Clôturée</th>
-          <th>Action</th>
+          <th i18n="@@accounting.closing.exercice.e171e2b0">Exercice</th>
+          <th i18n="@@accounting.closing.mois.0d304bea">Mois</th>
+          <th i18n="@@accounting.closing.cloturee.da2e2bc8">Clôturée</th>
+          <th i18n="@@accounting.closing.action.97c89a4d">Action</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-p>
@@ -98,17 +94,17 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
           </td>
           <td>
             @if (!p.isClosed) {
-              <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmClose(p.id, p.month, p.fiscalYear)" [disabled]="loading()">Clôturer</button>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmClose(p.id, p.month, p.fiscalYear)" [disabled]="loading()" i18n="@@accounting.closing.cloturer.e9f075c1">Clôturer</button>
             } @else if (isYearLocked(p.fiscalYear)) {
               <span class="closing-locked-tag"><i class="pi pi-lock" aria-hidden="true"></i> Verrouillé</span>
             } @else {
-              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="confirmReopen(p.id, p.month, p.fiscalYear)" [disabled]="loading()">Réouvrir</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="confirmReopen(p.id, p.month, p.fiscalYear)" [disabled]="loading()" i18n="@@accounting.closing.reouvrir.10968fea">Réouvrir</button>
             }
           </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td colspan="4" style="text-align:center;padding:2rem">Aucune période enregistrée.</td></tr>
+        <tr><td colspan="4" style="text-align:center;padding:2rem" i18n="@@accounting.closing.aucune.periode.enregistree.869c0e9d">Aucune période enregistrée.</td></tr>
       </ng-template>
     </p-table>
   `,

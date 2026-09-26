@@ -12,16 +12,16 @@ import { ClientPortalContact, PortalService } from '@features/portal/portal.serv
   standalone: true,
   imports: [CommonModule, FormsModule, ButtonModule, TableModule, InputTextModule, DatePipe],
   template: `
-    <p>Invitez un contact pour qu’il consulte ses factures dans l’espace client.</p>
+    <p i18n="@@clients.client-portal-contacts-panel.invitez.un.contact.pour.qu.il.consulte.ses.factu.aa0aa605">Invitez un contact pour qu’il consulte ses factures dans l’espace client.</p>
     <form class="invite" (ngSubmit)="invite()">
-      <input pInputText [(ngModel)]="email" name="email" placeholder="Email" />
-      <input pInputText [(ngModel)]="firstName" name="firstName" placeholder="Prénom" />
-      <input pInputText [(ngModel)]="lastName" name="lastName" placeholder="Nom" />
+      <input pInputText [(ngModel)]="email" name="email" placeholder="Email" i18n-placeholder="Email" />
+      <input pInputText [(ngModel)]="firstName" name="firstName" placeholder="Prénom" i18n-placeholder="Prénom" />
+      <input pInputText [(ngModel)]="lastName" name="lastName" placeholder="Nom" i18n-placeholder="Nom" />
       <p-button type="submit" label="Inviter" [loading]="busy()" />
     </form>
     <p-table [value]="contacts()" [loading]="loading()">
       <ng-template pTemplate="header">
-        <tr><th>Contact</th><th>Email</th><th>Statut</th><th>Dernier accès</th><th></th></tr>
+        <tr><th i18n="@@clients.client-portal-contacts-panel.contact.b37456c4">Contact</th><th i18n="@@clients.client-portal-contacts-panel.email.84add5b2">Email</th><th i18n="@@clients.client-portal-contacts-panel.statut.659499f3">Statut</th><th i18n="@@clients.client-portal-contacts-panel.dernier.acces.6e683cc4">Dernier accès</th><th></th></tr>
       </ng-template>
       <ng-template pTemplate="body" let-c>
         <tr>

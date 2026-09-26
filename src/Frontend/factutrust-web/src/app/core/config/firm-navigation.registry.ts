@@ -1,6 +1,7 @@
 import { AppModule as M } from '@core/models/app-module';
 import { PERMISSIONS } from './permission-keys';
 import { NavItem, NavSubItem } from './app-navigation.registry';
+import { NAV_ID } from './nav-item-ids';
 
 
 
@@ -306,36 +307,21 @@ export const FIRM_NATIVE_NAV: NavItem[] = [
 
 
 
-/** Labels of top-level sections available in delegated client context. */
-
-export const DELEGATED_SECTION_LABELS = new Set([
-
-  'Comptabilité',
-
-  'Fiscal / TEJ',
-
-  'RH & Paie',
-
-  'Ventes',
-
-  'Achats',
-
-  'Trésorerie'
-
+/** Identifiants stables des sections visibles en contexte délégué. */
+export const DELEGATED_SECTION_IDS = new Set<string>([
+  NAV_ID.accounting,
+  NAV_ID.fiscalTej,
+  NAV_ID.hrPayroll,
+  NAV_ID.sales,
+  NAV_ID.purchases,
+  NAV_ID.treasury
 ]);
 
-
-
 /** Commercial sections hidden when the delegated dossier is firm-managed. */
-
-export const FIRM_MANAGED_HIDDEN_SECTION_LABELS = new Set([
-
-  'Ventes',
-
-  'Achats',
-
-  'Trésorerie'
-
+export const FIRM_MANAGED_HIDDEN_SECTION_IDS = new Set<string>([
+  NAV_ID.sales,
+  NAV_ID.purchases,
+  NAV_ID.treasury
 ]);
 
 
@@ -426,27 +412,16 @@ function pathMatchesPrefix(path: string, prefix: string): boolean {
 
 
 export function filterDelegatedFirmSectionChildren(
-
-  sectionLabel: string,
-
+  sectionId: string,
   children: NavSubItem[]
-
 ): NavSubItem[] {
-
-  if (sectionLabel === 'Ventes') {
-
+  if (sectionId === NAV_ID.sales) {
     return children.filter(c => c.route && DELEGATED_FIRM_VENTES_ALLOWED_ROUTES.has(c.route));
-
   }
-
-  if (sectionLabel === 'Achats') {
-
+  if (sectionId === NAV_ID.purchases) {
     return children.filter(c => c.route && DELEGATED_FIRM_ACHATS_ALLOWED_ROUTES.has(c.route));
-
   }
-
   return children;
-
 }
 
 
@@ -753,6 +728,7 @@ export const FIRM_DELEGATED_QUICK_ACCESS = [
 /** Footer utilitaire du sidemenu cabinet en mode délégué (Contrôle, Paramètres, Aide). */
 export const FIRM_DELEGATED_FOOTER_NAV: NavItem[] = [
   {
+    id: 'firm-delegated-audit',
     label: 'Contrôle & Audit',
     icon: 'fa-solid fa-shield-halved',
     children: [

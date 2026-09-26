@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
   imports: [CommonModule, RouterLink],
   template: `
     <div class="proj-dash-gauge" role="img" [attr.aria-label]="ariaLabel()">
-      <h3 class="proj-dash-gauge__title">Avancement global</h3>
+      <h3 class="proj-dash-gauge__title" i18n="@@projects.components.avancement.global.5f0ee62d">Avancement global</h3>
       <svg viewBox="0 0 200 118" class="proj-dash-gauge__svg" aria-hidden="true">
         <path [attr.d]="trackPath()" class="proj-dash-gauge__track" />
         <path [attr.d]="valuePath()" class="proj-dash-gauge__fill" />
@@ -18,7 +18,7 @@ import { RouterLink } from '@angular/router';
         <strong class="proj-dash-gauge__value">{{ value() }} %</strong>
         <span class="proj-dash-gauge__target">Objectif : {{ target() }} %</span>
       </div>
-      <a routerLink="/projects" class="proj-dash-gauge__link">Voir le rapport complet →</a>
+      <a routerLink="/projects" class="proj-dash-gauge__link" i18n="@@projects.components.voir.le.rapport.complet.9f039147">Voir le rapport complet →</a>
     </div>
   `,
   styles: [`

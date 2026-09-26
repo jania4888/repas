@@ -9,7 +9,7 @@ import { PosDualScreenService, CustomerDisplayState } from '../../services/pos-d
   template: `
     <div class="customer-display">
       <div class="customer-display__header">
-        <h1 class="customer-display__title">InstaFact</h1>
+        <h1 class="customer-display__title" i18n="@@pos.components.instafact.ff6221f4">InstaFact</h1>
         <p class="customer-display__client">{{ state().clientName || 'Client passager' }}</p>
       </div>
 
@@ -24,7 +24,7 @@ import { PosDualScreenService, CustomerDisplayState } from '../../services/pos-d
       </div>
 
       <div class="customer-display__total">
-        <span>Total</span>
+        <span i18n="@@pos.components.total.b25928c6">Total</span>
         <span class="customer-display__total-value">{{ formatAmount(state().totalTTC) }} TND</span>
       </div>
     </div>

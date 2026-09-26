@@ -39,23 +39,23 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Balance auxiliaire" subtitle="Soldes par tiers — clients ou fournisseurs" />
+    <app-page-header title="Balance auxiliaire" i18n-title="Balance auxiliaire" subtitle="Soldes par tiers — clients ou fournisseurs" />
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Type de tiers et période">
         <div accountingFilterFields class="auxbal-toolbar-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="auxbal-kind">Tiers</label>
+            <label class="accounting-filter-label" for="auxbal-kind" i18n="@@accounting.auxiliary-balance.tiers.435080ba">Tiers</label>
             <select id="auxbal-kind" [(ngModel)]="kind" class="accounting-filter-input">
-              <option [ngValue]="1">Clients</option>
-              <option [ngValue]="2">Fournisseurs</option>
+              <option [ngValue]="1" i18n="@@accounting.auxiliary-balance.clients.28e22fe3">Clients</option>
+              <option [ngValue]="2" i18n="@@accounting.auxiliary-balance.fournisseurs.06b6d88c">Fournisseurs</option>
             </select>
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="auxbal-from">Du</label>
+            <label class="accounting-filter-label" for="auxbal-from" i18n="@@accounting.auxiliary-balance.du.84814985">Du</label>
             <input id="auxbal-from" type="date" [(ngModel)]="fromStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="auxbal-to">Au</label>
+            <label class="accounting-filter-label" for="auxbal-to" i18n="@@accounting.auxiliary-balance.au.7a1732d5">Au</label>
             <input id="auxbal-to" type="date" [(ngModel)]="toStr" class="accounting-filter-input" />
           </div>
         </div>
@@ -67,9 +67,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser la balance auxiliaire">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser la balance auxiliaire" i18n="@@accounting.auxiliary-balance.actualiser.9d3b2a7d">Actualiser</app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || rows().length === 0"
             (exportFormat)="onExport($event)" />
@@ -88,13 +86,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers">
       <ng-template pTemplate="header">
         <tr>
-          <th>Tiers</th>
-          <th class="text-right" pTooltip="Ouverture débit" tooltipPosition="top">Ouv. D</th>
-          <th class="text-right" pTooltip="Ouverture crédit" tooltipPosition="top">Ouv. C</th>
-          <th class="text-right" pTooltip="Mouvement débit" tooltipPosition="top">Mouv. D</th>
-          <th class="text-right" pTooltip="Mouvement crédit" tooltipPosition="top">Mouv. C</th>
-          <th class="text-right" pTooltip="Clôture débit" tooltipPosition="top">Clôture D</th>
-          <th class="text-right" pTooltip="Clôture crédit" tooltipPosition="top">Clôture C</th>
+          <th i18n="@@accounting.auxiliary-balance.tiers.435080ba">Tiers</th>
+          <th class="text-right" pTooltip="Ouverture débit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.ouv.d.1a1c3306">Ouv. D</th>
+          <th class="text-right" pTooltip="Ouverture crédit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.ouv.c.95e30fd9">Ouv. C</th>
+          <th class="text-right" pTooltip="Mouvement débit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.mouv.d.0f50458a">Mouv. D</th>
+          <th class="text-right" pTooltip="Mouvement crédit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.mouv.c.87e48868">Mouv. C</th>
+          <th class="text-right" pTooltip="Clôture débit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.cloture.d.edb6d923">Clôture D</th>
+          <th class="text-right" pTooltip="Clôture crédit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.cloture.c.2be08431">Clôture C</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
@@ -104,7 +102,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               class="auxbal-tiers-link"
               [routerLink]="['/accounting/third-party-ledger']"
               [queryParams]="{ thirdPartyId: r.thirdPartyId, kind: kind, from: fromStr, to: toStr, name: r.thirdPartyName }"
-              title="Voir le grand livre de ce tiers">
+              title="Voir le grand livre de ce tiers" i18n-title="Voir le grand livre de ce tiers">
               {{ r.thirdPartyName }}
             </a>
           </td>
@@ -128,7 +126,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td colspan="7" style="text-align:center;padding:2rem">Aucun mouvement de tiers sur la période.</td></tr>
+        <tr><td colspan="7" style="text-align:center;padding:2rem" i18n="@@accounting.auxiliary-balance.aucun.mouvement.de.tiers.sur.la.periode.d9368d68">Aucun mouvement de tiers sur la période.</td></tr>
       </ng-template>
     </p-table>
   `,

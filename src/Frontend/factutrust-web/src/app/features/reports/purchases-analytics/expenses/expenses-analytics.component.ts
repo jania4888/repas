@@ -23,20 +23,18 @@ import {
   ],
   template: `
     <app-page-header
-      title="Dépenses"
+      title="Dépenses" i18n-title="Dépenses"
       subtitle="Suivez l'évolution de vos dépenses et comparez par période">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.purchases-analytics.imprimer.5382c09d">Imprimer</app-button>
     </app-page-header>
 
     <div class="filter-bar">
       <div class="filter-group">
-        <label class="filter-label">Période</label>
+        <label class="filter-label" i18n="@@reports.purchases-analytics.periode.de2110b7">Période</label>
         <div class="period-tabs">
           @for (p of periodOptions; track p.value) {
             <button
@@ -96,7 +94,7 @@ import {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Évolution des dépenses</h2>
+        <h2 class="section-title" i18n="@@reports.purchases-analytics.evolution.des.depenses.55b93cad">Évolution des dépenses</h2>
         <span class="section-hint">
           <i class="pi pi-info-circle"></i>
           Dépenses (factures payées) sur la période sélectionnée
@@ -106,11 +104,11 @@ import {
         <div class="chart-placeholder">
           <div class="loading-spinner">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@reports.purchases-analytics.chargement.a209b664">Chargement...</span>
           </div>
         </div>
       } @else if (data()?.chartData && hasChartData()) {
-        <div class="chart-container" role="img" aria-label="Graphique des dépenses">
+        <div class="chart-container" role="img" aria-label="Graphique des dépenses" i18n-aria-label="Graphique des dépenses">
           <div class="chart-y-axis">
             <span class="y-label">{{ formatAmountShort(maxAmount) }}</span>
             <span class="y-label">{{ formatAmountShort(maxAmount / 2) }}</span>
@@ -146,8 +144,8 @@ import {
         <div class="chart-placeholder">
           <div class="empty-state">
             <i class="pi pi-chart-line empty-icon"></i>
-            <p class="empty-title">Aucune donnée pour cette période</p>
-            <p class="empty-subtitle">Les dépenses apparaîtront ici une fois que vous aurez des factures fournisseurs payées. Créez des bons de commande et des factures fournisseurs.</p>
+            <p class="empty-title" i18n="@@reports.purchases-analytics.aucune.donnee.pour.cette.periode.b2a99770">Aucune donnée pour cette période</p>
+            <p class="empty-subtitle" i18n="@@reports.purchases-analytics.les.depenses.apparaitront.ici.une.fois.que.vous..631790aa">Les dépenses apparaîtront ici une fois que vous aurez des factures fournisseurs payées. Créez des bons de commande et des factures fournisseurs.</p>
           </div>
         </div>
       }
@@ -156,18 +154,18 @@ import {
     <div class="grid-2-cols">
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Dépenses par fournisseur</h2>
+          <h2 class="section-title" i18n="@@reports.purchases-analytics.depenses.par.fournisseur.e216e654">Dépenses par fournisseur</h2>
           <span class="section-hint">
             <i class="pi pi-info-circle"></i>
             Top fournisseurs par montant total (factures payées)
           </span>
         </div>
         @if (loading()) {
-          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.purchases-analytics.chargement.a209b664">Chargement...</span></div>
         } @else if (!data()?.bySupplier?.length) {
           <div class="empty-state-sm">
             <i class="pi pi-building"></i>
-            <p>Aucune donnée disponible</p>
+            <p i18n="@@reports.purchases-analytics.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
           </div>
         } @else {
           <div class="ranking-list">
@@ -194,7 +192,7 @@ import {
       </div>
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Résumé</h2>
+          <h2 class="section-title" i18n="@@reports.purchases-analytics.resume.9fb58963">Résumé</h2>
           <span class="section-hint">
             <i class="pi pi-info-circle"></i>
             Vue d'ensemble de la période
@@ -207,9 +205,9 @@ import {
                 <i class="pi pi-dollar"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label">Total dépensé</span>
+                <span class="summary-label" i18n="@@reports.purchases-analytics.total.depense.8bd8cc9d">Total dépensé</span>
                 <span class="summary-value">{{ formatAmount(data()!.totalExpenses) }}</span>
-                <span class="summary-desc">Factures fournisseurs payées sur la période</span>
+                <span class="summary-desc" i18n="@@reports.purchases-analytics.factures.fournisseurs.payees.sur.la.periode.f7cd96dd">Factures fournisseurs payées sur la période</span>
               </div>
             </div>
             <div class="summary-item">
@@ -217,9 +215,9 @@ import {
                 <i class="pi pi-file"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label">Factures</span>
+                <span class="summary-label" i18n="@@reports.purchases-analytics.factures.da35e4f2">Factures</span>
                 <span class="summary-value">{{ data()!.totalInvoices }}</span>
-                <span class="summary-desc">Nombre total de factures sur la période</span>
+                <span class="summary-desc" i18n="@@reports.purchases-analytics.nombre.total.de.factures.sur.la.periode.9c4fbfde">Nombre total de factures sur la période</span>
               </div>
             </div>
             <div class="summary-item">
@@ -227,9 +225,9 @@ import {
                 <i class="pi pi-chart-line"></i>
               </div>
               <div class="summary-content">
-                <span class="summary-label">Moyenne par facture</span>
+                <span class="summary-label" i18n="@@reports.purchases-analytics.moyenne.par.facture.b3785f82">Moyenne par facture</span>
                 <span class="summary-value">{{ data()!.totalInvoices > 0 ? formatAmount(data()!.totalExpenses / data()!.totalInvoices) : '0' }}</span>
-                <span class="summary-desc">Montant moyen par facture payée</span>
+                <span class="summary-desc" i18n="@@reports.purchases-analytics.montant.moyen.par.facture.payee.4c9910ff">Montant moyen par facture payée</span>
               </div>
             </div>
           </div>

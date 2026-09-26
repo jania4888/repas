@@ -53,26 +53,24 @@ function toFrDate(d: Date): string {
   ],
   template: `
     <app-page-header
-      title="Exercice comptable — Immobilisations"
+      title="Exercice comptable — Immobilisations" i18n-title="Exercice comptable — Immobilisations"
       subtitle="Définir la frontière d'exercice du dossier pour les dotations et le tableau d'amortissement" />
 
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
     <app-accounting-status-banner [message]="success() ?? ''" variant="success" *ngIf="success()" />
 
     <div class="card" *ngIf="loading()">
-      <p class="hint">Chargement des paramètres…</p>
+      <p class="hint" i18n="@@accounting.fixed-assets.chargement.des.parametres.28d37cc5">Chargement des paramètres…</p>
     </div>
 
     <div class="card" *ngIf="!loading()">
-      <p class="hint">
-        L'exercice comptable détermine la répartition des dotations et le libellé des exercices
+      <p class="hint" i18n="@@accounting.fixed-assets.l.exercice.comptable.determine.la.repartition.de.3debb716">L'exercice comptable détermine la répartition des dotations et le libellé des exercices
         dans le tableau CP17 et les exports Immobilisations. Par défaut, l'exercice coïncide avec
-        l'année civile (janvier).
-      </p>
+        l'année civile (janvier).</p>
 
       <app-accounting-status-banner
         *ngIf="isOffset()"
-        title="Limitation transitoire"
+        title="Limitation transitoire" i18n-title="Limitation transitoire"
         [message]="offsetLimitationMessage"
         variant="warning" />
 
@@ -82,11 +80,11 @@ function toFrDate(d: Date): string {
           <select class="accounting-filter-input" [(ngModel)]="form.fiscalYearStartMonth" (ngModelChange)="onFormChange()">
             <option *ngFor="let m of monthOptions" [value]="m.value">{{ m.label }}</option>
           </select>
-          <span class="hint">1 = janvier (exercice civil, comportement par défaut).</span>
+          <span class="hint" i18n="@@accounting.fixed-assets.1.janvier.exercice.civil.comportement.par.defaut.2bc6d026">1 = janvier (exercice civil, comportement par défaut).</span>
         </label>
 
         <fieldset class="form-section">
-          <legend>Format du libellé d'exercice *</legend>
+          <legend i18n="@@accounting.fixed-assets.format.du.libelle.d.exercice.9b92223f">Format du libellé d'exercice *</legend>
           <label class="radio-option">
             <input
               type="radio"
@@ -110,18 +108,14 @@ function toFrDate(d: Date): string {
 
       <div class="preview">
         <p>
-          <strong>Aperçu :</strong> exercice courant affiché « {{ currentSample() }} »<ng-container *ngIf="isOffset()"> (frontière {{ offsetBoundary() }})</ng-container>.
+          <strong i18n="@@accounting.fixed-assets.apercu.33c24358">Aperçu :</strong> exercice courant affiché « {{ currentSample() }} »<ng-container *ngIf="isOffset()"> (frontière {{ offsetBoundary() }})</ng-container>.
         </p>
       </div>
 
       <div class="actions">
-        <app-button variant="primary" type="button" (click)="save()" [disabled]="saving()">
-          Enregistrer les paramètres
-        </app-button>
-        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets/depreciation-run">
-          Aller aux dotations
-        </app-button>
-        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets">Retour au registre</app-button>
+        <app-button variant="primary" type="button" (click)="save()" [disabled]="saving()" i18n="@@accounting.fixed-assets.enregistrer.les.parametres.f1ccef8d">Enregistrer les paramètres</app-button>
+        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets/depreciation-run" i18n="@@accounting.fixed-assets.aller.aux.dotations.1269addd">Aller aux dotations</app-button>
+        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets" i18n="@@accounting.fixed-assets.retour.au.registre.aa646cbf">Retour au registre</app-button>
       </div>
     </div>
   `,

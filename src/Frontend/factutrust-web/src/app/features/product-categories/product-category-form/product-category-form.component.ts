@@ -41,23 +41,21 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/product-categories">
-        Annuler
-      </app-button>
+        routerLink="/product-categories" i18n="@@product-categories.product-category-form.annuler.49ba3292">Annuler</app-button>
     </app-page-header>
 
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
-        <p>Chargement...</p>
+        <p i18n="@@product-categories.product-category-form.chargement.a209b664">Chargement...</p>
       </div>
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-grid">
-          <app-form-section title="Informations générales" icon="pi-tag" [number]="1">
+          <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-tag" [number]="1">
             @if (isEditMode()) {
               <div class="form-group">
-                <label for="code">Code</label>
+                <label for="code" i18n="@@product-categories.product-category-form.code.adac6937">Code</label>
                 <input
                   pInputText
                   id="code"
@@ -65,16 +63,16 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   class="w-full"
                   readonly
                   disabled>
-                <small class="form-hint">Le code n'est pas modifiable.</small>
+                <small class="form-hint" i18n="@@product-categories.product-category-form.le.code.n.est.pas.modifiable.366c19a3">Le code n'est pas modifiable.</small>
               </div>
             } @else {
               <div class="form-group">
-                <label for="code">Code <span class="required">*</span></label>
+                <label for="code">Code <span class="required" i18n="@@product-categories.product-category-form.text.df58248c">*</span></label>
                 <input
                   pInputText
                   id="code"
                   formControlName="code"
-                  placeholder="Ex: SERVICES"
+                  placeholder="Ex: SERVICES" i18n-placeholder="Ex: SERVICES"
                   maxlength="50"
                   class="w-full"
                   [class.ng-invalid]="isInvalid('code')">
@@ -84,17 +82,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                     <span>{{ errorMessageService.getErrorMessage(form.get('code')) }}</span>
                   </div>
                 }
-                <small class="form-hint">Code unique, en majuscules (max. 50 caractères).</small>
+                <small class="form-hint" i18n="@@product-categories.product-category-form.code.unique.en.majuscules.max.50.caracteres.e9a39e13">Code unique, en majuscules (max. 50 caractères).</small>
               </div>
             }
 
             <div class="form-group">
-              <label for="name">Nom <span class="required">*</span></label>
+              <label for="name">Nom <span class="required" i18n="@@product-categories.product-category-form.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="name"
                 formControlName="name"
-                placeholder="Ex: Services"
+                placeholder="Ex: Services" i18n-placeholder="Ex: Services"
                 maxlength="100"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('name')">
@@ -104,18 +102,18 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   <span>{{ errorMessageService.getErrorMessage(form.get('name')) }}</span>
                 </div>
               }
-              <small class="form-hint">Nom affiché dans les listes et le formulaire produit (max. 100 caractères).</small>
+              <small class="form-hint" i18n="@@product-categories.product-category-form.nom.affiche.dans.les.listes.et.le.formulaire.pro.a4010abb">Nom affiché dans les listes et le formulaire produit (max. 100 caractères).</small>
             </div>
 
             <div class="form-group">
-              <label for="displayOrder">Ordre d'affichage</label>
+              <label for="displayOrder" i18n="@@product-categories.product-category-form.ordre.d.affichage.6978b883">Ordre d'affichage</label>
               <p-inputNumber
                 id="displayOrder"
                 formControlName="displayOrder"
                 [min]="0"
                 [max]="9999"
                 [showButtons]="false"
-                placeholder="0"
+                placeholder="0" i18n-placeholder="0"
                 styleClass="w-full">
               </p-inputNumber>
               @if (isInvalid('displayOrder')) {
@@ -124,12 +122,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   <span>{{ errorMessageService.getErrorMessage(form.get('displayOrder')) }}</span>
                 </div>
               }
-              <small class="form-hint">Plus le nombre est petit, plus la catégorie apparaît en premier.</small>
+              <small class="form-hint" i18n="@@product-categories.product-category-form.plus.le.nombre.est.petit.plus.la.categorie.appar.df443502">Plus le nombre est petit, plus la catégorie apparaît en premier.</small>
             </div>
 
             @if (isEditMode()) {
               <div class="form-group">
-                <label for="isActive">Statut</label>
+                <label for="isActive" i18n="@@product-categories.product-category-form.statut.659499f3">Statut</label>
                 <div class="status-switch">
                   <p-inputSwitch
                     id="isActive"
@@ -139,7 +137,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                     {{ form.get('isActive')?.value ? 'Actif' : 'Inactif' }}
                   </span>
                 </div>
-                <small class="form-hint">Une catégorie inactive n'apparaît plus dans le choix du formulaire produit.</small>
+                <small class="form-hint" i18n="@@product-categories.product-category-form.une.categorie.inactive.n.apparait.plus.dans.le.c.ae1fa8e6">Une catégorie inactive n'apparaît plus dans le choix du formulaire produit.</small>
               </div>
             }
           </app-form-section>
@@ -150,9 +148,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/product-categories">
-            Annuler
-          </app-button>
+            routerLink="/product-categories" i18n="@@product-categories.product-category-form.annuler.49ba3292">Annuler</app-button>
           <app-button
             variant="primary"
             type="submit"

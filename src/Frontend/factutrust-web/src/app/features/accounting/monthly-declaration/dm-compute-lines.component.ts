@@ -34,18 +34,18 @@ import {
               <span class="dm-chip dm-chip--warn">{{ view.warningCount }} avertissement(s)</span>
             }
             @if (view.hasManualInput) {
-              <span class="dm-chip dm-chip--warn">saisie manuelle attendue</span>
+              <span class="dm-chip dm-chip--warn" i18n="@@accounting.monthly-declaration.saisie.manuelle.attendue.0b611312">saisie manuelle attendue</span>
             }
           </div>
 
           <dl class="dm-family__totals">
             <div>
-              <dt>Détail</dt>
+              <dt i18n="@@accounting.monthly-declaration.detail.7ce06afc">Détail</dt>
               <dd>{{ view.withheldTotal | number: '1.3-3' }}</dd>
             </div>
             @if (view.declaredAmount !== null) {
               <div>
-                <dt>Déclaré</dt>
+                <dt i18n="@@accounting.monthly-declaration.declare.8b244d70">Déclaré</dt>
                 <dd>{{ view.declaredAmount | number: '1.3-3' }}</dd>
               </div>
             }
@@ -62,12 +62,12 @@ import {
           [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Code</th>
-              <th scope="col">Libellé</th>
-              <th scope="col">Code rapport</th>
-              <th scope="col" class="dm-num">Montant brut</th>
-              <th scope="col" class="dm-num">Taux</th>
-              <th scope="col" class="dm-num">Retenue</th>
+              <th scope="col" i18n="@@accounting.monthly-declaration.code.adac6937">Code</th>
+              <th scope="col" i18n="@@accounting.monthly-declaration.libelle.f5485bba">Libellé</th>
+              <th scope="col" i18n="@@accounting.monthly-declaration.code.rapport.149223b0">Code rapport</th>
+              <th scope="col" class="dm-num" i18n="@@accounting.monthly-declaration.montant.brut.6c8cf046">Montant brut</th>
+              <th scope="col" class="dm-num" i18n="@@accounting.monthly-declaration.taux.18bc95b8">Taux</th>
+              <th scope="col" class="dm-num" i18n="@@accounting.monthly-declaration.retenue.88cf18f4">Retenue</th>
             </tr>
           </ng-template>
 
@@ -77,9 +77,7 @@ import {
               <td>
                 {{ line.label }}
                 @if (line.requiresManualInput) {
-                  <span class="dm-chip dm-chip--warn" title="Rubrique « Fixe » sans constante enregistrée.">
-                    à saisir
-                  </span>
+                  <span class="dm-chip dm-chip--warn" title="Rubrique « Fixe » sans constante enregistrée." i18n-title="Rubrique « Fixe » sans constante enregistrée." i18n="@@accounting.monthly-declaration.a.saisir.3e42af61">à saisir</span>
                 }
                 @for (d of diagnostics(line); track $index) {
                   <p class="dm-diag" [class.dm-diag--error]="severity(d) === 'error'">
@@ -98,10 +96,8 @@ import {
         </p-table>
       </section>
     } @empty {
-      <div class="card dm-empty">
-        Aucune ligne produite pour cette période : soit le dossier est resté en calcul historique,
-        soit aucune famille n’est incluse dans sa déclaration.
-      </div>
+      <div class="card dm-empty" i18n="@@accounting.monthly-declaration.aucune.ligne.produite.pour.cette.periode.soit.le.2599d765">Aucune ligne produite pour cette période : soit le dossier est resté en calcul historique,
+        soit aucune famille n’est incluse dans sa déclaration.</div>
     }
   `,
   styles: `

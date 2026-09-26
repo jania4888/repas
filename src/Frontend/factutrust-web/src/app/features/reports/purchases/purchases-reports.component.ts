@@ -46,33 +46,29 @@ interface PeriodOption {
   ],
   template: `
     <app-page-header 
-      title="Rapports Achats" 
+      title="Rapports Achats" i18n-title="Rapports Achats" 
       subtitle="Analysez vos dépenses et suivez vos indicateurs d'achats">
       <app-button 
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()">
-        Exporter
-      </app-button>
+        (click)="onExport()" i18n="@@reports.purchases.exporter.0cd84bdc">Exporter</app-button>
       <app-button 
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.purchases.imprimer.5382c09d">Imprimer</app-button>
     </app-page-header>
 
     <div class="filter-section">
       <div class="filter-group">
-        <label for="period" class="filter-label">Période</label>
+        <label for="period" class="filter-label" i18n="@@reports.purchases.periode.de2110b7">Période</label>
         <select 
           id="period"
           [(ngModel)]="selectedPeriod" 
           (ngModelChange)="onPeriodChange()"
           class="filter-select"
-          aria-label="Sélectionner la période des rapports">
+          aria-label="Sélectionner la période des rapports" i18n-aria-label="Sélectionner la période des rapports">
           @for (period of periodOptions; track period.value) {
             <option [value]="period.value">{{ period.label }}</option>
           }
@@ -133,15 +129,15 @@ interface PeriodOption {
     <div class="reports-tabs-wrap">
       <p-tabs class="ft-tabs" [scrollable]="true" [value]="activeTabIndex" (valueChange)="onTabChange($event)" [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0"><i class="pi pi-chart-line"></i><span>Dépenses et fournisseurs</span></p-tab>
-          <p-tab [value]="1"><i class="pi pi-list"></i><span>Transactions fournisseurs</span></p-tab>
-          <p-tab [value]="2"><i class="pi pi-box"></i><span>Détails achats par ligne</span></p-tab>
-          <p-tab [value]="3"><i class="pi pi-calculator"></i><span>TVA achats</span></p-tab>
-          <p-tab [value]="4"><i class="pi pi-wallet"></i><span>Soldes fournisseur</span></p-tab>
-          <p-tab [value]="5"><i class="pi pi-percentage"></i><span>Retenues fournisseurs</span></p-tab>
-          <p-tab [value]="6"><i class="pi pi-calendar"></i><span>Synthèse mensuelle</span></p-tab>
-          <p-tab [value]="7"><i class="pi pi-chart-bar"></i><span>Répartition par statut</span></p-tab>
-          <p-tab [value]="8"><i class="pi pi-table"></i><span>Dépenses par mois / Année</span></p-tab>
+          <p-tab [value]="0"><i class="pi pi-chart-line"></i><span i18n="@@reports.purchases.depenses.et.fournisseurs.8acc873e">Dépenses et fournisseurs</span></p-tab>
+          <p-tab [value]="1"><i class="pi pi-list"></i><span i18n="@@reports.purchases.transactions.fournisseurs.83a34e96">Transactions fournisseurs</span></p-tab>
+          <p-tab [value]="2"><i class="pi pi-box"></i><span i18n="@@reports.purchases.details.achats.par.ligne.20c0118b">Détails achats par ligne</span></p-tab>
+          <p-tab [value]="3"><i class="pi pi-calculator"></i><span i18n="@@reports.purchases.tva.achats.48719283">TVA achats</span></p-tab>
+          <p-tab [value]="4"><i class="pi pi-wallet"></i><span i18n="@@reports.purchases.soldes.fournisseur.18c92c31">Soldes fournisseur</span></p-tab>
+          <p-tab [value]="5"><i class="pi pi-percentage"></i><span i18n="@@reports.purchases.retenues.fournisseurs.a6b3211f">Retenues fournisseurs</span></p-tab>
+          <p-tab [value]="6"><i class="pi pi-calendar"></i><span i18n="@@reports.purchases.synthese.mensuelle.bab5b563">Synthèse mensuelle</span></p-tab>
+          <p-tab [value]="7"><i class="pi pi-chart-bar"></i><span i18n="@@reports.purchases.repartition.par.statut.05b7c49b">Répartition par statut</span></p-tab>
+          <p-tab [value]="8"><i class="pi pi-table"></i><span i18n="@@reports.purchases.depenses.par.mois.annee.a1932f50">Dépenses par mois / Année</span></p-tab>
         </p-tablist>
         <p-tabpanels>
         <p-tabpanel [value]="0">
@@ -149,18 +145,18 @@ interface PeriodOption {
     <div class="reports-grid">
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Évolution des dépenses</h2>
-          <span class="section-subtitle">Dépenses des factures fournisseurs payées sur la période</span>
+          <h2 class="section-title" i18n="@@reports.purchases.evolution.des.depenses.55b93cad">Évolution des dépenses</h2>
+          <span class="section-subtitle" i18n="@@reports.purchases.depenses.des.factures.fournisseurs.payees.sur.la.deaa8033">Dépenses des factures fournisseurs payées sur la période</span>
         </div>
         @if (loading()) {
           <div class="chart-placeholder">
             <div class="loading-placeholder">
               <i class="pi pi-spin pi-spinner"></i>
-              <span>Chargement...</span>
+              <span i18n="@@reports.purchases.chargement.a209b664">Chargement...</span>
             </div>
           </div>
         } @else if (reportsData()?.expenseChartData && reportsData()!.expenseChartData.length > 0) {
-          <div class="chart-container" role="img" aria-label="Graphique - évolution des dépenses">
+          <div class="chart-container" role="img" aria-label="Graphique - évolution des dépenses" i18n-aria-label="Graphique - évolution des dépenses">
             <div class="chart-bars">
               @for (item of reportsData()!.expenseChartData; track item.label) {
                 <div class="chart-bar-group">
@@ -184,8 +180,8 @@ interface PeriodOption {
           <div class="chart-placeholder">
             <div class="chart-content">
               <i class="pi pi-chart-line chart-icon"></i>
-              <p class="chart-text">Aucune donnée pour cette période</p>
-              <p class="chart-subtext">Les dépenses apparaîtront ici une fois que vous aurez des factures fournisseurs payées. Créez des bons de commande et des factures fournisseurs.</p>
+              <p class="chart-text" i18n="@@reports.purchases.aucune.donnee.pour.cette.periode.b2a99770">Aucune donnée pour cette période</p>
+              <p class="chart-subtext" i18n="@@reports.purchases.les.depenses.apparaitront.ici.une.fois.que.vous..631790aa">Les dépenses apparaîtront ici une fois que vous aurez des factures fournisseurs payées. Créez des bons de commande et des factures fournisseurs.</p>
             </div>
           </div>
         }
@@ -193,30 +189,30 @@ interface PeriodOption {
 
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Principaux fournisseurs</h2>
-          <span class="section-subtitle">Top 10 par montant total acheté</span>
+          <h2 class="section-title" i18n="@@reports.purchases.principaux.fournisseurs.343537e6">Principaux fournisseurs</h2>
+          <span class="section-subtitle" i18n="@@reports.purchases.top.10.par.montant.total.achete.b644fbce">Top 10 par montant total acheté</span>
         </div>
         @if (loading()) {
           <div class="loading-placeholder">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@reports.purchases.chargement.a209b664">Chargement...</span>
           </div>
         } @else if (!reportsData()?.topSuppliers?.length) {
           <div class="empty-placeholder">
             <i class="pi pi-info-circle"></i>
-            <p>Aucune donnée disponible</p>
-            <p class="empty-hint">Aucune facture fournisseur sur cette période. Changez la période ou créez des factures fournisseurs.</p>
+            <p i18n="@@reports.purchases.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
+            <p class="empty-hint" i18n="@@reports.purchases.aucune.facture.fournisseur.sur.cette.periode.cha.99f7521b">Aucune facture fournisseur sur cette période. Changez la période ou créez des factures fournisseurs.</p>
           </div>
         } @else {
           <p-table 
             [value]="reportsData()!.topSuppliers" 
             styleClass="p-datatable-sm reports-table"
-            aria-label="Tableau des principaux fournisseurs">
+            aria-label="Tableau des principaux fournisseurs" i18n-aria-label="Tableau des principaux fournisseurs">
             <ng-template pTemplate="header">
               <tr>
-                <th>Fournisseur</th>
-                <th class="text-right">Factures</th>
-                <th class="text-right">Montant total</th>
+                <th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th>
+                <th class="text-right" i18n="@@reports.purchases.factures.da35e4f2">Factures</th>
+                <th class="text-right" i18n="@@reports.purchases.montant.total.dd001537">Montant total</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-supplier>
@@ -236,17 +232,17 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Transactions fournisseurs</h2>
-        <span class="section-subtitle">Factures fournisseurs et paiements sur la période</span>
+        <h2 class="section-title" i18n="@@reports.purchases.transactions.fournisseurs.83a34e96">Transactions fournisseurs</h2>
+        <span class="section-subtitle" i18n="@@reports.purchases.factures.fournisseurs.et.paiements.sur.la.period.cd6c0301">Factures fournisseurs et paiements sur la période</span>
       </div>
       @if (supplierTransactionsLoading()) {
-        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.purchases.chargement.a209b664">Chargement...</span></div>
       } @else if (!supplierTransactions().length) {
-        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune transaction sur cette période</p></div>
+        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.purchases.aucune.transaction.sur.cette.periode.2ed99811">Aucune transaction sur cette période</p></div>
       } @else {
-        <p-table [value]="supplierTransactions()" styleClass="p-datatable-sm reports-table" aria-label="Transactions fournisseurs">
+        <p-table [value]="supplierTransactions()" styleClass="p-datatable-sm reports-table" aria-label="Transactions fournisseurs" i18n-aria-label="Transactions fournisseurs">
           <ng-template pTemplate="header">
-            <tr><th>Date</th><th>Type</th><th>Fournisseur</th><th>Référence</th><th class="text-right">Montant</th></tr>
+            <tr><th i18n="@@reports.purchases.date.eb9a4bc1">Date</th><th i18n="@@reports.purchases.type.3deb7456">Type</th><th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th><th i18n="@@reports.purchases.reference.f8130bb0">Référence</th><th class="text-right" i18n="@@reports.purchases.montant.4adcd9fc">Montant</th></tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
             <tr>
@@ -266,23 +262,23 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Détails achats par ligne produit</h2>
-        <span class="section-subtitle">Lignes de factures fournisseurs agrégées par produit sur la période</span>
+        <h2 class="section-title" i18n="@@reports.purchases.details.achats.par.ligne.produit.391443f8">Détails achats par ligne produit</h2>
+        <span class="section-subtitle" i18n="@@reports.purchases.lignes.de.factures.fournisseurs.agregees.par.pro.ace648ff">Lignes de factures fournisseurs agrégées par produit sur la période</span>
       </div>
       @if (purchasesByLineLoading()) {
-        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.purchases.chargement.a209b664">Chargement...</span></div>
       } @else if (!purchasesByLine().length) {
-        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune ligne d'achat sur cette période</p></div>
+        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.purchases.aucune.ligne.d.achat.sur.cette.periode.fc546c63">Aucune ligne d'achat sur cette période</p></div>
       } @else {
-        <p-table [value]="purchasesByLine()" styleClass="p-datatable-sm reports-table" aria-label="Détails achats par ligne">
+        <p-table [value]="purchasesByLine()" styleClass="p-datatable-sm reports-table" aria-label="Détails achats par ligne" i18n-aria-label="Détails achats par ligne">
           <ng-template pTemplate="header">
             <tr>
-              <th>Produit</th>
-              <th>Code</th>
-              <th>Fournisseur</th>
-              <th class="text-right">Quantité</th>
-              <th class="text-right">Montant TTC</th>
-              <th class="text-right">TVA</th>
+              <th i18n="@@reports.purchases.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.purchases.code.adac6937">Code</th>
+              <th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th>
+              <th class="text-right" i18n="@@reports.purchases.quantite.09a38fda">Quantité</th>
+              <th class="text-right" i18n="@@reports.purchases.montant.ttc.a742433a">Montant TTC</th>
+              <th class="text-right" i18n="@@reports.purchases.tva.fb62cb5d">TVA</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -304,20 +300,20 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">TVA achats</h2>
-        <span class="section-subtitle">Agrégat TVA par taux sur la période</span>
+        <h2 class="section-title" i18n="@@reports.purchases.tva.achats.48719283">TVA achats</h2>
+        <span class="section-subtitle" i18n="@@reports.purchases.agregat.tva.par.taux.sur.la.periode.94b0dc97">Agrégat TVA par taux sur la période</span>
       </div>
       @if (purchasesVatLoading()) {
-        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.purchases.chargement.a209b664">Chargement...</span></div>
       } @else if (!purchasesVat().length) {
-        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune TVA achats sur cette période</p></div>
+        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.purchases.aucune.tva.achats.sur.cette.periode.cdd1f640">Aucune TVA achats sur cette période</p></div>
       } @else {
-        <p-table [value]="purchasesVat()" styleClass="p-datatable-sm reports-table" aria-label="TVA achats">
+        <p-table [value]="purchasesVat()" styleClass="p-datatable-sm reports-table" aria-label="TVA achats" i18n-aria-label="TVA achats">
           <ng-template pTemplate="header">
             <tr>
-              <th>Taux TVA</th>
-              <th class="text-right">Base taxable</th>
-              <th class="text-right">Montant TVA</th>
+              <th i18n="@@reports.purchases.taux.tva.c0830fcc">Taux TVA</th>
+              <th class="text-right" i18n="@@reports.purchases.base.taxable.449d603a">Base taxable</th>
+              <th class="text-right" i18n="@@reports.purchases.montant.tva.f0c1b7cc">Montant TVA</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -336,9 +332,9 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Soldes fournisseur</h2>
-        <span class="section-subtitle">Total facturé, total payé et solde par fournisseur</span>
-        <a class="section-link" routerLink="/reports/supplier-balances">Voir la fenêtre dédiée</a>
+        <h2 class="section-title" i18n="@@reports.purchases.soldes.fournisseur.18c92c31">Soldes fournisseur</h2>
+        <span class="section-subtitle" i18n="@@reports.purchases.total.facture.total.paye.et.solde.par.fournisseu.8e4e2a6a">Total facturé, total payé et solde par fournisseur</span>
+        <a class="section-link" routerLink="/reports/supplier-balances" i18n="@@reports.purchases.voir.la.fenetre.dediee.f4185a4c">Voir la fenêtre dédiée</a>
       </div>
       <app-party-balances-table
         [rows]="supplierBalanceRows()"
@@ -354,26 +350,26 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Total des retenues pour les fournisseurs</h2>
-        <span class="section-subtitle">Agrégé par fournisseur selon la date de solde (PaidAt), aligné déclaration TEJ</span>
+        <h2 class="section-title" i18n="@@reports.purchases.total.des.retenues.pour.les.fournisseurs.754a9b6d">Total des retenues pour les fournisseurs</h2>
+        <span class="section-subtitle" i18n="@@reports.purchases.agrege.par.fournisseur.selon.la.date.de.solde.pa.16825c6f">Agrégé par fournisseur selon la date de solde (PaidAt), aligné déclaration TEJ</span>
       </div>
       <p class="section-hint">
-        <a routerLink="/withholding-tax/dashboard" class="section-link">Tableau de bord retenue à la source</a>
+        <a routerLink="/withholding-tax/dashboard" class="section-link" i18n="@@reports.purchases.tableau.de.bord.retenue.a.la.source.fa7f4511">Tableau de bord retenue à la source</a>
       </p>
       @if (supplierWithholdingsLoading()) {
-        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.purchases.chargement.a209b664">Chargement...</span></div>
       } @else if (!supplierWithholdings().length) {
-        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune retenue fournisseur sur cette période</p></div>
+        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.purchases.aucune.retenue.fournisseur.sur.cette.periode.d024c0d1">Aucune retenue fournisseur sur cette période</p></div>
       } @else {
-        <p-table [value]="supplierWithholdings()" styleClass="p-datatable-sm reports-table" aria-label="Retenues fournisseurs">
+        <p-table [value]="supplierWithholdings()" styleClass="p-datatable-sm reports-table" aria-label="Retenues fournisseurs" i18n-aria-label="Retenues fournisseurs">
           <ng-template pTemplate="header">
             <tr>
-              <th>Fournisseur</th>
-              <th class="text-right">N° factures</th>
-              <th class="text-right">Montant HT</th>
-              <th class="text-right">Retenue</th>
-              <th class="text-right">Net servi</th>
-              <th>Devise</th>
+              <th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th>
+              <th class="text-right" i18n="@@reports.purchases.n.factures.58e98580">N° factures</th>
+              <th class="text-right" i18n="@@reports.purchases.montant.ht.3df1d6fe">Montant HT</th>
+              <th class="text-right" i18n="@@reports.purchases.retenue.88cf18f4">Retenue</th>
+              <th class="text-right" i18n="@@reports.purchases.net.servi.bb6a0c49">Net servi</th>
+              <th i18n="@@reports.purchases.devise.eb2e42c4">Devise</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -388,7 +384,7 @@ interface PeriodOption {
           </ng-template>
           <ng-template pTemplate="footer">
             <tr>
-              <td><strong>Total</strong></td>
+              <td><strong i18n="@@reports.purchases.total.b25928c6">Total</strong></td>
               <td class="text-right"><strong>{{ supplierWithholdingsInvoiceTotal() }}</strong></td>
               <td class="text-right amount"><strong>{{ supplierWithholdingsHtTotal() | number:'1.3-3' }}</strong></td>
               <td class="text-right amount"><strong>{{ supplierWithholdingsTotal() | number:'1.3-3' }}</strong></td>
@@ -406,18 +402,18 @@ interface PeriodOption {
     @if (!loading() && reportsData()?.monthlySummary && reportsData()!.monthlySummary.length > 0) {
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Synthèse mensuelle</h2>
-          <span class="section-subtitle">6 derniers mois</span>
+          <h2 class="section-title" i18n="@@reports.purchases.synthese.mensuelle.bab5b563">Synthèse mensuelle</h2>
+          <span class="section-subtitle" i18n="@@reports.purchases.6.derniers.mois.c9a9f41e">6 derniers mois</span>
         </div>
         <p-table 
           [value]="reportsData()!.monthlySummary" 
           styleClass="p-datatable-sm reports-table">
           <ng-template pTemplate="header">
             <tr>
-              <th>Mois</th>
-              <th class="text-right">Dépenses</th>
-              <th class="text-right">Factures</th>
-              <th class="text-right">Payées</th>
+              <th i18n="@@reports.purchases.mois.0d304bea">Mois</th>
+              <th class="text-right" i18n="@@reports.purchases.depenses.fb667434">Dépenses</th>
+              <th class="text-right" i18n="@@reports.purchases.factures.da35e4f2">Factures</th>
+              <th class="text-right" i18n="@@reports.purchases.payees.1ff22288">Payées</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -434,7 +430,7 @@ interface PeriodOption {
       <div class="section">
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucune donnée pour la synthèse mensuelle</p>
+          <p i18n="@@reports.purchases.aucune.donnee.pour.la.synthese.mensuelle.8d28c95b">Aucune donnée pour la synthèse mensuelle</p>
         </div>
       </div>
     }
@@ -444,18 +440,18 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Répartition par statut</h2>
-        <span class="section-subtitle">Répartition des factures fournisseurs selon leur statut</span>
+        <h2 class="section-title" i18n="@@reports.purchases.repartition.par.statut.05b7c49b">Répartition par statut</h2>
+        <span class="section-subtitle" i18n="@@reports.purchases.repartition.des.factures.fournisseurs.selon.leur.a8a94e4f">Répartition des factures fournisseurs selon leur statut</span>
       </div>
       @if (loading()) {
         <div class="loading-placeholder">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.purchases.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!reportsData()?.statusBreakdown?.length) {
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucune donnée disponible</p>
+          <p i18n="@@reports.purchases.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
         </div>
       } @else {
         <div class="status-grid">
@@ -484,30 +480,30 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section crosstab-section">
       <div class="section-header">
-        <h2 class="section-title">Dépenses par mois / Année </h2>
-        <span class="section-subtitle">Dépenses par mois et année - 5 dernières années (factures payées)</span>
+        <h2 class="section-title" i18n="@@reports.purchases.depenses.par.mois.annee.a1932f50">Dépenses par mois / Année</h2>
+        <span class="section-subtitle" i18n="@@reports.purchases.depenses.par.mois.et.annee.5.dernieres.annees.fa.619a238f">Dépenses par mois et année - 5 dernières années (factures payées)</span>
       </div>
       @if (crossTabLoading()) {
         <div class="loading-placeholder">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.purchases.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!crossTabData()) {
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucune donnée disponible</p>
-          <p class="empty-hint">Aucune facture fournisseur payée sur la période.</p>
+          <p i18n="@@reports.purchases.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
+          <p class="empty-hint" i18n="@@reports.purchases.aucune.facture.fournisseur.payee.sur.la.periode.60b9a152">Aucune facture fournisseur payée sur la période.</p>
         </div>
       } @else {
         <div class="crosstab-table-wrapper">
-          <table class="crosstab-table" aria-label="Tableau croisé des dépenses par mois et année">
+          <table class="crosstab-table" aria-label="Tableau croisé des dépenses par mois et année" i18n-aria-label="Tableau croisé des dépenses par mois et année">
             <thead>
               <tr>
-                <th scope="col">Année</th>
+                <th scope="col" i18n="@@reports.purchases.annee.1f910d98">Année</th>
                 @for (month of crossTabData()!.monthLabels; track month) {
                   <th scope="col" class="text-right">{{ month }}</th>
                 }
-                <th scope="col" class="text-right total-col">Total</th>
+                <th scope="col" class="text-right total-col" i18n="@@reports.purchases.total.b25928c6">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -523,7 +519,7 @@ interface PeriodOption {
             </tbody>
             <tfoot>
               <tr class="totals-row">
-                <th scope="row">Total</th>
+                <th scope="row" i18n="@@reports.purchases.total.b25928c6">Total</th>
                 @for (col of crossTabData()!.columnTotals; track $index) {
                   <td class="text-right amount">{{ col | number:'1.3-3' }}</td>
                 }
@@ -547,7 +543,7 @@ interface PeriodOption {
         <div class="print-header__brand-bar"></div>
         <div class="print-header__content">
           <div class="print-header__left">
-            <h1 class="print-header__title">RAPPORT ACHATS</h1>
+            <h1 class="print-header__title" i18n="@@reports.purchases.rapport.achats.32ba4625">RAPPORT ACHATS</h1>
             <p class="print-header__subtitle">{{ activeTabName }}</p>
             <p class="print-header__period">Période : {{ periodOptions[selectedPeriodIndex].label || 'Tout' }}
               @if (periodDateRangeLabel()) {
@@ -556,7 +552,7 @@ interface PeriodOption {
             </p>
           </div>
           <div class="print-header__right">
-            <p class="print-header__app">InstaFact</p>
+            <p class="print-header__app" i18n="@@reports.purchases.instafact.ff6221f4">InstaFact</p>
             <p class="print-header__date">Généré le {{ printDate }}</p>
           </div>
         </div>
@@ -566,19 +562,19 @@ interface PeriodOption {
       @if (reportsData()) {
         <div class="print-kpi-bar">
           <div class="print-kpi-item">
-            <span class="print-kpi-item__label">Dépenses totales</span>
+            <span class="print-kpi-item__label" i18n="@@reports.purchases.depenses.totales.7f280e4e">Dépenses totales</span>
             <span class="print-kpi-item__value">{{ reportsData()!.totalExpenses }}</span>
           </div>
           <div class="print-kpi-item">
-            <span class="print-kpi-item__label">Factures</span>
+            <span class="print-kpi-item__label" i18n="@@reports.purchases.factures.da35e4f2">Factures</span>
             <span class="print-kpi-item__value">{{ reportsData()!.totalInvoices }}</span>
           </div>
           <div class="print-kpi-item">
-            <span class="print-kpi-item__label">Taux paiement</span>
+            <span class="print-kpi-item__label" i18n="@@reports.purchases.taux.paiement.c676e2b2">Taux paiement</span>
             <span class="print-kpi-item__value">{{ reportsData()!.paymentRate }}</span>
           </div>
           <div class="print-kpi-item">
-            <span class="print-kpi-item__label">À payer</span>
+            <span class="print-kpi-item__label" i18n="@@reports.purchases.a.payer.4999346b">À payer</span>
             <span class="print-kpi-item__value">{{ reportsData()!.amountToPay }}</span>
           </div>
         </div>
@@ -587,9 +583,9 @@ interface PeriodOption {
       <!-- Tab 0: Expenses & top suppliers -->
       @if (activeTabIndex === 0 && reportsData()) {
         @if (reportsData()!.expenseChartData.length) {
-          <h4 class="print-section-title">Évolution des dépenses</h4>
+          <h4 class="print-section-title" i18n="@@reports.purchases.evolution.des.depenses.55b93cad">Évolution des dépenses</h4>
           <table class="print-table">
-            <thead><tr><th>Période</th><th class="text-right">Dépenses</th><th class="text-right">Factures</th></tr></thead>
+            <thead><tr><th i18n="@@reports.purchases.periode.de2110b7">Période</th><th class="text-right" i18n="@@reports.purchases.depenses.fb667434">Dépenses</th><th class="text-right" i18n="@@reports.purchases.factures.da35e4f2">Factures</th></tr></thead>
             <tbody>
               @for (item of reportsData()!.expenseChartData; track item.label) {
                 <tr>
@@ -602,9 +598,9 @@ interface PeriodOption {
           </table>
         }
         @if (reportsData()!.topSuppliers.length) {
-          <h4 class="print-section-title">Principaux fournisseurs (Top 10)</h4>
+          <h4 class="print-section-title" i18n="@@reports.purchases.principaux.fournisseurs.top.10.b1a7f036">Principaux fournisseurs (Top 10)</h4>
           <table class="print-table">
-            <thead><tr><th>Fournisseur</th><th class="text-right">Factures</th><th class="text-right">Montant total</th></tr></thead>
+            <thead><tr><th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th><th class="text-right" i18n="@@reports.purchases.factures.da35e4f2">Factures</th><th class="text-right" i18n="@@reports.purchases.montant.total.dd001537">Montant total</th></tr></thead>
             <tbody>
               @for (supplier of reportsData()!.topSuppliers; track supplier.supplierName) {
                 <tr>
@@ -621,7 +617,7 @@ interface PeriodOption {
       <!-- Tab 1: Transactions fournisseurs -->
       @if (activeTabIndex === 1 && supplierTransactions().length) {
         <table class="print-table">
-          <thead><tr><th>Date</th><th>Type</th><th>Fournisseur</th><th>Référence</th><th class="text-right">Montant</th></tr></thead>
+          <thead><tr><th i18n="@@reports.purchases.date.eb9a4bc1">Date</th><th i18n="@@reports.purchases.type.3deb7456">Type</th><th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th><th i18n="@@reports.purchases.reference.f8130bb0">Référence</th><th class="text-right" i18n="@@reports.purchases.montant.4adcd9fc">Montant</th></tr></thead>
           <tbody>
             @for (row of supplierTransactions(); track row.reference) {
               <tr>
@@ -639,7 +635,7 @@ interface PeriodOption {
       <!-- Tab 2: Détails achats par ligne -->
       @if (activeTabIndex === 2 && purchasesByLine().length) {
         <table class="print-table">
-          <thead><tr><th>Produit</th><th>Code</th><th>Fournisseur</th><th class="text-right">Quantité</th><th class="text-right">Montant TTC</th><th class="text-right">TVA</th></tr></thead>
+          <thead><tr><th i18n="@@reports.purchases.produit.ff673dc2">Produit</th><th i18n="@@reports.purchases.code.adac6937">Code</th><th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th><th class="text-right" i18n="@@reports.purchases.quantite.09a38fda">Quantité</th><th class="text-right" i18n="@@reports.purchases.montant.ttc.a742433a">Montant TTC</th><th class="text-right" i18n="@@reports.purchases.tva.fb62cb5d">TVA</th></tr></thead>
           <tbody>
             @for (row of purchasesByLine(); track row.productCode) {
               <tr>
@@ -658,7 +654,7 @@ interface PeriodOption {
       <!-- Tab 3: TVA achats -->
       @if (activeTabIndex === 3 && purchasesVat().length) {
         <table class="print-table">
-          <thead><tr><th>Taux TVA</th><th class="text-right">Base taxable</th><th class="text-right">Montant TVA</th></tr></thead>
+          <thead><tr><th i18n="@@reports.purchases.taux.tva.c0830fcc">Taux TVA</th><th class="text-right" i18n="@@reports.purchases.base.taxable.449d603a">Base taxable</th><th class="text-right" i18n="@@reports.purchases.montant.tva.f0c1b7cc">Montant TVA</th></tr></thead>
           <tbody>
             @for (row of purchasesVat(); track row.vatRateDisplay) {
               <tr>
@@ -674,7 +670,7 @@ interface PeriodOption {
       <!-- Tab 4: Soldes fournisseur -->
       @if (activeTabIndex === 4 && supplierBalances().length) {
         <table class="print-table">
-          <thead><tr><th>Fournisseur</th><th class="text-right">Total facturé</th><th class="text-right">Total payé</th><th class="text-right">Solde</th></tr></thead>
+          <thead><tr><th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th><th class="text-right" i18n="@@reports.purchases.total.facture.ea06ae9d">Total facturé</th><th class="text-right" i18n="@@reports.purchases.total.paye.57d30be5">Total payé</th><th class="text-right" i18n="@@reports.purchases.solde.e5977cf9">Solde</th></tr></thead>
           <tbody>
             @for (row of supplierBalances(); track row.supplierName) {
               <tr>
@@ -691,7 +687,7 @@ interface PeriodOption {
       <!-- Tab 5: Synthèse mensuelle -->
       @if (activeTabIndex === 5 && supplierWithholdings().length) {
         <table class="print-table">
-          <thead><tr><th>Fournisseur</th><th class="text-right">Factures</th><th class="text-right">HT</th><th class="text-right">Retenue</th><th class="text-right">Net</th></tr></thead>
+          <thead><tr><th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th><th class="text-right" i18n="@@reports.purchases.factures.da35e4f2">Factures</th><th class="text-right" i18n="@@reports.purchases.ht.64c38cf2">HT</th><th class="text-right" i18n="@@reports.purchases.retenue.88cf18f4">Retenue</th><th class="text-right" i18n="@@reports.purchases.net.9bb81c2e">Net</th></tr></thead>
           <tbody>
             @for (row of supplierWithholdings(); track row.supplierId) {
               <tr>
@@ -708,7 +704,7 @@ interface PeriodOption {
 
       @if (activeTabIndex === 6 && reportsData()?.monthlySummary?.length) {
         <table class="print-table">
-          <thead><tr><th>Mois</th><th class="text-right">Dépenses</th><th class="text-right">Factures</th><th class="text-right">Payées</th></tr></thead>
+          <thead><tr><th i18n="@@reports.purchases.mois.0d304bea">Mois</th><th class="text-right" i18n="@@reports.purchases.depenses.fb667434">Dépenses</th><th class="text-right" i18n="@@reports.purchases.factures.da35e4f2">Factures</th><th class="text-right" i18n="@@reports.purchases.payees.1ff22288">Payées</th></tr></thead>
           <tbody>
             @for (row of reportsData()!.monthlySummary; track row.monthShort + row.year) {
               <tr>
@@ -725,7 +721,7 @@ interface PeriodOption {
       <!-- Tab 6: Répartition par statut -->
       @if (activeTabIndex === 7 && reportsData()?.statusBreakdown?.length) {
         <table class="print-table">
-          <thead><tr><th>Statut</th><th class="text-right">Nombre</th><th class="text-right">Pourcentage</th><th class="text-right">Montant</th></tr></thead>
+          <thead><tr><th i18n="@@reports.purchases.statut.659499f3">Statut</th><th class="text-right" i18n="@@reports.purchases.nombre.e68491e9">Nombre</th><th class="text-right" i18n="@@reports.purchases.pourcentage.e34218e3">Pourcentage</th><th class="text-right" i18n="@@reports.purchases.montant.4adcd9fc">Montant</th></tr></thead>
           <tbody>
             @for (status of reportsData()!.statusBreakdown; track status.status) {
               <tr>
@@ -744,11 +740,11 @@ interface PeriodOption {
         <table class="print-table">
           <thead>
             <tr>
-              <th>Année</th>
+              <th i18n="@@reports.purchases.annee.1f910d98">Année</th>
               @for (month of crossTabData()!.monthLabels; track month) {
                 <th class="text-right">{{ month }}</th>
               }
-              <th class="text-right">Total</th>
+              <th class="text-right" i18n="@@reports.purchases.total.b25928c6">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -764,7 +760,7 @@ interface PeriodOption {
           </tbody>
           <tfoot>
             <tr>
-              <td><strong>Total</strong></td>
+              <td><strong i18n="@@reports.purchases.total.b25928c6">Total</strong></td>
               @for (col of crossTabData()!.columnTotals; track $index) {
                 <td class="text-right print-amount"><strong>{{ col | number:'1.3-3' }}</strong></td>
               }
@@ -777,7 +773,7 @@ interface PeriodOption {
       <!-- Professional Footer -->
       <div class="print-footer">
         <div class="print-footer__content">
-          <span class="print-footer__brand">Généré par InstaFact</span>
+          <span class="print-footer__brand" i18n="@@reports.purchases.genere.par.instafact.35c72778">Généré par InstaFact</span>
           <span class="print-footer__page">{{ printDate }}</span>
         </div>
         <div class="print-footer__bar"></div>

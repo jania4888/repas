@@ -46,48 +46,48 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Balance" subtitle="Balance générale — 8 colonnes avec soldes d'ouverture" />
+    <app-page-header title="Balance" i18n-title="Balance" subtitle="Balance générale — 8 colonnes avec soldes d'ouverture" />
     <div class="card balance-filters-card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Période et filtre de classe">
         <div accountingFilterFields class="balance-toolbar-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="bal-from">Du</label>
+            <label class="accounting-filter-label" for="bal-from" i18n="@@accounting.balance.du.84814985">Du</label>
             <input id="bal-from" type="date" [(ngModel)]="fromStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="bal-to">Au</label>
+            <label class="accounting-filter-label" for="bal-to" i18n="@@accounting.balance.au.7a1732d5">Au</label>
             <input id="bal-to" type="date" [(ngModel)]="toStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="bal-class">Classe</label>
+            <label class="accounting-filter-label" for="bal-class" i18n="@@accounting.balance.classe.3c38412a">Classe</label>
             <select id="bal-class" [(ngModel)]="filterClass" class="accounting-filter-input">
-              <option [ngValue]="0">Toutes</option>
+              <option [ngValue]="0" i18n="@@accounting.balance.toutes.c5f641e4">Toutes</option>
               <option *ngFor="let c of [1,2,3,4,5,6,7]" [ngValue]="c">{{ c }}</option>
             </select>
           </div>
           @if (activeTabIndex !== 2) {
             <div class="accounting-filter-field">
-              <label class="accounting-filter-label" for="bal-acc-from">Du compte</label>
-              <input id="bal-acc-from" type="text" class="accounting-filter-input" [(ngModel)]="accountFrom" placeholder="Début" />
+              <label class="accounting-filter-label" for="bal-acc-from" i18n="@@accounting.balance.du.compte.e97591b0">Du compte</label>
+              <input id="bal-acc-from" type="text" class="accounting-filter-input" [(ngModel)]="accountFrom" placeholder="Début" i18n-placeholder="Début" />
             </div>
             <div class="accounting-filter-field">
-              <label class="accounting-filter-label" for="bal-acc-to">Au compte</label>
-              <input id="bal-acc-to" type="text" class="accounting-filter-input" [(ngModel)]="accountTo" placeholder="Fin" />
+              <label class="accounting-filter-label" for="bal-acc-to" i18n="@@accounting.balance.au.compte.42405969">Au compte</label>
+              <input id="bal-acc-to" type="text" class="accounting-filter-input" [(ngModel)]="accountTo" placeholder="Fin" i18n-placeholder="Fin" />
             </div>
           }
           @if (activeTabIndex === 0) {
             <div class="accounting-filter-field">
-              <label class="accounting-filter-label" for="bal-scope">Comptes</label>
+              <label class="accounting-filter-label" for="bal-scope" i18n="@@accounting.balance.comptes.f778ac95">Comptes</label>
               <select id="bal-scope" [(ngModel)]="accountScope" class="accounting-filter-input">
-                <option value="all">Tous</option>
-                <option value="moved">Mouvementés</option>
-                <option value="unsettled">Non soldés</option>
+                <option value="all" i18n="@@accounting.balance.tous.b97ae3b4">Tous</option>
+                <option value="moved" i18n="@@accounting.balance.mouvementes.8a70ed38">Mouvementés</option>
+                <option value="unsettled" i18n="@@accounting.balance.non.soldes.1767e6ce">Non soldés</option>
               </select>
             </div>
             <div class="accounting-filter-field">
-              <label class="accounting-filter-label" for="bal-level">Regroupement</label>
+              <label class="accounting-filter-label" for="bal-level" i18n="@@accounting.balance.regroupement.c875cbed">Regroupement</label>
               <select id="bal-level" [(ngModel)]="groupLevel" class="accounting-filter-input">
-                <option [ngValue]="0">Détail par compte</option>
+                <option [ngValue]="0" i18n="@@accounting.balance.detail.par.compte.f63634fc">Détail par compte</option>
                 @for (l of [1, 2, 3, 4, 5]; track l) {
                   <option [ngValue]="l">Racine à {{ l }} chiffre{{ l > 1 ? 's' : '' }}</option>
                 }
@@ -96,7 +96,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           }
           @if (activeTabIndex === 2) {
             <div class="accounting-filter-field">
-              <label class="accounting-filter-label" for="bal-year">Exercice</label>
+              <label class="accounting-filter-label" for="bal-year" i18n="@@accounting.balance.exercice.e171e2b0">Exercice</label>
               <input id="bal-year" type="number" class="accounting-filter-input" [(ngModel)]="fiscalYear" min="2000" max="2100" />
             </div>
           }
@@ -109,9 +109,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser la balance pour la période sélectionnée">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser la balance pour la période sélectionnée" i18n="@@accounting.balance.actualiser.9d3b2a7d">Actualiser</app-button>
           <app-analyze-with-ai-button
             screenId="accounting-balance"
             density="toolbar"
@@ -131,9 +129,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       (retry)="load()" />
     <p-tabs [(value)]="activeTabIndex" (valueChange)="onTabChange()" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0">Générale</p-tab>
-        <p-tab [value]="1">Détaillée</p-tab>
-        <p-tab [value]="2">Par période</p-tab>
+        <p-tab [value]="0" i18n="@@accounting.balance.generale.787e6d0b">Générale</p-tab>
+        <p-tab [value]="1" i18n="@@accounting.balance.detaillee.094d4a18">Détaillée</p-tab>
+        <p-tab [value]="2" i18n="@@accounting.balance.par.periode.4909c325">Par période</p-tab>
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
@@ -143,17 +141,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes">
           <ng-template pTemplate="header">
             <tr>
-              <th>Compte</th>
-              <th>Libellé</th>
+              <th i18n="@@accounting.balance.compte.c45740bb">Compte</th>
+              <th i18n="@@accounting.balance.libelle.f5485bba">Libellé</th>
               @if (hasForeignCurrency()) {
-                <th pTooltip="Devises presentes sur le compte — les montants restent en dinar" tooltipPosition="top">Devises</th>
+                <th pTooltip="Devises presentes sur le compte — les montants restent en dinar" tooltipPosition="top" i18n="@@accounting.balance.devises.23dd4301">Devises</th>
               }
-              <th class="text-right" pTooltip="Ouverture débit" tooltipPosition="top">Ouv. D</th>
-              <th class="text-right" pTooltip="Ouverture crédit" tooltipPosition="top">Ouv. C</th>
-              <th class="text-right" pTooltip="Mouvement débit" tooltipPosition="top">Mouv. D</th>
-              <th class="text-right" pTooltip="Mouvement crédit" tooltipPosition="top">Mouv. C</th>
-              <th class="text-right" pTooltip="Clôture débit" tooltipPosition="top">Clôture D</th>
-              <th class="text-right" pTooltip="Clôture crédit" tooltipPosition="top">Clôture C</th>
+              <th class="text-right" pTooltip="Ouverture débit" tooltipPosition="top" i18n="@@accounting.balance.ouv.d.1a1c3306">Ouv. D</th>
+              <th class="text-right" pTooltip="Ouverture crédit" tooltipPosition="top" i18n="@@accounting.balance.ouv.c.95e30fd9">Ouv. C</th>
+              <th class="text-right" pTooltip="Mouvement débit" tooltipPosition="top" i18n="@@accounting.balance.mouv.d.0f50458a">Mouv. D</th>
+              <th class="text-right" pTooltip="Mouvement crédit" tooltipPosition="top" i18n="@@accounting.balance.mouv.c.87e48868">Mouv. C</th>
+              <th class="text-right" pTooltip="Clôture débit" tooltipPosition="top" i18n="@@accounting.balance.cloture.d.edb6d923">Clôture D</th>
+              <th class="text-right" pTooltip="Clôture crédit" tooltipPosition="top" i18n="@@accounting.balance.cloture.c.2be08431">Clôture C</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -163,7 +161,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   class="account-link"
                   [routerLink]="['/accounting/ledger']"
                   [queryParams]="{ account: r.accountNumber, from: fromStr, to: toStr }"
-                  title="Voir le grand livre de ce compte">
+                  title="Voir le grand livre de ce compte" i18n-title="Voir le grand livre de ce compte">
                   {{ r.accountNumber }}
                 </a>
               </td>
@@ -173,7 +171,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   @if (r.foreignCurrencies?.length) {
                     {{ r.foreignCurrencies.join(' · ') }}
                   } @else {
-                    <span class="bal-currencies-none">—</span>
+                    <span class="bal-currencies-none" i18n="@@accounting.balance.text.1b93795b">—</span>
                   }
                 </td>
               }
@@ -187,7 +185,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td [attr.colspan]="hasForeignCurrency() ? 3 : 2">Totaux</td>
+              <td [attr.colspan]="hasForeignCurrency() ? 3 : 2" i18n="@@accounting.balance.totaux.a1ca02f8">Totaux</td>
               <td class="text-right" style="font-variant-numeric:tabular-nums">{{ totals().openingDebit | number : '1.3-3' }}</td>
               <td class="text-right" style="font-variant-numeric:tabular-nums">{{ totals().openingCredit | number : '1.3-3' }}</td>
               <td class="text-right" style="font-variant-numeric:tabular-nums">{{ totals().movementDebit | number : '1.3-3' }}</td>
@@ -197,7 +195,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td [attr.colspan]="hasForeignCurrency() ? 9 : 8" style="text-align:center;padding:2rem">Aucun mouvement sur la période.</td></tr>
+            <tr><td [attr.colspan]="hasForeignCurrency() ? 9 : 8" style="text-align:center;padding:2rem" i18n="@@accounting.balance.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</td></tr>
           </ng-template>
         </p-table>
       </p-tabpanel>
@@ -218,13 +216,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               <p-table [value]="acc.rows" [rowHover]="true" styleClass="p-datatable-sm accounting-datatable">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Journal</th>
-                    <th scope="col">Pièce</th>
-                    <th scope="col">Libellé</th>
-                    <th scope="col" class="text-right">Débit</th>
-                    <th scope="col" class="text-right">Crédit</th>
-                    <th scope="col" class="text-right">Solde</th>
+                    <th scope="col" i18n="@@accounting.balance.date.eb9a4bc1">Date</th>
+                    <th scope="col" i18n="@@accounting.balance.journal.57d7f743">Journal</th>
+                    <th scope="col" i18n="@@accounting.balance.piece.954bbc8c">Pièce</th>
+                    <th scope="col" i18n="@@accounting.balance.libelle.f5485bba">Libellé</th>
+                    <th scope="col" class="text-right" i18n="@@accounting.balance.debit.f528224f">Débit</th>
+                    <th scope="col" class="text-right" i18n="@@accounting.balance.credit.19194bdf">Crédit</th>
+                    <th scope="col" class="text-right" i18n="@@accounting.balance.solde.e5977cf9">Solde</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-r>
@@ -239,13 +237,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
-                  <tr><td colspan="7" class="bal-empty">Aucun mouvement — solde reporté seul.</td></tr>
+                  <tr><td colspan="7" class="bal-empty" i18n="@@accounting.balance.aucun.mouvement.solde.reporte.seul.c1306448">Aucun mouvement — solde reporté seul.</td></tr>
                 </ng-template>
               </p-table>
             </section>
           }
           @if (d.accounts.length === 0) {
-            <p class="bal-empty">Aucun mouvement sur la période.</p>
+            <p class="bal-empty" i18n="@@accounting.balance.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</p>
           } @else {
             <p class="bal-grand-total">
               Total mouvements — débit {{ d.totalMovementDebit | number : '1.3-3' }} ·
@@ -262,12 +260,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <table class="bal-matrix">
               <thead>
                 <tr>
-                  <th scope="col" class="bal-sticky">Compte</th>
-                  <th scope="col" class="text-right">Ouverture</th>
+                  <th scope="col" class="bal-sticky" i18n="@@accounting.balance.compte.c45740bb">Compte</th>
+                  <th scope="col" class="text-right" i18n="@@accounting.balance.ouverture.f2e32418">Ouverture</th>
                   @for (m of monthLabels; track m) {
                     <th scope="col" class="text-right">{{ m }}</th>
                   }
-                  <th scope="col" class="text-right bal-total-col">Clôture</th>
+                  <th scope="col" class="text-right bal-total-col" i18n="@@accounting.balance.cloture.eb133909">Clôture</th>
                 </tr>
               </thead>
               <tbody>
@@ -287,7 +285,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   </tr>
                 }
                 @if (p.rows.length === 0) {
-                  <tr><td colspan="15" class="bal-empty">Aucun mouvement sur l'exercice.</td></tr>
+                  <tr><td colspan="15" class="bal-empty" i18n="@@accounting.balance.aucun.mouvement.sur.l.exercice.dc0e435d">Aucun mouvement sur l'exercice.</td></tr>
                 }
               </tbody>
             </table>

@@ -52,7 +52,7 @@ interface EditOrderLine {
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@purchase-orders.purchase-order-edit.chargement.a209b664">Chargement...</p>
       </div>
     } @else if (po()) {
       <app-page-header
@@ -66,17 +66,17 @@ interface EditOrderLine {
           <h3 class="card-title"><i class="pi pi-building"></i> En-tête de commande</h3>
           <div class="form-grid">
             <div class="form-group">
-              <label>Fournisseur</label>
+              <label i18n="@@purchase-orders.purchase-order-edit.fournisseur.97d91d89">Fournisseur</label>
               <span class="readonly-value">{{ po()!.supplier.name }}</span>
             </div>
 
             <div class="form-group">
-              <label>Date de commande</label>
+              <label i18n="@@purchase-orders.purchase-order-edit.date.de.commande.f9b0df86">Date de commande</label>
               <span class="readonly-value">{{ po()!.orderDate | date:'dd/MM/yyyy' }}</span>
             </div>
 
             <div class="form-group">
-              <label for="deliveryDate">Date de livraison prévue</label>
+              <label for="deliveryDate" i18n="@@purchase-orders.purchase-order-edit.date.de.livraison.prevue.3ea95a1d">Date de livraison prévue</label>
               <p-datepicker
                 id="deliveryDate"
                 [(ngModel)]="expectedDeliveryDate"
@@ -87,12 +87,12 @@ interface EditOrderLine {
             </div>
 
             <div class="form-group">
-              <label for="reference">Référence fournisseur</label>
+              <label for="reference" i18n="@@purchase-orders.purchase-order-edit.reference.fournisseur.5fbc4823">Référence fournisseur</label>
               <input
                 pInputText
                 id="reference"
                 [(ngModel)]="reference"
-                placeholder="Ex: DEV-2024-001"
+                placeholder="Ex: DEV-2024-001" i18n-placeholder="Ex: DEV-2024-001"
                 class="w-full">
             </div>
           </div>
@@ -103,27 +103,25 @@ interface EditOrderLine {
           <div class="card-header">
             <h3 class="card-title"><i class="pi pi-list"></i> Lignes de commande</h3>
             <app-button variant="secondary" icon="pi-plus" iconPos="left" size="sm"
-              (click)="addLine()">
-              Ajouter une ligne
-            </app-button>
+              (click)="addLine()" i18n="@@purchase-orders.purchase-order-edit.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
           </div>
 
           @if (lines.length === 0) {
             <div class="empty-lines">
               <i class="pi pi-inbox"></i>
-              <p>Aucune ligne. Cliquez sur "Ajouter une ligne" pour commencer.</p>
+              <p i18n="@@purchase-orders.purchase-order-edit.aucune.ligne.cliquez.sur.ajouter.une.ligne.pour..bbab98ba">Aucune ligne. Cliquez sur "Ajouter une ligne" pour commencer.</p>
             </div>
           } @else {
             <div class="lines-table">
               <table>
                 <thead>
                   <tr>
-                    <th style="width: 40px">#</th>
-                    <th>Produit *</th>
-                    <th style="width: 120px">Quantité *</th>
-                    <th style="width: 140px">Prix unitaire HT</th>
-                    <th style="width: 80px">TVA</th>
-                    <th style="width: 140px">Total TTC</th>
+                    <th style="width: 40px" i18n="@@purchase-orders.purchase-order-edit.text.d08f88df">#</th>
+                    <th i18n="@@purchase-orders.purchase-order-edit.produit.12b1aa43">Produit *</th>
+                    <th style="width: 120px" i18n="@@purchase-orders.purchase-order-edit.quantite.d8a4d5eb">Quantité *</th>
+                    <th style="width: 140px" i18n="@@purchase-orders.purchase-order-edit.prix.unitaire.ht.bb3f8e39">Prix unitaire HT</th>
+                    <th style="width: 80px" i18n="@@purchase-orders.purchase-order-edit.tva.fb62cb5d">TVA</th>
+                    <th style="width: 140px" i18n="@@purchase-orders.purchase-order-edit.total.ttc.9e80ff7c">Total TTC</th>
                     <th style="width: 50px"></th>
                   </tr>
                 </thead>
@@ -141,7 +139,7 @@ interface EditOrderLine {
                             [options]="products()"
                             [(ngModel)]="line.product"
                             optionLabel="name"
-                            placeholder="Sélectionnez un produit"
+                            placeholder="Sélectionnez un produit" i18n-placeholder="Sélectionnez un produit"
                             [filter]="true"
                             filterBy="name,code"
                             [showClear]="false"
@@ -189,7 +187,7 @@ interface EditOrderLine {
                       </td>
                       <td class="text-center">
                         <button class="remove-btn" (click)="removeLine($index)"
-                          aria-label="Supprimer la ligne">
+                          aria-label="Supprimer la ligne" i18n-aria-label="Supprimer la ligne">
                           <i class="pi pi-trash"></i>
                         </button>
                       </td>
@@ -207,12 +205,12 @@ interface EditOrderLine {
 
           <div class="summary-layout">
             <div class="notes-section">
-              <label for="notes">Notes</label>
+              <label for="notes" i18n="@@purchase-orders.purchase-order-edit.notes.70440046">Notes</label>
               <textarea
                 pTextarea
                 id="notes"
                 [(ngModel)]="notes"
-                placeholder="Notes internes pour cette commande..."
+                placeholder="Notes internes pour cette commande..." i18n-placeholder="Notes internes pour cette commande..."
                 [rows]="4"
                 class="w-full">
               </textarea>
@@ -220,15 +218,15 @@ interface EditOrderLine {
 
             <div class="totals-section">
               <div class="total-row">
-                <span>Sous-total HT</span>
+                <span i18n="@@purchase-orders.purchase-order-edit.sous.total.ht.724598f6">Sous-total HT</span>
                 <span class="amount">{{ subTotalHT | currency:'TND':'symbol':'1.3-3' }}</span>
               </div>
               <div class="total-row">
-                <span>TVA</span>
+                <span i18n="@@purchase-orders.purchase-order-edit.tva.fb62cb5d">TVA</span>
                 <span class="amount">{{ totalVat | currency:'TND':'symbol':'1.3-3' }}</span>
               </div>
               <div class="total-row grand-total">
-                <span>Total TTC</span>
+                <span i18n="@@purchase-orders.purchase-order-edit.total.ttc.9e80ff7c">Total TTC</span>
                 <span class="amount">{{ totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
               </div>
             </div>
@@ -237,9 +235,7 @@ interface EditOrderLine {
 
         <!-- Actions -->
         <div class="form-actions">
-          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]">
-            Annuler
-          </app-button>
+          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]" i18n="@@purchase-orders.purchase-order-edit.annuler.49ba3292">Annuler</app-button>
           <app-button
             variant="primary"
             icon="pi-check"

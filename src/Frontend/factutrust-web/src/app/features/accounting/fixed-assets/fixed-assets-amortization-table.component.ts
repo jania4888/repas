@@ -40,7 +40,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Tableau des amortissements"
+      title="Tableau des amortissements" i18n-title="Tableau des amortissements"
       subtitle="État comptable complet de l'exercice (format Sage)" />
 
     <div class="card accounting-filters-card no-print">
@@ -48,44 +48,36 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <input
           type="search"
           class="accounting-filter-input"
-          placeholder="Rechercher (désignation, n° inventaire)"
+          placeholder="Rechercher (désignation, n° inventaire)" i18n-placeholder="Rechercher (désignation, n° inventaire)"
           [(ngModel)]="search"
           (keyup.enter)="reload()" />
         <select class="accounting-filter-input" [(ngModel)]="statusFilter" (ngModelChange)="reload()">
-          <option [ngValue]="null">Tous les statuts</option>
-          <option [ngValue]="FixedAssetStatus.Draft">Brouillon</option>
-          <option [ngValue]="FixedAssetStatus.InService">En service</option>
-          <option [ngValue]="FixedAssetStatus.FullyDepreciated">Totalement amorti</option>
-          <option [ngValue]="FixedAssetStatus.Disposed">Cédé</option>
+          <option [ngValue]="null" i18n="@@accounting.fixed-assets.tous.les.statuts.2d5088af">Tous les statuts</option>
+          <option [ngValue]="FixedAssetStatus.Draft" i18n="@@accounting.fixed-assets.brouillon.57d2d7a7">Brouillon</option>
+          <option [ngValue]="FixedAssetStatus.InService" i18n="@@accounting.fixed-assets.en.service.0b067773">En service</option>
+          <option [ngValue]="FixedAssetStatus.FullyDepreciated" i18n="@@accounting.fixed-assets.totalement.amorti.ede655ed">Totalement amorti</option>
+          <option [ngValue]="FixedAssetStatus.Disposed" i18n="@@accounting.fixed-assets.cede.51eca68c">Cédé</option>
         </select>
         <select class="accounting-filter-input" [(ngModel)]="categoryFilter" (ngModelChange)="reload()">
-          <option [ngValue]="null">Toutes les catégories</option>
+          <option [ngValue]="null" i18n="@@accounting.fixed-assets.toutes.les.categories.ac8ab261">Toutes les catégories</option>
           <option *ngFor="let c of categories()" [ngValue]="c.id">{{ c.label }}</option>
         </select>
         <input
           type="number"
           class="accounting-filter-input year-input"
-          placeholder="Exercice"
+          placeholder="Exercice" i18n-placeholder="Exercice"
           min="2000"
           max="2100"
           [(ngModel)]="fiscalYearFilter"
           (keyup.enter)="reload()" />
         <select class="accounting-filter-input" [(ngModel)]="groupingMode" (ngModelChange)="reload()">
-          <option value="AssetAccount">Compte immobilisation</option>
-          <option value="FiscalCategory">Catégorie fiscale</option>
+          <option value="AssetAccount" i18n="@@accounting.fixed-assets.compte.immobilisation.c2d44c21">Compte immobilisation</option>
+          <option value="FiscalCategory" i18n="@@accounting.fixed-assets.categorie.fiscale.a9a54a0a">Catégorie fiscale</option>
         </select>
-        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()">
-          Actualiser
-        </app-button>
-        <app-button variant="secondary" icon="pi pi-print" type="button" (click)="printReport()" [disabled]="loading() || !report()">
-          Imprimer
-        </app-button>
-        <app-button variant="secondary" icon="pi pi-file-excel" type="button" (click)="exportXlsx()" [disabled]="loading()">
-          Export XLSX
-        </app-button>
-        <app-button variant="secondary" icon="pi pi-download" type="button" (click)="exportCsv()" [disabled]="loading() || !report()">
-          Export CSV
-        </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()" i18n="@@accounting.fixed-assets.actualiser.9d3b2a7d">Actualiser</app-button>
+        <app-button variant="secondary" icon="pi pi-print" type="button" (click)="printReport()" [disabled]="loading() || !report()" i18n="@@accounting.fixed-assets.imprimer.5382c09d">Imprimer</app-button>
+        <app-button variant="secondary" icon="pi pi-file-excel" type="button" (click)="exportXlsx()" [disabled]="loading()" i18n="@@accounting.fixed-assets.export.xlsx.93f3f8f5">Export XLSX</app-button>
+        <app-button variant="secondary" icon="pi pi-download" type="button" (click)="exportCsv()" [disabled]="loading() || !report()" i18n="@@accounting.fixed-assets.export.csv.5755f9ac">Export CSV</app-button>
       </div>
     </div>
 
@@ -99,7 +91,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card" *ngIf="!loading() && !report()?.groups?.length">
       <app-empty-state
         icon="pi pi-table"
-        title="Aucune immobilisation"
+        title="Aucune immobilisation" i18n-title="Aucune immobilisation"
         message="Aucune immobilisation ne correspond aux filtres pour cet exercice." />
     </div>
 
@@ -107,7 +99,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <div class="print-only print-report">
         <header class="sage-report-header">
           <div class="sage-company">{{ displayCompanyName(r) }}</div>
-          <h2 class="sage-title">TABLEAU DES AMORTISSEMENTS</h2>
+          <h2 class="sage-title" i18n="@@accounting.fixed-assets.tableau.des.amortissements.44e28861">TABLEAU DES AMORTISSEMENTS</h2>
           <div class="sage-period">
             Exercice du {{ r.header.periodStart | date: 'dd/MM/yyyy' }} au {{ r.header.periodEnd | date: 'dd/MM/yyyy' }}
           </div>
@@ -121,19 +113,19 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <table class="sage-main-table">
             <thead>
               <tr>
-                <th>Code immobilisation</th>
-                <th>Désignation immobilisation</th>
-                <th>Date acquisition</th>
-                <th class="text-right">Valeur d'origine</th>
-                <th class="text-right">Durée (ans)</th>
-                <th>Mode</th>
+                <th i18n="@@accounting.fixed-assets.code.immobilisation.4463772b">Code immobilisation</th>
+                <th i18n="@@accounting.fixed-assets.designation.immobilisation.8f97d390">Désignation immobilisation</th>
+                <th i18n="@@accounting.fixed-assets.date.acquisition.455ed480">Date acquisition</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.valeur.d.origine.b74f9474">Valeur d'origine</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.duree.ans.21e6f820">Durée (ans)</th>
+                <th i18n="@@accounting.fixed-assets.mode.a7b93d21">Mode</th>
                 <th class="text-right">Amort. ant. 31/12/{{ priorYear() }}</th>
-                <th class="text-right">Dotation calculée</th>
-                <th class="text-right">Dotation comptabilisée</th>
-                <th class="text-right">Écart</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.dotation.calculee.3c1b6780">Dotation calculée</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.dotation.comptabilisee.03b8d6ab">Dotation comptabilisée</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.ecart.6ae8dce8">Écart</th>
                 <th class="text-right">Fin exercice 31/12/{{ r.header.fiscalYear }}</th>
                 <th class="text-right">VNC 31/12/{{ r.header.fiscalYear }}</th>
-                <th>Statut compta</th>
+                <th i18n="@@accounting.fixed-assets.statut.compta.949575d9">Statut compta</th>
               </tr>
             </thead>
             <tbody>
@@ -173,7 +165,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 </tr>
               </ng-container>
               <tr class="grand-total-row">
-                <td colspan="3"><strong>TOTAL GÉNÉRAL</strong></td>
+                <td colspan="3"><strong i18n="@@accounting.fixed-assets.total.general.f6821c15">TOTAL GÉNÉRAL</strong></td>
                 <td class="text-right"><strong>{{ r.grandTotal.originValue | number: '1.3-3' }}</strong></td>
                 <td colspan="2"></td>
                 <td class="text-right"><strong>{{ r.grandTotal.priorAccumulatedDepreciation | number: '1.3-3' }}</strong></td>
@@ -190,12 +182,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
         <div class="sage-bottom-panels">
           <div class="sage-summary-panel">
-            <h3>RÉCAPITULATIF PAR NATURE D'IMMOBILISATIONS</h3>
+            <h3 i18n="@@accounting.fixed-assets.recapitulatif.par.nature.d.immobilisations.37a44209">RÉCAPITULATIF PAR NATURE D'IMMOBILISATIONS</h3>
             <table class="sage-summary-table">
               <thead>
                 <tr>
-                  <th>Nature</th>
-                  <th class="text-right">Valeur d'origine</th>
+                  <th i18n="@@accounting.fixed-assets.nature.bddc7adb">Nature</th>
+                  <th class="text-right" i18n="@@accounting.fixed-assets.valeur.d.origine.b74f9474">Valeur d'origine</th>
                   <th class="text-right">Amort. cumulés 31/12/{{ priorYear() }}</th>
                   <th class="text-right">Dotation {{ fiscalYearDisplay(r.header.fiscalYear) }}</th>
                   <th class="text-right">VNC 31/12/{{ r.header.fiscalYear }}</th>
@@ -210,7 +202,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   <td class="text-right">{{ s.endOfYearNetBookValue | number: '1.3-3' }}</td>
                 </tr>
                 <tr class="summary-total-row">
-                  <td><strong>TOTAL GÉNÉRAL</strong></td>
+                  <td><strong i18n="@@accounting.fixed-assets.total.general.f6821c15">TOTAL GÉNÉRAL</strong></td>
                   <td class="text-right"><strong>{{ r.grandTotal.originValue | number: '1.3-3' }}</strong></td>
                   <td class="text-right"><strong>{{ r.grandTotal.priorAccumulatedDepreciation | number: '1.3-3' }}</strong></td>
                   <td class="text-right"><strong>{{ r.grandTotal.dotationCalculeeExercice | number: '1.3-3' }}</strong></td>
@@ -221,10 +213,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </div>
 
           <div class="sage-info-panel">
-            <h3>INFORMATIONS</h3>
-            <p><strong>Linéaire</strong> : dotation constante sur la durée d'amortissement.</p>
-            <p><strong>Accéléré</strong> : application du taux majoré fiscal.</p>
-            <p><strong>Intégral</strong> : dotation unique l'année de mise en service.</p>
+            <h3 i18n="@@accounting.fixed-assets.informations.08c80be1">INFORMATIONS</h3>
+            <p><strong i18n="@@accounting.fixed-assets.lineaire.a5db4cfe">Linéaire</strong> : dotation constante sur la durée d'amortissement.</p>
+            <p><strong i18n="@@accounting.fixed-assets.accelere.064a76be">Accéléré</strong> : application du taux majoré fiscal.</p>
+            <p><strong i18n="@@accounting.fixed-assets.integral.02387577">Intégral</strong> : dotation unique l'année de mise en service.</p>
             <p>Devise : {{ r.infoBox.currencyCode }}</p>
             <p>Édité le {{ r.infoBox.generatedAtUtc | date: 'dd/MM/yyyy à HH:mm' }}</p>
             <p>{{ r.infoBox.productName }}</p>

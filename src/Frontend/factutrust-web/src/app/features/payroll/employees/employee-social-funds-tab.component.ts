@@ -42,23 +42,23 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   ],
   template: `
     <app-payroll-section
-      title="Mutuelles et caisses complémentaires"
+      title="Mutuelles et caisses complémentaires" i18n-title="Mutuelles et caisses complémentaires"
       subtitle="Adhésions actives retenues au calcul du cycle de paie."
       icon="pi-heart">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Nouvelle adhésion</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.employees.nouvelle.adhesion.8dbabad1">Nouvelle adhésion</app-button>
         </div>
       }
 
       <p-table [value]="items()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Caisse</th>
-            <th>Début</th>
-            <th>Fin</th>
-            <th class="text-right">Part salarié</th>
-            <th class="text-right">Part employeur</th>
+            <th i18n="@@payroll.employees.caisse.ce5a5c98">Caisse</th>
+            <th i18n="@@payroll.employees.debut.f0955314">Début</th>
+            <th i18n="@@payroll.employees.fin.4251065f">Fin</th>
+            <th class="text-right" i18n="@@payroll.employees.part.salarie.93060d7c">Part salarié</th>
+            <th class="text-right" i18n="@@payroll.employees.part.employeur.af021705">Part employeur</th>
             @if (!readOnly) { <th></th> }
           </tr>
         </ng-template>
@@ -71,46 +71,46 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
             <td class="text-right">{{ e.overrideEmployerAmount != null ? (e.overrideEmployerAmount | payrollAmount) : 'Barème' }}</td>
             @if (!readOnly) {
               <td class="actions">
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="editEnrollment(e)">Modifier</button>
-                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(e)">Supprimer</button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="editEnrollment(e)" i18n="@@payroll.employees.modifier.f260e757">Modifier</button>
+                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(e)" i18n="@@payroll.employees.supprimer.1acfc1c7">Supprimer</button>
               </td>
             }
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td [attr.colspan]="readOnly ? 5 : 6">Aucune adhésion enregistrée.</td></tr>
+          <tr><td [attr.colspan]="readOnly ? 5 : 6" i18n="@@payroll.employees.aucune.adhesion.enregistree.04899747">Aucune adhésion enregistrée.</td></tr>
         </ng-template>
       </p-table>
     </app-payroll-section>
 
     <p-dialog [header]="dialogHeader" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
-        <label>Caisse / mutuelle</label>
+        <label i18n="@@payroll.employees.caisse.mutuelle.9db228d3">Caisse / mutuelle</label>
         <p-select [options]="schemes()" optionLabel="name" optionValue="id" [(ngModel)]="formSchemeId" appendTo="body" styleClass="w-full" [disabled]="!!editingId" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Date de début</label>
+          <label i18n="@@payroll.employees.date.de.debut.706438ab">Date de début</label>
           <p-datepicker [(ngModel)]="formStartDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" [disabled]="!!editingId" />
         </div>
         <div class="payroll-form-group">
-          <label>Date de fin</label>
+          <label i18n="@@payroll.employees.date.de.fin.716a6d8d">Date de fin</label>
           <p-datepicker [(ngModel)]="formEndDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Part salarié (override)</label>
-          <p-inputNumber [(ngModel)]="formEmployeeOverride" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" placeholder="Barème caisse" />
+          <label i18n="@@payroll.employees.part.salarie.override.957c1463">Part salarié (override)</label>
+          <p-inputNumber [(ngModel)]="formEmployeeOverride" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" placeholder="Barème caisse" i18n-placeholder="Barème caisse" />
         </div>
         <div class="payroll-form-group">
-          <label>Part employeur (override)</label>
-          <p-inputNumber [(ngModel)]="formEmployerOverride" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" placeholder="Barème caisse" />
+          <label i18n="@@payroll.employees.part.employeur.override.0fe0dbc4">Part employeur (override)</label>
+          <p-inputNumber [(ngModel)]="formEmployerOverride" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" placeholder="Barème caisse" i18n-placeholder="Barème caisse" />
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

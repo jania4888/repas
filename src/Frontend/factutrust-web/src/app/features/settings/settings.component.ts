@@ -31,7 +31,7 @@ interface SettingItem {
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     
     <app-page-header 
-      title="Paramètres" 
+      title="Paramètres" i18n-title="Paramètres" 
       subtitle="Configurez votre compte et votre entreprise">
     </app-page-header>
 

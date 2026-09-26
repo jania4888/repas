@@ -36,7 +36,7 @@ interface AggregationOption {
       [style]="{ width: '46rem' }">
       <table class="metrics-table">
         <thead>
-          <tr><th>Code</th><th>Nom</th><th>Unité</th><th>Agrégation</th><th>Actif</th><th></th></tr>
+          <tr><th i18n="@@recurring-contracts.components.code.adac6937">Code</th><th i18n="@@recurring-contracts.components.nom.7ff20370">Nom</th><th i18n="@@recurring-contracts.components.unite.388fd9c4">Unité</th><th i18n="@@recurring-contracts.components.agregation.1b174f8f">Agrégation</th><th i18n="@@recurring-contracts.components.actif.2eb75f84">Actif</th><th></th></tr>
         </thead>
         <tbody>
           @for (m of metrics; track m.id) {
@@ -47,11 +47,11 @@ interface AggregationOption {
               <td>{{ aggregationLabel(m.aggregationMode) }}</td>
               <td>{{ m.isActive ? 'Oui' : 'Non' }}</td>
               <td>
-                <app-button variant="ghost" size="sm" icon="pi-pencil" (clicked)="edit(m)">Modifier</app-button>
+                <app-button variant="ghost" size="sm" icon="pi-pencil" (clicked)="edit(m)" i18n="@@recurring-contracts.components.modifier.f260e757">Modifier</app-button>
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="6" class="empty">Aucune métrique pour l'instant.</td></tr>
+            <tr><td colspan="6" class="empty" i18n="@@recurring-contracts.components.aucune.metrique.pour.l.instant.3adec9d2">Aucune métrique pour l'instant.</td></tr>
           }
         </tbody>
       </table>
@@ -66,7 +66,7 @@ interface AggregationOption {
             <input class="ft-input" [(ngModel)]="form.name" name="metricName" />
           </label>
           <label>Unité *
-            <input class="ft-input" [(ngModel)]="form.unit" name="metricUnit" placeholder="ex. appels, Go, utilisateurs" />
+            <input class="ft-input" [(ngModel)]="form.unit" name="metricUnit" placeholder="ex. appels, Go, utilisateurs" i18n-placeholder="ex. appels, Go, utilisateurs" />
           </label>
           <label>Mode d'agrégation
             <select class="ft-input" [(ngModel)]="form.aggregationMode" name="metricAggregation">
@@ -77,7 +77,7 @@ interface AggregationOption {
           </label>
           <label>Produit lié
             <select class="ft-input" [(ngModel)]="form.productId" name="metricProduct">
-              <option [ngValue]="null">— Aucun —</option>
+              <option [ngValue]="null" i18n="@@recurring-contracts.components.aucun.67323ce2">— Aucun —</option>
               @for (p of products; track p.id) {
                 <option [ngValue]="p.id">{{ p.code }} — {{ p.name }}</option>
               }
@@ -92,7 +92,7 @@ interface AggregationOption {
 
       <ng-template pTemplate="footer">
         @if (editingId) {
-          <app-button variant="ghost" (clicked)="resetForm()">Annuler la modification</app-button>
+          <app-button variant="ghost" (clicked)="resetForm()" i18n="@@recurring-contracts.components.annuler.la.modification.a5ded982">Annuler la modification</app-button>
         }
         <app-button variant="primary" icon="pi-check" [disabled]="saving" (clicked)="save()">
           {{ saving ? 'Enregistrement…' : 'Enregistrer' }}

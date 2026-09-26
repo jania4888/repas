@@ -45,44 +45,42 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
                   <li>{{ d.name }} @if (d.nif) { <code>{{ d.nif }}</code> }</li>
                 }
               </ul>
-              <p class="tpq-duplicates__hint">
-                Rattachez-le depuis la colonne « Auxiliaire » de la grille plutôt que d'en créer un doublon.
-              </p>
+              <p class="tpq-duplicates__hint" i18n="@@accounting.manual-entry.rattachez.le.depuis.la.colonne.auxiliaire.de.la..b4d3a19d">Rattachez-le depuis la colonne « Auxiliaire » de la grille plutôt que d'en créer un doublon.</p>
             </div>
           }
 
           <div class="tpq-grid">
             <label class="tpq-field">
-              <span>Nom <abbr title="obligatoire">*</abbr></span>
+              <span>Nom <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.name" name="name" required />
             </label>
             <label class="tpq-field">
-              <span>Matricule fiscal</span>
+              <span i18n="@@accounting.manual-entry.matricule.fiscal.304096c4">Matricule fiscal</span>
               <input type="text" [(ngModel)]="form.nif" name="nif"
-                     placeholder="1772793W/A/M/000" />
+                     placeholder="1772793W/A/M/000" i18n-placeholder="1772793W/A/M/000" />
             </label>
             <label class="tpq-field">
-              <span>E-mail</span>
+              <span i18n="@@accounting.manual-entry.e.mail.0d01e2e8">E-mail</span>
               <input type="email" [(ngModel)]="form.email" name="email" />
             </label>
             <label class="tpq-field">
-              <span>Téléphone</span>
+              <span i18n="@@accounting.manual-entry.telephone.d3b023ea">Téléphone</span>
               <input type="tel" [(ngModel)]="form.phone" name="phone" />
             </label>
             <label class="tpq-field tpq-field--wide">
-              <span>Adresse <abbr title="obligatoire">*</abbr></span>
+              <span>Adresse <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.street" name="street" required />
             </label>
             <label class="tpq-field">
-              <span>Code postal</span>
+              <span i18n="@@accounting.manual-entry.code.postal.74779109">Code postal</span>
               <input type="text" [(ngModel)]="form.postalCode" name="postalCode" />
             </label>
             <label class="tpq-field">
-              <span>Ville <abbr title="obligatoire">*</abbr></span>
+              <span>Ville <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.city" name="city" required />
             </label>
             <label class="tpq-field">
-              <span>Gouvernorat <abbr title="obligatoire">*</abbr></span>
+              <span>Gouvernorat <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.governorate" name="governorate" required />
             </label>
           </div>
@@ -92,26 +90,20 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
           }
 
           <div class="tpq-actions">
-            <app-button variant="secondary" (click)="expanded.set(false)" ariaLabel="Annuler la création">
-              Annuler
-            </app-button>
+            <app-button variant="secondary" (click)="expanded.set(false)" ariaLabel="Annuler la création" i18n="@@accounting.manual-entry.annuler.49ba3292">Annuler</app-button>
             <app-button variant="primary" type="submit" icon="pi-check" iconPos="left"
                         [disabled]="!isValid() || saving()"
                         ariaLabel="Enregistrer le tiers">
               {{ saving() ? 'Création…' : 'Créer et rattacher' }}
             </app-button>
           </div>
-          <p class="tpq-note">
-            Le tiers sera créé dans le dossier. L'écriture, elle, n'est enregistrée qu'après
-            votre validation dans la saisie.
-          </p>
+          <p class="tpq-note" i18n="@@accounting.manual-entry.le.tiers.sera.cree.dans.le.dossier.l.ecriture.el.15c79a0a">Le tiers sera créé dans le dossier. L'écriture, elle, n'est enregistrée qu'après
+            votre validation dans la saisie.</p>
         </form>
       }
     } @else {
-      <p class="tpq-forbidden">
-        Vous n'avez pas l'autorisation de créer un tiers. L'écriture utilisera le compte
-        collectif sans auxiliaire.
-      </p>
+      <p class="tpq-forbidden" i18n="@@accounting.manual-entry.vous.n.avez.pas.l.autorisation.de.creer.un.tiers.cfe3d61d">Vous n'avez pas l'autorisation de créer un tiers. L'écriture utilisera le compte
+        collectif sans auxiliaire.</p>
     }
   `,
   styles: `

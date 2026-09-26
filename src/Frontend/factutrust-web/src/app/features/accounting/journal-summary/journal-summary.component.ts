@@ -65,24 +65,24 @@ const FILE_BASE_BY_TAB: readonly string[] = [
   ],
   template: `
     <app-page-header
-      title="Récapitulatifs de journaux"
+      title="Récapitulatifs de journaux" i18n-title="Récapitulatifs de journaux"
       subtitle="Centralisateur, récapitulation et totaux journaux" />
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Période et journal">
         <div accountingFilterFields class="js-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="js-from">Du</label>
+            <label class="accounting-filter-label" for="js-from" i18n="@@accounting.journal-summary.du.84814985">Du</label>
             <input id="js-from" type="date" [(ngModel)]="fromStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="js-to">Au</label>
+            <label class="accounting-filter-label" for="js-to" i18n="@@accounting.journal-summary.au.7a1732d5">Au</label>
             <input id="js-to" type="date" [(ngModel)]="toStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="js-journal">Journal</label>
+            <label class="accounting-filter-label" for="js-journal" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</label>
             <select id="js-journal" [(ngModel)]="journalCode" class="accounting-filter-input">
-              <option value="">Tous</option>
+              <option value="" i18n="@@accounting.journal-summary.tous.b97ae3b4">Tous</option>
               @for (j of journals(); track j.code) {
                 <option [value]="j.code">{{ j.code }} — {{ j.label }}</option>
               }
@@ -97,9 +97,7 @@ const FILE_BASE_BY_TAB: readonly string[] = [
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser le récapitulatif pour la période sélectionnée">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser le récapitulatif pour la période sélectionnée" i18n="@@accounting.journal-summary.actualiser.9d3b2a7d">Actualiser</app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !summary()"
             (exportFormat)="onExport($event)" />
@@ -124,9 +122,9 @@ const FILE_BASE_BY_TAB: readonly string[] = [
 
     <p-tabs [(value)]="activeTabIndex" (valueChange)="onTabChange()" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0">Centralisateur</p-tab>
-        <p-tab [value]="1">Récapitulation</p-tab>
-        <p-tab [value]="2">Totaux journaux</p-tab>
+        <p-tab [value]="0" i18n="@@accounting.journal-summary.centralisateur.3ed70b17">Centralisateur</p-tab>
+        <p-tab [value]="1" i18n="@@accounting.journal-summary.recapitulation.072c711a">Récapitulation</p-tab>
+        <p-tab [value]="2" i18n="@@accounting.journal-summary.totaux.journaux.2c1a92c9">Totaux journaux</p-tab>
       </p-tablist>
       <p-tabpanels>
       <!-- ══ Centralisateur : journaux × mois ══════════════════════════════ -->
@@ -136,20 +134,20 @@ const FILE_BASE_BY_TAB: readonly string[] = [
             <table class="js-matrix">
               <thead>
                 <tr>
-                  <th scope="col" class="js-sticky">Journal</th>
+                  <th scope="col" class="js-sticky" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</th>
                   @for (p of s.periods; track p.label) {
                     <th scope="col" colspan="2" class="js-month">{{ p.label }}</th>
                   }
-                  <th scope="col" colspan="2" class="js-month js-total-col">Total</th>
+                  <th scope="col" colspan="2" class="js-month js-total-col" i18n="@@accounting.journal-summary.total.b25928c6">Total</th>
                 </tr>
                 <tr>
                   <th scope="col" class="js-sticky"></th>
                   @for (p of s.periods; track p.label) {
-                    <th scope="col" class="js-num js-sub">D</th>
-                    <th scope="col" class="js-num js-sub">C</th>
+                    <th scope="col" class="js-num js-sub" i18n="@@accounting.journal-summary.d.50c9e8d5">D</th>
+                    <th scope="col" class="js-num js-sub" i18n="@@accounting.journal-summary.c.32096c2e">C</th>
                   }
-                  <th scope="col" class="js-num js-sub js-total-col">D</th>
-                  <th scope="col" class="js-num js-sub js-total-col">C</th>
+                  <th scope="col" class="js-num js-sub js-total-col" i18n="@@accounting.journal-summary.d.50c9e8d5">D</th>
+                  <th scope="col" class="js-num js-sub js-total-col" i18n="@@accounting.journal-summary.c.32096c2e">C</th>
                 </tr>
               </thead>
               <tbody>
@@ -169,15 +167,13 @@ const FILE_BASE_BY_TAB: readonly string[] = [
                 }
                 @if (centralizerRows().length === 0) {
                   <tr>
-                    <td [attr.colspan]="s.periods.length * 2 + 3" class="js-empty">
-                      Aucun mouvement sur la période.
-                    </td>
+                    <td [attr.colspan]="s.periods.length * 2 + 3" class="js-empty" i18n="@@accounting.journal-summary.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</td>
                   </tr>
                 }
               </tbody>
               <tfoot>
                 <tr class="acc-totals-row">
-                  <td class="js-sticky">Total général</td>
+                  <td class="js-sticky" i18n="@@accounting.journal-summary.total.general.b6793855">Total général</td>
                   @for (cell of periodTotals(); track $index) {
                     <td class="js-num">{{ cell.debit ? (cell.debit | number : '1.3-3') : '' }}</td>
                     <td class="js-num">{{ cell.credit ? (cell.credit | number : '1.3-3') : '' }}</td>
@@ -205,12 +201,12 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Journal</th>
-              <th scope="col">Libellé</th>
-              <th scope="col">Compte</th>
-              <th scope="col">Intitulé</th>
-              <th scope="col" class="js-num">Débit</th>
-              <th scope="col" class="js-num">Crédit</th>
+              <th scope="col" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</th>
+              <th scope="col" i18n="@@accounting.journal-summary.libelle.f5485bba">Libellé</th>
+              <th scope="col" i18n="@@accounting.journal-summary.compte.c45740bb">Compte</th>
+              <th scope="col" i18n="@@accounting.journal-summary.intitule.9f19d904">Intitulé</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.debit.f528224f">Débit</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.credit.19194bdf">Crédit</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-c>
@@ -225,13 +221,13 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td colspan="4">Total général</td>
+              <td colspan="4" i18n="@@accounting.journal-summary.total.general.b6793855">Total général</td>
               <td class="js-num">{{ summary()?.totalDebit | number : '1.3-3' }}</td>
               <td class="js-num">{{ summary()?.totalCredit | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="6" class="js-empty">Aucun mouvement sur la période.</td></tr>
+            <tr><td colspan="6" class="js-empty" i18n="@@accounting.journal-summary.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</td></tr>
           </ng-template>
         </p-table>
       </p-tabpanel>
@@ -245,11 +241,11 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           styleClass="p-datatable-sm accounting-datatable">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Journal</th>
-              <th scope="col">Libellé</th>
-              <th scope="col" class="js-num">Écritures</th>
-              <th scope="col" class="js-num">Total débit</th>
-              <th scope="col" class="js-num">Total crédit</th>
+              <th scope="col" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</th>
+              <th scope="col" i18n="@@accounting.journal-summary.libelle.f5485bba">Libellé</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.ecritures.7bfac2f6">Écritures</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.total.debit.ea9c4853">Total débit</th>
+              <th scope="col" class="js-num" i18n="@@accounting.journal-summary.total.credit.98c95962">Total crédit</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-t>
@@ -263,13 +259,13 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td colspan="3">Total général</td>
+              <td colspan="3" i18n="@@accounting.journal-summary.total.general.b6793855">Total général</td>
               <td class="js-num">{{ summary()?.totalDebit | number : '1.3-3' }}</td>
               <td class="js-num">{{ summary()?.totalCredit | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="5" class="js-empty">Aucun mouvement sur la période.</td></tr>
+            <tr><td colspan="5" class="js-empty" i18n="@@accounting.journal-summary.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</td></tr>
           </ng-template>
         </p-table>
       </p-tabpanel>

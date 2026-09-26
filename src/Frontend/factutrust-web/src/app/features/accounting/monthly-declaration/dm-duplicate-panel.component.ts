@@ -25,29 +25,27 @@ export interface DmDuplicateSource {
   imports: [CommonModule, FormsModule, ButtonComponent],
   template: `
     <div class="dm-dup">
-      <h3 class="dm-dup__title">Dupliquer la configuration DM</h3>
-      <p class="dm-dup__lead">
-        Reprend les rubriques et les comptes d’un autre dossier du cabinet. Les rubriques existantes
-        de même code sont conservées, sauf remplacement explicite.
-      </p>
+      <h3 class="dm-dup__title" i18n="@@accounting.monthly-declaration.dupliquer.la.configuration.dm.15643153">Dupliquer la configuration DM</h3>
+      <p class="dm-dup__lead" i18n="@@accounting.monthly-declaration.reprend.les.rubriques.et.les.comptes.d.un.autre..a7968a42">Reprend les rubriques et les comptes d’un autre dossier du cabinet. Les rubriques existantes
+        de même code sont conservées, sauf remplacement explicite.</p>
 
       <div class="dm-dup__row">
         <div class="dm-dup__field">
-          <label class="dm-lbl" for="dm-dup-source">Dossier source</label>
+          <label class="dm-lbl" for="dm-dup-source" i18n="@@accounting.monthly-declaration.dossier.source.de54ef81">Dossier source</label>
           <select id="dm-dup-source" class="dm-inp" [(ngModel)]="sourceTenantId" [disabled]="busy || readOnly">
-            <option [ngValue]="null">— Choisir un dossier —</option>
+            <option [ngValue]="null" i18n="@@accounting.monthly-declaration.choisir.un.dossier.4d651c91">— Choisir un dossier —</option>
             @for (s of sources; track s.companyTenantId) {
               <option [ngValue]="s.companyTenantId">{{ s.companyName }}</option>
             }
           </select>
           @if (!sources.length) {
-            <small class="dm-hint">Aucun autre dossier accessible dans le portefeuille du cabinet.</small>
+            <small class="dm-hint" i18n="@@accounting.monthly-declaration.aucun.autre.dossier.accessible.dans.le.portefeui.36b8bb67">Aucun autre dossier accessible dans le portefeuille du cabinet.</small>
           }
         </div>
 
         <label class="dm-dup__check">
           <input type="checkbox" [(ngModel)]="overwrite" [disabled]="busy || readOnly" />
-          <span>Remplacer les rubriques de même code</span>
+          <span i18n="@@accounting.monthly-declaration.remplacer.les.rubriques.de.meme.code.6146284b">Remplacer les rubriques de même code</span>
         </label>
 
         <app-button

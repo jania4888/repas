@@ -9,11 +9,11 @@ import { FormsModule } from '@angular/forms';
   template: `
     <div class="change-calc">
       <div class="change-calc__content">
-        <h3 class="change-calc__title">Rendu de monnaie</h3>
+        <h3 class="change-calc__title" i18n="@@pos.components.rendu.de.monnaie.96ba5322">Rendu de monnaie</h3>
         <p class="change-calc__total">Total a payer : {{ formatAmount(totalToPay) }} TND</p>
 
         <div class="change-calc__field">
-          <label for="amount-received">Montant recu</label>
+          <label for="amount-received" i18n="@@pos.components.montant.recu.236b7f76">Montant recu</label>
           <input
             #amountInput
             id="amount-received"
@@ -22,13 +22,13 @@ import { FormsModule } from '@angular/forms';
             (ngModelChange)="onAmountChange()"
             [min]="0"
             step="0.001"
-            placeholder="0.000"
+            placeholder="0.000" i18n-placeholder="0.000"
             class="change-calc__input" />
         </div>
 
         @if (amountReceived > 0) {
           <div class="change-calc__result">
-            <span class="change-calc__result-label">Rendu :</span>
+            <span class="change-calc__result-label" i18n="@@pos.components.rendu.c05eb967">Rendu :</span>
             <span class="change-calc__result-value">{{ formatAmount(changeAmount) }} TND</span>
           </div>
 

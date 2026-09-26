@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, combineLatest, forkJoin, of, timer, EMPTY, TimeoutError } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, map, switchMap, timeout } from 'rxjs/operators';
 import { AuthService } from '@core/services/auth.service';
+import { erpCollatorCompare } from '@core/i18n/erp-format';
 import { ExchangeBadgeService } from '@core/services/exchange-badge.service';
 import {
   ExchangeAuditEvent,
@@ -731,7 +732,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
       }
     }
 
-    return rows.sort((a, b) => a.companyName.localeCompare(b.companyName, 'fr'));
+    return rows.sort((a, b) => erpCollatorCompare(a.companyName, b.companyName));
   }
 
   private bootstrapCompanyLegacy(threadId: string | null): void {

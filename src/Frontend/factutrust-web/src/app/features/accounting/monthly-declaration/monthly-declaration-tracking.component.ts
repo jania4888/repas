@@ -50,14 +50,14 @@ import {
   ],
   template: `
     <app-page-header
-      title="Suivi DM"
+      title="Suivi DM" i18n-title="Suivi DM"
       subtitle="Les douze mois d’un exercice : ce qui est déposé, ce qui manque, et sous quel régime" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card dm-period">
       <div class="dm-field">
-        <label class="dm-lbl" for="dm-year">Exercice</label>
+        <label class="dm-lbl" for="dm-year" i18n="@@accounting.monthly-declaration.exercice.e171e2b0">Exercice</label>
         <input
           id="dm-year"
           type="number"
@@ -81,7 +81,7 @@ import {
       @if (!t.settings.configurableLinesEnabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé"
+          title="Calcul paramétré non activé" i18n-title="Calcul paramétré non activé"
           message="Toutes les périodes sont produites par le calcul historique. Le suivi des dépôts reste exact." />
       }
 
@@ -93,23 +93,23 @@ import {
       <div class="card dm-counts">
         <div class="dm-count">
           <span class="dm-count__value">{{ summary().filed }}</span>
-          <span class="dm-count__label">déposée(s)</span>
+          <span class="dm-count__label" i18n="@@accounting.monthly-declaration.deposee.s.14004565">déposée(s)</span>
         </div>
         <div class="dm-count" [class.dm-count--flag]="summary().drafts > 0">
           <span class="dm-count__value">{{ summary().drafts }}</span>
-          <span class="dm-count__label">brouillon(s)</span>
+          <span class="dm-count__label" i18n="@@accounting.monthly-declaration.brouillon.s.40d7d816">brouillon(s)</span>
         </div>
         <div class="dm-count" [class.dm-count--alert]="summary().late > 0">
           <span class="dm-count__value">{{ summary().late }}</span>
-          <span class="dm-count__label">en retard</span>
+          <span class="dm-count__label" i18n="@@accounting.monthly-declaration.en.retard.5865d4b6">en retard</span>
         </div>
         <div class="dm-count">
           <span class="dm-count__value">{{ summary().missing }}</span>
-          <span class="dm-count__label">à venir</span>
+          <span class="dm-count__label" i18n="@@accounting.monthly-declaration.a.venir.b7a44755">à venir</span>
         </div>
         <div class="dm-count dm-count--total">
           <span class="dm-count__value">{{ summary().totalToPay | number: '1.3-3' }}</span>
-          <span class="dm-count__label">total déposé</span>
+          <span class="dm-count__label" i18n="@@accounting.monthly-declaration.total.depose.35138fc7">total déposé</span>
         </div>
       </div>
 
@@ -120,12 +120,12 @@ import {
           [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Période</th>
-              <th scope="col">État</th>
-              <th scope="col">Échéance</th>
-              <th scope="col">Régime</th>
-              <th scope="col" class="dm-num">T.V.A due</th>
-              <th scope="col" class="dm-num">Total à payer</th>
+              <th scope="col" i18n="@@accounting.monthly-declaration.periode.de2110b7">Période</th>
+              <th scope="col" i18n="@@accounting.monthly-declaration.etat.d3b28a2a">État</th>
+              <th scope="col" i18n="@@accounting.monthly-declaration.echeance.f9a77ff6">Échéance</th>
+              <th scope="col" i18n="@@accounting.monthly-declaration.regime.0020ca1b">Régime</th>
+              <th scope="col" class="dm-num" i18n="@@accounting.monthly-declaration.t.v.a.due.4ad2ef13">T.V.A due</th>
+              <th scope="col" class="dm-num" i18n="@@accounting.monthly-declaration.total.a.payer.d9252b33">Total à payer</th>
             </tr>
           </ng-template>
 
@@ -150,8 +150,8 @@ import {
       </div>
 
       <p class="dm-links">
-        <a routerLink="/accounting/dm/calcul">Calcul DM</a> ·
-        <a routerLink="/accounting/dm/configuration">Configuration DM</a>
+        <a routerLink="/accounting/dm/calcul" i18n="@@accounting.monthly-declaration.calcul.dm.7af61bf4">Calcul DM</a> ·
+        <a routerLink="/accounting/dm/configuration" i18n="@@accounting.monthly-declaration.configuration.dm.b438b9c2">Configuration DM</a>
       </p>
     }
   `,

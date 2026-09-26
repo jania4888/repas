@@ -45,21 +45,21 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
         styleClass="mb-3 w-full" />
 
       <div class="payroll-form-group mb-2">
-        <label>Date de sortie</label>
+        <label i18n="@@payroll.employees.date.de.sortie.a963425d">Date de sortie</label>
         <p-datepicker [(ngModel)]="terminationDate" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" styleClass="w-full" [maxDate]="today" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Motif</label>
-        <textarea pTextarea [(ngModel)]="reason" rows="2" class="w-full" placeholder="Optionnel"></textarea>
+        <label i18n="@@payroll.employees.motif.2a198f47">Motif</label>
+        <textarea pTextarea [(ngModel)]="reason" rows="2" class="w-full" placeholder="Optionnel" i18n-placeholder="Optionnel"></textarea>
       </div>
       <div class="payroll-form-group checkbox-row mb-2">
         <p-checkbox inputId="closeContract" [(ngModel)]="closeActiveContract" [binary]="true" />
-        <label for="closeContract">Clôturer le contrat actif à la date de sortie</label>
+        <label for="closeContract" i18n="@@payroll.employees.cloturer.le.contrat.actif.a.la.date.de.sortie.4227d3d4">Clôturer le contrat actif à la date de sortie</label>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="visible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="submit()" [disabled]="saving || !terminationDate">Enregistrer</app-button>
+        <app-button variant="outline" (click)="visible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="submit()" [disabled]="saving || !terminationDate" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

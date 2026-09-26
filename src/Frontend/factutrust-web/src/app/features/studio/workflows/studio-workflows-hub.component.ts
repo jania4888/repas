@@ -106,7 +106,7 @@ type HubWorkflow = WorkflowDefinitionDto & { entityName: string };
                 @if (w.openInstances > 0) {
                   <p-tag severity="warn" [value]="w.openInstances.toString()" />
                 } @else {
-                  <span class="studio-muted">—</span>
+                  <span class="studio-muted" i18n="@@studio.workflows.text.1b93795b">—</span>
                 }
               </td>
               <td class="studio-actions">

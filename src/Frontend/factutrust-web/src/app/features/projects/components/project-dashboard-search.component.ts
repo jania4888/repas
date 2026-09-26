@@ -37,7 +37,7 @@ type ProjectSearchKind = 'Project' | 'Task' | 'Attachment';
           #searchInput
           type="search"
           class="proj-dash-search__input"
-          placeholder="Rechercher un projet, une tâche, un document…"
+          placeholder="Rechercher un projet, une tâche, un document…" i18n-placeholder="Rechercher un projet, une tâche, un document…"
           [(ngModel)]="query"
           (focus)="onFocus()"
           (input)="onQueryInput()"
@@ -45,18 +45,18 @@ type ProjectSearchKind = 'Project' | 'Task' | 'Attachment';
           role="combobox"
           aria-autocomplete="list"
           [attr.aria-expanded]="dropdownOpen()"
-          aria-label="Rechercher un projet, une tâche ou un document" />
-        <kbd class="proj-dash-search__hint" aria-hidden="true">Ctrl+K</kbd>
+          aria-label="Rechercher un projet, une tâche ou un document" i18n-aria-label="Rechercher un projet, une tâche ou un document" />
+        <kbd class="proj-dash-search__hint" aria-hidden="true" i18n="@@projects.components.ctrl.k.769b0d96">Ctrl+K</kbd>
       </div>
 
       @if (dropdownOpen()) {
         <div class="proj-dash-search__dropdown" role="listbox">
           @if (loading()) {
-            <div class="proj-dash-search__empty">Recherche en cours…</div>
+            <div class="proj-dash-search__empty" i18n="@@projects.components.recherche.en.cours.a16747f0">Recherche en cours…</div>
           } @else if (query.trim().length < 2) {
-            <div class="proj-dash-search__empty">Saisissez au moins 2 caractères</div>
+            <div class="proj-dash-search__empty" i18n="@@projects.components.saisissez.au.moins.2.caracteres.4196f7ef">Saisissez au moins 2 caractères</div>
           } @else if (groupedResults().length === 0) {
-            <div class="proj-dash-search__empty">Aucun résultat dans vos projets</div>
+            <div class="proj-dash-search__empty" i18n="@@projects.components.aucun.resultat.dans.vos.projets.af8cf1ea">Aucun résultat dans vos projets</div>
           } @else {
             @for (group of groupedResults(); track group.label) {
               <div class="proj-dash-search__group">

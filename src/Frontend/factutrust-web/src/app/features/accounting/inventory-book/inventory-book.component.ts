@@ -32,14 +32,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Livre d'inventaire"
+      title="Livre d'inventaire" i18n-title="Livre d'inventaire"
       subtitle="Édition légale figée de l'exercice — états financiers, provisions et balance de clôture" />
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Exercice du livre d'inventaire">
         <div accountingFilterFields class="ib-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="ib-year">Exercice</label>
+            <label class="accounting-filter-label" for="ib-year" i18n="@@accounting.inventory-book.exercice.e171e2b0">Exercice</label>
             <input id="ib-year" type="number" min="2000" max="2100" [(ngModel)]="fiscalYear" class="accounting-filter-input" />
           </div>
         </div>
@@ -51,9 +51,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le livre d'inventaire">
-            Charger
-          </app-button>
+            ariaLabel="Charger le livre d'inventaire" i18n="@@accounting.inventory-book.charger.8f860300">Charger</app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !book()"
             (exportFormat)="onExport($event)" />
@@ -70,19 +68,19 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           @if (b.isYearLocked) {
             Exercice verrouillé définitivement@if (b.lockedAt) { le {{ b.lockedAt | date : 'shortDate' }} } — le livre d'inventaire est figé.
           } @else {
-            Exercice non verrouillé — édition <strong>provisoire</strong> (les données peuvent encore évoluer). Verrouillez l'exercice pour figer le livre.
+            Exercice non verrouillé — édition <strong i18n="@@accounting.inventory-book.provisoire.107ae9dc">provisoire</strong> (les données peuvent encore évoluer). Verrouillez l'exercice pour figer le livre.
           }
         </span>
       </div>
 
       <div class="card ib-card">
-        <h2 class="ib-section-title">Provisions et dépréciations (détail par compte)</h2>
+        <h2 class="ib-section-title" i18n="@@accounting.inventory-book.provisions.et.depreciations.detail.par.compte.68bb815f">Provisions et dépréciations (détail par compte)</h2>
         <p-table [value]="b.detailedProvisions" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Compte</th>
-              <th scope="col">Libellé</th>
-              <th scope="col" class="text-right">Montant</th>
+              <th scope="col" i18n="@@accounting.inventory-book.compte.c45740bb">Compte</th>
+              <th scope="col" i18n="@@accounting.inventory-book.libelle.f5485bba">Libellé</th>
+              <th scope="col" class="text-right" i18n="@@accounting.inventory-book.montant.4adcd9fc">Montant</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -94,15 +92,15 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td colspan="2">Total des provisions</td>
+              <td colspan="2" i18n="@@accounting.inventory-book.total.des.provisions.2647629b">Total des provisions</td>
               <td class="text-right">{{ provisionsTotal() | number : '1.3-3' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="3" class="ib-empty">Aucune provision ni dépréciation à la clôture.</td></tr>
+            <tr><td colspan="3" class="ib-empty" i18n="@@accounting.inventory-book.aucune.provision.ni.depreciation.a.la.cloture.43a83a56">Aucune provision ni dépréciation à la clôture.</td></tr>
           </ng-template>
         </p-table>
-        <p class="ib-hint">Le document complet (états NCT + balance de clôture) est disponible en export PDF.</p>
+        <p class="ib-hint" i18n="@@accounting.inventory-book.le.document.complet.etats.nct.balance.de.cloture.03bf0860">Le document complet (états NCT + balance de clôture) est disponible en export PDF.</p>
       </div>
     }
   `,

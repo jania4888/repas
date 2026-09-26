@@ -23,8 +23,8 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
   template: `
     <section class="assist">
       <header class="assist-head">
-        <h1>Assistance</h1>
-        <p>Posez une question, envoyez une proposition ou une réclamation à l'équipe InstaFact.</p>
+        <h1 i18n="@@assistance.assistance-page.assistance.be6b37ba">Assistance</h1>
+        <p i18n="@@assistance.assistance-page.posez.une.question.envoyez.une.proposition.ou.un.db9ac792">Posez une question, envoyez une proposition ou une réclamation à l'équipe InstaFact.</p>
       </header>
 
       @if (error()) {
@@ -33,7 +33,7 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
 
       <div class="assist-thread" role="log" aria-live="polite">
         @if (!loading() && messages().length === 0) {
-          <p class="assist-empty">Aucun message. Posez une question, envoyez une proposition ou une réclamation.</p>
+          <p class="assist-empty" i18n="@@assistance.assistance-page.aucun.message.posez.une.question.envoyez.une.pro.0dad613d">Aucun message. Posez une question, envoyez une proposition ou une réclamation.</p>
         }
         @for (message of messages(); track message.id) {
           <article class="bubble" [class.mine]="message.authorSide === 'Company'" [class.theirs]="message.authorSide === 'Platform'">
@@ -60,14 +60,14 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
         <label>
           Type
           <select name="category" [(ngModel)]="category" required>
-            <option value="Question">Question</option>
-            <option value="Proposal">Proposition</option>
-            <option value="Complaint">Réclamation</option>
+            <option value="Question" i18n="@@assistance.assistance-page.question.002ff598">Question</option>
+            <option value="Proposal" i18n="@@assistance.assistance-page.proposition.3e2cf2d2">Proposition</option>
+            <option value="Complaint" i18n="@@assistance.assistance-page.reclamation.33d37f8b">Réclamation</option>
           </select>
         </label>
         <label class="grow">
           Message
-          <textarea name="body" rows="3" maxlength="4000" [(ngModel)]="body" placeholder="Votre message"></textarea>
+          <textarea name="body" rows="3" maxlength="4000" [(ngModel)]="body" placeholder="Votre message" i18n-placeholder="Votre message"></textarea>
         </label>
         <label>
           Fichiers
@@ -76,7 +76,7 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
         @if (files.length) {
           <p class="files">{{ files.length }} fichier(s) sélectionné(s)</p>
         }
-        <button type="submit" [disabled]="!canSend() || sending()">Envoyer</button>
+        <button type="submit" [disabled]="!canSend() || sending()" i18n="@@assistance.assistance-page.envoyer.e9ce243b">Envoyer</button>
       </form>
     </section>
   `,

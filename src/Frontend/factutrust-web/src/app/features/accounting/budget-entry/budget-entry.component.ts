@@ -36,15 +36,15 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Saisie des budgets" subtitle="Budgets annuels mensualisés par poste — versions Initial puis Révisé après validation" />
+    <app-page-header title="Saisie des budgets" i18n-title="Saisie des budgets" subtitle="Budgets annuels mensualisés par poste — versions Initial puis Révisé après validation" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card be-toolbar">
       <div class="be-year">
-        <button type="button" class="be-year-btn" (click)="changeYear(-1)" [disabled]="busy()" aria-label="Exercice précédent"><i class="pi pi-chevron-left"></i></button>
+        <button type="button" class="be-year-btn" (click)="changeYear(-1)" [disabled]="busy()" aria-label="Exercice précédent" i18n-aria-label="Exercice précédent"><i class="pi pi-chevron-left"></i></button>
         <span class="be-year-value">Exercice {{ fiscalYear() }}</span>
-        <button type="button" class="be-year-btn" (click)="changeYear(1)" [disabled]="busy()" aria-label="Exercice suivant"><i class="pi pi-chevron-right"></i></button>
+        <button type="button" class="be-year-btn" (click)="changeYear(1)" [disabled]="busy()" aria-label="Exercice suivant" i18n-aria-label="Exercice suivant"><i class="pi pi-chevron-right"></i></button>
       </div>
 
       @if (grid(); as g) {
@@ -53,16 +53,14 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
         </span>
         @if (g.status === 1) {
           <span class="be-validated-info">
-            validé le {{ g.validatedAt | date : 'shortDate' }} par {{ g.validatedBy }} — vous modifiez le <strong>budget révisé</strong>
+            validé le {{ g.validatedAt | date : 'shortDate' }} par {{ g.validatedBy }} — vous modifiez le <strong i18n="@@accounting.budget-entry.budget.revise.3da55912">budget révisé</strong>
           </span>
         }
       }
 
       <div class="be-actions">
         @if (grid()?.status === 0 && canValidate()) {
-          <app-button variant="secondary" icon="pi pi-lock" type="button" (click)="validateInitial()" [disabled]="busy()">
-            Valider le budget initial
-          </app-button>
+          <app-button variant="secondary" icon="pi pi-lock" type="button" (click)="validateInitial()" [disabled]="busy()" i18n="@@accounting.budget-entry.valider.le.budget.initial.ec885ae3">Valider le budget initial</app-button>
         }
         <app-button variant="primary" icon="pi pi-save" type="button" (click)="save()" [disabled]="busy() || rows().length === 0">
           {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
@@ -73,9 +71,9 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
     @if (distributeFor(); as row) {
       <div class="card be-distribute">
         <span>Répartir un montant annuel sur <strong>{{ row.code }} — {{ row.label }}</strong> (linéaire, reliquat sur décembre) :</span>
-        <input type="number" class="be-inp be-dist-inp" [(ngModel)]="distributeAmount" min="0" step="0.001" placeholder="Montant annuel" />
-        <button type="button" class="btn btn-primary" (click)="applyDistribution()">Répartir</button>
-        <button type="button" class="btn btn-secondary" (click)="distributeFor.set(null)">Annuler</button>
+        <input type="number" class="be-inp be-dist-inp" [(ngModel)]="distributeAmount" min="0" step="0.001" placeholder="Montant annuel" i18n-placeholder="Montant annuel" />
+        <button type="button" class="btn btn-primary" (click)="applyDistribution()" i18n="@@accounting.budget-entry.repartir.d7593598">Répartir</button>
+        <button type="button" class="btn btn-secondary" (click)="distributeFor.set(null)" i18n="@@accounting.budget-entry.annuler.49ba3292">Annuler</button>
       </div>
     }
 
@@ -83,10 +81,10 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
       <p-table [value]="rows()" [loading]="loading()" [scrollable]="true" styleClass="p-datatable-sm accounting-datatable be-table" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col" class="be-post-col">Poste</th>
+            <th scope="col" class="be-post-col" i18n="@@accounting.budget-entry.poste.86abf0cd">Poste</th>
             @for (m of monthLabels; track $index) { <th scope="col" class="be-amt">{{ m }}</th> }
-            <th scope="col" class="be-amt">Total</th>
-            @if (grid()?.status === 1) { <th scope="col" class="be-amt">Total initial</th> }
+            <th scope="col" class="be-amt" i18n="@@accounting.budget-entry.total.b25928c6">Total</th>
+            @if (grid()?.status === 1) { <th scope="col" class="be-amt" i18n="@@accounting.budget-entry.total.initial.37fc5d14">Total initial</th> }
             <th scope="col"></th>
           </tr>
         </ng-template>
@@ -105,7 +103,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
             <td class="be-amt be-row-total">{{ rowTotal(row) | number : '1.3-3' }}</td>
             @if (grid()?.status === 1) { <td class="be-amt be-muted">{{ sum(row.initialMonths) | number : '1.3-3' }}</td> }
             <td>
-              <button type="button" class="be-icon" (click)="startDistribution(row)" [disabled]="busy()" title="Répartir un montant annuel">
+              <button type="button" class="be-icon" (click)="startDistribution(row)" [disabled]="busy()" title="Répartir un montant annuel" i18n-title="Répartir un montant annuel">
                 <i class="pi pi-calculator"></i>
               </button>
             </td>
@@ -114,7 +112,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
         <ng-template pTemplate="footer">
           @if (rows().length > 0) {
             <tr class="be-totals-row">
-              <td class="be-post-col">Totaux</td>
+              <td class="be-post-col" i18n="@@accounting.budget-entry.totaux.a1ca02f8">Totaux</td>
               @for (m of monthLabels; track m; let i = $index) {
                 <td class="be-amt">{{ monthTotals()[i] | number : '1.3-3' }}</td>
               }
@@ -125,7 +123,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
           }
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td [attr.colspan]="16" class="be-empty">Aucun poste budgétaire actif. Créez d'abord des postes dans « Postes budgétaires ».</td></tr>
+          <tr><td [attr.colspan]="16" class="be-empty" i18n="@@accounting.budget-entry.aucun.poste.budgetaire.actif.creez.d.abord.des.p.c9d46f49">Aucun poste budgétaire actif. Créez d'abord des postes dans « Postes budgétaires ».</td></tr>
         </ng-template>
       </p-table>
     </div>

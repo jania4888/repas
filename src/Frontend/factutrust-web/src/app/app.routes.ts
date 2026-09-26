@@ -10,6 +10,7 @@ import { companyAccountingNavGuard } from './core/guards/company-accounting-nav.
 import { documentationAccessGuard } from './core/guards/documentation-access.guard';
 import { staffShellGuard } from './core/guards/staff-shell.guard';
 import { companyAssistanceGuard } from './core/guards/company-assistance.guard';
+import { CORE_TITLES } from './core/i18n/core-localize';
 
 export const routes: Routes = [
   {
@@ -27,7 +28,7 @@ export const routes: Routes = [
   {
     path: 'legal/terms',
     loadComponent: () => import('./features/legal/terms/terms.component').then(m => m.TermsComponent),
-    title: 'Conditions d\'utilisation - InstaFact'
+    title: CORE_TITLES.terms
   },
   {
     path: 'visite-virtuelle',
@@ -51,12 +52,12 @@ export const routes: Routes = [
         path: 'access-denied',
         loadComponent: () =>
           import('./shared/components/access-denied/access-denied.component').then(m => m.AccessDeniedComponent),
-        title: 'Accès refusé - InstaFact'
+        title: CORE_TITLES.accessDenied
       },
       {
         path: 'dashboard',
         loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
-        title: 'Tableau de bord - InstaFact'
+        title: CORE_TITLES.dashboard
       },
       {
         path: 'invoices',

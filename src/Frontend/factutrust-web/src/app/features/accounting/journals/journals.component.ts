@@ -22,24 +22,24 @@ interface JournalForm {
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingTableActionsComponent],
   template: `
-    <app-page-header title="Journaux & familles" subtitle="Gestion des journaux comptables et de leurs familles" />
+    <app-page-header title="Journaux & familles" i18n-title="Journaux & familles" subtitle="Gestion des journaux comptables et de leurs familles" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card jr-toolbar">
-      <app-button variant="primary" icon="pi pi-plus" type="button" (click)="startCreate()" [disabled]="loading()">Nouveau journal</app-button>
-      <app-button variant="secondary" icon="pi pi-folder-plus" type="button" (click)="showFamily.set(!showFamily())" [disabled]="loading()">Nouvelle famille</app-button>
+      <app-button variant="primary" icon="pi pi-plus" type="button" (click)="startCreate()" [disabled]="loading()" i18n="@@accounting.journals.nouveau.journal.a81ef718">Nouveau journal</app-button>
+      <app-button variant="secondary" icon="pi pi-folder-plus" type="button" (click)="showFamily.set(!showFamily())" [disabled]="loading()" i18n="@@accounting.journals.nouvelle.famille.7ce846aa">Nouvelle famille</app-button>
     </div>
 
     @if (showFamily()) {
       <div class="card jr-family-form">
-        <h3 class="jr-form-title">Nouvelle famille</h3>
+        <h3 class="jr-form-title" i18n="@@accounting.journals.nouvelle.famille.7ce846aa">Nouvelle famille</h3>
         <div class="jr-fields">
-          <div class="jr-field"><label class="jr-lbl">Code</label><input class="jr-inp" [(ngModel)]="famCode" placeholder="Ex. DIV" /></div>
-          <div class="jr-field jr-grow"><label class="jr-lbl">Libellé</label><input class="jr-inp" [(ngModel)]="famLabel" /></div>
+          <div class="jr-field"><label class="jr-lbl" i18n="@@accounting.journals.code.adac6937">Code</label><input class="jr-inp" [(ngModel)]="famCode" placeholder="Ex. DIV" i18n-placeholder="Ex. DIV" /></div>
+          <div class="jr-field jr-grow"><label class="jr-lbl" i18n="@@accounting.journals.libelle.f5485bba">Libellé</label><input class="jr-inp" [(ngModel)]="famLabel" /></div>
           <div class="jr-form-actions">
-            <button type="button" class="btn btn-secondary" (click)="showFamily.set(false)">Annuler</button>
-            <button type="button" class="btn btn-primary" (click)="createFamily()" [disabled]="!famCode.trim() || !famLabel.trim()">Enregistrer</button>
+            <button type="button" class="btn btn-secondary" (click)="showFamily.set(false)" i18n="@@accounting.journals.annuler.49ba3292">Annuler</button>
+            <button type="button" class="btn btn-primary" (click)="createFamily()" [disabled]="!famCode.trim() || !famLabel.trim()" i18n="@@accounting.journals.enregistrer.f7c8bcd8">Enregistrer</button>
           </div>
         </div>
       </div>
@@ -49,16 +49,16 @@ interface JournalForm {
       <div class="card jr-form">
         <h3 class="jr-form-title">{{ f.id ? 'Modifier le journal' : 'Nouveau journal' }}</h3>
         <div class="jr-fields">
-          <div class="jr-field"><label class="jr-lbl">Code</label><input class="jr-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. JX" /></div>
-          <div class="jr-field jr-grow"><label class="jr-lbl">Libellé</label><input class="jr-inp" [(ngModel)]="f.label" /></div>
-          <div class="jr-field"><label class="jr-lbl">Famille</label>
+          <div class="jr-field"><label class="jr-lbl" i18n="@@accounting.journals.code.adac6937">Code</label><input class="jr-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. JX" i18n-placeholder="Ex. JX" /></div>
+          <div class="jr-field jr-grow"><label class="jr-lbl" i18n="@@accounting.journals.libelle.f5485bba">Libellé</label><input class="jr-inp" [(ngModel)]="f.label" /></div>
+          <div class="jr-field"><label class="jr-lbl" i18n="@@accounting.journals.famille.3b0121d3">Famille</label>
             <select class="jr-inp" [(ngModel)]="f.familyId">
-              <option [ngValue]="null">—</option>
+              <option [ngValue]="null" i18n="@@accounting.journals.text.1b93795b">—</option>
               @for (fam of families(); track fam.id) { <option [ngValue]="fam.id">{{ fam.label }}</option> }
             </select>
           </div>
           <div class="jr-form-actions">
-            <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()">Annuler</button>
+            <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()" i18n="@@accounting.journals.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving() || !f.code.trim() || !f.label.trim()">
               {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
             </button>
@@ -70,7 +70,7 @@ interface JournalForm {
     <div class="card jr-list">
       <p-table [value]="journals()" [loading]="loading()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
-          <tr><th scope="col">Code</th><th scope="col">Libellé</th><th scope="col">Famille</th><th scope="col">Système</th><th scope="col">Actif</th><th scope="col">Actions</th></tr>
+          <tr><th scope="col" i18n="@@accounting.journals.code.adac6937">Code</th><th scope="col" i18n="@@accounting.journals.libelle.f5485bba">Libellé</th><th scope="col" i18n="@@accounting.journals.famille.3b0121d3">Famille</th><th scope="col" i18n="@@accounting.journals.systeme.62d09520">Système</th><th scope="col" i18n="@@accounting.journals.actif.2eb75f84">Actif</th><th scope="col" i18n="@@accounting.journals.actions.c3cd636a">Actions</th></tr>
         </ng-template>
         <ng-template pTemplate="body" let-j>
           <tr [class.jr-inactive]="!j.isActive">
@@ -94,7 +94,7 @@ interface JournalForm {
             </td>
           </tr>
         </ng-template>
-        <ng-template pTemplate="emptymessage"><tr><td colspan="6" class="jr-empty">Aucun journal.</td></tr></ng-template>
+        <ng-template pTemplate="emptymessage"><tr><td colspan="6" class="jr-empty" i18n="@@accounting.journals.aucun.journal.6c18811f">Aucun journal.</td></tr></ng-template>
       </p-table>
     </div>
   `,

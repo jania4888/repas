@@ -43,12 +43,10 @@ import { PERMISSIONS } from '@core/config/permission-keys';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Grilles tarifaires"
+      title="Grilles tarifaires" i18n-title="Grilles tarifaires"
       subtitle="Définissez des jeux de prix par produit, puis affectez-les à vos clients. Un client sans grille reste au tarif catalogue.">
       @if (canCreate()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()">
-          Nouvelle grille
-        </app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@pricing.price-list-list.nouvelle.grille.a8012b9e">Nouvelle grille</app-button>
       }
     </app-page-header>
 
@@ -57,7 +55,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
     } @else if (priceLists().length === 0) {
       <app-empty-state
         icon="pi-tags"
-        title="Aucune grille tarifaire"
+        title="Aucune grille tarifaire" i18n-title="Aucune grille tarifaire"
         message="Créez une grille pour appliquer des prix négociés à un groupe de clients.">
       </app-empty-state>
     } @else {
@@ -65,12 +63,12 @@ import { PERMISSIONS } from '@core/config/permission-keys';
         <p-table [value]="priceLists()" [rowHover]="true" styleClass="ft-table">
           <ng-template pTemplate="header">
             <tr>
-              <th>Nom</th>
-              <th class="ft-num">Produits</th>
-              <th>Validité</th>
-              <th>Devise</th>
-              <th>État</th>
-              <th class="ft-actions-col">Actions</th>
+              <th i18n="@@pricing.price-list-list.nom.7ff20370">Nom</th>
+              <th class="ft-num" i18n="@@pricing.price-list-list.produits.48000473">Produits</th>
+              <th i18n="@@pricing.price-list-list.validite.8be7d506">Validité</th>
+              <th i18n="@@pricing.price-list-list.devise.eb2e42c4">Devise</th>
+              <th i18n="@@pricing.price-list-list.etat.d3b28a2a">État</th>
+              <th class="ft-actions-col" i18n="@@pricing.price-list-list.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
 
@@ -127,30 +125,28 @@ import { PERMISSIONS } from '@core/config/permission-keys';
       [draggable]="false">
       <div class="ft-form-grid">
         <div class="ft-field">
-          <label for="pl-name">Nom <span class="ft-required">*</span></label>
+          <label for="pl-name">Nom <span class="ft-required" i18n="@@pricing.price-list-list.text.df58248c">*</span></label>
           <input id="pl-name" pInputText [(ngModel)]="form.name" maxlength="100" />
         </div>
 
         <div class="ft-field">
-          <label for="pl-from">Début de validité</label>
+          <label for="pl-from" i18n="@@pricing.price-list-list.debut.de.validite.10f1f74c">Début de validité</label>
           <input id="pl-from" type="date" pInputText [(ngModel)]="form.validFrom" />
         </div>
 
         <div class="ft-field">
-          <label for="pl-until">Fin de validité</label>
+          <label for="pl-until" i18n="@@pricing.price-list-list.fin.de.validite.3cfa7402">Fin de validité</label>
           <input id="pl-until" type="date" pInputText [(ngModel)]="form.validUntil" />
-          <small class="ft-hint">Laissez vide pour une grille sans limite de date.</small>
+          <small class="ft-hint" i18n="@@pricing.price-list-list.laissez.vide.pour.une.grille.sans.limite.de.date.1ce1488a">Laissez vide pour une grille sans limite de date.</small>
         </div>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="createVisible = false">Annuler</app-button>
+        <app-button variant="secondary" (clicked)="createVisible = false" i18n="@@pricing.price-list-list.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="primary"
           [disabled]="!form.name.trim() || saving()"
-          (clicked)="create()">
-          Créer
-        </app-button>
+          (clicked)="create()" i18n="@@pricing.price-list-list.creer.1a686172">Créer</app-button>
       </ng-template>
     </p-dialog>
   `

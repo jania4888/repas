@@ -32,8 +32,8 @@ import { dashboardFullConfigToCsv, dashboardTableSectionToCsv, downloadCsv } fro
                 type="button"
                 class="close-dashboard"
                 (click)="closed.emit()"
-                title="Fermer le tableau de bord"
-                aria-label="Fermer le tableau de bord">
+                title="Fermer le tableau de bord" i18n-title="Fermer le tableau de bord"
+                aria-label="Fermer le tableau de bord" i18n-aria-label="Fermer le tableau de bord">
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
               </button>
             }
@@ -104,7 +104,7 @@ import { dashboardFullConfigToCsv, dashboardTableSectionToCsv, downloadCsv } fro
                     </ng-template>
                     <ng-template pTemplate="emptymessage">
                       <tr>
-                        <td [attr.colspan]="(section.data?.columns || []).length">Aucune donnée</td>
+                        <td [attr.colspan]="(section.data?.columns || []).length" i18n="@@ai-assistant.components.aucune.donnee.434e5488">Aucune donnée</td>
                       </tr>
                     </ng-template>
                   </p-table>

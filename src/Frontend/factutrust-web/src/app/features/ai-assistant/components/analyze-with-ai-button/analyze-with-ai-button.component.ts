@@ -18,8 +18,8 @@ import { canUseAiAssistant } from '../../utils/ai-access.util';
         [disabled]="disabled()"
         (click)="run()"
         [ariaLabel]="ariaLabelText()">
-        <span class="analyze-label-full">Analyser avec l'assistant IA</span>
-        <span class="analyze-label-compact">Analyser avec l'IA</span>
+        <span class="analyze-label-full" i18n="@@ai-assistant.components.analyser.avec.l.assistant.ia.48bd0ffb">Analyser avec l'assistant IA</span>
+        <span class="analyze-label-compact" i18n="@@ai-assistant.components.analyser.avec.l.ia.78ea80a9">Analyser avec l'IA</span>
       </app-button>
     }
   `,

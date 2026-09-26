@@ -265,7 +265,7 @@ import { ProjectFavoritesService } from './project-favorites.service';
     }
 
     <p-dialog [(visible)]="editVisible" header="Modifier le projet" [modal]="true" [style]="{ width: '52rem' }">
-      <app-form-section title="Identité" icon="pi-id-card" variant="compact">
+      <app-form-section title="Identité" i18n-title="Identité" icon="pi-id-card" variant="compact">
         <div class="flex flex-column gap-3">
           <label>Nom <input pInputText class="w-full" [(ngModel)]="editDraft.name" /></label>
           <label>Type
@@ -283,7 +283,7 @@ import { ProjectFavoritesService } from './project-favorites.service';
         </div>
       </app-form-section>
       @if (project() && isBtp(project()!.kind)) {
-        <app-form-section title="Chantier BTP" icon="pi-building" variant="compact">
+        <app-form-section title="Chantier BTP" i18n-title="Chantier BTP" icon="pi-building" variant="compact">
           <div class="flex flex-column gap-3">
             <label>Adresse chantier <input pInputText class="w-full" [(ngModel)]="editDraft.siteAddress" /></label>
             <label>N° marché <input pInputText class="w-full" [(ngModel)]="editDraft.contractNumber" /></label>
@@ -291,8 +291,8 @@ import { ProjectFavoritesService } from './project-favorites.service';
         </app-form-section>
       }
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (click)="editVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="saveEdit()">Enregistrer</app-button>
+        <app-button variant="secondary" (click)="editVisible = false" i18n="@@projects.project-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="saveEdit()" i18n="@@projects.project-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

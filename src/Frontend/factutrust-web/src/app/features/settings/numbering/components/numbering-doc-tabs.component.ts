@@ -13,7 +13,7 @@ import { NumberingDocumentTab } from '../models/numbering.models';
       #tabList
       class="numbering-tabs-wrap"
       role="tablist"
-      aria-label="Types de documents"
+      aria-label="Types de documents" i18n-aria-label="Types de documents"
       (keydown)="onKeydown($event)">
       @for (tab of tabs; track tab.documentType; let i = $index) {
         <button
@@ -32,7 +32,7 @@ import { NumberingDocumentTab } from '../models/numbering.models';
           <span class="numbering-tab__label-full">{{ tab.label }}</span>
           <span class="numbering-tab__label-short">{{ tab.shortLabel }}</span>
           @if (lockedByIndex?.[i]) {
-            <i class="pi pi-lock numbering-tab__lock" aria-label="Format verrouille"></i>
+            <i class="pi pi-lock numbering-tab__lock" aria-label="Format verrouille" i18n-aria-label="Format verrouille"></i>
           }
         </button>
       }

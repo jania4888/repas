@@ -11,11 +11,11 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
   standalone: true,
   imports: [CommonModule, ButtonComponent, PayrollAmountPipe, PayrollSectionComponent],
   template: `
-    <app-payroll-section title="Paiements enregistrés" icon="pi-wallet">
+    <app-payroll-section title="Paiements enregistrés" i18n-title="Paiements enregistrés" icon="pi-wallet">
       @if (loading()) {
-        <p>Chargement…</p>
+        <p i18n="@@payroll.runs.chargement.01cba1df">Chargement…</p>
       } @else if (payments().length === 0) {
-        <p class="text-secondary">Aucun paiement enregistré pour ce cycle.</p>
+        <p class="text-secondary" i18n="@@payroll.runs.aucun.paiement.enregistre.pour.ce.cycle.d471868c">Aucun paiement enregistré pour ce cycle.</p>
       } @else {
         <div class="payments-list">
           @for (p of payments(); track p.id) {
@@ -25,7 +25,7 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
                   <strong>{{ p.paymentDate | date:'dd/MM/yyyy' }}</strong>
                   <span class="ml-2">{{ p.methodDisplay }}</span>
                   @if (p.isCancelled) {
-                    <span class="badge-cancelled">Annulé</span>
+                    <span class="badge-cancelled" i18n="@@payroll.runs.annule.34cd87cc">Annulé</span>
                   }
                 </div>
                 <strong>{{ p.amount | payrollAmount }}</strong>
@@ -39,7 +39,7 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
                 }
               </ul>
               @if (!p.isCancelled && canCancel()) {
-                <app-button variant="ghost" size="sm" (click)="cancelOne(p)">Annuler ce paiement</app-button>
+                <app-button variant="ghost" size="sm" (click)="cancelOne(p)" i18n="@@payroll.runs.annuler.ce.paiement.9c2d376a">Annuler ce paiement</app-button>
               }
             </div>
           }

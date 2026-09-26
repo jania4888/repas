@@ -36,21 +36,21 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
         aria-labelledby="history-modal-title">
         <header class="modal-header">
           <div>
-            <h3 id="history-modal-title">Historique des décisions</h3>
+            <h3 id="history-modal-title" i18n="@@forecasting.components.historique.des.decisions.af5ea832">Historique des décisions</h3>
             <span class="modal-subtitle" *ngIf="productName">{{ productName }}</span>
           </div>
-          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer">
+          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="Fermer">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </header>
 
         <div class="modal-body">
           @if (loading()) {
-            <div class="state">Chargement…</div>
+            <div class="state" i18n="@@forecasting.components.chargement.01cba1df">Chargement…</div>
           } @else if (rows().length === 0) {
-            <div class="state empty">Aucune décision enregistrée pour cette recommandation.</div>
+            <div class="state empty" i18n="@@forecasting.components.aucune.decision.enregistree.pour.cette.recommand.236fa87f">Aucune décision enregistrée pour cette recommandation.</div>
           } @else {
-            <ol class="timeline" aria-label="Historique des actions">
+            <ol class="timeline" aria-label="Historique des actions" i18n-aria-label="Historique des actions">
               @for (row of rows(); track row.id) {
                 <li class="entry" [class.entry-revert]="row.actionType === 'Revert'">
                   <div class="badge action" [attr.data-action]="row.actionType">
@@ -71,7 +71,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
                       <div class="reason">« {{ row.reason }} »</div>
                     }
                     @if (row.payloadJson) {
-                      <pre class="payload" aria-label="Détails de l'action">{{ formatPayload(row.payloadJson) }}</pre>
+                      <pre class="payload" aria-label="Détails de l'action" i18n-aria-label="Détails de l'action">{{ formatPayload(row.payloadJson) }}</pre>
                     }
                   </div>
                 </li>
@@ -81,7 +81,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
         </div>
 
         <footer class="modal-footer">
-          <button class="btn btn-secondary" type="button" (click)="onCancel()">Fermer</button>
+          <button class="btn btn-secondary" type="button" (click)="onCancel()" i18n="@@forecasting.components.fermer.5ab4ec64">Fermer</button>
         </footer>
       </div>
     </div>

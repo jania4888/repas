@@ -42,7 +42,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
       [title]="firmInternal() ? 'Salariés du cabinet' : 'Salariés'"
       [subtitle]="firmInternal() ? 'Paie interne — collaborateurs du cabinet.' : 'Dossiers salariés et contrats de travail.'">
       @if (canManage()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" [routerLink]="routeBase() + '/employees/new'">Nouveau salarié</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" [routerLink]="routeBase() + '/employees/new'" i18n="@@payroll.employees.nouveau.salarie.c5cbf8b1">Nouveau salarié</app-button>
       }
     </app-page-header>
 
@@ -51,14 +51,14 @@ type StatusFilter = 'all' | 'active' | 'inactive';
       message="Mode consultation — la gestion des dossiers salariés est réservée à la société cliente." />
 
     <div class="payroll-toolbar">
-      <input pInputText type="text" placeholder="Rechercher…" [(ngModel)]="search" (ngModelChange)="load()" class="w-full md:w-20rem" />
+      <input pInputText type="text" placeholder="Rechercher…" i18n-placeholder="Rechercher…" [(ngModel)]="search" (ngModelChange)="load()" class="w-full md:w-20rem" />
       <p-select
         [options]="statusOptions"
         [(ngModel)]="statusFilter"
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Statut"
+        placeholder="Statut" i18n-placeholder="Statut"
         styleClass="w-12rem" />
     </div>
 
@@ -67,7 +67,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
         [loading]="loading()"
         [skeletonColumns]="7"
         icon="pi-users"
-        title="Aucun salarié"
+        title="Aucun salarié" i18n-title="Aucun salarié"
         [description]="loading() ? undefined : 'Aucun salarié ne correspond à vos critères.'"
         [showAction]="canManage() && !loading()"
         actionLabel="Nouveau salarié"
@@ -78,12 +78,12 @@ type StatusFilter = 'all' | 'active' | 'inactive';
       <p-table [value]="items()" [paginator]="true" [rows]="20" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Matricule</th>
-            <th>Nom</th>
-            <th>CNSS</th>
-            <th>Poste</th>
-            <th class="text-right">Salaire base</th>
-            <th>Statut</th>
+            <th i18n="@@payroll.employees.matricule.8f74c132">Matricule</th>
+            <th i18n="@@payroll.employees.nom.7ff20370">Nom</th>
+            <th i18n="@@payroll.employees.cnss.a04d171a">CNSS</th>
+            <th i18n="@@payroll.employees.poste.86abf0cd">Poste</th>
+            <th class="text-right" i18n="@@payroll.employees.salaire.base.6035beae">Salaire base</th>
+            <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
             <th></th>
           </tr>
         </ng-template>
@@ -110,7 +110,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
               }
             </td>
             <td>
-              <app-button variant="outline" size="sm" icon="pi-eye" iconPos="left" [routerLink]="[routeBase() + '/employees', e.id]">Voir</app-button>
+              <app-button variant="outline" size="sm" icon="pi-eye" iconPos="left" [routerLink]="[routeBase() + '/employees', e.id]" i18n="@@payroll.employees.voir.8a754f1f">Voir</app-button>
             </td>
           </tr>
         </ng-template>

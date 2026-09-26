@@ -48,21 +48,21 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Exercice"
+        placeholder="Exercice" i18n-placeholder="Exercice"
         styleClass="w-10rem" />
-      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()">Générer</app-button>
+      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.declarations.generer.bd221c07">Générer</app-button>
       <app-button
         variant="outline"
         icon="pi-download"
         iconPos="left"
         (click)="exportCsv()"
-        [disabled]="!canExport()">Exporter CSV</app-button>
+        [disabled]="!canExport()" i18n="@@payroll.declarations.exporter.csv.d4fc31cb">Exporter CSV</app-button>
       <app-button
         variant="outline"
         icon="pi-file-export"
         iconPos="left"
         (click)="exportZip()"
-        [disabled]="!canExport()">Exporter ZIP (PDF)</app-button>
+        [disabled]="!canExport()" i18n="@@payroll.declarations.exporter.zip.pdf.6bd22aa3">Exporter ZIP (PDF)</app-button>
     </div>
 
     @if (batch() && !batch()!.isComplete) {
@@ -77,7 +77,7 @@ const MONTH_LABELS = [
     } @else if (!batch()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger les certificats"
+        title="Impossible de charger les certificats" i18n-title="Impossible de charger les certificats"
         description="Une erreur est survenue lors de la génération. Vérifiez le NIF de la société et vos droits."
         [showAction]="true"
         actionLabel="Réessayer"
@@ -85,7 +85,7 @@ const MONTH_LABELS = [
     } @else if (batch()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun certificat à générer"
+        title="Aucun certificat à générer" i18n-title="Aucun certificat à générer"
         [description]="emptyDescription()"
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
@@ -96,14 +96,14 @@ const MONTH_LABELS = [
       <p-table [value]="batch()!.lines" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Salarié</th>
-            <th>CIN</th>
-            <th class="text-right">Mois</th>
-            <th class="text-right">Net imposable</th>
-            <th class="text-right">IRPP retenu</th>
-            <th class="text-right">CSS retenue</th>
-            <th class="text-right">Total retenues</th>
-            <th class="text-center">PDF</th>
+            <th i18n="@@payroll.declarations.salarie.27f97915">Salarié</th>
+            <th i18n="@@payroll.declarations.cin.748d5d16">CIN</th>
+            <th class="text-right" i18n="@@payroll.declarations.mois.0d304bea">Mois</th>
+            <th class="text-right" i18n="@@payroll.declarations.net.imposable.2439110f">Net imposable</th>
+            <th class="text-right" i18n="@@payroll.declarations.irpp.retenu.7cc73d3d">IRPP retenu</th>
+            <th class="text-right" i18n="@@payroll.declarations.css.retenue.034ee1f0">CSS retenue</th>
+            <th class="text-right" i18n="@@payroll.declarations.total.retenues.b2cd335c">Total retenues</th>
+            <th class="text-center" i18n="@@payroll.declarations.pdf.d613d88c">PDF</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-l>

@@ -26,7 +26,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Tableau d'amortissement"
+      title="Tableau d'amortissement" i18n-title="Tableau d'amortissement"
       subtitle="Échéancier d'emprunt — capital, intérêts et solde restant dû" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
@@ -45,17 +45,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
 
         <div class="ls-kpis">
-          <div class="ls-kpi"><span class="ls-kpi-label">Capital emprunté</span><span class="ls-kpi-value">{{ s.loan.principal | number : '1.3-3' }}</span></div>
-          <div class="ls-kpi"><span class="ls-kpi-label">Taux annuel</span><span class="ls-kpi-value">{{ s.loan.annualRatePercent | number : '1.2-4' }} %</span></div>
-          <div class="ls-kpi"><span class="ls-kpi-label">Échéances</span><span class="ls-kpi-value">{{ s.loan.installmentCount }} · {{ periodicityLabel(s.loan.periodicity) }}</span></div>
-          <div class="ls-kpi"><span class="ls-kpi-label">Amortissement</span><span class="ls-kpi-value">{{ methodLabel(s.loan.method) }}</span></div>
-          <div class="ls-kpi"><span class="ls-kpi-label">Coût du crédit</span><span class="ls-kpi-value">{{ s.totalInterest | number : '1.3-3' }}</span></div>
-          <div class="ls-kpi"><span class="ls-kpi-label">Total remboursé</span><span class="ls-kpi-value">{{ s.totalInstallments | number : '1.3-3' }}</span></div>
+          <div class="ls-kpi"><span class="ls-kpi-label" i18n="@@accounting.loans.capital.emprunte.a40c562c">Capital emprunté</span><span class="ls-kpi-value">{{ s.loan.principal | number : '1.3-3' }}</span></div>
+          <div class="ls-kpi"><span class="ls-kpi-label" i18n="@@accounting.loans.taux.annuel.ddd3eb7f">Taux annuel</span><span class="ls-kpi-value">{{ s.loan.annualRatePercent | number : '1.2-4' }} %</span></div>
+          <div class="ls-kpi"><span class="ls-kpi-label" i18n="@@accounting.loans.echeances.c2079408">Échéances</span><span class="ls-kpi-value">{{ s.loan.installmentCount }} · {{ periodicityLabel(s.loan.periodicity) }}</span></div>
+          <div class="ls-kpi"><span class="ls-kpi-label" i18n="@@accounting.loans.amortissement.403d7802">Amortissement</span><span class="ls-kpi-value">{{ methodLabel(s.loan.method) }}</span></div>
+          <div class="ls-kpi"><span class="ls-kpi-label" i18n="@@accounting.loans.cout.du.credit.2f8c4b43">Coût du crédit</span><span class="ls-kpi-value">{{ s.totalInterest | number : '1.3-3' }}</span></div>
+          <div class="ls-kpi"><span class="ls-kpi-label" i18n="@@accounting.loans.total.rembourse.81bf5cbd">Total remboursé</span><span class="ls-kpi-value">{{ s.totalInstallments | number : '1.3-3' }}</span></div>
         </div>
 
         <p class="ls-notice">
           <i class="pi pi-info-circle" aria-hidden="true"></i>
-          Échéancier <strong>indicatif</strong> : les échéances ne sont pas comptabilisées automatiquement.
+          Échéancier <strong i18n="@@accounting.loans.indicatif.9854cb05">indicatif</strong> : les échéances ne sont pas comptabilisées automatiquement.
         </p>
 
         @if (!s.isSettled) {
@@ -69,13 +69,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           [loading]="loading()" [rowHover]="true" styleClass="p-datatable-sm accounting-datatable">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col" class="ls-narrow">N°</th>
-              <th scope="col">Échéance</th>
-              <th scope="col" class="ls-num">Capital restant dû</th>
-              <th scope="col" class="ls-num">Intérêt</th>
-              <th scope="col" class="ls-num">Capital remboursé</th>
-              <th scope="col" class="ls-num">Annuité</th>
-              <th scope="col" class="ls-num">Solde</th>
+              <th scope="col" class="ls-narrow" i18n="@@accounting.loans.n.754e6095">N°</th>
+              <th scope="col" i18n="@@accounting.loans.echeance.f9a77ff6">Échéance</th>
+              <th scope="col" class="ls-num" i18n="@@accounting.loans.capital.restant.du.fb1533e2">Capital restant dû</th>
+              <th scope="col" class="ls-num" i18n="@@accounting.loans.interet.c10e8ea5">Intérêt</th>
+              <th scope="col" class="ls-num" i18n="@@accounting.loans.capital.rembourse.829c9aae">Capital remboursé</th>
+              <th scope="col" class="ls-num" i18n="@@accounting.loans.annuite.a3535b86">Annuité</th>
+              <th scope="col" class="ls-num" i18n="@@accounting.loans.solde.e5977cf9">Solde</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-l>
@@ -91,7 +91,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td colspan="3">Totaux</td>
+              <td colspan="3" i18n="@@accounting.loans.totaux.a1ca02f8">Totaux</td>
               <td class="ls-num">{{ s.totalInterest | number : '1.3-3' }}</td>
               <td class="ls-num">{{ s.totalPrincipal | number : '1.3-3' }}</td>
               <td class="ls-num">{{ s.totalInstallments | number : '1.3-3' }}</td>
@@ -99,7 +99,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="7" style="text-align:center;padding:2rem">Aucune échéance.</td></tr>
+            <tr><td colspan="7" style="text-align:center;padding:2rem" i18n="@@accounting.loans.aucune.echeance.248d93b0">Aucune échéance.</td></tr>
           </ng-template>
         </p-table>
       </div>

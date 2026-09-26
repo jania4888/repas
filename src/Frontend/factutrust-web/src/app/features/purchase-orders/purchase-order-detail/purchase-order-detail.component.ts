@@ -41,7 +41,7 @@ import {
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@purchase-orders.purchase-order-detail.chargement.a209b664">Chargement...</p>
       </div>
     } @else if (po()) {
 
@@ -51,9 +51,7 @@ import {
         [subtitle]="po()!.supplier.name">
         <div class="header-actions">
           <app-button variant="outline" icon="pi-file-pdf" iconPos="left"
-            (click)="downloadPdf()">
-            Télécharger PDF
-          </app-button>
+            (click)="downloadPdf()" i18n="@@purchase-orders.purchase-order-detail.telecharger.pdf.06b2eebe">Télécharger PDF</app-button>
           
 
           <!-- Conditional buttons with robust comparison -->
@@ -71,9 +69,7 @@ import {
             
             <ng-container *ngIf="isDraft()">
               <app-button variant="outline" icon="pi-pencil" iconPos="left"
-                [routerLink]="['/purchase-orders', po()!.id, 'edit']">
-                Modifier
-              </app-button>
+                [routerLink]="['/purchase-orders', po()!.id, 'edit']" i18n="@@purchase-orders.purchase-order-detail.modifier.f260e757">Modifier</app-button>
               <app-button variant="primary" icon="pi-check" iconPos="left"
                 (click)="confirmOrder()"
                 [disabled]="confirming()"
@@ -82,28 +78,20 @@ import {
                 {{ confirming() ? 'Confirmation...' : 'Confirmer' }}
               </app-button>
               <app-button variant="outline" icon="pi-times" iconPos="left"
-                (click)="cancelOrder()">
-                Annuler
-              </app-button>
+                (click)="cancelOrder()" i18n="@@purchase-orders.purchase-order-detail.annuler.49ba3292">Annuler</app-button>
               <app-button variant="danger" icon="pi-trash" iconPos="left"
-                (click)="deleteOrder()">
-                Supprimer
-              </app-button>
+                (click)="deleteOrder()" i18n="@@purchase-orders.purchase-order-detail.supprimer.1acfc1c7">Supprimer</app-button>
             </ng-container>
             
             <ng-container *ngIf="canReceiveGoods()">
               <app-button variant="primary" icon="pi-box" iconPos="left"
                 [routerLink]="['/purchase-receipts', 'new']"
-                [queryParams]="{ purchaseOrderId: po()!.id }">
-                Réception marchandise
-              </app-button>
+                [queryParams]="{ purchaseOrderId: po()!.id }" i18n="@@purchase-orders.purchase-order-detail.reception.marchandise.61115c15">Réception marchandise</app-button>
             </ng-container>
             
             <ng-container *ngIf="canCreateSupplierInvoice()">
               <app-button variant="primary" icon="pi-money-bill" iconPos="left"
-                (click)="openCreateSupplierInvoice()">
-                Créer facture fournisseur
-              </app-button>
+                (click)="openCreateSupplierInvoice()" i18n="@@purchase-orders.purchase-order-detail.creer.facture.fournisseur.4a82949b">Créer facture fournisseur</app-button>
             </ng-container>
           </ng-container>
         </div>
@@ -115,11 +103,11 @@ import {
           <div class="guidance-content">
             <i class="pi pi-info-circle guidance-icon"></i>
             <div class="guidance-text">
-              <h4>Commande en brouillon</h4>
-              <p>Cette commande doit être confirmée avant de pouvoir recevoir les marchandises ou créer une facture fournisseur.</p>
+              <h4 i18n="@@purchase-orders.purchase-order-detail.commande.en.brouillon.5a415e9b">Commande en brouillon</h4>
+              <p i18n="@@purchase-orders.purchase-order-detail.cette.commande.doit.etre.confirmee.avant.de.pouv.7533cb5b">Cette commande doit être confirmée avant de pouvoir recevoir les marchandises ou créer une facture fournisseur.</p>
               <div class="next-steps">
-                <span class="step-label">Prochaine étape :</span>
-                <span class="step-action">Confirmer la commande</span>
+                <span class="step-label" i18n="@@purchase-orders.purchase-order-detail.prochaine.etape.a822d89b">Prochaine étape :</span>
+                <span class="step-action" i18n="@@purchase-orders.purchase-order-detail.confirmer.la.commande.3af7f44c">Confirmer la commande</span>
               </div>
             </div>
           </div>
@@ -131,11 +119,11 @@ import {
           <div class="guidance-content">
             <i class="pi pi-check-circle guidance-icon"></i>
             <div class="guidance-text">
-              <h4>Commande confirmée</h4>
-              <p>La commande est prête pour la réception des marchandises. Vous pouvez maintenant enregistrer les livraisons.</p>
+              <h4 i18n="@@purchase-orders.purchase-order-detail.commande.confirmee.7b08df9a">Commande confirmée</h4>
+              <p i18n="@@purchase-orders.purchase-order-detail.la.commande.est.prete.pour.la.reception.des.marc.1558ea9c">La commande est prête pour la réception des marchandises. Vous pouvez maintenant enregistrer les livraisons.</p>
               <div class="next-steps">
-                <span class="step-label">Prochaine étape :</span>
-                <span class="step-action">Réceptionner les marchandises</span>
+                <span class="step-label" i18n="@@purchase-orders.purchase-order-detail.prochaine.etape.a822d89b">Prochaine étape :</span>
+                <span class="step-action" i18n="@@purchase-orders.purchase-order-detail.receptionner.les.marchandises.8faeed7a">Réceptionner les marchandises</span>
               </div>
             </div>
           </div>
@@ -147,11 +135,11 @@ import {
           <div class="guidance-content">
             <i class="pi pi-exclamation-triangle guidance-icon"></i>
             <div class="guidance-text">
-              <h4>Réception partielle</h4>
-              <p>Certaines marchandises ont été reçues. Vous pouvez continuer la réception ou créer une facture pour les articles déjà livrés.</p>
+              <h4 i18n="@@purchase-orders.purchase-order-detail.reception.partielle.c5886c47">Réception partielle</h4>
+              <p i18n="@@purchase-orders.purchase-order-detail.certaines.marchandises.ont.ete.recues.vous.pouve.3e110c5c">Certaines marchandises ont été reçues. Vous pouvez continuer la réception ou créer une facture pour les articles déjà livrés.</p>
               <div class="next-steps">
-                <span class="step-label">Actions disponibles :</span>
-                <span class="step-action">Réceptionner / Créer facture</span>
+                <span class="step-label" i18n="@@purchase-orders.purchase-order-detail.actions.disponibles.76355671">Actions disponibles :</span>
+                <span class="step-action" i18n="@@purchase-orders.purchase-order-detail.receptionner.creer.facture.4883086f">Réceptionner / Créer facture</span>
               </div>
             </div>
           </div>
@@ -164,25 +152,25 @@ import {
           <h3 class="card-title"><i class="pi pi-file"></i> Informations commande</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Numéro</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.numero.15e73db0">Numéro</span>
               <span class="value mono">{{ po()!.number }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Date</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.date.eb9a4bc1">Date</span>
               <span class="value">{{ po()!.orderDate | date:'dd/MM/yyyy' }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Statut</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.statut.659499f3">Statut</span>
               <p-tag [value]="po()!.statusDisplay"
                 [severity]="getStatusSeverity(po()!.status)"></p-tag>
             </div>
             <div class="info-item">
-              <span class="label">Livraison prévue</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.livraison.prevue.dc15f458">Livraison prévue</span>
               <span class="value">{{ po()!.expectedDeliveryDate ? (po()!.expectedDeliveryDate | date:'dd/MM/yyyy') : '-' }}</span>
             </div>
             @if (po()!.reference) {
               <div class="info-item">
-                <span class="label">Référence</span>
+                <span class="label" i18n="@@purchase-orders.purchase-order-detail.reference.f8130bb0">Référence</span>
                 <span class="value">{{ po()!.reference }}</span>
               </div>
             }
@@ -194,23 +182,23 @@ import {
           <h3 class="card-title"><i class="pi pi-building"></i> Fournisseur</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Nom</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.nom.7ff20370">Nom</span>
               <a [routerLink]="['/suppliers', po()!.supplier.id]" class="value link">{{ po()!.supplier.name }}</a>
             </div>
             @if (po()!.supplier.email) {
               <div class="info-item">
-                <span class="label">Email</span>
+                <span class="label" i18n="@@purchase-orders.purchase-order-detail.email.84add5b2">Email</span>
                 <a [href]="'mailto:' + po()!.supplier.email" class="value link">{{ po()!.supplier.email }}</a>
               </div>
             }
             @if (po()!.supplier.nif) {
               <div class="info-item">
-                <span class="label">NIF</span>
+                <span class="label" i18n="@@purchase-orders.purchase-order-detail.nif.77124a3a">NIF</span>
                 <span class="value mono">{{ po()!.supplier.nif }}</span>
               </div>
             }
             <div class="info-item full-width">
-              <span class="label">Adresse</span>
+              <span class="label" i18n="@@purchase-orders.purchase-order-detail.adresse.522e1466">Adresse</span>
               <span class="value">{{ po()!.supplier.address }}</span>
             </div>
           </div>
@@ -222,13 +210,13 @@ import {
           <p-table [value]="po()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 50px">#</th>
-                <th>Produit</th>
-                <th style="width: 100px">Qté commandée</th>
-                <th style="width: 100px">Qté reçue</th>
-                <th style="width: 120px">Prix unitaire HT</th>
-                <th style="width: 80px">TVA</th>
-                <th style="width: 130px">Total TTC</th>
+                <th style="width: 50px" i18n="@@purchase-orders.purchase-order-detail.text.d08f88df">#</th>
+                <th i18n="@@purchase-orders.purchase-order-detail.produit.ff673dc2">Produit</th>
+                <th style="width: 100px" i18n="@@purchase-orders.purchase-order-detail.qte.commandee.8c1ee02c">Qté commandée</th>
+                <th style="width: 100px" i18n="@@purchase-orders.purchase-order-detail.qte.recue.ec07cbe1">Qté reçue</th>
+                <th style="width: 120px" i18n="@@purchase-orders.purchase-order-detail.prix.unitaire.ht.bb3f8e39">Prix unitaire HT</th>
+                <th style="width: 80px" i18n="@@purchase-orders.purchase-order-detail.tva.fb62cb5d">TVA</th>
+                <th style="width: 130px" i18n="@@purchase-orders.purchase-order-detail.total.ttc.9e80ff7c">Total TTC</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-line>
@@ -257,15 +245,15 @@ import {
           <!-- Totals -->
           <div class="totals-section">
             <div class="total-row">
-              <span>Sous-total HT</span>
+              <span i18n="@@purchase-orders.purchase-order-detail.sous.total.ht.724598f6">Sous-total HT</span>
               <span class="amount">{{ po()!.subTotal | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
             <div class="total-row">
-              <span>TVA</span>
+              <span i18n="@@purchase-orders.purchase-order-detail.tva.fb62cb5d">TVA</span>
               <span class="amount">{{ po()!.totalVat | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
             <div class="total-row grand-total">
-              <span>Total TTC</span>
+              <span i18n="@@purchase-orders.purchase-order-detail.total.ttc.9e80ff7c">Total TTC</span>
               <span class="amount">{{ po()!.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
           </div>
@@ -329,24 +317,22 @@ import {
       [draggable]="false"
       [resizable]="false"
       (onHide)="closeCancelDialog()">
-      <p class="dialog-message">Êtes-vous sûr de vouloir annuler cette commande ? Indiquez le motif d'annulation (obligatoire).</p>
+      <p class="dialog-message" i18n="@@purchase-orders.purchase-order-detail.etes.vous.sur.de.vouloir.annuler.cette.commande..c86b953a">Êtes-vous sûr de vouloir annuler cette commande ? Indiquez le motif d'annulation (obligatoire).</p>
       <textarea
         pTextarea
         [(ngModel)]="cancellationReason"
-        placeholder="Motif d'annulation..."
+        placeholder="Motif d'annulation..." i18n-placeholder="Motif d'annulation..."
         [rows]="4"
         class="w-full cancellation-reason-input">
       </textarea>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="closeCancelDialog()">Retour</app-button>
+        <app-button variant="outline" (click)="closeCancelDialog()" i18n="@@purchase-orders.purchase-order-detail.retour.e5befb1f">Retour</app-button>
         <app-button
           variant="danger"
           icon="pi-times"
           iconPos="left"
           [disabled]="!cancellationReason.trim()"
-          (click)="submitCancelOrder()">
-          Annuler la commande
-        </app-button>
+          (click)="submitCancelOrder()" i18n="@@purchase-orders.purchase-order-detail.annuler.la.commande.187515f7">Annuler la commande</app-button>
       </ng-template>
     </p-dialog>
 

@@ -25,17 +25,15 @@ import { ProfitTableComponent } from './profit-table.component';
   ],
   template: `
     <app-page-header
-      title="Rapport Bénéfices"
+      title="Rapport Bénéfices" i18n-title="Rapport Bénéfices"
       subtitle="Bénéfice commercial par pièce, mensuel, par ligne et par produit">
-      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" [disabled]="loading()">
-        Exporter
-      </app-button>
+      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" [disabled]="loading()" i18n="@@reports.profit.exporter.0cd84bdc">Exporter</app-button>
     </app-page-header>
 
     <div class="filter-section">
       <div class="filter-group">
-        <label for="period" class="filter-label">Période</label>
-        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période">
+        <label for="period" class="filter-label" i18n="@@reports.profit.periode.de2110b7">Période</label>
+        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="Période">
           @for (p of periodOptions; track p.value) {
             <option [value]="p.value">{{ p.label }}</option>
           }
@@ -45,10 +43,10 @@ import { ProfitTableComponent } from './profit-table.component';
 
     <p-tabs class="ft-tabs" (valueChange)="onTabChange($event)" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0"><i class="pi pi-list"></i><span>Par ligne</span></p-tab>
-        <p-tab [value]="1"><i class="pi pi-box"></i><span>Par produit</span></p-tab>
-        <p-tab [value]="2"><i class="pi pi-calendar"></i><span>Mensuel</span></p-tab>
-        <p-tab [value]="3"><i class="pi pi-file"></i><span>Par pièce</span></p-tab>
+        <p-tab [value]="0"><i class="pi pi-list"></i><span i18n="@@reports.profit.par.ligne.26d2b61a">Par ligne</span></p-tab>
+        <p-tab [value]="1"><i class="pi pi-box"></i><span i18n="@@reports.profit.par.produit.069de81b">Par produit</span></p-tab>
+        <p-tab [value]="2"><i class="pi pi-calendar"></i><span i18n="@@reports.profit.mensuel.272c1b22">Mensuel</span></p-tab>
+        <p-tab [value]="3"><i class="pi pi-file"></i><span i18n="@@reports.profit.par.piece.d152a853">Par pièce</span></p-tab>
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
@@ -87,7 +85,7 @@ import { ProfitTableComponent } from './profit-table.component';
     </p-tabs>
 
     <div class="back-link-wrap">
-      <a routerLink="/reports" class="back-link">Retour aux rapports</a>
+      <a routerLink="/reports" class="back-link" i18n="@@reports.profit.retour.aux.rapports.48320a4f">Retour aux rapports</a>
     </div>
   `,
   styles: [`

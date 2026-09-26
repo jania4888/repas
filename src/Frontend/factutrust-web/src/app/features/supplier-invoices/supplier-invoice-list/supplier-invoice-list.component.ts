@@ -52,9 +52,7 @@ interface StatusOption {
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Nouvelle facture
-        </app-button>
+          routerLink="new" i18n="@@supplier-invoices.supplier-invoice-list.nouvelle.facture.cdf7e09c">Nouvelle facture</app-button>
       }
     </app-page-header>
 
@@ -62,7 +60,7 @@ interface StatusOption {
       <div class="ft-filters__header">
         <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -72,7 +70,7 @@ interface StatusOption {
         <span class="p-input-icon-left flex-1">
           <i class="pi pi-search"></i>
           <input pInputText type="text"
-            placeholder="Rechercher par n° facture, fournisseur…"
+            placeholder="Rechercher par n° facture, fournisseur…" i18n-placeholder="Rechercher par n° facture, fournisseur…"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -82,7 +80,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -91,7 +89,7 @@ interface StatusOption {
           [(ngModel)]="selectedSupplierId"
           optionLabel="name"
           optionValue="id"
-          placeholder="Tous les fournisseurs"
+          placeholder="Tous les fournisseurs" i18n-placeholder="Tous les fournisseurs"
           [showClear]="true"
           [filter]="true"
           filterBy="name"
@@ -126,15 +124,15 @@ interface StatusOption {
           styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 140px">N° facture</th>
-              <th style="width: 90px">Type</th>
-              <th>Fournisseur</th>
-              <th style="width: 120px">Bon de commande</th>
-              <th style="width: 110px">Date</th>
-              <th style="width: 110px">Échéance</th>
-              <th style="width: 120px">Total TTC</th>
-              <th style="width: 120px">Statut</th>
-              <th style="width: 80px">Actions</th>
+              <th style="width: 140px" i18n="@@supplier-invoices.supplier-invoice-list.n.facture.7543385a">N° facture</th>
+              <th style="width: 90px" i18n="@@supplier-invoices.supplier-invoice-list.type.3deb7456">Type</th>
+              <th i18n="@@supplier-invoices.supplier-invoice-list.fournisseur.97d91d89">Fournisseur</th>
+              <th style="width: 120px" i18n="@@supplier-invoices.supplier-invoice-list.bon.de.commande.4b9aea29">Bon de commande</th>
+              <th style="width: 110px" i18n="@@supplier-invoices.supplier-invoice-list.date.eb9a4bc1">Date</th>
+              <th style="width: 110px" i18n="@@supplier-invoices.supplier-invoice-list.echeance.f9a77ff6">Échéance</th>
+              <th style="width: 120px" i18n="@@supplier-invoices.supplier-invoice-list.total.ttc.9e80ff7c">Total TTC</th>
+              <th style="width: 120px" i18n="@@supplier-invoices.supplier-invoice-list.statut.659499f3">Statut</th>
+              <th style="width: 80px" i18n="@@supplier-invoices.supplier-invoice-list.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-inv>
@@ -146,7 +144,7 @@ interface StatusOption {
                 } @else if (isStandalone(inv)) {
                   <p-tag value="Directe" severity="secondary" [rounded]="true"></p-tag>
                 } @else {
-                  <span class="type-muted">—</span>
+                  <span class="type-muted" i18n="@@supplier-invoices.supplier-invoice-list.text.1b93795b">—</span>
                 }
               </td>
               <td><span class="supplier-name">{{ inv.supplierName }}</span></td>
@@ -171,14 +169,14 @@ interface StatusOption {
               <td colspan="9" class="text-center p-6">
                 @if (unpaidOnlyMode()) {
                   <app-empty-state
-                    title="Aucune facture impayée"
+                    title="Aucune facture impayée" i18n-title="Aucune facture impayée"
                     description="Aucune facture fournisseur en attente de règlement."
                     actionLabel="Voir toutes les factures fournisseurs"
                     actionRoute="/supplier-invoices">
                   </app-empty-state>
                 } @else {
                   <app-empty-state
-                    title="Aucune facture fournisseur"
+                    title="Aucune facture fournisseur" i18n-title="Aucune facture fournisseur"
                     description="Créez une facture depuis un bon de commande, un bon de réception, ou directement."
                     [showAction]="canCreateSupplierInvoice()"
                     actionLabel="Nouvelle facture"

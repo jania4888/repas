@@ -48,7 +48,7 @@ interface ReceptionLine {
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@purchase-orders.purchase-order-receive.chargement.a209b664">Chargement...</p>
       </div>
     } @else if (po()) {
       <app-page-header
@@ -60,16 +60,16 @@ interface ReceptionLine {
       <div class="summary-card">
         <div class="summary-grid">
           <div class="summary-item">
-            <span class="summary-label">Statut</span>
+            <span class="summary-label" i18n="@@purchase-orders.purchase-order-receive.statut.659499f3">Statut</span>
             <p-tag [value]="po()!.statusDisplay"
               [severity]="getStatusSeverity(po()!.status)"></p-tag>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Date commande</span>
+            <span class="summary-label" i18n="@@purchase-orders.purchase-order-receive.date.commande.d50824e9">Date commande</span>
             <span class="summary-value">{{ po()!.orderDate | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Progression globale</span>
+            <span class="summary-label" i18n="@@purchase-orders.purchase-order-receive.progression.globale.0e5c3dbd">Progression globale</span>
             <div class="progress-container">
               <p-progressBar
                 [value]="globalProgress()"
@@ -89,9 +89,7 @@ interface ReceptionLine {
             (valueChange)="onReceiveWarehouseChange($event)">
           </app-warehouse-selector>
           @if (!receiveWarehouseId()) {
-            <p class="warehouse-hint" role="status">
-              Sélectionnez l'entrepôt dans lequel le stock sera mis à jour.
-            </p>
+            <p class="warehouse-hint" role="status" i18n="@@purchase-orders.purchase-order-receive.selectionnez.l.entrepot.dans.lequel.le.stock.ser.97ae182d">Sélectionnez l'entrepôt dans lequel le stock sera mis à jour.</p>
           }
         </div>
       </div>
@@ -104,12 +102,12 @@ interface ReceptionLine {
           <table>
             <thead>
               <tr>
-                <th>Produit</th>
-                <th style="width: 110px" class="text-center">Qté commandée</th>
-                <th style="width: 110px" class="text-center">Déjà reçue</th>
-                <th style="width: 110px" class="text-center">Restante</th>
-                <th style="width: 150px" class="text-center">Qté à réceptionner</th>
-                <th style="width: 100px" class="text-center">Statut</th>
+                <th i18n="@@purchase-orders.purchase-order-receive.produit.ff673dc2">Produit</th>
+                <th style="width: 110px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.qte.commandee.8c1ee02c">Qté commandée</th>
+                <th style="width: 110px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.deja.recue.03bcf3f9">Déjà reçue</th>
+                <th style="width: 110px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.restante.b9dbe01c">Restante</th>
+                <th style="width: 150px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.qte.a.receptionner.ac2fffa0">Qté à réceptionner</th>
+                <th style="width: 100px" class="text-center" i18n="@@purchase-orders.purchase-order-receive.statut.659499f3">Statut</th>
               </tr>
             </thead>
             <tbody>
@@ -165,9 +163,7 @@ interface ReceptionLine {
 
         <!-- Actions -->
         <div class="form-actions">
-          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]">
-            Retour au détail
-          </app-button>
+          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]" i18n="@@purchase-orders.purchase-order-receive.retour.au.detail.1ee22560">Retour au détail</app-button>
           <app-button
             variant="primary"
             icon="pi-check"

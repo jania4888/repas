@@ -60,38 +60,38 @@ import {
     <div class="card filters-card">
       <div class="filters-grid" role="search">
         <div class="filter-field">
-          <label class="filter-label" for="voucher-search">Recherche</label>
+          <label class="filter-label" for="voucher-search" i18n="@@stock-vouchers.stock-voucher-list.recherche.787b5492">Recherche</label>
           <input
             id="voucher-search"
             pInputText
             type="text"
             [(ngModel)]="searchTerm"
-            placeholder="Numéro, référence…"
+            placeholder="Numéro, référence…" i18n-placeholder="Numéro, référence…"
             (keyup.enter)="reload()" />
         </div>
         <div class="filter-field">
-          <label class="filter-label" for="filter-status">Statut</label>
+          <label class="filter-label" for="filter-status" i18n="@@stock-vouchers.stock-voucher-list.statut.659499f3">Statut</label>
           <p-select
             inputId="filter-status"
             [options]="statusOptions"
             [(ngModel)]="statusFilter"
             optionLabel="label"
             optionValue="value"
-            placeholder="Tous les statuts"
+            placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
             [showClear]="true"
             [style]="{ width: '100%' }"
             appendTo="body">
           </p-select>
         </div>
         <div class="filter-field">
-          <label class="filter-label" for="filter-warehouse">Dépôt</label>
+          <label class="filter-label" for="filter-warehouse" i18n="@@stock-vouchers.stock-voucher-list.depot.4c1c61c7">Dépôt</label>
           <p-select
             inputId="filter-warehouse"
             [options]="warehouseOptions"
             [(ngModel)]="warehouseFilter"
             optionLabel="label"
             optionValue="value"
-            placeholder="Tous les dépôts"
+            placeholder="Tous les dépôts" i18n-placeholder="Tous les dépôts"
             [showClear]="true"
             [filter]="warehouseOptions.length > 8"
             filterBy="label"
@@ -100,11 +100,11 @@ import {
           </p-select>
         </div>
         <div class="filter-field">
-          <label class="filter-label" for="filter-from">Du</label>
+          <label class="filter-label" for="filter-from" i18n="@@stock-vouchers.stock-voucher-list.du.84814985">Du</label>
           <input id="filter-from" type="date" class="date-input" [(ngModel)]="fromDate" />
         </div>
         <div class="filter-field">
-          <label class="filter-label" for="filter-to">Au</label>
+          <label class="filter-label" for="filter-to" i18n="@@stock-vouchers.stock-voucher-list.au.7a1732d5">Au</label>
           <input id="filter-to" type="date" class="date-input" [(ngModel)]="toDate" />
         </div>
         <div class="filter-actions">
@@ -131,15 +131,15 @@ import {
         styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Numéro</th>
-            <th>Date</th>
-            <th>Dépôt</th>
-            <th>Motif</th>
-            <th>Lignes</th>
-            <th>Quantité</th>
-            <th>Valorisation</th>
-            <th>Statut</th>
-            <th>Actions</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.numero.15e73db0">Numéro</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.date.eb9a4bc1">Date</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.depot.4c1c61c7">Dépôt</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.motif.2a198f47">Motif</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.lignes.41c7025e">Lignes</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.quantite.09a38fda">Quantité</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.valorisation.61fcd7cd">Valorisation</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.statut.659499f3">Statut</th>
+            <th i18n="@@stock-vouchers.stock-voucher-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>

@@ -28,7 +28,7 @@ interface ReportCard {
   imports: [CommonModule, RouterModule, FormsModule, PageHeaderComponent],
   template: `
     <app-page-header
-      title="Rapports"
+      title="Rapports" i18n-title="Rapports"
       subtitle="Accédez à tous les rapports et états de la plateforme">
     </app-page-header>
 
@@ -40,8 +40,8 @@ interface ReportCard {
           [(ngModel)]="searchQuery"
           (ngModelChange)="onSearchChange()"
           class="search-input"
-          placeholder="Rechercher un rapport..."
-          aria-label="Rechercher un rapport">
+          placeholder="Rechercher un rapport..." i18n-placeholder="Rechercher un rapport..."
+          aria-label="Rechercher un rapport" i18n-aria-label="Rechercher un rapport">
       </div>
     </div>
 
@@ -58,7 +58,7 @@ interface ReportCard {
                 @if (link.comingSoon) {
                   <span class="report-link report-link--disabled">
                     {{ link.label }}
-                    <span class="badge-coming">Bientôt</span>
+                    <span class="badge-coming" i18n="@@reports.reports-hub.bientot.a60303f4">Bientôt</span>
                   </span>
                 } @else if (link.route) {
                   <a [routerLink]="link.route" [queryParams]="link.queryParams" class="report-link" [attr.aria-label]="'Accéder à ' + link.label">
@@ -77,7 +77,7 @@ interface ReportCard {
     @if (filteredCards.length === 0) {
       <div class="empty-state" role="status">
         <i class="pi pi-search empty-icon"></i>
-        <p>Aucun rapport ne correspond à votre recherche.</p>
+        <p i18n="@@reports.reports-hub.aucun.rapport.ne.correspond.a.votre.recherche.9353e0e9">Aucun rapport ne correspond à votre recherche.</p>
       </div>
     }
   `,

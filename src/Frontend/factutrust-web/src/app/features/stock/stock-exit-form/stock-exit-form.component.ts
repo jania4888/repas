@@ -41,29 +41,27 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Nouvelle sortie de stock" 
+      title="Nouvelle sortie de stock" i18n-title="Nouvelle sortie de stock" 
       subtitle="Enregistrez une sortie de marchandise de votre entrepôt">
       <app-button 
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/stock">
-        Annuler
-      </app-button>
+        routerLink="/stock" i18n="@@stock.stock-exit-form.annuler.49ba3292">Annuler</app-button>
     </app-page-header>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <!-- Section 1: Entrepôt & Produit -->
-        <app-form-section title="Détails du Stock" icon="pi-box" [number]="1">
+        <app-form-section title="Détails du Stock" i18n-title="Détails du Stock" icon="pi-box" [number]="1">
           <div class="form-group">
-            <label for="warehouse">Entrepôt <span class="required">*</span></label>
+            <label for="warehouse">Entrepôt <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
             <p-select 
               id="warehouse"
               [options]="warehouses" 
               formControlName="warehouse"
               optionLabel="name"
-              placeholder="Sélectionner un entrepôt"
+              placeholder="Sélectionner un entrepôt" i18n-placeholder="Sélectionner un entrepôt"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('warehouse')">
             </p-select>
@@ -76,7 +74,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
           </div>
 
           <div class="form-group">
-            <label for="product">Produit <span class="required">*</span></label>
+            <label for="product">Produit <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
             <p-select 
               id="product"
               [options]="products" 
@@ -84,7 +82,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
               optionLabel="name"
               [filter]="true"
               filterBy="name,code"
-              placeholder="Chercher un produit"
+              placeholder="Chercher un produit" i18n-placeholder="Chercher un produit"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('product')">
             </p-select>
@@ -97,17 +95,17 @@ import { ConfirmationService } from '@core/services/confirmation.service';
             @if (productsLoaded && products.length === 0) {
               <small class="form-hint">
                 Aucun produit avec gestion de stock. 
-                <a routerLink="/products">Activer sur un produit existant</a> ou
-                <a routerLink="/products/new">créer un produit</a>.
+                <a routerLink="/products" i18n="@@stock.stock-exit-form.activer.sur.un.produit.existant.8bb7a382">Activer sur un produit existant</a> ou
+                <a routerLink="/products/new" i18n="@@stock.stock-exit-form.creer.un.produit.f389562a">créer un produit</a>.
               </small>
             }
           </div>
         </app-form-section>
 
         <!-- Section 2: Quantité -->
-        <app-form-section title="Quantité à Sortir" icon="pi-minus-circle" [number]="2">
+        <app-form-section title="Quantité à Sortir" i18n-title="Quantité à Sortir" icon="pi-minus-circle" [number]="2">
            <div class="form-group">
-              <label for="quantity">Quantité <span class="required">*</span></label>
+              <label for="quantity">Quantité <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
               <p-inputNumber 
                 id="quantity" 
                 formControlName="quantity"
@@ -129,21 +127,21 @@ import { ConfirmationService } from '@core/services/confirmation.service';
            <!-- Warning panel -->
            <div class="exit-warning">
              <i class="pi pi-exclamation-triangle"></i>
-             <span>Cette opération réduira le stock disponible du produit sélectionné.</span>
+             <span i18n="@@stock.stock-exit-form.cette.operation.reduira.le.stock.disponible.du.p.43c58548">Cette opération réduira le stock disponible du produit sélectionné.</span>
            </div>
         </app-form-section>
         
         <!-- Section 3: Motif & Notes -->
-        <app-form-section title="Informations Complémentaires" icon="pi-file-edit" [number]="3">
+        <app-form-section title="Informations Complémentaires" i18n-title="Informations Complémentaires" icon="pi-file-edit" [number]="3">
            <div class="form-group">
-              <label for="reason">Motif <span class="required">*</span></label>
+              <label for="reason">Motif <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
               <p-select 
                 id="reason"
                 [options]="exitReasons" 
                 formControlName="reason"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Raison de la sortie"
+                placeholder="Raison de la sortie" i18n-placeholder="Raison de la sortie"
                 styleClass="w-full"
                 [class.ng-invalid]="isInvalid('reason')">
               </p-select>
@@ -156,12 +154,12 @@ import { ConfirmationService } from '@core/services/confirmation.service';
             </div>
 
             <div class="form-group">
-              <label for="notes">Notes / Référence</label>
+              <label for="notes" i18n="@@stock.stock-exit-form.notes.reference.682d0de7">Notes / Référence</label>
               <textarea 
                 pTextarea 
                 id="notes" 
                 formControlName="notes"
-                placeholder="Ex: Ajustement inventaire"
+                placeholder="Ex: Ajustement inventaire" i18n-placeholder="Ex: Ajustement inventaire"
                 [rows]="3"
                 class="w-full">
               </textarea>
@@ -175,18 +173,14 @@ import { ConfirmationService } from '@core/services/confirmation.service';
           variant="outline"
           icon="pi-times"
           iconPos="left"
-          routerLink="/stock">
-          Annuler
-        </app-button>
+          routerLink="/stock" i18n="@@stock.stock-exit-form.annuler.49ba3292">Annuler</app-button>
         <app-button 
           variant="primary"
           type="submit"
           [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
           iconPos="left"
           [disabled]="form.invalid || saving()"
-          class="danger-button">
-          Enregistrer la sortie
-        </app-button>
+          class="danger-button" i18n="@@stock.stock-exit-form.enregistrer.la.sortie.478823d2">Enregistrer la sortie</app-button>
       </div>
     </form>
   `,

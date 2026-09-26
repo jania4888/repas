@@ -69,43 +69,33 @@ interface TimelineEvent {
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/quotes">
-        Retour aux devis
-      </app-button>
+        routerLink="/quotes" i18n="@@quotes.quote-detail.retour.aux.devis.be1faec1">Retour aux devis</app-button>
       @if (quote()) {
         <app-button
           variant="outline"
           icon="pi-download"
           iconPos="left"
-          (click)="downloadPdf()">
-          Télécharger PDF
-        </app-button>
+          (click)="downloadPdf()" i18n="@@quotes.quote-detail.telecharger.pdf.06b2eebe">Télécharger PDF</app-button>
         @if (canConvert()) {
           <app-button
             variant="primary"
             icon="pi-file-export"
             iconPos="left"
-            (click)="confirmConvertToInvoice()">
-            Créer la facture finale
-          </app-button>
+            (click)="confirmConvertToInvoice()" i18n="@@quotes.quote-detail.creer.la.facture.finale.a86b9a9e">Créer la facture finale</app-button>
         }
         @if (canConvertToOrder()) {
           <app-button
             variant="primary"
             icon="pi-shopping-cart"
             iconPos="left"
-            (click)="confirmConvertToSalesOrder()">
-            Transformer en commande
-          </app-button>
+            (click)="confirmConvertToSalesOrder()" i18n="@@quotes.quote-detail.transformer.en.commande.cd762203">Transformer en commande</app-button>
         }
         @if (canConvertToRecurringContract()) {
           <app-button
             variant="outline"
             icon="pi-refresh"
             iconPos="left"
-            (click)="confirmConvertToRecurringContract()">
-            Créer un contrat récurrent
-          </app-button>
+            (click)="confirmConvertToRecurringContract()" i18n="@@quotes.quote-detail.creer.un.contrat.recurrent.705884e7">Créer un contrat récurrent</app-button>
         }
       }
     </app-page-header>
@@ -137,11 +127,11 @@ interface TimelineEvent {
               </div>
               <div class="quote-dates">
                 <div class="date-item">
-                  <span class="label">Date d'émission</span>
+                  <span class="label" i18n="@@quotes.quote-detail.date.d.emission.99f68857">Date d'émission</span>
                   <span class="value">{{ quote()!.issueDate | date:'dd/MM/yyyy' }}</span>
                 </div>
                 <div class="date-item">
-                  <span class="label">Valide jusqu'au</span>
+                  <span class="label" i18n="@@quotes.quote-detail.valide.jusqu.au.f5b757f8">Valide jusqu'au</span>
                   <span class="value" [class.expired]="isExpired()">
                     {{ quote()!.expiryDate | date:'dd/MM/yyyy' }}
                   </span>
@@ -153,7 +143,7 @@ interface TimelineEvent {
 
             <div class="parties-grid">
               <div class="party-card">
-                <h4>Client</h4>
+                <h4 i18n="@@quotes.quote-detail.client.1bdd79b1">Client</h4>
                 <p class="party-name">{{ quote()!.client.name }}</p>
                 <p class="party-address">{{ quote()!.client.address }}</p>
                 @if (quote()!.client.nif) {
@@ -166,16 +156,16 @@ interface TimelineEvent {
             <p-divider></p-divider>
 
             <div class="lines-section">
-              <h4>Lignes</h4>
+              <h4 i18n="@@quotes.quote-detail.lignes.41c7025e">Lignes</h4>
               <table class="lines-table">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Désignation</th>
-                    <th class="text-right">Quantité</th>
-                    <th class="text-right">Prix unitaire</th>
-                    <th class="text-center">TVA</th>
-                    <th class="text-right">Total HT</th>
+                    <th i18n="@@quotes.quote-detail.text.d08f88df">#</th>
+                    <th i18n="@@quotes.quote-detail.designation.63a9062c">Désignation</th>
+                    <th class="text-right" i18n="@@quotes.quote-detail.quantite.09a38fda">Quantité</th>
+                    <th class="text-right" i18n="@@quotes.quote-detail.prix.unitaire.3e848c96">Prix unitaire</th>
+                    <th class="text-center" i18n="@@quotes.quote-detail.tva.fb62cb5d">TVA</th>
+                    <th class="text-right" i18n="@@quotes.quote-detail.total.ht.2ca17ae6">Total HT</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -200,27 +190,27 @@ interface TimelineEvent {
 
             <div class="totals-box">
               <div class="total-row">
-                <span>Total HT</span>
+                <span i18n="@@quotes.quote-detail.total.ht.2ca17ae6">Total HT</span>
                 <span class="mono">{{ quote()!.subTotal | number:'1.3-3' }} {{ quote()!.currency }}</span>
               </div>
               @if (quote()!.fodecAmount) {
                 <div class="total-row">
-                  <span>FODEC</span>
+                  <span i18n="@@quotes.quote-detail.fodec.9a029080">FODEC</span>
                   <span class="mono">{{ quote()!.fodecAmount | number:'1.3-3' }} {{ quote()!.currency }}</span>
                 </div>
               }
               <div class="total-row">
-                <span>Total TVA</span>
+                <span i18n="@@quotes.quote-detail.total.tva.605c4b2e">Total TVA</span>
                 <span class="mono">{{ quote()!.totalVat | number:'1.3-3' }} {{ quote()!.currency }}</span>
               </div>
               @if (quote()!.fiscalStampAmount) {
                 <div class="total-row">
-                  <span>Timbre fiscal</span>
+                  <span i18n="@@quotes.quote-detail.timbre.fiscal.1f8f7dd1">Timbre fiscal</span>
                   <span class="mono">{{ quote()!.fiscalStampAmount | number:'1.3-3' }} {{ quote()!.currency }}</span>
                 </div>
               }
               <div class="total-row grand">
-                <span>Total TTC</span>
+                <span i18n="@@quotes.quote-detail.total.ttc.9e80ff7c">Total TTC</span>
                 <span class="mono">{{ quote()!.totalAmount | number:'1.3-3' }} {{ quote()!.currency }}</span>
               </div>
             </div>
@@ -230,12 +220,12 @@ interface TimelineEvent {
               <div class="notes-section">
                 @if (quote()!.termsAndConditions) {
                   <div class="note">
-                    <strong>Conditions générales:</strong> {{ quote()!.termsAndConditions }}
+                    <strong i18n="@@quotes.quote-detail.conditions.generales.07ed78a1">Conditions générales:</strong> {{ quote()!.termsAndConditions }}
                   </div>
                 }
                 @if (quote()!.notes) {
                   <div class="note">
-                    <strong>Notes:</strong> {{ quote()!.notes }}
+                    <strong i18n="@@quotes.quote-detail.notes.9c3befe7">Notes:</strong> {{ quote()!.notes }}
                   </div>
                 }
               </div>
@@ -257,9 +247,7 @@ interface TimelineEvent {
                 icon="pi-send"
                 iconPos="left"
                 (click)="sendQuote()"
-                style="width: 100%; margin-bottom: var(--spacing-3);">
-                Envoyer au client
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-3);" i18n="@@quotes.quote-detail.envoyer.au.client.409bc8e1">Envoyer au client</app-button>
             }
             @if (canAccept()) {
               <div class="status-actions">
@@ -268,17 +256,13 @@ interface TimelineEvent {
                   size="sm"
                   icon="pi-check"
                   iconPos="left"
-                  (click)="acceptQuote()">
-                  Accepter
-                </app-button>
+                  (click)="acceptQuote()" i18n="@@quotes.quote-detail.accepter.f8b9b80e">Accepter</app-button>
                 <app-button
                   variant="outline"
                   size="sm"
                   icon="pi-times"
                   iconPos="left"
-                  (click)="rejectQuote()">
-                  Refuser
-                </app-button>
+                  (click)="rejectQuote()" i18n="@@quotes.quote-detail.refuser.62897154">Refuser</app-button>
               </div>
             }
           </p-card>
@@ -308,26 +292,20 @@ interface TimelineEvent {
                 icon="pi-download"
                 iconPos="left"
                 (click)="downloadPdf()"
-                style="width: 100%; margin-bottom: var(--spacing-2);">
-                Télécharger PDF
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@quotes.quote-detail.telecharger.pdf.06b2eebe">Télécharger PDF</app-button>
               <app-button
                 variant="outline"
                 icon="pi-copy"
                 iconPos="left"
                 (click)="duplicateQuote()"
-                style="width: 100%; margin-bottom: var(--spacing-2);">
-                Dupliquer
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@quotes.quote-detail.dupliquer.c5e1d3f1">Dupliquer</app-button>
               @if (convertedInvoiceId()) {
                 <app-button
                   variant="outline"
                   icon="pi-file"
                   iconPos="left"
                   [routerLink]="['/invoices', convertedInvoiceId()!]"
-                  style="width: 100%; margin-bottom: var(--spacing-2);">
-                  Voir la facture
-                </app-button>
+                  style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@quotes.quote-detail.voir.la.facture.e4bddea0">Voir la facture</app-button>
               }
               @if (convertedSalesOrderId()) {
                 <app-button
@@ -335,9 +313,7 @@ interface TimelineEvent {
                   icon="pi-shopping-cart"
                   iconPos="left"
                   [routerLink]="['/sales-orders', convertedSalesOrderId()!]"
-                  style="width: 100%;">
-                  Voir la commande
-                </app-button>
+                  style="width: 100%;" i18n="@@quotes.quote-detail.voir.la.commande.31cf49ea">Voir la commande</app-button>
               }
               @if (canCancel()) {
                 <app-button
@@ -345,9 +321,7 @@ interface TimelineEvent {
                   icon="pi-times"
                   iconPos="left"
                   (click)="cancelQuote()"
-                  style="width: 100%; margin-top: var(--spacing-2);">
-                  Annuler le devis
-                </app-button>
+                  style="width: 100%; margin-top: var(--spacing-2);" i18n="@@quotes.quote-detail.annuler.le.devis.98b229a4">Annuler le devis</app-button>
               }
             </div>
           </p-card>
@@ -356,9 +330,9 @@ interface TimelineEvent {
     } @else {
       <div class="not-found">
         <i class="pi pi-exclamation-triangle"></i>
-        <h2>Devis non trouvé</h2>
-        <p>Le devis demandé n'existe pas ou a été supprimé.</p>
-        <app-button variant="primary" routerLink="/quotes">Retour aux devis</app-button>
+        <h2 i18n="@@quotes.quote-detail.devis.non.trouve.b8455cbe">Devis non trouvé</h2>
+        <p i18n="@@quotes.quote-detail.le.devis.demande.n.existe.pas.ou.a.ete.supprime.1cfc0dc1">Le devis demandé n'existe pas ou a été supprimé.</p>
+        <app-button variant="primary" routerLink="/quotes" i18n="@@quotes.quote-detail.retour.aux.devis.be1faec1">Retour aux devis</app-button>
       </div>
     }
 
@@ -370,21 +344,21 @@ interface TimelineEvent {
       [draggable]="false"
       [resizable]="false"
       (onHide)="rejectReason = ''">
-      <p class="dialog-message">Vous êtes sur le point de refuser ce devis. Un motif est optionnel mais recommandé pour l'historique.</p>
+      <p class="dialog-message" i18n="@@quotes.quote-detail.vous.etes.sur.le.point.de.refuser.ce.devis.un.mo.57e548c2">Vous êtes sur le point de refuser ce devis. Un motif est optionnel mais recommandé pour l'historique.</p>
       <div class="dialog-field">
-        <label for="reject-reason">Motif de refus (optionnel)</label>
+        <label for="reject-reason" i18n="@@quotes.quote-detail.motif.de.refus.optionnel.543c4cff">Motif de refus (optionnel)</label>
         <textarea
           pTextarea
           id="reject-reason"
           [(ngModel)]="rejectReason"
           [rows]="3"
-          placeholder="Ex. : budget insuffisant, délais inadaptés…"
+          placeholder="Ex. : budget insuffisant, délais inadaptés…" i18n-placeholder="Ex. : budget insuffisant, délais inadaptés…"
           class="w-full">
         </textarea>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="rejectDialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" icon="pi-times" iconPos="left" (click)="doReject()">Refuser le devis</app-button>
+        <app-button variant="outline" (click)="rejectDialogVisible = false" i18n="@@quotes.quote-detail.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" icon="pi-times" iconPos="left" (click)="doReject()" i18n="@@quotes.quote-detail.refuser.le.devis.c9c3e549">Refuser le devis</app-button>
       </ng-template>
     </p-dialog>
 
@@ -396,15 +370,15 @@ interface TimelineEvent {
       [draggable]="false"
       [resizable]="false"
       (onHide)="cancelReason = ''">
-      <p class="dialog-message">L'annulation est définitive. Le motif est obligatoire pour la traçabilité.</p>
+      <p class="dialog-message" i18n="@@quotes.quote-detail.l.annulation.est.definitive.le.motif.est.obligat.e2534c49">L'annulation est définitive. Le motif est obligatoire pour la traçabilité.</p>
       <div class="dialog-field">
-        <label for="cancel-reason">Motif d'annulation <span class="required">*</span></label>
+        <label for="cancel-reason">Motif d'annulation <span class="required" i18n="@@quotes.quote-detail.text.df58248c">*</span></label>
         <textarea
           pTextarea
           id="cancel-reason"
           [(ngModel)]="cancelReason"
           [rows]="3"
-          placeholder="Ex. : projet abandonné, commande annulée…"
+          placeholder="Ex. : projet abandonné, commande annulée…" i18n-placeholder="Ex. : projet abandonné, commande annulée…"
           class="w-full">
         </textarea>
         @if (cancelError()) {
@@ -412,8 +386,8 @@ interface TimelineEvent {
         }
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="cancelDialogVisible = false">Retour</app-button>
-        <app-button variant="primary" icon="pi-times" iconPos="left" (click)="doCancel()">Annuler le devis</app-button>
+        <app-button variant="outline" (click)="cancelDialogVisible = false" i18n="@@quotes.quote-detail.retour.e5befb1f">Retour</app-button>
+        <app-button variant="primary" icon="pi-times" iconPos="left" (click)="doCancel()" i18n="@@quotes.quote-detail.annuler.le.devis.98b229a4">Annuler le devis</app-button>
       </ng-template>
     </p-dialog>
 

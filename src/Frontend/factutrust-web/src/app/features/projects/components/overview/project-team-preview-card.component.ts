@@ -10,7 +10,7 @@ import { isManagerRole, previewTeamMembers } from '../../project-detail.vm';
   imports: [CommonModule],
   template: `
     <section class="proj-detail-card">
-      <h3 class="proj-detail-card__title">Équipe du projet</h3>
+      <h3 class="proj-detail-card__title" i18n="@@projects.components.equipe.du.projet.5903aa75">Équipe du projet</h3>
       @if (preview.length) {
         <ul class="proj-detail-team-list">
           @for (m of preview; track m.id) {
@@ -26,9 +26,9 @@ import { isManagerRole, previewTeamMembers } from '../../project-detail.vm';
             </li>
           }
         </ul>
-        <button type="button" class="proj-detail-link" (click)="viewTeam.emit()">Voir l'équipe →</button>
+        <button type="button" class="proj-detail-link" (click)="viewTeam.emit()" i18n="@@projects.components.voir.l.equipe.fa7cc8b0">Voir l'équipe →</button>
       } @else {
-        <p class="proj-detail-card__desc proj-detail-card__desc--muted">Aucun membre assigné.</p>
+        <p class="proj-detail-card__desc proj-detail-card__desc--muted" i18n="@@projects.components.aucun.membre.assigne.614fbe24">Aucun membre assigné.</p>
       }
     </section>
   `

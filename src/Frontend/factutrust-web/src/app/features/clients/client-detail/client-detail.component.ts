@@ -65,24 +65,18 @@ import { PERMISSIONS } from '@core/config/permission-keys';
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/clients">
-        Retour
-      </app-button>
+        routerLink="/clients" i18n="@@clients.client-detail.retour.e5befb1f">Retour</app-button>
       @if (client()) {
         <app-button 
           variant="primary"
           icon="pi-pencil"
           iconPos="left"
-          [routerLink]="['edit']">
-          Modifier
-        </app-button>
+          [routerLink]="['edit']" i18n="@@clients.client-detail.modifier.f260e757">Modifier</app-button>
         <app-button 
           variant="outline"
           icon="pi-trash"
           iconPos="left"
-          (click)="confirmDelete()">
-          Supprimer
-        </app-button>
+          (click)="confirmDelete()" i18n="@@clients.client-detail.supprimer.1acfc1c7">Supprimer</app-button>
       }
     </app-page-header>
 
@@ -141,11 +135,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
         <div class="main-content">
           <p-tabs class="ft-tabs" [lazy]="true">
             <p-tablist>
-              <p-tab [value]="0"><i class="pi pi-info-circle"></i><span>Informations</span></p-tab>
-              <p-tab [value]="1"><i class="pi pi-file"></i><span>Devis</span></p-tab>
-              <p-tab [value]="2"><i class="pi pi-receipt"></i><span>Factures</span></p-tab>
+              <p-tab [value]="0"><i class="pi pi-info-circle"></i><span i18n="@@clients.client-detail.informations.54937b3a">Informations</span></p-tab>
+              <p-tab [value]="1"><i class="pi pi-file"></i><span i18n="@@clients.client-detail.devis.f7622f90">Devis</span></p-tab>
+              <p-tab [value]="2"><i class="pi pi-receipt"></i><span i18n="@@clients.client-detail.factures.da35e4f2">Factures</span></p-tab>
               @if (canManagePortal()) {
-                <p-tab [value]="3"><i class="pi pi-users"></i><span>Espace client</span></p-tab>
+                <p-tab [value]="3"><i class="pi pi-users"></i><span i18n="@@clients.client-detail.espace.client.997229dc">Espace client</span></p-tab>
               }
             </p-tablist>
             <p-tabpanels>
@@ -153,40 +147,40 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             <p-tabpanel [value]="0">
               <div class="info-grid">
                 <div class="info-section">
-                  <h3>Coordonnées</h3>
+                  <h3 i18n="@@clients.client-detail.coordonnees.7c309d77">Coordonnées</h3>
                   <div class="info-row">
-                    <span class="label">Email</span>
+                    <span class="label" i18n="@@clients.client-detail.email.84add5b2">Email</span>
                     @if (client()!.email) {
                       <a [href]="'mailto:' + client()!.email" class="value link">{{ client()!.email }}</a>
                     } @else {
-                      <span class="value">—</span>
+                      <span class="value" i18n="@@clients.client-detail.text.1b93795b">—</span>
                     }
                   </div>
                   <div class="info-row">
-                    <span class="label">Téléphone</span>
+                    <span class="label" i18n="@@clients.client-detail.telephone.d3b023ea">Téléphone</span>
                     <a [href]="'tel:' + client()!.phone" class="value link">{{ client()!.phone }}</a>
                   </div>
                 </div>
 
                 <div class="info-section">
-                  <h3>Informations fiscales</h3>
+                  <h3 i18n="@@clients.client-detail.informations.fiscales.b0156b88">Informations fiscales</h3>
                   <div class="info-row">
-                    <span class="label">Type</span>
+                    <span class="label" i18n="@@clients.client-detail.type.3deb7456">Type</span>
                     <app-status-badge 
                       [status]="getClientTypeStatus(client()!.type)"
                       [label]="client()!.typeDisplay">
                     </app-status-badge>
                   </div>
                   <div class="info-row">
-                    <span class="label">Matricule fiscal</span>
+                    <span class="label" i18n="@@clients.client-detail.matricule.fiscal.304096c4">Matricule fiscal</span>
                     <span class="value mono">{{ client()!.nif || 'Non renseigné' }}</span>
                   </div>
                 </div>
 
                 <div class="info-section">
-                  <h3>Conditions financières</h3>
+                  <h3 i18n="@@clients.client-detail.conditions.financieres.ae9a6ff2">Conditions financières</h3>
                   <div class="info-row">
-                    <span class="label">Délai de règlement</span>
+                    <span class="label" i18n="@@clients.client-detail.delai.de.reglement.052e3d66">Délai de règlement</span>
                     <span class="value">
                       @if (client()!.defaultPaymentTermDays != null) {
                         {{ client()!.defaultPaymentTermDays }} jours
@@ -196,7 +190,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                     </span>
                   </div>
                   <div class="info-row">
-                    <span class="label">Plafond d'encours</span>
+                    <span class="label" i18n="@@clients.client-detail.plafond.d.encours.d6965e27">Plafond d'encours</span>
                     <span class="value">
                       @if (outstanding()?.creditLimit != null) {
                         {{ formatCurrency(outstanding()!.creditLimit!) }}
@@ -207,12 +201,12 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   </div>
                   <div class="info-row">
                     <span class="label"></span>
-                    <a class="value link" [routerLink]="['edit']">Modifier le plafond</a>
+                    <a class="value link" [routerLink]="['edit']" i18n="@@clients.client-detail.modifier.le.plafond.b4fd857f">Modifier le plafond</a>
                   </div>
                 </div>
 
                 <div class="info-section full-width">
-                  <h3>Adresse</h3>
+                  <h3 i18n="@@clients.client-detail.adresse.522e1466">Adresse</h3>
                   <div class="address-block">
                     <p>{{ client()!.address.street }}</p>
                     @if (client()!.address.streetLine2) {
@@ -230,7 +224,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 
                 @if (client()!.notes) {
                   <div class="info-section full-width">
-                    <h3>Notes</h3>
+                    <h3 i18n="@@clients.client-detail.notes.70440046">Notes</h3>
                     <p class="notes">{{ client()!.notes }}</p>
                   </div>
                 }
@@ -241,16 +235,14 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             <p-tabpanel [value]="1">
               <div class="invoices-section">
                 <div class="section-header">
-                  <h3>Historique des devis</h3>
+                  <h3 i18n="@@clients.client-detail.historique.des.devis.0d541e89">Historique des devis</h3>
                   <app-button 
                     variant="primary"
                     size="sm"
                     icon="pi-plus"
                     iconPos="left"
                     [routerLink]="['/quotes/new']"
-                    [queryParams]="{clientId: client()!.id}">
-                    Nouveau devis
-                  </app-button>
+                    [queryParams]="{clientId: client()!.id}" i18n="@@clients.client-detail.nouveau.devis.4c3f0159">Nouveau devis</app-button>
                 </div>
 
                 @if (loadingQuotes()) {
@@ -260,11 +252,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
           [loading]="loading()" [value]="quotes()" [rows]="10" styleClass="p-datatable-sm">
                     <ng-template pTemplate="header">
                       <tr>
-                        <th>Numéro</th>
-                        <th>Date</th>
-                        <th>Montant</th>
-                        <th>Statut</th>
-                        <th style="width: 80px">Actions</th>
+                        <th i18n="@@clients.client-detail.numero.15e73db0">Numéro</th>
+                        <th i18n="@@clients.client-detail.date.eb9a4bc1">Date</th>
+                        <th i18n="@@clients.client-detail.montant.4adcd9fc">Montant</th>
+                        <th i18n="@@clients.client-detail.statut.659499f3">Statut</th>
+                        <th style="width: 80px" i18n="@@clients.client-detail.actions.c3cd636a">Actions</th>
                       </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-quote>
@@ -290,7 +282,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                           <app-empty-state
                             icon="pi-file-edit"
                             iconSize="2rem"
-                            title="Aucun devis"
+                            title="Aucun devis" i18n-title="Aucun devis"
                             description="Créez un devis pour ce client."
                             actionLabel="Créer un devis"
                             (actionClick)="createQuoteForClient()">
@@ -307,16 +299,14 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             <p-tabpanel [value]="2">
               <div class="invoices-section">
                 <div class="section-header">
-                  <h3>Historique des factures</h3>
+                  <h3 i18n="@@clients.client-detail.historique.des.factures.6bab16bc">Historique des factures</h3>
                   <app-button 
                     variant="primary"
                     size="sm"
                     icon="pi-plus"
                     iconPos="left"
                     [routerLink]="['/invoices/new']"
-                    [queryParams]="{clientId: client()!.id}">
-                    Nouvelle facture
-                  </app-button>
+                    [queryParams]="{clientId: client()!.id}" i18n="@@clients.client-detail.nouvelle.facture.cdf7e09c">Nouvelle facture</app-button>
                 </div>
 
                 @if (loadingInvoices()) {
@@ -333,11 +323,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>Numéro</th>
-                      <th>Date</th>
-                      <th>Montant</th>
-                      <th>Statut</th>
-                      <th style="width: 80px">Actions</th>
+                      <th i18n="@@clients.client-detail.numero.15e73db0">Numéro</th>
+                      <th i18n="@@clients.client-detail.date.eb9a4bc1">Date</th>
+                      <th i18n="@@clients.client-detail.montant.4adcd9fc">Montant</th>
+                      <th i18n="@@clients.client-detail.statut.659499f3">Statut</th>
+                      <th style="width: 80px" i18n="@@clients.client-detail.actions.c3cd636a">Actions</th>
                     </tr>
                   </ng-template>
 
@@ -375,7 +365,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         <app-empty-state
                           icon="pi-file"
                           iconSize="2rem"
-                          title="Aucune facture"
+                          title="Aucune facture" i18n-title="Aucune facture"
                           description="Créez une facture pour ce client."
                           actionLabel="Créer une facture"
                           (actionClick)="createInvoiceForClient()">
@@ -419,16 +409,16 @@ import { PERMISSIONS } from '@core/config/permission-keys';
           <p-card header="Historique" styleClass="history-card">
             <div class="history-content">
               <div class="history-item">
-                <span class="label">Créé le</span>
+                <span class="label" i18n="@@clients.client-detail.cree.le.046c02a0">Créé le</span>
                 <span class="value">{{ client()!.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
               </div>
               <div class="history-item">
-                <span class="label">Modifié le</span>
+                <span class="label" i18n="@@clients.client-detail.modifie.le.8b181c38">Modifié le</span>
                 <span class="value">{{ client()!.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
               </div>
               @if (stats()?.lastInvoiceDate) {
                 <div class="history-item">
-                  <span class="label">Dernière facture</span>
+                  <span class="label" i18n="@@clients.client-detail.derniere.facture.ab799db2">Dernière facture</span>
                   <span class="value">{{ stats()!.lastInvoiceDate | date:'dd/MM/yyyy' }}</span>
                 </div>
               }
@@ -443,26 +433,20 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                 iconPos="left"
                 routerLink="/quotes/new"
                 [queryParams]="{clientId: client()!.id}"
-                style="width: 100%; margin-bottom: var(--spacing-2);">
-                Nouveau devis
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@clients.client-detail.nouveau.devis.4c3f0159">Nouveau devis</app-button>
               <app-button 
                 variant="outline"
                 icon="pi-file"
                 iconPos="left"
                 routerLink="/invoices/new"
                 [queryParams]="{clientId: client()!.id}"
-                style="width: 100%; margin-bottom: var(--spacing-2);">
-                Nouvelle facture
-              </app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@clients.client-detail.nouvelle.facture.cdf7e09c">Nouvelle facture</app-button>
               <app-button 
                 variant="outline"
                 icon="pi-envelope"
                 iconPos="left"
                 (click)="sendEmail()"
-                style="width: 100%;">
-                Envoyer un email
-              </app-button>
+                style="width: 100%;" i18n="@@clients.client-detail.envoyer.un.email.48feacc4">Envoyer un email</app-button>
             </div>
           </p-card>
         </div>
@@ -470,9 +454,9 @@ import { PERMISSIONS } from '@core/config/permission-keys';
     } @else {
       <div class="not-found">
         <i class="pi pi-exclamation-triangle"></i>
-        <h2>Client non trouvé</h2>
-        <p>Le client demandé n'existe pas ou a été supprimé.</p>
-        <app-button variant="primary" routerLink="/clients">Retour à la liste</app-button>
+        <h2 i18n="@@clients.client-detail.client.non.trouve.1323765f">Client non trouvé</h2>
+        <p i18n="@@clients.client-detail.le.client.demande.n.existe.pas.ou.a.ete.supprime.b283788b">Le client demandé n'existe pas ou a été supprimé.</p>
+        <app-button variant="primary" routerLink="/clients" i18n="@@clients.client-detail.retour.a.la.liste.7753f531">Retour à la liste</app-button>
       </div>
     }
 

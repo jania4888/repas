@@ -36,7 +36,7 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
       styleClass="fs-export-dialog">
       <div class="fs-params">
         <div class="fs-field">
-          <label for="fs-asof">Arrêtée au</label>
+          <label for="fs-asof" i18n="@@accounting.nct-statements.arretee.au.c829a7a3">Arrêtée au</label>
           <p-datepicker
             inputId="fs-asof"
             [(ngModel)]="asOfDate"
@@ -45,7 +45,7 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
             appendTo="body"
             [disabled]="busy()" />
         </div>
-        <div class="fs-radios" role="radiogroup" aria-label="Comparatif N-1">
+        <div class="fs-radios" role="radiogroup" aria-label="Comparatif N-1" i18n-aria-label="Comparatif N-1">
           <label class="fs-radio">
             <input type="radio" name="n1Mode" [ngModel]="previousYearLabelMode" (ngModelChange)="setPreviousYearMode($event)" [value]="0" [disabled]="busy()" />
             N-1 arrêtée au 31/12
@@ -175,13 +175,9 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
         <div class="fs-footer">
           <i class="pi pi-print fs-footer-icon" aria-hidden="true"></i>
           <div class="fs-footer-actions">
-            <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="preview()" [disabled]="busy() || !hasSelection()">
-              Aperçu
-            </app-button>
-            <app-button variant="primary" icon="pi pi-print" type="button" (click)="print()" [disabled]="busy() || !hasSelection()">
-              Imprimer
-            </app-button>
-            <app-button variant="secondary" type="button" (click)="close()" [disabled]="busy()">Fermer</app-button>
+            <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="preview()" [disabled]="busy() || !hasSelection()" i18n="@@accounting.nct-statements.apercu.f0f53004">Aperçu</app-button>
+            <app-button variant="primary" icon="pi pi-print" type="button" (click)="print()" [disabled]="busy() || !hasSelection()" i18n="@@accounting.nct-statements.imprimer.5382c09d">Imprimer</app-button>
+            <app-button variant="secondary" type="button" (click)="close()" [disabled]="busy()" i18n="@@accounting.nct-statements.fermer.5ab4ec64">Fermer</app-button>
           </div>
         </div>
       </ng-template>

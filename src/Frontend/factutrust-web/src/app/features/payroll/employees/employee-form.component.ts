@@ -62,34 +62,34 @@ function parseIsoDate(value?: string): Date | null {
     <app-page-header
       [title]="isEditMode() ? 'Modifier le salarié' : 'Nouveau salarié'"
       [subtitle]="isEditMode() ? 'Mettez à jour le dossier salarié.' : 'Créez un dossier salarié et ses informations de base.'">
-      <app-button variant="outline" icon="pi-times" iconPos="left" [routerLink]="routeBase() + '/employees'">Annuler</app-button>
+      <app-button variant="outline" icon="pi-times" iconPos="left" [routerLink]="routeBase() + '/employees'" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
     </app-page-header>
 
     @if (loading()) {
-      <p>Chargement…</p>
+      <p i18n="@@payroll.employees.chargement.01cba1df">Chargement…</p>
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <app-form-section title="Identité" icon="pi-id-card" [number]="1">
+        <app-form-section title="Identité" i18n-title="Identité" icon="pi-id-card" [number]="1">
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="employeeNumber">Matricule <span class="required">*</span></label>
+              <label for="employeeNumber">Matricule <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
               <input pInputText id="employeeNumber" formControlName="employeeNumber" class="w-full" [class.ng-invalid]="isInvalid('employeeNumber')" />
               @if (isInvalid('employeeNumber')) {
                 <div class="field-error">{{ fieldError('employeeNumber') }}</div>
               }
             </div>
             <div class="payroll-form-group">
-              <label for="cin">CIN</label>
+              <label for="cin" i18n="@@payroll.employees.cin.748d5d16">CIN</label>
               <input pInputText id="cin" formControlName="cin" class="w-full" [class.ng-invalid]="isInvalid('cin')" />
-              <span class="field-hint">8 chiffres (ex. 12345678)</span>
+              <span class="field-hint" i18n="@@payroll.employees.8.chiffres.ex.12345678.527de8d0">8 chiffres (ex. 12345678)</span>
               @if (isInvalid('cin')) {
                 <div class="field-error">{{ fieldError('cin') }}</div>
               }
             </div>
             <div class="payroll-form-group">
-              <label for="cnssNumber">N° CNSS</label>
+              <label for="cnssNumber" i18n="@@payroll.employees.n.cnss.7f5891f3">N° CNSS</label>
               <input pInputText id="cnssNumber" formControlName="cnssNumber" class="w-full" [class.ng-invalid]="isInvalid('cnssNumber')" />
-              <span class="field-hint">10 chiffres sans espaces</span>
+              <span class="field-hint" i18n="@@payroll.employees.10.chiffres.sans.espaces.112df24e">10 chiffres sans espaces</span>
               @if (isInvalid('cnssNumber')) {
                 <div class="field-error">{{ fieldError('cnssNumber') }}</div>
               }
@@ -97,24 +97,24 @@ function parseIsoDate(value?: string): Date | null {
           </div>
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="category">Catégorie</label>
+              <label for="category" i18n="@@payroll.employees.categorie.6b38300a">Catégorie</label>
               <input pInputText id="category" formControlName="category" class="w-full" />
             </div>
             <div class="payroll-form-group">
-              <label for="echelon">Échelon</label>
+              <label for="echelon" i18n="@@payroll.employees.echelon.8d0277a5">Échelon</label>
               <input pInputText id="echelon" formControlName="echelon" class="w-full" />
             </div>
           </div>
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="firstName">Prénom <span class="required">*</span></label>
+              <label for="firstName">Prénom <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
               <input pInputText id="firstName" formControlName="firstName" class="w-full" [class.ng-invalid]="isInvalid('firstName')" />
               @if (isInvalid('firstName')) {
                 <div class="field-error">{{ fieldError('firstName') }}</div>
               }
             </div>
             <div class="payroll-form-group">
-              <label for="lastName">Nom <span class="required">*</span></label>
+              <label for="lastName">Nom <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
               <input pInputText id="lastName" formControlName="lastName" class="w-full" [class.ng-invalid]="isInvalid('lastName')" />
               @if (isInvalid('lastName')) {
                 <div class="field-error">{{ fieldError('lastName') }}</div>
@@ -123,11 +123,11 @@ function parseIsoDate(value?: string): Date | null {
           </div>
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="dateOfBirth">Date de naissance</label>
+              <label for="dateOfBirth" i18n="@@payroll.employees.date.de.naissance.8851f385">Date de naissance</label>
               <p-datepicker id="dateOfBirth" formControlName="dateOfBirth" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full" />
             </div>
             <div class="payroll-form-group">
-              <label for="hireDate">Date d'embauche <span class="required">*</span></label>
+              <label for="hireDate">Date d'embauche <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
               <p-datepicker id="hireDate" formControlName="hireDate" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full" />
               @if (isInvalid('hireDate')) {
                 <div class="field-error">{{ fieldError('hireDate') }}</div>
@@ -136,31 +136,31 @@ function parseIsoDate(value?: string): Date | null {
           </div>
         </app-form-section>
 
-        <app-form-section title="Situation familiale & contact" icon="pi-users" [number]="2">
+        <app-form-section title="Situation familiale & contact" i18n-title="Situation familiale & contact" icon="pi-users" [number]="2">
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="maritalStatus">Situation familiale</label>
+              <label for="maritalStatus" i18n="@@payroll.employees.situation.familiale.3b708781">Situation familiale</label>
               <p-select id="maritalStatus" [options]="maritalStatusOptions" formControlName="maritalStatus" optionLabel="label" optionValue="value" styleClass="w-full" />
             </div>
             <div class="payroll-form-group">
-              <label for="dependentChildren">Enfants à charge</label>
+              <label for="dependentChildren" i18n="@@payroll.employees.enfants.a.charge.d024299f">Enfants à charge</label>
               <p-inputNumber id="dependentChildren" formControlName="dependentChildren" [min]="0" styleClass="w-full" />
             </div>
             <div class="payroll-form-group switch-group">
-              <label for="isHeadOfFamily">Chef de famille</label>
+              <label for="isHeadOfFamily" i18n="@@payroll.employees.chef.de.famille.0ba5a38a">Chef de famille</label>
               <p-inputSwitch id="isHeadOfFamily" formControlName="isHeadOfFamily" />
             </div>
           </div>
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="studentChildren">Dont étudiants (non boursiers, &lt; 25 ans)</label>
+              <label for="studentChildren" i18n="@@payroll.employees.dont.etudiants.non.boursiers.lt.25.ans.ac38c774">Dont étudiants (non boursiers, &lt; 25 ans)</label>
               <p-inputNumber id="studentChildren" formControlName="studentChildren" [min]="0" styleClass="w-full" />
-              <span class="field-hint">Déduction IRPP majorée</span>
+              <span class="field-hint" i18n="@@payroll.employees.deduction.irpp.majoree.315b142c">Déduction IRPP majorée</span>
             </div>
             <div class="payroll-form-group">
-              <label for="disabledChildren">Dont infirmes</label>
+              <label for="disabledChildren" i18n="@@payroll.employees.dont.infirmes.486cedf0">Dont infirmes</label>
               <p-inputNumber id="disabledChildren" formControlName="disabledChildren" [min]="0" styleClass="w-full" />
-              <span class="field-hint">Déduction majorée, sans limite de rang</span>
+              <span class="field-hint" i18n="@@payroll.employees.deduction.majoree.sans.limite.de.rang.f11ea99e">Déduction majorée, sans limite de rang</span>
             </div>
           </div>
           @if (form.errors?.['familyCounts'] && form.touched) {
@@ -170,8 +170,8 @@ function parseIsoDate(value?: string): Date | null {
           <div class="parent-claims" formArrayName="dependentParentClaims">
             <div class="parent-claims-header">
               <div>
-                <strong>Parents à charge</strong>
-                <span class="field-hint">Un parent (CIN) ne peut être déclaré que par un seul salarié de l'entreprise.</span>
+                <strong i18n="@@payroll.employees.parents.a.charge.ce5fcb65">Parents à charge</strong>
+                <span class="field-hint" i18n="@@payroll.employees.un.parent.cin.ne.peut.etre.declare.que.par.un.se.d34a224b">Un parent (CIN) ne peut être déclaré que par un seul salarié de l'entreprise.</span>
               </div>
               <app-button
                 type="button"
@@ -179,9 +179,7 @@ function parseIsoDate(value?: string): Date | null {
                 icon="pi-plus"
                 iconPos="left"
                 [disabled]="dependentParentClaims.length >= 2"
-                (click)="addParentClaim()">
-                Ajouter un parent
-              </app-button>
+                (click)="addParentClaim()" i18n>Ajouter un parent</app-button>
             </div>
             @if (legacyIncomplete()) {
               <p-tag value="Parents à compléter — saisissez les CIN pour activer la déduction" severity="warn" />
@@ -189,7 +187,7 @@ function parseIsoDate(value?: string): Date | null {
             @for (ctrl of dependentParentClaims.controls; track $index; let i = $index) {
               <div class="parent-claim-row" [formGroupName]="i">
                 <div class="payroll-form-group">
-                  <label [for]="'kinship' + i">Lien</label>
+                  <label [for]="'kinship' + i" i18n="@@payroll.employees.lien.e2639e1d">Lien</label>
                   <p-select
                     [inputId]="'kinship' + i"
                     [options]="kinshipOptions"
@@ -199,7 +197,7 @@ function parseIsoDate(value?: string): Date | null {
                     styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label [for]="'parentCin' + i">CIN parent <span class="required">*</span></label>
+                  <label [for]="'parentCin' + i">CIN parent <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
                   <input
                     pInputText
                     [id]="'parentCin' + i"
@@ -211,44 +209,42 @@ function parseIsoDate(value?: string): Date | null {
                   }
                 </div>
                 <div class="payroll-form-group">
-                  <label [for]="'parentFirstName' + i">Prénom</label>
+                  <label [for]="'parentFirstName' + i" i18n="@@payroll.employees.prenom.e4387ade">Prénom</label>
                   <input pInputText [id]="'parentFirstName' + i" formControlName="firstName" class="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label [for]="'parentLastName' + i">Nom</label>
+                  <label [for]="'parentLastName' + i" i18n="@@payroll.employees.nom.7ff20370">Nom</label>
                   <input pInputText [id]="'parentLastName' + i" formControlName="lastName" class="w-full" />
                 </div>
                 <div class="parent-claim-actions">
-                  <app-button type="button" variant="danger" icon="pi-trash" iconPos="left" (click)="removeParentClaim(i)">
-                    Retirer
-                  </app-button>
+                  <app-button type="button" variant="danger" icon="pi-trash" iconPos="left" (click)="removeParentClaim(i)" i18n="@@payroll.employees.retirer.54ec24a1">Retirer</app-button>
                 </div>
               </div>
             }
             @if (dependentParentClaims.length === 0) {
-              <p class="field-hint">Aucun parent déclaré — la déduction parents à charge ne sera pas appliquée.</p>
+              <p class="field-hint" i18n="@@payroll.employees.aucun.parent.declare.la.deduction.parents.a.char.1151a5a9">Aucun parent déclaré — la déduction parents à charge ne sera pas appliquée.</p>
             }
           </div>
 
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="email">Email</label>
+              <label for="email" i18n="@@payroll.employees.email.84add5b2">Email</label>
               <input pInputText id="email" formControlName="email" class="w-full" [class.ng-invalid]="isInvalid('email')" />
               @if (isInvalid('email')) {
                 <div class="field-error">{{ fieldError('email') }}</div>
               }
             </div>
             <div class="payroll-form-group">
-              <label for="phone">Téléphone</label>
+              <label for="phone" i18n="@@payroll.employees.telephone.d3b023ea">Téléphone</label>
               <input pInputText id="phone" formControlName="phone" class="w-full" [class.ng-invalid]="isInvalid('phone')" />
               @if (isInvalid('phone')) {
                 <div class="field-error">{{ fieldError('phone') }}</div>
               }
             </div>
             <div class="payroll-form-group">
-              <label for="rib">RIB</label>
+              <label for="rib" i18n="@@payroll.employees.rib.61f3ea57">RIB</label>
               <input pInputText id="rib" formControlName="rib" class="w-full" [class.ng-invalid]="isInvalid('rib')" />
-              <span class="field-hint">20 chiffres (compte bancaire tunisien)</span>
+              <span class="field-hint" i18n="@@payroll.employees.20.chiffres.compte.bancaire.tunisien.e8ab5a63">20 chiffres (compte bancaire tunisien)</span>
               @if (isInvalid('rib')) {
                 <div class="field-error">{{ fieldError('rib') }}</div>
               }
@@ -256,26 +252,26 @@ function parseIsoDate(value?: string): Date | null {
           </div>
         </app-form-section>
 
-        <app-form-section title="Adresse" icon="pi-map-marker" [number]="3">
+        <app-form-section title="Adresse" i18n-title="Adresse" icon="pi-map-marker" [number]="3">
           <div class="payroll-form-group">
-            <label for="street">Rue</label>
+            <label for="street" i18n="@@payroll.employees.rue.53f787b0">Rue</label>
             <input pInputText id="street" formControlName="street" class="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label for="streetLine2">Complément d'adresse</label>
+            <label for="streetLine2" i18n="@@payroll.employees.complement.d.adresse.fba484a7">Complément d'adresse</label>
             <input pInputText id="streetLine2" formControlName="streetLine2" class="w-full" />
           </div>
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="city">Ville</label>
+              <label for="city" i18n="@@payroll.employees.ville.97217611">Ville</label>
               <input pInputText id="city" formControlName="city" class="w-full" />
             </div>
             <div class="payroll-form-group">
-              <label for="postalCode">Code postal</label>
+              <label for="postalCode" i18n="@@payroll.employees.code.postal.74779109">Code postal</label>
               <input pInputText id="postalCode" formControlName="postalCode" class="w-full" />
             </div>
             <div class="payroll-form-group">
-              <label for="governorate">Gouvernorat</label>
+              <label for="governorate" i18n="@@payroll.employees.gouvernorat.b9cd1d99">Gouvernorat</label>
               <p-select id="governorate" [options]="governorateOptions" formControlName="governorate" optionLabel="label" optionValue="value" [showClear]="true" styleClass="w-full" />
               @if (isInvalid('governorate')) {
                 <div class="field-error">{{ fieldError('governorate') }}</div>

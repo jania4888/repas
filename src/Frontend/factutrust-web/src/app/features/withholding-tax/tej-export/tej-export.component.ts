@@ -19,8 +19,8 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <div class="page-container">
       <div class="page-header">
         <div>
-          <h1>Export TEJ — Déclaration XML</h1>
-          <p class="subtitle">Générez le fichier XML pour préparer la déclaration ; la soumission officielle se fait sur le portail TEJ (connexion OIDC).</p>
+          <h1 i18n="@@withholding-tax.tej-export.export.tej.declaration.xml.77169891">Export TEJ — Déclaration XML</h1>
+          <p class="subtitle" i18n="@@withholding-tax.tej-export.generez.le.fichier.xml.pour.preparer.la.declarat.647cd798">Générez le fichier XML pour préparer la déclaration ; la soumission officielle se fait sur le portail TEJ (connexion OIDC).</p>
         </div>
         <a routerLink="/withholding-tax/dashboard" class="btn btn-outline">
           <i class="fa-solid fa-arrow-left"></i> Tableau de bord
@@ -29,10 +29,10 @@ import { ConfirmationService } from '@core/services/confirmation.service';
 
       <!-- Parameters -->
       <div class="card">
-        <h3>Paramètres de la déclaration</h3>
+        <h3 i18n="@@withholding-tax.tej-export.parametres.de.la.declaration.8a091a6d">Paramètres de la déclaration</h3>
         <div class="form-grid">
           <div class="form-group">
-            <label for="ex-y">Exercice (année) *</label>
+            <label for="ex-y" i18n="@@withholding-tax.tej-export.exercice.annee.a59f2bc1">Exercice (année) *</label>
             <select id="ex-y" [(ngModel)]="exerciceYear" (ngModelChange)="onPeriodChange()">
               @for (y of years; track y) {
                 <option [ngValue]="y">{{ y }}</option>
@@ -40,7 +40,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
             </select>
           </div>
           <div class="form-group">
-            <label for="ex-m">Mois *</label>
+            <label for="ex-m" i18n="@@withholding-tax.tej-export.mois.b5e21de4">Mois *</label>
             <select id="ex-m" [(ngModel)]="month" (ngModelChange)="onPeriodChange()">
               @for (m of months; track m.value) {
                 <option [ngValue]="m.value">{{ m.label }}</option>
@@ -48,10 +48,10 @@ import { ConfirmationService } from '@core/services/confirmation.service';
             </select>
           </div>
           <div class="form-group">
-            <label for="ex-t">Type de soumission *</label>
+            <label for="ex-t" i18n="@@withholding-tax.tej-export.type.de.soumission.35d5b450">Type de soumission *</label>
             <select id="ex-t" [(ngModel)]="submissionType">
-              <option [ngValue]="TejSubmissionType.Initiale">Initiale</option>
-              <option [ngValue]="TejSubmissionType.Corrective">Corrective</option>
+              <option [ngValue]="TejSubmissionType.Initiale" i18n="@@withholding-tax.tej-export.initiale.6e2ba30f">Initiale</option>
+              <option [ngValue]="TejSubmissionType.Corrective" i18n="@@withholding-tax.tej-export.corrective.6a9731be">Corrective</option>
             </select>
           </div>
         </div>
@@ -79,19 +79,19 @@ import { ConfirmationService } from '@core/services/confirmation.service';
       </div>
 
       @if (periodHintLoading) {
-        <p class="muted period-hint">Vérification des factures fournisseurs éligibles pour cette période…</p>
+        <p class="muted period-hint" i18n="@@withholding-tax.tej-export.verification.des.factures.fournisseurs.eligibles.7aeb3eea">Vérification des factures fournisseurs éligibles pour cette période…</p>
       }
       @if (!periodHintLoading && periodEligibleCount === 0) {
         <div class="card card-warning" role="status">
           <h3><i class="fa-solid fa-circle-info"></i> Aucune facture fournisseur éligible pour cette période</h3>
-          <p class="hint-p">Une facture n’apparaît dans le fichier que si <strong>toutes</strong> les conditions suivantes sont remplies :</p>
+          <p class="hint-p">Une facture n’apparaît dans le fichier que si <strong i18n="@@withholding-tax.tej-export.toutes.12a46cad">toutes</strong> les conditions suivantes sont remplies :</p>
           <ul class="hint-list">
-            <li>statut <strong>Payée</strong> (soldée) ;</li>
-            <li>retenue calculée et enregistrée sur la facture (fournisseur <strong>assujetti à la RS</strong>, type d’opération RS, montant &gt; 0) ;</li>
-            <li>date de solde (<strong>Payée le</strong>) dans le <strong>mois et l’année</strong> sélectionnés.</li>
+            <li>statut <strong i18n="@@withholding-tax.tej-export.payee.65b240e8">Payée</strong> (soldée) ;</li>
+            <li>retenue calculée et enregistrée sur la facture (fournisseur <strong i18n="@@withholding-tax.tej-export.assujetti.a.la.rs.6c46f7d3">assujetti à la RS</strong>, type d’opération RS, montant &gt; 0) ;</li>
+            <li>date de solde (<strong i18n="@@withholding-tax.tej-export.payee.le.9c5c2137">Payée le</strong>) dans le <strong i18n="@@withholding-tax.tej-export.mois.et.l.annee.68ceb441">mois et l’année</strong> sélectionnés.</li>
           </ul>
-          <p class="hint-p muted-hint">Un montant TTC supérieur au seuil RS7 (achats) ne suffit pas si le fournisseur n’est pas paramétré comme assujetti ou si la facture n’est pas encore soldée.</p>
-          <a routerLink="/withholding-tax/dashboard" class="btn btn-outline btn-sm">Tableau de bord retenue à la source</a>
+          <p class="hint-p muted-hint" i18n="@@withholding-tax.tej-export.un.montant.ttc.superieur.au.seuil.rs7.achats.ne..f60823e9">Un montant TTC supérieur au seuil RS7 (achats) ne suffit pas si le fournisseur n’est pas paramétré comme assujetti ou si la facture n’est pas encore soldée.</p>
+          <a routerLink="/withholding-tax/dashboard" class="btn btn-outline btn-sm" i18n="@@withholding-tax.tej-export.tableau.de.bord.retenue.a.la.source.fa7f4511">Tableau de bord retenue à la source</a>
         </div>
       }
 
@@ -111,14 +111,14 @@ import { ConfirmationService } from '@core/services/confirmation.service';
               <li>{{ err }}</li>
             }
           </ul>
-          <p class="help-text">Corrigez ces erreurs avant de soumettre le fichier sur la plateforme TEJ.</p>
+          <p class="help-text" i18n="@@withholding-tax.tej-export.corrigez.ces.erreurs.avant.de.soumettre.le.fichi.3b5e9b29">Corrigez ces erreurs avant de soumettre le fichier sur la plateforme TEJ.</p>
         </div>
       }
 
       @if (validationSuccess) {
         <div class="card card-success">
           <h3><i class="fa-solid fa-check-circle"></i> Validation réussie</h3>
-          <p>Le fichier XML est prêt pour contrôle ; vérifiez-le sur le portail avant envoi définitif.</p>
+          <p i18n="@@withholding-tax.tej-export.le.fichier.xml.est.pret.pour.controle.verifiez.l.631e4ea3">Le fichier XML est prêt pour contrôle ; vérifiez-le sur le portail avant envoi définitif.</p>
         </div>
       }
 
@@ -126,7 +126,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
       @if (xmlPreview) {
         <div class="card">
           <div class="preview-header">
-            <h3>Prévisualisation XML</h3>
+            <h3 i18n="@@withholding-tax.tej-export.previsualisation.xml.871ea180">Prévisualisation XML</h3>
             <button type="button" class="btn btn-outline btn-sm" (click)="copyXml()">
               <i class="fa-solid fa-copy"></i> Copier
             </button>
@@ -137,22 +137,22 @@ import { ConfirmationService } from '@core/services/confirmation.service';
 
       <!-- History -->
       <div class="card">
-        <h3>Historique des exports</h3>
+        <h3 i18n="@@withholding-tax.tej-export.historique.des.exports.ed5f4fcf">Historique des exports</h3>
         @if (historyLoading) {
-          <p class="muted">Chargement…</p>
+          <p class="muted" i18n="@@withholding-tax.tej-export.chargement.01cba1df">Chargement…</p>
         } @else if (exportHistory.length === 0) {
-          <p class="muted">Aucun export enregistré pour ce tenant.</p>
+          <p class="muted" i18n="@@withholding-tax.tej-export.aucun.export.enregistre.pour.ce.tenant.0baa3e76">Aucun export enregistré pour ce tenant.</p>
         } @else {
           <div class="table-wrap">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Fichier</th>
-                  <th>Période</th>
-                  <th>Lignes XML</th>
-                  <th>Valide</th>
-                  <th>Empreinte SHA-256</th>
+                  <th i18n="@@withholding-tax.tej-export.date.eb9a4bc1">Date</th>
+                  <th i18n="@@withholding-tax.tej-export.fichier.f0fa5745">Fichier</th>
+                  <th i18n="@@withholding-tax.tej-export.periode.de2110b7">Période</th>
+                  <th i18n="@@withholding-tax.tej-export.lignes.xml.38c04a57">Lignes XML</th>
+                  <th i18n="@@withholding-tax.tej-export.valide.67175216">Valide</th>
+                  <th i18n="@@withholding-tax.tej-export.empreinte.sha.256.e830bea9">Empreinte SHA-256</th>
                 </tr>
               </thead>
               <tbody>
@@ -177,32 +177,32 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         <h3><i class="fa-solid fa-info-circle"></i> Portail TEJ et sécurité</h3>
         <div class="help-grid help-grid-3">
           <div>
-            <h4>Format du fichier</h4>
+            <h4 i18n="@@withholding-tax.tej-export.format.du.fichier.6d4c98d7">Format du fichier</h4>
             <ul>
-              <li>XML structuré (validation interne + schéma enveloppe embarqué ; complétez avec les XSD officiels si fournis)</li>
-              <li>Montants en millimes (entiers)</li>
-              <li>Dates au format JJ/MM/AAAA</li>
-              <li>Encodage UTF-8</li>
+              <li i18n="@@withholding-tax.tej-export.xml.structure.validation.interne.schema.envelopp.06dfae72">XML structuré (validation interne + schéma enveloppe embarqué ; complétez avec les XSD officiels si fournis)</li>
+              <li i18n="@@withholding-tax.tej-export.montants.en.millimes.entiers.2240017b">Montants en millimes (entiers)</li>
+              <li i18n="@@withholding-tax.tej-export.dates.au.format.jj.mm.aaaa.71f12c3e">Dates au format JJ/MM/AAAA</li>
+              <li i18n="@@withholding-tax.tej-export.encodage.utf.8.e0abfc3a">Encodage UTF-8</li>
             </ul>
           </div>
           <div>
-            <h4>Connexion au portail</h4>
-            <p class="help-p">L’authentification se fait via <strong>OpenID Connect</strong> sur le domaine dédié (ex. <code>login-tej.finances.gov.tn</code>). InstaFact ne stocke <strong>aucun mot de passe</strong> du portail TEJ.</p>
+            <h4 i18n="@@withholding-tax.tej-export.connexion.au.portail.a1d7376f">Connexion au portail</h4>
+            <p class="help-p">L’authentification se fait via <strong i18n="@@withholding-tax.tej-export.openid.connect.15d13e02">OpenID Connect</strong> sur le domaine dédié (ex. <code i18n="@@withholding-tax.tej-export.login.tej.finances.gov.tn.5bb724cb">login-tej.finances.gov.tn</code>). InstaFact ne stocke <strong i18n="@@withholding-tax.tej-export.aucun.mot.de.passe.f9bc0251">aucun mot de passe</strong> du portail TEJ.</p>
             <ol>
-              <li>Générez le fichier XML dans InstaFact</li>
-              <li>Ouvrez une session sur le portail TEJ avec vos identifiants institutionnels</li>
-              <li>Téléversez le fichier et suivez la procédure de déclaration</li>
+              <li i18n="@@withholding-tax.tej-export.generez.le.fichier.xml.dans.instafact.2f619d44">Générez le fichier XML dans InstaFact</li>
+              <li i18n="@@withholding-tax.tej-export.ouvrez.une.session.sur.le.portail.tej.avec.vos.i.cb605efe">Ouvrez une session sur le portail TEJ avec vos identifiants institutionnels</li>
+              <li i18n="@@withholding-tax.tej-export.televersez.le.fichier.et.suivez.la.procedure.de..0fcba7ab">Téléversez le fichier et suivez la procédure de déclaration</li>
             </ol>
           </div>
           <div>
-            <h4>Dossier fiscal &amp; éligibilité</h4>
-            <p class="help-p">Pour vérifier le matricule fiscal ou consulter un dossier, utilisez les services en ligne du ministère des Finances.</p>
+            <h4 i18n="@@withholding-tax.tej-export.dossier.fiscal.amp.eligibilite.212549f5">Dossier fiscal &amp; éligibilité</h4>
+            <p class="help-p" i18n="@@withholding-tax.tej-export.pour.verifier.le.matricule.fiscal.ou.consulter.u.a9ed0e71">Pour vérifier le matricule fiscal ou consulter un dossier, utilisez les services en ligne du ministère des Finances.</p>
             <p class="help-p">
               <a
                 href="https://www.finances.gov.tn"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="ext-link">Portail des finances publiques (Tunisie)</a>
+                class="ext-link" i18n="@@withholding-tax.tej-export.portail.des.finances.publiques.tunisie.3529e2e2">Portail des finances publiques (Tunisie)</a>
             </p>
           </div>
         </div>

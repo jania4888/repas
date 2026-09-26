@@ -26,7 +26,7 @@ import {
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement...</p>
+        <p i18n="@@suppliers.supplier-detail.chargement.a209b664">Chargement...</p>
       </div>
     } @else if (supplier()) {
       <app-page-header
@@ -34,9 +34,7 @@ import {
         [subtitle]="supplier()!.typeDisplay">
         <div class="header-actions">
           <app-button variant="secondary" icon="pi-pencil" iconPos="left"
-            [routerLink]="['edit']">
-            Modifier
-          </app-button>
+            [routerLink]="['edit']" i18n="@@suppliers.supplier-detail.modifier.f260e757">Modifier</app-button>
           <app-button variant="outline"
             [icon]="supplier()!.isActive ? 'pi-ban' : 'pi-check'"
             iconPos="left"
@@ -51,21 +49,21 @@ import {
           <h3 class="card-title"><i class="pi pi-user"></i> Informations</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Type</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.type.3deb7456">Type</span>
               <p-tag [value]="supplier()!.typeDisplay"
                 [severity]="supplier()!.type === 1 ? 'success' : 'info'"></p-tag>
             </div>
             <div class="info-item">
-              <span class="label">NIF</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.nif.77124a3a">NIF</span>
               <span class="value mono">{{ supplier()!.nif || '-' }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Statut</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.statut.659499f3">Statut</span>
               <p-tag [value]="supplier()!.isActive ? 'Actif' : 'Inactif'"
                 [severity]="supplier()!.isActive ? 'success' : 'secondary'"></p-tag>
             </div>
             <div class="info-item">
-              <span class="label">Délai paiement</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.delai.paiement.bfca1de5">Délai paiement</span>
               <span class="value">{{ supplier()!.paymentTermDays }} jours</span>
             </div>
           </div>
@@ -75,19 +73,19 @@ import {
           <h3 class="card-title"><i class="pi pi-envelope"></i> Contact</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Email</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.email.84add5b2">Email</span>
               @if (supplier()!.email) {
                 <a [href]="'mailto:' + supplier()!.email" class="value link">{{ supplier()!.email }}</a>
               } @else {
-                <span class="value">—</span>
+                <span class="value" i18n="@@suppliers.supplier-detail.text.1b93795b">—</span>
               }
             </div>
             <div class="info-item">
-              <span class="label">Téléphone</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.telephone.d3b023ea">Téléphone</span>
               <span class="value">{{ supplier()!.phone || '-' }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Contact</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.contact.b37456c4">Contact</span>
               <span class="value">{{ supplier()!.contactPerson || '-' }}</span>
             </div>
           </div>
@@ -102,25 +100,25 @@ import {
           <h3 class="card-title"><i class="pi pi-percentage"></i> Retenue à la source &amp; TEJ</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="label">Soumis à la RS</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.soumis.a.la.rs.6a5c753b">Soumis à la RS</span>
               <span class="value">{{ supplier()!.isSubjectToWithholding ? 'Oui' : 'Non' }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Tranche IS (RS7)</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.tranche.is.rs7.bd637bb1">Tranche IS (RS7)</span>
               <span class="value">{{ rs7Label(supplier()!) }}</span>
             </div>
             @if (withholdingTypeLabel(supplier()!)) {
               <div class="info-item">
-                <span class="label">Type RS par défaut</span>
+                <span class="label" i18n="@@suppliers.supplier-detail.type.rs.par.defaut.b08fa503">Type RS par défaut</span>
                 <span class="value">{{ withholdingTypeLabel(supplier()!) }}</span>
               </div>
             }
             <div class="info-item">
-              <span class="label">Résident</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.resident.0a384a50">Résident</span>
               <span class="value">{{ supplier()!.isResident !== false ? 'Oui' : 'Non' }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Pays (fiscal)</span>
+              <span class="label" i18n="@@suppliers.supplier-detail.pays.fiscal.9bd89515">Pays (fiscal)</span>
               <span class="value mono">{{ supplier()!.countryCode || 'TN' }}</span>
             </div>
           </div>

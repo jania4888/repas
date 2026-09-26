@@ -12,8 +12,8 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
     <div class="page-container">
       <div class="page-header">
         <div>
-          <h1>Tableau de bord — Retenues à la source</h1>
-          <p class="subtitle">Vue d'ensemble de l'activité fiscale TEJ</p>
+          <h1 i18n="@@withholding-tax.withholding-dashboard.tableau.de.bord.retenues.a.la.source.ed610282">Tableau de bord — Retenues à la source</h1>
+          <p class="subtitle" i18n="@@withholding-tax.withholding-dashboard.vue.d.ensemble.de.l.activite.fiscale.tej.349ff0bc">Vue d'ensemble de l'activité fiscale TEJ</p>
         </div>
         <div class="header-controls">
           <select [(ngModel)]="selectedYear" (ngModelChange)="loadDashboard()">
@@ -37,18 +37,18 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
           <div class="kpi-card">
             <span class="kpi-label">Total retenues ({{ data.dashboardYear }})</span>
             <span class="kpi-value">{{ data.totalWithheldForYear | number:'1.3-3' }}</span>
-            <span class="kpi-unit">TND</span>
+            <span class="kpi-unit" i18n="@@withholding-tax.withholding-dashboard.tnd.51da21a7">TND</span>
           </div>
           <div class="kpi-card">
             <span class="kpi-label">FF soldées avec RS ({{ data.dashboardYear }})</span>
             <span class="kpi-value">{{ data.totalCertificatesForYear }}</span>
-            <span class="kpi-hint">Basé sur la date de solde (PaidAt), agrégé pour le tableau</span>
+            <span class="kpi-hint" i18n="@@withholding-tax.withholding-dashboard.base.sur.la.date.de.solde.paidat.agrege.pour.le..7bf088bb">Basé sur la date de solde (PaidAt), agrégé pour le tableau</span>
           </div>
           <div class="kpi-card kpi-card-muted">
-            <span class="kpi-label">Retenues subies (ventes)</span>
+            <span class="kpi-label" i18n="@@withholding-tax.withholding-dashboard.retenues.subies.ventes.8d65f638">Retenues subies (ventes)</span>
             <span class="kpi-value">{{ data.totalClientWithholdingSubieForYear | number:'1.3-3' }}</span>
-            <span class="kpi-unit">TND</span>
-            <span class="kpi-hint">Encaissements clients — hors déclaration TEJ déclarant</span>
+            <span class="kpi-unit" i18n="@@withholding-tax.withholding-dashboard.tnd.51da21a7">TND</span>
+            <span class="kpi-hint" i18n="@@withholding-tax.withholding-dashboard.encaissements.clients.hors.declaration.tej.decla.6a0657e2">Encaissements clients — hors déclaration TEJ déclarant</span>
           </div>
         </div>
 
@@ -68,11 +68,11 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
               <table>
                 <thead>
                   <tr>
-                    <th>Mois</th>
-                    <th class="right">Opérations</th>
-                    <th class="right">Montant HT</th>
-                    <th class="right">Retenue</th>
-                    <th class="right">Net servi</th>
+                    <th i18n="@@withholding-tax.withholding-dashboard.mois.0d304bea">Mois</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.operations.8d02bd5b">Opérations</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.montant.ht.3df1d6fe">Montant HT</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.retenue.88cf18f4">Retenue</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.net.servi.bb6a0c49">Net servi</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -88,7 +88,7 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td><strong>Total</strong></td>
+                    <td><strong i18n="@@withholding-tax.withholding-dashboard.total.b25928c6">Total</strong></td>
                     <td class="right"><strong>{{ getTotalCount() }}</strong></td>
                     <td class="right"><strong>{{ getTotalHT() | number:'1.3-3' }}</strong></td>
                     <td class="right"><strong>{{ data.totalWithheldForYear | number:'1.3-3' }}</strong></td>
@@ -107,9 +107,9 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
               <table>
                 <thead>
                   <tr>
-                    <th>Mois</th>
-                    <th class="right">Paiements</th>
-                    <th class="right">Total retenu</th>
+                    <th i18n="@@withholding-tax.withholding-dashboard.mois.0d304bea">Mois</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.paiements.97ecc646">Paiements</th>
+                    <th class="right" i18n="@@withholding-tax.withholding-dashboard.total.retenu.33b9224b">Total retenu</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -132,11 +132,11 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
         <div class="quick-links">
           <a routerLink="/withholding-tax/tej-export" class="link-card">
             <i class="fa-solid fa-file-export"></i>
-            <span>Export TEJ XML</span>
+            <span i18n="@@withholding-tax.withholding-dashboard.export.tej.xml.e91753b7">Export TEJ XML</span>
           </a>
           <a routerLink="/withholding-tax/settings" class="link-card">
             <i class="fa-solid fa-cog"></i>
-            <span>Types de retenue</span>
+            <span i18n="@@withholding-tax.withholding-dashboard.types.de.retenue.b0d657ed">Types de retenue</span>
           </a>
         </div>
       }

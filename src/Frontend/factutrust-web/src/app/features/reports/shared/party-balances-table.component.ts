@@ -31,7 +31,7 @@ export interface PartyBalanceRow {
   imports: [CommonModule, TableModule, ButtonComponent],
   template: `
     @if (loading) {
-      <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+      <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.shared.chargement.a209b664">Chargement...</span></div>
     } @else if (!rows.length) {
       <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>{{ emptyMessage }}</p></div>
     } @else {

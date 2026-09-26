@@ -28,13 +28,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Bilan" subtitle="État de la situation patrimoniale — Actif et Passif" />
+    <app-page-header title="Bilan" i18n-title="Bilan" subtitle="État de la situation patrimoniale — Actif et Passif" />
 
     <div class="card bs-filters-card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Exercice fiscal">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="bs-year">Exercice fiscal</label>
+            <label class="accounting-filter-label" for="bs-year" i18n="@@accounting.balance-sheet.exercice.fiscal.25ea5f92">Exercice fiscal</label>
             <input id="bs-year" type="number" [(ngModel)]="fiscalYear" class="accounting-filter-input bs-input-narrow" min="2000" max="2099" />
           </div>
         </div>
@@ -46,9 +46,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le bilan">
-            Charger
-          </app-button>
+            ariaLabel="Charger le bilan" i18n="@@accounting.balance-sheet.charger.8f860300">Charger</app-button>
           <app-analyze-with-ai-button
             screenId="accounting-balance-sheet"
             density="toolbar"
@@ -80,10 +78,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <p-table [value]="d.assets" [rowHover]="true" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
               <tr>
-                <th>Compte</th>
-                <th>Libellé</th>
-                <th class="text-right">Montant</th>
-                <th class="text-right">N-1</th>
+                <th i18n="@@accounting.balance-sheet.compte.c45740bb">Compte</th>
+                <th i18n="@@accounting.balance-sheet.libelle.f5485bba">Libellé</th>
+                <th class="text-right" i18n="@@accounting.balance-sheet.montant.4adcd9fc">Montant</th>
+                <th class="text-right" i18n="@@accounting.balance-sheet.n.1.4f927fbf">N-1</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-r>
@@ -96,13 +94,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             </ng-template>
             <ng-template pTemplate="footer">
               <tr class="bs-total-row">
-                <td colspan="2">Total Actif</td>
+                <td colspan="2" i18n="@@accounting.balance-sheet.total.actif.6d8f1286">Total Actif</td>
                 <td class="text-right tabnum">{{ d.totalAssets | number : '1.3-3' }}</td>
                 <td></td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
-              <tr><td colspan="4" class="bs-empty">Aucune ligne d'actif.</td></tr>
+              <tr><td colspan="4" class="bs-empty" i18n="@@accounting.balance-sheet.aucune.ligne.d.actif.31733d6e">Aucune ligne d'actif.</td></tr>
             </ng-template>
           </p-table>
         </div>
@@ -116,10 +114,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <p-table [value]="d.liabilities" [rowHover]="true" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
               <tr>
-                <th>Compte</th>
-                <th>Libellé</th>
-                <th class="text-right">Montant</th>
-                <th class="text-right">N-1</th>
+                <th i18n="@@accounting.balance-sheet.compte.c45740bb">Compte</th>
+                <th i18n="@@accounting.balance-sheet.libelle.f5485bba">Libellé</th>
+                <th class="text-right" i18n="@@accounting.balance-sheet.montant.4adcd9fc">Montant</th>
+                <th class="text-right" i18n="@@accounting.balance-sheet.n.1.4f927fbf">N-1</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-r>
@@ -132,13 +130,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             </ng-template>
             <ng-template pTemplate="footer">
               <tr class="bs-total-row">
-                <td colspan="2">Total Passif</td>
+                <td colspan="2" i18n="@@accounting.balance-sheet.total.passif.d3b4a120">Total Passif</td>
                 <td class="text-right tabnum">{{ d.totalLiabilities | number : '1.3-3' }}</td>
                 <td></td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
-              <tr><td colspan="4" class="bs-empty">Aucune ligne de passif.</td></tr>
+              <tr><td colspan="4" class="bs-empty" i18n="@@accounting.balance-sheet.aucune.ligne.de.passif.7b2a9f32">Aucune ligne de passif.</td></tr>
             </ng-template>
           </p-table>
         </div>
@@ -147,13 +145,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <!-- Résultat Net -->
       <div class="card bs-result-card">
         <div class="bs-result-content">
-          <span class="bs-result-label">Résultat Net de l'exercice</span>
+          <span class="bs-result-label" i18n="@@accounting.balance-sheet.resultat.net.de.l.exercice.b74bc21d">Résultat Net de l'exercice</span>
           <span class="bs-result-value" [class.bs-positive]="d.netResult >= 0" [class.bs-negative]="d.netResult < 0">
             {{ d.netResult | number : '1.3-3' }}
           </span>
         </div>
         <div class="bs-check-row">
-          <span class="bs-check-label">Contrôle : Actif − Passif</span>
+          <span class="bs-check-label" i18n="@@accounting.balance-sheet.controle.actif.passif.b227e86d">Contrôle : Actif − Passif</span>
           <span class="bs-check-value tabnum">{{ d.totalAssets - d.totalLiabilities | number : '1.3-3' }}</span>
         </div>
       </div>

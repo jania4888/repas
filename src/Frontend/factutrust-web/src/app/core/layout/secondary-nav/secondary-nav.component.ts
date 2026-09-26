@@ -13,6 +13,8 @@ import { NgbDropdown, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { filter, map, startWith } from 'rxjs';
 import { NavItem, NavSubItem } from '@core/config/app-navigation.registry';
 import { secondaryNavDisplayLabel } from '@core/config/secondary-nav.config';
+import { getNavId } from '@core/config/nav-item-ids';
+import { resolveNavLabel, resolveSubNavLabel } from '@core/i18n/erp-nav-label.util';
 import { AppNavService } from '@core/services/app-nav.service';
 import { AuthService } from '@core/services/auth.service';
 import { FirmContextService } from '@core/services/firm-context.service';
@@ -50,8 +52,8 @@ export class SecondaryNavComponent {
     () => this.auth.isAccountingFirm() && this.auth.isDelegatedMode()
   );
 
-  /** Label of the nested flyout currently open (hover / focus / click). */
-  readonly openSubmenuLabel = signal<string | null>(null);
+  /** Id of the nested flyout currently open (hover / focus / click). */
+  readonly openSubmenuId = signal<string | null>(null);
 
   private readonly routerUrl = toSignal(
     this.router.events.pipe(
@@ -70,14 +72,14 @@ export class SecondaryNavComponent {
       )
       .subscribe(() => {
         this.closeAllDropdowns();
-        this.openSubmenuLabel.set(null);
+        this.openSubmenuId.set(null);
       });
   }
 
-  readonly activeSectionLabel = computed(() => {
+  readonly activeSectionId = computed(() => {
     const url = this.routerUrl();
     const path = stripPathForMatch(url);
-    let bestLabel: string | null = null;
+    let bestId: string | null = null;
     let bestLen = -1;
 
     for (const section of this.sections()) {
@@ -85,18 +87,28 @@ export class SecondaryNavComponent {
         const child = findLongestMatchingChildInParent(path, section);
         if (child?.route && child.route.length > bestLen) {
           bestLen = child.route.length;
-          bestLabel = section.label;
+          bestId = getNavId(section);
         }
       } else if (section.route && isNavRouteActive(url, section.route) && section.route.length > bestLen) {
         bestLen = section.route.length;
-        bestLabel = section.label;
+        bestId = getNavId(section);
       }
     }
-    return bestLabel;
+    return bestId;
   });
 
   displayLabel(section: NavItem): string {
-    return secondaryNavDisplayLabel(section.label);
+    const id = getNavId(section);
+    const translated = resolveNavLabel(section);
+    return secondaryNavDisplayLabel(id, translated);
+  }
+
+  childDisplayLabel(child: NavSubItem): string {
+    return resolveSubNavLabel(child);
+  }
+
+  navId(item: NavItem | NavSubItem): string {
+    return getNavId(item);
   }
 
   getIconKey(icon?: string): string | null {
@@ -104,7 +116,7 @@ export class SecondaryNavComponent {
   }
 
   isSectionActive(section: NavItem): boolean {
-    return this.activeSectionLabel() === section.label;
+    return this.activeSectionId() === getNavId(section);
   }
 
   isChildActive(section: NavItem, child: NavSubItem): boolean {
@@ -140,17 +152,17 @@ export class SecondaryNavComponent {
   }
 
   isSubmenuOpen(child: NavSubItem): boolean {
-    return this.openSubmenuLabel() === child.label;
+    return this.openSubmenuId() === getNavId(child);
   }
 
   openSubmenu(child: NavSubItem): void {
     if (child.children?.length) {
-      this.openSubmenuLabel.set(child.label);
+      this.openSubmenuId.set(getNavId(child));
     }
   }
 
   closeSubmenu(): void {
-    this.openSubmenuLabel.set(null);
+    this.openSubmenuId.set(null);
   }
 
   toggleSubmenu(child: NavSubItem, event: Event): void {
@@ -159,7 +171,8 @@ export class SecondaryNavComponent {
     if (!child.children?.length) {
       return;
     }
-    this.openSubmenuLabel.update(current => (current === child.label ? null : child.label));
+    const id = getNavId(child);
+    this.openSubmenuId.update(current => (current === id ? null : id));
   }
 
   onSubmenuKeydown(child: NavSubItem, event: KeyboardEvent): void {
@@ -180,11 +193,11 @@ export class SecondaryNavComponent {
   }
 
   menuId(section: NavItem): string {
-    return `secondary-nav-menu-${section.label.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '')}`;
+    return `secondary-nav-menu-${getNavId(section)}`;
   }
 
   submenuId(child: NavSubItem): string {
-    return `secondary-nav-submenu-${child.label.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '')}`;
+    return `secondary-nav-submenu-${getNavId(child)}`;
   }
 
   async onChildClick(child: NavSubItem, dropdown: NgbDropdown, event: Event): Promise<void> {

@@ -43,7 +43,7 @@ export type VariantPickerSelection = ProductSuggestion;
             (completeMethod)="searchDirect($event)"
             (onSelect)="selectDirect($event.value)"
             field="label"
-            placeholder="Code ou nom du SKU…"
+            placeholder="Code ou nom du SKU…" i18n-placeholder="Code ou nom du SKU…"
             styleClass="w-full"
             [minLength]="1">
             <ng-template let-item pTemplate="item">
@@ -59,14 +59,14 @@ export type VariantPickerSelection = ProductSuggestion;
         </p-tabPanel>
         <p-tabPanel header="Par modèle">
           <div class="grouped-step">
-            <label>Modèle</label>
+            <label i18n="@@shared.components.variant-product-picker.variant-product-picker.modele.9853170f">Modèle</label>
             <p-autoComplete
               [(ngModel)]="templateQuery"
               [suggestions]="templateSuggestions()"
               (completeMethod)="searchTemplates($event)"
               (onSelect)="onTemplateSelected($event.value)"
               field="name"
-              placeholder="Rechercher un modèle…"
+              placeholder="Rechercher un modèle…" i18n-placeholder="Rechercher un modèle…"
               styleClass="w-full"
               [minLength]="1" />
           </div>

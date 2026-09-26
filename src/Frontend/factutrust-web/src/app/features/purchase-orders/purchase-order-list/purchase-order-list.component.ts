@@ -45,16 +45,14 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Bons de commande"
+      title="Bons de commande" i18n-title="Bons de commande"
       subtitle="Gérez vos commandes fournisseurs et suivez les réceptions.">
       @if (canCreatePurchaseOrder()) {
         <app-button
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Nouvelle commande
-        </app-button>
+          routerLink="new" i18n="@@purchase-orders.purchase-order-list.nouvelle.commande.061f365b">Nouvelle commande</app-button>
       }
     </app-page-header>
 
@@ -66,7 +64,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -78,7 +76,7 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par numéro, fournisseur ou référence…"
+            placeholder="Rechercher par numéro, fournisseur ou référence…" i18n-placeholder="Rechercher par numéro, fournisseur ou référence…"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -89,7 +87,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -99,7 +97,7 @@ interface StatusOption {
           [(ngModel)]="selectedSupplierId"
           optionLabel="name"
           optionValue="id"
-          placeholder="Tous les fournisseurs"
+          placeholder="Tous les fournisseurs" i18n-placeholder="Tous les fournisseurs"
           [showClear]="true"
           [filter]="true"
           filterBy="name"
@@ -107,24 +105,24 @@ interface StatusOption {
           styleClass="supplier-filter">
         </p-select>
 
-        <span class="filter-label">Date début</span>
+        <span class="filter-label" i18n="@@purchase-orders.purchase-order-list.date.debut.2413e246">Date début</span>
         <p-datepicker
           [(ngModel)]="fromDate"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
-          placeholder="Du"
+          placeholder="Du" i18n-placeholder="Du"
           [showButtonBar]="true"
           (onSelect)="onFilterChange()"
           (onClearClick)="onFilterChange()"
           styleClass="date-filter">
         </p-datepicker>
 
-        <span class="filter-label">Date fin</span>
+        <span class="filter-label" i18n="@@purchase-orders.purchase-order-list.date.fin.2d44e855">Date fin</span>
         <p-datepicker
           [(ngModel)]="toDate"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
-          placeholder="Au"
+          placeholder="Au" i18n-placeholder="Au"
           [showButtonBar]="true"
           (onSelect)="onFilterChange()"
           (onClearClick)="onFilterChange()"
@@ -164,14 +162,14 @@ interface StatusOption {
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="number" style="width: 130px">N° <p-sortIcon field="number"></p-sortIcon></th>
-            <th>Fournisseur</th>
+            <th i18n="@@purchase-orders.purchase-order-list.fournisseur.97d91d89">Fournisseur</th>
             <th pSortableColumn="orderDate" style="width: 120px">Date <p-sortIcon field="orderDate"></p-sortIcon></th>
-            <th style="width: 120px">Livraison prévue</th>
-            <th>Référence</th>
-            <th style="width: 100px">Lignes</th>
+            <th style="width: 120px" i18n="@@purchase-orders.purchase-order-list.livraison.prevue.dc15f458">Livraison prévue</th>
+            <th i18n="@@purchase-orders.purchase-order-list.reference.f8130bb0">Référence</th>
+            <th style="width: 100px" i18n="@@purchase-orders.purchase-order-list.lignes.41c7025e">Lignes</th>
             <th pSortableColumn="totalTTC" style="width: 130px">Total TTC <p-sortIcon field="totalTTC"></p-sortIcon></th>
-            <th style="width: 140px">Statut</th>
-            <th style="width: 80px">Actions</th>
+            <th style="width: 140px" i18n="@@purchase-orders.purchase-order-list.statut.659499f3">Statut</th>
+            <th style="width: 80px" i18n="@@purchase-orders.purchase-order-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
 
@@ -223,7 +221,7 @@ interface StatusOption {
           <tr>
             <td colspan="9" class="text-center p-6">
               <app-empty-state
-                title="Aucun bon de commande"
+                title="Aucun bon de commande" i18n-title="Aucun bon de commande"
                 description="Créez votre première commande fournisseur pour approvisionner votre stock."
                 [showAction]="canCreatePurchaseOrder()"
                 actionLabel="Nouvelle commande"

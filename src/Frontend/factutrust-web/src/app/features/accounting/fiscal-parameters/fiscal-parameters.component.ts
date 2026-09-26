@@ -32,7 +32,7 @@ const UNSAVED_CHANGES_MESSAGE =
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingFilterBarComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Paramètres fiscaux"
+    <app-page-header title="Paramètres fiscaux" i18n-title="Paramètres fiscaux"
       subtitle="Taux IS, minimum d'impôt, CSS, acomptes et barème IRPP — par exercice" />
 
     @if (isDirty()) {
@@ -43,20 +43,20 @@ const UNSAVED_CHANGES_MESSAGE =
       <app-accounting-filter-bar ariaLabel="Exercice des paramètres fiscaux">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="fp-year">Exercice</label>
+            <label class="accounting-filter-label" for="fp-year" i18n="@@accounting.fiscal-parameters.exercice.e171e2b0">Exercice</label>
             <input id="fp-year" type="number" [ngModel]="fiscalYear" (ngModelChange)="onYearInputChange($event)"
               class="accounting-filter-input fp-year-input" min="2000" max="2100"
               [attr.aria-invalid]="!isYearValid()" />
             @if (!isYearValid()) {
-              <span class="fp-year-error" role="alert">Exercice invalide : doit être compris entre 2000 et 2100.</span>
+              <span class="fp-year-error" role="alert" i18n="@@accounting.fiscal-parameters.exercice.invalide.doit.etre.compris.entre.2000.e.db4c8a16">Exercice invalide : doit être compris entre 2000 et 2100.</span>
             }
           </div>
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="load()" [disabled]="loading() || !isYearValid()"
-            ariaLabel="Charger les paramètres de l'exercice">Charger</app-button>
+            ariaLabel="Charger les paramètres de l'exercice" i18n="@@accounting.fiscal-parameters.charger.8f860300">Charger</app-button>
           <app-button variant="primary" icon="pi pi-save" type="button" (click)="save()" [disabled]="loading() || saving() || !model"
-            ariaLabel="Enregistrer les paramètres fiscaux">Enregistrer</app-button>
+            ariaLabel="Enregistrer les paramètres fiscaux" i18n="@@accounting.fiscal-parameters.enregistrer.f7c8bcd8">Enregistrer</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -64,7 +64,7 @@ const UNSAVED_CHANGES_MESSAGE =
     <div class="fp-validate-banner" role="status">
       <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
       <span>
-        <strong>Valeurs indicatives</strong> — à valider selon la loi de finances de l'exercice.
+        <strong i18n="@@accounting.fiscal-parameters.valeurs.indicatives.210e8c14">Valeurs indicatives</strong> — à valider selon la loi de finances de l'exercice.
         Le droit fiscal tunisien évolue chaque année : contrôlez les taux avant d'établir la liasse.
       </span>
     </div>
@@ -86,51 +86,51 @@ const UNSAVED_CHANGES_MESSAGE =
       @if (!m.isUserModified) {
         <div class="fp-default-banner" role="status">
           <i class="pi pi-info-circle" aria-hidden="true"></i>
-          <span>Paramètres standards en vigueur. Après enregistrement, vos valeurs personnalisées seront conservées et ne seront plus mises à jour automatiquement.</span>
+          <span i18n="@@accounting.fiscal-parameters.parametres.standards.en.vigueur.apres.enregistre.e086c573">Paramètres standards en vigueur. Après enregistrement, vos valeurs personnalisées seront conservées et ne seront plus mises à jour automatiquement.</span>
         </div>
       }
 
       <div class="fp-grid">
         <div class="card fp-card">
-          <h3 class="fp-title">Impôt sur les sociétés</h3>
-          <div class="fp-row"><label>Taux de droit commun</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isStandardRate" /><span class="fp-hint">0.15 = 15 %</span></div>
-          <div class="fp-row"><label>Taux réduit</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isReducedRate" /></div>
-          <div class="fp-row"><label>Taux sectoriel majoré</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isSectorRate" /><span class="fp-hint">banques, assurances, télécoms…</span></div>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.impot.sur.les.societes.33c535a2">Impôt sur les sociétés</h3>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.de.droit.commun.f3555cac">Taux de droit commun</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isStandardRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.15.15.584ea9ee">0.15 = 15 %</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.reduit.48dc3022">Taux réduit</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isReducedRate" /></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.sectoriel.majore.16c309a7">Taux sectoriel majoré</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.isSectorRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.banques.assurances.telecoms.a926498e">banques, assurances, télécoms…</span></div>
         </div>
 
         <div class="card fp-card">
-          <h3 class="fp-title">Minimum d'impôt</h3>
-          <div class="fp-row"><label>Taux (droit commun)</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.minTaxRate" /><span class="fp-hint">0.002 = 0,2 % du CA local TTC</span></div>
-          <div class="fp-row"><label>Plancher (droit commun)</label><input type="number" step="0.001" min="0" [(ngModel)]="m.minTaxFloorTnd" /><span class="fp-hint">TND</span></div>
-          <div class="fp-row"><label>Taux réduit</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.minTaxReducedRate" /><span class="fp-hint">0.001 = 0,1 %</span></div>
-          <div class="fp-row"><label>Plancher réduit</label><input type="number" step="0.001" min="0" [(ngModel)]="m.minTaxFloorReducedTnd" /><span class="fp-hint">TND</span></div>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.minimum.d.impot.8689385e">Minimum d'impôt</h3>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.droit.commun.1738478e">Taux (droit commun)</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.minTaxRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.002.0.2.du.ca.local.ttc.26904314">0.002 = 0,2 % du CA local TTC</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.plancher.droit.commun.11d78598">Plancher (droit commun)</label><input type="number" step="0.001" min="0" [(ngModel)]="m.minTaxFloorTnd" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.tnd.51da21a7">TND</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.reduit.48dc3022">Taux réduit</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.minTaxReducedRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.001.0.1.d4b62d5a">0.001 = 0,1 %</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.plancher.reduit.36c97c30">Plancher réduit</label><input type="number" step="0.001" min="0" [(ngModel)]="m.minTaxFloorReducedTnd" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.tnd.51da21a7">TND</span></div>
         </div>
 
         <div class="card fp-card">
-          <h3 class="fp-title">Contribution sociale de solidarité</h3>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.contribution.sociale.de.solidarite.49cf2910">Contribution sociale de solidarité</h3>
           <div class="fp-row fp-row--check">
-            <label for="fp-css">La CSS s'applique</label>
+            <label for="fp-css" i18n="@@accounting.fiscal-parameters.la.css.s.applique.e06158a8">La CSS s'applique</label>
             <input id="fp-css" type="checkbox" [(ngModel)]="m.cssApplies" />
           </div>
-          <div class="fp-row"><label>Taux CSS</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.cssRate" /><span class="fp-hint">0.01 = 1 % de l'assiette imposable</span></div>
-          <div class="fp-row"><label>Plancher CSS</label><input type="number" step="0.001" min="0" [(ngModel)]="m.cssFloorTnd" /><span class="fp-hint">TND</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.css.0070206d">Taux CSS</label><input type="number" step="0.001" min="0" max="1" [(ngModel)]="m.cssRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.01.1.de.l.assiette.imposable.0c6a4e47">0.01 = 1 % de l'assiette imposable</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.plancher.css.3c30a8cb">Plancher CSS</label><input type="number" step="0.001" min="0" [(ngModel)]="m.cssFloorTnd" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.tnd.51da21a7">TND</span></div>
         </div>
 
         <div class="card fp-card">
-          <h3 class="fp-title">Acomptes, reports et arrondi</h3>
-          <div class="fp-row"><label>Taux d'un acompte</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.acompteRate" /><span class="fp-hint">0.30 = 30 % de l'IS N-1</span></div>
-          <div class="fp-row"><label>Nombre d'acomptes</label><input type="number" step="1" min="0" max="12" [(ngModel)]="m.acompteCount" /></div>
-          <div class="fp-row"><label>Report des déficits (années)</label><input type="number" step="1" min="1" max="20" [(ngModel)]="m.deficitCarryForwardYears" /><span class="fp-hint">amortissements différés : illimité</span></div>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.acomptes.reports.et.arrondi.f15dd43a">Acomptes, reports et arrondi</h3>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.taux.d.un.acompte.17038508">Taux d'un acompte</label><input type="number" step="0.01" min="0" max="1" [(ngModel)]="m.acompteRate" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.0.30.30.de.l.is.n.1.c440fa3d">0.30 = 30 % de l'IS N-1</span></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.nombre.d.acomptes.1eaa3604">Nombre d'acomptes</label><input type="number" step="1" min="0" max="12" [(ngModel)]="m.acompteCount" /></div>
+          <div class="fp-row"><label i18n="@@accounting.fiscal-parameters.report.des.deficits.annees.23f152ab">Report des déficits (années)</label><input type="number" step="1" min="1" max="20" [(ngModel)]="m.deficitCarryForwardYears" /><span class="fp-hint" i18n="@@accounting.fiscal-parameters.amortissements.differes.illimite.a4e6a31a">amortissements différés : illimité</span></div>
           <div class="fp-row fp-row--check">
-            <label for="fp-round">Arrondir l'assiette au dinar</label>
+            <label for="fp-round" i18n="@@accounting.fiscal-parameters.arrondir.l.assiette.au.dinar.08d31433">Arrondir l'assiette au dinar</label>
             <input id="fp-round" type="checkbox" [(ngModel)]="m.roundTaxableToDinar" />
           </div>
         </div>
 
         <div class="card fp-card fp-card--wide">
-          <h3 class="fp-title">Barème IRPP (BIC — régime réel)</h3>
-          <p class="fp-hint">Tableau JSON : <code>[{{ '{' }}"lower":0,"rate":0{{ '}' }}, …]</code> — <em>lower</em> = borne inférieure annuelle (TND), <em>rate</em> = taux en %.</p>
-          <textarea rows="4" class="fp-json" [class.fp-json--invalid]="!!irppValidationError()" [(ngModel)]="m.irppBracketsJson" aria-label="Barème IRPP en JSON"></textarea>
+          <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.bareme.irpp.bic.regime.reel.0fc0c501">Barème IRPP (BIC — régime réel)</h3>
+          <p class="fp-hint">Tableau JSON : <code>[{{ '{' }}"lower":0,"rate":0{{ '}' }}, …]</code> — <em i18n="@@accounting.fiscal-parameters.lower.346e3ee1">lower</em> = borne inférieure annuelle (TND), <em i18n="@@accounting.fiscal-parameters.rate.1e01d215">rate</em> = taux en %.</p>
+          <textarea rows="4" class="fp-json" [class.fp-json--invalid]="!!irppValidationError()" [(ngModel)]="m.irppBracketsJson" aria-label="Barème IRPP en JSON" i18n-aria-label="Barème IRPP en JSON"></textarea>
           @if (irppValidationError(); as verr) {
             <span class="fp-json-inline-error" role="alert">{{ verr }}</span>
           }

@@ -66,7 +66,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
     <app-payroll-section
 
-      title="Tickets restaurant"
+      title="Tickets restaurant" i18n-title="Tickets restaurant"
 
       subtitle="Saisie mensuelle par salarié. Recalculez le cycle pour intégrer les retenues au bulletin."
 
@@ -76,7 +76,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
         <div class="payroll-toolbar mb-3">
 
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Ajouter une ligne</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.runs.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
 
         </div>
 
@@ -92,17 +92,17 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
           <tr>
 
-            <th>Salarié</th>
+            <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
 
-            <th class="text-right">Jours</th>
+            <th class="text-right" i18n="@@payroll.runs.jours.57960dfb">Jours</th>
 
-            <th class="text-right">Valeur faciale</th>
+            <th class="text-right" i18n="@@payroll.runs.valeur.faciale.7eb109c8">Valeur faciale</th>
 
-            <th class="text-right">Part employeur</th>
+            <th class="text-right" i18n="@@payroll.runs.part.employeur.af021705">Part employeur</th>
 
-            <th class="text-right">Part salarié</th>
+            <th class="text-right" i18n="@@payroll.runs.part.salarie.93060d7c">Part salarié</th>
 
-            <th class="text-right">Total</th>
+            <th class="text-right" i18n="@@payroll.runs.total.b25928c6">Total</th>
 
             @if (!readOnly) { <th></th> }
 
@@ -130,9 +130,9 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
               <td class="actions">
 
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="editLine(line)">Modifier</button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="editLine(line)" i18n="@@payroll.runs.modifier.f260e757">Modifier</button>
 
-                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(line)">Supprimer</button>
+                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(line)" i18n="@@payroll.runs.supprimer.1acfc1c7">Supprimer</button>
 
               </td>
 
@@ -144,7 +144,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
         <ng-template pTemplate="emptymessage">
 
-          <tr><td [attr.colspan]="readOnly ? 6 : 7">Aucun ticket restaurant saisi pour ce mois.</td></tr>
+          <tr><td [attr.colspan]="readOnly ? 6 : 7" i18n="@@payroll.runs.aucun.ticket.restaurant.saisi.pour.ce.mois.ad9d1b5d">Aucun ticket restaurant saisi pour ce mois.</td></tr>
 
         </ng-template>
 
@@ -160,7 +160,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
       <div class="payroll-form-group mb-2">
 
-        <label>Salarié</label>
+        <label i18n="@@payroll.runs.salarie.27f97915">Salarié</label>
 
         <p-select [options]="employees()" optionLabel="fullName" optionValue="id" [(ngModel)]="formEmployeeId" appendTo="body" styleClass="w-full" [disabled]="!!editingId" />
 
@@ -170,7 +170,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
         <div class="payroll-form-group">
 
-          <label>Jours travaillés</label>
+          <label i18n="@@payroll.runs.jours.travailles.4687ee29">Jours travaillés</label>
 
           <p-inputNumber [(ngModel)]="formDays" [min]="1" [max]="31" styleClass="w-full" />
 
@@ -178,7 +178,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
         <div class="payroll-form-group">
 
-          <label>Valeur faciale (TND)</label>
+          <label i18n="@@payroll.runs.valeur.faciale.tnd.41da4ad5">Valeur faciale (TND)</label>
 
           <p-inputNumber [(ngModel)]="formFaceValue" [min]="0.001" [minFractionDigits]="3" [maxFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
 
@@ -188,7 +188,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
       <div class="payroll-form-group mb-2">
 
-        <label>Part employeur (%)</label>
+        <label i18n="@@payroll.runs.part.employeur.37c96a45">Part employeur (%)</label>
 
         <p-inputNumber [(ngModel)]="formEmployerRate" [min]="0" [max]="100" [minFractionDigits]="0" [maxFractionDigits]="2" [locale]="'fr-TN'" styleClass="w-full" />
 
@@ -196,9 +196,9 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
       <ng-template pTemplate="footer">
 
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.runs.annuler.49ba3292">Annuler</app-button>
 
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.runs.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
       </ng-template>
 

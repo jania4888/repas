@@ -16,38 +16,38 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingCorrectionBannerComponent],
   template: `
-    <app-page-header title="Recherche d'écriture" subtitle="Recherche multicritère des lignes d'écriture" />
+    <app-page-header title="Recherche d'écriture" i18n-title="Recherche d'écriture" subtitle="Recherche multicritère des lignes d'écriture" />
 
     <app-accounting-correction-banner />
 
     <div class="card es-filters">
       <div class="es-grid">
-        <div class="es-field"><label class="es-lbl" for="es-acc">Compte</label><input id="es-acc" class="es-inp" [(ngModel)]="f.account" placeholder="Ex. 411" /></div>
-        <div class="es-field"><label class="es-lbl" for="es-jrn">Journal</label>
+        <div class="es-field"><label class="es-lbl" for="es-acc" i18n="@@accounting.entry-search.compte.c45740bb">Compte</label><input id="es-acc" class="es-inp" [(ngModel)]="f.account" placeholder="Ex. 411" i18n-placeholder="Ex. 411" /></div>
+        <div class="es-field"><label class="es-lbl" for="es-jrn" i18n="@@accounting.entry-search.journal.57d7f743">Journal</label>
           <select id="es-jrn" class="es-inp" [(ngModel)]="f.journalCode">
-            <option [ngValue]="null">Tous</option>
+            <option [ngValue]="null" i18n="@@accounting.entry-search.tous.b97ae3b4">Tous</option>
             @for (jc of journalCodes; track jc) { <option [value]="jc">{{ jc }}</option> }
           </select>
         </div>
-        <div class="es-field"><label class="es-lbl" for="es-from">Du</label><input id="es-from" type="date" class="es-inp" [(ngModel)]="f.from" /></div>
-        <div class="es-field"><label class="es-lbl" for="es-to">Au</label><input id="es-to" type="date" class="es-inp" [(ngModel)]="f.to" /></div>
-        <div class="es-field"><label class="es-lbl" for="es-min">Montant min</label><input id="es-min" type="number" class="es-inp" [(ngModel)]="f.minAmount" /></div>
-        <div class="es-field"><label class="es-lbl" for="es-max">Montant max</label><input id="es-max" type="number" class="es-inp" [(ngModel)]="f.maxAmount" /></div>
-        <div class="es-field es-field-wide"><label class="es-lbl" for="es-lbl">Libellé contient</label><input id="es-lbl" class="es-inp" [(ngModel)]="f.label" /></div>
-        <div class="es-field"><label class="es-lbl" for="es-let">Lettrage</label><input id="es-let" class="es-inp" [(ngModel)]="f.lettering" /></div>
-        <div class="es-field"><label class="es-lbl" for="es-piece">Réf. pièce</label><input id="es-piece" class="es-inp" [(ngModel)]="f.pieceRef" placeholder="Contient…" /></div>
-        <div class="es-field"><label class="es-lbl" for="es-st">Statut</label>
+        <div class="es-field"><label class="es-lbl" for="es-from" i18n="@@accounting.entry-search.du.84814985">Du</label><input id="es-from" type="date" class="es-inp" [(ngModel)]="f.from" /></div>
+        <div class="es-field"><label class="es-lbl" for="es-to" i18n="@@accounting.entry-search.au.7a1732d5">Au</label><input id="es-to" type="date" class="es-inp" [(ngModel)]="f.to" /></div>
+        <div class="es-field"><label class="es-lbl" for="es-min" i18n="@@accounting.entry-search.montant.min.e00fa4de">Montant min</label><input id="es-min" type="number" class="es-inp" [(ngModel)]="f.minAmount" /></div>
+        <div class="es-field"><label class="es-lbl" for="es-max" i18n="@@accounting.entry-search.montant.max.44599630">Montant max</label><input id="es-max" type="number" class="es-inp" [(ngModel)]="f.maxAmount" /></div>
+        <div class="es-field es-field-wide"><label class="es-lbl" for="es-lbl" i18n="@@accounting.entry-search.libelle.contient.694f61b3">Libellé contient</label><input id="es-lbl" class="es-inp" [(ngModel)]="f.label" /></div>
+        <div class="es-field"><label class="es-lbl" for="es-let" i18n="@@accounting.entry-search.lettrage.cfcdd333">Lettrage</label><input id="es-let" class="es-inp" [(ngModel)]="f.lettering" /></div>
+        <div class="es-field"><label class="es-lbl" for="es-piece" i18n="@@accounting.entry-search.ref.piece.16d07789">Réf. pièce</label><input id="es-piece" class="es-inp" [(ngModel)]="f.pieceRef" placeholder="Contient…" i18n-placeholder="Contient…" /></div>
+        <div class="es-field"><label class="es-lbl" for="es-st" i18n="@@accounting.entry-search.statut.659499f3">Statut</label>
           <select id="es-st" class="es-inp" [(ngModel)]="f.status">
-            <option [ngValue]="null">Tous</option>
-            <option [ngValue]="0">Brouillon</option>
-            <option [ngValue]="1">Validée</option>
-            <option [ngValue]="2">Clôturée</option>
+            <option [ngValue]="null" i18n="@@accounting.entry-search.tous.b97ae3b4">Tous</option>
+            <option [ngValue]="0" i18n="@@accounting.entry-search.brouillon.57d2d7a7">Brouillon</option>
+            <option [ngValue]="1" i18n="@@accounting.entry-search.validee.2cc6c327">Validée</option>
+            <option [ngValue]="2" i18n="@@accounting.entry-search.cloturee.da2e2bc8">Clôturée</option>
           </select>
         </div>
       </div>
       <div class="es-actions">
-        <app-button variant="primary" icon="pi pi-search" type="button" (click)="search()" [disabled]="loading()">Rechercher</app-button>
-        <app-button variant="secondary" icon="pi pi-times" type="button" (click)="reset()" [disabled]="loading()">Réinitialiser</app-button>
+        <app-button variant="primary" icon="pi pi-search" type="button" (click)="search()" [disabled]="loading()" i18n="@@accounting.entry-search.rechercher.91f7d3e9">Rechercher</app-button>
+        <app-button variant="secondary" icon="pi pi-times" type="button" (click)="reset()" [disabled]="loading()" i18n="@@accounting.entry-search.reinitialiser.e0e2ad54">Réinitialiser</app-button>
       </div>
     </div>
 
@@ -59,12 +59,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <p-table [value]="rows()" [loading]="loading()" [paginator]="rows().length > 25" [rows]="25" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Date</th><th scope="col">Journal</th><th scope="col">N°</th>
-              <th scope="col">Pièce</th>
-              <th scope="col">Compte</th><th scope="col">Libellé</th>
-              @if (hasForeignCurrency()) { <th scope="col">Devise</th> }
-              <th scope="col" class="es-amt">Débit</th><th scope="col" class="es-amt">Crédit</th>
-              <th scope="col">Lettrage</th><th scope="col">Statut</th>
+              <th scope="col" i18n="@@accounting.entry-search.date.eb9a4bc1">Date</th><th scope="col" i18n="@@accounting.entry-search.journal.57d7f743">Journal</th><th scope="col" i18n="@@accounting.entry-search.n.754e6095">N°</th>
+              <th scope="col" i18n="@@accounting.entry-search.piece.954bbc8c">Pièce</th>
+              <th scope="col" i18n="@@accounting.entry-search.compte.c45740bb">Compte</th><th scope="col" i18n="@@accounting.entry-search.libelle.f5485bba">Libellé</th>
+              @if (hasForeignCurrency()) { <th scope="col" i18n="@@accounting.entry-search.devise.eb2e42c4">Devise</th> }
+              <th scope="col" class="es-amt" i18n="@@accounting.entry-search.debit.f528224f">Débit</th><th scope="col" class="es-amt" i18n="@@accounting.entry-search.credit.19194bdf">Crédit</th>
+              <th scope="col" i18n="@@accounting.entry-search.lettrage.cfcdd333">Lettrage</th><th scope="col" i18n="@@accounting.entry-search.statut.659499f3">Statut</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -91,7 +91,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="10" class="es-empty">Aucune écriture ne correspond aux critères.</td></tr>
+            <tr><td colspan="10" class="es-empty" i18n="@@accounting.entry-search.aucune.ecriture.ne.correspond.aux.criteres.392fa480">Aucune écriture ne correspond aux critères.</td></tr>
           </ng-template>
         </p-table>
       </div>

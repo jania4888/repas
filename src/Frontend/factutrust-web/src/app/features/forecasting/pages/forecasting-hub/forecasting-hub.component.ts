@@ -22,11 +22,9 @@ import { firstValueFrom } from 'rxjs';
     <div class="forecasting-hub">
       <header class="hub-header">
         <div class="title-block">
-          <h1>Prévisions IA — Ventes &amp; Stock</h1>
-          <p class="subtitle">
-            Module déterministe basé sur votre historique et le calendrier commercial tunisien
-            (Ramadan, Aïd, Soldes, Rentrée…). Aucune valeur n'est inventée par l'IA.
-          </p>
+          <h1 i18n="@@forecasting.pages.previsions.ia.ventes.amp.stock.f8e5b6be">Prévisions IA — Ventes &amp; Stock</h1>
+          <p class="subtitle" i18n="@@forecasting.pages.module.deterministe.base.sur.votre.historique.et.704b8e0e">Module déterministe basé sur votre historique et le calendrier commercial tunisien
+            (Ramadan, Aïd, Soldes, Rentrée…). Aucune valeur n'est inventée par l'IA.</p>
         </div>
         <div class="hub-actions">
           @if (canManage()) {
@@ -62,18 +60,18 @@ import { firstValueFrom } from 'rxjs';
         <div class="audit-bar" [class.audit-error]="!a.success">
           <i class="pi" [class.pi-check-circle]="a.success" [class.pi-exclamation-circle]="!a.success"></i>
           <span>Dernier calcul : {{ a.startedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-          <span class="audit-sep">·</span>
+          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
           <span>{{ (a.durationMs / 1000).toFixed(1) }}s</span>
-          <span class="audit-sep">·</span>
+          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
           <span>{{ a.classificationsUpdated }} classif.</span>
-          <span class="audit-sep">·</span>
+          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
           <span>{{ a.replenishmentsGenerated }} réappros</span>
-          <span class="audit-sep">·</span>
+          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
           <span>{{ a.promotionsGenerated }} promos</span>
-          <span class="audit-sep">·</span>
+          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
           <span>{{ a.triggerType === 'manual' ? 'Manuel' : 'Automatique' }}</span>
           @if (!a.success && a.errorMessage) {
-            <span class="audit-sep">·</span>
+            <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
             <span class="audit-err-msg">{{ a.errorMessage }}</span>
           }
         </div>

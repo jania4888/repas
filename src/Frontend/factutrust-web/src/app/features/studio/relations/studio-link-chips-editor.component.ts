@@ -35,7 +35,7 @@ interface TargetOption { id: string; label: string; }
       }
 
       @if (loading()) {
-        <span class="studio-muted" data-testid="chips-loading">…</span>
+        <span class="studio-muted" data-testid="chips-loading" i18n="@@studio.relations.text.df316e17">…</span>
       } @else {
         <div class="link-chips__list">
           @for (row of rows(); track row.junctionRecordId) {
@@ -64,7 +64,7 @@ interface TargetOption { id: string; label: string; }
               }
             </span>
           } @empty {
-            <span class="studio-muted" data-testid="chips-empty">Aucune fiche liée.</span>
+            <span class="studio-muted" data-testid="chips-empty" i18n="@@studio.relations.aucune.fiche.liee.7d973884">Aucune fiche liée.</span>
           }
         </div>
 

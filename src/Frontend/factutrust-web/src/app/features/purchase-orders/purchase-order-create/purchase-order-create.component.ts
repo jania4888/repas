@@ -49,28 +49,26 @@ interface OrderLine {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Nouveau bon de commande"
+      title="Nouveau bon de commande" i18n-title="Nouveau bon de commande"
       subtitle="Créez une commande fournisseur en sélectionnant les produits et quantités.">
       <app-button 
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/purchase-orders">
-        Annuler
-      </app-button>
+        routerLink="/purchase-orders" i18n="@@purchase-orders.purchase-order-create.annuler.49ba3292">Annuler</app-button>
     </app-page-header>
 
     <div class="form-grid">
       <!-- Section 1: Informations générales -->
-      <app-form-section title="Informations générales" icon="pi-building" [number]="1">
+      <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-building" [number]="1">
         <div class="form-group">
-          <label for="supplier">Fournisseur <span class="required">*</span></label>
+          <label for="supplier">Fournisseur <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></label>
           <p-select
             id="supplier"
             [options]="suppliers()"
             [(ngModel)]="selectedSupplier"
             optionLabel="name"
-            placeholder="Sélectionnez un fournisseur"
+            placeholder="Sélectionnez un fournisseur" i18n-placeholder="Sélectionnez un fournisseur"
             [filter]="true"
             filterBy="name"
             [showClear]="true"
@@ -80,7 +78,7 @@ interface OrderLine {
 
         <div class="form-row">
           <div class="form-group">
-            <label for="orderDate">Date de commande <span class="required">*</span></label>
+            <label for="orderDate">Date de commande <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></label>
             <p-datepicker
               id="orderDate"
               [(ngModel)]="orderDate"
@@ -91,7 +89,7 @@ interface OrderLine {
           </div>
 
           <div class="form-group">
-            <label for="deliveryDate">Date de livraison prévue</label>
+            <label for="deliveryDate" i18n="@@purchase-orders.purchase-order-create.date.de.livraison.prevue.3ea95a1d">Date de livraison prévue</label>
             <p-datepicker
               id="deliveryDate"
               [(ngModel)]="expectedDeliveryDate"
@@ -104,53 +102,51 @@ interface OrderLine {
         </div>
 
         <div class="form-group">
-          <label for="reference">Référence fournisseur</label>
+          <label for="reference" i18n="@@purchase-orders.purchase-order-create.reference.fournisseur.5fbc4823">Référence fournisseur</label>
           <input
             pInputText
             id="reference"
             [(ngModel)]="reference"
-            placeholder="Ex: DEV-2024-001"
+            placeholder="Ex: DEV-2024-001" i18n-placeholder="Ex: DEV-2024-001"
             class="w-full">
         </div>
       </app-form-section>
 
       <!-- Section 2: Notes & Entrepôt -->
-      <app-form-section title="Notes et entrepôt" icon="pi-file-edit" [number]="2" class="notes-card">
+      <app-form-section title="Notes et entrepôt" i18n-title="Notes et entrepôt" icon="pi-file-edit" [number]="2" class="notes-card">
         <div class="form-group">
-          <label for="notes">Notes internes</label>
+          <label for="notes" i18n="@@purchase-orders.purchase-order-create.notes.internes.1a81fb4e">Notes internes</label>
           <textarea
             pTextarea
             id="notes"
             [(ngModel)]="notes"
-            placeholder="Notes internes pour cette commande..."
+            placeholder="Notes internes pour cette commande..." i18n-placeholder="Notes internes pour cette commande..."
             [rows]="4"
             class="w-full">
           </textarea>
-          <small class="form-hint">Non visibles par le fournisseur.</small>
+          <small class="form-hint" i18n="@@purchase-orders.purchase-order-create.non.visibles.par.le.fournisseur.03ee7227">Non visibles par le fournisseur.</small>
         </div>
         <div class="form-group" style="margin-top: 1rem;">
           <app-warehouse-selector
             label="Entrepôt de réception"
-            placeholder="Entrepôt par défaut"
+            placeholder="Entrepôt par défaut" i18n-placeholder="Entrepôt par défaut"
             [value]="selectedWarehouseId"
             (valueChange)="selectedWarehouseId = $event">
           </app-warehouse-selector>
-          <small class="form-hint">Entrepôt dans lequel la marchandise sera réceptionnée (optionnel)</small>
+          <small class="form-hint" i18n="@@purchase-orders.purchase-order-create.entrepot.dans.lequel.la.marchandise.sera.recepti.09418c89">Entrepôt dans lequel la marchandise sera réceptionnée (optionnel)</small>
         </div>
       </app-form-section>
     </div>
 
     <!-- Section 3: Lignes de commande (full width) -->
-    <app-form-section title="Lignes de commande" icon="pi-list" [number]="3" class="lines-section">
+    <app-form-section title="Lignes de commande" i18n-title="Lignes de commande" icon="pi-list" [number]="3" class="lines-section">
       <div class="section-header-actions">
         <app-button variant="secondary" icon="pi-plus" iconPos="left" size="sm"
-          (click)="addLine()">
-          Ajouter une ligne
-        </app-button>
+          (click)="addLine()" i18n="@@purchase-orders.purchase-order-create.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
         @if (barcodeScanEnabled) {
           <div class="barcode-scan-row">
             <ft-barcode-scan-field
-              placeholder="Scanner un code-barres pour ajouter une ligne"
+              placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
               [autoFocus]="false"
               (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
           </div>
@@ -160,19 +156,19 @@ interface OrderLine {
       @if (lines.length === 0) {
         <div class="empty-lines">
           <i class="pi pi-inbox"></i>
-          <p>Aucune ligne ajoutée. Cliquez sur "Ajouter une ligne" pour commencer.</p>
+          <p i18n="@@purchase-orders.purchase-order-create.aucune.ligne.ajoutee.cliquez.sur.ajouter.une.lig.6e62345a">Aucune ligne ajoutée. Cliquez sur "Ajouter une ligne" pour commencer.</p>
         </div>
       } @else {
         <div class="lines-table">
           <table>
             <thead>
               <tr>
-                <th style="width: 40px">#</th>
-                <th>Produit <span class="required">*</span></th>
-                <th style="width: 120px">Quantité <span class="required">*</span></th>
-                <th style="width: 140px">Prix unitaire HT</th>
-                <th style="width: 80px">TVA</th>
-                <th style="width: 140px">Total TTC</th>
+                <th style="width: 40px" i18n="@@purchase-orders.purchase-order-create.text.d08f88df">#</th>
+                <th>Produit <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></th>
+                <th style="width: 120px">Quantité <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></th>
+                <th style="width: 140px" i18n="@@purchase-orders.purchase-order-create.prix.unitaire.ht.bb3f8e39">Prix unitaire HT</th>
+                <th style="width: 80px" i18n="@@purchase-orders.purchase-order-create.tva.fb62cb5d">TVA</th>
+                <th style="width: 140px" i18n="@@purchase-orders.purchase-order-create.total.ttc.9e80ff7c">Total TTC</th>
                 <th style="width: 50px"></th>
               </tr>
             </thead>
@@ -185,7 +181,7 @@ interface OrderLine {
                       [options]="products()"
                       [(ngModel)]="line.product"
                       optionLabel="name"
-                      placeholder="Sélectionnez un produit"
+                      placeholder="Sélectionnez un produit" i18n-placeholder="Sélectionnez un produit"
                       [filter]="true"
                       filterBy="name,code"
                       [showClear]="false"
@@ -232,7 +228,7 @@ interface OrderLine {
                   </td>
                   <td class="text-center">
                     <button class="remove-btn" (click)="removeLine($index)"
-                      aria-label="Supprimer la ligne">
+                      aria-label="Supprimer la ligne" i18n-aria-label="Supprimer la ligne">
                       <i class="pi pi-trash"></i>
                     </button>
                   </td>
@@ -245,18 +241,18 @@ interface OrderLine {
     </app-form-section>
 
     <!-- Section 4: Récapitulatif -->
-    <app-form-section title="Récapitulatif" icon="pi-calculator" [number]="4" class="summary-section">
+    <app-form-section title="Récapitulatif" i18n-title="Récapitulatif" icon="pi-calculator" [number]="4" class="summary-section">
       <div class="totals-section">
         <div class="total-row">
-          <span>Sous-total HT</span>
+          <span i18n="@@purchase-orders.purchase-order-create.sous.total.ht.724598f6">Sous-total HT</span>
           <span class="amount">{{ subTotalHT | currency:'TND':'symbol':'1.3-3' }}</span>
         </div>
         <div class="total-row">
-          <span>TVA</span>
+          <span i18n="@@purchase-orders.purchase-order-create.tva.fb62cb5d">TVA</span>
           <span class="amount">{{ totalVat | currency:'TND':'symbol':'1.3-3' }}</span>
         </div>
         <div class="total-row grand-total">
-          <span>Total TTC</span>
+          <span i18n="@@purchase-orders.purchase-order-create.total.ttc.9e80ff7c">Total TTC</span>
           <span class="amount">{{ totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
         </div>
       </div>
@@ -268,17 +264,13 @@ interface OrderLine {
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/purchase-orders">
-        Annuler
-      </app-button>
+        routerLink="/purchase-orders" i18n="@@purchase-orders.purchase-order-create.annuler.49ba3292">Annuler</app-button>
       <app-button
         variant="primary"
         [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
         iconPos="left"
         [disabled]="!isFormValid() || submitting()"
-        (click)="submitOrder()">
-        Créer en brouillon
-      </app-button>
+        (click)="submitOrder()" i18n="@@purchase-orders.purchase-order-create.creer.en.brouillon.a3210155">Créer en brouillon</app-button>
     </div>
   `,
   styles: [`

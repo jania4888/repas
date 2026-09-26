@@ -24,7 +24,7 @@ const TVA_RATE = 0.19;
     <div class="change-plan-dialog">
       <!-- Header -->
       <div class="dialog-header">
-        <h2 class="dialog-title">Changer de forfait</h2>
+        <h2 class="dialog-title" i18n="@@settings.subscription.changer.de.forfait.9d073980">Changer de forfait</h2>
         <div class="dialog-header-actions">
           @if (currentStep() > 1) {
             <button
@@ -40,7 +40,7 @@ const TVA_RATE = 0.19;
             type="button"
             class="btn-close-dialog"
             (click)="modal.dismiss()"
-            aria-label="Fermer"
+            aria-label="Fermer" i18n-aria-label="Fermer"
             [disabled]="submitting()">
             <i class="pi pi-times"></i>
           </button>
@@ -57,12 +57,12 @@ const TVA_RATE = 0.19;
               1
             }
           </div>
-          <span class="step-label">Choisissez votre forfait</span>
+          <span class="step-label" i18n="@@settings.subscription.choisissez.votre.forfait.1a03784f">Choisissez votre forfait</span>
         </div>
         <div class="stepper-line" [class.active]="currentStep() > 1"></div>
         <div class="stepper-step" [class.active]="currentStep() >= 2">
           <div class="step-circle">2</div>
-          <span class="step-label">Récapitulatif & paiement</span>
+          <span class="step-label" i18n="@@settings.subscription.recapitulatif.paiement.af076074">Récapitulatif & paiement</span>
         </div>
       </div>
 
@@ -85,17 +85,17 @@ const TVA_RATE = 0.19;
                 (keydown.space)="!plan.isCurrent && selectPlan(plan.id); $event.preventDefault()">
 
                 @if (plan.isPopular && !plan.isCurrent) {
-                  <div class="badge-popular">Recommandé</div>
+                  <div class="badge-popular" i18n="@@settings.subscription.recommande.e1a57119">Recommandé</div>
                 }
                 @if (plan.isCurrent) {
-                  <div class="badge-current">Forfait actuel</div>
+                  <div class="badge-current" i18n="@@settings.subscription.forfait.actuel.ad20553e">Forfait actuel</div>
                 }
 
                 <div class="plan-card-header">
                   <h3 class="plan-name">{{ plan.name }}</h3>
                   <div class="plan-pricing">
                     <span class="plan-price">{{ plan.priceMonthly | number:'1.0-0' }}</span>
-                    <span class="plan-currency">TND</span>
+                    <span class="plan-currency" i18n="@@settings.subscription.tnd.51da21a7">TND</span>
                     <span class="plan-period">/ {{ plan.period }}</span>
                   </div>
                   @if (plan.priceAnnual) {
@@ -144,9 +144,7 @@ const TVA_RATE = 0.19;
             <button
               type="button"
               class="btn-secondary"
-              (click)="modal.dismiss()">
-              Annuler
-            </button>
+              (click)="modal.dismiss()" i18n="@@settings.subscription.annuler.49ba3292">Annuler</button>
             <button
               type="button"
               class="btn-primary"
@@ -166,14 +164,14 @@ const TVA_RATE = 0.19;
           <div class="summary-section">
             <div class="change-direction">
               <div class="change-from">
-                <span class="change-label">De</span>
+                <span class="change-label" i18n="@@settings.subscription.de.6b98c9b5">De</span>
                 <span class="change-plan-name">{{ currentPlanDisplay() }}</span>
               </div>
               <div class="change-arrow">
                 <i class="pi pi-arrow-right"></i>
               </div>
               <div class="change-to">
-                <span class="change-label">Vers</span>
+                <span class="change-label" i18n="@@settings.subscription.vers.abd795b0">Vers</span>
                 <span class="change-plan-name highlight">{{ selectedPlanDisplay() }}</span>
               </div>
             </div>
@@ -186,13 +184,13 @@ const TVA_RATE = 0.19;
                 <i class="pi pi-info-circle"></i>
               </div>
               <div class="notice-content">
-                <h4>Passage au forfait Gratuit</h4>
-                <p>Votre changement prendra effet immédiatement. Vos données restent accessibles, mais certaines fonctionnalités seront limitées.</p>
+                <h4 i18n="@@settings.subscription.passage.au.forfait.gratuit.8892606d">Passage au forfait Gratuit</h4>
+                <p i18n="@@settings.subscription.votre.changement.prendra.effet.immediatement.vos.ec1b5302">Votre changement prendra effet immédiatement. Vos données restent accessibles, mais certaines fonctionnalités seront limitées.</p>
                 <ul class="notice-limits">
-                  <li>10 factures / mois maximum</li>
-                  <li>20 clients maximum</li>
-                  <li>Pas de signature électronique</li>
-                  <li>Pas de suivi des paiements</li>
+                  <li i18n="@@settings.subscription.10.factures.mois.maximum.79a637a6">10 factures / mois maximum</li>
+                  <li i18n="@@settings.subscription.20.clients.maximum.fd987800">20 clients maximum</li>
+                  <li i18n="@@settings.subscription.pas.de.signature.electronique.adae2f11">Pas de signature électronique</li>
+                  <li i18n="@@settings.subscription.pas.de.suivi.des.paiements.160d9c7b">Pas de suivi des paiements</li>
                 </ul>
               </div>
             </div>
@@ -200,7 +198,7 @@ const TVA_RATE = 0.19;
             <!-- Pricing breakdown -->
             <div class="pricing-table">
               <div class="pricing-row">
-                <span class="pricing-label">Désignation</span>
+                <span class="pricing-label" i18n="@@settings.subscription.designation.63a9062c">Désignation</span>
                 <span class="pricing-value">
                   Abonnement {{ selectedPlanDisplay() }}
                   @if (selectedPlan()?.priceAnnual) {
@@ -209,34 +207,34 @@ const TVA_RATE = 0.19;
                 </span>
               </div>
               <div class="pricing-row">
-                <span class="pricing-label">Prix unitaire</span>
+                <span class="pricing-label" i18n="@@settings.subscription.prix.unitaire.3e848c96">Prix unitaire</span>
                 <span class="pricing-value">{{ selectedPlan()?.priceMonthly | number:'1.3-3' }} TND / mois</span>
               </div>
               @if (selectedPlan()?.priceAnnual) {
                 <div class="pricing-row">
-                  <span class="pricing-label">Sous-total annuel</span>
+                  <span class="pricing-label" i18n="@@settings.subscription.sous.total.annuel.189dc68e">Sous-total annuel</span>
                   <span class="pricing-value">{{ selectedPlan()?.priceAnnual | number:'1.3-3' }} TND</span>
                 </div>
               }
               <div class="pricing-divider"></div>
               <div class="pricing-row">
-                <span class="pricing-label">Prix HT</span>
+                <span class="pricing-label" i18n="@@settings.subscription.prix.ht.362207ca">Prix HT</span>
                 <span class="pricing-value bold">{{ priceHT() | number:'1.3-3' }} TND</span>
               </div>
               <div class="pricing-row">
-                <span class="pricing-label">TVA (19%)</span>
+                <span class="pricing-label" i18n="@@settings.subscription.tva.19.07090d79">TVA (19%)</span>
                 <span class="pricing-value">{{ tvaAmount() | number:'1.3-3' }} TND</span>
               </div>
               <div class="pricing-divider"></div>
               <div class="pricing-row total">
-                <span class="pricing-label">Total TTC</span>
+                <span class="pricing-label" i18n="@@settings.subscription.total.ttc.9e80ff7c">Total TTC</span>
                 <span class="pricing-value">{{ priceTTC() | number:'1.3-3' }} TND</span>
               </div>
             </div>
 
             <!-- Payment Method -->
             <div class="payment-section">
-              <h4 class="payment-title">Méthode de paiement</h4>
+              <h4 class="payment-title" i18n="@@settings.subscription.methode.de.paiement.b111f83e">Méthode de paiement</h4>
               <div class="payment-methods">
                 <div
                   class="payment-method"
@@ -253,8 +251,8 @@ const TVA_RATE = 0.19;
                     }
                   </div>
                   <div class="payment-info">
-                    <span class="payment-name">Carte bancaire <strong>ClicToPay</strong></span>
-                    <span class="payment-desc">Activation immédiate</span>
+                    <span class="payment-name">Carte bancaire <strong i18n="@@settings.subscription.clictopay.47cd6669">ClicToPay</strong></span>
+                    <span class="payment-desc" i18n="@@settings.subscription.activation.immediate.fb8aaf1f">Activation immédiate</span>
                   </div>
                 </div>
 
@@ -273,8 +271,8 @@ const TVA_RATE = 0.19;
                     }
                   </div>
                   <div class="payment-info">
-                    <span class="payment-name">Virement bancaire</span>
-                    <span class="payment-desc">Activation après validation du paiement</span>
+                    <span class="payment-name" i18n="@@settings.subscription.virement.bancaire.8306f08e">Virement bancaire</span>
+                    <span class="payment-desc" i18n="@@settings.subscription.activation.apres.validation.du.paiement.adc9da35">Activation après validation du paiement</span>
                   </div>
                 </div>
               </div>
@@ -282,24 +280,24 @@ const TVA_RATE = 0.19;
               @if (paymentMethod() === 'bank') {
                 <div class="bank-details">
                   <div class="bank-row">
-                    <span class="bank-label">Banque</span>
-                    <span class="bank-value">Banque Attijari</span>
+                    <span class="bank-label" i18n="@@settings.subscription.banque.2a7302cd">Banque</span>
+                    <span class="bank-value" i18n="@@settings.subscription.banque.attijari.61461dd8">Banque Attijari</span>
                   </div>
                   <div class="bank-row">
-                    <span class="bank-label">RIB</span>
+                    <span class="bank-label" i18n="@@settings.subscription.rib.61f3ea57">RIB</span>
                     <span class="bank-value">04 057 142 0053258414 24</span>
                   </div>
                   <div class="bank-row">
-                    <span class="bank-label">IBAN</span>
-                    <span class="bank-value">TN59 04 057 142 0053258414 24</span>
+                    <span class="bank-label" i18n="@@settings.subscription.iban.e81566a5">IBAN</span>
+                    <span class="bank-value" i18n="@@settings.subscription.tn59.04.057.142.0053258414.24.8f84e9d8">TN59 04 057 142 0053258414 24</span>
                   </div>
                   <div class="bank-row">
-                    <span class="bank-label">Swift</span>
-                    <span class="bank-value">BSTUTNTINT</span>
+                    <span class="bank-label" i18n="@@settings.subscription.swift.112ab020">Swift</span>
+                    <span class="bank-value" i18n="@@settings.subscription.bstutntint.78e09300">BSTUTNTINT</span>
                   </div>
                   <div class="bank-row">
-                    <span class="bank-label">Titulaire</span>
-                    <span class="bank-value">InstaFact SAS</span>
+                    <span class="bank-label" i18n="@@settings.subscription.titulaire.9cdd337a">Titulaire</span>
+                    <span class="bank-value" i18n="@@settings.subscription.instafact.sas.da9f8c46">InstaFact SAS</span>
                   </div>
                 </div>
               }
@@ -309,7 +307,7 @@ const TVA_RATE = 0.19;
           <!-- Security note -->
           <div class="security-note">
             <i class="pi pi-lock"></i>
-            <span>Paiement sécurisé — Vos données sont protégées</span>
+            <span i18n="@@settings.subscription.paiement.securise.vos.donnees.sont.protegees.44eb23e2">Paiement sécurisé — Vos données sont protégées</span>
           </div>
 
           <!-- Actions -->
@@ -318,9 +316,7 @@ const TVA_RATE = 0.19;
               type="button"
               class="btn-secondary"
               (click)="goBack()"
-              [disabled]="submitting()">
-              Retour
-            </button>
+              [disabled]="submitting()" i18n="@@settings.subscription.retour.e5befb1f">Retour</button>
             <button
               type="button"
               class="btn-primary confirm-btn"

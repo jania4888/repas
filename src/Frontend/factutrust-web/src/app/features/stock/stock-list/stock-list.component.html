@@ -4,16 +4,16 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <!-- Page Header -->
-<app-page-header title="Gestion du Stock" subtitle="Suivez l'état de vos stocks en temps réel">
+<app-page-header title="Gestion du Stock" i18n-title="Gestion du Stock" subtitle="Suivez l'état de vos stocks en temps réel">
   <div class="stock-actions">
     @if (canCreateStockVoucher()) {
       <a routerLink="/stock/entries/new" class="stock-btn stock-btn-entry">
         <i class="pi pi-arrow-down"></i>
-        <span>Entrée Stock</span>
+        <span i18n="@@stock.stock-list.entree.stock.16ab6222">Entrée Stock</span>
       </a>
       <a routerLink="/stock/issues/new" class="stock-btn stock-btn-exit">
         <i class="pi pi-arrow-up"></i>
-        <span>Sortie Stock</span>
+        <span i18n="@@stock.stock-list.sortie.stock.e914cdfc">Sortie Stock</span>
       </a>
     }
   </div>
@@ -23,7 +23,7 @@
 <div class="stats-grid">
   <div class="stat-card stat-primary">
     <div class="stat-content">
-      <span class="stat-label">Valeur Totale</span>
+      <span class="stat-label" i18n="@@stock.stock-list.valeur.totale.03c9b412">Valeur Totale</span>
       <span class="stat-value">{{ calculateTotalValue() | currency:'TND':'symbol':'1.3-3' }}</span>
     </div>
     <div class="stat-icon">
@@ -33,7 +33,7 @@
 
   <div class="stat-card stat-success">
     <div class="stat-content">
-      <span class="stat-label">Produits en Stock</span>
+      <span class="stat-label" i18n="@@stock.stock-list.produits.en.stock.bdce6715">Produits en Stock</span>
       <span class="stat-value">{{ countInStock() }}</span>
     </div>
     <div class="stat-icon">
@@ -43,7 +43,7 @@
 
   <div class="stat-card stat-warning">
     <div class="stat-content">
-      <span class="stat-label">Articles en Alerte</span>
+      <span class="stat-label" i18n="@@stock.stock-list.articles.en.alerte.0bc37b80">Articles en Alerte</span>
       <span class="stat-value">{{ countLowStock() }}</span>
     </div>
     <div class="stat-icon">
@@ -53,7 +53,7 @@
 
   <div class="stat-card stat-danger">
     <div class="stat-content">
-      <span class="stat-label">Ruptures de Stock</span>
+      <span class="stat-label" i18n="@@stock.stock-list.ruptures.de.stock.9698bf99">Ruptures de Stock</span>
       <span class="stat-value">{{ countOutOfStock() }}</span>
     </div>
     <div class="stat-icon">
@@ -65,9 +65,9 @@
 <!-- Filters -->
 <div class="filters-card">
   <div class="filters-header">
-    <h3 class="filters-title">Filtres</h3>
+    <h3 class="filters-title" i18n="@@stock.stock-list.filtres.2a8e76e0">Filtres</h3>
     @if (hasActiveFilters()) {
-    <button class="filters-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+    <button class="filters-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
       <i class="pi pi-times"></i>
       Réinitialiser ({{ activeFiltersCount() }})
     </button>
@@ -76,16 +76,16 @@
   <div class="filters-row">
     <span class="p-input-icon-left flex-1">
       <i class="pi pi-search"></i>
-      <input pInputText type="text" placeholder="Rechercher par produit ou code..." [(ngModel)]="searchTerm"
+      <input pInputText type="text" placeholder="Rechercher par produit ou code..." i18n-placeholder="Rechercher par produit ou code..." [(ngModel)]="searchTerm"
         (input)="applyFilters()" class="w-full">
     </span>
 
     <p-select [options]="warehouses" [(ngModel)]="selectedWarehouse" optionLabel="name"
-      placeholder="Tous les entrepôts" [showClear]="true" (onChange)="applyFilters()">
+      placeholder="Tous les entrepôts" i18n-placeholder="Tous les entrepôts" [showClear]="true" (onChange)="applyFilters()">
     </p-select>
 
     <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
-      placeholder="Tous les statuts" [showClear]="true" (onChange)="applyFilters()">
+      placeholder="Tous les statuts" i18n-placeholder="Tous les statuts" [showClear]="true" (onChange)="applyFilters()">
     </p-select>
   </div>
 </div>
@@ -95,7 +95,7 @@
 
 @if (expiryAlerts().length > 0) {
 <div class="filters-card" style="margin-bottom: 1rem; border-color: #f59e0b;">
-  <h3 class="filters-title">Alertes DLUO</h3>
+  <h3 class="filters-title" i18n="@@stock.stock-list.alertes.dluo.351b62de">Alertes DLUO</h3>
   <ul>
     @for (alert of expiryAlerts(); track alert.lotNumber + alert.productId) {
       <li>{{ alert.productName }} — lot {{ alert.lotNumber }} ({{ alert.daysRemaining }} j, {{ alert.quantityOnHand }} u.)</li>
@@ -124,8 +124,8 @@
         <th pSortableColumn="averageCost" class="text-right">Coût unitaire <p-sortIcon field="averageCost"></p-sortIcon>
         </th>
         <th pSortableColumn="stockValue" class="text-right">Valeur <p-sortIcon field="stockValue"></p-sortIcon></th>
-        <th class="text-center">Statut</th>
-        <th class="text-center">Actions</th>
+        <th class="text-center" i18n="@@stock.stock-list.statut.659499f3">Statut</th>
+        <th class="text-center" i18n="@@stock.stock-list.actions.c3cd636a">Actions</th>
       </tr>
     </ng-template>
 
@@ -145,7 +145,7 @@
         </td>
         <td>
           <div class="stock-progress">
-            <span class="stock-value">{{ item.quantityOnHand }} <span class="text-gray-500 text-xs">U</span></span>
+            <span class="stock-value">{{ item.quantityOnHand }} <span class="text-gray-500 text-xs" i18n="@@stock.stock-list.u.b2c7c0ca">U</span></span>
             <p-progressBar [value]="getStockPercentage(item)" [showValue]="false" [style]="{'height': '6px'}">
             </p-progressBar>
             <span class="text-xs text-gray-500">Min: {{ item.minimumStock }}</span>
@@ -187,14 +187,14 @@
       <tr>
         <td colspan="7">
           @if (lots.length === 0) {
-            <span class="text-xs text-gray-500">Aucun lot pour cet article.</span>
+            <span class="text-xs text-gray-500" i18n="@@stock.stock-list.aucun.lot.pour.cet.article.868ff46e">Aucun lot pour cet article.</span>
           } @else {
             <table class="w-full">
               <thead>
                 <tr>
-                  <th>Lot</th>
-                  <th>DLUO</th>
-                  <th class="text-right">Qté</th>
+                  <th i18n="@@stock.stock-list.lot.4a211932">Lot</th>
+                  <th i18n="@@stock.stock-list.dluo.d342f6a4">DLUO</th>
+                  <th class="text-right" i18n="@@stock.stock-list.qte.a4772129">Qté</th>
                 </tr>
               </thead>
               <tbody>
@@ -215,18 +215,18 @@
       <tr>
         <td colspan="7">
           @if (layers.length === 0) {
-            <span class="text-xs text-gray-500">Aucune couche de valorisation restante.</span>
+            <span class="text-xs text-gray-500" i18n="@@stock.stock-list.aucune.couche.de.valorisation.restante.f5eae8c4">Aucune couche de valorisation restante.</span>
           } @else {
             <table class="w-full">
               <thead>
                 <tr>
-                  <th>Reçu le</th>
-                  <th>Lot</th>
-                  <th class="text-right">Restant</th>
-                  <th class="text-right">Origine</th>
-                  <th class="text-right">Coût</th>
-                  <th class="text-right">Valeur</th>
-                  <th>Référence</th>
+                  <th i18n="@@stock.stock-list.recu.le.8390222a">Reçu le</th>
+                  <th i18n="@@stock.stock-list.lot.4a211932">Lot</th>
+                  <th class="text-right" i18n="@@stock.stock-list.restant.8df32592">Restant</th>
+                  <th class="text-right" i18n="@@stock.stock-list.origine.62e96258">Origine</th>
+                  <th class="text-right" i18n="@@stock.stock-list.cout.4a4aa395">Coût</th>
+                  <th class="text-right" i18n="@@stock.stock-list.valeur.68f92b0d">Valeur</th>
+                  <th i18n="@@stock.stock-list.reference.f8130bb0">Référence</th>
                 </tr>
               </thead>
               <tbody>
@@ -252,7 +252,7 @@
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="7" class="text-center p-6">
-          <app-empty-state illustration="empty-box.svg" title="Aucun article en stock"
+          <app-empty-state illustration="empty-box.svg" title="Aucun article en stock" i18n-title="Aucun article en stock"
             description="Ajoutez votre première entrée de stock pour commencer à gérer votre inventaire."
             actionLabel="Ajouter une entrée de stock" actionRoute="entry">
           </app-empty-state>
@@ -280,15 +280,15 @@
       </div>
     </div>
     <div class="current-stock">
-      <span class="label">Stock actuel</span>
-      <span class="value">{{ selectedItemForAdjust.quantityOnHand }} <span class="unit">unités</span></span>
+      <span class="label" i18n="@@stock.stock-list.stock.actuel.294a897a">Stock actuel</span>
+      <span class="value">{{ selectedItemForAdjust.quantityOnHand }} <span class="unit" i18n="@@stock.stock-list.unites.b2ec0bf5">unités</span></span>
     </div>
   </div>
 
   <!-- Adjustment Form Section -->
   <div class="adjust-form">
     <div class="form-field quantity-field">
-      <label for="newQuantity">Nouvelle quantité *</label>
+      <label for="newQuantity" i18n="@@stock.stock-list.nouvelle.quantite.98d68785">Nouvelle quantité *</label>
       <p-inputNumber id="newQuantity" [(ngModel)]="adjustmentForm.newQuantity" [min]="0" [showButtons]="true"
         buttonLayout="horizontal" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
         [inputStyle]="{'width': '100%'}" styleClass="w-full quantity-input">
@@ -308,9 +308,9 @@
     </div>
 
     <div class="form-field">
-      <label for="adjustNotes">Notes (optionnel)</label>
+      <label for="adjustNotes" i18n="@@stock.stock-list.notes.optionnel.c4bb754a">Notes (optionnel)</label>
       <textarea pInputText id="adjustNotes" [(ngModel)]="adjustmentForm.notes" rows="3"
-        placeholder="Raison de l'ajustement..." class="w-full"></textarea>
+        placeholder="Raison de l'ajustement..." i18n-placeholder="Raison de l'ajustement..." class="w-full"></textarea>
     </div>
   </div>
   }

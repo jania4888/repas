@@ -20,7 +20,7 @@ import { ClientOutstanding } from '@core/services/client.service';
     @if (loading) {
       <div class="ft-panel encours-panel">
         <div class="ft-panel__header">
-          <h3 class="ft-panel__title">Encours</h3>
+          <h3 class="ft-panel__title" i18n="@@clients.client-outstanding-panel.encours.ba3d7159">Encours</h3>
         </div>
         <div class="encours-kpi-grid">
           @for (i of [1, 2, 3, 4]; track i) {
@@ -32,8 +32,8 @@ import { ClientOutstanding } from '@core/services/client.service';
     } @else if (outstanding) {
       <div class="ft-panel encours-panel" [class.encours-panel--over]="outstanding.isOverLimit">
         <div class="ft-panel__header">
-          <h3 class="ft-panel__title">Encours</h3>
-          <a class="encours-edit-link" [routerLink]="editLink" aria-label="Modifier le plafond">
+          <h3 class="ft-panel__title" i18n="@@clients.client-outstanding-panel.encours.ba3d7159">Encours</h3>
+          <a class="encours-edit-link" [routerLink]="editLink" aria-label="Modifier le plafond" i18n-aria-label="Modifier le plafond">
             <i class="pi pi-pencil" aria-hidden="true"></i>
             Modifier le plafond
           </a>
@@ -45,7 +45,7 @@ import { ClientOutstanding } from '@core/services/client.service';
             <span>
               Encours de <strong>{{ formatAmount(outstanding.totalOutstanding) }} {{ outstanding.currency }}</strong>
               au-delà du plafond de {{ formatAmount(outstanding.creditLimit!) }} {{ outstanding.currency }}.
-              <span class="ft-muted">Information seulement : aucune vente n'est bloquée.</span>
+              <span class="ft-muted" i18n="@@clients.client-outstanding-panel.information.seulement.aucune.vente.n.est.bloquee.bab57933">Information seulement : aucune vente n'est bloquée.</span>
             </span>
           </div>
         }
@@ -95,12 +95,12 @@ import { ClientOutstanding } from '@core/services/client.service';
         <div class="encours-plafond">
           @if (outstanding.creditLimit === null) {
             <div class="encours-plafond__empty">
-              <span class="ft-muted">Aucun plafond défini.</span>
-              <a class="encours-edit-link" [routerLink]="editLink">Définir un plafond</a>
+              <span class="ft-muted" i18n="@@clients.client-outstanding-panel.aucun.plafond.defini.f42b48bf">Aucun plafond défini.</span>
+              <a class="encours-edit-link" [routerLink]="editLink" i18n="@@clients.client-outstanding-panel.definir.un.plafond.75174fc0">Définir un plafond</a>
             </div>
           } @else {
             <div class="encours-plafond__meta">
-              <span class="ft-info__label">Plafond</span>
+              <span class="ft-info__label" i18n="@@clients.client-outstanding-panel.plafond.527e038e">Plafond</span>
               <span class="encours-plafond__value ft-mono">
                 {{ formatAmount(outstanding.creditLimit) }} {{ outstanding.currency }}
                 <span class="encours-plafond__pct" [class.ft-amount--danger]="outstanding.isOverLimit">

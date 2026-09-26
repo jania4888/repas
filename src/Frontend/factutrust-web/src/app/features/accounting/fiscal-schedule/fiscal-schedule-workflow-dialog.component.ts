@@ -20,7 +20,7 @@ export type FiscalWorkflowMode = 'deposit' | 'payment' | 'reminder' | 'validate'
       <form class="fiscal-modal fiscal-modal--narrow" (ngSubmit)="submit.emit()">
         <header>
           <h2 id="fiscal-workflow-dialog-title">{{ title }}</h2>
-          <button class="square-button" type="button" title="Fermer" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
+          <button class="square-button" type="button" title="Fermer" i18n-title="Fermer" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
         </header>
         <label *ngIf="mode === 'deposit'">
           Date de depot
@@ -49,9 +49,9 @@ export type FiscalWorkflowMode = 'deposit' | 'payment' | 'reminder' | 'validate'
           <textarea name="workflowNotes" rows="3" [(ngModel)]="workflowObservations"></textarea>
         </label>
         <footer>
-          <button class="icon-button" type="button" (click)="cancel.emit()">Annuler</button>
+          <button class="icon-button" type="button" (click)="cancel.emit()" i18n="@@accounting.fiscal-schedule.annuler.49ba3292">Annuler</button>
           <button class="icon-button primary" type="submit" [disabled]="saving">
-            <i class="fa-solid fa-check"></i><span>Valider</span>
+            <i class="fa-solid fa-check"></i><span i18n="@@accounting.fiscal-schedule.valider.be4220f7">Valider</span>
           </button>
         </footer>
       </form>

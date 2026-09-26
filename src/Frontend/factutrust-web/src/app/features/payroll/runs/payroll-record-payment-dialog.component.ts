@@ -50,17 +50,15 @@ interface PayslipPaymentRow {
       [style]="{ width: '760px' }"
       (onShow)="onOpen()"
       (onHide)="closed.emit()">
-      <p class="hint mb-3">
-        Enregistrez le décaissement après confirmation bancaire. Une écriture JB et un lettrage 421 seront générés.
-      </p>
+      <p class="hint mb-3" i18n="@@payroll.runs.enregistrez.le.decaissement.apres.confirmation.b.e5561856">Enregistrez le décaissement après confirmation bancaire. Une écriture JB et un lettrage 421 seront générés.</p>
 
       <div class="form-grid mb-3">
         <div class="field">
-          <label for="pp-date">Date de paiement</label>
+          <label for="pp-date" i18n="@@payroll.runs.date.de.paiement.bd0020ef">Date de paiement</label>
           <input pInputText id="pp-date" type="date" class="w-full" [(ngModel)]="paymentDate" />
         </div>
         <div class="field">
-          <label for="pp-method">Mode</label>
+          <label for="pp-method" i18n="@@payroll.runs.mode.a7b93d21">Mode</label>
           <p-select
             inputId="pp-method"
             [options]="methodOptions"
@@ -71,29 +69,29 @@ interface PayslipPaymentRow {
         </div>
         @if (method !== 0) {
           <div class="field span-2">
-            <label for="pp-bank">Compte débiteur</label>
+            <label for="pp-bank" i18n="@@payroll.runs.compte.debiteur.b7abcb4f">Compte débiteur</label>
             <p-select
               inputId="pp-bank"
               [options]="accountOptions()"
               [(ngModel)]="bankAccountId"
               optionLabel="label"
               optionValue="value"
-              placeholder="Sélectionner un compte"
+              placeholder="Sélectionner un compte" i18n-placeholder="Sélectionner un compte"
               styleClass="w-full" />
           </div>
         }
         <div class="field">
-          <label for="pp-ref">Référence</label>
+          <label for="pp-ref" i18n="@@payroll.runs.reference.f8130bb0">Référence</label>
           <input pInputText id="pp-ref" class="w-full" [(ngModel)]="reference" />
         </div>
         <div class="field">
-          <label for="pp-notes">Notes</label>
+          <label for="pp-notes" i18n="@@payroll.runs.notes.70440046">Notes</label>
           <input pInputText id="pp-notes" class="w-full" [(ngModel)]="notes" />
         </div>
       </div>
 
       <div class="toolbar mb-2">
-        <app-button variant="ghost" size="sm" (click)="selectAll()">Tout sélectionner</app-button>
+        <app-button variant="ghost" size="sm" (click)="selectAll()" i18n="@@payroll.runs.tout.selectionner.06f2c1c0">Tout sélectionner</app-button>
         <strong>Total : {{ totalSelected() | payrollAmount }}</strong>
       </div>
 
@@ -102,9 +100,9 @@ interface PayslipPaymentRow {
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 3rem"></th>
-              <th>Salarié</th>
-              <th class="text-right">Reste à payer</th>
-              <th class="text-right">Montant</th>
+              <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+              <th class="text-right" i18n="@@payroll.runs.reste.a.payer.968444fc">Reste à payer</th>
+              <th class="text-right" i18n="@@payroll.runs.montant.4adcd9fc">Montant</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -129,7 +127,7 @@ interface PayslipPaymentRow {
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="visibleProxy = false">Annuler</app-button>
+        <app-button variant="outline" (click)="visibleProxy = false" i18n="@@payroll.runs.annuler.49ba3292">Annuler</app-button>
         <app-button variant="primary" [disabled]="!isValid() || saving()" (click)="submit()">
           {{ saving() ? 'Enregistrement…' : 'Enregistrer le paiement' }}
         </app-button>

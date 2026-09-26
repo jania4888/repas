@@ -51,7 +51,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
   ],
   providers: [ConfirmationService],
   template: `
-    <app-page-header title="Plan comptable" subtitle="NCT 01 + overlay métier — comptes système verrouillés" />
+    <app-page-header title="Plan comptable" i18n-title="Plan comptable" subtitle="NCT 01 + overlay métier — comptes système verrouillés" />
     <p-confirmDialog />
     <div class="card coa-card">
       <app-accounting-filter-bar ariaLabel="Recherche et actualisation du plan comptable">
@@ -64,8 +64,8 @@ export function sceAccountDigitCount(accountNumber: string): number {
               class="coa-search-input"
               [(ngModel)]="searchTerm"
               (ngModelChange)="onSearchChange()"
-              placeholder="Rechercher par n° de compte ou libellé…"
-              aria-label="Filtrer le plan comptable" />
+              placeholder="Rechercher par n° de compte ou libellé…" i18n-placeholder="Rechercher par n° de compte ou libellé…"
+              aria-label="Filtrer le plan comptable" i18n-aria-label="Filtrer le plan comptable" />
           </span>
         </div>
         <div accountingFilterActions class="coa-toolbar-right">
@@ -76,9 +76,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
               iconPos="left"
               type="button"
               (click)="openCreate()"
-              ariaLabel="Créer un nouveau compte comptable">
-              Nouveau compte
-            </app-button>
+              ariaLabel="Créer un nouveau compte comptable" i18n="@@accounting.chart-of-accounts.nouveau.compte.9c08a4c7">Nouveau compte</app-button>
           }
           <app-button
             variant="secondary"
@@ -86,9 +84,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
             iconPos="left"
             type="button"
             (click)="load()"
-            ariaLabel="Actualiser le plan comptable">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser le plan comptable" i18n="@@accounting.chart-of-accounts.actualiser.9d3b2a7d">Actualiser</app-button>
           <app-analyze-with-ai-button
             screenId="accounting-chart"
             density="toolbar"
@@ -141,9 +137,9 @@ export function sceAccountDigitCount(accountNumber: string): number {
             <th pSortableColumn="accountClass" scope="col" class="coa-col-narrow">
               Classe <p-sortIcon field="accountClass" />
             </th>
-            <th scope="col" class="coa-col-narrow">Système</th>
-            <th scope="col" class="coa-col-narrow">Auxiliaire</th>
-            <th scope="col" class="coa-col-narrow">Statut</th>
+            <th scope="col" class="coa-col-narrow" i18n="@@accounting.chart-of-accounts.systeme.62d09520">Système</th>
+            <th scope="col" class="coa-col-narrow" i18n="@@accounting.chart-of-accounts.auxiliaire.b8c6c266">Auxiliaire</th>
+            <th scope="col" class="coa-col-narrow" i18n="@@accounting.chart-of-accounts.statut.659499f3">Statut</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
@@ -169,7 +165,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
                   {{ r.affectationAccountNumber || 'Oui' }}
                 </span>
               } @else {
-                <span class="coa-aux-none">—</span>
+                <span class="coa-aux-none" i18n="@@accounting.chart-of-accounts.text.1b93795b">—</span>
               }
             </td>
             <td class="coa-col-narrow" data-label="Statut">
@@ -197,8 +193,8 @@ export function sceAccountDigitCount(accountNumber: string): number {
         <ng-template pTemplate="emptymessage">
           <tr>
             <td colspan="5" class="coa-empty">
-              <p class="coa-empty-title">Aucun résultat</p>
-              <p class="coa-empty-hint">Ajustez la recherche ou actualisez la liste.</p>
+              <p class="coa-empty-title" i18n="@@accounting.chart-of-accounts.aucun.resultat.9e524fe1">Aucun résultat</p>
+              <p class="coa-empty-hint" i18n="@@accounting.chart-of-accounts.ajustez.la.recherche.ou.actualisez.la.liste.c28a5fae">Ajustez la recherche ou actualisez la liste.</p>
             </td>
           </tr>
         </ng-template>
@@ -208,29 +204,29 @@ export function sceAccountDigitCount(accountNumber: string): number {
     @if (showCreate()) {
       <div class="coa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="coa-create-title">
         <div class="coa-modal">
-          <h2 id="coa-create-title" class="coa-modal-title">Nouveau compte comptable</h2>
-          <p class="coa-modal-sub">Plan comptable — Gestion des comptes</p>
+          <h2 id="coa-create-title" class="coa-modal-title" i18n="@@accounting.chart-of-accounts.nouveau.compte.comptable.c517e173">Nouveau compte comptable</h2>
+          <p class="coa-modal-sub" i18n="@@accounting.chart-of-accounts.plan.comptable.gestion.des.comptes.619b25d6">Plan comptable — Gestion des comptes</p>
 
-          <h3 class="coa-sec">Type de compte</h3>
+          <h3 class="coa-sec" i18n="@@accounting.chart-of-accounts.type.de.compte.b6544864">Type de compte</h3>
           <div class="coa-type-row">
             <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 2" (click)="setType(2)"><i class="pi pi-truck"></i> Fournisseur</button>
             <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 1" (click)="setType(1)"><i class="pi pi-user"></i> Client</button>
             <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 3 || form.accountType === 0" (click)="setType(3)"><i class="pi pi-ellipsis-h"></i> Autre</button>
           </div>
 
-          <h3 class="coa-sec">Hiérarchie du compte</h3>
+          <h3 class="coa-sec" i18n="@@accounting.chart-of-accounts.hierarchie.du.compte.edd80076">Hiérarchie du compte</h3>
           <div class="coa-grid">
             <div class="coa-field">
-              <label class="coa-lbl" for="coa-aux">Type</label>
+              <label class="coa-lbl" for="coa-aux" i18n="@@accounting.chart-of-accounts.type.3deb7456">Type</label>
               <select id="coa-aux" class="coa-inp" [(ngModel)]="form.isAuxiliary">
-                <option [ngValue]="true">Auxiliaire</option>
-                <option [ngValue]="false">Général</option>
+                <option [ngValue]="true" i18n="@@accounting.chart-of-accounts.auxiliaire.b8c6c266">Auxiliaire</option>
+                <option [ngValue]="false" i18n="@@accounting.chart-of-accounts.general.5376df98">Général</option>
               </select>
             </div>
             <div class="coa-field coa-field-wide">
-              <label class="coa-lbl" for="coa-parent">Sous compte de</label>
+              <label class="coa-lbl" for="coa-parent" i18n="@@accounting.chart-of-accounts.sous.compte.de.7f47036e">Sous compte de</label>
               <select id="coa-parent" class="coa-inp" [(ngModel)]="form.parentAccountNumber" (ngModelChange)="onParentChange($event)">
-                <option [ngValue]="null">—</option>
+                <option [ngValue]="null" i18n="@@accounting.chart-of-accounts.text.1b93795b">—</option>
                 @for (a of parentOptions(); track a.accountNumber) {
                   <option [ngValue]="a.accountNumber">{{ a.accountNumber }} — {{ a.label }}</option>
                 }
@@ -238,9 +234,9 @@ export function sceAccountDigitCount(accountNumber: string): number {
             </div>
             @if (form.isAuxiliary) {
               <div class="coa-field coa-field-wide">
-                <label class="coa-lbl" for="coa-affect">Compte d'affectation</label>
+                <label class="coa-lbl" for="coa-affect" i18n="@@accounting.chart-of-accounts.compte.d.affectation.4a67171b">Compte d'affectation</label>
                 <select id="coa-affect" class="coa-inp" [(ngModel)]="form.affectationAccountNumber">
-                  <option [ngValue]="null">—</option>
+                  <option [ngValue]="null" i18n="@@accounting.chart-of-accounts.text.1b93795b">—</option>
                   @for (a of rows(); track a.accountNumber) {
                     <option [ngValue]="a.accountNumber">{{ a.accountNumber }} — {{ a.label }}</option>
                   }
@@ -249,18 +245,18 @@ export function sceAccountDigitCount(accountNumber: string): number {
             }
           </div>
 
-          <h3 class="coa-sec">Identification</h3>
+          <h3 class="coa-sec" i18n="@@accounting.chart-of-accounts.identification.9d2c7063">Identification</h3>
           <div class="coa-grid">
             <div class="coa-field">
-              <label class="coa-lbl" for="coa-num">Compte numéro</label>
-              <input id="coa-num" class="coa-inp" [(ngModel)]="form.accountNumber" (ngModelChange)="onAccountNumberChange()" [maxlength]="accountNumberMaxLength" placeholder="Ex. 428.3 ou 41100001" />
+              <label class="coa-lbl" for="coa-num" i18n="@@accounting.chart-of-accounts.compte.numero.f569fef7">Compte numéro</label>
+              <input id="coa-num" class="coa-inp" [(ngModel)]="form.accountNumber" (ngModelChange)="onAccountNumberChange()" [maxlength]="accountNumberMaxLength" placeholder="Ex. 428.3 ou 41100001" i18n-placeholder="Ex. 428.3 ou 41100001" />
               @if (accountNumberError(); as numError) {
                 <p class="coa-create-error" role="alert">{{ numError }}</p>
               }
             </div>
             <div class="coa-field coa-field-wide">
-              <label class="coa-lbl" for="coa-label">Libellé</label>
-              <input id="coa-label" class="coa-inp" [(ngModel)]="form.label" placeholder="Ex. Client Société X" />
+              <label class="coa-lbl" for="coa-label" i18n="@@accounting.chart-of-accounts.libelle.f5485bba">Libellé</label>
+              <input id="coa-label" class="coa-inp" [(ngModel)]="form.label" placeholder="Ex. Client Société X" i18n-placeholder="Ex. Client Société X" />
             </div>
           </div>
 
@@ -269,7 +265,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
           }
 
           <div class="coa-modal-actions">
-            <button type="button" class="btn btn-secondary" (click)="closeCreate()" [disabled]="creating()">Annuler</button>
+            <button type="button" class="btn btn-secondary" (click)="closeCreate()" [disabled]="creating()" i18n="@@accounting.chart-of-accounts.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary" (click)="create()" [disabled]="creating() || !canSubmit()">
               {{ creating() ? 'Enregistrement…' : 'Enregistrer' }}
             </button>

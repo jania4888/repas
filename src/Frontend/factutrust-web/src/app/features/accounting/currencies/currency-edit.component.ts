@@ -36,7 +36,7 @@ interface RateRow {
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
     <app-page-header [title]="pageTitle()" subtitle="Configuration de la devise et de ses taux de change">
-      <app-button variant="secondary" icon="pi pi-arrow-left" type="button" (click)="back()">Retour</app-button>
+      <app-button variant="secondary" icon="pi pi-arrow-left" type="button" (click)="back()" i18n="@@accounting.currencies.retour.e5befb1f">Retour</app-button>
       @if (canManage()) {
         <app-button variant="primary" icon="pi pi-save" type="button"
                     (click)="save()" [disabled]="saving() || loading()">
@@ -48,48 +48,46 @@ interface RateRow {
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     @if (isDirty()) {
-      <div class="ce-dirty" role="status">Modifications non enregistrées.</div>
+      <div class="ce-dirty" role="status" i18n="@@accounting.currencies.modifications.non.enregistrees.d3afef8e">Modifications non enregistrées.</div>
     }
 
     @if (currency(); as c) {
       <div class="card ce-block">
-        <h3 class="ce-title">Configuration devise</h3>
+        <h3 class="ce-title" i18n="@@accounting.currencies.configuration.devise.147b7601">Configuration devise</h3>
         <div class="ce-grid">
           <div class="ce-field">
-            <label class="ce-lbl" for="ce-code">Code</label>
+            <label class="ce-lbl" for="ce-code" i18n="@@accounting.currencies.code.adac6937">Code</label>
             <input id="ce-code" class="ce-inp ce-readonly" [value]="c.code" readonly />
           </div>
           <div class="ce-field ce-grow">
-            <label class="ce-lbl" for="ce-label">Libellé</label>
+            <label class="ce-lbl" for="ce-label" i18n="@@accounting.currencies.libelle.f5485bba">Libellé</label>
             <input id="ce-label" class="ce-inp ce-readonly" [value]="c.label" readonly />
           </div>
           <div class="ce-field">
-            <label class="ce-lbl" for="ce-periodicity">Période</label>
+            <label class="ce-lbl" for="ce-periodicity" i18n="@@accounting.currencies.periode.de2110b7">Période</label>
             <input id="ce-periodicity" class="ce-inp ce-readonly"
                    [value]="c.ratePeriodicity === 1 ? 'Mensuelle' : 'Fixe (annuelle)'" readonly />
           </div>
           <div class="ce-field">
-            <label class="ce-lbl" for="ce-decimals">Décimale</label>
+            <label class="ce-lbl" for="ce-decimals" i18n="@@accounting.currencies.decimale.de3fe95d">Décimale</label>
             <input id="ce-decimals" class="ce-inp ce-readonly" [value]="c.decimalPlaces" readonly />
           </div>
         </div>
-        <p class="ce-hint">
-          Le code, le libellé, la période et les décimales se modifient depuis la liste des devises.
-        </p>
+        <p class="ce-hint" i18n="@@accounting.currencies.le.code.le.libelle.la.periode.et.les.decimales.s.8b492df5">Le code, le libellé, la période et les décimales se modifient depuis la liste des devises.</p>
       </div>
 
       <div class="card ce-block">
         <div class="ce-block-head">
-          <h3 class="ce-title">Configuration de taux de change</h3>
+          <h3 class="ce-title" i18n="@@accounting.currencies.configuration.de.taux.de.change.9bc5794a">Configuration de taux de change</h3>
           <div class="ce-field">
-            <label class="ce-lbl" for="ce-year">Exercice</label>
+            <label class="ce-lbl" for="ce-year" i18n="@@accounting.currencies.exercice.e171e2b0">Exercice</label>
             <input id="ce-year" class="ce-inp ce-year" type="number" [ngModel]="fiscalYear()"
                    (ngModelChange)="onYearChange($event)" [min]="minYear" [max]="maxYear" />
           </div>
         </div>
 
         <p class="ce-direction">
-          Un taux exprime le nombre de dinars pour <strong>une</strong> unité de {{ c.code }}.
+          Un taux exprime le nombre de dinars pour <strong i18n="@@accounting.currencies.une.e3bae98d">une</strong> unité de {{ c.code }}.
           Exemple : 1 {{ c.code }} = 3,31420 TND se saisit <code>3,31420</code>.
         </p>
 
@@ -106,7 +104,7 @@ interface RateRow {
         </div>
       </div>
     } @else if (!loading()) {
-      <div class="card ce-block"><p class="ce-hint">Devise introuvable.</p></div>
+      <div class="card ce-block"><p class="ce-hint" i18n="@@accounting.currencies.devise.introuvable.d2789868">Devise introuvable.</p></div>
     }
   `,
   styles: `

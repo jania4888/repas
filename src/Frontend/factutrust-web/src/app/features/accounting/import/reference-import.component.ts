@@ -24,37 +24,35 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card ri-card">
       <div class="ri-fields">
         <div class="form-field">
-          <label class="field-label" for="ri-format-{{ target }}">Format</label>
+          <label class="field-label" for="ri-format-{{ target }}" i18n="@@accounting.import.format.041a5dec">Format</label>
           <select id="ri-format-{{ target }}" class="ri-input" [(ngModel)]="format" [disabled]="busy()">
-            <option [ngValue]="0">CSV (délimité)</option>
-            <option [ngValue]="1">Excel (.xlsx)</option>
+            <option [ngValue]="0" i18n="@@accounting.import.csv.delimite.d957a0e8">CSV (délimité)</option>
+            <option [ngValue]="1" i18n="@@accounting.import.excel.xlsx.47f8ecb0">Excel (.xlsx)</option>
           </select>
         </div>
         @if (target === 2) {
           <div class="form-field">
-            <label class="field-label" for="ri-year-{{ target }}">Exercice</label>
+            <label class="field-label" for="ri-year-{{ target }}" i18n="@@accounting.import.exercice.e171e2b0">Exercice</label>
             <input id="ri-year-{{ target }}" type="number" min="2000" max="2100" class="ri-input" [(ngModel)]="fiscalYear" [disabled]="busy()" />
           </div>
         }
         <div class="form-field ri-field-file">
-          <label class="field-label" for="ri-file-{{ target }}">Fichier</label>
+          <label class="field-label" for="ri-file-{{ target }}" i18n="@@accounting.import.fichier.f0fa5745">Fichier</label>
           <input id="ri-file-{{ target }}" type="file" class="ri-input" (change)="onFileSelected($event)" [disabled]="busy()" accept=".csv,.txt,.xlsx,.tsv" />
         </div>
         @if (target !== 1) {
           <div class="form-field ri-field-file">
-            <label class="field-label" for="ri-mapping-{{ target }}">Table de correspondance (facultatif)</label>
+            <label class="field-label" for="ri-mapping-{{ target }}" i18n="@@accounting.import.table.de.correspondance.facultatif.4e919db4">Table de correspondance (facultatif)</label>
             <input id="ri-mapping-{{ target }}" type="file" class="ri-input" (change)="onMappingSelected($event)" [disabled]="busy()" accept=".csv,.txt,.xlsx,.tsv" />
           </div>
         }
         <div class="ri-actions">
           <app-button variant="secondary" icon="pi pi-search" type="button"
             (click)="runPreview()" [disabled]="!selectedFile() || busy()"
-            ariaLabel="Analyser le fichier sans rien enregistrer">
-            Aperçu
-          </app-button>
+            ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.apercu.f0f53004">Aperçu</app-button>
         </div>
       </div>
-      <p class="ri-help">Colonnes attendues : <code>{{ expectedColumns }}</code>. Création <strong>additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
+      <p class="ri-help">Colonnes attendues : <code>{{ expectedColumns }}</code>. Création <strong i18n="@@accounting.import.additive.62d12306">additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
     </div>
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -66,12 +64,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     @if (preview(); as p) {
       <div class="card ri-card">
         <div class="ri-summary">
-          <div class="ri-kpi"><span class="ri-kpi-label">Lignes</span><span class="ri-kpi-value">{{ p.totalRows }}</span></div>
-          <div class="ri-kpi"><span class="ri-kpi-label">Valides</span><span class="ri-kpi-value ri-ok">{{ p.validRows }}</span></div>
-          <div class="ri-kpi"><span class="ri-kpi-label">En erreur</span><span class="ri-kpi-value" [class.ri-err]="p.rowsWithErrors > 0">{{ p.rowsWithErrors }}</span></div>
-          <div class="ri-kpi"><span class="ri-kpi-label">Déjà présents</span><span class="ri-kpi-value">{{ p.existingRows }}</span></div>
+          <div class="ri-kpi"><span class="ri-kpi-label" i18n="@@accounting.import.lignes.41c7025e">Lignes</span><span class="ri-kpi-value">{{ p.totalRows }}</span></div>
+          <div class="ri-kpi"><span class="ri-kpi-label" i18n="@@accounting.import.valides.4cb63bf2">Valides</span><span class="ri-kpi-value ri-ok">{{ p.validRows }}</span></div>
+          <div class="ri-kpi"><span class="ri-kpi-label" i18n="@@accounting.import.en.erreur.10a2e3df">En erreur</span><span class="ri-kpi-value" [class.ri-err]="p.rowsWithErrors > 0">{{ p.rowsWithErrors }}</span></div>
+          <div class="ri-kpi"><span class="ri-kpi-label" i18n="@@accounting.import.deja.presents.cad005a1">Déjà présents</span><span class="ri-kpi-value">{{ p.existingRows }}</span></div>
           @if (p.mappedAccountCount > 0) {
-            <div class="ri-kpi"><span class="ri-kpi-label">Comptes traduits</span><span class="ri-kpi-value">{{ p.mappedAccountCount }}</span></div>
+            <div class="ri-kpi"><span class="ri-kpi-label" i18n="@@accounting.import.comptes.traduits.7bfb19b7">Comptes traduits</span><span class="ri-kpi-value">{{ p.mappedAccountCount }}</span></div>
           }
         </div>
 
@@ -96,7 +94,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         @if (p.sample.length > 0) {
           <h3 class="ri-sample-title">Aperçu ({{ p.sample.length }} première(s) ligne(s))</h3>
           <p-table [value]="p.sample" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
-            <ng-template pTemplate="header"><tr><th scope="col">Réf.</th><th scope="col">Résumé</th></tr></ng-template>
+            <ng-template pTemplate="header"><tr><th scope="col" i18n="@@accounting.import.ref.7f0a8d72">Réf.</th><th scope="col" i18n="@@accounting.import.resume.9fb58963">Résumé</th></tr></ng-template>
             <ng-template pTemplate="body" let-r><tr><td>{{ r.ref }}</td><td>{{ r.summary }}</td></tr></ng-template>
           </p-table>
         }
@@ -105,7 +103,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           @if (p.canCommit) {
             <span class="ri-commit-hint">Prêt à importer ({{ p.existingRows }} déjà présent(s) seront ignorés).</span>
           } @else {
-            <span class="ri-commit-hint ri-err">Corrigez les anomalies bloquantes avant d'importer.</span>
+            <span class="ri-commit-hint ri-err" i18n="@@accounting.import.corrigez.les.anomalies.bloquantes.avant.d.import.127ebca3">Corrigez les anomalies bloquantes avant d'importer.</span>
           }
           <app-button variant="primary" icon="pi pi-upload" type="button"
             (click)="runCommit()" [disabled]="!p.canCommit || busy()"

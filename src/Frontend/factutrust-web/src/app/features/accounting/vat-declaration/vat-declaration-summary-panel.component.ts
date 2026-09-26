@@ -11,7 +11,7 @@ import { VatChartSegment, canSubmitDeclaration, formatDateFr, shouldShowFilingAl
   template: `
     <div class="vat-sidebar">
       <div class="card vat-summary-card">
-        <h3 class="vat-zone-title">Récapitulatif</h3>
+        <h3 class="vat-zone-title" i18n="@@accounting.vat-declaration.recapitulatif.d5b5de6d">Récapitulatif</h3>
         @if (chartData) {
           <p-chart type="doughnut" [data]="chartData" [options]="chartOptions" [style]="{ height: '220px' }" />
         }
@@ -22,26 +22,18 @@ import { VatChartSegment, canSubmitDeclaration, formatDateFr, shouldShowFilingAl
       </div>
 
       <div class="card vat-actions-card">
-        <h3 class="vat-zone-title">Actions</h3>
+        <h3 class="vat-zone-title" i18n="@@accounting.vat-declaration.actions.c3cd636a">Actions</h3>
         <div class="vat-actions-stack">
           @if (canManage) {
             @if (canSubmit) {
-              <button type="button" class="btn btn-primary vat-action-btn" (click)="saveDraft.emit()" [disabled]="loading">
-                Enregistrer brouillon
-              </button>
-              <button type="button" class="btn btn-success vat-action-btn" (click)="submit.emit()" [disabled]="loading">
-                Soumettre
-              </button>
+              <button type="button" class="btn btn-primary vat-action-btn" (click)="saveDraft.emit()" [disabled]="loading" i18n="@@accounting.vat-declaration.enregistrer.brouillon.09f6f9ed">Enregistrer brouillon</button>
+              <button type="button" class="btn btn-success vat-action-btn" (click)="submit.emit()" [disabled]="loading" i18n="@@accounting.vat-declaration.soumettre.5597a63d">Soumettre</button>
             } @else {
-              <p class="vat-submitted-hint">
-                Déclaration déjà soumise pour cette période. Utilisez « Rectificative » pour la corriger.
-              </p>
+              <p class="vat-submitted-hint" i18n="@@accounting.vat-declaration.declaration.deja.soumise.pour.cette.periode.util.c26a58f7">Déclaration déjà soumise pour cette période. Utilisez « Rectificative » pour la corriger.</p>
             }
             @if (v2Enabled) {
               <button type="button" class="btn btn-secondary vat-action-btn" (click)="rectificative.emit()" [disabled]="loading"
-                title="Corriger une déclaration déjà déposée (rectificative)">
-                Rectificative
-              </button>
+                title="Corriger une déclaration déjà déposée (rectificative)" i18n-title="Corriger une déclaration déjà déposée (rectificative)" i18n="@@accounting.vat-declaration.rectificative.4524a686">Rectificative</button>
             }
           }
           <button type="button" class="btn btn-secondary vat-action-btn" (click)="exportPdf.emit()" [disabled]="loading">

@@ -13,30 +13,30 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Remplacement de compte" subtitle="Remplacer un compte par un autre sur les écritures des périodes ouvertes" />
+    <app-page-header title="Remplacement de compte" i18n-title="Remplacement de compte" subtitle="Remplacer un compte par un autre sur les écritures des périodes ouvertes" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card ar-card">
       <div class="ar-warn" role="note">
         <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-        <span>Opération de maintenance. Seules les écritures des <strong>périodes ouvertes</strong> sont modifiées ; l'action est journalisée.</span>
+        <span>Opération de maintenance. Seules les écritures des <strong i18n="@@accounting.account-replacement.periodes.ouvertes.83adb1a3">périodes ouvertes</strong> sont modifiées ; l'action est journalisée.</span>
       </div>
 
       <div class="ar-grid">
         <div class="ar-field">
-          <label class="ar-lbl" for="ar-old">Ancien compte</label>
-          <input id="ar-old" class="ar-inp" [(ngModel)]="oldAccount" (ngModelChange)="onOldChange()" placeholder="Ex. 41100001" [disabled]="replacing()" />
+          <label class="ar-lbl" for="ar-old" i18n="@@accounting.account-replacement.ancien.compte.b188eb3d">Ancien compte</label>
+          <input id="ar-old" class="ar-inp" [(ngModel)]="oldAccount" (ngModelChange)="onOldChange()" placeholder="Ex. 41100001" i18n-placeholder="Ex. 41100001" [disabled]="replacing()" />
         </div>
         <div class="ar-arrow"><i class="pi pi-arrow-right" aria-hidden="true"></i></div>
         <div class="ar-field">
-          <label class="ar-lbl" for="ar-new">Nouveau compte</label>
-          <input id="ar-new" class="ar-inp" [(ngModel)]="newAccount" placeholder="Ex. 41100002" [disabled]="replacing()" />
+          <label class="ar-lbl" for="ar-new" i18n="@@accounting.account-replacement.nouveau.compte.9c08a4c7">Nouveau compte</label>
+          <input id="ar-new" class="ar-inp" [(ngModel)]="newAccount" placeholder="Ex. 41100002" i18n-placeholder="Ex. 41100002" [disabled]="replacing()" />
         </div>
       </div>
 
       <div class="ar-actions">
-        <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="preview()" [disabled]="!oldAccount.trim() || replacing()">Aperçu</app-button>
+        <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="preview()" [disabled]="!oldAccount.trim() || replacing()" i18n="@@accounting.account-replacement.apercu.f0f53004">Aperçu</app-button>
         <app-button variant="primary" icon="pi pi-check" type="button" (click)="replace()"
           [disabled]="!canReplace() || replacing()">
           {{ replacing() ? 'Remplacement…' : 'Remplacer' }}

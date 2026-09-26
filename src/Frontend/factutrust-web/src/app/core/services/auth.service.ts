@@ -56,6 +56,8 @@ export interface User {
    * field existed — consumers must treat it as optional and fail open (show, don't hide).
    */
   tenantCreatedAtUtc?: string | null;
+  /** UI locale preference (`fr` | `ar`). Absent ⇒ French. */
+  preferredLanguage?: string | null;
 }
 
 /** Codes stables d'avertissement d'inscription (miroir de `RegistrationWarningCodes` côté API). */

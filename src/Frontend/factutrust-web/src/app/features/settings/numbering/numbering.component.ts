@@ -58,7 +58,7 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Numérotations"
+      title="Numérotations" i18n-title="Numérotations"
       [subtitle]="pageSubtitle()">
       <div class="header-actions">
         <p-button
@@ -90,7 +90,7 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
     @if (loading() && !schemes().length) {
       <div class="loading-container" role="status" aria-live="polite">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem" aria-hidden="true"></i>
-        <p>Chargement des numérotations...</p>
+        <p i18n="@@settings.numbering.chargement.des.numerotations.83350921">Chargement des numérotations...</p>
       </div>
     } @else {
       <app-numbering-doc-tabs
@@ -106,15 +106,15 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
         [attr.aria-labelledby]="'numbering-tab-' + currentDocumentType()">
         <div class="meta-row">
           <div class="meta-item">
-            <span class="meta-label">Année fiscale</span>
+            <span class="meta-label" i18n="@@settings.numbering.annee.fiscale.a3f33eb8">Année fiscale</span>
             <span class="meta-value">{{ fiscalYear() }}</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Dernier numéro émis</span>
+            <span class="meta-label" i18n="@@settings.numbering.dernier.numero.emis.44a4a0db">Dernier numéro émis</span>
             <span class="meta-value">{{ currentSequence() }}</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Prochain numéro</span>
+            <span class="meta-label" i18n="@@settings.numbering.prochain.numero.d628cf0d">Prochain numéro</span>
             <span class="meta-value">{{ previewSequence() }}</span>
           </div>
           @if (isFormatLocked() || hasIssuedDocuments()) {
@@ -132,8 +132,8 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
             class="panel palette-panel"
             [class.palette-panel--hidden]="isFormatLocked()"
             aria-labelledby="palette-title">
-              <h3 id="palette-title" class="panel-title">Blocs disponibles</h3>
-              <p class="panel-hint">Glissez un bloc vers le format ci-dessous.</p>
+              <h3 id="palette-title" class="panel-title" i18n="@@settings.numbering.blocs.disponibles.f8d62517">Blocs disponibles</h3>
+              <p class="panel-hint" i18n="@@settings.numbering.glissez.un.bloc.vers.le.format.ci.dessous.50f2d4b2">Glissez un bloc vers le format ci-dessous.</p>
               <div
                 class="palette-list"
                 cdkDropList
@@ -152,14 +152,12 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
             </section>
 
           <section class="panel builder-panel" aria-labelledby="builder-title">
-            <h3 id="builder-title" class="panel-title">Format de numérotation</h3>
+            <h3 id="builder-title" class="panel-title" i18n="@@settings.numbering.format.de.numerotation.7a70df22">Format de numérotation</h3>
             @if (isFormatLocked()) {
-              <p class="panel-hint">
-                Le format ne peut plus être modifié car des documents ont déjà été créés.
-                Vous pouvez uniquement ajuster le numéro de départ.
-              </p>
+              <p class="panel-hint" i18n="@@settings.numbering.le.format.ne.peut.plus.etre.modifie.car.des.docu.95baed70">Le format ne peut plus être modifié car des documents ont déjà été créés.
+                Vous pouvez uniquement ajuster le numéro de départ.</p>
             } @else {
-              <p class="panel-hint">Réorganisez les blocs par glisser-déposer.</p>
+              <p class="panel-hint" i18n="@@settings.numbering.reorganisez.les.blocs.par.glisser.deposer.b5d0e34a">Réorganisez les blocs par glisser-déposer.</p>
             }
 
             <div
@@ -196,7 +194,7 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
                         (ngModelChange)="onSeparatorChange(i, $event)"
                         [attr.aria-label]="'Séparateur du bloc ' + (i + 1)">
                         <option value="-">-</option>
-                        <option value="/">/</option>
+                        <option value="/" i18n="@@settings.numbering.text.42099b4a">/</option>
                       </select>
                     } @else if (block.value) {
                       <span class="builder-block__value">{{ block.value }}</span>
@@ -214,15 +212,13 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
                   }
                 </div>
               } @empty {
-                <div class="builder-empty">
-                  Aucun bloc. Glissez des éléments depuis la palette ou réinitialisez le format.
-                </div>
+                <div class="builder-empty" i18n="@@settings.numbering.aucun.bloc.glissez.des.elements.depuis.la.palett.2c3d0c0d">Aucun bloc. Glissez des éléments depuis la palette ou réinitialisez le format.</div>
               }
             </div>
           </section>
 
           <section class="panel preview-panel" aria-labelledby="preview-title">
-            <h3 id="preview-title" class="panel-title">Aperçu en direct</h3>
+            <h3 id="preview-title" class="panel-title" i18n="@@settings.numbering.apercu.en.direct.da6d683e">Aperçu en direct</h3>
             <div class="preview-box" [class.preview-box--error]="!previewValid()">
               @if (previewValid()) {
                 <span class="preview-value">{{ previewText() }}</span>
@@ -230,16 +226,12 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
                 <span class="preview-error">{{ previewError() }}</span>
               }
             </div>
-            <p class="panel-hint preview-hint">
-              Aperçu du prochain numéro qui sera émis (selon le format et la séquence).
-            </p>
+            <p class="panel-hint preview-hint" i18n="@@settings.numbering.apercu.du.prochain.numero.qui.sera.emis.selon.le.4c15e340">Aperçu du prochain numéro qui sera émis (selon le format et la séquence).</p>
           </section>
         </div>
 
         <div class="start-number-card">
-          <label class="start-number-label" for="start-number">
-            Numéro de départ
-          </label>
+          <label class="start-number-label" for="start-number" i18n="@@settings.numbering.numero.de.depart.d05888c4">Numéro de départ</label>
           <p-inputNumber
             inputId="start-number"
             [ngModel]="startNumber()"

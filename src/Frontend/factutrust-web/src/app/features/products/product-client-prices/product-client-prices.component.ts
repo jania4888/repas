@@ -51,25 +51,23 @@ interface ClientOption {
     <div class="client-prices-section">
       <div class="client-prices-header">
         <div>
-          <h4 class="pricing-block-title">Tarifs par client</h4>
+          <h4 class="pricing-block-title" i18n="@@products.product-client-prices.tarifs.par.client.e47e033b">Tarifs par client</h4>
           <p class="client-prices-subtitle">
             Prix catalogue : <strong>{{ catalogUnitPriceHT() | number: '1.3-3' }} {{ currency() }}</strong>
             — les clients absents conservent ce tarif.
           </p>
         </div>
         @if (!readOnly() && canUpdate()) {
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openAdd()">
-            Ajouter un tarif client
-          </app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openAdd()" i18n="@@products.product-client-prices.ajouter.un.tarif.client.db59e2ab">Ajouter un tarif client</app-button>
         }
       </div>
 
       @if (loading()) {
-        <p class="ft-muted">Chargement des tarifs client…</p>
+        <p class="ft-muted" i18n="@@products.product-client-prices.chargement.des.tarifs.client.820f8874">Chargement des tarifs client…</p>
       } @else if (clientPrices().length === 0) {
         <app-empty-state
           icon="pi-users"
-          title="Aucun tarif client"
+          title="Aucun tarif client" i18n-title="Aucun tarif client"
           message="Définissez des prix spécifiques pour certains clients. Les autres restent au prix catalogue.">
         </app-empty-state>
       } @else {
@@ -77,13 +75,13 @@ interface ClientOption {
           <p-table [value]="clientPrices()" [rowHover]="true" styleClass="ft-table">
             <ng-template pTemplate="header">
               <tr>
-                <th>Client</th>
-                <th class="ft-num">Prix HT</th>
-                <th>Validité</th>
-                <th class="ft-num">Écart</th>
-                <th>État</th>
+                <th i18n="@@products.product-client-prices.client.1bdd79b1">Client</th>
+                <th class="ft-num" i18n="@@products.product-client-prices.prix.ht.362207ca">Prix HT</th>
+                <th i18n="@@products.product-client-prices.validite.8be7d506">Validité</th>
+                <th class="ft-num" i18n="@@products.product-client-prices.ecart.6ae8dce8">Écart</th>
+                <th i18n="@@products.product-client-prices.etat.d3b28a2a">État</th>
                 @if (!readOnly() && (canUpdate() || canDelete())) {
-                  <th class="ft-actions-col">Actions</th>
+                  <th class="ft-actions-col" i18n="@@products.product-client-prices.actions.c3cd636a">Actions</th>
                 }
               </tr>
             </ng-template>
@@ -146,7 +144,7 @@ interface ClientOption {
       </p>
 
       <div class="ft-field ft-field--full client-price-dialog__client">
-        <label for="cp-client">Client <span class="ft-required">*</span></label>
+        <label for="cp-client">Client <span class="ft-required" i18n="@@products.product-client-prices.text.df58248c">*</span></label>
         @if (editingItem) {
           <div class="ft-readonly">{{ editingItem.clientName }}</div>
         } @else {
@@ -158,7 +156,7 @@ interface ClientOption {
             field="label"
             [forceSelection]="true"
             [dropdown]="true"
-            placeholder="Rechercher par nom"
+            placeholder="Rechercher par nom" i18n-placeholder="Rechercher par nom"
             appendTo="body"
             [disabled]="saving()">
           </p-autoComplete>
@@ -166,7 +164,7 @@ interface ClientOption {
       </div>
 
       <div class="ft-field ft-field--full client-price-dialog__price">
-        <label for="cp-price">Prix HT ({{ currency() }}) <span class="ft-required">*</span></label>
+        <label for="cp-price">Prix HT ({{ currency() }}) <span class="ft-required" i18n="@@products.product-client-prices.text.df58248c">*</span></label>
         <p-inputNumber
           inputId="cp-price"
           [(ngModel)]="formPrice"
@@ -189,48 +187,42 @@ interface ClientOption {
 
       <div class="ft-form-grid client-price-dialog__dates">
         <div class="ft-field">
-          <label for="cp-valid-from">Début de validité</label>
+          <label for="cp-valid-from" i18n="@@products.product-client-prices.debut.de.validite.10f1f74c">Début de validité</label>
           <input
             id="cp-valid-from"
             type="date"
             pInputText
             [(ngModel)]="formValidFrom"
             [disabled]="saving()" />
-          <small class="ft-hint">Optionnel</small>
+          <small class="ft-hint" i18n="@@products.product-client-prices.optionnel.879d6b16">Optionnel</small>
         </div>
 
         <div class="ft-field">
-          <label for="cp-valid-until">Fin de validité</label>
+          <label for="cp-valid-until" i18n="@@products.product-client-prices.fin.de.validite.3cfa7402">Fin de validité</label>
           <input
             id="cp-valid-until"
             type="date"
             pInputText
             [(ngModel)]="formValidUntil"
             [disabled]="saving()" />
-          <small class="ft-hint">Optionnel</small>
+          <small class="ft-hint" i18n="@@products.product-client-prices.optionnel.879d6b16">Optionnel</small>
         </div>
       </div>
 
       @if (dateRangeInvalid()) {
-        <p class="ft-field-error">La fin de validité ne peut pas précéder le début.</p>
+        <p class="ft-field-error" i18n="@@products.product-client-prices.la.fin.de.validite.ne.peut.pas.preceder.le.debut.4833acba">La fin de validité ne peut pas précéder le début.</p>
       }
-      <small class="ft-hint client-price-dialog__dates-hint">
-        Format affiché selon votre système. Laissez vide pour une validité sans limite.
-      </small>
+      <small class="ft-hint client-price-dialog__dates-hint" i18n="@@products.product-client-prices.format.affiche.selon.votre.systeme.laissez.vide..d0c19b95">Format affiché selon votre système. Laissez vide pour une validité sans limite.</small>
 
       <div class="ft-field ft-field--inline client-price-dialog__active">
         <p-inputSwitch [(ngModel)]="formIsActive" inputId="cp-active" [disabled]="saving()"></p-inputSwitch>
-        <label for="cp-active">Tarif actif</label>
+        <label for="cp-active" i18n="@@products.product-client-prices.tarif.actif.989d1fb6">Tarif actif</label>
       </div>
-      <small class="ft-hint client-price-dialog__active-hint">
-        Désactiver est réversible ; n'affecte pas les documents déjà émis.
-      </small>
+      <small class="ft-hint client-price-dialog__active-hint" i18n="@@products.product-client-prices.desactiver.est.reversible.n.affecte.pas.les.docu.f09cf48c">Désactiver est réversible ; n'affecte pas les documents déjà émis.</small>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="!canSave() || saving()" (clicked)="save()">
-          Enregistrer
-        </app-button>
+        <app-button variant="secondary" (clicked)="dialogVisible = false" i18n="@@products.product-client-prices.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="!canSave() || saving()" (clicked)="save()" i18n="@@products.product-client-prices.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

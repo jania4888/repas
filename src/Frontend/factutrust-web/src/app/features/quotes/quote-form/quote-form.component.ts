@@ -93,35 +93,31 @@ interface LineRow extends LinePromotionPreview {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <div class="form-container">
-      <h1 class="page-title">Créer un devis</h1>
-      <p class="page-subtitle">
-        Renseignez le client, les dates et les lignes. Vous pourrez envoyer le devis au client une fois créé.
-      </p>
-      <p class="page-hint">
-        Ce devis reste modifiable tant qu'il n'est pas envoyé au client.
-      </p>
+      <h1 class="page-title" i18n="@@quotes.quote-form.creer.un.devis.426c5610">Créer un devis</h1>
+      <p class="page-subtitle" i18n="@@quotes.quote-form.renseignez.le.client.les.dates.et.les.lignes.vou.c70a554b">Renseignez le client, les dates et les lignes. Vous pourrez envoyer le devis au client une fois créé.</p>
+      <p class="page-hint" i18n="@@quotes.quote-form.ce.devis.reste.modifiable.tant.qu.il.n.est.pas.e.50c5144d">Ce devis reste modifiable tant qu'il n'est pas envoyé au client.</p>
 
       <form (ngSubmit)="onSubmit()" class="quote-form">
-        <app-form-section title="Client et période" icon="pi-user" [number]="1">
+        <app-form-section title="Client et période" i18n-title="Client et période" icon="pi-user" [number]="1">
           <div class="form-grid">
             <div class="field span-full">
-              <label for="quoteTemplate">Modèle de devis (optionnel)</label>
+              <label for="quoteTemplate" i18n="@@quotes.quote-form.modele.de.devis.optionnel.7efa30ee">Modèle de devis (optionnel)</label>
               <p-select
                 id="quoteTemplate"
                 [options]="quoteTemplateOptions()"
                 [(ngModel)]="selectedQuoteTemplateId"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Aucun — saisie libre"
+                placeholder="Aucun — saisie libre" i18n-placeholder="Aucun — saisie libre"
                 [showClear]="true"
                 name="quoteTemplate"
                 styleClass="w-full"
                 (onChange)="onQuoteTemplateChange()">
               </p-select>
-              <small class="field-hint">Préremplit les lignes, les notes, les conditions et la date de validité.</small>
+              <small class="field-hint" i18n="@@quotes.quote-form.preremplit.les.lignes.les.notes.les.conditions.e.f10dd8cd">Préremplit les lignes, les notes, les conditions et la date de validité.</small>
             </div>
             <div class="field">
-              <label for="client">Client <span class="required">*</span></label>
+              <label for="client">Client <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
               <div class="client-cell">
                 <div class="client-cell-input">
                   <p-select
@@ -131,7 +127,7 @@ interface LineRow extends LinePromotionPreview {
                     (onChange)="onClientChange()"
                     optionLabel="name"
                     optionValue="id"
-                    placeholder="Choisir un client"
+                    placeholder="Choisir un client" i18n-placeholder="Choisir un client"
                     [filter]="true"
                     filterBy="name"
                     [showClear]="true"
@@ -152,7 +148,7 @@ interface LineRow extends LinePromotionPreview {
               </div>
             </div>
             <div class="field">
-              <label for="issueDate">Date d'émission <span class="required">*</span></label>
+              <label for="issueDate">Date d'émission <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
               <p-datepicker
                 id="issueDate"
                 [(ngModel)]="issueDate"
@@ -163,7 +159,7 @@ interface LineRow extends LinePromotionPreview {
               </p-datepicker>
             </div>
             <div class="field">
-              <label for="expiryDate">Valide jusqu'au <span class="required">*</span></label>
+              <label for="expiryDate">Valide jusqu'au <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
               <p-datepicker
                 id="expiryDate"
                 [(ngModel)]="expiryDate"
@@ -172,23 +168,23 @@ interface LineRow extends LinePromotionPreview {
                 name="expiryDate"
                 styleClass="w-full">
               </p-datepicker>
-              <small class="field-hint">Date limite de validité de l'offre. Passée cette date, le devis ne pourra plus être accepté.</small>
+              <small class="field-hint" i18n="@@quotes.quote-form.date.limite.de.validite.de.l.offre.passee.cette..e771d10d">Date limite de validité de l'offre. Passée cette date, le devis ne pourra plus être accepté.</small>
             </div>
           </div>
           <div class="field mt-3">
-            <label for="reference">Référence</label>
+            <label for="reference" i18n="@@quotes.quote-form.reference.f8130bb0">Référence</label>
             <input pInputText id="reference" [(ngModel)]="reference" name="reference" class="w-full" />
           </div>
         </app-form-section>
 
-        <app-form-section title="Lignes du devis" icon="pi-list" [number]="2">
+        <app-form-section title="Lignes du devis" i18n-title="Lignes du devis" icon="pi-list" [number]="2">
           <div class="lines-actions">
-            <app-button variant="secondary" icon="pi-plus" iconPos="left" (click)="addLine()">Ajouter une ligne</app-button>
+            <app-button variant="secondary" icon="pi-plus" iconPos="left" (click)="addLine()" i18n="@@quotes.quote-form.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
           </div>
           @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
               <ft-barcode-scan-field
-                placeholder="Scanner un code-barres pour ajouter une ligne"
+                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
                 [autoFocus]="false"
                 (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -198,15 +194,15 @@ interface LineRow extends LinePromotionPreview {
             <table class="lines-table">
               <thead>
                 <tr>
-                  <th style="width: 22%">Article (Recherche) *</th>
-                  <th style="width: 14%">Désignation</th>
-                  <th style="width: 8%">Qté *</th>
-                  <th style="width: 8%">Unité</th>
-                  <th style="width: 10%">Prix unit. HT *</th>
-                  <th style="width: 9%">Origine</th>
-                  <th style="width: 8%">TVA %</th>
-                  <th style="width: 8%">Remise %</th>
-                  <th style="width: 9%">Total HT</th>
+                  <th style="width: 22%" i18n="@@quotes.quote-form.article.recherche.8b736d6d">Article (Recherche) *</th>
+                  <th style="width: 14%" i18n="@@quotes.quote-form.designation.63a9062c">Désignation</th>
+                  <th style="width: 8%" i18n="@@quotes.quote-form.qte.f0c098af">Qté *</th>
+                  <th style="width: 8%" i18n="@@quotes.quote-form.unite.388fd9c4">Unité</th>
+                  <th style="width: 10%" i18n="@@quotes.quote-form.prix.unit.ht.bc9bcc29">Prix unit. HT *</th>
+                  <th style="width: 9%" i18n="@@quotes.quote-form.origine.62e96258">Origine</th>
+                  <th style="width: 8%" i18n="@@quotes.quote-form.tva.b984d709">TVA %</th>
+                  <th style="width: 8%" i18n="@@quotes.quote-form.remise.a39386b5">Remise %</th>
+                  <th style="width: 9%" i18n="@@quotes.quote-form.total.ht.2ca17ae6">Total HT</th>
                   <th style="width: 6%"></th>
                 </tr>
               </thead>
@@ -225,7 +221,7 @@ interface LineRow extends LinePromotionPreview {
                             [dropdown]="true"
                             [forceSelection]="true"
                             [ngModelOptions]="{ standalone: true }"
-                            placeholder="Rechercher un produit..."
+                            placeholder="Rechercher un produit..." i18n-placeholder="Rechercher un produit..."
                             styleClass="w-full"
                             inputStyleClass="w-full">
                             <ng-template let-product pTemplate="item">
@@ -243,7 +239,7 @@ interface LineRow extends LinePromotionPreview {
                           [iconOnly]="true"
                           ariaLabel="Choisir une variante"
                           (click)="openVariantPicker($index)"
-                          title="Choisir une variante" />
+                          title="Choisir une variante" i18n-title="Choisir une variante" />
                         <app-button
                           variant="primary"
                           size="sm"
@@ -259,7 +255,7 @@ interface LineRow extends LinePromotionPreview {
                         pInputText
                         [value]="line.designation"
                         disabled="true"
-                        placeholder="-"
+                        placeholder="-" i18n-placeholder="-"
                         class="w-full bg-gray-50" />
                     </td>
                     <td>
@@ -279,7 +275,7 @@ interface LineRow extends LinePromotionPreview {
                         pInputText
                         [value]="line.unit"
                         disabled="true"
-                        placeholder="-"
+                        placeholder="-" i18n-placeholder="-"
                         class="w-full bg-gray-50" />
                     </td>
                     <td>
@@ -303,7 +299,7 @@ interface LineRow extends LinePromotionPreview {
                       } @else if (line.priceSource === 'PriceList') {
                         <p-tag severity="info" value="Grille"></p-tag>
                       } @else if (line.priceSource) {
-                        <span class="text-muted">Catalogue</span>
+                        <span class="text-muted" i18n="@@quotes.quote-form.catalogue.5a241023">Catalogue</span>
                       }
                       @if (line.promotionEligible && line.promotionName) {
                         <p-tag severity="success" [value]="'Promo : ' + line.promotionName"></p-tag>
@@ -356,7 +352,7 @@ interface LineRow extends LinePromotionPreview {
                         pInputText
                         [(ngModel)]="line.description"
                         [ngModelOptions]="{ standalone: true }"
-                        placeholder="Notes / description pour cette ligne (optionnel)"
+                        placeholder="Notes / description pour cette ligne (optionnel)" i18n-placeholder="Notes / description pour cette ligne (optionnel)"
                         class="w-full text-sm" />
                     </td>
                   </tr>
@@ -364,7 +360,7 @@ interface LineRow extends LinePromotionPreview {
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan="8" class="text-right font-bold py-3">Total HT Estimé :</td>
+                  <td colspan="8" class="text-right font-bold py-3" i18n="@@quotes.quote-form.total.ht.estime.a621d615">Total HT Estimé :</td>
                   <td class="text-right font-bold py-3">{{ totals.subTotal | number:'1.3-3' }} {{ currency }}</td>
                   <td></td>
                 </tr>
@@ -374,24 +370,24 @@ interface LineRow extends LinePromotionPreview {
           <p class="lines-hint">{{ lines.length }} ligne(s) ajoutée(s)</p>
           <div class="totals-panel">
             <div class="totals-row">
-              <span>Total HT</span>
+              <span i18n="@@quotes.quote-form.total.ht.2ca17ae6">Total HT</span>
               <span class="mono">{{ totals.subTotal | number:'1.3-3' }} {{ currency }}</span>
             </div>
             <div class="totals-row">
-              <span>Total TVA</span>
+              <span i18n="@@quotes.quote-form.total.tva.605c4b2e">Total TVA</span>
               <span class="mono">{{ totals.totalVat | number:'1.3-3' }} {{ currency }}</span>
             </div>
             <div class="totals-row grand">
-              <span>Total TTC</span>
+              <span i18n="@@quotes.quote-form.total.ttc.9e80ff7c">Total TTC</span>
               <span class="mono">{{ totals.totalAmount | number:'1.3-3' }} {{ currency }}</span>
             </div>
           </div>
-          <p class="totals-hint">Les montants se mettent à jour automatiquement selon les lignes saisies.</p>
+          <p class="totals-hint" i18n="@@quotes.quote-form.les.montants.se.mettent.a.jour.automatiquement.s.d434580d">Les montants se mettent à jour automatiquement selon les lignes saisies.</p>
         </app-form-section>
 
-        <app-form-section title="Notes et conditions (optionnel)" icon="pi-file-edit" [number]="3">
+        <app-form-section title="Notes et conditions (optionnel)" i18n-title="Notes et conditions (optionnel)" icon="pi-file-edit" [number]="3">
           <div class="field">
-            <label for="notes">Notes</label>
+            <label for="notes" i18n="@@quotes.quote-form.notes.70440046">Notes</label>
             <textarea
               pTextarea
               id="notes"
@@ -402,7 +398,7 @@ interface LineRow extends LinePromotionPreview {
             </textarea>
           </div>
           <div class="field mt-3">
-            <label for="terms">Conditions générales</label>
+            <label for="terms" i18n="@@quotes.quote-form.conditions.generales.0c152db4">Conditions générales</label>
             <textarea
               pTextarea
               id="terms"
@@ -429,9 +425,7 @@ interface LineRow extends LinePromotionPreview {
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/quotes">
-            Annuler
-          </app-button>
+            routerLink="/quotes" i18n="@@quotes.quote-form.annuler.49ba3292">Annuler</app-button>
           <app-button
             variant="primary"
             [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"

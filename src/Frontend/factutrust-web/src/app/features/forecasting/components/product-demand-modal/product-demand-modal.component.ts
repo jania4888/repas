@@ -15,30 +15,30 @@ import { ProductDemandForecast } from '../../models/forecasting.models';
         <header class="modal-header">
           <div>
             <h3>{{ productName }}</h3>
-            <span class="modal-subtitle">Prévision de demande produit</span>
+            <span class="modal-subtitle" i18n="@@forecasting.components.prevision.de.demande.produit.bf33950d">Prévision de demande produit</span>
           </div>
           <button class="close-btn" (click)="close.emit()"><i class="pi pi-times"></i></button>
         </header>
 
         @if (loading()) {
-          <div class="state">Calcul en cours…</div>
+          <div class="state" i18n="@@forecasting.components.calcul.en.cours.0721ac07">Calcul en cours…</div>
         } @else {
           @if (forecast(); as f) {
             <div class="kpi-row">
               <div class="kpi">
-                <span class="label">Qté prévue</span>
+                <span class="label" i18n="@@forecasting.components.qte.prevue.1e18ec77">Qté prévue</span>
                 <span class="value">{{ f.expectedQty | number:'1.0-2' }}</span>
                 <span class="hint">{{ f.lowQty | number:'1.0-2' }} – {{ f.highQty | number:'1.0-2' }}</span>
               </div>
               <div class="kpi">
-                <span class="label">Stock actuel</span>
+                <span class="label" i18n="@@forecasting.components.stock.actuel.294a897a">Stock actuel</span>
                 <span class="value" [class.low-stock]="isLowStock(f)">{{ f.currentStockOnHand | number:'1.0-2' }}</span>
                 @if (f.daysOfStockRemaining !== null) {
                   <span class="hint">{{ f.daysOfStockRemaining | number:'1.0-0' }} jour(s) de stock</span>
                 }
               </div>
               <div class="kpi">
-                <span class="label">Réappro suggéré</span>
+                <span class="label" i18n="@@forecasting.components.reappro.suggere.0611eb76">Réappro suggéré</span>
                 <span class="value accent">{{ f.suggestedReplenishmentQty | number:'1.0-2' }}</span>
                 <span class="hint">Confiance {{ f.confidencePercent | number:'1.0-1' }} %</span>
               </div>
@@ -61,12 +61,12 @@ import { ProductDemandForecast } from '../../models/forecasting.models';
                 <i class="pi pi-shopping-cart"></i>
                 {{ generating() ? 'Génération…' : 'Créer une recommandation de réappro' }}
               </button>
-              <button class="btn btn-secondary" (click)="close.emit()">Fermer</button>
+              <button class="btn btn-secondary" (click)="close.emit()" i18n="@@forecasting.components.fermer.5ab4ec64">Fermer</button>
             </footer>
           } @else if (error()) {
             <div class="state error">{{ error() }}</div>
             <footer class="modal-footer">
-              <button class="btn btn-secondary" (click)="close.emit()">Fermer</button>
+              <button class="btn btn-secondary" (click)="close.emit()" i18n="@@forecasting.components.fermer.5ab4ec64">Fermer</button>
             </footer>
           }
         }

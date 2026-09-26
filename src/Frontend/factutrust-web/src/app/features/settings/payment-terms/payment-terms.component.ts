@@ -58,7 +58,7 @@ interface DueModeOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Conditions de règlement"
+      title="Conditions de règlement" i18n-title="Conditions de règlement"
       subtitle="Délai, échéance et escompte. La condition produit le texte imprimé sur le document et une échéance exploitable pour la balance âgée.">
       <div class="header-actions">
         <p-button
@@ -68,9 +68,7 @@ interface DueModeOption {
           routerLink="/settings">
         </p-button>
         @if (canCreate()) {
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()">
-            Nouvelle condition
-          </app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@settings.payment-terms.nouvelle.condition.67e805e6">Nouvelle condition</app-button>
         }
       </div>
     </app-page-header>
@@ -80,7 +78,7 @@ interface DueModeOption {
     } @else if (terms().length === 0) {
       <app-empty-state
         icon="pi-calendar-clock"
-        title="Aucune condition de règlement"
+        title="Aucune condition de règlement" i18n-title="Aucune condition de règlement"
         message="Créez une condition pour proposer un délai et calculer l'échéance automatiquement.">
       </app-empty-state>
     } @else {
@@ -88,12 +86,12 @@ interface DueModeOption {
         <p-table [value]="terms()" [rowHover]="true" styleClass="ft-table">
           <ng-template pTemplate="header">
             <tr>
-              <th>Libellé</th>
-              <th>Ce qui s'imprime</th>
-              <th class="ft-num">Délai</th>
-              <th>Échéance d'un document du jour</th>
-              <th>État</th>
-              <th class="ft-actions-col">Actions</th>
+              <th i18n="@@settings.payment-terms.libelle.f5485bba">Libellé</th>
+              <th i18n="@@settings.payment-terms.ce.qui.s.imprime.9b7642ed">Ce qui s'imprime</th>
+              <th class="ft-num" i18n="@@settings.payment-terms.delai.be9a9403">Délai</th>
+              <th i18n="@@settings.payment-terms.echeance.d.un.document.du.jour.fdfd4e70">Échéance d'un document du jour</th>
+              <th i18n="@@settings.payment-terms.etat.d3b28a2a">État</th>
+              <th class="ft-actions-col" i18n="@@settings.payment-terms.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
 
@@ -149,17 +147,17 @@ interface DueModeOption {
       [draggable]="false">
       <div class="ft-form-grid">
         <div class="ft-field ft-field--full">
-          <label for="pt-name">Libellé <span class="ft-required">*</span></label>
+          <label for="pt-name">Libellé <span class="ft-required" i18n="@@settings.payment-terms.text.df58248c">*</span></label>
           <input id="pt-name" pInputText [(ngModel)]="form.name" maxlength="100" />
         </div>
 
         <div class="ft-field">
-          <label for="pt-delay">Délai (jours) <span class="ft-required">*</span></label>
+          <label for="pt-delay">Délai (jours) <span class="ft-required" i18n="@@settings.payment-terms.text.df58248c">*</span></label>
           <p-inputNumber inputId="pt-delay" [(ngModel)]="form.delayDays" [min]="0" [max]="365"></p-inputNumber>
         </div>
 
         <div class="ft-field">
-          <label for="pt-mode">Mode d'échéance</label>
+          <label for="pt-mode" i18n="@@settings.payment-terms.mode.d.echeance.291cfb78">Mode d'échéance</label>
           <p-select
             inputId="pt-mode"
             [options]="dueModes"
@@ -171,16 +169,14 @@ interface DueModeOption {
 
         @if (form.dueMode === 'EndOfMonthOnDay') {
           <div class="ft-field">
-            <label for="pt-day">Jour de règlement <span class="ft-required">*</span></label>
+            <label for="pt-day">Jour de règlement <span class="ft-required" i18n="@@settings.payment-terms.text.df58248c">*</span></label>
             <p-inputNumber inputId="pt-day" [(ngModel)]="form.dueDayOfMonth" [min]="1" [max]="31"></p-inputNumber>
-            <small class="ft-hint">
-              Un jour inexistant (31 février) est ramené au dernier jour du mois.
-            </small>
+            <small class="ft-hint" i18n="@@settings.payment-terms.un.jour.inexistant.31.fevrier.est.ramene.au.dern.c56e4c63">Un jour inexistant (31 février) est ramené au dernier jour du mois.</small>
           </div>
         }
 
         <div class="ft-field">
-          <label for="pt-disc">Escompte (%)</label>
+          <label for="pt-disc" i18n="@@settings.payment-terms.escompte.b0b6e901">Escompte (%)</label>
           <p-inputNumber
             inputId="pt-disc"
             [(ngModel)]="form.earlyPaymentDiscountPercent"
@@ -192,30 +188,26 @@ interface DueModeOption {
         </div>
 
         <div class="ft-field">
-          <label for="pt-discdays">Escompte sous (jours)</label>
+          <label for="pt-discdays" i18n="@@settings.payment-terms.escompte.sous.jours.df2a00be">Escompte sous (jours)</label>
           <p-inputNumber inputId="pt-discdays" [(ngModel)]="form.earlyPaymentDays" [min]="1"></p-inputNumber>
-          <small class="ft-hint">
-            Doit être inférieur au délai, sinon l'escompte serait toujours acquis.
-          </small>
+          <small class="ft-hint" i18n="@@settings.payment-terms.doit.etre.inferieur.au.delai.sinon.l.escompte.se.c8129ccc">Doit être inférieur au délai, sinon l'escompte serait toujours acquis.</small>
         </div>
 
         <div class="ft-field ft-field--inline">
           <p-inputSwitch [(ngModel)]="form.isActive" inputId="pt-active"></p-inputSwitch>
-          <label for="pt-active">Condition active</label>
+          <label for="pt-active" i18n="@@settings.payment-terms.condition.active.a7d42119">Condition active</label>
         </div>
 
         <div class="ft-field ft-field--inline">
           <p-inputSwitch [(ngModel)]="form.isDefault" inputId="pt-default"></p-inputSwitch>
-          <label for="pt-default">Proposée par défaut</label>
-          <small class="ft-hint">Une seule condition peut l'être : l'ancienne est libérée.</small>
+          <label for="pt-default" i18n="@@settings.payment-terms.proposee.par.defaut.cfc08e05">Proposée par défaut</label>
+          <small class="ft-hint" i18n="@@settings.payment-terms.une.seule.condition.peut.l.etre.l.ancienne.est.l.ddd37b25">Une seule condition peut l'être : l'ancienne est libérée.</small>
         </div>
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="!canSave() || saving()" (clicked)="save()">
-          Enregistrer
-        </app-button>
+        <app-button variant="secondary" (clicked)="dialogVisible = false" i18n="@@settings.payment-terms.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="!canSave() || saving()" (clicked)="save()" i18n="@@settings.payment-terms.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

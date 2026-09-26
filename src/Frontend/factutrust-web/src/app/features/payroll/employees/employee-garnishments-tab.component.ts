@@ -55,25 +55,25 @@ const GARNISHMENT_KIND_OPTIONS = [
   ],
   template: `
     <app-payroll-section
-      title="Saisies sur salaire"
+      title="Saisies sur salaire" i18n-title="Saisies sur salaire"
       subtitle="Retenues priorisées selon le barème légal et le net disponible."
       icon="pi-exclamation-triangle">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Nouvelle saisie</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.employees.nouvelle.saisie.ade08a49">Nouvelle saisie</app-button>
         </div>
       }
 
       <p-table [value]="items()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Type</th>
-            <th>Référence</th>
-            <th>Bénéficiaire</th>
-            <th>Mode</th>
-            <th class="text-right">Montant dû</th>
-            <th class="text-right">Déjà retenu</th>
-            <th>Statut</th>
+            <th i18n="@@payroll.employees.type.3deb7456">Type</th>
+            <th i18n="@@payroll.employees.reference.f8130bb0">Référence</th>
+            <th i18n="@@payroll.employees.beneficiaire.7e8ba7ff">Bénéficiaire</th>
+            <th i18n="@@payroll.employees.mode.a7b93d21">Mode</th>
+            <th class="text-right" i18n="@@payroll.employees.montant.du.53e5e68c">Montant dû</th>
+            <th class="text-right" i18n="@@payroll.employees.deja.retenu.92afdbd5">Déjà retenu</th>
+            <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
             @if (!readOnly) { <th></th> }
           </tr>
         </ng-template>
@@ -91,15 +91,15 @@ const GARNISHMENT_KIND_OPTIONS = [
             @if (!readOnly) {
               <td class="actions">
                 @if (g.status === 'Active') {
-                  <button type="button" class="p-button p-button-text p-button-sm" (click)="editGarnishment(g)">Modifier</button>
-                  <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmCancel(g)">Annuler</button>
+                  <button type="button" class="p-button p-button-text p-button-sm" (click)="editGarnishment(g)" i18n="@@payroll.employees.modifier.f260e757">Modifier</button>
+                  <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmCancel(g)" i18n="@@payroll.employees.annuler.49ba3292">Annuler</button>
                 }
               </td>
             }
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td [attr.colspan]="readOnly ? 7 : 8">Aucune saisie enregistrée.</td></tr>
+          <tr><td [attr.colspan]="readOnly ? 7 : 8" i18n="@@payroll.employees.aucune.saisie.enregistree.fbac08ea">Aucune saisie enregistrée.</td></tr>
         </ng-template>
       </p-table>
     </app-payroll-section>
@@ -107,64 +107,64 @@ const GARNISHMENT_KIND_OPTIONS = [
     <p-dialog [header]="editingId ? 'Modifier la saisie' : 'Nouvelle saisie'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '560px' }">
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Type</label>
+          <label i18n="@@payroll.employees.type.3deb7456">Type</label>
           <p-select [options]="typeOptions" optionLabel="label" optionValue="value" [(ngModel)]="formType" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Priorité</label>
+          <label i18n="@@payroll.employees.priorite.eede91d2">Priorité</label>
           <p-inputNumber [(ngModel)]="formPriority" [min]="1" styleClass="w-full" />
         </div>
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Référence</label>
+          <label i18n="@@payroll.employees.reference.f8130bb0">Référence</label>
           <input pInputText [(ngModel)]="formReference" class="w-full" maxlength="100" />
         </div>
         <div class="payroll-form-group">
-          <label>Date du titre</label>
+          <label i18n="@@payroll.employees.date.du.titre.921f17ec">Date du titre</label>
           <p-datepicker [(ngModel)]="formIssuedAt" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Bénéficiaire</label>
+        <label i18n="@@payroll.employees.beneficiaire.7e8ba7ff">Bénéficiaire</label>
         <input pInputText [(ngModel)]="formBeneficiaryName" class="w-full" maxlength="200" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>RIB bénéficiaire (optionnel)</label>
+        <label i18n="@@payroll.employees.rib.beneficiaire.optionnel.fddc72d3">RIB bénéficiaire (optionnel)</label>
         <input pInputText [(ngModel)]="formBeneficiaryRib" class="w-full" maxlength="20" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Mode de calcul</label>
+          <label i18n="@@payroll.employees.mode.de.calcul.803843c7">Mode de calcul</label>
           <p-select [options]="kindOptions" optionLabel="label" optionValue="value" [(ngModel)]="formKind" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
           @if (formKind === 'FixedAmount') {
-            <label>Montant fixe (TND)</label>
+            <label i18n="@@payroll.employees.montant.fixe.tnd.1ef73ffc">Montant fixe (TND)</label>
             <p-inputNumber [(ngModel)]="formFixedAmount" [min]="0.001" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           } @else {
-            <label>Pourcentage du net (%)</label>
+            <label i18n="@@payroll.employees.pourcentage.du.net.e873b620">Pourcentage du net (%)</label>
             <p-inputNumber [(ngModel)]="formPercentOfNet" [min]="0.01" [max]="100" [minFractionDigits]="2" [locale]="'fr-TN'" styleClass="w-full" />
           }
         </div>
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Montant total dû (optionnel)</label>
+        <label i18n="@@payroll.employees.montant.total.du.optionnel.cbd9acb0">Montant total dû (optionnel)</label>
         <p-inputNumber [(ngModel)]="formTotalAmountDue" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Date de début</label>
+          <label i18n="@@payroll.employees.date.de.debut.706438ab">Date de début</label>
           <p-datepicker [(ngModel)]="formStartDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Date de fin</label>
+          <label i18n="@@payroll.employees.date.de.fin.716a6d8d">Date de fin</label>
           <p-datepicker [(ngModel)]="formEndDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

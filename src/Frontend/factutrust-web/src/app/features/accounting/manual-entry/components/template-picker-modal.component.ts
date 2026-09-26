@@ -16,28 +16,28 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <div class="tpm-backdrop" (click)="onBackdropClick($event)" role="presentation">
         <div class="tpm-modal" role="dialog" aria-modal="true" aria-labelledby="tpm-title" (click)="$event.stopPropagation()">
           <header class="tpm-header">
-            <h2 id="tpm-title" class="tpm-title">Charger un modèle d'écriture</h2>
-            <button type="button" class="tpm-close" (click)="onClose()" aria-label="Fermer la modale">✕</button>
+            <h2 id="tpm-title" class="tpm-title" i18n="@@accounting.manual-entry.charger.un.modele.d.ecriture.f370a44a">Charger un modèle d'écriture</h2>
+            <button type="button" class="tpm-close" (click)="onClose()" aria-label="Fermer la modale" i18n-aria-label="Fermer la modale" i18n="@@accounting.manual-entry.text.0951b9a0">✕</button>
           </header>
 
           <div class="tpm-search">
             <input type="search"
                    class="tpm-input"
-                   placeholder="Rechercher par nom, description ou code journal…"
+                   placeholder="Rechercher par nom, description ou code journal…" i18n-placeholder="Rechercher par nom, description ou code journal…"
                    [ngModel]="search()"
                    (ngModelChange)="search.set($event)"
-                   aria-label="Recherche dans les modèles" />
+                   aria-label="Recherche dans les modèles" i18n-aria-label="Recherche dans les modèles" />
           </div>
 
           <div class="tpm-body">
             @if (loading()) {
-              <p class="tpm-state" role="status">Chargement des modèles…</p>
+              <p class="tpm-state" role="status" i18n="@@accounting.manual-entry.chargement.des.modeles.6f00e426">Chargement des modèles…</p>
             } @else if (error()) {
               <p class="tpm-state tpm-state-error" role="alert">{{ error() }}</p>
             } @else if (filtered().length === 0) {
-              <p class="tpm-state">Aucun modèle ne correspond à votre recherche.</p>
+              <p class="tpm-state" i18n="@@accounting.manual-entry.aucun.modele.ne.correspond.a.votre.recherche.9a10fd92">Aucun modèle ne correspond à votre recherche.</p>
             } @else {
-              <ul class="tpm-list" role="listbox" aria-label="Liste des modèles">
+              <ul class="tpm-list" role="listbox" aria-label="Liste des modèles" i18n-aria-label="Liste des modèles">
                 @for (t of filtered(); track t.id) {
                   <li class="tpm-item"
                       [class.tpm-item-selected]="selected()?.id === t.id"
@@ -62,19 +62,19 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </div>
 
           @if (selected(); as sel) {
-            <div class="tpm-preview" aria-label="Aperçu du modèle sélectionné">
+            <div class="tpm-preview" aria-label="Aperçu du modèle sélectionné" i18n-aria-label="Aperçu du modèle sélectionné">
               <h3 class="tpm-preview-title">Aperçu : {{ sel.name }}</h3>
               @if (sel.labelTemplate) {
-                <p class="tpm-preview-label"><em>Libellé par défaut :</em> {{ sel.labelTemplate }}</p>
+                <p class="tpm-preview-label"><em i18n="@@accounting.manual-entry.libelle.par.defaut.2bc34c67">Libellé par défaut :</em> {{ sel.labelTemplate }}</p>
               }
               <table class="tpm-preview-table">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Compte</th>
-                    <th>Libellé</th>
-                    <th class="text-right">Débit</th>
-                    <th class="text-right">Crédit</th>
+                    <th i18n="@@accounting.manual-entry.text.d08f88df">#</th>
+                    <th i18n="@@accounting.manual-entry.compte.c45740bb">Compte</th>
+                    <th i18n="@@accounting.manual-entry.libelle.f5485bba">Libellé</th>
+                    <th class="text-right" i18n="@@accounting.manual-entry.debit.f528224f">Débit</th>
+                    <th class="text-right" i18n="@@accounting.manual-entry.credit.19194bdf">Crédit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -104,13 +104,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               }
             </div>
             <div class="tpm-footer-right">
-              <button type="button" class="btn btn-outline-secondary" (click)="onClose()">Annuler</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="onClose()" i18n="@@accounting.manual-entry.annuler.49ba3292">Annuler</button>
               <button type="button"
                       class="btn btn-primary"
                       (click)="onApply()"
-                      [disabled]="!selected()">
-                Charger ce modèle
-              </button>
+                      [disabled]="!selected()" i18n="@@accounting.manual-entry.charger.ce.modele.ef52dc55">Charger ce modèle</button>
             </div>
           </footer>
         </div>

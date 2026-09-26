@@ -27,15 +27,13 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
   ],
   template: `
     <app-page-header 
-      title="Rapports Fiches" 
+      title="Rapports Fiches" i18n-title="Rapports Fiches" 
       subtitle="Analysez vos clients et produits - CA par client, stock par produit">
       <app-button 
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()">
-        Exporter
-      </app-button>
+        (click)="onExport()" i18n="@@reports.fiches.exporter.0cd84bdc">Exporter</app-button>
     </app-page-header>
 
     @if (loading()) {
@@ -61,34 +59,34 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
 
       <p-tabs class="ft-tabs" [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0"><i class="pi pi-users"></i><span>Clients</span></p-tab>
-          <p-tab [value]="1"><i class="pi pi-cube"></i><span>Produits</span></p-tab>
+          <p-tab [value]="0"><i class="pi pi-users"></i><span i18n="@@reports.fiches.clients.28e22fe3">Clients</span></p-tab>
+          <p-tab [value]="1"><i class="pi pi-cube"></i><span i18n="@@reports.fiches.produits.48000473">Produits</span></p-tab>
         </p-tablist>
         <p-tabpanels>
         <p-tabpanel [value]="0">
           <div class="tab-content">
             <div class="section">
               <div class="section-header">
-                <h2 class="section-title">Top clients par chiffre d'affaires</h2>
-                <span class="section-subtitle">Clients avec le plus de revenus générés</span>
+                <h2 class="section-title" i18n="@@reports.fiches.top.clients.par.chiffre.d.affaires.aedddf9b">Top clients par chiffre d'affaires</h2>
+                <span class="section-subtitle" i18n="@@reports.fiches.clients.avec.le.plus.de.revenus.generes.6fea69e4">Clients avec le plus de revenus générés</span>
               </div>
               @if (!reportsData()?.topClientsByRevenue?.length) {
                 <div class="empty-placeholder">
                   <i class="pi pi-info-circle"></i>
-                  <p>Aucune donnée disponible</p>
-                  <p class="empty-hint">Les clients avec des factures apparaîtront ici.</p>
+                  <p i18n="@@reports.fiches.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
+                  <p class="empty-hint" i18n="@@reports.fiches.les.clients.avec.des.factures.apparaitront.ici.1fd98a6c">Les clients avec des factures apparaîtront ici.</p>
                 </div>
               } @else {
                 <p-table 
                   [value]="reportsData()!.topClientsByRevenue" 
                   styleClass="p-datatable-sm reports-table"
-                  aria-label="Tableau des meilleurs clients">
+                  aria-label="Tableau des meilleurs clients" i18n-aria-label="Tableau des meilleurs clients">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>Client</th>
-                      <th>Code</th>
-                      <th class="text-right">Factures</th>
-                      <th class="text-right">Chiffre d'affaires</th>
+                      <th i18n="@@reports.fiches.client.1bdd79b1">Client</th>
+                      <th i18n="@@reports.fiches.code.adac6937">Code</th>
+                      <th class="text-right" i18n="@@reports.fiches.factures.da35e4f2">Factures</th>
+                      <th class="text-right" i18n="@@reports.fiches.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
                       <th></th>
                     </tr>
                   </ng-template>
@@ -115,9 +113,9 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
             </div>
             <div class="section" id="soldes-client">
               <div class="section-header">
-                <h2 class="section-title">Soldes client</h2>
-                <span class="section-subtitle">Total facturé, total payé et solde par client</span>
-                <a class="section-link" routerLink="/reports/client-balances">Voir la fenêtre dédiée</a>
+                <h2 class="section-title" i18n="@@reports.fiches.soldes.client.ef2e0f4b">Soldes client</h2>
+                <span class="section-subtitle" i18n="@@reports.fiches.total.facture.total.paye.et.solde.par.client.4116de44">Total facturé, total payé et solde par client</span>
+                <a class="section-link" routerLink="/reports/client-balances" i18n="@@reports.fiches.voir.la.fenetre.dediee.f4185a4c">Voir la fenêtre dédiée</a>
               </div>
               <app-party-balances-table
                 [rows]="clientBalanceRows()"
@@ -134,27 +132,27 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
           <div class="tab-content">
             <div class="section">
               <div class="section-header">
-                <h2 class="section-title">Produits avec stock</h2>
-                <span class="section-subtitle">Produits ayant du stock, triés par valeur</span>
+                <h2 class="section-title" i18n="@@reports.fiches.produits.avec.stock.c8b52f24">Produits avec stock</h2>
+                <span class="section-subtitle" i18n="@@reports.fiches.produits.ayant.du.stock.tries.par.valeur.76f96dd6">Produits ayant du stock, triés par valeur</span>
               </div>
               @if (!reportsData()?.productsWithStock?.length) {
                 <div class="empty-placeholder">
                   <i class="pi pi-info-circle"></i>
-                  <p>Aucun produit avec du stock</p>
-                  <p class="empty-hint">Enregistrez des mouvements de stock pour voir les produits ici.</p>
+                  <p i18n="@@reports.fiches.aucun.produit.avec.du.stock.5f4c0567">Aucun produit avec du stock</p>
+                  <p class="empty-hint" i18n="@@reports.fiches.enregistrez.des.mouvements.de.stock.pour.voir.le.3dc6f866">Enregistrez des mouvements de stock pour voir les produits ici.</p>
                 </div>
               } @else {
                 <p-table 
                   [value]="reportsData()!.productsWithStock" 
                   styleClass="p-datatable-sm reports-table"
-                  aria-label="Tableau des produits avec stock">
+                  aria-label="Tableau des produits avec stock" i18n-aria-label="Tableau des produits avec stock">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>Produit</th>
-                      <th>Code</th>
-                      <th>Type</th>
-                      <th class="text-right">Quantité</th>
-                      <th class="text-right">Valeur stock</th>
+                      <th i18n="@@reports.fiches.produit.ff673dc2">Produit</th>
+                      <th i18n="@@reports.fiches.code.adac6937">Code</th>
+                      <th i18n="@@reports.fiches.type.3deb7456">Type</th>
+                      <th class="text-right" i18n="@@reports.fiches.quantite.09a38fda">Quantité</th>
+                      <th class="text-right" i18n="@@reports.fiches.valeur.stock.73676303">Valeur stock</th>
                       <th></th>
                     </tr>
                   </ng-template>

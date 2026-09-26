@@ -29,7 +29,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
   ],
   template: `
     <div class="section-header">
-      <h3>Factures du projet</h3>
+      <h3 i18n="@@projects.components.factures.du.projet.69bf2d0d">Factures du projet</h3>
     </div>
 
     @if (loading()) {
@@ -37,14 +37,14 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
     } @else if (invoices() === null) {
       <app-empty-state
         icon="pi-receipt"
-        title="Factures indisponibles"
+        title="Factures indisponibles" i18n-title="Factures indisponibles"
         description="Impossible de charger la liste des factures pour ce projet."
         [showAction]="false">
       </app-empty-state>
     } @else if (invoices()!.length === 0) {
       <app-empty-state
         icon="pi-receipt"
-        title="Aucune facture"
+        title="Aucune facture" i18n-title="Aucune facture"
         description="Aucune facture n'a encore été générée pour ce projet."
         [showAction]="false">
       </app-empty-state>
@@ -53,15 +53,15 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
         <p-table [value]="invoices()!" styleClass="p-datatable-sm" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th>Numéro</th>
-              <th style="width: 110px">Date</th>
-              <th>Client</th>
-              <th style="width: 120px">Montant HT</th>
-              <th style="width: 110px">TVA</th>
-              <th style="width: 120px">Montant TTC</th>
-              <th style="width: 140px">Statut</th>
-              <th style="width: 130px">Date de création</th>
-              <th style="width: 100px">Actions</th>
+              <th i18n="@@projects.components.numero.15e73db0">Numéro</th>
+              <th style="width: 110px" i18n="@@projects.components.date.eb9a4bc1">Date</th>
+              <th i18n="@@projects.components.client.1bdd79b1">Client</th>
+              <th style="width: 120px" i18n="@@projects.components.montant.ht.3df1d6fe">Montant HT</th>
+              <th style="width: 110px" i18n="@@projects.components.tva.fb62cb5d">TVA</th>
+              <th style="width: 120px" i18n="@@projects.components.montant.ttc.a742433a">Montant TTC</th>
+              <th style="width: 140px" i18n="@@projects.components.statut.659499f3">Statut</th>
+              <th style="width: 130px" i18n="@@projects.components.date.de.creation.d5e8d1af">Date de création</th>
+              <th style="width: 100px" i18n="@@projects.components.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-inv>
@@ -73,7 +73,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
                   <span class="invoice-number-static">{{ inv.number }}</span>
                 }
                 @if (inv.isCreditNote) {
-                  <span class="credit-note-tag">Avoir</span>
+                  <span class="credit-note-tag" i18n="@@projects.components.avoir.8ee24717">Avoir</span>
                 }
               </td>
               <td>{{ inv.issueDate | date:'dd/MM/yyyy' }}</td>

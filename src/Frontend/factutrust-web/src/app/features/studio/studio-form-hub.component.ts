@@ -20,18 +20,18 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      title="Formulaires & vues"
+      title="Formulaires & vues" i18n-title="Formulaires & vues"
       subtitle="Concevez le formulaire de saisie ou une vue lecture seule sur une table SQL."
       [breadcrumbs]="breadcrumbs">
       <button pButton type="button" label="Nouvelle vue" icon="fa-solid fa-database" class="p-button-outlined"
         studioActions routerLink="/studio/views/new"></button>
 
       <div class="studio-section-card">
-        <h2 class="studio-section-title">Mes tables personnalisées</h2>
+        <h2 class="studio-section-title" i18n="@@studio.studio-form-hub.mes.tables.personnalisees.544bd9ef">Mes tables personnalisées</h2>
         <div class="ft-table-card">
           <p-table [value]="entities()" [loading]="loading()" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
-              <tr><th>Table</th><th class="studio-num">Champs</th><th style="width:22rem"></th></tr>
+              <tr><th i18n="@@studio.studio-form-hub.table.0424f6e7">Table</th><th class="studio-num" i18n="@@studio.studio-form-hub.champs.76943546">Champs</th><th style="width:22rem"></th></tr>
             </ng-template>
             <ng-template pTemplate="body" let-e>
               <tr>
@@ -47,7 +47,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr><td colspan="3">
-                <app-empty-state icon="pi-table" title="Aucune table" description="Créez une table personnalisée pour concevoir son formulaire."
+                <app-empty-state icon="pi-table" title="Aucune table" i18n-title="Aucune table" description="Créez une table personnalisée pour concevoir son formulaire."
                   actionLabel="Créer une table" actionRoute="/studio" [showAction]="true" />
               </td></tr>
             </ng-template>
@@ -56,11 +56,11 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
       </div>
 
       <div class="studio-section-card">
-        <h2 class="studio-section-title">Vues lecture seule</h2>
+        <h2 class="studio-section-title" i18n="@@studio.studio-form-hub.vues.lecture.seule.78adbdec">Vues lecture seule</h2>
         <div class="ft-table-card">
           <p-table [value]="views()" [loading]="loadingViews()" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
-              <tr><th>Vue</th><th>Table source</th><th style="width:16rem"></th></tr>
+              <tr><th i18n="@@studio.studio-form-hub.vue.09237dba">Vue</th><th i18n="@@studio.studio-form-hub.table.source.e8534ba8">Table source</th><th style="width:16rem"></th></tr>
             </ng-template>
             <ng-template pTemplate="body" let-v>
               <tr>
@@ -75,7 +75,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr><td colspan="3">
-                <app-empty-state icon="pi-database" title="Aucune vue" description="Créez une vue lecture seule sur une table existante."
+                <app-empty-state icon="pi-database" title="Aucune vue" i18n-title="Aucune vue" description="Créez une vue lecture seule sur une table existante."
                   actionLabel="Nouvelle vue" actionRoute="/studio/views/new" [showAction]="true" />
               </td></tr>
             </ng-template>

@@ -247,8 +247,8 @@ const FIELD_CHANGE_PATH = /^entities\.([^.]+)\.fields\.([^.]+)$/;
                           <span class="sai-code sai-strike sai-field-key">{{ removed.key }}</span>
                         </td>
                         <td><span class="sai-strike">{{ typeLabel(removed) }}</span></td>
-                        <td class="sai-cell-center"><span class="sai-dash" aria-hidden="true">—</span></td>
-                        <td class="sai-cell-center"><span class="sai-dash" aria-hidden="true">—</span></td>
+                        <td class="sai-cell-center"><span class="sai-dash" aria-hidden="true" i18n="@@studio.ai.text.1b93795b">—</span></td>
+                        <td class="sai-cell-center"><span class="sai-dash" aria-hidden="true" i18n="@@studio.ai.text.1b93795b">—</span></td>
                         <td>
                           <button
                             type="button"
@@ -305,14 +305,14 @@ const FIELD_CHANGE_PATH = /^entities\.([^.]+)\.fields\.([^.]+)$/;
                           @if (field.required) {
                             <i class="fa-solid fa-check sai-ok" [attr.aria-label]="labels.colRequired"></i>
                           } @else {
-                            <span class="sai-dash" aria-hidden="true">—</span>
+                            <span class="sai-dash" aria-hidden="true" i18n="@@studio.ai.text.1b93795b">—</span>
                           }
                         </td>
                         <td>
                           @if (field.unique) {
                             <i class="fa-solid fa-check sai-ok" [attr.aria-label]="labels.colUnique"></i>
                           } @else {
-                            <span class="sai-dash" aria-hidden="true">—</span>
+                            <span class="sai-dash" aria-hidden="true" i18n="@@studio.ai.text.1b93795b">—</span>
                           }
                         </td>
                         <td class="sai-hint">{{ details(field) }}</td>

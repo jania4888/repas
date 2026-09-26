@@ -73,43 +73,35 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
                 icon="pi-times"
                 iconPos="left"
                 (click)="cancelImport()"
-                ariaLabel="Annuler l'import">
-                Annuler
-              </app-button>
+                ariaLabel="Annuler l'import" i18n="@@invoices.components.annuler.49ba3292">Annuler</app-button>
             </div>
           }
           @case ('error') {
             <div class="iid-state" role="alert">
               <i class="pi pi-exclamation-triangle iid-icon iid-icon-error" aria-hidden="true"></i>
-              <p class="iid-title">L'import a échoué</p>
+              <p class="iid-title" i18n="@@invoices.components.l.import.a.echoue.613ae19d">L'import a échoué</p>
               <p class="iid-text">{{ errorMessage() }}</p>
               <app-button
                 variant="primary"
                 icon="pi-refresh"
                 iconPos="left"
                 (click)="chooseFile()"
-                ariaLabel="Choisir un autre fichier">
-                Réessayer
-              </app-button>
+                ariaLabel="Choisir un autre fichier" i18n="@@invoices.components.reessayer.895d416b">Réessayer</app-button>
             </div>
           }
           @default {
             <div class="iid-state">
               <i class="pi pi-file-import iid-icon iid-icon-idle" aria-hidden="true"></i>
-              <p class="iid-title">Importez une facture existante</p>
-              <p class="iid-text">
-                Facture, bon de livraison ou devis (PDF recommandé ; photos acceptées).
-                L'IA en extraira les données ; vous pourrez tout vérifier avant de valider.
-              </p>
+              <p class="iid-title" i18n="@@invoices.components.importez.une.facture.existante.92f95412">Importez une facture existante</p>
+              <p class="iid-text" i18n="@@invoices.components.facture.bon.de.livraison.ou.devis.pdf.recommande.0a63dc73">Facture, bon de livraison ou devis (PDF recommandé ; photos acceptées).
+                L'IA en extraira les données ; vous pourrez tout vérifier avant de valider.</p>
               <app-button
                 variant="primary"
                 icon="pi-upload"
                 iconPos="left"
                 (click)="chooseFile()"
-                ariaLabel="Choisir un fichier à importer">
-                Choisir un fichier
-              </app-button>
-              <p class="iid-hint">Taille maximale : 10 Mo</p>
+                ariaLabel="Choisir un fichier à importer" i18n="@@invoices.components.choisir.un.fichier.75c27e25">Choisir un fichier</app-button>
+              <p class="iid-hint" i18n="@@invoices.components.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
               @if (modelReady() === true) {
                 <p class="iid-hint iid-hint-ready">
                   <i class="pi pi-check-circle" aria-hidden="true"></i> Modèle IA prêt

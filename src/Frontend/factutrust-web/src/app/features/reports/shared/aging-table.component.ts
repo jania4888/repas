@@ -29,12 +29,12 @@ import { PartyBalanceRow } from './party-balances-table.component';
         <ng-template pTemplate="header">
           <tr>
             <th>{{ partyLabel }}</th>
-            <th class="text-right">Solde</th>
-            <th class="text-right">Non échu</th>
-            <th class="text-right">1-30 j</th>
-            <th class="text-right">31-60 j</th>
-            <th class="text-right">61-90 j</th>
-            <th class="text-right over-90">&gt; 90 j</th>
+            <th class="text-right" i18n="@@reports.shared.solde.e5977cf9">Solde</th>
+            <th class="text-right" i18n="@@reports.shared.non.echu.cb5c1717">Non échu</th>
+            <th class="text-right" i18n="@@reports.shared.1.30.j.f6e60eeb">1-30 j</th>
+            <th class="text-right" i18n="@@reports.shared.31.60.j.8e913c3e">31-60 j</th>
+            <th class="text-right" i18n="@@reports.shared.61.90.j.a4452d3c">61-90 j</th>
+            <th class="text-right over-90" i18n="@@reports.shared.gt.90.j.4112cb98">&gt; 90 j</th>
           </tr>
         </ng-template>
 
@@ -56,7 +56,7 @@ import { PartyBalanceRow } from './party-balances-table.component';
 
         <ng-template pTemplate="footer">
           <tr class="totals-row">
-            <td>Total</td>
+            <td i18n="@@reports.shared.total.b25928c6">Total</td>
             <td class="text-right amount"><strong>{{ totals.balance | number: '1.3-3' }}</strong></td>
             <td class="text-right amount">{{ totals.notDue | number: '1.3-3' }}</td>
             <td class="text-right amount">{{ totals.bucket0To30 | number: '1.3-3' }}</td>

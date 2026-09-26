@@ -60,7 +60,7 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Mon entreprise" 
+      title="Mon entreprise" i18n-title="Mon entreprise" 
       subtitle="Informations légales et paramètres de facturation">
       <p-button 
         label="Retour" 
@@ -73,7 +73,7 @@ import {
     @if (loading()) {
       <div class="loading-container">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p>Chargement des informations...</p>
+        <p i18n="@@settings.company.chargement.des.informations.c52577f2">Chargement des informations...</p>
       </div>
     } @else {
     
@@ -82,7 +82,7 @@ import {
         <div class="error-content">
           <i class="pi pi-exclamation-triangle error-icon"></i>
           <div class="error-text">
-            <strong>Erreur</strong>
+            <strong i18n="@@settings.company.erreur.ab546c23">Erreur</strong>
             <p>{{ errorMessage() }}</p>
           </div>
         </div>
@@ -104,7 +104,7 @@ import {
           <div class="pcb-bar">
             <div class="pcb-bar__fill" [style.width.%]="profileCompletionPct()"></div>
           </div>
-          <p class="pcb-text">Complétez votre logo, RIB et coordonnées pour des documents plus professionnels.</p>
+          <p class="pcb-text" i18n="@@settings.company.completez.votre.logo.rib.et.coordonnees.pour.des.929a781f">Complétez votre logo, RIB et coordonnées pour des documents plus professionnels.</p>
         </div>
       </div>
     }
@@ -116,7 +116,7 @@ import {
           <div class="logo-section">
             <div class="logo-preview">
               @if (logoUrl()) {
-                <img [src]="logoUrl()" alt="Logo">
+                <img [src]="logoUrl()" alt="Logo" i18n-alt="Logo">
               } @else {
                 <i class="pi pi-image"></i>
               }
@@ -129,14 +129,14 @@ import {
                 chooseLabel="Choisir un logo"
                 (onSelect)="onLogoSelect($event)">
               </p-fileUpload>
-              <small>PNG, JPG. Max 1MB. Recommandé: 200x200px</small>
+              <small i18n="@@settings.company.png.jpg.max.1mb.recommande.200x200px.d501e6b5">PNG, JPG. Max 1MB. Recommandé: 200x200px</small>
             </div>
           </div>
 
           <p-divider></p-divider>
 
           <div class="form-group">
-            <label for="companyName">Raison sociale <span class="required">*</span></label>
+            <label for="companyName">Raison sociale <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <input 
               pInputText 
               id="companyName" 
@@ -146,43 +146,43 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="tradeName">Nom commercial</label>
+            <label for="tradeName" i18n="@@settings.company.nom.commercial.beb9d235">Nom commercial</label>
             <input 
               pInputText 
               id="tradeName" 
               formControlName="tradeName"
-              placeholder="Si différent de la raison sociale"
+              placeholder="Si différent de la raison sociale" i18n-placeholder="Si différent de la raison sociale"
               class="w-full">
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="nif">Matricule fiscal <span class="required">*</span></label>
+              <label for="nif">Matricule fiscal <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <p-inputMask
                 id="nif"
                 formControlName="nif"
                 appNifMaskPaste
                 mask="9999999a/a/a/999"
-                placeholder="1772793W/A/M/000"
+                placeholder="1772793W/A/M/000" i18n-placeholder="1772793W/A/M/000"
                 styleClass="w-full"
                 (onBlur)="onNifBlur()">
               </p-inputMask>
             </div>
 
             <div class="form-group">
-              <label for="commerceRegistry">Registre de commerce</label>
+              <label for="commerceRegistry" i18n="@@settings.company.registre.de.commerce.240423de">Registre de commerce</label>
               <input 
                 pInputText 
                 id="commerceRegistry" 
                 formControlName="commerceRegistry"
-                placeholder="Ex: B123456789"
+                placeholder="Ex: B123456789" i18n-placeholder="Ex: B123456789"
                 class="w-full">
             </div>
           </div>
 
           <div class="form-group">
             <label for="cnssEmployerNumber" class="label-with-tag">
-              <span>Matricule employeur CNSS</span>
+              <span i18n="@@settings.company.matricule.employeur.cnss.877c7c12">Matricule employeur CNSS</span>
               @if (!form.get('cnssEmployerNumber')?.value) {
                 <p-tag value="Recommandé" severity="warn" />
               }
@@ -191,18 +191,18 @@ import {
               pInputText
               id="cnssEmployerNumber"
               formControlName="cnssEmployerNumber"
-              placeholder="Numéro d'affiliation CNSS de l'entreprise"
+              placeholder="Numéro d'affiliation CNSS de l'entreprise" i18n-placeholder="Numéro d'affiliation CNSS de l'entreprise"
               class="w-full">
-            <small class="form-hint">Requis pour générer le bordereau mensuel CNSS et enregistrer les versements de cotisations.</small>
+            <small class="form-hint" i18n="@@settings.company.requis.pour.generer.le.bordereau.mensuel.cnss.et.57c348d5">Requis pour générer le bordereau mensuel CNSS et enregistrer les versements de cotisations.</small>
           </div>
 
           <div class="form-group">
-            <label for="taxRegime">Régime fiscal <span class="required">*</span></label>
+            <label for="taxRegime">Régime fiscal <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <p-select 
               id="taxRegime"
               [options]="taxRegimes" 
               formControlName="taxRegime"
-              placeholder="Sélectionner"
+              placeholder="Sélectionner" i18n-placeholder="Sélectionner"
               styleClass="w-full">
             </p-select>
           </div>
@@ -211,7 +211,7 @@ import {
         <!-- Contact & Address -->
         <p-card header="Coordonnées" styleClass="form-card">
           <div class="form-group">
-            <label for="street">Adresse <span class="required">*</span></label>
+            <label for="street">Adresse <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <input 
               pInputText 
               id="street" 
@@ -221,7 +221,7 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="streetLine2">Complément d'adresse</label>
+            <label for="streetLine2" i18n="@@settings.company.complement.d.adresse.fba484a7">Complément d'adresse</label>
             <input 
               pInputText 
               id="streetLine2" 
@@ -231,7 +231,7 @@ import {
 
           <div class="form-row">
             <div class="form-group">
-              <label for="postalCode">Code postal</label>
+              <label for="postalCode" i18n="@@settings.company.code.postal.74779109">Code postal</label>
               <p-inputMask
                 id="postalCode"
                 formControlName="postalCode"
@@ -241,7 +241,7 @@ import {
             </div>
 
             <div class="form-group">
-              <label for="city">Ville <span class="required">*</span></label>
+              <label for="city">Ville <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="city" 
@@ -251,12 +251,12 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="governorate">Gouvernorat <span class="required">*</span></label>
+            <label for="governorate">Gouvernorat <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <p-select 
               id="governorate"
               [options]="governorates" 
               formControlName="governorate"
-              placeholder="Sélectionner"
+              placeholder="Sélectionner" i18n-placeholder="Sélectionner"
               [filter]="true"
               styleClass="w-full">
             </p-select>
@@ -266,7 +266,7 @@ import {
 
           <div class="form-row">
             <div class="form-group">
-              <label for="email">Email <span class="required">*</span></label>
+              <label for="email">Email <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="email" 
@@ -276,7 +276,7 @@ import {
             </div>
 
             <div class="form-group">
-              <label for="phone">Téléphone <span class="required">*</span></label>
+              <label for="phone">Téléphone <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <p-inputMask
                 id="phone"
                 formControlName="phone"
@@ -287,12 +287,12 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="website">Site web</label>
+            <label for="website" i18n="@@settings.company.site.web.7e78af33">Site web</label>
             <input 
               pInputText 
               id="website" 
               formControlName="website"
-              placeholder="https://www.exemple.tn"
+              placeholder="https://www.exemple.tn" i18n-placeholder="https://www.exemple.tn"
               class="w-full">
           </div>
         </p-card>
@@ -300,34 +300,34 @@ import {
         <!-- Bank Information -->
         <p-card header="Informations bancaires" styleClass="form-card bank-card">
           <div class="form-group">
-            <label for="bankName">Nom de la banque</label>
+            <label for="bankName" i18n="@@settings.company.nom.de.la.banque.9848ce74">Nom de la banque</label>
             <input 
               pInputText 
               id="bankName" 
               formControlName="bankName"
-              placeholder="Ex: Banque Internationale Arabe de Tunisie"
+              placeholder="Ex: Banque Internationale Arabe de Tunisie" i18n-placeholder="Ex: Banque Internationale Arabe de Tunisie"
               class="w-full">
           </div>
 
           <div class="form-group">
-            <label for="rib">RIB</label>
+            <label for="rib" i18n="@@settings.company.rib.61f3ea57">RIB</label>
             <p-inputMask
               id="rib"
               formControlName="rib"
               mask="99 999 9999999999999 99"
-              placeholder="XX XXX XXXXXXXXXXXXX XX"
+              placeholder="XX XXX XXXXXXXXXXXXX XX" i18n-placeholder="XX XXX XXXXXXXXXXXXX XX"
               styleClass="w-full">
             </p-inputMask>
-            <small class="form-hint">Relevé d'Identité Bancaire à 20 chiffres</small>
+            <small class="form-hint" i18n="@@settings.company.releve.d.identite.bancaire.a.20.chiffres.604e850f">Relevé d'Identité Bancaire à 20 chiffres</small>
           </div>
 
           <div class="form-group">
-            <label for="iban">IBAN</label>
+            <label for="iban" i18n="@@settings.company.iban.e81566a5">IBAN</label>
             <input 
               pInputText 
               id="iban" 
               formControlName="iban"
-              placeholder="TN59 XXXX XXXX XXXX XXXX XXXX"
+              placeholder="TN59 XXXX XXXX XXXX XXXX XXXX" i18n-placeholder="TN59 XXXX XXXX XXXX XXXX XXXX"
               class="w-full">
           </div>
         </p-card>
@@ -335,10 +335,8 @@ import {
         <!-- Invoice Settings -->
         <p-card header="Paramètres de facturation" styleClass="form-card invoice-card">
           <div class="form-group numbering-link">
-            <label>Numérotation des documents</label>
-            <p class="form-hint">
-              Configurez le format et le début de numérotation de vos factures et autres documents.
-            </p>
+            <label i18n="@@settings.company.numerotation.des.documents.6857c7f1">Numérotation des documents</label>
+            <p class="form-hint" i18n="@@settings.company.configurez.le.format.et.le.debut.de.numerotation.2d1005c7">Configurez le format et le début de numérotation de vos factures et autres documents.</p>
             <a routerLink="/settings/numbering" class="numbering-settings-link">
               <i class="pi pi-sort-numeric-down"></i>
               Ouvrir les numérotations
@@ -346,24 +344,24 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="defaultPaymentTerms">Conditions de paiement par défaut</label>
+            <label for="defaultPaymentTerms" i18n="@@settings.company.conditions.de.paiement.par.defaut.3e7f9ec2">Conditions de paiement par défaut</label>
             <textarea 
               pTextarea 
               id="defaultPaymentTerms" 
               formControlName="defaultPaymentTerms"
-              placeholder="Ex: Paiement à 30 jours"
+              placeholder="Ex: Paiement à 30 jours" i18n-placeholder="Ex: Paiement à 30 jours"
               [rows]="2"
               class="w-full">
             </textarea>
           </div>
 
           <div class="form-group">
-            <label for="invoiceFooter">Pied de page des factures</label>
+            <label for="invoiceFooter" i18n="@@settings.company.pied.de.page.des.factures.763a451a">Pied de page des factures</label>
             <textarea 
               pTextarea 
               id="invoiceFooter" 
               formControlName="invoiceFooter"
-              placeholder="Texte qui apparaîtra en bas de chaque facture"
+              placeholder="Texte qui apparaîtra en bas de chaque facture" i18n-placeholder="Texte qui apparaîtra en bas de chaque facture"
               [rows]="3"
               class="w-full">
             </textarea>
@@ -372,26 +370,26 @@ import {
 
         <p-card header="Espace client" styleClass="form-card">
           <div class="form-group">
-            <label for="clientPortalEnabled">Activer l’espace client</label>
+            <label for="clientPortalEnabled" i18n="@@settings.company.activer.l.espace.client.d7a22239">Activer l’espace client</label>
             <p-inputSwitch inputId="clientPortalEnabled" formControlName="clientPortalEnabled"></p-inputSwitch>
-            <small class="form-hint">Permet d’inviter des contacts depuis la fiche client pour consulter leurs factures.</small>
+            <small class="form-hint" i18n="@@settings.company.permet.d.inviter.des.contacts.depuis.la.fiche.cl.a5481538">Permet d’inviter des contacts depuis la fiche client pour consulter leurs factures.</small>
           </div>
         </p-card>
 
         <!-- Stock Configuration -->
         <p-card header="Configuration du Stock" styleClass="form-card stock-card">
           <div class="form-group">
-            <label for="warehouseName">Nom de l'entrepôt principal</label>
+            <label for="warehouseName" i18n="@@settings.company.nom.de.l.entrepot.principal.2f77abf6">Nom de l'entrepôt principal</label>
             <input 
               pInputText 
               id="warehouseName" 
               formControlName="warehouseName"
-              placeholder="Entrepôt Principal"
+              placeholder="Entrepôt Principal" i18n-placeholder="Entrepôt Principal"
               class="w-full">
-            <small class="form-hint">Ce nom sera utilisé pour votre entrepôt par défaut.</small>
+            <small class="form-hint" i18n="@@settings.company.ce.nom.sera.utilise.pour.votre.entrepot.par.defa.fcaa6d42">Ce nom sera utilisé pour votre entrepôt par défaut.</small>
             <small class="form-hint warehouse-link">
               Pour gérer plusieurs entrepôts ou leurs adresses,
-              <a routerLink="/settings/warehouses">ouvrez la gestion des entrepôts</a>.
+              <a routerLink="/settings/warehouses" i18n="@@settings.company.ouvrez.la.gestion.des.entrepots.2d309303">ouvrez la gestion des entrepôts</a>.
             </small>
           </div>
         </p-card>
@@ -419,15 +417,13 @@ import {
       @if (sectorLoading()) {
         <div class="loading-container">
           <i class="pi pi-spin pi-spinner" style="font-size: 1.5rem"></i>
-          <p>Chargement du secteur...</p>
+          <p i18n="@@settings.company.chargement.du.secteur.89ee32a8">Chargement du secteur...</p>
         </div>
       } @else {
-        <p class="form-hint">
-          Votre secteur d'activité permet de recommander automatiquement les modules et modèles de documents adaptés à votre métier. Ce changement peut être effectué une fois par jour.
-        </p>
+        <p class="form-hint" i18n="@@settings.company.votre.secteur.d.activite.permet.de.recommander.a.3c90238a">Votre secteur d'activité permet de recommander automatiquement les modules et modèles de documents adaptés à votre métier. Ce changement peut être effectué une fois par jour.</p>
         <div class="form-grid sector-grid">
           <div class="form-group">
-            <label for="sectorSegment">Segment</label>
+            <label for="sectorSegment" i18n="@@settings.company.segment.44986cef">Segment</label>
             <p-select
               inputId="sectorSegment"
               [options]="availableSegments()"
@@ -435,12 +431,12 @@ import {
               optionValue="code"
               [(ngModel)]="selectedSegmentCode"
               [ngModelOptions]="{standalone: true}"
-              placeholder="Sélectionnez un segment"
+              placeholder="Sélectionnez un segment" i18n-placeholder="Sélectionnez un segment"
               class="w-full">
             </p-select>
           </div>
           <div class="form-group">
-            <label for="sectorDomain">Domaine d'activité</label>
+            <label for="sectorDomain" i18n="@@settings.company.domaine.d.activite.2582f8ea">Domaine d'activité</label>
             <p-select
               inputId="sectorDomain"
               [options]="availableDomains()"
@@ -448,7 +444,7 @@ import {
               optionValue="code"
               [(ngModel)]="selectedDomainCode"
               [ngModelOptions]="{standalone: true}"
-              placeholder="Sélectionnez un domaine"
+              placeholder="Sélectionnez un domaine" i18n-placeholder="Sélectionnez un domaine"
               class="w-full">
             </p-select>
           </div>
@@ -504,7 +500,7 @@ import {
             </div>
           }
           @if (preview.modulesToEnable.length === 0 && preview.templates.length === 0) {
-            <p>Aucun module ou modèle supplémentaire ne sera activé.</p>
+            <p i18n="@@settings.company.aucun.module.ou.modele.supplementaire.ne.sera.ac.b059f7a6">Aucun module ou modèle supplémentaire ne sera activé.</p>
           }
         </div>
       }

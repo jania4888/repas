@@ -85,16 +85,16 @@ const FIELD_IDS = {
       <div class="quick-create-client-content">
         <div class="form-fields">
           <div class="form-block">
-            <h4 class="form-block-title">Identité</h4>
+            <h4 class="form-block-title" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.identite.3138be1c">Identité</h4>
             <div class="form-group">
-              <label for="quick-client-name">Nom ou raison sociale <span class="required">*</span></label>
+              <label for="quick-client-name">Nom ou raison sociale <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="quick-client-name"
                 [ngModel]="name()"
                 (ngModelChange)="name.set($event)"
                 (blur)="nameTouched.set(true)"
-                placeholder="Ex. Jean Dupont ou ABC SARL"
+                placeholder="Ex. Jean Dupont ou ABC SARL" i18n-placeholder="Ex. Jean Dupont ou ABC SARL"
                 class="w-full"
                 [class.ng-invalid]="showNameError()" />
               @if (showNameError()) {
@@ -106,7 +106,7 @@ const FIELD_IDS = {
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="quick-client-type">Type <span class="required">*</span></label>
+                <label for="quick-client-type">Type <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-client-type"
                   [options]="typeOptions"
@@ -114,7 +114,7 @@ const FIELD_IDS = {
                   (ngModelChange)="type.set($event)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Type"
+                  placeholder="Type" i18n-placeholder="Type"
                   appendTo="body"
                   [overlayOptions]="drawerOverlayOptions"
                   styleClass="w-full" />
@@ -123,7 +123,7 @@ const FIELD_IDS = {
                 <label for="quick-client-nif">
                   NIF / Matricule fiscal
                   @if (type() === ClientType.Business) {
-                    <span class="required">*</span>
+                    <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span>
                   }
                 </label>
                 <p-inputMask
@@ -133,7 +133,7 @@ const FIELD_IDS = {
                   (onBlur)="onNifBlur()"
                   appNifMaskPaste
                   mask="9999999a/a/a/999"
-                  placeholder="Ex. 1772793W/A/M/000"
+                  placeholder="Ex. 1772793W/A/M/000" i18n-placeholder="Ex. 1772793W/A/M/000"
                   styleClass="w-full"
                   [class.ng-invalid]="showNifError()" />
                 @if (showNifError()) {
@@ -146,9 +146,9 @@ const FIELD_IDS = {
             </div>
           </div>
           <div class="form-block">
-            <h4 class="form-block-title">Contact</h4>
+            <h4 class="form-block-title" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.contact.b37456c4">Contact</h4>
             <div class="form-group">
-              <label for="quick-client-email">Email</label>
+              <label for="quick-client-email" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.email.84add5b2">Email</label>
               <input
                 pInputText
                 id="quick-client-email"
@@ -156,7 +156,7 @@ const FIELD_IDS = {
                 [ngModel]="email()"
                 (ngModelChange)="email.set($event)"
                 (blur)="emailTouched.set(true)"
-                placeholder="client@exemple.tn"
+                placeholder="client@exemple.tn" i18n-placeholder="client@exemple.tn"
                 class="w-full"
                 [class.ng-invalid]="showEmailError()" />
               @if (showEmailError()) {
@@ -167,7 +167,7 @@ const FIELD_IDS = {
               }
             </div>
             <div class="form-group">
-              <label for="quick-client-phone">Téléphone</label>
+              <label for="quick-client-phone" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.telephone.d3b023ea">Téléphone</label>
               <input
                 pInputText
                 id="quick-client-phone"
@@ -177,28 +177,28 @@ const FIELD_IDS = {
             </div>
           </div>
           <div class="form-block">
-            <h4 class="form-block-title">Adresse</h4>
+            <h4 class="form-block-title" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.adresse.522e1466">Adresse</h4>
             <div class="form-group">
-              <label for="quick-client-street">Rue <span class="required">*</span></label>
+              <label for="quick-client-street">Rue <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="quick-client-street"
                 [ngModel]="street()"
                 (ngModelChange)="street.set($event)"
                 (blur)="streetTouched.set(true)"
-                placeholder="Adresse complète"
+                placeholder="Adresse complète" i18n-placeholder="Adresse complète"
                 class="w-full"
                 [class.ng-invalid]="showStreetError()" />
               @if (showStreetError()) {
                 <div class="field-error" role="alert">
                   <i class="pi pi-exclamation-circle"></i>
-                  <span>Ce champ est obligatoire</span>
+                  <span i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.ce.champ.est.obligatoire.17061b6a">Ce champ est obligatoire</span>
                 </div>
               }
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="quick-client-city">Ville <span class="required">*</span></label>
+                <label for="quick-client-city">Ville <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
                 <input
                   pInputText
                   id="quick-client-city"
@@ -210,12 +210,12 @@ const FIELD_IDS = {
                 @if (showCityError()) {
                   <div class="field-error" role="alert">
                     <i class="pi pi-exclamation-circle"></i>
-                    <span>Ce champ est obligatoire</span>
+                    <span i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.ce.champ.est.obligatoire.17061b6a">Ce champ est obligatoire</span>
                   </div>
                 }
               </div>
               <div class="form-group">
-                <label for="quick-client-governorate">Gouvernorat <span class="required">*</span></label>
+                <label for="quick-client-governorate">Gouvernorat <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-client-governorate"
                   [options]="governorateOptions"
@@ -225,7 +225,7 @@ const FIELD_IDS = {
                   (onBlur)="governorateTouched.set(true)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="Sélectionner"
                   appendTo="body"
                   [overlayOptions]="drawerOverlayOptions"
                   styleClass="w-full"
@@ -233,13 +233,13 @@ const FIELD_IDS = {
                 @if (showGovernorateError()) {
                   <div class="field-error" role="alert">
                     <i class="pi pi-exclamation-circle"></i>
-                    <span>Ce champ est obligatoire</span>
+                    <span i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.ce.champ.est.obligatoire.17061b6a">Ce champ est obligatoire</span>
                   </div>
                 }
               </div>
             </div>
             <div class="form-group">
-              <label for="quick-client-postal">Code postal</label>
+              <label for="quick-client-postal" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.code.postal.74779109">Code postal</label>
               <input
                 pInputText
                 id="quick-client-postal"
@@ -253,7 +253,7 @@ const FIELD_IDS = {
           <div class="validation-summary" role="alert" id="quick-client-validation-summary">
             <i class="pi pi-info-circle"></i>
             <div>
-              <strong>Complétez les champs obligatoires pour continuer</strong>
+              <strong i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.completez.les.champs.obligatoires.pour.continuer.2719fef2">Complétez les champs obligatoires pour continuer</strong>
               <span>{{ missingFieldsMessage() }}</span>
             </div>
           </div>
@@ -271,8 +271,8 @@ const FIELD_IDS = {
       <div class="panel-overlay" (click)="close()" role="presentation">
         <div class="panel-content" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
           <div class="panel-header">
-            <h2 class="panel-title">Créer un client</h2>
-            <button type="button" class="panel-close" (click)="close()" aria-label="Fermer">
+            <h2 class="panel-title" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.creer.un.client.db580ea8">Créer un client</h2>
+            <button type="button" class="panel-close" (click)="close()" aria-label="Fermer" i18n-aria-label="Fermer">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -280,7 +280,7 @@ const FIELD_IDS = {
             <ng-container *ngTemplateOutlet="formContent"></ng-container>
           </div>
           <div class="panel-footer">
-            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="close()">Annuler</app-button>
+            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="close()" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.annuler.49ba3292">Annuler</app-button>
             <app-button
               variant="primary"
               icon="pi-plus"
@@ -308,7 +308,7 @@ const FIELD_IDS = {
         <ng-container *ngTemplateOutlet="formContent"></ng-container>
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
-            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="close()">Annuler</app-button>
+            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="close()" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.annuler.49ba3292">Annuler</app-button>
             <app-button
               variant="primary"
               icon="pi-plus"

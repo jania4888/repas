@@ -11,14 +11,14 @@ import { budgetUsedPercent, buildBudgetDonutSlices } from '../../project-detail.
   template: `
     @if (project) {
       <section class="proj-detail-card">
-        <h3 class="proj-detail-card__title">Budget du projet</h3>
+        <h3 class="proj-detail-card__title" i18n="@@projects.components.budget.du.projet.0be885e3">Budget du projet</h3>
         @if (budget && budget.budgetHt > 0) {
           <div class="proj-detail-budget">
             <div class="proj-detail-budget__chart">
               <p-chart type="doughnut" [data]="chartData()" [options]="chartOptions" [style]="{ height: '180px' }" />
               <div class="proj-detail-budget__center" aria-hidden="true">
                 <strong>{{ usedPercent }} %</strong>
-                <span>Consommé</span>
+                <span i18n="@@projects.components.consomme.a30080c3">Consommé</span>
               </div>
             </div>
             <ul class="proj-detail-budget__legend">
@@ -28,7 +28,7 @@ import { budgetUsedPercent, buildBudgetDonutSlices } from '../../project-detail.
               <li><span class="dot" style="background:#e2e8f0"></span> Reste <strong>{{ budget.remainingHt | number:'1.3-3' }}</strong></li>
             </ul>
           </div>
-          <button type="button" class="proj-detail-link" (click)="viewBudget.emit()">Voir le détail du budget →</button>
+          <button type="button" class="proj-detail-link" (click)="viewBudget.emit()" i18n="@@projects.components.voir.le.detail.du.budget.52c64769">Voir le détail du budget →</button>
         } @else {
           <p class="proj-detail-card__desc proj-detail-card__desc--muted">
             Budget HT : <strong>{{ project.budgetHt | number:'1.3-3' }} {{ project.currency }}</strong>

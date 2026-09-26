@@ -42,7 +42,7 @@ import {
       </div>
     } @else {
       <!-- Indicateur d'étapes -->
-      <div class="mw-steps" role="list" aria-label="Étapes de la migration assistée">
+      <div class="mw-steps" role="list" aria-label="Étapes de la migration assistée" i18n-aria-label="Étapes de la migration assistée">
         @for (s of stepLabels; track $index) {
           <span class="mw-step" role="listitem" [class.mw-step-active]="$index === step()" [class.mw-step-done]="$index < step()">
             {{ $index + 1 }}. {{ s }}
@@ -54,17 +54,15 @@ import {
       @if (step() === 0) {
         <div class="card mw-card">
           <div class="form-field mw-field-file">
-            <label class="field-label" for="mw-file">Fichier source (export Sage, EBP, Excel, CSV…)</label>
+            <label class="field-label" for="mw-file" i18n="@@accounting.import.fichier.source.export.sage.ebp.excel.csv.d315d87e">Fichier source (export Sage, EBP, Excel, CSV…)</label>
             <input id="mw-file" type="file" class="mw-input" (change)="onFileSelected($event)" [disabled]="busy()" accept=".csv,.txt,.xlsx,.tsv" />
           </div>
           <div class="mw-actions">
             <app-button variant="primary" icon="pi pi-search" type="button"
               (click)="analyze()" [disabled]="!file || busy()"
-              ariaLabel="Analyser le fichier sans rien enregistrer">
-              Analyser
-            </app-button>
+              ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.analyser.d06ab560">Analyser</app-button>
           </div>
-          <p class="mw-help">L'analyse détecte le progiciel source et la cible probable. Aucune donnée n'est enregistrée.</p>
+          <p class="mw-help" i18n="@@accounting.import.l.analyse.detecte.le.progiciel.source.et.la.cibl.b7801323">L'analyse détecte le progiciel source et la cible probable. Aucune donnée n'est enregistrée.</p>
         </div>
       }
 
@@ -72,21 +70,21 @@ import {
       @if (step() === 1 && analysis(); as a) {
         <div class="card mw-card">
           <div class="mw-summary">
-            <div class="mw-kpi"><span class="mw-kpi-label">Progiciel détecté</span><span class="mw-kpi-value">{{ sourceLabel(a.detectedSource) }}</span></div>
-            <div class="mw-kpi"><span class="mw-kpi-label">Lignes</span><span class="mw-kpi-value">{{ a.sampleRowCount }}</span></div>
-            <div class="mw-kpi"><span class="mw-kpi-label">Format</span><span class="mw-kpi-value">{{ a.format === 1 ? 'Excel' : 'CSV' }}</span></div>
+            <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.progiciel.detecte.aa375c01">Progiciel détecté</span><span class="mw-kpi-value">{{ sourceLabel(a.detectedSource) }}</span></div>
+            <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.lignes.41c7025e">Lignes</span><span class="mw-kpi-value">{{ a.sampleRowCount }}</span></div>
+            <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.format.041a5dec">Format</span><span class="mw-kpi-value">{{ a.format === 1 ? 'Excel' : 'CSV' }}</span></div>
           </div>
           <div class="form-field">
-            <label class="field-label" for="mw-target">Cible d'import</label>
+            <label class="field-label" for="mw-target" i18n="@@accounting.import.cible.d.import.5a0fc8de">Cible d'import</label>
             <select id="mw-target" class="mw-input" [(ngModel)]="target" [disabled]="busy()">
-              <option [ngValue]="targets.ChartOfAccounts">Plan comptable</option>
-              <option [ngValue]="targets.ThirdParties">Plan tiers</option>
-              <option [ngValue]="targets.OpeningBalance">Balance d'ouverture</option>
+              <option [ngValue]="targets.ChartOfAccounts" i18n="@@accounting.import.plan.comptable.b3f54c09">Plan comptable</option>
+              <option [ngValue]="targets.ThirdParties" i18n="@@accounting.import.plan.tiers.7dfd7c9a">Plan tiers</option>
+              <option [ngValue]="targets.OpeningBalance" i18n="@@accounting.import.balance.d.ouverture.02618c43">Balance d'ouverture</option>
             </select>
           </div>
           @if (target === targets.OpeningBalance) {
             <div class="form-field">
-              <label class="field-label" for="mw-year">Exercice</label>
+              <label class="field-label" for="mw-year" i18n="@@accounting.import.exercice.e171e2b0">Exercice</label>
               <input id="mw-year" type="number" min="2000" max="2100" class="mw-input" [(ngModel)]="fiscalYear" [disabled]="busy()" />
             </div>
           }
@@ -94,12 +92,10 @@ import {
             <p class="mw-warning"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i> {{ w }}</p>
           }
           <div class="mw-actions">
-            <app-button variant="secondary" type="button" (click)="backTo(0)" [disabled]="busy()">Retour</app-button>
+            <app-button variant="secondary" type="button" (click)="backTo(0)" [disabled]="busy()" i18n="@@accounting.import.retour.e5befb1f">Retour</app-button>
             <app-button variant="primary" icon="pi pi-arrow-right" type="button"
               (click)="suggestColumns()" [disabled]="busy() || (target === targets.OpeningBalance && !fiscalYear)"
-              ariaLabel="Proposer la correspondance des colonnes">
-              Suggérer les correspondances
-            </app-button>
+              ariaLabel="Proposer la correspondance des colonnes" i18n="@@accounting.import.suggerer.les.correspondances.ee9018db">Suggérer les correspondances</app-button>
           </div>
         </div>
       }
@@ -107,18 +103,18 @@ import {
       <!-- Étape 3 : correspondances de colonnes (éditables) -->
       @if (step() === 2) {
         <div class="card mw-card">
-          <h3 class="mw-title">Correspondance des colonnes <span class="mw-badge-ia">éditable</span></h3>
-          <p class="mw-help">Vérifiez et ajustez avant de continuer — les suggestions ne sont jamais appliquées telles quelles.</p>
+          <h3 class="mw-title">Correspondance des colonnes <span class="mw-badge-ia" i18n="@@accounting.import.editable.5c533c88">éditable</span></h3>
+          <p class="mw-help" i18n="@@accounting.import.verifiez.et.ajustez.avant.de.continuer.les.sugge.1f94b509">Vérifiez et ajustez avant de continuer — les suggestions ne sont jamais appliquées telles quelles.</p>
           <p-table [value]="columnItems()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
             <ng-template pTemplate="header"><tr>
-              <th scope="col">Colonne source</th><th scope="col">Colonne cible</th><th scope="col">Origine</th><th scope="col">Confiance</th>
+              <th scope="col" i18n="@@accounting.import.colonne.source.3205531b">Colonne source</th><th scope="col" i18n="@@accounting.import.colonne.cible.3e86cdcc">Colonne cible</th><th scope="col" i18n="@@accounting.import.origine.62e96258">Origine</th><th scope="col" i18n="@@accounting.import.confiance.7b2239f6">Confiance</th>
             </tr></ng-template>
             <ng-template pTemplate="body" let-item>
               <tr>
                 <td><code>{{ item.sourceColumn }}</code></td>
                 <td>
                   <select class="mw-input" [(ngModel)]="item.canonicalColumn" [disabled]="busy()">
-                    <option [ngValue]="null">— non mappée —</option>
+                    <option [ngValue]="null" i18n="@@accounting.import.non.mappee.c7389aff">— non mappée —</option>
                     @for (c of canonicalOptions(); track c) {
                       <option [ngValue]="c">{{ c }}{{ isRequired(c) ? ' *' : '' }}</option>
                     }
@@ -133,12 +129,10 @@ import {
             <p class="mw-warning"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i> {{ w }}</p>
           }
           <div class="mw-actions">
-            <app-button variant="secondary" type="button" (click)="backTo(1)" [disabled]="busy()">Retour</app-button>
+            <app-button variant="secondary" type="button" (click)="backTo(1)" [disabled]="busy()" i18n="@@accounting.import.retour.e5befb1f">Retour</app-button>
             <app-button variant="primary" icon="pi pi-arrow-right" type="button"
               (click)="columnsNext()" [disabled]="busy() || !columnMappingComplete()"
-              ariaLabel="Valider la correspondance des colonnes">
-              Valider les correspondances
-            </app-button>
+              ariaLabel="Valider la correspondance des colonnes" i18n="@@accounting.import.valider.les.correspondances.f5ee29eb">Valider les correspondances</app-button>
           </div>
         </div>
       }
@@ -147,14 +141,14 @@ import {
       @if (step() === 3) {
         <div class="card mw-card">
           @if (target !== targets.ThirdParties) {
-            <h3 class="mw-title">Correspondance des comptes <span class="mw-badge-ia">éditable</span></h3>
+            <h3 class="mw-title">Correspondance des comptes <span class="mw-badge-ia" i18n="@@accounting.import.editable.5c533c88">éditable</span></h3>
             <p class="mw-help">
               {{ accountResolvedCount() }} compte(s) résolu(s) sans IA (identique/préfixe).
               Les comptes sans cible seront importés tels quels.
             </p>
             <p-table [value]="accountItems()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true" [scrollable]="true" scrollHeight="360px">
               <ng-template pTemplate="header"><tr>
-                <th scope="col">Compte source</th><th scope="col">Libellé</th><th scope="col">Compte cible</th><th scope="col">Origine</th><th scope="col">Confiance</th>
+                <th scope="col" i18n="@@accounting.import.compte.source.ce24bd6c">Compte source</th><th scope="col" i18n="@@accounting.import.libelle.f5485bba">Libellé</th><th scope="col" i18n="@@accounting.import.compte.cible.d5e70e81">Compte cible</th><th scope="col" i18n="@@accounting.import.origine.62e96258">Origine</th><th scope="col" i18n="@@accounting.import.confiance.7b2239f6">Confiance</th>
               </tr></ng-template>
               <ng-template pTemplate="body" let-item>
                 <tr>
@@ -162,7 +156,7 @@ import {
                   <td>{{ item.sourceLabel ?? '—' }}</td>
                   <td>
                     <input type="text" class="mw-input mw-account-input" [(ngModel)]="item.targetAccount" [disabled]="busy()"
-                      [attr.title]="item.justification" placeholder="(tel quel)" />
+                      [attr.title]="item.justification" placeholder="(tel quel)" i18n-placeholder="(tel quel)" />
                   </td>
                   <td><span class="mw-origin" [class.mw-origin-ia]="item.origin === origins.Ia">{{ originLabel(item.origin) }}</span></td>
                   <td>{{ item.confidence > 0 ? (item.confidence * 100 | number:'1.0-0') + ' %' : '—' }}</td>
@@ -170,17 +164,17 @@ import {
               </ng-template>
             </p-table>
           } @else {
-            <h3 class="mw-title">Doublons de tiers détectés</h3>
+            <h3 class="mw-title" i18n="@@accounting.import.doublons.de.tiers.detectes.29f0809d">Doublons de tiers détectés</h3>
             @if (duplicatePairs().length === 0) {
               <p class="mw-help"><i class="pi pi-check-circle" aria-hidden="true"></i> Aucun doublon détecté.</p>
             } @else {
               <p class="mw-help">
                 {{ duplicatePairs().length }} paire(s) candidate(s). Les éléments déjà présents sont
-                <strong>ignorés, jamais écrasés</strong> par l'import (comportement additif existant).
+                <strong i18n="@@accounting.import.ignores.jamais.ecrases.aabf521b">ignorés, jamais écrasés</strong> par l'import (comportement additif existant).
               </p>
               <p-table [value]="duplicatePairs()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true" [scrollable]="true" scrollHeight="320px">
                 <ng-template pTemplate="header"><tr>
-                  <th scope="col">Ligne importée</th><th scope="col">Tiers existant</th><th scope="col">Motif</th><th scope="col">Score</th>
+                  <th scope="col" i18n="@@accounting.import.ligne.importee.d698f4a5">Ligne importée</th><th scope="col" i18n="@@accounting.import.tiers.existant.6686275e">Tiers existant</th><th scope="col" i18n="@@accounting.import.motif.2a198f47">Motif</th><th scope="col" i18n="@@accounting.import.score.489f4877">Score</th>
                 </tr></ng-template>
                 <ng-template pTemplate="body" let-p>
                   <tr>
@@ -197,12 +191,10 @@ import {
             <p class="mw-warning"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i> {{ w }}</p>
           }
           <div class="mw-actions">
-            <app-button variant="secondary" type="button" (click)="backTo(2)" [disabled]="busy()">Retour</app-button>
+            <app-button variant="secondary" type="button" (click)="backTo(2)" [disabled]="busy()" i18n="@@accounting.import.retour.e5befb1f">Retour</app-button>
             <app-button variant="primary" icon="pi pi-search" type="button"
               (click)="runPreview()" [disabled]="busy()"
-              ariaLabel="Lancer l'aperçu à blanc (dry-run)">
-              Aperçu à blanc
-            </app-button>
+              ariaLabel="Lancer l'aperçu à blanc (dry-run)" i18n="@@accounting.import.apercu.a.blanc.e0c1846b">Aperçu à blanc</app-button>
           </div>
         </div>
       }
@@ -210,14 +202,14 @@ import {
       <!-- Étape 5 : aperçu (pipeline d'import existant, inchangé) -->
       @if (step() === 4 && preview(); as p) {
         <div class="card mw-card">
-          <h3 class="mw-title">Aperçu à blanc — pipeline d'import standard</h3>
+          <h3 class="mw-title" i18n="@@accounting.import.apercu.a.blanc.pipeline.d.import.standard.747678be">Aperçu à blanc — pipeline d'import standard</h3>
           <div class="mw-summary">
-            <div class="mw-kpi"><span class="mw-kpi-label">Lignes</span><span class="mw-kpi-value">{{ p.totalRows }}</span></div>
-            <div class="mw-kpi"><span class="mw-kpi-label">Valides</span><span class="mw-kpi-value mw-ok">{{ p.validRows }}</span></div>
-            <div class="mw-kpi"><span class="mw-kpi-label">En erreur</span><span class="mw-kpi-value" [class.mw-err]="p.rowsWithErrors > 0">{{ p.rowsWithErrors }}</span></div>
-            <div class="mw-kpi"><span class="mw-kpi-label">Déjà présents</span><span class="mw-kpi-value">{{ p.existingRows }}</span></div>
+            <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.lignes.41c7025e">Lignes</span><span class="mw-kpi-value">{{ p.totalRows }}</span></div>
+            <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.valides.4cb63bf2">Valides</span><span class="mw-kpi-value mw-ok">{{ p.validRows }}</span></div>
+            <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.en.erreur.10a2e3df">En erreur</span><span class="mw-kpi-value" [class.mw-err]="p.rowsWithErrors > 0">{{ p.rowsWithErrors }}</span></div>
+            <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.deja.presents.cad005a1">Déjà présents</span><span class="mw-kpi-value">{{ p.existingRows }}</span></div>
             @if (p.mappedAccountCount > 0) {
-              <div class="mw-kpi"><span class="mw-kpi-label">Comptes traduits</span><span class="mw-kpi-value">{{ p.mappedAccountCount }}</span></div>
+              <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.comptes.traduits.7bfb19b7">Comptes traduits</span><span class="mw-kpi-value">{{ p.mappedAccountCount }}</span></div>
             }
           </div>
           @if (p.issues.length > 0) {
@@ -230,14 +222,12 @@ import {
               </ul>
             </div>
           }
-          <p class="mw-help">Création <strong>additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
+          <p class="mw-help">Création <strong i18n="@@accounting.import.additive.62d12306">additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
           <div class="mw-actions">
-            <app-button variant="secondary" type="button" (click)="backTo(3)" [disabled]="busy()">Retour</app-button>
+            <app-button variant="secondary" type="button" (click)="backTo(3)" [disabled]="busy()" i18n="@@accounting.import.retour.e5befb1f">Retour</app-button>
             <app-button variant="primary" icon="pi pi-check" type="button"
               (click)="commit()" [disabled]="busy() || !p.canCommit"
-              ariaLabel="Confirmer l'import">
-              Confirmer l'import
-            </app-button>
+              ariaLabel="Confirmer l'import" i18n="@@accounting.import.confirmer.l.import.2b2258ef">Confirmer l'import</app-button>
           </div>
         </div>
       }
@@ -246,9 +236,9 @@ import {
       @if (step() === 5) {
         <div class="card mw-card">
           <div class="mw-success" role="status"><i class="pi pi-check-circle" aria-hidden="true"></i><span>{{ successMessage() }}</span></div>
-          <p class="mw-help">L'import est tracé dans le journal d'audit du dossier.</p>
+          <p class="mw-help" i18n="@@accounting.import.l.import.est.trace.dans.le.journal.d.audit.du.do.7f2b376a">L'import est tracé dans le journal d'audit du dossier.</p>
           <div class="mw-actions">
-            <app-button variant="secondary" type="button" (click)="reset()">Nouvelle migration</app-button>
+            <app-button variant="secondary" type="button" (click)="reset()" i18n="@@accounting.import.nouvelle.migration.b5fb3220">Nouvelle migration</app-button>
           </div>
         </div>
       }

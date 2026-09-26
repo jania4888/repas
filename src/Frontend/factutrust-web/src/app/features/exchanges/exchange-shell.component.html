@@ -2,10 +2,10 @@
   @if (isFirm()) {
     <aside class="exchange-list">
       <div class="exchange-list__head">
-        <h2>Sociétés</h2>
+        <h2 i18n="@@exchanges.exchange-shell.societes.462e7896">Sociétés</h2>
         <input
           type="search"
-          placeholder="Rechercher une société..."
+          placeholder="Rechercher une société..." i18n-placeholder="Rechercher une société..."
           [ngModel]="search()"
           (ngModelChange)="search.set($event)"
         />
@@ -32,12 +32,12 @@
               @if (c.lastActivityAt) {
                 <span>{{ c.lastActivityAt | date: 'dd/MM/yyyy' }}</span>
               } @else if (!c.threadId) {
-                <span>Nouvelle conversation</span>
+                <span i18n="@@exchanges.exchange-shell.nouvelle.conversation.c886195f">Nouvelle conversation</span>
               }
             </div>
           </li>
         } @empty {
-          <li class="empty">Aucune société</li>
+          <li class="empty" i18n="@@exchanges.exchange-shell.aucune.societe.7896382f">Aucune société</li>
         }
       </ul>
     </aside>
@@ -45,7 +45,7 @@
 
   <section class="exchange-main">
     @if (loading() && !activeThread() && !emptyHint() && !error()) {
-      <div class="exchange-skeleton" role="status" aria-live="polite" aria-label="Chargement des échanges">
+      <div class="exchange-skeleton" role="status" aria-live="polite" aria-label="Chargement des échanges" i18n-aria-label="Chargement des échanges">
         <header class="exchange-header exchange-header--skeleton">
           <div class="exchange-header__info">
             <div class="skeleton-line skeleton-line--title"></div>
@@ -61,7 +61,7 @@
         <div class="exchange-body">
           <div class="content-loading-overlay" role="status" aria-live="polite">
             <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-            <span>Chargement…</span>
+            <span i18n="@@exchanges.exchange-shell.chargement.01cba1df">Chargement…</span>
           </div>
           <div class="messages messages--skeleton" aria-hidden="true">
             <div class="skeleton-bubble skeleton-bubble--left"></div>
@@ -74,7 +74,7 @@
       <div class="state empty-state-wrap">
         <app-empty-state
           icon="pi-comments"
-          title="Espace d'échange"
+          title="Espace d'échange" i18n-title="Espace d'échange"
           [description]="emptyHint()!"
           [showAction]="!isFirm()"
           actionLabel="Configurer le cabinet"
@@ -84,15 +84,13 @@
     } @else if (error() && !activeThread()) {
       <div class="state error" role="alert">
         <p>{{ error() }}</p>
-        <app-button variant="secondary" size="sm" icon="pi-refresh" (clicked)="retryBootstrap()">
-          Réessayer
-        </app-button>
+        <app-button variant="secondary" size="sm" icon="pi-refresh" (clicked)="retryBootstrap()" i18n="@@exchanges.exchange-shell.reessayer.895d416b">Réessayer</app-button>
       </div>
     } @else {
       @if (activeThread(); as thread) {
         @if (isFirm()) {
           <div class="firm-mobile-select">
-            <label for="firm-company-select">Société</label>
+            <label for="firm-company-select" i18n="@@exchanges.exchange-shell.societe.2c3fdad8">Société</label>
             <select
               id="firm-company-select"
               [ngModel]="thread.firmClientAssignmentId"
@@ -121,19 +119,15 @@
           </div>
           <div class="actions">
             @if (canClose() && isOpen(thread.status)) {
-              <app-button variant="danger" size="sm" icon="pi-times" (clicked)="closeExchange()">
-                Clore l'échange
-              </app-button>
+              <app-button variant="danger" size="sm" icon="pi-times" (clicked)="closeExchange()" i18n="@@exchanges.exchange-shell.clore.l.echange.5344653a">Clore l'échange</app-button>
             }
             @if (canClose() && isClosed(thread.status)) {
-              <app-button variant="secondary" size="sm" icon="pi-refresh" (clicked)="reopenExchange()">
-                Rouvrir
-              </app-button>
+              <app-button variant="secondary" size="sm" icon="pi-refresh" (clicked)="reopenExchange()" i18n="@@exchanges.exchange-shell.rouvrir.18f717af">Rouvrir</app-button>
             }
           </div>
         </header>
 
-        <nav class="tabs" role="tablist" aria-label="Sections de l'échange">
+        <nav class="tabs" role="tablist" aria-label="Sections de l'échange" i18n-aria-label="Sections de l'échange">
           @for (t of tabs; track t.key) {
             <button
               type="button"
@@ -154,7 +148,7 @@
           @if (contentLoading()) {
             <div class="content-loading-overlay" role="status" aria-live="polite">
               <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-              <span>Chargement…</span>
+              <span i18n="@@exchanges.exchange-shell.chargement.01cba1df">Chargement…</span>
             </div>
           }
           <div
@@ -202,7 +196,7 @@
                           <strong>{{ item.message.authorDisplayName }}</strong>
                           <span>{{ item.message.sentAt | date: 'dd/MM/yyyy HH:mm' }}</span>
                           @if (isNote(item.message.visibility)) {
-                            <em>Note interne</em>
+                            <em i18n="@@exchanges.exchange-shell.note.interne.c065d760">Note interne</em>
                           }
                         </div>
                         <p>{{ item.message.body }}</p>
@@ -225,7 +219,7 @@
                 } @empty {
                   <app-empty-state
                     icon="pi-comments"
-                    title="Aucun message"
+                    title="Aucun message" i18n-title="Aucun message"
                     description="Démarrez la conversation avec votre interlocuteur."
                     [showAction]="false"
                   />
@@ -234,29 +228,25 @@
 
               @if (isOpen(thread.status)) {
                 <div class="composer">
-                  <div class="composer__tabs" role="group" aria-label="Type de message">
+                  <div class="composer__tabs" role="group" aria-label="Type de message" i18n-aria-label="Type de message">
                     <button
                       type="button"
                       [class.active]="composerMode() === 'message'"
                       (click)="composerMode.set('message')"
-                    >
-                      Message
-                    </button>
+                     i18n="@@exchanges.exchange-shell.message.68f4145f">Message</button>
                     @if (canInternalNote()) {
                       <button
                         type="button"
                         [class.active]="composerMode() === 'note'"
                         (click)="composerMode.set('note')"
-                      >
-                        Note interne
-                      </button>
+                       i18n="@@exchanges.exchange-shell.note.interne.c065d760">Note interne</button>
                     }
                   </div>
-                  <label class="sr-only" for="composer-draft">Message</label>
+                  <label class="sr-only" for="composer-draft" i18n="@@exchanges.exchange-shell.message.68f4145f">Message</label>
                   <textarea
                     id="composer-draft"
                     rows="3"
-                    placeholder="Écrire un message…"
+                    placeholder="Écrire un message…" i18n-placeholder="Écrire un message…"
                     [ngModel]="draft()"
                     (ngModelChange)="draft.set($event)"
                   ></textarea>
@@ -265,17 +255,15 @@
                       @for (f of pendingFiles(); track $index) {
                         <li>
                           <span>{{ f.name }} ({{ formatBytes(f.size) }})</span>
-                          <button type="button" class="btn ghost" (click)="removePendingFile($index)">
-                            Retirer
-                          </button>
+                          <button type="button" class="btn ghost" (click)="removePendingFile($index)" i18n="@@exchanges.exchange-shell.retirer.54ec24a1">Retirer</button>
                         </li>
                       }
                     </ul>
                   }
                   <div class="composer__actions">
-                    <label class="btn ghost file-btn" title="Joindre un fichier">
+                    <label class="btn ghost file-btn" title="Joindre un fichier" i18n-title="Joindre un fichier">
                       <i class="pi pi-paperclip" aria-hidden="true"></i>
-                      <span class="sr-only">Joindre</span>
+                      <span class="sr-only" i18n="@@exchanges.exchange-shell.joindre.2ee36407">Joindre</span>
                       <input type="file" hidden (change)="onComposerFileSelected($event)" />
                     </label>
                     <app-button
@@ -284,9 +272,7 @@
                       icon="pi-send"
                       [disabled]="sending() || (!draft().trim() && pendingFiles().length === 0)"
                       (clicked)="send()"
-                    >
-                      Envoyer
-                    </app-button>
+                     i18n="@@exchanges.exchange-shell.envoyer.e9ce243b">Envoyer</app-button>
                   </div>
                 </div>
               }
@@ -295,7 +281,7 @@
             @if (activeTab() === 'documents') {
               <div class="panel">
                 <div class="panel__toolbar">
-                  <h3>Documents partagés</h3>
+                  <h3 i18n="@@exchanges.exchange-shell.documents.partages.3c2cdfbc">Documents partagés</h3>
                   @if (isOpen(thread.status)) {
                     <label class="btn primary file-btn">
                       <i class="pi pi-upload" aria-hidden="true"></i>
@@ -307,7 +293,7 @@
                 @if (documents().length === 0) {
                   <app-empty-state
                     icon="pi-folder-open"
-                    title="Aucun document"
+                    title="Aucun document" i18n-title="Aucun document"
                     description="Partagez un fichier pour le rendre disponible dans cet échange."
                     [showAction]="isOpen(thread.status)"
                     actionLabel="Partager un document"
@@ -332,11 +318,11 @@
                         <button
                           type="button"
                           class="btn ghost"
-                          title="Télécharger"
+                          title="Télécharger" i18n-title="Télécharger"
                           (click)="downloadDoc(d)"
                         >
                           <i class="pi pi-download" aria-hidden="true"></i>
-                          <span class="sr-only">Télécharger</span>
+                          <span class="sr-only" i18n="@@exchanges.exchange-shell.telecharger.b332d06d">Télécharger</span>
                         </button>
                       </li>
                     }
@@ -368,22 +354,20 @@
             @if (activeTab() === 'taches') {
               <div class="panel">
                 <div class="panel__toolbar">
-                  <h3>Tâches</h3>
+                  <h3 i18n="@@exchanges.exchange-shell.taches.1b018f86">Tâches</h3>
                   @if (isOpen(thread.status)) {
                     <app-button
                       variant="primary"
                       size="sm"
                       icon="pi-plus"
                       (clicked)="showNewTask.set(true)"
-                    >
-                      Créer une tâche
-                    </app-button>
+                     i18n="@@exchanges.exchange-shell.creer.une.tache.755f0229">Créer une tâche</app-button>
                   }
                 </div>
                 @if (showNewTask()) {
                   <div class="form-card">
                     <div class="ft-field">
-                      <label for="task-title">Titre</label>
+                      <label for="task-title" i18n="@@exchanges.exchange-shell.titre.eb97899a">Titre</label>
                       <input
                         id="task-title"
                         [ngModel]="newTaskTitle()"
@@ -391,7 +375,7 @@
                       />
                     </div>
                     <div class="ft-field">
-                      <label for="task-due">Échéance</label>
+                      <label for="task-due" i18n="@@exchanges.exchange-shell.echeance.f9a77ff6">Échéance</label>
                       <input
                         id="task-due"
                         type="date"
@@ -400,17 +384,15 @@
                       />
                     </div>
                     <div class="row">
-                      <app-button variant="primary" size="sm" (clicked)="createTask(false)">Créer</app-button>
-                      <app-button variant="ghost" size="sm" (clicked)="showNewTask.set(false)">
-                        Annuler
-                      </app-button>
+                      <app-button variant="primary" size="sm" (clicked)="createTask(false)" i18n="@@exchanges.exchange-shell.creer.1a686172">Créer</app-button>
+                      <app-button variant="ghost" size="sm" (clicked)="showNewTask.set(false)" i18n="@@exchanges.exchange-shell.annuler.49ba3292">Annuler</app-button>
                     </div>
                   </div>
                 }
                 @if (tasks().length === 0 && !showNewTask()) {
                   <app-empty-state
                     icon="pi-check-square"
-                    title="Aucune tâche"
+                    title="Aucune tâche" i18n-title="Aucune tâche"
                     description="Planifiez une tâche ou un rendez-vous lié à cet échange."
                     [showAction]="isOpen(thread.status)"
                     actionLabel="Créer une tâche"
@@ -433,7 +415,7 @@
                               <i class="pi pi-calendar" aria-hidden="true"></i>
                               Échéance {{ t.dueDate | date: 'dd/MM/yyyy' }}
                               @if (isTaskOverdue(t)) {
-                                <span class="overdue-label">En retard</span>
+                                <span class="overdue-label" i18n="@@exchanges.exchange-shell.en.retard.40c1dde3">En retard</span>
                               }
                             </div>
                           }
@@ -444,9 +426,7 @@
                             size="sm"
                             icon="pi-check"
                             (clicked)="changeTaskStatus(t, 'Done')"
-                          >
-                            Terminer
-                          </app-button>
+                           i18n="@@exchanges.exchange-shell.terminer.6bf1bd74">Terminer</app-button>
                         }
                       </li>
                     }
@@ -458,12 +438,12 @@
             @if (activeTab() === 'historique') {
               <div class="panel">
                 <div class="panel__toolbar">
-                  <h3>Historique</h3>
+                  <h3 i18n="@@exchanges.exchange-shell.historique.34f3a06a">Historique</h3>
                 </div>
                 @if (history().length === 0) {
                   <app-empty-state
                     icon="pi-history"
-                    title="Aucun événement"
+                    title="Aucun événement" i18n-title="Aucun événement"
                     description="L'activité de cet échange apparaîtra ici."
                     [showAction]="false"
                   />
@@ -488,7 +468,7 @@
 
           <aside class="exchange-side">
             <section>
-              <h4>Participants</h4>
+              <h4 i18n="@@exchanges.exchange-shell.participants.cd56e083">Participants</h4>
               <ul class="participant-list">
                 @for (p of thread.participants; track p.userId) {
                   <li class="participant">
@@ -504,28 +484,28 @@
                     </div>
                   </li>
                 } @empty {
-                  <li class="muted">—</li>
+                  <li class="muted" i18n="@@exchanges.exchange-shell.text.1b93795b">—</li>
                 }
               </ul>
             </section>
             <section>
-              <h4>Informations</h4>
+              <h4 i18n="@@exchanges.exchange-shell.informations.54937b3a">Informations</h4>
               <dl>
-                <dt>Ouverture</dt>
+                <dt i18n="@@exchanges.exchange-shell.ouverture.f2e32418">Ouverture</dt>
                 <dd>{{ thread.createdAt | date: 'dd/MM/yyyy' }}</dd>
-                <dt>Statut</dt>
+                <dt i18n="@@exchanges.exchange-shell.statut.659499f3">Statut</dt>
                 <dd>
                   <app-status-badge
                     [status]="threadBadge(thread.status)"
                     [label]="statusLabel(thread.status)"
                   />
                 </dd>
-                <dt>Sécurité</dt>
-                <dd>Échange sécurisé</dd>
+                <dt i18n="@@exchanges.exchange-shell.securite.33e96f02">Sécurité</dt>
+                <dd i18n="@@exchanges.exchange-shell.echange.securise.b9c8dfc8">Échange sécurisé</dd>
               </dl>
             </section>
             <section>
-              <h4>Documents récents</h4>
+              <h4 i18n="@@exchanges.exchange-shell.documents.recents.e68a6780">Documents récents</h4>
               <ul class="side-docs">
                 @for (d of recentDocuments(); track d.id) {
                   <li>
@@ -538,21 +518,19 @@
                     </span>
                   </li>
                 } @empty {
-                  <li class="muted">Aucun</li>
+                  <li class="muted" i18n="@@exchanges.exchange-shell.aucun.b2ed82f1">Aucun</li>
                 }
               </ul>
             </section>
             @if (isOpen(thread.status)) {
               <section class="quick">
-                <h4>Actions rapides</h4>
+                <h4 i18n="@@exchanges.exchange-shell.actions.rapides.abe69a9c">Actions rapides</h4>
                 <app-button
                   variant="secondary"
                   size="sm"
                   icon="pi-plus"
                   (clicked)="showNewRequest.set(true); setTab('demandes')"
-                >
-                  Nouvelle demande
-                </app-button>
+                 i18n="@@exchanges.exchange-shell.nouvelle.demande.0a6e5d2f">Nouvelle demande</app-button>
                 <label class="btn file-btn quick-file">
                   <i class="pi pi-upload" aria-hidden="true"></i>
                   Partager un document
@@ -563,17 +541,13 @@
                   size="sm"
                   icon="pi-calendar"
                   (clicked)="showNewTask.set(true); newTaskTitle.set('Rendez-vous'); setTab('taches')"
-                >
-                  Planifier un rendez-vous
-                </app-button>
+                 i18n="@@exchanges.exchange-shell.planifier.un.rendez.vous.4cb33949">Planifier un rendez-vous</app-button>
                 <app-button
                   variant="ghost"
                   size="sm"
                   icon="pi-check-square"
                   (clicked)="showNewTask.set(true); setTab('taches')"
-                >
-                  Créer une tâche
-                </app-button>
+                 i18n="@@exchanges.exchange-shell.creer.une.tache.755f0229">Créer une tâche</app-button>
               </section>
             }
           </aside>

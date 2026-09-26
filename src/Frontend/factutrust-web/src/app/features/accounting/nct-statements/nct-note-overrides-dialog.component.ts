@@ -45,11 +45,11 @@ interface NoteEditRow {
       styleClass="nno-dialog">
       <p class="nno-help">
         Exercice <strong>{{ fiscalYear }}</strong>. Un champ laissé vide conserve le libellé du
-        catalogue. Une note masquée disparaît de la liasse <em>et</em> de l'export PDF.
+        catalogue. Une note masquée disparaît de la liasse <em i18n="@@accounting.nct-statements.et.a5bc1d9b">et</em> de l'export PDF.
       </p>
 
       @if (loading()) {
-        <p class="nno-help">Chargement…</p>
+        <p class="nno-help" i18n="@@accounting.nct-statements.chargement.01cba1df">Chargement…</p>
       } @else {
         <div class="nno-list">
           @for (row of rows(); track row.number) {
@@ -73,19 +73,15 @@ interface NoteEditRow {
                 rows="2"
                 [(ngModel)]="row.customDescription"
                 [disabled]="row.saving || row.isHidden"
-                placeholder="Texte narratif (facultatif)"></textarea>
+                placeholder="Texte narratif (facultatif)" i18n-placeholder="Texte narratif (facultatif)"></textarea>
               <div class="nno-row-actions">
                 <app-button variant="secondary" size="sm" type="button"
                   (click)="save(row)" [disabled]="row.saving"
-                  [ariaLabel]="'Enregistrer la note ' + row.number">
-                  Enregistrer
-                </app-button>
+                  [ariaLabel]="'Enregistrer la note ' + row.number" i18n="@@accounting.nct-statements.enregistrer.f7c8bcd8">Enregistrer</app-button>
                 @if (row.hasOverride) {
                   <app-button variant="ghost" size="sm" type="button"
                     (click)="reset(row)" [disabled]="row.saving"
-                    [ariaLabel]="'Rétablir la note ' + row.number">
-                    Rétablir
-                  </app-button>
+                    [ariaLabel]="'Rétablir la note ' + row.number" i18n="@@accounting.nct-statements.retablir.91f08ee4">Rétablir</app-button>
                 }
               </div>
             </div>

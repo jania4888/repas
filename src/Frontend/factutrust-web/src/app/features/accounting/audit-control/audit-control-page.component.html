@@ -2,14 +2,12 @@
   <app-accounting-health />
 } @else {
   <app-page-header
-    title="Contrôle d'intégrité & Détection des anomalies"
+    title="Contrôle d'intégrité & Détection des anomalies" i18n-title="Contrôle d'intégrité & Détection des anomalies"
     subtitle="Analyse complète de vos données comptables pour garantir la fiabilité et la conformité">
     <div class="ac-header-actions">
-      <app-button variant="secondary" icon="pi pi-file" type="button" (click)="exportReport('csv')">Exporter CSV</app-button>
-      <app-button variant="secondary" icon="pi pi-file-pdf" type="button" (click)="exportReport('pdf')">Exporter PDF</app-button>
-      <app-button variant="primary" icon="pi pi-play" type="button" [disabled]="loading()" (click)="runControl()">
-        Lancer un nouveau contrôle
-      </app-button>
+      <app-button variant="secondary" icon="pi pi-file" type="button" (click)="exportReport('csv')" i18n="@@accounting.audit-control.exporter.csv.d4fc31cb">Exporter CSV</app-button>
+      <app-button variant="secondary" icon="pi pi-file-pdf" type="button" (click)="exportReport('pdf')" i18n="@@accounting.audit-control.exporter.pdf.9a2c3956">Exporter PDF</app-button>
+      <app-button variant="primary" icon="pi pi-play" type="button" [disabled]="loading()" (click)="runControl()" i18n="@@accounting.audit-control.lancer.un.nouveau.controle.bd511363">Lancer un nouveau contrôle</app-button>
     </div>
   </app-page-header>
 
@@ -17,16 +15,16 @@
     <app-accounting-filter-bar ariaLabel="Filtres du contrôle">
       <div accountingFilterFields class="ac-toolbar-fields">
         <div class="accounting-filter-field">
-          <label class="accounting-filter-label" for="ac-year">Exercice</label>
+          <label class="accounting-filter-label" for="ac-year" i18n="@@accounting.audit-control.exercice.e171e2b0">Exercice</label>
           <input id="ac-year" type="number" min="2000" max="2100" [(ngModel)]="fiscalYear" class="accounting-filter-input" />
         </div>
         <div class="accounting-filter-field">
-          <label class="accounting-filter-label" for="ac-search">Recherche</label>
-          <input id="ac-search" type="search" [(ngModel)]="search" class="accounting-filter-input" placeholder="Rechercher une anomalie…" (keyup.enter)="loadAnomalies(1)" />
+          <label class="accounting-filter-label" for="ac-search" i18n="@@accounting.audit-control.recherche.787b5492">Recherche</label>
+          <input id="ac-search" type="search" [(ngModel)]="search" class="accounting-filter-input" placeholder="Rechercher une anomalie…" i18n-placeholder="Rechercher une anomalie…" (keyup.enter)="loadAnomalies(1)" />
         </div>
       </div>
       <div accountingFilterActions>
-        <app-button variant="secondary" icon="pi pi-refresh" type="button" [disabled]="loading()" (click)="refreshAll()">Actualiser</app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" type="button" [disabled]="loading()" (click)="refreshAll()" i18n="@@accounting.audit-control.actualiser.9d3b2a7d">Actualiser</app-button>
       </div>
     </app-accounting-filter-bar>
   </div>
@@ -42,7 +40,7 @@
       <app-stat-card appearance="solid" label="Taux de conformité" [value]="dash.complianceRate + '%'" icon="fa-solid fa-chart-line" variant="success" [change]="dash.complianceRateDeltaVsPriorYear ?? undefined" />
       @if (dash.lastRun) {
         <div class="ac-last-run card">
-          <span class="ac-last-run__label">Dernier contrôle</span>
+          <span class="ac-last-run__label" i18n="@@accounting.audit-control.dernier.controle.9f050453">Dernier contrôle</span>
           <strong>{{ dash.lastRun.completedAt | date:'dd/MM/yyyy HH:mm' }}</strong>
           @if (dash.lastRun.triggeredByUserName) {
             <span class="ac-last-run__meta">{{ dash.lastRun.triggeredByUserName }}</span>
@@ -72,13 +70,13 @@
         [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th style="width:7rem">Sévérité</th>
-            <th style="width:8rem">Catégorie</th>
-            <th>Anomalie détectée</th>
-            <th>Compte / Écriture</th>
-            <th style="width:7rem">Montant</th>
-            <th style="width:8rem">Statut</th>
-            <th style="width:9rem">Action</th>
+            <th style="width:7rem" i18n="@@accounting.audit-control.severite.62fd4ae5">Sévérité</th>
+            <th style="width:8rem" i18n="@@accounting.audit-control.categorie.6b38300a">Catégorie</th>
+            <th i18n="@@accounting.audit-control.anomalie.detectee.a7401ff2">Anomalie détectée</th>
+            <th i18n="@@accounting.audit-control.compte.ecriture.442d7578">Compte / Écriture</th>
+            <th style="width:7rem" i18n="@@accounting.audit-control.montant.4adcd9fc">Montant</th>
+            <th style="width:8rem" i18n="@@accounting.audit-control.statut.659499f3">Statut</th>
+            <th style="width:9rem" i18n="@@accounting.audit-control.action.97c89a4d">Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -94,37 +92,37 @@
             <td>{{ statusLabel(row.status) }}</td>
             <td>
               @if (canCorrect(row)) {
-                <button type="button" class="ac-link ac-link--btn" (click)="correctAnomaly(row); $event.stopPropagation()">Corriger</button>
+                <button type="button" class="ac-link ac-link--btn" (click)="correctAnomaly(row); $event.stopPropagation()" i18n="@@accounting.audit-control.corriger.3447eb7c">Corriger</button>
               }
-              <button type="button" class="ac-link ac-link--btn" (click)="openDetail(row); $event.stopPropagation()">Détail</button>
+              <button type="button" class="ac-link ac-link--btn" (click)="openDetail(row); $event.stopPropagation()" i18n="@@accounting.audit-control.detail.7ce06afc">Détail</button>
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="7" class="ac-empty">Aucune anomalie — lancez un contrôle.</td></tr>
+          <tr><td colspan="7" class="ac-empty" i18n="@@accounting.audit-control.aucune.anomalie.lancez.un.controle.7d64f9f4">Aucune anomalie — lancez un contrôle.</td></tr>
         </ng-template>
       </p-table>
     </div>
   </div>
 
   <section class="ac-analytics">
-    <h2 class="ac-section-title">Analyses</h2>
+    <h2 class="ac-section-title" i18n="@@accounting.audit-control.analyses.f864c045">Analyses</h2>
     <div class="ac-analytics-grid">
       @if (donutData(); as dd) {
         <div class="card ac-chart-card">
-          <h3>Répartition par catégorie</h3>
+          <h3 i18n="@@accounting.audit-control.repartition.par.categorie.d2abbeba">Répartition par catégorie</h3>
           <p-chart type="doughnut" [data]="dd" [options]="chartOptions" height="220px" />
         </div>
       }
       @if (lineData(); as ld) {
         <div class="card ac-chart-card">
-          <h3>Évolution des anomalies</h3>
+          <h3 i18n="@@accounting.audit-control.evolution.des.anomalies.18387d3d">Évolution des anomalies</h3>
           <p-chart type="line" [data]="ld" [options]="chartOptions" height="220px" />
         </div>
       }
       @if (analytics()?.topAccounts?.length) {
         <div class="card ac-top-accounts">
-          <h3>Top comptes concernés</h3>
+          <h3 i18n="@@accounting.audit-control.top.comptes.concernes.2cfe9074">Top comptes concernés</h3>
           <ul>
             @for (acc of analytics()!.topAccounts; track acc.accountNumber) {
               <li><span>{{ acc.accountNumber }}</span><span>{{ acc.anomalyCount }} · {{ acc.totalAmount | number:'1.0-0' }} TND</span></li>
@@ -134,7 +132,7 @@
       }
       @if (analytics()?.recentActivity?.length) {
         <div class="card ac-activity">
-          <h3>Activité & suivi</h3>
+          <h3 i18n="@@accounting.audit-control.activite.suivi.31ea5ed9">Activité & suivi</h3>
           <ul>
             @for (act of analytics()!.recentActivity; track act.id) {
               <li><strong>{{ act.userName || 'Système' }}</strong> — {{ act.message }} <em>{{ act.createdAt | date:'short' }}</em></li>
@@ -146,7 +144,7 @@
   </section>
 
   <section class="ac-modules">
-    <h2 class="ac-section-title">Modules et contrôles disponibles</h2>
+    <h2 class="ac-section-title" i18n="@@accounting.audit-control.modules.et.controles.disponibles.16d27624">Modules et contrôles disponibles</h2>
     <div class="ac-modules-grid">
       @for (mod of modules(); track mod.code) {
         <button type="button" class="ac-module-tile" [class.ac-module-tile--active]="selectedModuleCode === mod.code" (click)="filterByModule(mod.code)">
@@ -174,10 +172,10 @@
         </div>
         <h3>{{ d.title }}</h3>
         <p>{{ d.description }}</p>
-        <p class="ac-detail__impact"><strong>Impact :</strong> {{ d.impact }}</p>
+        <p class="ac-detail__impact"><strong i18n="@@accounting.audit-control.impact.44f44e50">Impact :</strong> {{ d.impact }}</p>
         @if (d.recommendations.length) {
           <div class="ac-detail__reco">
-            <strong>Recommandations</strong>
+            <strong i18n="@@accounting.audit-control.recommandations.0589775e">Recommandations</strong>
             <ol>
               @for (r of d.recommendations; track r) { <li>{{ r }}</li> }
             </ol>
@@ -187,7 +185,7 @@
           <p-table [value]="d.lines" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
               <tr>
-                <th>Date</th><th>Compte</th><th>Libellé</th><th>Débit</th><th>Crédit</th><th>Justificatif</th><th></th>
+                <th i18n="@@accounting.audit-control.date.eb9a4bc1">Date</th><th i18n="@@accounting.audit-control.compte.c45740bb">Compte</th><th i18n="@@accounting.audit-control.libelle.f5485bba">Libellé</th><th i18n="@@accounting.audit-control.debit.f528224f">Débit</th><th i18n="@@accounting.audit-control.credit.19194bdf">Crédit</th><th i18n="@@accounting.audit-control.justificatif.cf1a64f9">Justificatif</th><th></th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-l>
@@ -200,7 +198,7 @@
                 <td>{{ l.justificationStatus || '—' }}</td>
                 <td>
                   @if (l.journalEntryId) {
-                    <button type="button" class="ac-link ac-link--btn" (click)="openEntryLine(l)">Ouvrir</button>
+                    <button type="button" class="ac-link ac-link--btn" (click)="openEntryLine(l)" i18n="@@accounting.audit-control.ouvrir.42c07747">Ouvrir</button>
                   }
                 </td>
               </tr>
@@ -213,9 +211,7 @@
               {{ d.correctionLink?.label || 'Corriger cette anomalie' }}
             </button>
           }
-          <button type="button" class="ac-btn ac-btn--secondary" (click)="resolveSelected()" title="Indique que l'anomalie a été traitée sans relancer le contrôle">
-            Marquer comme traitée
-          </button>
+          <button type="button" class="ac-btn ac-btn--secondary" (click)="resolveSelected()" title="Indique que l'anomalie a été traitée sans relancer le contrôle" i18n-title="Indique que l'anomalie a été traitée sans relancer le contrôle" i18n="@@accounting.audit-control.marquer.comme.traitee.0da927a0">Marquer comme traitée</button>
         </div>
       </div>
     }

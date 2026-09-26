@@ -14,20 +14,20 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
     <div class="history-panel" (click)="onClose.emit()">
       <div class="history-panel__content" (click)="$event.stopPropagation()">
         <div class="history-panel__header">
-          <h3 class="history-panel__title">Historique du jour</h3>
-          <button class="history-panel__close" (click)="onClose.emit()" aria-label="Fermer">
+          <h3 class="history-panel__title" i18n="@@pos.components.historique.du.jour.d4f3dc0e">Historique du jour</h3>
+          <button class="history-panel__close" (click)="onClose.emit()" aria-label="Fermer" i18n-aria-label="Fermer">
             <i class="pi pi-times"></i>
           </button>
         </div>
         <div class="history-panel__chips">
-          <button type="button" class="history-panel__chip" [class.history-panel__chip--active]="historyService.activeFilter() === 'today'" (click)="historyService.setFilter('today')">Aujourd'hui</button>
-          <button type="button" class="history-panel__chip" [class.history-panel__chip--active]="historyService.activeFilter() === 'session'" (click)="showThisSession()">Cette session</button>
+          <button type="button" class="history-panel__chip" [class.history-panel__chip--active]="historyService.activeFilter() === 'today'" (click)="historyService.setFilter('today')" i18n="@@pos.components.aujourd.hui.baca97f6">Aujourd'hui</button>
+          <button type="button" class="history-panel__chip" [class.history-panel__chip--active]="historyService.activeFilter() === 'session'" (click)="showThisSession()" i18n="@@pos.components.cette.session.8976ccb7">Cette session</button>
         </div>
 
         @if (historyService.isLoading()) {
           <div class="history-panel__loading">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@pos.components.chargement.a209b664">Chargement...</span>
           </div>
         } @else if (historyService.todayTransactions().length === 0) {
           <div class="history-panel__empty">
@@ -48,7 +48,7 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
                   <span class="history-panel__item-amount">{{ formatAmount(inv.totalAmount) }} TND</span>
                 </div>
                 <div class="history-panel__item-actions">
-                  <button type="button" class="history-panel__btn" (click)="reprint(inv.id)" title="Reimprimer">
+                  <button type="button" class="history-panel__btn" (click)="reprint(inv.id)" title="Reimprimer" i18n-title="Reimprimer">
                     <i class="pi pi-print"></i>
                   </button>
                 </div>
@@ -62,9 +62,9 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
         </button>
 
         <div class="history-panel__z">
-          <h4>Clôtures Z (30 jours)</h4>
+          <h4 i18n="@@pos.components.clotures.z.30.jours.50c327b2">Clôtures Z (30 jours)</h4>
           @if (zReports.length === 0) {
-            <p class="history-panel__z-empty">Aucune clôture sur la période.</p>
+            <p class="history-panel__z-empty" i18n="@@pos.components.aucune.cloture.sur.la.periode.350ca2f8">Aucune clôture sur la période.</p>
           } @else {
             <ul>
               @for (z of zReports; track z.id) {

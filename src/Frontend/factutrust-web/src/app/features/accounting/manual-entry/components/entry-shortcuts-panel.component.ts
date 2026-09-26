@@ -8,12 +8,12 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `
     <aside class="shortcuts card" aria-labelledby="shortcuts-title">
-      <h3 id="shortcuts-title" class="shortcuts__title">Raccourcis</h3>
+      <h3 id="shortcuts-title" class="shortcuts__title" i18n="@@accounting.manual-entry.raccourcis.0e0d6404">Raccourcis</h3>
       <ul class="shortcuts__list">
-        <li><a routerLink="/accounting/journal" [queryParams]="{ journalCode: 'JA' }">Consulter le journal des achats</a></li>
-        <li><a routerLink="/accounting/journal" [queryParams]="{ journalCode: 'JV' }">Consulter le journal des ventes</a></li>
-        <li><a routerLink="/accounting/ledger">Consulter le compte général</a></li>
-        <li><a routerLink="/accounting/entry-templates">Nouveau modèle d'écriture</a></li>
+        <li><a routerLink="/accounting/journal" [queryParams]="{ journalCode: 'JA' }" i18n="@@accounting.manual-entry.consulter.le.journal.des.achats.fb254caf">Consulter le journal des achats</a></li>
+        <li><a routerLink="/accounting/journal" [queryParams]="{ journalCode: 'JV' }" i18n="@@accounting.manual-entry.consulter.le.journal.des.ventes.100df53f">Consulter le journal des ventes</a></li>
+        <li><a routerLink="/accounting/ledger" i18n="@@accounting.manual-entry.consulter.le.compte.general.b7a8d490">Consulter le compte général</a></li>
+        <li><a routerLink="/accounting/entry-templates" i18n="@@accounting.manual-entry.nouveau.modele.d.ecriture.29362cf3">Nouveau modèle d'écriture</a></li>
       </ul>
     </aside>
   `,

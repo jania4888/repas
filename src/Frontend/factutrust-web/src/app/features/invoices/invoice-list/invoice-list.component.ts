@@ -80,9 +80,7 @@ interface StatusOption {
         iconPos="left"
         [disabled]="printingReport()"
         (click)="printInvoiceReport()"
-        [ariaLabel]="printAriaLabel()">
-        Imprimer l'état
-      </app-button>
+        [ariaLabel]="printAriaLabel()" i18n="@@invoices.invoice-list.imprimer.l.etat.389e5da9">Imprimer l'état</app-button>
       <app-analyze-with-ai-button
         [screenId]="analyzeScreenId()"
         [payloadBuilder]="buildInvoiceAnalyzePayload"
@@ -93,26 +91,20 @@ interface StatusOption {
           icon="pi-file-import"
           iconPos="left"
           (click)="openImportDialog()"
-          ariaLabel="Importer une facture depuis un fichier (PDF, image, Word ou Excel)">
-          Importer une facture
-        </app-button>
+          ariaLabel="Importer une facture depuis un fichier (PDF, image, Word ou Excel)" i18n="@@invoices.invoice-list.importer.une.facture.66ed8807">Importer une facture</app-button>
       }
       @if (canCreateInvoice() && creditNotesOnlyMode()) {
         <app-button 
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          (click)="openNewCreditNote()">
-          Nouvel avoir
-        </app-button>
+          (click)="openNewCreditNote()" i18n="@@invoices.invoice-list.nouvel.avoir.f3e4055a">Nouvel avoir</app-button>
       } @else if (canCreateInvoice()) {
         <app-button 
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="/invoices/new">
-          Nouvelle facture
-        </app-button>
+          routerLink="/invoices/new" i18n="@@invoices.invoice-list.nouvelle.facture.cdf7e09c">Nouvelle facture</app-button>
       }
     </app-page-header>
 
@@ -124,7 +116,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -136,7 +128,7 @@ interface StatusOption {
           <input 
             pInputText 
             type="text" 
-            placeholder="Rechercher..." 
+            placeholder="Rechercher..." i18n-placeholder="Rechercher..." 
             [(ngModel)]="searchTerm"
             (input)="onSearch()">
         </span>
@@ -144,7 +136,7 @@ interface StatusOption {
         <p-select 
           [options]="statusOptions" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -153,7 +145,7 @@ interface StatusOption {
           [(ngModel)]="dateRange" 
           selectionMode="range" 
           [readonlyInput]="true"
-          placeholder="Période"
+          placeholder="Période" i18n-placeholder="Période"
           dateFormat="dd/mm/yy"
           [showClear]="true"
           (onSelect)="onFilterChange()">
@@ -163,7 +155,7 @@ interface StatusOption {
           [options]="clientOptions" 
           [(ngModel)]="selectedClient"
           optionLabel="name"
-          placeholder="Tous les clients"
+          placeholder="Tous les clients" i18n-placeholder="Tous les clients"
           [showClear]="true"
           [filter]="true"
           filterBy="name,code"
@@ -178,10 +170,10 @@ interface StatusOption {
         <div class="error-content">
           <i class="pi pi-exclamation-triangle"></i>
           <div class="error-text">
-            <strong>Erreur de chargement</strong>
+            <strong i18n="@@invoices.invoice-list.erreur.de.chargement.d7568404">Erreur de chargement</strong>
             <p>{{ errorMessage() }}</p>
             @if (isRateLimited()) {
-              <small>Nouvelle tentative dans quelques instants...</small>
+              <small i18n="@@invoices.invoice-list.nouvelle.tentative.dans.quelques.instants.9cfcab5b">Nouvelle tentative dans quelques instants...</small>
             }
           </div>
           <app-button 
@@ -189,9 +181,7 @@ interface StatusOption {
             size="sm"
             icon="pi-refresh"
             (click)="loadInvoices()"
-            [disabled]="loading()">
-            Réessayer
-          </app-button>
+            [disabled]="loading()" i18n="@@invoices.invoice-list.reessayer.895d416b">Réessayer</app-button>
         </div>
       </div>
     }
@@ -225,14 +215,14 @@ interface StatusOption {
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="number">Numéro <p-sortIcon field="number"></p-sortIcon></th>
-            <th>Client</th>
+            <th i18n="@@invoices.invoice-list.client.1bdd79b1">Client</th>
             <th pSortableColumn="issueDate">Date <p-sortIcon field="issueDate"></p-sortIcon></th>
-            <th>Échéance</th>
+            <th i18n="@@invoices.invoice-list.echeance.f9a77ff6">Échéance</th>
             <th pSortableColumn="totalAmount">Montant <p-sortIcon field="totalAmount"></p-sortIcon></th>
-            <th>Montant payé</th>
+            <th i18n="@@invoices.invoice-list.montant.paye.40c0b255">Montant payé</th>
             <th>{{ remainingColumnLabel() }}</th>
-            <th>Statut</th>
-            <th style="width: 120px">Actions</th>
+            <th i18n="@@invoices.invoice-list.statut.659499f3">Statut</th>
+            <th style="width: 120px" i18n="@@invoices.invoice-list.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
 
@@ -243,7 +233,7 @@ interface StatusOption {
                 {{ invoice.number }}
               </a>
               @if (invoice.isCreditNote && !creditNotesOnlyMode()) {
-                <span class="doc-type-chip" title="Facture d'avoir">Avoir</span>
+                <span class="doc-type-chip" title="Facture d'avoir" i18n-title="Facture d'avoir" i18n="@@invoices.invoice-list.avoir.8ee24717">Avoir</span>
               }
             </td>
             <td>{{ invoice.clientName }}</td>
@@ -297,7 +287,7 @@ interface StatusOption {
               @if (unpaidOnlyMode()) {
                 <app-empty-state
                   illustration="empty-invoices.svg"
-                  title="Aucune facture impayée"
+                  title="Aucune facture impayée" i18n-title="Aucune facture impayée"
                   description="Aucune facture client en attente de règlement."
                   actionLabel="Voir toutes les factures"
                   actionRoute="/invoices">
@@ -305,7 +295,7 @@ interface StatusOption {
               } @else if (creditNotesOnlyMode()) {
                 <app-empty-state
                   illustration="empty-invoices.svg"
-                  title="Aucun avoir"
+                  title="Aucun avoir" i18n-title="Aucun avoir"
                   description="Créez votre premier avoir à partir d'une facture existante."
                   [showAction]="canCreateInvoice()"
                   actionLabel="Créer un avoir"
@@ -314,7 +304,7 @@ interface StatusOption {
               } @else {
                 <app-empty-state
                   illustration="empty-invoices.svg"
-                  title="Aucune facture"
+                  title="Aucune facture" i18n-title="Aucune facture"
                   description="Créez votre première facture pour commencer à facturer vos clients."
                   [showAction]="canCreateInvoice()"
                   actionLabel="Créer une facture"

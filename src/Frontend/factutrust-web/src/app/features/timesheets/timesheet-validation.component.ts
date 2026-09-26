@@ -14,11 +14,11 @@ import { TimesheetApiService } from './timesheet-api.service';
   standalone: true,
   imports: [CommonModule, RouterLink, TableModule, PageHeaderComponent, ButtonComponent],
   template: `
-    <app-page-header title="Validation des feuilles de temps" subtitle="File manageriale centralisée" />
+    <app-page-header title="Validation des feuilles de temps" i18n-title="Validation des feuilles de temps" subtitle="File manageriale centralisée" />
     <p-table [value]="entries()" [paginator]="true" [rows]="20">
       <ng-template pTemplate="header">
         <tr>
-          <th>Date</th><th>Projet</th><th>Utilisateur</th><th>Heures</th><th>Facturable</th><th></th>
+          <th i18n="@@timesheets.timesheet-validation.date.eb9a4bc1">Date</th><th i18n="@@timesheets.timesheet-validation.projet.a9de3a26">Projet</th><th i18n="@@timesheets.timesheet-validation.utilisateur.0b20cd7f">Utilisateur</th><th i18n="@@timesheets.timesheet-validation.heures.b4448c06">Heures</th><th i18n="@@timesheets.timesheet-validation.facturable.63134237">Facturable</th><th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-e>
@@ -28,7 +28,7 @@ import { TimesheetApiService } from './timesheet-api.service';
           <td>{{ e.userName }}</td>
           <td>{{ e.hours | number:'1.2-2' }}</td>
           <td>{{ e.isBillable ? 'Oui' : 'Non' }}</td>
-          <td><app-button size="sm" (clicked)="validate(e.id)">Valider</app-button></td>
+          <td><app-button size="sm" (clicked)="validate(e.id)" i18n="@@timesheets.timesheet-validation.valider.be4220f7">Valider</app-button></td>
         </tr>
       </ng-template>
     </p-table>

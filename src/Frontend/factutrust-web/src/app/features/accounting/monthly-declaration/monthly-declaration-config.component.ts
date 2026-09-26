@@ -71,7 +71,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Configuration DM"
+      title="Configuration DM" i18n-title="Configuration DM"
       subtitle="Calcul de chaque rubrique de la déclaration mensuelle : comptes, valeurs de paie, taux et période d’application" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -80,7 +80,7 @@ import {
       @if (!config.settings.configurableLinesEnabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé"
+          title="Calcul paramétré non activé" i18n-title="Calcul paramétré non activé"
           message="La configuration reste consultable. Sa modification sera possible dès l’activation par l’administrateur de la plateforme ; aucun montant n’en dépend pour l’instant." />
       }
 
@@ -97,9 +97,7 @@ import {
           icon="pi-refresh"
           type="button"
           [disabled]="loading()"
-          (click)="load()">
-          Actualiser
-        </app-button>
+          (click)="load()" i18n="@@accounting.monthly-declaration.actualiser.9d3b2a7d">Actualiser</app-button>
       </div>
 
       @if (!canWrite()) {
@@ -116,7 +114,7 @@ import {
               <p-tab [value]="tab.family">
                 {{ tab.label }}
                 @if (needsAttention(tab.family)) {
-                  <span class="dm-dot" title="Famille incluse sans rubrique active">●</span>
+                  <span class="dm-dot" title="Famille incluse sans rubrique active" i18n-title="Famille incluse sans rubrique active" i18n="@@accounting.monthly-declaration.text.02b4ebd4">●</span>
                 }
               </p-tab>
             }
@@ -136,7 +134,7 @@ import {
                   [checked]="included()"
                   [disabled]="!editable() || savingFamily()"
                   (change)="toggleFamily($event)" />
-                <span>Inclure cette famille dans la déclaration mensuelle</span>
+                <span i18n="@@accounting.monthly-declaration.inclure.cette.famille.dans.la.declaration.mensue.4fe1eab3">Inclure cette famille dans la déclaration mensuelle</span>
               </label>
             </div>
 
@@ -159,9 +157,7 @@ import {
                 icon="pi pi-plus"
                 type="button"
                 [disabled]="!editable() || loading()"
-                (click)="startCreate()">
-                Nouvelle rubrique
-              </app-button>
+                (click)="startCreate()" i18n="@@accounting.monthly-declaration.nouvelle.rubrique.f16710ee">Nouvelle rubrique</app-button>
               <span class="dm-family__count">{{ activeCount() }} rubrique(s) active(s)</span>
             </div>
 

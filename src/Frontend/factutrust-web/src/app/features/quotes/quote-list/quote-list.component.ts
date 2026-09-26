@@ -62,16 +62,14 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Devis"
+      title="Devis" i18n-title="Devis"
       subtitle="Créez, envoyez et transformez vos devis en factures">
       @if (canCreateQuote()) {
         <app-button
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Créer un devis
-        </app-button>
+          routerLink="new" i18n="@@quotes.quote-list.creer.un.devis.426c5610">Créer un devis</app-button>
       }
     </app-page-header>
 
@@ -82,7 +80,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -94,14 +92,14 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher..."
+            placeholder="Rechercher..." i18n-placeholder="Rechercher..."
             [(ngModel)]="searchTerm"
             (input)="onSearch()" />
         </span>
         <p-select
           [options]="statusOptions"
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -109,7 +107,7 @@ interface StatusOption {
           [(ngModel)]="dateRange"
           selectionMode="range"
           [readonlyInput]="true"
-          placeholder="Période"
+          placeholder="Période" i18n-placeholder="Période"
           dateFormat="dd/mm/yy"
           [showClear]="true"
           (onSelect)="onSearch()">
@@ -145,13 +143,13 @@ interface StatusOption {
           styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Numéro</th>
-              <th>Client</th>
-              <th>Date</th>
-              <th>Validité jusqu'au</th>
-              <th>Montant</th>
-              <th>Statut</th>
-              <th style="width: 120px">Actions</th>
+              <th i18n="@@quotes.quote-list.numero.15e73db0">Numéro</th>
+              <th i18n="@@quotes.quote-list.client.1bdd79b1">Client</th>
+              <th i18n="@@quotes.quote-list.date.eb9a4bc1">Date</th>
+              <th i18n="@@quotes.quote-list.validite.jusqu.au.b8609845">Validité jusqu'au</th>
+              <th i18n="@@quotes.quote-list.montant.4adcd9fc">Montant</th>
+              <th i18n="@@quotes.quote-list.statut.659499f3">Statut</th>
+              <th style="width: 120px" i18n="@@quotes.quote-list.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-quote>
@@ -208,7 +206,7 @@ interface StatusOption {
               <td colspan="7" class="text-center p-6">
                 <app-empty-state
                   illustration="empty-quotes.svg"
-                  title="Aucun devis"
+                  title="Aucun devis" i18n-title="Aucun devis"
                   description="Créez votre premier devis pour vos clients."
                   [showAction]="canCreateQuote()"
                   actionLabel="Créer un devis"

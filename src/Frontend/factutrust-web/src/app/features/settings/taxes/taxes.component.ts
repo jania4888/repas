@@ -52,7 +52,7 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Taxes et TVA"
+      title="Taxes et TVA" i18n-title="Taxes et TVA"
       subtitle="Configurez les taxes applicables et les taux de TVA">
       <div class="header-actions">
         <p-button
@@ -73,13 +73,13 @@ import {
     @if (loading() && !taxes().length) {
       <div class="loading-container" role="status" aria-live="polite">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem" aria-hidden="true"></i>
-        <p>Chargement des taxes...</p>
+        <p i18n="@@settings.taxes.chargement.des.taxes.71337aa1">Chargement des taxes...</p>
       </div>
     } @else {
       <p-tabs [(value)]="activeTabIndex" class="taxes-tabview" [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0">Taxe</p-tab>
-          <p-tab [value]="1">TVA</p-tab>
+          <p-tab [value]="0" i18n="@@settings.taxes.taxe.7acfb8ad">Taxe</p-tab>
+          <p-tab [value]="1" i18n="@@settings.taxes.tva.fb62cb5d">TVA</p-tab>
         </p-tablist>
         <p-tabpanels>
         <p-tabpanel [value]="0">
@@ -91,12 +91,12 @@ import {
             styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
               <tr>
-                <th scope="col">Nom</th>
-                <th scope="col">Contexte</th>
-                <th scope="col">Valeur</th>
-                <th scope="col">Sur produits</th>
-                <th scope="col">État</th>
-                <th scope="col" class="col-actions">Actions</th>
+                <th scope="col" i18n="@@settings.taxes.nom.7ff20370">Nom</th>
+                <th scope="col" i18n="@@settings.taxes.contexte.8112e9eb">Contexte</th>
+                <th scope="col" i18n="@@settings.taxes.valeur.68f92b0d">Valeur</th>
+                <th scope="col" i18n="@@settings.taxes.sur.produits.c07ac283">Sur produits</th>
+                <th scope="col" i18n="@@settings.taxes.etat.d3b28a2a">État</th>
+                <th scope="col" class="col-actions" i18n="@@settings.taxes.actions.c3cd636a">Actions</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-row>
@@ -136,7 +136,7 @@ import {
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td colspan="6" class="empty-cell">Aucune taxe hors TVA. Utilisez « Ajouter » pour en créer une.</td>
+                <td colspan="6" class="empty-cell" i18n="@@settings.taxes.aucune.taxe.hors.tva.utilisez.ajouter.pour.en.cr.2ff1aa23">Aucune taxe hors TVA. Utilisez « Ajouter » pour en créer une.</td>
               </tr>
             </ng-template>
           </p-table>
@@ -151,12 +151,12 @@ import {
             styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
               <tr>
-                <th scope="col">Nom</th>
-                <th scope="col">Contexte</th>
-                <th scope="col">Valeur</th>
-                <th scope="col">Sur produits</th>
-                <th scope="col">État</th>
-                <th scope="col" class="col-actions">Actions</th>
+                <th scope="col" i18n="@@settings.taxes.nom.7ff20370">Nom</th>
+                <th scope="col" i18n="@@settings.taxes.contexte.8112e9eb">Contexte</th>
+                <th scope="col" i18n="@@settings.taxes.valeur.68f92b0d">Valeur</th>
+                <th scope="col" i18n="@@settings.taxes.sur.produits.c07ac283">Sur produits</th>
+                <th scope="col" i18n="@@settings.taxes.etat.d3b28a2a">État</th>
+                <th scope="col" class="col-actions" i18n="@@settings.taxes.actions.c3cd636a">Actions</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-row>
@@ -196,7 +196,7 @@ import {
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td colspan="6" class="empty-cell">Aucun taux de TVA.</td>
+                <td colspan="6" class="empty-cell" i18n="@@settings.taxes.aucun.taux.de.tva.42d1391e">Aucun taux de TVA.</td>
               </tr>
             </ng-template>
           </p-table>
@@ -220,10 +220,10 @@ import {
             class="hint-banner hint-banner--top"
             role="region"
             aria-labelledby="tax-system-info-title">
-            <span id="tax-system-info-title" class="hint-banner__title">Taxe système</span>
+            <span id="tax-system-info-title" class="hint-banner__title" i18n="@@settings.taxes.taxe.systeme.cce09290">Taxe système</span>
             <p class="hint-banner__text">
-              Les champs <strong>Type</strong>, <strong>Mode de calcul</strong>, <strong>Valeur</strong> et
-              <strong>Contexte</strong> sont en lecture seule. Vous pouvez modifier le libellé, l’ordre d’affichage et
+              Les champs <strong i18n="@@settings.taxes.type.3deb7456">Type</strong>, <strong i18n="@@settings.taxes.mode.de.calcul.803843c7">Mode de calcul</strong>, <strong i18n="@@settings.taxes.valeur.68f92b0d">Valeur</strong> et
+              <strong i18n="@@settings.taxes.contexte.8112e9eb">Contexte</strong> sont en lecture seule. Vous pouvez modifier le libellé, l’ordre d’affichage et
               l’application sur les produits.
             </p>
           </div>
@@ -231,14 +231,14 @@ import {
 
         <div class="form-grid">
           <div class="form-section">
-            <span class="section-title" id="section-identification">Identification</span>
+            <span class="section-title" id="section-identification" i18n="@@settings.taxes.identification.9d2c7063">Identification</span>
             <label class="form-field" for="tax-name">
-              <span class="label-text">Nom <span class="required" aria-hidden="true">*</span></span>
+              <span class="label-text">Nom <span class="required" aria-hidden="true" i18n="@@settings.taxes.text.df58248c">*</span></span>
               <input pInputText id="tax-name" formControlName="name" class="w-full" autocomplete="off" />
             </label>
             @if (!isEditingSystemTax()) {
               <label class="form-field" for="tax-type">
-                <span class="label-text">Type</span>
+                <span class="label-text" i18n="@@settings.taxes.type.3deb7456">Type</span>
                 <p-select
                   inputId="tax-type"
                   formControlName="type"
@@ -258,10 +258,10 @@ import {
               aria-labelledby="tax-locked-legend">
               <div id="tax-locked-legend" class="locked-legend">
                 <i class="pi pi-lock locked-legend__icon" aria-hidden="true"></i>
-                <span>Règles imposées par la plateforme (lecture seule)</span>
+                <span i18n="@@settings.taxes.regles.imposees.par.la.plateforme.lecture.seule.de5b8a6f">Règles imposées par la plateforme (lecture seule)</span>
               </div>
               <label class="form-field" for="tax-type">
-                <span class="label-text">Type</span>
+                <span class="label-text" i18n="@@settings.taxes.type.3deb7456">Type</span>
                 <p-select
                   inputId="tax-type"
                   formControlName="type"
@@ -272,7 +272,7 @@ import {
                 </p-select>
               </label>
               <label class="form-field" for="tax-value-type">
-                <span class="label-text">Mode de calcul</span>
+                <span class="label-text" i18n="@@settings.taxes.mode.de.calcul.803843c7">Mode de calcul</span>
                 <p-select
                   inputId="tax-value-type"
                   formControlName="valueType"
@@ -283,7 +283,7 @@ import {
                 </p-select>
               </label>
               <label class="form-field" for="tax-value">
-                <span class="label-text">Valeur</span>
+                <span class="label-text" i18n="@@settings.taxes.valeur.68f92b0d">Valeur</span>
                 <p-inputNumber
                   inputId="tax-value"
                   formControlName="value"
@@ -297,7 +297,7 @@ import {
                 </p-inputNumber>
               </label>
               <label class="form-field" for="tax-context">
-                <span class="label-text">Contexte</span>
+                <span class="label-text" i18n="@@settings.taxes.contexte.8112e9eb">Contexte</span>
                 <p-select
                   inputId="tax-context"
                   formControlName="context"
@@ -310,9 +310,9 @@ import {
             </div>
           } @else {
             <div class="form-section" role="group" aria-labelledby="section-calcul">
-              <span class="section-title" id="section-calcul">Calcul</span>
+              <span class="section-title" id="section-calcul" i18n="@@settings.taxes.calcul.c0976407">Calcul</span>
               <label class="form-field" for="tax-value-type">
-                <span class="label-text">Mode de calcul</span>
+                <span class="label-text" i18n="@@settings.taxes.mode.de.calcul.803843c7">Mode de calcul</span>
                 <p-select
                   inputId="tax-value-type"
                   formControlName="valueType"
@@ -323,7 +323,7 @@ import {
                 </p-select>
               </label>
               <label class="form-field" for="tax-value">
-                <span class="label-text">Valeur</span>
+                <span class="label-text" i18n="@@settings.taxes.valeur.68f92b0d">Valeur</span>
                 <p-inputNumber
                   inputId="tax-value"
                   formControlName="value"
@@ -338,9 +338,9 @@ import {
               </label>
             </div>
             <div class="form-section" role="group" aria-labelledby="section-perimetre">
-              <span class="section-title" id="section-perimetre">Périmètre</span>
+              <span class="section-title" id="section-perimetre" i18n="@@settings.taxes.perimetre.b5d08ec3">Périmètre</span>
               <label class="form-field" for="tax-context">
-                <span class="label-text">Contexte</span>
+                <span class="label-text" i18n="@@settings.taxes.contexte.8112e9eb">Contexte</span>
                 <p-select
                   inputId="tax-context"
                   formControlName="context"
@@ -354,19 +354,19 @@ import {
           }
 
           <div class="form-section" role="group" aria-labelledby="section-perimetre-produits">
-            <span class="section-title" id="section-perimetre-produits">Produits</span>
+            <span class="section-title" id="section-perimetre-produits" i18n="@@settings.taxes.produits.48000473">Produits</span>
             <div class="form-field switch-field">
               <label class="switch-field__label" for="tax-on-products">
-                <span class="label-text">Appliquée sur les produits</span>
+                <span class="label-text" i18n="@@settings.taxes.appliquee.sur.les.produits.0ff18fd8">Appliquée sur les produits</span>
               </label>
               <p-inputSwitch formControlName="isAppliedToProducts" inputId="tax-on-products"></p-inputSwitch>
             </div>
           </div>
 
           <div class="form-section" role="group" aria-labelledby="section-affichage">
-            <span class="section-title" id="section-affichage">Affichage</span>
+            <span class="section-title" id="section-affichage" i18n="@@settings.taxes.affichage.bc8f3ed6">Affichage</span>
             <label class="form-field" for="tax-order">
-              <span class="label-text">Ordre d’affichage</span>
+              <span class="label-text" i18n="@@settings.taxes.ordre.d.affichage.0b1cb263">Ordre d’affichage</span>
               <p-inputNumber
                 inputId="tax-order"
                 formControlName="displayOrder"

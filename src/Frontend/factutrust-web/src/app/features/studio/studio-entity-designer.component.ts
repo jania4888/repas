@@ -68,11 +68,11 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
       <p-table [value]="fields()" [loading]="loading()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th style="width:6rem">Ordre</th>
-            <th>Libellé</th>
-            <th>Clé</th>
-            <th>Type</th>
-            <th>Requis</th>
+            <th style="width:6rem" i18n="@@studio.studio-entity-designer.ordre.5c32e631">Ordre</th>
+            <th i18n="@@studio.studio-entity-designer.libelle.f5485bba">Libellé</th>
+            <th i18n="@@studio.studio-entity-designer.cle.24a01bef">Clé</th>
+            <th i18n="@@studio.studio-entity-designer.type.3deb7456">Type</th>
+            <th i18n="@@studio.studio-entity-designer.requis.9a33b681">Requis</th>
             <th style="width:10rem"></th>
           </tr>
         </ng-template>
@@ -95,7 +95,7 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="6" class="ft-empty">Aucun champ. Ajoutez le premier champ de cette table.</td></tr>
+          <tr><td colspan="6" class="ft-empty" i18n="@@studio.studio-entity-designer.aucun.champ.ajoutez.le.premier.champ.de.cette.ta.e419990b">Aucun champ. Ajoutez le premier champ de cette table.</td></tr>
         </ng-template>
       </p-table>
       </div>
@@ -105,7 +105,7 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
           <h3 class="studio-section-title">{{ runtimeLabels.relations.title }}</h3>
           <p-table [value]="relations()" [loading]="relationsLoading()" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
-              <tr><th>Type</th><th>Cible</th><th>Jonction</th></tr>
+              <tr><th i18n="@@studio.studio-entity-designer.type.3deb7456">Type</th><th i18n="@@studio.studio-entity-designer.cible.bebdb9b8">Cible</th><th i18n="@@studio.studio-entity-designer.jonction.1f6dc40a">Jonction</th></tr>
             </ng-template>
             <ng-template pTemplate="body" let-rel>
               <tr>
@@ -133,13 +133,13 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
 
     <p-dialog [header]="editing() ? 'Modifier le champ' : 'Nouveau champ'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '34rem' }" (onHide)="resetTypeCheck()">
       <div class="ft-form">
-        <label>Libellé *</label>
+        <label i18n="@@studio.studio-entity-designer.libelle.059cd7f3">Libellé *</label>
         <input pInputText [(ngModel)]="fLabel" (ngModelChange)="onLabelChange($event)" />
 
-        <label>Clé technique *</label>
+        <label i18n="@@studio.studio-entity-designer.cle.technique.46172421">Clé technique *</label>
         <input pInputText [(ngModel)]="fKey" [disabled]="editing()" />
 
-        <label>Type *</label>
+        <label i18n="@@studio.studio-entity-designer.type.9a8e753c">Type *</label>
         <p-select [options]="typeOptions" [(ngModel)]="fType" (ngModelChange)="onTypeChange($event)" optionLabel="label" optionValue="value"
           appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" data-testid="field-type-select"></p-select>
         @if (editing() && typeChecking()) {
@@ -149,122 +149,120 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         }
 
         <div class="ft-row">
-          <div><p-inputSwitch [(ngModel)]="fRequired"></p-inputSwitch> <span>Obligatoire</span></div>
-          <div><p-inputSwitch [(ngModel)]="fUnique"></p-inputSwitch> <span>Unique</span></div>
+          <div><p-inputSwitch [(ngModel)]="fRequired"></p-inputSwitch> <span i18n="@@studio.studio-entity-designer.obligatoire.389b678a">Obligatoire</span></div>
+          <div><p-inputSwitch [(ngModel)]="fUnique"></p-inputSwitch> <span i18n="@@studio.studio-entity-designer.unique.87c6f410">Unique</span></div>
         </div>
 
         <ng-container *ngIf="isSelect()">
-          <label>Options (une par ligne, format <code>valeur|libellé</code>)</label>
+          <label>Options (une par ligne, format <code i18n="@@studio.studio-entity-designer.valeur.libelle.e14efa4a">valeur|libellé</code>)</label>
           <textarea class="ft-textarea" [(ngModel)]="fOptionsText" rows="4"
-            placeholder="open|Ouvert&#10;closed|Fermé"></textarea>
+            placeholder="open|Ouvert&#10;closed|Fermé" i18n-placeholder="open|Ouvert&#10;closed|Fermé"></textarea>
         </ng-container>
 
         <ng-container *ngIf="isRelationCustom()">
-          <label>Table cible *</label>
+          <label i18n="@@studio.studio-entity-designer.table.cible.d81d2d36">Table cible *</label>
           <p-select [options]="otherEntities()" [(ngModel)]="fRelationRef" optionLabel="displayName" optionValue="key"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table"></p-select>
-          <small class="ft-hint">Le champ référencera un enregistrement de cette table.</small>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table" i18n-placeholder="Choisir une table"></p-select>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.le.champ.referencera.un.enregistrement.de.cette..77a4f1e1">Le champ référencera un enregistrement de cette table.</small>
         </ng-container>
 
         <ng-container *ngIf="isRelationExisting()">
-          <label>Donnée existante cible *</label>
+          <label i18n="@@studio.studio-entity-designer.donnee.existante.cible.eb7f8753">Donnée existante cible *</label>
           <p-select [options]="existingRelationSources" [(ngModel)]="fRelationRef" optionLabel="label" optionValue="value"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une source"></p-select>
-          <small class="ft-hint">Référence en lecture seule vers une fiche existante.</small>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une source" i18n-placeholder="Choisir une source"></p-select>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.reference.en.lecture.seule.vers.une.fiche.exista.d7fcd2e5">Référence en lecture seule vers une fiche existante.</small>
         </ng-container>
 
         <ng-container *ngIf="isText()">
           <div class="ft-row">
-            <div><label>Longueur min</label><p-inputNumber [(ngModel)]="fMinLen"></p-inputNumber></div>
-            <div><label>Longueur max</label><p-inputNumber [(ngModel)]="fMaxLen"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.longueur.min.b63b8acb">Longueur min</label><p-inputNumber [(ngModel)]="fMinLen"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.longueur.max.0b07b1fd">Longueur max</label><p-inputNumber [(ngModel)]="fMaxLen"></p-inputNumber></div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isNumeric()">
           <div class="ft-row">
-            <div><label>Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
-            <div><label>Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.min.b13c2cab">Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.max.e5c54fb5">Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isMoney()">
-          <label>Devise</label>
-          <input pInputText [(ngModel)]="fCurrency" maxlength="8" placeholder="TND" />
-          <small class="ft-hint">Code ISO de la devise (ex. TND, EUR, USD).</small>
+          <label i18n="@@studio.studio-entity-designer.devise.eb2e42c4">Devise</label>
+          <input pInputText [(ngModel)]="fCurrency" maxlength="8" placeholder="TND" i18n-placeholder="TND" />
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.code.iso.de.la.devise.ex.tnd.eur.usd.e953cb11">Code ISO de la devise (ex. TND, EUR, USD).</small>
           <div class="ft-row">
-            <div><label>Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
-            <div><label>Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.min.b13c2cab">Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.max.e5c54fb5">Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isPercentage()">
           <div class="ft-row">
-            <div><label>Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
-            <div><label>Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.min.b13c2cab">Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.valeur.max.e5c54fb5">Valeur max</label><p-inputNumber [(ngModel)]="fMax"></p-inputNumber></div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isRating()">
-          <label>Nombre d'étoiles</label>
+          <label i18n="@@studio.studio-entity-designer.nombre.d.etoiles.3e5b9197">Nombre d'étoiles</label>
           <p-inputNumber [(ngModel)]="fRatingMax" [min]="1" [max]="10"></p-inputNumber>
-          <small class="ft-hint">Note maximale (1 à 10).</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.note.maximale.1.a.10.992633aa">Note maximale (1 à 10).</small>
         </ng-container>
 
         <ng-container *ngIf="isBarcode()">
-          <label>Symbologie</label>
+          <label i18n="@@studio.studio-entity-designer.symbologie.a84398d8">Symbologie</label>
           <p-select [options]="barcodeFormats" [(ngModel)]="fCodeFormat" optionLabel="label" optionValue="value"
             appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"></p-select>
-          <small class="ft-hint">EAN-13 attend 12 à 13 chiffres ; CODE128 accepte tout texte.</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.ean.13.attend.12.a.13.chiffres.code128.accepte.t.f1cc813d">EAN-13 attend 12 à 13 chiffres ; CODE128 accepte tout texte.</small>
         </ng-container>
 
         <ng-container *ngIf="isQr()">
-          <small class="ft-hint">La valeur saisie sera encodée en QR code.</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.la.valeur.saisie.sera.encodee.en.qr.code.ad30938f">La valeur saisie sera encodée en QR code.</small>
         </ng-container>
 
         <ng-container *ngIf="isFormula()">
-          <label>Expression *</label>
+          <label i18n="@@studio.studio-entity-designer.expression.f00f565b">Expression *</label>
           <textarea class="ft-textarea" [(ngModel)]="fFormulaExpr" rows="3"
-            placeholder="montant_ht * 1.19"></textarea>
-          <small class="ft-hint">
-            Fonctions : ROUND, ABS, MIN, MAX, IF, COALESCE, CONCAT, LEN, LOWER, UPPER, TRIM.
-            Opérateurs : + - * / % , comparaisons, AND/OR/NOT.
-          </small>
+            placeholder="montant_ht * 1.19" i18n-placeholder="montant_ht * 1.19"></textarea>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.fonctions.round.abs.min.max.if.coalesce.concat.l.d26e54db">Fonctions : ROUND, ABS, MIN, MAX, IF, COALESCE, CONCAT, LEN, LOWER, UPPER, TRIM.
+            Opérateurs : + - * / % , comparaisons, AND/OR/NOT.</small>
           <small class="ft-hint" *ngIf="otherFieldKeys() as keys">
             Champs disponibles : <code *ngFor="let k of keys">{{ k }}</code>
           </small>
         </ng-container>
 
         <ng-container *ngIf="isLookup()">
-          <label>Champ relation (via) *</label>
+          <label i18n="@@studio.studio-entity-designer.champ.relation.via.8aa18540">Champ relation (via) *</label>
           <p-select [options]="relationFields()" [(ngModel)]="fLookupVia" optionLabel="label" optionValue="value"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir un champ relation"></p-select>
-          <label>Champ cible *</label>
-          <input pInputText [(ngModel)]="fLookupTarget" placeholder="clé du champ à afficher" />
-          <small class="ft-hint">Affiche un champ de l'enregistrement/fiche liée par le champ relation.</small>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir un champ relation" i18n-placeholder="Choisir un champ relation"></p-select>
+          <label i18n="@@studio.studio-entity-designer.champ.cible.639048f6">Champ cible *</label>
+          <input pInputText [(ngModel)]="fLookupTarget" placeholder="clé du champ à afficher" i18n-placeholder="clé du champ à afficher" />
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.affiche.un.champ.de.l.enregistrement.fiche.liee..171873f3">Affiche un champ de l'enregistrement/fiche liée par le champ relation.</small>
         </ng-container>
 
         <ng-container *ngIf="isRollup()">
-          <label>Table enfant *</label>
+          <label i18n="@@studio.studio-entity-designer.table.enfant.a50a0c7c">Table enfant *</label>
           <p-select [options]="otherEntities()" [(ngModel)]="fRollupEntity" optionLabel="displayName" optionValue="key"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table"></p-select>
-          <label>Champ relation de l'enfant *</label>
-          <input pInputText [(ngModel)]="fRollupRelationField" placeholder="clé du champ relation pointant vers cette table" />
-          <label>Agrégat *</label>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table" i18n-placeholder="Choisir une table"></p-select>
+          <label i18n="@@studio.studio-entity-designer.champ.relation.de.l.enfant.d338d402">Champ relation de l'enfant *</label>
+          <input pInputText [(ngModel)]="fRollupRelationField" placeholder="clé du champ relation pointant vers cette table" i18n-placeholder="clé du champ relation pointant vers cette table" />
+          <label i18n="@@studio.studio-entity-designer.agregat.1ed60823">Agrégat *</label>
           <p-select [options]="aggOptions" [(ngModel)]="fRollupAgg" optionLabel="label" optionValue="value"
             appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"></p-select>
           <ng-container *ngIf="fRollupAgg !== 'count'">
-            <label>Champ à agréger *</label>
-            <input pInputText [(ngModel)]="fRollupField" placeholder="clé du champ numérique de l'enfant" />
+            <label i18n="@@studio.studio-entity-designer.champ.a.agreger.a3a552a7">Champ à agréger *</label>
+            <input pInputText [(ngModel)]="fRollupField" placeholder="clé du champ numérique de l'enfant" i18n-placeholder="clé du champ numérique de l'enfant" />
           </ng-container>
-          <small class="ft-hint">Agrège les enregistrements de la table enfant qui référencent cette fiche.</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.agrege.les.enregistrements.de.la.table.enfant.qu.04c263b9">Agrège les enregistrements de la table enfant qui référencent cette fiche.</small>
         </ng-container>
 
         <ng-container *ngIf="isAutoNumber()">
-          <small class="ft-hint">Référence séquentielle générée à la création, en lecture seule.</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.reference.sequentielle.generee.a.la.creation.en..ea3c9e00">Référence séquentielle générée à la création, en lecture seule.</small>
           <div class="ft-row">
-            <div><label>Préfixe</label><input pInputText [(ngModel)]="fNumPrefix" maxlength="16" placeholder="FACT-" /></div>
-            <div><label>Longueur (zéros)</label><p-inputNumber [(ngModel)]="fNumPadding" [min]="0" [max]="12"></p-inputNumber></div>
-            <div><label>Suffixe</label><input pInputText [(ngModel)]="fNumSuffix" maxlength="16" placeholder="/2026" /></div>
+            <div><label i18n="@@studio.studio-entity-designer.prefixe.2fe0a6db">Préfixe</label><input pInputText [(ngModel)]="fNumPrefix" maxlength="16" placeholder="FACT-" i18n-placeholder="FACT-" /></div>
+            <div><label i18n="@@studio.studio-entity-designer.longueur.zeros.4491a083">Longueur (zéros)</label><p-inputNumber [(ngModel)]="fNumPadding" [min]="0" [max]="12"></p-inputNumber></div>
+            <div><label i18n="@@studio.studio-entity-designer.suffixe.9c70a252">Suffixe</label><input pInputText [(ngModel)]="fNumSuffix" maxlength="16" placeholder="/2026" i18n-placeholder="/2026" /></div>
           </div>
           <small class="ft-hint">Aperçu : <code>{{ autoNumberPreview() }}</code></small>
         </ng-container>

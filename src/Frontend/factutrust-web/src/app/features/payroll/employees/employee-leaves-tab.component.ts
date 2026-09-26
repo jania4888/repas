@@ -48,7 +48,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   ],
   template: `
     <div class="payroll-toolbar mb-3">
-      <label for="balanceYear" class="sr-only">Exercice</label>
+      <label for="balanceYear" class="sr-only" i18n="@@payroll.employees.exercice.e171e2b0">Exercice</label>
       <p-select
         id="balanceYear"
         [options]="yearOptions"
@@ -56,39 +56,37 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
         (ngModelChange)="reloadBalance()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Exercice"
+        placeholder="Exercice" i18n-placeholder="Exercice"
         styleClass="w-10rem" />
     </div>
 
     <app-payroll-stat-grid [items]="balanceStats()" [compact]="true" />
 
-    <p class="payroll-info-text">
-      Acquisition : 1 jour par 26 jours travaillés, créditée à la validation du cycle de paie.
+    <p class="payroll-info-text" i18n="@@payroll.employees.acquisition.1.jour.par.26.jours.travailles.credi.f1c55fba">Acquisition : 1 jour par 26 jours travaillés, créditée à la validation du cycle de paie.
       Seuls les congés approuvés impactent le calcul de paie. Les absences sans solde et injustifiées réduisent le brut.
-      Avec les flags statutaires activés, maladie / maternité / paternité sont calculés automatiquement.
-    </p>
+      Avec les flags statutaires activés, maladie / maternité / paternité sont calculés automatiquement.</p>
 
     @if (!readOnly) {
       <div class="payroll-toolbar mb-3">
-        <app-button variant="outline" icon="pi-heart" (click)="openBirthDialog()">Déclarer une naissance</app-button>
+        <app-button variant="outline" icon="pi-heart" (click)="openBirthDialog()" i18n="@@payroll.employees.declarer.une.naissance.34a8ae30">Déclarer une naissance</app-button>
       </div>
     }
 
     @if (!readOnly) {
       <div class="payroll-toolbar">
-        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Ajouter un congé</app-button>
-        <app-button variant="outline" (click)="openOpeningDialog()">Solde initial</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.employees.ajouter.un.conge.f56640ec">Ajouter un congé</app-button>
+        <app-button variant="outline" (click)="openOpeningDialog()" i18n="@@payroll.employees.solde.initial.78a4e543">Solde initial</app-button>
       </div>
     }
 
     <p-table [value]="items()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Type</th>
-          <th>Début</th>
-          <th>Fin</th>
-          <th class="text-right">Jours</th>
-          <th>Statut</th>
+          <th i18n="@@payroll.employees.type.3deb7456">Type</th>
+          <th i18n="@@payroll.employees.debut.f0955314">Début</th>
+          <th i18n="@@payroll.employees.fin.4251065f">Fin</th>
+          <th class="text-right" i18n="@@payroll.employees.jours.57960dfb">Jours</th>
+          <th i18n="@@payroll.employees.statut.659499f3">Statut</th>
           @if (!readOnly) { <th></th> }
         </tr>
       </ng-template>
@@ -111,40 +109,38 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
                   [pTooltip]="approveBlockReason(l)"
                   [tooltipDisabled]="canApproveLeave(l)"
                   tooltipPosition="top"
-                  (click)="approve(l)">
-                  Approuver
-                </button>
+                  (click)="approve(l)" i18n="@@payroll.employees.approuver.3033e7d6">Approuver</button>
               }
-              <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(l)">Supprimer</button>
+              <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(l)" i18n="@@payroll.employees.supprimer.1acfc1c7">Supprimer</button>
             </td>
           }
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td [attr.colspan]="readOnly ? 5 : 6">Aucun congé enregistré.</td></tr>
+        <tr><td [attr.colspan]="readOnly ? 5 : 6" i18n="@@payroll.employees.aucun.conge.enregistre.114c51b3">Aucun congé enregistré.</td></tr>
       </ng-template>
     </p-table>
 
     <p-dialog header="Nouveau congé" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
-        <label>Type</label>
+        <label i18n="@@payroll.employees.type.3deb7456">Type</label>
         <p-select [options]="leaveTypeOptions" [(ngModel)]="formType" optionLabel="label" optionValue="value" appendTo="body" styleClass="w-full" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Début</label>
+          <label i18n="@@payroll.employees.debut.f0955314">Début</label>
           <p-datepicker [(ngModel)]="formStart" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" (ngModelChange)="computeDays()" />
         </div>
         <div class="payroll-form-group">
-          <label>Fin</label>
+          <label i18n="@@payroll.employees.fin.4251065f">Fin</label>
           <p-datepicker [(ngModel)]="formEnd" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" (ngModelChange)="computeDays()" />
         </div>
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Jours</label>
+        <label i18n="@@payroll.employees.jours.57960dfb">Jours</label>
         <p-inputNumber [(ngModel)]="formDays" [min]="0.5" [step]="0.5" styleClass="w-full" />
         @if (computingDays()) {
-          <span class="field-hint">Calcul en cours…</span>
+          <span class="field-hint" i18n="@@payroll.employees.calcul.en.cours.0721ac07">Calcul en cours…</span>
         }
         @if (createExceedsBalance()) {
           <span class="field-hint field-hint--warning">
@@ -156,30 +152,30 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
         }
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Motif</label>
+        <label i18n="@@payroll.employees.motif.2a198f47">Motif</label>
         <textarea pTextarea [(ngModel)]="formReason" rows="2" class="w-full"></textarea>
       </div>
 
       @if (formType === 'Sick') {
         <div class="payroll-form-group mb-2">
-          <label>N° certificat médical</label>
+          <label i18n="@@payroll.employees.n.certificat.medical.1fa0c641">N° certificat médical</label>
           <input pInputText [(ngModel)]="formMedicalCertificateNumber" class="w-full" />
         </div>
         <div class="payroll-form-group mb-2">
-          <label>Date certificat</label>
+          <label i18n="@@payroll.employees.date.certificat.79126e68">Date certificat</label>
           <p-datepicker [(ngModel)]="formMedicalCertificateDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group mb-2 flex align-items-center gap-2">
           <p-checkbox [(ngModel)]="formSubrogationEnabled" [binary]="true" inputId="subrogation" />
-          <label for="subrogation">Subrogation (avance IJ CNSS)</label>
+          <label for="subrogation" i18n="@@payroll.employees.subrogation.avance.ij.cnss.987414d9">Subrogation (avance IJ CNSS)</label>
         </div>
         <div class="payroll-form-row">
           <div class="payroll-form-group">
-            <label>Maintien employeur (%)</label>
+            <label i18n="@@payroll.employees.maintien.employeur.e0cea6f4">Maintien employeur (%)</label>
             <p-inputNumber [(ngModel)]="formEmployerTopUpPercent" [min]="0" [max]="100" styleClass="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label>Jours de maintien</label>
+            <label i18n="@@payroll.employees.jours.de.maintien.b9243e64">Jours de maintien</label>
             <p-inputNumber [(ngModel)]="formEmployerTopUpDays" [min]="0" styleClass="w-full" />
           </div>
         </div>
@@ -188,73 +184,73 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       @if (formType === 'Maternity') {
         <div class="payroll-form-row">
           <div class="payroll-form-group">
-            <label>Date prévue accouchement</label>
+            <label i18n="@@payroll.employees.date.prevue.accouchement.b4e9441c">Date prévue accouchement</label>
             <p-datepicker [(ngModel)]="formExpectedBirthDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label>Date réelle naissance</label>
+            <label i18n="@@payroll.employees.date.reelle.naissance.ac772f21">Date réelle naissance</label>
             <p-datepicker [(ngModel)]="formActualBirthDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
           </div>
         </div>
         <div class="payroll-form-group mb-2">
-          <label>N° acte de naissance</label>
+          <label i18n="@@payroll.employees.n.acte.de.naissance.2dc12689">N° acte de naissance</label>
           <input pInputText [(ngModel)]="formChildBirthCertificateNumber" class="w-full" />
         </div>
         <div class="payroll-form-group mb-2">
-          <label>Maintien employeur (%)</label>
+          <label i18n="@@payroll.employees.maintien.employeur.e0cea6f4">Maintien employeur (%)</label>
           <p-inputNumber [(ngModel)]="formEmployerTopUpPercent" [min]="0" [max]="100" styleClass="w-full" />
         </div>
       }
 
       @if (formType === 'Paternity') {
         <div class="payroll-form-group mb-2">
-          <label>Date de naissance</label>
+          <label i18n="@@payroll.employees.date.de.naissance.8851f385">Date de naissance</label>
           <p-datepicker [(ngModel)]="formActualBirthDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group mb-2">
-          <label>N° acte de naissance</label>
+          <label i18n="@@payroll.employees.n.acte.de.naissance.2dc12689">N° acte de naissance</label>
           <input pInputText [(ngModel)]="formChildBirthCertificateNumber" class="w-full" />
         </div>
       }
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" [disabled]="createExceedsBalance()" (click)="create()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" [disabled]="createExceedsBalance()" (click)="create()" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
 
     <p-dialog header="Solde initial de congés" [(visible)]="openingDialogVisible" [modal]="true" [style]="{ width: '400px' }">
-      <p class="payroll-info-text mb-2">Reprise d'historique ou ajustement du solde avant la première validation de paie.</p>
+      <p class="payroll-info-text mb-2" i18n="@@payroll.employees.reprise.d.historique.ou.ajustement.du.solde.avan.a6bf5678">Reprise d'historique ou ajustement du solde avant la première validation de paie.</p>
       <div class="payroll-form-group">
-        <label>Jours (solde initial)</label>
+        <label i18n="@@payroll.employees.jours.solde.initial.305cc84a">Jours (solde initial)</label>
         <p-inputNumber [(ngModel)]="openingBalanceDays" [min]="0" [minFractionDigits]="1" [maxFractionDigits]="3" styleClass="w-full" />
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="openingDialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="saveOpeningBalance()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="openingDialogVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="saveOpeningBalance()" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
 
     <p-dialog header="Déclarer une naissance" [(visible)]="birthDialogVisible" [modal]="true" [style]="{ width: '420px' }">
       <div class="payroll-form-group mb-2">
-        <label>Date de naissance</label>
+        <label i18n="@@payroll.employees.date.de.naissance.8851f385">Date de naissance</label>
         <p-datepicker [(ngModel)]="birthDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>N° acte de naissance</label>
+        <label i18n="@@payroll.employees.n.acte.de.naissance.2dc12689">N° acte de naissance</label>
         <input pInputText [(ngModel)]="birthCertificateNumber" class="w-full" />
       </div>
       <div class="payroll-form-group mb-2 flex align-items-center gap-2">
         <p-checkbox [(ngModel)]="createMaternityLeave" [binary]="true" inputId="matLeave" />
-        <label for="matLeave">Créer congé maternité (60 j)</label>
+        <label for="matLeave" i18n="@@payroll.employees.creer.conge.maternite.60.j.4c001b5d">Créer congé maternité (60 j)</label>
       </div>
       <div class="payroll-form-group mb-2 flex align-items-center gap-2">
         <p-checkbox [(ngModel)]="createPaternityLeave" [binary]="true" inputId="patLeave" />
-        <label for="patLeave">Créer congé paternité (2 j)</label>
+        <label for="patLeave" i18n="@@payroll.employees.creer.conge.paternite.2.j.dd393ccc">Créer congé paternité (2 j)</label>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="birthDialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="declareBirth()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="birthDialogVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="declareBirth()" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

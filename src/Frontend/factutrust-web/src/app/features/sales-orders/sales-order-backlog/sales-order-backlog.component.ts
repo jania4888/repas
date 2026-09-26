@@ -40,23 +40,21 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Carnet de commandes"
+      title="Carnet de commandes" i18n-title="Carnet de commandes"
       subtitle="Ce qui est engagé et pas encore livré, ligne par ligne. Seules les commandes confirmées ou partiellement livrées y figurent.">
-      <app-button variant="secondary" icon="pi-arrow-left" iconPos="left" routerLink="/sales-orders">
-        Retour aux commandes
-      </app-button>
+      <app-button variant="secondary" icon="pi-arrow-left" iconPos="left" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-backlog.retour.aux.commandes.68a21472">Retour aux commandes</app-button>
     </app-page-header>
 
     <div class="ft-filters">
       <div class="ft-filters__row">
         <div class="ft-field">
-          <label for="bl-due">Échéance avant le</label>
+          <label for="bl-due" i18n="@@sales-orders.sales-order-backlog.echeance.avant.le.35f3bb29">Échéance avant le</label>
           <input id="bl-due" type="date" pInputText [(ngModel)]="dueBefore" (change)="load()" />
-          <small class="ft-hint">Ne garder que ce qui doit être livré avant cette date.</small>
+          <small class="ft-hint" i18n="@@sales-orders.sales-order-backlog.ne.garder.que.ce.qui.doit.etre.livre.avant.cette.28428eae">Ne garder que ce qui doit être livré avant cette date.</small>
         </div>
 
         <div class="ft-field ft-field--actions">
-          <app-button variant="secondary" (clicked)="resetFilters()">Réinitialiser</app-button>
+          <app-button variant="secondary" (clicked)="resetFilters()" i18n="@@sales-orders.sales-order-backlog.reinitialiser.e0e2ad54">Réinitialiser</app-button>
         </div>
       </div>
     </div>
@@ -70,7 +68,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     } @else if (rows().length === 0) {
       <app-empty-state
         icon="pi-check-circle"
-        title="Carnet vide"
+        title="Carnet vide" i18n-title="Carnet vide"
         message="Aucune quantité engagée ne reste à livrer.">
       </app-empty-state>
     } @else {
@@ -78,14 +76,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <p-table [value]="rows()" [rowHover]="true" [paginator]="true" [rows]="25" styleClass="ft-table">
           <ng-template pTemplate="header">
             <tr>
-              <th>Commande</th>
-              <th>Livraison prévue</th>
-              <th>Client</th>
-              <th>Produit</th>
-              <th class="ft-num">Commandé</th>
-              <th class="ft-num">Livré</th>
-              <th class="ft-num">Reste</th>
-              <th class="ft-num">Valeur HT</th>
+              <th i18n="@@sales-orders.sales-order-backlog.commande.47844341">Commande</th>
+              <th i18n="@@sales-orders.sales-order-backlog.livraison.prevue.dc15f458">Livraison prévue</th>
+              <th i18n="@@sales-orders.sales-order-backlog.client.1bdd79b1">Client</th>
+              <th i18n="@@sales-orders.sales-order-backlog.produit.ff673dc2">Produit</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-backlog.commande.e460aa50">Commandé</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-backlog.livre.0a1317e9">Livré</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-backlog.reste.68135bb8">Reste</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-backlog.valeur.ht.8807b7ab">Valeur HT</th>
             </tr>
           </ng-template>
 
@@ -103,7 +101,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                     <p-tag severity="danger" value="En retard" pTooltip="Échéance dépassée."></p-tag>
                   }
                 } @else {
-                  <span class="ft-muted">Non datée</span>
+                  <span class="ft-muted" i18n="@@sales-orders.sales-order-backlog.non.datee.5a5eade0">Non datée</span>
                 }
               </td>
               <td>{{ row.clientName }}</td>

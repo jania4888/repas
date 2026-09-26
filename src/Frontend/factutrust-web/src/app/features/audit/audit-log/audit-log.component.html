@@ -1,4 +1,4 @@
-<app-page-header title="Journal d'audit" subtitle="Piste d'audit et vérification d'intégrité" />
+<app-page-header title="Journal d'audit" i18n-title="Journal d'audit" subtitle="Piste d'audit et vérification d'intégrité" />
 
 <div class="audit-toolbar card-like">
   <button
@@ -42,10 +42,10 @@
   }
 </div>
 
-<div class="audit-filters card-like" role="search" aria-label="Filtres du journal d'audit">
+<div class="audit-filters card-like" role="search" aria-label="Filtres du journal d'audit" i18n-aria-label="Filtres du journal d'audit">
   <div class="audit-filters-grid">
     <label class="form-field" for="audit-from">
-      <span class="field-label">Du</span>
+      <span class="field-label" i18n="@@audit.audit-log.du.84814985">Du</span>
       <p-datepicker
         inputId="audit-from"
         [(ngModel)]="fromDate"
@@ -56,7 +56,7 @@
       ></p-datepicker>
     </label>
     <label class="form-field" for="audit-to">
-      <span class="field-label">Au</span>
+      <span class="field-label" i18n="@@audit.audit-log.au.7a1732d5">Au</span>
       <p-datepicker
         inputId="audit-to"
         [(ngModel)]="toDate"
@@ -67,28 +67,28 @@
       ></p-datepicker>
     </label>
     <label class="form-field" for="audit-entity">
-      <span class="field-label">Type d'entité</span>
+      <span class="field-label" i18n="@@audit.audit-log.type.d.entite.5eed7d1e">Type d'entité</span>
       <p-select
         inputId="audit-entity"
         [(ngModel)]="selectedEntityType"
         [options]="entityOptions"
         optionLabel="label"
         optionValue="value"
-        placeholder="Tous"
+        placeholder="Tous" i18n-placeholder="Tous"
         [showClear]="true"
         appendTo="body"
         styleClass="w-full"
       ></p-select>
     </label>
     <label class="form-field" for="audit-action">
-      <span class="field-label">Action</span>
+      <span class="field-label" i18n="@@audit.audit-log.action.97c89a4d">Action</span>
       <p-select
         inputId="audit-action"
         [(ngModel)]="selectedAction"
         [options]="actionOptions"
         optionLabel="label"
         optionValue="value"
-        placeholder="Toutes"
+        placeholder="Toutes" i18n-placeholder="Toutes"
         [filter]="true"
         filterBy="label,value"
         [showClear]="true"
@@ -97,7 +97,7 @@
       ></p-select>
     </label>
     <label class="form-field audit-field-user" for="audit-user">
-      <span class="field-label">Utilisateur (UUID)</span>
+      <span class="field-label" i18n="@@audit.audit-log.utilisateur.uuid.594104a2">Utilisateur (UUID)</span>
       <input
         pInputText
         id="audit-user"
@@ -105,7 +105,7 @@
         [(ngModel)]="userIdFilter"
         class="w-full"
         autocomplete="off"
-        placeholder="Optionnel"
+        placeholder="Optionnel" i18n-placeholder="Optionnel"
       />
     </label>
   </div>
@@ -142,11 +142,11 @@
 >
   <ng-template pTemplate="header">
     <tr>
-      <th scope="col">Date</th>
-      <th scope="col">Utilisateur</th>
-      <th scope="col">Action</th>
-      <th scope="col">Entité</th>
-      <th scope="col" class="audit-col-actions">Détails</th>
+      <th scope="col" i18n="@@audit.audit-log.date.eb9a4bc1">Date</th>
+      <th scope="col" i18n="@@audit.audit-log.utilisateur.0b20cd7f">Utilisateur</th>
+      <th scope="col" i18n="@@audit.audit-log.action.97c89a4d">Action</th>
+      <th scope="col" i18n="@@audit.audit-log.entite.a52151ad">Entité</th>
+      <th scope="col" class="audit-col-actions" i18n="@@audit.audit-log.details.aaa029e6">Détails</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-r>
@@ -182,18 +182,18 @@
               <i class="pi pi-copy" aria-hidden="true"></i>
             </button>
           } @else {
-            <span class="audit-entity-dash">—</span>
+            <span class="audit-entity-dash" i18n="@@audit.audit-log.text.1b93795b">—</span>
           }
         </div>
       </td>
       <td class="audit-col-actions">
-        <button type="button" class="btn btn-sm btn-secondary" (click)="openDetail(r)">Voir</button>
+        <button type="button" class="btn btn-sm btn-secondary" (click)="openDetail(r)" i18n="@@audit.audit-log.voir.8a754f1f">Voir</button>
       </td>
     </tr>
   </ng-template>
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td colspan="5" class="audit-empty">Aucune entrée d'audit pour ces critères.</td>
+      <td colspan="5" class="audit-empty" i18n="@@audit.audit-log.aucune.entree.d.audit.pour.ces.criteres.d0643e3c">Aucune entrée d'audit pour ces critères.</td>
     </tr>
   </ng-template>
 </p-table>
@@ -213,25 +213,25 @@
   [dismissableMask]="true"
 >
   @if (detailLoading()) {
-    <p class="audit-detail-loading" role="status" aria-live="polite">Chargement…</p>
+    <p class="audit-detail-loading" role="status" aria-live="polite" i18n="@@audit.audit-log.chargement.01cba1df">Chargement…</p>
   } @else {
     @if (detailEntry(); as d) {
     <div class="audit-detail-body" role="region">
       <dl class="audit-detail-meta">
         <div>
-          <dt>Date</dt>
+          <dt i18n="@@audit.audit-log.date.eb9a4bc1">Date</dt>
           <dd>{{ d.createdAt | date : 'medium' }}</dd>
         </div>
         <div>
-          <dt>Utilisateur</dt>
+          <dt i18n="@@audit.audit-log.utilisateur.0b20cd7f">Utilisateur</dt>
           <dd>{{ d.userEmail }}</dd>
         </div>
         <div>
-          <dt>Action</dt>
+          <dt i18n="@@audit.audit-log.action.97c89a4d">Action</dt>
           <dd>{{ actionLabel(d.action) }}</dd>
         </div>
         <div>
-          <dt>Entité</dt>
+          <dt i18n="@@audit.audit-log.entite.a52151ad">Entité</dt>
           <dd>
             {{ entityLabel(d.entityType) }}
             @if (d.entityId) {
@@ -243,24 +243,24 @@
           </dd>
         </div>
         <div>
-          <dt>Adresse IP</dt>
+          <dt i18n="@@audit.audit-log.adresse.ip.02bcc162">Adresse IP</dt>
           <dd>{{ d.ipAddress }}</dd>
         </div>
         <div>
-          <dt>User-Agent</dt>
+          <dt i18n="@@audit.audit-log.user.agent.170c6d2e">User-Agent</dt>
           <dd class="audit-detail-wrap">{{ d.userAgent ?? '—' }}</dd>
         </div>
       </dl>
       <div class="audit-detail-hashes">
-        <p><strong>Empreinte précédente</strong></p>
+        <p><strong i18n="@@audit.audit-log.empreinte.precedente.1147d251">Empreinte précédente</strong></p>
         <pre class="audit-pre" tabindex="0">{{ d.previousHash }}</pre>
-        <p><strong>Empreinte SHA-256</strong></p>
+        <p><strong i18n="@@audit.audit-log.empreinte.sha.256.e830bea9">Empreinte SHA-256</strong></p>
         <pre class="audit-pre" tabindex="0">{{ d.hash }}</pre>
       </div>
       <div class="audit-detail-json">
-        <p><strong>Anciennes valeurs (JSON)</strong></p>
+        <p><strong i18n="@@audit.audit-log.anciennes.valeurs.json.a2b40624">Anciennes valeurs (JSON)</strong></p>
         <pre class="audit-pre" tabindex="0">{{ formatJsonBlob(d.oldValues) }}</pre>
-        <p><strong>Nouvelles valeurs (JSON)</strong></p>
+        <p><strong i18n="@@audit.audit-log.nouvelles.valeurs.json.58fce9f5">Nouvelles valeurs (JSON)</strong></p>
         <pre class="audit-pre" tabindex="0">{{ formatJsonBlob(d.newValues) }}</pre>
       </div>
     </div>

@@ -36,7 +36,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Mon abonnement"
+      title="Mon abonnement" i18n-title="Mon abonnement"
       subtitle="Gérez votre forfait et suivez votre consommation">
       <p-button
         label="Retour"
@@ -74,11 +74,11 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
           <h2>{{ subscription()!.planDisplay }}</h2>
           <p class="plan-price">
             @if (subscription()!.plan === 'Free') {
-              <span class="amount">Gratuit</span>
+              <span class="amount" i18n="@@settings.subscription.gratuit.705667ee">Gratuit</span>
             } @else {
               <span class="amount">{{ getPlanPrice() | number:'1.0-0' }}</span>
-              <span class="currency">TND</span>
-              <span class="period">/ mois</span>
+              <span class="currency" i18n="@@settings.subscription.tnd.51da21a7">TND</span>
+              <span class="period" i18n="@@settings.subscription.mois.95e9be7f">/ mois</span>
             }
           </p>
           <p class="renewal-info">
@@ -110,7 +110,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
         <div class="subscription-alert-banner">
           <i class="pi pi-exclamation-triangle"></i>
           <div class="alert-content">
-            <strong>Émission de factures indisponible</strong>
+            <strong i18n="@@settings.subscription.emission.de.factures.indisponible.19185e3b">Émission de factures indisponible</strong>
             <p>{{ getInvoiceBlockMessage() }}</p>
           </div>
           @if (canRegularizeSubscription()) {
@@ -158,7 +158,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
 
       <!-- Plans Comparison (always visible) -->
       <div class="plans-section" id="plans">
-        <h3>Changer de forfait</h3>
+        <h3 i18n="@@settings.subscription.changer.de.forfait.9d073980">Changer de forfait</h3>
         <div class="plans-grid">
           @for (plan of plans(); track plan.id) {
             <div
@@ -166,15 +166,15 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
               [class.popular]="plan.isPopular"
               [class.current]="plan.isCurrent">
               @if (plan.isPopular && !plan.isCurrent) {
-                <div class="popular-badge">Recommandé</div>
+                <div class="popular-badge" i18n="@@settings.subscription.recommande.e1a57119">Recommandé</div>
               }
               @if (plan.isCurrent) {
-                <div class="current-badge">Votre forfait</div>
+                <div class="current-badge" i18n="@@settings.subscription.votre.forfait.6d06f631">Votre forfait</div>
               }
               <h4>{{ plan.name }}</h4>
               <p class="plan-price-display">
                 <span class="amount">{{ plan.priceMonthly | number:'1.0-0' }}</span>
-                <span class="currency">TND</span>
+                <span class="currency" i18n="@@settings.subscription.tnd.51da21a7">TND</span>
                 <span class="period">/ {{ plan.period }}</span>
               </p>
               @if (plan.priceAnnual) {
@@ -235,7 +235,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
         @if (billingHistory.length === 0) {
           <div class="empty-billing">
             <i class="pi pi-inbox"></i>
-            <p>Aucun historique de facturation pour le moment.</p>
+            <p i18n="@@settings.subscription.aucun.historique.de.facturation.pour.le.moment.348b48c6">Aucun historique de facturation pour le moment.</p>
           </div>
         } @else {
           <div class="billing-list">
@@ -269,7 +269,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
     @if (error()) {
       <div class="error-state">
         <i class="pi pi-exclamation-triangle"></i>
-        <h3>Impossible de charger votre abonnement</h3>
+        <h3 i18n="@@settings.subscription.impossible.de.charger.votre.abonnement.890af3dd">Impossible de charger votre abonnement</h3>
         <p>{{ error() }}</p>
         <p-button
           label="Réessayer"

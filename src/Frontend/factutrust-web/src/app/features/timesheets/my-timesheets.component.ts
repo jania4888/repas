@@ -16,8 +16,8 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, TableModule, SelectModule, PageHeaderComponent, ButtonComponent],
   template: `
-    <app-page-header title="Mes feuilles de temps" subtitle="Vue grille — alignée Odoo Timesheets">
-      <app-button variant="secondary" routerLink="/timesheets/validation">Validation équipe</app-button>
+    <app-page-header title="Mes feuilles de temps" i18n-title="Mes feuilles de temps" subtitle="Vue grille — alignée Odoo Timesheets">
+      <app-button variant="secondary" routerLink="/timesheets/validation" i18n="@@timesheets.my-timesheets.validation.equipe.104ff195">Validation équipe</app-button>
     </app-page-header>
 
     @if (kpi(); as k) {
@@ -31,7 +31,7 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
 
     @if (leaderboard(); as lb) {
       <aside class="leaderboard">
-        <h3>Classement (top 3)</h3>
+        <h3 i18n="@@timesheets.my-timesheets.classement.top.3.d01a1b89">Classement (top 3)</h3>
         <ol>
           @for (e of lb.topThree; track e.userId) {
             <li>{{ e.userName }} — {{ e.completionPercent | number:'1.0-0' }} % ({{ e.billableLoggedHours | number:'1.1-1' }} h)</li>
@@ -50,8 +50,8 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
       }
       <label>Période
         <select [(ngModel)]="periodMode" (ngModelChange)="reload()">
-          <option value="week">Semaine</option>
-          <option value="month">Mois</option>
+          <option value="week" i18n="@@timesheets.my-timesheets.semaine.33703a8c">Semaine</option>
+          <option value="month" i18n="@@timesheets.my-timesheets.mois.0d304bea">Mois</option>
         </select>
       </label>
     </div>
@@ -60,11 +60,11 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
       <p-table [value]="g.rows" [scrollable]="true" styleClass="timesheet-grid">
         <ng-template pTemplate="header">
           <tr>
-            <th>Projet</th>
+            <th i18n="@@timesheets.my-timesheets.projet.a9de3a26">Projet</th>
             @for (d of g.dailyTotals; track d.date) {
               <th>{{ d.date | date:'EEE dd' }}</th>
             }
-            <th>Total</th>
+            <th i18n="@@timesheets.my-timesheets.total.b25928c6">Total</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -78,7 +78,7 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
         </ng-template>
         <ng-template pTemplate="footer">
           <tr>
-            <td><strong>Jour</strong></td>
+            <td><strong i18n="@@timesheets.my-timesheets.jour.240ce85d">Jour</strong></td>
             @for (d of g.dailyTotals; track d.date) {
               <td [class]="'cell-' + d.colorCode"><strong>{{ d.hours | number:'1.2-2' }}</strong></td>
             }

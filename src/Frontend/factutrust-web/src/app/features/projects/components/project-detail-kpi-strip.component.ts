@@ -23,7 +23,7 @@ import {
         <div class="proj-detail-kpi-card">
           <span class="proj-detail-kpi-icon"><i class="pi pi-calendar"></i></span>
           <div>
-            <span class="proj-detail-kpi-label">Période</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.periode.de2110b7">Période</span>
             <strong class="proj-detail-kpi-value proj-detail-kpi-value--sm">
               {{ project.startDate ? (project.startDate | date:'shortDate') : '—' }}
               → {{ project.endDate ? (project.endDate | date:'shortDate') : '—' }}
@@ -37,7 +37,7 @@ import {
         <div class="proj-detail-kpi-card">
           <span class="proj-detail-kpi-icon"><i class="pi pi-wallet"></i></span>
           <div class="proj-detail-kpi-grow">
-            <span class="proj-detail-kpi-label">Budget total</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.budget.total.b930ffdc">Budget total</span>
             <strong class="proj-detail-kpi-value">
               {{ (budget?.budgetHt ?? project.budgetHt) | number:'1.3-3' }} {{ project.currency }}
             </strong>
@@ -51,7 +51,7 @@ import {
         <div class="proj-detail-kpi-card">
           <span class="proj-detail-kpi-icon"><i class="pi pi-clock"></i></span>
           <div>
-            <span class="proj-detail-kpi-label">Heures à facturer</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.heures.a.facturer.7757d0a3">Heures à facturer</span>
             <strong class="proj-detail-kpi-value">
               {{ budget?.billableUninvoicedHours ?? 0 | number:'1.0-1' }} / {{ hoursDenominator | number:'1.0-1' }} h
             </strong>
@@ -61,7 +61,7 @@ import {
         <div class="proj-detail-kpi-card">
           <span class="proj-detail-kpi-icon"><i class="pi pi-check-square"></i></span>
           <div>
-            <span class="proj-detail-kpi-label">Tâches ouvertes</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.taches.ouvertes.639d6d23">Tâches ouvertes</span>
             <strong class="proj-detail-kpi-value">{{ openCount }} / {{ totalCount }}</strong>
           </div>
         </div>
@@ -69,13 +69,13 @@ import {
         <div class="proj-detail-kpi-card" [class.proj-detail-kpi-card--danger]="overdueCount > 0">
           <span class="proj-detail-kpi-icon"><i class="pi pi-exclamation-triangle"></i></span>
           <div>
-            <span class="proj-detail-kpi-label">En retard</span>
+            <span class="proj-detail-kpi-label" i18n="@@projects.components.en.retard.40c1dde3">En retard</span>
             <strong class="proj-detail-kpi-value">{{ overdueCount }}</strong>
           </div>
         </div>
 
         <div class="proj-detail-kpi-card proj-detail-kpi-card--gauge">
-          <span class="proj-detail-kpi-label">Avancement global</span>
+          <span class="proj-detail-kpi-label" i18n="@@projects.components.avancement.global.5f0ee62d">Avancement global</span>
           <div class="proj-detail-gauge" [style.background]="gaugeBackground">
             <div class="proj-detail-gauge__inner">
               <strong>{{ progressPercent }} %</strong>

@@ -103,7 +103,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
           @if (message.generationInterrupted) {
             <div class="generation-interrupted" role="status" aria-live="polite">
               <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-              <span>G&#233;n&#233;ration interrompue. Vous pouvez renvoyer votre message.</span>
+              <span i18n="@@ai-assistant.components.g.233.n.233.ration.interrompue.vous.pouvez.renvo.772cbb4d">G&#233;n&#233;ration interrompue. Vous pouvez renvoyer votre message.</span>
             </div>
           }
 
@@ -121,9 +121,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                 type="button"
                 class="show-dashboard-btn"
                 (click)="session.showInlineDashboard(message.id)"
-                aria-label="Afficher le tableau de bord structur&#233;">
-                Afficher le tableau de bord
-              </button>
+                aria-label="Afficher le tableau de bord structur&#233;" i18n-aria-label="Afficher le tableau de bord structur&#233;" i18n="@@ai-assistant.components.afficher.le.tableau.de.bord.7d6f5cb3">Afficher le tableau de bord</button>
             }
 
             @if (showAssistantActions()) {
@@ -134,7 +132,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="toolbar-btn"
                     (click)="copyFullMessage()"
                     [disabled]="copyInProgress"
-                    aria-label="Copier la r&#233;ponse (texte brut)">
+                    aria-label="Copier la r&#233;ponse (texte brut)" i18n-aria-label="Copier la r&#233;ponse (texte brut)">
                     <i class="fa-regular fa-copy" aria-hidden="true"></i>
                     Copier
                   </button>
@@ -143,18 +141,14 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="toolbar-btn"
                     (click)="copyAsTsv()"
                     [disabled]="copyInProgress"
-                    aria-label="Copier pour Excel (TSV)">
-                    TSV
-                  </button>
+                    aria-label="Copier pour Excel (TSV)" i18n-aria-label="Copier pour Excel (TSV)" i18n="@@ai-assistant.components.tsv.18e411dc">TSV</button>
                 }
                 @if (canExportMarkdownTables()) {
                   <button
                     type="button"
                     class="toolbar-btn"
                     (click)="exportMarkdownTablesCsv()"
-                    aria-label="Exporter les tableaux Markdown en CSV">
-                    CSV (tableaux)
-                  </button>
+                    aria-label="Exporter les tableaux Markdown en CSV" i18n-aria-label="Exporter les tableaux Markdown en CSV" i18n="@@ai-assistant.components.csv.tableaux.750c7fe5">CSV (tableaux)</button>
                 }
                 @if (message.parsedDashboard) {
                   <button
@@ -162,25 +156,21 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="toolbar-btn"
                     (click)="exportDashboardExcel()"
                     [disabled]="exportBusy"
-                    aria-label="Exporter le tableau de bord en Excel">
-                    Excel
-                  </button>
+                    aria-label="Exporter le tableau de bord en Excel" i18n-aria-label="Exporter le tableau de bord en Excel" i18n="@@ai-assistant.components.excel.a08e1111">Excel</button>
                 }
                 <button
                   type="button"
                   class="toolbar-btn"
                   (click)="exportAssistantPdf()"
                   [disabled]="exportBusy"
-                  aria-label="Exporter en PDF">
-                  PDF
-                </button>
+                  aria-label="Exporter en PDF" i18n-aria-label="Exporter en PDF" i18n="@@ai-assistant.components.pdf.d613d88c">PDF</button>
                 @if (canExportSingleToPowerPoint()) {
                   <button
                     type="button"
                     class="toolbar-btn"
                     (click)="exportSingleToPowerPoint()"
                     [disabled]="exportBusy"
-                    aria-label="Exporter en PowerPoint (cette réponse uniquement)">
+                    aria-label="Exporter en PowerPoint (cette réponse uniquement)" i18n-aria-label="Exporter en PowerPoint (cette réponse uniquement)">
                     <i class="fa-solid fa-file-powerpoint" aria-hidden="true"></i>
                     PPT
                   </button>
@@ -190,25 +180,19 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     type="button"
                     class="toolbar-btn"
                     (click)="shareByEmail()"
-                    aria-label="Partager par e-mail">
-                    E-mail
-                  </button>
+                    aria-label="Partager par e-mail" i18n-aria-label="Partager par e-mail" i18n="@@ai-assistant.components.e.mail.0d01e2e8">E-mail</button>
                 }
                 <button
                   type="button"
                   class="toolbar-btn"
                   (click)="copyConversationLink()"
-                  aria-label="Copier le lien de la conversation">
-                  Lien
-                </button>
+                  aria-label="Copier le lien de la conversation" i18n-aria-label="Copier le lien de la conversation" i18n="@@ai-assistant.components.lien.e2639e1d">Lien</button>
                 @if (!hideChartFollowUp && (markdownForDisplay.trim() || message.parsedDashboard)) {
                   <button
                     type="button"
                     class="toolbar-btn"
                     (click)="suggestChartFollowUp()"
-                    aria-label="Demander un graphique &#224; partir de cette r&#233;ponse">
-                    Graphique
-                  </button>
+                    aria-label="Demander un graphique &#224; partir de cette r&#233;ponse" i18n-aria-label="Demander un graphique &#224; partir de cette r&#233;ponse" i18n="@@ai-assistant.components.graphique.fad32c3f">Graphique</button>
                 }
               </div>
             }
@@ -220,19 +204,19 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     <i class="fa-solid fa-circle-info"></i>
                   </div>
                   <div class="fallback-body">
-                    <p class="fallback-title">Je n'ai pas pu consulter les donn&#233;es du cabinet</p>
+                    <p class="fallback-title" i18n="@@ai-assistant.components.je.n.ai.pas.pu.consulter.les.donn.233.es.du.cabi.1bf083c4">Je n'ai pas pu consulter les donn&#233;es du cabinet</p>
                     <p class="fallback-text">{{ message.content }}</p>
                     <div class="fallback-actions">
                       <button
                         type="button"
                         class="retry-btn"
                         (click)="resendOriginalQuestion()"
-                        aria-label="R&#233;essayer la consultation des donn&#233;es du cabinet">
+                        aria-label="R&#233;essayer la consultation des donn&#233;es du cabinet" i18n-aria-label="R&#233;essayer la consultation des donn&#233;es du cabinet">
                         <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
                         R&#233;essayer la consultation
                       </button>
                     </div>
-                    <p class="fallback-hint">Aucune donn&#233;e du cabinet n'a &#233;t&#233; utilis&#233;e dans ce message.</p>
+                    <p class="fallback-hint" i18n="@@ai-assistant.components.aucune.donn.233.e.du.cabinet.n.a.233.t.233.utili.83fd5e0b">Aucune donn&#233;e du cabinet n'a &#233;t&#233; utilis&#233;e dans ce message.</p>
                   </div>
                 </div>
               </div>
@@ -266,14 +250,14 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     <i class="fa-solid fa-check"></i>
                   </div>
                   <div>
-                    <div class="confirm-title" id="reminder-confirm-title">Relance envoy&#233;e</div>
+                    <div class="confirm-title" id="reminder-confirm-title" i18n="@@ai-assistant.components.relance.envoy.233.e.1b4202d6">Relance envoy&#233;e</div>
                     <div class="confirm-subtitle">Rappel &#8212; {{ message.firmReminderAction.preview.dossier }}</div>
                   </div>
                 </div>
                 <div class="confirmed-status" role="status" aria-live="polite">
                   <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                   E-mail envoy&#233; &#224; {{ message.firmReminderAction.preview.responsable }}
-                  <span class="meta">&#183; consign&#233; dans l'historique du dossier</span>
+                  <span class="meta" i18n="@@ai-assistant.components.183.consign.233.dans.l.historique.du.dossier.681a352f">&#183; consign&#233; dans l'historique du dossier</span>
                 </div>
               } @else {
                 <div class="confirm-header">
@@ -281,7 +265,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     <i class="fa-solid fa-envelope"></i>
                   </div>
                   <div>
-                    <div class="confirm-title" id="reminder-confirm-title">Confirmation requise &#8212; relance d'&#233;ch&#233;ance</div>
+                    <div class="confirm-title" id="reminder-confirm-title" i18n="@@ai-assistant.components.confirmation.requise.8212.relance.d.233.ch.233.a.f75c8d7f">Confirmation requise &#8212; relance d'&#233;ch&#233;ance</div>
                     <div class="confirm-subtitle">
                       Rappel &#224; {{ message.firmReminderAction.preview.responsable }} &#183; {{ message.firmReminderAction.preview.dossier }}
                     </div>
@@ -289,17 +273,17 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                 </div>
 
                 <div class="confirm-fields">
-                  <span class="field-label">Destinataire</span>
+                  <span class="field-label" i18n="@@ai-assistant.components.destinataire.56579042">Destinataire</span>
                   <span class="field-value"><strong>{{ message.firmReminderAction.preview.responsable }}</strong></span>
 
-                  <span class="field-label">Dossier</span>
+                  <span class="field-label" i18n="@@ai-assistant.components.dossier.8ed65788">Dossier</span>
                   <span class="field-value">{{ message.firmReminderAction.preview.dossier }}</span>
 
-                  <span class="field-label">&#201;ch&#233;ance</span>
+                  <span class="field-label" i18n="@@ai-assistant.components.201.ch.233.ance.db6d7f72">&#201;ch&#233;ance</span>
                   <span class="field-value">{{ message.firmReminderAction.preview.echeance }}</span>
 
-                  <span class="field-label">Aper&#231;u du message</span>
-                  <div class="message-preview" aria-label="Aper&#231;u de l'e-mail de relance">
+                  <span class="field-label" i18n="@@ai-assistant.components.aper.231.u.du.message.ca70afc6">Aper&#231;u du message</span>
+                  <div class="message-preview" aria-label="Aper&#231;u de l'e-mail de relance" i18n-aria-label="Aper&#231;u de l'e-mail de relance">
                     <p class="subject">{{ message.firmReminderAction.preview.objet }}</p>
                   </div>
                 </div>
@@ -317,7 +301,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="confirm-btn"
                     (click)="confirmReminder()"
                     [disabled]="message.firmReminderConfirming"
-                    aria-label="Confirmer l'envoi de la relance">
+                    aria-label="Confirmer l'envoi de la relance" i18n-aria-label="Confirmer l'envoi de la relance">
                     <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
                     @if (message.firmReminderConfirming) { Envoi&#8230; } @else { Confirmer l'envoi }
                   </button>
@@ -326,25 +310,21 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="cancel-btn"
                     (click)="cancelReminder()"
                     [disabled]="message.firmReminderConfirming"
-                    aria-label="Annuler la relance, aucun e-mail ne sera envoy&#233;">
-                    Annuler
-                  </button>
-                  <span class="confirm-expiry" aria-label="D&#233;lai avant expiration de la confirmation">
+                    aria-label="Annuler la relance, aucun e-mail ne sera envoy&#233;" i18n-aria-label="Annuler la relance, aucun e-mail ne sera envoy&#233;" i18n="@@ai-assistant.components.annuler.49ba3292">Annuler</button>
+                  <span class="confirm-expiry" aria-label="D&#233;lai avant expiration de la confirmation" i18n-aria-label="D&#233;lai avant expiration de la confirmation">
                     <i class="fa-regular fa-clock" aria-hidden="true"></i>
                     {{ reminderExpiryLabel }}
                   </span>
                 </div>
 
-                <div class="confirm-security-note">
-                  L'envoi n'est d&#233;clench&#233; que par votre clic &#8212; jamais automatiquement par l'assistant.
-                  Un rappel d&#233;j&#224; envoy&#233; aujourd'hui pour cette &#233;ch&#233;ance ne sera pas dupliqu&#233;.
-                </div>
+                <div class="confirm-security-note" i18n="@@ai-assistant.components.l.envoi.n.est.d.233.clench.233.que.par.votre.cli.fd668660">L'envoi n'est d&#233;clench&#233; que par votre clic &#8212; jamais automatiquement par l'assistant.
+                  Un rappel d&#233;j&#224; envoy&#233; aujourd'hui pour cette &#233;ch&#233;ance ne sera pas dupliqu&#233;.</div>
               }
             </section>
           }
 
           @if (message.suggestedPrompts?.length) {
-            <div class="suggested-prompts" role="group" aria-label="Suggestions de suite">
+            <div class="suggested-prompts" role="group" aria-label="Suggestions de suite" i18n-aria-label="Suggestions de suite">
               @for (p of message.suggestedPrompts; track $index) {
                 <button type="button" class="nav-chip" (click)="session.sendSuggestedPrompt(p)">
                   {{ p }}
@@ -354,7 +334,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
           }
 
           @if (message.clientActions?.length) {
-            <div class="client-actions" role="group" aria-label="Navigation sugg&#233;r&#233;e">
+            <div class="client-actions" role="group" aria-label="Navigation sugg&#233;r&#233;e" i18n-aria-label="Navigation sugg&#233;r&#233;e">
               @for (a of message.clientActions; track $index) {
                 <button type="button" class="nav-chip" (click)="navigateClientAction(a)">
                   {{ a.label }}
@@ -364,26 +344,26 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
           }
 
           @if (message.sources?.length) {
-            <div class="sources-line" role="note" aria-label="Sources consult&#233;es pour cette r&#233;ponse">
-              <span class="sources-label">Sources (outils)</span>
+            <div class="sources-line" role="note" aria-label="Sources consult&#233;es pour cette r&#233;ponse" i18n-aria-label="Sources consult&#233;es pour cette r&#233;ponse">
+              <span class="sources-label" i18n="@@ai-assistant.components.sources.outils.c36b1648">Sources (outils)</span>
               @for (s of dedupedSources; track s.toolName) {
                 <span class="src-tag" [attr.aria-label]="sourceChipAriaLabel(s)">{{ s.label }}@if (s.count > 1) { ×{{ s.count }}}</span>
               }
             </div>
           } @else if (showUngroundedWarning()) {
-            <div class="sources-line unverified-line" role="note" aria-label="Statut de v&#233;rification de la r&#233;ponse">
+            <div class="sources-line unverified-line" role="note" aria-label="Statut de v&#233;rification de la r&#233;ponse" i18n-aria-label="Statut de v&#233;rification de la r&#233;ponse">
               <span
                 class="unverified-badge"
                 role="status"
-                aria-label="R&#233;ponse non v&#233;rifi&#233;e &#8212; les donn&#233;es du cabinet n'ont pas &#233;t&#233; consult&#233;es">
+                aria-label="R&#233;ponse non v&#233;rifi&#233;e &#8212; les donn&#233;es du cabinet n'ont pas &#233;t&#233; consult&#233;es" i18n-aria-label="R&#233;ponse non v&#233;rifi&#233;e &#8212; les donn&#233;es du cabinet n'ont pas &#233;t&#233; consult&#233;es">
                 <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                <span>R&#233;ponse non v&#233;rifi&#233;e &#8212; donn&#233;es non consult&#233;es</span>
+                <span i18n="@@ai-assistant.components.r.233.ponse.non.v.233.rifi.233.e.8212.donn.233.e.874e5a52">R&#233;ponse non v&#233;rifi&#233;e &#8212; donn&#233;es non consult&#233;es</span>
               </span>
               <button
                 type="button"
                 class="regenerate-btn"
                 (click)="resendOriginalQuestion()"
-                aria-label="Relancer la question avec consultation des donn&#233;es du cabinet">
+                aria-label="Relancer la question avec consultation des donn&#233;es du cabinet" i18n-aria-label="Relancer la question avec consultation des donn&#233;es du cabinet">
                 <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
                 Relancer avec consultation des donn&#233;es
               </button>

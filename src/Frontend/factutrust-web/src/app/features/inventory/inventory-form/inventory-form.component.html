@@ -1,7 +1,7 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <app-page-header
-    title="Inventaire"
+    title="Inventaire" i18n-title="Inventaire"
     subtitle="Saisissez les quantités comptées et enregistrez. Vous pouvez reprendre plus tard."
 >
     <app-button
@@ -10,34 +10,32 @@
         iconPos="left"
         routerLink="/stock"
         ariaLabel="Retour au stock"
-    >
-        Retour
-    </app-button>
+     i18n="@@inventory.inventory-form.retour.e5befb1f">Retour</app-button>
 </app-page-header>
 
 @if (loading()) {
     <div class="loading-state" role="status" aria-live="polite">
         <span class="loading-spinner" aria-hidden="true"></span>
-        <p>Chargement en cours...</p>
+        <p i18n="@@inventory.inventory-form.chargement.en.cours.7b2b4440">Chargement en cours...</p>
     </div>
 } @else {
     <div class="inventory-form">
         <!-- Détails du document -->
-        <app-form-section title="Détails du document" icon="pi-file" [number]="1">
+        <app-form-section title="Détails du document" i18n-title="Détails du document" icon="pi-file" [number]="1">
             <div class="document-details">
                 <div class="detail-row">
-                    <span class="detail-label">Date</span>
+                    <span class="detail-label" i18n="@@inventory.inventory-form.date.eb9a4bc1">Date</span>
                     <span class="detail-value">{{ documentDate() | date:'dd/MM/yyyy' }}</span>
                 </div>
                 <div class="detail-row">
-                    <label for="inventory-warehouse" class="detail-label">Entrepôt <span class="required">*</span></label>
+                    <label for="inventory-warehouse" class="detail-label">Entrepôt <span class="required" i18n="@@inventory.inventory-form.text.df58248c">*</span></label>
                     <p-select
                         id="inventory-warehouse"
                         [options]="warehouses"
                         [ngModel]="selectedWarehouse()"
                         (ngModelChange)="onWarehouseChange($event)"
                         optionLabel="name"
-                        placeholder="Sélectionner un entrepôt"
+                        placeholder="Sélectionner un entrepôt" i18n-placeholder="Sélectionner un entrepôt"
                         styleClass="w-full dropdown-warehouse"
                         [disabled]="hasActiveInventory()"
                         ariaLabel="Choisir l'entrepôt"
@@ -46,20 +44,20 @@
                 </div>
                 @if (!hasActiveInventory()) {
                     <div class="detail-row">
-                        <label for="inventory-notes" class="detail-label">Note</label>
+                        <label for="inventory-notes" class="detail-label" i18n="@@inventory.inventory-form.note.2c924e30">Note</label>
                         <textarea
                             id="inventory-notes"
                             pTextarea
                             [ngModel]="notes()"
                             (ngModelChange)="notes.set($event)"
-                            placeholder="Optionnel : précisions sur cet inventaire"
+                            placeholder="Optionnel : précisions sur cet inventaire" i18n-placeholder="Optionnel : précisions sur cet inventaire"
                             [rows]="2"
                             class="notes-input"
                         ></textarea>
                     </div>
                 } @else {
                     <div class="detail-row">
-                        <span class="detail-label">Entrepôt (en cours)</span>
+                        <span class="detail-label" i18n="@@inventory.inventory-form.entrepot.en.cours.c0e1f823">Entrepôt (en cours)</span>
                         <span class="detail-value">{{ activeInventory()?.warehouseName }}</span>
                     </div>
                 }
@@ -69,50 +67,46 @@
         @if (!hasActiveInventory()) {
             <!-- Démarrer l'inventaire -->
             <div class="start-section">
-                <p class="start-hint">
-                    Sélectionnez l'entrepôt et lancez l'inventaire pour afficher la liste des produits à compter.
-                </p>
+                <p class="start-hint" i18n="@@inventory.inventory-form.selectionnez.l.entrepot.et.lancez.l.inventaire.p.1cb65c3e">Sélectionnez l'entrepôt et lancez l'inventaire pour afficher la liste des produits à compter.</p>
                 <div class="start-actions">
                     <button
                         type="button"
                         class="btn btn-primary btn-lg"
                         [disabled]="!selectedWarehouse() || starting()"
                         (click)="startInventory()"
-                        aria-label="Démarrer l'inventaire pour l'entrepôt sélectionné"
+                        aria-label="Démarrer l'inventaire pour l'entrepôt sélectionné" i18n-aria-label="Démarrer l'inventaire pour l'entrepôt sélectionné"
                     >
                         @if (starting()) {
                             <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-                            <span>Démarrage...</span>
+                            <span i18n="@@inventory.inventory-form.demarrage.8deb95ab">Démarrage...</span>
                         } @else {
                             <i class="pi pi-play" aria-hidden="true"></i>
-                            <span>Démarrer l'inventaire</span>
+                            <span i18n="@@inventory.inventory-form.demarrer.l.inventaire.9acf9255">Démarrer l'inventaire</span>
                         }
                     </button>
                 </div>
                 <p class="wizard-link">
-                    <a routerLink="/inventory/wizard" class="link-ghost">
-                        Préférer le mode assistant (pas à pas)
-                    </a>
+                    <a routerLink="/inventory/wizard" class="link-ghost" i18n="@@inventory.inventory-form.preferer.le.mode.assistant.pas.a.pas.a9c69db6">Préférer le mode assistant (pas à pas)</a>
                 </p>
             </div>
         } @else {
             <!-- Tableau des lignes -->
-            <app-form-section title="Lignes d'inventaire" icon="pi-list" [number]="2">
+            <app-form-section title="Lignes d'inventaire" i18n-title="Lignes d'inventaire" icon="pi-list" [number]="2">
                 @if (lastSavedAt()) {
                     <p class="last-saved" role="status">
                         Dernière sauvegarde à {{ lastSavedAt() | date:'shortTime' }}
                     </p>
                 }
-                <div class="table-wrapper" role="region" aria-label="Liste des produits à inventorier">
+                <div class="table-wrapper" role="region" aria-label="Liste des produits à inventorier" i18n-aria-label="Liste des produits à inventorier">
                     <table class="inventory-table">
                         <thead>
                             <tr>
-                                <th scope="col">Désignation</th>
+                                <th scope="col" i18n="@@inventory.inventory-form.designation.63a9062c">Désignation</th>
                                 @if (hasOpeningLotLines()) {
-                                    <th scope="col" class="col-lot">N° de lot</th>
+                                    <th scope="col" class="col-lot" i18n="@@inventory.inventory-form.n.de.lot.f5d14bdd">N° de lot</th>
                                 }
-                                <th scope="col" class="col-qty">Quantité disponible</th>
-                                <th scope="col" class="col-qty">Quantité comptée</th>
+                                <th scope="col" class="col-qty" i18n="@@inventory.inventory-form.quantite.disponible.a960f7c4">Quantité disponible</th>
+                                <th scope="col" class="col-qty" i18n="@@inventory.inventory-form.quantite.comptee.9aee073b">Quantité comptée</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -136,13 +130,13 @@
                                                     class="lot-input"
                                                     [ngModel]="line.lotNumberInput"
                                                     (ngModelChange)="updateLineLotNumber(line, $event)"
-                                                    placeholder="N° de lot"
+                                                    placeholder="N° de lot" i18n-placeholder="N° de lot"
                                                     [attr.aria-required]="requiresLotNumberForLine(line)"
                                                     [attr.aria-label]="'Numéro de lot pour ' + line.productName" />
                                             } @else if (line.lotNumber) {
                                                 <span class="lot-label">{{ line.lotNumber }}</span>
                                             } @else {
-                                                <span class="lot-empty">—</span>
+                                                <span class="lot-empty" i18n="@@inventory.inventory-form.text.1b93795b">—</span>
                                             }
                                         </td>
                                     }
@@ -174,23 +168,21 @@
                         (click)="cancelInventory()"
                         [disabled]="cancelling()"
                         ariaLabel="Annuler l'inventaire"
-                    >
-                        Annuler l'inventaire
-                    </app-button>
+                     i18n="@@inventory.inventory-form.annuler.l.inventaire.a78bf0e5">Annuler l'inventaire</app-button>
                     <div class="actions-group">
                         <button
                             type="button"
                             class="btn btn-secondary"
                             [disabled]="saving() || !hasDirtyLines()"
                             (click)="saveCounts()"
-                            aria-label="Enregistrer les comptages modifiés"
+                            aria-label="Enregistrer les comptages modifiés" i18n-aria-label="Enregistrer les comptages modifiés"
                         >
                             @if (saving()) {
                                 <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-                                <span>Enregistrement...</span>
+                                <span i18n="@@inventory.inventory-form.enregistrement.9bf1058a">Enregistrement...</span>
                             } @else {
                                 <i class="pi pi-save" aria-hidden="true"></i>
-                                <span>Enregistrer</span>
+                                <span i18n="@@inventory.inventory-form.enregistrer.f7c8bcd8">Enregistrer</span>
                             }
                         </button>
                         <button
@@ -198,14 +190,14 @@
                             class="btn btn-primary"
                             [disabled]="validating() || !canValidate()"
                             (click)="validateInventory()"
-                            aria-label="Valider l'inventaire et ajuster le stock"
+                            aria-label="Valider l'inventaire et ajuster le stock" i18n-aria-label="Valider l'inventaire et ajuster le stock"
                         >
                             @if (validating()) {
                                 <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-                                <span>Validation...</span>
+                                <span i18n="@@inventory.inventory-form.validation.938b4aa3">Validation...</span>
                             } @else {
                                 <i class="pi pi-check" aria-hidden="true"></i>
-                                <span>Valider</span>
+                                <span i18n="@@inventory.inventory-form.valider.be4220f7">Valider</span>
                             }
                         </button>
                     </div>

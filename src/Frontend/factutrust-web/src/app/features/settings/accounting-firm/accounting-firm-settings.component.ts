@@ -42,7 +42,7 @@ const NOTES_MAX = 1000;
   ],
   template: `
     <app-page-header
-      title="Cabinet comptable"
+      title="Cabinet comptable" i18n-title="Cabinet comptable"
       subtitle="Confiez la gestion comptable de votre société à un cabinet partenaire">
     </app-page-header>
 
@@ -79,36 +79,36 @@ const NOTES_MAX = 1000;
           <dl class="af-meta">
             @if (isActive(assignment.status) && assignment.respondedAt) {
               <div class="af-meta__row">
-                <dt>Actif depuis</dt>
+                <dt i18n="@@settings.accounting-firm.actif.depuis.bcdceff3">Actif depuis</dt>
                 <dd>{{ assignment.respondedAt | date: 'dd/MM/yyyy' }}</dd>
               </div>
             } @else {
               <div class="af-meta__row">
-                <dt>Demandée le</dt>
+                <dt i18n="@@settings.accounting-firm.demandee.le.c52dbe79">Demandée le</dt>
                 <dd>{{ assignment.requestedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
               </div>
             }
             @if (isActive(assignment.status) && (assignment.firmCity || assignment.firmGovernorate)) {
               <div class="af-meta__row">
-                <dt>Localisation</dt>
+                <dt i18n="@@settings.accounting-firm.localisation.84e3d483">Localisation</dt>
                 <dd>{{ assignment.firmCity }}{{ assignment.firmCity && assignment.firmGovernorate ? ', ' : '' }}{{ assignment.firmGovernorate }}</dd>
               </div>
             }
             @if (isActive(assignment.status) && assignment.firmPracticeAreas?.length) {
               <div class="af-meta__row">
-                <dt>Domaines</dt>
+                <dt i18n="@@settings.accounting-firm.domaines.244b02f9">Domaines</dt>
                 <dd>{{ practiceLabels(assignment.firmPracticeAreas) }}</dd>
               </div>
             }
             @if (isActive(assignment.status) && (assignment.firmContactPhone || assignment.firmContactEmail)) {
               <div class="af-meta__row">
-                <dt>Contact</dt>
+                <dt i18n="@@settings.accounting-firm.contact.b37456c4">Contact</dt>
                 <dd>{{ assignment.firmContactPhone }}{{ assignment.firmContactPhone && assignment.firmContactEmail ? ' · ' : '' }}{{ assignment.firmContactEmail }}</dd>
               </div>
             }
             @if (assignment.notes) {
               <div class="af-meta__row">
-                <dt>Message envoyé</dt>
+                <dt i18n="@@settings.accounting-firm.message.envoye.3414873e">Message envoyé</dt>
                 <dd class="af-meta__notes">{{ assignment.notes }}</dd>
               </div>
             }
@@ -134,14 +134,14 @@ const NOTES_MAX = 1000;
             @if (closed.rejectionReason) {
               <p class="af-banner__reason">Motif : {{ closed.rejectionReason }}</p>
             }
-            <span class="af-banner__cta">Vous pouvez adresser une nouvelle demande à un cabinet ci-dessous.</span>
+            <span class="af-banner__cta" i18n="@@settings.accounting-firm.vous.pouvez.adresser.une.nouvelle.demande.a.un.c.20d16262">Vous pouvez adresser une nouvelle demande à un cabinet ci-dessous.</span>
           </div>
         </div>
       }
 
       <div class="af-card">
-        <h2 class="af-card__title">Rechercher un cabinet</h2>
-        <p class="af-card__subtitle">Comparez les cabinets, puis envoyez une seule demande.</p>
+        <h2 class="af-card__title" i18n="@@settings.accounting-firm.rechercher.un.cabinet.77bb1df8">Rechercher un cabinet</h2>
+        <p class="af-card__subtitle" i18n="@@settings.accounting-firm.comparez.les.cabinets.puis.envoyez.une.seule.dem.8d99a9af">Comparez les cabinets, puis envoyez une seule demande.</p>
 
         <button type="button" class="af-filters__toggle" (click)="filtersOpen.set(!filtersOpen())">
           <i class="pi" [ngClass]="filtersOpen() ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
@@ -150,40 +150,40 @@ const NOTES_MAX = 1000;
 
           <div class="af-filters" [class.af-filters--open]="filtersOpen()">
             <div class="af-field">
-              <label for="firmSearch">Nom, ville ou présentation</label>
-              <input id="firmSearch" class="af-input" [(ngModel)]="searchText" (ngModelChange)="onFilterChange()" placeholder="Ex. TVA, Sousse, cabinet" />
+              <label for="firmSearch" i18n="@@settings.accounting-firm.nom.ville.ou.presentation.8204364c">Nom, ville ou présentation</label>
+              <input id="firmSearch" class="af-input" [(ngModel)]="searchText" (ngModelChange)="onFilterChange()" placeholder="Ex. TVA, Sousse, cabinet" i18n-placeholder="Ex. TVA, Sousse, cabinet" />
             </div>
             <div class="af-field">
-              <label for="firmGovernorate">Gouvernorat</label>
+              <label for="firmGovernorate" i18n="@@settings.accounting-firm.gouvernorat.b9cd1d99">Gouvernorat</label>
               <select id="firmGovernorate" class="af-input" [(ngModel)]="governorate" (ngModelChange)="onFilterChange()">
-                <option value="">Tous les gouvernorats</option>
+                <option value="" i18n="@@settings.accounting-firm.tous.les.gouvernorats.ae8b0ecb">Tous les gouvernorats</option>
                 @for (g of governorates; track g.value) {
                   <option [value]="g.value">{{ g.label }}</option>
                 }
               </select>
             </div>
             <div class="af-field">
-              <label for="firmPractice">Domaine</label>
+              <label for="firmPractice" i18n="@@settings.accounting-firm.domaine.b6eb3da6">Domaine</label>
               <select id="firmPractice" class="af-input" [(ngModel)]="practiceArea" (ngModelChange)="onFilterChange()">
-                <option value="">Tous les domaines</option>
+                <option value="" i18n="@@settings.accounting-firm.tous.les.domaines.9d24299c">Tous les domaines</option>
                 @for (o of practiceOptions; track o.value) {
                   <option [value]="o.value">{{ o.label }}</option>
                 }
               </select>
             </div>
             <div class="af-field">
-              <label for="firmLanguage">Langue</label>
+              <label for="firmLanguage" i18n="@@settings.accounting-firm.langue.6619264a">Langue</label>
               <select id="firmLanguage" class="af-input" [(ngModel)]="language" (ngModelChange)="onFilterChange()">
-                <option value="">Toutes les langues</option>
+                <option value="" i18n="@@settings.accounting-firm.toutes.les.langues.18c88470">Toutes les langues</option>
                 @for (o of languageOptions; track o.value) {
                   <option [value]="o.value">{{ o.label }}</option>
                 }
               </select>
             </div>
             <div class="af-field">
-              <label for="firmSegment">Type de société</label>
+              <label for="firmSegment" i18n="@@settings.accounting-firm.type.de.societe.68ad1468">Type de société</label>
               <select id="firmSegment" class="af-input" [(ngModel)]="clientSegment" (ngModelChange)="onFilterChange()">
-                <option value="">Tous</option>
+                <option value="" i18n="@@settings.accounting-firm.tous.b97ae3b4">Tous</option>
                 @for (o of segmentOptions; track o.value) {
                   <option [value]="o.value">{{ o.label }}</option>
                 }
@@ -193,7 +193,7 @@ const NOTES_MAX = 1000;
               <input id="firmRemote" type="checkbox" [(ngModel)]="remoteOnly" (ngModelChange)="onFilterChange()" />
               Accepte le distanciel
             </label>
-            <button type="button" class="af-btn af-btn--ghost" (click)="resetFilters()">Réinitialiser</button>
+            <button type="button" class="af-btn af-btn--ghost" (click)="resetFilters()" i18n="@@settings.accounting-firm.reinitialiser.e0e2ad54">Réinitialiser</button>
           </div>
 
         @if (directoryLoading()) {
@@ -202,8 +202,8 @@ const NOTES_MAX = 1000;
             <app-skeleton height="9rem" shape="rounded"></app-skeleton>
           </div>
         } @else if (directoryError()) {
-          <p class="af-empty">La liste des cabinets n’a pas pu être chargée.</p>
-          <button type="button" class="af-btn af-btn--ghost" (click)="loadDirectory(true)">Réessayer</button>
+          <p class="af-empty" i18n="@@settings.accounting-firm.la.liste.des.cabinets.n.a.pas.pu.etre.chargee.5e761efc">La liste des cabinets n’a pas pu être chargée.</p>
+          <button type="button" class="af-btn af-btn--ghost" (click)="loadDirectory(true)" i18n="@@settings.accounting-firm.reessayer.895d416b">Réessayer</button>
         } @else if (firms().length === 0) {
           <p class="af-empty">
             {{ hasActiveFilters() ? 'Aucun cabinet ne correspond à ces filtres. Élargissez la recherche.' : 'Aucun cabinet public n’est disponible pour le moment.' }}
@@ -220,20 +220,20 @@ const NOTES_MAX = 1000;
             }
           </div>
           @if (canLoadMore()) {
-            <button type="button" class="af-btn af-btn--ghost" (click)="loadMore()" [disabled]="directoryLoading()">Afficher plus</button>
+            <button type="button" class="af-btn af-btn--ghost" (click)="loadMore()" [disabled]="directoryLoading()" i18n="@@settings.accounting-firm.afficher.plus.5cc35957">Afficher plus</button>
           }
         }
 
         @if (selectedFirm) {
         <div class="af-field">
-          <label for="firmNotes">Message au cabinet <span class="af-optional">(facultatif)</span></label>
+          <label for="firmNotes">Message au cabinet <span class="af-optional" i18n="@@settings.accounting-firm.facultatif.6d7d6db4">(facultatif)</span></label>
           <textarea
             id="firmNotes"
             [(ngModel)]="notes"
             [maxlength]="NOTES_MAX"
             rows="3"
             class="af-textarea"
-            placeholder="Précisez votre demande (période, contexte, attentes...)"></textarea>
+            placeholder="Précisez votre demande (période, contexte, attentes...)" i18n-placeholder="Précisez votre demande (période, contexte, attentes...)"></textarea>
           <small class="af-hint-inline">{{ notes.length }} / {{ NOTES_MAX }}</small>
         </div>
 

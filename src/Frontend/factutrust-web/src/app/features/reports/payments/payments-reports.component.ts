@@ -33,26 +33,24 @@ interface PeriodOption {
   ],
   template: `
     <app-page-header 
-      title="Rapports Paiements" 
+      title="Rapports Paiements" i18n-title="Rapports Paiements" 
       subtitle="Encaissements, décaissements et trésorerie nette">
       <app-button 
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()">
-        Exporter
-      </app-button>
+        (click)="onExport()" i18n="@@reports.payments.exporter.0cd84bdc">Exporter</app-button>
     </app-page-header>
 
     <div class="filter-section">
       <div class="filter-group">
-        <label for="period" class="filter-label">Période</label>
+        <label for="period" class="filter-label" i18n="@@reports.payments.periode.de2110b7">Période</label>
         <select 
           id="period"
           [(ngModel)]="selectedPeriod" 
           (ngModelChange)="onPeriodChange()"
           class="filter-select"
-          aria-label="Sélectionner la période">
+          aria-label="Sélectionner la période" i18n-aria-label="Sélectionner la période">
           @for (period of periodOptions; track period.value) {
             <option [value]="period.value">{{ period.label }}</option>
           }
@@ -112,29 +110,29 @@ interface PeriodOption {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Évolution des flux de trésorerie</h2>
-        <span class="section-subtitle">Encaissements et décaissements sur la période</span>
+        <h2 class="section-title" i18n="@@reports.payments.evolution.des.flux.de.tresorerie.13a2fbc2">Évolution des flux de trésorerie</h2>
+        <span class="section-subtitle" i18n="@@reports.payments.encaissements.et.decaissements.sur.la.periode.b2825171">Encaissements et décaissements sur la période</span>
       </div>
       @if (loading()) {
         <div class="chart-placeholder">
           <div class="loading-placeholder">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@reports.payments.chargement.a209b664">Chargement...</span>
           </div>
         </div>
       } @else if (reportsData()?.cashFlowChartData && reportsData()!.cashFlowChartData.length > 0) {
-        <div class="chart-container" role="img" aria-label="Graphique des flux de trésorerie">
+        <div class="chart-container" role="img" aria-label="Graphique des flux de trésorerie" i18n-aria-label="Graphique des flux de trésorerie">
           <div class="chart-bars">
             @for (item of reportsData()!.cashFlowChartData; track item.label) {
               <div class="chart-bar-group">
                 <div class="chart-tooltip" aria-hidden="true">
-                  <strong>Encaissements:</strong> {{ formatCurrency(item.inflows) }}<br>
-                  <strong>Décaissements:</strong> {{ formatCurrency(item.outflows) }}<br>
-                  <strong>Net:</strong> {{ formatCurrency(item.net) }}
+                  <strong i18n="@@reports.payments.encaissements.f7c9178b">Encaissements:</strong> {{ formatCurrency(item.inflows) }}<br>
+                  <strong i18n="@@reports.payments.decaissements.fbcf9c92">Décaissements:</strong> {{ formatCurrency(item.outflows) }}<br>
+                  <strong i18n="@@reports.payments.net.0bf95aa3">Net:</strong> {{ formatCurrency(item.net) }}
                 </div>
                 <div class="chart-bar-wrapper">
-                  <div class="chart-bar chart-bar-in" [style.height.%]="getBarHeight(item.inflows, 'in')" title="Encaissements"></div>
-                  <div class="chart-bar chart-bar-out" [style.height.%]="getBarHeight(item.outflows, 'out')" title="Décaissements"></div>
+                  <div class="chart-bar chart-bar-in" [style.height.%]="getBarHeight(item.inflows, 'in')" title="Encaissements" i18n-title="Encaissements"></div>
+                  <div class="chart-bar chart-bar-out" [style.height.%]="getBarHeight(item.outflows, 'out')" title="Décaissements" i18n-title="Décaissements"></div>
                 </div>
                 <span class="chart-label">{{ item.labelShort }}</span>
               </div>
@@ -149,8 +147,8 @@ interface PeriodOption {
         <div class="chart-placeholder">
           <div class="chart-content">
             <i class="pi pi-chart-line chart-icon"></i>
-            <p class="chart-text">Aucune donnée pour cette période</p>
-            <p class="chart-subtext">Les flux de trésorerie apparaîtront ici une fois que vous aurez des factures payées (clients et fournisseurs).</p>
+            <p class="chart-text" i18n="@@reports.payments.aucune.donnee.pour.cette.periode.b2a99770">Aucune donnée pour cette période</p>
+            <p class="chart-subtext" i18n="@@reports.payments.les.flux.de.tresorerie.apparaitront.ici.une.fois.180134f5">Les flux de trésorerie apparaîtront ici une fois que vous aurez des factures payées (clients et fournisseurs).</p>
           </div>
         </div>
       }
@@ -158,31 +156,31 @@ interface PeriodOption {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Paiements clients</h2>
-        <span class="section-subtitle">Liste des encaissements sur la période</span>
+        <h2 class="section-title" i18n="@@reports.payments.paiements.clients.79a7e359">Paiements clients</h2>
+        <span class="section-subtitle" i18n="@@reports.payments.liste.des.encaissements.sur.la.periode.4dbc1f45">Liste des encaissements sur la période</span>
       </div>
       @if (clientPaymentsLoading()) {
         <div class="loading-placeholder">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.payments.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!clientPayments().length) {
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucun paiement client sur cette période</p>
+          <p i18n="@@reports.payments.aucun.paiement.client.sur.cette.periode.bd78e238">Aucun paiement client sur cette période</p>
         </div>
       } @else {
         <p-table
           [value]="clientPayments()"
           styleClass="p-datatable-sm reports-table"
-          aria-label="Paiements clients">
+          aria-label="Paiements clients" i18n-aria-label="Paiements clients">
           <ng-template pTemplate="header">
             <tr>
-              <th>Date</th>
-              <th>Client</th>
-              <th>Facture</th>
-              <th class="text-right">Montant</th>
-              <th>Mode</th>
+              <th i18n="@@reports.payments.date.eb9a4bc1">Date</th>
+              <th i18n="@@reports.payments.client.1bdd79b1">Client</th>
+              <th i18n="@@reports.payments.facture.3953b9f5">Facture</th>
+              <th class="text-right" i18n="@@reports.payments.montant.4adcd9fc">Montant</th>
+              <th i18n="@@reports.payments.mode.a7b93d21">Mode</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -200,31 +198,31 @@ interface PeriodOption {
 
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Paiements fournisseurs</h2>
-        <span class="section-subtitle">Liste des décaissements sur la période</span>
+        <h2 class="section-title" i18n="@@reports.payments.paiements.fournisseurs.416577a5">Paiements fournisseurs</h2>
+        <span class="section-subtitle" i18n="@@reports.payments.liste.des.decaissements.sur.la.periode.29711947">Liste des décaissements sur la période</span>
       </div>
       @if (supplierPaymentsLoading()) {
         <div class="loading-placeholder">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.payments.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!supplierPayments().length) {
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucun paiement fournisseur sur cette période</p>
+          <p i18n="@@reports.payments.aucun.paiement.fournisseur.sur.cette.periode.5891af97">Aucun paiement fournisseur sur cette période</p>
         </div>
       } @else {
         <p-table
           [value]="supplierPayments()"
           styleClass="p-datatable-sm reports-table"
-          aria-label="Paiements fournisseurs">
+          aria-label="Paiements fournisseurs" i18n-aria-label="Paiements fournisseurs">
           <ng-template pTemplate="header">
             <tr>
-              <th>Date</th>
-              <th>Fournisseur</th>
-              <th>Facture</th>
-              <th class="text-right">Montant</th>
-              <th>Mode</th>
+              <th i18n="@@reports.payments.date.eb9a4bc1">Date</th>
+              <th i18n="@@reports.payments.fournisseur.97d91d89">Fournisseur</th>
+              <th i18n="@@reports.payments.facture.3953b9f5">Facture</th>
+              <th class="text-right" i18n="@@reports.payments.montant.4adcd9fc">Montant</th>
+              <th i18n="@@reports.payments.mode.a7b93d21">Mode</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>

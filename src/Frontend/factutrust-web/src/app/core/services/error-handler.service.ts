@@ -4,6 +4,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 /** Backend ValidationErrorResponse / similar (`VALIDATION_FAILED`, fieldErrors, globalErrors). */
 const VALIDATION_FAILED_CODE = 'VALIDATION_FAILED';
 const TENANT_MIGRATION_FAILED_CODE = 'TENANT_MIGRATION_FAILED';
+export const TENANT_CONTEXT_INVALID_CODE = 'TENANT_CONTEXT_INVALID';
+export const DELEGATED_CONTEXT_INVALID_CODE = 'DELEGATED_CONTEXT_INVALID';
 
 export interface ApiErrorResponse {
   success?: boolean;
@@ -59,6 +61,10 @@ export class ErrorHandlerService {
    */
   isTenantMigrationFailure(error: HttpErrorResponse | any): boolean {
     return this.getApiErrorCode(error) === TENANT_MIGRATION_FAILED_CODE;
+  }
+
+  isTenantContextInvalid(error: HttpErrorResponse | any): boolean {
+    return this.getApiErrorCode(error) === TENANT_CONTEXT_INVALID_CODE;
   }
 
   /** User-facing message for tenant migration / database upgrade failures. */

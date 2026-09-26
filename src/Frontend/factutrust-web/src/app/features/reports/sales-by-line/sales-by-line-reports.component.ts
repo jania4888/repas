@@ -27,17 +27,15 @@ type GroupBy = 'Product' | 'Category' | 'ProductAndClient';
   ],
   template: `
     <app-page-header
-      title="Détails ventes par ligne produit"
+      title="Détails ventes par ligne produit" i18n-title="Détails ventes par ligne produit"
       subtitle="Chiffre d'affaires par produit, par catégorie et par client">
-      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()">
-        Exporter
-      </app-button>
+      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" i18n="@@reports.sales-by-line.exporter.0cd84bdc">Exporter</app-button>
     </app-page-header>
 
     <div class="filter-section">
       <div class="filter-group">
-        <label for="period" class="filter-label">Période</label>
-        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période">
+        <label for="period" class="filter-label" i18n="@@reports.sales-by-line.periode.de2110b7">Période</label>
+        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="Période">
           @for (p of periodOptions; track p.value) {
             <option [value]="p.value">{{ p.label }}</option>
           }
@@ -47,9 +45,9 @@ type GroupBy = 'Product' | 'Category' | 'ProductAndClient';
 
     <p-tabs class="ft-tabs" (valueChange)="onTabChange($event)" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0"><i class="pi pi-box"></i><span>Chiffre d'affaires par produit</span></p-tab>
-        <p-tab [value]="1"><i class="pi pi-tag"></i><span>Chiffre d'affaires par catégorie</span></p-tab>
-        <p-tab [value]="2"><i class="pi pi-users"></i><span>Chiffre d'affaires par produit par client</span></p-tab>
+        <p-tab [value]="0"><i class="pi pi-box"></i><span i18n="@@reports.sales-by-line.chiffre.d.affaires.par.produit.38290f0c">Chiffre d'affaires par produit</span></p-tab>
+        <p-tab [value]="1"><i class="pi pi-tag"></i><span i18n="@@reports.sales-by-line.chiffre.d.affaires.par.categorie.9207c985">Chiffre d'affaires par catégorie</span></p-tab>
+        <p-tab [value]="2"><i class="pi pi-users"></i><span i18n="@@reports.sales-by-line.chiffre.d.affaires.par.produit.par.client.15c9310e">Chiffre d'affaires par produit par client</span></p-tab>
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
@@ -71,7 +69,7 @@ type GroupBy = 'Product' | 'Category' | 'ProductAndClient';
     </p-tabs>
 
     <div class="back-link-wrap">
-      <a routerLink="/reports" class="back-link">Retour aux rapports</a>
+      <a routerLink="/reports" class="back-link" i18n="@@reports.sales-by-line.retour.aux.rapports.48320a4f">Retour aux rapports</a>
     </div>
   `,
   styles: [`

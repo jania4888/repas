@@ -21,15 +21,13 @@ import {
   ],
   template: `
     <app-page-header
-      title="Analyse des ventes"
+      title="Analyse des ventes" i18n-title="Analyse des ventes"
       subtitle="Comprenez vos performances commerciales en un coup d'œil">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d">Imprimer</app-button>
     </app-page-header>
 
     <!-- Alerts -->
@@ -96,7 +94,7 @@ import {
     @if (!loading() && data()) {
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Taux de transformation devis → facture</h2>
+          <h2 class="section-title" i18n="@@reports.analytics.taux.de.transformation.devis.facture.cdf4fcd5">Taux de transformation devis → facture</h2>
           <span class="section-hint">
             <i class="pi pi-info-circle"></i>
             Ce pourcentage montre combien de vos devis sont devenus des factures
@@ -140,12 +138,12 @@ import {
         </div>
 
         @if (loading()) {
-          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.analytics.chargement.a209b664">Chargement...</span></div>
         } @else if (!data()?.topProducts?.length) {
           <div class="empty-state-sm">
             <i class="pi pi-box"></i>
-            <p>Aucun produit enregistré</p>
-            <p class="empty-hint">Ajoutez des produits avec un prix d'achat pour voir les marges.</p>
+            <p i18n="@@reports.analytics.aucun.produit.enregistre.786c098d">Aucun produit enregistré</p>
+            <p class="empty-hint" i18n="@@reports.analytics.ajoutez.des.produits.avec.un.prix.d.achat.pour.v.2f7717d9">Ajoutez des produits avec un prix d'achat pour voir les marges.</p>
           </div>
         } @else {
           <div class="product-list">
@@ -172,10 +170,10 @@ import {
                       [class.margin-low]="product.marginPercent < 15">
                       {{ product.marginPercent | number:'1.1-1' }} %
                     </span>
-                    <span class="margin-label">marge</span>
+                    <span class="margin-label" i18n="@@reports.analytics.marge.c424ae3c">marge</span>
                   } @else {
-                    <span class="margin-badge margin-na">N/A</span>
-                    <span class="margin-label">pas de prix d'achat</span>
+                    <span class="margin-badge margin-na" i18n="@@reports.analytics.n.a.08d2e98e">N/A</span>
+                    <span class="margin-label" i18n="@@reports.analytics.pas.de.prix.d.achat.caa759dc">pas de prix d'achat</span>
                   }
                 </div>
               </div>
@@ -198,11 +196,11 @@ import {
         </div>
 
         @if (loading()) {
-          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+          <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.analytics.chargement.a209b664">Chargement...</span></div>
         } @else if (!data()?.worstProducts?.length) {
           <div class="empty-state-sm">
             <i class="pi pi-check-circle" style="color: var(--color-success-500);"></i>
-            <p>Aucun produit à faible marge détecté</p>
+            <p i18n="@@reports.analytics.aucun.produit.a.faible.marge.detecte.918ba19d">Aucun produit à faible marge détecté</p>
           </div>
         } @else {
           <div class="product-list">
@@ -253,34 +251,34 @@ import {
     <!-- Print-only section -->
     <div class="print-only print-report">
       <div class="print-header">
-        <h1 class="print-title">Analyse Des Ventes</h1>
-        <div class="print-logo">Logo</div>
+        <h1 class="print-title" i18n="@@reports.analytics.analyse.des.ventes.35adf138">Analyse Des Ventes</h1>
+        <div class="print-logo" i18n="@@reports.analytics.logo.83fce832">Logo</div>
       </div>
       <div class="print-separator"></div>
       @if (data()) {
         <div class="print-kpis">
           <div class="print-kpi">
-            <strong>Taux de conversion</strong>
+            <strong i18n="@@reports.analytics.taux.de.conversion.296dbcee">Taux de conversion</strong>
             <span>{{ data()!.conversionRate.toFixed(1) }} %</span>
           </div>
           <div class="print-kpi">
-            <strong>Panier moyen</strong>
+            <strong i18n="@@reports.analytics.panier.moyen.e9ce57ee">Panier moyen</strong>
             <span>{{ formatAmount(data()!.averageBasket) }}</span>
           </div>
           <div class="print-kpi">
-            <strong>Devis convertis</strong>
+            <strong i18n="@@reports.analytics.devis.convertis.e8e2b1c5">Devis convertis</strong>
             <span>{{ data()!.convertedQuotes }} / {{ data()!.totalQuotes }}</span>
           </div>
         </div>
-        <h3 class="print-subtitle">Produits - Marges</h3>
+        <h3 class="print-subtitle" i18n="@@reports.analytics.produits.marges.f4fc65aa">Produits - Marges</h3>
         <table class="print-table">
           <thead>
             <tr>
-              <th>Produit</th>
-              <th>Code</th>
-              <th>Prix vente</th>
-              <th>Prix achat</th>
-              <th>Marge</th>
+              <th i18n="@@reports.analytics.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.analytics.code.adac6937">Code</th>
+              <th i18n="@@reports.analytics.prix.vente.620ba2f4">Prix vente</th>
+              <th i18n="@@reports.analytics.prix.achat.22f9864c">Prix achat</th>
+              <th i18n="@@reports.analytics.marge.d9ef1a1d">Marge</th>
             </tr>
           </thead>
           <tbody>

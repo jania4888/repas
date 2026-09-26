@@ -184,18 +184,18 @@ interface ValidationState { isValid: boolean; errors: WorkflowValidationIssueDto
         <section class="wf-head" aria-labelledby="wf-trigger-lbl">
           <div class="wf-head__grid">
             <div class="wf-field">
-              <label for="wf-name">{{ L.designer.name }} <span class="wf-req">*</span></label>
+              <label for="wf-name">{{ L.designer.name }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
               <input id="wf-name" pInputText maxlength="120" [ngModel]="name()" (ngModelChange)="onNameChange($event)"
                 autocomplete="off" data-testid="wf-name" />
             </div>
             <div class="wf-field">
-              <label for="wf-key">{{ L.designer.key }} <span class="wf-req">*</span></label>
+              <label for="wf-key">{{ L.designer.key }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
               <input id="wf-key" pInputText [ngModel]="key()" (ngModelChange)="onKeyChange($event)"
                 [disabled]="!!id" autocomplete="off" data-testid="wf-key" />
               <small class="studio-muted">{{ id ? L.designer.keyImmutable : L.designer.keyHint }}</small>
             </div>
             <div class="wf-field">
-              <label for="wf-entity">{{ L.designer.table }} <span class="wf-req">*</span></label>
+              <label for="wf-entity">{{ L.designer.table }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
               <input id="wf-entity" pInputText [value]="entity()?.displayName ?? ''" disabled data-testid="wf-entity" />
               <small class="studio-muted">{{ localLabels.tableFixed }}</small>
             </div>
@@ -211,7 +211,7 @@ interface ValidationState { isValid: boolean; errors: WorkflowValidationIssueDto
               (ngModelChange)="description.set($event)" data-testid="wf-description"></textarea>
           </div>
 
-          <span class="wf-lbl" id="wf-trigger-lbl">{{ L.designer.trigger }} <span class="wf-req">*</span></span>
+          <span class="wf-lbl" id="wf-trigger-lbl">{{ L.designer.trigger }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></span>
           <div class="wf-triggers" role="radiogroup" aria-labelledby="wf-trigger-lbl">
             @for (t of triggers; track t.value) {
               <div class="wf-trigger" role="radio" [attr.aria-checked]="trigger() === t.value"
@@ -234,7 +234,7 @@ interface ValidationState { isValid: boolean; errors: WorkflowValidationIssueDto
           @if (trigger() === 'field_changed') {
             <div class="wf-sub" data-testid="wf-trigger-config">
               <div class="wf-field">
-                <label for="wf-watched">{{ L.designer.watchedField }} <span class="wf-req">*</span></label>
+                <label for="wf-watched">{{ L.designer.watchedField }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
                 <p-select inputId="wf-watched" [options]="watchableFields()" [ngModel]="triggerConfig()?.field ?? null"
                   (ngModelChange)="patchTriggerConfig({ field: $event ?? undefined })" optionLabel="label" optionValue="value"
                   [showClear]="true" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="wf-w"
@@ -263,9 +263,9 @@ interface ValidationState { isValid: boolean; errors: WorkflowValidationIssueDto
                   data-testid="wf-cron-preset" [attr.aria-label]="L.designer.cronPreset" />
               </div>
               <div class="wf-field">
-                <label for="wf-cron">{{ L.designer.cron }} <span class="wf-req">*</span></label>
+                <label for="wf-cron">{{ L.designer.cron }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
                 <input id="wf-cron" pInputText [ngModel]="triggerConfig()?.cron ?? ''"
-                  (ngModelChange)="onCronInput($event)" autocomplete="off" placeholder="0 6 * * *" data-testid="wf-cron" />
+                  (ngModelChange)="onCronInput($event)" autocomplete="off" placeholder="0 6 * * *" i18n-placeholder="0 6 * * *" data-testid="wf-cron" />
                 <small class="wf-hint">{{ L.designer.cronHint }}</small>
               </div>
               <div class="wf-field wf-field--filters">

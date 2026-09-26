@@ -31,16 +31,14 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
   ],
   template: `
     <app-payroll-section
-      title="Régularisation IRPP annuelle"
+      title="Régularisation IRPP annuelle" i18n-title="Régularisation IRPP annuelle"
       subtitle="Compare l'impôt dû sur le cumul réel de l'exercice à l'impôt déjà retenu. Après génération, relancez le calcul du cycle pour porter les écarts sur les bulletins."
       icon="pi-calculator">
 
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">
           <app-button variant="primary" icon="pi-refresh" iconPos="left"
-            [disabled]="generating()" (click)="confirmGenerate()">
-            Générer les régularisations
-          </app-button>
+            [disabled]="generating()" (click)="confirmGenerate()" i18n="@@payroll.runs.generer.les.regularisations.594ad942">Générer les régularisations</app-button>
         </div>
       }
 
@@ -54,13 +52,13 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
         <p-table [value]="lines()" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Salarié</th>
-              <th>Motif</th>
-              <th class="text-right">Cumul net imposable</th>
-              <th class="text-right">IRPP dû</th>
-              <th class="text-right">IRPP retenu</th>
-              <th class="text-right">Écart à porter</th>
-              <th>Sens</th>
+              <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+              <th i18n="@@payroll.runs.motif.2a198f47">Motif</th>
+              <th class="text-right" i18n="@@payroll.runs.cumul.net.imposable.c17a5048">Cumul net imposable</th>
+              <th class="text-right" i18n="@@payroll.runs.irpp.du.76631bbf">IRPP dû</th>
+              <th class="text-right" i18n="@@payroll.runs.irpp.retenu.7cc73d3d">IRPP retenu</th>
+              <th class="text-right" i18n="@@payroll.runs.ecart.a.porter.541d946a">Écart à porter</th>
+              <th i18n="@@payroll.runs.sens.55928a79">Sens</th>
               @if (!readOnly) { <th></th> }
             </tr>
           </ng-template>
@@ -83,16 +81,14 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
               @if (!readOnly) {
                 <td class="actions">
                   <button type="button" class="p-button p-button-text p-button-danger p-button-sm"
-                    (click)="confirmDelete(line)">Supprimer</button>
+                    (click)="confirmDelete(line)" i18n="@@payroll.runs.supprimer.1acfc1c7">Supprimer</button>
                 </td>
               }
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td [attr.colspan]="readOnly ? 7 : 8">
-                Aucune régularisation pour ce mois. Elles se génèrent en décembre et lors des soldes de tout compte.
-              </td>
+              <td [attr.colspan]="readOnly ? 7 : 8" i18n="@@payroll.runs.aucune.regularisation.pour.ce.mois.elles.se.gene.656a0fce">Aucune régularisation pour ce mois. Elles se génèrent en décembre et lors des soldes de tout compte.</td>
             </tr>
           </ng-template>
         </p-table>

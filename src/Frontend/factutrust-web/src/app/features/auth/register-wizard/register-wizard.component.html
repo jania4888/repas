@@ -2,11 +2,11 @@
   <aside class="sidebar">
     <div>
       <app-logo size="medium" variant="lockup" routerLink="/"></app-logo>
-      <h1 class="sidebar-title">Créez votre espace entreprise</h1>
-      <p class="sidebar-sub">Quelques informations pour personnaliser votre expérience et configurer votre ERP selon votre activité.</p>
+      <h1 class="sidebar-title" i18n="@@auth.register-wizard.creez.votre.espace.entreprise.1fbb632b">Créez votre espace entreprise</h1>
+      <p class="sidebar-sub" i18n="@@auth.register-wizard.quelques.informations.pour.personnaliser.votre.e.bfd459aa">Quelques informations pour personnaliser votre expérience et configurer votre ERP selon votre activité.</p>
     </div>
 
-    <nav class="step-list" aria-label="Étapes de l'inscription">
+    <nav class="step-list" aria-label="Étapes de l'inscription" i18n-aria-label="Étapes de l'inscription">
       @for (step of stepsMeta; track step.name; let i = $index) {
         <!-- `locked` : une fois l'espace créé, les étapes ne sont plus navigables (goToStep
              refuse déjà l'appel) — on le rend visible plutôt que de laisser un clic sans effet. -->
@@ -39,15 +39,15 @@
 
     <div class="side-box badge-box">
       <i class="pi pi-shield" aria-hidden="true"></i>
-      <span>Conforme à la réglementation tunisienne</span>
+      <span i18n="@@auth.register-wizard.conforme.a.la.reglementation.tunisienne.fc5e49f3">Conforme à la réglementation tunisienne</span>
     </div>
 
     <div class="side-box help-box">
       <div class="help-head">
         <span class="help-ico"><i class="pi pi-headphones"></i></span>
         <div>
-          <div class="help-title">Besoin d'aide&nbsp;?</div>
-          <div class="help-sub">Notre équipe vous accompagne</div>
+          <div class="help-title" i18n="@@auth.register-wizard.besoin.d.aide.nbsp.ef44de0a">Besoin d'aide&nbsp;?</div>
+          <div class="help-sub" i18n="@@auth.register-wizard.notre.equipe.vous.accompagne.d3813e36">Notre équipe vous accompagne</div>
         </div>
       </div>
       <a class="help-link" href="mailto:support@instafact.tn">
@@ -64,10 +64,10 @@
              e-mail/NIF après avoir consommé le quota de la politique de limitation). -->
         <section class="success-panel" role="status" @fadeInOut>
           <div class="success-icon"><i class="pi pi-check-circle" aria-hidden="true"></i></div>
-          <h2 class="success-title">Votre espace a été créé</h2>
+          <h2 class="success-title" i18n="@@auth.register-wizard.votre.espace.a.ete.cree.0b7287fa">Votre espace a été créé</h2>
 
           @if (registrationWarningDetails().length > 0) {
-            <p class="success-sub">Votre compte est prêt. Quelques points à vérifier&nbsp;:</p>
+            <p class="success-sub" i18n="@@auth.register-wizard.votre.compte.est.pret.quelques.points.a.verifier.3e6b0621">Votre compte est prêt. Quelques points à vérifier&nbsp;:</p>
             <ul class="success-warnings">
               @for (warning of registrationWarningDetails(); track warning.message) {
                 <li [class.is-info]="warning.severity === 'info'">
@@ -85,7 +85,7 @@
               </a>
             }
           } @else {
-            <p class="success-sub">Votre compte est prêt.</p>
+            <p class="success-sub" i18n="@@auth.register-wizard.votre.compte.est.pret.c3145b97">Votre compte est prêt.</p>
           }
 
           <button type="button" class="btn-continue" (click)="continueAfterWarnings()">
@@ -93,7 +93,7 @@
           </button>
         </section>
       } @else {
-      <div class="hstepper" role="group" aria-label="Progression de l'inscription">
+      <div class="hstepper" role="group" aria-label="Progression de l'inscription" i18n-aria-label="Progression de l'inscription">
         @for (step of stepsMeta; track step.name; let i = $index; let last = $last) {
           <div class="hstep" [class.active]="currentStep() === i" [class.done]="currentStep() > i">
             <span class="hstep-dot"><i class="pi {{ step.icon }}"></i></span>
@@ -114,12 +114,12 @@
           <div class="draft-banner" role="status">
             <i class="pi pi-history" aria-hidden="true"></i>
             <div class="draft-content">
-              <h4>Reprendre votre inscription ?</h4>
-              <p>Une inscription en cours a été retrouvée dans cet onglet. Votre mot de passe n'a pas été conservé.</p>
+              <h4 i18n="@@auth.register-wizard.reprendre.votre.inscription.8dd3f4b5">Reprendre votre inscription ?</h4>
+              <p i18n="@@auth.register-wizard.une.inscription.en.cours.a.ete.retrouvee.dans.ce.7973e223">Une inscription en cours a été retrouvée dans cet onglet. Votre mot de passe n'a pas été conservé.</p>
             </div>
             <div class="draft-actions">
-              <button type="button" class="draft-btn draft-btn--primary" (click)="restoreDraft()">Reprendre</button>
-              <button type="button" class="draft-btn" (click)="discardDraft()">Recommencer</button>
+              <button type="button" class="draft-btn draft-btn--primary" (click)="restoreDraft()" i18n="@@auth.register-wizard.reprendre.1c56710b">Reprendre</button>
+              <button type="button" class="draft-btn" (click)="discardDraft()" i18n="@@auth.register-wizard.recommencer.a15c72ad">Recommencer</button>
             </div>
           </div>
         }
@@ -130,10 +130,10 @@
               <i class="pi pi-exclamation-triangle"></i>
             </div>
             <div class="error-content">
-              <h4>Erreur lors de l'inscription</h4>
+              <h4 i18n="@@auth.register-wizard.erreur.lors.de.l.inscription.db5ac287">Erreur lors de l'inscription</h4>
               <p>{{ error() }}</p>
             </div>
-            <button type="button" class="close-btn" (click)="error.set(null)" aria-label="Fermer">
+            <button type="button" class="close-btn" (click)="error.set(null)" aria-label="Fermer" i18n-aria-label="Fermer">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -186,7 +186,7 @@
 
         <div class="navigation-footer">
           @if (currentStep() > 0) {
-            <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente">
+            <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente" i18n-aria-label="Étape précédente">
               <i class="pi pi-arrow-left" aria-hidden="true"></i> Précédent
             </button>
           } @else {
@@ -198,7 +198,7 @@
           </p>
 
           @if (currentStep() < stepCount() - 1) {
-            <button type="button" class="btn-next" [class.btn-next--ready]="isCurrentStepValid()" [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante">
+            <button type="button" class="btn-next" [class.btn-next--ready]="isCurrentStepValid()" [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante" i18n-aria-label="Étape suivante">
               Continuer <i class="pi pi-arrow-right" aria-hidden="true"></i>
             </button>
           } @else {
@@ -214,10 +214,10 @@
       </form>
 
       <div class="login-prompt">
-        <p>Vous avez déjà un compte ? <a routerLink="/auth/login" class="link-primary fw-semibold">Connectez-vous</a></p>
+        <p>Vous avez déjà un compte ? <a routerLink="/auth/login" class="link-primary fw-semibold" i18n="@@auth.register-wizard.connectez.vous.33a5aa49">Connectez-vous</a></p>
         @if (environment.accountingFirmsEnabled) {
           @if (!hidePublicCrossLinks()) {
-            <p class="mt-2">Cabinet comptable ? <a routerLink="/auth/register-firm" class="link-primary fw-semibold">Inscription cabinet</a></p>
+            <p class="mt-2">Cabinet comptable ? <a routerLink="/auth/register-firm" class="link-primary fw-semibold" i18n="@@auth.register-wizard.inscription.cabinet.0ec799e6">Inscription cabinet</a></p>
           }
         }
       </div>

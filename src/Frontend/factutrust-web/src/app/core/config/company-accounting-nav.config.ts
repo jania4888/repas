@@ -1,26 +1,29 @@
 import { AppModule as M } from '../models/app-module';
 import { AuthService } from '../services/auth.service';
 import {
+  ACCOUNTING_MODULE_ID,
   ACCOUNTING_MODULES,
   AccountingModuleLink
 } from './accounting-modules.config';
 import { NavItem, NavSearchEntry, NavSubItem } from './app-navigation.registry';
+import { getNavId, NAV_ID } from './nav-item-ids';
 
 /** Section États dans ACCOUNTING_MODULES — source des liens du hub « États comptables ». */
-export const COMPANY_ACCOUNTING_ETATS_MODULE_TITLE = 'États';
+export const COMPANY_ACCOUNTING_ETATS_MODULE_ID = ACCOUNTING_MODULE_ID.etats;
 
 export const COMPANY_ACCOUNTING_AI_ASSISTANT_ROUTE = '/ai-assistant/comptabilite';
 
 export const COMPANY_ACCOUNTING_FIXED_ASSETS_ROUTE = '/accounting/fixed-assets';
 
-const ETATS_MODULE = ACCOUNTING_MODULES.find(m => m.title === COMPANY_ACCOUNTING_ETATS_MODULE_TITLE);
+const ETATS_MODULE = ACCOUNTING_MODULES.find(m => m.id === COMPANY_ACCOUNTING_ETATS_MODULE_ID);
 
-const CONFIGURATION_ASSISTANT_LINK = ACCOUNTING_MODULES.find(m => m.title === 'Configuration')?.links.find(
+const CONFIGURATION_ASSISTANT_LINK = ACCOUNTING_MODULES.find(m => m.id === ACCOUNTING_MODULE_ID.configuration)?.links.find(
   l => l.route === COMPANY_ACCOUNTING_AI_ASSISTANT_ROUTE
 );
 
 function accountingModuleLinkToNavSubItem(link: AccountingModuleLink): NavSubItem {
   return {
+    id: link.id,
     label: link.label,
     route: link.route,
     icon: link.icon,
@@ -55,6 +58,7 @@ export const COMPANY_ACCOUNTING_GUARDED_ROUTE_PREFIXES: readonly string[] = [
 export const COMPANY_ACCOUNTING_SIDEBAR_CHILDREN: NavSubItem[] = [
   ...(CONFIGURATION_ASSISTANT_LINK ? [accountingModuleLinkToNavSubItem(CONFIGURATION_ASSISTANT_LINK)] : []),
   {
+    id: 'company-acct--financial-statements-hub',
     label: 'États comptables',
     route: '/accounting/financial-statements',
     icon: 'fa-solid fa-table-list',
@@ -63,6 +67,7 @@ export const COMPANY_ACCOUNTING_SIDEBAR_CHILDREN: NavSubItem[] = [
     children: buildCompanyEtatsComptablesNavChildren()
   },
   {
+    id: 'company-acct--vat-declaration',
     label: 'Déclaration mensuelle',
     route: '/accounting/vat-declaration',
     icon: 'fa-solid fa-file-invoice',
@@ -70,6 +75,7 @@ export const COMPANY_ACCOUNTING_SIDEBAR_CHILDREN: NavSubItem[] = [
     permissionsAll: ['accounting:read']
   },
   {
+    id: 'company-acct--fixed-assets-list',
     label: 'Liste des immobilisations',
     route: COMPANY_ACCOUNTING_FIXED_ASSETS_ROUTE,
     icon: 'fa-solid fa-building',
@@ -117,7 +123,7 @@ export function isAccountingGuardedPath(path: string): boolean {
 
 export function applyCompanyAccountingSidebar(items: NavItem[]): NavItem[] {
   return items.map(item => {
-    if (item.label !== 'Comptabilité' || !item.children?.length) {
+    if (getNavId(item) !== NAV_ID.accounting || !item.children?.length) {
       return item;
     }
     return { ...item, children: [...COMPANY_ACCOUNTING_SIDEBAR_CHILDREN] };

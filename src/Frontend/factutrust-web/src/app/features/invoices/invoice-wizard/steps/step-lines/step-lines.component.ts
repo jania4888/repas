@@ -105,9 +105,7 @@ interface WizardProductSuggestion {
               <i class="pi pi-list"></i>
               Lignes de facturation
             </h2>
-            <p class="section-description">
-              Ajoutez les produits ou services à facturer
-            </p>
+            <p class="section-description" i18n="@@invoices.invoice-wizard.ajoutez.les.produits.ou.services.a.facturer.6b89b6a1">Ajoutez les produits ou services à facturer</p>
           </div>
           <div class="header-actions">
             <button 
@@ -128,7 +126,7 @@ interface WizardProductSuggestion {
           @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
               <ft-barcode-scan-field
-                placeholder="Scanner un code-barres pour ajouter une ligne"
+                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
                 [autoFocus]="false"
                 (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -142,7 +140,7 @@ interface WizardProductSuggestion {
           <i class="pi pi-exclamation-triangle"></i>
           <div class="unmatched-content">
             <strong>{{ unmatchedLines().length }} ligne(s) à associer à un produit</strong>
-            <p>Ces articles ne sont pas reliés à votre catalogue. Liez chaque ligne à un produit existant ou créez un nouveau produit pour pouvoir émettre la facture.</p>
+            <p i18n="@@invoices.invoice-wizard.ces.articles.ne.sont.pas.relies.a.votre.catalogu.77ca4c77">Ces articles ne sont pas reliés à votre catalogue. Liez chaque ligne à un produit existant ou créez un nouveau produit pour pouvoir émettre la facture.</p>
           </div>
           <p-button
             label="Résoudre la première"
@@ -166,22 +164,22 @@ interface WizardProductSuggestion {
             
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 3%">#</th>
-                <th style="width: 28%">Désignation</th>
-                <th style="width: 8%" class="text-right">Quantité</th>
+                <th style="width: 3%" i18n="@@invoices.invoice-wizard.text.d08f88df">#</th>
+                <th style="width: 28%" i18n="@@invoices.invoice-wizard.designation.63a9062c">Désignation</th>
+                <th style="width: 8%" class="text-right" i18n="@@invoices.invoice-wizard.quantite.09a38fda">Quantité</th>
                 @if (!simpleMode()) {
-                  <th style="width: 7%">Unité</th>
+                  <th style="width: 7%" i18n="@@invoices.invoice-wizard.unite.388fd9c4">Unité</th>
                 }
-                <th style="width: 10%" class="text-right">Prix unit. HT</th>
-                <th style="width: 9%">Origine</th>
+                <th style="width: 10%" class="text-right" i18n="@@invoices.invoice-wizard.prix.unit.ht.5fbbfe6f">Prix unit. HT</th>
+                <th style="width: 9%" i18n="@@invoices.invoice-wizard.origine.62e96258">Origine</th>
                 @if (!simpleMode()) {
-                  <th style="width: 10%">Remise</th>
-                  <th style="width: 8%" class="col-vat-rate">TVA</th>
-                  <th style="width: 9%" class="text-right">Total HT</th>
-                  <th style="width: 6%" class="text-right">TVA</th>
+                  <th style="width: 10%" i18n="@@invoices.invoice-wizard.remise.ce12d942">Remise</th>
+                  <th style="width: 8%" class="col-vat-rate" i18n="@@invoices.invoice-wizard.tva.fb62cb5d">TVA</th>
+                  <th style="width: 9%" class="text-right" i18n="@@invoices.invoice-wizard.total.ht.2ca17ae6">Total HT</th>
+                  <th style="width: 6%" class="text-right" i18n="@@invoices.invoice-wizard.tva.fb62cb5d">TVA</th>
                 }
-                <th style="width: 10%" class="text-right">Total TTC</th>
-                <th style="width: 7%">Actions</th>
+                <th style="width: 10%" class="text-right" i18n="@@invoices.invoice-wizard.total.ttc.9e80ff7c">Total TTC</th>
+                <th style="width: 7%" i18n="@@invoices.invoice-wizard.actions.c3cd636a">Actions</th>
               </tr>
             </ng-template>
 
@@ -205,7 +203,7 @@ interface WizardProductSuggestion {
                             [forceSelection]="false"
                             [dropdown]="true"
                             [minLength]="0"
-                            placeholder="Rechercher un produit..."
+                            placeholder="Rechercher un produit..." i18n-placeholder="Rechercher un produit..."
                             appendTo="body"
                             [style]="{ width: '100%' }">
                             <ng-template let-product pTemplate="item">
@@ -213,7 +211,7 @@ interface WizardProductSuggestion {
                                 <span class="product-code">{{ product.code }}</span>
                                 <span class="product-name">{{ product.name }}</span>
                                 @if (product.isFodecApplicable) {
-                                  <span class="fodec-badge fodec-badge--suggestion">FODEC</span>
+                                  <span class="fodec-badge fodec-badge--suggestion" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                                 }
                                 <span class="product-price">{{ product.unitPrice | number:'1.3-3' }} TND</span>
                               </div>
@@ -222,10 +220,10 @@ interface WizardProductSuggestion {
                               <div class="product-empty">
                                 @if (isLoadingProducts()) {
                                   <i class="pi pi-spin pi-spinner"></i>
-                                  <span>Chargement des produits...</span>
+                                  <span i18n="@@invoices.invoice-wizard.chargement.des.produits.98b02485">Chargement des produits...</span>
                                 } @else {
                                   <div class="product-empty-content">
-                                    <span>Aucun produit trouvé</span>
+                                    <span i18n="@@invoices.invoice-wizard.aucun.produit.trouve.5edf7149">Aucun produit trouvé</span>
                                     <app-button
                                       variant="primary"
                                       size="sm"
@@ -246,7 +244,7 @@ interface WizardProductSuggestion {
                           icon="pi-th-large"
                           ariaLabel="Choisir une variante"
                           (click)="variantPickerVisible = true; $event.stopPropagation()"
-                          title="Choisir une variante" />
+                          title="Choisir une variante" i18n-title="Choisir une variante" />
                         <app-button
                           variant="primary"
                           size="sm"
@@ -259,7 +257,7 @@ interface WizardProductSuggestion {
                       <textarea
                         pTextarea
                         [(ngModel)]="editLine.description"
-                        placeholder="Description (optionnel)"
+                        placeholder="Description (optionnel)" i18n-placeholder="Description (optionnel)"
                         rows="2"
                         class="description-input">
                       </textarea>
@@ -274,7 +272,7 @@ interface WizardProductSuggestion {
                           </span>
                         }
                         @if (simpleMode() && line.isFodecApplicable) {
-                          <span class="fodec-badge" pTooltip="FODEC applicable (1%)">FODEC</span>
+                          <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                         }
                       </div>
                       @if (line.description) {
@@ -308,7 +306,7 @@ interface WizardProductSuggestion {
                     <input
                       pInputText
                       [(ngModel)]="editLine.unit"
-                      placeholder="Unité"
+                      placeholder="Unité" i18n-placeholder="Unité"
                       [style]="{ width: '80px' }">
                   } @else {
                     {{ line.unit || 'Unité' }}
@@ -349,7 +347,7 @@ interface WizardProductSuggestion {
                     } @else if (editLine.priceSource === 'PriceList') {
                       <p-tag severity="info" value="Grille"></p-tag>
                     } @else if (editLine.priceSource === 'Catalog') {
-                      <span class="text-muted">Catalogue</span>
+                      <span class="text-muted" i18n="@@invoices.invoice-wizard.catalogue.5a241023">Catalogue</span>
                     }
                   } @else {
                     @if (line.priceOverridden) {
@@ -359,7 +357,7 @@ interface WizardProductSuggestion {
                     } @else if (line.priceSource === 'PriceList') {
                       <p-tag severity="info" value="Grille"></p-tag>
                     } @else if (line.priceSource) {
-                      <span class="text-muted">Catalogue</span>
+                      <span class="text-muted" i18n="@@invoices.invoice-wizard.catalogue.5a241023">Catalogue</span>
                     }
                   }
                 </td>
@@ -418,7 +416,7 @@ interface WizardProductSuggestion {
                       {{ line.vatRate }}%
                     </span>
                     @if (line.isFodecApplicable) {
-                      <span class="fodec-badge" pTooltip="FODEC applicable (1%)">FODEC</span>
+                      <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                     }
                   }
                 </td>
@@ -488,7 +486,7 @@ interface WizardProductSuggestion {
                 <td colspan="12">
                   <div class="empty-lines">
                     <i class="pi pi-inbox"></i>
-                    <p>Aucune ligne de facturation</p>
+                    <p i18n="@@invoices.invoice-wizard.aucune.ligne.de.facturation.02e2114a">Aucune ligne de facturation</p>
                     <p-button
                       label="Ajouter votre première ligne"
                       icon="pi pi-plus"
@@ -503,8 +501,8 @@ interface WizardProductSuggestion {
       } @else {
         <div class="empty-state-card">
           <i class="pi pi-inbox"></i>
-          <h3>Aucune ligne de facturation</h3>
-          <p>Ajoutez des produits ou services pour continuer</p>
+          <h3 i18n="@@invoices.invoice-wizard.aucune.ligne.de.facturation.02e2114a">Aucune ligne de facturation</h3>
+          <p i18n="@@invoices.invoice-wizard.ajoutez.des.produits.ou.services.pour.continuer.cf42cd33">Ajoutez des produits ou services pour continuer</p>
           <p-button
             label="Ajouter une ligne"
             icon="pi pi-plus"
@@ -521,13 +519,13 @@ interface WizardProductSuggestion {
           <div class="totals-grid">
             <!-- VAT Breakdown -->
             <div class="vat-breakdown-card">
-              <h3>Récapitulatif TVA</h3>
+              <h3 i18n="@@invoices.invoice-wizard.recapitulatif.tva.0918d3bc">Récapitulatif TVA</h3>
               <table class="vat-breakdown-table">
                 <thead>
                   <tr>
-                    <th>Taux</th>
-                    <th class="text-right">Base imposable</th>
-                    <th class="text-right">TVA</th>
+                    <th i18n="@@invoices.invoice-wizard.taux.18bc95b8">Taux</th>
+                    <th class="text-right" i18n="@@invoices.invoice-wizard.base.imposable.e1baa7e1">Base imposable</th>
+                    <th class="text-right" i18n="@@invoices.invoice-wizard.tva.fb62cb5d">TVA</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -549,21 +547,21 @@ interface WizardProductSuggestion {
             <!-- Grand Total -->
             <div class="grand-total-card">
               <div class="total-row">
-                <span class="total-label">Sous-total HT</span>
+                <span class="total-label" i18n="@@invoices.invoice-wizard.sous.total.ht.724598f6">Sous-total HT</span>
                 <span class="total-value">{{ totals().subTotalHT | number:'1.3-3' }} {{ currency }}</span>
               </div>
               @if (totals().totalDiscount > 0) {
                 <div class="total-row discount">
-                  <span class="total-label">Remises</span>
+                  <span class="total-label" i18n="@@invoices.invoice-wizard.remises.e0700e8c">Remises</span>
                   <span class="total-value">-{{ totals().totalDiscount | number:'1.3-3' }} {{ currency }}</span>
                 </div>
               }
               <div class="total-row">
-                <span class="total-label">Total HT</span>
+                <span class="total-label" i18n="@@invoices.invoice-wizard.total.ht.2ca17ae6">Total HT</span>
                 <span class="total-value">{{ totals().totalHT | number:'1.3-3' }} {{ currency }}</span>
               </div>
               <div class="total-row">
-                <span class="total-label">Total TVA</span>
+                <span class="total-label" i18n="@@invoices.invoice-wizard.total.tva.605c4b2e">Total TVA</span>
                 <span class="total-value">{{ totals().totalVat | number:'1.3-3' }} {{ currency }}</span>
               </div>
               @if (totals().totalFodec > 0.0005 || totals().totalFodec < -0.0005) {
@@ -574,13 +572,13 @@ interface WizardProductSuggestion {
               }
               @if (totals().fiscalStampAmount > 0.0005 || totals().fiscalStampAmount < -0.0005) {
                 <div class="total-row">
-                  <span class="total-label">Timbre fiscal</span>
+                  <span class="total-label" i18n="@@invoices.invoice-wizard.timbre.fiscal.1f8f7dd1">Timbre fiscal</span>
                   <span class="total-value">{{ totals().fiscalStampAmount | number:'1.3-3' }} {{ currency }}</span>
                 </div>
               }
               <p-divider></p-divider>
               <div class="total-row grand">
-                <span class="total-label">Total TTC</span>
+                <span class="total-label" i18n="@@invoices.invoice-wizard.total.ttc.9e80ff7c">Total TTC</span>
                 <span class="total-value">{{ totals().totalTTC | number:'1.3-3' }} {{ currency }}</span>
               </div>
             </div>
@@ -591,9 +589,7 @@ interface WizardProductSuggestion {
       <!-- Compliance Info -->
       <div class="compliance-info">
         <i class="pi pi-info-circle"></i>
-        <span>
-          Taux de TVA conformes à la législation tunisienne : 0% (exonéré), 7% (réduit), 13% (intermédiaire), 19% (normal)
-        </span>
+        <span i18n="@@invoices.invoice-wizard.taux.de.tva.conformes.a.la.legislation.tunisienn.54fefbf1">Taux de TVA conformes à la législation tunisienne : 0% (exonéré), 7% (réduit), 13% (intermédiaire), 19% (normal)</span>
       </div>
 
       <app-quick-create-product-dialog

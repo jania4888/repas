@@ -36,11 +36,11 @@ export interface ProjectTaskMoveEvent {
   styleUrls: ['../projects.scss'],
   template: `
     @if (!project) {
-      <p class="text-color-secondary">Projet introuvable.</p>
+      <p class="text-color-secondary" i18n="@@projects.components.projet.introuvable.85f8f1d0">Projet introuvable.</p>
     } @else if (!hasVisibleTasks) {
       <app-empty-state
         icon="pi-check-square"
-        title="Aucune tâche visible"
+        title="Aucune tâche visible" i18n-title="Aucune tâche visible"
         description="Créez une tâche ou ajustez vos filtres pour alimenter le Kanban." />
     } @else {
       <div class="proj-kanban" [class.proj-kanban--readonly]="!canUpdateTask">
@@ -81,7 +81,7 @@ export interface ProjectTaskMoveEvent {
                     </div>
                     <p-progressBar [value]="task.progressPercent" [showValue]="false" styleClass="mt-1" />
                     @if (task.isOverdue) {
-                      <span class="text-danger">En retard</span>
+                      <span class="text-danger" i18n="@@projects.components.en.retard.40c1dde3">En retard</span>
                     }
                   </button>
                 </div>
@@ -91,13 +91,9 @@ export interface ProjectTaskMoveEvent {
         }
       </div>
       @if (!canUpdateTask) {
-        <p class="proj-kanban-readonly-hint text-sm text-color-secondary">
-          Vous n'avez pas les droits pour déplacer les tâches sur ce tableau.
-        </p>
+        <p class="proj-kanban-readonly-hint text-sm text-color-secondary" i18n="@@projects.components.vous.n.avez.pas.les.droits.pour.deplacer.les.tac.81b95700">Vous n'avez pas les droits pour déplacer les tâches sur ce tableau.</p>
       } @else {
-        <p class="proj-kanban-readonly-hint text-sm text-color-secondary">
-          Glissez une carte vers une autre colonne pour changer son statut.
-        </p>
+        <p class="proj-kanban-readonly-hint text-sm text-color-secondary" i18n="@@projects.components.glissez.une.carte.vers.une.autre.colonne.pour.ch.6b8f1b8b">Glissez une carte vers une autre colonne pour changer son statut.</p>
       }
     }
   `

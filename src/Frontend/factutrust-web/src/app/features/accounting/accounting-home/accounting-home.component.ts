@@ -5,7 +5,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 import { AuthService } from '@core/services/auth.service';
 import {
   ACCOUNTING_MODULES,
-  ACCOUNTING_HOME_HIDDEN_MODULE_TITLES,
+  ACCOUNTING_HOME_HIDDEN_MODULE_IDS,
   AccountingModuleDef
 } from '@core/config/accounting-modules.config';
 import { canSeeNavEntry } from '@core/utils/nav-visibility';
@@ -16,7 +16,7 @@ import { AppModule } from '@core/models/app-module';
   standalone: true,
   imports: [CommonModule, RouterLink, PageHeaderComponent],
   template: `
-    <app-page-header title="Comptabilité" subtitle="Modules et fonctions de la comptabilité générale" />
+    <app-page-header title="Comptabilité" i18n-title="Comptabilité" subtitle="Modules et fonctions de la comptabilité générale" />
 
     <div class="acc-modules">
       @for (mod of visibleModules(); track mod.title) {
@@ -104,7 +104,7 @@ export class AccountingHomeComponent {
             permissionsAll: link.perms
           }))
       }))
-      .filter(mod => !ACCOUNTING_HOME_HIDDEN_MODULE_TITLES.has(mod.title))
+      .filter(mod => !ACCOUNTING_HOME_HIDDEN_MODULE_IDS.has(mod.id))
       .filter(mod => mod.links.length > 0);
   });
 }

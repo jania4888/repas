@@ -52,34 +52,30 @@ interface PeriodOption {
   ],
   template: `
     <app-page-header 
-      title="Rapports Ventes" 
+      title="Rapports Ventes" i18n-title="Rapports Ventes" 
       subtitle="Analysez vos performances et suivez vos indicateurs clés de ventes">
       <app-button 
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()">
-        Exporter
-      </app-button>
+        (click)="onExport()" i18n="@@reports.sales.exporter.0cd84bdc">Exporter</app-button>
       <app-button 
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.sales.imprimer.5382c09d">Imprimer</app-button>
     </app-page-header>
 
     <!-- Period Filter -->
     <div class="filter-section">
       <div class="filter-group">
-        <label for="period" class="filter-label">Période</label>
+        <label for="period" class="filter-label" i18n="@@reports.sales.periode.de2110b7">Période</label>
         <select 
           id="period"
           [(ngModel)]="selectedPeriod" 
           (ngModelChange)="onPeriodChange()"
           class="filter-select"
-          aria-label="Sélectionner la période des rapports">
+          aria-label="Sélectionner la période des rapports" i18n-aria-label="Sélectionner la période des rapports">
           @for (period of periodOptions; track period.value) {
             <option [value]="period.value">{{ period.label }}</option>
           }
@@ -161,21 +157,21 @@ interface PeriodOption {
         (valueChange)="onTabChange($event)"
         [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0"><i class="pi pi-chart-line"></i><span>Revenus et clients</span></p-tab>
-          <p-tab [value]="1"><i class="pi pi-calendar"></i><span>Synthèse mensuelle</span></p-tab>
-          <p-tab [value]="2"><i class="pi pi-table"></i><span>Chiffres d'affaires par mois / Année</span></p-tab>
-          <p-tab [value]="3"><i class="pi pi-percentage"></i><span>Taux de conversion devis</span></p-tab>
-          <p-tab [value]="4"><i class="pi pi-chart-bar"></i><span>Répartition par statut</span></p-tab>
-          <p-tab [value]="5"><i class="pi pi-chart-bar"></i><span>Performance produits</span></p-tab>
-          <p-tab [value]="6"><i class="pi pi-chart-line"></i><span>Évolution ventes par produit</span></p-tab>
-          <p-tab [value]="7"><i class="pi pi-shopping-cart"></i><span>Indicateurs panier</span></p-tab>
-          <p-tab [value]="8"><i class="pi pi-box"></i><span>Produits jamais vendus</span></p-tab>
-          <p-tab [value]="9"><i class="pi pi-tag"></i><span>CA par catégorie</span></p-tab>
-          <p-tab [value]="10"><i class="pi pi-list"></i><span>Transactions clients</span></p-tab>
-          <p-tab [value]="11"><i class="pi pi-box"></i><span>Détails ventes par ligne</span></p-tab>
-          <p-tab [value]="12"><i class="pi pi-calculator"></i><span>TVA ventes</span></p-tab>
-          <p-tab [value]="13"><i class="pi pi-percentage"></i><span>Retenues clients</span></p-tab>
-          <p-tab [value]="14"><i class="pi pi-exclamation-triangle"></i><span>Factures en retard</span></p-tab>
+          <p-tab [value]="0"><i class="pi pi-chart-line"></i><span i18n="@@reports.sales.revenus.et.clients.893c8058">Revenus et clients</span></p-tab>
+          <p-tab [value]="1"><i class="pi pi-calendar"></i><span i18n="@@reports.sales.synthese.mensuelle.bab5b563">Synthèse mensuelle</span></p-tab>
+          <p-tab [value]="2"><i class="pi pi-table"></i><span i18n="@@reports.sales.chiffres.d.affaires.par.mois.annee.cc6a49c6">Chiffres d'affaires par mois / Année</span></p-tab>
+          <p-tab [value]="3"><i class="pi pi-percentage"></i><span i18n="@@reports.sales.taux.de.conversion.devis.8bc52158">Taux de conversion devis</span></p-tab>
+          <p-tab [value]="4"><i class="pi pi-chart-bar"></i><span i18n="@@reports.sales.repartition.par.statut.05b7c49b">Répartition par statut</span></p-tab>
+          <p-tab [value]="5"><i class="pi pi-chart-bar"></i><span i18n="@@reports.sales.performance.produits.fc69303c">Performance produits</span></p-tab>
+          <p-tab [value]="6"><i class="pi pi-chart-line"></i><span i18n="@@reports.sales.evolution.ventes.par.produit.703fd446">Évolution ventes par produit</span></p-tab>
+          <p-tab [value]="7"><i class="pi pi-shopping-cart"></i><span i18n="@@reports.sales.indicateurs.panier.1d499282">Indicateurs panier</span></p-tab>
+          <p-tab [value]="8"><i class="pi pi-box"></i><span i18n="@@reports.sales.produits.jamais.vendus.607efbe9">Produits jamais vendus</span></p-tab>
+          <p-tab [value]="9"><i class="pi pi-tag"></i><span i18n="@@reports.sales.ca.par.categorie.e22fee46">CA par catégorie</span></p-tab>
+          <p-tab [value]="10"><i class="pi pi-list"></i><span i18n="@@reports.sales.transactions.clients.32259f49">Transactions clients</span></p-tab>
+          <p-tab [value]="11"><i class="pi pi-box"></i><span i18n="@@reports.sales.details.ventes.par.ligne.2ed7995e">Détails ventes par ligne</span></p-tab>
+          <p-tab [value]="12"><i class="pi pi-calculator"></i><span i18n="@@reports.sales.tva.ventes.117028f5">TVA ventes</span></p-tab>
+          <p-tab [value]="13"><i class="pi pi-percentage"></i><span i18n="@@reports.sales.retenues.clients.68c049c1">Retenues clients</span></p-tab>
+          <p-tab [value]="14"><i class="pi pi-exclamation-triangle"></i><span i18n="@@reports.sales.factures.en.retard.7fc4c2c8">Factures en retard</span></p-tab>
         </p-tablist>
         <p-tabpanels>
         <p-tabpanel [value]="0">
@@ -184,14 +180,14 @@ interface PeriodOption {
       <!-- Revenue Chart -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Évolution des revenus</h2>
+          <h2 class="section-title" i18n="@@reports.sales.evolution.des.revenus.4d28fd3c">Évolution des revenus</h2>
           <span class="section-subtitle">Revenus des factures payées sur la période{{ periodDateRangeLabel() ? ' (' + periodDateRangeLabel() + ')' : '' }}</span>
         </div>
         @if (loading()) {
           <div class="chart-placeholder">
             <div class="loading-placeholder">
               <i class="pi pi-spin pi-spinner"></i>
-              <span>Chargement...</span>
+              <span i18n="@@reports.sales.chargement.a209b664">Chargement...</span>
             </div>
           </div>
         } @else if (reportsData()?.revenueChartData && reportsData()!.revenueChartData.length > 0) {
@@ -227,8 +223,8 @@ interface PeriodOption {
           <div class="chart-placeholder">
             <div class="chart-content">
               <i class="pi pi-chart-line chart-icon"></i>
-              <p class="chart-text">Aucune donnée pour cette période</p>
-              <p class="chart-subtext">Les revenus apparaîtront ici une fois que vous aurez des factures payées. Changez la période ou créez des factures.</p>
+              <p class="chart-text" i18n="@@reports.sales.aucune.donnee.pour.cette.periode.b2a99770">Aucune donnée pour cette période</p>
+              <p class="chart-subtext" i18n="@@reports.sales.les.revenus.apparaitront.ici.une.fois.que.vous.a.025be54c">Les revenus apparaîtront ici une fois que vous aurez des factures payées. Changez la période ou créez des factures.</p>
             </div>
           </div>
         }
@@ -237,19 +233,19 @@ interface PeriodOption {
       <!-- Top Clients -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Meilleurs clients</h2>
-          <span class="section-subtitle">Top 10 par montant total facturé</span>
+          <h2 class="section-title" i18n="@@reports.sales.meilleurs.clients.6c8fa779">Meilleurs clients</h2>
+          <span class="section-subtitle" i18n="@@reports.sales.top.10.par.montant.total.facture.0344ed0f">Top 10 par montant total facturé</span>
         </div>
         @if (loading()) {
           <div class="loading-placeholder">
             <i class="pi pi-spin pi-spinner"></i>
-            <span>Chargement...</span>
+            <span i18n="@@reports.sales.chargement.a209b664">Chargement...</span>
           </div>
         } @else if (!reportsData()?.topClients?.length) {
           <div class="empty-placeholder">
             <i class="pi pi-info-circle"></i>
-            <p>Aucune donnée disponible</p>
-            <p class="empty-hint">Aucune facture sur cette période. Changez la période ou créez des factures.</p>
+            <p i18n="@@reports.sales.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
+            <p class="empty-hint" i18n="@@reports.sales.aucune.facture.sur.cette.periode.changez.la.peri.52e9330e">Aucune facture sur cette période. Changez la période ou créez des factures.</p>
           </div>
         } @else {
           <p-table 
@@ -258,10 +254,10 @@ interface PeriodOption {
             [rows]="10"
             [rowsPerPageOptions]="[10, 25, 50]"
             styleClass="p-datatable-sm reports-table"
-            aria-label="Tableau des meilleurs clients">
+            aria-label="Tableau des meilleurs clients" i18n-aria-label="Tableau des meilleurs clients">
             <ng-template pTemplate="header">
               <tr>
-                <th>Client</th>
+                <th i18n="@@reports.sales.client.1bdd79b1">Client</th>
                 <th pSortableColumn="invoiceCount" class="text-right">Factures <p-sortIcon field="invoiceCount"></p-sortIcon></th>
                 <th pSortableColumn="totalAmount" class="text-right">Montant total <p-sortIcon field="totalAmount"></p-sortIcon></th>
               </tr>
@@ -290,8 +286,8 @@ interface PeriodOption {
     @if (!loading() && reportsData()?.monthlySummary && reportsData()!.monthlySummary.length > 0) {
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Synthèse mensuelle</h2>
-          <span class="section-subtitle">6 derniers mois</span>
+          <h2 class="section-title" i18n="@@reports.sales.synthese.mensuelle.bab5b563">Synthèse mensuelle</h2>
+          <span class="section-subtitle" i18n="@@reports.sales.6.derniers.mois.c9a9f41e">6 derniers mois</span>
         </div>
         <p-table 
           [value]="reportsData()!.monthlySummary" 
@@ -301,10 +297,10 @@ interface PeriodOption {
           styleClass="p-datatable-sm reports-table">
           <ng-template pTemplate="header">
             <tr>
-              <th>Mois</th>
-              <th class="text-right">Chiffre d'affaires</th>
-              <th class="text-right">Factures</th>
-              <th class="text-right">Payées</th>
+              <th i18n="@@reports.sales.mois.0d304bea">Mois</th>
+              <th class="text-right" i18n="@@reports.sales.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
+              <th class="text-right" i18n="@@reports.sales.factures.da35e4f2">Factures</th>
+              <th class="text-right" i18n="@@reports.sales.payees.1ff22288">Payées</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -323,7 +319,7 @@ interface PeriodOption {
       <div class="section">
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucune donnée pour la synthèse mensuelle</p>
+          <p i18n="@@reports.sales.aucune.donnee.pour.la.synthese.mensuelle.8d28c95b">Aucune donnée pour la synthèse mensuelle</p>
         </div>
       </div>
     }
@@ -333,19 +329,19 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section crosstab-section">
       <div class="section-header">
-        <h2 class="section-title">Chiffres d'affaires par mois / Année</h2>
-        <span class="section-subtitle">Chiffres d'affaires par mois et année - 5 dernières années (factures payées)</span>
+        <h2 class="section-title" i18n="@@reports.sales.chiffres.d.affaires.par.mois.annee.cc6a49c6">Chiffres d'affaires par mois / Année</h2>
+        <span class="section-subtitle" i18n="@@reports.sales.chiffres.d.affaires.par.mois.et.annee.5.derniere.e5892f1b">Chiffres d'affaires par mois et année - 5 dernières années (factures payées)</span>
       </div>
       @if (crossTabLoading()) {
         <div class="loading-placeholder">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.sales.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!crossTabData()) {
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucune donnée disponible</p>
-          <p class="empty-hint">Aucune facture payée sur la période. Le tableau croisé sera disponible après enregistrement de factures payées.</p>
+          <p i18n="@@reports.sales.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
+          <p class="empty-hint" i18n="@@reports.sales.aucune.facture.payee.sur.la.periode.le.tableau.c.82911fcd">Aucune facture payée sur la période. Le tableau croisé sera disponible après enregistrement de factures payées.</p>
         </div>
       } @else {
         @if (crossTabInsights().length > 0) {
@@ -364,14 +360,14 @@ interface PeriodOption {
         </div>
         }
         <div class="crosstab-table-wrapper">
-          <table class="crosstab-table" aria-label="Tableau croisé des chiffres d'affaires par mois et année">
+          <table class="crosstab-table" aria-label="Tableau croisé des chiffres d'affaires par mois et année" i18n-aria-label="Tableau croisé des chiffres d'affaires par mois et année">
             <thead>
               <tr>
-                <th scope="col">Année</th>
+                <th scope="col" i18n="@@reports.sales.annee.1f910d98">Année</th>
                 @for (month of crossTabData()!.monthLabels; track month) {
                   <th scope="col" class="text-right">{{ month }}</th>
                 }
-                <th scope="col" class="text-right total-col">Total</th>
+                <th scope="col" class="text-right total-col" i18n="@@reports.sales.total.b25928c6">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -387,7 +383,7 @@ interface PeriodOption {
             </tbody>
             <tfoot>
               <tr class="totals-row">
-                <th scope="row">Total</th>
+                <th scope="row" i18n="@@reports.sales.total.b25928c6">Total</th>
                 @for (col of crossTabData()!.columnTotals; track $index) {
                   <td class="text-right amount">{{ col | number:'1.3-3' }}</td>
                 }
@@ -405,8 +401,8 @@ interface PeriodOption {
     @if (!loading() && reportsData()?.quoteConversionRate !== undefined) {
       <div class="section conversion-section">
         <div class="section-header">
-          <h2 class="section-title">Taux de conversion devis</h2>
-          <span class="section-subtitle">Pourcentage de devis convertis en facture</span>
+          <h2 class="section-title" i18n="@@reports.sales.taux.de.conversion.devis.8bc52158">Taux de conversion devis</h2>
+          <span class="section-subtitle" i18n="@@reports.sales.pourcentage.de.devis.convertis.en.facture.67961fcc">Pourcentage de devis convertis en facture</span>
         </div>
         <div class="conversion-value">
           <span class="conversion-percent">{{ reportsData()!.quoteConversionRate }}</span>
@@ -416,7 +412,7 @@ interface PeriodOption {
       <div class="section">
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucune donnée de conversion devis disponible</p>
+          <p i18n="@@reports.sales.aucune.donnee.de.conversion.devis.disponible.617d80bc">Aucune donnée de conversion devis disponible</p>
         </div>
       </div>
     }
@@ -426,18 +422,18 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Répartition par statut</h2>
-        <span class="section-subtitle">Répartition des factures selon leur statut</span>
+        <h2 class="section-title" i18n="@@reports.sales.repartition.par.statut.05b7c49b">Répartition par statut</h2>
+        <span class="section-subtitle" i18n="@@reports.sales.repartition.des.factures.selon.leur.statut.8ebe007e">Répartition des factures selon leur statut</span>
       </div>
       @if (loading()) {
         <div class="loading-placeholder">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Chargement...</span>
+          <span i18n="@@reports.sales.chargement.a209b664">Chargement...</span>
         </div>
       } @else if (!reportsData()?.statusBreakdown?.length) {
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
-          <p>Aucune donnée disponible</p>
+          <p i18n="@@reports.sales.aucune.donnee.disponible.78c36aa1">Aucune donnée disponible</p>
         </div>
       } @else {
         <div class="status-grid">
@@ -468,13 +464,13 @@ interface PeriodOption {
         <div class="tab-content">
           <div class="section">
             <div class="section-header">
-              <h2 class="section-title">Performance produits</h2>
-              <span class="section-subtitle">Classement par CA avec marge et part du chiffre d'affaires.</span>
+              <h2 class="section-title" i18n="@@reports.sales.performance.produits.fc69303c">Performance produits</h2>
+              <span class="section-subtitle" i18n="@@reports.sales.classement.par.ca.avec.marge.et.part.du.chiffre..8232e13e">Classement par CA avec marge et part du chiffre d'affaires.</span>
             </div>
             @if (productPerformanceLoading()) {
-              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.sales.chargement.a209b664">Chargement...</span></div>
             } @else if (!productPerformance().length) {
-              <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune donnée pour cette période.</p></div>
+              <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.sales.aucune.donnee.pour.cette.periode.254e84f4">Aucune donnée pour cette période.</p></div>
             } @else {
               <p-table
                 [value]="productPerformance()"
@@ -482,17 +478,17 @@ interface PeriodOption {
                 [rows]="25"
                 [rowsPerPageOptions]="[10, 25, 50]"
                 styleClass="p-datatable-sm reports-table"
-                aria-label="Performance produits">
+                aria-label="Performance produits" i18n-aria-label="Performance produits">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>Produit</th>
-                    <th>Catégorie</th>
-                    <th class="text-right">Quantité</th>
-                    <th class="text-right">CA</th>
-                    <th class="text-right">Coût</th>
-                    <th class="text-right">Marge</th>
-                    <th class="text-right">Marge %</th>
-                    <th class="text-right">Part CA %</th>
+                    <th i18n="@@reports.sales.produit.ff673dc2">Produit</th>
+                    <th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th>
+                    <th class="text-right" i18n="@@reports.sales.quantite.09a38fda">Quantité</th>
+                    <th class="text-right" i18n="@@reports.sales.ca.09acbb7d">CA</th>
+                    <th class="text-right" i18n="@@reports.sales.cout.4a4aa395">Coût</th>
+                    <th class="text-right" i18n="@@reports.sales.marge.d9ef1a1d">Marge</th>
+                    <th class="text-right" i18n="@@reports.sales.marge.143c2670">Marge %</th>
+                    <th class="text-right" i18n="@@reports.sales.part.ca.e28d941d">Part CA %</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
@@ -516,13 +512,13 @@ interface PeriodOption {
         <div class="tab-content">
           <div class="section">
             <div class="section-header">
-              <h2 class="section-title">Évolution ventes par produit</h2>
-              <span class="section-subtitle">Ventes par produit et par mois sur la période.</span>
+              <h2 class="section-title" i18n="@@reports.sales.evolution.ventes.par.produit.703fd446">Évolution ventes par produit</h2>
+              <span class="section-subtitle" i18n="@@reports.sales.ventes.par.produit.et.par.mois.sur.la.periode.4d0b191d">Ventes par produit et par mois sur la période.</span>
             </div>
             @if (productSalesTrendLoading()) {
-              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.sales.chargement.a209b664">Chargement...</span></div>
             } @else if (!productSalesTrend().length) {
-              <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune donnée pour cette période.</p></div>
+              <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.sales.aucune.donnee.pour.cette.periode.254e84f4">Aucune donnée pour cette période.</p></div>
             } @else {
               <p-table
                 [value]="productSalesTrend()"
@@ -530,14 +526,14 @@ interface PeriodOption {
                 [rows]="25"
                 [rowsPerPageOptions]="[10, 25, 50]"
                 styleClass="p-datatable-sm reports-table"
-                aria-label="Évolution ventes par produit">
+                aria-label="Évolution ventes par produit" i18n-aria-label="Évolution ventes par produit">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>Période</th>
-                    <th>Produit</th>
-                    <th>Catégorie</th>
-                    <th class="text-right">Quantité</th>
-                    <th class="text-right">CA</th>
+                    <th i18n="@@reports.sales.periode.de2110b7">Période</th>
+                    <th i18n="@@reports.sales.produit.ff673dc2">Produit</th>
+                    <th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th>
+                    <th class="text-right" i18n="@@reports.sales.quantite.09a38fda">Quantité</th>
+                    <th class="text-right" i18n="@@reports.sales.ca.09acbb7d">CA</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
@@ -558,13 +554,13 @@ interface PeriodOption {
         <div class="tab-content">
           <div class="section">
             <div class="section-header">
-              <h2 class="section-title">Indicateurs panier</h2>
-              <span class="section-subtitle">Panier moyen et nombre de lignes par facture.</span>
+              <h2 class="section-title" i18n="@@reports.sales.indicateurs.panier.1d499282">Indicateurs panier</h2>
+              <span class="section-subtitle" i18n="@@reports.sales.panier.moyen.et.nombre.de.lignes.par.facture.024e4898">Panier moyen et nombre de lignes par facture.</span>
             </div>
             @if (basketMetricsLoading()) {
-              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.sales.chargement.a209b664">Chargement...</span></div>
             } @else if (!basketMetrics()) {
-              <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune donnée pour cette période.</p></div>
+              <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.sales.aucune.donnee.pour.cette.periode.254e84f4">Aucune donnée pour cette période.</p></div>
             } @else {
               <div class="stats-grid">
                 <app-stat-card
@@ -600,13 +596,13 @@ interface PeriodOption {
         <div class="tab-content">
           <div class="section">
             <div class="section-header">
-              <h2 class="section-title">Produits jamais vendus</h2>
-              <span class="section-subtitle">Produits actifs sans vente sur la période (opportunités de mise en avant).</span>
+              <h2 class="section-title" i18n="@@reports.sales.produits.jamais.vendus.607efbe9">Produits jamais vendus</h2>
+              <span class="section-subtitle" i18n="@@reports.sales.produits.actifs.sans.vente.sur.la.periode.opport.d2c7154c">Produits actifs sans vente sur la période (opportunités de mise en avant).</span>
             </div>
             @if (productsNeverSoldLoading()) {
-              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.sales.chargement.a209b664">Chargement...</span></div>
             } @else if (!productsNeverSold().length) {
-              <div class="empty-placeholder"><i class="pi pi-check-circle"></i><p>Tous vos produits actifs ont été vendus sur cette période.</p></div>
+              <div class="empty-placeholder"><i class="pi pi-check-circle"></i><p i18n="@@reports.sales.tous.vos.produits.actifs.ont.ete.vendus.sur.cett.377fcc3e">Tous vos produits actifs ont été vendus sur cette période.</p></div>
             } @else {
               <p-table
                 [value]="productsNeverSold()"
@@ -614,12 +610,12 @@ interface PeriodOption {
                 [rows]="25"
                 [rowsPerPageOptions]="[10, 25, 50]"
                 styleClass="p-datatable-sm reports-table"
-                aria-label="Produits jamais vendus">
+                aria-label="Produits jamais vendus" i18n-aria-label="Produits jamais vendus">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>Produit</th>
-                    <th>Catégorie</th>
-                    <th class="text-right">Prix unitaire</th>
+                    <th i18n="@@reports.sales.produit.ff673dc2">Produit</th>
+                    <th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th>
+                    <th class="text-right" i18n="@@reports.sales.prix.unitaire.3e848c96">Prix unitaire</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
@@ -638,13 +634,13 @@ interface PeriodOption {
         <div class="tab-content">
           <div class="section">
             <div class="section-header">
-              <h2 class="section-title">CA par catégorie</h2>
-              <span class="section-subtitle">Répartition du chiffre d'affaires par catégorie.</span>
+              <h2 class="section-title" i18n="@@reports.sales.ca.par.categorie.e22fee46">CA par catégorie</h2>
+              <span class="section-subtitle" i18n="@@reports.sales.repartition.du.chiffre.d.affaires.par.categorie.766851c4">Répartition du chiffre d'affaires par catégorie.</span>
             </div>
             @if (revenueByCategoryLoading()) {
-              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+              <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.sales.chargement.a209b664">Chargement...</span></div>
             } @else if (!revenueByCategory().length) {
-              <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune donnée pour cette période.</p></div>
+              <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.sales.aucune.donnee.pour.cette.periode.254e84f4">Aucune donnée pour cette période.</p></div>
             } @else {
               <p-table
                 [value]="revenueByCategory()"
@@ -652,12 +648,12 @@ interface PeriodOption {
                 [rows]="25"
                 [rowsPerPageOptions]="[10, 25, 50]"
                 styleClass="p-datatable-sm reports-table"
-                aria-label="CA par catégorie">
+                aria-label="CA par catégorie" i18n-aria-label="CA par catégorie">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>Catégorie</th>
-                    <th class="text-right">Quantité</th>
-                    <th class="text-right">Chiffre d'affaires</th>
+                    <th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th>
+                    <th class="text-right" i18n="@@reports.sales.quantite.09a38fda">Quantité</th>
+                    <th class="text-right" i18n="@@reports.sales.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
@@ -676,13 +672,13 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Transactions clients</h2>
-        <span class="section-subtitle">Factures et paiements sur la période</span>
+        <h2 class="section-title" i18n="@@reports.sales.transactions.clients.32259f49">Transactions clients</h2>
+        <span class="section-subtitle" i18n="@@reports.sales.factures.et.paiements.sur.la.periode.0d35f728">Factures et paiements sur la période</span>
       </div>
       @if (clientTransactionsLoading()) {
-        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.sales.chargement.a209b664">Chargement...</span></div>
       } @else if (!clientTransactions().length) {
-        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune transaction sur cette période</p></div>
+        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.sales.aucune.transaction.sur.cette.periode.2ed99811">Aucune transaction sur cette période</p></div>
       } @else {
         <p-table 
           [value]="clientTransactions()" 
@@ -690,13 +686,13 @@ interface PeriodOption {
           [rows]="25"
           [rowsPerPageOptions]="[10, 25, 50]"
           styleClass="p-datatable-sm reports-table" 
-          aria-label="Transactions clients">
+          aria-label="Transactions clients" i18n-aria-label="Transactions clients">
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
-              <th>Type</th>
-              <th>Client</th>
-              <th>Référence</th>
+              <th i18n="@@reports.sales.type.3deb7456">Type</th>
+              <th i18n="@@reports.sales.client.1bdd79b1">Client</th>
+              <th i18n="@@reports.sales.reference.f8130bb0">Référence</th>
               <th pSortableColumn="amount" class="text-right">Montant <p-sortIcon field="amount"></p-sortIcon></th>
             </tr>
           </ng-template>
@@ -718,13 +714,13 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Détails ventes par ligne produit</h2>
-        <span class="section-subtitle">Lignes de factures agrégées par produit sur la période</span>
+        <h2 class="section-title" i18n="@@reports.sales.details.ventes.par.ligne.produit.2fe7a584">Détails ventes par ligne produit</h2>
+        <span class="section-subtitle" i18n="@@reports.sales.lignes.de.factures.agregees.par.produit.sur.la.p.134198e2">Lignes de factures agrégées par produit sur la période</span>
       </div>
       @if (salesByLineLoading()) {
-        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.sales.chargement.a209b664">Chargement...</span></div>
       } @else if (!salesByLine().length) {
-        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune ligne de vente sur cette période</p></div>
+        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.sales.aucune.ligne.de.vente.sur.cette.periode.86cbba64">Aucune ligne de vente sur cette période</p></div>
       } @else {
         <p-table 
           [value]="salesByLine()" 
@@ -732,15 +728,15 @@ interface PeriodOption {
           [rows]="25"
           [rowsPerPageOptions]="[10, 25, 50]"
           styleClass="p-datatable-sm reports-table" 
-          aria-label="Détails ventes par ligne">
+          aria-label="Détails ventes par ligne" i18n-aria-label="Détails ventes par ligne">
           <ng-template pTemplate="header">
             <tr>
-              <th>Produit</th>
-              <th>Code</th>
-              <th>Catégorie</th>
+              <th i18n="@@reports.sales.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.sales.code.adac6937">Code</th>
+              <th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th>
               <th pSortableColumn="quantity" class="text-right">Quantité <p-sortIcon field="quantity"></p-sortIcon></th>
               <th pSortableColumn="revenue" class="text-right">Chiffre d'affaires <p-sortIcon field="revenue"></p-sortIcon></th>
-              <th class="text-right">TVA</th>
+              <th class="text-right" i18n="@@reports.sales.tva.fb62cb5d">TVA</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -762,13 +758,13 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">TVA ventes</h2>
-        <span class="section-subtitle">Agrégat TVA par taux sur la période</span>
+        <h2 class="section-title" i18n="@@reports.sales.tva.ventes.117028f5">TVA ventes</h2>
+        <span class="section-subtitle" i18n="@@reports.sales.agregat.tva.par.taux.sur.la.periode.94b0dc97">Agrégat TVA par taux sur la période</span>
       </div>
       @if (salesVatLoading()) {
-        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.sales.chargement.a209b664">Chargement...</span></div>
       } @else if (!salesVat().length) {
-        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune TVA ventes sur cette période</p></div>
+        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.sales.aucune.tva.ventes.sur.cette.periode.0656e86b">Aucune TVA ventes sur cette période</p></div>
       } @else {
         <p-table 
           [value]="salesVat()" 
@@ -776,11 +772,11 @@ interface PeriodOption {
           [rows]="10"
           [rowsPerPageOptions]="[10, 25, 50]"
           styleClass="p-datatable-sm reports-table" 
-          aria-label="TVA ventes">
+          aria-label="TVA ventes" i18n-aria-label="TVA ventes">
           <ng-template pTemplate="header">
             <tr>
-              <th>Taux TVA</th>
-              <th class="text-right">Base taxable</th>
+              <th i18n="@@reports.sales.taux.tva.c0830fcc">Taux TVA</th>
+              <th class="text-right" i18n="@@reports.sales.base.taxable.449d603a">Base taxable</th>
               <th pSortableColumn="totalVatAmount" class="text-right">Montant TVA <p-sortIcon field="totalVatAmount"></p-sortIcon></th>
             </tr>
           </ng-template>
@@ -800,13 +796,13 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section">
       <div class="section-header">
-        <h2 class="section-title">Total des retenues pour les clients</h2>
-        <span class="section-subtitle">Retenues subies agrégées par client (date d'encaissement) — hors déclaration TEJ déclarant</span>
+        <h2 class="section-title" i18n="@@reports.sales.total.des.retenues.pour.les.clients.040735f7">Total des retenues pour les clients</h2>
+        <span class="section-subtitle" i18n="@@reports.sales.retenues.subies.agregees.par.client.date.d.encai.c8b8dc7b">Retenues subies agrégées par client (date d'encaissement) — hors déclaration TEJ déclarant</span>
       </div>
       @if (clientWithholdingsLoading()) {
-        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.sales.chargement.a209b664">Chargement...</span></div>
       } @else if (!clientWithholdings().length) {
-        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p>Aucune retenue client sur cette période</p></div>
+        <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.sales.aucune.retenue.client.sur.cette.periode.847be151">Aucune retenue client sur cette période</p></div>
       } @else {
         <p-table
           [value]="clientWithholdings()"
@@ -814,13 +810,13 @@ interface PeriodOption {
           [rows]="10"
           [rowsPerPageOptions]="[10, 25, 50]"
           styleClass="p-datatable-sm reports-table"
-          aria-label="Retenues clients">
+          aria-label="Retenues clients" i18n-aria-label="Retenues clients">
           <ng-template pTemplate="header">
             <tr>
-              <th>Client</th>
-              <th class="text-right">N° paiements</th>
-              <th class="text-right">Total retenue</th>
-              <th>Devise</th>
+              <th i18n="@@reports.sales.client.1bdd79b1">Client</th>
+              <th class="text-right" i18n="@@reports.sales.n.paiements.cdb6fb06">N° paiements</th>
+              <th class="text-right" i18n="@@reports.sales.total.retenue.31936a2f">Total retenue</th>
+              <th i18n="@@reports.sales.devise.eb2e42c4">Devise</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -833,7 +829,7 @@ interface PeriodOption {
           </ng-template>
           <ng-template pTemplate="footer">
             <tr>
-              <td><strong>Total</strong></td>
+              <td><strong i18n="@@reports.sales.total.b25928c6">Total</strong></td>
               <td class="text-right"><strong>{{ clientWithholdingsPaymentTotal() }}</strong></td>
               <td class="text-right amount"><strong>{{ clientWithholdingsTotal() | number:'1.3-3' }}</strong></td>
               <td></td>
@@ -849,10 +845,8 @@ interface PeriodOption {
     @if (!loading() && reportsData()?.overdueInvoicesCount && reportsData()!.overdueInvoicesCount > 0) {
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Factures en retard</h2>
-          <a [routerLink]="['/invoices']" class="section-link">
-            Voir tout
-          </a>
+          <h2 class="section-title" i18n="@@reports.sales.factures.en.retard.7fc4c2c8">Factures en retard</h2>
+          <a [routerLink]="['/invoices']" class="section-link" i18n="@@reports.sales.voir.tout.7b7d86e8">Voir tout</a>
         </div>
         <p-table 
           [value]="reportsData()!.overdueInvoices" 
@@ -862,9 +856,9 @@ interface PeriodOption {
           styleClass="p-datatable-sm reports-table">
           <ng-template pTemplate="header">
             <tr>
-              <th>Numéro</th>
-              <th>Client</th>
-              <th class="text-right">Montant</th>
+              <th i18n="@@reports.sales.numero.15e73db0">Numéro</th>
+              <th i18n="@@reports.sales.client.1bdd79b1">Client</th>
+              <th class="text-right" i18n="@@reports.sales.montant.4adcd9fc">Montant</th>
               <th></th>
             </tr>
           </ng-template>
@@ -895,7 +889,7 @@ interface PeriodOption {
       <div class="section">
         <div class="empty-placeholder">
           <i class="pi pi-check-circle"></i>
-          <p>Aucune facture en retard</p>
+          <p i18n="@@reports.sales.aucune.facture.en.retard.409595bd">Aucune facture en retard</p>
         </div>
       </div>
     }
@@ -912,7 +906,7 @@ interface PeriodOption {
         <div class="print-header__brand-bar"></div>
         <div class="print-header__content">
           <div class="print-header__left">
-            <h1 class="print-header__title">RAPPORT VENTES</h1>
+            <h1 class="print-header__title" i18n="@@reports.sales.rapport.ventes.1438231f">RAPPORT VENTES</h1>
             <p class="print-header__subtitle">{{ activeTabName }}</p>
             <p class="print-header__period">Période : {{ periodOptions[selectedPeriodIndex].label || 'Tout' }}
               @if (periodDateRangeLabel()) {
@@ -921,7 +915,7 @@ interface PeriodOption {
             </p>
           </div>
           <div class="print-header__right">
-            <p class="print-header__app">InstaFact</p>
+            <p class="print-header__app" i18n="@@reports.sales.instafact.ff6221f4">InstaFact</p>
             <p class="print-header__date">Généré le {{ printDate }}</p>
           </div>
         </div>
@@ -931,23 +925,23 @@ interface PeriodOption {
       @if (reportsData()) {
         <div class="print-kpi-bar">
           <div class="print-kpi-item">
-            <span class="print-kpi-item__label">Revenus totaux</span>
+            <span class="print-kpi-item__label" i18n="@@reports.sales.revenus.totaux.7ba0e02a">Revenus totaux</span>
             <span class="print-kpi-item__value">{{ reportsData()!.totalRevenue }}</span>
           </div>
           <div class="print-kpi-item">
-            <span class="print-kpi-item__label">Factures</span>
+            <span class="print-kpi-item__label" i18n="@@reports.sales.factures.da35e4f2">Factures</span>
             <span class="print-kpi-item__value">{{ reportsData()!.totalInvoices }}</span>
           </div>
           <div class="print-kpi-item">
-            <span class="print-kpi-item__label">Taux paiement</span>
+            <span class="print-kpi-item__label" i18n="@@reports.sales.taux.paiement.c676e2b2">Taux paiement</span>
             <span class="print-kpi-item__value">{{ reportsData()!.paymentRate }}</span>
           </div>
           <div class="print-kpi-item">
-            <span class="print-kpi-item__label">À encaisser</span>
+            <span class="print-kpi-item__label" i18n="@@reports.sales.a.encaisser.2850ec24">À encaisser</span>
             <span class="print-kpi-item__value">{{ reportsData()!.amountToCollect }}</span>
           </div>
           <div class="print-kpi-item" [class.print-kpi-item--alert]="reportsData()!.overdueInvoicesCount > 0">
-            <span class="print-kpi-item__label">En retard</span>
+            <span class="print-kpi-item__label" i18n="@@reports.sales.en.retard.40c1dde3">En retard</span>
             <span class="print-kpi-item__value">{{ reportsData()!.overdueInvoicesCount }}</span>
           </div>
         </div>
@@ -956,9 +950,9 @@ interface PeriodOption {
       <!-- Tab Content -->
       @if (activeTabIndex === 0 && reportsData()) {
         @if (reportsData()!.revenueChartData.length) {
-          <h4 class="print-section-title">Évolution des revenus</h4>
+          <h4 class="print-section-title" i18n="@@reports.sales.evolution.des.revenus.4d28fd3c">Évolution des revenus</h4>
           <table class="print-table">
-            <thead><tr><th>Période</th><th class="text-right">Revenus</th><th class="text-right">Factures</th></tr></thead>
+            <thead><tr><th i18n="@@reports.sales.periode.de2110b7">Période</th><th class="text-right" i18n="@@reports.sales.revenus.a08a099a">Revenus</th><th class="text-right" i18n="@@reports.sales.factures.da35e4f2">Factures</th></tr></thead>
             <tbody>
               @for (item of reportsData()!.revenueChartData; track item.label) {
                 <tr>
@@ -971,9 +965,9 @@ interface PeriodOption {
           </table>
         }
         @if (reportsData()!.topClients.length) {
-          <h4 class="print-section-title">Meilleurs clients (Top 10)</h4>
+          <h4 class="print-section-title" i18n="@@reports.sales.meilleurs.clients.top.10.4404801a">Meilleurs clients (Top 10)</h4>
           <table class="print-table">
-            <thead><tr><th>Client</th><th class="text-right">Factures</th><th class="text-right">Montant total</th></tr></thead>
+            <thead><tr><th i18n="@@reports.sales.client.1bdd79b1">Client</th><th class="text-right" i18n="@@reports.sales.factures.da35e4f2">Factures</th><th class="text-right" i18n="@@reports.sales.montant.total.dd001537">Montant total</th></tr></thead>
             <tbody>
               @for (client of reportsData()!.topClients; track client.clientName) {
                 <tr>
@@ -989,7 +983,7 @@ interface PeriodOption {
 
       @if (activeTabIndex === 1 && reportsData()?.monthlySummary?.length) {
         <table class="print-table">
-          <thead><tr><th>Mois</th><th class="text-right">Chiffre d'affaires</th><th class="text-right">Factures</th><th class="text-right">Payées</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.mois.0d304bea">Mois</th><th class="text-right" i18n="@@reports.sales.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th><th class="text-right" i18n="@@reports.sales.factures.da35e4f2">Factures</th><th class="text-right" i18n="@@reports.sales.payees.1ff22288">Payées</th></tr></thead>
           <tbody>
             @for (row of reportsData()!.monthlySummary; track row.monthShort + row.year) {
               <tr>
@@ -1020,11 +1014,11 @@ interface PeriodOption {
         <table class="print-table">
           <thead>
             <tr>
-              <th>Année</th>
+              <th i18n="@@reports.sales.annee.1f910d98">Année</th>
               @for (month of crossTabData()!.monthLabels; track month) {
                 <th class="text-right">{{ month }}</th>
               }
-              <th class="text-right">Total</th>
+              <th class="text-right" i18n="@@reports.sales.total.b25928c6">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -1040,7 +1034,7 @@ interface PeriodOption {
           </tbody>
           <tfoot>
             <tr>
-              <td><strong>Total</strong></td>
+              <td><strong i18n="@@reports.sales.total.b25928c6">Total</strong></td>
               @for (col of crossTabData()!.columnTotals; track $index) {
                 <td class="text-right print-amount"><strong>{{ col | number:'1.3-3' }}</strong></td>
               }
@@ -1053,13 +1047,13 @@ interface PeriodOption {
       @if (activeTabIndex === 3 && reportsData()) {
         <div class="print-conversion">
           <span class="print-conversion-value">{{ reportsData()!.quoteConversionRate }}</span>
-          <span class="print-conversion-label">des devis convertis en facture</span>
+          <span class="print-conversion-label" i18n="@@reports.sales.des.devis.convertis.en.facture.aede1b8a">des devis convertis en facture</span>
         </div>
       }
 
       @if (activeTabIndex === 4 && reportsData()?.statusBreakdown?.length) {
         <table class="print-table">
-          <thead><tr><th>Statut</th><th class="text-right">Nombre</th><th class="text-right">Pourcentage</th><th class="text-right">Montant</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.statut.659499f3">Statut</th><th class="text-right" i18n="@@reports.sales.nombre.e68491e9">Nombre</th><th class="text-right" i18n="@@reports.sales.pourcentage.e34218e3">Pourcentage</th><th class="text-right" i18n="@@reports.sales.montant.4adcd9fc">Montant</th></tr></thead>
           <tbody>
             @for (status of reportsData()!.statusBreakdown; track status.status) {
               <tr>
@@ -1076,7 +1070,7 @@ interface PeriodOption {
       @if (activeTabIndex === 5 && productPerformance().length) {
         <table class="print-table print-table--compact">
           <thead>
-            <tr><th>Produit</th><th>Code</th><th>Catégorie</th><th class="text-right">Qté</th><th class="text-right">CA</th><th class="text-right">Coût</th><th class="text-right">Marge</th><th class="text-right">Marge %</th><th class="text-right">Part CA %</th></tr>
+            <tr><th i18n="@@reports.sales.produit.ff673dc2">Produit</th><th i18n="@@reports.sales.code.adac6937">Code</th><th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th><th class="text-right" i18n="@@reports.sales.qte.a4772129">Qté</th><th class="text-right" i18n="@@reports.sales.ca.09acbb7d">CA</th><th class="text-right" i18n="@@reports.sales.cout.4a4aa395">Coût</th><th class="text-right" i18n="@@reports.sales.marge.d9ef1a1d">Marge</th><th class="text-right" i18n="@@reports.sales.marge.143c2670">Marge %</th><th class="text-right" i18n="@@reports.sales.part.ca.e28d941d">Part CA %</th></tr>
           </thead>
           <tbody>
             @for (row of productPerformance(); track row.productCode) {
@@ -1098,7 +1092,7 @@ interface PeriodOption {
 
       @if (activeTabIndex === 6 && productSalesTrend().length) {
         <table class="print-table">
-          <thead><tr><th>Période</th><th>Produit</th><th>Code</th><th>Catégorie</th><th class="text-right">Quantité</th><th class="text-right">CA</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.periode.de2110b7">Période</th><th i18n="@@reports.sales.produit.ff673dc2">Produit</th><th i18n="@@reports.sales.code.adac6937">Code</th><th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th><th class="text-right" i18n="@@reports.sales.quantite.09a38fda">Quantité</th><th class="text-right" i18n="@@reports.sales.ca.09acbb7d">CA</th></tr></thead>
           <tbody>
             @for (row of productSalesTrend(); track row.period + row.productCode) {
               <tr>
@@ -1116,16 +1110,16 @@ interface PeriodOption {
 
       @if (activeTabIndex === 7 && basketMetrics()) {
         <div class="print-kpis">
-          <div class="print-kpi"><strong>Panier moyen</strong><span>{{ formatCurrency(basketMetrics()!.averageBasket, basketMetrics()!.currency) }}</span></div>
-          <div class="print-kpi"><strong>Lignes moy. / facture</strong><span>{{ basketMetrics()!.averageLinesPerInvoice | number:'1.1-1' }}</span></div>
-          <div class="print-kpi"><strong>Factures</strong><span>{{ basketMetrics()!.totalInvoices }}</span></div>
-          <div class="print-kpi"><strong>CA total</strong><span>{{ formatCurrency(basketMetrics()!.totalRevenue, basketMetrics()!.currency) }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.sales.panier.moyen.e9ce57ee">Panier moyen</strong><span>{{ formatCurrency(basketMetrics()!.averageBasket, basketMetrics()!.currency) }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.sales.lignes.moy.facture.471f033e">Lignes moy. / facture</strong><span>{{ basketMetrics()!.averageLinesPerInvoice | number:'1.1-1' }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.sales.factures.da35e4f2">Factures</strong><span>{{ basketMetrics()!.totalInvoices }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.sales.ca.total.c324bfa2">CA total</strong><span>{{ formatCurrency(basketMetrics()!.totalRevenue, basketMetrics()!.currency) }}</span></div>
         </div>
       }
 
       @if (activeTabIndex === 8 && productsNeverSold().length) {
         <table class="print-table">
-          <thead><tr><th>Produit</th><th>Code</th><th>Catégorie</th><th class="text-right">Prix unitaire</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.produit.ff673dc2">Produit</th><th i18n="@@reports.sales.code.adac6937">Code</th><th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th><th class="text-right" i18n="@@reports.sales.prix.unitaire.3e848c96">Prix unitaire</th></tr></thead>
           <tbody>
             @for (row of productsNeverSold(); track row.productCode) {
               <tr>
@@ -1141,7 +1135,7 @@ interface PeriodOption {
 
       @if (activeTabIndex === 9 && revenueByCategory().length) {
         <table class="print-table">
-          <thead><tr><th>Catégorie</th><th class="text-right">Quantité</th><th class="text-right">Chiffre d'affaires</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th><th class="text-right" i18n="@@reports.sales.quantite.09a38fda">Quantité</th><th class="text-right" i18n="@@reports.sales.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th></tr></thead>
           <tbody>
             @for (row of revenueByCategory(); track row.groupKey) {
               <tr>
@@ -1156,7 +1150,7 @@ interface PeriodOption {
 
       @if (activeTabIndex === 10 && clientTransactions().length) {
         <table class="print-table">
-          <thead><tr><th>Date</th><th>Type</th><th>Client</th><th>Référence</th><th class="text-right">Montant</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.date.eb9a4bc1">Date</th><th i18n="@@reports.sales.type.3deb7456">Type</th><th i18n="@@reports.sales.client.1bdd79b1">Client</th><th i18n="@@reports.sales.reference.f8130bb0">Référence</th><th class="text-right" i18n="@@reports.sales.montant.4adcd9fc">Montant</th></tr></thead>
           <tbody>
             @for (row of clientTransactions(); track row.reference) {
               <tr>
@@ -1173,7 +1167,7 @@ interface PeriodOption {
 
       @if (activeTabIndex === 11 && salesByLine().length) {
         <table class="print-table">
-          <thead><tr><th>Produit</th><th>Code</th><th>Catégorie</th><th class="text-right">Quantité</th><th class="text-right">CA</th><th class="text-right">TVA</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.produit.ff673dc2">Produit</th><th i18n="@@reports.sales.code.adac6937">Code</th><th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th><th class="text-right" i18n="@@reports.sales.quantite.09a38fda">Quantité</th><th class="text-right" i18n="@@reports.sales.ca.09acbb7d">CA</th><th class="text-right" i18n="@@reports.sales.tva.fb62cb5d">TVA</th></tr></thead>
           <tbody>
             @for (row of salesByLine(); track row.productCode) {
               <tr>
@@ -1191,7 +1185,7 @@ interface PeriodOption {
 
       @if (activeTabIndex === 12 && salesVat().length) {
         <table class="print-table">
-          <thead><tr><th>Taux TVA</th><th class="text-right">Base taxable</th><th class="text-right">Montant TVA</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.taux.tva.c0830fcc">Taux TVA</th><th class="text-right" i18n="@@reports.sales.base.taxable.449d603a">Base taxable</th><th class="text-right" i18n="@@reports.sales.montant.tva.f0c1b7cc">Montant TVA</th></tr></thead>
           <tbody>
             @for (row of salesVat(); track row.vatRateDisplay) {
               <tr>
@@ -1206,7 +1200,7 @@ interface PeriodOption {
 
       @if (activeTabIndex === 13 && clientWithholdings().length) {
         <table class="print-table">
-          <thead><tr><th>Client</th><th class="text-right">Paiements</th><th class="text-right">Total retenue</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.client.1bdd79b1">Client</th><th class="text-right" i18n="@@reports.sales.paiements.97ecc646">Paiements</th><th class="text-right" i18n="@@reports.sales.total.retenue.31936a2f">Total retenue</th></tr></thead>
           <tbody>
             @for (row of clientWithholdings(); track row.clientId) {
               <tr>
@@ -1221,7 +1215,7 @@ interface PeriodOption {
 
       @if (activeTabIndex === 14 && reportsData()?.overdueInvoices?.length) {
         <table class="print-table">
-          <thead><tr><th>Numéro</th><th>Client</th><th class="text-right">Montant</th></tr></thead>
+          <thead><tr><th i18n="@@reports.sales.numero.15e73db0">Numéro</th><th i18n="@@reports.sales.client.1bdd79b1">Client</th><th class="text-right" i18n="@@reports.sales.montant.4adcd9fc">Montant</th></tr></thead>
           <tbody>
             @for (invoice of reportsData()!.overdueInvoices; track invoice.id) {
               <tr>
@@ -1237,7 +1231,7 @@ interface PeriodOption {
       <!-- Professional Footer -->
       <div class="print-footer">
         <div class="print-footer__content">
-          <span class="print-footer__brand">Généré par InstaFact</span>
+          <span class="print-footer__brand" i18n="@@reports.sales.genere.par.instafact.35c72778">Généré par InstaFact</span>
           <span class="print-footer__page">{{ printDate }}</span>
         </div>
         <div class="print-footer__bar"></div>

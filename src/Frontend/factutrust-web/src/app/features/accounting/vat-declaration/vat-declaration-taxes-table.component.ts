@@ -10,16 +10,16 @@ import { VatDeclarationExtras, VatExtrasKey, VatTaxTableRow, hasSuggestionMismat
   imports: [CommonModule, FormsModule, TableModule],
   template: `
     <div class="card vat-zone-card">
-      <h3 class="vat-zone-title">3. Détail des impôts et taxes</h3>
+      <h3 class="vat-zone-title" i18n="@@accounting.vat-declaration.3.detail.des.impots.et.taxes.6f5e7faa">3. Détail des impôts et taxes</h3>
       <p-table [value]="rows" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th>Impôt / Taxe</th>
-            <th class="text-right">Base imposable</th>
-            <th class="text-right">Taux (%)</th>
-            <th class="text-right">Montant à payer</th>
-            <th class="text-right">Montant déductible</th>
-            <th class="text-right">Net à payer</th>
+            <th i18n="@@accounting.vat-declaration.impot.taxe.48a97567">Impôt / Taxe</th>
+            <th class="text-right" i18n="@@accounting.vat-declaration.base.imposable.e1baa7e1">Base imposable</th>
+            <th class="text-right" i18n="@@accounting.vat-declaration.taux.bb9a8c5a">Taux (%)</th>
+            <th class="text-right" i18n="@@accounting.vat-declaration.montant.a.payer.caf88629">Montant à payer</th>
+            <th class="text-right" i18n="@@accounting.vat-declaration.montant.deductible.6215a9e6">Montant déductible</th>
+            <th class="text-right" i18n="@@accounting.vat-declaration.net.a.payer.7835df38">Net à payer</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -35,7 +35,7 @@ import { VatDeclarationExtras, VatExtrasKey, VatTaxTableRow, hasSuggestionMismat
                     <span>Suggéré : {{ formatAmount(row.suggestedAmount) }}</span>
                     @if (isMismatch(row)) {
                       <button type="button" class="vat-suggest-apply" (click)="applySuggestion(row)"
-                        title="Aligner le montant sur la valeur calculée par les modules">Aligner</button>
+                        title="Aligner le montant sur la valeur calculée par les modules" i18n-title="Aligner le montant sur la valeur calculée par les modules" i18n="@@accounting.vat-declaration.aligner.4a0642db">Aligner</button>
                     }
                   </div>
                 }

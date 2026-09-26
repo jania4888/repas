@@ -10,10 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
     @if (returnUrl) {
       <div class="acct-correction-banner" role="note">
         <i class="pi pi-compass" aria-hidden="true"></i>
-        <span>Correction guidée depuis le contrôle d'intégrité.</span>
-        <button type="button" class="acct-correction-banner__btn" (click)="goBack()">
-          Retour au contrôle
-        </button>
+        <span i18n="@@accounting.shared.correction.guidee.depuis.le.controle.d.integrite.6cdda52d">Correction guidée depuis le contrôle d'intégrité.</span>
+        <button type="button" class="acct-correction-banner__btn" (click)="goBack()" i18n="@@accounting.shared.retour.au.controle.d839261e">Retour au contrôle</button>
       </div>
     }
   `,

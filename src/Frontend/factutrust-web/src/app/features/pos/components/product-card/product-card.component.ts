@@ -31,10 +31,10 @@ import { PosStateService } from '../../services/pos-state.service';
         type="button">
 
       @if (showRuptureStockBadge()) {
-        <span class="product-card__stock-badge product-card__stock-badge--insufficient">Rupture</span>
+        <span class="product-card__stock-badge product-card__stock-badge--insufficient" i18n="@@pos.components.rupture.fda77001">Rupture</span>
       }
       @if (showLowStockBadge()) {
-        <span class="product-card__stock-badge product-card__stock-badge--warning">Stock faible</span>
+        <span class="product-card__stock-badge product-card__stock-badge--warning" i18n="@@pos.components.stock.faible.051fbda0">Stock faible</span>
       }
 
       <div class="product-card__image">

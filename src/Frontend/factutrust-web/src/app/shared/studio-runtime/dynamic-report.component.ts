@@ -27,7 +27,7 @@ type ChartType = 'bar' | 'line' | 'pie';
     } @else if (!result || result.rows.length === 0) {
       <app-empty-state
         icon="pi-chart-bar"
-        title="Aucune donnée"
+        title="Aucune donnée" i18n-title="Aucune donnée"
         description="Aucune donnée pour ce rapport ou cette vue."
       />
     } @else {

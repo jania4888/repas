@@ -14,6 +14,7 @@ import { StudioAiCapabilitiesService } from '@features/studio/ai/studio-ai-capab
 import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-approvals-badge.service';
 import { AppModule } from '@core/models/app-module';
 import { SECONDARY_NAV_SECTION_ORDER } from '@core/config/secondary-nav.config';
+import { getNavId } from '@core/config/nav-item-ids';
 import { AppNavService } from './app-nav.service';
 import { StockFeaturesStore } from './stock-features-store.service';
 import { VARIANT_AXES_PATH } from '@features/settings/variant-axes/variant-axes.paths';
@@ -190,9 +191,9 @@ describe('AppNavService — secondary nav parity', () => {
     TestBed.inject(FirmContextService).syncFromUser();
 
     const nav = TestBed.inject(AppNavService);
-    const labels = nav.secondaryNavSections().map(s => s.label);
+    const sectionIds = nav.secondaryNavSections().map(s => getNavId(s));
 
-    expect(labels).toEqual([...SECONDARY_NAV_SECTION_ORDER]);
+    expect(sectionIds).toEqual([...SECONDARY_NAV_SECTION_ORDER]);
     expect(nav.hasSecondaryNav()).toBeTrue();
   });
 

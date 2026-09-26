@@ -37,26 +37,24 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Correction en lot par extourne"
+      title="Correction en lot par extourne" i18n-title="Correction en lot par extourne"
       subtitle="Contre-passer des écritures validées — la piste d'audit est préservée, rien n'est modifié" />
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Période des écritures à corriger">
         <div accountingFilterFields class="mr-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="mr-from">Du</label>
+            <label class="accounting-filter-label" for="mr-from" i18n="@@accounting.mass-reversal.du.84814985">Du</label>
             <input id="mr-from" type="date" [(ngModel)]="fromStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="mr-to">Au</label>
+            <label class="accounting-filter-label" for="mr-to" i18n="@@accounting.mass-reversal.au.7a1732d5">Au</label>
             <input id="mr-to" type="date" [(ngModel)]="toStr" class="accounting-filter-input" />
           </div>
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Charger les écritures validées">
-            Charger
-          </app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Charger les écritures validées" i18n="@@accounting.mass-reversal.charger.8f860300">Charger</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -70,9 +68,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card mr-actions-card">
       <div class="mr-actions">
         <div class="mr-field mr-field-grow">
-          <label class="accounting-filter-label" for="mr-reason">Motif de correction (obligatoire)</label>
+          <label class="accounting-filter-label" for="mr-reason" i18n="@@accounting.mass-reversal.motif.de.correction.obligatoire.10f7e33a">Motif de correction (obligatoire)</label>
           <input id="mr-reason" type="text" [(ngModel)]="reason" class="accounting-filter-input"
-            placeholder="Ex. erreur d'imputation sur le compte 607" [disabled]="busy()" />
+            placeholder="Ex. erreur d'imputation sur le compte 607" i18n-placeholder="Ex. erreur d'imputation sur le compte 607" [disabled]="busy()" />
         </div>
         <div class="mr-action-buttons">
           <app-button variant="danger" icon="pi pi-replay" type="button"
@@ -83,7 +81,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
       </div>
       <p class="mr-help">
-        Chaque écriture sélectionnée reçoit une <strong>écriture miroir</strong> qui l'annule ; l'originale
+        Chaque écriture sélectionnée reçoit une <strong i18n="@@accounting.mass-reversal.ecriture.miroir.85100fdb">écriture miroir</strong> qui l'annule ; l'originale
         reste intacte et marquée « extournée ». Les brouillons et les écritures déjà extournées sont ignorés.
       </p>
     </div>
@@ -92,11 +90,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <div class="card mr-confirm" role="alertdialog">
         <p class="mr-confirm-text">
           Extourner <strong>{{ selectedIds().length }}</strong> écriture(s) avec le motif
-          « {{ reason.trim() }} » ? <strong>Cette opération n'est pas annulable.</strong>
+          « {{ reason.trim() }} » ? <strong i18n="@@accounting.mass-reversal.cette.operation.n.est.pas.annulable.75f0df4d">Cette opération n'est pas annulable.</strong>
         </p>
         <div class="mr-confirm-actions">
-          <app-button variant="secondary" type="button" (click)="pendingConfirm.set(false)" [disabled]="busy()">Annuler</app-button>
-          <app-button variant="danger" type="button" (click)="applyReversal()" [disabled]="busy()">Confirmer l'extourne</app-button>
+          <app-button variant="secondary" type="button" (click)="pendingConfirm.set(false)" [disabled]="busy()" i18n="@@accounting.mass-reversal.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="danger" type="button" (click)="applyReversal()" [disabled]="busy()" i18n="@@accounting.mass-reversal.confirmer.l.extourne.e80c2b00">Confirmer l'extourne</app-button>
         </div>
       </div>
     }
@@ -107,12 +105,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <ng-template pTemplate="header">
           <tr>
             <th style="width:3rem">
-              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" />
+              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" i18n-aria-label="Tout sélectionner" />
             </th>
-            <th scope="col">Journal</th>
-            <th scope="col">N°</th>
-            <th scope="col">Date</th>
-            <th scope="col">Libellé</th>
+            <th scope="col" i18n="@@accounting.mass-reversal.journal.57d7f743">Journal</th>
+            <th scope="col" i18n="@@accounting.mass-reversal.n.754e6095">N°</th>
+            <th scope="col" i18n="@@accounting.mass-reversal.date.eb9a4bc1">Date</th>
+            <th scope="col" i18n="@@accounting.mass-reversal.libelle.f5485bba">Libellé</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-e>
@@ -125,7 +123,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="5" style="text-align:center;padding:2rem">Aucune écriture validée extournable sur la période.</td></tr>
+          <tr><td colspan="5" style="text-align:center;padding:2rem" i18n="@@accounting.mass-reversal.aucune.ecriture.validee.extournable.sur.la.perio.84101d06">Aucune écriture validée extournable sur la période.</td></tr>
         </ng-template>
       </p-table>
     </div>

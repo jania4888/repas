@@ -2,7 +2,7 @@
 
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
-<app-page-header title="Mon Stock" subtitle="Vue d'ensemble simple de vos produits">
+<app-page-header title="Mon Stock" i18n-title="Mon Stock" subtitle="Vue d'ensemble simple de vos produits">
     <div class="header-actions">
         <div class="stock-simple-warehouse">
             <app-warehouse-selector
@@ -17,11 +17,11 @@
         @if (canCreateStockMovement()) {
             <a routerLink="/stock/entries/new" class="stock-btn stock-btn-entry">
                 <i class="pi pi-arrow-down"></i>
-                <span>Entrée Stock</span>
+                <span i18n="@@stock.stock-simple.entree.stock.16ab6222">Entrée Stock</span>
             </a>
             <a routerLink="/stock/issues/new" class="stock-btn stock-btn-exit">
                 <i class="pi pi-arrow-up"></i>
-                <span>Sortie Stock</span>
+                <span i18n="@@stock.stock-simple.sortie.stock.e914cdfc">Sortie Stock</span>
             </a>
         }
         <button pButton pRipple label="Vue détaillée" icon="pi pi-cog" class="p-button-outlined p-button-secondary"
@@ -35,7 +35,7 @@
 <!-- Loading State -->
 <div *ngIf="loading()" class="loading-container">
     <p-progressSpinner strokeWidth="3"></p-progressSpinner>
-    <p>Chargement de votre stock...</p>
+    <p i18n="@@stock.stock-simple.chargement.de.votre.stock.57559f83">Chargement de votre stock...</p>
 </div>
 
 <!-- Main Content -->
@@ -44,31 +44,31 @@
     <!-- Summary Cards -->
     <div class="summary-cards">
         <div class="summary-card card-success">
-            <span class="card-icon">🟢</span>
+            <span class="card-icon" i18n="@@stock.stock-simple.text.5bbab22e">🟢</span>
             <div class="card-content">
                 <span class="card-number">{{ overview()!.productsInStock }}</span>
-                <span class="card-label">En stock</span>
+                <span class="card-label" i18n="@@stock.stock-simple.en.stock.8d3f298e">En stock</span>
             </div>
         </div>
         <div class="summary-card card-warning">
-            <span class="card-icon">🟠</span>
+            <span class="card-icon" i18n="@@stock.stock-simple.text.0cb1b6ce">🟠</span>
             <div class="card-content">
                 <span class="card-number">{{ overview()!.productsRunningLow }}</span>
-                <span class="card-label">Presque finis</span>
+                <span class="card-label" i18n="@@stock.stock-simple.presque.finis.945e7a03">Presque finis</span>
             </div>
         </div>
         <div class="summary-card card-danger">
-            <span class="card-icon">🔴</span>
+            <span class="card-icon" i18n="@@stock.stock-simple.text.78d34fd9">🔴</span>
             <div class="card-content">
                 <span class="card-number">{{ overview()!.productsOutOfStock }}</span>
-                <span class="card-label">En rupture</span>
+                <span class="card-label" i18n="@@stock.stock-simple.en.rupture.6b40cbf5">En rupture</span>
             </div>
         </div>
     </div>
 
     <!-- Alerts Section -->
     <div *ngIf="overview()!.alerts.length > 0" class="alerts-section">
-        <h3 class="section-title">⚠️ Actions recommandées</h3>
+        <h3 class="section-title" i18n="@@stock.stock-simple.actions.recommandees.91951f02">⚠️ Actions recommandées</h3>
         <div class="alerts-list">
             <div *ngFor="let alert of overview()!.alerts" class="alert-card"
                 [ngClass]="getAlertSeverityClass(alert.severity)">
@@ -88,7 +88,7 @@
         <div class="search-wrapper">
             <span class="p-input-icon-left p-input-icon-right search-input-container">
                 <i class="pi pi-search"></i>
-                <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="Rechercher un produit..."
+                <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="Rechercher un produit..." i18n-placeholder="Rechercher un produit..."
                     (keyup.enter)="onSearch()" class="search-input">
                 <i *ngIf="searchTerm" class="pi pi-times clear-icon" (click)="clearSearch()"></i>
             </span>
@@ -101,7 +101,7 @@
     <div class="products-section">
         <h3 class="section-title">Mes produits ({{ overview()!.totalProducts }})</h3>
 
-        <app-empty-state *ngIf="overview()!.items.length === 0" title="Aucun produit trouvé"
+        <app-empty-state *ngIf="overview()!.items.length === 0" title="Aucun produit trouvé" i18n-title="Aucun produit trouvé"
             message="Aucun produit ne correspond à votre recherche." icon="pi-box">
         </app-empty-state>
 
@@ -124,7 +124,7 @@
                 <!-- Quantity Display -->
                 <div class="quantity-display">
                     <span class="quantity-number">{{ item.quantityAvailable }}</span>
-                    <span class="quantity-label">unités</span>
+                    <span class="quantity-label" i18n="@@stock.stock-simple.unites.b2ec0bf5">unités</span>
                 </div>
 
                 <!-- Alert Message -->
@@ -135,7 +135,7 @@
                 <!-- Action Hint -->
                 <div class="action-hint">
                     <i class="pi pi-pencil"></i>
-                    <span>Cliquez pour compter</span>
+                    <span i18n="@@stock.stock-simple.cliquez.pour.compter.936eaea2">Cliquez pour compter</span>
                 </div>
             </div>
         </div>
@@ -160,15 +160,15 @@
             </div>
         </div>
         <div class="current-stock">
-            <span class="label">Stock système</span>
-            <span class="value">{{ selectedProduct.quantityAvailable }} <span class="unit">unités</span></span>
+            <span class="label" i18n="@@stock.stock-simple.stock.systeme.e3db2e92">Stock système</span>
+            <span class="value">{{ selectedProduct.quantityAvailable }} <span class="unit" i18n="@@stock.stock-simple.unites.b2ec0bf5">unités</span></span>
         </div>
     </div>
 
     <!-- Count Form Section -->
     <div class="count-form">
         <div class="form-field quantity-field">
-            <label for="actualQuantity">Quantité réelle comptée *</label>
+            <label for="actualQuantity" i18n="@@stock.stock-simple.quantite.reelle.comptee.e68f8e59">Quantité réelle comptée *</label>
             <p-inputNumber id="actualQuantity" [(ngModel)]="actualQuantity" [min]="0" [showButtons]="true"
                 buttonLayout="horizontal" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 styleClass="w-full quantity-input">
@@ -186,7 +186,7 @@
             @if (actualQuantity === selectedProduct.quantityAvailable) {
             <div class="quantity-delta delta-same">
                 <i class="pi pi-check"></i>
-                <span>Stock identique</span>
+                <span i18n="@@stock.stock-simple.stock.identique.d7f3c9cd">Stock identique</span>
             </div>
             }
         </div>
@@ -196,16 +196,16 @@
     <!-- Count Result -->
     @if (countResult) {
     <div class="count-result">
-        <div class="result-icon">✅</div>
+        <div class="result-icon" i18n="@@stock.stock-simple.text.1cee9449">✅</div>
         <p class="result-message">{{ countResult.humanMessage }}</p>
 
         <div class="result-details">
             <div class="detail-row">
-                <span>Avant :</span>
+                <span i18n="@@stock.stock-simple.avant.f5bdb313">Avant :</span>
                 <strong>{{ countResult.previousQuantity }} unités</strong>
             </div>
             <div class="detail-row">
-                <span>Maintenant :</span>
+                <span i18n="@@stock.stock-simple.maintenant.fd9975a9">Maintenant :</span>
                 <strong>{{ countResult.newQuantity }} unités</strong>
             </div>
         </div>

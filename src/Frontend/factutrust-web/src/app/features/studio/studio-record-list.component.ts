@@ -49,13 +49,13 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
             </app-button>
           }
           @if (canDesign()) {
-            <app-button variant="outline" icon="pi-wrench" routerLink="/studio/{{ e.id }}">Concevoir</app-button>
+            <app-button variant="outline" icon="pi-wrench" routerLink="/studio/{{ e.id }}" i18n="@@studio.studio-record-list.concevoir.0fef9efb">Concevoir</app-button>
           }
           @if (showWorkflowsButton()) {
-            <app-button variant="outline" icon="pi-sitemap" [routerLink]="['/studio', 'workflows']" [queryParams]="{ entity: e.id }" data-testid="wf-open">Workflows</app-button>
+            <app-button variant="outline" icon="pi-sitemap" [routerLink]="['/studio', 'workflows']" [queryParams]="{ entity: e.id }" data-testid="wf-open" i18n="@@studio.studio-record-list.workflows.825ce9e9">Workflows</app-button>
           }
           @if (canWrite()) {
-            <app-button variant="primary" icon="pi-plus" [routerLink]="['/studio/d', entityKey, 'new']">Ajouter</app-button>
+            <app-button variant="primary" icon="pi-plus" [routerLink]="['/studio/d', entityKey, 'new']" i18n="@@studio.studio-record-list.ajouter.87c57ed1">Ajouter</app-button>
           }
         </div>
 
@@ -64,7 +64,7 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
             <h3 class="ft-filters__title"><i class="pi pi-search"></i> Recherche</h3>
           </div>
           <div class="studio-toolbar">
-            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" class="studio-search-input"
+            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="Rechercher…" class="studio-search-input"
               [disabled]="searchDisabled()" [title]="searchDisabled() ? labels.views.searchDisabled : ''" />
             <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" class="p-button-sm" (click)="reload()"
               [disabled]="searchDisabled()"></button>
@@ -87,7 +87,7 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
           <app-skeleton-table [columns]="skeletonCols" [rows]="5" />
         } @else {
           @if (activeView(); as v) {
-            <div id="studio-view-panel" role="tabpanel" aria-label="Vue active">
+            <div id="studio-view-panel" role="tabpanel" aria-label="Vue active" i18n-aria-label="Vue active">
               <app-studio-record-view-runner
                 [entityKey]="entityKey"
                 [view]="v"

@@ -18,25 +18,25 @@ import { CommercialProfitReportRow } from '@core/services/reports-api.service';
         <ng-template pTemplate="header">
           <tr>
             @if (mode === 'line') {
-              <th>Produit</th>
-              <th>Facture</th>
-              <th>Date</th>
+              <th i18n="@@reports.profit.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.profit.facture.3953b9f5">Facture</th>
+              <th i18n="@@reports.profit.date.eb9a4bc1">Date</th>
             }
             @if (mode === 'piece') {
-              <th>Facture</th>
-              <th>Date</th>
+              <th i18n="@@reports.profit.facture.3953b9f5">Facture</th>
+              <th i18n="@@reports.profit.date.eb9a4bc1">Date</th>
             }
             @if (mode === 'product') {
-              <th>Produit</th>
-              <th>Code</th>
+              <th i18n="@@reports.profit.produit.ff673dc2">Produit</th>
+              <th i18n="@@reports.profit.code.adac6937">Code</th>
             }
             @if (mode === 'month') {
-              <th>Période</th>
+              <th i18n="@@reports.profit.periode.de2110b7">Période</th>
             }
-            <th class="text-right">Quantité</th>
-            <th class="text-right">CA net HT</th>
-            <th class="text-right">Coût</th>
-            <th class="text-right">Bénéfice</th>
+            <th class="text-right" i18n="@@reports.profit.quantite.09a38fda">Quantité</th>
+            <th class="text-right" i18n="@@reports.profit.ca.net.ht.6fe960cc">CA net HT</th>
+            <th class="text-right" i18n="@@reports.profit.cout.4a4aa395">Coût</th>
+            <th class="text-right" i18n="@@reports.profit.benefice.111823af">Bénéfice</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>

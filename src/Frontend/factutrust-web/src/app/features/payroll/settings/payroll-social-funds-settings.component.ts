@@ -51,18 +51,18 @@ const BASE_OPTIONS = [
   ],
   template: `
     <div class="payroll-toolbar mb-3">
-      <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Nouvelle caisse</app-button>
+      <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.settings.nouvelle.caisse.5357b199">Nouvelle caisse</app-button>
     </div>
 
     <p-table [value]="schemes()" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Code</th>
-          <th>Libellé</th>
-          <th>Base</th>
-          <th class="text-right">Taux sal.</th>
-          <th class="text-right">Taux pat.</th>
-          <th>Statut</th>
+          <th i18n="@@payroll.settings.code.adac6937">Code</th>
+          <th i18n="@@payroll.settings.libelle.f5485bba">Libellé</th>
+          <th i18n="@@payroll.settings.base.077fe9c5">Base</th>
+          <th class="text-right" i18n="@@payroll.settings.taux.sal.5d5006c8">Taux sal.</th>
+          <th class="text-right" i18n="@@payroll.settings.taux.pat.9c6da90a">Taux pat.</th>
+          <th i18n="@@payroll.settings.statut.659499f3">Statut</th>
           <th></th>
         </tr>
       </ng-template>
@@ -77,90 +77,88 @@ const BASE_OPTIONS = [
             <p-tag [value]="s.isActive ? 'Active' : 'Inactive'" [severity]="s.isActive ? 'success' : 'secondary'" />
           </td>
           <td class="actions">
-            <button type="button" class="p-button p-button-text p-button-sm" (click)="editScheme(s)">Modifier</button>
-            <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(s)">Supprimer</button>
+            <button type="button" class="p-button p-button-text p-button-sm" (click)="editScheme(s)" i18n="@@payroll.settings.modifier.f260e757">Modifier</button>
+            <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(s)" i18n="@@payroll.settings.supprimer.1acfc1c7">Supprimer</button>
           </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr><td colspan="7">Aucune caisse complémentaire configurée.</td></tr>
+        <tr><td colspan="7" i18n="@@payroll.settings.aucune.caisse.complementaire.configuree.2fb942f0">Aucune caisse complémentaire configurée.</td></tr>
       </ng-template>
     </p-table>
 
     <p-dialog [header]="editingId ? 'Modifier la caisse' : 'Nouvelle caisse complémentaire'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '640px' }">
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Code</label>
+          <label i18n="@@payroll.settings.code.adac6937">Code</label>
           <input pInputText [(ngModel)]="formCode" class="w-full" maxlength="20" [disabled]="!!editingId" />
         </div>
         <div class="payroll-form-group">
-          <label>Libellé</label>
+          <label i18n="@@payroll.settings.libelle.f5485bba">Libellé</label>
           <input pInputText [(ngModel)]="formName" class="w-full" maxlength="200" />
         </div>
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Base de calcul</label>
+          <label i18n="@@payroll.settings.base.de.calcul.8790a31f">Base de calcul</label>
           <p-select [options]="baseOptions" optionLabel="label" optionValue="value" [(ngModel)]="formBase" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group switch-row">
-          <label for="schemeActive">Active</label>
+          <label for="schemeActive" i18n="@@payroll.settings.active.a733b809">Active</label>
           <p-inputSwitch inputId="schemeActive" [(ngModel)]="formIsActive" />
         </div>
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Taux salarié (%)</label>
+          <label i18n="@@payroll.settings.taux.salarie.0fd3b3e0">Taux salarié (%)</label>
           <p-inputNumber [(ngModel)]="formEmployeeRate" [min]="0" [max]="100" [minFractionDigits]="2" [maxFractionDigits]="4" [locale]="'fr-TN'" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Taux employeur (%)</label>
+          <label i18n="@@payroll.settings.taux.employeur.7c6bae8e">Taux employeur (%)</label>
           <p-inputNumber [(ngModel)]="formEmployerRate" [min]="0" [max]="100" [minFractionDigits]="2" [maxFractionDigits]="4" [locale]="'fr-TN'" styleClass="w-full" />
         </div>
       </div>
       @if (formBase === 'FixedAmount') {
         <div class="payroll-form-row">
           <div class="payroll-form-group">
-            <label>Montant fixe salarié (TND)</label>
+            <label i18n="@@payroll.settings.montant.fixe.salarie.tnd.7fb06f12">Montant fixe salarié (TND)</label>
             <p-inputNumber [(ngModel)]="formFixedEmployee" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label>Montant fixe employeur (TND)</label>
+            <label i18n="@@payroll.settings.montant.fixe.employeur.tnd.86ddc861">Montant fixe employeur (TND)</label>
             <p-inputNumber [(ngModel)]="formFixedEmployer" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
         </div>
       }
       <div class="payroll-form-group mb-2">
-        <label>Plafond mensuel salarié (optionnel)</label>
+        <label i18n="@@payroll.settings.plafond.mensuel.salarie.optionnel.af8934e7">Plafond mensuel salarié (optionnel)</label>
         <p-inputNumber [(ngModel)]="formMonthlyCap" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Compte SCE salarié</label>
+          <label i18n="@@payroll.settings.compte.sce.salarie.2ff9c8e9">Compte SCE salarié</label>
           <input pInputText [(ngModel)]="formEmployeeAccount" class="w-full" [maxlength]="accountMaxLength" />
         </div>
         <div class="payroll-form-group">
-          <label>Compte SCE employeur</label>
+          <label i18n="@@payroll.settings.compte.sce.employeur.6b8d7f2d">Compte SCE employeur</label>
           <input pInputText [(ngModel)]="formEmployerAccount" class="w-full" [maxlength]="accountMaxLength" />
         </div>
       </div>
-      <p class="payroll-info-text mt-1">
-        Comptes effectifs : ces comptes pilote désormais l'écriture de paie (crédit part salarié / crédit dette
-        employeur). Défauts doctrinaux : salarié « 428.1 », employeur « 4538 » (fonds social à payer — non « 647 »).
-      </p>
+      <p class="payroll-info-text mt-1" i18n="@@payroll.settings.comptes.effectifs.ces.comptes.pilote.desormais.l.dc18db0e">Comptes effectifs : ces comptes pilote désormais l'écriture de paie (crédit part salarié / crédit dette
+        employeur). Défauts doctrinaux : salarié « 428.1 », employeur « 4538 » (fonds social à payer — non « 647 »).</p>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Effet à partir du</label>
+          <label i18n="@@payroll.settings.effet.a.partir.du.fece40e7">Effet à partir du</label>
           <p-datepicker [(ngModel)]="formEffectiveFrom" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Effet jusqu'au</label>
+          <label i18n="@@payroll.settings.effet.jusqu.au.95e4ca77">Effet jusqu'au</label>
           <p-datepicker [(ngModel)]="formEffectiveTo" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.settings.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.settings.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

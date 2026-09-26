@@ -33,23 +33,23 @@ import {
   imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="filters" role="search" aria-label="Filtres des recommandations de réapprovisionnement">
+    <section class="filters" role="search" aria-label="Filtres des recommandations de réapprovisionnement" i18n-aria-label="Filtres des recommandations de réapprovisionnement">
       <label class="field">
-        <span class="field-label">Statut</span>
+        <span class="field-label" i18n="@@forecasting.pages.statut.659499f3">Statut</span>
         <select [ngModel]="filters().status ?? ''" (ngModelChange)="onStatusChange($event)">
-          <option value="">Tous</option>
-          <option value="pending">En attente</option>
-          <option value="approved">Approuvées</option>
-          <option value="dismissed">Écartées</option>
-          <option value="ordered">Commandées</option>
-          <option value="superseded">Remplacées</option>
+          <option value="" i18n="@@forecasting.pages.tous.b97ae3b4">Tous</option>
+          <option value="pending" i18n="@@forecasting.pages.en.attente.5231158f">En attente</option>
+          <option value="approved" i18n="@@forecasting.pages.approuvees.b5329d45">Approuvées</option>
+          <option value="dismissed" i18n="@@forecasting.pages.ecartees.c08d1c36">Écartées</option>
+          <option value="ordered" i18n="@@forecasting.pages.commandees.480b28d2">Commandées</option>
+          <option value="superseded" i18n="@@forecasting.pages.remplacees.cc46072e">Remplacées</option>
         </select>
       </label>
 
       <label class="field">
-        <span class="field-label">Entrepôt</span>
+        <span class="field-label" i18n="@@forecasting.pages.entrepot.c349c0bc">Entrepôt</span>
         <select [ngModel]="filters().warehouseId ?? ''" (ngModelChange)="patch({ warehouseId: $event || null })">
-          <option value="">Tous</option>
+          <option value="" i18n="@@forecasting.pages.tous.b97ae3b4">Tous</option>
           @for (w of warehouses(); track w.id) {
             <option [value]="w.id">{{ w.name }}</option>
           }
@@ -57,9 +57,9 @@ import {
       </label>
 
       <label class="field">
-        <span class="field-label">Fournisseur</span>
+        <span class="field-label" i18n="@@forecasting.pages.fournisseur.97d91d89">Fournisseur</span>
         <select [ngModel]="filters().supplierId ?? ''" (ngModelChange)="patch({ supplierId: $event || null })">
-          <option value="">Tous</option>
+          <option value="" i18n="@@forecasting.pages.tous.b97ae3b4">Tous</option>
           @for (s of suppliers(); track s.id) {
             <option [value]="s.id">{{ s.name }}</option>
           }
@@ -67,33 +67,33 @@ import {
       </label>
 
       <label class="field">
-        <span class="field-label">Urgence</span>
+        <span class="field-label" i18n="@@forecasting.pages.urgence.9dc19606">Urgence</span>
         <select [ngModel]="filters().urgencyLevel ?? ''" (ngModelChange)="onUrgencyChange($event)">
-          <option value="">Toutes</option>
-          <option value="OutOfStock">Rupture</option>
-          <option value="Urgent">Urgent</option>
-          <option value="Warning">Attention</option>
-          <option value="Normal">Normal</option>
+          <option value="" i18n="@@forecasting.pages.toutes.c5f641e4">Toutes</option>
+          <option value="OutOfStock" i18n="@@forecasting.pages.rupture.fda77001">Rupture</option>
+          <option value="Urgent" i18n="@@forecasting.pages.urgent.ecb26f46">Urgent</option>
+          <option value="Warning" i18n="@@forecasting.pages.attention.74e0b9c8">Attention</option>
+          <option value="Normal" i18n="@@forecasting.pages.normal.45e118d0">Normal</option>
         </select>
       </label>
 
       <label class="field">
-        <span class="field-label">Recherche</span>
+        <span class="field-label" i18n="@@forecasting.pages.recherche.787b5492">Recherche</span>
         <input
           type="search"
           [ngModel]="filters().search ?? ''"
           (ngModelChange)="onSearchInput($event)"
-          placeholder="Code, produit, fournisseur…"
+          placeholder="Code, produit, fournisseur…" i18n-placeholder="Code, produit, fournisseur…"
           autocomplete="off"
-          aria-label="Rechercher par code, nom de produit ou fournisseur" />
+          aria-label="Rechercher par code, nom de produit ou fournisseur" i18n-aria-label="Rechercher par code, nom de produit ou fournisseur" />
       </label>
 
       <button
         type="button"
         class="btn-reset"
         (click)="onReset()"
-        title="Réinitialiser les filtres"
-        aria-label="Réinitialiser tous les filtres">
+        title="Réinitialiser les filtres" i18n-title="Réinitialiser les filtres"
+        aria-label="Réinitialiser tous les filtres" i18n-aria-label="Réinitialiser tous les filtres">
         <i class="pi pi-filter-slash" aria-hidden="true"></i>
       </button>
     </section>

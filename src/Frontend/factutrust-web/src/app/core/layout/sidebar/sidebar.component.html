@@ -6,7 +6,8 @@
 
   [class.sidebar--firm-delegated]="isFirmDelegatedSkin()"
 
-  aria-label="Navigation principale">
+  aria-label="Navigation principale"
+  i18n-aria-label="@@core.sidebar.mainNav">
 
   
 
@@ -22,7 +23,7 @@
 
         [routerLink]="dashboardHomeLink()"
 
-        [attr.aria-label]="brand.name + ' — Tableau de bord'">
+        [attr.aria-label]="brandDashboardAriaLabel()">
 
         @if (!collapsed()) {
 
@@ -42,7 +43,7 @@
 
             [src]="brand.logoIconOnDark"
 
-            alt="IF"
+            alt="IF" i18n-alt="IF"
 
             class="icon-logo-only"
 
@@ -64,7 +65,7 @@
 
           [attr.aria-expanded]="!collapsed()"
 
-          [attr.title]="collapsed() ? 'Agrandir le menu latéral' : 'Réduire le menu latéral'">
+          [attr.title]="collapsed() ? sidebarExpandTitle : sidebarCollapseTitle">
 
           <i class="fa-solid fa-angles-left" aria-hidden="true" [class.rail-collapse-icon--flipped]="collapsed()"></i>
 
@@ -140,7 +141,7 @@
 
               }
 
-              <span class="rail-label">{{ item.label }}</span>
+              <span class="rail-label">{{ navLabel(item) }}</span>
 
               @if (item.badge != null && item.badge > 0) {
 
@@ -150,7 +151,7 @@
 
               @if (item.railIconAsset) {
 
-                <span class="rail-beta-badge" aria-hidden="true">BETA</span>
+                <span class="rail-beta-badge" aria-hidden="true" i18n="@@core.sidebar.betaBadge">BETA</span>
 
               }
 
@@ -214,7 +215,7 @@
 
               }
 
-              <span class="rail-label">{{ item.label }}</span>
+              <span class="rail-label">{{ navLabel(item) }}</span>
 
               @if (isFirmDelegatedSkin() && isDossierContextItem(item)) {
 
@@ -224,7 +225,7 @@
 
               @if (item.railIconAsset) {
 
-                <span class="rail-beta-badge" aria-hidden="true">BETA</span>
+                <span class="rail-beta-badge" aria-hidden="true" i18n="@@core.sidebar.betaBadge">BETA</span>
 
               }
 
@@ -276,7 +277,7 @@
 
                   }
 
-                  <span class="rail-label">{{ item.label }}</span>
+                  <span class="rail-label">{{ navLabel(item) }}</span>
 
                 </a>
 
@@ -306,7 +307,7 @@
 
                   }
 
-                  <span class="rail-label">{{ item.label }}</span>
+                  <span class="rail-label">{{ navLabel(item) }}</span>
 
                 </a>
 
@@ -346,7 +347,7 @@
 
                   }
 
-                  <span class="rail-label">{{ item.label }}</span>
+                  <span class="rail-label">{{ navLabel(item) }}</span>
 
                   <i
 
@@ -412,7 +413,7 @@
 
           [attr.aria-expanded]="!collapsed()"
 
-          [attr.title]="collapsed() ? 'Agrandir le menu latéral' : 'Réduire le menu latéral'">
+          [attr.title]="collapsed() ? sidebarExpandTitle : sidebarCollapseTitle">
 
           <i class="fa-solid fa-angles-left" aria-hidden="true" [class.rail-collapse-icon--flipped]="collapsed()"></i>
 
@@ -440,7 +441,7 @@
 
           <div class="submenu-group" [attr.aria-hidden]="!isExpanded(item)">
 
-            <h3 class="submenu-title">{{ item.label }}</h3>
+            <h3 class="submenu-title">{{ navLabel(item) }}</h3>
 
             
 
@@ -470,7 +471,7 @@
 
                       @if (child.badge) {
 
-                        <span class="badge bg-danger ms-auto" data-testid="nav-child-badge" [attr.aria-label]="child.badge + ' en attente'">{{ child.badge }}</span>
+                        <span class="badge bg-danger ms-auto" data-testid="nav-child-badge" [attr.aria-label]="pendingBadgeAriaLabel(child.badge)">{{ child.badge }}</span>
 
                       }
 
@@ -498,7 +499,7 @@
 
                       @if (child.badge) {
 
-                        <span class="badge bg-danger ms-auto" data-testid="nav-child-badge" [attr.aria-label]="child.badge + ' en attente'">{{ child.badge }}</span>
+                        <span class="badge bg-danger ms-auto" data-testid="nav-child-badge" [attr.aria-label]="pendingBadgeAriaLabel(child.badge)">{{ child.badge }}</span>
 
                       }
 

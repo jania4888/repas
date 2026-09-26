@@ -26,7 +26,7 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="État budgétaire" subtitle="Budget (Initial / Révisé) vs réalisé par poste — écart et taux de consommation" />
+    <app-page-header title="État budgétaire" i18n-title="État budgétaire" subtitle="Budget (Initial / Révisé) vs réalisé par poste — écart et taux de consommation" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
 
@@ -34,11 +34,11 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
       <app-accounting-filter-bar ariaLabel="Filtres de l'état budgétaire">
         <div accountingFilterFields class="br-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="br-year">Exercice</label>
+            <label class="accounting-filter-label" for="br-year" i18n="@@accounting.budget-report.exercice.e171e2b0">Exercice</label>
             <input id="br-year" type="number" class="accounting-filter-input br-year-inp" [(ngModel)]="fiscalYear" [disabled]="loading()" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="br-month">Cumul jusqu'au mois</label>
+            <label class="accounting-filter-label" for="br-month" i18n="@@accounting.budget-report.cumul.jusqu.au.mois.11cf4d39">Cumul jusqu'au mois</label>
             <select id="br-month" class="accounting-filter-input" [(ngModel)]="throughMonth" [disabled]="loading()">
               @for (m of monthNames; track m; let i = $index) {
                 <option [ngValue]="i + 1">{{ m }}</option>
@@ -47,9 +47,9 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
           </div>
         </div>
         <div accountingFilterActions class="br-actions">
-          <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="load()" [disabled]="loading()">Actualiser</app-button>
-          <app-button variant="secondary" icon="pi pi-download" type="button" (click)="exportReport('csv')" [disabled]="loading() || exporting() || !report()">CSV</app-button>
-          <app-button variant="secondary" icon="pi pi-file-excel" type="button" (click)="exportReport('excel')" [disabled]="loading() || exporting() || !report()">Excel</app-button>
+          <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="load()" [disabled]="loading()" i18n="@@accounting.budget-report.actualiser.9d3b2a7d">Actualiser</app-button>
+          <app-button variant="secondary" icon="pi pi-download" type="button" (click)="exportReport('csv')" [disabled]="loading() || exporting() || !report()" i18n="@@accounting.budget-report.csv.32811883">CSV</app-button>
+          <app-button variant="secondary" icon="pi pi-file-excel" type="button" (click)="exportReport('excel')" [disabled]="loading() || exporting() || !report()" i18n="@@accounting.budget-report.excel.a08e1111">Excel</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -70,13 +70,13 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
         styleClass="p-datatable-sm accounting-datatable br-table" [rowHover]="true">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Code</th>
-            <th scope="col">Poste</th>
-            <th scope="col">Sens</th>
-            <th scope="col" class="br-amt">Budget initial</th>
-            <th scope="col" class="br-amt">Budget révisé</th>
-            <th scope="col" class="br-amt">Réalisé</th>
-            <th scope="col" class="br-amt">Écart</th>
+            <th scope="col" i18n="@@accounting.budget-report.code.adac6937">Code</th>
+            <th scope="col" i18n="@@accounting.budget-report.poste.86abf0cd">Poste</th>
+            <th scope="col" i18n="@@accounting.budget-report.sens.55928a79">Sens</th>
+            <th scope="col" class="br-amt" i18n="@@accounting.budget-report.budget.initial.e6954c29">Budget initial</th>
+            <th scope="col" class="br-amt" i18n="@@accounting.budget-report.budget.revise.506df1a8">Budget révisé</th>
+            <th scope="col" class="br-amt" i18n="@@accounting.budget-report.realise.eed7fe3a">Réalisé</th>
+            <th scope="col" class="br-amt" i18n="@@accounting.budget-report.ecart.6ae8dce8">Écart</th>
             <th scope="col" class="br-amt">%</th>
           </tr>
         </ng-template>
@@ -105,7 +105,7 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
         <ng-template pTemplate="footer">
           @if (report(); as r) {
             <tr class="br-totals-row">
-              <td colspan="3">Total charges</td>
+              <td colspan="3" i18n="@@accounting.budget-report.total.charges.892472ca">Total charges</td>
               <td class="br-amt">{{ r.totals.expenseInitial | number : '1.3-3' }}</td>
               <td class="br-amt">{{ r.totals.expenseRevised | number : '1.3-3' }}</td>
               <td class="br-amt">{{ r.totals.expenseActual | number : '1.3-3' }}</td>
@@ -113,7 +113,7 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
               <td></td>
             </tr>
             <tr class="br-totals-row">
-              <td colspan="3">Total produits</td>
+              <td colspan="3" i18n="@@accounting.budget-report.total.produits.e59ab731">Total produits</td>
               <td class="br-amt">{{ r.totals.revenueInitial | number : '1.3-3' }}</td>
               <td class="br-amt">{{ r.totals.revenueRevised | number : '1.3-3' }}</td>
               <td class="br-amt">{{ r.totals.revenueActual | number : '1.3-3' }}</td>
@@ -123,7 +123,7 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
           }
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="8" class="br-empty">Aucun poste budgétaire actif pour cet exercice.</td></tr>
+          <tr><td colspan="8" class="br-empty" i18n="@@accounting.budget-report.aucun.poste.budgetaire.actif.pour.cet.exercice.b075fa50">Aucun poste budgétaire actif pour cet exercice.</td></tr>
         </ng-template>
       </p-table>
     </div>

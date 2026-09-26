@@ -25,7 +25,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
           }
       <!-- Header -->
       <div class="order-panel__header">
-        <h2 class="order-panel__title">Commande</h2>
+        <h2 class="order-panel__title" i18n="@@pos.components.commande.47844341">Commande</h2>
         @if (posState.lineCount() > 0) {
           <span class="order-panel__badge order-panel__badge--animated">
             <i class="pi pi-shopping-cart order-panel__badge-icon"></i>
@@ -48,8 +48,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             type="checkbox"
             [checked]="clientPrefService.getPreferReceiptByEmail(client.id)"
             (change)="clientPrefService.setPreferReceiptByEmail(client.id, $any($event.target).checked)"
-            aria-label="Toujours envoyer le recu par e-mail" />
-          <span>Reçu par e-mail pour ce client</span>
+            aria-label="Toujours envoyer le recu par e-mail" i18n-aria-label="Toujours envoyer le recu par e-mail" />
+          <span i18n="@@pos.components.recu.par.e.mail.pour.ce.client.5c5d4ea6">Reçu par e-mail pour ce client</span>
         </label>
       </div>
       }
@@ -57,7 +57,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       @if (frequentProducts.length > 0) {
       <!-- Historique client - produits frequents (40) -->
       <div class="order-panel__frequent">
-        <span class="order-panel__frequent-title">Ce client prend souvent :</span>
+        <span class="order-panel__frequent-title" i18n="@@pos.components.ce.client.prend.souvent.de74a569">Ce client prend souvent :</span>
         <div class="order-panel__frequent-btns">
           @for (p of frequentProducts; track p.id) {
             <button type="button" class="order-panel__frequent-btn" (click)="onFrequentProductAdd.emit(p)" [attr.aria-label]="'Ajouter ' + p.name">
@@ -76,7 +76,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
           (click)="showOrderNotes = !showOrderNotes"
           [attr.aria-expanded]="showOrderNotes">
           <i class="pi pi-pencil"></i>
-          <span>Notes de commande</span>
+          <span i18n="@@pos.components.notes.de.commande.6d66940b">Notes de commande</span>
           @if (posState.orderNotes()) {
             <span class="order-panel__notes-badge">1</span>
           }
@@ -86,9 +86,9 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             class="order-panel__notes-input"
             [ngModel]="posState.orderNotes()"
             (ngModelChange)="posState.setOrderNotes($event)"
-            placeholder="Ex: A emporter, livraison 14h..."
+            placeholder="Ex: A emporter, livraison 14h..." i18n-placeholder="Ex: A emporter, livraison 14h..."
             rows="2"
-            aria-label="Notes de commande"></textarea>
+            aria-label="Notes de commande" i18n-aria-label="Notes de commande"></textarea>
         }
       </div>
       }
@@ -106,7 +106,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       @if (posState.lines().length > 0 && showVisualCart) {
       <!-- Apercu visuel du panier (54) -->
       <div class="order-panel__visual-cart">
-        <button type="button" class="order-panel__visual-cart-toggle" (click)="showVisualCart = false" aria-label="Fermer apercu">&#9660;</button>
+        <button type="button" class="order-panel__visual-cart-toggle" (click)="showVisualCart = false" aria-label="Fermer apercu" i18n-aria-label="Fermer apercu" i18n="@@pos.components.9660.cb2e2b05">&#9660;</button>
         <div class="order-panel__visual-cart-scroll">
           @for (line of posState.lines(); track line.id) {
             <div class="order-panel__visual-cart-item" [title]="line.designation + ' x' + line.quantity">
@@ -130,8 +130,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       @if (upsellService.hasSuggestions()) {
         <div class="order-panel__upsell">
           <div class="order-panel__upsell-header">
-            <span class="order-panel__upsell-title">Suggestions</span>
-            <button type="button" class="order-panel__upsell-close" (click)="upsellService.clearSuggestions()" aria-label="Fermer">
+            <span class="order-panel__upsell-title" i18n="@@pos.components.suggestions.861edba0">Suggestions</span>
+            <button type="button" class="order-panel__upsell-close" (click)="upsellService.clearSuggestions()" aria-label="Fermer" i18n-aria-label="Fermer">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -156,8 +156,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             <div class="order-panel__empty-icon">
               <i class="pi pi-shopping-cart"></i>
             </div>
-            <p class="order-panel__empty-title">Panier vide</p>
-            <p class="order-panel__empty-text">Selectionnez un produit dans le catalogue ou appuyez sur <kbd class="order-panel__empty-kbd">F2</kbd> pour rechercher</p>
+            <p class="order-panel__empty-title" i18n="@@pos.components.panier.vide.669bb72c">Panier vide</p>
+            <p class="order-panel__empty-text">Selectionnez un produit dans le catalogue ou appuyez sur <kbd class="order-panel__empty-kbd" i18n="@@pos.components.f2.999d0cd6">F2</kbd> pour rechercher</p>
           </div>
         } @else {
           @for (line of posState.lines(); track line.id) {
@@ -182,13 +182,13 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
           <div class="order-panel__totals" [class.order-panel__totals--quick]="posState.isQuickMode()">
             @if (!posState.isQuickMode()) {
             <div class="order-panel__total-row">
-              <span class="order-panel__total-label">Total HT</span>
+              <span class="order-panel__total-label" i18n="@@pos.components.total.ht.2ca17ae6">Total HT</span>
               <span class="order-panel__total-value">{{ posState.formatAmountWithCurrency(posState.totals().subTotalHT) }}</span>
             </div>
 
             @if (posState.hasGlobalDiscount()) {
               <div class="order-panel__total-row order-panel__total-row--discount">
-                <span class="order-panel__total-label">Remise globale</span>
+                <span class="order-panel__total-label" i18n="@@pos.components.remise.globale.a87e11a6">Remise globale</span>
                 <span class="order-panel__total-value order-panel__total-value--discount">-{{ posState.formatAmountWithCurrency(posState.totals().totalDiscount) }}</span>
               </div>
             }
@@ -196,8 +196,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             @if (showGlobalDiscountForm) {
               <div class="order-panel__discount-form">
                 <select [(ngModel)]="globalDiscountType">
-                  <option value="PERCENT">Pourcentage</option>
-                  <option value="AMOUNT">Montant fixe</option>
+                  <option value="PERCENT" i18n="@@pos.components.pourcentage.e34218e3">Pourcentage</option>
+                  <option value="AMOUNT" i18n="@@pos.components.montant.fixe.b4a2ce45">Montant fixe</option>
                 </select>
                 <input
                   type="number"
@@ -205,9 +205,9 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
                   [min]="0"
                   [attr.max]="globalDiscountType === 'PERCENT' ? 100 : null"
                   step="0.001"
-                  placeholder="0" />
-                <button type="button" class="order-panel__discount-apply" (click)="applyGlobalDiscount()">Appliquer</button>
-                <button type="button" class="order-panel__discount-cancel" (click)="cancelGlobalDiscountForm()">Annuler</button>
+                  placeholder="0" i18n-placeholder="0" />
+                <button type="button" class="order-panel__discount-apply" (click)="applyGlobalDiscount()" i18n="@@pos.components.appliquer.a4d66139">Appliquer</button>
+                <button type="button" class="order-panel__discount-cancel" (click)="cancelGlobalDiscountForm()" i18n="@@pos.components.annuler.49ba3292">Annuler</button>
               </div>
             }
 
@@ -226,7 +226,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             }
 
             <div class="order-panel__total-row order-panel__total-row--ttc" [class.order-panel__total-row--ttc-quick]="posState.isQuickMode()">
-              <span class="order-panel__total-label">Total TTC</span>
+              <span class="order-panel__total-label" i18n="@@pos.components.total.ttc.9e80ff7c">Total TTC</span>
               <span class="order-panel__total-value">{{ posState.formatAmountWithCurrency(posState.totals().totalTTC) }}</span>
             </div>
 
@@ -238,9 +238,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             }
 
             @if (posState.hasGlobalDiscount() && !showGlobalDiscountForm) {
-              <button type="button" class="order-panel__remove-discount" (click)="posState.removeGlobalDiscount()">
-                Supprimer remise
-              </button>
+              <button type="button" class="order-panel__remove-discount" (click)="posState.removeGlobalDiscount()" i18n="@@pos.components.supprimer.remise.cabc76a7">Supprimer remise</button>
             }
             }
 
@@ -253,7 +251,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
 
             @if (posState.paymentSchedule() === 'onAccount') {
               <div class="order-panel__schedule">
-                <span class="order-panel__schedule-label">Paiement a terme</span>
+                <span class="order-panel__schedule-label" i18n="@@pos.components.paiement.a.terme.09fa8abb">Paiement a terme</span>
                 <span class="order-panel__schedule-value">
                   Echeance {{ posState.client()?.defaultPaymentTermDays || 30 }} j
                 </span>
@@ -270,7 +268,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
 
             @if (!posState.isQuickMode()) {
             <div class="order-panel__schedule-btns">
-              <span class="order-panel__schedule-btns-label">Paiement :</span>
+              <span class="order-panel__schedule-btns-label" i18n="@@pos.components.paiement.7154f3bf">Paiement :</span>
               <button type="button" class="order-panel__schedule-btn" [class.order-panel__schedule-btn--active]="posState.paymentSchedule() === 'immediate'" (click)="posState.setPaymentSchedule('immediate')">
                 <i class="pi pi-wallet order-panel__schedule-btn-icon"></i> Comptant
               </button>
@@ -280,7 +278,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
                 [class.order-panel__schedule-btn--active]="posState.paymentSchedule() === 'onAccount'"
                 [disabled]="!posState.client()"
                 (click)="posState.client() && posState.setPaymentSchedule('onAccount')"
-                title="Facture a terme — client identifie obligatoire">
+                title="Facture a terme — client identifie obligatoire" i18n-title="Facture a terme — client identifie obligatoire">
                 <i class="pi pi-calendar order-panel__schedule-btn-icon"></i> A terme
               </button>
             </div>

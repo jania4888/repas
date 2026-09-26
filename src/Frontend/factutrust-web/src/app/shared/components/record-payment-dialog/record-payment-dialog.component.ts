@@ -63,24 +63,24 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
 
         <div class="form-fields">
           <div class="form-group">
-            <label for="paymentDate">Date de paiement <span class="required">*</span></label>
+            <label for="paymentDate">Date de paiement <span class="required" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.text.df58248c">*</span></label>
             <p-datepicker
               id="paymentDate"
               [(ngModel)]="paymentDate"
               [showIcon]="true"
               dateFormat="dd/mm/yy"
               [maxDate]="maxDate"
-              placeholder="Sélectionnez la date"
+              placeholder="Sélectionnez la date" i18n-placeholder="Sélectionnez la date"
               inputId="paymentDate"
               [appendTo]="panelMode ? 'body' : undefined"
               [baseZIndex]="panelMode ? drawerPrimeBaseZIndex : undefined"
               styleClass="w-full">
             </p-datepicker>
-            <small class="field-hint">Date à laquelle le paiement a été reçu</small>
+            <small class="field-hint" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.date.a.laquelle.le.paiement.a.ete.recu.cbe00fec">Date à laquelle le paiement a été reçu</small>
           </div>
 
           <div class="form-group">
-            <label for="amount">Montant net encaissé ({{ currency }}) <span class="required">*</span></label>
+            <label for="amount">Montant net encaissé ({{ currency }}) <span class="required" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.text.df58248c">*</span></label>
             <p-inputNumber
               id="amount"
               [(ngModel)]="amount"
@@ -89,7 +89,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               [maxFractionDigits]="3"
               [minFractionDigits]="3"
               mode="decimal"
-              placeholder="Montant reçu (banque)"
+              placeholder="Montant reçu (banque)" i18n-placeholder="Montant reçu (banque)"
               styleClass="w-full">
             </p-inputNumber>
             <small class="field-hint">{{ totalPaid > 0 ? 'Restant dû TTC : ' + (remainingAmount | number:'1.3-3') + ' ' + currency : 'Par défaut : solde TTC' }}</small>
@@ -107,10 +107,10 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
                 [maxFractionDigits]="3"
                 [minFractionDigits]="3"
                 mode="decimal"
-                placeholder="0 si aucune"
+                placeholder="0 si aucune" i18n-placeholder="0 si aucune"
                 styleClass="w-full">
               </p-inputNumber>
-              <small class="field-hint">Montant retenu par le client (hors export TEJ déclarant). Net + retenue ne peut pas dépasser le restant dû.</small>
+              <small class="field-hint" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.montant.retenu.par.le.client.hors.export.tej.dec.702a5336">Montant retenu par le client (hors export TEJ déclarant). Net + retenue ne peut pas dépasser le restant dû.</small>
             </div>
           }
 
@@ -118,14 +118,14 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
             <label for="method">
               Mode de paiement
               @if (invoiceType === 'client') {
-                <span class="required" aria-hidden="true">*</span>
+                <span class="required" aria-hidden="true" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.text.df58248c">*</span>
               }
             </label>
             <p-select
               id="method"
               [options]="paymentMethodOptions"
               [(ngModel)]="selectedMethod"
-              placeholder="Sélectionnez un mode"
+              placeholder="Sélectionnez un mode" i18n-placeholder="Sélectionnez un mode"
               optionLabel="label"
               optionValue="value"
               [showClear]="true"
@@ -136,29 +136,27 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               styleClass="w-full">
             </p-select>
             @if (invoiceType === 'client' && selectedMethod === null) {
-              <small id="method-required-hint" class="field-hint field-error" role="alert">
-                Veuillez sélectionner un mode de paiement.
-              </small>
+              <small id="method-required-hint" class="field-hint field-error" role="alert" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.veuillez.selectionner.un.mode.de.paiement.861ed82e">Veuillez sélectionner un mode de paiement.</small>
             }
           </div>
 
           @if (isTraite) {
             <div class="form-group">
-              <label for="effetDueDate">Échéance de la traite <span class="required">*</span></label>
+              <label for="effetDueDate">Échéance de la traite <span class="required" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.text.df58248c">*</span></label>
               <p-datepicker
                 id="effetDueDate"
                 [(ngModel)]="effetDueDate"
                 [showIcon]="true"
                 dateFormat="dd/mm/yy"
-                placeholder="Date d'échéance de l'effet"
+                placeholder="Date d'échéance de l'effet" i18n-placeholder="Date d'échéance de l'effet"
                 inputId="effetDueDate"
                 [appendTo]="panelMode ? 'body' : undefined"
                 [baseZIndex]="panelMode ? drawerPrimeBaseZIndex : undefined"
                 styleClass="w-full">
               </p-datepicker>
-              <small class="field-hint">Date à laquelle l'effet arrivera à échéance (encaissement/paiement)</small>
+              <small class="field-hint" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.date.a.laquelle.l.effet.arrivera.a.echeance.enca.212b4555">Date à laquelle l'effet arrivera à échéance (encaissement/paiement)</small>
               @if (effetDueDate === null) {
-                <small class="field-hint field-error" role="alert">L'échéance de la traite est obligatoire.</small>
+                <small class="field-hint field-error" role="alert" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.l.echeance.de.la.traite.est.obligatoire.35bbf8eb">L'échéance de la traite est obligatoire.</small>
               }
             </div>
           }
@@ -171,16 +169,16 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               [(ngModel)]="reference"
               [placeholder]="invoiceType === 'supplier' ? 'Ex: virement, chèque n°…' : 'Ex: n° chèque, n° virement'"
               class="w-full">
-            <small class="field-hint">Optionnel — N° de chèque, virement, etc.</small>
+            <small class="field-hint" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.optionnel.n.de.cheque.virement.etc.6a50a6f2">Optionnel — N° de chèque, virement, etc.</small>
           </div>
 
           <div class="form-group">
-            <label for="notes">Notes</label>
+            <label for="notes" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.notes.70440046">Notes</label>
             <textarea
               pTextarea
               id="notes"
               [(ngModel)]="notes"
-              placeholder="Notes internes (optionnel)"
+              placeholder="Notes internes (optionnel)" i18n-placeholder="Notes internes (optionnel)"
               [rows]="2"
               class="w-full">
             </textarea>
@@ -197,7 +195,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
     </ng-template>
 
     <ng-template #footerActions>
-      <app-button variant="outline" icon="pi-times" iconPos="left" (click)="close()">Annuler</app-button>
+      <app-button variant="outline" icon="pi-times" iconPos="left" (click)="close()" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.annuler.49ba3292">Annuler</app-button>
       <app-button
         variant="primary"
         icon="pi-check"
@@ -222,7 +220,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               type="button"
               class="panel-close"
               (click)="close()"
-              aria-label="Fermer le panneau">
+              aria-label="Fermer le panneau" i18n-aria-label="Fermer le panneau">
               <i class="pi pi-times"></i>
             </button>
           </div>

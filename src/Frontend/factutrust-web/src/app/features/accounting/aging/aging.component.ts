@@ -55,7 +55,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     `
   ],
   template: `
-    <app-page-header title="Balance âgée" subtitle="Créances et dettes par tranche" />
+    <app-page-header title="Balance âgée" i18n-title="Balance âgée" subtitle="Créances et dettes par tranche" />
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Actualisation balance âgée">
         <div accountingFilterActions>
@@ -92,8 +92,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
     <p-tabs class="ft-tabs aging-tabs" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0"><i class="pi pi-users"></i><span>Clients</span></p-tab>
-        <p-tab [value]="1"><i class="pi pi-truck"></i><span>Fournisseurs</span></p-tab>
+        <p-tab [value]="0"><i class="pi pi-users"></i><span i18n="@@accounting.aging.clients.28e22fe3">Clients</span></p-tab>
+        <p-tab [value]="1"><i class="pi pi-truck"></i><span i18n="@@accounting.aging.fournisseurs.06b6d88c">Fournisseurs</span></p-tab>
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
@@ -114,14 +114,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         >
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Client</th>
-              <th class="text-right" scope="col">Total</th>
-              <th class="text-right" scope="col">Non échu</th>
-              <th class="text-right" scope="col">0-30j</th>
-              <th class="text-right" scope="col">31-60j</th>
-              <th class="text-right" scope="col">61-90j</th>
-              <th class="text-right" scope="col">&gt;90j</th>
-              <th class="text-right" scope="col">DSO</th>
+              <th scope="col" i18n="@@accounting.aging.client.1bdd79b1">Client</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.total.b25928c6">Total</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.non.echu.cb5c1717">Non échu</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.0.30j.222b5f16">0-30j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.31.60j.4e83222f">31-60j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.61.90j.a4ba1dc5">61-90j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.gt.90j.f2293c82">&gt;90j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.dso.5684cca3">DSO</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -139,14 +139,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <ng-template pTemplate="footer">
             @if (clients().length) {
               <tr class="aging-totals-row">
-                <td>Total</td>
+                <td i18n="@@accounting.aging.total.b25928c6">Total</td>
                 <td class="text-right">{{ totalsClients().total | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().notYetDue | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().d0 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().d31 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().d61 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsClients().d90 | number : '1.3-3' }}</td>
-                <td class="text-right">—</td>
+                <td class="text-right" i18n="@@accounting.aging.text.1b93795b">—</td>
               </tr>
             }
           </ng-template>
@@ -170,14 +170,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         >
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Fournisseur</th>
-              <th class="text-right" scope="col">Total</th>
-              <th class="text-right" scope="col">Non échu</th>
-              <th class="text-right" scope="col">0-30j</th>
-              <th class="text-right" scope="col">31-60j</th>
-              <th class="text-right" scope="col">61-90j</th>
-              <th class="text-right" scope="col">&gt;90j</th>
-              <th class="text-right" scope="col">DPO</th>
+              <th scope="col" i18n="@@accounting.aging.fournisseur.97d91d89">Fournisseur</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.total.b25928c6">Total</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.non.echu.cb5c1717">Non échu</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.0.30j.222b5f16">0-30j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.31.60j.4e83222f">31-60j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.61.90j.a4ba1dc5">61-90j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.gt.90j.f2293c82">&gt;90j</th>
+              <th class="text-right" scope="col" i18n="@@accounting.aging.dpo.ef51589e">DPO</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -195,14 +195,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <ng-template pTemplate="footer">
             @if (suppliers().length) {
               <tr class="aging-totals-row">
-                <td>Total</td>
+                <td i18n="@@accounting.aging.total.b25928c6">Total</td>
                 <td class="text-right">{{ totalsSuppliers().total | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().notYetDue | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().d0 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().d31 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().d61 | number : '1.3-3' }}</td>
                 <td class="text-right">{{ totalsSuppliers().d90 | number : '1.3-3' }}</td>
-                <td class="text-right">—</td>
+                <td class="text-right" i18n="@@accounting.aging.text.1b93795b">—</td>
               </tr>
             }
           </ng-template>

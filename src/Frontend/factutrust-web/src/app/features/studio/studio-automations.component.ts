@@ -43,7 +43,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
 
       <p-table [value]="automations()" [loading]="loading()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
-          <tr><th>Nom</th><th>Déclencheur</th><th>Action ERP</th><th>Active</th><th style="width:8rem"></th></tr>
+          <tr><th i18n="@@studio.studio-automations.nom.7ff20370">Nom</th><th i18n="@@studio.studio-automations.declencheur.70540908">Déclencheur</th><th i18n="@@studio.studio-automations.action.erp.37fe6093">Action ERP</th><th i18n="@@studio.studio-automations.active.a733b809">Active</th><th style="width:8rem"></th></tr>
         </ng-template>
         <ng-template pTemplate="body" let-a>
           <tr>
@@ -58,7 +58,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="5" class="ft-empty">Aucune automatisation. Créez la première pour connecter cette table à l'ERP.</td></tr>
+          <tr><td colspan="5" class="ft-empty" i18n="@@studio.studio-automations.aucune.automatisation.creez.la.premiere.pour.con.8168165c">Aucune automatisation. Créez la première pour connecter cette table à l'ERP.</td></tr>
         </ng-template>
       </p-table>
     </app-studio-page-shell>
@@ -66,12 +66,12 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
     <p-dialog [header]="editing() ? 'Modifier l’automatisation' : 'Nouvelle automatisation'"
       [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '46rem' }">
       <div class="ft-form">
-        <label>Nom *</label>
-        <input pInputText [(ngModel)]="fName" placeholder="Ex. Facturer l'abonnement" />
+        <label i18n="@@studio.studio-automations.nom.463a6959">Nom *</label>
+        <input pInputText [(ngModel)]="fName" placeholder="Ex. Facturer l'abonnement" i18n-placeholder="Ex. Facturer l'abonnement" />
 
         <div class="ft-row">
           <div>
-            <label>Déclencheur *</label>
+            <label i18n="@@studio.studio-automations.declencheur.71f3eadf">Déclencheur *</label>
             <p-select [options]="triggerOptions" [(ngModel)]="fTrigger" optionLabel="label" optionValue="value"
               appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"></p-select>
           </div>
@@ -80,8 +80,8 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
         <app-studio-bridge-action-picker [actions]="actions()" [fields]="fields()" [(action)]="fAction" [(mapping)]="fMapping" />
 
         <div class="ft-row ft-switches">
-          <div><p-inputSwitch [(ngModel)]="fRunOnce"></p-inputSwitch> <span>Exécuter une seule fois par enregistrement</span></div>
-          <div><p-inputSwitch [(ngModel)]="fActive"></p-inputSwitch> <span>Active</span></div>
+          <div><p-inputSwitch [(ngModel)]="fRunOnce"></p-inputSwitch> <span i18n="@@studio.studio-automations.executer.une.seule.fois.par.enregistrement.b68e342f">Exécuter une seule fois par enregistrement</span></div>
+          <div><p-inputSwitch [(ngModel)]="fActive"></p-inputSwitch> <span i18n="@@studio.studio-automations.active.a733b809">Active</span></div>
         </div>
       </div>
       <ng-template pTemplate="footer">

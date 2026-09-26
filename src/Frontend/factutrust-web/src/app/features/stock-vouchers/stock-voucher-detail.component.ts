@@ -63,9 +63,7 @@ import {
           <button pButton type="button" label="PDF" icon="pi pi-file-pdf" class="p-button-outlined"
                   (click)="downloadPdf()" [loading]="pdfLoading()"></button>
           @if (canUpdate() && isDraft(v.status)) {
-            <app-button variant="outline" icon="pi-pencil" iconPos="left" [routerLink]="editRoute">
-              Modifier
-            </app-button>
+            <app-button variant="outline" icon="pi-pencil" iconPos="left" [routerLink]="editRoute" i18n="@@stock-vouchers.stock-voucher-detail.modifier.f260e757">Modifier</app-button>
             <button pButton type="button" label="Valider" icon="pi pi-check"
                     (click)="validate()" [loading]="processing()"></button>
           }
@@ -81,52 +79,50 @@ import {
             <button pButton type="button" label="Supprimer" icon="pi pi-trash"
                     class="p-button-danger" (click)="confirmDelete()"></button>
           }
-          <app-button variant="outline" icon="pi-arrow-left" iconPos="left" [routerLink]="listRoute">
-            Retour
-          </app-button>
+          <app-button variant="outline" icon="pi-arrow-left" iconPos="left" [routerLink]="listRoute" i18n="@@stock-vouchers.stock-voucher-detail.retour.e5befb1f">Retour</app-button>
         </div>
       </app-page-header>
 
       <div class="info-grid">
         <div class="card">
-          <h3>Dépôt</h3>
+          <h3 i18n="@@stock-vouchers.stock-voucher-detail.depot.4c1c61c7">Dépôt</h3>
           <p class="warehouse-name">{{ v.warehouseName || '—' }}</p>
         </div>
         <div class="card">
-          <h3>Informations</h3>
-          <p><strong>Date :</strong> {{ v.voucherDate | date:'dd/MM/yyyy' }}</p>
+          <h3 i18n="@@stock-vouchers.stock-voucher-detail.informations.54937b3a">Informations</h3>
+          <p><strong i18n="@@stock-vouchers.stock-voucher-detail.date.2e4c6fc1">Date :</strong> {{ v.voucherDate | date:'dd/MM/yyyy' }}</p>
           @if (v.externalReference) {
-            <p><strong>Référence :</strong> {{ v.externalReference }}</p>
+            <p><strong i18n="@@stock-vouchers.stock-voucher-detail.reference.d3ebb895">Référence :</strong> {{ v.externalReference }}</p>
           }
           @if (v.notes) {
-            <p><strong>Notes :</strong> {{ v.notes }}</p>
+            <p><strong i18n="@@stock-vouchers.stock-voucher-detail.notes.4ef03540">Notes :</strong> {{ v.notes }}</p>
           }
         </div>
         <div class="card">
-          <h3>Totaux</h3>
-          <p><strong>Quantité :</strong> {{ v.totalQuantity | number:'1.0-3' }}</p>
-          <p><strong>Valorisation :</strong> {{ v.totalValue | currency:'TND':'symbol':'1.3-3' }}</p>
+          <h3 i18n="@@stock-vouchers.stock-voucher-detail.totaux.a1ca02f8">Totaux</h3>
+          <p><strong i18n="@@stock-vouchers.stock-voucher-detail.quantite.ee1b5bf5">Quantité :</strong> {{ v.totalQuantity | number:'1.0-3' }}</p>
+          <p><strong i18n="@@stock-vouchers.stock-voucher-detail.valorisation.84e1cbf3">Valorisation :</strong> {{ v.totalValue | currency:'TND':'symbol':'1.3-3' }}</p>
           @if (v.validatedAt) {
-            <p><strong>Validé le :</strong> {{ v.validatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong i18n="@@stock-vouchers.stock-voucher-detail.valide.le.308fce50">Validé le :</strong> {{ v.validatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
           }
           @if (v.cancellationReason) {
-            <p><strong>Annulation :</strong> {{ v.cancellationReason }}</p>
+            <p><strong i18n="@@stock-vouchers.stock-voucher-detail.annulation.90e294c3">Annulation :</strong> {{ v.cancellationReason }}</p>
           }
         </div>
       </div>
 
       <div class="card">
-        <h3>Lignes</h3>
+        <h3 i18n="@@stock-vouchers.stock-voucher-detail.lignes.41c7025e">Lignes</h3>
         <table class="lines-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Code</th>
-              <th>Produit</th>
-              <th>Unité</th>
-              <th>Qté</th>
-              <th>Coût</th>
-              <th>Valorisation</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.text.d08f88df">#</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.code.adac6937">Code</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.produit.ff673dc2">Produit</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.unite.388fd9c4">Unité</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.qte.a4772129">Qté</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.cout.4a4aa395">Coût</th>
+              <th i18n="@@stock-vouchers.stock-voucher-detail.valorisation.61fcd7cd">Valorisation</th>
             </tr>
           </thead>
           <tbody>
@@ -147,7 +143,7 @@ import {
 
       <p-dialog header="Annuler le bon" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
         <div class="field">
-          <label class="field-label">Motif d'annulation</label>
+          <label class="field-label" i18n="@@stock-vouchers.stock-voucher-detail.motif.d.annulation.f627914d">Motif d'annulation</label>
           <textarea pTextarea [(ngModel)]="cancelReason" rows="3" style="width:100%"></textarea>
         </div>
         <ng-template pTemplate="footer">

@@ -57,7 +57,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Calcul DM"
+      title="Calcul DM" i18n-title="Calcul DM"
       subtitle="Évalue la configuration du dossier sur une période et rend le détail obtenu. Rien n’est déposé." />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -66,7 +66,7 @@ import {
       @if (!s.configurableLinesEnabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé"
+          title="Calcul paramétré non activé" i18n-title="Calcul paramétré non activé"
           message="Le calcul et le changement de régime sont indisponibles pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité." />
       }
     }
@@ -79,7 +79,7 @@ import {
 
     <div class="card dm-period">
       <div class="dm-field">
-        <label class="dm-lbl" for="dm-year">Exercice</label>
+        <label class="dm-lbl" for="dm-year" i18n="@@accounting.monthly-declaration.exercice.e171e2b0">Exercice</label>
         <input
           id="dm-year"
           type="number"
@@ -90,7 +90,7 @@ import {
           [disabled]="!canCompute()" />
       </div>
       <div class="dm-field">
-        <label class="dm-lbl" for="dm-month">Mois</label>
+        <label class="dm-lbl" for="dm-month" i18n="@@accounting.monthly-declaration.mois.0d304bea">Mois</label>
         <input
           id="dm-month"
           type="number"
@@ -118,9 +118,7 @@ import {
         </div>
         <p class="dm-outcome__text">{{ outcome(r) }}</p>
         @if (cleanRun()) {
-          <p class="dm-outcome__text">
-            Ce contrôle allonge la série qui ouvre la bascule vers le calcul paramétré.
-          </p>
+          <p class="dm-outcome__text" i18n="@@accounting.monthly-declaration.ce.controle.allonge.la.serie.qui.ouvre.la.bascul.b289ec8b">Ce contrôle allonge la série qui ouvre la bascule vers le calcul paramétré.</p>
         }
       </div>
 

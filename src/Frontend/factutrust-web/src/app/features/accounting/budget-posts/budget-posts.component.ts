@@ -24,45 +24,45 @@ interface BudgetPostForm {
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingTableActionsComponent],
   template: `
-    <app-page-header title="Postes budgétaires" subtitle="Regroupements de comptes (par préfixes) servant à la saisie des budgets et au suivi réalisé/budget" />
+    <app-page-header title="Postes budgétaires" i18n-title="Postes budgétaires" subtitle="Regroupements de comptes (par préfixes) servant à la saisie des budgets et au suivi réalisé/budget" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card bp-toolbar">
-      <app-button variant="primary" icon="pi pi-plus" type="button" (click)="startCreate()" [disabled]="loading()">Nouveau poste</app-button>
+      <app-button variant="primary" icon="pi pi-plus" type="button" (click)="startCreate()" [disabled]="loading()" i18n="@@accounting.budget-posts.nouveau.poste.03005c4d">Nouveau poste</app-button>
     </div>
 
     @if (form(); as f) {
       <div class="card bp-form">
         <h3 class="bp-form-title">{{ f.id ? 'Modifier le poste' : 'Nouveau poste budgétaire' }}</h3>
         <div class="bp-fields">
-          <div class="bp-field"><label class="bp-lbl">Code</label><input class="bp-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. 613" /></div>
-          <div class="bp-field bp-grow"><label class="bp-lbl">Libellé</label><input class="bp-inp" [(ngModel)]="f.label" placeholder="Ex. Locations et charges locatives" /></div>
-          <div class="bp-field"><label class="bp-lbl">Sens</label>
+          <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.code.adac6937">Code</label><input class="bp-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. 613" i18n-placeholder="Ex. 613" /></div>
+          <div class="bp-field bp-grow"><label class="bp-lbl" i18n="@@accounting.budget-posts.libelle.f5485bba">Libellé</label><input class="bp-inp" [(ngModel)]="f.label" placeholder="Ex. Locations et charges locatives" i18n-placeholder="Ex. Locations et charges locatives" /></div>
+          <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.sens.55928a79">Sens</label>
             <select class="bp-inp" [(ngModel)]="f.kind">
-              <option [ngValue]="0">Charges</option>
-              <option [ngValue]="1">Produits</option>
+              <option [ngValue]="0" i18n="@@accounting.budget-posts.charges.cfc370a2">Charges</option>
+              <option [ngValue]="1" i18n="@@accounting.budget-posts.produits.48000473">Produits</option>
             </select>
           </div>
-          <div class="bp-field"><label class="bp-lbl">Préfixes de comptes</label>
-            <input class="bp-inp" [(ngModel)]="f.accountPrefixes" placeholder="Ex. 61;62" />
+          <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.prefixes.de.comptes.255c5fc5">Préfixes de comptes</label>
+            <input class="bp-inp" [(ngModel)]="f.accountPrefixes" placeholder="Ex. 61;62" i18n-placeholder="Ex. 61;62" />
           </div>
-          <div class="bp-field"><label class="bp-lbl">Ordre</label><input type="number" class="bp-inp bp-narrow" [(ngModel)]="f.displayOrder" min="0" /></div>
+          <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.ordre.5c32e631">Ordre</label><input type="number" class="bp-inp bp-narrow" [(ngModel)]="f.displayOrder" min="0" /></div>
           <div class="bp-form-actions">
-            <app-button variant="secondary" size="sm" type="button" (click)="form.set(null)" [disabled]="saving()">Annuler</app-button>
+            <app-button variant="secondary" size="sm" type="button" (click)="form.set(null)" [disabled]="saving()" i18n="@@accounting.budget-posts.annuler.49ba3292">Annuler</app-button>
             <app-button variant="primary" size="sm" type="button" (click)="save()" [disabled]="saving() || !f.code.trim() || !f.label.trim() || !f.accountPrefixes.trim()">
               {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
             </app-button>
           </div>
         </div>
-        <p class="bp-help">Préfixes séparés par « ; » (1 à 8 chiffres chacun). Le réalisé agrège les comptes commençant par ces préfixes ; en cas de chevauchement entre postes, le préfixe le plus long gagne.</p>
+        <p class="bp-help" i18n="@@accounting.budget-posts.prefixes.separes.par.1.a.8.chiffres.chacun.le.re.2912a10c">Préfixes séparés par « ; » (1 à 8 chiffres chacun). Le réalisé agrège les comptes commençant par ces préfixes ; en cas de chevauchement entre postes, le préfixe le plus long gagne.</p>
       </div>
     }
 
     <div class="card bp-list">
       <p-table [value]="posts()" [loading]="loading()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
         <ng-template pTemplate="header">
-          <tr><th scope="col">Code</th><th scope="col">Libellé</th><th scope="col">Sens</th><th scope="col">Préfixes</th><th scope="col">Ordre</th><th scope="col">Actif</th><th scope="col">Actions</th></tr>
+          <tr><th scope="col" i18n="@@accounting.budget-posts.code.adac6937">Code</th><th scope="col" i18n="@@accounting.budget-posts.libelle.f5485bba">Libellé</th><th scope="col" i18n="@@accounting.budget-posts.sens.55928a79">Sens</th><th scope="col" i18n="@@accounting.budget-posts.prefixes.f6779ef9">Préfixes</th><th scope="col" i18n="@@accounting.budget-posts.ordre.5c32e631">Ordre</th><th scope="col" i18n="@@accounting.budget-posts.actif.2eb75f84">Actif</th><th scope="col" i18n="@@accounting.budget-posts.actions.c3cd636a">Actions</th></tr>
         </ng-template>
         <ng-template pTemplate="body" let-p>
           <tr [class.bp-inactive]="!p.isActive">
@@ -89,7 +89,7 @@ interface BudgetPostForm {
             </td>
           </tr>
         </ng-template>
-        <ng-template pTemplate="emptymessage"><tr><td colspan="7" class="bp-empty">Aucun poste budgétaire.</td></tr></ng-template>
+        <ng-template pTemplate="emptymessage"><tr><td colspan="7" class="bp-empty" i18n="@@accounting.budget-posts.aucun.poste.budgetaire.1498bea7">Aucun poste budgétaire.</td></tr></ng-template>
       </p-table>
     </div>
   `,

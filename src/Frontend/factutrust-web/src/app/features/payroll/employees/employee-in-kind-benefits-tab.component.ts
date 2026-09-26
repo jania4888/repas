@@ -51,23 +51,23 @@ const BENEFIT_TYPE_OPTIONS = [
   ],
   template: `
     <app-payroll-section
-      title="Avantages en nature"
+      title="Avantages en nature" i18n-title="Avantages en nature"
       subtitle="Valorisation mensuelle intégrée au brut imposable et cotisable au calcul."
       icon="pi-home">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Nouvel avantage</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.employees.nouvel.avantage.89695f96">Nouvel avantage</app-button>
         </div>
       }
 
       <p-table [value]="items()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Type</th>
-            <th>Libellé</th>
-            <th class="text-right">Valeur mensuelle</th>
-            <th>Début</th>
-            <th>Fin</th>
+            <th i18n="@@payroll.employees.type.3deb7456">Type</th>
+            <th i18n="@@payroll.employees.libelle.f5485bba">Libellé</th>
+            <th class="text-right" i18n="@@payroll.employees.valeur.mensuelle.71869168">Valeur mensuelle</th>
+            <th i18n="@@payroll.employees.debut.f0955314">Début</th>
+            <th i18n="@@payroll.employees.fin.4251065f">Fin</th>
             @if (!readOnly) { <th></th> }
           </tr>
         </ng-template>
@@ -80,48 +80,48 @@ const BENEFIT_TYPE_OPTIONS = [
             <td>{{ b.endDate ? (b.endDate | date:'dd/MM/yyyy') : '—' }}</td>
             @if (!readOnly) {
               <td class="actions">
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="editBenefit(b)">Modifier</button>
-                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(b)">Supprimer</button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="editBenefit(b)" i18n="@@payroll.employees.modifier.f260e757">Modifier</button>
+                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(b)" i18n="@@payroll.employees.supprimer.1acfc1c7">Supprimer</button>
               </td>
             }
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td [attr.colspan]="readOnly ? 5 : 6">Aucun avantage en nature enregistré.</td></tr>
+          <tr><td [attr.colspan]="readOnly ? 5 : 6" i18n="@@payroll.employees.aucun.avantage.en.nature.enregistre.2dfad4b4">Aucun avantage en nature enregistré.</td></tr>
         </ng-template>
       </p-table>
     </app-payroll-section>
 
     <p-dialog [header]="dialogHeader" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '520px' }">
       <div class="payroll-form-group mb-2">
-        <label>Type</label>
+        <label i18n="@@payroll.employees.type.3deb7456">Type</label>
         <p-select [options]="typeOptions" optionLabel="label" optionValue="value" [(ngModel)]="formType" appendTo="body" styleClass="w-full" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Libellé</label>
+        <label i18n="@@payroll.employees.libelle.f5485bba">Libellé</label>
         <input pInputText [(ngModel)]="formLabel" class="w-full" maxlength="200" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Valeur mensuelle (TND)</label>
+        <label i18n="@@payroll.employees.valeur.mensuelle.tnd.9f939bfb">Valeur mensuelle (TND)</label>
         <p-inputNumber [(ngModel)]="formMonthlyValue" [min]="0.001" [minFractionDigits]="3" [maxFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Date de début</label>
+          <label i18n="@@payroll.employees.date.de.debut.706438ab">Date de début</label>
           <p-datepicker [(ngModel)]="formStartDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" [disabled]="!!editingId" />
         </div>
         <div class="payroll-form-group">
-          <label>Date de fin</label>
+          <label i18n="@@payroll.employees.date.de.fin.716a6d8d">Date de fin</label>
           <p-datepicker [(ngModel)]="formEndDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
         </div>
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Description</label>
+        <label i18n="@@payroll.employees.description.55f8ebc8">Description</label>
         <textarea pTextarea [(ngModel)]="formDescription" rows="2" class="w-full"></textarea>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.employees.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

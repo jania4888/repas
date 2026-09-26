@@ -5,16 +5,14 @@
       <span class="req-count">{{ requests.length }}</span>
     </h3>
     @if (threadIsOpen) {
-      <app-button variant="primary" size="sm" icon="pi-plus" (clicked)="openCreate()">
-        Nouvelle demande
-      </app-button>
+      <app-button variant="primary" size="sm" icon="pi-plus" (clicked)="openCreate()" i18n="@@exchanges.exchange-requests-panel.nouvelle.demande.0a6e5d2f">Nouvelle demande</app-button>
     }
   </div>
 
   @if (openCreateForm) {
     <div class="form-card">
       <div class="ft-field">
-        <label for="req-title">Titre</label>
+        <label for="req-title" i18n="@@exchanges.exchange-requests-panel.titre.eb97899a">Titre</label>
         <input
           id="req-title"
           [ngModel]="newTitle()"
@@ -26,7 +24,7 @@
         }
       </div>
       <div class="ft-field">
-        <label for="req-desc">Description</label>
+        <label for="req-desc" i18n="@@exchanges.exchange-requests-panel.description.55f8ebc8">Description</label>
         <textarea
           id="req-desc"
           rows="3"
@@ -36,28 +34,26 @@
       </div>
       <div class="form-card__row">
         <div class="ft-field">
-          <label for="req-cat">Catégorie</label>
+          <label for="req-cat" i18n="@@exchanges.exchange-requests-panel.categorie.6b38300a">Catégorie</label>
           <select id="req-cat" [ngModel]="newCategory()" (ngModelChange)="setCategory($event)">
-            <option [ngValue]="0">Réclamation</option>
-            <option [ngValue]="1">Information</option>
-            <option [ngValue]="2">Document manquant</option>
-            <option [ngValue]="3">Autre</option>
+            <option [ngValue]="0" i18n="@@exchanges.exchange-requests-panel.reclamation.33d37f8b">Réclamation</option>
+            <option [ngValue]="1" i18n="@@exchanges.exchange-requests-panel.information.0eb5ed50">Information</option>
+            <option [ngValue]="2" i18n="@@exchanges.exchange-requests-panel.document.manquant.854cb44d">Document manquant</option>
+            <option [ngValue]="3" i18n="@@exchanges.exchange-requests-panel.autre.43dacf9e">Autre</option>
           </select>
         </div>
         <div class="ft-field">
-          <label for="req-prio">Priorité</label>
+          <label for="req-prio" i18n="@@exchanges.exchange-requests-panel.priorite.eede91d2">Priorité</label>
           <select id="req-prio" [ngModel]="newPriority()" (ngModelChange)="setPriority($event)">
-            <option [ngValue]="0">Basse</option>
-            <option [ngValue]="1">Normale</option>
-            <option [ngValue]="2">Haute</option>
+            <option [ngValue]="0" i18n="@@exchanges.exchange-requests-panel.basse.66ecf01a">Basse</option>
+            <option [ngValue]="1" i18n="@@exchanges.exchange-requests-panel.normale.c82c13b2">Normale</option>
+            <option [ngValue]="2" i18n="@@exchanges.exchange-requests-panel.haute.ab500e10">Haute</option>
           </select>
         </div>
       </div>
       <div class="row">
-        <app-button variant="primary" size="sm" [disabled]="creating()" (clicked)="createRequest()">
-          Créer
-        </app-button>
-        <app-button variant="ghost" size="sm" (clicked)="cancelCreate()">Annuler</app-button>
+        <app-button variant="primary" size="sm" [disabled]="creating()" (clicked)="createRequest()" i18n="@@exchanges.exchange-requests-panel.creer.1a686172">Créer</app-button>
+        <app-button variant="ghost" size="sm" (clicked)="cancelCreate()" i18n="@@exchanges.exchange-requests-panel.annuler.49ba3292">Annuler</app-button>
       </div>
     </div>
   }
@@ -69,11 +65,11 @@
           <input
             type="search"
             class="req-search"
-            placeholder="Rechercher une demande…"
+            placeholder="Rechercher une demande…" i18n-placeholder="Rechercher une demande…"
             [ngModel]="search()"
             (ngModelChange)="search.set($event)"
           />
-          <div class="req-chips" role="tablist" aria-label="Filtrer les demandes">
+          <div class="req-chips" role="tablist" aria-label="Filtrer les demandes" i18n-aria-label="Filtrer les demandes">
             @for (chip of filters; track chip.id) {
               <button
                 type="button"
@@ -92,14 +88,14 @@
       @if (requests.length === 0 && !openCreateForm) {
         <app-empty-state
           icon="pi-clipboard"
-          title="Aucune demande"
+          title="Aucune demande" i18n-title="Aucune demande"
           description="Créez une demande ou une réclamation pour suivre un besoin."
           [showAction]="threadIsOpen"
           actionLabel="Nouvelle demande"
           (actionClick)="openCreate()"
         />
       } @else if (filteredRequests().length === 0 && requests.length > 0) {
-        <p class="req-filter-empty">Aucune demande ne correspond à ce filtre.</p>
+        <p class="req-filter-empty" i18n="@@exchanges.exchange-requests-panel.aucune.demande.ne.correspond.a.ce.filtre.546474da">Aucune demande ne correspond à ce filtre.</p>
       } @else {
         <ul class="req-list">
           @for (r of filteredRequests(); track r.id) {
@@ -117,12 +113,12 @@
                 </div>
                 <div class="req-card__meta">
                   <span>{{ catLabel(r.category) }}</span>
-                  <span>·</span>
+                  <span i18n="@@exchanges.exchange-requests-panel.text.1fdf0d90">·</span>
                   <span>{{ r.createdAt | date: 'dd/MM/yyyy' }}</span>
-                  <span>·</span>
+                  <span i18n="@@exchanges.exchange-requests-panel.text.1fdf0d90">·</span>
                   <span>{{ authorName(r.createdByUserId) }}</span>
                   @if (isHigh(r.priority)) {
-                    <span class="req-prio">Priorité haute</span>
+                    <span class="req-prio" i18n="@@exchanges.exchange-requests-panel.priorite.haute.7599461c">Priorité haute</span>
                   }
                   @if (requestDocs(r.id).length > 0) {
                     <span class="req-docs-count">
@@ -164,26 +160,26 @@
 
         <dl class="req-meta-grid">
           <div>
-            <dt>Créée le</dt>
+            <dt i18n="@@exchanges.exchange-requests-panel.creee.le.c4dc9951">Créée le</dt>
             <dd>{{ req.createdAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
           </div>
           <div>
-            <dt>Auteur</dt>
+            <dt i18n="@@exchanges.exchange-requests-panel.auteur.06f1962f">Auteur</dt>
             <dd>{{ authorName(req.createdByUserId) }}</dd>
           </div>
           <div>
-            <dt>Assignée à</dt>
+            <dt i18n="@@exchanges.exchange-requests-panel.assignee.a.32461737">Assignée à</dt>
             <dd>{{ assigneeName(req) }}</dd>
           </div>
           @if (req.resolvedAt) {
             <div>
-              <dt>Résolue le</dt>
+              <dt i18n="@@exchanges.exchange-requests-panel.resolue.le.b86b9437">Résolue le</dt>
               <dd>{{ req.resolvedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
             </div>
           }
           @if (req.closedAt) {
             <div>
-              <dt>Clôturée le</dt>
+              <dt i18n="@@exchanges.exchange-requests-panel.cloturee.le.5ff3f687">Clôturée le</dt>
               <dd>{{ req.closedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
             </div>
           }
@@ -201,9 +197,7 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'InProgress')"
-              >
-                Prendre en charge
-              </app-button>
+               i18n="@@exchanges.exchange-requests-panel.prendre.en.charge.f6723a15">Prendre en charge</app-button>
             }
             @if (canResume(req)) {
               <app-button
@@ -211,9 +205,7 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'InProgress')"
-              >
-                Reprendre
-              </app-button>
+               i18n="@@exchanges.exchange-requests-panel.reprendre.1c56710b">Reprendre</app-button>
             }
             @if (canWait(req)) {
               <app-button
@@ -221,17 +213,13 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'WaitingClient')"
-              >
-                Attente client
-              </app-button>
+               i18n="@@exchanges.exchange-requests-panel.attente.client.6b243335">Attente client</app-button>
               <app-button
                 variant="ghost"
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'WaitingFirm')"
-              >
-                Attente cabinet
-              </app-button>
+               i18n="@@exchanges.exchange-requests-panel.attente.cabinet.9986eb84">Attente cabinet</app-button>
             }
             @if (canResolve(req)) {
               <app-button
@@ -239,9 +227,7 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'Resolved')"
-              >
-                Résoudre
-              </app-button>
+               i18n="@@exchanges.exchange-requests-panel.resoudre.2a5ddafb">Résoudre</app-button>
             }
             @if (canClose(req)) {
               <app-button
@@ -249,21 +235,19 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'Closed')"
-              >
-                Clôturer
-              </app-button>
+               i18n="@@exchanges.exchange-requests-panel.cloturer.e9f075c1">Clôturer</app-button>
             }
           </div>
         }
 
         @if (canAssign(req)) {
           <div class="req-assign">
-            <label for="req-assign">Assigner à</label>
+            <label for="req-assign" i18n="@@exchanges.exchange-requests-panel.assigner.a.6cfcf0ab">Assigner à</label>
             @if (firmParticipants().length === 0) {
-              <p class="muted">Aucun collaborateur cabinet dans cet échange.</p>
+              <p class="muted" i18n="@@exchanges.exchange-requests-panel.aucun.collaborateur.cabinet.dans.cet.echange.fa3f083e">Aucun collaborateur cabinet dans cet échange.</p>
             } @else {
               <select id="req-assign" [ngModel]="assignUserId()" (ngModelChange)="assignUserId.set($event)">
-                <option value="">Choisir un collaborateur…</option>
+                <option value="" i18n="@@exchanges.exchange-requests-panel.choisir.un.collaborateur.8759433f">Choisir un collaborateur…</option>
                 @for (p of firmParticipants(); track p.userId) {
                   <option [value]="p.userId">{{ p.displayName }}</option>
                 }
@@ -273,15 +257,13 @@
                 size="sm"
                 [disabled]="!assignUserId() || statusBusyId() === req.id"
                 (clicked)="assignToSelected(req)"
-              >
-                Assigner
-              </app-button>
+               i18n="@@exchanges.exchange-requests-panel.assigner.6397f178">Assigner</app-button>
             }
           </div>
         }
 
         <section class="req-section">
-          <h5>Pièces jointes</h5>
+          <h5 i18n="@@exchanges.exchange-requests-panel.pieces.jointes.98d89a25">Pièces jointes</h5>
           <ul class="req-docs">
             @for (d of requestDocs(req.id); track d.id) {
               <li>
@@ -292,7 +274,7 @@
                 <span>{{ fileSize(d.sizeBytes) }} · {{ d.uploadedAt | date: 'dd/MM/yyyy' }}</span>
               </li>
             } @empty {
-              <li class="muted">Aucun document lié</li>
+              <li class="muted" i18n="@@exchanges.exchange-requests-panel.aucun.document.lie.7139ec99">Aucun document lié</li>
             }
           </ul>
           @if (threadIsOpen) {
@@ -305,9 +287,9 @@
         </section>
 
         <section class="req-section">
-          <h5>Commentaires</h5>
+          <h5 i18n="@@exchanges.exchange-requests-panel.commentaires.dbdeccaf">Commentaires</h5>
           @if (commentsLoading()) {
-            <p class="muted">Chargement…</p>
+            <p class="muted" i18n="@@exchanges.exchange-requests-panel.chargement.01cba1df">Chargement…</p>
           }
           <ul class="req-comments">
             @for (c of comments(); track c.id) {
@@ -321,7 +303,7 @@
               </li>
             } @empty {
               @if (!commentsLoading()) {
-                <li class="muted">Aucun commentaire</li>
+                <li class="muted" i18n="@@exchanges.exchange-requests-panel.aucun.commentaire.4806b916">Aucun commentaire</li>
               }
             }
           </ul>
@@ -329,7 +311,7 @@
             <div class="req-comment-form">
               <textarea
                 rows="3"
-                placeholder="Ajouter un commentaire…"
+                placeholder="Ajouter un commentaire…" i18n-placeholder="Ajouter un commentaire…"
                 [ngModel]="commentBody()"
                 (ngModelChange)="commentBody.set($event)"
               ></textarea>
@@ -338,16 +320,14 @@
                 size="sm"
                 [disabled]="!commentBody().trim() || postingComment()"
                 (clicked)="postComment(req)"
-              >
-                Envoyer
-              </app-button>
+               i18n="@@exchanges.exchange-requests-panel.envoyer.e9ce243b">Envoyer</app-button>
             </div>
           }
         </section>
 
         @if (requestActivity(req).length > 0) {
           <section class="req-section">
-            <h5>Activité</h5>
+            <h5 i18n="@@exchanges.exchange-requests-panel.activite.8fe12048">Activité</h5>
             <ul class="req-activity">
               @for (h of requestActivity(req); track h.id) {
                 <li>

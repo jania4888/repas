@@ -82,24 +82,18 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     }
 
     @if (store.editingLocked() && store.isReversal()) {
-      <p class="me-warning-banner" role="alert">
-        Cette écriture est une extourne : vos modifications rompent la symétrie miroir avec l'écriture d'origine.
-      </p>
+      <p class="me-warning-banner" role="alert" i18n="@@accounting.manual-entry.cette.ecriture.est.une.extourne.vos.modification.a17151aa">Cette écriture est une extourne : vos modifications rompent la symétrie miroir avec l'écriture d'origine.</p>
     }
 
     @if (store.editingLocked() && store.sourceEntityType() === 'CashOperation') {
-      <p class="me-warning-banner" role="alert">
-        Cette modification impacte le calcul de la TVA sur encaissements : elle sera prise en compte au prochain
+      <p class="me-warning-banner" role="alert" i18n="@@accounting.manual-entry.cette.modification.impacte.le.calcul.de.la.tva.s.4b1724b3">Cette modification impacte le calcul de la TVA sur encaissements : elle sera prise en compte au prochain
         recalcul (enregistrement de la déclaration en brouillon, ou rectificative si la déclaration du mois est déjà
         soumise). Une déclaration déjà enregistrée n'est pas modifiée automatiquement. La ventilation par taux reste
-        celle de l'opération de caisse d'origine.
-      </p>
+        celle de l'opération de caisse d'origine.</p>
     }
 
     @if (refs.vatRatesFromFallback()) {
-      <p class="me-vat-fallback-banner" role="status">
-        Taux TVA par défaut utilisés (0 %, 7 %, 13 %, 19 %). La configuration personnalisée n'est pas accessible avec vos droits actuels.
-      </p>
+      <p class="me-vat-fallback-banner" role="status" i18n="@@accounting.manual-entry.taux.tva.par.defaut.utilises.0.7.13.19.la.config.5a8a0724">Taux TVA par défaut utilisés (0 %, 7 %, 13 %, 19 %). La configuration personnalisée n'est pas accessible avec vos droits actuels.</p>
     }
 
     <app-entry-toolbar
@@ -119,11 +113,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             (valueChange)="onTabChange($event)"
             [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0">Saisie standard</p-tab>
+        <p-tab [value]="0" i18n="@@accounting.manual-entry.saisie.standard.54919897">Saisie standard</p-tab>
         @if (!store.editingLocked()) {
-          <p-tab [value]="1">Saisie guidée</p-tab>
-          <p-tab [value]="2">Saisie par modèle</p-tab>
-          <p-tab [value]="3">Saisie récurrente</p-tab>
+          <p-tab [value]="1" i18n="@@accounting.manual-entry.saisie.guidee.7be40d61">Saisie guidée</p-tab>
+          <p-tab [value]="2" i18n="@@accounting.manual-entry.saisie.par.modele.1127088b">Saisie par modèle</p-tab>
+          <p-tab [value]="3" i18n="@@accounting.manual-entry.saisie.recurrente.4fe6a99b">Saisie récurrente</p-tab>
         }
       </p-tablist>
       <p-tabpanels>
@@ -181,22 +175,20 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <p class="text-success me-error" role="status">{{ store.successMsg() }}</p>
     }
     @if (store.periodClosed()) {
-      <p class="me-period-warning" role="alert">
-        La période comptable de cette date est clôturée — modifiez la date pour enregistrer.
-      </p>
+      <p class="me-period-warning" role="alert" i18n="@@accounting.manual-entry.la.periode.comptable.de.cette.date.est.cloturee..1a09b6b7">La période comptable de cette date est clôturée — modifiez la date pour enregistrer.</p>
     }
 
-    <details class="me-shortcuts" aria-label="Liste des raccourcis clavier">
-      <summary>⌨ Raccourcis clavier</summary>
+    <details class="me-shortcuts" aria-label="Liste des raccourcis clavier" i18n-aria-label="Liste des raccourcis clavier">
+      <summary i18n="@@accounting.manual-entry.raccourcis.clavier.feaa1001">⌨ Raccourcis clavier</summary>
       <ul class="me-shortcuts-list">
-        <li><kbd>Ctrl</kbd>+<kbd>S</kbd> — Enregistrer l'écriture</li>
-        <li><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> — Enregistrer & nouveau</li>
-        <li><kbd>Alt</kbd>+<kbd>L</kbd> — Ajouter une ligne</li>
-        <li><kbd>Alt</kbd>+<kbd>B</kbd> — Équilibrer automatiquement</li>
-        <li><kbd>Alt</kbd>+<kbd>M</kbd> — Charger un modèle</li>
-        <li><kbd>Alt</kbd>+<kbd>N</kbd> — Réinitialiser le formulaire</li>
-        <li><kbd>Tab</kbd> / <kbd>Entrée</kbd> — Depuis un montant : ligne suivante (saut du crédit si débit saisi)</li>
-        <li><kbd>Esc</kbd> — Fermer la modale ouverte</li>
+        <li><kbd i18n="@@accounting.manual-entry.ctrl.dd6a02a5">Ctrl</kbd>+<kbd i18n="@@accounting.manual-entry.s.02aa629c">S</kbd> — Enregistrer l'écriture</li>
+        <li><kbd i18n="@@accounting.manual-entry.ctrl.dd6a02a5">Ctrl</kbd>+<kbd i18n="@@accounting.manual-entry.shift.469d5b18">Shift</kbd>+<kbd i18n="@@accounting.manual-entry.s.02aa629c">S</kbd> — Enregistrer & nouveau</li>
+        <li><kbd i18n="@@accounting.manual-entry.alt.e30eff92">Alt</kbd>+<kbd i18n="@@accounting.manual-entry.l.d160e098">L</kbd> — Ajouter une ligne</li>
+        <li><kbd i18n="@@accounting.manual-entry.alt.e30eff92">Alt</kbd>+<kbd i18n="@@accounting.manual-entry.b.ae4f281d">B</kbd> — Équilibrer automatiquement</li>
+        <li><kbd i18n="@@accounting.manual-entry.alt.e30eff92">Alt</kbd>+<kbd i18n="@@accounting.manual-entry.m.c63ae6dd">M</kbd> — Charger un modèle</li>
+        <li><kbd i18n="@@accounting.manual-entry.alt.e30eff92">Alt</kbd>+<kbd i18n="@@accounting.manual-entry.n.b51a6073">N</kbd> — Réinitialiser le formulaire</li>
+        <li><kbd i18n="@@accounting.manual-entry.tab.fe06eb64">Tab</kbd> / <kbd i18n="@@accounting.manual-entry.entree.0ab59cb9">Entrée</kbd> — Depuis un montant : ligne suivante (saut du crédit si débit saisi)</li>
+        <li><kbd i18n="@@accounting.manual-entry.esc.1f7a4f9e">Esc</kbd> — Fermer la modale ouverte</li>
       </ul>
     </details>
 

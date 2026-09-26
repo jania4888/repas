@@ -26,15 +26,13 @@ import {
     ],
     template: `
     <app-page-header
-      title="Analyse clients"
+      title="Analyse clients" i18n-title="Analyse clients"
       subtitle="Identifiez vos meilleurs clients et ceux qui nécessitent votre attention">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()">
-        Imprimer
-      </app-button>
+        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d">Imprimer</app-button>
     </app-page-header>
 
     <!-- Alerts -->
@@ -84,7 +82,7 @@ import {
       <!-- Active/Inactive visual bar -->
       <div class="section activity-section">
         <div class="section-header">
-          <h2 class="section-title">Répartition actifs / inactifs</h2>
+          <h2 class="section-title" i18n="@@reports.analytics.repartition.actifs.inactifs.8882d0b8">Répartition actifs / inactifs</h2>
           <span class="section-hint">
             <i class="pi pi-info-circle"></i>
             Un client actif est un client qui est marqué comme actif dans votre base
@@ -117,21 +115,15 @@ import {
           <input
             type="text"
             class="search-input"
-            placeholder="Rechercher un client..."
+            placeholder="Rechercher un client..." i18n-placeholder="Rechercher un client..."
             [(ngModel)]="searchQuery"
             (ngModelChange)="onSearch()"
-            aria-label="Rechercher un client">
+            aria-label="Rechercher un client" i18n-aria-label="Rechercher un client">
         </div>
         <div class="filter-tabs">
-          <button class="filter-tab" [class.active]="filter === 'all'" (click)="onFilter('all')">
-            Tous
-          </button>
-          <button class="filter-tab" [class.active]="filter === 'active'" (click)="onFilter('active')">
-            Actifs
-          </button>
-          <button class="filter-tab" [class.active]="filter === 'inactive'" (click)="onFilter('inactive')">
-            Inactifs
-          </button>
+          <button class="filter-tab" [class.active]="filter === 'all'" (click)="onFilter('all')" i18n="@@reports.analytics.tous.b97ae3b4">Tous</button>
+          <button class="filter-tab" [class.active]="filter === 'active'" (click)="onFilter('active')" i18n="@@reports.analytics.actifs.4fc3a980">Actifs</button>
+          <button class="filter-tab" [class.active]="filter === 'inactive'" (click)="onFilter('inactive')" i18n="@@reports.analytics.inactifs.41c2d03e">Inactifs</button>
           <button class="filter-tab" [class.active]="filter === 'unpaid'" (click)="onFilter('unpaid')">
             <i class="pi pi-exclamation-circle" style="font-size: 0.7rem;"></i>
             Impayés
@@ -153,27 +145,27 @@ import {
       </div>
 
       @if (loading()) {
-        <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span>Chargement...</span></div>
+        <div class="loading-spinner"><i class="pi pi-spin pi-spinner"></i><span i18n="@@reports.analytics.chargement.a209b664">Chargement...</span></div>
       } @else if (!filteredClients().length) {
         <div class="empty-state-sm">
           <i class="pi pi-users"></i>
-          <p>Aucun client trouvé</p>
+          <p i18n="@@reports.analytics.aucun.client.trouve.ef55e6be">Aucun client trouvé</p>
           <p class="empty-hint">{{ searchQuery ? 'Aucun résultat pour votre recherche.' : 'Aucune donnée disponible.' }}</p>
         </div>
       } @else {
         <div class="clients-table-wrapper">
-          <table class="clients-table" aria-label="Tableau de classement des clients">
+          <table class="clients-table" aria-label="Tableau de classement des clients" i18n-aria-label="Tableau de classement des clients">
             <thead>
               <tr>
-                <th class="col-rank">#</th>
-                <th>Client</th>
-                <th class="text-center">Statut</th>
-                <th class="text-right" title="Nombre de factures">Nb factures</th>
-                <th class="text-right">Chiffre d'affaires</th>
+                <th class="col-rank" i18n="@@reports.analytics.text.d08f88df">#</th>
+                <th i18n="@@reports.analytics.client.1bdd79b1">Client</th>
+                <th class="text-center" i18n="@@reports.analytics.statut.659499f3">Statut</th>
+                <th class="text-right" title="Nombre de factures" i18n-title="Nombre de factures" i18n="@@reports.analytics.nb.factures.973edc99">Nb factures</th>
+                <th class="text-right" i18n="@@reports.analytics.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
                 @if (filter === 'unpaid' || filter === 'all') {
-                  <th class="text-right">Impayés</th>
+                  <th class="text-right" i18n="@@reports.analytics.impayes.1545a134">Impayés</th>
                 }
-                <th class="col-actions">Actions</th>
+                <th class="col-actions" i18n="@@reports.analytics.actions.c3cd636a">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -209,7 +201,7 @@ import {
                           <span class="unpaid-amount">{{ formatAmount(client.unpaidAmount) }}</span>
                         </div>
                       } @else {
-                        <span class="no-unpaid">Aucun impayé</span>
+                        <span class="no-unpaid" i18n="@@reports.analytics.aucun.impaye.137feeeb">Aucun impayé</span>
                       }
                     </td>
                   }
@@ -220,9 +212,7 @@ import {
                       icon="pi-eye"
                       [routerLink]="['/invoices']"
                       [queryParams]="{ search: client.name }"
-                      ariaLabel="Voir les factures de ce client">
-                      Factures
-                    </app-button>
+                      ariaLabel="Voir les factures de ce client" i18n="@@reports.analytics.factures.da35e4f2">Factures</app-button>
                   </td>
                 </tr>
               }
@@ -240,26 +230,26 @@ import {
     <!-- Print-only section -->
     <div class="print-only print-report">
       <div class="print-header">
-        <h1 class="print-title">Analyse Clients</h1>
-        <div class="print-logo">Logo</div>
+        <h1 class="print-title" i18n="@@reports.analytics.analyse.clients.8c024114">Analyse Clients</h1>
+        <div class="print-logo" i18n="@@reports.analytics.logo.83fce832">Logo</div>
       </div>
       <div class="print-separator"></div>
       @if (data()) {
         <div class="print-kpis">
-          <div class="print-kpi"><strong>Total clients</strong><span>{{ data()!.totalClients }}</span></div>
-          <div class="print-kpi"><strong>Actifs</strong><span>{{ data()!.activeCount }}</span></div>
-          <div class="print-kpi"><strong>Inactifs</strong><span>{{ data()!.inactiveCount }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.analytics.total.clients.9c969efc">Total clients</strong><span>{{ data()!.totalClients }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.analytics.actifs.4fc3a980">Actifs</strong><span>{{ data()!.activeCount }}</span></div>
+          <div class="print-kpi"><strong i18n="@@reports.analytics.inactifs.41c2d03e">Inactifs</strong><span>{{ data()!.inactiveCount }}</span></div>
         </div>
-        <h3 class="print-subtitle">Classement par chiffre d'affaires</h3>
+        <h3 class="print-subtitle" i18n="@@reports.analytics.classement.par.chiffre.d.affaires.a7553a74">Classement par chiffre d'affaires</h3>
         <table class="print-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Client</th>
-              <th>Statut</th>
-              <th>Nb factures</th>
-              <th>Chiffre d'affaires</th>
-              <th>Impayés</th>
+              <th i18n="@@reports.analytics.text.d08f88df">#</th>
+              <th i18n="@@reports.analytics.client.1bdd79b1">Client</th>
+              <th i18n="@@reports.analytics.statut.659499f3">Statut</th>
+              <th i18n="@@reports.analytics.nb.factures.973edc99">Nb factures</th>
+              <th i18n="@@reports.analytics.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
+              <th i18n="@@reports.analytics.impayes.1545a134">Impayés</th>
             </tr>
           </thead>
           <tbody>

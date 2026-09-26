@@ -41,14 +41,12 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
       [style]="{ width: '820px' }"
       (onShow)="onOpen()"
       (onHide)="closed.emit()">
-      <p class="hint mb-3">
-        Fichier CSV standard (; UTF-8) pour dépôt sur le portail de votre banque.
-        Vérifiez le modèle exigé par votre établissement avant import.
-      </p>
+      <p class="hint mb-3" i18n="@@payroll.runs.fichier.csv.standard.utf.8.pour.depot.sur.le.por.1e175a62">Fichier CSV standard (; UTF-8) pour dépôt sur le portail de votre banque.
+        Vérifiez le modèle exigé par votre établissement avant import.</p>
 
       <div class="toolbar mb-3">
         <div class="field">
-          <label for="bt-account">Compte débiteur</label>
+          <label for="bt-account" i18n="@@payroll.runs.compte.debiteur.b7abcb4f">Compte débiteur</label>
           <p-select
             inputId="bt-account"
             [options]="accountOptions()"
@@ -56,18 +54,18 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
             (ngModelChange)="reloadPreview()"
             optionLabel="label"
             optionValue="value"
-            placeholder="Compte par défaut"
+            placeholder="Compte par défaut" i18n-placeholder="Compte par défaut"
             [showClear]="true"
             styleClass="w-full" />
         </div>
         <div class="field">
-          <label for="bt-label">Libellé</label>
+          <label for="bt-label" i18n="@@payroll.runs.libelle.f5485bba">Libellé</label>
           <input pInputText id="bt-label" class="w-full" [(ngModel)]="transferLabel" (change)="reloadPreview()" />
         </div>
       </div>
 
       @if (loading()) {
-        <p>Chargement de la prévisualisation…</p>
+        <p i18n="@@payroll.runs.chargement.de.la.previsualisation.6b5a113b">Chargement de la prévisualisation…</p>
       } @else if (preview()) {
         @for (w of preview()!.warnings; track w.code) {
           <p-message severity="warn" [text]="w.message" styleClass="mb-2 w-full" />
@@ -89,10 +87,10 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
               <p-table [value]="preview()!.lines" styleClass="p-datatable-sm">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>Matricule</th>
-                    <th>Salarié</th>
-                    <th>RIB</th>
-                    <th class="text-right">Net</th>
+                    <th i18n="@@payroll.runs.matricule.8f74c132">Matricule</th>
+                    <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+                    <th i18n="@@payroll.runs.rib.61f3ea57">RIB</th>
+                    <th class="text-right" i18n="@@payroll.runs.net.9bb81c2e">Net</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-l>
@@ -104,7 +102,7 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
-                  <tr><td colspan="4">Aucun salarié éligible (RIB valide et net &gt; 0).</td></tr>
+                  <tr><td colspan="4" i18n="@@payroll.runs.aucun.salarie.eligible.rib.valide.et.net.gt.0.3f1d6219">Aucun salarié éligible (RIB valide et net &gt; 0).</td></tr>
                 </ng-template>
               </p-table>
             </div>
@@ -114,10 +112,10 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
               <p-table [value]="preview()!.excludedLines" styleClass="p-datatable-sm">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>Matricule</th>
-                    <th>Salarié</th>
-                    <th>Motif</th>
-                    <th class="text-right">Net</th>
+                    <th i18n="@@payroll.runs.matricule.8f74c132">Matricule</th>
+                    <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+                    <th i18n="@@payroll.runs.motif.2a198f47">Motif</th>
+                    <th class="text-right" i18n="@@payroll.runs.net.9bb81c2e">Net</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-e>
@@ -129,7 +127,7 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
-                  <tr><td colspan="4">Aucun exclu.</td></tr>
+                  <tr><td colspan="4" i18n="@@payroll.runs.aucun.exclu.eb8cdb35">Aucun exclu.</td></tr>
                 </ng-template>
               </p-table>
             </div>
@@ -139,15 +137,13 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
       }
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="close()">Annuler</app-button>
+        <app-button variant="outline" (click)="close()" i18n="@@payroll.runs.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="primary"
           icon="pi-download"
           iconPos="left"
           [disabled]="!canDownload() || downloading()"
-          (click)="download()">
-          Télécharger CSV
-        </app-button>
+          (click)="download()" i18n="@@payroll.runs.telecharger.csv.7a1a04b2">Télécharger CSV</app-button>
       </ng-template>
     </p-dialog>
   `,

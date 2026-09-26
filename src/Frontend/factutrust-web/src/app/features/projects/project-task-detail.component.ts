@@ -93,19 +93,19 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
       <app-page-header [title]="t.title" [subtitle]="t.phaseName">
         <app-status-badge [status]="taskStatusBadge(t.status)" [label]="t.statusDisplay" />
         @if (canCreateTimeEntry) {
-          <app-button variant="outline" (click)="goToTimeTab()">Saisir du temps</app-button>
+          <app-button variant="outline" (click)="goToTimeTab()" i18n="@@projects.project-task-detail.saisir.du.temps.829487f5">Saisir du temps</app-button>
         }
         @if (canUpdate) {
-          <app-button variant="outline" (click)="openStatusDialog()">Changer statut</app-button>
-          <app-button variant="primary" (click)="save()">Enregistrer</app-button>
-          <app-button variant="danger" (click)="deleteTask()">Supprimer</app-button>
+          <app-button variant="outline" (click)="openStatusDialog()" i18n="@@projects.project-task-detail.changer.statut.3db910c4">Changer statut</app-button>
+          <app-button variant="primary" (click)="save()" i18n="@@projects.project-task-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
+          <app-button variant="danger" (click)="deleteTask()" i18n="@@projects.project-task-detail.supprimer.1acfc1c7">Supprimer</app-button>
         }
-        <a routerLink="/projects/{{ t.projectId }}" [queryParams]="{ tab: 'tasks' }" class="p-button p-button-outlined p-button-sm">Retour au projet</a>
+        <a routerLink="/projects/{{ t.projectId }}" [queryParams]="{ tab: 'tasks' }" class="p-button p-button-outlined p-button-sm" i18n="@@projects.project-task-detail.retour.au.projet.c83aebd1">Retour au projet</a>
       </app-page-header>
 
       <div class="proj-meta-chips mb-2">
         @if (canUpdate) {
-          <p-select [options]="statusOptions" [(ngModel)]="status" optionLabel="label" optionValue="value" placeholder="Statut" />
+          <p-select [options]="statusOptions" [(ngModel)]="status" optionLabel="label" optionValue="value" placeholder="Statut" i18n-placeholder="Statut" />
           <p-select [options]="priorityOptions" [(ngModel)]="priority" optionLabel="label" optionValue="value" />
         }
         <span class="proj-chip">
@@ -121,24 +121,24 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
         <div class="task-detail-main-tabs">
           <p-tabs [value]="tab()" (valueChange)="tab.set($any($event))">
             <p-tablist>
-              <p-tab value="overview">Aperçu</p-tab>
+              <p-tab value="overview" i18n="@@projects.project-task-detail.apercu.f0f53004">Aperçu</p-tab>
               <p-tab value="subtasks">Sous-tâches {{ doneSubtasks() }}/{{ subtasks().length }}</p-tab>
               <p-tab value="files">Fichiers {{ taskFiles().length }}</p-tab>
               @if (showTaskTimeTab(project(), t)) {
-              <p-tab value="time">Temps passé</p-tab>
+              <p-tab value="time" i18n="@@projects.project-task-detail.temps.passe.94914a53">Temps passé</p-tab>
               }
-              <p-tab value="history">Historique</p-tab>
+              <p-tab value="history" i18n="@@projects.project-task-detail.historique.34f3a06a">Historique</p-tab>
             </p-tablist>
             <p-tabpanels>
               <p-tabpanel value="overview">
                 <div class="card p-3">
                   @if (canUpdate) {
                     <input pInputText class="w-full mb-2" [(ngModel)]="title" />
-                    <textarea pTextarea class="w-full" [(ngModel)]="description" rows="4" placeholder="Description"></textarea>
+                    <textarea pTextarea class="w-full" [(ngModel)]="description" rows="4" placeholder="Description" i18n-placeholder="Description"></textarea>
                     <div class="flex flex-wrap gap-2 mt-2">
-                      <p-select [options]="users()" [(ngModel)]="assigneeId" optionLabel="displayName" optionValue="id" placeholder="Assigné" [showClear]="true" />
-                      <p-datepicker [(ngModel)]="dueDate" dateFormat="dd/mm/yy" placeholder="Échéance" />
-                      <p-inputNumber [(ngModel)]="estimatedHours" [min]="0" placeholder="Estimé h" />
+                      <p-select [options]="users()" [(ngModel)]="assigneeId" optionLabel="displayName" optionValue="id" placeholder="Assigné" i18n-placeholder="Assigné" [showClear]="true" />
+                      <p-datepicker [(ngModel)]="dueDate" dateFormat="dd/mm/yy" placeholder="Échéance" i18n-placeholder="Échéance" />
+                      <p-inputNumber [(ngModel)]="estimatedHours" [min]="0" placeholder="Estimé h" i18n-placeholder="Estimé h" />
                     </div>
                   } @else {
                     <p>{{ t.description || 'Pas de description.' }}</p>
@@ -150,23 +150,23 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   </div>
                   <div class="flex gap-3 mt-3">
                     <div class="proj-kpi-card flex-1">
-                      <span class="proj-kpi-label">Temps estimé</span>
+                      <span class="proj-kpi-label" i18n="@@projects.project-task-detail.temps.estime.b398ea0b">Temps estimé</span>
                       <strong>{{ t.estimatedHours | number:'1.0-1' }} h</strong>
                     </div>
                     <div class="proj-kpi-card flex-1">
-                      <span class="proj-kpi-label">Temps passé</span>
+                      <span class="proj-kpi-label" i18n="@@projects.project-task-detail.temps.passe.94914a53">Temps passé</span>
                       <strong>{{ t.loggedHours | number:'1.0-1' }} h</strong>
                       @if (canCreateTimeEntry) {
-                        <button type="button" class="proj-tasks-link-btn" (click)="goToTimeTab()">Saisir du temps</button>
+                        <button type="button" class="proj-tasks-link-btn" (click)="goToTimeTab()" i18n="@@projects.project-task-detail.saisir.du.temps.829487f5">Saisir du temps</button>
                       }
                     </div>
                   </div>
                 </div>
                 <div class="card p-3 mt-3">
-                  <h3 class="mt-0">Commentaires</h3>
+                  <h3 class="mt-0" i18n="@@projects.project-task-detail.commentaires.dbdeccaf">Commentaires</h3>
                   @if (canUpdate) {
                     <textarea pTextarea class="w-full" [(ngModel)]="body" rows="3"></textarea>
-                    <app-button class="mt-2" variant="primary" (click)="comment()">Ajouter</app-button>
+                    <app-button class="mt-2" variant="primary" (click)="comment()" i18n="@@projects.project-task-detail.ajouter.87c57ed1">Ajouter</app-button>
                   }
                   <ul class="proj-sidebar-list">
                     @for (c of comments(); track c.id) {
@@ -178,7 +178,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
               <p-tabpanel value="subtasks">
                 <div class="card p-3">
                   <p-table [value]="subtasks()" styleClass="p-datatable-sm">
-                    <ng-template pTemplate="header"><tr><th>Titre</th><th>Statut</th><th>Avancement</th></tr></ng-template>
+                    <ng-template pTemplate="header"><tr><th i18n="@@projects.project-task-detail.titre.eb97899a">Titre</th><th i18n="@@projects.project-task-detail.statut.659499f3">Statut</th><th i18n="@@projects.project-task-detail.avancement.e1963fc4">Avancement</th></tr></ng-template>
                     <ng-template pTemplate="body" let-s>
                       <tr [routerLink]="['/projects', s.projectId, 'tasks', s.id]" style="cursor:pointer">
                         <td>{{ s.title }}</td>
@@ -189,8 +189,8 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   </p-table>
                   @if (canUpdate) {
                     <div class="flex gap-2 mt-2">
-                      <input pInputText [(ngModel)]="subTitle" placeholder="Nouvelle sous-tâche" class="flex-1" />
-                      <app-button (click)="addSub()">Ajouter</app-button>
+                      <input pInputText [(ngModel)]="subTitle" placeholder="Nouvelle sous-tâche" i18n-placeholder="Nouvelle sous-tâche" class="flex-1" />
+                      <app-button (click)="addSub()" i18n="@@projects.project-task-detail.ajouter.87c57ed1">Ajouter</app-button>
                     </div>
                   }
                 </div>
@@ -203,12 +203,12 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         <li>
                           <strong>{{ f.fileName }}</strong>
                           <span class="text-sm text-color-secondary">{{ formatSize(f.sizeBytes) }} · {{ f.createdAt | date:'shortDate' }}</span>
-                          <app-button size="sm" variant="outline" (click)="downloadFile(f)">Télécharger</app-button>
+                          <app-button size="sm" variant="outline" (click)="downloadFile(f)" i18n="@@projects.project-task-detail.telecharger.b332d06d">Télécharger</app-button>
                         </li>
                       }
                     </ul>
                   } @else {
-                    <p class="text-color-secondary m-0">Aucun fichier rattaché à cette tâche.</p>
+                    <p class="text-color-secondary m-0" i18n="@@projects.project-task-detail.aucun.fichier.rattache.a.cette.tache.8af2d734">Aucun fichier rattaché à cette tâche.</p>
                   }
                 </div>
               </p-tabpanel>
@@ -234,18 +234,18 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         }
                       </p>
                       <div class="task-create-field">
-                        <label for="task-time-date">Date <span class="ft-required">*</span></label>
+                        <label for="task-time-date">Date <span class="ft-required" i18n="@@projects.project-task-detail.text.df58248c">*</span></label>
                         <p-datepicker
                           inputId="task-time-date"
                           class="w-full"
                           [(ngModel)]="logWorkDate"
                           dateFormat="dd/mm/yy"
-                          placeholder="jj/mm/aa"
+                          placeholder="jj/mm/aa" i18n-placeholder="jj/mm/aa"
                           [showIcon]="true"
                           appendTo="body" />
                       </div>
                       <div class="task-create-field">
-                        <label for="task-time-hours">Heures <span class="ft-required">*</span></label>
+                        <label for="task-time-hours">Heures <span class="ft-required" i18n="@@projects.project-task-detail.text.df58248c">*</span></label>
                         <p-inputNumber
                           inputId="task-time-hours"
                           class="w-full"
@@ -259,23 +259,23 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                       </div>
                       <div class="task-create-check">
                         <p-checkbox [(ngModel)]="logBillable" [binary]="true" inputId="taskTimeBillable" />
-                        <label for="taskTimeBillable">Facturable</label>
+                        <label for="taskTimeBillable" i18n="@@projects.project-task-detail.facturable.63134237">Facturable</label>
                       </div>
                       <div class="task-create-field">
-                        <label for="task-time-notes">Notes</label>
+                        <label for="task-time-notes" i18n="@@projects.project-task-detail.notes.70440046">Notes</label>
                         <textarea
                           id="task-time-notes"
                           pTextarea
                           class="w-full"
                           [(ngModel)]="logNotes"
                           rows="3"
-                          placeholder="Détails, contexte…"></textarea>
+                          placeholder="Détails, contexte…" i18n-placeholder="Détails, contexte…"></textarea>
                       </div>
                       <div class="task-create-actions">
                         @if (editTimeId) {
-                          <app-button variant="secondary" (click)="cancelEditTime()">Annuler la modification</app-button>
+                          <app-button variant="secondary" (click)="cancelEditTime()" i18n="@@projects.project-task-detail.annuler.la.modification.a5ded982">Annuler la modification</app-button>
                         }
-                        <app-button variant="primary" [disabled]="!canSubmitLogTime" (click)="submitLogTime()">Enregistrer</app-button>
+                        <app-button variant="primary" [disabled]="!canSubmitLogTime" (click)="submitLogTime()" i18n="@@projects.project-task-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
                       </div>
                     </div>
                   }
@@ -283,11 +283,11 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   <p-table [value]="timeEntries()" styleClass="p-datatable-sm">
                     <ng-template pTemplate="header">
                       <tr>
-                        <th>Date</th>
-                        <th>Heures</th>
-                        <th>Statut</th>
-                        <th>Facturable</th>
-                        <th>Notes</th>
+                        <th i18n="@@projects.project-task-detail.date.eb9a4bc1">Date</th>
+                        <th i18n="@@projects.project-task-detail.heures.b4448c06">Heures</th>
+                        <th i18n="@@projects.project-task-detail.statut.659499f3">Statut</th>
+                        <th i18n="@@projects.project-task-detail.facturable.63134237">Facturable</th>
+                        <th i18n="@@projects.project-task-detail.notes.70440046">Notes</th>
                         <th></th>
                       </tr>
                     </ng-template>
@@ -302,7 +302,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         <td>{{ e.notes || '—' }}</td>
                         <td class="proj-time-row-actions">
                           @if (canEditTimeEntry(e) && canCreateTime) {
-                            <app-button size="sm" variant="outline" (click)="startEditTime(e)">Modifier</app-button>
+                            <app-button size="sm" variant="outline" (click)="startEditTime(e)" i18n="@@projects.project-task-detail.modifier.f260e757">Modifier</app-button>
                           }
                           @if (canDeleteTimeEntry(e) && canCreateTime) {
                             <app-button size="sm" variant="ghost" icon="pi-trash" [iconOnly]="true"
@@ -332,7 +332,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         </td>
                       </tr>
                     </ng-template>
-                    <ng-template pTemplate="emptymessage"><tr><td colspan="6">Aucun temps saisi sur cette tâche.</td></tr></ng-template>
+                    <ng-template pTemplate="emptymessage"><tr><td colspan="6" i18n="@@projects.project-task-detail.aucun.temps.saisi.sur.cette.tache.620a133d">Aucun temps saisi sur cette tâche.</td></tr></ng-template>
                   </p-table>
                 </div>
               </p-tabpanel>
@@ -346,7 +346,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         <time>{{ a.createdAt | date:'short' }}</time>
                       </li>
                     } @empty {
-                      <li class="text-color-secondary">Aucun historique.</li>
+                      <li class="text-color-secondary" i18n="@@projects.project-task-detail.aucun.historique.b806a0d9">Aucun historique.</li>
                     }
                   </ul>
                 </div>
@@ -357,17 +357,17 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
 
         <aside class="proj-sidebar-panel">
           <section class="proj-sidebar-section">
-            <h3 class="proj-sidebar-title">Informations</h3>
+            <h3 class="proj-sidebar-title" i18n="@@projects.project-task-detail.informations.54937b3a">Informations</h3>
             <dl class="proj-sidebar-dl">
-              <dt>ID</dt><dd>{{ t.id.slice(0, 8) }}</dd>
-              <dt>Projet</dt><dd><a [routerLink]="['/projects', t.projectId]">Voir le projet</a></dd>
-              <dt>Colonne</dt><dd>{{ t.phaseName }}</dd>
-              <dt>Assigné</dt><dd>{{ t.assigneeUserName || '—' }}</dd>
-              <dt>Priorité</dt><dd>{{ t.priorityDisplay }}</dd>
+              <dt i18n="@@projects.project-task-detail.id.89f89c02">ID</dt><dd>{{ t.id.slice(0, 8) }}</dd>
+              <dt i18n="@@projects.project-task-detail.projet.a9de3a26">Projet</dt><dd><a [routerLink]="['/projects', t.projectId]" i18n="@@projects.project-task-detail.voir.le.projet.4dfb4818">Voir le projet</a></dd>
+              <dt i18n="@@projects.project-task-detail.colonne.064b24f9">Colonne</dt><dd>{{ t.phaseName }}</dd>
+              <dt i18n="@@projects.project-task-detail.assigne.be552b5f">Assigné</dt><dd>{{ t.assigneeUserName || '—' }}</dd>
+              <dt i18n="@@projects.project-task-detail.priorite.eede91d2">Priorité</dt><dd>{{ t.priorityDisplay }}</dd>
             </dl>
           </section>
           <section class="proj-sidebar-section">
-            <h3 class="proj-sidebar-title">Activité</h3>
+            <h3 class="proj-sidebar-title" i18n="@@projects.project-task-detail.activite.8fe12048">Activité</h3>
             <ul class="proj-sidebar-activity">
               @for (a of taskActivity().slice(0, 5); track a.id) {
                 <li>

@@ -27,11 +27,11 @@ import { StockService } from '@core/services/stock.service';
         <label>
           Périmètre
           <select [(ngModel)]="scope" (ngModelChange)="onScopeChange()">
-            <option value="global">Global (toute la société)</option>
-            <option value="category">Catégorie</option>
-            <option value="product">Produit</option>
-            <option value="warehouse">Entrepôt</option>
-            <option value="client">Client</option>
+            <option value="global" i18n="@@forecasting.pages.global.toute.la.societe.84c4471a">Global (toute la société)</option>
+            <option value="category" i18n="@@forecasting.pages.categorie.6b38300a">Catégorie</option>
+            <option value="product" i18n="@@forecasting.pages.produit.ff673dc2">Produit</option>
+            <option value="warehouse" i18n="@@forecasting.pages.entrepot.c349c0bc">Entrepôt</option>
+            <option value="client" i18n="@@forecasting.pages.client.1bdd79b1">Client</option>
           </select>
         </label>
         @if (needsScopeId()) {
@@ -48,9 +48,9 @@ import { StockService } from '@core/services/stock.service';
         <label>
           Horizon
           <select [(ngModel)]="horizon" (ngModelChange)="loadForecast()">
-            <option value="week">Semaine (7 j)</option>
-            <option value="month">Mois (30 j)</option>
-            <option value="quarter">Trimestre (90 j)</option>
+            <option value="week" i18n="@@forecasting.pages.semaine.7.j.eb7024dd">Semaine (7 j)</option>
+            <option value="month" i18n="@@forecasting.pages.mois.30.j.de101fcd">Mois (30 j)</option>
+            <option value="quarter" i18n="@@forecasting.pages.trimestre.90.j.26bc6b51">Trimestre (90 j)</option>
           </select>
         </label>
         <div class="filters-actions">
@@ -66,23 +66,23 @@ import { StockService } from '@core/services/stock.service';
           Sélectionnez un(e) {{ scopeEntityLabel() | lowercase }} pour calculer la prévision.
         </div>
       } @else if (loading()) {
-        <div class="state">Calcul en cours…</div>
+        <div class="state" i18n="@@forecasting.pages.calcul.en.cours.0721ac07">Calcul en cours…</div>
       } @else if (errorMessage()) {
         <div class="state error">{{ errorMessage() }}</div>
       } @else if (forecast() !== null) {
         <div class="kpi-row">
           <div class="kpi">
-            <span class="label">CA prévu</span>
+            <span class="label" i18n="@@forecasting.pages.ca.prevu.d4e47a65">CA prévu</span>
             <span class="value">{{ forecast()!.expected | number:'1.3-3' }} {{ forecast()!.currency }}</span>
             <span class="hint">Sur {{ forecast()!.periodStart | date:'dd/MM/yyyy' }} → {{ forecast()!.periodEnd | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="kpi">
-            <span class="label">Intervalle 95 %</span>
+            <span class="label" i18n="@@forecasting.pages.intervalle.95.05aaeb06">Intervalle 95 %</span>
             <span class="value small">{{ forecast()!.low | number:'1.3-3' }} – {{ forecast()!.high | number:'1.3-3' }} {{ forecast()!.currency }}</span>
             <span class="hint">Confiance {{ forecast()!.confidencePercent | number:'1.0-1' }} %</span>
           </div>
           <div class="kpi">
-            <span class="label">Méthode</span>
+            <span class="label" i18n="@@forecasting.pages.methode.2e94172a">Méthode</span>
             <span class="value small">{{ methodLabel(forecast()!.methodUsed) }}</span>
             <span class="hint">{{ forecast()!.scopeLabel ?? 'Global' }}</span>
           </div>
@@ -119,14 +119,14 @@ import { StockService } from '@core/services/stock.service';
           </div>
         }
 
-        <h3>Détail mensuel</h3>
+        <h3 i18n="@@forecasting.pages.detail.mensuel.0a058ece">Détail mensuel</h3>
         <table class="table">
           <thead>
             <tr>
-              <th>Période</th>
-              <th class="num">Attendu</th>
-              <th class="num">Bas (95 %)</th>
-              <th class="num">Haut (95 %)</th>
+              <th i18n="@@forecasting.pages.periode.de2110b7">Période</th>
+              <th class="num" i18n="@@forecasting.pages.attendu.5e3bd350">Attendu</th>
+              <th class="num" i18n="@@forecasting.pages.bas.95.c6271777">Bas (95 %)</th>
+              <th class="num" i18n="@@forecasting.pages.haut.95.28837146">Haut (95 %)</th>
             </tr>
           </thead>
           <tbody>

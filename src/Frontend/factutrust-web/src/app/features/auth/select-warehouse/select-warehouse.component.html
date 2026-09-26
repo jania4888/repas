@@ -1,11 +1,11 @@
 <app-auth-shell [config]="shellConfig">
   <div class="form-header-text">
-    <h2>Entrepôt</h2>
-    <p>Votre compte a plusieurs entrepôts actifs. Lequel souhaitez-vous utiliser ?</p>
+    <h2 i18n="@@auth.select-warehouse.entrepot.c349c0bc">Entrepôt</h2>
+    <p i18n="@@auth.select-warehouse.votre.compte.a.plusieurs.entrepots.actifs.lequel.8ac3cc62">Votre compte a plusieurs entrepôts actifs. Lequel souhaitez-vous utiliser ?</p>
   </div>
 
   @if (loading()) {
-    <p class="warehouse-loading" role="status" aria-live="polite">Chargement des entrepôts…</p>
+    <p class="warehouse-loading" role="status" aria-live="polite" i18n="@@auth.select-warehouse.chargement.des.entrepots.7f9e9f39">Chargement des entrepôts…</p>
   } @else if (error()) {
     <p-message severity="error" [text]="error()!" styleClass="w-full"></p-message>
   } @else {
@@ -31,7 +31,7 @@
           <span class="warehouse-option__text" [id]="'wh-label-' + w.id">
             <span class="warehouse-option__name">{{ w.name }}</span>
             @if (w.isDefault) {
-              <span class="warehouse-option__badge">Par défaut</span>
+              <span class="warehouse-option__badge" i18n="@@auth.select-warehouse.par.defaut.4550c68e">Par défaut</span>
             }
             @if (w.code) {
               <span class="warehouse-option__code">{{ w.code }}</span>

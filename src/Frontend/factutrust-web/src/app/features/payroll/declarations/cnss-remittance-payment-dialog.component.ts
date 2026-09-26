@@ -38,7 +38,7 @@ import { PayrollAmountPipe } from '../shared';
       </p>
 
       <div class="field mb-3">
-        <label for="cnss-pay-date">Date de paiement</label>
+        <label for="cnss-pay-date" i18n="@@payroll.declarations.date.de.paiement.bd0020ef">Date de paiement</label>
         <p-datepicker
           inputId="cnss-pay-date"
           [(ngModel)]="paymentDate"
@@ -48,7 +48,7 @@ import { PayrollAmountPipe } from '../shared';
       </div>
 
       <div class="field mb-3">
-        <label for="cnss-pay-method">Mode</label>
+        <label for="cnss-pay-method" i18n="@@payroll.declarations.mode.a7b93d21">Mode</label>
         <p-select
           inputId="cnss-pay-method"
           [options]="methodOptions"
@@ -60,30 +60,30 @@ import { PayrollAmountPipe } from '../shared';
 
       @if (method !== 0) {
         <div class="field mb-3">
-          <label for="cnss-pay-account">Compte bancaire débiteur</label>
+          <label for="cnss-pay-account" i18n="@@payroll.declarations.compte.bancaire.debiteur.fa313693">Compte bancaire débiteur</label>
           <p-select
             inputId="cnss-pay-account"
             [options]="accountOptions()"
             [(ngModel)]="bankAccountId"
             optionLabel="label"
             optionValue="value"
-            placeholder="Sélectionner un compte"
+            placeholder="Sélectionner un compte" i18n-placeholder="Sélectionner un compte"
             styleClass="w-full" />
         </div>
       }
 
       <div class="field mb-3">
-        <label for="cnss-pay-ref">Référence</label>
+        <label for="cnss-pay-ref" i18n="@@payroll.declarations.reference.f8130bb0">Référence</label>
         <input pInputText id="cnss-pay-ref" class="w-full" [(ngModel)]="reference" />
       </div>
 
       <div class="field mb-3">
-        <label for="cnss-pay-notes">Notes</label>
+        <label for="cnss-pay-notes" i18n="@@payroll.declarations.notes.70440046">Notes</label>
         <input pInputText id="cnss-pay-notes" class="w-full" [(ngModel)]="notes" />
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button variant="ghost" (click)="visibleChange.emit(false)">Annuler</app-button>
+        <app-button variant="ghost" (click)="visibleChange.emit(false)" i18n="@@payroll.declarations.annuler.49ba3292">Annuler</app-button>
         <app-button variant="primary" [disabled]="saving()" (click)="submit()">
           {{ saving() ? 'Enregistrement…' : 'Confirmer' }}
         </app-button>

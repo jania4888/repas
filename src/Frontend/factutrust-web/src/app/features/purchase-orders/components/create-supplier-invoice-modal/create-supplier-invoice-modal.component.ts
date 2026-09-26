@@ -89,22 +89,22 @@ interface LineClassificationRow {
             <span class="value">{{ sourceDocumentNumber }}</span>
           </div>
           <div class="po-info-item po-info-item--right">
-            <span class="label">Montant TTC sélectionné</span>
+            <span class="label" i18n="@@purchase-orders.components.montant.ttc.selectionne.73c4e7c9">Montant TTC sélectionné</span>
             <span class="value amount">{{ selectedTotalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
           </div>
         </div>
 
         @if (invoiceLines.length > 0) {
           <div class="form-group">
-            <label>Quantités à facturer</label>
+            <label i18n="@@purchase-orders.components.quantites.a.facturer.4e6960e4">Quantités à facturer</label>
             <p-table [value]="invoiceLines" styleClass="p-datatable-sm invoice-lines-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>#</th>
-                  <th>Article</th>
-                  <th class="text-right">Dispo.</th>
-                  <th class="text-right">Qté à facturer</th>
-                  <th class="text-right">HT ligne</th>
+                  <th i18n="@@purchase-orders.components.text.d08f88df">#</th>
+                  <th i18n="@@purchase-orders.components.article.4360c2dc">Article</th>
+                  <th class="text-right" i18n="@@purchase-orders.components.dispo.0499b6f5">Dispo.</th>
+                  <th class="text-right" i18n="@@purchase-orders.components.qte.a.facturer.9139dfc3">Qté à facturer</th>
+                  <th class="text-right" i18n="@@purchase-orders.components.ht.ligne.c6962e1e">HT ligne</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -133,9 +133,7 @@ interface LineClassificationRow {
               </ng-template>
             </p-table>
             <div class="qty-actions">
-              <app-button type="button" variant="outline" size="sm" (click)="resetQuantitiesToMax()">
-                Tout facturer
-              </app-button>
+              <app-button type="button" variant="outline" size="sm" (click)="resetQuantitiesToMax()" i18n="@@purchase-orders.components.tout.facturer.580a60a2">Tout facturer</app-button>
             </div>
           </div>
         }
@@ -146,15 +144,15 @@ interface LineClassificationRow {
             <i class="pi pi-info-circle"></i>
           </div>
           <div class="info-content">
-            <strong>Information importante</strong>
-            <p>Seules les quantités reçues et non encore facturées peuvent être imputées sur cette facture fournisseur.</p>
+            <strong i18n="@@purchase-orders.components.information.importante.117f2310">Information importante</strong>
+            <p i18n="@@purchase-orders.components.seules.les.quantites.recues.et.non.encore.factur.b23a5faa">Seules les quantités reçues et non encore facturées peuvent être imputées sur cette facture fournisseur.</p>
           </div>
         </div>
 
         <form #form="ngForm" (ngSubmit)="onSubmit()">
           <!-- Invoice Number -->
           <div class="form-group">
-            <label for="invoiceNumber">Numéro de facture <span class="required">*</span></label>
+            <label for="invoiceNumber">Numéro de facture <span class="required" i18n="@@purchase-orders.components.text.df58248c">*</span></label>
             <div class="input-group">
               <input
                 pInputText
@@ -162,7 +160,7 @@ interface LineClassificationRow {
                 [(ngModel)]="request.invoiceNumber"
                 name="invoiceNumber"
                 required
-                placeholder="FS-2026-000001"
+                placeholder="FS-2026-000001" i18n-placeholder="FS-2026-000001"
                 class="w-full"
                 (ngModelChange)="onInvoiceNumberEdited()">
               <app-button
@@ -173,15 +171,13 @@ interface LineClassificationRow {
                 iconPos="left"
                 [disabled]="regenerating"
                 (click)="generateInvoiceNumber()"
-                class="generate-btn">
-                Générer
-              </app-button>
+                class="generate-btn" i18n="@@purchase-orders.components.generer.bd221c07">Générer</app-button>
             </div>
           </div>
 
           <!-- Invoice Date -->
           <div class="form-group">
-            <label for="invoiceDate">Date de facture <span class="required">*</span></label>
+            <label for="invoiceDate">Date de facture <span class="required" i18n="@@purchase-orders.components.text.df58248c">*</span></label>
             <p-datepicker
               id="invoiceDate"
               [(ngModel)]="request.invoiceDate"
@@ -195,7 +191,7 @@ interface LineClassificationRow {
 
           <!-- Payment Terms -->
           <div class="form-group">
-            <label for="paymentTermDays">Conditions de paiement</label>
+            <label for="paymentTermDays" i18n="@@purchase-orders.components.conditions.de.paiement.a9b1c917">Conditions de paiement</label>
             <p-select
               id="paymentTermDays"
               [(ngModel)]="request.paymentTermDays"
@@ -209,7 +205,7 @@ interface LineClassificationRow {
 
           <!-- Payment Method (intended) -->
           <div class="form-group">
-            <label for="paymentMethod">Mode de paiement prévu</label>
+            <label for="paymentMethod" i18n="@@purchase-orders.components.mode.de.paiement.prevu.c3d85a23">Mode de paiement prévu</label>
             <p-select
               id="paymentMethod"
               [(ngModel)]="request.paymentMethod"
@@ -218,32 +214,32 @@ interface LineClassificationRow {
               optionLabel="label"
               optionValue="value"
               [showClear]="true"
-              placeholder="Optionnel"
+              placeholder="Optionnel" i18n-placeholder="Optionnel"
               class="w-full">
             </p-select>
           </div>
 
           <!-- External Reference -->
           <div class="form-group">
-            <label for="externalReference">Référence externe</label>
+            <label for="externalReference" i18n="@@purchase-orders.components.reference.externe.c09efd4a">Référence externe</label>
             <input 
               pInputText 
               id="externalReference"
               [(ngModel)]="request.externalReference"
               name="externalReference"
-              placeholder="Référence du fournisseur..."
+              placeholder="Référence du fournisseur..." i18n-placeholder="Référence du fournisseur..."
               class="w-full">
           </div>
 
           <!-- Notes -->
           <div class="form-group">
-            <label for="notes">Notes</label>
+            <label for="notes" i18n="@@purchase-orders.components.notes.70440046">Notes</label>
             <textarea
               pTextarea
               id="notes"
               [(ngModel)]="request.notes"
               name="notes"
-              placeholder="Notes internes..."
+              placeholder="Notes internes..." i18n-placeholder="Notes internes..."
               [rows]="3"
               class="w-full">
             </textarea>
@@ -263,18 +259,16 @@ interface LineClassificationRow {
           </div>
 
           <div class="form-group" *ngIf="showAssetClassification">
-            <label>Classification immobilisations (lignes reçues)</label>
-            <p class="asset-hint">
-              Cochez les lignes à comptabiliser en 21x / 43662. Un brouillon sera créé dans le registre immobilisations.
-            </p>
+            <label i18n="@@purchase-orders.components.classification.immobilisations.lignes.recues.38ff121c">Classification immobilisations (lignes reçues)</label>
+            <p class="asset-hint" i18n="@@purchase-orders.components.cochez.les.lignes.a.comptabiliser.en.21x.43662.u.c936d1d5">Cochez les lignes à comptabiliser en 21x / 43662. Un brouillon sera créé dans le registre immobilisations.</p>
             <p-table [value]="lineClassifications" styleClass="p-datatable-sm asset-lines-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Ligne</th>
-                  <th>Article</th>
-                  <th class="text-right">HT</th>
-                  <th>Immo</th>
-                  <th>Catégorie (NC 22-5)</th>
+                  <th i18n="@@purchase-orders.components.ligne.5f02383a">Ligne</th>
+                  <th i18n="@@purchase-orders.components.article.4360c2dc">Article</th>
+                  <th class="text-right" i18n="@@purchase-orders.components.ht.64c38cf2">HT</th>
+                  <th i18n="@@purchase-orders.components.immo.b719c1f7">Immo</th>
+                  <th i18n="@@purchase-orders.components.categorie.nc.22.5.26740caa">Catégorie (NC 22-5)</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -294,7 +288,7 @@ interface LineClassificationRow {
                       [options]="rateCategories"
                       optionLabel="label"
                       optionValue="id"
-                      placeholder="Catégorie"
+                      placeholder="Catégorie" i18n-placeholder="Catégorie"
                       [style]="{ width: '100%' }"
                       (onChange)="onCategorySelected(row)">
                       <ng-template pTemplate="item" let-cat>
@@ -318,9 +312,7 @@ interface LineClassificationRow {
             variant="outline" 
             icon="pi-times"
             iconPos="left"
-            (click)="onHide()">
-            Annuler
-          </app-button>
+            (click)="onHide()" i18n="@@purchase-orders.components.annuler.49ba3292">Annuler</app-button>
           <app-button
             variant="primary"
             icon="pi-check"

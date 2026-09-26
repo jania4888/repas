@@ -126,7 +126,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
       </header>
 
       <!-- Stepper -->
-      <nav class="wizard-stepper" role="tablist" aria-label="Étapes de création de facture">
+      <nav class="wizard-stepper" role="tablist" aria-label="Étapes de création de facture" i18n-aria-label="Étapes de création de facture">
         @for (step of wizardService.steps(); track step.key) {
           <button
             #stepItem

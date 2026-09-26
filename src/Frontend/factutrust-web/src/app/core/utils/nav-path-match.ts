@@ -1,4 +1,5 @@
 import { NavItem, NavSubItem } from '@core/config/app-navigation.registry';
+import { getNavId } from '@core/config/nav-item-ids';
 
 /** Path only: no query, no hash; trailing slash removed except root. */
 export function stripPathForMatch(url: string): string {
@@ -91,7 +92,8 @@ export function isNavChildActive(url: string, item: NavItem): boolean {
 export function isNavSubItemActive(url: string, parent: NavItem, child: NavSubItem): boolean {
   const path = stripPathForMatch(url);
   if (child.children?.length) {
-    return findMatchingDirectChild(path, parent)?.label === child.label;
+    const match = findMatchingDirectChild(path, parent);
+    return match ? getNavId(match) === getNavId(child) : false;
   }
   if (!child.route) {
     return false;

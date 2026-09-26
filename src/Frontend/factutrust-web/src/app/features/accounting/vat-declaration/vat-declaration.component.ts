@@ -64,7 +64,7 @@ const COMPANY_EMPTY_STATE_MESSAGE =
   ],
   template: `
     <app-page-header
-      title="Déclaration mensuelle des impôts et taxes"
+      title="Déclaration mensuelle des impôts et taxes" i18n-title="Déclaration mensuelle des impôts et taxes"
       [subtitle]="isCompanyReadOnly
         ? 'Consultation des déclarations soumises par le cabinet'
         : 'Préremplissage à partir des ventes et achats du mois'" />

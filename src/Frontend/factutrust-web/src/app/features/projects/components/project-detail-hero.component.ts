@@ -28,26 +28,26 @@ import {
           </div>
           <p class="proj-detail-hero__meta">
             <span><i class="pi pi-building"></i> {{ project.clientName }}</span>
-            <span class="proj-detail-hero__dot">·</span>
+            <span class="proj-detail-hero__dot" i18n="@@projects.components.text.1fdf0d90">·</span>
             <span>{{ project.kindDisplay }}</span>
             @if (showSiteChip && project.siteAddress) {
-              <span class="proj-detail-hero__dot">·</span>
+              <span class="proj-detail-hero__dot" i18n="@@projects.components.text.1fdf0d90">·</span>
               <span><i class="pi pi-map-marker"></i> {{ project.siteAddress }}</span>
             }
           </p>
         </div>
         <div class="proj-detail-hero__actions">
           @if (canUpdate && canActivate(project.status)) {
-            <app-button variant="secondary" icon="pi-play" (click)="activate.emit()">Activer</app-button>
+            <app-button variant="secondary" icon="pi-play" (click)="activate.emit()" i18n="@@projects.components.activer.b96fa78d">Activer</app-button>
           }
           @if (canUpdate && canHold(project.status)) {
-            <app-button variant="secondary" icon="pi-pause" (click)="hold.emit()">Mettre en pause</app-button>
+            <app-button variant="secondary" icon="pi-pause" (click)="hold.emit()" i18n="@@projects.components.mettre.en.pause.4515da4b">Mettre en pause</app-button>
           }
           @if (canUpdate && canComplete(project.status)) {
-            <app-button variant="secondary" icon="pi-check" (click)="complete.emit()">Clôturer</app-button>
+            <app-button variant="secondary" icon="pi-check" (click)="complete.emit()" i18n="@@projects.components.cloturer.e9f075c1">Clôturer</app-button>
           }
           @if (canUpdate && canEditProject(project.status)) {
-            <app-button variant="primary" icon="pi-pencil" (click)="edit.emit()">Modifier le projet</app-button>
+            <app-button variant="primary" icon="pi-pencil" (click)="edit.emit()" i18n="@@projects.components.modifier.le.projet.64e99f20">Modifier le projet</app-button>
           }
           <app-document-actions-menu [items]="menuItems" label="" ariaLabel="Actions du projet" />
         </div>

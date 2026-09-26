@@ -25,8 +25,8 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
     <div class="page-container">
       <div class="page-header">
         <div>
-          <h1>Transferts entre entrepôts</h1>
-          <p class="text-muted">Gérez les transferts de stock entre vos entrepôts</p>
+          <h1 i18n="@@transfers.transfer-list.transferts.entre.entrepots.5043bd7d">Transferts entre entrepôts</h1>
+          <p class="text-muted" i18n="@@transfers.transfer-list.gerez.les.transferts.de.stock.entre.vos.entrepot.13ea9820">Gérez les transferts de stock entre vos entrepôts</p>
         </div>
         @if (canCreateTransfer()) {
           <a routerLink="create" class="btn-primary">
@@ -36,15 +36,15 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
       </div>
 
       <div class="card filters-card">
-        <div class="filters-grid" role="search" aria-label="Filtres des transferts">
+        <div class="filters-grid" role="search" aria-label="Filtres des transferts" i18n-aria-label="Filtres des transferts">
           <div class="filter-field">
-            <label class="filter-label" id="filter-status-label" for="filter-status">Statut</label>
+            <label class="filter-label" id="filter-status-label" for="filter-status" i18n="@@transfers.transfer-list.statut.659499f3">Statut</label>
             <p-select inputId="filter-status"
               [options]="statusOptions"
               [(ngModel)]="statusFilter"
               optionLabel="label"
               optionValue="value"
-              placeholder="Tous les statuts"
+              placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
               [showClear]="true"
               [style]="{ width: '100%' }"
               appendTo="body"
@@ -52,13 +52,13 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
             </p-select>
           </div>
           <div class="filter-field">
-            <label class="filter-label" id="filter-wh-label" for="filter-warehouse">Entrepôt (source ou destination)</label>
+            <label class="filter-label" id="filter-wh-label" for="filter-warehouse" i18n="@@transfers.transfer-list.entrepot.source.ou.destination.d06d0c18">Entrepôt (source ou destination)</label>
             <p-select inputId="filter-warehouse"
               [options]="warehouseOptions"
               [(ngModel)]="warehouseFilter"
               optionLabel="label"
               optionValue="value"
-              placeholder="Tous les entrepôts"
+              placeholder="Tous les entrepôts" i18n-placeholder="Tous les entrepôts"
               [showClear]="true"
               [filter]="warehouseOptions.length > 20"
               filterBy="label"
@@ -70,11 +70,11 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
             </p-select>
           </div>
           <div class="filter-field">
-            <label class="filter-label" for="filter-from">Du</label>
+            <label class="filter-label" for="filter-from" i18n="@@transfers.transfer-list.du.84814985">Du</label>
             <input id="filter-from" type="date" class="date-input" [(ngModel)]="fromDate" />
           </div>
           <div class="filter-field">
-            <label class="filter-label" for="filter-to">Au</label>
+            <label class="filter-label" for="filter-to" i18n="@@transfers.transfer-list.au.7a1732d5">Au</label>
             <input id="filter-to" type="date" class="date-input" [(ngModel)]="toDate" />
           </div>
           <div class="filter-actions">
@@ -93,13 +93,13 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
                  currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} transferts">
           <ng-template pTemplate="header">
             <tr>
-              <th>Numéro</th>
-              <th>Date</th>
-              <th>Source</th>
-              <th>Destination</th>
-              <th>Lignes</th>
-              <th>Statut</th>
-              <th>Actions</th>
+              <th i18n="@@transfers.transfer-list.numero.15e73db0">Numéro</th>
+              <th i18n="@@transfers.transfer-list.date.eb9a4bc1">Date</th>
+              <th i18n="@@transfers.transfer-list.source.6da13add">Source</th>
+              <th i18n="@@transfers.transfer-list.destination.d4271349">Destination</th>
+              <th i18n="@@transfers.transfer-list.lignes.41c7025e">Lignes</th>
+              <th i18n="@@transfers.transfer-list.statut.659499f3">Statut</th>
+              <th i18n="@@transfers.transfer-list.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-transfer>
@@ -114,7 +114,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="7" class="text-center py-4">Aucun transfert trouvé</td></tr>
+            <tr><td colspan="7" class="text-center py-4" i18n="@@transfers.transfer-list.aucun.transfert.trouve.7189631d">Aucun transfert trouvé</td></tr>
           </ng-template>
         </p-table>
       </div>

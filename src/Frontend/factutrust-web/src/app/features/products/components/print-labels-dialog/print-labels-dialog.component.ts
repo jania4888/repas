@@ -67,20 +67,20 @@ export interface LabelPrintTarget {
         }
 
         <div class="field">
-          <label for="label-layout">Gabarit</label>
+          <label for="label-layout" i18n="@@products.components.gabarit.abd6ed45">Gabarit</label>
           <p-select
             inputId="label-layout"
             [options]="layouts()"
             [(ngModel)]="selectedLayout"
             optionLabel="label"
             optionValue="key"
-            placeholder="Choisir un gabarit"
+            placeholder="Choisir un gabarit" i18n-placeholder="Choisir un gabarit"
             styleClass="w-full">
           </p-select>
         </div>
 
         <div class="field">
-          <label for="label-qty">Nombre d'étiquettes</label>
+          <label for="label-qty" i18n="@@products.components.nombre.d.etiquettes.cc444f8e">Nombre d'étiquettes</label>
           <p-inputNumber
             inputId="label-qty"
             [(ngModel)]="quantity"
@@ -93,7 +93,7 @@ export interface LabelPrintTarget {
 
         <div class="field field--check">
           <p-checkbox inputId="label-price" [(ngModel)]="includePrice" [binary]="true"></p-checkbox>
-          <label for="label-price">Imprimer le prix TTC</label>
+          <label for="label-price" i18n="@@products.components.imprimer.le.prix.ttc.360b03e0">Imprimer le prix TTC</label>
         </div>
 
         @if (sheetsLabel()) {
@@ -105,15 +105,13 @@ export interface LabelPrintTarget {
       }
 
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (clicked)="close()">Annuler</app-button>
+        <app-button variant="outline" (clicked)="close()" i18n="@@products.components.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="primary"
           icon="pi-download"
           iconPos="left"
           [disabled]="!selectedLayout || quantity < 1 || generating()"
-          (clicked)="generate()">
-          Générer le PDF
-        </app-button>
+          (clicked)="generate()" i18n="@@products.components.generer.le.pdf.09958b8a">Générer le PDF</app-button>
       </ng-template>
     </p-dialog>
   `,

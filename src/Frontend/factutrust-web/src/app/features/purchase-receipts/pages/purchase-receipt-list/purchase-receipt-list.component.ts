@@ -48,16 +48,14 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Bons de réception"
+      title="Bons de réception" i18n-title="Bons de réception"
       subtitle="Enregistrez et validez les réceptions de marchandises fournisseurs.">
       @if (canCreate()) {
         <app-button
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new">
-          Nouveau bon de réception
-        </app-button>
+          routerLink="new" i18n="@@purchase-receipts.pages.nouveau.bon.de.reception.479ec866">Nouveau bon de réception</app-button>
       }
     </app-page-header>
 
@@ -68,7 +66,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -80,7 +78,7 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par numéro, fournisseur ou référence…"
+            placeholder="Rechercher par numéro, fournisseur ou référence…" i18n-placeholder="Rechercher par numéro, fournisseur ou référence…"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -91,7 +89,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -101,7 +99,7 @@ interface StatusOption {
           [(ngModel)]="selectedSupplierId"
           optionLabel="name"
           optionValue="id"
-          placeholder="Tous les fournisseurs"
+          placeholder="Tous les fournisseurs" i18n-placeholder="Tous les fournisseurs"
           [showClear]="true"
           [filter]="true"
           filterBy="name"
@@ -109,24 +107,24 @@ interface StatusOption {
           styleClass="supplier-filter">
         </p-select>
 
-        <span class="filter-label">Date début</span>
+        <span class="filter-label" i18n="@@purchase-receipts.pages.date.debut.2413e246">Date début</span>
         <p-datepicker
           [(ngModel)]="fromDate"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
-          placeholder="Du"
+          placeholder="Du" i18n-placeholder="Du"
           [showButtonBar]="true"
           (onSelect)="onFilterChange()"
           (onClearClick)="onFilterChange()"
           styleClass="date-filter">
         </p-datepicker>
 
-        <span class="filter-label">Date fin</span>
+        <span class="filter-label" i18n="@@purchase-receipts.pages.date.fin.2d44e855">Date fin</span>
         <p-datepicker
           [(ngModel)]="toDate"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
-          placeholder="Au"
+          placeholder="Au" i18n-placeholder="Au"
           [showButtonBar]="true"
           (onSelect)="onFilterChange()"
           (onClearClick)="onFilterChange()"
@@ -163,15 +161,15 @@ interface StatusOption {
 
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 130px">N°</th>
-              <th>Fournisseur</th>
-              <th style="width: 120px">Date</th>
-              <th>Bon de commande</th>
-              <th>Entrepôt</th>
-              <th style="width: 80px">Lignes</th>
-              <th style="width: 130px">Total TTC</th>
-              <th style="width: 140px">Statut</th>
-              <th style="width: 80px">Actions</th>
+              <th style="width: 130px" i18n="@@purchase-receipts.pages.n.754e6095">N°</th>
+              <th i18n="@@purchase-receipts.pages.fournisseur.97d91d89">Fournisseur</th>
+              <th style="width: 120px" i18n="@@purchase-receipts.pages.date.eb9a4bc1">Date</th>
+              <th i18n="@@purchase-receipts.pages.bon.de.commande.4b9aea29">Bon de commande</th>
+              <th i18n="@@purchase-receipts.pages.entrepot.c349c0bc">Entrepôt</th>
+              <th style="width: 80px" i18n="@@purchase-receipts.pages.lignes.41c7025e">Lignes</th>
+              <th style="width: 130px" i18n="@@purchase-receipts.pages.total.ttc.9e80ff7c">Total TTC</th>
+              <th style="width: 140px" i18n="@@purchase-receipts.pages.statut.659499f3">Statut</th>
+              <th style="width: 80px" i18n="@@purchase-receipts.pages.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
 
@@ -192,7 +190,7 @@ interface StatusOption {
                     {{ receipt.purchaseOrderNumber }}
                   </a>
                 } @else {
-                  <span class="muted">—</span>
+                  <span class="muted" i18n="@@purchase-receipts.pages.text.1b93795b">—</span>
                 }
               </td>
               <td>{{ receipt.warehouseName || '—' }}</td>
@@ -230,7 +228,7 @@ interface StatusOption {
             <tr>
               <td colspan="9" class="text-center p-6">
                 <app-empty-state
-                  title="Aucun bon de réception"
+                  title="Aucun bon de réception" i18n-title="Aucun bon de réception"
                   description="Créez votre premier bon de réception pour enregistrer les livraisons fournisseurs."
                   [showAction]="canCreate()"
                   actionLabel="Nouveau bon de réception"

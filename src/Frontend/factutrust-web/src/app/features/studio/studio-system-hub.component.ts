@@ -35,7 +35,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
         <div class="hub">
           @if (d.system.onboardingSteps?.length) {
             <section class="hub-onboard">
-              <h3>Pour démarrer</h3>
+              <h3 i18n="@@studio.studio-system-hub.pour.demarrer.fc8965d8">Pour démarrer</h3>
               <ol>
                 @for (step of d.system.onboardingSteps; track step) {
                   <li>{{ step }}</li>

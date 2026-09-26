@@ -105,17 +105,13 @@ import {
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/delivery-notes">
-        Retour
-      </app-button>
+        routerLink="/delivery-notes" i18n="@@delivery-notes.pages.retour.e5befb1f">Retour</app-button>
       @if (canCreateReturnNote()) {
         <app-button
           variant="outline"
           icon="pi-replay"
           iconPos="left"
-          (clicked)="createReturnNote()">
-          Créer un bon de retour
-        </app-button>
+          (clicked)="createReturnNote()" i18n="@@delivery-notes.pages.creer.un.bon.de.retour.a9261008">Créer un bon de retour</app-button>
       }
       @if (primaryAction(); as action) {
         <app-button
@@ -163,12 +159,12 @@ import {
               </div>
               <div class="delivery-note-dates">
                 <div class="date-item">
-                  <span class="label">Date d'émission</span>
+                  <span class="label" i18n="@@delivery-notes.pages.date.d.emission.99f68857">Date d'émission</span>
                   <span class="value">{{ deliveryNote()!.issueDate | date:'dd/MM/yyyy' }}</span>
                 </div>
                 @if (deliveryNote()!.deliveryDate) {
                   <div class="date-item">
-                    <span class="label">Date de livraison</span>
+                    <span class="label" i18n="@@delivery-notes.pages.date.de.livraison.39361f0f">Date de livraison</span>
                     <span class="value">{{ deliveryNote()!.deliveryDate | date:'dd/MM/yyyy' }}</span>
                   </div>
                 }
@@ -180,20 +176,20 @@ import {
             <!-- Client Info -->
             <div class="parties-grid">
               <div class="party-card">
-                <h4>Client</h4>
+                <h4 i18n="@@delivery-notes.pages.client.1bdd79b1">Client</h4>
                 <p class="party-name">{{ deliveryNote()!.clientName }}</p>
                 @if (deliveryNote()!.clientEmail) {
                   <p class="party-email">{{ deliveryNote()!.clientEmail }}</p>
                 }
               </div>
               <div class="party-card">
-                <h4>Adresse de livraison</h4>
+                <h4 i18n="@@delivery-notes.pages.adresse.de.livraison.31eac756">Adresse de livraison</h4>
                 <p class="party-address">{{ deliveryNote()!.deliveryAddress }}</p>
                 @if (deliveryNote()!.deliveryCity) {
                   <p class="party-address">{{ deliveryNote()!.deliveryPostalCode }} {{ deliveryNote()!.deliveryCity }}</p>
                 }
                 @if (deliveryNote()!.recipientName) {
-                  <p class="party-recipient"><strong>Destinataire:</strong> {{ deliveryNote()!.recipientName }}</p>
+                  <p class="party-recipient"><strong i18n="@@delivery-notes.pages.destinataire.2935a4d5">Destinataire:</strong> {{ deliveryNote()!.recipientName }}</p>
                 }
               </div>
             </div>
@@ -202,22 +198,22 @@ import {
 
             <!-- Lines -->
             <div class="lines-section">
-              <h4>Lignes du bon de livraison</h4>
+              <h4 i18n="@@delivery-notes.pages.lignes.du.bon.de.livraison.f2475b32">Lignes du bon de livraison</h4>
               <table class="lines-table">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Désignation</th>
-                    <th class="text-right">Prix U. HT</th>
-                    <th class="text-right">Qté Comm.</th>
-                    <th class="text-right">Qté Livrée</th>
-                    <th class="text-right">Retourné</th>
-                    <th class="text-right">À facturer</th>
-                    <th class="text-right">Qté Rejetée</th>
-                    <th class="text-right">Remise</th>
-                    <th class="text-right">TVA</th>
-                    <th class="text-right">Total HT</th>
-                    <th class="text-right">Total TTC</th>
+                    <th i18n="@@delivery-notes.pages.text.d08f88df">#</th>
+                    <th i18n="@@delivery-notes.pages.designation.63a9062c">Désignation</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.prix.u.ht.8bf47793">Prix U. HT</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.qte.comm.3bd32f16">Qté Comm.</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.qte.livree.22a60015">Qté Livrée</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.retourne.4027bfdd">Retourné</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.a.facturer.acd40e67">À facturer</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.qte.rejetee.c6ab2d5a">Qté Rejetée</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.remise.ce12d942">Remise</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.tva.fb62cb5d">TVA</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.total.ht.2ca17ae6">Total HT</th>
+                    <th class="text-right" i18n="@@delivery-notes.pages.total.ttc.9e80ff7c">Total TTC</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -261,21 +257,21 @@ import {
               
               <div class="totals-section">
                 <div class="total-row">
-                  <span>Total HT</span>
+                  <span i18n="@@delivery-notes.pages.total.ht.2ca17ae6">Total HT</span>
                   <span class="mono">{{ deliveryNote()!.totalHT | number:'1.3-3' }} TND</span>
                 </div>
                 @if (totalFodec() > 0) {
                   <div class="total-row">
-                    <span>FODEC</span>
+                    <span i18n="@@delivery-notes.pages.fodec.9a029080">FODEC</span>
                     <span class="mono">{{ totalFodec() | number:'1.3-3' }} TND</span>
                   </div>
                 }
                 <div class="total-row">
-                  <span>Total TVA</span>
+                  <span i18n="@@delivery-notes.pages.total.tva.605c4b2e">Total TVA</span>
                   <span class="mono">{{ deliveryNote()!.totalVAT | number:'1.3-3' }} TND</span>
                 </div>
                 <div class="total-row total-ttc">
-                  <span>Total TTC</span>
+                  <span i18n="@@delivery-notes.pages.total.ttc.9e80ff7c">Total TTC</span>
                   <span class="mono">{{ deliveryNote()!.totalTTC | number:'1.3-3' }} TND</span>
                 </div>
               </div>
@@ -283,16 +279,14 @@ import {
 
             @if (isFullyReturned()) {
               <p-divider></p-divider>
-              <p class="return-info">
-                Toutes les quantités livrées ont été retournées — impossible de facturer.
-                Ce n'est pas un avoir : le stock a déjà été réintégré via le bon de retour.
-              </p>
+              <p class="return-info" i18n="@@delivery-notes.pages.toutes.les.quantites.livrees.ont.ete.retournees..812a9aee">Toutes les quantités livrées ont été retournées — impossible de facturer.
+                Ce n'est pas un avoir : le stock a déjà été réintégré via le bon de retour.</p>
             }
 
             @if (deliveryNote()!.returnNotes?.length) {
               <p-divider></p-divider>
               <div class="return-notes-section">
-                <h4>Bons de retour liés</h4>
+                <h4 i18n="@@delivery-notes.pages.bons.de.retour.lies.fedece91">Bons de retour liés</h4>
                 <ul class="return-notes-list">
                   @for (rtn of deliveryNote()!.returnNotes!; track rtn.id) {
                     <li>
@@ -309,12 +303,12 @@ import {
               <div class="notes-section">
                 @if (deliveryNote()!.reference) {
                   <div class="note">
-                    <strong>Référence:</strong> {{ deliveryNote()!.reference }}
+                    <strong i18n="@@delivery-notes.pages.reference.b55d2a20">Référence:</strong> {{ deliveryNote()!.reference }}
                   </div>
                 }
                 @if (deliveryNote()!.notes) {
                   <div class="note">
-                    <strong>Notes:</strong> {{ deliveryNote()!.notes }}
+                    <strong i18n="@@delivery-notes.pages.notes.9c3befe7">Notes:</strong> {{ deliveryNote()!.notes }}
                   </div>
                 }
               </div>
@@ -346,7 +340,7 @@ import {
               <div class="signature-info">
                 <div class="info-row">
                   <i class="pi pi-verified"></i>
-                  <span>Livraison signée</span>
+                  <span i18n="@@delivery-notes.pages.livraison.signee.9fb4ab89">Livraison signée</span>
                 </div>
                 <small>Signé le {{ deliveryNote()!.signedAt | date:'dd/MM/yyyy HH:mm' }}</small>
                 @if (deliveryNote()!.recipientName) {
@@ -374,7 +368,7 @@ import {
               <span class="delivery-context-warehouse">
                 Déduction depuis <strong>{{ deliveryWarehouseLabel() }}</strong>
                 @if (deliveryWarehouseIsDefault()) {
-                  <span class="delivery-default-badge">par défaut</span>
+                  <span class="delivery-default-badge" i18n="@@delivery-notes.pages.par.defaut.feee7660">par défaut</span>
                 }
               </span>
             }
@@ -395,8 +389,8 @@ import {
                 <i class="pi pi-times-circle"></i>
                 <div>
                   <p>{{ deliveryStockCheck()?.summaryMessage || 'Aucun stock trouvé pour un produit dans cet entrepôt.' }}</p>
-                  <p>Ajoutez du stock dans cet entrepôt avant de valider.</p>
-                  <a routerLink="/stock" (click)="showDeliveryDialog = false">Ajouter du stock</a>
+                  <p i18n="@@delivery-notes.pages.ajoutez.du.stock.dans.cet.entrepot.avant.de.vali.0fa91ed7">Ajoutez du stock dans cet entrepôt avant de valider.</p>
+                  <a routerLink="/stock" (click)="showDeliveryDialog = false" i18n="@@delivery-notes.pages.ajouter.du.stock.b3d3468f">Ajouter du stock</a>
                 </div>
               </div>
             } @else if (hasMissingWarehouseLots()) {
@@ -404,11 +398,11 @@ import {
                 <i class="pi pi-times-circle"></i>
                 <div>
                   @if (hasOnlyExpiredWarehouseLots()) {
-                    <p>Tous les lots disponibles sont périmés pour au moins un article suivi. Ils ne peuvent pas sortir.</p>
-                    <p>Choisissez un lot non périmé, ou réceptionnez un lot valide avant de valider.</p>
+                    <p i18n="@@delivery-notes.pages.tous.les.lots.disponibles.sont.perimes.pour.au.m.d7718b50">Tous les lots disponibles sont périmés pour au moins un article suivi. Ils ne peuvent pas sortir.</p>
+                    <p i18n="@@delivery-notes.pages.choisissez.un.lot.non.perime.ou.receptionnez.un..89ff9112">Choisissez un lot non périmé, ou réceptionnez un lot valide avant de valider.</p>
                   } @else {
-                    <p>Le stock de cet entrepôt n'a pas de lots (ou de n° de série) pour au moins un article suivi.</p>
-                    <p>Réceptionnez d'abord le stock avec un n° de lot, ou faites un inventaire d'ouverture.</p>
+                    <p i18n="@@delivery-notes.pages.le.stock.de.cet.entrepot.n.a.pas.de.lots.ou.de.n.de44cfd5">Le stock de cet entrepôt n'a pas de lots (ou de n° de série) pour au moins un article suivi.</p>
+                    <p i18n="@@delivery-notes.pages.receptionnez.d.abord.le.stock.avec.un.n.de.lot.o.2b6eba9f">Réceptionnez d'abord le stock avec un n° de lot, ou faites un inventaire d'ouverture.</p>
                   }
                 </div>
               </div>
@@ -422,35 +416,35 @@ import {
 
           <div class="delivery-form-grid">
             <div class="delivery-form-group">
-              <label for="recipientName">Nom du réceptionnaire <span class="required">*</span></label>
+              <label for="recipientName">Nom du réceptionnaire <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <input pInputText id="recipientName" [(ngModel)]="deliveryForm.recipientName" 
-                placeholder="Personne ayant signé la réception" class="w-full delivery-header-input" />
+                placeholder="Personne ayant signé la réception" i18n-placeholder="Personne ayant signé la réception" class="w-full delivery-header-input" />
             </div>
             <div class="delivery-form-group">
-              <label for="deliveryDate">Date de livraison <span class="required">*</span></label>
+              <label for="deliveryDate">Date de livraison <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <p-datepicker
                 id="deliveryDate"
                 [(ngModel)]="deliveryForm.deliveryDate"
                 name="deliveryDate"
                 dateFormat="dd/mm/yy"
                 [showIcon]="true"
-                placeholder="Date effective de réception"
+                placeholder="Date effective de réception" i18n-placeholder="Date effective de réception"
                 styleClass="w-full delivery-header-datepicker"
                 appendTo="body">
               </p-datepicker>
             </div>
           </div>
           
-          <h4 class="delivery-lines-title">Quantités livrées par ligne</h4>
+          <h4 class="delivery-lines-title" i18n="@@delivery-notes.pages.quantites.livrees.par.ligne.66d9901f">Quantités livrées par ligne</h4>
           <div class="delivery-lines-table-wrap">
             <table class="delivery-lines-form">
               <thead>
                 <tr>
-                  <th>Produit</th>
-                  <th class="text-right">Qté commandée</th>
-                  <th class="text-right">Qté livrée</th>
-                  <th class="text-right">Qté rejetée</th>
-                  <th class="motif-col">Motif refus</th>
+                  <th i18n="@@delivery-notes.pages.produit.ff673dc2">Produit</th>
+                  <th class="text-right" i18n="@@delivery-notes.pages.qte.commandee.8c1ee02c">Qté commandée</th>
+                  <th class="text-right" i18n="@@delivery-notes.pages.qte.livree.c6320ced">Qté livrée</th>
+                  <th class="text-right" i18n="@@delivery-notes.pages.qte.rejetee.bf3a66b4">Qté rejetée</th>
+                  <th class="motif-col" i18n="@@delivery-notes.pages.motif.refus.2b32c88a">Motif refus</th>
                 </tr>
               </thead>
               <tbody>
@@ -476,9 +470,9 @@ import {
                     <td class="motif-col">
                       @if (lineForm.rejectedQuantity > 0) {
                         <input pInputText [(ngModel)]="lineForm.rejectionReason" 
-                          placeholder="Motif du refus" class="motif-input w-full" />
+                          placeholder="Motif du refus" i18n-placeholder="Motif du refus" class="motif-input w-full" />
                       } @else {
-                        <span class="motif-empty">—</span>
+                        <span class="motif-empty" i18n="@@delivery-notes.pages.text.1b93795b">—</span>
                       }
                     </td>
                   </tr>
@@ -513,20 +507,18 @@ import {
         }
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
-            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="showDeliveryDialog = false">Annuler</app-button>
+            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="showDeliveryDialog = false" i18n="@@delivery-notes.pages.annuler.49ba3292">Annuler</app-button>
             <app-button variant="primary" icon="pi-check" iconPos="left"
-              [disabled]="!isDeliveryFormValid()" (click)="submitDelivery()">
-              Valider la livraison
-            </app-button>
+              [disabled]="!isDeliveryFormValid()" (click)="submitDelivery()" i18n="@@delivery-notes.pages.valider.la.livraison.f8f247be">Valider la livraison</app-button>
           </div>
         </ng-template>
       </p-dialog>
     } @else {
       <div class="not-found">
         <i class="pi pi-exclamation-triangle"></i>
-        <h2>Bon de livraison non trouvé</h2>
-        <p>Le bon de livraison demandé n'existe pas ou a été supprimé.</p>
-        <app-button variant="primary" routerLink="/delivery-notes">Retour à la liste</app-button>
+        <h2 i18n="@@delivery-notes.pages.bon.de.livraison.non.trouve.0be2aaed">Bon de livraison non trouvé</h2>
+        <p i18n="@@delivery-notes.pages.le.bon.de.livraison.demande.n.existe.pas.ou.a.et.f1651ba0">Le bon de livraison demandé n'existe pas ou a été supprimé.</p>
+        <app-button variant="primary" routerLink="/delivery-notes" i18n="@@delivery-notes.pages.retour.a.la.liste.7753f531">Retour à la liste</app-button>
       </div>
     }
   `,

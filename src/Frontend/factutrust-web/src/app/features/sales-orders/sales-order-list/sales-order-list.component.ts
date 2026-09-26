@@ -57,15 +57,11 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Commandes clients"
+      title="Commandes clients" i18n-title="Commandes clients"
       subtitle="L'engagement ferme entre le devis et la livraison. Le carnet mesure ce qui reste à livrer.">
-      <app-button variant="secondary" icon="pi-list" iconPos="left" routerLink="backlog">
-        Carnet de commandes
-      </app-button>
+      <app-button variant="secondary" icon="pi-list" iconPos="left" routerLink="backlog" i18n="@@sales-orders.sales-order-list.carnet.de.commandes.ec641454">Carnet de commandes</app-button>
       @if (canCreate()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new">
-          Nouvelle commande
-        </app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@sales-orders.sales-order-list.nouvelle.commande.061f365b">Nouvelle commande</app-button>
       }
     </app-page-header>
 
@@ -77,17 +73,17 @@ interface StatusOption {
 
       <div class="ft-filters__row">
         <div class="ft-field">
-          <label for="so-search">Recherche</label>
+          <label for="so-search" i18n="@@sales-orders.sales-order-list.recherche.787b5492">Recherche</label>
           <input
             id="so-search"
             pInputText
             [(ngModel)]="searchTerm"
             (keyup.enter)="applyFilters()"
-            placeholder="N° de commande, référence, client" />
+            placeholder="N° de commande, référence, client" i18n-placeholder="N° de commande, référence, client" />
         </div>
 
         <div class="ft-field">
-          <label for="so-status">Statut</label>
+          <label for="so-status" i18n="@@sales-orders.sales-order-list.statut.659499f3">Statut</label>
           <p-select
             inputId="so-status"
             [options]="statusOptions"
@@ -99,12 +95,12 @@ interface StatusOption {
         </div>
 
         <div class="ft-field">
-          <label for="so-from">Du</label>
+          <label for="so-from" i18n="@@sales-orders.sales-order-list.du.84814985">Du</label>
           <input id="so-from" type="date" pInputText [(ngModel)]="fromDate" (change)="applyFilters()" />
         </div>
 
         <div class="ft-field">
-          <label for="so-to">Au</label>
+          <label for="so-to" i18n="@@sales-orders.sales-order-list.au.7a1732d5">Au</label>
           <input id="so-to" type="date" pInputText [(ngModel)]="toDate" (change)="applyFilters()" />
         </div>
 
@@ -116,13 +112,11 @@ interface StatusOption {
             (onChange)="applyFilters()"></p-checkbox>
           <label
             for="so-open"
-            pTooltip="Masque les commandes soldées, annulées ou closes : il ne reste que celles qui pèsent sur le carnet.">
-            En cours seulement
-          </label>
+            pTooltip="Masque les commandes soldées, annulées ou closes : il ne reste que celles qui pèsent sur le carnet." i18n="@@sales-orders.sales-order-list.en.cours.seulement.e6580b49">En cours seulement</label>
         </div>
 
         <div class="ft-field ft-field--actions">
-          <app-button variant="secondary" (clicked)="resetFilters()">Réinitialiser</app-button>
+          <app-button variant="secondary" (clicked)="resetFilters()" i18n="@@sales-orders.sales-order-list.reinitialiser.e0e2ad54">Réinitialiser</app-button>
         </div>
       </div>
     </div>
@@ -136,7 +130,7 @@ interface StatusOption {
     } @else if (orders().length === 0) {
       <app-empty-state
         icon="pi-shopping-cart"
-        title="Aucune commande"
+        title="Aucune commande" i18n-title="Aucune commande"
         message="Créez une commande client, ou convertissez un devis accepté.">
       </app-empty-state>
     } @else {
@@ -153,13 +147,13 @@ interface StatusOption {
           styleClass="ft-table">
           <ng-template pTemplate="header">
             <tr>
-              <th>N°</th>
-              <th>Date</th>
-              <th>Client</th>
-              <th>Livraison prévue</th>
-              <th class="ft-num">Total TTC</th>
-              <th class="ft-num">Reste à livrer HT</th>
-              <th>Statut</th>
+              <th i18n="@@sales-orders.sales-order-list.n.754e6095">N°</th>
+              <th i18n="@@sales-orders.sales-order-list.date.eb9a4bc1">Date</th>
+              <th i18n="@@sales-orders.sales-order-list.client.1bdd79b1">Client</th>
+              <th i18n="@@sales-orders.sales-order-list.livraison.prevue.dc15f458">Livraison prévue</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-list.total.ttc.9e80ff7c">Total TTC</th>
+              <th class="ft-num" i18n="@@sales-orders.sales-order-list.reste.a.livrer.ht.7864f5dd">Reste à livrer HT</th>
+              <th i18n="@@sales-orders.sales-order-list.statut.659499f3">Statut</th>
               <th class="ft-actions-col"></th>
             </tr>
           </ng-template>
@@ -187,7 +181,7 @@ interface StatusOption {
                       pTooltip="Date de livraison dépassée alors qu'il reste à livrer."></i>
                   }
                 } @else {
-                  <span class="ft-muted">—</span>
+                  <span class="ft-muted" i18n="@@sales-orders.sales-order-list.text.1b93795b">—</span>
                 }
               </td>
               <td class="ft-num">{{ order.totalAmount | number: '1.3-3' }}</td>
@@ -195,7 +189,7 @@ interface StatusOption {
                 @if (order.backlogAmountHt > 0) {
                   <strong>{{ order.backlogAmountHt | number: '1.3-3' }}</strong>
                 } @else {
-                  <span class="ft-muted">—</span>
+                  <span class="ft-muted" i18n="@@sales-orders.sales-order-list.text.1b93795b">—</span>
                 }
               </td>
               <td>

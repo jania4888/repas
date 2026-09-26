@@ -55,7 +55,7 @@ interface ProrationOption {
         </label>
         <label>Date d'effet
           <input class="ft-input" [value]="today | date:'dd/MM/yyyy'" disabled />
-          <span class="field-hint">Effet immédiat (jour même) — non modifiable.</span>
+          <span class="field-hint" i18n="@@recurring-contracts.components.effet.immediat.jour.meme.non.modifiable.71bcc4a8">Effet immédiat (jour même) — non modifiable.</span>
         </label>
         <label>Politique de prorata
           <select class="ft-input" [(ngModel)]="prorationPolicy" name="prorationPolicy">
@@ -72,22 +72,20 @@ interface ProrationOption {
         Si un brouillon existe déjà pour la période en cours, il n'est pas modifié.
       </p>
 
-      <h4 class="lines-title">Lignes du contrat après avenant</h4>
+      <h4 class="lines-title" i18n="@@recurring-contracts.components.lignes.du.contrat.apres.avenant.707b103f">Lignes du contrat après avenant</h4>
       @for (line of lines; track $index; let i = $index) {
         <div class="line-card">
           <div class="line-card__head">
             <select class="ft-input" [(ngModel)]="line.lineType" [name]="'amendLineType' + i">
-              <option [ngValue]="'FixedRecurring'">Récurrent fixe</option>
-              <option [ngValue]="'UsageMetered'">À la consommation</option>
-              <option [ngValue]="'OneTimeSetup'">Frais d'installation</option>
+              <option [ngValue]="'FixedRecurring'" i18n="@@recurring-contracts.components.recurrent.fixe.9f36de5c">Récurrent fixe</option>
+              <option [ngValue]="'UsageMetered'" i18n="@@recurring-contracts.components.a.la.consommation.a9497352">À la consommation</option>
+              <option [ngValue]="'OneTimeSetup'" i18n="@@recurring-contracts.components.frais.d.installation.f39459df">Frais d'installation</option>
             </select>
-            <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)">
-              Retirer
-            </app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.components.retirer.54ec24a1">Retirer</app-button>
           </div>
           <div class="grid">
             <label class="span-2">Description
-              <input class="ft-input" placeholder="Description (optionnelle)" [(ngModel)]="line.description" [name]="'amendDesc' + i" />
+              <input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="Description (optionnelle)" [(ngModel)]="line.description" [name]="'amendDesc' + i" />
             </label>
             <label>Qté
               <input class="ft-input" type="number" [(ngModel)]="line.quantity" [name]="'amendQty' + i" />
@@ -100,9 +98,9 @@ interface ProrationOption {
             </label>
             @if (line.lineType === 'UsageMetered') {
               <label>
-                <span class="field-label required">Métrique</span>
+                <span class="field-label required" i18n="@@recurring-contracts.components.metrique.066ebc60">Métrique</span>
                 <select class="ft-input" [(ngModel)]="line.usageMetricId" [name]="'amendMetric' + i">
-                  <option [ngValue]="null">— Sélectionner —</option>
+                  <option [ngValue]="null" i18n="@@recurring-contracts.components.selectionner.7ae1afc7">— Sélectionner —</option>
                   @for (m of usageMetrics; track m.id) {
                     <option [ngValue]="m.id">{{ m.name }} ({{ m.unit }})</option>
                   }
@@ -118,9 +116,7 @@ interface ProrationOption {
           </div>
         </div>
       }
-      <app-button type="button" variant="outline" size="sm" icon="pi-plus" (clicked)="addLine()">
-        Ajouter une ligne
-      </app-button>
+      <app-button type="button" variant="outline" size="sm" icon="pi-plus" (clicked)="addLine()" i18n="@@recurring-contracts.components.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
 
       <label class="notes-label">Notes
         <textarea
@@ -128,12 +124,12 @@ interface ProrationOption {
           rows="2"
           [(ngModel)]="notes"
           name="amendmentNotes"
-          placeholder="Motif de l'avenant (visible dans l'historique)…">
+          placeholder="Motif de l'avenant (visible dans l'historique)…" i18n-placeholder="Motif de l'avenant (visible dans l'historique)…">
         </textarea>
       </label>
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (clicked)="close()">Annuler</app-button>
+        <app-button variant="secondary" (clicked)="close()" i18n="@@recurring-contracts.components.annuler.49ba3292">Annuler</app-button>
         <app-button variant="primary" icon="pi-check" [disabled]="saving" (clicked)="submit()">
           {{ saving ? 'Enregistrement…' : "Enregistrer l'avenant" }}
         </app-button>

@@ -48,7 +48,7 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année"
+        placeholder="Année" i18n-placeholder="Année"
         styleClass="w-10rem" />
       <p-select
         [options]="quarterOptions"
@@ -56,15 +56,15 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Trimestre"
+        placeholder="Trimestre" i18n-placeholder="Trimestre"
         styleClass="w-10rem" />
-      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()">Générer</app-button>
+      <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.declarations.generer.bd221c07">Générer</app-button>
       <app-button
         variant="outline"
         icon="pi-download"
         iconPos="left"
         (click)="exportCsv()"
-        [disabled]="!canExport()">Exporter CSV</app-button>
+        [disabled]="!canExport()" i18n="@@payroll.declarations.exporter.csv.d4fc31cb">Exporter CSV</app-button>
     </div>
 
     @if (dts() && !dts()!.isComplete) {
@@ -79,7 +79,7 @@ const MONTH_LABELS = [
     } @else if (!dts()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger la DTS"
+        title="Impossible de charger la DTS" i18n-title="Impossible de charger la DTS"
         description="Une erreur est survenue lors de la génération. Réessayez ou vérifiez vos droits."
         [showAction]="true"
         actionLabel="Réessayer"
@@ -87,7 +87,7 @@ const MONTH_LABELS = [
     } @else if (dts()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun salarié déclaré"
+        title="Aucun salarié déclaré" i18n-title="Aucun salarié déclaré"
         [description]="emptyDescription()"
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
@@ -98,12 +98,12 @@ const MONTH_LABELS = [
       <p-table [value]="dts()!.lines" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Salarié</th>
-            <th>CNSS</th>
-            <th class="text-right">Brut CNSSable</th>
-            <th class="text-right">CNSS sal.</th>
-            <th class="text-right">CNSS pat.</th>
-            <th class="text-right">Mois</th>
+            <th i18n="@@payroll.declarations.salarie.27f97915">Salarié</th>
+            <th i18n="@@payroll.declarations.cnss.a04d171a">CNSS</th>
+            <th class="text-right" i18n="@@payroll.declarations.brut.cnssable.fe8d5dba">Brut CNSSable</th>
+            <th class="text-right" i18n="@@payroll.declarations.cnss.sal.5d831d27">CNSS sal.</th>
+            <th class="text-right" i18n="@@payroll.declarations.cnss.pat.1d666774">CNSS pat.</th>
+            <th class="text-right" i18n="@@payroll.declarations.mois.0d304bea">Mois</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-l>

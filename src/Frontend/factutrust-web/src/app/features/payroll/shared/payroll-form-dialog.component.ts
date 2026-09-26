@@ -18,7 +18,7 @@ import { ButtonComponent } from '@shared/components/button/button.component';
       (onHide)="cancelled.emit()">
       <ng-content></ng-content>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="onCancel()">Annuler</app-button>
+        <app-button variant="outline" (click)="onCancel()" i18n="@@payroll.shared.annuler.49ba3292">Annuler</app-button>
         <app-button
           variant="primary"
           [disabled]="saveDisabled || saving"

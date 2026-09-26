@@ -14,7 +14,7 @@ import { ToastService } from '@core/services/toast.service';
   providers: [DecimalPipe],
   imports: [CommonModule, RouterModule, PageHeaderComponent, StatCardComponent, DashboardPanelComponent],
   template: `
-    <app-page-header title="CRM Commercial" subtitle="Tableau de bord" />
+    <app-page-header title="CRM Commercial" i18n-title="CRM Commercial" subtitle="Tableau de bord" />
 
     <div class="stats-wrapper">
       <div class="stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
@@ -26,8 +26,8 @@ import { ToastService } from '@core/services/toast.service';
     </div>
 
     @if (reminders().length > 0) {
-      <app-dashboard-panel title="Relances à venir" [hasActions]="true" class="mb-4">
-        <a panel-actions routerLink="/crm/activities" [queryParams]="{ mine: 1, completed: 'false' }" class="crm-dash-link">Voir toutes mes activités</a>
+      <app-dashboard-panel title="Relances à venir" i18n-title="Relances à venir" [hasActions]="true" class="mb-4">
+        <a panel-actions routerLink="/crm/activities" [queryParams]="{ mine: 1, completed: 'false' }" class="crm-dash-link" i18n="@@crm.dashboard.voir.toutes.mes.activites.c91dd96a">Voir toutes mes activités</a>
         <div class="reminder-list">
           @for (r of reminders(); track r.id) {
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border-subtle);">
@@ -35,7 +35,7 @@ import { ToastService } from '@core/services/toast.service';
                 <strong>{{ r.subject }}</strong>
                 <span style="color:var(--text-muted); margin-left:0.5rem">{{ r.dueDate | date:'shortDate' }}</span>
               </div>
-              <button type="button" style="font-size:0.85rem" (click)="markDone(r.id)">Terminé</button>
+              <button type="button" style="font-size:0.85rem" (click)="markDone(r.id)" i18n="@@crm.dashboard.termine.3bc59720">Terminé</button>
             </div>
           }
         </div>
@@ -43,7 +43,7 @@ import { ToastService } from '@core/services/toast.service';
     }
 
     @if (openOpps().length > 0) {
-      <app-dashboard-panel title="Top opportunités">
+      <app-dashboard-panel title="Top opportunités" i18n-title="Top opportunités">
         @for (o of openOpps().slice(0, 5); track o.id) {
           <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border-subtle);">
             <div>

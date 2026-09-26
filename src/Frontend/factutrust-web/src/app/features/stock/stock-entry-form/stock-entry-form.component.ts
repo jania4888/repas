@@ -40,29 +40,27 @@ import { ErrorMessageService } from '@core/services/error-message.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Nouvelle entrée de stock" 
+      title="Nouvelle entrée de stock" i18n-title="Nouvelle entrée de stock" 
       subtitle="Enregistrez une entrée de marchandise dans votre entrepôt">
       <app-button 
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/stock">
-        Annuler
-      </app-button>
+        routerLink="/stock" i18n="@@stock.stock-entry-form.annuler.49ba3292">Annuler</app-button>
     </app-page-header>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <!-- Section 1: Entrepôt & Produit -->
-        <app-form-section title="Détails du Stock" icon="pi-box" [number]="1">
+        <app-form-section title="Détails du Stock" i18n-title="Détails du Stock" icon="pi-box" [number]="1">
           <div class="form-group">
-            <label for="warehouse">Entrepôt <span class="required">*</span></label>
+            <label for="warehouse">Entrepôt <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
             <p-select 
               id="warehouse"
               [options]="warehouses" 
               formControlName="warehouse"
               optionLabel="name"
-              placeholder="Sélectionner un entrepôt"
+              placeholder="Sélectionner un entrepôt" i18n-placeholder="Sélectionner un entrepôt"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('warehouse')">
             </p-select>
@@ -75,7 +73,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
           </div>
 
           <div class="form-group">
-            <label for="product">Produit <span class="required">*</span></label>
+            <label for="product">Produit <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
             <p-select 
               id="product"
               [options]="products" 
@@ -83,7 +81,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
               optionLabel="name"
               [filter]="true"
               filterBy="name,code"
-              placeholder="Chercher un produit"
+              placeholder="Chercher un produit" i18n-placeholder="Chercher un produit"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('product')">
             </p-select>
@@ -96,18 +94,18 @@ import { ErrorMessageService } from '@core/services/error-message.service';
             @if (productsLoaded && products.length === 0) {
               <small class="form-hint">
                 Aucun produit avec gestion de stock. 
-                <a routerLink="/products">Activer sur un produit existant</a> ou
-                <a routerLink="/products/new">créer un produit</a>.
+                <a routerLink="/products" i18n="@@stock.stock-entry-form.activer.sur.un.produit.existant.8bb7a382">Activer sur un produit existant</a> ou
+                <a routerLink="/products/new" i18n="@@stock.stock-entry-form.creer.un.produit.f389562a">créer un produit</a>.
               </small>
             }
           </div>
         </app-form-section>
 
         <!-- Section 2: Quantité & Coût -->
-        <app-form-section title="Quantité & Valorisation" icon="pi-dollar" [number]="2">
+        <app-form-section title="Quantité & Valorisation" i18n-title="Quantité & Valorisation" icon="pi-dollar" [number]="2">
            <div class="form-row">
             <div class="form-group">
-              <label for="quantity">Quantité <span class="required">*</span></label>
+              <label for="quantity">Quantité <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
               <p-inputNumber 
                 id="quantity" 
                 formControlName="quantity"
@@ -127,7 +125,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
             </div>
 
             <div class="form-group">
-              <label for="unitCost">Coût Unitaire <span class="required">*</span></label>
+              <label for="unitCost">Coût Unitaire <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
               <p-inputNumber 
                 id="unitCost" 
                 formControlName="unitCost"
@@ -150,23 +148,23 @@ import { ErrorMessageService } from '@core/services/error-message.service';
            <!-- Calculated Total -->
           <div class="price-preview">
             <div class="preview-row total">
-               <span>Valeur Totale Entrée</span>
+               <span i18n="@@stock.stock-entry-form.valeur.totale.entree.5465bd99">Valeur Totale Entrée</span>
                <span class="value">{{ calculateTotal() | currency:'TND':'symbol':'1.3-3' }}</span>
             </div>
           </div>
         </app-form-section>
         
         <!-- Section 3: Motif & Notes -->
-        <app-form-section title="Informations Complémentaires" icon="pi-file-edit" [number]="3">
+        <app-form-section title="Informations Complémentaires" i18n-title="Informations Complémentaires" icon="pi-file-edit" [number]="3">
            <div class="form-group">
-              <label for="reason">Motif <span class="required">*</span></label>
+              <label for="reason">Motif <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
               <p-select 
                 id="reason"
                 [options]="entryReasons" 
                 formControlName="reason"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Raison de l'entrée"
+                placeholder="Raison de l'entrée" i18n-placeholder="Raison de l'entrée"
                 styleClass="w-full"
                 [class.ng-invalid]="isInvalid('reason')">
               </p-select>
@@ -179,12 +177,12 @@ import { ErrorMessageService } from '@core/services/error-message.service';
             </div>
 
             <div class="form-group">
-              <label for="notes">Notes / Référence</label>
+              <label for="notes" i18n="@@stock.stock-entry-form.notes.reference.682d0de7">Notes / Référence</label>
               <textarea 
                 pTextarea 
                 id="notes" 
                 formControlName="notes"
-                placeholder="Ex: BL-2024-001"
+                placeholder="Ex: BL-2024-001" i18n-placeholder="Ex: BL-2024-001"
                 [rows]="3"
                 class="w-full">
               </textarea>
@@ -198,17 +196,13 @@ import { ErrorMessageService } from '@core/services/error-message.service';
           variant="outline"
           icon="pi-times"
           iconPos="left"
-          routerLink="/stock">
-          Annuler
-        </app-button>
+          routerLink="/stock" i18n="@@stock.stock-entry-form.annuler.49ba3292">Annuler</app-button>
         <app-button 
           variant="primary"
           type="submit"
           [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
           iconPos="left"
-          [disabled]="form.invalid || saving()">
-          Enregistrer l'entrée
-        </app-button>
+          [disabled]="form.invalid || saving()" i18n="@@stock.stock-entry-form.enregistrer.l.entree.290540ec">Enregistrer l'entrée</app-button>
       </div>
     </form>
   `,

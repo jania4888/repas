@@ -1,3 +1,5 @@
+import { erpCollatorCompare } from '@core/i18n/erp-format';
+
 /** Libellés FR pour les actions d'audit (alignés sur AuditActions côté API). */
 const ACTION_LABELS: Readonly<Record<string, string>> = {
   'Auth.Login': 'Connexion',
@@ -174,11 +176,11 @@ export interface AuditSelectOption {
 export function auditEntityTypeSelectOptions(): AuditSelectOption[] {
   return Object.entries(ENTITY_LABELS)
     .map(([value, label]) => ({ label: `${label} (${value})`, value }))
-    .sort((a, b) => a.label.localeCompare(b.label, 'fr'));
+    .sort((a, b) => erpCollatorCompare(a.label, b.label));
 }
 
 export function auditActionSelectOptions(): AuditSelectOption[] {
   return Object.entries(ACTION_LABELS)
     .map(([value, label]) => ({ label, value }))
-    .sort((a, b) => a.label.localeCompare(b.label, 'fr'));
+    .sort((a, b) => erpCollatorCompare(a.label, b.label));
 }

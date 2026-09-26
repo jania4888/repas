@@ -64,9 +64,7 @@ import {
           <i class="pi pi-money-bill"></i>
           Mode de paiement
         </h2>
-        <p class="section-description">
-          Sélectionnez le mode de règlement pour cette facture
-        </p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.le.mode.de.reglement.pour.cette.fac.b38260c5">Sélectionnez le mode de règlement pour cette facture</p>
 
         <div class="payment-methods-grid">
           @for (method of paymentMethodOptions; track method.value) {
@@ -96,7 +94,7 @@ import {
 
         <div class="form-grid">
           <div class="form-group">
-            <label for="paymentTerms">Conditions</label>
+            <label for="paymentTerms" i18n="@@invoices.invoice-wizard.conditions.5506eb61">Conditions</label>
             <p-select
               inputId="paymentTerms"
               [options]="paymentTermsOptions"
@@ -104,13 +102,13 @@ import {
               (ngModelChange)="onPaymentTermsChange($event)"
               optionLabel="label"
               optionValue="value"
-              placeholder="Sélectionner..."
+              placeholder="Sélectionner..." i18n-placeholder="Sélectionner..."
               appendTo="body">
             </p-select>
           </div>
 
           <div class="form-group">
-            <label for="daysUntilDue">Délai de paiement (jours)</label>
+            <label for="daysUntilDue" i18n="@@invoices.invoice-wizard.delai.de.paiement.jours.586df9e3">Délai de paiement (jours)</label>
             <p-inputNumber
               inputId="daysUntilDue"
               [(ngModel)]="payment.daysUntilDue"
@@ -119,20 +117,18 @@ import {
               [max]="365"
               suffix=" jours">
             </p-inputNumber>
-            <small class="form-hint">
-              La date d'échéance sera calculée automatiquement
-            </small>
+            <small class="form-hint" i18n="@@invoices.invoice-wizard.la.date.d.echeance.sera.calculee.automatiquement.46127cd1">La date d'échéance sera calculée automatiquement</small>
           </div>
 
           <div class="form-group full-width">
-            <label for="customTerms">Conditions personnalisées</label>
+            <label for="customTerms" i18n="@@invoices.invoice-wizard.conditions.personnalisees.72cffa4d">Conditions personnalisées</label>
             <textarea
               pTextarea
               id="customTerms"
               [(ngModel)]="payment.terms"
               (ngModelChange)="updatePayment({ terms: $event })"
               rows="3"
-              placeholder="Ex: Paiement à réception de facture, escompte de 2% pour paiement anticipé...">
+              placeholder="Ex: Paiement à réception de facture, escompte de 2% pour paiement anticipé..." i18n-placeholder="Ex: Paiement à réception de facture, escompte de 2% pour paiement anticipé...">
             </textarea>
           </div>
         </div>
@@ -147,47 +143,41 @@ import {
             <i class="pi pi-building"></i>
             Coordonnées bancaires
           </h2>
-          <p class="section-description">
-            Ces informations apparaîtront sur la facture pour faciliter le règlement
-          </p>
+          <p class="section-description" i18n="@@invoices.invoice-wizard.ces.informations.apparaitront.sur.la.facture.pou.7f2c6707">Ces informations apparaîtront sur la facture pour faciliter le règlement</p>
 
           <div class="form-grid">
             <div class="form-group">
-              <label for="bankName">Nom de la banque</label>
+              <label for="bankName" i18n="@@invoices.invoice-wizard.nom.de.la.banque.9848ce74">Nom de la banque</label>
               <input
                 pInputText
                 id="bankName"
                 [(ngModel)]="payment.bankName"
                 (ngModelChange)="updatePayment({ bankName: $event })"
-                placeholder="Ex: Banque de Tunisie">
+                placeholder="Ex: Banque de Tunisie" i18n-placeholder="Ex: Banque de Tunisie">
             </div>
 
             <div class="form-group">
-              <label for="rib">RIB</label>
+              <label for="rib" i18n="@@invoices.invoice-wizard.rib.61f3ea57">RIB</label>
               <p-inputMask
                 inputId="rib"
                 [(ngModel)]="payment.rib"
                 (ngModelChange)="updatePayment({ rib: $event })"
                 mask="99 999 9999999999999999 99"
-                placeholder="XX XXX XXXXXXXXXXX XX">
+                placeholder="XX XXX XXXXXXXXXXX XX" i18n-placeholder="XX XXX XXXXXXXXXXX XX">
               </p-inputMask>
-              <small class="form-hint">
-                Relevé d'Identité Bancaire (20 caractères)
-              </small>
+              <small class="form-hint" i18n="@@invoices.invoice-wizard.releve.d.identite.bancaire.20.caracteres.0a997ef2">Relevé d'Identité Bancaire (20 caractères)</small>
             </div>
 
             <div class="form-group full-width">
-              <label for="iban">IBAN (optionnel)</label>
+              <label for="iban" i18n="@@invoices.invoice-wizard.iban.optionnel.e3ca0f8d">IBAN (optionnel)</label>
               <input
                 pInputText
                 id="iban"
                 [(ngModel)]="payment.iban"
                 (ngModelChange)="updatePayment({ iban: $event })"
-                placeholder="TNXX XXXX XXXX XXXX XXXX XXXX"
+                placeholder="TNXX XXXX XXXX XXXX XXXX XXXX" i18n-placeholder="TNXX XXXX XXXX XXXX XXXX XXXX"
                 maxlength="34">
-              <small class="form-hint">
-                Format international pour les paiements depuis l'étranger
-              </small>
+              <small class="form-hint" i18n="@@invoices.invoice-wizard.format.international.pour.les.paiements.depuis.l.fa96cb29">Format international pour les paiements depuis l'étranger</small>
             </div>
           </div>
         </section>
@@ -203,16 +193,14 @@ import {
         </h2>
 
         <div class="form-group" style="max-width: 400px;">
-          <label for="purchaseOrderRef">N° de bon de commande</label>
+          <label for="purchaseOrderRef" i18n="@@invoices.invoice-wizard.n.de.bon.de.commande.22b5d26b">N° de bon de commande</label>
           <input
             pInputText
             id="purchaseOrderRef"
             [(ngModel)]="payment.purchaseOrderRef"
             (ngModelChange)="updatePayment({ purchaseOrderRef: $event })"
-            placeholder="Ex: BC-2026-0001">
-          <small class="form-hint">
-            Référence du bon de commande client (optionnel)
-          </small>
+            placeholder="Ex: BC-2026-0001" i18n-placeholder="Ex: BC-2026-0001">
+          <small class="form-hint" i18n="@@invoices.invoice-wizard.reference.du.bon.de.commande.client.optionnel.e6c12910">Référence du bon de commande client (optionnel)</small>
         </div>
       </section>
 
@@ -224,23 +212,19 @@ import {
           <i class="pi pi-shield"></i>
           Mentions légales
         </h2>
-        <p class="section-description">
-          Mentions obligatoires selon la réglementation tunisienne
-        </p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.mentions.obligatoires.selon.la.reglementation.tu.fa52fcf9">Mentions obligatoires selon la réglementation tunisienne</p>
 
         <div class="legal-mentions-list">
           <!-- TVA Mention (Always required) -->
           <div class="legal-mention mandatory">
             <div class="mention-header">
               <i class="pi pi-check-circle"></i>
-              <span class="mention-badge">Obligatoire</span>
+              <span class="mention-badge" i18n="@@invoices.invoice-wizard.obligatoire.389b678a">Obligatoire</span>
             </div>
             <div class="mention-content">
               <strong>{{ legalMentions.vatMention }}</strong>
-              <p>
-                Cette mention est automatiquement ajoutée conformément à l'article 18 
-                du Code de la TVA tunisien.
-              </p>
+              <p i18n="@@invoices.invoice-wizard.cette.mention.est.automatiquement.ajoutee.confor.7b0cd47e">Cette mention est automatiquement ajoutée conformément à l'article 18 
+                du Code de la TVA tunisien.</p>
             </div>
           </div>
 
@@ -249,20 +233,18 @@ import {
             <div class="legal-mention exemption">
               <div class="mention-header">
                 <i class="pi pi-exclamation-triangle"></i>
-                <span class="mention-badge warning">Client exonéré</span>
+                <span class="mention-badge warning" i18n="@@invoices.invoice-wizard.client.exonere.f44392ad">Client exonéré</span>
               </div>
               <div class="mention-content">
-                <strong>Mention d'exonération</strong>
+                <strong i18n="@@invoices.invoice-wizard.mention.d.exoneration.0df903f7">Mention d'exonération</strong>
                 <textarea
                   pTextarea
                   [(ngModel)]="legalMentions.exemptionMention"
                   (ngModelChange)="updateLegalMentions({ exemptionMention: $event })"
                   rows="2"
-                  placeholder="Motif d'exonération de TVA...">
+                  placeholder="Motif d'exonération de TVA..." i18n-placeholder="Motif d'exonération de TVA...">
                 </textarea>
-                <small>
-                  Le client étant exonéré de TVA, une mention justificative est obligatoire.
-                </small>
+                <small i18n="@@invoices.invoice-wizard.le.client.etant.exonere.de.tva.une.mention.justi.b25e8824">Le client étant exonéré de TVA, une mention justificative est obligatoire.</small>
               </div>
             </div>
           }
@@ -271,16 +253,16 @@ import {
           <div class="legal-mention optional">
             <div class="mention-header">
               <i class="pi pi-plus-circle"></i>
-              <span class="mention-badge optional-badge">Optionnel</span>
+              <span class="mention-badge optional-badge" i18n="@@invoices.invoice-wizard.optionnel.879d6b16">Optionnel</span>
             </div>
             <div class="mention-content">
-              <strong>Mention personnalisée</strong>
+              <strong i18n="@@invoices.invoice-wizard.mention.personnalisee.f15fe1a7">Mention personnalisée</strong>
               <textarea
                 pTextarea
                 [(ngModel)]="legalMentions.customMention"
                 (ngModelChange)="updateLegalMentions({ customMention: $event })"
                 rows="3"
-                placeholder="Ajoutez une mention spécifique (garantie, conditions particulières, etc.)">
+                placeholder="Ajoutez une mention spécifique (garantie, conditions particulières, etc.)" i18n-placeholder="Ajoutez une mention spécifique (garantie, conditions particulières, etc.)">
               </textarea>
             </div>
           </div>
@@ -291,7 +273,7 @@ import {
       <div class="compliance-summary">
         <div class="compliance-header">
           <i class="pi pi-shield"></i>
-          <span>Conformité réglementaire</span>
+          <span i18n="@@invoices.invoice-wizard.conformite.reglementaire.300ae573">Conformité réglementaire</span>
         </div>
         <ul class="compliance-checklist">
           <li class="valid">

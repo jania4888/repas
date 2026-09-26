@@ -26,25 +26,25 @@ import { slugifyKey } from '../shared/studio-text.util';
     <p-dialog [header]="labels.relations.addManyToMany" [(visible)]="visible" [modal]="true" [style]="{ width: '30rem' }"
       (onHide)="reset()" data-testid="m2m-dialog">
       <div class="ft-form">
-        <label for="m2m-target">Table cible *</label>
+        <label for="m2m-target" i18n="@@studio.relations.table.cible.d81d2d36">Table cible *</label>
         <p-select inputId="m2m-target" class="studio-w-full" [options]="targetOptions()" [ngModel]="targetEntityId()"
           (ngModelChange)="targetEntityId.set($event)" optionLabel="label" optionValue="value" appendTo="body"
           panelStyleClass="studio-theme" data-testid="m2m-target" />
 
-        <label for="m2m-label">Libellé affiché</label>
+        <label for="m2m-label" i18n="@@studio.relations.libelle.affiche.39f5ced2">Libellé affiché</label>
         <input pInputText id="m2m-label" class="studio-w-full" [ngModel]="label()" (ngModelChange)="label.set($event)"
           [placeholder]="selectedTargetLabel() || 'Tels que nommés'" maxlength="120" data-testid="m2m-label" />
 
-        <label for="m2m-jkey">Clé de la table de liaison</label>
+        <label for="m2m-jkey" i18n="@@studio.relations.cle.de.la.table.de.liaison.02619902">Clé de la table de liaison</label>
         <input pInputText id="m2m-jkey" class="studio-w-full" [ngModel]="junctionKey()" (ngModelChange)="junctionKey.set($event)"
           [placeholder]="defaultJunctionKey()" maxlength="64" data-testid="m2m-junction-key" />
         @if (junctionKey() && !junctionKeyValid()) {
-          <small class="studio-hint" data-testid="m2m-key-invalid">Clé invalide : minuscule initiale, lettres, chiffres ou « _ » (2 à 64 caractères).</small>
+          <small class="studio-hint" data-testid="m2m-key-invalid" i18n="@@studio.relations.cle.invalide.minuscule.initiale.lettres.chiffres.af9a773b">Clé invalide : minuscule initiale, lettres, chiffres ou « _ » (2 à 64 caractères).</small>
         }
 
-        <label for="m2m-attribute">Attribut de liaison</label>
+        <label for="m2m-attribute" i18n="@@studio.relations.attribut.de.liaison.401d5ca6">Attribut de liaison</label>
         <input pInputText id="m2m-attribute" class="studio-w-full" [ngModel]="junctionAttribute()"
-          (ngModelChange)="junctionAttribute.set($event)" placeholder="Quantité" maxlength="120"
+          (ngModelChange)="junctionAttribute.set($event)" placeholder="Quantité" i18n-placeholder="Quantité" maxlength="120"
           data-testid="m2m-attribute" />
         <small class="studio-hint">{{ labels.relations.junctionAttributeHint }}</small>
 

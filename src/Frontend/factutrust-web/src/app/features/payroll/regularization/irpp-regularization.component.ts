@@ -52,14 +52,14 @@ import {
   ],
   template: `
     <app-page-header
-      title="Régularisation IRPP"
+      title="Régularisation IRPP" i18n-title="Régularisation IRPP"
       [subtitle]="'Période : ' + monthLabel(month) + ' ' + year">
-      <app-button variant="outline" (click)="reset()">Annuler</app-button>
+      <app-button variant="outline" (click)="reset()" i18n="@@payroll.regularization.annuler.49ba3292">Annuler</app-button>
       @if (canManage()) {
         <app-button variant="outline" icon="pi-calculator" iconPos="left"
-          [disabled]="!employeeId || loading()" (click)="calculate()">Calculer</app-button>
+          [disabled]="!employeeId || loading()" (click)="calculate()" i18n="@@payroll.regularization.calculer.29705857">Calculer</app-button>
         <app-button variant="primary" icon="pi-save" iconPos="left"
-          [disabled]="!canSave()" (click)="save()">Enregistrer</app-button>
+          [disabled]="!canSave()" (click)="save()" i18n="@@payroll.regularization.enregistrer.f7c8bcd8">Enregistrer</app-button>
       }
     </app-page-header>
 
@@ -73,21 +73,21 @@ import {
 
     <div class="reg-layout">
       <div class="reg-main">
-        <app-form-section title="Informations générales" icon="pi-user" [number]="1">
+        <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-user" [number]="1">
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="regEmployee">Salarié</label>
+              <label for="regEmployee" i18n="@@payroll.regularization.salarie.27f97915">Salarié</label>
               <p-select inputId="regEmployee" [options]="employees()" optionLabel="fullName" optionValue="id"
                 [(ngModel)]="employeeId" (ngModelChange)="onEmployeeChange()" [filter]="true" filterBy="fullName"
-                placeholder="Sélectionner un salarié" appendTo="body" styleClass="w-full" />
+                placeholder="Sélectionner un salarié" i18n-placeholder="Sélectionner un salarié" appendTo="body" styleClass="w-full" />
             </div>
             <div class="payroll-form-group">
-              <label for="regYear">Exercice</label>
+              <label for="regYear" i18n="@@payroll.regularization.exercice.e171e2b0">Exercice</label>
               <p-inputNumber inputId="regYear" [(ngModel)]="year" [min]="2000" [max]="2100"
                 [useGrouping]="false" (ngModelChange)="onPeriodChange()" styleClass="w-full" />
             </div>
             <div class="payroll-form-group">
-              <label for="regMonth">Mois de régularisation</label>
+              <label for="regMonth" i18n="@@payroll.regularization.mois.de.regularisation.cdffee58">Mois de régularisation</label>
               <p-select inputId="regMonth" [options]="monthOptions" optionLabel="label" optionValue="value"
                 [(ngModel)]="month" (ngModelChange)="onPeriodChange()" appendTo="body" styleClass="w-full" />
             </div>
@@ -95,35 +95,33 @@ import {
 
           @if (preview(); as p) {
             <dl class="payroll-detail-grid">
-              <dt>Matricule</dt><dd>{{ p.employeeNumber || '—' }}</dd>
-              <dt>Motif</dt><dd>{{ p.reasonLabel }}</dd>
-              <dt>Bulletins pris en compte</dt><dd>{{ p.monthsCounted }}</dd>
+              <dt i18n="@@payroll.regularization.matricule.8f74c132">Matricule</dt><dd>{{ p.employeeNumber || '—' }}</dd>
+              <dt i18n="@@payroll.regularization.motif.2a198f47">Motif</dt><dd>{{ p.reasonLabel }}</dd>
+              <dt i18n="@@payroll.regularization.bulletins.pris.en.compte.81a26994">Bulletins pris en compte</dt><dd>{{ p.monthsCounted }}</dd>
             </dl>
           }
 
           <div class="reg-legal">
             <i class="pi pi-info-circle" aria-hidden="true"></i>
             <div>
-              <p>
-                La retenue mensuelle est calculée en projetant le net imposable du mois sur douze mois.
+              <p i18n="@@payroll.regularization.la.retenue.mensuelle.est.calculee.en.projetant.l.9cc19762">La retenue mensuelle est calculée en projetant le net imposable du mois sur douze mois.
                 Dès que la rémunération varie, la somme des retenues s’écarte de l’impôt réellement dû
-                sur le revenu annuel. Cet écran compare les deux et porte la différence sur le bulletin.
-              </p>
-              <p class="reg-legal-ref">Référence : article 40 et suivants du code de l’IRPP.</p>
+                sur le revenu annuel. Cet écran compare les deux et porte la différence sur le bulletin.</p>
+              <p class="reg-legal-ref" i18n="@@payroll.regularization.reference.article.40.et.suivants.du.code.de.l.ir.f59d53c8">Référence : article 40 et suivants du code de l’IRPP.</p>
             </div>
           </div>
         </app-form-section>
 
         @if (preview(); as p) {
-          <app-form-section title="Détail du calcul" icon="pi-list" [number]="2">
+          <app-form-section title="Détail du calcul" i18n-title="Détail du calcul" icon="pi-list" [number]="2">
             <div class="payroll-table-scroll">
               <p-table [value]="detailRows()" styleClass="p-datatable-sm">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>Mois</th>
-                    <th class="text-right">Net imposable</th>
-                    <th class="text-right">IRPP retenu</th>
-                    <th class="text-right">CSS retenue</th>
+                    <th i18n="@@payroll.regularization.mois.0d304bea">Mois</th>
+                    <th class="text-right" i18n="@@payroll.regularization.net.imposable.2439110f">Net imposable</th>
+                    <th class="text-right" i18n="@@payroll.regularization.irpp.retenu.7cc73d3d">IRPP retenu</th>
+                    <th class="text-right" i18n="@@payroll.regularization.css.retenue.034ee1f0">CSS retenue</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
@@ -140,15 +138,15 @@ import {
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
-                  <tr><td colspan="4">Aucun bulletin arrêté sur cet exercice.</td></tr>
+                  <tr><td colspan="4" i18n="@@payroll.regularization.aucun.bulletin.arrete.sur.cet.exercice.dc2d7f37">Aucun bulletin arrêté sur cet exercice.</td></tr>
                 </ng-template>
               </p-table>
             </div>
           </app-form-section>
 
-          <app-form-section title="Notes" icon="pi-comment" [number]="3">
+          <app-form-section title="Notes" i18n-title="Notes" icon="pi-comment" [number]="3">
             <textarea pTextarea [(ngModel)]="notes" rows="3" class="w-full" maxlength="1000"
-              placeholder="Saisir une note éventuelle…"></textarea>
+              placeholder="Saisir une note éventuelle…" i18n-placeholder="Saisir une note éventuelle…"></textarea>
           </app-form-section>
         }
       </div>
@@ -156,7 +154,7 @@ import {
       <div class="reg-side">
         @if (preview(); as p) {
           <div class="card reg-summary">
-            <h3 class="reg-summary-title">Récapitulatif</h3>
+            <h3 class="reg-summary-title" i18n="@@payroll.regularization.recapitulatif.d5b5de6d">Récapitulatif</h3>
 
             <p-tag [value]="outcomeLabel()" [severity]="outcomeSeverity()" />
             <p class="reg-summary-hint">{{ outcomeHint() }}</p>
@@ -174,21 +172,19 @@ import {
           </div>
 
           <div class="card reg-actions">
-            <h3 class="reg-summary-title">Montant à porter</h3>
+            <h3 class="reg-summary-title" i18n="@@payroll.regularization.montant.a.porter.5fab264f">Montant à porter</h3>
             <div class="payroll-form-group">
-              <label for="regOverrideIrpp">Écart IRPP (ajustable)</label>
+              <label for="regOverrideIrpp" i18n="@@payroll.regularization.ecart.irpp.ajustable.bc3cb1b2">Écart IRPP (ajustable)</label>
               <p-inputNumber inputId="regOverrideIrpp" [(ngModel)]="overrideIrpp"
                 [minFractionDigits]="3" [maxFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
             </div>
             <div class="payroll-form-group">
-              <label for="regOverrideCss">Écart CSS (ajustable)</label>
+              <label for="regOverrideCss" i18n="@@payroll.regularization.ecart.css.ajustable.1e1f7d7d">Écart CSS (ajustable)</label>
               <p-inputNumber inputId="regOverrideCss" [(ngModel)]="overrideCss"
                 [minFractionDigits]="3" [maxFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
             </div>
-            <p class="reg-summary-note">
-              Laissez les montants calculés tels quels, ou ajustez-les : la ligne sera alors signalée
-              comme corrigée manuellement et préservée lors des régénérations.
-            </p>
+            <p class="reg-summary-note" i18n="@@payroll.regularization.laissez.les.montants.calcules.tels.quels.ou.ajus.4cbcddf5">Laissez les montants calculés tels quels, ou ajustez-les : la ligne sera alors signalée
+              comme corrigée manuellement et préservée lors des régénérations.</p>
           </div>
         }
       </div>

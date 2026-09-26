@@ -60,11 +60,11 @@ interface LegendItem {
     <div class="cal">
       <div class="cal__toolbar">
         <div class="cal__nav">
-          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(-1)" aria-label="Période précédente">
+          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(-1)" aria-label="Période précédente" i18n-aria-label="Période précédente">
             <i class="fa-solid fa-chevron-left"></i>
           </button>
           <button type="button" class="p-button p-button-text p-button-sm" (click)="goToday()">{{ labels.calendar.today }}</button>
-          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(1)" aria-label="Période suivante">
+          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(1)" aria-label="Période suivante" i18n-aria-label="Période suivante">
             <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
@@ -83,7 +83,7 @@ interface LegendItem {
 
       @if (legend().length > 0) {
         <div class="cal__legend">
-          <span class="cal__legend-title">Légende</span>
+          <span class="cal__legend-title" i18n="@@studio.views.legende.758710c1">Légende</span>
           @for (item of legend(); track item.value) {
             <span class="cal__legend-item">
               <span class="swatch" [class]="'sw-' + item.colorIndex"></span>

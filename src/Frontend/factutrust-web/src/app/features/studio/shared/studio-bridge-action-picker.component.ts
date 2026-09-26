@@ -27,21 +27,21 @@ const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['so
   imports: [FormsModule, SelectModule, InputTextModule, TextareaModule],
   template: `
     <div class="bap">
-      <label class="bap__lbl">Action ERP *</label>
+      <label class="bap__lbl" i18n="@@studio.shared.action.erp.cbd82106">Action ERP *</label>
       <p-select [options]="actions()" [ngModel]="action()" (ngModelChange)="onActionChange($event)" optionLabel="name" optionValue="name"
-        [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="bap__w-full" placeholder="Choisir une action"
+        [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="bap__w-full" placeholder="Choisir une action" i18n-placeholder="Choisir une action"
         [disabled]="disabled()" [attr.aria-label]="'Action ERP'" />
       @if (selectedAction(); as act) {
         <small class="bap__hint">{{ act.description }}</small>
-        <label class="bap__section">Correspondance des paramètres</label>
+        <label class="bap__section" i18n="@@studio.shared.correspondance.des.parametres.f8d90751">Correspondance des paramètres</label>
         @for (p of act.parameters; track p.name) {
           <div class="ft-map" [attr.data-testid]="'bap-row-' + p.name">
-            <div class="ft-map-name">{{ p.name }} @if (p.required) { <span class="ft-req">*</span> }</div>
+            <div class="ft-map-name">{{ p.name }} @if (p.required) { <span class="ft-req" i18n="@@studio.shared.text.df58248c">*</span> }</div>
             <p-select [options]="sourceOptions()" [ngModel]="rowSource(p.name)" (ngModelChange)="setSource(p.name, $event)" optionLabel="label" optionValue="value"
               appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-src" [disabled]="disabled()" />
             @switch (rowSource(p.name)) {
               @case ('field') { <p-select [options]="fieldOptions()" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)" optionLabel="label" optionValue="value"
-                [showClear]="true" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-val" placeholder="Champ…" [disabled]="disabled()" /> }
+                [showClear]="true" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-val" placeholder="Champ…" i18n-placeholder="Champ…" [disabled]="disabled()" /> }
               @case ('template') { <textarea pTextarea rows="2" class="ft-map-val" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)"
                 placeholder="{{ '{{record.champ}}' }}" [disabled]="disabled()"></textarea> }
               @default { <input pInputText class="ft-map-val" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)"

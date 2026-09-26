@@ -54,22 +54,22 @@ interface DesignColumn {
 
       <app-studio-designer-shell previewTitle="Aperçu (lecture seule)">
         <div studioEditor>
-          <label class="studio-lbl">Nom de la vue *</label>
-          <input pInputText [(ngModel)]="displayName" class="studio-w-full" placeholder="Ex. Liste clients" (ngModelChange)="schedulePreview()" />
+          <label class="studio-lbl" i18n="@@studio.studio-view-designer.nom.de.la.vue.86ef855c">Nom de la vue *</label>
+          <input pInputText [(ngModel)]="displayName" class="studio-w-full" placeholder="Ex. Liste clients" i18n-placeholder="Ex. Liste clients" (ngModelChange)="schedulePreview()" />
 
-          <label class="studio-lbl">Table SQL existante *</label>
+          <label class="studio-lbl" i18n="@@studio.studio-view-designer.table.sql.existante.69202119">Table SQL existante *</label>
           <p-select [options]="tables()" [(ngModel)]="sourceTable" (ngModelChange)="onTableChange()"
             optionLabel="name" optionValue="name" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="studio-w-full"
-            placeholder="Choisir une table"></p-select>
-          <small class="studio-hint">Lecture seule : aucune donnée n'est modifiée par une vue.</small>
+            placeholder="Choisir une table" i18n-placeholder="Choisir une table"></p-select>
+          <small class="studio-hint" i18n="@@studio.studio-view-designer.lecture.seule.aucune.donnee.n.est.modifiee.par.u.6baf5fab">Lecture seule : aucune donnée n'est modifiée par une vue.</small>
 
           <div class="studio-block-head" style="margin-top: 1rem">
-            <label class="studio-lbl" style="margin:0">Recherche activée</label>
+            <label class="studio-lbl" style="margin:0" i18n="@@studio.studio-view-designer.recherche.activee.4d16ddb9">Recherche activée</label>
             <p-inputSwitch [(ngModel)]="searchEnabled"></p-inputSwitch>
           </div>
 
           @if (columns().length > 0) {
-            <label class="studio-lbl">Colonnes</label>
+            <label class="studio-lbl" i18n="@@studio.studio-view-designer.colonnes.53a2544c">Colonnes</label>
             <div class="studio-cols" cdkDropList (cdkDropListDropped)="drop($event)">
               @for (c of columns(); track c.name) {
                 <div class="studio-col-row" cdkDrag [class.studio-col-row--off]="!c.included">
@@ -81,12 +81,12 @@ interface DesignColumn {
                   <p-select [options]="formatOptions" [(ngModel)]="c.format" optionLabel="label" optionValue="value"
                     appendTo="body" panelStyleClass="studio-theme" [disabled]="!c.included" (ngModelChange)="schedulePreview()"></p-select>
                   @if (c.included && c.format === 'status') {
-                    <input pInputText [(ngModel)]="c.statusMapText" placeholder="1=Brouillon,3=Validé"
+                    <input pInputText [(ngModel)]="c.statusMapText" placeholder="1=Brouillon,3=Validé" i18n-placeholder="1=Brouillon,3=Validé"
                       class="studio-grow" (ngModelChange)="schedulePreview()" />
                   }
                   @if (c.included && c.format === 'fk') {
-                    <input pInputText [(ngModel)]="c.lookupTable" placeholder="Table" class="studio-grow" (ngModelChange)="schedulePreview()" />
-                    <input pInputText [(ngModel)]="c.lookupDisplayColumn" placeholder="Colonne" (ngModelChange)="schedulePreview()" />
+                    <input pInputText [(ngModel)]="c.lookupTable" placeholder="Table" i18n-placeholder="Table" class="studio-grow" (ngModelChange)="schedulePreview()" />
+                    <input pInputText [(ngModel)]="c.lookupDisplayColumn" placeholder="Colonne" i18n-placeholder="Colonne" (ngModelChange)="schedulePreview()" />
                   }
                 </div>
               }

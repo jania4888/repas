@@ -5,6 +5,7 @@ import { environment } from '@environments/environment';
 import { AuthService } from './auth.service';
 import { getAllNavSearchEntries, NavSearchEntry } from '../config/app-navigation.registry';
 import { getEntityGroupLabel } from '../config/search-entity.config';
+import { normalizeSearchText } from '../utils/search-text-normalize';
 
 export type GlobalSearchResultKind = 'page' | 'document' | 'recent';
 
@@ -88,7 +89,7 @@ export class GlobalSearchService {
   }
 
   normalize(text: string): string {
-    return text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim();
+    return normalizeSearchText(text);
   }
 
   scoreNavMatch(query: string, entry: NavSearchEntry): number {

@@ -7,9 +7,9 @@ import {
   NavSubItem
 } from '@core/config/app-navigation.registry';
 import {
-  DELEGATED_SECTION_LABELS,
+  DELEGATED_SECTION_IDS,
+  FIRM_MANAGED_HIDDEN_SECTION_IDS,
   FIRM_DELEGATED_FOOTER_NAV,
-  FIRM_MANAGED_HIDDEN_SECTION_LABELS,
   FIRM_NATIVE_NAV,
   filterFirmGovernanceNav,
   filterFirmRevisionNav,
@@ -40,9 +40,10 @@ import { StudioApprovalsBadgeService } from '@features/studio/approvals/studio-a
 import { StockFeaturesStore } from '@core/services/stock-features-store.service';
 import { VARIANT_AXES_PATH } from '@features/settings/variant-axes/variant-axes.paths';
 import {
-  ACCOUNTING_FIRM_SECONDARY_EXCLUDED_LABELS,
+  ACCOUNTING_FIRM_SECONDARY_EXCLUDED_IDS,
   SECONDARY_NAV_SECTION_ORDER
 } from '@core/config/secondary-nav.config';
+import { getNavId, NAV_ID } from '@core/config/nav-item-ids';
 
 /**
  * Source unique du graphe de navigation filtré (sidebar + 2e barre).
@@ -115,7 +116,7 @@ export class AppNavService {
     items = filterNavItems(this.auth, items);
     if (!fixedAssetsEnabled) {
       items = items.map(item =>
-        item.children?.length && item.label === 'Comptabilité'
+        item.children?.length && getNavId(item) === NAV_ID.accounting
           ? {
               ...item,
               children: item.children.filter(
@@ -141,14 +142,14 @@ export class AppNavService {
     if (this.auth.isAccountingFirm() && this.auth.isDelegatedMode()) {
       const moduleSections = filterNavItems(this.auth, buildAccountingModuleNavItems());
       return moduleSections
-        .filter(item => !ACCOUNTING_FIRM_SECONDARY_EXCLUDED_LABELS.has(item.label))
+        .filter(item => !ACCOUNTING_FIRM_SECONDARY_EXCLUDED_IDS.has(getNavId(item)))
         .filter(item => !!item.route || !!item.children?.length);
     }
 
-    const byLabel = new Map(this.navItems().map(item => [item.label, item]));
+    const byId = new Map(this.navItems().map(item => [getNavId(item), item]));
     const sections: NavItem[] = [];
-    for (const label of SECONDARY_NAV_SECTION_ORDER) {
-      const item = byLabel.get(label);
+    for (const sectionId of SECONDARY_NAV_SECTION_ORDER) {
+      const item = byId.get(sectionId);
       if (!item) {
         continue;
       }
@@ -276,7 +277,7 @@ export class AppNavService {
       this.auth.isAdmin() &&
       !this.auth.isAccountingFirm();
     if (show) return items;
-    return items.filter(i => i.label !== 'Échanges');
+    return items.filter(i => getNavId(i) !== NAV_ID.exchanges);
   }
 
   private filterCompanyAssistanceNav(items: NavItem[]): NavItem[] {
@@ -286,7 +287,7 @@ export class AppNavService {
       !this.auth.isDelegatedMode() &&
       !this.auth.isClientPortal();
     if (show) return items;
-    return items.filter(i => i.label !== 'Assistance');
+    return items.filter(i => getNavId(i) !== NAV_ID.assistance);
   }
 
   private applyAssistanceBadge(items: NavItem[]): NavItem[] {
@@ -301,19 +302,19 @@ export class AppNavService {
   private buildDelegatedNav(): NavItem[] {
     const client = this.firmContext.activeClient();
     let items = filterNavItems(this.auth, ALL_NAV_ITEMS);
-    items = items.filter(i => DELEGATED_SECTION_LABELS.has(i.label));
+    items = items.filter(i => DELEGATED_SECTION_IDS.has(getNavId(i)));
     if (this.auth.isFirmManagedDelegated()) {
-      items = items.filter(i => !FIRM_MANAGED_HIDDEN_SECTION_LABELS.has(i.label));
+      items = items.filter(i => !FIRM_MANAGED_HIDDEN_SECTION_IDS.has(getNavId(i)));
     }
     items = items
       .map(item =>
-        item.children?.length && (item.label === 'Ventes' || item.label === 'Achats')
-          ? { ...item, children: filterDelegatedFirmSectionChildren(item.label, item.children) }
+        item.children?.length && (getNavId(item) === NAV_ID.sales || getNavId(item) === NAV_ID.purchases)
+          ? { ...item, children: filterDelegatedFirmSectionChildren(getNavId(item), item.children) }
           : item
       )
       .filter(item => !item.children?.length || item.children.length > 0);
 
-    const comptaIndex = items.findIndex(i => i.label === 'Comptabilité');
+    const comptaIndex = items.findIndex(i => getNavId(i) === NAV_ID.accounting);
     if (comptaIndex >= 0) {
       const comptaHub: NavItem = {
         label: 'Comptabilité',

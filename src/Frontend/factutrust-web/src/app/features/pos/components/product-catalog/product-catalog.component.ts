@@ -38,11 +38,11 @@ interface CategoryTab {
               #searchInput
               type="text"
               class="catalog__search-input"
-              placeholder="Rechercher un produit (F2)"
+              placeholder="Rechercher un produit (F2)" i18n-placeholder="Rechercher un produit (F2)"
               [ngModel]="searchQuery()"
               (ngModelChange)="onSearchChange($event)"
               (keydown.enter)="onSearchEnter($event)"
-              aria-label="Rechercher un produit" />
+              aria-label="Rechercher un produit" i18n-aria-label="Rechercher un produit" />
             @if (searchQuery()) {
               <button class="catalog__search-clear" (click)="clearSearch()" [attr.aria-label]="'Effacer la recherche'">
                 <i class="pi pi-times"></i>
@@ -64,8 +64,8 @@ interface CategoryTab {
               type="button"
               class="catalog__variant-btn"
               (click)="variantPickerVisible = true"
-              title="Choisir une variante"
-              aria-label="Choisir une variante">
+              title="Choisir une variante" i18n-title="Choisir une variante"
+              aria-label="Choisir une variante" i18n-aria-label="Choisir une variante">
               <i class="pi pi-th-large"></i>
             </button>
           </div>
@@ -73,14 +73,14 @@ interface CategoryTab {
       </div>
 
       <!-- Category Tabs -->
-      <div class="catalog__categories" role="tablist" aria-label="Filtrer par categorie">
+      <div class="catalog__categories" role="tablist" aria-label="Filtrer par categorie" i18n-aria-label="Filtrer par categorie">
         <button
           class="catalog__category-tab"
           [class.catalog__category-tab--active]="selectedCategory() === 'all'"
           (click)="selectCategory('all')"
           role="tab"
           [attr.aria-selected]="selectedCategory() === 'all'">
-          <span class="catalog__category-name">Tous</span>
+          <span class="catalog__category-name" i18n="@@pos.components.tous.b97ae3b4">Tous</span>
           <span class="catalog__category-count">{{ totalCount() }}</span>
         </button>
         @if (favoritesService.favoriteIds().length > 0) {
@@ -90,7 +90,7 @@ interface CategoryTab {
             (click)="selectCategory('favorites')"
             role="tab"
             [attr.aria-selected]="selectedCategory() === 'favorites'">
-            <span class="catalog__category-name">Favoris</span>
+            <span class="catalog__category-name" i18n="@@pos.components.favoris.1020d908">Favoris</span>
             <span class="catalog__category-count">{{ favoritesService.favoriteIds().length }}</span>
           </button>
         }
@@ -101,7 +101,7 @@ interface CategoryTab {
             (click)="selectCategory('recents')"
             role="tab"
             [attr.aria-selected]="selectedCategory() === 'recents'">
-            <span class="catalog__category-name">Recents</span>
+            <span class="catalog__category-name" i18n="@@pos.components.recents.84380106">Recents</span>
           </button>
         }
         @for (cat of categories(); track cat.id) {
@@ -133,7 +133,7 @@ interface CategoryTab {
             <div class="catalog__empty-icon">
               <i class="pi pi-inbox"></i>
             </div>
-            <p class="catalog__empty-title">Aucun produit trouve</p>
+            <p class="catalog__empty-title" i18n="@@pos.components.aucun.produit.trouve.1537e5ac">Aucun produit trouve</p>
             <p class="catalog__empty-text">
               @if (selectedCategory() === 'favorites') {
                 Ajoutez des produits aux favoris en cliquant sur l'etoile.
@@ -146,7 +146,7 @@ interface CategoryTab {
               }
             </p>
             @if (searchQuery()) {
-              <button class="catalog__empty-action" (click)="clearSearch()">Effacer la recherche</button>
+              <button class="catalog__empty-action" (click)="clearSearch()" i18n="@@pos.components.effacer.la.recherche.189351c0">Effacer la recherche</button>
             }
           </div>
         } @else {

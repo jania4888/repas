@@ -19,15 +19,13 @@ import {
   imports: [CommonModule, RouterModule],
   template: `
     @if (visible()) {
-      <section class="onboarding-checklist" data-tour="onboarding-checklist" aria-label="Premiers pas">
+      <section class="onboarding-checklist" data-tour="onboarding-checklist" aria-label="Premiers pas" i18n-aria-label="Premiers pas">
         <header class="onboarding-checklist__header">
           <div>
-            <h2 class="onboarding-checklist__title">Premiers pas</h2>
+            <h2 class="onboarding-checklist__title" i18n="@@shared.onboarding.onboarding-checklist.premiers.pas.975acb5a">Premiers pas</h2>
             <p class="onboarding-checklist__subtitle">{{ progressLabel() }}</p>
           </div>
-          <button type="button" class="onboarding-checklist__dismiss" (click)="dismiss()">
-            Masquer
-          </button>
+          <button type="button" class="onboarding-checklist__dismiss" (click)="dismiss()" i18n="@@shared.onboarding.onboarding-checklist.masquer.adb05f2b">Masquer</button>
         </header>
         <ul class="onboarding-checklist__list">
           @for (item of visibleItems(); track item.id) {

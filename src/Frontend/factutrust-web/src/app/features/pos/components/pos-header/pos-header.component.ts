@@ -17,18 +17,18 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
   template: `
     <header class="pos-header">
       <div class="pos-header__left">
-        <button class="pos-header__back" (click)="goBack()" title="Retour au tableau de bord" aria-label="Retour">
+        <button class="pos-header__back" (click)="goBack()" title="Retour au tableau de bord" i18n-title="Retour au tableau de bord" aria-label="Retour" i18n-aria-label="Retour">
           <i class="pi pi-arrow-left"></i>
         </button>
         <div class="pos-header__brand">
           <div class="pos-header__logo">
             <i class="pi pi-shopping-cart"></i>
           </div>
-          <h1 class="pos-header__title">Point de Vente</h1>
+          <h1 class="pos-header__title" i18n="@@pos.components.point.de.vente.420a8974">Point de Vente</h1>
         </div>
-          <button class="pos-header__pill pos-header__pill--overflow" type="button" (click)="onOpenHistory.emit()" title="Historique des transactions" aria-label="Historique">
+          <button class="pos-header__pill pos-header__pill--overflow" type="button" (click)="onOpenHistory.emit()" title="Historique des transactions" i18n-title="Historique des transactions" aria-label="Historique" i18n-aria-label="Historique">
           <i class="pi pi-folder-open"></i>
-          <span>Historiques</span>
+          <span i18n="@@pos.components.historiques.feb0e8f3">Historiques</span>
         </button>
       </div>
 
@@ -66,19 +66,19 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
             </button>
           }
           @if (registerSession.currentSession()) {
-            <button type="button" class="pos-header__pill pos-header__pill--overflow" (click)="onXReport.emit()" title="Rapport X" aria-label="Rapport X">
+            <button type="button" class="pos-header__pill pos-header__pill--overflow" (click)="onXReport.emit()" title="Rapport X" i18n-title="Rapport X" aria-label="Rapport X" i18n-aria-label="Rapport X">
               <i class="pi pi-eye"></i>
-              <span>X</span>
+              <span i18n="@@pos.components.x.c032adc1">X</span>
             </button>
-            <button type="button" class="pos-header__pill pos-header__pill--z" (click)="onCloseZ.emit()" title="Clôturer Z" aria-label="Clôturer Z">
+            <button type="button" class="pos-header__pill pos-header__pill--z" (click)="onCloseZ.emit()" title="Clôturer Z" i18n-title="Clôturer Z" aria-label="Clôturer Z" i18n-aria-label="Clôturer Z">
               <i class="pi pi-book"></i>
-              <span>Clôturer Z</span>
+              <span i18n="@@pos.components.cloturer.z.9bcddf02">Clôturer Z</span>
             </button>
           }
           @if (!registerSession.currentSession() && registerSession.requireOpenSession()) {
-            <button type="button" class="pos-header__pill pos-header__pill--active" (click)="onOpenRegister.emit()" title="Ouvrir la caisse" aria-label="Ouvrir la caisse">
+            <button type="button" class="pos-header__pill pos-header__pill--active" (click)="onOpenRegister.emit()" title="Ouvrir la caisse" i18n-title="Ouvrir la caisse" aria-label="Ouvrir la caisse" i18n-aria-label="Ouvrir la caisse">
               <i class="pi pi-unlock"></i>
-              <span>Ouvrir</span>
+              <span i18n="@@pos.components.ouvrir.42c07747">Ouvrir</span>
             </button>
           }
         </div>
@@ -86,9 +86,9 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
 
       <div class="pos-header__right">
         @if (!offlineService.isOnline()) {
-          <span class="pos-header__offline" title="Hors ligne">
+          <span class="pos-header__offline" title="Hors ligne" i18n-title="Hors ligne">
             <i class="pi pi-wifi-off"></i>
-            <span>Hors ligne</span>
+            <span i18n="@@pos.components.hors.ligne.2b3e7dce">Hors ligne</span>
           </span>
         }
         @if (heldCount > 0) {
@@ -106,33 +106,33 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
           [title]="audioService.isSoundEnabled() ? 'Desactiver le son' : 'Activer le son'"
           [attr.aria-label]="audioService.isSoundEnabled() ? 'Desactiver le son' : 'Activer le son'">
           <i class="pi" [class.pi-volume-up]="audioService.isSoundEnabled()" [class.pi-volume-off]="!audioService.isSoundEnabled()"></i>
-          <span>Son</span>
+          <span i18n="@@pos.components.son.cdff1da1">Son</span>
         </button>
         <button
           class="pos-header__pill pos-header__pill--compact-label"
           [class.pos-header__pill--active]="isDualScreenOpen"
           type="button"
           (click)="onDualScreenToggle.emit()"
-          title="Ecran client"
-          aria-label="Ecran client">
+          title="Ecran client" i18n-title="Ecran client"
+          aria-label="Ecran client" i18n-aria-label="Ecran client">
           <i class="pi pi-desktop"></i>
-          <span>Ecran client</span>
+          <span i18n="@@pos.components.ecran.client.1a2e7c98">Ecran client</span>
         </button>
         <button
           class="pos-header__pill pos-header__pill--compact-label"
           [class.pos-header__pill--active]="isQuickMode"
           type="button"
           (click)="onQuickModeToggle.emit()"
-          title="Mode rapide (F4)"
-          aria-label="Mode rapide">
+          title="Mode rapide (F4)" i18n-title="Mode rapide (F4)"
+          aria-label="Mode rapide" i18n-aria-label="Mode rapide">
           <i class="pi pi-bolt"></i>
-          <span>Mode rapide</span>
+          <span i18n="@@pos.components.mode.rapide.1c78b5f0">Mode rapide</span>
         </button>
 
         <div class="pos-header__theme pos-header__pill--overflow" (click)="$event.stopPropagation()">
-          <button type="button" class="pos-header__pill" title="Theme" aria-label="Changer le theme" (click)="toggleThemeMenu($event)">
+          <button type="button" class="pos-header__pill" title="Theme" i18n-title="Theme" aria-label="Changer le theme" i18n-aria-label="Changer le theme" (click)="toggleThemeMenu($event)">
             <i class="pi pi-palette"></i>
-            <span>Theme</span>
+            <span i18n="@@pos.components.theme.a797e309">Theme</span>
           </button>
           @if (showThemeMenu) {
             <div class="pos-header__theme-menu" (click)="$event.stopPropagation()">
@@ -144,9 +144,9 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
             </div>
           }
         </div>
-        <button class="pos-header__pill pos-header__pill--overflow" type="button" (click)="openShortcuts()" title="Raccourcis clavier" aria-label="Shortcuts">
+        <button class="pos-header__pill pos-header__pill--overflow" type="button" (click)="openShortcuts()" title="Raccourcis clavier" i18n-title="Raccourcis clavier" aria-label="Shortcuts" i18n-aria-label="Shortcuts">
           <i class="pi pi-th-large"></i>
-          <span>Raccourcis</span>
+          <span i18n="@@pos.components.raccourcis.0e0d6404">Raccourcis</span>
         </button>
 
         <div class="pos-header__clock" aria-live="off" [attr.title]="currentTime()">
@@ -159,8 +159,8 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
             type="button"
             class="pos-header__pill pos-header__plus-trigger"
             (click)="togglePlusMenu($event)"
-            title="Plus d'actions"
-            aria-label="Plus d'actions"
+            title="Plus d'actions" i18n-title="Plus d'actions"
+            aria-label="Plus d'actions" i18n-aria-label="Plus d'actions"
             [attr.aria-expanded]="showPlusMenu">
             <i class="pi pi-ellipsis-h"></i>
           </button>
@@ -168,12 +168,12 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
             <div class="pos-header__plus-menu" (click)="$event.stopPropagation()">
               <button type="button" class="pos-header__plus-item" (click)="onOpenHistory.emit(); closeMenus()">
                 <i class="pi pi-folder-open"></i>
-                <span>Historiques</span>
+                <span i18n="@@pos.components.historiques.feb0e8f3">Historiques</span>
               </button>
               @if (registerSession.currentSession()) {
                 <button type="button" class="pos-header__plus-item" (click)="onXReport.emit(); closeMenus()">
                   <i class="pi pi-eye"></i>
-                  <span>Rapport X</span>
+                  <span i18n="@@pos.components.rapport.x.5a5924ab">Rapport X</span>
                 </button>
               }
               <button
@@ -197,15 +197,15 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
               <div class="pos-header__plus-divider"></div>
               <button type="button" class="pos-header__plus-item" (click)="openShortcuts(); closeMenus()">
                 <i class="pi pi-th-large"></i>
-                <span>Raccourcis clavier</span>
+                <span i18n="@@pos.components.raccourcis.clavier.8a7de23a">Raccourcis clavier</span>
               </button>
             </div>
           }
         </div>
 
-        <button class="pos-header__new-order" (click)="onNewOrder.emit()" title="Nouvelle commande (F9)">
+        <button class="pos-header__new-order" (click)="onNewOrder.emit()" title="Nouvelle commande (F9)" i18n-title="Nouvelle commande (F9)">
           <i class="pi pi-plus"></i>
-          <span>Nouveau</span>
+          <span i18n="@@pos.components.nouveau.b9676c8f">Nouveau</span>
         </button>
       </div>
 
@@ -213,36 +213,36 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
         <div class="pos-header__shortcuts-panel" (click)="showShortcuts = false">
           <div class="pos-header__shortcuts-content" (click)="$event.stopPropagation()">
             <div class="pos-header__shortcuts-header">
-              <h3>Raccourcis clavier</h3>
-              <p class="pos-header__shortcuts-desc">Accelerez votre saisie avec ces raccourcis</p>
-              <button class="pos-header__shortcuts-close" (click)="showShortcuts = false" aria-label="Fermer">
+              <h3 i18n="@@pos.components.raccourcis.clavier.8a7de23a">Raccourcis clavier</h3>
+              <p class="pos-header__shortcuts-desc" i18n="@@pos.components.accelerez.votre.saisie.avec.ces.raccourcis.d1431e65">Accelerez votre saisie avec ces raccourcis</p>
+              <button class="pos-header__shortcuts-close" (click)="showShortcuts = false" aria-label="Fermer" i18n-aria-label="Fermer">
                 <i class="pi pi-times"></i>
               </button>
             </div>
             <div class="shortcut-grid">
               <div class="shortcut-item">
-                <kbd>F2</kbd>
-                <span>Rechercher un produit</span>
+                <kbd i18n="@@pos.components.f2.999d0cd6">F2</kbd>
+                <span i18n="@@pos.components.rechercher.un.produit.3ce811dc">Rechercher un produit</span>
               </div>
               <div class="shortcut-separator"></div>
               <div class="shortcut-item">
-                <kbd>F5</kbd>
-                <span>Valider & Imprimer</span>
+                <kbd i18n="@@pos.components.f5.b5cbd343">F5</kbd>
+                <span i18n="@@pos.components.valider.imprimer.925055ea">Valider & Imprimer</span>
               </div>
               <div class="shortcut-separator"></div>
               <div class="shortcut-item">
-                <kbd>F9</kbd>
-                <span>Nouvelle commande</span>
+                <kbd i18n="@@pos.components.f9.cfd1e0d8">F9</kbd>
+                <span i18n="@@pos.components.nouvelle.commande.061f365b">Nouvelle commande</span>
               </div>
               <div class="shortcut-separator"></div>
               <div class="shortcut-item">
-                <kbd>Echap</kbd>
-                <span>Annuler / Fermer</span>
+                <kbd i18n="@@pos.components.echap.17c19948">Echap</kbd>
+                <span i18n="@@pos.components.annuler.fermer.ad7cd766">Annuler / Fermer</span>
               </div>
               <div class="shortcut-separator"></div>
               <div class="shortcut-item">
-                <kbd>F6</kbd>
-                <span>Lire le total (accessibilite)</span>
+                <kbd i18n="@@pos.components.f6.d2b73763">F6</kbd>
+                <span i18n="@@pos.components.lire.le.total.accessibilite.29aaa0d2">Lire le total (accessibilite)</span>
               </div>
             </div>
           </div>

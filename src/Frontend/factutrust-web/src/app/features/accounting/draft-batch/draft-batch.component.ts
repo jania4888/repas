@@ -38,26 +38,24 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Écritures en brouillard — édition en lot"
+      title="Écritures en brouillard — édition en lot" i18n-title="Écritures en brouillard — édition en lot"
       subtitle="Corriger journal, date ou libellé d'un lot de brouillons, ou les supprimer. Le validé n'est jamais touché." />
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Période des brouillons">
         <div accountingFilterFields class="db-fields">
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="db-from">Du</label>
+            <label class="accounting-filter-label" for="db-from" i18n="@@accounting.draft-batch.du.84814985">Du</label>
             <input id="db-from" type="date" [(ngModel)]="fromStr" class="accounting-filter-input" />
           </div>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="db-to">Au</label>
+            <label class="accounting-filter-label" for="db-to" i18n="@@accounting.draft-batch.au.7a1732d5">Au</label>
             <input id="db-to" type="date" [(ngModel)]="toStr" class="accounting-filter-input" />
           </div>
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Charger les brouillons">
-            Charger
-          </app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Charger les brouillons" i18n="@@accounting.draft-batch.charger.8f860300">Charger</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -71,19 +69,19 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card db-actions-card">
       <div class="db-actions">
         <div class="db-field">
-          <label class="accounting-filter-label" for="db-journal">Nouveau journal</label>
+          <label class="accounting-filter-label" for="db-journal" i18n="@@accounting.draft-batch.nouveau.journal.a81ef718">Nouveau journal</label>
           <select id="db-journal" [(ngModel)]="newJournal" class="accounting-filter-input" [disabled]="busy()">
-            <option value="">— inchangé —</option>
+            <option value="" i18n="@@accounting.draft-batch.inchange.0b0415d4">— inchangé —</option>
             @for (j of journals(); track j.code) { <option [value]="j.code">{{ j.code }} — {{ j.label }}</option> }
           </select>
         </div>
         <div class="db-field">
-          <label class="accounting-filter-label" for="db-date">Nouvelle date</label>
+          <label class="accounting-filter-label" for="db-date" i18n="@@accounting.draft-batch.nouvelle.date.e513e19b">Nouvelle date</label>
           <input id="db-date" type="date" [(ngModel)]="newDate" class="accounting-filter-input" [disabled]="busy()" />
         </div>
         <div class="db-field db-field-grow">
-          <label class="accounting-filter-label" for="db-label">Nouveau libellé</label>
-          <input id="db-label" type="text" [(ngModel)]="newLabel" class="accounting-filter-input" placeholder="— inchangé —" [disabled]="busy()" />
+          <label class="accounting-filter-label" for="db-label" i18n="@@accounting.draft-batch.nouveau.libelle.90a78230">Nouveau libellé</label>
+          <input id="db-label" type="text" [(ngModel)]="newLabel" class="accounting-filter-input" placeholder="— inchangé —" i18n-placeholder="— inchangé —" [disabled]="busy()" />
         </div>
         <div class="db-action-buttons">
           <app-button variant="primary" icon="pi pi-pencil" type="button"
@@ -106,12 +104,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <ng-template pTemplate="header">
           <tr>
             <th style="width:3rem">
-              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" />
+              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" i18n-aria-label="Tout sélectionner" />
             </th>
-            <th scope="col">Journal</th>
-            <th scope="col">N°</th>
-            <th scope="col">Date</th>
-            <th scope="col">Libellé</th>
+            <th scope="col" i18n="@@accounting.draft-batch.journal.57d7f743">Journal</th>
+            <th scope="col" i18n="@@accounting.draft-batch.n.754e6095">N°</th>
+            <th scope="col" i18n="@@accounting.draft-batch.date.eb9a4bc1">Date</th>
+            <th scope="col" i18n="@@accounting.draft-batch.libelle.f5485bba">Libellé</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-e>
@@ -124,7 +122,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="5" style="text-align:center;padding:2rem">Aucune écriture en brouillard sur la période.</td></tr>
+          <tr><td colspan="5" style="text-align:center;padding:2rem" i18n="@@accounting.draft-batch.aucune.ecriture.en.brouillard.sur.la.periode.c26c42fb">Aucune écriture en brouillard sur la période.</td></tr>
         </ng-template>
       </p-table>
     </div>

@@ -8,6 +8,7 @@ import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { MessageService } from 'primeng/api';
 import { DynamicReportComponent } from '@shared/studio-runtime/dynamic-report.component';
+import { erpCollatorCompare } from '@core/i18n/erp-format';
 import { StudioService } from './studio.service';
 import {
   ReportAggFn, ReportAggregation, ReportDataSourceKind, ReportDefinition, ReportFieldMeta, ReportFilter,
@@ -35,52 +36,52 @@ import { ToastModule } from 'primeng/toast';
 
       <app-studio-designer-shell previewTitle="Aperçu du rapport">
         <div studioEditor>
-          <label class="ft-lbl">Nom du rapport *</label>
-          <input pInputText [(ngModel)]="displayName" class="ft-w-full" placeholder="Ex. Ventes par région" />
+          <label class="ft-lbl" i18n="@@studio.studio-report-designer.nom.du.rapport.b452b638">Nom du rapport *</label>
+          <input pInputText [(ngModel)]="displayName" class="ft-w-full" placeholder="Ex. Ventes par région" i18n-placeholder="Ex. Ventes par région" />
 
-          <label class="ft-lbl">Source de données *</label>
+          <label class="ft-lbl" i18n="@@studio.studio-report-designer.source.de.donnees.ceb89bdd">Source de données *</label>
           <p-select [options]="sources()" [(ngModel)]="sourceId" (ngModelChange)="onSourceChange()"
             optionLabel="displayName" optionValue="id" [group]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"
-            placeholder="Choisir une table ou source"></p-select>
+            placeholder="Choisir une table ou source" i18n-placeholder="Choisir une table ou source"></p-select>
 
           <ng-container *ngIf="selectedSource() as src">
-            <label class="ft-lbl">Regrouper par</label>
+            <label class="ft-lbl" i18n="@@studio.studio-report-designer.regrouper.par.ac0889e9">Regrouper par</label>
             <p-multiSelect [options]="fieldOptions()" [(ngModel)]="grouping" optionLabel="label" optionValue="value"
-              appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Aucun (rapport détaillé)"></p-multiSelect>
+              appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Aucun (rapport détaillé)" i18n-placeholder="Aucun (rapport détaillé)"></p-multiSelect>
 
             <ng-container *ngIf="grouping.length === 0">
-              <label class="ft-lbl">Colonnes affichées</label>
+              <label class="ft-lbl" i18n="@@studio.studio-report-designer.colonnes.affichees.9cedff9b">Colonnes affichées</label>
               <p-multiSelect [options]="fieldOptions()" [(ngModel)]="detailFields" optionLabel="label" optionValue="value"
-                appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Toutes les colonnes"></p-multiSelect>
+                appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Toutes les colonnes" i18n-placeholder="Toutes les colonnes"></p-multiSelect>
             </ng-container>
 
             <ng-container *ngIf="grouping.length > 0">
               <div class="ft-block-head">
-                <label class="ft-lbl">Calculs (agrégations)</label>
+                <label class="ft-lbl" i18n="@@studio.studio-report-designer.calculs.agregations.2ad91593">Calculs (agrégations)</label>
                 <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" (click)="addAgg()"></button>
               </div>
               <div class="ft-line" *ngFor="let a of aggregations; let i = index">
                 <p-select [options]="fnOptions" [(ngModel)]="a.fn" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme"></p-select>
                 <p-select *ngIf="a.fn !== 'count'" [options]="numericFieldOptions()" [(ngModel)]="a.field" optionLabel="label" optionValue="value"
-                  appendTo="body" panelStyleClass="studio-theme" styleClass="ft-grow" placeholder="Champ"></p-select>
-                <span *ngIf="a.fn === 'count'" class="ft-grow ft-muted">tous les enregistrements</span>
+                  appendTo="body" panelStyleClass="studio-theme" styleClass="ft-grow" placeholder="Champ" i18n-placeholder="Champ"></p-select>
+                <span *ngIf="a.fn === 'count'" class="ft-grow ft-muted" i18n="@@studio.studio-report-designer.tous.les.enregistrements.4e9454e2">tous les enregistrements</span>
                 <button pButton type="button" icon="fa-solid fa-xmark" class="p-button-text p-button-sm p-button-danger" (click)="removeAgg(i)"></button>
               </div>
             </ng-container>
 
             <div class="ft-block-head">
-              <label class="ft-lbl">Filtres</label>
+              <label class="ft-lbl" i18n="@@studio.studio-report-designer.filtres.2a8e76e0">Filtres</label>
               <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" (click)="addFilter()"></button>
             </div>
             <div class="ft-line" *ngFor="let f of filters; let i = index">
               <p-select [options]="fieldOptions()" [(ngModel)]="f.field" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-grow"></p-select>
               <p-select [options]="opOptions" [(ngModel)]="f.op" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme"></p-select>
-              <input pInputText [ngModel]="$any(f).value" (ngModelChange)="f.value = $event" placeholder="Valeur" class="ft-grow" />
+              <input pInputText [ngModel]="$any(f).value" (ngModelChange)="f.value = $event" placeholder="Valeur" i18n-placeholder="Valeur" class="ft-grow" />
               <button pButton type="button" icon="fa-solid fa-xmark" class="p-button-text p-button-sm p-button-danger" (click)="removeFilter(i)"></button>
             </div>
 
             <div class="ft-block-head">
-              <label class="ft-lbl">Tri</label>
+              <label class="ft-lbl" i18n="@@studio.studio-report-designer.tri.c05261e0">Tri</label>
               <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" (click)="addSort()"></button>
             </div>
             <div class="ft-line" *ngFor="let s of sort; let i = index">
@@ -162,7 +163,7 @@ export class StudioReportDesignerComponent implements OnInit {
       (byDomain.get(domain) ?? byDomain.set(domain, []).get(domain)!).push(this.toOption(source));
     }
     for (const [label, items] of byDomain) {
-      groups.push({ label, items: items.sort((a, b) => a.displayName.localeCompare(b.displayName, 'fr')) });
+      groups.push({ label, items: items.sort((a, b) => erpCollatorCompare(a.displayName, b.displayName)) });
     }
     return groups;
   });

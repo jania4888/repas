@@ -56,14 +56,14 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
   imports: [CommonModule, FormsModule, RouterModule, ButtonModule, Textarea, StudioPageShellComponent, DynamicReportComponent],
   template: `
     <app-studio-page-shell
-      title="Assistant Studio (IA)"
+      title="Assistant Studio (IA)" i18n-title="Assistant Studio (IA)"
       subtitle="Décrivez un système ou une table — l'IA crée tables, relations, formulaires et données de référence."
       [breadcrumbs]="breadcrumbs">
 
       <div class="sab-layout">
         <div class="sab-chat">
           @if (lines().length === 0 && !busy()) {
-            <p class="sab-welcome">Comment puis-je vous aider aujourd'hui ?</p>
+            <p class="sab-welcome" i18n="@@studio.studio-ai-builder.comment.puis.je.vous.aider.aujourd.hui.93af16b7">Comment puis-je vous aider aujourd'hui ?</p>
             <div class="sab-examples">
               @for (ex of examples; track ex) {
                 <button type="button" class="sab-chip" (click)="useExample(ex)">{{ ex }}</button>
@@ -109,7 +109,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
                 }
                 <p class="sab-failure__hint">{{ failureView(failure).hint }}</p>
                 @if (failureView(failure).showSuggestions && failure.suggestions.length) {
-                  <p class="sab-failure__suggest-hint">États suggérés :</p>
+                  <p class="sab-failure__suggest-hint" i18n="@@studio.studio-ai-builder.etats.suggeres.5fa9359e">États suggérés :</p>
                   <div class="sab-examples">
                     @for (s of failure.suggestions; track s.preset) {
                       <button type="button" class="sab-chip" [disabled]="busy()"
@@ -143,7 +143,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
                 <i class="fa-solid fa-clipboard-check"></i>
                 <div>
                   <h4>{{ p.summary.title }}</h4>
-                  <p class="sab-plan__hint">Rien n'est encore créé — vérifiez puis validez.</p>
+                  <p class="sab-plan__hint" i18n="@@studio.studio-ai-builder.rien.n.est.encore.cree.verifiez.puis.validez.0729fcab">Rien n'est encore créé — vérifiez puis validez.</p>
                 </div>
               </div>
               <ul class="sab-plan__steps">
@@ -166,7 +166,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
               }
               @if (p.summary.sample; as sample) {
                 <div class="sab-plan__sample">
-                  <h5>Aperçu des données réelles</h5>
+                  <h5 i18n="@@studio.studio-ai-builder.apercu.des.donnees.reelles.8f1ca5c0">Aperçu des données réelles</h5>
                   <app-dynamic-report [result]="sample" exportName="apercu-etat"></app-dynamic-report>
                 </div>
               }
@@ -184,7 +184,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
 
           @if (buildSteps().length) {
             <div class="sab-progress">
-              <h4>Construction</h4>
+              <h4 i18n="@@studio.studio-ai-builder.construction.da33e1b7">Construction</h4>
               @for (s of buildSteps(); track s.phase + s.label) {
                 <div class="sab-step">
                   <i class="fa-solid" [class.fa-spinner]="s.status === 'running'" [class.fa-spin]="s.status === 'running'"
@@ -201,7 +201,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
 
         <div class="sab-compose">
           <textarea pTextarea [(ngModel)]="prompt" rows="2" class="sab-input" [disabled]="busy()"
-            placeholder="Ex. : Créer un système de gestion de congés avec plusieurs tables..."
+            placeholder="Ex. : Créer un système de gestion de congés avec plusieurs tables..." i18n-placeholder="Ex. : Créer un système de gestion de congés avec plusieurs tables..."
             (keydown.enter)="onComposerEnter($event)"></textarea>
           <div class="sab-compose__actions">
             <button pButton type="button" icon="fa-solid fa-paper-plane" label="Envoyer"

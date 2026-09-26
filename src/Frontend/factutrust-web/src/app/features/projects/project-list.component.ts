@@ -94,7 +94,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Projets"
+      title="Projets" i18n-title="Projets"
       subtitle="Affaires, chantiers et missions"
       hint="Affaires, chantiers ESN et missions BTP : suivez avancement, tâches et heures à facturer.">
       <p-menu #exportMenu [popup]="true" [model]="exportMenuItems" appendTo="body" />
@@ -105,14 +105,12 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         type="button"
         [disabled]="exporting()"
         (click)="exportMenu.toggle($event)"
-        ariaLabel="Exporter la liste des projets">
-        Exporter
-      </app-button>
+        ariaLabel="Exporter la liste des projets" i18n="@@projects.project-list.exporter.0cd84bdc">Exporter</app-button>
       <a routerLink="/projects/dashboard" class="p-button p-button-outlined p-button-sm">
         <i class="pi pi-chart-bar" aria-hidden="true"></i> Tableau de bord
       </a>
       @if (canCreate) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openCreate()">Nouveau projet</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openCreate()" i18n="@@projects.project-list.nouveau.projet.29f05663">Nouveau projet</app-button>
       }
     </app-page-header>
 
@@ -128,10 +126,10 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           <input
             pInputText
             type="search"
-            placeholder="Rechercher un projet…"
+            placeholder="Rechercher un projet…" i18n-placeholder="Rechercher un projet…"
             [(ngModel)]="search"
             (ngModelChange)="onSearch($event)"
-            aria-label="Rechercher un projet" />
+            aria-label="Rechercher un projet" i18n-aria-label="Rechercher un projet" />
         </span>
 
         <p-select
@@ -139,7 +137,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [(ngModel)]="statusFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="onFilterChange()" />
 
@@ -148,7 +146,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [(ngModel)]="kindFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les types"
+          placeholder="Tous les types" i18n-placeholder="Tous les types"
           [showClear]="true"
           (onChange)="onFilterChange()" />
 
@@ -157,7 +155,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [(ngModel)]="clientFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les clients"
+          placeholder="Tous les clients" i18n-placeholder="Tous les clients"
           [showClear]="true"
           [filter]="true"
           filterPlaceholder="Rechercher…"
@@ -167,7 +165,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           type="button"
           class="proj-list-more-filters"
           (click)="advancedPanel.toggle($event)"
-          aria-label="Plus de filtres">
+          aria-label="Plus de filtres" i18n-aria-label="Plus de filtres">
           <i class="pi pi-filter" aria-hidden="true"></i>
           Plus de filtres
           @if (extraFiltersCount() > 0) {
@@ -178,59 +176,57 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         <p-popover #advancedPanel>
           <div class="proj-list-advanced">
             <label class="proj-list-advanced__field">
-              <span>Chef de projet</span>
+              <span i18n="@@projects.project-list.chef.de.projet.7a1d6008">Chef de projet</span>
               <p-select
                 class="w-full"
                 [options]="ownerOptions()"
                 [(ngModel)]="ownerFilter"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Tous"
+                placeholder="Tous" i18n-placeholder="Tous"
                 [showClear]="true"
                 (onChange)="onFilterChange()" />
             </label>
             <label class="proj-list-advanced__field">
-              <span>Mode de facturation</span>
+              <span i18n="@@projects.project-list.mode.de.facturation.d797aff0">Mode de facturation</span>
               <p-select
                 class="w-full"
                 [options]="billingFilterOptions"
                 [(ngModel)]="billingFilter"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Tous"
+                placeholder="Tous" i18n-placeholder="Tous"
                 [showClear]="true"
                 (onChange)="onFilterChange()" />
             </label>
             <div class="proj-list-advanced__dates">
               <label class="proj-list-advanced__field">
-                <span>Échéance du</span>
+                <span i18n="@@projects.project-list.echeance.du.168e2cce">Échéance du</span>
                 <p-datepicker [(ngModel)]="endDateFrom" dateFormat="dd/mm/yy" [showIcon]="true" (onSelect)="onFilterChange()" />
               </label>
               <label class="proj-list-advanced__field">
-                <span>au</span>
+                <span i18n="@@projects.project-list.au.f095160c">au</span>
                 <p-datepicker [(ngModel)]="endDateTo" dateFormat="dd/mm/yy" [showIcon]="true" (onSelect)="onFilterChange()" />
               </label>
             </div>
             <label class="proj-list-advanced__check">
               <p-checkbox [(ngModel)]="overdueOnly" [binary]="true" (onChange)="onFilterChange()" inputId="overdueOnly" />
-              <span for="overdueOnly">Uniquement avec tâches en retard</span>
+              <span for="overdueOnly" i18n="@@projects.project-list.uniquement.avec.taches.en.retard.ee6f621f">Uniquement avec tâches en retard</span>
             </label>
             @if (extraFiltersCount() > 0) {
-              <button type="button" class="proj-list-advanced__reset" (click)="resetExtraFilters()">
-                Réinitialiser les filtres avancés
-              </button>
+              <button type="button" class="proj-list-advanced__reset" (click)="resetExtraFilters()" i18n="@@projects.project-list.reinitialiser.les.filtres.avances.f602005a">Réinitialiser les filtres avancés</button>
             }
           </div>
         </p-popover>
 
         <div class="proj-list-filters__actions">
           @if (hasActiveFilters()) {
-            <button type="button" class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+            <button type="button" class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
               <i class="pi pi-times"></i>
               Réinitialiser ({{ activeFiltersCount() }})
             </button>
           }
-          <app-button variant="secondary" icon="pi-refresh" (click)="refreshAll()">Actualiser</app-button>
+          <app-button variant="secondary" icon="pi-refresh" (click)="refreshAll()" i18n="@@projects.project-list.actualiser.9d3b2a7d">Actualiser</app-button>
         </div>
       </div>
     </div>
@@ -259,14 +255,14 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th>Projet</th>
-              <th>Client</th>
-              <th>Chef de projet</th>
-              <th>Type</th>
-              <th>Statut</th>
-              <th>Échéance</th>
-              <th>Avancement</th>
-              <th>Tâches</th>
+              <th i18n="@@projects.project-list.projet.a9de3a26">Projet</th>
+              <th i18n="@@projects.project-list.client.1bdd79b1">Client</th>
+              <th i18n="@@projects.project-list.chef.de.projet.7a1d6008">Chef de projet</th>
+              <th i18n="@@projects.project-list.type.3deb7456">Type</th>
+              <th i18n="@@projects.project-list.statut.659499f3">Statut</th>
+              <th i18n="@@projects.project-list.echeance.f9a77ff6">Échéance</th>
+              <th i18n="@@projects.project-list.avancement.e1963fc4">Avancement</th>
+              <th i18n="@@projects.project-list.taches.1b018f86">Tâches</th>
               <th class="proj-list-actions-col"></th>
             </tr>
           </ng-template>
@@ -350,7 +346,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
               <td colspan="9">
                 <app-empty-state
                   icon="pi-briefcase"
-                  title="Aucun projet"
+                  title="Aucun projet" i18n-title="Aucun projet"
                   description="Créez-en un pour démarrer le suivi d'affaire, de mission ESN ou de chantier BTP."
                   [showAction]="canCreate"
                   actionLabel="Nouveau projet"
@@ -365,18 +361,18 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
     <p-menu #rowMenu [popup]="true" [model]="rowMenuItems()" appendTo="body" />
 
     <p-dialog [(visible)]="createVisible" [modal]="true" header="Nouveau projet" [style]="{ width: '52rem' }" styleClass="proj-create-dialog">
-      <app-form-section title="Identité" icon="pi-id-card" variant="compact">
+      <app-form-section title="Identité" i18n-title="Identité" icon="pi-id-card" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field">
-            <label for="createName">Nom <span class="ft-required" aria-hidden="true">*</span></label>
+            <label for="createName">Nom <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
             <input id="createName" pInputText class="w-full" [(ngModel)]="draft.name" />
           </div>
           <div class="ft-field">
-            <label for="createClient">Client <span class="ft-required" aria-hidden="true">*</span></label>
-            <p-select inputId="createClient" class="w-full" [options]="clients()" [(ngModel)]="draft.clientId" optionLabel="name" optionValue="id" placeholder="Client" />
+            <label for="createClient">Client <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
+            <p-select inputId="createClient" class="w-full" [options]="clients()" [(ngModel)]="draft.clientId" optionLabel="name" optionValue="id" placeholder="Client" i18n-placeholder="Client" />
           </div>
           <div class="ft-field ft-field--full">
-            <span class="block font-medium">Type de projet</span>
+            <span class="block font-medium" i18n="@@projects.project-list.type.de.projet.46597b92">Type de projet</span>
             <div class="proj-kind-cards">
               @for (opt of kindOptions; track opt.value) {
                 <div
@@ -392,14 +388,14 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         </div>
       </app-form-section>
 
-      <app-form-section title="Aperçu Kanban" icon="pi-table" variant="compact">
+      <app-form-section title="Aperçu Kanban" i18n-title="Aperçu Kanban" icon="pi-table" variant="compact">
         <app-project-kanban-template-preview [kind]="draft.kind" />
       </app-form-section>
 
-      <app-form-section title="Facturation" icon="pi-sliders-h" variant="compact">
+      <app-form-section title="Facturation" i18n-title="Facturation" icon="pi-sliders-h" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field ft-field--full">
-            <label for="createBilling">Facturation</label>
+            <label for="createBilling" i18n="@@projects.project-list.facturation.04716c6b">Facturation</label>
             <p-select inputId="createBilling" class="w-full" [options]="billingOptionsForKind()" [(ngModel)]="draft.billingMode" optionLabel="label" optionValue="value" />
           </div>
           <div class="ft-field ft-field--full">
@@ -407,8 +403,8 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
               <div class="proj-create-options__item">
                 <p-checkbox [(ngModel)]="draft.timesheetsEnabled" [binary]="true" inputId="createTimesheets" />
                 <label for="createTimesheets">
-                  <strong>Feuilles de temps</strong>
-                  <span class="text-sm text-color-secondary">Active la saisie et le suivi du temps sur ce projet.</span>
+                  <strong i18n="@@projects.project-list.feuilles.de.temps.679cea6a">Feuilles de temps</strong>
+                  <span class="text-sm text-color-secondary" i18n="@@projects.project-list.active.la.saisie.et.le.suivi.du.temps.sur.ce.pro.dbd98456">Active la saisie et le suivi du temps sur ce projet.</span>
                 </label>
               </div>
             </div>
@@ -416,55 +412,55 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         </div>
       </app-form-section>
 
-      <app-form-section title="Détails" icon="pi-file" variant="compact">
+      <app-form-section title="Détails" i18n-title="Détails" icon="pi-file" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field ft-field--full">
-            <label for="createDescription">Description</label>
+            <label for="createDescription" i18n="@@projects.project-list.description.55f8ebc8">Description</label>
             <textarea id="createDescription" pTextarea class="w-full" rows="2" [(ngModel)]="draft.description"></textarea>
           </div>
           <div class="ft-field">
-            <label for="createStart">Début</label>
+            <label for="createStart" i18n="@@projects.project-list.debut.f0955314">Début</label>
             <p-datepicker inputId="createStart" class="w-full" [(ngModel)]="startDate" dateFormat="dd/mm/yy" [showIcon]="true" />
           </div>
           <div class="ft-field">
-            <label for="createEnd">Fin</label>
+            <label for="createEnd" i18n="@@projects.project-list.fin.4251065f">Fin</label>
             <p-datepicker inputId="createEnd" class="w-full" [(ngModel)]="endDate" dateFormat="dd/mm/yy" [showIcon]="true" />
           </div>
           <div class="ft-field">
-            <label for="createOwner">Chef de projet</label>
-            <p-select inputId="createOwner" class="w-full" [options]="users()" [(ngModel)]="draft.ownerUserId" optionLabel="displayName" optionValue="id" placeholder="Optionnel" [showClear]="true" />
+            <label for="createOwner" i18n="@@projects.project-list.chef.de.projet.7a1d6008">Chef de projet</label>
+            <p-select inputId="createOwner" class="w-full" [options]="users()" [(ngModel)]="draft.ownerUserId" optionLabel="displayName" optionValue="id" placeholder="Optionnel" i18n-placeholder="Optionnel" [showClear]="true" />
           </div>
           <div class="ft-field">
-            <label for="createBudget">Budget HT</label>
+            <label for="createBudget" i18n="@@projects.project-list.budget.ht.0374a3ad">Budget HT</label>
             <p-inputNumber inputId="createBudget" class="w-full" [(ngModel)]="draft.budgetHt" mode="decimal" [minFractionDigits]="3" />
           </div>
         </div>
       </app-form-section>
 
       @if (isBtp(draft.kind)) {
-        <app-form-section title="Chantier BTP" icon="pi-building" variant="compact">
+        <app-form-section title="Chantier BTP" i18n-title="Chantier BTP" icon="pi-building" variant="compact">
           <div class="ft-form-grid">
             <div class="ft-field ft-field--full">
-              <label for="createSiteAddress">Adresse chantier</label>
+              <label for="createSiteAddress" i18n="@@projects.project-list.adresse.chantier.62e0d1f1">Adresse chantier</label>
               <input id="createSiteAddress" pInputText class="w-full" [(ngModel)]="draft.siteAddress" />
             </div>
             <div class="ft-field ft-field--full">
-              <label for="createContractNumber">N° de marché</label>
+              <label for="createContractNumber" i18n="@@projects.project-list.n.de.marche.1ce067d5">N° de marché</label>
               <input id="createContractNumber" pInputText class="w-full" [(ngModel)]="draft.contractNumber" />
             </div>
-            <p class="ft-hint ft-field--full m-0">Les situations de travaux et la retenue de garantie sont disponibles après activation.</p>
+            <p class="ft-hint ft-field--full m-0" i18n="@@projects.project-list.les.situations.de.travaux.et.la.retenue.de.garan.009bee93">Les situations de travaux et la retenue de garantie sont disponibles après activation.</p>
           </div>
         </app-form-section>
       }
       @if (draft.kind === 'Esn') {
-        <app-form-section title="Mission ESN" icon="pi-users" variant="compact">
-          <p class="text-sm text-color-secondary m-0">Renseignez le tarif de vente sur l'équipe avant de facturer en régie.</p>
+        <app-form-section title="Mission ESN" i18n-title="Mission ESN" icon="pi-users" variant="compact">
+          <p class="text-sm text-color-secondary m-0" i18n="@@projects.project-list.renseignez.le.tarif.de.vente.sur.l.equipe.avant..c64a0c55">Renseignez le tarif de vente sur l'équipe avant de facturer en régie.</p>
         </app-form-section>
       }
 
       <ng-template pTemplate="footer">
-        <app-button variant="secondary" (click)="createVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="saveCreate()">Créer</app-button>
+        <app-button variant="secondary" (click)="createVisible = false" i18n="@@projects.project-list.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="saveCreate()" i18n="@@projects.project-list.creer.1a686172">Créer</app-button>
       </ng-template>
     </p-dialog>
   `

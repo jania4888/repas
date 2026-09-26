@@ -69,7 +69,7 @@ interface ModuleDraft extends UserModuleAccessItem {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Utilisateurs et rôles"
+      title="Utilisateurs et rôles" i18n-title="Utilisateurs et rôles"
       subtitle="Gérez les accès de votre équipe">
       <p-button label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
       <p-button label="Ajouter un utilisateur" icon="pi pi-user-plus" (onClick)="openCreate()"></p-button>
@@ -82,11 +82,11 @@ interface ModuleDraft extends UserModuleAccessItem {
       <p-table [value]="users()" [loading]="loading()" [rows]="15" [paginator]="true" responsiveLayout="scroll">
         <ng-template pTemplate="header">
           <tr>
-            <th>Utilisateur</th>
-            <th>Rôle</th>
-            <th>Dernière connexion</th>
-            <th>Statut</th>
-            <th style="width: 8rem">Actions</th>
+            <th i18n="@@settings.users.utilisateur.0b20cd7f">Utilisateur</th>
+            <th i18n="@@settings.users.role.8b824790">Rôle</th>
+            <th i18n="@@settings.users.derniere.connexion.fcbd6dc7">Dernière connexion</th>
+            <th i18n="@@settings.users.statut.659499f3">Statut</th>
+            <th style="width: 8rem" i18n="@@settings.users.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -109,7 +109,7 @@ interface ModuleDraft extends UserModuleAccessItem {
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="5" class="empty-msg">Aucun utilisateur à afficher</td>
+            <td colspan="5" class="empty-msg" i18n="@@settings.users.aucun.utilisateur.a.afficher.5c67af5c">Aucun utilisateur à afficher</td>
           </tr>
         </ng-template>
       </p-table>
@@ -127,19 +127,19 @@ interface ModuleDraft extends UserModuleAccessItem {
       <div class="user-dialog-body">
         <div class="user-form-grid">
           <div class="form-field">
-            <label class="field-label" for="createFirstName">Prénom</label>
+            <label class="field-label" for="createFirstName" i18n="@@settings.users.prenom.e4387ade">Prénom</label>
             <input pInputText id="createFirstName" class="w-full" [(ngModel)]="createFirstName" autocomplete="given-name" />
           </div>
           <div class="form-field">
-            <label class="field-label" for="createLastName">Nom</label>
+            <label class="field-label" for="createLastName" i18n="@@settings.users.nom.7ff20370">Nom</label>
             <input pInputText id="createLastName" class="w-full" [(ngModel)]="createLastName" autocomplete="family-name" />
           </div>
           <div class="form-field field-span-full">
-            <label class="field-label" for="createEmail">Email</label>
+            <label class="field-label" for="createEmail" i18n="@@settings.users.email.84add5b2">Email</label>
             <input pInputText id="createEmail" class="w-full" [(ngModel)]="createEmail" type="email" autocomplete="off" />
           </div>
           <div class="form-field field-span-full">
-            <label class="field-label" for="createPassword">Mot de passe</label>
+            <label class="field-label" for="createPassword" i18n="@@settings.users.mot.de.passe.94e2f3ee">Mot de passe</label>
             <p-password
               inputId="createPassword"
               [(ngModel)]="createPassword"
@@ -149,11 +149,11 @@ interface ModuleDraft extends UserModuleAccessItem {
               inputStyleClass="w-full"></p-password>
           </div>
           <div class="form-field">
-            <label class="field-label" for="createPhone">Téléphone (optionnel)</label>
+            <label class="field-label" for="createPhone" i18n="@@settings.users.telephone.optionnel.23768a3e">Téléphone (optionnel)</label>
             <input pInputText id="createPhone" class="w-full" [(ngModel)]="createPhone" type="tel" autocomplete="tel" />
           </div>
           <div class="form-field">
-            <label class="field-label" for="createRole">Rôle</label>
+            <label class="field-label" for="createRole" i18n="@@settings.users.role.8b824790">Rôle</label>
             <p-select
               inputId="createRole"
               [options]="roleOptions"
@@ -167,17 +167,15 @@ interface ModuleDraft extends UserModuleAccessItem {
 
         <section class="form-section modules-section" aria-labelledby="create-modules-heading">
           <div class="form-section-head">
-            <h4 id="create-modules-heading" class="form-section-title">Modules</h4>
-            <p class="modules-hint">
-              Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
-              Les éléments « Extension » élargissent les accès par défaut du rôle.
-            </p>
+            <h4 id="create-modules-heading" class="form-section-title" i18n="@@settings.users.modules.04e9462c">Modules</h4>
+            <p class="modules-hint" i18n="@@settings.users.les.acces.effectifs.elements.coches.dans.la.limi.68814cf7">Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
+              Les éléments « Extension » élargissent les accès par défaut du rôle.</p>
           </div>
           @if (createCatalogLoading()) {
-            <p class="catalog-state">Chargement du catalogue…</p>
+            <p class="catalog-state" i18n="@@settings.users.chargement.du.catalogue.2ae07afb">Chargement du catalogue…</p>
           } @else if (createCatalogError()) {
             <div class="catalog-error">
-              <p>Impossible de charger le catalogue des modules pour ce rôle. L’enregistrement est désactivé.</p>
+              <p i18n="@@settings.users.impossible.de.charger.le.catalogue.des.modules.p.0ec32b10">Impossible de charger le catalogue des modules pour ce rôle. L’enregistrement est désactivé.</p>
               <p-button label="Réessayer" [outlined]="true" (onClick)="onCreateRoleChange(createRole)"></p-button>
             </div>
           } @else {
@@ -188,7 +186,7 @@ interface ModuleDraft extends UserModuleAccessItem {
                     <label class="module-row-label" [for]="'createMod' + m.module">
                       {{ moduleLabel(m.module) }}
                       @if (isModuleDefaultIncluded(createCatalogModule(m.module))) {
-                        <span class="default-badge">Inclus par défaut</span>
+                        <span class="default-badge" i18n="@@settings.users.inclus.par.defaut.0d38cc2c">Inclus par défaut</span>
                       }
                     </label>
                     <p-inputSwitch
@@ -210,7 +208,7 @@ interface ModuleDraft extends UserModuleAccessItem {
                             [inputId]="'createFeat-' + m.module + '-' + f.key"></p-checkbox>
                           <span class="subfeature-label-text">{{ featureLabel(m.module, f.key) }}</span>
                           @if (f.isExtension) {
-                            <span class="extension-badge">Extension</span>
+                            <span class="extension-badge" i18n="@@settings.users.extension.659087d3">Extension</span>
                           }
                         </label>
                       }
@@ -251,7 +249,7 @@ interface ModuleDraft extends UserModuleAccessItem {
 
           <div class="user-form-grid edit-role-grid">
             <div class="form-field">
-              <label class="field-label" for="editRole">Rôle</label>
+              <label class="field-label" for="editRole" i18n="@@settings.users.role.8b824790">Rôle</label>
               <p-select
                 inputId="editRole"
                 [options]="roleOptions"
@@ -262,7 +260,7 @@ interface ModuleDraft extends UserModuleAccessItem {
                 styleClass="w-full"></p-select>
             </div>
             <div class="form-field switch-field">
-              <label class="field-label" for="activeSw">Compte actif</label>
+              <label class="field-label" for="activeSw" i18n="@@settings.users.compte.actif.ea95f801">Compte actif</label>
               <div class="switch-field-control">
                 <p-inputSwitch inputId="activeSw" [(ngModel)]="editActive"></p-inputSwitch>
               </div>
@@ -270,7 +268,7 @@ interface ModuleDraft extends UserModuleAccessItem {
           </div>
 
           <div class="form-field field-span-full">
-            <label class="field-label" for="editNewPassword">Nouveau mot de passe (optionnel)</label>
+            <label class="field-label" for="editNewPassword" i18n="@@settings.users.nouveau.mot.de.passe.optionnel.c5261f5f">Nouveau mot de passe (optionnel)</label>
             <p-password
               inputId="editNewPassword"
               [(ngModel)]="editNewPassword"
@@ -282,17 +280,15 @@ interface ModuleDraft extends UserModuleAccessItem {
 
           <section class="form-section modules-section" aria-labelledby="edit-modules-heading">
             <div class="form-section-head">
-              <h4 id="edit-modules-heading" class="form-section-title">Modules</h4>
-              <p class="modules-hint">
-                Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
-                Les éléments « Extension » élargissent les accès par défaut du rôle.
-              </p>
+              <h4 id="edit-modules-heading" class="form-section-title" i18n="@@settings.users.modules.04e9462c">Modules</h4>
+              <p class="modules-hint" i18n="@@settings.users.les.acces.effectifs.elements.coches.dans.la.limi.60a55792">Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
+                Les éléments « Extension » élargissent les accès par défaut du rôle.</p>
             </div>
             @if (editCatalogLoading()) {
-              <p class="catalog-state">Chargement du catalogue…</p>
+              <p class="catalog-state" i18n="@@settings.users.chargement.du.catalogue.2ae07afb">Chargement du catalogue…</p>
             } @else if (editCatalogError()) {
               <div class="catalog-error">
-                <p>Impossible de charger le catalogue des modules pour ce rôle. L’enregistrement est désactivé.</p>
+                <p i18n="@@settings.users.impossible.de.charger.le.catalogue.des.modules.p.0ec32b10">Impossible de charger le catalogue des modules pour ce rôle. L’enregistrement est désactivé.</p>
                 <p-button label="Réessayer" [outlined]="true" (onClick)="onEditRoleChange(editRole)"></p-button>
               </div>
             } @else {
@@ -303,7 +299,7 @@ interface ModuleDraft extends UserModuleAccessItem {
                       <label class="module-row-label" [for]="'editMod' + m.module">
                         {{ moduleLabel(m.module) }}
                         @if (isModuleDefaultIncluded(editCatalogModule(m.module))) {
-                          <span class="default-badge">Inclus par défaut</span>
+                          <span class="default-badge" i18n="@@settings.users.inclus.par.defaut.0d38cc2c">Inclus par défaut</span>
                         }
                       </label>
                       <p-inputSwitch
@@ -327,7 +323,7 @@ interface ModuleDraft extends UserModuleAccessItem {
                               [disabled]="isAdministrationModuleLockedForEdit(m)"></p-checkbox>
                             <span class="subfeature-label-text">{{ featureLabel(m.module, f.key) }}</span>
                             @if (f.isExtension) {
-                              <span class="extension-badge">Extension</span>
+                              <span class="extension-badge" i18n="@@settings.users.extension.659087d3">Extension</span>
                             }
                           </label>
                         }

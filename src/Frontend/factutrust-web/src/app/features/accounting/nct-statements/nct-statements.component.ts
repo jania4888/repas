@@ -41,30 +41,30 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
     NctNoteOverridesDialogComponent
   ],
   template: `
-    <app-page-header title="États financiers NCT" subtitle="Liasse : bilan, résultat, flux de trésorerie, capitaux propres et notes" />
+    <app-page-header title="États financiers NCT" i18n-title="États financiers NCT" subtitle="Liasse : bilan, résultat, flux de trésorerie, capitaux propres et notes" />
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Exercice de la liasse NCT">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
-            <label class="accounting-filter-label" for="nct-year">Exercice</label>
+            <label class="accounting-filter-label" for="nct-year" i18n="@@accounting.nct-statements.exercice.e171e2b0">Exercice</label>
             <input id="nct-year" type="number" [ngModel]="fiscalYear" (ngModelChange)="onYearInputChange($event)"
               class="accounting-filter-input nct-year-input" min="2000" max="2100"
               [attr.aria-invalid]="!isYearValid()" />
             @if (!isYearValid()) {
-              <span class="nct-year-error" role="alert">Exercice invalide : doit être compris entre 2000 et 2100.</span>
+              <span class="nct-year-error" role="alert" i18n="@@accounting.nct-statements.exercice.invalide.doit.etre.compris.entre.2000.e.db4c8a16">Exercice invalide : doit être compris entre 2000 et 2100.</span>
             }
           </div>
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="load()" [disabled]="loading() || !isYearValid()"
-            ariaLabel="Charger la liasse NCT">Charger</app-button>
+            ariaLabel="Charger la liasse NCT" i18n="@@accounting.nct-statements.charger.8f860300">Charger</app-button>
           <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="openExportDialog()" [disabled]="loading() || !data()"
-            ariaLabel="Aperçu et impression des états financiers">Aperçu / Impression</app-button>
+            ariaLabel="Aperçu et impression des états financiers" i18n="@@accounting.nct-statements.apercu.impression.b2018ec0">Aperçu / Impression</app-button>
           <app-button variant="secondary" icon="pi pi-file-pdf" type="button" (click)="exportPdf()" [disabled]="loading() || !data()"
-            ariaLabel="Exporter la liasse NCT en PDF">Exporter PDF</app-button>
+            ariaLabel="Exporter la liasse NCT en PDF" i18n="@@accounting.nct-statements.exporter.pdf.9a2c3956">Exporter PDF</app-button>
           <app-button variant="secondary" icon="pi pi-pencil" type="button" (click)="overridesDialogVisible = true" [disabled]="loading()"
-            ariaLabel="Personnaliser les notes annexes">Personnaliser les annexes</app-button>
+            ariaLabel="Personnaliser les notes annexes" i18n="@@accounting.nct-statements.personnaliser.les.annexes.05ae837d">Personnaliser les annexes</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -85,7 +85,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
       @if (!d.nctStatementsEnabled) {
         <div class="nct-info-banner" role="status">
           <i class="pi pi-info-circle" aria-hidden="true"></i>
-          <span>La liasse NCT n'est pas activée pour ce dossier. L'aperçu ci-dessous est indicatif.</span>
+          <span i18n="@@accounting.nct-statements.la.liasse.nct.n.est.pas.activee.pour.ce.dossier..bc970082">La liasse NCT n'est pas activée pour ce dossier. L'aperçu ci-dessous est indicatif.</span>
         </div>
       }
 
@@ -93,7 +93,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
         <div class="nct-alert-banner" role="alert">
           <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
           <div>
-            <strong>Contrôles qualité de la liasse</strong>
+            <strong i18n="@@accounting.nct-statements.controles.qualite.de.la.liasse.602d2a38">Contrôles qualité de la liasse</strong>
             <ul class="nct-warn-list">
               @for (w of d.balanceSheet.warnings; track w) { <li>{{ w }}</li> }
             </ul>
@@ -102,11 +102,11 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
       }
 
       <div class="nct-tabs" role="tablist">
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'bilan'" (click)="tab.set('bilan')">Bilan</button>
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'resultat'" (click)="tab.set('resultat')">Compte de résultat</button>
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'flux'" (click)="tab.set('flux')">Flux de trésorerie</button>
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'capitaux'" (click)="tab.set('capitaux')">Capitaux propres</button>
-        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'notes'" (click)="tab.set('notes')">Notes</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'bilan'" (click)="tab.set('bilan')" i18n="@@accounting.nct-statements.bilan.a80c4623">Bilan</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'resultat'" (click)="tab.set('resultat')" i18n="@@accounting.nct-statements.compte.de.resultat.a292527b">Compte de résultat</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'flux'" (click)="tab.set('flux')" i18n="@@accounting.nct-statements.flux.de.tresorerie.b60dc8b6">Flux de trésorerie</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'capitaux'" (click)="tab.set('capitaux')" i18n="@@accounting.nct-statements.capitaux.propres.4245faa7">Capitaux propres</button>
+        <button type="button" role="tab" class="nct-tab" [class.nct-tab--active]="tab() === 'notes'" (click)="tab.set('notes')" i18n="@@accounting.nct-statements.notes.70440046">Notes</button>
       </div>
 
       <div class="card nct-card">
@@ -117,9 +117,9 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
                 {{ d.balanceSheet.isBalanced ? 'Bilan équilibré' : 'Non équilibré (écart : ' + (d.balanceSheet.difference | number : '1.3-3') + ' TND)' }}
               </span>
             </div>
-            <h3 class="nct-section">ACTIF</h3>
+            <h3 class="nct-section" i18n="@@accounting.nct-statements.actif.0fc6c6b8">ACTIF</h3>
             <ng-container [ngTemplateOutlet]="tableTpl" [ngTemplateOutletContext]="{ lines: d.balanceSheet.assets }"></ng-container>
-            <h3 class="nct-section">CAPITAUX PROPRES ET PASSIFS</h3>
+            <h3 class="nct-section" i18n="@@accounting.nct-statements.capitaux.propres.et.passifs.4a6fc6d6">CAPITAUX PROPRES ET PASSIFS</h3>
             <ng-container [ngTemplateOutlet]="tableTpl" [ngTemplateOutletContext]="{ lines: d.balanceSheet.equityAndLiabilities }"></ng-container>
           }
           @case ('resultat') {
@@ -131,7 +131,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
                 {{ d.cashFlow.isReconciled ? 'Flux de trésorerie rapproché' : 'Flux non rapproché (écart : ' + (cashFlowGap() | number : '1.3-3') + ' TND)' }}
               </span>
             </div>
-            <p class="nct-hint">Méthode indirecte. La ligne « Écart de rapprochement » explicite tout résidu par rapport à la variation réelle de trésorerie.</p>
+            <p class="nct-hint" i18n="@@accounting.nct-statements.methode.indirecte.la.ligne.ecart.de.rapprochemen.ff0b4d3e">Méthode indirecte. La ligne « Écart de rapprochement » explicite tout résidu par rapport à la variation réelle de trésorerie.</p>
             <ng-container [ngTemplateOutlet]="tableTpl" [ngTemplateOutletContext]="{ lines: d.cashFlow.lines }"></ng-container>
           }
           @case ('capitaux') {
@@ -151,9 +151,9 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
       <table class="nct-table">
         <thead>
           <tr>
-            <th scope="col" class="nct-th-label">Rubrique</th>
-            <th scope="col" class="nct-th-amount">Exercice N</th>
-            <th scope="col" class="nct-th-amount">Exercice N-1</th>
+            <th scope="col" class="nct-th-label" i18n="@@accounting.nct-statements.rubrique.ef1b579b">Rubrique</th>
+            <th scope="col" class="nct-th-amount" i18n="@@accounting.nct-statements.exercice.n.6fef5d8f">Exercice N</th>
+            <th scope="col" class="nct-th-amount" i18n="@@accounting.nct-statements.exercice.n.1.2568d50f">Exercice N-1</th>
           </tr>
         </thead>
         <tbody>

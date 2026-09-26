@@ -1,18 +1,18 @@
 <div class="wizard-step" [formGroup]="form">
-  <h3 class="step-title">4. Finalisation</h3>
+  <h3 class="step-title" i18n="@@auth.register-wizard.4.finalisation.c09f26f3">4. Finalisation</h3>
 
   <div class="step4-grid">
     <div class="form-section">
       <div class="sec-head">
         <span class="sec-num">1</span>
-        <h4>Adresse de votre société</h4>
+        <h4 i18n="@@auth.register-wizard.adresse.de.votre.societe.264aac02">Adresse de votre société</h4>
       </div>
 
       <div class="form-group">
-        <label for="wiz-street" class="sr-only">Adresse principale</label>
+        <label for="wiz-street" class="sr-only" i18n="@@auth.register-wizard.adresse.principale.b7ab7b05">Adresse principale</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-map-marker icon"></i>
-          <input pInputText id="wiz-street" formControlName="street" placeholder="Adresse principale *"
+          <input pInputText id="wiz-street" formControlName="street" placeholder="Adresse principale *" i18n-placeholder="Adresse principale *"
                  autocomplete="street-address"
                  [attr.aria-required]="true"
                  [class.ng-invalid]="isInvalid('street')">
@@ -25,20 +25,20 @@
       </div>
 
       <div class="form-group">
-        <label for="wiz-streetLine2" class="sr-only">Complément d'adresse</label>
+        <label for="wiz-streetLine2" class="sr-only" i18n="@@auth.register-wizard.complement.d.adresse.fba484a7">Complément d'adresse</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-building icon"></i>
-          <input pInputText id="wiz-streetLine2" formControlName="streetLine2" placeholder="Complément d'adresse (optionnel)">
+          <input pInputText id="wiz-streetLine2" formControlName="streetLine2" placeholder="Complément d'adresse (optionnel)" i18n-placeholder="Complément d'adresse (optionnel)">
         </div>
-        <small class="field-hint">Vous pourrez compléter plus tard</small>
+        <small class="field-hint" i18n="@@auth.register-wizard.vous.pourrez.completer.plus.tard.483b386b">Vous pourrez compléter plus tard</small>
       </div>
 
       <div class="form-row address-row">
         <div class="form-group flex-2">
-          <label for="wiz-city" class="sr-only">Ville</label>
+          <label for="wiz-city" class="sr-only" i18n="@@auth.register-wizard.ville.97217611">Ville</label>
           <div class="input-icon-wrapper">
             <i class="pi pi-map icon"></i>
-            <input pInputText id="wiz-city" formControlName="city" placeholder="Ville *" class="w-full"
+            <input pInputText id="wiz-city" formControlName="city" placeholder="Ville *" i18n-placeholder="Ville *" class="w-full"
                    autocomplete="address-level2"
                    [attr.aria-required]="true"
                    [class.ng-invalid]="isInvalid('city')">
@@ -51,23 +51,23 @@
         </div>
 
         <div class="form-group flex-1">
-          <label for="wiz-postalCode" class="sr-only">Code postal</label>
-          <p-inputMask id="wiz-postalCode" formControlName="postalCode" mask="9999" placeholder="Code postal" styleClass="w-full">
+          <label for="wiz-postalCode" class="sr-only" i18n="@@auth.register-wizard.code.postal.74779109">Code postal</label>
+          <p-inputMask id="wiz-postalCode" formControlName="postalCode" mask="9999" placeholder="Code postal" i18n-placeholder="Code postal" styleClass="w-full">
           </p-inputMask>
-          <small class="field-hint">4 chiffres</small>
+          <small class="field-hint" i18n="@@auth.register-wizard.4.chiffres.592fb939">4 chiffres</small>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="wiz-governorate" class="sr-only">Gouvernorat</label>
+        <label for="wiz-governorate" class="sr-only" i18n="@@auth.register-wizard.gouvernorat.b9cd1d99">Gouvernorat</label>
         <p-select id="wiz-governorate" [options]="governorates" formControlName="governorate"
-                    optionLabel="label" optionValue="value" placeholder="Gouvernorat *"
+                    optionLabel="label" optionValue="value" placeholder="Gouvernorat *" i18n-placeholder="Gouvernorat *"
                     [filter]="true" filterBy="label" appendTo="body"
                     styleClass="w-full custom-dropdown"
                     [class.ng-invalid]="isInvalid('governorate')"
                     [attr.aria-required]="true">
         </p-select>
-        <small class="field-hint">24 gouvernorats tunisiens disponibles</small>
+        <small class="field-hint" i18n="@@auth.register-wizard.24.gouvernorats.tunisiens.disponibles.11f67c7e">24 gouvernorats tunisiens disponibles</small>
         @if (isInvalid('governorate')) {
           <div class="field-error" role="alert" @fadeInOut>
             <i class="pi pi-info-circle"></i> Le gouvernorat est requis
@@ -79,7 +79,7 @@
         <div class="terms-group">
           <p-checkbox inputId="wiz-acceptTerms" formControlName="acceptTerms" [binary]="true"></p-checkbox>
           <label for="wiz-acceptTerms">
-            En continuant, j'accepte les <a routerLink="/legal/terms" target="_blank" class="link-primary">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary">Politique de Confidentialité</a>.
+            En continuant, j'accepte les <a routerLink="/legal/terms" target="_blank" class="link-primary" i18n="@@auth.register-wizard.conditions.d.utilisation.17c85066">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary" i18n="@@auth.register-wizard.politique.de.confidentialite.a8ebb0b8">Politique de Confidentialité</a>.
           </label>
         </div>
         @if (isInvalid('acceptTerms')) {
@@ -93,14 +93,14 @@
     <div class="form-section recap-section">
       <div class="sec-head">
         <span class="sec-num">2</span>
-        <h4>Récapitulatif de votre espace</h4>
+        <h4 i18n="@@auth.register-wizard.recapitulatif.de.votre.espace.959e5f4b">Récapitulatif de votre espace</h4>
       </div>
 
       <div class="recap-list">
         <div class="recap-row">
           <span class="rec-ico tone-blue"><i class="pi pi-sitemap"></i></span>
           <div class="rec-body">
-            <div class="rec-label">Segment</div>
+            <div class="rec-label" i18n="@@auth.register-wizard.segment.44986cef">Segment</div>
             <div class="rec-value">{{ recapSegment() }}</div>
           </div>
           <button type="button" class="rec-edit" (click)="goTo(0)">
@@ -111,7 +111,7 @@
         <div class="recap-row">
           <span class="rec-ico tone-purple"><i class="pi pi-briefcase"></i></span>
           <div class="rec-body">
-            <div class="rec-label">Domaine d'activité</div>
+            <div class="rec-label" i18n="@@auth.register-wizard.domaine.d.activite.2582f8ea">Domaine d'activité</div>
             <div class="rec-value">{{ recapDomain() }}</div>
           </div>
           <button type="button" class="rec-edit" (click)="goTo(0)">
@@ -122,7 +122,7 @@
         <div class="recap-row">
           <span class="rec-ico tone-green"><i class="pi pi-id-card"></i></span>
           <div class="rec-body">
-            <div class="rec-label">Régime fiscal</div>
+            <div class="rec-label" i18n="@@auth.register-wizard.regime.fiscal.ddf8b3c2">Régime fiscal</div>
             <div class="rec-value">{{ recapTaxRegime() }}</div>
           </div>
           <button type="button" class="rec-edit" (click)="goTo(1)">
@@ -133,7 +133,7 @@
         <div class="recap-row">
           <span class="rec-ico tone-orange"><i class="pi pi-cog"></i></span>
           <div class="rec-body">
-            <div class="rec-label">Modules activés</div>
+            <div class="rec-label" i18n="@@auth.register-wizard.modules.actives.62da2d37">Modules activés</div>
             <div class="rec-chips">
               @for (label of recapModuleLabels(); track label) {
                 <span>{{ label }}</span>
@@ -149,8 +149,8 @@
       <div class="smart-callout">
         <span class="smart-ico"><i class="pi pi-sparkles"></i></span>
         <div>
-          <div class="smart-title">Votre espace sera prêt en quelques secondes</div>
-          <p>Plan comptable tunisien, TVA et devise TND seront configurés automatiquement.</p>
+          <div class="smart-title" i18n="@@auth.register-wizard.votre.espace.sera.pret.en.quelques.secondes.172c454d">Votre espace sera prêt en quelques secondes</div>
+          <p i18n="@@auth.register-wizard.plan.comptable.tunisien.tva.et.devise.tnd.seront.d7980d07">Plan comptable tunisien, TVA et devise TND seront configurés automatiquement.</p>
         </div>
       </div>
     </div>

@@ -62,24 +62,24 @@ interface PaymentRow {
             type="button"
             class="panel-close"
             (click)="onClose()"
-            aria-label="Fermer le panneau">
+            aria-label="Fermer le panneau" i18n-aria-label="Fermer le panneau">
             <i class="pi pi-times"></i>
           </button>
         </div>
 
         @if (invoice && !loading()) {
           <div class="panel-summary" id="invoice-payments-summary" role="region" aria-labelledby="invoice-payments-summary-title">
-            <h3 class="panel-summary-title" id="invoice-payments-summary-title">Récapitulatif</h3>
+            <h3 class="panel-summary-title" id="invoice-payments-summary-title" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.recapitulatif.d5b5de6d">Récapitulatif</h3>
             <div class="panel-summary-row">
-              <span class="panel-summary-label">Montant total</span>
+              <span class="panel-summary-label" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.montant.total.dd001537">Montant total</span>
               <span class="panel-summary-value">{{ formatAmount(invoice.totalAmount) }} {{ invoice.currency }}</span>
             </div>
             <div class="panel-summary-row">
-              <span class="panel-summary-label">Total payé</span>
+              <span class="panel-summary-label" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.total.paye.57d30be5">Total payé</span>
               <span class="panel-summary-value">{{ formatAmount(effectiveTotalPaid()) }} {{ invoice.currency }}</span>
             </div>
             <div class="panel-summary-row panel-summary-row--remaining">
-              <span class="panel-summary-label">Reste à payer</span>
+              <span class="panel-summary-label" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.reste.a.payer.968444fc">Reste à payer</span>
               <span class="panel-summary-value panel-summary-value--remaining">{{ formatAmount(effectiveRemainingAmount()) }} {{ invoice.currency }}</span>
             </div>
           </div>
@@ -89,12 +89,12 @@ interface PaymentRow {
           @if (loading()) {
             <div class="panel-loading">
               <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-              <p>Chargement des paiements…</p>
+              <p i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.chargement.des.paiements.23bdaf2d">Chargement des paiements…</p>
             </div>
           } @else if (paymentRows().length === 0) {
             <div class="panel-empty">
               <i class="pi pi-wallet" aria-hidden="true"></i>
-              <p>Aucun paiement enregistré pour cette facture.</p>
+              <p i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.aucun.paiement.enregistre.pour.cette.facture.088793e0">Aucun paiement enregistré pour cette facture.</p>
             </div>
           } @else {
             <div class="panel-list">

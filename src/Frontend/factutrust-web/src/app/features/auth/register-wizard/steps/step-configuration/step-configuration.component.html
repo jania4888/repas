@@ -1,10 +1,10 @@
 <div class="wizard-step">
-  <h3 class="step-title">3. Configuration des modules</h3>
+  <h3 class="step-title" i18n="@@auth.register-wizard.3.configuration.des.modules.1f292efb">3. Configuration des modules</h3>
 
   <div class="form-section">
     <div class="sec-head sec-head--spread">
       <span class="sec-num">1</span>
-      <h4>Modules recommandés pour votre profil</h4>
+      <h4 i18n="@@auth.register-wizard.modules.recommandes.pour.votre.profil.164b1c25">Modules recommandés pour votre profil</h4>
       @if (profileLabel) {
         <span class="based-chip"><i class="pi pi-bolt" aria-hidden="true"></i> Basé sur : {{ profileLabel }}</span>
       }
@@ -23,43 +23,43 @@
 
       <div class="profiling-grid">
         <div class="profiling-q">
-          <span class="profiling-label" id="q-stock">Gérez-vous du stock physique ?</span>
+          <span class="profiling-label" id="q-stock" i18n="@@auth.register-wizard.gerez.vous.du.stock.physique.5052b2da">Gérez-vous du stock physique ?</span>
           <div class="profiling-choices" role="group" aria-labelledby="q-stock">
             <button type="button" class="choice" [class.on]="booleanAnswer('hasPhysicalStock') === true"
                     [attr.aria-pressed]="booleanAnswer('hasPhysicalStock') === true"
-                    (click)="setBooleanAnswer('hasPhysicalStock', true)">Oui</button>
+                    (click)="setBooleanAnswer('hasPhysicalStock', true)" i18n="@@auth.register-wizard.oui.eaa02f3f">Oui</button>
             <button type="button" class="choice" [class.on]="booleanAnswer('hasPhysicalStock') === false"
                     [attr.aria-pressed]="booleanAnswer('hasPhysicalStock') === false"
-                    (click)="setBooleanAnswer('hasPhysicalStock', false)">Non</button>
+                    (click)="setBooleanAnswer('hasPhysicalStock', false)" i18n="@@auth.register-wizard.non.a7219939">Non</button>
           </div>
         </div>
 
         <div class="profiling-q">
-          <span class="profiling-label" id="q-b2c">Vendez-vous à des particuliers ?</span>
+          <span class="profiling-label" id="q-b2c" i18n="@@auth.register-wizard.vendez.vous.a.des.particuliers.f168481a">Vendez-vous à des particuliers ?</span>
           <div class="profiling-choices" role="group" aria-labelledby="q-b2c">
             <button type="button" class="choice" [class.on]="booleanAnswer('sellsToConsumers') === true"
                     [attr.aria-pressed]="booleanAnswer('sellsToConsumers') === true"
-                    (click)="setBooleanAnswer('sellsToConsumers', true)">Oui</button>
+                    (click)="setBooleanAnswer('sellsToConsumers', true)" i18n="@@auth.register-wizard.oui.eaa02f3f">Oui</button>
             <button type="button" class="choice" [class.on]="booleanAnswer('sellsToConsumers') === false"
                     [attr.aria-pressed]="booleanAnswer('sellsToConsumers') === false"
-                    (click)="setBooleanAnswer('sellsToConsumers', false)">Non</button>
+                    (click)="setBooleanAnswer('sellsToConsumers', false)" i18n="@@auth.register-wizard.non.a7219939">Non</button>
           </div>
         </div>
 
         <div class="profiling-q">
-          <span class="profiling-label" id="q-compta">Votre comptabilité est-elle tenue par un cabinet ?</span>
+          <span class="profiling-label" id="q-compta" i18n="@@auth.register-wizard.votre.comptabilite.est.elle.tenue.par.un.cabinet.a007c495">Votre comptabilité est-elle tenue par un cabinet ?</span>
           <div class="profiling-choices" role="group" aria-labelledby="q-compta">
             <button type="button" class="choice" [class.on]="booleanAnswer('accountingDelegatedToFirm') === true"
                     [attr.aria-pressed]="booleanAnswer('accountingDelegatedToFirm') === true"
-                    (click)="setBooleanAnswer('accountingDelegatedToFirm', true)">Oui</button>
+                    (click)="setBooleanAnswer('accountingDelegatedToFirm', true)" i18n="@@auth.register-wizard.oui.eaa02f3f">Oui</button>
             <button type="button" class="choice" [class.on]="booleanAnswer('accountingDelegatedToFirm') === false"
                     [attr.aria-pressed]="booleanAnswer('accountingDelegatedToFirm') === false"
-                    (click)="setBooleanAnswer('accountingDelegatedToFirm', false)">Non</button>
+                    (click)="setBooleanAnswer('accountingDelegatedToFirm', false)" i18n="@@auth.register-wizard.non.a7219939">Non</button>
           </div>
         </div>
 
         <div class="profiling-q">
-          <span class="profiling-label" id="q-effectif">Combien êtes-vous ?</span>
+          <span class="profiling-label" id="q-effectif" i18n="@@auth.register-wizard.combien.etes.vous.120f6cb7">Combien êtes-vous ?</span>
           <div class="profiling-choices" role="group" aria-labelledby="q-effectif">
             @for (band of headcountBands; track band) {
               <button type="button" class="choice" [class.on]="headcountAnswer() === band"
@@ -78,7 +78,7 @@
           <div class="mod-card on locked" aria-disabled="true">
             <div class="mod-top">
               <span class="mod-ico tone-blue"><i class="pi pi-check" aria-hidden="true"></i></span>
-              <span class="mod-locked-badge">Inclus</span>
+              <span class="mod-locked-badge" i18n="@@auth.register-wizard.inclus.f497fc87">Inclus</span>
             </div>
             <span class="mod-name">{{ module.label }}</span>
           </div>
@@ -157,7 +157,7 @@
                 <span class="mod-locked-badge mod-locked-badge--plan"><i class="pi pi-lock" aria-hidden="true"></i> Plan supérieur</span>
               </div>
               <span class="mod-name">{{ module.label }}</span>
-              <span class="mod-plan-note">Disponible avec une offre supérieure.</span>
+              <span class="mod-plan-note" i18n="@@auth.register-wizard.disponible.avec.une.offre.superieure.48aa225f">Disponible avec une offre supérieure.</span>
             </div>
           }
         </div>
@@ -170,48 +170,48 @@
 
     <div class="note-bar">
       <span class="note-ico"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i></span>
-      <p>Rien n'est figé : vous pourrez activer ou désactiver ces modules à tout moment depuis les paramètres.</p>
+      <p i18n="@@auth.register-wizard.rien.n.est.fige.vous.pourrez.activer.ou.desactiv.643c6b50">Rien n'est figé : vous pourrez activer ou désactiver ces modules à tout moment depuis les paramètres.</p>
     </div>
   </div>
 
   <div class="form-section">
     <div class="sec-head">
       <span class="sec-num">2</span>
-      <h4>Paramètres clés pré-configurés</h4>
+      <h4 i18n="@@auth.register-wizard.parametres.cles.pre.configures.fcaefc4d">Paramètres clés pré-configurés</h4>
     </div>
 
     <div class="settings-grid">
       <div class="setting-row">
         <span class="set-ico tone-blue"><i class="pi pi-book" aria-hidden="true"></i></span>
         <div>
-          <div class="set-name">Plan comptable tunisien</div>
-          <div class="set-val">Classes NCT 1 à 7</div>
+          <div class="set-name" i18n="@@auth.register-wizard.plan.comptable.tunisien.3b8f1819">Plan comptable tunisien</div>
+          <div class="set-val" i18n="@@auth.register-wizard.classes.nct.1.a.7.73a24f97">Classes NCT 1 à 7</div>
         </div>
-        <span class="set-tag">Modifiable</span>
+        <span class="set-tag" i18n="@@auth.register-wizard.modifiable.22ad469f">Modifiable</span>
       </div>
       <div class="setting-row">
         <span class="set-ico tone-green"><i class="pi pi-percentage" aria-hidden="true"></i></span>
         <div>
-          <div class="set-name">TVA</div>
+          <div class="set-name" i18n="@@auth.register-wizard.tva.fb62cb5d">TVA</div>
           <div class="set-val">19%, 13%, 7%, 0%</div>
         </div>
-        <span class="set-tag">Modifiable</span>
+        <span class="set-tag" i18n="@@auth.register-wizard.modifiable.22ad469f">Modifiable</span>
       </div>
       <div class="setting-row">
         <span class="set-ico tone-yellow"><i class="pi pi-money-bill" aria-hidden="true"></i></span>
         <div>
-          <div class="set-name">Devise</div>
-          <div class="set-val">TND, 3 décimales</div>
+          <div class="set-name" i18n="@@auth.register-wizard.devise.eb2e42c4">Devise</div>
+          <div class="set-val" i18n="@@auth.register-wizard.tnd.3.decimales.df3f4a02">TND, 3 décimales</div>
         </div>
-        <span class="set-tag">Modifiable</span>
+        <span class="set-tag" i18n="@@auth.register-wizard.modifiable.22ad469f">Modifiable</span>
       </div>
       <div class="setting-row">
         <span class="set-ico tone-purple"><i class="pi pi-calendar" aria-hidden="true"></i></span>
         <div>
-          <div class="set-name">Exercice fiscal</div>
-          <div class="set-val">1er janvier – 31 décembre</div>
+          <div class="set-name" i18n="@@auth.register-wizard.exercice.fiscal.25ea5f92">Exercice fiscal</div>
+          <div class="set-val" i18n="@@auth.register-wizard.1er.janvier.31.decembre.d3751b84">1er janvier – 31 décembre</div>
         </div>
-        <span class="set-tag">Modifiable</span>
+        <span class="set-tag" i18n="@@auth.register-wizard.modifiable.22ad469f">Modifiable</span>
       </div>
     </div>
   </div>

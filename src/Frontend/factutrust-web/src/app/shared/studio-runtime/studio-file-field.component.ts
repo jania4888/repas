@@ -37,7 +37,7 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
       <!-- Signature -->
       <div *ngSwitchCase="'signature'" class="ft-file-col">
         <ng-container *ngIf="value && !editing">
-          <img [attr.src]="fileSrc$ | async" class="ft-sign-img" alt="signature" />
+          <img [attr.src]="fileSrc$ | async" class="ft-sign-img" alt="signature" i18n-alt="signature" />
           <div class="ft-sign-actions">
             <button pButton type="button" label="Refaire" class="p-button-text p-button-sm" (click)="editing = true"></button>
             <button pButton type="button" icon="fa-solid fa-xmark" class="p-button-text p-button-sm p-button-danger" (click)="clear()"></button>
@@ -53,7 +53,7 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
         </ng-container>
       </div>
 
-      <small class="ft-file-up" *ngIf="uploading">Téléversement…</small>
+      <small class="ft-file-up" *ngIf="uploading" i18n="@@shared.studio-runtime.studio-file-field.televersement.15038033">Téléversement…</small>
       <small class="ft-file-err" *ngIf="error">{{ error }}</small>
     </div>
   `,

@@ -15,6 +15,7 @@ import { TagModule } from 'primeng/tag';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
 import { ToastService } from '@core/services/toast.service';
+import { erpCollatorCompare } from '@core/i18n/erp-format';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import {
   StockService,
@@ -46,7 +47,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Entrepôts"
+      title="Entrepôts" i18n-title="Entrepôts"
       subtitle="Lieux de stockage utilisés pour le stock, les transferts et les documents">
       <div class="header-actions">
         <p-button
@@ -77,14 +78,14 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
     @if (loading() && !warehouses().length && !loadError()) {
       <div class="loading-container" role="status" aria-live="polite">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem" aria-hidden="true"></i>
-        <p>Chargement des entrepôts...</p>
+        <p i18n="@@settings.warehouses.chargement.des.entrepots.d1d834ab">Chargement des entrepôts...</p>
       </div>
     } @else if (!loadError()) {
       <div class="warehouses-page">
         <p-card header="Liste des entrepôts" styleClass="warehouses-card">
           <div class="card-toolbar">
             <div class="search-field">
-              <label class="sr-only" for="warehouse-search">Rechercher un entrepôt</label>
+              <label class="sr-only" for="warehouse-search" i18n="@@settings.warehouses.rechercher.un.entrepot.80fc0c59">Rechercher un entrepôt</label>
               <span class="search-input-wrap">
                 <i class="pi pi-search search-icon" aria-hidden="true"></i>
                 <input
@@ -92,7 +93,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
                   type="text"
                   pInputText
                   class="search-input"
-                  placeholder="Rechercher par code, nom ou adresse…"
+                  placeholder="Rechercher par code, nom ou adresse…" i18n-placeholder="Rechercher par code, nom ou adresse…"
                   [value]="searchQuery()"
                   (input)="onSearchInput($event)"
                   autocomplete="off" />
@@ -113,7 +114,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
           @if (warehouses().length > 0 && filteredWarehouses().length === 0 && searchQuery().trim()) {
             <div class="filter-empty" role="status">
               <i class="pi pi-filter-slash" aria-hidden="true"></i>
-              <p>Aucun résultat pour cette recherche.</p>
+              <p i18n="@@settings.warehouses.aucun.resultat.pour.cette.recherche.7e7f8c98">Aucun résultat pour cette recherche.</p>
               <p-button label="Réinitialiser le filtre" [outlined]="true" (onClick)="clearSearch()"></p-button>
             </div>
           } @else {
@@ -125,12 +126,12 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
               styleClass="p-datatable-sm warehouses-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th scope="col">Code</th>
-                  <th scope="col">Nom</th>
-                  <th scope="col">Adresse</th>
-                  <th scope="col">Par défaut</th>
-                  <th scope="col">État</th>
-                  <th scope="col" class="col-actions">Actions</th>
+                  <th scope="col" i18n="@@settings.warehouses.code.adac6937">Code</th>
+                  <th scope="col" i18n="@@settings.warehouses.nom.7ff20370">Nom</th>
+                  <th scope="col" i18n="@@settings.warehouses.adresse.522e1466">Adresse</th>
+                  <th scope="col" i18n="@@settings.warehouses.par.defaut.4550c68e">Par défaut</th>
+                  <th scope="col" i18n="@@settings.warehouses.etat.d3b28a2a">État</th>
+                  <th scope="col" class="col-actions" i18n="@@settings.warehouses.actions.c3cd636a">Actions</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-row>
@@ -170,9 +171,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
               </ng-template>
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td colspan="6" class="empty-cell">
-                    Aucun entrepôt. Utilisez « Ajouter » pour créer votre premier lieu de stockage.
-                  </td>
+                  <td colspan="6" class="empty-cell" i18n="@@settings.warehouses.aucun.entrepot.utilisez.ajouter.pour.creer.votre.0bda79b8">Aucun entrepôt. Utilisez « Ajouter » pour créer votre premier lieu de stockage.</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -193,13 +192,13 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
       [attr.aria-modal]="true"
       styleClass="warehouses-dialog">
       <p class="dialog-intro">
-        Indiquez un <strong>nom</strong> court (libellé interne : magasin, dépôt principal, etc.).
-        L’<strong>adresse</strong>, facultative, peut reprendre rue, ville, code postal et pays sur plusieurs lignes.
+        Indiquez un <strong i18n="@@settings.warehouses.nom.8d406e3d">nom</strong> court (libellé interne : magasin, dépôt principal, etc.).
+        L’<strong i18n="@@settings.warehouses.adresse.6c35df8a">adresse</strong>, facultative, peut reprendre rue, ville, code postal et pays sur plusieurs lignes.
       </p>
       <form [formGroup]="form" (ngSubmit)="onSubmitForm()" class="wh-form">
         @if (isEditMode()) {
           <label class="form-field" for="wh-code-readonly">
-            <span class="label-text">Code</span>
+            <span class="label-text" i18n="@@settings.warehouses.code.adac6937">Code</span>
             <input
               pInputText
               id="wh-code-readonly"
@@ -207,11 +206,11 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
               class="w-full"
               readonly
               tabindex="-1" />
-            <small class="hint">Le code ne peut pas être modifié après la création.</small>
+            <small class="hint" i18n="@@settings.warehouses.le.code.ne.peut.pas.etre.modifie.apres.la.creati.fa3d64d7">Le code ne peut pas être modifié après la création.</small>
           </label>
         } @else {
           <label class="form-field" for="wh-code">
-            <span class="label-text">Code <span class="required" aria-hidden="true">*</span></span>
+            <span class="label-text">Code <span class="required" aria-hidden="true" i18n="@@settings.warehouses.text.df58248c">*</span></span>
             <input
               pInputText
               id="wh-code"
@@ -227,7 +226,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
         }
 
         <label class="form-field" for="wh-name">
-          <span class="label-text">Nom <span class="required" aria-hidden="true">*</span></span>
+          <span class="label-text">Nom <span class="required" aria-hidden="true" i18n="@@settings.warehouses.text.df58248c">*</span></span>
           <input
             pInputText
             id="wh-name"
@@ -242,29 +241,27 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
         </label>
 
         <label class="form-field" for="wh-address">
-          <span class="label-text">Adresse</span>
+          <span class="label-text" i18n="@@settings.warehouses.adresse.522e1466">Adresse</span>
           <textarea
             pTextarea
             id="wh-address"
             formControlName="address"
             class="w-full"
             [rows]="3"
-            placeholder="Rue, ville, code postal, pays…">
+            placeholder="Rue, ville, code postal, pays…" i18n-placeholder="Rue, ville, code postal, pays…">
           </textarea>
         </label>
 
         <div class="form-field switch-block">
           <div class="switch-field">
-            <span class="label-text" id="wh-default-label">Entrepôt par défaut</span>
+            <span class="label-text" id="wh-default-label" i18n="@@settings.warehouses.entrepot.par.defaut.5dc0b8c6">Entrepôt par défaut</span>
             <p-inputSwitch
               formControlName="isDefault"
               inputId="wh-default"
               [attr.aria-labelledby]="'wh-default-label'">
             </p-inputSwitch>
           </div>
-          <small class="hint switch-hint">
-            Utilisé par défaut pour le stock et les documents lorsqu’aucun autre entrepôt n’est précisé.
-          </small>
+          <small class="hint switch-hint" i18n="@@settings.warehouses.utilise.par.defaut.pour.le.stock.et.les.document.b0aef0d3">Utilisé par défaut pour le stock et les documents lorsqu’aucun autre entrepôt n’est précisé.</small>
         </div>
 
         <div class="dialog-actions">
@@ -299,7 +296,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
         marquée défaut (utilisée si aucune caisse n'est choisie).
       </p>
       @if (registersLoading()) {
-        <p>Chargement…</p>
+        <p i18n="@@settings.warehouses.chargement.01cba1df">Chargement…</p>
       } @else {
         <ul class="registers-list">
           @for (reg of warehouseRegisters(); track reg.id) {
@@ -314,15 +311,15 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
       }
       <form [formGroup]="registerForm" (ngSubmit)="submitCreateRegister()" class="wh-form">
         <label class="form-field" for="reg-code">
-          <span class="label-text">Code</span>
+          <span class="label-text" i18n="@@settings.warehouses.code.adac6937">Code</span>
           <input pInputText id="reg-code" formControlName="code" class="w-full" maxlength="20" />
         </label>
         <label class="form-field" for="reg-name">
-          <span class="label-text">Nom</span>
+          <span class="label-text" i18n="@@settings.warehouses.nom.7ff20370">Nom</span>
           <input pInputText id="reg-name" formControlName="name" class="w-full" maxlength="100" />
         </label>
         <div class="switch-field">
-          <span>Caisse par défaut</span>
+          <span i18n="@@settings.warehouses.caisse.par.defaut.f4c511df">Caisse par défaut</span>
           <p-inputSwitch formControlName="isDefault"></p-inputSwitch>
         </div>
         <div class="dialog-actions">
@@ -713,7 +710,7 @@ export class WarehousesComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           if (res.success && res.data) {
-            this.warehouses.set([...res.data].sort((a, b) => a.name.localeCompare(b.name, 'fr')));
+            this.warehouses.set([...res.data].sort((a, b) => erpCollatorCompare(a.name, b.name)));
           } else {
             this.loadError.set(res.errors?.join(', ') || res.message || 'Chargement impossible');
           }

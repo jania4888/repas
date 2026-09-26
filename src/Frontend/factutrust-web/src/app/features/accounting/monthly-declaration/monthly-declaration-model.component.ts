@@ -39,18 +39,16 @@ import {
   ],
   template: `
     <app-page-header
-      title="Modèle Intégration DM"
+      title="Modèle Intégration DM" i18n-title="Modèle Intégration DM"
       subtitle="Emporter la configuration d’un dossier dans un fichier, et l’appliquer à un autre" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <section class="card dm-block">
-      <h3 class="dm-block__title">Exporter</h3>
-      <p class="dm-block__text">
-        Produit un fichier JSON portant les rubriques du dossier — actives comme désactivées — et
+      <h3 class="dm-block__title" i18n="@@accounting.monthly-declaration.exporter.0cd84bdc">Exporter</h3>
+      <p class="dm-block__text" i18n="@@accounting.monthly-declaration.produit.un.fichier.json.portant.les.rubriques.du.c7546c88">Produit un fichier JSON portant les rubriques du dossier — actives comme désactivées — et
         l’inclusion de chaque famille. Le régime de calcul et l’historique des contrôles de parité
-        n’y figurent pas : ils appartiennent au dossier, pas au paramétrage.
-      </p>
+        n’y figurent pas : ils appartiennent au dossier, pas au paramétrage.</p>
       <div class="dm-actions">
         <app-button
           variant="secondary"
@@ -64,7 +62,7 @@ import {
     </section>
 
     <section class="card dm-block">
-      <h3 class="dm-block__title">Importer</h3>
+      <h3 class="dm-block__title" i18n="@@accounting.monthly-declaration.importer.f54cfe90">Importer</h3>
 
       @if (!canWrite()) {
         <app-accounting-status-banner
@@ -78,14 +76,12 @@ import {
           message="Import indisponible : la déclaration mensuelle paramétrable est désactivée sur la plateforme. L’export reste disponible." />
       }
 
-      <p class="dm-block__text">
-        Les rubriques dont le code est absent du dossier sont créées. Une rubrique du dossier qui
+      <p class="dm-block__text" i18n="@@accounting.monthly-declaration.les.rubriques.dont.le.code.est.absent.du.dossier.3eb61e10">Les rubriques dont le code est absent du dossier sont créées. Une rubrique du dossier qui
         ne figure pas dans le fichier n’est jamais supprimée : un modèle complète une configuration,
-        il ne la remplace pas.
-      </p>
+        il ne la remplace pas.</p>
 
       <div class="dm-field">
-        <label class="dm-lbl" for="dm-model-file">Fichier de modèle (.json)</label>
+        <label class="dm-lbl" for="dm-model-file" i18n="@@accounting.monthly-declaration.fichier.de.modele.json.1e799b42">Fichier de modèle (.json)</label>
         <input
           id="dm-model-file"
           type="file"
@@ -101,31 +97,29 @@ import {
         } @else {
           <dl class="dm-facts">
             <div>
-              <dt>Rubriques</dt>
+              <dt i18n="@@accounting.monthly-declaration.rubriques.a5155d21">Rubriques</dt>
               <dd>{{ s.rubricCount }}</dd>
             </div>
             @if (s.modelVersion) {
               <div>
-                <dt>Format</dt>
+                <dt i18n="@@accounting.monthly-declaration.format.041a5dec">Format</dt>
                 <dd>{{ s.modelVersion }}</dd>
               </div>
             }
             @if (s.catalogVersion) {
               <div>
-                <dt>Catalogue</dt>
+                <dt i18n="@@accounting.monthly-declaration.catalogue.5a241023">Catalogue</dt>
                 <dd>{{ s.catalogVersion }}</dd>
               </div>
             }
           </dl>
 
           @if (s.silentOnFamilies) {
-            <p class="dm-hint">
-              Ce fichier ne dit rien des familles : aucune inclusion du dossier ne sera modifiée.
-            </p>
+            <p class="dm-hint" i18n="@@accounting.monthly-declaration.ce.fichier.ne.dit.rien.des.familles.aucune.inclu.0ce77b0a">Ce fichier ne dit rien des familles : aucune inclusion du dossier ne sera modifiée.</p>
           } @else {
             @if (s.includedFamilies.length) {
               <p class="dm-hint dm-hint--flag">
-                Familles que le fichier demande d’<strong>inclure</strong> :
+                Familles que le fichier demande d’<strong i18n="@@accounting.monthly-declaration.inclure.9d9a2c10">inclure</strong> :
                 {{ s.includedFamilies.join(', ') }}. Leur inclusion change les montants déclarés dès
                 que le dossier calcule en mode paramétré.
               </p>
@@ -162,10 +156,8 @@ import {
         <div class="dm-report" role="status">
           <p class="dm-report__line">{{ outcome(r) }}</p>
           @if (nothingChanged(r)) {
-            <p class="dm-hint">
-              Le fichier n’a rien ajouté : tous ses codes existaient déjà. Cochez « Remplacer » pour
-              appliquer sa version.
-            </p>
+            <p class="dm-hint" i18n="@@accounting.monthly-declaration.le.fichier.n.a.rien.ajoute.tous.ses.codes.exista.0c39b76a">Le fichier n’a rien ajouté : tous ses codes existaient déjà. Cochez « Remplacer » pour
+              appliquer sa version.</p>
           }
           @if (r.skippedCodes.length) {
             <p class="dm-hint">Codes déjà présents, laissés intacts : {{ r.skippedCodes.join(', ') }}</p>

@@ -11,7 +11,7 @@ import { formatDaysUntilDue, upcomingTasks } from '../../project-detail.vm';
   template: `
     @if (project) {
       <section class="proj-detail-card">
-        <h3 class="proj-detail-card__title">Prochaines échéances</h3>
+        <h3 class="proj-detail-card__title" i18n="@@projects.components.prochaines.echeances.69960f97">Prochaines échéances</h3>
         @if (items.length) {
           <ul class="proj-detail-deadlines">
             @for (t of items; track t.id) {
@@ -28,7 +28,7 @@ import { formatDaysUntilDue, upcomingTasks } from '../../project-detail.vm';
             }
           </ul>
         } @else {
-          <p class="proj-detail-card__desc proj-detail-card__desc--muted">Aucune échéance à venir.</p>
+          <p class="proj-detail-card__desc proj-detail-card__desc--muted" i18n="@@projects.components.aucune.echeance.a.venir.2c15f4e9">Aucune échéance à venir.</p>
         }
       </section>
     }

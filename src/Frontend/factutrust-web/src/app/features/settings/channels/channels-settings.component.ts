@@ -69,7 +69,7 @@ interface ChannelBridgeQrDto {
     <div class="channels-settings">
       <app-breadcrumb [items]="breadcrumbItems()" />
       <app-page-header
-        title="WhatsApp"
+        title="WhatsApp" i18n-title="WhatsApp"
         subtitle="Liez votre WhatsApp à l'assistant IA et recevez vos rappels fiscaux" />
 
       <p-confirmDialog />
@@ -79,16 +79,14 @@ interface ChannelBridgeQrDto {
       }
 
       @if (loading()) {
-        <p-card><p class="muted">Chargement…</p></p-card>
+        <p-card><p class="muted" i18n="@@settings.channels.chargement.01cba1df">Chargement…</p></p-card>
       } @else if (!featureEnabled()) {
         <p-card>
           <div class="feature-off">
             <i class="pi pi-lock feature-off-icon"></i>
-            <h3>Fonctionnalité non activée</h3>
-            <p class="muted">
-              Le canal WhatsApp n'est pas activé sur cette installation.
-              Contactez votre administrateur de plateforme.
-            </p>
+            <h3 i18n="@@settings.channels.fonctionnalite.non.activee.6927dbaf">Fonctionnalité non activée</h3>
+            <p class="muted" i18n="@@settings.channels.le.canal.whatsapp.n.est.pas.active.sur.cette.ins.0f2138cc">Le canal WhatsApp n'est pas activé sur cette installation.
+              Contactez votre administrateur de plateforme.</p>
           </div>
         </p-card>
       } @else if (status()?.linked) {
@@ -109,7 +107,7 @@ interface ChannelBridgeQrDto {
             <p>
               Envoyez vos questions en français au numéro WhatsApp de l'assistant :
               « Quel est mon chiffre d'affaires ce mois-ci ? », « Mes factures impayées ? »…
-              L'assistant répond en <strong>lecture seule</strong> : aucune modification de vos
+              L'assistant répond en <strong i18n="@@settings.channels.lecture.seule.a9a41b71">lecture seule</strong> : aucune modification de vos
               données n'est possible depuis WhatsApp.
             </p>
             <p-button
@@ -127,10 +125,8 @@ interface ChannelBridgeQrDto {
             <div class="linked-head">
               <i class="pi pi-whatsapp wa-icon"></i>
               <div>
-                <h3>Lier votre WhatsApp</h3>
-                <p class="muted">
-                  Générez un code, puis envoyez-le depuis votre WhatsApp au numéro de l'assistant.
-                </p>
+                <h3 i18n="@@settings.channels.lier.votre.whatsapp.934093aa">Lier votre WhatsApp</h3>
+                <p class="muted" i18n="@@settings.channels.generez.un.code.puis.envoyez.le.depuis.votre.wha.0b5fea96">Générez un code, puis envoyez-le depuis votre WhatsApp au numéro de l'assistant.</p>
               </div>
             </div>
 
@@ -141,13 +137,13 @@ interface ChannelBridgeQrDto {
                 @if (remainingSeconds() > 0) {
                   <span class="code-countdown">Expire dans {{ remainingLabel() }}</span>
                 } @else {
-                  <span class="code-countdown expired">Code expiré — générez-en un nouveau.</span>
+                  <span class="code-countdown expired" i18n="@@settings.channels.code.expire.generez.en.un.nouveau.1f6b8b63">Code expiré — générez-en un nouveau.</span>
                 }
                 <ol class="steps">
-                  <li>Ouvrez WhatsApp sur votre téléphone.</li>
-                  <li>Écrivez au numéro WhatsApp de l'assistant de votre entreprise.</li>
+                  <li i18n="@@settings.channels.ouvrez.whatsapp.sur.votre.telephone.d0dae8e9">Ouvrez WhatsApp sur votre téléphone.</li>
+                  <li i18n="@@settings.channels.ecrivez.au.numero.whatsapp.de.l.assistant.de.vot.20c18f53">Écrivez au numéro WhatsApp de l'assistant de votre entreprise.</li>
                   <li>Envoyez le message : <code>LIER {{ issued.code }}</code></li>
-                  <li>Vous recevrez une confirmation, puis posez vos questions librement.</li>
+                  <li i18n="@@settings.channels.vous.recevrez.une.confirmation.puis.posez.vos.qu.d30b2a24">Vous recevrez une confirmation, puis posez vos questions librement.</li>
                 </ol>
               </div>
             }
@@ -175,9 +171,7 @@ interface ChannelBridgeQrDto {
                   Connexion du bot WhatsApp
                   <p-tag [severity]="bridgeSeverity()" [value]="bridgeLabel()" />
                 </h3>
-                <p class="muted">
-                  Administration de la session WhatsApp partagée (le bot qui répond à vos équipes).
-                </p>
+                <p class="muted" i18n="@@settings.channels.administration.de.la.session.whatsapp.partagee.l.c1114c96">Administration de la session WhatsApp partagée (le bot qui répond à vos équipes).</p>
               </div>
             </div>
 
@@ -188,11 +182,11 @@ interface ChannelBridgeQrDto {
             @switch (bridgeStatus()?.state) {
               @case ('WaitingQr') {
                 <div class="qr-panel">
-                  <p>Scannez ce QR code avec WhatsApp (Réglages → Appareils connectés → Connecter un appareil) :</p>
+                  <p i18n="@@settings.channels.scannez.ce.qr.code.avec.whatsapp.reglages.appare.f3091c68">Scannez ce QR code avec WhatsApp (Réglages → Appareils connectés → Connecter un appareil) :</p>
                   @if (qrDataUri(); as qr) {
-                    <img class="qr-image" [src]="qr" alt="QR code de connexion WhatsApp" />
+                    <img class="qr-image" [src]="qr" alt="QR code de connexion WhatsApp" i18n-alt="QR code de connexion WhatsApp" />
                   } @else {
-                    <p class="muted">Génération du QR code…</p>
+                    <p class="muted" i18n="@@settings.channels.generation.du.qr.code.ed811c14">Génération du QR code…</p>
                   }
                 </div>
               }

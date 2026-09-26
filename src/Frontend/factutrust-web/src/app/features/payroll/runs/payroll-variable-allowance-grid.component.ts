@@ -36,12 +36,12 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
   ],
   template: `
     <app-payroll-section
-      title="Éléments variables — Primes mensuelles"
+      title="Éléments variables — Primes mensuelles" i18n-title="Éléments variables — Primes mensuelles"
       subtitle="Primes saisies pour ce mois uniquement. Pensez à recalculer le cycle pour mettre à jour les bulletins."
       icon="pi-gift">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()">Ajouter une prime</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="openDialog()" i18n="@@payroll.runs.ajouter.une.prime.68d6e043">Ajouter une prime</app-button>
         </div>
       }
 
@@ -49,11 +49,11 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
       <p-table [value]="lines()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Salarié</th>
-            <th>Libellé</th>
-            <th class="text-right">Montant</th>
-            <th class="text-center">Imposable</th>
-            <th class="text-center">CNSS</th>
+            <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+            <th i18n="@@payroll.runs.libelle.f5485bba">Libellé</th>
+            <th class="text-right" i18n="@@payroll.runs.montant.4adcd9fc">Montant</th>
+            <th class="text-center" i18n="@@payroll.runs.imposable.49743e0c">Imposable</th>
+            <th class="text-center" i18n="@@payroll.runs.cnss.a04d171a">CNSS</th>
             @if (!readOnly) { <th></th> }
           </tr>
         </ng-template>
@@ -66,14 +66,14 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
             <td class="text-center">{{ line.subjectToCnss ? 'Oui' : 'Non' }}</td>
             @if (!readOnly) {
               <td class="actions">
-                <button type="button" class="p-button p-button-text p-button-sm" (click)="editLine(line)">Modifier</button>
-                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(line)">Supprimer</button>
+                <button type="button" class="p-button p-button-text p-button-sm" (click)="editLine(line)" i18n="@@payroll.runs.modifier.f260e757">Modifier</button>
+                <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(line)" i18n="@@payroll.runs.supprimer.1acfc1c7">Supprimer</button>
               </td>
             }
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td [attr.colspan]="readOnly ? 5 : 6">Aucune prime variable saisie pour ce mois.</td></tr>
+          <tr><td [attr.colspan]="readOnly ? 5 : 6" i18n="@@payroll.runs.aucune.prime.variable.saisie.pour.ce.mois.5a04757f">Aucune prime variable saisie pour ce mois.</td></tr>
         </ng-template>
       </p-table>
       </div>
@@ -81,30 +81,30 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
     <p-dialog [header]="editingId ? 'Modifier la prime' : 'Nouvelle prime variable'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '520px' }">
       <div class="payroll-form-group mb-2">
-        <label>Salarié</label>
+        <label i18n="@@payroll.runs.salarie.27f97915">Salarié</label>
         <p-select [options]="employees()" optionLabel="fullName" optionValue="id" [(ngModel)]="formEmployeeId" appendTo="body" styleClass="w-full" [disabled]="!!editingId" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Libellé</label>
+        <label i18n="@@payroll.runs.libelle.f5485bba">Libellé</label>
         <input pInputText [(ngModel)]="formLabel" class="w-full" maxlength="200" />
       </div>
       <div class="payroll-form-group mb-2">
-        <label>Montant</label>
+        <label i18n="@@payroll.runs.montant.4adcd9fc">Montant</label>
         <p-inputNumber [(ngModel)]="formAmount" [min]="0.001" [minFractionDigits]="3" [maxFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
       </div>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
           <p-checkbox [(ngModel)]="formTaxable" [binary]="true" inputId="varTaxable" />
-          <label for="varTaxable" class="ml-2">Imposable IRPP</label>
+          <label for="varTaxable" class="ml-2" i18n="@@payroll.runs.imposable.irpp.a680c520">Imposable IRPP</label>
         </div>
         <div class="payroll-form-group">
           <p-checkbox [(ngModel)]="formSubjectToCnss" [binary]="true" inputId="varCnss" />
-          <label for="varCnss" class="ml-2">Soumise CNSS</label>
+          <label for="varCnss" class="ml-2" i18n="@@payroll.runs.soumise.cnss.2d4b9842">Soumise CNSS</label>
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="dialogVisible = false">Annuler</app-button>
-        <app-button variant="primary" (click)="save()">Enregistrer</app-button>
+        <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.runs.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="primary" (click)="save()" i18n="@@payroll.runs.enregistrer.f7c8bcd8">Enregistrer</app-button>
       </ng-template>
     </p-dialog>
   `,

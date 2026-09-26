@@ -2,15 +2,16 @@
   <div class="auth-page__photo" [style.background-image]="photoLayer" aria-hidden="true"></div>
   <div class="auth-page__overlay" aria-hidden="true"></div>
 
-  <header class="auth-page-header" aria-label="En-tête InstaFact">
+  <header class="auth-page-header" aria-label="En-tête InstaFact" i18n-aria-label="En-tête InstaFact">
     <div class="auth-page-header__brand">
       <app-logo size="medium" variant="lockup" routerLink="/"></app-logo>
       <span class="auth-page-header__tagline">{{ brand.taglineShort }}</span>
     </div>
+    <app-erp-language-switcher class="auth-page-header__lang" />
   </header>
 
   <div class="auth-page-body" [class.auth-page-body--wide]="config.wideFormCard">
-    <section class="auth-hero-panel" aria-label="Présentation InstaFact">
+    <section class="auth-hero-panel" aria-label="Présentation InstaFact" i18n-aria-label="Présentation InstaFact">
       <div class="auth-hero-panel__content">
         <span [class]="badgeClass()">
           <i class="pi pi-shield" aria-hidden="true"></i>
@@ -40,11 +41,11 @@
         }
 
         @if (config.showAiHighlight) {
-          <div class="auth-ai-highlight" aria-label="Intelligence artificielle">
-            <span class="auth-ai-highlight__mark">IA</span>
+          <div class="auth-ai-highlight" aria-label="Intelligence artificielle" i18n-aria-label="Intelligence artificielle">
+            <span class="auth-ai-highlight__mark" i18n="@@auth.auth-shell.ia.d41daf59">IA</span>
             <div class="auth-ai-highlight__text">
-              <strong>L'intelligence au service de votre gestion.</strong>
-              <span>InstaFact intègre l'intelligence artificielle pour analyser vos données et vous aider à décider plus vite.</span>
+              <strong i18n="@@auth.auth-shell.l.intelligence.au.service.de.votre.gestion.5d08824b">L'intelligence au service de votre gestion.</strong>
+              <span i18n="@@auth.auth-shell.instafact.integre.l.intelligence.artificielle.po.fe8c7eef">InstaFact intègre l'intelligence artificielle pour analyser vos données et vous aider à décider plus vite.</span>
             </div>
           </div>
         }
@@ -64,33 +65,33 @@
   </div>
 
   @if (config.showTrustFooter !== false) {
-    <footer class="auth-trust-footer" aria-label="Garanties InstaFact">
+    <footer class="auth-trust-footer" aria-label="Garanties InstaFact" i18n-aria-label="Garanties InstaFact">
       <div class="auth-trust-footer__item">
         <i class="pi pi-shield" aria-hidden="true"></i>
         <div class="auth-trust-footer__copy">
-          <span class="auth-trust-footer__title">Sécurité garantie</span>
-          <span class="auth-trust-footer__sub">Vos données sont chiffrées</span>
+          <span class="auth-trust-footer__title" i18n="@@auth.auth-shell.securite.garantie.8049134c">Sécurité garantie</span>
+          <span class="auth-trust-footer__sub" i18n="@@auth.auth-shell.vos.donnees.sont.chiffrees.6bb5e7e0">Vos données sont chiffrées</span>
         </div>
       </div>
       <div class="auth-trust-footer__item">
         <i class="pi pi-verified" aria-hidden="true"></i>
         <div class="auth-trust-footer__copy">
-          <span class="auth-trust-footer__title">Conforme aux normes</span>
-          <span class="auth-trust-footer__sub">Facturation électronique</span>
+          <span class="auth-trust-footer__title" i18n="@@auth.auth-shell.conforme.aux.normes.c3eba0b9">Conforme aux normes</span>
+          <span class="auth-trust-footer__sub" i18n="@@auth.auth-shell.facturation.electronique.8e4c90f2">Facturation électronique</span>
         </div>
       </div>
       <div class="auth-trust-footer__item">
         <i class="pi pi-cloud-upload" aria-hidden="true"></i>
         <div class="auth-trust-footer__copy">
-          <span class="auth-trust-footer__title">Sauvegarde quotidienne</span>
-          <span class="auth-trust-footer__sub">Données sécurisées 24/7</span>
+          <span class="auth-trust-footer__title" i18n="@@auth.auth-shell.sauvegarde.quotidienne.fb0fc2ed">Sauvegarde quotidienne</span>
+          <span class="auth-trust-footer__sub" i18n="@@auth.auth-shell.donnees.securisees.24.7.9fb70dd1">Données sécurisées 24/7</span>
         </div>
       </div>
       <div class="auth-trust-footer__item">
         <i class="pi pi-headphones" aria-hidden="true"></i>
         <div class="auth-trust-footer__copy">
-          <span class="auth-trust-footer__title">Support 7j/7</span>
-          <span class="auth-trust-footer__sub">Assistance disponible</span>
+          <span class="auth-trust-footer__title" i18n="@@auth.auth-shell.support.7j.7.00b11672">Support 7j/7</span>
+          <span class="auth-trust-footer__sub" i18n="@@auth.auth-shell.assistance.disponible.fc9420a6">Assistance disponible</span>
         </div>
       </div>
     </footer>

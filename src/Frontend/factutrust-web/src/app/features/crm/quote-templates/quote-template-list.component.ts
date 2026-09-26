@@ -56,12 +56,10 @@ interface ActiveFilterOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Modèles de devis"
+      title="Modèles de devis" i18n-title="Modèles de devis"
       subtitle="Modèles réutilisables pour accélérer la création de devis et harmoniser vos offres.">
       @if (canCreate()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new">
-          Nouveau modèle
-        </app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@crm.quote-templates.nouveau.modele.c5b99d5d">Nouveau modèle</app-button>
       }
     </app-page-header>
 
@@ -73,7 +71,7 @@ interface ActiveFilterOption {
             type="button"
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -85,7 +83,7 @@ interface ActiveFilterOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par nom ou description…"
+            placeholder="Rechercher par nom ou description…" i18n-placeholder="Rechercher par nom ou description…"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput()"
             class="w-full" />
@@ -95,7 +93,7 @@ interface ActiveFilterOption {
           [(ngModel)]="selectedActiveFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
           [showClear]="true"
           (onChange)="load()">
         </p-select>
@@ -118,13 +116,13 @@ interface ActiveFilterOption {
           styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Nom</th>
-              <th>Description</th>
-              <th>Validité</th>
-              <th>Lignes</th>
-              <th>Utilisations</th>
-              <th>Actif</th>
-              <th style="width: 140px">Actions</th>
+              <th i18n="@@crm.quote-templates.nom.7ff20370">Nom</th>
+              <th i18n="@@crm.quote-templates.description.55f8ebc8">Description</th>
+              <th i18n="@@crm.quote-templates.validite.8be7d506">Validité</th>
+              <th i18n="@@crm.quote-templates.lignes.41c7025e">Lignes</th>
+              <th i18n="@@crm.quote-templates.utilisations.67a8be8f">Utilisations</th>
+              <th i18n="@@crm.quote-templates.actif.2eb75f84">Actif</th>
+              <th style="width: 140px" i18n="@@crm.quote-templates.actions.c3cd636a">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-t>
@@ -184,7 +182,7 @@ interface ActiveFilterOption {
               <td colspan="7" class="text-center p-6">
                 <app-empty-state
                   illustration="empty-quotes.svg"
-                  title="Aucun modèle de devis"
+                  title="Aucun modèle de devis" i18n-title="Aucun modèle de devis"
                   description="Créez un modèle pour préremplir lignes, notes et conditions lors de la création d'un devis."
                   [showAction]="canCreate()"
                   actionLabel="Créer un modèle"

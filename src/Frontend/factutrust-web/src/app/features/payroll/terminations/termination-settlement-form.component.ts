@@ -41,57 +41,57 @@ function toIsoDate(value: Date | null | undefined): string {
     PageHeaderComponent, ButtonComponent, FormSectionComponent, PayrollAmountPipe
   ],
   template: `
-    <app-page-header title="Solde de tout compte" subtitle="Calcul et enregistrement des indemnités de rupture.">
-      <app-button variant="outline" (click)="back()">Retour</app-button>
-      <app-button variant="outline" icon="pi-calculator" [disabled]="!employeeId" (click)="preview()">Calculer</app-button>
-      <app-button variant="primary" icon="pi-save" [disabled]="!previewData()" (click)="save(false)">Enregistrer</app-button>
-      <app-button variant="primary" icon="pi-check" [disabled]="!previewData()" (click)="save(true)">Enregistrer et approuver</app-button>
+    <app-page-header title="Solde de tout compte" i18n-title="Solde de tout compte" subtitle="Calcul et enregistrement des indemnités de rupture.">
+      <app-button variant="outline" (click)="back()" i18n="@@payroll.terminations.retour.e5befb1f">Retour</app-button>
+      <app-button variant="outline" icon="pi-calculator" [disabled]="!employeeId" (click)="preview()" i18n="@@payroll.terminations.calculer.29705857">Calculer</app-button>
+      <app-button variant="primary" icon="pi-save" [disabled]="!previewData()" (click)="save(false)" i18n="@@payroll.terminations.enregistrer.f7c8bcd8">Enregistrer</app-button>
+      <app-button variant="primary" icon="pi-check" [disabled]="!previewData()" (click)="save(true)" i18n="@@payroll.terminations.enregistrer.et.approuver.c70c70df">Enregistrer et approuver</app-button>
     </app-page-header>
 
-    <app-form-section title="Informations" icon="pi-user" [number]="1">
+    <app-form-section title="Informations" i18n-title="Informations" icon="pi-user" [number]="1">
       <div class="payroll-form-row">
         <div class="payroll-form-group">
-          <label>Salarié</label>
+          <label i18n="@@payroll.terminations.salarie.27f97915">Salarié</label>
           <p-select [options]="employees()" optionLabel="fullName" optionValue="id" [(ngModel)]="employeeId" [filter]="true" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Date de sortie</label>
+          <label i18n="@@payroll.terminations.date.de.sortie.a963425d">Date de sortie</label>
           <p-datepicker [(ngModel)]="terminationDate" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full" />
         </div>
         <div class="payroll-form-group">
-          <label>Motif</label>
+          <label i18n="@@payroll.terminations.motif.2a198f47">Motif</label>
           <p-select [options]="reasonOptions" optionLabel="label" optionValue="value" [(ngModel)]="reason" styleClass="w-full" />
         </div>
       </div>
     </app-form-section>
 
     @if (previewData(); as p) {
-      <app-form-section title="Prévisualisation (art. 22bis CDT)" icon="pi-calculator" [number]="2">
+      <app-form-section title="Prévisualisation (art. 22bis CDT)" i18n-title="Prévisualisation (art. 22bis CDT)" icon="pi-calculator" [number]="2">
         <dl class="payroll-detail-grid">
-          <dt>Ancienneté</dt><dd>{{ p.seniorityMonths }} mois ({{ p.indemnityDays }} jours)</dd>
-          <dt>Salaire de référence</dt><dd>{{ p.grossMonthlyReference | payrollAmount }}</dd>
-          <dt>Indemnité légale</dt><dd>{{ p.legalIndemnityAmount | payrollAmount }}</dd>
+          <dt i18n="@@payroll.terminations.anciennete.166e0461">Ancienneté</dt><dd>{{ p.seniorityMonths }} mois ({{ p.indemnityDays }} jours)</dd>
+          <dt i18n="@@payroll.terminations.salaire.de.reference.6998cec5">Salaire de référence</dt><dd>{{ p.grossMonthlyReference | payrollAmount }}</dd>
+          <dt i18n="@@payroll.terminations.indemnite.legale.54c7c286">Indemnité légale</dt><dd>{{ p.legalIndemnityAmount | payrollAmount }}</dd>
         </dl>
         <div class="payroll-form-row mt-3">
           <div class="payroll-form-group">
-            <label>Indemnité légale (ajustée)</label>
+            <label i18n="@@payroll.terminations.indemnite.legale.ajustee.878b2302">Indemnité légale (ajustée)</label>
             <p-inputNumber [(ngModel)]="legalIndemnity" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label>Indemnité de préavis</label>
+            <label i18n="@@payroll.terminations.indemnite.de.preavis.8c4bdc1d">Indemnité de préavis</label>
             <p-inputNumber [(ngModel)]="noticeIndemnity" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label>Congés non consommés</label>
+            <label i18n="@@payroll.terminations.conges.non.consommes.1b9fed81">Congés non consommés</label>
             <p-inputNumber [(ngModel)]="unusedLeave" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
           <div class="payroll-form-group">
-            <label>Autres indemnités</label>
+            <label i18n="@@payroll.terminations.autres.indemnites.d87ca5d2">Autres indemnités</label>
             <p-inputNumber [(ngModel)]="otherIndemnity" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
           </div>
         </div>
         <div class="payroll-form-group mt-2">
-          <label>Notes</label>
+          <label i18n="@@payroll.terminations.notes.70440046">Notes</label>
           <textarea pTextarea [(ngModel)]="notes" rows="3" class="w-full"></textarea>
         </div>
       </app-form-section>

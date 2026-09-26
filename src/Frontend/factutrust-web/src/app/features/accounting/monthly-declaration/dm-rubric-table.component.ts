@@ -30,14 +30,14 @@ import {
       [rowHover]="true">
       <ng-template pTemplate="header">
         <tr>
-          <th scope="col">Code</th>
-          <th scope="col">Libellé</th>
-          <th scope="col">Code rapport</th>
-          <th scope="col">Montant brut</th>
-          <th scope="col">Retenue</th>
-          <th scope="col">Application</th>
-          <th scope="col">Actif</th>
-          <th scope="col">Actions</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.code.adac6937">Code</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.libelle.f5485bba">Libellé</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.code.rapport.149223b0">Code rapport</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.montant.brut.6c8cf046">Montant brut</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.retenue.88cf18f4">Retenue</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.application.b291beb8">Application</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.actif.2eb75f84">Actif</th>
+          <th scope="col" i18n="@@accounting.monthly-declaration.actions.c3cd636a">Actions</th>
         </tr>
       </ng-template>
 
@@ -47,15 +47,11 @@ import {
           <td>
             {{ r.label }}
             @if (unsupported(r)) {
-              <span class="dm-flag dm-flag--warn" title="Le moteur rendra 0 pour cette rubrique.">
-                non pris en charge
-              </span>
+              <span class="dm-flag dm-flag--warn" title="Le moteur rendra 0 pour cette rubrique." i18n-title="Le moteur rendra 0 pour cette rubrique." i18n="@@accounting.monthly-declaration.non.pris.en.charge.0d01bf4b">non pris en charge</span>
             }
             @if (unknownAccounts(r); as missing) {
               @if (missing.length) {
-                <span class="dm-flag dm-flag--warn" [title]="'Comptes absents du plan : ' + missing.join(', ')">
-                  compte inconnu
-                </span>
+                <span class="dm-flag dm-flag--warn" [title]="'Comptes absents du plan : ' + missing.join(', ')" i18n="@@accounting.monthly-declaration.compte.inconnu.84fbe64e">compte inconnu</span>
               }
             }
           </td>
@@ -103,7 +99,7 @@ import {
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="8" class="dm-empty">Aucune rubrique configurée pour cette famille.</td>
+          <td colspan="8" class="dm-empty" i18n="@@accounting.monthly-declaration.aucune.rubrique.configuree.pour.cette.famille.e8d268a4">Aucune rubrique configurée pour cette famille.</td>
         </tr>
       </ng-template>
     </p-table>

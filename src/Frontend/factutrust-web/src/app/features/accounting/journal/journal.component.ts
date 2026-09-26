@@ -89,13 +89,13 @@ type JournalFlatRow = {
     AccountingCorrectionBannerComponent
   ],
   template: `
-    <app-page-header title="Journal comptable" subtitle="Écritures par période" />
+    <app-page-header title="Journal comptable" i18n-title="Journal comptable" subtitle="Écritures par période" />
     <app-accounting-correction-banner />
     <div class="card journal-filters-card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Période et journal">
         <div accountingFilterFields class="journal-toolbar-fields">
           <div class="form-field journal-field-date">
-            <label class="field-label" for="jrn-from">Du</label>
+            <label class="field-label" for="jrn-from" i18n="@@accounting.journal.du.84814985">Du</label>
             <input
               id="jrn-from"
               type="date"
@@ -104,7 +104,7 @@ type JournalFlatRow = {
               [disabled]="loading()" />
           </div>
           <div class="form-field journal-field-date">
-            <label class="field-label" for="jrn-to">Au</label>
+            <label class="field-label" for="jrn-to" i18n="@@accounting.journal.au.7a1732d5">Au</label>
             <input
               id="jrn-to"
               type="date"
@@ -113,13 +113,13 @@ type JournalFlatRow = {
               [disabled]="loading()" />
           </div>
           <div class="form-field journal-field-journal">
-            <label class="field-label" for="jrn-code">Journal</label>
+            <label class="field-label" for="jrn-code" i18n="@@accounting.journal.journal.57d7f743">Journal</label>
             <select
               id="jrn-code"
               [(ngModel)]="journalCode"
               class="journal-date-input"
               [disabled]="loading()">
-              <option value="">Tous</option>
+              <option value="" i18n="@@accounting.journal.tous.b97ae3b4">Tous</option>
               @for (j of journals(); track j.code) {
                 <option [value]="j.code">{{ j.code }} — {{ j.label }}</option>
               }
@@ -136,9 +136,7 @@ type JournalFlatRow = {
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser le journal comptable pour la période sélectionnée">
-            Actualiser
-          </app-button>
+            ariaLabel="Actualiser le journal comptable pour la période sélectionnée" i18n="@@accounting.journal.actualiser.9d3b2a7d">Actualiser</app-button>
           <app-analyze-with-ai-button
             screenId="accounting-journal"
             density="toolbar"
@@ -152,13 +150,13 @@ type JournalFlatRow = {
       </app-accounting-filter-bar>
     </div>
 
-    <div class="accounting-kpi-row" aria-label="Totaux sur la période chargée">
+    <div class="accounting-kpi-row" aria-label="Totaux sur la période chargée" i18n-aria-label="Totaux sur la période chargée">
       <div class="accounting-kpi-item">
-        <span class="accounting-kpi-label">Total débit</span>
+        <span class="accounting-kpi-label" i18n="@@accounting.journal.total.debit.ea9c4853">Total débit</span>
         <span class="accounting-kpi-value">{{ totals().debit | number : '1.3-3' }}</span>
       </div>
       <div class="accounting-kpi-item">
-        <span class="accounting-kpi-label">Total crédit</span>
+        <span class="accounting-kpi-label" i18n="@@accounting.journal.total.credit.98c95962">Total crédit</span>
         <span class="accounting-kpi-value">{{ totals().credit | number : '1.3-3' }}</span>
       </div>
     </div>
@@ -193,8 +191,8 @@ type JournalFlatRow = {
             class="journal-search-input"
             [(ngModel)]="searchTerm"
             (ngModelChange)="onSearchChange()"
-            placeholder="Filtrer journal, libellé, compte, date…"
-            aria-label="Filtrer les lignes du journal" />
+            placeholder="Filtrer journal, libellé, compte, date…" i18n-placeholder="Filtrer journal, libellé, compte, date…"
+            aria-label="Filtrer les lignes du journal" i18n-aria-label="Filtrer les lignes du journal" />
         </span>
         <p class="journal-count" aria-live="polite">
           <span class="journal-count-value">{{ flatRows().length }}</span>
@@ -215,18 +213,18 @@ type JournalFlatRow = {
         styleClass="p-datatable-sm journal-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Journal</th>
-            <th scope="col" class="journal-col-narrow">N°</th>
-            <th scope="col">Libellé</th>
-            <th scope="col" class="journal-col-account">Compte</th>
+            <th scope="col" i18n="@@accounting.journal.date.eb9a4bc1">Date</th>
+            <th scope="col" i18n="@@accounting.journal.journal.57d7f743">Journal</th>
+            <th scope="col" class="journal-col-narrow" i18n="@@accounting.journal.n.754e6095">N°</th>
+            <th scope="col" i18n="@@accounting.journal.libelle.f5485bba">Libellé</th>
+            <th scope="col" class="journal-col-account" i18n="@@accounting.journal.compte.c45740bb">Compte</th>
             @if (hasForeignCurrency()) {
-              <th scope="col" class="journal-col-narrow">Devise</th>
+              <th scope="col" class="journal-col-narrow" i18n="@@accounting.journal.devise.eb2e42c4">Devise</th>
             }
-            <th scope="col" class="journal-col-amount">Débit</th>
-            <th scope="col" class="journal-col-amount">Crédit</th>
-            <th scope="col" class="journal-col-narrow">Statut</th>
-            <th scope="col" class="journal-col-narrow">Actions</th>
+            <th scope="col" class="journal-col-amount" i18n="@@accounting.journal.debit.f528224f">Débit</th>
+            <th scope="col" class="journal-col-amount" i18n="@@accounting.journal.credit.19194bdf">Crédit</th>
+            <th scope="col" class="journal-col-narrow" i18n="@@accounting.journal.statut.659499f3">Statut</th>
+            <th scope="col" class="journal-col-narrow" i18n="@@accounting.journal.actions.c3cd636a">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-r>
@@ -249,7 +247,7 @@ type JournalFlatRow = {
                   <span class="journal-account-code">{{ r.currency }}</span>
                   <span class="journal-currency-amount">{{ r.amountInCurrency | number : '1.2-2' }}</span>
                 } @else {
-                  <span class="journal-currency-none">—</span>
+                  <span class="journal-currency-none" i18n="@@accounting.journal.text.1b93795b">—</span>
                 }
               </td>
             }
@@ -262,10 +260,10 @@ type JournalFlatRow = {
                   {{ r.isDraft ? 'Brouillon' : r.status === 2 ? 'Clôturée' : 'Validée' }}
                 </span>
                 @if (isPayrollSourced(r.sourceEntityType)) {
-                  <span class="journal-badge journal-badge-reversed" title="Écriture générée par le module Paie">Paie</span>
+                  <span class="journal-badge journal-badge-reversed" title="Écriture générée par le module Paie" i18n-title="Écriture générée par le module Paie" i18n="@@accounting.journal.paie.6ca885f3">Paie</span>
                 }
                 @if (r.isReversed) {
-                  <span class="journal-badge journal-badge-reversed" title="Écriture extournée">Extournée</span>
+                  <span class="journal-badge journal-badge-reversed" title="Écriture extournée" i18n-title="Écriture extournée" i18n="@@accounting.journal.extournee.a84e7737">Extournée</span>
                 }
               }
             </td>
@@ -281,7 +279,7 @@ type JournalFlatRow = {
                   type="button"
                   (click)="editEntry(r)"
                   [attr.aria-label]="'Modifier l\\'écriture ' + r.journal + ' n° ' + r.piece"
-                  title="Modifier" />
+                  title="Modifier" i18n-title="Modifier" />
               }
               @if (r.firstOfEntry && r.isDraft && canValidate()) {
                 <app-button
@@ -292,9 +290,7 @@ type JournalFlatRow = {
                   type="button"
                   (click)="validateEntry(r.entryId)"
                   [disabled]="validatingId() === r.entryId"
-                  [attr.aria-label]="'Valider l\\'écriture ' + r.journal + ' n° ' + r.piece">
-                  Valider
-                </app-button>
+                  [attr.aria-label]="'Valider l\\'écriture ' + r.journal + ' n° ' + r.piece" i18n="@@accounting.journal.valider.be4220f7">Valider</app-button>
               }
               @if (r.firstOfEntry && r.isDraft && canDelete() && !isPayrollSourced(r.sourceEntityType)) {
                 <app-button
@@ -307,7 +303,7 @@ type JournalFlatRow = {
                   (click)="deleteEntry(r.entryId, r.journal, r.piece)"
                   [disabled]="deletingId() === r.entryId"
                   [attr.aria-label]="'Supprimer l\\'écriture ' + r.journal + ' n° ' + r.piece"
-                  title="Supprimer" />
+                  title="Supprimer" i18n-title="Supprimer" />
               }
               @if (r.firstOfEntry && !r.isDraft && !r.isReversed && !isPayrollSourced(r.sourceEntityType)) {
                 <app-button
@@ -317,9 +313,7 @@ type JournalFlatRow = {
                   iconPos="left"
                   type="button"
                   (click)="openReverse(r)"
-                  [attr.aria-label]="'Extourner l\\'écriture ' + r.journal + ' n° ' + r.piece">
-                  Extourner
-                </app-button>
+                  [attr.aria-label]="'Extourner l\\'écriture ' + r.journal + ' n° ' + r.piece" i18n="@@accounting.journal.extourner.8884c9cd">Extourner</app-button>
               }
               @if (r.firstOfEntry) {
                 <app-button
@@ -331,7 +325,7 @@ type JournalFlatRow = {
                   type="button"
                   (click)="openAttachments(r)"
                   [attr.aria-label]="'Pièces jointes de l\\'écriture ' + r.journal + ' n° ' + r.piece + (r.attachmentCount > 0 ? ' (' + r.attachmentCount + ')' : '')"
-                  title="Pièces justificatives" />
+                  title="Pièces justificatives" i18n-title="Pièces justificatives" />
                 @if (r.attachmentCount > 0) {
                   <span class="journal-attach-count">{{ r.attachmentCount }}</span>
                 }
@@ -343,8 +337,8 @@ type JournalFlatRow = {
         <ng-template pTemplate="emptymessage">
           <tr>
             <td [attr.colspan]="hasForeignCurrency() ? 10 : 9" class="journal-empty">
-              <p class="journal-empty-title">Aucune ligne</p>
-              <p class="journal-empty-hint">Élargissez la période, actualisez ou modifiez le filtre de recherche.</p>
+              <p class="journal-empty-title" i18n="@@accounting.journal.aucune.ligne.bc2bbdc3">Aucune ligne</p>
+              <p class="journal-empty-hint" i18n="@@accounting.journal.elargissez.la.periode.actualisez.ou.modifiez.le..89606b44">Élargissez la période, actualisez ou modifiez le filtre de recherche.</p>
             </td>
           </tr>
         </ng-template>
@@ -357,26 +351,22 @@ type JournalFlatRow = {
           <h2 id="reverse-title" class="journal-modal-title">
             Extourner l'écriture {{ target.journal }} n° {{ target.piece }}
           </h2>
-          <p class="journal-modal-desc">
-            Une écriture inverse (contre-passation) sera créée dans la période d'origine si elle est ouverte,
-            sinon à la date du jour. Indiquez le motif de la correction.
-          </p>
-          <label class="field-label" for="reverse-reason">Motif</label>
+          <p class="journal-modal-desc" i18n="@@accounting.journal.une.ecriture.inverse.contre.passation.sera.creee.fe29588f">Une écriture inverse (contre-passation) sera créée dans la période d'origine si elle est ouverte,
+            sinon à la date du jour. Indiquez le motif de la correction.</p>
+          <label class="field-label" for="reverse-reason" i18n="@@accounting.journal.motif.2a198f47">Motif</label>
           <textarea
             id="reverse-reason"
             class="journal-modal-textarea"
             rows="3"
             [(ngModel)]="reverseReason"
             [disabled]="reversing()"
-            placeholder="Ex. erreur d'imputation, montant erroné…"></textarea>
+            placeholder="Ex. erreur d'imputation, montant erroné…" i18n-placeholder="Ex. erreur d'imputation, montant erroné…"></textarea>
           <div class="journal-modal-actions">
             <button
               type="button"
               class="journal-modal-btn journal-modal-btn-cancel"
               (click)="cancelReverse()"
-              [disabled]="reversing()">
-              Annuler
-            </button>
+              [disabled]="reversing()" i18n="@@accounting.journal.annuler.49ba3292">Annuler</button>
             <button
               type="button"
               class="journal-modal-btn journal-modal-btn-confirm"
@@ -395,19 +385,17 @@ type JournalFlatRow = {
           <h2 id="attach-title" class="journal-modal-title">
             Pièces justificatives — {{ target.journal }} n° {{ target.piece }}
           </h2>
-          <p class="journal-modal-desc">
-            PDF, images, Excel ou Word — 10 Mo maximum. Les pièces d'une période clôturée
-            restent consultables mais ne peuvent plus être supprimées.
-          </p>
+          <p class="journal-modal-desc" i18n="@@accounting.journal.pdf.images.excel.ou.word.10.mo.maximum.les.piece.da269237">PDF, images, Excel ou Word — 10 Mo maximum. Les pièces d'une période clôturée
+            restent consultables mais ne peuvent plus être supprimées.</p>
 
           @if (attachError()) {
             <p class="journal-attach-error" role="alert">{{ attachError() }}</p>
           }
 
           @if (attachLoading()) {
-            <p class="journal-attach-loading">Chargement…</p>
+            <p class="journal-attach-loading" i18n="@@accounting.journal.chargement.01cba1df">Chargement…</p>
           } @else if (attachments().length === 0) {
-            <p class="journal-attach-empty">Aucune pièce jointe pour cette écriture.</p>
+            <p class="journal-attach-empty" i18n="@@accounting.journal.aucune.piece.jointe.pour.cette.ecriture.9d5f88f7">Aucune pièce jointe pour cette écriture.</p>
           } @else {
             <ul class="journal-attach-list" role="list">
               @for (a of attachments(); track a.id) {
@@ -421,7 +409,7 @@ type JournalFlatRow = {
                     (click)="downloadAttachment(a)"
                     [disabled]="attachBusyId() === a.id"
                     [attr.aria-label]="'Télécharger ' + a.fileName"
-                    title="Télécharger">
+                    title="Télécharger" i18n-title="Télécharger">
                     <i class="pi pi-download" aria-hidden="true"></i>
                   </button>
                   <button
@@ -430,7 +418,7 @@ type JournalFlatRow = {
                     (click)="deleteAttachment(a)"
                     [disabled]="attachBusyId() === a.id"
                     [attr.aria-label]="'Supprimer ' + a.fileName"
-                    title="Supprimer">
+                    title="Supprimer" i18n-title="Supprimer">
                     <i class="pi pi-trash" aria-hidden="true"></i>
                   </button>
                 </li>
@@ -452,9 +440,7 @@ type JournalFlatRow = {
             <button
               type="button"
               class="journal-modal-btn journal-modal-btn-cancel"
-              (click)="closeAttachments()">
-              Fermer
-            </button>
+              (click)="closeAttachments()" i18n="@@accounting.journal.fermer.5ab4ec64">Fermer</button>
           </div>
         </div>
       </div>

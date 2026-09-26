@@ -14,37 +14,37 @@ import { QuantityFormatPipe } from '../../../pipes/quantity-format.pipe';
   imports: [CommonModule, QuantityFormatPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="kpi-bar" role="region" aria-label="Indicateurs clés du module Réapprovisionnement">
+    <div class="kpi-bar" role="region" aria-label="Indicateurs clés du module Réapprovisionnement" i18n-aria-label="Indicateurs clés du module Réapprovisionnement">
       @if (kpi; as k) {
         <div class="kpi-tile">
-          <span class="label">En attente</span>
+          <span class="label" i18n="@@forecasting.pages.en.attente.5231158f">En attente</span>
           <span class="value">{{ k.pendingCount }}</span>
-          <span class="hint">Recommandations à traiter</span>
+          <span class="hint" i18n="@@forecasting.pages.recommandations.a.traiter.4761a209">Recommandations à traiter</span>
         </div>
         <div class="kpi-tile urgent" [class.empty]="k.urgentCount === 0">
-          <span class="label">Urgent</span>
+          <span class="label" i18n="@@forecasting.pages.urgent.ecb26f46">Urgent</span>
           <span class="value">{{ k.urgentCount }}</span>
-          <span class="hint">Moins que le lead time</span>
+          <span class="hint" i18n="@@forecasting.pages.moins.que.le.lead.time.f6d339ff">Moins que le lead time</span>
         </div>
         <div class="kpi-tile danger" [class.empty]="k.outOfStockCount === 0">
-          <span class="label">Rupture</span>
+          <span class="label" i18n="@@forecasting.pages.rupture.fda77001">Rupture</span>
           <span class="value">{{ k.outOfStockCount }}</span>
-          <span class="hint">Stock effectif à 0</span>
+          <span class="hint" i18n="@@forecasting.pages.stock.effectif.a.0.5dfb3f4f">Stock effectif à 0</span>
         </div>
         <div class="kpi-tile">
-          <span class="label">À commander</span>
+          <span class="label" i18n="@@forecasting.pages.a.commander.1616893e">À commander</span>
           <span class="value">
             {{ k.estimatedValueToOrder | qtyFmt: null }} <small class="ccy">{{ k.currency }}</small>
           </span>
-          <span class="hint">Estimation valeur d'achat</span>
+          <span class="hint" i18n="@@forecasting.pages.estimation.valeur.d.achat.22ff238c">Estimation valeur d'achat</span>
         </div>
         <div class="kpi-tile">
-          <span class="label">Taux de service</span>
+          <span class="label" i18n="@@forecasting.pages.taux.de.service.e609027c">Taux de service</span>
           <span class="value">{{ k.serviceLevelPercent | qtyFmt: null }} %</span>
-          <span class="hint">Approximation tenant</span>
+          <span class="hint" i18n="@@forecasting.pages.approximation.tenant.ee3c748e">Approximation tenant</span>
         </div>
       } @else {
-        <div class="kpi-loading" aria-busy="true">Chargement des indicateurs…</div>
+        <div class="kpi-loading" aria-busy="true" i18n="@@forecasting.pages.chargement.des.indicateurs.b4327e74">Chargement des indicateurs…</div>
       }
     </div>
   `,

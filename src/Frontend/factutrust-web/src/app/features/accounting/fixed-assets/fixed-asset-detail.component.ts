@@ -87,9 +87,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
 
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
     <div class="refresh-row" *ngIf="error() && asset()">
-      <app-button variant="secondary" type="button" icon="pi pi-refresh" (click)="refreshAsset()" [disabled]="saving()">
-        Actualiser la fiche
-      </app-button>
+      <app-button variant="secondary" type="button" icon="pi pi-refresh" (click)="refreshAsset()" [disabled]="saving()" i18n="@@accounting.fixed-assets.actualiser.la.fiche.d0adb1cb">Actualiser la fiche</app-button>
     </div>
     <app-accounting-status-banner [message]="success() ?? ''" variant="success" *ngIf="success()" />
     <app-accounting-status-banner
@@ -101,8 +99,8 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
     <div class="card" *ngIf="isNew() || asset()">
       <p-tabs [lazy]="true">
         <p-tablist>
-          <p-tab [value]="0">Généralités</p-tab>
-          <p-tab [value]="1">Acquisition</p-tab>
+          <p-tab [value]="0" i18n="@@accounting.fixed-assets.generalites.2e49e62e">Généralités</p-tab>
+          <p-tab [value]="1" i18n="@@accounting.fixed-assets.acquisition.e85b4567">Acquisition</p-tab>
         </p-tablist>
         <p-tabpanels>
         <p-tabpanel [value]="0">
@@ -123,7 +121,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                 [(ngModel)]="form.depreciationRateCategoryId"
                 (ngModelChange)="onCategoryChange($event)"
                 [disabled]="readonly()">
-                <option value="">— Sélectionner —</option>
+                <option value="" i18n="@@accounting.fixed-assets.selectionner.7ae1afc7">— Sélectionner —</option>
                 <option *ngFor="let c of categories()" [value]="c.id">
                   {{ c.label }} ({{ c.legalRatePercent | number: '1.2-2' }} %)
                 </option>
@@ -141,7 +139,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
           </div>
 
           <fieldset class="form-section">
-            <legend>Amortissement</legend>
+            <legend i18n="@@accounting.fixed-assets.amortissement.403d7802">Amortissement</legend>
             <app-accounting-status-banner
               *ngIf="suggestIntegral()"
               [message]="integralSuggestionMessage"
@@ -154,9 +152,9 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                   [(ngModel)]="form.depreciationMethod"
                   (ngModelChange)="onMethodChange($event)"
                   [disabled]="readonly() || isNonDepreciable()">
-                  <option [ngValue]="DepreciationMethod.Linear">Linéaire</option>
-                  <option [ngValue]="DepreciationMethod.Accelerated">Accéléré</option>
-                  <option [ngValue]="DepreciationMethod.Integral">Intégral</option>
+                  <option [ngValue]="DepreciationMethod.Linear" i18n="@@accounting.fixed-assets.lineaire.a5db4cfe">Linéaire</option>
+                  <option [ngValue]="DepreciationMethod.Accelerated" i18n="@@accounting.fixed-assets.accelere.064a76be">Accéléré</option>
+                  <option [ngValue]="DepreciationMethod.Integral" i18n="@@accounting.fixed-assets.integral.02387577">Intégral</option>
                 </select>
               </label>
               <label *ngIf="form.depreciationMethod === DepreciationMethod.Accelerated">
@@ -167,7 +165,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                   </option>
                 </select>
                 <span class="field-error" *ngIf="fieldErrors()['coefficient']">{{ fieldErrors()['coefficient'] }}</span>
-                <span class="hint">Décret 2008-492 art. 2 — réservé au matériel industriel des industries manufacturières non saisonnières.</span>
+                <span class="hint" i18n="@@accounting.fixed-assets.decret.2008.492.art.2.reserve.au.materiel.indust.cbda97ba">Décret 2008-492 art. 2 — réservé au matériel industriel des industries manufacturières non saisonnières.</span>
               </label>
               <label>
                 Durée d'utilisation (années)
@@ -194,14 +192,12 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                 <span class="field-error" *ngIf="fieldErrors()['rate']">{{ fieldErrors()['rate'] }}</span>
               </label>
             </div>
-            <p class="hint" *ngIf="isNonDepreciable()">Cette catégorie n'est pas amortissable (ex. terrains).</p>
-            <p class="hint" *ngIf="!isNonDepreciable()">
-              Le taux et la durée sont synchronisés (taux = 100 / durée). Le taux légal de la catégorie est proposé par défaut.
-            </p>
+            <p class="hint" *ngIf="isNonDepreciable()" i18n="@@accounting.fixed-assets.cette.categorie.n.est.pas.amortissable.ex.terrai.5eb9efc9">Cette catégorie n'est pas amortissable (ex. terrains).</p>
+            <p class="hint" *ngIf="!isNonDepreciable()" i18n="@@accounting.fixed-assets.le.taux.et.la.duree.sont.synchronises.taux.100.d.18bbd38f">Le taux et la durée sont synchronisés (taux = 100 / durée). Le taux légal de la catégorie est proposé par défaut.</p>
           </fieldset>
 
           <fieldset class="form-section">
-            <legend>Comptabilisation</legend>
+            <legend i18n="@@accounting.fixed-assets.comptabilisation.87cf8493">Comptabilisation</legend>
             <div class="form-grid">
               <label>
                 Compte d'immobilisation (21x) *
@@ -232,7 +228,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
             <label>
               Fournisseur
               <select class="accounting-filter-input" [(ngModel)]="form.supplierId" [disabled]="readonly()">
-                <option value="">— Aucun —</option>
+                <option value="" i18n="@@accounting.fixed-assets.aucun.67323ce2">— Aucun —</option>
                 <option *ngFor="let s of suppliers()" [value]="s.id">{{ s.name }}</option>
               </select>
             </label>
@@ -296,15 +292,13 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
     <!-- ============ Simulation du tableau (brouillon) ============ -->
     <div class="card" *ngIf="isDraftAsset() && !isNonDepreciable()">
       <div class="schedule-header">
-        <h3>Simulation du tableau d'amortissement</h3>
+        <h3 i18n="@@accounting.fixed-assets.simulation.du.tableau.d.amortissement.d8d3d134">Simulation du tableau d'amortissement</h3>
         <div class="actions-inline">
           <label class="inline-field">
             Date de mise en service hypothétique
             <input type="date" class="accounting-filter-input" [(ngModel)]="previewDate" />
           </label>
-          <app-button variant="secondary" type="button" (click)="previewSchedule()" [disabled]="saving()">
-            Simuler le tableau
-          </app-button>
+          <app-button variant="secondary" type="button" (click)="previewSchedule()" [disabled]="saving()" i18n="@@accounting.fixed-assets.simuler.le.tableau.6cff95d9">Simuler le tableau</app-button>
         </div>
       </div>
       <ng-container *ngIf="preview() as p">
@@ -314,14 +308,10 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
 
     <!-- ============ Mise en service ============ -->
     <div class="card" #putInServiceSection id="put-in-service" *ngIf="isDraftAsset()">
-      <h3>Mise en service</h3>
-      <p class="hint" *ngIf="!hasPositiveAcquisitionCost()">
-        Renseignez un prix d'achat HT positif (onglet Acquisition) avant la mise en service et la comptabilisation JIM.
-      </p>
-      <p class="hint" *ngIf="isFromSupplierInvoice()">
-        Cet actif provient d'une facture fournisseur déjà comptabilisée (journal des achats) :
-        aucune écriture d'acquisition supplémentaire ne sera générée.
-      </p>
+      <h3 i18n="@@accounting.fixed-assets.mise.en.service.9d7a72cb">Mise en service</h3>
+      <p class="hint" *ngIf="!hasPositiveAcquisitionCost()" i18n="@@accounting.fixed-assets.renseignez.un.prix.d.achat.ht.positif.onglet.acq.80ad42b1">Renseignez un prix d'achat HT positif (onglet Acquisition) avant la mise en service et la comptabilisation JIM.</p>
+      <p class="hint" *ngIf="isFromSupplierInvoice()" i18n="@@accounting.fixed-assets.cet.actif.provient.d.une.facture.fournisseur.dej.20cd16a1">Cet actif provient d'une facture fournisseur déjà comptabilisée (journal des achats) :
+        aucune écriture d'acquisition supplémentaire ne sera générée.</p>
       <div class="form-grid">
         <label>
           Date de mise en service *
@@ -329,7 +319,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
         </label>
         <label *ngIf="!isFromSupplierInvoice()">
           Compte de crédit (404, 532, 101…) *
-          <input class="accounting-filter-input" [(ngModel)]="creditAccount" placeholder="404" />
+          <input class="accounting-filter-input" [(ngModel)]="creditAccount" placeholder="404" i18n-placeholder="404" />
         </label>
       </div>
       <app-button variant="primary" type="button" (click)="putInService()" [disabled]="saving()">
@@ -340,7 +330,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
     <!-- ============ Tableau d'amortissement (actif en service) ============ -->
     <div class="card" *ngIf="isInServiceAsset()">
       <div class="schedule-header">
-        <h3>Tableau d'amortissement</h3>
+        <h3 i18n="@@accounting.fixed-assets.tableau.d.amortissement.2a7cef27">Tableau d'amortissement</h3>
         <div class="actions-inline" *ngIf="canShowScheduleActions()">
           <app-button variant="secondary" type="button" (click)="generateSchedule()" [disabled]="saving() || hasPostedLines()">
             {{ schedule()?.lines?.length ? 'Regénérer' : 'Générer' }} le tableau
@@ -350,31 +340,27 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
             type="button"
             icon="pi-download"
             (click)="exportSchedule()"
-            [disabled]="saving() || !schedule()?.lines?.length">
-            Export Excel
-          </app-button>
+            [disabled]="saving() || !schedule()?.lines?.length" i18n="@@accounting.fixed-assets.export.excel.4a245944">Export Excel</app-button>
         </div>
       </div>
-      <p class="hint" *ngIf="hasPostedLines()">
-        Des dotations non extournées sont déjà comptabilisées : le tableau ne peut plus être regénéré.
-        Extournez l'écriture concernée pour autoriser la régénération.
-      </p>
+      <p class="hint" *ngIf="hasPostedLines()" i18n="@@accounting.fixed-assets.des.dotations.non.extournees.sont.deja.comptabil.02b3196b">Des dotations non extournées sont déjà comptabilisées : le tableau ne peut plus être regénéré.
+        Extournez l'écriture concernée pour autoriser la régénération.</p>
 
       <ng-container *ngIf="schedule() as s">
         <ng-container *ngTemplateOutlet="normTable; context: { $implicit: s, simulated: false }"></ng-container>
 
-        <h4 class="detail-title" *ngIf="s.lines.length">Détail CP17</h4>
+        <h4 class="detail-title" *ngIf="s.lines.length" i18n="@@accounting.fixed-assets.detail.cp17.b3001501">Détail CP17</h4>
         <p-table *ngIf="s.lines.length" [value]="s.lines" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Exercice</th>
-              <th class="text-right">VNC début</th>
-              <th class="text-right">Annuité normale</th>
-              <th class="text-right">Amort. antérieurs</th>
-              <th class="text-right">Dotation exercice</th>
-              <th class="text-right">Cumul</th>
-              <th class="text-right">VNC fin</th>
-              <th>Comptabilisé</th>
+              <th i18n="@@accounting.fixed-assets.exercice.e171e2b0">Exercice</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.vnc.debut.d0ad0de9">VNC début</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.annuite.normale.0c0af391">Annuité normale</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.amort.anterieurs.9487b2d6">Amort. antérieurs</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.dotation.exercice.614cb9fd">Dotation exercice</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.cumul.ff6c23db">Cumul</th>
+              <th class="text-right" i18n="@@accounting.fixed-assets.vnc.fin.20096b25">VNC fin</th>
+              <th i18n="@@accounting.fixed-assets.comptabilise.ec941159">Comptabilisé</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-line>
@@ -396,24 +382,24 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
     <!-- ============ Tableau au format norme tunisienne (template partagé) ============ -->
     <ng-template #normTable let-s let-simulated="simulated">
       <div class="norm-summary" *ngIf="s.lines.length">
-        <div><strong>Nature du bien :</strong> {{ s.label }}</div>
-        <div><strong>Montant amortissable :</strong> {{ s.depreciableBase | accountingAmount }}</div>
-        <div><strong>Date de mise en service :</strong> {{ s.inServiceDate ? (s.inServiceDate | date: 'dd/MM/yyyy') : '—' }}</div>
-        <div><strong>Durée de vie :</strong> {{ s.usefulLifeYears | number: '1.0-2' }} ans</div>
-        <div><strong>Taux d'amortissement :</strong> {{ s.depreciationRatePercent | number: '1.2-2' }} %</div>
+        <div><strong i18n="@@accounting.fixed-assets.nature.du.bien.3cc65233">Nature du bien :</strong> {{ s.label }}</div>
+        <div><strong i18n="@@accounting.fixed-assets.montant.amortissable.44db17e0">Montant amortissable :</strong> {{ s.depreciableBase | accountingAmount }}</div>
+        <div><strong i18n="@@accounting.fixed-assets.date.de.mise.en.service.ec568998">Date de mise en service :</strong> {{ s.inServiceDate ? (s.inServiceDate | date: 'dd/MM/yyyy') : '—' }}</div>
+        <div><strong i18n="@@accounting.fixed-assets.duree.de.vie.474d074b">Durée de vie :</strong> {{ s.usefulLifeYears | number: '1.0-2' }} ans</div>
+        <div><strong i18n="@@accounting.fixed-assets.taux.d.amortissement.9e76b4fd">Taux d'amortissement :</strong> {{ s.depreciationRatePercent | number: '1.2-2' }} %</div>
         <div>
-          <strong>Méthode :</strong> {{ methodLabel(s.depreciationMethod) }}
+          <strong i18n="@@accounting.fixed-assets.methode.ff371e1b">Méthode :</strong> {{ methodLabel(s.depreciationMethod) }}
           <ng-container *ngIf="s.depreciationMethod === DepreciationMethod.Accelerated"> (coefficient {{ s.accelerationCoefficient | number: '1.1-2' }})</ng-container>
         </div>
       </div>
       <table class="norm-table" *ngIf="s.lines.length">
         <thead>
           <tr>
-            <th>Année</th>
-            <th class="text-right">Base</th>
-            <th class="text-right">Annuité</th>
-            <th class="text-right">Annuités cumulées</th>
-            <th class="text-right">Valeur nette comptable</th>
+            <th i18n="@@accounting.fixed-assets.annee.1f910d98">Année</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.base.077fe9c5">Base</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.annuite.a3535b86">Annuité</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.annuites.cumulees.dd1a2fe5">Annuités cumulées</th>
+            <th class="text-right" i18n="@@accounting.fixed-assets.valeur.nette.comptable.f4d6eaf4">Valeur nette comptable</th>
           </tr>
         </thead>
         <tbody>
@@ -425,7 +411,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
             <td class="text-right">{{ line.closingNbv | number: '1.3-3' }}</td>
           </tr>
           <tr class="total-row">
-            <td><strong>TOTAL</strong></td>
+            <td><strong i18n="@@accounting.fixed-assets.total.5c6505ae">TOTAL</strong></td>
             <td></td>
             <td class="text-right"><strong>{{ totalDepreciation(s) | number: '1.3-3' }}</strong></td>
             <td></td>
@@ -433,12 +419,12 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
           </tr>
         </tbody>
       </table>
-      <p class="hint" *ngIf="!s.lines.length">Aucune ligne d'amortissement (bien non amortissable ou base nulle).</p>
+      <p class="hint" *ngIf="!s.lines.length" i18n="@@accounting.fixed-assets.aucune.ligne.d.amortissement.bien.non.amortissab.170eff32">Aucune ligne d'amortissement (bien non amortissable ou base nulle).</p>
     </ng-template>
 
     <!-- ============ Cession ============ -->
     <div class="card" *ngIf="canDisposeAsset()">
-      <h3>Cession / mise au rebut</h3>
+      <h3 i18n="@@accounting.fixed-assets.cession.mise.au.rebut.cabc2596">Cession / mise au rebut</h3>
       <div class="form-grid">
         <label>
           Date de cession *
@@ -456,7 +442,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
       </div>
 
       <fieldset class="form-section">
-        <legend>Mode de règlement</legend>
+        <legend i18n="@@accounting.fixed-assets.mode.de.reglement.c82ec4a6">Mode de règlement</legend>
         <div class="disposal-mode-grid">
           <label class="radio-option">
             <input type="radio" name="disposalMode" value="cash" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
@@ -464,7 +450,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
           </label>
           <label *ngIf="disposalMode === 'cash'">
             Compte trésorerie *
-            <input class="accounting-filter-input" [(ngModel)]="treasuryAccount" placeholder="5321" />
+            <input class="accounting-filter-input" [(ngModel)]="treasuryAccount" placeholder="5321" i18n-placeholder="5321" />
           </label>
           <label class="radio-option">
             <input type="radio" name="disposalMode" value="receivable" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
@@ -472,32 +458,30 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
           </label>
           <label *ngIf="disposalMode === 'receivable'">
             Compte créance *
-            <input class="accounting-filter-input" [(ngModel)]="receivableAccount" placeholder="452" />
+            <input class="accounting-filter-input" [(ngModel)]="receivableAccount" placeholder="452" i18n-placeholder="452" />
           </label>
           <label class="radio-option">
             <input type="radio" name="disposalMode" value="scrap" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
             Mise au rebut — produit nul, aucun compte de règlement
           </label>
         </div>
-        <p class="hint" *ngIf="disposalMode === 'scrap'">
-          La mise au rebut force un prix de cession nul : aucune écriture de règlement n'est générée (sortie 2xx / 28x / 636 uniquement).
-        </p>
+        <p class="hint" *ngIf="disposalMode === 'scrap'" i18n="@@accounting.fixed-assets.la.mise.au.rebut.force.un.prix.de.cession.nul.au.3560e640">La mise au rebut force un prix de cession nul : aucune écriture de règlement n'est générée (sortie 2xx / 28x / 636 uniquement).</p>
       </fieldset>
 
-      <app-button variant="danger" type="button" (click)="confirmDispose()" [disabled]="saving()">Enregistrer la cession</app-button>
+      <app-button variant="danger" type="button" (click)="confirmDispose()" [disabled]="saving()" i18n="@@accounting.fixed-assets.enregistrer.la.cession.9bdc21df">Enregistrer la cession</app-button>
     </div>
 
     <!-- ============ Méta ============ -->
     <div class="card meta" *ngIf="asset()">
-      <p><strong>Statut :</strong> {{ statusLabel(asset()!) }}</p>
-      <p><strong>Méthode :</strong> {{ methodLabel(asset()!.depreciationMethod) }}
+      <p><strong i18n="@@accounting.fixed-assets.statut.b20e7fc2">Statut :</strong> {{ statusLabel(asset()!) }}</p>
+      <p><strong i18n="@@accounting.fixed-assets.methode.ff371e1b">Méthode :</strong> {{ methodLabel(asset()!.depreciationMethod) }}
         <ng-container *ngIf="asset()!.depreciationMethod === DepreciationMethod.Accelerated"> (coefficient {{ asset()!.accelerationCoefficient | number: '1.1-2' }})</ng-container>
       </p>
-      <p><strong>Comptes :</strong> {{ asset()!.assetAccountNumber }} / {{ asset()!.depreciationAccountNumber }} / {{ asset()!.expenseAccountNumber }}</p>
-      <p><strong>VNC actuelle :</strong> {{ asset()!.netBookValue | accountingAmount }}</p>
+      <p><strong i18n="@@accounting.fixed-assets.comptes.d35dab21">Comptes :</strong> {{ asset()!.assetAccountNumber }} / {{ asset()!.depreciationAccountNumber }} / {{ asset()!.expenseAccountNumber }}</p>
+      <p><strong i18n="@@accounting.fixed-assets.vnc.actuelle.b1f08efc">VNC actuelle :</strong> {{ asset()!.netBookValue | accountingAmount }}</p>
       <p *ngIf="asset()!.supplierInvoiceId">
-        <strong>Facture fournisseur :</strong>
-        <a [routerLink]="['/supplier-invoices', asset()!.supplierInvoiceId]">Voir la facture source</a>
+        <strong i18n="@@accounting.fixed-assets.facture.fournisseur.acffd398">Facture fournisseur :</strong>
+        <a [routerLink]="['/supplier-invoices', asset()!.supplierInvoiceId]" i18n="@@accounting.fixed-assets.voir.la.facture.source.03c66c7b">Voir la facture source</a>
       </p>
     </div>
   `,

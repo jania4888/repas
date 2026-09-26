@@ -29,7 +29,10 @@ export interface TaskStatusBreakdown {
   total: number;
 }
 
+export type BudgetDonutSeriesKey = 'actual' | 'time' | 'remaining';
+
 export interface BudgetDonutSlice {
+  key: BudgetDonutSeriesKey;
   label: string;
   value: number;
   color: string;
@@ -183,11 +186,12 @@ export function buildBudgetDonutSlices(budget: ProjectBudget | null, currency: s
     return [];
   }
   const remainder = Math.max(0, budget.budgetHt - budget.actualCostHt);
-  return [
-    { label: 'Coûts réalisés', value: budget.actualCostHt, color: '#2563eb' },
-    { label: 'Coût temps', value: budget.timeCostHt, color: '#7c3aed' },
-    { label: 'Reste', value: remainder, color: '#e2e8f0' }
-  ].filter(s => s.value > 0 || s.label === 'Reste');
+  const slices: BudgetDonutSlice[] = [
+    { key: 'actual', label: 'Coûts réalisés', value: budget.actualCostHt, color: '#2563eb' },
+    { key: 'time', label: 'Coût temps', value: budget.timeCostHt, color: '#7c3aed' },
+    { key: 'remaining', label: 'Reste', value: remainder, color: '#e2e8f0' }
+  ];
+  return slices.filter(s => s.value > 0 || s.key === 'remaining');
 }
 
 export function upcomingTasks(tasks: ProjectTask[], limit = 3): ProjectTask[] {

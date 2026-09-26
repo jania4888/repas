@@ -54,7 +54,7 @@ interface StatusFilterOption {
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="Activités" subtitle="Appels, rendez-vous, tâches et relances" />
+    <app-page-header title="Activités" i18n-title="Activités" subtitle="Appels, rendez-vous, tâches et relances" />
 
     <div class="card p-3 mb-3 activity-toolbar">
       <div class="toolbar-row">
@@ -65,16 +65,16 @@ interface StatusFilterOption {
             type="search"
             [(ngModel)]="searchInput"
             (ngModelChange)="onSearchInput($event)"
-            placeholder="Rechercher par sujet…"
+            placeholder="Rechercher par sujet…" i18n-placeholder="Rechercher par sujet…"
             class="w-full"
-            aria-label="Rechercher par sujet" />
+            aria-label="Rechercher par sujet" i18n-aria-label="Rechercher par sujet" />
         </span>
         <p-select
           [options]="statusFilterOptions"
           [(ngModel)]="statusFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Statut"
+          placeholder="Statut" i18n-placeholder="Statut"
           inputId="actStatusFilter"
           styleClass="toolbar-dropdown"
           (onChange)="onFiltersChanged()"
@@ -84,7 +84,7 @@ interface StatusFilterOption {
           [(ngModel)]="typeFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Type"
+          placeholder="Type" i18n-placeholder="Type"
           [showClear]="true"
           inputId="actTypeFilter"
           styleClass="toolbar-dropdown"
@@ -94,7 +94,7 @@ interface StatusFilterOption {
           [options]="clients()"
           [(ngModel)]="selectedClient"
           optionLabel="name"
-          placeholder="Client"
+          placeholder="Client" i18n-placeholder="Client"
           [showClear]="true"
           [filter]="true"
           filterBy="name,code"
@@ -106,7 +106,7 @@ interface StatusFilterOption {
           [options]="filteredOpportunities()"
           [(ngModel)]="selectedOpportunity"
           optionLabel="title"
-          placeholder="Opportunité"
+          placeholder="Opportunité" i18n-placeholder="Opportunité"
           [showClear]="true"
           [filter]="true"
           filterBy="title"
@@ -115,25 +115,25 @@ interface StatusFilterOption {
           (onChange)="onFiltersChanged()"
           [attr.aria-label]="'Filtrer par opportunité'"></p-select>
         <div class="toolbar-dates">
-          <label class="sr-only" for="actDueFrom">Échéance du</label>
+          <label class="sr-only" for="actDueFrom" i18n="@@crm.activities.echeance.du.168e2cce">Échéance du</label>
           <p-datepicker
             inputId="actDueFrom"
             [(ngModel)]="dueFrom"
             dateFormat="dd/mm/yy"
             [showIcon]="true"
             [showClear]="true"
-            placeholder="Échéance du"
+            placeholder="Échéance du" i18n-placeholder="Échéance du"
             appendTo="body"
             (onSelect)="onFiltersChanged()"
             (onClearClick)="onDueClear()"></p-datepicker>
-          <label class="sr-only" for="actDueTo">Échéance au</label>
+          <label class="sr-only" for="actDueTo" i18n="@@crm.activities.echeance.au.89dc2a04">Échéance au</label>
           <p-datepicker
             inputId="actDueTo"
             [(ngModel)]="dueTo"
             dateFormat="dd/mm/yy"
             [showIcon]="true"
             [showClear]="true"
-            placeholder="Échéance au"
+            placeholder="Échéance au" i18n-placeholder="Échéance au"
             appendTo="body"
             (onSelect)="onFiltersChanged()"
             (onClearClick)="onDueClear()"></p-datepicker>
@@ -145,15 +145,11 @@ interface StatusFilterOption {
             [(ngModel)]="myActivitiesOnly"
             [binary]="true"
             (ngModelChange)="onFiltersChanged()"></p-checkbox>
-          <label for="actMineOnly">Mes activités</label>
+          <label for="actMineOnly" i18n="@@crm.activities.mes.activites.ed4435e5">Mes activités</label>
         </div>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="reload()" ariaLabel="Actualiser la liste">
-          Actualiser
-        </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="reload()" ariaLabel="Actualiser la liste" i18n="@@crm.activities.actualiser.9d3b2a7d">Actualiser</app-button>
         @if (canCreate()) {
-          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle activité">
-            Nouvelle activité
-          </app-button>
+          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle activité" i18n="@@crm.activities.nouvelle.activite.1b50af31">Nouvelle activité</app-button>
         }
       </div>
     </div>
@@ -180,14 +176,14 @@ interface StatusFilterOption {
       styleClass="p-datatable-sm activity-table">
       <ng-template pTemplate="header">
         <tr>
-          <th scope="col">Type</th>
-          <th scope="col">Sujet</th>
-          <th scope="col">Client</th>
-          <th scope="col">Commercial</th>
-          <th scope="col">Échéance</th>
-          <th scope="col">Priorité</th>
-          <th scope="col">Statut</th>
-          <th scope="col" class="col-actions">Actions</th>
+          <th scope="col" i18n="@@crm.activities.type.3deb7456">Type</th>
+          <th scope="col" i18n="@@crm.activities.sujet.d7742281">Sujet</th>
+          <th scope="col" i18n="@@crm.activities.client.1bdd79b1">Client</th>
+          <th scope="col" i18n="@@crm.activities.commercial.b48513e4">Commercial</th>
+          <th scope="col" i18n="@@crm.activities.echeance.f9a77ff6">Échéance</th>
+          <th scope="col" i18n="@@crm.activities.priorite.eede91d2">Priorité</th>
+          <th scope="col" i18n="@@crm.activities.statut.659499f3">Statut</th>
+          <th scope="col" class="col-actions" i18n="@@crm.activities.actions.c3cd636a">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-a>
@@ -213,7 +209,7 @@ interface StatusFilterOption {
                   [iconOnly]="true"
                   icon="pi pi-check"
                   ariaLabel="Terminer l’activité"
-                  title="Terminer"
+                  title="Terminer" i18n-title="Terminer"
                   [iconAlwaysVisible]="true"
                   (click)="complete(a)"></app-button>
               }
@@ -224,7 +220,7 @@ interface StatusFilterOption {
                   [iconOnly]="true"
                   icon="pi pi-pencil"
                   ariaLabel="Modifier l’activité"
-                  title="Modifier"
+                  title="Modifier" i18n-title="Modifier"
                   [iconAlwaysVisible]="true"
                   (click)="openEdit(a)"></app-button>
               }
@@ -235,7 +231,7 @@ interface StatusFilterOption {
                   [iconOnly]="true"
                   icon="pi pi-trash"
                   ariaLabel="Supprimer l’activité"
-                  title="Supprimer"
+                  title="Supprimer" i18n-title="Supprimer"
                   [iconAlwaysVisible]="true"
                   (click)="confirmDelete(a)"></app-button>
               }
@@ -247,12 +243,10 @@ interface StatusFilterOption {
         <tr>
           <td colspan="8" class="empty-cell">
             <div class="empty-state">
-              <p class="empty-title">Aucune activité pour ces critères</p>
-              <p class="empty-hint">Créez une relance, un rendez-vous ou une tâche pour suivre votre prospection.</p>
+              <p class="empty-title" i18n="@@crm.activities.aucune.activite.pour.ces.criteres.888fb490">Aucune activité pour ces critères</p>
+              <p class="empty-hint" i18n="@@crm.activities.creez.une.relance.un.rendez.vous.ou.une.tache.po.5460a53e">Créez une relance, un rendez-vous ou une tâche pour suivre votre prospection.</p>
               @if (canCreate()) {
-                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une activité">
-                  Nouvelle activité
-                </app-button>
+                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une activité" i18n="@@crm.activities.nouvelle.activite.1b50af31">Nouvelle activité</app-button>
               }
             </div>
           </td>
@@ -280,7 +274,7 @@ interface StatusFilterOption {
               type="button"
               class="activity-panel-close"
               (click)="closeActivityPanel()"
-              aria-label="Fermer le panneau">
+              aria-label="Fermer le panneau" i18n-aria-label="Fermer le panneau">
               <i class="pi pi-times" aria-hidden="true"></i>
             </button>
           </div>
@@ -290,30 +284,30 @@ interface StatusFilterOption {
             </p>
             <form [formGroup]="activityForm" (ngSubmit)="save()" class="activity-form">
           <section class="act-form-section" aria-labelledby="act-section-details">
-            <h3 id="act-section-details" class="form-block-title activity-panel-section-title">Détails de l’activité</h3>
+            <h3 id="act-section-details" class="form-block-title activity-panel-section-title" i18n="@@crm.activities.details.de.l.activite.c70d5b27">Détails de l’activité</h3>
             <div class="form-field">
-              <label class="field-label" for="actType">Type <span class="required" aria-hidden="true">*</span></label>
+              <label class="field-label" for="actType">Type <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
               <p-select
                 inputId="actType"
                 formControlName="type"
                 [options]="typeOptions"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Type"
+                placeholder="Type" i18n-placeholder="Type"
                 styleClass="w-full"
                 appendTo="body"
                 [overlayOptions]="activityPanelPrimeOverlayOptions"></p-select>
             </div>
             @if (!editingId()) {
               <div class="form-field">
-                <label class="field-label" for="actClient">Client <span class="required" aria-hidden="true">*</span></label>
+                <label class="field-label" for="actClient">Client <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
                 <p-select
                   inputId="actClient"
                   formControlName="clientId"
                   [options]="clients()"
                   optionLabel="name"
                   optionValue="id"
-                  placeholder="Sélectionner un client"
+                  placeholder="Sélectionner un client" i18n-placeholder="Sélectionner un client"
                   [filter]="true"
                   filterBy="name,code"
                   styleClass="w-full"
@@ -323,34 +317,34 @@ interface StatusFilterOption {
               </div>
             }
             <div class="form-field">
-              <label class="field-label" for="actSubject">Sujet <span class="required" aria-hidden="true">*</span></label>
+              <label class="field-label" for="actSubject">Sujet <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
               <input pInputText id="actSubject" class="w-full" formControlName="subject" autocomplete="off" />
             </div>
             <div class="form-field">
-              <label class="field-label" for="actDesc">Description</label>
-              <p id="act-desc-hint" class="act-field-hint">Compte rendu, prochaine action ou précisions — optionnel, max. 2000 caractères.</p>
+              <label class="field-label" for="actDesc" i18n="@@crm.activities.description.55f8ebc8">Description</label>
+              <p id="act-desc-hint" class="act-field-hint" i18n="@@crm.activities.compte.rendu.prochaine.action.ou.precisions.opti.f1f8b6ff">Compte rendu, prochaine action ou précisions — optionnel, max. 2000 caractères.</p>
               <textarea
                 pTextarea
                 id="actDesc"
                 class="w-full activity-desc-textarea"
                 rows="5"
                 formControlName="description"
-                placeholder="Détails, compte rendu, prochaine action…"
+                placeholder="Détails, compte rendu, prochaine action…" i18n-placeholder="Détails, compte rendu, prochaine action…"
                 aria-describedby="act-desc-hint"></textarea>
             </div>
           </section>
 
           <section class="act-form-section act-form-section-secondary" aria-labelledby="act-section-context">
-            <h3 id="act-section-context" class="form-block-title activity-panel-section-title">Contexte</h3>
+            <h3 id="act-section-context" class="form-block-title activity-panel-section-title" i18n="@@crm.activities.contexte.8112e9eb">Contexte</h3>
             <div class="form-field">
-              <label class="field-label" for="actOpp">Opportunité (optionnel)</label>
+              <label class="field-label" for="actOpp" i18n="@@crm.activities.opportunite.optionnel.49421928">Opportunité (optionnel)</label>
               <p-select
                 inputId="actOpp"
                 formControlName="opportunityId"
                 [options]="formOpportunityOptions()"
                 optionLabel="title"
                 optionValue="id"
-                placeholder="Aucune"
+                placeholder="Aucune" i18n-placeholder="Aucune"
                 [showClear]="true"
                 [filter]="true"
                 filterBy="title"
@@ -359,21 +353,21 @@ interface StatusFilterOption {
                 [overlayOptions]="activityPanelPrimeOverlayOptions"></p-select>
             </div>
             <div class="form-field">
-              <label class="field-label" for="actAssignee">Assigné à</label>
+              <label class="field-label" for="actAssignee" i18n="@@crm.activities.assigne.a.a769dca6">Assigné à</label>
               <p-select
                 inputId="actAssignee"
                 formControlName="assignedUserId"
                 [options]="assigneeDropdownOptions()"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Moi par défaut"
+                placeholder="Moi par défaut" i18n-placeholder="Moi par défaut"
                 [showClear]="true"
                 styleClass="w-full"
                 appendTo="body"
                 [overlayOptions]="activityPanelPrimeOverlayOptions"></p-select>
             </div>
             <div class="form-field">
-              <label class="field-label" for="actPriority">Priorité <span class="required" aria-hidden="true">*</span></label>
+              <label class="field-label" for="actPriority">Priorité <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
               <p-select
                 inputId="actPriority"
                 formControlName="priority"
@@ -387,10 +381,10 @@ interface StatusFilterOption {
           </section>
 
           <section class="act-form-section act-form-section-secondary" aria-labelledby="act-section-plan">
-            <h3 id="act-section-plan" class="form-block-title activity-panel-section-title">Planification</h3>
+            <h3 id="act-section-plan" class="form-block-title activity-panel-section-title" i18n="@@crm.activities.planification.17624316">Planification</h3>
             <div class="form-grid-2">
               <div class="form-field">
-                <label class="field-label" for="actDue">Échéance</label>
+                <label class="field-label" for="actDue" i18n="@@crm.activities.echeance.f9a77ff6">Échéance</label>
                 <p-datepicker
                   inputId="actDue"
                   formControlName="dueDate"
@@ -402,7 +396,7 @@ interface StatusFilterOption {
                   styleClass="w-full"></p-datepicker>
               </div>
               <div class="form-field">
-                <label class="field-label" for="actRem">Rappel</label>
+                <label class="field-label" for="actRem" i18n="@@crm.activities.rappel.a1ec24e4">Rappel</label>
                 <p-datepicker
                   inputId="actRem"
                   formControlName="reminderDate"
@@ -423,9 +417,7 @@ interface StatusFilterOption {
           </div>
           <div class="activity-panel-footer">
             <div class="activity-dialog-footer-actions">
-              <app-button variant="ghost" size="sm" type="button" (click)="closeActivityPanel()" ariaLabel="Annuler">
-                Annuler
-              </app-button>
+              <app-button variant="ghost" size="sm" type="button" (click)="closeActivityPanel()" ariaLabel="Annuler" i18n="@@crm.activities.annuler.49ba3292">Annuler</app-button>
               <app-button
                 variant="primary"
                 [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"

@@ -37,9 +37,9 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
       </div>
 
       @if (loading()) {
-        <div class="state">Chargement…</div>
+        <div class="state" i18n="@@forecasting.pages.chargement.01cba1df">Chargement…</div>
       } @else if (rows().length === 0) {
-        <div class="state empty">Aucune recommandation active. Cliquez sur « Régénérer maintenant ».</div>
+        <div class="state empty" i18n="@@forecasting.pages.aucune.recommandation.active.cliquez.sur.regener.3fdfe983">Aucune recommandation active. Cliquez sur « Régénérer maintenant ».</div>
       } @else {
         <div class="cards">
           @for (p of rows(); track p.id) {
@@ -53,11 +53,11 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
 
               <div class="metrics">
                 <div>
-                  <span class="label">Remise suggérée</span>
+                  <span class="label" i18n="@@forecasting.pages.remise.suggeree.380e0d82">Remise suggérée</span>
                   <span class="value">{{ p.suggestedDiscountPercent | number:'1.0-1' }} %</span>
                 </div>
                 <div>
-                  <span class="label">Uplift attendu</span>
+                  <span class="label" i18n="@@forecasting.pages.uplift.attendu.95c98ddd">Uplift attendu</span>
                   <span class="value">+{{ p.expectedUpliftPercent | number:'1.0-1' }} %</span>
                 </div>
               </div>
@@ -72,7 +72,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
                   <button class="btn btn-primary" (click)="prepareDraft(p)">
                     <i class="pi pi-tag"></i> Préparer la remise
                   </button>
-                  <button class="btn btn-link" (click)="dismiss(p)">Écarter</button>
+                  <button class="btn btn-link" (click)="dismiss(p)" i18n="@@forecasting.pages.ecarter.0559f961">Écarter</button>
                 </footer>
               } @else {
                 <footer class="card-footer">
@@ -85,11 +85,11 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
       }
 
       <details class="simulator">
-        <summary>Simulateur d'impact promotion</summary>
+        <summary i18n="@@forecasting.pages.simulateur.d.impact.promotion.4a1648c6">Simulateur d'impact promotion</summary>
         <div class="sim-form">
           <label>
             ID produit (GUID)
-            <input type="text" [(ngModel)]="simProductId" placeholder="00000000-0000-0000-0000-000000000000" />
+            <input type="text" [(ngModel)]="simProductId" placeholder="00000000-0000-0000-0000-000000000000" i18n-placeholder="00000000-0000-0000-0000-000000000000" />
           </label>
           <label>
             Remise (%)
@@ -99,7 +99,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
             Durée (jours)
             <input type="number" min="1" max="90" [(ngModel)]="simDuration" />
           </label>
-          <button class="btn btn-secondary" (click)="simulate()" [disabled]="!simProductId">Simuler</button>
+          <button class="btn btn-secondary" (click)="simulate()" [disabled]="!simProductId" i18n="@@forecasting.pages.simuler.4c4f5484">Simuler</button>
         </div>
         @if (simResult(); as r) {
           <div class="sim-result">

@@ -64,7 +64,7 @@ interface BulkRow {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Ajouter des utilisateurs"
+      title="Ajouter des utilisateurs" i18n-title="Ajouter des utilisateurs"
       subtitle="Créez plusieurs comptes avec rôle et modules pour chacun">
       <p-button label="Retour à la liste" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings/users"></p-button>
     </app-page-header>
@@ -84,13 +84,13 @@ interface BulkRow {
       <p-table [value]="rows()" styleClass="bulk-table">
         <ng-template pTemplate="header">
           <tr>
-            <th scope="col">Prénom</th>
-            <th scope="col">Nom</th>
-            <th scope="col">Email</th>
-            <th scope="col">Mot de passe</th>
-            <th scope="col">Rôle</th>
-            <th scope="col" style="width: 12rem">Modules</th>
-            <th scope="col" class="actions-col" aria-label="Actions"></th>
+            <th scope="col" i18n="@@settings.users.prenom.e4387ade">Prénom</th>
+            <th scope="col" i18n="@@settings.users.nom.7ff20370">Nom</th>
+            <th scope="col" i18n="@@settings.users.email.84add5b2">Email</th>
+            <th scope="col" i18n="@@settings.users.mot.de.passe.94e2f3ee">Mot de passe</th>
+            <th scope="col" i18n="@@settings.users.role.8b824790">Rôle</th>
+            <th scope="col" style="width: 12rem" i18n="@@settings.users.modules.04e9462c">Modules</th>
+            <th scope="col" class="actions-col" aria-label="Actions" i18n-aria-label="Actions"></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row let-ri="rowIndex">
@@ -102,7 +102,7 @@ interface BulkRow {
                 [(ngModel)]="row.firstName"
                 [name]="'bulk-firstName-' + ri"
                 autocomplete="given-name"
-                placeholder="Prénom" />
+                placeholder="Prénom" i18n-placeholder="Prénom" />
             </td>
             <td data-label="Nom">
               <input
@@ -111,7 +111,7 @@ interface BulkRow {
                 [(ngModel)]="row.lastName"
                 [name]="'bulk-lastName-' + ri"
                 autocomplete="family-name"
-                placeholder="Nom" />
+                placeholder="Nom" i18n-placeholder="Nom" />
             </td>
             <td data-label="Email">
               <input
@@ -121,7 +121,7 @@ interface BulkRow {
                 type="email"
                 [name]="'bulk-email-' + ri"
                 autocomplete="off"
-                placeholder="nom@entreprise.fr" />
+                placeholder="nom@entreprise.fr" i18n-placeholder="nom@entreprise.fr" />
             </td>
             <td data-label="Mot de passe">
               <p-password
@@ -130,7 +130,7 @@ interface BulkRow {
                 [inputId]="'bulk-password-' + ri"
                 [feedback]="false"
                 [toggleMask]="true"
-                placeholder="Mot de passe"
+                placeholder="Mot de passe" i18n-placeholder="Mot de passe"
                 styleClass="w-full"
                 inputStyleClass="w-full bulk-password-input"></p-password>
             </td>
@@ -142,7 +142,7 @@ interface BulkRow {
                 [name]="'bulk-role-' + ri"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Rôle"
+                placeholder="Rôle" i18n-placeholder="Rôle"
                 styleClass="w-full"></p-select>
             </td>
             <td data-label="Modules">
@@ -181,16 +181,12 @@ interface BulkRow {
       [modal]="true"
       [style]="{ width: 'min(480px, 96vw)' }"
       (onHide)="onModulesDialogHide()">
-      <p class="hint">
-        Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
-        Les éléments « Extension » élargissent les accès par défaut du rôle.
-      </p>
+      <p class="hint" i18n="@@settings.users.les.acces.effectifs.elements.coches.dans.la.limi.cbdf0e2d">Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
+        Les éléments « Extension » élargissent les accès par défaut du rôle.</p>
       @if (bulkCatalogLoading()) {
-        <p class="catalog-state">Chargement du catalogue…</p>
+        <p class="catalog-state" i18n="@@settings.users.chargement.du.catalogue.2ae07afb">Chargement du catalogue…</p>
       } @else if (bulkCatalogError()) {
-        <div class="catalog-error">
-          Impossible de charger le catalogue des modules pour ce rôle. Fermez puis rouvrez la configuration pour réessayer.
-        </div>
+        <div class="catalog-error" i18n="@@settings.users.impossible.de.charger.le.catalogue.des.modules.p.b24c3ba2">Impossible de charger le catalogue des modules pour ce rôle. Fermez puis rouvrez la configuration pour réessayer.</div>
       } @else {
         <div class="module-actions">
           <p-button label="Tout activer" [text]="true" (onClick)="setAllModules(true)"></p-button>
@@ -203,7 +199,7 @@ interface BulkRow {
                 <span class="module-title">
                   {{ moduleLabel(m.module) }}
                   @if (isModuleDefaultIncluded(bulkCatalogModule(m.module))) {
-                    <span class="default-badge">Inclus par défaut</span>
+                    <span class="default-badge" i18n="@@settings.users.inclus.par.defaut.0d38cc2c">Inclus par défaut</span>
                   }
                 </span>
                 <p-inputSwitch
@@ -224,7 +220,7 @@ interface BulkRow {
                         [inputId]="'bulkFeat-' + m.module + '-' + f.key"></p-checkbox>
                       <span class="subfeature-label-text">{{ featureLabel(m.module, f.key) }}</span>
                       @if (f.isExtension) {
-                        <span class="extension-badge">Extension</span>
+                        <span class="extension-badge" i18n="@@settings.users.extension.659087d3">Extension</span>
                       }
                     </label>
                   }

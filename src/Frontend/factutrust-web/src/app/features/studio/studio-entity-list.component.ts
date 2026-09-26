@@ -32,7 +32,7 @@ import { slugifyKey } from './shared/studio-text.util';
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      title="Studio — Tables personnalisées"
+      title="Studio — Tables personnalisées" i18n-title="Studio — Tables personnalisées"
       subtitle="Créez vos propres tables sans écrire de code."
       [breadcrumbs]="breadcrumbs">
       <label studioActions class="studio-line studio-hide-junctions">
@@ -49,7 +49,7 @@ import { slugifyKey } from './shared/studio-text.util';
         } @else if (entities().length === 0) {
           <app-empty-state
             icon="pi-table"
-            title="Aucune table"
+            title="Aucune table" i18n-title="Aucune table"
             description="Créez votre première table personnalisée pour commencer."
             actionLabel="Nouvelle table"
             [showAction]="true"
@@ -58,10 +58,10 @@ import { slugifyKey } from './shared/studio-text.util';
           <p-table [value]="visibleEntities()" styleClass="p-datatable-sm" [paginator]="visibleEntities().length > 10" [rows]="10">
             <ng-template pTemplate="header">
               <tr>
-                <th>Nom</th>
-                <th>Clé</th>
-                <th class="studio-num">Champs</th>
-                <th>État</th>
+                <th i18n="@@studio.studio-entity-list.nom.7ff20370">Nom</th>
+                <th i18n="@@studio.studio-entity-list.cle.24a01bef">Clé</th>
+                <th class="studio-num" i18n="@@studio.studio-entity-list.champs.76943546">Champs</th>
+                <th i18n="@@studio.studio-entity-list.etat.d3b28a2a">État</th>
                 <th style="width: 24rem"></th>
               </tr>
             </ng-template>
@@ -97,16 +97,16 @@ import { slugifyKey } from './shared/studio-text.util';
 
     <p-dialog header="Nouvelle table" [(visible)]="createVisible" [modal]="true" [style]="{ width: '32rem' }">
       <div class="studio-form">
-        <label>Nom (singulier) *</label>
-        <input pInputText [(ngModel)]="draftName" (ngModelChange)="onNameChange($event)" placeholder="Ex. Contrat" />
-        <label>Nom (pluriel)</label>
-        <input pInputText [(ngModel)]="draftPlural" placeholder="Ex. Contrats" />
-        <label>Clé technique *</label>
-        <input pInputText [(ngModel)]="draftKey" placeholder="ex. contrat" />
-        <small class="studio-hint">Minuscules, chiffres et « _ », commence par une lettre.</small>
-        <label>Icône (FontAwesome)</label>
-        <input pInputText [(ngModel)]="draftIcon" placeholder="fa-solid fa-file-contract" />
-        <label>Description</label>
+        <label i18n="@@studio.studio-entity-list.nom.singulier.7df8eb9b">Nom (singulier) *</label>
+        <input pInputText [(ngModel)]="draftName" (ngModelChange)="onNameChange($event)" placeholder="Ex. Contrat" i18n-placeholder="Ex. Contrat" />
+        <label i18n="@@studio.studio-entity-list.nom.pluriel.8d2070c7">Nom (pluriel)</label>
+        <input pInputText [(ngModel)]="draftPlural" placeholder="Ex. Contrats" i18n-placeholder="Ex. Contrats" />
+        <label i18n="@@studio.studio-entity-list.cle.technique.46172421">Clé technique *</label>
+        <input pInputText [(ngModel)]="draftKey" placeholder="ex. contrat" i18n-placeholder="ex. contrat" />
+        <small class="studio-hint" i18n="@@studio.studio-entity-list.minuscules.chiffres.et.commence.par.une.lettre.0af1388f">Minuscules, chiffres et « _ », commence par une lettre.</small>
+        <label i18n="@@studio.studio-entity-list.icone.fontawesome.b25e133d">Icône (FontAwesome)</label>
+        <input pInputText [(ngModel)]="draftIcon" placeholder="fa-solid fa-file-contract" i18n-placeholder="fa-solid fa-file-contract" />
+        <label i18n="@@studio.studio-entity-list.description.55f8ebc8">Description</label>
         <textarea pTextarea [(ngModel)]="draftDescription" rows="2"></textarea>
       </div>
       <ng-template pTemplate="footer">

@@ -64,7 +64,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <section class="fiscal-schedule-page" [class.print-selected]="printSelectedOnly">
       <app-page-header
-        title="Echeancier fiscal"
+        title="Echeancier fiscal" i18n-title="Echeancier fiscal"
         [subtitle]="isFirmScope ? 'Vue consolidee des dossiers clients actifs du cabinet' : 'Suivi des obligations, depots, paiements et rappels fiscaux'">
         <app-fiscal-schedule-toolbar
           [canCreate]="canCreate"
@@ -85,7 +85,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <app-accounting-status-banner
         *ngIf="errorMessage"
         variant="error"
-        title="Chargement impossible"
+        title="Chargement impossible" i18n-title="Chargement impossible"
         [message]="errorMessage"
         [showRetry]="true"
         (retry)="load()" />

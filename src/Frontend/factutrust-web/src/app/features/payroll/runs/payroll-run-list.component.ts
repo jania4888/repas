@@ -35,7 +35,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
       [title]="firmInternal() ? 'Cycles de paie cabinet' : 'Cycles de paie'"
       [subtitle]="firmInternal() ? 'Paie interne du cabinet : calcul et validation.' : 'Paie mensuelle : brouillon → calcul → validation → clôture.'">
       @if (canRun() && !currentMonthExists()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="createCurrentMonth()">Nouveau cycle (mois courant)</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="createCurrentMonth()" i18n="@@payroll.runs.nouveau.cycle.mois.courant.0f512e23">Nouveau cycle (mois courant)</app-button>
       }
     </app-page-header>
 
@@ -50,7 +50,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
         (ngModelChange)="reload()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Exercice"
+        placeholder="Exercice" i18n-placeholder="Exercice"
         styleClass="w-10rem" />
     </div>
 
@@ -59,7 +59,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
         [loading]="loading()"
         [skeletonColumns]="6"
         icon="pi-calendar"
-        title="Aucun cycle de paie"
+        title="Aucun cycle de paie" i18n-title="Aucun cycle de paie"
         [description]="emptyDescription()"
         [showAction]="canRun() && !loading() && !currentMonthExists()"
         actionLabel="Créer le cycle du mois courant"
@@ -70,11 +70,11 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
       <p-table [value]="runs()" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>Période</th>
-            <th>Statut</th>
-            <th class="text-right">Bulletins</th>
-            <th class="text-right">Brut</th>
-            <th class="text-right">Net</th>
+            <th i18n="@@payroll.runs.periode.de2110b7">Période</th>
+            <th i18n="@@payroll.runs.statut.659499f3">Statut</th>
+            <th class="text-right" i18n="@@payroll.runs.bulletins.652cc5e0">Bulletins</th>
+            <th class="text-right" i18n="@@payroll.runs.brut.8fc72d21">Brut</th>
+            <th class="text-right" i18n="@@payroll.runs.net.9bb81c2e">Net</th>
             <th></th>
           </tr>
         </ng-template>
@@ -86,7 +86,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
             <td class="text-right">{{ r.totalGross | payrollAmount }}</td>
             <td class="text-right">{{ r.totalNet | payrollAmount }}</td>
             <td>
-              <app-button variant="outline" size="sm" icon="pi-external-link" iconPos="left" [routerLink]="[routeBase() + '/runs', r.id]">Ouvrir</app-button>
+              <app-button variant="outline" size="sm" icon="pi-external-link" iconPos="left" [routerLink]="[routeBase() + '/runs', r.id]" i18n="@@payroll.runs.ouvrir.42c07747">Ouvrir</app-button>
             </td>
           </tr>
         </ng-template>

@@ -44,7 +44,7 @@ const MONTH_NAMES_FR = [
     ButtonComponent
   ],
   template: `
-    <app-page-header title="Objectifs commerciaux" subtitle="Suivi mensuel par commercial" />
+    <app-page-header title="Objectifs commerciaux" i18n-title="Objectifs commerciaux" subtitle="Suivi mensuel par commercial" />
 
     <div class="card p-3 mb-3 targets-toolbar">
       <div class="toolbar-row">
@@ -62,7 +62,7 @@ const MONTH_NAMES_FR = [
           [(ngModel)]="filterMonth"
           optionLabel="label"
           optionValue="value"
-          placeholder="Mois"
+          placeholder="Mois" i18n-placeholder="Mois"
           [showClear]="true"
           inputId="tgtMonth"
           styleClass="toolbar-dropdown"
@@ -73,7 +73,7 @@ const MONTH_NAMES_FR = [
           [(ngModel)]="filterUserId"
           optionLabel="displayName"
           optionValue="id"
-          placeholder="Tous les commerciaux"
+          placeholder="Tous les commerciaux" i18n-placeholder="Tous les commerciaux"
           [showClear]="true"
           [filter]="true"
           filterBy="displayName"
@@ -81,13 +81,9 @@ const MONTH_NAMES_FR = [
           styleClass="toolbar-dropdown"
           (onChange)="load()"
           [attr.aria-label]="'Filtrer par commercial'"></p-select>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser">
-          Actualiser
-        </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser" i18n="@@crm.targets.actualiser.9d3b2a7d">Actualiser</app-button>
         @if (canManage()) {
-          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvel objectif">
-            Nouvel objectif
-          </app-button>
+          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvel objectif" i18n="@@crm.targets.nouvel.objectif.3f57fc8a">Nouvel objectif</app-button>
         }
         <app-button
           variant="outline"
@@ -96,9 +92,7 @@ const MONTH_NAMES_FR = [
           type="button"
           (click)="exportCsv()"
           [disabled]="items().length === 0"
-          ariaLabel="Exporter en CSV">
-          Export CSV
-        </app-button>
+          ariaLabel="Exporter en CSV" i18n="@@crm.targets.export.csv.5755f9ac">Export CSV</app-button>
       </div>
     </div>
 
@@ -117,14 +111,14 @@ const MONTH_NAMES_FR = [
       styleClass="p-datatable-sm targets-table">
       <ng-template pTemplate="header">
         <tr>
-          <th scope="col">Commercial</th>
-          <th scope="col">Année</th>
-          <th scope="col">Mois</th>
-          <th scope="col" class="text-right">Objectif</th>
-          <th scope="col" class="text-right">Réalisé</th>
-          <th scope="col">Progression</th>
+          <th scope="col" i18n="@@crm.targets.commercial.b48513e4">Commercial</th>
+          <th scope="col" i18n="@@crm.targets.annee.1f910d98">Année</th>
+          <th scope="col" i18n="@@crm.targets.mois.0d304bea">Mois</th>
+          <th scope="col" class="text-right" i18n="@@crm.targets.objectif.47d1c260">Objectif</th>
+          <th scope="col" class="text-right" i18n="@@crm.targets.realise.eed7fe3a">Réalisé</th>
+          <th scope="col" i18n="@@crm.targets.progression.685e2622">Progression</th>
           @if (canManage()) {
-            <th scope="col" class="col-actions">Actions</th>
+            <th scope="col" class="col-actions" i18n="@@crm.targets.actions.c3cd636a">Actions</th>
           }
         </tr>
       </ng-template>
@@ -155,7 +149,7 @@ const MONTH_NAMES_FR = [
                   [iconOnly]="true"
                   icon="pi pi-pencil"
                   ariaLabel="Modifier l’objectif"
-                  title="Modifier"
+                  title="Modifier" i18n-title="Modifier"
                   [iconAlwaysVisible]="true"
                   (click)="openEdit(t)"></app-button>
                 <app-button
@@ -164,7 +158,7 @@ const MONTH_NAMES_FR = [
                   [iconOnly]="true"
                   icon="pi pi-trash"
                   ariaLabel="Supprimer l’objectif"
-                  title="Supprimer"
+                  title="Supprimer" i18n-title="Supprimer"
                   [iconAlwaysVisible]="true"
                   (click)="confirmDelete(t)"></app-button>
               </div>
@@ -175,7 +169,7 @@ const MONTH_NAMES_FR = [
       <ng-template pTemplate="footer">
         @if (items().length > 0) {
           <tr class="targets-footer-row">
-            <td colspan="3"><strong>Totaux (liste affichée)</strong></td>
+            <td colspan="3"><strong i18n="@@crm.targets.totaux.liste.affichee.c8c8c70c">Totaux (liste affichée)</strong></td>
             <td class="text-right">
               <strong>{{ totals().target | number:'1.0-0' }} TND</strong>
             </td>
@@ -190,12 +184,10 @@ const MONTH_NAMES_FR = [
         <tr>
           <td [attr.colspan]="canManage() ? 7 : 6" class="empty-cell">
             <div class="empty-state">
-              <p class="empty-title">Aucun objectif pour ces critères</p>
-              <p class="empty-hint">Définissez un objectif de vente par commercial et par mois pour suivre la performance.</p>
+              <p class="empty-title" i18n="@@crm.targets.aucun.objectif.pour.ces.criteres.5b8e7098">Aucun objectif pour ces critères</p>
+              <p class="empty-hint" i18n="@@crm.targets.definissez.un.objectif.de.vente.par.commercial.e.9246bfad">Définissez un objectif de vente par commercial et par mois pour suivre la performance.</p>
               @if (canManage()) {
-                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer un objectif">
-                  Nouvel objectif
-                </app-button>
+                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer un objectif" i18n="@@crm.targets.nouvel.objectif.3f57fc8a">Nouvel objectif</app-button>
               }
             </div>
           </td>
@@ -227,18 +219,18 @@ const MONTH_NAMES_FR = [
               type="button"
               class="targets-panel-close"
               (click)="closeTargetsPanel()"
-              aria-label="Fermer le panneau">
+              aria-label="Fermer le panneau" i18n-aria-label="Fermer le panneau">
               <i class="pi pi-times" aria-hidden="true"></i>
             </button>
           </div>
           <div class="targets-panel-body">
-            <p id="tgt-form-desc" class="sr-only">Renseignez le montant cible pour le mois sélectionné.</p>
+            <p id="tgt-form-desc" class="sr-only" i18n="@@crm.targets.renseignez.le.montant.cible.pour.le.mois.selecti.671b6e1a">Renseignez le montant cible pour le mois sélectionné.</p>
             @if (editingTarget()) {
               <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="tgt-form">
                 <section class="tgt-form-section" aria-labelledby="tgt-section-edit">
-                  <h3 id="tgt-section-edit" class="form-block-title targets-panel-section-title">Montant</h3>
+                  <h3 id="tgt-section-edit" class="form-block-title targets-panel-section-title" i18n="@@crm.targets.montant.4adcd9fc">Montant</h3>
                   <div class="form-field">
-                    <label class="field-label" for="tgtAmountEdit">Objectif (TND) <span class="required" aria-hidden="true">*</span></label>
+                    <label class="field-label" for="tgtAmountEdit">Objectif (TND) <span class="required" aria-hidden="true" i18n="@@crm.targets.text.df58248c">*</span></label>
                     <p-inputNumber
                       inputId="tgtAmountEdit"
                       formControlName="targetAmount"
@@ -256,16 +248,16 @@ const MONTH_NAMES_FR = [
             } @else {
               <form [formGroup]="createForm" (ngSubmit)="saveCreate()" class="tgt-form">
                 <section class="tgt-form-section" aria-labelledby="tgt-section-create">
-                  <h3 id="tgt-section-create" class="form-block-title targets-panel-section-title">Définir l’objectif</h3>
+                  <h3 id="tgt-section-create" class="form-block-title targets-panel-section-title" i18n="@@crm.targets.definir.l.objectif.22a4ab78">Définir l’objectif</h3>
                   <div class="form-field">
-                    <label class="field-label" for="tgtUserCreate">Commercial <span class="required" aria-hidden="true">*</span></label>
+                    <label class="field-label" for="tgtUserCreate">Commercial <span class="required" aria-hidden="true" i18n="@@crm.targets.text.df58248c">*</span></label>
                     <p-select
                       inputId="tgtUserCreate"
                       formControlName="userId"
                       [options]="assignableUsers()"
                       optionLabel="displayName"
                       optionValue="id"
-                      placeholder="Sélectionner"
+                      placeholder="Sélectionner" i18n-placeholder="Sélectionner"
                       [filter]="true"
                       filterBy="displayName"
                       styleClass="w-full"
@@ -274,7 +266,7 @@ const MONTH_NAMES_FR = [
                   </div>
                   <div class="form-grid-2">
                     <div class="form-field">
-                      <label class="field-label" for="tgtYearCreate">Année</label>
+                      <label class="field-label" for="tgtYearCreate" i18n="@@crm.targets.annee.1f910d98">Année</label>
                       <p-select
                         inputId="tgtYearCreate"
                         formControlName="year"
@@ -286,7 +278,7 @@ const MONTH_NAMES_FR = [
                         [overlayOptions]="targetsPanelPrimeOverlayOptions"></p-select>
                     </div>
                     <div class="form-field">
-                      <label class="field-label" for="tgtMonthCreate">Mois</label>
+                      <label class="field-label" for="tgtMonthCreate" i18n="@@crm.targets.mois.0d304bea">Mois</label>
                       <p-select
                         inputId="tgtMonthCreate"
                         formControlName="month"
@@ -299,7 +291,7 @@ const MONTH_NAMES_FR = [
                     </div>
                   </div>
                   <div class="form-field">
-                    <label class="field-label" for="tgtAmountCreate">Objectif (TND) <span class="required" aria-hidden="true">*</span></label>
+                    <label class="field-label" for="tgtAmountCreate">Objectif (TND) <span class="required" aria-hidden="true" i18n="@@crm.targets.text.df58248c">*</span></label>
                     <p-inputNumber
                       inputId="tgtAmountCreate"
                       formControlName="targetAmount"
@@ -318,7 +310,7 @@ const MONTH_NAMES_FR = [
           </div>
           <div class="targets-panel-footer">
             <div class="targets-panel-footer-actions">
-              <app-button variant="ghost" size="sm" type="button" (click)="closeTargetsPanel()" ariaLabel="Annuler">Annuler</app-button>
+              <app-button variant="ghost" size="sm" type="button" (click)="closeTargetsPanel()" ariaLabel="Annuler" i18n="@@crm.targets.annuler.49ba3292">Annuler</app-button>
               @if (editingTarget()) {
                 <app-button
                   variant="primary"

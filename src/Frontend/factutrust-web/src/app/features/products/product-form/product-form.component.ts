@@ -105,23 +105,21 @@ interface VatOption {
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/products">
-        Annuler
-      </app-button>
+        routerLink="/products" i18n="@@products.product-form.annuler.49ba3292">Annuler</app-button>
     </app-page-header>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid" [class.form-grid--with-side]="hasSideSections()">
         <!-- General Information -->
-        <app-form-section class="section-identity" title="Informations générales" icon="pi-box" [number]="1">
+        <app-form-section class="section-identity" title="Informations générales" i18n-title="Informations générales" icon="pi-box" [number]="1">
           <div class="form-row form-row-3">
             <div class="form-group">
-              <label for="code">Code produit <span class="required">*</span></label>
+              <label for="code">Code produit <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="code" 
                 formControlName="code"
-                placeholder="Ex: PROD-001"
+                placeholder="Ex: PROD-001" i18n-placeholder="Ex: PROD-001"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('code')">
               @if (isInvalid('code')) {
@@ -133,12 +131,12 @@ interface VatOption {
             </div>
 
             <div class="form-group">
-              <label for="category">Type <span class="required">*</span></label>
+              <label for="category">Type <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
               <p-select 
                 id="category"
                 [options]="categoryOptions" 
                 formControlName="category"
-                placeholder="Sélectionner"
+                placeholder="Sélectionner" i18n-placeholder="Sélectionner"
                 styleClass="w-full">
               </p-select>
               @if (isInvalid('category')) {
@@ -150,22 +148,22 @@ interface VatOption {
             </div>
 
             <div class="form-group">
-              <label for="productCategoryId">Catégorie</label>
+              <label for="productCategoryId" i18n="@@products.product-form.categorie.6b38300a">Catégorie</label>
               <p-select 
                 id="productCategoryId"
                 [options]="productCategoryOptions()"
                 formControlName="productCategoryId"
-                placeholder="Sélectionner une catégorie"
+                placeholder="Sélectionner une catégorie" i18n-placeholder="Sélectionner une catégorie"
                 optionLabel="label"
                 optionValue="value"
                 styleClass="w-full">
               </p-select>
-              <small class="form-hint">Classification du produit. Par défaut: General</small>
+              <small class="form-hint" i18n="@@products.product-form.classification.du.produit.par.defaut.general.3db72c29">Classification du produit. Par défaut: General</small>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="barcode">Code-barres</label>
+            <label for="barcode" i18n="@@products.product-form.code.barres.a5ce859a">Code-barres</label>
             <div class="barcode-input-row">
               <span class="p-input-icon-left barcode-input-row__field">
                 <i class="pi pi-barcode" aria-hidden="true"></i>
@@ -173,7 +171,7 @@ interface VatOption {
                   pInputText
                   id="barcode"
                   formControlName="barcode"
-                  placeholder="Scannez ou saisissez le code-barres"
+                  placeholder="Scannez ou saisissez le code-barres" i18n-placeholder="Scannez ou saisissez le code-barres"
                   class="w-full"
                   autocomplete="off"
                   spellcheck="false">
@@ -184,18 +182,14 @@ interface VatOption {
                 iconPos="left"
                 size="sm"
                 [disabled]="generatingBarcode()"
-                (clicked)="generateBarcode()">
-                Générer un code interne
-              </app-button>
+                (clicked)="generateBarcode()" i18n="@@products.product-form.generer.un.code.interne.922844a9">Générer un code interne</app-button>
               @if (labelPrintingEnabled && isEditMode()) {
                 <app-button
                   variant="outline"
                   icon="pi-print"
                   iconPos="left"
                   size="sm"
-                  (clicked)="openLabelDialog()">
-                  Étiquettes
-                </app-button>
+                  (clicked)="openLabelDialog()" i18n="@@products.product-form.etiquettes.e26c690c">Étiquettes</app-button>
               }
             </div>
             @if (barcodeSymbologyLabel()) {
@@ -204,19 +198,17 @@ interface VatOption {
                 {{ barcodeSymbologyLabel() }}
               </small>
             } @else {
-              <small class="form-hint">
-                Distinct du code produit. Laissez vide si l'article n'en a pas.
-              </small>
+              <small class="form-hint" i18n="@@products.product-form.distinct.du.code.produit.laissez.vide.si.l.artic.983b9086">Distinct du code produit. Laissez vide si l'article n'en a pas.</small>
             }
           </div>
 
           <div class="form-group">
-            <label for="name">Désignation <span class="required">*</span></label>
+            <label for="name">Désignation <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
             <input 
               pInputText 
               id="name" 
               formControlName="name"
-              placeholder="Nom du produit ou service"
+              placeholder="Nom du produit ou service" i18n-placeholder="Nom du produit ou service"
               class="w-full"
               [class.ng-invalid]="isInvalid('name')">
             @if (isInvalid('name')) {
@@ -228,12 +220,12 @@ interface VatOption {
           </div>
 
           <div class="form-group">
-            <label for="description">Description</label>
+            <label for="description" i18n="@@products.product-form.description.55f8ebc8">Description</label>
             <textarea 
               pTextarea 
               id="description" 
               formControlName="description"
-              placeholder="Description détaillée du produit ou service..."
+              placeholder="Description détaillée du produit ou service..." i18n-placeholder="Description détaillée du produit ou service..."
               [rows]="4"
               class="w-full">
             </textarea>
@@ -242,7 +234,7 @@ interface VatOption {
           @if (showStockManagementSection()) {
             <div class="form-row">
               <div class="form-group">
-                <label for="isStockManaged">Gestion de stock</label>
+                <label for="isStockManaged" i18n="@@products.product-form.gestion.de.stock.3f196b66">Gestion de stock</label>
                 <div class="status-switch">
                   <p-inputSwitch 
                     id="isStockManaged"
@@ -254,56 +246,52 @@ interface VatOption {
                   </span>
                 </div>
                 @if (!isProductCategory()) {
-                  <small class="form-hint">Disponible uniquement pour les produits physiques.</small>
+                  <small class="form-hint" i18n="@@products.product-form.disponible.uniquement.pour.les.produits.physique.36d9ce42">Disponible uniquement pour les produits physiques.</small>
                 }
               </div>
 
               @if (isProductCategory()) {
                 <div class="form-group">
-                  <label for="preferredSupplierId">Fournisseur préféré</label>
+                  <label for="preferredSupplierId" i18n="@@products.product-form.fournisseur.prefere.7d570b74">Fournisseur préféré</label>
                   <p-select
                     id="preferredSupplierId"
                     [options]="supplierOptions()"
                     formControlName="preferredSupplierId"
-                    placeholder="Aucun (à choisir lors de la commande)"
+                    placeholder="Aucun (à choisir lors de la commande)" i18n-placeholder="Aucun (à choisir lors de la commande)"
                     optionLabel="label"
                     optionValue="value"
                     [filter]="true"
                     [showClear]="true"
                     styleClass="w-full">
                   </p-select>
-                  <small class="form-hint">
-                    Utilisé par Prévisions IA — Réapprovisionnement : les recommandations de ce produit
+                  <small class="form-hint" i18n="@@products.product-form.utilise.par.previsions.ia.reapprovisionnement.le.fa88557b">Utilisé par Prévisions IA — Réapprovisionnement : les recommandations de ce produit
                     seront pré-rattachées à ce fournisseur, ce qui permet de créer les bons de commande sans
-                    saisie manuelle.
-                  </small>
+                    saisie manuelle.</small>
                 </div>
               }
             </div>
 
             @if (isProductCategory() && form.get('isStockManaged')?.value) {
               <div class="form-group">
-                <label for="minimumStock">Stock minimum</label>
+                <label for="minimumStock" i18n="@@products.product-form.stock.minimum.8a0c24af">Stock minimum</label>
                 <p-inputNumber
                   id="minimumStock"
                   formControlName="minimumStock"
                   [min]="0"
                   [minFractionDigits]="0"
                   [maxFractionDigits]="3"
-                  placeholder="Non renseigné"
+                  placeholder="Non renseigné" i18n-placeholder="Non renseigné"
                   styleClass="w-full">
                 </p-inputNumber>
-                <small class="form-hint">
-                  Optionnel — seuil d'alerte sur l'entrepôt par défaut. Utilisé par les alertes stock
-                  et le réapprovisionnement (« Sous le stock min. configuré »).
-                </small>
+                <small class="form-hint" i18n="@@products.product-form.optionnel.seuil.d.alerte.sur.l.entrepot.par.defa.1ef85276">Optionnel — seuil d'alerte sur l'entrepôt par défaut. Utilisé par les alertes stock
+                  et le réapprovisionnement (« Sous le stock min. configuré »).</small>
               </div>
             }
           }
 
           @if (isProductCategory() && canMutateProduct()) {
             <div class="form-group product-image-group">
-              <label>Image produit</label>
+              <label i18n="@@products.product-form.image.produit.8586e902">Image produit</label>
               <div class="product-image-section">
                 <div class="product-image-preview" [class.has-image]="displayImageUrl()">
                   @if (displayImageUrl()) {
@@ -311,7 +299,7 @@ interface VatOption {
                   } @else {
                     <div class="product-image-placeholder">
                       <i class="pi pi-image"></i>
-                      <span>Ajouter une image</span>
+                      <span i18n="@@products.product-form.ajouter.une.image.762947a7">Ajouter une image</span>
                     </div>
                   }
                 </div>
@@ -323,7 +311,7 @@ interface VatOption {
                     chooseLabel="Choisir une image"
                     (onSelect)="onProductImageSelect($event)"
                     [disabled]="saving()"
-                    aria-label="Choisir une image pour le produit">
+                    aria-label="Choisir une image pour le produit" i18n-aria-label="Choisir une image pour le produit">
                   </p-fileUpload>
                   @if (displayImageUrl() || selectedImageFile()) {
                     <button
@@ -331,11 +319,9 @@ interface VatOption {
                       class="product-image-remove"
                       (click)="removeProductImage()"
                       [disabled]="saving()"
-                      aria-label="Supprimer l'image du produit">
-                      Supprimer l'image
-                    </button>
+                      aria-label="Supprimer l'image du produit" i18n-aria-label="Supprimer l'image du produit" i18n="@@products.product-form.supprimer.l.image.2042d17b">Supprimer l'image</button>
                   }
-                  <small class="form-hint">JPEG, PNG ou WebP. Max 2 Mo.</small>
+                  <small class="form-hint" i18n="@@products.product-form.jpeg.png.ou.webp.max.2.mo.c876f43c">JPEG, PNG ou WebP. Max 2 Mo.</small>
                 </div>
               </div>
             </div>
@@ -343,7 +329,7 @@ interface VatOption {
 
           @if (isEditMode() && canMutateProduct()) {
             <div class="form-group">
-              <label for="isActive">Statut</label>
+              <label for="isActive" i18n="@@products.product-form.statut.659499f3">Statut</label>
               <div class="status-switch">
                 <p-inputSwitch 
                   id="isActive"
@@ -360,9 +346,9 @@ interface VatOption {
         @if (hasSideSections()) {
           <div class="section-side">
         @if (showVariantsSection()) {
-          <app-form-section id="variantes" class="section-variants" title="Variantes" icon="pi-th-large" [number]="variantsSectionNumber()">
+          <app-form-section id="variantes" class="section-variants" title="Variantes" i18n-title="Variantes" icon="pi-th-large" [number]="variantsSectionNumber()">
             <div class="form-group">
-              <label for="isVariantTemplate">Modèle de variantes</label>
+              <label for="isVariantTemplate" i18n="@@products.product-form.modele.de.variantes.25d7b4a0">Modèle de variantes</label>
               <div class="status-switch">
                 <p-inputSwitch id="isVariantTemplate" formControlName="isVariantTemplate"></p-inputSwitch>
                 <span [class.active]="form.get('isVariantTemplate')?.value">
@@ -373,12 +359,12 @@ interface VatOption {
                   }
                 </span>
               </div>
-              <small class="form-hint">Génère des SKU enfants (taille, couleur…). Le modèle est exclu des factures, du POS et du stock.</small>
+              <small class="form-hint" i18n="@@products.product-form.genere.des.sku.enfants.taille.couleur.le.modele..2a28a372">Génère des SKU enfants (taille, couleur…). Le modèle est exclu des factures, du POS et du stock.</small>
             </div>
             @if (isEditMode() && form.get('isVariantTemplate')?.value) {
               <div class="form-group">
-                <label>Générer la matrice</label>
-                <p class="form-hint">Sélectionnez les valeurs pour chaque axe — la combinaison crée les SKU enfants.</p>
+                <label i18n="@@products.product-form.generer.la.matrice.2b13764a">Générer la matrice</label>
+                <p class="form-hint" i18n="@@products.product-form.selectionnez.les.valeurs.pour.chaque.axe.la.comb.46270d39">Sélectionnez les valeurs pour chaque axe — la combinaison crée les SKU enfants.</p>
                 @for (attr of attributes(); track attr.id) {
                   <div class="variant-axis">
                     <strong>{{ attr.name }}</strong>
@@ -398,29 +384,25 @@ interface VatOption {
                 @if (attributes().length === 0) {
                   @if (canConfigureVariantAxes()) {
                     <p class="form-hint">
-                      <a [routerLink]="variantAxesNewLink">Créer un axe de variantes</a> (ex. Taille, Couleur) avant de générer les SKU.
+                      <a [routerLink]="variantAxesNewLink" i18n="@@products.product-form.creer.un.axe.de.variantes.c66b8dfd">Créer un axe de variantes</a> (ex. Taille, Couleur) avant de générer les SKU.
                     </p>
                   } @else {
-                    <p class="form-hint">
-                      Aucun axe de variantes n'est défini. Un administrateur peut les configurer dans Paramètres → Axes de variantes.
-                    </p>
+                    <p class="form-hint" i18n="@@products.product-form.aucun.axe.de.variantes.n.est.defini.un.administr.4fdc29c8">Aucun axe de variantes n'est défini. Un administrateur peut les configurer dans Paramètres → Axes de variantes.</p>
                   }
                 }
                 @if (previewCombinationCount() > 0) {
                   <p class="form-hint">
                     Aperçu : {{ previewCombinationCount() }} combinaison(s) seront créées.
                     @if (previewCombinationCount() > 50) {
-                      <strong> Plus de 50 SKU — confirmez avant de générer.</strong>
+                      <strong i18n="@@products.product-form.plus.de.50.sku.confirmez.avant.de.generer.c2047ba3">Plus de 50 SKU — confirmez avant de générer.</strong>
                     }
                   </p>
                 }
                 <app-button type="button" variant="secondary" icon="pi-sitemap" iconPos="left"
-                            (clicked)="generateVariants()" [disabled]="generatingVariants() || !hasVariantSelection()">
-                  Générer les SKU
-                </app-button>
+                            (clicked)="generateVariants()" [disabled]="generatingVariants() || !hasVariantSelection()" i18n="@@products.product-form.generer.les.sku.6ff4e512">Générer les SKU</app-button>
               </div>
               <div class="form-group">
-                <label>SKU enfants</label>
+                <label i18n="@@products.product-form.sku.enfants.922c9ec5">SKU enfants</label>
                 <app-product-variant-matrix [parentProductId]="productId()!" />
               </div>
             }
@@ -428,20 +410,20 @@ interface VatOption {
         }
 
         @if (showTraceabilitySection()) {
-          <app-form-section class="section-trace" title="Traçabilité et valorisation" icon="pi-qrcode" [number]="traceSectionNumber()">
+          <app-form-section class="section-trace" title="Traçabilité et valorisation" i18n-title="Traçabilité et valorisation" icon="pi-qrcode" [number]="traceSectionNumber()">
             @if (!traceabilityEditable()) {
-              <p class="form-hint">Activez la gestion de stock pour configurer la traçabilité et la valorisation.</p>
+              <p class="form-hint" i18n="@@products.product-form.activez.la.gestion.de.stock.pour.configurer.la.t.bd79223f">Activez la gestion de stock pour configurer la traçabilité et la valorisation.</p>
             } @else {
               <div class="form-row">
                 <div class="form-group">
-                  <label for="trackingMode">Suivi</label>
+                  <label for="trackingMode" i18n="@@products.product-form.suivi.29293f77">Suivi</label>
                   <p-select id="trackingMode" [options]="trackingModeSelectOptions()" formControlName="trackingMode"
                             optionLabel="label" optionValue="value" optionDisabled="disabled" styleClass="w-full"></p-select>
                   <small class="form-hint">{{ trackingModeHint() }}</small>
                 </div>
                 @if (showPickingFieldForForm()) {
                   <div class="form-group">
-                    <label for="pickingPolicy">Politique de prélèvement</label>
+                    <label for="pickingPolicy" i18n="@@products.product-form.politique.de.prelevement.f7a64bad">Politique de prélèvement</label>
                     <p-select id="pickingPolicy" [options]="pickingPolicySelectOptions()" formControlName="pickingPolicy"
                               optionLabel="label" optionValue="value" optionDisabled="disabled" styleClass="w-full"></p-select>
                     <small class="form-hint">{{ pickingPolicyHint() }}</small>
@@ -450,34 +432,32 @@ interface VatOption {
               </div>
               @if (showExpiryFieldsForForm()) {
                 <div class="form-group">
-                  <label for="hasExpiryTracking">Suivi de péremption (DLUO)</label>
+                  <label for="hasExpiryTracking" i18n="@@products.product-form.suivi.de.peremption.dluo.1e67289e">Suivi de péremption (DLUO)</label>
                   <div class="status-switch">
                     <p-inputSwitch id="hasExpiryTracking" formControlName="hasExpiryTracking"></p-inputSwitch>
                     <span [class.active]="form.get('hasExpiryTracking')?.value">
                       {{ form.get('hasExpiryTracking')?.value ? 'Activé' : 'Désactivé' }}
                     </span>
                   </div>
-                  <small class="form-hint">Obligatoire pour activer FEFO.</small>
+                  <small class="form-hint" i18n="@@products.product-form.obligatoire.pour.activer.fefo.06e5bf32">Obligatoire pour activer FEFO.</small>
                 </div>
                 <div class="form-group">
-                  <label for="expiryAlertDays">Alerte DLUO (jours)</label>
+                  <label for="expiryAlertDays" i18n="@@products.product-form.alerte.dluo.jours.2a61933b">Alerte DLUO (jours)</label>
                   <p-inputNumber id="expiryAlertDays" formControlName="expiryAlertDays" [min]="0" [max]="3650" styleClass="w-full"></p-inputNumber>
                 </div>
               }
               <div class="form-group">
-                <label for="costingMethod">Méthode de valorisation</label>
+                <label for="costingMethod" i18n="@@products.product-form.methode.de.valorisation.b3c5bcf0">Méthode de valorisation</label>
                 @if (showCostingDropdown()) {
                   <p-select id="costingMethod" [options]="costingMethodSelectOptions()" formControlName="costingMethod"
                             optionLabel="label" optionValue="value" optionDisabled="disabled" styleClass="w-full"></p-select>
                 } @else {
-                  <p class="costing-readonly">CMUP</p>
+                  <p class="costing-readonly" i18n="@@products.product-form.cmup.df307ace">CMUP</p>
                 }
                 <small class="form-hint">{{ costingMethodHint() }}</small>
                 @if (isEditMode() && (form.get('costingMethod')?.value === 1 || form.get('costingMethod')?.value === 2)) {
                   <app-button type="button" variant="outline" size="sm" class="mt-2"
-                              (clicked)="createOpeningLayer()" [disabled]="saving()">
-                    Créer la couche d'ouverture FIFO/LIFO
-                  </app-button>
+                              (clicked)="createOpeningLayer()" [disabled]="saving()" i18n="@@products.product-form.creer.la.couche.d.ouverture.fifo.lifo.a2aaa6ce">Créer la couche d'ouverture FIFO/LIFO</app-button>
                 }
               </div>
             }
@@ -487,11 +467,11 @@ interface VatOption {
         }
 
         <!-- Pricing -->
-        <app-form-section class="section-pricing" title="Tarification" icon="pi-dollar" [number]="pricingSectionNumber()">
+        <app-form-section class="section-pricing" title="Tarification" i18n-title="Tarification" icon="pi-dollar" [number]="pricingSectionNumber()">
           <div class="pricing-block">
-            <h4 class="pricing-block-title">Coûts d'achat</h4>
+            <h4 class="pricing-block-title" i18n="@@products.product-form.couts.d.achat.1efe6462">Coûts d'achat</h4>
             <div class="form-group">
-              <label for="purchasePrice">Prix d'achat HT</label>
+              <label for="purchasePrice" i18n="@@products.product-form.prix.d.achat.ht.9e99d105">Prix d'achat HT</label>
               <p-inputNumber
                 id="purchasePrice"
                 formControlName="purchasePrice"
@@ -499,13 +479,11 @@ interface VatOption {
                 [minFractionDigits]="3"
                 [maxFractionDigits]="3"
                 suffix=" TND"
-                placeholder="Optionnel"
+                placeholder="Optionnel" i18n-placeholder="Optionnel"
                 styleClass="w-full"
                 (onInput)="onPricingChange('purchasePrice')">
               </p-inputNumber>
-              <small class="form-hint">
-                Prix par défaut pour les bons de commande et factures fournisseurs.
-              </small>
+              <small class="form-hint" i18n="@@products.product-form.prix.par.defaut.pour.les.bons.de.commande.et.fac.3864e612">Prix par défaut pour les bons de commande et factures fournisseurs.</small>
             </div>
 
             <div class="pricing-readonly-group">
@@ -514,7 +492,7 @@ interface VatOption {
                 Calculé automatiquement
               </p>
               <div class="form-group">
-                <label for="lastPurchasePrice">Dernier prix d'achat HT</label>
+                <label for="lastPurchasePrice" i18n="@@products.product-form.dernier.prix.d.achat.ht.ccb5059f">Dernier prix d'achat HT</label>
                 <p-inputNumber
                   id="lastPurchasePrice"
                   [ngModel]="lastPurchasePrice()"
@@ -526,7 +504,7 @@ interface VatOption {
                   [disabled]="true"
                   styleClass="w-full readonly-field">
                 </p-inputNumber>
-                <small class="form-hint">Mis à jour automatiquement à chaque réception BC.</small>
+                <small class="form-hint" i18n="@@products.product-form.mis.a.jour.automatiquement.a.chaque.reception.bc.752ca915">Mis à jour automatiquement à chaque réception BC.</small>
               </div>
 
               <div class="form-group">
@@ -542,42 +520,42 @@ interface VatOption {
                   [disabled]="true"
                   styleClass="w-full readonly-field">
                 </p-inputNumber>
-                <small class="form-hint">Calculé depuis le stock (entrepôt par défaut).</small>
+                <small class="form-hint" i18n="@@products.product-form.calcule.depuis.le.stock.entrepot.par.defaut.7fda61fe">Calculé depuis le stock (entrepôt par défaut).</small>
               </div>
             </div>
           </div>
 
           <div class="pricing-block">
-            <h4 class="pricing-block-title">Prix de vente</h4>
+            <h4 class="pricing-block-title" i18n="@@products.product-form.prix.de.vente.ccbfa99b">Prix de vente</h4>
 
-            <h5 class="pricing-subblock-title">Paramètres de vente</h5>
+            <h5 class="pricing-subblock-title" i18n="@@products.product-form.parametres.de.vente.ba205151">Paramètres de vente</h5>
             <div class="form-row form-row-pricing-params">
               <div class="form-group">
-                <label for="unit">Unité de mesure <span class="required">*</span></label>
+                <label for="unit">Unité de mesure <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-select
                   id="unit"
                   [options]="unitOptions"
                   formControlName="unit"
-                  placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="Sélectionner"
                   [editable]="true"
                   styleClass="w-full">
                 </p-select>
               </div>
 
               <div class="form-group">
-                <label for="vatRate">Taux de TVA <span class="required">*</span></label>
+                <label for="vatRate">Taux de TVA <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-select
                   id="vatRate"
                   [options]="vatOptions"
                   formControlName="vatRate"
-                  placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="Sélectionner"
                   styleClass="w-full"
                   (onChange)="onPricingChange('vatRate')">
                 </p-select>
               </div>
 
               <div class="form-group fodec-group">
-                <label for="isFodecApplicable">FODEC</label>
+                <label for="isFodecApplicable" i18n="@@products.product-form.fodec.9a029080">FODEC</label>
                 <div class="fodec-checkbox">
                   <p-checkbox
                     inputId="isFodecApplicable"
@@ -585,15 +563,15 @@ interface VatOption {
                     [binary]="true"
                     (onChange)="onPricingChange('fodec')">
                   </p-checkbox>
-                  <label for="isFodecApplicable">FODEC applicable (1%)</label>
+                  <label for="isFodecApplicable" i18n="@@products.product-form.fodec.applicable.1.01c61523">FODEC applicable (1%)</label>
                 </div>
               </div>
             </div>
 
-            <h5 class="pricing-subblock-title">Montants</h5>
+            <h5 class="pricing-subblock-title" i18n="@@products.product-form.montants.6b312baa">Montants</h5>
             <div class="form-row form-row-pricing-flow">
               <div class="form-group">
-                <label for="profitMarginPercent">Marge bénéficiaire</label>
+                <label for="profitMarginPercent" i18n="@@products.product-form.marge.beneficiaire.b7324f90">Marge bénéficiaire</label>
                 <p-inputNumber
                   id="profitMarginPercent"
                   formControlName="profitMarginPercent"
@@ -601,12 +579,12 @@ interface VatOption {
                   [minFractionDigits]="3"
                   [maxFractionDigits]="3"
                   suffix=" %"
-                  placeholder="—"
+                  placeholder="—" i18n-placeholder="—"
                   styleClass="w-full"
                   (onInput)="onPricingChange('margin')">
                 </p-inputNumber>
                 @if (!canEditMargin()) {
-                  <small class="form-hint">Renseignez un prix d'achat HT pour activer la marge.</small>
+                  <small class="form-hint" i18n="@@products.product-form.renseignez.un.prix.d.achat.ht.pour.activer.la.ma.7d2edf6e">Renseignez un prix d'achat HT pour activer la marge.</small>
                 }
               </div>
 
@@ -615,7 +593,7 @@ interface VatOption {
               </span>
 
               <div class="form-group">
-                <label for="unitPrice">Prix de vente HT <span class="required">*</span></label>
+                <label for="unitPrice">Prix de vente HT <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-inputNumber
                   id="unitPrice"
                   formControlName="unitPrice"
@@ -623,7 +601,7 @@ interface VatOption {
                   [minFractionDigits]="3"
                   [maxFractionDigits]="3"
                   suffix=" TND"
-                  placeholder="0.000"
+                  placeholder="0.000" i18n-placeholder="0.000"
                   styleClass="w-full"
                   [class.ng-invalid]="isInvalid('unitPrice')"
                   (onInput)="onPricingChange('unitPriceHt')">
@@ -641,7 +619,7 @@ interface VatOption {
               </span>
 
               <div class="form-group">
-                <label for="salePriceTtc">Prix de vente TTC <span class="required">*</span></label>
+                <label for="salePriceTtc">Prix de vente TTC <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-inputNumber
                   id="salePriceTtc"
                   formControlName="salePriceTtc"
@@ -649,21 +627,21 @@ interface VatOption {
                   [minFractionDigits]="3"
                   [maxFractionDigits]="3"
                   suffix=" TND"
-                  placeholder="0.000"
+                  placeholder="0.000" i18n-placeholder="0.000"
                   styleClass="w-full"
                   (onInput)="onPricingChange('saleTtc')">
                 </p-inputNumber>
               </div>
             </div>
 
-            <div class="price-preview" aria-label="Récapitulatif des prix">
+            <div class="price-preview" aria-label="Récapitulatif des prix" i18n-aria-label="Récapitulatif des prix">
               <div class="preview-row">
-                <span>Prix HT</span>
+                <span i18n="@@products.product-form.prix.ht.362207ca">Prix HT</span>
                 <span class="value">{{ (form.get('unitPrice')?.value ?? 0) | number:'1.3-3' }} TND</span>
               </div>
               @if (form.get('isFodecApplicable')?.value) {
                 <div class="preview-row">
-                  <span>FODEC (1%)</span>
+                  <span i18n="@@products.product-form.fodec.1.cdda0228">FODEC (1%)</span>
                   <span class="value">{{ previewFodec() | number:'1.3-3' }} TND</span>
                 </div>
               }
@@ -672,28 +650,28 @@ interface VatOption {
                 <span class="value">{{ previewVat() | number:'1.3-3' }} TND</span>
               </div>
               <div class="preview-row total">
-                <span>Prix TTC</span>
+                <span i18n="@@products.product-form.prix.ttc.c48d80e8">Prix TTC</span>
                 <span class="value">{{ (form.get('salePriceTtc')?.value ?? 0) | number:'1.3-3' }} TND</span>
               </div>
             </div>
           </div>
 
           <div class="pricing-block">
-            <h4 class="pricing-block-title">Remise produit</h4>
+            <h4 class="pricing-block-title" i18n="@@products.product-form.remise.produit.158a2250">Remise produit</h4>
             <div class="form-row">
               <div class="form-group">
-                <label for="isDiscountEnabled">Remise</label>
+                <label for="isDiscountEnabled" i18n="@@products.product-form.remise.ce12d942">Remise</label>
                 <div class="fodec-checkbox">
                   <p-checkbox
                     inputId="isDiscountEnabled"
                     formControlName="isDiscountEnabled"
                     [binary]="true">
                   </p-checkbox>
-                  <label for="isDiscountEnabled">Activer la remise</label>
+                  <label for="isDiscountEnabled" i18n="@@products.product-form.activer.la.remise.5a012642">Activer la remise</label>
                 </div>
               </div>
               <div class="form-group">
-                <label for="maxDiscountPercent">Remise maximale</label>
+                <label for="maxDiscountPercent" i18n="@@products.product-form.remise.maximale.5d83e3b6">Remise maximale</label>
                 <p-inputNumber
                   id="maxDiscountPercent"
                   formControlName="maxDiscountPercent"
@@ -701,11 +679,11 @@ interface VatOption {
                   [minFractionDigits]="1"
                   [maxFractionDigits]="1"
                   suffix=" %"
-                  placeholder="0.0"
+                  placeholder="0.0" i18n-placeholder="0.0"
                   styleClass="w-full"
                   [class.ng-invalid]="isInvalid('maxDiscountPercent')">
                 </p-inputNumber>
-                <small class="form-hint discount-hint">(Remise globale maximale : 100,0 %)</small>
+                <small class="form-hint discount-hint" i18n="@@products.product-form.remise.globale.maximale.100.0.3676411c">(Remise globale maximale : 100,0 %)</small>
               </div>
             </div>
           </div>
@@ -714,7 +692,7 @@ interface VatOption {
 
       @if (isEditMode() && productId()) {
         <div class="form-grid-full">
-          <app-form-section title="Tarifs par client" icon="pi-users" [number]="clientPricesSectionNumber()">
+          <app-form-section title="Tarifs par client" i18n-title="Tarifs par client" icon="pi-users" [number]="clientPricesSectionNumber()">
             <app-product-client-prices
               [productId]="productId()!"
               [catalogUnitPriceHT]="form.get('unitPrice')?.value ?? 0">
@@ -736,9 +714,7 @@ interface VatOption {
           variant="outline"
           icon="pi-times"
           iconPos="left"
-          routerLink="/products">
-          Annuler
-        </app-button>
+          routerLink="/products" i18n="@@products.product-form.annuler.49ba3292">Annuler</app-button>
         @if (canMutateProduct()) {
           <app-button 
             variant="primary"
@@ -1506,7 +1482,9 @@ export class ProductFormComponent implements OnInit {
       next: options => {
         this.productCategoryOptions.set(options);
         if (options.length > 0 && !this.productId()) {
-          const defaultCategory = options.find(o => o.label === 'General') ?? options[0];
+          const defaultCategory =
+            options.find(o => o.value === 'General' || String(o.value).toLowerCase() === 'general') ??
+            options[0];
           this.form.patchValue({ productCategoryId: defaultCategory.value });
         }
       },

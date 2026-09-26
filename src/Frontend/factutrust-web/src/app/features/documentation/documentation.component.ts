@@ -13,13 +13,13 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Documentation"
+      title="Documentation" i18n-title="Documentation"
       subtitle="Guide utilisateur pour découvrir et maîtriser InstaFact">
     </app-page-header>
 
     <div class="doc-intro">
       <p>
-        Ce guide est conçu pour les <strong>utilisateurs novices</strong> et les personnes non-informaticiennes.
+        Ce guide est conçu pour les <strong i18n="@@documentation.documentation.utilisateurs.novices.4eb3b140">utilisateurs novices</strong> et les personnes non-informaticiennes.
         Chaque action est expliquée simplement, avec des captures d'écran pour vous guider.
       </p>
     </div>

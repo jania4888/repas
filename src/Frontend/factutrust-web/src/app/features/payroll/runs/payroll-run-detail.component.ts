@@ -51,23 +51,23 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
     @if (run()) {
       <app-page-header [title]="run()!.label" [subtitle]="run()!.statusDisplay">
         @if (canRun() && (run()!.status === 'Draft' || run()!.status === 'Calculated')) {
-          <app-button variant="primary" icon="pi-calculator" iconPos="left" [disabled]="actionInProgress()" (click)="calculate()">Calculer</app-button>
+          <app-button variant="primary" icon="pi-calculator" iconPos="left" [disabled]="actionInProgress()" (click)="calculate()" i18n="@@payroll.runs.calculer.29705857">Calculer</app-button>
         }
         @if (canValidate() && run()!.status === 'Calculated') {
-          <app-button variant="primary" icon="pi-check" iconPos="left" [disabled]="actionInProgress()" (click)="validate()">Valider</app-button>
+          <app-button variant="primary" icon="pi-check" iconPos="left" [disabled]="actionInProgress()" (click)="validate()" i18n="@@payroll.runs.valider.be4220f7">Valider</app-button>
         }
         @if (canValidate() && run()!.status === 'Validated') {
-          <app-button variant="outline" icon="pi-replay" iconPos="left" [disabled]="actionInProgress()" (click)="reopen()">Rouvrir</app-button>
-          <app-button variant="primary" icon="pi-lock" iconPos="left" [disabled]="actionInProgress()" (click)="close()">Clôturer</app-button>
+          <app-button variant="outline" icon="pi-replay" iconPos="left" [disabled]="actionInProgress()" (click)="reopen()" i18n="@@payroll.runs.rouvrir.18f717af">Rouvrir</app-button>
+          <app-button variant="primary" icon="pi-lock" iconPos="left" [disabled]="actionInProgress()" (click)="close()" i18n="@@payroll.runs.cloturer.e9f075c1">Clôturer</app-button>
         }
         @if (showBankTransferExport()) {
-          <app-button variant="outline" icon="pi-building-columns" iconPos="left" [disabled]="actionInProgress()" (click)="openBankTransfer()">Export virement</app-button>
+          <app-button variant="outline" icon="pi-building-columns" iconPos="left" [disabled]="actionInProgress()" (click)="openBankTransfer()" i18n="@@payroll.runs.export.virement.0cf7f14c">Export virement</app-button>
         }
         @if (showRecordPayment()) {
-          <app-button variant="primary" icon="pi-wallet" iconPos="left" [disabled]="actionInProgress()" (click)="recordPaymentVisible.set(true)">Régler la paie</app-button>
+          <app-button variant="primary" icon="pi-wallet" iconPos="left" [disabled]="actionInProgress()" (click)="recordPaymentVisible.set(true)" i18n="@@payroll.runs.regler.la.paie.5ab3e218">Régler la paie</app-button>
         }
         @if (showCancelAllPayments()) {
-          <app-button variant="outline" icon="pi-times" iconPos="left" [disabled]="actionInProgress()" (click)="cancelAllPayments()">Annuler tous les paiements</app-button>
+          <app-button variant="outline" icon="pi-times" iconPos="left" [disabled]="actionInProgress()" (click)="cancelAllPayments()" i18n="@@payroll.runs.annuler.tous.les.paiements.7fdf7565">Annuler tous les paiements</app-button>
         }
       </app-page-header>
 
@@ -77,19 +77,19 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
 
       @if (run()!.status === 'Validated' || run()!.status === 'Closed') {
         <div class="mb-4">
-          <div class="treasury-banner" role="region" aria-label="État de trésorerie de la paie">
+          <div class="treasury-banner" role="region" aria-label="État de trésorerie de la paie" i18n-aria-label="État de trésorerie de la paie">
             <div class="treasury-banner__item">
-              <span class="treasury-banner__label">Trésorerie</span>
+              <span class="treasury-banner__label" i18n="@@payroll.runs.tresorerie.e0e75da7">Trésorerie</span>
               <strong [class]="'treasury-banner__value ' + treasuryStatusClass()">
                 {{ run()!.paymentStatusDisplay ?? 'Non payé' }}
               </strong>
             </div>
             <div class="treasury-banner__item">
-              <span class="treasury-banner__label">Payé</span>
+              <span class="treasury-banner__label" i18n="@@payroll.runs.paye.fa02fd68">Payé</span>
               <strong class="treasury-banner__value">{{ (run()!.totalPaid ?? 0) | payrollAmount }}</strong>
             </div>
             <div class="treasury-banner__item">
-              <span class="treasury-banner__label">Reste</span>
+              <span class="treasury-banner__label" i18n="@@payroll.runs.reste.68135bb8">Reste</span>
               <strong class="treasury-banner__value">{{ (run()!.remainingToPay ?? run()!.totalNet) | payrollAmount }}</strong>
             </div>
           </div>
@@ -127,15 +127,15 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
           [readOnly]="!canRun()" />
       }
 
-      <app-payroll-section title="Bulletins de paie" icon="pi-file">
+      <app-payroll-section title="Bulletins de paie" i18n-title="Bulletins de paie" icon="pi-file">
         <div class="payroll-table-scroll">
         <p-table [value]="run()!.payslips" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Salarié</th>
-              <th class="text-right">Brut</th>
-              <th class="text-right">Net</th>
-              <th>Statut paiement</th>
+              <th i18n="@@payroll.runs.salarie.27f97915">Salarié</th>
+              <th class="text-right" i18n="@@payroll.runs.brut.8fc72d21">Brut</th>
+              <th class="text-right" i18n="@@payroll.runs.net.9bb81c2e">Net</th>
+              <th i18n="@@payroll.runs.statut.paiement.3b17f23f">Statut paiement</th>
               <th></th>
             </tr>
           </ng-template>
@@ -150,13 +150,13 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
                 }
               </td>
               <td class="actions">
-                <app-button variant="ghost" size="sm" (click)="showPayslip(p.id)">Détail</app-button>
-                <app-button variant="ghost" size="sm" (click)="downloadPdf(p.id)">PDF</app-button>
+                <app-button variant="ghost" size="sm" (click)="showPayslip(p.id)" i18n="@@payroll.runs.detail.7ce06afc">Détail</app-button>
+                <app-button variant="ghost" size="sm" (click)="downloadPdf(p.id)" i18n="@@payroll.runs.pdf.d613d88c">PDF</app-button>
               </td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
-            <tr><td colspan="5">Aucun bulletin — lancez le calcul.</td></tr>
+            <tr><td colspan="5" i18n="@@payroll.runs.aucun.bulletin.lancez.le.calcul.a6c22606">Aucun bulletin — lancez le calcul.</td></tr>
           </ng-template>
         </p-table>
         </div>
@@ -184,7 +184,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
         </div>
         @if ((selectedPayslip()!.prorataDeductionAmount ?? 0) > 0) {
           <div class="prorata-summary mb-3">
-            <strong>Prorata du mois</strong>
+            <strong i18n="@@payroll.runs.prorata.du.mois.b192ed38">Prorata du mois</strong>
             <div class="prorata-grid">
               <span>Jours travaillés : {{ selectedPayslip()!.prorataWorkedDays }}</span>
               <span>Jours non travaillés : {{ selectedPayslip()!.prorataNonWorkedDays }}</span>
@@ -195,10 +195,10 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
         <p-table [value]="selectedPayslip()!.lines" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Libellé</th>
-              <th class="text-right">Base</th>
-              <th class="text-right">Taux</th>
-              <th class="text-right">Montant</th>
+              <th i18n="@@payroll.runs.libelle.f5485bba">Libellé</th>
+              <th class="text-right" i18n="@@payroll.runs.base.077fe9c5">Base</th>
+              <th class="text-right" i18n="@@payroll.runs.taux.18bc95b8">Taux</th>
+              <th class="text-right" i18n="@@payroll.runs.montant.4adcd9fc">Montant</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-line>
@@ -215,7 +215,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
         </div>
       }
       <ng-template pTemplate="footer">
-        <app-button variant="outline" (click)="payslipDialogVisible = false">Fermer</app-button>
+        <app-button variant="outline" (click)="payslipDialogVisible = false" i18n="@@payroll.runs.fermer.5ab4ec64">Fermer</app-button>
       </ng-template>
     </p-dialog>
 

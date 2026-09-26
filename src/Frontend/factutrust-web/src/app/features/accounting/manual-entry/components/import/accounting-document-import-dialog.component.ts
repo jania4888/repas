@@ -79,21 +79,17 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
               }
             </p>
             <app-button variant="secondary" icon="pi-times" iconPos="left"
-                        (click)="cancelImport()" ariaLabel="Annuler l'analyse">
-              Annuler
-            </app-button>
+                        (click)="cancelImport()" ariaLabel="Annuler l'analyse" i18n="@@accounting.manual-entry.annuler.49ba3292">Annuler</app-button>
           </div>
         }
 
         @case ('error') {
           <div class="adi-state" role="alert">
             <i class="pi pi-exclamation-triangle adi-icon adi-icon-error" aria-hidden="true"></i>
-            <p class="adi-title">L'analyse a échoué</p>
+            <p class="adi-title" i18n="@@accounting.manual-entry.l.analyse.a.echoue.14b05060">L'analyse a échoué</p>
             <p class="adi-text">{{ errorMessage() }}</p>
             <app-button variant="primary" icon="pi-refresh" iconPos="left"
-                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier">
-              Réessayer
-            </app-button>
+                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n="@@accounting.manual-entry.reessayer.895d416b">Réessayer</app-button>
           </div>
         }
 
@@ -103,20 +99,20 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
               <!-- Sens de la pièce -->
               <section class="adi-card">
                 <header class="adi-card__header">
-                  <h3 class="adi-card__title">Sens de la pièce</h3>
+                  <h3 class="adi-card__title" i18n="@@accounting.manual-entry.sens.de.la.piece.cbc2df59">Sens de la pièce</h3>
                   @if (p.directionReason) {
                     <span class="adi-card__hint">{{ p.directionReason }}</span>
                   }
                 </header>
-                <div class="adi-direction" role="radiogroup" aria-label="Sens de la pièce">
+                <div class="adi-direction" role="radiogroup" aria-label="Sens de la pièce" i18n-aria-label="Sens de la pièce">
                   <label class="adi-direction__option" [class.is-active]="p.direction === 'SALE'">
                     <input type="radio" name="adi-direction" value="SALE"
                            [checked]="p.direction === 'SALE'"
                            [disabled]="reanalyzing()"
                            (change)="changeDirection('SALE')" />
                     <span>
-                      <strong>Vente</strong>
-                      <small>Journal JV — client au débit</small>
+                      <strong i18n="@@accounting.manual-entry.vente.9e7753e0">Vente</strong>
+                      <small i18n="@@accounting.manual-entry.journal.jv.client.au.debit.c896c4b0">Journal JV — client au débit</small>
                     </span>
                   </label>
                   <label class="adi-direction__option" [class.is-active]="p.direction === 'PURCHASE'">
@@ -125,8 +121,8 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                            [disabled]="reanalyzing()"
                            (change)="changeDirection('PURCHASE')" />
                     <span>
-                      <strong>Achat</strong>
-                      <small>Journal JA — fournisseur au crédit</small>
+                      <strong i18n="@@accounting.manual-entry.achat.2faf08bf">Achat</strong>
+                      <small i18n="@@accounting.manual-entry.journal.ja.fournisseur.au.credit.481d88ab">Journal JA — fournisseur au crédit</small>
                     </span>
                   </label>
                   @if (reanalyzing()) {
@@ -149,9 +145,9 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                   </h3>
                   @if (p.thirdParty; as tp) {
                     <dl class="adi-facts">
-                      <div><dt>Nom</dt><dd>{{ tp.matchedName || tp.name || '—' }}</dd></div>
-                      <div><dt>Matricule fiscal</dt><dd>{{ tp.nif || '—' }}</dd></div>
-                      <div><dt>Compte collectif</dt><dd><code>{{ tp.collectiveAccountNumber }}</code></dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.nom.7ff20370">Nom</dt><dd>{{ tp.matchedName || tp.name || '—' }}</dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.matricule.fiscal.304096c4">Matricule fiscal</dt><dd>{{ tp.nif || '—' }}</dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.compte.collectif.f1c7e97c">Compte collectif</dt><dd><code>{{ tp.collectiveAccountNumber }}</code></dd></div>
                     </dl>
                     @if (tp.matchedId) {
                       <p class="adi-badge adi-badge--ok">
@@ -172,11 +168,11 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
 
                 <!-- Zones détectées -->
                 <section class="adi-card">
-                  <h3 class="adi-card__title">Zones détectées</h3>
+                  <h3 class="adi-card__title" i18n="@@accounting.manual-entry.zones.detectees.b69dd9e4">Zones détectées</h3>
                   <dl class="adi-facts">
-                    <div><dt>N° de pièce</dt><dd>{{ p.extraction.documentNumber || '—' }}</dd></div>
-                    <div><dt>Date</dt><dd>{{ p.entryDate || '—' }}</dd></div>
-                    <div><dt>Total HT</dt><dd>{{ amount(p.extraction.totalHt) }}</dd></div>
+                    <div><dt i18n="@@accounting.manual-entry.n.de.piece.a63c611f">N° de pièce</dt><dd>{{ p.extraction.documentNumber || '—' }}</dd></div>
+                    <div><dt i18n="@@accounting.manual-entry.date.eb9a4bc1">Date</dt><dd>{{ p.entryDate || '—' }}</dd></div>
+                    <div><dt i18n="@@accounting.manual-entry.total.ht.2ca17ae6">Total HT</dt><dd>{{ amount(p.extraction.totalHt) }}</dd></div>
                     @for (b of p.extraction.vatBreakdown; track b.ratePercent) {
                       <div>
                         <dt>TVA {{ b.ratePercent }}%</dt>
@@ -184,13 +180,13 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                       </div>
                     }
                     @if (p.extraction.fodecAmount) {
-                      <div><dt>FODEC</dt><dd>{{ amount(p.extraction.fodecAmount) }}</dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.fodec.9a029080">FODEC</dt><dd>{{ amount(p.extraction.fodecAmount) }}</dd></div>
                     }
                     @if (p.extraction.fiscalStampAmount) {
-                      <div><dt>Timbre fiscal</dt><dd>{{ amount(p.extraction.fiscalStampAmount) }}</dd></div>
+                      <div><dt i18n="@@accounting.manual-entry.timbre.fiscal.1f8f7dd1">Timbre fiscal</dt><dd>{{ amount(p.extraction.fiscalStampAmount) }}</dd></div>
                     }
                     <div class="adi-facts__total">
-                      <dt>Total TTC</dt><dd>{{ amount(p.extraction.totalTtc) }}</dd>
+                      <dt i18n="@@accounting.manual-entry.total.ttc.9e80ff7c">Total TTC</dt><dd>{{ amount(p.extraction.totalTtc) }}</dd>
                     </div>
                   </dl>
                 </section>
@@ -207,7 +203,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
               <!-- Diagnostics -->
               @if (displayDiagnostics().length > 0) {
                 <section class="adi-card">
-                  <h3 class="adi-card__title">Contrôles</h3>
+                  <h3 class="adi-card__title" i18n="@@accounting.manual-entry.controles.3d337f2f">Contrôles</h3>
                   <ul class="adi-diagnostics">
                     @for (d of displayDiagnostics(); track $index) {
                       <li class="adi-diagnostic" [class]="'adi-diagnostic--' + d.severity">
@@ -219,9 +215,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                     }
                   </ul>
                   @if (!canApplyNow() && !reanalyzing()) {
-                    <p class="adi-apply-hint" role="status">
-                      Corrigez les contrôles bloquants ou équilibrez l'écriture avant d'appliquer.
-                    </p>
+                    <p class="adi-apply-hint" role="status" i18n="@@accounting.manual-entry.corrigez.les.controles.bloquants.ou.equilibrez.l.df86b9f6">Corrigez les contrôles bloquants ou équilibrez l'écriture avant d'appliquer.</p>
                   }
                 </section>
               }
@@ -232,17 +226,13 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
         @default {
           <div class="adi-state">
             <i class="pi pi-file-import adi-icon adi-icon-idle" aria-hidden="true"></i>
-            <p class="adi-title">Importez une facture à comptabiliser</p>
-            <p class="adi-text">
-              Facture de vente ou d'achat (PDF recommandé ; photos et scans acceptés).
+            <p class="adi-title" i18n="@@accounting.manual-entry.importez.une.facture.a.comptabiliser.d03c8692">Importez une facture à comptabiliser</p>
+            <p class="adi-text" i18n="@@accounting.manual-entry.facture.de.vente.ou.d.achat.pdf.recommande.photo.6ef07041">Facture de vente ou d'achat (PDF recommandé ; photos et scans acceptés).
               Le système détecte les zones de la pièce et propose l'écriture selon le plan
-              comptable tunisien. Vous relisez avant d'appliquer.
-            </p>
+              comptable tunisien. Vous relisez avant d'appliquer.</p>
             <app-button variant="primary" icon="pi-upload" iconPos="left"
-                        (click)="chooseFile()" ariaLabel="Choisir un fichier à importer">
-              Choisir un fichier
-            </app-button>
-            <p class="adi-hint">Taille maximale : 10 Mo</p>
+                        (click)="chooseFile()" ariaLabel="Choisir un fichier à importer" i18n="@@accounting.manual-entry.choisir.un.fichier.75c27e25">Choisir un fichier</app-button>
+            <p class="adi-hint" i18n="@@accounting.manual-entry.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
             @if (capabilityHint(); as hint) {
               <p class="adi-hint adi-hint-warn" role="status">{{ hint }}</p>
             }
@@ -253,15 +243,11 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
       <ng-template pTemplate="footer">
         @if (phase() === 'review') {
           <div class="adi-footer">
-            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce">
-              Autre pièce
-            </app-button>
+            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce" i18n="@@accounting.manual-entry.autre.piece.de18e3bf">Autre pièce</app-button>
             <app-button variant="primary" icon="pi-check" iconPos="left"
                         [disabled]="!canApplyNow()"
                         (click)="apply()"
-                        ariaLabel="Appliquer la proposition à la saisie">
-              Appliquer à la saisie
-            </app-button>
+                        ariaLabel="Appliquer la proposition à la saisie" i18n="@@accounting.manual-entry.appliquer.a.la.saisie.1da9e067">Appliquer à la saisie</app-button>
           </div>
         }
       </ng-template>

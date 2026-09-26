@@ -94,9 +94,9 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
         <div class="pos-session-gate">
           <div class="pos-session-gate__box">
             <i class="pi pi-lock"></i>
-            <h2>Ouvrir la caisse</h2>
-            <p>Une session de caisse doit être ouverte pour vendre.</p>
-            <button type="button" class="pos-idle-btn" (click)="openRegisterModal()">Ouvrir la caisse</button>
+            <h2 i18n="@@pos.pos.ouvrir.la.caisse.7e98a335">Ouvrir la caisse</h2>
+            <p i18n="@@pos.pos.une.session.de.caisse.doit.etre.ouverte.pour.ven.c03daecb">Une session de caisse doit être ouverte pour vendre.</p>
+            <button type="button" class="pos-idle-btn" (click)="openRegisterModal()" i18n="@@pos.pos.ouvrir.la.caisse.7e98a335">Ouvrir la caisse</button>
           </div>
         </div>
       }
@@ -145,7 +145,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
               <i class="pi pi-check-circle"></i>
             </div>
             <div class="pos-toast__text">
-              <span class="pos-toast__title">Facture creee avec succes</span>
+              <span class="pos-toast__title" i18n="@@pos.pos.facture.creee.avec.succes.af22457e">Facture creee avec succes</span>
               <span class="pos-toast__subtitle">{{ successMessage }}</span>
             </div>
           </div>
@@ -157,19 +157,19 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
         <div class="pos-idle-overlay">
           <div class="pos-idle-box">
             <i class="pi pi-lock"></i>
-            <h2>Session verrouillee</h2>
+            <h2 i18n="@@pos.pos.session.verrouillee.f1549c06">Session verrouillee</h2>
             <p>Inactivite de {{ idleService.idleMinutes() }} min. Saisissez votre mot de passe pour reprendre.</p>
             <input
               type="password"
               [(ngModel)]="idleUnlockPassword"
               (keydown.enter)="unlockIdle()"
-              placeholder="Mot de passe"
+              placeholder="Mot de passe" i18n-placeholder="Mot de passe"
               class="pos-idle-input"
-              aria-label="Mot de passe" />
+              aria-label="Mot de passe" i18n-aria-label="Mot de passe" />
             @if (idleUnlockError) {
               <p class="pos-idle-error">{{ idleUnlockError }}</p>
             }
-            <button type="button" class="pos-idle-btn" (click)="unlockIdle()">Reprendre</button>
+            <button type="button" class="pos-idle-btn" (click)="unlockIdle()" i18n="@@pos.pos.reprendre.1c56710b">Reprendre</button>
           </div>
         </div>
       }
@@ -177,11 +177,11 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (showRestoreDraftModal) {
         <div class="pos-modal-overlay" (click)="showRestoreDraftModal = false">
           <div class="pos-modal pos-modal--draft" (click)="$event.stopPropagation()">
-            <h3>Reprendre la commande ?</h3>
-            <p>Une commande enregistree localement a ete trouvee. Voulez-vous la reprendre ?</p>
+            <h3 i18n="@@pos.pos.reprendre.la.commande.7c6faab9">Reprendre la commande ?</h3>
+            <p i18n="@@pos.pos.une.commande.enregistree.localement.a.ete.trouve.4cad41c4">Une commande enregistree localement a ete trouvee. Voulez-vous la reprendre ?</p>
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="restoreDraft()">Reprendre</button>
-              <button type="button" class="pos-modal-btn" (click)="dismissDraft(); showRestoreDraftModal = false">Nouvelle commande</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="restoreDraft()" i18n="@@pos.pos.reprendre.1c56710b">Reprendre</button>
+              <button type="button" class="pos-modal-btn" (click)="dismissDraft(); showRestoreDraftModal = false" i18n="@@pos.pos.nouvelle.commande.061f365b">Nouvelle commande</button>
             </div>
           </div>
         </div>
@@ -190,11 +190,11 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (showRestoreCloudModal) {
         <div class="pos-modal-overlay" (click)="showRestoreCloudModal = false">
           <div class="pos-modal pos-modal--cloud" (click)="$event.stopPropagation()">
-            <h3>Reprendre sur cet appareil ?</h3>
-            <p>Une commande enregistree sur un autre poste est disponible.</p>
+            <h3 i18n="@@pos.pos.reprendre.sur.cet.appareil.dfabe137">Reprendre sur cet appareil ?</h3>
+            <p i18n="@@pos.pos.une.commande.enregistree.sur.un.autre.poste.est..72a3665a">Une commande enregistree sur un autre poste est disponible.</p>
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="restoreCloudSession()">Reprendre</button>
-              <button type="button" class="pos-modal-btn" (click)="dismissCloudSession(); showRestoreCloudModal = false">Ignorer</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="restoreCloudSession()" i18n="@@pos.pos.reprendre.1c56710b">Reprendre</button>
+              <button type="button" class="pos-modal-btn" (click)="dismissCloudSession(); showRestoreCloudModal = false" i18n="@@pos.pos.ignorer.b0d64e49">Ignorer</button>
             </div>
           </div>
         </div>
@@ -203,21 +203,21 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (showOpenSessionModal) {
         <div class="pos-modal-overlay" (click)="showOpenSessionModal = false">
           <div class="pos-modal" (click)="$event.stopPropagation()">
-            <h3>Ouvrir la caisse</h3>
-            <p>Saisissez le fond de caisse déclaré (espèces). Ce montant n'écrit pas d'opération de trésorerie.</p>
+            <h3 i18n="@@pos.pos.ouvrir.la.caisse.7e98a335">Ouvrir la caisse</h3>
+            <p i18n="@@pos.pos.saisissez.le.fond.de.caisse.declare.especes.ce.m.c250b8be">Saisissez le fond de caisse déclaré (espèces). Ce montant n'écrit pas d'opération de trésorerie.</p>
             @if (availableRegisters.length > 1) {
-              <label class="pos-modal-label" for="pos-register-select">Caisse</label>
+              <label class="pos-modal-label" for="pos-register-select" i18n="@@pos.pos.caisse.ce5a5c98">Caisse</label>
               <select id="pos-register-select" class="pos-idle-input" [(ngModel)]="selectedRegisterIdForOpen">
                 @for (reg of availableRegisters; track reg.id) {
                   <option [value]="reg.id">{{ reg.code }} — {{ reg.name }}{{ reg.isDefault ? ' (défaut)' : '' }}</option>
                 }
               </select>
             }
-            <label class="pos-modal-label" for="pos-opening-float">Fond de caisse (TND)</label>
+            <label class="pos-modal-label" for="pos-opening-float" i18n="@@pos.pos.fond.de.caisse.tnd.987425b1">Fond de caisse (TND)</label>
             <input id="pos-opening-float" type="number" min="0" step="0.001" class="pos-idle-input" [(ngModel)]="openingFloatInput" />
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="confirmOpenSession()">Ouvrir</button>
-              <button type="button" class="pos-modal-btn" (click)="showOpenSessionModal = false">Annuler</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="confirmOpenSession()" i18n="@@pos.pos.ouvrir.42c07747">Ouvrir</button>
+              <button type="button" class="pos-modal-btn" (click)="showOpenSessionModal = false" i18n="@@pos.pos.annuler.49ba3292">Annuler</button>
             </div>
           </div>
         </div>
@@ -226,14 +226,14 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (showCloseZModal) {
         <div class="pos-modal-overlay" (click)="showCloseZModal = false">
           <div class="pos-modal pos-modal--wide" (click)="$event.stopPropagation()">
-            <h3>Clôture Z</h3>
+            <h3 i18n="@@pos.pos.cloture.z.e93fcfd6">Clôture Z</h3>
             @if (closePreview) {
               <p>Théorique espèces : <strong>{{ formatSessionAmount(closePreview.expectedCash) }} TND</strong></p>
               @if (closePreview.heldTicketCount > 0) {
                 <p>Attention : {{ closePreview.heldTicketCount }} ticket(s) encore en attente. Ils ne bloquent pas la clôture.</p>
               }
             }
-            <label class="pos-modal-label" for="pos-counted-cash">Comptage espèces (TND)</label>
+            <label class="pos-modal-label" for="pos-counted-cash" i18n="@@pos.pos.comptage.especes.tnd.9cc856ec">Comptage espèces (TND)</label>
             <input id="pos-counted-cash" type="number" min="0" step="0.001" class="pos-idle-input" [(ngModel)]="countedCashInput" />
             @if (closePreview) {
               <p [class.pos-variance-zero]="closeVariance() === 0" [class.pos-variance-nonzero]="closeVariance() !== 0">
@@ -241,8 +241,8 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
               </p>
             }
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="confirmCloseZ()">Clôturer</button>
-              <button type="button" class="pos-modal-btn" (click)="showCloseZModal = false">Annuler</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="confirmCloseZ()" i18n="@@pos.pos.cloturer.e9f075c1">Clôturer</button>
+              <button type="button" class="pos-modal-btn" (click)="showCloseZModal = false" i18n="@@pos.pos.annuler.49ba3292">Annuler</button>
             </div>
           </div>
         </div>
@@ -264,8 +264,8 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
               }
             </ul>
             <div class="pos-modal-actions">
-              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="printSessionReport()">Imprimer</button>
-              <button type="button" class="pos-modal-btn" (click)="sessionReport = null">Fermer</button>
+              <button type="button" class="pos-modal-btn pos-modal-btn--primary" (click)="printSessionReport()" i18n="@@pos.pos.imprimer.5382c09d">Imprimer</button>
+              <button type="button" class="pos-modal-btn" (click)="sessionReport = null" i18n="@@pos.pos.fermer.5ab4ec64">Fermer</button>
             </div>
           </div>
         </div>
