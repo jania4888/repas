@@ -42,6 +42,14 @@ steps:
     workingDirectory: src/Frontend/factutrust-web
     displayName: Install Playwright Chromium
 
+  - script: npm run test:erp-i18n
+    workingDirectory: src/Frontend/factutrust-web
+    displayName: ERP i18n guards (copy + CSS)
+
+  - script: npm run i18n:codemod:test && npm run i18n:build && npm run i18n:check
+    workingDirectory: src/Frontend/factutrust-web
+    displayName: ERP i18n runtime JSON (compile + check)
+
   - script: npx playwright test --project=chromium
     workingDirectory: src/Frontend/factutrust-web
     displayName: Run Playwright tests
