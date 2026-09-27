@@ -169,7 +169,7 @@ export class InventoryListComponent implements OnInit, OnDestroy {
           this.inventories.set(response.data.items ?? []);
           this.totalRecords.set(response.data.totalCount ?? 0);
         } else {
-          const errorMsg = (response as { error?: string }).error || 'Impossible de charger les inventaires';
+          const errorMsg = (response as { error?: string }).error || $localize`:@@inventory.inventory-list.ts.impossible.de.charger.les.inventaires.52cb63bd:Impossible de charger les inventaires`;
           this.errorMessage.set(errorMsg);
           this.showErrorToast(errorMsg);
         }
@@ -181,7 +181,7 @@ export class InventoryListComponent implements OnInit, OnDestroy {
         this.loading.set(false);
         this.initialLoad.set(false);
         this.isLoadingInProgress = false;
-        const errorMsg = this.errorHandler.extractErrorMessage(error) || 'Impossible de charger les inventaires';
+        const errorMsg = this.errorHandler.extractErrorMessage(error) || $localize`:@@inventory.inventory-list.ts.impossible.de.charger.les.inventaires.52cb63bd:Impossible de charger les inventaires`;
         this.errorMessage.set(errorMsg);
         this.showErrorToast(errorMsg);
       }

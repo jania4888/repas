@@ -20,7 +20,7 @@ interface FiscalParametersApiResponse {
 const MIN_FISCAL_YEAR = 2000;
 const MAX_FISCAL_YEAR = 2100;
 const UNSAVED_CHANGES_MESSAGE =
-  'Des modifications non enregistrées seront perdues. Continuer ?';
+  $localize`:@@accounting.fiscal-parameters.ts.des.modifications.non.enregistrees.seron.a18f027c:Des modifications non enregistrées seront perdues. Continuer ?`;
 
 /**
  * Paramétrage fiscal par exercice : taux IS, minimum d'impôt, CSS, acomptes, report des déficits et
@@ -271,26 +271,26 @@ export class FiscalParametersComponent implements OnInit {
     try {
       parsed = JSON.parse(raw);
     } catch {
-      return 'Barème IRPP : JSON invalide.';
+      return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.json.invalide.e3da66c9:Barème IRPP : JSON invalide.`;
     }
     if (!Array.isArray(parsed) || parsed.length === 0) {
-      return 'Barème IRPP : un tableau non vide de tranches est requis.';
+      return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.un.tableau.non.vide.de.tranc.178edcd9:Barème IRPP : un tableau non vide de tranches est requis.`;
     }
     let previousLower = -1;
     for (const entry of parsed) {
       if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
-        return 'Barème IRPP : chaque tranche doit être un objet { lower, rate }.';
+        return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.chaque.tranche.doit.etre.un.38076dfc:Barème IRPP : chaque tranche doit être un objet { lower, rate }.`;
       }
       const lower = (entry as Record<string, unknown>)['lower'];
       const rate = (entry as Record<string, unknown>)['rate'];
       if (typeof lower !== 'number' || !Number.isFinite(lower) || lower < 0) {
-        return 'Barème IRPP : chaque « lower » doit être un nombre ≥ 0.';
+        return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.chaque.lower.doit.etre.un.no.fe088626:Barème IRPP : chaque « lower » doit être un nombre ≥ 0.`;
       }
       if (typeof rate !== 'number' || !Number.isFinite(rate) || rate < 0 || rate > 100) {
-        return 'Barème IRPP : chaque « rate » doit être compris entre 0 et 100.';
+        return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.chaque.rate.doit.etre.compri.2ed6568c:Barème IRPP : chaque « rate » doit être compris entre 0 et 100.`;
       }
       if (lower <= previousLower) {
-        return 'Barème IRPP : les bornes « lower » doivent être strictement croissantes et uniques.';
+        return $localize`:@@accounting.fiscal-parameters.ts.bareme.irpp.les.bornes.lower.doivent.etr.deae9533:Barème IRPP : les bornes « lower » doivent être strictement croissantes et uniques.`;
       }
       previousLower = lower;
     }
@@ -313,7 +313,7 @@ export class FiscalParametersComponent implements OnInit {
     for (const [value, label] of rateFields) {
       const n = Number(value);
       if (!Number.isFinite(n) || n < 0 || n > 1) {
-        return `${label} : doit être compris entre 0 et 1.`;
+        return $localize`:@@accounting.fiscal-parameters.ts.label.doit.etre.compris.entre.0.et.1.8ee660ad:${label}:label: : doit être compris entre 0 et 1.`;
       }
     }
     const floorFields: Array<[number, string]> = [
@@ -324,16 +324,16 @@ export class FiscalParametersComponent implements OnInit {
     for (const [value, label] of floorFields) {
       const n = Number(value);
       if (!Number.isFinite(n) || n < 0) {
-        return `${label} : doit être positif ou nul.`;
+        return $localize`:@@accounting.fiscal-parameters.ts.label.doit.etre.positif.ou.nul.e11ca7fe:${label}:label: : doit être positif ou nul.`;
       }
     }
     const acompteCount = Number(m.acompteCount);
     if (!Number.isInteger(acompteCount) || acompteCount < 0 || acompteCount > 12) {
-      return "Nombre d'acomptes : doit être compris entre 0 et 12.";
+      return $localize`:@@accounting.fiscal-parameters.ts.nombre.d.acomptes.doit.etre.compris.entr.3dde7df8:Nombre d'acomptes : doit être compris entre 0 et 12.`;
     }
     const deficitYears = Number(m.deficitCarryForwardYears);
     if (!Number.isInteger(deficitYears) || deficitYears < 1 || deficitYears > 20) {
-      return 'Report des déficits (années) : doit être compris entre 1 et 20.';
+      return $localize`:@@accounting.fiscal-parameters.ts.report.des.deficits.annees.doit.etre.com.2a7522b5:Report des déficits (années) : doit être compris entre 1 et 20.`;
     }
     return null;
   }

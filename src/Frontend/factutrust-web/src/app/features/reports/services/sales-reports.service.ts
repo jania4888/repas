@@ -411,7 +411,7 @@ export class SalesReportsService {
       parts.push(`${overdueCount} facture${overdueCount > 1 ? 's' : ''} ${overdueCount > 1 ? 'sont' : 'est'} en retard.`);
     }
     if (parts.length === 0) {
-      return 'Toutes vos factures sont à jour.';
+      return $localize`:@@reports.sales-reports.ts.toutes.vos.factures.sont.a.jour.a34df1da:Toutes vos factures sont à jour.`;
     }
     return parts.join(' ');
   }

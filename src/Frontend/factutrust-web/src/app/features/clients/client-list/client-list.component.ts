@@ -482,7 +482,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
         }
         
         // Extraire le message d'erreur si disponible
-        const errorMessage = error?.error?.errors?.[0] || error?.error?.message || error?.message || 'Impossible de charger les clients';
+        const errorMessage = error?.error?.errors?.[0] || error?.error?.message || error?.message || $localize`:@@clients.client-list.ts.impossible.de.charger.les.clients.9a6137e9:Impossible de charger les clients`;
         this.handleError(errorMessage);
       }
     });

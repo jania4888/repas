@@ -12,6 +12,7 @@ import {
   formatDaysUntilDue,
   parseProjectTaskStatus
 } from './project-enums';
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
 
 export type ProjectHealthTone = 'good' | 'warning' | 'danger';
 
@@ -100,10 +101,26 @@ export function computeBillableHoursDenominator(tasks: ProjectTask[], loggedHour
 export function formatPeriodSubtext(endDate: string | null | undefined): string | null {
   const days = daysUntilDue(endDate);
   if (days === null) return null;
-  if (days === 0) return "Échéance aujourd'hui";
-  if (days > 0) return `${days} jour${days > 1 ? 's' : ''} restant${days > 1 ? 's' : ''}`;
+  if (days === 0) return $localize`:@@projects.project-detail.ts.echeance.aujourd.hui.f4401f0a:Échéance aujourd'hui`;
+  if (days > 0) {
+    return erpPlural(days, {
+      zero: $localize`:@@projects.project-detail.jours.restants.zero:${days}:days: jours restants`,
+      one: $localize`:@@projects.project-detail.jours.restants.one:${days}:days: jour restant`,
+      two: $localize`:@@projects.project-detail.jours.restants.two:${days}:days: jours restants`,
+      few: $localize`:@@projects.project-detail.jours.restants.few:${days}:days: jours restants`,
+      many: $localize`:@@projects.project-detail.jours.restants.many:${days}:days: jours restants`,
+      other: $localize`:@@projects.project-detail.jours.restants.other:${days}:days: jours restants`
+    }, erpPluralLocale());
+  }
   const late = Math.abs(days);
-  return `${late} jour${late > 1 ? 's' : ''} de retard`;
+  return erpPlural(late, {
+      zero: $localize`:@@projects.project-detail.jours.de.retard.zero:${late}:late: jours de retard`,
+      one: $localize`:@@projects.project-detail.jours.de.retard.one:${late}:late: jour de retard`,
+      two: $localize`:@@projects.project-detail.jours.de.retard.two:${late}:late: jours de retard`,
+      few: $localize`:@@projects.project-detail.jours.de.retard.few:${late}:late: jours de retard`,
+      many: $localize`:@@projects.project-detail.jours.de.retard.many:${late}:late: jours de retard`,
+      other: $localize`:@@projects.project-detail.jours.de.retard.other:${late}:late: jours de retard`
+    }, erpPluralLocale());
 }
 
 function elapsedSchedulePercent(startDate: string | null | undefined, endDate: string | null | undefined): number | null {
@@ -211,23 +228,32 @@ export function formatTimeAgoFr(isoDate: string, now = new Date()): string {
   const then = new Date(isoDate);
   if (Number.isNaN(then.getTime())) return '';
   const diffMs = now.getTime() - then.getTime();
-  if (diffMs < 0) return "à l'instant";
+  if (diffMs < 0) return $localize`:@@projects.project-detail.ts.a.l.instant.2427aa9c:à l'instant`;
 
   const minutes = Math.floor(diffMs / 60000);
-  if (minutes < 1) return "à l'instant";
+  if (minutes < 1) return $localize`:@@projects.project-detail.ts.a.l.instant.2427aa9c:à l'instant`;
   if (minutes < 60) return `il y a ${minutes} min`;
 
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `il y a ${hours} h`;
 
   const days = Math.floor(hours / 24);
-  if (days < 7) return `il y a ${days} jour${days > 1 ? 's' : ''}`;
+  if (days < 7) {
+    return erpPlural(days, {
+      zero: $localize`:@@projects.project-detail.il.y.a.jours.zero:il y a ${days}:days: jours`,
+      one: $localize`:@@projects.project-detail.il.y.a.jours.one:il y a ${days}:days: jour`,
+      two: $localize`:@@projects.project-detail.il.y.a.jours.two:il y a ${days}:days: jours`,
+      few: $localize`:@@projects.project-detail.il.y.a.jours.few:il y a ${days}:days: jours`,
+      many: $localize`:@@projects.project-detail.il.y.a.jours.many:il y a ${days}:days: jours`,
+      other: $localize`:@@projects.project-detail.il.y.a.jours.other:il y a ${days}:days: jours`
+    }, erpPluralLocale());
+  }
 
   const weeks = Math.floor(days / 7);
   if (weeks < 5) return `il y a ${weeks} sem.`;
 
   const months = Math.floor(days / 30);
-  return `il y a ${months} mois`;
+  return $localize`:@@projects.project-detail.ts.il.y.a.months.mois.4c3abe30:il y a ${months}:months: mois`;
 }
 
 const ACTIVITY_VISUALS: Record<string, ActivityVisual> = {

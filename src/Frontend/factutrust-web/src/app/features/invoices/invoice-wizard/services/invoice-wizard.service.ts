@@ -424,7 +424,7 @@ export class InvoiceWizardService {
     return this.invoiceService.getInvoice(invoiceId).pipe(
       switchMap((invoiceResponse) => {
         if (!invoiceResponse?.success) {
-          const message = invoiceResponse?.message || 'Impossible de charger la facture liée.';
+          const message = invoiceResponse?.message || $localize`:@@invoices.invoice-wizard.ts.impossible.de.charger.la.facture.liee.53f3a0f5:Impossible de charger la facture liée.`;
           console.error('[initForCreditNote] Invoice fetch failed:', invoiceResponse);
           return throwError(() => new Error(message));
         }
@@ -1513,9 +1513,9 @@ export class InvoiceWizardService {
     const invoices = sub.usage?.invoices;
     const usageLabel = invoices
       ? invoices.isUnlimited
-        ? `${invoices.used} facture(s) ce mois (forfait illimité)`
+        ? $localize`:@@invoices.invoice-wizard.ts.used.facture.s.ce.mois.forfait.illimite.f22815e7:${invoices.used}:used: facture(s) ce mois (forfait illimité)`
         : `${invoices.used}/${invoices.limit} facture(s) ce mois`
-      : `${sub.invoicesThisMonth} facture(s) ce mois`;
+      : $localize`:@@invoices.invoice-wizard.ts.invoicesthismonth.facture.s.ce.mois.87a8175c:${sub.invoicesThisMonth}:invoicesThisMonth: facture(s) ce mois`;
 
     if (typeof sub.canCreateInvoice === 'boolean') {
       if (sub.canCreateInvoice) {
@@ -1554,7 +1554,7 @@ export class InvoiceWizardService {
       };
       const normalized = status.replace('_', '');
       const description = statusMessages[normalized] ?? statusMessages[status]
-        ?? `Statut d'abonnement « ${sub.statusDisplay} » : émission de facture indisponible.`;
+        ?? $localize`:@@invoices.invoice-wizard.ts.statut.d.abonnement.statusdisplay.emissi.f6c66860:Statut d'abonnement « ${sub.statusDisplay}:statusDisplay: » : émission de facture indisponible.`;
 
       return {
         id: 'invoice-quota',
@@ -1573,8 +1573,7 @@ export class InvoiceWizardService {
         category: 'CALCULATION',
         label: $localize`:@@invoices.invoice-wizard.ts.quota.factures.dfc0fe56:Quota factures`,
         description:
-          $localize`:@@invoices.invoice-wizard.ts.limite.mensuelle.atteinte.used.limit.fac.ba6485b6:Limite mensuelle atteinte (${invoices.used}:used:/${invoices.limit}:limit: factures). ` +
-          $localize`:@@invoices.invoice-wizard.ts.passez.a.un.forfait.superieur.dans.param.98c1d038:Passez à un forfait supérieur dans Paramètres > Abonnement ou attendez le prochain cycle.`,
+          $localize`:@@invoices.invoice-wizard.ts.limite.mensuelle.atteinte.used.limit.fac.1b98ed0e:Limite mensuelle atteinte (${invoices.used}:used:/${invoices.limit}:limit: factures). Passez à un forfait supérieur dans Paramètres > Abonnement ou attendez le prochain cycle.`,
         status: 'ERROR',
         isBlocking: true,
         field: 'subscription'
@@ -1637,7 +1636,7 @@ export class InvoiceWizardService {
   }
 
   private extractSubmitError(error: unknown): { message: string; code: string | null } {
-    let errorMessage = 'Impossible d\'émettre la facture';
+    let errorMessage = $localize`:@@invoices.invoice-wizard.ts.impossible.d.emettre.la.facture.973e03c0:Impossible d'émettre la facture`;
     let errorCode: string | null = null;
     const err = error as {
       error?: {
@@ -2007,14 +2006,14 @@ export class InvoiceWizardService {
           // Re-vérifier après génération
           const newNumber = this.state().metadata.invoiceNumber;
           if (!newNumber || newNumber.toUpperCase().includes('TEMP')) {
-            const errorMessage = 'Impossible de générer le numéro séquentiel de facture';
+            const errorMessage = $localize`:@@invoices.invoice-wizard.ts.impossible.de.generer.le.numero.sequenti.a5e9a866:Impossible de générer le numéro séquentiel de facture`;
             this.updateState({ isSaving: false, submissionError: errorMessage });
             throw new Error(errorMessage);
           }
           return this.performSubmit();
         }),
         catchError(error => {
-          const errorMessage = error.message || 'Erreur lors de la génération du numéro de facture';
+          const errorMessage = error.message || $localize`:@@invoices.invoice-wizard.ts.erreur.lors.de.la.generation.du.numero.d.e1d61d23:Erreur lors de la génération du numéro de facture`;
           this.updateState({ isSaving: false, submissionError: errorMessage });
           throw error;
         })
@@ -2031,7 +2030,7 @@ export class InvoiceWizardService {
     const validation = this.validateInvoice();
 
     if (!validation.canProceed) {
-      const errorMessage = 'La facture ne peut pas être soumise - erreurs de validation';
+      const errorMessage = $localize`:@@invoices.invoice-wizard.ts.la.facture.ne.peut.pas.etre.soumise.erre.6ef4e7d5:La facture ne peut pas être soumise - erreurs de validation`;
       this.updateState({ isSaving: false, submissionError: errorMessage });
       return throwError(() => new Error(errorMessage));
     }
@@ -2046,14 +2045,14 @@ export class InvoiceWizardService {
     }
 
     if (!state.client) {
-      const errorMessage = 'Le client est obligatoire';
+      const errorMessage = $localize`:@@invoices.invoice-wizard.ts.le.client.est.obligatoire.778453ff:Le client est obligatoire`;
       this.updateState({ isSaving: false, submissionError: errorMessage });
       return throwError(() => new Error(errorMessage));
     }
 
     if (!isClientReadyForSubmission(state.client)) {
       const errorMessage =
-        'Sélectionnez un client dans la liste ou utilisez l\'onglet « Nouveau client ». Si le problème persiste, resélectionnez le client.';
+        $localize`:@@invoices.invoice-wizard.ts.selectionnez.un.client.dans.la.liste.ou.7e038a7f:Sélectionnez un client dans la liste ou utilisez l'onglet « Nouveau client ». Si le problème persiste, resélectionnez le client.`;
       this.updateState({ isSaving: false, submissionError: errorMessage });
       return throwError(() => new Error(errorMessage));
     }
@@ -2076,7 +2075,7 @@ export class InvoiceWizardService {
     }).pipe(
       map(response => {
         if (!response || !response.success) {
-          const errorMessage = response?.message || 'Erreur lors de l\'émission de la facture';
+          const errorMessage = response?.message || $localize`:@@invoices.invoice-wizard.ts.erreur.lors.de.l.emission.de.la.facture.748b038b:Erreur lors de l'émission de la facture`;
           this.updateState({ isSaving: false, submissionError: errorMessage });
           throw new Error(errorMessage);
         }
@@ -2124,7 +2123,7 @@ export class InvoiceWizardService {
     return this.http.post<ApiResponse<unknown>>(`${environment.apiUrl}/clients`, newClientRequest).pipe(
       switchMap(clientResponse => {
         if (!clientResponse || !clientResponse.success || clientResponse.data == null) {
-          const errorMessage = 'Erreur lors de la création du client';
+          const errorMessage = $localize`:@@invoices.invoice-wizard.ts.erreur.lors.de.la.creation.du.client.88ca36f6:Erreur lors de la création du client`;
           this.updateState({ isSaving: false, submissionError: errorMessage });
           throw new Error(errorMessage);
         }
@@ -2136,7 +2135,7 @@ export class InvoiceWizardService {
             : ((rawData as any)?.id ?? (rawData as any)?.Id ?? null);
 
         if (!clientId) {
-          const errorMessage = 'Erreur lors de la création du client : identifiant non retourné';
+          const errorMessage = $localize`:@@invoices.invoice-wizard.ts.erreur.lors.de.la.creation.du.client.ide.7134acd2:Erreur lors de la création du client : identifiant non retourné`;
           this.updateState({ isSaving: false, submissionError: errorMessage });
           throw new Error(errorMessage);
         }
@@ -2158,7 +2157,7 @@ export class InvoiceWizardService {
       }),
       map(response => {
         if (!response || !response.success) {
-          const errorMessage = response?.message || 'Erreur lors de l\'émission de la facture';
+          const errorMessage = response?.message || $localize`:@@invoices.invoice-wizard.ts.erreur.lors.de.l.emission.de.la.facture.748b038b:Erreur lors de l'émission de la facture`;
           this.updateState({ isSaving: false, submissionError: errorMessage });
           throw new Error(errorMessage);
         }

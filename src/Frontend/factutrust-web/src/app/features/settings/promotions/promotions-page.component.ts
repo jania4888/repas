@@ -315,7 +315,7 @@ export class PromotionsPageComponent implements OnInit {
   lifecycleTooltip(promo: Promotion): string {
     const lifecycle = promotionLifecycle(promo);
     if (lifecycle === 'outOfWindow') {
-      return 'Promotion active mais en dehors de sa fenêtre : elle n\'applique aucune remise aujourd\'hui.';
+      return $localize`:@@settings.promotions-page.ts.promotion.active.mais.en.dehors.de.sa.fe.9aac1184:Promotion active mais en dehors de sa fenêtre : elle n'applique aucune remise aujourd'hui.`;
     }
     return '';
   }

@@ -317,10 +317,10 @@ export class TejExportComponent implements OnInit {
 
   get exportBlockedTitle(): string {
     if (this.periodHintLoading) {
-      return 'Vérification des factures éligibles pour cette période en cours…';
+      return $localize`:@@withholding-tax.tej-export.ts.verification.des.factures.eligibles.pour.752c86d5:Vérification des factures éligibles pour cette période en cours…`;
     }
     if (this.periodEligibleCount === 0) {
-      return 'Aucune facture fournisseur soldée avec retenue pour ce mois. La date de solde doit correspondre à la période choisie.';
+      return $localize`:@@withholding-tax.tej-export.ts.aucune.facture.fournisseur.soldee.avec.r.507209f0:Aucune facture fournisseur soldée avec retenue pour ce mois. La date de solde doit correspondre à la période choisie.`;
     }
     return '';
   }
@@ -343,7 +343,7 @@ export class TejExportComponent implements OnInit {
     if (err instanceof HttpErrorResponse) {
       return this.errorHandler.extractErrorMessage(err);
     }
-    return 'Une erreur est survenue.';
+    return $localize`:@@withholding-tax.tej-export.ts.une.erreur.est.survenue.9a133198:Une erreur est survenue.`;
   }
 
   private isTejNoEligibleInvoicesError(message: string): boolean {
@@ -355,8 +355,7 @@ export class TejExportComponent implements OnInit {
     this.confirmation.alert({
       header: $localize`:@@withholding-tax.tej-export.ts.aucune.facture.eligible.pour.cette.perio.712a5264:Aucune facture éligible pour cette période`,
       message:
-        $localize`:@@withholding-tax.tej-export.ts.l.export.tej.inclut.uniquement.les.factu.aec54e21:L’export TEJ inclut uniquement les factures fournisseurs payées avec retenue enregistrée (fournisseur assujetti, montant et type RS), pour la date de solde (mois/année) sélectionnés.\n\n` +
-        $localize`:@@ui.tern.verifiez.le.parametrage.fournisseur.le.sta.0c248d:Vérifiez le paramétrage fournisseur, le statut Payée et que la date de solde tombe dans la période.`,
+        $localize`:@@withholding-tax.tej-export.ts.l.export.tej.inclut.uniquement.les.factu.1866df69:L’export TEJ inclut uniquement les factures fournisseurs payées avec retenue enregistrée (fournisseur assujetti, montant et type RS), pour la date de solde (mois/année) sélectionnés.\n\nVérifiez le paramétrage fournisseur, le statut Payée et que la date de solde tombe dans la période.`,
       icon: 'pi pi-exclamation-triangle',
       size: 'md',
       scrollable: true

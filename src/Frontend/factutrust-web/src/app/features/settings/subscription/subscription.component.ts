@@ -792,9 +792,9 @@ export class SubscriptionComponent implements OnInit {
       return sub.invoiceBlockMessage;
     }
     if (sub.plan !== 'Free' && ['Suspended', 'PastDue'].includes(sub.status)) {
-      return `Votre forfait ${sub.planDisplay} est actif mais votre compte est ${sub.statusDisplay.toLowerCase()}. Régularisez votre paiement pour émettre des factures.`;
+      return $localize`:@@settings.subscription.ts.votre.forfait.plandisplay.est.actif.mais.3a655d24:Votre forfait ${sub.planDisplay}:planDisplay: est actif mais votre compte est ${sub.statusDisplay.toLowerCase()}:toLowerCase:. Régularisez votre paiement pour émettre des factures.`;
     }
-    return `Statut d'abonnement « ${sub.statusDisplay} » : émission de factures indisponible.`;
+    return $localize`:@@settings.subscription.ts.statut.d.abonnement.statusdisplay.emissi.8ad79e20:Statut d'abonnement « ${sub.statusDisplay}:statusDisplay: » : émission de factures indisponible.`;
   }
 
   canRegularizeSubscription(): boolean {
@@ -813,9 +813,9 @@ export class SubscriptionComponent implements OnInit {
     const currentOrder = order[current ?? $localize`:@@ui.tern.free.75f527:Free`] ?? 0;
     const targetOrder = order[plan.id] ?? 0;
 
-    if (targetOrder > currentOrder) return 'Choisir ce forfait';
-    if (targetOrder < currentOrder) return 'Rétrograder';
-    return 'Choisir ce forfait';
+    if (targetOrder > currentOrder) return $localize`:@@settings.subscription.ts.choisir.ce.forfait.a713a296:Choisir ce forfait`;
+    if (targetOrder < currentOrder) return $localize`:@@settings.subscription.ts.retrograder.6740723a:Rétrograder`;
+    return $localize`:@@settings.subscription.ts.choisir.ce.forfait.a713a296:Choisir ce forfait`;
   }
 
   openChangePlanDialog(preselectedPlanId?: string): void {

@@ -404,7 +404,7 @@ export class PurchaseOrderReceiveComponent implements OnInit {
           // Verify the order can receive goods
           if (order.status !== PurchaseOrderStatus.Confirmed &&
             order.status !== PurchaseOrderStatus.PartiallyReceived) {
-            let message = 'Cette commande ne peut pas recevoir de marchandise';
+            let message = $localize`:@@purchase-orders.purchase-order-receive.ts.cette.commande.ne.peut.pas.recevoir.de.m.11ab2c41:Cette commande ne peut pas recevoir de marchandise`;
             if (order.status === PurchaseOrderStatus.Draft) {
               message = $localize`:@@purchase-orders.purchase-order-receive.ts.cette.commande.est.en.brouillon.veuillez.865b261e:Cette commande est en brouillon. Veuillez d'abord la confirmer avant de pouvoir recevoir des marchandises.`;
             } else if (order.status === PurchaseOrderStatus.Received) {

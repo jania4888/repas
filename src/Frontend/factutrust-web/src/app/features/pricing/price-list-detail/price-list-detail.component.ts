@@ -587,8 +587,7 @@ export class PriceListDetailComponent implements OnInit {
     this.confirmationService.confirm({
       header: $localize`:@@pricing.price-list-detail.ts.retirer.le.palier.19beafcf:Retirer le palier`,
       message:
-        $localize`:@@pricing.price-list-detail.ts.retirer.le.palier.a.partir.de.minquantit.b25c5888:Retirer le palier « à partir de ${tier.minQuantity}:minQuantity: » sur ${item.productCode}:productCode: ? ` +
-        $localize`:@@ui.tern.ces.quantites.retomberont.sur.le.palier.in.5636c0:Ces quantités retomberont sur le palier inférieur, ou sur le prix de base.`,
+        $localize`:@@pricing.price-list-detail.ts.retirer.le.palier.a.partir.de.minquantit.3ad6c6d1:Retirer le palier « à partir de ${tier.minQuantity}:minQuantity: » sur ${item.productCode}:productCode: ? Ces quantités retomberont sur le palier inférieur, ou sur le prix de base.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@price-list-detail.component.acceptLabel.Retirer:Retirer`,
       rejectLabel: $localize`:@@price-list-detail.component.rejectLabel.Annuler:Annuler`,

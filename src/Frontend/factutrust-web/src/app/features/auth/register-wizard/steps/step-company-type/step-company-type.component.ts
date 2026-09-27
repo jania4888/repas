@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { RegistrationCatalogService, SegmentOption, DomainOption } from '../../registration-catalog';
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
 
 @Component({
   selector: 'app-step-company-type',
@@ -60,8 +61,15 @@ export class StepCompanyTypeComponent {
     const count = this.domains.length;
     const total = this.catalog.domains.length;
     if (count === 0 || count >= total) return null;
-    const plural = count > 1 ? 's' : '';
-    return `${count} domaine${plural} adapté${plural} à votre segment : ${this.selectedSegmentLabel}`;
+    const segment = this.selectedSegmentLabel;
+    return erpPlural(count, {
+      zero: $localize`:@@auth.step-company-type.domaines.adaptes.zero:${count}:count: domaines adaptés à votre segment : ${segment}:segment:`,
+      one: $localize`:@@auth.step-company-type.domaines.adaptes.one:${count}:count: domaine adapté à votre segment : ${segment}:segment:`,
+      two: $localize`:@@auth.step-company-type.domaines.adaptes.two:${count}:count: domaines adaptés à votre segment : ${segment}:segment:`,
+      few: $localize`:@@auth.step-company-type.domaines.adaptes.few:${count}:count: domaines adaptés à votre segment : ${segment}:segment:`,
+      many: $localize`:@@auth.step-company-type.domaines.adaptes.many:${count}:count: domaines adaptés à votre segment : ${segment}:segment:`,
+      other: $localize`:@@auth.step-company-type.domaines.adaptes.other:${count}:count: domaines adaptés à votre segment : ${segment}:segment:`
+    }, erpPluralLocale());
   }
 
   get selectedSegmentLabel(): string {

@@ -938,9 +938,9 @@ export class BankReconciliationComponent implements OnInit {
 
   associationStatusLabel(status: BankLineAssociationStatus): string {
     switch (status) {
-      case BankLineAssociationStatus.Associated: return 'Associé';
-      case BankLineAssociationStatus.ToReconcile: return 'À rapprocher';
-      default: return 'Non associé';
+      case BankLineAssociationStatus.Associated: return $localize`:@@accounting.bank-reconciliation.ts.associe.7ab382a5:Associé`;
+      case BankLineAssociationStatus.ToReconcile: return $localize`:@@accounting.bank-reconciliation.ts.a.rapprocher.b60223ed:À rapprocher`;
+      default: return $localize`:@@accounting.bank-reconciliation.ts.non.associe.1d12cdc9:Non associé`;
     }
   }
 

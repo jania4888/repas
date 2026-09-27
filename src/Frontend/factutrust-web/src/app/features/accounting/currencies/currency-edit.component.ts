@@ -17,7 +17,7 @@ import {
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 
 const UNSAVED_CHANGES_MESSAGE =
-  'Des taux de change modifiés ne sont pas enregistrés. Quitter cette page les abandonnera. Continuer ?';
+  $localize`:@@accounting.currency-edit.ts.des.taux.de.change.modifies.ne.sont.pas.15498845:Des taux de change modifiés ne sont pas enregistrés. Quitter cette page les abandonnera. Continuer ?`;
 
 const MONTH_LABELS = [
   'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',

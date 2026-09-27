@@ -307,8 +307,8 @@ export class EntryFormStore {
 
   getLineStatusMessage(line: EntryLine): string {
     switch (this.getLineStatus(line)) {
-      case 'unknown': return 'Compte inconnu dans le plan comptable';
-      case 'inactive': return 'Compte désactivé — l\'enregistrement sera refusé';
+      case 'unknown': return $localize`:@@accounting.entry-form.ts.compte.inconnu.dans.le.plan.comptable.e4f1ac07:Compte inconnu dans le plan comptable`;
+      case 'inactive': return $localize`:@@accounting.entry-form.ts.compte.desactive.l.enregistrement.sera.r.43196ed3:Compte désactivé — l'enregistrement sera refusé`;
       default: return '';
     }
   }

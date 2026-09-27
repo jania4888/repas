@@ -112,7 +112,7 @@ export class BreadcrumbService {
 
   private formatSegment(segment: string): string {
     if (/^[0-9a-f-]{36}$/i.test(segment) || /^\d+$/.test(segment)) {
-      return 'Détail';
+      return $localize`:@@core.breadcrumb.ts.detail.7ce06afc:Détail`;
     }
     return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
   }

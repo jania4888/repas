@@ -607,8 +607,7 @@ export class StorefrontSettingsComponent implements OnInit {
 
   publicUrlBlockedMessage(slug: string): string {
     return (
-      `L’URL publique (/visite-virtuelle/${slug}) ne sera active qu’après publication sur la Rue InstaFact ` +
-      $localize`:@@ui.tern.validation.plateforme.en.brouillon.en.atte.413df7:(validation plateforme). En brouillon, en attente ou suspendue, cette adresse ne renvoie pas la vitrine côté public.`
+      $localize`:@@settings.storefront-settings.ts.l.url.publique.visite.virtuelle.slug.ne.c97a9f70:L’URL publique (/visite-virtuelle/${slug}:slug:) ne sera active qu’après publication sur la Rue InstaFact (validation plateforme). En brouillon, en attente ou suspendue, cette adresse ne renvoie pas la vitrine côté public.`
     );
   }
 

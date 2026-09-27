@@ -1464,20 +1464,20 @@ export class StepPreviewComponent implements OnInit {
 
   get validationSummaryTitle(): string {
     if (!this.validation) return '';
-    if (this.validation.isValid) return 'Facture conforme';
-    if (this.validation.canProceed) return 'Avertissements détectés';
+    if (this.validation.isValid) return $localize`:@@invoices.step-preview.ts.facture.conforme.cf5e698d:Facture conforme`;
+    if (this.validation.canProceed) return $localize`:@@invoices.step-preview.ts.avertissements.detectes.043faaef:Avertissements détectés`;
     return 'Erreurs bloquantes';
   }
 
   get validationSummaryMessage(): string {
     if (!this.validation) return '';
     if (this.validation.isValid) {
-      return 'Tous les contrôles de conformité sont passés avec succès.';
+      return $localize`:@@invoices.step-preview.ts.tous.les.controles.de.conformite.sont.pa.405e38b5:Tous les contrôles de conformité sont passés avec succès.`;
     }
     if (this.validation.canProceed) {
-      return 'La facture peut être émise mais certains éléments méritent votre attention.';
+      return $localize`:@@invoices.step-preview.ts.la.facture.peut.etre.emise.mais.certains.370d8676:La facture peut être émise mais certains éléments méritent votre attention.`;
     }
-    return 'Des erreurs doivent être corrigées avant de pouvoir émettre cette facture.';
+    return $localize`:@@invoices.step-preview.ts.des.erreurs.doivent.etre.corrigees.avant.9df1fb6b:Des erreurs doivent être corrigées avant de pouvoir émettre cette facture.`;
   }
 
   ngOnInit(): void {

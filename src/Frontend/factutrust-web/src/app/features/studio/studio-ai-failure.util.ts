@@ -196,29 +196,29 @@ export function sanitizeStudioFailureMessage(raw: string | null | undefined): st
   const n = normalizeFailureText(text);
 
   if (/spec_json/.test(n) || /indiquez soit/.test(n) || /specification d'etat invalide/.test(n)) {
-    return "Je n'ai pas pu déterminer quelles données analyser.";
+    return $localize`:@@studio.studio-ai-failure.ts.je.n.ai.pas.pu.determiner.quelles.donnee.4b0860e5:Je n'ai pas pu déterminer quelles données analyser.`;
   }
   if (/^nom de source invalide/.test(n) || /introuvable dans la base/.test(n) || /n'est pas ouverte aux etats/.test(n)) {
-    return "La source demandée n'est pas disponible pour les états.";
+    return $localize`:@@studio.studio-ai-failure.ts.la.source.demandee.n.est.pas.disponible.9557508b:La source demandée n'est pas disponible pour les états.`;
   }
   if (/aucun des regroupements demandes n'existe/.test(n)) {
-    return "Certaines ventilations demandées n'existent pas sur la source analysée.";
+    return $localize`:@@studio.studio-ai-failure.ts.certaines.ventilations.demandees.n.exist.a6a5a1ce:Certaines ventilations demandées n'existent pas sur la source analysée.`;
   }
   if (/aucun lien \(cle etrangere\)/.test(n)) {
-    return 'Les données demandées ne peuvent pas être reliées entre elles dans cet état.';
+    return $localize`:@@studio.studio-ai-failure.ts.les.donnees.demandees.ne.peuvent.pas.etr.df79c27e:Les données demandées ne peuvent pas être reliées entre elles dans cet état.`;
   }
   if (/trop de tables liees/.test(n)) {
-    return "L'état demandé relie trop de tables à la fois.";
+    return $localize`:@@studio.studio-ai-failure.ts.l.etat.demande.relie.trop.de.tables.a.la.880f0ce8:L'état demandé relie trop de tables à la fois.`;
   }
   if (/aucune colonne exploitable/.test(n)) {
-    return "Aucune colonne exploitable n'a été trouvée pour cet état.";
+    return $localize`:@@studio.studio-ai-failure.ts.aucune.colonne.exploitable.n.a.ete.trouv.61398668:Aucune colonne exploitable n'a été trouvée pour cet état.`;
   }
   if (/vous n'avez pas acces aux donnees/.test(n)) {
     // Le domaine cité (« Paie », « Ventes »…) est un libellé métier, pas un identifiant : on le garde.
     return text;
   }
   if (/n'est pas disponible sur cette base/.test(n)) {
-    return "Cet état n'est pas disponible sur vos données : une information qu'il utilise est absente ou inaccessible.";
+    return $localize`:@@studio.studio-ai-failure.ts.cet.etat.n.est.pas.disponible.sur.vos.do.310a6bb2:Cet état n'est pas disponible sur vos données : une information qu'il utilise est absente ou inaccessible.`;
   }
 
   // Filet de sécurité : tout ce qui ressemble à un identifiant, du SQL, du JSON ou un nom d'outil
@@ -287,9 +287,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
         eyebrow: $localize`:@@studio.studio-ai-failure.ts.precision.necessaire.b552b373:Précision nécessaire`,
         title: $localize`:@@studio.studio-ai-failure.ts.votre.demande.doit.etre.precisee.5389d7ac:Votre demande doit être précisée`,
         message: cleaned || $localize`:@@studio.studio-ai-failure.ts.je.n.ai.pas.pu.determiner.quelles.donnee.4b0860e5:Je n'ai pas pu déterminer quelles données analyser.`,
-        hint: $localize`:@@studio.studio-ai-failure.ts.indiquez.le.sujet.ventes.achats.encaisse.355a3d14:Indiquez le sujet (ventes, achats, encaissements…), la ventilation souhaitée `
-          + $localize`:@@studio.studio-ai-failure.ts.par.annee.par.client.par.produit.et.si.b.972e045a:(par année, par client, par produit…) et, si besoin, la période. `
-          + $localize`:@@studio.studio-ai-failure.ts.vous.pouvez.aussi.partir.d.un.etat.pret.81e501d7:Vous pouvez aussi partir d'un état prêt à l'emploi.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.indiquez.le.sujet.ventes.achats.encaisse.75e0c804:Indiquez le sujet (ventes, achats, encaissements…), la ventilation souhaitée (par année, par client, par produit…) et, si besoin, la période. Vous pouvez aussi partir d'un état prêt à l'emploi.`,
         stage: 'Compréhension de la demande',
         retryable: false,
         showSuggestions: true
@@ -301,8 +299,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
         eyebrow: $localize`:@@studio.studio-ai-failure.ts.acces.non.autorise.951229a5:Accès non autorisé`,
         title: $localize`:@@studio.studio-ai-failure.ts.vous.ne.pouvez.pas.consulter.cet.etat.8d00f46c:Vous ne pouvez pas consulter cet état`,
         message: cleaned || $localize`:@@studio.studio-ai-failure.ts.votre.compte.ne.dispose.pas.des.droits.n.dbaa1ce9:Votre compte ne dispose pas des droits nécessaires dans l'espace actif.`,
-        hint: $localize`:@@studio.studio-ai-failure.ts.demandez.a.un.administrateur.de.verifier.18ac6c21:Demandez à un administrateur de vérifier vos droits de consultation des états et des `
-          + $localize`:@@studio.studio-ai-failure.ts.donnees.concernees.reessayer.ou.reformul.8fbfd6e3:données concernées. Réessayer ou reformuler la demande ne modifie pas vos droits.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.demandez.a.un.administrateur.de.verifier.081b7ced:Demandez à un administrateur de vérifier vos droits de consultation des états et des données concernées. Réessayer ou reformuler la demande ne modifie pas vos droits.`,
         stage: 'Contrôle des autorisations',
         retryable: false,
         showSuggestions: false
@@ -314,8 +311,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
         eyebrow: $localize`:@@studio.studio-ai-failure.ts.service.ia.indisponible.1b49af44:Service IA indisponible`,
         title: $localize`:@@studio.studio-ai-failure.ts.la.preparation.de.la.demande.a.ete.inter.15137ea7:La préparation de la demande a été interrompue`,
         message: $localize`:@@studio.studio-ai-failure.ts.le.fournisseur.ia.est.momentanement.indi.305c864a:Le fournisseur IA est momentanément indisponible. Aucun état n'a été calculé et rien n'a été enregistré.`,
-        hint: $localize`:@@studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.a.votre.i.8817db8a:Vous pouvez réessayer une fois, à votre initiative. Sans l'assistant, le concepteur d'états `
-          + $localize`:@@studio.studio-ai-failure.ts.reste.disponible.bdc6c5e7:reste disponible.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.a.votre.i.33711c57:Vous pouvez réessayer une fois, à votre initiative. Sans l'assistant, le concepteur d'états reste disponible.`,
         stage: 'Préparation de la demande',
         retryable: true,
         showSuggestions: false,
@@ -329,8 +325,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
         eyebrow: $localize`:@@studio.studio-ai-failure.ts.moteur.de.calcul.delai.depasse.30dcb5a2:Moteur de calcul · délai dépassé`,
         title: $localize`:@@studio.studio-ai-failure.ts.le.calcul.de.l.etat.n.a.pas.abouti.dca8e126:Le calcul de l'état n'a pas abouti`,
         message: cleaned || $localize`:@@studio.studio-ai-failure.ts.le.calcul.de.l.etat.a.depasse.le.delai.i.86c79e73:Le calcul de l'état a dépassé le délai imparti. Aucun résultat partiel n'est présenté.`,
-        hint: $localize`:@@studio.studio-ai-failure.ts.restreignez.la.periode.une.seule.annee.p.4daa7098:Restreignez la période (une seule année, par exemple) ou le nombre de colonnes, puis relancez. `
-          + $localize`:@@studio.studio-ai-failure.ts.aucun.nouvel.appel.a.l.ia.n.est.necessai.bed39f7b:Aucun nouvel appel à l'IA n'est nécessaire pour un état prêt à l'emploi.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.restreignez.la.periode.une.seule.annee.p.7663276d:Restreignez la période (une seule année, par exemple) ou le nombre de colonnes, puis relancez. Aucun nouvel appel à l'IA n'est nécessaire pour un état prêt à l'emploi.`,
         stage: "Exécution de l'état",
         retryable: true,
         showSuggestions: true
@@ -441,8 +436,8 @@ export function formatStudioPeriod(period?: { from?: string | null; to?: string 
   if (!period) return '';
   const from = formatIsoDate(period.from);
   const to = formatIsoDate(period.to);
-  if (from && to) return `du ${from} au ${to}`;
-  if (from) return `à partir du ${from}`;
+  if (from && to) return $localize`:@@studio.studio-ai-failure.ts.du.from.au.to.526d67fd:du ${from}:from: au ${to}:to:`;
+  if (from) return $localize`:@@studio.studio-ai-failure.ts.a.partir.du.from.3bdd5d77:à partir du ${from}:from:`;
   if (to) return `jusqu'au ${to}`;
   return '';
 }

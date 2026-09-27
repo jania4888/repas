@@ -171,10 +171,10 @@ export class DismissReasonModalComponent {
 
   codeLabel(code: DismissReasonCode): string {
     switch (code) {
-      case 'SupplierUnavailable':     return 'Fournisseur indisponible';
-      case 'BudgetExhausted':         return 'Budget épuisé';
-      case 'DemandOverestimated':     return 'Demande surévaluée';
-      case 'AlternativeStockAvailable': return 'Stock alternatif disponible';
+      case 'SupplierUnavailable':     return $localize`:@@forecasting.dismiss-reason-modal.ts.fournisseur.indisponible.2fa91b99:Fournisseur indisponible`;
+      case 'BudgetExhausted':         return $localize`:@@forecasting.dismiss-reason-modal.ts.budget.epuise.4b594749:Budget épuisé`;
+      case 'DemandOverestimated':     return $localize`:@@forecasting.dismiss-reason-modal.ts.demande.surevaluee.4015682b:Demande surévaluée`;
+      case 'AlternativeStockAvailable': return $localize`:@@forecasting.dismiss-reason-modal.ts.stock.alternatif.disponible.ba6144ed:Stock alternatif disponible`;
       case 'Other':                   return 'Autre…';
     }
   }

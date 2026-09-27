@@ -470,7 +470,7 @@ export function validateRubricForm(form: DmRubricForm): string | null {
 // ── Lecture d'une rubrique en clair ──────────────────────────────────────────
 
 function sideLabel(side: AccountBalanceSide): string {
-  return side === AccountBalanceSide.Debit ? 'débits' : 'crédits';
+  return side === AccountBalanceSide.Debit ? $localize`:@@accounting.monthly-declaration-config.view-model.ts.debits.259795bd:débits` : $localize`:@@accounting.monthly-declaration-config.view-model.ts.credits.8269ea49:crédits`;
 }
 
 function accountsSummary(
@@ -479,7 +479,7 @@ function accountsSummary(
 ): string {
   const ofRole = accounts.filter(a => a.role === role);
   if (ofRole.length === 0) {
-    return 'aucun compte';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucun.compte.9f74e0b8:aucun compte`;
   }
   return ofRole
     .map(a => (a.matchMode === RubricAccountMatchMode.Prefix ? `${a.accountNumber}…` : a.accountNumber))
@@ -496,7 +496,7 @@ export function describeGross(rubric: MonthlyDeclarationRubricDto): string {
     case RubricGrossKind.Payroll:
       return `Paie — ${optionLabel(DM_PAYROLL_COMPONENT_OPTIONS, rubric.payrollComponent)}`;
     case RubricGrossKind.Account:
-      return `${sideLabel(rubric.grossSide)} de ${accountsSummary(rubric.accounts, RubricAccountRole.Gross)}`;
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1:${sideLabel(rubric.grossSide)}:sideLabel: de ${accountsSummary(rubric.accounts, RubricAccountRole.Gross)}:accountsSummary:`;
     case RubricGrossKind.WithheldOverRate:
       return `Retenue ÷ ${rubric.ratePercent} %`;
     default:
@@ -512,13 +512,13 @@ export function describeWithheld(rubric: MonthlyDeclarationRubricDto): string {
         ? 'Saisie au Calcul DM'
         : `Valeur fixe ${rubric.fixedWithheldAmount}`;
     case RubricWithheldKind.Account:
-      return `${sideLabel(rubric.withheldSide)} de ${accountsSummary(rubric.accounts, RubricAccountRole.Withheld)}`;
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1:${sideLabel(rubric.withheldSide)}:sideLabel: de ${accountsSummary(rubric.accounts, RubricAccountRole.Withheld)}:accountsSummary:`;
     case RubricWithheldKind.GrossTimesRate:
       return `Brut × ${rubric.ratePercent} %`;
     case RubricWithheldKind.Payroll:
       return `Paie — ${optionLabel(DM_PAYROLL_COMPONENT_OPTIONS, rubric.withheldPayrollComponent)}`;
     case RubricWithheldKind.WithheldOverRate:
-      return 'Non pris en charge';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.non.pris.en.charge.2c0f420c:Non pris en charge`;
     default:
       return '—';
   }
@@ -536,12 +536,12 @@ export function describeApplicability(rubric: MonthlyDeclarationRubricDto): stri
   const from = toDateInputValue(rubric.effectiveFrom);
   const to = toDateInputValue(rubric.effectiveTo);
   if (!from && !to) {
-    return 'Toutes périodes';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.toutes.periodes.fa4932c5:Toutes périodes`;
   }
   if (from && to) {
     return `${from} → ${to}`;
   }
-  return from ? `À partir du ${from}` : `Jusqu’au ${to}`;
+  return from ? $localize`:@@accounting.monthly-declaration-config.view-model.ts.a.partir.du.from.802ed9bb:À partir du ${from}:from:` : $localize`:@@accounting.monthly-declaration-config.view-model.ts.jusqu.au.to.5b249dfe:Jusqu’au ${to}:to:`;
 }
 
 // ── Lecture de la configuration ──────────────────────────────────────────────
@@ -587,9 +587,9 @@ export function modeLabel(mode: MonthlyDeclarationMode): string {
     case MonthlyDeclarationMode.Legacy:
       return 'Calcul historique';
     case MonthlyDeclarationMode.Parity:
-      return 'Contrôle de parité';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.controle.de.parite.815aad76:Contrôle de parité`;
     case MonthlyDeclarationMode.Configured:
-      return 'Calcul paramétré';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.calcul.parametre.ff2c9c1a:Calcul paramétré`;
     default:
       return 'Inconnu';
   }
@@ -599,13 +599,13 @@ export function modeLabel(mode: MonthlyDeclarationMode): string {
 export function describeMode(settings: MonthlyDeclarationSettingsDto): string {
   switch (settings.mode) {
     case MonthlyDeclarationMode.Legacy:
-      return 'La déclaration est produite par le calcul historique. La configuration du dossier est enregistrée mais ne déplace aucun montant.';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.la.declaration.est.produite.par.le.calcu.61acc8f4:La déclaration est produite par le calcul historique. La configuration du dossier est enregistrée mais ne déplace aucun montant.`;
     case MonthlyDeclarationMode.Parity:
-      return `Les deux calculs tournent ; les montants déclarés restent ceux du calcul historique. ${settings.parityCleanStreak} période(s) sans écart sur les ${settings.requiredCleanParityPeriods} requises.`;
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.les.deux.calculs.tournent.les.montants.d.7f0b4d36:Les deux calculs tournent ; les montants déclarés restent ceux du calcul historique. ${settings.parityCleanStreak}:parityCleanStreak: période(s) sans écart sur les ${settings.requiredCleanParityPeriods}:requiredCleanParityPeriods: requises.`;
     case MonthlyDeclarationMode.Configured:
       return settings.configuredSince
-        ? `Le calcul paramétré fait foi depuis le ${toDateInputValue(settings.configuredSince)}.`
-        : 'Le calcul paramétré fait foi.';
+        ? $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.depuis.le.t.4671ab9f:Le calcul paramétré fait foi depuis le ${toDateInputValue(settings.configuredSince)}:toDateInputValue:.`
+        : $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.42cd40ec:Le calcul paramétré fait foi.`;
     default:
       return '';
   }

@@ -229,7 +229,7 @@ export class ThirdPartyQuickCreateComponent {
         payload?.error ||
         payload?.message ||
         err?.message ||
-        "La création du tiers a échoué.";
+        $localize`:@@accounting.third-party-quick-create.ts.la.creation.du.tiers.a.echoue.ddde35ef:La création du tiers a échoué.`;
       this.error.set(detail);
     };
 

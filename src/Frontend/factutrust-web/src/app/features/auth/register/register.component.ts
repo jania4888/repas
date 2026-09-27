@@ -369,7 +369,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         } else {
           const errorMessage = response.errors?.length > 0
             ? response.errors.join(', ')
-            : response.message || 'Une erreur est survenue lors de l\'inscription';
+            : response.message || $localize`:@@auth.register.ts.une.erreur.est.survenue.lors.de.l.inscri.c27c4975:Une erreur est survenue lors de l'inscription`;
           this.error.set(errorMessage);
           this.errorHandler.logError('Registration failed (success: false)', { response });
         }

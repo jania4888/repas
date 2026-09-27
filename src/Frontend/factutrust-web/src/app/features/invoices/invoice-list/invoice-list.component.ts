@@ -697,7 +697,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
           this.totalRecords.set(response.data.totalCount);
           this.isRateLimited.set(false);
         } else {
-          const errorMsg = response.errors?.join(', ') || 'Impossible de charger les factures';
+          const errorMsg = response.errors?.join(', ') || $localize`:@@invoices.invoice-list.ts.impossible.de.charger.les.factures.583c2251:Impossible de charger les factures`;
           this.errorMessage.set(errorMsg);
           this.showErrorToast(errorMsg);
         }
@@ -721,7 +721,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
         }
 
         // Autres erreurs
-        const errorMsg = this.errorHandler.extractErrorMessage(error) || 'Impossible de charger les factures';
+        const errorMsg = this.errorHandler.extractErrorMessage(error) || $localize`:@@invoices.invoice-list.ts.impossible.de.charger.les.factures.583c2251:Impossible de charger les factures`;
         this.errorMessage.set(errorMsg);
         this.showErrorToast(errorMsg);
       },

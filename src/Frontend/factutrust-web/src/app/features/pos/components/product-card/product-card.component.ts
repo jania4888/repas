@@ -495,17 +495,17 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   cardAriaLabel(): string {
-    const base = $localize`:@@ui.tern.ajouter.778d9b:Ajouter ` + this.product.name + $localize`:@@ui.tern.au.panier.05ee4d: au panier`;
+    const base = $localize`:@@pos.product-card.ts.ajouter.name.au.panier.6b783056:Ajouter ${this.product.name}:name: au panier`;
     if (this.isAddDisabled()) {
-      return `${this.product.name} indisponible, rupture de stock`;
+      return $localize`:@@pos.product-card.ts.name.indisponible.rupture.de.stock.4c6fbcc6:${this.product.name}:name: indisponible, rupture de stock`;
     }
     if (this.product.isStockManaged && this.product.quantityAvailable != null) {
       const n = this.product.quantityAvailable;
       const unitPart = this.product.unit ? ` ${this.product.unit}` : '';
       if (n === 0) {
-        return `${base}, rupture de stock`;
+        return $localize`:@@pos.product-card.ts.base.rupture.de.stock.ef232cff:${base}:base:, rupture de stock`;
       }
-      let label = `${base}, stock disponible : ${this.formatQuantity(n)}${unitPart}`;
+      let label = $localize`:@@pos.product-card.ts.base.stock.disponible.formatquantity.uni.a2bed4d7:${base}:base:, stock disponible : ${this.formatQuantity(n)}:formatQuantity:${unitPart}:unitPart:`;
       if (this.showLowStockBadge()) {
         label += ', stock faible';
       }

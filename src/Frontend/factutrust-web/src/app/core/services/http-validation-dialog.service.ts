@@ -20,7 +20,7 @@ export class HttpValidationDialogService {
    * @param dedupeKey Clé stable (ex. méthode + URL) pour fusionner les doublons.
    */
   showValidationFailed(error: HttpErrorResponse, dedupeKey: string): void {
-    const message = this.errorHandler.formatValidationDialogBody(error).trim() || 'Veuillez corriger les données saisies.';
+    const message = this.errorHandler.formatValidationDialogBody(error).trim() || $localize`:@@core.http-validation-dialog.ts.veuillez.corriger.les.donnees.saisies.a09634cc:Veuillez corriger les données saisies.`;
     const now = Date.now();
     if (dedupeKey === this.lastDedupeKey && now - this.lastShownAt < this.dedupWindowMs) {
       return;

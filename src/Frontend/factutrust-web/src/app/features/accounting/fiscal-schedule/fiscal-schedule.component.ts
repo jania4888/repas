@@ -822,7 +822,7 @@ export class FiscalScheduleComponent implements OnInit {
 
   private downloadClientCsv(pageOnly: boolean): void {
     const rows = pageOnly ? (this.list?.items ?? []) : (this.list?.items ?? []);
-    const header = "Date d'echeance;Type;Periode;Societe;Montant;Statut;Responsable;Observations";
+    const header = $localize`:@@accounting.fiscal-schedule.ts.date.d.echeance.type.periode.societe.mon.4df89830:Date d'echeance;Type;Periode;Societe;Montant;Statut;Responsable;Observations`;
     const lines = rows.map(row => [
       formatFiscalDate(row.dueDate),
       row.obligationTypeDisplay,

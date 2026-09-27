@@ -482,7 +482,7 @@ export class ProductClientPricesComponent implements OnInit, OnChanges {
 
   validityLabel(item: ProductClientPrice): string {
     if (!item.validFrom && !item.validUntil) {
-      return 'Sans limite';
+      return $localize`:@@products.product-client-prices.ts.sans.limite.b90ed767:Sans limite`;
     }
     const from = item.validFrom ? this.formatDate(item.validFrom) : '…';
     const until = item.validUntil ? this.formatDate(item.validUntil) : '…';
@@ -521,10 +521,10 @@ export class ProductClientPricesComponent implements OnInit, OnChanges {
 
   statusLabel(item: ProductClientPrice): string {
     if (!item.isActive) {
-      return 'Désactivé';
+      return $localize`:@@products.product-client-prices.ts.desactive.2d32fa95:Désactivé`;
     }
     if (!item.isApplicableToday) {
-      return 'Hors période';
+      return $localize`:@@products.product-client-prices.ts.hors.periode.eb84848b:Hors période`;
     }
     return 'Applicable';
   }

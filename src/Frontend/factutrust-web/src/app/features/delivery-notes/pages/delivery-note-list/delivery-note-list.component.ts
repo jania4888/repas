@@ -444,7 +444,7 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
           this.deliveryNotes.set(response.data.items);
           this.totalRecords.set(response.data.totalCount);
         } else {
-          const errorMsg = response.errors?.join(', ') || 'Impossible de charger les bons de livraison';
+          const errorMsg = response.errors?.join(', ') || $localize`:@@delivery-notes.delivery-note-list.ts.impossible.de.charger.les.bons.de.livrai.fd61c761:Impossible de charger les bons de livraison`;
           this.errorMessage.set(errorMsg);
           this.showErrorToast(errorMsg);
         }
@@ -457,7 +457,7 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
         this.initialLoad.set(false);
         this.isLoadingInProgress = false;
 
-        const errorMsg = this.errorHandler.extractErrorMessage(error) || 'Impossible de charger les bons de livraison';
+        const errorMsg = this.errorHandler.extractErrorMessage(error) || $localize`:@@delivery-notes.delivery-note-list.ts.impossible.de.charger.les.bons.de.livrai.fd61c761:Impossible de charger les bons de livraison`;
         this.errorMessage.set(errorMsg);
         this.showErrorToast(errorMsg);
       }

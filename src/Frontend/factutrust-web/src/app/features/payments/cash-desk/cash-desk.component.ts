@@ -833,7 +833,7 @@ export class CashDeskComponent implements OnInit {
           : (err.error as any)?.errors?.[0] ??
             (err.error as any)?.message ??
             (err.error as any)?.error?.description ??
-            'Erreur lors de l\u2019annulation.';
+            $localize`:@@payments.cash-desk.ts.erreur.lors.de.l.annulation.0ba57921:Erreur lors de l’annulation.`;
         this.cancelError.set(msg);
         this.cancelling.set(false);
       }

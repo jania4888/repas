@@ -112,7 +112,7 @@ export function computeTotalDeductible(d: VatDeclarationDto): number {
 export function statusLabel(status: number): string {
   switch (status) {
     case 1: return 'Soumise';
-    case 2: return 'Verrouillée';
+    case 2: return $localize`:@@accounting.vat-declaration.view-model.ts.verrouillee.af142775:Verrouillée`;
     default: return 'Brouillon';
   }
 }
@@ -197,11 +197,10 @@ export function payrollHint(d: VatDeclarationDto): string | null {
   if (!s || !d.monthlyDeclarationV2Enabled) return null;
 
   if (!s.payrollRunExists)
-    return 'Aucun cycle de paie pour cette période : la TFP et le FOPROLOS restent à saisir manuellement.';
+    return $localize`:@@accounting.vat-declaration.view-model.ts.aucun.cycle.de.paie.pour.cette.periode.l.e1691c85:Aucun cycle de paie pour cette période : la TFP et le FOPROLOS restent à saisir manuellement.`;
 
   if (!s.payrollRunUsable) {
-    return `Le cycle de paie de la période est au statut « ${s.payrollRunStatusDisplay ?? 'Brouillon'} » : `
-      + 'ses montants TFP et FOPROLOS ne sont pas repris. Validez le cycle pour les intégrer.';
+    return $localize`:@@accounting.vat-declaration.view-model.ts.le.cycle.de.paie.de.la.periode.est.au.st.81b23f76:Le cycle de paie de la période est au statut « ${s.payrollRunStatusDisplay ?? 'Brouillon'}:p: » : ses montants TFP et FOPROLOS ne sont pas repris. Validez le cycle pour les intégrer.`;
   }
 
   return null;

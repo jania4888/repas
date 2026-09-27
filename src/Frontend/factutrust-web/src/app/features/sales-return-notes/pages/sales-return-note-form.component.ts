@@ -277,7 +277,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
   }
 
   private apiError(err: { error?: { message?: string } }): string {
-    return err?.error?.message || 'Une erreur est survenue. Réessayez.';
+    return err?.error?.message || $localize`:@@sales-return-notes.sales-return-note-form.ts.une.erreur.est.survenue.reessayez.ea88be8d:Une erreur est survenue. Réessayez.`;
   }
 
   private loadPrefill(deliveryNoteId: string): void {

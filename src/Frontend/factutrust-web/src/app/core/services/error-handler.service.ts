@@ -70,7 +70,7 @@ export class ErrorHandlerService {
 
   /** User-facing message for tenant migration / database upgrade failures. */
   getTenantMigrationFailureMessage(): string {
-    return 'Mise à jour de la base de données en cours ou bloquée. Réessayez dans quelques instants ou contactez l\'administrateur si le problème persiste.';
+    return $localize`:@@core.error-handler.ts.mise.a.jour.de.la.base.de.donnees.en.cou.70713096:Mise à jour de la base de données en cours ou bloquée. Réessayez dans quelques instants ou contactez l'administrateur si le problème persiste.`;
   }
 
   /** Code stable de l'erreur API (voir API_ERROR_CODE) : à tester à la place du texte du message. */
@@ -104,12 +104,12 @@ export class ErrorHandlerService {
       (!error.status && !error.error) ||
       (error.status === undefined && error.error === undefined)
     ) {
-      return 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001 et que votre connexion est active.';
+      return $localize`:@@core.error-handler.ts.impossible.de.se.connecter.au.serveur.ve.a314b5cc:Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001 et que votre connexion est active.`;
     }
 
     // Handle case where error is not a proper HttpErrorResponse
     if (!error || (typeof error === 'object' && !error.status && !error.error && !error.message)) {
-      return 'Erreur de connexion. Le serveur ne répond pas. Vérifiez que le backend est démarré.';
+      return $localize`:@@core.error-handler.ts.erreur.de.connexion.le.serveur.ne.repond.572a6b33:Erreur de connexion. Le serveur ne répond pas. Vérifiez que le backend est démarré.`;
     }
 
     // Handle non-JSON responses (e.g., rate limiting text responses)
@@ -129,7 +129,7 @@ export class ErrorHandlerService {
       // Check if it's a rate limiting message
       // Le statut suffit ; le texte ne sert que de repli pour un corps sans statut exploitable.
       if (error.status === 429 || errorData.toLowerCase().includes('trop de requêtes')) {
-        return 'Trop de requêtes. Veuillez patienter avant de réessayer.';
+        return $localize`:@@core.error-handler.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea:Trop de requêtes. Veuillez patienter avant de réessayer.`;
       }
       return errorData;
     }
@@ -141,7 +141,7 @@ export class ErrorHandlerService {
 
     // No error data and no status - network issue
     if (!errorData && !error.status) {
-      return 'Erreur de connexion réseau. Vérifiez votre connexion et que le backend est démarré.';
+      return $localize`:@@core.error-handler.ts.erreur.de.connexion.reseau.verifiez.votr.bc90acdd:Erreur de connexion réseau. Vérifiez votre connexion et que le backend est démarré.`;
     }
 
     // String error
@@ -406,6 +406,6 @@ export class ErrorHandlerService {
       503: 'Service en maintenance. Veuillez réessayer plus tard.'
     };
 
-    return messages[status] || `Erreur ${status}. Veuillez réessayer.`;
+    return messages[status] || $localize`:@@core.error-handler.ts.erreur.status.veuillez.reessayer.6682a2c4:Erreur ${status}:status:. Veuillez réessayer.`;
   }
 }

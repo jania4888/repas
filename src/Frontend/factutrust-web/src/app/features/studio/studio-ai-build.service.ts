@@ -358,10 +358,10 @@ export class StudioAiBuildService {
   }
 
   private httpMessage(status: number, statusText: string): string {
-    if (status === 401) return 'Session expirée. Reconnectez-vous, puis relancez la validation.';
-    if (status === 403) return "Vous n'avez pas la permission de créer des tables Studio.";
-    if (status === 404) return 'Ce plan est introuvable ou a expiré.';
-    if (status === 409) return 'Ce plan a déjà été traité.';
+    if (status === 401) return $localize`:@@studio.studio-ai-build.ts.session.expiree.reconnectez.vous.puis.re.641fdfab:Session expirée. Reconnectez-vous, puis relancez la validation.`;
+    if (status === 403) return $localize`:@@studio.studio-ai-build.ts.vous.n.avez.pas.la.permission.de.creer.d.5d212ebe:Vous n'avez pas la permission de créer des tables Studio.`;
+    if (status === 404) return $localize`:@@studio.studio-ai-build.ts.ce.plan.est.introuvable.ou.a.expire.2e8a0aa9:Ce plan est introuvable ou a expiré.`;
+    if (status === 409) return $localize`:@@studio.studio-ai-build.ts.ce.plan.a.deja.ete.traite.7e6ecf9d:Ce plan a déjà été traité.`;
     return `HTTP ${status} : ${statusText}`;
   }
 }

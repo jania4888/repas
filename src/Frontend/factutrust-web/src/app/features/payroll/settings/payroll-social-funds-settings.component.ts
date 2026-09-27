@@ -265,7 +265,7 @@ export class PayrollSocialFundsSettingsComponent implements OnInit {
       if (num.length === 0) continue;
       const digits = sceAccountDigitCount(num);
       if (digits > SCE_ACCOUNT_MAX_DIGITS) {
-        return `Le compte SCE ${label} « ${num} » comporte ${digits} chiffres : le maximum est ${SCE_ACCOUNT_MAX_DIGITS}.`;
+        return $localize`:@@payroll.payroll-social-funds-settings.ts.le.compte.sce.label.num.comporte.digits.d723ad15:Le compte SCE ${label}:label: « ${num}:num: » comporte ${digits}:digits: chiffres : le maximum est ${SCE_ACCOUNT_MAX_DIGITS}:SCE_ACCOUNT_MAX_DIGITS:.`;
       }
     }
     return null;

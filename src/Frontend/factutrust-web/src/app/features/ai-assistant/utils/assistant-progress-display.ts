@@ -230,7 +230,7 @@ export function getAssistantProgressSummary(
     }
   }
 
-  return parts.length > 0 ? `R\u00e9ponse pr\u00e9par\u00e9e en ${parts.join(' \u00b7 ')}` : '';
+  return parts.length > 0 ? $localize`:@@ai-assistant.assistant-progress-display.ts.reponse.preparee.en.join.d9d038ee:R\u00e9ponse pr\u00e9par\u00e9e en ${parts.join(' \u00b7 ')}:join:` : '';
 }
 
 export function getAssistantStepMeta(step: AssistantProgressStep): string {
@@ -267,25 +267,25 @@ function formatAssistantStepDetail(step: AssistantProgressStep): string {
       return formatProviderDetail(step.detail, step.status);
     case 'conversation_load_or_create':
       if (step.detail === 'nouvelle conversation') {
-        return 'Nouvel \u00e9change initialis\u00e9';
+        return $localize`:@@ai-assistant.assistant-progress-display.ts.nouvel.echange.initialise.7d5e9708:Nouvel échange initialisé`;
       }
       if (step.detail === 'conversation existante') {
-        return 'Historique retrouv\u00e9';
+        return $localize`:@@ai-assistant.assistant-progress-display.ts.historique.retrouve.53bb2d88:Historique retrouvé`;
       }
-      return 'Contexte de conversation pr\u00eat';
+      return $localize`:@@ai-assistant.assistant-progress-display.ts.contexte.de.conversation.pret.e8b99295:Contexte de conversation prêt`;
     case 'build_system_prompt':
       if (step.detail === 'Compliance') {
-        return 'V\u00e9rifications renforc\u00e9es activ\u00e9es';
+        return $localize`:@@ai-assistant.assistant-progress-display.ts.verifications.renforcees.activees.1d0b3903:Vérifications renforcées activées`;
       }
-      return 'Contexte m\u00e9tier enrichi';
+      return $localize`:@@ai-assistant.assistant-progress-display.ts.contexte.metier.enrichi.02d1ef22:Contexte métier enrichi`;
     case 'llm_stream_round':
-      return step.status === 'running' ? 'Le mod\u00e8le formule la r\u00e9ponse' : '';
+      return step.status === 'running' ? $localize`:@@ai-assistant.assistant-progress-display.ts.le.modele.formule.la.reponse.184633a8:Le modèle formule la réponse` : '';
     case 'llm_forced_synthesis':
-      return step.status === 'running' ? 'Consolidation des r\u00e9sultats' : '';
+      return step.status === 'running' ? $localize`:@@ai-assistant.assistant-progress-display.ts.consolidation.des.resultats.bc959d8d:Consolidation des résultats` : '';
     case 'persist_conversation':
-      return 'R\u00e9ponse enregistr\u00e9e';
+      return $localize`:@@ai-assistant.assistant-progress-display.ts.reponse.enregistree.7b21f542:Réponse enregistrée`;
     case 'total_request':
-      return 'Pr\u00eate \u00e0 \u00eatre lue';
+      return $localize`:@@ai-assistant.assistant-progress-display.ts.prete.a.etre.lue.a7652036:Prête à être lue`;
     default:
       return step.detail?.trim() ?? '';
   }
@@ -293,24 +293,24 @@ function formatAssistantStepDetail(step: AssistantProgressStep): string {
 
 function formatProviderDetail(detail: string | undefined, status: AssistantProgressStep['status']): string {
   if (status === 'failed') {
-    return 'Service ou mod\u00e8le indisponible';
+    return $localize`:@@ai-assistant.assistant-progress-display.ts.service.ou.modele.indisponible.13684d3f:Service ou modèle indisponible`;
   }
 
   if (detail?.startsWith('ollama:')) {
-    return 'Mod\u00e8le local pr\u00eat';
+    return $localize`:@@ai-assistant.assistant-progress-display.ts.modele.local.pret.81ba850f:Modèle local prêt`;
   }
 
   if (detail?.startsWith('openrouter:')) {
-    return 'Mod\u00e8le cloud pr\u00eat';
+    return $localize`:@@ai-assistant.assistant-progress-display.ts.modele.cloud.pret.ef0967f8:Modèle cloud prêt`;
   }
 
   if (detail?.startsWith('modal:')) {
-    return 'Mod\u00e8le cloud pr\u00eat';
+    return $localize`:@@ai-assistant.assistant-progress-display.ts.modele.cloud.pret.ef0967f8:Modèle cloud prêt`;
   }
 
   if (detail?.startsWith('cursor:')) {
-    return 'Mod\u00e8le Cursor pr\u00eat';
+    return $localize`:@@ai-assistant.assistant-progress-display.ts.modele.cursor.pret.19689eb7:Modèle Cursor prêt`;
   }
 
-  return 'Connexion \u00e9tablie';
+  return $localize`:@@ai-assistant.assistant-progress-display.ts.connexion.etablie.a5c17ab3:Connexion établie`;
 }

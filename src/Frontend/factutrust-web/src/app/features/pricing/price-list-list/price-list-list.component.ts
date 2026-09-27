@@ -204,7 +204,7 @@ export class PriceListListComponent implements OnInit {
   }
 
   validityLabel(row: PriceListListItem): string {
-    if (!row.validFrom && !row.validUntil) return 'Sans limite';
+    if (!row.validFrom && !row.validUntil) return $localize`:@@pricing.price-list-list.ts.sans.limite.b90ed767:Sans limite`;
     const from = row.validFrom ? new Date(row.validFrom).toLocaleDateString('fr-TN') : '…';
     const until = row.validUntil ? new Date(row.validUntil).toLocaleDateString('fr-TN') : '…';
     return `${from} → ${until}`;

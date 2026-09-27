@@ -312,11 +312,11 @@ export class DashboardService {
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffMinutes < 1) return "À l'instant";
+    if (diffMinutes < 1) return $localize`:@@dashboard.dashboard.ts.a.l.instant.67cf83bb:À l'instant`;
     if (diffMinutes < 60) return `Il y a ${diffMinutes} min`;
     if (diffHours < 24) return `Il y a ${diffHours}h`;
     if (diffDays === 1) return 'Hier';
-    if (diffDays < 7) return `Il y a ${diffDays} jours`;
+    if (diffDays < 7) return $localize`:@@dashboard.dashboard.ts.il.y.a.diffdays.jours.44aa16a2:Il y a ${diffDays}:diffDays: jours`;
     if (diffDays < 30) return `Il y a ${Math.floor(diffDays / 7)} sem.`;
 
     return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });

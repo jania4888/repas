@@ -622,9 +622,7 @@ export class PayrollSettingsComponent implements OnInit {
       this.confirmation.confirm({
         header: $localize`:@@payroll.payroll-settings.ts.basculer.en.imputation.sce.2026.a017cae0:Basculer en imputation SCE 2026`,
         message:
-          $localize`:@@payroll.payroll-settings.ts.a.partir.du.from.les.ecritures.de.paie.u.9b0f5df4:À partir du ${from}:from:, les écritures de paie utiliseront les comptes NCT 01 : TFP en 6611, `
-          + $localize`:@@payroll.payroll-settings.ts.foprolos.en.6612.taxes.patronales.en.437.4d50cea1:FOPROLOS en 6612, taxes patronales en 437, indemnités de rupture en 64602. Les cycles `
-          + $localize`:@@payroll.payroll-settings.ts.anterieurs.a.cette.date.conservent.leur.935befaa:antérieurs à cette date conservent leur imputation actuelle et ne sont pas réécrits. Continuer ?`,
+          $localize`:@@payroll.payroll-settings.ts.a.partir.du.from.les.ecritures.de.paie.u.99f73af0:À partir du ${from}:from:, les écritures de paie utiliseront les comptes NCT 01 : TFP en 6611, FOPROLOS en 6612, taxes patronales en 437, indemnités de rupture en 64602. Les cycles antérieurs à cette date conservent leur imputation actuelle et ne sont pas réécrits. Continuer ?`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: $localize`:@@payroll-settings.component.acceptLabel.Basculer:Basculer`,
         rejectLabel: $localize`:@@payroll-settings.component.rejectLabel.Annuler:Annuler`,

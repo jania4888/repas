@@ -69,11 +69,11 @@ export function positionZoneLabel(zone: CashPositionZone): string {
 export function scenarioLabel(kind: CashFlowScenarioKind): string {
   switch (kind) {
     case 'optimistic':
-      return 'Scénario optimiste';
+      return $localize`:@@treasury.cash-forecast.view-model.ts.scenario.optimiste.ffec2223:Scénario optimiste`;
     case 'realistic':
-      return 'Scénario réaliste';
+      return $localize`:@@treasury.cash-forecast.view-model.ts.scenario.realiste.4b8d48a3:Scénario réaliste`;
     default:
-      return 'Scénario pessimiste';
+      return $localize`:@@treasury.cash-forecast.view-model.ts.scenario.pessimiste.05d17bd7:Scénario pessimiste`;
   }
 }
 

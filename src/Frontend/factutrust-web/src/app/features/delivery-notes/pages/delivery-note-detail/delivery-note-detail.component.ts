@@ -1693,7 +1693,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
           });
           this.loadDeliveryNote(note.id);
         } else {
-          const message = (response as any).message || 'Impossible d\'enregistrer la livraison';
+          const message = (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.d.enregistrer.la.livraison.d625e48a:Impossible d'enregistrer la livraison`;
           this.deliverySubmitError.set(message);
           this.toastService.add({
             severity: 'error',

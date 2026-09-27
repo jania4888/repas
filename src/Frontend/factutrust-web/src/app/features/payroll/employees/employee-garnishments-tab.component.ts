@@ -219,7 +219,7 @@ export class EmployeeGarnishmentsTabComponent implements OnInit {
 
   amountLabel(g: EmployeeGarnishment): string {
     if (g.kind === 'PercentOfNet') {
-      return `${g.percentOfNet ?? 0} % du net`;
+      return $localize`:@@payroll.employee-garnishments-tab.ts.p.du.net.9b7e7292:${g.percentOfNet ?? 0}:p: % du net`;
     }
     return g.fixedAmount != null ? $localize`:@@ui.tern.ph.tnd.mois.553db0:${g.fixedAmount}:p0: TND / mois` : (g.kindDisplay ?? g.kind);
   }

@@ -1074,9 +1074,9 @@ export class ChangePlanDialogComponent {
     const currentOrder = planOrder[currentPlan] ?? 0;
     const targetOrder = planOrder[plan.id] ?? 0;
 
-    if (targetOrder > currentOrder) return 'Passer au supérieur';
-    if (targetOrder < currentOrder) return 'Rétrograder';
-    return 'Sélectionner';
+    if (targetOrder > currentOrder) return $localize`:@@settings.change-plan-dialog.ts.passer.au.superieur.32d80048:Passer au supérieur`;
+    if (targetOrder < currentOrder) return $localize`:@@settings.change-plan-dialog.ts.retrograder.6740723a:Rétrograder`;
+    return $localize`:@@settings.change-plan-dialog.ts.selectionner.ab31a36f:Sélectionner`;
   }
 
   goToStep2(): void {

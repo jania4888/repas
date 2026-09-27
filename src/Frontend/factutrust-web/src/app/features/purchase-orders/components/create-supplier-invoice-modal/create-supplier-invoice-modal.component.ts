@@ -832,6 +832,6 @@ export class CreateSupplierInvoiceModalComponent implements OnInit {
   }
 
   get modalHeader(): string {
-    return `Créer facture fournisseur - ${this.sourceDocumentNumber}`;
+    return $localize`:@@purchase-orders.create-supplier-invoice-modal.ts.creer.facture.fournisseur.sourcedocument.a556c042:Créer facture fournisseur - ${this.sourceDocumentNumber}:sourceDocumentNumber:`;
   }
 }

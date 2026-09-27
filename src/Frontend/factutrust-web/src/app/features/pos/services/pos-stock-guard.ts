@@ -10,7 +10,7 @@ export function buildInsufficientStockMessage(
   requested: number,
   available: number
 ): string {
-  return `Stock insuffisant pour ${productName} dans cet entrepôt (demandé ${requested}, disponible ${available}).`;
+  return $localize`:@@pos.pos-stock-guard.ts.stock.insuffisant.pour.productname.dans.d920260c:Stock insuffisant pour ${productName}:productName: dans cet entrepôt (demandé ${requested}:requested:, disponible ${available}:available:).`;
 }
 
 /** Clé de cache : entrepôt + lignes (produit:qté). Un TTL seul réutilisait un « tout dispo » d'un autre panier. */

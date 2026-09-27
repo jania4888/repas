@@ -92,6 +92,6 @@ export class PromotionPeriodBarComponent {
   }
 
   ariaLabel(): string {
-    return `Progression de la période : ${this.progress().percent} pour cent`;
+    return $localize`:@@settings.promotion-period-bar.ts.progression.de.la.periode.percent.pour.c.ac7c40ed:Progression de la période : ${this.progress().percent}:percent: pour cent`;
   }
 }

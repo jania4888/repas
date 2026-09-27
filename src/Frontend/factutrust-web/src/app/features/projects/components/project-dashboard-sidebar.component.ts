@@ -84,8 +84,8 @@ export class ProjectDashboardSidebarComponent {
   }
 
   activityLabel(status: string | undefined): string {
-    if (status === 'online') return 'Actif récemment';
-    if (status === 'away') return 'Actif cette semaine';
+    if (status === 'online') return $localize`:@@projects.project-dashboard-sidebar.ts.actif.recemment.45420db4:Actif récemment`;
+    if (status === 'away') return $localize`:@@projects.project-dashboard-sidebar.ts.actif.cette.semaine.68751ca1:Actif cette semaine`;
     return 'Inactif';
   }
 }

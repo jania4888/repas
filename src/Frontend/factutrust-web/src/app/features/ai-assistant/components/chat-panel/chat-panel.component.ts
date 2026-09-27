@@ -1027,7 +1027,7 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
     if (!trace) {
       return base;
     }
-    return `${base} — écran: ${trace.screenId}, schema: ${trace.schemaVersion}, payload: ${trace.payloadBytes} o${trace.truncated ? $localize`:@@ui.tern.tronque.d0a5cd: (tronqué)` : ''}`;
+    return $localize`:@@ai-assistant.chat-panel.ts.base.ecran.screenid.schema.schemaversion.464e5861:${base}:base: — écran: ${trace.screenId}:screenId:, schema: ${trace.schemaVersion}:schemaVersion:, payload: ${trace.payloadBytes}:payloadBytes: o${trace.truncated ? $localize`:@@ui.tern.tronque.d0a5cd: (tronqué)` : ''}:p:`;
   }
 
   /** Stream SSE continues in AiChatSessionService when this panel is destroyed (route change). */

@@ -354,8 +354,7 @@ export class ManualEntryComponent implements OnInit {
     if (letteredCodes.length > 0) {
       this.confirmationService.confirm({
         message:
-          $localize`:@@accounting.manual-entry.ts.enregistrer.delettrera.le.s.groupe.s.joi.a07593c3:Enregistrer délettrera le(s) groupe(s) ${letteredCodes.join(', ')}:join: : toutes leurs lignes ` +
-          $localize`:@@accounting.manual-entry.ts.redeviendront.lettrables.y.compris.celle.b7a448a6:redeviendront lettrables, y compris celles d'autres écritures. Continuer ?`,
+          $localize`:@@accounting.manual-entry.ts.enregistrer.delettrera.le.s.groupe.s.joi.07480ec6:Enregistrer délettrera le(s) groupe(s) ${letteredCodes.join(', ')}:join: : toutes leurs lignes redeviendront lettrables, y compris celles d'autres écritures. Continuer ?`,
         header: $localize`:@@accounting.manual-entry.ts.ecriture.lettree.5a8d7b8b:Écriture lettrée`,
         acceptLabel: $localize`:@@manual-entry.component.acceptLabel.D_lettrer_et_enr:Délettrer et enregistrer`,
         rejectLabel: $localize`:@@manual-entry.component.rejectLabel.Annuler:Annuler`,
@@ -669,6 +668,6 @@ const SOURCE_ENTITY_LABELS: Record<string, string> = {
 };
 
 function sourceEntityLabel(source: string | null): string {
-  if (!source) return 'un document source';
+  if (!source) return $localize`:@@accounting.manual-entry.ts.un.document.source.1372e08e:un document source`;
   return SOURCE_ENTITY_LABELS[source] ?? $localize`:@@ui.tern.un.document.source.1372e0:un document source`;
 }

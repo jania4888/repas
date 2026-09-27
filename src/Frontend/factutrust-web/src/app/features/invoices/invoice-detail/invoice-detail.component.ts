@@ -2018,7 +2018,7 @@ export class InvoiceDetailComponent implements OnInit {
         }
       },
       error: (error: Error) => {
-        const errorMessage = error.message || 'Impossible de télécharger le PDF';
+        const errorMessage = error.message || $localize`:@@invoices.invoice-detail.ts.impossible.de.telecharger.le.pdf.24ca4288:Impossible de télécharger le PDF`;
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,

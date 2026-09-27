@@ -758,7 +758,7 @@ export class AddCashOperationDialogComponent implements OnChanges, OnInit {
           this.operationCreated.emit(res.data);
           this.onHide();
         } else {
-          const msg = res.message ?? 'Impossible d\u2019enregistrer l\u2019opération.';
+          const msg = res.message ?? $localize`:@@payments.add-cash-operation-dialog.ts.impossible.d.enregistrer.l.operation.86fecb67:Impossible d’enregistrer l’opération.`;
           this.errorMessage.set(msg);
         }
         this.submitting.set(false);
@@ -771,7 +771,7 @@ export class AddCashOperationDialogComponent implements OnChanges, OnInit {
           : err?.error?.errors?.[0] ??
             err?.error?.message ??
             err?.error?.error?.description ??
-            'Erreur lors de l\u2019enregistrement de l\u2019opération.';
+            $localize`:@@payments.add-cash-operation-dialog.ts.erreur.lors.de.l.enregistrement.de.l.ope.2ea3dd53:Erreur lors de l’enregistrement de l’opération.`;
         this.errorMessage.set(msg);
         this.submitting.set(false);
       }

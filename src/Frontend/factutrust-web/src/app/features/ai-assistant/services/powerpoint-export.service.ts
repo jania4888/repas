@@ -297,14 +297,14 @@ export class PowerPointExportService {
   }
 
   private friendlyHttpMessage(error: HttpErrorResponse): string {
-    if (error.status === 0) return 'Impossible de joindre le serveur. Vérifiez votre connexion.';
+    if (error.status === 0) return $localize`:@@ai-assistant.powerpoint-export.ts.impossible.de.joindre.le.serveur.verifie.8b75460a:Impossible de joindre le serveur. Vérifiez votre connexion.`;
     if (error.status === 400 && error.message === 'Http failure response for unknown url: 400 Unknown Error') {
-      return 'La requête d\'export a été rejetée par le serveur.';
+      return $localize`:@@ai-assistant.powerpoint-export.ts.la.requete.d.export.a.ete.rejetee.par.le.f478a4e4:La requête d'export a été rejetée par le serveur.`;
     }
     if (error.message?.includes('Unknown Error')) {
-      return 'Erreur serveur lors de l\'export PowerPoint.';
+      return $localize`:@@ai-assistant.powerpoint-export.ts.erreur.serveur.lors.de.l.export.powerpoi.42306a40:Erreur serveur lors de l'export PowerPoint.`;
     }
-    return error.message || 'Erreur inattendue.';
+    return error.message || $localize`:@@ai-assistant.powerpoint-export.ts.erreur.inattendue.f815b77e:Erreur inattendue.`;
   }
 
   private async readApiResponseFromBlob(blob: Blob): Promise<ApiResponse<unknown> | null> {

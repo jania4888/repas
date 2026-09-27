@@ -793,7 +793,7 @@ export class AddBankAccountDialogComponent implements OnChanges {
       if (o.errors?.length) return o.errors[0];
       if (o.message) return o.message;
     }
-    return 'Erreur lors de l\u2019enregistrement du compte.';
+    return $localize`:@@payments.add-bank-account-dialog.ts.erreur.lors.de.l.enregistrement.du.compt.08e5eb61:Erreur lors de l’enregistrement du compte.`;
   }
 
   close(): void {

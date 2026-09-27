@@ -43,7 +43,7 @@ export function dueLabel(dueAt: string | null | undefined, nowMs: number): strin
   const state = dueState(dueAt, nowMs); if (state === 'none') return '—';
   const delta = Math.abs(Date.parse(dueAt!) - nowMs);
   const amount = delta >= DAY_MS ? `${Math.floor(delta / DAY_MS)} j` : `${Math.max(1, Math.round(delta / HOUR_MS))} h`;
-  return state === 'late' ? `En retard de ${amount}` : `Dans ${amount}`;
+  return state === 'late' ? $localize`:@@studio.studio-approvals.ts.en.retard.de.amount.6c326148:En retard de ${amount}:amount:` : $localize`:@@studio.studio-approvals.ts.dans.amount.f8d68aa1:Dans ${amount}:amount:`;
 }
 
 export function approvalKpis(rows: readonly ApprovalRow[], nowMs: number): { pending: number; late: number; soon: number } {

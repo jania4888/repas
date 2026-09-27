@@ -646,7 +646,7 @@ export class CashForecastComponent implements OnInit {
   impactLabel(impact: string | null | undefined): string {
     switch (impact) {
       case 'high':
-        return 'Impact élevé';
+        return $localize`:@@treasury.cash-forecast.ts.impact.eleve.d2a56cbd:Impact élevé`;
       case 'medium':
         return 'Impact moyen';
       default:

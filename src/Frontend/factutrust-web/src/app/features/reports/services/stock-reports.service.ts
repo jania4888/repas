@@ -104,7 +104,7 @@ export class StockReportsService {
 
   private buildSummaryText(alertCount: number, outOfStockCount: number, lowStockCount: number): string {
     if (alertCount === 0) {
-      return 'Votre stock est à jour. Aucune alerte de rupture.';
+      return $localize`:@@reports.stock-reports.ts.votre.stock.est.a.jour.aucune.alerte.de.0467df81:Votre stock est à jour. Aucune alerte de rupture.`;
     }
     const parts: string[] = [];
     if (outOfStockCount > 0) {

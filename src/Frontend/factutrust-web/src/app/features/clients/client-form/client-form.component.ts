@@ -646,7 +646,7 @@ export class ClientFormComponent implements OnInit {
     const control = this.form.get('nif');
     if (!control?.errors) return '';
     if (control.errors['required']) {
-      return 'Le matricule fiscal est obligatoire pour un client assujetti';
+      return $localize`:@@clients.client-form.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29:Le matricule fiscal est obligatoire pour un client assujetti`;
     }
     if (control.errors['pattern']) {
       return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';
@@ -805,7 +805,7 @@ export class ClientFormComponent implements OnInit {
           this.saving.set(false);
           
           // Extraire les erreurs de validation détaillées
-          let errorMessage = 'Impossible de créer le client';
+          let errorMessage = $localize`:@@clients.client-form.ts.impossible.de.creer.le.client.027d8009:Impossible de créer le client`;
           
           if (err.error?.errors && Array.isArray(err.error.errors) && err.error.errors.length > 0) {
             errorMessage = err.error.errors[0];

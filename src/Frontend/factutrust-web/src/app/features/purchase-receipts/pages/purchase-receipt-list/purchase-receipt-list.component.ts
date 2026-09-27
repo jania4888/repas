@@ -443,8 +443,8 @@ export class PurchaseReceiptListComponent implements OnInit, OnDestroy {
         const status = error?.status as number | undefined;
         const detail =
           status === 403
-            ? 'Accès non autorisé aux bons de réception'
-            : error?.error?.errors?.[0] || 'Impossible de charger les bons de réception';
+            ? $localize`:@@purchase-receipts.purchase-receipt-list.ts.acces.non.autorise.aux.bons.de.reception.bce6d414:Accès non autorisé aux bons de réception`
+            : error?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-list.ts.impossible.de.charger.les.bons.de.recept.2b72f55a:Impossible de charger les bons de réception`;
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@purchase-receipt-list.component.summary.Erreur:Erreur`,

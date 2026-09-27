@@ -164,13 +164,13 @@ export function requestStatusLabel(raw: unknown): string {
     case 'InProgress':
       return 'En cours';
     case 'WaitingClient':
-      return 'Attente client';
+      return $localize`:@@exchanges.exchange-status.ts.attente.client.6b243335:Attente client`;
     case 'WaitingFirm':
       return 'Attente cabinet';
     case 'Resolved':
-      return 'Résolue';
+      return $localize`:@@exchanges.exchange-status.ts.resolue.29df7ce6:Résolue`;
     case 'Closed':
-      return 'Clôturée';
+      return $localize`:@@exchanges.exchange-status.ts.cloturee.da2e2bc8:Clôturée`;
     default:
       return '';
   }
@@ -180,7 +180,7 @@ export function categoryLabel(raw: unknown): string {
   const c = parseExchangeRequestCategory(raw);
   switch (c) {
     case 'Reclamation':
-      return 'Réclamation';
+      return $localize`:@@exchanges.exchange-status.ts.reclamation.33d37f8b:Réclamation`;
     case 'Information':
       return 'Information';
     case 'DocumentManquant':
@@ -196,13 +196,13 @@ export function taskStatusLabel(raw: unknown): string {
   const s = parseExchangeTaskStatus(raw);
   switch (s) {
     case 'Todo':
-      return 'À faire';
+      return $localize`:@@exchanges.exchange-status.ts.a.faire.262bf4ea:À faire`;
     case 'Doing':
       return 'En cours';
     case 'Done':
-      return 'Terminée';
+      return $localize`:@@exchanges.exchange-status.ts.terminee.45936892:Terminée`;
     case 'Cancelled':
-      return 'Annulée';
+      return $localize`:@@exchanges.exchange-status.ts.annulee.2776573b:Annulée`;
     default:
       return '';
   }
@@ -312,8 +312,8 @@ export function parseExchangeAuditEventType(raw: unknown): ExchangeAuditEventTyp
 export function auditEventLabel(raw: unknown): string {
   const code = parseExchangeAuditEventType(raw);
   if (code) return AUDIT_LABELS[code];
-  if (raw == null || raw === '') return 'Événement';
-  return `Événement ${raw}`;
+  if (raw == null || raw === '') return $localize`:@@exchanges.exchange-status.ts.evenement.c040c1a9:Événement`;
+  return $localize`:@@exchanges.exchange-status.ts.evenement.raw.9e9bc6f2:Événement ${raw}:raw:`;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -512,7 +512,7 @@ export function assigneeDisplayName(
   participants: { userId: string; displayName: string }[] | null | undefined,
   assigneeUserId?: string | null
 ): string {
-  if (!assigneeUserId) return 'Non assignée';
+  if (!assigneeUserId) return $localize`:@@exchanges.exchange-status.ts.non.assignee.493d0bb2:Non assignée`;
   const name = participants?.find(p => p.userId === assigneeUserId)?.displayName?.trim();
   return name || 'Participant';
 }

@@ -366,14 +366,12 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       next: (caps) => {
         if (!caps.aiFallbackAvailable) {
           this.capabilityHint.set(
-            $localize`:@@accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.2a1357aa:Analyse IA indisponible pour votre compte : seules les factures émises par `
-            + $localize`:@@ui.tern.instafact.pourront.etre.lues.dc81c8:InstaFact pourront être lues.`);
+            $localize`:@@accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.4c261844:Analyse IA indisponible pour votre compte : seules les factures émises par InstaFact pourront être lues.`);
           return;
         }
         if (caps.visionModel && caps.visionModelReady === false) {
           this.capabilityHint.set(
-            $localize`:@@accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.408356a2:Le modèle vision d'import (${caps.visionModel}:visionModel:) n'est pas prêt sur le serveur. `
-            + $localize`:@@accounting.accounting-document-import-dialog.ts.les.photos.de.factures.pourraient.echoue.45785b89:Les photos de factures pourraient échouer — contactez l'administrateur InstaFact.`);
+            $localize`:@@accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.5ee55a7a:Le modèle vision d'import (${caps.visionModel}:visionModel:) n'est pas prêt sur le serveur. Les photos de factures pourraient échouer — contactez l'administrateur InstaFact.`);
           return;
         }
         this.capabilityHint.set(null);

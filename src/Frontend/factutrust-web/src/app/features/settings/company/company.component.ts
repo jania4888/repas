@@ -1053,7 +1053,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
             this.logoUrl.set(company.logoUrl);
           }
         } else {
-          const errorMsg = response.errors?.join(', ') || 'Impossible de charger les informations de l\'entreprise';
+          const errorMsg = response.errors?.join(', ') || $localize`:@@settings.company.ts.impossible.de.charger.les.informations.d.7b68d0c8:Impossible de charger les informations de l'entreprise`;
           this.errorMessage.set(errorMsg);
           this.showErrorToast('Erreur', errorMsg);
         }
@@ -1069,13 +1069,13 @@ export class CompanyComponent implements OnInit, OnDestroy {
         // On ne fait pas de retry supplémentaire ici pour éviter les boucles infinies
         if (err.status === 429) {
           this.isRateLimited.set(true);
-          const errorMsg = 'Trop de requêtes. Veuillez patienter avant de réessayer.';
+          const errorMsg = $localize`:@@settings.company.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea:Trop de requêtes. Veuillez patienter avant de réessayer.`;
           this.errorMessage.set(errorMsg);
           // Ne pas afficher de toast ici car l'intercepteur le gère déjà
           // Le composant affiche juste le message inline
         } else {
           const errorMessage = this.errorHandler.extractErrorMessage(err) ||
-            'Une erreur est survenue lors du chargement des informations';
+            $localize`:@@settings.company.ts.une.erreur.est.survenue.lors.du.chargeme.d29a12c6:Une erreur est survenue lors du chargement des informations`;
           this.errorMessage.set(errorMessage);
           this.showErrorToast('Erreur', errorMessage);
         }
@@ -1200,7 +1200,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
 
           this.saving.set(false);
         } else {
-          const errorMsg = response.errors?.join(', ') || 'Une erreur est survenue lors de la mise à jour';
+          const errorMsg = response.errors?.join(', ') || $localize`:@@settings.company.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`;
           this.errorMessage.set(errorMsg);
           this.showErrorToast('Erreur', errorMsg);
         }
@@ -1214,13 +1214,13 @@ export class CompanyComponent implements OnInit, OnDestroy {
         // On ne fait pas de retry supplémentaire ici pour éviter les boucles infinies
         if (err.status === 429) {
           this.isRateLimited.set(true);
-          const errorMsg = 'Trop de requêtes. Veuillez patienter avant de réessayer.';
+          const errorMsg = $localize`:@@settings.company.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea:Trop de requêtes. Veuillez patienter avant de réessayer.`;
           this.errorMessage.set(errorMsg);
           // Ne pas afficher de toast ici car l'intercepteur le gère déjà
           // Le composant affiche juste le message inline
         } else {
           const errorMessage = this.errorHandler.extractErrorMessage(err) ||
-            'Une erreur est survenue lors de la mise à jour';
+            $localize`:@@settings.company.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`;
           this.errorMessage.set(errorMessage);
           this.showErrorToast('Erreur', errorMessage);
         }

@@ -849,7 +849,7 @@ export class SupplierFormComponent implements OnInit {
     const control = this.form.get('nif');
     if (!control?.errors) return '';
     if (control.errors['required']) {
-      return 'Le matricule fiscal est obligatoire pour un fournisseur entreprise';
+      return $localize`:@@suppliers.supplier-form.ts.le.matricule.fiscal.est.obligatoire.pour.461e8771:Le matricule fiscal est obligatoire pour un fournisseur entreprise`;
     }
     if (control.errors['pattern']) {
       return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';

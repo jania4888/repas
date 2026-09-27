@@ -382,7 +382,7 @@ export class StockExitFormComponent implements OnInit {
           });
           this.router.navigate(['/stock']);
         } else {
-          const detail = res.errors?.join(', ') || res.message || 'Erreur';
+          const detail = res.errors?.join(', ') || res.message || $localize`:@@stock.stock-exit-form.ts.erreur.ab546c23:Erreur`;
           this.confirmationService.alert({
             header: $localize`:@@stock.stock-exit-form.ts.sortie.de.stock.impossible.803e3955:Sortie de stock impossible`,
             message: detail,

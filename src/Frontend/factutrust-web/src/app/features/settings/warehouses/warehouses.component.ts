@@ -770,8 +770,8 @@ export class WarehousesComponent implements OnInit, OnDestroy {
   fieldError(name: 'code' | 'name'): string {
     const c = this.form.get(name);
     if (!c?.errors) return '';
-    if (c.errors['required']) return 'Ce champ est obligatoire';
-    if (c.errors['maxlength']) return 'Longueur maximale dépassée';
+    if (c.errors['required']) return $localize`:@@settings.warehouses.ts.ce.champ.est.obligatoire.17061b6a:Ce champ est obligatoire`;
+    if (c.errors['maxlength']) return $localize`:@@settings.warehouses.ts.longueur.maximale.depassee.eef9b613:Longueur maximale dépassée`;
     return '';
   }
 

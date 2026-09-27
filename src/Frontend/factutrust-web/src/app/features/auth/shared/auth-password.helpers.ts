@@ -86,10 +86,10 @@ export function optionalAuthPasswordValidator(): ValidatorFn {
 export function passwordStrengthLabel(level: PasswordStrengthLevel): string {
   switch (level) {
     case 'empty': return '';
-    case 'weak': return 'Force du mot de passe : faible';
-    case 'fair': return 'Force du mot de passe : moyenne';
-    case 'good': return 'Force du mot de passe : bonne';
-    case 'strong': return 'Force du mot de passe : forte';
+    case 'weak': return $localize`:@@auth.auth-password.helpers.ts.force.du.mot.de.passe.faible.ef369fa3:Force du mot de passe : faible`;
+    case 'fair': return $localize`:@@auth.auth-password.helpers.ts.force.du.mot.de.passe.moyenne.c8d67cee:Force du mot de passe : moyenne`;
+    case 'good': return $localize`:@@auth.auth-password.helpers.ts.force.du.mot.de.passe.bonne.1bc2e600:Force du mot de passe : bonne`;
+    case 'strong': return $localize`:@@auth.auth-password.helpers.ts.force.du.mot.de.passe.forte.0ea699a1:Force du mot de passe : forte`;
     default: return '';
   }
 }

@@ -674,7 +674,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
 
   paletteLabel(template: PaletteBlockTemplate): string {
     if (template.type === NumberingBlockType.Separator) {
-      return `Séparateur « ${template.value ?? '-'} »`;
+      return $localize`:@@settings.numbering.ts.separateur.p.82bbc528:Séparateur « ${template.value ?? '-'}:p: »`;
     }
     return BLOCK_TYPE_LABELS[template.type];
   }

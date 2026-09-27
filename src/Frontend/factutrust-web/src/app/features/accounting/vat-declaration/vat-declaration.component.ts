@@ -256,10 +256,8 @@ export class VatDeclarationComponent implements OnInit {
     if (this.isCompanyReadOnly)
       return 'Les montants déposés par le cabinet font foi. Rapprochez-vous de lui pour toute correction.';
     if (d.status === 0)
-      return $localize`:@@ui.tern.les.montants.enregistres.font.foi.et.ne.so.718ac5:Les montants enregistrés font foi et ne sont jamais réalignés automatiquement. `
-        + $localize`:@@ui.tern.resynchronisez.puis.enregistrez.pour.les.m.dfda5a:Resynchronisez puis enregistrez pour les mettre à jour.`;
-    return $localize`:@@ui.tern.cette.declaration.a.ete.deposee.ses.montan.c05947:Cette déclaration a été déposée : ses montants restent ceux du dépôt. `
-      + $localize`:@@ui.tern.pour.la.corriger.resynchronisez.puis.enreg.daefa1:Pour la corriger, resynchronisez puis enregistrez une « Rectificative ».`;
+      return $localize`:@@accounting.vat-declaration.ts.les.montants.enregistres.font.foi.et.ne.292696d5:Les montants enregistrés font foi et ne sont jamais réalignés automatiquement. Resynchronisez puis enregistrez pour les mettre à jour.`;
+    return $localize`:@@accounting.vat-declaration.ts.cette.declaration.a.ete.deposee.ses.mont.0eb66461:Cette déclaration a été déposée : ses montants restent ceux du dépôt. Pour la corriger, resynchronisez puis enregistrez une « Rectificative ».`;
   });
 
   /**

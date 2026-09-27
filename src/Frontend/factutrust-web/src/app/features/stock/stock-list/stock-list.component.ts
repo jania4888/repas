@@ -383,7 +383,7 @@ export class StockListComponent implements OnInit {
           this.exitDialogVisible = false;
           this.loadData(); // Refresh
         } else {
-          const detail = res.errors?.join(', ') || res.message || 'Erreur';
+          const detail = res.errors?.join(', ') || res.message || $localize`:@@stock.stock-list.ts.erreur.ab546c23:Erreur`;
           this.confirmationService.alert({
             header: $localize`:@@stock.stock-list.ts.sortie.de.stock.impossible.803e3955:Sortie de stock impossible`,
             message: detail,

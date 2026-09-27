@@ -107,8 +107,8 @@ export class FiscalScheduleWorkflowDialogComponent {
 
   get title(): string {
     switch (this.mode) {
-      case 'payment': return 'Saisir le paiement';
-      case 'reminder': return 'Planifier un rappel';
+      case 'payment': return $localize`:@@accounting.fiscal-schedule-workflow-dialog.ts.saisir.le.paiement.79ab0d86:Saisir le paiement`;
+      case 'reminder': return $localize`:@@accounting.fiscal-schedule-workflow-dialog.ts.planifier.un.rappel.3fb10fc8:Planifier un rappel`;
       case 'validate': return 'Marquer comme validee';
       default: return 'Marquer comme deposee';
     }

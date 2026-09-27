@@ -1191,7 +1191,7 @@ export class StepClientComponent implements OnInit {
     const control = this.clientForm.get('nif');
     if (!control?.errors) return '';
     if (control.errors['required']) {
-      return 'Le matricule fiscal est obligatoire pour un client assujetti';
+      return $localize`:@@invoices.step-client.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29:Le matricule fiscal est obligatoire pour un client assujetti`;
     }
     if (control.errors['pattern']) {
       return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';

@@ -33,7 +33,7 @@ interface FiscalResultApiResponse {
 const MIN_FISCAL_YEAR = 2000;
 const MAX_FISCAL_YEAR = 2100;
 const UNSAVED_CHANGES_MESSAGE =
-  'Des modifications non enregistrées seront perdues. Continuer ?';
+  $localize`:@@accounting.fiscal-result.ts.des.modifications.non.enregistrees.seron.a18f027c:Des modifications non enregistrées seront perdues. Continuer ?`;
 
 /** Modèle éditable local (copie mutable de la feuille de détermination). */
 interface EditableModel {

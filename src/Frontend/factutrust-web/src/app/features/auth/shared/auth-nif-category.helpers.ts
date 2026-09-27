@@ -105,8 +105,7 @@ export function evaluateNifSegmentSuggestion(
 
     const currentLabel = segmentLabelResolver(currentSegmentCode) || currentSegmentCode;
     const hintMessage =
-      `Votre NIF indique une ${category.categoryLabelFr.toLowerCase()} ; ` +
-      `votre segment est ${currentLabel} — confirmer ?`;
+      $localize`:@@auth.auth-nif-category.helpers.ts.votre.nif.indique.une.tolowercase.votre.2debfc0f:Votre NIF indique une ${category.categoryLabelFr.toLowerCase()}:toLowerCase: ; votre segment est ${currentLabel}:currentLabel: — confirmer ?`;
     return { category, autoSelect: false, hintMessage };
   }
 
@@ -116,8 +115,7 @@ export function evaluateNifSegmentSuggestion(
   if (currentSegmentCode === ASSOCIATION_SEGMENT_CODE) {
     const currentLabel = segmentLabelResolver(currentSegmentCode) || currentSegmentCode;
     const hintMessage =
-      `Votre segment est ${currentLabel}, mais la catégorie de votre NIF est ` +
-      `« ${category.categoryLabelFr} » — vérifier ?`;
+      $localize`:@@auth.auth-nif-category.helpers.ts.votre.segment.est.currentlabel.mais.la.c.81bc649e:Votre segment est ${currentLabel}:currentLabel:, mais la catégorie de votre NIF est « ${category.categoryLabelFr}:categoryLabelFr: » — vérifier ?`;
     return { category, autoSelect: false, hintMessage };
   }
 

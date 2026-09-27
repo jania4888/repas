@@ -370,8 +370,7 @@ export class PaymentTermsComponent implements OnInit {
     this.confirmationService.confirm({
       header: $localize`:@@settings.payment-terms.ts.supprimer.la.condition.bd432d9d:Supprimer la condition`,
       message:
-        $localize`:@@settings.payment-terms.ts.supprimer.name.les.documents.deja.emis.c.b5285595:Supprimer « ${term.name}:name: » ? Les documents déjà émis conservent leur texte et leur ` +
-        $localize`:@@ui.tern.echeance.ils.ne.referencent.pas.le.modele.da0a27:échéance : ils ne référencent pas le modèle.`,
+        $localize`:@@settings.payment-terms.ts.supprimer.name.les.documents.deja.emis.c.3ff02199:Supprimer « ${term.name}:name: » ? Les documents déjà émis conservent leur texte et leur échéance : ils ne référencent pas le modèle.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@payment-terms.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@payment-terms.component.rejectLabel.Annuler:Annuler`,

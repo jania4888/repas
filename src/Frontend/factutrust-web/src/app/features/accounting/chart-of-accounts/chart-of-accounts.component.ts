@@ -612,7 +612,7 @@ export class ChartOfAccountsComponent implements OnInit {
   }
 
   formatDuplicateMessage(account: Pick<ChartOfAccountDto, 'accountNumber' | 'label'>): string {
-    return `Le compte ${account.accountNumber} existe déjà (${account.label}).`;
+    return $localize`:@@accounting.chart-of-accounts.ts.le.compte.accountnumber.existe.deja.labe.b94d0456:Le compte ${account.accountNumber}:accountNumber: existe déjà (${account.label}:label:).`;
   }
 
   /** Comptes proposés comme parent selon le type choisi. */
@@ -635,11 +635,11 @@ export class ChartOfAccountsComponent implements OnInit {
 
     const digits = sceAccountDigitCount(num);
     if (digits > SCE_ACCOUNT_MAX_DIGITS) {
-      return `Le compte ${num} comporte ${digits} chiffres : un numéro de compte ne peut pas en dépasser ${SCE_ACCOUNT_MAX_DIGITS}.`;
+      return $localize`:@@accounting.chart-of-accounts.ts.le.compte.num.comporte.digits.chiffres.u.421b5b16:Le compte ${num}:num: comporte ${digits}:digits: chiffres : un numéro de compte ne peut pas en dépasser ${SCE_ACCOUNT_MAX_DIGITS}:SCE_ACCOUNT_MAX_DIGITS:.`;
     }
 
     if (num.length >= 2 && !SCE_ACCOUNT_NUMBER_PATTERN.test(num)) {
-      return 'Le numéro doit être un compte SCE : chiffres, classe 1 à 7, points autorisés (ex. 428.3).';
+      return $localize`:@@accounting.chart-of-accounts.ts.le.numero.doit.etre.un.compte.sce.chiffr.37283b73:Le numéro doit être un compte SCE : chiffres, classe 1 à 7, points autorisés (ex. 428.3).`;
     }
 
     return null;

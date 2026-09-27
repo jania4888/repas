@@ -124,13 +124,13 @@ export function lifecycleLabel(lifecycle: PromotionLifecycle): string {
     case 'running':
       return 'En cours';
     case 'upcoming':
-      return 'À venir';
+      return $localize`:@@settings.promotions.ts.a.venir.5ae4e587:À venir`;
     case 'expired':
-      return 'Expirée';
+      return $localize`:@@settings.promotions.ts.expiree.1f0808dc:Expirée`;
     case 'disabled':
-      return 'Désactivée';
+      return $localize`:@@settings.promotions.ts.desactivee.74cc3b9b:Désactivée`;
     case 'outOfWindow':
-      return 'Hors période';
+      return $localize`:@@settings.promotions.ts.hors.periode.eb84848b:Hors période`;
   }
 }
 

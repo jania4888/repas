@@ -55,13 +55,45 @@
     "sha": "e4bf331c3bcadaec18454ac5bd22a61c0f41d71a898d449ce7db183e231d5626",
     "reason": "normalizeSearchText : même normalisation latine (NFD, sans diacritiques, minuscules) plus une normalisation arabe."
   },
+  "src/app/features/accounting/budget-entry/budget-entry.component.ts": {
+    "sha": "2003bf04794a16eb179fd76faca3dd460260deb706aa7388311043abbf6471a3",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
+  "src/app/features/accounting/fixed-assets/depreciation-run.component.ts": {
+    "sha": "628a5bdeba4fbf0e7f224121c2e6fad9daea2d3f30bf844a159034c9d6a199f8",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
   "src/app/features/accounting/fixed-assets/fixed-asset-detail.component.ts": {
     "sha": "2322cb0a32aac20ce670846c2b918321f05944270d7080c1ff607c7623718830",
     "reason": "Libellé du bouton « Regénérer/Générer » + « le tableau » remplacé par deux messages $localize complets : texte rendu identique ; fragments inutilisés retirés."
   },
+  "src/app/features/accounting/fixed-assets/fixed-asset-settings.component.ts": {
+    "sha": "754725e031687b94c9334b5485461d707c4781bc2f3f122d03759ce87aaf2fb9",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
+  "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts": {
+    "sha": "efb33cab3632c6edccffedd87e0e5fe6f2005456a46dc197223bdcce7ade486d",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
+  "src/app/features/accounting/manual-entry/manual-entry.component.ts": {
+    "sha": "807ac2d592bf70e6aae6f794b148ab591c2493f77f8a4a9fcc0bcefb38a972ae",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
+  "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts": {
+    "sha": "1ebf9e329df4b2a38be0138cbf09821650915c08ae93ab7fb9e6ac5e86974555",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
   "src/app/features/accounting/nct-statements/nct-statements.component.ts": {
     "sha": "d17ceb7f96c0b8a7bbe74bb1c1595c6029ac6ffe78f03fc9ca30d0ddc6d5d554",
     "reason": "Badges d'écart : les fragments « Non équilibré (écart : », « Flux non rapproché (écart : » et « TND) » deviennent deux messages complets à placeholder ${amount} (texte rendu identique)."
+  },
+  "src/app/features/accounting/vat-declaration/vat-declaration.component.ts": {
+    "sha": "42ee99a6bc6a2e609ead08835dc5b54cfe1577b3c909bb2b6a135a264e8e81cc",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
+  "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts": {
+    "sha": "bbae243124484e4faa94aea50863367b6608d1b46817165fc115ff700a6f9eb8",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
   "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts": {
     "sha": "7fcf317c1033931242f8f972dd131375f6377f4ff9bca296dcd39ceba5710672",
@@ -75,6 +107,14 @@
     "sha": "14d6f9d78c4e7cbeeac4bc67806a95683f9918d92e5d393bec7f5b61ec4a4b87",
     "reason": "Chaînes converties en $localize à placeholders nommés : rendu français identique."
   },
+  "src/app/features/auth/register-wizard/steps/step-company-type/step-company-type.component.ts": {
+    "sha": "fe9c0fb708aaae985957a61408ef9bd8f70e7aec233018ab12c19a736aeb7660",
+    "reason": "Pluriel bricolé « ${n > 1 ? 's' : ''} » (le « s » français serait injecté dans l'arabe) remplacé par erpPlural : une forme $localize par catégorie CLDR ; en français 0 et 1 → forme singulière, sinon pluriel : texte rendu identique."
+  },
+  "src/app/features/auth/shared/auth-nif-category.helpers.ts": {
+    "sha": "42b948ee09e8580504852366411714972f4f3ee883a23e90375b9570c98f12fb",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
   "src/app/features/exchanges/exchange-shell.component.ts": {
     "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
     "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
@@ -87,17 +127,37 @@
     "sha": "7c89f1e6c9ace27aada22d62bb57ba41140b58ea699e5cfe91e8934b3dcd74d7",
     "reason": "Pluriel « ${n > 1 ? 's' : ''} » remplacé par erpPlural (une forme $localize par catégorie CLDR) : en français, 1 → forme « one » et sinon « other »/« many », textes rendus identiques (espace séparateur sorti des messages). L'arabe n'affiche plus le « s » français injecté par les placeholders."
   },
+  "src/app/features/invoices/components/invoice-import-dialog/invoice-import-dialog.component.ts": {
+    "sha": "cc52042480d8e0f2b94684d47e1b00c83aa89f0719e7b9f35d479c0d3e1c6e54",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
+  "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts": {
+    "sha": "29d0aff2f79376ec647b9d62105c7c4257f3ff23b190200730f792a7ec5726b4",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
   "src/app/features/payroll/declarations/cnss-remittance-tab.component.ts": {
     "sha": "8a3bd02cd4cce2028726ac337beb24975acb8e3cd74b5fe1342a084688d78198",
     "reason": "Logique pilotée par des données structurées et des codes, jamais par un texte traduisible : matricule manquant = employerCnssNumber vide (le serveur n'émet l'avertissement « Matricule employeur CNSS manquant » que dans ce cas) ; erreur de chargement reconnue au code Validation.CnssEmployerNumber (l'ancien test lisait err.error.error.code, champ inexistant). Littéraux de comparaison, jamais affichés."
+  },
+  "src/app/features/payroll/runs/payroll-regularization-grid.component.ts": {
+    "sha": "bab06c2ac087f84f9eb272ac25db3464cb658c5eea762246577ba0b0d111750a",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
+  "src/app/features/payroll/settings/payroll-settings.component.ts": {
+    "sha": "dbed509b6e369487e63f10bbc34554d03656eab553d68d1b87c3a6c76e6b47bd",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
+  "src/app/features/pricing/price-list-detail/price-list-detail.component.ts": {
+    "sha": "36adf4821db1af0e0af525d451b7a312ded93009bb1a5e20e7727fb8dea45ea4",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
   "src/app/features/products/product-form/product-form.component.ts": {
     "sha": "de5d1770eadef65322efdb2f9cd74e35e984dc25ddc9a7d74e903f3e121d8a12",
     "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles). Catégorie par défaut toujours choisie par son nom en base (donnée)."
   },
   "src/app/features/projects/project-detail.vm.ts": {
-    "sha": "7ec25410d5769b0ce15f344bdb7f85be07a6fa7e5f2986536369c41ec1b39e00",
-    "reason": "Logique par clé / id au lieu du libellé affiché ; libellés français identiques."
+    "sha": "0f1314bdf7abbd3ae58cc6ccd47bc8c58b72346e3c0a6993a525794bdb46b90a",
+    "reason": "Logique par clé / id au lieu du libellé affiché ; libellés français identiques. Puis : Pluriel bricolé « ${n > 1 ? 's' : ''} » (le « s » français serait injecté dans l'arabe) remplacé par erpPlural : une forme $localize par catégorie CLDR ; en français 0 et 1 → forme singulière, sinon pluriel : texte rendu identique."
   },
   "src/app/features/projects/project-tasks.vm.ts": {
     "sha": "3718494df636e495a7f79417ad26f3e1f7337862a33806eb5801a38896ed01d0",
@@ -107,13 +167,29 @@
     "sha": "cbb23096671a28258164551d095ee305508611f07eb8e6077bfe32e58ebf4a68",
     "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles)."
   },
+  "src/app/features/reports/services/purchases-reports.service.ts": {
+    "sha": "983e3128afb8a0b6a6c8e2c090bd5ea8ec56ff20e12e35441e1f3ae054ca9346",
+    "reason": "Pluriel bricolé « ${n > 1 ? 's' : ''} » (le « s » français serait injecté dans l'arabe) remplacé par erpPlural : une forme $localize par catégorie CLDR ; en français 0 et 1 → forme singulière, sinon pluriel : texte rendu identique."
+  },
   "src/app/features/sales-orders/sales-order-detail/sales-order-detail.component.ts": {
-    "sha": "f0db836504415d58f9d1a395d5a8c091062b5ae28fbf76c1d93d40e31a3a4d86",
-    "reason": "Logique par clé / id au lieu du libellé affiché ; libellés français identiques."
+    "sha": "134b8455e2aed5a3963d7200a97caa07d71c4c9349306f4bc5039e1875962466",
+    "reason": "Logique par clé / id au lieu du libellé affiché ; libellés français identiques. Puis phrase de confirmation découpée par concaténation fusionnée en un seul $localize (i18n:concat --fix) : texte identique."
+  },
+  "src/app/features/settings/payment-terms/payment-terms.component.ts": {
+    "sha": "77f136cac08aada7ca8891677f7f0ee14f7860962933e3356dc0876d778d3ab7",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
+  },
+  "src/app/features/settings/storefront/storefront-settings.component.ts": {
+    "sha": "f343e6438806e7044131a4991627f1079668a024b89a87c84c4c2f32115c49ad",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
   "src/app/features/settings/warehouses/warehouses.component.ts": {
     "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
     "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
+  },
+  "src/app/features/studio/studio-ai-failure.util.ts": {
+    "sha": "d5d2a4cfe92b83a56327baa84d9f893f96ec13decfb0efd87690edf1d7eeb3fb",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
   "src/app/features/studio/studio-entity-list.component.ts": {
     "sha": "fa3a613c6b036803d2887e74405ca26eb2075b6db318a69e3e384b8c2ee16133",
@@ -138,6 +214,10 @@
   "src/app/features/supplier-invoices/supplier-invoice-form/supplier-invoice-form.component.ts": {
     "sha": "cbb23096671a28258164551d095ee305508611f07eb8e6077bfe32e58ebf4a68",
     "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles)."
+  },
+  "src/app/features/withholding-tax/tej-export/tej-export.component.ts": {
+    "sha": "3f465ea532635ab90ada7b8bcc540e0d3eb3a0d3df835e3accf73567599a6020",
+    "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
   "src/app/shared/components/quick-create-product-dialog/quick-create-product-dialog.component.ts": {
     "sha": "589758155cc966b71b54b140bf32fb00f39448f8bf0cf3c3e89ca736da4840d9",

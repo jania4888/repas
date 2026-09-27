@@ -280,7 +280,7 @@ export class CnssRemittanceTabComponent implements OnInit {
     const p = this.remittance()?.payment;
     if (!p) return '';
     const date = new Date(p.paymentDate).toLocaleDateString('fr-TN');
-    return `Versement enregistré le ${date}${p.reference ? $localize`:@@ui.tern.ref.44045a: — Réf. ` + p.reference : ''}`;
+    return $localize`:@@payroll.cnss-remittance-tab.ts.versement.enregistre.le.date.p.9740f175:Versement enregistré le ${date}:date:${p.reference ? $localize`:@@ui.tern.ref.44045a: — Réf. ` + p.reference : ''}:p:`;
   }
 
   load(): void {

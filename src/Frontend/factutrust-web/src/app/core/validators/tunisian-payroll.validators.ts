@@ -49,8 +49,8 @@ export const tunisianPayrollValidators = {
 export function formatValidationError(errors: ValidationErrors | null): string | null {
   if (!errors) return null;
   if (errors['tunisianFormat']) return errors['tunisianFormat'] as string;
-  if (errors['required']) return 'Ce champ est obligatoire.';
+  if (errors['required']) return $localize`:@@core.tunisian-payroll.validators.ts.ce.champ.est.obligatoire.95840ee3:Ce champ est obligatoire.`;
   if (errors['email']) return 'Adresse e-mail invalide.';
-  if (errors['min']) return 'La valeur est trop faible.';
+  if (errors['min']) return $localize`:@@core.tunisian-payroll.validators.ts.la.valeur.est.trop.faible.687e393d:La valeur est trop faible.`;
   return 'Valeur invalide.';
 }

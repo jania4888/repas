@@ -418,9 +418,9 @@ export class TenantUsersBulkComponent {
   bulkRowsHint(): string {
     const n = this.rows().length;
     if (n <= 1) {
-      return '1 ligne dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.';
+      return $localize`:@@settings.tenant-users-bulk.ts.1.ligne.dans.le.formulaire.chaque.ligne.c0a50277:1 ligne dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.`;
     }
-    return `${n} lignes dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.`;
+    return $localize`:@@settings.tenant-users-bulk.ts.n.lignes.dans.le.formulaire.chaque.ligne.b89f9eba:${n}:n: lignes dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.`;
   }
 
   modulesVisible = false;

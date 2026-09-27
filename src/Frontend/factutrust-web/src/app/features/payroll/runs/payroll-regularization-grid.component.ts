@@ -139,8 +139,7 @@ export class PayrollRegularizationGridComponent implements OnInit {
   confirmGenerate(): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: $localize`:@@payroll.payroll-regularization-grid.ts.generer.les.regularisations.irpp.de.tous.19783084:Générer les régularisations IRPP de tous les salariés éligibles ? `
-        + $localize`:@@payroll.payroll-regularization-grid.ts.les.cumuls.seront.rafraichis.et.les.mont.0eeb48d3:Les cumuls seront rafraîchis et les montants ajustés manuellement seront conservés.`,
+      message: $localize`:@@payroll.payroll-regularization-grid.ts.generer.les.regularisations.irpp.de.tous.a75175ce:Générer les régularisations IRPP de tous les salariés éligibles ? Les cumuls seront rafraîchis et les montants ajustés manuellement seront conservés.`,
       header: $localize`:@@payroll.payroll-regularization-grid.ts.regularisation.irpp.da08474d:Régularisation IRPP`,
       acceptLabel: $localize`:@@payroll-regularization-grid.component.acceptLabel.G_n_rer:Générer`,
       rejectLabel: $localize`:@@payroll-regularization-grid.component.rejectLabel.Annuler:Annuler`,
@@ -156,7 +155,7 @@ export class PayrollRegularizationGridComponent implements OnInit {
         const data = res.data;
         const preserved = data?.preservedOverrides ?? 0;
         const detail = preserved > 0
-          ? `${res.message ?? $localize`:@@ui.tern.generation.terminee.cf83c2:Génération terminée.`} ${preserved} ajustement(s) manuel(s) conservé(s).`
+          ? $localize`:@@payroll.payroll-regularization-grid.ts.p.preserved.ajustement.s.manuel.s.conser.debdf4ec:${res.message ?? $localize`:@@ui.tern.generation.terminee.cf83c2:Génération terminée.`}:p: ${preserved}:preserved: ajustement(s) manuel(s) conservé(s).`
           : res.message ?? $localize`:@@ui.tern.generation.terminee.cf83c2:Génération terminée.`;
         this.toast.add({ severity: 'success', summary: $localize`:@@payroll-regularization-grid.component.summary.R_gularisation_I:Régularisation IRPP`, detail });
         this.reload();

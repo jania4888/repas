@@ -359,7 +359,7 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 const errorMessage = error?.error?.message
                     || error?.error?.error
                     || error?.error?.globalErrors?.[0]
-                    || 'Impossible de démarrer l\'inventaire';
+                    || $localize`:@@inventory.inventory-wizard.ts.impossible.de.demarrer.l.inventaire.8110bf40:Impossible de démarrer l'inventaire`;
                 this.messageService.add({
                     severity: 'error',
                     summary: $localize`:@@inventory-wizard.component.summary.Erreur:Erreur`,

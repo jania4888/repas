@@ -220,6 +220,6 @@ export class ChatAttachmentCardComponent {
   }
 
   get ariaLabel(): string {
-    return `Pièce jointe ${this.attachment.fileName}, ${this.formatLabel}, ${this.sizeLabel}`;
+    return $localize`:@@ai-assistant.chat-attachment-card.ts.piece.jointe.filename.formatlabel.sizela.74bc908e:Pièce jointe ${this.attachment.fileName}:fileName:, ${this.formatLabel}:formatLabel:, ${this.sizeLabel}:sizeLabel:`;
   }
 }

@@ -420,7 +420,7 @@ export class InvoiceService {
                   errorResponse?.message ||
                   errorResponse?.error?.description ||
                   errorResponse?.error?.message ||
-                  'Impossible de générer le rapport PDF';
+                  $localize`:@@core.invoice.ts.impossible.de.generer.le.rapport.pdf.e2243d7a:Impossible de générer le rapport PDF`;
                 return throwError(() => new Error(errorMessage));
               } catch {
                 return throwError(() => new Error('Impossible de générer le rapport PDF'));
@@ -458,7 +458,7 @@ export class InvoiceService {
                   errorResponse?.message ||
                   errorResponse?.error?.description ||
                   errorResponse?.error?.message ||
-                  `Erreur ${error.status}: Impossible de générer le rapport PDF`;
+                  $localize`:@@core.invoice.ts.erreur.status.impossible.de.generer.le.r.b2e87c10:Erreur ${error.status}:status:: Impossible de générer le rapport PDF`;
                 return throwError(() => new Error(errorMessage));
               } catch {
                 return throwError(() => new Error(`Erreur ${error.status || 'inconnue'}: Impossible de générer le rapport PDF`));
@@ -475,7 +475,7 @@ export class InvoiceService {
         const errorMessage = httpError.error?.message ||
           httpError.error?.errors?.[0] ||
           httpError.error?.error?.description ||
-          `Erreur ${httpError.status || 'inconnue'}: Impossible de générer le rapport PDF`;
+          $localize`:@@core.invoice.ts.erreur.p.impossible.de.generer.le.rappor.edfa5a5c:Erreur ${httpError.status || 'inconnue'}:p:: Impossible de générer le rapport PDF`;
         return throwError(() => new Error(errorMessage));
       })
     );
@@ -520,7 +520,7 @@ export class InvoiceService {
                 const errorMessage = errorResponse?.message ||
                   errorResponse?.error?.description ||
                   errorResponse?.error?.message ||
-                  'Impossible de télécharger le PDF';
+                  $localize`:@@core.invoice.ts.impossible.de.telecharger.le.pdf.24ca4288:Impossible de télécharger le PDF`;
                 return throwError(() => new Error(errorMessage));
               } catch {
                 return throwError(() => new Error('Impossible de télécharger le PDF'));
@@ -559,7 +559,7 @@ export class InvoiceService {
                 const errorMessage = errorResponse?.message ||
                   errorResponse?.error?.description ||
                   errorResponse?.error?.message ||
-                  `Erreur ${error.status}: Impossible de télécharger le PDF`;
+                  $localize`:@@core.invoice.ts.erreur.status.impossible.de.telecharger.6eec4c6b:Erreur ${error.status}:status:: Impossible de télécharger le PDF`;
                 return throwError(() => new Error(errorMessage));
               } catch {
                 return throwError(() => new Error(`Erreur ${error.status || 'inconnue'}: Impossible de télécharger le PDF`));
@@ -577,7 +577,7 @@ export class InvoiceService {
         const httpError = error as HttpErrorResponse;
         const errorMessage = httpError.error?.message ||
           httpError.error?.error?.description ||
-          `Erreur ${httpError.status || 'inconnue'}: Impossible de télécharger le PDF`;
+          $localize`:@@core.invoice.ts.erreur.p.impossible.de.telecharger.le.pd.4effb8bc:Erreur ${httpError.status || 'inconnue'}:p:: Impossible de télécharger le PDF`;
         return throwError(() => new Error(errorMessage));
       })
     );

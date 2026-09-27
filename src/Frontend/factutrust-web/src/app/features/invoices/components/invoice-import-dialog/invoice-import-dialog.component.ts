@@ -340,10 +340,10 @@ export class InvoiceImportDialogComponent implements OnDestroy {
       return apiMessage;
     }
     if (e?.status === 0 || e?.message?.includes('Http failure')) {
-      return 'Impossible de joindre le serveur pour précharger le modèle IA. Vérifiez que l\'API est démarrée.';
+      return $localize`:@@invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.pour.pr.b7c89a5e:Impossible de joindre le serveur pour précharger le modèle IA. Vérifiez que l'API est démarrée.`;
     }
     return e?.message?.trim()
-      || 'Le préchauffage du modèle IA a échoué. L\'import reste possible mais peut être plus long.';
+      || $localize`:@@invoices.invoice-import-dialog.ts.le.prechauffage.du.modele.ia.a.echoue.l.44ce5352:Le préchauffage du modèle IA a échoué. L'import reste possible mais peut être plus long.`;
   }
 
   private resolveErrorMessage(err: unknown): string {
@@ -353,7 +353,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
         return apiMessage;
       }
       if (err.status === 0) {
-        return 'Impossible de joindre le serveur. Vérifiez que l\'API est démarrée.';
+        return $localize`:@@invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.verifie.3a324a40:Impossible de joindre le serveur. Vérifiez que l'API est démarrée.`;
       }
     }
 
@@ -370,11 +370,10 @@ export class InvoiceImportDialogComponent implements OnDestroy {
     }
 
     if (err instanceof HttpErrorResponse && err.status === 0) {
-      return 'Impossible de joindre le serveur. Vérifiez que l\'API est démarrée.';
+      return $localize`:@@invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.verifie.3a324a40:Impossible de joindre le serveur. Vérifiez que l'API est démarrée.`;
     }
 
-    return "Impossible d'extraire la facture de ce fichier. "
-      + $localize`:@@ui.tern.verifiez.le.document.ou.saisissez.la.factu.92c3f1:Vérifiez le document ou saisissez la facture manuellement.`;
+    return $localize`:@@invoices.invoice-import-dialog.ts.impossible.d.extraire.la.facture.de.ce.f.bc4649ce:Impossible d'extraire la facture de ce fichier. Vérifiez le document ou saisissez la facture manuellement.`;
   }
 
   /** Déclenché par la fermeture native de p-dialog (croix, Échap, clic backdrop). */

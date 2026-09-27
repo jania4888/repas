@@ -238,7 +238,7 @@ export class ProjectDashboardSearchComponent implements OnInit, OnDestroy {
 
   private groupLabel(item: ProjectSearchResult): string {
     const kind = this.normalizeKind(item.kind);
-    if (kind === 'Task') return 'Tâches';
+    if (kind === 'Task') return $localize`:@@projects.project-dashboard-search.ts.taches.1b018f86:Tâches`;
     if (kind === 'Attachment') return 'Documents';
     return 'Projets';
   }

@@ -50,7 +50,7 @@ export function outcomeLabel(outcome: RegularizationOutcome): string {
   switch (outcome) {
     case 'rappel': return 'Rappel';
     case 'restitution': return 'Restitution';
-    default: return 'Aucun écart';
+    default: return $localize`:@@payroll.irpp-regularization.view-model.ts.aucun.ecart.178a52ed:Aucun écart`;
   }
 }
 
@@ -66,11 +66,11 @@ export function outcomeSeverity(outcome: RegularizationOutcome): 'warn' | 'succe
 export function outcomeHint(outcome: RegularizationOutcome): string {
   switch (outcome) {
     case 'rappel':
-      return 'Un montant complémentaire sera retenu sur le bulletin du mois.';
+      return $localize`:@@payroll.irpp-regularization.view-model.ts.un.montant.complementaire.sera.retenu.su.ddef131f:Un montant complémentaire sera retenu sur le bulletin du mois.`;
     case 'restitution':
-      return 'Le trop-perçu d’impôt sera reversé au salarié sur le bulletin du mois.';
+      return $localize`:@@payroll.irpp-regularization.view-model.ts.le.trop.percu.d.impot.sera.reverse.au.sa.3a73a6d0:Le trop-perçu d’impôt sera reversé au salarié sur le bulletin du mois.`;
     default:
-      return 'La retenue mensuelle correspond déjà à l’impôt dû : rien à porter sur le bulletin.';
+      return $localize`:@@payroll.irpp-regularization.view-model.ts.la.retenue.mensuelle.correspond.deja.a.l.7fa49bc3:La retenue mensuelle correspond déjà à l’impôt dû : rien à porter sur le bulletin.`;
   }
 }
 

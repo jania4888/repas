@@ -459,7 +459,7 @@ export class FixedAssetsAmortizationTableComponent implements OnInit {
   }
 
   displayCompanyName(report: AmortizationReportResponse): string {
-    return report.header.companyName || this.auth.user()?.companyName || 'Société';
+    return report.header.companyName || this.auth.user()?.companyName || $localize`:@@accounting.fixed-assets-amortization-table.ts.societe.2c3fdad8:Société`;
   }
 
   methodLabel(row: AmortizationReportAssetRowDto): string {

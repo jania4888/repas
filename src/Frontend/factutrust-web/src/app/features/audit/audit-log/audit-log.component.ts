@@ -184,7 +184,7 @@ export class AuditLogComponent implements OnInit {
   }
 
   integrityValidMessage(count: number): string {
-    return `Chaîne d'intégrité valide — ${count} entrée(s) vérifiée(s).`;
+    return $localize`:@@audit.audit-log.ts.chaine.d.integrite.valide.count.entree.s.143347e3:Chaîne d'intégrité valide — ${count}:count: entrée(s) vérifiée(s).`;
   }
 
   integrityBrokenMessage(
@@ -204,7 +204,7 @@ export class AuditLogComponent implements OnInit {
       dupGroups != null && dupGroups > 0
         ? $localize`:@@ui.tern.ph.valeur.s.de.chaine.anterieure.dupliquee.4aa7b6: ${dupGroups}:p0: valeur(s) de chaîne antérieure dupliquée(s) — souvent lié à des écritures concurrentes avant correction.`
         : '';
-    return `Chaîne d'intégrité rompue — ${count} entrée(s) analysée(s).${idPart}${reasonPart}${dupPart}`;
+    return $localize`:@@audit.audit-log.ts.chaine.d.integrite.rompue.count.entree.s.05ebede1:Chaîne d'intégrité rompue — ${count}:count: entrée(s) analysée(s).${idPart}:idPart:${reasonPart}:reasonPart:${dupPart}:dupPart:`;
   }
 
   isBrokenHighlight(rowId: string): boolean {

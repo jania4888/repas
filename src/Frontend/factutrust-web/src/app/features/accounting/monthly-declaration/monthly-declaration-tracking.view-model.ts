@@ -54,15 +54,15 @@ function isDeadlinePassed(deadline: string, today: Date): boolean {
 export function stateLabel(state: DmTrackingState): string {
   switch (state) {
     case 'locked':
-      return 'Verrouillée';
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.verrouillee.af142775:Verrouillée`;
     case 'submitted':
-      return 'Déposée';
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.deposee.8d55a917:Déposée`;
     case 'draft':
       return 'Brouillon';
     case 'late':
       return 'En retard';
     default:
-      return 'À déposer';
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.a.deposer.a9c5ca9a:À déposer`;
   }
 }
 
@@ -76,17 +76,17 @@ export function describeRow(row: MonthlyDeclarationTrackingRowDto, today: Date):
   const state = trackingState(row, today);
   switch (state) {
     case 'locked':
-      return 'Déclaration verrouillée : elle ne peut plus être modifiée.';
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.declaration.verrouillee.elle.ne.peut.plu.f7d225e4:Déclaration verrouillée : elle ne peut plus être modifiée.`;
     case 'submitted':
       return row.isRectificative
-        ? `Déclaration rectificative n° ${row.revisionNumber} déposée.`
-        : 'Déclaration déposée.';
+        ? $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.declaration.rectificative.n.revisionnumb.9012cbdc:Déclaration rectificative n° ${row.revisionNumber}:revisionNumber: déposée.`
+        : $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.declaration.deposee.ece5d1c2:Déclaration déposée.`;
     case 'draft':
-      return 'Brouillon enregistré, jamais déposé.';
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.brouillon.enregistre.jamais.depose.3cb0b51e:Brouillon enregistré, jamais déposé.`;
     case 'late':
-      return 'Aucune déclaration, et l’échéance est passée.';
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.aucune.declaration.et.l.echeance.est.pas.d41e8eca:Aucune déclaration, et l’échéance est passée.`;
     default:
-      return 'Période non encore déclarée.';
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.periode.non.encore.declaree.c8fae813:Période non encore déclarée.`;
   }
 }
 
@@ -157,8 +157,8 @@ export function rowModeLabel(row: MonthlyDeclarationTrackingRowDto): string {
  */
 export function describeMigration(summary: DmTrackingSummary, year: number): string {
   if (summary.configuredMonths === 0)
-    return `Aucun mois de ${year} n’est calculé par la configuration du dossier.`;
+    return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.aucun.mois.de.year.n.est.calcule.par.la.b7736f24:Aucun mois de ${year}:year: n’est calculé par la configuration du dossier.`;
   if (summary.configuredMonths === 12)
-    return `Les douze mois de ${year} sont calculés par la configuration du dossier.`;
-  return `${summary.configuredMonths} mois de ${year} sur 12 sont calculés par la configuration du dossier.`;
+    return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.les.douze.mois.de.year.sont.calcules.par.c736b973:Les douze mois de ${year}:year: sont calculés par la configuration du dossier.`;
+  return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.configuredmonths.mois.de.year.sur.12.son.a87ff472:${summary.configuredMonths}:configuredMonths: mois de ${year}:year: sur 12 sont calculés par la configuration du dossier.`;
 }

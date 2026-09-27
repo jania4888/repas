@@ -142,18 +142,18 @@ export function showCostingMethodDropdown(features: StockFeatures | null): boole
 }
 
 export function getTrackingModeHint(): string {
-  return 'Définit si les mouvements exigent un lot ou un numéro de série.';
+  return $localize`:@@shared.product-traceability-rules.ts.definit.si.les.mouvements.exigent.un.lot.7552007a:Définit si les mouvements exigent un lot ou un numéro de série.`;
 }
 
 export function getPickingPolicyHint(hasExpiryTracking: boolean): string {
   if (!hasExpiryTracking) {
-    return 'Lot uniquement. Activez le suivi DLUO pour utiliser FEFO.';
+    return $localize`:@@shared.product-traceability-rules.ts.lot.uniquement.activez.le.suivi.dluo.pou.7f43ede8:Lot uniquement. Activez le suivi DLUO pour utiliser FEFO.`;
   }
-  return 'Lot uniquement. FEFO : lots les plus proches de la péremption en premier.';
+  return $localize`:@@shared.product-traceability-rules.ts.lot.uniquement.fefo.lots.les.plus.proche.7238bf50:Lot uniquement. FEFO : lots les plus proches de la péremption en premier.`;
 }
 
 export function getCostingMethodHint(): string {
-  return 'CMUP recommandé (comptes statutaires TN). LIFO : usage interne uniquement.';
+  return $localize`:@@shared.product-traceability-rules.ts.cmup.recommande.comptes.statutaires.tn.l.f65605fd:CMUP recommandé (comptes statutaires TN). LIFO : usage interne uniquement.`;
 }
 
 export interface NormalizeTraceabilityResult {
@@ -233,15 +233,15 @@ export function normalizeTraceabilityForm(
 export function formatTrackingModeLabel(mode: unknown): string {
   const m = coerceTrackingMode(mode);
   if (m === TRACKING_MODE_LOT) return 'Lot';
-  if (m === TRACKING_MODE_SERIAL) return 'N° de série';
-  return 'Aucun suivi';
+  if (m === TRACKING_MODE_SERIAL) return $localize`:@@shared.product-traceability-rules.ts.n.de.serie.6b826381:N° de série`;
+  return $localize`:@@shared.product-traceability-rules.ts.aucun.suivi.25d943ac:Aucun suivi`;
 }
 
 export function formatPickingPolicyLabel(policy: unknown): string {
   const p = coercePickingPolicy(policy);
-  if (p === PICKING_FEFO) return 'FEFO (péremption)';
+  if (p === PICKING_FEFO) return $localize`:@@shared.product-traceability-rules.ts.fefo.peremption.5413473d:FEFO (péremption)`;
   if (p === PICKING_FIFO_PHYSICAL) return 'FIFO physique';
-  if (p === PICKING_MANUAL || p === PICKING_NONE) return 'Manuel (choix du lot)';
+  if (p === PICKING_MANUAL || p === PICKING_NONE) return $localize`:@@shared.product-traceability-rules.ts.manuel.choix.du.lot.620f4076:Manuel (choix du lot)`;
   return '—';
 }
 

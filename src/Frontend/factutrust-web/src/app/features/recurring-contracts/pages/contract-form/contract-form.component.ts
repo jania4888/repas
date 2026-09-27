@@ -452,24 +452,24 @@ export class ContractFormComponent implements OnInit {
    * du bouton Enregistrer) et par `validate()` (filet de sécurité à la soumission).
    */
   private firstValidationError(): string | null {
-    if (!this.clientId) return 'Sélectionnez un client.';
+    if (!this.clientId) return $localize`:@@recurring-contracts.contract-form.ts.selectionnez.un.client.8fb40ef8:Sélectionnez un client.`;
     if (this.billingDayOfMonth < 1 || this.billingDayOfMonth > 31) {
-      return 'Le jour de facturation doit être compris entre 1 et 31.';
+      return $localize`:@@recurring-contracts.contract-form.ts.le.jour.de.facturation.doit.etre.compris.4880c24e:Le jour de facturation doit être compris entre 1 et 31.`;
     }
-    if (!this.startDate) return 'La date de début est obligatoire.';
+    if (!this.startDate) return $localize`:@@recurring-contracts.contract-form.ts.la.date.de.debut.est.obligatoire.f5872ef0:La date de début est obligatoire.`;
     if (this.endDate && this.endDate < this.startDate) {
-      return 'La date de fin doit être postérieure ou égale à la date de début.';
+      return $localize`:@@recurring-contracts.contract-form.ts.la.date.de.fin.doit.etre.posterieure.ou.79fde34f:La date de fin doit être postérieure ou égale à la date de début.`;
     }
-    if (this.lines.length === 0) return 'Ajoutez au moins une ligne au contrat.';
+    if (this.lines.length === 0) return $localize`:@@recurring-contracts.contract-form.ts.ajoutez.au.moins.une.ligne.au.contrat.ac749562:Ajoutez au moins une ligne au contrat.`;
     for (const line of this.lines) {
       if (line.lineType !== 'OneTimeSetup' && !line.productId) {
         if (this.products().length === 0) {
-          return 'Le catalogue produits est indisponible : impossible d\'enregistrer une ligne sans produit.';
+          return $localize`:@@recurring-contracts.contract-form.ts.le.catalogue.produits.est.indisponible.i.0bc88022:Le catalogue produits est indisponible : impossible d'enregistrer une ligne sans produit.`;
         }
-        return 'Le produit est obligatoire pour chaque ligne (sauf frais d\'installation).';
+        return $localize`:@@recurring-contracts.contract-form.ts.le.produit.est.obligatoire.pour.chaque.l.6b93ce74:Le produit est obligatoire pour chaque ligne (sauf frais d'installation).`;
       }
       if (line.lineType === 'UsageMetered' && !line.usageMetricId) {
-        return 'La métrique est obligatoire pour une ligne à la consommation.';
+        return $localize`:@@recurring-contracts.contract-form.ts.la.metrique.est.obligatoire.pour.une.lig.8cd3c2c1:La métrique est obligatoire pour une ligne à la consommation.`;
       }
     }
     return null;

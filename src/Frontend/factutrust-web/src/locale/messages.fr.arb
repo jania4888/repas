@@ -7328,6 +7328,13 @@
     ],
     "x-wave": "v1"
   },
+  "core.breadcrumb.ts.detail.7ce06afc": "Détail",
+  "@core.breadcrumb.ts.detail.7ce06afc": {
+    "x-files": [
+      "src/app/core/services/breadcrumb.service.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.cash-desk.ts.locaux.immobilier.3ca8e940": "Locaux & immobilier",
   "@core.cash-desk.ts.locaux.immobilier.3ca8e940": {
     "x-files": [
@@ -7594,6 +7601,48 @@
     ],
     "x-wave": "v1"
   },
+  "core.error-handler.ts.mise.a.jour.de.la.base.de.donnees.en.cou.70713096": "Mise à jour de la base de données en cours ou bloquée. Réessayez dans quelques instants ou contactez l'administrateur si le problème persiste.",
+  "@core.error-handler.ts.mise.a.jour.de.la.base.de.donnees.en.cou.70713096": {
+    "x-files": [
+      "src/app/core/services/error-handler.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.error-handler.ts.impossible.de.se.connecter.au.serveur.ve.a314b5cc": "Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001 et que votre connexion est active.",
+  "@core.error-handler.ts.impossible.de.se.connecter.au.serveur.ve.a314b5cc": {
+    "x-files": [
+      "src/app/core/services/error-handler.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.error-handler.ts.erreur.de.connexion.le.serveur.ne.repond.572a6b33": "Erreur de connexion. Le serveur ne répond pas. Vérifiez que le backend est démarré.",
+  "@core.error-handler.ts.erreur.de.connexion.le.serveur.ne.repond.572a6b33": {
+    "x-files": [
+      "src/app/core/services/error-handler.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.error-handler.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea": "Trop de requêtes. Veuillez patienter avant de réessayer.",
+  "@core.error-handler.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea": {
+    "x-files": [
+      "src/app/core/services/error-handler.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.error-handler.ts.erreur.de.connexion.reseau.verifiez.votr.bc90acdd": "Erreur de connexion réseau. Vérifiez votre connexion et que le backend est démarré.",
+  "@core.error-handler.ts.erreur.de.connexion.reseau.verifiez.votr.bc90acdd": {
+    "x-files": [
+      "src/app/core/services/error-handler.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.error-handler.ts.erreur.status.veuillez.reessayer.6682a2c4": "Erreur {$status}. Veuillez réessayer.",
+  "@core.error-handler.ts.erreur.status.veuillez.reessayer.6682a2c4": {
+    "x-files": [
+      "src/app/core/services/error-handler.service.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.validation.suggestion.nif": "Format attendu : 1772793W/A/M/000",
   "@core.validation.suggestion.nif": {
     "x-files": [
@@ -7643,6 +7692,13 @@
     ],
     "x-wave": "v1"
   },
+  "core.http-validation-dialog.ts.veuillez.corriger.les.donnees.saisies.a09634cc": "Veuillez corriger les données saisies.",
+  "@core.http-validation-dialog.ts.veuillez.corriger.les.donnees.saisies.a09634cc": {
+    "x-files": [
+      "src/app/core/services/http-validation-dialog.service.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.http-validation-dialog.ts.erreur.de.validation.ccce3082": "Erreur de validation",
   "@core.http-validation-dialog.ts.erreur.de.validation.ccce3082": {
     "x-files": [
@@ -7650,10 +7706,66 @@
     ],
     "x-wave": "v1"
   },
+  "core.invoice.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": "Impossible de générer le rapport PDF",
+  "@core.invoice.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": {
+    "x-files": [
+      "src/app/core/services/invoice.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.invoice.ts.erreur.status.impossible.de.generer.le.r.b2e87c10": "Erreur {$status}: Impossible de générer le rapport PDF",
+  "@core.invoice.ts.erreur.status.impossible.de.generer.le.r.b2e87c10": {
+    "x-files": [
+      "src/app/core/services/invoice.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.invoice.ts.erreur.p.impossible.de.generer.le.rappor.edfa5a5c": "Erreur {$p}: Impossible de générer le rapport PDF",
+  "@core.invoice.ts.erreur.p.impossible.de.generer.le.rappor.edfa5a5c": {
+    "x-files": [
+      "src/app/core/services/invoice.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.invoice.ts.impossible.de.telecharger.le.pdf.24ca4288": "Impossible de télécharger le PDF",
+  "@core.invoice.ts.impossible.de.telecharger.le.pdf.24ca4288": {
+    "x-files": [
+      "src/app/core/services/invoice.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.invoice.ts.erreur.status.impossible.de.telecharger.6eec4c6b": "Erreur {$status}: Impossible de télécharger le PDF",
+  "@core.invoice.ts.erreur.status.impossible.de.telecharger.6eec4c6b": {
+    "x-files": [
+      "src/app/core/services/invoice.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.invoice.ts.erreur.p.impossible.de.telecharger.le.pd.4effb8bc": "Erreur {$p}: Impossible de télécharger le PDF",
+  "@core.invoice.ts.erreur.p.impossible.de.telecharger.le.pd.4effb8bc": {
+    "x-files": [
+      "src/app/core/services/invoice.service.ts"
+    ],
+    "x-wave": "v1"
+  },
   "core.stock.ts.reponse.invalide.du.serveur.5068db26": "Réponse invalide du serveur",
   "@core.stock.ts.reponse.invalide.du.serveur.5068db26": {
     "x-files": [
       "src/app/core/services/stock.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.tunisian-payroll.validators.ts.ce.champ.est.obligatoire.95840ee3": "Ce champ est obligatoire.",
+  "@core.tunisian-payroll.validators.ts.ce.champ.est.obligatoire.95840ee3": {
+    "x-files": [
+      "src/app/core/validators/tunisian-payroll.validators.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "core.tunisian-payroll.validators.ts.la.valeur.est.trop.faible.687e393d": "La valeur est trop faible.",
+  "@core.tunisian-payroll.validators.ts.la.valeur.est.trop.faible.687e393d": {
+    "x-files": [
+      "src/app/core/validators/tunisian-payroll.validators.ts"
     ],
     "x-wave": "v1"
   },
@@ -10646,6 +10758,27 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.bank-reconciliation.ts.associe.7ab382a5": "Associé",
+  "@accounting.bank-reconciliation.ts.associe.7ab382a5": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-reconciliation.ts.a.rapprocher.b60223ed": "À rapprocher",
+  "@accounting.bank-reconciliation.ts.a.rapprocher.b60223ed": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.bank-reconciliation.ts.non.associe.1d12cdc9": "Non associé",
+  "@accounting.bank-reconciliation.ts.non.associe.1d12cdc9": {
+    "x-files": [
+      "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "ui.tern.erreur.de.chargement.des.releves.b5e8ea": "Erreur de chargement des relevés.",
   "@ui.tern.erreur.de.chargement.des.releves.b5e8ea": {
     "x-files": [
@@ -11101,15 +11234,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.budget-entry.ts.valider.le.budget.initial.fiscalyear.d6af6bff": "Valider le budget initial {$fiscalYear} ?\n\n",
-  "@accounting.budget-entry.ts.valider.le.budget.initial.fiscalyear.d6af6bff": {
-    "x-files": [
-      "src/app/features/accounting/budget-entry/budget-entry.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.le.budget.initial.sera.fige.copie.vers.le..8d6f06": "Le budget initial sera figé (copié vers le budget révisé, seule version modifiable ensuite). Cette action est irréversible.",
-  "@ui.tern.le.budget.initial.sera.fige.copie.vers.le..8d6f06": {
+  "accounting.budget-entry.ts.valider.le.budget.initial.fiscalyear.le.0ce3d2a0": "Valider le budget initial {$fiscalYear} ?\n\nLe budget initial sera figé (copié vers le budget révisé, seule version modifiable ensuite). Cette action est irréversible.",
+  "@accounting.budget-entry.ts.valider.le.budget.initial.fiscalyear.le.0ce3d2a0": {
     "x-files": [
       "src/app/features/accounting/budget-entry/budget-entry.component.ts"
     ],
@@ -11966,6 +12092,27 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.chart-of-accounts.ts.le.compte.accountnumber.existe.deja.labe.b94d0456": "Le compte {$accountNumber} existe déjà ({$label}).",
+  "@accounting.chart-of-accounts.ts.le.compte.accountnumber.existe.deja.labe.b94d0456": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.ts.le.compte.num.comporte.digits.chiffres.u.421b5b16": "Le compte {$num} comporte {$digits} chiffres : un numéro de compte ne peut pas en dépasser {$SCE_ACCOUNT_MAX_DIGITS}.",
+  "@accounting.chart-of-accounts.ts.le.compte.num.comporte.digits.chiffres.u.421b5b16": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.chart-of-accounts.ts.le.numero.doit.etre.un.compte.sce.chiffr.37283b73": "Le numéro doit être un compte SCE : chiffres, classe 1 à 7, points autorisés (ex. 428.3).",
+  "@accounting.chart-of-accounts.ts.le.numero.doit.etre.un.compte.sce.chiffr.37283b73": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "chart-of-accounts.component.summary.Comptecréé": "Compte créé",
   "@chart-of-accounts.component.summary.Comptecréé": {
     "x-files": [
@@ -12703,6 +12850,13 @@
   "@currencies.component.summary.Devise_enregistr": {
     "x-files": [
       "src/app/features/accounting/currencies/currencies.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.currency-edit.ts.des.taux.de.change.modifies.ne.sont.pas.15498845": "Des taux de change modifiés ne sont pas enregistrés. Quitter cette page les abandonnera. Continuer ?",
+  "@accounting.currency-edit.ts.des.taux.de.change.modifies.ne.sont.pas.15498845": {
+    "x-files": [
+      "src/app/features/accounting/currencies/currency-edit.component.ts"
     ],
     "x-wave": "v7"
   },
@@ -13666,6 +13820,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.fiscal-parameters.ts.des.modifications.non.enregistrees.seron.a18f027c": "Des modifications non enregistrées seront perdues. Continuer ?",
+  "@accounting.fiscal-parameters.ts.des.modifications.non.enregistrees.seron.a18f027c": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.fiscal-parameters.parametres.fiscaux.ec3397a0": "Paramètres fiscaux",
   "@accounting.fiscal-parameters.parametres.fiscaux.ec3397a0": {
     "x-files": [
@@ -13953,6 +14114,76 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.fiscal-parameters.ts.bareme.irpp.json.invalide.e3da66c9": "Barème IRPP : JSON invalide.",
+  "@accounting.fiscal-parameters.ts.bareme.irpp.json.invalide.e3da66c9": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-parameters.ts.bareme.irpp.un.tableau.non.vide.de.tranc.178edcd9": "Barème IRPP : un tableau non vide de tranches est requis.",
+  "@accounting.fiscal-parameters.ts.bareme.irpp.un.tableau.non.vide.de.tranc.178edcd9": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-parameters.ts.bareme.irpp.chaque.tranche.doit.etre.un.38076dfc": "Barème IRPP : chaque tranche doit être un objet { lower, rate }.",
+  "@accounting.fiscal-parameters.ts.bareme.irpp.chaque.tranche.doit.etre.un.38076dfc": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-parameters.ts.bareme.irpp.chaque.lower.doit.etre.un.no.fe088626": "Barème IRPP : chaque « lower » doit être un nombre ≥ 0.",
+  "@accounting.fiscal-parameters.ts.bareme.irpp.chaque.lower.doit.etre.un.no.fe088626": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-parameters.ts.bareme.irpp.chaque.rate.doit.etre.compri.2ed6568c": "Barème IRPP : chaque « rate » doit être compris entre 0 et 100.",
+  "@accounting.fiscal-parameters.ts.bareme.irpp.chaque.rate.doit.etre.compri.2ed6568c": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-parameters.ts.bareme.irpp.les.bornes.lower.doivent.etr.deae9533": "Barème IRPP : les bornes « lower » doivent être strictement croissantes et uniques.",
+  "@accounting.fiscal-parameters.ts.bareme.irpp.les.bornes.lower.doivent.etr.deae9533": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-parameters.ts.label.doit.etre.compris.entre.0.et.1.8ee660ad": "{$label} : doit être compris entre 0 et 1.",
+  "@accounting.fiscal-parameters.ts.label.doit.etre.compris.entre.0.et.1.8ee660ad": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-parameters.ts.label.doit.etre.positif.ou.nul.e11ca7fe": "{$label} : doit être positif ou nul.",
+  "@accounting.fiscal-parameters.ts.label.doit.etre.positif.ou.nul.e11ca7fe": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-parameters.ts.nombre.d.acomptes.doit.etre.compris.entr.3dde7df8": "Nombre d'acomptes : doit être compris entre 0 et 12.",
+  "@accounting.fiscal-parameters.ts.nombre.d.acomptes.doit.etre.compris.entr.3dde7df8": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-parameters.ts.report.des.deficits.annees.doit.etre.com.2a7522b5": "Report des déficits (années) : doit être compris entre 1 et 20.",
+  "@accounting.fiscal-parameters.ts.report.des.deficits.annees.doit.etre.com.2a7522b5": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.fiscal-parameters.ts.exercice.invalide.doit.etre.compris.entr.db4c8a16": "Exercice invalide : doit être compris entre 2000 et 2100.",
   "@accounting.fiscal-parameters.ts.exercice.invalide.doit.etre.compris.entr.db4c8a16": {
     "x-files": [
@@ -13980,6 +14211,13 @@
   "@accounting.fiscal-parameters.ts.l.enregistrement.a.echoue.3f69ec30": {
     "x-files": [
       "src/app/features/accounting/fiscal-parameters/fiscal-parameters.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-result.ts.des.modifications.non.enregistrees.seron.a18f027c": "Des modifications non enregistrées seront perdues. Continuer ?",
+  "@accounting.fiscal-result.ts.des.modifications.non.enregistrees.seron.a18f027c": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-result/fiscal-result.component.ts"
     ],
     "x-wave": "v7"
   },
@@ -15358,6 +15596,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.fiscal-schedule-workflow-dialog.ts.saisir.le.paiement.79ab0d86": "Saisir le paiement",
+  "@accounting.fiscal-schedule-workflow-dialog.ts.saisir.le.paiement.79ab0d86": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-schedule/fiscal-schedule-workflow-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-schedule-workflow-dialog.ts.planifier.un.rappel.3fb10fc8": "Planifier un rappel",
+  "@accounting.fiscal-schedule-workflow-dialog.ts.planifier.un.rappel.3fb10fc8": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-schedule/fiscal-schedule-workflow-dialog.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.fiscal-schedule.echeancier.fiscal.2b894e47": "Echeancier fiscal",
   "@accounting.fiscal-schedule.echeancier.fiscal.2b894e47": {
     "x-files": [
@@ -15451,6 +15703,13 @@
   },
   "fiscal-schedule.component.rejectLabel.Annuler": "Annuler",
   "@fiscal-schedule.component.rejectLabel.Annuler": {
+    "x-files": [
+      "src/app/features/accounting/fiscal-schedule/fiscal-schedule.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fiscal-schedule.ts.date.d.echeance.type.periode.societe.mon.4df89830": "Date d'echeance;Type;Periode;Societe;Montant;Statut;Responsable;Observations",
+  "@accounting.fiscal-schedule.ts.date.d.echeance.type.periode.societe.mon.4df89830": {
     "x-files": [
       "src/app/features/accounting/fiscal-schedule/fiscal-schedule.component.ts"
     ],
@@ -15814,15 +16073,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.depreciation-run.ts.le.dossier.est.en.exercice.decale.les.do.9e94cb87": "Le dossier est en exercice décalé : les dotations sont rattachées à l'exercice sélectionné ",
-  "@accounting.depreciation-run.ts.le.dossier.est.en.exercice.decale.les.do.9e94cb87": {
-    "x-files": [
-      "src/app/features/accounting/fixed-assets/depreciation-run.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.depreciation-run.ts.cle.annee.de.debut.le.grand.livre.reste.84dd6e0c": "(clé = année de début). Le Grand-Livre reste en année civile (limitation transitoire).",
-  "@accounting.depreciation-run.ts.cle.annee.de.debut.le.grand.livre.reste.84dd6e0c": {
+  "accounting.depreciation-run.ts.le.dossier.est.en.exercice.decale.les.do.0c4f8f70": "Le dossier est en exercice décalé : les dotations sont rattachées à l'exercice sélectionné (clé = année de début). Le Grand-Livre reste en année civile (limitation transitoire).",
+  "@accounting.depreciation-run.ts.le.dossier.est.en.exercice.decale.les.do.0c4f8f70": {
     "x-files": [
       "src/app/features/accounting/fixed-assets/depreciation-run.component.ts"
     ],
@@ -16825,22 +17077,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.fixed-asset-settings.ts.l.exercice.est.decale.le.grand.livre.les.9898eb90": "L'exercice est décalé : le Grand-Livre, les périodes et les verrous comptables restent en année civile. ",
-  "@accounting.fixed-asset-settings.ts.l.exercice.est.decale.le.grand.livre.les.9898eb90": {
-    "x-files": [
-      "src/app/features/accounting/fixed-assets/fixed-asset-settings.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.fixed-asset-settings.ts.seul.le.module.immobilisations.dotations.2d454ff9": "Seul le module Immobilisations (dotations, tableau CP17, exports) applique la frontière d'exercice. ",
-  "@accounting.fixed-asset-settings.ts.seul.le.module.immobilisations.dotations.2d454ff9": {
-    "x-files": [
-      "src/app/features/accounting/fixed-assets/fixed-asset-settings.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.fixed-asset-settings.ts.le.bascule.complete.du.socle.est.planifi.603ef40d": "Le bascule complète du socle est planifiée séparément.",
-  "@accounting.fixed-asset-settings.ts.le.bascule.complete.du.socle.est.planifi.603ef40d": {
+  "accounting.fixed-asset-settings.ts.l.exercice.est.decale.le.grand.livre.les.a48b7418": "L'exercice est décalé : le Grand-Livre, les périodes et les verrous comptables restent en année civile. Seul le module Immobilisations (dotations, tableau CP17, exports) applique la frontière d'exercice. Le bascule complète du socle est planifiée séparément.",
+  "@accounting.fixed-asset-settings.ts.l.exercice.est.decale.le.grand.livre.les.a48b7418": {
     "x-files": [
       "src/app/features/accounting/fixed-assets/fixed-asset-settings.component.ts"
     ],
@@ -17209,6 +17447,13 @@
   },
   "accounting.fixed-assets-amortization-table.ts.impossible.de.charger.le.tableau.des.amo.1292a2dd": "Impossible de charger le tableau des amortissements de l'exercice.",
   "@accounting.fixed-assets-amortization-table.ts.impossible.de.charger.le.tableau.des.amo.1292a2dd": {
+    "x-files": [
+      "src/app/features/accounting/fixed-assets/fixed-assets-amortization-table.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fixed-assets-amortization-table.ts.societe.2c3fdad8": "Société",
+  "@accounting.fixed-assets-amortization-table.ts.societe.2c3fdad8": {
     "x-files": [
       "src/app/features/accounting/fixed-assets/fixed-assets-amortization-table.component.ts"
     ],
@@ -18298,6 +18543,27 @@
   },
   "ui.tern.erreur.lors.de.l.import.264199": "Erreur lors de l'import.",
   "@ui.tern.erreur.lors.de.l.import.264199": {
+    "x-files": [
+      "src/app/features/accounting/import/migration-wizard/migration-wizard.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.migration-wizard.ts.prefixe.2fe0a6db": "Préfixe",
+  "@accounting.migration-wizard.ts.prefixe.2fe0a6db": {
+    "x-files": [
+      "src/app/features/accounting/import/migration-wizard/migration-wizard.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.migration-wizard.ts.tableur.generique.8accc45c": "Tableur générique",
+  "@accounting.migration-wizard.ts.tableur.generique.8accc45c": {
+    "x-files": [
+      "src/app/features/accounting/import/migration-wizard/migration-wizard.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.migration-wizard.ts.non.reconnu.11d9b0c7": "Non reconnu",
+  "@accounting.migration-wizard.ts.non.reconnu.11d9b0c7": {
     "x-files": [
       "src/app/features/accounting/import/migration-wizard/migration-wizard.component.ts"
     ],
@@ -21053,6 +21319,20 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.loans-list.ts.rembourse.8d7916c3": "Remboursé",
+  "@accounting.loans-list.ts.rembourse.8d7916c3": {
+    "x-files": [
+      "src/app/features/accounting/loans/loans-list.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.loans-list.ts.annule.34cd87cc": "Annulé",
+  "@accounting.loans-list.ts.annule.34cd87cc": {
+    "x-files": [
+      "src/app/features/accounting/loans/loans-list.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.loans-list.ts.erreur.reseau.0683007f": "Erreur réseau",
   "@accounting.loans-list.ts.erreur.reseau.0683007f": {
     "x-files": [
@@ -22592,29 +22872,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.2a1357aa": "Analyse IA indisponible pour votre compte : seules les factures émises par ",
-  "@accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.2a1357aa": {
+  "accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.4c261844": "Analyse IA indisponible pour votre compte : seules les factures émises par InstaFact pourront être lues.",
+  "@accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.4c261844": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
     ],
     "x-wave": "v7"
   },
-  "ui.tern.instafact.pourront.etre.lues.dc81c8": "InstaFact pourront être lues.",
-  "@ui.tern.instafact.pourront.etre.lues.dc81c8": {
-    "x-files": [
-      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.408356a2": "Le modèle vision d'import ({$visionModel}) n'est pas prêt sur le serveur. ",
-  "@accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.408356a2": {
-    "x-files": [
-      "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.accounting-document-import-dialog.ts.les.photos.de.factures.pourraient.echoue.45785b89": "Les photos de factures pourraient échouer — contactez l'administrateur InstaFact.",
-  "@accounting.accounting-document-import-dialog.ts.les.photos.de.factures.pourraient.echoue.45785b89": {
+  "accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.5ee55a7a": "Le modèle vision d'import ({$visionModel}) n'est pas prêt sur le serveur. Les photos de factures pourraient échouer — contactez l'administrateur InstaFact.",
+  "@accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.5ee55a7a": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/import/accounting-document-import-dialog.component.ts"
     ],
@@ -23309,15 +23575,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.manual-entry.ts.enregistrer.delettrera.le.s.groupe.s.joi.a07593c3": "Enregistrer délettrera le(s) groupe(s) {$join} : toutes leurs lignes ",
-  "@accounting.manual-entry.ts.enregistrer.delettrera.le.s.groupe.s.joi.a07593c3": {
-    "x-files": [
-      "src/app/features/accounting/manual-entry/manual-entry.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.manual-entry.ts.redeviendront.lettrables.y.compris.celle.b7a448a6": "redeviendront lettrables, y compris celles d'autres écritures. Continuer ?",
-  "@accounting.manual-entry.ts.redeviendront.lettrables.y.compris.celle.b7a448a6": {
+  "accounting.manual-entry.ts.enregistrer.delettrera.le.s.groupe.s.joi.07480ec6": "Enregistrer délettrera le(s) groupe(s) {$join} : toutes leurs lignes redeviendront lettrables, y compris celles d'autres écritures. Continuer ?",
+  "@accounting.manual-entry.ts.enregistrer.delettrera.le.s.groupe.s.joi.07480ec6": {
     "x-files": [
       "src/app/features/accounting/manual-entry/manual-entry.component.ts"
     ],
@@ -23498,10 +23757,45 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.manual-entry.ts.un.document.source.1372e08e": "un document source",
+  "@accounting.manual-entry.ts.un.document.source.1372e08e": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/manual-entry.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "ui.tern.un.document.source.1372e0": "un document source",
   "@ui.tern.un.document.source.1372e0": {
     "x-files": [
       "src/app/features/accounting/manual-entry/manual-entry.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import.ts.lecture.directe.du.pdf.aucune.analyse.ia.c260d0a2": "Lecture directe du PDF (aucune analyse IA nécessaire)",
+  "@accounting.accounting-document-import.ts.lecture.directe.du.pdf.aucune.analyse.ia.c260d0a2": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/models/accounting-document-import.models.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import.ts.analyse.ia.du.texte.du.document.d5e78bfb": "Analyse IA du texte du document",
+  "@accounting.accounting-document-import.ts.analyse.ia.du.texte.du.document.d5e78bfb": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/models/accounting-document-import.models.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import.ts.analyse.ia.visuelle.document.scanne.ou.p.3f8c2dca": "Analyse IA visuelle (document scanné ou photographié)",
+  "@accounting.accounting-document-import.ts.analyse.ia.visuelle.document.scanne.ou.p.3f8c2dca": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/models/accounting-document-import.models.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.accounting-document-import.ts.methode.inconnue.a2ec5941": "Méthode inconnue",
+  "@accounting.accounting-document-import.ts.methode.inconnue.a2ec5941": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/models/accounting-document-import.models.ts"
     ],
     "x-wave": "v7"
   },
@@ -23661,6 +23955,20 @@
   },
   "accounting.entry-form.ts.a.nouveaux.c6206161": "À-Nouveaux",
   "@accounting.entry-form.ts.a.nouveaux.c6206161": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/services/entry-form.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-form.ts.compte.inconnu.dans.le.plan.comptable.e4f1ac07": "Compte inconnu dans le plan comptable",
+  "@accounting.entry-form.ts.compte.inconnu.dans.le.plan.comptable.e4f1ac07": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/services/entry-form.store.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.entry-form.ts.compte.desactive.l.enregistrement.sera.r.43196ed3": "Compte désactivé — l'enregistrement sera refusé",
+  "@accounting.entry-form.ts.compte.desactive.l.enregistrement.sera.r.43196ed3": {
     "x-files": [
       "src/app/features/accounting/manual-entry/services/entry-form.store.ts"
     ],
@@ -24535,6 +24843,195 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.monthly-declaration-compute.view-model.ts.le.compte.detail.ne.figure.pas.au.plan.c.4b17702f": "Le compte {$detail} ne figure pas au plan comptable du dossier : il ne remonte aucun mouvement.",
+  "@accounting.monthly-declaration-compute.view-model.ts.le.compte.detail.ne.figure.pas.au.plan.c.4b17702f": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.un.compte.cite.par.la.configuration.ne.f.0bc83ddf": "Un compte cité par la configuration ne figure pas au plan comptable du dossier.",
+  "@accounting.monthly-declaration-compute.view-model.ts.un.compte.cite.par.la.configuration.ne.f.0bc83ddf": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.la.rubrique.detail.calcule.sur.un.taux.r.e3e4069c": "La rubrique {$detail} calcule sur un taux resté à zéro : elle produit zéro.",
+  "@accounting.monthly-declaration-compute.view-model.ts.la.rubrique.detail.calcule.sur.un.taux.r.e3e4069c": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.une.rubrique.calcule.sur.un.taux.reste.a.baafc131": "Une rubrique calcule sur un taux resté à zéro : elle produit zéro.",
+  "@accounting.monthly-declaration-compute.view-model.ts.une.rubrique.calcule.sur.un.taux.reste.a.baafc131": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.le.cycle.de.paie.du.mois.n.est.ni.valide.1ca57f17": "Le cycle de paie du mois n'est ni validé ni clôturé : les rubriques assises sur la paie sont ignorées.",
+  "@accounting.monthly-declaration-compute.view-model.ts.le.cycle.de.paie.du.mois.n.est.ni.valide.1ca57f17": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.combinaison.de.calcul.non.prise.en.charg.946a4d89": "Combinaison de calcul non prise en charge : {$detail}.",
+  "@accounting.monthly-declaration-compute.view-model.ts.combinaison.de.calcul.non.prise.en.charg.946a4d89": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.combinaison.de.calcul.non.prise.en.charg.1ee7f506": "Combinaison de calcul non prise en charge.",
+  "@accounting.monthly-declaration-compute.view-model.ts.combinaison.de.calcul.non.prise.en.charg.1ee7f506": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.le.code.rapport.detail.ne.correspond.a.a.f4e49f72": "Le code rapport {$detail} ne correspond à aucune case du formulaire officiel : le montant est calculé, mais il ne sera pas imprimé.",
+  "@accounting.monthly-declaration-compute.view-model.ts.le.code.rapport.detail.ne.correspond.a.a.f4e49f72": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.un.code.rapport.ne.correspond.a.aucune.c.94fead74": "Un code rapport ne correspond à aucune case du formulaire officiel : le montant est calculé, mais il ne sera pas imprimé.",
+  "@accounting.monthly-declaration-compute.view-model.ts.un.code.rapport.ne.correspond.a.aucune.c.94fead74": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.ligne.ecartee.du.formulaire.par.le.contr.4c600990": "Ligne écartée du formulaire par le contrôle de total de famille ({$detail}).",
+  "@accounting.monthly-declaration-compute.view-model.ts.ligne.ecartee.du.formulaire.par.le.contr.4c600990": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.une.ligne.a.ete.ecartee.du.formulaire.pa.793e3e04": "Une ligne a été écartée du formulaire par le contrôle de total de famille.",
+  "@accounting.monthly-declaration-compute.view-model.ts.une.ligne.a.ete.ecartee.du.formulaire.pa.793e3e04": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.la.famille.name.est.incluse.dans.la.decl.be171673": "La famille « {$name} » est incluse dans la déclaration, mais aucune de ses rubriques ne s'applique à la période.",
+  "@accounting.monthly-declaration-compute.view-model.ts.la.famille.name.est.incluse.dans.la.decl.be171673": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.une.famille.incluse.ne.porte.aucune.rubr.96ccde7f": "Une famille incluse ne porte aucune rubrique applicable à la période.",
+  "@accounting.monthly-declaration-compute.view-model.ts.une.famille.incluse.ne.porte.aucune.rubr.96ccde7f": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.signalement.non.reconnu.par.cette.versio.11c46f7a": "Signalement non reconnu par cette version de l'écran.",
+  "@accounting.monthly-declaration-compute.view-model.ts.signalement.non.reconnu.par.cette.versio.11c46f7a": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.cette.famille.n.alimente.aucune.case.chi.36184511": "Cette famille n'alimente aucune case chiffrée de la déclaration.",
+  "@accounting.monthly-declaration-compute.view-model.ts.cette.famille.n.alimente.aucune.case.chi.36184511": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.identique.au.montant.de.la.declaration.3a6bb283": "Identique au montant de la déclaration.",
+  "@accounting.monthly-declaration-compute.view-model.ts.identique.au.montant.de.la.declaration.3a6bb283": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.le.calcul.historique.q.d05499f7": "Écart de {$gap} avec le calcul historique, qui reste le montant déclaré.",
+  "@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.le.calcul.historique.q.d05499f7": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.alors.d16d1930": "Écart de {$gap} avec la case déclarée, alors que les deux devraient être le même calcul.",
+  "@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.alors.d16d1930": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.2efc40f5": "Écart de {$gap} avec la case déclarée.",
+  "@accounting.monthly-declaration-compute.view-model.ts.ecart.de.gap.avec.la.case.declaree.2efc40f5": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.cette.periode.est.calculee.a.l.ancienne.b4d8792d": "Cette période est calculée à l'ancienne : la configuration du dossier n'a déplacé aucun montant.",
+  "@accounting.monthly-declaration-compute.view-model.ts.cette.periode.est.calculee.a.l.ancienne.b4d8792d": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.sans.ecart.la.configu.a30e50b3": "Contrôle de parité sans écart : la configuration reproduit exactement le calcul historique sur cette période.",
+  "@accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.sans.ecart.la.configu.a30e50b3": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.ecart.maximal.de.form.2b0e4869": "Contrôle de parité : écart maximal de {$formatMillimes} entre les deux calculs. Les montants déclarés restent ceux du calcul historique.",
+  "@accounting.monthly-declaration-compute.view-model.ts.controle.de.parite.ecart.maximal.de.form.2b0e4869": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.les.montants.ci.dessous.sont.ceux.que.la.f8290d4d": "Les montants ci-dessous sont ceux que la configuration du dossier produit, et ce sont eux qui seront déclarés.",
+  "@accounting.monthly-declaration-compute.view-model.ts.les.montants.ci.dessous.sont.ceux.que.la.f8290d4d": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.le.dossier.est.en.calcul.parametre.la.ra.06099595": "Le dossier est en calcul paramétré ; la rampe est derrière lui.",
+  "@accounting.monthly-declaration-compute.view-model.ts.le.dossier.est.en.calcul.parametre.la.ra.06099595": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.le.controle.de.parite.n.a.pas.commence.a.b2828062": "Le contrôle de parité n'a pas commencé : aucune comparaison n'a encore été enregistrée.",
+  "@accounting.monthly-declaration-compute.view-model.ts.le.controle.de.parite.n.a.pas.commence.a.b2828062": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.serie.atteinte.paritycleanstreak.periode.7c17ba43": "Série atteinte : {$parityCleanStreak} périodes consécutives sans écart. La bascule est ouverte.",
+  "@accounting.monthly-declaration-compute.view-model.ts.serie.atteinte.paritycleanstreak.periode.7c17ba43": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-compute.view-model.ts.serie.en.cours.paritycleanstreak.sur.req.9ce7f0e5": "Série en cours : {$parityCleanStreak} sur {$requiredCleanParityPeriods} périodes consécutives sans écart. Encore {$missing} période(s), ou une dérogation motivée.",
+  "@accounting.monthly-declaration-compute.view-model.ts.serie.en.cours.paritycleanstreak.sur.req.9ce7f0e5": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-compute.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.monthly-declaration.configuration.dm.b438b9c2": "Configuration DM",
   "@accounting.monthly-declaration.configuration.dm.b438b9c2": {
     "x-files": [
@@ -24970,6 +25467,104 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.monthly-declaration-config.view-model.ts.debits.259795bd": "débits",
+  "@accounting.monthly-declaration-config.view-model.ts.debits.259795bd": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.credits.8269ea49": "crédits",
+  "@accounting.monthly-declaration-config.view-model.ts.credits.8269ea49": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.aucun.compte.9f74e0b8": "aucun compte",
+  "@accounting.monthly-declaration-config.view-model.ts.aucun.compte.9f74e0b8": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1": "{$sideLabel} de {$accountsSummary}",
+  "@accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.non.pris.en.charge.2c0f420c": "Non pris en charge",
+  "@accounting.monthly-declaration-config.view-model.ts.non.pris.en.charge.2c0f420c": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.toutes.periodes.fa4932c5": "Toutes périodes",
+  "@accounting.monthly-declaration-config.view-model.ts.toutes.periodes.fa4932c5": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.a.partir.du.from.802ed9bb": "À partir du {$from}",
+  "@accounting.monthly-declaration-config.view-model.ts.a.partir.du.from.802ed9bb": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.jusqu.au.to.5b249dfe": "Jusqu’au {$to}",
+  "@accounting.monthly-declaration-config.view-model.ts.jusqu.au.to.5b249dfe": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.controle.de.parite.815aad76": "Contrôle de parité",
+  "@accounting.monthly-declaration-config.view-model.ts.controle.de.parite.815aad76": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.calcul.parametre.ff2c9c1a": "Calcul paramétré",
+  "@accounting.monthly-declaration-config.view-model.ts.calcul.parametre.ff2c9c1a": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.la.declaration.est.produite.par.le.calcu.61acc8f4": "La déclaration est produite par le calcul historique. La configuration du dossier est enregistrée mais ne déplace aucun montant.",
+  "@accounting.monthly-declaration-config.view-model.ts.la.declaration.est.produite.par.le.calcu.61acc8f4": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.les.deux.calculs.tournent.les.montants.d.7f0b4d36": "Les deux calculs tournent ; les montants déclarés restent ceux du calcul historique. {$parityCleanStreak} période(s) sans écart sur les {$requiredCleanParityPeriods} requises.",
+  "@accounting.monthly-declaration-config.view-model.ts.les.deux.calculs.tournent.les.montants.d.7f0b4d36": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.depuis.le.t.4671ab9f": "Le calcul paramétré fait foi depuis le {$toDateInputValue}.",
+  "@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.depuis.le.t.4671ab9f": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.42cd40ec": "Le calcul paramétré fait foi.",
+  "@accounting.monthly-declaration-config.view-model.ts.le.calcul.parametre.fait.foi.42cd40ec": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-config.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.monthly-declaration.modele.integration.dm.bf548515": "Modèle Intégration DM",
   "@accounting.monthly-declaration.modele.integration.dm.bf548515": {
     "x-files": [
@@ -25292,6 +25887,90 @@
   "@accounting.monthly-declaration-tracking.ts.erreur.reseau.0683007f": {
     "x-files": [
       "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.verrouillee.af142775": "Verrouillée",
+  "@accounting.monthly-declaration-tracking.view-model.ts.verrouillee.af142775": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.deposee.8d55a917": "Déposée",
+  "@accounting.monthly-declaration-tracking.view-model.ts.deposee.8d55a917": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.a.deposer.a9c5ca9a": "À déposer",
+  "@accounting.monthly-declaration-tracking.view-model.ts.a.deposer.a9c5ca9a": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.declaration.verrouillee.elle.ne.peut.plu.f7d225e4": "Déclaration verrouillée : elle ne peut plus être modifiée.",
+  "@accounting.monthly-declaration-tracking.view-model.ts.declaration.verrouillee.elle.ne.peut.plu.f7d225e4": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.declaration.rectificative.n.revisionnumb.9012cbdc": "Déclaration rectificative n° {$revisionNumber} déposée.",
+  "@accounting.monthly-declaration-tracking.view-model.ts.declaration.rectificative.n.revisionnumb.9012cbdc": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.declaration.deposee.ece5d1c2": "Déclaration déposée.",
+  "@accounting.monthly-declaration-tracking.view-model.ts.declaration.deposee.ece5d1c2": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.brouillon.enregistre.jamais.depose.3cb0b51e": "Brouillon enregistré, jamais déposé.",
+  "@accounting.monthly-declaration-tracking.view-model.ts.brouillon.enregistre.jamais.depose.3cb0b51e": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.aucune.declaration.et.l.echeance.est.pas.d41e8eca": "Aucune déclaration, et l’échéance est passée.",
+  "@accounting.monthly-declaration-tracking.view-model.ts.aucune.declaration.et.l.echeance.est.pas.d41e8eca": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.periode.non.encore.declaree.c8fae813": "Période non encore déclarée.",
+  "@accounting.monthly-declaration-tracking.view-model.ts.periode.non.encore.declaree.c8fae813": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.aucun.mois.de.year.n.est.calcule.par.la.b7736f24": "Aucun mois de {$year} n’est calculé par la configuration du dossier.",
+  "@accounting.monthly-declaration-tracking.view-model.ts.aucun.mois.de.year.n.est.calcule.par.la.b7736f24": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.les.douze.mois.de.year.sont.calcules.par.c736b973": "Les douze mois de {$year} sont calculés par la configuration du dossier.",
+  "@accounting.monthly-declaration-tracking.view-model.ts.les.douze.mois.de.year.sont.calcules.par.c736b973": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.monthly-declaration-tracking.view-model.ts.configuredmonths.mois.de.year.sur.12.son.a87ff472": "{$configuredMonths} mois de {$year} sur 12 sont calculés par la configuration du dossier.",
+  "@accounting.monthly-declaration-tracking.view-model.ts.configuredmonths.mois.de.year.sur.12.son.a87ff472": {
+    "x-files": [
+      "src/app/features/accounting/monthly-declaration/monthly-declaration-tracking.view-model.ts"
     ],
     "x-wave": "v7"
   },
@@ -27139,29 +27818,15 @@
     ],
     "x-wave": "v7"
   },
-  "ui.tern.les.montants.enregistres.font.foi.et.ne.so.718ac5": "Les montants enregistrés font foi et ne sont jamais réalignés automatiquement. ",
-  "@ui.tern.les.montants.enregistres.font.foi.et.ne.so.718ac5": {
+  "accounting.vat-declaration.ts.les.montants.enregistres.font.foi.et.ne.292696d5": "Les montants enregistrés font foi et ne sont jamais réalignés automatiquement. Resynchronisez puis enregistrez pour les mettre à jour.",
+  "@accounting.vat-declaration.ts.les.montants.enregistres.font.foi.et.ne.292696d5": {
     "x-files": [
       "src/app/features/accounting/vat-declaration/vat-declaration.component.ts"
     ],
     "x-wave": "v7"
   },
-  "ui.tern.resynchronisez.puis.enregistrez.pour.les.m.dfda5a": "Resynchronisez puis enregistrez pour les mettre à jour.",
-  "@ui.tern.resynchronisez.puis.enregistrez.pour.les.m.dfda5a": {
-    "x-files": [
-      "src/app/features/accounting/vat-declaration/vat-declaration.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.cette.declaration.a.ete.deposee.ses.montan.c05947": "Cette déclaration a été déposée : ses montants restent ceux du dépôt. ",
-  "@ui.tern.cette.declaration.a.ete.deposee.ses.montan.c05947": {
-    "x-files": [
-      "src/app/features/accounting/vat-declaration/vat-declaration.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.pour.la.corriger.resynchronisez.puis.enreg.daefa1": "Pour la corriger, resynchronisez puis enregistrez une « Rectificative ».",
-  "@ui.tern.pour.la.corriger.resynchronisez.puis.enreg.daefa1": {
+  "accounting.vat-declaration.ts.cette.declaration.a.ete.deposee.ses.mont.0eb66461": "Cette déclaration a été déposée : ses montants restent ceux du dépôt. Pour la corriger, resynchronisez puis enregistrez une « Rectificative ».",
+  "@accounting.vat-declaration.ts.cette.declaration.a.ete.deposee.ses.mont.0eb66461": {
     "x-files": [
       "src/app/features/accounting/vat-declaration/vat-declaration.component.ts"
     ],
@@ -27272,6 +27937,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.vat-declaration.view-model.ts.verrouillee.af142775": "Verrouillée",
+  "@accounting.vat-declaration.view-model.ts.verrouillee.af142775": {
+    "x-files": [
+      "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.vat-declaration.view-model.ts.tva.collectee.19.4fb0b2e4": "TVA collectée 19 %",
   "@accounting.vat-declaration.view-model.ts.tva.collectee.19.4fb0b2e4": {
     "x-files": [
@@ -27323,6 +27995,20 @@
   },
   "accounting.vat-declaration.view-model.ts.retenues.a.la.source.rs.04dda5ef": "Retenues à la source (RS)",
   "@accounting.vat-declaration.view-model.ts.retenues.a.la.source.rs.04dda5ef": {
+    "x-files": [
+      "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.vat-declaration.view-model.ts.aucun.cycle.de.paie.pour.cette.periode.l.e1691c85": "Aucun cycle de paie pour cette période : la TFP et le FOPROLOS restent à saisir manuellement.",
+  "@accounting.vat-declaration.view-model.ts.aucun.cycle.de.paie.pour.cette.periode.l.e1691c85": {
+    "x-files": [
+      "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.vat-declaration.view-model.ts.le.cycle.de.paie.de.la.periode.est.au.st.81b23f76": "Le cycle de paie de la période est au statut « {$p} » : ses montants TFP et FOPROLOS ne sont pas repris. Validez le cycle pour les intégrer.",
+  "@accounting.vat-declaration.view-model.ts.le.cycle.de.paie.de.la.periode.est.au.st.81b23f76": {
     "x-files": [
       "src/app/features/accounting/vat-declaration/vat-declaration.view-model.ts"
     ],
@@ -27476,6 +28162,62 @@
     ],
     "x-wave": "v6"
   },
+  "ai-assistant.assistant-progress-timeline.ts.etapes.du.traitement.93c06168": "Étapes du traitement",
+  "@ai-assistant.assistant-progress-timeline.ts.etapes.du.traitement.93c06168": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/assistant-progress-timeline/assistant-progress-timeline.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-timeline.ts.reponse.prete.dcb81431": "Réponse prête",
+  "@ai-assistant.assistant-progress-timeline.ts.reponse.prete.dcb81431": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/assistant-progress-timeline/assistant-progress-timeline.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-timeline.ts.composed.time.traitement.en.cours.merci.b1bf7987": "{$composed}{$time} — traitement en cours, merci de patienter",
+  "@ai-assistant.assistant-progress-timeline.ts.composed.time.traitement.en.cours.merci.b1bf7987": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/assistant-progress-timeline/assistant-progress-timeline.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-timeline.ts.composed.time.un.autre.traitement.se.ter.5988258d": "{$composed}{$time} — un autre traitement se termine",
+  "@ai-assistant.assistant-progress-timeline.ts.composed.time.un.autre.traitement.se.ter.5988258d": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/assistant-progress-timeline/assistant-progress-timeline.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-timeline.ts.chargement.du.modele.local.en.cours.form.b2ca052d": "Chargement du modèle local en cours ({$formatDurationMs})",
+  "@ai-assistant.assistant-progress-timeline.ts.chargement.du.modele.local.en.cours.form.b2ca052d": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/assistant-progress-timeline/assistant-progress-timeline.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-timeline.ts.l.assistant.se.prepare.7cb89b09": "L'assistant se prépare",
+  "@ai-assistant.assistant-progress-timeline.ts.l.assistant.se.prepare.7cb89b09": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/assistant-progress-timeline/assistant-progress-timeline.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-timeline.ts.preparation.en.cours.28379fdb": "Préparation en cours",
+  "@ai-assistant.assistant-progress-timeline.ts.preparation.en.cours.28379fdb": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/assistant-progress-timeline/assistant-progress-timeline.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-timeline.ts.reponse.preparee.f5fcf17b": "Réponse préparée",
+  "@ai-assistant.assistant-progress-timeline.ts.reponse.preparee.f5fcf17b": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/assistant-progress-timeline/assistant-progress-timeline.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "ai-assistant.components.pages.fcdf352b": "{$INTERPOLATION} pages",
   "@ai-assistant.components.pages.fcdf352b": {
     "x-files": [
@@ -27541,6 +28283,13 @@
   },
   "ai-assistant.chat-attachment-card.voir.le.texte": "Voir le texte",
   "@ai-assistant.chat-attachment-card.voir.le.texte": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.chat-attachment-card.ts.piece.jointe.filename.formatlabel.sizela.74bc908e": "Pièce jointe {$fileName}, {$formatLabel}, {$sizeLabel}",
+  "@ai-assistant.chat-attachment-card.ts.piece.jointe.filename.formatlabel.sizela.74bc908e": {
     "x-files": [
       "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts"
     ],
@@ -28003,6 +28752,13 @@
     ],
     "x-wave": "v6"
   },
+  "ai-assistant.chat-message.ts.expire.dans.5.min.d79f5d42": "Expire dans 5 min",
+  "@ai-assistant.chat-message.ts.expire.dans.5.min.d79f5d42": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/chat-message/chat-message.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "ui.tern.expire.dans.ph.min.2d8ebb": "Expire dans {$p0} min",
   "@ui.tern.expire.dans.ph.min.2d8ebb": {
     "x-files": [
@@ -28261,6 +29017,13 @@
   },
   "ui.tern.votre.ph.repond.aux.questions.de.son.domai.d94ff9": "Votre {$p0} répond aux questions de son domaine. Quelques exemples :",
   "@ui.tern.votre.ph.repond.aux.questions.de.son.domai.d94ff9": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/chat-panel/chat-panel.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.chat-panel.ts.base.ecran.screenid.schema.schemaversion.464e5861": "{$base} — écran: {$screenId}, schema: {$schemaVersion}, payload: {$payloadBytes} o{$p}",
+  "@ai-assistant.chat-panel.ts.base.ecran.screenid.schema.schemaversion.464e5861": {
     "x-files": [
       "src/app/features/ai-assistant/components/chat-panel/chat-panel.component.ts"
     ],
@@ -28707,6 +29470,13 @@
     ],
     "x-wave": "v6"
   },
+  "ai-assistant.powerpoint-export-dialog.ts.synthese.assistant.ia.pad.pad1.getfullye.b84f60a8": "Synthèse Assistant IA — {$pad}/{$pad1}/{$getFullYear}",
+  "@ai-assistant.powerpoint-export-dialog.ts.synthese.assistant.ia.pad.pad1.getfullye.b84f60a8": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/powerpoint-export-dialog/powerpoint-export-dialog.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "ai-assistant.powerpoint-export-dialog.ts.erreur.inattendue.f815b77e": "Erreur inattendue.",
   "@ai-assistant.powerpoint-export-dialog.ts.erreur.inattendue.f815b77e": {
     "x-files": [
@@ -28917,6 +29687,55 @@
     ],
     "x-wave": "v6"
   },
+  "ai-assistant.ai-chat-session.ts.la.confirmation.de.la.relance.a.echoue.a8e4be33": "La confirmation de la relance a échoué.",
+  "@ai-assistant.ai-chat-session.ts.la.confirmation.de.la.relance.a.echoue.a8e4be33": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/ai-chat-session.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.ai-chat-session.ts.session.expiree.veuillez.vous.reconnecte.be32677a": "Session expirée. Veuillez vous reconnecter, puis renvoyer votre message.",
+  "@ai-assistant.ai-chat-session.ts.session.expiree.veuillez.vous.reconnecte.be32677a": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/ai-chat-session.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.ai-chat-session.ts.action.non.autorisee.en.mode.dossier.cli.e08597d7": "Action non autorisée en mode dossier client.",
+  "@ai-assistant.ai-chat-session.ts.action.non.autorisee.en.mode.dossier.cli.e08597d7": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/ai-chat-session.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.ai-chat-session.ts.trop.de.requetes.vers.l.assistant.ia.pat.ebb869db": "Trop de requêtes vers l’assistant IA. Patientez un instant avant de réessayer.",
+  "@ai-assistant.ai-chat-session.ts.trop.de.requetes.vers.l.assistant.ia.pat.ebb869db": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/ai-chat-session.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.ai-chat-session.ts.une.erreur.est.survenue.veuillez.essayer.431c8d83": "Une erreur est survenue. Veuillez essayer de nouveau.",
+  "@ai-assistant.ai-chat-session.ts.une.erreur.est.survenue.veuillez.essayer.431c8d83": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/ai-chat-session.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.ai-stream.ts.session.expiree.veuillez.vous.reconnecte.be32677a": "Session expirée. Veuillez vous reconnecter, puis renvoyer votre message.",
+  "@ai-assistant.ai-stream.ts.session.expiree.veuillez.vous.reconnecte.be32677a": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/ai-stream.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.ai-stream.ts.trop.de.requetes.vers.l.assistant.ia.pat.ebb869db": "Trop de requêtes vers l’assistant IA. Patientez un instant avant de réessayer.",
+  "@ai-assistant.ai-stream.ts.trop.de.requetes.vers.l.assistant.ia.pat.ebb869db": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/ai-stream.service.ts"
+    ],
+    "x-wave": "v6"
+  },
   "ai-assistant.chat-speech-transcription.ts.acces.au.microphone.refuse.autorisez.le.ddb1a61a": "Accès au microphone refusé. Autorisez le micro dans les paramètres du navigateur.",
   "@ai-assistant.chat-speech-transcription.ts.acces.au.microphone.refuse.autorisez.le.ddb1a61a": {
     "x-files": [
@@ -28947,6 +29766,34 @@
   },
   "ai-assistant.powerpoint-export.ts.erreur.reseau.inattendue.540e83b7": "Erreur réseau inattendue.",
   "@ai-assistant.powerpoint-export.ts.erreur.reseau.inattendue.540e83b7": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/powerpoint-export.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.powerpoint-export.ts.impossible.de.joindre.le.serveur.verifie.8b75460a": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+  "@ai-assistant.powerpoint-export.ts.impossible.de.joindre.le.serveur.verifie.8b75460a": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/powerpoint-export.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.powerpoint-export.ts.la.requete.d.export.a.ete.rejetee.par.le.f478a4e4": "La requête d'export a été rejetée par le serveur.",
+  "@ai-assistant.powerpoint-export.ts.la.requete.d.export.a.ete.rejetee.par.le.f478a4e4": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/powerpoint-export.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.powerpoint-export.ts.erreur.serveur.lors.de.l.export.powerpoi.42306a40": "Erreur serveur lors de l'export PowerPoint.",
+  "@ai-assistant.powerpoint-export.ts.erreur.serveur.lors.de.l.export.powerpoi.42306a40": {
+    "x-files": [
+      "src/app/features/ai-assistant/services/powerpoint-export.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.powerpoint-export.ts.erreur.inattendue.f815b77e": "Erreur inattendue.",
+  "@ai-assistant.powerpoint-export.ts.erreur.inattendue.f815b77e": {
     "x-files": [
       "src/app/features/ai-assistant/services/powerpoint-export.service.ts"
     ],
@@ -28994,10 +29841,101 @@
     ],
     "x-wave": "v6"
   },
+  "ai-assistant.ai-screen-labels.ts.ecran.32ad662e": "écran",
+  "@ai-assistant.ai-screen-labels.ts.ecran.32ad662e": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/ai-screen-labels.util.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.ai-screen-labels.ts.analyse.de.l.ecran.resolvescreenlabel.d8e572d2": "Analyse de l'écran : {$resolveScreenLabel}",
+  "@ai-assistant.ai-screen-labels.ts.analyse.de.l.ecran.resolvescreenlabel.d8e572d2": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/ai-screen-labels.util.ts"
+    ],
+    "x-wave": "v6"
+  },
   "ai-assistant.ai-screen-payload.factory.ts.ecriture.d5d8c87d": "Écriture",
   "@ai-assistant.ai-screen-payload.factory.ts.ecriture.d5d8c87d": {
     "x-files": [
       "src/app/features/ai-assistant/utils/ai-screen-payload.factory.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.aucune.vente.sur.la.periode.periodsuffix.8b004855": "Aucune vente sur la période {$periodSuffix}.",
+  "@ai-assistant.assistant-message-display.ts.aucune.vente.sur.la.periode.periodsuffix.8b004855": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.aucune.vente.sur.la.periode.97743ef9": "Aucune vente sur la période.",
+  "@ai-assistant.assistant-message-display.ts.aucune.vente.sur.la.periode.97743ef9": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.ca.total.periodsuffix.formattnd.rowcount.b793fa1b": "CA total {$periodSuffix} : **{$formatTnd}** ({$rowCount} ligne(s)).",
+  "@ai-assistant.assistant-message-display.ts.ca.total.periodsuffix.formattnd.rowcount.b793fa1b": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.ca.total.formattnd.rowcount.ligne.s.88e6effe": "CA total : **{$formatTnd}** ({$rowCount} ligne(s)).",
+  "@ai-assistant.assistant-message-display.ts.ca.total.formattnd.rowcount.ligne.s.88e6effe": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.aucune.donnee.pour.cette.periode.254e84f4": "Aucune donnée pour cette période.",
+  "@ai-assistant.assistant-message-display.ts.aucune.donnee.pour.cette.periode.254e84f4": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.du.formatisodatefr.au.formatisodatefr1.dc016cd4": "du {$formatIsoDateFr} au {$formatIsoDateFr1}",
+  "@ai-assistant.assistant-message-display.ts.du.formatisodatefr.au.formatisodatefr1.dc016cd4": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.oui.5898fc86": "oui",
+  "@ai-assistant.assistant-message-display.ts.oui.5898fc86": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.non.37031f99": "non",
+  "@ai-assistant.assistant-message-display.ts.non.37031f99": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.length.element.s.25d37380": "{$length} élément(s)",
+  "@ai-assistant.assistant-message-display.ts.length.element.s.25d37380": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.trim.analyse.complementaire.dans.le.tabl.29930d10": "{$trim}\n\n_Analyse complémentaire dans le tableau de bord ci-dessus._",
+  "@ai-assistant.assistant-message-display.ts.trim.analyse.complementaire.dans.le.tabl.29930d10": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-message-display.ts.analyse.disponible.dans.le.tableau.de.bo.7e908280": "Analyse disponible dans le tableau de bord ci-dessus.",
+  "@ai-assistant.assistant-message-display.ts.analyse.disponible.dans.le.tableau.de.bo.7e908280": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-message-display.ts"
     ],
     "x-wave": "v6"
   },
@@ -29038,6 +29976,111 @@
   },
   "assistant-progress-display.summary.synthese.des.ventes.538241e2": "Synthèse des ventes",
   "@assistant-progress-display.summary.synthese.des.ventes.538241e2": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.reponse.preparee.en.join.d9d038ee": "Réponse préparée en {$join}",
+  "@ai-assistant.assistant-progress-display.ts.reponse.preparee.en.join.d9d038ee": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.nouvel.echange.initialise.7d5e9708": "Nouvel échange initialisé",
+  "@ai-assistant.assistant-progress-display.ts.nouvel.echange.initialise.7d5e9708": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.historique.retrouve.53bb2d88": "Historique retrouvé",
+  "@ai-assistant.assistant-progress-display.ts.historique.retrouve.53bb2d88": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.contexte.de.conversation.pret.e8b99295": "Contexte de conversation prêt",
+  "@ai-assistant.assistant-progress-display.ts.contexte.de.conversation.pret.e8b99295": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.verifications.renforcees.activees.1d0b3903": "Vérifications renforcées activées",
+  "@ai-assistant.assistant-progress-display.ts.verifications.renforcees.activees.1d0b3903": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.contexte.metier.enrichi.02d1ef22": "Contexte métier enrichi",
+  "@ai-assistant.assistant-progress-display.ts.contexte.metier.enrichi.02d1ef22": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.le.modele.formule.la.reponse.184633a8": "Le modèle formule la réponse",
+  "@ai-assistant.assistant-progress-display.ts.le.modele.formule.la.reponse.184633a8": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.consolidation.des.resultats.bc959d8d": "Consolidation des résultats",
+  "@ai-assistant.assistant-progress-display.ts.consolidation.des.resultats.bc959d8d": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.reponse.enregistree.7b21f542": "Réponse enregistrée",
+  "@ai-assistant.assistant-progress-display.ts.reponse.enregistree.7b21f542": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.prete.a.etre.lue.a7652036": "Prête à être lue",
+  "@ai-assistant.assistant-progress-display.ts.prete.a.etre.lue.a7652036": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.service.ou.modele.indisponible.13684d3f": "Service ou modèle indisponible",
+  "@ai-assistant.assistant-progress-display.ts.service.ou.modele.indisponible.13684d3f": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.modele.local.pret.81ba850f": "Modèle local prêt",
+  "@ai-assistant.assistant-progress-display.ts.modele.local.pret.81ba850f": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.modele.cloud.pret.ef0967f8": "Modèle cloud prêt",
+  "@ai-assistant.assistant-progress-display.ts.modele.cloud.pret.ef0967f8": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.modele.cursor.pret.19689eb7": "Modèle Cursor prêt",
+  "@ai-assistant.assistant-progress-display.ts.modele.cursor.pret.19689eb7": {
+    "x-files": [
+      "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.assistant-progress-display.ts.connexion.etablie.a5c17ab3": "Connexion établie",
+  "@ai-assistant.assistant-progress-display.ts.connexion.etablie.a5c17ab3": {
     "x-files": [
       "src/app/features/ai-assistant/utils/assistant-progress-display.ts"
     ],
@@ -29393,6 +30436,13 @@
     ],
     "x-wave": "v6"
   },
+  "audit.audit-log.ts.chaine.d.integrite.valide.count.entree.s.143347e3": "Chaîne d'intégrité valide — {$count} entrée(s) vérifiée(s).",
+  "@audit.audit-log.ts.chaine.d.integrite.valide.count.entree.s.143347e3": {
+    "x-files": [
+      "src/app/features/audit/audit-log/audit-log.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "ui.tern.premiere.anomalie.detectee.sur.l.entree.ph.abddbb": " — première anomalie détectée sur l'entrée {$p0}.",
   "@ui.tern.premiere.anomalie.detectee.sur.l.entree.ph.abddbb": {
     "x-files": [
@@ -29416,6 +30466,13 @@
   },
   "ui.tern.ph.valeur.s.de.chaine.anterieure.dupliquee.4aa7b6": " {$p0} valeur(s) de chaîne antérieure dupliquée(s) — souvent lié à des écritures concurrentes avant correction.",
   "@ui.tern.ph.valeur.s.de.chaine.anterieure.dupliquee.4aa7b6": {
+    "x-files": [
+      "src/app/features/audit/audit-log/audit-log.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "audit.audit-log.ts.chaine.d.integrite.rompue.count.entree.s.05ebede1": "Chaîne d'intégrité rompue — {$count} entrée(s) analysée(s).{$idPart}{$reasonPart}{$dupPart}",
+  "@audit.audit-log.ts.chaine.d.integrite.rompue.count.entree.s.05ebede1": {
     "x-files": [
       "src/app/features/audit/audit-log/audit-log.component.ts"
     ],
@@ -31061,6 +32118,13 @@
     ],
     "x-wave": "v2"
   },
+  "auth.register-wizard.ts.une.erreur.est.survenue.lors.de.l.inscri.c27c4975": "Une erreur est survenue lors de l'inscription",
+  "@auth.register-wizard.ts.une.erreur.est.survenue.lors.de.l.inscri.c27c4975": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/register-wizard.component.ts"
+    ],
+    "x-wave": "v2"
+  },
   "auth.register-wizard.ts.configuration.plateforme.manquante.pour.f373acda": "Configuration plateforme manquante pour la création d'entreprise.",
   "@auth.register-wizard.ts.configuration.plateforme.manquante.pour.f373acda": {
     "x-files": [
@@ -31388,6 +32452,13 @@
   "@auth.register-wizard.en.fonction.de.votre.choix.nous.activons.automat.b021b04e": {
     "x-files": [
       "src/app/features/auth/register-wizard/steps/step-company-type/step-company-type.component.html"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.step-company-type.ts.count.domaine.plural.adapte.plural1.a.vo.5b44df27": "{$count} domaine{$plural} adapté{$plural1} à votre segment : {$selectedSegmentLabel}",
+  "@auth.step-company-type.ts.count.domaine.plural.adapte.plural1.a.vo.5b44df27": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/steps/step-company-type/step-company-type.component.ts"
     ],
     "x-wave": "v2"
   },
@@ -32660,6 +33731,13 @@
     ],
     "x-wave": "v2"
   },
+  "auth.register.ts.une.erreur.est.survenue.lors.de.l.inscri.c27c4975": "Une erreur est survenue lors de l'inscription",
+  "@auth.register.ts.une.erreur.est.survenue.lors.de.l.inscri.c27c4975": {
+    "x-files": [
+      "src/app/features/auth/register/register.component.ts"
+    ],
+    "x-wave": "v2"
+  },
   "auth.register.ts.impossible.de.se.connecter.au.serveur.ve.81a4b133": "Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.",
   "@auth.register.ts.impossible.de.se.connecter.au.serveur.ve.81a4b133": {
     "x-files": [
@@ -32825,6 +33903,48 @@
   "@auth.select-warehouse.ts.impossible.de.charger.les.entrepots.rees.5b5d2271": {
     "x-files": [
       "src/app/features/auth/select-warehouse/select-warehouse.component.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.auth-nif-category.helpers.ts.votre.nif.indique.une.tolowercase.votre.2debfc0f": "Votre NIF indique une {$toLowerCase} ; votre segment est {$currentLabel} — confirmer ?",
+  "@auth.auth-nif-category.helpers.ts.votre.nif.indique.une.tolowercase.votre.2debfc0f": {
+    "x-files": [
+      "src/app/features/auth/shared/auth-nif-category.helpers.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.auth-nif-category.helpers.ts.votre.segment.est.currentlabel.mais.la.c.81bc649e": "Votre segment est {$currentLabel}, mais la catégorie de votre NIF est « {$categoryLabelFr} » — vérifier ?",
+  "@auth.auth-nif-category.helpers.ts.votre.segment.est.currentlabel.mais.la.c.81bc649e": {
+    "x-files": [
+      "src/app/features/auth/shared/auth-nif-category.helpers.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.auth-password.helpers.ts.force.du.mot.de.passe.faible.ef369fa3": "Force du mot de passe : faible",
+  "@auth.auth-password.helpers.ts.force.du.mot.de.passe.faible.ef369fa3": {
+    "x-files": [
+      "src/app/features/auth/shared/auth-password.helpers.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.auth-password.helpers.ts.force.du.mot.de.passe.moyenne.c8d67cee": "Force du mot de passe : moyenne",
+  "@auth.auth-password.helpers.ts.force.du.mot.de.passe.moyenne.c8d67cee": {
+    "x-files": [
+      "src/app/features/auth/shared/auth-password.helpers.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.auth-password.helpers.ts.force.du.mot.de.passe.bonne.1bc2e600": "Force du mot de passe : bonne",
+  "@auth.auth-password.helpers.ts.force.du.mot.de.passe.bonne.1bc2e600": {
+    "x-files": [
+      "src/app/features/auth/shared/auth-password.helpers.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.auth-password.helpers.ts.force.du.mot.de.passe.forte.0ea699a1": "Force du mot de passe : forte",
+  "@auth.auth-password.helpers.ts.force.du.mot.de.passe.forte.0ea699a1": {
+    "x-files": [
+      "src/app/features/auth/shared/auth-password.helpers.ts"
     ],
     "x-wave": "v2"
   },
@@ -33842,6 +34962,13 @@
     ],
     "x-wave": "v3"
   },
+  "clients.client-form.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29": "Le matricule fiscal est obligatoire pour un client assujetti",
+  "@clients.client-form.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29": {
+    "x-files": [
+      "src/app/features/clients/client-form/client-form.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "client-form.component.summary.Erreur": "Erreur",
   "@client-form.component.summary.Erreur": {
     "x-files": [
@@ -34138,6 +35265,13 @@
   },
   "clients.client-list.ts.entreprise.d03e74b6": "Entreprise",
   "@clients.client-list.ts.entreprise.d03e74b6": {
+    "x-files": [
+      "src/app/features/clients/client-list/client-list.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "clients.client-list.ts.impossible.de.charger.les.clients.9a6137e9": "Impossible de charger les clients",
+  "@clients.client-list.ts.impossible.de.charger.les.clients.9a6137e9": {
     "x-files": [
       "src/app/features/clients/client-list/client-list.component.ts"
     ],
@@ -37388,6 +38522,20 @@
     ],
     "x-wave": "v3"
   },
+  "dashboard.dashboard.ts.a.l.instant.67cf83bb": "À l'instant",
+  "@dashboard.dashboard.ts.a.l.instant.67cf83bb": {
+    "x-files": [
+      "src/app/features/dashboard/services/dashboard.service.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "dashboard.dashboard.ts.il.y.a.diffdays.jours.44aa16a2": "Il y a {$diffDays} jours",
+  "@dashboard.dashboard.ts.il.y.a.diffdays.jours.44aa16a2": {
+    "x-files": [
+      "src/app/features/dashboard/services/dashboard.service.ts"
+    ],
+    "x-wave": "v3"
+  },
   "delivery-notes.routes.title.Bons_de_Livraison_Inst": "Bons de Livraison - InstaFact",
   "@delivery-notes.routes.title.Bons_de_Livraison_Inst": {
     "x-files": [
@@ -38052,6 +39200,13 @@
   },
   "delivery-note-detail.component.detail.Livraison_enregi": "Livraison enregistrée avec succès",
   "@delivery-note-detail.component.detail.Livraison_enregi": {
+    "x-files": [
+      "src/app/features/delivery-notes/pages/delivery-note-detail/delivery-note-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "delivery-notes.delivery-note-detail.ts.impossible.d.enregistrer.la.livraison.d625e48a": "Impossible d'enregistrer la livraison",
+  "@delivery-notes.delivery-note-detail.ts.impossible.d.enregistrer.la.livraison.d625e48a": {
     "x-files": [
       "src/app/features/delivery-notes/pages/delivery-note-detail/delivery-note-detail.component.ts"
     ],
@@ -38794,6 +39949,13 @@
     ],
     "x-wave": "v4"
   },
+  "delivery-notes.delivery-note-list.ts.impossible.de.charger.les.bons.de.livrai.fd61c761": "Impossible de charger les bons de livraison",
+  "@delivery-notes.delivery-note-list.ts.impossible.de.charger.les.bons.de.livrai.fd61c761": {
+    "x-files": [
+      "src/app/features/delivery-notes/pages/delivery-note-list/delivery-note-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "delivery-note-list.component.summary.Erreur": "Erreur",
   "@delivery-note-list.component.summary.Erreur": {
     "x-files": [
@@ -38805,6 +39967,27 @@
   "@delivery-notes.delivery-note-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": {
     "x-files": [
       "src/app/features/delivery-notes/pages/delivery-note-list/delivery-note-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "delivery-notes.delivery-note.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": "Impossible de générer le rapport PDF",
+  "@delivery-notes.delivery-note.ts.impossible.de.generer.le.rapport.pdf.e2243d7a": {
+    "x-files": [
+      "src/app/features/delivery-notes/services/delivery-note.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "delivery-notes.delivery-note.ts.erreur.status.impossible.de.generer.le.r.b2e87c10": "Erreur {$status}: Impossible de générer le rapport PDF",
+  "@delivery-notes.delivery-note.ts.erreur.status.impossible.de.generer.le.r.b2e87c10": {
+    "x-files": [
+      "src/app/features/delivery-notes/services/delivery-note.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "delivery-notes.delivery-note.ts.erreur.p.impossible.de.generer.le.rappor.edfa5a5c": "Erreur {$p}: Impossible de générer le rapport PDF",
+  "@delivery-notes.delivery-note.ts.erreur.p.impossible.de.generer.le.rappor.edfa5a5c": {
+    "x-files": [
+      "src/app/features/delivery-notes/services/delivery-note.service.ts"
     ],
     "x-wave": "v4"
   },
@@ -40222,6 +41405,76 @@
     ],
     "x-wave": "v5"
   },
+  "exchanges.exchange-status.ts.attente.client.6b243335": "Attente client",
+  "@exchanges.exchange-status.ts.attente.client.6b243335": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-status.ts.resolue.29df7ce6": "Résolue",
+  "@exchanges.exchange-status.ts.resolue.29df7ce6": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-status.ts.cloturee.da2e2bc8": "Clôturée",
+  "@exchanges.exchange-status.ts.cloturee.da2e2bc8": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-status.ts.reclamation.33d37f8b": "Réclamation",
+  "@exchanges.exchange-status.ts.reclamation.33d37f8b": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-status.ts.a.faire.262bf4ea": "À faire",
+  "@exchanges.exchange-status.ts.a.faire.262bf4ea": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-status.ts.terminee.45936892": "Terminée",
+  "@exchanges.exchange-status.ts.terminee.45936892": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-status.ts.annulee.2776573b": "Annulée",
+  "@exchanges.exchange-status.ts.annulee.2776573b": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-status.ts.evenement.c040c1a9": "Événement",
+  "@exchanges.exchange-status.ts.evenement.c040c1a9": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-status.ts.evenement.raw.9e9bc6f2": "Événement {$raw}",
+  "@exchanges.exchange-status.ts.evenement.raw.9e9bc6f2": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-status.ts.non.assignee.493d0bb2": "Non assignée",
+  "@exchanges.exchange-status.ts.non.assignee.493d0bb2": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-status.ts"
+    ],
+    "x-wave": "v5"
+  },
   "exchanges.exchange-tabs.ts.conversation.2a20c750": "Conversation",
   "@exchanges.exchange-tabs.ts.conversation.2a20c750": {
     "x-files": [
@@ -40318,6 +41571,48 @@
     ],
     "x-wave": "v6"
   },
+  "forecasting.decision-history-modal.ts.approuvee.7d606a51": "Approuvée",
+  "@forecasting.decision-history-modal.ts.approuvee.7d606a51": {
+    "x-files": [
+      "src/app/features/forecasting/components/decision-history-modal/decision-history-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.decision-history-modal.ts.ecartee.42bd51f7": "Écartée",
+  "@forecasting.decision-history-modal.ts.ecartee.42bd51f7": {
+    "x-files": [
+      "src/app/features/forecasting/components/decision-history-modal/decision-history-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.decision-history-modal.ts.modifiee.69d9d54f": "Modifiée",
+  "@forecasting.decision-history-modal.ts.modifiee.69d9d54f": {
+    "x-files": [
+      "src/app/features/forecasting/components/decision-history-modal/decision-history-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.decision-history-modal.ts.bc.cree.c314b8c1": "BC créé",
+  "@forecasting.decision-history-modal.ts.bc.cree.c314b8c1": {
+    "x-files": [
+      "src/app/features/forecasting/components/decision-history-modal/decision-history-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.decision-history-modal.ts.annulee.2776573b": "Annulée",
+  "@forecasting.decision-history-modal.ts.annulee.2776573b": {
+    "x-files": [
+      "src/app/features/forecasting/components/decision-history-modal/decision-history-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.decision-history-modal.ts.generee.0eaadba4": "Générée",
+  "@forecasting.decision-history-modal.ts.generee.0eaadba4": {
+    "x-files": [
+      "src/app/features/forecasting/components/decision-history-modal/decision-history-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "forecasting.components.ecarter.la.recommandation.e44fd9e5": "Écarter la recommandation",
   "@forecasting.components.ecarter.la.recommandation.e44fd9e5": {
     "x-files": [
@@ -40378,6 +41673,34 @@
   },
   "forecasting.components.confirmer.l.abandon.130aa235": " Confirmer l'abandon ",
   "@forecasting.components.confirmer.l.abandon.130aa235": {
+    "x-files": [
+      "src/app/features/forecasting/components/dismiss-reason-modal/dismiss-reason-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.dismiss-reason-modal.ts.fournisseur.indisponible.2fa91b99": "Fournisseur indisponible",
+  "@forecasting.dismiss-reason-modal.ts.fournisseur.indisponible.2fa91b99": {
+    "x-files": [
+      "src/app/features/forecasting/components/dismiss-reason-modal/dismiss-reason-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.dismiss-reason-modal.ts.budget.epuise.4b594749": "Budget épuisé",
+  "@forecasting.dismiss-reason-modal.ts.budget.epuise.4b594749": {
+    "x-files": [
+      "src/app/features/forecasting/components/dismiss-reason-modal/dismiss-reason-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.dismiss-reason-modal.ts.demande.surevaluee.4015682b": "Demande surévaluée",
+  "@forecasting.dismiss-reason-modal.ts.demande.surevaluee.4015682b": {
+    "x-files": [
+      "src/app/features/forecasting/components/dismiss-reason-modal/dismiss-reason-modal.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.dismiss-reason-modal.ts.stock.alternatif.disponible.ba6144ed": "Stock alternatif disponible",
+  "@forecasting.dismiss-reason-modal.ts.stock.alternatif.disponible.ba6144ed": {
     "x-files": [
       "src/app/features/forecasting/components/dismiss-reason-modal/dismiss-reason-modal.component.ts"
     ],
@@ -40991,15 +42314,8 @@
     ],
     "x-wave": "v6"
   },
-  "forecasting.forecasting-hub.ts.classificationsupdated.classifications.be67c722": "{$classificationsUpdated} classifications, ",
-  "@forecasting.forecasting-hub.ts.classificationsupdated.classifications.be67c722": {
-    "x-files": [
-      "src/app/features/forecasting/pages/forecasting-hub/forecasting-hub.component.ts"
-    ],
-    "x-wave": "v6"
-  },
-  "forecasting.forecasting-hub.ts.replenishmentsgenerated.reappros.promoti.e8a44b9a": "{$replenishmentsGenerated} réappros, {$promotionsGenerated} promos.",
-  "@forecasting.forecasting-hub.ts.replenishmentsgenerated.reappros.promoti.e8a44b9a": {
+  "forecasting.forecasting-hub.ts.tofixed.s.classificationsupdated.classif.455d4085": "{$toFixed}s — {$classificationsUpdated} classifications, {$replenishmentsGenerated} réappros, {$promotionsGenerated} promos.",
+  "@forecasting.forecasting-hub.ts.tofixed.s.classificationsupdated.classif.455d4085": {
     "x-files": [
       "src/app/features/forecasting/pages/forecasting-hub/forecasting-hub.component.ts"
     ],
@@ -42135,6 +43451,13 @@
     ],
     "x-wave": "v6"
   },
+  "forecasting.revenue-forecast.ts.heuristique.calendaire.historique.limite.eaa82a2c": "Heuristique calendaire (historique limité)",
+  "@forecasting.revenue-forecast.ts.heuristique.calendaire.historique.limite.eaa82a2c": {
+    "x-files": [
+      "src/app/features/forecasting/pages/revenue-forecast/revenue-forecast.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "forecasting.forecasting.ts.la.raison.du.rejet.est.obligatoire.fa12793d": "La raison du rejet est obligatoire.",
   "@forecasting.forecasting.ts.la.raison.du.rejet.est.obligatoire.fa12793d": {
     "x-files": [
@@ -42393,6 +43716,27 @@
       "src/app/features/inventory/inventory-detail/inventory-detail.component.ts",
       "src/app/features/sales-orders/sales-order-detail/sales-order-detail.component.ts",
       "src/app/features/studio/studio-report-list.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory.inventory-detail.ts.ecart.surplus.difference.6dd516eb": "Écart: surplus {$difference}",
+  "@inventory.inventory-detail.ts.ecart.surplus.difference.6dd516eb": {
+    "x-files": [
+      "src/app/features/inventory/inventory-detail/inventory-detail.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory.inventory-detail.ts.ecart.manquant.abs.43d8b199": "Écart: manquant {$abs}",
+  "@inventory.inventory-detail.ts.ecart.manquant.abs.43d8b199": {
+    "x-files": [
+      "src/app/features/inventory/inventory-detail/inventory-detail.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory.inventory-detail.ts.ecart.nul.4609d379": "Écart: nul",
+  "@inventory.inventory-detail.ts.ecart.nul.4609d379": {
+    "x-files": [
+      "src/app/features/inventory/inventory-detail/inventory-detail.component.ts"
     ],
     "x-wave": "v5"
   },
@@ -43161,6 +44505,13 @@
     ],
     "x-wave": "v5"
   },
+  "inventory.inventory-list.ts.impossible.de.charger.les.inventaires.52cb63bd": "Impossible de charger les inventaires",
+  "@inventory.inventory-list.ts.impossible.de.charger.les.inventaires.52cb63bd": {
+    "x-files": [
+      "src/app/features/inventory/inventory-list/inventory-list.component.ts"
+    ],
+    "x-wave": "v5"
+  },
   "inventory-list.component.summary.Erreur": "Erreur",
   "@inventory-list.component.summary.Erreur": {
     "x-files": [
@@ -43735,6 +45086,13 @@
     ],
     "x-wave": "v5"
   },
+  "inventory.inventory-wizard.ts.impossible.de.demarrer.l.inventaire.8110bf40": "Impossible de démarrer l'inventaire",
+  "@inventory.inventory-wizard.ts.impossible.de.demarrer.l.inventaire.8110bf40": {
+    "x-files": [
+      "src/app/features/inventory/inventory-wizard/inventory-wizard.component.ts"
+    ],
+    "x-wave": "v5"
+  },
   "inventory-wizard.component.summary.N° de lot re": "N° de lot requis",
   "@inventory-wizard.component.summary.N° de lot re": {
     "x-files": [
@@ -43994,8 +45352,29 @@
     ],
     "x-wave": "v4"
   },
-  "ui.tern.verifiez.le.document.ou.saisissez.la.factu.92c3f1": "Vérifiez le document ou saisissez la facture manuellement.",
-  "@ui.tern.verifiez.le.document.ou.saisissez.la.factu.92c3f1": {
+  "invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.pour.pr.b7c89a5e": "Impossible de joindre le serveur pour précharger le modèle IA. Vérifiez que l'API est démarrée.",
+  "@invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.pour.pr.b7c89a5e": {
+    "x-files": [
+      "src/app/features/invoices/components/invoice-import-dialog/invoice-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-import-dialog.ts.le.prechauffage.du.modele.ia.a.echoue.l.44ce5352": "Le préchauffage du modèle IA a échoué. L'import reste possible mais peut être plus long.",
+  "@invoices.invoice-import-dialog.ts.le.prechauffage.du.modele.ia.a.echoue.l.44ce5352": {
+    "x-files": [
+      "src/app/features/invoices/components/invoice-import-dialog/invoice-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.verifie.3a324a40": "Impossible de joindre le serveur. Vérifiez que l'API est démarrée.",
+  "@invoices.invoice-import-dialog.ts.impossible.de.joindre.le.serveur.verifie.3a324a40": {
+    "x-files": [
+      "src/app/features/invoices/components/invoice-import-dialog/invoice-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-import-dialog.ts.impossible.d.extraire.la.facture.de.ce.f.bc4649ce": "Impossible d'extraire la facture de ce fichier. Vérifiez le document ou saisissez la facture manuellement.",
+  "@invoices.invoice-import-dialog.ts.impossible.d.extraire.la.facture.de.ce.f.bc4649ce": {
     "x-files": [
       "src/app/features/invoices/components/invoice-import-dialog/invoice-import-dialog.component.ts"
     ],
@@ -44737,6 +46116,13 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-detail.ts.impossible.de.telecharger.le.pdf.24ca4288": "Impossible de télécharger le PDF",
+  "@invoices.invoice-detail.ts.impossible.de.telecharger.le.pdf.24ca4288": {
+    "x-files": [
+      "src/app/features/invoices/invoice-detail/invoice-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoice-detail.component.summary.Email_manquant": "Email manquant",
   "@invoice-detail.component.summary.Email_manquant": {
     "x-files": [
@@ -45227,6 +46613,13 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-list.ts.impossible.de.charger.les.factures.583c2251": "Impossible de charger les factures",
+  "@invoices.invoice-list.ts.impossible.de.charger.les.factures.583c2251": {
+    "x-files": [
+      "src/app/features/invoices/invoice-list/invoice-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoice-list.component.summary.Erreur": "Erreur",
   "@invoice-list.component.summary.Erreur": {
     "x-files": [
@@ -45472,6 +46865,14 @@
   "@ui.tern.la.facture.a.ete.creee.et.validee.avec.suc.d91f26": {
     "x-files": [
       "src/app/features/invoices/invoice-wizard/invoice-wizard.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.ts.impossible.d.emettre.la.facture.973e03c0": "Impossible d'émettre la facture",
+  "@invoices.invoice-wizard.ts.impossible.d.emettre.la.facture.973e03c0": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/invoice-wizard.component.ts",
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
     ],
     "x-wave": "v4"
   },
@@ -45951,6 +47352,13 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-wizard.ts.impossible.de.charger.la.facture.liee.53f3a0f5": "Impossible de charger la facture liée.",
+  "@invoices.invoice-wizard.ts.impossible.de.charger.la.facture.liee.53f3a0f5": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoices.invoice-wizard.ts.numero.de.facture.a19ac308": "Numéro de facture",
   "@invoices.invoice-wizard.ts.numero.de.facture.a19ac308": {
     "x-files": [
@@ -46196,6 +47604,20 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.invoice-wizard.ts.used.facture.s.ce.mois.forfait.illimite.f22815e7": "{$used} facture(s) ce mois (forfait illimité)",
+  "@invoices.invoice-wizard.ts.used.facture.s.ce.mois.forfait.illimite.f22815e7": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.ts.invoicesthismonth.facture.s.ce.mois.87a8175c": "{$invoicesThisMonth} facture(s) ce mois",
+  "@invoices.invoice-wizard.ts.invoicesthismonth.facture.s.ce.mois.87a8175c": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoices.invoice-wizard.ts.statut.d.abonnement.statusdisplay.emissi.f6c66860": "Statut d'abonnement « {$statusDisplay} » : émission de facture indisponible.",
   "@invoices.invoice-wizard.ts.statut.d.abonnement.statusdisplay.emissi.f6c66860": {
     "x-files": [
@@ -46203,15 +47625,8 @@
     ],
     "x-wave": "v4"
   },
-  "invoices.invoice-wizard.ts.limite.mensuelle.atteinte.used.limit.fac.ba6485b6": "Limite mensuelle atteinte ({$used}/{$limit} factures). ",
-  "@invoices.invoice-wizard.ts.limite.mensuelle.atteinte.used.limit.fac.ba6485b6": {
-    "x-files": [
-      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
-    ],
-    "x-wave": "v4"
-  },
-  "invoices.invoice-wizard.ts.passez.a.un.forfait.superieur.dans.param.98c1d038": "Passez à un forfait supérieur dans Paramètres > Abonnement ou attendez le prochain cycle.",
-  "@invoices.invoice-wizard.ts.passez.a.un.forfait.superieur.dans.param.98c1d038": {
+  "invoices.invoice-wizard.ts.limite.mensuelle.atteinte.used.limit.fac.1b98ed0e": "Limite mensuelle atteinte ({$used}/{$limit} factures). Passez à un forfait supérieur dans Paramètres > Abonnement ou attendez le prochain cycle.",
+  "@invoices.invoice-wizard.ts.limite.mensuelle.atteinte.used.limit.fac.1b98ed0e": {
     "x-files": [
       "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
     ],
@@ -46317,6 +47732,55 @@
   },
   "invoices.invoice-wizard.ts.le.format.du.numero.doit.correspondre.a.8886ba9b": "Le format du numéro doit correspondre à la numérotation configurée",
   "@invoices.invoice-wizard.ts.le.format.du.numero.doit.correspondre.a.8886ba9b": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.ts.impossible.de.generer.le.numero.sequenti.a5e9a866": "Impossible de générer le numéro séquentiel de facture",
+  "@invoices.invoice-wizard.ts.impossible.de.generer.le.numero.sequenti.a5e9a866": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.ts.erreur.lors.de.la.generation.du.numero.d.e1d61d23": "Erreur lors de la génération du numéro de facture",
+  "@invoices.invoice-wizard.ts.erreur.lors.de.la.generation.du.numero.d.e1d61d23": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.ts.la.facture.ne.peut.pas.etre.soumise.erre.6ef4e7d5": "La facture ne peut pas être soumise - erreurs de validation",
+  "@invoices.invoice-wizard.ts.la.facture.ne.peut.pas.etre.soumise.erre.6ef4e7d5": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.ts.le.client.est.obligatoire.778453ff": "Le client est obligatoire",
+  "@invoices.invoice-wizard.ts.le.client.est.obligatoire.778453ff": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.ts.erreur.lors.de.l.emission.de.la.facture.748b038b": "Erreur lors de l'émission de la facture",
+  "@invoices.invoice-wizard.ts.erreur.lors.de.l.emission.de.la.facture.748b038b": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.ts.erreur.lors.de.la.creation.du.client.88ca36f6": "Erreur lors de la création du client",
+  "@invoices.invoice-wizard.ts.erreur.lors.de.la.creation.du.client.88ca36f6": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.invoice-wizard.ts.erreur.lors.de.la.creation.du.client.ide.7134acd2": "Erreur lors de la création du client : identifiant non retourné",
+  "@invoices.invoice-wizard.ts.erreur.lors.de.la.creation.du.client.ide.7134acd2": {
     "x-files": [
       "src/app/features/invoices/invoice-wizard/services/invoice-wizard.service.ts"
     ],
@@ -47108,6 +48572,13 @@
   },
   "step-client.component.detail.Ce_client_n_a_pa": "Ce client n'a pas d'identifiant serveur. Veuillez le resélectionner dans la liste ou utiliser l'onglet « Nouveau client ».",
   "@step-client.component.detail.Ce_client_n_a_pa": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/steps/step-client/step-client.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.step-client.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29": "Le matricule fiscal est obligatoire pour un client assujetti",
+  "@invoices.step-client.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29": {
     "x-files": [
       "src/app/features/invoices/invoice-wizard/steps/step-client/step-client.component.ts"
     ],
@@ -48469,6 +49940,41 @@
     ],
     "x-wave": "v4"
   },
+  "invoices.step-preview.ts.facture.conforme.cf5e698d": "Facture conforme",
+  "@invoices.step-preview.ts.facture.conforme.cf5e698d": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/steps/step-preview/step-preview.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.step-preview.ts.avertissements.detectes.043faaef": "Avertissements détectés",
+  "@invoices.step-preview.ts.avertissements.detectes.043faaef": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/steps/step-preview/step-preview.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.step-preview.ts.tous.les.controles.de.conformite.sont.pa.405e38b5": "Tous les contrôles de conformité sont passés avec succès.",
+  "@invoices.step-preview.ts.tous.les.controles.de.conformite.sont.pa.405e38b5": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/steps/step-preview/step-preview.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.step-preview.ts.la.facture.peut.etre.emise.mais.certains.370d8676": "La facture peut être émise mais certains éléments méritent votre attention.",
+  "@invoices.step-preview.ts.la.facture.peut.etre.emise.mais.certains.370d8676": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/steps/step-preview/step-preview.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "invoices.step-preview.ts.des.erreurs.doivent.etre.corrigees.avant.9df1fb6b": "Des erreurs doivent être corrigées avant de pouvoir émettre cette facture.",
+  "@invoices.step-preview.ts.des.erreurs.doivent.etre.corrigees.avant.9df1fb6b": {
+    "x-files": [
+      "src/app/features/invoices/invoice-wizard/steps/step-preview/step-preview.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "invoices.invoice-wizard.entreprise.emettrice.b1bda858": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} Entreprise émettrice ",
   "@invoices.invoice-wizard.entreprise.emettrice.b1bda858": {
     "x-files": [
@@ -49240,6 +50746,13 @@
     ],
     "x-wave": "v5"
   },
+  "payments.add-bank-account-dialog.ts.erreur.lors.de.l.enregistrement.du.compt.08e5eb61": "Erreur lors de l’enregistrement du compte.",
+  "@payments.add-bank-account-dialog.ts.erreur.lors.de.l.enregistrement.du.compt.08e5eb61": {
+    "x-files": [
+      "src/app/features/payments/bank-accounts/components/add-bank-account-dialog/add-bank-account-dialog.component.ts"
+    ],
+    "x-wave": "v5"
+  },
   "payments.cash-desk.ts.janvier.7a32ae0f": "Janvier",
   "@payments.cash-desk.ts.janvier.7a32ae0f": {
     "x-files": [
@@ -49678,6 +51191,13 @@
     ],
     "x-wave": "v5"
   },
+  "payments.cash-desk.ts.erreur.lors.de.l.annulation.0ba57921": "Erreur lors de l’annulation.",
+  "@payments.cash-desk.ts.erreur.lors.de.l.annulation.0ba57921": {
+    "x-files": [
+      "src/app/features/payments/cash-desk/cash-desk.component.ts"
+    ],
+    "x-wave": "v5"
+  },
   "pay.cash": "Espèces",
   "@pay.cash": {
     "x-files": [
@@ -49944,6 +51464,20 @@
   },
   "payments.add-cash-operation-dialog.ts.typelabel.enregistre.avec.succes.018d1291": "{$typeLabel} enregistré avec succès",
   "@payments.add-cash-operation-dialog.ts.typelabel.enregistre.avec.succes.018d1291": {
+    "x-files": [
+      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.add-cash-operation-dialog.ts.impossible.d.enregistrer.l.operation.86fecb67": "Impossible d’enregistrer l’opération.",
+  "@payments.add-cash-operation-dialog.ts.impossible.d.enregistrer.l.operation.86fecb67": {
+    "x-files": [
+      "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.add-cash-operation-dialog.ts.erreur.lors.de.l.enregistrement.de.l.ope.2ea3dd53": "Erreur lors de l’enregistrement de l’opération.",
+  "@payments.add-cash-operation-dialog.ts.erreur.lors.de.l.enregistrement.de.l.ope.2ea3dd53": {
     "x-files": [
       "src/app/features/payments/cash-desk/components/add-cash-operation-dialog/add-cash-operation-dialog.component.ts"
     ],
@@ -50926,6 +52460,13 @@
   },
   "payroll.cnss-remittance-tab.ts.total.a.verser.70ce9db0": "Total à verser",
   "@payroll.cnss-remittance-tab.ts.total.a.verser.70ce9db0": {
+    "x-files": [
+      "src/app/features/payroll/declarations/cnss-remittance-tab.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "payroll.cnss-remittance-tab.ts.versement.enregistre.le.date.p.9740f175": "Versement enregistré le {$date}{$p}",
+  "@payroll.cnss-remittance-tab.ts.versement.enregistre.le.date.p.9740f175": {
     "x-files": [
       "src/app/features/payroll/declarations/cnss-remittance-tab.component.ts"
     ],
@@ -52685,6 +54226,13 @@
   },
   "employee-garnishments-tab.component.detail.Chargement_impos": "Chargement impossible.",
   "@employee-garnishments-tab.component.detail.Chargement_impos": {
+    "x-files": [
+      "src/app/features/payroll/employees/employee-garnishments-tab.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "payroll.employee-garnishments-tab.ts.p.du.net.9b7e7292": "{$p} % du net",
+  "@payroll.employee-garnishments-tab.ts.p.du.net.9b7e7292": {
     "x-files": [
       "src/app/features/payroll/employees/employee-garnishments-tab.component.ts"
     ],
@@ -54482,6 +56030,34 @@
     ],
     "x-wave": "v6"
   },
+  "payroll.irpp-regularization.view-model.ts.aucun.ecart.178a52ed": "Aucun écart",
+  "@payroll.irpp-regularization.view-model.ts.aucun.ecart.178a52ed": {
+    "x-files": [
+      "src/app/features/payroll/regularization/irpp-regularization.view-model.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "payroll.irpp-regularization.view-model.ts.un.montant.complementaire.sera.retenu.su.ddef131f": "Un montant complémentaire sera retenu sur le bulletin du mois.",
+  "@payroll.irpp-regularization.view-model.ts.un.montant.complementaire.sera.retenu.su.ddef131f": {
+    "x-files": [
+      "src/app/features/payroll/regularization/irpp-regularization.view-model.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "payroll.irpp-regularization.view-model.ts.le.trop.percu.d.impot.sera.reverse.au.sa.3a73a6d0": "Le trop-perçu d’impôt sera reversé au salarié sur le bulletin du mois.",
+  "@payroll.irpp-regularization.view-model.ts.le.trop.percu.d.impot.sera.reverse.au.sa.3a73a6d0": {
+    "x-files": [
+      "src/app/features/payroll/regularization/irpp-regularization.view-model.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "payroll.irpp-regularization.view-model.ts.la.retenue.mensuelle.correspond.deja.a.l.7fa49bc3": "La retenue mensuelle correspond déjà à l’impôt dû : rien à porter sur le bulletin.",
+  "@payroll.irpp-regularization.view-model.ts.la.retenue.mensuelle.correspond.deja.a.l.7fa49bc3": {
+    "x-files": [
+      "src/app/features/payroll/regularization/irpp-regularization.view-model.ts"
+    ],
+    "x-wave": "v6"
+  },
   "payroll.irpp-regularization.view-model.ts.total.b25928c6": "Total",
   "@payroll.irpp-regularization.view-model.ts.total.b25928c6": {
     "x-files": [
@@ -55925,15 +57501,8 @@
     ],
     "x-wave": "v6"
   },
-  "payroll.payroll-regularization-grid.ts.generer.les.regularisations.irpp.de.tous.19783084": "Générer les régularisations IRPP de tous les salariés éligibles ? ",
-  "@payroll.payroll-regularization-grid.ts.generer.les.regularisations.irpp.de.tous.19783084": {
-    "x-files": [
-      "src/app/features/payroll/runs/payroll-regularization-grid.component.ts"
-    ],
-    "x-wave": "v6"
-  },
-  "payroll.payroll-regularization-grid.ts.les.cumuls.seront.rafraichis.et.les.mont.0eeb48d3": "Les cumuls seront rafraîchis et les montants ajustés manuellement seront conservés.",
-  "@payroll.payroll-regularization-grid.ts.les.cumuls.seront.rafraichis.et.les.mont.0eeb48d3": {
+  "payroll.payroll-regularization-grid.ts.generer.les.regularisations.irpp.de.tous.a75175ce": "Générer les régularisations IRPP de tous les salariés éligibles ? Les cumuls seront rafraîchis et les montants ajustés manuellement seront conservés.",
+  "@payroll.payroll-regularization-grid.ts.generer.les.regularisations.irpp.de.tous.a75175ce": {
     "x-files": [
       "src/app/features/payroll/runs/payroll-regularization-grid.component.ts"
     ],
@@ -55955,6 +57524,13 @@
   },
   "payroll-regularization-grid.component.rejectLabel.Annuler": "Annuler",
   "@payroll-regularization-grid.component.rejectLabel.Annuler": {
+    "x-files": [
+      "src/app/features/payroll/runs/payroll-regularization-grid.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "payroll.payroll-regularization-grid.ts.p.preserved.ajustement.s.manuel.s.conser.debdf4ec": "{$p} {$preserved} ajustement(s) manuel(s) conservé(s).",
+  "@payroll.payroll-regularization-grid.ts.p.preserved.ajustement.s.manuel.s.conser.debdf4ec": {
     "x-files": [
       "src/app/features/payroll/runs/payroll-regularization-grid.component.ts"
     ],
@@ -57677,22 +59253,8 @@
     ],
     "x-wave": "v6"
   },
-  "payroll.payroll-settings.ts.a.partir.du.from.les.ecritures.de.paie.u.9b0f5df4": "À partir du {$from}, les écritures de paie utiliseront les comptes NCT 01 : TFP en 6611, ",
-  "@payroll.payroll-settings.ts.a.partir.du.from.les.ecritures.de.paie.u.9b0f5df4": {
-    "x-files": [
-      "src/app/features/payroll/settings/payroll-settings.component.ts"
-    ],
-    "x-wave": "v6"
-  },
-  "payroll.payroll-settings.ts.foprolos.en.6612.taxes.patronales.en.437.4d50cea1": "FOPROLOS en 6612, taxes patronales en 437, indemnités de rupture en 64602. Les cycles ",
-  "@payroll.payroll-settings.ts.foprolos.en.6612.taxes.patronales.en.437.4d50cea1": {
-    "x-files": [
-      "src/app/features/payroll/settings/payroll-settings.component.ts"
-    ],
-    "x-wave": "v6"
-  },
-  "payroll.payroll-settings.ts.anterieurs.a.cette.date.conservent.leur.935befaa": "antérieurs à cette date conservent leur imputation actuelle et ne sont pas réécrits. Continuer ?",
-  "@payroll.payroll-settings.ts.anterieurs.a.cette.date.conservent.leur.935befaa": {
+  "payroll.payroll-settings.ts.a.partir.du.from.les.ecritures.de.paie.u.99f73af0": "À partir du {$from}, les écritures de paie utiliseront les comptes NCT 01 : TFP en 6611, FOPROLOS en 6612, taxes patronales en 437, indemnités de rupture en 64602. Les cycles antérieurs à cette date conservent leur imputation actuelle et ne sont pas réécrits. Continuer ?",
+  "@payroll.payroll-settings.ts.a.partir.du.from.les.ecritures.de.paie.u.99f73af0": {
     "x-files": [
       "src/app/features/payroll/settings/payroll-settings.component.ts"
     ],
@@ -57999,6 +59561,13 @@
   },
   "payroll-social-funds-settings.component.detail.Chargement_impos": "Chargement impossible.",
   "@payroll-social-funds-settings.component.detail.Chargement_impos": {
+    "x-files": [
+      "src/app/features/payroll/settings/payroll-social-funds-settings.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "payroll.payroll-social-funds-settings.ts.le.compte.sce.label.num.comporte.digits.d723ad15": "Le compte SCE {$label} « {$num} » comporte {$digits} chiffres : le maximum est {$SCE_ACCOUNT_MAX_DIGITS}.",
+  "@payroll.payroll-social-funds-settings.ts.le.compte.sce.label.num.comporte.digits.d723ad15": {
     "x-files": [
       "src/app/features/payroll/settings/payroll-social-funds-settings.component.ts"
     ],
@@ -58893,8 +60462,7 @@
   "ui.tern.ajouter.778d9b": "Ajouter ",
   "@ui.tern.ajouter.778d9b": {
     "x-files": [
-      "src/app/features/pos/components/order-panel/order-panel.component.ts",
-      "src/app/features/pos/components/product-card/product-card.component.ts"
+      "src/app/features/pos/components/order-panel/order-panel.component.ts"
     ],
     "x-wave": "v5"
   },
@@ -59527,8 +61095,29 @@
     ],
     "x-wave": "v5"
   },
-  "ui.tern.au.panier.05ee4d": " au panier",
-  "@ui.tern.au.panier.05ee4d": {
+  "pos.product-card.ts.ajouter.name.au.panier.6b783056": "Ajouter {$name} au panier",
+  "@pos.product-card.ts.ajouter.name.au.panier.6b783056": {
+    "x-files": [
+      "src/app/features/pos/components/product-card/product-card.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "pos.product-card.ts.name.indisponible.rupture.de.stock.4c6fbcc6": "{$name} indisponible, rupture de stock",
+  "@pos.product-card.ts.name.indisponible.rupture.de.stock.4c6fbcc6": {
+    "x-files": [
+      "src/app/features/pos/components/product-card/product-card.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "pos.product-card.ts.base.rupture.de.stock.ef232cff": "{$base}, rupture de stock",
+  "@pos.product-card.ts.base.rupture.de.stock.ef232cff": {
+    "x-files": [
+      "src/app/features/pos/components/product-card/product-card.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "pos.product-card.ts.base.stock.disponible.formatquantity.uni.a2bed4d7": "{$base}, stock disponible : {$formatQuantity}{$unitPart}",
+  "@pos.product-card.ts.base.stock.disponible.formatquantity.uni.a2bed4d7": {
     "x-files": [
       "src/app/features/pos/components/product-card/product-card.component.ts"
     ],
@@ -60255,6 +61844,13 @@
     ],
     "x-wave": "v5"
   },
+  "pos.pos-stock-guard.ts.stock.insuffisant.pour.productname.dans.d920260c": "Stock insuffisant pour {$productName} dans cet entrepôt (demandé {$requested}, disponible {$available}).",
+  "@pos.pos-stock-guard.ts.stock.insuffisant.pour.productname.dans.d920260c": {
+    "x-files": [
+      "src/app/features/pos/services/pos-stock-guard.ts"
+    ],
+    "x-wave": "v5"
+  },
   "pos.pos-stock.ts.rupture.fda77001": "Rupture",
   "@pos.pos-stock.ts.rupture.fda77001": {
     "x-files": [
@@ -60266,6 +61862,13 @@
   "@pos.pos-stock.ts.stock.faible.051fbda0": {
     "x-files": [
       "src/app/features/pos/services/pos-stock.service.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "pos.pos-tts.ts.total.a.payer.tofixed.currency.6b8a8056": "Total à payer : {$toFixed} {$currency}.",
+  "@pos.pos-tts.ts.total.a.payer.tofixed.currency.6b8a8056": {
+    "x-files": [
+      "src/app/features/pos/services/pos-tts.service.ts"
     ],
     "x-wave": "v5"
   },
@@ -61104,6 +62707,27 @@
   },
   "product-client-prices.component.detail.Suppression_du_t": "Suppression du tarif client impossible.",
   "@product-client-prices.component.detail.Suppression_du_t": {
+    "x-files": [
+      "src/app/features/products/product-client-prices/product-client-prices.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "products.product-client-prices.ts.sans.limite.b90ed767": "Sans limite",
+  "@products.product-client-prices.ts.sans.limite.b90ed767": {
+    "x-files": [
+      "src/app/features/products/product-client-prices/product-client-prices.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "products.product-client-prices.ts.desactive.2d32fa95": "Désactivé",
+  "@products.product-client-prices.ts.desactive.2d32fa95": {
+    "x-files": [
+      "src/app/features/products/product-client-prices/product-client-prices.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "products.product-client-prices.ts.hors.periode.eb84848b": "Hors période",
+  "@products.product-client-prices.ts.hors.periode.eb84848b": {
     "x-files": [
       "src/app/features/products/product-client-prices/product-client-prices.component.ts"
     ],
@@ -63396,6 +65020,13 @@
     ],
     "x-wave": "v6"
   },
+  "projects.project-dashboard-search.ts.taches.1b018f86": "Tâches",
+  "@projects.project-dashboard-search.ts.taches.1b018f86": {
+    "x-files": [
+      "src/app/features/projects/components/project-dashboard-search.component.ts"
+    ],
+    "x-wave": "v6"
+  },
   "projects.components.taches.a.venir.dc667529": "Tâches à venir",
   "@projects.components.taches.a.venir.dc667529": {
     "x-files": [
@@ -63419,6 +65050,20 @@
   },
   "projects.components.aucune.activite.recente.58d9c15c": "Aucune activité récente.",
   "@projects.components.aucune.activite.recente.58d9c15c": {
+    "x-files": [
+      "src/app/features/projects/components/project-dashboard-sidebar.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-dashboard-sidebar.ts.actif.recemment.45420db4": "Actif récemment",
+  "@projects.project-dashboard-sidebar.ts.actif.recemment.45420db4": {
+    "x-files": [
+      "src/app/features/projects/components/project-dashboard-sidebar.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-dashboard-sidebar.ts.actif.cette.semaine.68751ca1": "Actif cette semaine",
+  "@projects.project-dashboard-sidebar.ts.actif.cette.semaine.68751ca1": {
     "x-files": [
       "src/app/features/projects/components/project-dashboard-sidebar.component.ts"
     ],
@@ -64368,6 +66013,27 @@
     ],
     "x-wave": "v6"
   },
+  "projects.project-detail.ts.echeance.aujourd.hui.f4401f0a": "Échéance aujourd'hui",
+  "@projects.project-detail.ts.echeance.aujourd.hui.f4401f0a": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.ts.days.jour.p.restant.p1.19a5f41c": "{$days} jour{$p} restant{$p1}",
+  "@projects.project-detail.ts.days.jour.p.restant.p1.19a5f41c": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.ts.late.jour.p.de.retard.1d0925d2": "{$late} jour{$p} de retard",
+  "@projects.project-detail.ts.late.jour.p.de.retard.1d0925d2": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
   "projects.project-detail.ts.en.retard.40c1dde3": "En retard",
   "@projects.project-detail.ts.en.retard.40c1dde3": {
     "x-files": [
@@ -64405,6 +66071,27 @@
   },
   "projects.project-detail.ts.reste.68135bb8": "Reste",
   "@projects.project-detail.ts.reste.68135bb8": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.ts.a.l.instant.2427aa9c": "à l'instant",
+  "@projects.project-detail.ts.a.l.instant.2427aa9c": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.ts.il.y.a.days.jour.p.c89f5093": "il y a {$days} jour{$p}",
+  "@projects.project-detail.ts.il.y.a.days.jour.p.c89f5093": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.ts.il.y.a.months.mois.4c3abe30": "il y a {$months} mois",
+  "@projects.project-detail.ts.il.y.a.months.mois.4c3abe30": {
     "x-files": [
       "src/app/features/projects/project-detail.vm.ts"
     ],
@@ -64580,6 +66267,76 @@
   },
   "projects.filter.task-annule": "Annulé",
   "@projects.filter.task-annule": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.activez.le.projet.pour.saisir.du.temps.l.ff98f0b0": "Activez le projet pour saisir du temps. La saisie est interdite en statut Brouillon.",
+  "@projects.project-enums.ts.activez.le.projet.pour.saisir.du.temps.l.ff98f0b0": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.la.saisie.de.temps.est.interdite.pour.un.c822c75b": "La saisie de temps est interdite pour un projet en pause.",
+  "@projects.project-enums.ts.la.saisie.de.temps.est.interdite.pour.un.c822c75b": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.aucune.nouvelle.saisie.de.temps.n.est.au.2afac007": "Aucune nouvelle saisie de temps n'est autorisée sur un projet terminé.",
+  "@projects.project-enums.ts.aucune.nouvelle.saisie.de.temps.n.est.au.2afac007": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.aucune.nouvelle.saisie.de.temps.n.est.au.5a22abe9": "Aucune nouvelle saisie de temps n'est autorisée sur un projet annulé.",
+  "@projects.project-enums.ts.aucune.nouvelle.saisie.de.temps.n.est.au.5a22abe9": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.activez.le.projet.pour.saisir.du.temps.l.e6d64bde": "Activez le projet pour saisir du temps. La saisie est réservée aux projets Actif.",
+  "@projects.project-enums.ts.activez.le.projet.pour.saisir.du.temps.l.e6d64bde": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.la.saisie.de.nouveaux.temps.est.desactiv.e0e96400": "La saisie de nouveaux temps est désactivée. Les temps déjà saisis restent consultables et traitables.",
+  "@projects.project-enums.ts.la.saisie.de.nouveaux.temps.est.desactiv.e0e96400": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.facture.55e253e6": "Facturé",
+  "@projects.project-enums.ts.facture.55e253e6": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.dans.days.jours.e071d77e": "Dans {$days} jours",
+  "@projects.project-enums.ts.dans.days.jours.e071d77e": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.en.retard.de.1.jour.a1d7110c": "En retard de 1 jour",
+  "@projects.project-enums.ts.en.retard.de.1.jour.a1d7110c": {
+    "x-files": [
+      "src/app/features/projects/project-enums.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-enums.ts.en.retard.de.abs.jours.b26fdeb7": "En retard de {$abs} jours",
+  "@projects.project-enums.ts.en.retard.de.abs.jours.b26fdeb7": {
     "x-files": [
       "src/app/features/projects/project-enums.ts"
     ],
@@ -67601,6 +69358,13 @@
     ],
     "x-wave": "v4"
   },
+  "purchase-orders.create-supplier-invoice-modal.ts.creer.facture.fournisseur.sourcedocument.a556c042": "Créer facture fournisseur - {$sourceDocumentNumber}",
+  "@purchase-orders.create-supplier-invoice-modal.ts.creer.facture.fournisseur.sourcedocument.a556c042": {
+    "x-files": [
+      "src/app/features/purchase-orders/components/create-supplier-invoice-modal/create-supplier-invoice-modal.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-orders.purchase-order-create.nouveau.bon.de.commande.589cb8eb": "Nouveau bon de commande",
   "@purchase-orders.purchase-order-create.nouveau.bon.de.commande.589cb8eb": {
     "x-files": [
@@ -69225,6 +70989,13 @@
     ],
     "x-wave": "v4"
   },
+  "purchase-orders.purchase-order-receive.ts.cette.commande.ne.peut.pas.recevoir.de.m.11ab2c41": "Cette commande ne peut pas recevoir de marchandise",
+  "@purchase-orders.purchase-order-receive.ts.cette.commande.ne.peut.pas.recevoir.de.m.11ab2c41": {
+    "x-files": [
+      "src/app/features/purchase-orders/purchase-order-receive/purchase-order-receive.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-orders.purchase-order-receive.ts.cette.commande.est.en.brouillon.veuillez.865b261e": "Cette commande est en brouillon. Veuillez d'abord la confirmer avant de pouvoir recevoir des marchandises.",
   "@purchase-orders.purchase-order-receive.ts.cette.commande.est.en.brouillon.veuillez.865b261e": {
     "x-files": [
@@ -69833,6 +71604,13 @@
   },
   "purchase-receipts.purchase-receipt-detail.ts.facture.fournisseur.invoicenumber.creee.0fa763be": "Facture fournisseur {$invoiceNumber} créée",
   "@purchase-receipts.purchase-receipt-detail.ts.facture.fournisseur.invoicenumber.creee.0fa763be": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-detail/purchase-receipt-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-detail.ts.erreur.lors.de.la.creation.18def0de": "Erreur lors de la création",
+  "@purchase-receipts.purchase-receipt-detail.ts.erreur.lors.de.la.creation.18def0de": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-detail/purchase-receipt-detail.component.ts"
     ],
@@ -70631,6 +72409,20 @@
   },
   "purchase-receipts.list.filter.annule": "Annulé",
   "@purchase-receipts.list.filter.annule": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-list.ts.acces.non.autorise.aux.bons.de.reception.bce6d414": "Accès non autorisé aux bons de réception",
+  "@purchase-receipts.purchase-receipt-list.ts.acces.non.autorise.aux.bons.de.reception.bce6d414": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-list.ts.impossible.de.charger.les.bons.de.recept.2b72f55a": "Impossible de charger les bons de réception",
+  "@purchase-receipts.purchase-receipt-list.ts.impossible.de.charger.les.bons.de.recept.2b72f55a": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts"
     ],
@@ -73589,6 +75381,62 @@
   },
   "contract-form.component.detail.Le_brouillon_de_": "Le brouillon de contrat a été créé.",
   "@contract-form.component.detail.Le_brouillon_de_": {
+    "x-files": [
+      "src/app/features/recurring-contracts/pages/contract-form/contract-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.contract-form.ts.selectionnez.un.client.8fb40ef8": "Sélectionnez un client.",
+  "@recurring-contracts.contract-form.ts.selectionnez.un.client.8fb40ef8": {
+    "x-files": [
+      "src/app/features/recurring-contracts/pages/contract-form/contract-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.contract-form.ts.le.jour.de.facturation.doit.etre.compris.4880c24e": "Le jour de facturation doit être compris entre 1 et 31.",
+  "@recurring-contracts.contract-form.ts.le.jour.de.facturation.doit.etre.compris.4880c24e": {
+    "x-files": [
+      "src/app/features/recurring-contracts/pages/contract-form/contract-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.contract-form.ts.la.date.de.debut.est.obligatoire.f5872ef0": "La date de début est obligatoire.",
+  "@recurring-contracts.contract-form.ts.la.date.de.debut.est.obligatoire.f5872ef0": {
+    "x-files": [
+      "src/app/features/recurring-contracts/pages/contract-form/contract-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.contract-form.ts.la.date.de.fin.doit.etre.posterieure.ou.79fde34f": "La date de fin doit être postérieure ou égale à la date de début.",
+  "@recurring-contracts.contract-form.ts.la.date.de.fin.doit.etre.posterieure.ou.79fde34f": {
+    "x-files": [
+      "src/app/features/recurring-contracts/pages/contract-form/contract-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.contract-form.ts.ajoutez.au.moins.une.ligne.au.contrat.ac749562": "Ajoutez au moins une ligne au contrat.",
+  "@recurring-contracts.contract-form.ts.ajoutez.au.moins.une.ligne.au.contrat.ac749562": {
+    "x-files": [
+      "src/app/features/recurring-contracts/pages/contract-form/contract-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.contract-form.ts.le.catalogue.produits.est.indisponible.i.0bc88022": "Le catalogue produits est indisponible : impossible d'enregistrer une ligne sans produit.",
+  "@recurring-contracts.contract-form.ts.le.catalogue.produits.est.indisponible.i.0bc88022": {
+    "x-files": [
+      "src/app/features/recurring-contracts/pages/contract-form/contract-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.contract-form.ts.le.produit.est.obligatoire.pour.chaque.l.6b93ce74": "Le produit est obligatoire pour chaque ligne (sauf frais d'installation).",
+  "@recurring-contracts.contract-form.ts.le.produit.est.obligatoire.pour.chaque.l.6b93ce74": {
+    "x-files": [
+      "src/app/features/recurring-contracts/pages/contract-form/contract-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.contract-form.ts.la.metrique.est.obligatoire.pour.une.lig.8cd3c2c1": "La métrique est obligatoire pour une ligne à la consommation.",
+  "@recurring-contracts.contract-form.ts.la.metrique.est.obligatoire.pour.une.lig.8cd3c2c1": {
     "x-files": [
       "src/app/features/recurring-contracts/pages/contract-form/contract-form.component.ts"
     ],
@@ -79426,6 +81274,34 @@
     ],
     "x-wave": "v6"
   },
+  "reports.analytics.ts.ce.mois.ci.f30c2ac7": "ce mois-ci",
+  "@reports.analytics.ts.ce.mois.ci.f30c2ac7": {
+    "x-files": [
+      "src/app/features/reports/services/analytics.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.analytics.ts.cette.annee.9909e9db": "cette année",
+  "@reports.analytics.ts.cette.annee.9909e9db": {
+    "x-files": [
+      "src/app/features/reports/services/analytics.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.analytics.ts.le.mois.dernier.15ecb0a2": "le mois dernier",
+  "@reports.analytics.ts.le.mois.dernier.15ecb0a2": {
+    "x-files": [
+      "src/app/features/reports/services/analytics.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.analytics.ts.l.annee.derniere.372514a8": "l'année dernière",
+  "@reports.analytics.ts.l.annee.derniere.372514a8": {
+    "x-files": [
+      "src/app/features/reports/services/analytics.service.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.analytics.ts.votre.chiffre.d.affaires.a.augmente.de.t.14e75341": "Votre chiffre d'affaires a augmenté de {$toFixed} % {$periodLabel} par rapport à {$prevLabel}.",
   "@reports.analytics.ts.votre.chiffre.d.affaires.a.augmente.de.t.14e75341": {
     "x-files": [
@@ -79517,6 +81393,34 @@
     ],
     "x-wave": "v6"
   },
+  "reports.purchases-analytics.ts.ce.mois.ci.f30c2ac7": "ce mois-ci",
+  "@reports.purchases-analytics.ts.ce.mois.ci.f30c2ac7": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-analytics.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-analytics.ts.cette.annee.9909e9db": "cette année",
+  "@reports.purchases-analytics.ts.cette.annee.9909e9db": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-analytics.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-analytics.ts.le.mois.dernier.15ecb0a2": "le mois dernier",
+  "@reports.purchases-analytics.ts.le.mois.dernier.15ecb0a2": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-analytics.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-analytics.ts.l.annee.derniere.372514a8": "l'année dernière",
+  "@reports.purchases-analytics.ts.l.annee.derniere.372514a8": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-analytics.service.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.purchases-analytics.ts.vos.depenses.ont.augmente.de.tofixed.per.9c5d089b": "Vos dépenses ont augmenté de {$toFixed} % {$periodLabel} par rapport à {$prevLabel}.",
   "@reports.purchases-analytics.ts.vos.depenses.ont.augmente.de.tofixed.per.9c5d089b": {
     "x-files": [
@@ -79587,8 +81491,29 @@
     ],
     "x-wave": "v6"
   },
+  "reports.purchases-reports.ts.toutes.vos.factures.fournisseurs.sont.a.07650a2d": "Toutes vos factures fournisseurs sont à jour.",
+  "@reports.purchases-reports.ts.toutes.vos.factures.fournisseurs.sont.a.07650a2d": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-reports.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-reports.ts.vous.avez.pendingcount.facture.p.fournis.838f5c6e": "Vous avez {$pendingCount} facture{$p} fournisseur{$p1} à payer pour {$amountStr} {$currency}.",
+  "@reports.purchases-reports.ts.vous.avez.pendingcount.facture.p.fournis.838f5c6e": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-reports.service.ts"
+    ],
+    "x-wave": "v6"
+  },
   "reports.sales-reports.ts.semaine.du.tolocaledatestring.au.tolocal.f7dcfdfa": "Semaine du {$toLocaleDateString} au {$toLocaleDateString1}",
   "@reports.sales-reports.ts.semaine.du.tolocaledatestring.au.tolocal.f7dcfdfa": {
+    "x-files": [
+      "src/app/features/reports/services/sales-reports.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.sales-reports.ts.toutes.vos.factures.sont.a.jour.a34df1da": "Toutes vos factures sont à jour.",
+  "@reports.sales-reports.ts.toutes.vos.factures.sont.a.jour.a34df1da": {
     "x-files": [
       "src/app/features/reports/services/sales-reports.service.ts"
     ],
@@ -79654,6 +81579,13 @@
   "@reports.sales-reports.ts.part.du.ca.par.mois.sur.les.cross.tab.ye.bb7791cd": {
     "x-files": [
       "src/app/features/reports/services/sales-reports.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.stock-reports.ts.votre.stock.est.a.jour.aucune.alerte.de.0467df81": "Votre stock est à jour. Aucune alerte de rupture.",
+  "@reports.stock-reports.ts.votre.stock.est.a.jour.aucune.alerte.de.0467df81": {
+    "x-files": [
+      "src/app/features/reports/services/stock-reports.service.ts"
     ],
     "x-wave": "v6"
   },
@@ -81520,15 +83452,8 @@
     ],
     "x-wave": "v4"
   },
-  "ui.tern.confirmer.engage.fermement.la.commande.et..59ec81": "Confirmer engage fermement la commande et rend les lignes non modifiables. ",
-  "@ui.tern.confirmer.engage.fermement.la.commande.et..59ec81": {
-    "x-files": [
-      "src/app/features/sales-orders/sales-order-detail/sales-order-detail.component.ts"
-    ],
-    "x-wave": "v4"
-  },
-  "ui.tern.si.la.reservation.de.stock.est.activee.le..7bb555": "Si la réservation de stock est activée, le stock sera réservé.",
-  "@ui.tern.si.la.reservation.de.stock.est.activee.le..7bb555": {
+  "sales-orders.sales-order-detail.ts.confirmer.engage.fermement.la.commande.e.f8e861c7": "Confirmer engage fermement la commande et rend les lignes non modifiables. Si la réservation de stock est activée, le stock sera réservé.",
+  "@sales-orders.sales-order-detail.ts.confirmer.engage.fermement.la.commande.e.f8e861c7": {
     "x-files": [
       "src/app/features/sales-orders/sales-order-detail/sales-order-detail.component.ts"
     ],
@@ -82511,6 +84436,13 @@
   },
   "sales-return-notes.sales-return-note-form.ts.ouvrez.la.fiche.pour.reessayer.8bd5b0fb": "Ouvrez la fiche pour réessayer.",
   "@sales-return-notes.sales-return-note-form.ts.ouvrez.la.fiche.pour.reessayer.8bd5b0fb": {
+    "x-files": [
+      "src/app/features/sales-return-notes/pages/sales-return-note-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "sales-return-notes.sales-return-note-form.ts.une.erreur.est.survenue.reessayez.ea88be8d": "Une erreur est survenue. Réessayez.",
+  "@sales-return-notes.sales-return-note-form.ts.une.erreur.est.survenue.reessayez.ea88be8d": {
     "x-files": [
       "src/app/features/sales-return-notes/pages/sales-return-note-form.component.ts"
     ],
@@ -84010,6 +85942,27 @@
     ],
     "x-wave": "v3"
   },
+  "settings.company.ts.impossible.de.charger.les.informations.d.7b68d0c8": "Impossible de charger les informations de l'entreprise",
+  "@settings.company.ts.impossible.de.charger.les.informations.d.7b68d0c8": {
+    "x-files": [
+      "src/app/features/settings/company/company.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.company.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea": "Trop de requêtes. Veuillez patienter avant de réessayer.",
+  "@settings.company.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea": {
+    "x-files": [
+      "src/app/features/settings/company/company.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.company.ts.une.erreur.est.survenue.lors.du.chargeme.d29a12c6": "Une erreur est survenue lors du chargement des informations",
+  "@settings.company.ts.une.erreur.est.survenue.lors.du.chargeme.d29a12c6": {
+    "x-files": [
+      "src/app/features/settings/company/company.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "company.component.summary.Succès": "Succès",
   "@company.component.summary.Succès": {
     "x-files": [
@@ -84019,6 +85972,13 @@
   },
   "settings.company.ts.informations.de.l.entreprise.mises.a.jou.194ab89e": "Informations de l'entreprise mises à jour",
   "@settings.company.ts.informations.de.l.entreprise.mises.a.jou.194ab89e": {
+    "x-files": [
+      "src/app/features/settings/company/company.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.company.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f": "Une erreur est survenue lors de la mise à jour",
+  "@settings.company.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f": {
     "x-files": [
       "src/app/features/settings/company/company.component.ts"
     ],
@@ -84647,6 +86607,13 @@
     ],
     "x-wave": "v3"
   },
+  "settings.numbering.ts.separateur.p.82bbc528": "Séparateur « {$p} »",
+  "@settings.numbering.ts.separateur.p.82bbc528": {
+    "x-files": [
+      "src/app/features/settings/numbering/numbering.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "numbering.component.summary.Succès": "Succès",
   "@numbering.component.summary.Succès": {
     "x-files": [
@@ -84990,15 +86957,8 @@
     ],
     "x-wave": "v3"
   },
-  "settings.payment-terms.ts.supprimer.name.les.documents.deja.emis.c.b5285595": "Supprimer « {$name} » ? Les documents déjà émis conservent leur texte et leur ",
-  "@settings.payment-terms.ts.supprimer.name.les.documents.deja.emis.c.b5285595": {
-    "x-files": [
-      "src/app/features/settings/payment-terms/payment-terms.component.ts"
-    ],
-    "x-wave": "v3"
-  },
-  "ui.tern.echeance.ils.ne.referencent.pas.le.modele.da0a27": "échéance : ils ne référencent pas le modèle.",
-  "@ui.tern.echeance.ils.ne.referencent.pas.le.modele.da0a27": {
+  "settings.payment-terms.ts.supprimer.name.les.documents.deja.emis.c.3ff02199": "Supprimer « {$name} » ? Les documents déjà émis conservent leur texte et leur échéance : ils ne référencent pas le modèle.",
+  "@settings.payment-terms.ts.supprimer.name.les.documents.deja.emis.c.3ff02199": {
     "x-files": [
       "src/app/features/settings/payment-terms/payment-terms.component.ts"
     ],
@@ -85456,6 +87416,13 @@
     ],
     "x-wave": "v3"
   },
+  "settings.promotion-period-bar.ts.progression.de.la.periode.percent.pour.c.ac7c40ed": "Progression de la période : {$percent} pour cent",
+  "@settings.promotion-period-bar.ts.progression.de.la.periode.percent.pour.c.ac7c40ed": {
+    "x-files": [
+      "src/app/features/settings/promotions/promotion-period-bar.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "settings.promotions.promotions.086e09b4": "Promotions",
   "@settings.promotions.promotions.086e09b4": {
     "x-files": [
@@ -85666,6 +87633,13 @@
     ],
     "x-wave": "v3"
   },
+  "settings.promotions-page.ts.promotion.active.mais.en.dehors.de.sa.fe.9aac1184": "Promotion active mais en dehors de sa fenêtre : elle n'applique aucune remise aujourd'hui.",
+  "@settings.promotions-page.ts.promotion.active.mais.en.dehors.de.sa.fe.9aac1184": {
+    "x-files": [
+      "src/app/features/settings/promotions/promotions-page.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "settings.promotions-page.ts.impossible.de.charger.les.promotions.d4f19af0": "Impossible de charger les promotions",
   "@settings.promotions-page.ts.impossible.de.charger.les.promotions.d4f19af0": {
     "x-files": [
@@ -85747,6 +87721,34 @@
   "@promotions-page.component.summary.Erreur": {
     "x-files": [
       "src/app/features/settings/promotions/promotions-page.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.promotions.ts.a.venir.5ae4e587": "À venir",
+  "@settings.promotions.ts.a.venir.5ae4e587": {
+    "x-files": [
+      "src/app/features/settings/promotions/promotions.utils.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.promotions.ts.expiree.1f0808dc": "Expirée",
+  "@settings.promotions.ts.expiree.1f0808dc": {
+    "x-files": [
+      "src/app/features/settings/promotions/promotions.utils.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.promotions.ts.desactivee.74cc3b9b": "Désactivée",
+  "@settings.promotions.ts.desactivee.74cc3b9b": {
+    "x-files": [
+      "src/app/features/settings/promotions/promotions.utils.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.promotions.ts.hors.periode.eb84848b": "Hors période",
+  "@settings.promotions.ts.hors.periode.eb84848b": {
+    "x-files": [
+      "src/app/features/settings/promotions/promotions.utils.ts"
     ],
     "x-wave": "v3"
   },
@@ -86471,8 +88473,8 @@
     ],
     "x-wave": "v3"
   },
-  "ui.tern.validation.plateforme.en.brouillon.en.atte.413df7": "(validation plateforme). En brouillon, en attente ou suspendue, cette adresse ne renvoie pas la vitrine côté public.",
-  "@ui.tern.validation.plateforme.en.brouillon.en.atte.413df7": {
+  "settings.storefront-settings.ts.l.url.publique.visite.virtuelle.slug.ne.c97a9f70": "L’URL publique (/visite-virtuelle/{$slug}) ne sera active qu’après publication sur la Rue InstaFact (validation plateforme). En brouillon, en attente ou suspendue, cette adresse ne renvoie pas la vitrine côté public.",
+  "@settings.storefront-settings.ts.l.url.publique.visite.virtuelle.slug.ne.c97a9f70": {
     "x-files": [
       "src/app/features/settings/storefront/storefront-settings.component.ts"
     ],
@@ -86510,6 +88512,20 @@
   "@ui.tern.vitrine.depubliee.93f44b": {
     "x-files": [
       "src/app/features/settings/storefront/storefront-settings.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.storefront-workflow-status.ts.en.attente.de.validation.a553ea16": "En attente de validation",
+  "@settings.storefront-workflow-status.ts.en.attente.de.validation.a553ea16": {
+    "x-files": [
+      "src/app/features/settings/storefront/storefront-workflow-status.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.storefront-workflow-status.ts.publiee.ebef6edc": "Publiée",
+  "@settings.storefront-workflow-status.ts.publiee.ebef6edc": {
+    "x-files": [
+      "src/app/features/settings/storefront/storefront-workflow-status.ts"
     ],
     "x-wave": "v3"
   },
@@ -86855,6 +88871,27 @@
     ],
     "x-wave": "v3"
   },
+  "settings.change-plan-dialog.ts.passer.au.superieur.32d80048": "Passer au supérieur",
+  "@settings.change-plan-dialog.ts.passer.au.superieur.32d80048": {
+    "x-files": [
+      "src/app/features/settings/subscription/change-plan-dialog/change-plan-dialog.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.change-plan-dialog.ts.retrograder.6740723a": "Rétrograder",
+  "@settings.change-plan-dialog.ts.retrograder.6740723a": {
+    "x-files": [
+      "src/app/features/settings/subscription/change-plan-dialog/change-plan-dialog.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.change-plan-dialog.ts.selectionner.ab31a36f": "Sélectionner",
+  "@settings.change-plan-dialog.ts.selectionner.ab31a36f": {
+    "x-files": [
+      "src/app/features/settings/subscription/change-plan-dialog/change-plan-dialog.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "change-plan-dialog.component.summary.Forfait mis ": "Forfait mis à jour",
   "@change-plan-dialog.component.summary.Forfait mis ": {
     "x-files": [
@@ -87037,8 +89074,36 @@
     ],
     "x-wave": "v3"
   },
+  "settings.subscription.ts.votre.forfait.plandisplay.est.actif.mais.3a655d24": "Votre forfait {$planDisplay} est actif mais votre compte est {$toLowerCase}. Régularisez votre paiement pour émettre des factures.",
+  "@settings.subscription.ts.votre.forfait.plandisplay.est.actif.mais.3a655d24": {
+    "x-files": [
+      "src/app/features/settings/subscription/subscription.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.subscription.ts.statut.d.abonnement.statusdisplay.emissi.8ad79e20": "Statut d'abonnement « {$statusDisplay} » : émission de factures indisponible.",
+  "@settings.subscription.ts.statut.d.abonnement.statusdisplay.emissi.8ad79e20": {
+    "x-files": [
+      "src/app/features/settings/subscription/subscription.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "ui.tern.free.75f527": "Free",
   "@ui.tern.free.75f527": {
+    "x-files": [
+      "src/app/features/settings/subscription/subscription.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.subscription.ts.choisir.ce.forfait.a713a296": "Choisir ce forfait",
+  "@settings.subscription.ts.choisir.ce.forfait.a713a296": {
+    "x-files": [
+      "src/app/features/settings/subscription/subscription.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.subscription.ts.retrograder.6740723a": "Rétrograder",
+  "@settings.subscription.ts.retrograder.6740723a": {
     "x-files": [
       "src/app/features/settings/subscription/subscription.component.ts"
     ],
@@ -87905,6 +89970,20 @@
   },
   "settings.tenant-users-bulk.ts.developpeur.4819232b": "Développeur",
   "@settings.tenant-users-bulk.ts.developpeur.4819232b": {
+    "x-files": [
+      "src/app/features/settings/users/tenant-users-bulk.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.tenant-users-bulk.ts.1.ligne.dans.le.formulaire.chaque.ligne.c0a50277": "1 ligne dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.",
+  "@settings.tenant-users-bulk.ts.1.ligne.dans.le.formulaire.chaque.ligne.c0a50277": {
+    "x-files": [
+      "src/app/features/settings/users/tenant-users-bulk.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.tenant-users-bulk.ts.n.lignes.dans.le.formulaire.chaque.ligne.b89f9eba": "{$n} lignes dans le formulaire — chaque ligne complète crée un utilisateur à l’enregistrement.",
+  "@settings.tenant-users-bulk.ts.n.lignes.dans.le.formulaire.chaque.ligne.b89f9eba": {
     "x-files": [
       "src/app/features/settings/users/tenant-users-bulk.component.ts"
     ],
@@ -89092,6 +91171,20 @@
   },
   "settings.warehouses.ts.impossible.de.charger.les.entrepots.3492459c": "Impossible de charger les entrepôts",
   "@settings.warehouses.ts.impossible.de.charger.les.entrepots.3492459c": {
+    "x-files": [
+      "src/app/features/settings/warehouses/warehouses.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.warehouses.ts.ce.champ.est.obligatoire.17061b6a": "Ce champ est obligatoire",
+  "@settings.warehouses.ts.ce.champ.est.obligatoire.17061b6a": {
+    "x-files": [
+      "src/app/features/settings/warehouses/warehouses.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "settings.warehouses.ts.longueur.maximale.depassee.eef9b613": "Longueur maximale dépassée",
+  "@settings.warehouses.ts.longueur.maximale.depassee.eef9b613": {
     "x-files": [
       "src/app/features/settings/warehouses/warehouses.component.ts"
     ],
@@ -91035,6 +93128,13 @@
     ],
     "x-wave": "v5"
   },
+  "stock.stock-list.ts.erreur.ab546c23": "Erreur",
+  "@stock.stock-list.ts.erreur.ab546c23": {
+    "x-files": [
+      "src/app/features/stock/stock-list/stock-list.component.ts"
+    ],
+    "x-wave": "v5"
+  },
   "stock.stock-list.ts.sortie.de.stock.impossible.803e3955": "Sortie de stock impossible",
   "@stock.stock-list.ts.sortie.de.stock.impossible.803e3955": {
     "x-files": [
@@ -91763,6 +93863,20 @@
     ],
     "x-wave": "v7"
   },
+  "studio.studio-approvals.ts.en.retard.de.amount.6c326148": "En retard de {$amount}",
+  "@studio.studio-approvals.ts.en.retard.de.amount.6c326148": {
+    "x-files": [
+      "src/app/features/studio/approvals/studio-approvals.util.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-approvals.ts.dans.amount.f8d68aa1": "Dans {$amount}",
+  "@studio.studio-approvals.ts.dans.amount.f8d68aa1": {
+    "x-files": [
+      "src/app/features/studio/approvals/studio-approvals.util.ts"
+    ],
+    "x-wave": "v7"
+  },
   "studio.records.text.213edd25": " → ",
   "@studio.records.text.213edd25": {
     "x-files": [
@@ -91908,6 +94022,27 @@
   "@studio.relations.jonction.1f6dc40a": {
     "x-files": [
       "src/app/features/studio/relations/studio-relations-page.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-relations.ts.plusieurs.a.plusieurs.c7a3e8e5": "Plusieurs-à-plusieurs",
+  "@studio.studio-relations.ts.plusieurs.a.plusieurs.c7a3e8e5": {
+    "x-files": [
+      "src/app/features/studio/relations/studio-relations.models.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-relations.ts.plusieurs.a.un.6a4e3826": "Plusieurs-à-un",
+  "@studio.studio-relations.ts.plusieurs.a.un.6a4e3826": {
+    "x-files": [
+      "src/app/features/studio/relations/studio-relations.models.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-relations.ts.un.a.plusieurs.af68751e": "Un-à-plusieurs",
+  "@studio.studio-relations.ts.un.a.plusieurs.af68751e": {
+    "x-files": [
+      "src/app/features/studio/relations/studio-relations.models.ts"
     ],
     "x-wave": "v7"
   },
@@ -92142,6 +94277,34 @@
     ],
     "x-wave": "v7"
   },
+  "studio.studio-ai-build.ts.session.expiree.reconnectez.vous.puis.re.641fdfab": "Session expirée. Reconnectez-vous, puis relancez la validation.",
+  "@studio.studio-ai-build.ts.session.expiree.reconnectez.vous.puis.re.641fdfab": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-build.service.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-ai-build.ts.vous.n.avez.pas.la.permission.de.creer.d.5d212ebe": "Vous n'avez pas la permission de créer des tables Studio.",
+  "@studio.studio-ai-build.ts.vous.n.avez.pas.la.permission.de.creer.d.5d212ebe": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-build.service.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-ai-build.ts.ce.plan.est.introuvable.ou.a.expire.2e8a0aa9": "Ce plan est introuvable ou a expiré.",
+  "@studio.studio-ai-build.ts.ce.plan.est.introuvable.ou.a.expire.2e8a0aa9": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-build.service.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-ai-build.ts.ce.plan.a.deja.ete.traite.7e6ecf9d": "Ce plan a déjà été traité.",
+  "@studio.studio-ai-build.ts.ce.plan.a.deja.ete.traite.7e6ecf9d": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-build.service.ts"
+    ],
+    "x-wave": "v7"
+  },
   "studio.studio-ai-builder.assistant.studio.ia.b0a6b182": "Assistant Studio (IA)",
   "@studio.studio-ai-builder.assistant.studio.ia.b0a6b182": {
     "x-files": [
@@ -92296,6 +94459,55 @@
     ],
     "x-wave": "v7"
   },
+  "studio.studio-ai-failure.ts.je.n.ai.pas.pu.determiner.quelles.donnee.4b0860e5": "Je n'ai pas pu déterminer quelles données analyser.",
+  "@studio.studio-ai-failure.ts.je.n.ai.pas.pu.determiner.quelles.donnee.4b0860e5": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-failure.util.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-ai-failure.ts.la.source.demandee.n.est.pas.disponible.9557508b": "La source demandée n'est pas disponible pour les états.",
+  "@studio.studio-ai-failure.ts.la.source.demandee.n.est.pas.disponible.9557508b": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-failure.util.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-ai-failure.ts.certaines.ventilations.demandees.n.exist.a6a5a1ce": "Certaines ventilations demandées n'existent pas sur la source analysée.",
+  "@studio.studio-ai-failure.ts.certaines.ventilations.demandees.n.exist.a6a5a1ce": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-failure.util.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-ai-failure.ts.les.donnees.demandees.ne.peuvent.pas.etr.df79c27e": "Les données demandées ne peuvent pas être reliées entre elles dans cet état.",
+  "@studio.studio-ai-failure.ts.les.donnees.demandees.ne.peuvent.pas.etr.df79c27e": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-failure.util.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-ai-failure.ts.l.etat.demande.relie.trop.de.tables.a.la.880f0ce8": "L'état demandé relie trop de tables à la fois.",
+  "@studio.studio-ai-failure.ts.l.etat.demande.relie.trop.de.tables.a.la.880f0ce8": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-failure.util.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-ai-failure.ts.aucune.colonne.exploitable.n.a.ete.trouv.61398668": "Aucune colonne exploitable n'a été trouvée pour cet état.",
+  "@studio.studio-ai-failure.ts.aucune.colonne.exploitable.n.a.ete.trouv.61398668": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-failure.util.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-ai-failure.ts.cet.etat.n.est.pas.disponible.sur.vos.do.310a6bb2": "Cet état n'est pas disponible sur vos données : une information qu'il utilise est absente ou inaccessible.",
+  "@studio.studio-ai-failure.ts.cet.etat.n.est.pas.disponible.sur.vos.do.310a6bb2": {
+    "x-files": [
+      "src/app/features/studio/studio-ai-failure.util.ts"
+    ],
+    "x-wave": "v7"
+  },
   "studio.studio-ai-failure.ts.precision.necessaire.b552b373": "Précision nécessaire",
   "@studio.studio-ai-failure.ts.precision.necessaire.b552b373": {
     "x-files": [
@@ -92310,29 +94522,8 @@
     ],
     "x-wave": "v7"
   },
-  "studio.studio-ai-failure.ts.je.n.ai.pas.pu.determiner.quelles.donnee.4b0860e5": "Je n'ai pas pu déterminer quelles données analyser.",
-  "@studio.studio-ai-failure.ts.je.n.ai.pas.pu.determiner.quelles.donnee.4b0860e5": {
-    "x-files": [
-      "src/app/features/studio/studio-ai-failure.util.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "studio.studio-ai-failure.ts.indiquez.le.sujet.ventes.achats.encaisse.355a3d14": "Indiquez le sujet (ventes, achats, encaissements…), la ventilation souhaitée ",
-  "@studio.studio-ai-failure.ts.indiquez.le.sujet.ventes.achats.encaisse.355a3d14": {
-    "x-files": [
-      "src/app/features/studio/studio-ai-failure.util.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "studio.studio-ai-failure.ts.par.annee.par.client.par.produit.et.si.b.972e045a": "(par année, par client, par produit…) et, si besoin, la période. ",
-  "@studio.studio-ai-failure.ts.par.annee.par.client.par.produit.et.si.b.972e045a": {
-    "x-files": [
-      "src/app/features/studio/studio-ai-failure.util.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "studio.studio-ai-failure.ts.vous.pouvez.aussi.partir.d.un.etat.pret.81e501d7": "Vous pouvez aussi partir d'un état prêt à l'emploi.",
-  "@studio.studio-ai-failure.ts.vous.pouvez.aussi.partir.d.un.etat.pret.81e501d7": {
+  "studio.studio-ai-failure.ts.indiquez.le.sujet.ventes.achats.encaisse.75e0c804": "Indiquez le sujet (ventes, achats, encaissements…), la ventilation souhaitée (par année, par client, par produit…) et, si besoin, la période. Vous pouvez aussi partir d'un état prêt à l'emploi.",
+  "@studio.studio-ai-failure.ts.indiquez.le.sujet.ventes.achats.encaisse.75e0c804": {
     "x-files": [
       "src/app/features/studio/studio-ai-failure.util.ts"
     ],
@@ -92359,15 +94550,8 @@
     ],
     "x-wave": "v7"
   },
-  "studio.studio-ai-failure.ts.demandez.a.un.administrateur.de.verifier.18ac6c21": "Demandez à un administrateur de vérifier vos droits de consultation des états et des ",
-  "@studio.studio-ai-failure.ts.demandez.a.un.administrateur.de.verifier.18ac6c21": {
-    "x-files": [
-      "src/app/features/studio/studio-ai-failure.util.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "studio.studio-ai-failure.ts.donnees.concernees.reessayer.ou.reformul.8fbfd6e3": "données concernées. Réessayer ou reformuler la demande ne modifie pas vos droits.",
-  "@studio.studio-ai-failure.ts.donnees.concernees.reessayer.ou.reformul.8fbfd6e3": {
+  "studio.studio-ai-failure.ts.demandez.a.un.administrateur.de.verifier.081b7ced": "Demandez à un administrateur de vérifier vos droits de consultation des états et des données concernées. Réessayer ou reformuler la demande ne modifie pas vos droits.",
+  "@studio.studio-ai-failure.ts.demandez.a.un.administrateur.de.verifier.081b7ced": {
     "x-files": [
       "src/app/features/studio/studio-ai-failure.util.ts"
     ],
@@ -92394,15 +94578,8 @@
     ],
     "x-wave": "v7"
   },
-  "studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.a.votre.i.8817db8a": "Vous pouvez réessayer une fois, à votre initiative. Sans l'assistant, le concepteur d'états ",
-  "@studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.a.votre.i.8817db8a": {
-    "x-files": [
-      "src/app/features/studio/studio-ai-failure.util.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "studio.studio-ai-failure.ts.reste.disponible.bdc6c5e7": "reste disponible.",
-  "@studio.studio-ai-failure.ts.reste.disponible.bdc6c5e7": {
+  "studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.a.votre.i.33711c57": "Vous pouvez réessayer une fois, à votre initiative. Sans l'assistant, le concepteur d'états reste disponible.",
+  "@studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.a.votre.i.33711c57": {
     "x-files": [
       "src/app/features/studio/studio-ai-failure.util.ts"
     ],
@@ -92429,15 +94606,8 @@
     ],
     "x-wave": "v7"
   },
-  "studio.studio-ai-failure.ts.restreignez.la.periode.une.seule.annee.p.4daa7098": "Restreignez la période (une seule année, par exemple) ou le nombre de colonnes, puis relancez. ",
-  "@studio.studio-ai-failure.ts.restreignez.la.periode.une.seule.annee.p.4daa7098": {
-    "x-files": [
-      "src/app/features/studio/studio-ai-failure.util.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "studio.studio-ai-failure.ts.aucun.nouvel.appel.a.l.ia.n.est.necessai.bed39f7b": "Aucun nouvel appel à l'IA n'est nécessaire pour un état prêt à l'emploi.",
-  "@studio.studio-ai-failure.ts.aucun.nouvel.appel.a.l.ia.n.est.necessai.bed39f7b": {
+  "studio.studio-ai-failure.ts.restreignez.la.periode.une.seule.annee.p.7663276d": "Restreignez la période (une seule année, par exemple) ou le nombre de colonnes, puis relancez. Aucun nouvel appel à l'IA n'est nécessaire pour un état prêt à l'emploi.",
+  "@studio.studio-ai-failure.ts.restreignez.la.periode.une.seule.annee.p.7663276d": {
     "x-files": [
       "src/app/features/studio/studio-ai-failure.util.ts"
     ],
@@ -95172,6 +97342,20 @@
     ],
     "x-wave": "v7"
   },
+  "studio.studio-calendar.ts.le.start.23c3798e": "le {$start}",
+  "@studio.studio-calendar.ts.le.start.23c3798e": {
+    "x-files": [
+      "src/app/features/studio/views/studio-calendar.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "studio.studio-calendar.ts.du.start.au.tolocaledatestring.1f74bee0": "du {$start} au {$toLocaleDateString}",
+  "@studio.studio-calendar.ts.du.start.au.tolocaledatestring.1f74bee0": {
+    "x-files": [
+      "src/app/features/studio/views/studio-calendar.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "studio.views.aucune.fiche.dans.cette.colonne.a9f5fca9": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} Aucune fiche dans cette colonne ",
   "@studio.views.aucune.fiche.dans.cette.colonne.a9f5fca9": {
     "x-files": [
@@ -97651,6 +99835,13 @@
     ],
     "x-wave": "v3"
   },
+  "suppliers.supplier-form.ts.le.matricule.fiscal.est.obligatoire.pour.461e8771": "Le matricule fiscal est obligatoire pour un fournisseur entreprise",
+  "@suppliers.supplier-form.ts.le.matricule.fiscal.est.obligatoire.pour.461e8771": {
+    "x-files": [
+      "src/app/features/suppliers/supplier-form/supplier-form.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "supplier-form.component.summary.Erreur": "Erreur",
   "@supplier-form.component.summary.Erreur": {
     "x-files": [
@@ -99583,6 +101774,34 @@
     ],
     "x-wave": "v5"
   },
+  "treasury.cash-forecast.ts.impact.eleve.d2a56cbd": "Impact élevé",
+  "@treasury.cash-forecast.ts.impact.eleve.d2a56cbd": {
+    "x-files": [
+      "src/app/features/treasury/cash-forecast/cash-forecast.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "treasury.cash-forecast.view-model.ts.scenario.optimiste.ffec2223": "Scénario optimiste",
+  "@treasury.cash-forecast.view-model.ts.scenario.optimiste.ffec2223": {
+    "x-files": [
+      "src/app/features/treasury/cash-forecast/cash-forecast.view-model.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "treasury.cash-forecast.view-model.ts.scenario.realiste.4b8d48a3": "Scénario réaliste",
+  "@treasury.cash-forecast.view-model.ts.scenario.realiste.4b8d48a3": {
+    "x-files": [
+      "src/app/features/treasury/cash-forecast/cash-forecast.view-model.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "treasury.cash-forecast.view-model.ts.scenario.pessimiste.05d17bd7": "Scénario pessimiste",
+  "@treasury.cash-forecast.view-model.ts.scenario.pessimiste.05d17bd7": {
+    "x-files": [
+      "src/app/features/treasury/cash-forecast/cash-forecast.view-model.ts"
+    ],
+    "x-wave": "v5"
+  },
   "treasury.cash-forecast.seuil.critique.2bf6d0b2": "Seuil critique",
   "@treasury.cash-forecast.seuil.critique.2bf6d0b2": {
     "x-files": [
@@ -100045,6 +102264,27 @@
     ],
     "x-wave": "v7"
   },
+  "withholding-tax.tej-export.ts.verification.des.factures.eligibles.pour.752c86d5": "Vérification des factures éligibles pour cette période en cours…",
+  "@withholding-tax.tej-export.ts.verification.des.factures.eligibles.pour.752c86d5": {
+    "x-files": [
+      "src/app/features/withholding-tax/tej-export/tej-export.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "withholding-tax.tej-export.ts.aucune.facture.fournisseur.soldee.avec.r.507209f0": "Aucune facture fournisseur soldée avec retenue pour ce mois. La date de solde doit correspondre à la période choisie.",
+  "@withholding-tax.tej-export.ts.aucune.facture.fournisseur.soldee.avec.r.507209f0": {
+    "x-files": [
+      "src/app/features/withholding-tax/tej-export/tej-export.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "withholding-tax.tej-export.ts.une.erreur.est.survenue.9a133198": "Une erreur est survenue.",
+  "@withholding-tax.tej-export.ts.une.erreur.est.survenue.9a133198": {
+    "x-files": [
+      "src/app/features/withholding-tax/tej-export/tej-export.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "withholding-tax.tej-export.ts.aucune.facture.eligible.pour.cette.perio.712a5264": "Aucune facture éligible pour cette période",
   "@withholding-tax.tej-export.ts.aucune.facture.eligible.pour.cette.perio.712a5264": {
     "x-files": [
@@ -100052,15 +102292,8 @@
     ],
     "x-wave": "v7"
   },
-  "withholding-tax.tej-export.ts.l.export.tej.inclut.uniquement.les.factu.aec54e21": "L’export TEJ inclut uniquement les factures fournisseurs payées avec retenue enregistrée (fournisseur assujetti, montant et type RS), pour la date de solde (mois/année) sélectionnés.\n\n",
-  "@withholding-tax.tej-export.ts.l.export.tej.inclut.uniquement.les.factu.aec54e21": {
-    "x-files": [
-      "src/app/features/withholding-tax/tej-export/tej-export.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.verifiez.le.parametrage.fournisseur.le.sta.0c248d": "Vérifiez le paramétrage fournisseur, le statut Payée et que la date de solde tombe dans la période.",
-  "@ui.tern.verifiez.le.parametrage.fournisseur.le.sta.0c248d": {
+  "withholding-tax.tej-export.ts.l.export.tej.inclut.uniquement.les.factu.1866df69": "L’export TEJ inclut uniquement les factures fournisseurs payées avec retenue enregistrée (fournisseur assujetti, montant et type RS), pour la date de solde (mois/année) sélectionnés.\n\nVérifiez le paramétrage fournisseur, le statut Payée et que la date de solde tombe dans la période.",
+  "@withholding-tax.tej-export.ts.l.export.tej.inclut.uniquement.les.factu.1866df69": {
     "x-files": [
       "src/app/features/withholding-tax/tej-export/tej-export.component.ts"
     ],
@@ -101839,6 +104072,13 @@
     ],
     "x-wave": "v1"
   },
+  "shared.stock-allocation-editor.ts.n.de.serie.6b826381": "N° de série",
+  "@shared.stock-allocation-editor.ts.n.de.serie.6b826381": {
+    "x-files": [
+      "src/app/shared/components/stock-allocation-editor/stock-allocation-editor.component.ts"
+    ],
+    "x-wave": "v1"
+  },
   "shared.components.table-totals-bar.table-totals-bar.totaux.du.tableau.a65d89c7": "Totaux du tableau",
   "@shared.components.table-totals-bar.table-totals-bar.totaux.du.tableau.a65d89c7": {
     "x-files": [
@@ -102378,6 +104618,20 @@
     ],
     "x-wave": "v1"
   },
+  "shared.studio-cell-formatter.ts.oui.eaa02f3f": "Oui",
+  "@shared.studio-cell-formatter.ts.oui.eaa02f3f": {
+    "x-files": [
+      "src/app/shared/studio-runtime/studio-cell-formatter.service.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.studio-cell-formatter.ts.non.a7219939": "Non",
+  "@shared.studio-cell-formatter.ts.non.a7219939": {
+    "x-files": [
+      "src/app/shared/studio-runtime/studio-cell-formatter.service.ts"
+    ],
+    "x-wave": "v1"
+  },
   "shared.studio-runtime.studio-code-image.text.1b93795b": "—",
   "@shared.studio-runtime.studio-code-image.text.1b93795b": {
     "x-files": [
@@ -102667,6 +104921,48 @@
   },
   "shared.product-traceability-rules.ts.lifo.attention.comptes.statutaires.52268aff": "LIFO (attention comptes statutaires)",
   "@shared.product-traceability-rules.ts.lifo.attention.comptes.statutaires.52268aff": {
+    "x-files": [
+      "src/app/shared/utils/product-traceability-rules.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.product-traceability-rules.ts.definit.si.les.mouvements.exigent.un.lot.7552007a": "Définit si les mouvements exigent un lot ou un numéro de série.",
+  "@shared.product-traceability-rules.ts.definit.si.les.mouvements.exigent.un.lot.7552007a": {
+    "x-files": [
+      "src/app/shared/utils/product-traceability-rules.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.product-traceability-rules.ts.lot.uniquement.activez.le.suivi.dluo.pou.7f43ede8": "Lot uniquement. Activez le suivi DLUO pour utiliser FEFO.",
+  "@shared.product-traceability-rules.ts.lot.uniquement.activez.le.suivi.dluo.pou.7f43ede8": {
+    "x-files": [
+      "src/app/shared/utils/product-traceability-rules.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.product-traceability-rules.ts.lot.uniquement.fefo.lots.les.plus.proche.7238bf50": "Lot uniquement. FEFO : lots les plus proches de la péremption en premier.",
+  "@shared.product-traceability-rules.ts.lot.uniquement.fefo.lots.les.plus.proche.7238bf50": {
+    "x-files": [
+      "src/app/shared/utils/product-traceability-rules.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.product-traceability-rules.ts.cmup.recommande.comptes.statutaires.tn.l.f65605fd": "CMUP recommandé (comptes statutaires TN). LIFO : usage interne uniquement.",
+  "@shared.product-traceability-rules.ts.cmup.recommande.comptes.statutaires.tn.l.f65605fd": {
+    "x-files": [
+      "src/app/shared/utils/product-traceability-rules.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.product-traceability-rules.ts.aucun.suivi.25d943ac": "Aucun suivi",
+  "@shared.product-traceability-rules.ts.aucun.suivi.25d943ac": {
+    "x-files": [
+      "src/app/shared/utils/product-traceability-rules.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.product-traceability-rules.ts.manuel.choix.du.lot.620f4076": "Manuel (choix du lot)",
+  "@shared.product-traceability-rules.ts.manuel.choix.du.lot.620f4076": {
     "x-files": [
       "src/app/shared/utils/product-traceability-rules.ts"
     ],

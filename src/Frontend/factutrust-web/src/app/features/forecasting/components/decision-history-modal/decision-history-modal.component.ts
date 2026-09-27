@@ -166,13 +166,13 @@ export class DecisionHistoryModalComponent implements OnInit {
 
   actionLabel(actionType: string): string {
     switch (actionType) {
-      case 'Approve':     return 'Approuvée';
-      case 'Dismiss':     return 'Écartée';
-      case 'Override':    return 'Modifiée';
-      case 'LinkPO':      return 'BC créé';
-      case 'Revert':      return 'Annulée';
+      case 'Approve':     return $localize`:@@forecasting.decision-history-modal.ts.approuvee.7d606a51:Approuvée`;
+      case 'Dismiss':     return $localize`:@@forecasting.decision-history-modal.ts.ecartee.42bd51f7:Écartée`;
+      case 'Override':    return $localize`:@@forecasting.decision-history-modal.ts.modifiee.69d9d54f:Modifiée`;
+      case 'LinkPO':      return $localize`:@@forecasting.decision-history-modal.ts.bc.cree.c314b8c1:BC créé`;
+      case 'Revert':      return $localize`:@@forecasting.decision-history-modal.ts.annulee.2776573b:Annulée`;
       case 'AttachNotes': return 'Notes';
-      case 'Generate':    return 'Générée';
+      case 'Generate':    return $localize`:@@forecasting.decision-history-modal.ts.generee.0eaadba4:Générée`;
       default:            return actionType;
     }
   }

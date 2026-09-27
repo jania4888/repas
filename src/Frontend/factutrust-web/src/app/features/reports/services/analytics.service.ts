@@ -233,8 +233,8 @@ export class AnalyticsService {
     const direction: 'up' | 'down' | 'stable' =
       changePercent > 1 ? 'up' : changePercent < -1 ? 'down' : 'stable';
 
-    const periodLabel = period === 'day' ? 'aujourd\'hui' : period === 'month' ? 'ce mois-ci' : 'cette année';
-    const prevLabel = period === 'day' ? 'hier' : period === 'month' ? 'le mois dernier' : 'l\'année dernière';
+    const periodLabel = period === 'day' ? 'aujourd\'hui' : period === 'month' ? $localize`:@@reports.analytics.ts.ce.mois.ci.f30c2ac7:ce mois-ci` : $localize`:@@reports.analytics.ts.cette.annee.9909e9db:cette année`;
+    const prevLabel = period === 'day' ? 'hier' : period === 'month' ? $localize`:@@reports.analytics.ts.le.mois.dernier.15ecb0a2:le mois dernier` : $localize`:@@reports.analytics.ts.l.annee.derniere.372514a8:l'année dernière`;
 
     let message: string;
     if (direction === 'up') {

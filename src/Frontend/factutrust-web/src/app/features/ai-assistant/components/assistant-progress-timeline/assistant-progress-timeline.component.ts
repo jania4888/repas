@@ -612,7 +612,7 @@ export class AssistantProgressTimelineComponent implements OnChanges, OnInit, On
       return 'Analyse en cours';
     }
 
-    return this.detailsExpanded ? '\u00c9tapes du traitement' : 'R\u00e9ponse pr\u00eate';
+    return this.detailsExpanded ? $localize`:@@ai-assistant.assistant-progress-timeline.ts.etapes.du.traitement.93c06168:Étapes du traitement` : $localize`:@@ai-assistant.assistant-progress-timeline.ts.reponse.prete.dcb81431:Réponse prête`;
   }
 
   currentStatusText(): string {
@@ -627,12 +627,12 @@ export class AssistantProgressTimelineComponent implements OnChanges, OnInit, On
 
       if (runningStep.code === 'llm_stream_round' && liveMs !== null && liveMs >= 5000) {
         const time = liveStr ? ` (${liveStr})` : '';
-        return `${composed}${time} \u2014 traitement en cours, merci de patienter`;
+        return $localize`:@@ai-assistant.assistant-progress-timeline.ts.composed.time.traitement.en.cours.merci.b1bf7987:${composed}:composed:${time}:time: \u2014 traitement en cours, merci de patienter`;
       }
 
       if (runningStep.code === 'ollama_queue_wait' && liveMs !== null && liveMs >= 1000) {
         const time = liveStr ? ` (${liveStr})` : '';
-        return `${composed}${time} \u2014 un autre traitement se termine`;
+        return $localize`:@@ai-assistant.assistant-progress-timeline.ts.composed.time.un.autre.traitement.se.ter.5988258d:${composed}:composed:${time}:time: \u2014 un autre traitement se termine`;
       }
 
       return liveStr ? `${composed} \u00b7 ${liveStr}` : composed;
@@ -642,15 +642,15 @@ export class AssistantProgressTimelineComponent implements OnChanges, OnInit, On
         ? Date.now() - this.connectingStartedAt
         : null;
       if (liveMs !== null && liveMs >= 3000) {
-        return `Chargement du mod\u00e8le local en cours (${formatDurationMs(liveMs)})`;
+        return $localize`:@@ai-assistant.assistant-progress-timeline.ts.chargement.du.modele.local.en.cours.form.b2ca052d:Chargement du mod\u00e8le local en cours (${formatDurationMs(liveMs)}:formatDurationMs:)`;
       }
-      return "L'assistant se pr\u00e9pare";
+      return $localize`:@@ai-assistant.assistant-progress-timeline.ts.l.assistant.se.prepare.7cb89b09:L'assistant se prépare`;
     }
-    return 'Pr\u00e9paration en cours';
+    return $localize`:@@ai-assistant.assistant-progress-timeline.ts.preparation.en.cours.28379fdb:Préparation en cours`;
   }
 
   completedStatusText(): string {
-    return getAssistantProgressSummary(this.progress, this.toolCalls) || 'R\u00e9ponse pr\u00e9par\u00e9e';
+    return getAssistantProgressSummary(this.progress, this.toolCalls) || $localize`:@@ai-assistant.assistant-progress-timeline.ts.reponse.preparee.f5fcf17b:Réponse préparée`;
   }
 
   stepMeta(step: AssistantProgressStep): string {

@@ -283,29 +283,29 @@ export function canProcessTimeEntries(project: ProjectTimeLoggingContext | null 
 }
 
 export function timesheetsDisabledMessage(): string {
-  return 'La saisie des temps est désactivée pour ce projet.';
+  return $localize`:@@projects.project-enums.ts.la.saisie.des.temps.est.desactivee.pour.7b19f276:La saisie des temps est désactivée pour ce projet.`;
 }
 
 export function cannotReceiveTimeMessage(raw: unknown): string {
   const s = parseProjectStatus(raw);
   switch (s) {
     case 'Draft':
-      return 'Activez le projet pour saisir du temps. La saisie est interdite en statut Brouillon.';
+      return $localize`:@@projects.project-enums.ts.activez.le.projet.pour.saisir.du.temps.l.ff98f0b0:Activez le projet pour saisir du temps. La saisie est interdite en statut Brouillon.`;
     case 'OnHold':
-      return 'La saisie de temps est interdite pour un projet en pause.';
+      return $localize`:@@projects.project-enums.ts.la.saisie.de.temps.est.interdite.pour.un.c822c75b:La saisie de temps est interdite pour un projet en pause.`;
     case 'Completed':
-      return 'Aucune nouvelle saisie de temps n\'est autorisée sur un projet terminé.';
+      return $localize`:@@projects.project-enums.ts.aucune.nouvelle.saisie.de.temps.n.est.au.2afac007:Aucune nouvelle saisie de temps n'est autorisée sur un projet terminé.`;
     case 'Cancelled':
-      return 'Aucune nouvelle saisie de temps n\'est autorisée sur un projet annulé.';
+      return $localize`:@@projects.project-enums.ts.aucune.nouvelle.saisie.de.temps.n.est.au.5a22abe9:Aucune nouvelle saisie de temps n'est autorisée sur un projet annulé.`;
     default:
-      return 'Activez le projet pour saisir du temps. La saisie est réservée aux projets Actif.';
+      return $localize`:@@projects.project-enums.ts.activez.le.projet.pour.saisir.du.temps.l.e6d64bde:Activez le projet pour saisir du temps. La saisie est réservée aux projets Actif.`;
   }
 }
 
 export function timeEntryCreationBlockedMessage(raw: unknown): string {
   const s = parseProjectStatus(raw);
   if (s === 'OnHold' || s === 'Completed') {
-    return 'La saisie de nouveaux temps est désactivée. Les temps déjà saisis restent consultables et traitables.';
+    return $localize`:@@projects.project-enums.ts.la.saisie.de.nouveaux.temps.est.desactiv.e0e96400:La saisie de nouveaux temps est désactivée. Les temps déjà saisis restent consultables et traitables.`;
   }
   return cannotReceiveTimeMessage(raw);
 }
@@ -351,7 +351,7 @@ export function canReopenValidatedTimeEntry(entry: TimeEntryActionContext): bool
 }
 
 export function timeEntryStatusLabel(entry: TimeEntryActionContext): string {
-  if (isInvoicedTimeEntry(entry)) return 'Facturé';
+  if (isInvoicedTimeEntry(entry)) return $localize`:@@projects.project-enums.ts.facture.55e253e6:Facturé`;
   if (entry.statusDisplay) return entry.statusDisplay;
   return parseProjectTimeStatus(entry.status) ?? 'Draft';
 }
@@ -598,9 +598,9 @@ export function formatDaysUntilDue(dueDate: string | null | undefined): string |
   if (days === null) return null;
   if (days === 0) return "Aujourd'hui";
   if (days === 1) return 'Demain';
-  if (days > 1) return `Dans ${days} jours`;
-  if (days === -1) return 'En retard de 1 jour';
-  return `En retard de ${Math.abs(days)} jours`;
+  if (days > 1) return $localize`:@@projects.project-enums.ts.dans.days.jours.e071d77e:Dans ${days}:days: jours`;
+  if (days === -1) return $localize`:@@projects.project-enums.ts.en.retard.de.1.jour.a1d7110c:En retard de 1 jour`;
+  return $localize`:@@projects.project-enums.ts.en.retard.de.abs.jours.b26fdeb7:En retard de ${Math.abs(days)}:abs: jours`;
 }
 
 export function projectKindPillClass(kind: unknown): string {

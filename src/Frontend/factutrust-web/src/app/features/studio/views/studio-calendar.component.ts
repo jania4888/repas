@@ -311,8 +311,8 @@ export class StudioCalendarComponent {
 
   formatEventDates(ev: RecordViewCalendarEventDto): string {
     const start = parseIsoDate(ev.start).toLocaleDateString('fr-FR');
-    if (!ev.end || ev.end === ev.start) return `le ${start}`;
-    return `du ${start} au ${parseIsoDate(ev.end).toLocaleDateString('fr-FR')}`;
+    if (!ev.end || ev.end === ev.start) return $localize`:@@studio.studio-calendar.ts.le.start.23c3798e:le ${start}:start:`;
+    return $localize`:@@studio.studio-calendar.ts.du.start.au.tolocaledatestring.1f74bee0:du ${start}:start: au ${parseIsoDate(ev.end).toLocaleDateString('fr-FR')}:toLocaleDateString:`;
   }
 
   /** Libellé accessible d'un événement : titre + dates (+ couleur si configurée). */

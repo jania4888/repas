@@ -969,8 +969,7 @@ export class SalesOrderDetailComponent implements OnInit {
 
   private askConfirmation(outstanding: ClientOutstanding | null): void {
     let message =
-      $localize`:@@ui.tern.confirmer.engage.fermement.la.commande.et..59ec81:Confirmer engage fermement la commande et rend les lignes non modifiables. ` +
-      $localize`:@@ui.tern.si.la.reservation.de.stock.est.activee.le..7bb555:Si la réservation de stock est activée, le stock sera réservé.`;
+      $localize`:@@sales-orders.sales-order-detail.ts.confirmer.engage.fermement.la.commande.e.f8e861c7:Confirmer engage fermement la commande et rend les lignes non modifiables. Si la réservation de stock est activée, le stock sera réservé.`;
 
     if (outstanding?.isOverLimit) {
       message +=

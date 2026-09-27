@@ -564,15 +564,15 @@ export function getFirstValidationError(errors: ValidationErrors | null): string
   // Default messages for standard validators
   switch (firstKey) {
     case 'required':
-      return 'Ce champ est obligatoire';
+      return $localize`:@@shared.tunisian-validators.ts.ce.champ.est.obligatoire.17061b6a:Ce champ est obligatoire`;
     case 'minlength':
-      return `Minimum ${error.requiredLength} caractères requis`;
+      return $localize`:@@shared.tunisian-validators.ts.minimum.requiredlength.caracteres.requis.74eda4f6:Minimum ${error.requiredLength}:requiredLength: caractères requis`;
     case 'maxlength':
-      return `Maximum ${error.requiredLength} caractères autorisés`;
+      return $localize`:@@shared.tunisian-validators.ts.maximum.requiredlength.caracteres.autori.f9fb6c0b:Maximum ${error.requiredLength}:requiredLength: caractères autorisés`;
     case 'min':
-      return `La valeur minimum est ${error.min}`;
+      return $localize`:@@shared.tunisian-validators.ts.la.valeur.minimum.est.min.fdb5a870:La valeur minimum est ${error.min}:min:`;
     case 'max':
-      return `La valeur maximum est ${error.max}`;
+      return $localize`:@@shared.tunisian-validators.ts.la.valeur.maximum.est.max.4a02a3c7:La valeur maximum est ${error.max}:max:`;
     case 'email':
       return 'Adresse email invalide';
     case 'pattern':

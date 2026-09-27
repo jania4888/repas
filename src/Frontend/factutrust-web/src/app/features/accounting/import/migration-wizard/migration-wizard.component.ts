@@ -561,7 +561,7 @@ export class MigrationWizardComponent {
       case MigrationSuggestionOrigin.Catalogue: return 'Catalogue';
       case MigrationSuggestionOrigin.Ia: return 'IA';
       case MigrationSuggestionOrigin.Identite: return 'Identique';
-      case MigrationSuggestionOrigin.Prefixe: return 'Préfixe';
+      case MigrationSuggestionOrigin.Prefixe: return $localize`:@@accounting.migration-wizard.ts.prefixe.2fe0a6db:Préfixe`;
       default: return '—';
     }
   }
@@ -572,8 +572,8 @@ export class MigrationWizardComponent {
       case MigrationSourceSystem.Ebp: return 'EBP';
       case MigrationSourceSystem.Cegid: return 'Cegid';
       case MigrationSourceSystem.Quadra: return 'Quadra';
-      case MigrationSourceSystem.TableurGenerique: return 'Tableur générique';
-      default: return 'Non reconnu';
+      case MigrationSourceSystem.TableurGenerique: return $localize`:@@accounting.migration-wizard.ts.tableur.generique.8accc45c:Tableur générique`;
+      default: return $localize`:@@accounting.migration-wizard.ts.non.reconnu.11d9b0c7:Non reconnu`;
     }
   }
 

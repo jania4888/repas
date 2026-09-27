@@ -844,7 +844,7 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         }
 
         this.createSupplierInvoiceModal?.setSubmitting(false);
-        const errorMsg = err?.error?.errors?.[0] ?? err?.error?.message ?? 'Erreur lors de la création';
+        const errorMsg = err?.error?.errors?.[0] ?? err?.error?.message ?? $localize`:@@purchase-receipts.purchase-receipt-detail.ts.erreur.lors.de.la.creation.18def0de:Erreur lors de la création`;
         this.toastService.add({
           severity: 'error',
           summary: isDuplicate ? $localize`:@@purchase-receipts.purchase-receipt-detail.ts.numero.en.doublon.9aeb86ca:Numéro en doublon` : $localize`:@@purchase-receipts.purchase-receipt-detail.ts.erreur.ab546c23:Erreur`,

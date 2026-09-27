@@ -309,8 +309,7 @@ export class BudgetEntryComponent implements OnInit {
     if (this.busy()) return;
     this.confirmationService.confirm({
       message:
-        $localize`:@@accounting.budget-entry.ts.valider.le.budget.initial.fiscalyear.d6af6bff:Valider le budget initial ${this.fiscalYear()}:fiscalYear: ?\n\n` +
-        $localize`:@@ui.tern.le.budget.initial.sera.fige.copie.vers.le..8d6f06:Le budget initial sera figé (copié vers le budget révisé, seule version modifiable ensuite). Cette action est irréversible.`,
+        $localize`:@@accounting.budget-entry.ts.valider.le.budget.initial.fiscalyear.le.0ce3d2a0:Valider le budget initial ${this.fiscalYear()}:fiscalYear: ?\n\nLe budget initial sera figé (copié vers le budget révisé, seule version modifiable ensuite). Cette action est irréversible.`,
       header: $localize`:@@accounting.budget-entry.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@budget-entry.component.acceptLabel.Valider:Valider`,
       rejectLabel: $localize`:@@budget-entry.component.rejectLabel.Annuler:Annuler`,

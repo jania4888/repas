@@ -3,6 +3,7 @@ import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { SupplierInvoiceService, SupplierInvoiceListItem, isSupplierInvoicePaid, isSupplierInvoicePending } from '@core/services/supplier-invoice.service';
 import { formatLocalDate } from '@core/utils/date.util';
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
 
 export type ReportPeriod = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
@@ -341,13 +342,20 @@ export class PurchasesReportsService {
 
   private buildSummaryText(pendingCount: number, amountToPay: number, currency: string): string {
     if (pendingCount === 0) {
-      return 'Toutes vos factures fournisseurs sont à jour.';
+      return $localize`:@@reports.purchases-reports.ts.toutes.vos.factures.fournisseurs.sont.a.07650a2d:Toutes vos factures fournisseurs sont à jour.`;
     }
     const amountStr = new Intl.NumberFormat('fr-FR', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(amountToPay);
-    return `Vous avez ${pendingCount} facture${pendingCount > 1 ? 's' : ''} fournisseur${pendingCount > 1 ? 's' : ''} à payer pour ${amountStr} ${currency}.`;
+    return erpPlural(pendingCount, {
+      zero: $localize`:@@reports.purchases-reports.factures.a.payer.zero:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      one: $localize`:@@reports.purchases-reports.factures.a.payer.one:Vous avez ${pendingCount}:pendingCount: facture fournisseur à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      two: $localize`:@@reports.purchases-reports.factures.a.payer.two:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      few: $localize`:@@reports.purchases-reports.factures.a.payer.few:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      many: $localize`:@@reports.purchases-reports.factures.a.payer.many:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`,
+      other: $localize`:@@reports.purchases-reports.factures.a.payer.other:Vous avez ${pendingCount}:pendingCount: factures fournisseurs à payer pour ${amountStr}:amountStr: ${currency}:currency:.`
+    }, erpPluralLocale());
   }
 
   loadExpenseCrossTabData(): Observable<ExpenseCrossTabData | null> {

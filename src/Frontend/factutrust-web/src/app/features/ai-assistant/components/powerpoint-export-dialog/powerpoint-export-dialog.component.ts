@@ -454,7 +454,7 @@ export class PowerPointExportDialogComponent implements OnInit, OnChanges {
   private buildDefaultTitle(): string {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, '0');
-    return `Synthèse Assistant IA — ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
+    return $localize`:@@ai-assistant.powerpoint-export-dialog.ts.synthese.assistant.ia.pad.pad1.getfullye.b84f60a8:Synthèse Assistant IA — ${pad(now.getDate())}:pad:/${pad(now.getMonth() + 1)}:pad1:/${now.getFullYear()}:getFullYear:`;
   }
 
   private buildLines(input: SelectedAssistantMessage[]): ResponseLine[] {

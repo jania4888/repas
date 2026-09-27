@@ -63,9 +63,9 @@ export function workflowStatusLabel(value: StorefrontWorkflowStatus): string {
     case 'draft':
       return 'Brouillon';
     case 'pendingReview':
-      return 'En attente de validation';
+      return $localize`:@@settings.storefront-workflow-status.ts.en.attente.de.validation.a553ea16:En attente de validation`;
     case 'published':
-      return 'Publiée';
+      return $localize`:@@settings.storefront-workflow-status.ts.publiee.ebef6edc:Publiée`;
     case 'suspended':
       return 'Suspendue';
     default: {

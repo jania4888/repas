@@ -1518,11 +1518,11 @@ export class ChatMessageComponent implements OnChanges {
   get reminderExpiryLabel(): string {
     const action = this.message.firmReminderAction;
     if (!action?.expiresAtUtc) {
-      return 'Expire dans 5 min';
+      return $localize`:@@ai-assistant.chat-message.ts.expire.dans.5.min.d79f5d42:Expire dans 5 min`;
     }
     const t = Date.parse(action.expiresAtUtc);
     if (Number.isNaN(t)) {
-      return 'Expire dans 5 min';
+      return $localize`:@@ai-assistant.chat-message.ts.expire.dans.5.min.d79f5d42:Expire dans 5 min`;
     }
     const mins = Math.round((t - Date.now()) / 60000);
     return mins > 0 ? $localize`:@@ui.tern.expire.dans.ph.min.2d8ebb:Expire dans ${mins}:p0: min` : $localize`:@@ui.tern.expiree.1f0808:Expirée`;

@@ -393,7 +393,7 @@ export class RevenueForecastComponent implements OnInit {
       case 'sma': return 'Moyenne mobile (SMA)';
       case 'holt': return 'Lissage exponentiel double (Holt)';
       case 'holtWinters': return 'Holt-Winters multiplicatif';
-      case 'calendarHeuristic': return 'Heuristique calendaire (historique limité)';
+      case 'calendarHeuristic': return $localize`:@@forecasting.revenue-forecast.ts.heuristique.calendaire.historique.limite.eaa82a2c:Heuristique calendaire (historique limité)`;
       default: return method;
     }
   }

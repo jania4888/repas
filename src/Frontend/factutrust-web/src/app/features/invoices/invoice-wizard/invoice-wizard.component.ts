@@ -837,7 +837,7 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
         error: (error) => {
           // The error message is already stored in the service state and displayed in the preview component
           // We still show a toast for immediate feedback, but the detailed error is in the preview
-          const errorMessage = error.message || this.wizardService.submissionError() || "Impossible d'émettre la facture";
+          const errorMessage = error.message || this.wizardService.submissionError() || $localize`:@@invoices.invoice-wizard.ts.impossible.d.emettre.la.facture.973e03c0:Impossible d'émettre la facture`;
           
           this.toastService.add({
             severity: 'error',

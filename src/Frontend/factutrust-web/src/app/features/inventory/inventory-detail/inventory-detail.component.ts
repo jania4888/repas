@@ -107,9 +107,9 @@ export class InventoryDetailComponent implements OnInit {
   }
 
   getDiffAriaLabel(difference: number): string {
-    if (difference > 0) return `Écart: surplus ${difference}`;
-    if (difference < 0) return `Écart: manquant ${Math.abs(difference)}`;
-    return 'Écart: nul';
+    if (difference > 0) return $localize`:@@inventory.inventory-detail.ts.ecart.surplus.difference.6dd516eb:Écart: surplus ${difference}:difference:`;
+    if (difference < 0) return $localize`:@@inventory.inventory-detail.ts.ecart.manquant.abs.43d8b199:Écart: manquant ${Math.abs(difference)}:abs:`;
+    return $localize`:@@inventory.inventory-detail.ts.ecart.nul.4609d379:Écart: nul`;
   }
 
   goToList(): void {
