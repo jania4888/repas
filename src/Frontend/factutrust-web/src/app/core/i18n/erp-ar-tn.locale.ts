@@ -4,6 +4,9 @@ import localeArTN from '@angular/common/locales/ar-TN';
 
 type LocaleArray = readonly unknown[];
 
+/** Position de la fonction de pluriel dans les données de locale Angular (LocaleDataIndex.PluralCase). */
+const PLURAL_CASE_INDEX = 20;
+
 function cloneLocaleData(data: LocaleArray): unknown[] {
   return JSON.parse(JSON.stringify(data)) as unknown[];
 }
@@ -24,5 +27,8 @@ export function registerHybridArTnLocale(
   if (ar[7] !== undefined) fr[7] = cloneLocaleData(ar[7] as LocaleArray);
   if (ar[9] !== undefined) fr[9] = cloneLocaleData(ar[9] as LocaleArray);
   fr[19] = 'rtl';
+  // La fonction de pluriel ne survit pas au clonage JSON (elle deviendrait null et ferait
+  // planter les ICU `plural` et I18nPluralPipe) : on reprend celle de l'arabe, par référence.
+  fr[PLURAL_CASE_INDEX] = ar[PLURAL_CASE_INDEX];
   registerLocaleData(fr as Parameters<typeof registerLocaleData>[0], 'ar-TN', extraArTn);
 }
