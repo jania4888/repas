@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -49,7 +50,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
 
       @if (grid(); as g) {
         <span class="be-badge" [class.be-badge-draft]="g.status === 0" [class.be-badge-validated]="g.status === 1">
-          {{ g.status === 1 ? 'Initial validé' : 'Brouillon budgétaire' }}
+          {{ g.status === 1 ? loc_ui_tern_initial_valide_39455a : loc_ui_tern_brouillon_budgetaire_3977e5 }}
         </span>
         @if (g.status === 1) {
           <span class="be-validated-info">
@@ -60,17 +61,17 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
 
       <div class="be-actions">
         @if (grid()?.status === 0 && canValidate()) {
-          <app-button variant="secondary" icon="pi pi-lock" type="button" (click)="validateInitial()" [disabled]="busy()" i18n="@@accounting.budget-entry.valider.le.budget.initial.ec885ae3">Valider le budget initial</app-button>
+          <app-button variant="secondary" icon="pi pi-lock" type="button" (click)="validateInitial()" [disabled]="busy()" i18n="@@accounting.budget-entry.valider.le.budget.initial.ec885ae3"> Valider le budget initial </app-button>
         }
         <app-button variant="primary" icon="pi pi-save" type="button" (click)="save()" [disabled]="busy() || rows().length === 0">
-          {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
         </app-button>
       </div>
     </div>
 
     @if (distributeFor(); as row) {
       <div class="card be-distribute">
-        <span>Répartir un montant annuel sur <strong>{{ row.code }} — {{ row.label }}</strong> (linéaire, reliquat sur décembre) :</span>
+        <span><ng-container i18n="@@accounting.budget-entry.repartir.un.montant.annuel.sur.47f3b5e7">Répartir un montant annuel sur </ng-container> <strong>{{ row.code }} — {{ row.label }}</strong> (linéaire, reliquat sur décembre) :</span>
         <input type="number" class="be-inp be-dist-inp" [(ngModel)]="distributeAmount" min="0" step="0.001" placeholder="Montant annuel" i18n-placeholder="Montant annuel" />
         <button type="button" class="btn btn-primary" (click)="applyDistribution()" i18n="@@accounting.budget-entry.repartir.d7593598">Répartir</button>
         <button type="button" class="btn btn-secondary" (click)="distributeFor.set(null)" i18n="@@accounting.budget-entry.annuler.49ba3292">Annuler</button>
@@ -162,6 +163,10 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
   `
 })
 export class BudgetEntryComponent implements OnInit {
+  readonly loc_ui_tern_initial_valide_39455a = $localize`:@@ui.tern.initial.valide.39455a:Initial validé`;
+  readonly loc_ui_tern_brouillon_budgetaire_3977e5 = $localize`:@@ui.tern.brouillon.budgetaire.3977e5:Brouillon budgétaire`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -232,7 +237,7 @@ export class BudgetEntryComponent implements OnInit {
         if (!res.success || !res.data) {
           this.grid.set(null);
           this.rows.set([]);
-          this.error.set(res.error ?? 'Erreur de chargement de la grille budgétaire.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.de.la.grille.budgetai.b383de:Erreur de chargement de la grille budgétaire.`);
           return;
         }
         const g = res.data;
@@ -286,10 +291,10 @@ export class BudgetEntryComponent implements OnInit {
       next: res => {
         this.saving.set(false);
         if (!res.success) {
-          this.error.set(res.error ?? "L'enregistrement du budget a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.enregistrement.du.budget.a.echoue.7cabe0:L'enregistrement du budget a échoué.`);
           return;
         }
-        this.toast.add({ severity: 'success', summary: 'Budget enregistré', detail: `Exercice ${this.fiscalYear()}`, life: 4000 });
+        this.toast.add({ severity: 'success', summary: $localize`:@@budget-entry.component.summary.Budget_enregistr:Budget enregistré`, detail: `Exercice ${this.fiscalYear()}`, life: 4000 });
         this.load();
       },
       error: err => {
@@ -305,10 +310,10 @@ export class BudgetEntryComponent implements OnInit {
     this.confirmationService.confirm({
       message:
         `Valider le budget initial ${this.fiscalYear()} ?\n\n` +
-        'Le budget initial sera figé (copié vers le budget révisé, seule version modifiable ensuite). Cette action est irréversible.',
+        $localize`:@@ui.tern.le.budget.initial.sera.fige.copie.vers.le..8d6f06:Le budget initial sera figé (copié vers le budget révisé, seule version modifiable ensuite). Cette action est irréversible.`,
       header: 'Confirmation',
-      acceptLabel: 'Valider',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@budget-entry.component.acceptLabel.Valider:Valider`,
+      rejectLabel: $localize`:@@budget-entry.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.validating.set(true);
         this.error.set(null);
@@ -316,10 +321,10 @@ export class BudgetEntryComponent implements OnInit {
           next: res => {
             this.validating.set(false);
             if (!res.success) {
-              this.error.set(res.error ?? 'La validation du budget initial a échoué.');
+              this.error.set(res.error ?? $localize`:@@ui.tern.la.validation.du.budget.initial.a.echoue.d3cadb:La validation du budget initial a échoué.`);
               return;
             }
-            this.toast.add({ severity: 'success', summary: 'Budget initial validé', detail: `Exercice ${this.fiscalYear()}`, life: 4000 });
+            this.toast.add({ severity: 'success', summary: $localize`:@@budget-entry.component.summary.Budget_initial_v:Budget initial validé`, detail: `Exercice ${this.fiscalYear()}`, life: 4000 });
             this.load();
           },
           error: err => {

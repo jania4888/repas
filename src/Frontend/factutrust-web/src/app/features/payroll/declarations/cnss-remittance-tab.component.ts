@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -93,7 +94,7 @@ const MONTH_LABELS = [
           severity="warn"
           text="Le matricule employeur CNSS est manquant. Configurez-le pour exporter le bordereau ou enregistrer un versement."
           styleClass="w-full" />
-        <app-button variant="ghost" routerLink="/settings/company" icon="pi-cog" iconPos="left" i18n="@@payroll.declarations.configurer.le.matricule.189aecce">Configurer le matricule</app-button>
+        <app-button variant="ghost" routerLink="/settings/company" icon="pi-cog" iconPos="left" i18n="@@payroll.declarations.configurer.le.matricule.189aecce"> Configurer le matricule </app-button>
       </div>
     }
 
@@ -122,7 +123,7 @@ const MONTH_LABELS = [
       <app-payroll-empty-state
         icon="pi-calendar"
         title="Cycle de paie non disponible" i18n-title="Cycle de paie non disponible"
-        [description]="'Aucun cycle validé ou clôturé pour ' + monthLabel() + '.'"
+        [description]="loc_ui_tern_aucun_cycle_valide_ou_cloture_pour_172d01 + monthLabel() + '.'"
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
         actionRoute="/payroll/runs" />
@@ -205,6 +206,7 @@ const MONTH_LABELS = [
   `]
 })
 export class CnssRemittanceTabComponent implements OnInit {
+  readonly loc_ui_tern_aucun_cycle_valide_ou_cloture_pour_172d01 = $localize`:@@ui.tern.aucun.cycle.valide.ou.cloture.pour.172d01:Aucun cycle validé ou clôturé pour `;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -272,7 +274,7 @@ export class CnssRemittanceTabComponent implements OnInit {
     const p = this.remittance()?.payment;
     if (!p) return '';
     const date = new Date(p.paymentDate).toLocaleDateString('fr-TN');
-    return `Versement enregistré le ${date}${p.reference ? ' — Réf. ' + p.reference : ''}`;
+    return `Versement enregistré le ${date}${p.reference ? $localize`:@@ui.tern.ref.44045a: — Réf. ` + p.reference : ''}`;
   }
 
   load(): void {
@@ -283,15 +285,15 @@ export class CnssRemittanceTabComponent implements OnInit {
       next: res => this.remittance.set(res.data ?? null),
       error: err => {
         this.remittance.set(null);
-        const message = err?.error?.message ?? err?.error?.error ?? 'Impossible de générer le bordereau.';
+        const message = err?.error?.message ?? err?.error?.error ?? $localize`:@@ui.tern.impossible.de.generer.le.bordereau.d130b4:Impossible de générer le bordereau.`;
         const isMissingMatricule =
           err?.error?.error?.code === 'CnssEmployerNumber' ||
           (typeof message === 'string' && message.toLowerCase().includes('matricule employeur cnss'));
         this.toast.add({
           severity: 'error',
-          summary: 'Bordereau CNSS',
+          summary: $localize`:@@cnss-remittance-tab.component.summary.Bordereau CN:Bordereau CNSS`,
           detail: isMissingMatricule
-            ? 'Le matricule employeur CNSS est obligatoire. Configurez-le dans Mon entreprise.'
+            ? $localize`:@@ui.tern.le.matricule.employeur.cnss.est.obligatoir.d9d786:Le matricule employeur CNSS est obligatoire. Configurez-le dans Mon entreprise.`
             : message
         });
       }
@@ -302,7 +304,7 @@ export class CnssRemittanceTabComponent implements OnInit {
     if (!this.canExport()) return;
     this.payroll.exportCnssRemittanceCsv(this.year, this.month).subscribe({
       next: blob => downloadBlob(blob, `bordereau_cnss_${this.year}_${String(this.month).padStart(2, '0')}.csv`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Bordereau CNSS', detail: 'Export CSV impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@cnss-remittance-tab.component.summary.Bordereau CN:Bordereau CNSS`, detail: $localize`:@@cnss-remittance-tab.component.detail.Export CSV i:Export CSV impossible.` })
     });
   }
 
@@ -310,7 +312,7 @@ export class CnssRemittanceTabComponent implements OnInit {
     if (!this.canExport()) return;
     this.payroll.exportCnssRemittancePdf(this.year, this.month).subscribe({
       next: blob => downloadBlob(blob, `bordereau_cnss_${this.year}_${String(this.month).padStart(2, '0')}.pdf`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Bordereau CNSS', detail: 'Export PDF impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@cnss-remittance-tab.component.summary.Bordereau CN:Bordereau CNSS`, detail: $localize`:@@cnss-remittance-tab.component.detail.Export PDF i:Export PDF impossible.` })
     });
   }
 

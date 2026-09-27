@@ -33,7 +33,7 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
   imports: [DialogModule, ButtonComponent],
   template: `
     <p-dialog
-      header="Importer une facture"
+      header="Importer une facture" i18n-header="Importer une facture"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: '520px', maxWidth: '95vw' }"
@@ -73,7 +73,7 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
                 icon="pi-times"
                 iconPos="left"
                 (click)="cancelImport()"
-                ariaLabel="Annuler l'import" i18n="@@invoices.components.annuler.49ba3292">Annuler</app-button>
+                ariaLabel="Annuler l'import" i18n="@@invoices.components.annuler.49ba3292"> Annuler </app-button>
             </div>
           }
           @case ('error') {
@@ -86,21 +86,21 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
                 icon="pi-refresh"
                 iconPos="left"
                 (click)="chooseFile()"
-                ariaLabel="Choisir un autre fichier" i18n="@@invoices.components.reessayer.895d416b">Réessayer</app-button>
+                ariaLabel="Choisir un autre fichier" i18n="@@invoices.components.reessayer.895d416b"> Réessayer </app-button>
             </div>
           }
           @default {
             <div class="iid-state">
               <i class="pi pi-file-import iid-icon iid-icon-idle" aria-hidden="true"></i>
               <p class="iid-title" i18n="@@invoices.components.importez.une.facture.existante.92f95412">Importez une facture existante</p>
-              <p class="iid-text" i18n="@@invoices.components.facture.bon.de.livraison.ou.devis.pdf.recommande.0a63dc73">Facture, bon de livraison ou devis (PDF recommandé ; photos acceptées).
-                L'IA en extraira les données ; vous pourrez tout vérifier avant de valider.</p>
+              <p class="iid-text" i18n="@@invoices.components.facture.bon.de.livraison.ou.devis.pdf.recommande.0a63dc73"> Facture, bon de livraison ou devis (PDF recommandé ; photos acceptées).
+                L'IA en extraira les données ; vous pourrez tout vérifier avant de valider. </p>
               <app-button
                 variant="primary"
                 icon="pi-upload"
                 iconPos="left"
                 (click)="chooseFile()"
-                ariaLabel="Choisir un fichier à importer" i18n="@@invoices.components.choisir.un.fichier.75c27e25">Choisir un fichier</app-button>
+                ariaLabel="Choisir un fichier à importer" i18n="@@invoices.components.choisir.un.fichier.75c27e25"> Choisir un fichier </app-button>
               <p class="iid-hint" i18n="@@invoices.components.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
               @if (modelReady() === true) {
                 <p class="iid-hint iid-hint-ready">
@@ -313,7 +313,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
     this.elapsedTimer = setInterval(() => {
       const next = this.elapsedSeconds() + 1;
       this.elapsedSeconds.set(next);
-      this.progressLabel.set(next < 8 ? 'Lecture du document…' : 'Analyse IA…');
+      this.progressLabel.set(next < 8 ? $localize`:@@ui.tern.lecture.du.document.f74989:Lecture du document…` : $localize`:@@ui.tern.analyse.ia.258a68:Analyse IA…`);
     }, 1000);
   }
 
@@ -374,7 +374,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
     }
 
     return "Impossible d'extraire la facture de ce fichier. "
-      + 'Vérifiez le document ou saisissez la facture manuellement.';
+      + $localize`:@@ui.tern.verifiez.le.document.ou.saisissez.la.factu.92c3f1:Vérifiez le document ou saisissez la facture manuellement.`;
   }
 
   /** Déclenché par la fermeture native de p-dialog (croix, Échap, clic backdrop). */

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +19,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 @Component({
   selector: 'app-payroll-overtime-grid',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -56,7 +58,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
           <tr>
             <td>{{ line.employeeName }}</td>
             <td class="text-right">{{ line.hours }}</td>
-            <td class="text-right">{{ line.ratePercentDisplay }}</td>
+            <td class="text-right">{{ line.ratePercentDisplay | backendLabel }}</td>
             <td class="text-right">{{ line.computedAmount | payrollAmount }}</td>
             <td class="text-right">
               {{ line.effectiveAmount | payrollAmount }}
@@ -79,7 +81,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
       </div>
     </app-payroll-section>
 
-    <p-dialog [header]="editingId ? 'Modifier heures sup.' : 'Nouvelles heures sup.'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
+    <p-dialog [header]="editingId ? loc_ui_tern_modifier_heures_sup_811294 : loc_ui_tern_nouvelles_heures_sup_a24bc4" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.runs.salarie.27f97915">Salarié</label>
         <p-select [options]="employees()" optionLabel="fullName" optionValue="id" [(ngModel)]="formEmployeeId" (ngModelChange)="onEmployeeChange()" appendTo="body" styleClass="w-full" [disabled]="!!editingId" />
@@ -100,7 +102,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
       </div>
       <p class="payroll-info-text">Formule : (salaire base ÷ {{ divisorLabel }}) × heures × (taux % ÷ 100)</p>
       @if (previewAmount() !== null) {
-        <p>Montant appliqué : <strong>{{ previewAmount() | payrollAmount }}</strong></p>
+        <p><ng-container i18n="@@payroll.runs.montant.applique.b4674e8b">Montant appliqué : </ng-container> <strong>{{ previewAmount() | payrollAmount }}</strong></p>
       }
       <ng-template pTemplate="footer">
         <app-button variant="outline" (click)="dialogVisible = false" i18n="@@payroll.runs.annuler.49ba3292">Annuler</app-button>
@@ -117,6 +119,8 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
   `]
 })
 export class PayrollOvertimeGridComponent implements OnInit {
+  readonly loc_ui_tern_modifier_heures_sup_811294 = $localize`:@@ui.tern.modifier.heures.sup.811294:Modifier heures sup.`;
+  readonly loc_ui_tern_nouvelles_heures_sup_a24bc4 = $localize`:@@ui.tern.nouvelles.heures.sup.a24bc4:Nouvelles heures sup.`;
   @Input({ required: true }) year!: number;
   @Input({ required: true }) month!: number;
   @Input() readOnly = false;
@@ -160,7 +164,7 @@ export class PayrollOvertimeGridComponent implements OnInit {
   reload(): void {
     this.payroll.listOvertime(this.year, this.month).subscribe({
       next: res => this.lines.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Heures sup.', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`, detail: $localize`:@@payroll-overtime-grid.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -242,14 +246,14 @@ export class PayrollOvertimeGridComponent implements OnInit {
 
     req.subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Heures sup.', detail: 'Enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`, detail: $localize`:@@payroll-overtime-grid.component.detail.Enregistr_:Enregistré.` });
         this.dialogVisible = false;
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Heures sup.',
-        detail: err?.error?.message ?? 'Enregistrement impossible.'
+        summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
       })
     });
   }
@@ -259,8 +263,8 @@ export class PayrollOvertimeGridComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer les heures sup. de ${line.employeeName} ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@payroll-overtime-grid.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@payroll-overtime-grid.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(line.id)
     });
@@ -269,13 +273,13 @@ export class PayrollOvertimeGridComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteOvertime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Heures sup.', detail: 'Ligne supprimée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`, detail: $localize`:@@payroll-overtime-grid.component.detail.Ligne_supprim_e_:Ligne supprimée.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Heures sup.',
-        detail: err?.error?.message ?? 'Suppression impossible.'
+        summary: $localize`:@@payroll-overtime-grid.component.summary.Heures sup.:Heures sup.`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
       })
     });
   }

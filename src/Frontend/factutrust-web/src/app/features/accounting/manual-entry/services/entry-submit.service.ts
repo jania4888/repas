@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Injectable, inject } from '@angular/core';
 import { Observable, concatMap, from, of, toArray, catchError, map } from 'rxjs';
 import { AccountingService } from '../../services/accounting.service';
@@ -142,7 +143,7 @@ export class EntrySubmitService {
     if (result.attachmentFailures && result.attachmentFailures.length > 0) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Pièces jointes partielles',
+        summary: $localize`:@@entry-submit.service.summary.Pi_ces_jointes_p:Pièces jointes partielles`,
         detail: `Échec pour : ${result.attachmentFailures.join(', ')}. Vous pouvez les ajouter depuis le journal.`,
         life: 8000
       });

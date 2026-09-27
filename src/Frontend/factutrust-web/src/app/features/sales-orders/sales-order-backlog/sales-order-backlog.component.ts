@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -42,7 +43,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <app-page-header
       title="Carnet de commandes" i18n-title="Carnet de commandes"
       subtitle="Ce qui est engagé et pas encore livré, ligne par ligne. Seules les commandes confirmées ou partiellement livrées y figurent.">
-      <app-button variant="secondary" icon="pi-arrow-left" iconPos="left" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-backlog.retour.aux.commandes.68a21472">Retour aux commandes</app-button>
+      <app-button variant="secondary" icon="pi-arrow-left" iconPos="left" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-backlog.retour.aux.commandes.68a21472"> Retour aux commandes </app-button>
     </app-page-header>
 
     <div class="ft-filters">
@@ -98,7 +99,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 @if (row.expectedDeliveryDate) {
                   {{ row.expectedDeliveryDate | date: 'dd/MM/yyyy' }}
                   @if (row.isLate) {
-                    <p-tag severity="danger" value="En retard" pTooltip="Échéance dépassée."></p-tag>
+                    <p-tag severity="danger" value="En retard" pTooltip="Échéance dépassée." i18n-pTooltip="Échéance dépassée."></p-tag>
                   }
                 } @else {
                   <span class="ft-muted" i18n="@@sales-orders.sales-order-backlog.non.datee.5a5eade0">Non datée</span>
@@ -187,7 +188,7 @@ export class SalesOrderBacklogComponent implements OnInit {
         const msg = this.errorHandler.extractErrorMessage(err);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@sales-order-backlog.component.summary.Erreur:Erreur`,
           detail: msg || 'Impossible de charger le carnet de commandes'
         });
         this.errorHandler.logError('Failed to load sales order backlog', err);

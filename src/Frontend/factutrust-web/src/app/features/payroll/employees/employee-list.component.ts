@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -39,8 +40,8 @@ type StatusFilter = 'all' | 'active' | 'inactive';
   ],
   template: `
     <app-page-header
-      [title]="firmInternal() ? 'Salariés du cabinet' : 'Salariés'"
-      [subtitle]="firmInternal() ? 'Paie interne — collaborateurs du cabinet.' : 'Dossiers salariés et contrats de travail.'">
+      [title]="firmInternal() ? loc_ui_tern_salaries_du_cabinet_791140 : loc_ui_tern_salaries_ce6838"
+      [subtitle]="firmInternal() ? loc_ui_tern_paie_interne_collaborateurs_du_cabinet_74de5b : loc_ui_tern_dossiers_salaries_et_contrats_de_travail_b70e08">
       @if (canManage()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" [routerLink]="routeBase() + '/employees/new'" i18n="@@payroll.employees.nouveau.salarie.c5cbf8b1">Nouveau salarié</app-button>
       }
@@ -101,7 +102,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
             <td>{{ e.jobTitle || '—' }}</td>
             <td class="text-right">{{ e.currentBaseSalary | payrollAmount }}</td>
             <td>
-              <p-tag [value]="e.isActive ? 'Actif' : 'Inactif'" [severity]="e.isActive ? 'success' : 'secondary'" />
+              <p-tag [value]="e.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033" [severity]="e.isActive ? 'success' : 'secondary'" />
               @if (e.parentClaimsStatus === 'Incomplete') {
                 <p-tag value="Parents à compléter" severity="warn" class="ml-1" />
               }
@@ -119,6 +120,12 @@ type StatusFilter = 'all' | 'active' | 'inactive';
   `
 })
 export class EmployeeListComponent implements OnInit {
+  readonly loc_ui_tern_salaries_du_cabinet_791140 = $localize`:@@ui.tern.salaries.du.cabinet.791140:Salariés du cabinet`;
+  readonly loc_ui_tern_salaries_ce6838 = $localize`:@@ui.tern.salaries.ce6838:Salariés`;
+  readonly loc_ui_tern_paie_interne_collaborateurs_du_cabinet_74de5b = $localize`:@@ui.tern.paie.interne.collaborateurs.du.cabinet.74de5b:Paie interne — collaborateurs du cabinet.`;
+  readonly loc_ui_tern_dossiers_salaries_et_contrats_de_travail_b70e08 = $localize`:@@ui.tern.dossiers.salaries.et.contrats.de.travail.b70e08:Dossiers salariés et contrats de travail.`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
   private readonly employees = inject(EmployeeService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -157,7 +164,7 @@ export class EmployeeListComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.toast.add({ severity: 'error', summary: 'Salariés', detail: 'Impossible de charger les salariés.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@employee-list.component.summary.Salariés:Salariés`, detail: $localize`:@@employee-list.component.detail.Impossible d:Impossible de charger les salariés.` });
         this.loading.set(false);
       }
     });

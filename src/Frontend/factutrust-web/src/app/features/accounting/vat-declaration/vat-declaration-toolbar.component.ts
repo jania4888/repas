@@ -26,18 +26,18 @@ import { isCompanyAccountingRestricted } from '@core/config/company-accounting-n
         </div>
         <div class="vat-toolbar-actions">
           <app-button variant="secondary" icon="pi pi-chevron-left" type="button" (click)="prevPeriod.emit()" [disabled]="loading" ariaLabel="Période précédente" />
-          <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" type="button" (click)="refresh.emit()" [disabled]="loading" ariaLabel="Actualiser la déclaration" i18n="@@accounting.vat-declaration.actualiser.9d3b2a7d">Actualiser</app-button>
+          <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" type="button" (click)="refresh.emit()" [disabled]="loading" ariaLabel="Actualiser la déclaration" i18n="@@accounting.vat-declaration.actualiser.9d3b2a7d"> Actualiser </app-button>
           @if (showAiAnalyze) {
             <app-analyze-with-ai-button screenId="accounting-vat-declaration" density="toolbar" [payloadBuilder]="payloadBuilder" [disabled]="loading" />
           }
           @if (showPreview) {
-            <app-button variant="secondary" icon="pi pi-eye" iconPos="left" type="button" (click)="previewPdf.emit()" [disabled]="loading || !hasData" ariaLabel="Aperçu avant impression" i18n="@@accounting.vat-declaration.apercu.f0f53004">Aperçu</app-button>
+            <app-button variant="secondary" icon="pi pi-eye" iconPos="left" type="button" (click)="previewPdf.emit()" [disabled]="loading || !hasData" ariaLabel="Aperçu avant impression" i18n="@@accounting.vat-declaration.apercu.f0f53004"> Aperçu </app-button>
           }
           @if (showExportPdf) {
-            <app-button variant="secondary" icon="pi pi-file-pdf" iconPos="left" type="button" (click)="exportPdf.emit()" [disabled]="loading || !hasData" ariaLabel="Exporter en PDF" i18n="@@accounting.vat-declaration.exporter.pdf.9a2c3956">Exporter PDF</app-button>
+            <app-button variant="secondary" icon="pi pi-file-pdf" iconPos="left" type="button" (click)="exportPdf.emit()" [disabled]="loading || !hasData" ariaLabel="Exporter en PDF" i18n="@@accounting.vat-declaration.exporter.pdf.9a2c3956"> Exporter PDF </app-button>
           }
           @if (showOfficialForm) {
-            <app-button variant="secondary" icon="pi pi-file-export" iconPos="left" type="button" (click)="exportOfficialForm.emit()" [disabled]="loading || !hasData" ariaLabel="Exporter le formulaire officiel DGI" i18n="@@accounting.vat-declaration.formulaire.officiel.285536d7">Formulaire officiel</app-button>
+            <app-button variant="secondary" icon="pi pi-file-export" iconPos="left" type="button" (click)="exportOfficialForm.emit()" [disabled]="loading || !hasData" ariaLabel="Exporter le formulaire officiel DGI" i18n="@@accounting.vat-declaration.formulaire.officiel.285536d7"> Formulaire officiel </app-button>
           }
           @if (showPreClosingControls) {
             <a class="vat-toolbar-link" routerLink="/accounting/pre-closing" aria-label="Contrôles de pré-clôture" i18n-aria-label="Contrôles de pré-clôture">

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,12 +27,12 @@ import { ToastModule } from 'primeng/toast';
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      [title]="(reportId ? 'Modifier' : 'Nouveau') + ' rapport'"
+      [title]="(reportId ? loc_ui_tern_modifier_f260e7 : loc_ui_tern_nouveau_b9676c) + loc_ui_tern_rapport_fe9579"
       subtitle="Configurez source, filtres, agrégations et aperçu."
       [breadcrumbs]="breadcrumbs()">
       <div studioActions class="studio-head-actions">
-        <button pButton type="button" label="Aperçu" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
-        <button pButton type="button" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
+        <button pButton type="button" label="Aperçu" i18n-label="Aperçu" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
       </div>
 
       <app-studio-designer-shell previewTitle="Aperçu du rapport">
@@ -58,7 +59,7 @@ import { ToastModule } from 'primeng/toast';
             <ng-container *ngIf="grouping.length > 0">
               <div class="ft-block-head">
                 <label class="ft-lbl" i18n="@@studio.studio-report-designer.calculs.agregations.2ad91593">Calculs (agrégations)</label>
-                <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" (click)="addAgg()"></button>
+                <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" i18n-label="Ajouter" (click)="addAgg()"></button>
               </div>
               <div class="ft-line" *ngFor="let a of aggregations; let i = index">
                 <p-select [options]="fnOptions" [(ngModel)]="a.fn" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme"></p-select>
@@ -71,7 +72,7 @@ import { ToastModule } from 'primeng/toast';
 
             <div class="ft-block-head">
               <label class="ft-lbl" i18n="@@studio.studio-report-designer.filtres.2a8e76e0">Filtres</label>
-              <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" (click)="addFilter()"></button>
+              <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" i18n-label="Ajouter" (click)="addFilter()"></button>
             </div>
             <div class="ft-line" *ngFor="let f of filters; let i = index">
               <p-select [options]="fieldOptions()" [(ngModel)]="f.field" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-grow"></p-select>
@@ -82,7 +83,7 @@ import { ToastModule } from 'primeng/toast';
 
             <div class="ft-block-head">
               <label class="ft-lbl" i18n="@@studio.studio-report-designer.tri.c05261e0">Tri</label>
-              <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" (click)="addSort()"></button>
+              <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" i18n-label="Ajouter" (click)="addSort()"></button>
             </div>
             <div class="ft-line" *ngFor="let s of sort; let i = index">
               <p-select [options]="sortFieldOptions()" [(ngModel)]="s.field" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-grow"></p-select>
@@ -104,6 +105,9 @@ import { ToastModule } from 'primeng/toast';
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioReportDesignerComponent implements OnInit {
+  readonly loc_ui_tern_modifier_f260e7 = $localize`:@@ui.tern.modifier.f260e7:Modifier`;
+  readonly loc_ui_tern_nouveau_b9676c = $localize`:@@ui.tern.nouveau.b9676c:Nouveau`;
+  readonly loc_ui_tern_rapport_fe9579 = $localize`:@@ui.tern.rapport.fe9579: rapport`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly route = inject(ActivatedRoute);
@@ -159,7 +163,7 @@ export class StudioReportDesignerComponent implements OnInit {
     // Un groupe par domaine métier : 80 tables à plat seraient inutilisables.
     const byDomain = new Map<string, { displayName: string; id: string }[]>();
     for (const source of all.filter(s => s.kind === 'sql')) {
-      const domain = source.domain ?? 'Autres';
+      const domain = source.domain ?? $localize`:@@ui.tern.autres.2f0dd0:Autres`;
       (byDomain.get(domain) ?? byDomain.set(domain, []).get(domain)!).push(this.toOption(source));
     }
     for (const [label, items] of byDomain) {
@@ -257,12 +261,12 @@ export class StudioReportDesignerComponent implements OnInit {
         if (res.success) {
           this.lazyFields.update(current => ({ ...current, [cacheKey]: res.data ?? [] }));
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? 'Champs indisponibles.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-designer.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? $localize`:@@ui.tern.champs.indisponibles.9c357c:Champs indisponibles.` });
         }
       },
       error: err => this.toast.add({
-        severity: 'error', summary: 'Erreur',
-        detail: err?.error?.message ?? 'Champs de la source indisponibles.'
+        severity: 'error', summary: $localize`:@@studio-report-designer.component.summary.Erreur:Erreur`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.champs.de.la.source.indisponibles.8712cc:Champs de la source indisponibles.`
       })
     });
   }
@@ -294,17 +298,17 @@ export class StudioReportDesignerComponent implements OnInit {
 
   preview(): void {
     const src = this.selectedSource();
-    if (!src) { this.toast.add({ severity: 'warn', summary: 'Source requise', detail: 'Choisissez une source de données.' }); return; }
+    if (!src) { this.toast.add({ severity: 'warn', summary: $localize`:@@studio-report-designer.component.summary.Source requi:Source requise`, detail: $localize`:@@studio-report-designer.component.detail.Choisissez_une_s:Choisissez une source de données.` }); return; }
     this.studio.previewReport({ dataSourceKind: this.kindValue(), dataSourceRef: src.ref, definition: this.buildDefinition() }).subscribe({
-      next: res => { if (res.success) this.result.set(res.data); else this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? 'Aperçu impossible.' }); },
-      error: err => this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Aperçu impossible.' })
+      next: res => { if (res.success) this.result.set(res.data); else this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-designer.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? $localize`:@@ui.tern.apercu.impossible.8df7df:Aperçu impossible.` }); },
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-designer.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.apercu.impossible.8df7df:Aperçu impossible.` })
     });
   }
 
   save(): void {
     const src = this.selectedSource();
-    if (!src) { this.toast.add({ severity: 'warn', summary: 'Source requise', detail: 'Choisissez une source de données.' }); return; }
-    if (!this.displayName.trim()) { this.toast.add({ severity: 'warn', summary: 'Nom requis', detail: 'Donnez un nom au rapport.' }); return; }
+    if (!src) { this.toast.add({ severity: 'warn', summary: $localize`:@@studio-report-designer.component.summary.Source requi:Source requise`, detail: $localize`:@@studio-report-designer.component.detail.Choisissez_une_s:Choisissez une source de données.` }); return; }
+    if (!this.displayName.trim()) { this.toast.add({ severity: 'warn', summary: $localize`:@@studio-report-designer.component.summary.Nom requis:Nom requis`, detail: $localize`:@@studio-report-designer.component.detail.Donnez_un_nom_au:Donnez un nom au rapport.` }); return; }
     this.saving.set(true);
     const req = { displayName: this.displayName.trim(), dataSourceKind: this.kindValue(), dataSourceRef: src.ref, definition: this.buildDefinition() };
     const obs = this.reportId ? this.studio.updateReport(this.reportId, req) : this.studio.createReport(req);
@@ -312,13 +316,13 @@ export class StudioReportDesignerComponent implements OnInit {
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Rapport enregistré' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@studio-report-designer.component.summary.Rapport_enregist:Rapport enregistré` });
           this.router.navigate(['/studio/reports']);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? res.message ?? 'Échec.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-designer.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? res.message ?? $localize`:@@ui.tern.echec.0238a9:Échec.` });
         }
       },
-      error: err => { this.saving.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Enregistrement impossible.' }); }
+      error: err => { this.saving.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-designer.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` }); }
     });
   }
 }

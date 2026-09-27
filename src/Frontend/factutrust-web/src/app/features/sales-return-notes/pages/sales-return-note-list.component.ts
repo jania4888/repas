@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -23,6 +24,7 @@ import {
   selector: 'app-sales-return-note-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -39,7 +41,7 @@ import {
       title="Bons de retour" i18n-title="Bons de retour"
       subtitle="Retournez des articles déjà livrés et non encore facturés — distinct d'un avoir fiscal">
       @if (canCreate()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@sales-return-notes.pages.nouveau.bon.de.retour.362bee47">Nouveau bon de retour</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@sales-return-notes.pages.nouveau.bon.de.retour.362bee47"> Nouveau bon de retour </app-button>
       }
     </app-page-header>
 
@@ -87,7 +89,7 @@ import {
               <td>{{ formatDate(row.returnDate) }}</td>
               <td>{{ row.clientName }}</td>
               <td class="mono">{{ row.deliveryNoteNumber }}</td>
-              <td><app-status-badge [status]="isDraft(row.status) ? 'draft' : 'validated'" [label]="row.statusDisplay" /></td>
+              <td><app-status-badge [status]="isDraft(row.status) ? 'draft' : 'validated'" [label]="row.statusDisplay | backendLabel" /></td>
               <td class="text-right mono">{{ row.totalReturnedQuantity | number:'1.0-3' }}</td>
               <td class="text-right mono">{{ row.totalTTC | number:'1.3-3' }}</td>
             </tr>

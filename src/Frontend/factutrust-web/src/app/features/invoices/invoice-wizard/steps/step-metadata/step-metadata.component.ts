@@ -60,8 +60,8 @@ import {
     <div class="step-metadata">
       <!-- Document Type Selection -->
       <section class="section" aria-labelledby="document-type-heading">
-        <h2 id="document-type-heading" class="section-title" i18n="@@invoices.invoice-wizard.type.de.document.69938df4">Type de document</h2>
-        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.le.type.de.document.fiscal.a.creer.3fbc43d7">Sélectionnez le type de document fiscal à créer</p>
+        <h2 id="document-type-heading" class="section-title" i18n="@@invoices.invoice-wizard.type.de.document.69938df4"> Type de document </h2>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.le.type.de.document.fiscal.a.creer.3fbc43d7"> Sélectionnez le type de document fiscal à créer </p>
 
         @if (metadata.type === 'CREDIT_NOTE' && metadata.linkedInvoiceId) {
           <div class="credit-note-locked">
@@ -109,8 +109,8 @@ import {
           <div class="credit-note-section">
             <div class="credit-note-warning">
               <i class="pi pi-info-circle"></i>
-              <span i18n="@@invoices.invoice-wizard.une.facture.d.avoir.doit.etre.liee.a.une.facture.b6dafc9d">Une facture d'avoir doit être liée à une facture existante.
-                Sélectionnez la facture d'origine ci-dessous.</span>
+              <span i18n="@@invoices.invoice-wizard.une.facture.d.avoir.doit.etre.liee.a.une.facture.b6dafc9d"> Une facture d'avoir doit être liée à une facture existante.
+                Sélectionnez la facture d'origine ci-dessous. </span>
             </div>
 
             @if (metadata.linkedInvoiceId) {
@@ -123,7 +123,7 @@ import {
                        class="linked-invoice-link" 
                        target="_blank"
                        (click)="$event.stopPropagation()">
-                      Voir la facture
+                      <ng-container i18n="@@invoices.invoice-wizard.voir.la.facture.e4bddea0"> Voir la facture </ng-container>
                       <i class="pi pi-external-link"></i>
                     </a>
                   </div>
@@ -173,10 +173,10 @@ import {
       <!-- Invoice Number (Read-only) -->
       <section class="section">
         <h2 class="section-title">
-          Numéro de facture
+          <ng-container i18n="@@invoices.invoice-wizard.numero.de.facture.a19ac308"> Numéro de facture </ng-container>
           <span class="badge-auto" i18n="@@invoices.invoice-wizard.auto.genere.22e37665">Auto-généré</span>
         </h2>
-        <p class="section-description" i18n="@@invoices.invoice-wizard.le.numero.est.attribue.automatiquement.selon.la..3b7af40d">Le numéro est attribué automatiquement selon la séquence légale</p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.le.numero.est.attribue.automatiquement.selon.la..3b7af40d"> Le numéro est attribué automatiquement selon la séquence légale </p>
 
         <div class="invoice-number-display">
           <div class="number-prefix">
@@ -198,7 +198,7 @@ import {
           </div>
           <div 
             class="number-info"
-            pTooltip="Conformité légale: numérotation chronologique et inaltérable (Art. 18 Code TVA)"
+            pTooltip="Conformité légale: numérotation chronologique et inaltérable (Art. 18 Code TVA)" i18n-pTooltip="Conformité légale: numérotation chronologique et inaltérable (Art. 18 Code TVA)"
             tooltipPosition="top">
             <i class="pi pi-lock"></i>
           </div>
@@ -210,11 +210,11 @@ import {
       <!-- Dates -->
       <section class="section">
         <h2 class="section-title" i18n="@@invoices.invoice-wizard.dates.842b7b5d">Dates</h2>
-        <p class="section-description" i18n="@@invoices.invoice-wizard.definissez.les.dates.d.emission.et.d.echeance.d1a1a0bf">Définissez les dates d'émission et d'échéance</p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.definissez.les.dates.d.emission.et.d.echeance.d1a1a0bf"> Définissez les dates d'émission et d'échéance </p>
 
         <div class="form-grid">
           <div class="form-group">
-            <label for="issueDate" class="required" i18n="@@invoices.invoice-wizard.date.d.emission.99f68857">Date d'émission</label>
+            <label for="issueDate" class="required" i18n="@@invoices.invoice-wizard.date.d.emission.99f68857"> Date d'émission </label>
             <p-datepicker
               inputId="issueDate"
               [(ngModel)]="issueDate"
@@ -228,11 +228,11 @@ import {
               appendTo="body"
               aria-describedby="issueDateHint">
             </p-datepicker>
-            <small id="issueDateHint" class="form-hint" i18n="@@invoices.invoice-wizard.date.figurant.sur.la.facture.obligatoire.808b317e">Date figurant sur la facture (obligatoire)</small>
+            <small id="issueDateHint" class="form-hint" i18n="@@invoices.invoice-wizard.date.figurant.sur.la.facture.obligatoire.808b317e"> Date figurant sur la facture (obligatoire) </small>
           </div>
 
           <div class="form-group">
-            <label for="dueDate" i18n="@@invoices.invoice-wizard.date.d.echeance.4f9893d7">Date d'échéance</label>
+            <label for="dueDate" i18n="@@invoices.invoice-wizard.date.d.echeance.4f9893d7"> Date d'échéance </label>
             <p-datepicker
               inputId="dueDate"
               [(ngModel)]="dueDate"
@@ -246,7 +246,7 @@ import {
               appendTo="body"
               aria-describedby="dueDateHint">
             </p-datepicker>
-            <small id="dueDateHint" class="form-hint" i18n="@@invoices.invoice-wizard.date.limite.de.paiement.5dc40dfe">Date limite de paiement</small>
+            <small id="dueDateHint" class="form-hint" i18n="@@invoices.invoice-wizard.date.limite.de.paiement.5dc40dfe"> Date limite de paiement </small>
 
             <!-- Quick selection buttons -->
             <div class="due-date-shortcuts">
@@ -254,22 +254,22 @@ import {
                 type="button" 
                 class="shortcut-btn"
                 [class.active]="dueDateDays === 0"
-                (click)="setDueDateDays(0)" i18n="@@invoices.invoice-wizard.comptant.da6aba96">Comptant</button>
+                (click)="setDueDateDays(0)" i18n="@@invoices.invoice-wizard.comptant.da6aba96"> Comptant </button>
               <button 
                 type="button" 
                 class="shortcut-btn"
                 [class.active]="dueDateDays === 30"
-                (click)="setDueDateDays(30)" i18n="@@invoices.invoice-wizard.30.jours.c13f82c8">30 jours</button>
+                (click)="setDueDateDays(30)" i18n="@@invoices.invoice-wizard.30.jours.c13f82c8"> 30 jours </button>
               <button 
                 type="button" 
                 class="shortcut-btn"
                 [class.active]="dueDateDays === 60"
-                (click)="setDueDateDays(60)" i18n="@@invoices.invoice-wizard.60.jours.974c1c66">60 jours</button>
+                (click)="setDueDateDays(60)" i18n="@@invoices.invoice-wizard.60.jours.974c1c66"> 60 jours </button>
               <button 
                 type="button" 
                 class="shortcut-btn"
                 [class.active]="dueDateDays === 90"
-                (click)="setDueDateDays(90)" i18n="@@invoices.invoice-wizard.90.jours.b2506836">90 jours</button>
+                (click)="setDueDateDays(90)" i18n="@@invoices.invoice-wizard.90.jours.b2506836"> 90 jours </button>
             </div>
           </div>
         </div>
@@ -283,7 +283,7 @@ import {
 
         <div class="form-grid">
           <div class="form-group">
-            <label for="currency" class="required" i18n="@@invoices.invoice-wizard.devise.eb2e42c4">Devise</label>
+            <label for="currency" class="required" i18n="@@invoices.invoice-wizard.devise.eb2e42c4"> Devise </label>
             <p-select
               inputId="currency"
               [options]="currencyOptions"
@@ -295,11 +295,11 @@ import {
               appendTo="body"
               aria-describedby="currencyHint">
             </p-select>
-            <small id="currencyHint" class="form-hint" i18n="@@invoices.invoice-wizard.tnd.obligatoire.pour.le.marche.local.de5fc6ed">TND obligatoire pour le marché local</small>
+            <small id="currencyHint" class="form-hint" i18n="@@invoices.invoice-wizard.tnd.obligatoire.pour.le.marche.local.de5fc6ed"> TND obligatoire pour le marché local </small>
           </div>
 
           <div class="form-group">
-            <label for="internalRef" i18n="@@invoices.invoice-wizard.reference.interne.d0b8c0a1">Référence interne</label>
+            <label for="internalRef" i18n="@@invoices.invoice-wizard.reference.interne.d0b8c0a1"> Référence interne </label>
             <input
               pInputText
               type="text"
@@ -309,18 +309,18 @@ import {
               placeholder="Ex: PROJ-2026-001" i18n-placeholder="Ex: PROJ-2026-001"
               maxlength="50"
               aria-describedby="internalRefHint">
-            <small id="internalRefHint" class="form-hint" i18n="@@invoices.invoice-wizard.reference.projet.devis.ou.bon.de.commande.option.c6f2bd05">Référence projet, devis ou bon de commande (optionnel)</small>
+            <small id="internalRefHint" class="form-hint" i18n="@@invoices.invoice-wizard.reference.projet.devis.ou.bon.de.commande.option.c6f2bd05"> Référence projet, devis ou bon de commande (optionnel) </small>
           </div>
 
           <div class="form-group">
             <app-warehouse-selector
               inputId="invoice-wizard-warehouse"
-              label="Entrepôt"
+              label="Entrepôt" i18n-label="Entrepôt"
               placeholder="Entrepôt par défaut" i18n-placeholder="Entrepôt par défaut"
               [value]="metadata.warehouseId"
               (valueChange)="onWarehouseChange($event)">
             </app-warehouse-selector>
-            <small class="form-hint" i18n="@@invoices.invoice-wizard.entrepot.utilise.pour.la.deduction.de.stock.opti.c969c592">Entrepôt utilisé pour la déduction de stock (optionnel)</small>
+            <small class="form-hint" i18n="@@invoices.invoice-wizard.entrepot.utilise.pour.la.deduction.de.stock.opti.c969c592"> Entrepôt utilisé pour la déduction de stock (optionnel) </small>
           </div>
         </div>
       </section>

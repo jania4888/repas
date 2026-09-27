@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -21,7 +22,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
 @Component({
   selector: 'app-subscription',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     ButtonModule,
@@ -39,7 +40,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
       title="Mon abonnement" i18n-title="Mon abonnement"
       subtitle="Gérez votre forfait et suivez votre consommation">
       <p-button
-        label="Retour"
+        label="Retour" i18n-label="Retour"
         icon="pi pi-arrow-left"
         [outlined]="true"
         routerLink="/settings">
@@ -67,11 +68,11 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
           <div class="plan-badge">
             <p-tag value="Forfait actuel" severity="info"></p-tag>
             <p-tag
-              [value]="subscription()!.statusDisplay"
+              [value]="subscription()!.statusDisplay | backendLabel"
               [severity]="getStatusSeverity(subscription()!.status)">
             </p-tag>
           </div>
-          <h2>{{ subscription()!.planDisplay }}</h2>
+          <h2>{{ subscription()!.planDisplay | backendLabel }}</h2>
           <p class="plan-price">
             @if (subscription()!.plan === 'Free') {
               <span class="amount" i18n="@@settings.subscription.gratuit.705667ee">Gratuit</span>
@@ -94,12 +95,12 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
         </div>
         <div class="plan-actions">
           <p-button
-            label="Changer de forfait"
+            label="Changer de forfait" i18n-label="Changer de forfait"
             icon="pi pi-arrow-up"
             (onClick)="openChangePlanDialog()">
           </p-button>
           <p-button
-            label="Gérer le paiement"
+            label="Gérer le paiement" i18n-label="Gérer le paiement"
             icon="pi pi-credit-card"
             [outlined]="true">
           </p-button>
@@ -115,7 +116,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
           </div>
           @if (canRegularizeSubscription()) {
             <p-button
-              label="Régulariser l'abonnement"
+              label="Régulariser l'abonnement" i18n-label="Régulariser l'abonnement"
               icon="pi pi-refresh"
               severity="warn"
               [outlined]="true"
@@ -126,7 +127,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
       }
 
       <!-- Usage -->
-      <p-card header="Utilisation ce mois" styleClass="usage-card">
+      <p-card header="Utilisation ce mois" i18n-header="Utilisation ce mois" styleClass="usage-card">
         <div class="usage-grid">
           @for (item of usageItems(); track item.label) {
             <div class="usage-item">
@@ -205,14 +206,14 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
               @if (plan.isCurrent) {
                 @if (canRegularizeSubscription()) {
                   <p-button
-                    label="Régulariser l'abonnement"
+                    label="Régulariser l'abonnement" i18n-label="Régulariser l'abonnement"
                     styleClass="w-full"
                     severity="warn"
                     (onClick)="openChangePlanDialog()">
                   </p-button>
                 } @else {
                   <p-button
-                    label="Forfait actuel"
+                    label="Forfait actuel" i18n-label="Forfait actuel"
                     [disabled]="true"
                     styleClass="w-full"
                     severity="secondary">
@@ -231,7 +232,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
       </div>
 
       <!-- Billing History -->
-      <p-card header="Historique de facturation" styleClass="billing-card">
+      <p-card header="Historique de facturation" i18n-header="Historique de facturation" styleClass="billing-card">
         @if (billingHistory.length === 0) {
           <div class="empty-billing">
             <i class="pi pi-inbox"></i>
@@ -256,7 +257,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
                   icon="pi pi-download"
                   [text]="true"
                   [rounded]="true"
-                  pTooltip="Télécharger">
+                  pTooltip="Télécharger" i18n-pTooltip="Télécharger">
                 </p-button>
               </div>
             }
@@ -272,7 +273,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
         <h3 i18n="@@settings.subscription.impossible.de.charger.votre.abonnement.890af3dd">Impossible de charger votre abonnement</h3>
         <p>{{ error() }}</p>
         <p-button
-          label="Réessayer"
+          label="Réessayer" i18n-label="Réessayer"
           icon="pi pi-refresh"
           (onClick)="loadData()">
         </p-button>
@@ -731,7 +732,7 @@ export class SubscriptionComponent implements OnInit {
         if (response.success) {
           this.subscription.set(response.data);
         } else {
-          this.error.set(response.errors?.[0] ?? 'Erreur inconnue');
+          this.error.set(response.errors?.[0] ?? $localize`:@@ui.tern.erreur.inconnue.c3ec73:Erreur inconnue`);
         }
       },
       error: (err) => {
@@ -809,7 +810,7 @@ export class SubscriptionComponent implements OnInit {
   getUpgradeLabel(plan: PlanOption): string {
     const current = this.subscription()?.plan;
     const order: Record<string, number> = { 'Free': 0, 'Monthly': 1, 'Annual': 2 };
-    const currentOrder = order[current ?? 'Free'] ?? 0;
+    const currentOrder = order[current ?? $localize`:@@ui.tern.free.75f527:Free`] ?? 0;
     const targetOrder = order[plan.id] ?? 0;
 
     if (targetOrder > currentOrder) return 'Choisir ce forfait';

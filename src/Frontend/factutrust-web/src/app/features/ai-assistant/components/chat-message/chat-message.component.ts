@@ -121,7 +121,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                 type="button"
                 class="show-dashboard-btn"
                 (click)="session.showInlineDashboard(message.id)"
-                aria-label="Afficher le tableau de bord structur&#233;" i18n-aria-label="Afficher le tableau de bord structur&#233;" i18n="@@ai-assistant.components.afficher.le.tableau.de.bord.7d6f5cb3">Afficher le tableau de bord</button>
+                aria-label="Afficher le tableau de bord structur&#233;" i18n-aria-label="Afficher le tableau de bord structur&#233;" i18n="@@ai-assistant.components.afficher.le.tableau.de.bord.7d6f5cb3"> Afficher le tableau de bord </button>
             }
 
             @if (showAssistantActions()) {
@@ -141,14 +141,14 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="toolbar-btn"
                     (click)="copyAsTsv()"
                     [disabled]="copyInProgress"
-                    aria-label="Copier pour Excel (TSV)" i18n-aria-label="Copier pour Excel (TSV)" i18n="@@ai-assistant.components.tsv.18e411dc">TSV</button>
+                    aria-label="Copier pour Excel (TSV)" i18n-aria-label="Copier pour Excel (TSV)" i18n="@@ai-assistant.components.tsv.18e411dc"> TSV </button>
                 }
                 @if (canExportMarkdownTables()) {
                   <button
                     type="button"
                     class="toolbar-btn"
                     (click)="exportMarkdownTablesCsv()"
-                    aria-label="Exporter les tableaux Markdown en CSV" i18n-aria-label="Exporter les tableaux Markdown en CSV" i18n="@@ai-assistant.components.csv.tableaux.750c7fe5">CSV (tableaux)</button>
+                    aria-label="Exporter les tableaux Markdown en CSV" i18n-aria-label="Exporter les tableaux Markdown en CSV" i18n="@@ai-assistant.components.csv.tableaux.750c7fe5"> CSV (tableaux) </button>
                 }
                 @if (message.parsedDashboard) {
                   <button
@@ -156,14 +156,14 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="toolbar-btn"
                     (click)="exportDashboardExcel()"
                     [disabled]="exportBusy"
-                    aria-label="Exporter le tableau de bord en Excel" i18n-aria-label="Exporter le tableau de bord en Excel" i18n="@@ai-assistant.components.excel.a08e1111">Excel</button>
+                    aria-label="Exporter le tableau de bord en Excel" i18n-aria-label="Exporter le tableau de bord en Excel" i18n="@@ai-assistant.components.excel.a08e1111"> Excel </button>
                 }
                 <button
                   type="button"
                   class="toolbar-btn"
                   (click)="exportAssistantPdf()"
                   [disabled]="exportBusy"
-                  aria-label="Exporter en PDF" i18n-aria-label="Exporter en PDF" i18n="@@ai-assistant.components.pdf.d613d88c">PDF</button>
+                  aria-label="Exporter en PDF" i18n-aria-label="Exporter en PDF" i18n="@@ai-assistant.components.pdf.d613d88c"> PDF </button>
                 @if (canExportSingleToPowerPoint()) {
                   <button
                     type="button"
@@ -180,19 +180,19 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     type="button"
                     class="toolbar-btn"
                     (click)="shareByEmail()"
-                    aria-label="Partager par e-mail" i18n-aria-label="Partager par e-mail" i18n="@@ai-assistant.components.e.mail.0d01e2e8">E-mail</button>
+                    aria-label="Partager par e-mail" i18n-aria-label="Partager par e-mail" i18n="@@ai-assistant.components.e.mail.0d01e2e8"> E-mail </button>
                 }
                 <button
                   type="button"
                   class="toolbar-btn"
                   (click)="copyConversationLink()"
-                  aria-label="Copier le lien de la conversation" i18n-aria-label="Copier le lien de la conversation" i18n="@@ai-assistant.components.lien.e2639e1d">Lien</button>
+                  aria-label="Copier le lien de la conversation" i18n-aria-label="Copier le lien de la conversation" i18n="@@ai-assistant.components.lien.e2639e1d"> Lien </button>
                 @if (!hideChartFollowUp && (markdownForDisplay.trim() || message.parsedDashboard)) {
                   <button
                     type="button"
                     class="toolbar-btn"
                     (click)="suggestChartFollowUp()"
-                    aria-label="Demander un graphique &#224; partir de cette r&#233;ponse" i18n-aria-label="Demander un graphique &#224; partir de cette r&#233;ponse" i18n="@@ai-assistant.components.graphique.fad32c3f">Graphique</button>
+                    aria-label="Demander un graphique &#224; partir de cette r&#233;ponse" i18n-aria-label="Demander un graphique &#224; partir de cette r&#233;ponse" i18n="@@ai-assistant.components.graphique.fad32c3f"> Graphique </button>
                 }
               </div>
             }
@@ -310,15 +310,15 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="cancel-btn"
                     (click)="cancelReminder()"
                     [disabled]="message.firmReminderConfirming"
-                    aria-label="Annuler la relance, aucun e-mail ne sera envoy&#233;" i18n-aria-label="Annuler la relance, aucun e-mail ne sera envoy&#233;" i18n="@@ai-assistant.components.annuler.49ba3292">Annuler</button>
+                    aria-label="Annuler la relance, aucun e-mail ne sera envoy&#233;" i18n-aria-label="Annuler la relance, aucun e-mail ne sera envoy&#233;" i18n="@@ai-assistant.components.annuler.49ba3292"> Annuler </button>
                   <span class="confirm-expiry" aria-label="D&#233;lai avant expiration de la confirmation" i18n-aria-label="D&#233;lai avant expiration de la confirmation">
                     <i class="fa-regular fa-clock" aria-hidden="true"></i>
                     {{ reminderExpiryLabel }}
                   </span>
                 </div>
 
-                <div class="confirm-security-note" i18n="@@ai-assistant.components.l.envoi.n.est.d.233.clench.233.que.par.votre.cli.fd668660">L'envoi n'est d&#233;clench&#233; que par votre clic &#8212; jamais automatiquement par l'assistant.
-                  Un rappel d&#233;j&#224; envoy&#233; aujourd'hui pour cette &#233;ch&#233;ance ne sera pas dupliqu&#233;.</div>
+                <div class="confirm-security-note" i18n="@@ai-assistant.components.l.envoi.n.est.d.233.clench.233.que.par.votre.cli.fd668660"> L'envoi n'est d&#233;clench&#233; que par votre clic &#8212; jamais automatiquement par l'assistant.
+                  Un rappel d&#233;j&#224; envoy&#233; aujourd'hui pour cette &#233;ch&#233;ance ne sera pas dupliqu&#233;. </div>
               }
             </section>
           }
@@ -1227,7 +1227,7 @@ export class ChatMessageComponent implements OnChanges {
   onSelectionToggle(event: Event): void {
     const id = this.session.activeConversationId();
     if (!id) return;
-    const conversationTitle = this.session.conversations().find(c => c.id === id)?.title ?? 'Conversation';
+    const conversationTitle = this.session.conversations().find(c => c.id === id)?.title ?? $localize`:@@ui.tern.conversation.2a20c7:Conversation`;
     const preview = (this.markdownForDisplay || this.message.content || '')
       .replace(/\s+/g, ' ')
       .trim()
@@ -1525,11 +1525,11 @@ export class ChatMessageComponent implements OnChanges {
       return 'Expire dans 5 min';
     }
     const mins = Math.round((t - Date.now()) / 60000);
-    return mins > 0 ? `Expire dans ${mins} min` : 'Expirée';
+    return mins > 0 ? $localize`:@@ui.tern.expire.dans.ph.min.2d8ebb:Expire dans ${mins}:p0: min` : $localize`:@@ui.tern.expiree.1f0808:Expirée`;
   }
 
   sourceChipAriaLabel(s: DedupedToolSource): string {
-    return `Source : ${s.label}${s.count > 1 ? ` (${s.count} consultations)` : ''}`;
+    return `Source : ${s.label}${s.count > 1 ? $localize`:@@ui.tern.ph.consultations.93f2ee: (${s.count}:p0: consultations)` : ''}`;
   }
 
   /** Relance la question utilisateur à l'origine de cette réponse (force la consultation des données). */

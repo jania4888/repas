@@ -46,7 +46,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="run()"
             [disabled]="loading()"
-            ariaLabel="Lancer les contrôles de pré-clôture" i18n="@@accounting.pre-closing.lancer.les.controles.521d27dd">Lancer les contrôles</app-button>
+            ariaLabel="Lancer les contrôles de pré-clôture" i18n="@@accounting.pre-closing.lancer.les.controles.521d27dd"> Lancer les contrôles </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -86,7 +86,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <td class="pc-message">{{ c.message }}</td>
             <td>
               @if (c.deepLinkRoute && c.count > 0) {
-                <a class="pc-link" [routerLink]="c.deepLinkRoute">Voir <i class="pi pi-angle-right" aria-hidden="true"></i></a>
+                <a class="pc-link" [routerLink]="c.deepLinkRoute"><ng-container i18n="@@accounting.pre-closing.voir.8a754f1f">Voir </ng-container> <i class="pi pi-angle-right" aria-hidden="true"></i></a>
               }
             </td>
           </tr>
@@ -146,7 +146,7 @@ export class PreClosingComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.checklist.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);

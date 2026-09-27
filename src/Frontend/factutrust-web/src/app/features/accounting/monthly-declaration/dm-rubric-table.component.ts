@@ -47,11 +47,11 @@ import {
           <td>
             {{ r.label }}
             @if (unsupported(r)) {
-              <span class="dm-flag dm-flag--warn" title="Le moteur rendra 0 pour cette rubrique." i18n-title="Le moteur rendra 0 pour cette rubrique." i18n="@@accounting.monthly-declaration.non.pris.en.charge.0d01bf4b">non pris en charge</span>
+              <span class="dm-flag dm-flag--warn" title="Le moteur rendra 0 pour cette rubrique." i18n-title="Le moteur rendra 0 pour cette rubrique." i18n="@@accounting.monthly-declaration.non.pris.en.charge.0d01bf4b"> non pris en charge </span>
             }
             @if (unknownAccounts(r); as missing) {
               @if (missing.length) {
-                <span class="dm-flag dm-flag--warn" [title]="'Comptes absents du plan : ' + missing.join(', ')" i18n="@@accounting.monthly-declaration.compte.inconnu.84fbe64e">compte inconnu</span>
+                <span class="dm-flag dm-flag--warn" [title]="loc_ui_tern_comptes_absents_du_plan_dce877 + missing.join(', ')" i18n="@@accounting.monthly-declaration.compte.inconnu.84fbe64e"> compte inconnu </span>
               }
             }
           </td>
@@ -59,7 +59,7 @@ import {
           <td class="dm-rule">{{ gross(r) }}</td>
           <td class="dm-rule">{{ withheld(r) }}</td>
           <td>{{ applicability(r) }}</td>
-          <td>{{ r.isActive ? 'Oui' : 'Non' }}</td>
+          <td>{{ r.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
           <td>
             <app-accounting-table-actions>
               <app-button
@@ -81,7 +81,7 @@ import {
                 type="button"
                 [disabled]="readOnly"
                 (click)="toggle.emit(r)"
-                [attr.aria-label]="r.isActive ? 'Désactiver' : 'Activer'" />
+                [attr.aria-label]="r.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7" />
               <app-button
                 variant="ghost"
                 size="sm"
@@ -114,6 +114,11 @@ import {
   `
 })
 export class DmRubricTableComponent {
+  readonly loc_ui_tern_comptes_absents_du_plan_dce877 = $localize`:@@ui.tern.comptes.absents.du.plan.dce877:Comptes absents du plan : `;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
   @Input() rubrics: MonthlyDeclarationRubricDto[] = [];
   @Input() loading = false;
   @Input() readOnly = false;

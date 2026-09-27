@@ -44,13 +44,13 @@ import {
         icon="pi-print"
         iconPos="left"
         (click)="onPrint()"
-        ariaLabel="Imprimer les soldes clients" i18n="@@reports.client-balances.imprimer.5382c09d">Imprimer</app-button>
+        ariaLabel="Imprimer les soldes clients" i18n="@@reports.client-balances.imprimer.5382c09d"> Imprimer </app-button>
       <app-button
         variant="secondary"
         icon="pi-download"
         iconPos="left"
         (click)="onExport()"
-        ariaLabel="Exporter les soldes clients en CSV" i18n="@@reports.client-balances.exporter.0cd84bdc">Exporter</app-button>
+        ariaLabel="Exporter les soldes clients en CSV" i18n="@@reports.client-balances.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="ft-filters">
@@ -93,7 +93,7 @@ import {
         [loading]="loading()"
         partyLabel="Client"
         [showActions]="true"
-        emptyMessage="Aucun solde client"
+        emptyMessage="Aucun solde client" i18n-emptyMessage="Aucun solde client"
         ariaLabel="Soldes par client"
         (viewInvoices)="onViewInvoices($event)"
         (viewParty)="onViewParty($event)">

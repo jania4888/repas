@@ -64,7 +64,7 @@ const PAYMENT_METHODS = [
                 <button type="button" class="scenario-card"
                         [class.scenario-card--selected]="selectedScenario()?.id === sc.id"
                         (click)="selectScenario(sc)">
-                  <i [class]="'scenario-card__icon ' + sc.icon" aria-hidden="true"></i>
+                  <i [class]="loc_ui_tern_scenario_card_icon_8fea02 + sc.icon" aria-hidden="true"></i>
                   <strong>{{ sc.label }}</strong>
                   <span class="scenario-card__desc">{{ sc.description }}</span>
                 </button>
@@ -270,6 +270,7 @@ const PAYMENT_METHODS = [
   `
 })
 export class GuidedEntryComponent {
+  readonly loc_ui_tern_scenario_card_icon_8fea02 = "scenario-card__icon ";
   readonly store = inject(EntryFormStore);
   readonly refs = inject(EntryReferenceStore);
   private readonly api = inject(AccountingService);

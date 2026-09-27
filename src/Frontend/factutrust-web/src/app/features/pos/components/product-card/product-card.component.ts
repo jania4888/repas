@@ -14,8 +14,8 @@ import { PosStateService } from '../../services/pos-state.service';
       <button
         class="product-card__favorite"
         (click)="toggleFavorite($event)"
-        [attr.aria-label]="isFavorite() ? 'Retirer des favoris' : 'Ajouter aux favoris'"
-        [title]="isFavorite() ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+        [attr.aria-label]="isFavorite() ? loc_ui_tern_retirer_des_favoris_dcaac8 : loc_ui_tern_ajouter_aux_favoris_721554"
+        [title]="isFavorite() ? loc_ui_tern_retirer_des_favoris_dcaac8 : loc_ui_tern_ajouter_aux_favoris_721554"
         type="button">
         <i [class]="isFavorite() ? 'pi pi-star-fill' : 'pi pi-star'"></i>
       </button>
@@ -366,6 +366,8 @@ import { PosStateService } from '../../services/pos-state.service';
   `]
 })
 export class ProductCardComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
+  readonly loc_ui_tern_retirer_des_favoris_dcaac8 = $localize`:@@ui.tern.retirer.des.favoris.dcaac8:Retirer des favoris`;
+  readonly loc_ui_tern_ajouter_aux_favoris_721554 = $localize`:@@ui.tern.ajouter.aux.favoris.721554:Ajouter aux favoris`;
   @Input({ required: true }) product!: ProductListItem;
   @Input() loadImageOnDemand = true;
   @Input() stockAlert: ProductStockAlert | null = null;
@@ -482,7 +484,7 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy, After
     return price.toLocaleString('fr-TN', {
       minimumFractionDigits: 3,
       maximumFractionDigits: 3
-    }) + ' TND';
+    }) + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   formatQuantity(value: number): string {
@@ -493,7 +495,7 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   cardAriaLabel(): string {
-    const base = 'Ajouter ' + this.product.name + ' au panier';
+    const base = $localize`:@@ui.tern.ajouter.778d9b:Ajouter ` + this.product.name + $localize`:@@ui.tern.au.panier.05ee4d: au panier`;
     if (this.isAddDisabled()) {
       return `${this.product.name} indisponible, rupture de stock`;
     }

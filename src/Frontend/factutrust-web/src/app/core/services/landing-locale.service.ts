@@ -1,6 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
-import { ErpLocaleService } from '@core/i18n/erp-locale.service';
+import { ErpDocumentLocaleBridge } from '@core/i18n/erp-document-locale.bridge';
 import {
   LANDING_DIR,
   LANDING_LANG_TAG,
@@ -19,7 +19,7 @@ export const LANDING_RTL_BODY_CLASS = 'landing-rtl';
 export class LandingLocaleService {
   private readonly doc = inject(DOCUMENT);
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly erpLocale = inject(ErpLocaleService, { optional: true });
+  private readonly erpLocaleBridge = inject(ErpDocumentLocaleBridge);
   private readonly _locale = signal<LandingLocale>('fr');
 
   readonly locale = this._locale.asReadonly();
@@ -44,14 +44,17 @@ export class LandingLocaleService {
     }
   }
 
-  /** Appelé à la destruction du shell : réappliquer la locale ERP (FR ou AR). */
+  /** Appelé à la destruction du shell : l'application repart en FR/LTR, puis dans la langue ERP de la session. */
   restore(): void {
     this._locale.set('fr');
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
+    const html = this.doc.documentElement;
+    html.setAttribute('lang', 'fr');
+    html.setAttribute('dir', 'ltr');
     this.doc.body?.classList.remove(LANDING_RTL_BODY_CLASS);
-    this.erpLocale?.reapplyFromStorage();
+    this.erpLocaleBridge.reapply?.();
   }
 
   /** Langue mémorisée (indication seulement, jamais de redirection). */

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -16,6 +18,7 @@ import { SalesReturnNoteDetailDto, isSalesReturnNoteDraft } from '../models/sale
   selector: 'app-sales-return-note-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     PageHeaderComponent,
@@ -26,8 +29,8 @@ import { SalesReturnNoteDetailDto, isSalesReturnNoteDraft } from '../models/sale
   template: `
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     @if (note(); as n) {
-      <app-page-header [title]="n.number" [subtitle]="'Retour du ' + formatDate(n.returnDate) + ' — ' + n.clientName">
-        <app-status-badge [status]="isDraft(n.status) ? 'draft' : 'validated'" [label]="n.statusDisplay" />
+      <app-page-header [title]="n.number" [subtitle]="loc_ui_tern_retour_du_cd06bd + formatDate(n.returnDate) + ' — ' + n.clientName">
+        <app-status-badge [status]="isDraft(n.status) ? 'draft' : 'validated'" [label]="n.statusDisplay | backendLabel" />
         <app-button variant="secondary" icon="pi-print" (clicked)="printPdf()" i18n="@@sales-return-notes.pages.imprimer.5382c09d">Imprimer</app-button>
         @if (isDraft(n.status) && canUpdate()) {
           <app-button variant="primary" icon="pi-check" (clicked)="confirm()" i18n="@@sales-return-notes.pages.confirmer.80a664c8">Confirmer</app-button>
@@ -92,6 +95,7 @@ import { SalesReturnNoteDetailDto, isSalesReturnNoteDraft } from '../models/sale
   `]
 })
 export class SalesReturnNoteDetailComponent implements OnInit {
+  readonly loc_ui_tern_retour_du_cd06bd = $localize`:@@ui.tern.retour.du.cd06bd:Retour du `;
   private readonly service = inject(SalesReturnNoteService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -130,20 +134,20 @@ export class SalesReturnNoteDetailComponent implements OnInit {
     this.service.confirm(n.id).subscribe({
       next: res => {
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Confirmé', detail: 'Stock réintégré, quantité facturable du BL mise à jour.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@sales-return-note-detail.component.summary.Confirm_:Confirmé`, detail: $localize`:@@sales-return-note-detail.component.detail.Stock_r_int_gr_:Stock réintégré, quantité facturable du BL mise à jour.` });
           this.load(n.id);
           return;
         }
         this.toast.add({
           severity: 'error',
-          summary: 'Confirmation impossible',
+          summary: $localize`:@@sales-return-note-detail.component.summary.Confirmation_imp:Confirmation impossible`,
           detail: res.message || 'Le bon de retour n’a pas pu être confirmé.'
         });
       },
       error: err => {
         this.toast.add({
           severity: 'error',
-          summary: 'Confirmation impossible',
+          summary: $localize`:@@sales-return-note-detail.component.summary.Confirmation_imp:Confirmation impossible`,
           detail: err?.error?.message || 'Une erreur est survenue. Réessayez.'
         });
       }
@@ -157,20 +161,20 @@ export class SalesReturnNoteDetailComponent implements OnInit {
     this.service.delete(n.id).subscribe({
       next: res => {
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Supprimé', detail: 'Brouillon supprimé.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@sales-return-note-detail.component.summary.Supprimé:Supprimé`, detail: $localize`:@@sales-return-note-detail.component.detail.Brouillon_suppri:Brouillon supprimé.` });
           this.router.navigate(['/return-notes']);
           return;
         }
         this.toast.add({
           severity: 'error',
-          summary: 'Suppression impossible',
+          summary: $localize`:@@sales-return-note-detail.component.summary.Suppression_impo:Suppression impossible`,
           detail: res.message || 'Le brouillon n’a pas pu être supprimé.'
         });
       },
       error: err => {
         this.toast.add({
           severity: 'error',
-          summary: 'Suppression impossible',
+          summary: $localize`:@@sales-return-note-detail.component.summary.Suppression_impo:Suppression impossible`,
           detail: err?.error?.message || 'Une erreur est survenue. Réessayez.'
         });
       }
@@ -188,7 +192,7 @@ export class SalesReturnNoteDetailComponent implements OnInit {
       error: err => {
         this.toast.add({
           severity: 'error',
-          summary: 'Impression impossible',
+          summary: $localize`:@@sales-return-note-detail.component.summary.Impression_impos:Impression impossible`,
           detail: err?.error?.message || 'Le PDF n’a pas pu être généré.'
         });
       }

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -35,13 +36,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
 
     <app-page-header
-      [title]="isEditMode() ? 'Modifier la catégorie' : 'Nouvelle catégorie'"
-      [subtitle]="isEditMode() ? 'Modifiez les informations de la catégorie.' : 'Créez une catégorie pour classer vos produits.'">
+      [title]="isEditMode() ? loc_ui_tern_modifier_la_categorie_b9c31a : loc_ui_tern_nouvelle_categorie_8c5f92"
+      [subtitle]="isEditMode() ? loc_ui_tern_modifiez_les_informations_de_la_categorie_1c40c7 : loc_ui_tern_creez_une_categorie_pour_classer_vos_produ_c1599a">
       <app-button
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/product-categories" i18n="@@product-categories.product-category-form.annuler.49ba3292">Annuler</app-button>
+        routerLink="/product-categories" i18n="@@product-categories.product-category-form.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     @if (loading()) {
@@ -67,7 +68,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               </div>
             } @else {
               <div class="form-group">
-                <label for="code">Code <span class="required" i18n="@@product-categories.product-category-form.text.df58248c">*</span></label>
+                <label for="code"><ng-container i18n="@@product-categories.product-category-form.code.adac6937">Code </ng-container> <span class="required" i18n="@@product-categories.product-category-form.text.df58248c">*</span></label>
                 <input
                   pInputText
                   id="code"
@@ -87,7 +88,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             }
 
             <div class="form-group">
-              <label for="name">Nom <span class="required" i18n="@@product-categories.product-category-form.text.df58248c">*</span></label>
+              <label for="name"><ng-container i18n="@@product-categories.product-category-form.nom.7ff20370">Nom </ng-container> <span class="required" i18n="@@product-categories.product-category-form.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="name"
@@ -134,7 +135,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                     formControlName="isActive">
                   </p-inputSwitch>
                   <span [class.active]="form.get('isActive')?.value">
-                    {{ form.get('isActive')?.value ? 'Actif' : 'Inactif' }}
+                    {{ form.get('isActive')?.value ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                   </span>
                 </div>
                 <small class="form-hint" i18n="@@product-categories.product-category-form.une.categorie.inactive.n.apparait.plus.dans.le.c.ae1fa8e6">Une catégorie inactive n'apparaît plus dans le choix du formulaire produit.</small>
@@ -148,14 +149,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/product-categories" i18n="@@product-categories.product-category-form.annuler.49ba3292">Annuler</app-button>
+            routerLink="/product-categories" i18n="@@product-categories.product-category-form.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             type="submit"
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             [disabled]="form.invalid || saving()">
-            {{ isEditMode() ? 'Enregistrer' : 'Créer la catégorie' }}
+            {{ isEditMode() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_la_categorie_e150d5 }}
           </app-button>
         </div>
       </form>
@@ -255,6 +256,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `]
 })
 export class ProductCategoryFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_la_categorie_b9c31a = $localize`:@@ui.tern.modifier.la.categorie.b9c31a:Modifier la catégorie`;
+  readonly loc_ui_tern_nouvelle_categorie_8c5f92 = $localize`:@@ui.tern.nouvelle.categorie.8c5f92:Nouvelle catégorie`;
+  readonly loc_ui_tern_modifiez_les_informations_de_la_categorie_1c40c7 = $localize`:@@ui.tern.modifiez.les.informations.de.la.categorie.1c40c7:Modifiez les informations de la catégorie.`;
+  readonly loc_ui_tern_creez_une_categorie_pour_classer_vos_produ_c1599a = $localize`:@@ui.tern.creez.une.categorie.pour.classer.vos.produ.c1599a:Créez une catégorie pour classer vos produits.`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_la_categorie_e150d5 = $localize`:@@ui.tern.creer.la.categorie.e150d5:Créer la catégorie`;
   private fb = inject(FormBuilder);
   private productCategoryService = inject(ProductCategoryService);
   private router = inject(Router);
@@ -314,8 +323,8 @@ export class ProductCategoryFormComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Catégorie non trouvée'
+            summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
+            detail: $localize`:@@product-category-form.component.detail.Cat_gorie_non_tr:Catégorie non trouvée`
           });
           this.router.navigate(['/product-categories']);
         }
@@ -325,7 +334,7 @@ export class ProductCategoryFormComponent implements OnInit {
         const msg = this.errorHandler.extractErrorMessage(err);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
           detail: msg || 'Impossible de charger la catégorie'
         });
         this.router.navigate(['/product-categories']);
@@ -359,14 +368,14 @@ export class ProductCategoryFormComponent implements OnInit {
           if (response.success) {
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
+              summary: $localize`:@@product-category-form.component.summary.Succès:Succès`,
               detail: response.message || 'Catégorie mise à jour.'
             });
             this.router.navigate(['/product-categories']);
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
               detail: response.errors?.join(', ') || response.message || 'Impossible de mettre à jour la catégorie'
             });
           }
@@ -376,7 +385,7 @@ export class ProductCategoryFormComponent implements OnInit {
           const msg = this.errorHandler.extractErrorMessage(err);
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
             detail: msg || 'Impossible de mettre à jour la catégorie'
           });
           this.saving.set(false);
@@ -394,14 +403,14 @@ export class ProductCategoryFormComponent implements OnInit {
           if (response.success && response.data) {
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
+              summary: $localize`:@@product-category-form.component.summary.Succès:Succès`,
               detail: response.message || 'Catégorie créée avec succès.'
             });
             this.router.navigate(['/product-categories']);
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
               detail: response.errors?.join(', ') || response.message || 'Impossible de créer la catégorie'
             });
           }
@@ -413,13 +422,13 @@ export class ProductCategoryFormComponent implements OnInit {
           if (status === 409) {
             this.toastService.add({
               severity: 'error',
-              summary: 'Conflit',
+              summary: $localize`:@@product-category-form.component.summary.Conflit:Conflit`,
               detail: msg || 'Une catégorie existe déjà avec ce code.'
             });
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
               detail: msg || 'Impossible de créer la catégorie'
             });
           }

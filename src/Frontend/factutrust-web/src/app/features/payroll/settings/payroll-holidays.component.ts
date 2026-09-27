@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -40,7 +42,7 @@ function parseDate(value: string): Date | null {
 @Component({
   selector: 'app-payroll-holidays',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -83,10 +85,10 @@ function parseDate(value: string): Date | null {
           <td>{{ h.date | date:'dd/MM/yyyy' }}</td>
           <td>{{ h.label }}</td>
           <td>
-            <p-tag [value]="h.kindDisplay || h.kind" [severity]="h.kind === 'Islamic' ? 'warn' : 'info'" />
+            <p-tag [value]="(h.kindDisplay | backendLabel) || h.kind" [severity]="h.kind === 'Islamic' ? 'warn' : 'info'" />
           </td>
           <td>
-            <p-tag [value]="h.isPaid ? 'Oui' : 'Non'" [severity]="h.isPaid ? 'success' : 'secondary'" />
+            <p-tag [value]="h.isPaid ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199" [severity]="h.isPaid ? 'success' : 'secondary'" />
           </td>
           <td>
             @if (h.isEstimated) {
@@ -105,7 +107,7 @@ function parseDate(value: string): Date | null {
       </ng-template>
     </p-table>
 
-    <p-dialog [header]="editingId ? 'Modifier le jour férié' : 'Nouveau jour férié'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '560px' }">
+    <p-dialog [header]="editingId ? loc_ui_tern_modifier_le_jour_ferie_f18a5f : loc_ui_tern_nouveau_jour_ferie_a4e478" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '560px' }">
       <div class="payroll-form-row">
         <div class="payroll-form-group">
           <label i18n="@@payroll.settings.date.eb9a4bc1">Date</label>
@@ -142,6 +144,10 @@ function parseDate(value: string): Date | null {
   `
 })
 export class PayrollHolidaysComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_modifier_le_jour_ferie_f18a5f = $localize`:@@ui.tern.modifier.le.jour.ferie.f18a5f:Modifier le jour férié`;
+  readonly loc_ui_tern_nouveau_jour_ferie_a4e478 = $localize`:@@ui.tern.nouveau.jour.ferie.a4e478:Nouveau jour férié`;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
   private readonly confirmation = inject(ConfirmationService);
@@ -168,8 +174,8 @@ export class PayrollHolidaysComponent implements OnInit {
       next: res => this.holidays.set(res.data ?? []),
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Jours fériés',
-        detail: err?.error?.message ?? 'Chargement impossible.'
+        summary: $localize`:@@payroll-holidays.component.summary.Jours fériés:Jours fériés`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.chargement.impossible.ce4b23:Chargement impossible.`
       })
     });
   }
@@ -183,15 +189,15 @@ export class PayrollHolidaysComponent implements OnInit {
           next: res => {
             this.toast.add({
               severity: 'success',
-              summary: 'Amorçage',
-              detail: res.message ?? `${res.data?.insertedCount ?? 0} jour(s) ajouté(s).`
+              summary: $localize`:@@payroll-holidays.component.summary.Amorçage:Amorçage`,
+              detail: res.message ?? $localize`:@@ui.tern.ph.jour.s.ajoute.s.6d2db9:${res.data?.insertedCount ?? 0}:p0: jour(s) ajouté(s).`
             });
             this.load();
           },
           error: err => this.toast.add({
             severity: 'error',
-            summary: 'Amorçage',
-            detail: err?.error?.message ?? 'Amorçage impossible.'
+            summary: $localize`:@@payroll-holidays.component.summary.Amorçage:Amorçage`,
+            detail: err?.error?.message ?? $localize`:@@ui.tern.amorcage.impossible.d0bc7f:Amorçage impossible.`
           })
         });
       }
@@ -222,7 +228,7 @@ export class PayrollHolidaysComponent implements OnInit {
 
   save(): void {
     if (!this.formDate || !this.formLabel.trim()) {
-      this.toast.add({ severity: 'warn', summary: 'Jour férié', detail: 'Date et libellé sont obligatoires.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@payroll-holidays.component.summary.Jour férié:Jour férié`, detail: $localize`:@@payroll-holidays.component.detail.Date_et_libell_:Date et libellé sont obligatoires.` });
       return;
     }
 
@@ -242,15 +248,15 @@ export class PayrollHolidaysComponent implements OnInit {
 
     req.subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Jour férié', detail: 'Enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-holidays.component.summary.Jour férié:Jour férié`, detail: $localize`:@@payroll-holidays.component.detail.Enregistr_:Enregistré.` });
         this.dialogVisible = false;
         this.year = body.year;
         this.load();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Jour férié',
-        detail: err?.error?.message ?? 'Enregistrement impossible.'
+        summary: $localize`:@@payroll-holidays.component.summary.Jour férié:Jour férié`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
       })
     });
   }
@@ -263,13 +269,13 @@ export class PayrollHolidaysComponent implements OnInit {
       accept: () => {
         this.payroll.deletePublicHoliday(h.id).subscribe({
           next: () => {
-            this.toast.add({ severity: 'success', summary: 'Jour férié', detail: 'Supprimé.' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@payroll-holidays.component.summary.Jour férié:Jour férié`, detail: $localize`:@@payroll-holidays.component.detail.Supprimé.:Supprimé.` });
             this.load();
           },
           error: err => this.toast.add({
             severity: 'error',
-            summary: 'Jour férié',
-            detail: err?.error?.message ?? 'Suppression impossible.'
+            summary: $localize`:@@payroll-holidays.component.summary.Jour férié:Jour férié`,
+            detail: err?.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
           })
         });
       }

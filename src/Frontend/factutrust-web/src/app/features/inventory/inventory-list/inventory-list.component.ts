@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -41,6 +43,7 @@ interface StatusOption {
   selector: 'app-inventory-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -85,10 +88,10 @@ export class InventoryListComponent implements OnInit, OnDestroy {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
     return [
-      { label: 'Inventaires', value: s?.count, format: 'number', icon: 'pi-box', tone: 'primary' },
-      { label: 'En cours', value: s?.inProgressCount, format: 'number', icon: 'pi-spinner', tone: 'amber' },
-      { label: 'Validés', value: s?.validatedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Produits', value: s?.totalProducts, format: 'number', icon: 'pi-database', tone: 'cyan' }
+      { label: $localize`:@@inventory.list.metric.inventaires:Inventaires`, value: s?.count, format: 'number', icon: 'pi-box', tone: 'primary' },
+      { label: $localize`:@@inventory.list.metric.en-cours:En cours`, value: s?.inProgressCount, format: 'number', icon: 'pi-spinner', tone: 'amber' },
+      { label: $localize`:@@inventory.list.metric.valides:Validés`, value: s?.validatedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@inventory.list.metric.produits:Produits`, value: s?.totalProducts, format: 'number', icon: 'pi-database', tone: 'cyan' }
     ];
   });
 
@@ -120,10 +123,10 @@ export class InventoryListComponent implements OnInit, OnDestroy {
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Tous', value: null },
-    { label: 'En cours', value: InventoryStatus.InProgress },
-    { label: 'Valide', value: InventoryStatus.Validated },
-    { label: 'Annulé', value: InventoryStatus.Cancelled }
+    { label: $localize`:@@inventory.list.filter.tous:Tous`, value: null },
+    { label: $localize`:@@inventory.list.filter.en-cours:En cours`, value: InventoryStatus.InProgress },
+    { label: $localize`:@@inventory.list.filter.valide:Valide`, value: InventoryStatus.Validated },
+    { label: $localize`:@@inventory.list.filter.annule:Annulé`, value: InventoryStatus.Cancelled }
   ];
 
   ngOnInit(): void {
@@ -224,7 +227,7 @@ export class InventoryListComponent implements OnInit, OnDestroy {
     this.toastService.add({
       key: 'inventory-list-error',
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@inventory-list.component.summary.Erreur:Erreur`,
       detail: message,
       life: 5000
     });

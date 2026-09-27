@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -130,7 +131,7 @@ export class TerminationSettlementFormComponent implements OnInit {
         this.previewData.set(res.data ?? null);
         if (res.data) this.legalIndemnity = res.data.legalIndemnityAmount;
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Solde de rupture', detail: err?.error?.message ?? 'Calcul impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@termination-settlement-form.component.summary.Solde de rup:Solde de rupture`, detail: err?.error?.message ?? $localize`:@@ui.tern.calcul.impossible.4c6059:Calcul impossible.` })
     });
   }
 
@@ -151,8 +152,8 @@ export class TerminationSettlementFormComponent implements OnInit {
       notes: this.notes || undefined,
       approve
     }).subscribe({
-      next: () => { this.toast.add({ severity: 'success', summary: 'Solde de rupture', detail: 'Solde enregistré.' }); this.router.navigate(['/payroll/terminations']); },
-      error: err => this.toast.add({ severity: 'error', summary: 'Solde de rupture', detail: err?.error?.message ?? 'Enregistrement impossible.' })
+      next: () => { this.toast.add({ severity: 'success', summary: $localize`:@@termination-settlement-form.component.summary.Solde de rup:Solde de rupture`, detail: $localize`:@@termination-settlement-form.component.detail.Solde_enregistr_:Solde enregistré.` }); this.router.navigate(['/payroll/terminations']); },
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@termination-settlement-form.component.summary.Solde de rup:Solde de rupture`, detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` })
     });
   }
 

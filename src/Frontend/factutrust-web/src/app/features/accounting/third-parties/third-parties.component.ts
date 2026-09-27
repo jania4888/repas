@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -72,11 +73,11 @@ interface ThirdPartyProfileForm {
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" type="button"
-            (click)="load()" [disabled]="loading()" ariaLabel="Actualiser le plan tiers" i18n="@@accounting.third-parties.actualiser.9d3b2a7d">Actualiser</app-button>
+            (click)="load()" [disabled]="loading()" ariaLabel="Actualiser le plan tiers" i18n="@@accounting.third-parties.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-button variant="primary" icon="pi pi-hashtag" iconPos="left" type="button"
             (click)="generateCodes()" [disabled]="loading() || generating()"
             ariaLabel="Générer les codes auxiliaires manquants">
-            {{ generating() ? 'Génération…' : 'Générer les codes manquants' }}
+            {{ generating() ? loc_ui_tern_generation_ce4e34 : loc_ui_tern_generer_les_codes_manquants_078786 }}
           </app-button>
         </div>
       </app-accounting-filter-bar>
@@ -90,7 +91,7 @@ interface ThirdPartyProfileForm {
         <h3 class="tp-form-title">
           Fiche comptable — {{ f.thirdPartyName }}
           <span class="tp-badge" [class.tp-badge-client]="f.kind === 1" [class.tp-badge-supplier]="f.kind === 2">
-            {{ f.kind === 1 ? 'Client' : 'Fournisseur' }}
+            {{ f.kind === 1 ? loc_ui_tern_client_1bdd79 : loc_ui_tern_fournisseur_97d91d }}
           </span>
         </h3>
         <div class="tp-fields">
@@ -117,7 +118,7 @@ interface ThirdPartyProfileForm {
             <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()" i18n="@@accounting.third-parties.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary" (click)="save()"
               [disabled]="saving() || !f.auxiliaryCode.trim() || !f.collectiveAccountNumber.trim()">
-              {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+              {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
             </button>
           </div>
         </div>
@@ -128,14 +129,14 @@ interface ThirdPartyProfileForm {
     <p-table [value]="rows()" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100]"
       [loading]="loading()" [rowHover]="true" [scrollable]="true" scrollHeight="flex"
       styleClass="p-datatable-sm accounting-datatable tp-table"
-      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers">
+      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers">
       <ng-template pTemplate="header">
         <tr>
           <th scope="col" i18n="@@accounting.third-parties.code.aux.2d39a431">Code aux.</th>
           <th scope="col" i18n="@@accounting.third-parties.nom.7ff20370">Nom</th>
           <th scope="col" i18n="@@accounting.third-parties.type.3deb7456">Type</th>
-          <th scope="col" pTooltip="Compte collectif de rattachement" tooltipPosition="top" i18n="@@accounting.third-parties.collectif.ba912701">Collectif</th>
-          <th scope="col" class="text-right" pTooltip="Délai de règlement (jours)" tooltipPosition="top" i18n="@@accounting.third-parties.delai.be9a9403">Délai</th>
+          <th scope="col" pTooltip="Compte collectif de rattachement" i18n-pTooltip="Compte collectif de rattachement" tooltipPosition="top" i18n="@@accounting.third-parties.collectif.ba912701">Collectif</th>
+          <th scope="col" class="text-right" pTooltip="Délai de règlement (jours)" i18n-pTooltip="Délai de règlement (jours)" tooltipPosition="top" i18n="@@accounting.third-parties.delai.be9a9403">Délai</th>
           <th scope="col" class="text-right" i18n="@@accounting.third-parties.solde.d.3f441081">Solde D</th>
           <th scope="col" class="text-right" i18n="@@accounting.third-parties.solde.c.81de0678">Solde C</th>
           <th scope="col" i18n="@@accounting.third-parties.actif.2eb75f84">Actif</th>
@@ -148,26 +149,26 @@ interface ThirdPartyProfileForm {
           <td data-label="Nom">{{ r.name }}</td>
           <td data-label="Type">
             <span class="tp-badge" [class.tp-badge-client]="r.kind === 1" [class.tp-badge-supplier]="r.kind === 2">
-              {{ r.kind === 1 ? 'Client' : 'Fournisseur' }}
+              {{ r.kind === 1 ? loc_ui_tern_client_1bdd79 : loc_ui_tern_fournisseur_97d91d }}
             </span>
           </td>
           <td class="tp-mono" data-label="Collectif">{{ r.collectiveAccountNumber }}</td>
           <td class="text-right" data-label="Délai">{{ r.paymentTermDays != null ? r.paymentTermDays + ' j' : '—' }}</td>
           <td class="text-right tp-num" data-label="Solde D">{{ r.balanceDebit | number : '1.3-3' }}</td>
           <td class="text-right tp-num" data-label="Solde C">{{ r.balanceCredit | number : '1.3-3' }}</td>
-          <td data-label="Actif">{{ r.isActive ? 'Oui' : 'Non' }}</td>
+          <td data-label="Actif">{{ r.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
           <td data-label="Actions" class="tp-actions">
             <app-accounting-table-actions>
             <app-button variant="ghost" size="sm" icon="pi-book" [iconOnly]="true" [iconAlwaysVisible]="true"
               [routerLink]="['/accounting/third-party-ledger']"
               [queryParams]="{ thirdPartyId: r.thirdPartyId, kind: r.kind, name: r.name }"
-              pTooltip="Grand livre du tiers" tooltipPosition="top" ariaLabel="Grand livre du tiers" />
+              pTooltip="Grand livre du tiers" i18n-pTooltip="Grand livre du tiers" tooltipPosition="top" ariaLabel="Grand livre du tiers" />
             <app-button variant="ghost" size="sm" icon="pi-link" [iconOnly]="true" [iconAlwaysVisible]="true"
               [routerLink]="['/accounting/lettering']"
-              pTooltip="Lettrage" tooltipPosition="top" ariaLabel="Lettrage" />
+              pTooltip="Lettrage" i18n-pTooltip="Lettrage" tooltipPosition="top" ariaLabel="Lettrage" />
             <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
               type="button" (click)="startEdit(r)"
-              pTooltip="Fiche comptable" tooltipPosition="top" ariaLabel="Modifier la fiche comptable" />
+              pTooltip="Fiche comptable" i18n-pTooltip="Fiche comptable" tooltipPosition="top" ariaLabel="Modifier la fiche comptable" />
             </app-accounting-table-actions>
           </td>
         </tr>
@@ -208,6 +209,14 @@ interface ThirdPartyProfileForm {
   `
 })
 export class ThirdPartiesComponent implements OnInit {
+  readonly loc_ui_tern_generation_ce4e34 = $localize`:@@ui.tern.generation.ce4e34:Génération…`;
+  readonly loc_ui_tern_generer_les_codes_manquants_078786 = $localize`:@@ui.tern.generer.les.codes.manquants.078786:Générer les codes manquants`;
+  readonly loc_ui_tern_client_1bdd79 = $localize`:@@ui.tern.client.1bdd79:Client`;
+  readonly loc_ui_tern_fournisseur_97d91d = $localize`:@@ui.tern.fournisseur.97d91d:Fournisseur`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
   private readonly errorHandler = inject(ErrorHandlerService);
@@ -236,7 +245,7 @@ export class ThirdPartiesComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.rows.set(res.data.items);
-        else this.error.set(res.error ?? 'Erreur de chargement du plan tiers.');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.du.plan.tiers.7d7ed6:Erreur de chargement du plan tiers.`);
       },
       error: err => { this.loading.set(false); this.error.set(this.errorHandler.extractErrorMessage(err)); }
     });
@@ -251,12 +260,12 @@ export class ThirdPartiesComponent implements OnInit {
         if (res.success) {
           const n = res.data ?? 0;
           this.toast.add({
-            severity: 'success', summary: 'Codes auxiliaires',
-            detail: n > 0 ? `${n} code(s) généré(s).` : 'Tous les tiers actifs ont déjà un code.', life: 4000
+            severity: 'success', summary: $localize`:@@third-parties.component.summary.Codes auxili:Codes auxiliaires`,
+            detail: n > 0 ? $localize`:@@ui.tern.ph.code.s.genere.s.fd9598:${n}:p0: code(s) généré(s).` : $localize`:@@ui.tern.tous.les.tiers.actifs.ont.deja.un.code.614d52:Tous les tiers actifs ont déjà un code.`, life: 4000
           });
           if (n > 0) this.load();
         } else {
-          this.error.set(res.error ?? 'Erreur lors de la génération des codes.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.generation.des.codes.130fa4:Erreur lors de la génération des codes.`);
         }
       },
       error: err => { this.generating.set(false); this.error.set(this.errorHandler.extractErrorMessage(err)); }
@@ -279,7 +288,7 @@ export class ThirdPartiesComponent implements OnInit {
             accountingNotes: p.accountingNotes ?? ''
           });
         } else {
-          this.error.set(res.error ?? 'Erreur de chargement de la fiche.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.de.la.fiche.69a06f:Erreur de chargement de la fiche.`);
         }
       },
       error: err => this.error.set(this.errorHandler.extractErrorMessage(err))
@@ -299,11 +308,11 @@ export class ThirdPartiesComponent implements OnInit {
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Fiche tiers enregistrée', detail: f.thirdPartyName, life: 4000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@third-parties.component.summary.Fiche_tiers_enre:Fiche tiers enregistrée`, detail: f.thirdPartyName, life: 4000 });
           this.form.set(null);
           this.load();
         } else {
-          this.error.set(res.error ?? "Erreur lors de l'enregistrement de la fiche.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.l.enregistrement.de.la.fich.3b6371:Erreur lors de l'enregistrement de la fiche.`);
         }
       },
       error: err => { this.saving.set(false); this.error.set(this.errorHandler.extractErrorMessage(err)); }

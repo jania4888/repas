@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -259,8 +260,8 @@ export class PayrollJournalComponent implements OnInit {
     const j = this.journal();
     if (!j) return '';
     return j.accountingLinesArePosted
-      ? `Écriture comptabilisée n° ${j.accountingEntryNumber} — journal ${j.accountingJournalCode}.`
-      : "Ventilation simulée : le cycle n'est pas encore comptabilisé.";
+      ? $localize`:@@ui.tern.ecriture.comptabilisee.n.ph.journal.ph.41db32:Écriture comptabilisée n° ${j.accountingEntryNumber}:p0: — journal ${j.accountingJournalCode}:p1:.`
+      : $localize`:@@ui.tern.ventilation.simulee.le.cycle.n.est.pas.enc.5d3f88:Ventilation simulée : le cycle n'est pas encore comptabilisé.`;
   });
 
   summaryStats = computed((): PayrollStatItem[] => {
@@ -306,7 +307,7 @@ export class PayrollJournalComponent implements OnInit {
   onExport(format: PayrollReportExportFormat): void {
     const j = this.journal();
     if (!j) return;
-    const view = VIEW_BY_TAB[this.activeTabIndex] ?? 'ByEmployee';
+    const view = VIEW_BY_TAB[this.activeTabIndex] ?? $localize`:@@ui.tern.byemployee.8f359b:ByEmployee`;
     this.exporting.set(true);
 
     this.payroll
@@ -325,7 +326,7 @@ export class PayrollJournalComponent implements OnInit {
         error: err =>
           this.toast.add({
             severity: 'error',
-            summary: 'Journal de paie',
+            summary: $localize`:@@payroll-journal.component.summary.Journal_de_paie:Journal de paie`,
             detail: this.errorHandler.extractErrorMessage(err) || 'Export impossible.'
           })
       });

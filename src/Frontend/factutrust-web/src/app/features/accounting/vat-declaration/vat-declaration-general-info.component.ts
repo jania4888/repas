@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, inject } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -16,7 +17,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
   standalone: true,
 
-  imports: [CommonModule],
+  imports: [BackendLabelPipe, CommonModule],
 
   template: `
 
@@ -38,7 +39,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
           <span class="vat-info-label" i18n="@@accounting.vat-declaration.type.de.declaration.1cfe4f4c">Type de déclaration</span>
 
-          <span class="vat-info-value">{{ declaration?.declarationTypeDisplay ?? '—' }}</span>
+          <span class="vat-info-value">{{ (declaration?.declarationTypeDisplay | backendLabel) ?? '—' }}</span>
 
         </div>
 
@@ -78,7 +79,7 @@ import { formatDateFr, formatPeriodLabel, resolveCompanyDisplay } from './vat-de
 
           <span class="vat-info-label" i18n="@@accounting.vat-declaration.regime.d.imposition.46563a5a">Régime d'imposition</span>
 
-          <span class="vat-info-value">{{ companyDisplay.taxRegimeDisplay ?? '—' }}</span>
+          <span class="vat-info-value">{{ (companyDisplay.taxRegimeDisplay | backendLabel) ?? '—' }}</span>
 
         </div>
 

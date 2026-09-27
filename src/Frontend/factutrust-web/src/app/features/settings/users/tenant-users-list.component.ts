@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -47,7 +49,7 @@ interface ModuleDraft extends UserModuleAccessItem {
 @Component({
   selector: 'app-tenant-users-list',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterModule,
@@ -71,9 +73,9 @@ interface ModuleDraft extends UserModuleAccessItem {
     <app-page-header
       title="Utilisateurs et rôles" i18n-title="Utilisateurs et rôles"
       subtitle="Gérez les accès de votre équipe">
-      <p-button label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
-      <p-button label="Ajouter un utilisateur" icon="pi pi-user-plus" (onClick)="openCreate()"></p-button>
-      <p-button label="Ajouter plusieurs" icon="pi pi-users" [outlined]="true" routerLink="/settings/users/add"></p-button>
+      <p-button label="Retour" i18n-label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
+      <p-button label="Ajouter un utilisateur" i18n-label="Ajouter un utilisateur" icon="pi pi-user-plus" (onClick)="openCreate()"></p-button>
+      <p-button label="Ajouter plusieurs" i18n-label="Ajouter plusieurs" icon="pi pi-users" [outlined]="true" routerLink="/settings/users/add"></p-button>
     </app-page-header>
 
     <app-table-totals-bar [metrics]="summaryMetrics()" [loading]="loading()"></app-table-totals-bar>
@@ -97,10 +99,10 @@ interface ModuleDraft extends UserModuleAccessItem {
                 <span class="email">{{ row.email }}</span>
               </div>
             </td>
-            <td>{{ row.roleDisplay }}</td>
+            <td>{{ row.roleDisplay | backendLabel }}</td>
             <td>{{ formatDate(row.lastLoginAt) }}</td>
             <td>
-              <p-tag [severity]="row.isActive ? 'success' : 'danger'" [value]="row.isActive ? 'Actif' : 'Inactif'"></p-tag>
+              <p-tag [severity]="row.isActive ? 'success' : 'danger'" [value]="row.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"></p-tag>
             </td>
             <td>
               <p-button icon="pi pi-cog" [rounded]="true" [text]="true" (onClick)="openEdit(row)" ariaLabel="Configurer"></p-button>
@@ -122,7 +124,7 @@ interface ModuleDraft extends UserModuleAccessItem {
       styleClass="user-form-dialog"
       [style]="{ width: 'min(700px, 96vw)' }"
       [contentStyle]="{ overflow: 'auto', maxHeight: 'min(62vh, 520px)', padding: 0 }"
-      header="Ajouter un utilisateur"
+      header="Ajouter un utilisateur" i18n-header="Ajouter un utilisateur"
       (onHide)="resetCreateForm()">
       <div class="user-dialog-body">
         <div class="user-form-grid">
@@ -168,15 +170,15 @@ interface ModuleDraft extends UserModuleAccessItem {
         <section class="form-section modules-section" aria-labelledby="create-modules-heading">
           <div class="form-section-head">
             <h4 id="create-modules-heading" class="form-section-title" i18n="@@settings.users.modules.04e9462c">Modules</h4>
-            <p class="modules-hint" i18n="@@settings.users.les.acces.effectifs.elements.coches.dans.la.limi.68814cf7">Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
-              Les éléments « Extension » élargissent les accès par défaut du rôle.</p>
+            <p class="modules-hint" i18n="@@settings.users.les.acces.effectifs.elements.coches.dans.la.limi.68814cf7"> Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
+              Les éléments « Extension » élargissent les accès par défaut du rôle. </p>
           </div>
           @if (createCatalogLoading()) {
             <p class="catalog-state" i18n="@@settings.users.chargement.du.catalogue.2ae07afb">Chargement du catalogue…</p>
           } @else if (createCatalogError()) {
             <div class="catalog-error">
               <p i18n="@@settings.users.impossible.de.charger.le.catalogue.des.modules.p.0ec32b10">Impossible de charger le catalogue des modules pour ce rôle. L’enregistrement est désactivé.</p>
-              <p-button label="Réessayer" [outlined]="true" (onClick)="onCreateRoleChange(createRole)"></p-button>
+              <p-button label="Réessayer" i18n-label="Réessayer" [outlined]="true" (onClick)="onCreateRoleChange(createRole)"></p-button>
             </div>
           } @else {
             <div class="module-list">
@@ -198,7 +200,7 @@ interface ModuleDraft extends UserModuleAccessItem {
                     <div
                       class="module-subfeatures"
                       role="group"
-                      [attr.aria-label]="'Sous-modules : ' + moduleLabel(m.module)">
+                      [attr.aria-label]="loc_ui_tern_sous_modules_6ad740 + moduleLabel(m.module)">
                       @for (f of catalogVisibleFeatures(createCatalogModule(m.module)); track f.key) {
                         <label class="subfeature-row">
                           <p-checkbox
@@ -222,9 +224,9 @@ interface ModuleDraft extends UserModuleAccessItem {
       </div>
       <ng-template pTemplate="footer">
         <div class="user-dialog-footer-actions">
-          <p-button label="Annuler" [outlined]="true" type="button" (onClick)="closeCreate()"></p-button>
+          <p-button label="Annuler" i18n-label="Annuler" [outlined]="true" type="button" (onClick)="closeCreate()"></p-button>
           <p-button
-            label="Créer"
+            label="Créer" i18n-label="Créer"
             icon="pi pi-check"
             type="button"
             (onClick)="saveCreate()"
@@ -241,7 +243,7 @@ interface ModuleDraft extends UserModuleAccessItem {
       styleClass="user-form-dialog"
       [style]="{ width: 'min(700px, 96vw)' }"
       [contentStyle]="{ overflow: 'auto', maxHeight: 'min(62vh, 520px)', padding: 0 }"
-      header="Modifier l'utilisateur"
+      header="Modifier l'utilisateur" i18n-header="Modifier l'utilisateur"
       (onHide)="closeEdit()">
       @if (editUser()) {
         <div class="user-dialog-body">
@@ -281,15 +283,15 @@ interface ModuleDraft extends UserModuleAccessItem {
           <section class="form-section modules-section" aria-labelledby="edit-modules-heading">
             <div class="form-section-head">
               <h4 id="edit-modules-heading" class="form-section-title" i18n="@@settings.users.modules.04e9462c">Modules</h4>
-              <p class="modules-hint" i18n="@@settings.users.les.acces.effectifs.elements.coches.dans.la.limi.60a55792">Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
-                Les éléments « Extension » élargissent les accès par défaut du rôle.</p>
+              <p class="modules-hint" i18n="@@settings.users.les.acces.effectifs.elements.coches.dans.la.limi.60a55792"> Les accès effectifs = éléments cochés, dans la limite du plafond autorisé pour le rôle.
+                Les éléments « Extension » élargissent les accès par défaut du rôle. </p>
             </div>
             @if (editCatalogLoading()) {
               <p class="catalog-state" i18n="@@settings.users.chargement.du.catalogue.2ae07afb">Chargement du catalogue…</p>
             } @else if (editCatalogError()) {
               <div class="catalog-error">
                 <p i18n="@@settings.users.impossible.de.charger.le.catalogue.des.modules.p.0ec32b10">Impossible de charger le catalogue des modules pour ce rôle. L’enregistrement est désactivé.</p>
-                <p-button label="Réessayer" [outlined]="true" (onClick)="onEditRoleChange(editRole)"></p-button>
+                <p-button label="Réessayer" i18n-label="Réessayer" [outlined]="true" (onClick)="onEditRoleChange(editRole)"></p-button>
               </div>
             } @else {
               <div class="module-list">
@@ -312,7 +314,7 @@ interface ModuleDraft extends UserModuleAccessItem {
                       <div
                         class="module-subfeatures"
                         role="group"
-                        [attr.aria-label]="'Sous-modules : ' + moduleLabel(m.module)">
+                        [attr.aria-label]="loc_ui_tern_sous_modules_6ad740 + moduleLabel(m.module)">
                         @for (f of catalogVisibleFeatures(editCatalogModule(m.module)); track f.key) {
                           <label class="subfeature-row">
                             <p-checkbox
@@ -339,9 +341,9 @@ interface ModuleDraft extends UserModuleAccessItem {
       <ng-template pTemplate="footer">
         @if (editUser()) {
           <div class="user-dialog-footer-actions">
-            <p-button label="Annuler" [outlined]="true" type="button" (onClick)="closeEdit()"></p-button>
+            <p-button label="Annuler" i18n-label="Annuler" [outlined]="true" type="button" (onClick)="closeEdit()"></p-button>
             <p-button
-              label="Enregistrer"
+              label="Enregistrer" i18n-label="Enregistrer"
               type="button"
               (onClick)="saveEdit()"
               [loading]="saving()"
@@ -591,6 +593,9 @@ interface ModuleDraft extends UserModuleAccessItem {
   `]
 })
 export class TenantUsersListComponent implements OnInit {
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_sous_modules_6ad740 = $localize`:@@ui.tern.sous.modules.6ad740:Sous-modules : `;
   private readonly tenantUsers = inject(TenantUsersService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -675,12 +680,12 @@ export class TenantUsersListComponent implements OnInit {
         if (res.success && res.data) {
           this.users.set(res.data);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? 'Chargement impossible' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@tenant-users-list.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? $localize`:@@ui.tern.chargement.impossible.4c82ff:Chargement impossible` });
         }
       },
       error: () => {
         this.loading.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de charger les utilisateurs' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@tenant-users-list.component.summary.Erreur:Erreur`, detail: $localize`:@@tenant-users-list.component.detail.Impossible d:Impossible de charger les utilisateurs` });
       }
     });
   }
@@ -868,8 +873,8 @@ export class TenantUsersListComponent implements OnInit {
     if (!this.createFirstName.trim() || !this.createLastName.trim() || !this.createEmail.trim() || !this.createPassword) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Champs requis',
-        detail: 'Renseignez le prénom, le nom, l’email et le mot de passe.'
+        summary: $localize`:@@tenant-users-list.component.summary.Champs requi:Champs requis`,
+        detail: $localize`:@@tenant-users-list.component.detail.Renseignez_le_pr:Renseignez le prénom, le nom, l’email et le mot de passe.`
       });
       return;
     }
@@ -891,17 +896,17 @@ export class TenantUsersListComponent implements OnInit {
       next: res => {
         this.createSaving.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Créé', detail: res.message ?? 'Utilisateur créé' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@tenant-users-list.component.summary.Créé:Créé`, detail: res.message ?? $localize`:@@ui.tern.utilisateur.cree.ba6887:Utilisateur créé` });
           this.createVisible = false;
           this.resetCreateForm();
           this.load();
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? 'Échec de la création' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@tenant-users-list.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? $localize`:@@ui.tern.echec.de.la.creation.4fa170:Échec de la création` });
         }
       },
       error: () => {
         this.createSaving.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Échec de la création' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@tenant-users-list.component.summary.Erreur:Erreur`, detail: $localize`:@@tenant-users-list.component.detail._chec_de_la_cr_a:Échec de la création` });
       }
     });
   }
@@ -1026,16 +1031,16 @@ export class TenantUsersListComponent implements OnInit {
         this.saving.set(false);
         if (res.success) {
           // Message de révocation renvoyé par l'API (sessions en cours révoquées) affiché en toast.
-          this.toast.add({ severity: 'success', summary: 'Enregistré', detail: res.message ?? 'Utilisateur mis à jour' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@tenant-users-list.component.summary.Enregistr_:Enregistré`, detail: res.message ?? $localize`:@@ui.tern.utilisateur.mis.a.jour.41ad5f:Utilisateur mis à jour` });
           this.closeEdit();
           this.load();
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? 'Échec de la mise à jour' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@tenant-users-list.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? $localize`:@@ui.tern.echec.de.la.mise.a.jour.4b4c25:Échec de la mise à jour` });
         }
       },
       error: () => {
         this.saving.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Échec de la mise à jour' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@tenant-users-list.component.summary.Erreur:Erreur`, detail: $localize`:@@tenant-users-list.component.detail.Échec de la :Échec de la mise à jour` });
       }
     });
   }

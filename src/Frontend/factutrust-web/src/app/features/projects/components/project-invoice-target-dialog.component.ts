@@ -19,7 +19,7 @@ export interface ProjectInvoiceTargetChoice {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Facturer la sélection"
+      header="Facturer la sélection" i18n-header="Facturer la sélection"
       [style]="{ width: '34rem' }"
       [draggable]="false"
       (onShow)="reset()"

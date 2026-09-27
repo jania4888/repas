@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,7 +23,7 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
 @Component({
   selector: 'app-payroll-bank-transfer-dialog',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     DialogModule,
@@ -35,14 +37,14 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
   ],
   template: `
     <p-dialog
-      header="Export virement bancaire"
+      header="Export virement bancaire" i18n-header="Export virement bancaire"
       [(visible)]="visibleProxy"
       [modal]="true"
       [style]="{ width: '820px' }"
       (onShow)="onOpen()"
       (onHide)="closed.emit()">
-      <p class="hint mb-3" i18n="@@payroll.runs.fichier.csv.standard.utf.8.pour.depot.sur.le.por.1e175a62">Fichier CSV standard (; UTF-8) pour dépôt sur le portail de votre banque.
-        Vérifiez le modèle exigé par votre établissement avant import.</p>
+      <p class="hint mb-3" i18n="@@payroll.runs.fichier.csv.standard.utf.8.pour.depot.sur.le.por.1e175a62"> Fichier CSV standard (; UTF-8) pour dépôt sur le portail de votre banque.
+        Vérifiez le modèle exigé par votre établissement avant import. </p>
 
       <div class="toolbar mb-3">
         <div class="field">
@@ -73,7 +75,7 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
 
         <div class="summary mb-3">
           <span><strong>{{ preview()!.eligibleCount }}</strong> virement(s)</span>
-          <span>Total : <strong>{{ preview()!.totalAmount | payrollAmount }}</strong></span>
+          <span><ng-container i18n="@@payroll.runs.total.45b5a72b">Total : </ng-container> <strong>{{ preview()!.totalAmount | payrollAmount }}</strong></span>
         </div>
 
         <p-tabs [lazy]="true">
@@ -122,7 +124,7 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
                   <tr>
                     <td>{{ e.employeeNumber }}</td>
                     <td>{{ e.employeeName }}</td>
-                    <td>{{ e.reasonDisplay }}</td>
+                    <td>{{ e.reasonDisplay | backendLabel }}</td>
                     <td class="text-right">{{ e.netSalary | payrollAmount }}</td>
                   </tr>
                 </ng-template>
@@ -143,7 +145,7 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
           icon="pi-download"
           iconPos="left"
           [disabled]="!canDownload() || downloading()"
-          (click)="download()" i18n="@@payroll.runs.telecharger.csv.7a1a04b2">Télécharger CSV</app-button>
+          (click)="download()" i18n="@@payroll.runs.telecharger.csv.7a1a04b2"> Télécharger CSV </app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -192,7 +194,7 @@ export class PayrollBankTransferDialogComponent implements OnInit {
       .filter(a => a.isActive)
       .map(a => ({
         value: a.id,
-        label: `${a.bankName}${a.isDefault ? ' (défaut)' : ''} — …${a.rib.slice(-4)}`
+        label: `${a.bankName}${a.isDefault ? $localize`:@@ui.tern.defaut.f21337: (défaut)` : ''} — …${a.rib.slice(-4)}`
       }))
   );
 
@@ -232,8 +234,8 @@ export class PayrollBankTransferDialogComponent implements OnInit {
           this.preview.set(null);
           this.toast.add({
             severity: 'error',
-            summary: 'Virement',
-            detail: err?.error?.message ?? 'Impossible de prévisualiser le virement.'
+            summary: $localize`:@@payroll-bank-transfer-dialog.component.summary.Virement:Virement`,
+            detail: err?.error?.message ?? $localize`:@@ui.tern.impossible.de.previsualiser.le.virement.0d7fd5:Impossible de prévisualiser le virement.`
           });
         }
       });
@@ -261,7 +263,7 @@ export class PayrollBankTransferDialogComponent implements OnInit {
           downloadBlob(blob, name);
           this.toast.add({
             severity: 'success',
-            summary: 'Virement',
+            summary: $localize`:@@payroll-bank-transfer-dialog.component.summary.Virement:Virement`,
             detail: `Fichier téléchargé (${run.eligibleCount} virement(s), ${formatPayrollAmount(run.totalAmount)}).`
           });
           this.close();
@@ -269,8 +271,8 @@ export class PayrollBankTransferDialogComponent implements OnInit {
         error: err =>
           this.toast.add({
             severity: 'error',
-            summary: 'Virement',
-            detail: err?.error?.message ?? 'Export CSV impossible.'
+            summary: $localize`:@@payroll-bank-transfer-dialog.component.summary.Virement:Virement`,
+            detail: err?.error?.message ?? $localize`:@@ui.tern.export.csv.impossible.52ba05:Export CSV impossible.`
           })
       });
   }

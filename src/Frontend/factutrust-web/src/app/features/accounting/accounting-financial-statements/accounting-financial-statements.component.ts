@@ -79,7 +79,7 @@ export class AccountingFinancialStatementsComponent {
   );
 
   readonly pageTitle = computed(() => 'États comptables');
-  readonly pageSubtitle = computed(() => this.etatsModule()?.description ?? 'Journal, grand livre, balance et bilans');
+  readonly pageSubtitle = computed(() => this.etatsModule()?.description ?? $localize`:@@ui.tern.journal.grand.livre.balance.et.bilans.94bb71:Journal, grand livre, balance et bilans`);
 
   readonly visibleLinks = computed<AccountingModuleLink[]>(() => {
     const mod = this.etatsModule();

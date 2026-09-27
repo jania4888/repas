@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -22,6 +23,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   selector: 'app-inventory-detail',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     ButtonModule,
@@ -53,7 +55,7 @@ export class InventoryDetailComponent implements OnInit {
     return [
       { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
       { label: 'Inventaire', route: '/inventory' },
-      { label: inv?.reference ?? 'Détail' }
+      { label: inv?.reference ?? $localize`:@@ui.tern.detail.7ce06a:Détail` }
     ];
   });
 

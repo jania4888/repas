@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { AuthShellComponent } from './auth-shell.component';
 import {
   AuthShellConfig,
@@ -22,7 +24,8 @@ describe('AuthShellComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AuthShellComponent],
-      providers: [provideRouter([])],
+      // Sélecteur de langue (ErpLocaleService → authentification et préférences via HTTP).
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AuthShellComponent);

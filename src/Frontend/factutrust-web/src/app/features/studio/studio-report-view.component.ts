@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -24,7 +25,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
       [breadcrumbs]="breadcrumbs()">
       <div class="srv-actions">
         <button pButton type="button" class="p-button-outlined p-button-sm"
-          icon="fa-solid fa-file-pdf" label="Imprimer (PDF)"
+          icon="fa-solid fa-file-pdf" label="Imprimer (PDF)" i18n-label="Imprimer (PDF)"
           [disabled]="loading() || exporting() || !result()" (click)="exportPdf()"></button>
       </div>
       <app-dynamic-report
@@ -60,7 +61,7 @@ export class StudioReportViewComponent implements OnInit {
       },
       error: () => {
         this.exporting.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: "L'édition PDF a échoué." });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-view.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-report-view.component.detail.LéditionPDFaéchoué:L'édition PDF a échoué.` });
       }
     });
   }
@@ -78,7 +79,7 @@ export class StudioReportViewComponent implements OnInit {
     });
     this.studio.runReport(id).subscribe({
       next: res => { this.loading.set(false); if (res.success) this.result.set(res.data); },
-      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Rapport introuvable.' }); }
+      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-view.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-report-view.component.detail.Rapport_introuva:Rapport introuvable.` }); }
     });
   }
 }

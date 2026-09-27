@@ -55,7 +55,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Charger les brouillons" i18n="@@accounting.draft-batch.charger.8f860300">Charger</app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Charger les brouillons" i18n="@@accounting.draft-batch.charger.8f860300"> Charger </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -91,7 +91,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </app-button>
           <app-button variant="danger" icon="pi pi-trash" type="button"
             (click)="applyDelete()" [disabled]="busy() || selectedIds().length === 0 || !canDelete()"
-            [attr.ariaLabel]="canDelete() ? 'Supprimer les brouillons sélectionnés' : 'Suppression réservée au cabinet en mode délégué'">
+            [attr.ariaLabel]="canDelete() ? loc_ui_tern_supprimer_les_brouillons_selectionnes_1ccce3 : loc_ui_tern_suppression_reservee_au_cabinet_en_mode_de_27d9cd">
             Supprimer ({{ selectedIds().length }})
           </app-button>
         </div>
@@ -114,7 +114,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </ng-template>
         <ng-template pTemplate="body" let-e>
           <tr>
-            <td><input type="checkbox" [checked]="isSelected(e.id)" (change)="toggle(e.id)" [attr.aria-label]="'Sélectionner ' + e.journalCode + ' ' + e.entryNumber" /></td>
+            <td><input type="checkbox" [checked]="isSelected(e.id)" (change)="toggle(e.id)" [attr.aria-label]="loc_ui_tern_selectionner_aaed53 + e.journalCode + ' ' + e.entryNumber" /></td>
             <td><span class="db-code">{{ e.journalCode }}</span></td>
             <td>{{ e.entryNumber }}</td>
             <td>{{ e.entryDate | date : 'shortDate' }}</td>
@@ -145,6 +145,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class DraftBatchComponent implements OnInit {
+  readonly loc_ui_tern_supprimer_les_brouillons_selectionnes_1ccce3 = $localize`:@@ui.tern.supprimer.les.brouillons.selectionnes.1ccce3:Supprimer les brouillons sélectionnés`;
+  readonly loc_ui_tern_suppression_reservee_au_cabinet_en_mode_de_27d9cd = $localize`:@@ui.tern.suppression.reservee.au.cabinet.en.mode.de.27d9cd:Suppression réservée au cabinet en mode délégué`;
+  readonly loc_ui_tern_selectionner_aaed53 = $localize`:@@ui.tern.selectionner.aaed53:Sélectionner `;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly journalCatalog = inject(AccountingJournalCatalogService);
@@ -207,7 +210,7 @@ export class DraftBatchComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.error.set(null);
@@ -221,7 +224,7 @@ export class DraftBatchComponent implements OnInit {
           // Seuls les brouillons non-extourne sont éditables en lot (le serveur les ignore sinon).
           this.drafts.set(res.data.filter(e => e.isDraft && !e.isReversed));
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: err => {
@@ -249,7 +252,7 @@ export class DraftBatchComponent implements OnInit {
           this.resetChangeForm();
           this.load();
         } else {
-          this.error.set(res.error ?? 'La modification a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.la.modification.a.echoue.5f6a29:La modification a échoué.`);
         }
       },
       error: err => {
@@ -272,7 +275,7 @@ export class DraftBatchComponent implements OnInit {
           this.successMessage.set(`${res.data.deleted} brouillon(s) supprimé(s), ${res.data.skipped} ignoré(s).`);
           this.load();
         } else {
-          this.error.set(res.error ?? 'La suppression a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.la.suppression.a.echoue.2be4e0:La suppression a échoué.`);
         }
       },
       error: err => {

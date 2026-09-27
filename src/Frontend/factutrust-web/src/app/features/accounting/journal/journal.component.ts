@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -136,7 +137,7 @@ type JournalFlatRow = {
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser le journal comptable pour la période sélectionnée" i18n="@@accounting.journal.actualiser.9d3b2a7d">Actualiser</app-button>
+            ariaLabel="Actualiser le journal comptable pour la période sélectionnée" i18n="@@accounting.journal.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-journal"
             density="toolbar"
@@ -209,7 +210,7 @@ type JournalFlatRow = {
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
         styleClass="p-datatable-sm journal-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
@@ -235,7 +236,7 @@ type JournalFlatRow = {
             <td data-label="Libellé">
               {{ r.label }}
               @if (r.firstOfEntry && r.pieceRef) {
-                <span class="journal-piece-ref" [title]="'Pièce : ' + r.pieceRef">Pièce {{ r.pieceRef }}</span>
+                <span class="journal-piece-ref" [title]="loc_ui_tern_piece_aa1746 + r.pieceRef">Pièce {{ r.pieceRef }}</span>
               }
             </td>
             <td class="journal-col-account" data-label="Compte">
@@ -256,8 +257,8 @@ type JournalFlatRow = {
             <td class="journal-col-narrow" data-label="Statut">
               @if (r.firstOfEntry) {
                 <span class="journal-badge" [class.journal-badge-draft]="r.isDraft" [class.journal-badge-valid]="!r.isDraft"
-                      [title]="isPayrollSourced(r.sourceEntityType) ? 'Écriture générée par le module Paie — corrigez via « Rouvrir le cycle » ou « Annuler le paiement ». Non supprimable ni extournable depuis la comptabilité.' : ''">
-                  {{ r.isDraft ? 'Brouillon' : r.status === 2 ? 'Clôturée' : 'Validée' }}
+                      [title]="isPayrollSourced(r.sourceEntityType) ? loc_ui_tern_ecriture_generee_par_le_module_paie_corrig_af7d4a : ''">
+                  {{ r.isDraft ? loc_ui_tern_brouillon_57d2d7 : r.status === 2 ? loc_ui_tern_cloturee_da2e2b : loc_ui_tern_validee_2cc6c3 }}
                 </span>
                 @if (isPayrollSourced(r.sourceEntityType)) {
                   <span class="journal-badge journal-badge-reversed" title="Écriture générée par le module Paie" i18n-title="Écriture générée par le module Paie" i18n="@@accounting.journal.paie.6ca885f3">Paie</span>
@@ -290,7 +291,7 @@ type JournalFlatRow = {
                   type="button"
                   (click)="validateEntry(r.entryId)"
                   [disabled]="validatingId() === r.entryId"
-                  [attr.aria-label]="'Valider l\\'écriture ' + r.journal + ' n° ' + r.piece" i18n="@@accounting.journal.valider.be4220f7">Valider</app-button>
+                  [attr.aria-label]="'Valider l\\'écriture ' + r.journal + ' n° ' + r.piece" i18n="@@accounting.journal.valider.be4220f7"> Valider </app-button>
               }
               @if (r.firstOfEntry && r.isDraft && canDelete() && !isPayrollSourced(r.sourceEntityType)) {
                 <app-button
@@ -313,7 +314,7 @@ type JournalFlatRow = {
                   iconPos="left"
                   type="button"
                   (click)="openReverse(r)"
-                  [attr.aria-label]="'Extourner l\\'écriture ' + r.journal + ' n° ' + r.piece" i18n="@@accounting.journal.extourner.8884c9cd">Extourner</app-button>
+                  [attr.aria-label]="'Extourner l\\'écriture ' + r.journal + ' n° ' + r.piece" i18n="@@accounting.journal.extourner.8884c9cd"> Extourner </app-button>
               }
               @if (r.firstOfEntry) {
                 <app-button
@@ -351,8 +352,8 @@ type JournalFlatRow = {
           <h2 id="reverse-title" class="journal-modal-title">
             Extourner l'écriture {{ target.journal }} n° {{ target.piece }}
           </h2>
-          <p class="journal-modal-desc" i18n="@@accounting.journal.une.ecriture.inverse.contre.passation.sera.creee.fe29588f">Une écriture inverse (contre-passation) sera créée dans la période d'origine si elle est ouverte,
-            sinon à la date du jour. Indiquez le motif de la correction.</p>
+          <p class="journal-modal-desc" i18n="@@accounting.journal.une.ecriture.inverse.contre.passation.sera.creee.fe29588f"> Une écriture inverse (contre-passation) sera créée dans la période d'origine si elle est ouverte,
+            sinon à la date du jour. Indiquez le motif de la correction. </p>
           <label class="field-label" for="reverse-reason" i18n="@@accounting.journal.motif.2a198f47">Motif</label>
           <textarea
             id="reverse-reason"
@@ -366,13 +367,13 @@ type JournalFlatRow = {
               type="button"
               class="journal-modal-btn journal-modal-btn-cancel"
               (click)="cancelReverse()"
-              [disabled]="reversing()" i18n="@@accounting.journal.annuler.49ba3292">Annuler</button>
+              [disabled]="reversing()" i18n="@@accounting.journal.annuler.49ba3292"> Annuler </button>
             <button
               type="button"
               class="journal-modal-btn journal-modal-btn-confirm"
               (click)="confirmReverse()"
               [disabled]="reversing() || !reverseReason.trim()">
-              {{ reversing() ? 'Extourne…' : "Confirmer l'extourne" }}
+              {{ reversing() ? loc_ui_tern_extourne_a58c5c : loc_ui_tern_confirmer_l_extourne_e80c2b }}
             </button>
           </div>
         </div>
@@ -385,8 +386,8 @@ type JournalFlatRow = {
           <h2 id="attach-title" class="journal-modal-title">
             Pièces justificatives — {{ target.journal }} n° {{ target.piece }}
           </h2>
-          <p class="journal-modal-desc" i18n="@@accounting.journal.pdf.images.excel.ou.word.10.mo.maximum.les.piece.da269237">PDF, images, Excel ou Word — 10 Mo maximum. Les pièces d'une période clôturée
-            restent consultables mais ne peuvent plus être supprimées.</p>
+          <p class="journal-modal-desc" i18n="@@accounting.journal.pdf.images.excel.ou.word.10.mo.maximum.les.piece.da269237"> PDF, images, Excel ou Word — 10 Mo maximum. Les pièces d'une période clôturée
+            restent consultables mais ne peuvent plus être supprimées. </p>
 
           @if (attachError()) {
             <p class="journal-attach-error" role="alert">{{ attachError() }}</p>
@@ -408,7 +409,7 @@ type JournalFlatRow = {
                     class="journal-attach-action"
                     (click)="downloadAttachment(a)"
                     [disabled]="attachBusyId() === a.id"
-                    [attr.aria-label]="'Télécharger ' + a.fileName"
+                    [attr.aria-label]="loc_ui_tern_telecharger_6ac5d8 + a.fileName"
                     title="Télécharger" i18n-title="Télécharger">
                     <i class="pi pi-download" aria-hidden="true"></i>
                   </button>
@@ -417,7 +418,7 @@ type JournalFlatRow = {
                     class="journal-attach-action journal-attach-action-danger"
                     (click)="deleteAttachment(a)"
                     [disabled]="attachBusyId() === a.id"
-                    [attr.aria-label]="'Supprimer ' + a.fileName"
+                    [attr.aria-label]="loc_ui_tern_supprimer_52af4f + a.fileName"
                     title="Supprimer" i18n-title="Supprimer">
                     <i class="pi pi-trash" aria-hidden="true"></i>
                   </button>
@@ -435,12 +436,12 @@ type JournalFlatRow = {
                 (change)="onAttachmentSelected($event)"
                 [disabled]="uploading()" />
               <i class="pi pi-upload" aria-hidden="true"></i>
-              {{ uploading() ? 'Envoi…' : 'Ajouter une pièce' }}
+              {{ uploading() ? loc_ui_tern_envoi_a62561 : loc_ui_tern_ajouter_une_piece_91839b }}
             </label>
             <button
               type="button"
               class="journal-modal-btn journal-modal-btn-cancel"
-              (click)="closeAttachments()" i18n="@@accounting.journal.fermer.5ab4ec64">Fermer</button>
+              (click)="closeAttachments()" i18n="@@accounting.journal.fermer.5ab4ec64"> Fermer </button>
           </div>
         </div>
       </div>
@@ -730,6 +731,17 @@ type JournalFlatRow = {
   `
 })
 export class JournalComponent implements OnInit {
+  readonly loc_ui_tern_piece_aa1746 = $localize`:@@ui.tern.piece.aa1746:Pièce : `;
+  readonly loc_ui_tern_ecriture_generee_par_le_module_paie_corrig_af7d4a = $localize`:@@ui.tern.ecriture.generee.par.le.module.paie.corrig.af7d4a:Écriture générée par le module Paie — corrigez via « Rouvrir le cycle » ou « Annuler le paiement ». Non supprimable ni extournable depuis la comptabilité.`;
+  readonly loc_ui_tern_brouillon_57d2d7 = $localize`:@@ui.tern.brouillon.57d2d7:Brouillon`;
+  readonly loc_ui_tern_cloturee_da2e2b = $localize`:@@ui.tern.cloturee.da2e2b:Clôturée`;
+  readonly loc_ui_tern_validee_2cc6c3 = $localize`:@@ui.tern.validee.2cc6c3:Validée`;
+  readonly loc_ui_tern_extourne_a58c5c = $localize`:@@ui.tern.extourne.a58c5c:Extourne…`;
+  readonly loc_ui_tern_confirmer_l_extourne_e80c2b = $localize`:@@ui.tern.confirmer.l.extourne.e80c2b:Confirmer l'extourne`;
+  readonly loc_ui_tern_telecharger_6ac5d8 = $localize`:@@ui.tern.telecharger.6ac5d8:Télécharger `;
+  readonly loc_ui_tern_supprimer_52af4f = $localize`:@@ui.tern.supprimer.52af4f:Supprimer `;
+  readonly loc_ui_tern_envoi_a62561 = $localize`:@@ui.tern.envoi.a62561:Envoi…`;
+  readonly loc_ui_tern_ajouter_une_piece_91839b = $localize`:@@ui.tern.ajouter.une.piece.91839b:Ajouter une pièce`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly monitoring = inject(AccountingMonitoringService);
@@ -829,7 +841,7 @@ export class JournalComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.exporting.set(true);
@@ -851,7 +863,7 @@ export class JournalComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.loading.set(true);
@@ -859,7 +871,7 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           return;
         }
         let flat: JournalFlatRow[] = [];
@@ -954,7 +966,7 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.validatingId.set(null);
         if (!res.success) {
-          this.error.set(res.error ?? 'La validation a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.la.validation.a.echoue.b2bfca:La validation a échoué.`);
           return;
         }
         this.load();
@@ -974,8 +986,8 @@ export class JournalComponent implements OnInit {
       message: `Supprimer l'écriture ${journal} n° ${piece} ? Cette action est irréversible.`,
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@journal.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@journal.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         if (this.deletingId()) return;
@@ -984,7 +996,7 @@ export class JournalComponent implements OnInit {
           next: res => {
             this.deletingId.set(null);
             if (!res.success) {
-              this.error.set(res.error ?? 'La suppression a échoué.');
+              this.error.set(res.error ?? $localize`:@@ui.tern.la.suppression.a.echoue.2be4e0:La suppression a échoué.`);
               return;
             }
             this.load();
@@ -1021,7 +1033,7 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.attachLoading.set(false);
         if (res.success && res.data) this.attachments.set(res.data);
-        else this.attachError.set(res.error ?? 'Erreur de chargement des pièces.');
+        else this.attachError.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.des.pieces.1f16c7:Erreur de chargement des pièces.`);
       },
       error: err => {
         this.attachLoading.set(false);
@@ -1043,7 +1055,7 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.uploading.set(false);
         if (res.success) this.reloadAttachments(target.entryId);
-        else this.attachError.set(res.error ?? "Erreur lors de l'ajout de la pièce.");
+        else this.attachError.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.l.ajout.de.la.piece.fc52f8:Erreur lors de l'ajout de la pièce.`);
       },
       error: err => {
         this.uploading.set(false);
@@ -1076,8 +1088,8 @@ export class JournalComponent implements OnInit {
       message: `Supprimer la pièce « ${a.fileName} » ?`,
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@journal.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@journal.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.attachBusyId.set(a.id);
@@ -1086,7 +1098,7 @@ export class JournalComponent implements OnInit {
           next: res => {
             this.attachBusyId.set(null);
             if (res.success) this.reloadAttachments(a.journalEntryId);
-            else this.attachError.set(res.error ?? 'Erreur lors de la suppression.');
+            else this.attachError.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.suppression.54158e:Erreur lors de la suppression.`);
           },
           error: err => {
             this.attachBusyId.set(null);
@@ -1128,7 +1140,7 @@ export class JournalComponent implements OnInit {
       next: res => {
         this.reversing.set(false);
         if (!res.success) {
-          this.error.set(res.error ?? "L'extourne a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.extourne.a.echoue.0069fe:L'extourne a échoué.`);
           return;
         }
         this.reverseTarget.set(null);

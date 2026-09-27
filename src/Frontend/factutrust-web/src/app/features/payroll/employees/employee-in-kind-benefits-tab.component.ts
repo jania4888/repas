@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,7 +37,7 @@ const BENEFIT_TYPE_OPTIONS = [
 @Component({
   selector: 'app-employee-in-kind-benefits-tab',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -73,7 +75,7 @@ const BENEFIT_TYPE_OPTIONS = [
         </ng-template>
         <ng-template pTemplate="body" let-b>
           <tr>
-            <td>{{ b.typeDisplay || b.type }}</td>
+            <td>{{ (b.typeDisplay | backendLabel) || b.type }}</td>
             <td>{{ b.label }}</td>
             <td class="text-right">{{ b.monthlyValue | payrollAmount }}</td>
             <td>{{ b.startDate | date:'dd/MM/yyyy' }}</td>
@@ -153,7 +155,7 @@ export class EmployeeInKindBenefitsTabComponent implements OnInit {
   formDescription = '';
 
   get dialogHeader(): string {
-    return this.editingId ? "Modifier l'avantage" : 'Nouvel avantage en nature';
+    return this.editingId ? $localize`:@@ui.tern.modifier.l.avantage.2f051d:Modifier l'avantage` : $localize`:@@ui.tern.nouvel.avantage.en.nature.409866:Nouvel avantage en nature`;
   }
 
   ngOnInit(): void {
@@ -163,7 +165,7 @@ export class EmployeeInKindBenefitsTabComponent implements OnInit {
   reload(): void {
     this.payroll.listInKindBenefits(this.employeeId).subscribe({
       next: res => this.items.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Avantages en nature', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-in-kind-benefits-tab.component.summary.Avantages_en_nat:Avantages en nature`, detail: $localize`:@@employee-in-kind-benefits-tab.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -209,11 +211,11 @@ export class EmployeeInKindBenefitsTabComponent implements OnInit {
 
     req.subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Avantages en nature', detail: 'Enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-in-kind-benefits-tab.component.summary.Avantages_en_nat:Avantages en nature`, detail: $localize`:@@employee-in-kind-benefits-tab.component.detail.Enregistr_:Enregistré.` });
         this.dialogVisible = false;
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Avantages en nature', detail: err.error?.message ?? 'Enregistrement impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-in-kind-benefits-tab.component.summary.Avantages_en_nat:Avantages en nature`, detail: err.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` })
     });
   }
 
@@ -222,8 +224,8 @@ export class EmployeeInKindBenefitsTabComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer l'avantage « ${b.label} » ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@employee-in-kind-benefits-tab.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@employee-in-kind-benefits-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(b.id)
     });
@@ -232,10 +234,10 @@ export class EmployeeInKindBenefitsTabComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteInKindBenefit(this.employeeId, id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Avantages en nature', detail: 'Supprimé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-in-kind-benefits-tab.component.summary.Avantages_en_nat:Avantages en nature`, detail: $localize`:@@employee-in-kind-benefits-tab.component.detail.Supprimé.:Supprimé.` });
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Avantages en nature', detail: err.error?.message ?? 'Suppression impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-in-kind-benefits-tab.component.summary.Avantages_en_nat:Avantages en nature`, detail: err.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.` })
     });
   }
 }

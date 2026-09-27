@@ -127,7 +127,7 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
   readonly registrationFormAriaLabel = computed(() => {
     const stepNames = ['Compte', 'Cabinet', 'Adresse & visibilité'];
     const cur = this.currentStep();
-    const prev = cur > 0 ? 'Étapes précédentes complétées. ' : '';
+    const prev = cur > 0 ? $localize`:@@ui.tern.etapes.precedentes.completees.b92c63:Étapes précédentes complétées. ` : '';
     return `${prev}Étape ${cur + 1} sur 3 : ${stepNames[cur]}.`;
   });
 
@@ -368,7 +368,7 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
             } else if (result.success) {
               this.error.set('Cabinet créé mais identifiant tenant manquant.');
             } else {
-              this.error.set(result.errors?.join(', ') ?? result.message ?? 'Création impossible.');
+              this.error.set(result.errors?.join(', ') ?? result.message ?? $localize`:@@ui.tern.creation.impossible.5661a5:Création impossible.`);
             }
           },
           error: (err: HttpErrorResponse | { status?: number; message?: string }) => {
@@ -398,7 +398,7 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
         } else {
           const errorMessage = response.errors?.length
             ? response.errors.join(', ')
-            : response.message ?? 'Une erreur est survenue lors de l\'inscription';
+            : response.message ?? $localize`:@@ui.tern.une.erreur.est.survenue.lors.de.l.inscript.c27c49:Une erreur est survenue lors de l'inscription`;
           this.error.set(errorMessage);
           this.errorHandler.logError('Firm registration failed (success: false)', { response });
         }

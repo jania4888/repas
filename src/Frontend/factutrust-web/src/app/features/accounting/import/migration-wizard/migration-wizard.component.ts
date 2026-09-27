@@ -60,7 +60,7 @@ import {
           <div class="mw-actions">
             <app-button variant="primary" icon="pi pi-search" type="button"
               (click)="analyze()" [disabled]="!file || busy()"
-              ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.analyser.d06ab560">Analyser</app-button>
+              ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.analyser.d06ab560"> Analyser </app-button>
           </div>
           <p class="mw-help" i18n="@@accounting.import.l.analyse.detecte.le.progiciel.source.et.la.cibl.b7801323">L'analyse détecte le progiciel source et la cible probable. Aucune donnée n'est enregistrée.</p>
         </div>
@@ -72,7 +72,7 @@ import {
           <div class="mw-summary">
             <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.progiciel.detecte.aa375c01">Progiciel détecté</span><span class="mw-kpi-value">{{ sourceLabel(a.detectedSource) }}</span></div>
             <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.lignes.41c7025e">Lignes</span><span class="mw-kpi-value">{{ a.sampleRowCount }}</span></div>
-            <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.format.041a5dec">Format</span><span class="mw-kpi-value">{{ a.format === 1 ? 'Excel' : 'CSV' }}</span></div>
+            <div class="mw-kpi"><span class="mw-kpi-label" i18n="@@accounting.import.format.041a5dec">Format</span><span class="mw-kpi-value">{{ a.format === 1 ? loc_ui_tern_excel_a08e11 : loc_ui_tern_csv_328118 }}</span></div>
           </div>
           <div class="form-field">
             <label class="field-label" for="mw-target" i18n="@@accounting.import.cible.d.import.5a0fc8de">Cible d'import</label>
@@ -95,7 +95,7 @@ import {
             <app-button variant="secondary" type="button" (click)="backTo(0)" [disabled]="busy()" i18n="@@accounting.import.retour.e5befb1f">Retour</app-button>
             <app-button variant="primary" icon="pi pi-arrow-right" type="button"
               (click)="suggestColumns()" [disabled]="busy() || (target === targets.OpeningBalance && !fiscalYear)"
-              ariaLabel="Proposer la correspondance des colonnes" i18n="@@accounting.import.suggerer.les.correspondances.ee9018db">Suggérer les correspondances</app-button>
+              ariaLabel="Proposer la correspondance des colonnes" i18n="@@accounting.import.suggerer.les.correspondances.ee9018db"> Suggérer les correspondances </app-button>
           </div>
         </div>
       }
@@ -103,7 +103,7 @@ import {
       <!-- Étape 3 : correspondances de colonnes (éditables) -->
       @if (step() === 2) {
         <div class="card mw-card">
-          <h3 class="mw-title">Correspondance des colonnes <span class="mw-badge-ia" i18n="@@accounting.import.editable.5c533c88">éditable</span></h3>
+          <h3 class="mw-title"><ng-container i18n="@@accounting.import.correspondance.des.colonnes.3c3fa143">Correspondance des colonnes </ng-container> <span class="mw-badge-ia" i18n="@@accounting.import.editable.5c533c88">éditable</span></h3>
           <p class="mw-help" i18n="@@accounting.import.verifiez.et.ajustez.avant.de.continuer.les.sugge.1f94b509">Vérifiez et ajustez avant de continuer — les suggestions ne sont jamais appliquées telles quelles.</p>
           <p-table [value]="columnItems()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
             <ng-template pTemplate="header"><tr>
@@ -132,7 +132,7 @@ import {
             <app-button variant="secondary" type="button" (click)="backTo(1)" [disabled]="busy()" i18n="@@accounting.import.retour.e5befb1f">Retour</app-button>
             <app-button variant="primary" icon="pi pi-arrow-right" type="button"
               (click)="columnsNext()" [disabled]="busy() || !columnMappingComplete()"
-              ariaLabel="Valider la correspondance des colonnes" i18n="@@accounting.import.valider.les.correspondances.f5ee29eb">Valider les correspondances</app-button>
+              ariaLabel="Valider la correspondance des colonnes" i18n="@@accounting.import.valider.les.correspondances.f5ee29eb"> Valider les correspondances </app-button>
           </div>
         </div>
       }
@@ -141,7 +141,7 @@ import {
       @if (step() === 3) {
         <div class="card mw-card">
           @if (target !== targets.ThirdParties) {
-            <h3 class="mw-title">Correspondance des comptes <span class="mw-badge-ia" i18n="@@accounting.import.editable.5c533c88">éditable</span></h3>
+            <h3 class="mw-title"><ng-container i18n="@@accounting.import.correspondance.des.comptes.83a49034">Correspondance des comptes </ng-container> <span class="mw-badge-ia" i18n="@@accounting.import.editable.5c533c88">éditable</span></h3>
             <p class="mw-help">
               {{ accountResolvedCount() }} compte(s) résolu(s) sans IA (identique/préfixe).
               Les comptes sans cible seront importés tels quels.
@@ -194,7 +194,7 @@ import {
             <app-button variant="secondary" type="button" (click)="backTo(2)" [disabled]="busy()" i18n="@@accounting.import.retour.e5befb1f">Retour</app-button>
             <app-button variant="primary" icon="pi pi-search" type="button"
               (click)="runPreview()" [disabled]="busy()"
-              ariaLabel="Lancer l'aperçu à blanc (dry-run)" i18n="@@accounting.import.apercu.a.blanc.e0c1846b">Aperçu à blanc</app-button>
+              ariaLabel="Lancer l'aperçu à blanc (dry-run)" i18n="@@accounting.import.apercu.a.blanc.e0c1846b"> Aperçu à blanc </app-button>
           </div>
         </div>
       }
@@ -222,12 +222,12 @@ import {
               </ul>
             </div>
           }
-          <p class="mw-help">Création <strong i18n="@@accounting.import.additive.62d12306">additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
+          <p class="mw-help"><ng-container i18n="@@accounting.import.creation.b5061590">Création </ng-container> <strong i18n="@@accounting.import.additive.62d12306">additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
           <div class="mw-actions">
             <app-button variant="secondary" type="button" (click)="backTo(3)" [disabled]="busy()" i18n="@@accounting.import.retour.e5befb1f">Retour</app-button>
             <app-button variant="primary" icon="pi pi-check" type="button"
               (click)="commit()" [disabled]="busy() || !p.canCommit"
-              ariaLabel="Confirmer l'import" i18n="@@accounting.import.confirmer.l.import.2b2258ef">Confirmer l'import</app-button>
+              ariaLabel="Confirmer l'import" i18n="@@accounting.import.confirmer.l.import.2b2258ef"> Confirmer l'import </app-button>
           </div>
         </div>
       }
@@ -275,6 +275,8 @@ import {
   `]
 })
 export class MigrationWizardComponent {
+  readonly loc_ui_tern_excel_a08e11 = $localize`:@@ui.tern.excel.a08e11:Excel`;
+  readonly loc_ui_tern_csv_328118 = $localize`:@@ui.tern.csv.328118:CSV`;
   private readonly service = inject(AccountingService);
 
   readonly targets = ReferenceImportTarget;
@@ -321,7 +323,7 @@ export class MigrationWizardComponent {
           this.target = r.data.suggestedTarget;
           this.step.set(1);
         } else {
-          this.error.set(r.error ?? "Analyse impossible.");
+          this.error.set(r.error ?? $localize`:@@ui.tern.analyse.impossible.26753e:Analyse impossible.`);
         }
       },
       error: (err) => {
@@ -329,7 +331,7 @@ export class MigrationWizardComponent {
         if (err?.status === 404) {
           this.featureUnavailable.set(true); // flag désactivé → repli vers l'import standard
         } else {
-          this.error.set(err?.error?.message ?? "Erreur lors de l'analyse du fichier.");
+          this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.l.analyse.du.fichier.32573d:Erreur lors de l'analyse du fichier.`);
         }
       }
     });
@@ -348,12 +350,12 @@ export class MigrationWizardComponent {
           this.mappingWarnings.set(r.data.warnings);
           this.step.set(2);
         } else {
-          this.error.set(r.error ?? 'Suggestion impossible.');
+          this.error.set(r.error ?? $localize`:@@ui.tern.suggestion.impossible.c4322e:Suggestion impossible.`);
         }
       },
       error: (err) => {
         this.busy.set(false);
-        this.error.set(err?.error?.message ?? 'Erreur lors de la suggestion de colonnes.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.la.suggestion.de.colonnes.79c9b6:Erreur lors de la suggestion de colonnes.`);
       }
     });
   }
@@ -371,12 +373,12 @@ export class MigrationWizardComponent {
             this.mappingWarnings.set(r.data.warnings);
             this.step.set(3);
           } else {
-            this.error.set(r.error ?? 'Détection impossible.');
+            this.error.set(r.error ?? $localize`:@@ui.tern.detection.impossible.aa3ba4:Détection impossible.`);
           }
         },
         error: (err) => {
           this.busy.set(false);
-          this.error.set(err?.error?.message ?? 'Erreur lors de la détection de doublons.');
+          this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.la.detection.de.doublons.596f48:Erreur lors de la détection de doublons.`);
         }
       });
     } else {
@@ -388,12 +390,12 @@ export class MigrationWizardComponent {
             this.mappingWarnings.set(r.data.warnings);
             this.step.set(3);
           } else {
-            this.error.set(r.error ?? 'Suggestion impossible.');
+            this.error.set(r.error ?? $localize`:@@ui.tern.suggestion.impossible.c4322e:Suggestion impossible.`);
           }
         },
         error: (err) => {
           this.busy.set(false);
-          this.error.set(err?.error?.message ?? 'Erreur lors de la suggestion de comptes.');
+          this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.la.suggestion.de.comptes.ba2614:Erreur lors de la suggestion de comptes.`);
         }
       });
     }
@@ -425,12 +427,12 @@ export class MigrationWizardComponent {
             this.preview.set(r.data);
             this.step.set(4);
           } else {
-            this.error.set(r.error ?? "Aperçu impossible.");
+            this.error.set(r.error ?? $localize`:@@ui.tern.apercu.impossible.8df7df:Aperçu impossible.`);
           }
         },
         error: (err) => {
           this.busy.set(false);
-          this.error.set(err?.error?.message ?? "Erreur lors de l'aperçu.");
+          this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.l.apercu.b90c81:Erreur lors de l'aperçu.`);
         }
       });
     };
@@ -443,7 +445,7 @@ export class MigrationWizardComponent {
         },
         error: (err) => {
           this.busy.set(false);
-          this.error.set(this.blobErrorMessage(err) ?? 'Erreur lors de la transformation du fichier.');
+          this.error.set(this.blobErrorMessage(err) ?? $localize`:@@ui.tern.erreur.lors.de.la.transformation.du.fichie.04ed3e:Erreur lors de la transformation du fichier.`);
         }
       });
     } else {
@@ -469,12 +471,12 @@ export class MigrationWizardComponent {
           this.successMessage.set(`${r.data.createdCount} élément(s) créé(s), ${r.data.skippedCount} ignoré(s).`);
           this.step.set(5);
         } else {
-          this.error.set(r.error ?? "Import refusé.");
+          this.error.set(r.error ?? $localize`:@@ui.tern.import.refuse.b4f285:Import refusé.`);
         }
       },
       error: (err) => {
         this.busy.set(false);
-        this.error.set(err?.error?.message ?? "Erreur lors de l'import.");
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.l.import.264199:Erreur lors de l'import.`);
       }
     });
   }

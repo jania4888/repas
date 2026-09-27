@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -27,7 +29,7 @@ import { formatLocalDate } from '@core/utils/date.util';
 @Component({
     selector: 'app-supplier-invoice-detail',
     standalone: true,
-    imports: [
+    imports: [BackendLabelPipe, 
         CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
         TagModule, TableModule, ToastModule, DialogModule, Textarea, InputTextModule,
         PageHeaderComponent, BreadcrumbComponent, ButtonComponent, RecordPaymentDialogComponent
@@ -42,14 +44,14 @@ import { formatLocalDate } from '@core/utils/date.util';
       </div>
     } @else if (inv()) {
       <app-page-header
-        [title]="'Facture ' + inv()!.invoiceNumber"
+        [title]="loc_ui_tern_facture_e6d1ea + inv()!.invoiceNumber"
         [subtitle]="inv()!.supplier.name">
         <div class="header-actions">
           @if (canRecordSupplierPayment()) {
-            <app-button variant="primary" icon="pi-wallet" iconPos="left" (click)="openPayDialog()" i18n="@@supplier-invoices.supplier-invoice-detail.payer.la.facture.4c5a802a">Payer la facture</app-button>
+            <app-button variant="primary" icon="pi-wallet" iconPos="left" (click)="openPayDialog()" i18n="@@supplier-invoices.supplier-invoice-detail.payer.la.facture.4c5a802a"> Payer la facture </app-button>
           }
           @if (canShowPaymentButton()) {
-            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="openCancelDialog()" i18n="@@supplier-invoices.supplier-invoice-detail.annuler.49ba3292">Annuler</app-button>
+            <app-button variant="outline" icon="pi-times" iconPos="left" (click)="openCancelDialog()" i18n="@@supplier-invoices.supplier-invoice-detail.annuler.49ba3292"> Annuler </app-button>
           }
         </div>
       </app-page-header>
@@ -64,14 +66,14 @@ import { formatLocalDate } from '@core/utils/date.util';
             <div class="info-item status-item">
               <span class="label" i18n="@@supplier-invoices.supplier-invoice-detail.statut.659499f3">Statut</span>
               <div class="status-with-actions">
-                <p-tag [value]="inv()!.statusDisplay" [severity]="getStatusSeverity(inv()!.status)"></p-tag>
+                <p-tag [value]="inv()!.statusDisplay | backendLabel" [severity]="getStatusSeverity(inv()!.status)"></p-tag>
                 @if (canRecordSupplierPayment() || canShowPaymentButton()) {
                   <div class="card-actions">
                     @if (canRecordSupplierPayment()) {
-                      <app-button variant="primary" icon="pi-wallet" iconPos="left" (click)="openPayDialog()" i18n="@@supplier-invoices.supplier-invoice-detail.payer.la.facture.4c5a802a">Payer la facture</app-button>
+                      <app-button variant="primary" icon="pi-wallet" iconPos="left" (click)="openPayDialog()" i18n="@@supplier-invoices.supplier-invoice-detail.payer.la.facture.4c5a802a"> Payer la facture </app-button>
                     }
                     @if (canShowPaymentButton()) {
-                      <app-button variant="outline" icon="pi-times" iconPos="left" (click)="openCancelDialog()" i18n="@@supplier-invoices.supplier-invoice-detail.annuler.49ba3292">Annuler</app-button>
+                      <app-button variant="outline" icon="pi-times" iconPos="left" (click)="openCancelDialog()" i18n="@@supplier-invoices.supplier-invoice-detail.annuler.49ba3292"> Annuler </app-button>
                     }
                   </div>
                 }
@@ -117,7 +119,7 @@ import { formatLocalDate } from '@core/utils/date.util';
           @if (hasFixedAssetLines()) {
             <div class="asset-banner" role="status">
               <i class="pi pi-building"></i>
-              <span>Cette facture comporte des lignes classées en <strong i18n="@@supplier-invoices.supplier-invoice-detail.immobilisations.872a2f64">immobilisations</strong> (comptes 21x / TVA 43662).</span>
+              <span><ng-container i18n="@@supplier-invoices.supplier-invoice-detail.cette.facture.comporte.des.lignes.classees.en.689e314d">Cette facture comporte des lignes classées en </ng-container> <strong i18n="@@supplier-invoices.supplier-invoice-detail.immobilisations.872a2f64">immobilisations</strong> (comptes 21x / TVA 43662).</span>
             </div>
           }
           <p-table [value]="inv()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
@@ -153,7 +155,7 @@ import { formatLocalDate } from '@core/utils/date.util';
                 </td>
                 <td class="text-center">{{ line.quantity }}</td>
                 <td class="text-right">{{ line.unitPriceHT | currency:'TND':'symbol':'1.3-3' }}</td>
-                <td class="text-center">{{ line.vatRateDisplay }}</td>
+                <td class="text-center">{{ line.vatRateDisplay | backendLabel }}</td>
                 <td class="text-right amount">{{ line.total | currency:'TND':'symbol':'1.3-3' }}</td>
               </tr>
             </ng-template>
@@ -183,7 +185,7 @@ import { formatLocalDate } from '@core/utils/date.util';
             }
             @if (inv()!.isSubjectToWithholding) {
               <p class="tej-hint">
-                La déclaration <strong i18n="@@supplier-invoices.supplier-invoice-detail.tej.e20f8646">TEJ</strong> regroupe automatiquement les factures fournisseurs <strong i18n="@@supplier-invoices.supplier-invoice-detail.soldees.7bfb62ea">soldées</strong> avec retenue, selon le mois de la date de solde.
+                <ng-container i18n="@@supplier-invoices.supplier-invoice-detail.la.declaration.a8180f35"> La déclaration </ng-container> <strong i18n="@@supplier-invoices.supplier-invoice-detail.tej.e20f8646">TEJ</strong> regroupe automatiquement les factures fournisseurs <strong i18n="@@supplier-invoices.supplier-invoice-detail.soldees.7bfb62ea">soldées</strong> avec retenue, selon le mois de la date de solde.
                 <a routerLink="/withholding-tax/tej-export" class="link-inline" i18n="@@supplier-invoices.supplier-invoice-detail.export.tej.c237f45b">Export TEJ</a>
               </p>
             }
@@ -214,12 +216,12 @@ import { formatLocalDate } from '@core/utils/date.util';
                 <tr>
                   <td>{{ payment.paymentDate | date:'dd/MM/yyyy' }}</td>
                   <td class="text-right amount">{{ payment.amount | number:'1.3-3' }} {{ payment.currency }}</td>
-                  <td>{{ payment.methodDisplay }}</td>
+                  <td>{{ payment.methodDisplay | backendLabel }}</td>
                   <td>{{ payment.reference || '-' }}</td>
                   <td>
                     @if (payment.effetStatus !== null && payment.effetStatus !== undefined) {
                       <span class="effet-badge" [class.en-portefeuille]="payment.effetStatus === 0" [class.encaisse]="payment.effetStatus === 1" [class.impaye]="payment.effetStatus === 2">
-                        {{ payment.effetStatusDisplay }}@if (payment.effetDueDate) { · éch. {{ payment.effetDueDate | date:'dd/MM/yyyy' }} }
+                        {{ payment.effetStatusDisplay | backendLabel }}@if (payment.effetDueDate) { · éch. {{ payment.effetDueDate | date:'dd/MM/yyyy' }} }
                       </span>
                       @if (payment.effetStatus === 0 && canSettleEffet()) {
                         <button type="button" class="effet-btn" [disabled]="settlingEffetId() === payment.id" (click)="onSettleSupplierEffet(payment.id)" i18n="@@supplier-invoices.supplier-invoice-detail.payer.l.effet.cf208e58">Payer l'effet</button>
@@ -271,7 +273,7 @@ import { formatLocalDate } from '@core/utils/date.util';
     </app-record-payment-dialog>
 
     <!-- Cancel dialog -->
-    <p-dialog header="Annuler la facture" [(visible)]="cancelDialogVisible" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" (onHide)="closeCancelDialog()">
+    <p-dialog header="Annuler la facture" i18n-header="Annuler la facture" [(visible)]="cancelDialogVisible" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" (onHide)="closeCancelDialog()">
       <p class="dialog-message" i18n="@@supplier-invoices.supplier-invoice-detail.indiquez.le.motif.d.annulation.obligatoire.ac8edb83">Indiquez le motif d'annulation (obligatoire).</p>
       <textarea pTextarea [(ngModel)]="cancelReason" placeholder="Motif..." i18n-placeholder="Motif..." [rows]="4" class="w-full"></textarea>
       <ng-template pTemplate="footer">
@@ -340,6 +342,7 @@ import { formatLocalDate } from '@core/utils/date.util';
   `]
 })
 export class SupplierInvoiceDetailComponent implements OnInit {
+  readonly loc_ui_tern_facture_e6d1ea = $localize`:@@ui.tern.facture.e6d1ea:Facture `;
     private route = inject(ActivatedRoute);
     private router = inject(Router);
     private service = inject(SupplierInvoiceService);
@@ -398,7 +401,7 @@ export class SupplierInvoiceDetailComponent implements OnInit {
             },
             error: () => {
                 this.loading.set(false);
-                this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Facture introuvable' });
+                this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-invoice-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@supplier-invoice-detail.component.detail.Facture_introuva:Facture introuvable` });
                 this.router.navigate([this.listBackRoute]);
             }
         });
@@ -440,7 +443,7 @@ export class SupplierInvoiceDetailComponent implements OnInit {
     onPaymentRecorded(): void {
         const invoice = this.inv();
         if (invoice) {
-            this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Paiement enregistré avec succès' });
+            this.toastService.add({ severity: 'success', summary: $localize`:@@supplier-invoice-detail.component.summary.Succès:Succès`, detail: $localize`:@@supplier-invoice-detail.component.detail.Paiement_enregis:Paiement enregistré avec succès` });
             this.loadInvoice(invoice.id);
         }
     }
@@ -463,15 +466,15 @@ export class SupplierInvoiceDetailComponent implements OnInit {
             next: (res) => {
                 this.settlingEffetId.set(null);
                 if (res.success) {
-                    this.toastService.add({ severity: 'success', summary: 'Effet payé', detail: 'Effet fournisseur payé avec succès' });
+                    this.toastService.add({ severity: 'success', summary: $localize`:@@supplier-invoice-detail.component.summary.Effet payé:Effet payé`, detail: $localize`:@@supplier-invoice-detail.component.detail.Effet_fournisseu:Effet fournisseur payé avec succès` });
                     this.loadInvoice(invoice.id);
                 } else {
-                    this.toastService.add({ severity: 'error', summary: 'Erreur', detail: res.message ?? 'Échec du paiement de l\'effet' });
+                    this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-invoice-detail.component.summary.Erreur:Erreur`, detail: res.message ?? $localize`:@@ui.tern.echec.du.paiement.de.l.effet.c57e3a:Échec du paiement de l'effet` });
                 }
             },
             error: () => {
                 this.settlingEffetId.set(null);
-                this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Échec du paiement de l\'effet' });
+                this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-invoice-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@supplier-invoice-detail.component.detail._chec_du_paiemen:Échec du paiement de l'effet` });
             }
         });
     }
@@ -494,11 +497,11 @@ export class SupplierInvoiceDetailComponent implements OnInit {
             next: (response) => {
                 if (response.success) {
                     this.closeCancelDialog();
-                    this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Facture annulée' });
+                    this.toastService.add({ severity: 'success', summary: $localize`:@@supplier-invoice-detail.component.summary.Succès:Succès`, detail: $localize`:@@supplier-invoice-detail.component.detail.Facture_annul_e:Facture annulée` });
                     this.loadInvoice(invoice.id);
                 }
             },
-            error: (err) => this.toastService.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.errors?.[0] || 'Erreur' })
+            error: (err) => this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-invoice-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || 'Erreur' })
         });
     }
 }

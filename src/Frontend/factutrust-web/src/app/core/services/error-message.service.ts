@@ -55,11 +55,17 @@ export class ErrorMessageService {
   }
 
   getFieldSuggestion(fieldName: string, errorType: string): string {
+    const nifFormat = $localize`:@@core.validation.suggestion.nif:Format attendu : 1772793W/A/M/000`;
+    const phoneFormat = $localize`:@@core.validation.suggestion.phone:Format attendu : XX XXX XXX (8 chiffres)`;
+    const passwordRule = $localize`:@@core.validation.suggestion.password:Le mot de passe doit contenir au moins 12 caractères avec majuscule, minuscule, chiffre et caractère spécial`;
     const suggestions: Record<string, Record<string, string>> = {
       email: {
-        email: $localize`:@@core.validation.suggestion.email:Exemple : contact@entreprise.tn`
-      }
+        email: $localize`:@@core.validation.suggestion.email:Exemple : votre@email.com`
+      },
+      nif: { pattern: nifFormat, required: nifFormat },
+      phone: { pattern: phoneFormat, required: phoneFormat },
+      password: { minlength: passwordRule, pattern: passwordRule }
     };
-    return suggestions[fieldName]?.[errorType] ?? '';
+    return suggestions[fieldName]?.[errorType] || '';
   }
 }

@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +10,7 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
 @Component({
   selector: 'app-fiscal-schedule-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule],
+  imports: [BackendLabelPipe, CommonModule, FormsModule, TableModule],
   template: `
     <div class="table-panel">
       <div class="loading-row" *ngIf="loading" i18n="@@accounting.fiscal-schedule.chargement.de.l.echeancier.fiscal.2f9a714c">Chargement de l'echeancier fiscal...</div>
@@ -45,11 +46,11 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
             (dblclick)="rowDblClick.emit(row)">
             <td class="marker-col"><i [class]="icon(row.status)" [ngClass]="statusClassName(row.status)"></i></td>
             <td>{{ date(row.dueDate) }}</td>
-            <td>{{ row.obligationTypeDisplay }}</td>
-            <td>{{ row.periodDisplay }}</td>
+            <td>{{ row.obligationTypeDisplay | backendLabel }}</td>
+            <td>{{ row.periodDisplay | backendLabel }}</td>
             <td>{{ row.companyName || companyLabel }}</td>
             <td class="amount-col">{{ amount(row.estimatedAmount, row.currency) }}</td>
-            <td><span class="status-pill" [ngClass]="statusClassName(row.status)">{{ row.statusDisplay }}</span></td>
+            <td><span class="status-pill" [ngClass]="statusClassName(row.status)">{{ row.statusDisplay | backendLabel }}</span></td>
             <td>{{ date(row.depositDate) }}</td>
             <td>{{ date(row.paymentDate) }}</td>
             <td>{{ row.responsibleName || '-' }}</td>
@@ -101,7 +102,7 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
           <i class="fa-solid fa-angles-right"></i>
         </button>
         <label class="page-size-label">
-          Afficher
+          <ng-container i18n="@@accounting.fiscal-schedule.afficher.5e802040"> Afficher </ng-container>
           <select [ngModel]="pageSize" (ngModelChange)="pageSizeChange.emit($event)">
             <option [ngValue]="25">25</option>
             <option [ngValue]="50">50</option>

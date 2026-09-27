@@ -112,18 +112,18 @@
   } @else {
   <p-table 
           [loading]="loading()" [value]="filteredItems()" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-    currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments" [rowHover]="true"
+    currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments" i18n-currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments" [rowHover]="true"
     styleClass="p-datatable-striped">
 
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="productName">Produit <p-sortIcon field="productName"></p-sortIcon></th>
-        <th pSortableColumn="warehouseName">Entrepôt <p-sortIcon field="warehouseName"></p-sortIcon></th>
-        <th pSortableColumn="quantityOnHand" class="text-right">Quantité <p-sortIcon
+        <th pSortableColumn="productName"><ng-container i18n="@@stock.stock-list.produit.ff673dc2">Produit </ng-container> <p-sortIcon field="productName"></p-sortIcon></th>
+        <th pSortableColumn="warehouseName"><ng-container i18n="@@stock.stock-list.entrepot.c349c0bc">Entrepôt </ng-container> <p-sortIcon field="warehouseName"></p-sortIcon></th>
+        <th pSortableColumn="quantityOnHand" class="text-right"><ng-container i18n="@@stock.stock-list.quantite.09a38fda">Quantité </ng-container> <p-sortIcon
             field="quantityOnHand"></p-sortIcon></th>
-        <th pSortableColumn="averageCost" class="text-right">Coût unitaire <p-sortIcon field="averageCost"></p-sortIcon>
+        <th pSortableColumn="averageCost" class="text-right"><ng-container i18n="@@stock.stock-list.cout.unitaire.3735acf6">Coût unitaire </ng-container> <p-sortIcon field="averageCost"></p-sortIcon>
         </th>
-        <th pSortableColumn="stockValue" class="text-right">Valeur <p-sortIcon field="stockValue"></p-sortIcon></th>
+        <th pSortableColumn="stockValue" class="text-right"><ng-container i18n="@@stock.stock-list.valeur.68f92b0d">Valeur </ng-container> <p-sortIcon field="stockValue"></p-sortIcon></th>
         <th class="text-center" i18n="@@stock.stock-list.statut.659499f3">Statut</th>
         <th class="text-center" i18n="@@stock.stock-list.actions.c3cd636a">Actions</th>
       </tr>
@@ -164,20 +164,20 @@
         </td>
         <td>
           <div class="actions-cell">
-            <app-button variant="ghost" size="sm" icon="pi-history" [iconOnly]="true" pTooltip="Historique mouvements"
+            <app-button variant="ghost" size="sm" icon="pi-history" [iconOnly]="true" pTooltip="Historique mouvements" i18n-pTooltip="Historique mouvements"
               tooltipPosition="top" [routerLink]="[item.id, 'history']" ariaLabel="Voir l'historique">
             </app-button>
             @if (lotTrackingEnabled()) {
-            <app-button variant="ghost" size="sm" icon="pi-tags" [iconOnly]="true" pTooltip="Lots"
+            <app-button variant="ghost" size="sm" icon="pi-tags" [iconOnly]="true" pTooltip="Lots" i18n-pTooltip="Lots"
               tooltipPosition="top" (click)="toggleLots(item)" ariaLabel="Voir les lots">
             </app-button>
             }
             @if (fifoLifoValuationEnabled() && (item.costingMethod === 1 || item.costingMethod === 2)) {
-            <app-button variant="ghost" size="sm" icon="pi-list" [iconOnly]="true" pTooltip="Couches FIFO/LIFO"
+            <app-button variant="ghost" size="sm" icon="pi-list" [iconOnly]="true" pTooltip="Couches FIFO/LIFO" i18n-pTooltip="Couches FIFO/LIFO"
               tooltipPosition="top" (click)="toggleLayers(item)" ariaLabel="Voir les couches de valorisation">
             </app-button>
             }
-            <app-button variant="ghost" size="sm" icon="pi-sliders-h" [iconOnly]="true" pTooltip="Ajuster le stock"
+            <app-button variant="ghost" size="sm" icon="pi-sliders-h" [iconOnly]="true" pTooltip="Ajuster le stock" i18n-pTooltip="Ajuster le stock"
               tooltipPosition="top" (click)="openAdjustDialog(item)" ariaLabel="Ajuster le stock">
             </app-button>
           </div>
@@ -264,7 +264,7 @@
 </div>
 
 <!-- Adjustment Dialog -->
-<p-dialog header="Ajuster le stock" [(visible)]="adjustDialogVisible" [modal]="true" [style]="{width: '480px'}"
+<p-dialog header="Ajuster le stock" i18n-header="Ajuster le stock" [(visible)]="adjustDialogVisible" [modal]="true" [style]="{width: '480px'}"
   [draggable]="false" [resizable]="false" styleClass="adjust-dialog">
 
   @if (selectedItemForAdjust) {
@@ -317,9 +317,9 @@
 
   <ng-template pTemplate="footer">
     <div class="dialog-actions">
-      <button pButton type="button" label="Annuler" class="p-button-text p-button-secondary"
+      <button pButton type="button" label="Annuler" i18n-label="Annuler" class="p-button-text p-button-secondary"
         (click)="adjustDialogVisible = false" [disabled]="adjustSubmitting"></button>
-      <button pButton type="button" label="Confirmer" icon="pi pi-check" (click)="submitAdjust()"
+      <button pButton type="button" label="Confirmer" i18n-label="Confirmer" icon="pi pi-check" (click)="submitAdjust()"
         [disabled]="!isValidAdjust() || adjustSubmitting" [loading]="adjustSubmitting"></button>
     </div>
   </ng-template>

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Injectable, inject } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '@shared/components/confirm-modal/confirm-modal.component';
@@ -77,8 +78,8 @@ export class ConfirmationService {
    *   message: 'Êtes-vous sûr de vouloir supprimer cet élément ?',
    *   header: 'Confirmation de suppression',
    *   icon: 'pi pi-exclamation-triangle',
-   *   acceptLabel: 'Supprimer',
-   *   rejectLabel: 'Annuler',
+   *   acceptLabel: $localize`:@@confirmation.service.acceptLabel.Supprimer:Supprimer`,
+   *   rejectLabel: $localize`:@@confirmation.service.rejectLabel.Annuler:Annuler`,
    *   acceptButtonStyleClass: 'btn-danger',
    *   accept: () => { this.deleteItem(); },
    *   reject: () => { console.log('Cancelled'); }
@@ -87,8 +88,8 @@ export class ConfirmationService {
    * @example Long labels (inventory cancel) — use size `md` so both actions fit side-by-side
    * confirmationService.confirm({
    *   header: 'Annuler l\'inventaire',
-   *   acceptLabel: 'Annuler l\'inventaire',
-   *   rejectLabel: 'Continuer le comptage',
+   *   acceptLabel: $localize`:@@confirmation.service.acceptLabel.Annuler_l_invent:Annuler l'inventaire`,
+   *   rejectLabel: $localize`:@@confirmation.service.rejectLabel.Continuer_le_com:Continuer le comptage`,
    *   size: 'md',
    *   acceptButtonStyleClass: 'btn-danger',
    *   accept: () => { this.cancelInventory(); }
@@ -180,7 +181,7 @@ export class ConfirmationService {
    * const reason = await confirmationService.prompt({
    *   header: 'Annuler les paiements',
    *   message: 'Motif d\\'annulation :',
-   *   acceptLabel: 'Annuler les paiements',
+   *   acceptLabel: $localize`:@@confirmation.service.acceptLabel.Annuler_les_paie:Annuler les paiements`,
    *   acceptButtonStyleClass: 'btn-danger',
    *   required: true
    * });

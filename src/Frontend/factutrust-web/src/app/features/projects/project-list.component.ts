@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -65,7 +67,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterLink,
@@ -105,7 +107,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         type="button"
         [disabled]="exporting()"
         (click)="exportMenu.toggle($event)"
-        ariaLabel="Exporter la liste des projets" i18n="@@projects.project-list.exporter.0cd84bdc">Exporter</app-button>
+        ariaLabel="Exporter la liste des projets" i18n="@@projects.project-list.exporter.0cd84bdc"> Exporter </app-button>
       <a routerLink="/projects/dashboard" class="p-button p-button-outlined p-button-sm">
         <i class="pi pi-chart-bar" aria-hidden="true"></i> Tableau de bord
       </a>
@@ -214,7 +216,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
               <span for="overdueOnly" i18n="@@projects.project-list.uniquement.avec.taches.en.retard.ee6f621f">Uniquement avec tâches en retard</span>
             </label>
             @if (extraFiltersCount() > 0) {
-              <button type="button" class="proj-list-advanced__reset" (click)="resetExtraFilters()" i18n="@@projects.project-list.reinitialiser.les.filtres.avances.f602005a">Réinitialiser les filtres avancés</button>
+              <button type="button" class="proj-list-advanced__reset" (click)="resetExtraFilters()" i18n="@@projects.project-list.reinitialiser.les.filtres.avances.f602005a"> Réinitialiser les filtres avancés </button>
             }
           </div>
         </p-popover>
@@ -249,7 +251,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} projets"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} projets" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} projets"
           (onLazyLoad)="onPageChange($event)"
           styleClass="p-datatable-sm proj-list-table"
           [rowHover]="true">
@@ -274,7 +276,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                     type="button"
                     class="proj-fav-btn"
                     [class.proj-fav-btn--active]="isFavorite(p.id)"
-                    [attr.aria-label]="isFavorite(p.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+                    [attr.aria-label]="isFavorite(p.id) ? loc_ui_tern_retirer_des_favoris_dcaac8 : loc_ui_tern_ajouter_aux_favoris_721554"
                     (click)="toggleFavorite(p.id, $event)">
                     <i class="pi" [class.pi-star-fill]="isFavorite(p.id)" [class.pi-star]="!isFavorite(p.id)"></i>
                   </button>
@@ -283,7 +285,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                   </span>
                   <div>
                     <strong>{{ p.name }}</strong>
-                    <span class="proj-list-project-desc">{{ p.kindDisplay }}</span>
+                    <span class="proj-list-project-desc">{{ p.kindDisplay | backendLabel }}</span>
                   </div>
                 </div>
               </td>
@@ -300,12 +302,12 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                 } @else { — }
               </td>
               <td>
-                <span class="proj-kind-pill" [ngClass]="kindPillClass(p.kind)">{{ p.kindDisplay }}</span>
+                <span class="proj-kind-pill" [ngClass]="kindPillClass(p.kind)">{{ p.kindDisplay | backendLabel }}</span>
               </td>
               <td>
                 <span class="proj-list-status">
                   <span class="proj-list-status-dot" [ngClass]="statusDotClass(p.status)"></span>
-                  <app-status-badge [status]="statusBadge(p.status)" [label]="p.statusDisplay" [showIcon]="false" />
+                  <app-status-badge [status]="statusBadge(p.status)" [label]="p.statusDisplay | backendLabel" [showIcon]="false" />
                 </span>
               </td>
               <td>
@@ -334,7 +336,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                 <button
                   type="button"
                   class="proj-dash-row-menu-btn"
-                  [attr.aria-label]="'Actions pour ' + p.name"
+                  [attr.aria-label]="loc_ui_tern_actions_pour_cf433f + p.name"
                   (click)="onRowMenu($event, p)">
                   <i class="pi pi-ellipsis-v"></i>
                 </button>
@@ -360,15 +362,15 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
 
     <p-menu #rowMenu [popup]="true" [model]="rowMenuItems()" appendTo="body" />
 
-    <p-dialog [(visible)]="createVisible" [modal]="true" header="Nouveau projet" [style]="{ width: '52rem' }" styleClass="proj-create-dialog">
+    <p-dialog [(visible)]="createVisible" [modal]="true" header="Nouveau projet" i18n-header="Nouveau projet" [style]="{ width: '52rem' }" styleClass="proj-create-dialog">
       <app-form-section title="Identité" i18n-title="Identité" icon="pi-id-card" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field">
-            <label for="createName">Nom <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
+            <label for="createName"><ng-container i18n="@@projects.project-list.nom.7ff20370">Nom </ng-container> <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
             <input id="createName" pInputText class="w-full" [(ngModel)]="draft.name" />
           </div>
           <div class="ft-field">
-            <label for="createClient">Client <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
+            <label for="createClient"><ng-container i18n="@@projects.project-list.client.1bdd79b1">Client </ng-container> <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
             <p-select inputId="createClient" class="w-full" [options]="clients()" [(ngModel)]="draft.clientId" optionLabel="name" optionValue="id" placeholder="Client" i18n-placeholder="Client" />
           </div>
           <div class="ft-field ft-field--full">
@@ -466,6 +468,9 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
   `
 })
 export class ProjectListComponent implements OnInit {
+  readonly loc_ui_tern_retirer_des_favoris_dcaac8 = $localize`:@@ui.tern.retirer.des.favoris.dcaac8:Retirer des favoris`;
+  readonly loc_ui_tern_ajouter_aux_favoris_721554 = $localize`:@@ui.tern.ajouter.aux.favoris.721554:Ajouter aux favoris`;
+  readonly loc_ui_tern_actions_pour_cf433f = $localize`:@@ui.tern.actions.pour.cf433f:Actions pour `;
   @ViewChild('rowMenu') rowMenu?: Menu;
 
   private readonly api = inject(ProjectApiService);
@@ -543,7 +548,7 @@ export class ProjectListComponent implements OnInit {
   rowMenuItems = computed((): MenuItem[] => {
     const p = this.activeRow();
     if (!p) return [];
-    const favLabel = this.isFavorite(p.id) ? 'Retirer des favoris' : 'Ajouter aux favoris';
+    const favLabel = this.isFavorite(p.id) ? $localize`:@@ui.tern.retirer.des.favoris.dcaac8:Retirer des favoris` : $localize`:@@ui.tern.ajouter.aux.favoris.721554:Ajouter aux favoris`;
     return [
       { label: 'Voir le projet', icon: 'pi pi-eye', command: () => this.open(p) },
       { label: 'Tâches', icon: 'pi pi-list', command: () => void this.router.navigate(['/projects', p.id], { fragment: 'tasks' }) },
@@ -677,7 +682,7 @@ export class ProjectListComponent implements OnInit {
           },
           error: err => this.toast.add({
             severity: 'error',
-            summary: 'Indicateurs',
+            summary: $localize`:@@project-list.component.summary.Indicateurs:Indicateurs`,
             detail: this.errors.extractErrorMessage(err)
           })
         });
@@ -783,11 +788,11 @@ export class ProjectListComponent implements OnInit {
         a.download = `projets-${new Date().toISOString().slice(0, 10)}.csv`;
         a.click();
         URL.revokeObjectURL(url);
-        this.toast.add({ severity: 'success', summary: 'Export', detail: 'Liste exportée en CSV.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-list.component.summary.Export:Export`, detail: $localize`:@@project-list.component.detail.Liste_export_e_e:Liste exportée en CSV.` });
       },
       error: err => {
         this.exporting.set(false);
-        this.toast.add({ severity: 'error', summary: 'Export', detail: this.errors.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@project-list.component.summary.Export:Export`, detail: this.errors.extractErrorMessage(err) });
       }
     });
   }
@@ -834,11 +839,11 @@ export class ProjectListComponent implements OnInit {
 
   saveCreate(): void {
     if (!this.draft.name?.trim()) {
-      this.toast.add({ severity: 'warn', summary: 'Nom requis', detail: 'Indiquez un nom de projet.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@project-list.component.summary.Nom requis:Nom requis`, detail: $localize`:@@project-list.component.detail.Indiquez_un_nom_:Indiquez un nom de projet.` });
       return;
     }
     if (!this.draft.clientId) {
-      this.toast.add({ severity: 'warn', summary: 'Client requis', detail: 'Sélectionnez un client.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@project-list.component.summary.Client_requis:Client requis`, detail: $localize`:@@project-list.component.detail.S_lectionnez_un_:Sélectionnez un client.` });
       return;
     }
     const payload: UpsertProjectPayload = {
@@ -851,13 +856,13 @@ export class ProjectListComponent implements OnInit {
       next: r => {
         if (r.success && r.data) {
           this.createVisible = false;
-          this.toast.add({ severity: 'success', summary: 'Projet créé', detail: 'Pensez à l’activer pour saisir du temps.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@project-list.component.summary.Projet créé:Projet créé`, detail: $localize`:@@project-list.component.detail.Pensez_l_activ:Pensez à l’activer pour saisir du temps.` });
           void this.router.navigate(['/projects', r.data]);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Création impossible', detail: r.message || 'Erreur' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@project-list.component.summary.Cr_ation_impossi:Création impossible`, detail: r.message || 'Erreur' });
         }
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Création impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-list.component.summary.Cr_ation_impossi:Création impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 }

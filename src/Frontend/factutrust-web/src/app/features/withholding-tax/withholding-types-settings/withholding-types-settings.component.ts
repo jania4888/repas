@@ -91,10 +91,10 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
         <!-- Info card -->
         <div class="info-card">
           <h3><i class="fa-solid fa-info-circle"></i> Référentiel fiscal</h3>
-          <p i18n="@@withholding-tax.withholding-types-settings.les.codes.d.operation.sont.definis.par.l.adminis.3dec3bd1">Les codes d'opération sont définis par l'administration fiscale tunisienne et correspondent aux
+          <p i18n="@@withholding-tax.withholding-types-settings.les.codes.d.operation.sont.definis.par.l.adminis.3dec3bd1"> Les codes d'opération sont définis par l'administration fiscale tunisienne et correspondent aux
             catégories prévues par les articles 52 et 53 du Code de l'IRPP et de l'IS.
             Les taux affichés sont les taux par défaut ; un taux réduit ou une exonération peut s'appliquer
-            en vertu d'une convention de non-double imposition (CNPC).</p>
+            en vertu d'une convention de non-double imposition (CNPC). </p>
         </div>
       }
     </div>

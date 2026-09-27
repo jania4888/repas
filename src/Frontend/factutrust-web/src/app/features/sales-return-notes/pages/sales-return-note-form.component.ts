@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -32,14 +33,14 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
       title="Nouveau bon de retour" i18n-title="Nouveau bon de retour"
       subtitle="Document logistique : réintègre le stock et réduit la quantité facturable du BL. Ce n'est pas un avoir.">
       <app-button variant="secondary" routerLink="/return-notes" i18n="@@sales-return-notes.pages.annuler.49ba3292">Annuler</app-button>
-      <app-button variant="outline" [disabled]="saving() || !canSave()" (clicked)="save(false)" i18n="@@sales-return-notes.pages.enregistrer.le.brouillon.6a319595">Enregistrer le brouillon</app-button>
+      <app-button variant="outline" [disabled]="saving() || !canSave()" (clicked)="save(false)" i18n="@@sales-return-notes.pages.enregistrer.le.brouillon.6a319595"> Enregistrer le brouillon </app-button>
       @if (canConfirm()) {
-        <app-button variant="primary" [disabled]="saving() || !canSave()" (clicked)="save(true)" i18n="@@sales-return-notes.pages.enregistrer.et.confirmer.cbe52895">Enregistrer et confirmer</app-button>
+        <app-button variant="primary" [disabled]="saving() || !canSave()" (clicked)="save(true)" i18n="@@sales-return-notes.pages.enregistrer.et.confirmer.cbe52895"> Enregistrer et confirmer </app-button>
       }
     </app-page-header>
 
     <p class="help">
-      Un bon de retour s'applique uniquement aux articles <strong i18n="@@sales-return-notes.pages.livres.et.non.encore.factures.7ba9aca6">livrés et non encore facturés</strong>.
+      <ng-container i18n="@@sales-return-notes.pages.un.bon.de.retour.s.applique.uniquement.aux.artic.7e041ab8"> Un bon de retour s'applique uniquement aux articles </ng-container> <strong i18n="@@sales-return-notes.pages.livres.et.non.encore.factures.7ba9aca6">livrés et non encore facturés</strong>.
       Après facture, utilisez un <strong i18n="@@sales-return-notes.pages.avoir.de.vente.cfb2d993">avoir de vente</strong>.
       Le stock n’est réintégré qu’après confirmation sur la fiche.
     </p>
@@ -195,10 +196,10 @@ export class SalesReturnNoteFormComponent implements OnInit {
     if (!this.canSave()) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Formulaire incomplet',
+        summary: $localize`:@@sales-return-note-form.component.summary.Formulaire_incom:Formulaire incomplet`,
         detail: !this.hasValidReason()
-          ? 'Indiquez un motif d’au moins 3 caractères.'
-          : 'Saisissez au moins une quantité à retourner.'
+          ? $localize`:@@ui.tern.indiquez.un.motif.d.au.moins.3.caracteres.f93a61:Indiquez un motif d’au moins 3 caractères.`
+          : $localize`:@@ui.tern.saisissez.au.moins.une.quantite.a.retourne.d54e58:Saisissez au moins une quantité à retourner.`
       });
       return;
     }
@@ -223,7 +224,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
           this.saving.set(false);
           this.toast.add({
             severity: 'error',
-            summary: 'Enregistrement impossible',
+            summary: $localize`:@@sales-return-note-form.component.summary.Enregistrement_i:Enregistrement impossible`,
             detail: res.message || 'Le brouillon n’a pas pu être créé.'
           });
           return;
@@ -231,7 +232,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
         const id = res.data;
         if (!confirmAfterCreate) {
           this.saving.set(false);
-          this.toast.add({ severity: 'success', summary: 'Brouillon créé', detail: 'Le stock n’est pas encore réintégré.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@sales-return-note-form.component.summary.Brouillon_cr_:Brouillon créé`, detail: $localize`:@@sales-return-note-form.component.detail.Le_stock_n_est_p:Le stock n’est pas encore réintégré.` });
           this.router.navigate(['/return-notes', id]);
           return;
         }
@@ -241,13 +242,13 @@ export class SalesReturnNoteFormComponent implements OnInit {
             if (confirmRes.success) {
               this.toast.add({
                 severity: 'success',
-                summary: 'Confirmé',
-                detail: 'Stock réintégré, quantité facturable du BL mise à jour.'
+                summary: $localize`:@@sales-return-note-form.component.summary.Confirm_:Confirmé`,
+                detail: $localize`:@@sales-return-note-form.component.detail.Stock_r_int_gr_:Stock réintégré, quantité facturable du BL mise à jour.`
               });
             } else {
               this.toast.add({
                 severity: 'warn',
-                summary: 'Brouillon enregistré, confirmation refusée',
+                summary: $localize`:@@sales-return-note-form.component.summary.Brouillon_enregi:Brouillon enregistré, confirmation refusée`,
                 detail: confirmRes.message || 'Ouvrez la fiche pour réessayer.'
               });
             }
@@ -257,7 +258,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
             this.saving.set(false);
             this.toast.add({
               severity: 'warn',
-              summary: 'Brouillon enregistré, confirmation refusée',
+              summary: $localize`:@@sales-return-note-form.component.summary.Brouillon_enregi:Brouillon enregistré, confirmation refusée`,
               detail: this.apiError(err)
             });
             this.router.navigate(['/return-notes', id]);
@@ -268,7 +269,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
         this.saving.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Enregistrement impossible',
+          summary: $localize`:@@sales-return-note-form.component.summary.Enregistrement_i:Enregistrement impossible`,
           detail: this.apiError(err)
         });
       }
@@ -292,7 +293,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
       error: err => {
         this.toast.add({
           severity: 'error',
-          summary: 'BL non éligible',
+          summary: $localize`:@@sales-return-note-form.component.summary.BL_non_ligible:BL non éligible`,
           detail: this.apiError(err)
         });
       }

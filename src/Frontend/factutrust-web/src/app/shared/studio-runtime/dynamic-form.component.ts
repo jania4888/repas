@@ -93,8 +93,8 @@ interface RenderSection {
 
       <!-- 4.7 suite (D-47-94) : en lecture seule, les actions d'écriture disparaissent. -->
       <div class="ft-form-actions" *ngIf="sections.length > 0 && !readOnly">
-        <button pButton type="button" label="Annuler" class="p-button-text" (click)="formCancel.emit()"></button>
-        <button pButton type="submit" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving"></button>
+        <button pButton type="button" label="Annuler" i18n-label="Annuler" class="p-button-text" (click)="formCancel.emit()"></button>
+        <button pButton type="submit" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving"></button>
       </div>
     </form>
   `,
@@ -210,7 +210,7 @@ export class DynamicFormComponent implements OnChanges {
 
   moneyCurrency(field: CustomField): string {
     const c = field.config?.['money']?.['currency'];
-    return typeof c === 'string' && c.trim() ? c.trim() : 'TND';
+    return typeof c === 'string' && c.trim() ? c.trim() : $localize`:@@ui.tern.tnd.51da21:TND`;
   }
 
   ratingStars(field: CustomField): number {

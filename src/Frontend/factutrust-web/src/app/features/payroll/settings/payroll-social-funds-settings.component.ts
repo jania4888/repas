@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -36,7 +38,7 @@ const BASE_OPTIONS = [
 @Component({
   selector: 'app-payroll-social-funds-settings',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -70,11 +72,11 @@ const BASE_OPTIONS = [
         <tr>
           <td>{{ s.code }}</td>
           <td>{{ s.name }}</td>
-          <td>{{ s.baseDisplay || baseLabel(s.base) }}</td>
+          <td>{{ (s.baseDisplay | backendLabel) || baseLabel(s.base) }}</td>
           <td class="text-right">{{ s.employeeRatePercent }} %</td>
           <td class="text-right">{{ s.employerRatePercent }} %</td>
           <td>
-            <p-tag [value]="s.isActive ? 'Active' : 'Inactive'" [severity]="s.isActive ? 'success' : 'secondary'" />
+            <p-tag [value]="s.isActive ? loc_ui_tern_active_a733b8 : loc_ui_tern_inactive_09af57" [severity]="s.isActive ? 'success' : 'secondary'" />
           </td>
           <td class="actions">
             <button type="button" class="p-button p-button-text p-button-sm" (click)="editScheme(s)" i18n="@@payroll.settings.modifier.f260e757">Modifier</button>
@@ -87,7 +89,7 @@ const BASE_OPTIONS = [
       </ng-template>
     </p-table>
 
-    <p-dialog [header]="editingId ? 'Modifier la caisse' : 'Nouvelle caisse complémentaire'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '640px' }">
+    <p-dialog [header]="editingId ? loc_ui_tern_modifier_la_caisse_0e11df : loc_ui_tern_nouvelle_caisse_complementaire_830026" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '640px' }">
       <div class="payroll-form-row">
         <div class="payroll-form-group">
           <label i18n="@@payroll.settings.code.adac6937">Code</label>
@@ -144,8 +146,8 @@ const BASE_OPTIONS = [
           <input pInputText [(ngModel)]="formEmployerAccount" class="w-full" [maxlength]="accountMaxLength" />
         </div>
       </div>
-      <p class="payroll-info-text mt-1" i18n="@@payroll.settings.comptes.effectifs.ces.comptes.pilote.desormais.l.dc18db0e">Comptes effectifs : ces comptes pilote désormais l'écriture de paie (crédit part salarié / crédit dette
-        employeur). Défauts doctrinaux : salarié « 428.1 », employeur « 4538 » (fonds social à payer — non « 647 »).</p>
+      <p class="payroll-info-text mt-1" i18n="@@payroll.settings.comptes.effectifs.ces.comptes.pilote.desormais.l.dc18db0e"> Comptes effectifs : ces comptes pilote désormais l'écriture de paie (crédit part salarié / crédit dette
+        employeur). Défauts doctrinaux : salarié « 428.1 », employeur « 4538 » (fonds social à payer — non « 647 »). </p>
       <div class="payroll-form-row">
         <div class="payroll-form-group">
           <label i18n="@@payroll.settings.effet.a.partir.du.fece40e7">Effet à partir du</label>
@@ -172,6 +174,10 @@ const BASE_OPTIONS = [
   `]
 })
 export class PayrollSocialFundsSettingsComponent implements OnInit {
+  readonly loc_ui_tern_active_a733b8 = $localize`:@@ui.tern.active.a733b8:Active`;
+  readonly loc_ui_tern_inactive_09af57 = $localize`:@@ui.tern.inactive.09af57:Inactive`;
+  readonly loc_ui_tern_modifier_la_caisse_0e11df = $localize`:@@ui.tern.modifier.la.caisse.0e11df:Modifier la caisse`;
+  readonly loc_ui_tern_nouvelle_caisse_complementaire_830026 = $localize`:@@ui.tern.nouvelle.caisse.complementaire.830026:Nouvelle caisse complémentaire`;
   @Input() fiscalYear = new Date().getFullYear();
 
   private readonly payroll = inject(PayrollService);
@@ -207,7 +213,7 @@ export class PayrollSocialFundsSettingsComponent implements OnInit {
   reload(): void {
     this.payroll.listSocialFunds().subscribe({
       next: res => this.schemes.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Caisses complémentaires', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-social-funds-settings.component.summary.Caisses_compl_me:Caisses complémentaires`, detail: $localize`:@@payroll-social-funds-settings.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -270,7 +276,7 @@ export class PayrollSocialFundsSettingsComponent implements OnInit {
 
     const accountError = this.accountError();
     if (accountError) {
-      this.toast.add({ severity: 'error', summary: 'Caisses complémentaires', detail: accountError });
+      this.toast.add({ severity: 'error', summary: $localize`:@@payroll-social-funds-settings.component.summary.Caisses_compl_me:Caisses complémentaires`, detail: accountError });
       return;
     }
 
@@ -296,11 +302,11 @@ export class PayrollSocialFundsSettingsComponent implements OnInit {
 
     req.subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Caisses complémentaires', detail: 'Enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-social-funds-settings.component.summary.Caisses_compl_me:Caisses complémentaires`, detail: $localize`:@@payroll-social-funds-settings.component.detail.Enregistr_:Enregistré.` });
         this.dialogVisible = false;
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Caisses complémentaires', detail: err.error?.message ?? 'Enregistrement impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-social-funds-settings.component.summary.Caisses_compl_me:Caisses complémentaires`, detail: err.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` })
     });
   }
 
@@ -308,8 +314,8 @@ export class PayrollSocialFundsSettingsComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer la caisse « ${s.name} » ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@payroll-social-funds-settings.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@payroll-social-funds-settings.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(s)
     });
@@ -318,10 +324,10 @@ export class PayrollSocialFundsSettingsComponent implements OnInit {
   private delete(scheme: SocialFundScheme): void {
     this.payroll.deleteSocialFund(scheme).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Caisses complémentaires', detail: 'Supprimé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-social-funds-settings.component.summary.Caisses_compl_me:Caisses complémentaires`, detail: $localize`:@@payroll-social-funds-settings.component.detail.Supprimé.:Supprimé.` });
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Caisses complémentaires', detail: err.error?.message ?? 'Suppression impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-social-funds-settings.component.summary.Caisses_compl_me:Caisses complémentaires`, detail: err.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.` })
     });
   }
 }

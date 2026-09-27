@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -23,7 +24,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
       title="Formulaires & vues" i18n-title="Formulaires & vues"
       subtitle="Concevez le formulaire de saisie ou une vue lecture seule sur une table SQL."
       [breadcrumbs]="breadcrumbs">
-      <button pButton type="button" label="Nouvelle vue" icon="fa-solid fa-database" class="p-button-outlined"
+      <button pButton type="button" label="Nouvelle vue" i18n-label="Nouvelle vue" icon="fa-solid fa-database" class="p-button-outlined"
         studioActions routerLink="/studio/views/new"></button>
 
       <div class="studio-section-card">
@@ -38,9 +39,9 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
                 <td><i [class]="e.icon || 'fa-solid fa-table'" class="studio-mr"></i><strong>{{ e.displayName }}</strong></td>
                 <td class="studio-num">{{ e.fieldCount }}</td>
                 <td class="studio-actions">
-                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire"
+                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire" i18n-label="Formulaire"
                     class="p-button-sm" [routerLink]="['/studio', e.id, 'form']"></button>
-                  <button pButton type="button" icon="fa-solid fa-table-list" label="Données"
+                  <button pButton type="button" icon="fa-solid fa-table-list" label="Données" i18n-label="Données"
                     class="p-button-sm p-button-text" [routerLink]="['/studio/d', e.key]"></button>
                 </td>
               </tr>
@@ -67,8 +68,8 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
                 <td><i class="fa-solid fa-database studio-mr"></i><strong>{{ v.displayName }}</strong></td>
                 <td><code>{{ v.sourceTable }}</code></td>
                 <td class="studio-actions">
-                  <button pButton type="button" icon="fa-solid fa-eye" label="Voir" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id, 'view']"></button>
-                  <button pButton type="button" icon="fa-solid fa-pen" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id]" pTooltip="Modifier"></button>
+                  <button pButton type="button" icon="fa-solid fa-eye" label="Voir" i18n-label="Voir" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id, 'view']"></button>
+                  <button pButton type="button" icon="fa-solid fa-pen" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id]" pTooltip="Modifier" i18n-pTooltip="Modifier"></button>
                   <button pButton type="button" icon="fa-solid fa-trash" class="p-button-sm p-button-text p-button-danger" (click)="removeView(v)"></button>
                 </td>
               </tr>
@@ -101,7 +102,7 @@ export class StudioFormHubComponent implements OnInit {
     this.loading.set(true);
     this.studio.listEntities(false).subscribe({
       next: res => { this.loading.set(false); if (res.success) this.entities.set(res.data ?? []); },
-      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Chargement impossible.' }); }
+      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-form-hub.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-form-hub.component.detail.Chargement_impos:Chargement impossible.` }); }
     });
     this.loadViews();
   }
@@ -118,12 +119,12 @@ export class StudioFormHubComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer la vue « ${v.displayName} » ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@studio-form-hub.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@studio-form-hub.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.studio.deleteView(v.id).subscribe({
           next: res => { if (res.success) this.loadViews(); },
-          error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Suppression impossible.' })
+          error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-form-hub.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-form-hub.component.detail.Suppression_impo:Suppression impossible.` })
         });
       }
     });

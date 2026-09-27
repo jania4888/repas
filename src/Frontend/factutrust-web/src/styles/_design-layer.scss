@@ -450,6 +450,17 @@ $ft-icon-tones: (
   flex-wrap: wrap;
   align-items: center;
 }
+.ft-filters__field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2, 0.5rem);
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.ft-filters__field > .filter-label {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
 .ft-filters__reset {
   display: inline-flex;
   align-items: center;

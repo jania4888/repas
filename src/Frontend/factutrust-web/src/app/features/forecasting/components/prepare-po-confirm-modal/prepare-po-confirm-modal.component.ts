@@ -143,7 +143,7 @@ export interface PreparePoLinePrice {
                                   [class.po-supplier-select--issue]="effectiveSupplierId(r) === null"
                                   [ngModel]="displaySupplierId(r)"
                                   (ngModelChange)="assign(r.id, $event)"
-                                  [attr.aria-label]="'Fournisseur pour ' + r.productCode">
+                                  [attr.aria-label]="loc_ui_tern_fournisseur_pour_ac3489 + r.productCode">
                                   <option [ngValue]="null" i18n="@@forecasting.components.choisir.un.fournisseur.6593f4d4">— Choisir un fournisseur —</option>
                                   @for (s of suppliers(); track s.id) {
                                     <option [ngValue]="s.id">{{ s.name }}</option>
@@ -162,7 +162,7 @@ export interface PreparePoLinePrice {
                                 [ngModel]="draftPriceValue(r.id)"
                                 (ngModelChange)="setDraftPrice(r.id, $event)"
                                 [class.invalid]="priceInvalidForLinkable(r)"
-                                [attr.aria-label]="'Prix unitaire HT pour ' + r.productCode"
+                                [attr.aria-label]="loc_ui_tern_prix_unitaire_ht_pour_083196 + r.productCode"
                                 placeholder="—" i18n-placeholder="—" />
                             </label>
                             <span class="po-price-suffix" i18n="@@forecasting.components.tnd.51da21a7">TND</span>
@@ -177,7 +177,7 @@ export interface PreparePoLinePrice {
                                 [ngModel]="draftQtyValue(r.id)"
                                 (ngModelChange)="setDraftQty(r.id, $event)"
                                 [class.invalid]="qtyInvalidFor(r.id)"
-                                [attr.aria-label]="'Quantité à commander pour ' + r.productCode" />
+                                [attr.aria-label]="loc_ui_tern_quantite_a_commander_pour_8e4c05 + r.productCode" />
                             </label>
                             <span class="po-rec-hint" title="Quantité recommandée par le moteur" i18n-title="Quantité recommandée par le moteur">
                               Rec. {{ r.recommendedQty | qtyFmt: r.productUnit }}
@@ -192,11 +192,11 @@ export interface PreparePoLinePrice {
             </ul>
 
             @if (anyQtyInvalid()) {
-              <p class="qty-error" role="alert" i18n="@@forecasting.components.chaque.quantite.doit.etre.un.nombre.strictement..e15fdb5e">Chaque quantité doit être un nombre strictement supérieur à 0.</p>
+              <p class="qty-error" role="alert" i18n="@@forecasting.components.chaque.quantite.doit.etre.un.nombre.strictement..e15fdb5e"> Chaque quantité doit être un nombre strictement supérieur à 0. </p>
             }
 
             @if (anyPriceMissing()) {
-              <p class="qty-error" role="alert" i18n="@@forecasting.components.chaque.ligne.avec.fournisseur.doit.avoir.un.prix.660b9bab">Chaque ligne avec fournisseur doit avoir un prix unitaire HT strictement supérieur à 0.</p>
+              <p class="qty-error" role="alert" i18n="@@forecasting.components.chaque.ligne.avec.fournisseur.doit.avoir.un.prix.660b9bab"> Chaque ligne avec fournisseur doit avoir un prix unitaire HT strictement supérieur à 0. </p>
             }
 
             @if (skippedCount() > 0) {
@@ -291,6 +291,9 @@ export interface PreparePoLinePrice {
   `]
 })
 export class PreparePoConfirmModalComponent implements OnInit {
+  readonly loc_ui_tern_fournisseur_pour_ac3489 = $localize`:@@ui.tern.fournisseur.pour.ac3489:Fournisseur pour `;
+  readonly loc_ui_tern_prix_unitaire_ht_pour_083196 = $localize`:@@ui.tern.prix.unitaire.ht.pour.083196:Prix unitaire HT pour `;
+  readonly loc_ui_tern_quantite_a_commander_pour_8e4c05 = $localize`:@@ui.tern.quantite.a.commander.pour.8e4c05:Quantité à commander pour `;
   /** Selected recommendations sent in for grouping & confirmation. */
   @Input() set selection(value: ReplenishmentRecommendation[]) {
     const list = value ?? [];
@@ -357,8 +360,8 @@ export class PreparePoConfirmModalComponent implements OnInit {
     for (const r of this._recs()) {
       const supplierId = this.effectiveSupplierId(r);
       const supplierName = supplierId === null
-        ? 'Sans fournisseur'
-        : (nameById.get(supplierId) ?? r.preferredSupplierName ?? 'Fournisseur');
+        ? $localize`:@@ui.tern.sans.fournisseur.b2a178:Sans fournisseur`
+        : (nameById.get(supplierId) ?? r.preferredSupplierName ?? $localize`:@@ui.tern.fournisseur.97d91d:Fournisseur`);
       const existing = grouped.get(supplierId);
       const qty = draft.get(r.id) ?? QuantityFormatPipe.toEditableQuantity(
         r.manualQtyOverride ?? r.recommendedQty,

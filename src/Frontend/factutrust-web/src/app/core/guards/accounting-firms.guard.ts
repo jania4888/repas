@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { environment } from '@environments/environment';
@@ -43,8 +44,8 @@ export const firmNativeGuard: CanActivateFn = async (_route, state) => {
     if (!cleared) {
       toast.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible de quitter le dossier client. Veuillez réessayer.'
+        summary: $localize`:@@accounting-firms.guard.summary.Erreur:Erreur`,
+        detail: $localize`:@@accounting-firms.guard.detail.Impossible_de_qu:Impossible de quitter le dossier client. Veuillez réessayer.`
       });
       return false;
     }

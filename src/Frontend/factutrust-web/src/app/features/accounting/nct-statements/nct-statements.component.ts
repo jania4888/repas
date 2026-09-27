@@ -114,7 +114,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
           @case ('bilan') {
             <div class="nct-balance-status">
               <span class="nct-badge" [class.nct-badge--ok]="d.balanceSheet.isBalanced" [class.nct-badge--ko]="!d.balanceSheet.isBalanced">
-                {{ d.balanceSheet.isBalanced ? 'Bilan équilibré' : 'Non équilibré (écart : ' + (d.balanceSheet.difference | number : '1.3-3') + ' TND)' }}
+                {{ d.balanceSheet.isBalanced ? loc_ui_tern_bilan_equilibre_8e3fbf : loc_ui_tern_non_equilibre_ecart_fd2d29 + (d.balanceSheet.difference | number : '1.3-3') + loc_ui_tern_tnd_d9c1d5 }}
               </span>
             </div>
             <h3 class="nct-section" i18n="@@accounting.nct-statements.actif.0fc6c6b8">ACTIF</h3>
@@ -128,7 +128,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
           @case ('flux') {
             <div class="nct-balance-status">
               <span class="nct-badge" [class.nct-badge--ok]="d.cashFlow.isReconciled" [class.nct-badge--ko]="!d.cashFlow.isReconciled">
-                {{ d.cashFlow.isReconciled ? 'Flux de trésorerie rapproché' : 'Flux non rapproché (écart : ' + (cashFlowGap() | number : '1.3-3') + ' TND)' }}
+                {{ d.cashFlow.isReconciled ? loc_ui_tern_flux_de_tresorerie_rapproche_e8cb8d : loc_ui_tern_flux_non_rapproche_ecart_4f680d + (cashFlowGap() | number : '1.3-3') + loc_ui_tern_tnd_d9c1d5 }}
               </span>
             </div>
             <p class="nct-hint" i18n="@@accounting.nct-statements.methode.indirecte.la.ligne.ecart.de.rapprochemen.ff0b4d3e">Méthode indirecte. La ligne « Écart de rapprochement » explicite tout résidu par rapport à la variation réelle de trésorerie.</p>
@@ -197,6 +197,11 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
   `
 })
 export class NctStatementsComponent implements OnInit {
+  readonly loc_ui_tern_bilan_equilibre_8e3fbf = $localize`:@@ui.tern.bilan.equilibre.8e3fbf:Bilan équilibré`;
+  readonly loc_ui_tern_non_equilibre_ecart_fd2d29 = $localize`:@@ui.tern.non.equilibre.ecart.fd2d29:Non équilibré (écart : `;
+  readonly loc_ui_tern_tnd_d9c1d5 = $localize`:@@ui.tern.tnd.d9c1d5: TND)`;
+  readonly loc_ui_tern_flux_de_tresorerie_rapproche_e8cb8d = $localize`:@@ui.tern.flux.de.tresorerie.rapproche.e8cb8d:Flux de trésorerie rapproché`;
+  readonly loc_ui_tern_flux_non_rapproche_ecart_4f680d = $localize`:@@ui.tern.flux.non.rapproche.ecart.4f680d:Flux non rapproché (écart : `;
   private readonly api = inject(AccountingService);
   fiscalYear = new Date().getFullYear();
   exportDialogVisible = false;
@@ -229,7 +234,7 @@ export class NctStatementsComponent implements OnInit {
       .subscribe(res => {
         this.loading.set(false);
         if (res.success && res.data) this.data.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       });
   }
 

@@ -26,8 +26,8 @@ export interface DmDuplicateSource {
   template: `
     <div class="dm-dup">
       <h3 class="dm-dup__title" i18n="@@accounting.monthly-declaration.dupliquer.la.configuration.dm.15643153">Dupliquer la configuration DM</h3>
-      <p class="dm-dup__lead" i18n="@@accounting.monthly-declaration.reprend.les.rubriques.et.les.comptes.d.un.autre..a7968a42">Reprend les rubriques et les comptes d’un autre dossier du cabinet. Les rubriques existantes
-        de même code sont conservées, sauf remplacement explicite.</p>
+      <p class="dm-dup__lead" i18n="@@accounting.monthly-declaration.reprend.les.rubriques.et.les.comptes.d.un.autre..a7968a42"> Reprend les rubriques et les comptes d’un autre dossier du cabinet. Les rubriques existantes
+        de même code sont conservées, sauf remplacement explicite. </p>
 
       <div class="dm-dup__row">
         <div class="dm-dup__field">
@@ -54,7 +54,7 @@ export interface DmDuplicateSource {
           type="button"
           [disabled]="busy || readOnly || !sourceTenantId"
           (click)="emitDuplicate()">
-          {{ busy ? 'Duplication…' : 'Dupliquer' }}
+          {{ busy ? loc_ui_tern_duplication_bdf3c5 : loc_ui_tern_dupliquer_c5e1d3 }}
         </app-button>
       </div>
 
@@ -90,6 +90,8 @@ export interface DmDuplicateSource {
   `
 })
 export class DmDuplicatePanelComponent {
+  readonly loc_ui_tern_duplication_bdf3c5 = $localize`:@@ui.tern.duplication.bdf3c5:Duplication…`;
+  readonly loc_ui_tern_dupliquer_c5e1d3 = $localize`:@@ui.tern.dupliquer.c5e1d3:Dupliquer`;
   @Input() sources: DmDuplicateSource[] = [];
   @Input() busy = false;
   @Input() readOnly = false;

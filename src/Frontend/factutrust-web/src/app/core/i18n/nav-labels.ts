@@ -112,4 +112,11 @@ export const NAV_LABELS: Readonly<Record<string, string>> = {
   'clients-new': $localize`:@@core.nav.clients-new:Ajouter un client`,
   'products-new': $localize`:@@core.nav.products-new:Ajouter un produit`,
   'suppliers-new': $localize`:@@core.nav.suppliers-new:Ajouter un fournisseur`,
+  'studio': $localize`:@@core.nav.studio:Studio`,
+  'studio-tables': $localize`:@@core.nav.studio.tables:Concepteur de tables`,
+  'studio-forms': $localize`:@@core.nav.studio.forms:Formulaires`,
+  'studio-reports': $localize`:@@core.nav.studio.reports:Rapports`,
+  'studio-ai': $localize`:@@core.nav.studio.ai:Assistant IA`,
+  'studio-workflows': $localize`:@@core.nav.studio.workflows:Workflows`,
+  'studio-approvals': $localize`:@@core.nav.studio.approvals:Mes approbations`,
 };

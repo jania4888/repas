@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -67,7 +68,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
           <i class="pi pi-user"></i>
           Client destinataire
         </h2>
-        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.un.client.existant.ou.creez.en.un.n.ef74ccaf">Sélectionnez un client existant ou créez-en un nouveau</p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.un.client.existant.ou.creez.en.un.n.ef74ccaf"> Sélectionnez un client existant ou créez-en un nouveau </p>
 
         <div class="mode-selector">
           <button
@@ -95,7 +96,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
       @if (mode === 'existing') {
         <section class="section">
           <div class="form-group">
-            <label for="clientSearch" class="required" i18n="@@invoices.invoice-wizard.rechercher.un.client.723cebe6">Rechercher un client</label>
+            <label for="clientSearch" class="required" i18n="@@invoices.invoice-wizard.rechercher.un.client.723cebe6"> Rechercher un client </label>
             <p-autoComplete
               inputId="clientSearch"
               [(ngModel)]="selectedClient"
@@ -107,7 +108,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
               field="name"
               placeholder="Nom, matricule fiscal ou email..." i18n-placeholder="Nom, matricule fiscal ou email..."
               [minLength]="2"
-              emptyMessage="Aucun client trouvé"
+              emptyMessage="Aucun client trouvé" i18n-emptyMessage="Aucun client trouvé"
               appendTo="body"
               [style]="{ width: '100%' }"
               [showEmptyMessage]="true">
@@ -126,7 +127,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                 </div>
               </ng-template>
             </p-autoComplete>
-            <small class="form-hint" i18n="@@invoices.invoice-wizard.recherchez.par.nom.matricule.fiscal.ou.adresse.e.7ee4dece">Recherchez par nom, matricule fiscal ou adresse email</small>
+            <small class="form-hint" i18n="@@invoices.invoice-wizard.recherchez.par.nom.matricule.fiscal.ou.adresse.e.7ee4dece"> Recherchez par nom, matricule fiscal ou adresse email </small>
           </div>
 
           @if (selectedClient && selectedClient.id) {
@@ -144,7 +145,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                 <button 
                   type="button" 
                   class="clear-btn"
-                  pTooltip="Changer de client"
+                  pTooltip="Changer de client" i18n-pTooltip="Changer de client"
                   (click)="clearSelection()">
                   <i class="pi pi-times"></i>
                 </button>
@@ -361,8 +362,8 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
           </div>
           <div class="warning-content">
             <strong i18n="@@invoices.invoice-wizard.client.exonere.de.tva.ce8a68fa">Client exonéré de TVA</strong>
-            <p i18n="@@invoices.invoice-wizard.une.mention.legale.d.exoneration.sera.automatiqu.903e9d06">Une mention légale d'exonération sera automatiquement ajoutée à la facture 
-              conformément à la réglementation tunisienne.</p>
+            <p i18n="@@invoices.invoice-wizard.une.mention.legale.d.exoneration.sera.automatiqu.903e9d06"> Une mention légale d'exonération sera automatiquement ajoutée à la facture 
+              conformément à la réglementation tunisienne. </p>
           </div>
         </div>
       }
@@ -1011,9 +1012,9 @@ export class StepClientComponent implements OnInit {
     if (!resolvedId) {
       this.toastService.add({
         severity: 'error',
-        summary: 'Client invalide',
+        summary: $localize`:@@step-client.component.summary.Client_invalide:Client invalide`,
         detail:
-          'Ce client n\'a pas d\'identifiant serveur. Veuillez le resélectionner dans la liste ou utiliser l\'onglet « Nouveau client ».',
+          $localize`:@@step-client.component.detail.Ce_client_n_a_pa:Ce client n'a pas d'identifiant serveur. Veuillez le resélectionner dans la liste ou utiliser l'onglet « Nouveau client ».`,
         life: 6000
       });
       return;

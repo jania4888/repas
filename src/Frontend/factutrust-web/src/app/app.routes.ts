@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { VARIANT_AXES_PATH } from './features/settings/variant-axes/variant-axes.paths';
@@ -34,7 +35,7 @@ export const routes: Routes = [
     path: 'visite-virtuelle',
     loadChildren: () =>
       import('./features/virtual-street/virtual-street.routes').then(m => m.VIRTUAL_STREET_ROUTES),
-    title: 'InstaFact — Visite virtuelle 3D'
+    title: $localize`:@@app.routes.title.InstaFact_Visite_virtu:InstaFact — Visite virtuelle 3D`
   },
   {
     path: 'pos',
@@ -186,7 +187,7 @@ export const routes: Routes = [
         canActivate: [companyAssistanceGuard],
         loadComponent: () =>
           import('./features/assistance/assistance-page.component').then(m => m.AssistancePageComponent),
-        title: 'Assistance - InstaFact'
+        title: $localize`:@@app.routes.title.Assistance_InstaFact:Assistance - InstaFact`
       },
       {
         path: 'firm',

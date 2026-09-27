@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -114,9 +115,9 @@ export class StockListComponent implements OnInit {
   selectedStatus: string | null = null;
 
   statusOptions: StatusOption[] = [
-    { label: 'En stock', value: 'inStock' },
-    { label: 'Stock faible', value: 'lowStock' },
-    { label: 'Rupture', value: 'outOfStock' }
+    { label: $localize`:@@stock.list.filter.en-stock:En stock`, value: 'inStock' },
+    { label: $localize`:@@stock.list.filter.faible:Stock faible`, value: 'lowStock' },
+    { label: $localize`:@@stock.list.filter.rupture:Rupture`, value: 'outOfStock' }
   ];
 
   // Breadcrumb
@@ -226,7 +227,7 @@ export class StockListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading stock items', err);
-        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de charger le stock' });
+        this.messageService.add({ severity: 'error', summary: $localize`:@@stock-list.component.summary.Erreur:Erreur`, detail: $localize`:@@stock-list.component.detail.Impossible d:Impossible de charger le stock` });
         this.loading.set(false);
         this.initialLoad.set(false);
       }
@@ -378,7 +379,7 @@ export class StockListComponent implements OnInit {
       next: (res) => {
         this.submitting = false;
         if (res.success) {
-          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Sortie de stock enregistrée' });
+          this.messageService.add({ severity: 'success', summary: $localize`:@@stock-list.component.summary.Succès:Succès`, detail: $localize`:@@stock-list.component.detail.Sortie_de_stock_:Sortie de stock enregistrée` });
           this.exitDialogVisible = false;
           this.loadData(); // Refresh
         } else {
@@ -433,7 +434,7 @@ export class StockListComponent implements OnInit {
       next: (res) => {
         this.adjustSubmitting = false;
         if (res.success) {
-          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Stock ajusté avec succès' });
+          this.messageService.add({ severity: 'success', summary: $localize`:@@stock-list.component.summary.Succès:Succès`, detail: $localize`:@@stock-list.component.detail.Stock ajusté:Stock ajusté avec succès` });
           this.adjustDialogVisible = false;
           this.selectedItemForAdjust = null;
           this.loadData(); // Refresh
@@ -441,7 +442,7 @@ export class StockListComponent implements OnInit {
       },
       error: (err) => {
         this.adjustSubmitting = false;
-        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Echec de l\'ajustement du stock' });
+        this.messageService.add({ severity: 'error', summary: $localize`:@@stock-list.component.summary.Erreur:Erreur`, detail: $localize`:@@stock-list.component.detail.Echec_de_l_ajust:Echec de l'ajustement du stock` });
       }
     });
   }

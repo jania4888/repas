@@ -36,7 +36,7 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
     <app-page-header
       title="Rapports décisionnels ventes produits" i18n-title="Rapports décisionnels ventes produits"
       subtitle="Performance, tendances, panier moyen et produits à mettre en avant">
-      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" i18n="@@reports.product-sales-analytics.exporter.0cd84bdc">Exporter</app-button>
+      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" i18n="@@reports.product-sales-analytics.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="filter-section">
@@ -137,25 +137,25 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
           } @else if (basketMetrics()) {
             <div class="kpi-grid">
               <app-stat-card
-                label="Panier moyen"
+                label="Panier moyen" i18n-label="Panier moyen"
                 [value]="formatAmount(basketMetrics()!.averageBasket, basketMetrics()!.currency)"
                 icon="pi-shopping-cart"
                 variant="primary">
               </app-stat-card>
               <app-stat-card
-                label="Lignes moy. / facture"
+                label="Lignes moy. / facture" i18n-label="Lignes moy. / facture"
                 [value]="(basketMetrics()!.averageLinesPerInvoice | number:'1.1-1') + ''"
                 icon="pi-list"
                 variant="success">
               </app-stat-card>
               <app-stat-card
-                label="Factures"
+                label="Factures" i18n-label="Factures"
                 [value]="basketMetrics()!.totalInvoices + ''"
                 icon="pi-file"
                 variant="primary">
               </app-stat-card>
               <app-stat-card
-                label="CA total"
+                label="CA total" i18n-label="CA total"
                 [value]="formatAmount(basketMetrics()!.totalRevenue, basketMetrics()!.currency)"
                 icon="pi-dollar"
                 variant="success">
@@ -312,7 +312,7 @@ export class ProductSalesAnalyticsComponent implements OnInit {
     this.reportsApi.getSalesRevenueByProduct(fromDate, toDate, 'Category').subscribe({
       next: (res) => {
         this.revenueByCategory.set(res.success && res.data ? res.data : []);
-        if (res.data?.length) this.currency.set(res.data[0].currency ?? 'TND');
+        if (res.data?.length) this.currency.set(res.data[0].currency ?? $localize`:@@ui.tern.tnd.51da21:TND`);
       },
       error: () => this.revenueByCategory.set([]),
       complete: maybeDone

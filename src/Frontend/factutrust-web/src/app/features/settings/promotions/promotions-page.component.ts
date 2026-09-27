@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -73,9 +74,9 @@ interface FilterOption<T extends string> {
       title="Promotions" i18n-title="Promotions"
       subtitle="Remises temporaires appliquées après le prix. Elles ne remplacent pas les grilles : un document émis garde sa remise quand la promotion se termine.">
       <div class="header-actions">
-        <p-button label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
+        <p-button label="Retour" i18n-label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
         @if (canCreate()) {
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@settings.promotions.nouvelle.promotion.32d11180">Nouvelle promotion</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@settings.promotions.nouvelle.promotion.32d11180"> Nouvelle promotion </app-button>
         }
       </div>
     </app-page-header>
@@ -141,15 +142,15 @@ interface FilterOption<T extends string> {
           [sortOrder]="-1">
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="name"><ng-container i18n="@@settings.promotions.nom.7ff20370">Nom </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
               <th i18n="@@settings.promotions.portee.f42a1d5d">Portée</th>
-              <th pSortableColumn="startsOn">Période <p-sortIcon field="startsOn"></p-sortIcon></th>
+              <th pSortableColumn="startsOn"><ng-container i18n="@@settings.promotions.periode.de2110b7">Période </ng-container> <p-sortIcon field="startsOn"></p-sortIcon></th>
               <th class="ft-num" i18n="@@settings.promotions.remise.ce12d942">Remise</th>
               <th class="ft-num" pSortableColumn="minQuantity">
-                Qté min. <p-sortIcon field="minQuantity"></p-sortIcon>
+                <ng-container i18n="@@settings.promotions.qte.min.ebdef318"> Qté min. </ng-container> <p-sortIcon field="minQuantity"></p-sortIcon>
               </th>
               <th class="ft-num" pSortableColumn="priority">
-                Priorité <p-sortIcon field="priority"></p-sortIcon>
+                <ng-container i18n="@@settings.promotions.priorite.eede91d2"> Priorité </ng-container> <p-sortIcon field="priority"></p-sortIcon>
               </th>
               <th i18n="@@settings.promotions.etat.d3b28a2a">État</th>
               <th class="ft-actions-col" i18n="@@settings.promotions.actions.c3cd636a">Actions</th>
@@ -183,7 +184,7 @@ interface FilterOption<T extends string> {
                     type="button"
                     icon="pi pi-pencil"
                     class="p-button-text p-button-sm"
-                    pTooltip="Modifier"
+                    pTooltip="Modifier" i18n-pTooltip="Modifier"
                     (click)="openEdit(promo)"></button>
                 }
                 @if (canDelete()) {
@@ -192,7 +193,7 @@ interface FilterOption<T extends string> {
                     type="button"
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Supprimer"
+                    pTooltip="Supprimer" i18n-pTooltip="Supprimer"
                     (click)="confirmDelete(promo)"></button>
                 }
               </td>
@@ -365,8 +366,8 @@ export class PromotionsPageComponent implements OnInit {
       next: () => {
         this.toastService.add({
           severity: 'success',
-          summary: 'Succès',
-          detail: this.editing ? 'Promotion mise à jour.' : 'Promotion créée.'
+          summary: $localize`:@@promotions-page.component.summary.Succès:Succès`,
+          detail: this.editing ? $localize`:@@ui.tern.promotion.mise.a.jour.3ccdcf:Promotion mise à jour.` : $localize`:@@ui.tern.promotion.creee.f84ced:Promotion créée.`
         });
         this.dialogVisible = false;
         this.saving.set(false);
@@ -391,8 +392,8 @@ export class PromotionsPageComponent implements OnInit {
       header: 'Supprimer la promotion',
       message: `Supprimer « ${promo.name} » ? Les documents déjà émis gardent leur remise.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@promotions-page.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@promotions-page.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.remove(promo)
     });
@@ -401,7 +402,7 @@ export class PromotionsPageComponent implements OnInit {
   private remove(promo: Promotion): void {
     this.pricingService.deletePromotion(promo.id).subscribe({
       next: () => {
-        this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Promotion supprimée.' });
+        this.toastService.add({ severity: 'success', summary: $localize`:@@promotions-page.component.summary.Succès:Succès`, detail: $localize`:@@promotions-page.component.detail.Promotion_suppri:Promotion supprimée.` });
         this.load();
       },
       error: err => {
@@ -413,6 +414,6 @@ export class PromotionsPageComponent implements OnInit {
 
   private showError(err: unknown, fallback: string): void {
     const msg = this.errorHandler.extractErrorMessage(err);
-    this.toastService.add({ severity: 'error', summary: 'Erreur', detail: msg || fallback });
+    this.toastService.add({ severity: 'error', summary: $localize`:@@promotions-page.component.summary.Erreur:Erreur`, detail: msg || fallback });
   }
 }

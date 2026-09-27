@@ -20,20 +20,20 @@ export type FiscalPeriodMode = 'all' | 'month' | 'quarter' | 'year';
   template: `
     <form class="filters-bar" (ngSubmit)="apply.emit()">
       <label *ngIf="isFirmScope">
-        Societe
+        <ng-container i18n="@@accounting.fiscal-schedule.societe.45c9ec04"> Societe </ng-container>
         <select name="companyTenantId" [(ngModel)]="filters.companyTenantId" (ngModelChange)="filtersChange.emit(filters)">
           <option [ngValue]="null" i18n="@@accounting.fiscal-schedule.toutes.les.societes.382627d5">Toutes les societes</option>
           <option *ngFor="let company of companies" [ngValue]="company.companyTenantId">{{ company.companyName }}</option>
         </select>
       </label>
       <label>
-        Exercice
+        <ng-container i18n="@@accounting.fiscal-schedule.exercice.e171e2b0"> Exercice </ng-container>
         <select name="fiscalYear" [(ngModel)]="filters.fiscalYear" (ngModelChange)="onFiscalYearChange($event)">
           <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
         </select>
       </label>
       <label>
-        Periode
+        <ng-container i18n="@@accounting.fiscal-schedule.periode.85e181b5"> Periode </ng-container>
         <select name="periodMode" [(ngModel)]="periodMode" (ngModelChange)="onPeriodModeChange($event)">
           <option value="all" i18n="@@accounting.fiscal-schedule.tous.b97ae3b4">Tous</option>
           <option value="month" i18n="@@accounting.fiscal-schedule.mois.0d304bea">Mois</option>
@@ -42,44 +42,44 @@ export type FiscalPeriodMode = 'all' | 'month' | 'quarter' | 'year';
         </select>
       </label>
       <label *ngIf="periodMode === 'month'">
-        Mois
+        <ng-container i18n="@@accounting.fiscal-schedule.mois.0d304bea"> Mois </ng-container>
         <select name="periodMonth" [(ngModel)]="filters.periodMonth" (ngModelChange)="filtersChange.emit(filters)">
           <option *ngFor="let month of months" [ngValue]="month.value">{{ month.label }}</option>
         </select>
       </label>
       <label *ngIf="periodMode === 'quarter'">
-        Trimestre
+        <ng-container i18n="@@accounting.fiscal-schedule.trimestre.13116972"> Trimestre </ng-container>
         <select name="periodQuarter" [(ngModel)]="filters.periodQuarter" (ngModelChange)="filtersChange.emit(filters)">
           <option *ngFor="let quarter of quarters" [ngValue]="quarter.value">{{ quarter.label }}</option>
         </select>
       </label>
       <label>
-        Type d'obligation
+        <ng-container i18n="@@accounting.fiscal-schedule.type.d.obligation.790fbe09"> Type d'obligation </ng-container>
         <select name="obligationType" [(ngModel)]="filters.obligationType" (ngModelChange)="filtersChange.emit(filters)">
           <option [ngValue]="null" i18n="@@accounting.fiscal-schedule.tous.b97ae3b4">Tous</option>
           <option *ngFor="let option of obligationOptions" [ngValue]="option.value">{{ option.label }}</option>
         </select>
       </label>
       <label>
-        Statut
+        <ng-container i18n="@@accounting.fiscal-schedule.statut.659499f3"> Statut </ng-container>
         <select name="status" [(ngModel)]="filters.status" (ngModelChange)="filtersChange.emit(filters)">
           <option [ngValue]="null" i18n="@@accounting.fiscal-schedule.tous.b97ae3b4">Tous</option>
           <option *ngFor="let option of statusOptions" [ngValue]="option.value">{{ option.label }}</option>
         </select>
       </label>
       <label>
-        Responsable
+        <ng-container i18n="@@accounting.fiscal-schedule.responsable.44b58814"> Responsable </ng-container>
         <select name="responsibleUserId" [(ngModel)]="filters.responsibleUserId" (ngModelChange)="filtersChange.emit(filters)">
           <option [ngValue]="null" i18n="@@accounting.fiscal-schedule.tous.b97ae3b4">Tous</option>
           <option *ngFor="let user of users" [ngValue]="user.id">{{ user.displayName }}</option>
         </select>
       </label>
       <label>
-        Periode du
+        <ng-container i18n="@@accounting.fiscal-schedule.periode.du.a268cb17"> Periode du </ng-container>
         <input name="dueFrom" type="date" [(ngModel)]="filters.dueFrom" (ngModelChange)="onDateChange()">
       </label>
       <label>
-        au
+        <ng-container i18n="@@accounting.fiscal-schedule.au.f095160c"> au </ng-container>
         <input name="dueTo" type="date" [(ngModel)]="filters.dueTo" (ngModelChange)="onDateChange()">
       </label>
       <p class="date-error" *ngIf="dateRangeError" i18n="@@accounting.fiscal-schedule.la.date.de.debut.doit.etre.anterieure.ou.egale.a.762c63b2">La date de debut doit etre anterieure ou egale a la date de fin.</p>

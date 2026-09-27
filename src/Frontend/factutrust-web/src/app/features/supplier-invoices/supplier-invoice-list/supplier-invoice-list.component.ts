@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterModule, ActivatedRoute, ParamMap } from '@angular/router';
@@ -26,6 +27,7 @@ import { ToastService } from '@core/services/toast.service';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { applySupplierInvoiceListFiltersFromQuery } from '@core/utils/list-filter-from-query';
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 
 interface StatusOption {
     label: string;
@@ -39,20 +41,20 @@ interface StatusOption {
         CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
         TableModule, InputTextModule, SelectModule, TagModule, ToastModule,
         PageHeaderComponent, BreadcrumbComponent, SkeletonTableComponent,
-        EmptyStateComponent, ButtonComponent, TableTotalsBarComponent
+        EmptyStateComponent, ButtonComponent, TableTotalsBarComponent, BackendLabelPipe
     ],
     template: `
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
 
     <app-page-header
-      [title]="unpaidOnlyMode() ? 'Factures impayées fournisseurs' : 'Factures fournisseurs'"
-      [subtitle]="unpaidOnlyMode() ? 'Factures fournisseurs non réglées ou partiellement réglées.' : 'Consultez et gérez les factures fournisseurs et leur statut de paiement.'">
+      [title]="unpaidOnlyMode() ? loc_ui_tern_factures_impayees_fournisseurs_12bded : loc_ui_tern_factures_fournisseurs_1dcbc2"
+      [subtitle]="unpaidOnlyMode() ? loc_ui_tern_factures_fournisseurs_non_reglees_ou_parti_50d35b : loc_ui_tern_consultez_et_gerez_les_factures_fournisseu_77faa5">
       @if (canCreateSupplierInvoice() && !unpaidOnlyMode()) {
         <app-button
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new" i18n="@@supplier-invoices.supplier-invoice-list.nouvelle.facture.cdf7e09c">Nouvelle facture</app-button>
+          routerLink="new" i18n="@@supplier-invoices.supplier-invoice-list.nouvelle.facture.cdf7e09c"> Nouvelle facture </app-button>
       }
     </app-page-header>
 
@@ -116,7 +118,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -158,7 +160,7 @@ interface StatusOption {
               <td><span class="date">{{ inv.invoiceDate | date:'dd/MM/yyyy' }}</span></td>
               <td><span class="date">{{ inv.dueDate | date:'dd/MM/yyyy' }}</span></td>
               <td><span class="amount">{{ inv.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span></td>
-              <td><p-tag [value]="inv.statusDisplay" [severity]="getStatusSeverity(inv.status)"></p-tag></td>
+              <td><p-tag [value]="inv.statusDisplay | backendLabel" [severity]="getStatusSeverity(inv.status)"></p-tag></td>
               <td>
                 <app-button variant="ghost" size="sm" icon="pi-eye" [iconOnly]="true" [routerLink]="inv.id" ariaLabel="Voir"></app-button>
               </td>
@@ -200,6 +202,10 @@ interface StatusOption {
   `]
 })
 export class SupplierInvoiceListComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_factures_impayees_fournisseurs_12bded = $localize`:@@ui.tern.factures.impayees.fournisseurs.12bded:Factures impayées fournisseurs`;
+  readonly loc_ui_tern_factures_fournisseurs_1dcbc2 = $localize`:@@ui.tern.factures.fournisseurs.1dcbc2:Factures fournisseurs`;
+  readonly loc_ui_tern_factures_fournisseurs_non_reglees_ou_parti_50d35b = $localize`:@@ui.tern.factures.fournisseurs.non.reglees.ou.parti.50d35b:Factures fournisseurs non réglées ou partiellement réglées.`;
+  readonly loc_ui_tern_consultez_et_gerez_les_factures_fournisseu_77faa5 = $localize`:@@ui.tern.consultez.et.gerez.les.factures.fournisseu.77faa5:Consultez et gérez les factures fournisseurs et leur statut de paiement.`;
     private service = inject(SupplierInvoiceService);
     private supplierService = inject(SupplierService);
     private toastService = inject(ToastService);
@@ -228,7 +234,7 @@ export class SupplierInvoiceListComponent implements OnInit, OnDestroy {
 
     summaryMetrics = computed<TotalMetric[]>(() => {
         const s = this.summary();
-        const currency = s?.currency ?? 'TND';
+        const currency = s?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
         return [
             { label: 'Factures', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
             { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
@@ -266,10 +272,10 @@ export class SupplierInvoiceListComponent implements OnInit, OnDestroy {
     ];
 
     statusOptions: StatusOption[] = [
-        { label: 'En attente', value: SupplierInvoiceStatus.Pending },
-        { label: 'Partiellement payée', value: SupplierInvoiceStatus.PartiallyPaid },
-        { label: 'Payée', value: SupplierInvoiceStatus.Paid },
-        { label: 'Annulée', value: SupplierInvoiceStatus.Cancelled }
+        { label: $localize`:@@supplier-invoices.list.filter.en-attente:En attente`, value: SupplierInvoiceStatus.Pending },
+        { label: $localize`:@@supplier-invoices.list.filter.partielle:Partiellement payée`, value: SupplierInvoiceStatus.PartiallyPaid },
+        { label: $localize`:@@supplier-invoices.list.filter.payee:Payée`, value: SupplierInvoiceStatus.Paid },
+        { label: $localize`:@@supplier-invoices.list.filter.annulee:Annulée`, value: SupplierInvoiceStatus.Cancelled }
     ];
 
     ngOnInit(): void {
@@ -339,7 +345,7 @@ export class SupplierInvoiceListComponent implements OnInit, OnDestroy {
             error: (error) => {
                 this.loading.set(false);
         this.initialLoad.set(false);
-                this.toastService.add({ severity: 'error', summary: 'Erreur', detail: error?.error?.errors?.[0] || 'Impossible de charger les factures' });
+                this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-invoice-list.component.summary.Erreur:Erreur`, detail: error?.error?.errors?.[0] || 'Impossible de charger les factures' });
             }
         });
     }

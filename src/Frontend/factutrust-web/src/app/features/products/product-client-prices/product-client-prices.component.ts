@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnChanges, SimpleChanges, inject, input, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -53,12 +54,12 @@ interface ClientOption {
         <div>
           <h4 class="pricing-block-title" i18n="@@products.product-client-prices.tarifs.par.client.e47e033b">Tarifs par client</h4>
           <p class="client-prices-subtitle">
-            Prix catalogue : <strong>{{ catalogUnitPriceHT() | number: '1.3-3' }} {{ currency() }}</strong>
+            <ng-container i18n="@@products.product-client-prices.prix.catalogue.dff80c05"> Prix catalogue : </ng-container> <strong>{{ catalogUnitPriceHT() | number: '1.3-3' }} {{ currency() }}</strong>
             — les clients absents conservent ce tarif.
           </p>
         </div>
         @if (!readOnly() && canUpdate()) {
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openAdd()" i18n="@@products.product-client-prices.ajouter.un.tarif.client.db59e2ab">Ajouter un tarif client</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openAdd()" i18n="@@products.product-client-prices.ajouter.un.tarif.client.db59e2ab"> Ajouter un tarif client </app-button>
         }
       </div>
 
@@ -108,7 +109,7 @@ interface ClientOption {
                         type="button"
                         icon="pi pi-pencil"
                         class="p-button-text p-button-sm"
-                        pTooltip="Modifier"
+                        pTooltip="Modifier" i18n-pTooltip="Modifier"
                         (click)="openEdit(item)"></button>
                     }
                     @if (canDelete()) {
@@ -117,7 +118,7 @@ interface ClientOption {
                         type="button"
                         icon="pi pi-trash"
                         class="p-button-text p-button-sm p-button-danger"
-                        pTooltip="Supprimer"
+                        pTooltip="Supprimer" i18n-pTooltip="Supprimer"
                         (click)="confirmDelete(item)"></button>
                     }
                   </td>
@@ -130,7 +131,7 @@ interface ClientOption {
     </div>
 
     <p-dialog
-      [header]="editingItem ? 'Modifier le tarif client' : 'Ajouter un tarif client'"
+      [header]="editingItem ? loc_ui_tern_modifier_le_tarif_client_45204a : loc_ui_tern_ajouter_un_tarif_client_db59e2"
       [(visible)]="dialogVisible"
       [modal]="true"
       styleClass="client-price-dialog"
@@ -138,13 +139,13 @@ interface ClientOption {
       [breakpoints]="{ '640px': '95vw' }"
       [draggable]="false">
       <p class="ft-dialog-intro">
-        Prix catalogue :
+        <ng-container i18n="@@products.product-client-prices.prix.catalogue.dff80c05"> Prix catalogue : </ng-container>
         <strong>{{ catalogUnitPriceHT() | number: '1.3-3' }} {{ currency() }}</strong>.
         Ce tarif s'applique uniquement à ce client ; les autres conservent le catalogue.
       </p>
 
       <div class="ft-field ft-field--full client-price-dialog__client">
-        <label for="cp-client">Client <span class="ft-required" i18n="@@products.product-client-prices.text.df58248c">*</span></label>
+        <label for="cp-client"><ng-container i18n="@@products.product-client-prices.client.1bdd79b1">Client </ng-container> <span class="ft-required" i18n="@@products.product-client-prices.text.df58248c">*</span></label>
         @if (editingItem) {
           <div class="ft-readonly">{{ editingItem.clientName }}</div>
         } @else {
@@ -212,17 +213,17 @@ interface ClientOption {
       @if (dateRangeInvalid()) {
         <p class="ft-field-error" i18n="@@products.product-client-prices.la.fin.de.validite.ne.peut.pas.preceder.le.debut.4833acba">La fin de validité ne peut pas précéder le début.</p>
       }
-      <small class="ft-hint client-price-dialog__dates-hint" i18n="@@products.product-client-prices.format.affiche.selon.votre.systeme.laissez.vide..d0c19b95">Format affiché selon votre système. Laissez vide pour une validité sans limite.</small>
+      <small class="ft-hint client-price-dialog__dates-hint" i18n="@@products.product-client-prices.format.affiche.selon.votre.systeme.laissez.vide..d0c19b95"> Format affiché selon votre système. Laissez vide pour une validité sans limite. </small>
 
       <div class="ft-field ft-field--inline client-price-dialog__active">
         <p-inputSwitch [(ngModel)]="formIsActive" inputId="cp-active" [disabled]="saving()"></p-inputSwitch>
         <label for="cp-active" i18n="@@products.product-client-prices.tarif.actif.989d1fb6">Tarif actif</label>
       </div>
-      <small class="ft-hint client-price-dialog__active-hint" i18n="@@products.product-client-prices.desactiver.est.reversible.n.affecte.pas.les.docu.f09cf48c">Désactiver est réversible ; n'affecte pas les documents déjà émis.</small>
+      <small class="ft-hint client-price-dialog__active-hint" i18n="@@products.product-client-prices.desactiver.est.reversible.n.affecte.pas.les.docu.f09cf48c"> Désactiver est réversible ; n'affecte pas les documents déjà émis. </small>
 
       <ng-template pTemplate="footer">
         <app-button variant="secondary" (clicked)="dialogVisible = false" i18n="@@products.product-client-prices.annuler.49ba3292">Annuler</app-button>
-        <app-button variant="primary" [disabled]="!canSave() || saving()" (clicked)="save()" i18n="@@products.product-client-prices.enregistrer.f7c8bcd8">Enregistrer</app-button>
+        <app-button variant="primary" [disabled]="!canSave() || saving()" (clicked)="save()" i18n="@@products.product-client-prices.enregistrer.f7c8bcd8"> Enregistrer </app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -278,6 +279,8 @@ interface ClientOption {
   ]
 })
 export class ProductClientPricesComponent implements OnInit, OnChanges {
+  readonly loc_ui_tern_modifier_le_tarif_client_45204a = $localize`:@@ui.tern.modifier.le.tarif.client.45204a:Modifier le tarif client`;
+  readonly loc_ui_tern_ajouter_un_tarif_client_db59e2 = $localize`:@@ui.tern.ajouter.un.tarif.client.db59e2:Ajouter un tarif client`;
   readonly productId = input.required<string>();
   readonly catalogUnitPriceHT = input(0);
   readonly currency = input('TND');
@@ -425,8 +428,8 @@ export class ProductClientPricesComponent implements OnInit, OnChanges {
         next: () => {
           this.toast.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Tarif client enregistré'
+            summary: $localize`:@@product-client-prices.component.summary.Succès:Succès`,
+            detail: $localize`:@@product-client-prices.component.detail.Tarif_client_enr:Tarif client enregistré`
           });
           this.dialogVisible = false;
           this.saving.set(false);
@@ -436,8 +439,8 @@ export class ProductClientPricesComponent implements OnInit, OnChanges {
           this.errorHandler.logError('Upsert client product price failed', err);
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Enregistrement du tarif client impossible.'
+            summary: $localize`:@@product-client-prices.component.summary.Erreur:Erreur`,
+            detail: $localize`:@@product-client-prices.component.detail.Enregistrement_d:Enregistrement du tarif client impossible.`
           });
           this.saving.set(false);
         }
@@ -449,8 +452,8 @@ export class ProductClientPricesComponent implements OnInit, OnChanges {
       message: `Supprimer le tarif de « ${item.clientName} » ? Le client repassera au prix catalogue.`,
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@product-client-prices.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@product-client-prices.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(item)
     });
@@ -461,8 +464,8 @@ export class ProductClientPricesComponent implements OnInit, OnChanges {
       next: () => {
         this.toast.add({
           severity: 'success',
-          summary: 'Succès',
-          detail: 'Tarif client supprimé'
+          summary: $localize`:@@product-client-prices.component.summary.Succès:Succès`,
+          detail: $localize`:@@product-client-prices.component.detail.Tarif_client_sup:Tarif client supprimé`
         });
         this.load();
       },
@@ -470,8 +473,8 @@ export class ProductClientPricesComponent implements OnInit, OnChanges {
         this.errorHandler.logError('Delete client product price failed', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Suppression du tarif client impossible.'
+          summary: $localize`:@@product-client-prices.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@product-client-prices.component.detail.Suppression_du_t:Suppression du tarif client impossible.`
         });
       }
     });

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Routes } from '@angular/router';
 import { adminGuard } from '@core/guards/admin.guard';
 import { permissionGuard } from '@core/guards/permission.guard';
@@ -10,56 +11,56 @@ export const SETTINGS_ROUTES: Routes = [
     path: '',
     canActivate: [platformSettingsGuard],
     loadComponent: () => import('./settings.component').then(m => m.SettingsComponent),
-    title: 'Paramètres - InstaFact'
+    title: $localize`:@@settings.routes.title.Param_tres_InstaFact:Paramètres - InstaFact`
   },
   {
     path: 'profile',
     loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent),
-    title: 'Mon profil - InstaFact'
+    title: $localize`:@@settings.routes.title.Mon_profil_InstaFact:Mon profil - InstaFact`
   },
   {
     path: 'company',
     canActivate: [platformSettingsGuard],
     loadComponent: () => import('./company/company.component').then(m => m.CompanyComponent),
-    title: 'Mon entreprise - InstaFact'
+    title: $localize`:@@settings.routes.title.Mon_entreprise_InstaFa:Mon entreprise - InstaFact`
   },
   {
     path: 'modules',
     canActivate: [platformSettingsGuard, permissionGuard],
     data: { permissions: [PERMISSIONS.settings.update] },
     loadComponent: () => import('./modules/modules-settings.component').then(m => m.ModulesSettingsComponent),
-    title: 'Modules - InstaFact'
+    title: $localize`:@@settings.routes.title.Modules_InstaFact:Modules - InstaFact`
   },
   {
     path: 'subscription',
     canActivate: [platformSettingsGuard],
     loadComponent: () => import('./subscription/subscription.component').then(m => m.SubscriptionComponent),
-    title: 'Mon abonnement - InstaFact'
+    title: $localize`:@@settings.routes.title.Mon_abonnement_InstaFa:Mon abonnement - InstaFact`
   },
   {
     path: 'numbering',
     canActivate: [platformSettingsGuard],
     loadComponent: () => import('./numbering/numbering.component').then(m => m.NumberingComponent),
-    title: 'Numérotations - InstaFact'
+    title: $localize`:@@settings.routes.title.Num_rotations_InstaFac:Numérotations - InstaFact`
   },
   {
     path: 'templates',
     canActivate: [platformSettingsGuard],
     loadComponent: () => import('./templates/templates.component').then(m => m.DocumentTemplatesComponent),
-    title: 'Modèles de documents - InstaFact'
+    title: $localize`:@@settings.routes.title.Mod_les_de_documents_I:Modèles de documents - InstaFact`
   },
   {
     path: 'payment-terms',
     canActivate: [platformSettingsGuard],
     loadComponent: () =>
       import('./payment-terms/payment-terms.component').then(m => m.PaymentTermsComponent),
-    title: 'Conditions de règlement - InstaFact'
+    title: $localize`:@@settings.routes.title.Conditions_de_r_glement_:Conditions de règlement - InstaFact`
   },
   {
     path: 'taxes',
     canActivate: [platformSettingsGuard],
     loadComponent: () => import('./taxes/taxes.component').then(m => m.TaxesComponent),
-    title: 'Taxes et TVA - InstaFact'
+    title: $localize`:@@settings.routes.title.Taxes_et_TVA_InstaFact:Taxes et TVA - InstaFact`
   },
   {
     path: 'promotions',
@@ -67,7 +68,7 @@ export const SETTINGS_ROUTES: Routes = [
     data: { permissions: [PERMISSIONS.pricing.read] },
     loadComponent: () =>
       import('./promotions/promotions-page.component').then(m => m.PromotionsPageComponent),
-    title: 'Promotions - InstaFact'
+    title: $localize`:@@settings.routes.title.Promotions_InstaFact:Promotions - InstaFact`
   },
   {
     path: 'variant-axes',
@@ -79,33 +80,33 @@ export const SETTINGS_ROUTES: Routes = [
     path: 'warehouses',
     canActivate: [platformSettingsGuard],
     loadComponent: () => import('./warehouses/warehouses.component').then(m => m.WarehousesComponent),
-    title: 'Entrepôts - InstaFact'
+    title: $localize`:@@settings.routes.title.Entrep_ts_InstaFact:Entrepôts - InstaFact`
   },
   {
     path: 'users',
     canActivate: [platformSettingsGuard, adminGuard],
     loadComponent: () => import('./users/tenant-users-list.component').then(m => m.TenantUsersListComponent),
-    title: 'Utilisateurs - InstaFact'
+    title: $localize`:@@settings.routes.title.Utilisateurs_InstaFact:Utilisateurs - InstaFact`
   },
   {
     path: 'users/add',
     canActivate: [platformSettingsGuard, adminGuard],
     loadComponent: () => import('./users/tenant-users-bulk.component').then(m => m.TenantUsersBulkComponent),
-    title: 'Ajouter des utilisateurs - InstaFact'
+    title: $localize`:@@settings.routes.title.Ajouter_des_utilisateurs:Ajouter des utilisateurs - InstaFact`
   },
   {
     path: 'storefront',
     canActivate: [platformSettingsGuard, storefrontManageGuard],
     loadComponent: () =>
       import('./storefront/storefront-settings.component').then(m => m.StorefrontSettingsComponent),
-    title: 'Vitrine publique - InstaFact'
+    title: $localize`:@@settings.routes.title.Vitrine_publique_Insta:Vitrine publique - InstaFact`
   },
   {
     path: 'accounting-firm',
     canActivate: [platformSettingsGuard, adminGuard],
     loadComponent: () =>
       import('./accounting-firm/accounting-firm-settings.component').then(m => m.AccountingFirmSettingsComponent),
-    title: 'Cabinet comptable - InstaFact'
+    title: $localize`:@@settings.routes.title.Cabinet_comptable_Inst:Cabinet comptable - InstaFact`
   },
   {
     // Page personnelle (chaque utilisateur gère SA liaison WhatsApp) : pas de platformSettingsGuard,
@@ -113,6 +114,6 @@ export const SETTINGS_ROUTES: Routes = [
     path: 'channels',
     loadComponent: () =>
       import('./channels/channels-settings.component').then(m => m.ChannelsSettingsComponent),
-    title: 'WhatsApp - InstaFact'
+    title: $localize`:@@settings.routes.title.WhatsApp_InstaFact:WhatsApp - InstaFact`
   }
 ];

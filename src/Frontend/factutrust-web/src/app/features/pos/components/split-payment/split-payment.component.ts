@@ -5,11 +5,11 @@ import { PosStateService } from '../../services/pos-state.service';
 import { PaymentMethod } from '../../../invoices/invoice-wizard/models/invoice-wizard.models';
 
 const METHOD_LABELS: Record<PaymentMethod, string> = {
-  [PaymentMethod.Cash]: 'Especes',
-  [PaymentMethod.Card]: 'Carte',
-  [PaymentMethod.BankTransfer]: 'Virement',
-  [PaymentMethod.Check]: 'Cheque',
-  [PaymentMethod.Effect]: 'Effet'
+  [PaymentMethod.Cash]: $localize`:@@ui.tern.especes.958d74:Especes`,
+  [PaymentMethod.Card]: $localize`:@@ui.tern.carte.8bb683:Carte`,
+  [PaymentMethod.BankTransfer]: $localize`:@@ui.tern.virement.afbaf9:Virement`,
+  [PaymentMethod.Check]: $localize`:@@ui.tern.cheque.6c0a13:Cheque`,
+  [PaymentMethod.Effect]: $localize`:@@ui.tern.effet.3b25c0:Effet`
 };
 
 @Component({
@@ -61,7 +61,7 @@ const METHOD_LABELS: Record<PaymentMethod, string> = {
         </button>
       </div>
 
-      <button type="button" class="split-payment__cancel" (click)="posState.disableSplitPayment()" i18n="@@pos.components.annuler.le.paiement.fractionne.82548779">Annuler le paiement fractionné</button>
+      <button type="button" class="split-payment__cancel" (click)="posState.disableSplitPayment()" i18n="@@pos.components.annuler.le.paiement.fractionne.82548779"> Annuler le paiement fractionné </button>
     </div>
   `,
   styles: [`

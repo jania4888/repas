@@ -28,10 +28,10 @@ const MAX_BYTES = 10 * 1024 * 1024;
       </p-tablist>
       <p-tabpanels>
       <p-tabpanel [value]="0">
-        <p class="bottom-tab-hint" i18n="@@accounting.manual-entry.les.fichiers.seront.televerses.apres.l.enregistr.1bb91483">Les fichiers seront téléversés après l'enregistrement de l'écriture (max 10 Mo, PDF/images/Office).</p>
+        <p class="bottom-tab-hint" i18n="@@accounting.manual-entry.les.fichiers.seront.televerses.apres.l.enregistr.1bb91483"> Les fichiers seront téléversés après l'enregistrement de l'écriture (max 10 Mo, PDF/images/Office). </p>
         <div class="attach-zone" (dragover)="$event.preventDefault()" (drop)="onDrop($event)">
           <input type="file" #fileInput multiple hidden (change)="onFilesSelected($event)" />
-          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="fileInput.click()" i18n="@@accounting.manual-entry.ajouter.un.fichier.2651b7a1">Ajouter un fichier</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="fileInput.click()" i18n="@@accounting.manual-entry.ajouter.un.fichier.2651b7a1"> Ajouter un fichier </button>
         </div>
         @if (pendingFiles.length > 0) {
           <ul class="attach-list">

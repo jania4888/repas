@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -94,8 +95,8 @@ interface LineRow extends LinePromotionPreview {
 
     <div class="form-container">
       <h1 class="page-title" i18n="@@quotes.quote-form.creer.un.devis.426c5610">Créer un devis</h1>
-      <p class="page-subtitle" i18n="@@quotes.quote-form.renseignez.le.client.les.dates.et.les.lignes.vou.c70a554b">Renseignez le client, les dates et les lignes. Vous pourrez envoyer le devis au client une fois créé.</p>
-      <p class="page-hint" i18n="@@quotes.quote-form.ce.devis.reste.modifiable.tant.qu.il.n.est.pas.e.50c5144d">Ce devis reste modifiable tant qu'il n'est pas envoyé au client.</p>
+      <p class="page-subtitle" i18n="@@quotes.quote-form.renseignez.le.client.les.dates.et.les.lignes.vou.c70a554b"> Renseignez le client, les dates et les lignes. Vous pourrez envoyer le devis au client une fois créé. </p>
+      <p class="page-hint" i18n="@@quotes.quote-form.ce.devis.reste.modifiable.tant.qu.il.n.est.pas.e.50c5144d"> Ce devis reste modifiable tant qu'il n'est pas envoyé au client. </p>
 
       <form (ngSubmit)="onSubmit()" class="quote-form">
         <app-form-section title="Client et période" i18n-title="Client et période" icon="pi-user" [number]="1">
@@ -117,7 +118,7 @@ interface LineRow extends LinePromotionPreview {
               <small class="field-hint" i18n="@@quotes.quote-form.preremplit.les.lignes.les.notes.les.conditions.e.f10dd8cd">Préremplit les lignes, les notes, les conditions et la date de validité.</small>
             </div>
             <div class="field">
-              <label for="client">Client <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
+              <label for="client"><ng-container i18n="@@quotes.quote-form.client.1bdd79b1">Client </ng-container> <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
               <div class="client-cell">
                 <div class="client-cell-input">
                   <p-select
@@ -148,7 +149,7 @@ interface LineRow extends LinePromotionPreview {
               </div>
             </div>
             <div class="field">
-              <label for="issueDate">Date d'émission <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
+              <label for="issueDate"><ng-container i18n="@@quotes.quote-form.date.d.emission.99f68857">Date d'émission </ng-container> <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
               <p-datepicker
                 id="issueDate"
                 [(ngModel)]="issueDate"
@@ -159,7 +160,7 @@ interface LineRow extends LinePromotionPreview {
               </p-datepicker>
             </div>
             <div class="field">
-              <label for="expiryDate">Valide jusqu'au <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
+              <label for="expiryDate"><ng-container i18n="@@quotes.quote-form.valide.jusqu.au.f5b757f8">Valide jusqu'au </ng-container> <span class="required" i18n="@@quotes.quote-form.text.df58248c">*</span></label>
               <p-datepicker
                 id="expiryDate"
                 [(ngModel)]="expiryDate"
@@ -291,7 +292,7 @@ interface LineRow extends LinePromotionPreview {
                     </td>
                     <td>
                       @if (linePricing.resolving()) {
-                        <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…"></i>
+                        <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…" i18n-pTooltip="Résolution du prix…"></i>
                       } @else if (line.priceOverridden) {
                         <p-tag severity="warning" value="Saisi"></p-tag>
                       } @else if (line.priceSource === 'ClientPrice') {
@@ -302,7 +303,7 @@ interface LineRow extends LinePromotionPreview {
                         <span class="text-muted" i18n="@@quotes.quote-form.catalogue.5a241023">Catalogue</span>
                       }
                       @if (line.promotionEligible && line.promotionName) {
-                        <p-tag severity="success" [value]="'Promo : ' + line.promotionName"></p-tag>
+                        <p-tag severity="success" [value]="loc_ui_tern_promo_84ac35 + line.promotionName"></p-tag>
                       } @else if (line.promotionMinQuantityRequired && line.promotionName) {
                         <small class="promo-hint">{{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}</small>
                       }
@@ -425,14 +426,14 @@ interface LineRow extends LinePromotionPreview {
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/quotes" i18n="@@quotes.quote-form.annuler.49ba3292">Annuler</app-button>
+            routerLink="/quotes" i18n="@@quotes.quote-form.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             type="submit"
             [disabled]="!canSubmit() || submitting() || linePricing.resolving()">
-            {{ submitting() ? 'Création...' : 'Créer le devis' }}
+            {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_le_devis_db90aa }}
           </app-button>
         </div>
       </form>
@@ -699,6 +700,9 @@ interface LineRow extends LinePromotionPreview {
   ],
 })
 export class QuoteFormComponent implements OnInit {
+  readonly loc_ui_tern_promo_84ac35 = $localize`:@@ui.tern.promo.84ac35:Promo : `;
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_creer_le_devis_db90aa = $localize`:@@ui.tern.creer.le.devis.db90aa:Créer le devis`;
   private quoteService = inject(QuoteService);
   private clientService = inject(ClientService);
   private auth = inject(AuthService);
@@ -994,8 +998,8 @@ export class QuoteFormComponent implements OnInit {
     this.quickCreateClientVisible = false;
     this.toastService.add({
       severity: 'success',
-      summary: 'Client créé',
-      detail: 'Le client a été créé et sélectionné.',
+      summary: $localize`:@@quote-form.component.summary.Client_cr_:Client créé`,
+      detail: $localize`:@@quote-form.component.detail.Le_client_a_t_:Le client a été créé et sélectionné.`,
     });
   }
 
@@ -1018,8 +1022,8 @@ export class QuoteFormComponent implements OnInit {
     this.quickCreateProductVisible = false;
     this.toastService.add({
       severity: 'success',
-      summary: 'Produit créé',
-      detail: 'Le produit a été créé et ajouté à la ligne.',
+      summary: $localize`:@@quote-form.component.summary.Produit créé:Produit créé`,
+      detail: $localize`:@@quote-form.component.detail.Le_produit_a_t_:Le produit a été créé et ajouté à la ligne.`,
     });
   }
 
@@ -1052,8 +1056,8 @@ export class QuoteFormComponent implements OnInit {
     if (lineDtos.length === 0) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Lignes manquantes',
-        detail: 'Ajoutez au moins une ligne avec un produit sélectionné.',
+        summary: $localize`:@@quote-form.component.summary.Lignes_manquante:Lignes manquantes`,
+        detail: $localize`:@@quote-form.component.detail.Ajoutez_au_moins:Ajoutez au moins une ligne avec un produit sélectionné.`,
       });
       return;
     }
@@ -1067,7 +1071,7 @@ export class QuoteFormComponent implements OnInit {
       if (line.discountPercent > maxAllowed) {
         this.toastService.add({
           severity: 'error',
-          summary: 'Remise invalide',
+          summary: $localize`:@@quote-form.component.summary.Remise_invalide:Remise invalide`,
           detail: `La remise ne peut pas dépasser ${maxAllowed}% pour « ${line.designation} ».`,
         });
         return;
@@ -1095,8 +1099,8 @@ export class QuoteFormComponent implements OnInit {
         if (res.success && res.data) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Devis créé',
-            detail: 'Redirection vers le devis...',
+            summary: $localize`:@@quote-form.component.summary.Devis créé:Devis créé`,
+            detail: $localize`:@@quote-form.component.detail.Redirection_vers:Redirection vers le devis...`,
           });
           this.router.navigate(['/quotes', res.data]);
         }
@@ -1107,7 +1111,7 @@ export class QuoteFormComponent implements OnInit {
         this.submitError.set(detail);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@quote-form.component.summary.Erreur:Erreur`,
           detail,
         });
       },

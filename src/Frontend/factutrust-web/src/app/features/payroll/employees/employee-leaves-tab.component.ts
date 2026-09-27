@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -30,7 +32,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
 @Component({
   selector: 'app-employee-leaves-tab',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -62,9 +64,9 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
 
     <app-payroll-stat-grid [items]="balanceStats()" [compact]="true" />
 
-    <p class="payroll-info-text" i18n="@@payroll.employees.acquisition.1.jour.par.26.jours.travailles.credi.f1c55fba">Acquisition : 1 jour par 26 jours travaillés, créditée à la validation du cycle de paie.
+    <p class="payroll-info-text" i18n="@@payroll.employees.acquisition.1.jour.par.26.jours.travailles.credi.f1c55fba"> Acquisition : 1 jour par 26 jours travaillés, créditée à la validation du cycle de paie.
       Seuls les congés approuvés impactent le calcul de paie. Les absences sans solde et injustifiées réduisent le brut.
-      Avec les flags statutaires activés, maladie / maternité / paternité sont calculés automatiquement.</p>
+      Avec les flags statutaires activés, maladie / maternité / paternité sont calculés automatiquement. </p>
 
     @if (!readOnly) {
       <div class="payroll-toolbar mb-3">
@@ -92,12 +94,12 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </ng-template>
       <ng-template pTemplate="body" let-l>
         <tr>
-          <td>{{ l.typeDisplay }}</td>
+          <td>{{ l.typeDisplay | backendLabel }}</td>
           <td>{{ l.startDate | date:'dd/MM/yyyy' }}</td>
           <td>{{ l.endDate | date:'dd/MM/yyyy' }}</td>
           <td class="text-right">{{ l.days }}</td>
           <td>
-            <p-tag [value]="l.isApproved ? 'Approuvé' : 'En attente'" [severity]="l.isApproved ? 'success' : 'warn'" />
+            <p-tag [value]="l.isApproved ? loc_ui_tern_approuve_4a06a7 : loc_ui_tern_en_attente_523115" [severity]="l.isApproved ? 'success' : 'warn'" />
           </td>
           @if (!readOnly) {
             <td class="actions">
@@ -109,7 +111,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
                   [pTooltip]="approveBlockReason(l)"
                   [tooltipDisabled]="canApproveLeave(l)"
                   tooltipPosition="top"
-                  (click)="approve(l)" i18n="@@payroll.employees.approuver.3033e7d6">Approuver</button>
+                  (click)="approve(l)" i18n="@@payroll.employees.approuver.3033e7d6"> Approuver </button>
               }
               <button type="button" class="p-button p-button-text p-button-danger p-button-sm" (click)="confirmDelete(l)" i18n="@@payroll.employees.supprimer.1acfc1c7">Supprimer</button>
             </td>
@@ -121,7 +123,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </ng-template>
     </p-table>
 
-    <p-dialog header="Nouveau congé" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
+    <p-dialog header="Nouveau congé" i18n-header="Nouveau congé" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.type.3deb7456">Type</label>
         <p-select [options]="leaveTypeOptions" [(ngModel)]="formType" optionLabel="label" optionValue="value" appendTo="body" styleClass="w-full" />
@@ -219,7 +221,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </ng-template>
     </p-dialog>
 
-    <p-dialog header="Solde initial de congés" [(visible)]="openingDialogVisible" [modal]="true" [style]="{ width: '400px' }">
+    <p-dialog header="Solde initial de congés" i18n-header="Solde initial de congés" [(visible)]="openingDialogVisible" [modal]="true" [style]="{ width: '400px' }">
       <p class="payroll-info-text mb-2" i18n="@@payroll.employees.reprise.d.historique.ou.ajustement.du.solde.avan.a6bf5678">Reprise d'historique ou ajustement du solde avant la première validation de paie.</p>
       <div class="payroll-form-group">
         <label i18n="@@payroll.employees.jours.solde.initial.305cc84a">Jours (solde initial)</label>
@@ -231,7 +233,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </ng-template>
     </p-dialog>
 
-    <p-dialog header="Déclarer une naissance" [(visible)]="birthDialogVisible" [modal]="true" [style]="{ width: '420px' }">
+    <p-dialog header="Déclarer une naissance" i18n-header="Déclarer une naissance" [(visible)]="birthDialogVisible" [modal]="true" [style]="{ width: '420px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.date.de.naissance.8851f385">Date de naissance</label>
         <p-datepicker [(ngModel)]="birthDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
@@ -264,6 +266,8 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   `]
 })
 export class EmployeeLeavesTabComponent implements OnInit {
+  readonly loc_ui_tern_approuve_4a06a7 = $localize`:@@ui.tern.approuve.4a06a7:Approuvé`;
+  readonly loc_ui_tern_en_attente_523115 = $localize`:@@ui.tern.en.attente.523115:En attente`;
   @Input({ required: true }) employeeId!: string;
   @Input() readOnly = false;
 
@@ -367,7 +371,7 @@ export class EmployeeLeavesTabComponent implements OnInit {
   reload(): void {
     this.employees.listLeaves(this.employeeId).subscribe({
       next: res => this.items.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Congés', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`, detail: $localize`:@@employee-leaves-tab.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -414,14 +418,14 @@ export class EmployeeLeavesTabComponent implements OnInit {
     if (this.readOnly) return;
     this.employees.setLeaveOpeningBalance(this.employeeId, this.openingBalanceDays).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Congés', detail: 'Solde initial enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`, detail: $localize`:@@employee-leaves-tab.component.detail.Solde_initial_en:Solde initial enregistré.` });
         this.openingDialogVisible = false;
         this.reloadBalance();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Congés',
-        detail: err?.error?.message ?? 'Enregistrement impossible.'
+        summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
       })
     });
   }
@@ -431,7 +435,7 @@ export class EmployeeLeavesTabComponent implements OnInit {
     if (this.createExceedsBalance()) {
       this.toast.add({
         severity: 'error',
-        summary: 'Congés',
+        summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`,
         detail: `Solde insuffisant : ${this.formDays} j demandés, ${this.balance()?.available ?? 0} j disponibles.`
       });
       return;
@@ -453,12 +457,12 @@ export class EmployeeLeavesTabComponent implements OnInit {
       childBirthCertificateNumber: this.formChildBirthCertificateNumber || undefined
     }).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Congés', detail: 'Congé enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`, detail: $localize`:@@employee-leaves-tab.component.detail.Cong_enregistr_:Congé enregistré.` });
         this.dialogVisible = false;
         this.reload();
         this.reloadBalance();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Congés', detail: err.error?.message ?? 'Création impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`, detail: err.error?.message ?? $localize`:@@ui.tern.creation.impossible.5661a5:Création impossible.` })
     });
   }
 
@@ -466,11 +470,11 @@ export class EmployeeLeavesTabComponent implements OnInit {
     if (this.readOnly || !this.canApproveLeave(leave)) return;
     this.payroll.approveLeave(leave.id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Congés', detail: 'Congé approuvé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`, detail: $localize`:@@employee-leaves-tab.component.detail.Cong_approuv_:Congé approuvé.` });
         this.reload();
         this.reloadBalance();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Congés', detail: err.error?.message ?? 'Approbation impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`, detail: err.error?.message ?? $localize`:@@ui.tern.approbation.impossible.7d6318:Approbation impossible.` })
     });
   }
 
@@ -479,8 +483,8 @@ export class EmployeeLeavesTabComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer le congé du ${leave.startDate} ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@employee-leaves-tab.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@employee-leaves-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(leave.id)
     });
@@ -489,11 +493,11 @@ export class EmployeeLeavesTabComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteLeave(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Congés', detail: 'Congé supprimé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`, detail: $localize`:@@employee-leaves-tab.component.detail.Cong_supprim_:Congé supprimé.` });
         this.reload();
         this.reloadBalance();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Congés', detail: err.error?.message ?? 'Suppression impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`, detail: err.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.` })
     });
   }
 
@@ -519,14 +523,14 @@ export class EmployeeLeavesTabComponent implements OnInit {
       createPaternityLeave: this.createPaternityLeave
     }).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Congés', detail: 'Naissance déclarée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`, detail: $localize`:@@employee-leaves-tab.component.detail.Naissance_d_clar:Naissance déclarée.` });
         this.birthDialogVisible = false;
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Congés',
-        detail: err?.error?.message ?? 'Déclaration impossible.'
+        summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.declaration.impossible.dd6516:Déclaration impossible.`
       })
     });
   }

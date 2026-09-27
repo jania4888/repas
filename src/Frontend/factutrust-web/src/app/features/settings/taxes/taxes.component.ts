@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, OnDestroy, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -30,7 +32,7 @@ import {
 @Component({
   selector: 'app-taxes',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -56,13 +58,13 @@ import {
       subtitle="Configurez les taxes applicables et les taux de TVA">
       <div class="header-actions">
         <p-button
-          label="Retour"
+          label="Retour" i18n-label="Retour"
           icon="pi pi-arrow-left"
           [outlined]="true"
           routerLink="/settings">
         </p-button>
         <p-button
-          label="Ajouter"
+          label="Ajouter" i18n-label="Ajouter"
           icon="pi pi-plus"
           (onClick)="openAddDialog()"
           [disabled]="loading()">
@@ -102,15 +104,15 @@ import {
             <ng-template pTemplate="body" let-row>
               <tr>
                 <td>{{ row.name }}</td>
-                <td>{{ row.contextDisplay }}</td>
+                <td>{{ row.contextDisplay | backendLabel }}</td>
                 <td>{{ formatValue(row) }}</td>
-                <td>{{ row.isAppliedToProducts ? 'Oui' : 'Non' }}</td>
+                <td>{{ row.isAppliedToProducts ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
                 <td>
                   <p-inputSwitch
                     [ngModel]="row.isActive"
                     (ngModelChange)="onToggleActive(row, $event)"
                     [inputId]="'active-' + row.id"
-                    [attr.aria-label]="'Activer ou désactiver ' + row.name">
+                    [attr.aria-label]="loc_ui_tern_activer_ou_desactiver_04c31b + row.name">
                   </p-inputSwitch>
                 </td>
                 <td class="col-actions">
@@ -119,7 +121,7 @@ import {
                     [text]="true"
                     [rounded]="true"
                     (onClick)="openEditDialog(row)"
-                    [attr.aria-label]="'Modifier ' + row.name">
+                    [attr.aria-label]="loc_ui_tern_modifier_6efdfe + row.name">
                   </p-button>
                   @if (!row.isSystem) {
                     <p-button
@@ -128,7 +130,7 @@ import {
                       [rounded]="true"
                       severity="danger"
                       (onClick)="confirmDelete(row)"
-                      [attr.aria-label]="'Supprimer ' + row.name">
+                      [attr.aria-label]="loc_ui_tern_supprimer_52af4f + row.name">
                     </p-button>
                   }
                 </td>
@@ -162,15 +164,15 @@ import {
             <ng-template pTemplate="body" let-row>
               <tr>
                 <td>{{ row.name }}</td>
-                <td>{{ row.contextDisplay }}</td>
+                <td>{{ row.contextDisplay | backendLabel }}</td>
                 <td>{{ formatValue(row) }}</td>
-                <td>{{ row.isAppliedToProducts ? 'Oui' : 'Non' }}</td>
+                <td>{{ row.isAppliedToProducts ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
                 <td>
                   <p-inputSwitch
                     [ngModel]="row.isActive"
                     (ngModelChange)="onToggleActive(row, $event)"
                     [inputId]="'vat-active-' + row.id"
-                    [attr.aria-label]="'Activer ou désactiver ' + row.name">
+                    [attr.aria-label]="loc_ui_tern_activer_ou_desactiver_04c31b + row.name">
                   </p-inputSwitch>
                 </td>
                 <td class="col-actions">
@@ -179,7 +181,7 @@ import {
                     [text]="true"
                     [rounded]="true"
                     (onClick)="openEditDialog(row)"
-                    [attr.aria-label]="'Modifier ' + row.name">
+                    [attr.aria-label]="loc_ui_tern_modifier_6efdfe + row.name">
                   </p-button>
                   @if (!row.isSystem) {
                     <p-button
@@ -188,7 +190,7 @@ import {
                       [rounded]="true"
                       severity="danger"
                       (onClick)="confirmDelete(row)"
-                      [attr.aria-label]="'Supprimer ' + row.name">
+                      [attr.aria-label]="loc_ui_tern_supprimer_52af4f + row.name">
                     </p-button>
                   }
                 </td>
@@ -222,7 +224,7 @@ import {
             aria-labelledby="tax-system-info-title">
             <span id="tax-system-info-title" class="hint-banner__title" i18n="@@settings.taxes.taxe.systeme.cce09290">Taxe système</span>
             <p class="hint-banner__text">
-              Les champs <strong i18n="@@settings.taxes.type.3deb7456">Type</strong>, <strong i18n="@@settings.taxes.mode.de.calcul.803843c7">Mode de calcul</strong>, <strong i18n="@@settings.taxes.valeur.68f92b0d">Valeur</strong> et
+              <ng-container i18n="@@settings.taxes.les.champs.862577e6"> Les champs </ng-container> <strong i18n="@@settings.taxes.type.3deb7456">Type</strong>, <strong i18n="@@settings.taxes.mode.de.calcul.803843c7">Mode de calcul</strong>, <strong i18n="@@settings.taxes.valeur.68f92b0d">Valeur</strong> et
               <strong i18n="@@settings.taxes.contexte.8112e9eb">Contexte</strong> sont en lecture seule. Vous pouvez modifier le libellé, l’ordre d’affichage et
               l’application sur les produits.
             </p>
@@ -233,7 +235,7 @@ import {
           <div class="form-section">
             <span class="section-title" id="section-identification" i18n="@@settings.taxes.identification.9d2c7063">Identification</span>
             <label class="form-field" for="tax-name">
-              <span class="label-text">Nom <span class="required" aria-hidden="true" i18n="@@settings.taxes.text.df58248c">*</span></span>
+              <span class="label-text"><ng-container i18n="@@settings.taxes.nom.7ff20370">Nom </ng-container> <span class="required" aria-hidden="true" i18n="@@settings.taxes.text.df58248c">*</span></span>
               <input pInputText id="tax-name" formControlName="name" class="w-full" autocomplete="off" />
             </label>
             @if (!isEditingSystemTax()) {
@@ -379,10 +381,10 @@ import {
         </div>
 
         <div class="dialog-actions">
-          <p-button type="button" label="Annuler" [text]="true" (onClick)="dialogVisible = false"></p-button>
+          <p-button type="button" label="Annuler" i18n-label="Annuler" [text]="true" (onClick)="dialogVisible = false"></p-button>
           <p-button
             type="submit"
-            label="Enregistrer"
+            label="Enregistrer" i18n-label="Enregistrer"
             icon="pi pi-check"
             iconPos="right"
             [loading]="saving()"
@@ -538,6 +540,11 @@ import {
   `]
 })
 export class TaxesComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_activer_ou_desactiver_04c31b = $localize`:@@ui.tern.activer.ou.desactiver.04c31b:Activer ou désactiver `;
+  readonly loc_ui_tern_modifier_6efdfe = $localize`:@@ui.tern.modifier.6efdfe:Modifier `;
+  readonly loc_ui_tern_supprimer_52af4f = $localize`:@@ui.tern.supprimer.52af4f:Supprimer `;
   private readonly taxService = inject(TaxService);
   private readonly toast = inject(ToastService);
   private readonly errorHandler = inject(ErrorHandlerService);
@@ -558,7 +565,7 @@ export class TaxesComponent implements OnInit, OnDestroy {
   activeTabIndex = 0;
   editingTax = signal<Tax | null>(null);
 
-  dialogTitle = computed(() => (this.editingTax() ? 'Modifier la taxe' : 'Nouvelle taxe'));
+  dialogTitle = computed(() => (this.editingTax() ? $localize`:@@ui.tern.modifier.la.taxe.d99686:Modifier la taxe` : $localize`:@@ui.tern.nouvelle.taxe.f9702f:Nouvelle taxe`));
 
   /** Aligné sur `editingTax()?.isSystem` pour le template (message + bloc verrouillé). */
   readonly isEditingSystemTax = computed(() => !!this.editingTax()?.isSystem);
@@ -634,7 +641,7 @@ export class TaxesComponent implements OnInit, OnDestroy {
           if (res.success && res.data) {
             this.taxes.set(res.data);
           } else {
-            this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.join(', ') || 'Chargement impossible' });
+            this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Chargement impossible' });
           }
           this.loading.set(false);
         },
@@ -642,7 +649,7 @@ export class TaxesComponent implements OnInit, OnDestroy {
           this.errorHandler.logError('Failed to load taxes', err);
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
             detail: this.errorHandler.extractErrorMessage(err) || 'Impossible de charger les taxes'
           });
           this.loading.set(false);
@@ -724,18 +731,18 @@ export class TaxesComponent implements OnInit, OnDestroy {
           next: (res) => {
             this.saving.set(false);
             if (res.success && res.data) {
-              this.toast.add({ severity: 'success', summary: 'Succès', detail: res.message || 'Taxe mise à jour' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: res.message || 'Taxe mise à jour' });
               this.dialogVisible = false;
               this.loadTaxes();
             } else {
-              this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.join(', ') || 'Échec' });
+              this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Échec' });
             }
           },
           error: (err) => {
             this.saving.set(false);
             this.toast.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err) || 'Échec de la mise à jour'
             });
           }
@@ -748,18 +755,18 @@ export class TaxesComponent implements OnInit, OnDestroy {
           next: (res) => {
             this.saving.set(false);
             if (res.success && res.data) {
-              this.toast.add({ severity: 'success', summary: 'Succès', detail: res.message || 'Taxe créée' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: res.message || 'Taxe créée' });
               this.dialogVisible = false;
               this.loadTaxes();
             } else {
-              this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.join(', ') || 'Échec' });
+              this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Échec' });
             }
           },
           error: (err) => {
             this.saving.set(false);
             this.toast.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err) || 'Échec de la création'
             });
           }
@@ -776,16 +783,16 @@ export class TaxesComponent implements OnInit, OnDestroy {
         next: (res) => {
           if (res.success && res.data) {
             this.taxes.update((list) => list.map((t) => (t.id === tax.id ? res.data! : t)));
-            this.toast.add({ severity: 'success', summary: 'Succès', detail: 'État mis à jour' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: $localize`:@@taxes.component.detail.État mis à j:État mis à jour` });
           } else {
-            this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.join(', ') || 'Échec' });
+            this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Échec' });
             this.loadTaxes();
           }
         },
         error: (err) => {
           this.toast.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
             detail: this.errorHandler.extractErrorMessage(err) || 'Échec'
           });
           this.loadTaxes();
@@ -798,8 +805,8 @@ export class TaxesComponent implements OnInit, OnDestroy {
       header: 'Supprimer la taxe',
       message: `Supprimer « ${tax.name} » ? Cette action est irréversible.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@taxes.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@taxes.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.taxService
@@ -808,16 +815,16 @@ export class TaxesComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (res) => {
               if (res.success) {
-                this.toast.add({ severity: 'success', summary: 'Succès', detail: 'Taxe supprimée' });
+                this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: $localize`:@@taxes.component.detail.Taxe supprim:Taxe supprimée` });
                 this.loadTaxes();
               } else {
-                this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.join(', ') || 'Échec' });
+                this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Échec' });
               }
             },
             error: (err) => {
               this.toast.add({
                 severity: 'error',
-                summary: 'Erreur',
+                summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
                 detail: this.errorHandler.extractErrorMessage(err) || 'Échec de la suppression'
               });
             }

@@ -48,15 +48,15 @@ export interface PartyBalanceRow {
               <p-sortIcon field="partyName"></p-sortIcon>
             </th>
             <th class="text-right" pSortableColumn="totalInvoiced">
-              Total facturé
+              <ng-container i18n="@@reports.shared.total.facture.ea06ae9d"> Total facturé </ng-container>
               <p-sortIcon field="totalInvoiced"></p-sortIcon>
             </th>
             <th class="text-right" pSortableColumn="totalPaid">
-              Total payé
+              <ng-container i18n="@@reports.shared.total.paye.57d30be5"> Total payé </ng-container>
               <p-sortIcon field="totalPaid"></p-sortIcon>
             </th>
             <th class="text-right" pSortableColumn="balance">
-              Solde
+              <ng-container i18n="@@reports.shared.solde.e5977cf9"> Solde </ng-container>
               <p-sortIcon field="balance"></p-sortIcon>
             </th>
             @if (showActions) {
@@ -80,7 +80,7 @@ export interface PartyBalanceRow {
                   icon="pi-eye"
                   [iconOnly]="true"
                   (click)="viewInvoices.emit(row)"
-                  [ariaLabel]="'Voir les factures de ' + row.partyName">
+                  [ariaLabel]="loc_ui_tern_voir_les_factures_de_829a0f + row.partyName">
                 </app-button>
                 <app-button
                   variant="ghost"
@@ -88,7 +88,7 @@ export interface PartyBalanceRow {
                   icon="pi-user"
                   [iconOnly]="true"
                   (click)="viewParty.emit(row)"
-                  [ariaLabel]="'Voir la fiche ' + row.partyName">
+                  [ariaLabel]="loc_ui_tern_voir_la_fiche_8971db + row.partyName">
                 </app-button>
               </td>
             }
@@ -143,6 +143,8 @@ export interface PartyBalanceRow {
   `]
 })
 export class PartyBalancesTableComponent {
+  readonly loc_ui_tern_voir_les_factures_de_829a0f = $localize`:@@ui.tern.voir.les.factures.de.829a0f:Voir les factures de `;
+  readonly loc_ui_tern_voir_la_fiche_8971db = $localize`:@@ui.tern.voir.la.fiche.8971db:Voir la fiche `;
   @Input() rows: PartyBalanceRow[] = [];
   @Input() loading = false;
   @Input() partyLabel: 'Client' | 'Fournisseur' = 'Client';

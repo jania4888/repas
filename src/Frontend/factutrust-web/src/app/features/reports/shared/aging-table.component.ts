@@ -25,7 +25,7 @@ import { PartyBalanceRow } from './party-balances-table.component';
         [value]="visibleRows"
         [rowHover]="true"
         styleClass="p-datatable-sm reports-table aging-table"
-        [attr.aria-label]="'Balance agee ' + partyLabel">
+        [attr.aria-label]="loc_ui_tern_balance_agee_b5ee79 + partyLabel">
         <ng-template pTemplate="header">
           <tr>
             <th>{{ partyLabel }}</th>
@@ -78,6 +78,7 @@ import { PartyBalanceRow } from './party-balances-table.component';
   `]
 })
 export class AgingTableComponent {
+  readonly loc_ui_tern_balance_agee_b5ee79 = $localize`:@@ui.tern.balance.agee.b5ee79:Balance agee `;
   @Input() rows: PartyBalanceRow[] = [];
   @Input() partyLabel = 'Client';
 

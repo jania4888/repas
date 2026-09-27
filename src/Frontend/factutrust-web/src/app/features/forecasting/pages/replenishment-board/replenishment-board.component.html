@@ -1,6 +1,6 @@
 <section class="board-v2" [attr.aria-busy]="loading()">
   <!-- Skip link — keyboard users can jump directly to the table. -->
-  <a class="skip-link" href="#repl-table" (click)="$event.preventDefault(); jumpToTable()" i18n="@@forecasting.pages.aller.directement.au.tableau.des.recommandations.e119666c">Aller directement au tableau des recommandations</a>
+  <a class="skip-link" href="#repl-table" (click)="$event.preventDefault(); jumpToTable()" i18n="@@forecasting.pages.aller.directement.au.tableau.des.recommandations.e119666c"> Aller directement au tableau des recommandations </a>
 
   <!-- KPI bar (top) -->
   <app-replenishment-kpi-bar [kpi]="kpi()" />
@@ -87,7 +87,7 @@
       <i class="pi pi-info-circle" aria-hidden="true"></i>
       Aucune recommandation pour ces filtres.
       @if (filters().status === 'pending' && canManage()) {
-        <span>Cliquez sur <strong i18n="@@forecasting.pages.regenerer.af5d1d73">Régénérer</strong> pour relancer le calcul.</span>
+        <span><ng-container i18n="@@forecasting.pages.cliquez.sur.487bfa49">Cliquez sur </ng-container> <strong i18n="@@forecasting.pages.regenerer.af5d1d73">Régénérer</strong> pour relancer le calcul.</span>
       }
     </div>
   } @else {
@@ -243,7 +243,7 @@
           <i class="pi pi-angle-left" aria-hidden="true"></i> Précédent
         </button>
         <span class="page-info" aria-live="polite">
-          Page <strong>{{ page() }}</strong> / {{ pageCount() }}
+          <ng-container i18n="@@forecasting.pages.page.fb06270f"> Page </ng-container> <strong>{{ page() }}</strong> / {{ pageCount() }}
         </span>
         <button type="button" class="btn btn-secondary"
                 [disabled]="page() === pageCount()"

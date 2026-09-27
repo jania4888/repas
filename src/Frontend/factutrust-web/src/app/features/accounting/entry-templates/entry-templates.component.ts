@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -43,12 +44,12 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card tpl-toolbar-card">
-      <app-button variant="primary" icon="pi pi-plus" type="button" (click)="startCreate()" [disabled]="loading()" i18n="@@accounting.entry-templates.nouveau.modele.c5b99d5d">Nouveau modèle</app-button>
+      <app-button variant="primary" icon="pi pi-plus" type="button" (click)="startCreate()" [disabled]="loading()" i18n="@@accounting.entry-templates.nouveau.modele.c5b99d5d"> Nouveau modèle </app-button>
     </div>
 
     @if (form(); as f) {
       <div class="card tpl-form-card">
-        <h3 class="tpl-form-title">{{ f.id ? 'Modifier le modèle' : 'Nouveau modèle' }}</h3>
+        <h3 class="tpl-form-title">{{ f.id ? loc_ui_tern_modifier_le_modele_840a7c : loc_ui_tern_nouveau_modele_c5b99d }}</h3>
         <div class="tpl-fields">
           <div class="tpl-field tpl-field-grow">
             <label class="field-label" for="tpl-name" i18n="@@accounting.entry-templates.nom.7ff20370">Nom</label>
@@ -71,8 +72,8 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
         </div>
 
         <h4 class="tpl-lines-title" i18n="@@accounting.entry-templates.recurrence.planifiee.8c97c8f6">Récurrence planifiée</h4>
-        <p class="tpl-recurrence-hint" i18n="@@accounting.entry-templates.genere.automatiquement.l.ecriture.a.chaque.echea.ed4e553f">Génère automatiquement l'écriture à chaque échéance (loyers, assurances…). Toutes les lignes
-          doivent porter un montant fixe et être équilibrées.</p>
+        <p class="tpl-recurrence-hint" i18n="@@accounting.entry-templates.genere.automatiquement.l.ecriture.a.chaque.echea.ed4e553f"> Génère automatiquement l'écriture à chaque échéance (loyers, assurances…). Toutes les lignes
+          doivent porter un montant fixe et être équilibrées. </p>
         <div class="tpl-fields">
           <div class="tpl-field">
             <label class="field-label" for="tpl-rec-freq" i18n="@@accounting.entry-templates.frequence.bafbfba7">Fréquence</label>
@@ -93,7 +94,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
               <input id="tpl-rec-start" type="date" class="tpl-input" [(ngModel)]="f.recurrenceStartDate" [disabled]="saving()" />
             </div>
             <div class="tpl-field">
-              <label class="field-label" for="tpl-rec-end">Fin <span class="tpl-optional" i18n="@@accounting.entry-templates.facultatif.6d7d6db4">(facultatif)</span></label>
+              <label class="field-label" for="tpl-rec-end"><ng-container i18n="@@accounting.entry-templates.fin.4251065f">Fin </ng-container> <span class="tpl-optional" i18n="@@accounting.entry-templates.facultatif.6d7d6db4">(facultatif)</span></label>
               <input id="tpl-rec-end" type="date" class="tpl-input" [(ngModel)]="f.recurrenceEndDate" [disabled]="saving()" />
             </div>
           }
@@ -146,7 +147,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
         <div class="tpl-form-actions">
           <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="saving()" i18n="@@accounting.entry-templates.annuler.49ba3292">Annuler</button>
           <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving() || !f.name.trim() || f.lines.length < 2">
-            {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+            {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
           </button>
         </div>
       </div>
@@ -172,7 +173,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
             <td>{{ t.lines.length }}</td>
             <td>
               @if (t.isRecurring) {
-                <span class="tpl-rec-badge" [title]="'Prochaine échéance : ' + (t.nextRunDate ? (t.nextRunDate | date : 'shortDate') : 'épuisée')">
+                <span class="tpl-rec-badge" [title]="loc_ui_tern_prochaine_echeance_570437 + (t.nextRunDate ? (t.nextRunDate | date : 'shortDate') : loc_ui_tern_epuisee_5d2b17)">
                   {{ frequencyLabel(t.recurrenceFrequency) }}
                   @if (t.nextRunDate) { · {{ t.nextRunDate | date : 'shortDate' }} }
                 </span>
@@ -181,7 +182,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
               }
             </td>
             <td>{{ t.usageCount }}</td>
-            <td>{{ t.isActive ? 'Oui' : 'Non' }}</td>
+            <td>{{ t.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
             <td>
               <app-accounting-table-actions>
               @if (t.isRecurring && t.nextRunDate && t.isActive) {
@@ -239,6 +240,14 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
   `
 })
 export class EntryTemplatesComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_modele_840a7c = $localize`:@@ui.tern.modifier.le.modele.840a7c:Modifier le modèle`;
+  readonly loc_ui_tern_nouveau_modele_c5b99d = $localize`:@@ui.tern.nouveau.modele.c5b99d:Nouveau modèle`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_prochaine_echeance_570437 = $localize`:@@ui.tern.prochaine.echeance.570437:Prochaine échéance : `;
+  readonly loc_ui_tern_epuisee_5d2b17 = $localize`:@@ui.tern.epuisee.5d2b17:épuisée`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -264,7 +273,7 @@ export class EntryTemplatesComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.templates.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
     });
@@ -339,10 +348,10 @@ export class EntryTemplatesComponent implements OnInit {
     const done = (ok: boolean, err?: string) => {
       this.saving.set(false);
       if (ok) {
-        this.toast.add({ severity: 'success', summary: 'Modèle enregistré', detail: 'Le modèle d\'écriture a été enregistré.', life: 4000 });
+        this.toast.add({ severity: 'success', summary: $localize`:@@entry-templates.component.summary.Mod_le_enregistr:Modèle enregistré`, detail: $localize`:@@entry-templates.component.detail.Le_mod_le_d_cri:Le modèle d'écriture a été enregistré.`, life: 4000 });
         this.form.set(null);
         this.load();
-      } else this.error.set(err ?? 'Erreur');
+      } else this.error.set(err ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
     };
     if (f.id) {
       this.api.updateJournalTemplate(f.id, { ...request, isActive: f.isActive }).subscribe({
@@ -360,8 +369,8 @@ export class EntryTemplatesComponent implements OnInit {
     this.confirmationService.confirm({
       message: `Générer maintenant l'écriture du modèle « ${t.name} » (échéance du ${t.nextRunDate?.substring(0, 10)}) ?`,
       header: 'Confirmation',
-      acceptLabel: 'Générer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@entry-templates.component.acceptLabel.G_n_rer:Générer`,
+      rejectLabel: $localize`:@@entry-templates.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.runningId.set(t.id);
         this.error.set(null);
@@ -369,9 +378,9 @@ export class EntryTemplatesComponent implements OnInit {
           next: res => {
             this.runningId.set(null);
             if (res.success) {
-              this.toast.add({ severity: 'success', summary: 'Écriture générée', detail: `Le modèle « ${t.name} » a généré son écriture.`, life: 4000 });
+              this.toast.add({ severity: 'success', summary: $localize`:@@entry-templates.component.summary._criture_g_n_r_e:Écriture générée`, detail: `Le modèle « ${t.name} » a généré son écriture.`, life: 4000 });
               this.load();
-            } else this.error.set(res.error ?? 'Erreur lors de la génération.');
+            } else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.generation.a98600:Erreur lors de la génération.`);
           },
           error: err => { this.runningId.set(null); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la génération.')); }
         });
@@ -382,8 +391,8 @@ export class EntryTemplatesComponent implements OnInit {
   remove(t: JournalEntryTemplateDto): void {
     this.api.deleteJournalTemplate(t.id).subscribe({
       next: res => {
-        if (res.success) { this.toast.add({ severity: 'success', summary: 'Modèle supprimé', detail: t.name, life: 4000 }); this.load(); }
-        else this.error.set(res.error ?? 'Erreur');
+        if (res.success) { this.toast.add({ severity: 'success', summary: $localize`:@@entry-templates.component.summary.Modèle suppr:Modèle supprimé`, detail: t.name, life: 4000 }); this.load(); }
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
     });

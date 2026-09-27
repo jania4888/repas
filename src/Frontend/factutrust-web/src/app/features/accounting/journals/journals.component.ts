@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -47,7 +48,7 @@ interface JournalForm {
 
     @if (form(); as f) {
       <div class="card jr-form">
-        <h3 class="jr-form-title">{{ f.id ? 'Modifier le journal' : 'Nouveau journal' }}</h3>
+        <h3 class="jr-form-title">{{ f.id ? loc_ui_tern_modifier_le_journal_30515a : loc_ui_tern_nouveau_journal_a81ef7 }}</h3>
         <div class="jr-fields">
           <div class="jr-field"><label class="jr-lbl" i18n="@@accounting.journals.code.adac6937">Code</label><input class="jr-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. JX" i18n-placeholder="Ex. JX" /></div>
           <div class="jr-field jr-grow"><label class="jr-lbl" i18n="@@accounting.journals.libelle.f5485bba">Libellé</label><input class="jr-inp" [(ngModel)]="f.label" /></div>
@@ -60,7 +61,7 @@ interface JournalForm {
           <div class="jr-form-actions">
             <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()" i18n="@@accounting.journals.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving() || !f.code.trim() || !f.label.trim()">
-              {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+              {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
             </button>
           </div>
         </div>
@@ -77,8 +78,8 @@ interface JournalForm {
             <td class="jr-mono">{{ j.code }}</td>
             <td>{{ j.label }}</td>
             <td>{{ j.familyLabel }}</td>
-            <td>{{ j.isSystem ? 'Oui' : 'Non' }}</td>
-            <td>{{ j.isActive ? 'Oui' : 'Non' }}</td>
+            <td>{{ j.isSystem ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
+            <td>{{ j.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
             <td>
               <app-accounting-table-actions>
               <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
@@ -88,7 +89,7 @@ interface JournalForm {
                   [icon]="j.isActive ? 'pi-eye-slash' : 'pi-eye'"
                   [iconOnly]="true" [iconAlwaysVisible]="true"
                   type="button" (click)="toggle(j)"
-                  [attr.aria-label]="j.isActive ? 'Désactiver' : 'Activer'" />
+                  [attr.aria-label]="j.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7" />
               }
               </app-accounting-table-actions>
             </td>
@@ -118,6 +119,14 @@ interface JournalForm {
   `
 })
 export class JournalsComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_journal_30515a = $localize`:@@ui.tern.modifier.le.journal.30515a:Modifier le journal`;
+  readonly loc_ui_tern_nouveau_journal_a81ef7 = $localize`:@@ui.tern.nouveau.journal.a81ef7:Nouveau journal`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -144,7 +153,7 @@ export class JournalsComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.journals.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
     });
@@ -159,8 +168,8 @@ export class JournalsComponent implements OnInit {
     this.saving.set(true);
     const done = (ok: boolean, err?: string) => {
       this.saving.set(false);
-      if (ok) { this.toast.add({ severity: 'success', summary: 'Journal enregistré', detail: f.code, life: 4000 }); this.form.set(null); this.load(); }
-      else this.error.set(err ?? 'Erreur');
+      if (ok) { this.toast.add({ severity: 'success', summary: $localize`:@@journals.component.summary.Journal_enregist:Journal enregistré`, detail: f.code, life: 4000 }); this.form.set(null); this.load(); }
+      else this.error.set(err ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
     };
     if (f.id) {
       this.api.updateJournal(f.id, { label: f.label.trim(), familyId: f.familyId }).subscribe({ next: r => done(r.success, r.error), error: err => done(false, this.errors.extractErrorMessage(err, 'Erreur réseau')) });
@@ -171,7 +180,7 @@ export class JournalsComponent implements OnInit {
 
   toggle(j: JournalDto): void {
     this.api.toggleJournal(j.id).subscribe({
-      next: r => { if (r.success) this.load(); else this.error.set(r.error ?? 'Erreur'); },
+      next: r => { if (r.success) this.load(); else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`); },
       error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
     });
   }
@@ -180,8 +189,8 @@ export class JournalsComponent implements OnInit {
     if (!this.famCode.trim() || !this.famLabel.trim()) return;
     this.api.createJournalFamily({ code: this.famCode.trim().toUpperCase(), label: this.famLabel.trim() }).subscribe({
       next: r => {
-        if (r.success) { this.toast.add({ severity: 'success', summary: 'Famille créée', detail: this.famLabel, life: 4000 }); this.famCode = ''; this.famLabel = ''; this.showFamily.set(false); this.load(); }
-        else this.error.set(r.error ?? 'Erreur');
+        if (r.success) { this.toast.add({ severity: 'success', summary: $localize`:@@journals.component.summary.Famille créé:Famille créée`, detail: this.famLabel, life: 4000 }); this.famCode = ''; this.famLabel = ''; this.showFamily.set(false); this.load(); }
+        else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
     });

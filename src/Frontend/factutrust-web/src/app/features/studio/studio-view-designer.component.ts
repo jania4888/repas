@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -44,12 +45,12 @@ interface DesignColumn {
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      [title]="(viewId ? 'Modifier' : 'Nouvelle') + ' vue (lecture seule)'"
+      [title]="(viewId ? loc_ui_tern_modifier_f260e7 : loc_ui_tern_nouvelle_3278b0) + loc_ui_tern_vue_lecture_seule_485638"
       subtitle="Configurez les colonnes affichées depuis une table SQL existante."
       [breadcrumbs]="breadcrumbs()">
       <div studioActions class="studio-head-actions">
-        <button pButton type="button" label="Aperçu" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
-        <button pButton type="button" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
+        <button pButton type="button" label="Aperçu" i18n-label="Aperçu" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
       </div>
 
       <app-studio-designer-shell previewTitle="Aperçu (lecture seule)">
@@ -106,6 +107,9 @@ interface DesignColumn {
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioViewDesignerComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_modifier_f260e7 = $localize`:@@ui.tern.modifier.f260e7:Modifier`;
+  readonly loc_ui_tern_nouvelle_3278b0 = $localize`:@@ui.tern.nouvelle.3278b0:Nouvelle`;
+  readonly loc_ui_tern_vue_lecture_seule_485638 = $localize`:@@ui.tern.vue.lecture.seule.485638: vue (lecture seule)`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly route = inject(ActivatedRoute);
@@ -144,7 +148,7 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
     this.viewId = this.route.snapshot.paramMap.get('id');
     this.studio.listSchemaTables().subscribe({
       next: res => { if (res.success) this.tables.set(res.data ?? []); },
-      error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Tables introuvables.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-view-designer.component.detail.Tables_introuvab:Tables introuvables.` })
     });
     if (this.viewId) this.loadView();
   }
@@ -203,7 +207,7 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
           this.schedulePreview();
         }
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Colonnes introuvables.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-view-designer.component.detail.Colonnes_introuv:Colonnes introuvables.` })
     });
   }
 
@@ -223,7 +227,7 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
       format: saved?.format ?? c.suggestedFormat ?? 'auto',
       statusMapText: Object.entries(statusMap).map(([k, v]) => `${k}=${v}`).join(','),
       lookupTable: saved?.formatOptions?.lookupTable ?? c.foreignKey?.referencedTable ?? '',
-      lookupDisplayColumn: saved?.formatOptions?.lookupDisplayColumn ?? 'Name',
+      lookupDisplayColumn: saved?.formatOptions?.lookupDisplayColumn ?? $localize`:@@ui.tern.name.709a23:Name`,
       suggestedFormat: c.suggestedFormat
     };
   }
@@ -266,11 +270,11 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
 
   save(): void {
     if (!this.displayName.trim()) {
-      this.toast.add({ severity: 'warn', summary: 'Nom requis', detail: 'Donnez un nom à la vue.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-view-designer.component.summary.Nom requis:Nom requis`, detail: $localize`:@@studio-view-designer.component.detail.Donnez_un_nom_:Donnez un nom à la vue.` });
       return;
     }
     if (!this.sourceTable) {
-      this.toast.add({ severity: 'warn', summary: 'Table requise', detail: 'Choisissez une table.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-view-designer.component.summary.Table requis:Table requise`, detail: $localize`:@@studio-view-designer.component.detail.Choisissez_une_t:Choisissez une table.` });
       return;
     }
     const cols = this.columns().filter(c => c.included).map(c => ({
@@ -281,7 +285,7 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
       formatOptions: this.buildFormatOptions(c)
     }));
     if (cols.length === 0) {
-      this.toast.add({ severity: 'warn', summary: 'Colonnes requises', detail: 'Cochez au moins une colonne.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-view-designer.component.summary.Colonnes_requise:Colonnes requises`, detail: $localize`:@@studio-view-designer.component.detail.Cochez_au_moins_:Cochez au moins une colonne.` });
       return;
     }
 
@@ -296,15 +300,15 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Vue enregistrée' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@studio-view-designer.component.summary.Vue_enregistr_e:Vue enregistrée` });
           this.router.navigate(['/studio/forms']);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? res.message ?? 'Échec.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-designer.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? res.message ?? $localize`:@@ui.tern.echec.0238a9:Échec.` });
         }
       },
       error: err => {
         this.saving.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Enregistrement impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-designer.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` });
       }
     });
   }

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -42,7 +43,7 @@ interface ProrationOption {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Créer un avenant"
+      header="Créer un avenant" i18n-header="Créer un avenant"
       [style]="{ width: '56rem' }"
       (onShow)="onShow()">
       <div class="grid">
@@ -81,7 +82,7 @@ interface ProrationOption {
               <option [ngValue]="'UsageMetered'" i18n="@@recurring-contracts.components.a.la.consommation.a9497352">À la consommation</option>
               <option [ngValue]="'OneTimeSetup'" i18n="@@recurring-contracts.components.frais.d.installation.f39459df">Frais d'installation</option>
             </select>
-            <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.components.retirer.54ec24a1">Retirer</app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.components.retirer.54ec24a1"> Retirer </app-button>
           </div>
           <div class="grid">
             <label class="span-2">Description
@@ -116,7 +117,7 @@ interface ProrationOption {
           </div>
         </div>
       }
-      <app-button type="button" variant="outline" size="sm" icon="pi-plus" (clicked)="addLine()" i18n="@@recurring-contracts.components.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
+      <app-button type="button" variant="outline" size="sm" icon="pi-plus" (clicked)="addLine()" i18n="@@recurring-contracts.components.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
 
       <label class="notes-label">Notes
         <textarea
@@ -131,7 +132,7 @@ interface ProrationOption {
       <ng-template pTemplate="footer">
         <app-button variant="secondary" (clicked)="close()" i18n="@@recurring-contracts.components.annuler.49ba3292">Annuler</app-button>
         <app-button variant="primary" icon="pi-check" [disabled]="saving" (clicked)="submit()">
-          {{ saving ? 'Enregistrement…' : "Enregistrer l'avenant" }}
+          {{ saving ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_l_avenant_d671bc }}
         </app-button>
       </ng-template>
     </p-dialog>
@@ -218,6 +219,8 @@ interface ProrationOption {
   `]
 })
 export class ContractAmendDialogComponent {
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_l_avenant_d671bc = $localize`:@@ui.tern.enregistrer.l.avenant.d671bc:Enregistrer l'avenant`;
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Input({ required: true }) contract!: RecurringContractDetail;
@@ -288,12 +291,12 @@ export class ContractAmendDialogComponent {
 
   submit(): void {
     if (this.lines.length === 0) {
-      this.toast.add({ severity: 'warn', summary: 'Avenant incomplet', detail: 'Le contrat doit conserver au moins une ligne.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@contract-amend-dialog.component.summary.Avenant_incomple:Avenant incomplet`, detail: $localize`:@@contract-amend-dialog.component.detail.Le_contrat_doit_:Le contrat doit conserver au moins une ligne.` });
       return;
     }
     for (const line of this.lines) {
       if (line.lineType === 'UsageMetered' && !line.usageMetricId) {
-        this.toast.add({ severity: 'warn', summary: 'Avenant incomplet', detail: 'La métrique est obligatoire pour une ligne à la consommation.' });
+        this.toast.add({ severity: 'warn', summary: $localize`:@@contract-amend-dialog.component.summary.Avenant_incomple:Avenant incomplet`, detail: $localize`:@@contract-amend-dialog.component.detail.La_m_trique_est_:La métrique est obligatoire pour une ligne à la consommation.` });
         return;
       }
     }
@@ -310,14 +313,14 @@ export class ContractAmendDialogComponent {
     this.service.amend(this.contract.id, payload).subscribe({
       next: () => {
         this.saving = false;
-        this.toast.add({ severity: 'success', summary: 'Avenant enregistré', detail: 'L\'avenant a été pris en compte immédiatement.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@contract-amend-dialog.component.summary.Avenant_enregist:Avenant enregistré`, detail: $localize`:@@contract-amend-dialog.component.detail.L_avenant_a_t_:L'avenant a été pris en compte immédiatement.` });
         this.close();
         this.amended.emit();
       },
       error: err => {
         this.saving = false;
         this.errorHandler.logError('RecurringContracts: amend', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-amend-dialog.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }

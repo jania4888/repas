@@ -42,10 +42,10 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
             class="btn-ghost"
             (click)="toggleExpanded()"
             [attr.aria-expanded]="expanded()"
-            [attr.aria-label]="expanded() ? 'Masquer le texte extrait' : 'Voir le texte extrait'"
+            [attr.aria-label]="expanded() ? loc_ui_tern_masquer_le_texte_extrait_9e2022 : loc_ui_tern_voir_le_texte_extrait_f7e1e7"
           >
             <i class="fa-solid" [class.fa-chevron-down]="!expanded()" [class.fa-chevron-up]="expanded()" aria-hidden="true"></i>
-            <span>{{ expanded() ? 'Masquer' : 'Voir' }} le texte</span>
+            <span>{{ expanded() ? loc_ui_tern_masquer_adb05f : loc_ui_tern_voir_8a754f }} le texte</span>
           </button>
           @if (editable) {
             <button
@@ -169,6 +169,10 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
   `]
 })
 export class ChatAttachmentCardComponent {
+  readonly loc_ui_tern_masquer_le_texte_extrait_9e2022 = $localize`:@@ui.tern.masquer.le.texte.extrait.9e2022:Masquer le texte extrait`;
+  readonly loc_ui_tern_voir_le_texte_extrait_f7e1e7 = $localize`:@@ui.tern.voir.le.texte.extrait.f7e1e7:Voir le texte extrait`;
+  readonly loc_ui_tern_masquer_adb05f = $localize`:@@ui.tern.masquer.adb05f:Masquer`;
+  readonly loc_ui_tern_voir_8a754f = $localize`:@@ui.tern.voir.8a754f:Voir`;
   @Input({ required: true }) attachment!: ChatAttachment;
   @Input() editable = false;
   @Output() removed = new EventEmitter<string>();

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -34,11 +35,11 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   ],
   template: `
     <app-studio-page-shell
-      [title]="'Pont ERP — ' + (entity()?.displayName ?? '…')"
+      [title]="loc_ui_tern_pont_erp_6f90c2 + (entity()?.displayName ?? '…')"
       subtitle="Déclenchez une action métier réelle (facture, dépense…) à partir d'un enregistrement de cette table."
       [breadcrumbs]="breadcrumbs()">
 
-      <button pButton type="button" label="Nouvelle automatisation" icon="fa-solid fa-bolt" studioActions
+      <button pButton type="button" label="Nouvelle automatisation" i18n-label="Nouvelle automatisation" icon="fa-solid fa-bolt" studioActions
         (click)="openAdd()"></button>
 
       <p-table [value]="automations()" [loading]="loading()" styleClass="p-datatable-sm">
@@ -63,7 +64,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
       </p-table>
     </app-studio-page-shell>
 
-    <p-dialog [header]="editing() ? 'Modifier l’automatisation' : 'Nouvelle automatisation'"
+    <p-dialog [header]="editing() ? loc_ui_tern_modifier_l_automatisation_3f36c8 : loc_ui_tern_nouvelle_automatisation_929c67"
       [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '46rem' }">
       <div class="ft-form">
         <label i18n="@@studio.studio-automations.nom.463a6959">Nom *</label>
@@ -85,8 +86,8 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Annuler" class="p-button-text" (click)="dialogVisible = false"></button>
-        <button pButton type="button" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
+        <button pButton type="button" label="Annuler" i18n-label="Annuler" class="p-button-text" (click)="dialogVisible = false"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
       </ng-template>
     </p-dialog>
   `,
@@ -103,6 +104,9 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   `]
 })
 export class StudioAutomationsComponent implements OnInit {
+  readonly loc_ui_tern_pont_erp_6f90c2 = $localize`:@@ui.tern.pont.erp.6f90c2:Pont ERP — `;
+  readonly loc_ui_tern_modifier_l_automatisation_3f36c8 = $localize`:@@ui.tern.modifier.l.automatisation.3f36c8:Modifier l’automatisation`;
+  readonly loc_ui_tern_nouvelle_automatisation_929c67 = $localize`:@@ui.tern.nouvelle.automatisation.929c67:Nouvelle automatisation`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly route = inject(ActivatedRoute);
@@ -151,7 +155,7 @@ export class StudioAutomationsComponent implements OnInit {
     this.loading.set(true);
     this.studio.listAutomations(this.entityId).subscribe({
       next: res => { this.loading.set(false); if (res.success) this.automations.set(res.data ?? []); },
-      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Chargement impossible.' }); }
+      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-automations.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-automations.component.detail.Chargement_impos:Chargement impossible.` }); }
     });
   }
 
@@ -185,7 +189,7 @@ export class StudioAutomationsComponent implements OnInit {
 
   save(): void {
     if (!this.fName.trim() || !this.fAction()) {
-      this.toast.add({ severity: 'warn', summary: 'Champs requis', detail: 'Nom et action obligatoires.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-automations.component.summary.Champs requi:Champs requis`, detail: $localize`:@@studio-automations.component.detail.Nom_et_action_ob:Nom et action obligatoires.` });
       return;
     }
 
@@ -201,9 +205,9 @@ export class StudioAutomationsComponent implements OnInit {
       next: res => {
         this.saving.set(false);
         if (res.success) { this.dialogVisible = false; this.loadAutomations(); }
-        else this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? res.message ?? 'Échec.' });
+        else this.toast.add({ severity: 'error', summary: $localize`:@@studio-automations.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? res.message ?? $localize`:@@ui.tern.echec.0238a9:Échec.` });
       },
-      error: err => { this.saving.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Échec.' }); }
+      error: err => { this.saving.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-automations.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.echec.0238a9:Échec.` }); }
     });
   }
 
@@ -211,7 +215,7 @@ export class StudioAutomationsComponent implements OnInit {
     if (!confirm(`Supprimer l'automatisation « ${a.name} » ?`)) return;
     this.studio.deleteAutomation(a.id).subscribe({
       next: res => { if (res.success) this.loadAutomations(); },
-      error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Suppression impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-automations.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-automations.component.detail.Suppression_impo:Suppression impossible.` })
     });
   }
 }

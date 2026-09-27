@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -206,7 +207,7 @@ const NOTES_MAX = 1000;
           <button type="button" class="af-btn af-btn--ghost" (click)="loadDirectory(true)" i18n="@@settings.accounting-firm.reessayer.895d416b">Réessayer</button>
         } @else if (firms().length === 0) {
           <p class="af-empty">
-            {{ hasActiveFilters() ? 'Aucun cabinet ne correspond à ces filtres. Élargissez la recherche.' : 'Aucun cabinet public n’est disponible pour le moment.' }}
+            {{ hasActiveFilters() ? loc_ui_tern_aucun_cabinet_ne_correspond_a_ces_filtres_356261 : loc_ui_tern_aucun_cabinet_public_n_est_disponible_pour_a0691a }}
           </p>
         } @else {
           <div class="af-grid">
@@ -226,7 +227,7 @@ const NOTES_MAX = 1000;
 
         @if (selectedFirm) {
         <div class="af-field">
-          <label for="firmNotes">Message au cabinet <span class="af-optional" i18n="@@settings.accounting-firm.facultatif.6d7d6db4">(facultatif)</span></label>
+          <label for="firmNotes"><ng-container i18n="@@settings.accounting-firm.message.au.cabinet.9019b579">Message au cabinet </ng-container> <span class="af-optional" i18n="@@settings.accounting-firm.facultatif.6d7d6db4">(facultatif)</span></label>
           <textarea
             id="firmNotes"
             [(ngModel)]="notes"
@@ -504,6 +505,8 @@ const NOTES_MAX = 1000;
   `]
 })
 export class AccountingFirmSettingsComponent implements OnInit {
+  readonly loc_ui_tern_aucun_cabinet_ne_correspond_a_ces_filtres_356261 = $localize`:@@ui.tern.aucun.cabinet.ne.correspond.a.ces.filtres..356261:Aucun cabinet ne correspond à ces filtres. Élargissez la recherche.`;
+  readonly loc_ui_tern_aucun_cabinet_public_n_est_disponible_pour_a0691a = $localize`:@@ui.tern.aucun.cabinet.public.n.est.disponible.pour.a0691a:Aucun cabinet public n’est disponible pour le moment.`;
   private readonly assignments = inject(FirmAssignmentService);
   private readonly toast = inject(ToastService);
   private readonly confirmation = inject(ConfirmationService);
@@ -651,8 +654,8 @@ export class AccountingFirmSettingsComponent implements OnInit {
       header: 'Envoyer la demande',
       message: `Confirmez-vous l'envoi d'une demande de liaison au cabinet « ${firm.displayName} » ?`,
       icon: 'pi pi-send',
-      acceptLabel: 'Envoyer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@accounting-firm-settings.component.acceptLabel.Envoyer:Envoyer`,
+      rejectLabel: $localize`:@@accounting-firm-settings.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-primary',
       accept: () => this.submit(firm)
     });
@@ -665,17 +668,17 @@ export class AccountingFirmSettingsComponent implements OnInit {
       next: r => {
         this.acting.set(false);
         if (r.success) {
-          this.toast.add({ severity: 'success', summary: 'Demande envoyée', detail: `Votre demande a été transmise à ${firm.displayName}.` });
+          this.toast.add({ severity: 'success', summary: $localize`:@@accounting-firm-settings.component.summary.Demande_envoy_e:Demande envoyée`, detail: `Votre demande a été transmise à ${firm.displayName}.` });
           this.selectedFirm = null;
           this.notes = '';
           this.current.set(r.data);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Envoi impossible', detail: r.message ?? 'Une erreur est survenue.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.Envoi_impossible:Envoi impossible`, detail: r.message ?? $localize`:@@ui.tern.une.erreur.est.survenue.9a1331:Une erreur est survenue.` });
         }
       },
       error: err => {
         this.acting.set(false);
-        this.toast.add({ severity: 'error', summary: 'Envoi impossible', detail: this.errorText(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.Envoi_impossible:Envoi impossible`, detail: this.errorText(err) });
       }
     });
   }
@@ -685,8 +688,8 @@ export class AccountingFirmSettingsComponent implements OnInit {
       header: 'Annuler la demande',
       message: 'Voulez-vous vraiment annuler votre demande en attente ? Le cabinet en sera informé.',
       icon: 'pi pi-ban',
-      acceptLabel: 'Annuler la demande',
-      rejectLabel: 'Retour',
+      acceptLabel: $localize`:@@accounting-firm-settings.component.acceptLabel.Annuler_la_deman:Annuler la demande`,
+      rejectLabel: $localize`:@@accounting-firm-settings.component.rejectLabel.Retour:Retour`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.acting.set(true);
@@ -694,15 +697,15 @@ export class AccountingFirmSettingsComponent implements OnInit {
           next: r => {
             this.acting.set(false);
             if (r.success) {
-              this.toast.add({ severity: 'success', summary: 'Demande annulée' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@accounting-firm-settings.component.summary.Demande_annul_e:Demande annulée` });
               this.reload();
             } else {
-              this.toast.add({ severity: 'error', summary: 'Annulation impossible', detail: r.message ?? 'Une erreur est survenue.' });
+              this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.Annulation_impos:Annulation impossible`, detail: r.message ?? $localize`:@@ui.tern.une.erreur.est.survenue.9a1331:Une erreur est survenue.` });
             }
           },
           error: err => {
             this.acting.set(false);
-            this.toast.add({ severity: 'error', summary: 'Annulation impossible', detail: this.errorText(err) });
+            this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.Annulation_impos:Annulation impossible`, detail: this.errorText(err) });
           }
         });
       }
@@ -714,8 +717,8 @@ export class AccountingFirmSettingsComponent implements OnInit {
       header: "Révoquer l'affectation",
       message: 'Voulez-vous vraiment révoquer la liaison avec ce cabinet ? Il perdra l\'accès à votre comptabilité.',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Révoquer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@accounting-firm-settings.component.acceptLabel.Révoquer:Révoquer`,
+      rejectLabel: $localize`:@@accounting-firm-settings.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.acting.set(true);
@@ -723,15 +726,15 @@ export class AccountingFirmSettingsComponent implements OnInit {
           next: r => {
             this.acting.set(false);
             if (r.success) {
-              this.toast.add({ severity: 'success', summary: 'Affectation révoquée' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@accounting-firm-settings.component.summary.Affectation_r_vo:Affectation révoquée` });
               this.reload();
             } else {
-              this.toast.add({ severity: 'error', summary: 'Révocation impossible', detail: r.message ?? 'Une erreur est survenue.' });
+              this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.R_vocation_impos:Révocation impossible`, detail: r.message ?? $localize`:@@ui.tern.une.erreur.est.survenue.9a1331:Une erreur est survenue.` });
             }
           },
           error: err => {
             this.acting.set(false);
-            this.toast.add({ severity: 'error', summary: 'Révocation impossible', detail: this.errorText(err) });
+            this.toast.add({ severity: 'error', summary: $localize`:@@accounting-firm-settings.component.summary.R_vocation_impos:Révocation impossible`, detail: this.errorText(err) });
           }
         });
       }
@@ -769,6 +772,6 @@ export class AccountingFirmSettingsComponent implements OnInit {
 
   private errorText(err: unknown): string {
     const msg = (err as { error?: { message?: string } })?.error?.message;
-    return msg ?? 'Une erreur est survenue. Veuillez réessayer.';
+    return msg ?? $localize`:@@ui.tern.une.erreur.est.survenue.veuillez.reessayer.51f64e:Une erreur est survenue. Veuillez réessayer.`;
   }
 }

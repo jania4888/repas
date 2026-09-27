@@ -19,7 +19,7 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
 
     <div class="doc-intro">
       <p>
-        Ce guide est conçu pour les <strong i18n="@@documentation.documentation.utilisateurs.novices.4eb3b140">utilisateurs novices</strong> et les personnes non-informaticiennes.
+        <ng-container i18n="@@documentation.documentation.ce.guide.est.concu.pour.les.c5fa5126"> Ce guide est conçu pour les </ng-container> <strong i18n="@@documentation.documentation.utilisateurs.novices.4eb3b140">utilisateurs novices</strong> et les personnes non-informaticiennes.
         Chaque action est expliquée simplement, avec des captures d'écran pour vous guider.
       </p>
     </div>

@@ -75,8 +75,8 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
                   class="dm-inp"
                   [(ngModel)]="f.configuredSince"
                   [disabled]="disabled" />
-                <span class="dm-hint" i18n="@@accounting.monthly-declaration.premier.jour.du.mois.a.partir.duquel.le.calcul.p.83201e1c">Premier jour du mois à partir duquel le calcul paramétré fait foi. Les périodes
-                  antérieures restent calculées à l’ancienne.</span>
+                <span class="dm-hint" i18n="@@accounting.monthly-declaration.premier.jour.du.mois.a.partir.duquel.le.calcul.p.83201e1c"> Premier jour du mois à partir duquel le calcul paramétré fait foi. Les périodes
+                  antérieures restent calculées à l’ancienne. </span>
               </div>
             }
 
@@ -90,8 +90,8 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
                   [maxlength]="maxReasonLength"
                   [(ngModel)]="f.overrideReason"
                   [disabled]="disabled"></textarea>
-                <span class="dm-hint" i18n="@@accounting.monthly-declaration.la.serie.de.controles.sans.ecart.n.est.pas.attei.f05c8902">La série de contrôles sans écart n’est pas atteinte. Le motif est conservé dans
-                  l’audit avec le nom de son auteur.</span>
+                <span class="dm-hint" i18n="@@accounting.monthly-declaration.la.serie.de.controles.sans.ecart.n.est.pas.attei.f05c8902"> La série de contrôles sans écart n’est pas atteinte. Le motif est conservé dans
+                  l’audit avec le nom de son auteur. </span>
               </div>
             }
 
@@ -106,7 +106,7 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
                 type="button"
                 [disabled]="disabled || saving || !!validationError"
                 (click)="apply.emit()">
-                {{ saving ? 'Application…' : 'Appliquer' }}
+                {{ saving ? loc_ui_tern_application_01a96a : loc_ui_tern_appliquer_a4d661 }}
               </app-button>
             </div>
           </div>
@@ -133,6 +133,8 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
   `
 })
 export class DmModePanelComponent {
+  readonly loc_ui_tern_application_01a96a = $localize`:@@ui.tern.application.01a96a:Application…`;
+  readonly loc_ui_tern_appliquer_a4d661 = $localize`:@@ui.tern.appliquer.a4d661:Appliquer`;
   @Input({ required: true }) settings!: MonthlyDeclarationSettingsDto | null;
   @Input() form: DmModeForm | null = null;
   @Input() disabled = false;

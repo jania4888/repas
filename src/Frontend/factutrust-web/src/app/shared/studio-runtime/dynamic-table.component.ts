@@ -94,13 +94,13 @@ export interface DynamicRow {
                   <!-- 4.7 suite (D-47-94) : œil « Voir » pour un lecteur pur (showView sans showActions). -->
                   @if (showView) {
                     <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm"
-                      pTooltip="Voir" (click)="viewRow.emit(row)"></button>
+                      pTooltip="Voir" i18n-pTooltip="Voir" (click)="viewRow.emit(row)"></button>
                   }
                   @if (showActions) {
                     <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm"
-                      pTooltip="Modifier" (click)="editRow.emit(row)"></button>
+                      pTooltip="Modifier" i18n-pTooltip="Modifier" (click)="editRow.emit(row)"></button>
                     <button pButton type="button" icon="fa-solid fa-trash" class="p-button-text p-button-sm p-button-danger"
-                      pTooltip="Supprimer" (click)="deleteRow.emit(row)"></button>
+                      pTooltip="Supprimer" i18n-pTooltip="Supprimer" (click)="deleteRow.emit(row)"></button>
                   }
                 </td>
               }
@@ -233,7 +233,7 @@ export class DynamicTableComponent implements OnChanges {
     const value = row.data?.[field.key];
     if (value === null || value === undefined || value === '') return '—';
     switch (field.fieldType) {
-      case CustomFieldType.Boolean: return value ? 'Oui' : 'Non';
+      case CustomFieldType.Boolean: return value ? $localize`:@@ui.tern.oui.eaa02f:Oui` : $localize`:@@ui.tern.non.a72199:Non`;
       case CustomFieldType.MultiSelect: return Array.isArray(value) ? value.join(', ') : String(value);
       case CustomFieldType.Date:
         return this.formatDate(value, false);
@@ -268,7 +268,7 @@ export class DynamicTableComponent implements OnChanges {
   private formatMoney(value: number, field: CustomField): string {
     if (!Number.isFinite(value)) return '—';
     const currency = field.config?.['money']?.['currency'];
-    const code = typeof currency === 'string' && currency.trim() ? currency.trim() : 'TND';
+    const code = typeof currency === 'string' && currency.trim() ? currency.trim() : $localize`:@@ui.tern.tnd.51da21:TND`;
     try {
       return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: code }).format(value);
     } catch {

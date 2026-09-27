@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -83,11 +84,11 @@ export interface TimeFilterPayload {
 
 const TIME_STATUS_FILTER_OPTIONS = [
 
-  { label: 'Brouillon', value: 'Draft' },
+  { label: $localize`:@@projects.time.tab.filter.brouillon:Brouillon`, value: 'Draft' },
 
-  { label: 'Soumis', value: 'Submitted' },
+  { label: $localize`:@@projects.time.tab.filter.soumis:Soumis`, value: 'Submitted' },
 
-  { label: 'Validé', value: 'Validated' }
+  { label: $localize`:@@projects.time.tab.filter.valide:Validé`, value: 'Validated' }
 
 ];
 

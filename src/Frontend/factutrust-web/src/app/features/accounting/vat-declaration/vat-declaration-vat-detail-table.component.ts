@@ -64,7 +64,7 @@ export class VatDeclarationVatDetailTableComponent {
 
     const rows: VatDetailRow[] = hasBreakdown
       ? breakdown.map(b => ({
-          designation: rateLabels[b.ratePercent] ?? `TVA ${b.ratePercent} %`,
+          designation: rateLabels[b.ratePercent] ?? $localize`:@@ui.tern.tva.ph.412aab:TVA ${b.ratePercent}:p0: %`,
           taxableBase: b.taxableBase,
           vatAmount: b.vatAmount
         }))

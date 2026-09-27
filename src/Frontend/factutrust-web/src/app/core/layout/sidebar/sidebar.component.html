@@ -377,7 +377,7 @@
 
                           (click)="onRouteNavClick(child.route, $event)">
 
-                          <span>{{ child.label }}</span>
+                          <span>{{ subNavLabel(child) }}</span>
 
                         </a>
 
@@ -467,7 +467,7 @@
 
                       }
 
-                      <span>{{ child.label }}</span>
+                      <span>{{ subNavLabel(child) }}</span>
 
                       @if (child.badge) {
 
@@ -495,7 +495,7 @@
 
                       }
 
-                      <span>{{ child.label }}</span>
+                      <span>{{ subNavLabel(child) }}</span>
 
                       @if (child.badge) {
 

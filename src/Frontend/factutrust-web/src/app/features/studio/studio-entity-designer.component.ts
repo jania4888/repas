@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, DestroyRef, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, of, switchMap, tap, timer } from 'rxjs';
@@ -42,26 +43,26 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
     <app-studio-page-shell
       *ngIf="entity() as e"
       [title]="e.displayName"
-      [subtitle]="'Clé : ' + e.key + ' — ' + fields().length + ' champ(s)'"
+      [subtitle]="loc_ui_tern_cle_df29c6 + e.key + ' — ' + fields().length + loc_ui_tern_champ_s_f2c969"
       [breadcrumbs]="breadcrumbs">
       <div studioActions class="studio-head-actions">
-        <button pButton type="button" label="Rapports" icon="fa-solid fa-chart-column"
+        <button pButton type="button" label="Rapports" i18n-label="Rapports" icon="fa-solid fa-chart-column"
           class="p-button-outlined p-button-sm" routerLink="/studio/reports/new" [queryParams]="{ source: e.key }"></button>
-        <button pButton type="button" label="Mise en page" icon="fa-solid fa-table-cells-large"
+        <button pButton type="button" label="Mise en page" i18n-label="Mise en page" icon="fa-solid fa-table-cells-large"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio', e.id, 'form']"></button>
-        <button pButton type="button" label="Données" icon="fa-solid fa-table-list"
+        <button pButton type="button" label="Données" i18n-label="Données" icon="fa-solid fa-table-list"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio/d', e.key]"></button>
-        <button pButton type="button" label="Pont ERP" icon="fa-solid fa-bolt"
+        <button pButton type="button" label="Pont ERP" i18n-label="Pont ERP" icon="fa-solid fa-bolt"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio', e.id, 'automations']"></button>
         @if (workflowsEnabled()) {
-          <button pButton type="button" label="Workflows" icon="fa-solid fa-route"
+          <button pButton type="button" label="Workflows" i18n-label="Workflows" icon="fa-solid fa-route"
             class="p-button-outlined p-button-sm" [routerLink]="['/studio', 'workflows']" [queryParams]="{ entity: e.id }" data-testid="wf-open"></button>
         }
         @if (manyToManyEnabled()) {
           <button pButton type="button" [label]="runtimeLabels.relations.addManyToMany" icon="fa-solid fa-diagram-project"
             class="p-button-outlined p-button-sm" (click)="m2mVisible.set(true)" data-testid="m2m-open"></button>
         }
-        <button pButton type="button" label="Ajouter un champ" icon="fa-solid fa-plus" (click)="openAdd()"></button>
+        <button pButton type="button" label="Ajouter un champ" i18n-label="Ajouter un champ" icon="fa-solid fa-plus" (click)="openAdd()"></button>
       </div>
 
       <div class="ft-table-card">
@@ -131,7 +132,7 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         [(visible)]="m2mVisible" (created)="onRelationCreated()" />
     }
 
-    <p-dialog [header]="editing() ? 'Modifier le champ' : 'Nouveau champ'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '34rem' }" (onHide)="resetTypeCheck()">
+    <p-dialog [header]="editing() ? loc_ui_tern_modifier_le_champ_9287d6 : loc_ui_tern_nouveau_champ_e9de4d" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '34rem' }" (onHide)="resetTypeCheck()">
       <div class="ft-form">
         <label i18n="@@studio.studio-entity-designer.libelle.059cd7f3">Libellé *</label>
         <input pInputText [(ngModel)]="fLabel" (ngModelChange)="onLabelChange($event)" />
@@ -154,7 +155,7 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         </div>
 
         <ng-container *ngIf="isSelect()">
-          <label>Options (une par ligne, format <code i18n="@@studio.studio-entity-designer.valeur.libelle.e14efa4a">valeur|libellé</code>)</label>
+          <label><ng-container i18n="@@studio.studio-entity-designer.options.une.par.ligne.format.0322f9b6">Options (une par ligne, format </ng-container> <code i18n="@@studio.studio-entity-designer.valeur.libelle.e14efa4a">valeur|libellé</code>)</label>
           <textarea class="ft-textarea" [(ngModel)]="fOptionsText" rows="4"
             placeholder="open|Ouvert&#10;closed|Fermé" i18n-placeholder="open|Ouvert&#10;closed|Fermé"></textarea>
         </ng-container>
@@ -225,10 +226,10 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
           <label i18n="@@studio.studio-entity-designer.expression.f00f565b">Expression *</label>
           <textarea class="ft-textarea" [(ngModel)]="fFormulaExpr" rows="3"
             placeholder="montant_ht * 1.19" i18n-placeholder="montant_ht * 1.19"></textarea>
-          <small class="ft-hint" i18n="@@studio.studio-entity-designer.fonctions.round.abs.min.max.if.coalesce.concat.l.d26e54db">Fonctions : ROUND, ABS, MIN, MAX, IF, COALESCE, CONCAT, LEN, LOWER, UPPER, TRIM.
-            Opérateurs : + - * / % , comparaisons, AND/OR/NOT.</small>
+          <small class="ft-hint" i18n="@@studio.studio-entity-designer.fonctions.round.abs.min.max.if.coalesce.concat.l.d26e54db"> Fonctions : ROUND, ABS, MIN, MAX, IF, COALESCE, CONCAT, LEN, LOWER, UPPER, TRIM.
+            Opérateurs : + - * / % , comparaisons, AND/OR/NOT. </small>
           <small class="ft-hint" *ngIf="otherFieldKeys() as keys">
-            Champs disponibles : <code *ngFor="let k of keys">{{ k }}</code>
+            <ng-container i18n="@@studio.studio-entity-designer.champs.disponibles.18772a02"> Champs disponibles : </ng-container> <code *ngFor="let k of keys">{{ k }}</code>
           </small>
         </ng-container>
 
@@ -264,12 +265,12 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
             <div><label i18n="@@studio.studio-entity-designer.longueur.zeros.4491a083">Longueur (zéros)</label><p-inputNumber [(ngModel)]="fNumPadding" [min]="0" [max]="12"></p-inputNumber></div>
             <div><label i18n="@@studio.studio-entity-designer.suffixe.9c70a252">Suffixe</label><input pInputText [(ngModel)]="fNumSuffix" maxlength="16" placeholder="/2026" i18n-placeholder="/2026" /></div>
           </div>
-          <small class="ft-hint">Aperçu : <code>{{ autoNumberPreview() }}</code></small>
+          <small class="ft-hint"><ng-container i18n="@@studio.studio-entity-designer.apercu.33c24358">Aperçu : </ng-container> <code>{{ autoNumberPreview() }}</code></small>
         </ng-container>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Annuler" class="p-button-text" (click)="closeDialog()"></button>
-        <button pButton type="button" label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving() || typeBlocked() || typeChecking()" (click)="save()" data-testid="field-save"></button>
+        <button pButton type="button" label="Annuler" i18n-label="Annuler" class="p-button-text" (click)="closeDialog()"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving() || typeBlocked() || typeChecking()" (click)="save()" data-testid="field-save"></button>
       </ng-template>
     </p-dialog>
   `,
@@ -289,6 +290,10 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioEntityDesignerComponent implements OnInit {
+  readonly loc_ui_tern_cle_df29c6 = $localize`:@@ui.tern.cle.df29c6:Clé : `;
+  readonly loc_ui_tern_champ_s_f2c969 = $localize`:@@ui.tern.champ.s.f2c969: champ(s)`;
+  readonly loc_ui_tern_modifier_le_champ_9287d6 = $localize`:@@ui.tern.modifier.le.champ.9287d6:Modifier le champ`;
+  readonly loc_ui_tern_nouveau_champ_e9de4d = $localize`:@@ui.tern.nouveau.champ.e9de4d:Nouveau champ`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly confirmation = inject(ConfirmationService);
@@ -462,7 +467,7 @@ export class StudioEntityDesignerComponent implements OnInit {
     this.loading.set(true);
     this.studio.listFields(this.entityId, true).subscribe({
       next: res => { this.loading.set(false); if (res.success) this.fields.set(res.data ?? []); },
-      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Chargement des champs impossible.' }); }
+      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-entity-designer.component.detail.Chargement_des_c:Chargement des champs impossible.` }); }
     });
   }
 
@@ -607,29 +612,29 @@ export class StudioEntityDesignerComponent implements OnInit {
   save(): void {
     if (this.typeBlocked() || this.typeChecking()) return;
     if (!this.fLabel.trim() || (!this.editing() && !this.fKey.trim())) {
-      this.toast.add({ severity: 'warn', summary: 'Champs requis', detail: 'Libellé et clé obligatoires.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Champs requi:Champs requis`, detail: $localize`:@@studio-entity-designer.component.detail.Libellé et c:Libellé et clé obligatoires.` });
       return;
     }
     const options = this.isSelect() ? this.parseOptions() : null;
     if (this.isSelect() && (!options || options.length === 0)) {
-      this.toast.add({ severity: 'warn', summary: 'Options requises', detail: 'Ajoutez au moins une option.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Options_requises:Options requises`, detail: $localize`:@@studio-entity-designer.component.detail.Ajoutez_au_moins:Ajoutez au moins une option.` });
       return;
     }
     if (this.isRelation() && !this.fRelationRef) {
-      this.toast.add({ severity: 'warn', summary: 'Cible requise', detail: 'Choisissez la cible de la relation.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Cible requis:Cible requise`, detail: $localize`:@@studio-entity-designer.component.detail.Choisissez_la_ci:Choisissez la cible de la relation.` });
       return;
     }
     if (this.isFormula() && !this.fFormulaExpr.trim()) {
-      this.toast.add({ severity: 'warn', summary: 'Expression requise', detail: 'Saisissez l\'expression de la formule.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Expression_requi:Expression requise`, detail: $localize`:@@studio-entity-designer.component.detail.Saisissez_l_expr:Saisissez l'expression de la formule.` });
       return;
     }
     if (this.isLookup() && (!this.fLookupVia || !this.fLookupTarget.trim())) {
-      this.toast.add({ severity: 'warn', summary: 'Recherche incomplète', detail: 'Choisissez le champ relation et le champ cible.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Recherche_incomp:Recherche incomplète`, detail: $localize`:@@studio-entity-designer.component.detail.Choisissez_le_ch:Choisissez le champ relation et le champ cible.` });
       return;
     }
     if (this.isRollup() && (!this.fRollupEntity || !this.fRollupRelationField.trim()
         || (this.fRollupAgg !== 'count' && !this.fRollupField.trim()))) {
-      this.toast.add({ severity: 'warn', summary: 'Agrégat incomplet', detail: 'Renseignez la table enfant, le champ relation et le champ à agréger.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-designer.component.summary.Agr_gat_incomple:Agrégat incomplet`, detail: $localize`:@@studio-entity-designer.component.detail.Renseignez_la_ta:Renseignez la table enfant, le champ relation et le champ à agréger.` });
       return;
     }
     const relation = this.isRelationCustom()
@@ -648,7 +653,7 @@ export class StudioEntityDesignerComponent implements OnInit {
         this.loadFields();
         this.loadEntity();
       } else {
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: detail ?? 'Échec.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-designer.component.summary.Erreur:Erreur`, detail: detail ?? $localize`:@@ui.tern.echec.0238a9:Échec.` });
       }
     };
 
@@ -692,12 +697,12 @@ export class StudioEntityDesignerComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer le champ « ${f.label} » ? Les données existantes sont conservées.`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@studio-entity-designer.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@studio-entity-designer.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.studio.deleteField(this.entityId, f.id).subscribe({
           next: res => { if (res.success) this.loadFields(); },
-          error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Suppression impossible.' })
+          error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-entity-designer.component.detail.Suppression_impo:Suppression impossible.` })
         });
       }
     });
@@ -710,7 +715,7 @@ export class StudioEntityDesignerComponent implements OnInit {
     [arr[index], arr[target]] = [arr[target], arr[index]];
     this.fields.set(arr);
     this.studio.reorderFields(this.entityId, arr.map(f => f.id)).subscribe({
-      error: () => { this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Réordonnancement impossible.' }); this.loadFields(); }
+      error: () => { this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-designer.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-entity-designer.component.detail.R_ordonnancement:Réordonnancement impossible.` }); this.loadFields(); }
     });
   }
 }

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 /**
  * Centralized Validation Rules for InstaFact
  * Tunisian fiscal compliance - Single source of truth
@@ -86,9 +87,37 @@ export const TUNISIAN_GOVERNORATES = [
   'Sousse', 'Tataouine', 'Tozeur', 'Tunis', 'Zaghouan'
 ] as const;
 
+/** Libellé affiché ; la valeur envoyée à l'API reste le nom latin officiel. */
+const GOVERNORATE_LABELS: Record<(typeof TUNISIAN_GOVERNORATES)[number], string> = {
+  Ariana: $localize`:@@gov.ariana:Ariana`,
+  'Béja': $localize`:@@gov.beja:Béja`,
+  'Ben Arous': $localize`:@@gov.benArous:Ben Arous`,
+  Bizerte: $localize`:@@gov.bizerte:Bizerte`,
+  'Gabès': $localize`:@@gov.gabes:Gabès`,
+  Gafsa: $localize`:@@gov.gafsa:Gafsa`,
+  Jendouba: $localize`:@@gov.jendouba:Jendouba`,
+  Kairouan: $localize`:@@gov.kairouan:Kairouan`,
+  Kasserine: $localize`:@@gov.kasserine:Kasserine`,
+  'Kébili': $localize`:@@gov.kebili:Kébili`,
+  'Le Kef': $localize`:@@gov.kef:Le Kef`,
+  Mahdia: $localize`:@@gov.mahdia:Mahdia`,
+  'La Manouba': $localize`:@@gov.manouba:La Manouba`,
+  'Médenine': $localize`:@@gov.medenine:Médenine`,
+  Monastir: $localize`:@@gov.monastir:Monastir`,
+  Nabeul: $localize`:@@gov.nabeul:Nabeul`,
+  Sfax: $localize`:@@gov.sfax:Sfax`,
+  'Sidi Bouzid': $localize`:@@gov.sidiBouzid:Sidi Bouzid`,
+  Siliana: $localize`:@@gov.siliana:Siliana`,
+  Sousse: $localize`:@@gov.sousse:Sousse`,
+  Tataouine: $localize`:@@gov.tataouine:Tataouine`,
+  Tozeur: $localize`:@@gov.tozeur:Tozeur`,
+  Tunis: $localize`:@@gov.tunis:Tunis`,
+  Zaghouan: $localize`:@@gov.zaghouan:Zaghouan`
+};
+
 /** PrimeNG dropdown options for Tunisian governorates. */
 export const TUNISIAN_GOVERNORATE_OPTIONS = TUNISIAN_GOVERNORATES.map(g => ({
-  label: g,
+  label: GOVERNORATE_LABELS[g],
   value: g
 }));
 

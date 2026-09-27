@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -65,7 +66,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
             <td class="text-right">{{ a.amount | payrollAmount }}</td>
             <td>{{ a.reason || '—' }}</td>
             <td>
-              <p-tag [value]="a.isSettled ? 'Soldée' : 'En cours'" [severity]="a.isSettled ? 'secondary' : 'info'" />
+              <p-tag [value]="a.isSettled ? loc_ui_tern_soldee_7fecce : loc_ui_tern_en_cours_bc9b53" [severity]="a.isSettled ? 'secondary' : 'info'" />
             </td>
             @if (!readOnly) {
               <td>
@@ -82,7 +83,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </p-table>
     </app-payroll-section>
 
-    <p-dialog header="Nouvelle avance" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '420px' }">
+    <p-dialog header="Nouvelle avance" i18n-header="Nouvelle avance" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '420px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.date.eb9a4bc1">Date</label>
         <p-datepicker [(ngModel)]="formDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />
@@ -108,6 +109,8 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   `]
 })
 export class EmployeeAdvancesTabComponent implements OnInit {
+  readonly loc_ui_tern_soldee_7fecce = $localize`:@@ui.tern.soldee.7fecce:Soldée`;
+  readonly loc_ui_tern_en_cours_bc9b53 = $localize`:@@ui.tern.en.cours.bc9b53:En cours`;
   @Input({ required: true }) employeeId!: string;
   @Input() readOnly = false;
 
@@ -129,7 +132,7 @@ export class EmployeeAdvancesTabComponent implements OnInit {
   reload(): void {
     this.employees.listAdvances(this.employeeId).subscribe({
       next: res => this.items.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Avances', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-advances-tab.component.summary.Avances:Avances`, detail: $localize`:@@employee-advances-tab.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -150,11 +153,11 @@ export class EmployeeAdvancesTabComponent implements OnInit {
       reason: this.formReason || undefined
     }).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Avances', detail: 'Avance enregistrée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-advances-tab.component.summary.Avances:Avances`, detail: $localize`:@@employee-advances-tab.component.detail.Avance_enregistr:Avance enregistrée.` });
         this.dialogVisible = false;
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Avances', detail: err.error?.message ?? 'Création impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-advances-tab.component.summary.Avances:Avances`, detail: err.error?.message ?? $localize`:@@ui.tern.creation.impossible.5661a5:Création impossible.` })
     });
   }
 
@@ -163,8 +166,8 @@ export class EmployeeAdvancesTabComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer l'avance de ${advance.amount} TND ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@employee-advances-tab.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@employee-advances-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(advance.id)
     });
@@ -173,13 +176,13 @@ export class EmployeeAdvancesTabComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteAdvance(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Avances', detail: 'Avance supprimée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-advances-tab.component.summary.Avances:Avances`, detail: $localize`:@@employee-advances-tab.component.detail.Avance_supprim_e:Avance supprimée.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Avances',
-        detail: err.error?.message ?? 'Suppression impossible (avance peut-être déjà soldée).'
+        summary: $localize`:@@employee-advances-tab.component.summary.Avances:Avances`,
+        detail: err.error?.message ?? $localize`:@@ui.tern.suppression.impossible.avance.peut.etre.de.c8f021:Suppression impossible (avance peut-être déjà soldée).`
       })
     });
   }

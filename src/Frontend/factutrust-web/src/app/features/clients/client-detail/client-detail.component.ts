@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -65,18 +66,18 @@ import { PERMISSIONS } from '@core/config/permission-keys';
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/clients" i18n="@@clients.client-detail.retour.e5befb1f">Retour</app-button>
+        routerLink="/clients" i18n="@@clients.client-detail.retour.e5befb1f"> Retour </app-button>
       @if (client()) {
         <app-button 
           variant="primary"
           icon="pi-pencil"
           iconPos="left"
-          [routerLink]="['edit']" i18n="@@clients.client-detail.modifier.f260e757">Modifier</app-button>
+          [routerLink]="['edit']" i18n="@@clients.client-detail.modifier.f260e757"> Modifier </app-button>
         <app-button 
           variant="outline"
           icon="pi-trash"
           iconPos="left"
-          (click)="confirmDelete()" i18n="@@clients.client-detail.supprimer.1acfc1c7">Supprimer</app-button>
+          (click)="confirmDelete()" i18n="@@clients.client-detail.supprimer.1acfc1c7"> Supprimer </app-button>
       }
     </app-page-header>
 
@@ -105,25 +106,25 @@ import { PERMISSIONS } from '@core/config/permission-keys';
       <!-- Stats -->
       <div class="stats-grid">
         <app-stat-card
-          label="Total factures"
+          label="Total factures" i18n-label="Total factures"
           [value]="stats()?.totalInvoices || 0"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées"
+          label="Factures payées" i18n-label="Factures payées"
           [value]="stats()?.paidInvoices || 0"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="En attente"
+          label="En attente" i18n-label="En attente"
           [value]="stats()?.pendingInvoices || 0"
           icon="pi-clock"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Chiffre d'affaires"
+          label="Chiffre d'affaires" i18n-label="Chiffre d'affaires"
           [value]="formatCurrency(stats()?.totalRevenue || 0)"
           icon="pi-wallet"
           variant="primary">
@@ -242,7 +243,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                     icon="pi-plus"
                     iconPos="left"
                     [routerLink]="['/quotes/new']"
-                    [queryParams]="{clientId: client()!.id}" i18n="@@clients.client-detail.nouveau.devis.4c3f0159">Nouveau devis</app-button>
+                    [queryParams]="{clientId: client()!.id}" i18n="@@clients.client-detail.nouveau.devis.4c3f0159"> Nouveau devis </app-button>
                 </div>
 
                 @if (loadingQuotes()) {
@@ -271,7 +272,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         </td>
                         <td>
                           <app-button variant="ghost" size="sm" icon="pi-eye" [iconOnly]="true"
-                            pTooltip="Voir" [routerLink]="['/quotes', quote.id]" ariaLabel="Voir le devis">
+                            pTooltip="Voir" i18n-pTooltip="Voir" [routerLink]="['/quotes', quote.id]" ariaLabel="Voir le devis">
                           </app-button>
                         </td>
                       </tr>
@@ -306,7 +307,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                     icon="pi-plus"
                     iconPos="left"
                     [routerLink]="['/invoices/new']"
-                    [queryParams]="{clientId: client()!.id}" i18n="@@clients.client-detail.nouvelle.facture.cdf7e09c">Nouvelle facture</app-button>
+                    [queryParams]="{clientId: client()!.id}" i18n="@@clients.client-detail.nouvelle.facture.cdf7e09c"> Nouvelle facture </app-button>
                 </div>
 
                 @if (loadingInvoices()) {
@@ -351,7 +352,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                           size="sm"
                           icon="pi-eye"
                           [iconOnly]="true"
-                          pTooltip="Voir"
+                          pTooltip="Voir" i18n-pTooltip="Voir"
                           [routerLink]="['/invoices', invoice.id]"
                           ariaLabel="Voir la facture">
                         </app-button>
@@ -388,11 +389,11 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 
         <!-- Sidebar -->
         <div class="sidebar">
-          <p-card header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="Statut" styleClass="status-card">
             <div class="status-content">
               <app-status-badge 
                 [status]="client()!.isActive ? 'active' : 'inactive'"
-                [label]="client()!.isActive ? 'Actif' : 'Inactif'"
+                [label]="client()!.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                 style="margin-bottom: var(--spacing-3);">
               </app-status-badge>
               <app-button 
@@ -401,12 +402,12 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                 [icon]="client()!.isActive ? 'pi-ban' : 'pi-check'"
                 iconPos="left"
                 (click)="toggleActive()">
-                {{ client()!.isActive ? 'Désactiver le client' : 'Réactiver le client' }}
+                {{ client()!.isActive ? loc_ui_tern_desactiver_le_client_a9b066 : loc_ui_tern_reactiver_le_client_e892c4 }}
               </app-button>
             </div>
           </p-card>
 
-          <p-card header="Historique" styleClass="history-card">
+          <p-card header="Historique" i18n-header="Historique" styleClass="history-card">
             <div class="history-content">
               <div class="history-item">
                 <span class="label" i18n="@@clients.client-detail.cree.le.046c02a0">Créé le</span>
@@ -425,7 +426,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             </div>
           </p-card>
 
-          <p-card header="Actions rapides" styleClass="actions-card">
+          <p-card header="Actions rapides" i18n-header="Actions rapides" styleClass="actions-card">
             <div class="quick-actions">
               <app-button 
                 variant="outline"
@@ -433,20 +434,20 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                 iconPos="left"
                 routerLink="/quotes/new"
                 [queryParams]="{clientId: client()!.id}"
-                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@clients.client-detail.nouveau.devis.4c3f0159">Nouveau devis</app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@clients.client-detail.nouveau.devis.4c3f0159"> Nouveau devis </app-button>
               <app-button 
                 variant="outline"
                 icon="pi-file"
                 iconPos="left"
                 routerLink="/invoices/new"
                 [queryParams]="{clientId: client()!.id}"
-                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@clients.client-detail.nouvelle.facture.cdf7e09c">Nouvelle facture</app-button>
+                style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@clients.client-detail.nouvelle.facture.cdf7e09c"> Nouvelle facture </app-button>
               <app-button 
                 variant="outline"
                 icon="pi-envelope"
                 iconPos="left"
                 (click)="sendEmail()"
-                style="width: 100%;" i18n="@@clients.client-detail.envoyer.un.email.48feacc4">Envoyer un email</app-button>
+                style="width: 100%;" i18n="@@clients.client-detail.envoyer.un.email.48feacc4"> Envoyer un email </app-button>
             </div>
           </p-card>
         </div>
@@ -682,6 +683,10 @@ import { PERMISSIONS } from '@core/config/permission-keys';
   `]
 })
 export class ClientDetailComponent implements OnInit {
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_desactiver_le_client_a9b066 = $localize`:@@ui.tern.desactiver.le.client.a9b066:Désactiver le client`;
+  readonly loc_ui_tern_reactiver_le_client_e892c4 = $localize`:@@ui.tern.reactiver.le.client.e892c4:Réactiver le client`;
   readonly outstanding = signal<ClientOutstanding | null>(null);
   readonly loadingOutstanding = signal(true);
 
@@ -859,7 +864,7 @@ export class ClientDetailComponent implements OnInit {
       style: 'decimal',
       minimumFractionDigits: 3,
       maximumFractionDigits: 3
-    }).format(amount) + ' TND';
+    }).format(amount) + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   toggleActive(): void {
@@ -872,16 +877,16 @@ export class ClientDetailComponent implements OnInit {
           this.client.set(response.data);
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: response.data.isActive ? 'Client activé' : 'Client désactivé'
+            summary: $localize`:@@client-detail.component.summary.Succès:Succès`,
+            detail: response.data.isActive ? $localize`:@@ui.tern.client.active.4c2918:Client activé` : $localize`:@@ui.tern.client.desactive.f0b4ab:Client désactivé`
           });
         }
       },
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de modifier le statut'
+          summary: $localize`:@@client-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@client-detail.component.detail.Impossible d:Impossible de modifier le statut`
         });
       }
     });
@@ -895,8 +900,8 @@ export class ClientDetailComponent implements OnInit {
       message: `Êtes-vous sûr de vouloir supprimer le client "${client.name}" ? Cette action est irréversible.`,
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@client-detail.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@client-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.deleteClient();
@@ -913,14 +918,14 @@ export class ClientDetailComponent implements OnInit {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Client supprimé avec succès'
+            summary: $localize`:@@client-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@client-detail.component.detail.Client_supprim_:Client supprimé avec succès`
           });
           this.router.navigate(['/clients']);
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@client-detail.component.summary.Erreur:Erreur`,
             detail: response.errors[0] || 'Impossible de supprimer le client'
           });
         }

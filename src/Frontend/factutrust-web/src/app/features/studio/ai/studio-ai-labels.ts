@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { StudioAiIntent, StudioAiPlanStatus, StudioAiPreviewTab, StudioSpecFieldType } from './studio-ai.models';
 
 /** Une carte d'intention « Que voulez-vous créer ? ». */
@@ -248,7 +249,7 @@ export const STUDIO_AI_LABELS = {
     integrateDisabledErrors: 'Corrigez les erreurs signalées avant d’intégrer.',
     cancelPlan: 'Refuser la proposition',
     cancelled: 'Plan annulé. Rien n’a été créé.',
-    summary: 'Résumé',
+    summary: $localize`:@@studio-ai-labels.summary.Résumé:Résumé`,
     tables: 'tables',
     fields: 'champs',
     relations: 'relations',

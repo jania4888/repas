@@ -44,8 +44,8 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
       </button>
     </div>
     <div class="refund-dialog-body">
-      <p class="refund-dialog-message" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.recherchez.la.facture.d.origine.par.numero.nom.d.c5cb585e">Recherchez la facture d'origine par numéro, nom de client ou référence POS (POS-…).</p>
-      <label for="refundInvoiceSearch" class="refund-dialog-label" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.facture.a.rembourser.4bf45deb">Facture à rembourser</label>
+      <p class="refund-dialog-message" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.recherchez.la.facture.d.origine.par.numero.nom.d.c5cb585e"> Recherchez la facture d'origine par numéro, nom de client ou référence POS (POS-…). </p>
+      <label for="refundInvoiceSearch" class="refund-dialog-label" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.facture.a.rembourser.4bf45deb"> Facture à rembourser </label>
       <div
         class="refund-dialog-search"
         [class.refund-dialog-search--open]="suggestions.length > 0">
@@ -99,13 +99,13 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
         class="refund-dialog-btn reject"
         (click)="modal.dismiss()"
         aria-label="Annuler" i18n-aria-label="Annuler"
-        tabindex="0" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.annuler.49ba3292">Annuler</button>
+        tabindex="0" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.annuler.49ba3292"> Annuler </button>
       <button
         type="button"
         class="refund-dialog-btn accept"
         [disabled]="!canSubmit()"
         (click)="onSubmit()"
-        aria-label="Valider" i18n-aria-label="Valider" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.valider.be4220f7">Valider</button>
+        aria-label="Valider" i18n-aria-label="Valider" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.valider.be4220f7"> Valider </button>
     </div>
   `,
   styles: [`
@@ -352,7 +352,7 @@ export class RefundInvoiceIdDialogComponent implements AfterViewInit {
       },
       error: err => {
         this.isResolving.set(false);
-        this.errorMessage.set(err?.message ?? 'Facture introuvable.');
+        this.errorMessage.set(err?.message ?? $localize`:@@ui.tern.facture.introuvable.ab2a43:Facture introuvable.`);
       }
     });
   }

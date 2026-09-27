@@ -29,8 +29,8 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
       @if (!expanded()) {
         <app-button variant="secondary" icon="pi-user-plus" iconPos="left"
                     (click)="expand()"
-                    [ariaLabel]="isSupplier() ? 'Créer le fournisseur' : 'Créer le client'">
-          {{ isSupplier() ? 'Créer le fournisseur' : 'Créer le client' }}
+                    [ariaLabel]="isSupplier() ? loc_ui_tern_creer_le_fournisseur_13e0a7 : loc_ui_tern_creer_le_client_aba191">
+          {{ isSupplier() ? loc_ui_tern_creer_le_fournisseur_13e0a7 : loc_ui_tern_creer_le_client_aba191 }}
         </app-button>
       } @else {
         <form class="tpq" (ngSubmit)="submit()">
@@ -45,13 +45,13 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
                   <li>{{ d.name }} @if (d.nif) { <code>{{ d.nif }}</code> }</li>
                 }
               </ul>
-              <p class="tpq-duplicates__hint" i18n="@@accounting.manual-entry.rattachez.le.depuis.la.colonne.auxiliaire.de.la..b4d3a19d">Rattachez-le depuis la colonne « Auxiliaire » de la grille plutôt que d'en créer un doublon.</p>
+              <p class="tpq-duplicates__hint" i18n="@@accounting.manual-entry.rattachez.le.depuis.la.colonne.auxiliaire.de.la..b4d3a19d"> Rattachez-le depuis la colonne « Auxiliaire » de la grille plutôt que d'en créer un doublon. </p>
             </div>
           }
 
           <div class="tpq-grid">
             <label class="tpq-field">
-              <span>Nom <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
+              <span><ng-container i18n="@@accounting.manual-entry.nom.7ff20370">Nom </ng-container> <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.name" name="name" required />
             </label>
             <label class="tpq-field">
@@ -68,7 +68,7 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
               <input type="tel" [(ngModel)]="form.phone" name="phone" />
             </label>
             <label class="tpq-field tpq-field--wide">
-              <span>Adresse <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
+              <span><ng-container i18n="@@accounting.manual-entry.adresse.522e1466">Adresse </ng-container> <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.street" name="street" required />
             </label>
             <label class="tpq-field">
@@ -76,11 +76,11 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
               <input type="text" [(ngModel)]="form.postalCode" name="postalCode" />
             </label>
             <label class="tpq-field">
-              <span>Ville <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
+              <span><ng-container i18n="@@accounting.manual-entry.ville.97217611">Ville </ng-container> <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.city" name="city" required />
             </label>
             <label class="tpq-field">
-              <span>Gouvernorat <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
+              <span><ng-container i18n="@@accounting.manual-entry.gouvernorat.b9cd1d99">Gouvernorat </ng-container> <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.governorate" name="governorate" required />
             </label>
           </div>
@@ -90,20 +90,20 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
           }
 
           <div class="tpq-actions">
-            <app-button variant="secondary" (click)="expanded.set(false)" ariaLabel="Annuler la création" i18n="@@accounting.manual-entry.annuler.49ba3292">Annuler</app-button>
+            <app-button variant="secondary" (click)="expanded.set(false)" ariaLabel="Annuler la création" i18n="@@accounting.manual-entry.annuler.49ba3292"> Annuler </app-button>
             <app-button variant="primary" type="submit" icon="pi-check" iconPos="left"
                         [disabled]="!isValid() || saving()"
                         ariaLabel="Enregistrer le tiers">
-              {{ saving() ? 'Création…' : 'Créer et rattacher' }}
+              {{ saving() ? loc_ui_tern_creation_2a06d1 : loc_ui_tern_creer_et_rattacher_87edac }}
             </app-button>
           </div>
-          <p class="tpq-note" i18n="@@accounting.manual-entry.le.tiers.sera.cree.dans.le.dossier.l.ecriture.el.15c79a0a">Le tiers sera créé dans le dossier. L'écriture, elle, n'est enregistrée qu'après
-            votre validation dans la saisie.</p>
+          <p class="tpq-note" i18n="@@accounting.manual-entry.le.tiers.sera.cree.dans.le.dossier.l.ecriture.el.15c79a0a"> Le tiers sera créé dans le dossier. L'écriture, elle, n'est enregistrée qu'après
+            votre validation dans la saisie. </p>
         </form>
       }
     } @else {
-      <p class="tpq-forbidden" i18n="@@accounting.manual-entry.vous.n.avez.pas.l.autorisation.de.creer.un.tiers.cfe3d61d">Vous n'avez pas l'autorisation de créer un tiers. L'écriture utilisera le compte
-        collectif sans auxiliaire.</p>
+      <p class="tpq-forbidden" i18n="@@accounting.manual-entry.vous.n.avez.pas.l.autorisation.de.creer.un.tiers.cfe3d61d"> Vous n'avez pas l'autorisation de créer un tiers. L'écriture utilisera le compte
+        collectif sans auxiliaire. </p>
     }
   `,
   styles: `
@@ -125,6 +125,10 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
   `
 })
 export class ThirdPartyQuickCreateComponent {
+  readonly loc_ui_tern_creer_le_fournisseur_13e0a7 = $localize`:@@ui.tern.creer.le.fournisseur.13e0a7:Créer le fournisseur`;
+  readonly loc_ui_tern_creer_le_client_aba191 = $localize`:@@ui.tern.creer.le.client.aba191:Créer le client`;
+  readonly loc_ui_tern_creation_2a06d1 = $localize`:@@ui.tern.creation.2a06d1:Création…`;
+  readonly loc_ui_tern_creer_et_rattacher_87edac = $localize`:@@ui.tern.creer.et.rattacher.87edac:Créer et rattacher`;
   private readonly auth = inject(AuthService);
   private readonly clientService = inject(ClientService);
   private readonly supplierService = inject(SupplierService);

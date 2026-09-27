@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, OnChanges, Output, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,7 +27,7 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
   imports: [CommonModule, FormsModule, DialogModule, CheckboxModule, DatePickerModule, ButtonComponent],
   template: `
     <p-dialog
-      header="États financiers"
+      header="États financiers" i18n-header="États financiers"
       [visible]="visible"
       (visibleChange)="onVisibleChange($event)"
       [modal]="true"
@@ -175,8 +176,8 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
         <div class="fs-footer">
           <i class="pi pi-print fs-footer-icon" aria-hidden="true"></i>
           <div class="fs-footer-actions">
-            <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="preview()" [disabled]="busy() || !hasSelection()" i18n="@@accounting.nct-statements.apercu.f0f53004">Aperçu</app-button>
-            <app-button variant="primary" icon="pi pi-print" type="button" (click)="print()" [disabled]="busy() || !hasSelection()" i18n="@@accounting.nct-statements.imprimer.5382c09d">Imprimer</app-button>
+            <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="preview()" [disabled]="busy() || !hasSelection()" i18n="@@accounting.nct-statements.apercu.f0f53004"> Aperçu </app-button>
+            <app-button variant="primary" icon="pi pi-print" type="button" (click)="print()" [disabled]="busy() || !hasSelection()" i18n="@@accounting.nct-statements.imprimer.5382c09d"> Imprimer </app-button>
             <app-button variant="secondary" type="button" (click)="close()" [disabled]="busy()" i18n="@@accounting.nct-statements.fermer.5ab4ec64">Fermer</app-button>
           </div>
         </div>
@@ -316,8 +317,8 @@ export class FinancialStatementsExportDialogComponent implements OnChanges {
         this.localError.set("La génération du PDF a échoué.");
         this.toast.add({
           severity: 'error',
-          summary: 'États financiers',
-          detail: "La génération du PDF a échoué.",
+          summary: $localize`:@@financial-statements-export-dialog.component.summary._tats_financiers:États financiers`,
+          detail: $localize`:@@financial-statements-export-dialog.component.detail.LagénérationduPDFaé:La génération du PDF a échoué.`,
           life: 5000
         });
       }

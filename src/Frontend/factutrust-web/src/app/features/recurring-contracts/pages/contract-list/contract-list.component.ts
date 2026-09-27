@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -31,7 +33,7 @@ interface StatusFilterOption {
 @Component({
   selector: 'app-contract-list',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule, RouterModule, FormsModule, TableModule,
     PageHeaderComponent, ButtonComponent, EmptyStateComponent,
     SkeletonTableComponent, StatCardComponent, StatusBadgeComponent
@@ -41,7 +43,7 @@ interface StatusFilterOption {
       title="Contrats récurrents" i18n-title="Contrats récurrents"
       subtitle="Abonnements et facturation périodique B2B">
       <div class="actions">
-        <app-button variant="outline" icon="pi-file-edit" routerLink="pending-drafts" i18n="@@recurring-contracts.pages.brouillons.a.valider.3fabaa45">Brouillons à valider</app-button>
+        <app-button variant="outline" icon="pi-file-edit" routerLink="pending-drafts" i18n="@@recurring-contracts.pages.brouillons.a.valider.3fabaa45"> Brouillons à valider </app-button>
         @if (canCreate()) {
           <app-button variant="primary" icon="pi-plus" routerLink="new" i18n="@@recurring-contracts.pages.nouveau.contrat.13fabd25">Nouveau contrat</app-button>
         }
@@ -51,25 +53,25 @@ interface StatusFilterOption {
     @if (stats(); as s) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Contrats actifs"
+          label="Contrats actifs" i18n-label="Contrats actifs"
           [value]="s.activeCount"
           icon="pi-check-circle"
           tone="teal">
         </app-stat-card>
         <app-stat-card
-          label="MRR estimé"
+          label="MRR estimé" i18n-label="MRR estimé"
           [value]="formatContractAmount(s.estimatedMonthlyRecurringTotal, s.currency)"
           icon="pi-wallet"
           tone="primary">
         </app-stat-card>
         <app-stat-card
-          label="Échéances ≤ 7 j"
+          label="Échéances ≤ 7 j" i18n-label="Échéances ≤ 7 j"
           [value]="s.dueSoonCount"
           icon="pi-calendar"
           tone="orange">
         </app-stat-card>
         <app-stat-card
-          label="Brouillons en attente"
+          label="Brouillons en attente" i18n-label="Brouillons en attente"
           [value]="s.pendingDraftsCount"
           icon="pi-file-edit"
           tone="violet"
@@ -123,7 +125,7 @@ interface StatusFilterOption {
           [loading]="loading()"
           [first]="(page() - 1) * pageSize"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} contrats"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} contrats" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} contrats"
           [rowHover]="true"
           styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
@@ -146,10 +148,10 @@ interface StatusFilterOption {
               <td>
                 <app-status-badge
                   [status]="contractBadgeStatus(item.status)"
-                  [label]="item.statusDisplay">
+                  [label]="item.statusDisplay | backendLabel">
                 </app-status-badge>
               </td>
-              <td>{{ item.billingFrequencyDisplay }}</td>
+              <td>{{ item.billingFrequencyDisplay | backendLabel }}</td>
               <td>{{ item.nextBillingDate ? (item.nextBillingDate | date:'dd/MM/yyyy') : '—' }}</td>
               <td class="amount">{{ item.estimatedMonthlyAmount | currency:item.currency:'symbol':'1.3-3' }}</td>
               <td>
@@ -158,7 +160,7 @@ interface StatusFilterOption {
                   size="sm"
                   icon="pi-eye"
                   [routerLink]="[item.id]"
-                  ariaLabel="Voir le contrat" i18n="@@recurring-contracts.pages.voir.8a754f1f">Voir</app-button>
+                  ariaLabel="Voir le contrat" i18n="@@recurring-contracts.pages.voir.8a754f1f"> Voir </app-button>
               </td>
             </tr>
           </ng-template>
@@ -232,12 +234,12 @@ export class ContractListComponent implements OnInit, OnDestroy {
   readonly canCreate = computed(() => this.auth.hasPermission(PERMISSIONS.recurringContracts.create));
 
   readonly statusOptions: StatusFilterOption[] = [
-    { label: 'Tous les statuts', value: null },
-    { label: 'Brouillon', value: 'Draft' },
-    { label: 'Actif', value: 'Active' },
-    { label: 'Suspendu', value: 'Suspended' },
-    { label: 'Résilié', value: 'Cancelled' },
-    { label: 'Expiré', value: 'Expired' }
+    { label: $localize`:@@recurring-contracts.list.filter.tous:Tous les statuts`, value: null },
+    { label: $localize`:@@recurring-contracts.list.filter.brouillon:Brouillon`, value: 'Draft' },
+    { label: $localize`:@@recurring-contracts.list.filter.actif:Actif`, value: 'Active' },
+    { label: $localize`:@@recurring-contracts.list.filter.suspendu:Suspendu`, value: 'Suspended' },
+    { label: $localize`:@@recurring-contracts.list.filter.resilie:Résilié`, value: 'Cancelled' },
+    { label: $localize`:@@recurring-contracts.list.filter.expire:Expiré`, value: 'Expired' }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -302,7 +304,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
         this.errorHandler.logError('RecurringContracts: list', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@contract-list.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -318,7 +320,7 @@ export class ContractListComponent implements OnInit, OnDestroy {
         this.errorHandler.logError('RecurringContracts: stats', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@contract-list.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

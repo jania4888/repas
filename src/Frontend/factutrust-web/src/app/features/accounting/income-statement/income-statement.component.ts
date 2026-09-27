@@ -51,7 +51,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le compte de résultat" i18n="@@accounting.income-statement.charger.8f860300">Charger</app-button>
+            ariaLabel="Charger le compte de résultat" i18n="@@accounting.income-statement.charger.8f860300"> Charger </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-income-statement"
             density="toolbar"
@@ -155,7 +155,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
         <div class="is-result-badge-row">
           <span class="is-result-badge" [class.is-badge--profit]="d.netResult >= 0" [class.is-badge--loss]="d.netResult < 0">
-            {{ d.netResult >= 0 ? 'Bénéfice' : 'Déficit' }}
+            {{ d.netResult >= 0 ? loc_ui_tern_benefice_111823 : loc_ui_tern_deficit_3a8608 }}
           </span>
           <span class="is-result-detail tabnum">
             Produits {{ d.totalRevenue | number : '1.3-3' }} − Charges {{ d.totalExpenses | number : '1.3-3' }}
@@ -197,6 +197,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class IncomeStatementComponent implements OnInit {
+  readonly loc_ui_tern_benefice_111823 = $localize`:@@ui.tern.benefice.111823:Bénéfice`;
+  readonly loc_ui_tern_deficit_3a8608 = $localize`:@@ui.tern.deficit.3a8608:Déficit`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   fiscalYear = new Date().getFullYear();
@@ -283,7 +285,7 @@ export class IncomeStatementComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.data.set(res.data);
-        else this.error.set(res.error ?? 'Erreur lors du chargement du compte de résultat');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.chargement.du.compte.de.res.b877bf:Erreur lors du chargement du compte de résultat`);
       },
       error: err => {
         this.loading.set(false);

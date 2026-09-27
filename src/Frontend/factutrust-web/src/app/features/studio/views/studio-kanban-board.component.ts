@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { ChangeDetectionStrategy, Component, DestroyRef, ViewChild, computed, effect, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -48,19 +49,19 @@ const REVEAL_STEP = 25;
       </div>
     }
 
-    <div class="kanban" role="region" [attr.aria-label]="'Tableau kanban regroupé par ' + groupLabel()" cdkDropListGroup>
+    <div class="kanban" role="region" [attr.aria-label]="loc_ui_tern_tableau_kanban_regroupe_par_121c48 + groupLabel()" cdkDropListGroup>
       @for (col of columns(); track $index) {
         <section class="kanban-col" [class]="col.colorClass" [attr.aria-labelledby]="'kcol-' + colId(col.value)">
           <header class="kanban-col__head">
             <span class="dot"></span>
             <h3 class="kanban-col__title" [id]="'kcol-' + colId(col.value)">{{ col.label }}</h3>
-            <span class="kanban-col__count" [attr.aria-label]="col.count + ' fiche(s)'">{{ col.count }}</span>
+            <span class="kanban-col__count" [attr.aria-label]="col.count + loc_ui_tern_fiche_s_000f8d">{{ col.count }}</span>
           </header>
 
           <div
             class="kanban-col__body"
             role="list"
-            [attr.aria-label]="'Fiches ' + col.label"
+            [attr.aria-label]="loc_ui_tern_fiches_041ed6 + col.label"
             cdkDropList
             [cdkDropListData]="col.visibleItems"
             [cdkDropListDisabled]="!canDragDrop()"
@@ -76,7 +77,7 @@ const REVEAL_STEP = 25;
                 class="kcard"
                 [class.kcard--movable]="canDragDrop()"
                 [attr.tabindex]="canDragDrop() ? 0 : null"
-                [attr.aria-roledescription]="canDragDrop() ? 'Fiche déplaçable' : null"
+                [attr.aria-roledescription]="canDragDrop() ? loc_ui_tern_fiche_deplacable_d8c81d : null"
                 cdkDrag
                 [cdkDragDisabled]="!canDragDrop()"
                 [cdkDragData]="item">
@@ -86,7 +87,7 @@ const REVEAL_STEP = 25;
                     <button
                       type="button"
                       class="kcard__menu"
-                      [attr.aria-label]="'Actions pour ' + cardTitle(item)"
+                      [attr.aria-label]="loc_ui_tern_actions_pour_cf433f + cardTitle(item)"
                       aria-haspopup="menu"
                       (click)="openMoveMenu($event, item, col.value)">
                       <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -121,6 +122,11 @@ const REVEAL_STEP = 25;
   styleUrl: './studio-kanban-board.component.scss'
 })
 export class StudioKanbanBoardComponent {
+  readonly loc_ui_tern_tableau_kanban_regroupe_par_121c48 = $localize`:@@ui.tern.tableau.kanban.regroupe.par.121c48:Tableau kanban regroupé par `;
+  readonly loc_ui_tern_fiche_s_000f8d = $localize`:@@ui.tern.fiche.s.000f8d: fiche(s)`;
+  readonly loc_ui_tern_fiches_041ed6 = $localize`:@@ui.tern.fiches.041ed6:Fiches `;
+  readonly loc_ui_tern_fiche_deplacable_d8c81d = $localize`:@@ui.tern.fiche.deplacable.d8c81d:Fiche déplaçable`;
+  readonly loc_ui_tern_actions_pour_cf433f = $localize`:@@ui.tern.actions.pour.cf433f:Actions pour `;
   private readonly viewsService = inject(StudioRecordViewsService);
   private readonly auth = inject(AuthService);
   private readonly toast = inject(MessageService);
@@ -280,16 +286,16 @@ export class StudioKanbanBoardComponent {
             this.replaceCard(targetValue, item.id, res.data);
           } else {
             this.rollbackMove(item.id, targetValue);
-            this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.labels.kanban.genericError });
+            this.toast.add({ severity: 'error', summary: $localize`:@@studio-kanban-board.component.summary.Erreur:Erreur`, detail: this.labels.kanban.genericError });
           }
         },
         error: (err: { status?: number }) => {
           this.rollbackMove(item.id, targetValue);
           if (err?.status === 409) {
-            this.toast.add({ severity: 'warn', summary: 'Conflit', detail: this.labels.kanban.conflict });
+            this.toast.add({ severity: 'warn', summary: $localize`:@@studio-kanban-board.component.summary.Conflit:Conflit`, detail: this.labels.kanban.conflict });
             this.reload.emit();
           } else {
-            this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.labels.kanban.genericError });
+            this.toast.add({ severity: 'error', summary: $localize`:@@studio-kanban-board.component.summary.Erreur:Erreur`, detail: this.labels.kanban.genericError });
           }
         }
       });
@@ -332,7 +338,7 @@ export class StudioKanbanBoardComponent {
     if (value === null || value === undefined || value === '') return '—';
     if (!field) return String(value);
     switch (field.fieldType) {
-      case CustomFieldType.Boolean: return value ? 'Oui' : 'Non';
+      case CustomFieldType.Boolean: return value ? $localize`:@@ui.tern.oui.eaa02f:Oui` : $localize`:@@ui.tern.non.a72199:Non`;
       case CustomFieldType.MultiSelect: return Array.isArray(value) ? value.join(', ') : String(value);
       case CustomFieldType.Date: return this.formatDate(value, false);
       case CustomFieldType.DateTime: return this.formatDate(value, true);

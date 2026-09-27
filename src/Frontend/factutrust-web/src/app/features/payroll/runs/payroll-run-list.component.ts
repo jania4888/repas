@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -18,6 +20,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
   selector: 'app-payroll-run-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -32,8 +35,8 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
   ],
   template: `
     <app-page-header
-      [title]="firmInternal() ? 'Cycles de paie cabinet' : 'Cycles de paie'"
-      [subtitle]="firmInternal() ? 'Paie interne du cabinet : calcul et validation.' : 'Paie mensuelle : brouillon → calcul → validation → clôture.'">
+      [title]="firmInternal() ? loc_ui_tern_cycles_de_paie_cabinet_9210b7 : loc_ui_tern_cycles_de_paie_ea07b4"
+      [subtitle]="firmInternal() ? loc_ui_tern_paie_interne_du_cabinet_calcul_et_validati_cdd1da : loc_ui_tern_paie_mensuelle_brouillon_calcul_validation_6c9ee2">
       @if (canRun() && !currentMonthExists()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" (click)="createCurrentMonth()" i18n="@@payroll.runs.nouveau.cycle.mois.courant.0f512e23">Nouveau cycle (mois courant)</app-button>
       }
@@ -81,7 +84,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
         <ng-template pTemplate="body" let-r>
           <tr>
             <td>{{ r.label }}</td>
-            <td><p-tag [value]="r.statusDisplay" /></td>
+            <td><p-tag [value]="r.statusDisplay | backendLabel" /></td>
             <td class="text-right">{{ r.payslipCount }}</td>
             <td class="text-right">{{ r.totalGross | payrollAmount }}</td>
             <td class="text-right">{{ r.totalNet | payrollAmount }}</td>
@@ -95,6 +98,10 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
   `
 })
 export class PayrollRunListComponent implements OnInit {
+  readonly loc_ui_tern_cycles_de_paie_cabinet_9210b7 = $localize`:@@ui.tern.cycles.de.paie.cabinet.9210b7:Cycles de paie cabinet`;
+  readonly loc_ui_tern_cycles_de_paie_ea07b4 = $localize`:@@ui.tern.cycles.de.paie.ea07b4:Cycles de paie`;
+  readonly loc_ui_tern_paie_interne_du_cabinet_calcul_et_validati_cdd1da = $localize`:@@ui.tern.paie.interne.du.cabinet.calcul.et.validati.cdd1da:Paie interne du cabinet : calcul et validation.`;
+  readonly loc_ui_tern_paie_mensuelle_brouillon_calcul_validation_6c9ee2 = $localize`:@@ui.tern.paie.mensuelle.brouillon.calcul.validation.6c9ee2:Paie mensuelle : brouillon → calcul → validation → clôture.`;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -144,7 +151,7 @@ export class PayrollRunListComponent implements OnInit {
         }
       },
       error: () => {
-        this.toast.add({ severity: 'error', summary: 'Paie', detail: 'Impossible de charger les cycles.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-list.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-list.component.detail.Impossible d:Impossible de charger les cycles.` });
         this.loading.set(false);
         this.refreshCurrentMonthRun();
       }
@@ -165,13 +172,13 @@ export class PayrollRunListComponent implements OnInit {
     const now = new Date();
     this.payroll.createRun(now.getFullYear(), now.getMonth() + 1).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle créé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-list.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-list.component.detail.Cycle créé.:Cycle créé.` });
         this.selectedYear = now.getFullYear();
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Paie',
+        summary: $localize`:@@payroll-run-list.component.summary.Paie:Paie`,
         detail: this.errorHandler.extractErrorMessage(err) || 'Création impossible.'
       })
     });

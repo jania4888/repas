@@ -85,7 +85,7 @@ export class StepConfigurationComponent {
   autoEnabledHintLabel(id: AppModule): string {
     const dependents = this.catalog.dependentsOf(id, this.enabledModuleIds());
     const labels = dependents.map(d => this.catalog.moduleLabel(d)).join(', ');
-    return labels ? `Activé automatiquement (requis par ${labels})` : 'Activé automatiquement';
+    return labels ? $localize`:@@ui.tern.active.automatiquement.requis.par.ph.fa9167:Activé automatiquement (requis par ${labels}:p0:)` : $localize`:@@ui.tern.active.automatiquement.2ee714:Activé automatiquement`;
   }
 
   // --- Profilage (lot 3) ---------------------------------------------------
@@ -95,10 +95,10 @@ export class StepConfigurationComponent {
   readonly headcountBands = HEADCOUNT_BANDS;
 
   readonly headcountLabels: Readonly<Record<HeadcountBand, string>> = {
-    '1': 'Seul(e)',
+    '1': $localize`:@@ui.tern.seul.e.489bcf:Seul(e)`,
     '2-9': '2 à 9',
     '10-49': '10 à 49',
-    '50+': '50 et plus'
+    '50+': $localize`:@@ui.tern.50.et.plus.05cb8a:50 et plus`
   };
 
   booleanAnswer(key: string): boolean | null {

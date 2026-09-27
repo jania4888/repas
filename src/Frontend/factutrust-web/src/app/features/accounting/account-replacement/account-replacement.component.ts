@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,7 +21,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card ar-card">
       <div class="ar-warn" role="note">
         <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-        <span>Opération de maintenance. Seules les écritures des <strong i18n="@@accounting.account-replacement.periodes.ouvertes.83adb1a3">périodes ouvertes</strong> sont modifiées ; l'action est journalisée.</span>
+        <span><ng-container i18n="@@accounting.account-replacement.operation.de.maintenance.seules.les.ecritures.de.2fc19dc1">Opération de maintenance. Seules les écritures des </ng-container> <strong i18n="@@accounting.account-replacement.periodes.ouvertes.83adb1a3">périodes ouvertes</strong> sont modifiées ; l'action est journalisée.</span>
       </div>
 
       <div class="ar-grid">
@@ -39,7 +40,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="preview()" [disabled]="!oldAccount.trim() || replacing()" i18n="@@accounting.account-replacement.apercu.f0f53004">Aperçu</app-button>
         <app-button variant="primary" icon="pi pi-check" type="button" (click)="replace()"
           [disabled]="!canReplace() || replacing()">
-          {{ replacing() ? 'Remplacement…' : 'Remplacer' }}
+          {{ replacing() ? loc_ui_tern_remplacement_d3e8d9 : loc_ui_tern_remplacer_db2c67 }}
         </app-button>
       </div>
 
@@ -65,6 +66,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class AccountReplacementComponent {
+  readonly loc_ui_tern_remplacement_d3e8d9 = $localize`:@@ui.tern.remplacement.d3e8d9:Remplacement…`;
+  readonly loc_ui_tern_remplacer_db2c67 = $localize`:@@ui.tern.remplacer.db2c67:Remplacer`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -95,7 +98,7 @@ export class AccountReplacementComponent {
         if (res.success && res.data !== undefined && res.data !== null) {
           this.previewedAccount.set(acc);
           this.previewCount.set(res.data);
-        } else this.error.set(res.error ?? 'Erreur');
+        } else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
     });
@@ -111,11 +114,11 @@ export class AccountReplacementComponent {
       next: res => {
         this.replacing.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Compte remplacé', detail: `${res.data} ligne(s) — ${o} → ${n}`, life: 5000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@account-replacement.component.summary.Compte rempl:Compte remplacé`, detail: `${res.data} ligne(s) — ${o} → ${n}`, life: 5000 });
           this.previewCount.set(null);
           this.oldAccount = '';
           this.newAccount = '';
-        } else this.error.set(res.error ?? 'Le remplacement a échoué.');
+        } else this.error.set(res.error ?? $localize`:@@ui.tern.le.remplacement.a.echoue.cdb82e:Le remplacement a échoué.`);
       },
       error: err => { this.replacing.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
     });

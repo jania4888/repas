@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnChanges, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -19,6 +21,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
   selector: 'app-project-invoices-section',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     TableModule,
@@ -82,7 +85,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
               <td class="amount">{{ inv.amountVat | currency:currency:'symbol':'1.3-3' }}</td>
               <td class="amount">{{ inv.amountTTC | currency:currency:'symbol':'1.3-3' }}</td>
               <td>
-                <app-status-badge [status]="invoiceBadgeStatus(inv.status)" [label]="inv.statusDisplay">
+                <app-status-badge [status]="invoiceBadgeStatus(inv.status)" [label]="inv.statusDisplay | backendLabel">
                 </app-status-badge>
               </td>
               <td>{{ inv.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -219,7 +222,7 @@ export class ProjectInvoicesSectionComponent implements OnInit, OnChanges {
         this.errorHandler.logError('Projects: linked invoices', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@project-invoices-section.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -236,7 +239,7 @@ export class ProjectInvoicesSectionComponent implements OnInit, OnChanges {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${inv.isCreditNote ? 'Avoir' : 'Facture'}_${inv.number}.pdf`;
+          a.download = `${inv.isCreditNote ? $localize`:@@ui.tern.avoir.8ee247:Avoir` : $localize`:@@ui.tern.facture.3953b9:Facture`}_${inv.number}.pdf`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -249,7 +252,7 @@ export class ProjectInvoicesSectionComponent implements OnInit, OnChanges {
         this.downloadingId.set(null);
         this.toast.add({
           severity: 'error',
-          summary: 'Téléchargement impossible',
+          summary: $localize`:@@project-invoices-section.component.summary.T_l_chargement_i:Téléchargement impossible`,
           detail: this.errorHandler.extractErrorMessage(error)
         });
       }

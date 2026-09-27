@@ -32,7 +32,7 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
         } @else if (historyService.todayTransactions().length === 0) {
           <div class="history-panel__empty">
             <i class="pi pi-inbox"></i>
-            <p>{{ historyService.activeFilter() === 'session' ? 'Aucune transaction dans cette session' : 'Aucune transaction aujourd\'hui' }}</p>
+            <p>{{ historyService.activeFilter() === 'session' ? loc_ui_tern_aucune_transaction_dans_cette_session_689382 : loc_ui_tern_aucune_transaction_aujourd_hui_0c1e49 }}</p>
           </div>
         } @else {
           <div class="history-panel__summary">
@@ -284,6 +284,8 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
   `]
 })
 export class PosHistoryPanelComponent implements OnInit {
+  readonly loc_ui_tern_aucune_transaction_dans_cette_session_689382 = $localize`:@@ui.tern.aucune.transaction.dans.cette.session.689382:Aucune transaction dans cette session`;
+  readonly loc_ui_tern_aucune_transaction_aujourd_hui_0c1e49 = $localize`:@@ui.tern.aucune.transaction.aujourd.hui.0c1e49:Aucune transaction aujourd'hui`;
   @Output() onClose = new EventEmitter<void>();
 
   readonly historyService = inject(PosHistoryService);

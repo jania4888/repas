@@ -75,7 +75,7 @@ export class ProjectDashboardComponent implements OnInit {
 
   get greeting(): string {
     const name = this.auth.user()?.firstName ?? '';
-    return name ? `Bonjour, ${name}` : 'Bonjour';
+    return name ? $localize`:@@ui.tern.bonjour.ph.abdeee:Bonjour, ${name}:p0:` : $localize`:@@ui.tern.bonjour.f30ecb:Bonjour`;
   }
 
   get canCreate(): boolean {

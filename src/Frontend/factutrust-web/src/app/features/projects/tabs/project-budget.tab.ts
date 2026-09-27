@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +23,7 @@ export interface ProductOption {
   selector: 'app-project-budget-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     FormsModule,
     RouterLink,
@@ -117,7 +119,7 @@ export interface ProductOption {
         <tr>
           <td><a [routerLink]="['/purchase-orders', po.id]">{{ po.number }}</a></td>
           <td>{{ po.supplierName }}</td>
-          <td><p-tag [value]="po.statusDisplay" [severity]="poStatusSeverity(po.status)" /></td>
+          <td><p-tag [value]="po.statusDisplay | backendLabel" [severity]="poStatusSeverity(po.status)" /></td>
           <td>{{ po.totalHt | number:'1.3-3' }}</td>
         </tr>
       </ng-template>

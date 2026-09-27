@@ -29,6 +29,10 @@ import type { ErpLocale } from '@core/i18n/erp-locale.types';
     }
   `,
   styles: `
+    /* Sélecteur masqué (drapeau arabe inactif) : l'hôte vide ne doit pas créer d'écart dans un parent flex à gap. */
+    :host(:empty) {
+      display: none;
+    }
     .erp-lang-switcher {
       display: inline-flex;
       gap: 0.25rem;

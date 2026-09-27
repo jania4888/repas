@@ -27,7 +27,7 @@ import {
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d">Imprimer</app-button>
+        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <!-- Alerts -->
@@ -58,14 +58,14 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Taux de conversion"
+          label="Taux de conversion" i18n-label="Taux de conversion"
           [value]="data()!.conversionRate.toFixed(1) + ' %'"
           icon="pi-sync"
           [variant]="data()!.conversionRate >= 50 ? 'success' : data()!.conversionRate >= 30 ? 'warning' : 'error'">
         </app-stat-card>
         <div class="kpi-explained">
           <app-stat-card
-            label="Panier moyen"
+            label="Panier moyen" i18n-label="Panier moyen"
             [value]="formatAmount(data()!.averageBasket)"
             icon="pi-shopping-cart"
             variant="primary">
@@ -76,13 +76,13 @@ import {
           </span>
         </div>
         <app-stat-card
-          label="Devis convertis"
+          label="Devis convertis" i18n-label="Devis convertis"
           [value]="data()!.convertedQuotes + ' / ' + data()!.totalQuotes"
           icon="pi-check-square"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées"
+          label="Factures payées" i18n-label="Factures payées"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">

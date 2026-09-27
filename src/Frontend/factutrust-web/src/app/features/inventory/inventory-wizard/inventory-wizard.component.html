@@ -34,11 +34,11 @@
     @if (step() === 'start') {
     <app-form-section title="Lancer un inventaire" i18n-title="Lancer un inventaire" icon="pi-play" [number]="1">
         <div class="start-card">
-            <p class="subtitle" i18n="@@inventory.inventory-wizard.comptez.vos.produits.un.par.un.nous.nous.occupon.06cb9283">Comptez vos produits un par un, nous nous occupons du reste.</p>
+            <p class="subtitle" i18n="@@inventory.inventory-wizard.comptez.vos.produits.un.par.un.nous.nous.occupon.06cb9283"> Comptez vos produits un par un, nous nous occupons du reste. </p>
 
             @if (showWarehousePicker()) {
             <div class="warehouse-picker">
-                <label for="wizard-warehouse" class="field-label">Entrepôt <span class="required" i18n="@@inventory.inventory-wizard.text.df58248c">*</span></label>
+                <label for="wizard-warehouse" class="field-label"><ng-container i18n="@@inventory.inventory-wizard.entrepot.c349c0bc">Entrepôt </ng-container> <span class="required" i18n="@@inventory.inventory-wizard.text.df58248c">*</span></label>
                 <p-select
                     id="wizard-warehouse"
                     [options]="warehouses"
@@ -123,10 +123,10 @@
                             aria-label="Rechercher un produit" i18n-aria-label="Rechercher un produit" />
                     </div>
                     <div class="selection-actions">
-                        <button pButton pRipple type="button" label="Tout sélectionner"
+                        <button pButton pRipple type="button" label="Tout sélectionner" i18n-label="Tout sélectionner"
                             class="p-button-text p-button-sm" icon="pi pi-check-square"
                             (click)="selectAllProducts()"></button>
-                        <button pButton pRipple type="button" label="Tout désélectionner"
+                        <button pButton pRipple type="button" label="Tout désélectionner" i18n-label="Tout désélectionner"
                             class="p-button-text p-button-sm p-button-secondary" icon="pi pi-times"
                             (click)="clearProductSelection()"></button>
                     </div>
@@ -389,7 +389,7 @@
                         iconPos="left"
                         [disabled]="submitting()"
                         (click)="confirmCancelInventory()"
-                        ariaLabel="Annuler l'inventaire" i18n="@@inventory.inventory-wizard.annuler.l.inventaire.a78bf0e5">Annuler l'inventaire</app-button>
+                        ariaLabel="Annuler l'inventaire" i18n="@@inventory.inventory-wizard.annuler.l.inventaire.a78bf0e5"> Annuler l'inventaire </app-button>
                 </div>
             </div>
         </div>
@@ -431,7 +431,7 @@
                         variant="primary"
                         icon="pi-pencil"
                         iconPos="left"
-                        (click)="goToFirstMissingLot()" i18n="@@inventory.inventory-wizard.saisir.le.n.de.lot.6574e1a2">Saisir le n° de lot</app-button>
+                        (click)="goToFirstMissingLot()" i18n="@@inventory.inventory-wizard.saisir.le.n.de.lot.6574e1a2"> Saisir le n° de lot </app-button>
                 </div>
             </div>
             }
@@ -481,7 +481,7 @@
                     <i class="pi pi-clock" aria-hidden="true"></i>
                     Non saisis ({{ inventorySummary()?.productsNotCounted }} produits)
                 </h3>
-                <p class="not-counted-hint" i18n="@@inventory.inventory-wizard.ces.articles.seront.confirmes.a.la.quantite.syst.c34518d6">Ces articles seront confirmés à la quantité système. Aucun ajustement de stock pour ces lignes.</p>
+                <p class="not-counted-hint" i18n="@@inventory.inventory-wizard.ces.articles.seront.confirmes.a.la.quantite.syst.c34518d6"> Ces articles seront confirmés à la quantité système. Aucun ajustement de stock pour ces lignes. </p>
                 <div class="summary-items">
                     @for (item of inventorySummary()?.productsNotCountedList; track lineKey(item)) {
                     <div class="summary-item not-counted">
@@ -511,7 +511,7 @@
                     variant="ghost"
                     icon="pi-arrow-left"
                     iconPos="left"
-                    (click)="step.set('count')" i18n="@@inventory.inventory-wizard.retourner.au.comptage.a3440378">Retourner au comptage</app-button>
+                    (click)="step.set('count')" i18n="@@inventory.inventory-wizard.retourner.au.comptage.a3440378"> Retourner au comptage </app-button>
             </div>
         </div>
     </app-form-section>
@@ -529,9 +529,9 @@
                 <p i18n="@@inventory.inventory-wizard.votre.stock.a.ete.mis.a.jour.avec.succes.bfb9acb2">Votre stock a été mis à jour avec succès.</p>
 
                 <div class="success-actions">
-                    <app-button variant="primary" icon="pi-list" iconPos="left" (click)="goToList()" i18n="@@inventory.inventory-wizard.voir.la.liste.des.inventaires.018e4d4a">Voir la liste des inventaires</app-button>
-                    <app-button variant="outline" icon="pi-box" iconPos="left" (click)="goToStock()" i18n="@@inventory.inventory-wizard.voir.mon.stock.be2d81ae">Voir mon stock</app-button>
-                    <app-button variant="ghost" icon="pi-refresh" iconPos="left" (click)="startNew()" i18n="@@inventory.inventory-wizard.nouvel.inventaire.3497f22e">Nouvel inventaire</app-button>
+                    <app-button variant="primary" icon="pi-list" iconPos="left" (click)="goToList()" i18n="@@inventory.inventory-wizard.voir.la.liste.des.inventaires.018e4d4a"> Voir la liste des inventaires </app-button>
+                    <app-button variant="outline" icon="pi-box" iconPos="left" (click)="goToStock()" i18n="@@inventory.inventory-wizard.voir.mon.stock.be2d81ae"> Voir mon stock </app-button>
+                    <app-button variant="ghost" icon="pi-refresh" iconPos="left" (click)="startNew()" i18n="@@inventory.inventory-wizard.nouvel.inventaire.3497f22e"> Nouvel inventaire </app-button>
                 </div>
             </div>
         </div>

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnChanges, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -20,6 +22,7 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
   selector: 'app-contract-invoices-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, TableModule,
     ButtonComponent, EmptyStateComponent, StatusBadgeComponent, SkeletonTableComponent
   ],
@@ -71,7 +74,7 @@ import { invoiceBadgeStatus } from '../recurring-contracts.ui-utils';
               <td class="amount">{{ inv.amountHT | currency:contract.currency:'symbol':'1.3-3' }}</td>
               <td class="amount">{{ inv.amountTTC | currency:contract.currency:'symbol':'1.3-3' }}</td>
               <td>
-                <app-status-badge [status]="invoiceBadgeStatus(inv.status)" [label]="inv.statusDisplay">
+                <app-status-badge [status]="invoiceBadgeStatus(inv.status)" [label]="inv.statusDisplay | backendLabel">
                 </app-status-badge>
               </td>
               <td>
@@ -164,7 +167,7 @@ export class ContractInvoicesTabComponent implements OnInit, OnChanges {
       error: err => {
         this.loading.set(false);
         this.errorHandler.logError('RecurringContracts: linked invoices', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-invoices.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }

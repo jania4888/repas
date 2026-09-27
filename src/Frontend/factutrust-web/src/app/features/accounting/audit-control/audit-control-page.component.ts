@@ -154,7 +154,7 @@ export class AuditControlPageComponent implements OnInit {
           this.loadAnomalies(1);
           this.loadAnalytics();
           this.loadModules();
-        } else this.error.set(res.error ?? 'Erreur');
+        } else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);

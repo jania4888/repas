@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -75,8 +76,8 @@ export class LoginComponent implements OnInit {
     if (this.route.snapshot.queryParams['reset'] === 'success') {
       this.toastService.add({
         severity: 'success',
-        summary: 'Mot de passe mis à jour',
-        detail: 'Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.',
+        summary: $localize`:@@login.component.summary.Mot de passe:Mot de passe mis à jour`,
+        detail: $localize`:@@login.component.detail.Vous_pouvez_main:Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.`,
         life: 6000,
       });
       void this.router.navigate([], {

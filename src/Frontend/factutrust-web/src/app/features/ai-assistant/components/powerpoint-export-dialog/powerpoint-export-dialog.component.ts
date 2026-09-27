@@ -74,7 +74,7 @@ interface ResponseLine {
   imports: [CommonModule, FormsModule, DialogModule, ButtonComponent, PowerPointThemePickerComponent],
   template: `
     <p-dialog
-      header="Exporter en PowerPoint"
+      header="Exporter en PowerPoint" i18n-header="Exporter en PowerPoint"
       [(visible)]="visibleInternal"
       [modal]="true"
       [style]="{ width: '900px', maxWidth: '96vw' }"
@@ -108,7 +108,7 @@ interface ResponseLine {
               <div class="ppt-card">
                 <h4 i18n="@@ai-assistant.components.informations.generales.be6ba6e5">Informations générales</h4>
                 <label class="ppt-field">
-                  <span>Titre de la présentation <em i18n="@@ai-assistant.components.text.df58248c">*</em></span>
+                  <span><ng-container i18n="@@ai-assistant.components.titre.de.la.presentation.c3df8df5">Titre de la présentation </ng-container> <em i18n="@@ai-assistant.components.text.df58248c">*</em></span>
                   <input
                     type="text"
                     name="title"
@@ -131,7 +131,7 @@ interface ResponseLine {
               <div class="ppt-card">
                 <div class="ppt-card-header-row">
                   <h4 i18n="@@ai-assistant.components.slides.a.inclure.71d6b043">Slides à inclure</h4>
-                  <button type="button" class="ppt-preset-link" (click)="applyExecutivePreset()" i18n="@@ai-assistant.components.preset.deck.executif.c2d0a8dd">Preset « Deck exécutif »</button>
+                  <button type="button" class="ppt-preset-link" (click)="applyExecutivePreset()" i18n="@@ai-assistant.components.preset.deck.executif.c2d0a8dd"> Preset « Deck exécutif » </button>
                 </div>
                 <div class="ppt-options-grid">
                   <label class="ppt-check">
@@ -196,12 +196,12 @@ interface ResponseLine {
             <div class="ppt-card ppt-review">
               <header class="ppt-review-header">
                 <h4>Réponses sélectionnées ({{ responseLines().length }})</h4>
-                <small class="ppt-muted" i18n="@@ai-assistant.components.personnalisez.le.titre.filtrez.les.blocs.ou.reti.2c6a8200">Personnalisez le titre, filtrez les blocs ou retirez une réponse avant l'export.</small>
+                <small class="ppt-muted" i18n="@@ai-assistant.components.personnalisez.le.titre.filtrez.les.blocs.ou.reti.2c6a8200"> Personnalisez le titre, filtrez les blocs ou retirez une réponse avant l'export. </small>
               </header>
 
               @if (responseLines().length === 0) {
-                <p class="ppt-empty" i18n="@@ai-assistant.components.aucune.reponse.selectionnee.activez.le.mode.sele.2ab2d239">Aucune réponse sélectionnée. Activez le mode sélection dans la barre de l'assistant
-                  pour cocher les réponses à inclure.</p>
+                <p class="ppt-empty" i18n="@@ai-assistant.components.aucune.reponse.selectionnee.activez.le.mode.sele.2ab2d239"> Aucune réponse sélectionnée. Activez le mode sélection dans la barre de l'assistant
+                  pour cocher les réponses à inclure. </p>
               } @else {
                 <ul class="ppt-response-list" role="list">
                   @for (line of responseLines(); track line.messageId; let i = $index) {
@@ -219,7 +219,7 @@ interface ResponseLine {
                             [name]="'cust-' + line.messageId"
                             placeholder="Hériter du titre auto-détecté" i18n-placeholder="Hériter du titre auto-détecté" />
                         </label>
-                        <div class="ppt-block-filters" role="group" [attr.aria-label]="'Filtrer le contenu pour la réponse ' + (i + 1)">
+                        <div class="ppt-block-filters" role="group" [attr.aria-label]="loc_ui_tern_filtrer_le_contenu_pour_la_reponse_7da43f + (i + 1)">
                           <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeText" [name]="'txt-' + line.messageId" /> Texte</label>
                           <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeKpis" [name]="'kpi-' + line.messageId" /> KPI</label>
                           <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeTables" [name]="'tbl-' + line.messageId" /> Tableaux</label>
@@ -253,9 +253,9 @@ interface ResponseLine {
                         }
                       </div>
                       <div class="ppt-response-actions">
-                        <button type="button" class="ppt-icon" (click)="moveUp(i)" [disabled]="i === 0" aria-label="Monter" i18n-aria-label="Monter" i18n="@@ai-assistant.components.text.9555ffd7">↑</button>
-                        <button type="button" class="ppt-icon" (click)="moveDown(i)" [disabled]="i === responseLines().length - 1" aria-label="Descendre" i18n-aria-label="Descendre" i18n="@@ai-assistant.components.text.fc486696">↓</button>
-                        <button type="button" class="ppt-icon ppt-icon-danger" (click)="removeLine(i)" aria-label="Retirer cette réponse" i18n-aria-label="Retirer cette réponse" i18n="@@ai-assistant.components.text.67fba2f3">×</button>
+                        <button type="button" class="ppt-icon" (click)="moveUp(i)" [disabled]="i === 0" aria-label="Monter" i18n-aria-label="Monter" i18n="@@ai-assistant.components.text.9555ffd7"> ↑ </button>
+                        <button type="button" class="ppt-icon" (click)="moveDown(i)" [disabled]="i === responseLines().length - 1" aria-label="Descendre" i18n-aria-label="Descendre" i18n="@@ai-assistant.components.text.fc486696"> ↓ </button>
+                        <button type="button" class="ppt-icon ppt-icon-danger" (click)="removeLine(i)" aria-label="Retirer cette réponse" i18n-aria-label="Retirer cette réponse" i18n="@@ai-assistant.components.text.67fba2f3"> × </button>
                       </div>
                     </li>
                   }
@@ -319,7 +319,7 @@ interface ResponseLine {
             <app-button variant="secondary" (click)="setStep('theme')" i18n="@@ai-assistant.components.retour.e5befb1f">Retour</app-button>
             <app-button
               [disabled]="!isReviewValid()"
-              (click)="startGeneration()" i18n="@@ai-assistant.components.generer.la.presentation.69409076">Générer la présentation</app-button>
+              (click)="startGeneration()" i18n="@@ai-assistant.components.generer.la.presentation.69409076"> Générer la présentation </app-button>
           }
           @if (currentStep() === 'generating') {
             <app-button variant="secondary" [disabled]="true" i18n="@@ai-assistant.components.generation.en.cours.46fb6bcf">Génération en cours…</app-button>
@@ -341,6 +341,7 @@ interface ResponseLine {
   styleUrls: ['./powerpoint-export-dialog.component.scss']
 })
 export class PowerPointExportDialogComponent implements OnInit, OnChanges {
+  readonly loc_ui_tern_filtrer_le_contenu_pour_la_reponse_7da43f = $localize`:@@ui.tern.filtrer.le.contenu.pour.la.reponse.7da43f:Filtrer le contenu pour la réponse `;
   private static readonly LAST_THEME_KEY = 'factutrust.ppt.lastTheme';
 
   @Input() visible = false;

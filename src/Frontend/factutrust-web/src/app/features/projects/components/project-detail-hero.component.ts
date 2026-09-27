@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
@@ -17,19 +18,19 @@ import {
 @Component({
   selector: 'app-project-detail-hero',
   standalone: true,
-  imports: [CommonModule, StatusBadgeComponent, ButtonComponent, DocumentActionsMenuComponent],
+  imports: [BackendLabelPipe, CommonModule, StatusBadgeComponent, ButtonComponent, DocumentActionsMenuComponent],
   template: `
     @if (project) {
       <header class="proj-detail-hero">
         <div class="proj-detail-hero__main">
           <div class="proj-detail-hero__title-row">
             <h1 class="proj-detail-hero__title">{{ project.name }}</h1>
-            <app-status-badge [status]="statusBadge(project.status)" [label]="project.statusDisplay" />
+            <app-status-badge [status]="statusBadge(project.status)" [label]="project.statusDisplay | backendLabel" />
           </div>
           <p class="proj-detail-hero__meta">
             <span><i class="pi pi-building"></i> {{ project.clientName }}</span>
             <span class="proj-detail-hero__dot" i18n="@@projects.components.text.1fdf0d90">·</span>
-            <span>{{ project.kindDisplay }}</span>
+            <span>{{ project.kindDisplay | backendLabel }}</span>
             @if (showSiteChip && project.siteAddress) {
               <span class="proj-detail-hero__dot" i18n="@@projects.components.text.1fdf0d90">·</span>
               <span><i class="pi pi-map-marker"></i> {{ project.siteAddress }}</span>
@@ -80,7 +81,7 @@ export class ProjectDetailHeroComponent {
     const p = this.project;
     const items: MenuItem[] = [
       {
-        label: this.favorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+        label: this.favorite ? $localize`:@@ui.tern.retirer.des.favoris.dcaac8:Retirer des favoris` : $localize`:@@ui.tern.ajouter.aux.favoris.721554:Ajouter aux favoris`,
         icon: this.favorite ? 'pi pi-star-fill' : 'pi pi-star',
         command: () => this.toggleFavorite.emit()
       },

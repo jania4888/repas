@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -241,7 +242,7 @@ export class StudioRecordViewRunnerComponent {
         this.error.set(true);
         // 4.7v2 : en mode aperçu, pas de toast à la frappe — l'état d'erreur inline suffit.
         if (!this.preview()) {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.labels.views.error });
+          this.toast.add({ severity: 'error', summary: $localize`:@@studio-record-view-runner.component.summary.Erreur:Erreur`, detail: this.labels.views.error });
         }
         return;
       }

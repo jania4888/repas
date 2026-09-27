@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -134,7 +135,7 @@ const MONTH_LABELS = [
                 icon="pi-file-pdf"
                 size="sm"
                 (click)="downloadPdf(l.employeeId)"
-                [attr.aria-label]="'Télécharger le certificat de ' + l.employeeName" />
+                [attr.aria-label]="loc_ui_tern_telecharger_le_certificat_de_36ca16 + l.employeeName" />
             </td>
           </tr>
         </ng-template>
@@ -149,6 +150,7 @@ const MONTH_LABELS = [
   `]
 })
 export class WithholdingCertificatesTabComponent implements OnInit {
+  readonly loc_ui_tern_telecharger_le_certificat_de_36ca16 = $localize`:@@ui.tern.telecharger.le.certificat.de.36ca16:Télécharger le certificat de `;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
 
@@ -209,7 +211,7 @@ export class WithholdingCertificatesTabComponent implements OnInit {
       next: res => this.batch.set(res.data ?? null),
       error: () => {
         this.batch.set(null);
-        this.toast.add({ severity: 'error', summary: 'Certificats RS', detail: 'Impossible de générer les certificats.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@withholding-certificates-tab.component.summary.Certificats :Certificats RS`, detail: $localize`:@@withholding-certificates-tab.component.detail.Impossible_de_g_:Impossible de générer les certificats.` });
       }
     });
   }
@@ -218,7 +220,7 @@ export class WithholdingCertificatesTabComponent implements OnInit {
     if (!this.canExport()) return;
     this.payroll.exportWithholdingCertificatesCsv(this.year).subscribe({
       next: blob => downloadBlob(blob, `certificats_rs_${this.year}.csv`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Certificats RS', detail: 'Export CSV impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@withholding-certificates-tab.component.summary.Certificats :Certificats RS`, detail: $localize`:@@withholding-certificates-tab.component.detail.Export CSV i:Export CSV impossible.` })
     });
   }
 
@@ -226,14 +228,14 @@ export class WithholdingCertificatesTabComponent implements OnInit {
     if (!this.canExport()) return;
     this.payroll.exportWithholdingCertificatesZip(this.year).subscribe({
       next: blob => downloadBlob(blob, `certificats_rs_${this.year}.zip`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Certificats RS', detail: 'Export ZIP impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@withholding-certificates-tab.component.summary.Certificats :Certificats RS`, detail: $localize`:@@withholding-certificates-tab.component.detail.Export ZIP i:Export ZIP impossible.` })
     });
   }
 
   downloadPdf(employeeId: string): void {
     this.payroll.downloadWithholdingCertificatePdf(this.year, employeeId).subscribe({
       next: blob => downloadBlob(blob, `certificat_rs_${this.year}_${employeeId}.pdf`),
-      error: () => this.toast.add({ severity: 'error', summary: 'Certificats RS', detail: 'Téléchargement PDF impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@withholding-certificates-tab.component.summary.Certificats :Certificats RS`, detail: $localize`:@@withholding-certificates-tab.component.detail.T_l_chargement_P:Téléchargement PDF impossible.` })
     });
   }
 }

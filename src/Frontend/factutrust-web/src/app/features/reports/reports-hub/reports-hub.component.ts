@@ -61,7 +61,7 @@ interface ReportCard {
                     <span class="badge-coming" i18n="@@reports.reports-hub.bientot.a60303f4">Bientôt</span>
                   </span>
                 } @else if (link.route) {
-                  <a [routerLink]="link.route" [queryParams]="link.queryParams" class="report-link" [attr.aria-label]="'Accéder à ' + link.label">
+                  <a [routerLink]="link.route" [queryParams]="link.queryParams" class="report-link" [attr.aria-label]="loc_ui_tern_acceder_a_54eb6e + link.label">
                     {{ link.label }}
                   </a>
                 } @else {
@@ -221,6 +221,7 @@ interface ReportCard {
   `]
 })
 export class ReportsHubComponent {
+  readonly loc_ui_tern_acceder_a_54eb6e = $localize`:@@ui.tern.acceder.a.54eb6e:Accéder à `;
   private readonly auth = inject(AuthService);
 
   showSearch = true;

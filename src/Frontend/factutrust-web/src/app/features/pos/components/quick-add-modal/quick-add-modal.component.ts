@@ -43,8 +43,8 @@ import { ProductListItem } from '@core/services/product.service';
           </div>
         </div>
         <div class="quick-add__actions">
-          <button class="quick-add__btn quick-add__btn--secondary" type="button" (click)="onCancel()" i18n="@@pos.components.annuler.49ba3292">Annuler</button>
-          <button class="quick-add__btn quick-add__btn--primary" type="button" (click)="onConfirm()" [disabled]="!isValid()" i18n="@@pos.components.ajouter.87c57ed1">Ajouter</button>
+          <button class="quick-add__btn quick-add__btn--secondary" type="button" (click)="onCancel()" i18n="@@pos.components.annuler.49ba3292"> Annuler </button>
+          <button class="quick-add__btn quick-add__btn--primary" type="button" (click)="onConfirm()" [disabled]="!isValid()" i18n="@@pos.components.ajouter.87c57ed1"> Ajouter </button>
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -33,7 +34,7 @@ interface PeriodOption {
 @Component({
   selector: 'app-purchases-reports',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -52,12 +53,12 @@ interface PeriodOption {
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()" i18n="@@reports.purchases.exporter.0cd84bdc">Exporter</app-button>
+        (click)="onExport()" i18n="@@reports.purchases.exporter.0cd84bdc"> Exporter </app-button>
       <app-button 
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()" i18n="@@reports.purchases.imprimer.5382c09d">Imprimer</app-button>
+        (click)="onPrint()" i18n="@@reports.purchases.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <div class="filter-section">
@@ -94,31 +95,31 @@ interface PeriodOption {
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Dépenses totales"
+          label="Dépenses totales" i18n-label="Dépenses totales"
           [value]="reportsData()!.totalExpenses"
           icon="pi-dollar"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Factures fournisseurs"
+          label="Factures fournisseurs" i18n-label="Factures fournisseurs"
           [value]="reportsData()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées"
+          label="Factures payées" i18n-label="Factures payées"
           [value]="reportsData()!.paidInvoices"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Taux de paiement"
+          label="Taux de paiement" i18n-label="Taux de paiement"
           [value]="reportsData()!.paymentRate"
           icon="pi-percentage"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Montant à payer"
+          label="Montant à payer" i18n-label="Montant à payer"
           [value]="reportsData()!.amountToPay"
           icon="pi-wallet"
           variant="warning">
@@ -318,7 +319,7 @@ interface PeriodOption {
           </ng-template>
           <ng-template pTemplate="body" let-row>
             <tr>
-              <td>{{ row.vatRateDisplay }}</td>
+              <td>{{ row.vatRateDisplay | backendLabel }}</td>
               <td class="text-right amount">{{ row.totalTaxableAmount | number:'1.3-3' }} {{ row.currency }}</td>
               <td class="text-right amount">{{ row.totalVatAmount | number:'1.3-3' }} {{ row.currency }}</td>
             </tr>
@@ -340,7 +341,7 @@ interface PeriodOption {
         [rows]="supplierBalanceRows()"
         [loading]="supplierBalancesLoading()"
         partyLabel="Fournisseur"
-        emptyMessage="Aucun solde fournisseur"
+        emptyMessage="Aucun solde fournisseur" i18n-emptyMessage="Aucun solde fournisseur"
         ariaLabel="Soldes fournisseurs">
       </app-party-balances-table>
     </div>
@@ -480,7 +481,7 @@ interface PeriodOption {
         <div class="tab-content">
     <div class="section crosstab-section">
       <div class="section-header">
-        <h2 class="section-title" i18n="@@reports.purchases.depenses.par.mois.annee.a1932f50">Dépenses par mois / Année</h2>
+        <h2 class="section-title" i18n="@@reports.purchases.depenses.par.mois.annee.a1932f50">Dépenses par mois / Année </h2>
         <span class="section-subtitle" i18n="@@reports.purchases.depenses.par.mois.et.annee.5.dernieres.annees.fa.619a238f">Dépenses par mois et année - 5 dernières années (factures payées)</span>
       </div>
       @if (crossTabLoading()) {
@@ -658,7 +659,7 @@ interface PeriodOption {
           <tbody>
             @for (row of purchasesVat(); track row.vatRateDisplay) {
               <tr>
-                <td>{{ row.vatRateDisplay }}</td>
+                <td>{{ row.vatRateDisplay | backendLabel }}</td>
                 <td class="text-right print-amount">{{ row.totalTaxableAmount | number:'1.3-3' }} {{ row.currency }}</td>
                 <td class="text-right print-amount">{{ row.totalVatAmount | number:'1.3-3' }} {{ row.currency }}</td>
               </tr>
@@ -1530,7 +1531,7 @@ export class PurchasesReportsComponent implements OnInit {
   ];
 
   get activeTabName(): string {
-    return this.tabNames[this.activeTabIndex] ?? 'Rapport';
+    return this.tabNames[this.activeTabIndex] ?? $localize`:@@ui.tern.rapport.f25c40:Rapport`;
   }
 
   get printDate(): string {

@@ -8,7 +8,7 @@ import { ProjectKindCode, defaultKanbanColumnsForKind } from '../project-enums';
   imports: [CommonModule],
   template: `
     <div class="proj-template-preview">
-      <div class="proj-template-preview__legend text-sm text-color-secondary mb-2" i18n="@@projects.components.colonnes.kanban.creees.automatiquement.pour.ce.t.7a57ed77">Colonnes Kanban créées automatiquement pour ce type de projet.</div>
+      <div class="proj-template-preview__legend text-sm text-color-secondary mb-2" i18n="@@projects.components.colonnes.kanban.creees.automatiquement.pour.ce.t.7a57ed77"> Colonnes Kanban créées automatiquement pour ce type de projet. </div>
       <div class="proj-kanban proj-kanban--preview">
         @for (col of columns; track col.order) {
           <div class="proj-kanban-col">

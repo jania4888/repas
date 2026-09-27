@@ -137,7 +137,7 @@
   [rowHover]="true"
   styleClass="p-datatable-sm"
   [showCurrentPageReport]="true"
-  currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} entrée(s)"
+  currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} entrée(s)" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} entrée(s)"
   [first]="first"
 >
   <ng-template pTemplate="header">
@@ -206,7 +206,7 @@
   [resizable]="false"
   [style]="{ width: 'min(720px, 96vw)' }"
   [breakpoints]="{ '960px': '95vw' }"
-  header="Détail de l'entrée d'audit"
+  header="Détail de l'entrée d'audit" i18n-header="Détail de l'entrée d'audit"
   styleClass="audit-detail-dialog"
   [focusOnShow]="true"
   [closeOnEscape]="true"

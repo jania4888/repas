@@ -102,7 +102,7 @@ import { catchError } from 'rxjs/operators';
                   </button>
                 </div>
               }
-              <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.lot.5e4bc959">Ajouter un lot</app-button>
+              <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.lot.5e4bc959"> Ajouter un lot </app-button>
             } @else if (lotsLoaded()) {
               <span class="alloc-empty">
                 @if (excludedExpiredCount() > 0) {
@@ -141,7 +141,7 @@ import { catchError } from 'rxjs/operators';
                 </button>
               </div>
             }
-            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.lot.5e4bc959">Ajouter un lot</app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.lot.5e4bc959"> Ajouter un lot </app-button>
           }
         }
 
@@ -172,7 +172,7 @@ import { catchError } from 'rxjs/operators';
                 </div>
               }
             } @else if (serialsLoaded()) {
-              <span class="alloc-empty" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.aucun.numero.de.serie.disponible.dans.cet.entrep.62ba2244">Aucun numéro de série disponible dans cet entrepôt.</span>
+              <span class="alloc-empty" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.aucun.numero.de.serie.disponible.dans.cet.entrep.62ba2244"> Aucun numéro de série disponible dans cet entrepôt. </span>
             }
           } @else {
             @for (alloc of allocations; track $index; let ai = $index) {
@@ -183,7 +183,7 @@ import { catchError } from 'rxjs/operators';
                 </button>
               </div>
             }
-            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addSerialRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.n.de.serie.e0aad4b5">Ajouter un n° de série</app-button>
+            <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addSerialRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.n.de.serie.e0aad4b5"> Ajouter un n° de série </app-button>
           }
         }
 

@@ -94,10 +94,34 @@
   .currency-value,
   .p-inputnumber,
   td.col-amount,
-  th.col-amount {
+  th.col-amount,
+  .panel-total,
+  .method-amount,
+  .balance-credit,
+  .balance-debit {
     direction: ltr;
     unicode-bidi: isolate;
     text-align: end;
+  }
+
+  .secondary-nav__submenu-panel {
+    left: auto;
+    right: 100%;
+  }
+
+  .p-input-icon-left > i,
+  .p-input-icon-left > .pi {
+    left: auto;
+    right: auto;
+    inset-inline-start: 0.75rem;
+  }
+
+  .p-input-icon-left > .p-inputtext,
+  .p-input-icon-left > input {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-inline-start: 2.5rem;
+    padding-inline-end: 0.75rem;
   }
 
   :lang(ar) {

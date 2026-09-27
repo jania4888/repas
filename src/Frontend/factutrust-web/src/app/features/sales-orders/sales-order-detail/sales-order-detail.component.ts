@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -46,7 +48,7 @@ interface TimelineEvent {
 @Component({
   selector: 'app-sales-order-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -126,9 +128,9 @@ interface TimelineEvent {
               <div class="document-meta">
                 <h1 class="document-title">{{ o.number }}</h1>
                 <div class="document-badges">
-                  <p-tag [severity]="statusSeverity(o.status)" [value]="o.statusDisplay"></p-tag>
+                  <p-tag [severity]="statusSeverity(o.status)" [value]="o.statusDisplay | backendLabel"></p-tag>
                   @if (o.isStockReserved) {
-                    <span class="ft-chip" pTooltip="Le stock est réservé pour cette commande.">
+                    <span class="ft-chip" pTooltip="Le stock est réservé pour cette commande." i18n-pTooltip="Le stock est réservé pour cette commande.">
                       <i class="pi pi-box"></i> Stock réservé
                     </span>
                   }
@@ -338,7 +340,7 @@ interface TimelineEvent {
               }
               @for (vat of o.vatBreakdown; track vat.rate) {
                 <div class="total-row">
-                  <span>TVA {{ vat.rateDisplay }}</span>
+                  <span>TVA {{ vat.rateDisplay | backendLabel }}</span>
                   <span class="mono">{{ vat.vatAmount | number: '1.3-3' }}</span>
                 </div>
               }
@@ -358,9 +360,9 @@ interface TimelineEvent {
 
         <!-- Sidebar -->
         <div class="sidebar">
-          <p-card header="Statut" styleClass="sidebar-card">
+          <p-card header="Statut" i18n-header="Statut" styleClass="sidebar-card">
             <div class="status-content">
-              <p-tag [severity]="statusSeverity(o.status)" [value]="o.statusDisplay" styleClass="w-full"></p-tag>
+              <p-tag [severity]="statusSeverity(o.status)" [value]="o.statusDisplay | backendLabel" styleClass="w-full"></p-tag>
               <div class="status-meta">
                 <div>Commande du {{ o.orderDate | date: 'dd/MM/yyyy' }}</div>
                 @if (o.sourceQuoteNumber) {
@@ -380,7 +382,7 @@ interface TimelineEvent {
             </div>
           </p-card>
 
-          <p-card header="Client" styleClass="sidebar-card">
+          <p-card header="Client" i18n-header="Client" styleClass="sidebar-card">
             <div class="client-card-content">
               <h3 class="client-name">{{ o.client.name }}</h3>
               @if (o.client.address) {
@@ -398,7 +400,7 @@ interface TimelineEvent {
             </div>
           </p-card>
 
-          <p-card header="Parcours de la commande" styleClass="sidebar-card">
+          <p-card header="Parcours de la commande" i18n-header="Parcours de la commande" styleClass="sidebar-card">
             <p-timeline [value]="timelineEvents()">
               <ng-template pTemplate="content" let-event>
                 <div class="timeline-content">
@@ -426,15 +428,15 @@ interface TimelineEvent {
 
     <!-- Annulation -->
     <p-dialog
-      header="Annuler la commande"
+      header="Annuler la commande" i18n-header="Annuler la commande"
       [(visible)]="cancelVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"
       [draggable]="false">
-      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.l.annulation.libere.les.reservations.de.stock.el.cbc75f32">L'annulation libère les réservations de stock. Elle suppose qu'aucune livraison n'a eu
-        lieu ; sinon, utilisez plutôt « Solder ».</p>
+      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.l.annulation.libere.les.reservations.de.stock.el.cbc75f32"> L'annulation libère les réservations de stock. Elle suppose qu'aucune livraison n'a eu
+        lieu ; sinon, utilisez plutôt « Solder ». </p>
       <div class="ft-field">
-        <label for="so-cancel-reason">Motif <span class="ft-required" i18n="@@sales-orders.sales-order-detail.text.df58248c">*</span></label>
+        <label for="so-cancel-reason"><ng-container i18n="@@sales-orders.sales-order-detail.motif.2a198f47">Motif </ng-container> <span class="ft-required" i18n="@@sales-orders.sales-order-detail.text.df58248c">*</span></label>
         <textarea
           id="so-cancel-reason"
           pTextarea
@@ -445,20 +447,20 @@ interface TimelineEvent {
 
       <ng-template pTemplate="footer">
         <app-button variant="secondary" (clicked)="cancelVisible = false" i18n="@@sales-orders.sales-order-detail.retour.e5befb1f">Retour</app-button>
-        <app-button variant="danger" [disabled]="!cancelReason.trim() || acting()" (clicked)="doCancel()" i18n="@@sales-orders.sales-order-detail.annuler.la.commande.187515f7">Annuler la commande</app-button>
+        <app-button variant="danger" [disabled]="!cancelReason.trim() || acting()" (clicked)="doCancel()" i18n="@@sales-orders.sales-order-detail.annuler.la.commande.187515f7"> Annuler la commande </app-button>
       </ng-template>
     </p-dialog>
 
     <!-- Remise de pied -->
     <p-dialog
-      header="Remise de pied de document"
+      header="Remise de pied de document" i18n-header="Remise de pied de document"
       [(visible)]="discountVisible"
       [modal]="true"
       [style]="{ width: '34rem' }"
       [draggable]="false">
-      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.la.remise.est.repartie.sur.les.lignes.au.prorata.2651c62b">La remise est répartie sur les lignes au prorata de leur base HT : elle réduit donc la
+      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.la.remise.est.repartie.sur.les.lignes.au.prorata.2651c62b"> La remise est répartie sur les lignes au prorata de leur base HT : elle réduit donc la
         base de TVA et le FODEC. Le timbre fiscal, droit fixe, n'est pas touché.
-        Laissez les deux champs vides pour retirer la remise.</p>
+        Laissez les deux champs vides pour retirer la remise. </p>
 
       <div class="ft-form-grid">
         <div class="ft-field">
@@ -491,21 +493,21 @@ interface TimelineEvent {
 
       <ng-template pTemplate="footer">
         <app-button variant="secondary" (clicked)="discountVisible = false" i18n="@@sales-orders.sales-order-detail.annuler.49ba3292">Annuler</app-button>
-        <app-button variant="primary" [disabled]="acting()" (clicked)="saveDiscount()" i18n="@@sales-orders.sales-order-detail.enregistrer.f7c8bcd8">Enregistrer</app-button>
+        <app-button variant="primary" [disabled]="acting()" (clicked)="saveDiscount()" i18n="@@sales-orders.sales-order-detail.enregistrer.f7c8bcd8"> Enregistrer </app-button>
       </ng-template>
     </p-dialog>
 
     <!-- Solde -->
     <p-dialog
-      header="Solder la commande"
+      header="Solder la commande" i18n-header="Solder la commande"
       [(visible)]="closeVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"
       [draggable]="false">
-      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.solder.ferme.la.commande.en.renoncant.au.reliqua.187df3b6">Solder ferme la commande en renonçant au reliquat non livré. Ce qui a déjà été livré et
-        facturé n'est pas touché.</p>
+      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.solder.ferme.la.commande.en.renoncant.au.reliqua.187df3b6"> Solder ferme la commande en renonçant au reliquat non livré. Ce qui a déjà été livré et
+        facturé n'est pas touché. </p>
       <div class="ft-field">
-        <label for="so-close-reason">Motif <span class="ft-required" i18n="@@sales-orders.sales-order-detail.text.df58248c">*</span></label>
+        <label for="so-close-reason"><ng-container i18n="@@sales-orders.sales-order-detail.motif.2a198f47">Motif </ng-container> <span class="ft-required" i18n="@@sales-orders.sales-order-detail.text.df58248c">*</span></label>
         <textarea
           id="so-close-reason"
           pTextarea
@@ -516,19 +518,19 @@ interface TimelineEvent {
 
       <ng-template pTemplate="footer">
         <app-button variant="secondary" (clicked)="closeVisible = false" i18n="@@sales-orders.sales-order-detail.retour.e5befb1f">Retour</app-button>
-        <app-button variant="primary" [disabled]="!closeReason.trim() || acting()" (clicked)="doClose()" i18n="@@sales-orders.sales-order-detail.solder.2663192f">Solder</app-button>
+        <app-button variant="primary" [disabled]="!closeReason.trim() || acting()" (clicked)="doClose()" i18n="@@sales-orders.sales-order-detail.solder.2663192f"> Solder </app-button>
       </ng-template>
     </p-dialog>
 
     <!-- Génération d'un bon de livraison depuis la commande -->
     <p-dialog
-      header="Générer un bon de livraison"
+      header="Générer un bon de livraison" i18n-header="Générer un bon de livraison"
       [(visible)]="deliveryNoteDialogVisible"
       [modal]="true"
       [style]="{ width: '44rem' }"
       [draggable]="false">
-      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.precisez.les.quantites.a.livrer.par.defaut.tout..7aa1af48">Précisez les quantités à livrer. Par défaut, tout le reste à livrer de la commande est
-        repris.</p>
+      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.precisez.les.quantites.a.livrer.par.defaut.tout..7aa1af48"> Précisez les quantités à livrer. Par défaut, tout le reste à livrer de la commande est
+        repris. </p>
 
       <div class="ft-field">
         <label for="dn-issue-date" i18n="@@sales-orders.sales-order-detail.date.d.emission.99f68857">Date d'émission</label>
@@ -574,19 +576,19 @@ interface TimelineEvent {
       <ng-template pTemplate="footer">
         <app-button variant="secondary" (clicked)="resetDeliveryNoteQuantities()" i18n="@@sales-orders.sales-order-detail.tout.livrer.d2623b5e">Tout livrer</app-button>
         <app-button variant="secondary" (clicked)="deliveryNoteDialogVisible = false" i18n="@@sales-orders.sales-order-detail.annuler.49ba3292">Annuler</app-button>
-        <app-button variant="primary" [disabled]="acting()" (clicked)="submitGenerateDeliveryNote()" i18n="@@sales-orders.sales-order-detail.generer.le.bl.8968ad09">Générer le BL</app-button>
+        <app-button variant="primary" [disabled]="acting()" (clicked)="submitGenerateDeliveryNote()" i18n="@@sales-orders.sales-order-detail.generer.le.bl.8968ad09"> Générer le BL </app-button>
       </ng-template>
     </p-dialog>
 
     <!-- Génération d'une facture depuis la commande -->
     <p-dialog
-      header="Générer une facture"
+      header="Générer une facture" i18n-header="Générer une facture"
       [(visible)]="invoiceDialogVisible"
       [modal]="true"
       [style]="{ width: '48rem' }"
       [draggable]="false">
       <p class="ft-dialog-intro">
-        Par défaut, seul le <strong i18n="@@sales-orders.sales-order-detail.livre.non.facture.eb209e11">livré-non-facturé</strong> est facturé. Activez la facturation
+        <ng-container i18n="@@sales-orders.sales-order-detail.par.defaut.seul.le.4e6144db"> Par défaut, seul le </ng-container> <strong i18n="@@sales-orders.sales-order-detail.livre.non.facture.eb209e11">livré-non-facturé</strong> est facturé. Activez la facturation
         d'avance pour facturer le reste à facturer indépendamment des livraisons.
       </p>
 
@@ -641,7 +643,7 @@ interface TimelineEvent {
       <ng-template pTemplate="footer">
         <app-button variant="secondary" (clicked)="resetInvoiceQuantities()" i18n="@@sales-orders.sales-order-detail.tout.facturer.580a60a2">Tout facturer</app-button>
         <app-button variant="secondary" (clicked)="invoiceDialogVisible = false" i18n="@@sales-orders.sales-order-detail.annuler.49ba3292">Annuler</app-button>
-        <app-button variant="primary" [disabled]="acting()" (clicked)="submitGenerateInvoice()" i18n="@@sales-orders.sales-order-detail.generer.la.facture.962ccf5c">Générer la facture</app-button>
+        <app-button variant="primary" [disabled]="acting()" (clicked)="submitGenerateInvoice()" i18n="@@sales-orders.sales-order-detail.generer.la.facture.962ccf5c"> Générer la facture </app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -687,12 +689,12 @@ export class SalesOrderDetailComponent implements OnInit {
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
     { label: 'Ventes' },
     { label: 'Commandes clients', route: '/sales-orders' },
-    { label: this.order()?.number ?? 'Détail' }
+    { label: this.order()?.number ?? $localize`:@@ui.tern.detail.7ce06a:Détail` }
   ]);
 
   readonly pageTitle = computed(() => {
     const o = this.order();
-    return o ? `Commande ${o.number}` : 'Commande';
+    return o ? $localize`:@@ui.tern.commande.ph.3030aa:Commande ${o.number}:p0:` : $localize`:@@ui.tern.commande.478443:Commande`;
   });
 
   readonly headerSubtitle = computed(() => {
@@ -967,8 +969,8 @@ export class SalesOrderDetailComponent implements OnInit {
 
   private askConfirmation(outstanding: ClientOutstanding | null): void {
     let message =
-      'Confirmer engage fermement la commande et rend les lignes non modifiables. ' +
-      'Si la réservation de stock est activée, le stock sera réservé.';
+      $localize`:@@ui.tern.confirmer.engage.fermement.la.commande.et..59ec81:Confirmer engage fermement la commande et rend les lignes non modifiables. ` +
+      $localize`:@@ui.tern.si.la.reservation.de.stock.est.activee.le..7bb555:Si la réservation de stock est activée, le stock sera réservé.`;
 
     if (outstanding?.isOverLimit) {
       message +=
@@ -978,15 +980,15 @@ export class SalesOrderDetailComponent implements OnInit {
     } else if (outstanding && outstanding.overdueAmount > 0) {
       message +=
         `\n\n⚠️ ${outstanding.overdueAmount.toFixed(3)} ${outstanding.currency} ` +
-        'échus depuis plus de 30 jours chez ce client.';
+        $localize`:@@ui.tern.echus.depuis.plus.de.30.jours.chez.ce.clie.ee6846:échus depuis plus de 30 jours chez ce client.`;
     }
 
     this.confirmationService.confirm({
       header: 'Confirmer la commande',
       message,
       icon: 'pi pi-check-circle',
-      acceptLabel: 'Confirmer',
-      rejectLabel: 'Retour',
+      acceptLabel: $localize`:@@sales-order-detail.component.acceptLabel.Confirmer:Confirmer`,
+      rejectLabel: $localize`:@@sales-order-detail.component.rejectLabel.Retour:Retour`,
       accept: () => this.doConfirm()
     });
   }
@@ -995,7 +997,7 @@ export class SalesOrderDetailComponent implements OnInit {
     this.acting.set(true);
     this.salesOrderService.confirmSalesOrder(this.orderId).subscribe({
       next: () => {
-        this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Commande confirmée.' });
+        this.toastService.add({ severity: 'success', summary: $localize`:@@sales-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@sales-order-detail.component.detail.Commande_confirm:Commande confirmée.` });
         this.acting.set(false);
         this.load();
       },
@@ -1032,8 +1034,8 @@ export class SalesOrderDetailComponent implements OnInit {
         next: () => {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Remise de pied enregistrée.'
+            summary: $localize`:@@sales-order-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@sales-order-detail.component.detail.Remise_de_pied_e:Remise de pied enregistrée.`
           });
           this.discountVisible = false;
           this.acting.set(false);
@@ -1056,7 +1058,7 @@ export class SalesOrderDetailComponent implements OnInit {
     this.acting.set(true);
     this.salesOrderService.cancelSalesOrder(this.orderId, this.cancelReason.trim()).subscribe({
       next: () => {
-        this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Commande annulée.' });
+        this.toastService.add({ severity: 'success', summary: $localize`:@@sales-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@sales-order-detail.component.detail.Commande_annul_e:Commande annulée.` });
         this.cancelVisible = false;
         this.acting.set(false);
         this.load();
@@ -1078,7 +1080,7 @@ export class SalesOrderDetailComponent implements OnInit {
     this.acting.set(true);
     this.salesOrderService.closeSalesOrder(this.orderId, this.closeReason.trim()).subscribe({
       next: () => {
-        this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Commande soldée.' });
+        this.toastService.add({ severity: 'success', summary: $localize`:@@sales-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@sales-order-detail.component.detail.Commande_sold_e_:Commande soldée.` });
         this.closeVisible = false;
         this.acting.set(false);
         this.load();
@@ -1114,7 +1116,7 @@ export class SalesOrderDetailComponent implements OnInit {
   submitGenerateDeliveryNote(): void {
     const lines = this.deliveryNoteLines.filter(l => l.quantity > 0);
     if (lines.length === 0) {
-      this.toastService.add({ severity: 'warn', summary: 'Avertissement', detail: 'Aucune quantité à livrer.' });
+      this.toastService.add({ severity: 'warn', summary: $localize`:@@sales-order-detail.component.summary.Avertissement:Avertissement`, detail: $localize`:@@sales-order-detail.component.detail.aucune.quantite.a.livrer.096c2041:Aucune quantité à livrer.` });
       return;
     }
 
@@ -1133,10 +1135,10 @@ export class SalesOrderDetailComponent implements OnInit {
         this.acting.set(false);
         if (res.success && res.data) {
           this.deliveryNoteDialogVisible = false;
-          this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Bon de livraison généré.' });
+          this.toastService.add({ severity: 'success', summary: $localize`:@@sales-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@sales-order-detail.component.detail.Bon_de_livraison:Bon de livraison généré.` });
           this.router.navigate(['/delivery-notes', res.data]);
         } else {
-          this.toastService.add({ severity: 'error', summary: 'Erreur', detail: res.message || 'Génération impossible.' });
+          this.toastService.add({ severity: 'error', summary: $localize`:@@sales-order-detail.component.summary.Erreur:Erreur`, detail: res.message || 'Génération impossible.' });
         }
       },
       error: err => {
@@ -1183,7 +1185,7 @@ export class SalesOrderDetailComponent implements OnInit {
   submitGenerateInvoice(): void {
     const lines = this.invoiceLines.filter(l => l.quantity > 0);
     if (lines.length === 0) {
-      this.toastService.add({ severity: 'warn', summary: 'Avertissement', detail: 'Aucune quantité à facturer.' });
+      this.toastService.add({ severity: 'warn', summary: $localize`:@@sales-order-detail.component.summary.Avertissement:Avertissement`, detail: $localize`:@@sales-order-detail.component.detail.aucune.quantite.a.facturer.88957e15:Aucune quantité à facturer.` });
       return;
     }
 
@@ -1203,10 +1205,10 @@ export class SalesOrderDetailComponent implements OnInit {
         this.acting.set(false);
         if (res.success && res.data) {
           this.invoiceDialogVisible = false;
-          this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Facture générée.' });
+          this.toastService.add({ severity: 'success', summary: $localize`:@@sales-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@sales-order-detail.component.detail.Facture_g_n_r_e_:Facture générée.` });
           this.router.navigate(['/invoices', res.data]);
         } else {
-          this.toastService.add({ severity: 'error', summary: 'Erreur', detail: res.message || 'Génération impossible.' });
+          this.toastService.add({ severity: 'error', summary: $localize`:@@sales-order-detail.component.summary.Erreur:Erreur`, detail: res.message || 'Génération impossible.' });
         }
       },
       error: err => {
@@ -1225,6 +1227,6 @@ export class SalesOrderDetailComponent implements OnInit {
 
   private showError(err: unknown, fallback: string): void {
     const msg = this.errorHandler.extractErrorMessage(err);
-    this.toastService.add({ severity: 'error', summary: 'Erreur', detail: msg || fallback });
+    this.toastService.add({ severity: 'error', summary: $localize`:@@sales-order-detail.component.summary.Erreur:Erreur`, detail: msg || fallback });
   }
 }

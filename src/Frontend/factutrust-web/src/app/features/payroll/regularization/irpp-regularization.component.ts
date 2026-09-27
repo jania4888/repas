@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -53,7 +54,7 @@ import {
   template: `
     <app-page-header
       title="Régularisation IRPP" i18n-title="Régularisation IRPP"
-      [subtitle]="'Période : ' + monthLabel(month) + ' ' + year">
+      [subtitle]="loc_ui_tern_periode_ed6eb6 + monthLabel(month) + ' ' + year">
       <app-button variant="outline" (click)="reset()" i18n="@@payroll.regularization.annuler.49ba3292">Annuler</app-button>
       @if (canManage()) {
         <app-button variant="outline" icon="pi-calculator" iconPos="left"
@@ -104,9 +105,9 @@ import {
           <div class="reg-legal">
             <i class="pi pi-info-circle" aria-hidden="true"></i>
             <div>
-              <p i18n="@@payroll.regularization.la.retenue.mensuelle.est.calculee.en.projetant.l.9cc19762">La retenue mensuelle est calculée en projetant le net imposable du mois sur douze mois.
+              <p i18n="@@payroll.regularization.la.retenue.mensuelle.est.calculee.en.projetant.l.9cc19762"> La retenue mensuelle est calculée en projetant le net imposable du mois sur douze mois.
                 Dès que la rémunération varie, la somme des retenues s’écarte de l’impôt réellement dû
-                sur le revenu annuel. Cet écran compare les deux et porte la différence sur le bulletin.</p>
+                sur le revenu annuel. Cet écran compare les deux et porte la différence sur le bulletin. </p>
               <p class="reg-legal-ref" i18n="@@payroll.regularization.reference.article.40.et.suivants.du.code.de.l.ir.f59d53c8">Référence : article 40 et suivants du code de l’IRPP.</p>
             </div>
           </div>
@@ -183,8 +184,8 @@ import {
               <p-inputNumber inputId="regOverrideCss" [(ngModel)]="overrideCss"
                 [minFractionDigits]="3" [maxFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" />
             </div>
-            <p class="reg-summary-note" i18n="@@payroll.regularization.laissez.les.montants.calcules.tels.quels.ou.ajus.4cbcddf5">Laissez les montants calculés tels quels, ou ajustez-les : la ligne sera alors signalée
-              comme corrigée manuellement et préservée lors des régénérations.</p>
+            <p class="reg-summary-note" i18n="@@payroll.regularization.laissez.les.montants.calcules.tels.quels.ou.ajus.4cbcddf5"> Laissez les montants calculés tels quels, ou ajustez-les : la ligne sera alors signalée
+              comme corrigée manuellement et préservée lors des régénérations. </p>
           </div>
         }
       </div>
@@ -226,6 +227,7 @@ import {
   `]
 })
 export class IrppRegularizationComponent implements OnInit {
+  readonly loc_ui_tern_periode_ed6eb6 = $localize`:@@ui.tern.periode.ed6eb6:Période : `;
   private readonly payroll = inject(PayrollService);
   private readonly employeesApi = inject(EmployeeService);
   private readonly toast = inject(ToastService);
@@ -333,8 +335,8 @@ export class IrppRegularizationComponent implements OnInit {
         this.preview.set(null);
         this.toast.add({
           severity: 'error',
-          summary: 'Régularisation IRPP',
-          detail: err?.error?.message ?? 'Calcul impossible.'
+          summary: $localize`:@@irpp-regularization.component.summary.R_gularisation_I:Régularisation IRPP`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.calcul.impossible.4c6059:Calcul impossible.`
         });
       }
     });
@@ -364,16 +366,16 @@ export class IrppRegularizationComponent implements OnInit {
         this.loading.set(false);
         this.toast.add({
           severity: 'success',
-          summary: 'Régularisation IRPP',
-          detail: 'Enregistrée. Recalculez le cycle pour la porter sur le bulletin.'
+          summary: $localize`:@@irpp-regularization.component.summary.R_gularisation_I:Régularisation IRPP`,
+          detail: $localize`:@@irpp-regularization.component.detail.Enregistr_e_Rec:Enregistrée. Recalculez le cycle pour la porter sur le bulletin.`
         });
       },
       error: err => {
         this.loading.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Régularisation IRPP',
-          detail: err?.error?.message ?? 'Enregistrement impossible.'
+          summary: $localize`:@@irpp-regularization.component.summary.R_gularisation_I:Régularisation IRPP`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
         });
       }
     });

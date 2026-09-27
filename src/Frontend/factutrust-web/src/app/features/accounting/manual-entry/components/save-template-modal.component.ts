@@ -30,7 +30,7 @@ export interface SaveTemplatePayload {
             </p>
 
             <div class="form-field">
-              <label class="field-label" for="stm-name">Nom du modèle <span class="stm-req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+              <label class="field-label" for="stm-name"><ng-container i18n="@@accounting.manual-entry.nom.du.modele.68d49f67">Nom du modèle </ng-container> <span class="stm-req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
               <input id="stm-name" type="text" class="stm-input"
                      [ngModel]="name()" (ngModelChange)="name.set($event)"
                      placeholder="Ex: Paiement client par virement" i18n-placeholder="Ex: Paiement client par virement"
@@ -46,7 +46,7 @@ export interface SaveTemplatePayload {
                         [ngModel]="description()" (ngModelChange)="description.set($event)"
                         rows="2"
                         maxlength="1000"
-                        placeholder="À quoi sert ce modèle ?" i18n-placeholder="À quoi sert ce modèle ?"></textarea>
+                        placeholder="À quoi sert ce modèle ?"></textarea>
             </div>
 
             <div class="form-field stm-row">
@@ -70,8 +70,8 @@ export interface SaveTemplatePayload {
                        [ngModel]="keepAmounts()" (ngModelChange)="keepAmounts.set($event)" />
                 Conserver les montants actuels comme valeurs par défaut du modèle
               </label>
-              <p class="stm-hint" i18n="@@accounting.manual-entry.decoche.seuls.les.comptes.et.libelles.sont.sauve.3d8cd4e8">Décoché : seuls les comptes et libellés sont sauvegardés (montants vides à l'application).
-                Coché : les montants actuels seront pré-remplis.</p>
+              <p class="stm-hint" i18n="@@accounting.manual-entry.decoche.seuls.les.comptes.et.libelles.sont.sauve.3d8cd4e8"> Décoché : seuls les comptes et libellés sont sauvegardés (montants vides à l'application).
+                Coché : les montants actuels seront pré-remplis. </p>
             </div>
           </div>
 
@@ -80,7 +80,7 @@ export interface SaveTemplatePayload {
             <button type="button" class="btn btn-primary"
                     (click)="onSave()"
                     [disabled]="saving() || !nameTrimmed()">
-              {{ saving() ? 'Sauvegarde…' : 'Sauvegarder le modèle' }}
+              {{ saving() ? loc_ui_tern_sauvegarde_853081 : loc_ui_tern_sauvegarder_le_modele_c6623f }}
             </button>
           </footer>
         </div>
@@ -112,6 +112,8 @@ export interface SaveTemplatePayload {
   `
 })
 export class SaveTemplateModalComponent {
+  readonly loc_ui_tern_sauvegarde_853081 = $localize`:@@ui.tern.sauvegarde.853081:Sauvegarde…`;
+  readonly loc_ui_tern_sauvegarder_le_modele_c6623f = $localize`:@@ui.tern.sauvegarder.le.modele.c6623f:Sauvegarder le modèle`;
   readonly visible = input<boolean>(false);
   readonly defaultName = input<string>('');
   readonly journalCode = input<string>('JOD');

@@ -64,8 +64,8 @@ interface StageOption {
             (ngModelChange)="load()"></p-checkbox>
           <label for="oppMineOnly" i18n="@@crm.opportunities.mes.opportunites.a7f22363">Mes opportunités</label>
         </div>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser la liste" i18n="@@crm.opportunities.actualiser.9d3b2a7d">Actualiser</app-button>
-        <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle opportunité" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57">Nouvelle opportunité</app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser la liste" i18n="@@crm.opportunities.actualiser.9d3b2a7d"> Actualiser </app-button>
+        <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle opportunité" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57"> Nouvelle opportunité </app-button>
       </div>
     </div>
     @if (error()) {
@@ -143,7 +143,7 @@ interface StageOption {
             <div class="empty-state">
               <p class="empty-title" i18n="@@crm.opportunities.aucune.opportunite.pour.ces.criteres.56b4694e">Aucune opportunité pour ces critères</p>
               <p class="empty-hint" i18n="@@crm.opportunities.creez.une.opportunite.pour.suivre.un.deal.dans.l.5ed28c3c">Créez une opportunité pour suivre un deal dans le pipeline.</p>
-              <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une opportunité" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57">Nouvelle opportunité</app-button>
+              <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une opportunité" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57"> Nouvelle opportunité </app-button>
             </div>
           </td>
         </tr>
@@ -156,12 +156,12 @@ interface StageOption {
       [draggable]="false"
       styleClass="opp-form-dialog"
       [contentStyle]="{ overflow: 'visible', padding: 0 }"
-      [header]="editingId ? 'Modifier l’opportunité' : 'Nouvelle opportunité'"
+      [header]="editingId ? loc_ui_tern_modifier_l_opportunite_c169c9 : loc_ui_tern_nouvelle_opportunite_ffadea"
       [style]="{ width: 'min(560px, 96vw)' }"
       (onHide)="resetFormDialog()"
       [attr.aria-describedby]="'opp-form-desc'">
       <p id="opp-form-desc" class="sr-only">
-        {{ editingId ? 'Modifiez les champs puis enregistrez.' : 'Renseignez le client, le montant et la date de clôture attendue.' }}
+        {{ editingId ? loc_ui_tern_modifiez_les_champs_puis_enregistrez_d6b04c : loc_ui_tern_renseignez_le_client_le_montant_et_la_date_e8d113 }}
       </p>
       <div class="opp-dialog-body">
         <form [formGroup]="oppForm" (ngSubmit)="saveOpportunity()" class="opp-form">
@@ -169,7 +169,7 @@ interface StageOption {
             <h3 id="opp-section-deal" class="form-block-title" i18n="@@crm.opportunities.deal.87078fc0">Deal</h3>
             @if (!editingId) {
               <div class="form-field">
-                <label class="field-label" for="oppClient">Client <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
+                <label class="field-label" for="oppClient"><ng-container i18n="@@crm.opportunities.client.1bdd79b1">Client </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
                 <p-select
                   inputId="oppClient"
                   formControlName="clientId"
@@ -190,7 +190,7 @@ interface StageOption {
               </div>
             }
             <div class="form-field">
-              <label class="field-label" for="oppTitle">Titre <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
+              <label class="field-label" for="oppTitle"><ng-container i18n="@@crm.opportunities.titre.eb97899a">Titre </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="oppTitle"
@@ -205,7 +205,7 @@ interface StageOption {
             </div>
             <div class="form-grid-2">
               <div class="form-field">
-                <label class="field-label" for="oppAmount">Montant attendu (TND) <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
+                <label class="field-label" for="oppAmount"><ng-container i18n="@@crm.opportunities.montant.attendu.tnd.05d34754">Montant attendu (TND) </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
                 <p-inputNumber
                   inputId="oppAmount"
                   formControlName="expectedAmount"
@@ -215,7 +215,7 @@ interface StageOption {
                   styleClass="w-full"></p-inputNumber>
               </div>
               <div class="form-field">
-                <label class="field-label" for="oppProb">Probabilité (%) <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
+                <label class="field-label" for="oppProb"><ng-container i18n="@@crm.opportunities.probabilite.0871fb8b">Probabilité (%) </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
                 <p-inputNumber
                   inputId="oppProb"
                   formControlName="probability"
@@ -225,7 +225,7 @@ interface StageOption {
               </div>
             </div>
             <div class="form-field">
-              <label class="field-label" for="oppClose">Date de clôture attendue <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
+              <label class="field-label" for="oppClose"><ng-container i18n="@@crm.opportunities.date.de.cloture.attendue.f610b7d3">Date de clôture attendue </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
               <p-datepicker
                 inputId="oppClose"
                 formControlName="expectedCloseDate"
@@ -267,7 +267,7 @@ interface StageOption {
       </div>
       <ng-template pTemplate="footer">
         <div class="opp-dialog-footer-actions">
-          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" (click)="formDialogVisible = false" ariaLabel="Annuler" i18n="@@crm.opportunities.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" (click)="formDialogVisible = false" ariaLabel="Annuler" i18n="@@crm.opportunities.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
@@ -275,8 +275,8 @@ interface StageOption {
             type="button"
             (click)="saveOpportunity()"
             [disabled]="oppForm.invalid || saving()"
-            [attr.aria-label]="editingId ? 'Enregistrer l’opportunité' : 'Créer l’opportunité'">
-            {{ saving() ? (editingId ? 'Enregistrement...' : 'Création...') : (editingId ? 'Enregistrer' : 'Créer') }}
+            [attr.aria-label]="editingId ? loc_ui_tern_enregistrer_l_opportunite_62ea6f : loc_ui_tern_creer_l_opportunite_19bea5">
+            {{ saving() ? (editingId ? loc_ui_tern_enregistrement_9bf105 : loc_ui_tern_creation_dca950) : (editingId ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_1a6861) }}
           </app-button>
         </div>
       </ng-template>
@@ -288,15 +288,15 @@ interface StageOption {
       [draggable]="false"
       styleClass="opp-lose-dialog"
       [contentStyle]="{ overflow: 'auto', padding: 0 }"
-      header="Motif de perte"
+      header="Motif de perte" i18n-header="Motif de perte"
       [style]="{ width: 'min(420px, 96vw)' }"
       (onHide)="resetLoseDialog()">
       <div class="opp-dialog-body opp-dialog-body--lose">
         <form [formGroup]="loseForm" (ngSubmit)="confirmLose()" class="opp-form opp-form-lose">
-          <p id="lose-reason-hint" class="lose-dialog-hint" i18n="@@crm.opportunities.decrivez.brievement.pourquoi.l.opportunite.est.p.a98518e5">Décrivez brièvement pourquoi l’opportunité est perdue (prix, concurrent, report, absence de budget…). Réservé à
-            l’équipe interne.</p>
+          <p id="lose-reason-hint" class="lose-dialog-hint" i18n="@@crm.opportunities.decrivez.brievement.pourquoi.l.opportunite.est.p.a98518e5"> Décrivez brièvement pourquoi l’opportunité est perdue (prix, concurrent, report, absence de budget…). Réservé à
+            l’équipe interne. </p>
           <div class="form-field">
-            <label class="field-label" for="loseReason">Motif <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
+            <label class="field-label" for="loseReason"><ng-container i18n="@@crm.opportunities.motif.2a198f47">Motif </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.opportunities.text.df58248c">*</span></label>
             <textarea
               pTextarea
               id="loseReason"
@@ -317,7 +317,7 @@ interface StageOption {
       </div>
       <ng-template pTemplate="footer">
         <div class="opp-dialog-footer-actions opp-dialog-footer-actions--lose">
-          <app-button variant="ghost" size="sm" type="button" (click)="loseDialogVisible = false" ariaLabel="Annuler" i18n="@@crm.opportunities.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="ghost" size="sm" type="button" (click)="loseDialogVisible = false" ariaLabel="Annuler" i18n="@@crm.opportunities.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="loseSaving() ? 'pi-spin pi-spinner' : 'pi-check'"
@@ -326,7 +326,7 @@ interface StageOption {
             (click)="confirmLose()"
             [disabled]="loseForm.invalid || loseSaving()"
             ariaLabel="Confirmer la perte du deal">
-            {{ loseSaving() ? 'Envoi...' : 'Confirmer' }}
+            {{ loseSaving() ? loc_ui_tern_envoi_5a377e : loc_ui_tern_confirmer_80a664 }}
           </app-button>
         </div>
       </ng-template>
@@ -573,6 +573,18 @@ interface StageOption {
   `
 })
 export class OpportunityListComponent implements OnInit {
+  readonly loc_ui_tern_modifier_l_opportunite_c169c9 = $localize`:@@ui.tern.modifier.l.opportunite.c169c9:Modifier l’opportunité`;
+  readonly loc_ui_tern_nouvelle_opportunite_ffadea = $localize`:@@ui.tern.nouvelle.opportunite.ffadea:Nouvelle opportunité`;
+  readonly loc_ui_tern_modifiez_les_champs_puis_enregistrez_d6b04c = $localize`:@@ui.tern.modifiez.les.champs.puis.enregistrez.d6b04c:Modifiez les champs puis enregistrez.`;
+  readonly loc_ui_tern_renseignez_le_client_le_montant_et_la_date_e8d113 = $localize`:@@ui.tern.renseignez.le.client.le.montant.et.la.date.e8d113:Renseignez le client, le montant et la date de clôture attendue.`;
+  readonly loc_ui_tern_enregistrer_l_opportunite_62ea6f = $localize`:@@ui.tern.enregistrer.l.opportunite.62ea6f:Enregistrer l’opportunité`;
+  readonly loc_ui_tern_creer_l_opportunite_19bea5 = $localize`:@@ui.tern.creer.l.opportunite.19bea5:Créer l’opportunité`;
+  readonly loc_ui_tern_enregistrement_9bf105 = $localize`:@@ui.tern.enregistrement.9bf105:Enregistrement...`;
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_1a6861 = $localize`:@@ui.tern.creer.1a6861:Créer`;
+  readonly loc_ui_tern_envoi_5a377e = $localize`:@@ui.tern.envoi.5a377e:Envoi...`;
+  readonly loc_ui_tern_confirmer_80a664 = $localize`:@@ui.tern.confirmer.80a664:Confirmer`;
   private readonly crm = inject(CrmService);
   private readonly clientsApi = inject(ClientService);
   private readonly auth = inject(AuthService);
@@ -662,7 +674,7 @@ export class OpportunityListComponent implements OnInit {
         if (r.success && r.data) {
           this.items.set(r.data);
         } else {
-          this.error.set(r.error ?? 'Erreur');
+          this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: () => this.error.set('Erreur réseau')
@@ -749,7 +761,7 @@ export class OpportunityListComponent implements OnInit {
               this.formDialogVisible = false;
               this.load();
             } else {
-              this.formError.set(r.error ?? 'Enregistrement impossible');
+              this.formError.set(r.error ?? $localize`:@@ui.tern.enregistrement.impossible.1e5e10:Enregistrement impossible`);
             }
           },
           error: () => {
@@ -784,7 +796,7 @@ export class OpportunityListComponent implements OnInit {
             this.formDialogVisible = false;
             this.load();
           } else {
-            this.formError.set(r.error ?? 'Création impossible');
+            this.formError.set(r.error ?? $localize`:@@ui.tern.creation.impossible.e15c59:Création impossible`);
           }
         },
         error: () => {
@@ -798,7 +810,7 @@ export class OpportunityListComponent implements OnInit {
     this.crm.advanceOpportunity(id).subscribe({
       next: r => {
         if (!r.success) {
-          this.error.set(r.error ?? 'Action impossible');
+          this.error.set(r.error ?? $localize`:@@ui.tern.action.impossible.f9002b:Action impossible`);
         }
         this.load();
       },
@@ -810,7 +822,7 @@ export class OpportunityListComponent implements OnInit {
     this.crm.winOpportunity(id).subscribe({
       next: r => {
         if (!r.success) {
-          this.error.set(r.error ?? 'Action impossible');
+          this.error.set(r.error ?? $localize`:@@ui.tern.action.impossible.f9002b:Action impossible`);
         }
         this.load();
       },
@@ -846,7 +858,7 @@ export class OpportunityListComponent implements OnInit {
           this.loseTargetId = null;
           this.load();
         } else {
-          this.loseError.set(r.error ?? 'Action impossible');
+          this.loseError.set(r.error ?? $localize`:@@ui.tern.action.impossible.f9002b:Action impossible`);
         }
       },
       error: () => {

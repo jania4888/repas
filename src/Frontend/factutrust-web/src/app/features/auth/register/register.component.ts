@@ -121,7 +121,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   registrationFormAriaLabel = computed(() => {
     const stepNames = ['Compte', 'Entreprise', 'Adresse'];
     const cur = this.currentStep();
-    const prev = cur > 0 ? `Étapes précédentes complétées. ` : '';
+    const prev = cur > 0 ? $localize`:@@ui.tern.etapes.precedentes.completees.b92c63:Étapes précédentes complétées. ` : '';
     return `${prev}Étape ${cur + 1} sur 3 : ${stepNames[cur]}.`;
   });
 

@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, ViewChild, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -19,7 +20,7 @@ import {
 @Component({
   selector: 'app-project-recent-projects-panel',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterLink,
@@ -48,7 +49,7 @@ import {
         [paginator]="filteredRows().length > rowsPerPage"
         [rows]="rowsPerPage"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Afficher {first} à {last} sur {totalRecords} projets">
+        currentPageReportTemplate="Afficher {first} à {last} sur {totalRecords} projets" i18n-currentPageReportTemplate="Afficher {first} à {last} sur {totalRecords} projets">
         <ng-template pTemplate="header">
           <tr>
             <th i18n="@@projects.components.projet.a9de3a26">Projet</th>
@@ -72,7 +73,7 @@ import {
                   @if (p.description) {
                     <span class="proj-dash-project-desc">{{ p.description }}</span>
                   } @else if (p.kindDisplay) {
-                    <span class="proj-dash-project-desc">{{ p.kindDisplay }}</span>
+                    <span class="proj-dash-project-desc">{{ p.kindDisplay | backendLabel }}</span>
                   }
                 </div>
               </div>
@@ -88,13 +89,13 @@ import {
               <p-progressBar [value]="p.progressPercent" [showValue]="false" />
               <span class="proj-dash-progress-pct">{{ p.progressPercent }} %</span>
             </td>
-            <td><app-status-badge [status]="statusBadge(p.status)" [label]="p.statusDisplay" /></td>
+            <td><app-status-badge [status]="statusBadge(p.status)" [label]="p.statusDisplay | backendLabel" /></td>
             <td>{{ p.endDate ? (p.endDate | date:'shortDate') : '—' }}</td>
             <td class="proj-dash-actions-col" (click)="$event.stopPropagation()">
               <button
                 type="button"
                 class="proj-dash-row-menu-btn"
-                [attr.aria-label]="'Actions pour ' + p.name"
+                [attr.aria-label]="loc_ui_tern_actions_pour_cf433f + p.name"
                 (click)="onMenuClick($event, p)">
                 <i class="pi pi-ellipsis-v"></i>
               </button>
@@ -114,6 +115,7 @@ import {
   `
 })
 export class ProjectRecentProjectsPanelComponent {
+  readonly loc_ui_tern_actions_pour_cf433f = $localize`:@@ui.tern.actions.pour.cf433f:Actions pour `;
   @ViewChild('rowMenu') rowMenu?: Menu;
 
   @Input() data: ProjectDashboardExtended | null = null;
@@ -139,7 +141,7 @@ export class ProjectRecentProjectsPanelComponent {
 
   tableSubtitle(): string | undefined {
     const total = this.data?.totalProjects;
-    return total != null ? `${total} projet(s) au total` : undefined;
+    return total != null ? $localize`:@@ui.tern.ph.projet.s.au.total.4cba89:${total}:p0: projet(s) au total` : undefined;
   }
 
   projectInitial(name: string): string {

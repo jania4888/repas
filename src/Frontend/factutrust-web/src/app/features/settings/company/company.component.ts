@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -63,7 +64,7 @@ import {
       title="Mon entreprise" i18n-title="Mon entreprise" 
       subtitle="Informations légales et paramètres de facturation">
       <p-button 
-        label="Retour" 
+        label="Retour" i18n-label="Retour" 
         icon="pi pi-arrow-left" 
         [outlined]="true"
         routerLink="/settings">
@@ -87,7 +88,7 @@ import {
           </div>
         </div>
         <p-button 
-          label="Réessayer" 
+          label="Réessayer" i18n-label="Réessayer" 
           icon="pi pi-refresh"
           [disabled]="loading()"
           (onClick)="loadCompanyData()"
@@ -112,7 +113,7 @@ import {
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <!-- Company Identity -->
-        <p-card header="Identité de l'entreprise" styleClass="form-card">
+        <p-card header="Identité de l'entreprise" i18n-header="Identité de l'entreprise" styleClass="form-card">
           <div class="logo-section">
             <div class="logo-preview">
               @if (logoUrl()) {
@@ -136,7 +137,7 @@ import {
           <p-divider></p-divider>
 
           <div class="form-group">
-            <label for="companyName">Raison sociale <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
+            <label for="companyName"><ng-container i18n="@@settings.company.raison.sociale.28eaf8b0">Raison sociale </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <input 
               pInputText 
               id="companyName" 
@@ -157,7 +158,7 @@ import {
 
           <div class="form-row">
             <div class="form-group">
-              <label for="nif">Matricule fiscal <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
+              <label for="nif"><ng-container i18n="@@settings.company.matricule.fiscal.304096c4">Matricule fiscal </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <p-inputMask
                 id="nif"
                 formControlName="nif"
@@ -197,7 +198,7 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="taxRegime">Régime fiscal <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
+            <label for="taxRegime"><ng-container i18n="@@settings.company.regime.fiscal.ddf8b3c2">Régime fiscal </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <p-select 
               id="taxRegime"
               [options]="taxRegimes" 
@@ -209,9 +210,9 @@ import {
         </p-card>
 
         <!-- Contact & Address -->
-        <p-card header="Coordonnées" styleClass="form-card">
+        <p-card header="Coordonnées" i18n-header="Coordonnées" styleClass="form-card">
           <div class="form-group">
-            <label for="street">Adresse <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
+            <label for="street"><ng-container i18n="@@settings.company.adresse.522e1466">Adresse </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <input 
               pInputText 
               id="street" 
@@ -241,7 +242,7 @@ import {
             </div>
 
             <div class="form-group">
-              <label for="city">Ville <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
+              <label for="city"><ng-container i18n="@@settings.company.ville.97217611">Ville </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="city" 
@@ -251,7 +252,7 @@ import {
           </div>
 
           <div class="form-group">
-            <label for="governorate">Gouvernorat <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
+            <label for="governorate"><ng-container i18n="@@settings.company.gouvernorat.b9cd1d99">Gouvernorat </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <p-select 
               id="governorate"
               [options]="governorates" 
@@ -266,7 +267,7 @@ import {
 
           <div class="form-row">
             <div class="form-group">
-              <label for="email">Email <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
+              <label for="email"><ng-container i18n="@@settings.company.email.84add5b2">Email </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="email" 
@@ -276,7 +277,7 @@ import {
             </div>
 
             <div class="form-group">
-              <label for="phone">Téléphone <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
+              <label for="phone"><ng-container i18n="@@settings.company.telephone.d3b023ea">Téléphone </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
               <p-inputMask
                 id="phone"
                 formControlName="phone"
@@ -298,7 +299,7 @@ import {
         </p-card>
 
         <!-- Bank Information -->
-        <p-card header="Informations bancaires" styleClass="form-card bank-card">
+        <p-card header="Informations bancaires" i18n-header="Informations bancaires" styleClass="form-card bank-card">
           <div class="form-group">
             <label for="bankName" i18n="@@settings.company.nom.de.la.banque.9848ce74">Nom de la banque</label>
             <input 
@@ -333,10 +334,10 @@ import {
         </p-card>
 
         <!-- Invoice Settings -->
-        <p-card header="Paramètres de facturation" styleClass="form-card invoice-card">
+        <p-card header="Paramètres de facturation" i18n-header="Paramètres de facturation" styleClass="form-card invoice-card">
           <div class="form-group numbering-link">
             <label i18n="@@settings.company.numerotation.des.documents.6857c7f1">Numérotation des documents</label>
-            <p class="form-hint" i18n="@@settings.company.configurez.le.format.et.le.debut.de.numerotation.2d1005c7">Configurez le format et le début de numérotation de vos factures et autres documents.</p>
+            <p class="form-hint" i18n="@@settings.company.configurez.le.format.et.le.debut.de.numerotation.2d1005c7"> Configurez le format et le début de numérotation de vos factures et autres documents. </p>
             <a routerLink="/settings/numbering" class="numbering-settings-link">
               <i class="pi pi-sort-numeric-down"></i>
               Ouvrir les numérotations
@@ -368,7 +369,7 @@ import {
           </div>
         </p-card>
 
-        <p-card header="Espace client" styleClass="form-card">
+        <p-card header="Espace client" i18n-header="Espace client" styleClass="form-card">
           <div class="form-group">
             <label for="clientPortalEnabled" i18n="@@settings.company.activer.l.espace.client.d7a22239">Activer l’espace client</label>
             <p-inputSwitch inputId="clientPortalEnabled" formControlName="clientPortalEnabled"></p-inputSwitch>
@@ -377,7 +378,7 @@ import {
         </p-card>
 
         <!-- Stock Configuration -->
-        <p-card header="Configuration du Stock" styleClass="form-card stock-card">
+        <p-card header="Configuration du Stock" i18n-header="Configuration du Stock" styleClass="form-card stock-card">
           <div class="form-group">
             <label for="warehouseName" i18n="@@settings.company.nom.de.l.entrepot.principal.2f77abf6">Nom de l'entrepôt principal</label>
             <input 
@@ -388,7 +389,7 @@ import {
               class="w-full">
             <small class="form-hint" i18n="@@settings.company.ce.nom.sera.utilise.pour.votre.entrepot.par.defa.fcaa6d42">Ce nom sera utilisé pour votre entrepôt par défaut.</small>
             <small class="form-hint warehouse-link">
-              Pour gérer plusieurs entrepôts ou leurs adresses,
+              <ng-container i18n="@@settings.company.pour.gerer.plusieurs.entrepots.ou.leurs.adresses.034f4fd9"> Pour gérer plusieurs entrepôts ou leurs adresses, </ng-container>
               <a routerLink="/settings/warehouses" i18n="@@settings.company.ouvrez.la.gestion.des.entrepots.2d309303">ouvrez la gestion des entrepôts</a>.
             </small>
           </div>
@@ -398,14 +399,14 @@ import {
       <!-- Actions -->
       <div class="form-actions">
         <p-button 
-          label="Annuler" 
+          label="Annuler" i18n-label="Annuler" 
           icon="pi pi-times" 
           [outlined]="true"
           routerLink="/settings">
         </p-button>
         <p-button 
           type="submit" 
-          label="Enregistrer" 
+          label="Enregistrer" i18n-label="Enregistrer" 
           icon="pi pi-check"
           [loading]="saving()"
           [disabled]="form.invalid || saving()">
@@ -413,14 +414,14 @@ import {
       </div>
     </form>
 
-    <p-card header="Secteur d'activité" styleClass="form-card sector-card" id="secteur">
+    <p-card header="Secteur d'activité" i18n-header="Secteur d'activité" styleClass="form-card sector-card" id="secteur">
       @if (sectorLoading()) {
         <div class="loading-container">
           <i class="pi pi-spin pi-spinner" style="font-size: 1.5rem"></i>
           <p i18n="@@settings.company.chargement.du.secteur.89ee32a8">Chargement du secteur...</p>
         </div>
       } @else {
-        <p class="form-hint" i18n="@@settings.company.votre.secteur.d.activite.permet.de.recommander.a.3c90238a">Votre secteur d'activité permet de recommander automatiquement les modules et modèles de documents adaptés à votre métier. Ce changement peut être effectué une fois par jour.</p>
+        <p class="form-hint" i18n="@@settings.company.votre.secteur.d.activite.permet.de.recommander.a.3c90238a"> Votre secteur d'activité permet de recommander automatiquement les modules et modèles de documents adaptés à votre métier. Ce changement peut être effectué une fois par jour. </p>
         <div class="form-grid sector-grid">
           <div class="form-group">
             <label for="sectorSegment" i18n="@@settings.company.segment.44986cef">Segment</label>
@@ -456,7 +457,7 @@ import {
         }
         <div class="sector-actions">
           <p-button
-            label="Prévisualiser les changements"
+            label="Prévisualiser les changements" i18n-label="Prévisualiser les changements"
             icon="pi pi-eye"
             [outlined]="true"
             [disabled]="!isSectorChanged() || sectorPreviewLoading()"
@@ -468,7 +469,7 @@ import {
     </p-card>
 
     <p-dialog
-      header="Aperçu du changement de secteur"
+      header="Aperçu du changement de secteur" i18n-header="Aperçu du changement de secteur"
       [(visible)]="previewDialogVisible"
       [modal]="true"
       [style]="{ width: 'min(480px, 95vw)' }"
@@ -505,9 +506,9 @@ import {
         </div>
       }
       <div class="dialog-actions">
-        <p-button label="Annuler" [outlined]="true" severity="secondary" (onClick)="previewDialogVisible = false"></p-button>
+        <p-button label="Annuler" i18n-label="Annuler" [outlined]="true" severity="secondary" (onClick)="previewDialogVisible = false"></p-button>
         <p-button
-          label="Confirmer"
+          label="Confirmer" i18n-label="Confirmer"
           icon="pi pi-check"
           [loading]="sectorSaving()"
           (onClick)="confirmSectorChange()">
@@ -1168,7 +1169,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
+            summary: $localize`:@@company.component.summary.Succès:Succès`,
             detail: response.message || 'Informations de l\'entreprise mises à jour',
             life: 3000
           });
@@ -1329,15 +1330,15 @@ export class CompanyComponent implements OnInit, OnDestroy {
           if (warnings.length > 0) {
             this.toastService.add({
               severity: 'warn',
-              summary: 'Secteur mis à jour avec avertissements',
+              summary: $localize`:@@company.component.summary.Secteur_mis_jo:Secteur mis à jour avec avertissements`,
               detail: warnings.join(' '),
               life: 8000
             });
           } else {
             this.toastService.add({
               severity: 'success',
-              summary: 'Secteur d\'activité mis à jour',
-              detail: 'Vos recommandations de modules ont été actualisées.'
+              summary: $localize`:@@company.component.summary.Secteur_d_activi:Secteur d'activité mis à jour`,
+              detail: $localize`:@@company.component.detail.Vos_recommandati:Vos recommandations de modules ont été actualisées.`
             });
           }
         },

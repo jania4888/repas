@@ -87,7 +87,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               <td class="es-amt">{{ r.debit | number : '1.3-3' }}</td>
               <td class="es-amt">{{ r.credit | number : '1.3-3' }}</td>
               <td>{{ r.letteringCode }}</td>
-              <td><span class="es-badge" [class.es-badge-draft]="r.isDraft">{{ r.isDraft ? 'Brouillon' : r.status === 2 ? 'Clôturée' : 'Validée' }}</span></td>
+              <td><span class="es-badge" [class.es-badge-draft]="r.isDraft">{{ r.isDraft ? loc_ui_tern_brouillon_57d2d7 : r.status === 2 ? loc_ui_tern_cloturee_da2e2b : loc_ui_tern_validee_2cc6c3 }}</span></td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
@@ -114,6 +114,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class EntrySearchComponent implements OnInit {
+  readonly loc_ui_tern_brouillon_57d2d7 = $localize`:@@ui.tern.brouillon.57d2d7:Brouillon`;
+  readonly loc_ui_tern_cloturee_da2e2b = $localize`:@@ui.tern.cloturee.da2e2b:Clôturée`;
+  readonly loc_ui_tern_validee_2cc6c3 = $localize`:@@ui.tern.validee.2cc6c3:Validée`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly route = inject(ActivatedRoute);
@@ -164,7 +167,7 @@ export class EntrySearchComponent implements OnInit {
         this.loading.set(false);
         this.searched.set(true);
         if (res.success && res.data) this.rows.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
     });

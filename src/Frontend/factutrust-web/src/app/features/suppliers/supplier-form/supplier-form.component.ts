@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -68,13 +69,13 @@ interface GovernorateOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      [title]="isEditMode ? 'Modifier le fournisseur' : 'Nouveau fournisseur'"
-      [subtitle]="isEditMode ? 'Mettre à jour les informations du fournisseur.' : 'Renseignez les informations essentielles de ce fournisseur.'">
+      [title]="isEditMode ? loc_ui_tern_modifier_le_fournisseur_2436d5 : loc_ui_tern_nouveau_fournisseur_7e0ee2"
+      [subtitle]="isEditMode ? loc_ui_tern_mettre_a_jour_les_informations_du_fourniss_e2ba76 : loc_ui_tern_renseignez_les_informations_essentielles_d_2da734">
       <app-button
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/suppliers" i18n="@@suppliers.supplier-form.annuler.49ba3292">Annuler</app-button>
+        routerLink="/suppliers" i18n="@@suppliers.supplier-form.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     @if (loading()) {
@@ -87,7 +88,7 @@ interface GovernorateOption {
         <div class="form-grid">
           <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-user" [number]="1">
             <div class="form-group">
-              <label for="name">Nom ou raison sociale <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
+              <label for="name"><ng-container i18n="@@suppliers.supplier-form.nom.ou.raison.sociale.2983b5c6">Nom ou raison sociale </ng-container> <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="name"
@@ -105,7 +106,7 @@ interface GovernorateOption {
 
             <div class="form-row">
               <div class="form-group">
-                <label for="type">Type <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
+                <label for="type"><ng-container i18n="@@suppliers.supplier-form.type.3deb7456">Type </ng-container> <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
                 <p-select
                   id="type"
                   [options]="typeOptions"
@@ -146,7 +147,7 @@ interface GovernorateOption {
                   </div>
                 }
                 @if (conflictSupplierId() && conflictField() === 'nif') {
-                  <a class="form-conflict-link" [routerLink]="['/suppliers', conflictSupplierId()]" i18n="@@suppliers.supplier-form.ouvrir.le.fournisseur.existant.8b13c3cd">Ouvrir le fournisseur existant</a>
+                  <a class="form-conflict-link" [routerLink]="['/suppliers', conflictSupplierId()]" i18n="@@suppliers.supplier-form.ouvrir.le.fournisseur.existant.8b13c3cd"> Ouvrir le fournisseur existant </a>
                 }
               </div>
             </div>
@@ -189,7 +190,7 @@ interface GovernorateOption {
                 </div>
               }
               @if (conflictSupplierId() && conflictField() === 'email') {
-                <a class="form-conflict-link" [routerLink]="['/suppliers', conflictSupplierId()]" i18n="@@suppliers.supplier-form.ouvrir.le.fournisseur.existant.8b13c3cd">Ouvrir le fournisseur existant</a>
+                <a class="form-conflict-link" [routerLink]="['/suppliers', conflictSupplierId()]" i18n="@@suppliers.supplier-form.ouvrir.le.fournisseur.existant.8b13c3cd"> Ouvrir le fournisseur existant </a>
               }
             </div>
 
@@ -217,7 +218,7 @@ interface GovernorateOption {
 
           <app-form-section title="Adresse" i18n-title="Adresse" icon="pi-map-marker" [number]="3" class="address-card">
             <div class="form-group">
-              <label for="street">Adresse <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
+              <label for="street"><ng-container i18n="@@suppliers.supplier-form.adresse.522e1466">Adresse </ng-container> <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="street"
@@ -246,7 +247,7 @@ interface GovernorateOption {
 
             <div class="form-row">
               <div class="form-group">
-                <label for="city">Ville <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
+                <label for="city"><ng-container i18n="@@suppliers.supplier-form.ville.97217611">Ville </ng-container> <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
                 <input
                   pInputText
                   id="city"
@@ -274,7 +275,7 @@ interface GovernorateOption {
             </div>
 
             <div class="form-group">
-              <label for="governorate">Gouvernorat <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
+              <label for="governorate"><ng-container i18n="@@suppliers.supplier-form.gouvernorat.b9cd1d99">Gouvernorat </ng-container> <span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span></label>
               <p-select
                 id="governorate"
                 [options]="governorates"
@@ -415,14 +416,14 @@ interface GovernorateOption {
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/suppliers" i18n="@@suppliers.supplier-form.annuler.49ba3292">Annuler</app-button>
+            routerLink="/suppliers" i18n="@@suppliers.supplier-form.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             type="submit"
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             [disabled]="form.invalid || saving()">
-            {{ isEditMode ? 'Enregistrer' : 'Créer le fournisseur' }}
+            {{ isEditMode ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_le_fournisseur_13e0a7 }}
           </app-button>
         </div>
       </form>
@@ -576,6 +577,12 @@ interface GovernorateOption {
   `]
 })
 export class SupplierFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_fournisseur_2436d5 = $localize`:@@ui.tern.modifier.le.fournisseur.2436d5:Modifier le fournisseur`;
+  readonly loc_ui_tern_nouveau_fournisseur_7e0ee2 = $localize`:@@ui.tern.nouveau.fournisseur.7e0ee2:Nouveau fournisseur`;
+  readonly loc_ui_tern_mettre_a_jour_les_informations_du_fourniss_e2ba76 = $localize`:@@ui.tern.mettre.a.jour.les.informations.du.fourniss.e2ba76:Mettre à jour les informations du fournisseur.`;
+  readonly loc_ui_tern_renseignez_les_informations_essentielles_d_2da734 = $localize`:@@ui.tern.renseignez.les.informations.essentielles.d.2da734:Renseignez les informations essentielles de ce fournisseur.`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_le_fournisseur_13e0a7 = $localize`:@@ui.tern.creer.le.fournisseur.13e0a7:Créer le fournisseur`;
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -905,8 +912,8 @@ export class SupplierFormComponent implements OnInit {
         this.loading.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger le fournisseur'
+          summary: $localize`:@@supplier-form.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@supplier-form.component.detail.Impossible_de_ch:Impossible de charger le fournisseur`
         });
         this.router.navigate(['/suppliers']);
       }
@@ -942,10 +949,10 @@ export class SupplierFormComponent implements OnInit {
         next: (response) => {
           this.saving.set(false);
           if (response.success) {
-            this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Fournisseur mis à jour' });
+            this.toastService.add({ severity: 'success', summary: $localize`:@@supplier-form.component.summary.Succès:Succès`, detail: $localize`:@@supplier-form.component.detail.Fournisseur_mis_:Fournisseur mis à jour` });
             this.router.navigate(['/suppliers', this.supplierId]);
           } else {
-            this.toastService.add({ severity: 'error', summary: 'Erreur', detail: response.errors?.[0] || 'Erreur' });
+            this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-form.component.summary.Erreur:Erreur`, detail: response.errors?.[0] || 'Erreur' });
           }
         },
         error: (err) => {
@@ -976,10 +983,10 @@ export class SupplierFormComponent implements OnInit {
         next: (response) => {
           this.saving.set(false);
           if (response.success) {
-            this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Fournisseur créé avec succès' });
+            this.toastService.add({ severity: 'success', summary: $localize`:@@supplier-form.component.summary.Succès:Succès`, detail: $localize`:@@supplier-form.component.detail.Fournisseur_cr_:Fournisseur créé avec succès` });
             this.router.navigate(['/suppliers']);
           } else {
-            this.toastService.add({ severity: 'error', summary: 'Erreur', detail: response.errors?.[0] || 'Erreur' });
+            this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-form.component.summary.Erreur:Erreur`, detail: response.errors?.[0] || 'Erreur' });
           }
         },
         error: (err) => {
@@ -996,7 +1003,7 @@ export class SupplierFormComponent implements OnInit {
       return;
     }
     const msg = this.errorHandler.extractErrorMessage(err);
-    this.toastService.add({ severity: 'error', summary: 'Erreur', detail: msg });
+    this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-form.component.summary.Erreur:Erreur`, detail: msg });
   }
 
   private applyDuplicateConflict(err: { error?: { data?: unknown } }): void {
@@ -1011,7 +1018,7 @@ export class SupplierFormComponent implements OnInit {
     this.conflictSupplierId.set(conflict.existingSupplierId);
     this.toastService.add({
       severity: 'warn',
-      summary: 'Fournisseur existant',
+      summary: $localize`:@@supplier-form.component.summary.Fournisseur_exis:Fournisseur existant`,
       detail: msg,
       life: 6000
     });

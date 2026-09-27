@@ -1,12 +1,16 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Injectable, PLATFORM_ID, computed, effect, inject, signal, untracked } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { environment } from '@environments/environment';
 import { AuthService } from '@core/services/auth.service';
 import { ErpPreferencesService } from '@core/services/erp-preferences.service';
-import { erpBootEffectiveLocale } from './erp-boot-locale';
+import { erpBootArabicCatalogRejected, erpBootEffectiveLocale } from './erp-boot-locale';
+import { ErpDocumentLocaleBridge } from './erp-document-locale.bridge';
 import {
   ERP_DIR,
+  ERP_FORCE_FR_SESSION_KEY,
+  ERP_FRENCH_ONLY_PATH,
   ERP_LANG_TAG,
   ERP_LOCALE_STORAGE_KEY,
   ERP_LOCALE_SYNC_RELOAD_KEY,
@@ -20,6 +24,9 @@ export const ERP_RTL_CSS = `erp-rtl.css?v=${environment.version}`;
 
 /**
  * Locale ERP (FR/AR). Seul service autorisé à poser `html[lang][dir]` hors landing active.
+ *
+ * Les traductions sont chargées une fois, avant le démarrage : `html[dir]` suit toujours le
+ * catalogue réellement chargé, et changer de langue passe par un rechargement de l'onglet.
  */
 @Injectable({ providedIn: 'root' })
 export class ErpLocaleService {
@@ -36,6 +43,23 @@ export class ErpLocaleService {
   readonly isRtl = computed(() => this.dir() === 'rtl');
   readonly langTag = computed(() => ERP_LANG_TAG[this._locale()]);
 
+  constructor() {
+    inject(ErpDocumentLocaleBridge).reapply = () => this.reapplyFromStorage();
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    // Connexion, déconnexion ou navigation vers un espace qui reste en français.
+    this.router?.events
+      ?.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => this.enforceFrenchOnlyScope());
+    if (this.auth?.user) {
+      effect(() => {
+        this.auth!.user();
+        untracked(() => this.enforceFrenchOnlyScope());
+      });
+    }
+  }
+
   arabicEnabled(): boolean {
     return Boolean(environment.erp?.arabicEnabled);
   }
@@ -49,20 +73,7 @@ export class ErpLocaleService {
 
   /** Affiche le sélecteur (espace société uniquement, drapeau actif). */
   shouldShowLanguageSwitcher(): boolean {
-    if (!this.arabicEnabled()) {
-      return false;
-    }
-    if (this.auth?.isAccountingFirm?.()) {
-      return false;
-    }
-    const url = this.router?.url ?? '';
-    if (/\/(firm|portal|platform)(\/|$)/i.test(url)) {
-      return false;
-    }
-    if (/\/auth\/(register-firm|accept-portal-invite)(\/|$)/i.test(url)) {
-      return false;
-    }
-    return true;
+    return this.arabicEnabled() && !this.mustForceFrench();
   }
 
   /** Résolution initiale (APP_INITIALIZER). */
@@ -72,6 +83,7 @@ export class ErpLocaleService {
       this.apply('fr', { persist: false });
       return 'fr';
     }
+    this.clearForceFrench();
 
     const fromUser = options?.userPreferredLanguage
       ? normalizeErpLocale(options.userPreferredLanguage)
@@ -79,33 +91,83 @@ export class ErpLocaleService {
     const fromStorage = this.readStorage();
     const boot = erpBootEffectiveLocale;
 
-    if (fromUser && fromUser !== boot && isPlatformBrowser(this.platformId)) {
-      const reloaded = sessionStorage.getItem(ERP_LOCALE_SYNC_RELOAD_KEY);
-      if (!reloaded) {
-        sessionStorage.setItem(ERP_LOCALE_SYNC_RELOAD_KEY, '1');
-        this.writeStorage(fromUser);
-        this.doc.defaultView?.location.reload();
-        return fromUser;
-      }
+    if (erpBootArabicCatalogRejected) {
+      this._userPreference.set(fromUser);
+      this.apply('fr', { persist: false });
+      return 'fr';
     }
 
-    let loc: ErpLocale = fromUser ?? fromStorage ?? boot ?? 'fr';
-    this._userPreference.set(fromUser);
+    const wanted: ErpLocale = fromUser ?? fromStorage ?? boot;
+    if (wanted !== boot && isPlatformBrowser(this.platformId) && this.claimSyncReload()) {
+      this.writeStorage(wanted);
+      this.reload();
+      return wanted;
+    }
 
+    this._userPreference.set(fromUser);
     if (!fromUser && fromStorage && this.auth?.isAuthenticated?.() && this.prefs) {
       void this.prefs.setLanguage(fromStorage);
     }
 
-    this.apply(loc, { persist: !fromUser && fromStorage === loc });
-    return loc;
+    // Seule la langue du catalogue chargé peut s'afficher sans rechargement.
+    this.apply(boot, { persist: false });
+    return boot;
   }
 
+  /** Cabinet, portail client, plateforme : ces espaces restent en français. */
   private mustForceFrench(): boolean {
-    if (this.auth?.isAccountingFirm?.()) {
+    if (this.auth?.isAccountingFirm?.() || this.auth?.isClientPortal?.()) {
       return true;
     }
-    const url = this.router?.url ?? '';
-    return /\/(firm|portal|platform)(\/|$)/i.test(url);
+    return ERP_FRENCH_ONLY_PATH.test(this.currentPath());
+  }
+
+  /** Avant la navigation initiale, `router.url` vaut `/` : lire alors l'adresse du document. */
+  private currentPath(): string {
+    if (this.router?.navigated) {
+      return this.router.url;
+    }
+    const loc = this.doc.defaultView?.location;
+    return loc ? `${loc.pathname}${loc.search}` : (this.router?.url ?? '');
+  }
+
+  /**
+   * Un espace qui reste en français ne tourne jamais avec le catalogue arabe chargé (connexion
+   * d'un utilisateur cabinet depuis une page en arabe, par exemple) : l'onglet repart en français.
+   */
+  private enforceFrenchOnlyScope(): void {
+    if (!this.arabicEnabled() || erpBootEffectiveLocale !== 'ar' || !this.mustForceFrench()) {
+      return;
+    }
+    try {
+      sessionStorage.setItem(ERP_FORCE_FR_SESSION_KEY, '1');
+    } catch {
+      // Sans ce marqueur, le rechargement redémarrerait en arabe : se contenter du sens LTR.
+      this.apply('fr', { persist: false });
+      return;
+    }
+    this.reload();
+  }
+
+  private clearForceFrench(): void {
+    try {
+      sessionStorage.removeItem(ERP_FORCE_FR_SESSION_KEY);
+    } catch {
+      /* navigation privée */
+    }
+  }
+
+  /** Au plus un rechargement de synchronisation par session d'onglet (pas de boucle). */
+  private claimSyncReload(): boolean {
+    try {
+      if (sessionStorage.getItem(ERP_LOCALE_SYNC_RELOAD_KEY)) {
+        return false;
+      }
+      sessionStorage.setItem(ERP_LOCALE_SYNC_RELOAD_KEY, '1');
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   apply(locale: ErpLocale, options?: { persist?: boolean }): void {
@@ -129,18 +191,23 @@ export class ErpLocaleService {
     }
   }
 
-  /** Après sortie de la landing : réappliquer la locale ERP mémorisée. */
+  /** Après sortie de la landing : réappliquer la langue ERP de la session (celle du catalogue chargé). */
   reapplyFromStorage(): void {
-    this.apply(this.readStorage() ?? 'fr');
+    if (erpBootArabicCatalogRejected || this.mustForceFrench()) {
+      this.apply('fr', { persist: false });
+      return;
+    }
+    this.apply(erpBootEffectiveLocale, { persist: false });
   }
 
   async setLocaleAndReload(locale: ErpLocale): Promise<void> {
-    if (!this.arabicEnabled() && locale === 'ar') {
+    if (locale === 'ar' && (!this.arabicEnabled() || this.mustForceFrench())) {
       return;
     }
     this.writeStorage(locale);
+    this.clearForceFrench();
     if (isPlatformBrowser(this.platformId)) {
-      this.doc.defaultView?.location.reload();
+      this.reload();
     }
   }
 
@@ -151,6 +218,11 @@ export class ErpLocaleService {
     } catch {
       return null;
     }
+  }
+
+  /** Point unique de rechargement (remplacé dans les tests). */
+  protected reload(): void {
+    this.doc.defaultView?.location.reload();
   }
 
   private writeStorage(locale: ErpLocale): void {

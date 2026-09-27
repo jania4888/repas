@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -97,7 +98,7 @@ import {
           icon="pi-refresh"
           type="button"
           [disabled]="loading()"
-          (click)="load()" i18n="@@accounting.monthly-declaration.actualiser.9d3b2a7d">Actualiser</app-button>
+          (click)="load()" i18n="@@accounting.monthly-declaration.actualiser.9d3b2a7d"> Actualiser </app-button>
       </div>
 
       @if (!canWrite()) {
@@ -157,7 +158,7 @@ import {
                 icon="pi pi-plus"
                 type="button"
                 [disabled]="!editable() || loading()"
-                (click)="startCreate()" i18n="@@accounting.monthly-declaration.nouvelle.rubrique.f16710ee">Nouvelle rubrique</app-button>
+                (click)="startCreate()" i18n="@@accounting.monthly-declaration.nouvelle.rubrique.f16710ee"> Nouvelle rubrique </app-button>
               <span class="dm-family__count">{{ activeCount() }} rubrique(s) active(s)</span>
             </div>
 
@@ -320,7 +321,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
         if (res.success && res.data) {
           this.configuration.set(res.data);
         } else {
-          this.error.set(res.error ?? 'Erreur de chargement de la configuration DM.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.de.la.configuration.d.15ff2d:Erreur de chargement de la configuration DM.`);
         }
       },
       error: err => {
@@ -401,12 +402,12 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
     const done = (ok: boolean, message?: string) => {
       this.savingRubric.set(false);
       if (!ok) {
-        this.error.set(message ?? 'Erreur lors de l’enregistrement de la rubrique.');
+        this.error.set(message ?? $localize`:@@ui.tern.erreur.lors.de.l.enregistrement.de.la.rubr.d150ee:Erreur lors de l’enregistrement de la rubrique.`);
         return;
       }
       this.toast.add({
         severity: 'success',
-        summary: 'Rubrique enregistrée',
+        summary: $localize`:@@monthly-declaration-config.component.summary.Rubrique_enregis:Rubrique enregistrée`,
         detail: draft.code.toUpperCase(),
         life: 4000
       });
@@ -445,7 +446,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
           } else {
             // La case reflète l'état du serveur : la recharger est la seule façon de ne pas
             // laisser l'écran afficher une inclusion qui n'a pas été enregistrée.
-            this.error.set(res.error ?? 'Erreur lors de la mise à jour de la famille.');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.mise.a.jour.de.la.famill.f72ba5:Erreur lors de la mise à jour de la famille.`);
             this.load(false);
           }
         },
@@ -466,7 +467,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
         if (res.success) {
           this.load();
         } else {
-          this.error.set(res.error ?? 'Erreur lors du changement d’état de la rubrique.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.changement.d.etat.de.la.rub.3fdf4d:Erreur lors du changement d’état de la rubrique.`);
         }
       },
       error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
@@ -480,8 +481,8 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
     this.confirmation.confirm({
       header: 'Supprimer la rubrique',
       message: `Supprimer définitivement « ${rubric.code} — ${rubric.label} » ? Les déclarations déjà déposées gardent leurs lignes ; les périodes suivantes ne la calculeront plus.`,
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@monthly-declaration-config.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@monthly-declaration-config.component.rejectLabel.Annuler:Annuler`,
       size: 'md',
       accept: () => this.remove(rubric)
     });
@@ -493,14 +494,14 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
         if (res.success) {
           this.toast.add({
             severity: 'success',
-            summary: 'Rubrique supprimée',
+            summary: $localize`:@@monthly-declaration-config.component.summary.Rubrique sup:Rubrique supprimée`,
             detail: rubric.code,
             life: 4000
           });
           this.form.set(null);
           this.load();
         } else {
-          this.error.set(res.error ?? 'Erreur lors de la suppression de la rubrique.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.suppression.de.la.rubriq.389719:Erreur lors de la suppression de la rubrique.`);
         }
       },
       error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
@@ -521,13 +522,13 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
           this.duplicationResult.set(res.data);
           this.toast.add({
             severity: 'success',
-            summary: 'Configuration dupliquée',
+            summary: $localize`:@@monthly-declaration-config.component.summary.Configuration_du:Configuration dupliquée`,
             detail: `${res.data.inserted} insérée(s), ${res.data.replaced} remplacée(s)`,
             life: 5000
           });
           this.load();
         } else {
-          this.error.set(res.error ?? 'Erreur lors de la duplication de la configuration.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.duplication.de.la.config.837517:Erreur lors de la duplication de la configuration.`);
         }
       },
       error: err => {

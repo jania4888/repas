@@ -33,7 +33,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()" i18n="@@reports.fiches.exporter.0cd84bdc">Exporter</app-button>
+        (click)="onExport()" i18n="@@reports.fiches.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     @if (loading()) {
@@ -44,13 +44,13 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Nombre de clients"
+          label="Nombre de clients" i18n-label="Nombre de clients"
           [value]="reportsData()!.totalClients"
           icon="pi-users"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Nombre de produits"
+          label="Nombre de produits" i18n-label="Nombre de produits"
           [value]="reportsData()!.totalProducts"
           icon="pi-cube"
           variant="primary">
@@ -121,7 +121,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
                 [rows]="clientBalanceRows()"
                 [loading]="clientBalancesLoading()"
                 partyLabel="Client"
-                emptyMessage="Aucun solde client"
+                emptyMessage="Aucun solde client" i18n-emptyMessage="Aucun solde client"
                 ariaLabel="Soldes clients">
               </app-party-balances-table>
             </div>

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -96,13 +97,13 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
       @if (b.isProvisional) {
         <p-message
           severity="error"
-          [text]="'État provisoire : mois issus de cycles calculés non validés (' + monthList(b.provisionalMonths) + ').'"
+          [text]="loc_ui_tern_etat_provisoire_mois_issus_de_cycles_calcu_ecb8df + monthList(b.provisionalMonths) + ').'"
           styleClass="mb-3 w-full" />
       }
       @if (b.missingMonths.length > 0) {
         <p-message
           severity="warn"
-          [text]="'Mois sans cycle éligible : ' + monthList(b.missingMonths) + '.'"
+          [text]="loc_ui_tern_mois_sans_cycle_eligible_3170d2 + monthList(b.missingMonths) + '.'"
           styleClass="mb-3 w-full" />
       }
     }
@@ -193,6 +194,8 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
   `]
 })
 export class PayrollBookComponent implements OnInit {
+  readonly loc_ui_tern_etat_provisoire_mois_issus_de_cycles_calcu_ecb8df = $localize`:@@ui.tern.etat.provisoire.mois.issus.de.cycles.calcu.ecb8df:État provisoire : mois issus de cycles calculés non validés (`;
+  readonly loc_ui_tern_mois_sans_cycle_eligible_3170d2 = $localize`:@@ui.tern.mois.sans.cycle.eligible.3170d2:Mois sans cycle éligible : `;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -258,7 +261,7 @@ export class PayrollBookComponent implements OnInit {
         next: res => this.book.set(res.data ?? null),
         error: () => {
           this.book.set(null);
-          this.toast.add({ severity: 'error', summary: 'Livre de paie', detail: 'Impossible de générer le livre de paie.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@payroll-book.component.summary.Livre de pai:Livre de paie`, detail: $localize`:@@payroll-book.component.detail.Impossible_de_g_:Impossible de générer le livre de paie.` });
         }
       });
   }
@@ -279,7 +282,7 @@ export class PayrollBookComponent implements OnInit {
           downloadBlob(blob, `livre_paie_${this.year}_${from}-${to}${suffix}.${exportExtension(format)}`);
         },
         error: () =>
-          this.toast.add({ severity: 'error', summary: 'Livre de paie', detail: "Export impossible." })
+          this.toast.add({ severity: 'error', summary: $localize`:@@payroll-book.component.summary.Livre de pai:Livre de paie`, detail: $localize`:@@payroll-book.component.detail.Exportimpossible:Export impossible.` })
       });
   }
 

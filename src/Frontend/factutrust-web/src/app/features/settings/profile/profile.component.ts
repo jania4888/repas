@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,7 +19,7 @@ import { AuthService } from '@core/services/auth.service';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
@@ -37,7 +39,7 @@ import { AuthService } from '@core/services/auth.service';
       title="Mon profil" i18n-title="Mon profil" 
       subtitle="Gérez vos informations personnelles">
       <p-button 
-        label="Retour" 
+        label="Retour" i18n-label="Retour" 
         icon="pi pi-arrow-left" 
         [outlined]="true"
         routerLink="/settings">
@@ -46,7 +48,7 @@ import { AuthService } from '@core/services/auth.service';
 
     <div class="profile-grid">
       <!-- Profile Info -->
-      <p-card header="Informations personnelles" styleClass="profile-card">
+      <p-card header="Informations personnelles" i18n-header="Informations personnelles" styleClass="profile-card">
         <div class="profile-header">
           <p-avatar 
             [label]="getInitials()"
@@ -56,7 +58,7 @@ import { AuthService } from '@core/services/auth.service';
           <div class="profile-info">
             <h3>{{ user()?.fullName }}</h3>
             <p>{{ user()?.email }}</p>
-            <span class="role-badge">{{ user()?.roleDisplay }}</span>
+            <span class="role-badge">{{ user()?.roleDisplay | backendLabel }}</span>
           </div>
         </div>
 
@@ -96,7 +98,7 @@ import { AuthService } from '@core/services/auth.service';
           <div class="form-actions">
             <p-button 
               type="submit"
-              label="Enregistrer" 
+              label="Enregistrer" i18n-label="Enregistrer" 
               icon="pi pi-check"
               [loading]="savingProfile()"
               [disabled]="profileForm.invalid">
@@ -106,7 +108,7 @@ import { AuthService } from '@core/services/auth.service';
       </p-card>
 
       <!-- Security -->
-      <p-card header="Sécurité" styleClass="security-card">
+      <p-card header="Sécurité" i18n-header="Sécurité" styleClass="security-card">
         <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
           <div class="form-group">
             <label for="currentPassword" i18n="@@settings.profile.mot.de.passe.actuel.f9242976">Mot de passe actuel</label>
@@ -151,7 +153,7 @@ import { AuthService } from '@core/services/auth.service';
           <div class="form-actions">
             <p-button 
               type="submit"
-              label="Changer le mot de passe" 
+              label="Changer le mot de passe" i18n-label="Changer le mot de passe" 
               icon="pi pi-lock"
               [loading]="savingPassword()"
               [disabled]="passwordForm.invalid">
@@ -167,7 +169,7 @@ import { AuthService } from '@core/services/auth.service';
             <p i18n="@@settings.profile.ajoutez.une.couche.de.securite.supplementaire.a..d93ba706">Ajoutez une couche de sécurité supplémentaire à votre compte</p>
           </div>
           <p-button 
-            [label]="user()?.twoFactorEnabled ? 'Désactiver' : 'Activer'"
+            [label]="user()?.twoFactorEnabled ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7"
             [outlined]="true"
             [severity]="user()?.twoFactorEnabled ? 'danger' : 'success'"
             icon="pi pi-shield">
@@ -298,6 +300,8 @@ import { AuthService } from '@core/services/auth.service';
   `]
 })
 export class ProfileComponent implements OnInit {
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
@@ -351,8 +355,8 @@ export class ProfileComponent implements OnInit {
     setTimeout(() => {
       this.toastService.add({
         severity: 'success',
-        summary: 'Succès',
-        detail: 'Profil mis à jour avec succès'
+        summary: $localize`:@@profile.component.summary.Succès:Succès`,
+        detail: $localize`:@@profile.component.detail.Profil mis à:Profil mis à jour avec succès`
       });
       this.savingProfile.set(false);
     }, 1000);
@@ -365,8 +369,8 @@ export class ProfileComponent implements OnInit {
     if (newPassword !== confirmPassword) {
       this.toastService.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Les mots de passe ne correspondent pas'
+        summary: $localize`:@@profile.component.summary.Erreur:Erreur`,
+        detail: $localize`:@@profile.component.detail.Les_mots_de_pass:Les mots de passe ne correspondent pas`
       });
       return;
     }
@@ -377,8 +381,8 @@ export class ProfileComponent implements OnInit {
     setTimeout(() => {
       this.toastService.add({
         severity: 'success',
-        summary: 'Succès',
-        detail: 'Mot de passe modifié avec succès'
+        summary: $localize`:@@profile.component.summary.Succès:Succès`,
+        detail: $localize`:@@profile.component.detail.Mot de passe:Mot de passe modifié avec succès`
       });
       this.passwordForm.reset();
       this.savingPassword.set(false);

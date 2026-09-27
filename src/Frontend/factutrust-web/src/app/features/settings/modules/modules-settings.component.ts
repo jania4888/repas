@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -201,7 +202,7 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
   }
 
   planLockLabel(module: CompanyModuleDto): string {
-    return this.isPremiumLock(module) ? 'Plan supérieur requis' : 'Temporairement indisponible';
+    return this.isPremiumLock(module) ? $localize`:@@ui.tern.plan.superieur.requis.d9c212:Plan supérieur requis` : $localize`:@@ui.tern.temporairement.indisponible.ca38b2:Temporairement indisponible`;
   }
 
   toggleModule(module: CompanyModuleDto): void {
@@ -273,7 +274,7 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
         if (!res.success || !res.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Échec de la mise à jour',
+            summary: $localize`:@@modules-settings.component.summary.Échec de la :Échec de la mise à jour`,
             detail: res.message || 'Impossible de mettre à jour les modules.'
           });
           return;
@@ -290,15 +291,15 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
         if (warnings.length > 0) {
           this.toastService.add({
             severity: 'warn',
-            summary: 'Modules mis à jour avec avertissements',
+            summary: $localize`:@@modules-settings.component.summary.Modules_mis_jo:Modules mis à jour avec avertissements`,
             detail: warnings.join(' '),
             life: 8000
           });
         } else {
           this.toastService.add({
             severity: 'success',
-            summary: 'Modules mis à jour',
-            detail: 'Votre navigation a été actualisée.'
+            summary: $localize`:@@modules-settings.component.summary.Modules mis :Modules mis à jour`,
+            detail: $localize`:@@modules-settings.component.detail.Votre_navigation:Votre navigation a été actualisée.`
           });
         }
 
@@ -308,7 +309,7 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
         this.saving.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Échec de la mise à jour',
+          summary: $localize`:@@modules-settings.component.summary.Échec de la :Échec de la mise à jour`,
           detail: this.errorHandler.extractErrorMessage(err),
           life: 8000
         });

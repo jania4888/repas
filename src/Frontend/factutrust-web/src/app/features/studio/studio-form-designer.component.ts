@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,10 +33,10 @@ type DesignerRow =
     <p-toast></p-toast>
     @if (entity(); as e) {
       <app-studio-page-shell
-        [title]="'Mise en page — ' + e.displayName"
+        [title]="loc_ui_tern_mise_en_page_a2cc30 + e.displayName"
         subtitle="Organisez les champs : ordre, sections, libellés, largeur."
         [breadcrumbs]="breadcrumbs()">
-        <button pButton type="button" label="Enregistrer" icon="fa-solid fa-check" studioActions
+        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" studioActions
           [disabled]="saving()" (click)="save()"></button>
 
         <app-studio-designer-shell previewTitle="Aperçu">
@@ -43,8 +44,8 @@ type DesignerRow =
             <div class="studio-add-bar">
               <p-select [options]="availableFields()" [(ngModel)]="fieldToAdd" optionLabel="label" optionValue="id"
                 placeholder="Ajouter un champ" i18n-placeholder="Ajouter un champ" [showClear]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="studio-add-dd"></p-select>
-              <button pButton type="button" icon="fa-solid fa-plus" label="Champ" [disabled]="!fieldToAdd" (click)="addField()"></button>
-              <button pButton type="button" icon="fa-solid fa-heading" label="Section" class="p-button-outlined" (click)="addSection()"></button>
+              <button pButton type="button" icon="fa-solid fa-plus" label="Champ" i18n-label="Champ" [disabled]="!fieldToAdd" (click)="addField()"></button>
+              <button pButton type="button" icon="fa-solid fa-heading" label="Section" i18n-label="Section" class="p-button-outlined" (click)="addSection()"></button>
             </div>
 
             <div cdkDropList (cdkDropListDropped)="drop($event)">
@@ -83,6 +84,7 @@ type DesignerRow =
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioFormDesignerComponent implements OnInit {
+  readonly loc_ui_tern_mise_en_page_a2cc30 = $localize`:@@ui.tern.mise.en.page.a2cc30:Mise en page — `;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly route = inject(ActivatedRoute);
@@ -204,13 +206,13 @@ export class StudioFormDesignerComponent implements OnInit {
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: 'Mise en page enregistrée' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@studio-form-designer.component.summary.Mise_en_page_enr:Mise en page enregistrée` });
           this.router.navigate(['/studio', this.entityId]);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? res.message ?? 'Échec.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@studio-form-designer.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? res.message ?? $localize`:@@ui.tern.echec.0238a9:Échec.` });
         }
       },
-      error: err => { this.saving.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Enregistrement impossible.' }); }
+      error: err => { this.saving.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-form-designer.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` }); }
     });
   }
 }

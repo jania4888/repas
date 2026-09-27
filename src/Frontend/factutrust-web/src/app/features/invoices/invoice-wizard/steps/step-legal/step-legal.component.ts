@@ -64,7 +64,7 @@ import {
           <i class="pi pi-money-bill"></i>
           Mode de paiement
         </h2>
-        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.le.mode.de.reglement.pour.cette.fac.b38260c5">Sélectionnez le mode de règlement pour cette facture</p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.le.mode.de.reglement.pour.cette.fac.b38260c5"> Sélectionnez le mode de règlement pour cette facture </p>
 
         <div class="payment-methods-grid">
           @for (method of paymentMethodOptions; track method.value) {
@@ -117,7 +117,7 @@ import {
               [max]="365"
               suffix=" jours">
             </p-inputNumber>
-            <small class="form-hint" i18n="@@invoices.invoice-wizard.la.date.d.echeance.sera.calculee.automatiquement.46127cd1">La date d'échéance sera calculée automatiquement</small>
+            <small class="form-hint" i18n="@@invoices.invoice-wizard.la.date.d.echeance.sera.calculee.automatiquement.46127cd1"> La date d'échéance sera calculée automatiquement </small>
           </div>
 
           <div class="form-group full-width">
@@ -143,7 +143,7 @@ import {
             <i class="pi pi-building"></i>
             Coordonnées bancaires
           </h2>
-          <p class="section-description" i18n="@@invoices.invoice-wizard.ces.informations.apparaitront.sur.la.facture.pou.7f2c6707">Ces informations apparaîtront sur la facture pour faciliter le règlement</p>
+          <p class="section-description" i18n="@@invoices.invoice-wizard.ces.informations.apparaitront.sur.la.facture.pou.7f2c6707"> Ces informations apparaîtront sur la facture pour faciliter le règlement </p>
 
           <div class="form-grid">
             <div class="form-group">
@@ -165,7 +165,7 @@ import {
                 mask="99 999 9999999999999999 99"
                 placeholder="XX XXX XXXXXXXXXXX XX" i18n-placeholder="XX XXX XXXXXXXXXXX XX">
               </p-inputMask>
-              <small class="form-hint" i18n="@@invoices.invoice-wizard.releve.d.identite.bancaire.20.caracteres.0a997ef2">Relevé d'Identité Bancaire (20 caractères)</small>
+              <small class="form-hint" i18n="@@invoices.invoice-wizard.releve.d.identite.bancaire.20.caracteres.0a997ef2"> Relevé d'Identité Bancaire (20 caractères) </small>
             </div>
 
             <div class="form-group full-width">
@@ -177,7 +177,7 @@ import {
                 (ngModelChange)="updatePayment({ iban: $event })"
                 placeholder="TNXX XXXX XXXX XXXX XXXX XXXX" i18n-placeholder="TNXX XXXX XXXX XXXX XXXX XXXX"
                 maxlength="34">
-              <small class="form-hint" i18n="@@invoices.invoice-wizard.format.international.pour.les.paiements.depuis.l.fa96cb29">Format international pour les paiements depuis l'étranger</small>
+              <small class="form-hint" i18n="@@invoices.invoice-wizard.format.international.pour.les.paiements.depuis.l.fa96cb29"> Format international pour les paiements depuis l'étranger </small>
             </div>
           </div>
         </section>
@@ -200,7 +200,7 @@ import {
             [(ngModel)]="payment.purchaseOrderRef"
             (ngModelChange)="updatePayment({ purchaseOrderRef: $event })"
             placeholder="Ex: BC-2026-0001" i18n-placeholder="Ex: BC-2026-0001">
-          <small class="form-hint" i18n="@@invoices.invoice-wizard.reference.du.bon.de.commande.client.optionnel.e6c12910">Référence du bon de commande client (optionnel)</small>
+          <small class="form-hint" i18n="@@invoices.invoice-wizard.reference.du.bon.de.commande.client.optionnel.e6c12910"> Référence du bon de commande client (optionnel) </small>
         </div>
       </section>
 
@@ -212,7 +212,7 @@ import {
           <i class="pi pi-shield"></i>
           Mentions légales
         </h2>
-        <p class="section-description" i18n="@@invoices.invoice-wizard.mentions.obligatoires.selon.la.reglementation.tu.fa52fcf9">Mentions obligatoires selon la réglementation tunisienne</p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.mentions.obligatoires.selon.la.reglementation.tu.fa52fcf9"> Mentions obligatoires selon la réglementation tunisienne </p>
 
         <div class="legal-mentions-list">
           <!-- TVA Mention (Always required) -->
@@ -223,8 +223,8 @@ import {
             </div>
             <div class="mention-content">
               <strong>{{ legalMentions.vatMention }}</strong>
-              <p i18n="@@invoices.invoice-wizard.cette.mention.est.automatiquement.ajoutee.confor.7b0cd47e">Cette mention est automatiquement ajoutée conformément à l'article 18 
-                du Code de la TVA tunisien.</p>
+              <p i18n="@@invoices.invoice-wizard.cette.mention.est.automatiquement.ajoutee.confor.7b0cd47e"> Cette mention est automatiquement ajoutée conformément à l'article 18 
+                du Code de la TVA tunisien. </p>
             </div>
           </div>
 
@@ -244,7 +244,7 @@ import {
                   rows="2"
                   placeholder="Motif d'exonération de TVA..." i18n-placeholder="Motif d'exonération de TVA...">
                 </textarea>
-                <small i18n="@@invoices.invoice-wizard.le.client.etant.exonere.de.tva.une.mention.justi.b25e8824">Le client étant exonéré de TVA, une mention justificative est obligatoire.</small>
+                <small i18n="@@invoices.invoice-wizard.le.client.etant.exonere.de.tva.une.mention.justi.b25e8824"> Le client étant exonéré de TVA, une mention justificative est obligatoire. </small>
               </div>
             </div>
           }
@@ -287,13 +287,13 @@ import {
           @if (showExemptionMention()) {
             <li [class.valid]="legalMentions.exemptionMention" [class.invalid]="!legalMentions.exemptionMention">
               <i [class]="legalMentions.exemptionMention ? 'pi pi-check' : 'pi pi-times'"></i>
-              Mention d'exonération {{ legalMentions.exemptionMention ? 'renseignée' : 'obligatoire' }}
+              Mention d'exonération {{ legalMentions.exemptionMention ? loc_ui_tern_renseignee_14ff83 : 'obligatoire' }}
             </li>
           }
           @if (payment.method === 'BANK_TRANSFER') {
             <li [class.valid]="payment.rib || payment.iban" [class.pending]="!payment.rib && !payment.iban">
               <i [class]="payment.rib || payment.iban ? 'pi pi-check' : 'pi pi-clock'"></i>
-              Coordonnées bancaires {{ payment.rib || payment.iban ? 'renseignées' : 'recommandées' }}
+              Coordonnées bancaires {{ payment.rib || payment.iban ? loc_ui_tern_renseignees_a5ced9 : loc_ui_tern_recommandees_0c1370 }}
             </li>
           }
         </ul>
@@ -570,6 +570,9 @@ import {
   `]
 })
 export class StepLegalComponent implements OnInit {
+  readonly loc_ui_tern_renseignee_14ff83 = $localize`:@@ui.tern.renseignee.14ff83:renseignée`;
+  readonly loc_ui_tern_renseignees_a5ced9 = $localize`:@@ui.tern.renseignees.a5ced9:renseignées`;
+  readonly loc_ui_tern_recommandees_0c1370 = $localize`:@@ui.tern.recommandees.0c1370:recommandées`;
   readonly wizardService = inject(InvoiceWizardService);
 
   // Options

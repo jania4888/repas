@@ -77,7 +77,7 @@ import {
         }
 
         @if (selectable()) {
-          <span class="fdc__cta">{{ selected() ? 'Cabinet choisi' : 'Choisir ce cabinet' }}</span>
+          <span class="fdc__cta">{{ selected() ? loc_ui_tern_cabinet_choisi_0863e3 : loc_ui_tern_choisir_ce_cabinet_bdb0f5 }}</span>
         }
       </article>
     }
@@ -150,6 +150,8 @@ import {
   `]
 })
 export class FirmDirectoryCardComponent {
+  readonly loc_ui_tern_cabinet_choisi_0863e3 = $localize`:@@ui.tern.cabinet.choisi.0863e3:Cabinet choisi`;
+  readonly loc_ui_tern_choisir_ce_cabinet_bdb0f5 = $localize`:@@ui.tern.choisir.ce.cabinet.bdb0f5:Choisir ce cabinet`;
   readonly firm = input.required<AccountingFirmDirectoryItem>();
   readonly selected = input(false);
   readonly selectable = input(false);

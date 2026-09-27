@@ -44,7 +44,7 @@ import { VatDivergenceRow } from './vat-declaration.view-model';
           </ul>
 
           @if (canResync) {
-            <button type="button" class="vat-divergence-action" (click)="resync.emit()" i18n="@@accounting.vat-declaration.resynchroniser.depuis.les.modules.85cff7e2">Resynchroniser depuis les modules</button>
+            <button type="button" class="vat-divergence-action" (click)="resync.emit()" i18n="@@accounting.vat-declaration.resynchroniser.depuis.les.modules.85cff7e2"> Resynchroniser depuis les modules </button>
           }
         }
       </div>
@@ -85,8 +85,8 @@ export class VatDeclarationDivergenceBannerComponent {
     const n = this.rows.length;
     if (n === 0) return 'Cycle de paie';
     return n === 1
-      ? "1 ligne s'écarte des montants calculés par les modules"
-      : `${n} lignes s'écartent des montants calculés par les modules`;
+      ? $localize`:@@ui.tern.1.ligne.s.ecarte.des.montants.calcules.par.9dca12:1 ligne s'écarte des montants calculés par les modules`
+      : $localize`:@@ui.tern.ph.lignes.s.ecartent.des.montants.calcules.ee76fb:${n}:p0: lignes s'écartent des montants calculés par les modules`;
   }
 
   format(value: number): string {

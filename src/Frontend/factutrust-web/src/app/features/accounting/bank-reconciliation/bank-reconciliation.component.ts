@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -79,7 +80,7 @@ interface WizardStepDef {
           }
         </ol>
         <div class="br-stepper-actions">
-          <app-button variant="secondary" icon="pi pi-times" type="button" (click)="exitWizard()" [disabled]="busy() || applying() || autoAssociating()" i18n="@@accounting.bank-reconciliation.quitter.l.assistant.d704aff2">Quitter l'assistant</app-button>
+          <app-button variant="secondary" icon="pi pi-times" type="button" (click)="exitWizard()" [disabled]="busy() || applying() || autoAssociating()" i18n="@@accounting.bank-reconciliation.quitter.l.assistant.d704aff2"> Quitter l'assistant </app-button>
         </div>
       </div>
     }
@@ -103,8 +104,8 @@ interface WizardStepDef {
             </div>
           </div>
           <div accountingFilterActions class="br-toolbar-actions">
-            <app-button variant="secondary" icon="pi pi-search" type="button" (click)="loadStatements()" [disabled]="loadingList()" i18n="@@accounting.bank-reconciliation.rechercher.91f7d3e9">Rechercher</app-button>
-            <app-button variant="primary" icon="pi pi-upload" type="button" (click)="startImport()" [disabled]="loadingList()" i18n="@@accounting.bank-reconciliation.importer.un.releve.75bae472">Importer un relevé</app-button>
+            <app-button variant="secondary" icon="pi pi-search" type="button" (click)="loadStatements()" [disabled]="loadingList()" i18n="@@accounting.bank-reconciliation.rechercher.91f7d3e9"> Rechercher </app-button>
+            <app-button variant="primary" icon="pi pi-upload" type="button" (click)="startImport()" [disabled]="loadingList()" i18n="@@accounting.bank-reconciliation.importer.un.releve.75bae472"> Importer un relevé </app-button>
           </div>
         </app-accounting-filter-bar>
 
@@ -218,7 +219,7 @@ interface WizardStepDef {
           </div>
           <p class="br-recon-diff" [class.br-recon-ok]="rs.isReconciled" [class.br-recon-ko]="!rs.isReconciled">
             Écart : {{ rs.difference | number : '1.3-3' }}
-            <span>{{ rs.isReconciled ? '— rapproché' : '— à justifier' }}</span>
+            <span>{{ rs.isReconciled ? loc_ui_tern_rapproche_06101d : loc_ui_tern_a_justifier_d719d3 }}</span>
           </p>
         </div>
       } @else if (reconError()) {
@@ -266,7 +267,7 @@ interface WizardStepDef {
           <div class="br-import-actions">
             <app-button variant="secondary" icon="pi pi-search" type="button"
               (click)="runPreview()" [disabled]="!selectedFile() || busy()">
-              {{ previewing() ? 'Analyse…' : "Tester l'importation" }}
+              {{ previewing() ? loc_ui_tern_analyse_458c82 : loc_ui_tern_tester_l_importation_92d856 }}
             </app-button>
           </div>
         </div>
@@ -303,7 +304,7 @@ interface WizardStepDef {
         </div>
 
         <p class="br-help">
-          Colonnes attendues pour CSV/Excel (1<sup i18n="@@accounting.bank-reconciliation.re.c387c982">re</sup> ligne = en-têtes) : <code i18n="@@accounting.bank-reconciliation.date.libelle.reference.ab34493e">date, libelle, [reference]</code> puis
+          <ng-container i18n="@@accounting.bank-reconciliation.colonnes.attendues.pour.csv.excel.1.c3518416"> Colonnes attendues pour CSV/Excel (1</ng-container><sup i18n="@@accounting.bank-reconciliation.re.c387c982">re</sup> ligne = en-têtes) : <code i18n="@@accounting.bank-reconciliation.date.libelle.reference.ab34493e">date, libelle, [reference]</code> puis
           <code i18n="@@accounting.bank-reconciliation.debit.credit.89843df7">debit/credit</code> ou une colonne <code i18n="@@accounting.bank-reconciliation.montant.aa2789fc">montant</code> signée. OFX/MT940 sont lus automatiquement.
         </p>
 
@@ -388,7 +389,7 @@ interface WizardStepDef {
               <span class="br-commit-hint">{{ p.validLines }} ligne(s) prête(s) à être importée(s).</span>
               <app-button variant="primary" icon="pi pi-arrow-right" type="button"
                 (click)="runImport()" [disabled]="!canSubmitImport() || busy()">
-                {{ importing() ? 'Import…' : 'Importer et continuer' }}
+                {{ importing() ? loc_ui_tern_import_4834ca : loc_ui_tern_importer_et_continuer_135d02 }}
               </app-button>
             </div>
           } @else {
@@ -405,15 +406,15 @@ interface WizardStepDef {
           <div class="br-detail-head">
             <h2 class="br-section-title">2 · Association automatique — {{ s.bankName }} · {{ s.accountNumber }}</h2>
             <div class="br-head-actions">
-              <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="runAutoAssociate()" [disabled]="autoAssociating() || applying()" i18n="@@accounting.bank-reconciliation.relancer.l.association.3c42e685">Relancer l'association</app-button>
+              <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="runAutoAssociate()" [disabled]="autoAssociating() || applying()" i18n="@@accounting.bank-reconciliation.relancer.l.association.3c42e685"> Relancer l'association </app-button>
               <app-button variant="primary" icon="pi pi-check-circle" type="button" (click)="applySelectedAssociations()"
                 [disabled]="applying() || autoAssociating() || selectedAssociatedCount() === 0">
-                {{ applying() ? 'Rapprochement…' : 'Rapprocher tout ce qui est associé (' + selectedAssociatedCount() + ')' }}
+                {{ applying() ? loc_ui_tern_rapprochement_e7a2b4 : loc_ui_tern_rapprocher_tout_ce_qui_est_associe_061001 + selectedAssociatedCount() + ')' }}
               </app-button>
             </div>
           </div>
-          <p class="br-help" i18n="@@accounting.bank-reconciliation.les.correspondances.certaines.sont.pre.cochees.a.97609dc3">Les correspondances certaines sont pré-cochées « Associé » (non enregistrées tant que vous ne cliquez pas sur « Rapprocher »).
-            Les lignes à plusieurs candidats restent « À rapprocher », les lignes sans écriture « Non associé ».</p>
+          <p class="br-help" i18n="@@accounting.bank-reconciliation.les.correspondances.certaines.sont.pre.cochees.a.97609dc3"> Les correspondances certaines sont pré-cochées « Associé » (non enregistrées tant que vous ne cliquez pas sur « Rapprocher »).
+            Les lignes à plusieurs candidats restent « À rapprocher », les lignes sans écriture « Non associé ». </p>
 
           <p-table [value]="associations()" [loading]="autoAssociating()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
             <ng-template pTemplate="header">
@@ -466,8 +467,8 @@ interface WizardStepDef {
           </p-table>
 
           <div class="br-commit-bar">
-            <app-button variant="secondary" icon="pi pi-arrow-left" type="button" (click)="goStep(1)" [disabled]="applying() || autoAssociating()" i18n="@@accounting.bank-reconciliation.retour.e5befb1f">Retour</app-button>
-            <app-button variant="primary" icon="pi pi-arrow-right" type="button" (click)="goToManual()" [disabled]="applying() || autoAssociating()" i18n="@@accounting.bank-reconciliation.rapprochement.manuel.476a4125">Rapprochement manuel</app-button>
+            <app-button variant="secondary" icon="pi pi-arrow-left" type="button" (click)="goStep(1)" [disabled]="applying() || autoAssociating()" i18n="@@accounting.bank-reconciliation.retour.e5befb1f"> Retour </app-button>
+            <app-button variant="primary" icon="pi pi-arrow-right" type="button" (click)="goToManual()" [disabled]="applying() || autoAssociating()" i18n="@@accounting.bank-reconciliation.rapprochement.manuel.476a4125"> Rapprochement manuel </app-button>
           </div>
         </div>
 
@@ -525,7 +526,7 @@ interface WizardStepDef {
               <td class="br-amt">{{ !l.isDebit ? (l.amount | number : '1.3-3') : '' }}</td>
               <td>
                 <span class="br-badge" [class.br-badge-done]="l.isReconciled" [class.br-badge-partial]="!l.isReconciled">
-                  {{ l.isReconciled ? 'Rapprochée' : 'À rapprocher' }}
+                  {{ l.isReconciled ? loc_ui_tern_rapprochee_bea87b : loc_ui_tern_a_rapprocher_b60223 }}
                 </span>
               </td>
               <td data-label="Actions">
@@ -555,7 +556,7 @@ interface WizardStepDef {
           <div class="br-detail-head">
             <h2 class="br-section-title">
               Candidats pour « {{ line.description }} » — {{ line.amount | number : '1.3-3' }}
-              {{ line.isDebit ? '(décaissement)' : '(encaissement)' }}
+              {{ line.isDebit ? loc_ui_tern_decaissement_e2ba8f : loc_ui_tern_encaissement_44a988 }}
             </h2>
             <button type="button" class="br-link-btn" (click)="closeCandidates()" i18n="@@accounting.bank-reconciliation.fermer.5ab4ec64">Fermer</button>
           </div>
@@ -605,7 +606,7 @@ interface WizardStepDef {
             @for (l of unreconciledLines(s); track l.id) {
               <li>
                 <span class="br-mono">{{ l.transactionDate | date : 'shortDate' }}</span> · {{ l.description }} —
-                <strong>{{ l.amount | number : '1.3-3' }}</strong> {{ l.isDebit ? '(débit)' : '(crédit)' }}
+                <strong>{{ l.amount | number : '1.3-3' }}</strong> {{ l.isDebit ? loc_ui_tern_debit_b70777 : loc_ui_tern_credit_023d57 }}
               </li>
             }
           </ul>
@@ -624,7 +625,7 @@ interface WizardStepDef {
     @if (createLine(); as cl) {
       <div class="card br-card br-create-panel">
         <div class="br-detail-head">
-          <h2 class="br-section-title">Comptabiliser « {{ cl.description }} » — {{ cl.amount | number : '1.3-3' }} {{ cl.isDebit ? '(décaissement)' : '(encaissement)' }}</h2>
+          <h2 class="br-section-title">Comptabiliser « {{ cl.description }} » — {{ cl.amount | number : '1.3-3' }} {{ cl.isDebit ? loc_ui_tern_decaissement_e2ba8f : loc_ui_tern_encaissement_44a988 }}</h2>
           <button type="button" class="br-link-btn" (click)="cancelCreateEntry()" i18n="@@accounting.bank-reconciliation.fermer.5ab4ec64">Fermer</button>
         </div>
         <div class="br-import-fields">
@@ -648,7 +649,7 @@ interface WizardStepDef {
         <div class="br-commit-bar">
           <app-button variant="primary" icon="pi pi-save" type="button" (click)="confirmCreateEntry()"
             [disabled]="creatingEntry() || !createForm.counterpartyAccount.trim() || !createForm.journalCode.trim()">
-            {{ creatingEntry() ? 'Comptabilisation…' : "Comptabiliser l'écriture" }}
+            {{ creatingEntry() ? loc_ui_tern_comptabilisation_a5c2b1 : loc_ui_tern_comptabiliser_l_ecriture_872706 }}
           </app-button>
         </div>
       </div>
@@ -792,6 +793,22 @@ interface WizardStepDef {
   `
 })
 export class BankReconciliationComponent implements OnInit {
+  readonly loc_ui_tern_rapproche_06101d = $localize`:@@ui.tern.rapproche.06101d:— rapproché`;
+  readonly loc_ui_tern_a_justifier_d719d3 = $localize`:@@ui.tern.a.justifier.d719d3:— à justifier`;
+  readonly loc_ui_tern_analyse_458c82 = $localize`:@@ui.tern.analyse.458c82:Analyse…`;
+  readonly loc_ui_tern_tester_l_importation_92d856 = $localize`:@@ui.tern.tester.l.importation.92d856:Tester l'importation`;
+  readonly loc_ui_tern_import_4834ca = $localize`:@@ui.tern.import.4834ca:Import…`;
+  readonly loc_ui_tern_importer_et_continuer_135d02 = $localize`:@@ui.tern.importer.et.continuer.135d02:Importer et continuer`;
+  readonly loc_ui_tern_rapprochement_e7a2b4 = $localize`:@@ui.tern.rapprochement.e7a2b4:Rapprochement…`;
+  readonly loc_ui_tern_rapprocher_tout_ce_qui_est_associe_061001 = $localize`:@@ui.tern.rapprocher.tout.ce.qui.est.associe.061001:Rapprocher tout ce qui est associé (`;
+  readonly loc_ui_tern_rapprochee_bea87b = $localize`:@@ui.tern.rapprochee.bea87b:Rapprochée`;
+  readonly loc_ui_tern_a_rapprocher_b60223 = $localize`:@@ui.tern.a.rapprocher.b60223:À rapprocher`;
+  readonly loc_ui_tern_decaissement_e2ba8f = $localize`:@@ui.tern.decaissement.e2ba8f:(décaissement)`;
+  readonly loc_ui_tern_encaissement_44a988 = $localize`:@@ui.tern.encaissement.44a988:(encaissement)`;
+  readonly loc_ui_tern_debit_b70777 = $localize`:@@ui.tern.debit.b70777:(débit)`;
+  readonly loc_ui_tern_credit_023d57 = $localize`:@@ui.tern.credit.023d57:(crédit)`;
+  readonly loc_ui_tern_comptabilisation_a5c2b1 = $localize`:@@ui.tern.comptabilisation.a5c2b1:Comptabilisation…`;
+  readonly loc_ui_tern_comptabiliser_l_ecriture_872706 = $localize`:@@ui.tern.comptabiliser.l.ecriture.872706:Comptabiliser l'écriture`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(BankReconciliationService);
   private readonly accounting = inject(AccountingService);
@@ -962,7 +979,7 @@ export class BankReconciliationComponent implements OnInit {
             list = list.filter(s => s.lines.some(l => !l.isReconciled));
           }
           this.statements.set(list);
-        } else this.error.set(res.error ?? 'Erreur de chargement des relevés.');
+        } else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.des.releves.b5e8ea:Erreur de chargement des relevés.`);
       },
       error: err => {
         this.loadingList.set(false);
@@ -1000,7 +1017,7 @@ export class BankReconciliationComponent implements OnInit {
   }
 
   finishWizard(): void {
-    this.toast.add({ severity: 'success', summary: 'Rapprochement terminé', life: 3000 });
+    this.toast.add({ severity: 'success', summary: $localize`:@@bank-reconciliation.component.summary.Rapprochement_te:Rapprochement terminé`, life: 3000 });
     this.exitWizard();
   }
 
@@ -1017,7 +1034,7 @@ export class BankReconciliationComponent implements OnInit {
           this.step.set(2);
           this.runAutoAssociate();
         } else {
-          this.error.set(res.error ?? 'Relevé introuvable.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.releve.introuvable.a15279:Relevé introuvable.`);
         }
       },
       error: err => {
@@ -1035,7 +1052,7 @@ export class BankReconciliationComponent implements OnInit {
     this.api.getReconciliationStatement(id).subscribe({
       next: res => {
         if (res.success && res.data) this.reconStatement.set(res.data);
-        else this.reconError.set(res.error ?? "Impossible d'établir l'état de rapprochement.");
+        else this.reconError.set(res.error ?? $localize`:@@ui.tern.impossible.d.etablir.l.etat.de.rapprocheme.86ce87:Impossible d'établir l'état de rapprochement.`);
       },
       error: err => this.reconError.set(this.errors.extractErrorMessage(err, "Erreur réseau lors du chargement de l'état de rapprochement."))
     });
@@ -1108,7 +1125,7 @@ export class BankReconciliationComponent implements OnInit {
       next: res => {
         this.previewing.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? "L'aperçu du relevé a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.apercu.du.releve.a.echoue.1582c6:L'aperçu du relevé a échoué.`);
           return;
         }
         const data: BankStatementFilePreviewDto = {
@@ -1158,16 +1175,16 @@ export class BankReconciliationComponent implements OnInit {
       next: res => {
         this.importing.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? "L'import du relevé a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.import.du.releve.a.echoue.ae1cdf:L'import du relevé a échoué.`);
           return;
         }
         const skipped = res.data.skippedDuplicateCount ?? 0;
         this.toast.add({
           severity: 'success',
-          summary: 'Relevé importé',
+          summary: $localize`:@@bank-reconciliation.component.summary.Relevé impor:Relevé importé`,
           detail: skipped > 0
-            ? `${res.data.lines.length} ligne(s) — ${skipped} déjà importée(s) ignorée(s)`
-            : `${res.data.lines.length} ligne(s) — ${res.data.bankName}`,
+            ? $localize`:@@ui.tern.ph.ligne.s.ph.deja.importee.s.ignoree.s.9ed814:${res.data.lines.length}:p0: ligne(s) — ${skipped}:p1: déjà importée(s) ignorée(s)`
+            : $localize`:@@ui.tern.ph.ligne.s.ph.8df2cd:${res.data.lines.length}:p0: ligne(s) — ${res.data.bankName}:p1:`,
           life: 4000
         });
         this.selected.set(res.data);
@@ -1220,7 +1237,7 @@ export class BankReconciliationComponent implements OnInit {
       next: (res: { success: boolean; data?: AutoAssociationResultDto; error?: string }) => {
         this.autoAssociating.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? "L'association automatique a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.association.automatique.a.echoue.540746:L'association automatique a échoué.`);
           return;
         }
         this.associations.set(res.data.associations);
@@ -1265,14 +1282,14 @@ export class BankReconciliationComponent implements OnInit {
       next: res => {
         this.applying.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? 'Le rapprochement en lot a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.le.rapprochement.en.lot.a.echoue.220ccc:Le rapprochement en lot a échoué.`);
           return;
         }
         const r = res.data;
         this.toast.add({
           severity: r.failures.length > 0 ? 'warn' : 'success',
           summary: `${r.appliedCount} rapprochement(s) appliqué(s)`,
-          detail: r.failures.length > 0 ? `${r.failures.length} échec(s)` : undefined,
+          detail: r.failures.length > 0 ? $localize`:@@ui.tern.ph.echec.s.ba006c:${r.failures.length}:p0: échec(s)` : undefined,
           life: 4000
         });
         this.refreshSelected(() => this.runAutoAssociate());
@@ -1321,7 +1338,7 @@ export class BankReconciliationComponent implements OnInit {
       next: res => {
         this.loadingCandidates.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? 'La recherche de candidats a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.la.recherche.de.candidats.a.echoue.d7b288:La recherche de candidats a échoué.`);
           return;
         }
         // Encaissement (crédit banque relevé) ⇒ débit du compte 53x ; décaissement ⇒ crédit. Brouillons exclus.
@@ -1348,10 +1365,10 @@ export class BankReconciliationComponent implements OnInit {
       next: res => {
         this.reconciling.set(false);
         if (!res.success) {
-          this.error.set(res.error ?? 'Le rapprochement a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.le.rapprochement.a.echoue.0d3e17:Le rapprochement a échoué.`);
           return;
         }
-        this.toast.add({ severity: 'success', summary: 'Ligne rapprochée', detail: line.description, life: 3000 });
+        this.toast.add({ severity: 'success', summary: $localize`:@@bank-reconciliation.component.summary.Ligne_rapproch_e:Ligne rapprochée`, detail: line.description, life: 3000 });
         this.closeCandidates();
         this.refreshSelected();
       },
@@ -1370,10 +1387,10 @@ export class BankReconciliationComponent implements OnInit {
       next: res => {
         this.reconciling.set(false);
         if (!res.success) {
-          this.error.set(res.error ?? 'Le dé-rapprochement a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.le.de.rapprochement.a.echoue.3fcf60:Le dé-rapprochement a échoué.`);
           return;
         }
-        this.toast.add({ severity: 'success', summary: 'Rapprochement annulé', detail: line.description, life: 3000 });
+        this.toast.add({ severity: 'success', summary: $localize`:@@bank-reconciliation.component.summary.Rapprochement_an:Rapprochement annulé`, detail: line.description, life: 3000 });
         this.refreshSelected();
       },
       error: err => {
@@ -1415,10 +1432,10 @@ export class BankReconciliationComponent implements OnInit {
       next: res => {
         this.creatingEntry.set(false);
         if (!res.success) {
-          this.error.set(res.error ?? "La comptabilisation de la ligne a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.la.comptabilisation.de.la.ligne.a.echoue.ed9000:La comptabilisation de la ligne a échoué.`);
           return;
         }
-        this.toast.add({ severity: 'success', summary: 'Écriture comptabilisée', detail: cl.description, life: 3000 });
+        this.toast.add({ severity: 'success', summary: $localize`:@@bank-reconciliation.component.summary.Écriture com:Écriture comptabilisée`, detail: cl.description, life: 3000 });
         this.cancelCreateEntry();
         this.refreshSelected(() => {
           if (this.step() === 2) this.runAutoAssociate();

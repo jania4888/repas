@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -62,7 +63,7 @@ interface TransferLine {
       <app-page-header
         title="Nouveau transfert" i18n-title="Nouveau transfert"
         subtitle="Déplacez des articles d’un entrepôt vers un autre en quelques étapes.">
-        <app-button variant="outline" icon="pi-times" iconPos="left" routerLink="/transfers" i18n="@@transfers.transfer-create.annuler.49ba3292">Annuler</app-button>
+        <app-button variant="outline" icon="pi-times" iconPos="left" routerLink="/transfers" i18n="@@transfers.transfer-create.annuler.49ba3292"> Annuler </app-button>
       </app-page-header>
 
       <app-form-section title="Entrepôts" i18n-title="Entrepôts" icon="pi-building" [number]="1">
@@ -70,7 +71,7 @@ interface TransferLine {
           <div class="warehouse-flow-item">
             <app-warehouse-selector
               inputId="transfer-wh-source"
-              label="Entrepôt source"
+              label="Entrepôt source" i18n-label="Entrepôt source"
               [required]="true"
               [activeOnly]="false"
               [value]="sourceWarehouseId"
@@ -83,7 +84,7 @@ interface TransferLine {
           <div class="warehouse-flow-item">
             <app-warehouse-selector
               inputId="transfer-wh-destination"
-              label="Entrepôt destination"
+              label="Entrepôt destination" i18n-label="Entrepôt destination"
               [required]="true"
               [activeOnly]="false"
               [value]="destinationWarehouseId"
@@ -97,7 +98,7 @@ interface TransferLine {
             <i class="pi pi-exclamation-triangle alert-banner-icon" aria-hidden="true"></i>
             <div class="alert-banner-content">
               <div class="error-text">
-                <p i18n="@@transfers.transfer-create.l.entrepot.source.et.l.entrepot.destination.doiv.01dcab36">L’entrepôt source et l’entrepôt destination doivent être différents pour créer le transfert.</p>
+                <p i18n="@@transfers.transfer-create.l.entrepot.source.et.l.entrepot.destination.doiv.01dcab36"> L’entrepôt source et l’entrepôt destination doivent être différents pour créer le transfert. </p>
               </div>
             </div>
           </div>
@@ -107,7 +108,7 @@ interface TransferLine {
       <app-form-section title="Informations" i18n-title="Informations" icon="pi-info-circle" [number]="2">
         <div class="form-row">
           <div class="form-group">
-            <label for="transfer-date">Date de transfert <span class="required" i18n="@@transfers.transfer-create.text.df58248c">*</span></label>
+            <label for="transfer-date"><ng-container i18n="@@transfers.transfer-create.date.de.transfert.e1a48aa3">Date de transfert </ng-container> <span class="required" i18n="@@transfers.transfer-create.text.df58248c">*</span></label>
             <p-datepicker
               inputId="transfer-date"
               [(ngModel)]="transferDate"
@@ -213,7 +214,7 @@ interface TransferLine {
                 iconPos="left"
                 (click)="addLine()"
                 [disabled]="!selectedProduct || selectedQuantity <= 0"
-                ariaLabel="Ajouter le produit sélectionné au transfert" i18n="@@transfers.transfer-create.ajouter.87c57ed1">Ajouter</app-button>
+                ariaLabel="Ajouter le produit sélectionné au transfert" i18n="@@transfers.transfer-create.ajouter.87c57ed1"> Ajouter </app-button>
             </div>
           </div>
 
@@ -291,7 +292,7 @@ interface TransferLine {
                         [ngModelOptions]="{ standalone: true }"
                         placeholder="Optionnel" i18n-placeholder="Optionnel"
                         class="notes-input"
-                        [attr.aria-label]="'Notes pour la ligne ' + line.productName" />
+                        [attr.aria-label]="loc_ui_tern_notes_pour_la_ligne_c1c6dd + line.productName" />
                     </td>
                     <td class="col-actions">
                       <app-button
@@ -301,7 +302,7 @@ interface TransferLine {
                         icon="pi-trash"
                         [iconOnly]="true"
                         (click)="removeLine(i)"
-                        [ariaLabel]="'Retirer ' + line.productName + ' du transfert'">
+                        [ariaLabel]="loc_ui_tern_retirer_c3dfc6 + line.productName + loc_ui_tern_du_transfert_60be8c">
                       </app-button>
                     </td>
                   </tr>
@@ -324,7 +325,7 @@ interface TransferLine {
           [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
           iconPos="left"
           (click)="submit()"
-          [disabled]="!canSubmit()" i18n="@@transfers.transfer-create.creer.le.transfert.c2700adc">Créer le transfert</app-button>
+          [disabled]="!canSubmit()" i18n="@@transfers.transfer-create.creer.le.transfert.c2700adc"> Créer le transfert </app-button>
       </div>
     </div>
   `,
@@ -689,6 +690,9 @@ interface TransferLine {
   `],
 })
 export class TransferCreateComponent implements OnInit {
+  readonly loc_ui_tern_notes_pour_la_ligne_c1c6dd = $localize`:@@ui.tern.notes.pour.la.ligne.c1c6dd:Notes pour la ligne `;
+  readonly loc_ui_tern_retirer_c3dfc6 = $localize`:@@ui.tern.retirer.c3dfc6:Retirer `;
+  readonly loc_ui_tern_du_transfert_60be8c = $localize`:@@ui.tern.du.transfert.60be8c: du transfert`;
   private transferService = inject(StockTransferService);
   private productService = inject(ProductService);
   private stockService = inject(StockService);
@@ -739,8 +743,8 @@ export class TransferCreateComponent implements OnInit {
                 this.productsLoading.set(false);
                 this.messageService.add({
                   severity: 'error',
-                  summary: 'Produits',
-                  detail: 'Impossible de charger les produits',
+                  summary: $localize`:@@transfer-create.component.summary.Produits:Produits`,
+                  detail: $localize`:@@transfer-create.component.detail.Impossible d:Impossible de charger les produits`,
                 });
                 return of({ success: false as const, data: undefined });
               })
@@ -798,8 +802,8 @@ export class TransferCreateComponent implements OnInit {
     if (this.lines.some((l) => l.productId === product.id)) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Attention',
-        detail: 'Ce produit est déjà dans la liste',
+        summary: $localize`:@@transfer-create.component.summary.Attention:Attention`,
+        detail: $localize`:@@transfer-create.component.detail.Ce_produit_est_d:Ce produit est déjà dans la liste`,
       });
       return;
     }
@@ -823,8 +827,8 @@ export class TransferCreateComponent implements OnInit {
       header: 'Retirer la ligne',
       message: `Retirer « ${line.productName} » de ce transfert ?`,
       icon: 'pi pi-trash',
-      acceptLabel: 'Retirer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@transfer-create.component.acceptLabel.Retirer:Retirer`,
+      rejectLabel: $localize`:@@transfer-create.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.lines.splice(index, 1),
     });
@@ -863,14 +867,14 @@ export class TransferCreateComponent implements OnInit {
     this.transferService.createStockTransfer(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         this.submitting.set(false);
-        this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Transfert créé avec succès' });
+        this.messageService.add({ severity: 'success', summary: $localize`:@@transfer-create.component.summary.Succès:Succès`, detail: $localize`:@@transfer-create.component.detail.Transfert_cr_a:Transfert créé avec succès` });
         this.router.navigate(['/transfers', res.data?.id || '']);
       },
       error: (err) => {
         this.submitting.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@transfer-create.component.summary.Erreur:Erreur`,
           detail: err.error?.error || 'Erreur lors de la création',
         });
       },
@@ -934,8 +938,8 @@ export class TransferCreateComponent implements OnInit {
         catchError(() => {
           this.messageService.add({
             severity: 'warn',
-            summary: 'Stock',
-            detail: 'Impossible de charger les quantités de l’entrepôt source',
+            summary: $localize`:@@transfer-create.component.summary.Stock:Stock`,
+            detail: $localize`:@@transfer-create.component.detail.Impossible_de_ch:Impossible de charger les quantités de l’entrepôt source`,
           });
           return of(new Map<string, number>());
         }),

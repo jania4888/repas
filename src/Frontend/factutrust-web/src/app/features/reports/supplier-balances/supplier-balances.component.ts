@@ -42,13 +42,13 @@ import {
         icon="pi-print"
         iconPos="left"
         (click)="onPrint()"
-        ariaLabel="Imprimer les soldes fournisseurs" i18n="@@reports.supplier-balances.imprimer.5382c09d">Imprimer</app-button>
+        ariaLabel="Imprimer les soldes fournisseurs" i18n="@@reports.supplier-balances.imprimer.5382c09d"> Imprimer </app-button>
       <app-button
         variant="secondary"
         icon="pi-download"
         iconPos="left"
         (click)="onExport()"
-        ariaLabel="Exporter les soldes fournisseurs en CSV" i18n="@@reports.supplier-balances.exporter.0cd84bdc">Exporter</app-button>
+        ariaLabel="Exporter les soldes fournisseurs en CSV" i18n="@@reports.supplier-balances.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="ft-filters">
@@ -90,7 +90,7 @@ import {
         [loading]="loading()"
         partyLabel="Fournisseur"
         [showActions]="true"
-        emptyMessage="Aucun solde fournisseur"
+        emptyMessage="Aucun solde fournisseur" i18n-emptyMessage="Aucun solde fournisseur"
         ariaLabel="Soldes par fournisseur"
         (viewInvoices)="onViewInvoices($event)"
         (viewParty)="onViewParty($event)">

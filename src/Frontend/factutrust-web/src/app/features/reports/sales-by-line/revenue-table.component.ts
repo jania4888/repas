@@ -13,11 +13,11 @@ import { SalesRevenueReportRow } from '@core/services/reports-api.service';
     } @else if (!rows.length) {
       <div class="empty-placeholder"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
     } @else {
-      <div role="region" [attr.aria-label]="showClientColumn ? 'CA par produit et client' : 'CA'">
+      <div role="region" [attr.aria-label]="showClientColumn ? loc_ui_tern_ca_par_produit_et_client_ea218a : 'CA'">
         <p-table [value]="rows" styleClass="p-datatable-sm reports-table">
         <ng-template pTemplate="header">
           <tr>
-            <th>{{ showClientColumn ? 'Produit' : 'Libellé' }}</th>
+            <th>{{ showClientColumn ? loc_ui_tern_produit_ff673d : loc_ui_tern_libelle_f5485b }}</th>
             @if (showClientColumn) { <th i18n="@@reports.sales-by-line.client.1bdd79b1">Client</th> }
             <th class="text-right" i18n="@@reports.sales-by-line.quantite.09a38fda">Quantité</th>
             <th class="text-right" i18n="@@reports.sales-by-line.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
@@ -44,6 +44,9 @@ import { SalesRevenueReportRow } from '@core/services/reports-api.service';
   `]
 })
 export class RevenueTableComponent {
+  readonly loc_ui_tern_ca_par_produit_et_client_ea218a = $localize`:@@ui.tern.ca.par.produit.et.client.ea218a:CA par produit et client`;
+  readonly loc_ui_tern_produit_ff673d = $localize`:@@ui.tern.produit.ff673d:Produit`;
+  readonly loc_ui_tern_libelle_f5485b = $localize`:@@ui.tern.libelle.f5485b:Libellé`;
   @Input() rows: SalesRevenueReportRow[] = [];
   @Input() loading = false;
   @Input() currency = 'TND';

@@ -23,7 +23,7 @@ import { isNavChildActive, isNavSubItemActive } from '@core/utils/nav-path-match
 import { getNavIconKey } from '@core/utils/nav-icon-key.util';
 import { AiAssistantShellService } from '@features/ai-assistant/services/ai-assistant-shell.service';
 import { canUseAiAssistant } from '@features/ai-assistant/utils/ai-access.util';
-import { resolveNavLabel } from '@core/i18n/erp-nav-label.util';
+import { resolveNavLabel, resolveSubNavLabel } from '@core/i18n/erp-nav-label.util';
 import { getNavId, NAV_ID } from '@core/config/nav-item-ids';
 
 @Component({
@@ -52,13 +52,17 @@ export class SidebarComponent implements OnInit {
     return resolveNavLabel(item);
   }
 
+  subNavLabel(item: NavSubItem): string {
+    return resolveSubNavLabel(item);
+  }
+
   brandDashboardAriaLabel(): string {
-    return $localize`:@@core.sidebar.brandDashboardAria:${this.brand.name}:brand:${this.brand.name} — Tableau de bord`;
+    return $localize`:@@core.sidebar.brandDashboardAria:${this.brand.name}:brand: — Tableau de bord`;
   }
 
   pendingBadgeAriaLabel(count: number | undefined): string {
     const n = count ?? 0;
-    return $localize`:@@core.sidebar.badgePending:${n}:count:${n} en attente`;
+    return $localize`:@@core.sidebar.badgePending:${n}:count: en attente`;
   }
 
   readonly dashboardHomeLink = this.appNav.dashboardHomeLink;

@@ -3,7 +3,7 @@
 <div class="ledger-page accounting-page">
   <p-card
     styleClass="p-card--static ledger-filters-card"
-    header="Critères de consultation"
+    header="Critères de consultation" i18n-header="Critères de consultation"
     subheader="Compte et période — les mêmes paramètres déclenchent l’appel au serveur qu’auparavant.">
     <p-toolbar styleClass="ledger-toolbar accounting-prime-toolbar">
       <ng-template pTemplate="start">
@@ -92,7 +92,7 @@
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            [attr.aria-label]="'Afficher les mouvements du compte ' + account" i18n="@@accounting.ledger.afficher.5e802040">Afficher</app-button>
+            [attr.aria-label]="'Afficher les mouvements du compte ' + account" i18n="@@accounting.ledger.afficher.5e802040"> Afficher </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-ledger"
             density="toolbar"
@@ -116,7 +116,7 @@
 
   <p-card
     styleClass="p-card--static ledger-table-card"
-    header="Mouvements"
+    header="Mouvements" i18n-header="Mouvements"
     subheader="Écritures et solde progressif sur la période sélectionnée.">
     @if (mode === 'range') {
       <!-- Grand livre général : les comptes en séquence, chacun avec report et sous-total. -->
@@ -238,15 +238,15 @@
           [rows]="20"
           [rowsPerPageOptions]="[10, 20, 50]"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
           [rowHover]="true"
           [scrollable]="true"
           scrollHeight="min(52vh, 28rem)"
           styleClass="ledger-table accounting-datatable"
         >
           <ng-template pTemplate="caption">
-            <span class="sr-only" i18n="@@accounting.ledger.ecritures.du.grand.livre.date.journal.numero.de..9bdcacba">Écritures du grand livre : date, journal, numéro de pièce, libellé, débit, crédit et solde
-              progressif pour la période sélectionnée.</span>
+            <span class="sr-only" i18n="@@accounting.ledger.ecritures.du.grand.livre.date.journal.numero.de..9bdcacba"> Écritures du grand livre : date, journal, numéro de pièce, libellé, débit, crédit et solde
+              progressif pour la période sélectionnée. </span>
           </ng-template>
           <ng-template pTemplate="header">
             <tr>

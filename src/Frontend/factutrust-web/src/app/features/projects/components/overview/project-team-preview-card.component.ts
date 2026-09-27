@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectMember } from '../../project-api.service';
@@ -7,7 +8,7 @@ import { isManagerRole, previewTeamMembers } from '../../project-detail.vm';
 @Component({
   selector: 'app-project-team-preview-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [BackendLabelPipe, CommonModule],
   template: `
     <section class="proj-detail-card">
       <h3 class="proj-detail-card__title" i18n="@@projects.components.equipe.du.projet.5903aa75">Équipe du projet</h3>
@@ -18,10 +19,10 @@ import { isManagerRole, previewTeamMembers } from '../../project-detail.vm';
               <span class="proj-avatar">{{ initials(m.userName) }}</span>
               <div class="proj-detail-team-list__info">
                 <strong>{{ m.userName }}</strong>
-                <span>{{ m.roleDisplay }}</span>
+                <span>{{ m.roleDisplay | backendLabel }}</span>
               </div>
               <span class="proj-detail-team-badge" [class.proj-detail-team-badge--lead]="isManager(m.role)">
-                {{ isManager(m.role) ? 'Chef' : 'Membre' }}
+                {{ isManager(m.role) ? loc_ui_tern_chef_46de84 : loc_ui_tern_membre_bbc7e7 }}
               </span>
             </li>
           }
@@ -34,6 +35,8 @@ import { isManagerRole, previewTeamMembers } from '../../project-detail.vm';
   `
 })
 export class ProjectTeamPreviewCardComponent {
+  readonly loc_ui_tern_chef_46de84 = $localize`:@@ui.tern.chef.46de84:Chef`;
+  readonly loc_ui_tern_membre_bbc7e7 = $localize`:@@ui.tern.membre.bbc7e7:Membre`;
   @Input() members: ProjectMember[] = [];
   @Output() viewTeam = new EventEmitter<void>();
 

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -27,14 +28,14 @@ import { PayrollAmountPipe } from '../shared';
   ],
   template: `
     <p-dialog
-      header="Enregistrer le versement CNSS"
+      header="Enregistrer le versement CNSS" i18n-header="Enregistrer le versement CNSS"
       [visible]="visible()"
       (visibleChange)="visibleChange.emit($event)"
       [modal]="true"
       [style]="{ width: '480px' }"
       (onShow)="onOpen()">
       <p class="hint mb-3">
-        Montant à verser (compte 453) : <strong>{{ totalDue() | payrollAmount }}</strong>
+        <ng-container i18n="@@payroll.declarations.montant.a.verser.compte.453.66ffbe27"> Montant à verser (compte 453) : </ng-container> <strong>{{ totalDue() | payrollAmount }}</strong>
       </p>
 
       <div class="field mb-3">
@@ -85,7 +86,7 @@ import { PayrollAmountPipe } from '../shared';
       <ng-template pTemplate="footer">
         <app-button variant="ghost" (click)="visibleChange.emit(false)" i18n="@@payroll.declarations.annuler.49ba3292">Annuler</app-button>
         <app-button variant="primary" [disabled]="saving()" (click)="submit()">
-          {{ saving() ? 'Enregistrement…' : 'Confirmer' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_confirmer_80a664 }}
         </app-button>
       </ng-template>
     </p-dialog>
@@ -97,6 +98,8 @@ import { PayrollAmountPipe } from '../shared';
   `]
 })
 export class CnssRemittancePaymentDialogComponent implements OnInit {
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_confirmer_80a664 = $localize`:@@ui.tern.confirmer.80a664:Confirmer`;
   private readonly payroll = inject(PayrollService);
   private readonly bankAccounts = inject(BankAccountService);
   private readonly toast = inject(ToastService);
@@ -153,7 +156,7 @@ export class CnssRemittancePaymentDialogComponent implements OnInit {
 
   submit(): void {
     if (this.method !== 0 && !this.bankAccountId) {
-      this.toast.add({ severity: 'warn', summary: 'Versement CNSS', detail: 'Sélectionnez un compte bancaire.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@cnss-remittance-payment-dialog.component.summary.Versement_CNSS:Versement CNSS`, detail: $localize`:@@cnss-remittance-payment-dialog.component.detail.S_lectionnez_un_:Sélectionnez un compte bancaire.` });
       return;
     }
 
@@ -169,14 +172,14 @@ export class CnssRemittancePaymentDialogComponent implements OnInit {
       notes: this.notes || undefined
     }).pipe(finalize(() => this.saving.set(false))).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Versement CNSS', detail: 'Versement enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@cnss-remittance-payment-dialog.component.summary.Versement_CNSS:Versement CNSS`, detail: $localize`:@@cnss-remittance-payment-dialog.component.detail.Versement_enregi:Versement enregistré.` });
         this.recorded.emit();
       },
       error: err =>
         this.toast.add({
           severity: 'error',
-          summary: 'Versement CNSS',
-          detail: err?.error?.message ?? 'Enregistrement impossible.'
+          summary: $localize`:@@cnss-remittance-payment-dialog.component.summary.Versement_CNSS:Versement CNSS`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
         })
     });
   }

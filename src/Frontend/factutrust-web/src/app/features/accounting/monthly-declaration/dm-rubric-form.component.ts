@@ -35,7 +35,7 @@ import {
     @if (form; as f) {
       <div class="dm-form">
         <h3 class="dm-form__title">
-          {{ f.id ? 'Modifier la rubrique ' + f.code : 'Nouvelle rubrique' }}
+          {{ f.id ? loc_ui_tern_modifier_la_rubrique_035400 + f.code : 'Nouvelle rubrique' }}
         </h3>
 
         <div class="dm-grid">
@@ -272,8 +272,8 @@ import {
             <label class="dm-lbl" for="dm-to" i18n="@@accounting.monthly-declaration.date.maximale.d.application.9f9a67dd">Date maximale d’application</label>
             <input id="dm-to" type="date" class="dm-inp" [(ngModel)]="f.effectiveTo" [disabled]="disabled" />
           </div>
-          <small class="dm-hint dm-hint--block" i18n="@@accounting.monthly-declaration.la.rubrique.s.applique.au.mois.entier.de.la.date.0b581591">La rubrique s’applique au mois entier de la date maximale : le formulaire officiel n’a pas
-            de case pour un mois proratisé.</small>
+          <small class="dm-hint dm-hint--block" i18n="@@accounting.monthly-declaration.la.rubrique.s.applique.au.mois.entier.de.la.date.0b581591"> La rubrique s’applique au mois entier de la date maximale : le formulaire officiel n’a pas
+            de case pour un mois proratisé. </small>
         </div>
 
         @if (validationMessage; as message) {
@@ -281,14 +281,14 @@ import {
         }
 
         <div class="dm-actions">
-          <app-button variant="secondary" size="sm" type="button" [disabled]="saving" (click)="cancel.emit()" i18n="@@accounting.monthly-declaration.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="secondary" size="sm" type="button" [disabled]="saving" (click)="cancel.emit()" i18n="@@accounting.monthly-declaration.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             size="sm"
             type="button"
             [disabled]="saving || disabled || !!validationMessage"
             (click)="save.emit()">
-            {{ saving ? 'Enregistrement…' : 'Enregistrer' }}
+            {{ saving ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
           </app-button>
         </div>
       </div>
@@ -315,6 +315,9 @@ import {
   `
 })
 export class DmRubricFormComponent {
+  readonly loc_ui_tern_modifier_la_rubrique_035400 = $localize`:@@ui.tern.modifier.la.rubrique.035400:Modifier la rubrique `;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   /** Brouillon modifié en place ; le conteneur en garde la propriété. */
   @Input({ required: true }) form!: DmRubricForm;
   @Input() accountOptions: DmOption<string>[] = [];

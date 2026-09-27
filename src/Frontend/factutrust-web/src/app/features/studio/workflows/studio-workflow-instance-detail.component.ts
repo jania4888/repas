@@ -318,7 +318,7 @@ export class StudioWorkflowInstanceDetailComponent {
   protected readonly approvals = computed(() => this.detail()?.approvals ?? []);
 
   /**
-   * Portée figée à l'ouverture (revue 4.5i★, D-45-29) : `{ entityKey, recordId }` lus quand `instanceId`
+   * Portée figée à l'ouverture (revue 4.5i★, D-45-29) : $localize`:@@ui.tern.entitykey.recordid.ed9193:{ entityKey, recordId }` lus quand `instanceId`
    * change, pour qu'un « Réessayer » ou un rechargement 409 garde la route runtime même si l'hôte
    * (« Mes approbations ») a perdu sa sélection entre-temps — sinon bascule vers la route de conception ⇒ 403 lecteur.
    */

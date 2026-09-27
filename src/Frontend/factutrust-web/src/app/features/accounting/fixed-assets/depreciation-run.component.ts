@@ -39,30 +39,30 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
     <app-accounting-correction-banner />
 
     <div class="card">
-      <p class="hint" i18n="@@accounting.fixed-assets.le.tableau.d.amortissement.est.genere.automatiqu.e3b052ae">Le tableau d'amortissement est généré automatiquement à la mise en service de chaque actif.
-        Si une dotation attendue n'apparaît pas, ouvrez la fiche de l'actif et générez son tableau.</p>
+      <p class="hint" i18n="@@accounting.fixed-assets.le.tableau.d.amortissement.est.genere.automatiqu.e3b052ae"> Le tableau d'amortissement est généré automatiquement à la mise en service de chaque actif.
+        Si une dotation attendue n'apparaît pas, ouvrez la fiche de l'actif et générez son tableau. </p>
       <app-accounting-status-banner
         *ngIf="isOffset()"
         title="Exercice décalé" i18n-title="Exercice décalé"
         [message]="offsetHint"
         variant="warning" />
       <label>
-        Exercice fiscal
+        <ng-container i18n="@@accounting.fixed-assets.exercice.fiscal.25ea5f92"> Exercice fiscal </ng-container>
         <select class="accounting-filter-input" [(ngModel)]="fiscalYear" [disabled]="loading()">
           <option *ngFor="let opt of fiscalYearOptions()" [ngValue]="opt.key">{{ opt.label }}</option>
         </select>
         <span class="hint" *ngIf="!settingsLoaded()" i18n="@@accounting.fixed-assets.chargement.des.exercices.ade10a7b">Chargement des exercices…</span>
       </label>
       <div class="actions">
-        <app-button variant="primary" type="button" (click)="run()" [disabled]="loading()" i18n="@@accounting.fixed-assets.comptabiliser.les.dotations.e264ad6f">Comptabiliser les dotations</app-button>
-        <app-button variant="outline" type="button" icon="pi-download" (click)="exportReport()" [disabled]="loading()" i18n="@@accounting.fixed-assets.export.excel.dotations.b3950169">Export Excel dotations</app-button>
+        <app-button variant="primary" type="button" (click)="run()" [disabled]="loading()" i18n="@@accounting.fixed-assets.comptabiliser.les.dotations.e264ad6f"> Comptabiliser les dotations </app-button>
+        <app-button variant="outline" type="button" icon="pi-download" (click)="exportReport()" [disabled]="loading()" i18n="@@accounting.fixed-assets.export.excel.dotations.b3950169"> Export Excel dotations </app-button>
         <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets" i18n="@@accounting.fixed-assets.retour.au.registre.aa646cbf">Retour au registre</app-button>
         <app-button
           variant="secondary"
           type="button"
           routerLink="/accounting/fixed-assets/amortization-table"
-          [queryParams]="{ refresh: 1 }" i18n="@@accounting.fixed-assets.voir.tableau.amortissements.52f1668b">Voir tableau amortissements</app-button>
-        <app-button variant="secondary" type="button" icon="pi pi-cog" routerLink="/accounting/fixed-assets/settings" i18n="@@accounting.fixed-assets.parametres.d.exercice.7fa4b6fc">Paramètres d'exercice</app-button>
+          [queryParams]="{ refresh: 1 }" i18n="@@accounting.fixed-assets.voir.tableau.amortissements.52f1668b"> Voir tableau amortissements </app-button>
+        <app-button variant="secondary" type="button" icon="pi pi-cog" routerLink="/accounting/fixed-assets/settings" i18n="@@accounting.fixed-assets.parametres.d.exercice.7fa4b6fc"> Paramètres d'exercice </app-button>
       </div>
     </div>
 
@@ -203,7 +203,7 @@ export class DepreciationRunComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.error.set(err?.error?.message ?? 'Erreur lors de la comptabilisation des dotations.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.la.comptabilisation.des.dot.fc608d:Erreur lors de la comptabilisation des dotations.`);
         this.loading.set(false);
       }
     });
@@ -224,7 +224,7 @@ export class DepreciationRunComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(err?.error?.message ?? 'Erreur export Excel.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.erreur.export.excel.dd1ee1:Erreur export Excel.`);
       }
     });
   }

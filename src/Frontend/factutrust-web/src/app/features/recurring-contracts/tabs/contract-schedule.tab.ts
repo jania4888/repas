@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -24,6 +26,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
   selector: 'app-contract-schedule-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, TableModule,
     ButtonComponent, EmptyStateComponent, StatusBadgeComponent, SkeletonTableComponent,
     DraftAdjustDialogComponent
@@ -77,7 +80,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
               <td>{{ e.description }}</td>
               <td class="amount">{{ e.estimatedAmountHT | currency:contract.currency:'symbol':'1.3-3' }}</td>
               <td>
-                <app-status-badge [status]="scheduleBadgeStatus(e.status)" [label]="e.statusDisplay">
+                <app-status-badge [status]="scheduleBadgeStatus(e.status)" [label]="e.statusDisplay | backendLabel">
                 </app-status-badge>
               </td>
               <td>
@@ -196,7 +199,7 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
       error: err => {
         this.loading.set(false);
         this.errorHandler.logError('RecurringContracts: schedule', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-schedule.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -213,7 +216,7 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
         this.generating.set(false);
         this.toast.add({
           severity: 'success',
-          summary: 'Génération terminée',
+          summary: $localize`:@@contract-schedule.tab.summary.G_n_ration_termi:Génération terminée`,
           detail: `${count} brouillon(s) généré(s).`
         });
         this.load();
@@ -221,7 +224,7 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
       error: err => {
         this.generating.set(false);
         this.errorHandler.logError('RecurringContracts: trigger billing', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-schedule.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -238,8 +241,8 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
       header: 'Confirmer l\'émission',
       message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Émettre la facture',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@contract-schedule.tab.acceptLabel.Émettre la f:Émettre la facture`,
+      rejectLabel: $localize`:@@contract-schedule.tab.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       size: 'md',
       accept: () => this.issue(entry.billingRunId!)
@@ -253,7 +256,7 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
         this.issuingId.set(null);
         this.toast.add({
           severity: 'success',
-          summary: 'Facture émise',
+          summary: $localize`:@@contract-schedule.tab.summary.Facture émis:Facture émise`,
           detail: `Facture ${issued.invoiceNumber} émise.`
         });
         this.load();
@@ -264,7 +267,7 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
         this.errorHandler.logError('RecurringContracts: issue from schedule', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Émission impossible',
+          summary: $localize`:@@contract-schedule.tab.summary._mission_impossi:Émission impossible`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

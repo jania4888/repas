@@ -62,11 +62,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           max="2100"
           [(ngModel)]="fiscalYearFilter"
           (keyup.enter)="reload()" />
-        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()" i18n="@@accounting.fixed-assets.actualiser.9d3b2a7d">Actualiser</app-button>
-        <app-button variant="primary" icon="pi pi-plus" type="button" routerLink="/accounting/fixed-assets/new" i18n="@@accounting.fixed-assets.nouvelle.immobilisation.477db87f">Nouvelle immobilisation</app-button>
-        <app-button variant="secondary" icon="pi pi-calculator" type="button" routerLink="/accounting/fixed-assets/depreciation-run" i18n="@@accounting.fixed-assets.dotations.751a01e7">Dotations</app-button>
-        <app-button variant="secondary" icon="pi pi-table" type="button" routerLink="/accounting/fixed-assets/amortization-table" i18n="@@accounting.fixed-assets.tableau.amortissements.0ddccc41">Tableau amortissements</app-button>
-        <app-button variant="secondary" icon="pi pi-cog" type="button" routerLink="/accounting/fixed-assets/settings" i18n="@@accounting.fixed-assets.exercice.comptable.7d7b9297">Exercice comptable</app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()" i18n="@@accounting.fixed-assets.actualiser.9d3b2a7d"> Actualiser </app-button>
+        <app-button variant="primary" icon="pi pi-plus" type="button" routerLink="/accounting/fixed-assets/new" i18n="@@accounting.fixed-assets.nouvelle.immobilisation.477db87f"> Nouvelle immobilisation </app-button>
+        <app-button variant="secondary" icon="pi pi-calculator" type="button" routerLink="/accounting/fixed-assets/depreciation-run" i18n="@@accounting.fixed-assets.dotations.751a01e7"> Dotations </app-button>
+        <app-button variant="secondary" icon="pi pi-table" type="button" routerLink="/accounting/fixed-assets/amortization-table" i18n="@@accounting.fixed-assets.tableau.amortissements.0ddccc41"> Tableau amortissements </app-button>
+        <app-button variant="secondary" icon="pi pi-cog" type="button" routerLink="/accounting/fixed-assets/settings" i18n="@@accounting.fixed-assets.exercice.comptable.7d7b9297"> Exercice comptable </app-button>
       </div>
     </div>
 
@@ -127,8 +127,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           {{ totalCount() }} immobilisation(s) — page {{ page() }} / {{ totalPages() }}
         </span>
         <div class="page-actions">
-          <app-button variant="secondary" type="button" (click)="prevPage()" [disabled]="loading() || page() <= 1" i18n="@@accounting.fixed-assets.precedent.a527f171">Précédent</app-button>
-          <app-button variant="secondary" type="button" (click)="nextPage()" [disabled]="loading() || page() >= totalPages()" i18n>Suivant</app-button>
+          <app-button variant="secondary" type="button" (click)="prevPage()" [disabled]="loading() || page() <= 1" i18n="@@accounting.fixed-assets.precedent.a527f171"> Précédent </app-button>
+          <app-button variant="secondary" type="button" (click)="nextPage()" [disabled]="loading() || page() >= totalPages()" i18n> Suivant </app-button>
         </div>
       </div>
     </div>
@@ -270,6 +270,6 @@ export class FixedAssetsListComponent implements OnInit {
   }
 
   methodLabel(row: FixedAssetDto): string {
-    return DEPRECIATION_METHOD_LABELS[row.depreciationMethod] ?? 'Linéaire';
+    return DEPRECIATION_METHOD_LABELS[row.depreciationMethod] ?? $localize`:@@ui.tern.lineaire.a5db4c:Linéaire`;
   }
 }

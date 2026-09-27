@@ -7,7 +7,7 @@
     </div>
     <h2 i18n="@@inventory.inventory-detail.inventaire.introuvable.58ba8c22">Inventaire introuvable</h2>
     <p i18n="@@inventory.inventory-detail.l.inventaire.demande.n.existe.pas.ou.vous.n.avez.02e353aa">L'inventaire demandé n'existe pas ou vous n'avez pas les droits pour le consulter.</p>
-    <app-button variant="primary" icon="pi-arrow-left" iconPos="left" (click)="goToList()" ariaLabel="Retour à la liste des inventaires" i18n="@@inventory.inventory-detail.retour.a.la.liste.7753f531">Retour à la liste</app-button>
+    <app-button variant="primary" icon="pi-arrow-left" iconPos="left" (click)="goToList()" ariaLabel="Retour à la liste des inventaires" i18n="@@inventory.inventory-detail.retour.a.la.liste.7753f531"> Retour à la liste </app-button>
   </div>
 } @else {
   <app-page-header
@@ -18,7 +18,7 @@
       icon="pi-arrow-left"
       iconPos="left"
       routerLink="/inventory"
-      ariaLabel="Retour à la liste des inventaires" i18n="@@inventory.inventory-detail.retour.e5befb1f">Retour</app-button>
+      ariaLabel="Retour à la liste des inventaires" i18n="@@inventory.inventory-detail.retour.e5befb1f"> Retour </app-button>
     @if (inventory()?.status === 1) {
       <app-button
         variant="primary"
@@ -26,7 +26,7 @@
         iconPos="left"
         routerLink="/inventory/new"
         [queryParams]="{ warehouseId: inventory()?.warehouseId }"
-        ariaLabel="Continuer le comptage de cet inventaire" i18n="@@inventory.inventory-detail.continuer.l.inventaire.9964ec39">Continuer l'inventaire</app-button>
+        ariaLabel="Continuer le comptage de cet inventaire" i18n="@@inventory.inventory-detail.continuer.l.inventaire.9964ec39"> Continuer l'inventaire </app-button>
     }
   </app-page-header>
 
@@ -101,7 +101,7 @@
               </h3>
               <app-status-badge
                 [status]="getStatusBadgeStatus(inventory()!.status)"
-                [label]="inventory()!.statusDisplay">
+                [label]="inventory()!.statusDisplay | backendLabel">
               </app-status-badge>
             </div>
             <h2 id="inventory-summary-heading" class="visually-hidden" i18n="@@inventory.inventory-detail.resume.de.l.inventaire.6ce44d41">Résumé de l'inventaire</h2>

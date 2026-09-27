@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -76,7 +77,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
               iconPos="left"
               type="button"
               (click)="openCreate()"
-              ariaLabel="Créer un nouveau compte comptable" i18n="@@accounting.chart-of-accounts.nouveau.compte.9c08a4c7">Nouveau compte</app-button>
+              ariaLabel="Créer un nouveau compte comptable" i18n="@@accounting.chart-of-accounts.nouveau.compte.9c08a4c7"> Nouveau compte </app-button>
           }
           <app-button
             variant="secondary"
@@ -84,7 +85,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
             iconPos="left"
             type="button"
             (click)="load()"
-            ariaLabel="Actualiser le plan comptable" i18n="@@accounting.chart-of-accounts.actualiser.9d3b2a7d">Actualiser</app-button>
+            ariaLabel="Actualiser le plan comptable" i18n="@@accounting.chart-of-accounts.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-chart"
             density="toolbar"
@@ -124,18 +125,18 @@ export function sceAccountDigitCount(accountNumber: string): number {
         [showCurrentPageReport]="true"
         [sortField]="'accountNumber'"
         [sortOrder]="1"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes"
         styleClass="p-datatable-sm coa-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="accountNumber" scope="col">
-              Compte <p-sortIcon field="accountNumber" />
+              <ng-container i18n="@@accounting.chart-of-accounts.compte.c45740bb"> Compte </ng-container> <p-sortIcon field="accountNumber" />
             </th>
             <th pSortableColumn="label" scope="col">
-              Libellé <p-sortIcon field="label" />
+              <ng-container i18n="@@accounting.chart-of-accounts.libelle.f5485bba"> Libellé </ng-container> <p-sortIcon field="label" />
             </th>
             <th pSortableColumn="accountClass" scope="col" class="coa-col-narrow">
-              Classe <p-sortIcon field="accountClass" />
+              <ng-container i18n="@@accounting.chart-of-accounts.classe.3c38412a"> Classe </ng-container> <p-sortIcon field="accountClass" />
             </th>
             <th scope="col" class="coa-col-narrow" i18n="@@accounting.chart-of-accounts.systeme.62d09520">Système</th>
             <th scope="col" class="coa-col-narrow" i18n="@@accounting.chart-of-accounts.auxiliaire.b8c6c266">Auxiliaire</th>
@@ -154,14 +155,14 @@ export function sceAccountDigitCount(accountNumber: string): number {
                 class="coa-badge"
                 [class.coa-badge--yes]="r.isSystem"
                 [class.coa-badge--no]="!r.isSystem">
-                {{ r.isSystem ? 'Oui' : 'Non' }}
+                {{ r.isSystem ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}
               </span>
             </td>
             <td class="coa-col-narrow" data-label="Auxiliaire">
               @if (r.isAuxiliary) {
                 <span
                   class="coa-badge coa-badge--aux"
-                  [title]="r.affectationAccountNumber ? 'Rattaché au compte ' + r.affectationAccountNumber : ''">
+                  [title]="r.affectationAccountNumber ? loc_ui_tern_rattache_au_compte_324197 + r.affectationAccountNumber : ''">
                   {{ r.affectationAccountNumber || 'Oui' }}
                 </span>
               } @else {
@@ -174,7 +175,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
                   class="coa-badge"
                   [class.coa-badge--yes]="r.isActive"
                   [class.coa-badge--no]="!r.isActive">
-                  {{ r.isActive ? 'Actif' : 'Inactif' }}
+                  {{ r.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                 </span>
                 @if (canCreate && !r.isSystem) {
                   <button
@@ -182,8 +183,8 @@ export function sceAccountDigitCount(accountNumber: string): number {
                     class="coa-toggle-btn"
                     [disabled]="togglingId() === r.id"
                     (click)="confirmToggleActive(r)"
-                    [attr.aria-label]="(r.isActive ? 'Désactiver' : 'Réactiver') + ' le compte ' + r.accountNumber">
-                    {{ r.isActive ? 'Désactiver' : 'Réactiver' }}
+                    [attr.aria-label]="(r.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_reactiver_822dbd) + loc_ui_tern_le_compte_e8f216 + r.accountNumber">
+                    {{ r.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_reactiver_822dbd }}
                   </button>
                 }
               </span>
@@ -267,7 +268,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
           <div class="coa-modal-actions">
             <button type="button" class="btn btn-secondary" (click)="closeCreate()" [disabled]="creating()" i18n="@@accounting.chart-of-accounts.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary" (click)="create()" [disabled]="creating() || !canSubmit()">
-              {{ creating() ? 'Enregistrement…' : 'Enregistrer' }}
+              {{ creating() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
             </button>
           </div>
         </div>
@@ -463,6 +464,16 @@ export function sceAccountDigitCount(accountNumber: string): number {
   `
 })
 export class ChartOfAccountsComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_rattache_au_compte_324197 = $localize`:@@ui.tern.rattache.au.compte.324197:Rattaché au compte `;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_reactiver_822dbd = $localize`:@@ui.tern.reactiver.822dbd:Réactiver`;
+  readonly loc_ui_tern_le_compte_e8f216 = $localize`:@@ui.tern.le.compte.e8f216: le compte `;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   private readonly api = inject(AccountingService);
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
@@ -669,11 +680,11 @@ export class ChartOfAccountsComponent implements OnInit {
         this.creating.set(false);
         if (res.success) {
           this.createError.set(null);
-          this.toast.add({ severity: 'success', summary: 'Compte créé', detail: `${num} — ${request.label}`, life: 4000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@chart-of-accounts.component.summary.Comptecréé:Compte créé`, detail: `${num} — ${request.label}`, life: 4000 });
           this.showCreate.set(false);
           this.load();
         } else {
-          this.createError.set(res.error ?? 'La création du compte a échoué.');
+          this.createError.set(res.error ?? $localize`:@@ui.tern.la.creation.du.compte.a.echoue.f63cae:La création du compte a échoué.`);
         }
       },
       error: err => {
@@ -698,14 +709,14 @@ export class ChartOfAccountsComponent implements OnInit {
   }
 
   confirmToggleActive(account: ChartOfAccountDto): void {
-    const action = account.isActive ? 'Désactiver' : 'Réactiver';
+    const action = account.isActive ? $localize`:@@ui.tern.desactiver.d28397:Désactiver` : $localize`:@@ui.tern.reactiver.822dbd:Réactiver`;
     this.confirmService.confirm({
-      header: `${action} le compte`,
+      header: $localize`:@@ui.tern.action.le.compte.9c1a20:${action}:action: le compte`,
       message: account.isActive
-        ? `Désactiver le compte ${account.accountNumber} — ${account.label} ? Il ne sera plus utilisable en saisie ni en génération automatique.`
-        : `Réactiver le compte ${account.accountNumber} — ${account.label} ?`,
+        ? $localize`:@@ui.tern.desactiver.le.compte.ph.ph.il.ne.sera.plus.b1104d:Désactiver le compte ${account.accountNumber}:p0: — ${account.label}:p1: ? Il ne sera plus utilisable en saisie ni en génération automatique.`
+        : $localize`:@@ui.tern.reactiver.le.compte.ph.ph.3c4d55:Réactiver le compte ${account.accountNumber}:p0: — ${account.label}:p1: ?`,
       acceptLabel: action,
-      rejectLabel: 'Annuler',
+      rejectLabel: $localize`:@@chart-of-accounts.component.rejectLabel.Annuler:Annuler`,
       accept: () => this.toggleActive(account)
     });
   }
@@ -718,13 +729,13 @@ export class ChartOfAccountsComponent implements OnInit {
         if (res.success) {
           this.toast.add({
             severity: 'success',
-            summary: account.isActive ? 'Compte désactivé' : 'Compte réactivé',
+            summary: account.isActive ? $localize`:@@ui.tern.compte.desactive.3ba8b2:Compte désactivé` : $localize`:@@ui.tern.compte.reactive.c00017:Compte réactivé`,
             detail: `${account.accountNumber} — ${account.label}`,
             life: 4000
           });
           this.load();
         } else {
-          this.error.set(res.error ?? 'Le changement de statut a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.le.changement.de.statut.a.echoue.aac7f0:Le changement de statut a échoué.`);
         }
       },
       error: (err: HttpErrorResponse) => {
@@ -744,7 +755,7 @@ export class ChartOfAccountsComponent implements OnInit {
           this.rows.set(res.data);
           this.reapplyGlobalFilter();
         } else {
-          this.error.set(res.error ?? 'Erreur de chargement');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.d75684:Erreur de chargement`);
         }
       },
       error: err => {

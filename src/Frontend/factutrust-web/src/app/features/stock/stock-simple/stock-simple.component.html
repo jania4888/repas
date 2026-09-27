@@ -6,7 +6,7 @@
     <div class="header-actions">
         <div class="stock-simple-warehouse">
             <app-warehouse-selector
-                label="Entrepôt"
+                label="Entrepôt" i18n-label="Entrepôt"
                 [showLabel]="true"
                 [required]="true"
                 [value]="warehouseContext.selectedWarehouseId()"
@@ -24,7 +24,7 @@
                 <span i18n="@@stock.stock-simple.sortie.stock.e914cdfc">Sortie Stock</span>
             </a>
         }
-        <button pButton pRipple label="Vue détaillée" icon="pi pi-cog" class="p-button-outlined p-button-secondary"
+        <button pButton pRipple label="Vue détaillée" i18n-label="Vue détaillée" icon="pi pi-cog" class="p-button-outlined p-button-secondary"
             (click)="navigateToAdvanced()">
         </button>
         <app-analyze-with-ai-button screenId="stock-simple" [payloadBuilder]="buildStockAnalyzePayload"
@@ -92,7 +92,7 @@
                     (keyup.enter)="onSearch()" class="search-input">
                 <i *ngIf="searchTerm" class="pi pi-times clear-icon" (click)="clearSearch()"></i>
             </span>
-            <button pButton pRipple label="Rechercher" icon="pi pi-search" (click)="onSearch()">
+            <button pButton pRipple label="Rechercher" i18n-label="Rechercher" icon="pi pi-search" (click)="onSearch()">
             </button>
         </div>
     </div>
@@ -143,7 +143,7 @@
 </div>
 
 <!-- Quick Count Dialog - Premium Design -->
-<p-dialog header="Compter mon stock" [(visible)]="countDialogVisible" [modal]="true"
+<p-dialog header="Compter mon stock" i18n-header="Compter mon stock" [(visible)]="countDialogVisible" [modal]="true"
     [style]="{width: '480px'}" [closable]="!submitting" [closeOnEscape]="!submitting"
     [draggable]="false" [resizable]="false" styleClass="count-dialog">
 
@@ -221,13 +221,13 @@
     <ng-template pTemplate="footer">
         <div class="dialog-actions">
             @if (!countResult) {
-            <button pButton type="button" label="Annuler" class="p-button-text p-button-secondary"
+            <button pButton type="button" label="Annuler" i18n-label="Annuler" class="p-button-text p-button-secondary"
                 (click)="closeCountDialog()" [disabled]="submitting"></button>
-            <button pButton type="button" label="Valider le comptage" icon="pi pi-check"
+            <button pButton type="button" label="Valider le comptage" i18n-label="Valider le comptage" icon="pi pi-check"
                 (click)="submitCount()" [loading]="submitting"></button>
             }
             @if (countResult) {
-            <button pButton type="button" label="Fermer" icon="pi pi-check"
+            <button pButton type="button" label="Fermer" i18n-label="Fermer" icon="pi pi-check"
                 (click)="closeCountDialog()"></button>
             }
         </div>

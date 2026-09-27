@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import {
   Component,
   EventEmitter,
@@ -224,12 +225,12 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
           if (!r.success) {
             this.toast.add({
               severity: 'error',
-              summary: 'Demande',
+              summary: $localize`:@@exchange-requests-panel.component.summary.Demande:Demande`,
               detail: r.message || 'Impossible de créer la demande'
             });
             return;
           }
-          this.toast.add({ severity: 'success', summary: 'Demande', detail: 'Demande créée' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@exchange-requests-panel.component.summary.Demande:Demande`, detail: $localize`:@@exchange-requests-panel.component.detail.Demande_cr_e:Demande créée` });
           this.created.emit(r.data);
           this.cancelCreate();
           this.selectedChange.emit(r.data.id);
@@ -238,8 +239,8 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
           this.creating.set(false);
           this.toast.add({
             severity: 'error',
-            summary: 'Demande',
-            detail: 'Impossible de créer la demande'
+            summary: $localize`:@@exchange-requests-panel.component.summary.Demande:Demande`,
+            detail: $localize`:@@exchange-requests-panel.component.detail.Impossible_de_cr:Impossible de créer la demande`
           });
         }
       });
@@ -278,8 +279,8 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
       this.confirm.confirm({
         header: `Clôturer la demande #${req.number}`,
         message: 'Cette action est irréversible. La demande ne pourra plus changer de statut.',
-        acceptLabel: 'Clôturer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@exchange-requests-panel.component.acceptLabel.Clôturer:Clôturer`,
+        rejectLabel: $localize`:@@exchange-requests-panel.component.rejectLabel.Annuler:Annuler`,
         acceptButtonStyleClass: 'btn-danger',
         accept: () => this.applyStatus(req, status)
       });
@@ -298,20 +299,20 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
         if (!r.success) {
           this.toast.add({
             severity: 'error',
-            summary: 'Assignation',
+            summary: $localize`:@@exchange-requests-panel.component.summary.Assignation:Assignation`,
             detail: r.message || 'Impossible d’assigner la demande'
           });
           return;
         }
-        this.toast.add({ severity: 'success', summary: 'Assignation', detail: 'Demande assignée' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@exchange-requests-panel.component.summary.Assignation:Assignation`, detail: $localize`:@@exchange-requests-panel.component.detail.Demande_assign_e:Demande assignée` });
         this.assigned.emit(r.data);
       },
       error: () => {
         this.statusBusyId.set(null);
         this.toast.add({
           severity: 'error',
-          summary: 'Assignation',
-          detail: 'Impossible d’assigner la demande'
+          summary: $localize`:@@exchange-requests-panel.component.summary.Assignation:Assignation`,
+          detail: $localize`:@@exchange-requests-panel.component.detail.Impossible_d_ass:Impossible d’assigner la demande`
         });
       }
     });
@@ -329,20 +330,20 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
         if (!r.success) {
           this.toast.add({
             severity: 'error',
-            summary: 'Pièce jointe',
+            summary: $localize`:@@exchange-requests-panel.component.summary.Pi_ce_jointe:Pièce jointe`,
             detail: r.message || 'Upload impossible'
           });
           return;
         }
-        this.toast.add({ severity: 'success', summary: 'Pièce jointe', detail: 'Document ajouté' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@exchange-requests-panel.component.summary.Pi_ce_jointe:Pièce jointe`, detail: $localize`:@@exchange-requests-panel.component.detail.Document_ajout_:Document ajouté` });
         this.uploaded.emit(r.data);
       },
       error: () => {
         this.uploading.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Pièce jointe',
-          detail: 'Upload impossible'
+          summary: $localize`:@@exchange-requests-panel.component.summary.Pi_ce_jointe:Pièce jointe`,
+          detail: $localize`:@@exchange-requests-panel.component.detail.Upload impos:Upload impossible`
         });
       }
     });
@@ -362,8 +363,8 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
       error: () =>
         this.toast.add({
           severity: 'error',
-          summary: 'Téléchargement',
-          detail: 'Impossible de télécharger le document'
+          summary: $localize`:@@exchange-requests-panel.component.summary.T_l_chargement:Téléchargement`,
+          detail: $localize`:@@exchange-requests-panel.component.detail.Impossible_de_t_:Impossible de télécharger le document`
         })
     });
   }
@@ -378,7 +379,7 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
         if (!r.success) {
           this.toast.add({
             severity: 'error',
-            summary: 'Commentaire',
+            summary: $localize`:@@exchange-requests-panel.component.summary.Commentaire:Commentaire`,
             detail: r.message || 'Impossible d’ajouter le commentaire'
           });
           return;
@@ -390,8 +391,8 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
         this.postingComment.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Commentaire',
-          detail: 'Impossible d’ajouter le commentaire'
+          summary: $localize`:@@exchange-requests-panel.component.summary.Commentaire:Commentaire`,
+          detail: $localize`:@@exchange-requests-panel.component.detail.Impossible_d_ajo:Impossible d’ajouter le commentaire`
         });
       }
     });
@@ -406,14 +407,14 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
         if (!r.success) {
           this.toast.add({
             severity: 'error',
-            summary: 'Statut',
+            summary: $localize`:@@exchange-requests-panel.component.summary.Statut:Statut`,
             detail: r.message || 'Impossible de mettre à jour le statut'
           });
           return;
         }
         this.toast.add({
           severity: 'success',
-          summary: 'Statut',
+          summary: $localize`:@@exchange-requests-panel.component.summary.Statut:Statut`,
           detail: `Demande ${requestStatusLabel(status).toLowerCase()}`
         });
         this.statusChanged.emit(r.data);
@@ -422,8 +423,8 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
         this.statusBusyId.set(null);
         this.toast.add({
           severity: 'error',
-          summary: 'Statut',
-          detail: 'Impossible de mettre à jour le statut'
+          summary: $localize`:@@exchange-requests-panel.component.summary.Statut:Statut`,
+          detail: $localize`:@@exchange-requests-panel.component.detail.Impossible d:Impossible de mettre à jour le statut`
         });
       }
     });
@@ -443,7 +444,7 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
           this.comments.set([]);
           this.toast.add({
             severity: 'error',
-            summary: 'Commentaires',
+            summary: $localize`:@@exchange-requests-panel.component.summary.Commentaires:Commentaires`,
             detail: r.message || 'Impossible de charger les commentaires'
           });
           return;
@@ -455,8 +456,8 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
         this.comments.set([]);
         this.toast.add({
           severity: 'error',
-          summary: 'Commentaires',
-          detail: 'Impossible de charger les commentaires'
+          summary: $localize`:@@exchange-requests-panel.component.summary.Commentaires:Commentaires`,
+          detail: $localize`:@@exchange-requests-panel.component.detail.Impossible_de_ch:Impossible de charger les commentaires`
         });
       }
     });

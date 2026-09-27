@@ -3,7 +3,8 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { provideRouter } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { of, throwError, timeout, TimeoutError, catchError } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RegisterFirmComponent } from './register-firm.component';
 import { AuthService, ApiResponse, AuthResponse } from '@core/services/auth.service';
 import { WarehouseContextService } from '@core/services/warehouse-context.service';
@@ -31,6 +32,9 @@ describe('RegisterFirmComponent', () => {
         FormBuilder,
         provideRouter([]),
         provideNoopAnimations(),
+        // Sélecteur de langue (ErpLocaleService → préférences utilisateur via HTTP).
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: AuthService, useValue: authSpy },
         { provide: WarehouseContextService, useValue: warehouseSpy },
         { provide: ErrorHandlerService, useValue: errorSpy }

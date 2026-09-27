@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import {
     Component,
     OnInit,
@@ -141,8 +142,8 @@ export class InventoryFormComponent implements OnInit {
                 this.loading.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: this.errorHandler.extractErrorMessage(err) ?? 'Impossible de charger les entrepôts',
+                    summary: $localize`:@@inventory-form.component.summary.Erreur:Erreur`,
+                    detail: this.errorHandler.extractErrorMessage(err) ?? $localize`:@@ui.tern.impossible.de.charger.les.entrepots.349245:Impossible de charger les entrepôts`,
                 });
             },
         });
@@ -176,8 +177,8 @@ export class InventoryFormComponent implements OnInit {
                 this.loading.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: 'Impossible de charger l\'inventaire actif',
+                    summary: $localize`:@@inventory-form.component.summary.Erreur:Erreur`,
+                    detail: $localize`:@@inventory-form.component.detail.Impossible_de_ch:Impossible de charger l'inventaire actif`,
                 });
             },
         });
@@ -199,8 +200,8 @@ export class InventoryFormComponent implements OnInit {
         if (!warehouse) {
             this.toastService.add({
                 severity: 'warn',
-                summary: 'Attention',
-                detail: 'Veuillez sélectionner un entrepôt',
+                summary: $localize`:@@inventory-form.component.summary.Attention:Attention`,
+                detail: $localize`:@@inventory-form.component.detail.Veuillez_s_lecti:Veuillez sélectionner un entrepôt`,
             });
             return;
         }
@@ -217,15 +218,15 @@ export class InventoryFormComponent implements OnInit {
                     if (res.success && res.data) {
                         this.toastService.add({
                             severity: 'success',
-                            summary: 'Inventaire démarré',
+                            summary: $localize`:@@inventory-form.component.summary.Inventaire_d_mar:Inventaire démarré`,
                             detail: res.data.humanMessage,
                         });
                         this.loadActiveInventory(warehouse.id);
                     } else {
                         this.toastService.add({
                             severity: 'error',
-                            summary: 'Erreur',
-                            detail: res.errors?.join(', ') ?? 'Impossible de démarrer l\'inventaire',
+                            summary: $localize`:@@inventory-form.component.summary.Erreur:Erreur`,
+                            detail: res.errors?.join(', ') ?? $localize`:@@ui.tern.impossible.de.demarrer.l.inventaire.8110bf:Impossible de démarrer l'inventaire`,
                         });
                     }
                     this.starting.set(false);
@@ -234,8 +235,8 @@ export class InventoryFormComponent implements OnInit {
                     const msg = this.errorHandler.extractErrorMessage(err);
                     this.toastService.add({
                         severity: 'error',
-                        summary: 'Erreur',
-                        detail: msg ?? 'Impossible de démarrer l\'inventaire',
+                        summary: $localize`:@@inventory-form.component.summary.Erreur:Erreur`,
+                        detail: msg ?? $localize`:@@ui.tern.impossible.de.demarrer.l.inventaire.8110bf:Impossible de démarrer l'inventaire`,
                     });
                     this.errorHandler.logError('Start inventory failed', err);
                     this.starting.set(false);
@@ -316,8 +317,8 @@ export class InventoryFormComponent implements OnInit {
         if (toSave.length === 0) {
             this.toastService.add({
                 severity: 'info',
-                summary: 'Rien à enregistrer',
-                detail: 'Aucune modification à sauvegarder',
+                summary: $localize`:@@inventory-form.component.summary.Rien_enregistr:Rien à enregistrer`,
+                detail: $localize`:@@inventory-form.component.detail.Aucune_modificat:Aucune modification à sauvegarder`,
             });
             return;
         }
@@ -338,7 +339,7 @@ export class InventoryFormComponent implements OnInit {
                 this.lastSavedAt.set(new Date());
                 this.toastService.add({
                     severity: 'success',
-                    summary: 'Enregistrement terminé',
+                    summary: $localize`:@@inventory-form.component.summary.Enregistrement_t:Enregistrement terminé`,
                     detail: `${queue.length} comptage(s) enregistré(s). Dernière sauvegarde à ${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`,
                 });
                 this.loadActiveInventory(inv.warehouseId);
@@ -357,10 +358,10 @@ export class InventoryFormComponent implements OnInit {
                         this.saving.set(false);
                         this.toastService.add({
                             severity: 'error',
-                            summary: 'Erreur d\'enregistrement',
+                            summary: $localize`:@@inventory-form.component.summary.Erreur_d_enregis:Erreur d'enregistrement`,
                             detail:
                                 this.errorHandler.extractErrorMessage(err) ??
-                                'Impossible d\'enregistrer le comptage',
+                                $localize`:@@ui.tern.impossible.d.enregistrer.le.comptage.b4a869:Impossible d'enregistrer le comptage`,
                         });
                         this.errorHandler.logError('Record count failed', err);
                     },
@@ -379,7 +380,7 @@ export class InventoryFormComponent implements OnInit {
     private warnMissingLot(line: InventoryFormLine): void {
         this.toastService.add({
             severity: 'warn',
-            summary: 'N° de lot requis',
+            summary: $localize`:@@inventory-form.component.summary.N° de lot re:N° de lot requis`,
             detail: `Saisissez un numéro de lot pour « ${line.productName} » (article suivi avec écart).`,
         });
     }
@@ -400,18 +401,18 @@ export class InventoryFormComponent implements OnInit {
         ).length;
 
         const implicitPart = implicitCount > 0
-            ? `${implicitCount} article${implicitCount > 1 ? 's' : ''} non saisi${implicitCount > 1 ? 's' : ''} seront confirmés à la quantité système.`
-            : 'Tous les articles saisis seront enregistrés.';
+            ? $localize`:@@ui.tern.ph.article.ph.non.saisi.ph.seront.confirme.023e2c:${implicitCount}:p0: article${implicitCount > 1 ? 's' : ''}:p1: non saisi${implicitCount > 1 ? 's' : ''}:p2: seront confirmés à la quantité système.`
+            : $localize`:@@ui.tern.tous.les.articles.saisis.seront.enregistre.fdf8dc:Tous les articles saisis seront enregistrés.`;
         const variancePart = varianceCount > 0
-            ? ` ${varianceCount} écart${varianceCount > 1 ? 's' : ''} ${varianceCount > 1 ? 'seront appliqués' : 'sera appliqué'} au stock.`
-            : ' Aucun ajustement de stock.';
+            ? ` ${varianceCount} écart${varianceCount > 1 ? 's' : ''} ${varianceCount > 1 ? $localize`:@@ui.tern.seront.appliques.cad5b3:seront appliqués` : $localize`:@@ui.tern.sera.applique.c08e44:sera appliqué`} au stock.`
+            : $localize`:@@ui.tern.aucun.ajustement.de.stock.6f28b5: Aucun ajustement de stock.`;
 
         this.confirmationService.confirm({
             header: 'Valider l\'inventaire',
             message: `${implicitPart}${variancePart}`,
             icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Valider',
-            rejectLabel: 'Retour',
+            acceptLabel: $localize`:@@inventory-form.component.acceptLabel.Valider:Valider`,
+            rejectLabel: $localize`:@@inventory-form.component.rejectLabel.Retour:Retour`,
             size: 'md',
             accept: () => this.executeValidate()
         });
@@ -435,7 +436,7 @@ export class InventoryFormComponent implements OnInit {
                 if (res.success && res.data) {
                     this.toastService.add({
                         severity: 'success',
-                        summary: 'Inventaire validé',
+                        summary: $localize`:@@inventory-form.component.summary.Inventaire_valid:Inventaire validé`,
                         detail: res.data.humanMessage,
                     });
                     this.activeInventory.set(null);
@@ -448,10 +449,10 @@ export class InventoryFormComponent implements OnInit {
                 this.validating.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
+                    summary: $localize`:@@inventory-form.component.summary.Erreur:Erreur`,
                     detail:
                         this.errorHandler.extractErrorMessage(err) ??
-                        'Impossible de valider l\'inventaire',
+                        $localize`:@@ui.tern.impossible.de.valider.l.inventaire.2555f5:Impossible de valider l'inventaire`,
                 });
                 this.errorHandler.logError('Validate inventory failed', err);
             },
@@ -468,7 +469,7 @@ export class InventoryFormComponent implements OnInit {
                 if (res.success && res.data) {
                     this.toastService.add({
                         severity: 'info',
-                        summary: 'Inventaire annulé',
+                        summary: $localize`:@@inventory-form.component.summary.Inventaire_annul:Inventaire annulé`,
                         detail: res.data.humanMessage,
                     });
                     this.activeInventory.set(null);
@@ -480,10 +481,10 @@ export class InventoryFormComponent implements OnInit {
                 this.cancelling.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
+                    summary: $localize`:@@inventory-form.component.summary.Erreur:Erreur`,
                     detail:
                         this.errorHandler.extractErrorMessage(err) ??
-                        'Impossible d\'annuler l\'inventaire',
+                        $localize`:@@ui.tern.impossible.d.annuler.l.inventaire.40980e:Impossible d'annuler l'inventaire`,
                 });
                 this.errorHandler.logError('Cancel inventory failed', err);
             },

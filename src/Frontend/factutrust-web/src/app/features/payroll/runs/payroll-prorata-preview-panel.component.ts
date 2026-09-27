@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
@@ -33,7 +34,7 @@ import {
   template: `
     <app-payroll-section title="Prorata du mois" i18n-title="Prorata du mois" icon="pi-calendar-minus">
       <div class="payroll-toolbar mb-3">
-        <app-button variant="primary" icon="pi-eye" iconPos="left" (click)="load()" [disabled]="loading()" i18n="@@payroll.runs.previsualiser.le.prorata.61ca30ac">Prévisualiser le prorata</app-button>
+        <app-button variant="primary" icon="pi-eye" iconPos="left" (click)="load()" [disabled]="loading()" i18n="@@payroll.runs.previsualiser.le.prorata.61ca30ac"> Prévisualiser le prorata </app-button>
       </div>
 
       @if (!preview() && !loading() && !loadedOnce()) {
@@ -129,7 +130,7 @@ export class PayrollProrataPreviewPanelComponent {
       next: res => this.preview.set(res.data ?? null),
       error: () => {
         this.preview.set(null);
-        this.toast.add({ severity: 'error', summary: 'Prorata', detail: 'Prévisualisation impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@payroll-prorata-preview-panel.component.summary.Prorata:Prorata`, detail: $localize`:@@payroll-prorata-preview-panel.component.detail.Pr_visualisation:Prévisualisation impossible.` });
       }
     });
   }

@@ -42,7 +42,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      [title]="'Grand livre tiers' + (ledger()?.thirdPartyName ? ' — ' + ledger()!.thirdPartyName : '')"
+      [title]="loc_ui_tern_grand_livre_tiers_a3b44e + (ledger()?.thirdPartyName ? ' — ' + ledger()!.thirdPartyName : '')"
       subtitle="Mouvements d'un tiers avec solde progressif" />
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Période du grand livre tiers">
@@ -63,7 +63,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             iconPos="left"
             type="button"
             [routerLink]="['/accounting/auxiliary-balance']"
-            ariaLabel="Retour à la balance auxiliaire" i18n="@@accounting.third-party-ledger.balance.auxiliaire.e2a90270">Balance auxiliaire</app-button>
+            ariaLabel="Retour à la balance auxiliaire" i18n="@@accounting.third-party-ledger.balance.auxiliaire.e2a90270"> Balance auxiliaire </app-button>
           <app-button
             variant="secondary"
             icon="pi pi-refresh"
@@ -71,7 +71,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading() || !thirdPartyId"
-            ariaLabel="Actualiser le grand livre du tiers" i18n="@@accounting.third-party-ledger.actualiser.9d3b2a7d">Actualiser</app-button>
+            ariaLabel="Actualiser le grand livre du tiers" i18n="@@accounting.third-party-ledger.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !thirdPartyId || (ledger()?.rows?.length ?? 0) === 0"
             (exportFormat)="onExport($event)" />
@@ -95,7 +95,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <p-table [value]="ledger()?.rows ?? []" [paginator]="true" [rows]="50" [rowsPerPageOptions]="[25, 50, 100]"
       [loading]="loading()" [rowHover]="true" [scrollable]="true" scrollHeight="flex"
       styleClass="p-datatable-sm accounting-datatable tpl-table"
-      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} mouvements">
+      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} mouvements" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} mouvements">
       <ng-template pTemplate="header">
         <tr>
           <th i18n="@@accounting.third-party-ledger.date.eb9a4bc1">Date</th>
@@ -165,6 +165,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class ThirdPartyLedgerComponent implements OnInit {
+  readonly loc_ui_tern_grand_livre_tiers_a3b44e = $localize`:@@ui.tern.grand.livre.tiers.a3b44e:Grand livre tiers`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly route = inject(ActivatedRoute);
@@ -204,7 +205,7 @@ export class ThirdPartyLedgerComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.loading.set(true);
@@ -212,7 +213,7 @@ export class ThirdPartyLedgerComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.ledger.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);
@@ -227,7 +228,7 @@ export class ThirdPartyLedgerComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.exporting.set(true);

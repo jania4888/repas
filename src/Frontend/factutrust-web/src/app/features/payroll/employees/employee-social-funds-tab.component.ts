@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -67,8 +68,8 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
             <td>{{ e.schemeName || e.schemeCode || '—' }}</td>
             <td>{{ e.startDate | date:'dd/MM/yyyy' }}</td>
             <td>{{ e.endDate ? (e.endDate | date:'dd/MM/yyyy') : '—' }}</td>
-            <td class="text-right">{{ e.overrideEmployeeAmount != null ? (e.overrideEmployeeAmount | payrollAmount) : 'Barème' }}</td>
-            <td class="text-right">{{ e.overrideEmployerAmount != null ? (e.overrideEmployerAmount | payrollAmount) : 'Barème' }}</td>
+            <td class="text-right">{{ e.overrideEmployeeAmount != null ? (e.overrideEmployeeAmount | payrollAmount) : loc_ui_tern_bareme_35a41e }}</td>
+            <td class="text-right">{{ e.overrideEmployerAmount != null ? (e.overrideEmployerAmount | payrollAmount) : loc_ui_tern_bareme_35a41e }}</td>
             @if (!readOnly) {
               <td class="actions">
                 <button type="button" class="p-button p-button-text p-button-sm" (click)="editEnrollment(e)" i18n="@@payroll.employees.modifier.f260e757">Modifier</button>
@@ -123,6 +124,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   `]
 })
 export class EmployeeSocialFundsTabComponent implements OnInit {
+  readonly loc_ui_tern_bareme_35a41e = $localize`:@@ui.tern.bareme.35a41e:Barème`;
   @Input({ required: true }) employeeId!: string;
   @Input() readOnly = false;
 
@@ -141,7 +143,7 @@ export class EmployeeSocialFundsTabComponent implements OnInit {
   formEmployerOverride: number | null = null;
 
   get dialogHeader(): string {
-    return this.editingId ? "Modifier l'adhésion" : 'Nouvelle adhésion';
+    return this.editingId ? $localize`:@@ui.tern.modifier.l.adhesion.1216d6:Modifier l'adhésion` : $localize`:@@ui.tern.nouvelle.adhesion.8dbaba:Nouvelle adhésion`;
   }
 
   ngOnInit(): void {
@@ -152,7 +154,7 @@ export class EmployeeSocialFundsTabComponent implements OnInit {
   reload(): void {
     this.payroll.listSocialFundEnrollments(this.employeeId).subscribe({
       next: res => this.items.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Mutuelles', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-social-funds-tab.component.summary.Mutuelles:Mutuelles`, detail: $localize`:@@employee-social-funds-tab.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -203,11 +205,11 @@ export class EmployeeSocialFundsTabComponent implements OnInit {
 
     req.subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Mutuelles', detail: 'Adhésion enregistrée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-social-funds-tab.component.summary.Mutuelles:Mutuelles`, detail: $localize`:@@employee-social-funds-tab.component.detail.Adh_sion_enregis:Adhésion enregistrée.` });
         this.dialogVisible = false;
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Mutuelles', detail: err.error?.message ?? 'Enregistrement impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-social-funds-tab.component.summary.Mutuelles:Mutuelles`, detail: err.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` })
     });
   }
 
@@ -216,8 +218,8 @@ export class EmployeeSocialFundsTabComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer l'adhésion à « ${e.schemeName ?? e.schemeCode} » ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@employee-social-funds-tab.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@employee-social-funds-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(e.id)
     });
@@ -226,10 +228,10 @@ export class EmployeeSocialFundsTabComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteSocialFundEnrollment(this.employeeId, id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Mutuelles', detail: 'Adhésion supprimée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-social-funds-tab.component.summary.Mutuelles:Mutuelles`, detail: $localize`:@@employee-social-funds-tab.component.detail.Adh_sion_supprim:Adhésion supprimée.` });
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Mutuelles', detail: err.error?.message ?? 'Suppression impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-social-funds-tab.component.summary.Mutuelles:Mutuelles`, detail: err.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.` })
     });
   }
 }

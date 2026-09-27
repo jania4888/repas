@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -100,7 +101,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="inv-actions">
           <app-button variant="secondary" type="button" (click)="reset()" [disabled]="saving()" i18n="@@accounting.inventory-assistant.reinitialiser.e0e2ad54">Réinitialiser</app-button>
           <app-button variant="primary" icon="pi pi-check" type="button" (click)="submit()" [disabled]="saving() || !previewValid()">
-            {{ saving() ? 'Enregistrement…' : 'Enregistrer l\\'écriture' }}
+            {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : 'Enregistrer l\\'écriture' }}
           </app-button>
         </div>
       </div>
@@ -134,6 +135,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class InventoryAssistantComponent implements OnInit {
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -193,13 +195,13 @@ export class InventoryAssistantComponent implements OnInit {
         if (res.success) {
           this.toast.add({
             severity: 'success',
-            summary: 'Écriture enregistrée',
-            detail: this.form.autoReverse ? "L'écriture d'inventaire et son extourne ont été créées." : "L'écriture d'inventaire a été créée.",
+            summary: $localize`:@@inventory-assistant.component.summary._criture_enregis:Écriture enregistrée`,
+            detail: this.form.autoReverse ? $localize`:@@ui.tern.l.ecriture.d.inventaire.et.son.extourne.on.cd0fca:L'écriture d'inventaire et son extourne ont été créées.` : $localize`:@@ui.tern.l.ecriture.d.inventaire.a.ete.creee.83df0b:L'écriture d'inventaire a été créée.`,
             life: 5000
           });
           this.reset();
         } else {
-          this.error.set(res.error ?? "Erreur lors de l'enregistrement.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.l.enregistrement.e952ae:Erreur lors de l'enregistrement.`);
         }
       },
       error: err => {

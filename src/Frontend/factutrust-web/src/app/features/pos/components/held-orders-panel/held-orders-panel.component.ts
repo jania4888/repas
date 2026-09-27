@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PosHeldOrdersService, HeldOrder } from '../../services/pos-held-orders.service';
@@ -236,8 +237,8 @@ export class HeldOrdersPanelComponent {
         header: 'Remplacer la commande ?',
         message: 'La commande en cours sera remplacée. Continuer ?',
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Continuer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@held-orders-panel.component.acceptLabel.Continuer:Continuer`,
+        rejectLabel: $localize`:@@held-orders-panel.component.rejectLabel.Annuler:Annuler`,
         accept: apply
       });
       return;
@@ -251,8 +252,8 @@ export class HeldOrdersPanelComponent {
       message: 'Supprimer cette commande en attente ?',
       icon: 'pi pi-trash',
       acceptButtonStyleClass: 'btn-danger',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@held-orders-panel.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@held-orders-panel.component.rejectLabel.Annuler:Annuler`,
       accept: () => this.heldService.deleteHeldOrder(id)
     });
   }

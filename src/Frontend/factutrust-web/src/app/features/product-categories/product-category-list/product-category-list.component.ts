@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -58,7 +59,7 @@ interface StatusOption {
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new" i18n="@@product-categories.product-category-list.nouvelle.categorie.8c5f928e">Nouvelle catégorie</app-button>
+          routerLink="new" i18n="@@product-categories.product-category-list.nouvelle.categorie.8c5f928e"> Nouvelle catégorie </app-button>
       }
     </app-page-header>
 
@@ -120,9 +121,9 @@ interface StatusOption {
 
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="code" style="width: 140px">Code <p-sortIcon field="code"></p-sortIcon></th>
-              <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
-              <th pSortableColumn="displayOrder" style="width: 140px">Ordre d'affichage <p-sortIcon field="displayOrder"></p-sortIcon></th>
+              <th pSortableColumn="code" style="width: 140px"><ng-container i18n="@@product-categories.product-category-list.code.adac6937">Code </ng-container> <p-sortIcon field="code"></p-sortIcon></th>
+              <th pSortableColumn="name"><ng-container i18n="@@product-categories.product-category-list.nom.7ff20370">Nom </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="displayOrder" style="width: 140px"><ng-container i18n="@@product-categories.product-category-list.ordre.d.affichage.6978b883">Ordre d'affichage </ng-container> <p-sortIcon field="displayOrder"></p-sortIcon></th>
               <th style="width: 100px" i18n="@@product-categories.product-category-list.statut.659499f3">Statut</th>
               <th style="width: 140px" class="text-right" i18n="@@product-categories.product-category-list.actions.c3cd636a">Actions</th>
             </tr>
@@ -139,7 +140,7 @@ interface StatusOption {
               <td>{{ cat.displayOrder }}</td>
               <td>
                 <p-tag
-                  [value]="cat.isActive ? 'Actif' : 'Inactif'"
+                  [value]="cat.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                   [severity]="cat.isActive ? 'success' : 'secondary'">
                 </p-tag>
               </td>
@@ -153,10 +154,10 @@ interface StatusOption {
                       size="sm"
                       [icon]="cat.isActive ? 'pi-ban' : 'pi-check-circle'"
                       [iconOnly]="true"
-                      [pTooltip]="cat.isActive ? 'Désactiver' : 'Activer'"
+                      [pTooltip]="cat.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7"
                       tooltipPosition="top"
                       (click)="toggleActive(cat)"
-                      [attr.aria-label]="cat.isActive ? 'Désactiver' : 'Activer'">
+                      [attr.aria-label]="cat.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7">
                     </app-button>
                   }
                   @if (canUpdateCategory()) {
@@ -223,6 +224,10 @@ interface StatusOption {
   `]
 })
 export class ProductCategoryListComponent implements OnInit {
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
   private productCategoryService = inject(ProductCategoryService);
   private toastService = inject(ToastService);
   private errorHandler = inject(ErrorHandlerService);
@@ -305,7 +310,7 @@ export class ProductCategoryListComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
             detail: response.errors?.join(', ') || 'Impossible de charger les catégories'
           });
           this.categories.set([]);
@@ -316,7 +321,7 @@ export class ProductCategoryListComponent implements OnInit {
         const msg = this.errorHandler.extractErrorMessage(err);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
           detail: msg || 'Impossible de charger les catégories'
         });
         this.errorHandler.logError('Failed to load product categories', err);
@@ -350,13 +355,13 @@ export class ProductCategoryListComponent implements OnInit {
           );
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: body.isActive ? 'Catégorie activée.' : 'Catégorie désactivée.'
+            summary: $localize`:@@product-category-list.component.summary.Succès:Succès`,
+            detail: body.isActive ? $localize`:@@ui.tern.categorie.activee.c0381e:Catégorie activée.` : $localize`:@@ui.tern.categorie.desactivee.a1e015:Catégorie désactivée.`
           });
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
             detail: response.errors?.join(', ') || response.message || 'Action impossible'
           });
         }
@@ -366,7 +371,7 @@ export class ProductCategoryListComponent implements OnInit {
         const msg = this.errorHandler.extractErrorMessage(err);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
           detail: msg || 'Action impossible'
         });
         this.errorHandler.logError('Toggle category active failed', err);

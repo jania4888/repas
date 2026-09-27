@@ -29,7 +29,7 @@ import {
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()" i18n="@@reports.purchases-analytics.imprimer.5382c09d">Imprimer</app-button>
+        (click)="onPrint()" i18n="@@reports.purchases-analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <div class="filter-bar">
@@ -71,20 +71,20 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Dépenses totales"
+          label="Dépenses totales" i18n-label="Dépenses totales"
           [value]="formatAmount(data()!.totalExpenses)"
           icon="pi-dollar"
           variant="primary"
           [change]="-data()!.comparison.changePercent">
         </app-stat-card>
         <app-stat-card
-          label="Factures fournisseurs"
+          label="Factures fournisseurs" i18n-label="Factures fournisseurs"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Période précédente"
+          label="Période précédente" i18n-label="Période précédente"
           [value]="formatAmount(data()!.comparison.previousValue)"
           icon="pi-history"
           variant="warning">
@@ -392,7 +392,7 @@ export class ExpensesAnalyticsComponent implements OnInit {
   }
 
   formatAmount(value: number): string {
-    return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(value) + ' TND';
+    return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(value) + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   formatAmountShort(value: number): string {

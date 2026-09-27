@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Injectable, inject, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -149,7 +150,7 @@ export class FirmContextService {
           : fallback;
     this.toast.add({
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@firm-context.service.summary.Erreur:Erreur`,
       detail: detail || fallback
     });
   }

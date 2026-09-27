@@ -53,8 +53,8 @@ import { slugifyKey } from '../shared/studio-text.util';
         }
       </div>
       <ng-template pTemplate="footer">
-        <p-button label="Annuler" [text]="true" (onClick)="visible.set(false)" />
-        <p-button label="Créer" icon="pi pi-check" [loading]="saving()" [disabled]="!canSubmit()" (onClick)="submit()" data-testid="m2m-submit" />
+        <p-button label="Annuler" i18n-label="Annuler" [text]="true" (onClick)="visible.set(false)" />
+        <p-button label="Créer" i18n-label="Créer" icon="pi pi-check" [loading]="saving()" [disabled]="!canSubmit()" (onClick)="submit()" data-testid="m2m-submit" />
       </ng-template>
     </p-dialog>
   `,

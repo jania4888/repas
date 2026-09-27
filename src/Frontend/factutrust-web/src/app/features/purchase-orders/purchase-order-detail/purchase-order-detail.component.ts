@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -30,7 +32,7 @@ import {
 @Component({
   selector: 'app-purchase-order-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
     TagModule, TableModule, ToastModule, DialogModule, Textarea, TooltipModule,
     PageHeaderComponent, BreadcrumbComponent, ButtonComponent, CreateSupplierInvoiceModalComponent
@@ -47,11 +49,11 @@ import {
 
 
       <app-page-header
-        [title]="'Commande ' + po()!.number"
+        [title]="loc_ui_tern_commande_9798ea + po()!.number"
         [subtitle]="po()!.supplier.name">
         <div class="header-actions">
           <app-button variant="outline" icon="pi-file-pdf" iconPos="left"
-            (click)="downloadPdf()" i18n="@@purchase-orders.purchase-order-detail.telecharger.pdf.06b2eebe">Télécharger PDF</app-button>
+            (click)="downloadPdf()" i18n="@@purchase-orders.purchase-order-detail.telecharger.pdf.06b2eebe"> Télécharger PDF </app-button>
           
 
           <!-- Conditional buttons with robust comparison -->
@@ -59,39 +61,39 @@ import {
             <ng-container *ngIf="po()!.status != PurchaseOrderStatus.Draft && po()!.status != PurchaseOrderStatus.Cancelled">
               <app-button variant="outline" icon="pi-envelope" iconPos="left"
                 [disabled]="sending() || !po()!.supplier.email"
-                pTooltip="Le fournisseur n'a pas d'adresse email."
+                pTooltip="Le fournisseur n'a pas d'adresse email." i18n-pTooltip="Le fournisseur n'a pas d'adresse email."
                 [tooltipDisabled]="!!po()!.supplier.email"
                 tooltipPosition="bottom"
                 (click)="sendByEmail()">
-                {{ sending() ? 'Envoi...' : 'Envoyer par email' }}
+                {{ sending() ? loc_ui_tern_envoi_5a377e : loc_ui_tern_envoyer_par_email_535086 }}
               </app-button>
             </ng-container>
             
             <ng-container *ngIf="isDraft()">
               <app-button variant="outline" icon="pi-pencil" iconPos="left"
-                [routerLink]="['/purchase-orders', po()!.id, 'edit']" i18n="@@purchase-orders.purchase-order-detail.modifier.f260e757">Modifier</app-button>
+                [routerLink]="['/purchase-orders', po()!.id, 'edit']" i18n="@@purchase-orders.purchase-order-detail.modifier.f260e757"> Modifier </app-button>
               <app-button variant="primary" icon="pi-check" iconPos="left"
                 (click)="confirmOrder()"
                 [disabled]="confirming()"
-                pTooltip="Confirmer la commande pour pouvoir recevoir les marchandises et créer des factures"
+                pTooltip="Confirmer la commande pour pouvoir recevoir les marchandises et créer des factures" i18n-pTooltip="Confirmer la commande pour pouvoir recevoir les marchandises et créer des factures"
                 tooltipPosition="bottom">
-                {{ confirming() ? 'Confirmation...' : 'Confirmer' }}
+                {{ confirming() ? loc_ui_tern_confirmation_a1e29f : loc_ui_tern_confirmer_80a664 }}
               </app-button>
               <app-button variant="outline" icon="pi-times" iconPos="left"
-                (click)="cancelOrder()" i18n="@@purchase-orders.purchase-order-detail.annuler.49ba3292">Annuler</app-button>
+                (click)="cancelOrder()" i18n="@@purchase-orders.purchase-order-detail.annuler.49ba3292"> Annuler </app-button>
               <app-button variant="danger" icon="pi-trash" iconPos="left"
-                (click)="deleteOrder()" i18n="@@purchase-orders.purchase-order-detail.supprimer.1acfc1c7">Supprimer</app-button>
+                (click)="deleteOrder()" i18n="@@purchase-orders.purchase-order-detail.supprimer.1acfc1c7"> Supprimer </app-button>
             </ng-container>
             
             <ng-container *ngIf="canReceiveGoods()">
               <app-button variant="primary" icon="pi-box" iconPos="left"
                 [routerLink]="['/purchase-receipts', 'new']"
-                [queryParams]="{ purchaseOrderId: po()!.id }" i18n="@@purchase-orders.purchase-order-detail.reception.marchandise.61115c15">Réception marchandise</app-button>
+                [queryParams]="{ purchaseOrderId: po()!.id }" i18n="@@purchase-orders.purchase-order-detail.reception.marchandise.61115c15"> Réception marchandise </app-button>
             </ng-container>
             
             <ng-container *ngIf="canCreateSupplierInvoice()">
               <app-button variant="primary" icon="pi-money-bill" iconPos="left"
-                (click)="openCreateSupplierInvoice()" i18n="@@purchase-orders.purchase-order-detail.creer.facture.fournisseur.4a82949b">Créer facture fournisseur</app-button>
+                (click)="openCreateSupplierInvoice()" i18n="@@purchase-orders.purchase-order-detail.creer.facture.fournisseur.4a82949b"> Créer facture fournisseur </app-button>
             </ng-container>
           </ng-container>
         </div>
@@ -161,7 +163,7 @@ import {
             </div>
             <div class="info-item">
               <span class="label" i18n="@@purchase-orders.purchase-order-detail.statut.659499f3">Statut</span>
-              <p-tag [value]="po()!.statusDisplay"
+              <p-tag [value]="po()!.statusDisplay | backendLabel"
                 [severity]="getStatusSeverity(po()!.status)"></p-tag>
             </div>
             <div class="info-item">
@@ -236,7 +238,7 @@ import {
                   </span>
                 </td>
                 <td class="text-right">{{ line.unitPriceHT | currency:'TND':'symbol':'1.3-3' }}</td>
-                <td class="text-center">{{ line.vatRateDisplay }}</td>
+                <td class="text-center">{{ line.vatRateDisplay | backendLabel }}</td>
                 <td class="text-right amount">{{ line.total | currency:'TND':'symbol':'1.3-3' }}</td>
               </tr>
             </ng-template>
@@ -274,7 +276,7 @@ import {
                 <li>
                   <a [routerLink]="['/purchase-receipts', br.id]" class="value link">{{ br.number }}</a>
                   <span class="date">{{ br.receiptDate | date:'dd/MM/yyyy' }}</span>
-                  <p-tag [value]="br.statusDisplay" [severity]="br.status === 1 ? 'success' : br.status === 2 ? 'danger' : 'secondary'"></p-tag>
+                  <p-tag [value]="br.statusDisplay | backendLabel" [severity]="br.status === 1 ? 'success' : br.status === 2 ? 'danger' : 'secondary'"></p-tag>
                   <span class="amount">{{ br.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
                 </li>
               }
@@ -290,7 +292,7 @@ import {
                 <li>
                   <a [routerLink]="['/supplier-invoices', inv.id]" class="value link">{{ inv.invoiceNumber }}</a>
                   <span class="date">{{ inv.invoiceDate | date:'dd/MM/yyyy' }}</span>
-                  <p-tag [value]="inv.statusDisplay" severity="info"></p-tag>
+                  <p-tag [value]="inv.statusDisplay | backendLabel" severity="info"></p-tag>
                   <span class="amount">{{ inv.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span>
                 </li>
               }
@@ -310,7 +312,7 @@ import {
 
     <!-- Cancel order dialog -->
     <p-dialog
-      header="Annuler la commande"
+      header="Annuler la commande" i18n-header="Annuler la commande"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [style]="{ width: '450px' }"
@@ -332,7 +334,7 @@ import {
           icon="pi-times"
           iconPos="left"
           [disabled]="!cancellationReason.trim()"
-          (click)="submitCancelOrder()" i18n="@@purchase-orders.purchase-order-detail.annuler.la.commande.187515f7">Annuler la commande</app-button>
+          (click)="submitCancelOrder()" i18n="@@purchase-orders.purchase-order-detail.annuler.la.commande.187515f7"> Annuler la commande </app-button>
       </ng-template>
     </p-dialog>
 
@@ -637,6 +639,11 @@ import {
   `]
 })
 export class PurchaseOrderDetailComponent implements OnInit {
+  readonly loc_ui_tern_commande_9798ea = $localize`:@@ui.tern.commande.9798ea:Commande `;
+  readonly loc_ui_tern_envoi_5a377e = $localize`:@@ui.tern.envoi.5a377e:Envoi...`;
+  readonly loc_ui_tern_envoyer_par_email_535086 = $localize`:@@ui.tern.envoyer.par.email.535086:Envoyer par email`;
+  readonly loc_ui_tern_confirmation_a1e29f = $localize`:@@ui.tern.confirmation.a1e29f:Confirmation...`;
+  readonly loc_ui_tern_confirmer_80a664 = $localize`:@@ui.tern.confirmer.80a664:Confirmer`;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly poService = inject(PurchaseOrderService);
@@ -679,8 +686,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
             this.loading.set(false);
             this.toastService.add({
               severity: 'warn',
-              summary: 'Statut inconnu',
-              detail: 'Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.'
+              summary: $localize`:@@purchase-order-detail.component.summary.Statut_inconnu:Statut inconnu`,
+              detail: $localize`:@@purchase-order-detail.component.detail.Le_statut_de_cet:Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.`
             });
             console.warn('[PurchaseOrderDetail] Unknown purchase order status received from API', {
               orderId: response.data.id,
@@ -701,7 +708,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Commande introuvable' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@purchase-order-detail.component.detail.Commande_introuv:Commande introuvable` });
         this.router.navigate(['/purchase-orders']);
       }
     });
@@ -762,15 +769,15 @@ export class PurchaseOrderDetailComponent implements OnInit {
       message: `Êtes-vous sûr de vouloir confirmer la commande ${order.number} ? Cette action est irréversible.`,
       header: 'Confirmer la commande',
       icon: 'pi pi-check-circle',
-      acceptLabel: 'Confirmer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@purchase-order-detail.component.acceptLabel.Confirmer:Confirmer`,
+      rejectLabel: $localize`:@@purchase-order-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.confirming.set(true);
         this.poService.confirmPurchaseOrder(order.id).subscribe({
           next: (response) => {
             this.confirming.set(false);
             if (response.success) {
-              this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Commande confirmée' });
+              this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@purchase-order-detail.component.detail.Commande_confirm:Commande confirmée` });
               this.loadOrder(order.id);
             }
           },
@@ -801,12 +808,12 @@ export class PurchaseOrderDetailComponent implements OnInit {
       next: (response) => {
         if (response.success) {
           this.closeCancelDialog();
-          this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Commande annulée' });
+          this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@purchase-order-detail.component.detail.Commande_annul_e:Commande annulée` });
           this.loadOrder(order.id);
         }
       },
       error: (err) => {
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.errors?.[0] || 'Erreur' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || 'Erreur' });
       }
     });
   }
@@ -823,10 +830,10 @@ export class PurchaseOrderDetailComponent implements OnInit {
         link.download = `BC_${order.number}.pdf`;
         link.click();
         window.URL.revokeObjectURL(url);
-        this.toastService.add({ severity: 'success', summary: 'PDF', detail: 'Téléchargement lancé' });
+        this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.PDF:PDF`, detail: $localize`:@@purchase-order-detail.component.detail.T_l_chargement_l:Téléchargement lancé` });
       },
       error: () => {
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de générer le PDF' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@purchase-order-detail.component.detail.impossible.de.generer.le.pdf.c4657cf1:Impossible de générer le PDF` });
       }
     });
   }
@@ -837,8 +844,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
     if (!order.supplier.email) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Email manquant',
-        detail: "Le fournisseur n'a pas d'adresse email."
+        summary: $localize`:@@purchase-order-detail.component.summary.Email_manquant:Email manquant`,
+        detail: $localize`:@@purchase-order-detail.component.detail.Lefournisseurnapasd:Le fournisseur n'a pas d'adresse email.`
       });
       return;
     }
@@ -847,20 +854,20 @@ export class PurchaseOrderDetailComponent implements OnInit {
       message: `Envoyer le bon de commande ${order.number} par email à ${order.supplier.email} ?`,
       header: 'Envoi par email',
       icon: 'pi pi-envelope',
-      acceptLabel: 'Envoyer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@purchase-order-detail.component.acceptLabel.Envoyer:Envoyer`,
+      rejectLabel: $localize`:@@purchase-order-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.sending.set(true);
         this.poService.sendByEmail(order.id).subscribe({
           next: (response) => {
             this.sending.set(false);
             if (response.success) {
-              this.toastService.add({ severity: 'success', summary: 'Envoyé', detail: `Email envoyé à ${order.supplier.email}` });
+              this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Envoy_:Envoyé`, detail: `Email envoyé à ${order.supplier.email}` });
             }
           },
           error: (err) => {
             this.sending.set(false);
-            this.toastService.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.errors?.[0] || 'Erreur lors de l\'envoi' });
+            this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || 'Erreur lors de l\'envoi' });
           }
         });
       }
@@ -876,7 +883,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
         if (!prefillRes.success || !prefillRes.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
             detail: prefillRes.message || 'Impossible de préparer la facture'
           });
           return;
@@ -893,7 +900,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
       error: (err) => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
           detail: err?.error?.errors?.[0] || err?.error?.message || 'Impossible de préparer la facture'
         });
       }
@@ -933,7 +940,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
           this.createSupplierInvoiceModal?.closeAfterSuccess();
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
+            summary: $localize`:@@purchase-order-detail.component.summary.Succès:Succès`,
             detail: `Facture fournisseur ${response.data.invoiceNumber} créée`
           });
           void this.router.navigate(['/supplier-invoices', response.data.id]);
@@ -949,12 +956,12 @@ export class PurchaseOrderDetailComponent implements OnInit {
         }
 
         this.createSupplierInvoiceModal?.setSubmitting(false);
-        const errorMsg = err?.error?.errors?.[0] ?? err?.error?.message ?? 'Erreur lors de la création';
+        const errorMsg = err?.error?.errors?.[0] ?? err?.error?.message ?? $localize`:@@ui.tern.erreur.lors.de.la.creation.18def0:Erreur lors de la création`;
         this.toastService.add({
           severity: 'error',
-          summary: isDuplicate ? 'Numéro en doublon' : 'Erreur',
+          summary: isDuplicate ? $localize`:@@ui.tern.numero.en.doublon.9aeb86:Numéro en doublon` : $localize`:@@ui.tern.erreur.ab546c:Erreur`,
           detail: isDuplicate
-            ? 'Impossible de créer la facture : le numéro proposé est également indisponible. Réessayez ou saisissez un numéro.'
+            ? $localize`:@@ui.tern.impossible.de.creer.la.facture.le.numero.p.379737:Impossible de créer la facture : le numéro proposé est également indisponible. Réessayez ou saisissez un numéro.`
             : errorMsg
         });
       }
@@ -979,8 +986,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
       modal.setSubmitting(false);
       this.toastService.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible de générer un nouveau numéro de facture. Veuillez réessayer.'
+        summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
+        detail: $localize`:@@purchase-order-detail.component.detail.impossible.de.generer.un.nouveau.numero.de.factu.72ff9457:Impossible de générer un nouveau numéro de facture. Veuillez réessayer.`
       });
       return;
     }
@@ -1005,8 +1012,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
     // For now, just show a success message
     this.toastService.add({
       severity: 'info',
-      summary: 'Email envoyé',
-      detail: 'La facture fournisseur a été envoyée par email'
+      summary: $localize`:@@purchase-order-detail.component.summary.Email_envoy_:Email envoyé`,
+      detail: $localize`:@@purchase-order-detail.component.detail.La_facture_fourn:La facture fournisseur a été envoyée par email`
     });
   }
 
@@ -1018,21 +1025,21 @@ export class PurchaseOrderDetailComponent implements OnInit {
       message: `Êtes-vous sûr de vouloir supprimer définitivement la commande brouillon ${order.number} ? Cette action est irréversible.`,
       header: 'Supprimer la commande',
       icon: 'pi pi-trash',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@purchase-order-detail.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@purchase-order-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.poService.deletePurchaseOrder(order.id).subscribe({
           next: (response) => {
             if (response.success) {
-              this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Commande supprimée' });
+              this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@purchase-order-detail.component.detail.Commande_supprim:Commande supprimée` });
               this.router.navigate(['/purchase-orders']);
             }
           },
           error: (err) => {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
               detail: err?.error?.errors?.[0] || 'Impossible de supprimer cette commande'
             });
           }

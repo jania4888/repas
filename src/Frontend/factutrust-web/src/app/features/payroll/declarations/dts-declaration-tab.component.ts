@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -113,7 +114,7 @@ const MONTH_LABELS = [
               @if (l.cnssNumber) {
                 {{ l.cnssNumber }}
               } @else {
-                <i class="pi pi-exclamation-triangle text-warning" pTooltip="CNSS manquant" tooltipPosition="top"></i>
+                <i class="pi pi-exclamation-triangle text-warning" pTooltip="CNSS manquant" i18n-pTooltip="CNSS manquant" tooltipPosition="top"></i>
                 <p-tag value="Manquant" severity="warn" class="ml-2" />
               }
             </td>
@@ -199,7 +200,7 @@ export class DtsDeclarationTabComponent implements OnInit {
       next: res => this.dts.set(res.data ?? null),
       error: () => {
         this.dts.set(null);
-        this.toast.add({ severity: 'error', summary: 'DTS', detail: 'Impossible de générer la DTS.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@dts-declaration-tab.component.summary.DTS:DTS`, detail: $localize`:@@dts-declaration-tab.component.detail.Impossible_de_g_:Impossible de générer la DTS.` });
       }
     });
   }
@@ -208,7 +209,7 @@ export class DtsDeclarationTabComponent implements OnInit {
     if (!this.canExport()) return;
     this.payroll.exportDtsCsv(this.year, this.quarter).subscribe({
       next: blob => downloadBlob(blob, `dts_${this.year}_T${this.quarter}.csv`),
-      error: () => this.toast.add({ severity: 'error', summary: 'DTS', detail: 'Export CSV impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@dts-declaration-tab.component.summary.DTS:DTS`, detail: $localize`:@@dts-declaration-tab.component.detail.Export CSV i:Export CSV impossible.` })
     });
   }
 }

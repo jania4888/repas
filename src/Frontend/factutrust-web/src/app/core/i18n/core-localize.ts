@@ -28,7 +28,7 @@ export const CORE_COMMON = {
 
 export const CORE_HTTP = {
   contextError: $localize`:@@core.http.contextError:Votre session ne comporte pas d'entreprise valide. Veuillez vous reconnecter.`,
-  purchaseOrderConflict: $localize`:@@core.http.purchaseOrderConflict:Cette commande n'est plus confirmable dans son état actuel. Actualisez la page puis réessayez.`
+  purchaseOrderConflict: $localize`:@@core.http.purchaseOrderConflict:Cette commande n’est plus confirmable dans son état actuel. Actualisez la page puis réessayez.`
 };
 
 export const CORE_VALIDATION = {

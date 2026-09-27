@@ -10,12 +10,12 @@ import { CommonModule } from '@angular/common';
       <div class="db-banner" role="region" aria-label="Brouillon disponible" i18n-aria-label="Brouillon disponible">
         <span class="db-icon" aria-hidden="true" i18n="@@accounting.manual-entry.text.edc47290">📝</span>
         <span class="db-message">
-          Un brouillon d'écriture a été sauvegardé automatiquement
+          <ng-container i18n="@@accounting.manual-entry.un.brouillon.d.ecriture.a.ete.sauvegarde.automat.1930ed4a"> Un brouillon d'écriture a été sauvegardé automatiquement </ng-container>
           <strong>{{ relative() }}</strong>.
         </span>
         <div class="db-actions">
-          <button type="button" class="btn btn-sm btn-primary" (click)="restore.emit()" i18n="@@accounting.manual-entry.restaurer.le.brouillon.6208ee6f">Restaurer le brouillon</button>
-          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="discard.emit()" i18n="@@accounting.manual-entry.ignorer.b0d64e49">Ignorer</button>
+          <button type="button" class="btn btn-sm btn-primary" (click)="restore.emit()" i18n="@@accounting.manual-entry.restaurer.le.brouillon.6208ee6f"> Restaurer le brouillon </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="discard.emit()" i18n="@@accounting.manual-entry.ignorer.b0d64e49"> Ignorer </button>
         </div>
       </div>
     }

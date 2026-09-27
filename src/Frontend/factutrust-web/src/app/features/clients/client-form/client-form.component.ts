@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -60,13 +61,13 @@ interface GovernorateOption {
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     
     <app-page-header 
-      [title]="isEditMode() ? 'Modifier le client' : 'Nouveau client'" 
-      [subtitle]="isEditMode() ? 'Mettez à jour les informations du client.' : 'Renseignez les informations essentielles pour facturer ce client.'">
+      [title]="isEditMode() ? loc_ui_tern_modifier_le_client_5c0584 : loc_ui_tern_nouveau_client_9e7edf" 
+      [subtitle]="isEditMode() ? loc_ui_tern_mettez_a_jour_les_informations_du_client_fdd2c8 : loc_ui_tern_renseignez_les_informations_essentielles_p_730075">
       <app-button 
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/clients" i18n="@@clients.client-form.annuler.49ba3292">Annuler</app-button>
+        routerLink="/clients" i18n="@@clients.client-form.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     @if (loading()) {
@@ -80,7 +81,7 @@ interface GovernorateOption {
           <!-- General Information -->
           <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-user" [number]="1">
             <div class="form-group">
-              <label for="name">Nom ou raison sociale <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
+              <label for="name"><ng-container i18n="@@clients.client-form.nom.ou.raison.sociale.2983b5c6">Nom ou raison sociale </ng-container> <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="name" 
@@ -98,7 +99,7 @@ interface GovernorateOption {
 
             <div class="form-row">
               <div class="form-group">
-                <label for="type">Type de client <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
+                <label for="type"><ng-container i18n="@@clients.client-form.type.de.client.b2406987">Type de client </ng-container> <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
                 <p-select 
                   id="type"
                   [options]="typeOptions" 
@@ -150,7 +151,7 @@ interface GovernorateOption {
                     formControlName="isActive">
                   </p-inputSwitch>
                   <span [class.active]="form.get('isActive')?.value">
-                    {{ form.get('isActive')?.value ? 'Actif' : 'Inactif' }}
+                    {{ form.get('isActive')?.value ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                   </span>
                 </div>
               </div>
@@ -202,7 +203,7 @@ interface GovernorateOption {
           <!-- Address -->
           <app-form-section title="Adresse" i18n-title="Adresse" icon="pi-map-marker" [number]="3" class="address-card">
             <div class="form-group">
-              <label for="street">Adresse <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
+              <label for="street"><ng-container i18n="@@clients.client-form.adresse.522e1466">Adresse </ng-container> <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="street" 
@@ -231,7 +232,7 @@ interface GovernorateOption {
 
             <div class="form-row">
               <div class="form-group">
-                <label for="city">Ville <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
+                <label for="city"><ng-container i18n="@@clients.client-form.ville.97217611">Ville </ng-container> <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
                 <input 
                   pInputText 
                   id="city" 
@@ -260,7 +261,7 @@ interface GovernorateOption {
             </div>
 
             <div class="form-group">
-              <label for="governorate">Gouvernorat <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
+              <label for="governorate"><ng-container i18n="@@clients.client-form.gouvernorat.b9cd1d99">Gouvernorat </ng-container> <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
               <p-select 
                 id="governorate"
                 [options]="governorates" 
@@ -350,14 +351,14 @@ interface GovernorateOption {
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/clients" i18n="@@clients.client-form.annuler.49ba3292">Annuler</app-button>
+            routerLink="/clients" i18n="@@clients.client-form.annuler.49ba3292"> Annuler </app-button>
           <app-button 
             variant="primary"
             type="submit"
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             [disabled]="form.invalid || saving()">
-            {{ isEditMode() ? 'Enregistrer' : 'Créer le client' }}
+            {{ isEditMode() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_le_client_aba191 }}
           </app-button>
         </div>
       </form>
@@ -504,6 +505,14 @@ interface GovernorateOption {
   `]
 })
 export class ClientFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_client_5c0584 = $localize`:@@ui.tern.modifier.le.client.5c0584:Modifier le client`;
+  readonly loc_ui_tern_nouveau_client_9e7edf = $localize`:@@ui.tern.nouveau.client.9e7edf:Nouveau client`;
+  readonly loc_ui_tern_mettez_a_jour_les_informations_du_client_fdd2c8 = $localize`:@@ui.tern.mettez.a.jour.les.informations.du.client.fdd2c8:Mettez à jour les informations du client.`;
+  readonly loc_ui_tern_renseignez_les_informations_essentielles_p_730075 = $localize`:@@ui.tern.renseignez.les.informations.essentielles.p.730075:Renseignez les informations essentielles pour facturer ce client.`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_le_client_aba191 = $localize`:@@ui.tern.creer.le.client.aba191:Créer le client`;
   private fb = inject(FormBuilder);
   private clientService = inject(ClientService);
   private router = inject(Router);
@@ -655,8 +664,8 @@ export class ClientFormComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Client non trouvé'
+            summary: $localize`:@@client-form.component.summary.Erreur:Erreur`,
+            detail: $localize`:@@client-form.component.detail.Client_non_trouv:Client non trouvé`
           });
           this.router.navigate(['/clients']);
         }
@@ -666,8 +675,8 @@ export class ClientFormComponent implements OnInit {
         this.loading.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger le client'
+          summary: $localize`:@@client-form.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@client-form.component.detail.Impossible_de_ch:Impossible de charger le client`
         });
         this.router.navigate(['/clients']);
       }
@@ -731,14 +740,14 @@ export class ClientFormComponent implements OnInit {
           if (response.success) {
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: 'Client mis à jour avec succès'
+              summary: $localize`:@@client-form.component.summary.Succès:Succès`,
+              detail: $localize`:@@client-form.component.detail.Client_mis_jou:Client mis à jour avec succès`
             });
             this.router.navigate(['/clients', this.clientId()]);
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@client-form.component.summary.Erreur:Erreur`,
               detail: response.errors[0] || 'Impossible de mettre à jour le client'
             });
           }
@@ -748,7 +757,7 @@ export class ClientFormComponent implements OnInit {
           this.saving.set(false);
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@client-form.component.summary.Erreur:Erreur`,
             detail: err.error?.errors?.[0] || 'Impossible de mettre à jour le client'
           });
         }
@@ -778,15 +787,15 @@ export class ClientFormComponent implements OnInit {
           if (response.success && response.data) {
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: 'Client créé. Vous pouvez maintenant créer un devis ou une facture.'
+              summary: $localize`:@@client-form.component.summary.Succès:Succès`,
+              detail: $localize`:@@client-form.component.detail.Client_cr_Vou:Client créé. Vous pouvez maintenant créer un devis ou une facture.`
             });
             // response.data est un Guid (string), pas un objet Client
             this.router.navigate(['/clients', response.data]);
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@client-form.component.summary.Erreur:Erreur`,
               detail: response.errors[0] || 'Impossible de créer le client'
             });
           }
@@ -812,7 +821,7 @@ export class ClientFormComponent implements OnInit {
           
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@client-form.component.summary.Erreur:Erreur`,
             detail: errorMessage
           });
         }

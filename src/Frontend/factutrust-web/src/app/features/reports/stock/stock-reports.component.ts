@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -13,7 +14,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
 @Component({
   selector: 'app-stock-reports',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -30,7 +31,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()" i18n="@@reports.stock.exporter.0cd84bdc">Exporter</app-button>
+        (click)="onExport()" i18n="@@reports.stock.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     @if (!loading() && reportsData()?.summaryText) {
@@ -50,25 +51,25 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Valeur totale du stock"
+          label="Valeur totale du stock" i18n-label="Valeur totale du stock"
           [value]="reportsData()!.totalStockValue"
           icon="pi-dollar"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Produits en stock"
+          label="Produits en stock" i18n-label="Produits en stock"
           [value]="reportsData()!.productCount"
           icon="pi-cubes"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Alertes rupture"
+          label="Alertes rupture" i18n-label="Alertes rupture"
           [value]="reportsData()!.alertCount"
           icon="pi-exclamation-triangle"
           [variant]="reportsData()!.alertCount > 0 ? 'error' : 'success'">
         </app-stat-card>
         <app-stat-card
-          label="Produits en rupture"
+          label="Produits en rupture" i18n-label="Produits en rupture"
           [value]="reportsData()!.outOfStockCount"
           icon="pi-times-circle"
           [variant]="reportsData()!.outOfStockCount > 0 ? 'error' : 'success'">
@@ -243,8 +244,8 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
               <td>{{ row.occurredAt | date:'dd/MM/yyyy HH:mm' }}</td>
               <td>{{ row.productName }} <span class="product-code">({{ row.productCode }})</span></td>
               <td>{{ row.warehouseName }}</td>
-              <td>{{ row.typeDisplay }}</td>
-              <td>{{ row.reasonDisplay }}</td>
+              <td>{{ row.typeDisplay | backendLabel }}</td>
+              <td>{{ row.reasonDisplay | backendLabel }}</td>
               <td class="text-right">{{ row.quantity | number:'1.3-3' }}</td>
               <td class="text-right amount">{{ row.unitCost | number:'1.3-3' }}</td>
               <td>{{ row.reference ?? '-' }}</td>

@@ -122,13 +122,13 @@ export class StepBillingComponent {
   protected readonly paymentSummary = computed(() => {
     const payment = this.wizardService.payment();
     const labels: Record<PaymentMethod, string> = {
-      [PaymentMethod.BankTransfer]: 'Virement bancaire',
-      [PaymentMethod.Cash]: 'Espèces',
-      [PaymentMethod.Check]: 'Chèque',
-      [PaymentMethod.Card]: 'Carte bancaire',
-      [PaymentMethod.Effect]: 'Effet de commerce'
+      [PaymentMethod.BankTransfer]: $localize`:@@ui.tern.virement.bancaire.8306f0:Virement bancaire`,
+      [PaymentMethod.Cash]: $localize`:@@ui.tern.especes.b7679d:Espèces`,
+      [PaymentMethod.Check]: $localize`:@@ui.tern.cheque.8bbb89:Chèque`,
+      [PaymentMethod.Card]: $localize`:@@ui.tern.carte.bancaire.9e3d9b:Carte bancaire`,
+      [PaymentMethod.Effect]: $localize`:@@ui.tern.effet.de.commerce.9793a8:Effet de commerce`
     };
-    const method = labels[payment.method] ?? 'Non défini';
+    const method = labels[payment.method] ?? $localize`:@@ui.tern.non.defini.4ed844:Non défini`;
     const terms = payment.daysUntilDue != null ? ` · ${payment.daysUntilDue} j` : '';
     return `${method}${terms}`;
   });

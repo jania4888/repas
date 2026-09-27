@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -11,6 +12,7 @@ import { AutoCompleteModule, AutoCompleteCompleteEvent, AutoCompleteSelectEvent 
 import { CheckboxModule } from 'primeng/checkbox';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { PAYMENT_TERM_DAY_OPTIONS, SUPPLIER_PAYMENT_METHOD_OPTIONS } from '@shared/constants/coded-option-labels';
 import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.component';
 import { FormSectionComponent } from '@shared/components/form-section/form-section.component';
 import { WarehouseSelectorComponent } from '@shared/components/warehouse-selector/warehouse-selector.component';
@@ -100,19 +102,9 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
   lines: InvoiceLineRow[] = [];
   quickCreateVisible = false;
 
-  paymentTermOptions = [
-    { label: '30 jours', value: 30 },
-    { label: '60 jours', value: 60 },
-    { label: '90 jours', value: 90 }
-  ];
+  paymentTermOptions = [...PAYMENT_TERM_DAY_OPTIONS];
 
-  paymentMethodOptions = [
-    { label: 'Effet de commerce', value: 'Effet de commerce' },
-    { label: 'Virement bancaire', value: 'Virement bancaire' },
-    { label: 'Espèces', value: 'Espèces' },
-    { label: 'Chèque', value: 'Chèque' },
-    { label: 'Carte bancaire', value: 'Carte bancaire' }
-  ];
+  paymentMethodOptions = [...SUPPLIER_PAYMENT_METHOD_OPTIONS];
 
   fixedAssetsEnabled = computed(() => this.accountingFlags.isEnabled('fixedAssetsEnabled'));
 
@@ -212,8 +204,8 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
     if (product.isStockManaged) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Stock',
-        detail: 'Cet article est géré en stock. Utilisez un bon de réception.'
+        summary: $localize`:@@supplier-invoice-form.component.summary.Stock:Stock`,
+        detail: $localize`:@@supplier-invoice-form.component.detail.Cet_article_est_:Cet article est géré en stock. Utilisez un bon de réception.`
       });
       line.product = null;
       line.productId = null;
@@ -230,8 +222,8 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
     if (product.isStockManaged) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Stock',
-        detail: 'L’article créé est géré en stock et ne peut pas figurer sur une facture directe.'
+        summary: $localize`:@@supplier-invoice-form.component.summary.Stock:Stock`,
+        detail: $localize`:@@supplier-invoice-form.component.detail.L_article_cr_e:L’article créé est géré en stock et ne peut pas figurer sur une facture directe.`
       });
       return;
     }
@@ -293,12 +285,12 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
       next: res => {
         this.submitting.set(false);
         if (!res.success || !res.data) {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Création impossible.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@supplier-invoice-form.component.summary.Erreur:Erreur`, detail: $localize`:@@supplier-invoice-form.component.detail.Cr_ation_impossi:Création impossible.` });
           return;
         }
         this.toast.add({
           severity: 'success',
-          summary: 'Facture créée',
+          summary: $localize`:@@supplier-invoice-form.component.summary.Facture créé:Facture créée`,
           detail: `${res.data.invoiceNumber} — joignez le scan à l’écriture comptable d’achat.`
         });
         void this.router.navigate(['/supplier-invoices', res.data.id]);
@@ -307,7 +299,7 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
         this.submitting.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@supplier-invoice-form.component.summary.Erreur:Erreur`,
           detail: this.errors.extractErrorMessage(err)
         });
       }
@@ -341,7 +333,7 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
     if (this.paymentTermOptions.some(o => o.value === days)) return;
     this.paymentTermOptions = [
       ...this.paymentTermOptions,
-      { label: `${days} jours`, value: days }
+      { label: $localize`:@@pay.term.days:${days}:days: jours`, value: days }
     ];
   }
 

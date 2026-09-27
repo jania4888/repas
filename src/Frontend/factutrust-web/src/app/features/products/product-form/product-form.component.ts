@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed, ViewChild } from '@angular/core';
 import { environment } from '@environments/environment';
 import { PrintLabelsDialogComponent, LabelPrintTarget } from '../components/print-labels-dialog/print-labels-dialog.component';
@@ -26,6 +27,7 @@ import { ProductCategoryService } from '@core/services/product-category.service'
 import { SupplierService } from '@core/services/supplier.service';
 import { StockService, StockFeatures } from '@core/services/stock.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+import { PRODUCT_CATEGORY_OPTIONS, PRODUCT_UNIT_OPTIONS, PRODUCT_VAT_OPTIONS } from '@shared/constants/coded-option-labels';
 import { AuthService } from '@core/services/auth.service';
 import { PERMISSIONS } from '@core/config/permission-keys';
 import { AppModule } from '@core/models/app-module';
@@ -69,6 +71,9 @@ interface VatOption {
   value: number;
 }
 
+/** Nom (en base) de la catégorie proposée par défaut à la création d'un produit. */
+const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
+
 @Component({
   selector: 'app-product-form',
   standalone: true,
@@ -99,13 +104,13 @@ interface VatOption {
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
     
     <app-page-header 
-      [title]="isEditMode() ? 'Modifier le produit' : 'Nouveau produit'" 
-      [subtitle]="isEditMode() ? 'Modifiez les informations du produit' : 'Ajoutez un nouveau produit à votre catalogue'">
+      [title]="isEditMode() ? loc_ui_tern_modifier_le_produit_aeaa8f : loc_ui_tern_nouveau_produit_c31ca3" 
+      [subtitle]="isEditMode() ? loc_ui_tern_modifiez_les_informations_du_produit_41bd18 : loc_ui_tern_ajoutez_un_nouveau_produit_a_votre_catalog_d9126c">
       <app-button 
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/products" i18n="@@products.product-form.annuler.49ba3292">Annuler</app-button>
+        routerLink="/products" i18n="@@products.product-form.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -114,7 +119,7 @@ interface VatOption {
         <app-form-section class="section-identity" title="Informations générales" i18n-title="Informations générales" icon="pi-box" [number]="1">
           <div class="form-row form-row-3">
             <div class="form-group">
-              <label for="code">Code produit <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
+              <label for="code"><ng-container i18n="@@products.product-form.code.produit.60220afb">Code produit </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="code" 
@@ -131,7 +136,7 @@ interface VatOption {
             </div>
 
             <div class="form-group">
-              <label for="category">Type <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
+              <label for="category"><ng-container i18n="@@products.product-form.type.3deb7456">Type </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
               <p-select 
                 id="category"
                 [options]="categoryOptions" 
@@ -182,14 +187,14 @@ interface VatOption {
                 iconPos="left"
                 size="sm"
                 [disabled]="generatingBarcode()"
-                (clicked)="generateBarcode()" i18n="@@products.product-form.generer.un.code.interne.922844a9">Générer un code interne</app-button>
+                (clicked)="generateBarcode()" i18n="@@products.product-form.generer.un.code.interne.922844a9"> Générer un code interne </app-button>
               @if (labelPrintingEnabled && isEditMode()) {
                 <app-button
                   variant="outline"
                   icon="pi-print"
                   iconPos="left"
                   size="sm"
-                  (clicked)="openLabelDialog()" i18n="@@products.product-form.etiquettes.e26c690c">Étiquettes</app-button>
+                  (clicked)="openLabelDialog()" i18n="@@products.product-form.etiquettes.e26c690c"> Étiquettes </app-button>
               }
             </div>
             @if (barcodeSymbologyLabel()) {
@@ -198,12 +203,12 @@ interface VatOption {
                 {{ barcodeSymbologyLabel() }}
               </small>
             } @else {
-              <small class="form-hint" i18n="@@products.product-form.distinct.du.code.produit.laissez.vide.si.l.artic.983b9086">Distinct du code produit. Laissez vide si l'article n'en a pas.</small>
+              <small class="form-hint" i18n="@@products.product-form.distinct.du.code.produit.laissez.vide.si.l.artic.983b9086"> Distinct du code produit. Laissez vide si l'article n'en a pas. </small>
             }
           </div>
 
           <div class="form-group">
-            <label for="name">Désignation <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
+            <label for="name"><ng-container i18n="@@products.product-form.designation.63a9062c">Désignation </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
             <input 
               pInputText 
               id="name" 
@@ -242,7 +247,7 @@ interface VatOption {
                     [disabled]="!isProductCategory()">
                   </p-inputSwitch>
                   <span [class.active]="form.get('isStockManaged')?.value">
-                    {{ form.get('isStockManaged')?.value ? 'Activée' : 'Désactivée' }}
+                    {{ form.get('isStockManaged')?.value ? loc_ui_tern_activee_9b4e7c : loc_ui_tern_desactivee_74cc3b }}
                   </span>
                 </div>
                 @if (!isProductCategory()) {
@@ -264,9 +269,9 @@ interface VatOption {
                     [showClear]="true"
                     styleClass="w-full">
                   </p-select>
-                  <small class="form-hint" i18n="@@products.product-form.utilise.par.previsions.ia.reapprovisionnement.le.fa88557b">Utilisé par Prévisions IA — Réapprovisionnement : les recommandations de ce produit
+                  <small class="form-hint" i18n="@@products.product-form.utilise.par.previsions.ia.reapprovisionnement.le.fa88557b"> Utilisé par Prévisions IA — Réapprovisionnement : les recommandations de ce produit
                     seront pré-rattachées à ce fournisseur, ce qui permet de créer les bons de commande sans
-                    saisie manuelle.</small>
+                    saisie manuelle. </small>
                 </div>
               }
             </div>
@@ -283,8 +288,8 @@ interface VatOption {
                   placeholder="Non renseigné" i18n-placeholder="Non renseigné"
                   styleClass="w-full">
                 </p-inputNumber>
-                <small class="form-hint" i18n="@@products.product-form.optionnel.seuil.d.alerte.sur.l.entrepot.par.defa.1ef85276">Optionnel — seuil d'alerte sur l'entrepôt par défaut. Utilisé par les alertes stock
-                  et le réapprovisionnement (« Sous le stock min. configuré »).</small>
+                <small class="form-hint" i18n="@@products.product-form.optionnel.seuil.d.alerte.sur.l.entrepot.par.defa.1ef85276"> Optionnel — seuil d'alerte sur l'entrepôt par défaut. Utilisé par les alertes stock
+                  et le réapprovisionnement (« Sous le stock min. configuré »). </small>
               </div>
             }
           }
@@ -319,7 +324,7 @@ interface VatOption {
                       class="product-image-remove"
                       (click)="removeProductImage()"
                       [disabled]="saving()"
-                      aria-label="Supprimer l'image du produit" i18n-aria-label="Supprimer l'image du produit" i18n="@@products.product-form.supprimer.l.image.2042d17b">Supprimer l'image</button>
+                      aria-label="Supprimer l'image du produit" i18n-aria-label="Supprimer l'image du produit" i18n="@@products.product-form.supprimer.l.image.2042d17b"> Supprimer l'image </button>
                   }
                   <small class="form-hint" i18n="@@products.product-form.jpeg.png.ou.webp.max.2.mo.c876f43c">JPEG, PNG ou WebP. Max 2 Mo.</small>
                 </div>
@@ -336,7 +341,7 @@ interface VatOption {
                   formControlName="isActive">
                 </p-inputSwitch>
                 <span [class.active]="form.get('isActive')?.value">
-                  {{ form.get('isActive')?.value ? 'Actif' : 'Inactif' }}
+                  {{ form.get('isActive')?.value ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                 </span>
               </div>
             </div>
@@ -387,19 +392,19 @@ interface VatOption {
                       <a [routerLink]="variantAxesNewLink" i18n="@@products.product-form.creer.un.axe.de.variantes.c66b8dfd">Créer un axe de variantes</a> (ex. Taille, Couleur) avant de générer les SKU.
                     </p>
                   } @else {
-                    <p class="form-hint" i18n="@@products.product-form.aucun.axe.de.variantes.n.est.defini.un.administr.4fdc29c8">Aucun axe de variantes n'est défini. Un administrateur peut les configurer dans Paramètres → Axes de variantes.</p>
+                    <p class="form-hint" i18n="@@products.product-form.aucun.axe.de.variantes.n.est.defini.un.administr.4fdc29c8"> Aucun axe de variantes n'est défini. Un administrateur peut les configurer dans Paramètres → Axes de variantes. </p>
                   }
                 }
                 @if (previewCombinationCount() > 0) {
                   <p class="form-hint">
                     Aperçu : {{ previewCombinationCount() }} combinaison(s) seront créées.
                     @if (previewCombinationCount() > 50) {
-                      <strong i18n="@@products.product-form.plus.de.50.sku.confirmez.avant.de.generer.c2047ba3">Plus de 50 SKU — confirmez avant de générer.</strong>
+                      <strong i18n="@@products.product-form.plus.de.50.sku.confirmez.avant.de.generer.c2047ba3"> Plus de 50 SKU — confirmez avant de générer.</strong>
                     }
                   </p>
                 }
                 <app-button type="button" variant="secondary" icon="pi-sitemap" iconPos="left"
-                            (clicked)="generateVariants()" [disabled]="generatingVariants() || !hasVariantSelection()" i18n="@@products.product-form.generer.les.sku.6ff4e512">Générer les SKU</app-button>
+                            (clicked)="generateVariants()" [disabled]="generatingVariants() || !hasVariantSelection()" i18n="@@products.product-form.generer.les.sku.6ff4e512"> Générer les SKU </app-button>
               </div>
               <div class="form-group">
                 <label i18n="@@products.product-form.sku.enfants.922c9ec5">SKU enfants</label>
@@ -436,7 +441,7 @@ interface VatOption {
                   <div class="status-switch">
                     <p-inputSwitch id="hasExpiryTracking" formControlName="hasExpiryTracking"></p-inputSwitch>
                     <span [class.active]="form.get('hasExpiryTracking')?.value">
-                      {{ form.get('hasExpiryTracking')?.value ? 'Activé' : 'Désactivé' }}
+                      {{ form.get('hasExpiryTracking')?.value ? loc_ui_tern_active_42ce0b : loc_ui_tern_desactive_2d32fa }}
                     </span>
                   </div>
                   <small class="form-hint" i18n="@@products.product-form.obligatoire.pour.activer.fefo.06e5bf32">Obligatoire pour activer FEFO.</small>
@@ -457,7 +462,7 @@ interface VatOption {
                 <small class="form-hint">{{ costingMethodHint() }}</small>
                 @if (isEditMode() && (form.get('costingMethod')?.value === 1 || form.get('costingMethod')?.value === 2)) {
                   <app-button type="button" variant="outline" size="sm" class="mt-2"
-                              (clicked)="createOpeningLayer()" [disabled]="saving()" i18n="@@products.product-form.creer.la.couche.d.ouverture.fifo.lifo.a2aaa6ce">Créer la couche d'ouverture FIFO/LIFO</app-button>
+                              (clicked)="createOpeningLayer()" [disabled]="saving()" i18n="@@products.product-form.creer.la.couche.d.ouverture.fifo.lifo.a2aaa6ce"> Créer la couche d'ouverture FIFO/LIFO </app-button>
                 }
               </div>
             }
@@ -483,7 +488,7 @@ interface VatOption {
                 styleClass="w-full"
                 (onInput)="onPricingChange('purchasePrice')">
               </p-inputNumber>
-              <small class="form-hint" i18n="@@products.product-form.prix.par.defaut.pour.les.bons.de.commande.et.fac.3864e612">Prix par défaut pour les bons de commande et factures fournisseurs.</small>
+              <small class="form-hint" i18n="@@products.product-form.prix.par.defaut.pour.les.bons.de.commande.et.fac.3864e612"> Prix par défaut pour les bons de commande et factures fournisseurs. </small>
             </div>
 
             <div class="pricing-readonly-group">
@@ -508,7 +513,7 @@ interface VatOption {
               </div>
 
               <div class="form-group">
-                <label for="weightedAverageCost">{{ (form.get('costingMethod')?.value === 1 || form.get('costingMethod')?.value === 2) ? 'Coût unitaire affiché HT' : 'Coût unitaire moyen pondéré (CMUP) HT' }}</label>
+                <label for="weightedAverageCost">{{ (form.get('costingMethod')?.value === 1 || form.get('costingMethod')?.value === 2) ? loc_ui_tern_cout_unitaire_affiche_ht_050c67 : loc_ui_tern_cout_unitaire_moyen_pondere_cmup_ht_665d78 }}</label>
                 <p-inputNumber
                   id="weightedAverageCost"
                   [ngModel]="weightedAverageCost()"
@@ -531,7 +536,7 @@ interface VatOption {
             <h5 class="pricing-subblock-title" i18n="@@products.product-form.parametres.de.vente.ba205151">Paramètres de vente</h5>
             <div class="form-row form-row-pricing-params">
               <div class="form-group">
-                <label for="unit">Unité de mesure <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
+                <label for="unit"><ng-container i18n="@@products.product-form.unite.de.mesure.f5101bff">Unité de mesure </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-select
                   id="unit"
                   [options]="unitOptions"
@@ -543,7 +548,7 @@ interface VatOption {
               </div>
 
               <div class="form-group">
-                <label for="vatRate">Taux de TVA <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
+                <label for="vatRate"><ng-container i18n="@@products.product-form.taux.de.tva.e704ceaf">Taux de TVA </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-select
                   id="vatRate"
                   [options]="vatOptions"
@@ -593,7 +598,7 @@ interface VatOption {
               </span>
 
               <div class="form-group">
-                <label for="unitPrice">Prix de vente HT <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
+                <label for="unitPrice"><ng-container i18n="@@products.product-form.prix.de.vente.ht.7a39da52">Prix de vente HT </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-inputNumber
                   id="unitPrice"
                   formControlName="unitPrice"
@@ -619,7 +624,7 @@ interface VatOption {
               </span>
 
               <div class="form-group">
-                <label for="salePriceTtc">Prix de vente TTC <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
+                <label for="salePriceTtc"><ng-container i18n="@@products.product-form.prix.de.vente.ttc.87e7c028">Prix de vente TTC </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
                 <p-inputNumber
                   id="salePriceTtc"
                   formControlName="salePriceTtc"
@@ -714,7 +719,7 @@ interface VatOption {
           variant="outline"
           icon="pi-times"
           iconPos="left"
-          routerLink="/products" i18n="@@products.product-form.annuler.49ba3292">Annuler</app-button>
+          routerLink="/products" i18n="@@products.product-form.annuler.49ba3292"> Annuler </app-button>
         @if (canMutateProduct()) {
           <app-button 
             variant="primary"
@@ -722,7 +727,7 @@ interface VatOption {
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             [disabled]="form.invalid || saving()">
-            {{ isEditMode() ? 'Enregistrer' : 'Créer le produit' }}
+            {{ isEditMode() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_le_produit_e19a48 }}
           </app-button>
         }
       </div>
@@ -1087,6 +1092,20 @@ interface VatOption {
   `]
 })
 export class ProductFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_produit_aeaa8f = $localize`:@@ui.tern.modifier.le.produit.aeaa8f:Modifier le produit`;
+  readonly loc_ui_tern_nouveau_produit_c31ca3 = $localize`:@@ui.tern.nouveau.produit.c31ca3:Nouveau produit`;
+  readonly loc_ui_tern_modifiez_les_informations_du_produit_41bd18 = $localize`:@@ui.tern.modifiez.les.informations.du.produit.41bd18:Modifiez les informations du produit`;
+  readonly loc_ui_tern_ajoutez_un_nouveau_produit_a_votre_catalog_d9126c = $localize`:@@ui.tern.ajoutez.un.nouveau.produit.a.votre.catalog.d9126c:Ajoutez un nouveau produit à votre catalogue`;
+  readonly loc_ui_tern_activee_9b4e7c = $localize`:@@ui.tern.activee.9b4e7c:Activée`;
+  readonly loc_ui_tern_desactivee_74cc3b = $localize`:@@ui.tern.desactivee.74cc3b:Désactivée`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_active_42ce0b = $localize`:@@ui.tern.active.42ce0b:Activé`;
+  readonly loc_ui_tern_desactive_2d32fa = $localize`:@@ui.tern.desactive.2d32fa:Désactivé`;
+  readonly loc_ui_tern_cout_unitaire_affiche_ht_050c67 = $localize`:@@ui.tern.cout.unitaire.affiche.ht.050c67:Coût unitaire affiché HT`;
+  readonly loc_ui_tern_cout_unitaire_moyen_pondere_cmup_ht_665d78 = $localize`:@@ui.tern.cout.unitaire.moyen.pondere.cmup.ht.665d78:Coût unitaire moyen pondéré (CMUP) HT`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_le_produit_e19a48 = $localize`:@@ui.tern.creer.le.produit.e19a48:Créer le produit`;
   @ViewChild(ProductVariantMatrixComponent) variantMatrix?: ProductVariantMatrixComponent;
 
   private fb = inject(FormBuilder);
@@ -1256,30 +1275,9 @@ export class ProductFormComponent implements OnInit {
     return base;
   });
 
-  categoryOptions: CategoryOption[] = [
-    { label: 'Produit', value: 'Produit' },
-    { label: 'Service', value: 'Service' },
-    { label: 'Abonnement', value: 'Abonnement' }
-  ];
-
-  unitOptions: UnitOption[] = [
-    { label: 'Unité', value: 'Unité' },
-    { label: 'Heure', value: 'Heure' },
-    { label: 'Jour', value: 'Jour' },
-    { label: 'Mois', value: 'Mois' },
-    { label: 'An', value: 'An' },
-    { label: 'Kg', value: 'Kg' },
-    { label: 'Litre', value: 'Litre' },
-    { label: 'Mètre', value: 'Mètre' },
-    { label: 'M²', value: 'M²' }
-  ];
-
-  vatOptions: VatOption[] = [
-    { label: '19% - Taux normal', value: 19 },
-    { label: '13% - Taux intermédiaire', value: 13 },
-    { label: '7% - Taux réduit', value: 7 },
-    { label: '0% - Exonéré', value: 0 }
-  ];
+  categoryOptions: CategoryOption[] = PRODUCT_CATEGORY_OPTIONS;
+  unitOptions: UnitOption[] = PRODUCT_UNIT_OPTIONS;
+  vatOptions: VatOption[] = PRODUCT_VAT_OPTIONS;
 
   readonly generatingBarcode = signal(false);
   readonly labelPrintingEnabled = environment.featureFlags?.barcodeLabelPrinting === true;
@@ -1482,9 +1480,8 @@ export class ProductFormComponent implements OnInit {
       next: options => {
         this.productCategoryOptions.set(options);
         if (options.length > 0 && !this.productId()) {
-          const defaultCategory =
-            options.find(o => o.value === 'General' || String(o.value).toLowerCase() === 'general') ??
-            options[0];
+          // `label` est ici le nom de la catégorie en base (donnée, jamais traduite) et `value` son id.
+          const defaultCategory = options.find(o => o.label === DEFAULT_PRODUCT_CATEGORY_NAME) ?? options[0];
           this.form.patchValue({ productCategoryId: defaultCategory.value });
         }
       },
@@ -1557,7 +1554,7 @@ export class ProductFormComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
             detail: response.errors?.join(', ') || 'Impossible de charger le produit'
           });
           this.router.navigate(['/products']);
@@ -1567,7 +1564,7 @@ export class ProductFormComponent implements OnInit {
         const errorMessage = this.errorHandler.extractErrorMessage(error);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
           detail: errorMessage || 'Impossible de charger le produit'
         });
         this.errorHandler.logError('Failed to load product', error);
@@ -1635,7 +1632,7 @@ export class ProductFormComponent implements OnInit {
           if (response.success) {
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
+              summary: $localize`:@@product-form.component.summary.Succès:Succès`,
               detail: response.message || 'Produit mis à jour avec succès'
             });
             const id = this.productId()!;
@@ -1650,8 +1647,8 @@ export class ProductFormComponent implements OnInit {
                 error: (err) => {
                   this.toastService.add({
                     severity: 'warn',
-                    summary: 'Image',
-                    detail: 'Produit mis à jour ; l\'image n\'a pas pu être enregistrée.'
+                    summary: $localize`:@@product-form.component.summary.Image:Image`,
+                    detail: $localize`:@@product-form.component.detail.Produit_mis_jo:Produit mis à jour ; l'image n'a pas pu être enregistrée.`
                   });
                   this.saving.set(false);
                   this.navigateToProducts();
@@ -1675,7 +1672,7 @@ export class ProductFormComponent implements OnInit {
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
               detail: this.mapTraceabilityApiError(
                 response.errors?.join(', ') || 'Une erreur est survenue lors de la mise à jour'
               )
@@ -1689,7 +1686,7 @@ export class ProductFormComponent implements OnInit {
           );
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
             detail: errorMessage
           });
           this.errorHandler.logError('Failed to update product', error);
@@ -1730,7 +1727,7 @@ export class ProductFormComponent implements OnInit {
             const newId = response.data;
             this.toastService.add({
               severity: 'success',
-              summary: 'Succès',
+              summary: $localize`:@@product-form.component.summary.Succès:Succès`,
               detail: response.message || 'Produit créé avec succès'
             });
             const file = this.selectedImageFile();
@@ -1740,8 +1737,8 @@ export class ProductFormComponent implements OnInit {
                   if (!uploadRes.success) {
                     this.toastService.add({
                       severity: 'warn',
-                      summary: 'Image',
-                      detail: 'Produit créé ; l\'image n\'a pas pu être enregistrée.'
+                      summary: $localize`:@@product-form.component.summary.Image:Image`,
+                      detail: $localize`:@@product-form.component.detail.Produit_cr_l:Produit créé ; l'image n'a pas pu être enregistrée.`
                     });
                   }
                   this.saving.set(false);
@@ -1750,8 +1747,8 @@ export class ProductFormComponent implements OnInit {
                 error: () => {
                   this.toastService.add({
                     severity: 'warn',
-                    summary: 'Image',
-                    detail: 'Produit créé ; l\'image n\'a pas pu être enregistrée.'
+                    summary: $localize`:@@product-form.component.summary.Image:Image`,
+                    detail: $localize`:@@product-form.component.detail.Produit_cr_l:Produit créé ; l'image n'a pas pu être enregistrée.`
                   });
                   this.saving.set(false);
                   this.navigateAfterCreate(newId, createRequest.isVariantTemplate ?? false);
@@ -1764,7 +1761,7 @@ export class ProductFormComponent implements OnInit {
           } else {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
               detail: this.mapTraceabilityApiError(
                 response.errors?.join(', ') || 'Une erreur est survenue lors de la création'
               )
@@ -1778,7 +1775,7 @@ export class ProductFormComponent implements OnInit {
           );
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
             detail: errorMessage
           });
           this.errorHandler.logError('Failed to create product', error);
@@ -1846,7 +1843,7 @@ export class ProductFormComponent implements OnInit {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Variantes',
+            summary: $localize`:@@product-form.component.summary.Variantes:Variantes`,
             detail: `${res.data?.length ?? 0} SKU enfant(s) créé(s)`
           });
           this.loadVariantAxes(productId);
@@ -1857,7 +1854,7 @@ export class ProductFormComponent implements OnInit {
         this.generatingVariants.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Variantes',
+          summary: $localize`:@@product-form.component.summary.Variantes:Variantes`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -1875,13 +1872,13 @@ export class ProductFormComponent implements OnInit {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Valorisation',
-            detail: 'Couche d\'ouverture créée. Vous pouvez enregistrer le produit.'
+            summary: $localize`:@@product-form.component.summary.Valorisation:Valorisation`,
+            detail: $localize`:@@product-form.component.detail.Couche_d_ouvertu:Couche d'ouverture créée. Vous pouvez enregistrer le produit.`
           });
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Valorisation',
+            summary: $localize`:@@product-form.component.summary.Valorisation:Valorisation`,
             detail: res.message || res.errors?.join(', ') || 'Impossible de créer la couche d\'ouverture.'
           });
         }
@@ -1890,7 +1887,7 @@ export class ProductFormComponent implements OnInit {
         this.saving.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Valorisation',
+          summary: $localize`:@@product-form.component.summary.Valorisation:Valorisation`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -1967,8 +1964,8 @@ export class ProductFormComponent implements OnInit {
     if (notifyFefoDowngrade && fefoDowngraded) {
       this.toastService.add({
         severity: 'info',
-        summary: 'Politique de prélèvement',
-        detail: 'FEFO nécessite le suivi DLUO. Passage à FIFO physique.'
+        summary: $localize`:@@product-form.component.summary.Politique_de_pr_:Politique de prélèvement`,
+        detail: $localize`:@@product-form.component.detail.FEFO_n_cessite_l:FEFO nécessite le suivi DLUO. Passage à FIFO physique.`
       });
     }
 
@@ -2037,7 +2034,7 @@ export class ProductFormComponent implements OnInit {
           this.form.get('barcode')?.markAsDirty();
           this.toastService.add({
             severity: 'success',
-            summary: 'Code-barres engendré',
+            summary: $localize`:@@product-form.component.summary.Code_barres_enge:Code-barres engendré`,
             detail: response.data.barcode
           });
         }

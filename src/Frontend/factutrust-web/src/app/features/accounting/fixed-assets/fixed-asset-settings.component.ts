@@ -64,9 +64,9 @@ function toFrDate(d: Date): string {
     </div>
 
     <div class="card" *ngIf="!loading()">
-      <p class="hint" i18n="@@accounting.fixed-assets.l.exercice.comptable.determine.la.repartition.de.3debb716">L'exercice comptable détermine la répartition des dotations et le libellé des exercices
+      <p class="hint" i18n="@@accounting.fixed-assets.l.exercice.comptable.determine.la.repartition.de.3debb716"> L'exercice comptable détermine la répartition des dotations et le libellé des exercices
         dans le tableau CP17 et les exports Immobilisations. Par défaut, l'exercice coïncide avec
-        l'année civile (janvier).</p>
+        l'année civile (janvier). </p>
 
       <app-accounting-status-banner
         *ngIf="isOffset()"
@@ -76,7 +76,7 @@ function toFrDate(d: Date): string {
 
       <div class="form-grid">
         <label>
-          Mois de début d'exercice *
+          <ng-container i18n="@@accounting.fixed-assets.mois.de.debut.d.exercice.97c6a5e8"> Mois de début d'exercice * </ng-container>
           <select class="accounting-filter-input" [(ngModel)]="form.fiscalYearStartMonth" (ngModelChange)="onFormChange()">
             <option *ngFor="let m of monthOptions" [value]="m.value">{{ m.label }}</option>
           </select>
@@ -113,8 +113,8 @@ function toFrDate(d: Date): string {
       </div>
 
       <div class="actions">
-        <app-button variant="primary" type="button" (click)="save()" [disabled]="saving()" i18n="@@accounting.fixed-assets.enregistrer.les.parametres.f1ccef8d">Enregistrer les paramètres</app-button>
-        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets/depreciation-run" i18n="@@accounting.fixed-assets.aller.aux.dotations.1269addd">Aller aux dotations</app-button>
+        <app-button variant="primary" type="button" (click)="save()" [disabled]="saving()" i18n="@@accounting.fixed-assets.enregistrer.les.parametres.f1ccef8d"> Enregistrer les paramètres </app-button>
+        <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets/depreciation-run" i18n="@@accounting.fixed-assets.aller.aux.dotations.1269addd"> Aller aux dotations </app-button>
         <app-button variant="secondary" type="button" routerLink="/accounting/fixed-assets" i18n="@@accounting.fixed-assets.retour.au.registre.aa646cbf">Retour au registre</app-button>
       </div>
     </div>
@@ -269,12 +269,12 @@ export class FixedAssetSettingsComponent implements OnInit {
           };
           this.success.set('Paramètres d\'exercice enregistrés.');
         } else {
-          this.error.set(res.message ?? 'Enregistrement impossible.');
+          this.error.set(res.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`);
         }
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(err?.error?.message ?? 'Enregistrement impossible.');
+        this.error.set(err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`);
       }
     });
   }

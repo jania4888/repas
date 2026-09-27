@@ -3,9 +3,15 @@ import { BACKEND_DISPLAY_LABELS } from '@core/i18n/backend-display-labels.genera
 
 @Pipe({ name: 'backendLabel', standalone: true })
 export class BackendLabelPipe implements PipeTransform {
-  transform(value: string | null | undefined): string {
+  transform(value: string): string;
+  transform(value: string | null | undefined): string | null | undefined;
+  /**
+   * Une valeur absente est renvoyée telle quelle : `(x | backendLabel) ?? '—'` doit se comporter
+   * comme `x ?? '—'` avant l'ajout du pipe.
+   */
+  transform(value: string | null | undefined): string | null | undefined {
     if (!value) {
-      return '';
+      return value;
     }
     const lang = typeof document !== 'undefined' ? document.documentElement.getAttribute('lang') ?? 'fr' : 'fr';
     if (lang.startsWith('fr')) {

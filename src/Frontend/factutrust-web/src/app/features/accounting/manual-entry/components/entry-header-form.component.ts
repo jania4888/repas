@@ -44,7 +44,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
         <div class="form-field">
 
-          <label class="field-label" for="eh-journal">Journal <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+          <label class="field-label" for="eh-journal"><ng-container i18n="@@accounting.manual-entry.journal.57d7f743">Journal </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
           <select id="eh-journal" class="me-input"
                   [ngModel]="store.journalCode()" (ngModelChange)="store.journalCode.set($event)"
@@ -64,7 +64,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
         <div class="form-field">
 
-          <label class="field-label" for="eh-date">Date d'écriture <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+          <label class="field-label" for="eh-date"><ng-container i18n="@@accounting.manual-entry.date.d.ecriture.1cca6f03">Date d'écriture </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
           <input id="eh-date" type="date" class="me-input"
 
@@ -83,7 +83,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
         <div class="form-field">
 
-          <label class="field-label" for="eh-period">Période <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+          <label class="field-label" for="eh-period"><ng-container i18n="@@accounting.manual-entry.periode.de2110b7">Période </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
           <select id="eh-period" class="me-input"
 
@@ -108,7 +108,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
           <div class="form-field">
 
-            <label class="field-label" for="eh-currency">Devise <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+            <label class="field-label" for="eh-currency"><ng-container i18n="@@accounting.manual-entry.devise.eb2e42c4">Devise </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
             <select id="eh-currency" class="me-input"
                     [ngModel]="store.currency()" (ngModelChange)="onCurrencyChange($event)"
@@ -132,13 +132,13 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
           <div class="form-field">
 
-            <label class="field-label" for="eh-rate">Taux <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+            <label class="field-label" for="eh-rate"><ng-container i18n="@@accounting.manual-entry.taux.18bc95b8">Taux </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
             <input id="eh-rate" type="number" step="0.00001" min="0" class="me-input"
                    [class.me-input--locked]="!canOverrideRate()"
                    [readonly]="!canOverrideRate()"
                    [ngModel]="store.exchangeRate()" (ngModelChange)="onRateChange($event)"
-                   [attr.aria-label]="'Taux de change ' + store.currency()" />
+                   [attr.aria-label]="loc_ui_tern_taux_de_change_9dd682 + store.currency()" />
 
             @if (rateError(); as err) {
 
@@ -158,7 +158,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
         <div class="form-field form-field--wide">
 
-          <label class="field-label" for="eh-label">Libellé général <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
+          <label class="field-label" for="eh-label"><ng-container i18n="@@accounting.manual-entry.libelle.general.777f3fa8">Libellé général </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
           <input id="eh-label" type="text" class="me-input" placeholder="Libellé de l'écriture" i18n-placeholder="Libellé de l'écriture"
 
@@ -264,6 +264,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 })
 
 export class EntryHeaderFormComponent {
+  readonly loc_ui_tern_taux_de_change_9dd682 = $localize`:@@ui.tern.taux.de.change.9dd682:Taux de change `;
 
   readonly store = inject(EntryFormStore);
 
@@ -352,7 +353,7 @@ export class EntryHeaderFormComponent {
             // périmé, et le message porte le mois exact à renseigner. Le taux d'une écriture
             // rechargée survit en revanche au message : il est déjà comptabilisé.
             if (!hydrated) this.store.exchangeRate.set(null);
-            this.rateError.set(res.error ?? 'Taux indisponible');
+            this.rateError.set(res.error ?? $localize`:@@ui.tern.taux.indisponible.29ec77:Taux indisponible`);
           }
         },
         error: () => {

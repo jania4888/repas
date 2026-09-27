@@ -147,7 +147,7 @@
                   </div>
                 </div>
 
-                <span id="password-strength-hint" class="sr-only" i18n="@@auth.register.exigences.au.moins.12.caracteres.une.majuscule.u.86d13e2b">Exigences : au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.</span>
+                <span id="password-strength-hint" class="sr-only" i18n="@@auth.register.exigences.au.moins.12.caracteres.une.majuscule.u.86d13e2b"> Exigences : au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial. </span>
 
                 <div class="password-criteria-card">
                   <div class="criteria-header-row">
@@ -184,7 +184,7 @@
               <div class="terms-group">
                 <p-checkbox inputId="acceptTerms" formControlName="acceptTerms" [binary]="true"></p-checkbox>
                 <label for="acceptTerms">
-                  En continuant, j'accepte les <a routerLink="/legal/terms" target="_blank" class="link-primary" i18n="@@auth.register.conditions.d.utilisation.17c85066">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary" i18n="@@auth.register.politique.de.confidentialite.a8ebb0b8">Politique de Confidentialité</a>.
+                  <ng-container i18n="@@auth.register.en.continuant.j.accepte.les.a41cc7a3"> En continuant, j'accepte les </ng-container> <a routerLink="/legal/terms" target="_blank" class="link-primary" i18n="@@auth.register.conditions.d.utilisation.17c85066">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary" i18n="@@auth.register.politique.de.confidentialite.a8ebb0b8">Politique de Confidentialité</a>.
                 </label>
               </div>
               @if (form.get('acceptTerms')?.invalid && form.get('acceptTerms')?.touched) {
@@ -387,7 +387,7 @@
           }
 
           <p class="step-indicator" aria-live="polite">
-            Étape <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur 3
+            <ng-container i18n="@@auth.register.etape.13146b48"> Étape </ng-container> <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur 3
           </p>
           
           @if (currentStep() < 2) {
@@ -407,9 +407,9 @@
       </form>
 
       <div class="login-prompt">
-        <p>Vous avez déjà un compte ? <a routerLink="/auth/login" class="link-primary fw-semibold" i18n="@@auth.register.connectez.vous.33a5aa49">Connectez-vous</a></p>
+        <p><ng-container i18n="@@auth.register.vous.avez.deja.un.compte.6e1e5d50">Vous avez déjà un compte ? </ng-container> <a routerLink="/auth/login" class="link-primary fw-semibold" i18n="@@auth.register.connectez.vous.33a5aa49">Connectez-vous</a></p>
         @if (environment.accountingFirmsEnabled) {
-          <p class="mt-2">Cabinet comptable ? <a routerLink="/auth/register-firm" class="link-primary fw-semibold" i18n="@@auth.register.inscription.cabinet.0ec799e6">Inscription cabinet</a></p>
+          <p class="mt-2"><ng-container i18n="@@auth.register.cabinet.comptable.09c7c638">Cabinet comptable ? </ng-container> <a routerLink="/auth/register-firm" class="link-primary fw-semibold" i18n="@@auth.register.inscription.cabinet.0ec799e6">Inscription cabinet</a></p>
         }
       </div>
 </app-auth-shell>

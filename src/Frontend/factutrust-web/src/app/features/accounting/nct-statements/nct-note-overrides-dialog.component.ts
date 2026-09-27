@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, OnChanges, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,7 +36,7 @@ interface NoteEditRow {
   imports: [CommonModule, FormsModule, DialogModule, ButtonComponent],
   template: `
     <p-dialog
-      header="Personnaliser les annexes"
+      header="Personnaliser les annexes" i18n-header="Personnaliser les annexes"
       [visible]="visible"
       (visibleChange)="onVisibleChange($event)"
       [modal]="true"
@@ -44,7 +45,7 @@ interface NoteEditRow {
       [closable]="true"
       styleClass="nno-dialog">
       <p class="nno-help">
-        Exercice <strong>{{ fiscalYear }}</strong>. Un champ laissé vide conserve le libellé du
+        <ng-container i18n="@@accounting.nct-statements.exercice.e171e2b0"> Exercice </ng-container> <strong>{{ fiscalYear }}</strong>. Un champ laissé vide conserve le libellé du
         catalogue. Une note masquée disparaît de la liasse <em i18n="@@accounting.nct-statements.et.a5bc1d9b">et</em> de l'export PDF.
       </p>
 
@@ -77,11 +78,11 @@ interface NoteEditRow {
               <div class="nno-row-actions">
                 <app-button variant="secondary" size="sm" type="button"
                   (click)="save(row)" [disabled]="row.saving"
-                  [ariaLabel]="'Enregistrer la note ' + row.number" i18n="@@accounting.nct-statements.enregistrer.f7c8bcd8">Enregistrer</app-button>
+                  [ariaLabel]="loc_ui_tern_enregistrer_la_note_b39ca7 + row.number" i18n="@@accounting.nct-statements.enregistrer.f7c8bcd8"> Enregistrer </app-button>
                 @if (row.hasOverride) {
                   <app-button variant="ghost" size="sm" type="button"
                     (click)="reset(row)" [disabled]="row.saving"
-                    [ariaLabel]="'Rétablir la note ' + row.number" i18n="@@accounting.nct-statements.retablir.91f08ee4">Rétablir</app-button>
+                    [ariaLabel]="loc_ui_tern_retablir_la_note_f1b0b0 + row.number" i18n="@@accounting.nct-statements.retablir.91f08ee4"> Rétablir </app-button>
                 }
               </div>
             </div>
@@ -105,6 +106,8 @@ interface NoteEditRow {
   `
 })
 export class NctNoteOverridesDialogComponent implements OnChanges {
+  readonly loc_ui_tern_enregistrer_la_note_b39ca7 = $localize`:@@ui.tern.enregistrer.la.note.b39ca7:Enregistrer la note `;
+  readonly loc_ui_tern_retablir_la_note_f1b0b0 = $localize`:@@ui.tern.retablir.la.note.f1b0b0:Rétablir la note `;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -185,7 +188,7 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
           this.notify('success', `Note ${row.number} personnalisée.`);
           this.changed.emit();
         } else {
-          this.notify('error', res.error ?? "L'enregistrement a échoué.");
+          this.notify('error', res.error ?? $localize`:@@ui.tern.l.enregistrement.a.echoue.3f69ec:L'enregistrement a échoué.`);
         }
       },
       error: err => {
@@ -215,6 +218,6 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
   }
 
   private notify(severity: 'success' | 'error', detail: string): void {
-    this.toast.add({ severity, summary: 'Annexes NCT', detail, life: 4000 });
+    this.toast.add({ severity, summary: $localize`:@@nct-note-overrides-dialog.component.summary.Annexes_NCT:Annexes NCT`, detail, life: 4000 });
   }
 }

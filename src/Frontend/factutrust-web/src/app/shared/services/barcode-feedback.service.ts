@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Injectable, inject } from '@angular/core';
 
 import { ToastService } from '@core/services/toast.service';
@@ -49,7 +50,7 @@ export class BarcodeFeedbackService {
     if (detail) {
       this.toastService.add({
         severity: 'success',
-        summary: 'Article ajouté',
+        summary: $localize`:@@barcode-feedback.service.summary.Article ajou:Article ajouté`,
         detail,
         life: 1800
       });

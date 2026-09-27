@@ -156,7 +156,7 @@ export interface PromotionFormValue {
 
     <p-dialog
 
-      [header]="editing ? 'Modifier la promotion' : 'Nouvelle promotion'"
+      [header]="editing ? loc_ui_tern_modifier_la_promotion_b296fc : loc_ui_tern_nouvelle_promotion_32d111"
 
       [(visible)]="visible"
 
@@ -174,9 +174,9 @@ export interface PromotionFormValue {
 
       [draggable]="false">
 
-      <p class="ft-dialog-intro" i18n="@@settings.promotions.remise.temporaire.appliquee.apres.le.prix.catalo.9c11f762">Remise temporaire appliquée après le prix catalogue ou la grille. Les documents déjà émis
+      <p class="ft-dialog-intro" i18n="@@settings.promotions.remise.temporaire.appliquee.apres.le.prix.catalo.9c11f762"> Remise temporaire appliquée après le prix catalogue ou la grille. Les documents déjà émis
 
-        conservent leur remise.</p>
+        conservent leur remise. </p>
 
 
 
@@ -184,7 +184,7 @@ export interface PromotionFormValue {
 
         <div class="ft-field ft-field--full">
 
-          <label for="pr-name">Nom <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
+          <label for="pr-name"><ng-container i18n="@@settings.promotions.nom.7ff20370">Nom </ng-container> <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
           <input id="pr-name" pInputText [(ngModel)]="form.name" maxlength="100" [disabled]="saving" />
 
@@ -194,7 +194,7 @@ export interface PromotionFormValue {
 
           <div class="ft-field">
 
-            <label for="pr-start">Début <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
+            <label for="pr-start"><ng-container i18n="@@settings.promotions.debut.f0955314">Début </ng-container> <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
             <input id="pr-start" type="date" pInputText [(ngModel)]="form.startsOn" [disabled]="saving" />
 
@@ -202,7 +202,7 @@ export interface PromotionFormValue {
 
           <div class="ft-field">
 
-            <label for="pr-end">Fin <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
+            <label for="pr-end"><ng-container i18n="@@settings.promotions.fin.4251065f">Fin </ng-container> <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
             <input id="pr-end" type="date" pInputText [(ngModel)]="form.endsOn" [disabled]="saving" />
 
@@ -246,7 +246,7 @@ export interface PromotionFormValue {
 
               [dropdown]="true"
 
-              [placeholder]="loadingProductLabel() ? 'Chargement…' : 'Tous les produits si vide'"
+              [placeholder]="loadingProductLabel() ? loc_ui_tern_chargement_01cba1 : loc_ui_tern_tous_les_produits_si_vide_846983"
 
               appendTo="body"
 
@@ -320,7 +320,7 @@ export interface PromotionFormValue {
 
               [dropdown]="true"
 
-              [placeholder]="loadingClientLabel() ? 'Chargement…' : 'Tous les clients si vide'"
+              [placeholder]="loadingClientLabel() ? loc_ui_tern_chargement_01cba1 : loc_ui_tern_tous_les_clients_si_vide_b6fc94"
 
               appendTo="body"
 
@@ -374,7 +374,7 @@ export interface PromotionFormValue {
 
             @if (form.discountType === 'Percentage') {
 
-              <label for="pr-pct">Taux (%) <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
+              <label for="pr-pct"><ng-container i18n="@@settings.promotions.taux.bb9a8c5a">Taux (%) </ng-container> <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
               <p-inputNumber
 
@@ -396,7 +396,7 @@ export interface PromotionFormValue {
 
             } @else {
 
-              <label for="pr-amt">Montant par unité <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
+              <label for="pr-amt"><ng-container i18n="@@settings.promotions.montant.par.unite.800d8a4e">Montant par unité </ng-container> <span class="ft-required" i18n="@@settings.promotions.text.df58248c">*</span></label>
 
               <p-inputNumber
 
@@ -460,7 +460,7 @@ export interface PromotionFormValue {
 
         <div class="ft-field ft-field--full promotion-form-dialog__priority-hint">
 
-          <small class="ft-hint" i18n="@@settings.promotions.la.plus.elevee.gagne.a.egalite.c.est.la.plus.cib.d47795fd">La plus élevée gagne ; à égalité, c'est la plus ciblée qui s'applique.</small>
+          <small class="ft-hint" i18n="@@settings.promotions.la.plus.elevee.gagne.a.egalite.c.est.la.plus.cib.d47795fd"> La plus élevée gagne ; à égalité, c'est la plus ciblée qui s'applique. </small>
 
         </div>
 
@@ -478,7 +478,7 @@ export interface PromotionFormValue {
 
         </div>
 
-        <small class="ft-hint promotion-form-dialog__status-hint" i18n="@@settings.promotions.desactiver.n.affecte.aucun.document.deja.emis.50f0b090">Désactiver n'affecte aucun document déjà émis.</small>
+        <small class="ft-hint promotion-form-dialog__status-hint" i18n="@@settings.promotions.desactiver.n.affecte.aucun.document.deja.emis.50f0b090"> Désactiver n'affecte aucun document déjà émis. </small>
 
       }
 
@@ -488,7 +488,7 @@ export interface PromotionFormValue {
 
         <app-button variant="secondary" (clicked)="close()" i18n="@@settings.promotions.annuler.49ba3292">Annuler</app-button>
 
-        <app-button variant="primary" [disabled]="!canSave() || saving" (clicked)="submit()" i18n="@@settings.promotions.enregistrer.f7c8bcd8">Enregistrer</app-button>
+        <app-button variant="primary" [disabled]="!canSave() || saving" (clicked)="submit()" i18n="@@settings.promotions.enregistrer.f7c8bcd8"> Enregistrer </app-button>
 
       </ng-template>
 
@@ -611,6 +611,11 @@ export interface PromotionFormValue {
 })
 
 export class PromotionFormDialogComponent implements OnInit, OnChanges {
+  readonly loc_ui_tern_modifier_la_promotion_b296fc = $localize`:@@ui.tern.modifier.la.promotion.b296fc:Modifier la promotion`;
+  readonly loc_ui_tern_nouvelle_promotion_32d111 = $localize`:@@ui.tern.nouvelle.promotion.32d111:Nouvelle promotion`;
+  readonly loc_ui_tern_chargement_01cba1 = $localize`:@@ui.tern.chargement.01cba1:Chargement…`;
+  readonly loc_ui_tern_tous_les_produits_si_vide_846983 = $localize`:@@ui.tern.tous.les.produits.si.vide.846983:Tous les produits si vide`;
+  readonly loc_ui_tern_tous_les_clients_si_vide_b6fc94 = $localize`:@@ui.tern.tous.les.clients.si.vide.b6fc94:Tous les clients si vide`;
 
   private readonly productService = inject(ProductService);
 

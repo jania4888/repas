@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,16 +33,16 @@ import { slugifyKey } from './shared/studio-text.util';
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      title="Studio — Tables personnalisées" i18n-title="Studio — Tables personnalisées"
-      subtitle="Créez vos propres tables sans écrire de code."
+      [title]="pageTitle"
+      [subtitle]="pageSubtitle"
       [breadcrumbs]="breadcrumbs">
       <label studioActions class="studio-line studio-hide-junctions">
         <p-checkbox [binary]="true" [(ngModel)]="hideJunctions" data-testid="hide-junctions" />
         <span>{{ runtimeLabels.entities.hideJunctions }}</span>
       </label>
-      <button pButton type="button" label="Assistant IA" icon="fa-solid fa-wand-magic-sparkles" studioActions
-        class="p-button-outlined" routerLink="/studio/ai" pTooltip="Créer une table en langage naturel"></button>
-      <button pButton type="button" label="Nouvelle table" icon="fa-solid fa-plus" studioActions (click)="openCreate()"></button>
+      <button pButton type="button" [label]="aiLabel" icon="fa-solid fa-wand-magic-sparkles" studioActions
+        class="p-button-outlined" routerLink="/studio/ai" pTooltip="Créer une table en langage naturel" i18n-pTooltip="Créer une table en langage naturel"></button>
+      <button pButton type="button" [label]="newTableLabel" icon="fa-solid fa-plus" studioActions (click)="openCreate()"></button>
 
       <div class="ft-table-card">
         @if (loading()) {
@@ -49,9 +50,9 @@ import { slugifyKey } from './shared/studio-text.util';
         } @else if (entities().length === 0) {
           <app-empty-state
             icon="pi-table"
-            title="Aucune table" i18n-title="Aucune table"
-            description="Créez votre première table personnalisée pour commencer."
-            actionLabel="Nouvelle table"
+            [title]="emptyTitle"
+            [description]="emptyDescription"
+            [actionLabel]="newTableLabel"
             [showAction]="true"
             (actionClick)="openCreate()" />
         } @else {
@@ -78,14 +79,14 @@ import { slugifyKey } from './shared/studio-text.util';
                 <td class="studio-num">{{ e.fieldCount }}</td>
                 <td>
                   <app-status-badge [status]="e.isActive ? 'active' : 'inactive'"
-                    [label]="e.isActive ? 'Active' : 'Inactive'" />
+                    [label]="e.isActive ? loc_ui_tern_active_a733b8 : loc_ui_tern_inactive_09af57" />
                 </td>
                 <td class="studio-actions">
-                  <button pButton type="button" icon="fa-solid fa-list-check" label="Champs"
-                    class="p-button-sm p-button-text" [routerLink]="['/studio', e.id]" pTooltip="Concevoir les champs"></button>
-                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire"
-                    class="p-button-sm p-button-text" [routerLink]="['/studio', e.id, 'form']" pTooltip="Mise en page"></button>
-                  <button pButton type="button" icon="fa-solid fa-table-list" label="Données"
+                  <button pButton type="button" icon="fa-solid fa-list-check" label="Champs" i18n-label="Champs"
+                    class="p-button-sm p-button-text" [routerLink]="['/studio', e.id]" pTooltip="Concevoir les champs" i18n-pTooltip="Concevoir les champs"></button>
+                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire" i18n-label="Formulaire"
+                    class="p-button-sm p-button-text" [routerLink]="['/studio', e.id, 'form']" pTooltip="Mise en page" i18n-pTooltip="Mise en page"></button>
+                  <button pButton type="button" icon="fa-solid fa-table-list" [label]="dataLabel"
                     class="p-button-sm p-button-text" [routerLink]="['/studio/d', e.key]"></button>
                 </td>
               </tr>
@@ -95,7 +96,7 @@ import { slugifyKey } from './shared/studio-text.util';
       </div>
     </app-studio-page-shell>
 
-    <p-dialog header="Nouvelle table" [(visible)]="createVisible" [modal]="true" [style]="{ width: '32rem' }">
+    <p-dialog [header]="newTableLabel" [(visible)]="createVisible" [modal]="true" [style]="{ width: '32rem' }">
       <div class="studio-form">
         <label i18n="@@studio.studio-entity-list.nom.singulier.7df8eb9b">Nom (singulier) *</label>
         <input pInputText [(ngModel)]="draftName" (ngModelChange)="onNameChange($event)" placeholder="Ex. Contrat" i18n-placeholder="Ex. Contrat" />
@@ -110,8 +111,8 @@ import { slugifyKey } from './shared/studio-text.util';
         <textarea pTextarea [(ngModel)]="draftDescription" rows="2"></textarea>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Annuler" class="p-button-text" (click)="createVisible = false"></button>
-        <button pButton type="button" label="Créer" icon="fa-solid fa-check" [disabled]="saving()" (click)="create()"></button>
+        <button pButton type="button" [label]="cancelLabel" class="p-button-text" (click)="createVisible = false"></button>
+        <button pButton type="button" [label]="createLabel" icon="fa-solid fa-check" [disabled]="saving()" (click)="create()"></button>
       </ng-template>
     </p-dialog>
   `,
@@ -126,6 +127,17 @@ import { slugifyKey } from './shared/studio-text.util';
   `],
 })
 export class StudioEntityListComponent implements OnInit {
+  readonly pageTitle = $localize`:@@studio.entity-list.title:Studio — Tables personnalisées`;
+  readonly pageSubtitle = $localize`:@@studio.entity-list.subtitle:Créez vos propres tables sans écrire de code.`;
+  readonly newTableLabel = $localize`:@@studio.entity-list.nouvelle-table:Nouvelle table`;
+  readonly emptyTitle = $localize`:@@studio.entity-list.aucune-table:Aucune table`;
+  readonly emptyDescription = $localize`:@@studio.entity-list.premiere-table:Créez votre première table personnalisée pour commencer.`;
+  readonly dataLabel = $localize`:@@studio.entity-list.donnees:Données`;
+  readonly cancelLabel = $localize`:@@studio.entity-list.annuler:Annuler`;
+  readonly createLabel = $localize`:@@studio.entity-list.creer:Créer`;
+  readonly aiLabel = $localize`:@@studio.entity-list.assistant:Assistant IA`;
+  readonly loc_ui_tern_active_a733b8 = $localize`:@@ui.tern.active.a733b8:Active`;
+  readonly loc_ui_tern_inactive_09af57 = $localize`:@@ui.tern.inactive.09af57:Inactive`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
 
@@ -153,7 +165,7 @@ export class StudioEntityListComponent implements OnInit {
     this.loading.set(true);
     this.studio.listEntities(true).subscribe({
       next: res => { this.loading.set(false); if (res.success) this.entities.set(res.data ?? []); },
-      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Chargement impossible.' }); }
+      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-list.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-entity-list.component.detail.Chargement_impos:Chargement impossible.` }); }
     });
   }
 
@@ -169,7 +181,7 @@ export class StudioEntityListComponent implements OnInit {
 
   create(): void {
     if (!this.draftName.trim() || !this.draftKey.trim()) {
-      this.toast.add({ severity: 'warn', summary: 'Champs requis', detail: 'Le nom et la clé sont obligatoires.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@studio-entity-list.component.summary.Champs requi:Champs requis`, detail: $localize`:@@studio-entity-list.component.detail.Le_nom_et_la_cl_:Le nom et la clé sont obligatoires.` });
       return;
     }
     this.saving.set(true);
@@ -184,15 +196,15 @@ export class StudioEntityListComponent implements OnInit {
         this.saving.set(false);
         if (res.success) {
           this.createVisible = false;
-          this.toast.add({ severity: 'success', summary: 'Table créée', detail: res.data.displayName });
+          this.toast.add({ severity: 'success', summary: $localize`:@@studio-entity-list.component.summary.Table créée:Table créée`, detail: res.data.displayName });
           this.load();
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.errors?.[0] ?? res.message ?? 'Échec.' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-list.component.summary.Erreur:Erreur`, detail: res.errors?.[0] ?? res.message ?? $localize`:@@ui.tern.echec.0238a9:Échec.` });
         }
       },
       error: err => {
         this.saving.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Création impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-entity-list.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.creation.impossible.5661a5:Création impossible.` });
       }
     });
   }

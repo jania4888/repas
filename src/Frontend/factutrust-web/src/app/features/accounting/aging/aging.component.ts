@@ -79,11 +79,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             [payloadBuilder]="buildAgingAnalyzePayload"
             [disabled]="loadingClients() || loadingSuppliers()" />
           <app-accounting-export-menu
-            label="Exporter clients"
+            label="Exporter clients" i18n-label="Exporter clients"
             [disabled]="loadingClients() || exportingClients() || clients().length === 0"
             (exportFormat)="onExportClients($event)" />
           <app-accounting-export-menu
-            label="Exporter fournisseurs"
+            label="Exporter fournisseurs" i18n-label="Exporter fournisseurs"
             [disabled]="loadingSuppliers() || exportingSuppliers() || suppliers().length === 0"
             (exportFormat)="onExportSuppliers($event)" />
         </div>
@@ -286,7 +286,7 @@ export class AgingComponent implements OnInit {
       next: r => {
         this.loadingClients.set(false);
         if (r.success && r.data) this.clients.set(r.data);
-        else this.errClients.set(r.error ?? 'Erreur de chargement.');
+        else this.errClients.set(r.error ?? $localize`:@@ui.tern.erreur.de.chargement.168d09:Erreur de chargement.`);
       },
       error: err => {
         this.loadingClients.set(false);
@@ -302,7 +302,7 @@ export class AgingComponent implements OnInit {
       next: r => {
         this.loadingSuppliers.set(false);
         if (r.success && r.data) this.suppliers.set(r.data);
-        else this.errSup.set(r.error ?? 'Erreur de chargement.');
+        else this.errSup.set(r.error ?? $localize`:@@ui.tern.erreur.de.chargement.168d09:Erreur de chargement.`);
       },
       error: err => {
         this.loadingSuppliers.set(false);

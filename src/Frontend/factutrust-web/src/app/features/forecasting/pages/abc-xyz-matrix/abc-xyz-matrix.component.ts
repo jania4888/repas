@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -27,7 +28,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
         @if (canManage()) {
           <button class="btn btn-secondary" (click)="recompute()" [disabled]="loading()">
             <i class="pi pi-refresh"></i>
-            {{ loading() ? 'Calcul…' : 'Recalculer la classification' }}
+            {{ loading() ? loc_ui_tern_calcul_c289e9 : loc_ui_tern_recalculer_la_classification_ec8914 }}
           </button>
         }
         <app-analyze-with-ai-button
@@ -133,6 +134,8 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
   `]
 })
 export class AbcXyzMatrixComponent implements OnInit {
+  readonly loc_ui_tern_calcul_c289e9 = $localize`:@@ui.tern.calcul.c289e9:Calcul…`;
+  readonly loc_ui_tern_recalculer_la_classification_ec8914 = $localize`:@@ui.tern.recalculer.la.classification.ec8914:Recalculer la classification`;
   private readonly forecastingService = inject(ForecastingService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -159,7 +162,7 @@ export class AbcXyzMatrixComponent implements OnInit {
       const m = await firstValueFrom(this.forecastingService.getAbcXyzMatrix());
       this.matrix.set(m);
     } catch (err: any) {
-      this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Chargement échoué.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@abc-xyz-matrix.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.chargement.echoue.a882c7:Chargement échoué.` });
     } finally {
       this.loading.set(false);
     }
@@ -169,10 +172,10 @@ export class AbcXyzMatrixComponent implements OnInit {
     this.loading.set(true);
     try {
       const count = await firstValueFrom(this.forecastingService.recomputeAbcXyz());
-      this.toast.add({ severity: 'success', summary: 'Recalcul terminé', detail: `${count} produit(s) classifiés.` });
+      this.toast.add({ severity: 'success', summary: $localize`:@@abc-xyz-matrix.component.summary.Recalcul_termin_:Recalcul terminé`, detail: `${count} produit(s) classifiés.` });
       await this.load();
     } catch (err: any) {
-      this.toast.add({ severity: 'error', summary: 'Échec', detail: err?.error?.message ?? 'Erreur inconnue.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@abc-xyz-matrix.component.summary.Échec:Échec`, detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.2f49e3:Erreur inconnue.` });
     } finally {
       this.loading.set(false);
     }

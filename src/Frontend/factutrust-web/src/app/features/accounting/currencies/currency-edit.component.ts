@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -40,7 +41,7 @@ interface RateRow {
       @if (canManage()) {
         <app-button variant="primary" icon="pi pi-save" type="button"
                     (click)="save()" [disabled]="saving() || loading()">
-          {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
         </app-button>
       }
     </app-page-header>
@@ -66,14 +67,14 @@ interface RateRow {
           <div class="ce-field">
             <label class="ce-lbl" for="ce-periodicity" i18n="@@accounting.currencies.periode.de2110b7">Période</label>
             <input id="ce-periodicity" class="ce-inp ce-readonly"
-                   [value]="c.ratePeriodicity === 1 ? 'Mensuelle' : 'Fixe (annuelle)'" readonly />
+                   [value]="c.ratePeriodicity === 1 ? loc_ui_tern_mensuelle_15af1b : loc_ui_tern_fixe_annuelle_dc8817" readonly />
           </div>
           <div class="ce-field">
             <label class="ce-lbl" for="ce-decimals" i18n="@@accounting.currencies.decimale.de3fe95d">Décimale</label>
             <input id="ce-decimals" class="ce-inp ce-readonly" [value]="c.decimalPlaces" readonly />
           </div>
         </div>
-        <p class="ce-hint" i18n="@@accounting.currencies.le.code.le.libelle.la.periode.et.les.decimales.s.8b492df5">Le code, le libellé, la période et les décimales se modifient depuis la liste des devises.</p>
+        <p class="ce-hint" i18n="@@accounting.currencies.le.code.le.libelle.la.periode.et.les.decimales.s.8b492df5"> Le code, le libellé, la période et les décimales se modifient depuis la liste des devises. </p>
       </div>
 
       <div class="card ce-block">
@@ -87,7 +88,7 @@ interface RateRow {
         </div>
 
         <p class="ce-direction">
-          Un taux exprime le nombre de dinars pour <strong i18n="@@accounting.currencies.une.e3bae98d">une</strong> unité de {{ c.code }}.
+          <ng-container i18n="@@accounting.currencies.un.taux.exprime.le.nombre.de.dinars.pour.5a2da916"> Un taux exprime le nombre de dinars pour </ng-container> <strong i18n="@@accounting.currencies.une.e3bae98d">une</strong> unité de {{ c.code }}.
           Exemple : 1 {{ c.code }} = 3,31420 TND se saisit <code>3,31420</code>.
         </p>
 
@@ -98,7 +99,7 @@ interface RateRow {
               <input [id]="'ce-rate-' + (row.month ?? 0)" class="ce-inp ce-rate-inp" type="number"
                      step="0.00001" min="0" [disabled]="!canManage()"
                      [ngModel]="row.value" (ngModelChange)="onRateChange(row, $event)"
-                     [attr.aria-label]="'Taux de change ' + row.label" />
+                     [attr.aria-label]="loc_ui_tern_taux_de_change_9dd682 + row.label" />
             </div>
           }
         </div>
@@ -127,6 +128,11 @@ interface RateRow {
   `
 })
 export class CurrencyEditComponent implements OnInit {
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_mensuelle_15af1b = $localize`:@@ui.tern.mensuelle.15af1b:Mensuelle`;
+  readonly loc_ui_tern_fixe_annuelle_dc8817 = $localize`:@@ui.tern.fixe.annuelle.dc8817:Fixe (annuelle)`;
+  readonly loc_ui_tern_taux_de_change_9dd682 = $localize`:@@ui.tern.taux.de.change.9dd682:Taux de change `;
   private readonly api = inject(AccountingService);
   // Le 400 metier porte un message precis ; extractErrorMessage le lit et
   // distingue au passage la vraie panne reseau (status 0).
@@ -153,7 +159,7 @@ export class CurrencyEditComponent implements OnInit {
   readonly canManage = computed(() => this.auth.hasPermission(PERMISSIONS.accounting.currenciesManage));
   readonly pageTitle = computed(() => {
     const c = this.currency();
-    return c ? `Édition de devise — ${c.code}` : 'Édition de devise';
+    return c ? $localize`:@@ui.tern.edition.de.devise.ph.0241c4:Édition de devise — ${c.code}:p0:` : $localize`:@@ui.tern.edition.de.devise.403ce5:Édition de devise`;
   });
 
   private currencyId = '';
@@ -204,7 +210,7 @@ export class CurrencyEditComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           return;
         }
         const detail = res.data;
@@ -244,10 +250,10 @@ export class CurrencyEditComponent implements OnInit {
       next: r => {
         this.saving.set(false);
         if (r.success) {
-          this.toast.add({ severity: 'success', summary: 'Taux enregistrés', detail: this.currency()?.code, life: 4000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@currency-edit.component.summary.Taux_enregistr_s:Taux enregistrés`, detail: this.currency()?.code, life: 4000 });
           this.load();
         } else {
-          this.error.set(r.error ?? 'Erreur');
+          this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: err => { this.saving.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }

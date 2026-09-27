@@ -43,7 +43,7 @@ import {
   ACCOUNTING_FIRM_SECONDARY_EXCLUDED_IDS,
   SECONDARY_NAV_SECTION_ORDER
 } from '@core/config/secondary-nav.config';
-import { getNavId, NAV_ID } from '@core/config/nav-item-ids';
+import { CONTEXT_NAV_ID, getNavId, NAV_ID, STUDIO_CHILD_NAV_ID, studioDynamicNavId } from '@core/config/nav-item-ids';
 
 /**
  * Source unique du graphe de navigation filtré (sidebar + 2e barre).
@@ -139,6 +139,9 @@ export class AppNavService {
    * - Cabinet natif : vide (pas de sections métier company).
    */
   readonly secondaryNavSections = computed((): NavItem[] => {
+    if (this.auth.isAccountingFirm() && !this.auth.isDelegatedMode()) {
+      return [];
+    }
     if (this.auth.isAccountingFirm() && this.auth.isDelegatedMode()) {
       const moduleSections = filterNavItems(this.auth, buildAccountingModuleNavItems());
       return moduleSections
@@ -196,12 +199,14 @@ export class AppNavService {
   private buildFirmNativeNav(): NavItem[] {
     const clients = this.activeClients();
     const dossierChildren: NavSubItem[] = clients.slice(0, 8).map(c => ({
+      id: `firm-dossier--${c.companyTenantId}`,
       label: c.companyName,
       route: `/firm/open/${c.companyTenantId}`,
       icon: 'fa-solid fa-building'
     }));
     if (clients.length > 0) {
       dossierChildren.push({
+        id: CONTEXT_NAV_ID.allDossiers,
         label: 'Voir tous les dossiers',
         route: '/firm/clients',
         icon: 'fa-solid fa-list'
@@ -232,6 +237,7 @@ export class AppNavService {
     const items: NavItem[] = [
       dashboard,
       {
+        id: CONTEXT_NAV_ID.myDossiers,
         label: 'Mes dossiers clients',
         icon: 'fa-solid fa-briefcase',
         children: dossierChildren.length
@@ -316,7 +322,9 @@ export class AppNavService {
 
     const comptaIndex = items.findIndex(i => getNavId(i) === NAV_ID.accounting);
     if (comptaIndex >= 0) {
+      // Remplace la section Comptabilité : même id, pour que les règles par section s'appliquent.
       const comptaHub: NavItem = {
+        id: NAV_ID.accounting,
         label: 'Comptabilité',
         icon: 'fa-solid fa-table-cells-large',
         route: '/accounting/home',
@@ -333,15 +341,18 @@ export class AppNavService {
     }
 
     const contextHeader: NavItem = {
+      id: CONTEXT_NAV_ID.firmDossierHeader,
       label: client ? `Dossier : ${client.companyName}` : 'Dossier client',
       icon: 'fa-solid fa-folder-open',
       children: [
         {
+          id: CONTEXT_NAV_ID.returnToFirm,
           label: 'Retour au cabinet',
           icon: 'fa-solid fa-arrow-left',
           action: 'returnToFirm'
         },
         {
+          id: CONTEXT_NAV_ID.changeDossier,
           label: 'Changer de dossier',
           icon: 'fa-solid fa-right-left',
           action: 'changeDossier'
@@ -365,6 +376,7 @@ export class AppNavService {
   private buildStudioNavSection(): NavItem {
     const children: NavSubItem[] = [
       {
+        id: STUDIO_CHILD_NAV_ID.tables,
         label: 'Concepteur de tables',
         route: '/studio',
         icon: 'fa-solid fa-screwdriver-wrench',
@@ -372,6 +384,7 @@ export class AppNavService {
         permissionsAll: [PERMISSIONS.studio.designEntities]
       },
       {
+        id: STUDIO_CHILD_NAV_ID.forms,
         label: 'Formulaires',
         route: '/studio/forms',
         icon: 'fa-solid fa-table-cells-large',
@@ -379,6 +392,7 @@ export class AppNavService {
         permissionsAll: [PERMISSIONS.studio.designForms]
       },
       {
+        id: STUDIO_CHILD_NAV_ID.reports,
         label: 'Rapports',
         route: '/studio/reports',
         icon: 'fa-solid fa-chart-column',
@@ -386,6 +400,7 @@ export class AppNavService {
         permissionsAll: [PERMISSIONS.studio.designReports]
       },
       {
+        id: STUDIO_CHILD_NAV_ID.ai,
         label: 'Assistant IA',
         route: '/studio/ai',
         icon: 'fa-solid fa-wand-magic-sparkles',
@@ -395,6 +410,7 @@ export class AppNavService {
       ...(this.studioCapabilities.workflowsEnabled()
         ? ([
             {
+              id: STUDIO_CHILD_NAV_ID.workflows,
               label: 'Workflows',
               route: '/studio/workflows',
               icon: 'fa-solid fa-route',
@@ -406,6 +422,7 @@ export class AppNavService {
       ...(this.approvalsVisible()
         ? ([
             {
+              id: STUDIO_CHILD_NAV_ID.approvals,
               label: 'Mes approbations',
               route: '/studio/approvals',
               icon: 'fa-solid fa-inbox',
@@ -416,6 +433,7 @@ export class AppNavService {
           ] satisfies NavSubItem[])
         : []),
       ...this.studioNav.items().map<NavSubItem>(e => ({
+        id: studioDynamicNavId(e.key),
         label: e.label,
         route: e.route.startsWith('/') ? e.route : `/studio/d/${e.key}`,
         icon: e.icon || (e.label.trimStart() !== e.label ? 'fa-solid fa-table' : 'fa-solid fa-folder-tree'),
@@ -423,6 +441,6 @@ export class AppNavService {
         permissionsAll: [PERMISSIONS.customData.recordsRead]
       }))
     ];
-    return { label: 'Studio', icon: 'fa-solid fa-shapes', children };
+    return { id: NAV_ID.studio, label: 'Studio', icon: 'fa-solid fa-shapes', children };
   }
 }

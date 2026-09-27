@@ -39,12 +39,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="import-actions">
           <app-button variant="secondary" icon="pi pi-search" type="button"
             (click)="runPreview()" [disabled]="!selectedFile() || busy()"
-            ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.apercu.f0f53004">Aperçu</app-button>
+            ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.apercu.f0f53004"> Aperçu </app-button>
         </div>
       </div>
 
       <p class="import-help">
-        Colonnes attendues (CSV/Excel, 1<sup i18n="@@accounting.import.re.c387c982">re</sup> ligne = en-têtes) : <code i18n="@@accounting.import.journal.numero.date.compte.libelle.debit.credit.edfd9ab6">journal, numero, date, compte, libelle, debit, credit</code>.
+        <ng-container i18n="@@accounting.import.colonnes.attendues.csv.excel.1.7e34c840"> Colonnes attendues (CSV/Excel, 1</ng-container><sup i18n="@@accounting.import.re.c387c982">re</sup> ligne = en-têtes) : <code i18n="@@accounting.import.journal.numero.date.compte.libelle.debit.credit.edfd9ab6">journal, numero, date, compte, libelle, debit, credit</code>.
         Les lignes de même <code i18n="@@accounting.import.journal.4954ccf5">journal</code>+<code i18n="@@accounting.import.numero.53b2ed9f">numero</code> forment une pièce. Pour une balance d'ouverture,
         utilisez le journal <code i18n="@@accounting.import.jan.521ad2c9">JAN</code>. Les écritures importées arrivent <strong i18n="@@accounting.import.en.brouillard.70db7a42">en brouillard</strong> et devront être validées.
       </p>
@@ -123,7 +123,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 <td class="import-col-amount">{{ e.totalCredit | number : '1.3-3' }}</td>
                 <td>
                   <span class="import-badge" [class.import-badge-ok]="e.isBalanced" [class.import-badge-ko]="!e.isBalanced">
-                    {{ e.isBalanced ? 'OK' : 'Déséquilibrée' }}
+                    {{ e.isBalanced ? 'OK' : loc_ui_tern_desequilibree_aff27e }}
                   </span>
                 </td>
               </tr>
@@ -140,7 +140,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <app-button variant="primary" icon="pi pi-upload" type="button"
             (click)="runCommit()" [disabled]="!p.canCommit || busy()"
             ariaLabel="Importer les écritures en brouillard">
-            {{ committing() ? 'Import…' : 'Importer en brouillard' }}
+            {{ committing() ? loc_ui_tern_import_4834ca : loc_ui_tern_importer_en_brouillard_347e35 }}
           </app-button>
         </div>
       </div>
@@ -225,6 +225,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class ImportComponent {
+  readonly loc_ui_tern_desequilibree_aff27e = $localize`:@@ui.tern.desequilibree.aff27e:Déséquilibrée`;
+  readonly loc_ui_tern_import_4834ca = $localize`:@@ui.tern.import.4834ca:Import…`;
+  readonly loc_ui_tern_importer_en_brouillard_347e35 = $localize`:@@ui.tern.importer.en.brouillard.347e35:Importer en brouillard`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
 
@@ -271,7 +274,7 @@ export class ImportComponent {
       next: res => {
         this.loading.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? "L'aperçu a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.apercu.a.echoue.15045a:L'aperçu a échoué.`);
           return;
         }
         this.preview.set(res.data);
@@ -293,7 +296,7 @@ export class ImportComponent {
       next: res => {
         this.committing.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? "L'import a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.import.a.echoue.2e84df:L'import a échoué.`);
           return;
         }
         this.successMessage.set(

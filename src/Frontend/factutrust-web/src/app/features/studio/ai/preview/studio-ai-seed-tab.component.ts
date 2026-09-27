@@ -150,7 +150,7 @@ export class StudioAiSeedTabComponent {
   cell(row: Record<string, unknown>, key: string): string {
     const value = row?.[key];
     if (value === null || value === undefined || value === '') return '—';
-    if (typeof value === 'boolean') return value ? 'Oui' : 'Non';
+    if (typeof value === 'boolean') return value ? $localize`:@@ui.tern.oui.eaa02f:Oui` : $localize`:@@ui.tern.non.a72199:Non`;
     if (typeof value === 'object') return JSON.stringify(value);
     return String(value);
   }

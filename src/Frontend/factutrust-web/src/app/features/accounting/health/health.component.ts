@@ -58,7 +58,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="run()"
             [disabled]="loading()"
-            ariaLabel="Lancer les contrôles d'intégrité" i18n="@@accounting.health.lancer.les.controles.521d27dd">Lancer les contrôles</app-button>
+            ariaLabel="Lancer les contrôles d'intégrité" i18n="@@accounting.health.lancer.les.controles.521d27dd"> Lancer les contrôles </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -95,7 +95,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <td class="hc-message">{{ c.message }}</td>
             <td>
               @if (c.deepLinkRoute && c.count > 0) {
-                <a class="hc-link" [routerLink]="c.deepLinkRoute">Voir <i class="pi pi-angle-right" aria-hidden="true"></i></a>
+                <a class="hc-link" [routerLink]="c.deepLinkRoute"><ng-container i18n="@@accounting.health.voir.8a754f1f">Voir </ng-container> <i class="pi pi-angle-right" aria-hidden="true"></i></a>
               }
             </td>
           </tr>
@@ -147,8 +147,8 @@ export class AccountingHealthComponent implements OnInit {
 
   noAnomalyMessage(fiscalYear: number | null): string {
     return fiscalYear
-      ? `Aucune anomalie détectée sur l'exercice ${fiscalYear}.`
-      : "Aucune anomalie détectée sur l'ensemble du dossier.";
+      ? $localize`:@@ui.tern.aucune.anomalie.detectee.sur.l.exercice.ph.f58da0:Aucune anomalie détectée sur l'exercice ${fiscalYear}:p0:.`
+      : $localize`:@@ui.tern.aucune.anomalie.detectee.sur.l.ensemble.du.86d2cf:Aucune anomalie détectée sur l'ensemble du dossier.`;
   }
 
   ngOnInit(): void {
@@ -163,7 +163,7 @@ export class AccountingHealthComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.report.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);

@@ -1,11 +1,11 @@
 <div class="panel req-panel" [class.req-panel--detail]="!!selectedRequest()">
   <div class="panel__toolbar">
     <h3>
-      Demandes & réclamations
+      <ng-container i18n="@@exchanges.exchange-requests-panel.demandes.reclamations.fabb7cc7"> Demandes & réclamations </ng-container>
       <span class="req-count">{{ requests.length }}</span>
     </h3>
     @if (threadIsOpen) {
-      <app-button variant="primary" size="sm" icon="pi-plus" (clicked)="openCreate()" i18n="@@exchanges.exchange-requests-panel.nouvelle.demande.0a6e5d2f">Nouvelle demande</app-button>
+      <app-button variant="primary" size="sm" icon="pi-plus" (clicked)="openCreate()" i18n="@@exchanges.exchange-requests-panel.nouvelle.demande.0a6e5d2f"> Nouvelle demande </app-button>
     }
   </div>
 
@@ -52,7 +52,7 @@
         </div>
       </div>
       <div class="row">
-        <app-button variant="primary" size="sm" [disabled]="creating()" (clicked)="createRequest()" i18n="@@exchanges.exchange-requests-panel.creer.1a686172">Créer</app-button>
+        <app-button variant="primary" size="sm" [disabled]="creating()" (clicked)="createRequest()" i18n="@@exchanges.exchange-requests-panel.creer.1a686172"> Créer </app-button>
         <app-button variant="ghost" size="sm" (clicked)="cancelCreate()" i18n="@@exchanges.exchange-requests-panel.annuler.49ba3292">Annuler</app-button>
       </div>
     </div>
@@ -197,7 +197,7 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'InProgress')"
-               i18n="@@exchanges.exchange-requests-panel.prendre.en.charge.f6723a15">Prendre en charge</app-button>
+               i18n="@@exchanges.exchange-requests-panel.prendre.en.charge.f6723a15"> Prendre en charge </app-button>
             }
             @if (canResume(req)) {
               <app-button
@@ -205,7 +205,7 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'InProgress')"
-               i18n="@@exchanges.exchange-requests-panel.reprendre.1c56710b">Reprendre</app-button>
+               i18n="@@exchanges.exchange-requests-panel.reprendre.1c56710b"> Reprendre </app-button>
             }
             @if (canWait(req)) {
               <app-button
@@ -213,13 +213,13 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'WaitingClient')"
-               i18n="@@exchanges.exchange-requests-panel.attente.client.6b243335">Attente client</app-button>
+               i18n="@@exchanges.exchange-requests-panel.attente.client.6b243335"> Attente client </app-button>
               <app-button
                 variant="ghost"
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'WaitingFirm')"
-               i18n="@@exchanges.exchange-requests-panel.attente.cabinet.9986eb84">Attente cabinet</app-button>
+               i18n="@@exchanges.exchange-requests-panel.attente.cabinet.9986eb84"> Attente cabinet </app-button>
             }
             @if (canResolve(req)) {
               <app-button
@@ -227,7 +227,7 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'Resolved')"
-               i18n="@@exchanges.exchange-requests-panel.resoudre.2a5ddafb">Résoudre</app-button>
+               i18n="@@exchanges.exchange-requests-panel.resoudre.2a5ddafb"> Résoudre </app-button>
             }
             @if (canClose(req)) {
               <app-button
@@ -235,7 +235,7 @@
                 size="sm"
                 [disabled]="statusBusyId() === req.id"
                 (clicked)="changeStatus(req, 'Closed')"
-               i18n="@@exchanges.exchange-requests-panel.cloturer.e9f075c1">Clôturer</app-button>
+               i18n="@@exchanges.exchange-requests-panel.cloturer.e9f075c1"> Clôturer </app-button>
             }
           </div>
         }
@@ -257,7 +257,7 @@
                 size="sm"
                 [disabled]="!assignUserId() || statusBusyId() === req.id"
                 (clicked)="assignToSelected(req)"
-               i18n="@@exchanges.exchange-requests-panel.assigner.6397f178">Assigner</app-button>
+               i18n="@@exchanges.exchange-requests-panel.assigner.6397f178"> Assigner </app-button>
             }
           </div>
         }
@@ -320,7 +320,7 @@
                 size="sm"
                 [disabled]="!commentBody().trim() || postingComment()"
                 (clicked)="postComment(req)"
-               i18n="@@exchanges.exchange-requests-panel.envoyer.e9ce243b">Envoyer</app-button>
+               i18n="@@exchanges.exchange-requests-panel.envoyer.e9ce243b"> Envoyer </app-button>
             </div>
           }
         </section>

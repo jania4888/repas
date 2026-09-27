@@ -21,7 +21,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
     @if (detail(); as d) {
       <app-studio-page-shell
         [title]="d.system.displayName"
-        [subtitle]="d.system.description ?? (d.entities.length + ' table(s)')"
+        [subtitle]="d.system.description ?? (d.entities.length + loc_ui_tern_table_s_e50877)"
         [breadcrumbs]="breadcrumbs()">
         @if (exportEnabled()) {
           <div studioActions class="studio-head-actions">
@@ -49,9 +49,9 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
                 <h4><i [class]="e.icon || 'fa-solid fa-table'"></i> {{ e.displayName }}</h4>
                 <p>{{ e.fieldCount }} champ(s)</p>
                 <div class="hub-card__actions">
-                  <a pButton class="p-button-sm" icon="fa-solid fa-table" label="Données"
+                  <a pButton class="p-button-sm" icon="fa-solid fa-table" label="Données" i18n-label="Données"
                     [routerLink]="['/studio/d', e.key]"></a>
-                  <a pButton class="p-button-sm p-button-outlined" icon="fa-solid fa-wrench" label="Concevoir"
+                  <a pButton class="p-button-sm p-button-outlined" icon="fa-solid fa-wrench" label="Concevoir" i18n-label="Concevoir"
                     [routerLink]="['/studio', e.id]"></a>
                 </div>
               </article>
@@ -78,6 +78,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   `]
 })
 export class StudioSystemHubComponent implements OnInit {
+  readonly loc_ui_tern_table_s_e50877 = $localize`:@@ui.tern.table.s.e50877: table(s)`;
   private readonly route = inject(ActivatedRoute);
   private readonly studio = inject(StudioService);
   private readonly capabilities = inject(StudioAiCapabilitiesService);

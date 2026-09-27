@@ -12,6 +12,7 @@ import {
 } from './firm-navigation.registry';
 import { filterFirmManagerNav } from './firm-manager-access.config';
 import { NavItem, NavSubItem } from './app-navigation.registry';
+import { NAV_ID } from './nav-item-ids';
 
 describe('firm-navigation.registry — FIRM_NATIVE_NAV', () => {
   const governanceRoutes = [
@@ -202,12 +203,12 @@ describe('firm-navigation.registry — delegated firm sales/purchases', () => {
   });
 
   it('filterDelegatedFirmSectionChildren keeps only allowed ventes items', () => {
-    const filtered = filterDelegatedFirmSectionChildren('Ventes', ventesChildren);
+    const filtered = filterDelegatedFirmSectionChildren(NAV_ID.sales, ventesChildren);
     expect(filtered.map(c => c.label)).toEqual(['Factures', 'Factures impayées', 'Rapports']);
   });
 
   it('filterDelegatedFirmSectionChildren keeps only allowed achats items', () => {
-    const filtered = filterDelegatedFirmSectionChildren('Achats', achatsChildren);
+    const filtered = filterDelegatedFirmSectionChildren(NAV_ID.purchases, achatsChildren);
     expect(filtered.map(c => c.label)).toEqual([
       'Factures fournisseurs',
       'Factures impayées',

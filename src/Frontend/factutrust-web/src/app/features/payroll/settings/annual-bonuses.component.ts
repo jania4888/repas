@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +16,7 @@ import { ToastService } from '@core/services/toast.service';
 @Component({
   selector: 'app-annual-bonuses-settings',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule, FormsModule, TableModule, InputNumberModule, InputTextModule,
     InputSwitchModule, SelectModule, PageHeaderComponent, ButtonComponent
   ],
@@ -48,10 +50,10 @@ import { ToastService } from '@core/services/toast.service';
         <tr>
           <td>{{ row.code }}</td>
           <td>{{ row.label }}</td>
-          <td>{{ row.kindDisplay }}</td>
+          <td>{{ row.kindDisplay | backendLabel }}</td>
           <td>{{ row.paymentMonth }}</td>
-          <td>{{ row.formulaDisplay }}</td>
-          <td>{{ row.isActive ? 'Oui' : 'Non' }}</td>
+          <td>{{ row.formulaDisplay | backendLabel }}</td>
+          <td>{{ row.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
           <td><button type="button" class="p-button p-button-text" (click)="edit(row)" i18n="@@payroll.settings.modifier.f260e757">Modifier</button></td>
         </tr>
       </ng-template>
@@ -59,6 +61,8 @@ import { ToastService } from '@core/services/toast.service';
   `
 })
 export class AnnualBonusesSettingsComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
 
@@ -73,7 +77,7 @@ export class AnnualBonusesSettingsComponent implements OnInit {
   load(): void {
     this.payroll.listAnnualBonusRules(this.fiscalYear).subscribe({
       next: res => this.rules.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Primes annuelles', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@annual-bonuses.component.summary.Primes_annuelles:Primes annuelles`, detail: $localize`:@@annual-bonuses.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -108,8 +112,8 @@ export class AnnualBonusesSettingsComponent implements OnInit {
       ? this.payroll.updateAnnualBonusRule(this.editingId, req)
       : this.payroll.createAnnualBonusRule(req);
     obs.subscribe({
-      next: () => { this.toast.add({ severity: 'success', summary: 'Primes annuelles', detail: 'Règle enregistrée.' }); this.editing.set(false); this.load(); },
-      error: err => this.toast.add({ severity: 'error', summary: 'Primes annuelles', detail: err?.error?.message ?? 'Erreur.' })
+      next: () => { this.toast.add({ severity: 'success', summary: $localize`:@@annual-bonuses.component.summary.Primes_annuelles:Primes annuelles`, detail: $localize`:@@annual-bonuses.component.detail.R_gle_enregistr_:Règle enregistrée.` }); this.editing.set(false); this.load(); },
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@annual-bonuses.component.summary.Primes_annuelles:Primes annuelles`, detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.d4fe76:Erreur.` })
     });
   }
 

@@ -86,7 +86,7 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
             <td>{{ r.label }}</td>
             <td>
               <span class="br-badge" [class.br-badge-expense]="r.kind === 0" [class.br-badge-revenue]="r.kind === 1">
-                {{ r.kind === 0 ? 'Charges' : 'Produits' }}
+                {{ r.kind === 0 ? loc_ui_tern_charges_cfc370 : loc_ui_tern_produits_480004 }}
               </span>
             </td>
             <td class="br-amt">{{ r.periodInitial | number : '1.3-3' }}</td>
@@ -153,6 +153,8 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
   `
 })
 export class BudgetReportComponent implements OnInit {
+  readonly loc_ui_tern_charges_cfc370 = $localize`:@@ui.tern.charges.cfc370:Charges`;
+  readonly loc_ui_tern_produits_480004 = $localize`:@@ui.tern.produits.480004:Produits`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
 
@@ -191,7 +193,7 @@ export class BudgetReportComponent implements OnInit {
         if (res.success && res.data) this.report.set(res.data);
         else {
           this.report.set(null);
-          this.error.set(res.error ?? "Erreur de chargement de l'état budgétaire.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.de.l.etat.budgetaire.2274ee:Erreur de chargement de l'état budgétaire.`);
         }
       },
       error: err => {

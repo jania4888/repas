@@ -26,12 +26,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <app-button variant="primary" icon="pi pi-download" type="button"
             (click)="download()" [disabled]="busy()"
             ariaLabel="Télécharger l'archive ZIP du dossier">
-            {{ busy() ? 'Préparation…' : 'Télécharger le dossier (ZIP)' }}
+            {{ busy() ? loc_ui_tern_preparation_47305e : loc_ui_tern_telecharger_le_dossier_zip_485761 }}
           </app-button>
         </div>
       </div>
       <p class="de-help">
-        L'archive réunit <code i18n="@@accounting.import.plan.comptable.csv.d2519761">plan_comptable.csv</code>, <code i18n="@@accounting.import.journal.general.csv.f981840a">journal_general.csv</code>,
+        <ng-container i18n="@@accounting.import.l.archive.reunit.2eb023b7"> L'archive réunit </ng-container> <code i18n="@@accounting.import.plan.comptable.csv.d2519761">plan_comptable.csv</code>, <code i18n="@@accounting.import.journal.general.csv.f981840a">journal_general.csv</code>,
         <code i18n="@@accounting.import.balance.csv.7b3038e7">balance.csv</code>, <code i18n="@@accounting.import.tiers.csv.950afe57">tiers.csv</code>, <code i18n="@@accounting.import.fec.txt.2e506cd7">fec.txt</code> et un manifeste.
         Export en <strong i18n="@@accounting.import.lecture.seule.a9a41b71">lecture seule</strong> — aucune donnée n'est modifiée.
       </p>
@@ -55,6 +55,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class DossierExportComponent {
+  readonly loc_ui_tern_preparation_47305e = $localize`:@@ui.tern.preparation.47305e:Préparation…`;
+  readonly loc_ui_tern_telecharger_le_dossier_zip_485761 = $localize`:@@ui.tern.telecharger.le.dossier.zip.485761:Télécharger le dossier (ZIP)`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
 

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -64,11 +65,11 @@ import {
 
 const TIME_STATUS_FILTER_OPTIONS = [
 
-  { label: 'Brouillon', value: 'Draft' },
+  { label: $localize`:@@projects.time.filter.brouillon:Brouillon`, value: 'Draft' },
 
-  { label: 'Soumis', value: 'Submitted' },
+  { label: $localize`:@@projects.time.filter.soumis:Soumis`, value: 'Submitted' },
 
-  { label: 'Validé', value: 'Validated' }
+  { label: $localize`:@@projects.time.filter.valide:Validé`, value: 'Validated' }
 
 ];
 
@@ -165,11 +166,11 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <div class="proj-field-row">
 
-          <label>Date <p-datepicker [(ngModel)]="workDate" dateFormat="dd/mm/yy" /></label>
+          <label><ng-container i18n="@@projects.project-time.date.eb9a4bc1">Date </ng-container> <p-datepicker [(ngModel)]="workDate" dateFormat="dd/mm/yy" /></label>
 
-          <label>Tâche <p-select [options]="tasks()" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" i18n-placeholder="Tâche" [showClear]="true" /></label>
+          <label><ng-container i18n="@@projects.project-time.tache.43c8425c">Tâche </ng-container> <p-select [options]="tasks()" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" i18n-placeholder="Tâche" [showClear]="true" /></label>
 
-          <label>Heures <p-inputNumber [(ngModel)]="hours" [min]="0.25" [max]="24" [step]="0.25" /></label>
+          <label><ng-container i18n="@@projects.project-time.heures.b4448c06">Heures </ng-container> <p-inputNumber [(ngModel)]="hours" [min]="0.25" [max]="24" [step]="0.25" /></label>
 
           <label class="flex-row align-items-center gap-2" style="flex-direction:row">
 
@@ -179,7 +180,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
           </label>
 
-          <label>Notes <input pInputText [(ngModel)]="notes" /></label>
+          <label><ng-container i18n="@@projects.project-time.notes.70440046">Notes </ng-container> <input pInputText [(ngModel)]="notes" /></label>
 
           <app-button variant="primary" [disabled]="!canSaveLine" (click)="create()" i18n="@@projects.project-time.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
@@ -227,7 +228,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
           <td>{{ e.hours }}</td>
 
-          <td>{{ e.isBillable ? 'Oui' : 'Non' }}</td>
+          <td>{{ e.isBillable ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
 
           <td>
             <app-status-badge [status]="timeEntryStatusBadge(e)" [label]="timeEntryStatusLabel(e)" />
@@ -237,37 +238,37 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
             @if (canEditTimeEntry(e) && canCreate) {
               <app-button size="sm" variant="ghost" icon="pi-pencil" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Modifier" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Modifier" i18n-pTooltip="Modifier" tooltipPosition="top"
                 ariaLabel="Modifier" (click)="openEdit(e)" />
             }
 
             @if (canDeleteTimeEntry(e) && canCreate) {
               <app-button size="sm" variant="ghost" icon="pi-trash" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Supprimer" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Supprimer" i18n-pTooltip="Supprimer" tooltipPosition="top"
                 ariaLabel="Supprimer" (click)="deleteEntry(e.id)" />
             }
 
             @if (canSubmitTimeEntry(e) && canSubmit) {
               <app-button size="sm" variant="ghost" icon="pi-send" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Soumettre" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Soumettre" i18n-pTooltip="Soumettre" tooltipPosition="top"
                 ariaLabel="Soumettre" (click)="submit(e.id)" />
             }
 
             @if (canValidateTimeEntry(e) && canValidate) {
               <app-button size="sm" variant="primary" icon="pi-check" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Valider" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Valider" i18n-pTooltip="Valider" tooltipPosition="top"
                 ariaLabel="Valider" (click)="validate(e.id)" />
             }
 
             @if (canReopenSubmittedTimeEntry(e) && canSubmit) {
               <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="Rouvrir en brouillon" tooltipPosition="top"
                 ariaLabel="Rouvrir en brouillon" (click)="reopen(e.id)" />
             }
 
             @if (canReopenValidatedTimeEntry(e) && canValidate) {
               <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="Rouvrir en brouillon" tooltipPosition="top"
                 ariaLabel="Rouvrir en brouillon" (click)="reopen(e.id)" />
             }
 
@@ -280,7 +281,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
                 [iconOnly]="true"
                 [iconAlwaysVisible]="true"
                 [routerLink]="['/invoices', e.invoicedInvoiceId]"
-                pTooltip="Voir la facture"
+                pTooltip="Voir la facture" i18n-pTooltip="Voir la facture"
                 tooltipPosition="top"
                 ariaLabel="Voir la facture" />
 
@@ -306,15 +307,15 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
 
 
-    <p-dialog [(visible)]="editVisible" header="Modifier le temps" [modal]="true" [style]="{ width: '28rem' }">
+    <p-dialog [(visible)]="editVisible" header="Modifier le temps" i18n-header="Modifier le temps" [modal]="true" [style]="{ width: '28rem' }">
 
       <div class="proj-field-stack">
 
-        <label>Date <p-datepicker [(ngModel)]="editWorkDate" dateFormat="dd/mm/yy" /></label>
+        <label><ng-container i18n="@@projects.project-time.date.eb9a4bc1">Date </ng-container> <p-datepicker [(ngModel)]="editWorkDate" dateFormat="dd/mm/yy" /></label>
 
-        <label>Tâche <p-select [options]="tasks()" [(ngModel)]="editTaskId" optionLabel="title" optionValue="id" [showClear]="true" /></label>
+        <label><ng-container i18n="@@projects.project-time.tache.43c8425c">Tâche </ng-container> <p-select [options]="tasks()" [(ngModel)]="editTaskId" optionLabel="title" optionValue="id" [showClear]="true" /></label>
 
-        <label>Heures <p-inputNumber [(ngModel)]="editHours" [min]="0.25" [max]="24" [step]="0.25" /></label>
+        <label><ng-container i18n="@@projects.project-time.heures.b4448c06">Heures </ng-container> <p-inputNumber [(ngModel)]="editHours" [min]="0.25" [max]="24" [step]="0.25" /></label>
 
         <label class="proj-field-stack__check">
 
@@ -324,7 +325,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         </label>
 
-        <label>Notes <input pInputText class="w-full" [(ngModel)]="editNotes" /></label>
+        <label><ng-container i18n="@@projects.project-time.notes.70440046">Notes </ng-container> <input pInputText class="w-full" [(ngModel)]="editNotes" /></label>
 
       </div>
 
@@ -344,6 +345,8 @@ const TIME_STATUS_FILTER_OPTIONS = [
 })
 
 export class ProjectTimeComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
 
   private readonly api = inject(ProjectApiService);
 
@@ -564,7 +567,7 @@ export class ProjectTimeComponent implements OnInit {
 
         if (r.success) {
 
-          this.toast.add({ severity: 'success', summary: 'Temps enregistré' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@project-time.component.summary.Temps_enregistr_:Temps enregistré` });
 
           this.notes = '';
 
@@ -630,7 +633,7 @@ export class ProjectTimeComponent implements OnInit {
 
       next: () => {
 
-        this.toast.add({ severity: 'success', summary: 'Temps mis à jour' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-time.component.summary.Temps mis à :Temps mis à jour` });
 
         this.editVisible = false;
 
@@ -675,7 +678,7 @@ export class ProjectTimeComponent implements OnInit {
   deleteEntry(id: string): void {
     this.api.deleteTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps supprimé' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-time.component.summary.Temps suppri:Temps supprimé` });
         this.load();
       },
       error: err => this.error.set(this.errors.extractErrorMessage(err))
@@ -685,7 +688,7 @@ export class ProjectTimeComponent implements OnInit {
   reopen(id: string): void {
     this.api.reopenTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps rouvert en brouillon' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-time.component.summary.Temps_rouvert_en:Temps rouvert en brouillon` });
         this.load();
       },
       error: err => this.error.set(this.errors.extractErrorMessage(err))

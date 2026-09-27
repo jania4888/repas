@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -18,10 +19,10 @@ import { ToastService } from '@core/services/toast.service';
 
     <div class="stats-wrapper">
       <div class="stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
-        <app-stat-card appearance="solid" label="Mes relances" [value]="reminders().length" icon="pi-bell"
+        <app-stat-card appearance="solid" label="Mes relances" i18n-label="Mes relances" [value]="reminders().length" icon="pi-bell"
           [variant]="reminders().length > 0 ? 'warning' : 'success'" />
-        <app-stat-card appearance="solid" label="Pipeline pondéré" [value]="formatAmount(pipelineTotal())" icon="pi-chart-bar" variant="primary" />
-        <app-stat-card appearance="solid" label="Opportunités ouvertes" [value]="openOpps().length" icon="pi-bullseye" variant="primary" />
+        <app-stat-card appearance="solid" label="Pipeline pondéré" i18n-label="Pipeline pondéré" [value]="formatAmount(pipelineTotal())" icon="pi-chart-bar" variant="primary" />
+        <app-stat-card appearance="solid" label="Opportunités ouvertes" i18n-label="Opportunités ouvertes" [value]="openOpps().length" icon="pi-bullseye" variant="primary" />
       </div>
     </div>
 
@@ -92,7 +93,7 @@ export class CrmDashboardComponent implements OnInit {
   }
 
   formatAmount(v: number): string {
-    return (this.decimalPipe.transform(v, '1.0-0') ?? '0') + ' TND';
+    return (this.decimalPipe.transform(v, '1.0-0') ?? '0') + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   markDone(id: string): void {
@@ -101,12 +102,12 @@ export class CrmDashboardComponent implements OnInit {
         if (r.success) {
           this.reminders.update(list => list.filter(x => x.id !== id));
         } else {
-          const msg = r.errors?.[0] ?? r.message ?? r.error ?? 'Impossible de terminer l’activité';
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: msg, life: 6000 });
+          const msg = r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.impossible.de.terminer.l.activite.0da4cb:Impossible de terminer l’activité`;
+          this.toast.add({ severity: 'error', summary: $localize`:@@crm-dashboard.component.summary.Erreur:Erreur`, detail: msg, life: 6000 });
         }
       },
       error: () => {
-        this.toast.add({ severity: 'error', summary: 'Erreur réseau', life: 6000 });
+        this.toast.add({ severity: 'error', summary: $localize`:@@crm-dashboard.component.summary.Erreur résea:Erreur réseau`, life: 6000 });
       }
     });
   }

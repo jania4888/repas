@@ -31,7 +31,7 @@ import {
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d">Imprimer</app-button>
+        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <!-- Period Filter -->
@@ -76,20 +76,20 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Chiffre d'affaires"
+          label="Chiffre d'affaires" i18n-label="Chiffre d'affaires"
           [value]="formatAmount(data()!.totalRevenue)"
           icon="pi-dollar"
           variant="success"
           [change]="data()!.comparison.changePercent">
         </app-stat-card>
         <app-stat-card
-          label="Factures émises"
+          label="Factures émises" i18n-label="Factures émises"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Période précédente"
+          label="Période précédente" i18n-label="Période précédente"
           [value]="formatAmount(data()!.comparison.previousValue)"
           icon="pi-history"
           variant="warning">

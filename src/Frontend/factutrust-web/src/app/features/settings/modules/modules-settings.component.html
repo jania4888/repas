@@ -4,7 +4,7 @@
   title="Modules" i18n-title="Modules"
   subtitle="Activez ou désactivez les fonctionnalités de votre espace. Les changements sont appliqués immédiatement dans la navigation.">
   <p-button
-    label="Retour"
+    label="Retour" i18n-label="Retour"
     icon="pi pi-arrow-left"
     [outlined]="true"
     routerLink="/settings">
@@ -15,7 +15,7 @@
   <div class="error-banner" role="alert">
     <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
     <p>{{ loadError() }}</p>
-    <p-button label="Réessayer" icon="pi pi-refresh" [outlined]="true" (onClick)="load()"></p-button>
+    <p-button label="Réessayer" i18n-label="Réessayer" icon="pi pi-refresh" [outlined]="true" (onClick)="load()"></p-button>
   </div>
 } @else if (loading()) {
   <div class="loading-container" role="status" aria-live="polite">
@@ -158,19 +158,19 @@
 
   <div class="note-bar" role="note">
     <span class="note-ico"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i></span>
-    <p>Désactiver un module requis par un autre module actif est bloqué : désactivez d'abord le module dépendant. <b>Offre actuelle : {{ planCode() }}.</b></p>
+    <p><ng-container i18n="@@settings.modules.desactiver.un.module.requis.par.un.autre.module..cd00e177">Désactiver un module requis par un autre module actif est bloqué : désactivez d'abord le module dépendant. </ng-container> <b>Offre actuelle : {{ planCode() }}.</b></p>
   </div>
 
   <div class="page-actions">
     <p-button
-      label="Annuler les modifications"
+      label="Annuler les modifications" i18n-label="Annuler les modifications"
       icon="pi pi-undo"
       [outlined]="true"
       [disabled]="!isDirty() || saving()"
       (onClick)="resetChanges()">
     </p-button>
     <p-button
-      label="Enregistrer"
+      label="Enregistrer" i18n-label="Enregistrer"
       icon="pi pi-check"
       [loading]="saving()"
       [disabled]="!isDirty() || saving()"

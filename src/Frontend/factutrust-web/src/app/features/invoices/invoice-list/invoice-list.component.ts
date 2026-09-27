@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
@@ -80,7 +81,7 @@ interface StatusOption {
         iconPos="left"
         [disabled]="printingReport()"
         (click)="printInvoiceReport()"
-        [ariaLabel]="printAriaLabel()" i18n="@@invoices.invoice-list.imprimer.l.etat.389e5da9">Imprimer l'état</app-button>
+        [ariaLabel]="printAriaLabel()" i18n="@@invoices.invoice-list.imprimer.l.etat.389e5da9"> Imprimer l'état </app-button>
       <app-analyze-with-ai-button
         [screenId]="analyzeScreenId()"
         [payloadBuilder]="buildInvoiceAnalyzePayload"
@@ -91,20 +92,20 @@ interface StatusOption {
           icon="pi-file-import"
           iconPos="left"
           (click)="openImportDialog()"
-          ariaLabel="Importer une facture depuis un fichier (PDF, image, Word ou Excel)" i18n="@@invoices.invoice-list.importer.une.facture.66ed8807">Importer une facture</app-button>
+          ariaLabel="Importer une facture depuis un fichier (PDF, image, Word ou Excel)" i18n="@@invoices.invoice-list.importer.une.facture.66ed8807"> Importer une facture </app-button>
       }
       @if (canCreateInvoice() && creditNotesOnlyMode()) {
         <app-button 
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          (click)="openNewCreditNote()" i18n="@@invoices.invoice-list.nouvel.avoir.f3e4055a">Nouvel avoir</app-button>
+          (click)="openNewCreditNote()" i18n="@@invoices.invoice-list.nouvel.avoir.f3e4055a"> Nouvel avoir </app-button>
       } @else if (canCreateInvoice()) {
         <app-button 
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="/invoices/new" i18n="@@invoices.invoice-list.nouvelle.facture.cdf7e09c">Nouvelle facture</app-button>
+          routerLink="/invoices/new" i18n="@@invoices.invoice-list.nouvelle.facture.cdf7e09c"> Nouvelle facture </app-button>
       }
     </app-page-header>
 
@@ -181,7 +182,7 @@ interface StatusOption {
             size="sm"
             icon="pi-refresh"
             (click)="loadInvoices()"
-            [disabled]="loading()" i18n="@@invoices.invoice-list.reessayer.895d416b">Réessayer</app-button>
+            [disabled]="loading()" i18n="@@invoices.invoice-list.reessayer.895d416b"> Réessayer </app-button>
         </div>
       </div>
     }
@@ -214,11 +215,11 @@ interface StatusOption {
         
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="number">Numéro <p-sortIcon field="number"></p-sortIcon></th>
+            <th pSortableColumn="number"><ng-container i18n="@@invoices.invoice-list.numero.15e73db0">Numéro </ng-container> <p-sortIcon field="number"></p-sortIcon></th>
             <th i18n="@@invoices.invoice-list.client.1bdd79b1">Client</th>
-            <th pSortableColumn="issueDate">Date <p-sortIcon field="issueDate"></p-sortIcon></th>
+            <th pSortableColumn="issueDate"><ng-container i18n="@@invoices.invoice-list.date.eb9a4bc1">Date </ng-container> <p-sortIcon field="issueDate"></p-sortIcon></th>
             <th i18n="@@invoices.invoice-list.echeance.f9a77ff6">Échéance</th>
-            <th pSortableColumn="totalAmount">Montant <p-sortIcon field="totalAmount"></p-sortIcon></th>
+            <th pSortableColumn="totalAmount"><ng-container i18n="@@invoices.invoice-list.montant.4adcd9fc">Montant </ng-container> <p-sortIcon field="totalAmount"></p-sortIcon></th>
             <th i18n="@@invoices.invoice-list.montant.paye.40c0b255">Montant payé</th>
             <th>{{ remainingColumnLabel() }}</th>
             <th i18n="@@invoices.invoice-list.statut.659499f3">Statut</th>
@@ -440,18 +441,18 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   });
 
   analyzeScreenId = computed(() => this.creditNotesOnlyMode() ? 'credit-note-list' : 'invoice-list');
-  remainingColumnLabel = computed(() => this.creditNotesOnlyMode() ? 'Reste à rembourser' : 'Reste à payer');
+  remainingColumnLabel = computed(() => this.creditNotesOnlyMode() ? $localize`:@@ui.tern.reste.a.rembourser.551580:Reste à rembourser` : $localize`:@@ui.tern.reste.a.payer.968444:Reste à payer`);
   paginatorTemplate = computed(() =>
     this.creditNotesOnlyMode()
-      ? 'Affichage de {first} à {last} sur {totalRecords} avoirs'
-      : 'Affichage de {first} à {last} sur {totalRecords} factures'
+      ? $localize`:@@ui.tern.affichage.de.first.a.last.sur.totalrecords.b122ac:Affichage de {first} à {last} sur {totalRecords} avoirs`
+      : $localize`:@@ui.tern.affichage.de.first.a.last.sur.totalrecords.5b810a:Affichage de {first} à {last} sur {totalRecords} factures`
   );
   printAriaLabel = computed(() =>
     this.creditNotesOnlyMode()
-      ? "Imprimer l'état des avoirs (période et client optionnels)"
-      : "Imprimer l'état des factures (période et client optionnels)"
+      ? $localize`:@@ui.tern.imprimer.l.etat.des.avoirs.periode.et.clie.1f08fb:Imprimer l'état des avoirs (période et client optionnels)`
+      : $localize`:@@ui.tern.imprimer.l.etat.des.factures.periode.et.cl.728ed9:Imprimer l'état des factures (période et client optionnels)`
   );
-  viewAriaLabel = computed(() => this.creditNotesOnlyMode() ? "Voir l'avoir" : 'Voir la facture');
+  viewAriaLabel = computed(() => this.creditNotesOnlyMode() ? $localize`:@@ui.tern.voir.l.avoir.1dce8e:Voir l'avoir` : $localize`:@@ui.tern.voir.la.facture.e4bdde:Voir la facture`);
 
   canCreateInvoice = computed(
     () => !this.auth.isFirmDelegatedReadonly() && this.auth.hasPermission(PERMISSIONS.invoices.create)
@@ -481,14 +482,14 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   /** Cartes de la zone de totaux, dérivées du résumé backend. */
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
-    const currency = s?.currency ?? 'TND';
+    const currency = s?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
     const creditNotes = this.creditNotesOnlyMode();
     return [
-      { label: creditNotes ? 'Avoirs' : 'Factures', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
+      { label: creditNotes ? $localize`:@@ui.tern.avoirs.38b0e7:Avoirs` : $localize`:@@ui.tern.factures.da35e4:Factures`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
       { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
       { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
-      { label: creditNotes ? 'Total remboursé' : 'Total payé', value: s?.totalPaid, format: 'currency', currency, icon: 'pi-check-circle', tone: 'emerald' },
-      { label: creditNotes ? 'Reste à rembourser' : 'Reste à payer', value: s?.totalRemaining, format: 'currency', currency, icon: 'pi-clock', tone: 'amber' },
+      { label: creditNotes ? $localize`:@@ui.tern.total.rembourse.81bf5c:Total remboursé` : $localize`:@@ui.tern.total.paye.57d30b:Total payé`, value: s?.totalPaid, format: 'currency', currency, icon: 'pi-check-circle', tone: 'emerald' },
+      { label: creditNotes ? $localize`:@@ui.tern.reste.a.rembourser.551580:Reste à rembourser` : $localize`:@@ui.tern.reste.a.payer.968444:Reste à payer`, value: s?.totalRemaining, format: 'currency', currency, icon: 'pi-clock', tone: 'amber' },
       { label: 'En retard', value: s?.overdueCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
     ];
   });
@@ -541,13 +542,13 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Brouillon', value: 0 },
-    { label: 'Validée', value: 1 },
-    { label: 'Signée', value: 2 },
-    { label: 'Payée', value: 4 },
-    { label: 'Partiellement payée', value: 5 },
-    { label: 'En retard', value: 6 },
-    { label: 'Annulée', value: 7 }
+    { label: $localize`:@@invoices.list.filter.brouillon:Brouillon`, value: 0 },
+    { label: $localize`:@@invoices.list.filter.validee:Validée`, value: 1 },
+    { label: $localize`:@@invoices.list.filter.signee:Signée`, value: 2 },
+    { label: $localize`:@@invoices.list.filter.payee:Payée`, value: 4 },
+    { label: $localize`:@@invoices.list.filter.partielle:Partiellement payée`, value: 5 },
+    { label: $localize`:@@invoices.list.filter.retard:En retard`, value: 6 },
+    { label: $localize`:@@invoices.list.filter.annulee:Annulée`, value: 7 }
   ];
 
   ngOnInit(): void {
@@ -793,7 +794,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     this.toastService.add({
       key: 'invoice-list-error',
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@invoice-list.component.summary.Erreur:Erreur`,
       detail: message,
       life: 5000
     });
@@ -825,7 +826,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${invoice.isCreditNote ? 'Avoir' : 'Facture'}_${invoice.number}.pdf`;
+          a.download = `${invoice.isCreditNote ? $localize`:@@ui.tern.avoir.8ee247:Avoir` : $localize`:@@ui.tern.facture.3953b9:Facture`}_${invoice.number}.pdf`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -850,7 +851,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
       next: (blob) => {
         this.printingReport.set(false);
         if (!blob || blob.size === 0) return;
-        const prefix = this.creditNotesOnlyMode() ? 'Etat_avoirs_ventes' : 'Etat_factures_ventes';
+        const prefix = this.creditNotesOnlyMode() ? $localize`:@@ui.tern.etat.avoirs.ventes.07ebfb:Etat_avoirs_ventes` : $localize`:@@ui.tern.etat.factures.ventes.44039a:Etat_factures_ventes`;
         this.printPreviewService.openPdfForPrintPreview(blob, `${prefix}_${fromDate}_${toDate}.pdf`);
       },
       error: (error: Error) => {
@@ -858,7 +859,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
         this.toastService.add({
           key: 'invoice-list-print',
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@invoice-list.component.summary.Erreur:Erreur`,
           detail: error.message || 'Impossible de générer le rapport PDF',
           life: 5000
         });

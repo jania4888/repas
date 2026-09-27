@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import type { WorkflowStepType } from './studio-workflows.models';
 
 /**
@@ -200,7 +201,7 @@ export const STUDIO_WORKFLOW_LABELS = {
     /** 4.7a2 / D-47-F01 — le panneau devient l'historique paginé (était « Instances récentes »). */
     history: 'Historique',
     empty: 'Aucune instance.',
-    detail: 'Détail',
+    detail: $localize`:@@studio-workflow-labels.detail.Détail:Détail`,
     close: 'Fermer',
     cancel: 'Annuler l\'instance',
     cancelReason: 'Motif (optionnel, 500 caractères max.)',
@@ -220,7 +221,7 @@ export const STUDIO_WORKFLOW_LABELS = {
     approvals: 'Approbations',
     noApprovals: 'Aucune approbation.',
     context: 'Contexte masqué.',
-    summary: '{done} étape(s) terminée(s) · {waiting} en attente · {todo} à venir'
+    summary: $localize`:@@studio-workflow-labels.summary._done_tape_s_:{done} étape(s) terminée(s) · {waiting} en attente · {todo} à venir`
   },
 
   approvals: {
@@ -253,7 +254,7 @@ export const STUDIO_WORKFLOW_LABELS = {
     },
     approve: 'Approuver',
     reject: 'Refuser',
-    detail: 'Détail',
+    detail: $localize`:@@studio-workflow-labels.detail.Détail:Détail`,
     comment: 'Commentaire',
     commentRequired: 'Le commentaire est obligatoire pour refuser.',
     approved: 'Approbation enregistrée.',
@@ -351,7 +352,7 @@ export const STUDIO_WORKFLOW_LABELS = {
     cancelConfirm: 'Confirmer l\'annulation',
     cancelBack: 'Retour',
     colActions: 'Actions',
-    detail: 'Détail',
+    detail: $localize`:@@studio-workflow-labels.detail.Détail:Détail`,
     close: 'Fermer',
     colWorkflow: 'Workflow',
     colStatus: 'Statut',

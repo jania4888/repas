@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -35,6 +37,7 @@ interface StatusOption {
     selector: 'app-purchase-order-list',
     standalone: true,
     imports: [
+    BackendLabelPipe,
         CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
         TableModule, ButtonModule, InputTextModule, SelectModule,
         TagModule, TooltipModule, DatePickerModule, ToastModule,
@@ -52,7 +55,7 @@ interface StatusOption {
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new" i18n="@@purchase-orders.purchase-order-list.nouvelle.commande.061f365b">Nouvelle commande</app-button>
+          routerLink="new" i18n="@@purchase-orders.purchase-order-list.nouvelle.commande.061f365b"> Nouvelle commande </app-button>
       }
     </app-page-header>
 
@@ -105,29 +108,33 @@ interface StatusOption {
           styleClass="supplier-filter">
         </p-select>
 
-        <span class="filter-label" i18n="@@purchase-orders.purchase-order-list.date.debut.2413e246">Date début</span>
-        <p-datepicker
-          [(ngModel)]="fromDate"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          placeholder="Du" i18n-placeholder="Du"
-          [showButtonBar]="true"
-          (onSelect)="onFilterChange()"
-          (onClearClick)="onFilterChange()"
-          styleClass="date-filter">
-        </p-datepicker>
+        <div class="ft-filters__field">
+          <span class="filter-label" i18n="@@purchase-orders.purchase-order-list.date.debut.2413e246">Date début</span>
+          <p-datepicker
+            [(ngModel)]="fromDate"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            placeholder="Du" i18n-placeholder="Du"
+            [showButtonBar]="true"
+            (onSelect)="onFilterChange()"
+            (onClearClick)="onFilterChange()"
+            styleClass="date-filter">
+          </p-datepicker>
+        </div>
 
-        <span class="filter-label" i18n="@@purchase-orders.purchase-order-list.date.fin.2d44e855">Date fin</span>
-        <p-datepicker
-          [(ngModel)]="toDate"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          placeholder="Au" i18n-placeholder="Au"
-          [showButtonBar]="true"
-          (onSelect)="onFilterChange()"
-          (onClearClick)="onFilterChange()"
-          styleClass="date-filter">
-        </p-datepicker>
+        <div class="ft-filters__field">
+          <span class="filter-label" i18n="@@purchase-orders.purchase-order-list.date.fin.2d44e855">Date fin</span>
+          <p-datepicker
+            [(ngModel)]="toDate"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            placeholder="Au" i18n-placeholder="Au"
+            [showButtonBar]="true"
+            (onSelect)="onFilterChange()"
+            (onClearClick)="onFilterChange()"
+            styleClass="date-filter">
+          </p-datepicker>
+        </div>
       </div>
     </div>
 
@@ -152,7 +159,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} commandes"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} commandes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} commandes"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -161,13 +168,13 @@ interface StatusOption {
 
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="number" style="width: 130px">N° <p-sortIcon field="number"></p-sortIcon></th>
+            <th pSortableColumn="number" style="width: 130px"><ng-container i18n="@@purchase-orders.purchase-order-list.n.754e6095">N° </ng-container> <p-sortIcon field="number"></p-sortIcon></th>
             <th i18n="@@purchase-orders.purchase-order-list.fournisseur.97d91d89">Fournisseur</th>
-            <th pSortableColumn="orderDate" style="width: 120px">Date <p-sortIcon field="orderDate"></p-sortIcon></th>
+            <th pSortableColumn="orderDate" style="width: 120px"><ng-container i18n="@@purchase-orders.purchase-order-list.date.eb9a4bc1">Date </ng-container> <p-sortIcon field="orderDate"></p-sortIcon></th>
             <th style="width: 120px" i18n="@@purchase-orders.purchase-order-list.livraison.prevue.dc15f458">Livraison prévue</th>
             <th i18n="@@purchase-orders.purchase-order-list.reference.f8130bb0">Référence</th>
             <th style="width: 100px" i18n="@@purchase-orders.purchase-order-list.lignes.41c7025e">Lignes</th>
-            <th pSortableColumn="totalTTC" style="width: 130px">Total TTC <p-sortIcon field="totalTTC"></p-sortIcon></th>
+            <th pSortableColumn="totalTTC" style="width: 130px"><ng-container i18n="@@purchase-orders.purchase-order-list.total.ttc.9e80ff7c">Total TTC </ng-container> <p-sortIcon field="totalTTC"></p-sortIcon></th>
             <th style="width: 140px" i18n="@@purchase-orders.purchase-order-list.statut.659499f3">Statut</th>
             <th style="width: 80px" i18n="@@purchase-orders.purchase-order-list.actions.c3cd636a">Actions</th>
           </tr>
@@ -198,7 +205,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag
-                [value]="order.statusDisplay"
+                [value]="order.statusDisplay | backendLabel"
                 [severity]="getStatusSeverity(order.status)">
               </p-tag>
             </td>
@@ -320,7 +327,7 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
 
     summaryMetrics = computed<TotalMetric[]>(() => {
         const s = this.summary();
-        const currency = s?.currency ?? 'TND';
+        const currency = s?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
         return [
             { label: 'Commandes', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
             { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
@@ -357,11 +364,11 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
     ];
 
     statusOptions: StatusOption[] = [
-        { label: 'Brouillon', value: PurchaseOrderStatus.Draft },
-        { label: 'Confirmé', value: PurchaseOrderStatus.Confirmed },
-        { label: 'Partiellement reçu', value: PurchaseOrderStatus.PartiallyReceived },
-        { label: 'Reçu', value: PurchaseOrderStatus.Received },
-        { label: 'Annulé', value: PurchaseOrderStatus.Cancelled }
+        { label: $localize`:@@purchase-orders.list.filter.brouillon:Brouillon`, value: PurchaseOrderStatus.Draft },
+        { label: $localize`:@@purchase-orders.list.filter.confirme:Confirmé`, value: PurchaseOrderStatus.Confirmed },
+        { label: $localize`:@@purchase-orders.list.filter.partiel:Partiellement reçu`, value: PurchaseOrderStatus.PartiallyReceived },
+        { label: $localize`:@@purchase-orders.list.filter.recu:Reçu`, value: PurchaseOrderStatus.Received },
+        { label: $localize`:@@purchase-orders.list.filter.annule:Annulé`, value: PurchaseOrderStatus.Cancelled }
     ];
 
     ngOnInit(): void {
@@ -425,7 +432,7 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
         this.initialLoad.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
+                    summary: $localize`:@@purchase-order-list.component.summary.Erreur:Erreur`,
                     detail: error?.error?.errors?.[0] || 'Impossible de charger les commandes'
                 });
             }

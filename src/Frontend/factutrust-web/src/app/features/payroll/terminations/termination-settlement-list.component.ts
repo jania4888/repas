@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +16,7 @@ import { PayrollAmountPipe } from '../shared';
 @Component({
   selector: 'app-termination-settlement-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TableModule, TagModule, InputNumberModule, PageHeaderComponent, ButtonComponent, PayrollAmountPipe],
+  imports: [BackendLabelPipe, CommonModule, FormsModule, RouterModule, TableModule, TagModule, InputNumberModule, PageHeaderComponent, ButtonComponent, PayrollAmountPipe],
   template: `
     <app-page-header title="Soldes de tout compte" i18n-title="Soldes de tout compte" subtitle="Indemnités de rupture et fin de contrat.">
       <app-button variant="primary" icon="pi-plus" routerLink="/payroll/terminations/new" i18n="@@payroll.terminations.nouveau.solde.5e1744e0">Nouveau solde</app-button>
@@ -42,8 +44,8 @@ import { PayrollAmountPipe } from '../shared';
         <tr>
           <td>{{ row.employeeName || row.employeeId }}</td>
           <td>{{ row.terminationDate | date:'dd/MM/yyyy' }}</td>
-          <td>{{ row.reasonDisplay }}</td>
-          <td><p-tag [value]="row.statusDisplay" /></td>
+          <td>{{ row.reasonDisplay | backendLabel }}</td>
+          <td><p-tag [value]="row.statusDisplay | backendLabel" /></td>
           <td class="text-right">{{ row.totalIndemnityAmount | payrollAmount }}</td>
           <td>
             <a [routerLink]="['/payroll/terminations', row.id]" i18n="@@payroll.terminations.detail.7ce06afc">Détail</a>
@@ -68,7 +70,7 @@ export class TerminationSettlementListComponent implements OnInit {
     this.loading.set(true);
     this.payroll.listTerminationSettlements(this.year, this.month).subscribe({
       next: res => { this.items.set(res.data ?? []); this.loading.set(false); },
-      error: () => { this.toast.add({ severity: 'error', summary: 'Soldes de tout compte', detail: 'Impossible de charger les soldes.' }); this.loading.set(false); }
+      error: () => { this.toast.add({ severity: 'error', summary: $localize`:@@termination-settlement-list.component.summary.Soldes de to:Soldes de tout compte`, detail: $localize`:@@termination-settlement-list.component.detail.Impossible d:Impossible de charger les soldes.` }); this.loading.set(false); }
     });
   }
 }

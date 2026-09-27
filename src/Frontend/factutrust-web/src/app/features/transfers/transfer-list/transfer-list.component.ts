@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, DestroyRef, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -18,7 +20,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
 @Component({
   selector: 'app-transfer-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TableModule, SelectModule, ButtonModule, TagModule, ToastModule, TableTotalsBarComponent],
+  imports: [BackendLabelPipe, CommonModule, RouterModule, FormsModule, TableModule, SelectModule, ButtonModule, TagModule, ToastModule, TableTotalsBarComponent],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
@@ -78,8 +80,8 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
             <input id="filter-to" type="date" class="date-input" [(ngModel)]="toDate" />
           </div>
           <div class="filter-actions">
-            <button pButton type="button" label="Appliquer" icon="pi pi-filter" (click)="loadTransfers()"></button>
-            <button pButton type="button" label="Réinitialiser" class="p-button-outlined" (click)="resetFilters()"></button>
+            <button pButton type="button" label="Appliquer" i18n-label="Appliquer" icon="pi pi-filter" (click)="loadTransfers()"></button>
+            <button pButton type="button" label="Réinitialiser" i18n-label="Réinitialiser" class="p-button-outlined" (click)="resetFilters()"></button>
           </div>
         </div>
       </div>
@@ -90,7 +92,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
         <p-table [value]="transfers()" [paginator]="true" [rows]="20"
                  [loading]="loading()" styleClass="p-datatable-sm"
                  [rowHover]="true" [showCurrentPageReport]="true"
-                 currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} transferts">
+                 currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} transferts" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} transferts">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@transfers.transfer-list.numero.15e73db0">Numéro</th>
@@ -109,8 +111,8 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
               <td>{{ transfer.sourceWarehouseName }}</td>
               <td>{{ transfer.destinationWarehouseName }}</td>
               <td>{{ transfer.lineCount }}</td>
-              <td><span class="status-badge" [ngClass]="transfer.statusCss">{{ transfer.statusDisplay }}</span></td>
-              <td><a [routerLink]="[transfer.id]" class="btn-icon" [attr.aria-label]="'Voir le transfert ' + transfer.number"><i class="fas fa-eye" aria-hidden="true"></i></a></td>
+              <td><span class="status-badge" [ngClass]="transfer.statusCss">{{ transfer.statusDisplay | backendLabel }}</span></td>
+              <td><a [routerLink]="[transfer.id]" class="btn-icon" [attr.aria-label]="loc_ui_tern_voir_le_transfert_1ac89f + transfer.number"><i class="fas fa-eye" aria-hidden="true"></i></a></td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
@@ -156,6 +158,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
   `]
 })
 export class TransferListComponent implements OnInit {
+  readonly loc_ui_tern_voir_le_transfert_1ac89f = $localize`:@@ui.tern.voir.le.transfert.1ac89f:Voir le transfert `;
   private transferService = inject(StockTransferService);
   private stockService = inject(StockService);
   private messageService = inject(MessageService);
@@ -187,11 +190,11 @@ export class TransferListComponent implements OnInit {
   warehouseOptions: { label: string; value: string }[] = [];
 
   readonly statusOptions: { label: string; value: string }[] = [
-    { label: 'Brouillon', value: 'Draft' },
-    { label: 'Confirmé', value: 'Confirmed' },
-    { label: 'En transit', value: 'InTransit' },
-    { label: 'Terminé', value: 'Completed' },
-    { label: 'Annulé', value: 'Cancelled' }
+    { label: $localize`:@@transfers.list.filter.brouillon:Brouillon`, value: 'Draft' },
+    { label: $localize`:@@transfers.list.filter.confirme:Confirmé`, value: 'Confirmed' },
+    { label: $localize`:@@transfers.list.filter.transit:En transit`, value: 'InTransit' },
+    { label: $localize`:@@transfers.list.filter.termine:Terminé`, value: 'Completed' },
+    { label: $localize`:@@transfers.list.filter.annule:Annulé`, value: 'Cancelled' }
   ];
 
   ngOnInit() {
@@ -199,7 +202,7 @@ export class TransferListComponent implements OnInit {
       next: (res) => {
         const data = res.data as Warehouse[] | undefined;
         this.warehouseOptions = (data ?? []).map((w) => {
-          let label = `${w.name}${w.isDefault ? ' (défaut)' : ''}`;
+          let label = `${w.name}${w.isDefault ? $localize`:@@ui.tern.defaut.f21337: (défaut)` : ''}`;
           if (!w.isActive) {
             label += ' — Inactif';
           }
@@ -207,7 +210,7 @@ export class TransferListComponent implements OnInit {
         });
       },
       error: () => {
-        this.messageService.add({ severity: 'warn', summary: 'Entrepôts', detail: 'Impossible de charger la liste des entrepôts' });
+        this.messageService.add({ severity: 'warn', summary: $localize`:@@transfer-list.component.summary.Entrep_ts:Entrepôts`, detail: $localize`:@@transfer-list.component.detail.Impossible_de_ch:Impossible de charger la liste des entrepôts` });
       }
     });
     this.loadTransfers();
@@ -243,7 +246,7 @@ export class TransferListComponent implements OnInit {
         this.loading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@transfer-list.component.summary.Erreur:Erreur`,
           detail: err.error?.error || err.error?.message || 'Impossible de charger les transferts'
         });
       }

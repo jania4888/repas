@@ -225,7 +225,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
 
   registrationFormAriaLabel = computed(() => {
     const cur = this.currentStep();
-    const prev = cur > 0 ? `Étapes précédentes complétées. ` : '';
+    const prev = cur > 0 ? $localize`:@@ui.tern.etapes.precedentes.completees.b92c63:Étapes précédentes complétées. ` : '';
     return `${prev}Étape ${cur + 1} sur ${this.stepsMeta.length} : ${this.stepsMeta[cur].name}.`;
   });
 
@@ -717,7 +717,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
             this.navigateAfterCompanySuccess(result.tenantId);
           } else {
             this.error.set(
-              result.errors?.length ? result.errors.join(', ') : result.message ?? 'Création impossible.'
+              result.errors?.length ? result.errors.join(', ') : result.message ?? $localize`:@@ui.tern.creation.impossible.5661a5:Création impossible.`
             );
           }
           this.stopLoading();
@@ -744,19 +744,19 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
       const status = 'status' in err ? err.status : (err as HttpErrorResponse)?.status;
       if (!status) {
         errorMessage = platform
-          ? 'Impossible de joindre l\'API plateforme.'
-          : 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.';
+          ? $localize`:@@ui.tern.impossible.de.joindre.l.api.plateforme.c1ad8f:Impossible de joindre l'API plateforme.`
+          : $localize`:@@ui.tern.impossible.de.se.connecter.au.serveur.veri.81a4b1:Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur https://localhost:7001.`;
       } else {
         errorMessage = platform
-          ? `Erreur lors de la création (${status}).`
-          : `Une erreur est survenue lors de l'inscription (${status || 'erreur inconnue'}). Veuillez réessayer.`;
+          ? $localize`:@@ui.tern.erreur.lors.de.la.creation.ph.ea3e06:Erreur lors de la création (${status}:p0:).`
+          : $localize`:@@ui.tern.une.erreur.est.survenue.lors.de.l.inscript.32f480:Une erreur est survenue lors de l'inscription (${status || 'erreur inconnue'}:p0:). Veuillez réessayer.`;
       }
     }
 
     if (!errorMessage || errorMessage === 'undefined') {
       errorMessage = platform
-        ? 'La création n\'a pas pu être finalisée.'
-        : 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.';
+        ? $localize`:@@ui.tern.la.creation.n.a.pas.pu.etre.finalisee.d36b40:La création n'a pas pu être finalisée.`
+        : $localize`:@@ui.tern.une.erreur.est.survenue.lors.de.l.inscript.587687:Une erreur est survenue lors de l'inscription. Veuillez réessayer.`;
     }
     return errorMessage;
   }

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,14 +12,14 @@ import { ClientPortalContact, PortalService } from '@features/portal/portal.serv
 @Component({
   selector: 'app-client-portal-contacts-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, TableModule, InputTextModule, DatePipe],
+  imports: [BackendLabelPipe, CommonModule, FormsModule, ButtonModule, TableModule, InputTextModule, DatePipe],
   template: `
     <p i18n="@@clients.client-portal-contacts-panel.invitez.un.contact.pour.qu.il.consulte.ses.factu.aa0aa605">Invitez un contact pour qu’il consulte ses factures dans l’espace client.</p>
     <form class="invite" (ngSubmit)="invite()">
       <input pInputText [(ngModel)]="email" name="email" placeholder="Email" i18n-placeholder="Email" />
       <input pInputText [(ngModel)]="firstName" name="firstName" placeholder="Prénom" i18n-placeholder="Prénom" />
       <input pInputText [(ngModel)]="lastName" name="lastName" placeholder="Nom" i18n-placeholder="Nom" />
-      <p-button type="submit" label="Inviter" [loading]="busy()" />
+      <p-button type="submit" label="Inviter" i18n-label="Inviter" [loading]="busy()" />
     </form>
     <p-table [value]="contacts()" [loading]="loading()">
       <ng-template pTemplate="header">
@@ -27,12 +29,12 @@ import { ClientPortalContact, PortalService } from '@features/portal/portal.serv
         <tr>
           <td>{{ c.displayName }}</td>
           <td>{{ c.email }}</td>
-          <td>{{ c.statusDisplay }}</td>
+          <td>{{ c.statusDisplay | backendLabel }}</td>
           <td>{{ c.lastAccessAt | date:'dd/MM/yyyy HH:mm' }}</td>
           <td>
             @if (c.status !== 'Revoked') {
-              <p-button label="Renvoyer" size="small" [text]="true" (onClick)="resend(c)" />
-              <p-button label="Révoquer" size="small" severity="danger" [text]="true" (onClick)="revoke(c)" />
+              <p-button label="Renvoyer" i18n-label="Renvoyer" size="small" [text]="true" (onClick)="resend(c)" />
+              <p-button label="Révoquer" i18n-label="Révoquer" size="small" severity="danger" [text]="true" (onClick)="revoke(c)" />
             }
           </td>
         </tr>
@@ -79,14 +81,14 @@ export class ClientPortalContactsPanelComponent {
       next: () => {
         this.busy.set(false);
         this.email = this.firstName = this.lastName = '';
-        this.toast.add({ severity: 'success', summary: 'Invitation envoyée' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@client-portal-contacts-panel.component.summary.Invitation_envoy:Invitation envoyée` });
         this.reload();
       },
       error: err => {
         this.busy.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Invitation impossible',
+          summary: $localize`:@@client-portal-contacts-panel.component.summary.Invitation_impos:Invitation impossible`,
           detail: err?.error?.errors?.[0] || err?.message
         });
       }
@@ -95,14 +97,14 @@ export class ClientPortalContactsPanelComponent {
 
   resend(c: ClientPortalContact): void {
     this.portal.resendInvite(this.clientId, c.id).subscribe({
-      next: () => this.toast.add({ severity: 'success', summary: 'Invitation renvoyée' })
+      next: () => this.toast.add({ severity: 'success', summary: $localize`:@@client-portal-contacts-panel.component.summary.Invitation_renvo:Invitation renvoyée` })
     });
   }
 
   revoke(c: ClientPortalContact): void {
     this.portal.revokeContact(this.clientId, c.id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Accès révoqué' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@client-portal-contacts-panel.component.summary.Accès révoqu:Accès révoqué` });
         this.reload();
       }
     });

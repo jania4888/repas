@@ -12,7 +12,7 @@ import { ProjectListProgressRingComponent } from './project-list-progress-ring.c
     @if (extended) {
       <div class="proj-list-kpi-row">
         <app-stat-card
-          label="Projets actifs"
+          label="Projets actifs" i18n-label="Projets actifs"
           [value]="String(extended.activeProjects)"
           icon="fa-solid fa-folder-open"
           variant="primary"
@@ -21,7 +21,7 @@ import { ProjectListProgressRingComponent } from './project-list-progress-ring.c
           [change]="extended.kpiTrends?.activeProjectsChangePercent ?? undefined"
           changeSuffix="vs mois dernier" />
         <app-stat-card
-          label="Tâches ouvertes"
+          label="Tâches ouvertes" i18n-label="Tâches ouvertes"
           [value]="String(extended.openTasks)"
           icon="fa-solid fa-list-check"
           variant="success"
@@ -31,7 +31,7 @@ import { ProjectListProgressRingComponent } from './project-list-progress-ring.c
           changeSuffix="vs mois dernier"
           [sparkline]="pendingSparkline()" />
         <app-stat-card
-          label="En retard"
+          label="En retard" i18n-label="En retard"
           [value]="String(extended.overdueTasks)"
           icon="fa-solid fa-clock"
           [variant]="extended.overdueTasks > 0 ? 'error' : 'success'"
@@ -44,7 +44,7 @@ import { ProjectListProgressRingComponent } from './project-list-progress-ring.c
           navigationAriaLabel="Filtrer les projets avec tâches en retard"
           (cardClick)="overdueFilter.emit()" />
         <app-stat-card
-          label="Heures à facturer"
+          label="Heures à facturer" i18n-label="Heures à facturer"
           [value]="(extended.uninvoicedBillableHours | number:'1.0-1') + ' h'"
           icon="fa-solid fa-hourglass-half"
           variant="warning"
@@ -53,7 +53,7 @@ import { ProjectListProgressRingComponent } from './project-list-progress-ring.c
           [change]="extended.kpiTrends?.uninvoicedBillableHoursChangePercent ?? undefined"
           changeSuffix="vs mois dernier" />
         <app-stat-card
-          label="Avancement moyen"
+          label="Avancement moyen" i18n-label="Avancement moyen"
           [value]="extended.averageProgressPercent + ' %'"
           icon="fa-solid fa-chart-pie"
           variant="primary"
@@ -66,16 +66,16 @@ import { ProjectListProgressRingComponent } from './project-list-progress-ring.c
       </div>
     } @else if (basic) {
       <div class="proj-list-kpi-row proj-list-kpi-row--fallback">
-        <app-stat-card label="Projets actifs" [value]="String(basic.activeProjects)" icon="fa-solid fa-folder-open" variant="primary" tone="primary" />
-        <app-stat-card label="Tâches ouvertes" [value]="String(basic.openTasks)" icon="fa-solid fa-list-check" variant="success" tone="emerald" />
+        <app-stat-card label="Projets actifs" i18n-label="Projets actifs" [value]="String(basic.activeProjects)" icon="fa-solid fa-folder-open" variant="primary" tone="primary" />
+        <app-stat-card label="Tâches ouvertes" i18n-label="Tâches ouvertes" [value]="String(basic.openTasks)" icon="fa-solid fa-list-check" variant="success" tone="emerald" />
         <app-stat-card
-          label="En retard"
+          label="En retard" i18n-label="En retard"
           [value]="String(basic.overdueTasks)"
           icon="fa-solid fa-clock"
           [variant]="basic.overdueTasks > 0 ? 'error' : 'success'"
           [tone]="basic.overdueTasks > 0 ? 'rose' : 'emerald'" />
         <app-stat-card
-          label="Heures à facturer"
+          label="Heures à facturer" i18n-label="Heures à facturer"
           [value]="(basic.uninvoicedBillableHours | number:'1.0-1') + ' h'"
           icon="fa-solid fa-hourglass-half"
           variant="warning"

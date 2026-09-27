@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -31,7 +33,7 @@ function parseIsoDate(value?: string): Date | null {
 @Component({
   selector: 'app-employee-suspensions-tab',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -44,8 +46,8 @@ function parseIsoDate(value?: string): Date | null {
     ButtonComponent
   ],
   template: `
-    <p class="payroll-info-text" i18n="@@payroll.employees.les.suspensions.approuvees.reduisent.le.brut.du..a4d1ac0a">Les suspensions approuvées réduisent le brut du mois (prorata) lorsque l'option est activée sur l'exercice.
-      Une suspension rémunérée n'entraîne pas de retenue.</p>
+    <p class="payroll-info-text" i18n="@@payroll.employees.les.suspensions.approuvees.reduisent.le.brut.du..a4d1ac0a"> Les suspensions approuvées réduisent le brut du mois (prorata) lorsque l'option est activée sur l'exercice.
+      Une suspension rémunérée n'entraîne pas de retenue. </p>
 
     @if (!readOnly) {
       <div class="payroll-toolbar mb-3">
@@ -66,12 +68,12 @@ function parseIsoDate(value?: string): Date | null {
       </ng-template>
       <ng-template pTemplate="body" let-s>
         <tr>
-          <td>{{ s.typeDisplay }}</td>
+          <td>{{ s.typeDisplay | backendLabel }}</td>
           <td>{{ s.startDate | date:'dd/MM/yyyy' }}</td>
           <td>{{ s.endDate ? (s.endDate | date:'dd/MM/yyyy') : '—' }}</td>
-          <td>{{ s.isPaid ? 'Oui' : 'Non' }}</td>
+          <td>{{ s.isPaid ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
           <td>
-            <p-tag [value]="s.isApproved ? 'Approuvée' : 'En attente'" [severity]="s.isApproved ? 'success' : 'warn'" />
+            <p-tag [value]="s.isApproved ? loc_ui_tern_approuvee_7d606a : loc_ui_tern_en_attente_523115" [severity]="s.isApproved ? 'success' : 'warn'" />
           </td>
           @if (!readOnly) {
             <td class="actions">
@@ -90,7 +92,7 @@ function parseIsoDate(value?: string): Date | null {
     </p-table>
 
     <p-dialog
-      [header]="editingId ? 'Modifier la suspension' : 'Nouvelle suspension'"
+      [header]="editingId ? loc_ui_tern_modifier_la_suspension_654454 : loc_ui_tern_nouvelle_suspension_fe6ff0"
       [(visible)]="dialogVisible"
       [modal]="true"
       [style]="{ width: '480px' }">
@@ -131,6 +133,12 @@ function parseIsoDate(value?: string): Date | null {
   `]
 })
 export class EmployeeSuspensionsTabComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_approuvee_7d606a = $localize`:@@ui.tern.approuvee.7d606a:Approuvée`;
+  readonly loc_ui_tern_en_attente_523115 = $localize`:@@ui.tern.en.attente.523115:En attente`;
+  readonly loc_ui_tern_modifier_la_suspension_654454 = $localize`:@@ui.tern.modifier.la.suspension.654454:Modifier la suspension`;
+  readonly loc_ui_tern_nouvelle_suspension_fe6ff0 = $localize`:@@ui.tern.nouvelle.suspension.fe6ff0:Nouvelle suspension`;
   @Input({ required: true }) employeeId!: string;
   @Input() readOnly = false;
 
@@ -155,7 +163,7 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
   reload(): void {
     this.payroll.listSuspensions(this.employeeId).subscribe({
       next: res => this.items.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Suspensions', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`, detail: $localize`:@@employee-suspensions-tab.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -195,16 +203,16 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
       next: () => {
         this.toast.add({
           severity: 'success',
-          summary: 'Suspensions',
-          detail: this.editingId ? 'Suspension mise à jour.' : 'Suspension enregistrée.'
+          summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`,
+          detail: this.editingId ? $localize`:@@ui.tern.suspension.mise.a.jour.45fd9a:Suspension mise à jour.` : $localize`:@@ui.tern.suspension.enregistree.c7c7a4:Suspension enregistrée.`
         });
         this.dialogVisible = false;
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Suspensions',
-        detail: err.error?.message ?? 'Enregistrement impossible.'
+        summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`,
+        detail: err.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
       })
     });
   }
@@ -213,13 +221,13 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
     if (this.readOnly) return;
     this.payroll.approveSuspension(suspension.id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Suspensions', detail: 'Suspension approuvée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`, detail: $localize`:@@employee-suspensions-tab.component.detail.Suspension_appro:Suspension approuvée.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Suspensions',
-        detail: err.error?.message ?? 'Approbation impossible.'
+        summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`,
+        detail: err.error?.message ?? $localize`:@@ui.tern.approbation.impossible.7d6318:Approbation impossible.`
       })
     });
   }
@@ -229,8 +237,8 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer la suspension du ${suspension.startDate} ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@employee-suspensions-tab.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@employee-suspensions-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(suspension.id)
     });
@@ -239,13 +247,13 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteSuspension(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Suspensions', detail: 'Suspension supprimée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`, detail: $localize`:@@employee-suspensions-tab.component.detail.Suspension_suppr:Suspension supprimée.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Suspensions',
-        detail: err.error?.message ?? 'Suppression impossible.'
+        summary: $localize`:@@employee-suspensions-tab.component.summary.Suspensions:Suspensions`,
+        detail: err.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
       })
     });
   }

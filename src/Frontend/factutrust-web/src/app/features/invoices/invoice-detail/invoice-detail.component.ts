@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -73,7 +75,7 @@ interface TimelineEvent {
 @Component({
   selector: 'app-invoice-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterModule,
@@ -101,12 +103,12 @@ interface TimelineEvent {
     
     <app-page-header 
       [title]="invoice()?.number || 'Chargement...'" 
-      [subtitle]="'Facture du ' + (invoice()?.issueDate | date:'dd/MM/yyyy')">
+      [subtitle]="loc_ui_tern_facture_du_17b440 + (invoice()?.issueDate | date:'dd/MM/yyyy')">
       <app-button 
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        [routerLink]="listBackRoute" i18n="@@invoices.invoice-detail.retour.e5befb1f">Retour</app-button>
+        [routerLink]="listBackRoute" i18n="@@invoices.invoice-detail.retour.e5befb1f"> Retour </app-button>
       @if (primaryAction(); as action) {
         <app-button
           [variant]="action.variant"
@@ -149,11 +151,11 @@ interface TimelineEvent {
                 <span class="doc-type-badge"
                       [class.doc-type-badge-avoir]="invoice()!.isCreditNote"
                       [class.doc-type-badge-facture]="!invoice()!.isCreditNote">
-                  {{ invoice()!.isCreditNote ? "Facture d'avoir" : 'Facture' }}
+                  {{ invoice()!.isCreditNote ? loc_ui_tern_facture_d_avoir_541e44 : loc_ui_tern_facture_3953b9 }}
                 </span>
                 <app-status-badge
                   [status]="getStatusBadgeStatus(invoice()!.status)"
-                  [label]="invoice()!.statusDisplay">
+                  [label]="invoice()!.statusDisplay | backendLabel">
                 </app-status-badge>
               </div>
               <div class="invoice-dates">
@@ -229,7 +231,7 @@ interface TimelineEvent {
                 <h5 i18n="@@invoices.invoice-detail.recapitulatif.tva.0918d3bc">Récapitulatif TVA</h5>
                 @for (vat of invoice()!.vatBreakdown; track vat.rate) {
                   <div class="vat-row">
-                    <span>{{ vat.rateDisplay }}</span>
+                    <span>{{ vat.rateDisplay | backendLabel }}</span>
                     <span class="mono">{{ vat.baseAmount | number:'1.3-3' }}</span>
                     <span class="mono">{{ vat.vatAmount | number:'1.3-3' }}</span>
                   </div>
@@ -238,16 +240,16 @@ interface TimelineEvent {
 
               <div class="totals-box" [class.totals-box-avoir]="invoice()!.isCreditNote">
                 <div class="total-row">
-                  <span>{{ invoice()!.isCreditNote ? 'Total HT à rembourser' : 'Total HT' }}</span>
+                  <span>{{ invoice()!.isCreditNote ? loc_ui_tern_total_ht_a_rembourser_a8f25c : loc_ui_tern_total_ht_2ca17a }}</span>
                   <span class="mono">{{ invoice()!.subTotal | number:'1.3-3' }} {{ invoice()!.currency }}</span>
                 </div>
                 <div class="total-row">
-                  <span>{{ invoice()!.isCreditNote ? 'Total TVA à rembourser' : 'Total TVA' }}</span>
+                  <span>{{ invoice()!.isCreditNote ? loc_ui_tern_total_tva_a_rembourser_a5ddaa : loc_ui_tern_total_tva_605c4b }}</span>
                   <span class="mono">{{ invoice()!.totalVat | number:'1.3-3' }} {{ invoice()!.currency }}</span>
                 </div>
                 @if ((invoice()!.fodecAmount ?? 0) > 0.0005 || (invoice()!.fodecAmount ?? 0) < -0.0005) {
                   <div class="total-row">
-                    <span>{{ invoice()!.isCreditNote ? 'FODEC à rembourser' : 'FODEC' }}</span>
+                    <span>{{ invoice()!.isCreditNote ? loc_ui_tern_fodec_a_rembourser_bca3c0 : loc_ui_tern_fodec_9a0290 }}</span>
                     <span class="mono">{{ invoice()!.fodecAmount | number:'1.3-3' }} {{ invoice()!.currency }}</span>
                   </div>
                 }
@@ -258,7 +260,7 @@ interface TimelineEvent {
                   </div>
                 }
                 <div class="total-row grand">
-                  <span>{{ invoice()!.isCreditNote ? 'Total TTC à rembourser' : 'Total TTC' }}</span>
+                  <span>{{ invoice()!.isCreditNote ? loc_ui_tern_total_ttc_a_rembourser_1ef7ef : loc_ui_tern_total_ttc_9e80ff }}</span>
                   <span class="mono">{{ invoice()!.totalAmount | number:'1.3-3' }} {{ invoice()!.currency }}</span>
                 </div>
               </div>
@@ -285,17 +287,17 @@ interface TimelineEvent {
         <!-- Sidebar -->
         <div class="sidebar">
           <!-- Status Card -->
-          <p-card header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="Statut" styleClass="status-card">
             <div class="status-content">
               <app-status-badge 
                 [status]="getStatusBadgeStatus(invoice()!.status)"
-                [label]="invoice()!.statusDisplay">
+                [label]="invoice()!.statusDisplay | backendLabel">
               </app-status-badge>
             </div>
           </p-card>
 
           <!-- Timeline Card -->
-          <p-card header="Historique" styleClass="timeline-card">
+          <p-card header="Historique" i18n-header="Historique" styleClass="timeline-card">
             <p-timeline [value]="timeline" styleClass="custom-timeline">
               <ng-template pTemplate="content" let-event>
                 <div class="timeline-event">
@@ -314,7 +316,7 @@ interface TimelineEvent {
           </p-card>
 
           <!-- Payment History Card -->
-          <p-card header="Historique des paiements" styleClass="payments-card">
+          <p-card header="Historique des paiements" i18n-header="Historique des paiements" styleClass="payments-card">
             @if (invoice()!.payments && invoice()!.payments!.length > 0) {
               <div class="payments-list">
                 @for (payment of invoice()!.payments; track payment.id) {
@@ -324,7 +326,7 @@ interface TimelineEvent {
                       <span class="payment-date">{{ payment.paymentDate | date:'dd/MM/yyyy' }}</span>
                     </div>
                     <div class="payment-meta">
-                      <span class="payment-method">{{ payment.methodDisplay }}</span>
+                      <span class="payment-method">{{ payment.methodDisplay | backendLabel }}</span>
                       @if (payment.reference) {
                         <span class="payment-ref">{{ payment.reference }}</span>
                       }
@@ -339,7 +341,7 @@ interface TimelineEvent {
                       <div class="payment-effet">
                         <span class="effet-badge" [class.en-portefeuille]="payment.effetStatus === 0" [class.encaisse]="payment.effetStatus === 1" [class.impaye]="payment.effetStatus === 2">
                           <i class="pi pi-file"></i>
-                          Effet {{ payment.effetStatusDisplay }}
+                          Effet {{ payment.effetStatusDisplay | backendLabel }}
                           @if (payment.effetDueDate) {
                             <span class="effet-due"> · échéance {{ payment.effetDueDate | date:'dd/MM/yyyy' }}</span>
                           }
@@ -386,7 +388,7 @@ interface TimelineEvent {
                   icon="pi-wallet"
                   iconPos="left"
                   (click)="openRecordPaymentDialog()"
-                  style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@invoices.invoice-detail.enregistrer.un.paiement.72dddba2">Enregistrer un paiement</app-button>
+                  style="width: 100%; margin-bottom: var(--spacing-2);" i18n="@@invoices.invoice-detail.enregistrer.un.paiement.72dddba2"> Enregistrer un paiement </app-button>
               }
           </p-card>
 
@@ -398,14 +400,14 @@ interface TimelineEvent {
             [totalAmount]="invoice()?.totalAmount ?? 0"
             [totalPaid]="invoice()?.totalPaid ?? 0"
             [remainingAmount]="invoice()?.remainingAmount ?? (invoice()?.totalAmount ?? 0)"
-            [currency]="invoice()?.currency ?? 'TND'"
+            [currency]="invoice()?.currency ?? loc_ui_tern_tnd_51da21"
             invoiceType="client"
             (paymentRecorded)="onPaymentRecorded()">
           </app-record-payment-dialog>
 
           <!-- Signature Info -->
           @if (invoice()!.signatureHash) {
-            <p-card header="Signature électronique" styleClass="signature-card">
+            <p-card header="Signature électronique" i18n-header="Signature électronique" styleClass="signature-card">
               <div class="signature-info">
                 <div class="info-row">
                   <i class="pi pi-verified"></i>
@@ -422,7 +424,7 @@ interface TimelineEvent {
       </div>
 
       <p-dialog
-        header="Valider la facture"
+        header="Valider la facture" i18n-header="Valider la facture"
         [(visible)]="showValidateDialog"
         [modal]="true"
         styleClass="ft-dialog-scrollable"
@@ -435,7 +437,7 @@ interface TimelineEvent {
         @if (!invoice()!.isCreditNote) {
           @if (validateWarehouseLabel()) {
             <p class="validate-warehouse-banner">
-              Déduction de stock depuis : <strong>{{ validateWarehouseLabel() }}</strong>
+              <ng-container i18n="@@invoices.invoice-detail.deduction.de.stock.depuis.49a643b4"> Déduction de stock depuis : </ng-container> <strong>{{ validateWarehouseLabel() }}</strong>
               @if (validateWarehouseIsDefault()) {
                 <span class="validate-default-badge" i18n="@@invoices.invoice-detail.par.defaut.feee7660">par défaut</span>
               }
@@ -552,7 +554,7 @@ interface TimelineEvent {
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
             <app-button variant="outline" icon="pi-times" (click)="showValidateDialog = false" i18n="@@invoices.invoice-detail.annuler.49ba3292">Annuler</app-button>
-            <app-button variant="primary" icon="pi-check" [disabled]="!isValidateFormValid()" (click)="submitValidate()" i18n="@@invoices.invoice-detail.valider.be4220f7">Valider</app-button>
+            <app-button variant="primary" icon="pi-check" [disabled]="!isValidateFormValid()" (click)="submitValidate()" i18n="@@invoices.invoice-detail.valider.be4220f7"> Valider </app-button>
           </div>
         </ng-template>
       </p-dialog>
@@ -1265,6 +1267,18 @@ interface TimelineEvent {
   `]
 })
 export class InvoiceDetailComponent implements OnInit {
+  readonly loc_ui_tern_facture_du_17b440 = $localize`:@@ui.tern.facture.du.17b440:Facture du `;
+  readonly loc_ui_tern_facture_d_avoir_541e44 = $localize`:@@ui.tern.facture.d.avoir.541e44:Facture d'avoir`;
+  readonly loc_ui_tern_facture_3953b9 = $localize`:@@ui.tern.facture.3953b9:Facture`;
+  readonly loc_ui_tern_total_ht_a_rembourser_a8f25c = $localize`:@@ui.tern.total.ht.a.rembourser.a8f25c:Total HT à rembourser`;
+  readonly loc_ui_tern_total_ht_2ca17a = $localize`:@@ui.tern.total.ht.2ca17a:Total HT`;
+  readonly loc_ui_tern_total_tva_a_rembourser_a5ddaa = $localize`:@@ui.tern.total.tva.a.rembourser.a5ddaa:Total TVA à rembourser`;
+  readonly loc_ui_tern_total_tva_605c4b = $localize`:@@ui.tern.total.tva.605c4b:Total TVA`;
+  readonly loc_ui_tern_fodec_a_rembourser_bca3c0 = $localize`:@@ui.tern.fodec.a.rembourser.bca3c0:FODEC à rembourser`;
+  readonly loc_ui_tern_fodec_9a0290 = $localize`:@@ui.tern.fodec.9a0290:FODEC`;
+  readonly loc_ui_tern_total_ttc_a_rembourser_1ef7ef = $localize`:@@ui.tern.total.ttc.a.rembourser.1ef7ef:Total TTC à rembourser`;
+  readonly loc_ui_tern_total_ttc_9e80ff = $localize`:@@ui.tern.total.ttc.9e80ff:Total TTC`;
+  readonly loc_ui_tern_tnd_51da21 = $localize`:@@ui.tern.tnd.51da21:TND`;
   private invoiceService = inject(InvoiceService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -1338,7 +1352,7 @@ export class InvoiceDetailComponent implements OnInit {
         base.push({ label: 'Factures impayées', route: '/invoices/unpaid' });
       }
     }
-    base.push({ label: inv?.number || (this.creditNotesOnlyFromRoute ? 'Avoir' : 'Facture') });
+    base.push({ label: inv?.number || (this.creditNotesOnlyFromRoute ? $localize`:@@ui.tern.avoir.8ee247:Avoir` : $localize`:@@ui.tern.facture.3953b9:Facture`) });
     return base;
   });
 
@@ -1397,19 +1411,19 @@ export class InvoiceDetailComponent implements OnInit {
         status: 'Validée',
         date: invoice.status !== 'Draft' ? invoice.createdAt : null,
         icon: 'pi pi-check',
-        color: invoice.status !== 'Draft' ? 'var(--color-primary-500)' : 'var(--color-neutral-300)'
+        color: invoice.status !== 'Draft' ? $localize`:@@ui.tern.var.color.primary.500.135495:var(--color-primary-500)` : $localize`:@@ui.tern.var.color.neutral.300.711144:var(--color-neutral-300)`
       },
       {
         status: 'Signée',
         date: invoice.signedAt,
         icon: 'pi pi-pencil',
-        color: invoice.signedAt ? 'var(--color-success-500)' : 'var(--color-neutral-300)'
+        color: invoice.signedAt ? $localize`:@@ui.tern.var.color.success.500.6e3aad:var(--color-success-500)` : $localize`:@@ui.tern.var.color.neutral.300.711144:var(--color-neutral-300)`
       },
       {
         status: 'Payée',
         date: invoice.paidAt,
         icon: 'pi pi-wallet',
-        color: invoice.paidAt ? 'var(--color-success-600)' : 'var(--color-neutral-300)'
+        color: invoice.paidAt ? $localize`:@@ui.tern.var.color.success.600.129c92:var(--color-success-600)` : $localize`:@@ui.tern.var.color.neutral.300.711144:var(--color-neutral-300)`
       }
     ];
   }
@@ -1422,7 +1436,7 @@ export class InvoiceDetailComponent implements OnInit {
         command: () => this.downloadPdf()
       },
       {
-        label: invoice.client.email ? 'Envoyer par email' : 'Envoyer par email (adresse manquante)',
+        label: invoice.client.email ? $localize`:@@ui.tern.envoyer.par.email.535086:Envoyer par email` : $localize`:@@ui.tern.envoyer.par.email.adresse.manquante.ffe6e3:Envoyer par email (adresse manquante)`,
         icon: 'pi pi-envelope',
         disabled: !invoice.client.email,
         command: () => this.sendByEmail()
@@ -1507,8 +1521,8 @@ export class InvoiceDetailComponent implements OnInit {
     if (inv) {
       this.toastService.add({
         severity: 'success',
-        summary: 'Succès',
-        detail: 'Paiement enregistré avec succès'
+        summary: $localize`:@@invoice-detail.component.summary.Succès:Succès`,
+        detail: $localize`:@@invoice-detail.component.detail.Paiement_enregis:Paiement enregistré avec succès`
       });
       this.loadInvoice(inv.id);
     }
@@ -1528,13 +1542,13 @@ export class InvoiceDetailComponent implements OnInit {
     if (!inv) return;
 
     this.confirmationService.confirm({
-      header: outcome === 1 ? 'Encaisser l\'effet' : 'Marquer l\'effet impayé',
+      header: outcome === 1 ? $localize`:@@ui.tern.encaisser.l.effet.e5814c:Encaisser l'effet` : $localize`:@@ui.tern.marquer.l.effet.impaye.0f7c87:Marquer l'effet impayé`,
       message: outcome === 1
-        ? 'Confirmer l\'encaissement de cet effet à échéance ? L\'écriture bancaire (532/413) sera générée.'
-        : 'Confirmer le retour impayé de cet effet ? La créance client sera réouverte (4111/413).',
+        ? $localize`:@@ui.tern.confirmer.l.encaissement.de.cet.effet.a.ec.609377:Confirmer l'encaissement de cet effet à échéance ? L'écriture bancaire (532/413) sera générée.`
+        : $localize`:@@ui.tern.confirmer.le.retour.impaye.de.cet.effet.la.0cdc24:Confirmer le retour impayé de cet effet ? La créance client sera réouverte (4111/413).`,
       icon: outcome === 1 ? 'pi pi-check-circle' : 'pi pi-exclamation-triangle',
-      acceptLabel: outcome === 1 ? 'Encaisser' : 'Marquer impayé',
-      rejectLabel: 'Annuler',
+      acceptLabel: outcome === 1 ? $localize`:@@ui.tern.encaisser.fec08f:Encaisser` : $localize`:@@ui.tern.marquer.impaye.6de559:Marquer impayé`,
+      rejectLabel: $localize`:@@invoice-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.settlingEffetId.set(paymentId);
         this.invoiceService.settleEffet(inv.id, paymentId, {
@@ -1546,17 +1560,17 @@ export class InvoiceDetailComponent implements OnInit {
             if (res.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Effet réglé',
-                detail: outcome === 1 ? 'Effet encaissé avec succès' : 'Effet marqué impayé'
+                summary: $localize`:@@invoice-detail.component.summary.Effet réglé:Effet réglé`,
+                detail: outcome === 1 ? $localize`:@@ui.tern.effet.encaisse.avec.succes.ce2647:Effet encaissé avec succès` : $localize`:@@ui.tern.effet.marque.impaye.6ea42d:Effet marqué impayé`
               });
               this.loadInvoice(inv.id);
             } else {
-              this.toastService.add({ severity: 'error', summary: 'Erreur', detail: res.message ?? 'Échec du règlement de l\'effet' });
+              this.toastService.add({ severity: 'error', summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`, detail: res.message ?? $localize`:@@ui.tern.echec.du.reglement.de.l.effet.f701ff:Échec du règlement de l'effet` });
             }
           },
           error: () => {
             this.settlingEffetId.set(null);
-            this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Échec du règlement de l\'effet' });
+            this.toastService.add({ severity: 'error', summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@invoice-detail.component.detail._chec_du_r_gleme:Échec du règlement de l'effet` });
           }
         });
       }
@@ -1662,14 +1676,14 @@ export class InvoiceDetailComponent implements OnInit {
           this.showValidateDialog = false;
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Facture validée avec succès'
+            summary: $localize`:@@invoice-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@invoice-detail.component.detail.Facture vali:Facture validée avec succès`
           });
           this.loadInvoice(invoice.id);
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
             detail: (response as any).message || 'Impossible de valider la facture'
           });
           this.validateSubmitError.set((response as any).message || 'Impossible de valider la facture');
@@ -1680,7 +1694,7 @@ export class InvoiceDetailComponent implements OnInit {
         this.validateSubmitError.set(message);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
           detail: message
         });
       }
@@ -1941,8 +1955,8 @@ export class InvoiceDetailComponent implements OnInit {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Facture signée électroniquement'
+            summary: $localize`:@@invoice-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@invoice-detail.component.detail.Facture_sign_e_:Facture signée électroniquement`
           });
           this.loadInvoice(invoice.id);
         }
@@ -1950,8 +1964,8 @@ export class InvoiceDetailComponent implements OnInit {
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de signer la facture'
+          summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@invoice-detail.component.detail.Impossible_de_si:Impossible de signer la facture`
         });
       }
     });
@@ -1962,8 +1976,8 @@ export class InvoiceDetailComponent implements OnInit {
     if (!invoice) {
       this.toastService.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Aucune facture disponible pour le téléchargement'
+        summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
+        detail: $localize`:@@invoice-detail.component.detail.Aucune_facture_d:Aucune facture disponible pour le téléchargement`
       });
       return;
     }
@@ -1974,8 +1988,8 @@ export class InvoiceDetailComponent implements OnInit {
         if (!blob || blob.size === 0) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Le fichier PDF est vide ou invalide'
+            summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
+            detail: $localize`:@@invoice-detail.component.detail.Le_fichier_PDF_e:Le fichier PDF est vide ou invalide`
           });
           return;
         }
@@ -1992,14 +2006,14 @@ export class InvoiceDetailComponent implements OnInit {
 
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'PDF téléchargé avec succès'
+            summary: $localize`:@@invoice-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@invoice-detail.component.detail.PDF téléchar:PDF téléchargé avec succès`
           });
         } catch (error) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Erreur lors de la création du lien de téléchargement'
+            summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
+            detail: $localize`:@@invoice-detail.component.detail.Erreur_lors_de_l:Erreur lors de la création du lien de téléchargement`
           });
         }
       },
@@ -2007,7 +2021,7 @@ export class InvoiceDetailComponent implements OnInit {
         const errorMessage = error.message || 'Impossible de télécharger le PDF';
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
           detail: errorMessage
         });
       }
@@ -2022,8 +2036,8 @@ export class InvoiceDetailComponent implements OnInit {
     if (!invoice.client.email) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Email manquant',
-        detail: "Le client n'a pas d'adresse email."
+        summary: $localize`:@@invoice-detail.component.summary.Email_manquant:Email manquant`,
+        detail: $localize`:@@invoice-detail.component.detail.Leclientnapasdadre:Le client n'a pas d'adresse email.`
       });
       return;
     }
@@ -2032,8 +2046,8 @@ export class InvoiceDetailComponent implements OnInit {
       message: `Envoyer la facture ${invoice.number} par email à ${invoice.client.email} ?`,
       header: 'Envoi par email',
       icon: 'pi pi-envelope',
-      acceptLabel: 'Envoyer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@invoice-detail.component.acceptLabel.Envoyer:Envoyer`,
+      rejectLabel: $localize`:@@invoice-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.sending.set(true);
         this.invoiceService.sendByEmail(invoice.id).subscribe({
@@ -2042,7 +2056,7 @@ export class InvoiceDetailComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Envoyé',
+                summary: $localize`:@@invoice-detail.component.summary.Envoy_:Envoyé`,
                 detail: `Email envoyé à ${invoice.client.email}`
               });
               this.loadInvoice(invoice.id);
@@ -2052,7 +2066,7 @@ export class InvoiceDetailComponent implements OnInit {
             this.sending.set(false);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
               detail: err?.error?.errors?.[0] || 'Erreur lors de l\'envoi'
             });
           }
@@ -2064,8 +2078,8 @@ export class InvoiceDetailComponent implements OnInit {
   duplicateInvoice(): void {
     this.toastService.add({
       severity: 'info',
-      summary: 'Information',
-      detail: 'Fonctionnalité en cours de développement'
+      summary: $localize`:@@invoice-detail.component.summary.Information:Information`,
+      detail: $localize`:@@invoice-detail.component.detail.Fonctionnalit_e:Fonctionnalité en cours de développement`
     });
   }
 }

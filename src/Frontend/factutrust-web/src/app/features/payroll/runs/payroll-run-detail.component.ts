@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -26,7 +28,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
 @Component({
   selector: 'app-payroll-run-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     TableModule,
@@ -49,7 +51,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
   ],
   template: `
     @if (run()) {
-      <app-page-header [title]="run()!.label" [subtitle]="run()!.statusDisplay">
+      <app-page-header [title]="run()!.label" [subtitle]="run()!.statusDisplay | backendLabel">
         @if (canRun() && (run()!.status === 'Draft' || run()!.status === 'Calculated')) {
           <app-button variant="primary" icon="pi-calculator" iconPos="left" [disabled]="actionInProgress()" (click)="calculate()" i18n="@@payroll.runs.calculer.29705857">Calculer</app-button>
         }
@@ -80,8 +82,8 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
           <div class="treasury-banner" role="region" aria-label="État de trésorerie de la paie" i18n-aria-label="État de trésorerie de la paie">
             <div class="treasury-banner__item">
               <span class="treasury-banner__label" i18n="@@payroll.runs.tresorerie.e0e75da7">Trésorerie</span>
-              <strong [class]="'treasury-banner__value ' + treasuryStatusClass()">
-                {{ run()!.paymentStatusDisplay ?? 'Non payé' }}
+              <strong [class]="loc_ui_tern_treasury_banner_value_74a94b + treasuryStatusClass()">
+                {{ (run()!.paymentStatusDisplay | backendLabel) ?? loc_ui_tern_non_paye_00f2ac }}
               </strong>
             </div>
             <div class="treasury-banner__item">
@@ -170,7 +172,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
       }
     }
 
-    <p-dialog header="Détail du bulletin" [(visible)]="payslipDialogVisible" [modal]="true" [style]="{ width: '640px' }">
+    <p-dialog header="Détail du bulletin" i18n-header="Détail du bulletin" [(visible)]="payslipDialogVisible" [modal]="true" [style]="{ width: '640px' }">
       @if (selectedPayslip()) {
         <div class="mb-3">
           <strong>{{ selectedPayslip()!.employeeName }}</strong>
@@ -286,6 +288,8 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
   `]
 })
 export class PayrollRunDetailComponent implements OnInit {
+  readonly loc_ui_tern_treasury_banner_value_74a94b = "treasury-banner__value ";
+  readonly loc_ui_tern_non_paye_00f2ac = $localize`:@@ui.tern.non.paye.00f2ac:Non payé`;
   private readonly route = inject(ActivatedRoute);
   private readonly payroll = inject(PayrollService);
   private readonly toast = inject(ToastService);
@@ -367,7 +371,7 @@ export class PayrollRunDetailComponent implements OnInit {
   reload(): void {
     this.payroll.getRun(this.runId).subscribe({
       next: res => this.run.set(res.data ?? null),
-      error: () => this.toast.add({ severity: 'error', summary: 'Paie', detail: 'Cycle introuvable.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle_introuvabl:Cycle introuvable.` })
     });
   }
 
@@ -386,8 +390,8 @@ export class PayrollRunDetailComponent implements OnInit {
     const reason = await this.confirmation.prompt({
       header: 'Annuler tous les paiements',
       message: 'Saisissez le motif d\'annulation de tous les paiements du cycle :',
-      acceptLabel: 'Annuler les paiements',
-      rejectLabel: 'Conserver les paiements',
+      acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Annuler_les_paie:Annuler les paiements`,
+      rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Conserver_les_pa:Conserver les paiements`,
       acceptButtonStyleClass: 'btn-danger',
       required: true
     });
@@ -396,15 +400,15 @@ export class PayrollRunDetailComponent implements OnInit {
     this.payroll.cancelAllRunPayments(this.runId, reason).subscribe({
       next: () => {
         this.actionInProgress.set(false);
-        this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Tous les paiements ont été annulés.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Tous_les_paiemen:Tous les paiements ont été annulés.` });
         this.reload();
       },
       error: err => {
         this.actionInProgress.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Paie',
-          detail: err?.error?.message ?? 'Annulation impossible.'
+          summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.annulation.impossible.814b7d:Annulation impossible.`
         });
       }
     });
@@ -433,12 +437,12 @@ export class PayrollRunDetailComponent implements OnInit {
         if (warnings.length > 0) {
           this.toast.add({
             severity: 'warn',
-            summary: 'Paie calculée',
+            summary: $localize`:@@payroll-run-detail.component.summary.Paie calculé:Paie calculée`,
             detail: warnings.map(w => w.message).join(' | '),
             life: 12000
           });
         } else {
-          this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle calculé.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle calcul:Cycle calculé.` });
         }
         this.reload();
       },
@@ -446,8 +450,8 @@ export class PayrollRunDetailComponent implements OnInit {
         this.actionInProgress.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Paie',
-          detail: err?.error?.message ?? 'Calcul impossible.'
+          summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.calcul.impossible.4c6059:Calcul impossible.`
         });
       }
     });
@@ -458,8 +462,8 @@ export class PayrollRunDetailComponent implements OnInit {
     this.confirmation.confirm({
       header: 'Valider le cycle',
       message: 'Confirmer la validation du cycle de paie ? Les écritures comptables seront générées et les avances/échéances soldées.',
-      acceptLabel: 'Valider',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Valider:Valider`,
+      rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-primary',
       accept: () => this.executeValidate()
     });
@@ -471,7 +475,7 @@ export class PayrollRunDetailComponent implements OnInit {
     this.payroll.validateRun(this.runId).subscribe({
       next: () => {
         this.actionInProgress.set(false);
-        this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle validé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle validé:Cycle validé.` });
         if (this.firmInternal() && year != null) {
           this.firmGovernance.syncCollaboratorCosts(year, false).subscribe({
             next: res => {
@@ -479,7 +483,7 @@ export class PayrollRunDetailComponent implements OnInit {
               if (imported > 0) {
                 this.toast.add({
                   severity: 'info',
-                  summary: 'Coûts collaborateurs',
+                  summary: $localize`:@@payroll-run-detail.component.summary.Coûts collab:Coûts collaborateurs`,
                   detail: `${imported} coût(s) mis à jour depuis la paie validée.`
                 });
               }
@@ -490,7 +494,7 @@ export class PayrollRunDetailComponent implements OnInit {
       },
       error: err => {
         this.actionInProgress.set(false);
-        this.toast.add({ severity: 'error', summary: 'Paie', detail: err?.error?.message ?? 'Validation impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: err?.error?.message ?? $localize`:@@ui.tern.validation.impossible.73f194:Validation impossible.` });
       }
     });
   }
@@ -500,8 +504,8 @@ export class PayrollRunDetailComponent implements OnInit {
     this.confirmation.confirm({
       header: 'Rouvrir le cycle',
       message: 'Confirmer la réouverture du cycle ? Les écritures seront extournées et les avances/échéances dé-soldées.',
-      acceptLabel: 'Rouvrir',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Rouvrir:Rouvrir`,
+      rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-primary',
       accept: () => this.executeReopen()
     });
@@ -510,8 +514,8 @@ export class PayrollRunDetailComponent implements OnInit {
   private executeReopen(): void {
     this.actionInProgress.set(true);
     this.payroll.reopenRun(this.runId).subscribe({
-      next: () => { this.actionInProgress.set(false); this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle rouvert.' }); this.reload(); },
-      error: err => { this.actionInProgress.set(false); this.toast.add({ severity: 'error', summary: 'Paie', detail: err?.error?.message ?? 'Réouverture impossible.' }); }
+      next: () => { this.actionInProgress.set(false); this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle rouver:Cycle rouvert.` }); this.reload(); },
+      error: err => { this.actionInProgress.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: err?.error?.message ?? $localize`:@@ui.tern.reouverture.impossible.91ee08:Réouverture impossible.` }); }
     });
   }
 
@@ -520,8 +524,8 @@ export class PayrollRunDetailComponent implements OnInit {
     this.confirmation.confirm({
       header: 'Clôturer le cycle',
       message: 'Confirmer la clôture définitive du cycle ? Cette opération est IRRÉVERSIBLE : la période sera verrouillée et ne pourra plus être rouverte.',
-      acceptLabel: 'Clôturer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Clôturer:Clôturer`,
+      rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.executeClose()
     });
@@ -530,8 +534,8 @@ export class PayrollRunDetailComponent implements OnInit {
   private executeClose(): void {
     this.actionInProgress.set(true);
     this.payroll.closeRun(this.runId).subscribe({
-      next: () => { this.actionInProgress.set(false); this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Cycle clôturé.' }); this.reload(); },
-      error: err => { this.actionInProgress.set(false); this.toast.add({ severity: 'error', summary: 'Paie', detail: err?.error?.message ?? 'Clôture impossible.' }); }
+      next: () => { this.actionInProgress.set(false); this.toast.add({ severity: 'success', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: $localize`:@@payroll-run-detail.component.detail.Cycle clôtur:Cycle clôturé.` }); this.reload(); },
+      error: err => { this.actionInProgress.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Paie:Paie`, detail: err?.error?.message ?? $localize`:@@ui.tern.cloture.impossible.f65658:Clôture impossible.` }); }
     });
   }
 
@@ -541,7 +545,7 @@ export class PayrollRunDetailComponent implements OnInit {
         this.selectedPayslip.set(res.data ?? null);
         this.payslipDialogVisible = true;
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'Bulletin', detail: 'Impossible de charger le détail.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.Bulletin:Bulletin`, detail: $localize`:@@payroll-run-detail.component.detail.Impossible d:Impossible de charger le détail.` })
     });
   }
 
@@ -555,7 +559,7 @@ export class PayrollRunDetailComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(url);
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'PDF', detail: 'Export PDF impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-run-detail.component.summary.PDF:PDF`, detail: $localize`:@@payroll-run-detail.component.detail.Export PDF i:Export PDF impossible.` })
     });
   }
 }

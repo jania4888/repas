@@ -79,7 +79,7 @@
         <div class="terms-group">
           <p-checkbox inputId="wiz-acceptTerms" formControlName="acceptTerms" [binary]="true"></p-checkbox>
           <label for="wiz-acceptTerms">
-            En continuant, j'accepte les <a routerLink="/legal/terms" target="_blank" class="link-primary" i18n="@@auth.register-wizard.conditions.d.utilisation.17c85066">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary" i18n="@@auth.register-wizard.politique.de.confidentialite.a8ebb0b8">Politique de Confidentialité</a>.
+            <ng-container i18n="@@auth.register-wizard.en.continuant.j.accepte.les.a41cc7a3"> En continuant, j'accepte les </ng-container> <a routerLink="/legal/terms" target="_blank" class="link-primary" i18n="@@auth.register-wizard.conditions.d.utilisation.17c85066">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary" i18n="@@auth.register-wizard.politique.de.confidentialite.a8ebb0b8">Politique de Confidentialité</a>.
           </label>
         </div>
         @if (isInvalid('acceptTerms')) {

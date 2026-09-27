@@ -81,7 +81,7 @@
           formControlName="rememberMe"
           [binary]="true"
           inputId="rememberMe"
-          label="Se souvenir de moi"
+          label="Se souvenir de moi" i18n-label="Se souvenir de moi"
           [attr.title]="rememberMeHint"
           [attr.aria-describedby]="'rememberMe-hint'"
         >
@@ -93,7 +93,7 @@
 
     <p-button
       type="submit"
-      label="Se connecter"
+      label="Se connecter" i18n-label="Se connecter"
       icon="pi pi-arrow-right"
       iconPos="right"
       styleClass="w-full login-submit-btn"
@@ -124,6 +124,6 @@
       }
     </div>
   } @else if (!registrationClosedNotice()) {
-    <p class="login-footer__intro login-footer__intro--block" i18n="@@auth.login.l.ouverture.de.compte.est.reservee.a.l.equipe.in.c35eaf05">L’ouverture de compte est réservée à l’équipe InstaFact. Contactez le support pour accéder à la plateforme.</p>
+    <p class="login-footer__intro login-footer__intro--block" i18n="@@auth.login.l.ouverture.de.compte.est.reservee.a.l.equipe.in.c35eaf05"> L’ouverture de compte est réservée à l’équipe InstaFact. Contactez le support pour accéder à la plateforme. </p>
   }
 </app-auth-shell>

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -62,8 +63,8 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
             <td>{{ line.employeeName }}</td>
             <td>{{ line.label }}</td>
             <td class="text-right">{{ line.amount | payrollAmount }}</td>
-            <td class="text-center">{{ line.taxable ? 'Oui' : 'Non' }}</td>
-            <td class="text-center">{{ line.subjectToCnss ? 'Oui' : 'Non' }}</td>
+            <td class="text-center">{{ line.taxable ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
+            <td class="text-center">{{ line.subjectToCnss ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
             @if (!readOnly) {
               <td class="actions">
                 <button type="button" class="p-button p-button-text p-button-sm" (click)="editLine(line)" i18n="@@payroll.runs.modifier.f260e757">Modifier</button>
@@ -79,7 +80,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
       </div>
     </app-payroll-section>
 
-    <p-dialog [header]="editingId ? 'Modifier la prime' : 'Nouvelle prime variable'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '520px' }">
+    <p-dialog [header]="editingId ? loc_ui_tern_modifier_la_prime_9811c8 : loc_ui_tern_nouvelle_prime_variable_bff633" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '520px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.runs.salarie.27f97915">Salarié</label>
         <p-select [options]="employees()" optionLabel="fullName" optionValue="id" [(ngModel)]="formEmployeeId" appendTo="body" styleClass="w-full" [disabled]="!!editingId" />
@@ -118,6 +119,10 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
   `]
 })
 export class PayrollVariableAllowanceGridComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_modifier_la_prime_9811c8 = $localize`:@@ui.tern.modifier.la.prime.9811c8:Modifier la prime`;
+  readonly loc_ui_tern_nouvelle_prime_variable_bff633 = $localize`:@@ui.tern.nouvelle.prime.variable.bff633:Nouvelle prime variable`;
   @Input({ required: true }) year!: number;
   @Input({ required: true }) month!: number;
   @Input() readOnly = false;
@@ -146,7 +151,7 @@ export class PayrollVariableAllowanceGridComponent implements OnInit {
   reload(): void {
     this.payroll.listVariableAllowances(this.year, this.month).subscribe({
       next: res => this.lines.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Primes variables', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-variable-allowance-grid.component.summary.Primes varia:Primes variables`, detail: $localize`:@@payroll-variable-allowance-grid.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -200,16 +205,16 @@ export class PayrollVariableAllowanceGridComponent implements OnInit {
       next: () => {
         this.toast.add({
           severity: 'success',
-          summary: 'Primes variables',
-          detail: 'Enregistré. Recalculez le cycle pour mettre à jour les bulletins.'
+          summary: $localize`:@@payroll-variable-allowance-grid.component.summary.Primes varia:Primes variables`,
+          detail: $localize`:@@payroll-variable-allowance-grid.component.detail.Enregistr_Reca:Enregistré. Recalculez le cycle pour mettre à jour les bulletins.`
         });
         this.dialogVisible = false;
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Primes variables',
-        detail: err?.error?.message ?? 'Enregistrement impossible.'
+        summary: $localize`:@@payroll-variable-allowance-grid.component.summary.Primes varia:Primes variables`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
       })
     });
   }
@@ -219,8 +224,8 @@ export class PayrollVariableAllowanceGridComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer la prime « ${line.label} » pour ${line.employeeName} ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@payroll-variable-allowance-grid.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@payroll-variable-allowance-grid.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(line.id)
     });
@@ -229,13 +234,13 @@ export class PayrollVariableAllowanceGridComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteVariableAllowance(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Primes variables', detail: 'Supprimé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-variable-allowance-grid.component.summary.Primes varia:Primes variables`, detail: $localize`:@@payroll-variable-allowance-grid.component.detail.Supprimé.:Supprimé.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Primes variables',
-        detail: err?.error?.message ?? 'Suppression impossible.'
+        summary: $localize`:@@payroll-variable-allowance-grid.component.summary.Primes varia:Primes variables`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
       })
     });
   }

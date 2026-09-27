@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -60,8 +61,8 @@ function parseIsoDate(value?: string): Date | null {
     <app-breadcrumb [items]="breadcrumbItems()" />
 
     <app-page-header
-      [title]="isEditMode() ? 'Modifier le salarié' : 'Nouveau salarié'"
-      [subtitle]="isEditMode() ? 'Mettez à jour le dossier salarié.' : 'Créez un dossier salarié et ses informations de base.'">
+      [title]="isEditMode() ? loc_ui_tern_modifier_le_salarie_ae2e4e : loc_ui_tern_nouveau_salarie_c5cbf8"
+      [subtitle]="isEditMode() ? loc_ui_tern_mettez_a_jour_le_dossier_salarie_37a607 : loc_ui_tern_creez_un_dossier_salarie_et_ses_informatio_2bab8b">
       <app-button variant="outline" icon="pi-times" iconPos="left" [routerLink]="routeBase() + '/employees'" i18n="@@payroll.employees.annuler.49ba3292">Annuler</app-button>
     </app-page-header>
 
@@ -72,7 +73,7 @@ function parseIsoDate(value?: string): Date | null {
         <app-form-section title="Identité" i18n-title="Identité" icon="pi-id-card" [number]="1">
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="employeeNumber">Matricule <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
+              <label for="employeeNumber"><ng-container i18n="@@payroll.employees.matricule.8f74c132">Matricule </ng-container> <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
               <input pInputText id="employeeNumber" formControlName="employeeNumber" class="w-full" [class.ng-invalid]="isInvalid('employeeNumber')" />
               @if (isInvalid('employeeNumber')) {
                 <div class="field-error">{{ fieldError('employeeNumber') }}</div>
@@ -107,14 +108,14 @@ function parseIsoDate(value?: string): Date | null {
           </div>
           <div class="payroll-form-row">
             <div class="payroll-form-group">
-              <label for="firstName">Prénom <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
+              <label for="firstName"><ng-container i18n="@@payroll.employees.prenom.e4387ade">Prénom </ng-container> <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
               <input pInputText id="firstName" formControlName="firstName" class="w-full" [class.ng-invalid]="isInvalid('firstName')" />
               @if (isInvalid('firstName')) {
                 <div class="field-error">{{ fieldError('firstName') }}</div>
               }
             </div>
             <div class="payroll-form-group">
-              <label for="lastName">Nom <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
+              <label for="lastName"><ng-container i18n="@@payroll.employees.nom.7ff20370">Nom </ng-container> <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
               <input pInputText id="lastName" formControlName="lastName" class="w-full" [class.ng-invalid]="isInvalid('lastName')" />
               @if (isInvalid('lastName')) {
                 <div class="field-error">{{ fieldError('lastName') }}</div>
@@ -127,7 +128,7 @@ function parseIsoDate(value?: string): Date | null {
               <p-datepicker id="dateOfBirth" formControlName="dateOfBirth" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full" />
             </div>
             <div class="payroll-form-group">
-              <label for="hireDate">Date d'embauche <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
+              <label for="hireDate"><ng-container i18n="@@payroll.employees.date.d.embauche.a42fd436">Date d'embauche </ng-container> <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
               <p-datepicker id="hireDate" formControlName="hireDate" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full" />
               @if (isInvalid('hireDate')) {
                 <div class="field-error">{{ fieldError('hireDate') }}</div>
@@ -179,7 +180,7 @@ function parseIsoDate(value?: string): Date | null {
                 icon="pi-plus"
                 iconPos="left"
                 [disabled]="dependentParentClaims.length >= 2"
-                (click)="addParentClaim()" i18n>Ajouter un parent</app-button>
+                (click)="addParentClaim()" i18n> Ajouter un parent </app-button>
             </div>
             @if (legacyIncomplete()) {
               <p-tag value="Parents à compléter — saisissez les CIN pour activer la déduction" severity="warn" />
@@ -197,7 +198,7 @@ function parseIsoDate(value?: string): Date | null {
                     styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label [for]="'parentCin' + i">CIN parent <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
+                  <label [for]="'parentCin' + i"><ng-container i18n="@@payroll.employees.cin.parent.cb5cda16">CIN parent </ng-container> <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
                   <input
                     pInputText
                     [id]="'parentCin' + i"
@@ -217,7 +218,7 @@ function parseIsoDate(value?: string): Date | null {
                   <input pInputText [id]="'parentLastName' + i" formControlName="lastName" class="w-full" />
                 </div>
                 <div class="parent-claim-actions">
-                  <app-button type="button" variant="danger" icon="pi-trash" iconPos="left" (click)="removeParentClaim(i)" i18n="@@payroll.employees.retirer.54ec24a1">Retirer</app-button>
+                  <app-button type="button" variant="danger" icon="pi-trash" iconPos="left" (click)="removeParentClaim(i)" i18n="@@payroll.employees.retirer.54ec24a1"> Retirer </app-button>
                 </div>
               </div>
             }
@@ -282,7 +283,7 @@ function parseIsoDate(value?: string): Date | null {
 
         <div class="form-actions">
           <app-button type="submit" variant="primary" icon="pi-check" iconPos="left" [disabled]="form.invalid || saving()">
-            {{ isEditMode() ? 'Enregistrer' : 'Créer le salarié' }}
+            {{ isEditMode() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_le_salarie_20b7cb }}
           </app-button>
         </div>
       </form>
@@ -300,6 +301,12 @@ function parseIsoDate(value?: string): Date | null {
   `]
 })
 export class EmployeeFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_salarie_ae2e4e = $localize`:@@ui.tern.modifier.le.salarie.ae2e4e:Modifier le salarié`;
+  readonly loc_ui_tern_nouveau_salarie_c5cbf8 = $localize`:@@ui.tern.nouveau.salarie.c5cbf8:Nouveau salarié`;
+  readonly loc_ui_tern_mettez_a_jour_le_dossier_salarie_37a607 = $localize`:@@ui.tern.mettez.a.jour.le.dossier.salarie.37a607:Mettez à jour le dossier salarié.`;
+  readonly loc_ui_tern_creez_un_dossier_salarie_et_ses_informatio_2bab8b = $localize`:@@ui.tern.creez.un.dossier.salarie.et.ses.informatio.2bab8b:Créez un dossier salarié et ses informations de base.`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_le_salarie_20b7cb = $localize`:@@ui.tern.creer.le.salarie.20b7cb:Créer le salarié`;
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -356,7 +363,7 @@ export class EmployeeFormComponent implements OnInit {
 
   breadcrumbItems = computed((): BreadcrumbItem[] => [
     { label: 'Salariés', route: `${this.routeBase()}/employees` },
-    { label: this.isEditMode() ? 'Modifier' : 'Nouveau' }
+    { label: this.isEditMode() ? $localize`:@@ui.tern.modifier.f260e7:Modifier` : $localize`:@@ui.tern.nouveau.b9676c:Nouveau` }
   ]);
 
   ngOnInit(): void {
@@ -407,7 +414,7 @@ export class EmployeeFormComponent implements OnInit {
   private createParentClaimGroup(claim?: DependentParentClaim): FormGroup {
     return this.fb.group({
       parentCin: [claim?.parentCin ?? '', [Validators.required, tunisianPayrollValidators.cin]],
-      kinship: [claim?.kinship ?? 'Father', Validators.required],
+      kinship: [claim?.kinship ?? $localize`:@@ui.tern.father.922561:Father`, Validators.required],
       firstName: [claim?.firstName ?? ''],
       lastName: [claim?.lastName ?? '']
     });
@@ -421,7 +428,7 @@ export class EmployeeFormComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.toast.add({ severity: 'error', summary: 'Salarié', detail: 'Salarié introuvable.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@employee-form.component.summary.Salarié:Salarié`, detail: $localize`:@@employee-form.component.detail.Salari_introuva:Salarié introuvable.` });
         this.router.navigate([this.routeBase() + '/employees']);
         this.loading.set(false);
       }
@@ -429,7 +436,7 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   private populateForm(e: EmployeeDetail): void {
-    this.parentClaimsStatus.set(e.parentClaimsStatus ?? 'None');
+    this.parentClaimsStatus.set(e.parentClaimsStatus ?? $localize`:@@ui.tern.none.6eef66:None`);
     this.legacyDependentParents.set(e.dependentParents ?? 0);
     this.dependentParentClaims.clear();
     for (const claim of e.dependentParentClaims ?? []) {
@@ -510,15 +517,15 @@ export class EmployeeFormComponent implements OnInit {
       };
       this.employees.update(this.employeeId()!, body).subscribe({
         next: () => {
-          this.toast.add({ severity: 'success', summary: 'Salarié', detail: 'Dossier mis à jour.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@employee-form.component.summary.Salarié:Salarié`, detail: $localize`:@@employee-form.component.detail.Dossier mis :Dossier mis à jour.` });
           this.router.navigate([this.routeBase() + '/employees', this.employeeId()]);
           this.saving.set(false);
         },
         error: err => {
           this.toast.add({
             severity: 'error',
-            summary: 'Salarié',
-            detail: err.error?.message ?? err.error?.errors?.[0] ?? 'Enregistrement impossible.'
+            summary: $localize`:@@employee-form.component.summary.Salarié:Salarié`,
+            detail: err.error?.message ?? err.error?.errors?.[0] ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
           });
           this.saving.set(false);
         }
@@ -553,7 +560,7 @@ export class EmployeeFormComponent implements OnInit {
       this.employees.create(body).subscribe({
         next: res => {
           if (res.success && res.data) {
-            this.toast.add({ severity: 'success', summary: 'Salarié', detail: 'Salarié créé.' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@employee-form.component.summary.Salarié:Salarié`, detail: $localize`:@@employee-form.component.detail.Salarié créé:Salarié créé.` });
             this.router.navigate([this.routeBase() + '/employees', res.data]);
           }
           this.saving.set(false);
@@ -561,8 +568,8 @@ export class EmployeeFormComponent implements OnInit {
         error: err => {
           this.toast.add({
             severity: 'error',
-            summary: 'Salarié',
-            detail: err.error?.message ?? err.error?.errors?.[0] ?? 'Création impossible.'
+            summary: $localize`:@@employee-form.component.summary.Salarié:Salarié`,
+            detail: err.error?.message ?? err.error?.errors?.[0] ?? $localize`:@@ui.tern.creation.impossible.5661a5:Création impossible.`
           });
           this.saving.set(false);
         }

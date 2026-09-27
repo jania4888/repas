@@ -72,7 +72,7 @@ interface FilterChip {
                   <img
                     class="ppt-theme-thumb"
                     [src]="src"
-                    [alt]="'Aperçu du thème ' + tpl.name"
+                    [alt]="loc_ui_tern_apercu_du_theme_2b011a + tpl.name"
                     loading="lazy"
                     decoding="async"
                     (error)="onThumbnailError(tpl.key)" />
@@ -87,7 +87,7 @@ interface FilterChip {
                     [style.--body-font]="tpl.bodyFontFamily">
                     <span class="ppt-theme-preview-title" i18n="@@ai-assistant.components.titre.eb97899a">Titre</span>
                     <span class="ppt-theme-preview-body">
-                      Corps et <span class="ppt-theme-preview-link" i18n="@@ai-assistant.components.lien.80bf0c8d">lien</span>
+                      <ng-container i18n="@@ai-assistant.components.corps.et.8d315a87"> Corps et </ng-container> <span class="ppt-theme-preview-link" i18n="@@ai-assistant.components.lien.80bf0c8d">lien</span>
                     </span>
                   </div>
                 }
@@ -109,6 +109,7 @@ interface FilterChip {
   styleUrls: ['./powerpoint-theme-picker.component.scss']
 })
 export class PowerPointThemePickerComponent implements OnChanges {
+  readonly loc_ui_tern_apercu_du_theme_2b011a = $localize`:@@ui.tern.apercu.du.theme.2b011a:Aperçu du thème `;
   @Input({ required: true }) templates: PowerPointTemplateInfo[] = [];
   @Input() selected: PowerPointTemplate = PowerPointTemplate.Standard;
   @Output() selectedChange = new EventEmitter<PowerPointTemplate>();

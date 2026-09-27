@@ -61,9 +61,9 @@ export function parseListValue(raw: string): string[] {
             @case ('none') {}
             @case ('range') {
               <input pInputText class="ffb__value ffb__value--half" [type]="row.inputType" [ngModel]="row.range[0]"
-                (ngModelChange)="setRange(i, 0, $event)" [disabled]="disabled()" [attr.aria-label]="labels.filters.value + ' (min)'" />
+                (ngModelChange)="setRange(i, 0, $event)" [disabled]="disabled()" [attr.aria-label]="labels.filters.value + loc_ui_tern_min_91dbdc" />
               <input pInputText class="ffb__value ffb__value--half" [type]="row.inputType" [ngModel]="row.range[1]"
-                (ngModelChange)="setRange(i, 1, $event)" [disabled]="disabled()" [attr.aria-label]="labels.filters.value + ' (max)'" />
+                (ngModelChange)="setRange(i, 1, $event)" [disabled]="disabled()" [attr.aria-label]="labels.filters.value + loc_ui_tern_max_bad0c0" />
             }
             @case ('list') {
               <input pInputText class="ffb__value" [ngModel]="row.text" (ngModelChange)="setList(i, $event)" [disabled]="disabled()"
@@ -110,6 +110,8 @@ export function parseListValue(raw: string): string[] {
   `]
 })
 export class StudioFilterBuilderComponent {
+  readonly loc_ui_tern_min_91dbdc = $localize`:@@ui.tern.min.91dbdc: (min)`;
+  readonly loc_ui_tern_max_bad0c0 = $localize`:@@ui.tern.max.bad0c0: (max)`;
   /** Champs actifs de l'entité (hors clés système : un filtre porte toujours sur un champ). */
   readonly fields = input.required<CustomField[]>();
   readonly filters = model<RecordViewFilter[]>([]);

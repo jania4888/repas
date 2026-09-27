@@ -38,7 +38,7 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
         @for (message of messages(); track message.id) {
           <article class="bubble" [class.mine]="message.authorSide === 'Company'" [class.theirs]="message.authorSide === 'Platform'">
             <header>
-              <strong>{{ message.authorSide === 'Platform' ? 'Assistance' : message.authorDisplayName }}</strong>
+              <strong>{{ message.authorSide === 'Platform' ? loc_ui_tern_assistance_be6b37 : message.authorDisplayName }}</strong>
               <span class="chip">{{ label(message.category) }}</span>
               <time>{{ message.sentAt | date: 'dd/MM/yyyy HH:mm' }}</time>
             </header>
@@ -58,7 +58,7 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
 
       <form class="composer" (ngSubmit)="send()">
         <label>
-          Type
+          <ng-container i18n="@@assistance.assistance-page.type.3deb7456"> Type </ng-container>
           <select name="category" [(ngModel)]="category" required>
             <option value="Question" i18n="@@assistance.assistance-page.question.002ff598">Question</option>
             <option value="Proposal" i18n="@@assistance.assistance-page.proposition.3e2cf2d2">Proposition</option>
@@ -66,11 +66,11 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
           </select>
         </label>
         <label class="grow">
-          Message
+          <ng-container i18n="@@assistance.assistance-page.message.68f4145f"> Message </ng-container>
           <textarea name="body" rows="3" maxlength="4000" [(ngModel)]="body" placeholder="Votre message" i18n-placeholder="Votre message"></textarea>
         </label>
         <label>
-          Fichiers
+          <ng-container i18n="@@assistance.assistance-page.fichiers.23a9d9fc"> Fichiers </ng-container>
           <input type="file" multiple (change)="onFiles($event)" />
         </label>
         @if (files.length) {
@@ -98,6 +98,7 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
   `]
 })
 export class AssistancePageComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_assistance_be6b37 = $localize`:@@ui.tern.assistance.be6b37:Assistance`;
   private readonly support = inject(CompanySupportService);
   private readonly badge = inject(CompanySupportBadgeService);
 

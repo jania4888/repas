@@ -146,7 +146,7 @@ export class LoanScheduleComponent implements OnInit {
   }
 
   methodLabel(value: number): string {
-    return value === 1 ? 'Amortissement constant' : 'Annuité constante';
+    return value === 1 ? $localize`:@@ui.tern.amortissement.constant.ccbefc:Amortissement constant` : $localize`:@@ui.tern.annuite.constante.c65591:Annuité constante`;
   }
 
   ngOnInit(): void {
@@ -165,7 +165,7 @@ export class LoanScheduleComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.schedule.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);

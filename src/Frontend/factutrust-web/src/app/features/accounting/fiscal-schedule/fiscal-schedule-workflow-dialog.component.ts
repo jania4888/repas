@@ -23,29 +23,29 @@ export type FiscalWorkflowMode = 'deposit' | 'payment' | 'reminder' | 'validate'
           <button class="square-button" type="button" title="Fermer" i18n-title="Fermer" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
         </header>
         <label *ngIf="mode === 'deposit'">
-          Date de depot
+          <ng-container i18n="@@accounting.fiscal-schedule.date.de.depot.a4aa4224"> Date de depot </ng-container>
           <input name="depositDate" type="date" required [(ngModel)]="workflowDate">
         </label>
         <label *ngIf="mode === 'payment'">
-          Date de paiement
+          <ng-container i18n="@@accounting.fiscal-schedule.date.de.paiement.bd0020ef"> Date de paiement </ng-container>
           <input name="paymentDate" type="date" required [(ngModel)]="workflowDate">
         </label>
         <label *ngIf="mode === 'validate'">
-          Date de validation
+          <ng-container i18n="@@accounting.fiscal-schedule.date.de.validation.a3a6e7af"> Date de validation </ng-container>
           <input name="validatedDate" type="date" required [(ngModel)]="workflowDate">
         </label>
         <label *ngIf="mode === 'reminder'">
-          Canal
+          <ng-container i18n="@@accounting.fiscal-schedule.canal.61f21e6f"> Canal </ng-container>
           <select name="reminderChannel" [(ngModel)]="reminderChannel">
             <option *ngFor="let option of reminderChannels" [ngValue]="option.value">{{ option.label }}</option>
           </select>
         </label>
         <label *ngIf="mode === 'reminder'">
-          Date du rappel
+          <ng-container i18n="@@accounting.fiscal-schedule.date.du.rappel.ca97806b"> Date du rappel </ng-container>
           <input name="reminderAt" type="datetime-local" [(ngModel)]="workflowDateTime">
         </label>
         <label>
-          Observations
+          <ng-container i18n="@@accounting.fiscal-schedule.observations.461ebaa1"> Observations </ng-container>
           <textarea name="workflowNotes" rows="3" [(ngModel)]="workflowObservations"></textarea>
         </label>
         <footer>

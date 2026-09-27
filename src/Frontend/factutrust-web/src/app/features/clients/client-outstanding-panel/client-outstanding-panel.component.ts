@@ -43,7 +43,7 @@ import { ClientOutstanding } from '@core/services/client.service';
           <div class="ft-alert ft-alert--warning">
             <i class="pi pi-exclamation-triangle"></i>
             <span>
-              Encours de <strong>{{ formatAmount(outstanding.totalOutstanding) }} {{ outstanding.currency }}</strong>
+              <ng-container i18n="@@clients.client-outstanding-panel.encours.de.df77802b"> Encours de </ng-container> <strong>{{ formatAmount(outstanding.totalOutstanding) }} {{ outstanding.currency }}</strong>
               au-delà du plafond de {{ formatAmount(outstanding.creditLimit!) }} {{ outstanding.currency }}.
               <span class="ft-muted" i18n="@@clients.client-outstanding-panel.information.seulement.aucune.vente.n.est.bloquee.bab57933">Information seulement : aucune vente n'est bloquée.</span>
             </span>
@@ -62,7 +62,7 @@ import { ClientOutstanding } from '@core/services/client.service';
 
         <div class="encours-kpi-grid">
           <app-stat-card
-            label="Factures non soldées"
+            label="Factures non soldées" i18n-label="Factures non soldées"
             [value]="formatAmount(outstanding.unpaidInvoicesAmount) + ' ' + outstanding.currency"
             icon="pi-file"
             variant="primary">
@@ -70,14 +70,14 @@ import { ClientOutstanding } from '@core/services/client.service';
           </app-stat-card>
 
           <app-stat-card
-            label="Commandes non facturées"
+            label="Commandes non facturées" i18n-label="Commandes non facturées"
             [value]="formatAmount(outstanding.confirmedOrdersAmount) + ' ' + outstanding.currency"
             icon="pi-shopping-cart"
             variant="warning">
           </app-stat-card>
 
           <app-stat-card
-            label="Encours total"
+            label="Encours total" i18n-label="Encours total"
             [value]="formatAmount(outstanding.totalOutstanding) + ' ' + outstanding.currency"
             icon="pi-wallet"
             [variant]="outstanding.isOverLimit ? 'error' : 'primary'"
@@ -85,7 +85,7 @@ import { ClientOutstanding } from '@core/services/client.service';
           </app-stat-card>
 
           <app-stat-card
-            label="Marge restante"
+            label="Marge restante" i18n-label="Marge restante"
             [value]="marginDisplay"
             icon="pi-shield"
             [variant]="marginVariant">
@@ -111,7 +111,7 @@ import { ClientOutstanding } from '@core/services/client.service';
             <p-progressBar
               [value]="utilizationBarValue()"
               [showValue]="false"
-              [styleClass]="outstanding.isOverLimit ? 'encours-progress encours-progress--over' : 'encours-progress'">
+              [styleClass]="outstanding.isOverLimit ? loc_ui_tern_encours_progress_encours_progress_over_b0a1e5 : 'encours-progress'">
             </p-progressBar>
           }
         </div>
@@ -227,6 +227,7 @@ import { ClientOutstanding } from '@core/services/client.service';
   `]
 })
 export class ClientOutstandingPanelComponent {
+  readonly loc_ui_tern_encours_progress_encours_progress_over_b0a1e5 = "encours-progress encours-progress--over";
   @Input() outstanding: ClientOutstanding | null = null;
   @Input() loading = false;
   /** Relative router link to the client edit form (default: sibling "edit"). */

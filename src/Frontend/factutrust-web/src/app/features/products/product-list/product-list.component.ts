@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
@@ -71,7 +72,7 @@ interface CategoryOption {
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new" i18n="@@products.product-list.nouveau.produit.c31ca342">Nouveau produit</app-button>
+          routerLink="new" i18n="@@products.product-list.nouveau.produit.c31ca342"> Nouveau produit </app-button>
       }
     </app-page-header>
 
@@ -156,11 +157,11 @@ interface CategoryOption {
         
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="code" style="width: 120px">Code <p-sortIcon field="code"></p-sortIcon></th>
-            <th pSortableColumn="name">Désignation <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="code" style="width: 120px"><ng-container i18n="@@products.product-list.code.adac6937">Code </ng-container> <p-sortIcon field="code"></p-sortIcon></th>
+            <th pSortableColumn="name"><ng-container i18n="@@products.product-list.designation.63a9062c">Désignation </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
             <th i18n="@@products.product-list.type.3deb7456">Type</th>
             <th i18n="@@products.product-list.categorie.6b38300a">Catégorie</th>
-            <th pSortableColumn="unitPrice" class="text-right" style="width: 140px">Prix HT <p-sortIcon field="unitPrice"></p-sortIcon></th>
+            <th pSortableColumn="unitPrice" class="text-right" style="width: 140px"><ng-container i18n="@@products.product-list.prix.ht.362207ca">Prix HT </ng-container> <p-sortIcon field="unitPrice"></p-sortIcon></th>
             <th style="width: 80px" i18n="@@products.product-list.unite.388fd9c4">Unité</th>
             <th style="width: 80px" i18n="@@products.product-list.tva.fb62cb5d">TVA</th>
             <th style="width: 120px" i18n="@@products.product-list.stock.bcecf456">Stock</th>
@@ -195,7 +196,7 @@ interface CategoryOption {
             <td>{{ product.vatRate }}%</td>
             <td>
               <p-tag 
-                [value]="product.isStockManaged ? 'Stock activé' : 'Sans stock'" 
+                [value]="product.isStockManaged ? loc_ui_tern_stock_active_e21445 : loc_ui_tern_sans_stock_ef7cf7" 
                 [severity]="product.isStockManaged ? 'success' : 'secondary'">
               </p-tag>
               @if (product.isVariantTemplate) {
@@ -213,7 +214,7 @@ interface CategoryOption {
             </td>
             <td>
               <p-tag 
-                [value]="product.isActive ? 'Actif' : 'Inactif'" 
+                [value]="product.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033" 
                 [severity]="product.isActive ? 'success' : 'secondary'">
               </p-tag>
             </td>
@@ -226,7 +227,7 @@ interface CategoryOption {
                     [icon]="stockToggleLoading().has(product.id) ? 'pi-spin pi-spinner' : 'pi-box'"
                     [iconOnly]="true"
                     [disabled]="stockToggleLoading().has(product.id)"
-                    pTooltip="Activer la gestion de stock"
+                    pTooltip="Activer la gestion de stock" i18n-pTooltip="Activer la gestion de stock"
                     tooltipPosition="top"
                     (click)="enableStockManagement(product)"
                     ariaLabel="Activer la gestion de stock">
@@ -239,7 +240,7 @@ interface CategoryOption {
                     icon="pi-eye"
                     [iconOnly]="true"
                     [routerLink]="[product.id, 'view']"
-                    pTooltip="Voir les détails du produit"
+                    pTooltip="Voir les détails du produit" i18n-pTooltip="Voir les détails du produit"
                     tooltipPosition="top"
                     ariaLabel="Voir les détails du produit">
                   </app-button>
@@ -251,7 +252,7 @@ interface CategoryOption {
                     icon="pi-pencil"
                     [iconOnly]="true"
                     [routerLink]="[product.id, 'edit']"
-                    pTooltip="Modifier le produit"
+                    pTooltip="Modifier le produit" i18n-pTooltip="Modifier le produit"
                     tooltipPosition="top"
                     ariaLabel="Modifier le produit">
                   </app-button>
@@ -263,7 +264,7 @@ interface CategoryOption {
                     icon="pi-print"
                     [iconOnly]="true"
                     (clicked)="openLabelDialog(product)"
-                    pTooltip="Imprimer les étiquettes"
+                    pTooltip="Imprimer les étiquettes" i18n-pTooltip="Imprimer les étiquettes"
                     tooltipPosition="top"
                     ariaLabel="Imprimer les étiquettes">
                   </app-button>
@@ -362,6 +363,10 @@ interface CategoryOption {
   `]
 })
 export class ProductListComponent implements OnInit {
+  readonly loc_ui_tern_stock_active_e21445 = $localize`:@@ui.tern.stock.active.e21445:Stock activé`;
+  readonly loc_ui_tern_sans_stock_ef7cf7 = $localize`:@@ui.tern.sans.stock.ef7cf7:Sans stock`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
   private confirmationService = inject(ConfirmationService);
   private toastService = inject(ToastService);
   private productService = inject(ProductService);
@@ -516,7 +521,7 @@ export class ProductListComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
             detail: response.errors?.join(', ') || 'Impossible de charger les produits'
           });
           this.products.set([]);
@@ -528,7 +533,7 @@ export class ProductListComponent implements OnInit {
         const errorMessage = this.errorHandler.extractErrorMessage(error);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
           detail: errorMessage || 'Impossible de charger les produits'
         });
         this.errorHandler.logError('Failed to load products', error);
@@ -560,8 +565,8 @@ export class ProductListComponent implements OnInit {
       message: `Êtes-vous sûr de vouloir activer la gestion de stock pour le produit "${product.name}" ? Il n'est pas possible de désactiver cette fonctionnalité une fois activée.`,
       header: 'Confirmation d\'activation',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Oui, activer',
-      rejectLabel: 'Non, annuler',
+      acceptLabel: $localize`:@@product-list.component.acceptLabel.Oui, activer:Oui, activer`,
+      rejectLabel: $localize`:@@product-list.component.rejectLabel.Non_annuler:Non, annuler`,
       acceptButtonStyleClass: 'btn-primary',
       accept: () => {
         const currentSet = new Set(this.stockToggleLoading());
@@ -591,14 +596,14 @@ export class ProductListComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'La gestion de stock a été activée avec succès'
+                summary: $localize`:@@product-list.component.summary.Succès:Succès`,
+                detail: $localize`:@@product-list.component.detail.La_gestion_de_st:La gestion de stock a été activée avec succès`
               });
               this.loadProducts(); // Rafraîchir la liste
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
+                summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
                 detail: response.errors?.join(', ') || 'Impossible d\'activer la gestion de stock'
               });
             }
@@ -611,7 +616,7 @@ export class ProductListComponent implements OnInit {
             const errorMessage = this.errorHandler.extractErrorMessage(error);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
               detail: errorMessage || 'Impossible d\'activer la gestion de stock'
             });
             this.errorHandler.logError('Failed to enable stock management', error);
@@ -626,8 +631,8 @@ export class ProductListComponent implements OnInit {
       message: `Êtes-vous sûr de vouloir supprimer le produit "${product.name}" ?`,
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Oui, supprimer',
-      rejectLabel: 'Non, annuler',
+      acceptLabel: $localize`:@@product-list.component.acceptLabel.Oui, supprim:Oui, supprimer`,
+      rejectLabel: $localize`:@@product-list.component.rejectLabel.Non_annuler:Non, annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.productService.deleteProduct(product.id).subscribe({
@@ -635,14 +640,14 @@ export class ProductListComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Produit supprimé avec succès'
+                summary: $localize`:@@product-list.component.summary.Succès:Succès`,
+                detail: $localize`:@@product-list.component.detail.Produit supp:Produit supprimé avec succès`
               });
               this.loadProducts(); // Rafraîchir la liste
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
+                summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
                 detail: response.errors?.join(', ') || 'Impossible de supprimer le produit'
               });
             }

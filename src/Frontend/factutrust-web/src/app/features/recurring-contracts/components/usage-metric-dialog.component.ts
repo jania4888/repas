@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,7 +33,7 @@ interface AggregationOption {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Gérer les métriques"
+      header="Gérer les métriques" i18n-header="Gérer les métriques"
       [style]="{ width: '46rem' }">
       <table class="metrics-table">
         <thead>
@@ -45,7 +46,7 @@ interface AggregationOption {
               <td>{{ m.name }}</td>
               <td>{{ m.unit }}</td>
               <td>{{ aggregationLabel(m.aggregationMode) }}</td>
-              <td>{{ m.isActive ? 'Oui' : 'Non' }}</td>
+              <td>{{ m.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
               <td>
                 <app-button variant="ghost" size="sm" icon="pi-pencil" (clicked)="edit(m)" i18n="@@recurring-contracts.components.modifier.f260e757">Modifier</app-button>
               </td>
@@ -57,7 +58,7 @@ interface AggregationOption {
       </table>
 
       <div class="edit-block">
-        <h4>{{ editingId ? 'Modifier la métrique' : 'Nouvelle métrique' }}</h4>
+        <h4>{{ editingId ? loc_ui_tern_modifier_la_metrique_4071da : loc_ui_tern_nouvelle_metrique_e1b093 }}</h4>
         <div class="grid">
           <label>Code *
             <input class="ft-input" [(ngModel)]="form.code" name="metricCode" [disabled]="!!editingId" />
@@ -95,7 +96,7 @@ interface AggregationOption {
           <app-button variant="ghost" (clicked)="resetForm()" i18n="@@recurring-contracts.components.annuler.la.modification.a5ded982">Annuler la modification</app-button>
         }
         <app-button variant="primary" icon="pi-check" [disabled]="saving" (clicked)="save()">
-          {{ saving ? 'Enregistrement…' : 'Enregistrer' }}
+          {{ saving ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
         </app-button>
       </ng-template>
     </p-dialog>
@@ -175,6 +176,12 @@ interface AggregationOption {
   `]
 })
 export class UsageMetricDialogComponent {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_modifier_la_metrique_4071da = $localize`:@@ui.tern.modifier.la.metrique.4071da:Modifier la métrique`;
+  readonly loc_ui_tern_nouvelle_metrique_e1b093 = $localize`:@@ui.tern.nouvelle.metrique.e1b093:Nouvelle métrique`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Input() metrics: UsageMetric[] = [];
@@ -222,8 +229,8 @@ export class UsageMetricDialogComponent {
     if (!this.form.code?.trim() || !this.form.name?.trim() || !this.form.unit?.trim()) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Formulaire incomplet',
-        detail: 'Code, nom et unité sont obligatoires.'
+        summary: $localize`:@@usage-metric-dialog.component.summary.Formulaire_incom:Formulaire incomplet`,
+        detail: $localize`:@@usage-metric-dialog.component.detail.Code_nom_et_uni:Code, nom et unité sont obligatoires.`
       });
       return;
     }
@@ -236,7 +243,7 @@ export class UsageMetricDialogComponent {
         this.saving = false;
         this.toast.add({
           severity: 'success',
-          summary: this.editingId ? 'Métrique modifiée' : 'Métrique créée',
+          summary: this.editingId ? $localize`:@@ui.tern.metrique.modifiee.174890:Métrique modifiée` : $localize`:@@ui.tern.metrique.creee.86b599:Métrique créée`,
           detail: `La métrique « ${this.form.name} » a été enregistrée.`
         });
         this.resetForm();
@@ -245,7 +252,7 @@ export class UsageMetricDialogComponent {
       error: (err: unknown) => {
         this.saving = false;
         this.errorHandler.logError('RecurringContracts: usage metric save', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@usage-metric-dialog.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }

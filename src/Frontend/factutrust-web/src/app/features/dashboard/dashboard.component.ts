@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -99,10 +100,10 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="/invoices/new" i18n="@@dashboard.dashboard.nouvelle.facture.cdf7e09c">Nouvelle facture</app-button>
+          routerLink="/invoices/new" i18n="@@dashboard.dashboard.nouvelle.facture.cdf7e09c"> Nouvelle facture </app-button>
       }
       @if (!editMode()) {
-        <app-button variant="ghost" icon="pi-th-large" iconPos="left" (click)="enterEdit()" i18n="@@dashboard.dashboard.personnaliser.b9d70818">Personnaliser</app-button>
+        <app-button variant="ghost" icon="pi-th-large" iconPos="left" (click)="enterEdit()" i18n="@@dashboard.dashboard.personnaliser.b9d70818"> Personnaliser </app-button>
       }
     </app-page-header>
 
@@ -112,7 +113,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="dashboard-migration-banner" role="alert">
         <i class="pi pi-database" aria-hidden="true"></i>
         <span>{{ tenantMigrationMessage }}</span>
-        <button type="button" class="dashboard-migration-banner__retry" (click)="reloadAfterMigrationIssue()" i18n="@@dashboard.dashboard.reessayer.895d416b">Réessayer</button>
+        <button type="button" class="dashboard-migration-banner__retry" (click)="reloadAfterMigrationIssue()" i18n="@@dashboard.dashboard.reessayer.895d416b"> Réessayer </button>
       </div>
     }
 
@@ -185,7 +186,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="kpi-row" data-tour="dash-kpi">
         @if (canReadInvoices()) {
         <app-stat-card
-          label="Chiffre d'affaires"
+          label="Chiffre d'affaires" i18n-label="Chiffre d'affaires"
           [value]="totalRevenue()"
           icon="fa-solid fa-sack-dollar"
           variant="primary"
@@ -198,7 +199,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [navigationAriaLabel]="drillDown('totalRevenue')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="Ventes aujourd'hui"
+          label="Ventes aujourd'hui" i18n-label="Ventes aujourd'hui"
           [value]="salesToday()"
           icon="fa-solid fa-cart-shopping"
           variant="primary"
@@ -210,7 +211,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [navigationAriaLabel]="drillDown('salesToday')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="CA du mois en cours"
+          label="CA du mois en cours" i18n-label="CA du mois en cours"
           [value]="currentMonthRevenue()"
           icon="fa-solid fa-calendar-check"
           variant="success"
@@ -223,7 +224,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [navigationAriaLabel]="drillDown('currentMonthRevenue')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="Factures impayées"
+          label="Factures impayées" i18n-label="Factures impayées"
           [value]="pendingInvoicesCount()"
           icon="fa-solid fa-clock"
           variant="warning"
@@ -238,7 +239,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         }
         @if (showStockUrgent()) {
         <app-stat-card
-          label="Produits en alerte"
+          label="Produits en alerte" i18n-label="Produits en alerte"
           [value]="stockAlertsCount()"
           icon="fa-solid fa-triangle-exclamation"
           [variant]="stockAlertsCount() > 0 ? 'error' : 'success'"
@@ -275,7 +276,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         <div class="modules-block__header">
           <span class="modules-block__title"><i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i> Modules actifs</span>
           <a routerLink="/settings/modules" class="modules-block__link">
-            Gérer mes modules <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            <ng-container i18n="@@dashboard.dashboard.gerer.mes.modules.f9e7eea3"> Gérer mes modules </ng-container> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
         <div class="modules-block__pills">
@@ -312,7 +313,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                     <i class="pi pi-check" aria-hidden="true"></i> Activer
                   }
                 </button>
-                <button type="button" class="btn-dismiss" (click)="dismissRecommendation(rec.moduleId)" i18n="@@dashboard.dashboard.masquer.adb05f2b">Masquer</button>
+                <button type="button" class="btn-dismiss" (click)="dismissRecommendation(rec.moduleId)" i18n="@@dashboard.dashboard.masquer.adb05f2b"> Masquer </button>
               </div>
             </div>
           }
@@ -430,7 +431,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           <i class="fa-solid fa-puzzle-piece quick-actions-empty-icon" aria-hidden="true"></i>
           <p i18n="@@dashboard.dashboard.activez.des.modules.pour.voir.vos.actions.rapide.a0632dc0">Activez des modules pour voir vos actions rapides.</p>
           <a routerLink="/settings/company" class="quick-actions-empty-link">
-            Gérer mon entreprise <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            <ng-container i18n="@@dashboard.dashboard.gerer.mon.entreprise.4af7f8ef"> Gérer mon entreprise </ng-container> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
         }
@@ -490,7 +491,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         </div>
         <div class="stats-grid">
           <app-stat-card
-            label="TVA due (estim.)"
+            label="TVA due (estim.)" i18n-label="TVA due (estim.)"
             [value]="formatAccountingAmount(accountingKpis()!.vatDueEstimate)"
             icon="pi-percentage"
             variant="primary"
@@ -501,7 +502,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('accountingVat')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Créances +90 j."
+            label="Créances +90 j." i18n-label="Créances +90 j."
             [value]="formatAccountingAmount(accountingKpis()!.overdueReceivablesOver90)"
             icon="pi-clock"
             variant="warning"
@@ -512,7 +513,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('accountingReceivables90')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Factures non comptabilisées"
+            label="Factures non comptabilisées" i18n-label="Factures non comptabilisées"
             [value]="accountingKpis()!.unpostedInvoiceCount"
             icon="pi-file-excel"
             variant="primary"
@@ -523,7 +524,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('accountingUnposted')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Prochaine échéance TVA"
+            label="Prochaine échéance TVA" i18n-label="Prochaine échéance TVA"
             [value]="formatVatDeadline(accountingKpis()!.nextVatDeadline)"
             icon="pi-calendar"
             variant="primary"
@@ -548,7 +549,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         </div>
         <div class="stats-grid">
           <app-stat-card
-            label="Mes relances"
+            label="Mes relances" i18n-label="Mes relances"
             [value]="crmRemindersCount()"
             icon="pi-bell"
             [variant]="crmRemindersCount() > 0 ? 'warning' : 'success'"
@@ -559,7 +560,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('crmReminders')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Opportunités ouvertes"
+            label="Opportunités ouvertes" i18n-label="Opportunités ouvertes"
             [value]="crmOpenOppsCount()"
             icon="pi-bullseye"
             variant="primary"
@@ -584,7 +585,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         aria-label="Évolution du chiffre d'affaires sur 6 mois" i18n-aria-label="Évolution du chiffre d'affaires sur 6 mois">
         <div chart-actions>
           @if (drillDown('totalRevenue'); as revenueTarget) {
-            <a [routerLink]="revenueTarget.route" [queryParams]="revenueTarget.queryParams" class="section-link" [attr.aria-label]="revenueTarget.ariaLabel" i18n="@@dashboard.dashboard.details.aaa029e6">Détails</a>
+            <a [routerLink]="revenueTarget.route" [queryParams]="revenueTarget.queryParams" class="section-link" [attr.aria-label]="revenueTarget.ariaLabel" i18n="@@dashboard.dashboard.details.aaa029e6"> Détails </a>
           }
         </div>
         <p-chart
@@ -702,7 +703,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           <div class="section" aria-label="Top 5 clients par chiffre d'affaires" i18n-aria-label="Top 5 clients par chiffre d'affaires">
             <div class="section-header">
               <h2 class="section-title" i18n="@@dashboard.dashboard.top.clients.dd696714">Top clients</h2>
-              <a routerLink="/clients" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8">Voir tout</a>
+              <a routerLink="/clients" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8"> Voir tout </a>
             </div>
             <div class="top-clients-list">
               @for (client of topClients(); track client.id; let i = $index) {
@@ -729,7 +730,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           <div class="section" aria-label="Devis récents" i18n-aria-label="Devis récents">
             <div class="section-header">
               <h2 class="section-title" i18n="@@dashboard.dashboard.devis.recents.4379bba9">Devis récents</h2>
-              <a routerLink="/quotes" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8">Voir tout</a>
+              <a routerLink="/quotes" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8"> Voir tout </a>
             </div>
 
             @if (recentQuotes().length === 0) {
@@ -2445,7 +2446,7 @@ export class DashboardComponent implements OnInit {
         if (!res.success || !res.data) {
           this.toastService.add({
             severity: 'error',
-            summary: 'Échec de l’activation',
+            summary: $localize`:@@dashboard.component.summary._chec_de_l_activ:Échec de l’activation`,
             detail: res.message || 'Impossible d’activer ce module.'
           });
           return;
@@ -2456,15 +2457,15 @@ export class DashboardComponent implements OnInit {
         if (warnings.length > 0) {
           this.toastService.add({
             severity: 'warn',
-            summary: 'Module activé avec avertissements',
+            summary: $localize`:@@dashboard.component.summary.Module_activ_av:Module activé avec avertissements`,
             detail: warnings.join(' '),
             life: 8000
           });
         } else {
           this.toastService.add({
             severity: 'success',
-            summary: 'Module activé',
-            detail: 'Votre navigation a été actualisée.'
+            summary: $localize`:@@dashboard.component.summary.Module activ:Module activé`,
+            detail: $localize`:@@dashboard.component.detail.Votre_navigation:Votre navigation a été actualisée.`
           });
         }
         // Retire la reco localement (le backend ne la renverra plus non plus).
@@ -2474,7 +2475,7 @@ export class DashboardComponent implements OnInit {
         this.activatingModuleId.set(null);
         this.toastService.add({
           severity: 'error',
-          summary: 'Échec de l’activation',
+          summary: $localize`:@@dashboard.component.summary._chec_de_l_activ:Échec de l’activation`,
           detail: this.errorHandler.extractErrorMessage(err),
           life: 8000
         });

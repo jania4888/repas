@@ -15,7 +15,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   template: `
     <div class="modal-header prompt-modal-header">
       @if (icon) {
-        <i [class]="icon + ' prompt-modal-icon'" aria-hidden="true"></i>
+        <i [class]="icon + loc_ui_tern_prompt_modal_icon_d0bfa1" aria-hidden="true"></i>
       }
       <h5 class="modal-title" id="promptModalTitle">{{ header }}</h5>
       <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer" i18n-aria-label="Fermer"></button>
@@ -38,7 +38,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">{{ rejectLabel }}</button>
       <button
         type="button"
-        [class]="'btn ' + acceptButtonStyleClass"
+        [class]="loc_ui_tern_btn_6a21bb + acceptButtonStyleClass"
         [disabled]="required && !value.trim()"
         (click)="accept()">{{ acceptLabel }}</button>
     </div>
@@ -81,6 +81,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   `]
 })
 export class PromptModalComponent {
+  readonly loc_ui_tern_prompt_modal_icon_d0bfa1 = " prompt-modal-icon";
+  readonly loc_ui_tern_btn_6a21bb = "btn ";
   @Input() message = '';
   @Input() header = 'Saisie';
   @Input() icon = '';

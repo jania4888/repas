@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -51,7 +52,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le livre d'inventaire" i18n="@@accounting.inventory-book.charger.8f860300">Charger</app-button>
+            ariaLabel="Charger le livre d'inventaire" i18n="@@accounting.inventory-book.charger.8f860300"> Charger </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !book()"
             (exportFormat)="onExport($event)" />
@@ -157,13 +158,13 @@ export class InventoryBookComponent implements OnInit {
           if (!wasLocked && res.data.isYearLocked) {
             this.toast.add({
               severity: 'warn',
-              summary: "Livre d'inventaire",
-              detail: "L'exercice a été verrouillé depuis le dernier chargement.",
+              summary: $localize`:@@inventory-book.component.summary.Livredinventaire:Livre d'inventaire`,
+              detail: $localize`:@@inventory-book.component.detail.Lexerciceaétéverroui:L'exercice a été verrouillé depuis le dernier chargement.`,
               life: 6000
             });
           }
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: err => {

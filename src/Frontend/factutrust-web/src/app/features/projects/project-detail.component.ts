@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -264,29 +265,29 @@ import { ProjectFavoritesService } from './project-favorites.service';
       </div>
     }
 
-    <p-dialog [(visible)]="editVisible" header="Modifier le projet" [modal]="true" [style]="{ width: '52rem' }">
+    <p-dialog [(visible)]="editVisible" header="Modifier le projet" i18n-header="Modifier le projet" [modal]="true" [style]="{ width: '52rem' }">
       <app-form-section title="Identité" i18n-title="Identité" icon="pi-id-card" variant="compact">
         <div class="flex flex-column gap-3">
-          <label>Nom <input pInputText class="w-full" [(ngModel)]="editDraft.name" /></label>
+          <label><ng-container i18n="@@projects.project-detail.nom.7ff20370">Nom </ng-container> <input pInputText class="w-full" [(ngModel)]="editDraft.name" /></label>
           <label>Type
             <input pInputText class="w-full" [value]="project()?.kindDisplay" readonly />
           </label>
-          <label>Description <textarea pTextarea class="w-full" rows="2" [(ngModel)]="editDraft.description"></textarea></label>
+          <label><ng-container i18n="@@projects.project-detail.description.55f8ebc8">Description </ng-container> <textarea pTextarea class="w-full" rows="2" [(ngModel)]="editDraft.description"></textarea></label>
           <label>Chef de projet
             <p-select class="w-full" [options]="users()" [(ngModel)]="editDraft.ownerUserId" optionLabel="displayName" optionValue="id" [showClear]="true" />
           </label>
           <div class="flex gap-2">
-            <label class="flex-1">Début <p-datepicker class="w-full" [(ngModel)]="editStart" dateFormat="dd/mm/yy" /></label>
-            <label class="flex-1">Fin <p-datepicker class="w-full" [(ngModel)]="editEnd" dateFormat="dd/mm/yy" /></label>
+            <label class="flex-1"><ng-container i18n="@@projects.project-detail.debut.f0955314">Début </ng-container> <p-datepicker class="w-full" [(ngModel)]="editStart" dateFormat="dd/mm/yy" /></label>
+            <label class="flex-1"><ng-container i18n="@@projects.project-detail.fin.4251065f">Fin </ng-container> <p-datepicker class="w-full" [(ngModel)]="editEnd" dateFormat="dd/mm/yy" /></label>
           </div>
-          <label>Budget HT <p-inputNumber class="w-full" [(ngModel)]="editDraft.budgetHt" mode="decimal" [minFractionDigits]="3" /></label>
+          <label><ng-container i18n="@@projects.project-detail.budget.ht.0374a3ad">Budget HT </ng-container> <p-inputNumber class="w-full" [(ngModel)]="editDraft.budgetHt" mode="decimal" [minFractionDigits]="3" /></label>
         </div>
       </app-form-section>
       @if (project() && isBtp(project()!.kind)) {
         <app-form-section title="Chantier BTP" i18n-title="Chantier BTP" icon="pi-building" variant="compact">
           <div class="flex flex-column gap-3">
-            <label>Adresse chantier <input pInputText class="w-full" [(ngModel)]="editDraft.siteAddress" /></label>
-            <label>N° marché <input pInputText class="w-full" [(ngModel)]="editDraft.contractNumber" /></label>
+            <label><ng-container i18n="@@projects.project-detail.adresse.chantier.62e0d1f1">Adresse chantier </ng-container> <input pInputText class="w-full" [(ngModel)]="editDraft.siteAddress" /></label>
+            <label><ng-container i18n="@@projects.project-detail.n.marche.6eb7d3b6">N° marché </ng-container> <input pInputText class="w-full" [(ngModel)]="editDraft.contractNumber" /></label>
           </div>
         </app-form-section>
       }
@@ -386,7 +387,7 @@ export class ProjectDetailComponent implements OnInit {
     return [
       { label: 'Accueil', route: '/' },
       { label: 'Projets', route: '/projects' },
-      { label: this.project()?.name ?? 'Fiche' }
+      { label: this.project()?.name ?? $localize`:@@ui.tern.fiche.6ad303:Fiche` }
     ];
   }
 
@@ -620,7 +621,7 @@ export class ProjectDetailComponent implements OnInit {
     })).subscribe({
       next: r => {
         if (r.success) { this.editVisible = false; this.ok('Projet mis à jour'); this.reloadProject(); }
-        else this.toast.add({ severity: 'error', summary: 'Mise à jour impossible', detail: r.message || '' });
+        else this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Mise à jour :Mise à jour impossible`, detail: r.message || '' });
       },
       error: err => this.fail(err, 'Mise à jour impossible')
     });
@@ -653,7 +654,7 @@ export class ProjectDetailComponent implements OnInit {
           this.reloadProject();
           this.loadTab('settings');
         } else {
-          this.toast.add({ severity: 'error', summary: 'Enregistrement impossible', detail: r.message || '' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Enregistrement_i:Enregistrement impossible`, detail: r.message || '' });
         }
       },
       error: err => this.fail(err, 'Enregistrement impossible')
@@ -843,7 +844,7 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   onInvoiceDraftLoadError(message: string): void {
-    this.toast.add({ severity: 'error', summary: 'Facturation', detail: message });
+    this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Facturation:Facturation`, detail: message });
   }
 
   invoiceTime(ev: { groupBy: string; notes?: string; timeEntryIds: string[]; targetInvoiceId?: string }): void {
@@ -856,7 +857,7 @@ export class ProjectDetailComponent implements OnInit {
           });
           void this.router.navigate(['/invoices', r.data.invoiceId]);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Facturation impossible', detail: r.message || '' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Facturation_impo:Facturation impossible`, detail: r.message || '' });
         }
       },
       error: err => this.fail(err, 'Facturation impossible')
@@ -884,7 +885,7 @@ export class ProjectDetailComponent implements OnInit {
           this.loadBillableTasks(ev.method);
           void this.router.navigate(['/invoices', r.data.invoiceId]);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Facturation par tâche', detail: r.message || '' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Facturation_par_:Facturation par tâche`, detail: r.message || '' });
         }
       },
       error: err => this.fail(err, 'Facturation par tâche')
@@ -898,7 +899,7 @@ export class ProjectDetailComponent implements OnInit {
           this.ok('Forfait facturé');
           void this.router.navigate(['/invoices', r.data.invoiceId]);
         } else {
-          this.toast.add({ severity: 'error', summary: 'Facturation forfait', detail: r.message || '' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Facturation_forf:Facturation forfait`, detail: r.message || '' });
         }
       },
       error: err => this.fail(err, 'Facturation forfait')

@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -117,6 +118,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
   standalone: true,
 
   imports: [
+    BackendLabelPipe,
 
     CommonModule,
 
@@ -207,7 +209,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
         <ul class="m-0 pl-3">
 
-          <li>Statut : {{ readiness.statusDisplay }} {{ readiness.canBill ? '✓' : '✗' }}</li>
+          <li>Statut : {{ readiness.statusDisplay | backendLabel }} {{ readiness.canBill ? '✓' : '✗' }}</li>
 
           <li>Temps validés non facturés : {{ readiness.validatedUninvoicedHours | number:'1.0-1' }} h</li>
 
@@ -685,7 +687,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
             <td>{{ s.totalTtc | number:'1.3-3' }}</td>
 
-            <td><app-status-badge [status]="situationStatusBadge(s.status)" [label]="s.statusDisplay" /></td>
+            <td><app-status-badge [status]="situationStatusBadge(s.status)" [label]="s.statusDisplay | backendLabel" /></td>
 
             <td>
 

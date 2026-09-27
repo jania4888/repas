@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -62,13 +63,13 @@ interface DueModeOption {
       subtitle="Délai, échéance et escompte. La condition produit le texte imprimé sur le document et une échéance exploitable pour la balance âgée.">
       <div class="header-actions">
         <p-button
-          label="Retour"
+          label="Retour" i18n-label="Retour"
           icon="pi pi-arrow-left"
           [outlined]="true"
           routerLink="/settings">
         </p-button>
         @if (canCreate()) {
-          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@settings.payment-terms.nouvelle.condition.67e805e6">Nouvelle condition</app-button>
+          <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@settings.payment-terms.nouvelle.condition.67e805e6"> Nouvelle condition </app-button>
         }
       </div>
     </app-page-header>
@@ -120,7 +121,7 @@ interface DueModeOption {
                     type="button"
                     icon="pi pi-pencil"
                     class="p-button-text p-button-sm"
-                    pTooltip="Modifier"
+                    pTooltip="Modifier" i18n-pTooltip="Modifier"
                     (click)="openEdit(term)"></button>
                 }
                 @if (canDelete()) {
@@ -129,7 +130,7 @@ interface DueModeOption {
                     type="button"
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Supprimer"
+                    pTooltip="Supprimer" i18n-pTooltip="Supprimer"
                     (click)="confirmDelete(term)"></button>
                 }
               </td>
@@ -140,19 +141,19 @@ interface DueModeOption {
     }
 
     <p-dialog
-      [header]="editing ? 'Modifier la condition' : 'Nouvelle condition'"
+      [header]="editing ? loc_ui_tern_modifier_la_condition_1c9065 : loc_ui_tern_nouvelle_condition_67e805"
       [(visible)]="dialogVisible"
       [modal]="true"
       [style]="{ width: '36rem' }"
       [draggable]="false">
       <div class="ft-form-grid">
         <div class="ft-field ft-field--full">
-          <label for="pt-name">Libellé <span class="ft-required" i18n="@@settings.payment-terms.text.df58248c">*</span></label>
+          <label for="pt-name"><ng-container i18n="@@settings.payment-terms.libelle.f5485bba">Libellé </ng-container> <span class="ft-required" i18n="@@settings.payment-terms.text.df58248c">*</span></label>
           <input id="pt-name" pInputText [(ngModel)]="form.name" maxlength="100" />
         </div>
 
         <div class="ft-field">
-          <label for="pt-delay">Délai (jours) <span class="ft-required" i18n="@@settings.payment-terms.text.df58248c">*</span></label>
+          <label for="pt-delay"><ng-container i18n="@@settings.payment-terms.delai.jours.8c106e9f">Délai (jours) </ng-container> <span class="ft-required" i18n="@@settings.payment-terms.text.df58248c">*</span></label>
           <p-inputNumber inputId="pt-delay" [(ngModel)]="form.delayDays" [min]="0" [max]="365"></p-inputNumber>
         </div>
 
@@ -169,9 +170,9 @@ interface DueModeOption {
 
         @if (form.dueMode === 'EndOfMonthOnDay') {
           <div class="ft-field">
-            <label for="pt-day">Jour de règlement <span class="ft-required" i18n="@@settings.payment-terms.text.df58248c">*</span></label>
+            <label for="pt-day"><ng-container i18n="@@settings.payment-terms.jour.de.reglement.a7678726">Jour de règlement </ng-container> <span class="ft-required" i18n="@@settings.payment-terms.text.df58248c">*</span></label>
             <p-inputNumber inputId="pt-day" [(ngModel)]="form.dueDayOfMonth" [min]="1" [max]="31"></p-inputNumber>
-            <small class="ft-hint" i18n="@@settings.payment-terms.un.jour.inexistant.31.fevrier.est.ramene.au.dern.c56e4c63">Un jour inexistant (31 février) est ramené au dernier jour du mois.</small>
+            <small class="ft-hint" i18n="@@settings.payment-terms.un.jour.inexistant.31.fevrier.est.ramene.au.dern.c56e4c63"> Un jour inexistant (31 février) est ramené au dernier jour du mois. </small>
           </div>
         }
 
@@ -190,7 +191,7 @@ interface DueModeOption {
         <div class="ft-field">
           <label for="pt-discdays" i18n="@@settings.payment-terms.escompte.sous.jours.df2a00be">Escompte sous (jours)</label>
           <p-inputNumber inputId="pt-discdays" [(ngModel)]="form.earlyPaymentDays" [min]="1"></p-inputNumber>
-          <small class="ft-hint" i18n="@@settings.payment-terms.doit.etre.inferieur.au.delai.sinon.l.escompte.se.c8129ccc">Doit être inférieur au délai, sinon l'escompte serait toujours acquis.</small>
+          <small class="ft-hint" i18n="@@settings.payment-terms.doit.etre.inferieur.au.delai.sinon.l.escompte.se.c8129ccc"> Doit être inférieur au délai, sinon l'escompte serait toujours acquis. </small>
         </div>
 
         <div class="ft-field ft-field--inline">
@@ -207,7 +208,7 @@ interface DueModeOption {
 
       <ng-template pTemplate="footer">
         <app-button variant="secondary" (clicked)="dialogVisible = false" i18n="@@settings.payment-terms.annuler.49ba3292">Annuler</app-button>
-        <app-button variant="primary" [disabled]="!canSave() || saving()" (clicked)="save()" i18n="@@settings.payment-terms.enregistrer.f7c8bcd8">Enregistrer</app-button>
+        <app-button variant="primary" [disabled]="!canSave() || saving()" (clicked)="save()" i18n="@@settings.payment-terms.enregistrer.f7c8bcd8"> Enregistrer </app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -220,6 +221,8 @@ interface DueModeOption {
   `]
 })
 export class PaymentTermsComponent implements OnInit {
+  readonly loc_ui_tern_modifier_la_condition_1c9065 = $localize`:@@ui.tern.modifier.la.condition.1c9065:Modifier la condition`;
+  readonly loc_ui_tern_nouvelle_condition_67e805 = $localize`:@@ui.tern.nouvelle.condition.67e805:Nouvelle condition`;
   private readonly pricingService = inject(PricingService);
   private readonly toastService = inject(ToastService);
   private readonly errorHandler = inject(ErrorHandlerService);
@@ -348,8 +351,8 @@ export class PaymentTermsComponent implements OnInit {
         next: () => {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Condition de règlement enregistrée.'
+            summary: $localize`:@@payment-terms.component.summary.Succès:Succès`,
+            detail: $localize`:@@payment-terms.component.detail.Condition_de_r_g:Condition de règlement enregistrée.`
           });
           this.dialogVisible = false;
           this.saving.set(false);
@@ -368,10 +371,10 @@ export class PaymentTermsComponent implements OnInit {
       header: 'Supprimer la condition',
       message:
         `Supprimer « ${term.name} » ? Les documents déjà émis conservent leur texte et leur ` +
-        'échéance : ils ne référencent pas le modèle.',
+        $localize`:@@ui.tern.echeance.ils.ne.referencent.pas.le.modele.da0a27:échéance : ils ne référencent pas le modèle.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@payment-terms.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@payment-terms.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.remove(term)
     });
@@ -380,7 +383,7 @@ export class PaymentTermsComponent implements OnInit {
   private remove(term: PaymentTermTemplate): void {
     this.pricingService.deletePaymentTerm(term.id).subscribe({
       next: () => {
-        this.toastService.add({ severity: 'success', summary: 'Succès', detail: 'Condition supprimée.' });
+        this.toastService.add({ severity: 'success', summary: $localize`:@@payment-terms.component.summary.Succès:Succès`, detail: $localize`:@@payment-terms.component.detail.Condition_suppri:Condition supprimée.` });
         this.load();
       },
       error: err => {
@@ -392,6 +395,6 @@ export class PaymentTermsComponent implements OnInit {
 
   private showError(err: unknown, fallback: string): void {
     const msg = this.errorHandler.extractErrorMessage(err);
-    this.toastService.add({ severity: 'error', summary: 'Erreur', detail: msg || fallback });
+    this.toastService.add({ severity: 'error', summary: $localize`:@@payment-terms.component.summary.Erreur:Erreur`, detail: msg || fallback });
   }
 }

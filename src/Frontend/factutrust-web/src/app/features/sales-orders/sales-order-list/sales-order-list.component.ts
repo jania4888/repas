@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -36,6 +38,7 @@ interface StatusOption {
   selector: 'app-sales-order-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -59,9 +62,9 @@ interface StatusOption {
     <app-page-header
       title="Commandes clients" i18n-title="Commandes clients"
       subtitle="L'engagement ferme entre le devis et la livraison. Le carnet mesure ce qui reste à livrer.">
-      <app-button variant="secondary" icon="pi-list" iconPos="left" routerLink="backlog" i18n="@@sales-orders.sales-order-list.carnet.de.commandes.ec641454">Carnet de commandes</app-button>
+      <app-button variant="secondary" icon="pi-list" iconPos="left" routerLink="backlog" i18n="@@sales-orders.sales-order-list.carnet.de.commandes.ec641454"> Carnet de commandes </app-button>
       @if (canCreate()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@sales-orders.sales-order-list.nouvelle.commande.061f365b">Nouvelle commande</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@sales-orders.sales-order-list.nouvelle.commande.061f365b"> Nouvelle commande </app-button>
       }
     </app-page-header>
 
@@ -112,7 +115,7 @@ interface StatusOption {
             (onChange)="applyFilters()"></p-checkbox>
           <label
             for="so-open"
-            pTooltip="Masque les commandes soldées, annulées ou closes : il ne reste que celles qui pèsent sur le carnet." i18n="@@sales-orders.sales-order-list.en.cours.seulement.e6580b49">En cours seulement</label>
+            pTooltip="Masque les commandes soldées, annulées ou closes : il ne reste que celles qui pèsent sur le carnet." i18n-pTooltip="Masque les commandes soldées, annulées ou closes : il ne reste que celles qui pèsent sur le carnet." i18n="@@sales-orders.sales-order-list.en.cours.seulement.e6580b49"> En cours seulement </label>
         </div>
 
         <div class="ft-field ft-field--actions">
@@ -165,7 +168,7 @@ interface StatusOption {
                 @if (order.sourceQuoteId) {
                   <i
                     class="pi pi-file-import ft-icon-hint"
-                    pTooltip="Issue d'un devis"></i>
+                    pTooltip="Issue d'un devis" i18n-pTooltip="Issue d'un devis"></i>
                 }
               </td>
               <td>{{ order.orderDate | date: 'dd/MM/yyyy' }}</td>
@@ -178,7 +181,7 @@ interface StatusOption {
                   @if (isLate(order)) {
                     <i
                       class="pi pi-exclamation-triangle ft-icon-warn"
-                      pTooltip="Date de livraison dépassée alors qu'il reste à livrer."></i>
+                      pTooltip="Date de livraison dépassée alors qu'il reste à livrer." i18n-pTooltip="Date de livraison dépassée alors qu'il reste à livrer."></i>
                   }
                 } @else {
                   <span class="ft-muted" i18n="@@sales-orders.sales-order-list.text.1b93795b">—</span>
@@ -193,11 +196,11 @@ interface StatusOption {
                 }
               </td>
               <td>
-                <p-tag [severity]="statusSeverity(order.status)" [value]="order.statusDisplay"></p-tag>
+                <p-tag [severity]="statusSeverity(order.status)" [value]="order.statusDisplay | backendLabel"></p-tag>
                 @if (order.isStockReserved) {
                   <i
                     class="pi pi-box ft-icon-hint"
-                    pTooltip="Stock réservé pour cette commande."></i>
+                    pTooltip="Stock réservé pour cette commande." i18n-pTooltip="Stock réservé pour cette commande."></i>
                 }
               </td>
               <td class="ft-actions-col">
@@ -206,7 +209,7 @@ interface StatusOption {
                   type="button"
                   icon="pi pi-eye"
                   class="p-button-text p-button-sm"
-                  pTooltip="Ouvrir"
+                  pTooltip="Ouvrir" i18n-pTooltip="Ouvrir"
                   [routerLink]="[order.id]"></button>
               </td>
             </tr>
@@ -243,14 +246,14 @@ export class SalesOrderListComponent implements OnInit {
   ];
 
   readonly statusOptions: StatusOption[] = [
-    { label: 'Tous', value: null },
-    { label: 'Brouillon', value: 'Draft' },
-    { label: 'Confirmée', value: 'Confirmed' },
-    { label: 'Partiellement livrée', value: 'PartiallyDelivered' },
-    { label: 'Livrée', value: 'Delivered' },
-    { label: 'Soldée', value: 'Completed' },
-    { label: 'Annulée', value: 'Cancelled' },
-    { label: 'Close', value: 'Closed' }
+    { label: $localize`:@@sales-orders.list.filter.tous:Tous`, value: null },
+    { label: $localize`:@@sales-orders.list.filter.brouillon:Brouillon`, value: 'Draft' },
+    { label: $localize`:@@sales-orders.list.filter.confirmee:Confirmée`, value: 'Confirmed' },
+    { label: $localize`:@@sales-orders.list.filter.partielle:Partiellement livrée`, value: 'PartiallyDelivered' },
+    { label: $localize`:@@sales-orders.list.filter.livree:Livrée`, value: 'Delivered' },
+    { label: $localize`:@@sales-orders.list.filter.soldee:Soldée`, value: 'Completed' },
+    { label: $localize`:@@sales-orders.list.filter.annulee:Annulée`, value: 'Cancelled' },
+    { label: $localize`:@@sales-orders.list.filter.close:Close`, value: 'Closed' }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -390,6 +393,6 @@ export class SalesOrderListComponent implements OnInit {
 
   private showError(err: unknown, fallback: string): void {
     const msg = this.errorHandler.extractErrorMessage(err);
-    this.toastService.add({ severity: 'error', summary: 'Erreur', detail: msg || fallback });
+    this.toastService.add({ severity: 'error', summary: $localize`:@@sales-order-list.component.summary.Erreur:Erreur`, detail: msg || fallback });
   }
 }

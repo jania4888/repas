@@ -45,7 +45,7 @@ const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['so
               @case ('template') { <textarea pTextarea rows="2" class="ft-map-val" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)"
                 placeholder="{{ '{{record.champ}}' }}" [disabled]="disabled()"></textarea> }
               @default { <input pInputText class="ft-map-val" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)"
-                [placeholder]="p.allowedValues?.length ? p.allowedValues!.join(' | ') : 'Valeur fixe'" [disabled]="disabled()" /> }
+                [placeholder]="p.allowedValues?.length ? p.allowedValues!.join(' | ') : loc_ui_tern_valeur_fixe_84e108" [disabled]="disabled()" /> }
             }
             <small class="ft-map-desc">{{ p.description }}</small>
           </div>
@@ -60,6 +60,7 @@ const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['so
     :host ::ng-deep .bap__w-full, :host ::ng-deep .ft-map-src, :host ::ng-deep .ft-map-val { width: 100%; }`]
 })
 export class StudioBridgeActionPickerComponent {
+  readonly loc_ui_tern_valeur_fixe_84e108 = $localize`:@@ui.tern.valeur.fixe.84e108:Valeur fixe`;
   readonly actions = input.required<AutomationAction[]>();
   readonly fields = input.required<CustomField[]>();
   readonly action = model<string | null>(null);

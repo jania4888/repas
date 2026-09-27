@@ -21,7 +21,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
           <span class="me-balance-label" i18n="@@accounting.manual-entry.ecriture.equilibree.vous.pouvez.enregistrer.45eefb66">Écriture équilibrée — vous pouvez enregistrer</span>
         } @else {
           <span class="me-balance-label">
-            Écart :
+            <ng-container i18n="@@accounting.manual-entry.ecart.c3b7ae14"> Écart : </ng-container>
             <strong>{{ gap() | number : amountFormat() }}</strong>
             <span class="me-balance-currency"> {{ currencyCode() }}</span>
           </span>
@@ -31,7 +31,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
         <button type="button"
                 class="btn btn-outline-primary btn-sm me-auto-balance-btn"
                 (click)="autoBalance.emit()"
-                aria-label="Équilibrer automatiquement l'écriture" i18n-aria-label="Équilibrer automatiquement l'écriture" i18n="@@accounting.manual-entry.equilibrer.auto.1d16ebc0">⇆ Équilibrer auto</button>
+                aria-label="Équilibrer automatiquement l'écriture" i18n-aria-label="Équilibrer automatiquement l'écriture" i18n="@@accounting.manual-entry.equilibrer.auto.1d16ebc0"> ⇆ Équilibrer auto </button>
       }
     </div>
   `,

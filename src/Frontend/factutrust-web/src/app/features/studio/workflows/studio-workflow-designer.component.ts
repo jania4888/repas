@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, HostListener, OnInit, computed, effect, inject, linkedSignal, signal, untracked } from '@angular/core';
@@ -657,7 +658,7 @@ export class StudioWorkflowDesignerComponent implements OnInit {
       },
       // Mêmes erreurs que le hub : 409 clé `_copy<n>` prise (maxCopies 9), 400 quota 20/table.
       error: (err: HttpErrorResponse) => this.toast.add({
-        severity: 'warn', summary: 'Erreur',
+        severity: 'warn', summary: $localize`:@@studio-workflow-designer.component.summary.Erreur:Erreur`,
         detail: err.status === 409 ? this.L.hub.duplicateKey
           : err.status === 400 && workflowErrorMessage(err).startsWith('Limite du plan')
             ? formatWorkflowLabel(this.L.designer.quota, { max: WORKFLOW_LIMITS.maxWorkflowsPerEntity })
@@ -681,7 +682,7 @@ export class StudioWorkflowDesignerComponent implements OnInit {
           this.toast.add({ severity: 'success', summary: this.L.hub.title, detail: formatWorkflowLabel(this.L.hub.deleted, { count: r.data?.cancelledInstances ?? 0 }) });
           void this.router.navigate(['/studio/workflows']);
         },
-        error: (err: HttpErrorResponse) => this.toast.add({ severity: 'error', summary: 'Erreur', detail: workflowErrorMessage(err) || this.L.hub.loadError })
+        error: (err: HttpErrorResponse) => this.toast.add({ severity: 'error', summary: $localize`:@@studio-workflow-designer.component.summary.Erreur:Erreur`, detail: workflowErrorMessage(err) || this.L.hub.loadError })
       })
     });
   }

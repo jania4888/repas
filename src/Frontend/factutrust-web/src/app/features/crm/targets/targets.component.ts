@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, HostListener, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -81,9 +82,9 @@ const MONTH_NAMES_FR = [
           styleClass="toolbar-dropdown"
           (onChange)="load()"
           [attr.aria-label]="'Filtrer par commercial'"></p-select>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser" i18n="@@crm.targets.actualiser.9d3b2a7d">Actualiser</app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser" i18n="@@crm.targets.actualiser.9d3b2a7d"> Actualiser </app-button>
         @if (canManage()) {
-          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvel objectif" i18n="@@crm.targets.nouvel.objectif.3f57fc8a">Nouvel objectif</app-button>
+          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvel objectif" i18n="@@crm.targets.nouvel.objectif.3f57fc8a"> Nouvel objectif </app-button>
         }
         <app-button
           variant="outline"
@@ -92,7 +93,7 @@ const MONTH_NAMES_FR = [
           type="button"
           (click)="exportCsv()"
           [disabled]="items().length === 0"
-          ariaLabel="Exporter en CSV" i18n="@@crm.targets.export.csv.5755f9ac">Export CSV</app-button>
+          ariaLabel="Exporter en CSV" i18n="@@crm.targets.export.csv.5755f9ac"> Export CSV </app-button>
       </div>
     </div>
 
@@ -107,7 +108,7 @@ const MONTH_NAMES_FR = [
       [rows]="12"
       [rowsPerPageOptions]="[12, 24, 48]"
       [showCurrentPageReport]="true"
-      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} objectifs"
+      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} objectifs" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} objectifs"
       styleClass="p-datatable-sm targets-table">
       <ng-template pTemplate="header">
         <tr>
@@ -131,7 +132,7 @@ const MONTH_NAMES_FR = [
           <td class="text-right">{{ t.achievedAmount | number:'1.0-0' }} {{ t.currency }}</td>
           <td>
             <div class="progress-wrap">
-              <div class="progress-track" role="progressbar" [attr.aria-valuenow]="t.progressPercent" aria-valuemin="0" aria-valuemax="100" [attr.aria-label]="'Progression ' + (t.progressPercent | number:'1.0-0') + ' pourcent'">
+              <div class="progress-track" role="progressbar" [attr.aria-valuenow]="t.progressPercent" aria-valuemin="0" aria-valuemax="100" [attr.aria-label]="loc_ui_tern_progression_a6e180 + (t.progressPercent | number:'1.0-0') + loc_ui_tern_pourcent_da28b6">
                 <div
                   class="progress-fill"
                   [class.progress-fill--done]="t.progressPercent >= 100"
@@ -187,7 +188,7 @@ const MONTH_NAMES_FR = [
               <p class="empty-title" i18n="@@crm.targets.aucun.objectif.pour.ces.criteres.5b8e7098">Aucun objectif pour ces critères</p>
               <p class="empty-hint" i18n="@@crm.targets.definissez.un.objectif.de.vente.par.commercial.e.9246bfad">Définissez un objectif de vente par commercial et par mois pour suivre la performance.</p>
               @if (canManage()) {
-                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer un objectif" i18n="@@crm.targets.nouvel.objectif.3f57fc8a">Nouvel objectif</app-button>
+                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer un objectif" i18n="@@crm.targets.nouvel.objectif.3f57fc8a"> Nouvel objectif </app-button>
               }
             </div>
           </td>
@@ -206,7 +207,7 @@ const MONTH_NAMES_FR = [
           [attr.aria-describedby]="'tgt-form-desc'">
           <div class="targets-panel-header">
             <div class="targets-panel-header-text">
-              <h2 id="targets-panel-title">{{ editingTarget() ? 'Modifier l’objectif' : 'Nouvel objectif' }}</h2>
+              <h2 id="targets-panel-title">{{ editingTarget() ? loc_ui_tern_modifier_l_objectif_009458 : loc_ui_tern_nouvel_objectif_3f57fc }}</h2>
               <p class="targets-panel-subtitle">
                 @if (editingTarget()) {
                   Édition · {{ editingTarget()!.userName }} — {{ monthLabel(editingTarget()!.month) }} {{ editingTarget()!.year }}
@@ -230,7 +231,7 @@ const MONTH_NAMES_FR = [
                 <section class="tgt-form-section" aria-labelledby="tgt-section-edit">
                   <h3 id="tgt-section-edit" class="form-block-title targets-panel-section-title" i18n="@@crm.targets.montant.4adcd9fc">Montant</h3>
                   <div class="form-field">
-                    <label class="field-label" for="tgtAmountEdit">Objectif (TND) <span class="required" aria-hidden="true" i18n="@@crm.targets.text.df58248c">*</span></label>
+                    <label class="field-label" for="tgtAmountEdit"><ng-container i18n="@@crm.targets.objectif.tnd.dbdf229b">Objectif (TND) </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.targets.text.df58248c">*</span></label>
                     <p-inputNumber
                       inputId="tgtAmountEdit"
                       formControlName="targetAmount"
@@ -250,7 +251,7 @@ const MONTH_NAMES_FR = [
                 <section class="tgt-form-section" aria-labelledby="tgt-section-create">
                   <h3 id="tgt-section-create" class="form-block-title targets-panel-section-title" i18n="@@crm.targets.definir.l.objectif.22a4ab78">Définir l’objectif</h3>
                   <div class="form-field">
-                    <label class="field-label" for="tgtUserCreate">Commercial <span class="required" aria-hidden="true" i18n="@@crm.targets.text.df58248c">*</span></label>
+                    <label class="field-label" for="tgtUserCreate"><ng-container i18n="@@crm.targets.commercial.b48513e4">Commercial </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.targets.text.df58248c">*</span></label>
                     <p-select
                       inputId="tgtUserCreate"
                       formControlName="userId"
@@ -291,7 +292,7 @@ const MONTH_NAMES_FR = [
                     </div>
                   </div>
                   <div class="form-field">
-                    <label class="field-label" for="tgtAmountCreate">Objectif (TND) <span class="required" aria-hidden="true" i18n="@@crm.targets.text.df58248c">*</span></label>
+                    <label class="field-label" for="tgtAmountCreate"><ng-container i18n="@@crm.targets.objectif.tnd.dbdf229b">Objectif (TND) </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.targets.text.df58248c">*</span></label>
                     <p-inputNumber
                       inputId="tgtAmountCreate"
                       formControlName="targetAmount"
@@ -319,7 +320,7 @@ const MONTH_NAMES_FR = [
                   iconPos="left"
                   (click)="saveEdit()"
                   [disabled]="editForm.invalid || saving()">
-                  {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+                  {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
                 </app-button>
               } @else {
                 <app-button
@@ -329,7 +330,7 @@ const MONTH_NAMES_FR = [
                   iconPos="left"
                   (click)="saveCreate()"
                   [disabled]="createForm.invalid || saving()">
-                  {{ saving() ? 'Création…' : 'Créer' }}
+                  {{ saving() ? loc_ui_tern_creation_2a06d1 : loc_ui_tern_creer_1a6861 }}
                 </app-button>
               }
             </div>
@@ -573,6 +574,14 @@ const MONTH_NAMES_FR = [
   `
 })
 export class TargetsComponent implements OnInit {
+  readonly loc_ui_tern_progression_a6e180 = $localize`:@@ui.tern.progression.a6e180:Progression `;
+  readonly loc_ui_tern_pourcent_da28b6 = $localize`:@@ui.tern.pourcent.da28b6: pourcent`;
+  readonly loc_ui_tern_modifier_l_objectif_009458 = $localize`:@@ui.tern.modifier.l.objectif.009458:Modifier l’objectif`;
+  readonly loc_ui_tern_nouvel_objectif_3f57fc = $localize`:@@ui.tern.nouvel.objectif.3f57fc:Nouvel objectif`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creation_2a06d1 = $localize`:@@ui.tern.creation.2a06d1:Création…`;
+  readonly loc_ui_tern_creer_1a6861 = $localize`:@@ui.tern.creer.1a6861:Créer`;
   private readonly crm = inject(CrmService);
   private readonly auth = inject(AuthService);
   private readonly confirm = inject(ConfirmationService);
@@ -644,7 +653,7 @@ export class TargetsComponent implements OnInit {
         if (res.success && res.data) this.assignableUsers.set(res.data);
       },
       error: () => {
-        this.toast.add({ severity: 'warn', summary: 'Liste des commerciaux', detail: 'Chargement partiel des filtres.', life: 4000 });
+        this.toast.add({ severity: 'warn', summary: $localize`:@@targets.component.summary.Liste des co:Liste des commerciaux`, detail: $localize`:@@targets.component.detail.Chargement_parti:Chargement partiel des filtres.`, life: 4000 });
       }
     });
 
@@ -676,7 +685,7 @@ export class TargetsComponent implements OnInit {
         if (r.success && r.data) {
           this.items.set(r.data);
         } else {
-          this.error.set(r.errors?.[0] ?? r.message ?? r.error ?? 'Erreur');
+          this.error.set(r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: () => {
@@ -751,9 +760,9 @@ export class TargetsComponent implements OnInit {
           if (r.success) {
             this.closeTargetsPanel();
             this.load();
-            this.toast.add({ severity: 'success', summary: 'Objectif créé', life: 3000 });
+            this.toast.add({ severity: 'success', summary: $localize`:@@targets.component.summary.Objectif cré:Objectif créé`, life: 3000 });
           } else {
-            this.formError.set(r.errors?.[0] ?? r.message ?? r.error ?? 'Erreur');
+            this.formError.set(r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           }
         },
         error: () => {
@@ -778,9 +787,9 @@ export class TargetsComponent implements OnInit {
         if (r.success) {
           this.closeTargetsPanel();
           this.load();
-          this.toast.add({ severity: 'success', summary: 'Objectif mis à jour', life: 3000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@targets.component.summary.Objectif mis:Objectif mis à jour`, life: 3000 });
         } else {
-          this.formError.set(r.errors?.[0] ?? r.message ?? r.error ?? 'Erreur');
+          this.formError.set(r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: () => {
@@ -795,22 +804,22 @@ export class TargetsComponent implements OnInit {
       header: 'Supprimer l’objectif',
       message: `Supprimer l’objectif ${this.monthLabel(t.month)} ${t.year} pour ${t.userName} ?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@targets.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@targets.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.crm.deleteTarget(t.id).subscribe({
           next: r => {
             if (r.success) {
               this.load();
-              this.toast.add({ severity: 'success', summary: 'Objectif supprimé', life: 3000 });
+              this.toast.add({ severity: 'success', summary: $localize`:@@targets.component.summary.Objectif sup:Objectif supprimé`, life: 3000 });
             } else {
-              const msg = r.errors?.[0] ?? r.message ?? r.error ?? 'Suppression impossible';
-              this.toast.add({ severity: 'error', summary: 'Erreur', detail: msg, life: 6000 });
+              const msg = r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.suppression.impossible.55762f:Suppression impossible`;
+              this.toast.add({ severity: 'error', summary: $localize`:@@targets.component.summary.Erreur:Erreur`, detail: msg, life: 6000 });
             }
           },
           error: () => {
-            this.toast.add({ severity: 'error', summary: 'Erreur réseau', life: 6000 });
+            this.toast.add({ severity: 'error', summary: $localize`:@@targets.component.summary.Erreur résea:Erreur réseau`, life: 6000 });
           }
         });
       }

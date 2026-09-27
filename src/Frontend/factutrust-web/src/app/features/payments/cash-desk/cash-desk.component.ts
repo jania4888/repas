@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -50,7 +52,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
 @Component({
   selector: 'app-cash-desk',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -118,12 +120,12 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                   variant="outline"
                   icon="pi pi-building"
                   (click)="openBankDepositWizard()"
-                  ariaLabel="Remise en banque" i18n="@@payments.cash-desk.remise.en.banque.f42e5169">Remise en banque</app-button>
+                  ariaLabel="Remise en banque" i18n="@@payments.cash-desk.remise.en.banque.f42e5169"> Remise en banque </app-button>
                 <app-button
                   variant="primary"
                   icon="pi pi-plus"
                   (click)="openAddDialog()"
-                  ariaLabel="Enregistrer une opération" i18n="@@payments.cash-desk.enregistrer.une.operation.f45e95b6">Enregistrer une opération</app-button>
+                  ariaLabel="Enregistrer une opération" i18n="@@payments.cash-desk.enregistrer.une.operation.f45e95b6"> Enregistrer une opération </app-button>
               } @else {
                 <span class="perm-hint" role="note" i18n="@@payments.cash-desk.autorisation.tresorerie.saisie.requise.93829a0d">Autorisation « Trésorerie — saisie » requise.</span>
               }
@@ -152,7 +154,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             <div class="method-list">
               @for (row of balances()?.primary ?? []; track row.method) {
                 <div class="method-row">
-                  <span class="method-name">{{ row.methodDisplay }}</span>
+                  <span class="method-name">{{ row.methodDisplay | backendLabel }}</span>
                   <span class="method-amount mono" [class.negative]="row.amount < 0">{{ row.amount | number:'1.3-3' }}</span>
                 </div>
               }
@@ -177,7 +179,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             <div class="method-list">
               @for (row of balances()?.secondary ?? []; track row.method) {
                 <div class="method-row">
-                  <span class="method-name">{{ row.methodDisplay }}</span>
+                  <span class="method-name">{{ row.methodDisplay | backendLabel }}</span>
                   <span class="method-amount mono" [class.negative]="row.amount < 0">{{ row.amount | number:'1.3-3' }}</span>
                 </div>
               }
@@ -240,11 +242,11 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                   <td>{{ op.operationDate | date:'dd/MM/yyyy' }}</td>
                   <td>
                     <span class="type-badge" [class.credit]="op.operationType === CashOperationType.Credit" [class.debit]="op.operationType === CashOperationType.Debit">
-                      {{ op.operationTypeDisplay }}
+                      {{ op.operationTypeDisplay | backendLabel }}
                     </span>
                   </td>
-                  <td>{{ op.methodDisplay }}</td>
-                  <td class="category-cell">{{ op.categoryDisplay || op.revenueCategoryDisplay }}</td>
+                  <td>{{ op.methodDisplay | backendLabel }}</td>
+                  <td class="category-cell">{{ (op.categoryDisplay | backendLabel) || (op.revenueCategoryDisplay | backendLabel) }}</td>
                   <td>
                     <div class="label-cell">
                       <span>{{ op.label }}</span>
@@ -261,7 +263,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                         <a
                           [routerLink]="['/invoices', op.sourceInvoiceId]"
                           class="source-link"
-                          [attr.aria-label]="'Voir la facture ' + (op.sourceInvoiceNumber || '')">
+                          [attr.aria-label]="loc_ui_tern_voir_la_facture_fb6bca + (op.sourceInvoiceNumber || '')">
                           {{ op.sourceInvoiceNumber || 'Voir facture' }}
                         </a>
                       }
@@ -269,7 +271,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                         <a
                           [routerLink]="['/supplier-invoices', op.sourceSupplierInvoiceId]"
                           class="source-link"
-                          [attr.aria-label]="'Voir la facture fournisseur ' + (op.sourceSupplierInvoiceNumber || '')">
+                          [attr.aria-label]="loc_ui_tern_voir_la_facture_fournisseur_6bee70 + (op.sourceSupplierInvoiceNumber || '')">
                           {{ op.sourceSupplierInvoiceNumber || 'Voir facture fournisseur' }}
                         </a>
                       }
@@ -300,7 +302,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                               icon="pi pi-trash"
                               [iconOnly]="true"
                               [iconAlwaysVisible]="true"
-                              pTooltip="Annuler l'opération"
+                              pTooltip="Annuler l'opération" i18n-pTooltip="Annuler l'opération"
                               ariaLabel="Annuler l'opération"
                               (click)="openCancelDialog(op); $event.stopPropagation()">
                             </app-button>
@@ -308,7 +310,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                             <span
                               class="perm-lock"
                               role="note"
-                              pTooltip="Autorisation « Trésorerie — mise à jour » requise."
+                              pTooltip="Autorisation « Trésorerie — mise à jour » requise." i18n-pTooltip="Autorisation « Trésorerie — mise à jour » requise."
                               aria-label="Autorisation « Trésorerie — mise à jour » requise." i18n-aria-label="Autorisation « Trésorerie — mise à jour » requise.">
                               <i class="pi pi-lock" aria-hidden="true"></i>
                             </span>
@@ -323,7 +325,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                             [iconOnly]="true"
                             [iconAlwaysVisible]="true"
                             [disabled]="true"
-                            pTooltip="Géré via la facture"
+                            pTooltip="Géré via la facture" i18n-pTooltip="Géré via la facture"
                             ariaLabel="Opération gérée via la facture">
                           </app-button>
                         }
@@ -352,7 +354,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
 
     <!-- Cancel dialog -->
     <p-dialog
-      header="Annuler l'opération"
+      header="Annuler l'opération" i18n-header="Annuler l'opération"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [position]="dialogPosition"
@@ -363,7 +365,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
       (onHide)="closeCancelDialog()">
 
       <div class="dialog-body">
-        <p class="dialog-message" i18n="@@payments.cash-desk.indiquez.le.motif.d.annulation.obligatoire.ac8edb83">Indiquez le motif d'annulation (obligatoire).</p>
+        <p class="dialog-message" i18n="@@payments.cash-desk.indiquez.le.motif.d.annulation.obligatoire.ac8edb83"> Indiquez le motif d'annulation (obligatoire). </p>
         <textarea
           pTextarea
           [(ngModel)]="cancelReason"
@@ -385,7 +387,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             icon="pi pi-times"
             iconPos="left"
             [disabled]="!cancelReason.trim() || cancelling()"
-            (click)="submitCancel()" ariaLabel="Annuler l'opération" i18n="@@payments.cash-desk.annuler.49ba3292">Annuler</app-button>
+            (click)="submitCancel()" ariaLabel="Annuler l'opération" i18n="@@payments.cash-desk.annuler.49ba3292"> Annuler </app-button>
         </div>
       </ng-template>
     </p-dialog>
@@ -522,6 +524,8 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
   `]
 })
 export class CashDeskComponent implements OnInit {
+  readonly loc_ui_tern_voir_la_facture_fb6bca = $localize`:@@ui.tern.voir.la.facture.fb6bca:Voir la facture `;
+  readonly loc_ui_tern_voir_la_facture_fournisseur_6bee70 = $localize`:@@ui.tern.voir.la.facture.fournisseur.6bee70:Voir la facture fournisseur `;
   private readonly cashDeskService = inject(CashDeskService);
   private readonly toastService = inject(ToastService);
   readonly auth = inject(AuthService);
@@ -552,7 +556,7 @@ export class CashDeskComponent implements OnInit {
    */
   summaryMetrics = computed<TotalMetric[]>(() => {
     const b = this.balances();
-    const currency = b?.currency ?? 'TND';
+    const currency = b?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
     return [
       { label: 'Solde caisse (mois)', value: b?.primaryTotal, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
       { label: 'Encaissements', value: b?.primaryCreditsTotal, format: 'currency', currency, icon: 'pi-arrow-down-left', tone: 'emerald' },
@@ -625,8 +629,8 @@ export class CashDeskComponent implements OnInit {
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger les opérations.'
+          summary: $localize`:@@cash-desk.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@cash-desk.component.detail.Impossible_de_ch:Impossible de charger les opérations.`
         });
       }
     });
@@ -655,8 +659,8 @@ export class CashDeskComponent implements OnInit {
         this.initialLoad.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger la caisse de trésorerie.'
+          summary: $localize`:@@cash-desk.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@cash-desk.component.detail.Impossible d:Impossible de charger la caisse de trésorerie.`
         });
       },
       complete: () => {
@@ -812,8 +816,8 @@ export class CashDeskComponent implements OnInit {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Opération annulée.'
+            summary: $localize`:@@cash-desk.component.summary.Succès:Succès`,
+            detail: $localize`:@@cash-desk.component.detail.Op_ration_annul_:Opération annulée.`
           });
           this.loadAll();
           this.cancelDialogVisible = false;
@@ -825,7 +829,7 @@ export class CashDeskComponent implements OnInit {
       error: (err: HttpErrorResponse) => {
         // 403 (payments:update) → message métier français ; autres erreurs → message générique francisé.
         const msg = err.status === 403
-          ? 'Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).'
+          ? $localize`:@@ui.tern.action.refusee.autorisations.insuffisantes.86b982:Action refusée : autorisations insuffisantes (Trésorerie — mise à jour).`
           : (err.error as any)?.errors?.[0] ??
             (err.error as any)?.message ??
             (err.error as any)?.error?.description ??

@@ -30,7 +30,7 @@ import {
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()" i18n="@@reports.purchases-analytics.imprimer.5382c09d">Imprimer</app-button>
+        (click)="onPrint()" i18n="@@reports.purchases-analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <div class="filter-bar">
@@ -75,25 +75,25 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Taux de conversion"
+          label="Taux de conversion" i18n-label="Taux de conversion"
           [value]="data()!.conversionRate.toFixed(1) + ' %'"
           icon="pi-sync"
           [variant]="data()!.conversionRate >= 50 ? 'success' : data()!.conversionRate >= 30 ? 'warning' : 'primary'">
         </app-stat-card>
         <app-stat-card
-          label="Bons de commande"
+          label="Bons de commande" i18n-label="Bons de commande"
           [value]="data()!.totalOrders"
           icon="pi-file-edit"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Facturés"
+          label="Facturés" i18n-label="Facturés"
           [value]="data()!.invoicedOrders"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Panier moyen (commande)"
+          label="Panier moyen (commande)" i18n-label="Panier moyen (commande)"
           [value]="formatAmount(data()!.averageOrderAmount)"
           icon="pi-shopping-cart"
           variant="warning">
@@ -344,7 +344,7 @@ export class OrdersAnalyticsComponent implements OnInit {
   }
 
   formatAmount(value: number): string {
-    return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(value) + ' TND';
+    return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(value) + $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   }
 
   onPrint(): void {

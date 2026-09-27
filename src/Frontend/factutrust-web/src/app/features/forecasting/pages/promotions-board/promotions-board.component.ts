@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,7 +26,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
         @if (canManage()) {
           <button class="btn btn-secondary" (click)="generateNow()" [disabled]="generating()">
             <i class="pi pi-refresh"></i>
-            {{ generating() ? 'Génération…' : 'Régénérer maintenant' }}
+            {{ generating() ? loc_ui_tern_generation_ce4e34 : loc_ui_tern_regenerer_maintenant_94cff2 }}
           </button>
         }
         <div class="actions-ai">
@@ -88,15 +89,15 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
         <summary i18n="@@forecasting.pages.simulateur.d.impact.promotion.4a1648c6">Simulateur d'impact promotion</summary>
         <div class="sim-form">
           <label>
-            ID produit (GUID)
+            <ng-container i18n="@@forecasting.pages.id.produit.guid.a0a67819"> ID produit (GUID) </ng-container>
             <input type="text" [(ngModel)]="simProductId" placeholder="00000000-0000-0000-0000-000000000000" i18n-placeholder="00000000-0000-0000-0000-000000000000" />
           </label>
           <label>
-            Remise (%)
+            <ng-container i18n="@@forecasting.pages.remise.35bc2c9e"> Remise (%) </ng-container>
             <input type="number" min="0" max="90" [(ngModel)]="simDiscount" />
           </label>
           <label>
-            Durée (jours)
+            <ng-container i18n="@@forecasting.pages.duree.jours.fa5bd0ae"> Durée (jours) </ng-container>
             <input type="number" min="1" max="90" [(ngModel)]="simDuration" />
           </label>
           <button class="btn btn-secondary" (click)="simulate()" [disabled]="!simProductId" i18n="@@forecasting.pages.simuler.4c4f5484">Simuler</button>
@@ -105,10 +106,10 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
           <div class="sim-result">
             <p><strong>{{ r.productName }}</strong> — élasticité approchée {{ r.approxElasticity }}</p>
             <ul>
-              <li>CA sans promo : <b>{{ r.projectedRevenueWithoutPromo | number:'1.3-3' }} TND</b></li>
-              <li>CA avec promo : <b>{{ r.projectedRevenueWithPromo | number:'1.3-3' }} TND</b></li>
-              <li>Uplift attendu : <b>+{{ r.expectedUpliftPercent | number:'1.0-1' }} %</b></li>
-              <li>Impact marge : <b>{{ r.marginImpactPercent | number:'1.0-1' }} %</b></li>
+              <li><ng-container i18n="@@forecasting.pages.ca.sans.promo.8d2ab7ef">CA sans promo : </ng-container> <b>{{ r.projectedRevenueWithoutPromo | number:'1.3-3' }} TND</b></li>
+              <li><ng-container i18n="@@forecasting.pages.ca.avec.promo.09fcce53">CA avec promo : </ng-container> <b>{{ r.projectedRevenueWithPromo | number:'1.3-3' }} TND</b></li>
+              <li><ng-container i18n="@@forecasting.pages.uplift.attendu.8d7fd4da">Uplift attendu : </ng-container> <b>+{{ r.expectedUpliftPercent | number:'1.0-1' }} %</b></li>
+              <li><ng-container i18n="@@forecasting.pages.impact.marge.2ad62fb4">Impact marge : </ng-container> <b>{{ r.marginImpactPercent | number:'1.0-1' }} %</b></li>
             </ul>
             <p class="hint">{{ r.notes }}</p>
           </div>
@@ -164,6 +165,8 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
   `]
 })
 export class PromotionsBoardComponent implements OnInit {
+  readonly loc_ui_tern_generation_ce4e34 = $localize`:@@ui.tern.generation.ce4e34:Génération…`;
+  readonly loc_ui_tern_regenerer_maintenant_94cff2 = $localize`:@@ui.tern.regenerer.maintenant.94cff2:Régénérer maintenant`;
   private readonly forecastingService = inject(ForecastingService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -194,7 +197,7 @@ export class PromotionsBoardComponent implements OnInit {
       const paged = await firstValueFrom(this.forecastingService.getPromotions({ pageSize: 100 }));
       this.rows.set(paged.items);
     } catch (err: any) {
-      this.toast.add({ severity: 'error', summary: 'Erreur', detail: err?.error?.message ?? 'Chargement échoué.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@promotions-board.component.summary.Erreur:Erreur`, detail: err?.error?.message ?? $localize`:@@ui.tern.chargement.echoue.a882c7:Chargement échoué.` });
     } finally {
       this.loading.set(false);
     }
@@ -204,10 +207,10 @@ export class PromotionsBoardComponent implements OnInit {
     this.generating.set(true);
     try {
       const count = await firstValueFrom(this.forecastingService.generatePromotionsNow());
-      this.toast.add({ severity: 'success', summary: 'Régénération terminée', detail: `${count} recommandation(s).` });
+      this.toast.add({ severity: 'success', summary: $localize`:@@promotions-board.component.summary.R_g_n_ration_ter:Régénération terminée`, detail: `${count} recommandation(s).` });
       await this.load();
     } catch (err: any) {
-      this.toast.add({ severity: 'error', summary: 'Échec', detail: err?.error?.message ?? 'Erreur inconnue.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@promotions-board.component.summary.Échec:Échec`, detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.2f49e3:Erreur inconnue.` });
     } finally {
       this.generating.set(false);
     }
@@ -218,23 +221,23 @@ export class PromotionsBoardComponent implements OnInit {
       const result = await firstValueFrom(this.forecastingService.prepareDiscountDraft(p.id));
       this.toast.add({
         severity: 'success',
-        summary: 'Brouillon prêt',
+        summary: $localize`:@@promotions-board.component.summary.Brouillon_pr_t:Brouillon prêt`,
         detail: `Remise ${result.suggestedDiscountPercent}% préparée du ${new Date(result.validFrom).toLocaleDateString('fr-FR')} au ${new Date(result.validUntil).toLocaleDateString('fr-FR')}. ${result.notes}`,
         life: 8000
       });
       await this.load();
     } catch (err: any) {
-      this.toast.add({ severity: 'error', summary: 'Échec', detail: err?.error?.message ?? 'Erreur inconnue.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@promotions-board.component.summary.Échec:Échec`, detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.2f49e3:Erreur inconnue.` });
     }
   }
 
   async dismiss(p: PromotionRecommendation) {
     try {
       await firstValueFrom(this.forecastingService.dismissPromotion(p.id));
-      this.toast.add({ severity: 'info', summary: 'Écartée', detail: 'Recommandation écartée.' });
+      this.toast.add({ severity: 'info', summary: $localize`:@@promotions-board.component.summary.Écartée:Écartée`, detail: $localize`:@@promotions-board.component.detail.Recommandation_:Recommandation écartée.` });
       this.rows.set(this.rows().filter(x => x.id !== p.id));
     } catch (err: any) {
-      this.toast.add({ severity: 'error', summary: 'Échec', detail: err?.error?.message ?? 'Erreur inconnue.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@promotions-board.component.summary.Échec:Échec`, detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.2f49e3:Erreur inconnue.` });
     }
   }
 
@@ -246,7 +249,7 @@ export class PromotionsBoardComponent implements OnInit {
       );
       this.simResult.set(r);
     } catch (err: any) {
-      this.toast.add({ severity: 'error', summary: 'Simulation impossible', detail: err?.error?.message ?? 'Erreur inconnue.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@promotions-board.component.summary.Simulation_impos:Simulation impossible`, detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.2f49e3:Erreur inconnue.` });
     }
   }
 

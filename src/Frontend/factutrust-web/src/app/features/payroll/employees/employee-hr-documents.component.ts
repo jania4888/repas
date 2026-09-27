@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '@shared/components/button/button.component';
@@ -38,7 +39,7 @@ function downloadBlob(blob: Blob, filename: string): void {
             icon="pi-download"
             iconPos="left"
             [disabled]="downloading() !== null"
-            (click)="downloadEmploymentCertificate()" i18n="@@payroll.employees.certificat.de.travail.02713183">Certificat de travail</app-button>
+            (click)="downloadEmploymentCertificate()" i18n="@@payroll.employees.certificat.de.travail.02713183"> Certificat de travail </app-button>
 
           <div class="salary-group">
             <span class="group-label" i18n="@@payroll.employees.attestation.de.salaire.dbadd260">Attestation de salaire</span>
@@ -62,7 +63,7 @@ function downloadBlob(blob: Blob, filename: string): void {
               icon="pi-download"
               iconPos="left"
               [disabled]="downloading() !== null"
-              (click)="downloadSoldeToutCompte()" i18n="@@payroll.employees.solde.de.tout.compte.93fc3ea6">Solde de tout compte</app-button>
+              (click)="downloadSoldeToutCompte()" i18n="@@payroll.employees.solde.de.tout.compte.93fc3ea6"> Solde de tout compte </app-button>
           }
         </div>
       }
@@ -160,14 +161,14 @@ export class EmployeeHrDocumentsComponent implements OnInit {
     request().subscribe({
       next: blob => {
         downloadBlob(blob, filename);
-        this.toast.add({ severity: 'success', summary: 'Documents RH', detail: `${label} téléchargé.` });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-hr-documents.component.summary.Documents_RH:Documents RH`, detail: `${label} téléchargé.` });
         this.downloading.set(null);
       },
       error: err => {
         this.toast.add({
           severity: 'error',
-          summary: 'Documents RH',
-          detail: err.error?.message ?? `Impossible de générer ${label.toLowerCase()}.`
+          summary: $localize`:@@employee-hr-documents.component.summary.Documents_RH:Documents RH`,
+          detail: err.error?.message ?? $localize`:@@ui.tern.impossible.de.generer.ph.ee5254:Impossible de générer ${label.toLowerCase()}:p0:.`
         });
         this.downloading.set(null);
       }

@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ProjectDetail } from '../../project-api.service';
@@ -6,7 +7,7 @@ import { initialsFromName, isBtp } from '../../project-enums';
 @Component({
   selector: 'app-project-overview-info-card',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [BackendLabelPipe, CommonModule, DatePipe],
   template: `
     @if (project) {
       <section class="proj-detail-card">
@@ -24,9 +25,9 @@ import { initialsFromName, isBtp } from '../../project-enums';
             }
           </dd>
           <dt i18n="@@projects.components.type.3deb7456">Type</dt>
-          <dd>{{ project.kindDisplay }}</dd>
+          <dd>{{ project.kindDisplay | backendLabel }}</dd>
           <dt i18n="@@projects.components.facturation.04716c6b">Facturation</dt>
-          <dd>{{ project.billingModeDisplay }}</dd>
+          <dd>{{ project.billingModeDisplay | backendLabel }}</dd>
           <dt i18n="@@projects.components.devise.eb2e42c4">Devise</dt>
           <dd>{{ project.currency }}</dd>
           <dt i18n="@@projects.components.periode.de2110b7">Période</dt>

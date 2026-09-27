@@ -97,7 +97,7 @@ const FILE_BASE_BY_TAB: readonly string[] = [
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser le récapitulatif pour la période sélectionnée" i18n="@@accounting.journal-summary.actualiser.9d3b2a7d">Actualiser</app-button>
+            ariaLabel="Actualiser le récapitulatif pour la période sélectionnée" i18n="@@accounting.journal-summary.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !summary()"
             (exportFormat)="onExport($event)" />
@@ -167,7 +167,7 @@ const FILE_BASE_BY_TAB: readonly string[] = [
                 }
                 @if (centralizerRows().length === 0) {
                   <tr>
-                    <td [attr.colspan]="s.periods.length * 2 + 3" class="js-empty" i18n="@@accounting.journal-summary.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</td>
+                    <td [attr.colspan]="s.periods.length * 2 + 3" class="js-empty" i18n="@@accounting.journal-summary.aucun.mouvement.sur.la.periode.9d40027a"> Aucun mouvement sur la période. </td>
                   </tr>
                 }
               </tbody>
@@ -198,7 +198,7 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           [rowHover]="true"
           styleClass="p-datatable-sm accounting-datatable"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes">
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes">
           <ng-template pTemplate="header">
             <tr>
               <th scope="col" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</th>
@@ -409,7 +409,7 @@ export class JournalSummaryComponent implements OnInit {
         next: res => {
           this.loading.set(false);
           if (res.success && res.data) this.summary.set(res.data);
-          else this.error.set(res.error ?? 'Erreur');
+          else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
         error: err => {
           this.loading.set(false);
@@ -450,7 +450,7 @@ export class JournalSummaryComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return null;
     }
     return { from, to };

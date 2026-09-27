@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -74,7 +76,7 @@ interface WizardProductSuggestion {
 @Component({
   selector: 'app-step-lines',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     BarcodeScanFieldComponent,
     CommonModule,
     FormsModule,
@@ -105,7 +107,7 @@ interface WizardProductSuggestion {
               <i class="pi pi-list"></i>
               Lignes de facturation
             </h2>
-            <p class="section-description" i18n="@@invoices.invoice-wizard.ajoutez.les.produits.ou.services.a.facturer.6b89b6a1">Ajoutez les produits ou services à facturer</p>
+            <p class="section-description" i18n="@@invoices.invoice-wizard.ajoutez.les.produits.ou.services.a.facturer.6b89b6a1"> Ajoutez les produits ou services à facturer </p>
           </div>
           <div class="header-actions">
             <button 
@@ -113,12 +115,12 @@ interface WizardProductSuggestion {
               class="mode-toggle"
               [class.active]="!simpleMode()"
               (click)="toggleSimpleMode()"
-              pTooltip="Afficher/masquer les colonnes avancées (Unité, Remise, TVA détaillée)">
+              pTooltip="Afficher/masquer les colonnes avancées (Unité, Remise, TVA détaillée)" i18n-pTooltip="Afficher/masquer les colonnes avancées (Unité, Remise, TVA détaillée)">
               <i class="pi" [class.pi-eye]="simpleMode()" [class.pi-eye-slash]="!simpleMode()"></i>
-              {{ simpleMode() ? 'Mode avancé' : 'Mode simple' }}
+              {{ simpleMode() ? loc_ui_tern_mode_avance_f0a7a0 : loc_ui_tern_mode_simple_c08361 }}
             </button>
             <p-button
-              label="Ajouter une ligne"
+              label="Ajouter une ligne" i18n-label="Ajouter une ligne"
               icon="pi pi-plus"
               (click)="addNewLine()">
             </p-button>
@@ -143,7 +145,7 @@ interface WizardProductSuggestion {
             <p i18n="@@invoices.invoice-wizard.ces.articles.ne.sont.pas.relies.a.votre.catalogu.77ca4c77">Ces articles ne sont pas reliés à votre catalogue. Liez chaque ligne à un produit existant ou créez un nouveau produit pour pouvoir émettre la facture.</p>
           </div>
           <p-button
-            label="Résoudre la première"
+            label="Résoudre la première" i18n-label="Résoudre la première"
             icon="pi pi-arrow-right"
             iconPos="right"
             severity="warn"
@@ -267,12 +269,12 @@ interface WizardProductSuggestion {
                       <div class="designation-main-row">
                         <span class="designation-main">{{ line.designation }}</span>
                         @if (!line.productId) {
-                          <span class="unmatched-badge" pTooltip="Cette ligne n'est pas associée à un produit du catalogue">
+                          <span class="unmatched-badge" pTooltip="Cette ligne n'est pas associée à un produit du catalogue" i18n-pTooltip="Cette ligne n'est pas associée à un produit du catalogue">
                             <i class="pi pi-exclamation-circle"></i> À lier
                           </span>
                         }
                         @if (simpleMode() && line.isFodecApplicable) {
-                          <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
+                          <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n-pTooltip="FODEC applicable (1%)" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                         }
                       </div>
                       @if (line.description) {
@@ -319,7 +321,7 @@ interface WizardProductSuggestion {
                   @if (editingLineId === line.id) {
                     <div class="price-cell">
                       @if (linePricing.resolving()) {
-                        <i class="pi pi-spin pi-spinner price-resolving" pTooltip="Résolution du prix…"></i>
+                        <i class="pi pi-spin pi-spinner price-resolving" pTooltip="Résolution du prix…" i18n-pTooltip="Résolution du prix…"></i>
                       }
                       <p-inputNumber
                         [(ngModel)]="editLine.unitPriceHT"
@@ -388,7 +390,7 @@ interface WizardProductSuggestion {
                   } @else {
                     @if (line.discountAmount > 0) {
                       <span class="discount-badge">
-                        -{{ line.discountValue }}{{ line.discountType === 'PERCENT' ? '%' : ' TND' }}
+                        -{{ line.discountValue }}{{ line.discountType === 'PERCENT' ? '%' : loc_ui_tern_tnd_9aaf5c }}
                       </span>
                     } @else {
                       <span class="text-muted">-</span>
@@ -416,7 +418,7 @@ interface WizardProductSuggestion {
                       {{ line.vatRate }}%
                     </span>
                     @if (line.isFodecApplicable) {
-                      <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
+                      <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n-pTooltip="FODEC applicable (1%)" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                     }
                   }
                 </td>
@@ -448,7 +450,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         severity="success"
-                        pTooltip="Valider"
+                        pTooltip="Valider" i18n-pTooltip="Valider"
                         (click)="saveLineEdit()">
                       </p-button>
                       <p-button
@@ -456,7 +458,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         severity="secondary"
-                        pTooltip="Annuler"
+                        pTooltip="Annuler" i18n-pTooltip="Annuler"
                         (click)="cancelLineEdit()">
                       </p-button>
                     } @else {
@@ -464,7 +466,7 @@ interface WizardProductSuggestion {
                         icon="pi pi-pencil"
                         [text]="true"
                         [rounded]="true"
-                        pTooltip="Modifier"
+                        pTooltip="Modifier" i18n-pTooltip="Modifier"
                         (click)="startEditLine(line)">
                       </p-button>
                       <p-button
@@ -472,7 +474,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         severity="danger"
-                        pTooltip="Supprimer"
+                        pTooltip="Supprimer" i18n-pTooltip="Supprimer"
                         (click)="deleteLine(line)">
                       </p-button>
                     }
@@ -488,7 +490,7 @@ interface WizardProductSuggestion {
                     <i class="pi pi-inbox"></i>
                     <p i18n="@@invoices.invoice-wizard.aucune.ligne.de.facturation.02e2114a">Aucune ligne de facturation</p>
                     <p-button
-                      label="Ajouter votre première ligne"
+                      label="Ajouter votre première ligne" i18n-label="Ajouter votre première ligne"
                       icon="pi pi-plus"
                       (click)="addNewLine()">
                     </p-button>
@@ -504,7 +506,7 @@ interface WizardProductSuggestion {
           <h3 i18n="@@invoices.invoice-wizard.aucune.ligne.de.facturation.02e2114a">Aucune ligne de facturation</h3>
           <p i18n="@@invoices.invoice-wizard.ajoutez.des.produits.ou.services.pour.continuer.cf42cd33">Ajoutez des produits ou services pour continuer</p>
           <p-button
-            label="Ajouter une ligne"
+            label="Ajouter une ligne" i18n-label="Ajouter une ligne"
             icon="pi pi-plus"
             (click)="addNewLine()">
           </p-button>
@@ -533,7 +535,7 @@ interface WizardProductSuggestion {
                     <tr>
                       <td>
                         <span class="vat-badge" [class]="'vat-' + item.rate">
-                          {{ item.rateDisplay }}
+                          {{ item.rateDisplay | backendLabel }}
                         </span>
                       </td>
                       <td class="text-right amount">{{ item.baseAmount | number:'1.3-3' }}</td>
@@ -589,7 +591,7 @@ interface WizardProductSuggestion {
       <!-- Compliance Info -->
       <div class="compliance-info">
         <i class="pi pi-info-circle"></i>
-        <span i18n="@@invoices.invoice-wizard.taux.de.tva.conformes.a.la.legislation.tunisienn.54fefbf1">Taux de TVA conformes à la législation tunisienne : 0% (exonéré), 7% (réduit), 13% (intermédiaire), 19% (normal)</span>
+        <span i18n="@@invoices.invoice-wizard.taux.de.tva.conformes.a.la.legislation.tunisienn.54fefbf1"> Taux de TVA conformes à la législation tunisienne : 0% (exonéré), 7% (réduit), 13% (intermédiaire), 19% (normal) </span>
       </div>
 
       <app-quick-create-product-dialog
@@ -1195,6 +1197,9 @@ interface WizardProductSuggestion {
   `]
 })
 export class StepLinesComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_mode_avance_f0a7a0 = $localize`:@@ui.tern.mode.avance.f0a7a0:Mode avancé`;
+  readonly loc_ui_tern_mode_simple_c08361 = $localize`:@@ui.tern.mode.simple.c08361:Mode simple`;
+  readonly loc_ui_tern_tnd_9aaf5c = $localize`:@@ui.tern.tnd.9aaf5c: TND`;
   readonly wizardService = inject(InvoiceWizardService);
   private readonly productAutocomplete = inject(ProductAutocompleteService);
   private readonly pricingService = inject(PricingService);
@@ -1480,8 +1485,8 @@ export class StepLinesComponent implements OnInit, OnDestroy {
       message: `Supprimer la ligne "${line.designation}" ?`,
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@step-lines.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@step-lines.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.wizardService.removeLine(line.id);
@@ -1610,8 +1615,8 @@ export class StepLinesComponent implements OnInit, OnDestroy {
     this.quickCreateProductVisible = false;
     this.toastService.add({
       severity: 'success',
-      summary: 'Produit créé',
-      detail: 'Le produit a été créé et ajouté à la ligne.',
+      summary: $localize`:@@step-lines.component.summary.Produit créé:Produit créé`,
+      detail: $localize`:@@step-lines.component.detail.Le_produit_a_t_:Le produit a été créé et ajouté à la ligne.`,
     });
   }
 

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, DestroyRef, HostListener, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -82,18 +83,18 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     }
 
     @if (store.editingLocked() && store.isReversal()) {
-      <p class="me-warning-banner" role="alert" i18n="@@accounting.manual-entry.cette.ecriture.est.une.extourne.vos.modification.a17151aa">Cette écriture est une extourne : vos modifications rompent la symétrie miroir avec l'écriture d'origine.</p>
+      <p class="me-warning-banner" role="alert" i18n="@@accounting.manual-entry.cette.ecriture.est.une.extourne.vos.modification.a17151aa"> Cette écriture est une extourne : vos modifications rompent la symétrie miroir avec l'écriture d'origine. </p>
     }
 
     @if (store.editingLocked() && store.sourceEntityType() === 'CashOperation') {
-      <p class="me-warning-banner" role="alert" i18n="@@accounting.manual-entry.cette.modification.impacte.le.calcul.de.la.tva.s.4b1724b3">Cette modification impacte le calcul de la TVA sur encaissements : elle sera prise en compte au prochain
+      <p class="me-warning-banner" role="alert" i18n="@@accounting.manual-entry.cette.modification.impacte.le.calcul.de.la.tva.s.4b1724b3"> Cette modification impacte le calcul de la TVA sur encaissements : elle sera prise en compte au prochain
         recalcul (enregistrement de la déclaration en brouillon, ou rectificative si la déclaration du mois est déjà
         soumise). Une déclaration déjà enregistrée n'est pas modifiée automatiquement. La ventilation par taux reste
-        celle de l'opération de caisse d'origine.</p>
+        celle de l'opération de caisse d'origine. </p>
     }
 
     @if (refs.vatRatesFromFallback()) {
-      <p class="me-vat-fallback-banner" role="status" i18n="@@accounting.manual-entry.taux.tva.par.defaut.utilises.0.7.13.19.la.config.5a8a0724">Taux TVA par défaut utilisés (0 %, 7 %, 13 %, 19 %). La configuration personnalisée n'est pas accessible avec vos droits actuels.</p>
+      <p class="me-vat-fallback-banner" role="status" i18n="@@accounting.manual-entry.taux.tva.par.defaut.utilises.0.7.13.19.la.config.5a8a0724"> Taux TVA par défaut utilisés (0 %, 7 %, 13 %, 19 %). La configuration personnalisée n'est pas accessible avec vos droits actuels. </p>
     }
 
     <app-entry-toolbar
@@ -175,7 +176,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <p class="text-success me-error" role="status">{{ store.successMsg() }}</p>
     }
     @if (store.periodClosed()) {
-      <p class="me-period-warning" role="alert" i18n="@@accounting.manual-entry.la.periode.comptable.de.cette.date.est.cloturee..1a09b6b7">La période comptable de cette date est clôturée — modifiez la date pour enregistrer.</p>
+      <p class="me-period-warning" role="alert" i18n="@@accounting.manual-entry.la.periode.comptable.de.cette.date.est.cloturee..1a09b6b7"> La période comptable de cette date est clôturée — modifiez la date pour enregistrer. </p>
     }
 
     <details class="me-shortcuts" aria-label="Liste des raccourcis clavier" i18n-aria-label="Liste des raccourcis clavier">
@@ -256,14 +257,14 @@ export class ManualEntryComponent implements OnInit {
     const n = this.store.editingEntryNumber();
     const journal = this.store.journalCode();
     return n != null
-      ? `Modification de l'écriture ${journal} n° ${n} — Brouillon`
-      : 'Modification de l\'écriture — Brouillon';
+      ? $localize`:@@ui.tern.modification.de.l.ecriture.ph.n.ph.brouill.769405:Modification de l'écriture ${journal}:p0: n° ${n}:p1: — Brouillon`
+      : $localize`:@@ui.tern.modification.de.l.ecriture.brouillon.2edf28:Modification de l'écriture — Brouillon`;
   });
 
   readonly pageSubtitle = computed(() =>
     this.store.editingLocked()
-      ? 'Corrigez les lignes puis enregistrez. La validation se fait ensuite depuis le journal.'
-      : 'Écriture de journal multi-lignes avec équilibrage automatique'
+      ? $localize`:@@ui.tern.corrigez.les.lignes.puis.enregistrez.la.va.e22392:Corrigez les lignes puis enregistrez. La validation se fait ensuite depuis le journal.`
+      : $localize`:@@ui.tern.ecriture.de.journal.multi.lignes.avec.equi.daae00:Écriture de journal multi-lignes avec équilibrage automatique`
   );
 
   readonly sourceLabel = computed(() => sourceEntityLabel(this.store.sourceEntityType()));
@@ -356,8 +357,8 @@ export class ManualEntryComponent implements OnInit {
           `Enregistrer délettrera le(s) groupe(s) ${letteredCodes.join(', ')} : toutes leurs lignes ` +
           'redeviendront lettrables, y compris celles d\'autres écritures. Continuer ?',
         header: 'Écriture lettrée',
-        acceptLabel: 'Délettrer et enregistrer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@manual-entry.component.acceptLabel.D_lettrer_et_enr:Délettrer et enregistrer`,
+        rejectLabel: $localize`:@@manual-entry.component.rejectLabel.Annuler:Annuler`,
         accept: () => this.confirmWorkNotesThenSubmit(afterSuccess)
       });
       return;
@@ -370,8 +371,8 @@ export class ManualEntryComponent implements OnInit {
       this.confirmationService.confirm({
         message: 'La note de travail ne sera pas enregistrée en comptabilité. Continuer ?',
         header: 'Confirmation',
-        acceptLabel: 'Continuer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@manual-entry.component.acceptLabel.Continuer:Continuer`,
+        rejectLabel: $localize`:@@manual-entry.component.rejectLabel.Annuler:Annuler`,
         accept: () => this.executeSubmit(afterSuccess)
       });
       return;
@@ -418,7 +419,7 @@ export class ManualEntryComponent implements OnInit {
     ).length;
     this.toast.add({
       severity: 'success',
-      summary: 'Proposition appliquée',
+      summary: $localize`:@@manual-entry.component.summary.Proposition_appl:Proposition appliquée`,
       detail: `${lineCount} ligne(s) posée(s). Vérifiez avant d'enregistrer.`
     });
   }
@@ -444,7 +445,7 @@ export class ManualEntryComponent implements OnInit {
         next: res => {
           this.store.loading.set(false);
           if (!res.success || !res.data) {
-            this.leaveEditWithError(res.error ?? "Impossible de charger l'écriture.");
+            this.leaveEditWithError(res.error ?? $localize`:@@ui.tern.impossible.de.charger.l.ecriture.5fb160:Impossible de charger l'écriture.`);
             return;
           }
           const entry = res.data;
@@ -463,7 +464,7 @@ export class ManualEntryComponent implements OnInit {
   }
 
   private leaveEditWithError(message: string): void {
-    this.toast.add({ severity: 'error', summary: 'Modification impossible', detail: message, life: 6000 });
+    this.toast.add({ severity: 'error', summary: $localize`:@@manual-entry.component.summary.Modification_imp:Modification impossible`, detail: message, life: 6000 });
     this.router.navigate(['/accounting/journal'], {
       queryParams: {
         journalCode: this.returnJournal() || undefined,
@@ -485,8 +486,8 @@ export class ManualEntryComponent implements OnInit {
     this.draftInitialized.set(true);
     this.toast.add({
       severity: 'info',
-      summary: 'Brouillon restauré',
-      detail: 'Votre saisie a été restaurée. Vérifiez les montants avant d\'enregistrer.',
+      summary: $localize`:@@manual-entry.component.summary.Brouillon_restau:Brouillon restauré`,
+      detail: $localize`:@@manual-entry.component.detail.Votre_saisie_a_:Votre saisie a été restaurée. Vérifiez les montants avant d'enregistrer.`,
       life: 4000
     });
   }
@@ -510,8 +511,8 @@ export class ManualEntryComponent implements OnInit {
     this.confirmationService.confirm({
       message: 'Voulez-vous vraiment vider le formulaire ? Toutes les saisies en cours seront perdues.',
       header: 'Confirmation',
-      acceptLabel: 'Vider',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@manual-entry.component.acceptLabel.Vider:Vider`,
+      rejectLabel: $localize`:@@manual-entry.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.store.resetForm();
         this.pendingFiles.set([]);
@@ -530,8 +531,8 @@ export class ManualEntryComponent implements OnInit {
       this.confirmationService.confirm({
         message: `Charger le modèle « ${template.name} » va remplacer la saisie en cours. Voulez-vous continuer ?`,
         header: 'Confirmation',
-        acceptLabel: 'Continuer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@manual-entry.component.acceptLabel.Continuer:Continuer`,
+        rejectLabel: $localize`:@@manual-entry.component.rejectLabel.Annuler:Annuler`,
         accept: () => this.applySelectedTemplate(template)
       });
       return;
@@ -560,7 +561,7 @@ export class ManualEntryComponent implements OnInit {
     );
     this.toast.add({
       severity: 'info',
-      summary: 'Modèle chargé',
+      summary: $localize`:@@manual-entry.component.summary.Modèle charg:Modèle chargé`,
       detail: `Le modèle « ${template.name} » a été chargé.`,
       life: 4000
     });
@@ -570,8 +571,8 @@ export class ManualEntryComponent implements OnInit {
     if (!this.store.canSaveAsTemplate()) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Sauvegarde impossible',
-        detail: 'Veuillez saisir au moins 2 lignes avec un numéro de compte.',
+        summary: $localize`:@@manual-entry.component.summary.Sauvegarde i:Sauvegarde impossible`,
+        detail: $localize`:@@manual-entry.component.detail.Veuillez_saisir_:Veuillez saisir au moins 2 lignes avec un numéro de compte.`,
         life: 5000
       });
       return;
@@ -607,14 +608,14 @@ export class ManualEntryComponent implements OnInit {
           this.savingTemplate.set(false);
           if (res.success) {
             this.closeSaveTemplate();
-            this.toast.add({ severity: 'success', summary: 'Modèle sauvegardé', detail: `Le modèle « ${payload.name} » est disponible.`, life: 5000 });
+            this.toast.add({ severity: 'success', summary: $localize`:@@manual-entry.component.summary.Modèle sauve:Modèle sauvegardé`, detail: `Le modèle « ${payload.name} » est disponible.`, life: 5000 });
           } else {
-            this.toast.add({ severity: 'error', summary: 'Échec', detail: res.error ?? 'Erreur', life: 6000 });
+            this.toast.add({ severity: 'error', summary: $localize`:@@manual-entry.component.summary.Échec:Échec`, detail: res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`, life: 6000 });
           }
         },
         error: err => {
           this.savingTemplate.set(false);
-          this.toast.add({ severity: 'error', summary: 'Impossible de sauvegarder.', detail: this.errors.extractErrorMessage(err, 'Erreur réseau'), life: 6000 });
+          this.toast.add({ severity: 'error', summary: $localize`:@@manual-entry.component.summary.Impossible d:Impossible de sauvegarder.`, detail: this.errors.extractErrorMessage(err, 'Erreur réseau'), life: 6000 });
         }
       });
   }
@@ -669,5 +670,5 @@ const SOURCE_ENTITY_LABELS: Record<string, string> = {
 
 function sourceEntityLabel(source: string | null): string {
   if (!source) return 'un document source';
-  return SOURCE_ENTITY_LABELS[source] ?? 'un document source';
+  return SOURCE_ENTITY_LABELS[source] ?? $localize`:@@ui.tern.un.document.source.1372e0:un document source`;
 }

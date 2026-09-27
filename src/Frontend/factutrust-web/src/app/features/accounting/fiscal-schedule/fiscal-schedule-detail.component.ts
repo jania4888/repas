@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
@@ -11,18 +12,18 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
 @Component({
   selector: 'app-fiscal-schedule-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [BackendLabelPipe, CommonModule],
   template: `
     <section class="detail-panel" *ngIf="selected">
       <div class="detail-group">
         <h2 i18n="@@accounting.fiscal-schedule.detail.7c9a7c06">Detail</h2>
         <dl>
-          <div><dt i18n="@@accounting.fiscal-schedule.type.d.obligation.790fbe09">Type d'obligation</dt><dd>{{ selected.obligationTypeDisplay }}</dd></div>
-          <div><dt i18n="@@accounting.fiscal-schedule.periode.85e181b5">Periode</dt><dd>{{ selected.periodDisplay }}</dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.type.d.obligation.790fbe09">Type d'obligation</dt><dd>{{ selected.obligationTypeDisplay | backendLabel }}</dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.periode.85e181b5">Periode</dt><dd>{{ selected.periodDisplay | backendLabel }}</dd></div>
           <div><dt i18n="@@accounting.fiscal-schedule.date.d.echeance.e0e8b824">Date d'echeance</dt><dd>{{ date(selected.dueDate) }}</dd></div>
           <div><dt i18n="@@accounting.fiscal-schedule.societe.45c9ec04">Societe</dt><dd>{{ selected.companyName || companyLabel }}</dd></div>
           <div><dt i18n="@@accounting.fiscal-schedule.montant.estime.b496eba3">Montant estime</dt><dd>{{ amount(selected.estimatedAmount, selected.currency) }}</dd></div>
-          <div><dt i18n="@@accounting.fiscal-schedule.statut.659499f3">Statut</dt><dd><span class="status-pill" [ngClass]="statusClassName(selected.status)">{{ selected.statusDisplay }}</span></dd></div>
+          <div><dt i18n="@@accounting.fiscal-schedule.statut.659499f3">Statut</dt><dd><span class="status-pill" [ngClass]="statusClassName(selected.status)">{{ selected.statusDisplay | backendLabel }}</span></dd></div>
           <div><dt i18n="@@accounting.fiscal-schedule.responsable.44b58814">Responsable</dt><dd>{{ selected.responsibleName || '-' }}</dd></div>
           <div><dt i18n="@@accounting.fiscal-schedule.observations.461ebaa1">Observations</dt><dd>{{ selected.observations || '-' }}</dd></div>
         </dl>
@@ -50,7 +51,7 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
       <div class="detail-group">
         <h2 i18n="@@accounting.fiscal-schedule.actions.rapides.abe69a9c">Actions rapides</h2>
         <button class="quick-action" type="button" (click)="openSource.emit()">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>{{ isFirmScope ? 'Ouvrir le dossier' : 'Ouvrir la declaration' }}
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>{{ isFirmScope ? loc_ui_tern_ouvrir_le_dossier_48592a : loc_ui_tern_ouvrir_la_declaration_666cb2 }}
         </button>
         <button class="quick-action" type="button" (click)="deposit.emit()" [disabled]="!canMutate">
           <i class="fa-regular fa-circle-check"></i>Marquer comme deposee
@@ -156,6 +157,8 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
   `]
 })
 export class FiscalScheduleDetailComponent {
+  readonly loc_ui_tern_ouvrir_le_dossier_48592a = $localize`:@@ui.tern.ouvrir.le.dossier.48592a:Ouvrir le dossier`;
+  readonly loc_ui_tern_ouvrir_la_declaration_666cb2 = $localize`:@@ui.tern.ouvrir.la.declaration.666cb2:Ouvrir la declaration`;
   @Input() selected: FiscalScheduleEntryDto | null = null;
   @Input() history: FiscalScheduleHistoryDto[] = [];
   @Input() attachments: FiscalScheduleAttachmentDto[] = [];

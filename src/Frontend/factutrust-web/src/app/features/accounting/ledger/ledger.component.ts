@@ -259,7 +259,7 @@ export class LedgerComponent implements OnInit {
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
       this.loading.set(false);
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.error.set(null);
@@ -273,7 +273,7 @@ export class LedgerComponent implements OnInit {
             this.rows.set(res.data);
             this.error.set(null);
           } else {
-            this.error.set(res.error ?? 'Erreur');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           }
         },
         error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
@@ -292,7 +292,7 @@ export class LedgerComponent implements OnInit {
       .subscribe({
         next: res => {
           if (res.success && res.data) this.generalLedger.set(res.data);
-          else this.error.set(res.error ?? 'Erreur');
+          else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
         error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
       });
@@ -310,7 +310,7 @@ export class LedgerComponent implements OnInit {
       .subscribe({
         next: res => {
           if (res.success && res.data) this.recapRows.set(res.data);
-          else this.error.set(res.error ?? 'Erreur');
+          else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
         error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
       });
@@ -323,7 +323,7 @@ export class LedgerComponent implements OnInit {
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
       this.loading.set(false);
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return null;
     }
     return { from, to };
@@ -348,7 +348,7 @@ export class LedgerComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.exporting.set(true);

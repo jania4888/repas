@@ -49,7 +49,7 @@ interface StepRow { step: WorkflowStepSpec; index: number; errors: number; entry
                 [attr.aria-selected]="r.index === selectedIndex()" [attr.data-testid]="'wf-step-' + r.step.key"
                 tabindex="0" (click)="selectedIndex.set(r.index)">
               <span class="wf-steps__no" aria-hidden="true">{{ r.index + 1 }}</span>
-              <i [class]="icons[r.step.type] + ' wf-steps__icon'" aria-hidden="true"></i>
+              <i [class]="icons[r.step.type] + loc_ui_tern_wf_steps_icon_82dabc" aria-hidden="true"></i>
               <span class="wf-steps__label">{{ r.step.label || r.step.key }}</span>
               @if (r.errors > 0) {
                 <p-tag severity="danger" [value]="'' + r.errors" />
@@ -96,6 +96,7 @@ interface StepRow { step: WorkflowStepSpec; index: number; errors: number; entry
   `]
 })
 export class StudioWorkflowStepListComponent {
+  readonly loc_ui_tern_wf_steps_icon_82dabc = " wf-steps__icon";
   readonly steps = model.required<WorkflowStepSpec[]>();
   readonly selectedIndex = model<number | null>(null);
   readonly catalog = input.required<StepCatalogEntryDto[]>();

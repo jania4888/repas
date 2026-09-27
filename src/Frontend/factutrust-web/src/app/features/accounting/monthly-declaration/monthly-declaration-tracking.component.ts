@@ -73,7 +73,7 @@ import {
         type="button"
         [disabled]="loading() || !yearValid()"
         (click)="load()">
-        {{ loading() ? 'Chargement…' : 'Actualiser' }}
+        {{ loading() ? loc_ui_tern_chargement_01cba1 : loc_ui_tern_actualiser_9d3b2a }}
       </app-button>
     </div>
 
@@ -178,6 +178,8 @@ import {
   `
 })
 export class MonthlyDeclarationTrackingComponent implements OnInit {
+  readonly loc_ui_tern_chargement_01cba1 = $localize`:@@ui.tern.chargement.01cba1:Chargement…`;
+  readonly loc_ui_tern_actualiser_9d3b2a = $localize`:@@ui.tern.actualiser.9d3b2a:Actualiser`;
   private readonly api = inject(AccountingService);
   private readonly errors = inject(ErrorHandlerService);
 
@@ -249,7 +251,7 @@ export class MonthlyDeclarationTrackingComponent implements OnInit {
           this.tracking.set(res.data);
         } else {
           this.tracking.set(null);
-          this.error.set(res.error ?? 'Erreur de chargement du suivi.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.du.suivi.c972e3:Erreur de chargement du suivi.`);
         }
       },
       error: err => {

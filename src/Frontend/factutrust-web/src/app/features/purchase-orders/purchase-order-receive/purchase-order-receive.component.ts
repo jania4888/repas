@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -38,6 +40,7 @@ interface ReceptionLine {
   selector: 'app-purchase-order-receive',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, FormsModule,
     TableModule, InputNumberModule, ProgressBarModule, TagModule, ToastModule,
     PageHeaderComponent, BreadcrumbComponent, ButtonComponent, WarehouseSelectorComponent
@@ -52,8 +55,8 @@ interface ReceptionLine {
       </div>
     } @else if (po()) {
       <app-page-header
-        [title]="'Réception — ' + po()!.number"
-        [subtitle]="'Fournisseur : ' + po()!.supplier.name">
+        [title]="loc_ui_tern_reception_9c4605 + po()!.number"
+        [subtitle]="loc_ui_tern_fournisseur_9f3ef9 + po()!.supplier.name">
       </app-page-header>
 
       <!-- Order Summary -->
@@ -61,7 +64,7 @@ interface ReceptionLine {
         <div class="summary-grid">
           <div class="summary-item">
             <span class="summary-label" i18n="@@purchase-orders.purchase-order-receive.statut.659499f3">Statut</span>
-            <p-tag [value]="po()!.statusDisplay"
+            <p-tag [value]="po()!.statusDisplay | backendLabel"
               [severity]="getStatusSeverity(po()!.status)"></p-tag>
           </div>
           <div class="summary-item">
@@ -83,13 +86,13 @@ interface ReceptionLine {
         <div class="warehouse-row">
           <app-warehouse-selector
             inputId="po-receive-warehouse"
-            label="Entrepôt de réception"
+            label="Entrepôt de réception" i18n-label="Entrepôt de réception"
             [required]="true"
             [value]="receiveWarehouseId()"
             (valueChange)="onReceiveWarehouseChange($event)">
           </app-warehouse-selector>
           @if (!receiveWarehouseId()) {
-            <p class="warehouse-hint" role="status" i18n="@@purchase-orders.purchase-order-receive.selectionnez.l.entrepot.dans.lequel.le.stock.ser.97ae182d">Sélectionnez l'entrepôt dans lequel le stock sera mis à jour.</p>
+            <p class="warehouse-hint" role="status" i18n="@@purchase-orders.purchase-order-receive.selectionnez.l.entrepot.dans.lequel.le.stock.ser.97ae182d"> Sélectionnez l'entrepôt dans lequel le stock sera mis à jour. </p>
           }
         </div>
       </div>
@@ -163,14 +166,14 @@ interface ReceptionLine {
 
         <!-- Actions -->
         <div class="form-actions">
-          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]" i18n="@@purchase-orders.purchase-order-receive.retour.au.detail.1ee22560">Retour au détail</app-button>
+          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]" i18n="@@purchase-orders.purchase-order-receive.retour.au.detail.1ee22560"> Retour au détail </app-button>
           <app-button
             variant="primary"
             icon="pi-check"
             iconPos="left"
             [disabled]="!hasLinesToReceive() || submitting() || !receiveWarehouseId()"
             (click)="submitReception()">
-            {{ submitting() ? 'Validation...' : 'Valider la réception' }}
+            {{ submitting() ? loc_ui_tern_validation_938b4a : loc_ui_tern_valider_la_reception_7e1569 }}
           </app-button>
         </div>
       </div>
@@ -341,6 +344,10 @@ interface ReceptionLine {
   `]
 })
 export class PurchaseOrderReceiveComponent implements OnInit {
+  readonly loc_ui_tern_reception_9c4605 = $localize`:@@ui.tern.reception.9c4605:Réception — `;
+  readonly loc_ui_tern_fournisseur_9f3ef9 = $localize`:@@ui.tern.fournisseur.9f3ef9:Fournisseur : `;
+  readonly loc_ui_tern_validation_938b4a = $localize`:@@ui.tern.validation.938b4a:Validation...`;
+  readonly loc_ui_tern_valider_la_reception_7e1569 = $localize`:@@ui.tern.valider.la.reception.7e1569:Valider la réception`;
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private poService = inject(PurchaseOrderService);
@@ -383,8 +390,8 @@ export class PurchaseOrderReceiveComponent implements OnInit {
             this.loading.set(false);
             this.toastService.add({
               severity: 'warn',
-              summary: 'Statut inconnu',
-              detail: 'Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.'
+              summary: $localize`:@@purchase-order-receive.component.summary.Statut_inconnu:Statut inconnu`,
+              detail: $localize`:@@purchase-order-receive.component.detail.Le_statut_de_cet:Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.`
             });
             console.warn('[PurchaseOrderReceive] Unknown purchase order status received from API', {
               orderId: response.data.id,
@@ -408,7 +415,7 @@ export class PurchaseOrderReceiveComponent implements OnInit {
 
             this.toastService.add({
               severity: 'warn',
-              summary: 'Action impossible',
+              summary: $localize`:@@purchase-order-receive.component.summary.Action_impossibl:Action impossible`,
               detail: message
             });
             this.router.navigate(['/purchase-orders', id]);
@@ -440,7 +447,7 @@ export class PurchaseOrderReceiveComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Commande introuvable' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-receive.component.summary.Erreur:Erreur`, detail: $localize`:@@purchase-order-receive.component.detail.Commande_introuv:Commande introuvable` });
         this.router.navigate(['/purchase-orders']);
       }
     });
@@ -494,8 +501,8 @@ export class PurchaseOrderReceiveComponent implements OnInit {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Réception enregistrée avec succès. Le stock a été mis à jour.'
+            summary: $localize`:@@purchase-order-receive.component.summary.Succès:Succès`,
+            detail: $localize`:@@purchase-order-receive.component.detail.R_ception_enregi:Réception enregistrée avec succès. Le stock a été mis à jour.`
           });
           this.router.navigate(['/purchase-orders', order.id]);
         }
@@ -505,7 +512,7 @@ export class PurchaseOrderReceiveComponent implements OnInit {
         this.submitting.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@purchase-order-receive.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

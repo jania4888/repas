@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
@@ -8,7 +9,7 @@ import { ProjectProgressGaugeComponent } from './project-progress-gauge.componen
 @Component({
   selector: 'app-project-dashboard-charts',
   standalone: true,
-  imports: [CommonModule, ChartModule, ChartCardComponent, ProjectProgressGaugeComponent],
+  imports: [BackendLabelPipe, CommonModule, ChartModule, ChartCardComponent, ProjectProgressGaugeComponent],
   template: `
     @if (data) {
       <div class="proj-dash-charts">
@@ -25,7 +26,7 @@ import { ProjectProgressGaugeComponent } from './project-progress-gauge.componen
               @for (item of legendItems(); track item.statusDisplay) {
                 <li>
                   <span class="proj-dash-legend-dot" [style.background]="item.color"></span>
-                  <span class="proj-dash-legend-label">{{ item.statusDisplay }}</span>
+                  <span class="proj-dash-legend-label">{{ item.statusDisplay | backendLabel }}</span>
                   <span class="proj-dash-legend-meta">{{ item.percent }} % · {{ item.count }}</span>
                 </li>
               }
@@ -35,7 +36,7 @@ import { ProjectProgressGaugeComponent } from './project-progress-gauge.componen
 
         <app-chart-card
           title="Évolution des tâches" i18n-title="Évolution des tâches"
-          [subtitle]="period === 'month' ? '30 derniers jours' : '7 derniers jours'">
+          [subtitle]="period === 'month' ? loc_ui_tern_30_derniers_jours_edd8ab : loc_ui_tern_7_derniers_jours_4ea89a">
           <p-chart type="line" [data]="trendChart()" [options]="lineOptions" [style]="{ height: '260px' }" />
         </app-chart-card>
 
@@ -47,6 +48,8 @@ import { ProjectProgressGaugeComponent } from './project-progress-gauge.componen
   `
 })
 export class ProjectDashboardChartsComponent {
+  readonly loc_ui_tern_30_derniers_jours_edd8ab = $localize`:@@ui.tern.30.derniers.jours.edd8ab:30 derniers jours`;
+  readonly loc_ui_tern_7_derniers_jours_4ea89a = $localize`:@@ui.tern.7.derniers.jours.4ea89a:7 derniers jours`;
   @Input() data: ProjectDashboardExtended | null = null;
   @Input() period: 'week' | 'month' = 'week';
 

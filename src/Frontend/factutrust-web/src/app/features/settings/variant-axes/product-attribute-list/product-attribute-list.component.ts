@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -39,9 +40,9 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <app-page-header
       title="Axes de variantes" i18n-title="Axes de variantes"
       subtitle="Définissez les axes (taille, couleur, etc.) et leurs valeurs pour générer les SKU.">
-      <app-button variant="outline" icon="pi-arrow-left" iconPos="left" routerLink="/settings" i18n="@@settings.variant-axes.retour.e5befb1f">Retour</app-button>
+      <app-button variant="outline" icon="pi-arrow-left" iconPos="left" routerLink="/settings" i18n="@@settings.variant-axes.retour.e5befb1f"> Retour </app-button>
       @if (canCreate()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@settings.variant-axes.nouvel.axe.09ff15dd">Nouvel axe</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@settings.variant-axes.nouvel.axe.09ff15dd"> Nouvel axe </app-button>
       }
     </app-page-header>
 
@@ -83,10 +84,10 @@ import { ConfirmationService } from '@core/services/confirmation.service';
               <td>{{ attr.values.length }} valeur(s)</td>
               <td class="actions-col">
                 @if (canUpdate()) {
-                  <app-button variant="ghost" size="sm" icon="pi-pencil" [routerLink]="[attr.id, 'edit']" i18n="@@settings.variant-axes.modifier.f260e757">Modifier</app-button>
+                  <app-button variant="ghost" size="sm" icon="pi-pencil" [routerLink]="[attr.id, 'edit']" i18n="@@settings.variant-axes.modifier.f260e757"> Modifier </app-button>
                 }
                 @if (canDelete()) {
-                  <app-button variant="ghost" size="sm" icon="pi-trash" (clicked)="confirmDelete(attr)" i18n="@@settings.variant-axes.supprimer.1acfc1c7">Supprimer</app-button>
+                  <app-button variant="ghost" size="sm" icon="pi-trash" (clicked)="confirmDelete(attr)" i18n="@@settings.variant-axes.supprimer.1acfc1c7"> Supprimer </app-button>
                 }
               </td>
             </tr>
@@ -150,7 +151,7 @@ export class ProductAttributeListComponent implements OnInit {
         this.loading.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-attribute-list.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -162,16 +163,16 @@ export class ProductAttributeListComponent implements OnInit {
       header: 'Supprimer l\'axe',
       message: `Supprimer l'axe « ${attr.name} » ? Cette action est irréversible.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@product-attribute-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@product-attribute-list.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.productService.deleteAttribute(attr.id).subscribe({
           next: res => {
             if (res.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Supprimé',
-                detail: 'Axe de variantes supprimé'
+                summary: $localize`:@@product-attribute-list.component.summary.Supprimé:Supprimé`,
+                detail: $localize`:@@product-attribute-list.component.detail.Axe_de_variantes:Axe de variantes supprimé`
               });
               this.loadAttributes();
             }
@@ -179,7 +180,7 @@ export class ProductAttributeListComponent implements OnInit {
           error: err => {
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@product-attribute-list.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }

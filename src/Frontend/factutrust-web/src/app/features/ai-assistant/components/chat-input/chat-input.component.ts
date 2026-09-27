@@ -92,7 +92,7 @@ export interface ChatInputSubmission {
             [class.mic-btn--active]="speech.listening()"
             [disabled]="disabled"
             [attr.aria-pressed]="speech.listening()"
-            [attr.aria-label]="speech.listening() ? 'Arrêter la dictée vocale' : 'Démarrer la dictée vocale'"
+            [attr.aria-label]="speech.listening() ? loc_ui_tern_arreter_la_dictee_vocale_b1047b : loc_ui_tern_demarrer_la_dictee_vocale_5198f7"
             (click)="toggleDictation()"
           >
             <i class="fa-solid fa-microphone" aria-hidden="true"></i>
@@ -120,7 +120,7 @@ export interface ChatInputSubmission {
         }
       </div>
       @if (speech.listening()) {
-        <div id="ft-ai-dictation-hint" class="dictation-hint" role="status" aria-live="polite" i18n="@@ai-assistant.components.dictee.active.verifiez.le.texte.dans.le.champ.av.b6da1861">Dictée active — vérifiez le texte dans le champ avant d’envoyer.</div>
+        <div id="ft-ai-dictation-hint" class="dictation-hint" role="status" aria-live="polite" i18n="@@ai-assistant.components.dictee.active.verifiez.le.texte.dans.le.champ.av.b6da1861"> Dictée active — vérifiez le texte dans le champ avant d’envoyer. </div>
       }
       @if (speech.lastError(); as err) {
         <div class="speech-error" role="status" aria-live="polite">{{ err }}</div>
@@ -134,11 +134,11 @@ export interface ChatInputSubmission {
         } @else {
           Entrée pour envoyer &middot; Shift+Entrée pour un retour à la ligne
           @if (speechSupported) {
-            <span i18n="@@ai-assistant.components.middot.dictee.via.le.micro.chrome.edge.recommand.32a2d645">&middot; Dictée via le micro (Chrome / Edge recommandés)</span>
+            <span i18n="@@ai-assistant.components.middot.dictee.via.le.micro.chrome.edge.recommand.32a2d645"> &middot; Dictée via le micro (Chrome / Edge recommandés)</span>
           }
         }
       </div>
-      <p class="input-disclaimer" role="note" i18n="@@ai-assistant.components.l.ia.peut.se.tromper.verifiez.les.reponses.et.le.7d4fa22f">L’IA peut se tromper. Vérifiez les réponses et les montants avant toute décision.</p>
+      <p class="input-disclaimer" role="note" i18n="@@ai-assistant.components.l.ia.peut.se.tromper.verifiez.les.reponses.et.le.7d4fa22f"> L’IA peut se tromper. Vérifiez les réponses et les montants avant toute décision. </p>
     </div>
   `,
   styles: [`
@@ -378,6 +378,8 @@ export interface ChatInputSubmission {
   `]
 })
 export class ChatInputComponent implements OnDestroy, OnChanges, AfterViewChecked {
+  readonly loc_ui_tern_arreter_la_dictee_vocale_b1047b = $localize`:@@ui.tern.arreter.la.dictee.vocale.b1047b:Arrêter la dictée vocale`;
+  readonly loc_ui_tern_demarrer_la_dictee_vocale_5198f7 = $localize`:@@ui.tern.demarrer.la.dictee.vocale.5198f7:Démarrer la dictée vocale`;
   @Input() disabled = false;
   /** When true, show stop control instead of send (typically mirrors assistant streaming). */
   @Input() isStreaming = false;

@@ -73,9 +73,9 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                    activeModel reste chargé côté session pour vision et warm-up Ollama. -->
               <div class="ai-status" [class.offline]="session.aiAvailable() === false">
                 <span class="ai-status-dot"></span>
-                <span class="ai-status-text">{{ session.aiAvailable() === false ? 'Hors ligne' : 'Modèle prêt' }}</span>
+                <span class="ai-status-text">{{ session.aiAvailable() === false ? loc_ui_tern_hors_ligne_2b3e7d : loc_ui_tern_modele_pret_0df9a1 }}</span>
                 @if (scopeConfig(); as sc) {
-                  <span class="scope-badge" [attr.title]="'Assistant expert du module — catalogue et persona ' + sc.expertName">
+                  <span class="scope-badge" [attr.title]="loc_ui_tern_assistant_expert_du_module_catalogue_et_pe_a73956 + sc.expertName">
                     <i [class]="sc.icon" aria-hidden="true"></i>
                     {{ sc.expertName }}
                   </span>
@@ -89,21 +89,21 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                 type="button"
                 class="mode-chip"
                 (click)="switchToGlobalAssistant()"
-                title="Revenir à l'assistant global (tous les domaines)" i18n-title="Revenir à l'assistant global (tous les domaines)" i18n="@@ai-assistant.components.assistant.global.0dc5a3f0">Assistant global</button>
+                title="Revenir à l'assistant global (tous les domaines)" i18n-title="Revenir à l'assistant global (tous les domaines)" i18n="@@ai-assistant.components.assistant.global.0dc5a3f0"> Assistant global </button>
             } @else {
               <button
                 type="button"
                 class="mode-chip"
                 [class.active]="session.assistantComplianceMode()"
                 (click)="session.setAssistantComplianceMode(!session.assistantComplianceMode())"
-                title="Mode conformité : sous-ensemble d’outils et consignes renforcées" i18n-title="Mode conformité : sous-ensemble d’outils et consignes renforcées" i18n="@@ai-assistant.components.conformite.905cab8c">Conformité</button>
+                title="Mode conformité : sous-ensemble d’outils et consignes renforcées" i18n-title="Mode conformité : sous-ensemble d’outils et consignes renforcées" i18n="@@ai-assistant.components.conformite.905cab8c"> Conformité </button>
             }
             @if (session.lastStreamTraceId(); as tid) {
               <button
                 type="button"
                 class="trace-chip"
                 (click)="copyTraceId(tid)"
-                [title]="screenAnalysisTraceTitle()" i18n="@@ai-assistant.components.trace.2f38169a">Trace</button>
+                [title]="screenAnalysisTraceTitle()" i18n="@@ai-assistant.components.trace.2f38169a"> Trace </button>
             }
             <button
               type="button"
@@ -111,7 +111,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
               [class.active]="selection.isSelectionMode()"
               (click)="toggleSelectionMode()"
               [attr.aria-pressed]="selection.isSelectionMode()"
-              title="Sélection multi-réponses (export PowerPoint)" i18n-title="Sélection multi-réponses (export PowerPoint)" i18n="@@ai-assistant.components.selection.ac0002b0">Sélection</button>
+              title="Sélection multi-réponses (export PowerPoint)" i18n-title="Sélection multi-réponses (export PowerPoint)" i18n="@@ai-assistant.components.selection.ac0002b0"> Sélection </button>
             <button class="icon-btn" (click)="onCloseClick()" title="Fermer" i18n-title="Fermer">
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -135,7 +135,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                 class="selection-btn"
                 (click)="selection.clear()"
                 [disabled]="!selection.hasSelection()"
-                aria-label="Vider la sélection" i18n-aria-label="Vider la sélection" i18n="@@ai-assistant.components.effacer.fe23de7b">Effacer</button>
+                aria-label="Vider la sélection" i18n-aria-label="Vider la sélection" i18n="@@ai-assistant.components.effacer.fe23de7b"> Effacer </button>
               <button
                 type="button"
                 class="selection-btn primary"
@@ -184,16 +184,16 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                       <div class="briefing-title" i18n="@@ai-assistant.components.apercu.du.jour.be116976">Aperçu du jour</div>
                       <ul class="briefing-list">
                         <li>
-                          Relances à venir (7 j.) :
+                          <ng-container i18n="@@ai-assistant.components.relances.a.venir.7.j.b31a456b"> Relances à venir (7 j.) : </ng-container>
                           <strong>{{ b.upcomingRemindersCount }}</strong>
                         </li>
                         <li>
-                          Soldes clients :
+                          <ng-container i18n="@@ai-assistant.components.soldes.clients.616b2f83"> Soldes clients : </ng-container>
                           <strong>{{ b.totalClientBalances | number: '1.3-3' }} {{ b.currency }}</strong>
                           ({{ b.clientsWithBalanceCount }} comptes)
                         </li>
                         <li>
-                          Créances +90 j. :
+                          <ng-container i18n="@@ai-assistant.components.creances.90.j.280f2d0f"> Créances +90 j. : </ng-container>
                           <strong>{{ b.agingOver90 | number: '1.3-3' }}</strong>
                         </li>
                       </ul>
@@ -220,7 +220,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                       placeholder="Enregistrer une question favorite…" i18n-placeholder="Enregistrer une question favorite…"
                       maxlength="500"
                       (keydown.enter)="addFavorite(favInput); $event.preventDefault()" />
-                    <button type="button" class="favorite-save-btn" (click)="addFavorite(favInput)" i18n="@@ai-assistant.components.enregistrer.f7c8bcd8">Enregistrer</button>
+                    <button type="button" class="favorite-save-btn" (click)="addFavorite(favInput)" i18n="@@ai-assistant.components.enregistrer.f7c8bcd8"> Enregistrer </button>
                   </div>
                   @if (promptFavorites.favorites().length) {
                     <div class="favorites-block" role="region" aria-label="Questions enregistrées" i18n-aria-label="Questions enregistrées">
@@ -234,7 +234,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                             type="button"
                             class="favorite-remove"
                             (click)="promptFavorites.remove(f.id)"
-                            [attr.aria-label]="'Retirer « ' + f.text.slice(0, 40) + ' »'" i18n="@@ai-assistant.components.text.67fba2f3">×</button>
+                            [attr.aria-label]="loc_ui_tern_retirer_b55802 + f.text.slice(0, 40) + ' »'" i18n="@@ai-assistant.components.text.67fba2f3"> × </button>
                         </div>
                       }
                     </div>
@@ -829,6 +829,10 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
   `]
 })
 export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnDestroy {
+  readonly loc_ui_tern_hors_ligne_2b3e7d = $localize`:@@ui.tern.hors.ligne.2b3e7d:Hors ligne`;
+  readonly loc_ui_tern_modele_pret_0df9a1 = $localize`:@@ui.tern.modele.pret.0df9a1:Modèle prêt`;
+  readonly loc_ui_tern_assistant_expert_du_module_catalogue_et_pe_a73956 = $localize`:@@ui.tern.assistant.expert.du.module.catalogue.et.pe.a73956:Assistant expert du module — catalogue et persona `;
+  readonly loc_ui_tern_retirer_b55802 = $localize`:@@ui.tern.retirer.b55802:Retirer « `;
   @HostBinding('class.chat-panel-host--fill')
   get hostFillClass(): boolean {
     return this.embedded;
@@ -864,11 +868,11 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
     () => this.session.agentScope() === AssistantAgentScope.FirmMission
   );
 
-  readonly headerTitle = computed(() => this.scopeConfig()?.title ?? 'Assistant IA InstaFact');
+  readonly headerTitle = computed(() => this.scopeConfig()?.title ?? $localize`:@@ui.tern.assistant.ia.instafact.f7d399:Assistant IA InstaFact`);
 
   readonly welcomeTitle = computed(() => {
     const sc = this.scopeConfig();
-    return sc ? `Bienvenue dans l'${sc.title}` : "Bienvenue dans l'Assistant IA";
+    return sc ? $localize`:@@ui.tern.bienvenue.dans.l.ph.0ff1ca:Bienvenue dans l'${sc.title}:p0:` : $localize`:@@ui.tern.bienvenue.dans.l.assistant.ia.618a15:Bienvenue dans l'Assistant IA`;
   });
 
   readonly welcomeDescription = computed(() => {
@@ -878,8 +882,8 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
     }
     const themed = (sc.suggestionCategories?.length ?? 0) > 0;
     return themed
-      ? `Votre ${sc.expertName} répond aux questions de son domaine. Quelques exemples, classés par thème :`
-      : `Votre ${sc.expertName} répond aux questions de son domaine. Quelques exemples :`;
+      ? $localize`:@@ui.tern.votre.ph.repond.aux.questions.de.son.domai.b85c50:Votre ${sc.expertName}:p0: répond aux questions de son domaine. Quelques exemples, classés par thème :`
+      : $localize`:@@ui.tern.votre.ph.repond.aux.questions.de.son.domai.d94ff9:Votre ${sc.expertName}:p0: répond aux questions de son domaine. Quelques exemples :`;
   });
 
   readonly scopedSuggestions = computed(() => this.scopeConfig()?.suggestions ?? this.suggestions);
@@ -1023,7 +1027,7 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
     if (!trace) {
       return base;
     }
-    return `${base} — écran: ${trace.screenId}, schema: ${trace.schemaVersion}, payload: ${trace.payloadBytes} o${trace.truncated ? ' (tronqué)' : ''}`;
+    return `${base} — écran: ${trace.screenId}, schema: ${trace.schemaVersion}, payload: ${trace.payloadBytes} o${trace.truncated ? $localize`:@@ui.tern.tronque.d0a5cd: (tronqué)` : ''}`;
   }
 
   /** Stream SSE continues in AiChatSessionService when this panel is destroyed (route change). */
@@ -1130,7 +1134,7 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
     const conversationId = this.session.activeConversationId() ?? '';
     const conversationTitle = this.session.conversations()
       .find(c => c.id === conversationId)?.title
-      ?? 'Conversation';
+      ?? $localize`:@@ui.tern.conversation.2a20c7:Conversation`;
 
     const previewSource = buildAssistantMarkdownForDisplay(message.content) || message.content;
     const preview = previewSource.replace(/\s+/g, ' ').trim().slice(0, 140);

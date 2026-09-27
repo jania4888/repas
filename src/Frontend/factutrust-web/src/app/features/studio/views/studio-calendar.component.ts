@@ -94,7 +94,7 @@ interface LegendItem {
       }
 
       @if (effectiveMode() === 'month') {
-        <div class="cal-grid" role="grid" [attr.aria-label]="'Grille du mois, ' + title()">
+        <div class="cal-grid" role="grid" [attr.aria-label]="loc_ui_tern_grille_du_mois_c58c99 + title()">
           <div class="cal-grid__dow" role="row">
             @for (d of dowLabels; track d) {
               <span role="columnheader">{{ d }}</span>
@@ -133,7 +133,7 @@ interface LegendItem {
           }
         </div>
       } @else {
-        <div class="week-grid" role="grid" [attr.aria-label]="'Grille de la semaine, ' + title()">
+        <div class="week-grid" role="grid" [attr.aria-label]="loc_ui_tern_grille_de_la_semaine_4975b6 + title()">
           @for (day of weekDays(); track day.iso) {
             <div class="week-day" role="row" [class.week-day--weekend]="day.isWeekend" [class.week-day--today]="day.isToday">
               <div class="week-day__head" role="columnheader">
@@ -183,6 +183,8 @@ interface LegendItem {
   styleUrl: './studio-calendar.component.scss'
 })
 export class StudioCalendarComponent {
+  readonly loc_ui_tern_grille_du_mois_c58c99 = $localize`:@@ui.tern.grille.du.mois.c58c99:Grille du mois, `;
+  readonly loc_ui_tern_grille_de_la_semaine_4975b6 = $localize`:@@ui.tern.grille.de.la.semaine.4975b6:Grille de la semaine, `;
   private readonly router = inject(Router);
 
   readonly entityKey = input('');

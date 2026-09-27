@@ -12,7 +12,7 @@ export type MetricTileTone = 'blue' | 'teal' | 'orange' | 'purple' | 'red' | 'cy
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="metric-tile" [class]="'metric-tile metric-tile--' + tone">
+    <div class="metric-tile" [class]="loc_ui_tern_metric_tile_metric_tile_8d5733 + tone">
       <div class="metric-tile__icon" aria-hidden="true">
         <i [class]="iconClass"></i>
       </div>
@@ -70,6 +70,7 @@ export type MetricTileTone = 'blue' | 'teal' | 'orange' | 'purple' | 'red' | 'cy
   `]
 })
 export class MetricTileComponent {
+  readonly loc_ui_tern_metric_tile_metric_tile_8d5733 = "metric-tile metric-tile--";
   @Input() label = '';
   @Input() value: string | number = '';
   @Input() icon = 'fa-solid fa-ticket';

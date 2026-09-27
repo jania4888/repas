@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -94,14 +95,14 @@ interface LineRow extends LinePromotionPreview {
 
     <div class="form-container">
       <h1 class="page-title" i18n="@@delivery-notes.pages.creer.un.bon.de.livraison.628f7b6b">Créer un bon de livraison</h1>
-      <p class="page-subtitle" i18n="@@delivery-notes.pages.renseignez.le.client.l.adresse.de.livraison.et.l.301a7477">Renseignez le client, l'adresse de livraison et les articles à livrer.</p>
-      <p class="page-hint" i18n="@@delivery-notes.pages.le.bon.de.livraison.sera.cree.en.brouillon.vous..375f0fce">Le bon de livraison sera créé en brouillon. Vous pourrez le confirmer ensuite.</p>
+      <p class="page-subtitle" i18n="@@delivery-notes.pages.renseignez.le.client.l.adresse.de.livraison.et.l.301a7477"> Renseignez le client, l'adresse de livraison et les articles à livrer. </p>
+      <p class="page-hint" i18n="@@delivery-notes.pages.le.bon.de.livraison.sera.cree.en.brouillon.vous..375f0fce"> Le bon de livraison sera créé en brouillon. Vous pourrez le confirmer ensuite. </p>
 
       <form (ngSubmit)="onSubmit()" class="dn-form">
         <app-form-section title="Client et informations" i18n-title="Client et informations" icon="pi-user" [number]="1">
           <div class="form-grid">
             <div class="field">
-              <label for="client">Client <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
+              <label for="client"><ng-container i18n="@@delivery-notes.pages.client.1bdd79b1">Client </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <div class="client-cell">
                 <div class="client-cell-input">
                   <p-select
@@ -132,7 +133,7 @@ interface LineRow extends LinePromotionPreview {
               </div>
             </div>
             <div class="field">
-              <label for="issueDate">Date d'émission <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
+              <label for="issueDate"><ng-container i18n="@@delivery-notes.pages.date.d.emission.99f68857">Date d'émission </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <p-datepicker
                 id="issueDate"
                 [(ngModel)]="issueDate"
@@ -153,7 +154,7 @@ interface LineRow extends LinePromotionPreview {
         <app-form-section title="Adresse de livraison" i18n-title="Adresse de livraison" icon="pi-map-marker" [number]="2">
           <div class="form-grid">
             <div class="field span-full">
-              <label for="deliveryAddress">Adresse <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
+              <label for="deliveryAddress"><ng-container i18n="@@delivery-notes.pages.adresse.522e1466">Adresse </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <input pInputText id="deliveryAddress" [(ngModel)]="deliveryAddress" name="deliveryAddress" class="w-full" placeholder="Adresse complète" i18n-placeholder="Adresse complète" />
             </div>
             <div class="field">
@@ -290,7 +291,7 @@ interface LineRow extends LinePromotionPreview {
                     <td class="cell-origin">
                       <div class="origin-stack">
                         @if (linePricing.resolving()) {
-                          <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…"></i>
+                          <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…" i18n-pTooltip="Résolution du prix…"></i>
                         } @else if (line.priceSource === 'ClientPrice') {
                           <p-tag severity="success" value="Prix négocié"></p-tag>
                         } @else if (line.priceSource === 'PriceList') {
@@ -299,11 +300,11 @@ interface LineRow extends LinePromotionPreview {
                           <span class="text-muted" i18n="@@delivery-notes.pages.catalogue.5a241023">Catalogue</span>
                         }
                         @if (line.promotionEligible && line.promotionName) {
-                          <p-tag severity="success" [value]="'Promo : ' + line.promotionName"></p-tag>
+                          <p-tag severity="success" [value]="loc_ui_tern_promo_84ac35 + line.promotionName"></p-tag>
                         } @else if (line.promotionMinQuantityRequired && line.promotionName) {
                           <small
                             class="promo-hint"
-                            [pTooltip]="line.promotionName + ' : qty min. ' + line.promotionMinQuantityRequired">
+                            [pTooltip]="line.promotionName + loc_ui_tern_qty_min_f7ccc3 + line.promotionMinQuantityRequired">
                             {{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}
                           </small>
                         }
@@ -382,14 +383,14 @@ interface LineRow extends LinePromotionPreview {
               [binary]="true"
               name="allowGroupInvoicing"
               inputId="allowGroupInvoicing"
-              label="Autoriser la facturation groupée">
+              label="Autoriser la facturation groupée" i18n-label="Autoriser la facturation groupée">
             </p-checkbox>
             <small class="field-hint" i18n="@@delivery-notes.pages.si.active.ce.bon.de.livraison.pourra.etre.regrou.01efd4ff">Si activé, ce bon de livraison pourra être regroupé avec d'autres pour une facturation unique.</small>
           </div>
 
           <div class="field mt-3">
             <app-warehouse-selector
-              label="Entrepôt source"
+              label="Entrepôt source" i18n-label="Entrepôt source"
               placeholder="Entrepôt par défaut" i18n-placeholder="Entrepôt par défaut"
               [value]="selectedWarehouseId"
               (valueChange)="selectedWarehouseId = $event">
@@ -403,14 +404,14 @@ interface LineRow extends LinePromotionPreview {
             variant="outline"
             icon="pi-times"
             iconPos="left"
-            routerLink="/delivery-notes" i18n="@@delivery-notes.pages.annuler.49ba3292">Annuler</app-button>
+            routerLink="/delivery-notes" i18n="@@delivery-notes.pages.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             type="submit"
             [disabled]="!canSubmit() || submitting() || linePricing.resolving()">
-            {{ submitting() ? 'Création...' : 'Créer le bon de livraison' }}
+            {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_le_bon_de_livraison_cac142 }}
           </app-button>
         </div>
       </form>
@@ -690,6 +691,10 @@ interface LineRow extends LinePromotionPreview {
   `]
 })
 export class DeliveryNoteFormComponent implements OnInit {
+  readonly loc_ui_tern_promo_84ac35 = $localize`:@@ui.tern.promo.84ac35:Promo : `;
+  readonly loc_ui_tern_qty_min_f7ccc3 = $localize`:@@ui.tern.qty.min.f7ccc3: : qty min. `;
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_creer_le_bon_de_livraison_cac142 = $localize`:@@ui.tern.creer.le.bon.de.livraison.cac142:Créer le bon de livraison`;
   private deliveryNoteService = inject(DeliveryNoteService);
   private clientService = inject(ClientService);
   private auth = inject(AuthService);
@@ -875,8 +880,8 @@ export class DeliveryNoteFormComponent implements OnInit {
 
     this.toastService.add({
       severity: 'success',
-      summary: 'Client créé',
-      detail: 'Le client a été créé et sélectionné.',
+      summary: $localize`:@@delivery-note-form.component.summary.Client_cr_:Client créé`,
+      detail: $localize`:@@delivery-note-form.component.detail.Le_client_a_t_:Le client a été créé et sélectionné.`,
     });
   }
 
@@ -896,8 +901,8 @@ export class DeliveryNoteFormComponent implements OnInit {
     this.quickCreateProductVisible = false;
     this.toastService.add({
       severity: 'success',
-      summary: 'Produit créé',
-      detail: 'Le produit a été créé et ajouté à la ligne.',
+      summary: $localize`:@@delivery-note-form.component.summary.Produit créé:Produit créé`,
+      detail: $localize`:@@delivery-note-form.component.detail.Le_produit_a_t_:Le produit a été créé et ajouté à la ligne.`,
     });
   }
 
@@ -956,8 +961,8 @@ export class DeliveryNoteFormComponent implements OnInit {
     if (lineDtos.length === 0) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Lignes manquantes',
-        detail: 'Ajoutez au moins une ligne avec un produit sélectionné.',
+        summary: $localize`:@@delivery-note-form.component.summary.Lignes_manquante:Lignes manquantes`,
+        detail: $localize`:@@delivery-note-form.component.detail.Ajoutez_au_moins:Ajoutez au moins une ligne avec un produit sélectionné.`,
       });
       return;
     }
@@ -982,8 +987,8 @@ export class DeliveryNoteFormComponent implements OnInit {
         if (res.success && res.data) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Bon de livraison créé',
-            detail: 'Redirection vers le bon de livraison...',
+            summary: $localize`:@@delivery-note-form.component.summary.Bon_de_livraison:Bon de livraison créé`,
+            detail: $localize`:@@delivery-note-form.component.detail.Redirection_vers:Redirection vers le bon de livraison...`,
           });
           this.router.navigate(['/delivery-notes', res.data]);
         }
@@ -994,11 +999,11 @@ export class DeliveryNoteFormComponent implements OnInit {
         const isContextError =
           detail.toLowerCase().includes('contexte') || detail.toLowerCase().includes('entreprise valide');
         const fullDetail = isContextError
-          ? `${detail} Déconnectez-vous et reconnectez-vous, ou contactez l'administrateur pour vérifier votre rattachement à une entreprise.`
+          ? $localize`:@@ui.tern.ph.deconnectez.vous.et.reconnectez.vous.ou.325880:${detail}:p0: Déconnectez-vous et reconnectez-vous, ou contactez l'administrateur pour vérifier votre rattachement à une entreprise.`
           : detail;
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@delivery-note-form.component.summary.Erreur:Erreur`,
           detail: fullDetail,
         });
       },

@@ -12,7 +12,7 @@
   <!-- Filters -->
   <p-card
     styleClass="p-card--static lettering-filters-card"
-    header="Critères de sélection"
+    header="Critères de sélection" i18n-header="Critères de sélection"
     subheader="Choisissez un compte et une période, puis chargez les écritures à lettrer.">
     <p-toolbar styleClass="lettering-toolbar accounting-prime-toolbar">
       <ng-template pTemplate="start">
@@ -50,7 +50,7 @@
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            [attr.aria-label]="'Charger les écritures du compte ' + account" i18n="@@accounting.lettering.charger.8f860300">Charger</app-button>
+            [attr.aria-label]="'Charger les écritures du compte ' + account" i18n="@@accounting.lettering.charger.8f860300"> Charger </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-lettering"
             density="toolbar"
@@ -112,7 +112,7 @@
         @if (!selectionSummary().balanced && selectionSummary().count >= 2) {
           <label class="lettering-partial-toggle" for="lettering-partial">
             <p-checkbox inputId="lettering-partial" [binary]="true" [(ngModel)]="allowPartial" />
-            <span>Lettrage partiel <span class="lettering-partial-hint" i18n="@@accounting.lettering.reglement.incomplet.code.p.2c32c024">(règlement incomplet — code « P »)</span></span>
+            <span><ng-container i18n="@@accounting.lettering.lettrage.partiel.fc201a43">Lettrage partiel </ng-container> <span class="lettering-partial-hint" i18n="@@accounting.lettering.reglement.incomplet.code.p.2c32c024">(règlement incomplet — code « P »)</span></span>
           </label>
         }
         @if (selectionSummary().hasExchangeDifference) {
@@ -121,7 +121,7 @@
             {{ selectionSummary().gap | number : '1.3-3' }} d'écart de change.
           </p>
           <p-button
-            label="Équilibrer"
+            label="Équilibrer" i18n-label="Équilibrer"
             icon="pi pi-sliders-h"
             severity="warn"
             [outlined]="true"
@@ -147,7 +147,7 @@
   <!-- Table -->
   <p-card
     styleClass="p-card--static lettering-table-card"
-    header="Écritures"
+    header="Écritures" i18n-header="Écritures"
     subheader="Sélectionnez les lignes à rapprocher. Le lettrage n'est possible que si le total débit = total crédit.">
     @if (loading() && lines().length === 0) {
       <div class="lettering-loading" role="status" aria-live="polite">
@@ -172,14 +172,14 @@
           [rows]="25"
           [rowsPerPageOptions]="[15, 25, 50, 100]"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
           [rowHover]="true"
           [scrollable]="true"
           scrollHeight="min(56vh, 32rem)"
           styleClass="lettering-table"
         >
           <ng-template pTemplate="caption">
-            <span class="sr-only" i18n="@@accounting.lettering.ecritures.du.compte.selectionnez.les.lignes.a.le.5d46181d">Écritures du compte : sélectionnez les lignes à lettrer en cochant les cases.</span>
+            <span class="sr-only" i18n="@@accounting.lettering.ecritures.du.compte.selectionnez.les.lignes.a.le.5d46181d"> Écritures du compte : sélectionnez les lignes à lettrer en cochant les cases. </span>
           </ng-template>
           <ng-template pTemplate="header">
             <tr>
@@ -187,23 +187,23 @@
                 <p-tableHeaderCheckbox />
               </th>
               <th scope="col" pSortableColumn="entryDate">
-                Date <p-sortIcon field="entryDate" />
+                <ng-container i18n="@@accounting.lettering.date.eb9a4bc1"> Date </ng-container> <p-sortIcon field="entryDate" />
               </th>
               <th scope="col" pSortableColumn="journalCode">
-                Journal <p-sortIcon field="journalCode" />
+                <ng-container i18n="@@accounting.lettering.journal.57d7f743"> Journal </ng-container> <p-sortIcon field="journalCode" />
               </th>
               <th scope="col" pSortableColumn="entryNumber">
-                N° <p-sortIcon field="entryNumber" />
+                <ng-container i18n="@@accounting.lettering.n.754e6095"> N° </ng-container> <p-sortIcon field="entryNumber" />
               </th>
               <th scope="col" i18n="@@accounting.lettering.libelle.f5485bba">Libellé</th>
               @if (hasForeignLines()) {
                 <th scope="col" i18n="@@accounting.lettering.devise.eb2e42c4">Devise</th>
               }
               <th scope="col" class="text-right" pSortableColumn="debit">
-                Débit <p-sortIcon field="debit" />
+                <ng-container i18n="@@accounting.lettering.debit.f528224f"> Débit </ng-container> <p-sortIcon field="debit" />
               </th>
               <th scope="col" class="text-right" pSortableColumn="credit">
-                Crédit <p-sortIcon field="credit" />
+                <ng-container i18n="@@accounting.lettering.credit.19194bdf"> Crédit </ng-container> <p-sortIcon field="credit" />
               </th>
               <th scope="col" i18n="@@accounting.lettering.lettrage.cfcdd333">Lettrage</th>
             </tr>
@@ -277,13 +277,13 @@
     <label class="lettering-modal__label" for="settle-account" i18n="@@accounting.lettering.compte.d.imputation.de.l.ecart.5774ab5d">Compte d'imputation de l'écart</label>
     <input id="settle-account" class="lettering-modal__input" type="text"
            [(ngModel)]="settleAccount" placeholder="Ex. 655 ou 756" i18n-placeholder="Ex. 655 ou 756" autocomplete="off" />
-    <p class="lettering-modal__hint" i18n="@@accounting.lettering.charges.ou.produits.classe.6.ou.7.ou.ecarts.de.c.0ab34cdc">Charges ou produits (classe 6 ou 7), ou écarts de conversion (185 / 275).
-      Dans le plan NCT 01 : 655 pertes de change, 756 gains de change.</p>
+    <p class="lettering-modal__hint" i18n="@@accounting.lettering.charges.ou.produits.classe.6.ou.7.ou.ecarts.de.c.0ab34cdc"> Charges ou produits (classe 6 ou 7), ou écarts de conversion (185 / 275).
+      Dans le plan NCT 01 : 655 pertes de change, 756 gains de change. </p>
 
     <div class="lettering-modal__actions">
-      <p-button label="Annuler" severity="secondary" [outlined]="true"
+      <p-button label="Annuler" i18n-label="Annuler" severity="secondary" [outlined]="true"
                 [disabled]="settling()" (onClick)="closeSettle()" />
-      <p-button label="Équilibrer et lettrer" icon="pi pi-check"
+      <p-button label="Équilibrer et lettrer" i18n-label="Équilibrer et lettrer" icon="pi pi-check"
                 [disabled]="!settleAccount.trim() || settling()"
                 [loading]="settling()"
                 (onClick)="settleExchangeDifference()" />

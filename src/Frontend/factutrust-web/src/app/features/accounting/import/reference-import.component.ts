@@ -49,10 +49,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="ri-actions">
           <app-button variant="secondary" icon="pi pi-search" type="button"
             (click)="runPreview()" [disabled]="!selectedFile() || busy()"
-            ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.apercu.f0f53004">Aperçu</app-button>
+            ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.apercu.f0f53004"> Aperçu </app-button>
         </div>
       </div>
-      <p class="ri-help">Colonnes attendues : <code>{{ expectedColumns }}</code>. Création <strong i18n="@@accounting.import.additive.62d12306">additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
+      <p class="ri-help"><ng-container i18n="@@accounting.import.colonnes.attendues.512b88dd">Colonnes attendues : </ng-container> <code>{{ expectedColumns }}</code>. Création <strong i18n="@@accounting.import.additive.62d12306">additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
     </div>
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -108,7 +108,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <app-button variant="primary" icon="pi pi-upload" type="button"
             (click)="runCommit()" [disabled]="!p.canCommit || busy()"
             ariaLabel="Importer le référentiel">
-            {{ committing() ? 'Import…' : 'Importer' }}
+            {{ committing() ? loc_ui_tern_import_4834ca : loc_ui_tern_importer_f54cfe }}
           </app-button>
         </div>
       </div>
@@ -140,6 +140,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class ReferenceImportComponent {
+  readonly loc_ui_tern_import_4834ca = $localize`:@@ui.tern.import.4834ca:Import…`;
+  readonly loc_ui_tern_importer_f54cfe = $localize`:@@ui.tern.importer.f54cfe:Importer`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
 
@@ -201,7 +203,7 @@ export class ReferenceImportComponent {
       next: res => {
         this.loading.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? "L'aperçu a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.apercu.a.echoue.15045a:L'aperçu a échoué.`);
           return;
         }
         this.preview.set(res.data);
@@ -223,7 +225,7 @@ export class ReferenceImportComponent {
       next: res => {
         this.committing.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? "L'import a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.import.a.echoue.2e84df:L'import a échoué.`);
           return;
         }
         this.successMessage.set(`${res.data.createdCount} élément(s) créé(s), ${res.data.skippedCount} ignoré(s).`);

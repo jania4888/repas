@@ -2,7 +2,7 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <app-page-header [title]="pageTitle" [subtitle]="pageSubtitle">
-  <app-button variant="outline" icon="pi-times" iconPos="left" [routerLink]="listRoute" i18n="@@stock-vouchers.stock-voucher-form.retour.e5befb1f">Retour</app-button>
+  <app-button variant="outline" icon="pi-times" iconPos="left" [routerLink]="listRoute" i18n="@@stock-vouchers.stock-voucher-form.retour.e5befb1f"> Retour </app-button>
 </app-page-header>
 
 <div class="submit-readiness" role="status" aria-live="polite">
@@ -39,7 +39,7 @@
       @if (hasLines()) {
         <span>{{ lines.length }} ligne(s) produit ajoutée(s)</span>
       } @else {
-        <button type="button" class="submit-readiness__link" (click)="scrollToLines()" i18n="@@stock-vouchers.stock-voucher-form.ajoutez.au.moins.une.ligne.produit.section.ligne.d5f1dfd9">Ajoutez au moins une ligne produit (section Lignes)</button>
+        <button type="button" class="submit-readiness__link" (click)="scrollToLines()" i18n="@@stock-vouchers.stock-voucher-form.ajoutez.au.moins.une.ligne.produit.section.ligne.d5f1dfd9"> Ajoutez au moins une ligne produit (section Lignes) </button>
       }
     </li>
   </ul>
@@ -50,7 +50,7 @@
     <div class="ft-field">
       <app-warehouse-selector
         inputId="voucher-warehouse"
-        label="Dépôt"
+        label="Dépôt" i18n-label="Dépôt"
         [required]="true"
         [activeOnly]="true"
         [value]="warehouseId"
@@ -58,7 +58,7 @@
       </app-warehouse-selector>
     </div>
     <div class="ft-field">
-      <label for="voucher-date">Date <span class="ft-required" i18n="@@stock-vouchers.stock-voucher-form.text.df58248c">*</span></label>
+      <label for="voucher-date"><ng-container i18n="@@stock-vouchers.stock-voucher-form.date.eb9a4bc1">Date </ng-container> <span class="ft-required" i18n="@@stock-vouchers.stock-voucher-form.text.df58248c">*</span></label>
       <p-datepicker
         inputId="voucher-date"
         [(ngModel)]="voucherDate"
@@ -69,7 +69,7 @@
       </p-datepicker>
     </div>
     <div class="ft-field">
-      <label for="voucher-reason">Motif <span class="ft-required" i18n="@@stock-vouchers.stock-voucher-form.text.df58248c">*</span></label>
+      <label for="voucher-reason"><ng-container i18n="@@stock-vouchers.stock-voucher-form.motif.2a198f47">Motif </ng-container> <span class="ft-required" i18n="@@stock-vouchers.stock-voucher-form.text.df58248c">*</span></label>
       <p-select
         inputId="voucher-reason"
         [options]="reasonOptions"
@@ -85,7 +85,7 @@
         <div class="ft-alert ft-alert--info">
           <i class="pi pi-info-circle"></i>
           <p>
-            Pour un achat fournisseur, utilisez <strong i18n="@@stock-vouchers.stock-voucher-form.achats.gt.bons.de.reception.bf1f61b8">Achats &gt; Bons de réception</strong>.
+            <ng-container i18n="@@stock-vouchers.stock-voucher-form.pour.un.achat.fournisseur.utilisez.730b264d"> Pour un achat fournisseur, utilisez </ng-container> <strong i18n="@@stock-vouchers.stock-voucher-form.achats.gt.bons.de.reception.bf1f61b8">Achats &gt; Bons de réception</strong>.
             Ce motif enregistre une entrée de stock sans BR, sans commande et sans facture.
           </p>
         </div>
@@ -180,7 +180,7 @@
           icon="pi-plus"
           iconPos="left"
           (clicked)="addLine()"
-          [disabled]="!selectedProduct || selectedQuantity <= 0" i18n="@@stock-vouchers.stock-voucher-form.ajouter.87c57ed1">Ajouter</app-button>
+          [disabled]="!selectedProduct || selectedQuantity <= 0" i18n="@@stock-vouchers.stock-voucher-form.ajouter.87c57ed1"> Ajouter </app-button>
       </div>
 
       @if (barcodeScanEnabled) {
@@ -304,7 +304,7 @@
       </span>
     </div>
     <div class="sticky-action-bar__actions">
-      <app-button type="button" variant="outline" (clicked)="cancel()" [disabled]="submitting()" i18n="@@stock-vouchers.stock-voucher-form.annuler.49ba3292">Annuler</app-button>
+      <app-button type="button" variant="outline" (clicked)="cancel()" [disabled]="submitting()" i18n="@@stock-vouchers.stock-voucher-form.annuler.49ba3292"> Annuler </app-button>
       <span
         [pTooltip]="submitBlockersTooltip()"
         [tooltipDisabled]="canSubmit() || submitting()"
@@ -337,7 +337,7 @@
   </div>
 } @else {
   <div class="form-actions">
-    <app-button type="button" variant="outline" (clicked)="cancel()" [disabled]="submitting()" i18n="@@stock-vouchers.stock-voucher-form.annuler.49ba3292">Annuler</app-button>
+    <app-button type="button" variant="outline" (clicked)="cancel()" [disabled]="submitting()" i18n="@@stock-vouchers.stock-voucher-form.annuler.49ba3292"> Annuler </app-button>
     <span
       [pTooltip]="submitBlockersTooltip()"
       [tooltipDisabled]="canSubmit() || submitting()"
@@ -348,7 +348,7 @@
         icon="pi-save"
         iconPos="left"
         (clicked)="save(false)"
-        [disabled]="!canSubmit() || submitting()" i18n="@@stock-vouchers.stock-voucher-form.enregistrer.brouillon.09f6f9ed">Enregistrer brouillon</app-button>
+        [disabled]="!canSubmit() || submitting()" i18n="@@stock-vouchers.stock-voucher-form.enregistrer.brouillon.09f6f9ed"> Enregistrer brouillon </app-button>
     </span>
     <span
       [pTooltip]="submitBlockersTooltip()"
@@ -360,7 +360,7 @@
         icon="pi-check"
         iconPos="left"
         (clicked)="save(true)"
-        [disabled]="!canSubmit() || submitting()" i18n="@@stock-vouchers.stock-voucher-form.enregistrer.et.valider.647a0a77">Enregistrer et valider</app-button>
+        [disabled]="!canSubmit() || submitting()" i18n="@@stock-vouchers.stock-voucher-form.enregistrer.et.valider.647a0a77"> Enregistrer et valider </app-button>
     </span>
   </div>
 }

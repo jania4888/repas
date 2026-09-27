@@ -29,7 +29,7 @@ type GroupBy = 'Product' | 'Category' | 'ProductAndClient';
     <app-page-header
       title="Détails ventes par ligne produit" i18n-title="Détails ventes par ligne produit"
       subtitle="Chiffre d'affaires par produit, par catégorie et par client">
-      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" i18n="@@reports.sales-by-line.exporter.0cd84bdc">Exporter</app-button>
+      <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" i18n="@@reports.sales-by-line.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="filter-section">
@@ -138,7 +138,7 @@ export class SalesByLineReportsComponent implements OnInit {
     this.reportsApi.getSalesRevenueByProduct(fromDate, toDate, 'Product').subscribe({
       next: (res) => {
         this.revenueByProduct.set(res.success && res.data ? res.data : []);
-        if (res.data?.length) this.currency.set(res.data[0].currency ?? 'TND');
+        if (res.data?.length) this.currency.set(res.data[0].currency ?? $localize`:@@ui.tern.tnd.51da21:TND`);
       },
       error: () => this.revenueByProduct.set([]),
       complete: maybeDone

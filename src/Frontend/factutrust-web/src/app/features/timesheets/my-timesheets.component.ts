@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -44,7 +45,7 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
     }
 
     <div class="toolbar">
-      <app-button (clicked)="toggleTimer()">{{ timer() ? 'Stop timer' : 'Start timer' }}</app-button>
+      <app-button (clicked)="toggleTimer()">{{ timer() ? loc_ui_tern_stop_timer_4e04d8 : loc_ui_tern_start_timer_4f207a }}</app-button>
       @if (timer(); as t) {
         <span class="timer-info">{{ t.projectName }} — depuis {{ t.startedAtUtc | date:'HH:mm' }}</span>
       }
@@ -111,6 +112,8 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
   `]
 })
 export class MyTimesheetsComponent implements OnInit {
+  readonly loc_ui_tern_stop_timer_4e04d8 = $localize`:@@ui.tern.stop.timer.4e04d8:Stop timer`;
+  readonly loc_ui_tern_start_timer_4f207a = $localize`:@@ui.tern.start.timer.4f207a:Start timer`;
   private readonly api = inject(TimesheetApiService);
   private readonly projects = inject(ProjectApiService);
   private readonly toast = inject(ToastService);
@@ -151,7 +154,7 @@ export class MyTimesheetsComponent implements OnInit {
         next: r => {
           if (r.success) {
             this.timer.set(null);
-            this.toast.add({ severity: 'success', summary: 'Chronomètre arrêté' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@my-timesheets.component.summary.Chronom_tre_arr_:Chronomètre arrêté` });
             this.reload();
           }
         },
@@ -162,14 +165,14 @@ export class MyTimesheetsComponent implements OnInit {
     this.ensureProjects(() => {
       const project = this.projectList.find(p => p.timesheetsEnabled);
       if (!project) {
-        this.toast.add({ severity: 'warn', summary: 'Aucun projet avec timesheets activés' });
+        this.toast.add({ severity: 'warn', summary: $localize`:@@my-timesheets.component.summary.Aucun_projet_ave:Aucun projet avec timesheets activés` });
         return;
       }
       this.api.startTimer({ projectId: project.id }).subscribe({
         next: r => {
           if (r.success && r.data) {
             this.timer.set(r.data);
-            this.toast.add({ severity: 'success', summary: 'Chronomètre démarré' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@my-timesheets.component.summary.Chronom_tre_d_ma:Chronomètre démarré` });
           }
         },
         error: e => this.fail(e, 'Démarrage du chronomètre')

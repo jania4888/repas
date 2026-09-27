@@ -164,7 +164,7 @@ describe('SecondaryNavComponent', () => {
     fixture.detectChanges();
     tick();
 
-    const menu = document.getElementById('secondary-nav-menu-Ventes');
+    const menu = document.getElementById('secondary-nav-menu-sales');
     expect(menu).toBeTruthy();
     expect(menu!.querySelector('i.secondary-nav__icon.fa-file')).toBeTruthy();
   }));
@@ -180,7 +180,7 @@ describe('SecondaryNavComponent', () => {
     fixture.detectChanges();
     tick();
 
-    const menu = document.getElementById('secondary-nav-menu-Ventes');
+    const menu = document.getElementById('secondary-nav-menu-sales');
     expect(menu).toBeTruthy();
     expect(menu!.classList.contains('show')).toBeTrue();
     expect(menu!.getBoundingClientRect().height).toBeGreaterThan(40);
@@ -201,7 +201,7 @@ describe('SecondaryNavComponent', () => {
     fixture.detectChanges();
     tick();
 
-    const menu = document.getElementById('secondary-nav-menu-RH-Paie');
+    const menu = document.getElementById('secondary-nav-menu-hr-payroll');
     expect(menu).toBeTruthy();
     const salaries = Array.from(menu!.querySelectorAll('.secondary-nav__link')).find(el =>
       el.textContent?.includes('Salariés')
@@ -220,14 +220,14 @@ describe('SecondaryNavComponent', () => {
     fixture.detectChanges();
     tick();
 
-    expect(document.getElementById('secondary-nav-menu-Ventes')?.classList.contains('show')).toBeTrue();
+    expect(document.getElementById('secondary-nav-menu-sales')?.classList.contains('show')).toBeTrue();
 
     const router = TestBed.inject(Router);
     await router.navigateByUrl('/quotes');
     fixture.detectChanges();
     tick();
 
-    expect(document.getElementById('secondary-nav-menu-Ventes')?.classList.contains('show')).toBeFalsy();
+    expect(document.getElementById('secondary-nav-menu-sales')?.classList.contains('show')).toBeFalsy();
   }));
 
   it('opens États comptables flyout and navigates to Journal', fakeAsync(() => {
@@ -240,7 +240,7 @@ describe('SecondaryNavComponent', () => {
     fixture.detectChanges();
     tick();
 
-    const menu = document.getElementById('secondary-nav-menu-Comptabilit');
+    const menu = document.getElementById('secondary-nav-menu-accounting');
     expect(menu).toBeTruthy();
 
     const etatsTrigger = Array.from(menu!.querySelectorAll('.secondary-nav__submenu-trigger')).find(el =>
@@ -251,7 +251,7 @@ describe('SecondaryNavComponent', () => {
     fixture.detectChanges();
     tick();
 
-    const submenu = document.getElementById('secondary-nav-submenu-tats-comptables');
+    const submenu = document.getElementById('secondary-nav-submenu-company-acct--financial-statements-hub');
     expect(submenu).toBeTruthy();
     expect(submenu!.textContent).toContain('Tous les états');
     expect(submenu!.textContent).toContain('Journal');

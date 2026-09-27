@@ -22,7 +22,7 @@ import { dashboardFullConfigToCsv, dashboardTableSectionToCsv, downloadCsv } fro
                 type="button"
                 class="csv-btn"
                 (click)="exportFullDashboard()"
-                [attr.aria-label]="'Exporter tout le tableau de bord « ' + config.title + ' » en CSV'">
+                [attr.aria-label]="loc_ui_tern_exporter_tout_le_tableau_de_bord_77b356 + config.title + loc_ui_tern_en_csv_7e6f95">
                 <i class="fa-solid fa-file-csv" aria-hidden="true"></i>
                 Tout exporter (CSV)
               </button>
@@ -65,7 +65,7 @@ import { dashboardFullConfigToCsv, dashboardTableSectionToCsv, downloadCsv } fro
                         type="button"
                         class="csv-btn"
                         (click)="exportTable(section)"
-                        [attr.aria-label]="'Exporter « ' + section.title + ' » en CSV'">
+                        [attr.aria-label]="loc_ui_tern_exporter_9ef108 + section.title + loc_ui_tern_en_csv_7e6f95">
                         <i class="fa-solid fa-file-csv" aria-hidden="true"></i>
                         CSV
                       </button>
@@ -92,7 +92,7 @@ import { dashboardFullConfigToCsv, dashboardTableSectionToCsv, downloadCsv } fro
                                 type="button"
                                 class="cell-link"
                                 (click)="navigateCell(cellLink)"
-                                [attr.aria-label]="'Ouvrir ' + formatCell(row[c.key])">
+                                [attr.aria-label]="loc_ui_tern_ouvrir_84b3ab + formatCell(row[c.key])">
                                 {{ formatCell(row[c.key]) }}
                               </button>
                             } @else {
@@ -313,6 +313,10 @@ import { dashboardFullConfigToCsv, dashboardTableSectionToCsv, downloadCsv } fro
   `]
 })
 export class AiDashboardRendererComponent implements OnChanges {
+  readonly loc_ui_tern_exporter_tout_le_tableau_de_bord_77b356 = $localize`:@@ui.tern.exporter.tout.le.tableau.de.bord.77b356:Exporter tout le tableau de bord « `;
+  readonly loc_ui_tern_en_csv_7e6f95 = $localize`:@@ui.tern.en.csv.7e6f95: » en CSV`;
+  readonly loc_ui_tern_exporter_9ef108 = $localize`:@@ui.tern.exporter.9ef108:Exporter « `;
+  readonly loc_ui_tern_ouvrir_84b3ab = $localize`:@@ui.tern.ouvrir.84b3ab:Ouvrir `;
   @Input() config: DashboardConfig | null = null;
   /** Tighter spacing when embedded under a chat bubble. */
   @Input() variant: 'default' | 'inline' = 'default';

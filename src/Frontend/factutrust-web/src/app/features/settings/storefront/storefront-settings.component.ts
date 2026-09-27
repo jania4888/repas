@@ -246,7 +246,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
         <p-message severity="error" [text]="error()!" role="alert"></p-message>
       }
       @if (profile()) {
-        <p-card header="Vitrine configurée">
+        <p-card header="Vitrine configurée" i18n-header="Vitrine configurée">
           <p><strong i18n="@@settings.storefront.slug.c22372b0">Slug :</strong> {{ profile()!.slug }}</p>
           <p><strong i18n="@@settings.storefront.nom.public.3e9fc9db">Nom public :</strong> {{ profile()!.displayName }}</p>
           <p><strong i18n="@@settings.storefront.statut.b20e7fc2">Statut :</strong> {{ workflowStatusLabel(profile()!.workflowStatus) }}</p>
@@ -277,7 +277,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
           <div class="workflow-actions mt-3">
             @if (isDraft(profile()!.workflowStatus)) {
               <p-button
-                label="Soumettre à la modération"
+                label="Soumettre à la modération" i18n-label="Soumettre à la modération"
                 icon="pi pi-send"
                 (onClick)="submitForReview()"
                 [loading]="workflowBusy()"
@@ -285,7 +285,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             }
             @if (isPublished(profile()!.workflowStatus)) {
               <p-button
-                label="Dépublier (retour brouillon)"
+                label="Dépublier (retour brouillon)" i18n-label="Dépublier (retour brouillon)"
                 icon="pi pi-eye-slash"
                 severity="secondary"
                 [outlined]="true"
@@ -296,9 +296,9 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
         </p-card>
 
         @if (canEditProfileFields()) {
-          <p-card header="Contenu et habillage publics" class="mt-3">
+          <p-card header="Contenu et habillage publics" i18n-header="Contenu et habillage publics" class="mt-3">
             <p class="lede mb-3">
-              Ces champs sont visibles après modération et publication. Une
+              <ng-container i18n="@@settings.storefront.ces.champs.sont.visibles.apres.moderation.et.pub.77a89db2"> Ces champs sont visibles après modération et publication. Une </ng-container>
               <strong i18n="@@settings.storefront.description.cb329146">description</strong> et une <strong i18n="@@settings.storefront.url.de.logo.public.a9ca3375">URL de logo public</strong> sont obligatoires pour soumettre
               la vitrine.
             </p>
@@ -306,7 +306,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
               <p-message
                 class="block mb-3"
                 severity="info"
-                [text]="'À compléter avant soumission : ' + moderationChecklistItems().join(' · ') + '.'"></p-message>
+                [text]="loc_ui_tern_a_completer_avant_soumission_688cf2 + moderationChecklistItems().join(' · ') + '.'"></p-message>
             }
             @if (fieldErrors().length > 0) {
               <p-message
@@ -395,13 +395,13 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
               <label for="sf-orders" i18n="@@settings.storefront.autoriser.les.commandes.depuis.la.vitrine.publiq.054fb621">Autoriser les commandes depuis la vitrine publique</label>
               <p-inputSwitch inputId="sf-orders" [(ngModel)]="editForm.orderSubmissionEnabled" />
             </div>
-            <p-button label="Enregistrer" icon="pi pi-save" (onClick)="saveProfile()" [loading]="saveBusy()" />
+            <p-button label="Enregistrer" i18n-label="Enregistrer" icon="pi pi-save" (onClick)="saveProfile()" [loading]="saveBusy()" />
           </p-card>
         }
       } @else if (!loading() && profile() === null && !invalidStatusFromServer()) {
-        <p-card header="Activer la vitrine (brouillon)">
+        <p-card header="Activer la vitrine (brouillon)" i18n-header="Activer la vitrine (brouillon)">
           <p class="mb-3">
-            Les CGU de publication version <strong>{{ termsVersion }}</strong> seront enregistrées pour votre
+            <ng-container i18n="@@settings.storefront.les.cgu.de.publication.version.1e109255"> Les CGU de publication version </ng-container> <strong>{{ termsVersion }}</strong> seront enregistrées pour votre
             entreprise.
           </p>
           <div class="field">
@@ -424,7 +424,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             <label i18n="@@settings.storefront.theme.facade.8db2163f">Thème façade</label>
             <p-select [options]="themes" [(ngModel)]="draft.facadeTheme" optionLabel="label" optionValue="value" />
           </div>
-          <p-button label="Créer la vitrine (brouillon)" (onClick)="optIn()" [loading]="saving()" />
+          <p-button label="Créer la vitrine (brouillon)" i18n-label="Créer la vitrine (brouillon)" (onClick)="optIn()" [loading]="saving()" />
         </p-card>
       } @else if (!loading() && invalidStatusFromServer()) {
         <p class="sr-only" i18n="@@settings.storefront.reponse.serveur.incoherente.statut.vitrine.68d1e8a9">Réponse serveur incohérente (statut vitrine).</p>
@@ -483,6 +483,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
   ]
 })
 export class StorefrontSettingsComponent implements OnInit {
+  readonly loc_ui_tern_a_completer_avant_soumission_688cf2 = $localize`:@@ui.tern.a.completer.avant.soumission.688cf2:À compléter avant soumission : `;
   private readonly http = inject(HttpClient);
   private readonly errorHandler = inject(ErrorHandlerService);
 
@@ -607,7 +608,7 @@ export class StorefrontSettingsComponent implements OnInit {
   publicUrlBlockedMessage(slug: string): string {
     return (
       `L’URL publique (/visite-virtuelle/${slug}) ne sera active qu’après publication sur la Rue InstaFact ` +
-      '(validation plateforme). En brouillon, en attente ou suspendue, cette adresse ne renvoie pas la vitrine côté public.'
+      $localize`:@@ui.tern.validation.plateforme.en.brouillon.en.atte.413df7:(validation plateforme). En brouillon, en attente ou suspendue, cette adresse ne renvoie pas la vitrine côté public.`
     );
   }
 
@@ -689,12 +690,12 @@ export class StorefrontSettingsComponent implements OnInit {
       next: res => {
         this.saveBusy.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.errors?.join(' ') ?? res.message ?? 'Enregistrement impossible.');
+          this.error.set(res.errors?.join(' ') ?? res.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`);
           return;
         }
         if (this.applyProfileFromApiDto(res.data)) {
           this.fieldErrors.set([]);
-          this.saveMessage.set(res.message ?? 'Vitrine mise à jour.');
+          this.saveMessage.set(res.message ?? $localize`:@@ui.tern.vitrine.mise.a.jour.ed7ec2:Vitrine mise à jour.`);
         }
       },
       error: (err: HttpErrorResponse) => {
@@ -715,11 +716,11 @@ export class StorefrontSettingsComponent implements OnInit {
         next: res => {
           this.workflowBusy.set(false);
           if (!res.success || !res.data) {
-            this.error.set(res.errors?.join(' ') ?? res.message ?? 'Soumission impossible.');
+            this.error.set(res.errors?.join(' ') ?? res.message ?? $localize`:@@ui.tern.soumission.impossible.543f0c:Soumission impossible.`);
             return;
           }
           if (this.applyProfileFromApiDto(res.data)) {
-            this.workflowMessage.set(res.message ?? 'Soumise à la modération.');
+            this.workflowMessage.set(res.message ?? $localize`:@@ui.tern.soumise.a.la.moderation.c769d8:Soumise à la modération.`);
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -740,11 +741,11 @@ export class StorefrontSettingsComponent implements OnInit {
         next: res => {
           this.workflowBusy.set(false);
           if (!res.success || !res.data) {
-            this.error.set(res.errors?.join(' ') ?? res.message ?? 'Dépublication impossible.');
+            this.error.set(res.errors?.join(' ') ?? res.message ?? $localize`:@@ui.tern.depublication.impossible.0d9c38:Dépublication impossible.`);
             return;
           }
           if (this.applyProfileFromApiDto(res.data)) {
-            this.workflowMessage.set(res.message ?? 'Vitrine dépubliée.');
+            this.workflowMessage.set(res.message ?? $localize`:@@ui.tern.vitrine.depubliee.93f44b:Vitrine dépubliée.`);
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -768,7 +769,7 @@ export class StorefrontSettingsComponent implements OnInit {
     this.http.post<ApiResponse<StorefrontProfileApiDto>>(`${environment.apiUrl}/storefront/tenant/profile`, body).subscribe({
       next: res => {
         if (!res.success || !res.data) {
-          this.error.set(res.errors?.join(' ') ?? res.message ?? 'Erreur');
+          this.error.set(res.errors?.join(' ') ?? res.message ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         } else if (!this.applyProfileFromApiDto(res.data)) {
           // erreur statut déjà posée
         }

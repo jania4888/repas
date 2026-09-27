@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
       [class.skeleton--rounded]="shape === 'rounded'"
       [style.width]="width"
       [style.height]="height"
-      [style.border-radius]="shape === 'circle' ? '50%' : shape === 'rounded' ? 'var(--radius-md)' : 'var(--radius-sm)'"
+      [style.border-radius]="shape === 'circle' ? '50%' : shape === 'rounded' ? loc_ui_tern_var_radius_md_d50c22 : loc_ui_tern_var_radius_sm_1113ae"
       aria-hidden="true">
     </div>
   `,
@@ -48,6 +48,8 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class SkeletonComponent {
+  readonly loc_ui_tern_var_radius_md_d50c22 = "var(--radius-md)";
+  readonly loc_ui_tern_var_radius_sm_1113ae = "var(--radius-sm)";
   @Input() width: string = '100%';
   @Input() height: string = '1rem';
   @Input() shape: 'default' | 'circle' | 'rounded' = 'default';

@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -22,7 +23,7 @@ interface PeriodOption {
 @Component({
   selector: 'app-payments-reports',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -39,7 +40,7 @@ interface PeriodOption {
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()" i18n="@@reports.payments.exporter.0cd84bdc">Exporter</app-button>
+        (click)="onExport()" i18n="@@reports.payments.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="filter-section">
@@ -76,31 +77,31 @@ interface PeriodOption {
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Encaissements"
+          label="Encaissements" i18n-label="Encaissements"
           [value]="reportsData()!.totalInflows"
           icon="pi-arrow-down"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Décaissements"
+          label="Décaissements" i18n-label="Décaissements"
           [value]="reportsData()!.totalOutflows"
           icon="pi-arrow-up"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Trésorerie nette"
+          label="Trésorerie nette" i18n-label="Trésorerie nette"
           [value]="reportsData()!.netCashFlow"
           icon="pi-wallet"
           [variant]="getNetVariant()">
         </app-stat-card>
         <app-stat-card
-          label="Factures clients en attente"
+          label="Factures clients en attente" i18n-label="Factures clients en attente"
           [value]="reportsData()!.pendingClientAmount"
           icon="pi-clock"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Factures fournisseurs en attente"
+          label="Factures fournisseurs en attente" i18n-label="Factures fournisseurs en attente"
           [value]="reportsData()!.pendingSupplierAmount"
           icon="pi-clock"
           variant="warning">
@@ -189,7 +190,7 @@ interface PeriodOption {
               <td>{{ row.clientName }}</td>
               <td>{{ row.invoiceNumber }}</td>
               <td class="text-right amount">{{ row.amount | number:'1.3-3' }} {{ row.currency }}</td>
-              <td>{{ row.methodDisplay }}</td>
+              <td>{{ row.methodDisplay | backendLabel }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -231,7 +232,7 @@ interface PeriodOption {
               <td>{{ row.supplierName }}</td>
               <td>{{ row.invoiceNumber }}</td>
               <td class="text-right amount">{{ row.amount | number:'1.3-3' }} {{ row.currency }}</td>
-              <td>{{ row.methodDisplay }}</td>
+              <td>{{ row.methodDisplay | backendLabel }}</td>
             </tr>
           </ng-template>
         </p-table>

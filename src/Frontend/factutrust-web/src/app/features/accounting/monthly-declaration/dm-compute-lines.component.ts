@@ -77,7 +77,7 @@ import {
               <td>
                 {{ line.label }}
                 @if (line.requiresManualInput) {
-                  <span class="dm-chip dm-chip--warn" title="Rubrique « Fixe » sans constante enregistrée." i18n-title="Rubrique « Fixe » sans constante enregistrée." i18n="@@accounting.monthly-declaration.a.saisir.3e42af61">à saisir</span>
+                  <span class="dm-chip dm-chip--warn" title="Rubrique « Fixe » sans constante enregistrée." i18n-title="Rubrique « Fixe » sans constante enregistrée." i18n="@@accounting.monthly-declaration.a.saisir.3e42af61"> à saisir </span>
                 }
                 @for (d of diagnostics(line); track $index) {
                   <p class="dm-diag" [class.dm-diag--error]="severity(d) === 'error'">
@@ -96,8 +96,8 @@ import {
         </p-table>
       </section>
     } @empty {
-      <div class="card dm-empty" i18n="@@accounting.monthly-declaration.aucune.ligne.produite.pour.cette.periode.soit.le.2599d765">Aucune ligne produite pour cette période : soit le dossier est resté en calcul historique,
-        soit aucune famille n’est incluse dans sa déclaration.</div>
+      <div class="card dm-empty" i18n="@@accounting.monthly-declaration.aucune.ligne.produite.pour.cette.periode.soit.le.2599d765"> Aucune ligne produite pour cette période : soit le dossier est resté en calcul historique,
+        soit aucune famille n’est incluse dans sa déclaration. </div>
     }
   `,
   styles: `

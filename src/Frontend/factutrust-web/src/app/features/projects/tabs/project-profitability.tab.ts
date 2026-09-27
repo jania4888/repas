@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
@@ -62,7 +63,7 @@ export class ProjectProfitabilityTabComponent implements OnInit {
       next: r => { if (r.success && r.data) this.data.set(r.data); },
       error: e => this.toast.add({
         severity: 'error',
-        summary: 'Rentabilité',
+        summary: $localize`:@@project-profitability.tab.summary.Rentabilit_:Rentabilité`,
         detail: this.errors.extractErrorMessage(e)
       })
     });

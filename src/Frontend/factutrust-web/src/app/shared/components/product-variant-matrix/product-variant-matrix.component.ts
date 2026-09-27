@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,9 +36,9 @@ import { ToastService } from '@core/services/toast.service';
     } @else {
       <div class="matrix-toolbar">
         <app-button type="button" variant="outline" size="sm" icon="pi-copy"
-                    (clicked)="copyPricesFromParent()" [disabled]="saving()" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.appliquer.les.prix.du.modele.b6e3445d">Appliquer les prix du modèle</app-button>
+                    (clicked)="copyPricesFromParent()" [disabled]="saving()" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.appliquer.les.prix.du.modele.b6e3445d"> Appliquer les prix du modèle </app-button>
         <app-button type="button" variant="secondary" size="sm" icon="pi-save"
-                    (clicked)="saveAllPrices()" [disabled]="saving()" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.enregistrer.les.prix.e06faf29">Enregistrer les prix</app-button>
+                    (clicked)="saveAllPrices()" [disabled]="saving()" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.enregistrer.les.prix.e06faf29"> Enregistrer les prix </app-button>
       </div>
       <p-table [value]="variants()" styleClass="variant-matrix-table" [scrollable]="true" scrollHeight="320px">
         <ng-template pTemplate="header">
@@ -66,7 +67,7 @@ import { ToastService } from '@core/services/toast.service';
             </td>
             <td>
               <app-button type="button" variant="ghost" size="sm" icon="pi-external-link"
-                          [routerLink]="['/products', row.id, 'edit']" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.fiche.6ad30343">Fiche</app-button>
+                          [routerLink]="['/products', row.id, 'edit']" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.fiche.6ad30343"> Fiche </app-button>
             </td>
           </tr>
         </ng-template>
@@ -126,7 +127,7 @@ export class ProductVariantMatrixComponent implements OnChanges {
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.toastService.add({ severity: 'success', summary: 'Prix', detail: 'Prix du modèle appliqués aux variantes.' });
+          this.toastService.add({ severity: 'success', summary: $localize`:@@product-variant-matrix.component.summary.Prix:Prix`, detail: $localize`:@@product-variant-matrix.component.detail.Prix_du_mod_le_a:Prix du modèle appliqués aux variantes.` });
           this.load();
         }
       },
@@ -148,7 +149,7 @@ export class ProductVariantMatrixComponent implements OnChanges {
         if (res.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Prix',
+            summary: $localize`:@@product-variant-matrix.component.summary.Prix:Prix`,
             detail: `${res.data ?? 0} variante(s) mise(s) à jour.`
           });
           this.load();
@@ -160,7 +161,7 @@ export class ProductVariantMatrixComponent implements OnChanges {
         // que le serveur refuse un code-barres en doublon ou d'une symbologie non activée.
         this.toastService.add({
           severity: 'warn',
-          summary: 'Enregistrement refusé',
+          summary: $localize`:@@product-variant-matrix.component.summary.Enregistrement_r:Enregistrement refusé`,
           detail: res.message || res.errors?.[0] || 'Vérifiez les prix et les codes-barres saisis.'
         });
       },
@@ -169,10 +170,10 @@ export class ProductVariantMatrixComponent implements OnChanges {
         const detail =
           (err as { error?: { message?: string; error?: string } })?.error?.message ??
           (err as { error?: { message?: string; error?: string } })?.error?.error ??
-          'Vérifiez les prix et les codes-barres saisis.';
+          $localize`:@@ui.tern.verifiez.les.prix.et.les.codes.barres.sais.e1f0fb:Vérifiez les prix et les codes-barres saisis.`;
         this.toastService.add({
           severity: 'error',
-          summary: 'Enregistrement refusé',
+          summary: $localize`:@@product-variant-matrix.component.summary.Enregistrement_r:Enregistrement refusé`,
           detail
         });
       }

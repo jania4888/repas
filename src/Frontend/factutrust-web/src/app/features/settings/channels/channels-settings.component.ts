@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -85,8 +86,8 @@ interface ChannelBridgeQrDto {
           <div class="feature-off">
             <i class="pi pi-lock feature-off-icon"></i>
             <h3 i18n="@@settings.channels.fonctionnalite.non.activee.6927dbaf">Fonctionnalité non activée</h3>
-            <p class="muted" i18n="@@settings.channels.le.canal.whatsapp.n.est.pas.active.sur.cette.ins.0f2138cc">Le canal WhatsApp n'est pas activé sur cette installation.
-              Contactez votre administrateur de plateforme.</p>
+            <p class="muted" i18n="@@settings.channels.le.canal.whatsapp.n.est.pas.active.sur.cette.ins.0f2138cc"> Le canal WhatsApp n'est pas activé sur cette installation.
+              Contactez votre administrateur de plateforme. </p>
           </div>
         </p-card>
       } @else if (status()?.linked) {
@@ -95,7 +96,7 @@ interface ChannelBridgeQrDto {
             <div class="linked-head">
               <i class="pi pi-whatsapp wa-icon"></i>
               <div>
-                <h3>WhatsApp lié <p-tag severity="success" value="Actif" /></h3>
+                <h3><ng-container i18n="@@settings.channels.whatsapp.lie.3a496fda">WhatsApp lié </ng-container> <p-tag severity="success" value="Actif" /></h3>
                 <p class="muted">
                   Numéro {{ status()?.linkedNumberMasked || 'lié' }}
                   @if (status()?.verifiedAtUtc) {
@@ -111,7 +112,7 @@ interface ChannelBridgeQrDto {
               données n'est possible depuis WhatsApp.
             </p>
             <p-button
-              label="Délier ce numéro"
+              label="Délier ce numéro" i18n-label="Délier ce numéro"
               icon="pi pi-times"
               severity="danger"
               [outlined]="true"
@@ -126,7 +127,7 @@ interface ChannelBridgeQrDto {
               <i class="pi pi-whatsapp wa-icon"></i>
               <div>
                 <h3 i18n="@@settings.channels.lier.votre.whatsapp.934093aa">Lier votre WhatsApp</h3>
-                <p class="muted" i18n="@@settings.channels.generez.un.code.puis.envoyez.le.depuis.votre.wha.0b5fea96">Générez un code, puis envoyez-le depuis votre WhatsApp au numéro de l'assistant.</p>
+                <p class="muted" i18n="@@settings.channels.generez.un.code.puis.envoyez.le.depuis.votre.wha.0b5fea96"> Générez un code, puis envoyez-le depuis votre WhatsApp au numéro de l'assistant. </p>
               </div>
             </div>
 
@@ -142,14 +143,14 @@ interface ChannelBridgeQrDto {
                 <ol class="steps">
                   <li i18n="@@settings.channels.ouvrez.whatsapp.sur.votre.telephone.d0dae8e9">Ouvrez WhatsApp sur votre téléphone.</li>
                   <li i18n="@@settings.channels.ecrivez.au.numero.whatsapp.de.l.assistant.de.vot.20c18f53">Écrivez au numéro WhatsApp de l'assistant de votre entreprise.</li>
-                  <li>Envoyez le message : <code>LIER {{ issued.code }}</code></li>
+                  <li><ng-container i18n="@@settings.channels.envoyez.le.message.4239ecfc">Envoyez le message : </ng-container> <code>LIER {{ issued.code }}</code></li>
                   <li i18n="@@settings.channels.vous.recevrez.une.confirmation.puis.posez.vos.qu.d30b2a24">Vous recevrez une confirmation, puis posez vos questions librement.</li>
                 </ol>
               </div>
             }
 
             <p-button
-              [label]="issuedCode() ? 'Générer un nouveau code' : 'Générer un code'"
+              [label]="issuedCode() ? loc_ui_tern_generer_un_nouveau_code_5ff61c : loc_ui_tern_generer_un_code_dda87e"
               icon="pi pi-key"
               [loading]="working()"
               (onClick)="generateCode()" />
@@ -168,10 +169,10 @@ interface ChannelBridgeQrDto {
               <i class="pi pi-server wa-icon admin-icon"></i>
               <div>
                 <h3>
-                  Connexion du bot WhatsApp
+                  <ng-container i18n="@@settings.channels.connexion.du.bot.whatsapp.8c845520"> Connexion du bot WhatsApp </ng-container>
                   <p-tag [severity]="bridgeSeverity()" [value]="bridgeLabel()" />
                 </h3>
-                <p class="muted" i18n="@@settings.channels.administration.de.la.session.whatsapp.partagee.l.c1114c96">Administration de la session WhatsApp partagée (le bot qui répond à vos équipes).</p>
+                <p class="muted" i18n="@@settings.channels.administration.de.la.session.whatsapp.partagee.l.c1114c96"> Administration de la session WhatsApp partagée (le bot qui répond à vos équipes). </p>
               </div>
             </div>
 
@@ -205,13 +206,13 @@ interface ChannelBridgeQrDto {
 
             <div class="admin-actions">
               <p-button
-                label="Redémarrer"
+                label="Redémarrer" i18n-label="Redémarrer"
                 icon="pi pi-refresh"
                 [outlined]="true"
                 [loading]="bridgeWorking()"
                 (onClick)="restartBridge()" />
               <p-button
-                label="Déconnecter la session"
+                label="Déconnecter la session" i18n-label="Déconnecter la session"
                 icon="pi pi-sign-out"
                 severity="danger"
                 [outlined]="true"
@@ -330,6 +331,8 @@ interface ChannelBridgeQrDto {
   `]
 })
 export class ChannelsSettingsComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_generer_un_nouveau_code_5ff61c = $localize`:@@ui.tern.generer.un.nouveau.code.5ff61c:Générer un nouveau code`;
+  readonly loc_ui_tern_generer_un_code_dda87e = $localize`:@@ui.tern.generer.un.code.dda87e:Générer un code`;
   private readonly http = inject(HttpClient);
   private readonly errorHandler = inject(ErrorHandlerService);
   private readonly confirmation = inject(ConfirmationService);
@@ -450,8 +453,8 @@ export class ChannelsSettingsComponent implements OnInit, OnDestroy {
       header: 'Délier ce numéro ?',
       message: 'Votre WhatsApp ne pourra plus interroger l’assistant ni recevoir de rappels. Vous pourrez le relier à tout moment.',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Délier',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@channels-settings.component.acceptLabel.Délier:Délier`,
+      rejectLabel: $localize`:@@channels-settings.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.unlink()
     });
@@ -517,8 +520,8 @@ export class ChannelsSettingsComponent implements OnInit, OnDestroy {
       header: 'Déconnecter la session WhatsApp ?',
       message: 'Le bot cessera de répondre jusqu’à ce qu’un nouveau QR code soit scanné. Continuer ?',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Déconnecter',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@channels-settings.component.acceptLabel.D_connecter:Déconnecter`,
+      rejectLabel: $localize`:@@channels-settings.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.logoutBridge()
     });

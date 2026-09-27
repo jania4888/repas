@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
@@ -30,7 +32,7 @@ import {
 @Component({
   selector: 'app-stock-voucher-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -59,27 +61,27 @@ import {
       <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
       <app-page-header [title]="v.kindDisplay + ' ' + v.number" [subtitle]="v.reasonDisplay">
         <div class="header-actions">
-          <span class="status-badge" [ngClass]="v.statusCss">{{ v.statusDisplay }}</span>
-          <button pButton type="button" label="PDF" icon="pi pi-file-pdf" class="p-button-outlined"
+          <span class="status-badge" [ngClass]="v.statusCss">{{ v.statusDisplay | backendLabel }}</span>
+          <button pButton type="button" label="PDF" i18n-label="PDF" icon="pi pi-file-pdf" class="p-button-outlined"
                   (click)="downloadPdf()" [loading]="pdfLoading()"></button>
           @if (canUpdate() && isDraft(v.status)) {
-            <app-button variant="outline" icon="pi-pencil" iconPos="left" [routerLink]="editRoute" i18n="@@stock-vouchers.stock-voucher-detail.modifier.f260e757">Modifier</app-button>
-            <button pButton type="button" label="Valider" icon="pi pi-check"
+            <app-button variant="outline" icon="pi-pencil" iconPos="left" [routerLink]="editRoute" i18n="@@stock-vouchers.stock-voucher-detail.modifier.f260e757"> Modifier </app-button>
+            <button pButton type="button" label="Valider" i18n-label="Valider" icon="pi pi-check"
                     (click)="validate()" [loading]="processing()"></button>
           }
           @if (canCreate() && !isDraft(v.status)) {
-            <button pButton type="button" label="Dupliquer" icon="pi pi-copy" class="p-button-outlined"
+            <button pButton type="button" label="Dupliquer" i18n-label="Dupliquer" icon="pi pi-copy" class="p-button-outlined"
                     (click)="duplicate()" [loading]="duplicating()"></button>
           }
           @if (canUpdate() && (isDraft(v.status) || isValidated(v.status))) {
-            <button pButton type="button" label="Annuler" icon="pi pi-times"
+            <button pButton type="button" label="Annuler" i18n-label="Annuler" icon="pi pi-times"
                     class="p-button-danger p-button-outlined" (click)="showCancelDialog = true"></button>
           }
           @if (canDelete() && isDraft(v.status)) {
-            <button pButton type="button" label="Supprimer" icon="pi pi-trash"
+            <button pButton type="button" label="Supprimer" i18n-label="Supprimer" icon="pi pi-trash"
                     class="p-button-danger" (click)="confirmDelete()"></button>
           }
-          <app-button variant="outline" icon="pi-arrow-left" iconPos="left" [routerLink]="listRoute" i18n="@@stock-vouchers.stock-voucher-detail.retour.e5befb1f">Retour</app-button>
+          <app-button variant="outline" icon="pi-arrow-left" iconPos="left" [routerLink]="listRoute" i18n="@@stock-vouchers.stock-voucher-detail.retour.e5befb1f"> Retour </app-button>
         </div>
       </app-page-header>
 
@@ -141,14 +143,14 @@ import {
         </table>
       </div>
 
-      <p-dialog header="Annuler le bon" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
+      <p-dialog header="Annuler le bon" i18n-header="Annuler le bon" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
         <div class="field">
           <label class="field-label" i18n="@@stock-vouchers.stock-voucher-detail.motif.d.annulation.f627914d">Motif d'annulation</label>
           <textarea pTextarea [(ngModel)]="cancelReason" rows="3" style="width:100%"></textarea>
         </div>
         <ng-template pTemplate="footer">
-          <button pButton type="button" label="Fermer" class="p-button-text" (click)="showCancelDialog = false"></button>
-          <button pButton type="button" label="Confirmer l'annulation" class="p-button-danger"
+          <button pButton type="button" label="Fermer" i18n-label="Fermer" class="p-button-text" (click)="showCancelDialog = false"></button>
+          <button pButton type="button" label="Confirmer l'annulation" i18n-label="Confirmer l'annulation" class="p-button-danger"
                   (click)="cancelVoucher()" [disabled]="!cancelReason.trim()" [loading]="processing()"></button>
         </ng-template>
       </p-dialog>
@@ -229,7 +231,7 @@ export class StockVoucherDetailComponent implements OnInit {
         const data = res.data ?? null;
         this.voucher.set(data);
         if (data) {
-          const listLabel = isStockVoucherEntry(data.kind) ? "Bons d'entrée" : 'Bons de sortie';
+          const listLabel = isStockVoucherEntry(data.kind) ? $localize`:@@ui.tern.bons.d.entree.c04705:Bons d'entrée` : $localize`:@@ui.tern.bons.de.sortie.ccd59b:Bons de sortie`;
           this.breadcrumbItems = [
             { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
             { label: 'Stock', route: '/stock' },
@@ -243,7 +245,7 @@ export class StockVoucherDetailComponent implements OnInit {
         this.initialLoading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@stock-voucher-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
         void this.router.navigate([this.listRoute]);
@@ -258,21 +260,21 @@ export class StockVoucherDetailComponent implements OnInit {
       header: 'Valider le bon',
       message: 'Le stock sera mis à jour. Continuer ?',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Valider',
-      rejectLabel: 'Retour',
+      acceptLabel: $localize`:@@stock-voucher-detail.component.acceptLabel.Valider:Valider`,
+      rejectLabel: $localize`:@@stock-voucher-detail.component.rejectLabel.Retour:Retour`,
       accept: () => {
         this.processing.set(true);
         this.voucherService.validate(v.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
             this.processing.set(false);
-            this.messageService.add({ severity: 'success', summary: 'Validé', detail: 'Le stock a été mis à jour.' });
+            this.messageService.add({ severity: 'success', summary: $localize`:@@stock-voucher-detail.component.summary.Validé:Validé`, detail: $localize`:@@stock-voucher-detail.component.detail.Le stock a é:Le stock a été mis à jour.` });
             this.load(v.id);
           },
           error: (err) => {
             this.processing.set(false);
             this.messageService.add({
               severity: 'error',
-              summary: 'Validation refusée',
+              summary: $localize`:@@stock-voucher-detail.component.summary.Validation_refus:Validation refusée`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }
@@ -289,14 +291,14 @@ export class StockVoucherDetailComponent implements OnInit {
       next: () => {
         this.processing.set(false);
         this.showCancelDialog = false;
-        this.messageService.add({ severity: 'info', summary: 'Annulé', detail: 'Bon de stock annulé.' });
+        this.messageService.add({ severity: 'info', summary: $localize`:@@stock-voucher-detail.component.summary.Annul_:Annulé`, detail: $localize`:@@stock-voucher-detail.component.detail.Bon_de_stock_ann:Bon de stock annulé.` });
         this.load(v.id);
       },
       error: (err) => {
         this.processing.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Annulation refusée',
+          summary: $localize`:@@stock-voucher-detail.component.summary.Annulation_refus:Annulation refusée`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -310,18 +312,18 @@ export class StockVoucherDetailComponent implements OnInit {
       header: 'Supprimer le brouillon',
       message: `Supprimer définitivement ${v.number} ?`,
       icon: 'pi pi-trash',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@stock-voucher-detail.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@stock-voucher-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.voucherService.delete(v.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Supprimé', detail: 'Brouillon supprimé.' });
+            this.messageService.add({ severity: 'success', summary: $localize`:@@stock-voucher-detail.component.summary.Supprimé:Supprimé`, detail: $localize`:@@stock-voucher-detail.component.detail.Brouillon_suppri:Brouillon supprimé.` });
             void this.router.navigate([this.listRoute]);
           },
           error: (err) => this.messageService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@stock-voucher-detail.component.summary.Erreur:Erreur`,
             detail: this.errorHandler.extractErrorMessage(err)
           })
         });
@@ -351,14 +353,14 @@ export class StockVoucherDetailComponent implements OnInit {
       next: (res) => {
         this.duplicating.set(false);
         const id = res.data;
-        this.messageService.add({ severity: 'success', summary: 'Dupliqué', detail: 'Un brouillon a été créé.' });
+        this.messageService.add({ severity: 'success', summary: $localize`:@@stock-voucher-detail.component.summary.Dupliqué:Dupliqué`, detail: $localize`:@@stock-voucher-detail.component.detail.Un_brouillon_a_:Un brouillon a été créé.` });
         if (id) void this.router.navigate([this.listRoute, id, 'edit']);
       },
       error: (err) => {
         this.duplicating.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@stock-voucher-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -383,7 +385,7 @@ export class StockVoucherDetailComponent implements OnInit {
         this.pdfLoading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@stock-voucher-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

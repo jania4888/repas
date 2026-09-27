@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed, effect, untracked, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -274,8 +275,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 this.loading.set(false);
                 this.messageService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: 'Impossible de charger les inventaires'
+                    summary: $localize`:@@inventory-wizard.component.summary.Erreur:Erreur`,
+                    detail: $localize`:@@inventory-wizard.component.detail.Impossible_de_ch:Impossible de charger les inventaires`
                 });
             }
         });
@@ -296,8 +297,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 this.loadingProducts.set(false);
                 this.messageService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: 'Impossible de charger les produits'
+                    summary: $localize`:@@inventory-wizard.component.summary.Erreur:Erreur`,
+                    detail: $localize`:@@inventory-wizard.component.detail.impossible.de.charger.les.produits.a97081a2:Impossible de charger les produits`
                 });
             }
         });
@@ -346,7 +347,7 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 if (response.success && response.data) {
                     this.messageService.add({
                         severity: 'success',
-                        summary: 'Inventaire lancé !',
+                        summary: $localize`:@@inventory-wizard.component.summary.Inventaire_lanc_:Inventaire lancé !`,
                         detail: response.data.humanMessage
                     });
                     this.checkActiveInventory();
@@ -361,7 +362,7 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                     || 'Impossible de démarrer l\'inventaire';
                 this.messageService.add({
                     severity: 'error',
-                    summary: 'Erreur',
+                    summary: $localize`:@@inventory-wizard.component.summary.Erreur:Erreur`,
                     detail: errorMessage
                 });
             }
@@ -415,8 +416,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
         if (this.requiresLotNumberForCurrentCount() && !this.lotNumber().trim()) {
             this.messageService.add({
                 severity: 'warn',
-                summary: 'N° de lot requis',
-                detail: 'Saisissez un numéro de lot pour cet article suivi (inventaire d\'ouverture).'
+                summary: $localize`:@@inventory-wizard.component.summary.N° de lot re:N° de lot requis`,
+                detail: $localize`:@@inventory-wizard.component.detail.Saisissez_un_num:Saisissez un numéro de lot pour cet article suivi (inventaire d'ouverture).`
             });
             return;
         }
@@ -438,7 +439,7 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                     this.lastCountResult.set(response.data);
                     this.messageService.add({
                         severity: 'success',
-                        summary: 'Comptage enregistré',
+                        summary: $localize`:@@inventory-wizard.component.summary.Comptage_enregis:Comptage enregistré`,
                         detail: response.data.humanMessage
                     });
                     this.refreshAndMoveNext();
@@ -449,8 +450,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 this.submitting.set(false);
                 this.messageService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: this.errorHandler.extractErrorMessage(err) ?? 'Impossible d\'enregistrer le comptage'
+                    summary: $localize`:@@inventory-wizard.component.summary.Erreur:Erreur`,
+                    detail: this.errorHandler.extractErrorMessage(err) ?? $localize`:@@ui.tern.impossible.d.enregistrer.le.comptage.b4a869:Impossible d'enregistrer le comptage`
                 });
             }
         });
@@ -492,8 +493,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 this.loading.set(false);
                 this.messageService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: 'Impossible de charger le résumé'
+                    summary: $localize`:@@inventory-wizard.component.summary.Erreur:Erreur`,
+                    detail: $localize`:@@inventory-wizard.component.detail.impossible.de.charger.le.resume.e18c7605:Impossible de charger le résumé`
                 });
             }
         });
@@ -519,11 +520,11 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
             const names = missing.map(item => `« ${item.productName} »`).join(', ');
             this.messageService.add({
                 severity: 'warn',
-                summary: 'N° de lot requis',
+                summary: $localize`:@@inventory-wizard.component.summary.N° de lot re:N° de lot requis`,
                 detail: names
-                    ? `Saisissez un numéro de lot pour ${names} (article suivi par lot).`
+                    ? $localize`:@@ui.tern.saisissez.un.numero.de.lot.pour.ph.article.7c7998:Saisissez un numéro de lot pour ${names}:p0: (article suivi par lot).`
                     : (this.inventorySummary()?.statusMessage
-                        ?? 'Saisissez les numéros de lot manquants avant de valider.')
+                        ?? $localize`:@@ui.tern.saisissez.les.numeros.de.lot.manquants.ava.fa6d2f:Saisissez les numéros de lot manquants avant de valider.`)
             });
             return;
         }
@@ -534,7 +535,7 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 if (response.success && response.data) {
                     this.messageService.add({
                         severity: 'success',
-                        summary: 'Inventaire validé !',
+                        summary: $localize`:@@inventory-wizard.component.summary.Inventaire_valid:Inventaire validé !`,
                         detail: response.data.humanMessage
                     });
                     this.step.set('success');
@@ -545,8 +546,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 this.submitting.set(false);
                 this.messageService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: this.errorHandler.extractErrorMessage(err) ?? 'Impossible de valider l\'inventaire'
+                    summary: $localize`:@@inventory-wizard.component.summary.Erreur:Erreur`,
+                    detail: this.errorHandler.extractErrorMessage(err) ?? $localize`:@@ui.tern.impossible.de.valider.l.inventaire.2555f5:Impossible de valider l'inventaire`
                 });
             }
         });
@@ -557,8 +558,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
             header: 'Annuler l\'inventaire',
             message: 'Les comptages non validés seront perdus. Voulez-vous vraiment annuler cet inventaire ?',
             icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Annuler l\'inventaire',
-            rejectLabel: 'Continuer le comptage',
+            acceptLabel: $localize`:@@inventory-wizard.component.acceptLabel.Annuler_l_invent:Annuler l'inventaire`,
+            rejectLabel: $localize`:@@inventory-wizard.component.rejectLabel.Continuer_le_com:Continuer le comptage`,
             acceptButtonStyleClass: 'btn-danger',
             size: 'md',
             accept: () => this.cancelInventory()
@@ -575,7 +576,7 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 if (response.success && response.data) {
                     this.messageService.add({
                         severity: 'info',
-                        summary: 'Inventaire annulé',
+                        summary: $localize`:@@inventory-wizard.component.summary.Inventaire_annul:Inventaire annulé`,
                         detail: response.data.humanMessage
                     });
                     this.activeInventory.set(null);
@@ -587,8 +588,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
                 this.submitting.set(false);
                 this.messageService.add({
                     severity: 'error',
-                    summary: 'Erreur',
-                    detail: 'Impossible d\'annuler l\'inventaire'
+                    summary: $localize`:@@inventory-wizard.component.summary.Erreur:Erreur`,
+                    detail: $localize`:@@inventory-wizard.component.detail.Impossible_d_ann:Impossible d'annuler l'inventaire`
                 });
             }
         });

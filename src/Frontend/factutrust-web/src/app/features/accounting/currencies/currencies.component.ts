@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -60,7 +61,7 @@ const MAX_FISCAL_YEAR = 2100;
 
     @if (form(); as f) {
       <div class="card cur-form">
-        <h3 class="cur-form-title">{{ f.id ? 'Modifier la devise' : 'Nouvelle devise' }}</h3>
+        <h3 class="cur-form-title">{{ f.id ? loc_ui_tern_modifier_la_devise_b37fac : loc_ui_tern_nouvelle_devise_b1094e }}</h3>
         <div class="cur-fields">
           <div class="cur-field">
             <label class="cur-lbl" for="cur-code" i18n="@@accounting.currencies.code.adac6937">Code</label>
@@ -88,7 +89,7 @@ const MAX_FISCAL_YEAR = 2100;
             <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()" i18n="@@accounting.currencies.annuler.49ba3292">Annuler</button>
             <button type="button" class="btn btn-primary" (click)="save()"
                     [disabled]="saving() || !f.code.trim() || !f.label.trim()">
-              {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+              {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
             </button>
           </div>
         </div>
@@ -135,7 +136,7 @@ const MAX_FISCAL_YEAR = 2100;
                 <span class="cur-badge cur-badge--ok" i18n="@@accounting.currencies.complet.26275ebd">Complet</span>
               }
             </td>
-            <td>{{ c.isActive ? 'Oui' : 'Non' }}</td>
+            <td>{{ c.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
             <td>
               <app-accounting-table-actions>
                 @if (!c.isFunctional) {
@@ -150,7 +151,7 @@ const MAX_FISCAL_YEAR = 2100;
                                 [icon]="c.isActive ? 'pi-eye-slash' : 'pi-eye'"
                                 [iconOnly]="true" [iconAlwaysVisible]="true"
                                 type="button" (click)="toggle(c)"
-                                [attr.aria-label]="c.isActive ? 'Désactiver' : 'Activer'" />
+                                [attr.aria-label]="c.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7" />
                   }
                 }
               </app-accounting-table-actions>
@@ -191,6 +192,14 @@ const MAX_FISCAL_YEAR = 2100;
   `
 })
 export class CurrenciesComponent implements OnInit {
+  readonly loc_ui_tern_modifier_la_devise_b37fac = $localize`:@@ui.tern.modifier.la.devise.b37fac:Modifier la devise`;
+  readonly loc_ui_tern_nouvelle_devise_b1094e = $localize`:@@ui.tern.nouvelle.devise.b1094e:Nouvelle devise`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
   private readonly api = inject(AccountingService);
   // Le 400 metier porte un message precis ; extractErrorMessage le lit et
   // distingue au passage la vraie panne reseau (status 0).
@@ -230,7 +239,7 @@ export class CurrenciesComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.currencies.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
     });
@@ -264,11 +273,11 @@ export class CurrenciesComponent implements OnInit {
     const done = (ok: boolean, err?: string) => {
       this.saving.set(false);
       if (ok) {
-        this.toast.add({ severity: 'success', summary: 'Devise enregistrée', detail: f.code, life: 4000 });
+        this.toast.add({ severity: 'success', summary: $localize`:@@currencies.component.summary.Devise_enregistr:Devise enregistrée`, detail: f.code, life: 4000 });
         this.form.set(null);
         this.load();
       } else {
-        this.error.set(err ?? 'Erreur');
+        this.error.set(err ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       }
     };
 
@@ -290,7 +299,7 @@ export class CurrenciesComponent implements OnInit {
 
   toggle(c: CurrencyDto): void {
     this.api.toggleCurrency(c.id).subscribe({
-      next: r => { if (r.success) this.load(); else this.error.set(r.error ?? 'Erreur'); },
+      next: r => { if (r.success) this.load(); else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`); },
       error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
     });
   }

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -28,6 +30,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
   selector: 'app-contract-history-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, TableModule, TooltipModule,
     ButtonComponent, StatusBadgeComponent, SkeletonTableComponent,
     DraftAdjustDialogComponent
@@ -57,7 +60,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
             <tr>
               <td>{{ r.periodFrom | date:'dd/MM/yyyy' }} — {{ r.periodTo | date:'dd/MM/yyyy' }}</td>
               <td>
-                <app-status-badge [status]="runBadgeStatus(r.status)" [label]="r.statusDisplay"></app-status-badge>
+                <app-status-badge [status]="runBadgeStatus(r.status)" [label]="r.statusDisplay | backendLabel"></app-status-badge>
                 @if (r.status === 'Failed' && r.errorMessage) {
                   <div class="run-error" [pTooltip]="r.errorMessage" tooltipPosition="top">
                     <i class="pi pi-exclamation-triangle"></i> {{ r.errorMessage }}
@@ -315,7 +318,7 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
       error: err => {
         this.loadingRuns.set(false);
         this.errorHandler.logError('RecurringContracts: billing runs', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-history.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -335,7 +338,7 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
       error: err => {
         this.loadingAmendments.set(false);
         this.errorHandler.logError('RecurringContracts: amendments', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-history.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -350,8 +353,8 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
       header: 'Confirmer l\'émission',
       message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Émettre la facture',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@contract-history.tab.acceptLabel.Émettre la f:Émettre la facture`,
+      rejectLabel: $localize`:@@contract-history.tab.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       size: 'md',
       accept: () => this.issue(run.id)
@@ -365,7 +368,7 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
         this.issuingId.set(null);
         this.toast.add({
           severity: 'success',
-          summary: 'Facture émise',
+          summary: $localize`:@@contract-history.tab.summary.Facture émis:Facture émise`,
           detail: `Facture ${issued.invoiceNumber} émise.`
         });
         this.loadRuns();
@@ -376,7 +379,7 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
         this.errorHandler.logError('RecurringContracts: issue from history', err);
         this.toast.add({
           severity: 'error',
-          summary: 'Émission impossible',
+          summary: $localize`:@@contract-history.tab.summary._mission_impossi:Émission impossible`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

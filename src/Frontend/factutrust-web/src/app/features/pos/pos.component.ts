@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, inject, OnDestroy, OnInit, HostListener, ViewChild, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -52,7 +54,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
 @Component({
   selector: 'app-pos',
   standalone: true,
-  imports: [CommonModule, FormsModule, PosHeaderComponent, ProductCatalogComponent, OrderPanelComponent, HeldOrdersPanelComponent, ChangeCalculatorComponent, PosHistoryPanelComponent, PosReceiptComponent],
+  imports: [BackendLabelPipe, CommonModule, FormsModule, PosHeaderComponent, ProductCatalogComponent, OrderPanelComponent, HeldOrdersPanelComponent, ChangeCalculatorComponent, PosHistoryPanelComponent, PosReceiptComponent],
   template: `
     <div class="pos-layout">
       <app-pos-header
@@ -209,7 +211,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
               <label class="pos-modal-label" for="pos-register-select" i18n="@@pos.pos.caisse.ce5a5c98">Caisse</label>
               <select id="pos-register-select" class="pos-idle-input" [(ngModel)]="selectedRegisterIdForOpen">
                 @for (reg of availableRegisters; track reg.id) {
-                  <option [value]="reg.id">{{ reg.code }} — {{ reg.name }}{{ reg.isDefault ? ' (défaut)' : '' }}</option>
+                  <option [value]="reg.id">{{ reg.code }} — {{ reg.name }}{{ reg.isDefault ? loc_ui_tern_defaut_f21337 : '' }}</option>
                 }
               </select>
             }
@@ -228,7 +230,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
           <div class="pos-modal pos-modal--wide" (click)="$event.stopPropagation()">
             <h3 i18n="@@pos.pos.cloture.z.e93fcfd6">Clôture Z</h3>
             @if (closePreview) {
-              <p>Théorique espèces : <strong>{{ formatSessionAmount(closePreview.expectedCash) }} TND</strong></p>
+              <p><ng-container i18n="@@pos.pos.theorique.especes.4b60f776">Théorique espèces : </ng-container> <strong>{{ formatSessionAmount(closePreview.expectedCash) }} TND</strong></p>
               @if (closePreview.heldTicketCount > 0) {
                 <p>Attention : {{ closePreview.heldTicketCount }} ticket(s) encore en attente. Ils ne bloquent pas la clôture.</p>
               }
@@ -251,7 +253,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
       @if (sessionReport) {
         <div class="pos-modal-overlay" (click)="sessionReport = null">
           <div class="pos-modal pos-modal--wide pos-z-print" (click)="$event.stopPropagation()">
-            <h3>{{ sessionReport.zReportNumber ? ('Clôture ' + sessionReport.zReportNumber) : 'Rapport X' }}</h3>
+            <h3>{{ sessionReport.zReportNumber ? (loc_ui_tern_cloture_248bfe + sessionReport.zReportNumber) : loc_ui_tern_rapport_x_5a5924 }}</h3>
             <p>{{ sessionReport.cashRegisterName }} — fond {{ formatSessionAmount(sessionReport.openingFloat) }} TND</p>
             <p>Tickets : {{ sessionReport.invoiceCount }} — Avoirs : {{ sessionReport.creditNoteCount }}</p>
             <p>Théorique : {{ formatSessionAmount(sessionReport.expectedCash) }} TND</p>
@@ -260,7 +262,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
             }
             <ul>
               @for (row of sessionReport.totalsByMethod; track row.method) {
-                <li>{{ row.methodDisplay }} : {{ formatSessionAmount(row.amount) }} TND</li>
+                <li>{{ row.methodDisplay | backendLabel }} : {{ formatSessionAmount(row.amount) }} TND</li>
               }
             </ul>
             <div class="pos-modal-actions">
@@ -645,6 +647,9 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
   `]
 })
 export class PosComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_defaut_f21337 = $localize`:@@ui.tern.defaut.f21337: (défaut)`;
+  readonly loc_ui_tern_cloture_248bfe = $localize`:@@ui.tern.cloture.248bfe:Clôture `;
+  readonly loc_ui_tern_rapport_x_5a5924 = $localize`:@@ui.tern.rapport.x.5a5924:Rapport X`;
   @ViewChild('catalog') catalogComponent!: ProductCatalogComponent;
   @ViewChild('receiptRef') receiptRef!: PosReceiptComponent;
 
@@ -1001,8 +1006,8 @@ export class PosComponent implements OnInit, OnDestroy {
         header: 'Abandonner la commande ?',
         message: 'La commande en cours sera perdue. Voulez-vous continuer ?',
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Abandonner',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@pos.component.acceptLabel.Abandonner:Abandonner`,
+        rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
         accept: () => {
           this.upsellService.clearSuggestions();
           this.posState.resetOrder();
@@ -1063,8 +1068,8 @@ export class PosComponent implements OnInit, OnDestroy {
         header: 'Plafond d\'encours depasse',
         message: 'Le plafond client est depasse. Continuer quand meme ? (avertissement, la vente n\'est pas bloquee)',
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Continuer quand meme',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@pos.component.acceptLabel.Continuer_quand_:Continuer quand meme`,
+        rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
         accept: () => {
           this.posState.acknowledgeOverLimit();
           this.validateAndPrint();
@@ -1129,8 +1134,8 @@ export class PosComponent implements OnInit, OnDestroy {
         header: 'Remplacer le panier ?',
         message: 'Le panier actuel sera remplacé par les lignes de la facture sélectionnée.',
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Continuer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@pos.component.acceptLabel.Continuer:Continuer`,
+        rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
         accept: activate
       });
       return;
@@ -1274,8 +1279,8 @@ export class PosComponent implements OnInit, OnDestroy {
         header: 'Changer de magasin ?',
         message: 'Le panier est lie au magasin precedent. Continuer videra le panier.',
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Vider et continuer',
-        rejectLabel: 'Annuler',
+        acceptLabel: $localize`:@@pos.component.acceptLabel.Vider_et_continu:Vider et continuer`,
+        rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
         accept: () => {
           this.posState.resetOrder();
           apply();
@@ -1457,7 +1462,7 @@ export class PosComponent implements OnInit, OnDestroy {
     const clientName = posClient?.name?.trim() || 'Client passager';
     const clientIdDisplay = posClient?.id
       ? `#${posClient.id.replace(/-/g, '').slice(0, 8).toUpperCase()}`
-      : '#PASSAGER';
+      : $localize`:@@ui.tern.passager.b5e3a4:#PASSAGER`;
 
     const num = invoiceNumber?.trim();
     const displayInvoiceNumber = num || invoiceId.replace(/-/g, '').slice(0, 12).toUpperCase();
@@ -1470,8 +1475,8 @@ export class PosComponent implements OnInit, OnDestroy {
 
     const isCredit = this.posState.isCreditNote();
     const documentBanner = isCredit
-      ? '---------- AVOIR (DÉTAIL) ----------'
-      : '---------- REÇU DE DÉTAIL ----------';
+      ? $localize`:@@ui.tern.avoir.detail.011371:---------- AVOIR (DÉTAIL) ----------`
+      : $localize`:@@ui.tern.recu.de.detail.2e79d7:---------- REÇU DE DÉTAIL ----------`;
 
     const remise = totals.totalDiscount + totals.firstPurchaseDiscount;
     const footerLegal =
@@ -1735,7 +1740,7 @@ export class PosComponent implements OnInit, OnDestroy {
         this.showCloseZModal = false;
         this.closePreview = null;
         this.sessionReport = report;
-        this.showToast(report.zReportNumber ? `Clôture ${report.zReportNumber}` : 'Caisse clôturée');
+        this.showToast(report.zReportNumber ? $localize`:@@ui.tern.cloture.ph.fba751:Clôture ${report.zReportNumber}:p0:` : $localize`:@@ui.tern.caisse.cloturee.6b484e:Caisse clôturée`);
       },
       error: err => {
         this.posState.setError(this.extractErrorMessage(err, 'Clôture Z impossible'));

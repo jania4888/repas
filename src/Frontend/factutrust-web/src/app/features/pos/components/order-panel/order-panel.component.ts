@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, inject, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +14,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
 @Component({
   selector: 'app-order-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule, ClientSelectorComponent, OrderLineComponent, PaymentActionsComponent],
+  imports: [BackendLabelPipe, CommonModule, FormsModule, ClientSelectorComponent, OrderLineComponent, PaymentActionsComponent],
   template: `
     <div class="order-panel">
       <div class="order-panel__scroll">
@@ -60,7 +61,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
         <span class="order-panel__frequent-title" i18n="@@pos.components.ce.client.prend.souvent.de74a569">Ce client prend souvent :</span>
         <div class="order-panel__frequent-btns">
           @for (p of frequentProducts; track p.id) {
-            <button type="button" class="order-panel__frequent-btn" (click)="onFrequentProductAdd.emit(p)" [attr.aria-label]="'Ajouter ' + p.name">
+            <button type="button" class="order-panel__frequent-btn" (click)="onFrequentProductAdd.emit(p)" [attr.aria-label]="loc_ui_tern_ajouter_778d9b + p.name">
               {{ p.name }}
             </button>
           }
@@ -140,7 +141,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
               <div class="order-panel__upsell-card">
                 <span class="order-panel__upsell-name">{{ product.name }}</span>
                 <span class="order-panel__upsell-price">{{ posState.formatAmountWithCurrency(product.unitPrice) }}</span>
-                <button type="button" class="order-panel__upsell-add" (click)="onSuggestionAdd.emit(product)" [attr.aria-label]="'Ajouter ' + product.name">
+                <button type="button" class="order-panel__upsell-add" (click)="onSuggestionAdd.emit(product)" [attr.aria-label]="loc_ui_tern_ajouter_778d9b + product.name">
                   <i class="pi pi-plus"></i>
                 </button>
               </div>
@@ -157,7 +158,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
               <i class="pi pi-shopping-cart"></i>
             </div>
             <p class="order-panel__empty-title" i18n="@@pos.components.panier.vide.669bb72c">Panier vide</p>
-            <p class="order-panel__empty-text">Selectionnez un produit dans le catalogue ou appuyez sur <kbd class="order-panel__empty-kbd" i18n="@@pos.components.f2.999d0cd6">F2</kbd> pour rechercher</p>
+            <p class="order-panel__empty-text"><ng-container i18n="@@pos.components.selectionnez.un.produit.dans.le.catalogue.ou.app.40cc7bc4">Selectionnez un produit dans le catalogue ou appuyez sur </ng-container> <kbd class="order-panel__empty-kbd" i18n="@@pos.components.f2.999d0cd6">F2</kbd> pour rechercher</p>
           </div>
         } @else {
           @for (line of posState.lines(); track line.id) {
@@ -219,7 +220,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             }
             @for (vat of posState.totals().vatBreakdown; track vat.rate) {
               <div class="order-panel__total-row order-panel__total-row--vat">
-                <span class="order-panel__total-label">TVA {{ vat.rateDisplay }}</span>
+                <span class="order-panel__total-label">TVA {{ vat.rateDisplay | backendLabel }}</span>
                 <span class="order-panel__total-value">{{ posState.formatAmountWithCurrency(vat.vatAmount) }}</span>
               </div>
             }
@@ -238,7 +239,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             }
 
             @if (posState.hasGlobalDiscount() && !showGlobalDiscountForm) {
-              <button type="button" class="order-panel__remove-discount" (click)="posState.removeGlobalDiscount()" i18n="@@pos.components.supprimer.remise.cabc76a7">Supprimer remise</button>
+              <button type="button" class="order-panel__remove-discount" (click)="posState.removeGlobalDiscount()" i18n="@@pos.components.supprimer.remise.cabc76a7"> Supprimer remise </button>
             }
             }
 
@@ -1093,6 +1094,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
   `]
 })
 export class OrderPanelComponent {
+  readonly loc_ui_tern_ajouter_778d9b = $localize`:@@ui.tern.ajouter.778d9b:Ajouter `;
   @Input() frequentProducts: ProductListItem[] = [];
   @Output() onValidate = new EventEmitter<void>();
   @Output() onSaveDraft = new EventEmitter<void>();

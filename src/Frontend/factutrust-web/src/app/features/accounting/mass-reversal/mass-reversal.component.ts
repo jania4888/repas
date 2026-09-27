@@ -54,7 +54,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Charger les écritures validées" i18n="@@accounting.mass-reversal.charger.8f860300">Charger</app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Charger les écritures validées" i18n="@@accounting.mass-reversal.charger.8f860300"> Charger </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -81,7 +81,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
       </div>
       <p class="mr-help">
-        Chaque écriture sélectionnée reçoit une <strong i18n="@@accounting.mass-reversal.ecriture.miroir.85100fdb">écriture miroir</strong> qui l'annule ; l'originale
+        <ng-container i18n="@@accounting.mass-reversal.chaque.ecriture.selectionnee.recoit.une.700e8092"> Chaque écriture sélectionnée reçoit une </ng-container> <strong i18n="@@accounting.mass-reversal.ecriture.miroir.85100fdb">écriture miroir</strong> qui l'annule ; l'originale
         reste intacte et marquée « extournée ». Les brouillons et les écritures déjà extournées sont ignorés.
       </p>
     </div>
@@ -89,7 +89,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     @if (pendingConfirm()) {
       <div class="card mr-confirm" role="alertdialog">
         <p class="mr-confirm-text">
-          Extourner <strong>{{ selectedIds().length }}</strong> écriture(s) avec le motif
+          <ng-container i18n="@@accounting.mass-reversal.extourner.8884c9cd"> Extourner </ng-container> <strong>{{ selectedIds().length }}</strong> écriture(s) avec le motif
           « {{ reason.trim() }} » ? <strong i18n="@@accounting.mass-reversal.cette.operation.n.est.pas.annulable.75f0df4d">Cette opération n'est pas annulable.</strong>
         </p>
         <div class="mr-confirm-actions">
@@ -115,7 +115,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </ng-template>
         <ng-template pTemplate="body" let-e>
           <tr>
-            <td><input type="checkbox" [checked]="isSelected(e.id)" (change)="toggle(e.id)" [attr.aria-label]="'Sélectionner ' + e.journalCode + ' ' + e.entryNumber" /></td>
+            <td><input type="checkbox" [checked]="isSelected(e.id)" (change)="toggle(e.id)" [attr.aria-label]="loc_ui_tern_selectionner_aaed53 + e.journalCode + ' ' + e.entryNumber" /></td>
             <td><span class="mr-code">{{ e.journalCode }}</span></td>
             <td>{{ e.entryNumber }}</td>
             <td>{{ e.entryDate | date : 'shortDate' }}</td>
@@ -153,6 +153,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class MassReversalComponent implements OnInit {
+  readonly loc_ui_tern_selectionner_aaed53 = $localize`:@@ui.tern.selectionner.aaed53:Sélectionner `;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
 
@@ -206,7 +207,7 @@ export class MassReversalComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.error.set(null);
@@ -221,7 +222,7 @@ export class MassReversalComponent implements OnInit {
           // Seules les écritures validées et NON déjà extournées sont extournables.
           this.entries.set(res.data.filter(e => !e.isDraft && !e.isReversed));
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: err => {
@@ -251,7 +252,7 @@ export class MassReversalComponent implements OnInit {
           this.reason = '';
           this.load();
         } else {
-          this.error.set(res.error ?? "L'extourne a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.extourne.a.echoue.0069fe:L'extourne a échoué.`);
         }
       },
       error: err => {

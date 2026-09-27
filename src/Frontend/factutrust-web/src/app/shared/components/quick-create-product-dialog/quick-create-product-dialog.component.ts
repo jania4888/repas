@@ -28,6 +28,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 import { HttpErrorResponse } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { PRODUCT_TYPE_OPTIONS, PRODUCT_UNIT_OPTIONS, PRODUCT_VAT_OPTIONS } from '@shared/constants/coded-option-labels';
 import {
   calculateFodecAmount,
   calculateSaleTtc,
@@ -49,29 +50,9 @@ interface VatOption {
   value: number;
 }
 
-const TYPE_OPTIONS: TypeOption[] = [
-  { label: 'Produit', value: 'Produit' },
-  { label: 'Service', value: 'Service' },
-];
-
-const UNIT_OPTIONS: UnitOption[] = [
-  { label: 'Unité', value: 'Unité' },
-  { label: 'Heure', value: 'Heure' },
-  { label: 'Jour', value: 'Jour' },
-  { label: 'Mois', value: 'Mois' },
-  { label: 'An', value: 'An' },
-  { label: 'Kg', value: 'Kg' },
-  { label: 'Litre', value: 'Litre' },
-  { label: 'Mètre', value: 'Mètre' },
-  { label: 'M²', value: 'M²' },
-];
-
-const VAT_OPTIONS: VatOption[] = [
-  { label: '19% - Taux normal', value: 19 },
-  { label: '13% - Taux intermédiaire', value: 13 },
-  { label: '7% - Taux réduit', value: 7 },
-  { label: '0% - Exonéré', value: 0 },
-];
+const TYPE_OPTIONS: TypeOption[] = PRODUCT_TYPE_OPTIONS;
+const UNIT_OPTIONS: UnitOption[] = PRODUCT_UNIT_OPTIONS;
+const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
 
 /**
  * Dialog to create a product with minimal fields (code, name, type, unit price, VAT, unit, stock).
@@ -100,7 +81,7 @@ const VAT_OPTIONS: VatOption[] = [
           <div class="form-block">
             <h4 class="form-block-title" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.identite.3138be1c">Identité</h4>
             <div class="form-group">
-              <label for="quick-code">Code produit <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
+              <label for="quick-code"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.code.produit.60220afb">Code produit </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="quick-code"
@@ -122,7 +103,7 @@ const VAT_OPTIONS: VatOption[] = [
             </div>
 
             <div class="form-group">
-              <label for="quick-name">Nom <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
+              <label for="quick-name"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.nom.7ff20370">Nom </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="quick-name"
@@ -145,7 +126,7 @@ const VAT_OPTIONS: VatOption[] = [
 
             <div class="form-row">
               <div class="form-group">
-                <label for="quick-type">Type <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
+                <label for="quick-type"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.type.3deb7456">Type </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-type"
                   [options]="typeOptions"
@@ -159,7 +140,7 @@ const VAT_OPTIONS: VatOption[] = [
                   styleClass="w-full" />
               </div>
               <div class="form-group">
-                <label for="quick-unit">Unité <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
+                <label for="quick-unit"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.unite.388fd9c4">Unité </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-unit"
                   [options]="unitOptions"
@@ -186,7 +167,7 @@ const VAT_OPTIONS: VatOption[] = [
                     [attr.aria-describedby]="stockDescribedBy()">
                   </p-inputSwitch>
                   <span [class.active]="resolveIsStockManaged()">
-                    {{ resolveIsStockManaged() ? 'Activée' : 'Désactivée' }}
+                    {{ resolveIsStockManaged() ? loc_ui_tern_activee_9b4e7c : loc_ui_tern_desactivee_74cc3b }}
                   </span>
                 </div>
                 @if (!isProductCategory()) {
@@ -206,7 +187,7 @@ const VAT_OPTIONS: VatOption[] = [
             <h4 class="form-block-title" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.tarification.5dc310ae">Tarification</h4>
             <div class="form-row">
               <div class="form-group">
-                <label for="quick-price">Prix unitaire HT (TND) <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
+                <label for="quick-price"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.prix.unitaire.ht.tnd.937c4281">Prix unitaire HT (TND) </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
                 <p-inputNumber
                   id="quick-price"
                   [ngModel]="unitPrice()"
@@ -219,7 +200,7 @@ const VAT_OPTIONS: VatOption[] = [
                   styleClass="w-full" />
               </div>
               <div class="form-group">
-                <label for="quick-vat">TVA <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
+                <label for="quick-vat"><ng-container i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.tva.fb62cb5d">TVA </ng-container> <span class="required" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-vat"
                   [options]="vatOptions"
@@ -316,7 +297,7 @@ const VAT_OPTIONS: VatOption[] = [
               icon="pi-times"
               iconPos="left"
               (click)="close()"
-              ariaLabel="Annuler" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292">Annuler</app-button>
+              ariaLabel="Annuler" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292"> Annuler </app-button>
             <app-button
               variant="primary"
               icon="pi-plus"
@@ -324,7 +305,7 @@ const VAT_OPTIONS: VatOption[] = [
               [disabled]="submitting() || !canSubmit()"
               (click)="submit()"
               ariaLabel="Créer et ajouter">
-              {{ submitting() ? 'Création...' : 'Créer et ajouter' }}
+              {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_et_ajouter_b6333d }}
             </app-button>
           </div>
         </div>
@@ -333,7 +314,7 @@ const VAT_OPTIONS: VatOption[] = [
 
     @if (!panelMode) {
       <p-dialog
-        header="Créer un produit"
+        header="Créer un produit" i18n-header="Créer un produit"
         [(visible)]="visible"
         [modal]="true"
         [style]="{ width: '640px', maxWidth: '95vw' }"
@@ -350,7 +331,7 @@ const VAT_OPTIONS: VatOption[] = [
               icon="pi-times"
               iconPos="left"
               (click)="close()"
-              ariaLabel="Annuler" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292">Annuler</app-button>
+              ariaLabel="Annuler" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292"> Annuler </app-button>
             <app-button
               variant="primary"
               icon="pi-plus"
@@ -358,7 +339,7 @@ const VAT_OPTIONS: VatOption[] = [
               [disabled]="submitting() || !canSubmit()"
               (click)="submit()"
               ariaLabel="Créer et ajouter">
-              {{ submitting() ? 'Création...' : 'Créer et ajouter' }}
+              {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_et_ajouter_b6333d }}
             </app-button>
           </div>
         </ng-template>
@@ -645,6 +626,10 @@ const VAT_OPTIONS: VatOption[] = [
   `],
 })
 export class QuickCreateProductDialogComponent {
+  readonly loc_ui_tern_activee_9b4e7c = $localize`:@@ui.tern.activee.9b4e7c:Activée`;
+  readonly loc_ui_tern_desactivee_74cc3b = $localize`:@@ui.tern.desactivee.74cc3b:Désactivée`;
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_creer_et_ajouter_b6333d = $localize`:@@ui.tern.creer.et.ajouter.b6333d:Créer et ajouter`;
   @Input() panelMode = false;
   /** Facture fournisseur directe : un article géré en stock n'est pas ajouté à la ligne. */
   @Input() stockExcludedFromLine = false;
@@ -727,12 +712,12 @@ export class QuickCreateProductDialogComponent {
 
   readonly codeErrorMessage = computed(() => {
     const v = this.code().trim();
-    return v.length === 0 ? 'Ce champ est obligatoire' : 'Min. 2 caractères';
+    return v.length === 0 ? $localize`:@@ui.tern.ce.champ.est.obligatoire.17061b:Ce champ est obligatoire` : $localize`:@@ui.tern.min.2.caracteres.af9507:Min. 2 caractères`;
   });
 
   readonly nameErrorMessage = computed(() => {
     const v = this.name().trim();
-    return v.length === 0 ? 'Ce champ est obligatoire' : 'Min. 2 caractères';
+    return v.length === 0 ? $localize`:@@ui.tern.ce.champ.est.obligatoire.17061b:Ce champ est obligatoire` : $localize`:@@ui.tern.min.2.caracteres.af9507:Min. 2 caractères`;
   });
 
   resolveIsStockManaged(): boolean {

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -156,7 +157,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
 
 
-    <p-dialog [header]="editingId ? 'Modifier les tickets restaurant' : 'Nouveaux tickets restaurant'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '520px' }">
+    <p-dialog [header]="editingId ? loc_ui_tern_modifier_les_tickets_restaurant_622ff7 : loc_ui_tern_nouveaux_tickets_restaurant_f9c7a9" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '520px' }">
 
       <div class="payroll-form-group mb-2">
 
@@ -223,6 +224,8 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 })
 
 export class PayrollMealVoucherGridComponent implements OnInit {
+  readonly loc_ui_tern_modifier_les_tickets_restaurant_622ff7 = $localize`:@@ui.tern.modifier.les.tickets.restaurant.622ff7:Modifier les tickets restaurant`;
+  readonly loc_ui_tern_nouveaux_tickets_restaurant_f9c7a9 = $localize`:@@ui.tern.nouveaux.tickets.restaurant.f9c7a9:Nouveaux tickets restaurant`;
 
   @Input({ required: true }) year!: number;
 
@@ -306,7 +309,7 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
       next: res => this.lines.set(res.data ?? []),
 
-      error: () => this.toast.add({ severity: 'error', summary: 'Tickets restaurant', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`, detail: $localize`:@@payroll-meal-voucher-grid.component.detail.Chargement_impos:Chargement impossible.` })
 
     });
 
@@ -408,9 +411,9 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
           severity: 'success',
 
-          summary: 'Tickets restaurant',
+          summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`,
 
-          detail: 'Enregistré. Recalculez le cycle pour mettre à jour les bulletins.'
+          detail: $localize`:@@payroll-meal-voucher-grid.component.detail.Enregistr_Reca:Enregistré. Recalculez le cycle pour mettre à jour les bulletins.`
 
         });
 
@@ -424,9 +427,9 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
         severity: 'error',
 
-        summary: 'Tickets restaurant',
+        summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`,
 
-        detail: err?.error?.message ?? 'Enregistrement impossible.'
+        detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
 
       })
 
@@ -446,9 +449,9 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
       header: 'Confirmation',
 
-      acceptLabel: 'Supprimer',
+      acceptLabel: $localize`:@@payroll-meal-voucher-grid.component.acceptLabel.Supprimer:Supprimer`,
 
-      rejectLabel: 'Annuler',
+      rejectLabel: $localize`:@@payroll-meal-voucher-grid.component.rejectLabel.Annuler:Annuler`,
 
       acceptButtonStyleClass: 'btn-danger',
 
@@ -466,7 +469,7 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
       next: () => {
 
-        this.toast.add({ severity: 'success', summary: 'Tickets restaurant', detail: 'Supprimé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`, detail: $localize`:@@payroll-meal-voucher-grid.component.detail.Supprimé.:Supprimé.` });
 
         this.reload();
 
@@ -476,9 +479,9 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
         severity: 'error',
 
-        summary: 'Tickets restaurant',
+        summary: $localize`:@@payroll-meal-voucher-grid.component.summary.Tickets_restaura:Tickets restaurant`,
 
-        detail: err?.error?.message ?? 'Suppression impossible.'
+        detail: err?.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
 
       })
 

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -39,7 +40,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      [title]="isEdit() ? 'Modifier le contrat' : 'Nouveau contrat récurrent'"
+      [title]="isEdit() ? loc_ui_tern_modifier_le_contrat_2ed431 : loc_ui_tern_nouveau_contrat_recurrent_811d0c"
       subtitle="Définissez la périodicité, les lignes et les conditions de facturation">
     </app-page-header>
 
@@ -124,7 +125,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
                   <option [ngValue]="'OneTimeSetup'" i18n="@@recurring-contracts.pages.frais.d.installation.f39459df">Frais d'installation</option>
                 </select>
               </label>
-              <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.pages.supprimer.1acfc1c7">Supprimer</app-button>
+              <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.pages.supprimer.1acfc1c7"> Supprimer </app-button>
             </div>
             <div class="grid">
               <label class="span-2">Description
@@ -184,7 +185,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
       <div class="actions">
         <app-button type="button" variant="outline" [routerLink]="cancelRoute" i18n="@@recurring-contracts.pages.annuler.49ba3292">Annuler</app-button>
         <app-button type="submit" variant="primary" icon="pi-check" [disabled]="saving() || !canSave">
-          {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
         </app-button>
       </div>
     </form>
@@ -268,6 +269,10 @@ interface ContractLineForm extends ContractLinePayloadSource {
   `]
 })
 export class ContractFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_contrat_2ed431 = $localize`:@@ui.tern.modifier.le.contrat.2ed431:Modifier le contrat`;
+  readonly loc_ui_tern_nouveau_contrat_recurrent_811d0c = $localize`:@@ui.tern.nouveau.contrat.recurrent.811d0c:Nouveau contrat récurrent`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
   private readonly service = inject(RecurringContractService);
   private readonly clientService = inject(ClientService);
   private readonly pricingService = inject(PricingService);
@@ -304,7 +309,7 @@ export class ContractFormComponent implements OnInit {
     return [
       { label: 'Accueil', route: '/', icon: 'pi-home' },
       { label: 'Contrats récurrents', route: '/recurring-contracts' },
-      { label: this.isEdit() ? 'Modifier le contrat' : 'Nouveau contrat' }
+      { label: this.isEdit() ? $localize`:@@ui.tern.modifier.le.contrat.2ed431:Modifier le contrat` : $localize`:@@ui.tern.nouveau.contrat.13fabd:Nouveau contrat` }
     ];
   }
 
@@ -352,7 +357,7 @@ export class ContractFormComponent implements OnInit {
         error: err => {
           this.pageLoading.set(false);
           this.errorHandler.logError('RecurringContracts: form load', err);
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-form.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
           void this.router.navigate(['/recurring-contracts']);
         }
       });
@@ -399,13 +404,13 @@ export class ContractFormComponent implements OnInit {
       this.service.update(this.contractId, payload).subscribe({
         next: () => {
           this.saving.set(false);
-          this.toast.add({ severity: 'success', summary: 'Contrat enregistré', detail: 'Les modifications ont été enregistrées.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@contract-form.component.summary.Contrat_enregist:Contrat enregistré`, detail: $localize`:@@contract-form.component.detail.Les_modification:Les modifications ont été enregistrées.` });
           void this.router.navigate(['/recurring-contracts', this.contractId!]);
         },
         error: err => {
           this.saving.set(false);
           this.errorHandler.logError('RecurringContracts: update', err);
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-form.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
         }
       });
       return;
@@ -415,13 +420,13 @@ export class ContractFormComponent implements OnInit {
       this.service.convertFromQuote(this.quoteId, payload).subscribe({
         next: id => {
           this.saving.set(false);
-          this.toast.add({ severity: 'success', summary: 'Contrat créé', detail: 'Contrat créé depuis le devis.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@contract-form.component.summary.Contrat_cr_:Contrat créé`, detail: $localize`:@@contract-form.component.detail.Contrat_cr_dep:Contrat créé depuis le devis.` });
           void this.router.navigate(['/recurring-contracts', id]);
         },
         error: err => {
           this.saving.set(false);
           this.errorHandler.logError('RecurringContracts: convertFromQuote', err);
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-form.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
         }
       });
       return;
@@ -430,13 +435,13 @@ export class ContractFormComponent implements OnInit {
     this.service.create(payload).subscribe({
       next: id => {
         this.saving.set(false);
-        this.toast.add({ severity: 'success', summary: 'Contrat créé', detail: 'Le brouillon de contrat a été créé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@contract-form.component.summary.Contrat_cr_:Contrat créé`, detail: $localize`:@@contract-form.component.detail.Le_brouillon_de_:Le brouillon de contrat a été créé.` });
         void this.router.navigate(['/recurring-contracts', id]);
       },
       error: err => {
         this.saving.set(false);
         this.errorHandler.logError('RecurringContracts: create', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-form.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -479,7 +484,7 @@ export class ContractFormComponent implements OnInit {
   private validate(): boolean {
     const error = this.firstValidationError();
     if (error) {
-      this.toast.add({ severity: 'warn', summary: 'Formulaire incomplet', detail: error });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@contract-form.component.summary.Formulaire_incom:Formulaire incomplet`, detail: error });
       return false;
     }
     return true;

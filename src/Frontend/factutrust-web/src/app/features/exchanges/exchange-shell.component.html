@@ -84,7 +84,7 @@
     } @else if (error() && !activeThread()) {
       <div class="state error" role="alert">
         <p>{{ error() }}</p>
-        <app-button variant="secondary" size="sm" icon="pi-refresh" (clicked)="retryBootstrap()" i18n="@@exchanges.exchange-shell.reessayer.895d416b">Réessayer</app-button>
+        <app-button variant="secondary" size="sm" icon="pi-refresh" (clicked)="retryBootstrap()" i18n="@@exchanges.exchange-shell.reessayer.895d416b"> Réessayer </app-button>
       </div>
     } @else {
       @if (activeThread(); as thread) {
@@ -119,10 +119,10 @@
           </div>
           <div class="actions">
             @if (canClose() && isOpen(thread.status)) {
-              <app-button variant="danger" size="sm" icon="pi-times" (clicked)="closeExchange()" i18n="@@exchanges.exchange-shell.clore.l.echange.5344653a">Clore l'échange</app-button>
+              <app-button variant="danger" size="sm" icon="pi-times" (clicked)="closeExchange()" i18n="@@exchanges.exchange-shell.clore.l.echange.5344653a"> Clore l'échange </app-button>
             }
             @if (canClose() && isClosed(thread.status)) {
-              <app-button variant="secondary" size="sm" icon="pi-refresh" (clicked)="reopenExchange()" i18n="@@exchanges.exchange-shell.rouvrir.18f717af">Rouvrir</app-button>
+              <app-button variant="secondary" size="sm" icon="pi-refresh" (clicked)="reopenExchange()" i18n="@@exchanges.exchange-shell.rouvrir.18f717af"> Rouvrir </app-button>
             }
           </div>
         </header>
@@ -233,13 +233,13 @@
                       type="button"
                       [class.active]="composerMode() === 'message'"
                       (click)="composerMode.set('message')"
-                     i18n="@@exchanges.exchange-shell.message.68f4145f">Message</button>
+                     i18n="@@exchanges.exchange-shell.message.68f4145f"> Message </button>
                     @if (canInternalNote()) {
                       <button
                         type="button"
                         [class.active]="composerMode() === 'note'"
                         (click)="composerMode.set('note')"
-                       i18n="@@exchanges.exchange-shell.note.interne.c065d760">Note interne</button>
+                       i18n="@@exchanges.exchange-shell.note.interne.c065d760"> Note interne </button>
                     }
                   </div>
                   <label class="sr-only" for="composer-draft" i18n="@@exchanges.exchange-shell.message.68f4145f">Message</label>
@@ -255,7 +255,7 @@
                       @for (f of pendingFiles(); track $index) {
                         <li>
                           <span>{{ f.name }} ({{ formatBytes(f.size) }})</span>
-                          <button type="button" class="btn ghost" (click)="removePendingFile($index)" i18n="@@exchanges.exchange-shell.retirer.54ec24a1">Retirer</button>
+                          <button type="button" class="btn ghost" (click)="removePendingFile($index)" i18n="@@exchanges.exchange-shell.retirer.54ec24a1"> Retirer </button>
                         </li>
                       }
                     </ul>
@@ -272,7 +272,7 @@
                       icon="pi-send"
                       [disabled]="sending() || (!draft().trim() && pendingFiles().length === 0)"
                       (clicked)="send()"
-                     i18n="@@exchanges.exchange-shell.envoyer.e9ce243b">Envoyer</app-button>
+                     i18n="@@exchanges.exchange-shell.envoyer.e9ce243b"> Envoyer </app-button>
                   </div>
                 </div>
               }
@@ -361,7 +361,7 @@
                       size="sm"
                       icon="pi-plus"
                       (clicked)="showNewTask.set(true)"
-                     i18n="@@exchanges.exchange-shell.creer.une.tache.755f0229">Créer une tâche</app-button>
+                     i18n="@@exchanges.exchange-shell.creer.une.tache.755f0229"> Créer une tâche </app-button>
                   }
                 </div>
                 @if (showNewTask()) {
@@ -385,7 +385,7 @@
                     </div>
                     <div class="row">
                       <app-button variant="primary" size="sm" (clicked)="createTask(false)" i18n="@@exchanges.exchange-shell.creer.1a686172">Créer</app-button>
-                      <app-button variant="ghost" size="sm" (clicked)="showNewTask.set(false)" i18n="@@exchanges.exchange-shell.annuler.49ba3292">Annuler</app-button>
+                      <app-button variant="ghost" size="sm" (clicked)="showNewTask.set(false)" i18n="@@exchanges.exchange-shell.annuler.49ba3292"> Annuler </app-button>
                     </div>
                   </div>
                 }
@@ -426,7 +426,7 @@
                             size="sm"
                             icon="pi-check"
                             (clicked)="changeTaskStatus(t, 'Done')"
-                           i18n="@@exchanges.exchange-shell.terminer.6bf1bd74">Terminer</app-button>
+                           i18n="@@exchanges.exchange-shell.terminer.6bf1bd74"> Terminer </app-button>
                         }
                       </li>
                     }
@@ -530,7 +530,7 @@
                   size="sm"
                   icon="pi-plus"
                   (clicked)="showNewRequest.set(true); setTab('demandes')"
-                 i18n="@@exchanges.exchange-shell.nouvelle.demande.0a6e5d2f">Nouvelle demande</app-button>
+                 i18n="@@exchanges.exchange-shell.nouvelle.demande.0a6e5d2f"> Nouvelle demande </app-button>
                 <label class="btn file-btn quick-file">
                   <i class="pi pi-upload" aria-hidden="true"></i>
                   Partager un document
@@ -541,13 +541,13 @@
                   size="sm"
                   icon="pi-calendar"
                   (clicked)="showNewTask.set(true); newTaskTitle.set('Rendez-vous'); setTab('taches')"
-                 i18n="@@exchanges.exchange-shell.planifier.un.rendez.vous.4cb33949">Planifier un rendez-vous</app-button>
+                 i18n="@@exchanges.exchange-shell.planifier.un.rendez.vous.4cb33949"> Planifier un rendez-vous </app-button>
                 <app-button
                   variant="ghost"
                   size="sm"
                   icon="pi-check-square"
                   (clicked)="showNewTask.set(true); setTab('taches')"
-                 i18n="@@exchanges.exchange-shell.creer.une.tache.755f0229">Créer une tâche</app-button>
+                 i18n="@@exchanges.exchange-shell.creer.une.tache.755f0229"> Créer une tâche </app-button>
               </section>
             }
           </aside>

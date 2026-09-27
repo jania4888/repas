@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -193,8 +194,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: err?.error?.message ?? 'Chargement des recommandations échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Erreur:Erreur`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.chargement.des.recommandations.echoue.ba9b44:Chargement des recommandations échoué.`
       });
     } finally {
       this.loading.set(false);
@@ -275,15 +276,15 @@ export class ReplenishmentBoardComponent implements OnInit {
     this.dismissModal.set(null);
     try {
       await firstValueFrom(this.forecastingService.dismissReplenishment(rec.id, reason));
-      this.toast.add({ severity: 'info', summary: 'Écartée', detail: `${rec.productName} écartée.` });
+      this.toast.add({ severity: 'info', summary: $localize`:@@replenishment-board.component.summary.Écartée:Écartée`, detail: `${rec.productName} écartée.` });
       this.rows.update(rows => rows.filter(x => x.id !== rec.id));
       this.unselect(rec.id);
       void this.refreshKpi();
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'Le rejet a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.le.rejet.a.echoue.c3d6a3:Le rejet a échoué.`
       });
     }
   }
@@ -295,7 +296,7 @@ export class ReplenishmentBoardComponent implements OnInit {
       this.unselect(r.id);
       this.toast.add({
         severity: 'success',
-        summary: 'Approuvée',
+        summary: $localize`:@@replenishment-board.component.summary.Approuvée:Approuvée`,
         detail: `${r.productName} approuvée.`
       });
       // If the current filter is "pending", the row exits the view immediately.
@@ -310,8 +311,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'Approbation échouée.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.approbation.echouee.b12630:Approbation échouée.`
       });
     }
   }
@@ -328,15 +329,15 @@ export class ReplenishmentBoardComponent implements OnInit {
       const updated = await firstValueFrom(this.forecastingService.overrideReplenishment(rec.id, payload));
       this.toast.add({
         severity: 'success',
-        summary: 'Modifié',
+        summary: $localize`:@@replenishment-board.component.summary.Modifié:Modifié`,
         detail: `${rec.productName} mis à jour.`
       });
       this.rows.update(rows => rows.map(x => x.id === updated.id ? updated : x));
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'La modification a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.la.modification.a.echoue.5f6a29:La modification a échoué.`
       });
     }
   }
@@ -346,7 +347,7 @@ export class ReplenishmentBoardComponent implements OnInit {
       const updated = await firstValueFrom(this.forecastingService.undoReplenishment(r.id));
       this.toast.add({
         severity: 'success',
-        summary: 'Annulée',
+        summary: $localize`:@@replenishment-board.component.summary.Annul_e:Annulée`,
         detail: `Décision sur ${r.productName} annulée.`
       });
       this.rows.update(rows => rows.map(x => x.id === updated.id ? updated : x));
@@ -354,8 +355,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Annulation impossible',
-        detail: err?.error?.message ?? 'L\'annulation a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Annulation_impos:Annulation impossible`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.l.annulation.a.echoue.47819e:L'annulation a échoué.`
       });
     }
   }
@@ -375,7 +376,7 @@ export class ReplenishmentBoardComponent implements OnInit {
     if (ignored > 0) {
       this.toast.add({
         severity: 'info',
-        summary: 'Sélection partielle',
+        summary: $localize`:@@replenishment-board.component.summary.S_lection_partie:Sélection partielle`,
         detail: `${ignored} recommandation(s) déjà traitée(s) (non-Pending) seront ignorée(s).`
       });
     }
@@ -394,20 +395,20 @@ export class ReplenishmentBoardComponent implements OnInit {
       if (ok > 0 && ko === 0) {
         this.toast.add({
           severity: 'success',
-          summary: 'Approbations',
+          summary: $localize`:@@replenishment-board.component.summary.Approbations:Approbations`,
           detail: `${ok} recommandation(s) approuvée(s).`
         });
       } else if (ok > 0 && ko > 0) {
         this.toast.add({
           severity: 'warn',
-          summary: 'Approbations partielles',
+          summary: $localize`:@@replenishment-board.component.summary.Approbations_par:Approbations partielles`,
           detail: `${ok} approuvée(s), ${ko} en échec.`,
           life: 6000
         });
       } else {
         this.toast.add({
           severity: 'error',
-          summary: 'Échec',
+          summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
           detail: `Aucune approbation n'a réussi (${ko} échec(s)).`
         });
       }
@@ -423,8 +424,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     if (targets.length === 0) {
       this.toast.add({
         severity: 'warn',
-        summary: 'Sélection vide',
-        detail: 'Aucune recommandation éligible (statut Pending ou Approved) dans la sélection.'
+        summary: $localize`:@@replenishment-board.component.summary.S_lection_vide:Sélection vide`,
+        detail: $localize`:@@replenishment-board.component.detail.Aucune_recommand:Aucune recommandation éligible (statut Pending ou Approved) dans la sélection.`
       });
       return;
     }
@@ -451,7 +452,7 @@ export class ReplenishmentBoardComponent implements OnInit {
         if (failed > 0) {
           this.toast.add({
             severity: 'warn',
-            summary: 'Enregistrement partiel',
+            summary: $localize`:@@replenishment-board.component.summary.Enregistrement_p:Enregistrement partiel`,
             detail: `${failed} ligne(s) : quantité ou fournisseur non enregistré(s) — vérifiez avant de renvoyer.`,
             life: 6000
           });
@@ -470,18 +471,18 @@ export class ReplenishmentBoardComponent implements OnInit {
       const unlinkedCount = result.unlinkedRecommendationIds?.length ?? 0;
       const detail = result.createdPurchaseOrdersCount === 0
         ? (unlinkedCount > 0
-            ? `Aucun BC créé : ${unlinkedCount} recommandation(s) sans fournisseur. Assignez un fournisseur puis réessayez.`
-            : 'Aucun BC créé. Vérifiez les avertissements.')
-        : `${result.createdPurchaseOrdersCount} BC créé(s), ${result.linkedRecommendationsCount} recommandation(s) liée(s).`;
+            ? $localize`:@@ui.tern.aucun.bc.cree.ph.recommandation.s.sans.fou.7efa06:Aucun BC créé : ${unlinkedCount}:p0: recommandation(s) sans fournisseur. Assignez un fournisseur puis réessayez.`
+            : $localize`:@@ui.tern.aucun.bc.cree.verifiez.les.avertissements.9603df:Aucun BC créé. Vérifiez les avertissements.`)
+        : $localize`:@@ui.tern.ph.bc.cree.s.ph.recommandation.s.liee.s.9328d1:${result.createdPurchaseOrdersCount}:p0: BC créé(s), ${result.linkedRecommendationsCount}:p1: recommandation(s) liée(s).`;
       this.toast.add({
         severity: result.createdPurchaseOrdersCount === 0 ? 'warn' : 'success',
-        summary: 'Bons de commande',
+        summary: $localize`:@@replenishment-board.component.summary.Bons_de_commande:Bons de commande`,
         detail,
         life: 8000
       });
       // Surface backend warnings (recos without supplier, etc.)
       for (const w of result.warnings ?? []) {
-        this.toast.add({ severity: 'warn', summary: 'Avertissement', detail: w, life: 6000 });
+        this.toast.add({ severity: 'warn', summary: $localize`:@@replenishment-board.component.summary.Avertissement:Avertissement`, detail: w, life: 6000 });
       }
       this.selectedIds.set(new Set());
       await this.load();
@@ -489,8 +490,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'La création des bons de commande a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.la.creation.des.bons.de.commande.a.echoue.b14709:La création des bons de commande a échoué.`
       });
     } finally {
       this.bulkActionInFlight.set(false);
@@ -507,7 +508,7 @@ export class ReplenishmentBoardComponent implements OnInit {
       );
       this.toast.add({
         severity: 'success',
-        summary: 'Régénération terminée',
+        summary: $localize`:@@replenishment-board.component.summary.R_g_n_ration_ter:Régénération terminée`,
         detail: `${count} recommandation(s).`
       });
       await this.load();
@@ -515,8 +516,8 @@ export class ReplenishmentBoardComponent implements OnInit {
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Échec',
-        detail: err?.error?.message ?? 'La régénération a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.la.regeneration.a.echoue.2e1fcb:La régénération a échoué.`
       });
     } finally {
       this.generating.set(false);
@@ -529,14 +530,14 @@ export class ReplenishmentBoardComponent implements OnInit {
       const fileName = await this.exportService.downloadCsv(this.filters());
       this.toast.add({
         severity: 'success',
-        summary: 'Export',
+        summary: $localize`:@@replenishment-board.component.summary.Export:Export`,
         detail: `Fichier ${fileName} téléchargé.`
       });
     } catch (err: any) {
       this.toast.add({
         severity: 'error',
-        summary: 'Export échoué',
-        detail: err?.error?.message ?? 'Le téléchargement CSV a échoué.'
+        summary: $localize`:@@replenishment-board.component.summary.Export échou:Export échoué`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.le.telechargement.csv.a.echoue.1e13c1:Le téléchargement CSV a échoué.`
       });
     } finally {
       this.exporting.set(false);

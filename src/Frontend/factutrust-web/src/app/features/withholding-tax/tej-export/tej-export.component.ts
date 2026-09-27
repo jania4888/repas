@@ -84,11 +84,11 @@ import { ConfirmationService } from '@core/services/confirmation.service';
       @if (!periodHintLoading && periodEligibleCount === 0) {
         <div class="card card-warning" role="status">
           <h3><i class="fa-solid fa-circle-info"></i> Aucune facture fournisseur éligible pour cette période</h3>
-          <p class="hint-p">Une facture n’apparaît dans le fichier que si <strong i18n="@@withholding-tax.tej-export.toutes.12a46cad">toutes</strong> les conditions suivantes sont remplies :</p>
+          <p class="hint-p"><ng-container i18n="@@withholding-tax.tej-export.une.facture.n.apparait.dans.le.fichier.que.si.0f177b98">Une facture n’apparaît dans le fichier que si </ng-container> <strong i18n="@@withholding-tax.tej-export.toutes.12a46cad">toutes</strong> les conditions suivantes sont remplies :</p>
           <ul class="hint-list">
-            <li>statut <strong i18n="@@withholding-tax.tej-export.payee.65b240e8">Payée</strong> (soldée) ;</li>
-            <li>retenue calculée et enregistrée sur la facture (fournisseur <strong i18n="@@withholding-tax.tej-export.assujetti.a.la.rs.6c46f7d3">assujetti à la RS</strong>, type d’opération RS, montant &gt; 0) ;</li>
-            <li>date de solde (<strong i18n="@@withholding-tax.tej-export.payee.le.9c5c2137">Payée le</strong>) dans le <strong i18n="@@withholding-tax.tej-export.mois.et.l.annee.68ceb441">mois et l’année</strong> sélectionnés.</li>
+            <li><ng-container i18n="@@withholding-tax.tej-export.statut.a1aecf38">statut </ng-container> <strong i18n="@@withholding-tax.tej-export.payee.65b240e8">Payée</strong> (soldée) ;</li>
+            <li><ng-container i18n="@@withholding-tax.tej-export.retenue.calculee.et.enregistree.sur.la.facture.f.2fc4efb9">retenue calculée et enregistrée sur la facture (fournisseur </ng-container> <strong i18n="@@withholding-tax.tej-export.assujetti.a.la.rs.6c46f7d3">assujetti à la RS</strong>, type d’opération RS, montant &gt; 0) ;</li>
+            <li><ng-container i18n="@@withholding-tax.tej-export.date.de.solde.5ff96ef6">date de solde (</ng-container><strong i18n="@@withholding-tax.tej-export.payee.le.9c5c2137">Payée le</strong>) dans le <strong i18n="@@withholding-tax.tej-export.mois.et.l.annee.68ceb441">mois et l’année</strong> sélectionnés.</li>
           </ul>
           <p class="hint-p muted-hint" i18n="@@withholding-tax.tej-export.un.montant.ttc.superieur.au.seuil.rs7.achats.ne..f60823e9">Un montant TTC supérieur au seuil RS7 (achats) ne suffit pas si le fournisseur n’est pas paramétré comme assujetti ou si la facture n’est pas encore soldée.</p>
           <a routerLink="/withholding-tax/dashboard" class="btn btn-outline btn-sm" i18n="@@withholding-tax.tej-export.tableau.de.bord.retenue.a.la.source.fa7f4511">Tableau de bord retenue à la source</a>
@@ -162,7 +162,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
                     <td class="mono">{{ row.fileName }}</td>
                     <td>{{ row.month }}/{{ row.year }}</td>
                     <td>{{ row.certificateCount }}</td>
-                    <td>{{ row.isValid ? 'Oui' : 'Non' }}</td>
+                    <td>{{ row.isValid ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
                     <td class="mono hash">{{ row.sha256Hex }}</td>
                   </tr>
                 }
@@ -187,7 +187,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
           </div>
           <div>
             <h4 i18n="@@withholding-tax.tej-export.connexion.au.portail.a1d7376f">Connexion au portail</h4>
-            <p class="help-p">L’authentification se fait via <strong i18n="@@withholding-tax.tej-export.openid.connect.15d13e02">OpenID Connect</strong> sur le domaine dédié (ex. <code i18n="@@withholding-tax.tej-export.login.tej.finances.gov.tn.5bb724cb">login-tej.finances.gov.tn</code>). InstaFact ne stocke <strong i18n="@@withholding-tax.tej-export.aucun.mot.de.passe.f9bc0251">aucun mot de passe</strong> du portail TEJ.</p>
+            <p class="help-p"><ng-container i18n="@@withholding-tax.tej-export.l.authentification.se.fait.via.3db24eef">L’authentification se fait via </ng-container> <strong i18n="@@withholding-tax.tej-export.openid.connect.15d13e02">OpenID Connect</strong> sur le domaine dédié (ex. <code i18n="@@withholding-tax.tej-export.login.tej.finances.gov.tn.5bb724cb">login-tej.finances.gov.tn</code>). InstaFact ne stocke <strong i18n="@@withholding-tax.tej-export.aucun.mot.de.passe.f9bc0251">aucun mot de passe</strong> du portail TEJ.</p>
             <ol>
               <li i18n="@@withholding-tax.tej-export.generez.le.fichier.xml.dans.instafact.2f619d44">Générez le fichier XML dans InstaFact</li>
               <li i18n="@@withholding-tax.tej-export.ouvrez.une.session.sur.le.portail.tej.avec.vos.i.cb605efe">Ouvrez une session sur le portail TEJ avec vos identifiants institutionnels</li>
@@ -262,6 +262,8 @@ import { ConfirmationService } from '@core/services/confirmation.service';
   `]
 })
 export class TejExportComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   /** Aligné sur `Error.Validation` côté API (ExportTejXml / preview). */
   private static readonly tejNoEligibleInvoicesApiMessage =
     'Aucune facture fournisseur soldée avec retenue à la source pour cette période';
@@ -354,7 +356,7 @@ export class TejExportComponent implements OnInit {
       header: 'Aucune facture éligible pour cette période',
       message:
         'L’export TEJ inclut uniquement les factures fournisseurs payées avec retenue enregistrée (fournisseur assujetti, montant et type RS), pour la date de solde (mois/année) sélectionnés.\n\n' +
-        'Vérifiez le paramétrage fournisseur, le statut Payée et que la date de solde tombe dans la période.',
+        $localize`:@@ui.tern.verifiez.le.parametrage.fournisseur.le.sta.0c248d:Vérifiez le paramétrage fournisseur, le statut Payée et que la date de solde tombe dans la période.`,
       icon: 'pi pi-exclamation-triangle',
       size: 'md',
       scrollable: true

@@ -13,7 +13,7 @@ import { CommercialProfitReportRow } from '@core/services/reports-api.service';
     } @else if (!rows.length) {
       <div class="empty-placeholder"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
     } @else {
-      <div role="region" [attr.aria-label]="mode === 'line' ? 'Bénéfice par ligne' : mode === 'piece' ? 'Bénéfice par pièce' : mode === 'product' ? 'Bénéfice par produit' : 'Bénéfice mensuel'">
+      <div role="region" [attr.aria-label]="mode === 'line' ? loc_ui_tern_benefice_par_ligne_fbe640 : mode === 'piece' ? loc_ui_tern_benefice_par_piece_929041 : mode === 'product' ? loc_ui_tern_benefice_par_produit_2e34eb : loc_ui_tern_benefice_mensuel_65f82a">
         <p-table [value]="rows" styleClass="p-datatable-sm reports-table">
         <ng-template pTemplate="header">
           <tr>
@@ -77,6 +77,10 @@ import { CommercialProfitReportRow } from '@core/services/reports-api.service';
   `]
 })
 export class ProfitTableComponent {
+  readonly loc_ui_tern_benefice_par_ligne_fbe640 = $localize`:@@ui.tern.benefice.par.ligne.fbe640:Bénéfice par ligne`;
+  readonly loc_ui_tern_benefice_par_piece_929041 = $localize`:@@ui.tern.benefice.par.piece.929041:Bénéfice par pièce`;
+  readonly loc_ui_tern_benefice_par_produit_2e34eb = $localize`:@@ui.tern.benefice.par.produit.2e34eb:Bénéfice par produit`;
+  readonly loc_ui_tern_benefice_mensuel_65f82a = $localize`:@@ui.tern.benefice.mensuel.65f82a:Bénéfice mensuel`;
   @Input() rows: CommercialProfitReportRow[] = [];
   @Input() loading = false;
   @Input() mode: 'piece' | 'line' | 'product' | 'month' = 'product';

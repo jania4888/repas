@@ -46,7 +46,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le bilan" i18n="@@accounting.balance-sheet.charger.8f860300">Charger</app-button>
+            ariaLabel="Charger le bilan" i18n="@@accounting.balance-sheet.charger.8f860300"> Charger </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-balance-sheet"
             density="toolbar"
@@ -240,7 +240,7 @@ export class BalanceSheetComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.data.set(res.data);
-        else this.error.set(res.error ?? 'Erreur lors du chargement du bilan');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.chargement.du.bilan.760441:Erreur lors du chargement du bilan`);
       },
       error: err => {
         this.loading.set(false);

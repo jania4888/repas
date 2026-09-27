@@ -87,7 +87,7 @@ const FIELD_IDS = {
           <div class="form-block">
             <h4 class="form-block-title" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.identite.3138be1c">Identité</h4>
             <div class="form-group">
-              <label for="quick-client-name">Nom ou raison sociale <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
+              <label for="quick-client-name"><ng-container i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.nom.ou.raison.sociale.2983b5c6">Nom ou raison sociale </ng-container> <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="quick-client-name"
@@ -106,7 +106,7 @@ const FIELD_IDS = {
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="quick-client-type">Type <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
+                <label for="quick-client-type"><ng-container i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.type.3deb7456">Type </ng-container> <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-client-type"
                   [options]="typeOptions"
@@ -179,7 +179,7 @@ const FIELD_IDS = {
           <div class="form-block">
             <h4 class="form-block-title" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.adresse.522e1466">Adresse</h4>
             <div class="form-group">
-              <label for="quick-client-street">Rue <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
+              <label for="quick-client-street"><ng-container i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.rue.53f787b0">Rue </ng-container> <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
               <input
                 pInputText
                 id="quick-client-street"
@@ -198,7 +198,7 @@ const FIELD_IDS = {
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="quick-client-city">Ville <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
+                <label for="quick-client-city"><ng-container i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.ville.97217611">Ville </ng-container> <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
                 <input
                   pInputText
                   id="quick-client-city"
@@ -215,7 +215,7 @@ const FIELD_IDS = {
                 }
               </div>
               <div class="form-group">
-                <label for="quick-client-governorate">Gouvernorat <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
+                <label for="quick-client-governorate"><ng-container i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.gouvernorat.b9cd1d99">Gouvernorat </ng-container> <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span></label>
                 <p-select
                   id="quick-client-governorate"
                   [options]="governorateOptions"
@@ -289,7 +289,7 @@ const FIELD_IDS = {
               [attr.title]="submitDisabledReason()"
               [attr.aria-describedby]="!canSubmit() ? 'quick-client-validation-summary' : null"
               (click)="submit()">
-              {{ submitting() ? 'Création...' : 'Créer et sélectionner' }}
+              {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_et_selectionner_41dd64 }}
             </app-button>
           </div>
         </div>
@@ -298,7 +298,7 @@ const FIELD_IDS = {
 
     @if (!panelMode) {
       <p-dialog
-        header="Créer un client"
+        header="Créer un client" i18n-header="Créer un client"
         [(visible)]="visible"
         [modal]="true"
         [style]="{ width: '640px', maxWidth: '95vw' }"
@@ -317,7 +317,7 @@ const FIELD_IDS = {
               [attr.title]="submitDisabledReason()"
               [attr.aria-describedby]="!canSubmit() ? 'quick-client-validation-summary' : null"
               (click)="submit()">
-              {{ submitting() ? 'Création...' : 'Créer et sélectionner' }}
+              {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_et_selectionner_41dd64 }}
             </app-button>
           </div>
         </ng-template>
@@ -405,6 +405,8 @@ const FIELD_IDS = {
   `],
 })
 export class QuickCreateClientDialogComponent {
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_creer_et_selectionner_41dd64 = $localize`:@@ui.tern.creer.et.selectionner.41dd64:Créer et sélectionner`;
   readonly ClientType = ClientType;
 
   @Input() panelMode = false;
@@ -503,7 +505,7 @@ export class QuickCreateClientDialogComponent {
 
   readonly nameErrorMessage = computed(() => {
     const v = this.name().trim();
-    return v.length === 0 ? 'Ce champ est obligatoire' : 'Min. 2 caractères';
+    return v.length === 0 ? $localize`:@@ui.tern.ce.champ.est.obligatoire.17061b:Ce champ est obligatoire` : $localize`:@@ui.tern.min.2.caracteres.af9507:Min. 2 caractères`;
   });
 
   readonly emailErrorMessage = computed(() => 'Adresse email invalide');
@@ -529,7 +531,7 @@ export class QuickCreateClientDialogComponent {
     if (this.submitting()) return 'Création en cours...';
     if (!this.canSubmit()) {
       const fields = this.missingFieldsMessage().replace(/^ : /, '');
-      return fields ? `Champs manquants ou invalides : ${fields}` : 'Complétez les champs obligatoires';
+      return fields ? $localize`:@@ui.tern.champs.manquants.ou.invalides.ph.744911:Champs manquants ou invalides : ${fields}:p0:` : $localize`:@@ui.tern.completez.les.champs.obligatoires.703cef:Complétez les champs obligatoires`;
     }
     return '';
   }

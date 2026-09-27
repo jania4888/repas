@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -29,7 +31,7 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
 @Component({
   selector: 'app-employee-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     TabsModule,
@@ -56,14 +58,14 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
     @if (loading()) {
       <p i18n="@@payroll.employees.chargement.01cba1df">Chargement…</p>
     } @else if (employee()) {
-      <app-page-header [title]="employee()!.fullName" [subtitle]="'Matricule ' + employee()!.employeeNumber">
+      <app-page-header [title]="employee()!.fullName" [subtitle]="loc_ui_tern_matricule_6d6b53 + employee()!.employeeNumber">
         @if (canManage()) {
           <app-button variant="outline" icon="pi-pencil" iconPos="left" [routerLink]="[routeBase() + '/employees', employee()!.id, 'edit']" i18n="@@payroll.employees.modifier.f260e757">Modifier</app-button>
           @if (!employee()!.terminationDate) {
             <app-button variant="outline" icon="pi-sign-out" iconPos="left" (click)="departureDialogVisible = true" i18n="@@payroll.employees.declarer.un.depart.97498276">Déclarer un départ</app-button>
           }
           <app-button variant="outline" [icon]="employee()!.isActive ? 'pi-ban' : 'pi-check'" iconPos="left" (click)="toggleActive()">
-            {{ employee()!.isActive ? 'Désactiver' : 'Réactiver' }}
+            {{ employee()!.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_reactiver_822dbd }}
           </app-button>
           <app-button variant="danger" icon="pi-trash" iconPos="left" (click)="confirmDelete()" i18n="@@payroll.employees.supprimer.1acfc1c7">Supprimer</app-button>
         }
@@ -136,11 +138,11 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
             }
             <div>
               <dt i18n="@@payroll.employees.situation.familiale.3b708781">Situation familiale</dt>
-              <dd>{{ employee()!.maritalStatusDisplay }}</dd>
+              <dd>{{ employee()!.maritalStatusDisplay | backendLabel }}</dd>
             </div>
             <div>
               <dt i18n="@@payroll.employees.chef.de.famille.0ba5a38a">Chef de famille</dt>
-              <dd>{{ employee()!.isHeadOfFamily ? 'Oui' : 'Non' }}</dd>
+              <dd>{{ employee()!.isHeadOfFamily ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</dd>
             </div>
             <div>
               <dt i18n="@@payroll.employees.enfants.a.charge.d024299f">Enfants à charge</dt>
@@ -169,7 +171,7 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
                   <ul>
                     @for (claim of employee()!.dependentParentClaims!; track claim.parentCin) {
                       <li>
-                        {{ claim.kinship === 'Father' ? 'Père' : 'Mère' }}
+                        {{ claim.kinship === 'Father' ? loc_ui_tern_pere_3b0ae0 : loc_ui_tern_mere_0c6533 }}
                         — CIN {{ claim.parentCin }}
                         @if (claim.firstName || claim.lastName) {
                           ({{ claim.firstName }} {{ claim.lastName }})
@@ -199,7 +201,7 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
             <div>
               <dt i18n="@@payroll.employees.statut.659499f3">Statut</dt>
               <dd>
-                <p-tag [value]="employee()!.isActive ? 'Actif' : 'Inactif'" [severity]="employee()!.isActive ? 'success' : 'secondary'" />
+                <p-tag [value]="employee()!.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033" [severity]="employee()!.isActive ? 'success' : 'secondary'" />
               </dd>
             </div>
           </dl>
@@ -213,7 +215,7 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
             <div class="card p-3 mb-3">
               <div class="contract-header">
                 <div>
-                  <strong>{{ c.typeDisplay }}</strong> — {{ c.regimeDisplay }} — {{ c.weeklyRegimeDisplay }}
+                  <strong>{{ c.typeDisplay | backendLabel }}</strong> — {{ c.regimeDisplay | backendLabel }} — {{ c.weeklyRegimeDisplay | backendLabel }}
                   @if (!c.isActive) { <p-tag value="Inactif" severity="secondary" class="ml-2" /> }
                 </div>
                 @if (canManage()) {
@@ -235,8 +237,8 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
                     <tr>
                       <td>{{ a.label }}</td>
                       <td class="text-right">{{ a.amount | payrollAmount }}</td>
-                      <td>{{ a.taxable ? 'Oui' : 'Non' }}</td>
-                      <td>{{ a.subjectToCnss ? 'Oui' : 'Non' }}</td>
+                      <td>{{ a.taxable ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
+                      <td>{{ a.subjectToCnss ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
                     </tr>
                   </ng-template>
                 </p-table>
@@ -334,6 +336,15 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
   `]
 })
 export class EmployeeDetailComponent implements OnInit {
+  readonly loc_ui_tern_matricule_6d6b53 = $localize`:@@ui.tern.matricule.6d6b53:Matricule `;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_reactiver_822dbd = $localize`:@@ui.tern.reactiver.822dbd:Réactiver`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_pere_3b0ae0 = $localize`:@@ui.tern.pere.3b0ae0:Père`;
+  readonly loc_ui_tern_mere_0c6533 = $localize`:@@ui.tern.mere.0c6533:Mère`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly employees = inject(EmployeeService);
@@ -398,7 +409,7 @@ export class EmployeeDetailComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.toast.add({ severity: 'error', summary: 'Salarié', detail: 'Salarié introuvable.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@employee-detail.component.summary.Salarié:Salarié`, detail: $localize`:@@employee-detail.component.detail.Salari_introuva:Salarié introuvable.` });
         this.loading.set(false);
       }
     });
@@ -427,16 +438,16 @@ export class EmployeeDetailComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer le contrat ${c.typeDisplay} ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@employee-detail.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@employee-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.employees.deleteContract(c.id).subscribe({
           next: () => {
-            this.toast.add({ severity: 'success', summary: 'Contrat', detail: 'Contrat supprimé.' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@employee-detail.component.summary.Contrat:Contrat`, detail: $localize`:@@employee-detail.component.detail.Contrat_supprim_:Contrat supprimé.` });
             this.reload();
           },
-          error: err => this.toast.add({ severity: 'error', summary: 'Contrat', detail: err.error?.message ?? 'Suppression impossible.' })
+          error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-detail.component.summary.Contrat:Contrat`, detail: err.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.` })
         });
       }
     });
@@ -446,10 +457,10 @@ export class EmployeeDetailComponent implements OnInit {
     if (!this.canManage() || !this.employee()) return;
     this.employees.toggleActive(this.employee()!.id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Salarié', detail: 'Statut mis à jour.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-detail.component.summary.Salarié:Salarié`, detail: $localize`:@@employee-detail.component.detail.Statut mis à:Statut mis à jour.` });
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Salarié', detail: err.error?.message ?? 'Action impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-detail.component.summary.Salarié:Salarié`, detail: err.error?.message ?? $localize`:@@ui.tern.action.impossible.cd5717:Action impossible.` })
     });
   }
 
@@ -458,16 +469,16 @@ export class EmployeeDetailComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer le salarié « ${this.employee()!.fullName} » ?`,
       header: 'Confirmation de suppression',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@employee-detail.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@employee-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.employees.delete(this.employee()!.id).subscribe({
           next: () => {
-            this.toast.add({ severity: 'success', summary: 'Salarié', detail: 'Salarié supprimé.' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@employee-detail.component.summary.Salarié:Salarié`, detail: $localize`:@@employee-detail.component.detail.Salarié supp:Salarié supprimé.` });
             this.router.navigate([this.routeBase() + '/employees']);
           },
-          error: err => this.toast.add({ severity: 'error', summary: 'Salarié', detail: err.error?.message ?? 'Suppression impossible.' })
+          error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-detail.component.summary.Salarié:Salarié`, detail: err.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.` })
         });
       }
     });

@@ -22,7 +22,7 @@ export interface ProjectStatusChangePayload {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Modifier le statut de la tâche"
+      header="Modifier le statut de la tâche" i18n-header="Modifier le statut de la tâche"
       [style]="{ width: '32rem' }"
       [draggable]="false"
       (onHide)="cancel.emit()">
@@ -30,7 +30,7 @@ export interface ProjectStatusChangePayload {
 
       <div class="task-create-form">
         <div class="task-create-field">
-          <label for="status-change-target">Nouveau statut <span class="ft-required" i18n="@@projects.components.text.df58248c">*</span></label>
+          <label for="status-change-target"><ng-container i18n="@@projects.components.nouveau.statut.3e47f423">Nouveau statut </ng-container> <span class="ft-required" i18n="@@projects.components.text.df58248c">*</span></label>
           <p-select
             inputId="status-change-target"
             class="w-full"

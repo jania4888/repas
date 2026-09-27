@@ -24,7 +24,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                 [class.balanced]="store.isBalanced()"
                 [class.unbalanced]="!store.isBalanced()"
                 aria-live="polite">
-            Solde <strong>{{ store.balance() | number : store.amountFormat() }}</strong> {{ store.currency() }}
+            <ng-container i18n="@@accounting.manual-entry.solde.e5977cf9"> Solde </ng-container> <strong>{{ store.balance() | number : store.amountFormat() }}</strong> {{ store.currency() }}
           </span>
         }
       </div>
@@ -69,10 +69,10 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                 <th class="col-amount text-right" style="width:11%">Crédit ({{ functionalCurrency }})</th>
               }
               @if (store.columnVisibility().piece) {
-                <th style="width:8%">Pièce <span class="assist-hint" title="Aide à la saisie — non comptabilisé" i18n-title="Aide à la saisie — non comptabilisé" i18n="@@accounting.manual-entry.text.f77b6fef">ⓘ</span></th>
+                <th style="width:8%"><ng-container i18n="@@accounting.manual-entry.piece.954bbc8c">Pièce </ng-container> <span class="assist-hint" title="Aide à la saisie — non comptabilisé" i18n-title="Aide à la saisie — non comptabilisé" i18n="@@accounting.manual-entry.text.f77b6fef">ⓘ</span></th>
               }
               @if (store.columnVisibility().dueDate) {
-                <th style="width:9%">Échéance <span class="assist-hint" title="Aide à la saisie — non comptabilisé" i18n-title="Aide à la saisie — non comptabilisé" i18n="@@accounting.manual-entry.text.f77b6fef">ⓘ</span></th>
+                <th style="width:9%"><ng-container i18n="@@accounting.manual-entry.echeance.f9a77ff6">Échéance </ng-container> <span class="assist-hint" title="Aide à la saisie — non comptabilisé" i18n-title="Aide à la saisie — non comptabilisé" i18n="@@accounting.manual-entry.text.f77b6fef">ⓘ</span></th>
               }
               @if (store.columnVisibility().vat) {
                 <th style="width:7%" i18n="@@accounting.manual-entry.tva.fb62cb5d">TVA</th>
@@ -87,7 +87,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
             <tr [class.vat-generated]="line.isVatGenerated">
               <td class="col-check">
                 <input type="checkbox" [checked]="store.selectedLineIndexes().has(i)"
-                       (change)="store.toggleLineSelection(i)" [attr.aria-label]="'Sélectionner ligne ' + (i+1)" />
+                       (change)="store.toggleLineSelection(i)" [attr.aria-label]="loc_ui_tern_selectionner_ligne_c6d73c + (i+1)" />
               </td>
               <td class="text-center me-line-number col-num">{{ i + 1 }}</td>
               <td class="me-cell-account col-account"
@@ -146,7 +146,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                   side="debit"
                   [fractionDigits]="store.currencyDecimals()"
                   [inputId]="'debit-' + i"
-                  [ariaLabel]="'Débit ligne ' + (i + 1)"
+                  [ariaLabel]="loc_ui_tern_debit_ligne_3bdc7d + (i + 1)"
                   [disabled]="!!line.isVatGenerated"
                   (amountChange)="onDebitPreview(i)"
                   (amountCommitted)="onDebitCommit(i)"
@@ -164,7 +164,7 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
                   side="credit"
                   [fractionDigits]="store.currencyDecimals()"
                   [inputId]="'credit-' + i"
-                  [ariaLabel]="'Crédit ligne ' + (i + 1)"
+                  [ariaLabel]="loc_ui_tern_credit_ligne_05f325 + (i + 1)"
                   [disabled]="!!line.isVatGenerated"
                   (amountChange)="onCreditPreview(i)"
                   (amountCommitted)="onCreditCommit(i)"
@@ -296,6 +296,9 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
   `
 })
 export class EntryLinesGridComponent {
+  readonly loc_ui_tern_selectionner_ligne_c6d73c = $localize`:@@ui.tern.selectionner.ligne.c6d73c:Sélectionner ligne `;
+  readonly loc_ui_tern_debit_ligne_3bdc7d = $localize`:@@ui.tern.debit.ligne.3bdc7d:Débit ligne `;
+  readonly loc_ui_tern_credit_ligne_05f325 = $localize`:@@ui.tern.credit.ligne.05f325:Crédit ligne `;
   readonly store = inject(EntryFormStore);
   readonly refs = inject(EntryReferenceStore);
   private readonly vatAssist = inject(VatAssistService);

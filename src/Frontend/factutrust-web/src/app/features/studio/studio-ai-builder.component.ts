@@ -82,7 +82,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
                     <p class="sab-report__hint">Source : {{ report.sourceLabel }} — calculé à l'instant, rien n'est enregistré.</p>
                   </div>
                   <button pButton type="button" class="p-button-sm p-button-outlined" icon="fa-solid fa-floppy-disk"
-                    label="Enregistrer comme état" [disabled]="busy()" (click)="saveReportAsState(report)"></button>
+                    label="Enregistrer comme état" i18n-label="Enregistrer comme état" [disabled]="busy()" (click)="saveReportAsState(report)"></button>
                 </div>
                 @for (w of report.warnings; track w) {
                   <p class="sab-plan__warning"><i class="fa-solid fa-triangle-exclamation"></i> {{ w }}</p>
@@ -120,7 +120,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
                 <div class="sab-failure__actions">
                   @if (failureView(failure).retryable) {
                     <button pButton type="button" class="p-button-sm p-button-outlined"
-                      icon="fa-solid fa-rotate-right" label="Réessayer"
+                      icon="fa-solid fa-rotate-right" label="Réessayer" i18n-label="Réessayer"
                       [disabled]="busy() || !lastUserMessage" (click)="retry()"></button>
                   }
                 </div>
@@ -173,9 +173,9 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
               @if (state() === 'awaiting_confirmation') {
                 <div class="sab-plan__actions">
                   <button pButton type="button" icon="fa-solid fa-check"
-                    [label]="p.summary.kind === 'Report' ? 'Valider et enregistrer' : 'Valider et créer'"
+                    [label]="p.summary.kind === 'Report' ? loc_ui_tern_valider_et_enregistrer_f19a56 : loc_ui_tern_valider_et_creer_bdef68"
                     (click)="confirmPlan()"></button>
-                  <button pButton type="button" class="p-button-text" icon="fa-solid fa-xmark" label="Annuler"
+                  <button pButton type="button" class="p-button-text" icon="fa-solid fa-xmark" label="Annuler" i18n-label="Annuler"
                     (click)="cancelPlan()"></button>
                 </div>
               }
@@ -204,7 +204,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
             placeholder="Ex. : Créer un système de gestion de congés avec plusieurs tables..." i18n-placeholder="Ex. : Créer un système de gestion de congés avec plusieurs tables..."
             (keydown.enter)="onComposerEnter($event)"></textarea>
           <div class="sab-compose__actions">
-            <button pButton type="button" icon="fa-solid fa-paper-plane" label="Envoyer"
+            <button pButton type="button" icon="fa-solid fa-paper-plane" label="Envoyer" i18n-label="Envoyer"
               [disabled]="busy() || !prompt.trim()" (click)="send()"></button>
           </div>
         </div>
@@ -276,6 +276,8 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
   `]
 })
 export class StudioAiBuilderComponent {
+  readonly loc_ui_tern_valider_et_enregistrer_f19a56 = $localize`:@@ui.tern.valider.et.enregistrer.f19a56:Valider et enregistrer`;
+  readonly loc_ui_tern_valider_et_creer_bdef68 = $localize`:@@ui.tern.valider.et.creer.bdef68:Valider et créer`;
   private readonly stream = inject(AiStreamService);
   private readonly builds = inject(StudioAiBuildService);
   private readonly router = inject(Router);
@@ -340,7 +342,7 @@ export class StudioAiBuilderComponent {
 
     this.stream.streamChat(request).subscribe({
       next: ev => this.handleEvent(ev),
-      error: e => this.fail(e?.message ?? 'Échec de la génération.'),
+      error: e => this.fail(e?.message ?? $localize`:@@ui.tern.echec.de.la.generation.94609f:Échec de la génération.`),
       complete: () => this.settleAfterChat()
     });
   }
@@ -356,7 +358,7 @@ export class StudioAiBuilderComponent {
 
     this.builds.confirm(current.planId).subscribe({
       next: ev => this.handleConfirmEvent(ev),
-      error: e => this.failExecution(e?.message ?? "Échec de l'exécution du plan."),
+      error: e => this.failExecution(e?.message ?? $localize`:@@ui.tern.echec.de.l.execution.du.plan.b3595f:Échec de l'exécution du plan.`),
       complete: () => {
         if (this.state() === 'executing') this.state.set('idle');
         this.studioNav.refresh();
@@ -416,7 +418,7 @@ export class StudioAiBuilderComponent {
         this.actions.set(this.parseActions(ev.clientActions));
         break;
       case 'error':
-        this.fail(ev.error ?? 'Une erreur est survenue.');
+        this.fail(ev.error ?? $localize`:@@ui.tern.une.erreur.est.survenue.9a1331:Une erreur est survenue.`);
         break;
       case 'done':
         if (ev.conversationId) this.conversationId = ev.conversationId;
@@ -437,7 +439,7 @@ export class StudioAiBuilderComponent {
         this.lines.update(l => [...l, { kind: 'text', role: 'assistant', text: 'Création terminée.' }]);
         break;
       case 'error':
-        this.failExecution(ev.error ?? "Échec de l'exécution du plan.");
+        this.failExecution(ev.error ?? $localize`:@@ui.tern.echec.de.l.execution.du.plan.b3595f:Échec de l'exécution du plan.`);
         break;
       case 'done':
         if (this.state() === 'executing') this.state.set('idle');
@@ -447,7 +449,7 @@ export class StudioAiBuilderComponent {
 
   entityChip(e: StudioPlanEntity): string {
     const base = `${e.displayName} · ${e.fieldCount} champ(s)`;
-    return e.relationCount > 0 ? `${base}, ${e.relationCount} relation(s)` : base;
+    return e.relationCount > 0 ? $localize`:@@ui.tern.ph.ph.relation.s.d41dd1:${base}:p0:, ${e.relationCount}:p1: relation(s)` : base;
   }
 
   private applyPlan(json: string | undefined): void {

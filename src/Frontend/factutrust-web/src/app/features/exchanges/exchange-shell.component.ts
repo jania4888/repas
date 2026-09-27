@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import {
   Component,
   OnDestroy,
@@ -302,8 +303,8 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
     if (!isThreadOpen(thread.status)) return;
 
     const visibility =
-      this.composerMode() === 'note' && this.canInternalNote() ? 'InternalNote' : 'ClientVisible';
-    const text = body || (files.length ? '(Pièce jointe)' : '');
+      this.composerMode() === 'note' && this.canInternalNote() ? $localize`:@@ui.tern.internalnote.28a701:InternalNote` : $localize`:@@ui.tern.clientvisible.bf9461:ClientVisible`;
+    const text = body || (files.length ? $localize`:@@ui.tern.piece.jointe.882014:(Pièce jointe)` : '');
     this.sending.set(true);
     this.error.set(null);
 
@@ -437,7 +438,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
 
   createTask(asAppointment = false): void {
     const thread = this.activeThread();
-    const title = this.newTaskTitle().trim() || (asAppointment ? 'Rendez-vous' : '');
+    const title = this.newTaskTitle().trim() || (asAppointment ? $localize`:@@ui.tern.rendez.vous.59342b:Rendez-vous` : '');
     if (!thread || !title) return;
     this.exchange
       .createTask(thread.id, {
@@ -510,7 +511,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
 
   feedTrackKey(item: MessageFeedItem, index: number): string {
     if (item.kind === 'day') return `day-${item.dayLabel}-${index}`;
-    return item.message?.id ?? `msg-${index}`;
+    return item.message?.id ?? $localize`:@@ui.tern.msg.ph.e4663f:msg-${index}:p0:`;
   }
 
   loadOlderMessages(): void {
@@ -579,8 +580,8 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
           this.contentLoading.set(false);
           this.error.set(
             timedOut
-              ? 'Le chargement prend plus de temps que prévu. Réessayez.'
-              : 'Impossible de charger les échanges'
+              ? $localize`:@@ui.tern.le.chargement.prend.plus.de.temps.que.prev.72d1a5:Le chargement prend plus de temps que prévu. Réessayez.`
+              : $localize`:@@ui.tern.impossible.de.charger.les.echanges.41f2d1:Impossible de charger les échanges`
           );
           return EMPTY;
         })
@@ -712,7 +713,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
         companyTenantId: c.companyTenantId,
         companyName: c.companyName,
         threadId: t?.id,
-        status: t?.status ?? 'Open',
+        status: t?.status ?? $localize`:@@ui.tern.open.cf9b77:Open`,
         lastActivityAt: t?.lastActivityAt,
         unreadCount: t?.unreadCount ?? 0
       };
@@ -868,7 +869,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
           else
             this.toast.add({
               severity: 'error',
-              summary: 'Demandes',
+              summary: $localize`:@@exchange-shell.component.summary.Demandes:Demandes`,
               detail: requests.message || 'Impossible de charger les demandes'
             });
           if (documents.success) this.documents.set(documents.data);
@@ -877,8 +878,8 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
         error: () =>
           this.toast.add({
             severity: 'error',
-            summary: 'Demandes',
-            detail: 'Impossible de charger les demandes'
+            summary: $localize`:@@exchange-shell.component.summary.Demandes:Demandes`,
+            detail: $localize`:@@exchange-shell.component.detail.Impossible_de_ch:Impossible de charger les demandes`
           })
       });
     } else if (tab === 'taches') {

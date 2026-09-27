@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -106,7 +107,7 @@ import {
         type="button"
         [disabled]="!canCompute() || !periodValid() || computing()"
         (click)="compute()">
-        {{ computing() ? 'Calcul…' : 'Calculer' }}
+        {{ computing() ? loc_ui_tern_calcul_c289e9 : loc_ui_tern_calculer_297058 }}
       </app-button>
     </div>
 
@@ -118,7 +119,7 @@ import {
         </div>
         <p class="dm-outcome__text">{{ outcome(r) }}</p>
         @if (cleanRun()) {
-          <p class="dm-outcome__text" i18n="@@accounting.monthly-declaration.ce.controle.allonge.la.serie.qui.ouvre.la.bascul.b289ec8b">Ce contrôle allonge la série qui ouvre la bascule vers le calcul paramétré.</p>
+          <p class="dm-outcome__text" i18n="@@accounting.monthly-declaration.ce.controle.allonge.la.serie.qui.ouvre.la.bascul.b289ec8b"> Ce contrôle allonge la série qui ouvre la bascule vers le calcul paramétré. </p>
         }
       </div>
 
@@ -126,7 +127,7 @@ import {
         @if (list.length) {
           <section class="card dm-diags">
             <h3 class="dm-diags__title">
-              Signalements du calcul
+              <ng-container i18n="@@accounting.monthly-declaration.signalements.du.calcul.0119b230"> Signalements du calcul </ng-container>
               <span class="dm-diags__counts">
                 {{ errorCount(r) }} erreur(s), {{ warningCount(r) }} avertissement(s)
               </span>
@@ -170,6 +171,8 @@ import {
   `
 })
 export class MonthlyDeclarationComputeComponent implements OnInit {
+  readonly loc_ui_tern_calcul_c289e9 = $localize`:@@ui.tern.calcul.c289e9:Calcul…`;
+  readonly loc_ui_tern_calculer_297058 = $localize`:@@ui.tern.calculer.297058:Calculer`;
   private readonly api = inject(AccountingService);
   private readonly auth = inject(AuthService);
   private readonly errors = inject(ErrorHandlerService);
@@ -269,7 +272,7 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
           this.settings.set(res.data.settings);
           this.modeForm.set(newModeForm(res.data.settings, new Date()));
         } else if (clearError) {
-          this.error.set(res.error ?? 'Erreur de chargement des réglages de la déclaration.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.des.reglages.de.la.de.3d201b:Erreur de chargement des réglages de la déclaration.`);
         }
       },
       error: err => {
@@ -296,7 +299,7 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
           this.loadSettings(false);
         } else {
           this.result.set(null);
-          this.error.set(res.error ?? 'Le calcul a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.le.calcul.a.echoue.353312:Le calcul a échoué.`);
         }
       },
       error: err => {
@@ -327,13 +330,13 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
         if (res.success) {
           this.toast.add({
             severity: 'success',
-            summary: 'Régime de calcul modifié',
+            summary: $localize`:@@monthly-declaration-compute.component.summary.Régime de ca:Régime de calcul modifié`,
             detail: modeLabel(form.mode),
             life: 4000
           });
           this.loadSettings();
         } else {
-          this.error.set(res.error ?? 'Le changement de régime a été refusé.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.le.changement.de.regime.a.ete.refuse.e7a8db:Le changement de régime a été refusé.`);
           this.loadSettings(false);
         }
       },

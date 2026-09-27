@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -60,6 +61,7 @@ type TaskView = 'list' | 'board' | 'calendar' | 'planning';
   selector: 'app-project-tasks-tab',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule,
     FormsModule,
     RouterLink,
@@ -205,7 +207,7 @@ type TaskView = 'list' | 'board' | 'calendar' | 'planning';
             <td>
               <span class="proj-task-pill" [ngClass]="statusPillClass(t.status)">
                 <i class="pi pi-chevron-right" aria-hidden="true"></i>
-                {{ t.statusDisplay }}
+                {{ t.statusDisplay | backendLabel }}
               </span>
             </td>
             <td>

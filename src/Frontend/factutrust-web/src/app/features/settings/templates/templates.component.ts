@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -37,10 +38,10 @@ import {
       title="Modèles de documents" i18n-title="Modèles de documents"
       subtitle="Choisissez le modèle visuel utilisé pour imprimer chaque type de document">
       <div class="header-actions">
-        <p-button label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
+        <p-button label="Retour" i18n-label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
         @if (canUpdate()) {
           <p-button
-            label="Enregistrer"
+            label="Enregistrer" i18n-label="Enregistrer"
             icon="pi pi-check"
             (onClick)="save()"
             [loading]="saving()"
@@ -207,7 +208,7 @@ export class DocumentTemplatesComponent implements OnInit, OnDestroy {
   }
 
   private showError(err: unknown): void {
-    this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+    this.toast.add({ severity: 'error', summary: $localize`:@@templates.component.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
   }
 
   private loadAll(): void {
@@ -298,9 +299,9 @@ export class DocumentTemplatesComponent implements OnInit, OnDestroy {
         this.saving.set(false);
         if (res.success && res.data) {
           this.preferences.update(m => ({ ...m, [type]: res.data!.templateKey }));
-          this.toast.add({ severity: 'success', summary: 'Modèle enregistré', detail: `Modèle « ${res.data.templateName} » appliqué.` });
+          this.toast.add({ severity: 'success', summary: $localize`:@@templates.component.summary.Mod_le_enregistr:Modèle enregistré`, detail: `Modèle « ${res.data.templateName} » appliqué.` });
         } else {
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.message ?? "Échec de l'enregistrement." });
+          this.toast.add({ severity: 'error', summary: $localize`:@@templates.component.summary.Erreur:Erreur`, detail: res.message ?? $localize`:@@ui.tern.echec.de.l.enregistrement.92ba0d:Échec de l'enregistrement.` });
         }
       },
       error: (err) => { this.saving.set(false); this.showError(err); }

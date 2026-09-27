@@ -56,7 +56,7 @@ interface CategoryTab {
                 class="catalog__search-voice"
                 [class.catalog__search-voice--listening]="listening()"
                 (click)="toggleVoiceSearch()"
-                [attr.aria-label]="listening() ? 'Arreter la recherche vocale' : 'Recherche vocale'">
+                [attr.aria-label]="listening() ? loc_ui_tern_arreter_la_recherche_vocale_00b388 : loc_ui_tern_recherche_vocale_c929e9">
                 <i class="pi" [class.pi-microphone]="!listening()" [class.pi-stop]="listening()"></i>
               </button>
             }
@@ -650,6 +650,8 @@ interface CategoryTab {
   `]
 })
 export class ProductCatalogComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_arreter_la_recherche_vocale_00b388 = $localize`:@@ui.tern.arreter.la.recherche.vocale.00b388:Arreter la recherche vocale`;
+  readonly loc_ui_tern_recherche_vocale_c929e9 = $localize`:@@ui.tern.recherche.vocale.c929e9:Recherche vocale`;
   @Output() onProductAdd = new EventEmitter<ProductListItem>();
   @Output() onProductAddWithQuantity = new EventEmitter<{ product: ProductListItem; quantity: number }>();
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -84,7 +85,7 @@ import {
               (click)="recompute()"
               [disabled]="recomputing() || loading()">
               <i class="pi pi-refresh" aria-hidden="true"></i>
-              {{ recomputing() ? 'Recalcul…' : 'Rafraîchir les prévisions' }}
+              {{ recomputing() ? loc_ui_tern_recalcul_39088a : loc_ui_tern_rafraichir_les_previsions_6d1d32 }}
             </button>
           }
         </div>
@@ -93,8 +94,8 @@ import {
       @if (loading()) {
         <div class="state" aria-busy="true" i18n="@@treasury.cash-forecast.calcul.de.la.projection.en.cours.62d75b0e">Calcul de la projection en cours…</div>
       } @else if (moduleDisabled()) {
-        <div class="state state--info" i18n="@@treasury.cash-forecast.le.module.tresorerie.previsionnelle.n.est.pas.ac.f894b1ab">Le module Trésorerie prévisionnelle n'est pas activé pour cet espace.
-          Contactez votre administrateur pour l'activer.</div>
+        <div class="state state--info" i18n="@@treasury.cash-forecast.le.module.tresorerie.previsionnelle.n.est.pas.ac.f894b1ab"> Le module Trésorerie prévisionnelle n'est pas activé pour cet espace.
+          Contactez votre administrateur pour l'activer. </div>
       } @else if (errorMessage()) {
         <div class="state state--error">
           {{ errorMessage() }}
@@ -104,32 +105,32 @@ import {
         <!-- KPI -->
         <section class="kpi-row" aria-label="Indicateurs de trésorerie" i18n-aria-label="Indicateurs de trésorerie">
           <app-stat-card
-            label="Solde de trésorerie"
+            label="Solde de trésorerie" i18n-label="Solde de trésorerie"
             [value]="amount(data().openingBalance)"
             icon="pi-wallet"
             variant="primary" />
           <app-stat-card
-            [label]="'Solde prévisionnel au ' + (data().periodEnd | date: 'dd/MM/yyyy')"
+            [label]="loc_ui_tern_solde_previsionnel_au_73c6a9 + (data().periodEnd | date: 'dd/MM/yyyy')"
             [value]="amount(data().closingBalance)"
             icon="pi-chart-line"
             [variant]="data().closingBalance < 0 ? 'error' : 'primary'" />
           <app-stat-card
-            label="Encaissements prévus"
+            label="Encaissements prévus" i18n-label="Encaissements prévus"
             [value]="amount(data().totalInflows)"
             icon="pi-arrow-down-left"
             variant="success" />
           <app-stat-card
-            label="Décaissements prévus"
+            label="Décaissements prévus" i18n-label="Décaissements prévus"
             [value]="amount(data().totalOutflows)"
             icon="pi-arrow-up-right"
             variant="warning" />
           <app-stat-card
-            label="Flux net prévisionnel"
+            label="Flux net prévisionnel" i18n-label="Flux net prévisionnel"
             [value]="amount(data().netFlow)"
             icon="pi-arrows-v"
             [variant]="data().netFlow < 0 ? 'error' : 'success'" />
           <app-stat-card
-            label="Indice de confiance"
+            label="Indice de confiance" i18n-label="Indice de confiance"
             [value]="(data().confidencePercent | number: '1.0-0') + ' %'"
             icon="pi-sparkles"
             variant="primary" />
@@ -200,8 +201,8 @@ import {
             <app-dashboard-panel
               title="Scénarios de prévision" i18n-title="Scénarios de prévision"
               [subtitle]="data().aiAdjustmentApplied
-                ? 'Probabilités pondérées par l’IA autour des valeurs du moteur'
-                : 'Probabilités issues du moteur déterministe'">
+                ? loc_ui_tern_probabilites_ponderees_par_l_ia_autour_des_42688a
+                : loc_ui_tern_probabilites_issues_du_moteur_deterministe_9e9fa3">
               <div class="scenarios">
                 @for (s of scenarios(); track s.kind) {
                   <article class="scenario" [class]="'scenario--' + s.kind">
@@ -210,7 +211,7 @@ import {
                       @if (s.probabilitySource === 'ai_adjusted') {
                         <span
                           class="ai-badge"
-                          [title]="'Valeur du moteur : ' + s.deterministicProbabilityPercent + ' %'">
+                          [title]="loc_ui_tern_valeur_du_moteur_16e0b3 + s.deterministicProbabilityPercent + ' %'">
                           <i class="pi pi-sparkles" aria-hidden="true"></i> IA
                         </span>
                       }
@@ -277,7 +278,7 @@ import {
               } @else {
                 <ul class="alerts">
                   @for (a of alerts(); track a.title) {
-                    <li [class]="'alerts__item alerts__item--' + a.severity">
+                    <li [class]="loc_ui_tern_alerts_item_alerts_item_73da9b + a.severity">
                       <div>
                         <strong>{{ a.title }}</strong>
                         @if (a.detail) { <p class="muted">{{ a.detail }}</p> }
@@ -445,6 +446,13 @@ import {
   `]
 })
 export class CashForecastComponent implements OnInit {
+  readonly loc_ui_tern_recalcul_39088a = $localize`:@@ui.tern.recalcul.39088a:Recalcul…`;
+  readonly loc_ui_tern_rafraichir_les_previsions_6d1d32 = $localize`:@@ui.tern.rafraichir.les.previsions.6d1d32:Rafraîchir les prévisions`;
+  readonly loc_ui_tern_solde_previsionnel_au_73c6a9 = $localize`:@@ui.tern.solde.previsionnel.au.73c6a9:Solde prévisionnel au `;
+  readonly loc_ui_tern_probabilites_ponderees_par_l_ia_autour_des_42688a = $localize`:@@ui.tern.probabilites.ponderees.par.l.ia.autour.des.42688a:Probabilités pondérées par l’IA autour des valeurs du moteur`;
+  readonly loc_ui_tern_probabilites_issues_du_moteur_deterministe_9e9fa3 = $localize`:@@ui.tern.probabilites.issues.du.moteur.deterministe.9e9fa3:Probabilités issues du moteur déterministe`;
+  readonly loc_ui_tern_valeur_du_moteur_16e0b3 = $localize`:@@ui.tern.valeur.du.moteur.16e0b3:Valeur du moteur : `;
+  readonly loc_ui_tern_alerts_item_alerts_item_73da9b = "alerts__item alerts__item--";
   private readonly service = inject(CashForecastService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
@@ -509,7 +517,7 @@ export class CashForecastComponent implements OnInit {
       tooltip: {
         callbacks: {
           label: (ctx: { dataset: { label?: string }; parsed: { y: number } }) =>
-            `${ctx.dataset.label} : ${formatAmount(ctx.parsed.y, this.forecast()?.currency ?? 'TND')}`
+            `${ctx.dataset.label} : ${formatAmount(ctx.parsed.y, this.forecast()?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`)}`
         }
       }
     },
@@ -550,7 +558,7 @@ export class CashForecastComponent implements OnInit {
           this.moduleDisabled.set(true);
         } else {
           this.errorMessage.set(
-            err?.error?.message ?? 'Impossible de charger la trésorerie prévisionnelle.'
+            err?.error?.message ?? $localize`:@@ui.tern.impossible.de.charger.la.tresorerie.previs.acb3d6:Impossible de charger la trésorerie prévisionnelle.`
           );
         }
         this.loading.set(false);
@@ -568,7 +576,7 @@ export class CashForecastComponent implements OnInit {
         this.recomputing.set(false);
         this.toast.add({
           severity: 'success',
-          summary: 'Projection recalculée',
+          summary: $localize`:@@cash-forecast.component.summary.Projection_recal:Projection recalculée`,
           detail: `Solde prévisionnel : ${this.amount(data.closingBalance)}`
         });
       },
@@ -578,8 +586,8 @@ export class CashForecastComponent implements OnInit {
         if (err?.status === 429) return;
         this.toast.add({
           severity: 'error',
-          summary: 'Recalcul impossible',
-          detail: err?.error?.message ?? 'Erreur inconnue'
+          summary: $localize`:@@cash-forecast.component.summary.Recalcul imp:Recalcul impossible`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.c3ec73:Erreur inconnue`
         });
       }
     });
@@ -601,8 +609,8 @@ export class CashForecastComponent implements OnInit {
       error: () =>
         this.toast.add({
           severity: 'error',
-          summary: 'Export impossible',
-          detail: 'Le fichier n’a pas pu être généré.'
+          summary: $localize`:@@cash-forecast.component.summary.Export impos:Export impossible`,
+          detail: $localize`:@@cash-forecast.component.detail.Le_fichier_n_a_p:Le fichier n’a pas pu être généré.`
         })
     });
   }
@@ -616,7 +624,7 @@ export class CashForecastComponent implements OnInit {
   }
 
   amount(value: number | null | undefined): string {
-    return formatAmount(value, this.forecast()?.currency ?? 'TND');
+    return formatAmount(value, this.forecast()?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`);
   }
 
   label = bucketLabel;

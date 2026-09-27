@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -38,6 +40,7 @@ interface StatusOption {
   selector: 'app-purchase-receipt-list',
   standalone: true,
   imports: [
+    BackendLabelPipe,
     CommonModule, RouterModule, FormsModule, CurrencyPipe, DatePipe,
     TableModule, ButtonModule, InputTextModule, SelectModule,
     TagModule, DatePickerModule, ToastModule,
@@ -55,7 +58,7 @@ interface StatusOption {
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new" i18n="@@purchase-receipts.pages.nouveau.bon.de.reception.479ec866">Nouveau bon de réception</app-button>
+          routerLink="new" i18n="@@purchase-receipts.pages.nouveau.bon.de.reception.479ec866"> Nouveau bon de réception </app-button>
       }
     </app-page-header>
 
@@ -107,29 +110,33 @@ interface StatusOption {
           styleClass="supplier-filter">
         </p-select>
 
-        <span class="filter-label" i18n="@@purchase-receipts.pages.date.debut.2413e246">Date début</span>
-        <p-datepicker
-          [(ngModel)]="fromDate"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          placeholder="Du" i18n-placeholder="Du"
-          [showButtonBar]="true"
-          (onSelect)="onFilterChange()"
-          (onClearClick)="onFilterChange()"
-          styleClass="date-filter">
-        </p-datepicker>
+        <div class="ft-filters__field">
+          <span class="filter-label" i18n="@@purchase-receipts.pages.date.debut.2413e246">Date début</span>
+          <p-datepicker
+            [(ngModel)]="fromDate"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            placeholder="Du" i18n-placeholder="Du"
+            [showButtonBar]="true"
+            (onSelect)="onFilterChange()"
+            (onClearClick)="onFilterChange()"
+            styleClass="date-filter">
+          </p-datepicker>
+        </div>
 
-        <span class="filter-label" i18n="@@purchase-receipts.pages.date.fin.2d44e855">Date fin</span>
-        <p-datepicker
-          [(ngModel)]="toDate"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          placeholder="Au" i18n-placeholder="Au"
-          [showButtonBar]="true"
-          (onSelect)="onFilterChange()"
-          (onClearClick)="onFilterChange()"
-          styleClass="date-filter">
-        </p-datepicker>
+        <div class="ft-filters__field">
+          <span class="filter-label" i18n="@@purchase-receipts.pages.date.fin.2d44e855">Date fin</span>
+          <p-datepicker
+            [(ngModel)]="toDate"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            placeholder="Au" i18n-placeholder="Au"
+            [showButtonBar]="true"
+            (onSelect)="onFilterChange()"
+            (onClearClick)="onFilterChange()"
+            styleClass="date-filter">
+          </p-datepicker>
+        </div>
       </div>
     </div>
 
@@ -205,7 +212,7 @@ interface StatusOption {
               </td>
               <td>
                 <p-tag
-                  [value]="receipt.statusDisplay"
+                  [value]="receipt.statusDisplay | backendLabel"
                   [severity]="getStatusSeverity(receipt.status)">
                 </p-tag>
               </td>
@@ -375,9 +382,9 @@ export class PurchaseReceiptListComponent implements OnInit, OnDestroy {
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Brouillon', value: PurchaseReceiptStatus.Draft },
-    { label: 'Validé', value: PurchaseReceiptStatus.Validated },
-    { label: 'Annulé', value: PurchaseReceiptStatus.Cancelled }
+    { label: $localize`:@@purchase-receipts.list.filter.brouillon:Brouillon`, value: PurchaseReceiptStatus.Draft },
+    { label: $localize`:@@purchase-receipts.list.filter.valide:Validé`, value: PurchaseReceiptStatus.Validated },
+    { label: $localize`:@@purchase-receipts.list.filter.annule:Annulé`, value: PurchaseReceiptStatus.Cancelled }
   ];
 
   ngOnInit(): void {
@@ -440,7 +447,7 @@ export class PurchaseReceiptListComponent implements OnInit, OnDestroy {
             : error?.error?.errors?.[0] || 'Impossible de charger les bons de réception';
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@purchase-receipt-list.component.summary.Erreur:Erreur`,
           detail
         });
       }

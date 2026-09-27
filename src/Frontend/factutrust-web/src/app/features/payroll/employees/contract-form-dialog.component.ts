@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -51,7 +52,7 @@ function parseIsoDate(value?: string): Date | null {
   ],
   template: `
     <p-dialog
-      [header]="editContract ? 'Modifier le contrat' : 'Nouveau contrat'"
+      [header]="editContract ? loc_ui_tern_modifier_le_contrat_2ed431 : loc_ui_tern_nouveau_contrat_13fabd"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: '720px', maxWidth: '95vw' }"
@@ -164,6 +165,8 @@ function parseIsoDate(value?: string): Date | null {
   `]
 })
 export class ContractFormDialogComponent implements OnChanges {
+  readonly loc_ui_tern_modifier_le_contrat_2ed431 = $localize`:@@ui.tern.modifier.le.contrat.2ed431:Modifier le contrat`;
+  readonly loc_ui_tern_nouveau_contrat_13fabd = $localize`:@@ui.tern.nouveau.contrat.13fabd:Nouveau contrat`;
   private readonly employees = inject(EmployeeService);
   private readonly toast = inject(ToastService);
 
@@ -200,7 +203,7 @@ export class ContractFormDialogComponent implements OnChanges {
       const c = this.editContract;
       this.type = c.type;
       this.regime = c.regime;
-      this.weeklyRegime = c.weeklyRegime ?? 'FortyEightHours';
+      this.weeklyRegime = c.weeklyRegime ?? $localize`:@@ui.tern.fortyeighthours.a53c9c:FortyEightHours`;
       this.startDate = parseIsoDate(c.startDate);
       this.endDate = parseIsoDate(c.endDate);
       this.baseSalary = c.baseSalary;
@@ -261,13 +264,13 @@ export class ContractFormDialogComponent implements OnChanges {
 
     req.subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Contrat', detail: 'Contrat enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@contract-form-dialog.component.summary.Contrat:Contrat`, detail: $localize`:@@contract-form-dialog.component.detail.Contrat_enregist:Contrat enregistré.` });
         this.saved.emit();
         this.close();
         this.saving.set(false);
       },
       error: err => {
-        this.toast.add({ severity: 'error', summary: 'Contrat', detail: err.error?.message ?? 'Enregistrement impossible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-form-dialog.component.summary.Contrat:Contrat`, detail: err.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` });
         this.saving.set(false);
       }
     });
@@ -312,7 +315,7 @@ export class ContractFormDialogComponent implements OnChanges {
         a.click();
         URL.revokeObjectURL(url);
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'CIVP', detail: 'Téléchargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@contract-form-dialog.component.summary.CIVP:CIVP`, detail: $localize`:@@contract-form-dialog.component.detail.T_l_chargement_i:Téléchargement impossible.` })
     });
   }
 }

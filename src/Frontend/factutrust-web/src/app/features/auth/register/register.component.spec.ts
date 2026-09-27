@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed, fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { provideRouter, Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { of, throwError, NEVER } from 'rxjs';
 import { RegisterComponent } from './register.component';
@@ -56,6 +57,9 @@ describe('RegisterComponent', () => {
         FormBuilder,
         provideRouter([]),
         provideNoopAnimations(),
+        // Sélecteur de langue (ErpLocaleService → préférences utilisateur via HTTP).
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: AuthService, useValue: authServiceSpy },
         { provide: WarehouseContextService, useValue: warehouseContextSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerSpy }

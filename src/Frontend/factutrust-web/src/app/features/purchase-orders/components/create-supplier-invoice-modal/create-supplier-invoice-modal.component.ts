@@ -12,6 +12,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { PAYMENT_TERM_DAY_OPTIONS, SUPPLIER_PAYMENT_METHOD_OPTIONS } from '@shared/constants/coded-option-labels';
 import { CurrencyPipe } from '@angular/common';
 import {
   SupplierInvoicePrefill,
@@ -133,7 +134,7 @@ interface LineClassificationRow {
               </ng-template>
             </p-table>
             <div class="qty-actions">
-              <app-button type="button" variant="outline" size="sm" (click)="resetQuantitiesToMax()" i18n="@@purchase-orders.components.tout.facturer.580a60a2">Tout facturer</app-button>
+              <app-button type="button" variant="outline" size="sm" (click)="resetQuantitiesToMax()" i18n="@@purchase-orders.components.tout.facturer.580a60a2"> Tout facturer </app-button>
             </div>
           </div>
         }
@@ -152,7 +153,7 @@ interface LineClassificationRow {
         <form #form="ngForm" (ngSubmit)="onSubmit()">
           <!-- Invoice Number -->
           <div class="form-group">
-            <label for="invoiceNumber">Numéro de facture <span class="required" i18n="@@purchase-orders.components.text.df58248c">*</span></label>
+            <label for="invoiceNumber"><ng-container i18n="@@purchase-orders.components.numero.de.facture.a19ac308">Numéro de facture </ng-container> <span class="required" i18n="@@purchase-orders.components.text.df58248c">*</span></label>
             <div class="input-group">
               <input
                 pInputText
@@ -171,13 +172,13 @@ interface LineClassificationRow {
                 iconPos="left"
                 [disabled]="regenerating"
                 (click)="generateInvoiceNumber()"
-                class="generate-btn" i18n="@@purchase-orders.components.generer.bd221c07">Générer</app-button>
+                class="generate-btn" i18n="@@purchase-orders.components.generer.bd221c07"> Générer </app-button>
             </div>
           </div>
 
           <!-- Invoice Date -->
           <div class="form-group">
-            <label for="invoiceDate">Date de facture <span class="required" i18n="@@purchase-orders.components.text.df58248c">*</span></label>
+            <label for="invoiceDate"><ng-container i18n="@@purchase-orders.components.date.de.facture.f1edd0d6">Date de facture </ng-container> <span class="required" i18n="@@purchase-orders.components.text.df58248c">*</span></label>
             <p-datepicker
               id="invoiceDate"
               [(ngModel)]="request.invoiceDate"
@@ -252,7 +253,7 @@ interface LineClassificationRow {
                 [(ngModel)]="request.sendEmail"
                 name="sendEmail"
                 binary="true"
-                label="Envoyer par email après création">
+                label="Envoyer par email après création" i18n-label="Envoyer par email après création">
               </p-checkbox>
               <i class="pi pi-envelope option-tile-icon"></i>
             </div>
@@ -260,7 +261,7 @@ interface LineClassificationRow {
 
           <div class="form-group" *ngIf="showAssetClassification">
             <label i18n="@@purchase-orders.components.classification.immobilisations.lignes.recues.38ff121c">Classification immobilisations (lignes reçues)</label>
-            <p class="asset-hint" i18n="@@purchase-orders.components.cochez.les.lignes.a.comptabiliser.en.21x.43662.u.c936d1d5">Cochez les lignes à comptabiliser en 21x / 43662. Un brouillon sera créé dans le registre immobilisations.</p>
+            <p class="asset-hint" i18n="@@purchase-orders.components.cochez.les.lignes.a.comptabiliser.en.21x.43662.u.c936d1d5"> Cochez les lignes à comptabiliser en 21x / 43662. Un brouillon sera créé dans le registre immobilisations. </p>
             <p-table [value]="lineClassifications" styleClass="p-datatable-sm asset-lines-table">
               <ng-template pTemplate="header">
                 <tr>
@@ -312,14 +313,14 @@ interface LineClassificationRow {
             variant="outline" 
             icon="pi-times"
             iconPos="left"
-            (click)="onHide()" i18n="@@purchase-orders.components.annuler.49ba3292">Annuler</app-button>
+            (click)="onHide()" i18n="@@purchase-orders.components.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             icon="pi-check"
             iconPos="left"
             [disabled]="!isFormValid() || submitting || regenerating || !hasSelectedQuantity()"
             (click)="onSubmit()">
-            {{ submitting ? 'Création...' : regenerating ? 'Génération...' : 'Créer la facture' }}
+            {{ submitting ? loc_ui_tern_creation_dca950 : regenerating ? loc_ui_tern_generation_839b55 : loc_ui_tern_creer_la_facture_d28b4f }}
           </app-button>
         </div>
       </ng-template>
@@ -569,6 +570,9 @@ interface LineClassificationRow {
   `]
 })
 export class CreateSupplierInvoiceModalComponent implements OnInit {
+  readonly loc_ui_tern_creation_dca950 = $localize`:@@ui.tern.creation.dca950:Création...`;
+  readonly loc_ui_tern_generation_839b55 = $localize`:@@ui.tern.generation.839b55:Génération...`;
+  readonly loc_ui_tern_creer_la_facture_d28b4f = $localize`:@@ui.tern.creer.la.facture.d28b4f:Créer la facture`;
   @ViewChild('form') formRef?: NgForm;
 
   private readonly fixedAssetsApi = inject(FixedAssetsService);
@@ -597,19 +601,9 @@ export class CreateSupplierInvoiceModalComponent implements OnInit {
     sendEmail: false
   };
 
-  paymentTermOptions = [
-    { label: '30 jours', value: 30 },
-    { label: '60 jours', value: 60 },
-    { label: '90 jours', value: 90 }
-  ];
+  paymentTermOptions = [...PAYMENT_TERM_DAY_OPTIONS];
 
-  paymentMethodOptions = [
-    { label: 'Effet de commerce', value: 'Effet de commerce' },
-    { label: 'Virement bancaire', value: 'Virement bancaire' },
-    { label: 'Espèces', value: 'Espèces' },
-    { label: 'Chèque', value: 'Chèque' },
-    { label: 'Carte bancaire', value: 'Carte bancaire' }
-  ];
+  paymentMethodOptions = [...SUPPLIER_PAYMENT_METHOD_OPTIONS];
 
   private onClose?: () => void;
   private onConfirm?: (request: CreateSupplierInvoiceRequest) => void;
@@ -627,7 +621,7 @@ export class CreateSupplierInvoiceModalComponent implements OnInit {
   }): void {
     const prefill = config.prefill;
     this.sourceDocumentNumber = prefill.purchaseReceiptNumber ?? prefill.purchaseOrderNumber ?? '—';
-    this.sourceTypeLabel = config.sourceType === 'pr' ? 'Bon de réception' : 'Bon de commande';
+    this.sourceTypeLabel = config.sourceType === 'pr' ? $localize`:@@ui.tern.bon.de.reception.e02e17:Bon de réception` : $localize`:@@ui.tern.bon.de.commande.4b9aea:Bon de commande`;
     this.request.paymentTermDays = prefill.paymentTermDays ?? 30;
     this.onClose = config.onClose;
     this.onConfirm = config.onConfirm;

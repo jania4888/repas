@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,7 +34,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   ],
   template: `
     <p-dialog
-      header="Déclarer un départ"
+      header="Déclarer un départ" i18n-header="Déclarer un départ"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: '480px' }"
@@ -103,8 +104,8 @@ export class EmployeeDepartureDialogComponent {
         const warning = res.data?.warning;
         this.toast.add({
           severity: 'success',
-          summary: 'Départ',
-          detail: warning ?? 'Départ enregistré.',
+          summary: $localize`:@@employee-departure-dialog.component.summary.Départ:Départ`,
+          detail: warning ?? $localize`:@@ui.tern.depart.enregistre.89698d:Départ enregistré.`,
           life: warning ? 10000 : 3000
         });
         this.visible = false;
@@ -115,8 +116,8 @@ export class EmployeeDepartureDialogComponent {
         this.saving = false;
         this.toast.add({
           severity: 'error',
-          summary: 'Départ',
-          detail: err.error?.message ?? 'Enregistrement impossible.'
+          summary: $localize`:@@employee-departure-dialog.component.summary.Départ:Départ`,
+          detail: err.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
         });
       }
     });

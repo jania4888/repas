@@ -131,7 +131,7 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
         (click)="openAiWorkspaceTab()"
         [hidden]="tourRunning()"
         [attr.inert]="tourRunning() ? '' : null"
-        title="Assistant IA">
+        title="Assistant IA" i18n-title="Assistant IA">
         <img
           [src]="aiMarkSrc"
           alt=""
@@ -458,7 +458,7 @@ export class MainLayoutComponent implements OnInit {
   private updateWorkTabTitle(): void {
     const items = this.breadcrumb.items();
     const last = items.length > 0 ? items[items.length - 1]?.label : 'Accueil';
-    this.aiAssistantShell.setWorkTabTitle(last ?? 'Accueil');
+    this.aiAssistantShell.setWorkTabTitle(last ?? $localize`:@@ui.tern.accueil.a8ff8f:Accueil`);
   }
 
   private notifyWorkPaneResize(): void {

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,7 +27,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      [title]="view()?.displayName ?? 'Vue (lecture seule)'"
+      [title]="view()?.displayName ?? loc_ui_tern_vue_lecture_seule_8649da"
       subtitle="Consultation en lecture seule des données SQL."
       [breadcrumbs]="breadcrumbs()">
       @if (view()?.definition?.search !== false) {
@@ -36,7 +37,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
           </div>
           <div class="studio-toolbar">
             <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="Rechercher…" class="studio-search-input" />
-            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" class="p-button-sm" (click)="reload()"></button>
+            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" i18n-label="Rechercher" class="p-button-sm" (click)="reload()"></button>
           </div>
         </div>
       }
@@ -55,6 +56,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioViewRunnerComponent implements OnInit {
+  readonly loc_ui_tern_vue_lecture_seule_8649da = $localize`:@@ui.tern.vue.lecture.seule.8649da:Vue (lecture seule)`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly route = inject(ActivatedRoute);
@@ -113,7 +115,7 @@ export class StudioViewRunnerComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Vue introuvable.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@studio-view-runner.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-view-runner.component.detail.Vue_introuvable_:Vue introuvable.` });
       }
     });
   }

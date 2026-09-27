@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +31,7 @@ const MONTH_OPTIONS = [
 @Component({
   selector: 'app-employee-loans-tab',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -74,7 +76,7 @@ const MONTH_OPTIONS = [
             <td class="text-right">{{ (loan.remainingBalance ?? 0) | payrollAmount }}</td>
             <td>{{ loan.startMonth }}/{{ loan.startYear }}</td>
             <td>
-              <p-tag [value]="loan.statusDisplay || loan.status" [severity]="loanStatusSeverity(loan.status)" />
+              <p-tag [value]="(loan.statusDisplay | backendLabel) || loan.status" [severity]="loanStatusSeverity(loan.status)" />
             </td>
             <td class="actions">
               <button type="button" class="p-button p-button-text p-button-sm" (click)="showSchedule(loan)" i18n="@@payroll.employees.echeancier.7930f4ee">Échéancier</button>
@@ -90,7 +92,7 @@ const MONTH_OPTIONS = [
       </p-table>
     </app-payroll-section>
 
-    <p-dialog header="Nouveau prêt salarié" [(visible)]="createDialogVisible" [modal]="true" [style]="{ width: '480px' }">
+    <p-dialog header="Nouveau prêt salarié" i18n-header="Nouveau prêt salarié" [(visible)]="createDialogVisible" [modal]="true" [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.reference.f8130bb0">Référence</label>
         <input pInputText [(ngModel)]="formReference" class="w-full" maxlength="50" />
@@ -123,7 +125,7 @@ const MONTH_OPTIONS = [
       </ng-template>
     </p-dialog>
 
-    <p-dialog header="Échéancier du prêt" [(visible)]="scheduleDialogVisible" [modal]="true" [style]="{ width: '560px' }">
+    <p-dialog header="Échéancier du prêt" i18n-header="Échéancier du prêt" [(visible)]="scheduleDialogVisible" [modal]="true" [style]="{ width: '560px' }">
       @if (selectedLoan()) {
         <p class="mb-3"><strong>{{ selectedLoan()!.reference }}</strong> — {{ selectedLoan()!.installmentCount }} échéances</p>
         <p-table [value]="scheduleLines()" styleClass="p-datatable-sm">
@@ -140,7 +142,7 @@ const MONTH_OPTIONS = [
               <td>{{ line.sequenceNumber }}</td>
               <td>{{ line.month }}/{{ line.year }}</td>
               <td class="text-right">{{ line.amount | payrollAmount }}</td>
-              <td>{{ line.isSettled ? 'Soldée' : 'À venir' }}</td>
+              <td>{{ line.isSettled ? loc_ui_tern_soldee_7fecce : loc_ui_tern_a_venir_5ae4e5 }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -159,6 +161,8 @@ const MONTH_OPTIONS = [
   `]
 })
 export class EmployeeLoansTabComponent implements OnInit {
+  readonly loc_ui_tern_soldee_7fecce = $localize`:@@ui.tern.soldee.7fecce:Soldée`;
+  readonly loc_ui_tern_a_venir_5ae4e5 = $localize`:@@ui.tern.a.venir.5ae4e5:À venir`;
   @Input({ required: true }) employeeId!: string;
   @Input() readOnly = false;
 
@@ -186,7 +190,7 @@ export class EmployeeLoansTabComponent implements OnInit {
   reload(): void {
     this.payroll.listEmployeeLoans(this.employeeId).subscribe({
       next: res => this.items.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Prêts', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-loans-tab.component.summary.Prêts:Prêts`, detail: $localize`:@@employee-loans-tab.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -222,11 +226,11 @@ export class EmployeeLoansTabComponent implements OnInit {
 
     this.payroll.createEmployeeLoan(this.employeeId, body).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Prêts', detail: 'Prêt enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-loans-tab.component.summary.Prêts:Prêts`, detail: $localize`:@@employee-loans-tab.component.detail.Pr_t_enregistr_:Prêt enregistré.` });
         this.createDialogVisible = false;
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Prêts', detail: err.error?.message ?? 'Création impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-loans-tab.component.summary.Prêts:Prêts`, detail: err.error?.message ?? $localize`:@@ui.tern.creation.impossible.5661a5:Création impossible.` })
     });
   }
 
@@ -243,7 +247,7 @@ export class EmployeeLoansTabComponent implements OnInit {
         this.scheduleLines.set(res.data?.installments ?? []);
         this.scheduleDialogVisible = true;
       },
-      error: () => this.toast.add({ severity: 'error', summary: 'Prêts', detail: 'Échéancier introuvable.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-loans-tab.component.summary.Prêts:Prêts`, detail: $localize`:@@employee-loans-tab.component.detail._ch_ancier_intro:Échéancier introuvable.` })
     });
   }
 
@@ -252,8 +256,8 @@ export class EmployeeLoansTabComponent implements OnInit {
     this.confirmation.confirm({
       message: `Annuler le prêt « ${loan.reference} » ?`,
       header: 'Confirmation',
-      acceptLabel: 'Annuler le prêt',
-      rejectLabel: 'Fermer',
+      acceptLabel: $localize`:@@employee-loans-tab.component.acceptLabel.Annuler_le_pr_t:Annuler le prêt`,
+      rejectLabel: $localize`:@@employee-loans-tab.component.rejectLabel.Fermer:Fermer`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.cancel(loan.id)
     });
@@ -262,13 +266,13 @@ export class EmployeeLoansTabComponent implements OnInit {
   private cancel(loanId: string): void {
     this.payroll.cancelLoan(loanId).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Prêts', detail: 'Prêt annulé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-loans-tab.component.summary.Prêts:Prêts`, detail: $localize`:@@employee-loans-tab.component.detail.Pr_t_annul_:Prêt annulé.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Prêts',
-        detail: err.error?.message ?? 'Annulation impossible (échéances peut-être déjà retenues).'
+        summary: $localize`:@@employee-loans-tab.component.summary.Prêts:Prêts`,
+        detail: err.error?.message ?? $localize`:@@ui.tern.annulation.impossible.echeances.peut.etre..5d91e7:Annulation impossible (échéances peut-être déjà retenues).`
       })
     });
   }

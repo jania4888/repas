@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import {
   Component,
   ElementRef,
@@ -43,7 +44,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
   providers: [AccountingDocumentImportService],
   template: `
     <p-dialog
-      header="Importer une facture"
+      header="Importer une facture" i18n-header="Importer une facture"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: phase() === 'review' ? '1100px' : '560px', maxWidth: '98vw' }"
@@ -79,7 +80,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
               }
             </p>
             <app-button variant="secondary" icon="pi-times" iconPos="left"
-                        (click)="cancelImport()" ariaLabel="Annuler l'analyse" i18n="@@accounting.manual-entry.annuler.49ba3292">Annuler</app-button>
+                        (click)="cancelImport()" ariaLabel="Annuler l'analyse" i18n="@@accounting.manual-entry.annuler.49ba3292"> Annuler </app-button>
           </div>
         }
 
@@ -89,7 +90,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
             <p class="adi-title" i18n="@@accounting.manual-entry.l.analyse.a.echoue.14b05060">L'analyse a échoué</p>
             <p class="adi-text">{{ errorMessage() }}</p>
             <app-button variant="primary" icon="pi-refresh" iconPos="left"
-                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n="@@accounting.manual-entry.reessayer.895d416b">Réessayer</app-button>
+                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n="@@accounting.manual-entry.reessayer.895d416b"> Réessayer </app-button>
           </div>
         }
 
@@ -141,7 +142,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                 <!-- Tiers -->
                 <section class="adi-card">
                   <h3 class="adi-card__title">
-                    {{ p.direction === 'SALE' ? 'Client' : 'Fournisseur' }}
+                    {{ p.direction === 'SALE' ? loc_ui_tern_client_1bdd79 : loc_ui_tern_fournisseur_97d91d }}
                   </h3>
                   @if (p.thirdParty; as tp) {
                     <dl class="adi-facts">
@@ -152,7 +153,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                     @if (tp.matchedId) {
                       <p class="adi-badge adi-badge--ok">
                         <i class="pi pi-check-circle" aria-hidden="true"></i>
-                        Tiers rapproché{{ tp.matchedBy === 'nif' ? ' par matricule fiscal' : ' par nom' }}
+                        Tiers rapproché{{ tp.matchedBy === 'nif' ? loc_ui_tern_par_matricule_fiscal_ef1940 : loc_ui_tern_par_nom_4c4de0 }}
                       </p>
                     } @else {
                       <p class="adi-badge adi-badge--warn">
@@ -215,7 +216,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                     }
                   </ul>
                   @if (!canApplyNow() && !reanalyzing()) {
-                    <p class="adi-apply-hint" role="status" i18n="@@accounting.manual-entry.corrigez.les.controles.bloquants.ou.equilibrez.l.df86b9f6">Corrigez les contrôles bloquants ou équilibrez l'écriture avant d'appliquer.</p>
+                    <p class="adi-apply-hint" role="status" i18n="@@accounting.manual-entry.corrigez.les.controles.bloquants.ou.equilibrez.l.df86b9f6"> Corrigez les contrôles bloquants ou équilibrez l'écriture avant d'appliquer. </p>
                   }
                 </section>
               }
@@ -227,11 +228,11 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
           <div class="adi-state">
             <i class="pi pi-file-import adi-icon adi-icon-idle" aria-hidden="true"></i>
             <p class="adi-title" i18n="@@accounting.manual-entry.importez.une.facture.a.comptabiliser.d03c8692">Importez une facture à comptabiliser</p>
-            <p class="adi-text" i18n="@@accounting.manual-entry.facture.de.vente.ou.d.achat.pdf.recommande.photo.6ef07041">Facture de vente ou d'achat (PDF recommandé ; photos et scans acceptés).
+            <p class="adi-text" i18n="@@accounting.manual-entry.facture.de.vente.ou.d.achat.pdf.recommande.photo.6ef07041"> Facture de vente ou d'achat (PDF recommandé ; photos et scans acceptés).
               Le système détecte les zones de la pièce et propose l'écriture selon le plan
-              comptable tunisien. Vous relisez avant d'appliquer.</p>
+              comptable tunisien. Vous relisez avant d'appliquer. </p>
             <app-button variant="primary" icon="pi-upload" iconPos="left"
-                        (click)="chooseFile()" ariaLabel="Choisir un fichier à importer" i18n="@@accounting.manual-entry.choisir.un.fichier.75c27e25">Choisir un fichier</app-button>
+                        (click)="chooseFile()" ariaLabel="Choisir un fichier à importer" i18n="@@accounting.manual-entry.choisir.un.fichier.75c27e25"> Choisir un fichier </app-button>
             <p class="adi-hint" i18n="@@accounting.manual-entry.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
             @if (capabilityHint(); as hint) {
               <p class="adi-hint adi-hint-warn" role="status">{{ hint }}</p>
@@ -243,11 +244,11 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
       <ng-template pTemplate="footer">
         @if (phase() === 'review') {
           <div class="adi-footer">
-            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce" i18n="@@accounting.manual-entry.autre.piece.de18e3bf">Autre pièce</app-button>
+            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce" i18n="@@accounting.manual-entry.autre.piece.de18e3bf"> Autre pièce </app-button>
             <app-button variant="primary" icon="pi-check" iconPos="left"
                         [disabled]="!canApplyNow()"
                         (click)="apply()"
-                        ariaLabel="Appliquer la proposition à la saisie" i18n="@@accounting.manual-entry.appliquer.a.la.saisie.1da9e067">Appliquer à la saisie</app-button>
+                        ariaLabel="Appliquer la proposition à la saisie" i18n="@@accounting.manual-entry.appliquer.a.la.saisie.1da9e067"> Appliquer à la saisie </app-button>
           </div>
         }
       </ng-template>
@@ -314,6 +315,10 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
   `
 })
 export class AccountingDocumentImportDialogComponent implements OnChanges, OnDestroy {
+  readonly loc_ui_tern_client_1bdd79 = $localize`:@@ui.tern.client.1bdd79:Client`;
+  readonly loc_ui_tern_fournisseur_97d91d = $localize`:@@ui.tern.fournisseur.97d91d:Fournisseur`;
+  readonly loc_ui_tern_par_matricule_fiscal_ef1940 = $localize`:@@ui.tern.par.matricule.fiscal.ef1940: par matricule fiscal`;
+  readonly loc_ui_tern_par_nom_4c4de0 = $localize`:@@ui.tern.par.nom.4c4de0: par nom`;
   private readonly importService = inject(AccountingDocumentImportService);
   private readonly confirmationService = inject(ConfirmationService);
 
@@ -362,7 +367,7 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
         if (!caps.aiFallbackAvailable) {
           this.capabilityHint.set(
             "Analyse IA indisponible pour votre compte : seules les factures émises par "
-            + 'InstaFact pourront être lues.');
+            + $localize`:@@ui.tern.instafact.pourront.etre.lues.dc81c8:InstaFact pourront être lues.`);
           return;
         }
         if (caps.visionModel && caps.visionModelReady === false) {
@@ -487,8 +492,8 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
     this.confirmationService.confirm({
       message: 'Vos modifications sur l\'écriture proposée seront perdues. Continuer ?',
       header: 'Confirmation',
-      acceptLabel: 'Continuer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@accounting-document-import-dialog.component.acceptLabel.Continuer:Continuer`,
+      rejectLabel: $localize`:@@accounting-document-import-dialog.component.rejectLabel.Annuler:Annuler`,
       accept: onConfirm
     });
   }

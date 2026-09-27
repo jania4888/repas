@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -163,8 +164,8 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
         this.serverAvailableByMethod.set({ 0: 0, 1: 0, 2: 0 });
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger les soldes disponibles pour cette date.'
+          summary: $localize`:@@bank-deposit-wizard.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@bank-deposit-wizard.component.detail.impossible.de.charger.les.soldes.disponibles.pou.de02da90:Impossible de charger les soldes disponibles pour cette date.`
         });
       }
     });
@@ -187,8 +188,8 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
       error: () => {
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger les comptes bancaires.'
+          summary: $localize`:@@bank-deposit-wizard.component.summary.Erreur:Erreur`,
+          detail: $localize`:@@bank-deposit-wizard.component.detail.impossible.de.charger.les.comptes.bancaires.f5455f1d:Impossible de charger les comptes bancaires.`
         });
       }
     });
@@ -364,8 +365,8 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
         if (res.success && res.data) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Remise en banque enregistrée.'
+            summary: $localize`:@@bank-deposit-wizard.component.summary.Succès:Succès`,
+            detail: $localize`:@@bank-deposit-wizard.component.detail.Remise_en_banque:Remise en banque enregistrée.`
           });
           this.depositCreated.emit(res.data);
           this.onHide();
@@ -379,7 +380,7 @@ export class BankDepositWizardComponent implements OnChanges, OnInit {
         // 403 (payments:create) → message métier français ; autres erreurs → extraction francisée.
         this.stepError.set(
           err.status === 403
-            ? 'Action refusée : autorisations insuffisantes (Trésorerie — saisie).'
+            ? $localize`:@@ui.tern.action.refusee.autorisations.insuffisantes.c21aad:Action refusée : autorisations insuffisantes (Trésorerie — saisie).`
             : this.errorHandler.extractErrorMessage(err)
         );
         this.submitting.set(false);

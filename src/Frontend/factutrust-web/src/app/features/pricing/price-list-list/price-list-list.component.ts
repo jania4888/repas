@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -46,7 +47,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
       title="Grilles tarifaires" i18n-title="Grilles tarifaires"
       subtitle="Définissez des jeux de prix par produit, puis affectez-les à vos clients. Un client sans grille reste au tarif catalogue.">
       @if (canCreate()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@pricing.price-list-list.nouvelle.grille.a8012b9e">Nouvelle grille</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@pricing.price-list-list.nouvelle.grille.a8012b9e"> Nouvelle grille </app-button>
       }
     </app-page-header>
 
@@ -87,7 +88,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   <p-tag
                     severity="warning"
                     value="Hors période"
-                    pTooltip="Grille active mais en dehors de sa période de validité : elle n'applique aucun prix aujourd'hui."></p-tag>
+                    pTooltip="Grille active mais en dehors de sa période de validité : elle n'applique aucun prix aujourd'hui." i18n-pTooltip="Grille active mais en dehors de sa période de validité : elle n'applique aucun prix aujourd'hui."></p-tag>
                 } @else {
                   <p-tag severity="success" value="Applicable"></p-tag>
                 }
@@ -98,7 +99,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   type="button"
                   icon="pi pi-pencil"
                   class="p-button-text p-button-sm"
-                  pTooltip="Ouvrir"
+                  pTooltip="Ouvrir" i18n-pTooltip="Ouvrir"
                   [routerLink]="[row.id]"></button>
                 @if (canDelete()) {
                   <button
@@ -106,7 +107,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                     type="button"
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Supprimer"
+                    pTooltip="Supprimer" i18n-pTooltip="Supprimer"
                     (click)="confirmDelete(row)"></button>
                 }
               </td>
@@ -118,14 +119,14 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 
     <!-- Création -->
     <p-dialog
-      header="Nouvelle grille tarifaire"
+      header="Nouvelle grille tarifaire" i18n-header="Nouvelle grille tarifaire"
       [(visible)]="createVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"
       [draggable]="false">
       <div class="ft-form-grid">
         <div class="ft-field">
-          <label for="pl-name">Nom <span class="ft-required" i18n="@@pricing.price-list-list.text.df58248c">*</span></label>
+          <label for="pl-name"><ng-container i18n="@@pricing.price-list-list.nom.7ff20370">Nom </ng-container> <span class="ft-required" i18n="@@pricing.price-list-list.text.df58248c">*</span></label>
           <input id="pl-name" pInputText [(ngModel)]="form.name" maxlength="100" />
         </div>
 
@@ -146,7 +147,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
         <app-button
           variant="primary"
           [disabled]="!form.name.trim() || saving()"
-          (clicked)="create()" i18n="@@pricing.price-list-list.creer.1a686172">Créer</app-button>
+          (clicked)="create()" i18n="@@pricing.price-list-list.creer.1a686172"> Créer </app-button>
       </ng-template>
     </p-dialog>
   `
@@ -226,8 +227,8 @@ export class PriceListListComponent implements OnInit {
         next: () => {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Grille tarifaire créée.'
+            summary: $localize`:@@price-list-list.component.summary.Succ_s:Succès`,
+            detail: $localize`:@@price-list-list.component.detail.grille.tarifaire.creee.5749befd:Grille tarifaire créée.`
           });
           this.createVisible = false;
           this.saving.set(false);
@@ -246,8 +247,8 @@ export class PriceListListComponent implements OnInit {
       header: 'Supprimer la grille',
       message: `Supprimer définitivement la grille « ${row.name} » ?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@price-list-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@price-list-list.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(row)
     });
@@ -258,8 +259,8 @@ export class PriceListListComponent implements OnInit {
       next: () => {
         this.toastService.add({
           severity: 'success',
-          summary: 'Succès',
-          detail: 'Grille tarifaire supprimée.'
+          summary: $localize`:@@price-list-list.component.summary.Succ_s:Succès`,
+          detail: $localize`:@@price-list-list.component.detail.grille.tarifaire.supprimee.160dd522:Grille tarifaire supprimée.`
         });
         this.load();
       },
@@ -276,7 +277,7 @@ export class PriceListListComponent implements OnInit {
     const msg = this.errorHandler.extractErrorMessage(err);
     this.toastService.add({
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@price-list-list.component.summary.Erreur:Erreur`,
       detail: msg || fallback
     });
   }

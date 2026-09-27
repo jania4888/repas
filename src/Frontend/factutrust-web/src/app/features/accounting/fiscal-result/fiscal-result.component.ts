@@ -102,9 +102,9 @@ interface EditableModel {
               [disabled]="loading() || saving() || readonly()"
               ariaLabel="Enregistrer et recalculer" i18n="@@accounting.fiscal-result.enregistrer.et.recalculer.0b6f2782">Enregistrer et recalculer</app-button>
           }
-          <app-accounting-export-menu label="Exporter la détermination"
+          <app-accounting-export-menu label="Exporter la détermination" i18n-label="Exporter la détermination"
             [disabled]="loading() || !data()" (exportFormat)="onExportDetermination($event)" />
-          <app-accounting-export-menu label="Exporter la liasse complète"
+          <app-accounting-export-menu label="Exporter la liasse complète" i18n-label="Exporter la liasse complète"
             [disabled]="loading() || !data()" (exportFormat)="onExportLiasse($event)" />
           @if (canFinalize()) {
             <app-button variant="secondary" icon="pi pi-lock" type="button" (click)="finalize()"
@@ -215,7 +215,7 @@ interface EditableModel {
 
           <div class="card fr-card">
             <div class="fr-card-head">
-              <h3 class="fr-card-title">Réintégrations <span class="fr-sum">+{{ reintegrationsTotal() | number : '1.3-3' }}</span></h3>
+              <h3 class="fr-card-title"><ng-container i18n="@@accounting.fiscal-result.reintegrations.a09780f3">Réintégrations </ng-container> <span class="fr-sum">+{{ reintegrationsTotal() | number : '1.3-3' }}</span></h3>
               <div class="fr-add">
                 <select #reCat class="fr-cat-select" [disabled]="readonly()" aria-label="Ajouter une réintégration du catalogue" i18n-aria-label="Ajouter une réintégration du catalogue">
                   <option value="" i18n="@@accounting.fiscal-result.ajouter.du.catalogue.e2d6bfbf">Ajouter du catalogue…</option>
@@ -232,7 +232,7 @@ interface EditableModel {
 
           <div class="card fr-card">
             <div class="fr-card-head">
-              <h3 class="fr-card-title">Déductions <span class="fr-sum fr-sum--neg">−{{ deductionsTotal() | number : '1.3-3' }}</span></h3>
+              <h3 class="fr-card-title"><ng-container i18n="@@accounting.fiscal-result.deductions.9690592b">Déductions </ng-container> <span class="fr-sum fr-sum--neg">−{{ deductionsTotal() | number : '1.3-3' }}</span></h3>
               <div class="fr-add">
                 <select #deCat class="fr-cat-select" [disabled]="readonly()" aria-label="Ajouter une déduction du catalogue" i18n-aria-label="Ajouter une déduction du catalogue">
                   <option value="" i18n="@@accounting.fiscal-result.ajouter.du.catalogue.e2d6bfbf">Ajouter du catalogue…</option>
@@ -312,7 +312,7 @@ interface EditableModel {
                 @if (d.computation.deficitGeneratedThisYear > 0) {
                   <tr class="fr-deficit"><td i18n="@@accounting.fiscal-result.deficit.genere.reportable.bae87c7e">Déficit généré (reportable)</td><td class="fr-num">{{ d.computation.deficitGeneratedThisYear | number : '1.3-3' }}</td></tr>
                 }
-                <tr><td>Impôt sur le résultat{{ d.computation.taxpayerKind === 0 ? ' (IS ' + (d.computation.appliedIsRate * 100 | number : '1.0-2') + ' %)' : ' (barème IRPP)' }}</td><td class="fr-num">{{ d.computation.taxOnResult | number : '1.3-3' }}</td></tr>
+                <tr><td>Impôt sur le résultat{{ d.computation.taxpayerKind === 0 ? ' (IS ' + (d.computation.appliedIsRate * 100 | number : '1.0-2') + ' %)' : loc_ui_tern_bareme_irpp_a5d313 }}</td><td class="fr-num">{{ d.computation.taxOnResult | number : '1.3-3' }}</td></tr>
                 <tr><td i18n="@@accounting.fiscal-result.minimum.d.impot.8689385e">Minimum d'impôt</td><td class="fr-num">{{ d.computation.minimumTax | number : '1.3-3' }}</td></tr>
                 <tr class="fr-sub"><td i18n="@@accounting.fiscal-result.impot.du.max.68b3784b">= Impôt dû (max)</td><td class="fr-num">{{ d.computation.taxDue | number : '1.3-3' }}</td></tr>
                 <tr><td i18n="@@accounting.fiscal-result.contribution.sociale.de.solidarite.css.40731cb7">+ Contribution sociale de solidarité (CSS)</td><td class="fr-num">{{ d.computation.css | number : '1.3-3' }}</td></tr>
@@ -408,6 +408,7 @@ interface EditableModel {
   `
 })
 export class FiscalResultComponent implements OnInit {
+  readonly loc_ui_tern_bareme_irpp_a5d313 = $localize`:@@ui.tern.bareme.irpp.a5d313: (barème IRPP)`;
   private readonly api = inject(AccountingService);
   private readonly auth = inject(AuthService);
 
@@ -461,7 +462,7 @@ export class FiscalResultComponent implements OnInit {
           this.suggestedTurnover.set(res.data.suggestedLocalTurnoverTtc ?? 0);
           this.suggestedAccountingResult.set(res.data.suggestedAccountingResult ?? null);
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       });
   }
@@ -600,7 +601,7 @@ export class FiscalResultComponent implements OnInit {
           this.snapshot = this.toModel(res.data);
           this.info.set('Feuille enregistrée et recalculée.');
         } else {
-          this.error.set(res.error ?? "L'enregistrement a échoué.");
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.enregistrement.a.echoue.3f69ec:L'enregistrement a échoué.`);
         }
       },
       error: () => {
@@ -622,7 +623,7 @@ export class FiscalResultComponent implements OnInit {
           this.info.set('Feuille finalisée.');
           this.load();
         } else {
-          this.error.set(res.error ?? 'La finalisation a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.la.finalisation.a.echoue.81aa71:La finalisation a échoué.`);
         }
       },
       error: () => {

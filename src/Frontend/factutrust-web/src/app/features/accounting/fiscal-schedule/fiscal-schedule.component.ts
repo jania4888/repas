@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { CommonModule, Location } from '@angular/common';
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import {
@@ -65,7 +66,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <section class="fiscal-schedule-page" [class.print-selected]="printSelectedOnly">
       <app-page-header
         title="Echeancier fiscal" i18n-title="Echeancier fiscal"
-        [subtitle]="isFirmScope ? 'Vue consolidee des dossiers clients actifs du cabinet' : 'Suivi des obligations, depots, paiements et rappels fiscaux'">
+        [subtitle]="isFirmScope ? loc_ui_tern_vue_consolidee_des_dossiers_clients_actifs_7bb12b : loc_ui_tern_suivi_des_obligations_depots_paiements_et_5d9f32">
         <app-fiscal-schedule-toolbar
           [canCreate]="canCreate"
           [canEdit]="canEdit"
@@ -183,6 +184,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `]
 })
 export class FiscalScheduleComponent implements OnInit {
+  readonly loc_ui_tern_vue_consolidee_des_dossiers_clients_actifs_7bb12b = $localize`:@@ui.tern.vue.consolidee.des.dossiers.clients.actifs.7bb12b:Vue consolidee des dossiers clients actifs du cabinet`;
+  readonly loc_ui_tern_suivi_des_obligations_depots_paiements_et_5d9f32 = $localize`:@@ui.tern.suivi.des.obligations.depots.paiements.et..5d9f32:Suivi des obligations, depots, paiements et rappels fiscaux`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly schedule = inject(FiscalScheduleService);
   private readonly firmSchedule = inject(FirmFiscalScheduleService);
@@ -500,7 +503,7 @@ export class FiscalScheduleComponent implements OnInit {
           this.closeForm();
           this.selected = response.data;
           this.ensureEntryVisibleAfterSave(response.data);
-          this.notify('success', wasEditing ? 'Echeance mise a jour.' : 'Echeance creee.');
+          this.notify('success', wasEditing ? $localize`:@@ui.tern.echeance.mise.a.jour.2e09c8:Echeance mise a jour.` : $localize`:@@ui.tern.echeance.creee.13b4e8:Echeance creee.`);
           this.load();
         },
         error: err => this.notify('error', this.httpErrorMessage(err, "L'echeance n'a pas pu etre enregistree."))
@@ -513,8 +516,8 @@ export class FiscalScheduleComponent implements OnInit {
       message: 'Annuler cette echeance fiscale ?',
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Annuler l\'échéance',
-      rejectLabel: 'Retour',
+      acceptLabel: $localize`:@@fiscal-schedule.component.acceptLabel.Annuler_l_ch_an:Annuler l'échéance`,
+      rejectLabel: $localize`:@@fiscal-schedule.component.rejectLabel.Retour:Retour`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         const companyId = this.firmWriteCompanyId;
@@ -649,8 +652,8 @@ export class FiscalScheduleComponent implements OnInit {
       message: 'Supprimer cette piece jointe ?',
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@fiscal-schedule.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@fiscal-schedule.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         const companyId = this.firmWriteCompanyId;
@@ -864,6 +867,6 @@ export class FiscalScheduleComponent implements OnInit {
   }
 
   private notify(severity: 'success' | 'info' | 'warn' | 'error', detail: string): void {
-    this.toast.add({ severity, summary: severity === 'success' ? 'Echeancier fiscal' : 'Attention', detail });
+    this.toast.add({ severity, summary: severity === 'success' ? $localize`:@@ui.tern.echeancier.fiscal.2b894e:Echeancier fiscal` : $localize`:@@ui.tern.attention.74e0b9:Attention`, detail });
   }
 }

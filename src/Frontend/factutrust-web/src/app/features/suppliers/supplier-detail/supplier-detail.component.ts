@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -34,12 +35,12 @@ import {
         [subtitle]="supplier()!.typeDisplay">
         <div class="header-actions">
           <app-button variant="secondary" icon="pi-pencil" iconPos="left"
-            [routerLink]="['edit']" i18n="@@suppliers.supplier-detail.modifier.f260e757">Modifier</app-button>
+            [routerLink]="['edit']" i18n="@@suppliers.supplier-detail.modifier.f260e757"> Modifier </app-button>
           <app-button variant="outline"
             [icon]="supplier()!.isActive ? 'pi-ban' : 'pi-check'"
             iconPos="left"
             (click)="toggleActive()">
-            {{ supplier()!.isActive ? 'Désactiver' : 'Activer' }}
+            {{ supplier()!.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7 }}
           </app-button>
         </div>
       </app-page-header>
@@ -59,7 +60,7 @@ import {
             </div>
             <div class="info-item">
               <span class="label" i18n="@@suppliers.supplier-detail.statut.659499f3">Statut</span>
-              <p-tag [value]="supplier()!.isActive ? 'Actif' : 'Inactif'"
+              <p-tag [value]="supplier()!.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                 [severity]="supplier()!.isActive ? 'success' : 'secondary'"></p-tag>
             </div>
             <div class="info-item">
@@ -101,7 +102,7 @@ import {
           <div class="info-grid">
             <div class="info-item">
               <span class="label" i18n="@@suppliers.supplier-detail.soumis.a.la.rs.6a5c753b">Soumis à la RS</span>
-              <span class="value">{{ supplier()!.isSubjectToWithholding ? 'Oui' : 'Non' }}</span>
+              <span class="value">{{ supplier()!.isSubjectToWithholding ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</span>
             </div>
             <div class="info-item">
               <span class="label" i18n="@@suppliers.supplier-detail.tranche.is.rs7.bd637bb1">Tranche IS (RS7)</span>
@@ -115,7 +116,7 @@ import {
             }
             <div class="info-item">
               <span class="label" i18n="@@suppliers.supplier-detail.resident.0a384a50">Résident</span>
-              <span class="value">{{ supplier()!.isResident !== false ? 'Oui' : 'Non' }}</span>
+              <span class="value">{{ supplier()!.isResident !== false ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</span>
             </div>
             <div class="info-item">
               <span class="label" i18n="@@suppliers.supplier-detail.pays.fiscal.9bd89515">Pays (fiscal)</span>
@@ -223,6 +224,12 @@ import {
   `]
 })
 export class SupplierDetailComponent implements OnInit {
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   rs7Label(s: Supplier): string {
     const bracket = normalizeSupplierRs7IsBracket(s.rs7IsBracket);
     return rs7BracketLabel(bracket) ?? '—';
@@ -273,7 +280,7 @@ export class SupplierDetailComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Fournisseur introuvable' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@supplier-detail.component.detail.Fournisseur_intr:Fournisseur introuvable` });
         this.router.navigate(['/suppliers']);
       }
     });
@@ -289,13 +296,13 @@ export class SupplierDetailComponent implements OnInit {
           this.supplier.set(response.data);
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: response.data.isActive ? 'Fournisseur activé' : 'Fournisseur désactivé'
+            summary: $localize`:@@supplier-detail.component.summary.Succès:Succès`,
+            detail: response.data.isActive ? $localize`:@@ui.tern.fournisseur.active.6689d6:Fournisseur activé` : $localize`:@@ui.tern.fournisseur.desactive.e68961:Fournisseur désactivé`
           });
         }
       },
       error: () => {
-        this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors du changement de statut' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@supplier-detail.component.detail.Erreur_lors_du_c:Erreur lors du changement de statut` });
       }
     });
   }

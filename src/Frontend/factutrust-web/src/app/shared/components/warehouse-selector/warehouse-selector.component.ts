@@ -117,7 +117,7 @@ export class WarehouseSelectorComponent implements OnInit, OnChanges {
 
     this.warehouses.set(
       list.map((w) => {
-        let displayLabel = `${w.name}${w.isDefault ? ' (par défaut)' : ''}`;
+        let displayLabel = `${w.name}${w.isDefault ? $localize`:@@ui.tern.par.defaut.27c480: (par défaut)` : ''}`;
         if (!w.isActive) {
           displayLabel += ' — Inactif';
         }

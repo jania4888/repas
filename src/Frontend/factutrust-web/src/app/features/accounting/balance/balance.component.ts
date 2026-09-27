@@ -109,7 +109,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser la balance pour la période sélectionnée" i18n="@@accounting.balance.actualiser.9d3b2a7d">Actualiser</app-button>
+            ariaLabel="Actualiser la balance pour la période sélectionnée" i18n="@@accounting.balance.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-balance"
             density="toolbar"
@@ -138,20 +138,20 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <p-table [value]="filteredRows()" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100]"
           [loading]="loading()" [rowHover]="true" [scrollable]="true" scrollHeight="flex"
           styleClass="p-datatable-sm accounting-datatable balance-table"
-          [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes">
+          [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@accounting.balance.compte.c45740bb">Compte</th>
               <th i18n="@@accounting.balance.libelle.f5485bba">Libellé</th>
               @if (hasForeignCurrency()) {
-                <th pTooltip="Devises presentes sur le compte — les montants restent en dinar" tooltipPosition="top" i18n="@@accounting.balance.devises.23dd4301">Devises</th>
+                <th pTooltip="Devises presentes sur le compte — les montants restent en dinar" i18n-pTooltip="Devises presentes sur le compte — les montants restent en dinar" tooltipPosition="top" i18n="@@accounting.balance.devises.23dd4301">Devises</th>
               }
-              <th class="text-right" pTooltip="Ouverture débit" tooltipPosition="top" i18n="@@accounting.balance.ouv.d.1a1c3306">Ouv. D</th>
-              <th class="text-right" pTooltip="Ouverture crédit" tooltipPosition="top" i18n="@@accounting.balance.ouv.c.95e30fd9">Ouv. C</th>
-              <th class="text-right" pTooltip="Mouvement débit" tooltipPosition="top" i18n="@@accounting.balance.mouv.d.0f50458a">Mouv. D</th>
-              <th class="text-right" pTooltip="Mouvement crédit" tooltipPosition="top" i18n="@@accounting.balance.mouv.c.87e48868">Mouv. C</th>
-              <th class="text-right" pTooltip="Clôture débit" tooltipPosition="top" i18n="@@accounting.balance.cloture.d.edb6d923">Clôture D</th>
-              <th class="text-right" pTooltip="Clôture crédit" tooltipPosition="top" i18n="@@accounting.balance.cloture.c.2be08431">Clôture C</th>
+              <th class="text-right" pTooltip="Ouverture débit" i18n-pTooltip="Ouverture débit" tooltipPosition="top" i18n="@@accounting.balance.ouv.d.1a1c3306">Ouv. D</th>
+              <th class="text-right" pTooltip="Ouverture crédit" i18n-pTooltip="Ouverture crédit" tooltipPosition="top" i18n="@@accounting.balance.ouv.c.95e30fd9">Ouv. C</th>
+              <th class="text-right" pTooltip="Mouvement débit" i18n-pTooltip="Mouvement débit" tooltipPosition="top" i18n="@@accounting.balance.mouv.d.0f50458a">Mouv. D</th>
+              <th class="text-right" pTooltip="Mouvement crédit" i18n-pTooltip="Mouvement crédit" tooltipPosition="top" i18n="@@accounting.balance.mouv.c.87e48868">Mouv. C</th>
+              <th class="text-right" pTooltip="Clôture débit" i18n-pTooltip="Clôture débit" tooltipPosition="top" i18n="@@accounting.balance.cloture.d.edb6d923">Clôture D</th>
+              <th class="text-right" pTooltip="Clôture crédit" i18n-pTooltip="Clôture crédit" tooltipPosition="top" i18n="@@accounting.balance.cloture.c.2be08431">Clôture C</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -518,7 +518,7 @@ export class BalanceComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.loading.set(true);
@@ -526,7 +526,7 @@ export class BalanceComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.rows.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);
@@ -547,7 +547,7 @@ export class BalanceComponent implements OnInit {
         next: res => {
           this.loading.set(false);
           if (res.success && res.data) this.detailed.set(res.data);
-          else this.error.set(res.error ?? 'Erreur');
+          else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
         error: err => {
           this.loading.set(false);
@@ -563,7 +563,7 @@ export class BalanceComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.periodic.set(res.data);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);
@@ -578,7 +578,7 @@ export class BalanceComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return null;
     }
     return { from, to };
@@ -598,7 +598,7 @@ export class BalanceComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.exporting.set(true);

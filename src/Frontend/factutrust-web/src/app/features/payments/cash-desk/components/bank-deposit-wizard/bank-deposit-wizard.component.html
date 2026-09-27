@@ -1,5 +1,5 @@
 <p-dialog
-  header="Remise en banque"
+  header="Remise en banque" i18n-header="Remise en banque"
   [visible]="visible"
   (visibleChange)="handleVisibleChange($event)"
   [modal]="true"
@@ -20,7 +20,7 @@
     <!-- Step 0 -->
     @if (currentStep === 0) {
       <div class="step-panel">
-        <h3 class="step-title">Type de dépôt <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></h3>
+        <h3 class="step-title"><ng-container i18n="@@payments.cash-desk.type.de.depot.29517a83">Type de dépôt </ng-container> <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></h3>
         <div class="type-cards" role="list">
           <button
             type="button"
@@ -60,7 +60,7 @@
     @if (currentStep === 1) {
       <div class="step-panel">
         <div class="field">
-          <label for="slipRef">Numéro de la remise en banque <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
+          <label for="slipRef"><ng-container i18n="@@payments.cash-desk.numero.de.la.remise.en.banque.38998db8">Numéro de la remise en banque </ng-container> <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
           <input pInputText id="slipRef" [(ngModel)]="depositSlipReference" class="w-full" maxlength="100" autocomplete="off" />
         </div>
         <div class="field">
@@ -77,7 +77,7 @@
           </p-datepicker>
         </div>
         <div class="field">
-          <span class="field-label">Compte destinataire <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></span>
+          <span class="field-label"><ng-container i18n="@@payments.cash-desk.compte.destinataire.4709f5e3">Compte destinataire </ng-container> <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></span>
           <div class="account-row">
             <div class="account-pick">
               @for (a of bankAccounts; track a.id) {
@@ -113,7 +113,7 @@
     @if (currentStep === 2) {
       <div class="step-panel">
         <div class="field">
-          <label for="depAmount">Solde déposé <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
+          <label for="depAmount"><ng-container i18n="@@payments.cash-desk.solde.depose.d68801d5">Solde déposé </ng-container> <span class="req" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
           <div class="amount-available">
             <span class="avail-label" i18n="@@payments.cash-desk.solde.disponible.a.la.date.de.remise.bf057c45">Solde disponible (à la date de remise)</span>
             <span class="avail-value">{{ formatCurrency(availableForSelectedType()) }} <sup i18n="@@payments.cash-desk.tnd.51da21a7">TND</sup></span>
@@ -211,7 +211,7 @@
           icon="pi pi-arrow-right"
           iconPos="right"
           [disabled]="(currentStep === 0 || currentStep === 2) && serverBalancesLoading()"
-          (click)="next()" i18n="@@payments.cash-desk.continuer.129ffff9">Continuer</app-button>
+          (click)="next()" i18n="@@payments.cash-desk.continuer.129ffff9"> Continuer </app-button>
       } @else {
         <app-button
           variant="primary"

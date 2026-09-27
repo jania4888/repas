@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -65,7 +66,7 @@ interface StatusOption {
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new" i18n="@@suppliers.supplier-list.ajouter.un.fournisseur.cfb5e618">Ajouter un fournisseur</app-button>
+          routerLink="new" i18n="@@suppliers.supplier-list.ajouter.un.fournisseur.cfb5e618"> Ajouter un fournisseur </app-button>
       }
     </app-page-header>
 
@@ -135,7 +136,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} fournisseurs"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} fournisseurs" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} fournisseurs"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -144,7 +145,7 @@ interface StatusOption {
 
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="name"><ng-container i18n="@@suppliers.supplier-list.nom.7ff20370">Nom </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
             <th i18n="@@suppliers.supplier-list.contact.b37456c4">Contact</th>
             <th i18n="@@suppliers.supplier-list.nif.77124a3a">NIF</th>
             <th i18n="@@suppliers.supplier-list.type.3deb7456">Type</th>
@@ -192,7 +193,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag
-                [value]="supplier.isActive ? 'Actif' : 'Inactif'"
+                [value]="supplier.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                 [severity]="supplier.isActive ? 'success' : 'secondary'">
               </p-tag>
             </td>
@@ -299,6 +300,8 @@ interface StatusOption {
   `]
 })
 export class SupplierListComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
     private supplierService = inject(SupplierService);
     private toastService = inject(ToastService);
     private auth = inject(AuthService);
@@ -435,7 +438,7 @@ export class SupplierListComponent implements OnInit, OnDestroy {
         this.initialLoad.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
+                    summary: $localize`:@@supplier-list.component.summary.Erreur:Erreur`,
                     detail: error?.error?.errors?.[0] || 'Impossible de charger les fournisseurs'
                 });
             }

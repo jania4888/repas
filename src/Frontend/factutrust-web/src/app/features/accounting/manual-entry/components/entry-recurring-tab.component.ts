@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -37,7 +38,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   <button type="button" class="btn btn-sm btn-primary"
                           [disabled]="runningId() === t.id"
                           (click)="runNow(t)">
-                    {{ runningId() === t.id ? 'Génération…' : 'Générer maintenant' }}
+                    {{ runningId() === t.id ? loc_ui_tern_generation_ce4e34 : loc_ui_tern_generer_maintenant_3ad084 }}
                   </button>
                 </td>
               </tr>
@@ -57,6 +58,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class EntryRecurringTabComponent implements OnInit {
+  readonly loc_ui_tern_generation_ce4e34 = $localize`:@@ui.tern.generation.ce4e34:Génération…`;
+  readonly loc_ui_tern_generer_maintenant_3ad084 = $localize`:@@ui.tern.generer.maintenant.3ad084:Générer maintenant`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -96,14 +99,14 @@ export class EntryRecurringTabComponent implements OnInit {
         next: res => {
           this.runningId.set(null);
           if (res.success) {
-            this.toast.add({ severity: 'success', summary: 'Écriture générée', detail: `Le modèle « ${t.name} » a été exécuté.`, life: 5000 });
+            this.toast.add({ severity: 'success', summary: $localize`:@@entry-recurring-tab.component.summary._criture_g_n_r_e:Écriture générée`, detail: `Le modèle « ${t.name} » a été exécuté.`, life: 5000 });
           } else {
-            this.toast.add({ severity: 'error', summary: 'Échec', detail: res.error ?? 'Erreur', life: 6000 });
+            this.toast.add({ severity: 'error', summary: $localize`:@@entry-recurring-tab.component.summary.Échec:Échec`, detail: res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`, life: 6000 });
           }
         },
         error: err => {
           this.runningId.set(null);
-          this.toast.add({ severity: 'error', summary: 'Impossible de générer l\'écriture.', detail: this.errors.extractErrorMessage(err, 'Erreur réseau'), life: 6000 });
+          this.toast.add({ severity: 'error', summary: $localize`:@@entry-recurring-tab.component.summary.Impossible_de_g_:Impossible de générer l'écriture.`, detail: this.errors.extractErrorMessage(err, 'Erreur réseau'), life: 6000 });
         }
       });
   }

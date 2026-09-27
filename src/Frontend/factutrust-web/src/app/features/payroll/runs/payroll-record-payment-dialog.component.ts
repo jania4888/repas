@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -44,13 +45,13 @@ interface PayslipPaymentRow {
   ],
   template: `
     <p-dialog
-      header="Régler la paie"
+      header="Régler la paie" i18n-header="Régler la paie"
       [(visible)]="visibleProxy"
       [modal]="true"
       [style]="{ width: '760px' }"
       (onShow)="onOpen()"
       (onHide)="closed.emit()">
-      <p class="hint mb-3" i18n="@@payroll.runs.enregistrez.le.decaissement.apres.confirmation.b.e5561856">Enregistrez le décaissement après confirmation bancaire. Une écriture JB et un lettrage 421 seront générés.</p>
+      <p class="hint mb-3" i18n="@@payroll.runs.enregistrez.le.decaissement.apres.confirmation.b.e5561856"> Enregistrez le décaissement après confirmation bancaire. Une écriture JB et un lettrage 421 seront générés. </p>
 
       <div class="form-grid mb-3">
         <div class="field">
@@ -129,7 +130,7 @@ interface PayslipPaymentRow {
       <ng-template pTemplate="footer">
         <app-button variant="outline" (click)="visibleProxy = false" i18n="@@payroll.runs.annuler.49ba3292">Annuler</app-button>
         <app-button variant="primary" [disabled]="!isValid() || saving()" (click)="submit()">
-          {{ saving() ? 'Enregistrement…' : 'Enregistrer le paiement' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_le_paiement_6495b8 }}
         </app-button>
       </ng-template>
     </p-dialog>
@@ -147,6 +148,8 @@ interface PayslipPaymentRow {
   `]
 })
 export class PayrollRecordPaymentDialogComponent implements OnInit {
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_le_paiement_6495b8 = $localize`:@@ui.tern.enregistrer.le.paiement.6495b8:Enregistrer le paiement`;
   private readonly payroll = inject(PayrollService);
   private readonly banks = inject(BankAccountService);
   private readonly toast = inject(ToastService);
@@ -247,15 +250,15 @@ export class PayrollRecordPaymentDialogComponent implements OnInit {
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: () => {
-          this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Paiement enregistré.' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@payroll-record-payment-dialog.component.summary.Paie:Paie`, detail: $localize`:@@payroll-record-payment-dialog.component.detail.Paiement_enregis:Paiement enregistré.` });
           this.visibleProxy = false;
           this.paymentRecorded.emit();
         },
         error: err =>
           this.toast.add({
             severity: 'error',
-            summary: 'Paie',
-            detail: err?.error?.message ?? 'Enregistrement impossible.'
+            summary: $localize`:@@payroll-record-payment-dialog.component.summary.Paie:Paie`,
+            detail: err?.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`
           })
       });
   }

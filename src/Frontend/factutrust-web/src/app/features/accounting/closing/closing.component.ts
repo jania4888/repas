@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -53,8 +54,8 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
         <a class="btn btn-outline-secondary" [routerLink]="['/accounting/pre-closing']" [queryParams]="{ }">
           <i class="pi pi-list-check" aria-hidden="true"></i> Contrôles de pré-clôture
         </a>
-        <button type="button" class="btn btn-warning" (click)="confirmCloseYear()" [disabled]="loading() || isYearLocked(fiscalYearInput)" i18n="@@accounting.closing.cloturer.l.exercice.cd0d9b56">Clôturer l'exercice</button>
-        <button type="button" class="btn btn-primary" (click)="confirmGenerateOpeningEntries()" [disabled]="loading() || isYearLocked(fiscalYearInput)" i18n="@@accounting.closing.ecritures.d.a.nouveau.d0348a61">Ecritures d'a-nouveau</button>
+        <button type="button" class="btn btn-warning" (click)="confirmCloseYear()" [disabled]="loading() || isYearLocked(fiscalYearInput)" i18n="@@accounting.closing.cloturer.l.exercice.cd0d9b56"> Clôturer l'exercice </button>
+        <button type="button" class="btn btn-primary" (click)="confirmGenerateOpeningEntries()" [disabled]="loading() || isYearLocked(fiscalYearInput)" i18n="@@accounting.closing.ecritures.d.a.nouveau.d0348a61"> Ecritures d'a-nouveau </button>
         <button type="button" class="btn btn-outline-danger" (click)="confirmLockYear()" [disabled]="loading() || isYearLocked(fiscalYearInput)">
           <i class="pi pi-lock" aria-hidden="true"></i> Verrouiller définitivement
         </button>
@@ -89,7 +90,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
           <td>{{ p.month }}</td>
           <td>
             <span class="closing-badge" [class.closing-badge--closed]="p.isClosed" [class.closing-badge--open]="!p.isClosed">
-              {{ p.isClosed ? 'Oui' : 'Non' }}
+              {{ p.isClosed ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}
             </span>
           </td>
           <td>
@@ -127,6 +128,8 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
   `
 })
 export class ClosingComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly api = inject(AccountingService);
   private readonly confirmService = inject(ConfirmationService);
   private readonly errorHandler = inject(ErrorHandlerService);
@@ -202,8 +205,8 @@ export class ClosingComponent implements OnInit {
       message: `Generer les ecritures d'a-nouveau pour l'exercice ${y + 1} a partir des soldes de ${y} ?`,
       header: 'Ecritures d\'a-nouveau',
       icon: 'pi pi-book',
-      acceptLabel: 'Generer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@closing.component.acceptLabel.Generer:Generer`,
+      rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.loading.set(true);
         this.error.set(null);
@@ -214,7 +217,7 @@ export class ClosingComponent implements OnInit {
             if (res.success) {
               this.success.set(`Ecritures d'a-nouveau generees pour l'exercice ${y + 1}.`);
             } else {
-              this.error.set(res.error ?? 'Erreur');
+              this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
             }
           },
           error: err => {
@@ -234,8 +237,8 @@ export class ClosingComponent implements OnInit {
       message: `Clôturer tous les mois enregistrés pour l'exercice ${y} ?`,
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Clôturer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@closing.component.acceptLabel.Clôturer:Clôturer`,
+      rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.loading.set(true);
         this.error.set(null);
@@ -247,7 +250,7 @@ export class ClosingComponent implements OnInit {
               this.success.set(`Exercice ${y} clôturé.`);
               this.refresh();
             } else {
-              this.error.set(res.error ?? 'Erreur');
+              this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
             }
           },
           error: err => {
@@ -270,7 +273,7 @@ export class ClosingComponent implements OnInit {
       .subscribe({
         next: r => {
           if (r.success && r.data) this.periods.set(r.data);
-          else this.error.set(r.error ?? 'Erreur');
+          else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
         error: err =>
           this.error.set(this.httpFailureMessage(err, 'Erreur réseau. Impossible de charger les périodes.'))
@@ -286,8 +289,8 @@ export class ClosingComponent implements OnInit {
       message: `Verrouiller DÉFINITIVEMENT l'exercice ${y} ? Cette action est IRRÉVERSIBLE : aucune écriture ne pourra plus y être enregistrée et ses périodes ne pourront plus être rouvertes. Assurez-vous d'avoir résolu les contrôles de pré-clôture et généré les à-nouveaux.`,
       header: 'Verrouillage définitif',
       icon: 'pi pi-lock',
-      acceptLabel: 'Verrouiller définitivement',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@closing.component.acceptLabel.Verrouiller_d_fi:Verrouiller définitivement`,
+      rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.loading.set(true);
         this.error.set(null);
@@ -299,7 +302,7 @@ export class ClosingComponent implements OnInit {
               this.success.set(`Exercice ${y} verrouillé définitivement.`);
               this.refresh();
             } else {
-              this.error.set(res.error ?? 'Erreur lors du verrouillage.');
+              this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.verrouillage.0bbd74:Erreur lors du verrouillage.`);
             }
           },
           error: err => {
@@ -316,8 +319,8 @@ export class ClosingComponent implements OnInit {
       message: `Clôturer la période ${month}/${year} ?`,
       header: 'Confirmation',
       icon: 'pi pi-lock',
-      acceptLabel: 'Clôturer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@closing.component.acceptLabel.Clôturer:Clôturer`,
+      rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.loading.set(true);
         this.error.set(null);
@@ -329,7 +332,7 @@ export class ClosingComponent implements OnInit {
               this.success.set(`Période ${month}/${year} clôturée.`);
               this.refresh();
             } else {
-              this.error.set(res.error ?? 'Erreur lors de la clôture.');
+              this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.cloture.e012f5:Erreur lors de la clôture.`);
             }
           },
           error: err => {
@@ -346,8 +349,8 @@ export class ClosingComponent implements OnInit {
       message: `Réouvrir la période ${month}/${year} ? Les écritures pourront à nouveau être modifiées.`,
       header: 'Confirmation',
       icon: 'pi pi-unlock',
-      acceptLabel: 'Réouvrir',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@closing.component.acceptLabel.Réouvrir:Réouvrir`,
+      rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.loading.set(true);
         this.error.set(null);
@@ -359,7 +362,7 @@ export class ClosingComponent implements OnInit {
               this.success.set(`Période ${month}/${year} réouverte.`);
               this.refresh();
             } else {
-              this.error.set(res.error ?? 'Erreur lors de la réouverture.');
+              this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.reouverture.d5e49a:Erreur lors de la réouverture.`);
             }
           },
           error: err => {

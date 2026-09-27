@@ -74,17 +74,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <option value="AssetAccount" i18n="@@accounting.fixed-assets.compte.immobilisation.c2d44c21">Compte immobilisation</option>
           <option value="FiscalCategory" i18n="@@accounting.fixed-assets.categorie.fiscale.a9a54a0a">Catégorie fiscale</option>
         </select>
-        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()" i18n="@@accounting.fixed-assets.actualiser.9d3b2a7d">Actualiser</app-button>
-        <app-button variant="secondary" icon="pi pi-print" type="button" (click)="printReport()" [disabled]="loading() || !report()" i18n="@@accounting.fixed-assets.imprimer.5382c09d">Imprimer</app-button>
-        <app-button variant="secondary" icon="pi pi-file-excel" type="button" (click)="exportXlsx()" [disabled]="loading()" i18n="@@accounting.fixed-assets.export.xlsx.93f3f8f5">Export XLSX</app-button>
-        <app-button variant="secondary" icon="pi pi-download" type="button" (click)="exportCsv()" [disabled]="loading() || !report()" i18n="@@accounting.fixed-assets.export.csv.5755f9ac">Export CSV</app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="reload()" [disabled]="loading()" i18n="@@accounting.fixed-assets.actualiser.9d3b2a7d"> Actualiser </app-button>
+        <app-button variant="secondary" icon="pi pi-print" type="button" (click)="printReport()" [disabled]="loading() || !report()" i18n="@@accounting.fixed-assets.imprimer.5382c09d"> Imprimer </app-button>
+        <app-button variant="secondary" icon="pi pi-file-excel" type="button" (click)="exportXlsx()" [disabled]="loading()" i18n="@@accounting.fixed-assets.export.xlsx.93f3f8f5"> Export XLSX </app-button>
+        <app-button variant="secondary" icon="pi pi-download" type="button" (click)="exportCsv()" [disabled]="loading() || !report()" i18n="@@accounting.fixed-assets.export.csv.5755f9ac"> Export CSV </app-button>
       </div>
     </div>
 
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
     <app-accounting-status-banner
       class="no-print"
-      [message]="'Exercice affiché : ' + fiscalYearDisplay(fiscalYearFilter)"
+      [message]="loc_ui_tern_exercice_affiche_6dd078 + fiscalYearDisplay(fiscalYearFilter)"
       variant="info"
       *ngIf="!error()" />
 
@@ -378,6 +378,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ]
 })
 export class FixedAssetsAmortizationTableComponent implements OnInit {
+  readonly loc_ui_tern_exercice_affiche_6dd078 = $localize`:@@ui.tern.exercice.affiche.6dd078:Exercice affiché : `;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(FixedAssetsService);
   private readonly auth = inject(AuthService);
@@ -462,7 +463,7 @@ export class FixedAssetsAmortizationTableComponent implements OnInit {
   }
 
   methodLabel(row: AmortizationReportAssetRowDto): string {
-    return DEPRECIATION_METHOD_LABELS[row.depreciationMethod] ?? 'Linéaire';
+    return DEPRECIATION_METHOD_LABELS[row.depreciationMethod] ?? $localize`:@@ui.tern.lineaire.a5db4c:Linéaire`;
   }
 
   // C4 : n'affiche le code de groupe qu'une seule fois — certaines réponses API renvoient déjà le
@@ -477,7 +478,7 @@ export class FixedAssetsAmortizationTableComponent implements OnInit {
   }
 
   postingStatusLabel(status: keyof typeof CURRENT_YEAR_POSTING_STATUS_LABELS): string {
-    return CURRENT_YEAR_POSTING_STATUS_LABELS[status] ?? 'Non comptabilisée';
+    return CURRENT_YEAR_POSTING_STATUS_LABELS[status] ?? $localize`:@@ui.tern.non.comptabilisee.5e1470:Non comptabilisée`;
   }
 
   gap(row: { dotationCalculeeExercice: number; dotationComptabiliseeExercice: number }): number {

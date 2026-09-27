@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
@@ -75,7 +76,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <i class="pi pi-exclamation-triangle studio-mr"></i>
             <span class="studio-grow">{{ err.message }}</span>
             @if (err.stale) {
-              <p-button label="Recharger" icon="pi pi-refresh" size="small" [text]="true" (onClick)="reload()" data-testid="designer-reload" />
+              <p-button label="Recharger" i18n-label="Recharger" icon="pi pi-refresh" size="small" [text]="true" (onClick)="reload()" data-testid="designer-reload" />
             }
           </div>
         }
@@ -163,7 +164,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
                     <p-button icon="pi pi-chevron-down" [text]="true" size="small" [disabled]="last" (onClick)="moveColumn(i, 1)" ariaLabel="Descendre" />
                   </span>
                   <p-button [icon]="col.hidden ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" size="small"
-                    (onClick)="toggleColumnHidden(i)" [ariaLabel]="col.hidden ? 'Afficher' : 'Masquer'" />
+                    (onClick)="toggleColumnHidden(i)" [ariaLabel]="col.hidden ? loc_ui_tern_afficher_5e8020 : loc_ui_tern_masquer_adb05f" />
                   <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeColumn(i)" ariaLabel="Retirer" />
                 </div>
               } @empty {
@@ -186,7 +187,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             @for (s of sort(); track s.fieldKey; let i = $index) {
               <div class="studio-row" [attr.data-testid]="'designer-sort-' + i">
                 <span class="studio-grow">{{ fieldLabel(s.fieldKey) }}</span>
-                <p-button [label]="s.descending ? 'Décroissant' : 'Croissant'" [icon]="s.descending ? 'pi pi-sort-amount-down' : 'pi pi-sort-amount-up'"
+                <p-button [label]="s.descending ? loc_ui_tern_decroissant_7e8886 : loc_ui_tern_croissant_c4f64a" [icon]="s.descending ? 'pi pi-sort-amount-down' : 'pi pi-sort-amount-up'"
                   [text]="true" size="small" (onClick)="toggleSortDirection(i)" />
                 <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeSort(i)" ariaLabel="Retirer" />
               </div>
@@ -207,7 +208,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             </div>
 
             <div class="studio-form-actions">
-              <p-button label="Annuler" [text]="true" (onClick)="backToList()" />
+              <p-button label="Annuler" i18n-label="Annuler" [text]="true" (onClick)="backToList()" />
               <p-button [label]="labels.designer.save" icon="pi pi-check" [loading]="saving()" [disabled]="!canSave()" (onClick)="save()" data-testid="designer-save" />
             </div>
           </section>
@@ -216,7 +217,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <div class="studio-block-head">
               <h3 class="studio-preview-title" i18n="@@studio.views.apercu.f0f53004">Aperçu</h3>
               @if (canDesign()) {
-                <p-button label="Actualiser l’aperçu" icon="pi pi-refresh" [text]="true" size="small"
+                <p-button label="Actualiser l’aperçu" i18n-label="Actualiser l’aperçu" icon="pi pi-refresh" [text]="true" size="small"
                   [disabled]="saving() || !previewEligible()" (onClick)="refreshPreview()" data-testid="designer-preview-refresh" />
               }
             </div>
@@ -237,6 +238,10 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
   styleUrls: ['../shared/studio-layout.scss', './studio-record-view-designer.component.scss']
 })
 export class StudioRecordViewDesignerComponent implements OnInit {
+  readonly loc_ui_tern_afficher_5e8020 = $localize`:@@ui.tern.afficher.5e8020:Afficher`;
+  readonly loc_ui_tern_masquer_adb05f = $localize`:@@ui.tern.masquer.adb05f:Masquer`;
+  readonly loc_ui_tern_decroissant_7e8886 = $localize`:@@ui.tern.decroissant.7e8886:Décroissant`;
+  readonly loc_ui_tern_croissant_c4f64a = $localize`:@@ui.tern.croissant.c4f64a:Croissant`;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly studio = inject(StudioService);
@@ -291,7 +296,7 @@ export class StudioRecordViewDesignerComponent implements OnInit {
     this.activeFields()
       .filter(f => f.fieldType === CustomFieldType.Select || f.fieldType === CustomFieldType.MultiSelect)
       .map(f => ({ key: f.key, label: f.label })));
-  readonly subtitle = computed(() => this.entityName() ? `Table « ${this.entityName()} »` : null);
+  readonly subtitle = computed(() => this.entityName() ? $localize`:@@ui.tern.table.ph.798a94:Table « ${this.entityName()}:p0: »` : null);
   readonly breadcrumbs = computed<BreadcrumbItem[]>(() => this.editing
     ? STUDIO_BREADCRUMBS.recordViewEdit(this.entityName(), this.entityKey, this.view()?.displayName)
     : STUDIO_BREADCRUMBS.recordViewNew(this.entityName(), this.entityKey));
@@ -574,7 +579,7 @@ export class StudioRecordViewDesignerComponent implements OnInit {
       message: 'Supprimer cette vue ? Cette action est irréversible.',
       header: 'Confirmation',
       acceptLabel: this.labels.designer.delete,
-      rejectLabel: 'Annuler',
+      rejectLabel: $localize`:@@studio-record-view-designer.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.saving.set(true);
         this.views.deleteRecordView(this.entityKey, this.viewId!).subscribe({

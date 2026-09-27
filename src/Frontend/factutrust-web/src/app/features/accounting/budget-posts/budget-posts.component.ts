@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -34,7 +35,7 @@ interface BudgetPostForm {
 
     @if (form(); as f) {
       <div class="card bp-form">
-        <h3 class="bp-form-title">{{ f.id ? 'Modifier le poste' : 'Nouveau poste budgétaire' }}</h3>
+        <h3 class="bp-form-title">{{ f.id ? loc_ui_tern_modifier_le_poste_2a15b3 : loc_ui_tern_nouveau_poste_budgetaire_567237 }}</h3>
         <div class="bp-fields">
           <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.code.adac6937">Code</label><input class="bp-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. 613" i18n-placeholder="Ex. 613" /></div>
           <div class="bp-field bp-grow"><label class="bp-lbl" i18n="@@accounting.budget-posts.libelle.f5485bba">Libellé</label><input class="bp-inp" [(ngModel)]="f.label" placeholder="Ex. Locations et charges locatives" i18n-placeholder="Ex. Locations et charges locatives" /></div>
@@ -51,7 +52,7 @@ interface BudgetPostForm {
           <div class="bp-form-actions">
             <app-button variant="secondary" size="sm" type="button" (click)="form.set(null)" [disabled]="saving()" i18n="@@accounting.budget-posts.annuler.49ba3292">Annuler</app-button>
             <app-button variant="primary" size="sm" type="button" (click)="save()" [disabled]="saving() || !f.code.trim() || !f.label.trim() || !f.accountPrefixes.trim()">
-              {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+              {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_f7c8bc }}
             </app-button>
           </div>
         </div>
@@ -70,12 +71,12 @@ interface BudgetPostForm {
             <td>{{ p.label }}</td>
             <td>
               <span class="bp-badge" [class.bp-badge-expense]="p.kind === 0" [class.bp-badge-revenue]="p.kind === 1">
-                {{ p.kind === 0 ? 'Charges' : 'Produits' }}
+                {{ p.kind === 0 ? loc_ui_tern_charges_cfc370 : loc_ui_tern_produits_480004 }}
               </span>
             </td>
             <td class="bp-mono">{{ p.accountPrefixes }}</td>
             <td>{{ p.displayOrder }}</td>
-            <td>{{ p.isActive ? 'Oui' : 'Non' }}</td>
+            <td>{{ p.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
             <td>
               <app-accounting-table-actions>
                 <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
@@ -84,7 +85,7 @@ interface BudgetPostForm {
                   [icon]="p.isActive ? 'pi-eye-slash' : 'pi-eye'"
                   [iconOnly]="true" [iconAlwaysVisible]="true"
                   type="button" (click)="toggle(p)"
-                  [attr.aria-label]="p.isActive ? 'Désactiver' : 'Activer'" />
+                  [attr.aria-label]="p.isActive ? loc_ui_tern_desactiver_d28397 : loc_ui_tern_activer_b96fa7" />
               </app-accounting-table-actions>
             </td>
           </tr>
@@ -114,6 +115,16 @@ interface BudgetPostForm {
   `
 })
 export class BudgetPostsComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_poste_2a15b3 = $localize`:@@ui.tern.modifier.le.poste.2a15b3:Modifier le poste`;
+  readonly loc_ui_tern_nouveau_poste_budgetaire_567237 = $localize`:@@ui.tern.nouveau.poste.budgetaire.567237:Nouveau poste budgétaire`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_charges_cfc370 = $localize`:@@ui.tern.charges.cfc370:Charges`;
+  readonly loc_ui_tern_produits_480004 = $localize`:@@ui.tern.produits.480004:Produits`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
+  readonly loc_ui_tern_desactiver_d28397 = $localize`:@@ui.tern.desactiver.d28397:Désactiver`;
+  readonly loc_ui_tern_activer_b96fa7 = $localize`:@@ui.tern.activer.b96fa7:Activer`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -135,7 +146,7 @@ export class BudgetPostsComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.posts.set(res.data);
-        else this.error.set(res.error ?? 'Erreur de chargement des postes budgétaires.');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.de.chargement.des.postes.budgetaire.63d7ae:Erreur de chargement des postes budgétaires.`);
       },
       error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
     });
@@ -156,8 +167,8 @@ export class BudgetPostsComponent implements OnInit {
     this.saving.set(true);
     const done = (ok: boolean, err?: string) => {
       this.saving.set(false);
-      if (ok) { this.toast.add({ severity: 'success', summary: 'Poste enregistré', detail: f.code, life: 4000 }); this.form.set(null); this.load(); }
-      else this.error.set(err ?? 'Erreur');
+      if (ok) { this.toast.add({ severity: 'success', summary: $localize`:@@budget-posts.component.summary.Poste_enregistr_:Poste enregistré`, detail: f.code, life: 4000 }); this.form.set(null); this.load(); }
+      else this.error.set(err ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
     };
     const body = { label: f.label.trim(), kind: f.kind, accountPrefixes: f.accountPrefixes.trim(), displayOrder: f.displayOrder };
     if (f.id) {
@@ -169,7 +180,7 @@ export class BudgetPostsComponent implements OnInit {
 
   toggle(p: BudgetPostDto): void {
     this.api.toggleBudgetPost(p.id).subscribe({
-      next: r => { if (r.success) this.load(); else this.error.set(r.error ?? 'Erreur'); },
+      next: r => { if (r.success) this.load(); else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`); },
       error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
     });
   }

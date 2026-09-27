@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PayrollService, type PayrollPayment } from '@core/services/payroll.service';
@@ -9,7 +11,7 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
 @Component({
   selector: 'app-payroll-payments-panel',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, PayrollAmountPipe, PayrollSectionComponent],
+  imports: [BackendLabelPipe, CommonModule, ButtonComponent, PayrollAmountPipe, PayrollSectionComponent],
   template: `
     <app-payroll-section title="Paiements enregistrés" i18n-title="Paiements enregistrés" icon="pi-wallet">
       @if (loading()) {
@@ -23,7 +25,7 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
               <div class="payment-header">
                 <div>
                   <strong>{{ p.paymentDate | date:'dd/MM/yyyy' }}</strong>
-                  <span class="ml-2">{{ p.methodDisplay }}</span>
+                  <span class="ml-2">{{ p.methodDisplay | backendLabel }}</span>
                   @if (p.isCancelled) {
                     <span class="badge-cancelled" i18n="@@payroll.runs.annule.34cd87cc">Annulé</span>
                   }
@@ -83,7 +85,7 @@ export class PayrollPaymentsPanelComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toast.add({ severity: 'error', summary: 'Paie', detail: 'Impossible de charger les paiements.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@payroll-payments-panel.component.summary.Paie:Paie`, detail: $localize`:@@payroll-payments-panel.component.detail.Impossible_de_ch:Impossible de charger les paiements.` });
       }
     });
   }
@@ -92,23 +94,23 @@ export class PayrollPaymentsPanelComponent implements OnInit {
     const reason = await this.confirmation.prompt({
       header: 'Annuler le paiement',
       message: 'Saisissez le motif d\'annulation du paiement :',
-      acceptLabel: 'Annuler le paiement',
-      rejectLabel: 'Conserver',
+      acceptLabel: $localize`:@@payroll-payments-panel.component.acceptLabel.Annuler_le_paiem:Annuler le paiement`,
+      rejectLabel: $localize`:@@payroll-payments-panel.component.rejectLabel.Conserver:Conserver`,
       acceptButtonStyleClass: 'btn-danger',
       required: true
     });
     if (!reason) return;
     this.payroll.cancelPayment(p.id, reason).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Paie', detail: 'Paiement annulé.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-payments-panel.component.summary.Paie:Paie`, detail: $localize`:@@payroll-payments-panel.component.detail.Paiement_annul_:Paiement annulé.` });
         this.load();
         this.refreshed.emit();
       },
       error: err =>
         this.toast.add({
           severity: 'error',
-          summary: 'Paie',
-          detail: err?.error?.message ?? 'Annulation impossible.'
+          summary: $localize`:@@payroll-payments-panel.component.summary.Paie:Paie`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.annulation.impossible.814b7d:Annulation impossible.`
         })
     });
   }

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -53,8 +54,8 @@ const MONTHS = [
 
     <div class="card cr-block">
       <h3 class="cr-title" i18n="@@accounting.currencies.comptes.d.imputation.9bc1ccb6">Comptes d'imputation</h3>
-      <p class="cr-hint" i18n="@@accounting.currencies.saisis.a.chaque.execution.sans.valeur.memorisee..6a41fcf0">Saisis à chaque exécution, sans valeur mémorisée : le plan NCT 01 fournit 185, 275 et 1515,
-        mais un dossier non migré peut ne pas les avoir.</p>
+      <p class="cr-hint" i18n="@@accounting.currencies.saisis.a.chaque.execution.sans.valeur.memorisee..6a41fcf0"> Saisis à chaque exécution, sans valeur mémorisée : le plan NCT 01 fournit 185, 275 et 1515,
+        mais un dossier non migré peut ne pas les avoir. </p>
 
       <div class="cr-grid">
         <div class="cr-field">
@@ -69,9 +70,9 @@ const MONTHS = [
         </div>
       </div>
 
-      <h3 class="cr-title cr-title--sub">Provision pour pertes de change <span class="cr-optional" i18n="@@accounting.currencies.facultatif.1f84e92e">facultatif</span></h3>
-      <p class="cr-hint" i18n="@@accounting.currencies.principe.de.prudence.seule.la.perte.latente.se.p.4246cee4">Principe de prudence : seule la perte latente se provisionne, le gain latent ne se constate pas.
-        Laissez ces deux champs vides pour ne constater aucune provision.</p>
+      <h3 class="cr-title cr-title--sub"><ng-container i18n="@@accounting.currencies.provision.pour.pertes.de.change.dde90ec9">Provision pour pertes de change </ng-container> <span class="cr-optional" i18n="@@accounting.currencies.facultatif.1f84e92e">facultatif</span></h3>
+      <p class="cr-hint" i18n="@@accounting.currencies.principe.de.prudence.seule.la.perte.latente.se.p.4246cee4"> Principe de prudence : seule la perte latente se provisionne, le gain latent ne se constate pas.
+        Laissez ces deux champs vides pour ne constater aucune provision. </p>
 
       <div class="cr-grid">
         <div class="cr-field">
@@ -88,7 +89,7 @@ const MONTHS = [
         <div class="cr-actions">
           <app-button variant="primary" icon="pi pi-play" type="button"
                       (click)="run()" [disabled]="running() || !gainAccount.trim() || !lossAccount.trim()">
-            {{ running() ? 'Traitement…' : 'Lancer la réévaluation' }}
+            {{ running() ? loc_ui_tern_traitement_2f66d9 : loc_ui_tern_lancer_la_reevaluation_ca8de5 }}
           </app-button>
         </div>
       } @else {
@@ -132,6 +133,8 @@ const MONTHS = [
   `
 })
 export class ClosingRevaluationComponent {
+  readonly loc_ui_tern_traitement_2f66d9 = $localize`:@@ui.tern.traitement.2f66d9:Traitement…`;
+  readonly loc_ui_tern_lancer_la_reevaluation_ca8de5 = $localize`:@@ui.tern.lancer.la.reevaluation.ca8de5:Lancer la réévaluation`;
   private readonly api = inject(AccountingService);
   // Le 400 metier porte un message precis ; extractErrorMessage le lit et
   // distingue au passage la vraie panne reseau (status 0).
@@ -181,12 +184,12 @@ export class ClosingRevaluationComponent {
           this.result.set(res.data);
           this.toast.add({
             severity: 'success',
-            summary: 'Réévaluation effectuée',
+            summary: $localize`:@@closing-revaluation.component.summary.R_valuation_eff:Réévaluation effectuée`,
             detail: `${res.data.positionCount} position(s) réévaluée(s)`,
             life: 5000
           });
         } else {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: err => { this.running.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }

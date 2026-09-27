@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -52,14 +53,14 @@ interface TemplateLineRow {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <div class="form-container">
-      <h1 class="page-title">{{ isEdit() ? 'Modifier le modèle' : 'Nouveau modèle de devis' }}</h1>
-      <p class="page-subtitle" i18n="@@crm.quote-templates.definissez.les.lignes.produits.la.validite.par.d.ebd25d30">Définissez les lignes produits, la validité par défaut et les textes réutilisés lors de la création d'un devis.</p>
+      <h1 class="page-title">{{ isEdit() ? loc_ui_tern_modifier_le_modele_840a7c : loc_ui_tern_nouveau_modele_de_devis_243d9e }}</h1>
+      <p class="page-subtitle" i18n="@@crm.quote-templates.definissez.les.lignes.produits.la.validite.par.d.ebd25d30"> Définissez les lignes produits, la validité par défaut et les textes réutilisés lors de la création d'un devis. </p>
 
       <form (ngSubmit)="onSubmit()" class="quote-template-form">
         <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-bookmark" [number]="1">
           <div class="form-grid">
             <div class="field span-2">
-              <label for="name">Nom <span class="required" i18n="@@crm.quote-templates.text.df58248c">*</span></label>
+              <label for="name"><ng-container i18n="@@crm.quote-templates.nom.7ff20370">Nom </ng-container> <span class="required" i18n="@@crm.quote-templates.text.df58248c">*</span></label>
               <input pInputText id="name" [(ngModel)]="name" name="name" class="w-full" required />
             </div>
             <div class="field span-2">
@@ -67,7 +68,7 @@ interface TemplateLineRow {
               <input pInputText id="description" [(ngModel)]="description" name="description" class="w-full" />
             </div>
             <div class="field">
-              <label for="validity">Validité par défaut (jours) <span class="required" i18n="@@crm.quote-templates.text.df58248c">*</span></label>
+              <label for="validity"><ng-container i18n="@@crm.quote-templates.validite.par.defaut.jours.c1dc9b58">Validité par défaut (jours) </ng-container> <span class="required" i18n="@@crm.quote-templates.text.df58248c">*</span></label>
               <p-inputNumber
                 id="validity"
                 [(ngModel)]="defaultValidityDays"
@@ -89,14 +90,14 @@ interface TemplateLineRow {
 
         <app-form-section title="Lignes du modèle" i18n-title="Lignes du modèle" icon="pi-list" [number]="2">
           <div class="lines-actions">
-            <app-button variant="secondary" icon="pi-plus" iconPos="left" type="button" (click)="addLine()" i18n="@@crm.quote-templates.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
+            <app-button variant="secondary" icon="pi-plus" iconPos="left" type="button" (click)="addLine()" i18n="@@crm.quote-templates.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
           </div>
           <div class="lines-table-wrap">
             <table class="lines-table">
               <thead>
                 <tr>
-                  <th style="width: 36%">Produit <span class="required" i18n="@@crm.quote-templates.text.df58248c">*</span></th>
-                  <th style="width: 12%">Qté <span class="required" i18n="@@crm.quote-templates.text.df58248c">*</span></th>
+                  <th style="width: 36%"><ng-container i18n="@@crm.quote-templates.produit.ff673dc2">Produit </ng-container> <span class="required" i18n="@@crm.quote-templates.text.df58248c">*</span></th>
+                  <th style="width: 12%"><ng-container i18n="@@crm.quote-templates.qte.a4772129">Qté </ng-container> <span class="required" i18n="@@crm.quote-templates.text.df58248c">*</span></th>
                   <th style="width: 16%" i18n="@@crm.quote-templates.prix.unit.ht.optionnel.ba9c62c4">Prix unit. HT (optionnel)</th>
                   <th style="width: 12%" i18n="@@crm.quote-templates.remise.a39386b5">Remise %</th>
                   <th style="width: 8%"></th>
@@ -212,21 +213,21 @@ interface TemplateLineRow {
             <p-message severity="error" [text]="submitError()!" styleClass="w-full"></p-message>
             @if (conflictReloadOffered() && isEdit()) {
               <div class="conflict-reload-actions">
-                <app-button variant="secondary" type="button" (click)="reloadAfterConflict()" i18n="@@crm.quote-templates.recharger.le.modele.85129767">Recharger le modèle</app-button>
+                <app-button variant="secondary" type="button" (click)="reloadAfterConflict()" i18n="@@crm.quote-templates.recharger.le.modele.85129767"> Recharger le modèle </app-button>
               </div>
             }
           </div>
         }
 
         <div class="form-actions">
-          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" routerLink="/crm/quote-templates" i18n="@@crm.quote-templates.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" routerLink="/crm/quote-templates" i18n="@@crm.quote-templates.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
             iconPos="left"
             type="submit"
             [disabled]="!canSubmit() || submitting()">
-            {{ submitting() ? 'Enregistrement…' : isEdit() ? 'Enregistrer' : 'Créer le modèle' }}
+            {{ submitting() ? loc_ui_tern_enregistrement_e7d5f2 : isEdit() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_le_modele_60844a }}
           </app-button>
         </div>
       </form>
@@ -357,6 +358,11 @@ interface TemplateLineRow {
   ],
 })
 export class QuoteTemplateFormComponent implements OnInit {
+  readonly loc_ui_tern_modifier_le_modele_840a7c = $localize`:@@ui.tern.modifier.le.modele.840a7c:Modifier le modèle`;
+  readonly loc_ui_tern_nouveau_modele_de_devis_243d9e = $localize`:@@ui.tern.nouveau.modele.de.devis.243d9e:Nouveau modèle de devis`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_le_modele_60844a = $localize`:@@ui.tern.creer.le.modele.60844a:Créer le modèle`;
   private readonly crm = inject(CrmService);
   private readonly productService = inject(ProductService);
   private readonly route = inject(ActivatedRoute);
@@ -425,7 +431,7 @@ export class QuoteTemplateFormComponent implements OnInit {
     this.crm.getQuoteTemplate(id).subscribe({
       next: (res) => {
         if (!res.success || !res.data) {
-          this.submitError.set(res.error ?? 'Modèle introuvable');
+          this.submitError.set(res.error ?? $localize`:@@ui.tern.modele.introuvable.a8c84d:Modèle introuvable`);
           return;
         }
         this.submitError.set(null);
@@ -544,10 +550,10 @@ export class QuoteTemplateFormComponent implements OnInit {
         next: (res) => {
           this.submitting.set(false);
           if (res.success) {
-            this.toast.add({ severity: 'success', summary: 'Enregistré', detail: 'Modèle mis à jour.' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@quote-template-form.component.summary.Enregistr_:Enregistré`, detail: $localize`:@@quote-template-form.component.detail.Modèle mis à:Modèle mis à jour.` });
             this.router.navigate(['/crm/quote-templates']);
           } else {
-            this.submitError.set(res.error ?? 'Erreur');
+            this.submitError.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -569,10 +575,10 @@ export class QuoteTemplateFormComponent implements OnInit {
         next: (res) => {
           this.submitting.set(false);
           if (res.success) {
-            this.toast.add({ severity: 'success', summary: 'Créé', detail: 'Modèle créé.' });
+            this.toast.add({ severity: 'success', summary: $localize`:@@quote-template-form.component.summary.Créé:Créé`, detail: $localize`:@@quote-template-form.component.detail.Modèle créé.:Modèle créé.` });
             this.router.navigate(['/crm/quote-templates']);
           } else {
-            this.submitError.set(res.error ?? 'Erreur');
+            this.submitError.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           }
         },
         error: (err: HttpErrorResponse) => {

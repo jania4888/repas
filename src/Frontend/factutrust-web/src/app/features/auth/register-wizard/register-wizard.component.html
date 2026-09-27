@@ -51,7 +51,7 @@
         </div>
       </div>
       <a class="help-link" href="mailto:support@instafact.tn">
-        Contacter le support <i class="pi pi-arrow-right"></i>
+        <ng-container i18n="@@auth.register-wizard.contacter.le.support.7d3b6831"> Contacter le support </ng-container> <i class="pi pi-arrow-right"></i>
       </a>
     </div>
   </aside>
@@ -81,7 +81,7 @@
             </ul>
             @if (nifWarning()) {
               <a class="success-action" routerLink="/settings/company">
-                Vérifier mon matricule fiscal <i class="pi pi-arrow-right" aria-hidden="true"></i>
+                <ng-container i18n="@@auth.register-wizard.verifier.mon.matricule.fiscal.f9178220"> Vérifier mon matricule fiscal </ng-container> <i class="pi pi-arrow-right" aria-hidden="true"></i>
               </a>
             }
           } @else {
@@ -89,7 +89,7 @@
           }
 
           <button type="button" class="btn-continue" (click)="continueAfterWarnings()">
-            Continuer vers le tableau de bord <i class="pi pi-arrow-right" aria-hidden="true"></i>
+            <ng-container i18n="@@auth.register-wizard.continuer.vers.le.tableau.de.bord.1c8e2630"> Continuer vers le tableau de bord </ng-container> <i class="pi pi-arrow-right" aria-hidden="true"></i>
           </button>
         </section>
       } @else {
@@ -194,7 +194,7 @@
           }
 
           <p class="step-indicator" aria-live="polite">
-            Étape <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur {{ stepCount() }}
+            <ng-container i18n="@@auth.register-wizard.etape.13146b48"> Étape </ng-container> <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur {{ stepCount() }}
           </p>
 
           @if (currentStep() < stepCount() - 1) {
@@ -214,10 +214,10 @@
       </form>
 
       <div class="login-prompt">
-        <p>Vous avez déjà un compte ? <a routerLink="/auth/login" class="link-primary fw-semibold" i18n="@@auth.register-wizard.connectez.vous.33a5aa49">Connectez-vous</a></p>
+        <p><ng-container i18n="@@auth.register-wizard.vous.avez.deja.un.compte.6e1e5d50">Vous avez déjà un compte ? </ng-container> <a routerLink="/auth/login" class="link-primary fw-semibold" i18n="@@auth.register-wizard.connectez.vous.33a5aa49">Connectez-vous</a></p>
         @if (environment.accountingFirmsEnabled) {
           @if (!hidePublicCrossLinks()) {
-            <p class="mt-2">Cabinet comptable ? <a routerLink="/auth/register-firm" class="link-primary fw-semibold" i18n="@@auth.register-wizard.inscription.cabinet.0ec799e6">Inscription cabinet</a></p>
+            <p class="mt-2"><ng-container i18n="@@auth.register-wizard.cabinet.comptable.09c7c638">Cabinet comptable ? </ng-container> <a routerLink="/auth/register-firm" class="link-primary fw-semibold" i18n="@@auth.register-wizard.inscription.cabinet.0ec799e6">Inscription cabinet</a></p>
           }
         }
       </div>

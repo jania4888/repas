@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -612,8 +613,8 @@ export class AuthService {
 
     this.toast.add({
       severity: 'warn',
-      summary: 'Dossier fermé',
-      detail: "Votre accès à ce dossier client n'est plus actif. Retour à l'espace cabinet."
+      summary: $localize`:@@auth.service.summary.dossierFerme:Dossier fermé`,
+      detail: $localize`:@@auth.service.detail.accesDossierInactif:Votre accès à ce dossier client n'est plus actif. Retour à l'espace cabinet.`
     });
 
     void this.router.navigate(['/firm/dashboard']);

@@ -33,10 +33,10 @@ export type VariantPickerSelection = ProductSuggestion;
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: 'min(720px, 96vw)' }"
-      header="Choisir une variante"
+      header="Choisir une variante" i18n-header="Choisir une variante"
       (onHide)="onDialogHide()">
       <p-tabView>
-        <p-tabPanel header="Recherche SKU">
+        <p-tabPanel header="Recherche SKU" i18n-header="Recherche SKU">
           <p-autoComplete
             [(ngModel)]="directQuery"
             [suggestions]="directSuggestions()"
@@ -57,7 +57,7 @@ export type VariantPickerSelection = ProductSuggestion;
             </ng-template>
           </p-autoComplete>
         </p-tabPanel>
-        <p-tabPanel header="Par modèle">
+        <p-tabPanel header="Par modèle" i18n-header="Par modèle">
           <div class="grouped-step">
             <label i18n="@@shared.components.variant-product-picker.variant-product-picker.modele.9853170f">Modèle</label>
             <p-autoComplete

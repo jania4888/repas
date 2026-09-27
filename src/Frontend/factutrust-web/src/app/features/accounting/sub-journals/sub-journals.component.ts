@@ -114,7 +114,7 @@ type JournalFlatRow = {
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
         styleClass="p-datatable-sm sub-journals-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
@@ -329,7 +329,7 @@ export class SubJournalsComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.loading.set(true);
@@ -338,7 +338,7 @@ export class SubJournalsComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (!res.success || !res.data) {
-          this.error.set(res.error ?? 'Erreur');
+          this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           return;
         }
         this.flatRows.set(this.flatten(res.data));

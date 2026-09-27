@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, DestroyRef, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -99,7 +100,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                         class="btn btn-outline-danger btn-sm"
                         (click)="onDelete()"
                         [disabled]="deleting()">
-                  {{ deleting() ? 'Suppression…' : '🗑 Supprimer ce modèle' }}
+                  {{ deleting() ? loc_ui_tern_suppression_a620db : loc_ui_tern_supprimer_ce_modele_6a6201 }}
                 </button>
               }
             </div>
@@ -108,7 +109,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               <button type="button"
                       class="btn btn-primary"
                       (click)="onApply()"
-                      [disabled]="!selected()" i18n="@@accounting.manual-entry.charger.ce.modele.ef52dc55">Charger ce modèle</button>
+                      [disabled]="!selected()" i18n="@@accounting.manual-entry.charger.ce.modele.ef52dc55"> Charger ce modèle </button>
             </div>
           </footer>
         </div>
@@ -148,6 +149,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class TemplatePickerModalComponent implements OnInit {
+  readonly loc_ui_tern_suppression_a620db = $localize`:@@ui.tern.suppression.a620db:Suppression…`;
+  readonly loc_ui_tern_supprimer_ce_modele_6a6201 = $localize`:@@ui.tern.supprimer.ce.modele.6a6201:🗑 Supprimer ce modèle`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly toast = inject(ToastService);
@@ -190,7 +193,7 @@ export class TemplatePickerModalComponent implements OnInit {
           if (res.success && res.data) {
             this.templates.set(res.data);
           } else {
-            this.error.set(res.error ?? 'Erreur lors du chargement des modèles.');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.chargement.des.modeles.d6d566:Erreur lors du chargement des modèles.`);
           }
         },
         error: err => {
@@ -226,8 +229,8 @@ export class TemplatePickerModalComponent implements OnInit {
       message: `Voulez-vous vraiment supprimer le modèle « ${sel.name} » ? Cette action est irréversible.`,
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@template-picker-modal.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@template-picker-modal.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.deleting.set(true);
@@ -239,7 +242,7 @@ export class TemplatePickerModalComponent implements OnInit {
               if (res.success) {
                 this.toast.add({
                   severity: 'success',
-                  summary: 'Modèle supprimé',
+                  summary: $localize`:@@template-picker-modal.component.summary.Modèle suppr:Modèle supprimé`,
                   detail: `Le modèle « ${sel.name} » a été supprimé.`,
                   life: 4000
                 });
@@ -248,8 +251,8 @@ export class TemplatePickerModalComponent implements OnInit {
               } else {
                 this.toast.add({
                   severity: 'error',
-                  summary: 'Échec de la suppression',
-                  detail: res.error ?? 'Erreur lors de la suppression.',
+                  summary: $localize`:@@template-picker-modal.component.summary._chec_de_la_supp:Échec de la suppression`,
+                  detail: res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.suppression.54158e:Erreur lors de la suppression.`,
                   life: 6000
                 });
               }
@@ -258,7 +261,7 @@ export class TemplatePickerModalComponent implements OnInit {
               this.deleting.set(false);
               this.toast.add({
                 severity: 'error',
-                summary: 'Impossible de supprimer le modèle.',
+                summary: $localize`:@@template-picker-modal.component.summary.Impossible d:Impossible de supprimer le modèle.`,
                 detail: this.errors.extractErrorMessage(err, 'Erreur réseau'),
                 life: 6000
               });

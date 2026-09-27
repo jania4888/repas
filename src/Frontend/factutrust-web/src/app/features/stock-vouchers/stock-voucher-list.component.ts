@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
@@ -28,7 +30,7 @@ import {
 @Component({
   selector: 'app-stock-voucher-list',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -108,8 +110,8 @@ import {
           <input id="filter-to" type="date" class="date-input" [(ngModel)]="toDate" />
         </div>
         <div class="filter-actions">
-          <button pButton type="button" label="Appliquer" icon="pi pi-filter" (click)="reload()"></button>
-          <button pButton type="button" label="Réinitialiser" class="p-button-outlined" (click)="resetFilters()"></button>
+          <button pButton type="button" label="Appliquer" i18n-label="Appliquer" icon="pi pi-filter" (click)="reload()"></button>
+          <button pButton type="button" label="Réinitialiser" i18n-label="Réinitialiser" class="p-button-outlined" (click)="resetFilters()"></button>
         </div>
       </div>
     </div>
@@ -126,7 +128,7 @@ import {
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons"
         (onLazyLoad)="onLazyLoad($event)"
         styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
@@ -149,15 +151,15 @@ import {
             </td>
             <td>{{ row.voucherDate | date:'dd/MM/yyyy' }}</td>
             <td>{{ row.warehouseName || '—' }}</td>
-            <td>{{ row.reasonDisplay }}</td>
+            <td>{{ row.reasonDisplay | backendLabel }}</td>
             <td>{{ row.lineCount }}</td>
             <td>{{ row.totalQuantity | number:'1.0-3' }}</td>
             <td>{{ row.totalValue | currency:'TND':'symbol':'1.3-3' }}</td>
             <td>
-              <span class="status-badge" [ngClass]="row.statusCss">{{ row.statusDisplay }}</span>
+              <span class="status-badge" [ngClass]="row.statusCss">{{ row.statusDisplay | backendLabel }}</span>
             </td>
             <td>
-              <a [routerLink]="[row.id]" class="btn-icon" [attr.aria-label]="'Voir ' + row.number">
+              <a [routerLink]="[row.id]" class="btn-icon" [attr.aria-label]="loc_ui_tern_voir_ab3de7 + row.number">
                 <i class="fas fa-eye" aria-hidden="true"></i>
               </a>
             </td>
@@ -199,6 +201,7 @@ import {
   `]
 })
 export class StockVoucherListComponent implements OnInit {
+  readonly loc_ui_tern_voir_ab3de7 = $localize`:@@ui.tern.voir.ab3de7:Voir `;
   private voucherService = inject(StockVoucherService);
   private stockService = inject(StockService);
   private route = inject(ActivatedRoute);
@@ -208,16 +211,16 @@ export class StockVoucherListComponent implements OnInit {
 
   readonly isEntry = (this.route.snapshot.data['kind'] as StockVoucherKindName) !== 'Issue';
   readonly kind: StockVoucherKindName = this.isEntry ? 'Entry' : 'Issue';
-  readonly title = this.isEntry ? "Bons d'entrée" : 'Bons de sortie';
+  readonly title = this.isEntry ? $localize`:@@ui.tern.bons.d.entree.c04705:Bons d'entrée` : $localize`:@@ui.tern.bons.de.sortie.ccd59b:Bons de sortie`;
   readonly subtitle = this.isEntry
-    ? 'Documents d’entrée de stock (stock initial, retours hors BRT, achats hors réception).'
-    : 'Documents de sortie de stock (casse, usage interne, dons, retours hors flux achat).';
-  readonly createLabel = this.isEntry ? 'Nouveau bon d’entrée' : 'Nouveau bon de sortie';
+    ? $localize`:@@ui.tern.documents.d.entree.de.stock.stock.initial..1b12ca:Documents d’entrée de stock (stock initial, retours hors BRT, achats hors réception).`
+    : $localize`:@@ui.tern.documents.de.sortie.de.stock.casse.usage.i.718eff:Documents de sortie de stock (casse, usage interne, dons, retours hors flux achat).`;
+  readonly createLabel = this.isEntry ? $localize`:@@ui.tern.nouveau.bon.d.entree.4b0d6e:Nouveau bon d’entrée` : $localize`:@@ui.tern.nouveau.bon.de.sortie.39e890:Nouveau bon de sortie`;
   readonly newRoute = this.isEntry ? '/stock/entries/new' : '/stock/issues/new';
-  readonly emptyTitle = this.isEntry ? "Aucun bon d'entrée" : 'Aucun bon de sortie';
+  readonly emptyTitle = this.isEntry ? $localize`:@@ui.tern.aucun.bon.d.entree.adae22:Aucun bon d'entrée` : $localize`:@@ui.tern.aucun.bon.de.sortie.1cf680:Aucun bon de sortie`;
   readonly emptyHint = this.isEntry
-    ? 'Pour un achat fournisseur, utilisez Achats > Bons de réception.'
-    : 'Les ventes et livraisons sortent le stock via la facture ou le bon de livraison.';
+    ? $localize`:@@ui.tern.pour.un.achat.fournisseur.utilisez.achats..08c2cf:Pour un achat fournisseur, utilisez Achats > Bons de réception.`
+    : $localize`:@@ui.tern.les.ventes.et.livraisons.sortent.le.stock..41667a:Les ventes et livraisons sortent le stock via la facture ou le bon de livraison.`;
 
   breadcrumbItems: BreadcrumbItem[] = [
     { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
@@ -253,9 +256,9 @@ export class StockVoucherListComponent implements OnInit {
   warehouseOptions: { label: string; value: string }[] = [];
 
   readonly statusOptions: { label: string; value: StockVoucherStatusName }[] = [
-    { label: 'Brouillon', value: 'Draft' },
-    { label: 'Validé', value: 'Validated' },
-    { label: 'Annulé', value: 'Cancelled' }
+    { label: $localize`:@@stock-vouchers.list.filter.brouillon:Brouillon`, value: 'Draft' },
+    { label: $localize`:@@stock-vouchers.list.filter.valide:Validé`, value: 'Validated' },
+    { label: $localize`:@@stock-vouchers.list.filter.annule:Annulé`, value: 'Cancelled' }
   ];
 
   ngOnInit(): void {
@@ -313,7 +316,7 @@ export class StockVoucherListComponent implements OnInit {
         },
         error: () => {
           this.loading.set(false);
-          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de charger les bons' });
+          this.messageService.add({ severity: 'error', summary: $localize`:@@stock-voucher-list.component.summary.Erreur:Erreur`, detail: $localize`:@@stock-voucher-list.component.detail.Impossible_de_ch:Impossible de charger les bons` });
         }
       });
   }

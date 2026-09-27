@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -71,7 +73,7 @@ import {
 @Component({
   selector: 'app-delivery-note-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterModule,
@@ -100,18 +102,18 @@ import {
     
     <app-page-header 
       [title]="deliveryNote()?.number || 'Chargement...'" 
-      [subtitle]="'Bon de livraison du ' + (deliveryNote()?.issueDate | date:'dd/MM/yyyy')">
+      [subtitle]="loc_ui_tern_bon_de_livraison_du_b10ffc + (deliveryNote()?.issueDate | date:'dd/MM/yyyy')">
       <app-button 
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/delivery-notes" i18n="@@delivery-notes.pages.retour.e5befb1f">Retour</app-button>
+        routerLink="/delivery-notes" i18n="@@delivery-notes.pages.retour.e5befb1f"> Retour </app-button>
       @if (canCreateReturnNote()) {
         <app-button
           variant="outline"
           icon="pi-replay"
           iconPos="left"
-          (clicked)="createReturnNote()" i18n="@@delivery-notes.pages.creer.un.bon.de.retour.a9261008">Créer un bon de retour</app-button>
+          (clicked)="createReturnNote()" i18n="@@delivery-notes.pages.creer.un.bon.de.retour.a9261008"> Créer un bon de retour </app-button>
       }
       @if (primaryAction(); as action) {
         <app-button
@@ -154,7 +156,7 @@ import {
                 <h2>{{ deliveryNote()!.number }}</h2>
                 <app-status-badge 
                   [status]="getStatusBadgeStatus(deliveryNote()!.status)"
-                  [label]="deliveryNote()!.statusDisplay">
+                  [label]="deliveryNote()!.statusDisplay | backendLabel">
                 </app-status-badge>
               </div>
               <div class="delivery-note-dates">
@@ -279,8 +281,8 @@ import {
 
             @if (isFullyReturned()) {
               <p-divider></p-divider>
-              <p class="return-info" i18n="@@delivery-notes.pages.toutes.les.quantites.livrees.ont.ete.retournees..812a9aee">Toutes les quantités livrées ont été retournées — impossible de facturer.
-                Ce n'est pas un avoir : le stock a déjà été réintégré via le bon de retour.</p>
+              <p class="return-info" i18n="@@delivery-notes.pages.toutes.les.quantites.livrees.ont.ete.retournees..812a9aee"> Toutes les quantités livrées ont été retournées — impossible de facturer.
+                Ce n'est pas un avoir : le stock a déjà été réintégré via le bon de retour. </p>
             }
 
             @if (deliveryNote()!.returnNotes?.length) {
@@ -291,7 +293,7 @@ import {
                   @for (rtn of deliveryNote()!.returnNotes!; track rtn.id) {
                     <li>
                       <a [routerLink]="['/return-notes', rtn.id]">{{ rtn.number }}</a>
-                      <span> — {{ rtn.statusDisplay }} · {{ rtn.returnDate | date:'dd/MM/yyyy' }} · qté {{ rtn.totalReturnedQuantity | number:'1.0-3' }}</span>
+                      <span> — {{ rtn.statusDisplay | backendLabel }} · {{ rtn.returnDate | date:'dd/MM/yyyy' }} · qté {{ rtn.totalReturnedQuantity | number:'1.0-3' }}</span>
                     </li>
                   }
                 </ul>
@@ -319,16 +321,16 @@ import {
         <!-- Sidebar -->
         <div class="sidebar">
           <!-- Status Card -->
-          <p-card header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="Statut" styleClass="status-card">
             <div class="status-content">
               <app-status-badge 
                 [status]="getStatusBadgeStatus(deliveryNote()!.status)"
-                [label]="deliveryNote()!.statusDisplay">
+                [label]="deliveryNote()!.statusDisplay | backendLabel">
               </app-status-badge>
             </div>
           </p-card>
 
-          <p-card header="Entrepôt" styleClass="status-card">
+          <p-card header="Entrepôt" i18n-header="Entrepôt" styleClass="status-card">
             <div class="status-content">
               <span>{{ deliveryNote()!.warehouseName || 'Entrepôt par défaut' }}</span>
             </div>
@@ -336,7 +338,7 @@ import {
 
           <!-- Signature Info -->
           @if (deliveryNote()!.signedAt) {
-            <p-card header="Signature" styleClass="signature-card">
+            <p-card header="Signature" i18n-header="Signature" styleClass="signature-card">
               <div class="signature-info">
                 <div class="info-row">
                   <i class="pi pi-verified"></i>
@@ -354,7 +356,7 @@ import {
 
       <!-- Delivery Recording Dialog -->
       <p-dialog 
-        header="Enregistrer la livraison" 
+        header="Enregistrer la livraison" i18n-header="Enregistrer la livraison" 
         [(visible)]="showDeliveryDialog" 
         [modal]="true"
         styleClass="ft-dialog-scrollable"
@@ -366,7 +368,7 @@ import {
             <span class="delivery-context-number">{{ deliveryNote()!.number }}</span>
             @if (deliveryWarehouseLabel()) {
               <span class="delivery-context-warehouse">
-                Déduction depuis <strong>{{ deliveryWarehouseLabel() }}</strong>
+                <ng-container i18n="@@delivery-notes.pages.deduction.depuis.35c6b781"> Déduction depuis </ng-container> <strong>{{ deliveryWarehouseLabel() }}</strong>
                 @if (deliveryWarehouseIsDefault()) {
                   <span class="delivery-default-badge" i18n="@@delivery-notes.pages.par.defaut.feee7660">par défaut</span>
                 }
@@ -416,12 +418,12 @@ import {
 
           <div class="delivery-form-grid">
             <div class="delivery-form-group">
-              <label for="recipientName">Nom du réceptionnaire <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
+              <label for="recipientName"><ng-container i18n="@@delivery-notes.pages.nom.du.receptionnaire.9b14b159">Nom du réceptionnaire </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <input pInputText id="recipientName" [(ngModel)]="deliveryForm.recipientName" 
                 placeholder="Personne ayant signé la réception" i18n-placeholder="Personne ayant signé la réception" class="w-full delivery-header-input" />
             </div>
             <div class="delivery-form-group">
-              <label for="deliveryDate">Date de livraison <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
+              <label for="deliveryDate"><ng-container i18n="@@delivery-notes.pages.date.de.livraison.39361f0f">Date de livraison </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <p-datepicker
                 id="deliveryDate"
                 [(ngModel)]="deliveryForm.deliveryDate"
@@ -509,7 +511,7 @@ import {
           <div class="dialog-footer">
             <app-button variant="outline" icon="pi-times" iconPos="left" (click)="showDeliveryDialog = false" i18n="@@delivery-notes.pages.annuler.49ba3292">Annuler</app-button>
             <app-button variant="primary" icon="pi-check" iconPos="left"
-              [disabled]="!isDeliveryFormValid()" (click)="submitDelivery()" i18n="@@delivery-notes.pages.valider.la.livraison.f8f247be">Valider la livraison</app-button>
+              [disabled]="!isDeliveryFormValid()" (click)="submitDelivery()" i18n="@@delivery-notes.pages.valider.la.livraison.f8f247be"> Valider la livraison </app-button>
           </div>
         </ng-template>
       </p-dialog>
@@ -1064,6 +1066,7 @@ import {
   `]
 })
 export class DeliveryNoteDetailComponent implements OnInit {
+  readonly loc_ui_tern_bon_de_livraison_du_b10ffc = $localize`:@@ui.tern.bon.de.livraison.du.b10ffc:Bon de livraison du `;
   private deliveryNoteService = inject(DeliveryNoteService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -1204,7 +1207,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
 
     if (note.invoiceId) {
       this.menuItems.push({
-        label: note.invoiceNumber ? `Voir la facture ${note.invoiceNumber}` : 'Voir la facture',
+        label: note.invoiceNumber ? $localize`:@@ui.tern.voir.la.facture.ph.f92328:Voir la facture ${note.invoiceNumber}:p0:` : $localize`:@@ui.tern.voir.la.facture.e4bdde:Voir la facture`,
         icon: 'pi pi-file',
         routerLink: ['/invoices', note.invoiceId]
       });
@@ -1235,8 +1238,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
     this.confirmationService.confirm({
       header: 'Confirmer le bon de livraison',
       message: `Êtes-vous sûr de vouloir confirmer le bon de livraison ${note.number} ?`,
-      acceptLabel: 'Confirmer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.Confirmer:Confirmer`,
+      rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Annuler:Annuler`,
       icon: 'pi pi-check-circle',
       accept: () => {
         this.workflowActionInProgress.set(true);
@@ -1246,14 +1249,14 @@ export class DeliveryNoteDetailComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Bon de livraison confirmé avec succès'
+                summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+                detail: $localize`:@@delivery-note-detail.component.detail.bon.de.livraison.confirme.avec.succes.d52ec9b8:Bon de livraison confirmé avec succès`
               });
               this.loadDeliveryNote(note.id);
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
+                summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
                 detail: (response as any).message || 'Impossible de confirmer le bon de livraison'
               });
             }
@@ -1264,15 +1267,15 @@ export class DeliveryNoteDetailComponent implements OnInit {
             if (this.isAlreadyConfirmedError(message)) {
               this.toastService.add({
                 severity: 'info',
-                summary: 'Information',
-                detail: 'Ce bon est déjà confirmé. Utilisez « Démarrer livraison » pour continuer.'
+                summary: $localize`:@@delivery-note-detail.component.summary.Information:Information`,
+                detail: $localize`:@@delivery-note-detail.component.detail.Ce_bon_est_d_j_:Ce bon est déjà confirmé. Utilisez « Démarrer livraison » pour continuer.`
               });
               this.loadDeliveryNote(note.id);
               return;
             }
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
               detail: message
             });
           }
@@ -1288,8 +1291,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
     this.confirmationService.confirm({
       header: 'Démarrer la livraison',
       message: `Êtes-vous sûr de vouloir démarrer la livraison du bon ${note.number} ?`,
-      acceptLabel: 'Démarrer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.Démarrer:Démarrer`,
+      rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Annuler:Annuler`,
       icon: 'pi pi-truck',
       accept: () => {
         this.workflowActionInProgress.set(true);
@@ -1299,14 +1302,14 @@ export class DeliveryNoteDetailComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Livraison démarrée avec succès'
+                summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+                detail: $localize`:@@delivery-note-detail.component.detail.Livraison_d_marr:Livraison démarrée avec succès`
               });
               this.loadDeliveryNote(note.id);
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
+                summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
                 detail: (response as any).message || 'Impossible de démarrer la livraison'
               });
             }
@@ -1315,7 +1318,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
             this.workflowActionInProgress.set(false);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }
@@ -1684,8 +1687,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
           this.showDeliveryDialog = false;
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Livraison enregistrée avec succès'
+            summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+            detail: $localize`:@@delivery-note-detail.component.detail.Livraison_enregi:Livraison enregistrée avec succès`
           });
           this.loadDeliveryNote(note.id);
         } else {
@@ -1693,7 +1696,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
           this.deliverySubmitError.set(message);
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
             detail: message
           });
         }
@@ -1716,8 +1719,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
     this.confirmationService.confirm({
       header: 'Annuler le bon de livraison',
       message: `Êtes-vous sûr de vouloir annuler le bon de livraison ${note.number} ?`,
-      acceptLabel: 'Annuler le bon',
-      rejectLabel: 'Retour',
+      acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.Annuler_le_bon:Annuler le bon`,
+      rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Retour:Retour`,
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
@@ -1728,14 +1731,14 @@ export class DeliveryNoteDetailComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Bon de livraison annulé'
+                summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+                detail: $localize`:@@delivery-note-detail.component.detail.bon.de.livraison.annule.94728b09:Bon de livraison annulé`
               });
               this.loadDeliveryNote(note.id);
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
+                summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
                 detail: (response as any).message || 'Impossible d\'annuler le bon de livraison'
               });
             }
@@ -1744,7 +1747,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
             this.workflowActionInProgress.set(false);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }
@@ -1759,8 +1762,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
     if (!canGenerateInvoiceFromDeliveryNote(note)) {
       this.toastService.add({
         severity: 'warn',
-        summary: 'Facturation impossible',
-        detail: 'Toutes les quantités livrées ont été retournées — impossible de facturer.'
+        summary: $localize`:@@delivery-note-detail.component.summary.Facturation_impo:Facturation impossible`,
+        detail: $localize`:@@delivery-note-detail.component.detail.Toutes_les_quant:Toutes les quantités livrées ont été retournées — impossible de facturer.`
       });
       return;
     }
@@ -1768,8 +1771,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
     this.confirmationService.confirm({
       header: 'Générer facture',
       message: `Voulez-vous générer une facture pour le bon de livraison ${note.number} ?`,
-      acceptLabel: 'Générer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.G_n_rer:Générer`,
+      rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Annuler:Annuler`,
       icon: 'pi pi-file',
       accept: () => {
         this.workflowActionInProgress.set(true);
@@ -1779,8 +1782,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
             if (response.success) {
               this.toastService.add({
                 severity: 'success',
-                summary: 'Succès',
-                detail: 'Facture générée avec succès'
+                summary: $localize`:@@delivery-note-detail.component.summary.Succès:Succès`,
+                detail: $localize`:@@delivery-note-detail.component.detail.Facture_g_n_r_e_:Facture générée avec succès`
               });
               this.loadDeliveryNote(note.id);
               if (response.data) {
@@ -1789,7 +1792,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
             } else {
               this.toastService.add({
                 severity: 'error',
-                summary: 'Erreur',
+                summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
                 detail: (response as any).message || 'Impossible de générer la facture'
               });
             }
@@ -1798,7 +1801,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
             this.workflowActionInProgress.set(false);
             this.toastService.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err)
             });
           }

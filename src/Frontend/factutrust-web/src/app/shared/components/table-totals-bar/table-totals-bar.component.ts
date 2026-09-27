@@ -175,7 +175,7 @@ export class TableTotalsBarComponent {
     }
     switch (m.format) {
       case 'currency':
-        return `${this.decimal.transform(m.value, '1.3-3')} ${m.currency ?? 'TND'}`;
+        return `${this.decimal.transform(m.value, '1.3-3')} ${m.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`}`;
       case 'percent':
         return `${this.decimal.transform(m.value, '1.0-1')} %`;
       default:

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -23,7 +24,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
       title="Rapports" i18n-title="Rapports"
       subtitle="Analysez vos tables personnalisées et vos données existantes."
       [breadcrumbs]="breadcrumbs">
-      <button pButton type="button" label="Nouveau rapport" icon="fa-solid fa-plus" studioActions routerLink="/studio/reports/new"></button>
+      <button pButton type="button" label="Nouveau rapport" i18n-label="Nouveau rapport" icon="fa-solid fa-plus" studioActions routerLink="/studio/reports/new"></button>
 
       <div class="ft-table-card">
         <p-table [value]="reports()" [loading]="loading()" styleClass="p-datatable-sm">
@@ -37,10 +38,10 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
                 <i [class]="r.dataSourceKind === ExistingKind ? 'fa-solid fa-database' : 'fa-solid fa-table'" class="studio-mr"></i>
                 {{ r.dataSourceRef }}
               </td>
-              <td>{{ r.definition.grouping.length > 0 ? 'Agrégé' : 'Détail' }}</td>
+              <td>{{ r.definition.grouping.length > 0 ? loc_ui_tern_agrege_a31b89 : loc_ui_tern_detail_7ce06a }}</td>
               <td class="studio-actions">
-                <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id, 'view']" pTooltip="Voir"></button>
-                <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id]" pTooltip="Modifier"></button>
+                <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id, 'view']" pTooltip="Voir" i18n-pTooltip="Voir"></button>
+                <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id]" pTooltip="Modifier" i18n-pTooltip="Modifier"></button>
                 <button pButton type="button" icon="fa-solid fa-trash" class="p-button-text p-button-sm p-button-danger" (click)="remove(r)"></button>
               </td>
             </tr>
@@ -58,6 +59,8 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
   styleUrl: './shared/studio-layout.scss',
 })
 export class StudioReportListComponent implements OnInit {
+  readonly loc_ui_tern_agrege_a31b89 = $localize`:@@ui.tern.agrege.a31b89:Agrégé`;
+  readonly loc_ui_tern_detail_7ce06a = $localize`:@@ui.tern.detail.7ce06a:Détail`;
   private readonly studio = inject(StudioService);
   private readonly toast = inject(MessageService);
   private readonly confirmation = inject(ConfirmationService);
@@ -73,7 +76,7 @@ export class StudioReportListComponent implements OnInit {
     this.loading.set(true);
     this.studio.listReports().subscribe({
       next: res => { this.loading.set(false); if (res.success) this.reports.set(res.data ?? []); },
-      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Chargement impossible.' }); }
+      error: () => { this.loading.set(false); this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-list.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-report-list.component.detail.Chargement_impos:Chargement impossible.` }); }
     });
   }
 
@@ -81,12 +84,12 @@ export class StudioReportListComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer le rapport « ${r.displayName} » ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@studio-report-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@studio-report-list.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
         this.studio.deleteReport(r.id).subscribe({
           next: res => { if (res.success) this.load(); },
-          error: () => this.toast.add({ severity: 'error', summary: 'Erreur', detail: 'Suppression impossible.' })
+          error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-report-list.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-report-list.component.detail.Suppression_impo:Suppression impossible.` })
         });
       }
     });

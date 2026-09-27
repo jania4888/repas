@@ -51,11 +51,11 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
         </header>
 
         <div class="modal-body">
-          <p class="hint" i18n="@@forecasting.components.indiquez.pourquoi.cette.recommandation.est.ecart.d7371962">Indiquez pourquoi cette recommandation est écartée. Cette information est conservée
-            dans l'historique des décisions et accessible aux auditeurs.</p>
+          <p class="hint" i18n="@@forecasting.components.indiquez.pourquoi.cette.recommandation.est.ecart.d7371962"> Indiquez pourquoi cette recommandation est écartée. Cette information est conservée
+            dans l'historique des décisions et accessible aux auditeurs. </p>
 
           <label class="field">
-            <span class="field-label">Raison <span class="required" aria-hidden="true" i18n="@@forecasting.components.text.df58248c">*</span></span>
+            <span class="field-label"><ng-container i18n="@@forecasting.components.raison.c14900ea">Raison </ng-container> <span class="required" aria-hidden="true" i18n="@@forecasting.components.text.df58248c">*</span></span>
             <select
               [(ngModel)]="selectedCode"
               (ngModelChange)="onSelectCode($event)"
@@ -68,7 +68,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
 
           @if (selectedCode() === 'Other') {
             <label class="field">
-              <span class="field-label">Précisez <span class="required" aria-hidden="true" i18n="@@forecasting.components.text.df58248c">*</span></span>
+              <span class="field-label"><ng-container i18n="@@forecasting.components.precisez.d9a27eb3">Précisez </ng-container> <span class="required" aria-hidden="true" i18n="@@forecasting.components.text.df58248c">*</span></span>
               <textarea
                 [(ngModel)]="customText"
                 (ngModelChange)="customText.set($event)"
@@ -81,7 +81,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
           }
 
           @if (showValidationError()) {
-            <p class="error" role="alert" i18n="@@forecasting.components.la.raison.du.rejet.est.obligatoire.veuillez.choi.ff21bb63">La raison du rejet est obligatoire. Veuillez choisir une option ou détailler votre motif.</p>
+            <p class="error" role="alert" i18n="@@forecasting.components.la.raison.du.rejet.est.obligatoire.veuillez.choi.ff21bb63"> La raison du rejet est obligatoire. Veuillez choisir une option ou détailler votre motif. </p>
           }
         </div>
 
@@ -91,7 +91,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
             class="btn btn-danger"
             type="button"
             (click)="onConfirm()"
-            [disabled]="!canConfirm()" i18n="@@forecasting.components.confirmer.l.abandon.130aa235">Confirmer l'abandon</button>
+            [disabled]="!canConfirm()" i18n="@@forecasting.components.confirmer.l.abandon.130aa235"> Confirmer l'abandon </button>
         </footer>
       </div>
     </div>

@@ -65,14 +65,14 @@
                       @if (child.icon) {
                         <i class="secondary-nav__icon" [ngClass]="child.icon" aria-hidden="true"></i>
                       }
-                      <span class="secondary-nav__submenu-label">{{ child.label }}</span>
+                      <span class="secondary-nav__submenu-label">{{ childDisplayLabel(child) }}</span>
                       <i class="fa-solid fa-chevron-right secondary-nav__submenu-chevron" aria-hidden="true"></i>
                     </button>
                     <div
                       class="secondary-nav__submenu-panel"
                       [id]="submenuId(child)"
                       role="menu"
-                      [attr.aria-label]="child.label"
+                      [attr.aria-label]="childDisplayLabel(child)"
                       [attr.aria-hidden]="!isSubmenuOpen(child)">
                       <a
                         role="menuitem"
@@ -97,7 +97,7 @@
                           @if (grand.icon) {
                             <i class="secondary-nav__icon" [ngClass]="grand.icon" aria-hidden="true"></i>
                           }
-                          <span>{{ grand.label }}</span>
+                          <span>{{ childDisplayLabel(grand) }}</span>
                         </a>
                       }
                     </div>
@@ -113,7 +113,7 @@
                     @if (child.icon) {
                       <i class="secondary-nav__icon" [ngClass]="child.icon" aria-hidden="true"></i>
                     }
-                    <span>{{ child.label }}</span>
+                    <span>{{ childDisplayLabel(child) }}</span>
                   </a>
                 }
               }

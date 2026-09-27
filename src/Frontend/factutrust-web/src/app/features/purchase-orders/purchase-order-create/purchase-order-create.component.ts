@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -55,14 +56,14 @@ interface OrderLine {
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/purchase-orders" i18n="@@purchase-orders.purchase-order-create.annuler.49ba3292">Annuler</app-button>
+        routerLink="/purchase-orders" i18n="@@purchase-orders.purchase-order-create.annuler.49ba3292"> Annuler </app-button>
     </app-page-header>
 
     <div class="form-grid">
       <!-- Section 1: Informations générales -->
       <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-building" [number]="1">
         <div class="form-group">
-          <label for="supplier">Fournisseur <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></label>
+          <label for="supplier"><ng-container i18n="@@purchase-orders.purchase-order-create.fournisseur.97d91d89">Fournisseur </ng-container> <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></label>
           <p-select
             id="supplier"
             [options]="suppliers()"
@@ -78,7 +79,7 @@ interface OrderLine {
 
         <div class="form-row">
           <div class="form-group">
-            <label for="orderDate">Date de commande <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></label>
+            <label for="orderDate"><ng-container i18n="@@purchase-orders.purchase-order-create.date.de.commande.f9b0df86">Date de commande </ng-container> <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></label>
             <p-datepicker
               id="orderDate"
               [(ngModel)]="orderDate"
@@ -128,7 +129,7 @@ interface OrderLine {
         </div>
         <div class="form-group" style="margin-top: 1rem;">
           <app-warehouse-selector
-            label="Entrepôt de réception"
+            label="Entrepôt de réception" i18n-label="Entrepôt de réception"
             placeholder="Entrepôt par défaut" i18n-placeholder="Entrepôt par défaut"
             [value]="selectedWarehouseId"
             (valueChange)="selectedWarehouseId = $event">
@@ -142,7 +143,7 @@ interface OrderLine {
     <app-form-section title="Lignes de commande" i18n-title="Lignes de commande" icon="pi-list" [number]="3" class="lines-section">
       <div class="section-header-actions">
         <app-button variant="secondary" icon="pi-plus" iconPos="left" size="sm"
-          (click)="addLine()" i18n="@@purchase-orders.purchase-order-create.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
+          (click)="addLine()" i18n="@@purchase-orders.purchase-order-create.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
         @if (barcodeScanEnabled) {
           <div class="barcode-scan-row">
             <ft-barcode-scan-field
@@ -164,8 +165,8 @@ interface OrderLine {
             <thead>
               <tr>
                 <th style="width: 40px" i18n="@@purchase-orders.purchase-order-create.text.d08f88df">#</th>
-                <th>Produit <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></th>
-                <th style="width: 120px">Quantité <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></th>
+                <th><ng-container i18n="@@purchase-orders.purchase-order-create.produit.ff673dc2">Produit </ng-container> <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></th>
+                <th style="width: 120px"><ng-container i18n="@@purchase-orders.purchase-order-create.quantite.09a38fda">Quantité </ng-container> <span class="required" i18n="@@purchase-orders.purchase-order-create.text.df58248c">*</span></th>
                 <th style="width: 140px" i18n="@@purchase-orders.purchase-order-create.prix.unitaire.ht.bb3f8e39">Prix unitaire HT</th>
                 <th style="width: 80px" i18n="@@purchase-orders.purchase-order-create.tva.fb62cb5d">TVA</th>
                 <th style="width: 140px" i18n="@@purchase-orders.purchase-order-create.total.ttc.9e80ff7c">Total TTC</th>
@@ -264,13 +265,13 @@ interface OrderLine {
         variant="outline"
         icon="pi-times"
         iconPos="left"
-        routerLink="/purchase-orders" i18n="@@purchase-orders.purchase-order-create.annuler.49ba3292">Annuler</app-button>
+        routerLink="/purchase-orders" i18n="@@purchase-orders.purchase-order-create.annuler.49ba3292"> Annuler </app-button>
       <app-button
         variant="primary"
         [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
         iconPos="left"
         [disabled]="!isFormValid() || submitting()"
-        (click)="submitOrder()" i18n="@@purchase-orders.purchase-order-create.creer.en.brouillon.a3210155">Créer en brouillon</app-button>
+        (click)="submitOrder()" i18n="@@purchase-orders.purchase-order-create.creer.en.brouillon.a3210155"> Créer en brouillon </app-button>
     </div>
   `,
   styles: [`
@@ -627,8 +628,8 @@ export class PurchaseOrderCreateComponent implements OnInit {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Bon de commande créé avec succès'
+            summary: $localize`:@@purchase-order-create.component.summary.Succès:Succès`,
+            detail: $localize`:@@purchase-order-create.component.detail.Bon_de_commande_:Bon de commande créé avec succès`
           });
           this.router.navigate(['/purchase-orders', response.data]);
         }
@@ -638,7 +639,7 @@ export class PurchaseOrderCreateComponent implements OnInit {
         this.submitting.set(false);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@purchase-order-create.component.summary.Erreur:Erreur`,
           detail: err?.error?.errors?.[0] || 'Erreur lors de la création'
         });
       }

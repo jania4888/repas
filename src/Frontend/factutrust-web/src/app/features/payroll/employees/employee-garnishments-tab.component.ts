@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -39,7 +41,7 @@ const GARNISHMENT_KIND_OPTIONS = [
 @Component({
   selector: 'app-employee-garnishments-tab',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     TableModule,
@@ -79,14 +81,14 @@ const GARNISHMENT_KIND_OPTIONS = [
         </ng-template>
         <ng-template pTemplate="body" let-g>
           <tr>
-            <td>{{ g.typeDisplay || g.type }}</td>
+            <td>{{ (g.typeDisplay | backendLabel) || g.type }}</td>
             <td>{{ g.reference }}</td>
             <td>{{ g.beneficiaryName }}</td>
             <td>{{ amountLabel(g) }}</td>
             <td class="text-right">{{ g.totalAmountDue != null ? (g.totalAmountDue | payrollAmount) : '—' }}</td>
             <td class="text-right">{{ (g.totalApplied ?? 0) | payrollAmount }}</td>
             <td>
-              <p-tag [value]="g.statusDisplay || g.status" [severity]="garnishmentStatusSeverity(g.status)" />
+              <p-tag [value]="(g.statusDisplay | backendLabel) || g.status" [severity]="garnishmentStatusSeverity(g.status)" />
             </td>
             @if (!readOnly) {
               <td class="actions">
@@ -104,7 +106,7 @@ const GARNISHMENT_KIND_OPTIONS = [
       </p-table>
     </app-payroll-section>
 
-    <p-dialog [header]="editingId ? 'Modifier la saisie' : 'Nouvelle saisie'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '560px' }">
+    <p-dialog [header]="editingId ? loc_ui_tern_modifier_la_saisie_489cf6 : loc_ui_tern_nouvelle_saisie_ade08a" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '560px' }">
       <div class="payroll-form-row">
         <div class="payroll-form-group">
           <label i18n="@@payroll.employees.type.3deb7456">Type</label>
@@ -177,6 +179,8 @@ const GARNISHMENT_KIND_OPTIONS = [
   `]
 })
 export class EmployeeGarnishmentsTabComponent implements OnInit {
+  readonly loc_ui_tern_modifier_la_saisie_489cf6 = $localize`:@@ui.tern.modifier.la.saisie.489cf6:Modifier la saisie`;
+  readonly loc_ui_tern_nouvelle_saisie_ade08a = $localize`:@@ui.tern.nouvelle.saisie.ade08a:Nouvelle saisie`;
   @Input({ required: true }) employeeId!: string;
   @Input() readOnly = false;
 
@@ -209,7 +213,7 @@ export class EmployeeGarnishmentsTabComponent implements OnInit {
   reload(): void {
     this.payroll.listGarnishments(this.employeeId).subscribe({
       next: res => this.items.set(res.data ?? []),
-      error: () => this.toast.add({ severity: 'error', summary: 'Saisies', detail: 'Chargement impossible.' })
+      error: () => this.toast.add({ severity: 'error', summary: $localize`:@@employee-garnishments-tab.component.summary.Saisies:Saisies`, detail: $localize`:@@employee-garnishments-tab.component.detail.Chargement_impos:Chargement impossible.` })
     });
   }
 
@@ -217,7 +221,7 @@ export class EmployeeGarnishmentsTabComponent implements OnInit {
     if (g.kind === 'PercentOfNet') {
       return `${g.percentOfNet ?? 0} % du net`;
     }
-    return g.fixedAmount != null ? `${g.fixedAmount} TND / mois` : (g.kindDisplay ?? g.kind);
+    return g.fixedAmount != null ? $localize`:@@ui.tern.ph.tnd.mois.553db0:${g.fixedAmount}:p0: TND / mois` : (g.kindDisplay ?? g.kind);
   }
 
   garnishmentStatusSeverity(status: string): 'success' | 'info' | 'secondary' {
@@ -292,11 +296,11 @@ export class EmployeeGarnishmentsTabComponent implements OnInit {
 
     req.subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Saisies', detail: 'Enregistré.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-garnishments-tab.component.summary.Saisies:Saisies`, detail: $localize`:@@employee-garnishments-tab.component.detail.Enregistr_:Enregistré.` });
         this.dialogVisible = false;
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Saisies', detail: err.error?.message ?? 'Enregistrement impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-garnishments-tab.component.summary.Saisies:Saisies`, detail: err.error?.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.` })
     });
   }
 
@@ -305,8 +309,8 @@ export class EmployeeGarnishmentsTabComponent implements OnInit {
     this.confirmation.confirm({
       message: `Annuler la saisie « ${g.reference} » ?`,
       header: 'Confirmation',
-      acceptLabel: 'Annuler la saisie',
-      rejectLabel: 'Fermer',
+      acceptLabel: $localize`:@@employee-garnishments-tab.component.acceptLabel.Annuler_la_saisi:Annuler la saisie`,
+      rejectLabel: $localize`:@@employee-garnishments-tab.component.rejectLabel.Fermer:Fermer`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.cancel(g.id)
     });
@@ -315,10 +319,10 @@ export class EmployeeGarnishmentsTabComponent implements OnInit {
   private cancel(id: string): void {
     this.payroll.deleteGarnishment(this.employeeId, id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Saisies', detail: 'Saisie annulée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-garnishments-tab.component.summary.Saisies:Saisies`, detail: $localize`:@@employee-garnishments-tab.component.detail.Saisie_annul_e_:Saisie annulée.` });
         this.reload();
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Saisies', detail: err.error?.message ?? 'Annulation impossible.' })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@employee-garnishments-tab.component.summary.Saisies:Saisies`, detail: err.error?.message ?? $localize`:@@ui.tern.annulation.impossible.814b7d:Annulation impossible.` })
     });
   }
 }

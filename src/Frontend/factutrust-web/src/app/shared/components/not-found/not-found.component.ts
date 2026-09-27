@@ -11,9 +11,9 @@ import { ButtonModule } from 'primeng/button';
       <div class="not-found-content">
         <h1 class="error-code">404</h1>
         <h2 class="error-title" i18n="@@shared.components.not-found.not-found.page.non.trouvee.314ec33e">Page non trouvée</h2>
-        <p class="error-message" i18n="@@shared.components.not-found.not-found.la.page.que.vous.recherchez.n.existe.pas.ou.a.et.177090fb">La page que vous recherchez n'existe pas ou a été déplacée.</p>
+        <p class="error-message" i18n="@@shared.components.not-found.not-found.la.page.que.vous.recherchez.n.existe.pas.ou.a.et.177090fb"> La page que vous recherchez n'existe pas ou a été déplacée. </p>
         <p-button 
-          label="Retour à l'accueil" 
+          label="Retour à l'accueil" i18n-label="Retour à l'accueil" 
           icon="pi pi-home" 
           routerLink="/dashboard">
         </p-button>

@@ -9,7 +9,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   template: `
     <div class="modal-header confirm-modal-header">
       @if (icon) {
-        <i [class]="icon + ' confirm-modal-icon'" aria-hidden="true"></i>
+        <i [class]="icon + loc_ui_tern_confirm_modal_icon_e3a84f" aria-hidden="true"></i>
       }
       <h5 class="modal-title" id="confirmModalTitle">{{ header }}</h5>
       <button 
@@ -36,7 +36,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
       }
       <button 
         type="button" 
-        [class]="'btn confirm-modal-btn-accept ' + acceptButtonStyleClass"
+        [class]="loc_ui_tern_btn_confirm_modal_btn_accept_23fde5 + acceptButtonStyleClass"
         (click)="modal.close()"
         [attr.aria-label]="acceptLabel"
         tabindex="0">
@@ -211,6 +211,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   `]
 })
 export class ConfirmModalComponent {
+  readonly loc_ui_tern_confirm_modal_icon_e3a84f = " confirm-modal-icon";
+  readonly loc_ui_tern_btn_confirm_modal_btn_accept_23fde5 = "btn confirm-modal-btn-accept ";
   @Input() message = 'Êtes-vous sûr ?';
   @Input() header = 'Confirmation';
   @Input() icon = '';

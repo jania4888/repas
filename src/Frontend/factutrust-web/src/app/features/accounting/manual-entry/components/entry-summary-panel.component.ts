@@ -73,7 +73,7 @@ import { FUNCTIONAL_CURRENCY } from '../models/entry-form.model';
         }
       </dl>
       @if (store.hasNonPersistedAssistFields()) {
-        <p class="summary-panel__warn" role="note" i18n="@@accounting.manual-entry.certaines.colonnes.d.aide.piece.echeance.ne.sero.90877df6">Certaines colonnes d'aide (pièce, échéance) ne seront pas enregistrées.</p>
+        <p class="summary-panel__warn" role="note" i18n="@@accounting.manual-entry.certaines.colonnes.d.aide.piece.echeance.ne.sero.90877df6"> Certaines colonnes d'aide (pièce, échéance) ne seront pas enregistrées. </p>
       }
     </aside>
   `,

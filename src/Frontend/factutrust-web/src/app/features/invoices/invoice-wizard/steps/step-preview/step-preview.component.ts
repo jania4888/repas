@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, Output, EventEmitter, inject, signal } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -41,7 +42,7 @@ import {
 @Component({
   selector: 'app-step-preview',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     ButtonModule,
@@ -64,7 +65,7 @@ import {
             <i class="pi pi-eye"></i>
             Aperçu et validation
           </h2>
-          <p class="section-description" i18n="@@invoices.invoice-wizard.verifiez.les.informations.puis.emettez.la.factur.515bc47d">Vérifiez les informations puis émettez la facture lorsque tout est conforme.</p>
+          <p class="section-description" i18n="@@invoices.invoice-wizard.verifiez.les.informations.puis.emettez.la.factur.515bc47d"> Vérifiez les informations puis émettez la facture lorsque tout est conforme. </p>
         </div>
       </section>
 
@@ -91,7 +92,7 @@ import {
                 </div>
               </div>
               <div class="invoice-header-right">
-                <div class="facture-doc-title">{{ metadata.type === InvoiceType.CreditNote ? "FACTURE D'AVOIR" : 'FACTURE' }}</div>
+                <div class="facture-doc-title">{{ metadata.type === InvoiceType.CreditNote ? loc_ui_tern_facture_d_avoir_4c6fe8 : loc_ui_tern_facture_61fd01 }}</div>
                 <div class="invoice-type-badge" [class]="invoiceTypeBadgeClass">
                   {{ invoiceTypeLabel }}
                 </div>
@@ -122,7 +123,7 @@ import {
                 }
               </div>
               <div class="invoice-dates-block">
-                <div class="dates-block-line"><strong>{{ metadata.type === InvoiceType.CreditNote ? 'AVOIR n° :' : 'FACTURE n° :' }}</strong> {{ metadata.invoiceNumber || '—' }}</div>
+                <div class="dates-block-line"><strong>{{ metadata.type === InvoiceType.CreditNote ? loc_ui_tern_avoir_n_4d40ec : loc_ui_tern_facture_n_9d03d0 }}</strong> {{ metadata.invoiceNumber || '—' }}</div>
                 <div class="dates-block-line"><strong i18n="@@invoices.invoice-wizard.date.facture.6bf98d96">Date facture :</strong> {{ metadata.issueDate | date:'dd/MM/yyyy' }}</div>
                 @if (metadata.dueDate) {
                   <div class="dates-block-line"><strong i18n="@@invoices.invoice-wizard.echeance.0d63aefb">Échéance :</strong> {{ metadata.dueDate | date:'dd/MM/yyyy' }}</div>
@@ -203,7 +204,7 @@ import {
                     <tbody>
                       @for (item of totals.vatBreakdown; track item.rate) {
                         <tr>
-                          <td>{{ item.rateDisplay }}</td>
+                          <td>{{ item.rateDisplay | backendLabel }}</td>
                           <td class="text-right">{{ item.baseAmount | number:'1.3-3' }}</td>
                           <td class="text-right">{{ item.vatAmount | number:'1.3-3' }}</td>
                         </tr>
@@ -221,7 +222,7 @@ import {
                 @for (item of totals.vatBreakdown; track item.rate) {
                   @if (item.vatAmount > 0) {
                     <div class="total-line">
-                      <span>{{ item.rateDisplay }}</span>
+                      <span>{{ item.rateDisplay | backendLabel }}</span>
                       <span class="amount">{{ item.vatAmount | number:'1.3-3' }} {{ metadata.currency }}</span>
                     </div>
                   }
@@ -367,7 +368,7 @@ import {
               <div class="validation-details">
                 <p-accordion [multiple]="true">
                   <!-- Legal Checks -->
-                  <p-accordionTab header="Mentions légales" [selected]="hasErrorsInCategory('LEGAL')">
+                  <p-accordionTab header="Mentions légales" i18n-header="Mentions légales" [selected]="hasErrorsInCategory('LEGAL')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
                         <span i18n="@@invoices.invoice-wizard.mentions.legales.414291e0">Mentions légales</span>
@@ -386,7 +387,7 @@ import {
                   </p-accordionTab>
 
                   <!-- Fiscal Checks -->
-                  <p-accordionTab header="Conformité fiscale" [selected]="hasErrorsInCategory('FISCAL')">
+                  <p-accordionTab header="Conformité fiscale" i18n-header="Conformité fiscale" [selected]="hasErrorsInCategory('FISCAL')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
                         <span i18n="@@invoices.invoice-wizard.conformite.fiscale.f4dc5b52">Conformité fiscale</span>
@@ -405,7 +406,7 @@ import {
                   </p-accordionTab>
 
                   <!-- Calculation Checks -->
-                  <p-accordionTab header="Calculs" [selected]="hasErrorsInCategory('CALCULATION')">
+                  <p-accordionTab header="Calculs" i18n-header="Calculs" [selected]="hasErrorsInCategory('CALCULATION')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
                         <span i18n="@@invoices.invoice-wizard.calculs.009b0e4f">Calculs</span>
@@ -424,7 +425,7 @@ import {
                   </p-accordionTab>
 
                   <!-- Format Checks -->
-                  <p-accordionTab header="Format">
+                  <p-accordionTab header="Format" i18n-header="Format">
                     @for (check of getChecksByCategory('FORMAT'); track check.id) {
                       <div class="check-item" [class]="check.status.toLowerCase()">
                         <i [class]="getCheckIcon(check)"></i>
@@ -517,7 +518,7 @@ import {
         @if (featureFlags.pdfPreview()) {
           <div class="actions-pdf">
             <p-button
-              label="Télécharger aperçu PDF"
+              label="Télécharger aperçu PDF" i18n-label="Télécharger aperçu PDF"
               icon="pi pi-download"
               [text]="true"
               (click)="downloadPreview()">
@@ -1358,6 +1359,10 @@ import {
   `]
 })
 export class StepPreviewComponent implements OnInit {
+  readonly loc_ui_tern_facture_d_avoir_4c6fe8 = $localize`:@@ui.tern.facture.d.avoir.4c6fe8:FACTURE D'AVOIR`;
+  readonly loc_ui_tern_facture_61fd01 = $localize`:@@ui.tern.facture.61fd01:FACTURE`;
+  readonly loc_ui_tern_avoir_n_4d40ec = $localize`:@@ui.tern.avoir.n.4d40ec:AVOIR n° :`;
+  readonly loc_ui_tern_facture_n_9d03d0 = $localize`:@@ui.tern.facture.n.9d03d0:FACTURE n° :`;
   @Output() validateAndSubmit = new EventEmitter<void>();
 
   readonly wizardService = inject(InvoiceWizardService);
@@ -1406,7 +1411,7 @@ export class StepPreviewComponent implements OnInit {
   }
 
   get invoiceTypeLabel(): string {
-    return this.metadata.type === InvoiceType.CreditNote ? "Facture d'avoir" : 'Facture';
+    return this.metadata.type === InvoiceType.CreditNote ? $localize`:@@ui.tern.facture.d.avoir.541e44:Facture d'avoir` : $localize`:@@ui.tern.facture.3953b9:Facture`;
   }
 
   get invoiceTypeBadgeClass(): string {
@@ -1418,17 +1423,17 @@ export class StepPreviewComponent implements OnInit {
   }
 
   get emitActionTitle(): string {
-    return this.isCreditNote ? "Émettre l'avoir" : 'Émettre la facture';
+    return this.isCreditNote ? $localize`:@@ui.tern.emettre.l.avoir.4155eb:Émettre l'avoir` : $localize`:@@ui.tern.emettre.la.facture.9ba0dd:Émettre la facture`;
   }
 
   get emitButtonLabel(): string {
-    return this.isCreditNote ? "Émettre l'avoir" : 'Émettre la facture';
+    return this.isCreditNote ? $localize`:@@ui.tern.emettre.l.avoir.4155eb:Émettre l'avoir` : $localize`:@@ui.tern.emettre.la.facture.9ba0dd:Émettre la facture`;
   }
 
   get emitActionHint(): string {
     return this.isCreditNote
-      ? "L'avoir est validé immédiatement avec un numéro attribué."
-      : 'La facture est créée ; vous pourrez la valider et la signer depuis sa fiche.';
+      ? $localize`:@@ui.tern.l.avoir.est.valide.immediatement.avec.un.n.0d7593:L'avoir est validé immédiatement avec un numéro attribué.`
+      : $localize`:@@ui.tern.la.facture.est.creee.vous.pourrez.la.valid.ef8ee6:La facture est créée ; vous pourrez la valider et la signer depuis sa fiche.`;
   }
 
   lineRefLabel(_line: InvoiceLine): string {
@@ -1437,11 +1442,11 @@ export class StepPreviewComponent implements OnInit {
 
   get paymentMethodLabel(): string {
     const labels: Record<PaymentMethod, string> = {
-      [PaymentMethod.BankTransfer]: 'Virement bancaire',
-      [PaymentMethod.Cash]: 'Espèces',
-      [PaymentMethod.Check]: 'Chèque',
-      [PaymentMethod.Card]: 'Carte bancaire',
-      [PaymentMethod.Effect]: 'Effet de commerce'
+      [PaymentMethod.BankTransfer]: $localize`:@@ui.tern.virement.bancaire.8306f0:Virement bancaire`,
+      [PaymentMethod.Cash]: $localize`:@@ui.tern.especes.b7679d:Espèces`,
+      [PaymentMethod.Check]: $localize`:@@ui.tern.cheque.8bbb89:Chèque`,
+      [PaymentMethod.Card]: $localize`:@@ui.tern.carte.bancaire.9e3d9b:Carte bancaire`,
+      [PaymentMethod.Effect]: $localize`:@@ui.tern.effet.de.commerce.9793a8:Effet de commerce`
     };
     return labels[this.payment.method] || '';
   }

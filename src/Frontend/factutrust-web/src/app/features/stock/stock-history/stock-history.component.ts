@@ -35,12 +35,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     
     <app-page-header 
       [title]="'Historique des Mouvements'"
-      [subtitle]="productName() ? 'Produit: ' + productName() : 'Chargement...'">
+      [subtitle]="productName() ? loc_ui_tern_produit_fe4d4d + productName() : loc_ui_tern_chargement_a209b6">
       <app-button 
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/stock" i18n="@@stock.stock-history.retour.au.stock.5b0f5b07">Retour au Stock</app-button>
+        routerLink="/stock" i18n="@@stock.stock-history.retour.au.stock.5b0f5b07"> Retour au Stock </app-button>
     </app-page-header>
 
     <div class="history-card">
@@ -61,7 +61,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           [paginator]="true" 
           [rows]="20"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} mouvements"
+          currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} mouvements" i18n-currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} mouvements"
           [rowHover]="true"
           styleClass="p-datatable-striped">
           
@@ -83,7 +83,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               <td>{{ movement.occurredAt | date:'dd/MM/yyyy HH:mm' }}</td>
               <td>
                 <p-tag 
-                  [value]="movement.type === 'Entry' ? 'Entrée' : 'Sortie'" 
+                  [value]="movement.type === 'Entry' ? loc_ui_tern_entree_0ab59c : loc_ui_tern_sortie_fbd00e" 
                   [severity]="movement.type === 'Entry' ? 'success' : 'danger'">
                 </p-tag>
               </td>
@@ -144,6 +144,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `]
 })
 export class StockHistoryComponent implements OnInit {
+  readonly loc_ui_tern_produit_fe4d4d = $localize`:@@ui.tern.produit.fe4d4d:Produit: `;
+  readonly loc_ui_tern_chargement_a209b6 = $localize`:@@ui.tern.chargement.a209b6:Chargement...`;
+  readonly loc_ui_tern_entree_0ab59c = $localize`:@@ui.tern.entree.0ab59c:Entrée`;
+  readonly loc_ui_tern_sortie_fbd00e = $localize`:@@ui.tern.sortie.fbd00e:Sortie`;
   private route = inject(ActivatedRoute);
   private stockService = inject(StockService);
   private errorHandler = inject(ErrorHandlerService);

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -59,7 +60,7 @@ interface ActiveFilterOption {
       title="Modèles de devis" i18n-title="Modèles de devis"
       subtitle="Modèles réutilisables pour accélérer la création de devis et harmoniser vos offres.">
       @if (canCreate()) {
-        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@crm.quote-templates.nouveau.modele.c5b99d5d">Nouveau modèle</app-button>
+        <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@crm.quote-templates.nouveau.modele.c5b99d5d"> Nouveau modèle </app-button>
       }
     </app-page-header>
 
@@ -111,7 +112,7 @@ interface ActiveFilterOption {
           [paginator]="true"
           [rows]="10"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} modèles"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} modèles" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} modèles"
           [loading]="loading()"
           styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
@@ -138,11 +139,11 @@ interface ActiveFilterOption {
                     [ngModel]="t.isActive"
                     (ngModelChange)="onToggleActive(t, $event)"
                     [inputId]="'act-' + t.id"
-                    [attr.aria-label]="'Activer ou désactiver ' + t.name" />
+                    [attr.aria-label]="loc_ui_tern_activer_ou_desactiver_04c31b + t.name" />
                 } @else {
                   <app-status-badge
                     [status]="t.isActive ? 'active' : 'inactive'"
-                    [label]="t.isActive ? 'Oui' : 'Non'"
+                    [label]="t.isActive ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199"
                     [showIcon]="true">
                   </app-status-badge>
                 }
@@ -156,7 +157,7 @@ interface ActiveFilterOption {
                       icon="pi-pencil"
                       [iconOnly]="true"
                       [iconAlwaysVisible]="true"
-                      pTooltip="Modifier"
+                      pTooltip="Modifier" i18n-pTooltip="Modifier"
                       [routerLink]="[t.id, 'edit']"
                       ariaLabel="Modifier le modèle">
                     </app-button>
@@ -168,7 +169,7 @@ interface ActiveFilterOption {
                       icon="pi-trash"
                       [iconOnly]="true"
                       [iconAlwaysVisible]="true"
-                      pTooltip="Supprimer"
+                      pTooltip="Supprimer" i18n-pTooltip="Supprimer"
                       (click)="confirmDelete(t)"
                       ariaLabel="Supprimer le modèle">
                     </app-button>
@@ -223,6 +224,9 @@ interface ActiveFilterOption {
   ],
 })
 export class QuoteTemplateListComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_activer_ou_desactiver_04c31b = $localize`:@@ui.tern.activer.ou.desactiver.04c31b:Activer ou désactiver `;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly crm = inject(CrmService);
   private readonly auth = inject(AuthService);
   private readonly confirm = inject(ConfirmationService);
@@ -320,7 +324,7 @@ export class QuoteTemplateListComponent implements OnInit, OnDestroy {
         this.loading.set(false);
         this.initialLoad.set(false);
         if (r.success && r.data) this.items.set(r.data);
-        else this.error.set(r.error ?? 'Erreur lors du chargement');
+        else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.lors.du.chargement.9b01ff:Erreur lors du chargement`);
       },
       error: (err) => {
         this.loading.set(false);
@@ -341,14 +345,14 @@ export class QuoteTemplateListComponent implements OnInit, OnDestroy {
           );
           this.toast.add({
             severity: 'success',
-            summary: 'Statut mis à jour',
-            detail: value ? 'Modèle activé.' : 'Modèle désactivé.',
+            summary: $localize`:@@quote-template-list.component.summary.Statut mis à:Statut mis à jour`,
+            detail: value ? $localize`:@@ui.tern.modele.active.372fd3:Modèle activé.` : $localize`:@@ui.tern.modele.desactive.7b4545:Modèle désactivé.`,
           });
         } else {
           this.items.update((list) =>
             list.map((x) => (x.id === t.id ? { ...x, isActive: prev } : x))
           );
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.error ?? 'Échec' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@quote-template-list.component.summary.Erreur:Erreur`, detail: res.error ?? $localize`:@@ui.tern.echec.0ff45f:Échec` });
         }
       },
       error: (err) => {
@@ -357,7 +361,7 @@ export class QuoteTemplateListComponent implements OnInit, OnDestroy {
         );
         this.toast.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@quote-template-list.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err),
         });
       },
@@ -368,23 +372,23 @@ export class QuoteTemplateListComponent implements OnInit, OnDestroy {
     this.confirm.confirm({
       header: 'Supprimer le modèle',
       message: `Supprimer « ${t.name} » ? Cette action est irréversible.`,
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@quote-template-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@quote-template-list.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.crm.deleteQuoteTemplate(t.id).subscribe({
           next: (res) => {
             if (res.success) {
               this.items.update((list) => list.filter((x) => x.id !== t.id));
-              this.toast.add({ severity: 'success', summary: 'Supprimé', detail: 'Modèle supprimé.' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@quote-template-list.component.summary.Supprimé:Supprimé`, detail: $localize`:@@quote-template-list.component.detail.Modèle suppr:Modèle supprimé.` });
             } else {
-              this.toast.add({ severity: 'error', summary: 'Erreur', detail: res.error ?? 'Échec' });
+              this.toast.add({ severity: 'error', summary: $localize`:@@quote-template-list.component.summary.Erreur:Erreur`, detail: res.error ?? $localize`:@@ui.tern.echec.0ff45f:Échec` });
             }
           },
           error: (err) =>
             this.toast.add({
               severity: 'error',
-              summary: 'Erreur',
+              summary: $localize`:@@quote-template-list.component.summary.Erreur:Erreur`,
               detail: this.errorHandler.extractErrorMessage(err),
             }),
         });

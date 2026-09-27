@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input, OnChanges, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,7 +28,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
 @Component({
   selector: 'app-contract-services-tab',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule, FormsModule, TableModule,
     ButtonComponent, SkeletonTableComponent, UsageMetricDialogComponent
   ],
@@ -51,7 +53,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
           <ng-template pTemplate="body" let-line>
             <tr [class.line-inactive]="line.isActive === false">
               <td>
-                {{ line.lineTypeDisplay || line.lineType }}
+                {{ (line.lineTypeDisplay | backendLabel) || line.lineType }}
                 @if (line.isActive === false) {
                   <span class="closed-tag">Clôturée</span>
                 }
@@ -374,7 +376,7 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
       next: m => this.usageMetrics.set(m),
       error: err => {
         this.errorHandler.logError('RecurringContracts: usage metrics', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -390,7 +392,7 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
         error: err => {
           this.loadingRecords.set(false);
           this.errorHandler.logError('RecurringContracts: usage records', err);
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
         }
       });
   }
@@ -398,11 +400,11 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
   submitUsage(): void {
     if (!this.usageMetricId) return;
     if (!this.usageQuantity || this.usageQuantity <= 0) {
-      this.toast.add({ severity: 'warn', summary: 'Saisie invalide', detail: 'La quantité doit être supérieure à 0.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@contract-services.tab.summary.Saisie_invalide:Saisie invalide`, detail: $localize`:@@contract-services.tab.detail.La_quantit_doit:La quantité doit être supérieure à 0.` });
       return;
     }
     if (this.usagePeriodFrom && this.usagePeriodTo && this.usagePeriodTo < this.usagePeriodFrom) {
-      this.toast.add({ severity: 'warn', summary: 'Saisie invalide', detail: 'La fin de période doit être postérieure au début.' });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@contract-services.tab.summary.Saisie_invalide:Saisie invalide`, detail: $localize`:@@contract-services.tab.detail.La_fin_de_p_riod:La fin de période doit être postérieure au début.` });
       return;
     }
     this.savingUsage.set(true);
@@ -417,13 +419,13 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
         this.savingUsage.set(false);
         this.usageQuantity = null;
         this.usageNotes = '';
-        this.toast.add({ severity: 'success', summary: 'Consommation enregistrée', detail: 'La saisie a été prise en compte.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@contract-services.tab.summary.Consommation_enr:Consommation enregistrée`, detail: $localize`:@@contract-services.tab.detail.La_saisie_a_t_:La saisie a été prise en compte.` });
         this.loadRecords();
       },
       error: err => {
         this.savingUsage.set(false);
         this.errorHandler.logError('RecurringContracts: record usage', err);
-        this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
       }
     });
   }
@@ -441,7 +443,7 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
         const result = parseUsageRecordsCsv(String(reader.result ?? ''));
         if (result.error) {
           this.importing.set(false);
-          this.toast.add({ severity: 'error', summary: 'Import impossible', detail: result.error });
+          this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Import impos:Import impossible`, detail: result.error });
           return;
         }
         this.service.importUsageRecords(this.contract.id, result.rows).subscribe({
@@ -449,7 +451,7 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
             this.importing.set(false);
             this.toast.add({
               severity: 'success',
-              summary: 'Import terminé',
+              summary: $localize`:@@contract-services.tab.summary.Import_termin_:Import terminé`,
               detail: `${count} ligne(s) importée(s).`
             });
             this.loadRecords();
@@ -457,18 +459,18 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
           error: err => {
             this.importing.set(false);
             this.errorHandler.logError('RecurringContracts: import usage', err);
-            this.toast.add({ severity: 'error', summary: 'Erreur', detail: this.errorHandler.extractErrorMessage(err) });
+            this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Erreur:Erreur`, detail: this.errorHandler.extractErrorMessage(err) });
           }
         });
       } catch (e) {
         this.importing.set(false);
         this.errorHandler.logError('RecurringContracts: import parse', e);
-        this.toast.add({ severity: 'error', summary: 'Import impossible', detail: 'Le fichier CSV est illisible.' });
+        this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Import impos:Import impossible`, detail: $localize`:@@contract-services.tab.detail.Le fichier C:Le fichier CSV est illisible.` });
       }
     };
     reader.onerror = () => {
       this.importing.set(false);
-      this.toast.add({ severity: 'error', summary: 'Import impossible', detail: 'Le fichier n\'a pas pu être lu.' });
+      this.toast.add({ severity: 'error', summary: $localize`:@@contract-services.tab.summary.Import impos:Import impossible`, detail: $localize`:@@contract-services.tab.detail.Le_fichier_n_a_p:Le fichier n'a pas pu être lu.` });
     };
     reader.readAsText(file);
   }

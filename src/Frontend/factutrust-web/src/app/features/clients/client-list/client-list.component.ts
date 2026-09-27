@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -69,7 +70,7 @@ interface StatusOption {
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new" i18n="@@clients.client-list.ajouter.un.client.pour.facturer.plus.vite.74cf9d67">Ajouter un client pour facturer plus vite</app-button>
+          routerLink="new" i18n="@@clients.client-list.ajouter.un.client.pour.facturer.plus.vite.74cf9d67"> Ajouter un client pour facturer plus vite </app-button>
       }
     </app-page-header>
 
@@ -139,7 +140,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} clients"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} clients" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} clients"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -148,13 +149,13 @@ interface StatusOption {
         
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="code" style="width: 100px">Code <p-sortIcon field="code"></p-sortIcon></th>
-            <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="code" style="width: 100px"><ng-container i18n="@@clients.client-list.code.adac6937">Code </ng-container> <p-sortIcon field="code"></p-sortIcon></th>
+            <th pSortableColumn="name"><ng-container i18n="@@clients.client-list.nom.7ff20370">Nom </ng-container> <p-sortIcon field="name"></p-sortIcon></th>
             <th i18n="@@clients.client-list.contact.b37456c4">Contact</th>
             <th i18n="@@clients.client-list.nif.77124a3a">NIF</th>
             <th i18n="@@clients.client-list.type.3deb7456">Type</th>
             <th i18n="@@clients.client-list.localisation.84e3d483">Localisation</th>
-            <th pSortableColumn="totalInvoices" style="width: 100px">Factures <p-sortIcon field="totalInvoices"></p-sortIcon></th>
+            <th pSortableColumn="totalInvoices" style="width: 100px"><ng-container i18n="@@clients.client-list.factures.da35e4f2">Factures </ng-container> <p-sortIcon field="totalInvoices"></p-sortIcon></th>
             <th style="width: 80px" i18n="@@clients.client-list.statut.659499f3">Statut</th>
             <th style="width: 120px" i18n="@@clients.client-list.actions.c3cd636a">Actions</th>
           </tr>
@@ -199,7 +200,7 @@ interface StatusOption {
             </td>
             <td>
               <p-tag 
-                [value]="client.isActive ? 'Actif' : 'Inactif'" 
+                [value]="client.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033" 
                 [severity]="client.isActive ? 'success' : 'secondary'">
               </p-tag>
             </td>
@@ -311,6 +312,8 @@ interface StatusOption {
   `]
 })
 export class ClientListComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
   private clientService = inject(ClientService);
   private confirmationService = inject(ConfirmationService);
   private toastService = inject(ToastService);
@@ -496,7 +499,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
     this.toastService.add({
       key: 'client-list-error', // Clé unique pour éviter les doublons
       severity: 'error',
-      summary: 'Erreur',
+      summary: $localize`:@@client-list.component.summary.Erreur:Erreur`,
       detail: message,
       life: 5000, // Durée d'affichage de 5 secondes
       closable: true
@@ -558,8 +561,8 @@ export class ClientListComponent implements OnInit, OnDestroy {
       message: `Êtes-vous sûr de vouloir supprimer le client "${client.name}" ?`,
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@client-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@client-list.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.deleteClient(client.id);
@@ -573,14 +576,14 @@ export class ClientListComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Client supprimé avec succès'
+            summary: $localize`:@@client-list.component.summary.Succès:Succès`,
+            detail: $localize`:@@client-list.component.detail.Client_supprim_:Client supprimé avec succès`
           });
           this.loadClients();
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@client-list.component.summary.Erreur:Erreur`,
             detail: response.errors[0] || 'Impossible de supprimer le client'
           });
         }

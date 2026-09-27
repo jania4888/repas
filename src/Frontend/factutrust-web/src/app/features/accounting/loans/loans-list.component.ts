@@ -35,7 +35,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
     <div class="ln-notice" role="note">
       <i class="pi pi-info-circle" aria-hidden="true"></i>
-      <span>Échéanciers <strong i18n="@@accounting.loans.indicatifs.5a70502c">indicatifs</strong> : les échéances ne sont pas comptabilisées automatiquement.</span>
+      <span><ng-container i18n="@@accounting.loans.echeanciers.d752ca1d">Échéanciers </ng-container> <strong i18n="@@accounting.loans.indicatifs.5a70502c">indicatifs</strong> : les échéances ne sont pas comptabilisées automatiquement.</span>
     </div>
 
     <div class="card accounting-filters-card">
@@ -49,9 +49,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Actualiser le registre des emprunts" i18n="@@accounting.loans.actualiser.9d3b2a7d">Actualiser</app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Actualiser le registre des emprunts" i18n="@@accounting.loans.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-button variant="primary" icon="pi pi-plus" type="button"
-            (click)="showForm.set(!showForm())" [disabled]="busy()" ariaLabel="Créer un emprunt" i18n="@@accounting.loans.nouvel.emprunt.9ef02dcf">Nouvel emprunt</app-button>
+            (click)="showForm.set(!showForm())" [disabled]="busy()" ariaLabel="Créer un emprunt" i18n="@@accounting.loans.nouvel.emprunt.9ef02dcf"> Nouvel emprunt </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -120,10 +120,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </div>
         </div>
         <div class="ln-form-actions">
-          <app-button variant="secondary" type="button" (click)="showForm.set(false)" [disabled]="busy()" ariaLabel="Annuler" i18n="@@accounting.loans.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="secondary" type="button" (click)="showForm.set(false)" [disabled]="busy()" ariaLabel="Annuler" i18n="@@accounting.loans.annuler.49ba3292"> Annuler </app-button>
           <app-button variant="primary" icon="pi pi-check" type="button"
             (click)="create()" [disabled]="busy() || !canSubmit()" ariaLabel="Créer l'emprunt et générer l'échéancier">
-            {{ creating() ? 'Création…' : "Créer et générer l'échéancier" }}
+            {{ creating() ? loc_ui_tern_creation_2a06d1 : loc_ui_tern_creer_et_generer_l_echeancier_c92a2a }}
           </app-button>
         </div>
       </div>
@@ -156,7 +156,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <td data-label="Coût du crédit" class="ln-num">{{ l.totalInterest | number : '1.3-3' }}</td>
             <td data-label="Statut">{{ statusLabel(l) }}</td>
             <td>
-              <a class="ln-link" [routerLink]="['/accounting/loans', l.id]">Échéancier <i class="pi pi-angle-right" aria-hidden="true"></i></a>
+              <a class="ln-link" [routerLink]="['/accounting/loans', l.id]"><ng-container i18n="@@accounting.loans.echeancier.7930f4ee">Échéancier </ng-container> <i class="pi pi-angle-right" aria-hidden="true"></i></a>
             </td>
           </tr>
         </ng-template>
@@ -193,6 +193,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   `
 })
 export class LoansListComponent implements OnInit {
+  readonly loc_ui_tern_creation_2a06d1 = $localize`:@@ui.tern.creation.2a06d1:Création…`;
+  readonly loc_ui_tern_creer_et_generer_l_echeancier_c92a2a = $localize`:@@ui.tern.creer.et.generer.l.echeancier.c92a2a:Créer et générer l'échéancier`;
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly router = inject(Router);
@@ -237,7 +239,7 @@ export class LoansListComponent implements OnInit {
       next: res => {
         this.loading.set(false);
         if (res.success && res.data) this.loans.set(res.data.items);
-        else this.error.set(res.error ?? 'Erreur');
+        else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
       error: err => {
         this.loading.set(false);
@@ -260,7 +262,7 @@ export class LoansListComponent implements OnInit {
           this.form = this.emptyForm();
           this.router.navigate(['/accounting/loans', res.data]);
         } else {
-          this.error.set(res.error ?? 'La création a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.la.creation.a.echoue.7010ee:La création a échoué.`);
         }
       },
       error: err => {

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -27,7 +28,7 @@ import { TimesheetApiService } from './timesheet-api.service';
           <td><a [routerLink]="['/projects', e.projectId]">{{ e.projectName }}</a></td>
           <td>{{ e.userName }}</td>
           <td>{{ e.hours | number:'1.2-2' }}</td>
-          <td>{{ e.isBillable ? 'Oui' : 'Non' }}</td>
+          <td>{{ e.isBillable ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
           <td><app-button size="sm" (clicked)="validate(e.id)" i18n="@@timesheets.timesheet-validation.valider.be4220f7">Valider</app-button></td>
         </tr>
       </ng-template>
@@ -35,6 +36,8 @@ import { TimesheetApiService } from './timesheet-api.service';
   `
 })
 export class TimesheetValidationComponent implements OnInit {
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly timesheets = inject(TimesheetApiService);
   private readonly projects = inject(ProjectApiService);
   private readonly toast = inject(ToastService);
@@ -54,7 +57,7 @@ export class TimesheetValidationComponent implements OnInit {
     this.projects.validateTime(id).subscribe({
       next: r => {
         if (r.success) {
-          this.toast.add({ severity: 'success', summary: 'Temps validé' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@timesheet-validation.component.summary.Temps validé:Temps validé` });
           this.load();
         }
       },

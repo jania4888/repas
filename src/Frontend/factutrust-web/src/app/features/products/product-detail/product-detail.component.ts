@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -61,13 +62,13 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
-        routerLink="/products" i18n="@@products.product-detail.retour.e5befb1f">Retour</app-button>
+        routerLink="/products" i18n="@@products.product-detail.retour.e5befb1f"> Retour </app-button>
       @if (product() && canEditProduct()) {
         <app-button
           variant="primary"
           icon="pi-pencil"
           iconPos="left"
-          [routerLink]="['/products', product()!.id, 'edit']" i18n="@@products.product-detail.modifier.f260e757">Modifier</app-button>
+          [routerLink]="['/products', product()!.id, 'edit']" i18n="@@products.product-detail.modifier.f260e757"> Modifier </app-button>
       }
     </app-page-header>
 
@@ -118,7 +119,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
             <span class="field-label" i18n="@@products.product-detail.gestion.de.stock.3f196b66">Gestion de stock</span>
             <p class="field-value">
               <p-tag
-                [value]="p.isStockManaged ? 'Activée' : 'Désactivée'"
+                [value]="p.isStockManaged ? loc_ui_tern_activee_9b4e7c : loc_ui_tern_desactivee_74cc3b"
                 [severity]="p.isStockManaged ? 'success' : 'secondary'">
               </p-tag>
               @if (p.isVariantTemplate) {
@@ -157,7 +158,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
             <div class="form-group">
               <span class="field-label" i18n="@@products.product-detail.fournisseur.prefere.7d570b74">Fournisseur préféré</span>
               <p class="field-value">
-                {{ preferredSupplierName() ?? (p.preferredSupplierId ? '—' : 'Aucun') }}
+                {{ preferredSupplierName() ?? (p.preferredSupplierId ? '—' : loc_ui_tern_aucun_b2ed82) }}
               </p>
             </div>
           }
@@ -174,7 +175,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
               <span class="field-label" i18n="@@products.product-detail.image.produit.8586e902">Image produit</span>
               <div class="product-image-preview" [class.has-image]="resolvedImageUrl(p)">
                 @if (resolvedImageUrl(p)) {
-                  <img [src]="resolvedImageUrl(p)!" [alt]="'Image du produit ' + p.name" />
+                  <img [src]="resolvedImageUrl(p)!" [alt]="loc_ui_tern_image_du_produit_6ab688 + p.name" />
                 } @else {
                   <div class="product-image-placeholder">
                     <i class="pi pi-image" aria-hidden="true"></i>
@@ -189,7 +190,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
             <span class="field-label" i18n="@@products.product-detail.statut.659499f3">Statut</span>
             <p class="field-value">
               <p-tag
-                [value]="p.isActive ? 'Actif' : 'Inactif'"
+                [value]="p.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                 [severity]="p.isActive ? 'success' : 'secondary'">
               </p-tag>
             </p>
@@ -214,7 +215,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
                 <p class="field-value mono">{{ formatMoney(p.lastPurchasePrice) }}</p>
               </div>
               <div class="form-group">
-                <span class="field-label">{{ (p.costingMethod === 1 || p.costingMethod === 2) ? 'Coût unitaire affiché HT' : 'CMUP HT' }}</span>
+                <span class="field-label">{{ (p.costingMethod === 1 || p.costingMethod === 2) ? loc_ui_tern_cout_unitaire_affiche_ht_050c67 : loc_ui_tern_cmup_ht_8e5c3c }}</span>
                 <p class="field-value mono">{{ formatMoney(p.weightedAverageCost) }}</p>
               </div>
             </div>
@@ -235,7 +236,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
               </div>
               <div class="form-group">
                 <span class="field-label" i18n="@@products.product-detail.fodec.9a029080">FODEC</span>
-                <p class="field-value">{{ p.isFodecApplicable ? 'Applicable (1%)' : 'Non applicable' }}</p>
+                <p class="field-value">{{ p.isFodecApplicable ? loc_ui_tern_applicable_1_7af7ec : loc_ui_tern_non_applicable_16ed38 }}</p>
               </div>
             </div>
 
@@ -288,7 +289,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
             <div class="form-row">
               <div class="form-group">
                 <span class="field-label" i18n="@@products.product-detail.remise.produit.158a2250">Remise produit</span>
-                <p class="field-value">{{ p.isDiscountEnabled ? 'Activée' : 'Désactivée' }}</p>
+                <p class="field-value">{{ p.isDiscountEnabled ? loc_ui_tern_activee_9b4e7c : loc_ui_tern_desactivee_74cc3b }}</p>
               </div>
               <div class="form-group">
                 <span class="field-label" i18n="@@products.product-detail.remise.maximale.5d83e3b6">Remise maximale</span>
@@ -531,6 +532,16 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
   `]
 })
 export class ProductDetailComponent implements OnInit {
+  readonly loc_ui_tern_activee_9b4e7c = $localize`:@@ui.tern.activee.9b4e7c:Activée`;
+  readonly loc_ui_tern_desactivee_74cc3b = $localize`:@@ui.tern.desactivee.74cc3b:Désactivée`;
+  readonly loc_ui_tern_aucun_b2ed82 = $localize`:@@ui.tern.aucun.b2ed82:Aucun`;
+  readonly loc_ui_tern_image_du_produit_6ab688 = $localize`:@@ui.tern.image.du.produit.6ab688:Image du produit `;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_cout_unitaire_affiche_ht_050c67 = $localize`:@@ui.tern.cout.unitaire.affiche.ht.050c67:Coût unitaire affiché HT`;
+  readonly loc_ui_tern_cmup_ht_8e5c3c = $localize`:@@ui.tern.cmup.ht.8e5c3c:CMUP HT`;
+  readonly loc_ui_tern_applicable_1_7af7ec = $localize`:@@ui.tern.applicable.1.7af7ec:Applicable (1%)`;
+  readonly loc_ui_tern_non_applicable_16ed38 = $localize`:@@ui.tern.non.applicable.16ed38:Non applicable`;
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
@@ -555,7 +566,7 @@ export class ProductDetailComponent implements OnInit {
     return items;
   });
 
-  pageTitle = computed(() => (this.loading() ? 'Chargement…' : 'Détails du produit'));
+  pageTitle = computed(() => (this.loading() ? $localize`:@@ui.tern.chargement.01cba1:Chargement…` : $localize`:@@ui.tern.details.du.produit.e44cb6:Détails du produit`));
 
   pageSubtitle = computed(() => {
     const p = this.product();
@@ -568,8 +579,8 @@ export class ProductDetailComponent implements OnInit {
     if (!id) {
       this.toastService.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Produit introuvable'
+        summary: $localize`:@@product-detail.component.summary.Erreur:Erreur`,
+        detail: $localize`:@@product-detail.component.detail.Produit_introuva:Produit introuvable`
       });
       void this.router.navigate(['/products']);
       return;
@@ -636,7 +647,7 @@ export class ProductDetailComponent implements OnInit {
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: $localize`:@@product-detail.component.summary.Erreur:Erreur`,
             detail: response.errors?.join(', ') || 'Impossible de charger le produit'
           });
           void this.router.navigate(['/products']);
@@ -647,7 +658,7 @@ export class ProductDetailComponent implements OnInit {
         const errorMessage = this.errorHandler.extractErrorMessage(error);
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@product-detail.component.summary.Erreur:Erreur`,
           detail: errorMessage || 'Impossible de charger le produit'
         });
         this.errorHandler.logError('Failed to load product', error);

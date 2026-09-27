@@ -52,7 +52,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
           <i class="pi pi-building"></i>
           Entreprise émettrice
         </h2>
-        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.l.entreprise.qui.emet.cette.facture.0a656362">Sélectionnez l'entreprise qui émet cette facture</p>
+        <p class="section-description" i18n="@@invoices.invoice-wizard.selectionnez.l.entreprise.qui.emet.cette.facture.0a656362"> Sélectionnez l'entreprise qui émet cette facture </p>
 
         @if (loading()) {
           <div class="companies-loading">
@@ -124,7 +124,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
             <i class="pi pi-info-circle"></i>
             Informations de l'émetteur
           </h2>
-          <p class="section-description" i18n="@@invoices.invoice-wizard.ces.informations.apparaitront.sur.la.facture.5f0da9e9">Ces informations apparaîtront sur la facture</p>
+          <p class="section-description" i18n="@@invoices.invoice-wizard.ces.informations.apparaitront.sur.la.facture.5f0da9e9"> Ces informations apparaîtront sur la facture </p>
 
           <div class="details-card">
             <!-- Company Header -->
@@ -177,7 +177,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
                   <code>{{ selectedSeller.nif }}</code>
                   <span 
                     class="nif-valid"
-                    pTooltip="Format conforme: 1772793W/A/M/000"
+                    pTooltip="Format conforme: 1772793W/A/M/000" i18n-pTooltip="Format conforme: 1772793W/A/M/000"
                     tooltipPosition="top">
                     <i class="pi pi-check-circle"></i>
                     Valide

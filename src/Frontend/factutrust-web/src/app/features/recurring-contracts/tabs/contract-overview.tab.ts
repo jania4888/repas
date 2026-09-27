@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -20,7 +21,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
 @Component({
   selector: 'app-contract-overview-tab',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule, RouterModule, ChartModule, TableModule,
     ChartCardComponent, ButtonComponent, EmptyStateComponent, StatusBadgeComponent, SkeletonComponent
   ],
@@ -155,7 +156,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
             </ng-template>
             <ng-template pTemplate="body" let-line>
               <tr>
-                <td>{{ line.lineTypeDisplay || line.lineType }}</td>
+                <td>{{ (line.lineTypeDisplay | backendLabel) || line.lineType }}</td>
                 <td>
                   {{ line.description }}
                   @if (line.lineType === 'UsageMetered') {

@@ -31,7 +31,7 @@ import { budgetUsedPercent, buildBudgetDonutSlices } from '../../project-detail.
           <button type="button" class="proj-detail-link" (click)="viewBudget.emit()" i18n="@@projects.components.voir.le.detail.du.budget.52c64769">Voir le détail du budget →</button>
         } @else {
           <p class="proj-detail-card__desc proj-detail-card__desc--muted">
-            Budget HT : <strong>{{ project.budgetHt | number:'1.3-3' }} {{ project.currency }}</strong>
+            <ng-container i18n="@@projects.components.budget.ht.0de1b507"> Budget HT : </ng-container> <strong>{{ project.budgetHt | number:'1.3-3' }} {{ project.currency }}</strong>
           </p>
         }
       </section>
@@ -58,7 +58,7 @@ export class ProjectOverviewBudgetCardComponent {
     if (!b || b.budgetHt <= 0) {
       return { labels: [], datasets: [{ data: [] }] };
     }
-    const slices = buildBudgetDonutSlices(b, this.project?.currency ?? 'TND');
+    const slices = buildBudgetDonutSlices(b, this.project?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`);
     const consumed = Math.max(0, b.actualCostHt);
     const remainder = Math.max(0, b.budgetHt - consumed);
     return {

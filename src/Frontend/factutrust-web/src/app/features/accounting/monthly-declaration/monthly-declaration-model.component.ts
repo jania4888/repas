@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -46,9 +47,9 @@ import {
 
     <section class="card dm-block">
       <h3 class="dm-block__title" i18n="@@accounting.monthly-declaration.exporter.0cd84bdc">Exporter</h3>
-      <p class="dm-block__text" i18n="@@accounting.monthly-declaration.produit.un.fichier.json.portant.les.rubriques.du.c7546c88">Produit un fichier JSON portant les rubriques du dossier — actives comme désactivées — et
+      <p class="dm-block__text" i18n="@@accounting.monthly-declaration.produit.un.fichier.json.portant.les.rubriques.du.c7546c88"> Produit un fichier JSON portant les rubriques du dossier — actives comme désactivées — et
         l’inclusion de chaque famille. Le régime de calcul et l’historique des contrôles de parité
-        n’y figurent pas : ils appartiennent au dossier, pas au paramétrage.</p>
+        n’y figurent pas : ils appartiennent au dossier, pas au paramétrage. </p>
       <div class="dm-actions">
         <app-button
           variant="secondary"
@@ -56,7 +57,7 @@ import {
           type="button"
           [disabled]="exporting()"
           (click)="exportModel()">
-          {{ exporting() ? 'Export…' : 'Exporter le modèle' }}
+          {{ exporting() ? loc_ui_tern_export_0a1163 : loc_ui_tern_exporter_le_modele_93eb36 }}
         </app-button>
       </div>
     </section>
@@ -76,9 +77,9 @@ import {
           message="Import indisponible : la déclaration mensuelle paramétrable est désactivée sur la plateforme. L’export reste disponible." />
       }
 
-      <p class="dm-block__text" i18n="@@accounting.monthly-declaration.les.rubriques.dont.le.code.est.absent.du.dossier.3eb61e10">Les rubriques dont le code est absent du dossier sont créées. Une rubrique du dossier qui
+      <p class="dm-block__text" i18n="@@accounting.monthly-declaration.les.rubriques.dont.le.code.est.absent.du.dossier.3eb61e10"> Les rubriques dont le code est absent du dossier sont créées. Une rubrique du dossier qui
         ne figure pas dans le fichier n’est jamais supprimée : un modèle complète une configuration,
-        il ne la remplace pas.</p>
+        il ne la remplace pas. </p>
 
       <div class="dm-field">
         <label class="dm-lbl" for="dm-model-file" i18n="@@accounting.monthly-declaration.fichier.de.modele.json.1e799b42">Fichier de modèle (.json)</label>
@@ -115,11 +116,11 @@ import {
           </dl>
 
           @if (s.silentOnFamilies) {
-            <p class="dm-hint" i18n="@@accounting.monthly-declaration.ce.fichier.ne.dit.rien.des.familles.aucune.inclu.0ce77b0a">Ce fichier ne dit rien des familles : aucune inclusion du dossier ne sera modifiée.</p>
+            <p class="dm-hint" i18n="@@accounting.monthly-declaration.ce.fichier.ne.dit.rien.des.familles.aucune.inclu.0ce77b0a"> Ce fichier ne dit rien des familles : aucune inclusion du dossier ne sera modifiée. </p>
           } @else {
             @if (s.includedFamilies.length) {
               <p class="dm-hint dm-hint--flag">
-                Familles que le fichier demande d’<strong i18n="@@accounting.monthly-declaration.inclure.9d9a2c10">inclure</strong> :
+                <ng-container i18n="@@accounting.monthly-declaration.familles.que.le.fichier.demande.d.f9d37ab2"> Familles que le fichier demande d’</ng-container><strong i18n="@@accounting.monthly-declaration.inclure.9d9a2c10">inclure</strong> :
                 {{ s.includedFamilies.join(', ') }}. Leur inclusion change les montants déclarés dès
                 que le dossier calcule en mode paramétré.
               </p>
@@ -148,7 +149,7 @@ import {
           type="button"
           [disabled]="!canImport() || importing() || !readyToImport()"
           (click)="importModel()">
-          {{ importing() ? 'Import…' : 'Importer' }}
+          {{ importing() ? loc_ui_tern_import_4834ca : loc_ui_tern_importer_f54cfe }}
         </app-button>
       </div>
 
@@ -156,8 +157,8 @@ import {
         <div class="dm-report" role="status">
           <p class="dm-report__line">{{ outcome(r) }}</p>
           @if (nothingChanged(r)) {
-            <p class="dm-hint" i18n="@@accounting.monthly-declaration.le.fichier.n.a.rien.ajoute.tous.ses.codes.exista.0c39b76a">Le fichier n’a rien ajouté : tous ses codes existaient déjà. Cochez « Remplacer » pour
-              appliquer sa version.</p>
+            <p class="dm-hint" i18n="@@accounting.monthly-declaration.le.fichier.n.a.rien.ajoute.tous.ses.codes.exista.0c39b76a"> Le fichier n’a rien ajouté : tous ses codes existaient déjà. Cochez « Remplacer » pour
+              appliquer sa version. </p>
           }
           @if (r.skippedCodes.length) {
             <p class="dm-hint">Codes déjà présents, laissés intacts : {{ r.skippedCodes.join(', ') }}</p>
@@ -192,6 +193,10 @@ import {
   `
 })
 export class MonthlyDeclarationModelComponent implements OnInit {
+  readonly loc_ui_tern_export_0a1163 = $localize`:@@ui.tern.export.0a1163:Export…`;
+  readonly loc_ui_tern_exporter_le_modele_93eb36 = $localize`:@@ui.tern.exporter.le.modele.93eb36:Exporter le modèle`;
+  readonly loc_ui_tern_import_4834ca = $localize`:@@ui.tern.import.4834ca:Import…`;
+  readonly loc_ui_tern_importer_f54cfe = $localize`:@@ui.tern.importer.f54cfe:Importer`;
   private readonly api = inject(AccountingService);
   private readonly auth = inject(AuthService);
   private readonly errors = inject(ErrorHandlerService);
@@ -262,12 +267,12 @@ export class MonthlyDeclarationModelComponent implements OnInit {
           this.download(res.data.content, res.data.fileName);
           this.toast.add({
             severity: 'success',
-            summary: 'Modèle exporté',
+            summary: $localize`:@@monthly-declaration-model.component.summary.Modèle expor:Modèle exporté`,
             detail: res.data.fileName,
             life: 4000
           });
         } else {
-          this.error.set(res.error ?? 'L’export du modèle a échoué.');
+          this.error.set(res.error ?? $localize`:@@ui.tern.l.export.du.modele.a.echoue.194856:L’export du modèle a échoué.`);
         }
       },
       error: err => {
@@ -327,13 +332,13 @@ export class MonthlyDeclarationModelComponent implements OnInit {
             this.result.set(res.data);
             this.toast.add({
               severity: 'success',
-              summary: 'Modèle importé',
+              summary: $localize`:@@monthly-declaration-model.component.summary.Modèle impor:Modèle importé`,
               detail: describeImportOutcome(res.data),
               life: 5000
             });
           } else {
             this.result.set(null);
-            this.error.set(res.error ?? 'L’import du modèle a été refusé.');
+            this.error.set(res.error ?? $localize`:@@ui.tern.l.import.du.modele.a.ete.refuse.a3064d:L’import du modèle a été refusé.`);
           }
         },
         error: err => {

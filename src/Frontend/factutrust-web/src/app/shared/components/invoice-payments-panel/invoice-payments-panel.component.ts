@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import {
   Component,
   Input,
@@ -45,14 +46,14 @@ interface PaymentRow {
 @Component({
   selector: 'app-invoice-payments-panel',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RecordPaymentDialogComponent],
+  imports: [BackendLabelPipe, CommonModule, ButtonComponent, RecordPaymentDialogComponent],
   template: `
     <div class="panel-overlay" (click)="onClose()" role="presentation">
       <div
         class="panel-content"
         (click)="$event.stopPropagation()"
         role="dialog"
-        [attr.aria-label]="'Paiements de la facture ' + (invoice?.number ?? '')"
+        [attr.aria-label]="loc_ui_tern_paiements_de_la_facture_c5d629 + (invoice?.number ?? '')"
         [attr.aria-modal]="'true'">
         <div class="panel-header">
           <h2 class="panel-title" id="invoice-payments-panel-title">
@@ -106,7 +107,7 @@ interface PaymentRow {
                   </div>
                   <div class="panel-item-meta">
                     @if (row.methodDisplay) {
-                      <span class="panel-item-method">{{ row.methodDisplay }}</span>
+                      <span class="panel-item-method">{{ row.methodDisplay | backendLabel }}</span>
                     }
                     @if (row.reference) {
                       <span class="panel-item-ref">{{ row.reference }}</span>
@@ -126,7 +127,7 @@ interface PaymentRow {
                 variant="primary"
                 size="md"
                 icon="pi-plus"
-                label="Ajouter un paiement"
+                label="Ajouter un paiement" i18n-label="Ajouter un paiement"
                 (click)="openRecordPaymentDialog()"
                 [disabled]="effectiveRemainingAmount() <= 0"
                 ariaLabel="Ajouter un paiement pour cette facture">
@@ -144,7 +145,7 @@ interface PaymentRow {
       [totalAmount]="invoice?.totalAmount ?? 0"
       [totalPaid]="effectiveTotalPaid()"
       [remainingAmount]="effectiveRemainingAmount()"
-      [currency]="invoice?.currency ?? 'TND'"
+      [currency]="invoice?.currency ?? loc_ui_tern_tnd_51da21"
       [invoiceType]="invoice?.type ?? 'client'"
       (paymentRecorded)="onPaymentRecorded()">
     </app-record-payment-dialog>
@@ -346,6 +347,8 @@ interface PaymentRow {
   `]
 })
 export class InvoicePaymentsPanelComponent implements OnChanges {
+  readonly loc_ui_tern_paiements_de_la_facture_c5d629 = $localize`:@@ui.tern.paiements.de.la.facture.c5d629:Paiements de la facture `;
+  readonly loc_ui_tern_tnd_51da21 = $localize`:@@ui.tern.tnd.51da21:TND`;
   @Input() invoice: InvoicePaymentsPanelContext | null = null;
   @Input() allowRecordPayment = true;
   @Output() closed = new EventEmitter<void>();

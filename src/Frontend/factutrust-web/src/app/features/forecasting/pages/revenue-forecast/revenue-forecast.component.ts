@@ -25,7 +25,7 @@ import { StockService } from '@core/services/stock.service';
     <section class="revenue-forecast">
       <header class="filters">
         <label>
-          Périmètre
+          <ng-container i18n="@@forecasting.pages.perimetre.b5d08ec3"> Périmètre </ng-container>
           <select [(ngModel)]="scope" (ngModelChange)="onScopeChange()">
             <option value="global" i18n="@@forecasting.pages.global.toute.la.societe.84c4471a">Global (toute la société)</option>
             <option value="category" i18n="@@forecasting.pages.categorie.6b38300a">Catégorie</option>
@@ -38,7 +38,7 @@ import { StockService } from '@core/services/stock.service';
           <label>
             {{ scopeEntityLabel() }}
             <select [(ngModel)]="scopeId" (ngModelChange)="onScopeIdChange()" [disabled]="optionsLoading()">
-              <option [ngValue]="null">{{ optionsLoading() ? 'Chargement…' : '— Sélectionner —' }}</option>
+              <option [ngValue]="null">{{ optionsLoading() ? loc_ui_tern_chargement_01cba1 : loc_ui_tern_selectionner_7ae1af }}</option>
               @for (opt of currentOptions(); track opt.value) {
                 <option [ngValue]="opt.value">{{ opt.label }}</option>
               }
@@ -46,7 +46,7 @@ import { StockService } from '@core/services/stock.service';
           </label>
         }
         <label>
-          Horizon
+          <ng-container i18n="@@forecasting.pages.horizon.eda24363"> Horizon </ng-container>
           <select [(ngModel)]="horizon" (ngModelChange)="loadForecast()">
             <option value="week" i18n="@@forecasting.pages.semaine.7.j.eb7024dd">Semaine (7 j)</option>
             <option value="month" i18n="@@forecasting.pages.mois.30.j.de101fcd">Mois (30 j)</option>
@@ -84,7 +84,7 @@ import { StockService } from '@core/services/stock.service';
           <div class="kpi">
             <span class="label" i18n="@@forecasting.pages.methode.2e94172a">Méthode</span>
             <span class="value small">{{ methodLabel(forecast()!.methodUsed) }}</span>
-            <span class="hint">{{ forecast()!.scopeLabel ?? 'Global' }}</span>
+            <span class="hint">{{ forecast()!.scopeLabel ?? loc_ui_tern_global_5f1184 }}</span>
           </div>
         </div>
 
@@ -185,6 +185,9 @@ import { StockService } from '@core/services/stock.service';
   `]
 })
 export class RevenueForecastComponent implements OnInit {
+  readonly loc_ui_tern_chargement_01cba1 = $localize`:@@ui.tern.chargement.01cba1:Chargement…`;
+  readonly loc_ui_tern_selectionner_7ae1af = $localize`:@@ui.tern.selectionner.7ae1af:— Sélectionner —`;
+  readonly loc_ui_tern_global_5f1184 = $localize`:@@ui.tern.global.5f1184:Global`;
   private readonly forecastingService = inject(ForecastingService);
   private readonly categoryService = inject(ProductCategoryService);
   private readonly productService = inject(ProductService);
@@ -277,7 +280,7 @@ export class RevenueForecastComponent implements OnInit {
       }));
       this.forecast.set(dto);
     } catch (err: any) {
-      this.errorMessage.set(err?.error?.message ?? 'Impossible de calculer la prévision.');
+      this.errorMessage.set(err?.error?.message ?? $localize`:@@ui.tern.impossible.de.calculer.la.prevision.159413:Impossible de calculer la prévision.`);
       this.forecast.set(null);
     } finally {
       this.loading.set(false);

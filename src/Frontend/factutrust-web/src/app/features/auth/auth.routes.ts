@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/guards/auth.guard';
 import { accountingFirmsFeatureGuard } from '@core/guards/accounting-firms.guard';
@@ -8,19 +9,19 @@ export const AUTH_ROUTES: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./login/login.component').then(m => m.LoginComponent),
-    title: 'Connexion - InstaFact'
+    title: $localize`:@@auth.routes.title.Connexion_InstaFact:Connexion - InstaFact`
   },
   {
     path: 'forgot-password',
     loadComponent: () =>
       import('./forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
-    title: 'Mot de passe oublié - InstaFact'
+    title: $localize`:@@auth.routes.title.Mot_de_passe_oubli_In:Mot de passe oublié - InstaFact`
   },
   {
     path: 'reset-password',
     loadComponent: () =>
       import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
-    title: 'Réinitialiser le mot de passe - InstaFact'
+    title: $localize`:@@auth.routes.title.R_initialiser_le_mot_de_:Réinitialiser le mot de passe - InstaFact`
   },
   {
     path: 'select-warehouse',
@@ -29,7 +30,7 @@ export const AUTH_ROUTES: Routes = [
         (m) => m.SelectWarehouseComponent
       ),
     canActivate: [authGuard],
-    title: 'Choisir un entrepôt - InstaFact'
+    title: $localize`:@@auth.routes.title.Choisir_un_entrep_t_In:Choisir un entrepôt - InstaFact`
   },
   {
     path: 'register',
@@ -38,13 +39,13 @@ export const AUTH_ROUTES: Routes = [
       environment.featureFlags.registrationWizardV2
         ? import('./register-wizard/register-wizard.component').then(m => m.RegisterWizardComponent)
         : import('./register/register.component').then(m => m.RegisterComponent),
-    title: 'Inscription - InstaFact'
+    title: $localize`:@@auth.routes.title.Inscription_InstaFact:Inscription - InstaFact`
   },
   {
     path: 'register-firm',
     canActivate: [publicRegistrationGuard('firm'), accountingFirmsFeatureGuard],
     loadComponent: () => import('./register-firm/register-firm.component').then(m => m.RegisterFirmComponent),
-    title: 'Inscription cabinet - InstaFact'
+    title: $localize`:@@auth.routes.title.Inscription_cabinet_In:Inscription cabinet - InstaFact`
   },
   {
     path: 'accept-portal-invite',
@@ -52,7 +53,7 @@ export const AUTH_ROUTES: Routes = [
       import('./accept-portal-invite/accept-portal-invite.component').then(
         m => m.AcceptPortalInviteComponent
       ),
-    title: 'Activer l’espace client - InstaFact'
+    title: $localize`:@@auth.routes.title.Activer_l_espace_client_:Activer l’espace client - InstaFact`
   },
   {
     path: '',

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -45,21 +46,21 @@ export interface PaymentListItem {
 }
 
 const CLIENT_STATUS_OPTIONS: { label: string; value: string | null }[] = [
-  { label: 'Tous les statuts', value: null },
-  { label: 'Payée', value: 'Payée' },
-  { label: 'Partiellement payée', value: 'Partiellement payée' },
-  { label: 'En attente', value: 'En attente' },
-  { label: 'Signée', value: 'Signée' },
-  { label: 'Validée', value: 'Validée' },
-  { label: 'Brouillon', value: 'Brouillon' },
-  { label: 'En retard', value: 'En retard' }
+  { label: $localize`:@@payments.client.filter.tous:Tous les statuts`, value: null },
+  { label: $localize`:@@payments.client.filter.payee:Payée`, value: 'Payée' },
+  { label: $localize`:@@payments.client.filter.partielle:Partiellement payée`, value: 'Partiellement payée' },
+  { label: $localize`:@@payments.client.filter.attente:En attente`, value: 'En attente' },
+  { label: $localize`:@@payments.client.filter.signee:Signée`, value: 'Signée' },
+  { label: $localize`:@@payments.client.filter.validee:Validée`, value: 'Validée' },
+  { label: $localize`:@@payments.client.filter.brouillon:Brouillon`, value: 'Brouillon' },
+  { label: $localize`:@@payments.client.filter.retard:En retard`, value: 'En retard' }
 ];
 
 const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
-  { label: 'Tous les statuts', value: null },
-  { label: 'Payée', value: 'Payée' },
-  { label: 'Partiellement payée', value: 'Partiellement payée' },
-  { label: 'En attente', value: 'En attente' }
+  { label: $localize`:@@payments.supplier.filter.tous:Tous les statuts`, value: null },
+  { label: $localize`:@@payments.supplier.filter.payee:Payée`, value: 'Payée' },
+  { label: $localize`:@@payments.supplier.filter.partielle:Partiellement payée`, value: 'Partiellement payée' },
+  { label: $localize`:@@payments.supplier.filter.attente:En attente`, value: 'En attente' }
 ];
 
 @Component({
@@ -102,25 +103,25 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
     } @else {
       <div class="stats-grid">
         <app-stat-card
-          label="Total payé"
+          label="Total payé" i18n-label="Total payé"
           [value]="totalPaid()"
           icon="pi-dollar"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="En attente"
+          label="En attente" i18n-label="En attente"
           [value]="pendingAmount()"
           icon="pi-clock"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées"
+          label="Factures payées" i18n-label="Factures payées"
           [value]="paidCount()"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="En retard"
+          label="En retard" i18n-label="En retard"
           [value]="overdueCount()"
           icon="pi-exclamation-triangle"
           variant="error">
@@ -241,7 +242,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
                   icon="pi-list"
                   [iconOnly]="true"
                   [iconAlwaysVisible]="true"
-                  pTooltip="Voir les paiements"
+                  pTooltip="Voir les paiements" i18n-pTooltip="Voir les paiements"
                   ariaLabel="Voir les paiements de la facture"
                   (click)="openPaymentsPanel(payment); $event.stopPropagation()">
                 </app-button>
@@ -251,7 +252,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
                     size="sm"
                     icon="pi-wallet"
                     [iconOnly]="true"
-                    pTooltip="Enregistrer un paiement"
+                    pTooltip="Enregistrer un paiement" i18n-pTooltip="Enregistrer un paiement"
                     ariaLabel="Enregistrer un paiement"
                     (click)="openRecordPaymentDialog(payment); $event.stopPropagation()">
                   </app-button>
@@ -263,7 +264,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
                   [iconOnly]="true"
                   [iconAlwaysVisible]="true"
                   [routerLink]="payment.detailRoute"
-                  pTooltip="Voir la facture"
+                  pTooltip="Voir la facture" i18n-pTooltip="Voir la facture"
                   ariaLabel="Voir la facture"
                   (click)="$event.stopPropagation()">
                 </app-button>
@@ -302,7 +303,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
       [totalAmount]="selectedPaymentForDialog()?.totalAmount ?? 0"
       [totalPaid]="selectedPaymentForDialog()?.totalPaid ?? 0"
       [remainingAmount]="selectedPaymentForDialog()?.remainingAmount ?? selectedPaymentForDialog()?.totalAmount ?? 0"
-      [currency]="selectedPaymentForDialog()?.currency ?? 'TND'"
+      [currency]="selectedPaymentForDialog()?.currency ?? loc_ui_tern_tnd_51da21"
       [invoiceType]="selectedPaymentForDialog()?.type ?? 'client'"
       (paymentRecorded)="onPaymentRecorded()">
     </app-record-payment-dialog>
@@ -542,6 +543,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
   `]
 })
 export class PaymentsComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_tnd_51da21 = $localize`:@@ui.tern.tnd.51da21:TND`;
   private invoiceService = inject(InvoiceService);
   private supplierInvoiceService = inject(SupplierInvoiceService);
   private toastService = inject(ToastService);
@@ -564,19 +566,19 @@ export class PaymentsComponent implements OnInit, OnDestroy {
   selectedPaymentForPanel = signal<PaymentListItem | null>(null);
 
   pageTitle = computed(() =>
-    this.paymentType() === 'client' ? 'Paiements clients' : 'Paiements fournisseurs'
+    this.paymentType() === 'client' ? $localize`:@@ui.tern.paiements.clients.79a7e3:Paiements clients` : $localize`:@@ui.tern.paiements.fournisseurs.416577:Paiements fournisseurs`
   );
 
   pageSubtitle = computed(() =>
     this.paymentType() === 'client'
-      ? 'Suivez et gérez les paiements de vos factures clients. Cliquez sur une facture pour voir les détails, ou sur l\'icône paiement pour enregistrer directement.'
-      : 'Suivez et gérez les paiements de vos factures fournisseurs. Cliquez sur une facture pour voir les détails, ou sur l\'icône paiement pour enregistrer directement.'
+      ? $localize`:@@ui.tern.suivez.et.gerez.les.paiements.de.vos.factu.e2c239:Suivez et gérez les paiements de vos factures clients. Cliquez sur une facture pour voir les détails, ou sur l'icône paiement pour enregistrer directement.`
+      : $localize`:@@ui.tern.suivez.et.gerez.les.paiements.de.vos.factu.14dc96:Suivez et gérez les paiements de vos factures fournisseurs. Cliquez sur une facture pour voir les détails, ou sur l'icône paiement pour enregistrer directement.`
   );
 
   searchPlaceholder = computed(() =>
     this.paymentType() === 'client'
-      ? 'Rechercher par numéro, client...'
-      : 'Rechercher par numéro, fournisseur...'
+      ? $localize`:@@ui.tern.rechercher.par.numero.client.3adaec:Rechercher par numéro, client...`
+      : $localize`:@@ui.tern.rechercher.par.numero.fournisseur.ee355a:Rechercher par numéro, fournisseur...`
   );
 
   statusOptions = computed(() =>
@@ -828,8 +830,8 @@ export class PaymentsComponent implements OnInit, OnDestroy {
   onPaymentRecordedFromPanel(): void {
     this.toastService.add({
       severity: 'success',
-      summary: 'Succès',
-      detail: 'Paiement enregistré avec succès'
+      summary: $localize`:@@payments.component.summary.Succès:Succès`,
+      detail: $localize`:@@payments.component.detail.Paiement_enregis:Paiement enregistré avec succès`
     });
     this.loadPayments();
   }
@@ -837,8 +839,8 @@ export class PaymentsComponent implements OnInit, OnDestroy {
   onPaymentRecorded(): void {
     this.toastService.add({
       severity: 'success',
-      summary: 'Succès',
-      detail: 'Paiement enregistré avec succès'
+      summary: $localize`:@@payments.component.summary.Succès:Succès`,
+      detail: $localize`:@@payments.component.detail.Paiement_enregis:Paiement enregistré avec succès`
     });
     this.selectedPaymentForDialog.set(null);
     this.loadPayments();

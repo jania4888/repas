@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -38,7 +39,7 @@ interface PeriodOption {
 @Component({
   selector: 'app-sales-reports',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     RouterModule,
     FormsModule,
@@ -58,12 +59,12 @@ interface PeriodOption {
         variant="secondary"
         icon="pi-download"
         iconPos="left"
-        (click)="onExport()" i18n="@@reports.sales.exporter.0cd84bdc">Exporter</app-button>
+        (click)="onExport()" i18n="@@reports.sales.exporter.0cd84bdc"> Exporter </app-button>
       <app-button 
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()" i18n="@@reports.sales.imprimer.5382c09d">Imprimer</app-button>
+        (click)="onPrint()" i18n="@@reports.sales.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <!-- Period Filter -->
@@ -111,37 +112,37 @@ interface PeriodOption {
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Revenus totaux"
+          label="Revenus totaux" i18n-label="Revenus totaux"
           [value]="reportsData()!.totalRevenue"
           icon="pi-dollar"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Factures"
+          label="Factures" i18n-label="Factures"
           [value]="reportsData()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées"
+          label="Factures payées" i18n-label="Factures payées"
           [value]="reportsData()!.paidInvoices"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Taux de paiement"
+          label="Taux de paiement" i18n-label="Taux de paiement"
           [value]="reportsData()!.paymentRate"
           icon="pi-percentage"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Montant à encaisser"
+          label="Montant à encaisser" i18n-label="Montant à encaisser"
           [value]="reportsData()!.amountToCollect"
           icon="pi-wallet"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Factures en retard"
+          label="Factures en retard" i18n-label="Factures en retard"
           [value]="reportsData()!.overdueInvoicesCount"
           icon="pi-exclamation-triangle"
           [variant]="reportsData()!.overdueInvoicesCount > 0 ? 'error' : 'success'">
@@ -194,7 +195,7 @@ interface PeriodOption {
           <div 
             class="chart-container" 
             role="img" 
-            [attr.aria-label]="'Graphique en barres - évolution des revenus ' + (periodDateRangeLabel() || 'sur la période sélectionnée')">
+            [attr.aria-label]="loc_ui_tern_graphique_en_barres_evolution_des_revenus_b58454 + (periodDateRangeLabel() || 'sur la période sélectionnée')">
             <div class="chart-y-axis" aria-hidden="true">
               @for (tick of chartYAxisTicks(); track tick.value) {
                 <span class="chart-y-tick">{{ tick.label }}</span>
@@ -258,8 +259,8 @@ interface PeriodOption {
             <ng-template pTemplate="header">
               <tr>
                 <th i18n="@@reports.sales.client.1bdd79b1">Client</th>
-                <th pSortableColumn="invoiceCount" class="text-right">Factures <p-sortIcon field="invoiceCount"></p-sortIcon></th>
-                <th pSortableColumn="totalAmount" class="text-right">Montant total <p-sortIcon field="totalAmount"></p-sortIcon></th>
+                <th pSortableColumn="invoiceCount" class="text-right"><ng-container i18n="@@reports.sales.factures.da35e4f2">Factures </ng-container> <p-sortIcon field="invoiceCount"></p-sortIcon></th>
+                <th pSortableColumn="totalAmount" class="text-right"><ng-container i18n="@@reports.sales.montant.total.dd001537">Montant total </ng-container> <p-sortIcon field="totalAmount"></p-sortIcon></th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-client>
@@ -564,25 +565,25 @@ interface PeriodOption {
             } @else {
               <div class="stats-grid">
                 <app-stat-card
-                  label="Panier moyen"
+                  label="Panier moyen" i18n-label="Panier moyen"
                   [value]="formatCurrency(basketMetrics()!.averageBasket, basketMetrics()!.currency)"
                   icon="pi-shopping-cart"
                   variant="primary">
                 </app-stat-card>
                 <app-stat-card
-                  label="Lignes moy. / facture"
+                  label="Lignes moy. / facture" i18n-label="Lignes moy. / facture"
                   [value]="(basketMetrics()!.averageLinesPerInvoice | number:'1.1-1') + ''"
                   icon="pi-list"
                   variant="success">
                 </app-stat-card>
                 <app-stat-card
-                  label="Factures"
+                  label="Factures" i18n-label="Factures"
                   [value]="basketMetrics()!.totalInvoices + ''"
                   icon="pi-file"
                   variant="primary">
                 </app-stat-card>
                 <app-stat-card
-                  label="CA total"
+                  label="CA total" i18n-label="CA total"
                   [value]="formatCurrency(basketMetrics()!.totalRevenue, basketMetrics()!.currency)"
                   icon="pi-dollar"
                   variant="success">
@@ -689,11 +690,11 @@ interface PeriodOption {
           aria-label="Transactions clients" i18n-aria-label="Transactions clients">
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+              <th pSortableColumn="date"><ng-container i18n="@@reports.sales.date.eb9a4bc1">Date </ng-container> <p-sortIcon field="date"></p-sortIcon></th>
               <th i18n="@@reports.sales.type.3deb7456">Type</th>
               <th i18n="@@reports.sales.client.1bdd79b1">Client</th>
               <th i18n="@@reports.sales.reference.f8130bb0">Référence</th>
-              <th pSortableColumn="amount" class="text-right">Montant <p-sortIcon field="amount"></p-sortIcon></th>
+              <th pSortableColumn="amount" class="text-right"><ng-container i18n="@@reports.sales.montant.4adcd9fc">Montant </ng-container> <p-sortIcon field="amount"></p-sortIcon></th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
@@ -734,8 +735,8 @@ interface PeriodOption {
               <th i18n="@@reports.sales.produit.ff673dc2">Produit</th>
               <th i18n="@@reports.sales.code.adac6937">Code</th>
               <th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th>
-              <th pSortableColumn="quantity" class="text-right">Quantité <p-sortIcon field="quantity"></p-sortIcon></th>
-              <th pSortableColumn="revenue" class="text-right">Chiffre d'affaires <p-sortIcon field="revenue"></p-sortIcon></th>
+              <th pSortableColumn="quantity" class="text-right"><ng-container i18n="@@reports.sales.quantite.09a38fda">Quantité </ng-container> <p-sortIcon field="quantity"></p-sortIcon></th>
+              <th pSortableColumn="revenue" class="text-right"><ng-container i18n="@@reports.sales.chiffre.d.affaires.0a341b9f">Chiffre d'affaires </ng-container> <p-sortIcon field="revenue"></p-sortIcon></th>
               <th class="text-right" i18n="@@reports.sales.tva.fb62cb5d">TVA</th>
             </tr>
           </ng-template>
@@ -777,12 +778,12 @@ interface PeriodOption {
             <tr>
               <th i18n="@@reports.sales.taux.tva.c0830fcc">Taux TVA</th>
               <th class="text-right" i18n="@@reports.sales.base.taxable.449d603a">Base taxable</th>
-              <th pSortableColumn="totalVatAmount" class="text-right">Montant TVA <p-sortIcon field="totalVatAmount"></p-sortIcon></th>
+              <th pSortableColumn="totalVatAmount" class="text-right"><ng-container i18n="@@reports.sales.montant.tva.f0c1b7cc">Montant TVA </ng-container> <p-sortIcon field="totalVatAmount"></p-sortIcon></th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
             <tr>
-              <td>{{ row.vatRateDisplay }}</td>
+              <td>{{ row.vatRateDisplay | backendLabel }}</td>
               <td class="text-right amount">{{ row.totalTaxableAmount | number:'1.3-3' }} {{ row.currency }}</td>
               <td class="text-right amount">{{ row.totalVatAmount | number:'1.3-3' }} {{ row.currency }}</td>
             </tr>
@@ -846,7 +847,7 @@ interface PeriodOption {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.sales.factures.en.retard.7fc4c2c8">Factures en retard</h2>
-          <a [routerLink]="['/invoices']" class="section-link" i18n="@@reports.sales.voir.tout.7b7d86e8">Voir tout</a>
+          <a [routerLink]="['/invoices']" class="section-link" i18n="@@reports.sales.voir.tout.7b7d86e8"> Voir tout </a>
         </div>
         <p-table 
           [value]="reportsData()!.overdueInvoices" 
@@ -1189,7 +1190,7 @@ interface PeriodOption {
           <tbody>
             @for (row of salesVat(); track row.vatRateDisplay) {
               <tr>
-                <td>{{ row.vatRateDisplay }}</td>
+                <td>{{ row.vatRateDisplay | backendLabel }}</td>
                 <td class="text-right print-amount">{{ row.totalTaxableAmount | number:'1.3-3' }} {{ row.currency }}</td>
                 <td class="text-right print-amount">{{ row.totalVatAmount | number:'1.3-3' }} {{ row.currency }}</td>
               </tr>
@@ -2201,6 +2202,7 @@ interface PeriodOption {
   `]
 })
 export class SalesReportsComponent implements OnInit {
+  readonly loc_ui_tern_graphique_en_barres_evolution_des_revenus_b58454 = $localize`:@@ui.tern.graphique.en.barres.evolution.des.revenus.b58454:Graphique en barres - évolution des revenus `;
   private readonly route = inject(ActivatedRoute);
   reportsService = inject(SalesReportsService);
   reportsApi = inject(ReportsApiService);
@@ -2453,7 +2455,7 @@ export class SalesReportsComponent implements OnInit {
   }
 
   chartYAxisTicks(): { value: number; label: string }[] {
-    const currency = this.reportsData()?.currency ?? 'TND';
+    const currency = this.reportsData()?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
     const steps = [1, 0.75, 0.5, 0.25, 0];
     return steps.map(p => {
       const value = p * this.maxRevenue;
@@ -2467,7 +2469,7 @@ export class SalesReportsComponent implements OnInit {
       minimumFractionDigits: 3,
       maximumFractionDigits: 3
     }).format(amount);
-    return `${formatted} ${currency ?? 'TND'}`;
+    return `${formatted} ${currency ?? $localize`:@@ui.tern.tnd.51da21:TND`}`;
   }
 
   private exportDecisionnelTab(tabIndex: number): void {
@@ -2610,7 +2612,7 @@ export class SalesReportsComponent implements OnInit {
   ];
 
   get activeTabName(): string {
-    return this.tabNames[this.activeTabIndex] ?? 'Rapport';
+    return this.tabNames[this.activeTabIndex] ?? $localize`:@@ui.tern.rapport.f25c40:Rapport`;
   }
 
   get printDate(): string {

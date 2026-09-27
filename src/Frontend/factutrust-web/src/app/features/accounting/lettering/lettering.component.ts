@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -221,7 +222,7 @@ export class LetteringComponent implements OnInit {
     const to = parseLocalDateString(this.toStr);
     const vr = validateDateRange(from, to);
     if (!vr.valid) {
-      this.error.set(vr.message ?? 'Période invalide.');
+      this.error.set(vr.message ?? $localize`:@@ui.tern.periode.invalide.a64d6e:Période invalide.`);
       return;
     }
     this.loading.set(true);
@@ -239,7 +240,7 @@ export class LetteringComponent implements OnInit {
             }
             this.lines.set(result);
           } else {
-            this.error.set(res.error ?? 'Erreur lors du chargement des écritures.');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.chargement.des.ecritures.872dad:Erreur lors du chargement des écritures.`);
           }
         },
         error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau. Vérifiez votre connexion.'))
@@ -305,7 +306,7 @@ export class LetteringComponent implements OnInit {
             this.selectedLines.set([]);
             this.load();
           } else {
-            this.error.set(res.error ?? "Erreur lors de l'équilibrage.");
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.l.equilibrage.564a12:Erreur lors de l'équilibrage.`);
           }
         },
         error: err => this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'équilibrage."))
@@ -328,13 +329,13 @@ export class LetteringComponent implements OnInit {
         next: res => {
           if (res.success) {
             this.successMessage.set(partial
-              ? `Lettrage partiel effectué sur ${ids.length} lignes (code « P »).`
-              : `Lettrage effectué avec succès sur ${ids.length} lignes.`);
+              ? $localize`:@@ui.tern.lettrage.partiel.effectue.sur.ph.lignes.co.2ed8b4:Lettrage partiel effectué sur ${ids.length}:p0: lignes (code « P »).`
+              : $localize`:@@ui.tern.lettrage.effectue.avec.succes.sur.ph.ligne.e8c8c6:Lettrage effectué avec succès sur ${ids.length}:p0: lignes.`);
             this.selectedLines.set([]);
             this.allowPartial = false;
             this.load();
           } else {
-            this.error.set(res.error ?? 'Erreur lors du lettrage.');
+            this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.lettrage.8e822f:Erreur lors du lettrage.`);
           }
         },
         error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du lettrage.'))
@@ -348,8 +349,8 @@ export class LetteringComponent implements OnInit {
       message: `Délettrer le groupe ${code} ? Toutes ses lignes redeviendront lettrables.`,
       header: 'Confirmation de délettrage',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Délettrer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@lettering.component.acceptLabel.Délettrer:Délettrer`,
+      rejectLabel: $localize`:@@lettering.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.unlettering.set(code);
@@ -366,7 +367,7 @@ export class LetteringComponent implements OnInit {
                 this.selectedLines.set([]);
                 this.load();
               } else {
-                this.error.set(res.error ?? 'Erreur lors du délettrage.');
+                this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.delettrage.a7b9e5:Erreur lors du délettrage.`);
               }
             },
             error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du délettrage.'))

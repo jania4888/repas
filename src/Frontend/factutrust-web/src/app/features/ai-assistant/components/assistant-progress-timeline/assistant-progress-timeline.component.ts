@@ -52,7 +52,7 @@ import {
               class="toggle-btn"
               (click)="toggleDetails(); $event.stopPropagation()"
               [attr.aria-expanded]="detailsExpanded">
-              <span>{{ detailsExpanded ? 'Masquer' : 'Voir le d&#233;tail' }}</span>
+              <span>{{ detailsExpanded ? loc_ui_tern_masquer_adb05f : loc_ui_tern_voir_le_d_233_tail_553c09 }}</span>
               <i
                 class="fa-solid fa-chevron-down toggle-icon"
                 [class.expanded]="detailsExpanded"
@@ -67,7 +67,7 @@ import {
           [attr.aria-hidden]="!showDetails()">
           <div class="progress-body">
             @if (showNote()) {
-              <div class="progress-note" i18n="@@ai-assistant.components.nous.affichons.les.grandes.233.tapes.pour.expliq.8ab532c8">Nous affichons les grandes &#233;tapes pour expliquer l'attente, sans exposer le raisonnement interne.</div>
+              <div class="progress-note" i18n="@@ai-assistant.components.nous.affichons.les.grandes.233.tapes.pour.expliq.8ab532c8"> Nous affichons les grandes &#233;tapes pour expliquer l'attente, sans exposer le raisonnement interne. </div>
             }
 
             @if (steps.length) {
@@ -478,6 +478,8 @@ import {
   `]
 })
 export class AssistantProgressTimelineComponent implements OnChanges, OnInit, OnDestroy {
+  readonly loc_ui_tern_masquer_adb05f = $localize`:@@ui.tern.masquer.adb05f:Masquer`;
+  readonly loc_ui_tern_voir_le_d_233_tail_553c09 = $localize`:@@ui.tern.voir.le.d.233.tail.553c09:Voir le d&#233;tail`;
   @Input() progress?: AssistantProgressTimeline;
   @Input() toolCalls: ActiveToolCall[] = [];
   @Input() isStreaming = false;

@@ -40,14 +40,14 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
             <div
               class="pos-header__warehouse"
               role="status"
-              [attr.title]="'Entrepôt : ' + wh.name"
-              [attr.aria-label]="'Entrepôt actif : ' + wh.name">
+              [attr.title]="loc_ui_tern_entrepot_a7c1cf + wh.name"
+              [attr.aria-label]="loc_ui_tern_entrepot_actif_75675f + wh.name">
               <i class="pi pi-building" aria-hidden="true"></i>
               <span class="pos-header__warehouse-name">{{ wh.name }}</span>
             </div>
           }
           @if (registerSession.currentRegister(); as cr) {
-            <div class="pos-header__warehouse pos-header__warehouse--register" [attr.title]="'Caisse : ' + cr.code">
+            <div class="pos-header__warehouse pos-header__warehouse--register" [attr.title]="loc_ui_tern_caisse_4214e6 + cr.code">
               <i class="pi pi-inbox" aria-hidden="true"></i>
               <span class="pos-header__warehouse-name">{{ cr.code }}</span>
             </div>
@@ -59,10 +59,10 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
               [class.pos-header__pill--session-open]="registerSession.currentSession()"
               [class.pos-header__pill--session-closed]="!registerSession.currentSession()"
               (click)="registerSession.currentSession() ? onXReport.emit() : onOpenRegister.emit()"
-              [title]="registerSession.currentSession() ? 'Caisse ouverte' : 'Ouvrir la caisse'"
-              [attr.aria-label]="registerSession.currentSession() ? 'Caisse ouverte' : 'Ouvrir la caisse'">
+              [title]="registerSession.currentSession() ? loc_ui_tern_caisse_ouverte_72457d : loc_ui_tern_ouvrir_la_caisse_7e98a3"
+              [attr.aria-label]="registerSession.currentSession() ? loc_ui_tern_caisse_ouverte_72457d : loc_ui_tern_ouvrir_la_caisse_7e98a3">
               <i class="pi" [class.pi-lock-open]="registerSession.currentSession()" [class.pi-lock]="!registerSession.currentSession()"></i>
-              <span>{{ registerSession.currentSession() ? 'Caisse ouverte' : 'Caisse fermée' }}</span>
+              <span>{{ registerSession.currentSession() ? loc_ui_tern_caisse_ouverte_72457d : loc_ui_tern_caisse_fermee_8f0e89 }}</span>
             </button>
           }
           @if (registerSession.currentSession()) {
@@ -92,7 +92,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
           </span>
         }
         @if (heldCount > 0) {
-          <button class="pos-header__pill pos-header__pill--held" type="button" (click)="onOpenHeld.emit()" [title]="'En attente (' + heldCount + ')'" [attr.aria-label]="'En attente ' + heldCount + ' commandes'">
+          <button class="pos-header__pill pos-header__pill--held" type="button" (click)="onOpenHeld.emit()" [title]="loc_ui_tern_en_attente_5baac0 + heldCount + ')'" [attr.aria-label]="loc_ui_tern_en_attente_b9cac2 + heldCount + loc_ui_tern_commandes_4f2b74">
             <i class="pi pi-pause"></i>
             <span>En attente ({{ heldCount }})</span>
           </button>
@@ -103,8 +103,8 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
           [class.pos-header__pill--active]="audioService.isSoundEnabled()"
           type="button"
           (click)="audioService.toggleSound()"
-          [title]="audioService.isSoundEnabled() ? 'Desactiver le son' : 'Activer le son'"
-          [attr.aria-label]="audioService.isSoundEnabled() ? 'Desactiver le son' : 'Activer le son'">
+          [title]="audioService.isSoundEnabled() ? loc_ui_tern_desactiver_le_son_76b567 : loc_ui_tern_activer_le_son_4fec90"
+          [attr.aria-label]="audioService.isSoundEnabled() ? loc_ui_tern_desactiver_le_son_76b567 : loc_ui_tern_activer_le_son_4fec90">
           <i class="pi" [class.pi-volume-up]="audioService.isSoundEnabled()" [class.pi-volume-off]="!audioService.isSoundEnabled()"></i>
           <span i18n="@@pos.components.son.cdff1da1">Son</span>
         </button>
@@ -181,7 +181,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
                 class="pos-header__plus-item"
                 (click)="audioService.toggleSound(); closeMenus()">
                 <i class="pi" [class.pi-volume-up]="audioService.isSoundEnabled()" [class.pi-volume-off]="!audioService.isSoundEnabled()"></i>
-                <span>{{ audioService.isSoundEnabled() ? 'Desactiver le son' : 'Activer le son' }}</span>
+                <span>{{ audioService.isSoundEnabled() ? loc_ui_tern_desactiver_le_son_76b567 : loc_ui_tern_activer_le_son_4fec90 }}</span>
               </button>
               <div class="pos-header__plus-divider"></div>
               @for (t of themeOptions; track t.id) {
@@ -805,6 +805,17 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
   `]
 })
 export class PosHeaderComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_entrepot_a7c1cf = $localize`:@@ui.tern.entrepot.a7c1cf:Entrepôt : `;
+  readonly loc_ui_tern_entrepot_actif_75675f = $localize`:@@ui.tern.entrepot.actif.75675f:Entrepôt actif : `;
+  readonly loc_ui_tern_caisse_4214e6 = $localize`:@@ui.tern.caisse.4214e6:Caisse : `;
+  readonly loc_ui_tern_caisse_ouverte_72457d = $localize`:@@ui.tern.caisse.ouverte.72457d:Caisse ouverte`;
+  readonly loc_ui_tern_ouvrir_la_caisse_7e98a3 = $localize`:@@ui.tern.ouvrir.la.caisse.7e98a3:Ouvrir la caisse`;
+  readonly loc_ui_tern_caisse_fermee_8f0e89 = $localize`:@@ui.tern.caisse.fermee.8f0e89:Caisse fermée`;
+  readonly loc_ui_tern_en_attente_5baac0 = $localize`:@@ui.tern.en.attente.5baac0:En attente (`;
+  readonly loc_ui_tern_en_attente_b9cac2 = $localize`:@@ui.tern.en.attente.b9cac2:En attente `;
+  readonly loc_ui_tern_commandes_4f2b74 = $localize`:@@ui.tern.commandes.4f2b74: commandes`;
+  readonly loc_ui_tern_desactiver_le_son_76b567 = $localize`:@@ui.tern.desactiver.le.son.76b567:Desactiver le son`;
+  readonly loc_ui_tern_activer_le_son_4fec90 = $localize`:@@ui.tern.activer.le.son.4fec90:Activer le son`;
   @Input() heldCount = 0;
   @Input() isDualScreenOpen = false;
   @Input() isQuickMode = false;

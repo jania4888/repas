@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 /**
  * Contrat JSON Projets : enums sérialisés en PascalCase via
  * JsonStringEnumConverter() (Program.cs). Accepte aussi les entiers 0..N
@@ -15,11 +16,11 @@ export type ProjectTimeEntryStatusCode = 'Draft' | 'Submitted' | 'Validated';
 export type ProjectSituationStatusCode = 'Draft' | 'Validated';
 
 export const PROJECT_STATUS_OPTIONS = [
-  { label: 'Brouillon', value: 'Draft' },
-  { label: 'Actif', value: 'Active' },
-  { label: 'En pause', value: 'OnHold' },
-  { label: 'Terminé', value: 'Completed' },
-  { label: 'Annulé', value: 'Cancelled' }
+  { label: $localize`:@@projects.filter.brouillon:Brouillon`, value: 'Draft' },
+  { label: $localize`:@@projects.filter.actif:Actif`, value: 'Active' },
+  { label: $localize`:@@projects.filter.en-pause:En pause`, value: 'OnHold' },
+  { label: $localize`:@@projects.filter.termine:Terminé`, value: 'Completed' },
+  { label: $localize`:@@projects.filter.annule:Annulé`, value: 'Cancelled' }
 ];
 
 export const PROJECT_KIND_OPTIONS = [
@@ -50,11 +51,11 @@ export const PROJECT_PRIORITY_OPTIONS = [
 ];
 
 export const PROJECT_TASK_STATUS_OPTIONS = [
-  { label: 'À faire', value: 'Todo' },
-  { label: 'En cours', value: 'InProgress' },
-  { label: 'En attente', value: 'Waiting' },
-  { label: 'Terminé', value: 'Done' },
-  { label: 'Annulé', value: 'Cancelled' }
+  { label: $localize`:@@projects.filter.a-faire:À faire`, value: 'Todo' },
+  { label: $localize`:@@projects.filter.en-cours:En cours`, value: 'InProgress' },
+  { label: $localize`:@@projects.filter.en-attente:En attente`, value: 'Waiting' },
+  { label: $localize`:@@projects.filter.task-termine:Terminé`, value: 'Done' },
+  { label: $localize`:@@projects.filter.task-annule:Annulé`, value: 'Cancelled' }
 ];
 
 function parseMapped<T extends string>(

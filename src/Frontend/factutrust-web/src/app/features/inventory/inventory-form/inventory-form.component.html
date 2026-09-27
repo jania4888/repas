@@ -10,7 +10,7 @@
         iconPos="left"
         routerLink="/stock"
         ariaLabel="Retour au stock"
-     i18n="@@inventory.inventory-form.retour.e5befb1f">Retour</app-button>
+     i18n="@@inventory.inventory-form.retour.e5befb1f"> Retour </app-button>
 </app-page-header>
 
 @if (loading()) {
@@ -28,7 +28,7 @@
                     <span class="detail-value">{{ documentDate() | date:'dd/MM/yyyy' }}</span>
                 </div>
                 <div class="detail-row">
-                    <label for="inventory-warehouse" class="detail-label">Entrepôt <span class="required" i18n="@@inventory.inventory-form.text.df58248c">*</span></label>
+                    <label for="inventory-warehouse" class="detail-label"><ng-container i18n="@@inventory.inventory-form.entrepot.c349c0bc">Entrepôt </ng-container> <span class="required" i18n="@@inventory.inventory-form.text.df58248c">*</span></label>
                     <p-select
                         id="inventory-warehouse"
                         [options]="warehouses"
@@ -67,7 +67,7 @@
         @if (!hasActiveInventory()) {
             <!-- Démarrer l'inventaire -->
             <div class="start-section">
-                <p class="start-hint" i18n="@@inventory.inventory-form.selectionnez.l.entrepot.et.lancez.l.inventaire.p.1cb65c3e">Sélectionnez l'entrepôt et lancez l'inventaire pour afficher la liste des produits à compter.</p>
+                <p class="start-hint" i18n="@@inventory.inventory-form.selectionnez.l.entrepot.et.lancez.l.inventaire.p.1cb65c3e"> Sélectionnez l'entrepôt et lancez l'inventaire pour afficher la liste des produits à compter. </p>
                 <div class="start-actions">
                     <button
                         type="button"
@@ -86,7 +86,7 @@
                     </button>
                 </div>
                 <p class="wizard-link">
-                    <a routerLink="/inventory/wizard" class="link-ghost" i18n="@@inventory.inventory-form.preferer.le.mode.assistant.pas.a.pas.a9c69db6">Préférer le mode assistant (pas à pas)</a>
+                    <a routerLink="/inventory/wizard" class="link-ghost" i18n="@@inventory.inventory-form.preferer.le.mode.assistant.pas.a.pas.a9c69db6"> Préférer le mode assistant (pas à pas) </a>
                 </p>
             </div>
         } @else {
@@ -168,7 +168,7 @@
                         (click)="cancelInventory()"
                         [disabled]="cancelling()"
                         ariaLabel="Annuler l'inventaire"
-                     i18n="@@inventory.inventory-form.annuler.l.inventaire.a78bf0e5">Annuler l'inventaire</app-button>
+                     i18n="@@inventory.inventory-form.annuler.l.inventaire.a78bf0e5"> Annuler l'inventaire </app-button>
                     <div class="actions-group">
                         <button
                             type="button"

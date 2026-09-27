@@ -32,7 +32,7 @@ import {
         variant="secondary"
         icon="pi-print"
         iconPos="left"
-        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d">Imprimer</app-button>
+        (click)="onPrint()" i18n="@@reports.analytics.imprimer.5382c09d"> Imprimer </app-button>
     </app-page-header>
 
     <!-- Alerts -->
@@ -60,19 +60,19 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Clients total"
+          label="Clients total" i18n-label="Clients total"
           [value]="data()!.totalClients"
           icon="pi-users"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Clients actifs"
+          label="Clients actifs" i18n-label="Clients actifs"
           [value]="data()!.activeCount"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Clients inactifs"
+          label="Clients inactifs" i18n-label="Clients inactifs"
           [value]="data()!.inactiveCount"
           icon="pi-user-minus"
           [variant]="data()!.inactiveCount > data()!.activeCount ? 'error' : 'warning'">
@@ -121,9 +121,9 @@ import {
             aria-label="Rechercher un client" i18n-aria-label="Rechercher un client">
         </div>
         <div class="filter-tabs">
-          <button class="filter-tab" [class.active]="filter === 'all'" (click)="onFilter('all')" i18n="@@reports.analytics.tous.b97ae3b4">Tous</button>
-          <button class="filter-tab" [class.active]="filter === 'active'" (click)="onFilter('active')" i18n="@@reports.analytics.actifs.4fc3a980">Actifs</button>
-          <button class="filter-tab" [class.active]="filter === 'inactive'" (click)="onFilter('inactive')" i18n="@@reports.analytics.inactifs.41c2d03e">Inactifs</button>
+          <button class="filter-tab" [class.active]="filter === 'all'" (click)="onFilter('all')" i18n="@@reports.analytics.tous.b97ae3b4"> Tous </button>
+          <button class="filter-tab" [class.active]="filter === 'active'" (click)="onFilter('active')" i18n="@@reports.analytics.actifs.4fc3a980"> Actifs </button>
+          <button class="filter-tab" [class.active]="filter === 'inactive'" (click)="onFilter('inactive')" i18n="@@reports.analytics.inactifs.41c2d03e"> Inactifs </button>
           <button class="filter-tab" [class.active]="filter === 'unpaid'" (click)="onFilter('unpaid')">
             <i class="pi pi-exclamation-circle" style="font-size: 0.7rem;"></i>
             Impayés
@@ -150,7 +150,7 @@ import {
         <div class="empty-state-sm">
           <i class="pi pi-users"></i>
           <p i18n="@@reports.analytics.aucun.client.trouve.ef55e6be">Aucun client trouvé</p>
-          <p class="empty-hint">{{ searchQuery ? 'Aucun résultat pour votre recherche.' : 'Aucune donnée disponible.' }}</p>
+          <p class="empty-hint">{{ searchQuery ? loc_ui_tern_aucun_resultat_pour_votre_recherche_2cb219 : loc_ui_tern_aucune_donnee_disponible_279625 }}</p>
         </div>
       } @else {
         <div class="clients-table-wrapper">
@@ -184,7 +184,7 @@ import {
                   </td>
                   <td class="text-center">
                     <span class="status-badge" [class.active]="client.isActive" [class.inactive]="!client.isActive">
-                      {{ client.isActive ? 'Actif' : 'Inactif' }}
+                      {{ client.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}
                     </span>
                   </td>
                   <td class="text-right">
@@ -212,7 +212,7 @@ import {
                       icon="pi-eye"
                       [routerLink]="['/invoices']"
                       [queryParams]="{ search: client.name }"
-                      ariaLabel="Voir les factures de ce client" i18n="@@reports.analytics.factures.da35e4f2">Factures</app-button>
+                      ariaLabel="Voir les factures de ce client" i18n="@@reports.analytics.factures.da35e4f2"> Factures </app-button>
                   </td>
                 </tr>
               }
@@ -257,10 +257,10 @@ import {
               <tr>
                 <td>{{ i + 1 }}</td>
                 <td>{{ client.name }}</td>
-                <td>{{ client.isActive ? 'Actif' : 'Inactif' }}</td>
+                <td>{{ client.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033 }}</td>
                 <td>{{ client.totalInvoices }}</td>
                 <td>{{ formatAmount(client.totalRevenue) }}</td>
-                <td>{{ client.unpaidCount > 0 ? client.unpaidCount + ' (' + formatAmount(client.unpaidAmount) + ')' : 'Aucun impayé' }}</td>
+                <td>{{ client.unpaidCount > 0 ? client.unpaidCount + ' (' + formatAmount(client.unpaidAmount) + ')' : loc_ui_tern_aucun_impaye_137fee }}</td>
               </tr>
             }
           </tbody>
@@ -706,6 +706,11 @@ import {
   `]
 })
 export class ClientsAnalyticsComponent implements OnInit {
+  readonly loc_ui_tern_aucun_resultat_pour_votre_recherche_2cb219 = $localize`:@@ui.tern.aucun.resultat.pour.votre.recherche.2cb219:Aucun résultat pour votre recherche.`;
+  readonly loc_ui_tern_aucune_donnee_disponible_279625 = $localize`:@@ui.tern.aucune.donnee.disponible.279625:Aucune donnée disponible.`;
+  readonly loc_ui_tern_actif_2eb75f = $localize`:@@ui.tern.actif.2eb75f:Actif`;
+  readonly loc_ui_tern_inactif_d2e033 = $localize`:@@ui.tern.inactif.d2e033:Inactif`;
+  readonly loc_ui_tern_aucun_impaye_137fee = $localize`:@@ui.tern.aucun.impaye.137fee:Aucun impayé`;
     private readonly analyticsService = inject(AnalyticsService);
 
     loading = signal(true);
@@ -745,14 +750,14 @@ export class ClientsAnalyticsComponent implements OnInit {
 
     get sectionTitle(): string {
         return this.filter === 'unpaid'
-            ? 'Clients avec impayés'
-            : 'Classement clients par chiffre d\'affaires';
+            ? $localize`:@@ui.tern.clients.avec.impayes.ef5206:Clients avec impayés`
+            : $localize`:@@ui.tern.classement.clients.par.chiffre.d.affaires.75f08d:Classement clients par chiffre d'affaires`;
     }
 
     get sectionSubtitle(): string {
         return this.filter === 'unpaid'
-            ? 'Clients ayant des factures en attente ou en retard de paiement'
-            : 'Vos clients triés par le montant total des factures payées';
+            ? $localize`:@@ui.tern.clients.ayant.des.factures.en.attente.ou.e.bc094a:Clients ayant des factures en attente ou en retard de paiement`
+            : $localize`:@@ui.tern.vos.clients.tries.par.le.montant.total.des.f76795:Vos clients triés par le montant total des factures payées`;
     }
 
     private applyFilters(): void {

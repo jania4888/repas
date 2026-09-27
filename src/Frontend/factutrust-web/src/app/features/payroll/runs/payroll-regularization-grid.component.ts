@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
@@ -38,7 +39,7 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">
           <app-button variant="primary" icon="pi-refresh" iconPos="left"
-            [disabled]="generating()" (click)="confirmGenerate()" i18n="@@payroll.runs.generer.les.regularisations.594ad942">Générer les régularisations</app-button>
+            [disabled]="generating()" (click)="confirmGenerate()" i18n="@@payroll.runs.generer.les.regularisations.594ad942"> Générer les régularisations </app-button>
         </div>
       }
 
@@ -88,7 +89,7 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td [attr.colspan]="readOnly ? 7 : 8" i18n="@@payroll.runs.aucune.regularisation.pour.ce.mois.elles.se.gene.656a0fce">Aucune régularisation pour ce mois. Elles se génèrent en décembre et lors des soldes de tout compte.</td>
+              <td [attr.colspan]="readOnly ? 7 : 8" i18n="@@payroll.runs.aucune.regularisation.pour.ce.mois.elles.se.gene.656a0fce"> Aucune régularisation pour ce mois. Elles se génèrent en décembre et lors des soldes de tout compte. </td>
             </tr>
           </ng-template>
         </p-table>
@@ -141,8 +142,8 @@ export class PayrollRegularizationGridComponent implements OnInit {
       message: 'Générer les régularisations IRPP de tous les salariés éligibles ? '
         + 'Les cumuls seront rafraîchis et les montants ajustés manuellement seront conservés.',
       header: 'Régularisation IRPP',
-      acceptLabel: 'Générer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@payroll-regularization-grid.component.acceptLabel.G_n_rer:Générer`,
+      rejectLabel: $localize`:@@payroll-regularization-grid.component.rejectLabel.Annuler:Annuler`,
       accept: () => this.generate()
     });
   }
@@ -155,17 +156,17 @@ export class PayrollRegularizationGridComponent implements OnInit {
         const data = res.data;
         const preserved = data?.preservedOverrides ?? 0;
         const detail = preserved > 0
-          ? `${res.message ?? 'Génération terminée.'} ${preserved} ajustement(s) manuel(s) conservé(s).`
-          : res.message ?? 'Génération terminée.';
-        this.toast.add({ severity: 'success', summary: 'Régularisation IRPP', detail });
+          ? `${res.message ?? $localize`:@@ui.tern.generation.terminee.cf83c2:Génération terminée.`} ${preserved} ajustement(s) manuel(s) conservé(s).`
+          : res.message ?? $localize`:@@ui.tern.generation.terminee.cf83c2:Génération terminée.`;
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-regularization-grid.component.summary.R_gularisation_I:Régularisation IRPP`, detail });
         this.reload();
       },
       error: err => {
         this.generating.set(false);
         this.toast.add({
           severity: 'error',
-          summary: 'Régularisation IRPP',
-          detail: err?.error?.message ?? 'Génération impossible.'
+          summary: $localize`:@@payroll-regularization-grid.component.summary.R_gularisation_I:Régularisation IRPP`,
+          detail: err?.error?.message ?? $localize`:@@ui.tern.generation.impossible.0031b8:Génération impossible.`
         });
       }
     });
@@ -176,8 +177,8 @@ export class PayrollRegularizationGridComponent implements OnInit {
     this.confirmation.confirm({
       message: `Supprimer la régularisation de ${line.employeeName} ?`,
       header: 'Confirmation',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@payroll-regularization-grid.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@payroll-regularization-grid.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => this.delete(line.id)
     });
@@ -186,13 +187,13 @@ export class PayrollRegularizationGridComponent implements OnInit {
   private delete(id: string): void {
     this.payroll.deleteIrppRegularization(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Régularisation IRPP', detail: 'Supprimée.' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@payroll-regularization-grid.component.summary.R_gularisation_I:Régularisation IRPP`, detail: $localize`:@@payroll-regularization-grid.component.detail.Supprimée.:Supprimée.` });
         this.reload();
       },
       error: err => this.toast.add({
         severity: 'error',
-        summary: 'Régularisation IRPP',
-        detail: err?.error?.message ?? 'Suppression impossible.'
+        summary: $localize`:@@payroll-regularization-grid.component.summary.R_gularisation_I:Régularisation IRPP`,
+        detail: err?.error?.message ?? $localize`:@@ui.tern.suppression.impossible.0dffe4:Suppression impossible.`
       })
     });
   }

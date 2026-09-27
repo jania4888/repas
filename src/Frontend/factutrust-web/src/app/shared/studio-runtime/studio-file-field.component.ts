@@ -29,7 +29,7 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
         </a>
         <input #fileInput type="file" (change)="onFile($event)" hidden />
         <button pButton type="button" class="p-button-outlined p-button-sm" icon="fa-solid fa-upload"
-          [label]="value ? 'Remplacer' : 'Téléverser'" [disabled]="uploading" (click)="fileInput.click()"></button>
+          [label]="value ? loc_ui_tern_remplacer_db2c67 : loc_ui_tern_televerser_e9e72d" [disabled]="uploading" (click)="fileInput.click()"></button>
         <button *ngIf="value" pButton type="button" icon="fa-solid fa-xmark"
           class="p-button-text p-button-sm p-button-danger" (click)="clear()"></button>
       </div>
@@ -39,7 +39,7 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
         <ng-container *ngIf="value && !editing">
           <img [attr.src]="fileSrc$ | async" class="ft-sign-img" alt="signature" i18n-alt="signature" />
           <div class="ft-sign-actions">
-            <button pButton type="button" label="Refaire" class="p-button-text p-button-sm" (click)="editing = true"></button>
+            <button pButton type="button" label="Refaire" i18n-label="Refaire" class="p-button-text p-button-sm" (click)="editing = true"></button>
             <button pButton type="button" icon="fa-solid fa-xmark" class="p-button-text p-button-sm p-button-danger" (click)="clear()"></button>
           </div>
         </ng-container>
@@ -47,8 +47,8 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
           <canvas #canvas width="320" height="120" class="ft-sign-pad"
             (pointerdown)="start($event)" (pointermove)="move($event)" (pointerup)="end()" (pointerleave)="end()"></canvas>
           <div class="ft-sign-actions">
-            <button pButton type="button" label="Effacer" class="p-button-text p-button-sm" (click)="clearPad()"></button>
-            <button pButton type="button" label="Enregistrer" class="p-button-sm" [disabled]="uploading" (click)="savePad()"></button>
+            <button pButton type="button" label="Effacer" i18n-label="Effacer" class="p-button-text p-button-sm" (click)="clearPad()"></button>
+            <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" class="p-button-sm" [disabled]="uploading" (click)="savePad()"></button>
           </div>
         </ng-container>
       </div>
@@ -71,6 +71,8 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
   `]
 })
 export class StudioFileFieldComponent {
+  readonly loc_ui_tern_remplacer_db2c67 = $localize`:@@ui.tern.remplacer.db2c67:Remplacer`;
+  readonly loc_ui_tern_televerser_e9e72d = $localize`:@@ui.tern.televerser.e9e72d:Téléverser`;
   private readonly http = inject(HttpClient);
   private readonly studioFiles = inject(StudioFileService);
 
@@ -172,12 +174,12 @@ export class StudioFileFieldComponent {
           this.editing = false;
           this.valueChange.emit(res.data);
         } else {
-          this.error = res.errors?.[0] ?? res.message ?? 'Échec du téléversement.';
+          this.error = res.errors?.[0] ?? res.message ?? $localize`:@@ui.tern.echec.du.televersement.bf7802:Échec du téléversement.`;
         }
       },
       error: err => {
         this.uploading = false;
-        this.error = err?.error?.message ?? 'Échec du téléversement.';
+        this.error = err?.error?.message ?? $localize`:@@ui.tern.echec.du.televersement.bf7802:Échec du téléversement.`;
       }
     });
   }

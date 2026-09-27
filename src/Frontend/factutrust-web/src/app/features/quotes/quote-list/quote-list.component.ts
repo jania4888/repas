@@ -69,7 +69,7 @@ interface StatusOption {
           variant="primary"
           icon="pi-plus"
           iconPos="left"
-          routerLink="new" i18n="@@quotes.quote-list.creer.un.devis.426c5610">Créer un devis</app-button>
+          routerLink="new" i18n="@@quotes.quote-list.creer.un.devis.426c5610"> Créer un devis </app-button>
       }
     </app-page-header>
 
@@ -137,7 +137,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} devis"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} devis" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} devis"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           styleClass="p-datatable-sm">
@@ -183,7 +183,7 @@ interface StatusOption {
                     icon="pi-eye"
                     [iconOnly]="true"
                     [iconAlwaysVisible]="true"
-                    pTooltip="Voir"
+                    pTooltip="Voir" i18n-pTooltip="Voir"
                     [routerLink]="[quote.id]"
                     ariaLabel="Voir le devis">
                   </app-button>
@@ -193,7 +193,7 @@ interface StatusOption {
                     icon="pi-download"
                     [iconOnly]="true"
                     [iconAlwaysVisible]="true"
-                    pTooltip="Télécharger PDF"
+                    pTooltip="Télécharger PDF" i18n-pTooltip="Télécharger PDF"
                     (click)="downloadPdf(quote)"
                     ariaLabel="Télécharger le PDF">
                   </app-button>
@@ -266,7 +266,7 @@ export class QuoteListComponent implements OnInit {
 
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
-    const currency = s?.currency ?? 'TND';
+    const currency = s?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
     return [
       { label: 'Devis', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
       { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
@@ -299,13 +299,13 @@ export class QuoteListComponent implements OnInit {
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Brouillon', value: 0 },
-    { label: 'Envoyé', value: 1 },
-    { label: 'Accepté', value: 2 },
-    { label: 'Refusé', value: 3 },
-    { label: 'Expiré', value: 4 },
-    { label: 'Facturé', value: 5 },
-    { label: 'Annulé', value: 6 },
+    { label: $localize`:@@quotes.list.filter.brouillon:Brouillon`, value: 0 },
+    { label: $localize`:@@quotes.list.filter.envoye:Envoyé`, value: 1 },
+    { label: $localize`:@@quotes.list.filter.accepte:Accepté`, value: 2 },
+    { label: $localize`:@@quotes.list.filter.refuse:Refusé`, value: 3 },
+    { label: $localize`:@@quotes.list.filter.expire:Expiré`, value: 4 },
+    { label: $localize`:@@quotes.list.filter.facture:Facturé`, value: 5 },
+    { label: $localize`:@@quotes.list.filter.annule:Annulé`, value: 6 },
   ];
 
   private isLoadingQuotes = false;

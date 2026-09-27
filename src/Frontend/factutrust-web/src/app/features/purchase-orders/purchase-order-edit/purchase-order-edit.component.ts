@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -56,7 +57,7 @@ interface EditOrderLine {
       </div>
     } @else if (po()) {
       <app-page-header
-        [title]="'Modifier — ' + po()!.number"
+        [title]="loc_ui_tern_modifier_042082 + po()!.number"
         subtitle="Modifiez les informations et les lignes de cette commande brouillon.">
       </app-page-header>
 
@@ -103,7 +104,7 @@ interface EditOrderLine {
           <div class="card-header">
             <h3 class="card-title"><i class="pi pi-list"></i> Lignes de commande</h3>
             <app-button variant="secondary" icon="pi-plus" iconPos="left" size="sm"
-              (click)="addLine()" i18n="@@purchase-orders.purchase-order-edit.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
+              (click)="addLine()" i18n="@@purchase-orders.purchase-order-edit.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
           </div>
 
           @if (lines.length === 0) {
@@ -235,14 +236,14 @@ interface EditOrderLine {
 
         <!-- Actions -->
         <div class="form-actions">
-          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]" i18n="@@purchase-orders.purchase-order-edit.annuler.49ba3292">Annuler</app-button>
+          <app-button variant="outline" [routerLink]="['/purchase-orders', po()!.id]" i18n="@@purchase-orders.purchase-order-edit.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             icon="pi-check"
             iconPos="left"
             [disabled]="!isFormValid()"
             (click)="submitUpdate()">
-            {{ submitting() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+            {{ submitting() ? loc_ui_tern_enregistrement_9bf105 : loc_ui_tern_enregistrer_les_modifications_2a9459 }}
           </app-button>
         </div>
       </div>
@@ -480,6 +481,9 @@ interface EditOrderLine {
   `]
 })
 export class PurchaseOrderEditComponent implements OnInit {
+  readonly loc_ui_tern_modifier_042082 = $localize`:@@ui.tern.modifier.042082:Modifier — `;
+  readonly loc_ui_tern_enregistrement_9bf105 = $localize`:@@ui.tern.enregistrement.9bf105:Enregistrement...`;
+  readonly loc_ui_tern_enregistrer_les_modifications_2a9459 = $localize`:@@ui.tern.enregistrer.les.modifications.2a9459:Enregistrer les modifications`;
     private route = inject(ActivatedRoute);
     private router = inject(Router);
     private poService = inject(PurchaseOrderService);
@@ -531,8 +535,8 @@ export class PurchaseOrderEditComponent implements OnInit {
                         this.loading.set(false);
                         this.toastService.add({
                             severity: 'warn',
-                            summary: 'Statut inconnu',
-                            detail: 'Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.'
+                            summary: $localize`:@@purchase-order-edit.component.summary.Statut_inconnu:Statut inconnu`,
+                            detail: $localize`:@@purchase-order-edit.component.detail.Le_statut_de_cet:Le statut de cette commande est non reconnu. Veuillez actualiser ou contacter le support.`
                         });
                         console.warn('[PurchaseOrderEdit] Unknown purchase order status received from API', {
                             orderId: response.data.id,
@@ -546,8 +550,8 @@ export class PurchaseOrderEditComponent implements OnInit {
                     if (order.status !== PurchaseOrderStatus.Draft) {
                         this.toastService.add({
                             severity: 'warn',
-                            summary: 'Action impossible',
-                            detail: 'Seuls les brouillons peuvent être modifiés.'
+                            summary: $localize`:@@purchase-order-edit.component.summary.Action_impossibl:Action impossible`,
+                            detail: $localize`:@@purchase-order-edit.component.detail.Seuls_les_brouil:Seuls les brouillons peuvent être modifiés.`
                         });
                         this.router.navigate(['/purchase-orders', id]);
                         return;
@@ -589,7 +593,7 @@ export class PurchaseOrderEditComponent implements OnInit {
             },
             error: () => {
                 this.loading.set(false);
-                this.toastService.add({ severity: 'error', summary: 'Erreur', detail: 'Commande introuvable' });
+                this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-edit.component.summary.Erreur:Erreur`, detail: $localize`:@@purchase-order-edit.component.detail.Commande_introuv:Commande introuvable` });
                 this.router.navigate(['/purchase-orders']);
             }
         });
@@ -667,8 +671,8 @@ export class PurchaseOrderEditComponent implements OnInit {
                 if (response.success) {
                     this.toastService.add({
                         severity: 'success',
-                        summary: 'Succès',
-                        detail: 'Bon de commande mis à jour avec succès'
+                        summary: $localize`:@@purchase-order-edit.component.summary.Succès:Succès`,
+                        detail: $localize`:@@purchase-order-edit.component.detail.Bon_de_commande_:Bon de commande mis à jour avec succès`
                     });
                     this.router.navigate(['/purchase-orders', order.id]);
                 }
@@ -678,7 +682,7 @@ export class PurchaseOrderEditComponent implements OnInit {
                 this.submitting.set(false);
                 this.toastService.add({
                     severity: 'error',
-                    summary: 'Erreur',
+                    summary: $localize`:@@purchase-order-edit.component.summary.Erreur:Erreur`,
                     detail: err?.error?.errors?.[0] || 'Erreur lors de la mise à jour'
                 });
             }

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import {
   ChangeDetectionStrategy,
   Component,
@@ -49,7 +50,7 @@ export interface LabelPrintTarget {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p-dialog
-      header="Imprimer les étiquettes"
+      header="Imprimer les étiquettes" i18n-header="Imprimer les étiquettes"
       [visible]="visible"
       (visibleChange)="onVisibleChange($event)"
       [modal]="true"
@@ -111,7 +112,7 @@ export interface LabelPrintTarget {
           icon="pi-download"
           iconPos="left"
           [disabled]="!selectedLayout || quantity < 1 || generating()"
-          (clicked)="generate()" i18n="@@products.components.generer.le.pdf.09958b8a">Générer le PDF</app-button>
+          (clicked)="generate()" i18n="@@products.components.generer.le.pdf.09958b8a"> Générer le PDF </app-button>
       </ng-template>
     </p-dialog>
   `,
@@ -200,8 +201,8 @@ export class PrintLabelsDialogComponent {
     const sheets = Math.ceil(qty / Math.max(1, layout.labelsPerPage));
 
     return layout.isRoll
-      ? `${qty} étiquette(s) en continu.`
-      : `${qty} étiquette(s) sur ${sheets} planche(s) de ${layout.labelsPerPage}.`;
+      ? $localize`:@@ui.tern.ph.etiquette.s.en.continu.f42d7c:${qty}:p0: étiquette(s) en continu.`
+      : $localize`:@@ui.tern.ph.etiquette.s.sur.ph.planche.s.de.ph.761668:${qty}:p0: étiquette(s) sur ${sheets}:p1: planche(s) de ${layout.labelsPerPage}:p2:.`;
   });
 
   private ensureLayoutsLoaded(): void {
@@ -268,8 +269,8 @@ export class PrintLabelsDialogComponent {
 
     this.toastService.add({
       severity: 'success',
-      summary: 'Étiquettes',
-      detail: 'Le PDF a été téléchargé.'
+      summary: $localize`:@@print-labels-dialog.component.summary.Étiquettes:Étiquettes`,
+      detail: $localize`:@@print-labels-dialog.component.detail.Le PDF a été:Le PDF a été téléchargé.`
     });
   }
 }

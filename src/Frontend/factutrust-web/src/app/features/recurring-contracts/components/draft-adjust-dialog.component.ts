@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -45,7 +46,7 @@ interface EditableDraftLine {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Ajustement du brouillon"
+      header="Ajustement du brouillon" i18n-header="Ajustement du brouillon"
       [style]="{ width: '56rem' }"
       [draggable]="false"
       [resizable]="false"
@@ -113,14 +114,14 @@ interface EditableDraftLine {
           icon="pi-save"
           [disabled]="!canPersist() || busy()"
           (clicked)="save()">
-          {{ saving() ? 'Enregistrement…' : 'Enregistrer les modifications' }}
+          {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_enregistrer_les_modifications_2a9459 }}
         </app-button>
         <app-button
           variant="primary"
           icon="pi-check"
           [disabled]="!canPersist() || busy()"
           (clicked)="confirmIssue()">
-          {{ issuing() ? 'Émission…' : 'Émettre' }}
+          {{ issuing() ? loc_ui_tern_emission_f2fa21 : loc_ui_tern_emettre_3819c4 }}
         </app-button>
       </ng-template>
     </p-dialog>
@@ -173,6 +174,10 @@ interface EditableDraftLine {
   `]
 })
 export class DraftAdjustDialogComponent {
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
+  readonly loc_ui_tern_enregistrer_les_modifications_2a9459 = $localize`:@@ui.tern.enregistrer.les.modifications.2a9459:Enregistrer les modifications`;
+  readonly loc_ui_tern_emission_f2fa21 = $localize`:@@ui.tern.emission.f2fa21:Émission…`;
+  readonly loc_ui_tern_emettre_3819c4 = $localize`:@@ui.tern.emettre.3819c4:Émettre`;
   @Input() billingRunId: string | null = null;
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
@@ -197,7 +202,7 @@ export class DraftAdjustDialogComponent {
   readonly vatRates = [0, 7, 13, 19] as const;
 
   totalsMetrics(): TotalMetric[] {
-    const currency = this.draft()?.currency ?? 'TND';
+    const currency = this.draft()?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
     const live = this.computeLiveTotals();
     return [
       { label: 'Total HT', value: live.ht, format: 'currency', currency, icon: 'pi-calculator', tone: 'primary' },
@@ -236,8 +241,8 @@ export class DraftAdjustDialogComponent {
       next: () => {
         this.toast.add({
           severity: 'success',
-          summary: 'Brouillon mis à jour',
-          detail: 'Les modifications ont été enregistrées. L\'échéance reste en brouillon.'
+          summary: $localize`:@@draft-adjust-dialog.component.summary.Brouillon_mis_:Brouillon mis à jour`,
+          detail: $localize`:@@draft-adjust-dialog.component.detail.Les_modification:Les modifications ont été enregistrées. L'échéance reste en brouillon.`
         });
         this.close();
         this.saved.emit();
@@ -252,8 +257,8 @@ export class DraftAdjustDialogComponent {
       header: 'Confirmer l\'émission',
       message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Émettre la facture',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@draft-adjust-dialog.component.acceptLabel.Émettre la f:Émettre la facture`,
+      rejectLabel: $localize`:@@draft-adjust-dialog.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       size: 'md',
       accept: () => this.issue()
@@ -319,7 +324,7 @@ export class DraftAdjustDialogComponent {
           this.issuing.set(false);
           this.toast.add({
             severity: 'success',
-            summary: 'Facture émise',
+            summary: $localize`:@@draft-adjust-dialog.component.summary.Facture émis:Facture émise`,
             detail: `Facture ${issued.invoiceNumber} émise.`
           });
           this.close();
@@ -330,7 +335,7 @@ export class DraftAdjustDialogComponent {
           this.errorHandler.logError('RecurringContracts: issue from adjust modal', err);
           this.toast.add({
             severity: 'error',
-            summary: 'Émission impossible',
+            summary: $localize`:@@draft-adjust-dialog.component.summary._mission_impossi:Émission impossible`,
             detail: this.errorHandler.extractErrorMessage(err)
           });
         }
@@ -401,7 +406,7 @@ export class DraftAdjustDialogComponent {
     this.errorHandler.logError(context, err);
     this.toast.add({
       severity: 'error',
-      summary: 'Enregistrement impossible',
+      summary: $localize`:@@draft-adjust-dialog.component.summary.Enregistrement_i:Enregistrement impossible`,
       detail: this.errorHandler.extractErrorMessage(err)
     });
   }

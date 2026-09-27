@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, Input, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -144,13 +145,13 @@ const TVA_RATE = 0.19;
             <button
               type="button"
               class="btn-secondary"
-              (click)="modal.dismiss()" i18n="@@settings.subscription.annuler.49ba3292">Annuler</button>
+              (click)="modal.dismiss()" i18n="@@settings.subscription.annuler.49ba3292"> Annuler </button>
             <button
               type="button"
               class="btn-primary"
               [disabled]="!canProceed()"
               (click)="goToStep2()">
-              Continuer
+              <ng-container i18n="@@settings.subscription.continuer.129ffff9"> Continuer </ng-container>
               <i class="pi pi-arrow-right"></i>
             </button>
           </div>
@@ -251,7 +252,7 @@ const TVA_RATE = 0.19;
                     }
                   </div>
                   <div class="payment-info">
-                    <span class="payment-name">Carte bancaire <strong i18n="@@settings.subscription.clictopay.47cd6669">ClicToPay</strong></span>
+                    <span class="payment-name"><ng-container i18n="@@settings.subscription.carte.bancaire.9e3d9bfa">Carte bancaire </ng-container> <strong i18n="@@settings.subscription.clictopay.47cd6669">ClicToPay</strong></span>
                     <span class="payment-desc" i18n="@@settings.subscription.activation.immediate.fb8aaf1f">Activation immédiate</span>
                   </div>
                 </div>
@@ -316,7 +317,7 @@ const TVA_RATE = 0.19;
               type="button"
               class="btn-secondary"
               (click)="goBack()"
-              [disabled]="submitting()" i18n="@@settings.subscription.retour.e5befb1f">Retour</button>
+              [disabled]="submitting()" i18n="@@settings.subscription.retour.e5befb1f"> Retour </button>
             <button
               type="button"
               class="btn-primary confirm-btn"
@@ -1106,16 +1107,16 @@ export class ChangePlanDialogComponent {
         if (response.success) {
           this.toastService.add({
             severity: 'success',
-            summary: 'Forfait mis à jour',
-            detail: response.message ?? 'Votre forfait a été mis à jour avec succès.',
+            summary: $localize`:@@change-plan-dialog.component.summary.Forfait mis :Forfait mis à jour`,
+            detail: response.message ?? $localize`:@@ui.tern.votre.forfait.a.ete.mis.a.jour.avec.succes.2c5c57:Votre forfait a été mis à jour avec succès.`,
             life: 5000
           });
           this.modal.close(response.data);
         } else {
           this.toastService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: response.errors?.[0] ?? 'Une erreur est survenue.',
+            summary: $localize`:@@change-plan-dialog.component.summary.Erreur:Erreur`,
+            detail: response.errors?.[0] ?? $localize`:@@ui.tern.une.erreur.est.survenue.9a1331:Une erreur est survenue.`,
             life: 5000
           });
         }
@@ -1124,10 +1125,10 @@ export class ChangePlanDialogComponent {
         this.submitting.set(false);
         const message = err?.error?.errors?.[0]
           ?? err?.error?.message
-          ?? 'Une erreur est survenue. Veuillez réessayer.';
+          ?? $localize`:@@ui.tern.une.erreur.est.survenue.veuillez.reessayer.51f64e:Une erreur est survenue. Veuillez réessayer.`;
         this.toastService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@change-plan-dialog.component.summary.Erreur:Erreur`,
           detail: message,
           life: 5000
         });

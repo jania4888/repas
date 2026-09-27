@@ -9,7 +9,7 @@
     [icon]="submitting() ? 'pi-spin pi-spinner' : 'pi-check'"
     iconPos="left"
     [disabled]="submitting() || !canSubmit()"
-    (click)="submit()" i18n="@@supplier-invoices.supplier-invoice-form.creer.la.facture.d28b4fd5">Créer la facture</app-button>
+    (click)="submit()" i18n="@@supplier-invoices.supplier-invoice-form.creer.la.facture.d28b4fd5"> Créer la facture </app-button>
 </app-page-header>
 
 <div class="info-banner" role="status">
@@ -24,7 +24,7 @@
   <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-building" [number]="1">
     <div class="ft-form-grid">
       <div class="ft-field">
-        <label for="supplier">Fournisseur <span class="ft-required" i18n="@@supplier-invoices.supplier-invoice-form.text.df58248c">*</span></label>
+        <label for="supplier"><ng-container i18n="@@supplier-invoices.supplier-invoice-form.fournisseur.97d91d89">Fournisseur </ng-container> <span class="ft-required" i18n="@@supplier-invoices.supplier-invoice-form.text.df58248c">*</span></label>
         <p-select
           id="supplier"
           [options]="suppliers()"
@@ -41,7 +41,7 @@
       </div>
 
       <div class="ft-field">
-        <label for="invoiceDate">Date de facture <span class="ft-required" i18n="@@supplier-invoices.supplier-invoice-form.text.df58248c">*</span></label>
+        <label for="invoiceDate"><ng-container i18n="@@supplier-invoices.supplier-invoice-form.date.de.facture.f1edd0d6">Date de facture </ng-container> <span class="ft-required" i18n="@@supplier-invoices.supplier-invoice-form.text.df58248c">*</span></label>
         <p-datepicker
           id="invoiceDate"
           [(ngModel)]="invoiceDate"
@@ -84,7 +84,7 @@
             [icon]="regenerating() ? 'pi-spin pi-spinner' : 'pi-refresh'"
             iconPos="left"
             [disabled]="regenerating()"
-            (click)="generateInvoiceNumber()" i18n="@@supplier-invoices.supplier-invoice-form.generer.bd221c07">Générer</app-button>
+            (click)="generateInvoiceNumber()" i18n="@@supplier-invoices.supplier-invoice-form.generer.bd221c07"> Générer </app-button>
         </div>
         <label class="hint-check">
           <p-checkbox
@@ -150,8 +150,8 @@
 
   <app-form-section title="Lignes" i18n-title="Lignes" icon="pi-list" [number]="2">
     <div class="lines-toolbar">
-      <app-button type="button" variant="outline" size="sm" icon="pi-plus" iconPos="left" (click)="addLine()" i18n="@@supplier-invoices.supplier-invoice-form.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
-      <app-button type="button" variant="ghost" size="sm" icon="pi-plus-circle" iconPos="left" (click)="quickCreateVisible = true" i18n="@@supplier-invoices.supplier-invoice-form.creer.un.article.service.33b46eca">Créer un article / service</app-button>
+      <app-button type="button" variant="outline" size="sm" icon="pi-plus" iconPos="left" (click)="addLine()" i18n="@@supplier-invoices.supplier-invoice-form.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
+      <app-button type="button" variant="ghost" size="sm" icon="pi-plus-circle" iconPos="left" (click)="quickCreateVisible = true" i18n="@@supplier-invoices.supplier-invoice-form.creer.un.article.service.33b46eca"> Créer un article / service </app-button>
     </div>
 
     <!-- Doit rester HORS de .lines-table-wrap : l'overflow-x du conteneur le rognerait. -->
@@ -229,7 +229,7 @@
             </tr>
           } @empty {
             <tr>
-              <td class="lines-empty" [attr.colspan]="fixedAssetsEnabled() ? 9 : 8" i18n="@@supplier-invoices.supplier-invoice-form.aucune.ligne.utilisez.ajouter.une.ligne.pour.com.b4334189">Aucune ligne. Utilisez « Ajouter une ligne » pour commencer.</td>
+              <td class="lines-empty" [attr.colspan]="fixedAssetsEnabled() ? 9 : 8" i18n="@@supplier-invoices.supplier-invoice-form.aucune.ligne.utilisez.ajouter.une.ligne.pour.com.b4334189"> Aucune ligne. Utilisez « Ajouter une ligne » pour commencer. </td>
             </tr>
           }
         </tbody>

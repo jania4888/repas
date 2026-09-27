@@ -81,7 +81,7 @@ import {
                               <span class="srh-val srh-new" [attr.title]="change.newText">{{ change.newText }}</span>
                             } @else {
                               <span class="srh-val srh-old" [attr.title]="change.oldText">{{ change.oldText }}</span>
-                              <span class="srh-change__arrow" i18n="@@studio.records.text.213edd25">→</span>
+                              <span class="srh-change__arrow" i18n="@@studio.records.text.213edd25"> → </span>
                               <span class="srh-val srh-new" [class.srh-val--null]="change.kind === 'removed'"
                                 [attr.title]="change.kind === 'removed' ? null : change.newText">{{ change.newText }}</span>
                             }

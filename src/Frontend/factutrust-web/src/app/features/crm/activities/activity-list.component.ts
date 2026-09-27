@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Component, HostListener, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -147,9 +148,9 @@ interface StatusFilterOption {
             (ngModelChange)="onFiltersChanged()"></p-checkbox>
           <label for="actMineOnly" i18n="@@crm.activities.mes.activites.ed4435e5">Mes activités</label>
         </div>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="reload()" ariaLabel="Actualiser la liste" i18n="@@crm.activities.actualiser.9d3b2a7d">Actualiser</app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="reload()" ariaLabel="Actualiser la liste" i18n="@@crm.activities.actualiser.9d3b2a7d"> Actualiser </app-button>
         @if (canCreate()) {
-          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle activité" i18n="@@crm.activities.nouvelle.activite.1b50af31">Nouvelle activité</app-button>
+          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle activité" i18n="@@crm.activities.nouvelle.activite.1b50af31"> Nouvelle activité </app-button>
         }
       </div>
     </div>
@@ -170,7 +171,7 @@ interface StatusFilterOption {
       [first]="firstIdx()"
       [totalRecords]="totalRecords()"
       [showCurrentPageReport]="true"
-      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} activités"
+      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} activités" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} activités"
       [rowsPerPageOptions]="[15, 25, 50]"
       (onLazyLoad)="onLazyLoad($event)"
       styleClass="p-datatable-sm activity-table">
@@ -198,8 +199,8 @@ interface StatusFilterOption {
           <td>{{ a.clientName || '—' }}</td>
           <td>{{ a.assignedUserName }}</td>
           <td>{{ a.dueDate | date:'shortDate' }}</td>
-          <td><span [class]="'badge badge-' + a.priorityColor">{{ a.priorityName }}</span></td>
-          <td>{{ a.isCompleted ? 'Terminée' : 'En cours' }}</td>
+          <td><span [class]="loc_ui_tern_badge_badge_e609fe + a.priorityColor">{{ a.priorityName }}</span></td>
+          <td>{{ a.isCompleted ? loc_ui_tern_terminee_459368 : loc_ui_tern_en_cours_bc9b53 }}</td>
           <td class="col-actions">
             <div class="action-cell">
               @if (!a.isCompleted && canUpdate()) {
@@ -246,7 +247,7 @@ interface StatusFilterOption {
               <p class="empty-title" i18n="@@crm.activities.aucune.activite.pour.ces.criteres.888fb490">Aucune activité pour ces critères</p>
               <p class="empty-hint" i18n="@@crm.activities.creez.une.relance.un.rendez.vous.ou.une.tache.po.5460a53e">Créez une relance, un rendez-vous ou une tâche pour suivre votre prospection.</p>
               @if (canCreate()) {
-                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une activité" i18n="@@crm.activities.nouvelle.activite.1b50af31">Nouvelle activité</app-button>
+                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une activité" i18n="@@crm.activities.nouvelle.activite.1b50af31"> Nouvelle activité </app-button>
               }
             </div>
           </td>
@@ -265,9 +266,9 @@ interface StatusFilterOption {
           [attr.aria-describedby]="'act-form-desc'">
           <div class="activity-panel-header">
             <div class="activity-panel-header-text">
-              <h2 id="activity-panel-title">{{ editingId() ? 'Modifier l’activité' : 'Nouvelle activité' }}</h2>
+              <h2 id="activity-panel-title">{{ editingId() ? loc_ui_tern_modifier_l_activite_0681d2 : loc_ui_tern_nouvelle_activite_1b50af }}</h2>
               <p class="activity-panel-subtitle">
-                {{ editingId() ? 'Édition' : 'Création' }} · Suivi commercial et relances
+                {{ editingId() ? loc_ui_tern_edition_b8056d : loc_ui_tern_creation_b50615 }} · Suivi commercial et relances
               </p>
             </div>
             <button
@@ -280,13 +281,13 @@ interface StatusFilterOption {
           </div>
           <div class="activity-panel-body">
             <p id="act-form-desc" class="sr-only">
-              {{ editingId() ? 'Modifiez les champs puis enregistrez.' : 'Renseignez le client, le type et le sujet.' }}
+              {{ editingId() ? loc_ui_tern_modifiez_les_champs_puis_enregistrez_d6b04c : loc_ui_tern_renseignez_le_client_le_type_et_le_sujet_23d08c }}
             </p>
             <form [formGroup]="activityForm" (ngSubmit)="save()" class="activity-form">
           <section class="act-form-section" aria-labelledby="act-section-details">
             <h3 id="act-section-details" class="form-block-title activity-panel-section-title" i18n="@@crm.activities.details.de.l.activite.c70d5b27">Détails de l’activité</h3>
             <div class="form-field">
-              <label class="field-label" for="actType">Type <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
+              <label class="field-label" for="actType"><ng-container i18n="@@crm.activities.type.3deb7456">Type </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
               <p-select
                 inputId="actType"
                 formControlName="type"
@@ -300,7 +301,7 @@ interface StatusFilterOption {
             </div>
             @if (!editingId()) {
               <div class="form-field">
-                <label class="field-label" for="actClient">Client <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
+                <label class="field-label" for="actClient"><ng-container i18n="@@crm.activities.client.1bdd79b1">Client </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
                 <p-select
                   inputId="actClient"
                   formControlName="clientId"
@@ -317,7 +318,7 @@ interface StatusFilterOption {
               </div>
             }
             <div class="form-field">
-              <label class="field-label" for="actSubject">Sujet <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
+              <label class="field-label" for="actSubject"><ng-container i18n="@@crm.activities.sujet.d7742281">Sujet </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
               <input pInputText id="actSubject" class="w-full" formControlName="subject" autocomplete="off" />
             </div>
             <div class="form-field">
@@ -367,7 +368,7 @@ interface StatusFilterOption {
                 [overlayOptions]="activityPanelPrimeOverlayOptions"></p-select>
             </div>
             <div class="form-field">
-              <label class="field-label" for="actPriority">Priorité <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
+              <label class="field-label" for="actPriority"><ng-container i18n="@@crm.activities.priorite.eede91d2">Priorité </ng-container> <span class="required" aria-hidden="true" i18n="@@crm.activities.text.df58248c">*</span></label>
               <p-select
                 inputId="actPriority"
                 formControlName="priority"
@@ -417,7 +418,7 @@ interface StatusFilterOption {
           </div>
           <div class="activity-panel-footer">
             <div class="activity-dialog-footer-actions">
-              <app-button variant="ghost" size="sm" type="button" (click)="closeActivityPanel()" ariaLabel="Annuler" i18n="@@crm.activities.annuler.49ba3292">Annuler</app-button>
+              <app-button variant="ghost" size="sm" type="button" (click)="closeActivityPanel()" ariaLabel="Annuler" i18n="@@crm.activities.annuler.49ba3292"> Annuler </app-button>
               <app-button
                 variant="primary"
                 [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
@@ -425,8 +426,8 @@ interface StatusFilterOption {
                 type="button"
                 (click)="save()"
                 [disabled]="activityForm.invalid || saving()"
-                [attr.aria-label]="editingId() ? 'Enregistrer' : 'Créer'">
-                {{ saving() ? 'Enregistrement…' : editingId() ? 'Enregistrer' : 'Créer' }}
+                [attr.aria-label]="editingId() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_1a6861">
+                {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : editingId() ? loc_ui_tern_enregistrer_f7c8bc : loc_ui_tern_creer_1a6861 }}
               </app-button>
             </div>
           </div>
@@ -705,6 +706,18 @@ interface StatusFilterOption {
   `
 })
 export class ActivityListComponent implements OnInit, OnDestroy {
+  readonly loc_ui_tern_badge_badge_e609fe = "badge badge-";
+  readonly loc_ui_tern_terminee_459368 = $localize`:@@ui.tern.terminee.459368:Terminée`;
+  readonly loc_ui_tern_en_cours_bc9b53 = $localize`:@@ui.tern.en.cours.bc9b53:En cours`;
+  readonly loc_ui_tern_modifier_l_activite_0681d2 = $localize`:@@ui.tern.modifier.l.activite.0681d2:Modifier l’activité`;
+  readonly loc_ui_tern_nouvelle_activite_1b50af = $localize`:@@ui.tern.nouvelle.activite.1b50af:Nouvelle activité`;
+  readonly loc_ui_tern_edition_b8056d = $localize`:@@ui.tern.edition.b8056d:Édition`;
+  readonly loc_ui_tern_creation_b50615 = $localize`:@@ui.tern.creation.b50615:Création`;
+  readonly loc_ui_tern_modifiez_les_champs_puis_enregistrez_d6b04c = $localize`:@@ui.tern.modifiez.les.champs.puis.enregistrez.d6b04c:Modifiez les champs puis enregistrez.`;
+  readonly loc_ui_tern_renseignez_le_client_le_type_et_le_sujet_23d08c = $localize`:@@ui.tern.renseignez.le.client.le.type.et.le.sujet.23d08c:Renseignez le client, le type et le sujet.`;
+  readonly loc_ui_tern_enregistrer_f7c8bc = $localize`:@@ui.tern.enregistrer.f7c8bc:Enregistrer`;
+  readonly loc_ui_tern_creer_1a6861 = $localize`:@@ui.tern.creer.1a6861:Créer`;
+  readonly loc_ui_tern_enregistrement_e7d5f2 = $localize`:@@ui.tern.enregistrement.e7d5f2:Enregistrement…`;
   private readonly crm = inject(CrmService);
   private readonly clientsApi = inject(ClientService);
   private readonly auth = inject(AuthService);
@@ -957,7 +970,7 @@ export class ActivityListComponent implements OnInit, OnDestroy {
           this.items.set(r.data.items);
           this.totalRecords.set(r.data.totalCount);
         } else {
-          const msg = r.errors?.[0] ?? r.message ?? r.error ?? 'Erreur';
+          const msg = r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`;
           this.error.set(msg);
         }
       },
@@ -990,7 +1003,7 @@ export class ActivityListComponent implements OnInit, OnDestroy {
 
   openEdit(a: SalesActivityDto): void {
     if (a.isCompleted) {
-      this.toast.add({ severity: 'warn', summary: 'Activité terminée', detail: 'Impossible de modifier une activité terminée.', life: 5000 });
+      this.toast.add({ severity: 'warn', summary: $localize`:@@activity-list.component.summary.Activit_termin_:Activité terminée`, detail: $localize`:@@activity-list.component.detail.Impossible_de_mo:Impossible de modifier une activité terminée.`, life: 5000 });
       return;
     }
     this.editingId.set(a.id);
@@ -1064,9 +1077,9 @@ export class ActivityListComponent implements OnInit, OnDestroy {
           if (r.success) {
             this.closeActivityPanel();
             this.loadActivities();
-            this.toast.add({ severity: 'success', summary: 'Activité mise à jour', life: 3000 });
+            this.toast.add({ severity: 'success', summary: $localize`:@@activity-list.component.summary.Activité mis:Activité mise à jour`, life: 3000 });
           } else {
-            this.formError.set(r.errors?.[0] ?? r.message ?? r.error ?? 'Erreur');
+            this.formError.set(r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           }
         },
         error: () => {
@@ -1097,9 +1110,9 @@ export class ActivityListComponent implements OnInit, OnDestroy {
         if (r.success) {
           this.closeActivityPanel();
           this.resetPagingAndLoad();
-          this.toast.add({ severity: 'success', summary: 'Activité créée', life: 3000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@activity-list.component.summary.Activité cré:Activité créée`, life: 3000 });
         } else {
-          this.formError.set(r.errors?.[0] ?? r.message ?? r.error ?? 'Erreur');
+          this.formError.set(r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
       error: () => {
@@ -1114,14 +1127,14 @@ export class ActivityListComponent implements OnInit, OnDestroy {
       next: r => {
         if (r.success) {
           this.loadActivities();
-          this.toast.add({ severity: 'success', summary: 'Activité terminée', life: 3000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@activity-list.component.summary.Activit_termin_:Activité terminée`, life: 3000 });
         } else {
-          const msg = r.errors?.[0] ?? r.message ?? r.error ?? 'Impossible de terminer l’activité';
-          this.toast.add({ severity: 'error', summary: 'Erreur', detail: msg, life: 6000 });
+          const msg = r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.impossible.de.terminer.l.activite.0da4cb:Impossible de terminer l’activité`;
+          this.toast.add({ severity: 'error', summary: $localize`:@@activity-list.component.summary.Erreur:Erreur`, detail: msg, life: 6000 });
         }
       },
       error: () => {
-        this.toast.add({ severity: 'error', summary: 'Erreur réseau', detail: 'Réessayez dans un instant.', life: 6000 });
+        this.toast.add({ severity: 'error', summary: $localize`:@@activity-list.component.summary.Erreur résea:Erreur réseau`, detail: $localize`:@@activity-list.component.detail.R_essayez_dans_u:Réessayez dans un instant.`, life: 6000 });
       }
     });
   }
@@ -1131,22 +1144,22 @@ export class ActivityListComponent implements OnInit, OnDestroy {
       header: 'Supprimer l’activité',
       message: `Supprimer « ${a.subject} » ? Cette action est définitive.`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@activity-list.component.acceptLabel.Supprimer:Supprimer`,
+      rejectLabel: $localize`:@@activity-list.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       accept: () => {
         this.crm.deleteActivity(a.id).subscribe({
           next: r => {
             if (r.success) {
               this.loadActivities();
-              this.toast.add({ severity: 'success', summary: 'Activité supprimée', life: 3000 });
+              this.toast.add({ severity: 'success', summary: $localize`:@@activity-list.component.summary.Activité sup:Activité supprimée`, life: 3000 });
             } else {
-              const msg = r.errors?.[0] ?? r.message ?? r.error ?? 'Suppression impossible';
-              this.toast.add({ severity: 'error', summary: 'Erreur', detail: msg, life: 6000 });
+              const msg = r.errors?.[0] ?? r.message ?? r.error ?? $localize`:@@ui.tern.suppression.impossible.55762f:Suppression impossible`;
+              this.toast.add({ severity: 'error', summary: $localize`:@@activity-list.component.summary.Erreur:Erreur`, detail: msg, life: 6000 });
             }
           },
           error: () => {
-            this.toast.add({ severity: 'error', summary: 'Erreur réseau', life: 6000 });
+            this.toast.add({ severity: 'error', summary: $localize`:@@activity-list.component.summary.Erreur résea:Erreur réseau`, life: 6000 });
           }
         });
       }

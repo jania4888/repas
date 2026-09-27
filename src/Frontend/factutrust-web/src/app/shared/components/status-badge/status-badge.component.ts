@@ -80,6 +80,6 @@ export class StatusBadgeComponent {
   }
 
   getStatusLabel(): string {
-    return StatusBadgeComponent.labels[this.status] ?? 'Inconnu';
+    return StatusBadgeComponent.labels[this.status] ?? $localize`:@@ui.tern.inconnu.f3cfc6:Inconnu`;
   }
 }

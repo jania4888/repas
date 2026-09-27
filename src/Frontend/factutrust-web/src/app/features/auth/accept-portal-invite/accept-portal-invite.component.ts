@@ -28,7 +28,7 @@ import { MessageModule } from 'primeng/message';
         <p-password inputId="password" formControlName="password" [toggleMask]="true" [feedback]="false" styleClass="w-full" />
         <label for="confirmPassword" i18n="@@auth.accept-portal-invite.confirmation.3424edc2">Confirmation</label>
         <p-password inputId="confirmPassword" formControlName="confirmPassword" [toggleMask]="true" [feedback]="false" styleClass="w-full" />
-        <p-button type="submit" label="Activer mon accès" [loading]="loading()" [disabled]="form.invalid" />
+        <p-button type="submit" label="Activer mon accès" i18n-label="Activer mon accès" [loading]="loading()" [disabled]="form.invalid" />
       </form>
     </app-auth-shell>
   `

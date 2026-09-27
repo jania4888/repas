@@ -216,7 +216,7 @@
 .secondary-nav__submenu-panel {
   display: none;
   position: absolute;
-  left: 100%; /* rtl-ok : panneau flyout LTR physique, contre-caré en erp-rtl */
+  left: 100%; /* rtl-ok : ouverture vers la droite ; contre-calé dans erp-rtl.scss */
   top: 0;
   min-width: 14rem;
   max-width: 22rem;

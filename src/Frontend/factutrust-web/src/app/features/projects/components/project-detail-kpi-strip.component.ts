@@ -79,7 +79,7 @@ import {
           <div class="proj-detail-gauge" [style.background]="gaugeBackground">
             <div class="proj-detail-gauge__inner">
               <strong>{{ progressPercent }} %</strong>
-              <span [class]="'proj-detail-health proj-detail-health--' + health.tone">{{ health.text }}</span>
+              <span [class]="loc_ui_tern_proj_detail_health_proj_detail_health_990a19 + health.tone">{{ health.text }}</span>
             </div>
           </div>
         </div>
@@ -88,6 +88,7 @@ import {
   `
 })
 export class ProjectDetailKpiStripComponent {
+  readonly loc_ui_tern_proj_detail_health_proj_detail_health_990a19 = "proj-detail-health proj-detail-health--";
   @Input() project: ProjectDetail | null = null;
   @Input() budget: ProjectBudget | null = null;
   @Input() tasks: ProjectTask[] = [];

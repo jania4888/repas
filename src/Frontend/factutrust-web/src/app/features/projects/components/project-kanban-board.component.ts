@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import {
   Component,
   EventEmitter,
@@ -32,7 +33,7 @@ export interface ProjectTaskMoveEvent {
 @Component({
   selector: 'app-project-kanban-board',
   standalone: true,
-  imports: [CommonModule, DragDropModule, ProgressBarModule, EmptyStateComponent],
+  imports: [BackendLabelPipe, CommonModule, DragDropModule, ProgressBarModule, EmptyStateComponent],
   styleUrls: ['../projects.scss'],
   template: `
     @if (!project) {
@@ -74,7 +75,7 @@ export interface ProjectTaskMoveEvent {
                     class="proj-kanban-card__body"
                     (click)="onCardClick(task)">
                     <strong>{{ task.title }}</strong>
-                    <div class="text-sm">{{ task.priorityDisplay }}</div>
+                    <div class="text-sm">{{ task.priorityDisplay | backendLabel }}</div>
                     <div class="text-sm">{{ task.assigneeUserName || 'Non assigné' }}</div>
                     <div class="text-sm">
                       {{ task.loggedHours | number:'1.0-1' }} / {{ task.estimatedHours | number:'1.0-1' }} h
@@ -91,9 +92,9 @@ export interface ProjectTaskMoveEvent {
         }
       </div>
       @if (!canUpdateTask) {
-        <p class="proj-kanban-readonly-hint text-sm text-color-secondary" i18n="@@projects.components.vous.n.avez.pas.les.droits.pour.deplacer.les.tac.81b95700">Vous n'avez pas les droits pour déplacer les tâches sur ce tableau.</p>
+        <p class="proj-kanban-readonly-hint text-sm text-color-secondary" i18n="@@projects.components.vous.n.avez.pas.les.droits.pour.deplacer.les.tac.81b95700"> Vous n'avez pas les droits pour déplacer les tâches sur ce tableau. </p>
       } @else {
-        <p class="proj-kanban-readonly-hint text-sm text-color-secondary" i18n="@@projects.components.glissez.une.carte.vers.une.autre.colonne.pour.ch.6b8f1b8b">Glissez une carte vers une autre colonne pour changer son statut.</p>
+        <p class="proj-kanban-readonly-hint text-sm text-color-secondary" i18n="@@projects.components.glissez.une.carte.vers.une.autre.colonne.pour.ch.6b8f1b8b"> Glissez une carte vers une autre colonne pour changer son statut. </p>
       }
     }
   `

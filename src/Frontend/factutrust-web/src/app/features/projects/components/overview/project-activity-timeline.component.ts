@@ -36,7 +36,7 @@ import {
           }
         </ul>
         @if (compact && activities.length > limit) {
-          <button type="button" class="proj-detail-link proj-detail-link--block" (click)="viewAll.emit()" i18n="@@projects.components.voir.toute.l.activite.f006b3ea">Voir toute l'activité →</button>
+          <button type="button" class="proj-detail-link proj-detail-link--block" (click)="viewAll.emit()" i18n="@@projects.components.voir.toute.l.activite.f006b3ea"> Voir toute l'activité → </button>
         }
       } @else {
         <p class="proj-detail-card__desc proj-detail-card__desc--muted" i18n="@@projects.components.aucune.activite.pour.l.instant.c875fc7a">Aucune activité pour l'instant.</p>

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,7 +19,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 @Component({
   selector: 'app-transfer-detail',
   standalone: true,
-  imports: [CommonModule, ButtonModule, TagModule, ConfirmDialogModule, ToastModule, Textarea, FormsModule, DialogModule, ProgressSpinnerModule],
+  imports: [BackendLabelPipe, CommonModule, ButtonModule, TagModule, ConfirmDialogModule, ToastModule, Textarea, FormsModule, DialogModule, ProgressSpinnerModule],
   providers: [ConfirmationService, MessageService],
   template: `
     <p-toast></p-toast>
@@ -29,24 +31,24 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <div class="page-header">
         <div>
           <h1>Transfert {{ transfer()!.number }}</h1>
-          <span class="status-badge" [ngClass]="transfer()!.statusCss">{{ transfer()!.statusDisplay }}</span>
+          <span class="status-badge" [ngClass]="transfer()!.statusCss">{{ transfer()!.statusDisplay | backendLabel }}</span>
         </div>
         <div class="actions">
-          <button pButton type="button" label="Télécharger PDF" icon="pi pi-file-pdf" class="p-button-outlined"
+          <button pButton type="button" label="Télécharger PDF" i18n-label="Télécharger PDF" icon="pi pi-file-pdf" class="p-button-outlined"
                   (click)="downloadPdf()" [loading]="pdfLoading()" [disabled]="pdfLoading()"
                   aria-label="Télécharger le transfert au format PDF" i18n-aria-label="Télécharger le transfert au format PDF"></button>
           <button *ngIf="transfer()!.status === 'Draft' || transfer()!.status === '0'"
-                  pButton label="Confirmer" icon="pi pi-check" (click)="confirm()" [loading]="processing()"
+                  pButton label="Confirmer" i18n-label="Confirmer" icon="pi pi-check" (click)="confirm()" [loading]="processing()"
                   aria-label="Confirmer le transfert" i18n-aria-label="Confirmer le transfert"></button>
           <button *ngIf="isConfirmedNotInTransit()"
-                  pButton type="button" label="Mettre en transit" icon="pi pi-send" class="p-button-secondary"
+                  pButton type="button" label="Mettre en transit" i18n-label="Mettre en transit" icon="pi pi-send" class="p-button-secondary"
                   (click)="startTransit()" [loading]="processing()"
                   aria-label="Passer le transfert en statut en transit" i18n-aria-label="Passer le transfert en statut en transit"></button>
           <button *ngIf="transfer()!.status === 'Confirmed' || transfer()!.status === '1' || transfer()!.status === 'InTransit' || transfer()!.status === '2'"
-                  pButton label="Terminer" icon="pi pi-check-circle" class="p-button-success" (click)="complete()" [loading]="processing()"
+                  pButton label="Terminer" i18n-label="Terminer" icon="pi pi-check-circle" class="p-button-success" (click)="complete()" [loading]="processing()"
                   aria-label="Terminer le transfert et mettre à jour les stocks" i18n-aria-label="Terminer le transfert et mettre à jour les stocks"></button>
           <button *ngIf="transfer()!.status === 'Draft' || transfer()!.status === '0' || transfer()!.status === 'Confirmed' || transfer()!.status === '1'"
-                  pButton label="Annuler" icon="pi pi-times" class="p-button-danger p-button-outlined" (click)="showCancelDialog = true"></button>
+                  pButton label="Annuler" i18n-label="Annuler" icon="pi pi-times" class="p-button-danger p-button-outlined" (click)="showCancelDialog = true"></button>
         </div>
       </div>
 
@@ -98,14 +100,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </table>
       </div>
 
-      <p-dialog header="Annuler le transfert" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
+      <p-dialog header="Annuler le transfert" i18n-header="Annuler le transfert" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
         <div class="field">
           <label class="field-label" i18n="@@transfers.transfer-detail.motif.d.annulation.f627914d">Motif d'annulation</label>
           <textarea pTextarea [(ngModel)]="cancelReason" rows="3" style="width:100%"></textarea>
         </div>
         <ng-template pTemplate="footer">
-          <button pButton label="Annuler" class="p-button-text" (click)="showCancelDialog = false"></button>
-          <button pButton label="Confirmer l'annulation" class="p-button-danger" (click)="cancelTransfer()" [disabled]="!cancelReason.trim()"></button>
+          <button pButton label="Annuler" i18n-label="Annuler" class="p-button-text" (click)="showCancelDialog = false"></button>
+          <button pButton label="Confirmer l'annulation" i18n-label="Confirmer l'annulation" class="p-button-danger" (click)="cancelTransfer()" [disabled]="!cancelReason.trim()"></button>
         </ng-template>
       </p-dialog>
     </div>
@@ -160,7 +162,7 @@ export class TransferDetailComponent implements OnInit {
     if (id) this.loadTransfer(id);
     else {
       this.initialLoading.set(false);
-      this.messageService.add({ severity: 'warn', summary: 'Transfert', detail: 'Identifiant manquant' });
+      this.messageService.add({ severity: 'warn', summary: $localize`:@@transfer-detail.component.summary.Transfert:Transfert`, detail: $localize`:@@transfer-detail.component.detail.Identifiant_manq:Identifiant manquant` });
       void this.router.navigate(['/transfers']);
     }
   }
@@ -181,7 +183,7 @@ export class TransferDetailComponent implements OnInit {
       },
       error: () => {
         if (showFullSpinner) this.initialLoading.set(false);
-        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de charger le transfert' });
+        this.messageService.add({ severity: 'error', summary: $localize`:@@transfer-detail.component.summary.Erreur:Erreur`, detail: $localize`:@@transfer-detail.component.detail.Impossible_de_ch:Impossible de charger le transfert` });
         void this.router.navigate(['/transfers']);
       }
     });
@@ -194,14 +196,14 @@ export class TransferDetailComponent implements OnInit {
     this.transferService.startTransitStockTransfer(t.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.processing.set(false);
-        this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Transfert marqué en transit' });
+        this.messageService.add({ severity: 'success', summary: $localize`:@@transfer-detail.component.summary.Succès:Succès`, detail: $localize`:@@transfer-detail.component.detail.Transfert_marqu_:Transfert marqué en transit` });
         this.loadTransfer(t.id);
       },
       error: (err) => {
         this.processing.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@transfer-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -213,8 +215,8 @@ export class TransferDetailComponent implements OnInit {
       header: 'Confirmer le transfert',
       message: 'Confirmer ce transfert ? La disponibilité des stocks à la source sera contrôlée.',
       icon: 'pi pi-info-circle',
-      acceptLabel: 'Confirmer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@transfer-detail.component.acceptLabel.Confirmer:Confirmer`,
+      rejectLabel: $localize`:@@transfer-detail.component.rejectLabel.Annuler:Annuler`,
       accept: () => this.runConfirm()
     });
   }
@@ -226,14 +228,14 @@ export class TransferDetailComponent implements OnInit {
     this.transferService.confirmStockTransfer(t.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.processing.set(false);
-        this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Transfert confirmé' });
+        this.messageService.add({ severity: 'success', summary: $localize`:@@transfer-detail.component.summary.Succès:Succès`, detail: $localize`:@@transfer-detail.component.detail.Transfert_confir:Transfert confirmé` });
         this.loadTransfer(t.id);
       },
       error: (err) => {
         this.processing.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@transfer-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -245,8 +247,8 @@ export class TransferDetailComponent implements OnInit {
       header: 'Terminer le transfert',
       message: 'Cette action est irréversible : les stocks seront débités à la source et crédités à destination. Continuer ?',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Terminer',
-      rejectLabel: 'Annuler',
+      acceptLabel: $localize`:@@transfer-detail.component.acceptLabel.Terminer:Terminer`,
+      rejectLabel: $localize`:@@transfer-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-success',
       accept: () => this.runComplete()
     });
@@ -259,14 +261,14 @@ export class TransferDetailComponent implements OnInit {
     this.transferService.completeStockTransfer(t.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.processing.set(false);
-        this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Transfert terminé. Stock mis à jour.' });
+        this.messageService.add({ severity: 'success', summary: $localize`:@@transfer-detail.component.summary.Succès:Succès`, detail: $localize`:@@transfer-detail.component.detail.Transfert_termin:Transfert terminé. Stock mis à jour.` });
         this.loadTransfer(t.id);
       },
       error: (err) => {
         this.processing.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@transfer-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -291,7 +293,7 @@ export class TransferDetailComponent implements OnInit {
         this.pdfLoading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@transfer-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }
@@ -304,13 +306,13 @@ export class TransferDetailComponent implements OnInit {
     this.transferService.cancelStockTransfer(t.id, this.cancelReason).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.showCancelDialog = false;
-        this.messageService.add({ severity: 'info', summary: 'Annulé', detail: 'Transfert annulé' });
+        this.messageService.add({ severity: 'info', summary: $localize`:@@transfer-detail.component.summary.Annul_:Annulé`, detail: $localize`:@@transfer-detail.component.detail.Transfert_annul_:Transfert annulé` });
         this.loadTransfer(t.id);
       },
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
+          summary: $localize`:@@transfer-detail.component.summary.Erreur:Erreur`,
           detail: this.errorHandler.extractErrorMessage(err)
         });
       }

@@ -1,3 +1,4 @@
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -13,7 +14,7 @@ import {
 @Component({
   selector: 'app-project-dashboard-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink, DashboardPanelComponent],
+  imports: [BackendLabelPipe, CommonModule, RouterLink, DashboardPanelComponent],
   template: `
     @if (data) {
       <div class="proj-dash-sidebar">
@@ -49,7 +50,7 @@ import {
                   <div class="proj-dash-member-body">
                     <strong>{{ m.displayName }}</strong>
                     @if (m.roleDisplay) {
-                      <span class="proj-dash-member-role">{{ m.roleDisplay }}</span>
+                      <span class="proj-dash-member-role">{{ m.roleDisplay | backendLabel }}</span>
                     }
                   </div>
                   <span

@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -65,7 +67,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
 @Component({
   selector: 'app-project-task-detail',
   standalone: true,
-  imports: [
+  imports: [BackendLabelPipe, 
     CommonModule,
     FormsModule,
     RouterLink,
@@ -91,7 +93,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
     @if (task(); as t) {
       <app-breadcrumb [items]="crumbs(t)"></app-breadcrumb>
       <app-page-header [title]="t.title" [subtitle]="t.phaseName">
-        <app-status-badge [status]="taskStatusBadge(t.status)" [label]="t.statusDisplay" />
+        <app-status-badge [status]="taskStatusBadge(t.status)" [label]="t.statusDisplay | backendLabel" />
         @if (canCreateTimeEntry) {
           <app-button variant="outline" (click)="goToTimeTab()" i18n="@@projects.project-task-detail.saisir.du.temps.829487f5">Saisir du temps</app-button>
         }
@@ -110,7 +112,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
         }
         <span class="proj-chip">
           <i class="pi pi-calendar"></i>
-          {{ dueDate ? (dueDate | date:'shortDate') : 'Sans échéance' }}
+          {{ dueDate ? (dueDate | date:'shortDate') : loc_ui_tern_sans_echeance_4a0d4b }}
           @if (daysLeft() !== null && daysLeft()! <= 5 && daysLeft()! >= 0) {
             <span class="text-danger"> · J{{ daysLeft() }}</span>
           }
@@ -182,7 +184,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                     <ng-template pTemplate="body" let-s>
                       <tr [routerLink]="['/projects', s.projectId, 'tasks', s.id]" style="cursor:pointer">
                         <td>{{ s.title }}</td>
-                        <td><app-status-badge [status]="taskStatusBadge(s.status)" [label]="s.statusDisplay" /></td>
+                        <td><app-status-badge [status]="taskStatusBadge(s.status)" [label]="s.statusDisplay | backendLabel" /></td>
                         <td>{{ s.progressPercent }}%</td>
                       </tr>
                     </ng-template>
@@ -234,7 +236,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         }
                       </p>
                       <div class="task-create-field">
-                        <label for="task-time-date">Date <span class="ft-required" i18n="@@projects.project-task-detail.text.df58248c">*</span></label>
+                        <label for="task-time-date"><ng-container i18n="@@projects.project-task-detail.date.eb9a4bc1">Date </ng-container> <span class="ft-required" i18n="@@projects.project-task-detail.text.df58248c">*</span></label>
                         <p-datepicker
                           inputId="task-time-date"
                           class="w-full"
@@ -245,7 +247,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                           appendTo="body" />
                       </div>
                       <div class="task-create-field">
-                        <label for="task-time-hours">Heures <span class="ft-required" i18n="@@projects.project-task-detail.text.df58248c">*</span></label>
+                        <label for="task-time-hours"><ng-container i18n="@@projects.project-task-detail.heures.b4448c06">Heures </ng-container> <span class="ft-required" i18n="@@projects.project-task-detail.text.df58248c">*</span></label>
                         <p-inputNumber
                           inputId="task-time-hours"
                           class="w-full"
@@ -298,7 +300,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                         <td>
                           <app-status-badge [status]="timeEntryStatusBadge(e)" [label]="timeEntryStatusLabel(e)" />
                         </td>
-                        <td>{{ e.isBillable ? 'Oui' : 'Non' }}</td>
+                        <td>{{ e.isBillable ? loc_ui_tern_oui_eaa02f : loc_ui_tern_non_a72199 }}</td>
                         <td>{{ e.notes || '—' }}</td>
                         <td class="proj-time-row-actions">
                           @if (canEditTimeEntry(e) && canCreateTime) {
@@ -306,27 +308,27 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                           }
                           @if (canDeleteTimeEntry(e) && canCreateTime) {
                             <app-button size="sm" variant="ghost" icon="pi-trash" [iconOnly]="true"
-                              pTooltip="Supprimer" tooltipPosition="top" ariaLabel="Supprimer"
+                              pTooltip="Supprimer" i18n-pTooltip="Supprimer" tooltipPosition="top" ariaLabel="Supprimer"
                               (click)="deleteTimeEntry(e.id)" />
                           }
                           @if (canSubmitTimeEntry(e) && canSubmitTime) {
                             <app-button size="sm" variant="ghost" icon="pi-send" [iconOnly]="true"
-                              pTooltip="Soumettre" tooltipPosition="top" ariaLabel="Soumettre"
+                              pTooltip="Soumettre" i18n-pTooltip="Soumettre" tooltipPosition="top" ariaLabel="Soumettre"
                               (click)="submitTimeEntry(e.id)" />
                           }
                           @if (canValidateTimeEntry(e) && canValidateTime) {
                             <app-button size="sm" variant="primary" icon="pi-check" [iconOnly]="true"
-                              pTooltip="Valider" tooltipPosition="top" ariaLabel="Valider"
+                              pTooltip="Valider" i18n-pTooltip="Valider" tooltipPosition="top" ariaLabel="Valider"
                               (click)="validateTimeEntry(e.id)" />
                           }
                           @if (canReopenSubmittedTimeEntry(e) && canSubmitTime) {
                             <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                              pTooltip="Rouvrir en brouillon" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
+                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="Rouvrir en brouillon" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
                               (click)="reopenTimeEntry(e.id)" />
                           }
                           @if (canReopenValidatedTimeEntry(e) && canValidateTime) {
                             <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                              pTooltip="Rouvrir en brouillon" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
+                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="Rouvrir en brouillon" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
                               (click)="reopenTimeEntry(e.id)" />
                           }
                         </td>
@@ -363,7 +365,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
               <dt i18n="@@projects.project-task-detail.projet.a9de3a26">Projet</dt><dd><a [routerLink]="['/projects', t.projectId]" i18n="@@projects.project-task-detail.voir.le.projet.4dfb4818">Voir le projet</a></dd>
               <dt i18n="@@projects.project-task-detail.colonne.064b24f9">Colonne</dt><dd>{{ t.phaseName }}</dd>
               <dt i18n="@@projects.project-task-detail.assigne.be552b5f">Assigné</dt><dd>{{ t.assigneeUserName || '—' }}</dd>
-              <dt i18n="@@projects.project-task-detail.priorite.eede91d2">Priorité</dt><dd>{{ t.priorityDisplay }}</dd>
+              <dt i18n="@@projects.project-task-detail.priorite.eede91d2">Priorité</dt><dd>{{ t.priorityDisplay | backendLabel }}</dd>
             </dl>
           </section>
           <section class="proj-sidebar-section">
@@ -388,6 +390,9 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
   `
 })
 export class ProjectTaskDetailComponent implements OnInit {
+  readonly loc_ui_tern_sans_echeance_4a0d4b = $localize`:@@ui.tern.sans.echeance.4a0d4b:Sans échéance`;
+  readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
+  readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly api = inject(ProjectApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -492,7 +497,7 @@ export class ProjectTaskDetailComponent implements OnInit {
       }
     }
     if (payload.notifyCollaborators) {
-      this.toast.add({ severity: 'info', summary: 'Notification', detail: 'Les collaborateurs seront notifiés prochainement.' });
+      this.toast.add({ severity: 'info', summary: $localize`:@@project-task-detail.component.summary.Notification:Notification`, detail: $localize`:@@project-task-detail.component.detail.Les_collaborateu:Les collaborateurs seront notifiés prochainement.` });
     }
     this.save();
   }
@@ -547,22 +552,22 @@ export class ProjectTaskDetailComponent implements OnInit {
       if (!this.canCreateTime) return;
       this.api.updateTime(this.editTimeId, payload).subscribe({
         next: () => {
-          this.toast.add({ severity: 'success', summary: 'Temps mis à jour' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps mis à :Temps mis à jour` });
           this.resetLogForm();
           this.reload(t.id);
         },
-        error: err => this.toast.add({ severity: 'error', summary: 'Mise à jour du temps', detail: this.errors.extractErrorMessage(err) })
+        error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Mise à jour :Mise à jour du temps`, detail: this.errors.extractErrorMessage(err) })
       });
       return;
     }
     if (!this.canCreateTimeEntry) return;
     this.api.createTime(payload).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps enregistré' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps_enregistr_:Temps enregistré` });
         this.resetLogForm();
         this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Saisie des temps', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Saisie des t:Saisie des temps`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -570,10 +575,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     this.api.deleteTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps supprimé' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps suppri:Temps supprimé` });
         if (t) this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Suppression impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Suppression_impo:Suppression impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -581,10 +586,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     this.api.submitTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps soumis' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps soumis:Temps soumis` });
         if (t) this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Soumission impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Soumission_impos:Soumission impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -592,10 +597,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     this.api.validateTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps validé' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps validé:Temps validé` });
         if (t) this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Validation impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Validation_impos:Validation impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -603,10 +608,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     this.api.reopenTime(id).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Temps rouvert en brouillon' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Temps_rouvert_en:Temps rouvert en brouillon` });
         if (t) this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Réouverture impossible', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Réouverture :Réouverture impossible`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -651,7 +656,7 @@ export class ProjectTaskDetailComponent implements OnInit {
           });
         }
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Tâche', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Tâche:Tâche`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -672,10 +677,10 @@ export class ProjectTaskDetailComponent implements OnInit {
     };
     this.api.updateTask(t.id, payload).subscribe({
       next: () => {
-        this.toast.add({ severity: 'success', summary: 'Tâche enregistrée' });
+        this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.T_che_enregistr_:Tâche enregistrée` });
         this.reload(t.id);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Enregistrement', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Enregistrement:Enregistrement`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -691,7 +696,7 @@ export class ProjectTaskDetailComponent implements OnInit {
       progressPercent: 0
     }).subscribe({
       next: () => { this.subTitle = ''; this.reload(t.id); },
-      error: err => this.toast.add({ severity: 'error', summary: 'Sous-tâche', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Sous-tâche:Sous-tâche`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -705,7 +710,7 @@ export class ProjectTaskDetailComponent implements OnInit {
           if (c.success && c.data) this.comments.set(c.data);
         });
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Commentaire', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Commentaire:Commentaire`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -721,7 +726,7 @@ export class ProjectTaskDetailComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(url);
       },
-      error: err => this.toast.add({ severity: 'error', summary: 'Téléchargement', detail: this.errors.extractErrorMessage(err) })
+      error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.T_l_chargement:Téléchargement`, detail: this.errors.extractErrorMessage(err) })
     });
   }
 
@@ -738,10 +743,10 @@ export class ProjectTaskDetailComponent implements OnInit {
       message: 'Cette action est irréversible. Supprimer cette tâche ?',
       accept: () => this.api.deleteTask(t.id).subscribe({
         next: () => {
-          this.toast.add({ severity: 'success', summary: 'Tâche supprimée' });
+          this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Tâche suppri:Tâche supprimée` });
           void this.router.navigate(['/projects', t.projectId], { queryParams: { tab: 'tasks' } });
         },
-        error: err => this.toast.add({ severity: 'error', summary: 'Suppression', detail: this.errors.extractErrorMessage(err) })
+        error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-task-detail.component.summary.Suppression:Suppression`, detail: this.errors.extractErrorMessage(err) })
       })
     });
   }
