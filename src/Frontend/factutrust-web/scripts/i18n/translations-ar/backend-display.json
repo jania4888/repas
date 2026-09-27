@@ -1,0 +1,18 @@
+{
+  "backend.accepte": "مقبول",
+  "backend.annule": "ملغى",
+  "backend.annulee": "ملغاة",
+  "backend.brouillon": "مسودة",
+  "backend.carte.bancaire": "بطاقة بنكية",
+  "backend.cheque": "صك",
+  "backend.en.retard": "متأخر",
+  "backend.envoye": "مُرسل",
+  "backend.especes": "نقداً",
+  "backend.partiellement.payee": "مسددة جزئياً",
+  "backend.paye": "مسدد",
+  "backend.payee": "مسددة",
+  "backend.refuse": "مرفوض",
+  "backend.refusee": "مرفوضة",
+  "backend.valide.b": "مثبّت",
+  "backend.validee": "مثبّتة"
+}
