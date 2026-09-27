@@ -18,6 +18,13 @@ if (process.argv.includes('--json')) {
     for (const v of c.variants) console.error(`    « ${v.text.slice(0, 80)} » ← ${v.files.slice(0, 3).join(', ')}`);
   }
   const withId = messages.filter(m => m.id).length;
-  console.log(`[i18n:ids] ${messages.length} messages (${withId} avec @@id, ${messages.length - withId} sans) — ${collisions.length} collision(s)`);
+  // Un ICU imbriqué dans un message reçoit toujours un ID calculé par le compilateur (on ne peut pas
+  // lui en donner un) ; il est extrait et traduit comme les autres. Seuls les autres « sans ID » comptent.
+  const nestedIcu = messages.filter(m => !m.id && m.text === '{$ICU}').length;
+  const withoutId = messages.length - withId - nestedIcu;
+  console.log(
+    `[i18n:ids] ${messages.length} messages (${withId} avec @@id, ${nestedIcu} ICU imbriqué(s) à ID calculé, ` +
+      `${withoutId} sans) — ${collisions.length} collision(s)`
+  );
 }
 process.exit(collisions.length ? 1 : 0);

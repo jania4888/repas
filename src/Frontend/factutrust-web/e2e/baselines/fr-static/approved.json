@@ -35,9 +35,17 @@
     "sha": "5b0651060de991d22b4abe048c639dde3997ca1c66f2cc3a8d6df2597998696c",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
+  "src/app/features/accounting/fixed-assets/fixed-asset-detail.component.ts#FixedAssetDetailComponent": {
+    "sha": "51f27b128da802d1bfbe9713fd728e8fa8ee0b218c8037fcd7825ac39246a16e",
+    "reason": "« {{ c ? 'Regénérer' : 'Générer' }} le tableau » remplacé par deux messages complets (« Regénérer le tableau », « Générer le tableau ») : texte rendu identique."
+  },
   "src/app/features/accounting/fixed-assets/fixed-assets-amortization-table.component.ts#FixedAssetsAmortizationTableComponent": {
     "sha": "927b82641a12802add50f4a5c66c0ef589e9d129f427803706ba1f10f99a18b1",
     "reason": "Date et heure séparées pour sortir « à » du format (date:'dd/MM/yyyy' + « à » + date:'HH:mm') : rendu français identique, phrase traduisible."
+  },
+  "src/app/features/accounting/inventory-book/inventory-book.component.ts#InventoryBookComponent": {
+    "sha": "956642dba1ae7025d2fd3be3461f5496ebd25c14bc213231af6611062be5098d",
+    "reason": "Bandeau « Exercice verrouillé définitivement[ le {date}] — le livre d'inventaire est figé. » : trois fragments remplacés par deux phrases complètes (@if lockedAt) ; texte rendu identique (blancs repliés)."
   },
   "src/app/features/accounting/journal/journal.component.ts#JournalComponent": {
     "sha": "f23f101767a69873a71eb39864303965f12f8445805003ea04a65bff331498e3",
@@ -54,6 +62,10 @@
   "src/app/features/accounting/manual-entry/components/template-picker-modal.component.ts#TemplatePickerModalComponent": {
     "sha": "70ec975e4d37ce148ad8bfe9b968372f7d9fcb7e55396eef7878e29fa9f63797",
     "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
+  "src/app/features/accounting/nct-statements/nct-statements.component.ts#NctStatementsComponent": {
+    "sha": "7d766578d5fb931ab0debbda13f7dc84cc1e14b876d08bad2cfd4578d6ac9ce3",
+    "reason": "Badges « Non équilibré (écart : X TND) » et « Flux non rapproché (écart : X TND) » : la concaténation fragment + montant + « TND) » devient une méthode renvoyant un seul message $localize à placeholder ; montant formaté par DecimalPipe(LOCALE_ID) '1.3-3', comme le pipe number d'avant."
   },
   "src/app/features/accounting/vat-declaration/vat-declaration-general-info.component.ts#VatDeclarationGeneralInfoComponent": {
     "sha": "1eb3207edd122993181c652b28a2e4ba76cbc9f801a979ea42249f0e4706bed2",

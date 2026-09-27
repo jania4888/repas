@@ -1,5 +1,5 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, LOCALE_ID, OnInit, computed, inject, signal } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, of } from 'rxjs';
@@ -114,7 +114,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
           @case ('bilan') {
             <div class="nct-balance-status">
               <span class="nct-badge" [class.nct-badge--ok]="d.balanceSheet.isBalanced" [class.nct-badge--ko]="!d.balanceSheet.isBalanced">
-                {{ d.balanceSheet.isBalanced ? loc_ui_tern_bilan_equilibre_8e3fbf : loc_ui_tern_non_equilibre_ecart_fd2d29 + (d.balanceSheet.difference | number : '1.3-3') + loc_ui_tern_tnd_d9c1d5 }}
+                {{ d.balanceSheet.isBalanced ? loc_ui_tern_bilan_equilibre_8e3fbf : unbalancedLabel(d.balanceSheet.difference) }}
               </span>
             </div>
             <h3 class="nct-section" i18n="@@accounting.nct-statements.actif.0fc6c6b8">ACTIF</h3>
@@ -128,7 +128,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
           @case ('flux') {
             <div class="nct-balance-status">
               <span class="nct-badge" [class.nct-badge--ok]="d.cashFlow.isReconciled" [class.nct-badge--ko]="!d.cashFlow.isReconciled">
-                {{ d.cashFlow.isReconciled ? loc_ui_tern_flux_de_tresorerie_rapproche_e8cb8d : loc_ui_tern_flux_non_rapproche_ecart_4f680d + (cashFlowGap() | number : '1.3-3') + loc_ui_tern_tnd_d9c1d5 }}
+                {{ d.cashFlow.isReconciled ? loc_ui_tern_flux_de_tresorerie_rapproche_e8cb8d : unreconciledLabel(cashFlowGap()) }}
               </span>
             </div>
             <p class="nct-hint" i18n="@@accounting.nct-statements.methode.indirecte.la.ligne.ecart.de.rapprochemen.ff0b4d3e">Méthode indirecte. La ligne « Écart de rapprochement » explicite tout résidu par rapport à la variation réelle de trésorerie.</p>
@@ -198,11 +198,22 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
 })
 export class NctStatementsComponent implements OnInit {
   readonly loc_ui_tern_bilan_equilibre_8e3fbf = $localize`:@@ui.tern.bilan.equilibre.8e3fbf:Bilan équilibré`;
-  readonly loc_ui_tern_non_equilibre_ecart_fd2d29 = $localize`:@@ui.tern.non.equilibre.ecart.fd2d29:Non équilibré (écart : `;
-  readonly loc_ui_tern_tnd_d9c1d5 = $localize`:@@ui.tern.tnd.d9c1d5: TND)`;
   readonly loc_ui_tern_flux_de_tresorerie_rapproche_e8cb8d = $localize`:@@ui.tern.flux.de.tresorerie.rapproche.e8cb8d:Flux de trésorerie rapproché`;
-  readonly loc_ui_tern_flux_non_rapproche_ecart_4f680d = $localize`:@@ui.tern.flux.non.rapproche.ecart.4f680d:Flux non rapproché (écart : `;
   private readonly api = inject(AccountingService);
+  private readonly decimal = new DecimalPipe(inject(LOCALE_ID));
+
+  /** Badge d'écart du bilan : une seule phrase traduisible, montant au format du pipe number. */
+  unbalancedLabel(difference: number | null | undefined): string {
+    const amount = this.decimal.transform(difference, '1.3-3');
+    return $localize`:@@accounting.nct-statements.non.equilibre.ecart:Non équilibré (écart : ${amount}:amount: TND)`;
+  }
+
+  /** Badge d'écart du tableau de flux. */
+  unreconciledLabel(gap: number | null | undefined): string {
+    const amount = this.decimal.transform(gap, '1.3-3');
+    return $localize`:@@accounting.nct-statements.flux.non.rapproche.ecart:Flux non rapproché (écart : ${amount}:amount: TND)`;
+  }
+
   fiscalYear = new Date().getFullYear();
   exportDialogVisible = false;
   overridesDialogVisible = false;

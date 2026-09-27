@@ -268,6 +268,7 @@
   "pos.components.mode.rapide.f4.874b63b5": "الوضع السريع (F4)",
   "pos.components.net.a.payer.64737429": "{$START_TAG_SPAN}{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} الصافي للدفع {$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION}{$CLOSE_TAG_SPAN}",
   "pos.components.nouvelle.commande.f9.0be2f15a": "طلبية جديدة (F9)",
+  "pos.components.ok.9ce3bd42": "حسنًا",
   "pos.components.paiement.a.terme.echeance.j.0cb37e43": "{$START_TAG_SPAN}الدفع لأجل{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1} الأجل {$INTERPOLATION} يوم {$CLOSE_TAG_SPAN}",
   "pos.components.paiement.fractionne.10e17a92": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} الدفع المجزأ",
   "pos.components.pdf.et.ticket.a3f9d079": "PDF ووصل",

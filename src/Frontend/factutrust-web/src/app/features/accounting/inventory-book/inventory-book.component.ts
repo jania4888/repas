@@ -66,9 +66,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <div class="ib-lock" [class.ib-lock--locked]="b.isYearLocked" [class.ib-lock--provisional]="!b.isYearLocked" role="status">
         <i class="pi" [class.pi-lock]="b.isYearLocked" [class.pi-lock-open]="!b.isYearLocked" aria-hidden="true"></i>
         <span>
-          @if (b.isYearLocked) {<ng-container i18n="@@accounting.inventory-book.exercice.verrouille.definitivement.72159d77">
-            Exercice verrouillé définitivement</ng-container>@if (b.lockedAt) {<ng-container i18n="@@accounting.inventory-book.le.008d7ff1"> le {{ b.lockedAt | date : 'shortDate' }} </ng-container>}<ng-container i18n="@@accounting.inventory-book.le.livre.d.inventaire.est.fige.54852660"> — le livre d'inventaire est figé.
-          </ng-container>} @else {<ng-container i18n="@@accounting.inventory-book.exercice.non.verrouille.edition.provisoi.61deeec9">
+          @if (b.isYearLocked) {@if (b.lockedAt) {<ng-container i18n="@@accounting.inventory-book.verrouille.le.date.livre.fige">
+            Exercice verrouillé définitivement le {{ b.lockedAt | date : 'shortDate' }} — le livre d'inventaire est figé.
+          </ng-container>} @else {<ng-container i18n="@@accounting.inventory-book.verrouille.livre.fige">
+            Exercice verrouillé définitivement — le livre d'inventaire est figé.
+          </ng-container>}} @else {<ng-container i18n="@@accounting.inventory-book.exercice.non.verrouille.edition.provisoi.61deeec9">
             Exercice non verrouillé — édition <strong>provisoire</strong> (les données peuvent encore évoluer). Verrouillez l'exercice pour figer le livre.
           </ng-container>}
         </span>

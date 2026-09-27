@@ -24,6 +24,7 @@ const looksLikeValue = text =>
   /^[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]*)+$/.test(text) || // PascalCase composé
   /^[a-z][a-z0-9]*(?:-[a-z0-9]+|-\{\$[A-Za-z0-9_]+\})+$/.test(text) || // kebab-case, y compris msg-{$p0}
   /^var\(--[a-z0-9-]+\)$/.test(text) || // valeur CSS
+  /^(?:(?:fa|pi)-?[a-z-]*\s+)*(?:fa|pi)-[a-z0-9-]+$/.test(text) || // classes d'icône (fa-solid fa-x, pi pi-x)
   /^[?&][A-Za-z_][A-Za-z0-9_]*=$/.test(text) || // paramètre d'URL (?instance=)
   /^\.[a-z0-9]{2,5}$/.test(text); // extension de fichier (.json)
 

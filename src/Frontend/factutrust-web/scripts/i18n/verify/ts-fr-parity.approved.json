@@ -55,6 +55,14 @@
     "sha": "e4bf331c3bcadaec18454ac5bd22a61c0f41d71a898d449ce7db183e231d5626",
     "reason": "normalizeSearchText : même normalisation latine (NFD, sans diacritiques, minuscules) plus une normalisation arabe."
   },
+  "src/app/features/accounting/fixed-assets/fixed-asset-detail.component.ts": {
+    "sha": "2322cb0a32aac20ce670846c2b918321f05944270d7080c1ff607c7623718830",
+    "reason": "Libellé du bouton « Regénérer/Générer » + « le tableau » remplacé par deux messages $localize complets : texte rendu identique ; fragments inutilisés retirés."
+  },
+  "src/app/features/accounting/nct-statements/nct-statements.component.ts": {
+    "sha": "d17ceb7f96c0b8a7bbe74bb1c1595c6029ac6ffe78f03fc9ca30d0ddc6d5d554",
+    "reason": "Badges d'écart : les fragments « Non équilibré (écart : », « Flux non rapproché (écart : » et « TND) » deviennent deux messages complets à placeholder ${amount} (texte rendu identique)."
+  },
   "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts": {
     "sha": "7fcf317c1033931242f8f972dd131375f6377f4ff9bca296dcd39ceba5710672",
     "reason": "Libellé du bouton « Masquer/Voir » + « le texte » remplacé par deux messages $localize complets (« Masquer le texte », « Voir le texte ») : texte rendu identique, traduisible d'un seul tenant ; les fragments « Masquer »/« Voir » ne sont plus utilisés dans ce composant."

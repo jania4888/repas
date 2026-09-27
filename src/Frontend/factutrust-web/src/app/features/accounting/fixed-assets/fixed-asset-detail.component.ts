@@ -333,8 +333,8 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
       <div class="schedule-header">
         <h3 i18n="@@accounting.fixed-assets.tableau.d.amortissement.2a7cef27">Tableau d'amortissement</h3>
         <div class="actions-inline" *ngIf="canShowScheduleActions()">
-          <app-button variant="secondary" type="button" (click)="generateSchedule()" [disabled]="saving() || hasPostedLines()" i18n="@@accounting.fixed-assets.le.tableau.a77889ab">
-            {{ schedule()?.lines?.length ? loc_ui_tern_regenerer_2486f4 : loc_ui_tern_generer_bd221c }} le tableau
+          <app-button variant="secondary" type="button" (click)="generateSchedule()" [disabled]="saving() || hasPostedLines()">
+            {{ schedule()?.lines?.length ? locRegenererTableau : locGenererTableau }}
           </app-button>
           <app-button
             variant="outline"
@@ -612,8 +612,8 @@ export class FixedAssetDetailComponent implements OnInit {
   readonly loc_ui_tern_retour_au_registre_aa646c = $localize`:@@ui.tern.retour.au.registre.aa646c:Retour au registre`;
   readonly loc_ui_tern_mettre_en_service_79c6d1 = $localize`:@@ui.tern.mettre.en.service.79c6d1:Mettre en service`;
   readonly loc_ui_tern_mettre_en_service_et_comptabiliser_920942 = $localize`:@@ui.tern.mettre.en.service.et.comptabiliser.920942:Mettre en service et comptabiliser`;
-  readonly loc_ui_tern_regenerer_2486f4 = $localize`:@@ui.tern.regenerer.2486f4:Regénérer`;
-  readonly loc_ui_tern_generer_bd221c = $localize`:@@ui.tern.generer.bd221c:Générer`;
+  readonly locRegenererTableau = $localize`:@@accounting.fixed-assets.regenerer.le.tableau:Regénérer le tableau`;
+  readonly locGenererTableau = $localize`:@@accounting.fixed-assets.generer.le.tableau:Générer le tableau`;
   readonly loc_ui_tern_oui_eaa02f = $localize`:@@ui.tern.oui.eaa02f:Oui`;
   readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   private readonly api = inject(FixedAssetsService);

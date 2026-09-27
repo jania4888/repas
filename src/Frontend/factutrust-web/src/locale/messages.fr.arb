@@ -8022,8 +8022,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.chart-of-accounts.compte.87c3614c": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1} compte{$INTERPOLATION_1}{$CLOSE_TAG_SPAN}",
-  "@accounting.chart-of-accounts.compte.87c3614c": {
+  "accounting.chart-of-accounts.compte.87c3614c.pl": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1} {$ICU}{$CLOSE_TAG_SPAN}",
+  "@accounting.chart-of-accounts.compte.87c3614c.pl": {
+    "x-files": [
+      "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "5006144791105795267": "{VAR_PLURAL, plural, =1 {compte} other {comptes}}",
+  "@5006144791105795267": {
     "x-files": [
       "src/app/features/accounting/chart-of-accounts/chart-of-accounts.component.ts"
     ],
@@ -10231,8 +10238,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.fiscal-result.feuille.finalisee.lecture.seule.622c43f5": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT}{$START_TAG_SPAN}Feuille finalisée{$INTERPOLATION} — lecture seule.{$CLOSE_TAG_SPAN}",
-  "@accounting.fiscal-result.feuille.finalisee.lecture.seule.622c43f5": {
+  "accounting.fiscal-result.feuille.finalisee.lecture.seule.622c43f5.if": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT}{$START_TAG_SPAN}{$START_BLOCK_IF}Feuille finalisée le {$INTERPOLATION} — lecture seule.{$CLOSE_BLOCK_IF}{$START_BLOCK_ELSE}Feuille finalisée — lecture seule.{$CLOSE_BLOCK_ELSE}{$CLOSE_TAG_SPAN}",
+  "@accounting.fiscal-result.feuille.finalisee.lecture.seule.622c43f5.if": {
     "x-files": [
       "src/app/features/accounting/fiscal-result/fiscal-result.component.ts"
     ],
@@ -10651,8 +10658,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.fiscal-result.impot.sur.le.resultat.7419068e": "Impôt sur le résultat{$INTERPOLATION}",
-  "@accounting.fiscal-result.impot.sur.le.resultat.7419068e": {
+  "accounting.fiscal-result.impot.sur.le.resultat.7419068e.if": "{$START_BLOCK_IF}Impôt sur le résultat (IS {$INTERPOLATION} %){$CLOSE_BLOCK_IF}{$START_BLOCK_ELSE}Impôt sur le résultat (barème IRPP){$CLOSE_BLOCK_ELSE}",
+  "@accounting.fiscal-result.impot.sur.le.resultat.7419068e.if": {
     "x-files": [
       "src/app/features/accounting/fiscal-result/fiscal-result.component.ts"
     ],
@@ -10772,13 +10779,6 @@
   },
   "accounting.fiscal-result.supprimer.la.ligne.7e5f9ae0": "Supprimer la ligne",
   "@accounting.fiscal-result.supprimer.la.ligne.7e5f9ae0": {
-    "x-files": [
-      "src/app/features/accounting/fiscal-result/fiscal-result.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.bareme.irpp.a5d313": " (barème IRPP)",
-  "@ui.tern.bareme.irpp.a5d313": {
     "x-files": [
       "src/app/features/accounting/fiscal-result/fiscal-result.component.ts"
     ],
@@ -11924,13 +11924,6 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.fixed-assets.le.tableau.a77889ab": " {$INTERPOLATION} le tableau ",
-  "@accounting.fixed-assets.le.tableau.a77889ab": {
-    "x-files": [
-      "src/app/features/accounting/fixed-assets/fixed-asset-detail.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "accounting.fixed-assets.export.excel.4a245944": " Export Excel ",
   "@accounting.fixed-assets.export.excel.4a245944": {
     "x-files": [
@@ -12293,15 +12286,15 @@
     ],
     "x-wave": "v7"
   },
-  "ui.tern.regenerer.2486f4": "Regénérer",
-  "@ui.tern.regenerer.2486f4": {
+  "accounting.fixed-assets.regenerer.le.tableau": "Regénérer le tableau",
+  "@accounting.fixed-assets.regenerer.le.tableau": {
     "x-files": [
       "src/app/features/accounting/fixed-assets/fixed-asset-detail.component.ts"
     ],
     "x-wave": "v7"
   },
-  "ui.tern.generer.bd221c": "Générer",
-  "@ui.tern.generer.bd221c": {
+  "accounting.fixed-assets.generer.le.tableau": "Générer le tableau",
+  "@accounting.fixed-assets.generer.le.tableau": {
     "x-files": [
       "src/app/features/accounting/fixed-assets/fixed-asset-detail.component.ts"
     ],
@@ -14286,22 +14279,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.inventory-book.exercice.verrouille.definitivement.72159d77": " Exercice verrouillé définitivement",
-  "@accounting.inventory-book.exercice.verrouille.definitivement.72159d77": {
+  "accounting.inventory-book.verrouille.le.date.livre.fige": " Exercice verrouillé définitivement le {$INTERPOLATION} — le livre d'inventaire est figé. ",
+  "@accounting.inventory-book.verrouille.le.date.livre.fige": {
     "x-files": [
       "src/app/features/accounting/inventory-book/inventory-book.component.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.inventory-book.le.008d7ff1": " le {$INTERPOLATION} ",
-  "@accounting.inventory-book.le.008d7ff1": {
-    "x-files": [
-      "src/app/features/accounting/inventory-book/inventory-book.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "accounting.inventory-book.le.livre.d.inventaire.est.fige.54852660": " — le livre d'inventaire est figé. ",
-  "@accounting.inventory-book.le.livre.d.inventaire.est.fige.54852660": {
+  "accounting.inventory-book.verrouille.livre.fige": " Exercice verrouillé définitivement — le livre d'inventaire est figé. ",
+  "@accounting.inventory-book.verrouille.livre.fige": {
     "x-files": [
       "src/app/features/accounting/inventory-book/inventory-book.component.ts"
     ],
@@ -14657,15 +14643,22 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.journal.ecriture.en.brouillard.sur.la.periode.a.0ba1cf47": " {$INTERPOLATION} écriture{$INTERPOLATION_1} en brouillard sur la période — à valider avant clôture ou export. ",
-  "@accounting.journal.ecriture.en.brouillard.sur.la.periode.a.0ba1cf47": {
+  "accounting.journal.ecriture.en.brouillard.sur.la.periode.a.0ba1cf47.pl": " {$INTERPOLATION} {$ICU} en brouillard sur la période — à valider avant clôture ou export. ",
+  "@accounting.journal.ecriture.en.brouillard.sur.la.periode.a.0ba1cf47.pl": {
     "x-files": [
       "src/app/features/accounting/journal/journal.component.ts"
     ],
     "x-wave": "v7"
   },
-  "accounting.journal.ecriture.en.brouillard.en.attente.de.val.70e53073": " {$INTERPOLATION} écriture{$INTERPOLATION_1} en brouillard — en attente de validation par votre cabinet comptable. ",
-  "@accounting.journal.ecriture.en.brouillard.en.attente.de.val.70e53073": {
+  "196494359036129736": "{VAR_PLURAL, plural, =1 {écriture} other {écritures}}",
+  "@196494359036129736": {
+    "x-files": [
+      "src/app/features/accounting/journal/journal.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.journal.ecriture.en.brouillard.en.attente.de.val.70e53073.pl": " {$INTERPOLATION} {$ICU} en brouillard — en attente de validation par votre cabinet comptable. ",
+  "@accounting.journal.ecriture.en.brouillard.en.attente.de.val.70e53073.pl": {
     "x-files": [
       "src/app/features/accounting/journal/journal.component.ts"
     ],
@@ -14692,8 +14685,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.journal.ligne.sur.la.periode.3219962d": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1} ligne{$INTERPOLATION_1} sur la période{$CLOSE_TAG_SPAN}",
-  "@accounting.journal.ligne.sur.la.periode.3219962d": {
+  "accounting.journal.ligne.sur.la.periode.3219962d.pl": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1} {$ICU} sur la période{$CLOSE_TAG_SPAN}",
+  "@accounting.journal.ligne.sur.la.periode.3219962d.pl": {
+    "x-files": [
+      "src/app/features/accounting/journal/journal.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "3584269125067295164": "{VAR_PLURAL, plural, =1 {ligne} other {lignes}}",
+  "@3584269125067295164": {
     "x-files": [
       "src/app/features/accounting/journal/journal.component.ts"
     ],
@@ -20089,20 +20089,6 @@
     ],
     "x-wave": "v7"
   },
-  "ui.tern.non.equilibre.ecart.fd2d29": "Non équilibré (écart : ",
-  "@ui.tern.non.equilibre.ecart.fd2d29": {
-    "x-files": [
-      "src/app/features/accounting/nct-statements/nct-statements.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "ui.tern.tnd.d9c1d5": " TND)",
-  "@ui.tern.tnd.d9c1d5": {
-    "x-files": [
-      "src/app/features/accounting/nct-statements/nct-statements.component.ts"
-    ],
-    "x-wave": "v7"
-  },
   "ui.tern.flux.de.tresorerie.rapproche.e8cb8d": "Flux de trésorerie rapproché",
   "@ui.tern.flux.de.tresorerie.rapproche.e8cb8d": {
     "x-files": [
@@ -20110,8 +20096,15 @@
     ],
     "x-wave": "v7"
   },
-  "ui.tern.flux.non.rapproche.ecart.4f680d": "Flux non rapproché (écart : ",
-  "@ui.tern.flux.non.rapproche.ecart.4f680d": {
+  "accounting.nct-statements.non.equilibre.ecart": "Non équilibré (écart : {$amount} TND)",
+  "@accounting.nct-statements.non.equilibre.ecart": {
+    "x-files": [
+      "src/app/features/accounting/nct-statements/nct-statements.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.nct-statements.flux.non.rapproche.ecart": "Flux non rapproché (écart : {$amount} TND)",
+  "@accounting.nct-statements.flux.non.rapproche.ecart": {
     "x-files": [
       "src/app/features/accounting/nct-statements/nct-statements.component.ts"
     ],
@@ -21585,7 +21578,6 @@
   "@ui.tern.masquer.adb05f": {
     "x-files": [
       "src/app/features/ai-assistant/components/assistant-progress-timeline/assistant-progress-timeline.component.ts",
-      "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts",
       "src/app/features/studio/views/studio-record-view-designer.component.ts"
     ],
     "x-wave": "v6"
@@ -21632,13 +21624,6 @@
     ],
     "x-wave": "v6"
   },
-  "ai-assistant.components.le.texte.a74f9f09": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT}{$START_TAG_SPAN}{$INTERPOLATION} le texte{$CLOSE_TAG_SPAN}",
-  "@ai-assistant.components.le.texte.a74f9f09": {
-    "x-files": [
-      "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts"
-    ],
-    "x-wave": "v6"
-  },
   "ai-assistant.components.supprimer.cette.piece.jointe.4b3f3917": "Supprimer cette pièce jointe",
   "@ai-assistant.components.supprimer.cette.piece.jointe.4b3f3917": {
     "x-files": [
@@ -21660,8 +21645,15 @@
     ],
     "x-wave": "v6"
   },
-  "ui.tern.voir.8a754f": "Voir",
-  "@ui.tern.voir.8a754f": {
+  "ai-assistant.chat-attachment-card.masquer.le.texte": "Masquer le texte",
+  "@ai-assistant.chat-attachment-card.masquer.le.texte": {
+    "x-files": [
+      "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "ai-assistant.chat-attachment-card.voir.le.texte": "Voir le texte",
+  "@ai-assistant.chat-attachment-card.voir.le.texte": {
     "x-files": [
       "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts"
     ],
@@ -74994,13 +74986,6 @@
   },
   "studio.studio-entity-list.icone.fontawesome.b25e133d": "Icône (FontAwesome)",
   "@studio.studio-entity-list.icone.fontawesome.b25e133d": {
-    "x-files": [
-      "src/app/features/studio/studio-entity-list.component.ts"
-    ],
-    "x-wave": "v7"
-  },
-  "studio.studio-entity-list.fa.solid.fa.file.contract.44803ac4": "fa-solid fa-file-contract",
-  "@studio.studio-entity-list.fa.solid.fa.file.contract.44803ac4": {
     "x-files": [
       "src/app/features/studio/studio-entity-list.component.ts"
     ],
