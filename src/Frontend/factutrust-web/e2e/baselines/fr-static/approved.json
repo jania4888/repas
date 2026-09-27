@@ -1,0 +1,354 @@
+{
+  "src/app/core/layout/header/header.component.ts#HeaderComponent": {
+    "sha": "ead42268f84d72cdeb105e3b07df01b7649884ec92e4cc6d81e473fa8203accc",
+    "reason": "Attributs entrepôt via $localize (« Entrepôt actif : » / « Entrepôt : » + nom, texte identique) ; sélecteur de langue ajouté (masqué si erp.arabicEnabled est faux)."
+  },
+  "src/app/core/layout/secondary-nav/secondary-nav.component.html": {
+    "sha": "75c830c22123121c155b6045b30c57399a3b5e1fbf1c089c25ba5b61046917a2",
+    "reason": "Libellés via resolveSubNavLabel : texte source identique au registre (nav-labels.spec.ts)."
+  },
+  "src/app/core/layout/sidebar/sidebar.component.html": {
+    "sha": "5bbb3101685a8da0bcc09f8e330189beb39fbf9ed8ad194fe34dadcc9b01d12a",
+    "reason": "Libellés via resolveNavLabel/resolveSubNavLabel (nav-labels.spec.ts) ; aria-label marque et badge via $localize (même texte, doublon d'interpolation corrigé)."
+  },
+  "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts#BankReconciliationComponent": {
+    "sha": "bfaa4e6f8b968c2c47810f7e6c1f7f6aa40b8b2f672d4b033ba7c8f73da5ef16",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/accounting/fiscal-schedule/fiscal-schedule-detail.component.ts#FiscalScheduleDetailComponent": {
+    "sha": "175012c588e1086778a525e7e87dc8562e2182bd454ee241df3a0902230748e9",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/accounting/fiscal-schedule/fiscal-schedule-table.component.ts#FiscalScheduleTableComponent": {
+    "sha": "5b0651060de991d22b4abe048c639dde3997ca1c66f2cc3a8d6df2597998696c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/accounting/journal/journal.component.ts#JournalComponent": {
+    "sha": "b4d0bdb6f7c44bbe75531bfd339de18263eed654e8f6bff10c145a6bb09f40cc",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/accounting/loans/loans-list.component.ts#LoansListComponent": {
+    "sha": "09e469a0c14c0b06fc682a00eab850ecc18e0f42434e4be7aaac1341a7282426",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/accounting/vat-declaration/vat-declaration-general-info.component.ts#VatDeclarationGeneralInfoComponent": {
+    "sha": "1eb3207edd122993181c652b28a2e4ba76cbc9f801a979ea42249f0e4706bed2",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/auth/auth-shell/auth-shell.component.html": {
+    "sha": "aa933dbd3b1f31a0bb0488bbfd9e3fbcd8a8f4e9000fae46a9ee9a31eb5da0ad",
+    "reason": "Sélecteur de langue ajouté (masqué si erp.arabicEnabled est faux)."
+  },
+  "src/app/features/clients/client-portal-contacts-panel.component.ts#ClientPortalContactsPanelComponent": {
+    "sha": "56aeccb15df32c49e4d93fc2bc41e267c3f7a566e66dc887351a275655f9281a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/delivery-notes/pages/delivery-note-detail/delivery-note-detail.component.ts#DeliveryNoteDetailComponent": {
+    "sha": "ac26e06502773ad9bc163fd2d2be3600d197a7b1ff33a84318fa14979d4ec5a8",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/delivery-notes/pages/delivery-note-list/delivery-note-list.component.ts#DeliveryNoteListComponent": {
+    "sha": "80b6d7ec83157658dba39bda6e10436be92fdbef7e9f80f5a2085296d1bb486b",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/inventory/inventory-detail/inventory-detail.component.html": {
+    "sha": "8d3ac34fcf3ed44076f96557219432ab9063721a45f56f426bf7a1f2bf017348",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/inventory/inventory-list/inventory-list.component.html": {
+    "sha": "58ee2f3553b23ca76831773293a931ed5235495c2f48563918f18dfe83fafcc1",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/invoices/invoice-detail/invoice-detail.component.ts#InvoiceDetailComponent": {
+    "sha": "97f2752155172de72256e923face600c20bad0e9e1ffe63aa751a02a387bf07c",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/invoices/invoice-wizard/invoice-wizard.component.ts#InvoiceWizardComponent": {
+    "sha": "38ab9f2f89ea06ba2a0d599638630af23ef95f96f30faf7e561d4c5de233e96c",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/invoices/invoice-wizard/steps/step-lines/step-lines.component.ts#StepLinesComponent": {
+    "sha": "bfa06c4dec150cbcb3e29647fbae9f254049142326a71814509e4f2dd745bb63",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/invoices/invoice-wizard/steps/step-preview/step-preview.component.ts#StepPreviewComponent": {
+    "sha": "fc47e4a535323f1c0f8edd502de78369eb83558077187ceddccb36b690115533",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/payments/cash-desk/cash-desk.component.ts#CashDeskComponent": {
+    "sha": "983fc228f30630d04b7d63ceb30e453af2ea737877d7c45904fc1be059ae892e",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-cnss-ij-claims-tab.component.ts#EmployeeCnssIjClaimsTabComponent": {
+    "sha": "81d2cefc60a6c02d1971d9c33dfe2e9565e46088af0f35bef78cc4f79574be11",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-detail.component.ts#EmployeeDetailComponent": {
+    "sha": "081dd27f989d2972aa1925846d84c10def713195fe1c90988e5f828687558a2c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-garnishments-tab.component.ts#EmployeeGarnishmentsTabComponent": {
+    "sha": "86a743a4cd6a82cbeb591997d1c64c8378e2a24d29bb2ef476fba7aea818baf8",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-in-kind-benefits-tab.component.ts#EmployeeInKindBenefitsTabComponent": {
+    "sha": "006e27c5191db02f91891b4af4fae2b9e5fe2ccc22a7595c0b3c0ddf8d597241",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-leaves-tab.component.ts#EmployeeLeavesTabComponent": {
+    "sha": "e7a3ddeacffc0e8f0681ef51053dc0e21e6f0e49275f9d784ef85517edd39606",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-loans-tab.component.ts#EmployeeLoansTabComponent": {
+    "sha": "9dcf74b02e2fa20c4f8388e6d73dfbbc9d45ff803beb6fac94f9091a14573d47",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/employees/employee-suspensions-tab.component.ts#EmployeeSuspensionsTabComponent": {
+    "sha": "9d3d255c4cb57e808c20e827dd874a84111e6b2bf6df96ab77143aa45d0266a4",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/runs/payroll-bank-transfer-dialog.component.ts#PayrollBankTransferDialogComponent": {
+    "sha": "07055e8e4c57eeb11988f764ffddbdb364c4b113fc91503f736dd52c9f334b79",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/runs/payroll-overtime-grid.component.ts#PayrollOvertimeGridComponent": {
+    "sha": "ff1a2a5a33ae5577f605bc7db25df140ece766b0533efa5e92377eaf64eb767f",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/runs/payroll-payments-panel.component.ts#PayrollPaymentsPanelComponent": {
+    "sha": "6b03a2039d5ba36254e7c5e502386c48fdd8855be5a3dbbecb1f0e3fa26627f5",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/runs/payroll-run-detail.component.ts#PayrollRunDetailComponent": {
+    "sha": "4ffec76631d3ccef523c76a6a1ebac05e2f9064fad3ba831b3a76d5e078c1abc",
+    "reason": "Ajout du pipe backendLabel : identité en français ; le pipe conserve null, donc « ?? 'Non payé' » s'applique comme avant."
+  },
+  "src/app/features/payroll/runs/payroll-run-list.component.ts#PayrollRunListComponent": {
+    "sha": "12d74d7fe74d5a96ecd278f9d18945c334fcfe9b79b24db7e0aaf8566cedd350",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/settings/annual-bonuses.component.ts#AnnualBonusesSettingsComponent": {
+    "sha": "8d2bfad405e09b840cc19c6ffc87c7b41c0b03830acd84b97df23dfea013371c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/settings/payroll-holidays.component.ts#PayrollHolidaysComponent": {
+    "sha": "093bfd41a2d224a96a6af85e047cde9d498e71170ff05dd155b6b2dc56dea228",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/settings/payroll-social-funds-settings.component.ts#PayrollSocialFundsSettingsComponent": {
+    "sha": "d11ff1aa0f8abf5a21ef42e3aa0867ba76f03049571a7d27c6dfc7616dce7cc3",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/payroll/terminations/termination-settlement-list.component.ts#TerminationSettlementListComponent": {
+    "sha": "6375ea1ec65c72e432528bc61b0dc94ca7ff31e960849ff3251ff2ce80baa2dd",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/pos/components/order-panel/order-panel.component.ts#OrderPanelComponent": {
+    "sha": "7d063303bdaab783a8b54cd6b1ce87539f8b4a2a0d5b067332bfc27fbc9ec81d",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/pos/components/pos-history-panel/pos-history-panel.component.ts#PosHistoryPanelComponent": {
+    "sha": "c78e1cacb939c0f9d55e4fe4059635ff230e333674773e657ae787566f07cbb9",
+    "reason": "Artefact d'outil : la référence échappait l'apostrophe dans le littéral TS (Angular lit le template brut) ; texte affiché identique « Aucune transaction aujourd'hui »."
+  },
+  "src/app/features/pos/pos.component.ts#PosComponent": {
+    "sha": "2454d80715ab0d47e15e487a8ab50fac88d7df0ef21593b58752400a615d589f",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/overview/project-overview-info-card.component.ts#ProjectOverviewInfoCardComponent": {
+    "sha": "9fcc30ffdb857b106ef595df56956e27005e8b568aa71a741489261bc603e00a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/overview/project-team-preview-card.component.ts#ProjectTeamPreviewCardComponent": {
+    "sha": "4e38bc013f92db17e0491bfdf2ccab1e7549dea8b23d45d6c494f850dfe9b6cc",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-dashboard-charts.component.ts#ProjectDashboardChartsComponent": {
+    "sha": "17770523bd31741d46be40e9eb129ea03eef2d3c86cad494de5afa8365ef60f0",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-dashboard-sidebar.component.ts#ProjectDashboardSidebarComponent": {
+    "sha": "623354b4bb996270459b4609fb7ad09f19ed207895286fb967c48c8fa4d9f5c8",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-detail-hero.component.ts#ProjectDetailHeroComponent": {
+    "sha": "ad5d155d286eb40233d2e9f4c50683572a54d6b50f7af706f11cfe8e7b439931",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-invoices-section.component.ts#ProjectInvoicesSectionComponent": {
+    "sha": "93e59d322e173046ecc9c282f80cd6db84f30a16fd9825fe576fa6a48f082bd5",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-kanban-board.component.ts#ProjectKanbanBoardComponent": {
+    "sha": "3ae99a2e9edfa576efd638581bfc0ebe8fcadb7e2473998c05b162b2f2d9a630",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/components/project-recent-projects-panel.component.ts#ProjectRecentProjectsPanelComponent": {
+    "sha": "f4530ed54816e493327e9a99174843eef62bfc3df5e77d668f04a514f30efcbd",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/project-list.component.ts#ProjectListComponent": {
+    "sha": "1fcc3a4c4b8d2ae8f0bf86473c5f33d223e477f03fd3bc2a518139b4cf5b1d13",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/project-task-detail.component.ts#ProjectTaskDetailComponent": {
+    "sha": "f11549fd6b750e4ff6943fb47b72e8def2395af5ee2bbe0519e389de6a8a9273",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/tabs/project-billing.tab.ts#ProjectBillingTabComponent": {
+    "sha": "4e60b21f52cdf61a08d987314ea4b880a4e933f9ec0885ba432cf0d9f94be5cd",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/tabs/project-budget.tab.ts#ProjectBudgetTabComponent": {
+    "sha": "9f234eabaf6a5de451366aff39d3696c83efef5e51d3ab7a033817bfdf033049",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/projects/tabs/project-tasks.tab.ts#ProjectTasksTabComponent": {
+    "sha": "ed5814bc96c76e3d09d2ee1470ae77dbfd979d8f38eaf23f330baacacdf490c7",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/purchase-orders/purchase-order-detail/purchase-order-detail.component.ts#PurchaseOrderDetailComponent": {
+    "sha": "330e7f5585c36ee7af78bc0491c4cb28be3b2f1b54b9532a32b4cbd10867cf3c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/purchase-orders/purchase-order-list/purchase-order-list.component.ts#PurchaseOrderListComponent": {
+    "sha": "aefecaf334e5965f70b305b7e3d24f9e4433c955aab4e0cd0e68cd5201fe7ec1",
+    "reason": "Filtres de dates regroupés (.ft-filters__field) : même ordre et mêmes textes, le libellé ne se sépare plus de son champ au retour à la ligne (libellés arabes plus longs)."
+  },
+  "src/app/features/purchase-orders/purchase-order-receive/purchase-order-receive.component.ts#PurchaseOrderReceiveComponent": {
+    "sha": "b00e4a9783c3536a056d4e44c6e9e56e645aa1ca23c28cfc73ec712d51728ae3",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/purchase-receipts/pages/purchase-receipt-detail/purchase-receipt-detail.component.ts#PurchaseReceiptDetailComponent": {
+    "sha": "0ed8e34cc6f97f074fa5ee8e2b1a1edad2f5ee9faa349adda0d916f3e98e076c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts#PurchaseReceiptFormComponent": {
+    "sha": "5a91168eb410575c684fe0bd006ab420ea1c8af35caca0d6b3aba8a4130483f3",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts#PurchaseReceiptListComponent": {
+    "sha": "40d7eed5fffdc6d4be106b6ebb1348045c8944824f0342a62aa6e141aa88d324",
+    "reason": "Filtres de dates regroupés (.ft-filters__field) : même ordre et mêmes textes, le libellé ne se sépare plus de son champ au retour à la ligne (libellés arabes plus longs)."
+  },
+  "src/app/features/quotes/quote-detail/quote-detail.component.ts#QuoteDetailComponent": {
+    "sha": "5b4e238e99f7a97be1e5b6a3d8a7b459e2b11c97c1ef844c124365422cd464d5",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/components/contract-amend-dialog.component.ts#ContractAmendDialogComponent": {
+    "sha": "754be322b5b5fe9eb938354ea1362f262d35772dc8a8b7c9aabb63b86ebc46b7",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/recurring-contracts/pages/contract-detail/contract-detail.component.ts#ContractDetailComponent": {
+    "sha": "e4d60e4bf7f3e2fab2acd502ba07634579a60b75d56d1c6a5a9dc48bc3e57a38",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/pages/contract-list/contract-list.component.ts#ContractListComponent": {
+    "sha": "ff1e5fca7343e7172b0ac93dd7a50f34c3fccca110c3da4b6832cf69f59e3f91",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-history.tab.ts#ContractHistoryTabComponent": {
+    "sha": "fa42764db9f049d8f554d1a9d064fd8cd92d0c2b55baaed6d44aa69495de42d7",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-invoices.tab.ts#ContractInvoicesTabComponent": {
+    "sha": "e30244ca02f39614ebb9eed089dceaf5a7dba83148e4728b837612a0425fc9c0",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-overview.tab.ts#ContractOverviewTabComponent": {
+    "sha": "80cf51c415d22e343ca336b86b5333f20073f382a1ac5d71f1857e1a7194ad5f",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-schedule.tab.ts#ContractScheduleTabComponent": {
+    "sha": "22909ae449b57fd314917dd4d05e94a353c9c3bacaedb6e131359c80e241062b",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/recurring-contracts/tabs/contract-services.tab.ts#ContractServicesTabComponent": {
+    "sha": "3f1a348cb2db717cf58894ae9072d91c7dc3cc4824bb8f93e7cbe9ea62e45c9a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/reports/payments/payments-reports.component.ts#PaymentsReportsComponent": {
+    "sha": "545ae601e582a4c01a8fd6b4861b59e33895815b3f97a4ef6fc4997992e7a25a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/reports/purchases/purchases-reports.component.ts#PurchasesReportsComponent": {
+    "sha": "310679c1f786377947476046b1b964f0d34cc2b3bd3ea7506fd4d452d144b120",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/reports/sales/sales-reports.component.ts#SalesReportsComponent": {
+    "sha": "36afdf201983ac98ff78b19223189b9f09d2751a5d97e55eb61291badc0f0d2f",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/reports/stock/stock-reports.component.ts#StockReportsComponent": {
+    "sha": "01b67c9c79f91fef4e149655ab22f2f72a67e17df63b0fbd9d2095ad7a395f9a",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/sales-orders/sales-order-detail/sales-order-detail.component.ts#SalesOrderDetailComponent": {
+    "sha": "be17607f57aca2ce6c95dfae919a616cf16ce754cdd37fa905737ea856c4e4cd",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/sales-orders/sales-order-list/sales-order-list.component.ts#SalesOrderListComponent": {
+    "sha": "53f83b154fc568b49c1ce67d8df010c0f5df813f85764ee24d150830d0bf3185",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/sales-return-notes/pages/sales-return-note-detail.component.ts#SalesReturnNoteDetailComponent": {
+    "sha": "9614250cfa4d2786a3d7e5aa24438876cdc7fc5071ae07963ce340eb95da1a78",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/sales-return-notes/pages/sales-return-note-list.component.ts#SalesReturnNoteListComponent": {
+    "sha": "f8327c925f8a2ad271639069ecf528f442203056ab44309506b0cd6471ebf3d2",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/profile/profile.component.ts#ProfileComponent": {
+    "sha": "5920a51914300c9df3c4d2f7c6c0a7ce346fd7763abb8341c9fc0ede39bcdb14",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/subscription/subscription.component.ts#SubscriptionComponent": {
+    "sha": "071e0f98e94d620b190921407b8eb854816474f010af0cfdc4ca619b8b757879",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/taxes/taxes.component.ts#TaxesComponent": {
+    "sha": "f11a9e938688245f401000f95c4ee04586b162a65c7b9a34460cce5ec529ea94",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/users/tenant-users-list.component.ts#TenantUsersListComponent": {
+    "sha": "bf3999faa516d47c628cf5aca0a577821bf828cb12979bf13b336250da286ca7",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/settings/variant-axes/product-attribute-form/product-attribute-form.component.ts#ProductAttributeFormComponent": {
+    "sha": "919c44c34b95e01b2870d8b0dd5bb8d0400005339c44a3b863a41d3859ce1e4e",
+    "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/stock-vouchers/stock-voucher-detail.component.ts#StockVoucherDetailComponent": {
+    "sha": "6ec6efbdb2e22cca380a955f0fbc3d804ca22f892382343c6879ebef7e410f97",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/stock-vouchers/stock-voucher-list.component.ts#StockVoucherListComponent": {
+    "sha": "28b880ffabbfb43811373242b25d1d274c8130d827f79601cfbdce407885a66f",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/supplier-invoices/supplier-invoice-detail/supplier-invoice-detail.component.ts#SupplierInvoiceDetailComponent": {
+    "sha": "d73ded8463101fcc075c9da3d93d2361a2ca3b38e5d281ce2356d5d7af79d95c",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/supplier-invoices/supplier-invoice-list/supplier-invoice-list.component.ts#SupplierInvoiceListComponent": {
+    "sha": "587eae305720424557245e30ef749618677f6787c3db3397bdb0214549c8cee2",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/transfers/transfer-detail/transfer-detail.component.ts#TransferDetailComponent": {
+    "sha": "dd962e39dd15a4c061a379eb971a4e216b6cba7bffffa73972bdb6ef01213c30",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/transfers/transfer-list/transfer-list.component.ts#TransferListComponent": {
+    "sha": "0d46feb691593d058e43437dfaa9034b01b0c590084d5eed228dd7bf0642e2aa",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/shared/components/invoice-payments-panel/invoice-payments-panel.component.ts#InvoicePaymentsPanelComponent": {
+    "sha": "301dcf8bba9a1a02e1d9c96288fa28265b6da813ac0568f53324f1464ae7b5bb",
+    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/shared/components/record-payment-dialog/record-payment-dialog.component.ts#RecordPaymentDialogComponent": {
+    "sha": "184dd4dcb908a7e86f9cb0e87147176333401b2d114425e90e48531f3fedd295",
+    "reason": "Artefact d'outil : la référence échappait l'apostrophe dans le littéral TS (Angular lit le template brut) ; texte affiché identique « N° de l'effet »."
+  }
+}

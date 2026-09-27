@@ -14,7 +14,17 @@ if (!targetDir) {
   process.exit(1);
 }
 
-const ATTRS = ['placeholder', 'title', 'aria-label', 'alt'];
+const ATTRS = [
+  'placeholder',
+  'title',
+  'aria-label',
+  'alt',
+  'label',
+  'header',
+  'pTooltip',
+  'emptyMessage',
+  'currentPageReportTemplate'
+];
 
 function openingTagEndingAt(src, gtIndex) {
   let i = gtIndex - 1;
@@ -22,19 +32,74 @@ function openingTagEndingAt(src, gtIndex) {
   return i >= 0 ? src.slice(i, gtIndex + 1) : '';
 }
 
+function insideHtmlComment(src, index) {
+  const before = src.slice(0, index);
+  return before.lastIndexOf('<!--') > before.lastIndexOf('-->');
+}
+
 /** @param {string} src HTML fragment */
+function looksLikeComment(text) {
+  const t = text.trim();
+  if (!t || t.startsWith('<!--') || t.includes('-->')) return true;
+  if (/ngTemplateOutlet|compile time|declaration shared/.test(t)) return true;
+  return false;
+}
+
 export function markHtmlContent(src) {
-  // Texte direct entre balises (>texte<) sans {{ }}
-  src = src.replace(/>([^<>{}\n][^<>{}]*?)<\//g, (match, text, offset) => {
+  // Conserve les espaces d'origine. trim sert seulement à décider si le nœud est traduisible.
+  src = src.replace(/>([^<>{}]*?)<\//g, (match, text, offset) => {
+    if (insideHtmlComment(src, offset)) return match;
     const trimmed = text.trim();
     if (!trimmed || trimmed.includes('{{') || trimmed.includes('i18n')) return match;
+    if (looksLikeComment(trimmed)) return match;
     if (/^[\d\s.,:;%€$+-]+$/.test(trimmed)) return match;
+    if (trimmed.length > 400) return match;
     if (offset > 0 && src[offset - 1] === '/') return match;
     const opening = openingTagEndingAt(src, offset);
     if (/\bi18n\b/.test(opening)) return match;
     if (/<\//.test(opening)) return match;
     if (/\/>\s*$/.test(opening)) return match;
-    return ` i18n>${trimmed}</`;
+    if (/^<i[\s>]/.test(opening)) return match;
+    return ` i18n>${text}</`;
+  });
+  // Texte suivi d'un élément enfant : ng-container (aucun nœud DOM rendu).
+  src = src.replace(/>([ \t]*)([^<>{}\n][^<>{}\n]*?)([ \t]*)(<[A-Za-z])/g, (match, lead, text, trail, next, offset) => {
+    if (insideHtmlComment(src, offset)) return match;
+    const prev = src[offset - 1] ?? '';
+    if (prev === ' ' || prev === '\t' || prev === '\n' || prev === '\r' || prev === '>') return match;
+    const trimmed = text.trim();
+    if (!trimmed || trimmed.includes('{{') || trimmed.includes('i18n')) return match;
+    if (looksLikeComment(trimmed)) return match;
+    if (/^[\d\s.,:;%€$+*]+$/.test(trimmed)) return match;
+    const opening = openingTagEndingAt(src, offset);
+    if (/\bi18n\b/.test(opening) || /<\//.test(opening) || /^<i[\s>]/.test(opening)) return match;
+    return `>${lead}<ng-container i18n>${text}</ng-container>${trail}${next}`;
+  });
+  src = src.replace(/>(\r?\n[ \t]*)([^<>{}\n][^<>{}\n]*?)([ \t]*)(<[A-Za-z])/g, (match, lead, text, trail, next, offset) => {
+    if (insideHtmlComment(src, offset)) return match;
+    const prev = src[offset - 1] ?? '';
+    if (prev === ' ' || prev === '\t' || prev === '>' ) return match;
+    const trimmed = text.trim();
+    if (!trimmed || trimmed.includes('{{') || trimmed.includes('i18n') || trimmed.includes('"')) return match;
+    if (looksLikeComment(trimmed)) return match;
+    if (/^[\d\s.,:;%€$+*]+$/.test(trimmed)) return match;
+    const opening = openingTagEndingAt(src, offset);
+    if (/\bi18n\b/.test(opening) || /<\//.test(opening) || /^<i[\s>]/.test(opening)) return match;
+    return `>${lead}<ng-container i18n>${text}</ng-container>${trail}${next}`;
+  });
+  // Libellé seul sur sa ligne, champ sur la ligne suivante.
+  src = src.replace(/>(\r?\n[ \t]*)([^<>{}\n@][^<>{}\n]*?)(\r?\n[ \t]*)(<[A-Za-z])/g, (match, lead, text, between, next, offset) => {
+    if (insideHtmlComment(src, offset)) return match;
+    const prev = src[offset - 1] ?? '';
+    if (prev === ' ' || prev === '\t' || prev === '\n' || prev === '\r' || prev === '>') return match;
+    const trimmed = text.trim();
+    if (!trimmed || trimmed.startsWith('@') || trimmed.includes('{{') || trimmed.includes('i18n') || trimmed.includes('"')) return match;
+    if (looksLikeComment(trimmed)) return match;
+    if (/^[\d\s.,:;%€$+*]+$/.test(trimmed)) return match;
+    if (/^@(if|for|switch|else|empty|defer)\b/.test(trimmed)) return match;
+    const opening = openingTagEndingAt(src, offset);
+    if (/\bi18n\b/.test(opening) || /<\//.test(opening) || /^<i[\s>]/.test(opening)) return match;
+    return `>${lead}<ng-container i18n>${text}</ng-container>${between}${next}`;
   });
   for (const attr of ATTRS) {
     const re = new RegExp(`(?:^|\\s)(${attr})="([^"]+)"(?!\\s+i18n-${attr}=)`, 'g');
@@ -113,8 +178,10 @@ function processComponentTs(file) {
   return false;
 }
 
+const SKIP_FEATURE_DIRS = new Set(['firm', 'portal', 'home', 'legal', 'platform', 'virtual-street']);
+
 function shouldSkipDir(parentDir, name) {
-  return name === 'firm' && parentDir.replace(/\\/g, '/').endsWith('/features');
+  return SKIP_FEATURE_DIRS.has(name) && parentDir.replace(/\\/g, '/').endsWith('/features');
 }
 
 function walk(dir) {
@@ -125,8 +192,10 @@ function walk(dir) {
       if (shouldSkipDir(dir, ent.name)) continue;
       changed = walk(p) || changed;
     } else if (ent.name.endsWith('.html') && !ent.name.endsWith('-before.html')) {
+      if (/receipt|print-ticket|pos-ticket/i.test(ent.name)) continue;
       changed = processHtml(p) || changed;
     } else if (ent.name.endsWith('.component.ts')) {
+      if (/receipt|print-ticket|pos-ticket/i.test(ent.name)) continue;
       changed = processComponentTs(p) || changed;
     }
   }

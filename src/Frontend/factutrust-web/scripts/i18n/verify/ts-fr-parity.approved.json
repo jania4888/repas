@@ -1,0 +1,126 @@
+{
+  "src/app/app.config.ts": {
+    "sha": "5bc067c9481024dda77aad221ed41b2bea9644bc0a47c6fde718b6bf2d122847",
+    "reason": "LOCALE_ID ar-TN seulement quand le catalogue arabe est chargé ; fr-TN sinon (inchangé)."
+  },
+  "src/app/app.routes.ts": {
+    "sha": "99e2d31cce0738009de11567518d0b97068b8edde8d08dcd4b2e28c72e0dec0f",
+    "reason": "Titres de page via CORE_TITLES / $localize : texte identique."
+  },
+  "src/app/core/config/accounting-modules.config.ts": {
+    "sha": "ad4228b73a057518d01a20a9097c93fc67eee447e931c4c979f602baea7bbeac",
+    "reason": "Navigation par identifiant stable (NAV_ID / id d'entrée) au lieu du libellé ; libellés français inchangés (nav-labels.spec.ts, nav-item-ids.spec.ts, specs sidebar/secondary-nav)."
+  },
+  "src/app/core/config/app-navigation.registry.ts": {
+    "sha": "ff0270d17c6217cc4010d089e58c9c2a09f1077bc3896405f3ab970e9ec412f4",
+    "reason": "Navigation par identifiant stable (NAV_ID / id d'entrée) au lieu du libellé ; libellés français inchangés (nav-labels.spec.ts, nav-item-ids.spec.ts, specs sidebar/secondary-nav)."
+  },
+  "src/app/core/config/company-accounting-nav.config.ts": {
+    "sha": "4d74f06e90faac342842f59c96236472533db9a46988f276c08aad73bb1f029d",
+    "reason": "Navigation par identifiant stable (NAV_ID / id d'entrée) au lieu du libellé ; libellés français inchangés (nav-labels.spec.ts, nav-item-ids.spec.ts, specs sidebar/secondary-nav)."
+  },
+  "src/app/core/config/firm-navigation.registry.ts": {
+    "sha": "05f60d268eb3284423a8eb486c971b4993555bcc9bd3be4622465196c27d54ce",
+    "reason": "Navigation par identifiant stable (NAV_ID / id d'entrée) au lieu du libellé ; libellés français inchangés (nav-labels.spec.ts, nav-item-ids.spec.ts, specs sidebar/secondary-nav)."
+  },
+  "src/app/core/config/secondary-nav.config.ts": {
+    "sha": "0ca8fb881d660da84d6e47b5931390de7b2f863557ca66d523318976562bd803",
+    "reason": "Navigation par identifiant stable (NAV_ID / id d'entrée) au lieu du libellé ; libellés français inchangés (nav-labels.spec.ts, nav-item-ids.spec.ts, specs sidebar/secondary-nav)."
+  },
+  "src/app/core/interceptors/error.interceptor.ts": {
+    "sha": "d4de4bc1932715de36d42de3c2148e1b57912852486369828c7ddf77b596b80a",
+    "reason": "Messages centralisés dans core-localize (texte identique) ; contexte entreprise invalide détecté par le code API TENANT_CONTEXT_INVALID, émis par le seul 403 dont le message contenait « Contexte entreprise » : comportement équivalent, robuste à la traduction."
+  },
+  "src/app/core/layout/header/header.component.ts": {
+    "sha": "1c1af227fc7034e39b8d69c539229187d7efd0487b7124965cafc6ad46470417",
+    "reason": "Littéraux remontés du template vers des champs $localize : texte français identique (vérifié par template-fr-parity). Aria-label marque/badge sans double interpolation."
+  },
+  "src/app/core/layout/sidebar/sidebar.component.ts": {
+    "sha": "8355c9669823c2b1ce68415ef5c83bc86eaf0c3533d41df51c418d1067e72b8e",
+    "reason": "Littéraux remontés du template vers des champs $localize : texte français identique (vérifié par template-fr-parity). Aria-label marque/badge sans double interpolation."
+  },
+  "src/app/core/services/app-nav.service.ts": {
+    "sha": "ccb4014b6847d7992071b01d56deeeb84a5efcd2b509391535fc1964e5e84892",
+    "reason": "Navigation par identifiant stable (NAV_ID / id d'entrée) au lieu du libellé ; libellés français inchangés (nav-labels.spec.ts, nav-item-ids.spec.ts, specs sidebar/secondary-nav)."
+  },
+  "src/app/core/services/error-handler.service.ts": {
+    "sha": "9381352f66c94dcfa1ffc0825c076f85380fc2014aad6ca8c9f56447801b2f12",
+    "reason": "Constantes de codes d’erreur API ajoutées (TENANT_CONTEXT_INVALID, DELEGATED_CONTEXT_INVALID), sans texte affiché."
+  },
+  "src/app/core/services/error-message.service.ts": {
+    "sha": "a7c7d14ff246559332c928c74be504dc30636a08657a217500304e49ba6e4f92",
+    "reason": "Messages de validation centralisés dans core-localize (texte identique) ; suggestions NIF / téléphone / mot de passe / e-mail rétablies à l’identique en $localize."
+  },
+  "src/app/core/services/global-search.service.ts": {
+    "sha": "e4bf331c3bcadaec18454ac5bd22a61c0f41d71a898d449ce7db183e231d5626",
+    "reason": "normalizeSearchText : même normalisation latine (NFD, sans diacritiques, minuscules) plus une normalisation arabe."
+  },
+  "src/app/features/audit/audit-action-labels.ts": {
+    "sha": "e712f3fbdae1db3932716d1f1e5b38d539f50745623134726b54759d742f4e9b",
+    "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
+  },
+  "src/app/features/auth/register-wizard/register-wizard.component.ts": {
+    "sha": "14d6f9d78c4e7cbeeac4bc67806a95683f9918d92e5d393bec7f5b61ec4a4b87",
+    "reason": "Chaînes converties en $localize à placeholders nommés : rendu français identique."
+  },
+  "src/app/features/exchanges/exchange-shell.component.ts": {
+    "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
+    "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
+  },
+  "src/app/features/forecasting/components/prepare-po-confirm-modal/prepare-po-confirm-modal.component.ts": {
+    "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
+    "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
+  },
+  "src/app/features/inventory/inventory-form/inventory-form.component.ts": {
+    "sha": "ba58f5dfe01f1093954250370fd15d2cf9884e8e557ca88b6c8cab65399af32d",
+    "reason": "Chaînes converties en $localize à placeholders nommés : rendu français identique."
+  },
+  "src/app/features/products/product-form/product-form.component.ts": {
+    "sha": "de5d1770eadef65322efdb2f9cd74e35e984dc25ddc9a7d74e903f3e121d8a12",
+    "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles). Catégorie par défaut toujours choisie par son nom en base (donnée)."
+  },
+  "src/app/features/projects/project-detail.vm.ts": {
+    "sha": "7ec25410d5769b0ce15f344bdb7f85be07a6fa7e5f2986536369c41ec1b39e00",
+    "reason": "Logique par clé / id au lieu du libellé affiché ; libellés français identiques."
+  },
+  "src/app/features/projects/project-tasks.vm.ts": {
+    "sha": "3718494df636e495a7f79417ad26f3e1f7337862a33806eb5801a38896ed01d0",
+    "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
+  },
+  "src/app/features/purchase-orders/components/create-supplier-invoice-modal/create-supplier-invoice-modal.component.ts": {
+    "sha": "cbb23096671a28258164551d095ee305508611f07eb8e6077bfe32e58ebf4a68",
+    "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles)."
+  },
+  "src/app/features/sales-orders/sales-order-detail/sales-order-detail.component.ts": {
+    "sha": "f0db836504415d58f9d1a395d5a8c091062b5ae28fbf76c1d93d40e31a3a4d86",
+    "reason": "Logique par clé / id au lieu du libellé affiché ; libellés français identiques."
+  },
+  "src/app/features/settings/warehouses/warehouses.component.ts": {
+    "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
+    "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
+  },
+  "src/app/features/studio/studio-entity-list.component.ts": {
+    "sha": "fa3a613c6b036803d2887e74405ca26eb2075b6db318a69e3e384b8c2ee16133",
+    "reason": "Littéraux remontés du template vers des champs $localize : texte français identique (vérifié par template-fr-parity)."
+  },
+  "src/app/features/studio/studio-report-designer.component.ts": {
+    "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
+    "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
+  },
+  "src/app/features/supplier-invoices/supplier-invoice-form/supplier-invoice-form.component.ts": {
+    "sha": "cbb23096671a28258164551d095ee305508611f07eb8e6077bfe32e58ebf4a68",
+    "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles)."
+  },
+  "src/app/shared/components/quick-create-product-dialog/quick-create-product-dialog.component.ts": {
+    "sha": "589758155cc966b71b54b140bf32fb00f39448f8bf0cf3c3e89ca736da4840d9",
+    "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles)."
+  },
+  "src/app/shared/services/product-autocomplete.service.ts": {
+    "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
+    "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
+  },
+  "src/app/shared/validation/validation-rules.ts": {
+    "sha": "55b4a6477b1faed5b621557278804ebfa5ef2d6463ac45637befc1edfd2eadcd",
+    "reason": "Gouvernorats : libellé affiché via $localize (texte français identique), valeur envoyée à l’API = nom latin officiel inchangé (validation-rules.governorate.spec.ts)."
+  }
+}

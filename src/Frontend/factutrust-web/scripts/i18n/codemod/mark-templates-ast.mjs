@@ -46,8 +46,10 @@ function assertTemplateParses(html, url) {
   parseTemplate(html, url, PARSE_OPTS);
 }
 
+const SKIP_FEATURE_DIRS = new Set(['firm', 'portal', 'home', 'legal', 'platform', 'virtual-street']);
+
 function shouldSkipDir(parentDir, name) {
-  return name === 'firm' && parentDir.replace(/\\/g, '/').endsWith('/features');
+  return SKIP_FEATURE_DIRS.has(name) && parentDir.replace(/\\/g, '/').endsWith('/features');
 }
 
 function validateTree(dir) {
@@ -82,4 +84,11 @@ const args = [delegate, targetDir];
 if (checkOnly) args.push('--check');
 
 const result = spawnSync(process.execPath, args, { stdio: 'inherit', cwd: path.join(here, '../../..') });
-process.exit(result.status ?? 1);
+if ((result.status ?? 1) !== 0) process.exit(result.status ?? 1);
+
+try {
+  validateTree(abs);
+} catch (err) {
+  console.error(`[mark-templates-ast] template invalide après marquage : ${err.message}`);
+  process.exit(1);
+}

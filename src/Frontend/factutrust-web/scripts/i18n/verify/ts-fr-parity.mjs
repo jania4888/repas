@@ -1,116 +1,151 @@
 #!/usr/bin/env node
 /**
- * Compare les multiensembles de chaînes littérales TS (périmètre ERP société)
- * entre fr-reference et l'arbre de travail.
+ * Parité statique du français côté TypeScript : pour chaque fichier du périmètre société, le
+ * multiensemble des segments de texte français doit être identique à fr-reference.
  *
- * Usage: node scripts/i18n/verify/ts-fr-parity.mjs
+ * Segment : valeur d'un littéral chaîne, partie fixe d'un gabarit, ou partie fixe d'un `$localize`
+ * (sans le bloc `:meaning|desc@@id:` ni les noms de placeholders `:nom:`). Ainsi
+ * `'Erreur : ' + msg` et `$localize`:@@x:Erreur : ${msg}:msg:`` donnent le même segment,
+ * alors qu'un espace rogné ou un mot changé ressort.
+ *
+ * Exclus : templates de composants (couverts par template-fr-parity) et champs `loc_*`
+ * (littéraux remontés des templates, résolus par template-fr-parity).
+ *
+ *   node scripts/i18n/verify/ts-fr-parity.mjs [--json out.json]
+ *
+ * Écarts relus et acceptés : scripts/i18n/verify/ts-fr-parity.approved.json
+ *   { "<fichier>": { "sha": "<empreinte de l'écart>", "reason": "…" } }
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import {
-  FR_REFERENCE_TAG,
-  getRepoRoot,
-  getWebRoot,
-  gitShow,
-  repoRelativePath,
-  walkCompanyFiles
-} from './_lib.mjs';
+import ts from 'typescript';
+import { getWebRoot, listWorkFiles, readRefFiles, readWorkFile, sha256 } from './_lib.mjs';
 
-const web = getWebRoot();
-const repo = getRepoRoot();
+const args = process.argv.slice(2);
+const jsonOut = args.includes('--json') ? args[args.indexOf('--json') + 1] : null;
+const approvedPath = path.join(getWebRoot(), 'scripts/i18n/verify/ts-fr-parity.approved.json');
+const approved = fs.existsSync(approvedPath) ? JSON.parse(fs.readFileSync(approvedPath, 'utf8')) : {};
 
-const STRING_RE =
-  /'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\$]|\\$|\$(?!\{))*`/g;
+const isTs = rel => rel.endsWith('.ts') && !rel.endsWith('.spec.ts') && !rel.includes('.generated.');
+const hasLetter = s => /[A-Za-zÀ-ÿ]/.test(s);
 
-function decodeStringLiteral(raw) {
-  if (raw.startsWith('`')) {
-    return raw.slice(1, -1).replace(/\\(.)/g, '$1');
+function propertyName(node) {
+  return node.name && (ts.isIdentifier(node.name) || ts.isStringLiteral(node.name)) ? node.name.text : null;
+}
+
+function isExcluded(node) {
+  const parent = node.parent;
+  if (!parent) return false;
+  if (ts.isImportDeclaration(parent) || ts.isExportDeclaration(parent) || ts.isExternalModuleReference(parent)) return true;
+  if (ts.isLiteralTypeNode(parent)) return true;
+  if (ts.isPropertyAssignment(parent) && parent.initializer === node) {
+    const name = propertyName(parent);
+    if (['template', 'styles', 'selector', 'templateUrl', 'styleUrl', 'styleUrls'].includes(name)) return true;
   }
-  const q = raw[0];
-  return raw.slice(1, -1).replace(/\\(.)/g, '$1');
+  if (ts.isArrayLiteralExpression(parent) && ts.isPropertyAssignment(parent.parent) && propertyName(parent.parent) === 'styles') return true;
+  if (ts.isPropertyDeclaration(parent) && parent.initializer === node && propertyName(parent)?.startsWith('loc_')) return true;
+  return false;
 }
 
-function stripNoise(source) {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/\/\/.*$/gm, '')
-    .replace(/\$localize`[^`]*`/g, '')
-    .replace(/import\s+[\s\S]*?from\s+['"][^'"]+['"];?/g, '');
-}
-
-function collectTsStrings(source) {
-  const cleaned = stripNoise(source);
+/** Segments français d'un fichier : Map<texte, nombre>. */
+function segments(rel, source) {
+  const sf = ts.createSourceFile(rel, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const bag = new Map();
-  let m;
-  STRING_RE.lastIndex = 0;
-  while ((m = STRING_RE.exec(cleaned)) !== null) {
-    const raw = m[0];
-    if (raw.length < 4) continue;
-    const decoded = decodeStringLiteral(raw);
-    if (decoded.length < 2) continue;
-    if (/^[\d\s.,:;%€$+-]+$/.test(decoded)) continue;
-    if (/^https?:\/\//i.test(decoded)) continue;
-    if (/^[@./\\]/.test(decoded) && !/[\u00C0-\u024F]/.test(decoded)) continue;
-    bag.set(decoded, (bag.get(decoded) ?? 0) + 1);
-  }
+  const add = text => {
+    if (text && hasLetter(text)) bag.set(text, (bag.get(text) ?? 0) + 1);
+  };
+  const visit = node => {
+    if (ts.isTaggedTemplateExpression(node) && node.tag.getText(sf) === '$localize') {
+      if (isExcluded(node)) return;
+      const tpl = node.template;
+      if (ts.isNoSubstitutionTemplateLiteral(tpl)) {
+        add(tpl.text.replace(/^:[^:]*:/, ''));
+      } else {
+        add(tpl.head.text.replace(/^:[^:]*:/, ''));
+        for (const span of tpl.templateSpans) add(span.literal.text.replace(/^:[^:]*:/, ''));
+      }
+      return;
+    }
+    if (ts.isTaggedTemplateExpression(node)) {
+      ts.forEachChild(node, visit);
+      return;
+    }
+    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
+      if (!isExcluded(node)) add(node.text);
+      return;
+    }
+    if (ts.isTemplateExpression(node)) {
+      if (isExcluded(node)) return;
+      add(node.head.text);
+      for (const span of node.templateSpans) {
+        visit(span.expression);
+        add(span.literal.text);
+      }
+      return;
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sf);
   return bag;
-}
-
-function mergeBags(into, from) {
-  for (const [k, v] of from) {
-    into.set(k, (into.get(k) ?? 0) + v);
-  }
 }
 
 function bagDiff(ref, work) {
-  const added = [];
-  const removed = [];
-  const keys = new Set([...ref.keys(), ...work.keys()]);
-  for (const k of keys) {
-    const r = ref.get(k) ?? 0;
-    const w = work.get(k) ?? 0;
-    if (w > r) added.push({ text: k, delta: w - r });
-    if (r > w) removed.push({ text: k, delta: r - w });
+  const rows = [];
+  for (const k of new Set([...ref.keys(), ...work.keys()])) {
+    const d = (work.get(k) ?? 0) - (ref.get(k) ?? 0);
+    if (d) rows.push({ text: k, delta: d });
   }
-  added.sort((a, b) => b.delta - a.delta);
-  removed.sort((a, b) => b.delta - a.delta);
-  return { added, removed };
+  return rows.sort((a, b) => a.text.localeCompare(b.text) || a.delta - b.delta);
 }
 
-function stringsForTree(readFile) {
-  const bag = new Map();
-  const tsFiles = walkCompanyFiles(web, p => p.endsWith('.ts') && !p.endsWith('.spec.ts'));
-  for (const file of tsFiles) {
-    const src = readFile(file);
-    if (src == null) continue;
-    mergeBags(bag, collectTsStrings(src));
+const refFiles = readRefFiles(isTs);
+const workRels = listWorkFiles(isTs);
+const report = { diffs: [], approved: [], removedFiles: [], addedFiles: [], global: [] };
+const globalRef = new Map();
+const globalWork = new Map();
+const merge = (into, bag) => {
+  for (const [k, v] of bag) into.set(k, (into.get(k) ?? 0) + v);
+};
+for (const [rel, source] of refFiles) merge(globalRef, segments(rel, source));
+
+for (const rel of workRels) {
+  const work = segments(rel, readWorkFile(rel));
+  merge(globalWork, work);
+  if (!refFiles.has(rel)) {
+    report.addedFiles.push(rel);
+    continue;
   }
-  return bag;
+  const rows = bagDiff(segments(rel, refFiles.get(rel)), work);
+  if (!rows.length) continue;
+  const sha = sha256(JSON.stringify(rows));
+  if (approved[rel]?.sha === sha) {
+    report.approved.push(rel);
+    continue;
+  }
+  report.diffs.push({ file: rel, sha, rows });
 }
+for (const rel of refFiles.keys()) if (!workRels.includes(rel)) report.removedFiles.push(rel);
+// Bilan tous fichiers confondus, en présence : un texte déplacé ou factorisé dans une constante
+// partagée n'est ni perdu ni nouveau ; seul un texte qui n'existe plus (ou pas encore) nulle part ressort.
+report.global = [
+  ...[...globalRef.keys()].filter(k => !globalWork.has(k)).map(text => ({ text, delta: -1 })),
+  ...[...globalWork.keys()].filter(k => !globalRef.has(k)).map(text => ({ text, delta: 1 }))
+].sort((a, b) => a.text.localeCompare(b.text));
 
-const refBag = stringsForTree(absPath => gitShow(FR_REFERENCE_TAG, repoRelativePath(absPath)));
-const workBag = stringsForTree(absPath => {
-  if (!fs.existsSync(absPath)) return null;
-  return fs.readFileSync(absPath, 'utf8');
-});
-
-const { added, removed } = bagDiff(refBag, workBag);
-const changed = added.length + removed.length;
-
-if (changed) {
-  console.error('[ts-fr-parity] écarts multiset (extrait) :');
-  for (const row of added.slice(0, 40)) {
-    console.error(`  +${row.delta}  ${JSON.stringify(row.text.slice(0, 120))}`);
-  }
-  for (const row of removed.slice(0, 40)) {
-    console.error(`  -${row.delta}  ${JSON.stringify(row.text.slice(0, 120))}`);
-  }
-  if (added.length + removed.length > 80) {
-    console.error(`  … ${added.length + removed.length - 80} autres`);
-  }
+for (const d of report.diffs) {
+  console.error(`\n[écart] ${d.file}`);
+  for (const r of d.rows.slice(0, 12)) console.error(`  ${r.delta > 0 ? '+' : ''}${r.delta}  ${JSON.stringify(r.text.slice(0, 140))}`);
+  if (d.rows.length > 12) console.error(`  … ${d.rows.length - 12} autre(s)`);
 }
+for (const f of report.removedFiles) console.error(`[supprimé] ${f}`);
+if (report.addedFiles.length) console.log(`[info] ${report.addedFiles.length} fichier(s) TS nouveaux (sans référence)`);
+if (jsonOut) fs.writeFileSync(jsonOut, JSON.stringify(report, null, 2), 'utf8');
 
+const lost = report.global.filter(r => r.delta < 0).length;
+const added = report.global.filter(r => r.delta > 0).length;
+console.log(`[ts-fr-parity] bilan global : ${lost} segment(s) disparu(s), ${added} apparu(s) (--json pour le détail)`);
 console.log(
-  `[ts-fr-parity] ref=${refBag.size} clés distinctes, work=${workBag.size}, écarts=${changed}`
+  `[ts-fr-parity] ${workRels.length} fichiers : ${report.diffs.length} écart(s), ` +
+    `${report.removedFiles.length} supprimé(s), ${report.approved.length} écart(s) approuvé(s)`
 );
-process.exit(changed ? 1 : 0);
+process.exit(report.diffs.length || report.removedFiles.length ? 1 : 0);

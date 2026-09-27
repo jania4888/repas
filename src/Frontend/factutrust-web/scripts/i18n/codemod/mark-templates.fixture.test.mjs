@@ -22,6 +22,16 @@ assert.equal(run.status, 0, run.stderr || run.stdout);
 const updated = fs.readFileSync(sample, 'utf8');
 assert.match(updated, /i18n/);
 assert.match(updated, /i18n-placeholder/);
+assert.match(updated, /<ng-container i18n>Type d'obligation<\/ng-container>/);
+assert.match(updated, /@if \(x < 4\)/);
+assert.doesNotMatch(updated, /ng-container i18n>@if/);
+
+const second = spawnSync(process.execPath, ['mark-templates.mjs', fixtureDir], {
+  cwd: path.join(root, 'codemod'),
+  encoding: 'utf8'
+});
+assert.equal(second.status, 0, second.stderr || second.stdout);
+assert.equal(fs.readFileSync(sample, 'utf8'), updated, 'second pass must be idempotent');
 
 fs.writeFileSync(sample, original, 'utf8');
 fs.unlinkSync(backup);

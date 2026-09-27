@@ -8,6 +8,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { buildCatalog, loadArabicMerged } from './compile-i18n-runtime.mjs';
 
 const WEB = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const localeDir = path.join(WEB, 'src/locale');
@@ -17,6 +18,7 @@ const legacyJson = path.join(WEB, 'src/assets/i18n/messages.ar.json');
 const whitelistPath = path.join(WEB, 'scripts/i18n/identical-fr-whitelist.json');
 
 const scope = process.argv.find(a => a.startsWith('--scope='))?.split('=')[1];
+const wave = process.argv.find(a => a.startsWith('--wave='))?.split('=')[1];
 const legacyOnly = process.argv.includes('--legacy-only');
 const allowFrFallback = process.argv.includes('--allow-fr-fallback');
 const FILLER = 'مسمّى';
@@ -121,6 +123,61 @@ function checkLegacyJson() {
   return errors;
 }
 
+function wavePrefixes(waveId) {
+  const scopes = JSON.parse(fs.readFileSync(path.join(WEB, 'scripts/i18n/scopes.json'), 'utf8'));
+  const spec = scopes.waves[waveId];
+  if (!spec) {
+    console.error(`[wave] vague inconnue ${waveId}`);
+    process.exit(1);
+  }
+  return spec.globs.map(g => g.replace(/\/\*\*$/, '/'));
+}
+
+function checkWaveSourceFiles() {
+  const prefixes = wavePrefixes(wave);
+  const { frById } = buildCatalog();
+  const manual = loadArabicMerged();
+  const arArb = loadArb(arArbPath) ?? {};
+  const hasArabic = s => /[\u0600-\u06FF]/.test(String(s ?? ''));
+  const idFile = new Map();
+  function walk(dir) {
+    if (!fs.existsSync(dir)) return;
+    for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, ent.name);
+      if (ent.isDirectory()) {
+        if (ent.name === 'node_modules') continue;
+        walk(full);
+      } else if (/\.(html|ts)$/.test(ent.name)) {
+        const rel = path.relative(WEB, full).replace(/\\/g, '/');
+        const src = fs.readFileSync(full, 'utf8');
+        for (const m of src.matchAll(/@@([A-Za-z0-9_.-]+)/g)) {
+          if (!idFile.has(m[1])) idFile.set(m[1], rel);
+        }
+      }
+    }
+  }
+  walk(path.join(WEB, 'src/app'));
+  let checked = 0;
+  let fallback = 0;
+  let errors = 0;
+  for (const [id, fr] of frById) {
+    const file = idFile.get(id);
+    if (!file || !prefixes.some(p => file.startsWith(p))) continue;
+    checked++;
+    const ar = manual[id] ?? manual[`@@${id}`] ?? arArb[id] ?? arArb[`@@${id}`];
+    const same = !ar || String(ar).trim() === String(fr).trim() || !hasArabic(ar);
+    const allowSame = whitelist.ids.includes(id) || whitelist.values.includes(String(fr).trim());
+    if (!same || allowSame) continue;
+    fallback++;
+    if (!allowFrFallback) {
+      console.error(`[wave-fr-fallback] ${id} (${file})`);
+      errors++;
+    }
+  }
+  console.log(`Wave ${wave} — ${checked} clés de fichiers source, ${fallback} replis FR hors liste blanche`);
+  return errors;
+}
+
 const frArb = loadArb(frArbPath);
 const arArb = loadArb(arArbPath);
 
@@ -133,5 +190,7 @@ if (frArb && arArb && !legacyOnly) {
 } else {
   errors = checkLegacyJson();
 }
+
+if (wave) errors += checkWaveSourceFiles();
 
 process.exit(errors ? 1 : 0);

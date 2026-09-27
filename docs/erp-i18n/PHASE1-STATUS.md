@@ -1,32 +1,31 @@
-# Phase 1 — statut des filets de sécurité i18n ERP
+# Statut du chantier i18n ERP
 
-Dernière mise à jour : 2026-09-25 (implémentation scripts + CI).
+Dernière mise à jour : 2026-09-27 — stabilisation du WIP (lot 0) et fiabilisation de l'outillage (lot 1).
 
-## Scripts ajoutés
+## Portes (worktree propre, base `fr-reference` = `32a2f4c1`)
 
-| Commande | Rôle |
-|----------|------|
-| `npm run i18n:parity:template` | Canonicalise les templates (`parseTemplate`, `preserveWhitespaces: false`) vs tag `fr-reference` ; `--write-baseline` → `e2e/baselines/fr-static/` |
-| `npm run i18n:parity:ts` | Multiensembles de littéraux TS (périmètre ERP société) vs `fr-reference` |
+| Porte | Commande | Résultat |
+|-------|----------|----------|
+| ID uniques | `npm run i18n:ids` | 0 collision (13 corrigées : un ID partagé affichait un message faux en arabe) |
+| Catalogue AR | `npm run i18n:build -- --strict` | 7 877 / 9 704 messages traduits, 0 rejet, 634 Kio |
+| Parité FR templates | `npm run i18n:parity:template` | 0 écart non justifié (88 approuvés, motif par template) |
+| Parité FR TypeScript | `npm run i18n:parity:ts` | 0 écart non justifié (31 approuvés) ; bilan global : aucun texte FR perdu |
+| Karma | `npx ng test --watch=false --browsers=ChromeHeadless` | 16 échecs, **identiques à fr-reference** (14 SupplierInvoiceForm, Studio fuseau, ProjectApi) |
+| Backend | `dotnet test` (Infrastructure, API) | identique à la base (21 Projects ; FixedAssets SQL, Hangfire 15≠16, PlatformAiSettings) |
+| Build prod | `npm run build:prod` | OK |
 
-## Baselines Karma / build / .NET
+## Corrigé pendant la stabilisation
 
-| Porte | Commande | Résultat local (2026-09-25) |
-|-------|----------|-------------------------------|
-| Runtime AR | `npm run i18n:build` | OK — 5386 clés, manifest + `messages.ar.<hash>.json` |
-| Validation | `npm run i18n:check` | OK — mode legacy `messages.ar.json` (pas encore de paire ARB) |
-| Karma | `npx ng test --watch=false --browsers=ChromeHeadless` | _À exécuter_ (non lancé ici — ~plusieurs minutes) |
-| Build prod | `npm run build:prod` | _À exécuter_ |
-| Backend | `dotnet build src/Backend/FactuTrust.sln -c Release` | OK — 0 erreur, 17 avertissements (~13 min) |
-| Parité TS | `npm run i18n:parity:ts` | Échec attendu — 6166 écarts multiset (~8 min) |
-| Parité templates | `npm run i18n:parity:template` | Échec attendu — 5 écarts / 509 templates (~10 min) ; CI `continue-on-error: true` |
+- Collisions d'ID (`localize-ts.mjs` tronquait le texte sans hash).
+- Catalogue : le français n'est plus injecté pour les ID non traduits (affichait `${n}` brut).
+- Source FR : extraction par le compilateur au lieu de la regex (`auto.*` et ID digest).
+- Régressions FR du WIP : pourcentage des analyses (texte `loc_…` affiché), placeholder de modèle d'écriture, suggestions NIF/téléphone/mot de passe perdues, catégorie produit par défaut, espaces de bord (1 711), doublon d'interpolation (marque, badge), `?? '—'` neutralisé par le pipe `backendLabel`.
+- Sécurité : `auth.interceptor` rétabli (le WIP envoyait le jeton sur `/auth/login`).
+- Plantage du menu en mode délégué cabinet (`getNavId` levait sur une entrée dynamique).
+- Périmètre : un espace cabinet/portail ne tourne jamais avec le catalogue arabe ; `html[dir]` suit le catalogue chargé.
 
-## E2E
+## Reste à faire
 
-- `e2e/i18n/erp-ar-leak.spec.ts` v2 : `localStorage['instafact_erp_locale']=ar` via `addInitScript`, sans sélecteur login ; pièces jointes `findBasicLatinLeaks`.
-
-## Prochaines étapes
-
-1. `npm run i18n:parity:template -- --write-baseline` après gel FR si on veut comparer à des snapshots statiques.
-2. Introduire `src/locale/messages.fr.arb` + `messages.ar.arb` (`npm run i18n:extract`) pour activer les contrôles ARB stricts (`identical-fr`, `مسمّى`).
-3. Raccourcir les scripts de parité (cache `git cat-file --batch`) si le temps d’exécution devient gênant en local.
+Lots 2 à 8 du plan (`~/.claude/plans/il-faut-traduire-tout-squishy-toucan.md`) : codes d'erreur API pour les
+derniers tests sur texte, balisage AST des ~1 900 messages sans ID et des textes non balisés, classification
+et balisage du TypeScript, traduction (1 789 messages manquants + nouveaux), backend, RTL, E2E authentifié.

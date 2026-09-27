@@ -71,7 +71,7 @@ test.describe('Secondary navigation bar', () => {
     }
 
     await ventesTrigger.click();
-    const menu = page.locator('#secondary-nav-menu-Ventes, .secondary-nav__dropdown.show').first();
+    const menu = page.locator('#secondary-nav-menu-sales, .secondary-nav__dropdown.show').first();
     await expect(menu).toBeVisible();
     const box = await menu.boundingBox();
     expect(box).toBeTruthy();
@@ -103,7 +103,7 @@ test.describe('Secondary navigation bar', () => {
     }
 
     await rhTrigger.click();
-    const menu = page.locator('#secondary-nav-menu-RH-Paie, .secondary-nav__dropdown.show').first();
+    const menu = page.locator('#secondary-nav-menu-hr-payroll, .secondary-nav__dropdown.show').first();
     await expect(menu).toBeVisible();
     const box = await menu.boundingBox();
     expect(box).toBeTruthy();

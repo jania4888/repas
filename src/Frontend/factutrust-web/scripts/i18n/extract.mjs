@@ -66,37 +66,63 @@ function waveForIdByPrefix(id) {
   return waveForId(id);
 }
 
-fs.mkdirSync(LOCALE_DIR, { recursive: true });
-
-const ng = spawnSync('npm', ['exec', '--', 'ng', 'extract-i18n', '--format=arb'], {
-  cwd: WEB,
-  stdio: 'inherit',
-  shell: process.platform === 'win32'
-});
-if (ng.status !== 0) {
-  process.exit(ng.status ?? 1);
+/** Vague d'après le fichier source (globs de scopes.json), à défaut d'après le préfixe de l'ID. */
+function waveForFiles(files, id) {
+  for (const file of files) {
+    for (const [wave, cfg] of Object.entries(SCOPES.waves ?? {})) {
+      if ((cfg.globs ?? []).some(glob => file.startsWith(glob.replace(/\*\*$/, '')))) return wave;
+    }
+  }
+  return waveForIdByPrefix(id);
 }
 
-const defaultOut = path.join(LOCALE_DIR, 'messages.json');
-const source = fs.existsSync(defaultOut) ? defaultOut : OUT_ARB;
+/**
+ * Normalise la sortie de `ng extract-i18n` : locale source `fr`, emplacements réduits aux fichiers
+ * (sans ligne ni colonne, pour que le diff ne bouge pas à chaque édition), vague de livraison.
+ */
+function normalizeArb(raw) {
+  const out = { '@@locale': 'fr' };
+  for (const key of Object.keys(raw)) {
+    if (key.startsWith('@')) continue;
+    out[key] = raw[key];
+    const meta = raw[`@${key}`] && typeof raw[`@${key}`] === 'object' ? raw[`@${key}`] : {};
+    const files = [
+      ...new Set((meta['x-locations'] ?? []).map(l => String(l.file ?? '').replace(/\\/g, '/')).filter(Boolean))
+    ].sort();
+    const next = {};
+    if (meta.description) next.description = meta.description;
+    if (meta['x-meaning'] ?? meta.meaning) next['x-meaning'] = meta['x-meaning'] ?? meta.meaning;
+    if (files.length) next['x-files'] = files;
+    const wave = waveForFiles(files, key);
+    if (wave) next['x-wave'] = wave;
+    out[`@${key}`] = next;
+  }
+  return out;
+}
+
+fs.mkdirSync(LOCALE_DIR, { recursive: true });
+
+const fromArg = process.argv.find(a => a.startsWith('--from='))?.slice('--from='.length);
+let source = fromArg ? path.resolve(fromArg) : null;
+const tmpDir = path.join(WEB, '.angular', 'i18n-extract');
+if (!source) {
+  const ng = spawnSync('npm', ['exec', '--', 'ng', 'extract-i18n', '--format=arb', `--output-path=${tmpDir}`, '--out-file=messages.fr.arb'], {
+    cwd: WEB,
+    stdio: 'inherit',
+    shell: process.platform === 'win32'
+  });
+  if (ng.status !== 0) {
+    process.exit(ng.status ?? 1);
+  }
+  source = path.join(tmpDir, 'messages.fr.arb');
+}
 if (!fs.existsSync(source)) {
-  console.error('[extract] sortie extract-i18n introuvable');
+  console.error(`[extract] sortie extract-i18n introuvable : ${source}`);
   process.exit(1);
 }
 
-const arb = JSON.parse(fs.readFileSync(source, 'utf8'));
-for (const key of Object.keys(arb)) {
-  if (key.startsWith('@') || key === '@@locale') continue;
-  const metaKey = `@${key}`;
-  const wave = waveForIdByPrefix(key);
-  if (!wave) continue;
-  const meta = typeof arb[metaKey] === 'object' && arb[metaKey] ? { ...arb[metaKey] } : {};
-  meta['x-wave'] = wave;
-  arb[metaKey] = meta;
-}
-
-fs.writeFileSync(OUT_ARB, JSON.stringify(arb, null, 2), 'utf8');
-if (source !== OUT_ARB && fs.existsSync(defaultOut)) {
-  fs.unlinkSync(defaultOut);
-}
-console.log(`[extract] écrit ${OUT_ARB}`);
+const arb = normalizeArb(JSON.parse(fs.readFileSync(source, 'utf8')));
+fs.writeFileSync(OUT_ARB, `${JSON.stringify(arb, null, 2)}\n`, 'utf8');
+if (!fromArg) fs.rmSync(tmpDir, { recursive: true, force: true });
+const count = Object.keys(arb).filter(k => !k.startsWith('@')).length;
+console.log(`[extract] ${count} messages → ${path.relative(WEB, OUT_ARB)}`);
