@@ -1278,7 +1278,7 @@ export class InvoiceDetailComponent implements OnInit {
   readonly loc_ui_tern_fodec_9a0290 = $localize`:@@ui.tern.fodec.9a0290:FODEC`;
   readonly loc_ui_tern_total_ttc_a_rembourser_1ef7ef = $localize`:@@ui.tern.total.ttc.a.rembourser.1ef7ef:Total TTC à rembourser`;
   readonly loc_ui_tern_total_ttc_9e80ff = $localize`:@@ui.tern.total.ttc.9e80ff:Total TTC`;
-  readonly loc_ui_tern_tnd_51da21 = $localize`:@@ui.tern.tnd.51da21:TND`;
+  readonly loc_ui_tern_tnd_51da21 = 'TND';
   private invoiceService = inject(InvoiceService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);

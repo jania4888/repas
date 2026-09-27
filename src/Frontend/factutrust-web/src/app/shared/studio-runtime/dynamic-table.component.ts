@@ -268,7 +268,7 @@ export class DynamicTableComponent implements OnChanges {
   private formatMoney(value: number, field: CustomField): string {
     if (!Number.isFinite(value)) return '—';
     const currency = field.config?.['money']?.['currency'];
-    const code = typeof currency === 'string' && currency.trim() ? currency.trim() : $localize`:@@ui.tern.tnd.51da21:TND`;
+    const code = typeof currency === 'string' && currency.trim() ? currency.trim() : 'TND';
     try {
       return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: code }).format(value);
     } catch {

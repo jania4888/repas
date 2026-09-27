@@ -482,7 +482,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
   /** Cartes de la zone de totaux, dérivées du résumé backend. */
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
-    const currency = s?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
+    const currency = s?.currency ?? 'TND';
     const creditNotes = this.creditNotesOnlyMode();
     return [
       { label: creditNotes ? $localize`:@@ui.tern.avoirs.38b0e7:Avoirs` : $localize`:@@ui.tern.factures.da35e4:Factures`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },

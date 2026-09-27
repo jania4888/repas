@@ -303,7 +303,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
     if (!isThreadOpen(thread.status)) return;
 
     const visibility =
-      this.composerMode() === 'note' && this.canInternalNote() ? $localize`:@@ui.tern.internalnote.28a701:InternalNote` : $localize`:@@ui.tern.clientvisible.bf9461:ClientVisible`;
+      this.composerMode() === 'note' && this.canInternalNote() ? 'InternalNote' : 'ClientVisible';
     const text = body || (files.length ? $localize`:@@ui.tern.piece.jointe.882014:(Pièce jointe)` : '');
     this.sending.set(true);
     this.error.set(null);
@@ -511,7 +511,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
 
   feedTrackKey(item: MessageFeedItem, index: number): string {
     if (item.kind === 'day') return `day-${item.dayLabel}-${index}`;
-    return item.message?.id ?? $localize`:@@ui.tern.msg.ph.e4663f:msg-${index}:p0:`;
+    return item.message?.id ?? `msg-${index}`;
   }
 
   loadOlderMessages(): void {
@@ -713,7 +713,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
         companyTenantId: c.companyTenantId,
         companyName: c.companyName,
         threadId: t?.id,
-        status: t?.status ?? $localize`:@@ui.tern.open.cf9b77:Open`,
+        status: t?.status ?? 'Open',
         lastActivityAt: t?.lastActivityAt,
         unreadCount: t?.unreadCount ?? 0
       };

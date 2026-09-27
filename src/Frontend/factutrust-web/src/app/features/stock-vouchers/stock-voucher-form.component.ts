@@ -133,7 +133,7 @@ export class StockVoucherFormComponent implements OnInit {
   editId: string | null = null;
   warehouseId: string | null = null;
   voucherDate: Date = new Date();
-  reason = this.isEntry ? $localize`:@@ui.tern.initialstock.2874d4:InitialStock` : $localize`:@@ui.tern.damage.7bf6d1:Damage`;
+  reason = this.isEntry ? 'InitialStock' : 'Damage';
   externalReference = '';
   notes = '';
   lines: VoucherLine[] = [];

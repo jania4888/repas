@@ -556,7 +556,7 @@ export class CashDeskComponent implements OnInit {
    */
   summaryMetrics = computed<TotalMetric[]>(() => {
     const b = this.balances();
-    const currency = b?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
+    const currency = b?.currency ?? 'TND';
     return [
       { label: 'Solde caisse (mois)', value: b?.primaryTotal, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
       { label: 'Encaissements', value: b?.primaryCreditsTotal, format: 'currency', currency, icon: 'pi-arrow-down-left', tone: 'emerald' },

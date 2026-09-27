@@ -138,7 +138,7 @@ export class SalesByLineReportsComponent implements OnInit {
     this.reportsApi.getSalesRevenueByProduct(fromDate, toDate, 'Product').subscribe({
       next: (res) => {
         this.revenueByProduct.set(res.success && res.data ? res.data : []);
-        if (res.data?.length) this.currency.set(res.data[0].currency ?? $localize`:@@ui.tern.tnd.51da21:TND`);
+        if (res.data?.length) this.currency.set(res.data[0].currency ?? 'TND');
       },
       error: () => this.revenueByProduct.set([]),
       complete: maybeDone

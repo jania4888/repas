@@ -202,7 +202,7 @@ export class DraftAdjustDialogComponent {
   readonly vatRates = [0, 7, 13, 19] as const;
 
   totalsMetrics(): TotalMetric[] {
-    const currency = this.draft()?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
+    const currency = this.draft()?.currency ?? 'TND';
     const live = this.computeLiveTotals();
     return [
       { label: 'Total HT', value: live.ht, format: 'currency', currency, icon: 'pi-calculator', tone: 'primary' },

@@ -82,6 +82,19 @@
     "XX XXX XXXXXXXXXXX XX",
     "FS-2026-000001",
     "IBAN:",
-    "RIB:"
+    "RIB:",
+    "F2",
+    "F4",
+    "F5",
+    "F6",
+    "F9",
+    "X",
+    "SWIFT",
+    "SWIFT / BIC",
+    "TN59 1000 0035 1835 8847 8831",
+    "DSO",
+    "DPO",
+    "VNC",
+    "BETA"
   ]
 }

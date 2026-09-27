@@ -312,7 +312,7 @@ export class ProductSalesAnalyticsComponent implements OnInit {
     this.reportsApi.getSalesRevenueByProduct(fromDate, toDate, 'Category').subscribe({
       next: (res) => {
         this.revenueByCategory.set(res.success && res.data ? res.data : []);
-        if (res.data?.length) this.currency.set(res.data[0].currency ?? $localize`:@@ui.tern.tnd.51da21:TND`);
+        if (res.data?.length) this.currency.set(res.data[0].currency ?? 'TND');
       },
       error: () => this.revenueByCategory.set([]),
       complete: maybeDone

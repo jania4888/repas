@@ -543,7 +543,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
   `]
 })
 export class PaymentsComponent implements OnInit, OnDestroy {
-  readonly loc_ui_tern_tnd_51da21 = $localize`:@@ui.tern.tnd.51da21:TND`;
+  readonly loc_ui_tern_tnd_51da21 = 'TND';
   private invoiceService = inject(InvoiceService);
   private supplierInvoiceService = inject(SupplierInvoiceService);
   private toastService = inject(ToastService);

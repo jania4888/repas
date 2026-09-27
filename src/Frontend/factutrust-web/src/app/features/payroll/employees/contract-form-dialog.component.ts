@@ -203,7 +203,7 @@ export class ContractFormDialogComponent implements OnChanges {
       const c = this.editContract;
       this.type = c.type;
       this.regime = c.regime;
-      this.weeklyRegime = c.weeklyRegime ?? $localize`:@@ui.tern.fortyeighthours.a53c9c:FortyEightHours`;
+      this.weeklyRegime = c.weeklyRegime ?? 'FortyEightHours';
       this.startDate = parseIsoDate(c.startDate);
       this.endDate = parseIsoDate(c.endDate);
       this.baseSalary = c.baseSalary;

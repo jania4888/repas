@@ -2455,7 +2455,7 @@ export class SalesReportsComponent implements OnInit {
   }
 
   chartYAxisTicks(): { value: number; label: string }[] {
-    const currency = this.reportsData()?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
+    const currency = this.reportsData()?.currency ?? 'TND';
     const steps = [1, 0.75, 0.5, 0.25, 0];
     return steps.map(p => {
       const value = p * this.maxRevenue;
@@ -2469,7 +2469,7 @@ export class SalesReportsComponent implements OnInit {
       minimumFractionDigits: 3,
       maximumFractionDigits: 3
     }).format(amount);
-    return `${formatted} ${currency ?? $localize`:@@ui.tern.tnd.51da21:TND`}`;
+    return `${formatted} ${currency ?? 'TND'}`;
   }
 
   private exportDecisionnelTab(tabIndex: number): void {

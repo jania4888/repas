@@ -517,7 +517,7 @@ export class CashForecastComponent implements OnInit {
       tooltip: {
         callbacks: {
           label: (ctx: { dataset: { label?: string }; parsed: { y: number } }) =>
-            `${ctx.dataset.label} : ${formatAmount(ctx.parsed.y, this.forecast()?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`)}`
+            `${ctx.dataset.label} : ${formatAmount(ctx.parsed.y, this.forecast()?.currency ?? 'TND')}`
         }
       }
     },
@@ -624,7 +624,7 @@ export class CashForecastComponent implements OnInit {
   }
 
   amount(value: number | null | undefined): string {
-    return formatAmount(value, this.forecast()?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`);
+    return formatAmount(value, this.forecast()?.currency ?? 'TND');
   }
 
   label = bucketLabel;

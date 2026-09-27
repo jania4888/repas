@@ -348,7 +348,7 @@ interface PaymentRow {
 })
 export class InvoicePaymentsPanelComponent implements OnChanges {
   readonly loc_ui_tern_paiements_de_la_facture_c5d629 = $localize`:@@ui.tern.paiements.de.la.facture.c5d629:Paiements de la facture `;
-  readonly loc_ui_tern_tnd_51da21 = $localize`:@@ui.tern.tnd.51da21:TND`;
+  readonly loc_ui_tern_tnd_51da21 = 'TND';
   @Input() invoice: InvoicePaymentsPanelContext | null = null;
   @Input() allowRecordPayment = true;
   @Output() closed = new EventEmitter<void>();

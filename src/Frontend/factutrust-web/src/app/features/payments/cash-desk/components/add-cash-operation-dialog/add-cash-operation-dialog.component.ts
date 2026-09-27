@@ -566,8 +566,8 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
   `]
 })
 export class AddCashOperationDialogComponent implements OnChanges, OnInit {
-  readonly loc_ui_tern_expensecategory_d48904 = $localize`:@@ui.tern.expensecategory.d48904:expenseCategory`;
-  readonly loc_ui_tern_revenuecategory_21cd74 = $localize`:@@ui.tern.revenuecategory.21cd74:revenueCategory`;
+  readonly loc_ui_tern_expensecategory_d48904 = 'expenseCategory';
+  readonly loc_ui_tern_revenuecategory_21cd74 = 'revenueCategory';
   readonly loc_ui_tern_categorie_de_depense_652cf2 = $localize`:@@ui.tern.categorie.de.depense.652cf2:Catégorie de dépense`;
   readonly loc_ui_tern_categorie_de_revenu_ed807b = $localize`:@@ui.tern.categorie.de.revenu.ed807b:Catégorie de revenu`;
   readonly loc_ui_tern_category_option_icon_e996ce = " category-option-icon";

@@ -307,7 +307,7 @@ export class PayrollJournalComponent implements OnInit {
   onExport(format: PayrollReportExportFormat): void {
     const j = this.journal();
     if (!j) return;
-    const view = VIEW_BY_TAB[this.activeTabIndex] ?? $localize`:@@ui.tern.byemployee.8f359b:ByEmployee`;
+    const view = VIEW_BY_TAB[this.activeTabIndex] ?? 'ByEmployee';
     this.exporting.set(true);
 
     this.payroll

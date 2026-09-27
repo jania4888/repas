@@ -58,7 +58,7 @@ export class ProjectOverviewBudgetCardComponent {
     if (!b || b.budgetHt <= 0) {
       return { labels: [], datasets: [{ data: [] }] };
     }
-    const slices = buildBudgetDonutSlices(b, this.project?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`);
+    const slices = buildBudgetDonutSlices(b, this.project?.currency ?? 'TND');
     const consumed = Math.max(0, b.actualCostHt);
     const remainder = Math.max(0, b.budgetHt - consumed);
     return {

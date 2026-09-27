@@ -210,7 +210,7 @@ export class DynamicFormComponent implements OnChanges {
 
   moneyCurrency(field: CustomField): string {
     const c = field.config?.['money']?.['currency'];
-    return typeof c === 'string' && c.trim() ? c.trim() : $localize`:@@ui.tern.tnd.51da21:TND`;
+    return typeof c === 'string' && c.trim() ? c.trim() : 'TND';
   }
 
   ratingStars(field: CustomField): number {

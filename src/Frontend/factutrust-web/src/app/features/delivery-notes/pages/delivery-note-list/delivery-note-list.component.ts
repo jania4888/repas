@@ -326,7 +326,7 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
 
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
-    const currency = s?.currency ?? $localize`:@@ui.tern.tnd.51da21:TND`;
+    const currency = s?.currency ?? 'TND';
     return [
       { label: 'Bons', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
       { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
