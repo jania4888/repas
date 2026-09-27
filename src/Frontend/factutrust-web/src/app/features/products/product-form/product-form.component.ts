@@ -1,4 +1,5 @@
 /// <reference types="@angular/localize" />
+import { API_ERROR_CODE } from '@core/utils/api-error-code';
 import { Component, OnInit, inject, signal, computed, ViewChild } from '@angular/core';
 import { environment } from '@environments/environment';
 import { PrintLabelsDialogComponent, LabelPrintTarget } from '../components/print-labels-dialog/print-labels-dialog.component';
@@ -1674,7 +1675,8 @@ export class ProductFormComponent implements OnInit {
               severity: 'error',
               summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
               detail: this.mapTraceabilityApiError(
-                response.errors?.join(', ') || 'Une erreur est survenue lors de la mise à jour'
+                response.errors?.join(', ') || 'Une erreur est survenue lors de la mise à jour',
+                (response as { code?: string }).code
               )
             });
             this.saving.set(false);
@@ -1682,7 +1684,8 @@ export class ProductFormComponent implements OnInit {
         },
         error: (error) => {
           const errorMessage = this.mapTraceabilityApiError(
-            this.errorHandler.extractErrorMessage(error) || 'Une erreur est survenue lors de la mise à jour'
+            this.errorHandler.extractErrorMessage(error) || 'Une erreur est survenue lors de la mise à jour',
+            this.errorHandler.getApiErrorCode(error)
           );
           this.toastService.add({
             severity: 'error',
@@ -1763,7 +1766,8 @@ export class ProductFormComponent implements OnInit {
               severity: 'error',
               summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
               detail: this.mapTraceabilityApiError(
-                response.errors?.join(', ') || 'Une erreur est survenue lors de la création'
+                response.errors?.join(', ') || 'Une erreur est survenue lors de la création',
+                (response as { code?: string }).code
               )
             });
             this.saving.set(false);
@@ -1771,7 +1775,8 @@ export class ProductFormComponent implements OnInit {
         },
         error: (error) => {
           const errorMessage = this.mapTraceabilityApiError(
-            this.errorHandler.extractErrorMessage(error) || 'Une erreur est survenue lors de la création'
+            this.errorHandler.extractErrorMessage(error) || 'Une erreur est survenue lors de la création',
+            this.errorHandler.getApiErrorCode(error)
           );
           this.toastService.add({
             severity: 'error',
@@ -1972,9 +1977,13 @@ export class ProductFormComponent implements OnInit {
     return state;
   }
 
-  private mapTraceabilityApiError(message: string): string {
-    if (message.includes('couche d\'ouverture') || message.includes('couche d’ouverture')) {
-      return `${message} Utilisez le bouton « Créer la couche d'ouverture FIFO/LIFO » si le stock est à zéro.`;
+  /** Ajoute l'aide « couche d'ouverture » : code d'abord (message traduisible), texte en repli sans code. */
+  private mapTraceabilityApiError(message: string, code?: string): string {
+    const needsOpeningLayer = code
+      ? code === API_ERROR_CODE.openingLayerRequired
+      : message.includes('couche d\'ouverture') || message.includes('couche d’ouverture');
+    if (needsOpeningLayer) {
+      return $localize`:@@products.product-form.opening-layer-hint:${message}:message: Utilisez le bouton « Créer la couche d'ouverture FIFO/LIFO » si le stock est à zéro.`;
     }
     return message;
   }

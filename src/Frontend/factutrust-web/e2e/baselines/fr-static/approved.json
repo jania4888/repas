@@ -23,6 +23,10 @@
     "sha": "5b0651060de991d22b4abe048c639dde3997ca1c66f2cc3a8d6df2597998696c",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
+  "src/app/features/accounting/fixed-assets/fixed-assets-amortization-table.component.ts#FixedAssetsAmortizationTableComponent": {
+    "sha": "927b82641a12802add50f4a5c66c0ef589e9d129f427803706ba1f10f99a18b1",
+    "reason": "Date et heure séparées pour sortir « à » du format (date:'dd/MM/yyyy' + « à » + date:'HH:mm') : rendu français identique, phrase traduisible."
+  },
   "src/app/features/accounting/journal/journal.component.ts#JournalComponent": {
     "sha": "b4d0bdb6f7c44bbe75531bfd339de18263eed654e8f6bff10c145a6bb09f40cc",
     "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
@@ -299,6 +303,10 @@
     "sha": "f8327c925f8a2ad271639069ecf528f442203056ab44309506b0cd6471ebf3d2",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
+  "src/app/features/settings/channels/channels-settings.component.ts#ChannelsSettingsComponent": {
+    "sha": "cc50b4a6954094181db52c26e033e9cdae9df27fc65e7c42a3f06a5f03c7840b",
+    "reason": "Date et heure séparées pour sortir « à » du format (date:'dd/MM/yyyy' + « à » + date:'HH:mm') : rendu français identique, phrase traduisible."
+  },
   "src/app/features/settings/profile/profile.component.ts#ProfileComponent": {
     "sha": "5920a51914300c9df3c4d2f7c6c0a7ce346fd7763abb8341c9fc0ede39bcdb14",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
@@ -342,6 +350,10 @@
   "src/app/features/transfers/transfer-list/transfer-list.component.ts#TransferListComponent": {
     "sha": "0d46feb691593d058e43437dfaa9034b01b0c590084d5eed228dd7bf0642e2aa",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/treasury/cash-forecast/cash-forecast.component.ts#CashForecastComponent": {
+    "sha": "b19937efa8a26cdc9209219343f3a771f392418220159867d595a115b6c0a711",
+    "reason": "Date et heure séparées pour sortir « à » du format (date:'dd/MM/yyyy' + « à » + date:'HH:mm') : rendu français identique, phrase traduisible."
   },
   "src/app/shared/components/invoice-payments-panel/invoice-payments-panel.component.ts#InvoicePaymentsPanelComponent": {
     "sha": "301dcf8bba9a1a02e1d9c96288fa28265b6da813ac0568f53324f1464ae7b5bb",

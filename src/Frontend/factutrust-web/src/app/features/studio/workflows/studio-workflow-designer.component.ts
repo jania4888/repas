@@ -1,4 +1,5 @@
 /// <reference types="@angular/localize" />
+import { isStudioPlanLimitError } from '@features/studio/shared/studio-api-errors';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, HostListener, OnInit, computed, effect, inject, linkedSignal, signal, untracked } from '@angular/core';
@@ -623,7 +624,7 @@ export class StudioWorkflowDesignerComponent implements OnInit {
     } else if (err.status === 400) {
       this.banner.set({
         severity: 'error',
-        text: msg.startsWith('Limite du plan') ? formatWorkflowLabel(this.L.designer.quota, { max: WORKFLOW_LIMITS.maxWorkflowsPerEntity }) : (msg || DESIGNER_LABELS.saveError),
+        text: isStudioPlanLimitError(err, msg) ? formatWorkflowLabel(this.L.designer.quota, { max: WORKFLOW_LIMITS.maxWorkflowsPerEntity }) : (msg || DESIGNER_LABELS.saveError),
         reload: false
       });
     } else if (err.status === 404) {
@@ -660,7 +661,7 @@ export class StudioWorkflowDesignerComponent implements OnInit {
       error: (err: HttpErrorResponse) => this.toast.add({
         severity: 'warn', summary: $localize`:@@studio-workflow-designer.component.summary.Erreur:Erreur`,
         detail: err.status === 409 ? this.L.hub.duplicateKey
-          : err.status === 400 && workflowErrorMessage(err).startsWith('Limite du plan')
+          : err.status === 400 && isStudioPlanLimitError(err, workflowErrorMessage(err))
             ? formatWorkflowLabel(this.L.designer.quota, { max: WORKFLOW_LIMITS.maxWorkflowsPerEntity })
             : (workflowErrorMessage(err) || this.L.hub.loadError)
       })

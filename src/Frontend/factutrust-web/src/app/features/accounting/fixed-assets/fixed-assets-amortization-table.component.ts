@@ -104,7 +104,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             Exercice du {{ r.header.periodStart | date: 'dd/MM/yyyy' }} au {{ r.header.periodEnd | date: 'dd/MM/yyyy' }}
           </div>
           <div class="sage-meta">
-            <span>Le {{ r.header.generatedAtUtc | date: 'dd/MM/yyyy à HH:mm' }}</span>
+            <span i18n="@@accounting.fixed-assets.genere.le.date.heure">Le {{ r.header.generatedAtUtc | date: 'dd/MM/yyyy' }} à {{ r.header.generatedAtUtc | date: 'HH:mm' }}</span>
             <span>Exercice : {{ fiscalYearDisplay(r.header.fiscalYear) }}</span>
           </div>
         </header>
@@ -218,7 +218,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <p><strong i18n="@@accounting.fixed-assets.accelere.064a76be">Accéléré</strong> : application du taux majoré fiscal.</p>
             <p><strong i18n="@@accounting.fixed-assets.integral.02387577">Intégral</strong> : dotation unique l'année de mise en service.</p>
             <p>Devise : {{ r.infoBox.currencyCode }}</p>
-            <p>Édité le {{ r.infoBox.generatedAtUtc | date: 'dd/MM/yyyy à HH:mm' }}</p>
+            <p i18n="@@accounting.fixed-assets.edite.le.date.heure">Édité le {{ r.infoBox.generatedAtUtc | date: 'dd/MM/yyyy' }} à {{ r.infoBox.generatedAtUtc | date: 'HH:mm' }}</p>
             <p>{{ r.infoBox.productName }}</p>
           </div>
         </div>

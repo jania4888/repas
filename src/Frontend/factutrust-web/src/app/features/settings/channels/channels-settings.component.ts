@@ -100,7 +100,7 @@ interface ChannelBridgeQrDto {
                 <p class="muted">
                   Numéro {{ status()?.linkedNumberMasked || 'lié' }}
                   @if (status()?.verifiedAtUtc) {
-                    — lié le {{ status()?.verifiedAtUtc | date: 'dd/MM/yyyy à HH:mm' }}
+                    <ng-container i18n="@@settings.channels.lie.le.date.heure"> — lié le {{ status()?.verifiedAtUtc | date: 'dd/MM/yyyy' }} à {{ status()?.verifiedAtUtc | date: 'HH:mm' }} </ng-container>
                   }
                 </p>
               </div>

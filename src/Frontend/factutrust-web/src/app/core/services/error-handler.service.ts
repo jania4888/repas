@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { API_ERROR_CODE, apiErrorCode } from '@core/utils/api-error-code';
 
 /** Backend ValidationErrorResponse / similar (`VALIDATION_FAILED`, fieldErrors, globalErrors). */
 const VALIDATION_FAILED_CODE = 'VALIDATION_FAILED';
 const TENANT_MIGRATION_FAILED_CODE = 'TENANT_MIGRATION_FAILED';
-export const TENANT_CONTEXT_INVALID_CODE = 'TENANT_CONTEXT_INVALID';
-export const DELEGATED_CONTEXT_INVALID_CODE = 'DELEGATED_CONTEXT_INVALID';
+export const TENANT_CONTEXT_INVALID_CODE = API_ERROR_CODE.tenantContextInvalid;
+export const DELEGATED_CONTEXT_INVALID_CODE = API_ERROR_CODE.delegatedContextInvalid;
 
 export interface ApiErrorResponse {
   success?: boolean;
@@ -72,11 +73,9 @@ export class ErrorHandlerService {
     return 'Mise à jour de la base de données en cours ou bloquée. Réessayez dans quelques instants ou contactez l\'administrateur si le problème persiste.';
   }
 
-  private getApiErrorCode(error: HttpErrorResponse | any): string | undefined {
-    const payload = typeof error?.error === 'object' && error?.error !== null
-      ? error.error as ApiErrorResponse
-      : null;
-    return payload?.code;
+  /** Code stable de l'erreur API (voir API_ERROR_CODE) : à tester à la place du texte du message. */
+  getApiErrorCode(error: HttpErrorResponse | any): string | undefined {
+    return apiErrorCode(error);
   }
 
   /**
@@ -128,6 +127,7 @@ export class ErrorHandlerService {
     // If error.error is a string (non-JSON response), handle it directly
     if (typeof errorData === 'string') {
       // Check if it's a rate limiting message
+      // Le statut suffit ; le texte ne sert que de repli pour un corps sans statut exploitable.
       if (error.status === 429 || errorData.toLowerCase().includes('trop de requêtes')) {
         return 'Trop de requêtes. Veuillez patienter avant de réessayer.';
       }

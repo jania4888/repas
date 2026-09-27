@@ -1,4 +1,5 @@
 /// <reference types="@angular/localize" />
+import { API_ERROR_CODE } from '@core/utils/api-error-code';
 import { BackendLabelPipe } from '@shared/pipes/backend-label.pipe';
 import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -1264,7 +1265,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
           error: (err) => {
             this.workflowActionInProgress.set(false);
             const message = this.errorHandler.extractErrorMessage(err);
-            if (this.isAlreadyConfirmedError(message)) {
+            if (this.isAlreadyConfirmedError(err, message)) {
               this.toastService.add({
                 severity: 'info',
                 summary: $localize`:@@delivery-note-detail.component.summary.Information:Information`,
@@ -1810,7 +1811,12 @@ export class DeliveryNoteDetailComponent implements OnInit {
     });
   }
 
-  private isAlreadyConfirmedError(message: string): boolean {
+  /** Refus de confirmation lié au statut : code d'abord (message traduisible), texte en repli sans code. */
+  private isAlreadyConfirmedError(err: unknown, message: string): boolean {
+    const code = this.errorHandler.getApiErrorCode(err);
+    if (code) {
+      return code === API_ERROR_CODE.statusNotAllowed;
+    }
     const normalized = message.toLowerCase();
     return normalized.includes('déjà confirmé') || normalized.includes('ne peut pas être confirmé');
   }

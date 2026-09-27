@@ -75,5 +75,7 @@ public sealed class PublicContactRateLimitIntegrationTests : IClassFixture<Publi
 
         var body = await rejected.Content.ReadAsStringAsync();
         Assert.Contains("\"success\":false", body, StringComparison.Ordinal);
+        // Code stable pour le client (le message peut être traduit selon X-UI-Locale).
+        Assert.Contains("\"code\":\"RATE_LIMIT_EXCEEDED\"", body, StringComparison.Ordinal);
     }
 }

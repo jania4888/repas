@@ -327,6 +327,13 @@ describe('StudioRecordViewDesignerComponent', () => {
       { success: false, data: null, message: 'Limite du plan atteinte : 20 vues par table maximum.', errors: [] }, { status: 400, statusText: 'Bad Request' });
     expect(component.error()?.message).toBe(STUDIO_RUNTIME_LABELS.designer.planLimit);
 
+    // Interface arabe : message traduit par l'API, la limite est reconnue au code.
+    component.save();
+    httpMock.expectOne(`${API}/views`).flush(
+      { success: false, data: null, message: 'تم بلوغ حد الباقة: 20 عروض لكل جدول كحد أقصى.', code: 'Validation.Plan', errors: [] },
+      { status: 400, statusText: 'Bad Request' });
+    expect(component.error()?.message).toBe(STUDIO_RUNTIME_LABELS.designer.planLimit);
+
     component.save();
     httpMock.expectOne(`${API}/views`).flush(
       { success: false, data: null, message: 'Une vue accepte au plus 25 colonnes.', errors: [] }, { status: 400, statusText: 'Bad Request' });

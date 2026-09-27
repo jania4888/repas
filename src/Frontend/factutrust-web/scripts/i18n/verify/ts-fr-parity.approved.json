@@ -44,8 +44,8 @@
     "reason": "Navigation par identifiant stable (NAV_ID / id d'entrée) au lieu du libellé ; libellés français inchangés (nav-labels.spec.ts, nav-item-ids.spec.ts, specs sidebar/secondary-nav)."
   },
   "src/app/core/services/error-handler.service.ts": {
-    "sha": "9381352f66c94dcfa1ffc0825c076f85380fc2014aad6ca8c9f56447801b2f12",
-    "reason": "Constantes de codes d’erreur API ajoutées (TENANT_CONTEXT_INVALID, DELEGATED_CONTEXT_INVALID), sans texte affiché."
+    "sha": "6dd6fa0ab6277816c27976b960540328606728dcffd3868f291238f0133eb24e",
+    "reason": "Constantes de codes d’erreur API (TENANT_CONTEXT_INVALID, DELEGATED_CONTEXT_INVALID) désormais tirées de core/utils/api-error-code ; lecture du code factorisée (apiErrorCode) ; aucun texte affiché modifié."
   },
   "src/app/core/services/error-message.service.ts": {
     "sha": "a7c7d14ff246559332c928c74be504dc30636a08657a217500304e49ba6e4f92",
@@ -74,6 +74,10 @@
   "src/app/features/inventory/inventory-form/inventory-form.component.ts": {
     "sha": "ba58f5dfe01f1093954250370fd15d2cf9884e8e557ca88b6c8cab65399af32d",
     "reason": "Chaînes converties en $localize à placeholders nommés : rendu français identique."
+  },
+  "src/app/features/payroll/declarations/cnss-remittance-tab.component.ts": {
+    "sha": "8a3bd02cd4cce2028726ac337beb24975acb8e3cd74b5fe1342a084688d78198",
+    "reason": "Logique pilotée par des données structurées et des codes, jamais par un texte traduisible : matricule manquant = employerCnssNumber vide (le serveur n'émet l'avertissement « Matricule employeur CNSS manquant » que dans ce cas) ; erreur de chargement reconnue au code Validation.CnssEmployerNumber (l'ancien test lisait err.error.error.code, champ inexistant). Littéraux de comparaison, jamais affichés."
   },
   "src/app/features/products/product-form/product-form.component.ts": {
     "sha": "de5d1770eadef65322efdb2f9cd74e35e984dc25ddc9a7d74e903f3e121d8a12",
@@ -106,6 +110,18 @@
   "src/app/features/studio/studio-report-designer.component.ts": {
     "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
     "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
+  },
+  "src/app/features/studio/views/studio-record-view-designer.component.ts": {
+    "sha": "f57a0b37f44533af7ab668e7cf5ebfc626d182b2614521af0c2fca665a21ec1a",
+    "reason": "Limite du plan détectée par le code API Validation.Plan (isStudioPlanLimitError) ; « Limite du plan » était un littéral de comparaison, jamais affiché, conservé en repli dans studio-api-errors.ts."
+  },
+  "src/app/features/studio/workflows/studio-workflow-designer.component.ts": {
+    "sha": "084faad7eb5e86de88b2f74d1d9582fac7eba37a0d798f809326b9ebde33be5c",
+    "reason": "Limite du plan détectée par le code API Validation.Plan (isStudioPlanLimitError) ; « Limite du plan » était un littéral de comparaison, jamais affiché, conservé en repli dans studio-api-errors.ts."
+  },
+  "src/app/features/studio/workflows/studio-workflows-hub.component.ts": {
+    "sha": "f57a0b37f44533af7ab668e7cf5ebfc626d182b2614521af0c2fca665a21ec1a",
+    "reason": "Limite du plan détectée par le code API Validation.Plan (isStudioPlanLimitError) ; « Limite du plan » était un littéral de comparaison, jamais affiché, conservé en repli dans studio-api-errors.ts."
   },
   "src/app/features/supplier-invoices/supplier-invoice-form/supplier-invoice-form.component.ts": {
     "sha": "cbb23096671a28258164551d095ee305508611f07eb8e6077bfe32e58ebf4a68",

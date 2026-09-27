@@ -405,11 +405,17 @@ builder.Services.AddRateLimiter(options =>
                 Math.Max(1, (int)Math.Ceiling(retryAfter.TotalSeconds)).ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
+        // Réponse écrite hors MVC : ni LocalizeApiResponseFilter ni ExceptionHandlingMiddleware ne la voient.
+        // UiLanguageMiddleware s'exécute avant le limiteur : le localiseur connaît déjà la langue de l'interface.
+        var localizer = context.HttpContext.RequestServices
+            .GetService<FactuTrust.Application.Localization.IMessageLocalizer>();
+        string Localize(string text) => localizer?.Localize(text) ?? text;
         var response = System.Text.Json.JsonSerializer.Serialize(new
         {
             success = false,
-            message = "Trop de requêtes. Veuillez réessayer plus tard.",
-            errors = new[] { "Trop de requêtes. Veuillez patienter avant de réessayer." }
+            code = FactuTrust.Application.DTOs.ValidationErrorCodes.RateLimitExceeded,
+            message = Localize("Trop de requêtes. Veuillez réessayer plus tard."),
+            errors = new[] { Localize("Trop de requêtes. Veuillez patienter avant de réessayer.") }
         });
         
         await context.HttpContext.Response.WriteAsync(response);

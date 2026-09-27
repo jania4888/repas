@@ -186,8 +186,9 @@ public class DeliveryNotesController : ControllerBase
         var command = new ConfirmDeliveryNoteCommand(id);
         var result = await _mediator.Send(command, cancellationToken);
 
+        // Validation.Status (déjà confirmé / non confirmable) est lu par le client : le message peut être traduit.
         if (result.IsFailure)
-            return BadRequest(ApiResponse<object>.Fail(result.Error.Description));
+            return BadRequest(ApiResponse<object>.FailWithCode(result.Error.Description, result.Error.Code));
 
         return Ok(ApiResponse<object>.Ok(null!, "Bon de livraison confirmé avec succès"));
     }

@@ -1,4 +1,5 @@
 /// <reference types="@angular/localize" />
+import { isStudioPlanLimitError } from '@features/studio/shared/studio-api-errors';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
@@ -612,7 +613,7 @@ export class StudioRecordViewDesignerComponent implements OnInit {
         return;
       case 400:
         this.error.set({
-          message: serverMessage.startsWith('Limite du plan') ? this.labels.designer.planLimit : (serverMessage || this.labels.views.error),
+          message: isStudioPlanLimitError(err, serverMessage) ? this.labels.designer.planLimit : (serverMessage || this.labels.views.error),
           stale: false
         });
         return;

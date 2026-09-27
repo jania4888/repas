@@ -1,4 +1,5 @@
 /// <reference types="@angular/localize" />
+import { API_ERROR_CODE } from '@core/utils/api-error-code';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -996,8 +997,12 @@ export class DeliveryNoteFormComponent implements OnInit {
       error: (err) => {
         this.submitting.set(false);
         const detail = this.errorHandler.extractErrorMessage(err);
+        const code = this.errorHandler.getApiErrorCode(err);
+        // Code d'abord (le message peut être traduit) ; texte en repli pour une réponse sans code.
         const isContextError =
-          detail.toLowerCase().includes('contexte') || detail.toLowerCase().includes('entreprise valide');
+          code === API_ERROR_CODE.tenantContextInvalid ||
+          code === API_ERROR_CODE.delegatedContextInvalid ||
+          (!code && (detail.toLowerCase().includes('contexte') || detail.toLowerCase().includes('entreprise valide')));
         const fullDetail = isContextError
           ? $localize`:@@ui.tern.ph.deconnectez.vous.et.reconnectez.vous.ou.325880:${detail}:p0: Déconnectez-vous et reconnectez-vous, ou contactez l'administrateur pour vérifier votre rattachement à une entreprise.`
           : detail;

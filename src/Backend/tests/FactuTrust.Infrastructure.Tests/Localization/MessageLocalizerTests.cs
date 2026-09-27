@@ -58,6 +58,66 @@ public sealed class MessageLocalizerTests
         }
     }
 
+    /// <summary>
+    /// Catalogue réel : les messages dont le client dépend (limite du plan Studio, 429, couche
+    /// d'ouverture, confirmation du BL) sont entièrement traduits, sans libellé français résiduel.
+    /// Format de la limite du plan : StudioQuotaService.EnsureUnderLimitAsync.
+    /// </summary>
+    [Theory]
+    [InlineData("Limite du plan atteinte : 50 tables personnalisées maximum. Mettez à niveau votre abonnement pour en créer davantage.", "50")]
+    [InlineData("Limite du plan atteinte : 200 champs par table maximum. Mettez à niveau votre abonnement pour en créer davantage.", "200")]
+    [InlineData("Limite du plan atteinte : 10000 enregistrements par table maximum. Mettez à niveau votre abonnement pour en créer davantage.", "10000")]
+    [InlineData("Limite du plan atteinte : 10 vues par table maximum. Mettez à niveau votre abonnement pour en créer davantage.", "10")]
+    [InlineData("Limite du plan atteinte : 20 workflows par table maximum. Mettez à niveau votre abonnement pour en créer davantage.", "20")]
+    [InlineData("Trop de requêtes. Veuillez réessayer plus tard.", null)]
+    [InlineData("Trop de requêtes. Veuillez patienter avant de réessayer.", null)]
+    [InlineData("Le passage CMUP → FIFO/LIFO exige une couche d'ouverture (inventaire). Stock physique non nul.", null)]
+    [InlineData("Ce bon de livraison ne peut pas être confirmé", null)]
+    public void Localize_RealCatalog_TranslatesClientFacingMessages(string french, string? number)
+    {
+        var localizer = CreateLocalizerFromRealCatalog();
+        var previous = CultureInfo.CurrentUICulture;
+        try
+        {
+            CultureInfo.CurrentUICulture = new CultureInfo("ar-TN");
+            var arabic = localizer.Localize(french);
+            Assert.NotEqual(french, arabic);
+            Assert.Matches(@"\p{IsArabic}", arabic);
+            Assert.DoesNotMatch(@"\b(tables|champs|enregistrements|vues|workflows|requêtes|couche|bon)\b", arabic);
+            if (number is not null)
+                Assert.Contains(number, arabic, StringComparison.Ordinal);
+
+            CultureInfo.CurrentUICulture = new CultureInfo("fr-TN");
+            Assert.Equal(french, localizer.Localize(french));
+        }
+        finally
+        {
+            CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
+    private static MessageLocalizer CreateLocalizerFromRealCatalog()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        string? catalog = null;
+        while (dir is not null && catalog is null)
+        {
+            var candidate = Path.Combine(dir.FullName, "FactuTrust.API", "Localization", "messages.ar.json");
+            if (File.Exists(candidate))
+                catalog = candidate;
+            dir = dir.Parent;
+        }
+        Assert.NotNull(catalog);
+
+        var root = Path.Combine(Path.GetTempPath(), "ft-i18n-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(root, "Localization"));
+        File.Copy(catalog!, Path.Combine(root, "Localization", "messages.ar.json"));
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?> { ["Localization:ArabicMessagesEnabled"] = "true" })
+            .Build();
+        return new MessageLocalizer(config, new HostEnvironmentStub(root), NullLogger<MessageLocalizer>.Instance);
+    }
+
     private static MessageLocalizer CreateLocalizer(bool enabled, params (string fr, string ar)[] pairs)
     {
         var translations = pairs.ToDictionary(p => p.fr, p => p.ar, StringComparer.Ordinal);

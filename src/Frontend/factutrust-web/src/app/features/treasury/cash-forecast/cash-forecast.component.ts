@@ -359,7 +359,7 @@ import {
             </app-dashboard-panel>
 
             <p class="computed-at">
-              Calculé le {{ data().computedAt | date: 'dd/MM/yyyy à HH:mm' }}
+              <ng-container i18n="@@treasury.cash-forecast.calcule.le.date.heure"> Calculé le {{ data().computedAt | date: 'dd/MM/yyyy' }} à {{ data().computedAt | date: 'HH:mm' }} </ng-container>
               @if (data().aiAdjustmentApplied) { · pondéré par l'IA }
             </p>
           </aside>

@@ -454,6 +454,19 @@
     "from ne peut pas être après to.": "لا يمكن أن يكون from بعد to.",
     "kind doit être 1 (client) ou 2 (fournisseur).": "يجب أن يكون kind القيمة 1 (حريف) أو 2 (مزوّد).",
     "pile interne erp confidentielle": "مكدّس داخلي سري لنظام التصرّف",
-    "thirdPartyId, from et to sont requis.": "thirdPartyId و from و to مطلوبة."
+    "thirdPartyId, from et to sont requis.": "thirdPartyId و from و to مطلوبة.",
+    "Trop de requêtes. Veuillez réessayer plus tard.": "عدد الطلبات مرتفع جدًا. يرجى إعادة المحاولة لاحقًا.",
+    "Trop de requêtes. Veuillez patienter avant de réessayer.": "عدد الطلبات مرتفع جدًا. يرجى الانتظار قبل إعادة المحاولة.",
+    "Le passage CMUP → FIFO/LIFO exige une couche d'ouverture (inventaire). Stock physique non nul.": "يتطلب الانتقال من CMUP إلى FIFO/LIFO طبقة افتتاحية (جرد). المخزون الفعلي غير منعدم.",
+    "Le passage FIFO/LIFO → CMUP est interdit tant qu'un stock physique existe. Clôturez les couches ou soldez le stock.": "الانتقال من FIFO/LIFO إلى CMUP ممنوع ما دام يوجد مخزون فعلي. أغلقوا الطبقات أو صفّوا المخزون.",
+    "Ce bon de livraison est déjà confirmé. Utilisez l'action « Démarrer livraison » pour passer à l'étape suivante.": "إذن التسليم هذا مؤكد مسبقًا. استخدموا الإجراء « بدء التسليم » للانتقال إلى المرحلة الموالية.",
+    "Ce bon de livraison ne peut pas être confirmé": "لا يمكن تأكيد إذن التسليم هذا",
+    "Le matricule employeur CNSS est obligatoire.": "رقم انخراط المؤجر في CNSS إلزامي.",
+    "Le matricule employeur CNSS est obligatoire pour exporter le bordereau.": "رقم انخراط المؤجر في CNSS إلزامي لتصدير الكشف.",
+    "Limite du plan atteinte : {0} tables personnalisées maximum. Mettez à niveau votre abonnement pour en créer davantage.": "تم بلوغ حد الباقة: {0} جداول مخصصة كحد أقصى. قوموا بترقية اشتراككم لإنشاء المزيد.",
+    "Limite du plan atteinte : {0} champs par table maximum. Mettez à niveau votre abonnement pour en créer davantage.": "تم بلوغ حد الباقة: {0} حقول لكل جدول كحد أقصى. قوموا بترقية اشتراككم لإنشاء المزيد.",
+    "Limite du plan atteinte : {0} enregistrements par table maximum. Mettez à niveau votre abonnement pour en créer davantage.": "تم بلوغ حد الباقة: {0} تسجيلات لكل جدول كحد أقصى. قوموا بترقية اشتراككم لإنشاء المزيد.",
+    "Limite du plan atteinte : {0} vues par table maximum. Mettez à niveau votre abonnement pour en créer davantage.": "تم بلوغ حد الباقة: {0} عروض لكل جدول كحد أقصى. قوموا بترقية اشتراككم لإنشاء المزيد.",
+    "Limite du plan atteinte : {0} workflows par table maximum. Mettez à niveau votre abonnement pour en créer davantage.": "تم بلوغ حد الباقة: {0} مسارات عمل لكل جدول كحد أقصى. قوموا بترقية اشتراككم لإنشاء المزيد."
   }
 }

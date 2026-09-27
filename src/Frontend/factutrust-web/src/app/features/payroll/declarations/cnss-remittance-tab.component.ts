@@ -1,4 +1,5 @@
 /// <reference types="@angular/localize" />
+import { API_ERROR_CODE, apiErrorCode } from '@core/utils/api-error-code';
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -236,9 +237,14 @@ export class CnssRemittanceTabComponent implements OnInit {
     return !!r && r.isEligible && !r.hasExistingPayment && r.totalDue > 0 && !this.missingEmployerMatricule();
   });
 
-  missingEmployerMatricule = computed(() =>
-    !!this.remittance()?.warnings?.some(w => w.includes('Matricule employeur CNSS manquant'))
-  );
+  /**
+   * Champ structuré, jamais le texte de l'avertissement (traduisible) : le serveur renseigne
+   * toujours employerCnssNumber et n'émet l'avertissement « matricule manquant » que s'il est vide.
+   */
+  missingEmployerMatricule = computed(() => {
+    const r = this.remittance();
+    return !!r && !r.employerCnssNumber?.trim();
+  });
 
   otherWarnings = computed(() =>
     (this.remittance()?.warnings ?? []).filter(w => !w.includes('Matricule employeur CNSS manquant'))
@@ -286,9 +292,10 @@ export class CnssRemittanceTabComponent implements OnInit {
       error: err => {
         this.remittance.set(null);
         const message = err?.error?.message ?? err?.error?.error ?? $localize`:@@ui.tern.impossible.de.generer.le.bordereau.d130b4:Impossible de générer le bordereau.`;
-        const isMissingMatricule =
-          err?.error?.error?.code === 'CnssEmployerNumber' ||
-          (typeof message === 'string' && message.toLowerCase().includes('matricule employeur cnss'));
+        const code = apiErrorCode(err);
+        const isMissingMatricule = code
+          ? code === API_ERROR_CODE.cnssEmployerNumberMissing
+          : typeof message === 'string' && message.toLowerCase().includes('matricule employeur cnss');
         this.toast.add({
           severity: 'error',
           summary: $localize`:@@cnss-remittance-tab.component.summary.Bordereau CN:Bordereau CNSS`,

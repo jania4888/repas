@@ -58,7 +58,7 @@ public class PayrollDeclarationsController : ControllerBase
     {
         var result = await _mediator.Send(new GenerateCnssRemittanceQuery(year, month), cancellationToken);
         if (result.IsFailure)
-            return BadRequest(ApiResponse<CnssContributionRemittanceDto>.Fail(result.Error.Description));
+            return BadRequest(ApiResponse<CnssContributionRemittanceDto>.FailWithCode(result.Error.Description, result.Error.Code));
         return Ok(ApiResponse<CnssContributionRemittanceDto>.Ok(result.Value));
     }
 

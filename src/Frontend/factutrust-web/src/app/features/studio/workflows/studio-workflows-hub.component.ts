@@ -1,4 +1,5 @@
 /// <reference types="@angular/localize" />
+import { isStudioPlanLimitError } from '@features/studio/shared/studio-api-errors';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -296,7 +297,7 @@ export class StudioWorkflowsHubComponent implements OnInit {
         }
       },
       // 409 = clé `<key>_copy<n>` déjà prise (maxCopies 9) ; 400 « Limite du plan » = 20 workflows/table (WORKFLOW_LIMITS.maxWorkflowsPerEntity).
-      error: (err: HttpErrorResponse) => this.toast.add({ severity: 'warn', summary: $localize`:@@studio-workflows-hub.component.summary.Erreur:Erreur`, detail: err.status === 409 ? this.L.hub.duplicateKey : err.status === 400 && workflowErrorMessage(err).startsWith('Limite du plan') ? this.L.designer.quota : (workflowErrorMessage(err) || this.L.hub.loadError) })
+      error: (err: HttpErrorResponse) => this.toast.add({ severity: 'warn', summary: $localize`:@@studio-workflows-hub.component.summary.Erreur:Erreur`, detail: err.status === 409 ? this.L.hub.duplicateKey : err.status === 400 && isStudioPlanLimitError(err, workflowErrorMessage(err)) ? this.L.designer.quota : (workflowErrorMessage(err) || this.L.hub.loadError) })
     });
   }
 
