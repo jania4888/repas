@@ -196,7 +196,7 @@ export class LedgerComponent implements OnInit {
       },
       highlights: [
         ...(imbalance > 0.001
-          ? [{ type: 'warning' as const, label: $localize`:@@accounting.ledger.ts.ecart.debit.credit.c4e76936:Écart débit/crédit`, value: imbalance, context: 'Vérifier l\'équilibre' }]
+          ? [{ type: 'warning' as const, label: 'Écart débit/crédit', value: imbalance, context: 'Vérifier l\'équilibre' }]
           : []),
         ...detectBasicAnomalies(
           rows.map(r => ({ label: r.label, debit: r.debit, credit: r.credit })),

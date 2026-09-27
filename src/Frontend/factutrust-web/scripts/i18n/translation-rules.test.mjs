@@ -36,3 +36,10 @@ test('jetons remplacés par le code ({entity}, {0}, {first}) conservés', () => 
   assert.equal(validateTranslation('Affichage de {first} à {last}', 'عرض {first} إلى {last}'), null);
   assert.equal(validateTranslation('{0} champs', 'حقول'), 'jetons');
 });
+
+test('jetons de bibliothèque {{x}} : tolérés seulement à l’identique de la source', () => {
+  assert.equal(validateTranslation('Étape {{current}} / {{total}}', 'الخطوة {{current}} / {{total}}'), null);
+  assert.equal(validateTranslation('Étape {{current}} / {{total}}', 'الخطوة {{current}}'), 'jetons');
+  assert.equal(validateTranslation('Étape suivante', 'الخطوة {{current}}'), 'jetons');
+  assert.equal(validateTranslation('Étape {{current}} / {{total}}', 'الخطوة {{current}} / {{total}} ${x}'), 'code');
+});

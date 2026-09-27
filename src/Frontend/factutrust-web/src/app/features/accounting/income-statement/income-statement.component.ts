@@ -240,7 +240,7 @@ export class IncomeStatementComponent implements OnInit {
     if (grossMargin < 0) {
       highlights.unshift({
         type: 'anomaly' as const,
-        label: $localize`:@@accounting.income-statement.ts.marge.brute.negative.77acc627:Marge brute négative`,
+        label: 'Marge brute négative',
         value: grossMargin,
         context: 'Les achats/consommations dépassent les produits'
       });

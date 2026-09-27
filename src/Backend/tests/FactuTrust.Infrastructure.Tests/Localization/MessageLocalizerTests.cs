@@ -118,6 +118,28 @@ public sealed class MessageLocalizerTests
         }
     }
 
+    /// <summary>
+    /// Messages dont le front reconnaît le texte français (vat-declaration.component.ts,
+    /// COMPANY_NOT_SUBMITTED_MARKER) : traduits, l'écran afficherait une erreur au lieu de son état vide.
+    /// </summary>
+    [Fact]
+    public void Localize_RealCatalog_KeepsFrontMarkersInFrench()
+    {
+        var localizer = CreateLocalizerFromRealCatalog();
+        var previous = CultureInfo.CurrentUICulture;
+        try
+        {
+            CultureInfo.CurrentUICulture = new CultureInfo("ar-TN");
+            Assert.Equal(
+                FactuTrust.Domain.Authorization.VatDeclarationAccess.NotSubmittedMessage,
+                localizer.Localize(FactuTrust.Domain.Authorization.VatDeclarationAccess.NotSubmittedMessage));
+        }
+        finally
+        {
+            CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
     private static MessageLocalizer CreateLocalizerFromRealCatalog()
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);

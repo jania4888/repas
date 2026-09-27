@@ -102,17 +102,18 @@ export class ProjectDashboardSearchComponent implements OnInit, OnDestroy {
   readonly activeId = signal<string | null>(null);
 
   readonly groupedResults = computed(() => {
-    const groups = new Map<string, ProjectSearchResult[]>();
+    // Regroupement par nature (valeur stable), libellé calculé ensuite : il est traduit.
+    const groups = new Map<ProjectSearchKind, ProjectSearchResult[]>();
     for (const item of this.results()) {
-      const label = this.groupLabel(item);
-      const list = groups.get(label) ?? [];
+      const kind = this.normalizeKind(item.kind);
+      const list = groups.get(kind) ?? [];
       list.push(item);
-      groups.set(label, list);
+      groups.set(kind, list);
     }
-    const order = ['Projets', 'Tâches', 'Documents'];
+    const order: ProjectSearchKind[] = ['Project', 'Task', 'Attachment'];
     return order
-      .filter(label => groups.has(label))
-      .map(label => ({ label, items: groups.get(label)! }));
+      .filter(kind => groups.has(kind))
+      .map(kind => ({ label: this.groupLabel(kind), items: groups.get(kind)! }));
   });
 
   ngOnInit(): void {
@@ -236,11 +237,10 @@ export class ProjectDashboardSearchComponent implements OnInit, OnDestroy {
     this.activeId.set(items[idx].id);
   }
 
-  private groupLabel(item: ProjectSearchResult): string {
-    const kind = this.normalizeKind(item.kind);
+  private groupLabel(kind: ProjectSearchKind): string {
     if (kind === 'Task') return $localize`:@@projects.project-dashboard-search.ts.taches.1b018f86:Tâches`;
-    if (kind === 'Attachment') return 'Documents';
-    return 'Projets';
+    if (kind === 'Attachment') return $localize`:@@projects.project-dashboard-search.ts.documents.687c8286:Documents`;
+    return $localize`:@@projects.project-dashboard-search.ts.projets.b1e8cd4d:Projets`;
   }
 
   private normalizeKind(kind: ProjectSearchResult['kind']): ProjectSearchKind {

@@ -71,7 +71,10 @@ export function validateTranslation(fr, ar) {
   if (BIDI_CONTROLS.test(value)) return 'bidi';
   // Dans un ICU, « }} » ferme un cas et « {{$X} » l'ouvre : seules les interpolations Angular sont du code.
   const isIcu = /\{VAR_[A-Z0-9_]+,\s*(plural|select)\s*,/.test(String(fr));
-  if ((isIcu ? /\$\{|\{\{(?!\$)/ : /\$\{|\{\{|\}\}/).test(value)) return 'code';
+  // Jetons d'une bibliothèque (`{{current}}` de driver.js) : tolérés s'ils sont exactement ceux de la source.
+  if (!isIcu && multiset(fr, LIBRARY_TOKEN) !== multiset(value, LIBRARY_TOKEN)) return 'jetons';
+  const code = isIcu ? value : value.replace(LIBRARY_TOKEN, '');
+  if ((isIcu ? /\$\{|\{\{(?!\$)/ : /\$\{|\{\{|\}\}/).test(code)) return 'code';
   if (isIcu) {
     const problem = icuProblem(value);
     if (problem) return problem;
@@ -86,6 +89,8 @@ export function validateTranslation(fr, ar) {
 
 /** `{nom}` / `{0}` remplacés par du code (hors placeholders `{$…}` et hors ICU). */
 const CODE_TOKEN = /\{([A-Za-z0-9_]+)\}/g;
+/** `{{nom}}` remplacés par une bibliothèque tierce (visite guidée driver.js). */
+const LIBRARY_TOKEN = /\{\{([A-Za-z0-9_]+)\}\}/g;
 
 /** Isole les valeurs interpolées (nombres, codes latins) dans le texte arabe. */
 export function wrapIsolates(ar) {

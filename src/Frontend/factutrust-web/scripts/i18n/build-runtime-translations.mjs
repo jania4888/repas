@@ -32,9 +32,12 @@ const PHRASE_MAPS = ['phrase-map-ar.json', 'phrase-map-wave.json', 'phrase-map-b
 const MANIFEST = path.join(WEB, 'src/app/core/i18n/erp-i18n-manifest.generated.ts');
 const REPORT = path.join(WEB, 'scripts/i18n/reports/runtime-build.json');
 
-/** Plafond dur du chargeur (erp-boot-locale.ts MAX_CATALOG_BYTES) et cible de confort. */
+/**
+ * Plafond dur du chargeur (erp-boot-locale.ts MAX_CATALOG_BYTES) et cible de confort (12,5 % de marge).
+ * Mesuré à couverture complète (2026-09-27) : ~1,6 Mio, dont ~51 % d'ID ; ~370 Kio une fois compressé.
+ */
 const HARD_LIMIT_BYTES = 2 * 1024 * 1024;
-const TARGET_BYTES = 1.5 * 1024 * 1024;
+const TARGET_BYTES = 1.75 * 1024 * 1024;
 
 const strict = process.argv.includes('--strict');
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -115,7 +118,10 @@ for (const [id, fr] of frById) {
       rejected.push({ id, reason, source: cand.source, fr, ar });
       continue;
     }
-    translations[id] = wrapIsolates(ar);
+    // Blancs de bord de la source (écart icône/libellé, suffixe concaténé) : repris tels quels.
+    const [lead] = /^\s*/.exec(fr);
+    const [trail] = /\s*$/.exec(fr);
+    translations[id] = wrapIsolates(lead + ar + trail);
     outcome = cand.kind;
     break;
   }

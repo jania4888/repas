@@ -752,13 +752,13 @@ export class CashDeskComponent implements OnInit {
         ? [
             {
               type: 'top' as const,
-              label: $localize`:@@payments.cash-desk.ts.solde.caisse.primaire.870f7a24:Solde caisse primaire`,
+              label: 'Solde caisse primaire',
               value: b.primaryTotal,
               context: b.currency
             },
             {
               type: 'top' as const,
-              label: $localize`:@@payments.cash-desk.ts.solde.banque.secondaire.6562e61a:Solde banque secondaire`,
+              label: 'Solde banque secondaire',
               value: b.secondaryTotal,
               context: b.currency
             }

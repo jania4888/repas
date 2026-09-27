@@ -176,11 +176,34 @@ function calleeName(call) {
   return { name: '', receiver: '' };
 }
 
+/** Appels qui construisent le contexte envoyé à l'assistant IA : leur texte reste en français. */
+const AI_PAYLOAD_CALL = /\b(buildScreenAnalysisPayloadV2|buildNoDataPayload)\s*\(/;
+const AI_PAYLOAD_TYPE = /ScreenAnalysisPayload/;
+
+/**
+ * Fonction englobante qui produit une charge utile IA (appel d'un constructeur de payload ou
+ * type de retour ScreenAnalysisPayload) : tout littéral qu'elle contient part vers le LLM.
+ * @returns {string|null} nom de la fonction, ou null
+ */
+export function aiPayloadFunction(node) {
+  for (let fn = ts.findAncestor(node.parent, x => ts.isFunctionLike(x)); fn; fn = ts.findAncestor(fn.parent, x => ts.isFunctionLike(x))) {
+    if (!aiPayloadFns.has(fn)) {
+      const body = fn.body ? fn.body.getText() : '';
+      aiPayloadFns.set(fn, AI_PAYLOAD_CALL.test(body) || AI_PAYLOAD_TYPE.test(fn.type ? fn.type.getText() : ''));
+    }
+    if (aiPayloadFns.get(fn)) return fn.name ? fn.name.getText() : '(anonyme)';
+  }
+  return null;
+}
+const aiPayloadFns = new WeakMap();
+
 /**
  * Remonte depuis le littéral au travers des expressions transparentes (ternaire, ??, ||,
  * parenthèses, concaténation, `as`) et classe selon le premier contexte significatif.
  */
 export function classify(node) {
+  const aiFn = aiPayloadFunction(node);
+  if (aiFn) return { kind: 'NEVER', reason: `charge utile IA (${aiFn})` };
   let child = node;
   let parent = node.parent;
   while (parent) {

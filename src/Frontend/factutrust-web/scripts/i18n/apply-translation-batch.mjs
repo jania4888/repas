@@ -3,9 +3,10 @@
  * Applique un lot de traductions indexé par texte français (blancs normalisés) à tous les ID
  * du catalogue qui portent ce texte, et les range dans scripts/i18n/translations-ar/<vague>.json.
  * Chaque traduction est validée (placeholders, ICU, HTML, bidi…) ; une traduction invalide est
- * refusée et signalée, jamais écrite.
+ * refusée et signalée, jamais écrite. Un ID qui a déjà une traduction n'est pas réécrit
+ * (homonymes : « Soldes », « Arrêté »…), sauf avec --overwrite.
  *
- * Usage : node scripts/i18n/apply-translation-batch.mjs <lot.json> [--dry-run]
+ * Usage : node scripts/i18n/apply-translation-batch.mjs <lot.json> [--dry-run] [--overwrite]
  *   lot.json : { "Texte français exact": "النص العربي", … }
  */
 import fs from 'node:fs';
@@ -16,8 +17,10 @@ import { validateTranslation } from './translation-rules.mjs';
 const WEB = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const batchPath = process.argv[2];
 const dryRun = process.argv.includes('--dry-run');
+// Par défaut, un ID déjà traduit n'est jamais réécrit : un homonyme (« Soldes », « Arrêté ») garde sa traduction.
+const overwrite = process.argv.includes('--overwrite');
 if (!batchPath) {
-  console.error('Usage: apply-translation-batch.mjs <lot.json> [--dry-run]');
+  console.error('Usage: apply-translation-batch.mjs <lot.json> [--dry-run] [--overwrite]');
   process.exit(1);
 }
 
@@ -33,9 +36,16 @@ for (const [id, text] of Object.entries(fr)) {
   idsByText.get(key).push(id);
 }
 
+const TR_DIR = path.join(WEB, 'scripts/i18n/translations-ar');
+const stored = new Set();
+for (const file of fs.readdirSync(TR_DIR).filter(f => f.endsWith('.json'))) {
+  for (const id of Object.keys(JSON.parse(fs.readFileSync(path.join(TR_DIR, file), 'utf8')))) stored.add(id);
+}
+
 const byWave = new Map();
 const problems = [];
 let applied = 0;
+let kept = 0;
 for (const [text, ar] of Object.entries(batch)) {
   const key = norm(text);
   const ids = idsByText.get(key);
@@ -50,6 +60,10 @@ for (const [text, ar] of Object.entries(batch)) {
     continue;
   }
   for (const id of ids) {
+    if (!overwrite && stored.has(id)) {
+      kept++;
+      continue;
+    }
     const wave = fr[`@${id}`]?.['x-wave'] ?? 'misc';
     if (!byWave.has(wave)) byWave.set(wave, {});
     byWave.get(wave)[id] = value;
@@ -68,6 +82,6 @@ for (const [wave, entries] of byWave) {
 for (const p of problems) console.warn(p);
 console.log(
   `[apply-translation-batch] ${Object.keys(batch).length} textes → ${applied} ID` +
-    ` (${[...byWave.keys()].join(', ') || 'aucune vague'}) ; ${problems.length} refus${dryRun ? ' — simulation' : ''}`
+    ` (${[...byWave.keys()].join(', ') || 'aucune vague'}) ; ${kept} déjà traduit(s) conservé(s) ; ${problems.length} refus${dryRun ? ' — simulation' : ''}`
 );
 process.exit(problems.length ? 1 : 0);

@@ -2,8 +2,8 @@
 /** Classifieur et codemod des littéraux TS (node --test). */
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { scanFile } from './_ts-literals.mjs';
-import { localizeSource } from './localize-ts-ast.mjs';
+import { classify, scanFile } from './_ts-literals.mjs';
+import { approvedEdits, localizeSource } from './localize-ts-ast.mjs';
 
 const kinds = src => scanFile('t.ts', src).found.map(f => `${f.kind}:${f.text}`);
 const BS = '\\';
@@ -47,4 +47,47 @@ test('remplacement : échappements, placeholders nommés, texte français identi
   assert.ok(out.includes(':Impossible de charger ' + BS + BT + 'x' + BS + BT + ' ' + BS + '${y}' + BT), out);
   assert.ok(out.includes(':Échec : ${e.message}:message:' + BS + 'nRéessayez' + BT), out);
   assert.ok(/\$localize`:@@stock\.stock-list\.ts\.impossible\.de\.charger\.x\.y\.[0-9a-f]{8}:/.test(out), out);
+});
+
+test("charge utile IA : tout littéral d'une fonction qui construit le contexte d'écran reste en français", () => {
+  const src = `
+    class A {
+      payload() { const h = [{ label: 'Marge brute négative' }]; return buildScreenAnalysisPayloadV2({ highlights: h }); }
+      message() { return 'Marge brute négative'; }
+    }`;
+  const found = scanFile('t.ts', src).found;
+  assert.deepEqual(found.map(f => classify(f.node).kind), ['NEVER', 'DISPLAY']);
+});
+
+test('--approve : « * », exclusions, pluriel fabriqué et imbrication laissés à la main', () => {
+  const rel = 'src/app/features/stock/stock-list/stock-list.component.ts';
+  const src = [
+    "missing.push('une majuscule');",
+    "missing.push('un chiffre obligatoire');",
+    'parts.push(`${n} étape${n > 1 ? ' + "'s'" + " : ''} terminée`);",
+    "return `Période ${m ? 'clôturée' : 'ouverte'} pour le mois`;"
+  ].join('\n');
+  const all = approvedEdits(rel, src, '*');
+  assert.equal(all.count, 2, all.out);
+  assert.ok(all.out.includes(':une majuscule`'), all.out);
+  assert.deepEqual(all.manual.map(m => m.line), [3, 4, 4]);
+  const some = approvedEdits(rel, src, { exclude: ['un chiffre obligatoire'] });
+  assert.equal(some.count, 1);
+  assert.ok(some.out.includes("missing.push('un chiffre obligatoire');"), some.out);
+});
+
+test('--approve : « ** » prend aussi les libellés sans accent, « also » les ajoute à « * », « texte@ligne » cible un homonyme', () => {
+  const rel = 'src/app/features/stock/stock-list/stock-list.component.ts';
+  const src = [
+    "const LABELS = { Draft: 'Brouillon', Active: 'Actif' };",
+    "const INTENTS = [{ intent: 'relations', title: 'Relations' }];",
+    "const COUNTS = { relations: 'relations' };"
+  ].join('\n');
+  const all = approvedEdits(rel, src, '**');
+  assert.ok(all.texts.includes('Actif') && all.texts.includes('Brouillon'), all.texts.join('|'));
+  const plus = approvedEdits(rel, src, { base: '*', also: ['Actif'] });
+  assert.deepEqual(plus.texts, ['Actif']);
+  const homonym = approvedEdits(rel, src, { base: '**', exclude: ['relations@2'] });
+  assert.ok(!homonym.out.split('\n')[1].includes("$localize`:@@stock.stock-list.ts.relations."), homonym.out);
+  assert.ok(homonym.out.split('\n')[2].includes('$localize'), homonym.out);
 });
