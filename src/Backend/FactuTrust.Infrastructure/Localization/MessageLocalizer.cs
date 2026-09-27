@@ -110,12 +110,14 @@ public sealed class MessageLocalizer : IMessageLocalizer
             list.Add(rule);
         }
 
+        // Le gabarit le plus spécifique (le plus de texte littéral) gagne : un gabarit générique
+        // (« … : {0} {1} maximum ») ne doit jamais masquer un gabarit précis qui traduit aussi le libellé.
         var frozenBuckets = prefixBuckets.ToDictionary(
             kv => kv.Key,
-            kv => (IReadOnlyList<TemplateRule>)kv.Value,
+            kv => (IReadOnlyList<TemplateRule>)kv.Value.OrderByDescending(r => r.LiteralLength).ToList(),
             StringComparer.Ordinal);
 
-        return (rules, frozenBuckets);
+        return (rules.OrderByDescending(r => r.LiteralLength).ToList(), frozenBuckets);
     }
 
     private static IReadOnlyDictionary<string, string> LoadCatalog(IHostEnvironment env)
@@ -157,11 +159,15 @@ public sealed class MessageLocalizer : IMessageLocalizer
         private readonly string _arTemplate;
         private readonly Regex _pattern;
 
-        private TemplateRule(string arTemplate, Regex pattern)
+        private TemplateRule(string arTemplate, Regex pattern, int literalLength)
         {
             _arTemplate = arTemplate;
             _pattern = pattern;
+            LiteralLength = literalLength;
         }
+
+        /// <summary>Longueur du texte français hors placeholders : mesure de spécificité du gabarit.</summary>
+        public int LiteralLength { get; }
 
         public static TemplateRule? TryCreate(string french, string arabic)
         {
@@ -176,7 +182,7 @@ public sealed class MessageLocalizer : IMessageLocalizer
                 return null;
             }
 
-            return new TemplateRule(arabic, pattern);
+            return new TemplateRule(arabic, pattern, Regex.Replace(french, @"\{\d+\}", string.Empty).Length);
         }
 
         public string? TryMatch(string message)

@@ -43,6 +43,28 @@ public sealed class MessageLocalizerTests
     }
 
     [Fact]
+    public void Localize_ArabicCulture_SpecificTemplateWinsOverGenericOne()
+    {
+        // Le gabarit générique est déclaré en premier : l'ordre du catalogue ne doit pas décider.
+        var localizer = CreateLocalizer(
+            enabled: true,
+            ("Limite atteinte : {0} {1} maximum.", "تم بلوغ الحد: {0} {1} كحد أقصى."),
+            ("Limite atteinte : {0} champs par table maximum.", "تم بلوغ الحد: {0} حقول لكل جدول كحد أقصى."));
+        var previous = CultureInfo.CurrentUICulture;
+        try
+        {
+            CultureInfo.CurrentUICulture = new CultureInfo("ar");
+            Assert.Equal(
+                "تم بلوغ الحد: 200 حقول لكل جدول كحد أقصى.",
+                localizer.Localize("Limite atteinte : 200 champs par table maximum."));
+        }
+        finally
+        {
+            CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
+    [Fact]
     public void Localize_ArabicCulture_TemplateWithPlaceholder()
     {
         var localizer = CreateLocalizer(enabled: true, ("Le champ {0} est requis.", "الحقل {0} مطلوب."));
