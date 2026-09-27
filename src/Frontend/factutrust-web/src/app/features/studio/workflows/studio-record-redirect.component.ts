@@ -26,7 +26,7 @@ export class StudioRecordRedirectComponent {
       return;
     }
     router.navigateByUrl(
-      `/studio/d/${encodeURIComponent(key)}/${encodeURIComponent(id)}/edit${instance ? $localize`:@@ui.tern.instance.803b49:?instance=` + encodeURIComponent(instance) : ''}`,
+      `/studio/d/${encodeURIComponent(key)}/${encodeURIComponent(id)}/edit${instance ? '?instance=' + encodeURIComponent(instance) : ''}`,
       { replaceUrl: true }
     );
   }

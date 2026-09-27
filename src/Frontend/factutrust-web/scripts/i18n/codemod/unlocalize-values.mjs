@@ -27,7 +27,9 @@ const VALUE_IDS = new Set([
   'ui.tern.revenuecategory.21cd74',
   'ui.tern.father.922561', // lien de parenté par défaut (valeur de formulaire)
   'ui.tern.none.6eef66', // statut / mode par défaut (énumérations de paie)
-  'ui.tern.name.709a23' // colonne d'affichage par défaut d'une table liée (nom de colonne)
+  'ui.tern.name.709a23', // colonne d'affichage par défaut d'une table liée (nom de colonne)
+  'ui.tern.instance.803b49', // paramètre de requête d'une URL de navigation
+  'ui.tern.json.9abd16' // extension de fichier
 ]);
 
 const checkOnly = process.argv.includes('--check');

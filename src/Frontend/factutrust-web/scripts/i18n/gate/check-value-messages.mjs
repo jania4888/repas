@@ -23,7 +23,9 @@ const looksLikeValue = text =>
   /^[a-z]+[A-Z][A-Za-z0-9]*$/.test(text) || // camelCase
   /^[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]*)+$/.test(text) || // PascalCase composé
   /^[a-z][a-z0-9]*(?:-[a-z0-9]+|-\{\$[A-Za-z0-9_]+\})+$/.test(text) || // kebab-case, y compris msg-{$p0}
-  /^var\(--[a-z0-9-]+\)$/.test(text); // valeur CSS
+  /^var\(--[a-z0-9-]+\)$/.test(text) || // valeur CSS
+  /^[?&][A-Za-z_][A-Za-z0-9_]*=$/.test(text) || // paramètre d'URL (?instance=)
+  /^\.[a-z0-9]{2,5}$/.test(text); // extension de fichier (.json)
 
 const offenders = collectMessages().filter(m => !identical.has(m.text.trim()) && looksLikeValue(m.text.trim()));
 for (const m of offenders) console.error(`[valeur] « ${m.text} » ← ${m.file}${m.id ? ` (@@${m.id})` : ''}`);

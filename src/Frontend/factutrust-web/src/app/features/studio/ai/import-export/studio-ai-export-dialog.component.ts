@@ -171,7 +171,7 @@ import { StudioSystemExportDto } from '../studio-ai.models';
   `]
 })
 export class StudioAiExportDialogComponent {
-  readonly loc_ui_tern_json_9abd16 = $localize`:@@ui.tern.json.9abd16: .json`;
+  readonly loc_ui_tern_json_9abd16 = ' .json';
   private readonly builds = inject(StudioAiBuildService);
   private readonly studio = inject(StudioService);
 
