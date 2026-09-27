@@ -280,7 +280,7 @@
           @if (threadIsOpen) {
             <label class="req-upload">
               <i class="pi pi-upload" aria-hidden="true"></i>
-              {{ uploading() ? 'Envoi…' : 'Joindre un fichier' }}
+              <ng-container i18n="@@exchanges.exchange-requests-panel.sel.envoi.joindre.un.fichier.444b54d6">{!!(uploading()), select, true {Envoi…} other {Joindre un fichier}}</ng-container>
               <input type="file" hidden [disabled]="uploading()" (change)="onAttachSelected(req, $event)" />
             </label>
           }

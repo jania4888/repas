@@ -420,6 +420,7 @@
   "vat-declaration.component.summary.Aperçu PDF": "معاينة PDF",
   "vat-declaration.component.summary.Export PDF": "تصدير PDF",
   "withholding-tax.tej-export.action.impossible.617d5932": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} الإجراء غير ممكن",
+  "withholding-tax.tej-export.copier.0246a8b8": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} نسخ",
   "withholding-tax.tej-export.corrective.6a9731be": "تصحيحي",
   "withholding-tax.tej-export.generez.le.fichier.xml.pour.preparer.la.declarat.647cd798": "ولّدوا ملف XML لإعداد التصريح؛ يتم الإيداع الرسمي عبر بوابة TEJ (دخول OIDC).",
   "withholding-tax.tej-export.initiale.6e2ba30f": "أولي",

@@ -55,6 +55,10 @@
     "sha": "e4bf331c3bcadaec18454ac5bd22a61c0f41d71a898d449ce7db183e231d5626",
     "reason": "normalizeSearchText : même normalisation latine (NFD, sans diacritiques, minuscules) plus une normalisation arabe."
   },
+  "src/app/features/ai-assistant/components/chat-attachment-card/chat-attachment-card.component.ts": {
+    "sha": "7fcf317c1033931242f8f972dd131375f6377f4ff9bca296dcd39ceba5710672",
+    "reason": "Libellé du bouton « Masquer/Voir » + « le texte » remplacé par deux messages $localize complets (« Masquer le texte », « Voir le texte ») : texte rendu identique, traduisible d'un seul tenant ; les fragments « Masquer »/« Voir » ne sont plus utilisés dans ce composant."
+  },
   "src/app/features/audit/audit-action-labels.ts": {
     "sha": "e712f3fbdae1db3932716d1f1e5b38d539f50745623134726b54759d742f4e9b",
     "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."

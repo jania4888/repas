@@ -18068,7 +18068,8 @@
   "2245051417065635102": "{VAR_PLURAL, plural, =0 {ligne} =1 {ligne} other {lignes}}",
   "@2245051417065635102": {
     "x-files": [
-      "src/app/features/accounting/manual-entry/components/template-picker-modal.component.ts"
+      "src/app/features/accounting/manual-entry/components/template-picker-modal.component.ts",
+      "src/app/features/inventory/inventory-detail/inventory-detail.component.html"
     ],
     "x-wave": "v7"
   },
@@ -30996,6 +30997,13 @@
     ],
     "x-wave": "v5"
   },
+  "exchanges.exchange-requests-panel.sel.envoi.joindre.un.fichier.444b54d6": "{VAR_SELECT, select, true {Envoi…} other {Joindre un fichier}}",
+  "@exchanges.exchange-requests-panel.sel.envoi.joindre.un.fichier.444b54d6": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-requests-panel.component.html"
+    ],
+    "x-wave": "v5"
+  },
   "exchanges.exchange-requests-panel.commentaires.dbdeccaf": "Commentaires",
   "@exchanges.exchange-requests-panel.commentaires.dbdeccaf": {
     "x-files": [
@@ -31509,6 +31517,13 @@
   },
   "exchanges.exchange-shell.participants.cd56e083": "Participants",
   "@exchanges.exchange-shell.participants.cd56e083": {
+    "x-files": [
+      "src/app/features/exchanges/exchange-shell.component.html"
+    ],
+    "x-wave": "v5"
+  },
+  "exchanges.exchange-shell.sel.cabinet.societe.019fe942": "{VAR_SELECT, select, true {Cabinet} other {Société}}",
+  "@exchanges.exchange-shell.sel.cabinet.societe.019fe942": {
     "x-files": [
       "src/app/features/exchanges/exchange-shell.component.html"
     ],
@@ -32580,6 +32595,13 @@
     ],
     "x-wave": "v6"
   },
+  "forecasting.pages.sel.deselectionner.tout.tout.selectionner.8772367b": "{VAR_SELECT, select, true {Désélectionner tout} other {Tout sélectionner}}",
+  "@forecasting.pages.sel.deselectionner.tout.tout.selectionner.8772367b": {
+    "x-files": [
+      "src/app/features/forecasting/pages/replenishment-board/replenishment-board.component.html"
+    ],
+    "x-wave": "v6"
+  },
   "forecasting.pages.approuver.les.recommandations.selectionnees.b638302d": "Approuver les recommandations sélectionnées",
   "@forecasting.pages.approuver.les.recommandations.selectionnees.b638302d": {
     "x-files": [
@@ -32608,8 +32630,22 @@
     ],
     "x-wave": "v6"
   },
+  "forecasting.pages.sel.generation.regenerer.05d04060": "{VAR_SELECT, select, true {Génération…} other {Régénérer}}",
+  "@forecasting.pages.sel.generation.regenerer.05d04060": {
+    "x-files": [
+      "src/app/features/forecasting/pages/replenishment-board/replenishment-board.component.html"
+    ],
+    "x-wave": "v6"
+  },
   "forecasting.pages.exporter.les.recommandations.au.format.csv.0d84ce58": "Exporter les recommandations au format CSV",
   "@forecasting.pages.exporter.les.recommandations.au.format.csv.0d84ce58": {
+    "x-files": [
+      "src/app/features/forecasting/pages/replenishment-board/replenishment-board.component.html"
+    ],
+    "x-wave": "v6"
+  },
+  "forecasting.pages.sel.export.exporter.csv.2dbab7d6": "{VAR_SELECT, select, true {Export…} other {Exporter CSV}}",
+  "@forecasting.pages.sel.export.exporter.csv.2dbab7d6": {
     "x-files": [
       "src/app/features/forecasting/pages/replenishment-board/replenishment-board.component.html"
     ],
@@ -33525,6 +33561,13 @@
     ],
     "x-wave": "v5"
   },
+  "inventory.inventory-detail.nombre.de.lignes.pl": " {$INTERPOLATION} {$ICU} ",
+  "@inventory.inventory-detail.nombre.de.lignes.pl": {
+    "x-files": [
+      "src/app/features/inventory/inventory-detail/inventory-detail.component.html"
+    ],
+    "x-wave": "v5"
+  },
   "inventory.inventory-detail.lignes.d.inventaire.454d192f": "Lignes d'inventaire",
   "@inventory.inventory-detail.lignes.d.inventaire.454d192f": {
     "x-files": [
@@ -33576,6 +33619,13 @@
   },
   "inventory.inventory-detail.lot.f7358f58": "Lot {$INTERPOLATION}",
   "@inventory.inventory-detail.lot.f7358f58": {
+    "x-files": [
+      "src/app/features/inventory/inventory-detail/inventory-detail.component.html"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory.inventory-detail.sel.compte.non.compte.cc8a603c": "{VAR_SELECT, select, true {Compté} other {Non compté}}",
+  "@inventory.inventory-detail.sel.compte.non.compte.cc8a603c": {
     "x-files": [
       "src/app/features/inventory/inventory-detail/inventory-detail.component.html"
     ],
@@ -34691,29 +34741,15 @@
     ],
     "x-wave": "v5"
   },
-  "inventory.inventory-wizard.saisissez.un.numero.de.lot.pour.5330335e": " Saisissez un numéro de lot pour ",
-  "@inventory.inventory-wizard.saisissez.un.numero.de.lot.pour.5330335e": {
+  "inventory.inventory-wizard.lot.manquant.un.article": " Saisissez un numéro de lot pour cet article suivi par lot avant de valider. ",
+  "@inventory.inventory-wizard.lot.manquant.un.article": {
     "x-files": [
       "src/app/features/inventory/inventory-wizard/inventory-wizard.component.html"
     ],
     "x-wave": "v5"
   },
-  "inventory.inventory-wizard.cet.article.suivi.par.lot.06bc3e76": " cet article suivi par lot ",
-  "@inventory.inventory-wizard.cet.article.suivi.par.lot.06bc3e76": {
-    "x-files": [
-      "src/app/features/inventory/inventory-wizard/inventory-wizard.component.html"
-    ],
-    "x-wave": "v5"
-  },
-  "inventory.inventory-wizard.ces.articles.suivis.par.lot.6953af2e": " ces articles suivis par lot ",
-  "@inventory.inventory-wizard.ces.articles.suivis.par.lot.6953af2e": {
-    "x-files": [
-      "src/app/features/inventory/inventory-wizard/inventory-wizard.component.html"
-    ],
-    "x-wave": "v5"
-  },
-  "inventory.inventory-wizard.avant.de.valider.bf18937c": " avant de valider. ",
-  "@inventory.inventory-wizard.avant.de.valider.bf18937c": {
+  "inventory.inventory-wizard.lot.manquant.plusieurs.articles": " Saisissez un numéro de lot pour ces articles suivis par lot avant de valider. ",
+  "@inventory.inventory-wizard.lot.manquant.plusieurs.articles": {
     "x-files": [
       "src/app/features/inventory/inventory-wizard/inventory-wizard.component.html"
     ],
@@ -39512,8 +39548,22 @@
     ],
     "x-wave": "v5"
   },
+  "payments.cash-desk.sel.annuler.precedent.8d63cb1d": "{VAR_SELECT, select, true {Annuler} other {Précédent}}",
+  "@payments.cash-desk.sel.annuler.precedent.8d63cb1d": {
+    "x-files": [
+      "src/app/features/payments/cash-desk/components/bank-deposit-wizard/bank-deposit-wizard.component.html"
+    ],
+    "x-wave": "v5"
+  },
   "payments.cash-desk.continuer.129ffff9": " Continuer ",
   "@payments.cash-desk.continuer.129ffff9": {
+    "x-files": [
+      "src/app/features/payments/cash-desk/components/bank-deposit-wizard/bank-deposit-wizard.component.html"
+    ],
+    "x-wave": "v5"
+  },
+  "payments.cash-desk.sel.validation.valider.65f3eb48": "{VAR_SELECT, select, true {Validation...} other {Valider}}",
+  "@payments.cash-desk.sel.validation.valider.65f3eb48": {
     "x-files": [
       "src/app/features/payments/cash-desk/components/bank-deposit-wizard/bank-deposit-wizard.component.html"
     ],
@@ -46473,8 +46523,7 @@
   "pos.components.total.b25928c6": "Total",
   "@pos.components.total.b25928c6": {
     "x-files": [
-      "src/app/features/pos/components/customer-display/customer-display.component.ts",
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
+      "src/app/features/pos/components/customer-display/customer-display.component.ts"
     ],
     "x-wave": "v5"
   },
@@ -47362,132 +47411,6 @@
   "@ui.tern.aucune.transaction.aujourd.hui.0c1e49": {
     "x-files": [
       "src/app/features/pos/components/pos-history-panel/pos-history-panel.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.nom.91e87d17": "Nom:",
-  "@pos.components.nom.91e87d17": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.client.id.09b4aaeb": "Client Id:",
-  "@pos.components.client.id.09b4aaeb": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.facture.n.6f7ea1be": "Facture N°:",
-  "@pos.components.facture.n.6f7ea1be": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.date.81b7d2ea": "Date:",
-  "@pos.components.date.81b7d2ea": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.qte.a4772129": "Qté",
-  "@pos.components.qte.a4772129": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.article.4360c2dc": "Article",
-  "@pos.components.article.4360c2dc": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.prix.2d5eddef": "Prix",
-  "@pos.components.prix.2d5eddef": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.dt.21cd369f": "{$INTERPOLATION} DT",
-  "@pos.components.dt.21cd369f": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.dt.645d6176": "{$INTERPOLATION} DT",
-  "@pos.components.dt.645d6176": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.sous.total.dt.d0754699": "{$START_TAG_SPAN}Sous-Total:{$CLOSE_TAG_SPAN}{$START_TAG_SPAN}{$INTERPOLATION} DT{$CLOSE_TAG_SPAN}",
-  "@pos.components.sous.total.dt.d0754699": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.remise.8b875876": "Remise:",
-  "@pos.components.remise.8b875876": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.base.tva.dt.4bde2f1e": "{$START_TAG_SPAN}BASE TVA:{$CLOSE_TAG_SPAN}{$START_TAG_SPAN}{$INTERPOLATION} DT{$CLOSE_TAG_SPAN}",
-  "@pos.components.base.tva.dt.4bde2f1e": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.total.tva.dt.9a313b86": "{$START_TAG_SPAN}TOTAL TVA:{$CLOSE_TAG_SPAN}{$START_TAG_SPAN}{$INTERPOLATION} DT{$CLOSE_TAG_SPAN}",
-  "@pos.components.total.tva.dt.9a313b86": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.dont.tva.dt.f0cd4361": "{$START_TAG_SPAN} dont TVA {$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN}{$INTERPOLATION_1} DT{$CLOSE_TAG_SPAN}",
-  "@pos.components.dont.tva.dt.f0cd4361": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.timbre.fiscal.dt.1cb8d8d4": "{$START_TAG_SPAN}Timbre fiscal:{$CLOSE_TAG_SPAN}{$START_TAG_SPAN}{$INTERPOLATION} DT{$CLOSE_TAG_SPAN}",
-  "@pos.components.timbre.fiscal.dt.1cb8d8d4": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.facture.totale.dt.d4ad2517": "{$START_TAG_SPAN}Facture totale:{$CLOSE_TAG_SPAN}{$START_TAG_SPAN}{$INTERPOLATION} DT{$CLOSE_TAG_SPAN}",
-  "@pos.components.facture.totale.dt.d4ad2517": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.payable.dt.5c80cdad": "{$START_TAG_SPAN}Payable :{$CLOSE_TAG_SPAN}{$START_TAG_SPAN}{$INTERPOLATION} DT{$CLOSE_TAG_SPAN}",
-  "@pos.components.payable.dt.5c80cdad": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
-    ],
-    "x-wave": "v5"
-  },
-  "pos.components.total.a.payer.dt.2158b743": "{$START_TAG_SPAN}Total à payer:{$CLOSE_TAG_SPAN}{$START_TAG_SPAN}{$INTERPOLATION} DT{$CLOSE_TAG_SPAN}",
-  "@pos.components.total.a.payer.dt.2158b743": {
-    "x-files": [
-      "src/app/features/pos/components/pos-receipt/pos-receipt.component.ts"
     ],
     "x-wave": "v5"
   },
@@ -54043,6 +53966,13 @@
     ],
     "x-wave": "v6"
   },
+  "projects.tabs.sel.oui.non.ea7e16a5": "{VAR_SELECT, select, true {Oui} other {Non}}",
+  "@projects.tabs.sel.oui.non.ea7e16a5": {
+    "x-files": [
+      "src/app/features/projects/tabs/project-time.tab.ts"
+    ],
+    "x-wave": "v6"
+  },
   "projects.tabs.modifier.99f59cf6": "Modifier",
   "@projects.tabs.modifier.99f59cf6": {
     "x-files": [
@@ -55864,8 +55794,22 @@
     ],
     "x-wave": "v4"
   },
+  "purchase-receipts.pages.sel.pdf.pdf.a5f843cb": "{VAR_SELECT, select, true {PDF…} other {PDF}}",
+  "@purchase-receipts.pages.sel.pdf.pdf.a5f843cb": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-detail/purchase-receipt-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-receipts.pages.modifier.f260e757": " Modifier ",
   "@purchase-receipts.pages.modifier.f260e757": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-detail/purchase-receipt-detail.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.sel.validation.valider.ed0aee37": "{VAR_SELECT, select, true {Validation…} other {Valider}}",
+  "@purchase-receipts.pages.sel.validation.valider.ed0aee37": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-detail/purchase-receipt-detail.component.ts"
     ],
@@ -56562,6 +56506,27 @@
   },
   "purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f": "Reste à recevoir HT",
   "@purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.sel.enregistrement.enregistrer.en.brouillon.cd8328f3": "{VAR_SELECT, select, true {Enregistrement…} other {Enregistrer en brouillon}}",
+  "@purchase-receipts.pages.sel.enregistrement.enregistrer.en.brouillon.cd8328f3": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.sel.enregistrement.enregistrer.1317c42c": "{VAR_SELECT, select, true {Enregistrement…} other {Enregistrer}}",
+  "@purchase-receipts.pages.sel.enregistrement.enregistrer.1317c42c": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.sel.validation.valider.la.reception.21433cdd": "{VAR_SELECT, select, true {Validation…} other {Valider la réception}}",
+  "@purchase-receipts.pages.sel.validation.valider.la.reception.21433cdd": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
     ],
@@ -60065,6 +60030,13 @@
     ],
     "x-wave": "v4"
   },
+  "recurring-contracts.tabs.sel.enregistrement.enregistrer.1317c42c": "{VAR_SELECT, select, true {Enregistrement…} other {Enregistrer}}",
+  "@recurring-contracts.tabs.sel.enregistrement.enregistrer.1317c42c": {
+    "x-files": [
+      "src/app/features/recurring-contracts/tabs/contract-notes.tab.ts"
+    ],
+    "x-wave": "v4"
+  },
   "contract-notes.tab.summary.Fonction_indispo": "Fonction indisponible",
   "@contract-notes.tab.summary.Fonction_indispo": {
     "x-files": [
@@ -60315,6 +60287,13 @@
     ],
     "x-wave": "v4"
   },
+  "recurring-contracts.tabs.sel.generation.generer.maintenant.41264bb1": "{VAR_SELECT, select, true {Génération…} other {Générer maintenant}}",
+  "@recurring-contracts.tabs.sel.generation.generer.maintenant.41264bb1": {
+    "x-files": [
+      "src/app/features/recurring-contracts/tabs/contract-schedule.tab.ts"
+    ],
+    "x-wave": "v4"
+  },
   "recurring-contracts.tabs.echeancier.disponible.prochainement.4db0027e": "Échéancier disponible prochainement",
   "@recurring-contracts.tabs.echeancier.disponible.prochainement.4db0027e": {
     "x-files": [
@@ -60359,6 +60338,13 @@
   },
   "recurring-contracts.tabs.voir.la.facture.e4bddea0": " Voir la facture ",
   "@recurring-contracts.tabs.voir.la.facture.e4bddea0": {
+    "x-files": [
+      "src/app/features/recurring-contracts/tabs/contract-schedule.tab.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.tabs.sel.emission.emettre.9f179bb7": "{VAR_SELECT, select, true {Émission…} other {Émettre}}",
+  "@recurring-contracts.tabs.sel.emission.emettre.9f179bb7": {
     "x-files": [
       "src/app/features/recurring-contracts/tabs/contract-schedule.tab.ts"
     ],
@@ -60513,6 +60499,13 @@
   },
   "recurring-contracts.tabs.enregistrer.f7c8bcd8": " Enregistrer ",
   "@recurring-contracts.tabs.enregistrer.f7c8bcd8": {
+    "x-files": [
+      "src/app/features/recurring-contracts/tabs/contract-services.tab.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "recurring-contracts.tabs.sel.import.importer.csv.d4370772": "{VAR_SELECT, select, true {Import…} other {Importer (CSV)}}",
+  "@recurring-contracts.tabs.sel.import.importer.csv.d4370772": {
     "x-files": [
       "src/app/features/recurring-contracts/tabs/contract-services.tab.ts"
     ],
@@ -72190,8 +72183,15 @@
     ],
     "x-wave": "v5"
   },
-  "stock-vouchers.stock-voucher-form.etapes.pour.le.bon.0a9dd0fa": " Étapes pour {$INTERPOLATION} le bon ",
-  "@stock-vouchers.stock-voucher-form.etapes.pour.le.bon.0a9dd0fa": {
+  "stock-vouchers.stock-voucher-form.etapes.pour.le.bon.0a9dd0fa.sel": " Étapes pour {$ICU} le bon ",
+  "@stock-vouchers.stock-voucher-form.etapes.pour.le.bon.0a9dd0fa.sel": {
+    "x-files": [
+      "src/app/features/stock-vouchers/stock-voucher-form.component.html"
+    ],
+    "x-wave": "v5"
+  },
+  "3961114538354979403": "{VAR_SELECT, select, true {modifier} other {enregistrer}}",
+  "@3961114538354979403": {
     "x-files": [
       "src/app/features/stock-vouchers/stock-voucher-form.component.html"
     ],
@@ -72486,6 +72486,20 @@
   },
   "stock-vouchers.stock-voucher-form.annuler.49ba3292": " Annuler ",
   "@stock-vouchers.stock-voucher-form.annuler.49ba3292": {
+    "x-files": [
+      "src/app/features/stock-vouchers/stock-voucher-form.component.html"
+    ],
+    "x-wave": "v5"
+  },
+  "stock-vouchers.stock-voucher-form.sel.enregistrement.enregistrer.brouillon.55052217": "{VAR_SELECT, select, true {Enregistrement…} other {Enregistrer brouillon}}",
+  "@stock-vouchers.stock-voucher-form.sel.enregistrement.enregistrer.brouillon.55052217": {
+    "x-files": [
+      "src/app/features/stock-vouchers/stock-voucher-form.component.html"
+    ],
+    "x-wave": "v5"
+  },
+  "stock-vouchers.stock-voucher-form.sel.enregistrement.enregistrer.et.valider.e5748a2a": "{VAR_SELECT, select, true {Enregistrement…} other {Enregistrer et valider}}",
+  "@stock-vouchers.stock-voucher-form.sel.enregistrement.enregistrer.et.valider.e5748a2a": {
     "x-files": [
       "src/app/features/stock-vouchers/stock-voucher-form.component.html"
     ],

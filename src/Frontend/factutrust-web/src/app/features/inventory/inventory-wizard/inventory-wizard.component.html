@@ -410,15 +410,13 @@
                     <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
                     N° de lot manquant
                 </h3>
-                <p class="not-counted-hint"><ng-container i18n="@@inventory.inventory-wizard.saisissez.un.numero.de.lot.pour.5330335e">
-                    Saisissez un numéro de lot pour
-                    </ng-container>@if (productsMissingLot().length === 1) {<ng-container i18n="@@inventory.inventory-wizard.cet.article.suivi.par.lot.06bc3e76">
-                    cet article suivi par lot
-                    </ng-container>} @else {<ng-container i18n="@@inventory.inventory-wizard.ces.articles.suivis.par.lot.6953af2e">
-                    ces articles suivis par lot
-                    </ng-container>}<ng-container i18n="@@inventory.inventory-wizard.avant.de.valider.bf18937c">
-                    avant de valider.
-                </ng-container></p>
+                <p class="not-counted-hint">
+                    @if (productsMissingLot().length === 1) {<ng-container i18n="@@inventory.inventory-wizard.lot.manquant.un.article">
+                    Saisissez un numéro de lot pour cet article suivi par lot avant de valider.
+                    </ng-container>} @else {<ng-container i18n="@@inventory.inventory-wizard.lot.manquant.plusieurs.articles">
+                    Saisissez un numéro de lot pour ces articles suivis par lot avant de valider.
+                    </ng-container>}
+                </p>
                 <div class="summary-items">
                     @for (item of productsMissingLot(); track lineKey(item)) {
                     <div class="summary-item">

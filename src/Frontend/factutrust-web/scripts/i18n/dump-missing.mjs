@@ -32,7 +32,7 @@ for (const [id, text] of Object.entries(fr)) {
   if (wave && meta['x-wave'] !== wave) continue;
   const key = norm(String(text));
   // Texte sans lettre (ponctuation, placeholders seuls) : rien à traduire.
-  if (!/\p{L}/u.test(key.replace(/\{\$[^}]+\}/g, '')) || identical.has(key)) continue;
+  if (!/\p{L}/u.test(key.replace(/\{\$[^}]+\}/g, '')) || identical.has(key) || identical.has(key.replace(/\{\$[^}]+\}/g, '').trim())) continue;
   if (!groups.has(key)) groups.set(key, { text: key, ids: [], files: new Set(), waves: new Set() });
   const g = groups.get(key);
   g.ids.push(id);

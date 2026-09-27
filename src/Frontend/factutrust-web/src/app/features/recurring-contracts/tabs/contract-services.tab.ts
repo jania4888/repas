@@ -129,7 +129,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
               icon="pi-upload"
               [disabled]="importing()"
               (clicked)="fileInput.click()">
-              {{ importing() ? 'Import…' : 'Importer (CSV)' }}
+              <ng-container i18n="@@recurring-contracts.tabs.sel.import.importer.csv.d4370772">{!!(importing()), select, true {Import…} other {Importer (CSV)}}</ng-container>
             </app-button>
             <input
               #fileInput

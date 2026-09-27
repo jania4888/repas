@@ -43,7 +43,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             icon="pi-check"
             [disabled]="saving()"
             (clicked)="save()">
-            {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+            <ng-container i18n="@@recurring-contracts.tabs.sel.enregistrement.enregistrer.1317c42c">{!!(saving()), select, true {Enregistrement…} other {Enregistrer}}</ng-container>
           </app-button>
         </div>
       }

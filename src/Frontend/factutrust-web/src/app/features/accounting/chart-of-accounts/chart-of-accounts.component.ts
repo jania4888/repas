@@ -101,9 +101,9 @@ export function sceAccountDigitCount(accountNumber: string): number {
               <span i18n="@@accounting.chart-of-accounts.masquer.les.comptes.auxiliaires.ca6a40b1">Masquer les comptes auxiliaires ({{ auxiliaryCount() }})</span>
             </label>
           }
-          <p class="coa-count" aria-live="polite" i18n="@@accounting.chart-of-accounts.compte.87c3614c">
+          <p class="coa-count" aria-live="polite" i18n="@@accounting.chart-of-accounts.compte.87c3614c.pl">
             <span class="coa-count-value">{{ visibleRows().length }}</span>
-            <span class="coa-count-label"> compte{{ visibleRows().length === 1 ? '' : 's' }}</span>
+            <span class="coa-count-label"> {visibleRows().length, plural, =1 {compte} other {comptes}}</span>
           </p>
         </div>
       </app-accounting-filter-bar>

@@ -476,7 +476,7 @@
                     <div class="participant__info">
                       <strong>{{ p.displayName }}</strong>
                       <span>
-                        {{ p.side === 'firm' ? 'Cabinet' : 'Société' }}
+                        <ng-container i18n="@@exchanges.exchange-shell.sel.cabinet.societe.019fe942">{!!(p.side === 'firm'), select, true {Cabinet} other {Société}}</ng-container>
                         @if (roleLabel(p.role)) {
                           · {{ roleLabel(p.role) }}
                         }

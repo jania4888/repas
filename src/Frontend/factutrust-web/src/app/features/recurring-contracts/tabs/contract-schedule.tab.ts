@@ -41,7 +41,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
           icon="pi-bolt"
           [disabled]="generating()"
           (clicked)="generateNow()">
-          {{ generating() ? 'Génération…' : 'Générer maintenant' }}
+          <ng-container i18n="@@recurring-contracts.tabs.sel.generation.generer.maintenant.41264bb1">{!!(generating()), select, true {Génération…} other {Générer maintenant}}</ng-container>
         </app-button>
       }
     </div>
@@ -97,7 +97,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
                         icon="pi-check"
                         [disabled]="issuingId() === e.billingRunId"
                         (clicked)="confirmIssue(e)">
-                        {{ issuingId() === e.billingRunId ? 'Émission…' : 'Émettre' }}
+                        <ng-container i18n="@@recurring-contracts.tabs.sel.emission.emettre.9f179bb7">{!!(issuingId() === e.billingRunId), select, true {Émission…} other {Émettre}}</ng-container>
                       </app-button>
                       <app-button
                         variant="ghost"

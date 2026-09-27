@@ -500,17 +500,17 @@ interface ReceiptLineRow {
         <app-button variant="secondary" icon="pi-save" iconPos="left"
           [disabled]="!canSave() || submitting()"
           (clicked)="save('draft')">
-          {{ submitting() && submitMode() === 'draft' ? 'Enregistrement…' : 'Enregistrer en brouillon' }}
+          <ng-container i18n="@@purchase-receipts.pages.sel.enregistrement.enregistrer.en.brouillon.cd8328f3">{!!(submitting() && submitMode() === 'draft'), select, true {Enregistrement…} other {Enregistrer en brouillon}}</ng-container>
         </app-button>
         <app-button variant="primary" icon="pi-check" iconPos="left"
           [disabled]="!canSave() || submitting()"
           (clicked)="save('save')">
-          {{ submitting() && submitMode() === 'save' ? 'Enregistrement…' : 'Enregistrer' }}
+          <ng-container i18n="@@purchase-receipts.pages.sel.enregistrement.enregistrer.1317c42c">{!!(submitting() && submitMode() === 'save'), select, true {Enregistrement…} other {Enregistrer}}</ng-container>
         </app-button>
         <app-button variant="primary" icon="pi-verified" iconPos="left"
           [disabled]="!canValidate() || submitting()"
           (clicked)="save('validate')">
-          {{ submitting() && submitMode() === 'validate' ? 'Validation…' : 'Valider la réception' }}
+          <ng-container i18n="@@purchase-receipts.pages.sel.validation.valider.la.reception.21433cdd">{!!(submitting() && submitMode() === 'validate'), select, true {Validation…} other {Valider la réception}}</ng-container>
         </app-button>
       </div>
     }

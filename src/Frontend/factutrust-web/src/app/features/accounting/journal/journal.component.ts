@@ -166,10 +166,10 @@ type JournalFlatRow = {
       <div class="journal-draft-banner" role="status" aria-live="polite">
         <i class="pi pi-pencil" aria-hidden="true"></i>
         <span>
-          @if (canValidate()) {<ng-container i18n="@@accounting.journal.ecriture.en.brouillard.sur.la.periode.a.0ba1cf47">
-            {{ draftEntryCount() }} écriture{{ draftEntryCount() === 1 ? '' : 's' }} en brouillard sur la période — à valider avant clôture ou export.
-          </ng-container>} @else {<ng-container i18n="@@accounting.journal.ecriture.en.brouillard.en.attente.de.val.70e53073">
-            {{ draftEntryCount() }} écriture{{ draftEntryCount() === 1 ? '' : 's' }} en brouillard — en attente de validation par votre cabinet comptable.
+          @if (canValidate()) {<ng-container i18n="@@accounting.journal.ecriture.en.brouillard.sur.la.periode.a.0ba1cf47.pl">
+            {{ draftEntryCount() }} {draftEntryCount(), plural, =1 {écriture} other {écritures}} en brouillard sur la période — à valider avant clôture ou export.
+          </ng-container>} @else {<ng-container i18n="@@accounting.journal.ecriture.en.brouillard.en.attente.de.val.70e53073.pl">
+            {{ draftEntryCount() }} {draftEntryCount(), plural, =1 {écriture} other {écritures}} en brouillard — en attente de validation par votre cabinet comptable.
           </ng-container>}
         </span>
       </div>
@@ -195,9 +195,9 @@ type JournalFlatRow = {
             placeholder="Filtrer journal, libellé, compte, date…" i18n-placeholder="@@accounting.journal.filtrer.journal.libelle.compte.date.a3d2e50b"
             aria-label="Filtrer les lignes du journal" i18n-aria-label="@@accounting.journal.filtrer.les.lignes.du.journal.7d436ef3" />
         </span>
-        <p class="journal-count" aria-live="polite" i18n="@@accounting.journal.ligne.sur.la.periode.3219962d">
+        <p class="journal-count" aria-live="polite" i18n="@@accounting.journal.ligne.sur.la.periode.3219962d.pl">
           <span class="journal-count-value">{{ flatRows().length }}</span>
-          <span class="journal-count-label"> ligne{{ flatRows().length === 1 ? '' : 's' }} sur la période</span>
+          <span class="journal-count-label"> {flatRows().length, plural, =1 {ligne} other {lignes}} sur la période</span>
         </p>
       </div>
       <p-table

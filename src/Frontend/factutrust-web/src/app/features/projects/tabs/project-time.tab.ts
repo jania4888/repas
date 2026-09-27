@@ -234,7 +234,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
           <td>{{ e.hours }}</td>
 
-          <td>{{ e.isBillable ? 'Oui' : 'Non' }}</td>
+          <td><ng-container i18n="@@projects.tabs.sel.oui.non.ea7e16a5">{!!(e.isBillable), select, true {Oui} other {Non}}</ng-container></td>
 
           <td>
             <app-status-badge [status]="timeEntryStatusBadge(e)" [label]="timeEntryStatusLabel(e)" />

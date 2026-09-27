@@ -6,8 +6,8 @@
 </app-page-header>
 
 <div class="submit-readiness" role="status" aria-live="polite">
-  <p class="submit-readiness__title" i18n="@@stock-vouchers.stock-voucher-form.etapes.pour.le.bon.0a9dd0fa">
-    Étapes pour {{ editId ? 'modifier' : 'enregistrer' }} le bon
+  <p class="submit-readiness__title" i18n="@@stock-vouchers.stock-voucher-form.etapes.pour.le.bon.0a9dd0fa.sel">
+    Étapes pour {!!(editId), select, true {modifier} other {enregistrer}} le bon
   </p>
   <ul class="submit-readiness__list">
     <li [class.submit-readiness__item--done]="hasWarehouse()">
@@ -316,7 +316,7 @@
           iconPos="left"
           (clicked)="save(false)"
           [disabled]="!canSubmit() || submitting()">
-          {{ submitting() ? 'Enregistrement…' : 'Enregistrer brouillon' }}
+          <ng-container i18n="@@stock-vouchers.stock-voucher-form.sel.enregistrement.enregistrer.brouillon.55052217">{!!(submitting()), select, true {Enregistrement…} other {Enregistrer brouillon}}</ng-container>
         </app-button>
       </span>
       <span
@@ -330,7 +330,7 @@
           iconPos="left"
           (clicked)="save(true)"
           [disabled]="!canSubmit() || submitting()">
-          {{ submitting() ? 'Enregistrement…' : 'Enregistrer et valider' }}
+          <ng-container i18n="@@stock-vouchers.stock-voucher-form.sel.enregistrement.enregistrer.et.valider.e5748a2a">{!!(submitting()), select, true {Enregistrement…} other {Enregistrer et valider}}</ng-container>
         </app-button>
       </span>
     </div>

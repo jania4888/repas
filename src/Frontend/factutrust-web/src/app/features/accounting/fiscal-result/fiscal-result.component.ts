@@ -129,9 +129,9 @@ interface EditableModel {
         </div>
       }
       @if (d.isFinalized) {
-        <div class="fr-lock-banner" role="status" i18n="@@accounting.fiscal-result.feuille.finalisee.lecture.seule.622c43f5">
+        <div class="fr-lock-banner" role="status" i18n="@@accounting.fiscal-result.feuille.finalisee.lecture.seule.622c43f5.if">
           <i class="pi pi-lock" aria-hidden="true"></i>
-          <span>Feuille finalisée{{ d.finalizedAt ? ' le ' + (d.finalizedAt | date : 'shortDate') : '' }} — lecture seule.</span>
+          <span>@if (d.finalizedAt) {Feuille finalisée le {{ d.finalizedAt | date : 'shortDate' }} — lecture seule.} @else {Feuille finalisée — lecture seule.}</span>
         </div>
       }
       @if (d.warnings.length) {
@@ -312,7 +312,7 @@ interface EditableModel {
                 @if (d.computation.deficitGeneratedThisYear > 0) {
                   <tr class="fr-deficit"><td i18n="@@accounting.fiscal-result.deficit.genere.reportable.bae87c7e">Déficit généré (reportable)</td><td class="fr-num">{{ d.computation.deficitGeneratedThisYear | number : '1.3-3' }}</td></tr>
                 }
-                <tr><td i18n="@@accounting.fiscal-result.impot.sur.le.resultat.7419068e">Impôt sur le résultat{{ d.computation.taxpayerKind === 0 ? ' (IS ' + (d.computation.appliedIsRate * 100 | number : '1.0-2') + ' %)' : loc_ui_tern_bareme_irpp_a5d313 }}</td><td class="fr-num">{{ d.computation.taxOnResult | number : '1.3-3' }}</td></tr>
+                <tr><td i18n="@@accounting.fiscal-result.impot.sur.le.resultat.7419068e.if">@if (d.computation.taxpayerKind === 0) {Impôt sur le résultat (IS {{ d.computation.appliedIsRate * 100 | number : '1.0-2' }} %)} @else {Impôt sur le résultat (barème IRPP)}</td><td class="fr-num">{{ d.computation.taxOnResult | number : '1.3-3' }}</td></tr>
                 <tr><td i18n="@@accounting.fiscal-result.minimum.d.impot.8689385e">Minimum d'impôt</td><td class="fr-num">{{ d.computation.minimumTax | number : '1.3-3' }}</td></tr>
                 <tr class="fr-sub"><td i18n="@@accounting.fiscal-result.impot.du.max.68b3784b">= Impôt dû (max)</td><td class="fr-num">{{ d.computation.taxDue | number : '1.3-3' }}</td></tr>
                 <tr><td i18n="@@accounting.fiscal-result.contribution.sociale.de.solidarite.css.40731cb7">+ Contribution sociale de solidarité (CSS)</td><td class="fr-num">{{ d.computation.css | number : '1.3-3' }}</td></tr>
@@ -408,7 +408,6 @@ interface EditableModel {
   `
 })
 export class FiscalResultComponent implements OnInit {
-  readonly loc_ui_tern_bareme_irpp_a5d313 = $localize`:@@ui.tern.bareme.irpp.a5d313: (barème IRPP)`;
   private readonly api = inject(AccountingService);
   private readonly auth = inject(AuthService);
 

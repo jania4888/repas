@@ -56,7 +56,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
           <app-button variant="outline" icon="pi-file-pdf" iconPos="left"
             [disabled]="downloadingPdf()"
             (clicked)="downloadPdf()">
-            {{ downloadingPdf() ? 'PDF…' : 'PDF' }}
+            <ng-container i18n="@@purchase-receipts.pages.sel.pdf.pdf.a5f843cb">{!!(downloadingPdf()), select, true {PDF…} other {PDF}}</ng-container>
           </app-button>
 
           @if (canEdit()) {
@@ -68,7 +68,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
             <app-button variant="primary" icon="pi-verified" iconPos="left"
               [disabled]="validating()"
               (clicked)="validate()">
-              {{ validating() ? 'Validation…' : 'Valider' }}
+              <ng-container i18n="@@purchase-receipts.pages.sel.validation.valider.ed0aee37">{!!(validating()), select, true {Validation…} other {Valider}}</ng-container>
             </app-button>
           }
 

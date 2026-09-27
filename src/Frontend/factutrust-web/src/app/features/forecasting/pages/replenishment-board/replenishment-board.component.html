@@ -25,7 +25,7 @@
         [attr.aria-pressed]="allRowsSelected()"
         aria-label="Tout (dé)sélectionner" i18n-aria-label="@@forecasting.pages.tout.de.selectionner.652493c0">
         <i class="pi" [class.pi-square]="!allRowsSelected() && !someRowsSelected()" [class.pi-minus]="someRowsSelected()" [class.pi-check-square]="allRowsSelected()" aria-hidden="true"></i>
-        {{ allRowsSelected() ? 'Désélectionner tout' : 'Tout sélectionner' }}
+        <ng-container i18n="@@forecasting.pages.sel.deselectionner.tout.tout.selectionner.8772367b">{!!(allRowsSelected()), select, true {Désélectionner tout} other {Tout sélectionner}}</ng-container>
       </button>
 
       <button
@@ -55,7 +55,7 @@
         (click)="generateNow()"
         aria-label="Régénérer les recommandations" i18n-aria-label="@@forecasting.pages.regenerer.les.recommandations.3e0054b4">
         <i class="pi pi-refresh" aria-hidden="true"></i>
-        {{ generating() ? 'Génération…' : 'Régénérer' }}
+        <ng-container i18n="@@forecasting.pages.sel.generation.regenerer.05d04060">{!!(generating()), select, true {Génération…} other {Régénérer}}</ng-container>
       </button>
     }
 
@@ -66,7 +66,7 @@
       (click)="exportCsv()"
       aria-label="Exporter les recommandations au format CSV" i18n-aria-label="@@forecasting.pages.exporter.les.recommandations.au.format.csv.0d84ce58">
       <i class="pi pi-download" aria-hidden="true"></i>
-      {{ exporting() ? 'Export…' : 'Exporter CSV' }}
+      <ng-container i18n="@@forecasting.pages.sel.export.exporter.csv.2dbab7d6">{!!(exporting()), select, true {Export…} other {Exporter CSV}}</ng-container>
     </button>
 
     <div class="actions-ai">

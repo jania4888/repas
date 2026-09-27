@@ -173,8 +173,8 @@
               <i class="pi pi-list" aria-hidden="true"></i>
               Lignes d'inventaire
             </h3>
-            <span class="lines-count-badge">
-              {{ inventory()!.lines.length }} {{ inventory()!.lines.length > 1 ? 'lignes' : 'ligne' }}
+            <span class="lines-count-badge" i18n="@@inventory.inventory-detail.nombre.de.lignes.pl">
+              {{ inventory()!.lines.length }} {inventory()!.lines.length, plural, =0 {ligne} =1 {ligne} other {lignes}}
             </span>
           </div>
           <div class="table-wrapper" role="region" aria-label="Lignes d'inventaire" i18n-aria-label="@@inventory.inventory-detail.lignes.d.inventaire.454d192f">
@@ -231,7 +231,7 @@
                       } @else {
                         <i class="pi pi-clock" aria-hidden="true"></i>
                       }
-                      {{ line.isCounted ? 'Compté' : 'Non compté' }}
+                      <ng-container i18n="@@inventory.inventory-detail.sel.compte.non.compte.cc8a603c">{!!(line.isCounted), select, true {Compté} other {Non compté}}</ng-container>
                     </span>
                   </td>
                 </tr>

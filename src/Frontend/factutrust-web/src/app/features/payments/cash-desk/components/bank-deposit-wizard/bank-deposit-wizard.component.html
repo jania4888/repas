@@ -203,7 +203,7 @@
   <ng-template pTemplate="footer">
     <div class="wizard-footer">
       <app-button variant="outline" (click)="currentStep === 0 ? onHide() : prev()" [attr.aria-label]="currentStep === 0 ? 'Fermer' : 'Précédent'">
-        {{ currentStep === 0 ? 'Annuler' : 'Précédent' }}
+        <ng-container i18n="@@payments.cash-desk.sel.annuler.precedent.8d63cb1d">{!!(currentStep === 0), select, true {Annuler} other {Précédent}}</ng-container>
       </app-button>
       @if (currentStep < 3) {
         <app-button
@@ -219,7 +219,7 @@
           iconPos="right"
           [disabled]="submitting()"
           (click)="submit()">
-          {{ submitting() ? 'Validation...' : 'Valider' }}
+          <ng-container i18n="@@payments.cash-desk.sel.validation.valider.65f3eb48">{!!(submitting()), select, true {Validation...} other {Valider}}</ng-container>
         </app-button>
       }
     </div>
