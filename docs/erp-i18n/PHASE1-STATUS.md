@@ -1,31 +1,54 @@
 # Statut du chantier i18n ERP
 
-Dernière mise à jour : 2026-09-27 — stabilisation du WIP (lot 0) et fiabilisation de l'outillage (lot 1).
+Dernière mise à jour : 2026-09-27 — lots 0 à 5 livrés sur `i18n/erp-arabe` (worktree `C:\wt\ar`).
+Les drapeaux arabes restent **OFF** en production (`environment.erp.arabicEnabled`,
+`Localization:ArabicMessagesEnabled`).
 
-## Portes (worktree propre, base `fr-reference` = `32a2f4c1`)
+## Portes (base `fr-reference` = `32a2f4c1`)
 
 | Porte | Commande | Résultat |
 |-------|----------|----------|
-| ID uniques | `npm run i18n:ids` | 0 collision (13 corrigées : un ID partagé affichait un message faux en arabe) |
-| Catalogue AR | `npm run i18n:build -- --strict` | 7 877 / 9 704 messages traduits, 0 rejet, 634 Kio |
-| Parité FR templates | `npm run i18n:parity:template` | 0 écart non justifié (88 approuvés, motif par template) |
-| Parité FR TypeScript | `npm run i18n:parity:ts` | 0 écart non justifié (31 approuvés) ; bilan global : aucun texte FR perdu |
-| Karma | `npx ng test --watch=false --browsers=ChromeHeadless` | 16 échecs, **identiques à fr-reference** (14 SupplierInvoiceForm, Studio fuseau, ProjectApi) |
-| Backend | `dotnet test` (Infrastructure, API) | identique à la base (21 Projects ; FixedAssets SQL, Hangfire 15≠16, PlatformAiSettings) |
-| Build prod | `npm run build:prod` | OK |
+| Toutes | `npm run i18n:gate` | vert (règles de traduction, ID, concaténations, valeurs, catalogue strict, parités) |
+| ID uniques | `npm run i18n:ids` | 17 910 messages, tous à `@@id` sauf 18 ICU imbriqués (ID calculé par le compilateur), 0 collision |
+| Phrases découpées | `node scripts/i18n/gate/check-concat-messages.mjs` | 0 (27 fusionnées en un seul `$localize`) |
+| Messages-valeurs | `npm run i18n:values` | 0 (enum, clé, URL, classe d'icône… jamais en `$localize`) |
+| Catalogue AR | `node scripts/i18n/build-runtime-translations.mjs --strict` | **14 614 / 14 933** messages, 0 rejet, 1 430 Kio (plafond 2 Mio) |
+| Parité FR templates | `npm run i18n:parity:template` | 0 écart non justifié (113 approuvés, motif par template) |
+| Parité FR TypeScript | `npm run i18n:parity:ts` | 0 écart non justifié (57 approuvés) |
+| Codemods | `npm run i18n:codemod:test` | vert (templates, ternaires, littéraux TS) |
+| Karma | `npx ng test --watch=false --browsers=ChromeHeadless` | 16 échecs, **identiques à fr-reference** |
+| Backend | `dotnet test --filter MessageLocalizer\|LocalizeApiResponse\|UiLanguage\|ExceptionHandling…` | Infrastructure 22/22, API 28/28 |
 
-## Corrigé pendant la stabilisation
+Les 319 messages non traduits sont volontaires : sigles et exemples identiques (TVA, NIF, IBAN…),
+traces de diagnostic, en-tête CSV d'export, titre du PDF d'avoir, et le ticket POS (documents : français).
 
-- Collisions d'ID (`localize-ts.mjs` tronquait le texte sans hash).
-- Catalogue : le français n'est plus injecté pour les ID non traduits (affichait `${n}` brut).
-- Source FR : extraction par le compilateur au lieu de la regex (`auto.*` et ID digest).
-- Régressions FR du WIP : pourcentage des analyses (texte `loc_…` affiché), placeholder de modèle d'écriture, suggestions NIF/téléphone/mot de passe perdues, catégorie produit par défaut, espaces de bord (1 711), doublon d'interpolation (marque, badge), `?? '—'` neutralisé par le pipe `backendLabel`.
-- Sécurité : `auth.interceptor` rétabli (le WIP envoyait le jeton sur `/auth/login`).
-- Plantage du menu en mode délégué cabinet (`getNavId` levait sur une entrée dynamique).
-- Périmètre : un espace cabinet/portail ne tourne jamais avec le catalogue arabe ; `html[dir]` suit le catalogue chargé.
+## Livré
+
+- **Lot 1 — outillage** : extraction par le compilateur (`ng extract-i18n`), catalogue sans repli français,
+  validation stricte (placeholders, ICU, bidi, HTML), unicité des ID, parités FR sur AST.
+- **Lot 2 — sûreté** : codes d'erreur stables (`FailWithCode`) pour tous les cas où le front lisait le
+  texte français d'une erreur ; formats de date sans texte français.
+- **Lot 3 — balisage** :
+  - codemod AST des templates (2 000 textes/attributs, phrases entières avec éléments en ligne) ;
+  - ternaires de libellés → ICU `select` ; pluriels bricolés → ICU `plural` ou `erpPlural` ;
+  - classifieur TS (DISPLAY / NEVER / REVIEW) + codemod : 3 593 littéraux en `$localize`, jamais les
+    valeurs, clés, routes, fichiers, journaux, charges d'API ni prompts IA.
+- **Lot 4 — traduction** : toutes les vagues v1 à v7 (terminologie tunisienne, voir `ar-glossary-erp.md`),
+  pluriels arabes par catégorie CLDR (zéro, un, deux, 3–10, 11+).
+- **Lot 5 — backend** : extracteur Roslyn étendu (2 850 messages), tous les messages de périmètre société
+  traduits ; `MessageLocalizer` essaie les gabarits du plus spécifique au plus générique.
+
+## Corrigé en chemin
+
+- Locale `ar-TN` hybride : la fonction de pluriel était perdue au clonage (plantage des ICU en arabe).
+- Traduction arabe qui injectait le « s » français (`فصلs`) via des placeholders de pluriel.
+- Ticket POS : marqueurs i18n retirés (reste en français, `lang="fr" dir="ltr"`).
 
 ## Reste à faire
 
-Lots 2 à 8 du plan (`~/.claude/plans/il-faut-traduire-tout-squishy-toucan.md`) : codes d'erreur API pour les
-derniers tests sur texte, balisage AST des ~1 900 messages sans ID et des textes non balisés, classification
-et balisage du TypeScript, traduction (1 789 messages manquants + nouveaux), backend, RTL, E2E authentifié.
+- **REVIEW** (~6 800 littéraux TS non classés, surtout techniques) : revue ciblée des tableaux de libellés,
+  des valeurs affichées via `labelFr`, et des colonnes partagées entre tableau et export Excel client.
+- **Lot 6 — RTL** : dialogues, formulaires, tableaux (`erp-rtl.css`, `dir="ltr"` ciblé sur montants et codes).
+- **Lot 7 — recette** : E2E authentifié sur toutes les routes société (fuites latines), captures, revue sécurité.
+- **Relecture native** de chaque vague (`npm run i18n:export-review`) avant activation.
+- **Lot 8 — activation** : uniquement sur feu vert explicite (`Deploy-Hostinger.ps1`) ; retour arrière = drapeaux à `false`.
