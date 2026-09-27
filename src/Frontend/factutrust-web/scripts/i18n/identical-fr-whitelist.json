@@ -136,6 +136,8 @@
     "fa-solid fa-file-contract",
     "HH",
     "MM",
-    "SS"
+    "SS",
+    "RSNA (CNSS)",
+    "{VAR_SELECT, select, true {PDF…} other {PDF}}"
   ]
 }

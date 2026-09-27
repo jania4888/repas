@@ -1023,7 +1023,7 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
 
   screenAnalysisTraceTitle(): string {
     const trace = this.session.lastScreenAnalysisTrace();
-    const base = 'Copier l’identifiant de corrélation (support / logs)';
+    const base = $localize`:@@ai-assistant.chat-panel.ts.copier.l.identifiant.de.correlation.supp.8c60e2eb:Copier l’identifiant de corrélation (support / logs)`;
     if (!trace) {
       return base;
     }
