@@ -72,7 +72,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Configuration DM" i18n-title="Configuration DM"
+      title="Configuration DM" i18n-title="@@accounting.monthly-declaration.configuration.dm.b438b9c2"
       subtitle="Calcul de chaque rubrique de la déclaration mensuelle : comptes, valeurs de paie, taux et période d’application" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -81,7 +81,7 @@ import {
       @if (!config.settings.configurableLinesEnabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé" i18n-title="Calcul paramétré non activé"
+          title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
           message="La configuration reste consultable. Sa modification sera possible dès l’activation par l’administrateur de la plateforme ; aucun montant n’en dépend pour l’instant." />
       }
 
@@ -115,7 +115,7 @@ import {
               <p-tab [value]="tab.family">
                 {{ tab.label }}
                 @if (needsAttention(tab.family)) {
-                  <span class="dm-dot" title="Famille incluse sans rubrique active" i18n-title="Famille incluse sans rubrique active" i18n="@@accounting.monthly-declaration.text.02b4ebd4">●</span>
+                  <span class="dm-dot" title="Famille incluse sans rubrique active" i18n-title="@@accounting.monthly-declaration.famille.incluse.sans.rubrique.active.00192701" i18n="@@accounting.monthly-declaration.text.02b4ebd4">●</span>
                 }
               </p-tab>
             }

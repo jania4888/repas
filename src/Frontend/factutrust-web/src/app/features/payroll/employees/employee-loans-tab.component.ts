@@ -47,7 +47,7 @@ const MONTH_OPTIONS = [
   ],
   template: `
     <app-payroll-section
-      title="Prêts salariés" i18n-title="Prêts salariés"
+      title="Prêts salariés" i18n-title="@@payroll.employees.prets.salaries.6e48cdbc"
       subtitle="Remboursement mensuel sans intérêt, retenu au calcul et soldé à la validation."
       icon="pi-credit-card">
       @if (!readOnly) {
@@ -92,7 +92,7 @@ const MONTH_OPTIONS = [
       </p-table>
     </app-payroll-section>
 
-    <p-dialog header="Nouveau prêt salarié" i18n-header="Nouveau prêt salarié" [(visible)]="createDialogVisible" [modal]="true" [style]="{ width: '480px' }">
+    <p-dialog header="Nouveau prêt salarié" i18n-header="@@payroll.employees.nouveau.pret.salarie.2e5e83f2" [(visible)]="createDialogVisible" [modal]="true" [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.reference.f8130bb0">Référence</label>
         <input pInputText [(ngModel)]="formReference" class="w-full" maxlength="50" />
@@ -125,7 +125,7 @@ const MONTH_OPTIONS = [
       </ng-template>
     </p-dialog>
 
-    <p-dialog header="Échéancier du prêt" i18n-header="Échéancier du prêt" [(visible)]="scheduleDialogVisible" [modal]="true" [style]="{ width: '560px' }">
+    <p-dialog header="Échéancier du prêt" i18n-header="@@payroll.employees.echeancier.du.pret.13ba504e" [(visible)]="scheduleDialogVisible" [modal]="true" [style]="{ width: '560px' }">
       @if (selectedLoan()) {
         <p class="mb-3"><strong>{{ selectedLoan()!.reference }}</strong> — {{ selectedLoan()!.installmentCount }} échéances</p>
         <p-table [value]="scheduleLines()" styleClass="p-datatable-sm">

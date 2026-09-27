@@ -177,7 +177,7 @@ import {
                     data-tour="header-profile"
                     aria-haspopup="menu">
                     <div class="user_avatar_image">
-                      <img src="assets/theme/pluto/images/layout_img/user_img.jpg" alt="User avatar" i18n-alt="User avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                      <img src="assets/theme/pluto/images/layout_img/user_img.jpg" alt="User avatar" i18n-alt="@@core.layout.header.header.user.avatar.900527c9" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                       <div class="user_avatar_circle" style="display: none;">{{ getInitials() }}</div>
                     </div>
                   </button>

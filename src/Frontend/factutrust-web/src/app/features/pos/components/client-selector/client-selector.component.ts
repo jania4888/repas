@@ -16,7 +16,7 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
       <div class="client-selector__header">
         <span class="client-selector__label" i18n="@@pos.components.client.1bdd79b1">Client</span>
         @if (posState.client()) {
-          <button class="client-selector__clear" (click)="clearClient()" title="Client passager" i18n-title="Client passager">
+          <button class="client-selector__clear" (click)="clearClient()" title="Client passager" i18n-title="@@pos.components.client.passager.c0cf7273">
             <i class="pi pi-times"></i>
           </button>
         }
@@ -45,7 +45,7 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
               </span>
             }
           </div>
-          <button class="client-selector__edit" (click)="openSearch()" title="Changer de client" i18n-title="Changer de client">
+          <button class="client-selector__edit" (click)="openSearch()" title="Changer de client" i18n-title="@@pos.components.changer.de.client.b170ee3b">
             <i class="pi pi-pencil"></i>
           </button>
         </div>
@@ -70,7 +70,7 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
               <input
                 #clientSearchInput
                 type="text"
-                placeholder="Rechercher par nom, NIF, email ou code CLI-..." i18n-placeholder="Rechercher par nom, NIF, email ou code CLI-..."
+                placeholder="Rechercher par nom, NIF, email ou code CLI-..." i18n-placeholder="@@pos.components.rechercher.par.nom.nif.email.ou.code.cli.035fe923"
                 [ngModel]="searchQuery()"
                 (ngModelChange)="onSearchChange($event)"
                 (keydown.escape)="closeSearch()"

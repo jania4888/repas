@@ -20,7 +20,7 @@ export interface SaveTemplatePayload {
         <div class="stm-modal" role="dialog" aria-modal="true" aria-labelledby="stm-title" (click)="$event.stopPropagation()">
           <header class="stm-header">
             <h2 id="stm-title" class="stm-title" i18n="@@accounting.manual-entry.sauvegarder.comme.modele.80b765f8">Sauvegarder comme modèle</h2>
-            <button type="button" class="stm-close" (click)="onClose()" aria-label="Fermer" i18n-aria-label="Fermer" i18n="@@accounting.manual-entry.text.0951b9a0">✕</button>
+            <button type="button" class="stm-close" (click)="onClose()" aria-label="Fermer" i18n-aria-label="@@accounting.manual-entry.fermer.5ab4ec64" i18n="@@accounting.manual-entry.text.0951b9a0">✕</button>
           </header>
 
           <div class="stm-body">
@@ -33,7 +33,7 @@ export interface SaveTemplatePayload {
               <label class="field-label" for="stm-name"><ng-container i18n="@@accounting.manual-entry.nom.du.modele.68d49f67">Nom du modèle </ng-container> <span class="stm-req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
               <input id="stm-name" type="text" class="stm-input"
                      [ngModel]="name()" (ngModelChange)="name.set($event)"
-                     placeholder="Ex: Paiement client par virement" i18n-placeholder="Ex: Paiement client par virement"
+                     placeholder="Ex: Paiement client par virement" i18n-placeholder="@@accounting.manual-entry.ex.paiement.client.par.virement.3b98d267"
                      maxlength="200" required />
               @if (showValidation() && !nameTrimmed()) {
                 <p class="stm-error" i18n="@@accounting.manual-entry.le.nom.est.obligatoire.c4331d4d">Le nom est obligatoire.</p>
@@ -60,7 +60,7 @@ export interface SaveTemplatePayload {
                 <input id="stm-label" type="text" class="stm-input"
                        [ngModel]="labelTemplate()" (ngModelChange)="labelTemplate.set($event)"
                        maxlength="500"
-                       placeholder="Pré-remplit le libellé à l'application" i18n-placeholder="Pré-remplit le libellé à l'application" />
+                       placeholder="Pré-remplit le libellé à l'application" i18n-placeholder="@@accounting.manual-entry.pre.remplit.le.libelle.a.l.application.b5af33c3" />
               </div>
             </div>
 

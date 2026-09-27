@@ -47,7 +47,7 @@ import { SupplierService, SupplierListItem } from '@core/services/supplier.servi
               {{ recommendation.productCode }} — {{ recommendation.productName }}
             </span>
           </div>
-          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="Fermer">
+          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="@@forecasting.components.fermer.5ab4ec64">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </header>
@@ -77,7 +77,7 @@ import { SupplierService, SupplierListItem } from '@core/services/supplier.servi
                 step="any"
                 [(ngModel)]="qtyInput"
                 (ngModelChange)="qtyInput.set($event)"
-                placeholder="Laisser vide pour conserver la quantité recommandée" i18n-placeholder="Laisser vide pour conserver la quantité recommandée" />
+                placeholder="Laisser vide pour conserver la quantité recommandée" i18n-placeholder="@@forecasting.components.laisser.vide.pour.conserver.la.quantite.recomman.04dec656" />
               <small class="hint">Doit être &gt; 0. Vide = utiliser {{ r.recommendedQty | qtyFmt: r.productUnit }} u.</small>
             </label>
 

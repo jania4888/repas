@@ -38,11 +38,11 @@ interface CategoryTab {
               #searchInput
               type="text"
               class="catalog__search-input"
-              placeholder="Rechercher un produit (F2)" i18n-placeholder="Rechercher un produit (F2)"
+              placeholder="Rechercher un produit (F2)" i18n-placeholder="@@pos.components.rechercher.un.produit.f2.a5e21a19"
               [ngModel]="searchQuery()"
               (ngModelChange)="onSearchChange($event)"
               (keydown.enter)="onSearchEnter($event)"
-              aria-label="Rechercher un produit" i18n-aria-label="Rechercher un produit" />
+              aria-label="Rechercher un produit" i18n-aria-label="@@pos.components.rechercher.un.produit.3ce811dc" />
             @if (searchQuery()) {
               <button class="catalog__search-clear" (click)="clearSearch()" [attr.aria-label]="'Effacer la recherche'">
                 <i class="pi pi-times"></i>
@@ -64,8 +64,8 @@ interface CategoryTab {
               type="button"
               class="catalog__variant-btn"
               (click)="variantPickerVisible = true"
-              title="Choisir une variante" i18n-title="Choisir une variante"
-              aria-label="Choisir une variante" i18n-aria-label="Choisir une variante">
+              title="Choisir une variante" i18n-title="@@pos.components.choisir.une.variante.c8ab137c"
+              aria-label="Choisir une variante" i18n-aria-label="@@pos.components.choisir.une.variante.c8ab137c">
               <i class="pi pi-th-large"></i>
             </button>
           </div>
@@ -73,7 +73,7 @@ interface CategoryTab {
       </div>
 
       <!-- Category Tabs -->
-      <div class="catalog__categories" role="tablist" aria-label="Filtrer par categorie" i18n-aria-label="Filtrer par categorie">
+      <div class="catalog__categories" role="tablist" aria-label="Filtrer par categorie" i18n-aria-label="@@pos.components.filtrer.par.categorie.f4dcce51">
         <button
           class="catalog__category-tab"
           [class.catalog__category-tab--active]="selectedCategory() === 'all'"

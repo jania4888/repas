@@ -65,11 +65,11 @@
           <input
             type="search"
             class="req-search"
-            placeholder="Rechercher une demande…" i18n-placeholder="Rechercher une demande…"
+            placeholder="Rechercher une demande…" i18n-placeholder="@@exchanges.exchange-requests-panel.rechercher.une.demande.97563f66"
             [ngModel]="search()"
             (ngModelChange)="search.set($event)"
           />
-          <div class="req-chips" role="tablist" aria-label="Filtrer les demandes" i18n-aria-label="Filtrer les demandes">
+          <div class="req-chips" role="tablist" aria-label="Filtrer les demandes" i18n-aria-label="@@exchanges.exchange-requests-panel.filtrer.les.demandes.3d5e4bf0">
             @for (chip of filters; track chip.id) {
               <button
                 type="button"
@@ -88,7 +88,7 @@
       @if (requests.length === 0 && !openCreateForm) {
         <app-empty-state
           icon="pi-clipboard"
-          title="Aucune demande" i18n-title="Aucune demande"
+          title="Aucune demande" i18n-title="@@exchanges.exchange-requests-panel.aucune.demande.8c11b950"
           description="Créez une demande ou une réclamation pour suivre un besoin."
           [showAction]="threadIsOpen"
           actionLabel="Nouvelle demande"
@@ -311,7 +311,7 @@
             <div class="req-comment-form">
               <textarea
                 rows="3"
-                placeholder="Ajouter un commentaire…" i18n-placeholder="Ajouter un commentaire…"
+                placeholder="Ajouter un commentaire…" i18n-placeholder="@@exchanges.exchange-requests-panel.ajouter.un.commentaire.dc509228"
                 [ngModel]="commentBody()"
                 (ngModelChange)="commentBody.set($event)"
               ></textarea>

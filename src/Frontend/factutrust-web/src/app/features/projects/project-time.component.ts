@@ -123,7 +123,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
-    <app-page-header title="Saisie des temps" i18n-title="Saisie des temps" subtitle="Temps projet (indépendant des feuilles cabinet)" />
+    <app-page-header title="Saisie des temps" i18n-title="@@projects.project-time.saisie.des.temps.86f92f4d" subtitle="Temps projet (indépendant des feuilles cabinet)" />
 
     <div class="card p-3 mb-3">
 
@@ -131,19 +131,19 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <label>Projet
 
-          <p-select [options]="projects()" [(ngModel)]="projectId" optionLabel="name" optionValue="id" placeholder="Projet" i18n-placeholder="Projet" [showClear]="true" (onChange)="onProjectChange()" />
+          <p-select [options]="projects()" [(ngModel)]="projectId" optionLabel="name" optionValue="id" placeholder="Projet" i18n-placeholder="@@projects.project-time.projet.a9de3a26" [showClear]="true" (onChange)="onProjectChange()" />
 
         </label>
 
         <label>Période
 
-          <p-datepicker [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" placeholder="Filtrer" i18n-placeholder="Filtrer" [showClear]="true" (onSelect)="load()" (onClear)="load()" />
+          <p-datepicker [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" placeholder="Filtrer" i18n-placeholder="@@projects.project-time.filtrer.a7a02ef5" [showClear]="true" (onSelect)="load()" (onClear)="load()" />
 
         </label>
 
         <label>Statut
 
-          <p-select [options]="statusFilterOptions" [(ngModel)]="statusFilter" optionLabel="label" optionValue="value" placeholder="Tous" i18n-placeholder="Tous" [showClear]="true" (onChange)="load()" />
+          <p-select [options]="statusFilterOptions" [(ngModel)]="statusFilter" optionLabel="label" optionValue="value" placeholder="Tous" i18n-placeholder="@@projects.project-time.tous.b97ae3b4" [showClear]="true" (onChange)="load()" />
 
         </label>
 
@@ -168,7 +168,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
           <label><ng-container i18n="@@projects.project-time.date.eb9a4bc1">Date </ng-container> <p-datepicker [(ngModel)]="workDate" dateFormat="dd/mm/yy" /></label>
 
-          <label><ng-container i18n="@@projects.project-time.tache.43c8425c">Tâche </ng-container> <p-select [options]="tasks()" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" i18n-placeholder="Tâche" [showClear]="true" /></label>
+          <label><ng-container i18n="@@projects.project-time.tache.43c8425c">Tâche </ng-container> <p-select [options]="tasks()" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" i18n-placeholder="@@projects.project-time.tache.43c8425c" [showClear]="true" /></label>
 
           <label><ng-container i18n="@@projects.project-time.heures.b4448c06">Heures </ng-container> <p-inputNumber [(ngModel)]="hours" [min]="0.25" [max]="24" [step]="0.25" /></label>
 
@@ -238,37 +238,37 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
             @if (canEditTimeEntry(e) && canCreate) {
               <app-button size="sm" variant="ghost" icon="pi-pencil" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Modifier" i18n-pTooltip="Modifier" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Modifier" i18n-pTooltip="@@projects.project-time.modifier.f260e757" tooltipPosition="top"
                 ariaLabel="Modifier" (click)="openEdit(e)" />
             }
 
             @if (canDeleteTimeEntry(e) && canCreate) {
               <app-button size="sm" variant="ghost" icon="pi-trash" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Supprimer" i18n-pTooltip="Supprimer" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Supprimer" i18n-pTooltip="@@projects.project-time.supprimer.1acfc1c7" tooltipPosition="top"
                 ariaLabel="Supprimer" (click)="deleteEntry(e.id)" />
             }
 
             @if (canSubmitTimeEntry(e) && canSubmit) {
               <app-button size="sm" variant="ghost" icon="pi-send" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Soumettre" i18n-pTooltip="Soumettre" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Soumettre" i18n-pTooltip="@@projects.project-time.soumettre.5597a63d" tooltipPosition="top"
                 ariaLabel="Soumettre" (click)="submit(e.id)" />
             }
 
             @if (canValidateTimeEntry(e) && canValidate) {
               <app-button size="sm" variant="primary" icon="pi-check" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Valider" i18n-pTooltip="Valider" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Valider" i18n-pTooltip="@@projects.project-time.valider.be4220f7" tooltipPosition="top"
                 ariaLabel="Valider" (click)="validate(e.id)" />
             }
 
             @if (canReopenSubmittedTimeEntry(e) && canSubmit) {
               <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="Rouvrir en brouillon" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-time.rouvrir.en.brouillon.7acbda14" tooltipPosition="top"
                 ariaLabel="Rouvrir en brouillon" (click)="reopen(e.id)" />
             }
 
             @if (canReopenValidatedTimeEntry(e) && canValidate) {
               <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="Rouvrir en brouillon" tooltipPosition="top"
+                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-time.rouvrir.en.brouillon.7acbda14" tooltipPosition="top"
                 ariaLabel="Rouvrir en brouillon" (click)="reopen(e.id)" />
             }
 
@@ -281,7 +281,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
                 [iconOnly]="true"
                 [iconAlwaysVisible]="true"
                 [routerLink]="['/invoices', e.invoicedInvoiceId]"
-                pTooltip="Voir la facture" i18n-pTooltip="Voir la facture"
+                pTooltip="Voir la facture" i18n-pTooltip="@@projects.project-time.voir.la.facture.e4bddea0"
                 tooltipPosition="top"
                 ariaLabel="Voir la facture" />
 
@@ -297,7 +297,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <tr><td colspan="7">
 
-          <app-empty-state icon="pi-clock" title="Aucun temps" i18n-title="Aucun temps" description="Choisissez un projet actif pour saisir une ligne." [showAction]="false" />
+          <app-empty-state icon="pi-clock" title="Aucun temps" i18n-title="@@projects.project-time.aucun.temps.6900002b" description="Choisissez un projet actif pour saisir une ligne." [showAction]="false" />
 
         </td></tr>
 
@@ -307,7 +307,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
 
 
-    <p-dialog [(visible)]="editVisible" header="Modifier le temps" i18n-header="Modifier le temps" [modal]="true" [style]="{ width: '28rem' }">
+    <p-dialog [(visible)]="editVisible" header="Modifier le temps" i18n-header="@@projects.project-time.modifier.le.temps.2b0a5ab7" [modal]="true" [style]="{ width: '28rem' }">
 
       <div class="proj-field-stack">
 

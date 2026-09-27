@@ -12,7 +12,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
   template: `
     <div class="kpi-grid">
       <app-stat-card
-        label="Montant du contrat" i18n-label="Montant du contrat"
+        label="Montant du contrat" i18n-label="@@recurring-contracts.components.montant.du.contrat.e9a249d6"
         [value]="formatContractAmount(kpi.contractTotalHT, currency)"
         icon="pi-wallet"
         variant="primary"
@@ -23,7 +23,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
       </app-stat-card>
 
       <app-stat-card
-        label="Prochaine échéance" i18n-label="Prochaine échéance"
+        label="Prochaine échéance" i18n-label="@@recurring-contracts.components.prochaine.echeance.8fbb8d84"
         [value]="kpi.nextBillingDate ? ((kpi.nextBillingDate | date:'dd/MM/yyyy') ?? '—') : '—'"
         icon="pi-calendar"
         variant="primary"
@@ -38,7 +38,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
       </app-stat-card>
 
       <app-stat-card
-        label="Fréquence" i18n-label="Fréquence"
+        label="Fréquence" i18n-label="@@recurring-contracts.components.frequence.bafbfba7"
         [value]="kpi.frequencyLabel || '—'"
         icon="pi-sync"
         variant="primary"
@@ -47,7 +47,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
       </app-stat-card>
 
       <app-stat-card
-        label="Durée" i18n-label="Durée"
+        label="Durée" i18n-label="@@recurring-contracts.components.duree.6feac25e"
         [value]="kpi.durationMonths != null ? kpi.durationMonths + loc_ui_tern_mois_e570fc : loc_ui_tern_indeterminee_d12dcb"
         icon="pi-hourglass"
         variant="primary"
@@ -56,7 +56,7 @@ import { formatContractAmount } from '../recurring-contracts.ui-utils';
       </app-stat-card>
 
       <app-stat-card
-        label="Renouvellement" i18n-label="Renouvellement"
+        label="Renouvellement" i18n-label="@@recurring-contracts.components.renouvellement.5b961f3a"
         [value]="kpi.autoRenew ? loc_ui_tern_automatique_f8a3c3 : loc_ui_tern_manuel_6c1cc0"
         icon="pi-refresh"
         [variant]="kpi.autoRenew ? 'success' : 'warning'">

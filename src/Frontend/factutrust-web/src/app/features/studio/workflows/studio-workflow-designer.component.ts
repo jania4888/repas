@@ -266,7 +266,7 @@ interface ValidationState { isValid: boolean; errors: WorkflowValidationIssueDto
               <div class="wf-field">
                 <label for="wf-cron">{{ L.designer.cron }} <span class="wf-req" i18n="@@studio.workflows.text.df58248c">*</span></label>
                 <input id="wf-cron" pInputText [ngModel]="triggerConfig()?.cron ?? ''"
-                  (ngModelChange)="onCronInput($event)" autocomplete="off" placeholder="0 6 * * *" i18n-placeholder="0 6 * * *" data-testid="wf-cron" />
+                  (ngModelChange)="onCronInput($event)" autocomplete="off" placeholder="0 6 * * *" i18n-placeholder="@@studio.workflows.0.6.50487944" data-testid="wf-cron" />
                 <small class="wf-hint">{{ L.designer.cronHint }}</small>
               </div>
               <div class="wf-field wf-field--filters">

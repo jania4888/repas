@@ -29,7 +29,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     ButtonComponent
   ],
   template: `
-    <app-page-header title="Contrôles de pré-clôture" i18n-title="Contrôles de pré-clôture" subtitle="Diagnostic de révision avant clôture de l'exercice" />
+    <app-page-header title="Contrôles de pré-clôture" i18n-title="@@accounting.pre-closing.controles.de.pre.cloture.e6b9bc87" subtitle="Diagnostic de révision avant clôture de l'exercice" />
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Exercice à contrôler">
         <div accountingFilterFields class="pc-toolbar-fields">

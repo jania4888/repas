@@ -86,7 +86,7 @@ interface ReceptionLine {
         <div class="warehouse-row">
           <app-warehouse-selector
             inputId="po-receive-warehouse"
-            label="Entrepôt de réception" i18n-label="Entrepôt de réception"
+            label="Entrepôt de réception" i18n-label="@@purchase-orders.purchase-order-receive.entrepot.de.reception.e8cfc9df"
             [required]="true"
             [value]="receiveWarehouseId()"
             (valueChange)="onReceiveWarehouseChange($event)">

@@ -117,7 +117,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@invoices.invoice-list.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -129,7 +129,7 @@ interface StatusOption {
           <input 
             pInputText 
             type="text" 
-            placeholder="Rechercher..." i18n-placeholder="Rechercher..." 
+            placeholder="Rechercher..." i18n-placeholder="@@invoices.invoice-list.rechercher.8bd64daa" 
             [(ngModel)]="searchTerm"
             (input)="onSearch()">
         </span>
@@ -137,7 +137,7 @@ interface StatusOption {
         <p-select 
           [options]="statusOptions" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@invoices.invoice-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -146,7 +146,7 @@ interface StatusOption {
           [(ngModel)]="dateRange" 
           selectionMode="range" 
           [readonlyInput]="true"
-          placeholder="Période" i18n-placeholder="Période"
+          placeholder="Période" i18n-placeholder="@@invoices.invoice-list.periode.de2110b7"
           dateFormat="dd/mm/yy"
           [showClear]="true"
           (onSelect)="onFilterChange()">
@@ -156,7 +156,7 @@ interface StatusOption {
           [options]="clientOptions" 
           [(ngModel)]="selectedClient"
           optionLabel="name"
-          placeholder="Tous les clients" i18n-placeholder="Tous les clients"
+          placeholder="Tous les clients" i18n-placeholder="@@invoices.invoice-list.tous.les.clients.56f5092c"
           [showClear]="true"
           [filter]="true"
           filterBy="name,code"
@@ -234,7 +234,7 @@ interface StatusOption {
                 {{ invoice.number }}
               </a>
               @if (invoice.isCreditNote && !creditNotesOnlyMode()) {
-                <span class="doc-type-chip" title="Facture d'avoir" i18n-title="Facture d'avoir" i18n="@@invoices.invoice-list.avoir.8ee24717">Avoir</span>
+                <span class="doc-type-chip" title="Facture d'avoir" i18n-title="@@invoices.invoice-list.facture.d.avoir.541e4451" i18n="@@invoices.invoice-list.avoir.8ee24717">Avoir</span>
               }
             </td>
             <td>{{ invoice.clientName }}</td>
@@ -288,7 +288,7 @@ interface StatusOption {
               @if (unpaidOnlyMode()) {
                 <app-empty-state
                   illustration="empty-invoices.svg"
-                  title="Aucune facture impayée" i18n-title="Aucune facture impayée"
+                  title="Aucune facture impayée" i18n-title="@@invoices.invoice-list.aucune.facture.impayee.6da9b1d9"
                   description="Aucune facture client en attente de règlement."
                   actionLabel="Voir toutes les factures"
                   actionRoute="/invoices">
@@ -296,7 +296,7 @@ interface StatusOption {
               } @else if (creditNotesOnlyMode()) {
                 <app-empty-state
                   illustration="empty-invoices.svg"
-                  title="Aucun avoir" i18n-title="Aucun avoir"
+                  title="Aucun avoir" i18n-title="@@invoices.invoice-list.aucun.avoir.41d83a3a"
                   description="Créez votre premier avoir à partir d'une facture existante."
                   [showAction]="canCreateInvoice()"
                   actionLabel="Créer un avoir"
@@ -305,7 +305,7 @@ interface StatusOption {
               } @else {
                 <app-empty-state
                   illustration="empty-invoices.svg"
-                  title="Aucune facture" i18n-title="Aucune facture"
+                  title="Aucune facture" i18n-title="@@invoices.invoice-list.aucune.facture.72124217"
                   description="Créez votre première facture pour commencer à facturer vos clients."
                   [showAction]="canCreateInvoice()"
                   actionLabel="Créer une facture"

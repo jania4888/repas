@@ -90,7 +90,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
         <div class="sim-form">
           <label>
             <ng-container i18n="@@forecasting.pages.id.produit.guid.a0a67819"> ID produit (GUID) </ng-container>
-            <input type="text" [(ngModel)]="simProductId" placeholder="00000000-0000-0000-0000-000000000000" i18n-placeholder="00000000-0000-0000-0000-000000000000" />
+            <input type="text" [(ngModel)]="simProductId" placeholder="00000000-0000-0000-0000-000000000000" i18n-placeholder="@@forecasting.pages.00000000.0000.0000.0000.000000000000.b602d594" />
           </label>
           <label>
             <ng-container i18n="@@forecasting.pages.remise.35bc2c9e"> Remise (%) </ng-container>

@@ -31,7 +31,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
         <button type="button"
                 class="btn btn-outline-primary btn-sm me-auto-balance-btn"
                 (click)="autoBalance.emit()"
-                aria-label="Équilibrer automatiquement l'écriture" i18n-aria-label="Équilibrer automatiquement l'écriture" i18n="@@accounting.manual-entry.equilibrer.auto.1d16ebc0"> ⇆ Équilibrer auto </button>
+                aria-label="Équilibrer automatiquement l'écriture" i18n-aria-label="@@accounting.manual-entry.equilibrer.automatiquement.l.ecriture.0aa4aea5" i18n="@@accounting.manual-entry.equilibrer.auto.1d16ebc0"> ⇆ Équilibrer auto </button>
       }
     </div>
   `,

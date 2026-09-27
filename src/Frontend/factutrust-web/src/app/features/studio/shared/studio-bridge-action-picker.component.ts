@@ -29,7 +29,7 @@ const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['so
     <div class="bap">
       <label class="bap__lbl" i18n="@@studio.shared.action.erp.cbd82106">Action ERP *</label>
       <p-select [options]="actions()" [ngModel]="action()" (ngModelChange)="onActionChange($event)" optionLabel="name" optionValue="name"
-        [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="bap__w-full" placeholder="Choisir une action" i18n-placeholder="Choisir une action"
+        [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="bap__w-full" placeholder="Choisir une action" i18n-placeholder="@@studio.shared.choisir.une.action.c17f1360"
         [disabled]="disabled()" [attr.aria-label]="'Action ERP'" />
       @if (selectedAction(); as act) {
         <small class="bap__hint">{{ act.description }}</small>
@@ -41,7 +41,7 @@ const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['so
               appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-src" [disabled]="disabled()" />
             @switch (rowSource(p.name)) {
               @case ('field') { <p-select [options]="fieldOptions()" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)" optionLabel="label" optionValue="value"
-                [showClear]="true" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-val" placeholder="Champ…" i18n-placeholder="Champ…" [disabled]="disabled()" /> }
+                [showClear]="true" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-map-val" placeholder="Champ…" i18n-placeholder="@@studio.shared.champ.ff508878" [disabled]="disabled()" /> }
               @case ('template') { <textarea pTextarea rows="2" class="ft-map-val" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)"
                 placeholder="{{ '{{record.champ}}' }}" [disabled]="disabled()"></textarea> }
               @default { <input pInputText class="ft-map-val" [ngModel]="rowValue(p.name)" (ngModelChange)="setValue(p.name, $event)"

@@ -59,18 +59,18 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Numérotations" i18n-title="Numérotations"
+      title="Numérotations" i18n-title="@@settings.numbering.numerotations.f8fd8b5e"
       [subtitle]="pageSubtitle()">
       <div class="header-actions">
         <p-button
-          label="Retour" i18n-label="Retour"
+          label="Retour" i18n-label="@@settings.numbering.retour.e5befb1f"
           icon="pi pi-arrow-left"
           [outlined]="true"
           routerLink="/settings">
         </p-button>
         @if (canUpdate()) {
           <p-button
-            label="Réinitialiser" i18n-label="Réinitialiser"
+            label="Réinitialiser" i18n-label="@@settings.numbering.reinitialiser.e0e2ad54"
             icon="pi pi-refresh"
             [outlined]="true"
             severity="secondary"
@@ -78,7 +78,7 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
             [disabled]="loading() || saving()">
           </p-button>
           <p-button
-            label="Enregistrer" i18n-label="Enregistrer"
+            label="Enregistrer" i18n-label="@@settings.numbering.enregistrer.f7c8bcd8"
             icon="pi pi-check"
             (onClick)="save()"
             [loading]="saving()"

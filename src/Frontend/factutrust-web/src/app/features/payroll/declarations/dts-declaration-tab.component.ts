@@ -49,7 +49,7 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année" i18n-placeholder="Année"
+        placeholder="Année" i18n-placeholder="@@payroll.declarations.annee.1f910d98"
         styleClass="w-10rem" />
       <p-select
         [options]="quarterOptions"
@@ -57,7 +57,7 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Trimestre" i18n-placeholder="Trimestre"
+        placeholder="Trimestre" i18n-placeholder="@@payroll.declarations.trimestre.13116972"
         styleClass="w-10rem" />
       <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.declarations.generer.bd221c07">Générer</app-button>
       <app-button
@@ -80,7 +80,7 @@ const MONTH_LABELS = [
     } @else if (!dts()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger la DTS" i18n-title="Impossible de charger la DTS"
+        title="Impossible de charger la DTS" i18n-title="@@payroll.declarations.impossible.de.charger.la.dts.27caee45"
         description="Une erreur est survenue lors de la génération. Réessayez ou vérifiez vos droits."
         [showAction]="true"
         actionLabel="Réessayer"
@@ -88,7 +88,7 @@ const MONTH_LABELS = [
     } @else if (dts()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun salarié déclaré" i18n-title="Aucun salarié déclaré"
+        title="Aucun salarié déclaré" i18n-title="@@payroll.declarations.aucun.salarie.declare.8fdf57d6"
         [description]="emptyDescription()"
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
@@ -114,7 +114,7 @@ const MONTH_LABELS = [
               @if (l.cnssNumber) {
                 {{ l.cnssNumber }}
               } @else {
-                <i class="pi pi-exclamation-triangle text-warning" pTooltip="CNSS manquant" i18n-pTooltip="CNSS manquant" tooltipPosition="top"></i>
+                <i class="pi pi-exclamation-triangle text-warning" pTooltip="CNSS manquant" i18n-pTooltip="@@payroll.declarations.cnss.manquant.93b06f4b" tooltipPosition="top"></i>
                 <p-tag value="Manquant" severity="warn" class="ml-2" />
               }
             </td>

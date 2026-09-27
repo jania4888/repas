@@ -25,7 +25,7 @@ import {
     ],
     template: `
     <app-page-header
-      title="Chiffre d'affaires" i18n-title="Chiffre d'affaires"
+      title="Chiffre d'affaires" i18n-title="@@reports.analytics.chiffre.d.affaires.0a341b9f"
       subtitle="Suivez l'évolution de votre chiffre d'affaires au fil du temps">
       <app-button
         variant="secondary"
@@ -76,20 +76,20 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Chiffre d'affaires" i18n-label="Chiffre d'affaires"
+          label="Chiffre d'affaires" i18n-label="@@reports.analytics.chiffre.d.affaires.0a341b9f"
           [value]="formatAmount(data()!.totalRevenue)"
           icon="pi-dollar"
           variant="success"
           [change]="data()!.comparison.changePercent">
         </app-stat-card>
         <app-stat-card
-          label="Factures émises" i18n-label="Factures émises"
+          label="Factures émises" i18n-label="@@reports.analytics.factures.emises.25238c12"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Période précédente" i18n-label="Période précédente"
+          label="Période précédente" i18n-label="@@reports.analytics.periode.precedente.5e420e76"
           [value]="formatAmount(data()!.comparison.previousValue)"
           icon="pi-history"
           variant="warning">
@@ -115,7 +115,7 @@ import {
           </div>
         </div>
       } @else if (data()?.chartData && hasChartData()) {
-        <div class="chart-container" role="img" aria-label="Graphique en barres du chiffre d'affaires" i18n-aria-label="Graphique en barres du chiffre d'affaires">
+        <div class="chart-container" role="img" aria-label="Graphique en barres du chiffre d'affaires" i18n-aria-label="@@reports.analytics.graphique.en.barres.du.chiffre.d.affaires.7fbaa86e">
           <div class="chart-y-axis">
             <span class="y-label">{{ formatAmountShort(maxRevenue) }}</span>
             <span class="y-label">{{ formatAmountShort(maxRevenue / 2) }}</span>

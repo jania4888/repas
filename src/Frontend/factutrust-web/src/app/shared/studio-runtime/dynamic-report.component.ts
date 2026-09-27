@@ -27,7 +27,7 @@ type ChartType = 'bar' | 'line' | 'pie';
     } @else if (!result || result.rows.length === 0) {
       <app-empty-state
         icon="pi-chart-bar"
-        title="Aucune donnée" i18n-title="Aucune donnée"
+        title="Aucune donnée" i18n-title="@@shared.studio-runtime.dynamic-report.aucune.donnee.434e5488"
         description="Aucune donnée pour ce rapport ou cette vue."
       />
     } @else {
@@ -41,14 +41,14 @@ type ChartType = 'bar' | 'line' | 'pie';
       <div class="dr-bar">
         @if (chartable()) {
           <div class="dr-modes">
-            <button pButton type="button" icon="fa-solid fa-table" label="Tableau" i18n-label="Tableau" class="p-button-sm"
+            <button pButton type="button" icon="fa-solid fa-table" label="Tableau" i18n-label="@@shared.studio-runtime.dynamic-report.tableau.bb6d7e52" class="p-button-sm"
               [class.p-button-outlined]="view !== 'table'" (click)="view = 'table'"></button>
-            <button pButton type="button" icon="fa-solid fa-chart-simple" label="Graphique" i18n-label="Graphique" class="p-button-sm"
+            <button pButton type="button" icon="fa-solid fa-chart-simple" label="Graphique" i18n-label="@@shared.studio-runtime.dynamic-report.graphique.fad32c3f" class="p-button-sm"
               [class.p-button-outlined]="view !== 'chart'" (click)="view = 'chart'"></button>
           </div>
         }
         <span class="dr-spacer"></span>
-        <button pButton type="button" icon="fa-solid fa-download" label="Exporter" i18n-label="Exporter" class="p-button-sm p-button-outlined"
+        <button pButton type="button" icon="fa-solid fa-download" label="Exporter" i18n-label="@@shared.studio-runtime.dynamic-report.exporter.0cd84bdc" class="p-button-sm p-button-outlined"
           (click)="exportMenu.toggle($event)"></button>
         <p-menu #exportMenu [popup]="true" [model]="exportItems" appendTo="body"></p-menu>
       </div>
@@ -95,9 +95,9 @@ type ChartType = 'bar' | 'line' | 'pie';
       @if (view === 'chart' && chartable()) {
         <div class="dr-chart-wrap">
           <div class="dr-types">
-            <button pButton type="button" label="Barres" i18n-label="Barres" class="p-button-sm" [class.p-button-outlined]="chartType !== 'bar'" (click)="chartType = 'bar'"></button>
-            <button pButton type="button" label="Lignes" i18n-label="Lignes" class="p-button-sm" [class.p-button-outlined]="chartType !== 'line'" (click)="chartType = 'line'"></button>
-            <button pButton type="button" label="Camembert" i18n-label="Camembert" class="p-button-sm" [class.p-button-outlined]="chartType !== 'pie'" (click)="chartType = 'pie'"></button>
+            <button pButton type="button" label="Barres" i18n-label="@@shared.studio-runtime.dynamic-report.barres.b51306e1" class="p-button-sm" [class.p-button-outlined]="chartType !== 'bar'" (click)="chartType = 'bar'"></button>
+            <button pButton type="button" label="Lignes" i18n-label="@@shared.studio-runtime.dynamic-report.lignes.41c7025e" class="p-button-sm" [class.p-button-outlined]="chartType !== 'line'" (click)="chartType = 'line'"></button>
+            <button pButton type="button" label="Camembert" i18n-label="@@shared.studio-runtime.dynamic-report.camembert.f15c2595" class="p-button-sm" [class.p-button-outlined]="chartType !== 'pie'" (click)="chartType = 'pie'"></button>
           </div>
           <p-chart [type]="chartType" [data]="buildChartData()" [options]="chartOptions" [style]="{ height: '340px' }"></p-chart>
         </div>

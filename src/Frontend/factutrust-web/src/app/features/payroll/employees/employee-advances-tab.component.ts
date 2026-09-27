@@ -41,7 +41,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   ],
   template: `
     <app-payroll-section
-      title="Avances sur salaire" i18n-title="Avances sur salaire"
+      title="Avances sur salaire" i18n-title="@@payroll.employees.avances.sur.salaire.6e2ebd50"
       subtitle="Les avances en cours sont retenues au calcul du cycle et soldées à la validation."
       icon="pi-wallet">
       @if (!readOnly) {
@@ -83,7 +83,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </p-table>
     </app-payroll-section>
 
-    <p-dialog header="Nouvelle avance" i18n-header="Nouvelle avance" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '420px' }">
+    <p-dialog header="Nouvelle avance" i18n-header="@@payroll.employees.nouvelle.avance.1d2cf479" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '420px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.date.eb9a4bc1">Date</label>
         <p-datepicker [(ngModel)]="formDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />

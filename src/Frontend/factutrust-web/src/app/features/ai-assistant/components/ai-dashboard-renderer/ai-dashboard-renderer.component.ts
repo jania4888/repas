@@ -32,8 +32,8 @@ import { dashboardFullConfigToCsv, dashboardTableSectionToCsv, downloadCsv } fro
                 type="button"
                 class="close-dashboard"
                 (click)="closed.emit()"
-                title="Fermer le tableau de bord" i18n-title="Fermer le tableau de bord"
-                aria-label="Fermer le tableau de bord" i18n-aria-label="Fermer le tableau de bord">
+                title="Fermer le tableau de bord" i18n-title="@@ai-assistant.components.fermer.le.tableau.de.bord.4e70d9ad"
+                aria-label="Fermer le tableau de bord" i18n-aria-label="@@ai-assistant.components.fermer.le.tableau.de.bord.4e70d9ad">
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
               </button>
             }

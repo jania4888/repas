@@ -52,7 +52,7 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Catégories" i18n-title="Catégories"
+      title="Catégories" i18n-title="@@product-categories.product-category-list.categories.d463d7d2"
       subtitle="Gérez les catégories de vos produits pour les classer dans le catalogue.">
       @if (canCreateCategory()) {
         <app-button
@@ -71,7 +71,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@product-categories.product-category-list.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -83,7 +83,7 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par code ou nom..." i18n-placeholder="Rechercher par code ou nom..."
+            placeholder="Rechercher par code ou nom..." i18n-placeholder="@@product-categories.product-category-list.rechercher.par.code.ou.nom.5764fbc6"
             [(ngModel)]="searchTerm"
             (input)="onFilterChange()"
             class="w-full">
@@ -93,7 +93,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@product-categories.product-category-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -180,7 +180,7 @@ interface StatusOption {
               <td colspan="5" class="text-center p-6">
                 <app-empty-state
                   [icon]="'pi-tags'"
-                  title="Aucune catégorie" i18n-title="Aucune catégorie"
+                  title="Aucune catégorie" i18n-title="@@product-categories.product-category-list.aucune.categorie.33bf71cf"
                   description="Créez des catégories pour classer vos produits (ex. General, Services, Marchandises)."
                   [showAction]="canCreateCategory()"
                   actionLabel="Nouvelle catégorie"

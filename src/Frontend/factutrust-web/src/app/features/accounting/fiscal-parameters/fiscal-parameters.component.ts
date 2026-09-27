@@ -32,7 +32,7 @@ const UNSAVED_CHANGES_MESSAGE =
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingFilterBarComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Paramètres fiscaux" i18n-title="Paramètres fiscaux"
+    <app-page-header title="Paramètres fiscaux" i18n-title="@@accounting.fiscal-parameters.parametres.fiscaux.ec3397a0"
       subtitle="Taux IS, minimum d'impôt, CSS, acomptes et barème IRPP — par exercice" />
 
     @if (isDirty()) {
@@ -130,7 +130,7 @@ const UNSAVED_CHANGES_MESSAGE =
         <div class="card fp-card fp-card--wide">
           <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.bareme.irpp.bic.regime.reel.0fc0c501">Barème IRPP (BIC — régime réel)</h3>
           <p class="fp-hint"><ng-container i18n="@@accounting.fiscal-parameters.tableau.json.4da684ec">Tableau JSON : </ng-container> <code>[{{ '{' }}"lower":0,"rate":0{{ '}' }}, …]</code> — <em i18n="@@accounting.fiscal-parameters.lower.346e3ee1">lower</em> = borne inférieure annuelle (TND), <em i18n="@@accounting.fiscal-parameters.rate.1e01d215">rate</em> = taux en %.</p>
-          <textarea rows="4" class="fp-json" [class.fp-json--invalid]="!!irppValidationError()" [(ngModel)]="m.irppBracketsJson" aria-label="Barème IRPP en JSON" i18n-aria-label="Barème IRPP en JSON"></textarea>
+          <textarea rows="4" class="fp-json" [class.fp-json--invalid]="!!irppValidationError()" [(ngModel)]="m.irppBracketsJson" aria-label="Barème IRPP en JSON" i18n-aria-label="@@accounting.fiscal-parameters.bareme.irpp.en.json.bef0cbaa"></textarea>
           @if (irppValidationError(); as verr) {
             <span class="fp-json-inline-error" role="alert">{{ verr }}</span>
           }

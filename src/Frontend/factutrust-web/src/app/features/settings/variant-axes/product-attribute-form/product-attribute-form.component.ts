@@ -57,7 +57,7 @@ interface NewValueRow {
       </div>
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <app-form-section title="Informations" i18n-title="Informations" icon="pi-tag" [number]="1">
+        <app-form-section title="Informations" i18n-title="@@settings.variant-axes.informations.54937b3a" icon="pi-tag" [number]="1">
           @if (isEditMode()) {
             <div class="form-group">
               <label i18n="@@settings.variant-axes.code.adac6937">Code</label>
@@ -67,16 +67,16 @@ interface NewValueRow {
           } @else {
             <div class="form-group">
               <label for="code"><ng-container i18n="@@settings.variant-axes.code.adac6937">Code </ng-container> <span class="required" i18n="@@settings.variant-axes.text.df58248c">*</span></label>
-              <input pInputText id="code" formControlName="code" placeholder="Ex: SIZE" i18n-placeholder="Ex: SIZE" class="w-full" maxlength="50" />
+              <input pInputText id="code" formControlName="code" placeholder="Ex: SIZE" i18n-placeholder="@@settings.variant-axes.ex.size.394fd236" class="w-full" maxlength="50" />
             </div>
           }
           <div class="form-group">
             <label for="name"><ng-container i18n="@@settings.variant-axes.nom.7ff20370">Nom </ng-container> <span class="required" i18n="@@settings.variant-axes.text.df58248c">*</span></label>
-            <input pInputText id="name" formControlName="name" placeholder="Ex: Taille" i18n-placeholder="Ex: Taille" class="w-full" maxlength="100" />
+            <input pInputText id="name" formControlName="name" placeholder="Ex: Taille" i18n-placeholder="@@settings.variant-axes.ex.taille.eafec36e" class="w-full" maxlength="100" />
           </div>
         </app-form-section>
 
-        <app-form-section title="Valeurs" i18n-title="Valeurs" icon="pi-list" [number]="2">
+        <app-form-section title="Valeurs" i18n-title="@@settings.variant-axes.valeurs.1f2cbf36" icon="pi-list" [number]="2">
           @if (isEditMode()) {
             <table class="values-table">
               <thead>
@@ -104,17 +104,17 @@ interface NewValueRow {
 
             <h4 class="sub-title" i18n="@@settings.variant-axes.ajouter.une.valeur.8ea96adb">Ajouter une valeur</h4>
             <div class="form-row">
-              <input pInputText [(ngModel)]="newValueCode" [ngModelOptions]="{ standalone: true }" placeholder="Code" i18n-placeholder="Code" class="w-full" />
-              <input pInputText [(ngModel)]="newValueName" [ngModelOptions]="{ standalone: true }" placeholder="Nom" i18n-placeholder="Nom" class="w-full" />
+              <input pInputText [(ngModel)]="newValueCode" [ngModelOptions]="{ standalone: true }" placeholder="Code" i18n-placeholder="@@settings.variant-axes.code.adac6937" class="w-full" />
+              <input pInputText [(ngModel)]="newValueName" [ngModelOptions]="{ standalone: true }" placeholder="Nom" i18n-placeholder="@@settings.variant-axes.nom.7ff20370" class="w-full" />
               <app-button type="button" variant="outline" icon="pi-plus" (clicked)="addValue()" [disabled]="savingValue()" i18n="@@settings.variant-axes.ajouter.87c57ed1"> Ajouter </app-button>
             </div>
           } @else {
             <p class="form-hint" i18n="@@settings.variant-axes.ajoutez.les.valeurs.initiales.ex.s.m.l.pour.tail.dc1f2157">Ajoutez les valeurs initiales (ex. S, M, L pour Taille).</p>
             @for (row of newValues; track $index; let i = $index) {
               <div class="form-row">
-                <input pInputText [(ngModel)]="row.code" [ngModelOptions]="{ standalone: true }" placeholder="Code" i18n-placeholder="Code" class="w-full" />
-                <input pInputText [(ngModel)]="row.name" [ngModelOptions]="{ standalone: true }" placeholder="Nom" i18n-placeholder="Nom" class="w-full" />
-                <button type="button" class="btn-icon" (click)="removeNewValue(i)" aria-label="Retirer" i18n-aria-label="Retirer">
+                <input pInputText [(ngModel)]="row.code" [ngModelOptions]="{ standalone: true }" placeholder="Code" i18n-placeholder="@@settings.variant-axes.code.adac6937" class="w-full" />
+                <input pInputText [(ngModel)]="row.name" [ngModelOptions]="{ standalone: true }" placeholder="Nom" i18n-placeholder="@@settings.variant-axes.nom.7ff20370" class="w-full" />
+                <button type="button" class="btn-icon" (click)="removeNewValue(i)" aria-label="Retirer" i18n-aria-label="@@settings.variant-axes.retirer.54ec24a1">
                   <i class="pi pi-times"></i>
                 </button>
               </div>

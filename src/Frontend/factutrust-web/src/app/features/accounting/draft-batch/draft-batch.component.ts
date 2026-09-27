@@ -38,7 +38,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Écritures en brouillard — édition en lot" i18n-title="Écritures en brouillard — édition en lot"
+      title="Écritures en brouillard — édition en lot" i18n-title="@@accounting.draft-batch.ecritures.en.brouillard.edition.en.lot.d092258e"
       subtitle="Corriger journal, date ou libellé d'un lot de brouillons, ou les supprimer. Le validé n'est jamais touché." />
 
     <div class="card accounting-filters-card">
@@ -81,7 +81,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
         <div class="db-field db-field-grow">
           <label class="accounting-filter-label" for="db-label" i18n="@@accounting.draft-batch.nouveau.libelle.90a78230">Nouveau libellé</label>
-          <input id="db-label" type="text" [(ngModel)]="newLabel" class="accounting-filter-input" placeholder="— inchangé —" i18n-placeholder="— inchangé —" [disabled]="busy()" />
+          <input id="db-label" type="text" [(ngModel)]="newLabel" class="accounting-filter-input" placeholder="— inchangé —" i18n-placeholder="@@accounting.draft-batch.inchange.0b0415d4" [disabled]="busy()" />
         </div>
         <div class="db-action-buttons">
           <app-button variant="primary" icon="pi pi-pencil" type="button"
@@ -104,7 +104,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <ng-template pTemplate="header">
           <tr>
             <th style="width:3rem">
-              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" i18n-aria-label="Tout sélectionner" />
+              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" i18n-aria-label="@@accounting.draft-batch.tout.selectionner.06f2c1c0" />
             </th>
             <th scope="col" i18n="@@accounting.draft-batch.journal.57d7f743">Journal</th>
             <th scope="col" i18n="@@accounting.draft-batch.n.754e6095">N°</th>

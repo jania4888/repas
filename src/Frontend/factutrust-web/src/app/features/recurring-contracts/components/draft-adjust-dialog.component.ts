@@ -46,7 +46,7 @@ interface EditableDraftLine {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Ajustement du brouillon" i18n-header="Ajustement du brouillon"
+      header="Ajustement du brouillon" i18n-header="@@recurring-contracts.components.ajustement.du.brouillon.f1a21cbf"
       [style]="{ width: '56rem' }"
       [draggable]="false"
       [resizable]="false"
@@ -67,7 +67,7 @@ interface EditableDraftLine {
                 <label class="span-2">Description
                   <input
                     class="ft-input"
-                    placeholder="Description" i18n-placeholder="Description"
+                    placeholder="Description" i18n-placeholder="@@recurring-contracts.components.description.55f8ebc8"
                     [(ngModel)]="line.designation"
                     [name]="'adjDesc' + i" />
                 </label>

@@ -38,7 +38,7 @@ const MAX_FISCAL_YEAR = 2100;
     AccountingTableActionsComponent
   ],
   template: `
-    <app-page-header title="Gestion des devises" i18n-title="Gestion des devises"
+    <app-page-header title="Gestion des devises" i18n-title="@@accounting.currencies.gestion.des.devises.d97aadcb"
                      subtitle="Devises utilisables en comptabilité et taux de change par exercice" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -66,7 +66,7 @@ const MAX_FISCAL_YEAR = 2100;
           <div class="cur-field">
             <label class="cur-lbl" for="cur-code" i18n="@@accounting.currencies.code.adac6937">Code</label>
             <input id="cur-code" class="cur-inp" [(ngModel)]="f.code" [disabled]="!!f.id"
-                   maxlength="3" placeholder="Ex. EUR" i18n-placeholder="Ex. EUR" />
+                   maxlength="3" placeholder="Ex. EUR" i18n-placeholder="@@accounting.currencies.ex.eur.0a968982" />
           </div>
           <div class="cur-field cur-grow">
             <label class="cur-lbl" for="cur-label" i18n="@@accounting.currencies.libelle.f5485bba">Libellé</label>

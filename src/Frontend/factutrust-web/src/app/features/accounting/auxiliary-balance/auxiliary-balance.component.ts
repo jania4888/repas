@@ -39,7 +39,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Balance auxiliaire" i18n-title="Balance auxiliaire" subtitle="Soldes par tiers — clients ou fournisseurs" />
+    <app-page-header title="Balance auxiliaire" i18n-title="@@accounting.auxiliary-balance.balance.auxiliaire.e2a90270" subtitle="Soldes par tiers — clients ou fournisseurs" />
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Type de tiers et période">
         <div accountingFilterFields class="auxbal-toolbar-fields">
@@ -83,16 +83,16 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <p-table [value]="rows()" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100]"
       [loading]="loading()" [rowHover]="true" [scrollable]="true" scrollHeight="flex"
       styleClass="p-datatable-sm accounting-datatable auxbal-table"
-      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers">
+      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers" i18n-currentPageReportTemplate="@@accounting.auxiliary-balance.affichage.de.first.a.last.sur.totalrecords.tiers.05aff86a">
       <ng-template pTemplate="header">
         <tr>
           <th i18n="@@accounting.auxiliary-balance.tiers.435080ba">Tiers</th>
-          <th class="text-right" pTooltip="Ouverture débit" i18n-pTooltip="Ouverture débit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.ouv.d.1a1c3306">Ouv. D</th>
-          <th class="text-right" pTooltip="Ouverture crédit" i18n-pTooltip="Ouverture crédit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.ouv.c.95e30fd9">Ouv. C</th>
-          <th class="text-right" pTooltip="Mouvement débit" i18n-pTooltip="Mouvement débit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.mouv.d.0f50458a">Mouv. D</th>
-          <th class="text-right" pTooltip="Mouvement crédit" i18n-pTooltip="Mouvement crédit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.mouv.c.87e48868">Mouv. C</th>
-          <th class="text-right" pTooltip="Clôture débit" i18n-pTooltip="Clôture débit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.cloture.d.edb6d923">Clôture D</th>
-          <th class="text-right" pTooltip="Clôture crédit" i18n-pTooltip="Clôture crédit" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.cloture.c.2be08431">Clôture C</th>
+          <th class="text-right" pTooltip="Ouverture débit" i18n-pTooltip="@@accounting.auxiliary-balance.ouverture.debit.3235ca23" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.ouv.d.1a1c3306">Ouv. D</th>
+          <th class="text-right" pTooltip="Ouverture crédit" i18n-pTooltip="@@accounting.auxiliary-balance.ouverture.credit.7b3ac906" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.ouv.c.95e30fd9">Ouv. C</th>
+          <th class="text-right" pTooltip="Mouvement débit" i18n-pTooltip="@@accounting.auxiliary-balance.mouvement.debit.b7720deb" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.mouv.d.0f50458a">Mouv. D</th>
+          <th class="text-right" pTooltip="Mouvement crédit" i18n-pTooltip="@@accounting.auxiliary-balance.mouvement.credit.ff1df20a" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.mouv.c.87e48868">Mouv. C</th>
+          <th class="text-right" pTooltip="Clôture débit" i18n-pTooltip="@@accounting.auxiliary-balance.cloture.debit.c64629a9" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.cloture.d.edb6d923">Clôture D</th>
+          <th class="text-right" pTooltip="Clôture crédit" i18n-pTooltip="@@accounting.auxiliary-balance.cloture.credit.b9f511f5" tooltipPosition="top" i18n="@@accounting.auxiliary-balance.cloture.c.2be08431">Clôture C</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
@@ -102,7 +102,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               class="auxbal-tiers-link"
               [routerLink]="['/accounting/third-party-ledger']"
               [queryParams]="{ thirdPartyId: r.thirdPartyId, kind: kind, from: fromStr, to: toStr, name: r.thirdPartyName }"
-              title="Voir le grand livre de ce tiers" i18n-title="Voir le grand livre de ce tiers">
+              title="Voir le grand livre de ce tiers" i18n-title="@@accounting.auxiliary-balance.voir.le.grand.livre.de.ce.tiers.0fed4715">
               {{ r.thirdPartyName }}
             </a>
           </td>

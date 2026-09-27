@@ -41,7 +41,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Carnet de commandes" i18n-title="Carnet de commandes"
+      title="Carnet de commandes" i18n-title="@@sales-orders.sales-order-backlog.carnet.de.commandes.ec641454"
       subtitle="Ce qui est engagé et pas encore livré, ligne par ligne. Seules les commandes confirmées ou partiellement livrées y figurent.">
       <app-button variant="secondary" icon="pi-arrow-left" iconPos="left" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-backlog.retour.aux.commandes.68a21472"> Retour aux commandes </app-button>
     </app-page-header>
@@ -69,7 +69,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     } @else if (rows().length === 0) {
       <app-empty-state
         icon="pi-check-circle"
-        title="Carnet vide" i18n-title="Carnet vide"
+        title="Carnet vide" i18n-title="@@sales-orders.sales-order-backlog.carnet.vide.28ec78c4"
         message="Aucune quantité engagée ne reste à livrer.">
       </app-empty-state>
     } @else {
@@ -99,7 +99,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 @if (row.expectedDeliveryDate) {
                   {{ row.expectedDeliveryDate | date: 'dd/MM/yyyy' }}
                   @if (row.isLate) {
-                    <p-tag severity="danger" value="En retard" pTooltip="Échéance dépassée." i18n-pTooltip="Échéance dépassée."></p-tag>
+                    <p-tag severity="danger" value="En retard" pTooltip="Échéance dépassée." i18n-pTooltip="@@sales-orders.sales-order-backlog.echeance.depassee.528917a7"></p-tag>
                   }
                 } @else {
                   <span class="ft-muted" i18n="@@sales-orders.sales-order-backlog.non.datee.5a5eade0">Non datée</span>

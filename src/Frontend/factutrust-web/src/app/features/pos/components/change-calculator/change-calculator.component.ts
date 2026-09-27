@@ -22,7 +22,7 @@ import { FormsModule } from '@angular/forms';
             (ngModelChange)="onAmountChange()"
             [min]="0"
             step="0.001"
-            placeholder="0.000" i18n-placeholder="0.000"
+            placeholder="0.000" i18n-placeholder="@@pos.components.0.000.725af307"
             class="change-calc__input" />
         </div>
 

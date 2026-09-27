@@ -40,12 +40,12 @@ import { isCompanyAccountingRestricted } from '@core/config/company-accounting-n
             <app-button variant="secondary" icon="pi pi-file-export" iconPos="left" type="button" (click)="exportOfficialForm.emit()" [disabled]="loading || !hasData" ariaLabel="Exporter le formulaire officiel DGI" i18n="@@accounting.vat-declaration.formulaire.officiel.285536d7"> Formulaire officiel </app-button>
           }
           @if (showPreClosingControls) {
-            <a class="vat-toolbar-link" routerLink="/accounting/pre-closing" aria-label="Contrôles de pré-clôture" i18n-aria-label="Contrôles de pré-clôture">
+            <a class="vat-toolbar-link" routerLink="/accounting/pre-closing" aria-label="Contrôles de pré-clôture" i18n-aria-label="@@accounting.vat-declaration.controles.de.pre.cloture.e6b9bc87">
               <i class="pi pi-shield" aria-hidden="true"></i> Contrôles
             </a>
           }
           @if (showCompanySettings) {
-            <a class="vat-toolbar-link" routerLink="/settings/company" aria-label="Paramètres société" i18n-aria-label="Paramètres société">
+            <a class="vat-toolbar-link" routerLink="/settings/company" aria-label="Paramètres société" i18n-aria-label="@@accounting.vat-declaration.parametres.societe.94798218">
               <i class="pi pi-cog" aria-hidden="true"></i> Paramètres
             </a>
           }

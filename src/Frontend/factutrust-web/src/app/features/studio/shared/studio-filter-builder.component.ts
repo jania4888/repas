@@ -67,7 +67,7 @@ export function parseListValue(raw: string): string[] {
             }
             @case ('list') {
               <input pInputText class="ffb__value" [ngModel]="row.text" (ngModelChange)="setList(i, $event)" [disabled]="disabled()"
-                placeholder="a, b, c" i18n-placeholder="a, b, c" [attr.aria-label]="labels.filters.value" />
+                placeholder="a, b, c" i18n-placeholder="@@studio.shared.a.b.c.a0b3afd6" [attr.aria-label]="labels.filters.value" />
             }
             @case ('boolean') {
               <p-select class="ffb__value" [options]="booleanOptions" [ngModel]="row.filter.value" (ngModelChange)="setValue(i, $event)"

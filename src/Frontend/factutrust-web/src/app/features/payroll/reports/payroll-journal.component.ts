@@ -55,7 +55,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
   ],
   template: `
     <app-page-header
-      title="Journal de paie" i18n-title="Journal de paie"
+      title="Journal de paie" i18n-title="@@payroll.reports.journal.de.paie.240f3575"
       subtitle="Détail mensuel par salarié et ventilation comptable de l'écriture de paie.">
       @if (canExport()) {
         <app-accounting-export-menu
@@ -70,7 +70,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
         [(ngModel)]="year"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année" i18n-placeholder="Année"
+        placeholder="Année" i18n-placeholder="@@payroll.reports.annee.1f910d98"
         styleClass="w-10rem"
         ariaLabel="Année" />
       <p-select
@@ -78,7 +78,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
         [(ngModel)]="month"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois" i18n-placeholder="Mois"
+        placeholder="Mois" i18n-placeholder="@@payroll.reports.mois.0d304bea"
         styleClass="w-10rem"
         ariaLabel="Mois" />
       <label class="payroll-report-check">
@@ -112,7 +112,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
     } @else if (!journal()) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun journal disponible" i18n-title="Aucun journal disponible"
+        title="Aucun journal disponible" i18n-title="@@payroll.reports.aucun.journal.disponible.690b5900"
         [description]="error() ?? 'Sélectionnez une période disposant d\\'un cycle de paie.'"
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
@@ -186,7 +186,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
           @if (journal()!.accountingLines.length === 0) {
             <app-payroll-empty-state
               icon="pi-book"
-              title="Aucune ventilation comptable" i18n-title="Aucune ventilation comptable"
+              title="Aucune ventilation comptable" i18n-title="@@payroll.reports.aucune.ventilation.comptable.d850aeb3"
               description="Le cycle ne produit pas d'écriture exploitable." />
           } @else {
             <div class="payroll-table-scroll">

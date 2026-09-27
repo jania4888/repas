@@ -39,7 +39,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
             <h3 id="history-modal-title" i18n="@@forecasting.components.historique.des.decisions.af5ea832">Historique des décisions</h3>
             <span class="modal-subtitle" *ngIf="productName">{{ productName }}</span>
           </div>
-          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="Fermer">
+          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="@@forecasting.components.fermer.5ab4ec64">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </header>
@@ -50,7 +50,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
           } @else if (rows().length === 0) {
             <div class="state empty" i18n="@@forecasting.components.aucune.decision.enregistree.pour.cette.recommand.236fa87f">Aucune décision enregistrée pour cette recommandation.</div>
           } @else {
-            <ol class="timeline" aria-label="Historique des actions" i18n-aria-label="Historique des actions">
+            <ol class="timeline" aria-label="Historique des actions" i18n-aria-label="@@forecasting.components.historique.des.actions.863ad2e3">
               @for (row of rows(); track row.id) {
                 <li class="entry" [class.entry-revert]="row.actionType === 'Revert'">
                   <div class="badge action" [attr.data-action]="row.actionType">
@@ -71,7 +71,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
                       <div class="reason">« {{ row.reason }} »</div>
                     }
                     @if (row.payloadJson) {
-                      <pre class="payload" aria-label="Détails de l'action" i18n-aria-label="Détails de l'action">{{ formatPayload(row.payloadJson) }}</pre>
+                      <pre class="payload" aria-label="Détails de l'action" i18n-aria-label="@@forecasting.components.details.de.l.action.0e8634f6">{{ formatPayload(row.payloadJson) }}</pre>
                     }
                   </div>
                 </li>

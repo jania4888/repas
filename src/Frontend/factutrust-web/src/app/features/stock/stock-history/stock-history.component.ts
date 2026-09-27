@@ -49,7 +49,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       } @else if (movements().length === 0) {
         <app-empty-state
           illustration="empty-box.svg"
-          title="Aucun mouvement" i18n-title="Aucun mouvement"
+          title="Aucun mouvement" i18n-title="@@stock.stock-history.aucun.mouvement.e4e42303"
           description="Aucun mouvement de stock n'a été enregistré pour ce produit."
           actionLabel="Retour au stock"
           actionRoute="/stock">
@@ -61,7 +61,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           [paginator]="true" 
           [rows]="20"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} mouvements" i18n-currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} mouvements"
+          currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} mouvements" i18n-currentPageReportTemplate="@@stock.stock-history.affichage.first.a.last.sur.totalrecords.mouvemen.2251bca4"
           [rowHover]="true"
           styleClass="p-datatable-striped">
           

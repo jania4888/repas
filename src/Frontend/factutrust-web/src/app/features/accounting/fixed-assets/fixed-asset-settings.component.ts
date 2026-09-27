@@ -53,7 +53,7 @@ function toFrDate(d: Date): string {
   ],
   template: `
     <app-page-header
-      title="Exercice comptable — Immobilisations" i18n-title="Exercice comptable — Immobilisations"
+      title="Exercice comptable — Immobilisations" i18n-title="@@accounting.fixed-assets.exercice.comptable.immobilisations.37874f47"
       subtitle="Définir la frontière d'exercice du dossier pour les dotations et le tableau d'amortissement" />
 
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
@@ -70,7 +70,7 @@ function toFrDate(d: Date): string {
 
       <app-accounting-status-banner
         *ngIf="isOffset()"
-        title="Limitation transitoire" i18n-title="Limitation transitoire"
+        title="Limitation transitoire" i18n-title="@@accounting.fixed-assets.limitation.transitoire.9ea0fb81"
         [message]="offsetLimitationMessage"
         variant="warning" />
 

@@ -23,7 +23,7 @@ function downloadBlob(blob: Blob, filename: string): void {
   imports: [CommonModule, ButtonComponent, PayrollSectionComponent],
   template: `
     <app-payroll-section
-      title="Documents RH" i18n-title="Documents RH"
+      title="Documents RH" i18n-title="@@payroll.employees.documents.rh.57cc3bb8"
       subtitle="Certificats et attestations issus des bulletins de paie figés (cycles validés ou clôturés)."
       icon="pi-file-pdf">
       @if (!featureReady()) {

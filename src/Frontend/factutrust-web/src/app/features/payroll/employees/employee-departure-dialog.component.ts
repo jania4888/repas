@@ -34,7 +34,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   ],
   template: `
     <p-dialog
-      header="Déclarer un départ" i18n-header="Déclarer un départ"
+      header="Déclarer un départ" i18n-header="@@payroll.employees.declarer.un.depart.97498276"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: '480px' }"
@@ -51,7 +51,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </div>
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.motif.2a198f47">Motif</label>
-        <textarea pTextarea [(ngModel)]="reason" rows="2" class="w-full" placeholder="Optionnel" i18n-placeholder="Optionnel"></textarea>
+        <textarea pTextarea [(ngModel)]="reason" rows="2" class="w-full" placeholder="Optionnel" i18n-placeholder="@@payroll.employees.optionnel.879d6b16"></textarea>
       </div>
       <div class="payroll-form-group checkbox-row mb-2">
         <p-checkbox inputId="closeContract" [(ngModel)]="closeActiveContract" [binary]="true" />

@@ -42,14 +42,14 @@ interface StageOption {
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="Opportunités" i18n-title="Opportunités" subtitle="Pipeline commercial" />
+    <app-page-header title="Opportunités" i18n-title="@@crm.opportunities.opportunites.0dbfa3c5" subtitle="Pipeline commercial" />
     <div class="card p-3 mb-3 opportunity-toolbar">
       <div class="toolbar-row">
         <p-select
           [options]="stageOptions"
           [(ngModel)]="selectedStageOption"
           optionLabel="label"
-          placeholder="Stage" i18n-placeholder="Stage"
+          placeholder="Stage" i18n-placeholder="@@crm.opportunities.stage.ca6d0e3a"
           [showClear]="true"
           styleClass="toolbar-dropdown"
           inputId="oppStageFilter"
@@ -103,7 +103,7 @@ interface StageOption {
                   [iconOnly]="true"
                   icon="pi pi-angle-right"
                   ariaLabel="Avancer l’opportunité"
-                  title="Avancer" i18n-title="Avancer"
+                  title="Avancer" i18n-title="@@crm.opportunities.avancer.ddc5c41f"
                   [iconAlwaysVisible]="true"
                   (click)="advance(o.id)"></app-button>
                 <app-button
@@ -112,7 +112,7 @@ interface StageOption {
                   [iconOnly]="true"
                   icon="pi pi-check"
                   ariaLabel="Marquer comme gagnée"
-                  title="Gagnée" i18n-title="Gagnée"
+                  title="Gagnée" i18n-title="@@crm.opportunities.gagnee.7dffc692"
                   [iconAlwaysVisible]="true"
                   (click)="win(o.id)"></app-button>
                 <app-button
@@ -121,7 +121,7 @@ interface StageOption {
                   [iconOnly]="true"
                   icon="pi pi-times"
                   ariaLabel="Marquer comme perdue"
-                  title="Perdue" i18n-title="Perdue"
+                  title="Perdue" i18n-title="@@crm.opportunities.perdue.2b13797b"
                   [iconAlwaysVisible]="true"
                   (click)="openLose(o)"></app-button>
               }
@@ -131,7 +131,7 @@ interface StageOption {
                 [iconOnly]="true"
                 icon="pi pi-pencil"
                 ariaLabel="Modifier l’opportunité"
-                title="Modifier" i18n-title="Modifier"
+                title="Modifier" i18n-title="@@crm.opportunities.modifier.f260e757"
                 (click)="openEdit(o)"></app-button>
             </div>
           </td>
@@ -176,7 +176,7 @@ interface StageOption {
                   [options]="clients"
                   optionLabel="name"
                   optionValue="id"
-                  placeholder="Sélectionner un client" i18n-placeholder="Sélectionner un client"
+                  placeholder="Sélectionner un client" i18n-placeholder="@@crm.opportunities.selectionner.un.client.20f49a7a"
                   [filter]="true"
                   filterBy="name,code"
                   styleClass="w-full"
@@ -288,7 +288,7 @@ interface StageOption {
       [draggable]="false"
       styleClass="opp-lose-dialog"
       [contentStyle]="{ overflow: 'auto', padding: 0 }"
-      header="Motif de perte" i18n-header="Motif de perte"
+      header="Motif de perte" i18n-header="@@crm.opportunities.motif.de.perte.943b55a1"
       [style]="{ width: 'min(420px, 96vw)' }"
       (onHide)="resetLoseDialog()">
       <div class="opp-dialog-body opp-dialog-body--lose">
@@ -303,7 +303,7 @@ interface StageOption {
               class="w-full lose-reason-textarea"
               rows="5"
               formControlName="reason"
-              placeholder="Ex. : offre concurrente moins chère, projet gelé par le client…" i18n-placeholder="Ex. : offre concurrente moins chère, projet gelé par le client…"
+              placeholder="Ex. : offre concurrente moins chère, projet gelé par le client…" i18n-placeholder="@@crm.opportunities.ex.offre.concurrente.moins.chere.projet.gele.par.2466d0a6"
               [attr.aria-describedby]="loseReasonAriaDescribedBy()"
               [attr.aria-invalid]="loseForm.get('reason')?.invalid && loseForm.get('reason')?.touched ? true : null"></textarea>
             @if (loseForm.get('reason')?.invalid && loseForm.get('reason')?.touched) {

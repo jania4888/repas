@@ -9,32 +9,32 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
   standalone: true,
   imports: [CommonModule, MenuModule],
   template: `
-    <div class="toolbar" role="toolbar" aria-label="Actions echeancier fiscal" i18n-aria-label="Actions echeancier fiscal">
-      <button class="icon-button primary" type="button" title="Creer" i18n-title="Creer" (click)="create.emit()" [disabled]="!canCreate">
+    <div class="toolbar" role="toolbar" aria-label="Actions echeancier fiscal" i18n-aria-label="@@accounting.fiscal-schedule.actions.echeancier.fiscal.cc35e7bf">
+      <button class="icon-button primary" type="button" title="Creer" i18n-title="@@accounting.fiscal-schedule.creer.2bd00521" (click)="create.emit()" [disabled]="!canCreate">
         <i class="fa-solid fa-plus"></i><span i18n="@@accounting.fiscal-schedule.creer.2bd00521">Creer</span>
       </button>
-      <button class="icon-button" type="button" title="Modifier" i18n-title="Modifier" (click)="edit.emit()" [disabled]="!canEdit || !hasSelection">
+      <button class="icon-button" type="button" title="Modifier" i18n-title="@@accounting.fiscal-schedule.modifier.f260e757" (click)="edit.emit()" [disabled]="!canEdit || !hasSelection">
         <i class="fa-solid fa-pen"></i><span i18n="@@accounting.fiscal-schedule.modifier.f260e757">Modifier</span>
       </button>
-      <button class="icon-button danger" type="button" title="Supprimer" i18n-title="Supprimer" (click)="delete.emit()" [disabled]="!canDelete || !hasSelection">
+      <button class="icon-button danger" type="button" title="Supprimer" i18n-title="@@accounting.fiscal-schedule.supprimer.1acfc1c7" (click)="delete.emit()" [disabled]="!canDelete || !hasSelection">
         <i class="fa-solid fa-trash"></i><span i18n="@@accounting.fiscal-schedule.supprimer.1acfc1c7">Supprimer</span>
       </button>
-      <button class="icon-button" type="button" title="Actualiser" i18n-title="Actualiser" (click)="refresh.emit()">
+      <button class="icon-button" type="button" title="Actualiser" i18n-title="@@accounting.fiscal-schedule.actualiser.9d3b2a7d" (click)="refresh.emit()">
         <i class="fa-solid fa-rotate"></i><span i18n="@@accounting.fiscal-schedule.actualiser.9d3b2a7d">Actualiser</span>
       </button>
       <div class="menu-wrap">
-        <button class="icon-button" type="button" title="Imprimer" i18n-title="Imprimer" (click)="printMenu.toggle($event)">
+        <button class="icon-button" type="button" title="Imprimer" i18n-title="@@accounting.fiscal-schedule.imprimer.5382c09d" (click)="printMenu.toggle($event)">
           <i class="fa-solid fa-print"></i><span i18n="@@accounting.fiscal-schedule.imprimer.5382c09d">Imprimer</span><i class="fa-solid fa-caret-down caret"></i>
         </button>
         <p-menu #printMenu [popup]="true" [model]="printItems" appendTo="body"></p-menu>
       </div>
       <div class="menu-wrap">
-        <button class="icon-button" type="button" title="Exporter" i18n-title="Exporter" (click)="exportMenu.toggle($event)">
+        <button class="icon-button" type="button" title="Exporter" i18n-title="@@accounting.fiscal-schedule.exporter.0cd84bdc" (click)="exportMenu.toggle($event)">
           <i class="fa-solid fa-file-export"></i><span i18n="@@accounting.fiscal-schedule.exporter.0cd84bdc">Exporter</span><i class="fa-solid fa-caret-down caret"></i>
         </button>
         <p-menu #exportMenu [popup]="true" [model]="exportItems" appendTo="body"></p-menu>
       </div>
-      <button class="icon-button" type="button" title="Planifier les rappels" i18n-title="Planifier les rappels" (click)="planReminder.emit()" [disabled]="!canCreate || !hasSelection">
+      <button class="icon-button" type="button" title="Planifier les rappels" i18n-title="@@accounting.fiscal-schedule.planifier.les.rappels.7acb81ad" (click)="planReminder.emit()" [disabled]="!canCreate || !hasSelection">
         <i class="fa-regular fa-bell"></i><span i18n="@@accounting.fiscal-schedule.planifier.les.rappels.7acb81ad">Planifier les rappels</span>
       </button>
     </div>

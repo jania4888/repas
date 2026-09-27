@@ -36,10 +36,10 @@ import { AuthService } from '@core/services/auth.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Mon profil" i18n-title="Mon profil" 
+      title="Mon profil" i18n-title="@@settings.profile.mon.profil.faa6d321" 
       subtitle="Gérez vos informations personnelles">
       <p-button 
-        label="Retour" i18n-label="Retour" 
+        label="Retour" i18n-label="@@settings.profile.retour.e5befb1f" 
         icon="pi pi-arrow-left" 
         [outlined]="true"
         routerLink="/settings">
@@ -48,7 +48,7 @@ import { AuthService } from '@core/services/auth.service';
 
     <div class="profile-grid">
       <!-- Profile Info -->
-      <p-card header="Informations personnelles" i18n-header="Informations personnelles" styleClass="profile-card">
+      <p-card header="Informations personnelles" i18n-header="@@settings.profile.informations.personnelles.e1e05861" styleClass="profile-card">
         <div class="profile-header">
           <p-avatar 
             [label]="getInitials()"
@@ -98,7 +98,7 @@ import { AuthService } from '@core/services/auth.service';
           <div class="form-actions">
             <p-button 
               type="submit"
-              label="Enregistrer" i18n-label="Enregistrer" 
+              label="Enregistrer" i18n-label="@@settings.profile.enregistrer.f7c8bcd8" 
               icon="pi pi-check"
               [loading]="savingProfile()"
               [disabled]="profileForm.invalid">
@@ -108,7 +108,7 @@ import { AuthService } from '@core/services/auth.service';
       </p-card>
 
       <!-- Security -->
-      <p-card header="Sécurité" i18n-header="Sécurité" styleClass="security-card">
+      <p-card header="Sécurité" i18n-header="@@settings.profile.securite.33e96f02" styleClass="security-card">
         <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
           <div class="form-group">
             <label for="currentPassword" i18n="@@settings.profile.mot.de.passe.actuel.f9242976">Mot de passe actuel</label>
@@ -153,7 +153,7 @@ import { AuthService } from '@core/services/auth.service';
           <div class="form-actions">
             <p-button 
               type="submit"
-              label="Changer le mot de passe" i18n-label="Changer le mot de passe" 
+              label="Changer le mot de passe" i18n-label="@@settings.profile.changer.le.mot.de.passe.4ad8d631" 
               icon="pi pi-lock"
               [loading]="savingPassword()"
               [disabled]="passwordForm.invalid">

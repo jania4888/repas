@@ -70,7 +70,7 @@ function parseIsoDate(value?: string): Date | null {
       <p i18n="@@payroll.employees.chargement.01cba1df">Chargement…</p>
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <app-form-section title="Identité" i18n-title="Identité" icon="pi-id-card" [number]="1">
+        <app-form-section title="Identité" i18n-title="@@payroll.employees.identite.3138be1c" icon="pi-id-card" [number]="1">
           <div class="payroll-form-row">
             <div class="payroll-form-group">
               <label for="employeeNumber"><ng-container i18n="@@payroll.employees.matricule.8f74c132">Matricule </ng-container> <span class="required" i18n="@@payroll.employees.text.df58248c">*</span></label>
@@ -137,7 +137,7 @@ function parseIsoDate(value?: string): Date | null {
           </div>
         </app-form-section>
 
-        <app-form-section title="Situation familiale & contact" i18n-title="Situation familiale & contact" icon="pi-users" [number]="2">
+        <app-form-section title="Situation familiale & contact" i18n-title="@@payroll.employees.situation.familiale.contact.c9751437" icon="pi-users" [number]="2">
           <div class="payroll-form-row">
             <div class="payroll-form-group">
               <label for="maritalStatus" i18n="@@payroll.employees.situation.familiale.3b708781">Situation familiale</label>
@@ -180,7 +180,7 @@ function parseIsoDate(value?: string): Date | null {
                 icon="pi-plus"
                 iconPos="left"
                 [disabled]="dependentParentClaims.length >= 2"
-                (click)="addParentClaim()" i18n> Ajouter un parent </app-button>
+                (click)="addParentClaim()" i18n="@@payroll.employees.ajouter.un.parent.a870b210"> Ajouter un parent </app-button>
             </div>
             @if (legacyIncomplete()) {
               <p-tag value="Parents à compléter — saisissez les CIN pour activer la déduction" severity="warn" />
@@ -253,7 +253,7 @@ function parseIsoDate(value?: string): Date | null {
           </div>
         </app-form-section>
 
-        <app-form-section title="Adresse" i18n-title="Adresse" icon="pi-map-marker" [number]="3">
+        <app-form-section title="Adresse" i18n-title="@@payroll.employees.adresse.522e1466" icon="pi-map-marker" [number]="3">
           <div class="payroll-form-group">
             <label for="street" i18n="@@payroll.employees.rue.53f787b0">Rue</label>
             <input pInputText id="street" formControlName="street" class="w-full" />

@@ -30,7 +30,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Emprunts" i18n-title="Emprunts"
+      title="Emprunts" i18n-title="@@accounting.loans.emprunts.1b7f68cc"
       subtitle="Registre des emprunts et tableaux d'amortissement" />
 
     <div class="ln-notice" role="note">
@@ -44,7 +44,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="ln-search" i18n="@@accounting.loans.recherche.787b5492">Recherche</label>
             <input id="ln-search" type="text" [(ngModel)]="search" class="accounting-filter-input"
-              placeholder="Numéro, libellé, prêteur" i18n-placeholder="Numéro, libellé, prêteur" />
+              placeholder="Numéro, libellé, prêteur" i18n-placeholder="@@accounting.loans.numero.libelle.preteur.cbd8d675" />
           </div>
         </div>
         <div accountingFilterActions>

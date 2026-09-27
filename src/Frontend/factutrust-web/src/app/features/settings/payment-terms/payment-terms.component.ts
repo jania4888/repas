@@ -59,11 +59,11 @@ interface DueModeOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Conditions de règlement" i18n-title="Conditions de règlement"
+      title="Conditions de règlement" i18n-title="@@settings.payment-terms.conditions.de.reglement.84c9c451"
       subtitle="Délai, échéance et escompte. La condition produit le texte imprimé sur le document et une échéance exploitable pour la balance âgée.">
       <div class="header-actions">
         <p-button
-          label="Retour" i18n-label="Retour"
+          label="Retour" i18n-label="@@settings.payment-terms.retour.e5befb1f"
           icon="pi pi-arrow-left"
           [outlined]="true"
           routerLink="/settings">
@@ -79,7 +79,7 @@ interface DueModeOption {
     } @else if (terms().length === 0) {
       <app-empty-state
         icon="pi-calendar-clock"
-        title="Aucune condition de règlement" i18n-title="Aucune condition de règlement"
+        title="Aucune condition de règlement" i18n-title="@@settings.payment-terms.aucune.condition.de.reglement.5a451783"
         message="Créez une condition pour proposer un délai et calculer l'échéance automatiquement.">
       </app-empty-state>
     } @else {
@@ -121,7 +121,7 @@ interface DueModeOption {
                     type="button"
                     icon="pi pi-pencil"
                     class="p-button-text p-button-sm"
-                    pTooltip="Modifier" i18n-pTooltip="Modifier"
+                    pTooltip="Modifier" i18n-pTooltip="@@settings.payment-terms.modifier.f260e757"
                     (click)="openEdit(term)"></button>
                 }
                 @if (canDelete()) {
@@ -130,7 +130,7 @@ interface DueModeOption {
                     type="button"
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Supprimer" i18n-pTooltip="Supprimer"
+                    pTooltip="Supprimer" i18n-pTooltip="@@settings.payment-terms.supprimer.1acfc1c7"
                     (click)="confirmDelete(term)"></button>
                 }
               </td>

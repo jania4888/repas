@@ -115,12 +115,12 @@ interface WizardProductSuggestion {
               class="mode-toggle"
               [class.active]="!simpleMode()"
               (click)="toggleSimpleMode()"
-              pTooltip="Afficher/masquer les colonnes avancées (Unité, Remise, TVA détaillée)" i18n-pTooltip="Afficher/masquer les colonnes avancées (Unité, Remise, TVA détaillée)">
+              pTooltip="Afficher/masquer les colonnes avancées (Unité, Remise, TVA détaillée)" i18n-pTooltip="@@invoices.invoice-wizard.afficher.masquer.les.colonnes.avancees.unite.rem.2761bdf3">
               <i class="pi" [class.pi-eye]="simpleMode()" [class.pi-eye-slash]="!simpleMode()"></i>
               {{ simpleMode() ? loc_ui_tern_mode_avance_f0a7a0 : loc_ui_tern_mode_simple_c08361 }}
             </button>
             <p-button
-              label="Ajouter une ligne" i18n-label="Ajouter une ligne"
+              label="Ajouter une ligne" i18n-label="@@invoices.invoice-wizard.ajouter.une.ligne.ba241fd4"
               icon="pi pi-plus"
               (click)="addNewLine()">
             </p-button>
@@ -128,7 +128,7 @@ interface WizardProductSuggestion {
           @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
               <ft-barcode-scan-field
-                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
+                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@invoices.invoice-wizard.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
                 [autoFocus]="false"
                 (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -145,7 +145,7 @@ interface WizardProductSuggestion {
             <p i18n="@@invoices.invoice-wizard.ces.articles.ne.sont.pas.relies.a.votre.catalogu.77ca4c77">Ces articles ne sont pas reliés à votre catalogue. Liez chaque ligne à un produit existant ou créez un nouveau produit pour pouvoir émettre la facture.</p>
           </div>
           <p-button
-            label="Résoudre la première" i18n-label="Résoudre la première"
+            label="Résoudre la première" i18n-label="@@invoices.invoice-wizard.resoudre.la.premiere.893bfabd"
             icon="pi pi-arrow-right"
             iconPos="right"
             severity="warn"
@@ -205,7 +205,7 @@ interface WizardProductSuggestion {
                             [forceSelection]="false"
                             [dropdown]="true"
                             [minLength]="0"
-                            placeholder="Rechercher un produit..." i18n-placeholder="Rechercher un produit..."
+                            placeholder="Rechercher un produit..." i18n-placeholder="@@invoices.invoice-wizard.rechercher.un.produit.0da008f6"
                             appendTo="body"
                             [style]="{ width: '100%' }">
                             <ng-template let-product pTemplate="item">
@@ -246,7 +246,7 @@ interface WizardProductSuggestion {
                           icon="pi-th-large"
                           ariaLabel="Choisir une variante"
                           (click)="variantPickerVisible = true; $event.stopPropagation()"
-                          title="Choisir une variante" i18n-title="Choisir une variante" />
+                          title="Choisir une variante" i18n-title="@@invoices.invoice-wizard.choisir.une.variante.c8ab137c" />
                         <app-button
                           variant="primary"
                           size="sm"
@@ -259,7 +259,7 @@ interface WizardProductSuggestion {
                       <textarea
                         pTextarea
                         [(ngModel)]="editLine.description"
-                        placeholder="Description (optionnel)" i18n-placeholder="Description (optionnel)"
+                        placeholder="Description (optionnel)" i18n-placeholder="@@invoices.invoice-wizard.description.optionnel.d1a39655"
                         rows="2"
                         class="description-input">
                       </textarea>
@@ -269,12 +269,12 @@ interface WizardProductSuggestion {
                       <div class="designation-main-row">
                         <span class="designation-main">{{ line.designation }}</span>
                         @if (!line.productId) {
-                          <span class="unmatched-badge" pTooltip="Cette ligne n'est pas associée à un produit du catalogue" i18n-pTooltip="Cette ligne n'est pas associée à un produit du catalogue">
+                          <span class="unmatched-badge" pTooltip="Cette ligne n'est pas associée à un produit du catalogue" i18n-pTooltip="@@invoices.invoice-wizard.cette.ligne.n.est.pas.associee.a.un.produit.du.c.051aa385">
                             <i class="pi pi-exclamation-circle"></i> À lier
                           </span>
                         }
                         @if (simpleMode() && line.isFodecApplicable) {
-                          <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n-pTooltip="FODEC applicable (1%)" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
+                          <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n-pTooltip="@@invoices.invoice-wizard.fodec.applicable.1.01c61523" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                         }
                       </div>
                       @if (line.description) {
@@ -308,7 +308,7 @@ interface WizardProductSuggestion {
                     <input
                       pInputText
                       [(ngModel)]="editLine.unit"
-                      placeholder="Unité" i18n-placeholder="Unité"
+                      placeholder="Unité" i18n-placeholder="@@invoices.invoice-wizard.unite.388fd9c4"
                       [style]="{ width: '80px' }">
                   } @else {
                     {{ line.unit || 'Unité' }}
@@ -321,7 +321,7 @@ interface WizardProductSuggestion {
                   @if (editingLineId === line.id) {
                     <div class="price-cell">
                       @if (linePricing.resolving()) {
-                        <i class="pi pi-spin pi-spinner price-resolving" pTooltip="Résolution du prix…" i18n-pTooltip="Résolution du prix…"></i>
+                        <i class="pi pi-spin pi-spinner price-resolving" pTooltip="Résolution du prix…" i18n-pTooltip="@@invoices.invoice-wizard.resolution.du.prix.38097b39"></i>
                       }
                       <p-inputNumber
                         [(ngModel)]="editLine.unitPriceHT"
@@ -418,7 +418,7 @@ interface WizardProductSuggestion {
                       {{ line.vatRate }}%
                     </span>
                     @if (line.isFodecApplicable) {
-                      <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n-pTooltip="FODEC applicable (1%)" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
+                      <span class="fodec-badge" pTooltip="FODEC applicable (1%)" i18n-pTooltip="@@invoices.invoice-wizard.fodec.applicable.1.01c61523" i18n="@@invoices.invoice-wizard.fodec.9a029080">FODEC</span>
                     }
                   }
                 </td>
@@ -450,7 +450,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         severity="success"
-                        pTooltip="Valider" i18n-pTooltip="Valider"
+                        pTooltip="Valider" i18n-pTooltip="@@invoices.invoice-wizard.valider.be4220f7"
                         (click)="saveLineEdit()">
                       </p-button>
                       <p-button
@@ -458,7 +458,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         severity="secondary"
-                        pTooltip="Annuler" i18n-pTooltip="Annuler"
+                        pTooltip="Annuler" i18n-pTooltip="@@invoices.invoice-wizard.annuler.49ba3292"
                         (click)="cancelLineEdit()">
                       </p-button>
                     } @else {
@@ -466,7 +466,7 @@ interface WizardProductSuggestion {
                         icon="pi pi-pencil"
                         [text]="true"
                         [rounded]="true"
-                        pTooltip="Modifier" i18n-pTooltip="Modifier"
+                        pTooltip="Modifier" i18n-pTooltip="@@invoices.invoice-wizard.modifier.f260e757"
                         (click)="startEditLine(line)">
                       </p-button>
                       <p-button
@@ -474,7 +474,7 @@ interface WizardProductSuggestion {
                         [text]="true"
                         [rounded]="true"
                         severity="danger"
-                        pTooltip="Supprimer" i18n-pTooltip="Supprimer"
+                        pTooltip="Supprimer" i18n-pTooltip="@@invoices.invoice-wizard.supprimer.1acfc1c7"
                         (click)="deleteLine(line)">
                       </p-button>
                     }
@@ -490,7 +490,7 @@ interface WizardProductSuggestion {
                     <i class="pi pi-inbox"></i>
                     <p i18n="@@invoices.invoice-wizard.aucune.ligne.de.facturation.02e2114a">Aucune ligne de facturation</p>
                     <p-button
-                      label="Ajouter votre première ligne" i18n-label="Ajouter votre première ligne"
+                      label="Ajouter votre première ligne" i18n-label="@@invoices.invoice-wizard.ajouter.votre.premiere.ligne.f4087e0c"
                       icon="pi pi-plus"
                       (click)="addNewLine()">
                     </p-button>
@@ -506,7 +506,7 @@ interface WizardProductSuggestion {
           <h3 i18n="@@invoices.invoice-wizard.aucune.ligne.de.facturation.02e2114a">Aucune ligne de facturation</h3>
           <p i18n="@@invoices.invoice-wizard.ajoutez.des.produits.ou.services.pour.continuer.cf42cd33">Ajoutez des produits ou services pour continuer</p>
           <p-button
-            label="Ajouter une ligne" i18n-label="Ajouter une ligne"
+            label="Ajouter une ligne" i18n-label="@@invoices.invoice-wizard.ajouter.une.ligne.ba241fd4"
             icon="pi pi-plus"
             (click)="addNewLine()">
           </p-button>

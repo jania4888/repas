@@ -71,7 +71,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               [showIcon]="true"
               dateFormat="dd/mm/yy"
               [maxDate]="maxDate"
-              placeholder="Sélectionnez la date" i18n-placeholder="Sélectionnez la date"
+              placeholder="Sélectionnez la date" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.selectionnez.la.date.b9d5a16a"
               inputId="paymentDate"
               [appendTo]="panelMode ? 'body' : undefined"
               [baseZIndex]="panelMode ? drawerPrimeBaseZIndex : undefined"
@@ -90,7 +90,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               [maxFractionDigits]="3"
               [minFractionDigits]="3"
               mode="decimal"
-              placeholder="Montant reçu (banque)" i18n-placeholder="Montant reçu (banque)"
+              placeholder="Montant reçu (banque)" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.montant.recu.banque.a102a141"
               styleClass="w-full">
             </p-inputNumber>
             <small class="field-hint">{{ totalPaid > 0 ? loc_ui_tern_restant_du_ttc_6c8de4 + (remainingAmount | number:'1.3-3') + ' ' + currency : 'Par défaut : solde TTC' }}</small>
@@ -108,7 +108,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
                 [maxFractionDigits]="3"
                 [minFractionDigits]="3"
                 mode="decimal"
-                placeholder="0 si aucune" i18n-placeholder="0 si aucune"
+                placeholder="0 si aucune" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.0.si.aucune.25d7dfe9"
                 styleClass="w-full">
               </p-inputNumber>
               <small class="field-hint" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.montant.retenu.par.le.client.hors.export.tej.dec.702a5336">Montant retenu par le client (hors export TEJ déclarant). Net + retenue ne peut pas dépasser le restant dû.</small>
@@ -126,7 +126,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               id="method"
               [options]="paymentMethodOptions"
               [(ngModel)]="selectedMethod"
-              placeholder="Sélectionnez un mode" i18n-placeholder="Sélectionnez un mode"
+              placeholder="Sélectionnez un mode" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.selectionnez.un.mode.4dfd28da"
               optionLabel="label"
               optionValue="value"
               [showClear]="true"
@@ -149,7 +149,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
                 [(ngModel)]="effetDueDate"
                 [showIcon]="true"
                 dateFormat="dd/mm/yy"
-                placeholder="Date d'échéance de l'effet" i18n-placeholder="Date d'échéance de l'effet"
+                placeholder="Date d'échéance de l'effet" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.date.d.echeance.de.l.effet.7aa0b5c7"
                 inputId="effetDueDate"
                 [appendTo]="panelMode ? 'body' : undefined"
                 [baseZIndex]="panelMode ? drawerPrimeBaseZIndex : undefined"
@@ -179,7 +179,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               pTextarea
               id="notes"
               [(ngModel)]="notes"
-              placeholder="Notes internes (optionnel)" i18n-placeholder="Notes internes (optionnel)"
+              placeholder="Notes internes (optionnel)" i18n-placeholder="@@shared.components.record-payment-dialog.record-payment-dialog.notes.internes.optionnel.10eb967f"
               [rows]="2"
               class="w-full">
             </textarea>
@@ -221,7 +221,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
               type="button"
               class="panel-close"
               (click)="close()"
-              aria-label="Fermer le panneau" i18n-aria-label="Fermer le panneau">
+              aria-label="Fermer le panneau" i18n-aria-label="@@shared.components.record-payment-dialog.record-payment-dialog.fermer.le.panneau.e1210a2f">
               <i class="pi pi-times"></i>
             </button>
           </div>

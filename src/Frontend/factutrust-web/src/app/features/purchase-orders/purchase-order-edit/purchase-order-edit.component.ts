@@ -93,7 +93,7 @@ interface EditOrderLine {
                 pInputText
                 id="reference"
                 [(ngModel)]="reference"
-                placeholder="Ex: DEV-2024-001" i18n-placeholder="Ex: DEV-2024-001"
+                placeholder="Ex: DEV-2024-001" i18n-placeholder="@@purchase-orders.purchase-order-edit.ex.dev.2024.001.9e0e07b8"
                 class="w-full">
             </div>
           </div>
@@ -140,7 +140,7 @@ interface EditOrderLine {
                             [options]="products()"
                             [(ngModel)]="line.product"
                             optionLabel="name"
-                            placeholder="Sélectionnez un produit" i18n-placeholder="Sélectionnez un produit"
+                            placeholder="Sélectionnez un produit" i18n-placeholder="@@purchase-orders.purchase-order-edit.selectionnez.un.produit.fec907fb"
                             [filter]="true"
                             filterBy="name,code"
                             [showClear]="false"
@@ -188,7 +188,7 @@ interface EditOrderLine {
                       </td>
                       <td class="text-center">
                         <button class="remove-btn" (click)="removeLine($index)"
-                          aria-label="Supprimer la ligne" i18n-aria-label="Supprimer la ligne">
+                          aria-label="Supprimer la ligne" i18n-aria-label="@@purchase-orders.purchase-order-edit.supprimer.la.ligne.17611368">
                           <i class="pi pi-trash"></i>
                         </button>
                       </td>
@@ -211,7 +211,7 @@ interface EditOrderLine {
                 pTextarea
                 id="notes"
                 [(ngModel)]="notes"
-                placeholder="Notes internes pour cette commande..." i18n-placeholder="Notes internes pour cette commande..."
+                placeholder="Notes internes pour cette commande..." i18n-placeholder="@@purchase-orders.purchase-order-edit.notes.internes.pour.cette.commande.2507da2c"
                 [rows]="4"
                 class="w-full">
               </textarea>

@@ -265,8 +265,8 @@ import { ProjectFavoritesService } from './project-favorites.service';
       </div>
     }
 
-    <p-dialog [(visible)]="editVisible" header="Modifier le projet" i18n-header="Modifier le projet" [modal]="true" [style]="{ width: '52rem' }">
-      <app-form-section title="Identité" i18n-title="Identité" icon="pi-id-card" variant="compact">
+    <p-dialog [(visible)]="editVisible" header="Modifier le projet" i18n-header="@@projects.project-detail.modifier.le.projet.64e99f20" [modal]="true" [style]="{ width: '52rem' }">
+      <app-form-section title="Identité" i18n-title="@@projects.project-detail.identite.3138be1c" icon="pi-id-card" variant="compact">
         <div class="flex flex-column gap-3">
           <label><ng-container i18n="@@projects.project-detail.nom.7ff20370">Nom </ng-container> <input pInputText class="w-full" [(ngModel)]="editDraft.name" /></label>
           <label>Type
@@ -284,7 +284,7 @@ import { ProjectFavoritesService } from './project-favorites.service';
         </div>
       </app-form-section>
       @if (project() && isBtp(project()!.kind)) {
-        <app-form-section title="Chantier BTP" i18n-title="Chantier BTP" icon="pi-building" variant="compact">
+        <app-form-section title="Chantier BTP" i18n-title="@@projects.project-detail.chantier.btp.20419af9" icon="pi-building" variant="compact">
           <div class="flex flex-column gap-3">
             <label><ng-container i18n="@@projects.project-detail.adresse.chantier.62e0d1f1">Adresse chantier </ng-container> <input pInputText class="w-full" [(ngModel)]="editDraft.siteAddress" /></label>
             <label><ng-container i18n="@@projects.project-detail.n.marche.6eb7d3b6">N° marché </ng-container> <input pInputText class="w-full" [(ngModel)]="editDraft.contractNumber" /></label>

@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
     template: `
     <div class="analytics-hub">
       <!-- Navigation Tabs -->
-      <nav class="analytics-nav" aria-label="Navigation des états analytiques" i18n-aria-label="Navigation des états analytiques">
+      <nav class="analytics-nav" aria-label="Navigation des états analytiques" i18n-aria-label="@@reports.analytics.navigation.des.etats.analytiques.b0a208df">
         <div class="nav-tabs">
           @for (tab of tabs; track tab.id) {
             <a

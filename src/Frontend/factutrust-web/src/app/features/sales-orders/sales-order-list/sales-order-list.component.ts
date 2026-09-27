@@ -60,7 +60,7 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Commandes clients" i18n-title="Commandes clients"
+      title="Commandes clients" i18n-title="@@sales-orders.sales-order-list.commandes.clients.928f824a"
       subtitle="L'engagement ferme entre le devis et la livraison. Le carnet mesure ce qui reste à livrer.">
       <app-button variant="secondary" icon="pi-list" iconPos="left" routerLink="backlog" i18n="@@sales-orders.sales-order-list.carnet.de.commandes.ec641454"> Carnet de commandes </app-button>
       @if (canCreate()) {
@@ -82,7 +82,7 @@ interface StatusOption {
             pInputText
             [(ngModel)]="searchTerm"
             (keyup.enter)="applyFilters()"
-            placeholder="N° de commande, référence, client" i18n-placeholder="N° de commande, référence, client" />
+            placeholder="N° de commande, référence, client" i18n-placeholder="@@sales-orders.sales-order-list.n.de.commande.reference.client.737d086c" />
         </div>
 
         <div class="ft-field">
@@ -115,7 +115,7 @@ interface StatusOption {
             (onChange)="applyFilters()"></p-checkbox>
           <label
             for="so-open"
-            pTooltip="Masque les commandes soldées, annulées ou closes : il ne reste que celles qui pèsent sur le carnet." i18n-pTooltip="Masque les commandes soldées, annulées ou closes : il ne reste que celles qui pèsent sur le carnet." i18n="@@sales-orders.sales-order-list.en.cours.seulement.e6580b49"> En cours seulement </label>
+            pTooltip="Masque les commandes soldées, annulées ou closes : il ne reste que celles qui pèsent sur le carnet." i18n-pTooltip="@@sales-orders.sales-order-list.masque.les.commandes.soldees.annulees.ou.closes.bcce2dba" i18n="@@sales-orders.sales-order-list.en.cours.seulement.e6580b49"> En cours seulement </label>
         </div>
 
         <div class="ft-field ft-field--actions">
@@ -133,7 +133,7 @@ interface StatusOption {
     } @else if (orders().length === 0) {
       <app-empty-state
         icon="pi-shopping-cart"
-        title="Aucune commande" i18n-title="Aucune commande"
+        title="Aucune commande" i18n-title="@@sales-orders.sales-order-list.aucune.commande.3dfe8fbd"
         message="Créez une commande client, ou convertissez un devis accepté.">
       </app-empty-state>
     } @else {
@@ -168,7 +168,7 @@ interface StatusOption {
                 @if (order.sourceQuoteId) {
                   <i
                     class="pi pi-file-import ft-icon-hint"
-                    pTooltip="Issue d'un devis" i18n-pTooltip="Issue d'un devis"></i>
+                    pTooltip="Issue d'un devis" i18n-pTooltip="@@sales-orders.sales-order-list.issue.d.un.devis.0423cc82"></i>
                 }
               </td>
               <td>{{ order.orderDate | date: 'dd/MM/yyyy' }}</td>
@@ -181,7 +181,7 @@ interface StatusOption {
                   @if (isLate(order)) {
                     <i
                       class="pi pi-exclamation-triangle ft-icon-warn"
-                      pTooltip="Date de livraison dépassée alors qu'il reste à livrer." i18n-pTooltip="Date de livraison dépassée alors qu'il reste à livrer."></i>
+                      pTooltip="Date de livraison dépassée alors qu'il reste à livrer." i18n-pTooltip="@@sales-orders.sales-order-list.date.de.livraison.depassee.alors.qu.il.reste.a.l.1600dd21"></i>
                   }
                 } @else {
                   <span class="ft-muted" i18n="@@sales-orders.sales-order-list.text.1b93795b">—</span>
@@ -200,7 +200,7 @@ interface StatusOption {
                 @if (order.isStockReserved) {
                   <i
                     class="pi pi-box ft-icon-hint"
-                    pTooltip="Stock réservé pour cette commande." i18n-pTooltip="Stock réservé pour cette commande."></i>
+                    pTooltip="Stock réservé pour cette commande." i18n-pTooltip="@@sales-orders.sales-order-list.stock.reserve.pour.cette.commande.22553b65"></i>
                 }
               </td>
               <td class="ft-actions-col">
@@ -209,7 +209,7 @@ interface StatusOption {
                   type="button"
                   icon="pi pi-eye"
                   class="p-button-text p-button-sm"
-                  pTooltip="Ouvrir" i18n-pTooltip="Ouvrir"
+                  pTooltip="Ouvrir" i18n-pTooltip="@@sales-orders.sales-order-list.ouvrir.42c07747"
                   [routerLink]="[order.id]"></button>
               </td>
             </tr>

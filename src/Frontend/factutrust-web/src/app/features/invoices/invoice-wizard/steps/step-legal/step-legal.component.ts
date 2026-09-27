@@ -102,7 +102,7 @@ import {
               (ngModelChange)="onPaymentTermsChange($event)"
               optionLabel="label"
               optionValue="value"
-              placeholder="Sélectionner..." i18n-placeholder="Sélectionner..."
+              placeholder="Sélectionner..." i18n-placeholder="@@invoices.invoice-wizard.selectionner.01ea04b3"
               appendTo="body">
             </p-select>
           </div>
@@ -128,7 +128,7 @@ import {
               [(ngModel)]="payment.terms"
               (ngModelChange)="updatePayment({ terms: $event })"
               rows="3"
-              placeholder="Ex: Paiement à réception de facture, escompte de 2% pour paiement anticipé..." i18n-placeholder="Ex: Paiement à réception de facture, escompte de 2% pour paiement anticipé...">
+              placeholder="Ex: Paiement à réception de facture, escompte de 2% pour paiement anticipé..." i18n-placeholder="@@invoices.invoice-wizard.ex.paiement.a.reception.de.facture.escompte.de.2.9537d717">
             </textarea>
           </div>
         </div>
@@ -153,7 +153,7 @@ import {
                 id="bankName"
                 [(ngModel)]="payment.bankName"
                 (ngModelChange)="updatePayment({ bankName: $event })"
-                placeholder="Ex: Banque de Tunisie" i18n-placeholder="Ex: Banque de Tunisie">
+                placeholder="Ex: Banque de Tunisie" i18n-placeholder="@@invoices.invoice-wizard.ex.banque.de.tunisie.c3754ea9">
             </div>
 
             <div class="form-group">
@@ -163,7 +163,7 @@ import {
                 [(ngModel)]="payment.rib"
                 (ngModelChange)="updatePayment({ rib: $event })"
                 mask="99 999 9999999999999999 99"
-                placeholder="XX XXX XXXXXXXXXXX XX" i18n-placeholder="XX XXX XXXXXXXXXXX XX">
+                placeholder="XX XXX XXXXXXXXXXX XX" i18n-placeholder="@@invoices.invoice-wizard.xx.xxx.xxxxxxxxxxx.xx.09ed7c5a">
               </p-inputMask>
               <small class="form-hint" i18n="@@invoices.invoice-wizard.releve.d.identite.bancaire.20.caracteres.0a997ef2"> Relevé d'Identité Bancaire (20 caractères) </small>
             </div>
@@ -175,7 +175,7 @@ import {
                 id="iban"
                 [(ngModel)]="payment.iban"
                 (ngModelChange)="updatePayment({ iban: $event })"
-                placeholder="TNXX XXXX XXXX XXXX XXXX XXXX" i18n-placeholder="TNXX XXXX XXXX XXXX XXXX XXXX"
+                placeholder="TNXX XXXX XXXX XXXX XXXX XXXX" i18n-placeholder="@@invoices.invoice-wizard.tnxx.xxxx.xxxx.xxxx.xxxx.xxxx.9f78d4ed"
                 maxlength="34">
               <small class="form-hint" i18n="@@invoices.invoice-wizard.format.international.pour.les.paiements.depuis.l.fa96cb29"> Format international pour les paiements depuis l'étranger </small>
             </div>
@@ -199,7 +199,7 @@ import {
             id="purchaseOrderRef"
             [(ngModel)]="payment.purchaseOrderRef"
             (ngModelChange)="updatePayment({ purchaseOrderRef: $event })"
-            placeholder="Ex: BC-2026-0001" i18n-placeholder="Ex: BC-2026-0001">
+            placeholder="Ex: BC-2026-0001" i18n-placeholder="@@invoices.invoice-wizard.ex.bc.2026.0001.e994e436">
           <small class="form-hint" i18n="@@invoices.invoice-wizard.reference.du.bon.de.commande.client.optionnel.e6c12910"> Référence du bon de commande client (optionnel) </small>
         </div>
       </section>
@@ -242,7 +242,7 @@ import {
                   [(ngModel)]="legalMentions.exemptionMention"
                   (ngModelChange)="updateLegalMentions({ exemptionMention: $event })"
                   rows="2"
-                  placeholder="Motif d'exonération de TVA..." i18n-placeholder="Motif d'exonération de TVA...">
+                  placeholder="Motif d'exonération de TVA..." i18n-placeholder="@@invoices.invoice-wizard.motif.d.exoneration.de.tva.3b0f8aad">
                 </textarea>
                 <small i18n="@@invoices.invoice-wizard.le.client.etant.exonere.de.tva.une.mention.justi.b25e8824"> Le client étant exonéré de TVA, une mention justificative est obligatoire. </small>
               </div>
@@ -262,7 +262,7 @@ import {
                 [(ngModel)]="legalMentions.customMention"
                 (ngModelChange)="updateLegalMentions({ customMention: $event })"
                 rows="3"
-                placeholder="Ajoutez une mention spécifique (garantie, conditions particulières, etc.)" i18n-placeholder="Ajoutez une mention spécifique (garantie, conditions particulières, etc.)">
+                placeholder="Ajoutez une mention spécifique (garantie, conditions particulières, etc.)" i18n-placeholder="@@invoices.invoice-wizard.ajoutez.une.mention.specifique.garantie.conditio.aa9f5d90">
               </textarea>
             </div>
           </div>

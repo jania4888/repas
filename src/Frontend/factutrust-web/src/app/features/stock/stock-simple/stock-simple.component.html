@@ -2,11 +2,11 @@
 
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
-<app-page-header title="Mon Stock" i18n-title="Mon Stock" subtitle="Vue d'ensemble simple de vos produits">
+<app-page-header title="Mon Stock" i18n-title="@@stock.stock-simple.mon.stock.7d1adf31" subtitle="Vue d'ensemble simple de vos produits">
     <div class="header-actions">
         <div class="stock-simple-warehouse">
             <app-warehouse-selector
-                label="Entrepôt" i18n-label="Entrepôt"
+                label="Entrepôt" i18n-label="@@stock.stock-simple.entrepot.c349c0bc"
                 [showLabel]="true"
                 [required]="true"
                 [value]="warehouseContext.selectedWarehouseId()"
@@ -24,7 +24,7 @@
                 <span i18n="@@stock.stock-simple.sortie.stock.e914cdfc">Sortie Stock</span>
             </a>
         }
-        <button pButton pRipple label="Vue détaillée" i18n-label="Vue détaillée" icon="pi pi-cog" class="p-button-outlined p-button-secondary"
+        <button pButton pRipple label="Vue détaillée" i18n-label="@@stock.stock-simple.vue.detaillee.ab32a035" icon="pi pi-cog" class="p-button-outlined p-button-secondary"
             (click)="navigateToAdvanced()">
         </button>
         <app-analyze-with-ai-button screenId="stock-simple" [payloadBuilder]="buildStockAnalyzePayload"
@@ -88,11 +88,11 @@
         <div class="search-wrapper">
             <span class="p-input-icon-left p-input-icon-right search-input-container">
                 <i class="pi pi-search"></i>
-                <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="Rechercher un produit..." i18n-placeholder="Rechercher un produit..."
+                <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="Rechercher un produit..." i18n-placeholder="@@stock.stock-simple.rechercher.un.produit.0da008f6"
                     (keyup.enter)="onSearch()" class="search-input">
                 <i *ngIf="searchTerm" class="pi pi-times clear-icon" (click)="clearSearch()"></i>
             </span>
-            <button pButton pRipple label="Rechercher" i18n-label="Rechercher" icon="pi pi-search" (click)="onSearch()">
+            <button pButton pRipple label="Rechercher" i18n-label="@@stock.stock-simple.rechercher.91f7d3e9" icon="pi pi-search" (click)="onSearch()">
             </button>
         </div>
     </div>
@@ -101,7 +101,7 @@
     <div class="products-section">
         <h3 class="section-title">Mes produits ({{ overview()!.totalProducts }})</h3>
 
-        <app-empty-state *ngIf="overview()!.items.length === 0" title="Aucun produit trouvé" i18n-title="Aucun produit trouvé"
+        <app-empty-state *ngIf="overview()!.items.length === 0" title="Aucun produit trouvé" i18n-title="@@stock.stock-simple.aucun.produit.trouve.5edf7149"
             message="Aucun produit ne correspond à votre recherche." icon="pi-box">
         </app-empty-state>
 
@@ -143,7 +143,7 @@
 </div>
 
 <!-- Quick Count Dialog - Premium Design -->
-<p-dialog header="Compter mon stock" i18n-header="Compter mon stock" [(visible)]="countDialogVisible" [modal]="true"
+<p-dialog header="Compter mon stock" i18n-header="@@stock.stock-simple.compter.mon.stock.ad33f2c7" [(visible)]="countDialogVisible" [modal]="true"
     [style]="{width: '480px'}" [closable]="!submitting" [closeOnEscape]="!submitting"
     [draggable]="false" [resizable]="false" styleClass="count-dialog">
 
@@ -221,13 +221,13 @@
     <ng-template pTemplate="footer">
         <div class="dialog-actions">
             @if (!countResult) {
-            <button pButton type="button" label="Annuler" i18n-label="Annuler" class="p-button-text p-button-secondary"
+            <button pButton type="button" label="Annuler" i18n-label="@@stock.stock-simple.annuler.49ba3292" class="p-button-text p-button-secondary"
                 (click)="closeCountDialog()" [disabled]="submitting"></button>
-            <button pButton type="button" label="Valider le comptage" i18n-label="Valider le comptage" icon="pi pi-check"
+            <button pButton type="button" label="Valider le comptage" i18n-label="@@stock.stock-simple.valider.le.comptage.863c51d2" icon="pi pi-check"
                 (click)="submitCount()" [loading]="submitting"></button>
             }
             @if (countResult) {
-            <button pButton type="button" label="Fermer" i18n-label="Fermer" icon="pi pi-check"
+            <button pButton type="button" label="Fermer" i18n-label="@@stock.stock-simple.fermer.5ab4ec64" icon="pi pi-check"
                 (click)="closeCountDialog()"></button>
             }
         </div>

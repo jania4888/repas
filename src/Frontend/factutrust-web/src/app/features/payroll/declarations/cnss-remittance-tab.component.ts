@@ -55,7 +55,7 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année" i18n-placeholder="Année"
+        placeholder="Année" i18n-placeholder="@@payroll.declarations.annee.1f910d98"
         styleClass="w-10rem" />
       <p-select
         [options]="monthOptions"
@@ -63,7 +63,7 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois" i18n-placeholder="Mois"
+        placeholder="Mois" i18n-placeholder="@@payroll.declarations.mois.0d304bea"
         styleClass="w-10rem" />
       <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.declarations.generer.bd221c07">Générer</app-button>
       <app-button
@@ -114,7 +114,7 @@ const MONTH_LABELS = [
     } @else if (!remittance()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger le bordereau" i18n-title="Impossible de charger le bordereau"
+        title="Impossible de charger le bordereau" i18n-title="@@payroll.declarations.impossible.de.charger.le.bordereau.ea4207e2"
         description="Vérifiez que la fonctionnalité est activée et que vous disposez des droits nécessaires."
         [showAction]="true"
         actionLabel="Réessayer"
@@ -122,7 +122,7 @@ const MONTH_LABELS = [
     } @else if (!remittance()!.isEligible) {
       <app-payroll-empty-state
         icon="pi-calendar"
-        title="Cycle de paie non disponible" i18n-title="Cycle de paie non disponible"
+        title="Cycle de paie non disponible" i18n-title="@@payroll.declarations.cycle.de.paie.non.disponible.e1468b8a"
         [description]="loc_ui_tern_aucun_cycle_valide_ou_cloture_pour_172d01 + monthLabel() + '.'"
         [showAction]="true"
         actionLabel="Voir les cycles de paie"
@@ -130,7 +130,7 @@ const MONTH_LABELS = [
     } @else if (remittance()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun salarié" i18n-title="Aucun salarié"
+        title="Aucun salarié" i18n-title="@@payroll.declarations.aucun.salarie.a1567c77"
         description="Le cycle ne contient aucun bulletin."
         [showAction]="true"
         actionLabel="Voir les cycles de paie"

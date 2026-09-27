@@ -54,7 +54,7 @@ interface WizardStepDef {
   ],
   template: `
     <app-page-header
-      title="Rapprochement bancaire" i18n-title="Rapprochement bancaire"
+      title="Rapprochement bancaire" i18n-title="@@accounting.bank-reconciliation.rapprochement.bancaire.b6463429"
       subtitle="Assistant d'importation de relevé et de rapprochement — Import, association automatique, rapprochement manuel, résultat" />
 
     <app-accounting-correction-banner />
@@ -92,7 +92,7 @@ interface WizardStepDef {
           <div accountingFilterFields class="br-toolbar-fields">
             <div class="form-field">
               <label class="field-label" for="br-account" i18n="@@accounting.bank-reconciliation.compte.bancaire.485b42ca">Compte bancaire</label>
-              <input id="br-account" class="br-input" [(ngModel)]="accountFilter" placeholder="N° de compte…" i18n-placeholder="N° de compte…" [disabled]="loadingList()" />
+              <input id="br-account" class="br-input" [(ngModel)]="accountFilter" placeholder="N° de compte…" i18n-placeholder="@@accounting.bank-reconciliation.n.de.compte.05918a18" [disabled]="loadingList()" />
             </div>
             <div class="form-field">
               <label class="field-label" for="br-from" i18n="@@accounting.bank-reconciliation.du.84814985">Du</label>
@@ -283,7 +283,7 @@ interface WizardStepDef {
             <input type="checkbox" [(ngModel)]="optImportBalances" [disabled]="busy()" />
             <span i18n="@@accounting.bank-reconciliation.importer.les.soldes.f9ecb009">Importer les soldes</span>
           </label>
-          <label class="br-check br-check-disabled" title="Non applicable : les écritures 512↔contrepartie ne créent pas de tiers." i18n-title="Non applicable : les écritures 512↔contrepartie ne créent pas de tiers.">
+          <label class="br-check br-check-disabled" title="Non applicable : les écritures 512↔contrepartie ne créent pas de tiers." i18n-title="@@accounting.bank-reconciliation.non.applicable.les.ecritures.512.contrepartie.ne.e3b79636">
             <input type="checkbox" disabled />
             <span i18n="@@accounting.bank-reconciliation.creer.les.tiers.inexistants.e16eb6d9">Créer les tiers inexistants</span>
           </label>
@@ -294,11 +294,11 @@ interface WizardStepDef {
         <div class="br-import-fields">
           <div class="form-field">
             <label class="field-label" for="br-journal" i18n="@@accounting.bank-reconciliation.journal.a.utiliser.5d02eafb">Journal à utiliser</label>
-            <input id="br-journal" class="br-input br-input-narrow" [(ngModel)]="defaultJournalCode" placeholder="BQ" i18n-placeholder="BQ" [disabled]="busy()" />
+            <input id="br-journal" class="br-input br-input-narrow" [(ngModel)]="defaultJournalCode" placeholder="BQ" i18n-placeholder="@@accounting.bank-reconciliation.bq.70c2d9e1" [disabled]="busy()" />
           </div>
           <div class="form-field">
             <label class="field-label" for="br-counterparty" i18n="@@accounting.bank-reconciliation.contrepartie.par.defaut.10226f0a">Contrepartie par défaut</label>
-            <input id="br-counterparty" class="br-input" [(ngModel)]="defaultCounterparty" placeholder="Ex. 6580000" i18n-placeholder="Ex. 6580000" [disabled]="busy()" />
+            <input id="br-counterparty" class="br-input" [(ngModel)]="defaultCounterparty" placeholder="Ex. 6580000" i18n-placeholder="@@accounting.bank-reconciliation.ex.6580000.19a967b0" [disabled]="busy()" />
             <small class="br-help" i18n="@@accounting.bank-reconciliation.utilisee.pour.comptabiliser.les.lignes.non.assoc.f8e30f7b">Utilisée pour comptabiliser les lignes non associées (étapes 2 et 3).</small>
           </div>
         </div>
@@ -362,11 +362,11 @@ interface WizardStepDef {
             <div class="br-import-fields">
               <div class="form-field">
                 <label class="field-label" for="br-bank" i18n="@@accounting.bank-reconciliation.banque.2a7302cd">Banque</label>
-                <input id="br-bank" class="br-input" [(ngModel)]="meta.bankName" placeholder="Ex. BIAT" i18n-placeholder="Ex. BIAT" [disabled]="busy()" />
+                <input id="br-bank" class="br-input" [(ngModel)]="meta.bankName" placeholder="Ex. BIAT" i18n-placeholder="@@accounting.bank-reconciliation.ex.biat.3372625e" [disabled]="busy()" />
               </div>
               <div class="form-field">
                 <label class="field-label" for="br-acc" i18n="@@accounting.bank-reconciliation.n.de.compte.0b69581b">N° de compte</label>
-                <input id="br-acc" class="br-input" [(ngModel)]="meta.accountNumber" placeholder="Ex. 08 123 456789" i18n-placeholder="Ex. 08 123 456789" [disabled]="busy()" />
+                <input id="br-acc" class="br-input" [(ngModel)]="meta.accountNumber" placeholder="Ex. 08 123 456789" i18n-placeholder="@@accounting.bank-reconciliation.ex.08.123.456789.b37e585d" [disabled]="busy()" />
               </div>
               <div class="form-field">
                 <label class="field-label" for="br-pstart" i18n="@@accounting.bank-reconciliation.debut.de.periode.071c1f1d">Début de période</label>
@@ -631,11 +631,11 @@ interface WizardStepDef {
         <div class="br-import-fields">
           <div class="form-field">
             <label class="field-label" for="ce-journal" i18n="@@accounting.bank-reconciliation.journal.57d7f743">Journal</label>
-            <input id="ce-journal" class="br-input br-input-narrow" [(ngModel)]="createForm.journalCode" placeholder="BQ" i18n-placeholder="BQ" [disabled]="creatingEntry()" />
+            <input id="ce-journal" class="br-input br-input-narrow" [(ngModel)]="createForm.journalCode" placeholder="BQ" i18n-placeholder="@@accounting.bank-reconciliation.bq.70c2d9e1" [disabled]="creatingEntry()" />
           </div>
           <div class="form-field">
             <label class="field-label" for="ce-account" i18n="@@accounting.bank-reconciliation.compte.de.contrepartie.df81fd03">Compte de contrepartie</label>
-            <input id="ce-account" class="br-input" [(ngModel)]="createForm.counterpartyAccount" placeholder="Ex. 6580000" i18n-placeholder="Ex. 6580000" [disabled]="creatingEntry()" />
+            <input id="ce-account" class="br-input" [(ngModel)]="createForm.counterpartyAccount" placeholder="Ex. 6580000" i18n-placeholder="@@accounting.bank-reconciliation.ex.6580000.19a967b0" [disabled]="creatingEntry()" />
           </div>
           <div class="form-field br-field-file">
             <label class="field-label" for="ce-label" i18n="@@accounting.bank-reconciliation.libelle.facultatif.3c04cfb9">Libellé (facultatif)</label>

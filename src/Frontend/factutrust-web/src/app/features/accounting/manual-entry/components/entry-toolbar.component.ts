@@ -10,7 +10,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <div class="entry-toolbar" role="toolbar" aria-label="Actions d'écriture" i18n-aria-label="Actions d'écriture">
+    <div class="entry-toolbar" role="toolbar" aria-label="Actions d'écriture" i18n-aria-label="@@accounting.manual-entry.actions.d.ecriture.7657e8cb">
       <div class="entry-toolbar__left">
         <div class="dropdown">
           <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"
@@ -67,7 +67,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
         <div class="dropdown">
           <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"
                   (click)="toggleImport($event)" [attr.aria-expanded]="importOpen"
-                  title="Importer une pièce ou des écritures" i18n-title="Importer une pièce ou des écritures" i18n="@@accounting.manual-entry.import.d6fbc9d2"> Import </button>
+                  title="Importer une pièce ou des écritures" i18n-title="@@accounting.manual-entry.importer.une.piece.ou.des.ecritures.1d98fa90" i18n="@@accounting.manual-entry.import.d6fbc9d2"> Import </button>
           @if (importOpen) {
             <div class="dropdown-menu show">
               <button type="button" class="dropdown-item"

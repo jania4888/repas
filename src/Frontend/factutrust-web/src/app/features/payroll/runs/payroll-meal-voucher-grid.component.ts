@@ -67,7 +67,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
     <app-payroll-section
 
-      title="Tickets restaurant" i18n-title="Tickets restaurant"
+      title="Tickets restaurant" i18n-title="@@payroll.runs.tickets.restaurant.72ed5294"
 
       subtitle="Saisie mensuelle par salarié. Recalculez le cycle pour intégrer les retenues au bulletin."
 

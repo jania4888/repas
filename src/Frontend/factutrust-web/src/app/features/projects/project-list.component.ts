@@ -96,7 +96,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Projets" i18n-title="Projets"
+      title="Projets" i18n-title="@@projects.project-list.projets.b1e8cd4d"
       subtitle="Affaires, chantiers et missions"
       hint="Affaires, chantiers ESN et missions BTP : suivez avancement, tâches et heures à facturer.">
       <p-menu #exportMenu [popup]="true" [model]="exportMenuItems" appendTo="body" />
@@ -128,10 +128,10 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           <input
             pInputText
             type="search"
-            placeholder="Rechercher un projet…" i18n-placeholder="Rechercher un projet…"
+            placeholder="Rechercher un projet…" i18n-placeholder="@@projects.project-list.rechercher.un.projet.9923387b"
             [(ngModel)]="search"
             (ngModelChange)="onSearch($event)"
-            aria-label="Rechercher un projet" i18n-aria-label="Rechercher un projet" />
+            aria-label="Rechercher un projet" i18n-aria-label="@@projects.project-list.rechercher.un.projet.7ef9017c" />
         </span>
 
         <p-select
@@ -139,7 +139,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [(ngModel)]="statusFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@projects.project-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()" />
 
@@ -148,7 +148,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [(ngModel)]="kindFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les types" i18n-placeholder="Tous les types"
+          placeholder="Tous les types" i18n-placeholder="@@projects.project-list.tous.les.types.5a6be24d"
           [showClear]="true"
           (onChange)="onFilterChange()" />
 
@@ -157,7 +157,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [(ngModel)]="clientFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les clients" i18n-placeholder="Tous les clients"
+          placeholder="Tous les clients" i18n-placeholder="@@projects.project-list.tous.les.clients.56f5092c"
           [showClear]="true"
           [filter]="true"
           filterPlaceholder="Rechercher…"
@@ -167,7 +167,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           type="button"
           class="proj-list-more-filters"
           (click)="advancedPanel.toggle($event)"
-          aria-label="Plus de filtres" i18n-aria-label="Plus de filtres">
+          aria-label="Plus de filtres" i18n-aria-label="@@projects.project-list.plus.de.filtres.51cff4a1">
           <i class="pi pi-filter" aria-hidden="true"></i>
           Plus de filtres
           @if (extraFiltersCount() > 0) {
@@ -185,7 +185,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                 [(ngModel)]="ownerFilter"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Tous" i18n-placeholder="Tous"
+                placeholder="Tous" i18n-placeholder="@@projects.project-list.tous.b97ae3b4"
                 [showClear]="true"
                 (onChange)="onFilterChange()" />
             </label>
@@ -197,7 +197,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                 [(ngModel)]="billingFilter"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Tous" i18n-placeholder="Tous"
+                placeholder="Tous" i18n-placeholder="@@projects.project-list.tous.b97ae3b4"
                 [showClear]="true"
                 (onChange)="onFilterChange()" />
             </label>
@@ -223,7 +223,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
 
         <div class="proj-list-filters__actions">
           @if (hasActiveFilters()) {
-            <button type="button" class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            <button type="button" class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@projects.project-list.reinitialiser.les.filtres.d8915f02">
               <i class="pi pi-times"></i>
               Réinitialiser ({{ activeFiltersCount() }})
             </button>
@@ -251,7 +251,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} projets" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} projets"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} projets" i18n-currentPageReportTemplate="@@projects.project-list.affichage.de.first.a.last.sur.totalrecords.proje.43c25739"
           (onLazyLoad)="onPageChange($event)"
           styleClass="p-datatable-sm proj-list-table"
           [rowHover]="true">
@@ -348,7 +348,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
               <td colspan="9">
                 <app-empty-state
                   icon="pi-briefcase"
-                  title="Aucun projet" i18n-title="Aucun projet"
+                  title="Aucun projet" i18n-title="@@projects.project-list.aucun.projet.c77f3894"
                   description="Créez-en un pour démarrer le suivi d'affaire, de mission ESN ou de chantier BTP."
                   [showAction]="canCreate"
                   actionLabel="Nouveau projet"
@@ -362,8 +362,8 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
 
     <p-menu #rowMenu [popup]="true" [model]="rowMenuItems()" appendTo="body" />
 
-    <p-dialog [(visible)]="createVisible" [modal]="true" header="Nouveau projet" i18n-header="Nouveau projet" [style]="{ width: '52rem' }" styleClass="proj-create-dialog">
-      <app-form-section title="Identité" i18n-title="Identité" icon="pi-id-card" variant="compact">
+    <p-dialog [(visible)]="createVisible" [modal]="true" header="Nouveau projet" i18n-header="@@projects.project-list.nouveau.projet.29f05663" [style]="{ width: '52rem' }" styleClass="proj-create-dialog">
+      <app-form-section title="Identité" i18n-title="@@projects.project-list.identite.3138be1c" icon="pi-id-card" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field">
             <label for="createName"><ng-container i18n="@@projects.project-list.nom.7ff20370">Nom </ng-container> <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
@@ -371,7 +371,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           </div>
           <div class="ft-field">
             <label for="createClient"><ng-container i18n="@@projects.project-list.client.1bdd79b1">Client </ng-container> <span class="ft-required" aria-hidden="true" i18n="@@projects.project-list.text.df58248c">*</span></label>
-            <p-select inputId="createClient" class="w-full" [options]="clients()" [(ngModel)]="draft.clientId" optionLabel="name" optionValue="id" placeholder="Client" i18n-placeholder="Client" />
+            <p-select inputId="createClient" class="w-full" [options]="clients()" [(ngModel)]="draft.clientId" optionLabel="name" optionValue="id" placeholder="Client" i18n-placeholder="@@projects.project-list.client.1bdd79b1" />
           </div>
           <div class="ft-field ft-field--full">
             <span class="block font-medium" i18n="@@projects.project-list.type.de.projet.46597b92">Type de projet</span>
@@ -390,11 +390,11 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         </div>
       </app-form-section>
 
-      <app-form-section title="Aperçu Kanban" i18n-title="Aperçu Kanban" icon="pi-table" variant="compact">
+      <app-form-section title="Aperçu Kanban" i18n-title="@@projects.project-list.apercu.kanban.4f287372" icon="pi-table" variant="compact">
         <app-project-kanban-template-preview [kind]="draft.kind" />
       </app-form-section>
 
-      <app-form-section title="Facturation" i18n-title="Facturation" icon="pi-sliders-h" variant="compact">
+      <app-form-section title="Facturation" i18n-title="@@projects.project-list.facturation.04716c6b" icon="pi-sliders-h" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field ft-field--full">
             <label for="createBilling" i18n="@@projects.project-list.facturation.04716c6b">Facturation</label>
@@ -414,7 +414,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         </div>
       </app-form-section>
 
-      <app-form-section title="Détails" i18n-title="Détails" icon="pi-file" variant="compact">
+      <app-form-section title="Détails" i18n-title="@@projects.project-list.details.aaa029e6" icon="pi-file" variant="compact">
         <div class="ft-form-grid">
           <div class="ft-field ft-field--full">
             <label for="createDescription" i18n="@@projects.project-list.description.55f8ebc8">Description</label>
@@ -430,7 +430,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           </div>
           <div class="ft-field">
             <label for="createOwner" i18n="@@projects.project-list.chef.de.projet.7a1d6008">Chef de projet</label>
-            <p-select inputId="createOwner" class="w-full" [options]="users()" [(ngModel)]="draft.ownerUserId" optionLabel="displayName" optionValue="id" placeholder="Optionnel" i18n-placeholder="Optionnel" [showClear]="true" />
+            <p-select inputId="createOwner" class="w-full" [options]="users()" [(ngModel)]="draft.ownerUserId" optionLabel="displayName" optionValue="id" placeholder="Optionnel" i18n-placeholder="@@projects.project-list.optionnel.879d6b16" [showClear]="true" />
           </div>
           <div class="ft-field">
             <label for="createBudget" i18n="@@projects.project-list.budget.ht.0374a3ad">Budget HT</label>
@@ -440,7 +440,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
       </app-form-section>
 
       @if (isBtp(draft.kind)) {
-        <app-form-section title="Chantier BTP" i18n-title="Chantier BTP" icon="pi-building" variant="compact">
+        <app-form-section title="Chantier BTP" i18n-title="@@projects.project-list.chantier.btp.20419af9" icon="pi-building" variant="compact">
           <div class="ft-form-grid">
             <div class="ft-field ft-field--full">
               <label for="createSiteAddress" i18n="@@projects.project-list.adresse.chantier.62e0d1f1">Adresse chantier</label>
@@ -455,7 +455,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         </app-form-section>
       }
       @if (draft.kind === 'Esn') {
-        <app-form-section title="Mission ESN" i18n-title="Mission ESN" icon="pi-users" variant="compact">
+        <app-form-section title="Mission ESN" i18n-title="@@projects.project-list.mission.esn.7528bd23" icon="pi-users" variant="compact">
           <p class="text-sm text-color-secondary m-0" i18n="@@projects.project-list.renseignez.le.tarif.de.vente.sur.l.equipe.avant..c64a0c55">Renseignez le tarif de vente sur l'équipe avant de facturer en régie.</p>
         </app-form-section>
       }

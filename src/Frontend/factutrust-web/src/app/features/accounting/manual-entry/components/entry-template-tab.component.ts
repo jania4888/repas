@@ -12,7 +12,7 @@ import { AccountingService, JournalEntryTemplateDto } from '../../services/accou
   template: `
     <section class="template-tab card">
       <div class="template-tab__search">
-        <input type="search" class="me-input" placeholder="Rechercher un modèle…" i18n-placeholder="Rechercher un modèle…"
+        <input type="search" class="me-input" placeholder="Rechercher un modèle…" i18n-placeholder="@@accounting.manual-entry.rechercher.un.modele.57af3d5f"
                [(ngModel)]="search" (ngModelChange)="load()" />
       </div>
       @if (loading()) {

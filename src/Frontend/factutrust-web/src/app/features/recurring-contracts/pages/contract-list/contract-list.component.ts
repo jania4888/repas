@@ -40,7 +40,7 @@ interface StatusFilterOption {
   ],
   template: `
     <app-page-header
-      title="Contrats récurrents" i18n-title="Contrats récurrents"
+      title="Contrats récurrents" i18n-title="@@recurring-contracts.pages.contrats.recurrents.e773e54a"
       subtitle="Abonnements et facturation périodique B2B">
       <div class="actions">
         <app-button variant="outline" icon="pi-file-edit" routerLink="pending-drafts" i18n="@@recurring-contracts.pages.brouillons.a.valider.3fabaa45"> Brouillons à valider </app-button>
@@ -53,25 +53,25 @@ interface StatusFilterOption {
     @if (stats(); as s) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Contrats actifs" i18n-label="Contrats actifs"
+          label="Contrats actifs" i18n-label="@@recurring-contracts.pages.contrats.actifs.9c1f0223"
           [value]="s.activeCount"
           icon="pi-check-circle"
           tone="teal">
         </app-stat-card>
         <app-stat-card
-          label="MRR estimé" i18n-label="MRR estimé"
+          label="MRR estimé" i18n-label="@@recurring-contracts.pages.mrr.estime.76040103"
           [value]="formatContractAmount(s.estimatedMonthlyRecurringTotal, s.currency)"
           icon="pi-wallet"
           tone="primary">
         </app-stat-card>
         <app-stat-card
-          label="Échéances ≤ 7 j" i18n-label="Échéances ≤ 7 j"
+          label="Échéances ≤ 7 j" i18n-label="@@recurring-contracts.pages.echeances.7.j.b1be5150"
           [value]="s.dueSoonCount"
           icon="pi-calendar"
           tone="orange">
         </app-stat-card>
         <app-stat-card
-          label="Brouillons en attente" i18n-label="Brouillons en attente"
+          label="Brouillons en attente" i18n-label="@@recurring-contracts.pages.brouillons.en.attente.7d7a40ea"
           [value]="s.pendingDraftsCount"
           icon="pi-file-edit"
           tone="violet"
@@ -87,7 +87,7 @@ interface StatusFilterOption {
           class="ft-input filters__search"
           [(ngModel)]="search"
           (ngModelChange)="onSearchInput()"
-          placeholder="Rechercher (numéro, référence, client)…" i18n-placeholder="Rechercher (numéro, référence, client)…" />
+          placeholder="Rechercher (numéro, référence, client)…" i18n-placeholder="@@recurring-contracts.pages.rechercher.numero.reference.client.7cb836b5" />
         <select class="ft-input" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()">
           @for (opt of statusOptions; track opt.label) {
             <option [ngValue]="opt.value">{{ opt.label }}</option>
@@ -107,7 +107,7 @@ interface StatusFilterOption {
     } @else if (!loading() && items().length === 0) {
       <app-empty-state
         icon="pi-inbox"
-        title="Aucun contrat" i18n-title="Aucun contrat"
+        title="Aucun contrat" i18n-title="@@recurring-contracts.pages.aucun.contrat.355efb57"
         description="Créez votre premier contrat récurrent ou ajustez vos filtres."
         actionLabel="Nouveau contrat"
         actionRoute="/recurring-contracts/new"
@@ -125,7 +125,7 @@ interface StatusFilterOption {
           [loading]="loading()"
           [first]="(page() - 1) * pageSize"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} contrats" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} contrats"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} contrats" i18n-currentPageReportTemplate="@@recurring-contracts.pages.affichage.de.first.a.last.sur.totalrecords.contr.c58ca015"
           [rowHover]="true"
           styleClass="p-datatable-sm">
           <ng-template pTemplate="header">

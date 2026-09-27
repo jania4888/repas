@@ -45,7 +45,7 @@ interface PayslipPaymentRow {
   ],
   template: `
     <p-dialog
-      header="Régler la paie" i18n-header="Régler la paie"
+      header="Régler la paie" i18n-header="@@payroll.runs.regler.la.paie.5ab3e218"
       [(visible)]="visibleProxy"
       [modal]="true"
       [style]="{ width: '760px' }"
@@ -77,7 +77,7 @@ interface PayslipPaymentRow {
               [(ngModel)]="bankAccountId"
               optionLabel="label"
               optionValue="value"
-              placeholder="Sélectionner un compte" i18n-placeholder="Sélectionner un compte"
+              placeholder="Sélectionner un compte" i18n-placeholder="@@payroll.runs.selectionner.un.compte.9009d2c1"
               styleClass="w-full" />
           </div>
         }

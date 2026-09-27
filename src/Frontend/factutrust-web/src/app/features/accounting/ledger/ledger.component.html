@@ -1,9 +1,9 @@
-<app-page-header title="Grand livre" i18n-title="Grand livre" subtitle="Mouvements et solde progressif par compte" />
+<app-page-header title="Grand livre" i18n-title="@@accounting.ledger.grand.livre.7eef7547" subtitle="Mouvements et solde progressif par compte" />
 
 <div class="ledger-page accounting-page">
   <p-card
     styleClass="p-card--static ledger-filters-card"
-    header="Critères de consultation" i18n-header="Critères de consultation"
+    header="Critères de consultation" i18n-header="@@accounting.ledger.criteres.de.consultation.92faee0d"
     subheader="Compte et période — les mêmes paramètres déclenchent l’appel au serveur qu’auparavant.">
     <p-toolbar styleClass="ledger-toolbar accounting-prime-toolbar">
       <ng-template pTemplate="start">
@@ -25,7 +25,7 @@
                 (completeMethod)="filterAccounts($event)"
                 [minLength]="1"
                 [forceSelection]="false"
-                placeholder="Ex: 4111" i18n-placeholder="Ex: 4111"
+                placeholder="Ex: 4111" i18n-placeholder="@@accounting.ledger.ex.4111.a0b05b0e"
                 inputId="ledger-account"
                 [inputStyle]="{'width':'100%'}"
                 [style]="{'width':'100%'}"
@@ -36,11 +36,11 @@
           @if (mode === 'range') {
             <div class="ledger-field">
               <label class="ledger-label" for="ledger-account-from" i18n="@@accounting.ledger.du.compte.e97591b0">Du compte</label>
-              <input id="ledger-account-from" type="text" class="p-inputtext" [(ngModel)]="accountFrom" placeholder="Début" i18n-placeholder="Début" />
+              <input id="ledger-account-from" type="text" class="p-inputtext" [(ngModel)]="accountFrom" placeholder="Début" i18n-placeholder="@@accounting.ledger.debut.f0955314" />
             </div>
             <div class="ledger-field">
               <label class="ledger-label" for="ledger-account-to" i18n="@@accounting.ledger.au.compte.42405969">Au compte</label>
-              <input id="ledger-account-to" type="text" class="p-inputtext" [(ngModel)]="accountTo" placeholder="Fin" i18n-placeholder="Fin" />
+              <input id="ledger-account-to" type="text" class="p-inputtext" [(ngModel)]="accountTo" placeholder="Fin" i18n-placeholder="@@accounting.ledger.fin.4251065f" />
             </div>
             <div class="ledger-field ledger-field-check">
               <label class="ledger-label" for="ledger-unmoved">
@@ -116,7 +116,7 @@
 
   <p-card
     styleClass="p-card--static ledger-table-card"
-    header="Mouvements" i18n-header="Mouvements"
+    header="Mouvements" i18n-header="@@accounting.ledger.mouvements.604505fb"
     subheader="Écritures et solde progressif sur la période sélectionnée.">
     @if (mode === 'range') {
       <!-- Grand livre général : les comptes en séquence, chacun avec report et sous-total. -->
@@ -176,7 +176,7 @@
         @if (gl.accounts.length === 0) {
           <app-empty-state
             icon="pi-book"
-            title="Aucun compte mouvementé sur la période" i18n-title="Aucun compte mouvementé sur la période"
+            title="Aucun compte mouvementé sur la période" i18n-title="@@accounting.ledger.aucun.compte.mouvemente.sur.la.periode.32d11b75"
             description="Élargissez la plage de comptes ou les dates, puis cliquez sur Afficher."
             [showAction]="false" />
         } @else {
@@ -226,7 +226,7 @@
     } @else if (showEmpty()) {
       <app-empty-state
         icon="pi-book"
-        title="Aucun mouvement sur la période" i18n-title="Aucun mouvement sur la période"
+        title="Aucun mouvement sur la période" i18n-title="@@accounting.ledger.aucun.mouvement.sur.la.periode.0c965385"
         description="Vérifiez le numéro de compte ou élargissez les dates, puis cliquez sur Afficher."
         [showAction]="false"
       />
@@ -238,7 +238,7 @@
           [rows]="20"
           [rowsPerPageOptions]="[10, 20, 50]"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.ledger.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824"
           [rowHover]="true"
           [scrollable]="true"
           scrollHeight="min(52vh, 28rem)"

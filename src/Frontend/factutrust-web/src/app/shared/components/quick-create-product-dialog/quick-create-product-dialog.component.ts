@@ -88,7 +88,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
                 [ngModel]="code()"
                 (ngModelChange)="code.set($event)"
                 (blur)="codeTouched.set(true)"
-                placeholder="Ex: PROD-001" i18n-placeholder="Ex: PROD-001"
+                placeholder="Ex: PROD-001" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.ex.prod.001.654beeed"
                 class="w-full"
                 [class.ng-invalid]="showCodeError()"
                 [attr.aria-invalid]="showCodeError()"
@@ -110,7 +110,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
                 [ngModel]="name()"
                 (ngModelChange)="name.set($event)"
                 (blur)="nameTouched.set(true)"
-                placeholder="Nom du produit ou service" i18n-placeholder="Nom du produit ou service"
+                placeholder="Nom du produit ou service" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.nom.du.produit.ou.service.d82d71d4"
                 class="w-full"
                 [class.ng-invalid]="showNameError()"
                 [attr.aria-invalid]="showNameError()"
@@ -134,7 +134,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
                   (ngModelChange)="onCategoryChange($event)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Type" i18n-placeholder="Type"
+                  placeholder="Type" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.type.3deb7456"
                   [appendTo]="panelMode ? 'body' : null"
                   [overlayOptions]="panelMode ? drawerOverlayOptions : undefined"
                   styleClass="w-full" />
@@ -148,7 +148,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
                   (ngModelChange)="unit.set($event)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Unité" i18n-placeholder="Unité"
+                  placeholder="Unité" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.unite.388fd9c4"
                   [appendTo]="panelMode ? 'body' : null"
                   [overlayOptions]="panelMode ? drawerOverlayOptions : undefined"
                   styleClass="w-full" />
@@ -196,7 +196,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
                   [minFractionDigits]="2"
                   [maxFractionDigits]="3"
                   mode="decimal"
-                  placeholder="0.000" i18n-placeholder="0.000"
+                  placeholder="0.000" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.0.000.725af307"
                   styleClass="w-full" />
               </div>
               <div class="form-group">
@@ -208,7 +208,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
                   (ngModelChange)="vatRate.set($event)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="TVA" i18n-placeholder="TVA"
+                  placeholder="TVA" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.tva.fb62cb5d"
                   [appendTo]="panelMode ? 'body' : null"
                   [overlayOptions]="panelMode ? drawerOverlayOptions : undefined"
                   styleClass="w-full" />
@@ -254,7 +254,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
                 id="quick-desc"
                 [ngModel]="description()"
                 (ngModelChange)="description.set($event)"
-                placeholder="Description du produit" i18n-placeholder="Description du produit"
+                placeholder="Description du produit" i18n-placeholder="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.description.du.produit.c84f0797"
                 [rows]="2"
                 class="w-full"></textarea>
             </div>
@@ -276,7 +276,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
           class="panel-content"
           (click)="$event.stopPropagation()"
           role="dialog"
-          aria-label="Créer un nouveau produit" i18n-aria-label="Créer un nouveau produit"
+          aria-label="Créer un nouveau produit" i18n-aria-label="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.un.nouveau.produit.1b9477c1"
           aria-modal="true">
           <div class="panel-header">
             <h2 class="panel-title" id="quick-create-product-panel-title" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.un.produit.c896c606">Créer un produit</h2>
@@ -284,7 +284,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
               type="button"
               class="panel-close"
               (click)="close()"
-              aria-label="Fermer le panneau" i18n-aria-label="Fermer le panneau">
+              aria-label="Fermer le panneau" i18n-aria-label="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.fermer.le.panneau.e1210a2f">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -314,7 +314,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
 
     @if (!panelMode) {
       <p-dialog
-        header="Créer un produit" i18n-header="Créer un produit"
+        header="Créer un produit" i18n-header="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.un.produit.c896c606"
         [(visible)]="visible"
         [modal]="true"
         [style]="{ width: '640px', maxWidth: '95vw' }"

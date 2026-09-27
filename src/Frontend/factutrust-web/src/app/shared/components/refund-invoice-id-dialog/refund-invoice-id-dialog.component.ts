@@ -39,7 +39,7 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
         type="button"
         class="refund-dialog-close"
         (click)="modal.dismiss()"
-        aria-label="Fermer" i18n-aria-label="Fermer"
+        aria-label="Fermer" i18n-aria-label="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.fermer.5ab4ec64"
         tabindex="0"><span aria-hidden="true" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.times.77d7c977">&times;</span>
       </button>
     </div>
@@ -59,7 +59,7 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
           field="number"
           [dropdown]="false"
           [minLength]="1"
-          placeholder="Ex. FAC-2026-000042 ou POS-…" i18n-placeholder="Ex. FAC-2026-000042 ou POS-…"
+          placeholder="Ex. FAC-2026-000042 ou POS-…" i18n-placeholder="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.ex.fac.2026.000042.ou.pos.3c339c9e"
           appendTo="body"
           panelStyleClass="refund-invoice-autocomplete-panel"
           scrollHeight="200px"
@@ -67,7 +67,7 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
           [baseZIndex]="modalPrimeBaseZIndex"
           [inputStyle]="{ width: '100%' }"
           [style]="{ width: '100%' }"
-          aria-label="Rechercher une facture à rembourser" i18n-aria-label="Rechercher une facture à rembourser"
+          aria-label="Rechercher une facture à rembourser" i18n-aria-label="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.rechercher.une.facture.a.rembourser.e1bac7a3"
           aria-describedby="refundDialogTitle">
           <ng-template let-invoice pTemplate="item">
             <div class="invoice-suggestion">
@@ -98,14 +98,14 @@ export const REFUND_INVOICE_DIALOG_OPTIONS: NgbModalOptions = {
         type="button"
         class="refund-dialog-btn reject"
         (click)="modal.dismiss()"
-        aria-label="Annuler" i18n-aria-label="Annuler"
+        aria-label="Annuler" i18n-aria-label="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.annuler.49ba3292"
         tabindex="0" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.annuler.49ba3292"> Annuler </button>
       <button
         type="button"
         class="refund-dialog-btn accept"
         [disabled]="!canSubmit()"
         (click)="onSubmit()"
-        aria-label="Valider" i18n-aria-label="Valider" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.valider.be4220f7"> Valider </button>
+        aria-label="Valider" i18n-aria-label="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.valider.be4220f7" i18n="@@shared.components.refund-invoice-id-dialog.refund-invoice-id-dialog.valider.be4220f7"> Valider </button>
     </div>
   `,
   styles: [`

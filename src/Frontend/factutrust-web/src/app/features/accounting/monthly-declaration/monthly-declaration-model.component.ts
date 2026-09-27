@@ -40,7 +40,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Modèle Intégration DM" i18n-title="Modèle Intégration DM"
+      title="Modèle Intégration DM" i18n-title="@@accounting.monthly-declaration.modele.integration.dm.bf548515"
       subtitle="Emporter la configuration d’un dossier dans un fichier, et l’appliquer à un autre" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />

@@ -160,7 +160,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
           <label class="field-label" for="eh-label"><ng-container i18n="@@accounting.manual-entry.libelle.general.777f3fa8">Libellé général </ng-container> <span class="req" i18n="@@accounting.manual-entry.text.df58248c">*</span></label>
 
-          <input id="eh-label" type="text" class="me-input" placeholder="Libellé de l'écriture" i18n-placeholder="Libellé de l'écriture"
+          <input id="eh-label" type="text" class="me-input" placeholder="Libellé de l'écriture" i18n-placeholder="@@accounting.manual-entry.libelle.de.l.ecriture.6852da99"
 
                  [ngModel]="store.entryLabel()" (ngModelChange)="onLabelChange($event)" />
 
@@ -182,10 +182,10 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
             @if (store.editingEntryNumber() != null) {
               <input id="eh-piece-num" type="text" class="me-input me-input--locked" readonly
-                     [value]="store.editingEntryNumber()" title="Numéro de pièce (figé)" i18n-title="Numéro de pièce (figé)" />
+                     [value]="store.editingEntryNumber()" title="Numéro de pièce (figé)" i18n-title="@@accounting.manual-entry.numero.de.piece.fige.30223eb7" />
             } @else {
               <input id="eh-piece-num" type="text" class="me-input me-input--locked" readonly
-                     value="Attribué à l'enregistrement" title="Le numéro de pièce est généré automatiquement" i18n-title="Le numéro de pièce est généré automatiquement" />
+                     value="Attribué à l'enregistrement" title="Le numéro de pièce est généré automatiquement" i18n-title="@@accounting.manual-entry.le.numero.de.piece.est.genere.automatiquement.c670f497" />
             }
 
           </div>
@@ -198,7 +198,7 @@ import { FUNCTIONAL_CURRENCY, MILLIME_DECIMALS } from '../models/entry-form.mode
 
             <input id="eh-ref" type="text" class="me-input" maxlength="50"
 
-                   placeholder="Réf. pièce externe" i18n-placeholder="Réf. pièce externe"
+                   placeholder="Réf. pièce externe" i18n-placeholder="@@accounting.manual-entry.ref.piece.externe.3f3a8f49"
 
                    [ngModel]="store.pieceRef()" (ngModelChange)="store.pieceRef.set($event)" />
 

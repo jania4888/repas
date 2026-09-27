@@ -14,7 +14,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
       <div class="held-panel__content" (click)="$event.stopPropagation()">
         <div class="held-panel__header">
           <h3 class="held-panel__title" i18n="@@pos.components.commandes.en.attente.d424a2c1">Commandes en attente</h3>
-          <button class="held-panel__close" (click)="onClose.emit()" aria-label="Fermer" i18n-aria-label="Fermer">
+          <button class="held-panel__close" (click)="onClose.emit()" aria-label="Fermer" i18n-aria-label="@@pos.components.fermer.5ab4ec64">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -44,7 +44,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
                     class="held-panel__btn held-panel__btn--danger"
                     (click)="deleteOrder(order.id)"
                     type="button"
-                    aria-label="Supprimer" i18n-aria-label="Supprimer">
+                    aria-label="Supprimer" i18n-aria-label="@@pos.components.supprimer.1acfc1c7">
                     <i class="pi pi-trash"></i>
                   </button>
                 </div>

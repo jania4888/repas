@@ -65,7 +65,7 @@ const FILE_BASE_BY_TAB: readonly string[] = [
   ],
   template: `
     <app-page-header
-      title="Récapitulatifs de journaux" i18n-title="Récapitulatifs de journaux"
+      title="Récapitulatifs de journaux" i18n-title="@@accounting.journal-summary.recapitulatifs.de.journaux.39863c76"
       subtitle="Centralisateur, récapitulation et totaux journaux" />
 
     <div class="card accounting-filters-card">
@@ -198,7 +198,7 @@ const FILE_BASE_BY_TAB: readonly string[] = [
           [rowHover]="true"
           styleClass="p-datatable-sm accounting-datatable"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes">
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.journal-summary.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824">
           <ng-template pTemplate="header">
             <tr>
               <th scope="col" i18n="@@accounting.journal-summary.journal.57d7f743">Journal</th>

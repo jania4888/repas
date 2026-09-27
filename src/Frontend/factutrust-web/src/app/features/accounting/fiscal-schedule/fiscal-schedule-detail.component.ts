@@ -41,7 +41,7 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
             <button class="link-row" type="button" (click)="downloadAttachment.emit(attachment)">
               <i class="fa-regular fa-file-lines"></i>{{ attachment.fileName }}
             </button>
-            <button class="square-button danger-btn" type="button" title="Supprimer" i18n-title="Supprimer" (click)="deleteAttachment.emit(attachment)">
+            <button class="square-button danger-btn" type="button" title="Supprimer" i18n-title="@@accounting.fiscal-schedule.supprimer.1acfc1c7" (click)="deleteAttachment.emit(attachment)">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>

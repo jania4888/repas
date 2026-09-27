@@ -53,7 +53,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
         (ngModelChange)="reload()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Exercice" i18n-placeholder="Exercice"
+        placeholder="Exercice" i18n-placeholder="@@payroll.runs.exercice.e171e2b0"
         styleClass="w-10rem" />
     </div>
 
@@ -62,7 +62,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
         [loading]="loading()"
         [skeletonColumns]="6"
         icon="pi-calendar"
-        title="Aucun cycle de paie" i18n-title="Aucun cycle de paie"
+        title="Aucun cycle de paie" i18n-title="@@payroll.runs.aucun.cycle.de.paie.a0557f41"
         [description]="emptyDescription()"
         [showAction]="canRun() && !loading() && !currentMonthExists()"
         actionLabel="Créer le cycle du mois courant"

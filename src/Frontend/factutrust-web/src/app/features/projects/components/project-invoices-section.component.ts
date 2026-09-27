@@ -40,14 +40,14 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
     } @else if (invoices() === null) {
       <app-empty-state
         icon="pi-receipt"
-        title="Factures indisponibles" i18n-title="Factures indisponibles"
+        title="Factures indisponibles" i18n-title="@@projects.components.factures.indisponibles.d67140b4"
         description="Impossible de charger la liste des factures pour ce projet."
         [showAction]="false">
       </app-empty-state>
     } @else if (invoices()!.length === 0) {
       <app-empty-state
         icon="pi-receipt"
-        title="Aucune facture" i18n-title="Aucune facture"
+        title="Aucune facture" i18n-title="@@projects.components.aucune.facture.72124217"
         description="Aucune facture n'a encore été générée pour ce projet."
         [showAction]="false">
       </app-empty-state>

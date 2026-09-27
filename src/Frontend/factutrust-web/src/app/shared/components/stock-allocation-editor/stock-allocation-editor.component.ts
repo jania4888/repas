@@ -76,7 +76,7 @@ import { catchError } from 'rxjs/operators';
                     [ngModelOptions]="{ standalone: true }"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Lot" i18n-placeholder="Lot"
+                    placeholder="Lot" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.lot.4a211932"
                     [filter]="true"
                     filterBy="label"
                     filterPlaceholder="Rechercher un lot…"
@@ -97,7 +97,7 @@ import { catchError } from 'rxjs/operators';
                     [maxFractionDigits]="3"
                     (ngModelChange)="onExitLotQtyChange(alloc, ai)">
                   </p-inputNumber>
-                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="Retirer">
+                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="@@shared.components.stock-allocation-editor.stock-allocation-editor.retirer.54ec24a1">
                     <i class="pi pi-times"></i>
                   </button>
                 </div>
@@ -115,14 +115,14 @@ import { catchError } from 'rxjs/operators';
           } @else {
             @for (alloc of allocations; track $index; let ai = $index) {
               <div class="alloc-row alloc-row--entry">
-                <input pInputText class="alloc-field-lot" placeholder="N° lot" i18n-placeholder="N° lot" [(ngModel)]="alloc.lotNumber" [ngModelOptions]="{ standalone: true }" />
+                <input pInputText class="alloc-field-lot" placeholder="N° lot" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.n.lot.487dbd0f" [(ngModel)]="alloc.lotNumber" [ngModelOptions]="{ standalone: true }" />
                 <p-datepicker
                   styleClass="alloc-field-dluo"
                   class="alloc-field-dluo"
                   [(ngModel)]="alloc.expiryDate"
                   [ngModelOptions]="{ standalone: true }"
                   dateFormat="dd/mm/yy"
-                  placeholder="DLUO" i18n-placeholder="DLUO"
+                  placeholder="DLUO" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.dluo.d342f6a4"
                   [showIcon]="true"
                   appendTo="body">
                 </p-datepicker>
@@ -136,7 +136,7 @@ import { catchError } from 'rxjs/operators';
                   [minFractionDigits]="0"
                   [maxFractionDigits]="3">
                 </p-inputNumber>
-                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="Retirer">
+                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="@@shared.components.stock-allocation-editor.stock-allocation-editor.retirer.54ec24a1">
                   <i class="pi pi-times"></i>
                 </button>
               </div>
@@ -158,7 +158,7 @@ import { catchError } from 'rxjs/operators';
                     [ngModelOptions]="{ standalone: true }"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="N° série" i18n-placeholder="N° série"
+                    placeholder="N° série" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.n.serie.8c333421"
                     [filter]="true"
                     filterBy="label"
                     filterPlaceholder="Rechercher un n° de série…"
@@ -166,7 +166,7 @@ import { catchError } from 'rxjs/operators';
                     appendTo="body"
                     (onChange)="onSerialPicked(alloc, $event.value)">
                   </p-select>
-                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="Retirer">
+                  <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="@@shared.components.stock-allocation-editor.stock-allocation-editor.retirer.54ec24a1">
                     <i class="pi pi-times"></i>
                   </button>
                 </div>
@@ -177,8 +177,8 @@ import { catchError } from 'rxjs/operators';
           } @else {
             @for (alloc of allocations; track $index; let ai = $index) {
               <div class="alloc-row alloc-row--serial">
-                <input pInputText class="alloc-field-lot" placeholder="N° série" i18n-placeholder="N° série" [(ngModel)]="alloc.serialNumber" [ngModelOptions]="{ standalone: true }" />
-                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="Retirer">
+                <input pInputText class="alloc-field-lot" placeholder="N° série" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.n.serie.8c333421" [(ngModel)]="alloc.serialNumber" [ngModelOptions]="{ standalone: true }" />
+                <button type="button" class="btn-icon" (click)="removeRow(ai)" aria-label="Retirer" i18n-aria-label="@@shared.components.stock-allocation-editor.stock-allocation-editor.retirer.54ec24a1">
                   <i class="pi pi-times"></i>
                 </button>
               </div>

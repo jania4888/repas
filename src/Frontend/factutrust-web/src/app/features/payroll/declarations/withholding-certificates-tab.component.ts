@@ -49,7 +49,7 @@ const MONTH_LABELS = [
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Exercice" i18n-placeholder="Exercice"
+        placeholder="Exercice" i18n-placeholder="@@payroll.declarations.exercice.e171e2b0"
         styleClass="w-10rem" />
       <app-button variant="primary" icon="pi-refresh" iconPos="left" (click)="load()" i18n="@@payroll.declarations.generer.bd221c07">Générer</app-button>
       <app-button
@@ -78,7 +78,7 @@ const MONTH_LABELS = [
     } @else if (!batch()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger les certificats" i18n-title="Impossible de charger les certificats"
+        title="Impossible de charger les certificats" i18n-title="@@payroll.declarations.impossible.de.charger.les.certificats.9e902ae6"
         description="Une erreur est survenue lors de la génération. Vérifiez le NIF de la société et vos droits."
         [showAction]="true"
         actionLabel="Réessayer"
@@ -86,7 +86,7 @@ const MONTH_LABELS = [
     } @else if (batch()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-file"
-        title="Aucun certificat à générer" i18n-title="Aucun certificat à générer"
+        title="Aucun certificat à générer" i18n-title="@@payroll.declarations.aucun.certificat.a.generer.2997d642"
         [description]="emptyDescription()"
         [showAction]="true"
         actionLabel="Voir les cycles de paie"

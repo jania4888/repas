@@ -94,7 +94,7 @@ const FIELD_IDS = {
                 [ngModel]="name()"
                 (ngModelChange)="name.set($event)"
                 (blur)="nameTouched.set(true)"
-                placeholder="Ex. Jean Dupont ou ABC SARL" i18n-placeholder="Ex. Jean Dupont ou ABC SARL"
+                placeholder="Ex. Jean Dupont ou ABC SARL" i18n-placeholder="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.ex.jean.dupont.ou.abc.sarl.92bd3a72"
                 class="w-full"
                 [class.ng-invalid]="showNameError()" />
               @if (showNameError()) {
@@ -114,7 +114,7 @@ const FIELD_IDS = {
                   (ngModelChange)="type.set($event)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Type" i18n-placeholder="Type"
+                  placeholder="Type" i18n-placeholder="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.type.3deb7456"
                   appendTo="body"
                   [overlayOptions]="drawerOverlayOptions"
                   styleClass="w-full" />
@@ -133,7 +133,7 @@ const FIELD_IDS = {
                   (onBlur)="onNifBlur()"
                   appNifMaskPaste
                   mask="9999999a/a/a/999"
-                  placeholder="Ex. 1772793W/A/M/000" i18n-placeholder="Ex. 1772793W/A/M/000"
+                  placeholder="Ex. 1772793W/A/M/000" i18n-placeholder="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.ex.1772793w.a.m.000.f3190bfc"
                   styleClass="w-full"
                   [class.ng-invalid]="showNifError()" />
                 @if (showNifError()) {
@@ -156,7 +156,7 @@ const FIELD_IDS = {
                 [ngModel]="email()"
                 (ngModelChange)="email.set($event)"
                 (blur)="emailTouched.set(true)"
-                placeholder="client@exemple.tn" i18n-placeholder="client@exemple.tn"
+                placeholder="client@exemple.tn" i18n-placeholder="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.client.exemple.tn.336b0635"
                 class="w-full"
                 [class.ng-invalid]="showEmailError()" />
               @if (showEmailError()) {
@@ -186,7 +186,7 @@ const FIELD_IDS = {
                 [ngModel]="street()"
                 (ngModelChange)="street.set($event)"
                 (blur)="streetTouched.set(true)"
-                placeholder="Adresse complète" i18n-placeholder="Adresse complète"
+                placeholder="Adresse complète" i18n-placeholder="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.adresse.complete.ac51a43d"
                 class="w-full"
                 [class.ng-invalid]="showStreetError()" />
               @if (showStreetError()) {
@@ -225,7 +225,7 @@ const FIELD_IDS = {
                   (onBlur)="governorateTouched.set(true)"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Sélectionner" i18n-placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.selectionner.ab31a36f"
                   appendTo="body"
                   [overlayOptions]="drawerOverlayOptions"
                   styleClass="w-full"
@@ -272,7 +272,7 @@ const FIELD_IDS = {
         <div class="panel-content" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
           <div class="panel-header">
             <h2 class="panel-title" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.creer.un.client.db580ea8">Créer un client</h2>
-            <button type="button" class="panel-close" (click)="close()" aria-label="Fermer" i18n-aria-label="Fermer">
+            <button type="button" class="panel-close" (click)="close()" aria-label="Fermer" i18n-aria-label="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.fermer.5ab4ec64">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -298,7 +298,7 @@ const FIELD_IDS = {
 
     @if (!panelMode) {
       <p-dialog
-        header="Créer un client" i18n-header="Créer un client"
+        header="Créer un client" i18n-header="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.creer.un.client.db580ea8"
         [(visible)]="visible"
         [modal]="true"
         [style]="{ width: '640px', maxWidth: '95vw' }"

@@ -33,7 +33,7 @@ import {
   imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="filters" role="search" aria-label="Filtres des recommandations de réapprovisionnement" i18n-aria-label="Filtres des recommandations de réapprovisionnement">
+    <section class="filters" role="search" aria-label="Filtres des recommandations de réapprovisionnement" i18n-aria-label="@@forecasting.pages.filtres.des.recommandations.de.reapprovisionneme.96f5b7e1">
       <label class="field">
         <span class="field-label" i18n="@@forecasting.pages.statut.659499f3">Statut</span>
         <select [ngModel]="filters().status ?? ''" (ngModelChange)="onStatusChange($event)">
@@ -83,17 +83,17 @@ import {
           type="search"
           [ngModel]="filters().search ?? ''"
           (ngModelChange)="onSearchInput($event)"
-          placeholder="Code, produit, fournisseur…" i18n-placeholder="Code, produit, fournisseur…"
+          placeholder="Code, produit, fournisseur…" i18n-placeholder="@@forecasting.pages.code.produit.fournisseur.75d442d7"
           autocomplete="off"
-          aria-label="Rechercher par code, nom de produit ou fournisseur" i18n-aria-label="Rechercher par code, nom de produit ou fournisseur" />
+          aria-label="Rechercher par code, nom de produit ou fournisseur" i18n-aria-label="@@forecasting.pages.rechercher.par.code.nom.de.produit.ou.fournisseu.be72cc18" />
       </label>
 
       <button
         type="button"
         class="btn-reset"
         (click)="onReset()"
-        title="Réinitialiser les filtres" i18n-title="Réinitialiser les filtres"
-        aria-label="Réinitialiser tous les filtres" i18n-aria-label="Réinitialiser tous les filtres">
+        title="Réinitialiser les filtres" i18n-title="@@forecasting.pages.reinitialiser.les.filtres.d8915f02"
+        aria-label="Réinitialiser tous les filtres" i18n-aria-label="@@forecasting.pages.reinitialiser.tous.les.filtres.9ec4827b">
         <i class="pi pi-filter-slash" aria-hidden="true"></i>
       </button>
     </section>

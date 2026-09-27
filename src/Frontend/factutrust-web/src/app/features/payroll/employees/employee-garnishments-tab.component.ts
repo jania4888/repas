@@ -57,7 +57,7 @@ const GARNISHMENT_KIND_OPTIONS = [
   ],
   template: `
     <app-payroll-section
-      title="Saisies sur salaire" i18n-title="Saisies sur salaire"
+      title="Saisies sur salaire" i18n-title="@@payroll.employees.saisies.sur.salaire.3e372a38"
       subtitle="Retenues priorisées selon le barème légal et le net disponible."
       icon="pi-exclamation-triangle">
       @if (!readOnly) {

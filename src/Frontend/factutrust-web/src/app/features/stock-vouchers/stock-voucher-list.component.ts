@@ -68,7 +68,7 @@ import {
             pInputText
             type="text"
             [(ngModel)]="searchTerm"
-            placeholder="Numéro, référence…" i18n-placeholder="Numéro, référence…"
+            placeholder="Numéro, référence…" i18n-placeholder="@@stock-vouchers.stock-voucher-list.numero.reference.201b347e"
             (keyup.enter)="reload()" />
         </div>
         <div class="filter-field">
@@ -79,7 +79,7 @@ import {
             [(ngModel)]="statusFilter"
             optionLabel="label"
             optionValue="value"
-            placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+            placeholder="Tous les statuts" i18n-placeholder="@@stock-vouchers.stock-voucher-list.tous.les.statuts.2d5088af"
             [showClear]="true"
             [style]="{ width: '100%' }"
             appendTo="body">
@@ -93,7 +93,7 @@ import {
             [(ngModel)]="warehouseFilter"
             optionLabel="label"
             optionValue="value"
-            placeholder="Tous les dépôts" i18n-placeholder="Tous les dépôts"
+            placeholder="Tous les dépôts" i18n-placeholder="@@stock-vouchers.stock-voucher-list.tous.les.depots.7221e7b1"
             [showClear]="true"
             [filter]="warehouseOptions.length > 8"
             filterBy="label"
@@ -110,8 +110,8 @@ import {
           <input id="filter-to" type="date" class="date-input" [(ngModel)]="toDate" />
         </div>
         <div class="filter-actions">
-          <button pButton type="button" label="Appliquer" i18n-label="Appliquer" icon="pi pi-filter" (click)="reload()"></button>
-          <button pButton type="button" label="Réinitialiser" i18n-label="Réinitialiser" class="p-button-outlined" (click)="resetFilters()"></button>
+          <button pButton type="button" label="Appliquer" i18n-label="@@stock-vouchers.stock-voucher-list.appliquer.a4d66139" icon="pi pi-filter" (click)="reload()"></button>
+          <button pButton type="button" label="Réinitialiser" i18n-label="@@stock-vouchers.stock-voucher-list.reinitialiser.e0e2ad54" class="p-button-outlined" (click)="resetFilters()"></button>
         </div>
       </div>
     </div>
@@ -128,7 +128,7 @@ import {
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons" i18n-currentPageReportTemplate="@@stock-vouchers.stock-voucher-list.affichage.de.first.a.last.sur.totalrecords.bons.7cce8044"
         (onLazyLoad)="onLazyLoad($event)"
         styleClass="p-datatable-sm">
         <ng-template pTemplate="header">

@@ -37,10 +37,10 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Mon abonnement" i18n-title="Mon abonnement"
+      title="Mon abonnement" i18n-title="@@settings.subscription.mon.abonnement.d248414d"
       subtitle="Gérez votre forfait et suivez votre consommation">
       <p-button
-        label="Retour" i18n-label="Retour"
+        label="Retour" i18n-label="@@settings.subscription.retour.e5befb1f"
         icon="pi pi-arrow-left"
         [outlined]="true"
         routerLink="/settings">
@@ -95,12 +95,12 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
         </div>
         <div class="plan-actions">
           <p-button
-            label="Changer de forfait" i18n-label="Changer de forfait"
+            label="Changer de forfait" i18n-label="@@settings.subscription.changer.de.forfait.9d073980"
             icon="pi pi-arrow-up"
             (onClick)="openChangePlanDialog()">
           </p-button>
           <p-button
-            label="Gérer le paiement" i18n-label="Gérer le paiement"
+            label="Gérer le paiement" i18n-label="@@settings.subscription.gerer.le.paiement.4ce031b8"
             icon="pi pi-credit-card"
             [outlined]="true">
           </p-button>
@@ -116,7 +116,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
           </div>
           @if (canRegularizeSubscription()) {
             <p-button
-              label="Régulariser l'abonnement" i18n-label="Régulariser l'abonnement"
+              label="Régulariser l'abonnement" i18n-label="@@settings.subscription.regulariser.l.abonnement.a58e2ad0"
               icon="pi pi-refresh"
               severity="warn"
               [outlined]="true"
@@ -127,7 +127,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
       }
 
       <!-- Usage -->
-      <p-card header="Utilisation ce mois" i18n-header="Utilisation ce mois" styleClass="usage-card">
+      <p-card header="Utilisation ce mois" i18n-header="@@settings.subscription.utilisation.ce.mois.b8c6c579" styleClass="usage-card">
         <div class="usage-grid">
           @for (item of usageItems(); track item.label) {
             <div class="usage-item">
@@ -206,14 +206,14 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
               @if (plan.isCurrent) {
                 @if (canRegularizeSubscription()) {
                   <p-button
-                    label="Régulariser l'abonnement" i18n-label="Régulariser l'abonnement"
+                    label="Régulariser l'abonnement" i18n-label="@@settings.subscription.regulariser.l.abonnement.a58e2ad0"
                     styleClass="w-full"
                     severity="warn"
                     (onClick)="openChangePlanDialog()">
                   </p-button>
                 } @else {
                   <p-button
-                    label="Forfait actuel" i18n-label="Forfait actuel"
+                    label="Forfait actuel" i18n-label="@@settings.subscription.forfait.actuel.ad20553e"
                     [disabled]="true"
                     styleClass="w-full"
                     severity="secondary">
@@ -232,7 +232,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
       </div>
 
       <!-- Billing History -->
-      <p-card header="Historique de facturation" i18n-header="Historique de facturation" styleClass="billing-card">
+      <p-card header="Historique de facturation" i18n-header="@@settings.subscription.historique.de.facturation.5cdc4eff" styleClass="billing-card">
         @if (billingHistory.length === 0) {
           <div class="empty-billing">
             <i class="pi pi-inbox"></i>
@@ -257,7 +257,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
                   icon="pi pi-download"
                   [text]="true"
                   [rounded]="true"
-                  pTooltip="Télécharger" i18n-pTooltip="Télécharger">
+                  pTooltip="Télécharger" i18n-pTooltip="@@settings.subscription.telecharger.b332d06d">
                 </p-button>
               </div>
             }
@@ -273,7 +273,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
         <h3 i18n="@@settings.subscription.impossible.de.charger.votre.abonnement.890af3dd">Impossible de charger votre abonnement</h3>
         <p>{{ error() }}</p>
         <p-button
-          label="Réessayer" i18n-label="Réessayer"
+          label="Réessayer" i18n-label="@@settings.subscription.reessayer.895d416b"
           icon="pi pi-refresh"
           (onClick)="loadData()">
         </p-button>

@@ -65,16 +65,16 @@ interface BulkRow {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Ajouter des utilisateurs" i18n-title="Ajouter des utilisateurs"
+      title="Ajouter des utilisateurs" i18n-title="@@settings.users.ajouter.des.utilisateurs.0f065e3f"
       subtitle="Créez plusieurs comptes avec rôle et modules pour chacun">
-      <p-button label="Retour à la liste" i18n-label="Retour à la liste" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings/users"></p-button>
+      <p-button label="Retour à la liste" i18n-label="@@settings.users.retour.a.la.liste.7753f531" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings/users"></p-button>
     </app-page-header>
 
     <p-card styleClass="bulk-card">
       <div class="toolbar">
-        <p-button label="Ajouter une ligne" i18n-label="Ajouter une ligne" icon="pi pi-plus" [outlined]="true" (onClick)="addRow()"></p-button>
+        <p-button label="Ajouter une ligne" i18n-label="@@settings.users.ajouter.une.ligne.ba241fd4" icon="pi pi-plus" [outlined]="true" (onClick)="addRow()"></p-button>
         <p-button
-          label="Dupliquer modules (ligne 1 → toutes)" i18n-label="Dupliquer modules (ligne 1 → toutes)"
+          label="Dupliquer modules (ligne 1 → toutes)" i18n-label="@@settings.users.dupliquer.modules.ligne.1.toutes.6ebd1d76"
           icon="pi pi-copy"
           [outlined]="true"
           severity="secondary"
@@ -91,7 +91,7 @@ interface BulkRow {
             <th scope="col" i18n="@@settings.users.mot.de.passe.94e2f3ee">Mot de passe</th>
             <th scope="col" i18n="@@settings.users.role.8b824790">Rôle</th>
             <th scope="col" style="width: 12rem" i18n="@@settings.users.modules.04e9462c">Modules</th>
-            <th scope="col" class="actions-col" aria-label="Actions" i18n-aria-label="Actions"></th>
+            <th scope="col" class="actions-col" aria-label="Actions" i18n-aria-label="@@settings.users.actions.c3cd636a"></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row let-ri="rowIndex">
@@ -103,7 +103,7 @@ interface BulkRow {
                 [(ngModel)]="row.firstName"
                 [name]="'bulk-firstName-' + ri"
                 autocomplete="given-name"
-                placeholder="Prénom" i18n-placeholder="Prénom" />
+                placeholder="Prénom" i18n-placeholder="@@settings.users.prenom.e4387ade" />
             </td>
             <td data-label="Nom">
               <input
@@ -112,7 +112,7 @@ interface BulkRow {
                 [(ngModel)]="row.lastName"
                 [name]="'bulk-lastName-' + ri"
                 autocomplete="family-name"
-                placeholder="Nom" i18n-placeholder="Nom" />
+                placeholder="Nom" i18n-placeholder="@@settings.users.nom.7ff20370" />
             </td>
             <td data-label="Email">
               <input
@@ -122,7 +122,7 @@ interface BulkRow {
                 type="email"
                 [name]="'bulk-email-' + ri"
                 autocomplete="off"
-                placeholder="nom@entreprise.fr" i18n-placeholder="nom@entreprise.fr" />
+                placeholder="nom@entreprise.fr" i18n-placeholder="@@settings.users.nom.entreprise.fr.9626f884" />
             </td>
             <td data-label="Mot de passe">
               <p-password
@@ -131,7 +131,7 @@ interface BulkRow {
                 [inputId]="'bulk-password-' + ri"
                 [feedback]="false"
                 [toggleMask]="true"
-                placeholder="Mot de passe" i18n-placeholder="Mot de passe"
+                placeholder="Mot de passe" i18n-placeholder="@@settings.users.mot.de.passe.94e2f3ee"
                 styleClass="w-full"
                 inputStyleClass="w-full bulk-password-input"></p-password>
             </td>
@@ -143,13 +143,13 @@ interface BulkRow {
                 [name]="'bulk-role-' + ri"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Rôle" i18n-placeholder="Rôle"
+                placeholder="Rôle" i18n-placeholder="@@settings.users.role.8b824790"
                 styleClass="w-full"></p-select>
             </td>
             <td data-label="Modules">
               <div class="module-cell">
                 <p-button
-                  label="Configurer" i18n-label="Configurer"
+                  label="Configurer" i18n-label="@@settings.users.configurer.382efbe9"
                   icon="pi pi-sliders-h"
                   [outlined]="true"
                   (onClick)="openModules(ri)"></p-button>
@@ -172,13 +172,13 @@ interface BulkRow {
       <p class="rows-hint">{{ bulkRowsHint() }}</p>
 
       <div class="footer-actions">
-        <p-button label="Enregistrer tout" i18n-label="Enregistrer tout" icon="pi pi-check" (onClick)="submit()" [loading]="submitting()"></p-button>
+        <p-button label="Enregistrer tout" i18n-label="@@settings.users.enregistrer.tout.d16a3dcb" icon="pi pi-check" (onClick)="submit()" [loading]="submitting()"></p-button>
       </div>
     </p-card>
 
     <p-dialog
       [(visible)]="modulesVisible"
-      header="Modules autorisés" i18n-header="Modules autorisés"
+      header="Modules autorisés" i18n-header="@@settings.users.modules.autorises.2d0a003a"
       [modal]="true"
       [style]="{ width: 'min(480px, 96vw)' }"
       (onHide)="onModulesDialogHide()">
@@ -190,8 +190,8 @@ interface BulkRow {
         <div class="catalog-error" i18n="@@settings.users.impossible.de.charger.le.catalogue.des.modules.p.b24c3ba2"> Impossible de charger le catalogue des modules pour ce rôle. Fermez puis rouvrez la configuration pour réessayer. </div>
       } @else {
         <div class="module-actions">
-          <p-button label="Tout activer" i18n-label="Tout activer" [text]="true" (onClick)="setAllModules(true)"></p-button>
-          <p-button label="Tout désactiver" i18n-label="Tout désactiver" [text]="true" (onClick)="setAllModules(false)"></p-button>
+          <p-button label="Tout activer" i18n-label="@@settings.users.tout.activer.ce34115c" [text]="true" (onClick)="setAllModules(true)"></p-button>
+          <p-button label="Tout désactiver" i18n-label="@@settings.users.tout.desactiver.f09b1c87" [text]="true" (onClick)="setAllModules(false)"></p-button>
         </div>
         <div class="module-list">
           @for (m of workingModules(); track m.module) {
@@ -232,7 +232,7 @@ interface BulkRow {
         </div>
       }
       <div class="dialog-actions">
-        <p-button label="Fermer" i18n-label="Fermer" (onClick)="modulesVisible = false"></p-button>
+        <p-button label="Fermer" i18n-label="@@settings.users.fermer.5ab4ec64" (onClick)="modulesVisible = false"></p-button>
       </div>
     </p-dialog>
   `,

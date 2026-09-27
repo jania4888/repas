@@ -177,7 +177,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
                   <code>{{ selectedSeller.nif }}</code>
                   <span 
                     class="nif-valid"
-                    pTooltip="Format conforme: 1772793W/A/M/000" i18n-pTooltip="Format conforme: 1772793W/A/M/000"
+                    pTooltip="Format conforme: 1772793W/A/M/000" i18n-pTooltip="@@invoices.invoice-wizard.format.conforme.1772793w.a.m.000.ecfd8d49"
                     tooltipPosition="top">
                     <i class="pi pi-check-circle"></i>
                     Valide

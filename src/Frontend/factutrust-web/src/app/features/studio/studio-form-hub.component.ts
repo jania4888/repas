@@ -21,10 +21,10 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      title="Formulaires & vues" i18n-title="Formulaires & vues"
+      title="Formulaires & vues" i18n-title="@@studio.studio-form-hub.formulaires.vues.b08f8230"
       subtitle="Concevez le formulaire de saisie ou une vue lecture seule sur une table SQL."
       [breadcrumbs]="breadcrumbs">
-      <button pButton type="button" label="Nouvelle vue" i18n-label="Nouvelle vue" icon="fa-solid fa-database" class="p-button-outlined"
+      <button pButton type="button" label="Nouvelle vue" i18n-label="@@studio.studio-form-hub.nouvelle.vue.5c1894bc" icon="fa-solid fa-database" class="p-button-outlined"
         studioActions routerLink="/studio/views/new"></button>
 
       <div class="studio-section-card">
@@ -39,16 +39,16 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
                 <td><i [class]="e.icon || 'fa-solid fa-table'" class="studio-mr"></i><strong>{{ e.displayName }}</strong></td>
                 <td class="studio-num">{{ e.fieldCount }}</td>
                 <td class="studio-actions">
-                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire" i18n-label="Formulaire"
+                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire" i18n-label="@@studio.studio-form-hub.formulaire.87e4e76f"
                     class="p-button-sm" [routerLink]="['/studio', e.id, 'form']"></button>
-                  <button pButton type="button" icon="fa-solid fa-table-list" label="Données" i18n-label="Données"
+                  <button pButton type="button" icon="fa-solid fa-table-list" label="Données" i18n-label="@@studio.studio-form-hub.donnees.e3e0c5ec"
                     class="p-button-sm p-button-text" [routerLink]="['/studio/d', e.key]"></button>
                 </td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr><td colspan="3">
-                <app-empty-state icon="pi-table" title="Aucune table" i18n-title="Aucune table" description="Créez une table personnalisée pour concevoir son formulaire."
+                <app-empty-state icon="pi-table" title="Aucune table" i18n-title="@@studio.studio-form-hub.aucune.table.05210918" description="Créez une table personnalisée pour concevoir son formulaire."
                   actionLabel="Créer une table" actionRoute="/studio" [showAction]="true" />
               </td></tr>
             </ng-template>
@@ -68,15 +68,15 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
                 <td><i class="fa-solid fa-database studio-mr"></i><strong>{{ v.displayName }}</strong></td>
                 <td><code>{{ v.sourceTable }}</code></td>
                 <td class="studio-actions">
-                  <button pButton type="button" icon="fa-solid fa-eye" label="Voir" i18n-label="Voir" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id, 'view']"></button>
-                  <button pButton type="button" icon="fa-solid fa-pen" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id]" pTooltip="Modifier" i18n-pTooltip="Modifier"></button>
+                  <button pButton type="button" icon="fa-solid fa-eye" label="Voir" i18n-label="@@studio.studio-form-hub.voir.8a754f1f" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id, 'view']"></button>
+                  <button pButton type="button" icon="fa-solid fa-pen" class="p-button-sm p-button-text" [routerLink]="['/studio/views', v.id]" pTooltip="Modifier" i18n-pTooltip="@@studio.studio-form-hub.modifier.f260e757"></button>
                   <button pButton type="button" icon="fa-solid fa-trash" class="p-button-sm p-button-text p-button-danger" (click)="removeView(v)"></button>
                 </td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr><td colspan="3">
-                <app-empty-state icon="pi-database" title="Aucune vue" i18n-title="Aucune vue" description="Créez une vue lecture seule sur une table existante."
+                <app-empty-state icon="pi-database" title="Aucune vue" i18n-title="@@studio.studio-form-hub.aucune.vue.6f4edeb8" description="Créez une vue lecture seule sur une table existante."
                   actionLabel="Nouvelle vue" actionRoute="/studio/views/new" [showAction]="true" />
               </td></tr>
             </ng-template>

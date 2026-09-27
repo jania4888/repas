@@ -25,7 +25,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Assistant d'écritures d'inventaire" i18n-title="Assistant d'écritures d'inventaire" subtitle="Régularisations de fin d'exercice (CCA/PCA, provisions…)" />
+    <app-page-header title="Assistant d'écritures d'inventaire" i18n-title="@@accounting.inventory-assistant.assistant.d.ecritures.d.inventaire.fb2e8311" subtitle="Régularisations de fin d'exercice (CCA/PCA, provisions…)" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -56,11 +56,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </div>
           <div class="inv-field">
             <label class="field-label" for="inv-debit" i18n="@@accounting.inventory-assistant.compte.debit.dadbd7e8">Compte débit</label>
-            <input id="inv-debit" class="inv-input" [(ngModel)]="form.debitAccount" list="inv-accounts" placeholder="Compte à débiter" i18n-placeholder="Compte à débiter" />
+            <input id="inv-debit" class="inv-input" [(ngModel)]="form.debitAccount" list="inv-accounts" placeholder="Compte à débiter" i18n-placeholder="@@accounting.inventory-assistant.compte.a.debiter.9115cf60" />
           </div>
           <div class="inv-field">
             <label class="field-label" for="inv-credit" i18n="@@accounting.inventory-assistant.compte.credit.3aec4855">Compte crédit</label>
-            <input id="inv-credit" class="inv-input" [(ngModel)]="form.creditAccount" list="inv-accounts" placeholder="Compte à créditer" i18n-placeholder="Compte à créditer" />
+            <input id="inv-credit" class="inv-input" [(ngModel)]="form.creditAccount" list="inv-accounts" placeholder="Compte à créditer" i18n-placeholder="@@accounting.inventory-assistant.compte.a.crediter.c614b491" />
           </div>
           <div class="inv-field">
             <label class="field-label" for="inv-amount" i18n="@@accounting.inventory-assistant.montant.4adcd9fc">Montant</label>

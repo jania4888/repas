@@ -22,7 +22,7 @@ export type ContractSideAction = 'invoice' | 'reminder' | 'download' | 'clone' |
   imports: [CommonModule, ChartModule, TooltipModule, ChartCardComponent, ButtonComponent, EmptyStateComponent],
   template: `
     <app-chart-card
-      title="Résumé financier" i18n-title="Résumé financier"
+      title="Résumé financier" i18n-title="@@recurring-contracts.components.resume.financier.00e0cf1c"
       [subtitle]="summary && summary.isOpenEnded ? loc_ui_tern_12_prochains_mois_contrat_sans_fin_225ba2 : undefined">
       @if (summary; as s) {
         <div class="donut-wrap">
@@ -55,7 +55,7 @@ export type ContractSideAction = 'invoice' | 'reminder' | 'download' | 'clone' |
         <app-empty-state
           icon="pi-chart-pie"
           iconSize="1.5rem"
-          title="Résumé disponible prochainement" i18n-title="Résumé disponible prochainement"
+          title="Résumé disponible prochainement" i18n-title="@@recurring-contracts.components.resume.disponible.prochainement.2a743add"
           description="Le résumé financier sera disponible après la mise à jour du serveur."
           [showAction]="false">
         </app-empty-state>
@@ -84,14 +84,14 @@ export type ContractSideAction = 'invoice' | 'reminder' | 'download' | 'clone' |
           size="sm"
           icon="pi-envelope"
           [disabled]="true"
-          pTooltip="Disponible prochainement" i18n-pTooltip="Disponible prochainement"
+          pTooltip="Disponible prochainement" i18n-pTooltip="@@recurring-contracts.components.disponible.prochainement.96420607"
           tooltipPosition="left" i18n="@@recurring-contracts.components.envoyer.un.rappel.80e49875"> Envoyer un rappel </app-button>
         <app-button
           variant="outline"
           size="sm"
           icon="pi-download"
           [disabled]="true"
-          pTooltip="Disponible prochainement" i18n-pTooltip="Disponible prochainement"
+          pTooltip="Disponible prochainement" i18n-pTooltip="@@recurring-contracts.components.disponible.prochainement.96420607"
           tooltipPosition="left" i18n="@@recurring-contracts.components.telecharger.le.contrat.9eca7c98"> Télécharger le contrat </app-button>
         @if (canCreate) {
           <app-button variant="outline" size="sm" icon="pi-copy" [disabled]="actionInProgress" (clicked)="actionTriggered.emit('clone')" i18n="@@recurring-contracts.components.cloner.le.contrat.0beaa2d4"> Cloner le contrat </app-button>

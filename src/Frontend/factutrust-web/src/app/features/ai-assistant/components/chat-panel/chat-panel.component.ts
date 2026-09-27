@@ -56,7 +56,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
         <!-- Header -->
         <div class="panel-header">
           <div class="header-left">
-            <button class="icon-btn" (click)="session.toggleSidebar()" title="Conversations" i18n-title="Conversations">
+            <button class="icon-btn" (click)="session.toggleSidebar()" title="Conversations" i18n-title="@@ai-assistant.components.conversations.07c59b44">
               <i class="fa-solid fa-clock-rotate-left"></i>
             </button>
             <div class="ai-avatar" aria-hidden="true">
@@ -89,14 +89,14 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                 type="button"
                 class="mode-chip"
                 (click)="switchToGlobalAssistant()"
-                title="Revenir à l'assistant global (tous les domaines)" i18n-title="Revenir à l'assistant global (tous les domaines)" i18n="@@ai-assistant.components.assistant.global.0dc5a3f0"> Assistant global </button>
+                title="Revenir à l'assistant global (tous les domaines)" i18n-title="@@ai-assistant.components.revenir.a.l.assistant.global.tous.les.domaines.28083c00" i18n="@@ai-assistant.components.assistant.global.0dc5a3f0"> Assistant global </button>
             } @else {
               <button
                 type="button"
                 class="mode-chip"
                 [class.active]="session.assistantComplianceMode()"
                 (click)="session.setAssistantComplianceMode(!session.assistantComplianceMode())"
-                title="Mode conformité : sous-ensemble d’outils et consignes renforcées" i18n-title="Mode conformité : sous-ensemble d’outils et consignes renforcées" i18n="@@ai-assistant.components.conformite.905cab8c"> Conformité </button>
+                title="Mode conformité : sous-ensemble d’outils et consignes renforcées" i18n-title="@@ai-assistant.components.mode.conformite.sous.ensemble.d.outils.et.consig.c82156d3" i18n="@@ai-assistant.components.conformite.905cab8c"> Conformité </button>
             }
             @if (session.lastStreamTraceId(); as tid) {
               <button
@@ -111,8 +111,8 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
               [class.active]="selection.isSelectionMode()"
               (click)="toggleSelectionMode()"
               [attr.aria-pressed]="selection.isSelectionMode()"
-              title="Sélection multi-réponses (export PowerPoint)" i18n-title="Sélection multi-réponses (export PowerPoint)" i18n="@@ai-assistant.components.selection.ac0002b0"> Sélection </button>
-            <button class="icon-btn" (click)="onCloseClick()" title="Fermer" i18n-title="Fermer">
+              title="Sélection multi-réponses (export PowerPoint)" i18n-title="@@ai-assistant.components.selection.multi.reponses.export.powerpoint.8e60cffd" i18n="@@ai-assistant.components.selection.ac0002b0"> Sélection </button>
+            <button class="icon-btn" (click)="onCloseClick()" title="Fermer" i18n-title="@@ai-assistant.components.fermer.5ab4ec64">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
@@ -122,7 +122,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
           <div
             class="selection-bar"
             role="toolbar"
-            aria-label="Barre d'actions pour la sélection multi-réponses" i18n-aria-label="Barre d'actions pour la sélection multi-réponses">
+            aria-label="Barre d'actions pour la sélection multi-réponses" i18n-aria-label="@@ai-assistant.components.barre.d.actions.pour.la.selection.multi.reponses.3ffb0105">
             <span class="selection-count">
               {{ selection.count() }} réponse(s) sélectionnée(s)
               @if (selection.atLimit()) {
@@ -135,13 +135,13 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                 class="selection-btn"
                 (click)="selection.clear()"
                 [disabled]="!selection.hasSelection()"
-                aria-label="Vider la sélection" i18n-aria-label="Vider la sélection" i18n="@@ai-assistant.components.effacer.fe23de7b"> Effacer </button>
+                aria-label="Vider la sélection" i18n-aria-label="@@ai-assistant.components.vider.la.selection.834a3e51" i18n="@@ai-assistant.components.effacer.fe23de7b"> Effacer </button>
               <button
                 type="button"
                 class="selection-btn primary"
                 (click)="openExportDialog()"
                 [disabled]="!selection.hasSelection()"
-                aria-label="Exporter en PowerPoint" i18n-aria-label="Exporter en PowerPoint">
+                aria-label="Exporter en PowerPoint" i18n-aria-label="@@ai-assistant.components.exporter.en.powerpoint.1032c468">
                 <i class="fa-solid fa-file-powerpoint" aria-hidden="true"></i>
                 Exporter PowerPoint
               </button>
@@ -180,7 +180,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                   <h4>{{ welcomeTitle() }}</h4>
                   <p>{{ welcomeDescription() }}</p>
                   @if (!scopeConfig() && session.dailyBriefing(); as b) {
-                    <div class="briefing-card" role="region" aria-label="Aperçu du jour" i18n-aria-label="Aperçu du jour">
+                    <div class="briefing-card" role="region" aria-label="Aperçu du jour" i18n-aria-label="@@ai-assistant.components.apercu.du.jour.be116976">
                       <div class="briefing-title" i18n="@@ai-assistant.components.apercu.du.jour.be116976">Aperçu du jour</div>
                       <ul class="briefing-list">
                         <li>
@@ -212,18 +212,18 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                       }
                     </div>
                   }
-                  <div class="favorite-add" role="group" aria-label="Enregistrer une question favorite" i18n-aria-label="Enregistrer une question favorite">
+                  <div class="favorite-add" role="group" aria-label="Enregistrer une question favorite" i18n-aria-label="@@ai-assistant.components.enregistrer.une.question.favorite.c2d5ac73">
                     <input
                       #favInput
                       type="text"
                       class="favorite-input"
-                      placeholder="Enregistrer une question favorite…" i18n-placeholder="Enregistrer une question favorite…"
+                      placeholder="Enregistrer une question favorite…" i18n-placeholder="@@ai-assistant.components.enregistrer.une.question.favorite.bd0517d1"
                       maxlength="500"
                       (keydown.enter)="addFavorite(favInput); $event.preventDefault()" />
                     <button type="button" class="favorite-save-btn" (click)="addFavorite(favInput)" i18n="@@ai-assistant.components.enregistrer.f7c8bcd8"> Enregistrer </button>
                   </div>
                   @if (promptFavorites.favorites().length) {
-                    <div class="favorites-block" role="region" aria-label="Questions enregistrées" i18n-aria-label="Questions enregistrées">
+                    <div class="favorites-block" role="region" aria-label="Questions enregistrées" i18n-aria-label="@@ai-assistant.components.questions.enregistrees.b4f9d0eb">
                       <div class="favorites-title" i18n="@@ai-assistant.components.questions.enregistrees.b4f9d0eb">Questions enregistrées</div>
                       @for (f of promptFavorites.favorites(); track f.id) {
                         <div class="favorite-row">

@@ -282,7 +282,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
       <textarea
         pTextarea
         [(ngModel)]="cancellationReason"
-        placeholder="Motif d'annulation…" i18n-placeholder="Motif d'annulation…"
+        placeholder="Motif d'annulation…" i18n-placeholder="@@purchase-receipts.pages.motif.d.annulation.7df7a5ee"
         [rows]="4"
         class="w-full">
       </textarea>

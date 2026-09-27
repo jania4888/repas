@@ -1,7 +1,7 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <app-page-header
-  title="Nouvelle facture fournisseur" i18n-title="Nouvelle facture fournisseur"
+  title="Nouvelle facture fournisseur" i18n-title="@@supplier-invoices.supplier-invoice-form.nouvelle.facture.fournisseur.9342d116"
   subtitle="Saisissez une facture de charges ou de services. Le stock n'est pas mis à jour.">
   <app-button variant="outline" icon="pi-times" iconPos="left" (click)="cancel()" i18n="@@supplier-invoices.supplier-invoice-form.annuler.49ba3292">Annuler</app-button>
   <app-button
@@ -21,7 +21,7 @@
 </div>
 
 <div class="form-layout">
-  <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-building" [number]="1">
+  <app-form-section title="Informations générales" i18n-title="@@supplier-invoices.supplier-invoice-form.informations.generales.be6ba6e5" icon="pi-building" [number]="1">
     <div class="ft-form-grid">
       <div class="ft-field">
         <label for="supplier"><ng-container i18n="@@supplier-invoices.supplier-invoice-form.fournisseur.97d91d89">Fournisseur </ng-container> <span class="ft-required" i18n="@@supplier-invoices.supplier-invoice-form.text.df58248c">*</span></label>
@@ -32,7 +32,7 @@
           name="supplierId"
           optionLabel="name"
           optionValue="id"
-          placeholder="Sélectionnez un fournisseur" i18n-placeholder="Sélectionnez un fournisseur"
+          placeholder="Sélectionnez un fournisseur" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.selectionnez.un.fournisseur.7351a0fb"
           [filter]="true"
           filterBy="name"
           [showClear]="true"
@@ -74,7 +74,7 @@
             id="invoiceNumber"
             [(ngModel)]="invoiceNumber"
             name="invoiceNumber"
-            placeholder="FS-2026-000001" i18n-placeholder="FS-2026-000001"
+            placeholder="FS-2026-000001" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.fs.2026.000001.35a32054"
             [disabled]="useSuggestedNumber"
             (ngModelChange)="onInvoiceNumberEdited()">
           <app-button
@@ -105,7 +105,7 @@
           id="externalReference"
           [(ngModel)]="externalReference"
           name="externalReference"
-          placeholder="N° papier du fournisseur" i18n-placeholder="N° papier du fournisseur">
+          placeholder="N° papier du fournisseur" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.n.papier.du.fournisseur.1ff1c874">
       </div>
 
       <div class="ft-field">
@@ -118,7 +118,7 @@
           optionLabel="label"
           optionValue="value"
           [showClear]="true"
-          placeholder="Optionnel" i18n-placeholder="Optionnel">
+          placeholder="Optionnel" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.optionnel.879d6b16">
         </p-select>
       </div>
 
@@ -148,7 +148,7 @@
     </div>
   </app-form-section>
 
-  <app-form-section title="Lignes" i18n-title="Lignes" icon="pi-list" [number]="2">
+  <app-form-section title="Lignes" i18n-title="@@supplier-invoices.supplier-invoice-form.lignes.41c7025e" icon="pi-list" [number]="2">
     <div class="lines-toolbar">
       <app-button type="button" variant="outline" size="sm" icon="pi-plus" iconPos="left" (click)="addLine()" i18n="@@supplier-invoices.supplier-invoice-form.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
       <app-button type="button" variant="ghost" size="sm" icon="pi-plus-circle" iconPos="left" (click)="quickCreateVisible = true" i18n="@@supplier-invoices.supplier-invoice-form.creer.un.article.service.33b46eca"> Créer un article / service </app-button>
@@ -158,7 +158,7 @@
     @if (barcodeScanEnabled) {
       <div class="barcode-scan-row">
         <ft-barcode-scan-field
-          placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
+          placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
           [autoFocus]="false"
           (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
       </div>
@@ -198,7 +198,7 @@
                   [minLength]="0"
                   appendTo="body"
                   panelStyleClass="si-line-product-panel"
-                  placeholder="Service ou charge (hors stock)" i18n-placeholder="Service ou charge (hors stock)">
+                  placeholder="Service ou charge (hors stock)" i18n-placeholder="@@supplier-invoices.supplier-invoice-form.service.ou.charge.hors.stock.881e7889">
                   <ng-template let-product pTemplate="item">
                     <div class="product-item">
                       <span class="product-item__code">{{ product.code }}</span>

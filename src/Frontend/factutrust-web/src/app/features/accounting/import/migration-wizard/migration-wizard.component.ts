@@ -42,7 +42,7 @@ import {
       </div>
     } @else {
       <!-- Indicateur d'étapes -->
-      <div class="mw-steps" role="list" aria-label="Étapes de la migration assistée" i18n-aria-label="Étapes de la migration assistée">
+      <div class="mw-steps" role="list" aria-label="Étapes de la migration assistée" i18n-aria-label="@@accounting.import.etapes.de.la.migration.assistee.75cb9810">
         @for (s of stepLabels; track $index) {
           <span class="mw-step" role="listitem" [class.mw-step-active]="$index === step()" [class.mw-step-done]="$index < step()">
             {{ $index + 1 }}. {{ s }}
@@ -156,7 +156,7 @@ import {
                   <td>{{ item.sourceLabel ?? '—' }}</td>
                   <td>
                     <input type="text" class="mw-input mw-account-input" [(ngModel)]="item.targetAccount" [disabled]="busy()"
-                      [attr.title]="item.justification" placeholder="(tel quel)" i18n-placeholder="(tel quel)" />
+                      [attr.title]="item.justification" placeholder="(tel quel)" i18n-placeholder="@@accounting.import.tel.quel.5dbc58d7" />
                   </td>
                   <td><span class="mw-origin" [class.mw-origin-ia]="item.origin === origins.Ia">{{ originLabel(item.origin) }}</span></td>
                   <td>{{ item.confidence > 0 ? (item.confidence * 100 | number:'1.0-0') + ' %' : '—' }}</td>

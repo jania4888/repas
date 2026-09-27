@@ -48,7 +48,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
   ],
   template: `
     <app-page-header
-      title="Livre de paie simplifié" i18n-title="Livre de paie simplifié"
+      title="Livre de paie simplifié" i18n-title="@@payroll.reports.livre.de.paie.simplifie.ebb59e66"
       subtitle="Registre des salaires par salarié sur une plage de mois. Seuls les cycles validés ou clôturés sont inclus par défaut.">
       @if (canExport()) {
         <app-accounting-export-menu
@@ -63,7 +63,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         [(ngModel)]="year"
         optionLabel="label"
         optionValue="value"
-        placeholder="Année" i18n-placeholder="Année"
+        placeholder="Année" i18n-placeholder="@@payroll.reports.annee.1f910d98"
         styleClass="w-10rem"
         ariaLabel="Année" />
       <p-select
@@ -71,7 +71,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         [(ngModel)]="fromMonth"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois de" i18n-placeholder="Mois de"
+        placeholder="Mois de" i18n-placeholder="@@payroll.reports.mois.de.c0799d11"
         styleClass="w-10rem"
         ariaLabel="Mois de début" />
       <p-select
@@ -79,7 +79,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         [(ngModel)]="toMonth"
         optionLabel="label"
         optionValue="value"
-        placeholder="Mois à" i18n-placeholder="Mois à"
+        placeholder="Mois à" i18n-placeholder="@@payroll.reports.mois.a.876a05e9"
         styleClass="w-10rem"
         ariaLabel="Mois de fin" />
       <label class="payroll-report-check">
@@ -113,7 +113,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
     } @else if (!book()) {
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
-        title="Impossible de charger le livre de paie" i18n-title="Impossible de charger le livre de paie"
+        title="Impossible de charger le livre de paie" i18n-title="@@payroll.reports.impossible.de.charger.le.livre.de.paie.526ad9d1"
         description="Une erreur est survenue. Réessayez ou vérifiez vos droits."
         [showAction]="true"
         actionLabel="Réessayer"
@@ -121,7 +121,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
     } @else if (book()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-book"
-        title="Aucun bulletin sur la période" i18n-title="Aucun bulletin sur la période"
+        title="Aucun bulletin sur la période" i18n-title="@@payroll.reports.aucun.bulletin.sur.la.periode.f2265bfb"
         description="Aucun cycle validé ou clôturé sur la plage sélectionnée."
         [showAction]="true"
         actionLabel="Voir les cycles de paie"

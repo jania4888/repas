@@ -16,13 +16,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingCorrectionBannerComponent],
   template: `
-    <app-page-header title="Recherche d'écriture" i18n-title="Recherche d'écriture" subtitle="Recherche multicritère des lignes d'écriture" />
+    <app-page-header title="Recherche d'écriture" i18n-title="@@accounting.entry-search.recherche.d.ecriture.0a69c5f4" subtitle="Recherche multicritère des lignes d'écriture" />
 
     <app-accounting-correction-banner />
 
     <div class="card es-filters">
       <div class="es-grid">
-        <div class="es-field"><label class="es-lbl" for="es-acc" i18n="@@accounting.entry-search.compte.c45740bb">Compte</label><input id="es-acc" class="es-inp" [(ngModel)]="f.account" placeholder="Ex. 411" i18n-placeholder="Ex. 411" /></div>
+        <div class="es-field"><label class="es-lbl" for="es-acc" i18n="@@accounting.entry-search.compte.c45740bb">Compte</label><input id="es-acc" class="es-inp" [(ngModel)]="f.account" placeholder="Ex. 411" i18n-placeholder="@@accounting.entry-search.ex.411.473c941f" /></div>
         <div class="es-field"><label class="es-lbl" for="es-jrn" i18n="@@accounting.entry-search.journal.57d7f743">Journal</label>
           <select id="es-jrn" class="es-inp" [(ngModel)]="f.journalCode">
             <option [ngValue]="null" i18n="@@accounting.entry-search.tous.b97ae3b4">Tous</option>
@@ -35,7 +35,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="es-field"><label class="es-lbl" for="es-max" i18n="@@accounting.entry-search.montant.max.44599630">Montant max</label><input id="es-max" type="number" class="es-inp" [(ngModel)]="f.maxAmount" /></div>
         <div class="es-field es-field-wide"><label class="es-lbl" for="es-lbl" i18n="@@accounting.entry-search.libelle.contient.694f61b3">Libellé contient</label><input id="es-lbl" class="es-inp" [(ngModel)]="f.label" /></div>
         <div class="es-field"><label class="es-lbl" for="es-let" i18n="@@accounting.entry-search.lettrage.cfcdd333">Lettrage</label><input id="es-let" class="es-inp" [(ngModel)]="f.lettering" /></div>
-        <div class="es-field"><label class="es-lbl" for="es-piece" i18n="@@accounting.entry-search.ref.piece.16d07789">Réf. pièce</label><input id="es-piece" class="es-inp" [(ngModel)]="f.pieceRef" placeholder="Contient…" i18n-placeholder="Contient…" /></div>
+        <div class="es-field"><label class="es-lbl" for="es-piece" i18n="@@accounting.entry-search.ref.piece.16d07789">Réf. pièce</label><input id="es-piece" class="es-inp" [(ngModel)]="f.pieceRef" placeholder="Contient…" i18n-placeholder="@@accounting.entry-search.contient.b61b3adf" /></div>
         <div class="es-field"><label class="es-lbl" for="es-st" i18n="@@accounting.entry-search.statut.659499f3">Statut</label>
           <select id="es-st" class="es-inp" [(ngModel)]="f.status">
             <option [ngValue]="null" i18n="@@accounting.entry-search.tous.b97ae3b4">Tous</option>

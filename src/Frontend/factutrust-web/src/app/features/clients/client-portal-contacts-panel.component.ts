@@ -16,10 +16,10 @@ import { ClientPortalContact, PortalService } from '@features/portal/portal.serv
   template: `
     <p i18n="@@clients.client-portal-contacts-panel.invitez.un.contact.pour.qu.il.consulte.ses.factu.aa0aa605">Invitez un contact pour qu’il consulte ses factures dans l’espace client.</p>
     <form class="invite" (ngSubmit)="invite()">
-      <input pInputText [(ngModel)]="email" name="email" placeholder="Email" i18n-placeholder="Email" />
-      <input pInputText [(ngModel)]="firstName" name="firstName" placeholder="Prénom" i18n-placeholder="Prénom" />
-      <input pInputText [(ngModel)]="lastName" name="lastName" placeholder="Nom" i18n-placeholder="Nom" />
-      <p-button type="submit" label="Inviter" i18n-label="Inviter" [loading]="busy()" />
+      <input pInputText [(ngModel)]="email" name="email" placeholder="Email" i18n-placeholder="@@clients.client-portal-contacts-panel.email.84add5b2" />
+      <input pInputText [(ngModel)]="firstName" name="firstName" placeholder="Prénom" i18n-placeholder="@@clients.client-portal-contacts-panel.prenom.e4387ade" />
+      <input pInputText [(ngModel)]="lastName" name="lastName" placeholder="Nom" i18n-placeholder="@@clients.client-portal-contacts-panel.nom.7ff20370" />
+      <p-button type="submit" label="Inviter" i18n-label="@@clients.client-portal-contacts-panel.inviter.3c7ec332" [loading]="busy()" />
     </form>
     <p-table [value]="contacts()" [loading]="loading()">
       <ng-template pTemplate="header">
@@ -33,8 +33,8 @@ import { ClientPortalContact, PortalService } from '@features/portal/portal.serv
           <td>{{ c.lastAccessAt | date:'dd/MM/yyyy HH:mm' }}</td>
           <td>
             @if (c.status !== 'Revoked') {
-              <p-button label="Renvoyer" i18n-label="Renvoyer" size="small" [text]="true" (onClick)="resend(c)" />
-              <p-button label="Révoquer" i18n-label="Révoquer" size="small" severity="danger" [text]="true" (onClick)="revoke(c)" />
+              <p-button label="Renvoyer" i18n-label="@@clients.client-portal-contacts-panel.renvoyer.1e73219e" size="small" [text]="true" (onClick)="resend(c)" />
+              <p-button label="Révoquer" i18n-label="@@clients.client-portal-contacts-panel.revoquer.9c67aaa2" size="small" severity="danger" [text]="true" (onClick)="revoke(c)" />
             }
           </td>
         </tr>

@@ -320,7 +320,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
         </label>
         <label *ngIf="!isFromSupplierInvoice()">
           <ng-container i18n="@@accounting.fixed-assets.compte.de.credit.404.532.101.72e064b6"> Compte de crédit (404, 532, 101…) * </ng-container>
-          <input class="accounting-filter-input" [(ngModel)]="creditAccount" placeholder="404" i18n-placeholder="404" />
+          <input class="accounting-filter-input" [(ngModel)]="creditAccount" placeholder="404" i18n-placeholder="@@accounting.fixed-assets.404.c35a9fc5" />
         </label>
       </div>
       <app-button variant="primary" type="button" (click)="putInService()" [disabled]="saving()">
@@ -451,7 +451,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
           </label>
           <label *ngIf="disposalMode === 'cash'">
             <ng-container i18n="@@accounting.fixed-assets.compte.tresorerie.d0134786"> Compte trésorerie * </ng-container>
-            <input class="accounting-filter-input" [(ngModel)]="treasuryAccount" placeholder="5321" i18n-placeholder="5321" />
+            <input class="accounting-filter-input" [(ngModel)]="treasuryAccount" placeholder="5321" i18n-placeholder="@@accounting.fixed-assets.5321.c17ece1e" />
           </label>
           <label class="radio-option">
             <input type="radio" name="disposalMode" value="receivable" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
@@ -459,7 +459,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
           </label>
           <label *ngIf="disposalMode === 'receivable'">
             <ng-container i18n="@@accounting.fixed-assets.compte.creance.f64b8a52"> Compte créance * </ng-container>
-            <input class="accounting-filter-input" [(ngModel)]="receivableAccount" placeholder="452" i18n-placeholder="452" />
+            <input class="accounting-filter-input" [(ngModel)]="receivableAccount" placeholder="452" i18n-placeholder="@@accounting.fixed-assets.452.3af0af21" />
           </label>
           <label class="radio-option">
             <input type="radio" name="disposalMode" value="scrap" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />

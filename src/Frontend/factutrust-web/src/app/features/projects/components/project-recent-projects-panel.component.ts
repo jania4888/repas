@@ -32,14 +32,14 @@ import {
     EmptyStateComponent
   ],
   template: `
-    <app-dashboard-panel title="Projets récents" i18n-title="Projets récents" [subtitle]="tableSubtitle()" [flush]="true">
+    <app-dashboard-panel title="Projets récents" i18n-title="@@projects.components.projets.recents.dd30bc80" [subtitle]="tableSubtitle()" [flush]="true">
       <div panel-actions class="proj-dash-table-search">
         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
         <input
           type="search"
           [(ngModel)]="searchQuery"
-          placeholder="Rechercher…" i18n-placeholder="Rechercher…"
-          aria-label="Rechercher dans les projets récents" i18n-aria-label="Rechercher dans les projets récents" />
+          placeholder="Rechercher…" i18n-placeholder="@@projects.components.rechercher.1d12cdfb"
+          aria-label="Rechercher dans les projets récents" i18n-aria-label="@@projects.components.rechercher.dans.les.projets.recents.a46be4ca" />
       </div>
 
       <p-table
@@ -49,7 +49,7 @@ import {
         [paginator]="filteredRows().length > rowsPerPage"
         [rows]="rowsPerPage"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Afficher {first} à {last} sur {totalRecords} projets" i18n-currentPageReportTemplate="Afficher {first} à {last} sur {totalRecords} projets">
+        currentPageReportTemplate="Afficher {first} à {last} sur {totalRecords} projets" i18n-currentPageReportTemplate="@@projects.components.afficher.first.a.last.sur.totalrecords.projets.4fdca48e">
         <ng-template pTemplate="header">
           <tr>
             <th i18n="@@projects.components.projet.a9de3a26">Projet</th>
@@ -105,7 +105,7 @@ import {
         <ng-template pTemplate="emptymessage">
           <tr>
             <td colspan="7">
-              <app-empty-state icon="pi-briefcase" title="Aucun projet" i18n-title="Aucun projet" [showAction]="false" />
+              <app-empty-state icon="pi-briefcase" title="Aucun projet" i18n-title="@@projects.components.aucun.projet.c77f3894" [showAction]="false" />
             </td>
           </tr>
         </ng-template>

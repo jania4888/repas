@@ -50,7 +50,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Suivi DM" i18n-title="Suivi DM"
+      title="Suivi DM" i18n-title="@@accounting.monthly-declaration.suivi.dm.2089b59a"
       subtitle="Les douze mois d’un exercice : ce qui est déposé, ce qui manque, et sous quel régime" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -81,7 +81,7 @@ import {
       @if (!t.settings.configurableLinesEnabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé" i18n-title="Calcul paramétré non activé"
+          title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
           message="Toutes les périodes sont produites par le calcul historique. Le suivi des dépôts reste exact." />
       }
 

@@ -287,7 +287,7 @@ interface TimelineEvent {
         <!-- Sidebar -->
         <div class="sidebar">
           <!-- Status Card -->
-          <p-card header="Statut" i18n-header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="@@invoices.invoice-detail.statut.659499f3" styleClass="status-card">
             <div class="status-content">
               <app-status-badge 
                 [status]="getStatusBadgeStatus(invoice()!.status)"
@@ -297,7 +297,7 @@ interface TimelineEvent {
           </p-card>
 
           <!-- Timeline Card -->
-          <p-card header="Historique" i18n-header="Historique" styleClass="timeline-card">
+          <p-card header="Historique" i18n-header="@@invoices.invoice-detail.historique.34f3a06a" styleClass="timeline-card">
             <p-timeline [value]="timeline" styleClass="custom-timeline">
               <ng-template pTemplate="content" let-event>
                 <div class="timeline-event">
@@ -316,7 +316,7 @@ interface TimelineEvent {
           </p-card>
 
           <!-- Payment History Card -->
-          <p-card header="Historique des paiements" i18n-header="Historique des paiements" styleClass="payments-card">
+          <p-card header="Historique des paiements" i18n-header="@@invoices.invoice-detail.historique.des.paiements.38e1285d" styleClass="payments-card">
             @if (invoice()!.payments && invoice()!.payments!.length > 0) {
               <div class="payments-list">
                 @for (payment of invoice()!.payments; track payment.id) {
@@ -407,7 +407,7 @@ interface TimelineEvent {
 
           <!-- Signature Info -->
           @if (invoice()!.signatureHash) {
-            <p-card header="Signature électronique" i18n-header="Signature électronique" styleClass="signature-card">
+            <p-card header="Signature électronique" i18n-header="@@invoices.invoice-detail.signature.electronique.513a9511" styleClass="signature-card">
               <div class="signature-info">
                 <div class="info-row">
                   <i class="pi pi-verified"></i>
@@ -424,7 +424,7 @@ interface TimelineEvent {
       </div>
 
       <p-dialog
-        header="Valider la facture" i18n-header="Valider la facture"
+        header="Valider la facture" i18n-header="@@invoices.invoice-detail.valider.la.facture.04848f44"
         [(visible)]="showValidateDialog"
         [modal]="true"
         styleClass="ft-dialog-scrollable"
@@ -484,7 +484,7 @@ interface TimelineEvent {
             }
             @if (needsStockAllocationOnValidate()) {
               <div class="validate-lines-table-wrap">
-                <table class="validate-lines-table" aria-label="Lignes à déduire du stock" i18n-aria-label="Lignes à déduire du stock">
+                <table class="validate-lines-table" aria-label="Lignes à déduire du stock" i18n-aria-label="@@invoices.invoice-detail.lignes.a.deduire.du.stock.cb3a69b2">
                   <thead>
                     <tr>
                       <th i18n="@@invoices.invoice-detail.produit.ff673dc2">Produit</th>

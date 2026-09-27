@@ -32,7 +32,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Immobilisations" i18n-title="Immobilisations"
+      title="Immobilisations" i18n-title="@@accounting.fixed-assets.immobilisations.1e4cbe01"
       subtitle="Registre des actifs et suivi des amortissements (norme tunisienne)" />
 
     <div class="card accounting-filters-card">
@@ -40,7 +40,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <input
           type="search"
           class="accounting-filter-input"
-          placeholder="Rechercher (désignation, n° inventaire)" i18n-placeholder="Rechercher (désignation, n° inventaire)"
+          placeholder="Rechercher (désignation, n° inventaire)" i18n-placeholder="@@accounting.fixed-assets.rechercher.designation.n.inventaire.cc557d2d"
           [(ngModel)]="search"
           (keyup.enter)="reload()" />
         <select class="accounting-filter-input" [(ngModel)]="statusFilter" (ngModelChange)="reload()">
@@ -57,7 +57,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <input
           type="number"
           class="accounting-filter-input year-input"
-          placeholder="Exercice" i18n-placeholder="Exercice"
+          placeholder="Exercice" i18n-placeholder="@@accounting.fixed-assets.exercice.e171e2b0"
           min="2000"
           max="2100"
           [(ngModel)]="fiscalYearFilter"
@@ -75,7 +75,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card" *ngIf="!loading() && items().length === 0">
       <app-empty-state
         icon="pi pi-building"
-        title="Aucune immobilisation" i18n-title="Aucune immobilisation"
+        title="Aucune immobilisation" i18n-title="@@accounting.fixed-assets.aucune.immobilisation.f9c26485"
         message="Créez votre premier actif pour générer un tableau d'amortissement." />
     </div>
 
@@ -128,7 +128,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </span>
         <div class="page-actions">
           <app-button variant="secondary" type="button" (click)="prevPage()" [disabled]="loading() || page() <= 1" i18n="@@accounting.fixed-assets.precedent.a527f171"> Précédent </app-button>
-          <app-button variant="secondary" type="button" (click)="nextPage()" [disabled]="loading() || page() >= totalPages()" i18n> Suivant </app-button>
+          <app-button variant="secondary" type="button" (click)="nextPage()" [disabled]="loading() || page() >= totalPages()" i18n="@@accounting.fixed-assets.suivant.596d29a7"> Suivant </app-button>
         </div>
       </div>
     </div>

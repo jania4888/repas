@@ -116,7 +116,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid" [class.form-grid--with-side]="hasSideSections()">
         <!-- General Information -->
-        <app-form-section class="section-identity" title="Informations générales" i18n-title="Informations générales" icon="pi-box" [number]="1">
+        <app-form-section class="section-identity" title="Informations générales" i18n-title="@@products.product-form.informations.generales.be6ba6e5" icon="pi-box" [number]="1">
           <div class="form-row form-row-3">
             <div class="form-group">
               <label for="code"><ng-container i18n="@@products.product-form.code.produit.60220afb">Code produit </ng-container> <span class="required" i18n="@@products.product-form.text.df58248c">*</span></label>
@@ -124,7 +124,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                 pInputText 
                 id="code" 
                 formControlName="code"
-                placeholder="Ex: PROD-001" i18n-placeholder="Ex: PROD-001"
+                placeholder="Ex: PROD-001" i18n-placeholder="@@products.product-form.ex.prod.001.654beeed"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('code')">
               @if (isInvalid('code')) {
@@ -141,7 +141,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                 id="category"
                 [options]="categoryOptions" 
                 formControlName="category"
-                placeholder="Sélectionner" i18n-placeholder="Sélectionner"
+                placeholder="Sélectionner" i18n-placeholder="@@products.product-form.selectionner.ab31a36f"
                 styleClass="w-full">
               </p-select>
               @if (isInvalid('category')) {
@@ -158,7 +158,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                 id="productCategoryId"
                 [options]="productCategoryOptions()"
                 formControlName="productCategoryId"
-                placeholder="Sélectionner une catégorie" i18n-placeholder="Sélectionner une catégorie"
+                placeholder="Sélectionner une catégorie" i18n-placeholder="@@products.product-form.selectionner.une.categorie.6b9668aa"
                 optionLabel="label"
                 optionValue="value"
                 styleClass="w-full">
@@ -176,7 +176,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                   pInputText
                   id="barcode"
                   formControlName="barcode"
-                  placeholder="Scannez ou saisissez le code-barres" i18n-placeholder="Scannez ou saisissez le code-barres"
+                  placeholder="Scannez ou saisissez le code-barres" i18n-placeholder="@@products.product-form.scannez.ou.saisissez.le.code.barres.507da1a3"
                   class="w-full"
                   autocomplete="off"
                   spellcheck="false">
@@ -213,7 +213,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
               pInputText 
               id="name" 
               formControlName="name"
-              placeholder="Nom du produit ou service" i18n-placeholder="Nom du produit ou service"
+              placeholder="Nom du produit ou service" i18n-placeholder="@@products.product-form.nom.du.produit.ou.service.d82d71d4"
               class="w-full"
               [class.ng-invalid]="isInvalid('name')">
             @if (isInvalid('name')) {
@@ -230,7 +230,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
               pTextarea 
               id="description" 
               formControlName="description"
-              placeholder="Description détaillée du produit ou service..." i18n-placeholder="Description détaillée du produit ou service..."
+              placeholder="Description détaillée du produit ou service..." i18n-placeholder="@@products.product-form.description.detaillee.du.produit.ou.service.8c65fcfc"
               [rows]="4"
               class="w-full">
             </textarea>
@@ -262,7 +262,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                     id="preferredSupplierId"
                     [options]="supplierOptions()"
                     formControlName="preferredSupplierId"
-                    placeholder="Aucun (à choisir lors de la commande)" i18n-placeholder="Aucun (à choisir lors de la commande)"
+                    placeholder="Aucun (à choisir lors de la commande)" i18n-placeholder="@@products.product-form.aucun.a.choisir.lors.de.la.commande.8c0a1570"
                     optionLabel="label"
                     optionValue="value"
                     [filter]="true"
@@ -285,7 +285,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                   [min]="0"
                   [minFractionDigits]="0"
                   [maxFractionDigits]="3"
-                  placeholder="Non renseigné" i18n-placeholder="Non renseigné"
+                  placeholder="Non renseigné" i18n-placeholder="@@products.product-form.non.renseigne.9ccfe1f1"
                   styleClass="w-full">
                 </p-inputNumber>
                 <small class="form-hint" i18n="@@products.product-form.optionnel.seuil.d.alerte.sur.l.entrepot.par.defa.1ef85276"> Optionnel — seuil d'alerte sur l'entrepôt par défaut. Utilisé par les alertes stock
@@ -316,7 +316,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                     chooseLabel="Choisir une image"
                     (onSelect)="onProductImageSelect($event)"
                     [disabled]="saving()"
-                    aria-label="Choisir une image pour le produit" i18n-aria-label="Choisir une image pour le produit">
+                    aria-label="Choisir une image pour le produit" i18n-aria-label="@@products.product-form.choisir.une.image.pour.le.produit.498fe514">
                   </p-fileUpload>
                   @if (displayImageUrl() || selectedImageFile()) {
                     <button
@@ -324,7 +324,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                       class="product-image-remove"
                       (click)="removeProductImage()"
                       [disabled]="saving()"
-                      aria-label="Supprimer l'image du produit" i18n-aria-label="Supprimer l'image du produit" i18n="@@products.product-form.supprimer.l.image.2042d17b"> Supprimer l'image </button>
+                      aria-label="Supprimer l'image du produit" i18n-aria-label="@@products.product-form.supprimer.l.image.du.produit.32bd2603" i18n="@@products.product-form.supprimer.l.image.2042d17b"> Supprimer l'image </button>
                   }
                   <small class="form-hint" i18n="@@products.product-form.jpeg.png.ou.webp.max.2.mo.c876f43c">JPEG, PNG ou WebP. Max 2 Mo.</small>
                 </div>
@@ -351,7 +351,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
         @if (hasSideSections()) {
           <div class="section-side">
         @if (showVariantsSection()) {
-          <app-form-section id="variantes" class="section-variants" title="Variantes" i18n-title="Variantes" icon="pi-th-large" [number]="variantsSectionNumber()">
+          <app-form-section id="variantes" class="section-variants" title="Variantes" i18n-title="@@products.product-form.variantes.69a7f04e" icon="pi-th-large" [number]="variantsSectionNumber()">
             <div class="form-group">
               <label for="isVariantTemplate" i18n="@@products.product-form.modele.de.variantes.25d7b4a0">Modèle de variantes</label>
               <div class="status-switch">
@@ -415,7 +415,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
         }
 
         @if (showTraceabilitySection()) {
-          <app-form-section class="section-trace" title="Traçabilité et valorisation" i18n-title="Traçabilité et valorisation" icon="pi-qrcode" [number]="traceSectionNumber()">
+          <app-form-section class="section-trace" title="Traçabilité et valorisation" i18n-title="@@products.product-form.tracabilite.et.valorisation.d1bd26b2" icon="pi-qrcode" [number]="traceSectionNumber()">
             @if (!traceabilityEditable()) {
               <p class="form-hint" i18n="@@products.product-form.activez.la.gestion.de.stock.pour.configurer.la.t.bd79223f">Activez la gestion de stock pour configurer la traçabilité et la valorisation.</p>
             } @else {
@@ -472,7 +472,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
         }
 
         <!-- Pricing -->
-        <app-form-section class="section-pricing" title="Tarification" i18n-title="Tarification" icon="pi-dollar" [number]="pricingSectionNumber()">
+        <app-form-section class="section-pricing" title="Tarification" i18n-title="@@products.product-form.tarification.5dc310ae" icon="pi-dollar" [number]="pricingSectionNumber()">
           <div class="pricing-block">
             <h4 class="pricing-block-title" i18n="@@products.product-form.couts.d.achat.1efe6462">Coûts d'achat</h4>
             <div class="form-group">
@@ -484,7 +484,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                 [minFractionDigits]="3"
                 [maxFractionDigits]="3"
                 suffix=" TND"
-                placeholder="Optionnel" i18n-placeholder="Optionnel"
+                placeholder="Optionnel" i18n-placeholder="@@products.product-form.optionnel.879d6b16"
                 styleClass="w-full"
                 (onInput)="onPricingChange('purchasePrice')">
               </p-inputNumber>
@@ -541,7 +541,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                   id="unit"
                   [options]="unitOptions"
                   formControlName="unit"
-                  placeholder="Sélectionner" i18n-placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="@@products.product-form.selectionner.ab31a36f"
                   [editable]="true"
                   styleClass="w-full">
                 </p-select>
@@ -553,7 +553,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                   id="vatRate"
                   [options]="vatOptions"
                   formControlName="vatRate"
-                  placeholder="Sélectionner" i18n-placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="@@products.product-form.selectionner.ab31a36f"
                   styleClass="w-full"
                   (onChange)="onPricingChange('vatRate')">
                 </p-select>
@@ -584,7 +584,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                   [minFractionDigits]="3"
                   [maxFractionDigits]="3"
                   suffix=" %"
-                  placeholder="—" i18n-placeholder="—"
+                  placeholder="—" i18n-placeholder="@@products.product-form.text.1b93795b"
                   styleClass="w-full"
                   (onInput)="onPricingChange('margin')">
                 </p-inputNumber>
@@ -606,7 +606,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                   [minFractionDigits]="3"
                   [maxFractionDigits]="3"
                   suffix=" TND"
-                  placeholder="0.000" i18n-placeholder="0.000"
+                  placeholder="0.000" i18n-placeholder="@@products.product-form.0.000.725af307"
                   styleClass="w-full"
                   [class.ng-invalid]="isInvalid('unitPrice')"
                   (onInput)="onPricingChange('unitPriceHt')">
@@ -632,14 +632,14 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                   [minFractionDigits]="3"
                   [maxFractionDigits]="3"
                   suffix=" TND"
-                  placeholder="0.000" i18n-placeholder="0.000"
+                  placeholder="0.000" i18n-placeholder="@@products.product-form.0.000.725af307"
                   styleClass="w-full"
                   (onInput)="onPricingChange('saleTtc')">
                 </p-inputNumber>
               </div>
             </div>
 
-            <div class="price-preview" aria-label="Récapitulatif des prix" i18n-aria-label="Récapitulatif des prix">
+            <div class="price-preview" aria-label="Récapitulatif des prix" i18n-aria-label="@@products.product-form.recapitulatif.des.prix.3d69a8b0">
               <div class="preview-row">
                 <span i18n="@@products.product-form.prix.ht.362207ca">Prix HT</span>
                 <span class="value">{{ (form.get('unitPrice')?.value ?? 0) | number:'1.3-3' }} TND</span>
@@ -684,7 +684,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                   [minFractionDigits]="1"
                   [maxFractionDigits]="1"
                   suffix=" %"
-                  placeholder="0.0" i18n-placeholder="0.0"
+                  placeholder="0.0" i18n-placeholder="@@products.product-form.0.0.38f6d787"
                   styleClass="w-full"
                   [class.ng-invalid]="isInvalid('maxDiscountPercent')">
                 </p-inputNumber>
@@ -697,7 +697,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
 
       @if (isEditMode() && productId()) {
         <div class="form-grid-full">
-          <app-form-section title="Tarifs par client" i18n-title="Tarifs par client" icon="pi-users" [number]="clientPricesSectionNumber()">
+          <app-form-section title="Tarifs par client" i18n-title="@@products.product-form.tarifs.par.client.e47e033b" icon="pi-users" [number]="clientPricesSectionNumber()">
             <app-product-client-prices
               [productId]="productId()!"
               [catalogUnitPriceHT]="form.get('unitPrice')?.value ?? 0">

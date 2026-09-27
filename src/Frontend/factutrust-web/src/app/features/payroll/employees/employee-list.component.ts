@@ -52,14 +52,14 @@ type StatusFilter = 'all' | 'active' | 'inactive';
       message="Mode consultation — la gestion des dossiers salariés est réservée à la société cliente." />
 
     <div class="payroll-toolbar">
-      <input pInputText type="text" placeholder="Rechercher…" i18n-placeholder="Rechercher…" [(ngModel)]="search" (ngModelChange)="load()" class="w-full md:w-20rem" />
+      <input pInputText type="text" placeholder="Rechercher…" i18n-placeholder="@@payroll.employees.rechercher.1d12cdfb" [(ngModel)]="search" (ngModelChange)="load()" class="w-full md:w-20rem" />
       <p-select
         [options]="statusOptions"
         [(ngModel)]="statusFilter"
         (ngModelChange)="load()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Statut" i18n-placeholder="Statut"
+        placeholder="Statut" i18n-placeholder="@@payroll.employees.statut.659499f3"
         styleClass="w-12rem" />
     </div>
 
@@ -68,7 +68,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
         [loading]="loading()"
         [skeletonColumns]="7"
         icon="pi-users"
-        title="Aucun salarié" i18n-title="Aucun salarié"
+        title="Aucun salarié" i18n-title="@@payroll.employees.aucun.salarie.a1567c77"
         [description]="loading() ? undefined : 'Aucun salarié ne correspond à vos critères.'"
         [showAction]="canManage() && !loading()"
         actionLabel="Nouveau salarié"

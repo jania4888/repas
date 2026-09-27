@@ -131,7 +131,7 @@ import { ProductOnboardingApiService } from '../../onboarding/product-onboarding
         (click)="openAiWorkspaceTab()"
         [hidden]="tourRunning()"
         [attr.inert]="tourRunning() ? '' : null"
-        title="Assistant IA" i18n-title="Assistant IA">
+        title="Assistant IA" i18n-title="@@core.layout.main-layout.main-layout.assistant.ia.94f6f208">
         <img
           [src]="aiMarkSrc"
           alt=""

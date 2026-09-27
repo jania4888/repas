@@ -13,7 +13,7 @@ import { ProjectProgressGaugeComponent } from './project-progress-gauge.componen
   template: `
     @if (data) {
       <div class="proj-dash-charts">
-        <app-chart-card title="Avancement des projets" i18n-title="Avancement des projets" subtitle="Répartition par statut">
+        <app-chart-card title="Avancement des projets" i18n-title="@@projects.components.avancement.des.projets.2192527c" subtitle="Répartition par statut">
           <div class="proj-dash-donut-wrap">
             <div class="proj-dash-donut-chart">
               <p-chart type="doughnut" [data]="statusChart()" [options]="doughnutOptions" [style]="{ height: '220px' }" />
@@ -35,7 +35,7 @@ import { ProjectProgressGaugeComponent } from './project-progress-gauge.componen
         </app-chart-card>
 
         <app-chart-card
-          title="Évolution des tâches" i18n-title="Évolution des tâches"
+          title="Évolution des tâches" i18n-title="@@projects.components.evolution.des.taches.1cb8b4bb"
           [subtitle]="period === 'month' ? loc_ui_tern_30_derniers_jours_edd8ab : loc_ui_tern_7_derniers_jours_4ea89a">
           <p-chart type="line" [data]="trendChart()" [options]="lineOptions" [style]="{ height: '260px' }" />
         </app-chart-card>

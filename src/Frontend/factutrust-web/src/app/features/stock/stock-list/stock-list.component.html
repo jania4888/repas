@@ -4,7 +4,7 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <!-- Page Header -->
-<app-page-header title="Gestion du Stock" i18n-title="Gestion du Stock" subtitle="Suivez l'état de vos stocks en temps réel">
+<app-page-header title="Gestion du Stock" i18n-title="@@stock.stock-list.gestion.du.stock.72df5586" subtitle="Suivez l'état de vos stocks en temps réel">
   <div class="stock-actions">
     @if (canCreateStockVoucher()) {
       <a routerLink="/stock/entries/new" class="stock-btn stock-btn-entry">
@@ -67,7 +67,7 @@
   <div class="filters-header">
     <h3 class="filters-title" i18n="@@stock.stock-list.filtres.2a8e76e0">Filtres</h3>
     @if (hasActiveFilters()) {
-    <button class="filters-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+    <button class="filters-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@stock.stock-list.reinitialiser.les.filtres.d8915f02">
       <i class="pi pi-times"></i>
       Réinitialiser ({{ activeFiltersCount() }})
     </button>
@@ -76,16 +76,16 @@
   <div class="filters-row">
     <span class="p-input-icon-left flex-1">
       <i class="pi pi-search"></i>
-      <input pInputText type="text" placeholder="Rechercher par produit ou code..." i18n-placeholder="Rechercher par produit ou code..." [(ngModel)]="searchTerm"
+      <input pInputText type="text" placeholder="Rechercher par produit ou code..." i18n-placeholder="@@stock.stock-list.rechercher.par.produit.ou.code.5d13f223" [(ngModel)]="searchTerm"
         (input)="applyFilters()" class="w-full">
     </span>
 
     <p-select [options]="warehouses" [(ngModel)]="selectedWarehouse" optionLabel="name"
-      placeholder="Tous les entrepôts" i18n-placeholder="Tous les entrepôts" [showClear]="true" (onChange)="applyFilters()">
+      placeholder="Tous les entrepôts" i18n-placeholder="@@stock.stock-list.tous.les.entrepots.2c918ad1" [showClear]="true" (onChange)="applyFilters()">
     </p-select>
 
     <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
-      placeholder="Tous les statuts" i18n-placeholder="Tous les statuts" [showClear]="true" (onChange)="applyFilters()">
+      placeholder="Tous les statuts" i18n-placeholder="@@stock.stock-list.tous.les.statuts.2d5088af" [showClear]="true" (onChange)="applyFilters()">
     </p-select>
   </div>
 </div>
@@ -112,7 +112,7 @@
   } @else {
   <p-table 
           [loading]="loading()" [value]="filteredItems()" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-    currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments" i18n-currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments" [rowHover]="true"
+    currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments" i18n-currentPageReportTemplate="@@stock.stock-list.affichage.first.a.last.sur.totalrecords.elements.c41bb317" [rowHover]="true"
     styleClass="p-datatable-striped">
 
     <ng-template pTemplate="header">
@@ -164,20 +164,20 @@
         </td>
         <td>
           <div class="actions-cell">
-            <app-button variant="ghost" size="sm" icon="pi-history" [iconOnly]="true" pTooltip="Historique mouvements" i18n-pTooltip="Historique mouvements"
+            <app-button variant="ghost" size="sm" icon="pi-history" [iconOnly]="true" pTooltip="Historique mouvements" i18n-pTooltip="@@stock.stock-list.historique.mouvements.ad6facc6"
               tooltipPosition="top" [routerLink]="[item.id, 'history']" ariaLabel="Voir l'historique">
             </app-button>
             @if (lotTrackingEnabled()) {
-            <app-button variant="ghost" size="sm" icon="pi-tags" [iconOnly]="true" pTooltip="Lots" i18n-pTooltip="Lots"
+            <app-button variant="ghost" size="sm" icon="pi-tags" [iconOnly]="true" pTooltip="Lots" i18n-pTooltip="@@stock.stock-list.lots.79029175"
               tooltipPosition="top" (click)="toggleLots(item)" ariaLabel="Voir les lots">
             </app-button>
             }
             @if (fifoLifoValuationEnabled() && (item.costingMethod === 1 || item.costingMethod === 2)) {
-            <app-button variant="ghost" size="sm" icon="pi-list" [iconOnly]="true" pTooltip="Couches FIFO/LIFO" i18n-pTooltip="Couches FIFO/LIFO"
+            <app-button variant="ghost" size="sm" icon="pi-list" [iconOnly]="true" pTooltip="Couches FIFO/LIFO" i18n-pTooltip="@@stock.stock-list.couches.fifo.lifo.cf47038e"
               tooltipPosition="top" (click)="toggleLayers(item)" ariaLabel="Voir les couches de valorisation">
             </app-button>
             }
-            <app-button variant="ghost" size="sm" icon="pi-sliders-h" [iconOnly]="true" pTooltip="Ajuster le stock" i18n-pTooltip="Ajuster le stock"
+            <app-button variant="ghost" size="sm" icon="pi-sliders-h" [iconOnly]="true" pTooltip="Ajuster le stock" i18n-pTooltip="@@stock.stock-list.ajuster.le.stock.b3559cfb"
               tooltipPosition="top" (click)="openAdjustDialog(item)" ariaLabel="Ajuster le stock">
             </app-button>
           </div>
@@ -252,7 +252,7 @@
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="7" class="text-center p-6">
-          <app-empty-state illustration="empty-box.svg" title="Aucun article en stock" i18n-title="Aucun article en stock"
+          <app-empty-state illustration="empty-box.svg" title="Aucun article en stock" i18n-title="@@stock.stock-list.aucun.article.en.stock.5a3a8111"
             description="Ajoutez votre première entrée de stock pour commencer à gérer votre inventaire."
             actionLabel="Ajouter une entrée de stock" actionRoute="entry">
           </app-empty-state>
@@ -264,7 +264,7 @@
 </div>
 
 <!-- Adjustment Dialog -->
-<p-dialog header="Ajuster le stock" i18n-header="Ajuster le stock" [(visible)]="adjustDialogVisible" [modal]="true" [style]="{width: '480px'}"
+<p-dialog header="Ajuster le stock" i18n-header="@@stock.stock-list.ajuster.le.stock.b3559cfb" [(visible)]="adjustDialogVisible" [modal]="true" [style]="{width: '480px'}"
   [draggable]="false" [resizable]="false" styleClass="adjust-dialog">
 
   @if (selectedItemForAdjust) {
@@ -310,16 +310,16 @@
     <div class="form-field">
       <label for="adjustNotes" i18n="@@stock.stock-list.notes.optionnel.c4bb754a">Notes (optionnel)</label>
       <textarea pInputText id="adjustNotes" [(ngModel)]="adjustmentForm.notes" rows="3"
-        placeholder="Raison de l'ajustement..." i18n-placeholder="Raison de l'ajustement..." class="w-full"></textarea>
+        placeholder="Raison de l'ajustement..." i18n-placeholder="@@stock.stock-list.raison.de.l.ajustement.617ebe1a" class="w-full"></textarea>
     </div>
   </div>
   }
 
   <ng-template pTemplate="footer">
     <div class="dialog-actions">
-      <button pButton type="button" label="Annuler" i18n-label="Annuler" class="p-button-text p-button-secondary"
+      <button pButton type="button" label="Annuler" i18n-label="@@stock.stock-list.annuler.49ba3292" class="p-button-text p-button-secondary"
         (click)="adjustDialogVisible = false" [disabled]="adjustSubmitting"></button>
-      <button pButton type="button" label="Confirmer" i18n-label="Confirmer" icon="pi pi-check" (click)="submitAdjust()"
+      <button pButton type="button" label="Confirmer" i18n-label="@@stock.stock-list.confirmer.80a664c8" icon="pi pi-check" (click)="submitAdjust()"
         [disabled]="!isValidAdjust() || adjustSubmitting" [loading]="adjustSubmitting"></button>
     </div>
   </ng-template>

@@ -90,7 +90,7 @@ type JournalFlatRow = {
     AccountingCorrectionBannerComponent
   ],
   template: `
-    <app-page-header title="Journal comptable" i18n-title="Journal comptable" subtitle="Écritures par période" />
+    <app-page-header title="Journal comptable" i18n-title="@@accounting.journal.journal.comptable.cc13c236" subtitle="Écritures par période" />
     <app-accounting-correction-banner />
     <div class="card journal-filters-card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Période et journal">
@@ -151,7 +151,7 @@ type JournalFlatRow = {
       </app-accounting-filter-bar>
     </div>
 
-    <div class="accounting-kpi-row" aria-label="Totaux sur la période chargée" i18n-aria-label="Totaux sur la période chargée">
+    <div class="accounting-kpi-row" aria-label="Totaux sur la période chargée" i18n-aria-label="@@accounting.journal.totaux.sur.la.periode.chargee.5f242d4c">
       <div class="accounting-kpi-item">
         <span class="accounting-kpi-label" i18n="@@accounting.journal.total.debit.ea9c4853">Total débit</span>
         <span class="accounting-kpi-value">{{ totals().debit | number : '1.3-3' }}</span>
@@ -192,8 +192,8 @@ type JournalFlatRow = {
             class="journal-search-input"
             [(ngModel)]="searchTerm"
             (ngModelChange)="onSearchChange()"
-            placeholder="Filtrer journal, libellé, compte, date…" i18n-placeholder="Filtrer journal, libellé, compte, date…"
-            aria-label="Filtrer les lignes du journal" i18n-aria-label="Filtrer les lignes du journal" />
+            placeholder="Filtrer journal, libellé, compte, date…" i18n-placeholder="@@accounting.journal.filtrer.journal.libelle.compte.date.a3d2e50b"
+            aria-label="Filtrer les lignes du journal" i18n-aria-label="@@accounting.journal.filtrer.les.lignes.du.journal.7d436ef3" />
         </span>
         <p class="journal-count" aria-live="polite">
           <span class="journal-count-value">{{ flatRows().length }}</span>
@@ -210,7 +210,7 @@ type JournalFlatRow = {
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.journal.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824"
         styleClass="p-datatable-sm journal-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
@@ -261,10 +261,10 @@ type JournalFlatRow = {
                   {{ r.isDraft ? loc_ui_tern_brouillon_57d2d7 : r.status === 2 ? loc_ui_tern_cloturee_da2e2b : loc_ui_tern_validee_2cc6c3 }}
                 </span>
                 @if (isPayrollSourced(r.sourceEntityType)) {
-                  <span class="journal-badge journal-badge-reversed" title="Écriture générée par le module Paie" i18n-title="Écriture générée par le module Paie" i18n="@@accounting.journal.paie.6ca885f3">Paie</span>
+                  <span class="journal-badge journal-badge-reversed" title="Écriture générée par le module Paie" i18n-title="@@accounting.journal.ecriture.generee.par.le.module.paie.a2daa06d" i18n="@@accounting.journal.paie.6ca885f3">Paie</span>
                 }
                 @if (r.isReversed) {
-                  <span class="journal-badge journal-badge-reversed" title="Écriture extournée" i18n-title="Écriture extournée" i18n="@@accounting.journal.extournee.a84e7737">Extournée</span>
+                  <span class="journal-badge journal-badge-reversed" title="Écriture extournée" i18n-title="@@accounting.journal.ecriture.extournee.85db3ad3" i18n="@@accounting.journal.extournee.a84e7737">Extournée</span>
                 }
               }
             </td>
@@ -280,7 +280,7 @@ type JournalFlatRow = {
                   type="button"
                   (click)="editEntry(r)"
                   [attr.aria-label]="'Modifier l\\'écriture ' + r.journal + ' n° ' + r.piece"
-                  title="Modifier" i18n-title="Modifier" />
+                  title="Modifier" i18n-title="@@accounting.journal.modifier.f260e757" />
               }
               @if (r.firstOfEntry && r.isDraft && canValidate()) {
                 <app-button
@@ -304,7 +304,7 @@ type JournalFlatRow = {
                   (click)="deleteEntry(r.entryId, r.journal, r.piece)"
                   [disabled]="deletingId() === r.entryId"
                   [attr.aria-label]="'Supprimer l\\'écriture ' + r.journal + ' n° ' + r.piece"
-                  title="Supprimer" i18n-title="Supprimer" />
+                  title="Supprimer" i18n-title="@@accounting.journal.supprimer.1acfc1c7" />
               }
               @if (r.firstOfEntry && !r.isDraft && !r.isReversed && !isPayrollSourced(r.sourceEntityType)) {
                 <app-button
@@ -326,7 +326,7 @@ type JournalFlatRow = {
                   type="button"
                   (click)="openAttachments(r)"
                   [attr.aria-label]="'Pièces jointes de l\\'écriture ' + r.journal + ' n° ' + r.piece + (r.attachmentCount > 0 ? ' (' + r.attachmentCount + ')' : '')"
-                  title="Pièces justificatives" i18n-title="Pièces justificatives" />
+                  title="Pièces justificatives" i18n-title="@@accounting.journal.pieces.justificatives.db547f24" />
                 @if (r.attachmentCount > 0) {
                   <span class="journal-attach-count">{{ r.attachmentCount }}</span>
                 }
@@ -361,7 +361,7 @@ type JournalFlatRow = {
             rows="3"
             [(ngModel)]="reverseReason"
             [disabled]="reversing()"
-            placeholder="Ex. erreur d'imputation, montant erroné…" i18n-placeholder="Ex. erreur d'imputation, montant erroné…"></textarea>
+            placeholder="Ex. erreur d'imputation, montant erroné…" i18n-placeholder="@@accounting.journal.ex.erreur.d.imputation.montant.errone.1add0981"></textarea>
           <div class="journal-modal-actions">
             <button
               type="button"
@@ -410,7 +410,7 @@ type JournalFlatRow = {
                     (click)="downloadAttachment(a)"
                     [disabled]="attachBusyId() === a.id"
                     [attr.aria-label]="loc_ui_tern_telecharger_6ac5d8 + a.fileName"
-                    title="Télécharger" i18n-title="Télécharger">
+                    title="Télécharger" i18n-title="@@accounting.journal.telecharger.b332d06d">
                     <i class="pi pi-download" aria-hidden="true"></i>
                   </button>
                   <button
@@ -419,7 +419,7 @@ type JournalFlatRow = {
                     (click)="deleteAttachment(a)"
                     [disabled]="attachBusyId() === a.id"
                     [attr.aria-label]="loc_ui_tern_supprimer_52af4f + a.fileName"
-                    title="Supprimer" i18n-title="Supprimer">
+                    title="Supprimer" i18n-title="@@accounting.journal.supprimer.1acfc1c7">
                     <i class="pi pi-trash" aria-hidden="true"></i>
                   </button>
                 </li>

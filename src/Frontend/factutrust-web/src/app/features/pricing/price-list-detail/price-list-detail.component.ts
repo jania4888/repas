@@ -87,7 +87,7 @@ interface ProductOption {
       @if (pl.items.length === 0) {
         <app-empty-state
           icon="pi-tags"
-          title="Aucun prix dans cette grille" i18n-title="Aucun prix dans cette grille"
+          title="Aucun prix dans cette grille" i18n-title="@@pricing.price-list-detail.aucun.prix.dans.cette.grille.fa1b4a0a"
           message="Ajoutez des produits : ceux qui n'y figurent pas restent au prix catalogue.">
         </app-empty-state>
       } @else {
@@ -135,7 +135,7 @@ interface ProductOption {
                       type="button"
                       icon="pi pi-plus"
                       class="p-button-text p-button-sm"
-                      pTooltip="Ajouter un palier" i18n-pTooltip="Ajouter un palier"
+                      pTooltip="Ajouter un palier" i18n-pTooltip="@@pricing.price-list-detail.ajouter.un.palier.716c9dc0"
                       (click)="openAddTier(item)"></button>
                   }
                 </td>
@@ -146,14 +146,14 @@ interface ProductOption {
                       type="button"
                       icon="pi pi-pencil"
                       class="p-button-text p-button-sm"
-                      pTooltip="Modifier le prix" i18n-pTooltip="Modifier le prix"
+                      pTooltip="Modifier le prix" i18n-pTooltip="@@pricing.price-list-detail.modifier.le.prix.20fbf571"
                       (click)="openEditItem(item)"></button>
                     <button
                       pButton
                       type="button"
                       icon="pi pi-trash"
                       class="p-button-text p-button-sm p-button-danger"
-                      pTooltip="Retirer de la grille" i18n-pTooltip="Retirer de la grille"
+                      pTooltip="Retirer de la grille" i18n-pTooltip="@@pricing.price-list-detail.retirer.de.la.grille.92c887ff"
                       (click)="confirmRemove(item)"></button>
                   }
                 </td>
@@ -165,14 +165,14 @@ interface ProductOption {
     } @else if (!loading()) {
       <app-empty-state
         icon="pi-exclamation-circle"
-        title="Grille introuvable" i18n-title="Grille introuvable"
+        title="Grille introuvable" i18n-title="@@pricing.price-list-detail.grille.introuvable.56e220cc"
         message="Cette grille tarifaire n'existe pas ou a été supprimée.">
       </app-empty-state>
     }
 
     <!-- Paramètres de la grille -->
     <p-dialog
-      header="Paramètres de la grille" i18n-header="Paramètres de la grille"
+      header="Paramètres de la grille" i18n-header="@@pricing.price-list-detail.parametres.de.la.grille.e0229226"
       [(visible)]="settingsVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"
@@ -233,7 +233,7 @@ interface ProductOption {
               field="label"
               [forceSelection]="true"
               [dropdown]="true"
-              placeholder="Rechercher par code ou nom" i18n-placeholder="Rechercher par code ou nom"
+              placeholder="Rechercher par code ou nom" i18n-placeholder="@@pricing.price-list-detail.rechercher.par.code.ou.nom.46838c72"
               appendTo="body"></p-autoComplete>
           </div>
         }
@@ -261,7 +261,7 @@ interface ProductOption {
 
     <!-- Palier quantitatif -->
     <p-dialog
-      header="Ajouter un palier" i18n-header="Ajouter un palier"
+      header="Ajouter un palier" i18n-header="@@pricing.price-list-detail.ajouter.un.palier.716c9dc0"
       [(visible)]="tierVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"

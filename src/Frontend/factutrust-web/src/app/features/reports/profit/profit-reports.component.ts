@@ -25,7 +25,7 @@ import { ProfitTableComponent } from './profit-table.component';
   ],
   template: `
     <app-page-header
-      title="Rapport Bénéfices" i18n-title="Rapport Bénéfices"
+      title="Rapport Bénéfices" i18n-title="@@reports.profit.rapport.benefices.245eba08"
       subtitle="Bénéfice commercial par pièce, mensuel, par ligne et par produit">
       <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" [disabled]="loading()" i18n="@@reports.profit.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
@@ -33,7 +33,7 @@ import { ProfitTableComponent } from './profit-table.component';
     <div class="filter-section">
       <div class="filter-group">
         <label for="period" class="filter-label" i18n="@@reports.profit.periode.de2110b7">Période</label>
-        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="Période">
+        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="@@reports.profit.periode.de2110b7">
           @for (p of periodOptions; track p.value) {
             <option [value]="p.value">{{ p.label }}</option>
           }

@@ -2,7 +2,7 @@
   <app-accounting-health />
 } @else {
   <app-page-header
-    title="Contrôle d'intégrité & Détection des anomalies" i18n-title="Contrôle d'intégrité & Détection des anomalies"
+    title="Contrôle d'intégrité & Détection des anomalies" i18n-title="@@accounting.audit-control.controle.d.integrite.detection.des.anomalies.aa3f478a"
     subtitle="Analyse complète de vos données comptables pour garantir la fiabilité et la conformité">
     <div class="ac-header-actions">
       <app-button variant="secondary" icon="pi pi-file" type="button" (click)="exportReport('csv')" i18n="@@accounting.audit-control.exporter.csv.d4fc31cb">Exporter CSV</app-button>
@@ -20,7 +20,7 @@
         </div>
         <div class="accounting-filter-field">
           <label class="accounting-filter-label" for="ac-search" i18n="@@accounting.audit-control.recherche.787b5492">Recherche</label>
-          <input id="ac-search" type="search" [(ngModel)]="search" class="accounting-filter-input" placeholder="Rechercher une anomalie…" i18n-placeholder="Rechercher une anomalie…" (keyup.enter)="loadAnomalies(1)" />
+          <input id="ac-search" type="search" [(ngModel)]="search" class="accounting-filter-input" placeholder="Rechercher une anomalie…" i18n-placeholder="@@accounting.audit-control.rechercher.une.anomalie.2b8e8605" (keyup.enter)="loadAnomalies(1)" />
         </div>
       </div>
       <div accountingFilterActions>
@@ -33,11 +33,11 @@
 
   @if (dashboard(); as dash) {
     <div class="ac-kpi-grid">
-      <app-stat-card appearance="solid" label="Erreurs bloquantes" i18n-label="Erreurs bloquantes" [value]="dash.blockingCount" icon="fa-solid fa-circle-xmark" variant="error" />
-      <app-stat-card appearance="solid" label="Avertissements" i18n-label="Avertissements" [value]="dash.warningCount" icon="fa-solid fa-triangle-exclamation" variant="warning" />
-      <app-stat-card appearance="solid" label="Anomalies" i18n-label="Anomalies" [value]="dash.anomalyCount" icon="fa-solid fa-bolt" variant="warning" />
-      <app-stat-card appearance="solid" label="Informations" i18n-label="Informations" [value]="dash.infoCount" icon="fa-solid fa-circle-info" variant="primary" />
-      <app-stat-card appearance="solid" label="Taux de conformité" i18n-label="Taux de conformité" [value]="dash.complianceRate + '%'" icon="fa-solid fa-chart-line" variant="success" [change]="dash.complianceRateDeltaVsPriorYear ?? undefined" />
+      <app-stat-card appearance="solid" label="Erreurs bloquantes" i18n-label="@@accounting.audit-control.erreurs.bloquantes.f4604ece" [value]="dash.blockingCount" icon="fa-solid fa-circle-xmark" variant="error" />
+      <app-stat-card appearance="solid" label="Avertissements" i18n-label="@@accounting.audit-control.avertissements.0fc072a7" [value]="dash.warningCount" icon="fa-solid fa-triangle-exclamation" variant="warning" />
+      <app-stat-card appearance="solid" label="Anomalies" i18n-label="@@accounting.audit-control.anomalies.4b2e6f56" [value]="dash.anomalyCount" icon="fa-solid fa-bolt" variant="warning" />
+      <app-stat-card appearance="solid" label="Informations" i18n-label="@@accounting.audit-control.informations.54937b3a" [value]="dash.infoCount" icon="fa-solid fa-circle-info" variant="primary" />
+      <app-stat-card appearance="solid" label="Taux de conformité" i18n-label="@@accounting.audit-control.taux.de.conformite.3eb0e418" [value]="dash.complianceRate + '%'" icon="fa-solid fa-chart-line" variant="success" [change]="dash.complianceRateDeltaVsPriorYear ?? undefined" />
       @if (dash.lastRun) {
         <div class="ac-last-run card">
           <span class="ac-last-run__label" i18n="@@accounting.audit-control.dernier.controle.9f050453">Dernier contrôle</span>
@@ -157,7 +157,7 @@
   </section>
 
   <p-dialog
-    header="Détail de l'anomalie" i18n-header="Détail de l'anomalie"
+    header="Détail de l'anomalie" i18n-header="@@accounting.audit-control.detail.de.l.anomalie.6a7c45a6"
     [visible]="detailVisible()"
     (visibleChange)="detailVisible.set($event)"
     [modal]="true"
@@ -211,7 +211,7 @@
               {{ d.correctionLink?.label || 'Corriger cette anomalie' }}
             </button>
           }
-          <button type="button" class="ac-btn ac-btn--secondary" (click)="resolveSelected()" title="Indique que l'anomalie a été traitée sans relancer le contrôle" i18n-title="Indique que l'anomalie a été traitée sans relancer le contrôle" i18n="@@accounting.audit-control.marquer.comme.traitee.0da927a0"> Marquer comme traitée </button>
+          <button type="button" class="ac-btn ac-btn--secondary" (click)="resolveSelected()" title="Indique que l'anomalie a été traitée sans relancer le contrôle" i18n-title="@@accounting.audit-control.indique.que.l.anomalie.a.ete.traitee.sans.relanc.d820abd6" i18n="@@accounting.audit-control.marquer.comme.traitee.0da927a0"> Marquer comme traitée </button>
         </div>
       </div>
     }

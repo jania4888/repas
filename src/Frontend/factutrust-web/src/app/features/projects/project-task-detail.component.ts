@@ -107,7 +107,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
 
       <div class="proj-meta-chips mb-2">
         @if (canUpdate) {
-          <p-select [options]="statusOptions" [(ngModel)]="status" optionLabel="label" optionValue="value" placeholder="Statut" i18n-placeholder="Statut" />
+          <p-select [options]="statusOptions" [(ngModel)]="status" optionLabel="label" optionValue="value" placeholder="Statut" i18n-placeholder="@@projects.project-task-detail.statut.659499f3" />
           <p-select [options]="priorityOptions" [(ngModel)]="priority" optionLabel="label" optionValue="value" />
         }
         <span class="proj-chip">
@@ -136,11 +136,11 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                 <div class="card p-3">
                   @if (canUpdate) {
                     <input pInputText class="w-full mb-2" [(ngModel)]="title" />
-                    <textarea pTextarea class="w-full" [(ngModel)]="description" rows="4" placeholder="Description" i18n-placeholder="Description"></textarea>
+                    <textarea pTextarea class="w-full" [(ngModel)]="description" rows="4" placeholder="Description" i18n-placeholder="@@projects.project-task-detail.description.55f8ebc8"></textarea>
                     <div class="flex flex-wrap gap-2 mt-2">
-                      <p-select [options]="users()" [(ngModel)]="assigneeId" optionLabel="displayName" optionValue="id" placeholder="Assigné" i18n-placeholder="Assigné" [showClear]="true" />
-                      <p-datepicker [(ngModel)]="dueDate" dateFormat="dd/mm/yy" placeholder="Échéance" i18n-placeholder="Échéance" />
-                      <p-inputNumber [(ngModel)]="estimatedHours" [min]="0" placeholder="Estimé h" i18n-placeholder="Estimé h" />
+                      <p-select [options]="users()" [(ngModel)]="assigneeId" optionLabel="displayName" optionValue="id" placeholder="Assigné" i18n-placeholder="@@projects.project-task-detail.assigne.be552b5f" [showClear]="true" />
+                      <p-datepicker [(ngModel)]="dueDate" dateFormat="dd/mm/yy" placeholder="Échéance" i18n-placeholder="@@projects.project-task-detail.echeance.f9a77ff6" />
+                      <p-inputNumber [(ngModel)]="estimatedHours" [min]="0" placeholder="Estimé h" i18n-placeholder="@@projects.project-task-detail.estime.h.e7abfae2" />
                     </div>
                   } @else {
                     <p>{{ t.description || 'Pas de description.' }}</p>
@@ -191,7 +191,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   </p-table>
                   @if (canUpdate) {
                     <div class="flex gap-2 mt-2">
-                      <input pInputText [(ngModel)]="subTitle" placeholder="Nouvelle sous-tâche" i18n-placeholder="Nouvelle sous-tâche" class="flex-1" />
+                      <input pInputText [(ngModel)]="subTitle" placeholder="Nouvelle sous-tâche" i18n-placeholder="@@projects.project-task-detail.nouvelle.sous.tache.fd2dd779" class="flex-1" />
                       <app-button (click)="addSub()" i18n="@@projects.project-task-detail.ajouter.87c57ed1">Ajouter</app-button>
                     </div>
                   }
@@ -242,7 +242,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                           class="w-full"
                           [(ngModel)]="logWorkDate"
                           dateFormat="dd/mm/yy"
-                          placeholder="jj/mm/aa" i18n-placeholder="jj/mm/aa"
+                          placeholder="jj/mm/aa" i18n-placeholder="@@projects.project-task-detail.jj.mm.aa.82616990"
                           [showIcon]="true"
                           appendTo="body" />
                       </div>
@@ -271,7 +271,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                           class="w-full"
                           [(ngModel)]="logNotes"
                           rows="3"
-                          placeholder="Détails, contexte…" i18n-placeholder="Détails, contexte…"></textarea>
+                          placeholder="Détails, contexte…" i18n-placeholder="@@projects.project-task-detail.details.contexte.18aa02a6"></textarea>
                       </div>
                       <div class="task-create-actions">
                         @if (editTimeId) {
@@ -308,27 +308,27 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                           }
                           @if (canDeleteTimeEntry(e) && canCreateTime) {
                             <app-button size="sm" variant="ghost" icon="pi-trash" [iconOnly]="true"
-                              pTooltip="Supprimer" i18n-pTooltip="Supprimer" tooltipPosition="top" ariaLabel="Supprimer"
+                              pTooltip="Supprimer" i18n-pTooltip="@@projects.project-task-detail.supprimer.1acfc1c7" tooltipPosition="top" ariaLabel="Supprimer"
                               (click)="deleteTimeEntry(e.id)" />
                           }
                           @if (canSubmitTimeEntry(e) && canSubmitTime) {
                             <app-button size="sm" variant="ghost" icon="pi-send" [iconOnly]="true"
-                              pTooltip="Soumettre" i18n-pTooltip="Soumettre" tooltipPosition="top" ariaLabel="Soumettre"
+                              pTooltip="Soumettre" i18n-pTooltip="@@projects.project-task-detail.soumettre.5597a63d" tooltipPosition="top" ariaLabel="Soumettre"
                               (click)="submitTimeEntry(e.id)" />
                           }
                           @if (canValidateTimeEntry(e) && canValidateTime) {
                             <app-button size="sm" variant="primary" icon="pi-check" [iconOnly]="true"
-                              pTooltip="Valider" i18n-pTooltip="Valider" tooltipPosition="top" ariaLabel="Valider"
+                              pTooltip="Valider" i18n-pTooltip="@@projects.project-task-detail.valider.be4220f7" tooltipPosition="top" ariaLabel="Valider"
                               (click)="validateTimeEntry(e.id)" />
                           }
                           @if (canReopenSubmittedTimeEntry(e) && canSubmitTime) {
                             <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="Rouvrir en brouillon" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
+                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-task-detail.rouvrir.en.brouillon.7acbda14" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
                               (click)="reopenTimeEntry(e.id)" />
                           }
                           @if (canReopenValidatedTimeEntry(e) && canValidateTime) {
                             <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="Rouvrir en brouillon" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
+                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-task-detail.rouvrir.en.brouillon.7acbda14" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
                               (click)="reopenTimeEntry(e.id)" />
                           }
                         </td>

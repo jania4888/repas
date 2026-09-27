@@ -28,7 +28,7 @@
           id="email"
           type="email"
           formControlName="email"
-          placeholder="Entrez votre adresse email" i18n-placeholder="Entrez votre adresse email"
+          placeholder="Entrez votre adresse email" i18n-placeholder="@@auth.login.entrez.votre.adresse.email.f0d096b5"
           class="w-full"
           autocomplete="email"
           [attr.aria-invalid]="isEmailInvalid()"
@@ -58,7 +58,7 @@
           formControlName="password"
           [feedback]="false"
           [toggleMask]="true"
-          placeholder="Entrez votre mot de passe" i18n-placeholder="Entrez votre mot de passe"
+          placeholder="Entrez votre mot de passe" i18n-placeholder="@@auth.login.entrez.votre.mot.de.passe.9f4b3380"
           styleClass="w-full"
           inputStyleClass="w-full"
           autocomplete="current-password"
@@ -81,7 +81,7 @@
           formControlName="rememberMe"
           [binary]="true"
           inputId="rememberMe"
-          label="Se souvenir de moi" i18n-label="Se souvenir de moi"
+          label="Se souvenir de moi" i18n-label="@@auth.login.se.souvenir.de.moi.0c8f8391"
           [attr.title]="rememberMeHint"
           [attr.aria-describedby]="'rememberMe-hint'"
         >
@@ -93,7 +93,7 @@
 
     <p-button
       type="submit"
-      label="Se connecter" i18n-label="Se connecter"
+      label="Se connecter" i18n-label="@@auth.login.se.connecter.fedf2439"
       icon="pi pi-arrow-right"
       iconPos="right"
       styleClass="w-full login-submit-btn"
@@ -113,7 +113,7 @@
     <p-message severity="info" [text]="registrationClosedNotice()!" styleClass="w-full mt-3" />
   }
   @if (showPublicRegistrationLinks()) {
-    <div class="login-footer" aria-label="Création de compte" i18n-aria-label="Création de compte">
+    <div class="login-footer" aria-label="Création de compte" i18n-aria-label="@@auth.login.creation.de.compte.b7497961">
       <p class="login-footer__intro" i18n="@@auth.login.pas.encore.de.compte.91e00b13">Pas encore de compte ?</p>
       @if (environment.publicRegistration.companyEnabled) {
         <a routerLink="/auth/register" class="login-footer__cta" i18n="@@auth.login.creer.un.compte.gratuitement.ef0b3609">Créer un compte gratuitement</a>

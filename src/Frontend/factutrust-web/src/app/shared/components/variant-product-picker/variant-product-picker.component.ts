@@ -33,17 +33,17 @@ export type VariantPickerSelection = ProductSuggestion;
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: 'min(720px, 96vw)' }"
-      header="Choisir une variante" i18n-header="Choisir une variante"
+      header="Choisir une variante" i18n-header="@@shared.components.variant-product-picker.variant-product-picker.choisir.une.variante.c8ab137c"
       (onHide)="onDialogHide()">
       <p-tabView>
-        <p-tabPanel header="Recherche SKU" i18n-header="Recherche SKU">
+        <p-tabPanel header="Recherche SKU" i18n-header="@@shared.components.variant-product-picker.variant-product-picker.recherche.sku.ecc8587e">
           <p-autoComplete
             [(ngModel)]="directQuery"
             [suggestions]="directSuggestions()"
             (completeMethod)="searchDirect($event)"
             (onSelect)="selectDirect($event.value)"
             field="label"
-            placeholder="Code ou nom du SKU…" i18n-placeholder="Code ou nom du SKU…"
+            placeholder="Code ou nom du SKU…" i18n-placeholder="@@shared.components.variant-product-picker.variant-product-picker.code.ou.nom.du.sku.f9636dc9"
             styleClass="w-full"
             [minLength]="1">
             <ng-template let-item pTemplate="item">
@@ -57,7 +57,7 @@ export type VariantPickerSelection = ProductSuggestion;
             </ng-template>
           </p-autoComplete>
         </p-tabPanel>
-        <p-tabPanel header="Par modèle" i18n-header="Par modèle">
+        <p-tabPanel header="Par modèle" i18n-header="@@shared.components.variant-product-picker.variant-product-picker.par.modele.ad61be8b">
           <div class="grouped-step">
             <label i18n="@@shared.components.variant-product-picker.variant-product-picker.modele.9853170f">Modèle</label>
             <p-autoComplete
@@ -66,7 +66,7 @@ export type VariantPickerSelection = ProductSuggestion;
               (completeMethod)="searchTemplates($event)"
               (onSelect)="onTemplateSelected($event.value)"
               field="name"
-              placeholder="Rechercher un modèle…" i18n-placeholder="Rechercher un modèle…"
+              placeholder="Rechercher un modèle…" i18n-placeholder="@@shared.components.variant-product-picker.variant-product-picker.rechercher.un.modele.57af3d5f"
               styleClass="w-full"
               [minLength]="1" />
           </div>

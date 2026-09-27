@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     @if (visible()) {
-      <div class="db-banner" role="region" aria-label="Brouillon disponible" i18n-aria-label="Brouillon disponible">
+      <div class="db-banner" role="region" aria-label="Brouillon disponible" i18n-aria-label="@@accounting.manual-entry.brouillon.disponible.d1d2f606">
         <span class="db-icon" aria-hidden="true" i18n="@@accounting.manual-entry.text.edc47290">📝</span>
         <span class="db-message">
           <ng-container i18n="@@accounting.manual-entry.un.brouillon.d.ecriture.a.ete.sauvegarde.automat.1930ed4a"> Un brouillon d'écriture a été sauvegardé automatiquement </ng-container>

@@ -34,7 +34,7 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
   ],
   template: `
     <app-page-header
-      title="Rapports décisionnels ventes produits" i18n-title="Rapports décisionnels ventes produits"
+      title="Rapports décisionnels ventes produits" i18n-title="@@reports.product-sales-analytics.rapports.decisionnels.ventes.produits.3f8c6fdc"
       subtitle="Performance, tendances, panier moyen et produits à mettre en avant">
       <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" i18n="@@reports.product-sales-analytics.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
@@ -42,7 +42,7 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
     <div class="filter-section">
       <div class="filter-group">
         <label for="period" class="filter-label" i18n="@@reports.product-sales-analytics.periode.de2110b7">Période</label>
-        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="Période">
+        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="@@reports.product-sales-analytics.periode.de2110b7">
           @for (p of periodOptions; track p.value) {
             <option [value]="p.value">{{ p.label }}</option>
           }
@@ -137,25 +137,25 @@ import { RevenueTableComponent } from '../sales-by-line/revenue-table.component'
           } @else if (basketMetrics()) {
             <div class="kpi-grid">
               <app-stat-card
-                label="Panier moyen" i18n-label="Panier moyen"
+                label="Panier moyen" i18n-label="@@reports.product-sales-analytics.panier.moyen.e9ce57ee"
                 [value]="formatAmount(basketMetrics()!.averageBasket, basketMetrics()!.currency)"
                 icon="pi-shopping-cart"
                 variant="primary">
               </app-stat-card>
               <app-stat-card
-                label="Lignes moy. / facture" i18n-label="Lignes moy. / facture"
+                label="Lignes moy. / facture" i18n-label="@@reports.product-sales-analytics.lignes.moy.facture.471f033e"
                 [value]="(basketMetrics()!.averageLinesPerInvoice | number:'1.1-1') + ''"
                 icon="pi-list"
                 variant="success">
               </app-stat-card>
               <app-stat-card
-                label="Factures" i18n-label="Factures"
+                label="Factures" i18n-label="@@reports.product-sales-analytics.factures.da35e4f2"
                 [value]="basketMetrics()!.totalInvoices + ''"
                 icon="pi-file"
                 variant="primary">
               </app-stat-card>
               <app-stat-card
-                label="CA total" i18n-label="CA total"
+                label="CA total" i18n-label="@@reports.product-sales-analytics.ca.total.c324bfa2"
                 [value]="formatAmount(basketMetrics()!.totalRevenue, basketMetrics()!.currency)"
                 icon="pi-dollar"
                 variant="success">

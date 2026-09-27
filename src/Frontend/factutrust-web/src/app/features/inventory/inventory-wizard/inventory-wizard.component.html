@@ -4,13 +4,13 @@
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-        title="Inventaire physique" i18n-title="Inventaire physique"
+        title="Inventaire physique" i18n-title="@@inventory.inventory-wizard.inventaire.physique.38b526c7"
         subtitle="Comptez vos produits et ajustez votre stock en quelques minutes">
     </app-page-header>
 
     <!-- Wizard step indicator -->
     @if (!loading()) {
-    <nav class="wizard-steps" aria-label="Étapes de l'inventaire" i18n-aria-label="Étapes de l'inventaire">
+    <nav class="wizard-steps" aria-label="Étapes de l'inventaire" i18n-aria-label="@@inventory.inventory-wizard.etapes.de.l.inventaire.a08db1b2">
         @for (s of wizardSteps(); track s.key; let i = $index; let last = $last) {
         <div class="wizard-step" [class.active]="s.active" [class.done]="s.done">
             <span class="step-index" aria-hidden="true">{{ i + 1 }}</span>
@@ -32,7 +32,7 @@
     } @else {
     <!-- STEP 1: START -->
     @if (step() === 'start') {
-    <app-form-section title="Lancer un inventaire" i18n-title="Lancer un inventaire" icon="pi-play" [number]="1">
+    <app-form-section title="Lancer un inventaire" i18n-title="@@inventory.inventory-wizard.lancer.un.inventaire.e333a5d0" icon="pi-play" [number]="1">
         <div class="start-card">
             <p class="subtitle" i18n="@@inventory.inventory-wizard.comptez.vos.produits.un.par.un.nous.nous.occupon.06cb9283"> Comptez vos produits un par un, nous nous occupons du reste. </p>
 
@@ -45,7 +45,7 @@
                     [ngModel]="selectedWarehouse()"
                     (ngModelChange)="onWarehouseChange($event)"
                     optionLabel="name"
-                    placeholder="Sélectionner un entrepôt" i18n-placeholder="Sélectionner un entrepôt"
+                    placeholder="Sélectionner un entrepôt" i18n-placeholder="@@inventory.inventory-wizard.selectionner.un.entrepot.2e4d1232"
                     styleClass="w-full"
                     ariaLabel="Choisir l'entrepôt">
                 </p-select>
@@ -55,7 +55,7 @@
             <div class="type-selection">
                 <h3 i18n="@@inventory.inventory-wizard.type.d.inventaire.1e378c77">Type d'inventaire</h3>
 
-                <div class="type-options" role="radiogroup" aria-label="Type d'inventaire" i18n-aria-label="Type d'inventaire">
+                <div class="type-options" role="radiogroup" aria-label="Type d'inventaire" i18n-aria-label="@@inventory.inventory-wizard.type.d.inventaire.1e378c77">
                     <div
                         class="type-option"
                         [class.selected]="inventoryType() === InventoryType.Complete"
@@ -117,16 +117,16 @@
                         <input
                             type="text"
                             pInputText
-                            placeholder="Rechercher un produit..." i18n-placeholder="Rechercher un produit..."
+                            placeholder="Rechercher un produit..." i18n-placeholder="@@inventory.inventory-wizard.rechercher.un.produit.0da008f6"
                             [ngModel]="productSearchTerm()"
                             (ngModelChange)="productSearchTerm.set($event)"
-                            aria-label="Rechercher un produit" i18n-aria-label="Rechercher un produit" />
+                            aria-label="Rechercher un produit" i18n-aria-label="@@inventory.inventory-wizard.rechercher.un.produit.3ce811dc" />
                     </div>
                     <div class="selection-actions">
-                        <button pButton pRipple type="button" label="Tout sélectionner" i18n-label="Tout sélectionner"
+                        <button pButton pRipple type="button" label="Tout sélectionner" i18n-label="@@inventory.inventory-wizard.tout.selectionner.06f2c1c0"
                             class="p-button-text p-button-sm" icon="pi pi-check-square"
                             (click)="selectAllProducts()"></button>
-                        <button pButton pRipple type="button" label="Tout désélectionner" i18n-label="Tout désélectionner"
+                        <button pButton pRipple type="button" label="Tout désélectionner" i18n-label="@@inventory.inventory-wizard.tout.deselectionner.d17ec0b7"
                             class="p-button-text p-button-sm p-button-secondary" icon="pi pi-times"
                             (click)="clearProductSelection()"></button>
                     </div>
@@ -209,7 +209,7 @@
         @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
                 <ft-barcode-scan-field
-                    placeholder="Scanner un code-barres pour aller à l'article" i18n-placeholder="Scanner un code-barres pour aller à l'article"
+                    placeholder="Scanner un code-barres pour aller à l'article" i18n-placeholder="@@inventory.inventory-wizard.scanner.un.code.barres.pour.aller.a.l.article.5bed44b0"
                     [autoFocus]="false"
                     (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -227,7 +227,7 @@
                     <p-progressBar [value]="progress()" [showValue]="false"></p-progressBar>
                 </div>
 
-                <div class="products-list" role="list" aria-label="Liste des produits à compter" i18n-aria-label="Liste des produits à compter">
+                <div class="products-list" role="list" aria-label="Liste des produits à compter" i18n-aria-label="@@inventory.inventory-wizard.liste.des.produits.a.compter.ff63d2cf">
                     @for (product of activeInventory()?.products; track lineKey(product); let i = $index) {
                     <div
                         class="product-item"
@@ -306,7 +306,7 @@
                                 class="lot-input"
                                 [ngModel]="lotNumber()"
                                 (ngModelChange)="lotNumber.set($event ?? '')"
-                                placeholder="Ex. LOT-2026-001" i18n-placeholder="Ex. LOT-2026-001"
+                                placeholder="Ex. LOT-2026-001" i18n-placeholder="@@inventory.inventory-wizard.ex.lot.2026.001.48400037"
                                 [attr.aria-required]="requiresLotNumberForCurrentCount()"
                                 [attr.aria-label]="'Numéro de lot pour ' + (currentProduct()?.productName ?? '')" />
                             @if (requiresLotNumberForCurrentCount()) {
@@ -398,7 +398,7 @@
 
     <!-- STEP 3: SUMMARY -->
     @if (step() === 'summary' && inventorySummary()) {
-    <app-form-section title="Résumé de l'inventaire" i18n-title="Résumé de l'inventaire" icon="pi-list-check" [number]="3">
+    <app-form-section title="Résumé de l'inventaire" i18n-title="@@inventory.inventory-wizard.resume.de.l.inventaire.6ce44d41" icon="pi-list-check" [number]="3">
         <div class="summary-section">
             <div class="summary-header">
                 <h2>{{ inventorySummary()?.statusMessage }}</h2>
@@ -519,7 +519,7 @@
 
     <!-- STEP 4: SUCCESS -->
     @if (step() === 'success') {
-    <app-form-section title="Inventaire terminé" i18n-title="Inventaire terminé" icon="pi-verified">
+    <app-form-section title="Inventaire terminé" i18n-title="@@inventory.inventory-wizard.inventaire.termine.5adca5d0" icon="pi-verified">
         <div class="success-section">
             <div class="success-card">
                 <div class="success-icon">

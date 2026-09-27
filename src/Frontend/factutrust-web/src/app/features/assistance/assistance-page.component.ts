@@ -67,7 +67,7 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
         </label>
         <label class="grow">
           <ng-container i18n="@@assistance.assistance-page.message.68f4145f"> Message </ng-container>
-          <textarea name="body" rows="3" maxlength="4000" [(ngModel)]="body" placeholder="Votre message" i18n-placeholder="Votre message"></textarea>
+          <textarea name="body" rows="3" maxlength="4000" [(ngModel)]="body" placeholder="Votre message" i18n-placeholder="@@assistance.assistance-page.votre.message.65d92a68"></textarea>
         </label>
         <label>
           <ng-container i18n="@@assistance.assistance-page.fichiers.23a9d9fc"> Fichiers </ng-container>

@@ -6,7 +6,7 @@
       <p class="sidebar-sub" i18n="@@auth.register-wizard.quelques.informations.pour.personnaliser.votre.e.bfd459aa">Quelques informations pour personnaliser votre expérience et configurer votre ERP selon votre activité.</p>
     </div>
 
-    <nav class="step-list" aria-label="Étapes de l'inscription" i18n-aria-label="Étapes de l'inscription">
+    <nav class="step-list" aria-label="Étapes de l'inscription" i18n-aria-label="@@auth.register-wizard.etapes.de.l.inscription.6ad1d5c1">
       @for (step of stepsMeta; track step.name; let i = $index) {
         <!-- `locked` : une fois l'espace créé, les étapes ne sont plus navigables (goToStep
              refuse déjà l'appel) — on le rend visible plutôt que de laisser un clic sans effet. -->
@@ -93,7 +93,7 @@
           </button>
         </section>
       } @else {
-      <div class="hstepper" role="group" aria-label="Progression de l'inscription" i18n-aria-label="Progression de l'inscription">
+      <div class="hstepper" role="group" aria-label="Progression de l'inscription" i18n-aria-label="@@auth.register-wizard.progression.de.l.inscription.1be534a3">
         @for (step of stepsMeta; track step.name; let i = $index; let last = $last) {
           <div class="hstep" [class.active]="currentStep() === i" [class.done]="currentStep() > i">
             <span class="hstep-dot"><i class="pi {{ step.icon }}"></i></span>
@@ -133,7 +133,7 @@
               <h4 i18n="@@auth.register-wizard.erreur.lors.de.l.inscription.db5ac287">Erreur lors de l'inscription</h4>
               <p>{{ error() }}</p>
             </div>
-            <button type="button" class="close-btn" (click)="error.set(null)" aria-label="Fermer" i18n-aria-label="Fermer">
+            <button type="button" class="close-btn" (click)="error.set(null)" aria-label="Fermer" i18n-aria-label="@@auth.register-wizard.fermer.5ab4ec64">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -186,7 +186,7 @@
 
         <div class="navigation-footer">
           @if (currentStep() > 0) {
-            <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente" i18n-aria-label="Étape précédente">
+            <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente" i18n-aria-label="@@auth.register-wizard.etape.precedente.4b2bab32">
               <i class="pi pi-arrow-left" aria-hidden="true"></i> Précédent
             </button>
           } @else {
@@ -198,7 +198,7 @@
           </p>
 
           @if (currentStep() < stepCount() - 1) {
-            <button type="button" class="btn-next" [class.btn-next--ready]="isCurrentStepValid()" [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante" i18n-aria-label="Étape suivante">
+            <button type="button" class="btn-next" [class.btn-next--ready]="isCurrentStepValid()" [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante" i18n-aria-label="@@auth.register-wizard.etape.suivante.992dbd53">
               Continuer <i class="pi pi-arrow-right" aria-hidden="true"></i>
             </button>
           } @else {

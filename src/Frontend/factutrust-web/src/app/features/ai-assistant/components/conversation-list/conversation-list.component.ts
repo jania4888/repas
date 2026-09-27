@@ -10,7 +10,7 @@ import { ConversationDto } from '../../models/ai-chat.models';
     <div class="conversation-list">
       <div class="list-header">
         <h4 i18n="@@ai-assistant.components.conversations.07c59b44">Conversations</h4>
-        <button class="new-btn" (click)="newConversation.emit()" title="Nouvelle conversation" i18n-title="Nouvelle conversation">
+        <button class="new-btn" (click)="newConversation.emit()" title="Nouvelle conversation" i18n-title="@@ai-assistant.components.nouvelle.conversation.c886195f">
           <i class="fa-solid fa-plus"></i>
         </button>
       </div>
@@ -35,7 +35,7 @@ import { ConversationDto } from '../../models/ai-chat.models';
             <button
               class="delete-btn"
               (click)="onDelete($event, conv.id)"
-              title="Supprimer" i18n-title="Supprimer">
+              title="Supprimer" i18n-title="@@ai-assistant.components.supprimer.1acfc1c7">
               <i class="fa-solid fa-trash-can"></i>
             </button>
           </div>

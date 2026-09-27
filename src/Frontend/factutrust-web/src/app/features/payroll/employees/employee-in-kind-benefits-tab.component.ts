@@ -53,7 +53,7 @@ const BENEFIT_TYPE_OPTIONS = [
   ],
   template: `
     <app-payroll-section
-      title="Avantages en nature" i18n-title="Avantages en nature"
+      title="Avantages en nature" i18n-title="@@payroll.employees.avantages.en.nature.7683e287"
       subtitle="Valorisation mensuelle intégrée au brut imposable et cotisable au calcul."
       icon="pi-home">
       @if (!readOnly) {

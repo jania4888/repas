@@ -46,23 +46,23 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
       [subtitle]="loc_ui_tern_cle_df29c6 + e.key + ' — ' + fields().length + loc_ui_tern_champ_s_f2c969"
       [breadcrumbs]="breadcrumbs">
       <div studioActions class="studio-head-actions">
-        <button pButton type="button" label="Rapports" i18n-label="Rapports" icon="fa-solid fa-chart-column"
+        <button pButton type="button" label="Rapports" i18n-label="@@studio.studio-entity-designer.rapports.db7d9fbb" icon="fa-solid fa-chart-column"
           class="p-button-outlined p-button-sm" routerLink="/studio/reports/new" [queryParams]="{ source: e.key }"></button>
-        <button pButton type="button" label="Mise en page" i18n-label="Mise en page" icon="fa-solid fa-table-cells-large"
+        <button pButton type="button" label="Mise en page" i18n-label="@@studio.studio-entity-designer.mise.en.page.f09e7eee" icon="fa-solid fa-table-cells-large"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio', e.id, 'form']"></button>
-        <button pButton type="button" label="Données" i18n-label="Données" icon="fa-solid fa-table-list"
+        <button pButton type="button" label="Données" i18n-label="@@studio.studio-entity-designer.donnees.e3e0c5ec" icon="fa-solid fa-table-list"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio/d', e.key]"></button>
-        <button pButton type="button" label="Pont ERP" i18n-label="Pont ERP" icon="fa-solid fa-bolt"
+        <button pButton type="button" label="Pont ERP" i18n-label="@@studio.studio-entity-designer.pont.erp.3f55804e" icon="fa-solid fa-bolt"
           class="p-button-outlined p-button-sm" [routerLink]="['/studio', e.id, 'automations']"></button>
         @if (workflowsEnabled()) {
-          <button pButton type="button" label="Workflows" i18n-label="Workflows" icon="fa-solid fa-route"
+          <button pButton type="button" label="Workflows" i18n-label="@@studio.studio-entity-designer.workflows.825ce9e9" icon="fa-solid fa-route"
             class="p-button-outlined p-button-sm" [routerLink]="['/studio', 'workflows']" [queryParams]="{ entity: e.id }" data-testid="wf-open"></button>
         }
         @if (manyToManyEnabled()) {
           <button pButton type="button" [label]="runtimeLabels.relations.addManyToMany" icon="fa-solid fa-diagram-project"
             class="p-button-outlined p-button-sm" (click)="m2mVisible.set(true)" data-testid="m2m-open"></button>
         }
-        <button pButton type="button" label="Ajouter un champ" i18n-label="Ajouter un champ" icon="fa-solid fa-plus" (click)="openAdd()"></button>
+        <button pButton type="button" label="Ajouter un champ" i18n-label="@@studio.studio-entity-designer.ajouter.un.champ.b653a98c" icon="fa-solid fa-plus" (click)="openAdd()"></button>
       </div>
 
       <div class="ft-table-card">
@@ -157,20 +157,20 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         <ng-container *ngIf="isSelect()">
           <label><ng-container i18n="@@studio.studio-entity-designer.options.une.par.ligne.format.0322f9b6">Options (une par ligne, format </ng-container> <code i18n="@@studio.studio-entity-designer.valeur.libelle.e14efa4a">valeur|libellé</code>)</label>
           <textarea class="ft-textarea" [(ngModel)]="fOptionsText" rows="4"
-            placeholder="open|Ouvert&#10;closed|Fermé" i18n-placeholder="open|Ouvert&#10;closed|Fermé"></textarea>
+            placeholder="open|Ouvert&#10;closed|Fermé" i18n-placeholder="@@studio.studio-entity-designer.open.ouvert.closed.ferme.22501d68"></textarea>
         </ng-container>
 
         <ng-container *ngIf="isRelationCustom()">
           <label i18n="@@studio.studio-entity-designer.table.cible.d81d2d36">Table cible *</label>
           <p-select [options]="otherEntities()" [(ngModel)]="fRelationRef" optionLabel="displayName" optionValue="key"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table" i18n-placeholder="Choisir une table"></p-select>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table" i18n-placeholder="@@studio.studio-entity-designer.choisir.une.table.9ec20a6a"></p-select>
           <small class="ft-hint" i18n="@@studio.studio-entity-designer.le.champ.referencera.un.enregistrement.de.cette..77a4f1e1">Le champ référencera un enregistrement de cette table.</small>
         </ng-container>
 
         <ng-container *ngIf="isRelationExisting()">
           <label i18n="@@studio.studio-entity-designer.donnee.existante.cible.eb7f8753">Donnée existante cible *</label>
           <p-select [options]="existingRelationSources" [(ngModel)]="fRelationRef" optionLabel="label" optionValue="value"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une source" i18n-placeholder="Choisir une source"></p-select>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une source" i18n-placeholder="@@studio.studio-entity-designer.choisir.une.source.b3847a60"></p-select>
           <small class="ft-hint" i18n="@@studio.studio-entity-designer.reference.en.lecture.seule.vers.une.fiche.exista.d7fcd2e5">Référence en lecture seule vers une fiche existante.</small>
         </ng-container>
 
@@ -190,7 +190,7 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
 
         <ng-container *ngIf="isMoney()">
           <label i18n="@@studio.studio-entity-designer.devise.eb2e42c4">Devise</label>
-          <input pInputText [(ngModel)]="fCurrency" maxlength="8" placeholder="TND" i18n-placeholder="TND" />
+          <input pInputText [(ngModel)]="fCurrency" maxlength="8" placeholder="TND" i18n-placeholder="@@studio.studio-entity-designer.tnd.51da21a7" />
           <small class="ft-hint" i18n="@@studio.studio-entity-designer.code.iso.de.la.devise.ex.tnd.eur.usd.e953cb11">Code ISO de la devise (ex. TND, EUR, USD).</small>
           <div class="ft-row">
             <div><label i18n="@@studio.studio-entity-designer.valeur.min.b13c2cab">Valeur min</label><p-inputNumber [(ngModel)]="fMin"></p-inputNumber></div>
@@ -225,7 +225,7 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         <ng-container *ngIf="isFormula()">
           <label i18n="@@studio.studio-entity-designer.expression.f00f565b">Expression *</label>
           <textarea class="ft-textarea" [(ngModel)]="fFormulaExpr" rows="3"
-            placeholder="montant_ht * 1.19" i18n-placeholder="montant_ht * 1.19"></textarea>
+            placeholder="montant_ht * 1.19" i18n-placeholder="@@studio.studio-entity-designer.montant.ht.1.19.42f5b1a7"></textarea>
           <small class="ft-hint" i18n="@@studio.studio-entity-designer.fonctions.round.abs.min.max.if.coalesce.concat.l.d26e54db"> Fonctions : ROUND, ABS, MIN, MAX, IF, COALESCE, CONCAT, LEN, LOWER, UPPER, TRIM.
             Opérateurs : + - * / % , comparaisons, AND/OR/NOT. </small>
           <small class="ft-hint" *ngIf="otherFieldKeys() as keys">
@@ -236,24 +236,24 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         <ng-container *ngIf="isLookup()">
           <label i18n="@@studio.studio-entity-designer.champ.relation.via.8aa18540">Champ relation (via) *</label>
           <p-select [options]="relationFields()" [(ngModel)]="fLookupVia" optionLabel="label" optionValue="value"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir un champ relation" i18n-placeholder="Choisir un champ relation"></p-select>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir un champ relation" i18n-placeholder="@@studio.studio-entity-designer.choisir.un.champ.relation.ea675858"></p-select>
           <label i18n="@@studio.studio-entity-designer.champ.cible.639048f6">Champ cible *</label>
-          <input pInputText [(ngModel)]="fLookupTarget" placeholder="clé du champ à afficher" i18n-placeholder="clé du champ à afficher" />
+          <input pInputText [(ngModel)]="fLookupTarget" placeholder="clé du champ à afficher" i18n-placeholder="@@studio.studio-entity-designer.cle.du.champ.a.afficher.4b1bdc6f" />
           <small class="ft-hint" i18n="@@studio.studio-entity-designer.affiche.un.champ.de.l.enregistrement.fiche.liee..171873f3">Affiche un champ de l'enregistrement/fiche liée par le champ relation.</small>
         </ng-container>
 
         <ng-container *ngIf="isRollup()">
           <label i18n="@@studio.studio-entity-designer.table.enfant.a50a0c7c">Table enfant *</label>
           <p-select [options]="otherEntities()" [(ngModel)]="fRollupEntity" optionLabel="displayName" optionValue="key"
-            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table" i18n-placeholder="Choisir une table"></p-select>
+            appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Choisir une table" i18n-placeholder="@@studio.studio-entity-designer.choisir.une.table.9ec20a6a"></p-select>
           <label i18n="@@studio.studio-entity-designer.champ.relation.de.l.enfant.d338d402">Champ relation de l'enfant *</label>
-          <input pInputText [(ngModel)]="fRollupRelationField" placeholder="clé du champ relation pointant vers cette table" i18n-placeholder="clé du champ relation pointant vers cette table" />
+          <input pInputText [(ngModel)]="fRollupRelationField" placeholder="clé du champ relation pointant vers cette table" i18n-placeholder="@@studio.studio-entity-designer.cle.du.champ.relation.pointant.vers.cette.table.77fef3db" />
           <label i18n="@@studio.studio-entity-designer.agregat.1ed60823">Agrégat *</label>
           <p-select [options]="aggOptions" [(ngModel)]="fRollupAgg" optionLabel="label" optionValue="value"
             appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"></p-select>
           <ng-container *ngIf="fRollupAgg !== 'count'">
             <label i18n="@@studio.studio-entity-designer.champ.a.agreger.a3a552a7">Champ à agréger *</label>
-            <input pInputText [(ngModel)]="fRollupField" placeholder="clé du champ numérique de l'enfant" i18n-placeholder="clé du champ numérique de l'enfant" />
+            <input pInputText [(ngModel)]="fRollupField" placeholder="clé du champ numérique de l'enfant" i18n-placeholder="@@studio.studio-entity-designer.cle.du.champ.numerique.de.l.enfant.4fcc1688" />
           </ng-container>
           <small class="ft-hint" i18n="@@studio.studio-entity-designer.agrege.les.enregistrements.de.la.table.enfant.qu.04c263b9">Agrège les enregistrements de la table enfant qui référencent cette fiche.</small>
         </ng-container>
@@ -261,16 +261,16 @@ import { StudioAiCapabilitiesService } from './ai/studio-ai-capabilities.service
         <ng-container *ngIf="isAutoNumber()">
           <small class="ft-hint" i18n="@@studio.studio-entity-designer.reference.sequentielle.generee.a.la.creation.en..ea3c9e00">Référence séquentielle générée à la création, en lecture seule.</small>
           <div class="ft-row">
-            <div><label i18n="@@studio.studio-entity-designer.prefixe.2fe0a6db">Préfixe</label><input pInputText [(ngModel)]="fNumPrefix" maxlength="16" placeholder="FACT-" i18n-placeholder="FACT-" /></div>
+            <div><label i18n="@@studio.studio-entity-designer.prefixe.2fe0a6db">Préfixe</label><input pInputText [(ngModel)]="fNumPrefix" maxlength="16" placeholder="FACT-" i18n-placeholder="@@studio.studio-entity-designer.fact.b565d22e" /></div>
             <div><label i18n="@@studio.studio-entity-designer.longueur.zeros.4491a083">Longueur (zéros)</label><p-inputNumber [(ngModel)]="fNumPadding" [min]="0" [max]="12"></p-inputNumber></div>
-            <div><label i18n="@@studio.studio-entity-designer.suffixe.9c70a252">Suffixe</label><input pInputText [(ngModel)]="fNumSuffix" maxlength="16" placeholder="/2026" i18n-placeholder="/2026" /></div>
+            <div><label i18n="@@studio.studio-entity-designer.suffixe.9c70a252">Suffixe</label><input pInputText [(ngModel)]="fNumSuffix" maxlength="16" placeholder="/2026" i18n-placeholder="@@studio.studio-entity-designer.2026.5e98d8b1" /></div>
           </div>
           <small class="ft-hint"><ng-container i18n="@@studio.studio-entity-designer.apercu.33c24358">Aperçu : </ng-container> <code>{{ autoNumberPreview() }}</code></small>
         </ng-container>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Annuler" i18n-label="Annuler" class="p-button-text" (click)="closeDialog()"></button>
-        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving() || typeBlocked() || typeChecking()" (click)="save()" data-testid="field-save"></button>
+        <button pButton type="button" label="Annuler" i18n-label="@@studio.studio-entity-designer.annuler.49ba3292" class="p-button-text" (click)="closeDialog()"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-entity-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" [disabled]="saving() || typeBlocked() || typeChecking()" (click)="save()" data-testid="field-save"></button>
       </ng-template>
     </p-dialog>
   `,

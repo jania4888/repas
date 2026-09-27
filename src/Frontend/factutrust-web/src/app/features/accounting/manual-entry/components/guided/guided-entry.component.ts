@@ -42,7 +42,7 @@ const PAYMENT_METHODS = [
   ],
   template: `
     <div class="guided-entry">
-      <nav class="guided-stepper" aria-label="Étapes de la saisie guidée" i18n-aria-label="Étapes de la saisie guidée">
+      <nav class="guided-stepper" aria-label="Étapes de la saisie guidée" i18n-aria-label="@@accounting.manual-entry.etapes.de.la.saisie.guidee.5ea432fb">
         @for (s of steps; track s.num) {
           <button type="button" class="guided-step"
                   [class.guided-step--active]="step() === s.num"
@@ -124,7 +124,7 @@ const PAYMENT_METHODS = [
                     [minLength]="2"
                     [forceSelection]="true"
                     [showClear]="true"
-                    placeholder="Client ou fournisseur" i18n-placeholder="Client ou fournisseur"
+                    placeholder="Client ou fournisseur" i18n-placeholder="@@accounting.manual-entry.client.ou.fournisseur.7a06baa3"
                     appendTo="body"
                     panelStyleClass="me-autocomplete-panel"
                   />

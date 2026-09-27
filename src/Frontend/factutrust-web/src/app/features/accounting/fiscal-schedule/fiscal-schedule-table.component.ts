@@ -83,10 +83,10 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
       </p-table>
 
       <div class="pagination-row" *ngIf="list && list.totalCount > list.pageSize">
-        <button class="square-button" type="button" title="Premiere page" i18n-title="Premiere page" (click)="pageChange.emit(1)" [disabled]="page === 1">
+        <button class="square-button" type="button" title="Premiere page" i18n-title="@@accounting.fiscal-schedule.premiere.page.52b1f545" (click)="pageChange.emit(1)" [disabled]="page === 1">
           <i class="fa-solid fa-angles-left"></i>
         </button>
-        <button class="square-button" type="button" title="Page precedente" i18n-title="Page precedente" (click)="pageChange.emit(page - 1)" [disabled]="page === 1">
+        <button class="square-button" type="button" title="Page precedente" i18n-title="@@accounting.fiscal-schedule.page.precedente.45fb7e16" (click)="pageChange.emit(page - 1)" [disabled]="page === 1">
           <i class="fa-solid fa-angle-left"></i>
         </button>
         <button
@@ -95,10 +95,10 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
           *ngFor="let p of pageNumbers"
           [class.active]="p === page"
           (click)="pageChange.emit(p)">{{ p }}</button>
-        <button class="square-button" type="button" title="Page suivante" i18n-title="Page suivante" (click)="pageChange.emit(page + 1)" [disabled]="page === totalPages">
+        <button class="square-button" type="button" title="Page suivante" i18n-title="@@accounting.fiscal-schedule.page.suivante.86b1be40" (click)="pageChange.emit(page + 1)" [disabled]="page === totalPages">
           <i class="fa-solid fa-angle-right"></i>
         </button>
-        <button class="square-button" type="button" title="Derniere page" i18n-title="Derniere page" (click)="pageChange.emit(totalPages)" [disabled]="page === totalPages">
+        <button class="square-button" type="button" title="Derniere page" i18n-title="@@accounting.fiscal-schedule.derniere.page.710f9a70" (click)="pageChange.emit(totalPages)" [disabled]="page === totalPages">
           <i class="fa-solid fa-angles-right"></i>
         </button>
         <label class="page-size-label">

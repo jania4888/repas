@@ -59,7 +59,7 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Fournisseurs" i18n-title="Fournisseurs"
+      title="Fournisseurs" i18n-title="@@suppliers.supplier-list.fournisseurs.06b6d88c"
       subtitle="Gérez vos fournisseurs pour les bons de commande.">
       @if (canCreateSupplier()) {
         <app-button
@@ -78,7 +78,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@suppliers.supplier-list.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -90,7 +90,7 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par nom, email ou NIF…" i18n-placeholder="Rechercher par nom, email ou NIF…"
+            placeholder="Rechercher par nom, email ou NIF…" i18n-placeholder="@@suppliers.supplier-list.rechercher.par.nom.email.ou.nif.e25e488c"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -101,7 +101,7 @@ interface StatusOption {
           [(ngModel)]="selectedType"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les types" i18n-placeholder="Tous les types"
+          placeholder="Tous les types" i18n-placeholder="@@suppliers.supplier-list.tous.les.types.5a6be24d"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -111,7 +111,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@suppliers.supplier-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -136,7 +136,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} fournisseurs" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} fournisseurs"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} fournisseurs" i18n-currentPageReportTemplate="@@suppliers.supplier-list.affichage.de.first.a.last.sur.totalrecords.fourn.72f8264d"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -226,7 +226,7 @@ interface StatusOption {
           <tr>
             <td colspan="8" class="text-center p-6">
               <app-empty-state
-                title="Aucun fournisseur" i18n-title="Aucun fournisseur"
+                title="Aucun fournisseur" i18n-title="@@suppliers.supplier-list.aucun.fournisseur.44a1e39f"
                 description="Ajoutez votre premier fournisseur pour créer des bons de commande."
                 [showAction]="canCreateSupplier()"
                 actionLabel="Ajouter un fournisseur"

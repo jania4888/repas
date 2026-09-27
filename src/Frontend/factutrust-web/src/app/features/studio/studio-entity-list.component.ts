@@ -41,7 +41,7 @@ import { slugifyKey } from './shared/studio-text.util';
         <span>{{ runtimeLabels.entities.hideJunctions }}</span>
       </label>
       <button pButton type="button" [label]="aiLabel" icon="fa-solid fa-wand-magic-sparkles" studioActions
-        class="p-button-outlined" routerLink="/studio/ai" pTooltip="Créer une table en langage naturel" i18n-pTooltip="Créer une table en langage naturel"></button>
+        class="p-button-outlined" routerLink="/studio/ai" pTooltip="Créer une table en langage naturel" i18n-pTooltip="@@studio.studio-entity-list.creer.une.table.en.langage.naturel.4055aca7"></button>
       <button pButton type="button" [label]="newTableLabel" icon="fa-solid fa-plus" studioActions (click)="openCreate()"></button>
 
       <div class="ft-table-card">
@@ -82,10 +82,10 @@ import { slugifyKey } from './shared/studio-text.util';
                     [label]="e.isActive ? loc_ui_tern_active_a733b8 : loc_ui_tern_inactive_09af57" />
                 </td>
                 <td class="studio-actions">
-                  <button pButton type="button" icon="fa-solid fa-list-check" label="Champs" i18n-label="Champs"
-                    class="p-button-sm p-button-text" [routerLink]="['/studio', e.id]" pTooltip="Concevoir les champs" i18n-pTooltip="Concevoir les champs"></button>
-                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire" i18n-label="Formulaire"
-                    class="p-button-sm p-button-text" [routerLink]="['/studio', e.id, 'form']" pTooltip="Mise en page" i18n-pTooltip="Mise en page"></button>
+                  <button pButton type="button" icon="fa-solid fa-list-check" label="Champs" i18n-label="@@studio.studio-entity-list.champs.76943546"
+                    class="p-button-sm p-button-text" [routerLink]="['/studio', e.id]" pTooltip="Concevoir les champs" i18n-pTooltip="@@studio.studio-entity-list.concevoir.les.champs.3a9bfc4f"></button>
+                  <button pButton type="button" icon="fa-solid fa-table-cells-large" label="Formulaire" i18n-label="@@studio.studio-entity-list.formulaire.87e4e76f"
+                    class="p-button-sm p-button-text" [routerLink]="['/studio', e.id, 'form']" pTooltip="Mise en page" i18n-pTooltip="@@studio.studio-entity-list.mise.en.page.f09e7eee"></button>
                   <button pButton type="button" icon="fa-solid fa-table-list" [label]="dataLabel"
                     class="p-button-sm p-button-text" [routerLink]="['/studio/d', e.key]"></button>
                 </td>
@@ -99,14 +99,14 @@ import { slugifyKey } from './shared/studio-text.util';
     <p-dialog [header]="newTableLabel" [(visible)]="createVisible" [modal]="true" [style]="{ width: '32rem' }">
       <div class="studio-form">
         <label i18n="@@studio.studio-entity-list.nom.singulier.7df8eb9b">Nom (singulier) *</label>
-        <input pInputText [(ngModel)]="draftName" (ngModelChange)="onNameChange($event)" placeholder="Ex. Contrat" i18n-placeholder="Ex. Contrat" />
+        <input pInputText [(ngModel)]="draftName" (ngModelChange)="onNameChange($event)" placeholder="Ex. Contrat" i18n-placeholder="@@studio.studio-entity-list.ex.contrat.9ed38f87" />
         <label i18n="@@studio.studio-entity-list.nom.pluriel.8d2070c7">Nom (pluriel)</label>
-        <input pInputText [(ngModel)]="draftPlural" placeholder="Ex. Contrats" i18n-placeholder="Ex. Contrats" />
+        <input pInputText [(ngModel)]="draftPlural" placeholder="Ex. Contrats" i18n-placeholder="@@studio.studio-entity-list.ex.contrats.4be0c8f4" />
         <label i18n="@@studio.studio-entity-list.cle.technique.46172421">Clé technique *</label>
-        <input pInputText [(ngModel)]="draftKey" placeholder="ex. contrat" i18n-placeholder="ex. contrat" />
+        <input pInputText [(ngModel)]="draftKey" placeholder="ex. contrat" i18n-placeholder="@@studio.studio-entity-list.ex.contrat.170e996f" />
         <small class="studio-hint" i18n="@@studio.studio-entity-list.minuscules.chiffres.et.commence.par.une.lettre.0af1388f">Minuscules, chiffres et « _ », commence par une lettre.</small>
         <label i18n="@@studio.studio-entity-list.icone.fontawesome.b25e133d">Icône (FontAwesome)</label>
-        <input pInputText [(ngModel)]="draftIcon" placeholder="fa-solid fa-file-contract" i18n-placeholder="fa-solid fa-file-contract" />
+        <input pInputText [(ngModel)]="draftIcon" placeholder="fa-solid fa-file-contract" i18n-placeholder="@@studio.studio-entity-list.fa.solid.fa.file.contract.883c019b" />
         <label i18n="@@studio.studio-entity-list.description.55f8ebc8">Description</label>
         <textarea pTextarea [(ngModel)]="draftDescription" rows="2"></textarea>
       </div>

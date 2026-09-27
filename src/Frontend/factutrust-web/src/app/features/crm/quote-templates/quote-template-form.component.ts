@@ -57,7 +57,7 @@ interface TemplateLineRow {
       <p class="page-subtitle" i18n="@@crm.quote-templates.definissez.les.lignes.produits.la.validite.par.d.ebd25d30"> Définissez les lignes produits, la validité par défaut et les textes réutilisés lors de la création d'un devis. </p>
 
       <form (ngSubmit)="onSubmit()" class="quote-template-form">
-        <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-bookmark" [number]="1">
+        <app-form-section title="Informations générales" i18n-title="@@crm.quote-templates.informations.generales.be6ba6e5" icon="pi-bookmark" [number]="1">
           <div class="form-grid">
             <div class="field span-2">
               <label for="name"><ng-container i18n="@@crm.quote-templates.nom.7ff20370">Nom </ng-container> <span class="required" i18n="@@crm.quote-templates.text.df58248c">*</span></label>
@@ -88,7 +88,7 @@ interface TemplateLineRow {
           </div>
         </app-form-section>
 
-        <app-form-section title="Lignes du modèle" i18n-title="Lignes du modèle" icon="pi-list" [number]="2">
+        <app-form-section title="Lignes du modèle" i18n-title="@@crm.quote-templates.lignes.du.modele.59da0ace" icon="pi-list" [number]="2">
           <div class="lines-actions">
             <app-button variant="secondary" icon="pi-plus" iconPos="left" type="button" (click)="addLine()" i18n="@@crm.quote-templates.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
           </div>
@@ -116,7 +116,7 @@ interface TemplateLineRow {
                         field="name"
                         [dropdown]="true"
                         [forceSelection]="true"
-                        placeholder="Rechercher un produit..." i18n-placeholder="Rechercher un produit..."
+                        placeholder="Rechercher un produit..." i18n-placeholder="@@crm.quote-templates.rechercher.un.produit.0da008f6"
                         styleClass="w-full"
                         inputStyleClass="w-full">
                         <ng-template let-product pTemplate="item">
@@ -146,7 +146,7 @@ interface TemplateLineRow {
                         [maxFractionDigits]="3"
                         mode="decimal"
                         [allowEmpty]="true"
-                        placeholder="Prix catalogue" i18n-placeholder="Prix catalogue"
+                        placeholder="Prix catalogue" i18n-placeholder="@@crm.quote-templates.prix.catalogue.07b341c0"
                         styleClass="w-full">
                       </p-inputNumber>
                     </td>
@@ -183,7 +183,7 @@ interface TemplateLineRow {
           </div>
         </app-form-section>
 
-        <app-form-section title="Notes et conditions par défaut" i18n-title="Notes et conditions par défaut" icon="pi-file-edit" [number]="3">
+        <app-form-section title="Notes et conditions par défaut" i18n-title="@@crm.quote-templates.notes.et.conditions.par.defaut.fcd4572c" icon="pi-file-edit" [number]="3">
           <div class="field">
             <label for="notes" i18n="@@crm.quote-templates.notes.70440046">Notes</label>
             <textarea

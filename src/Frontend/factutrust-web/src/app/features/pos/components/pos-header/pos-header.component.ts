@@ -17,7 +17,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
   template: `
     <header class="pos-header">
       <div class="pos-header__left">
-        <button class="pos-header__back" (click)="goBack()" title="Retour au tableau de bord" i18n-title="Retour au tableau de bord" aria-label="Retour" i18n-aria-label="Retour">
+        <button class="pos-header__back" (click)="goBack()" title="Retour au tableau de bord" i18n-title="@@pos.components.retour.au.tableau.de.bord.72006dd2" aria-label="Retour" i18n-aria-label="@@pos.components.retour.e5befb1f">
           <i class="pi pi-arrow-left"></i>
         </button>
         <div class="pos-header__brand">
@@ -26,7 +26,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
           </div>
           <h1 class="pos-header__title" i18n="@@pos.components.point.de.vente.420a8974">Point de Vente</h1>
         </div>
-          <button class="pos-header__pill pos-header__pill--overflow" type="button" (click)="onOpenHistory.emit()" title="Historique des transactions" i18n-title="Historique des transactions" aria-label="Historique" i18n-aria-label="Historique">
+          <button class="pos-header__pill pos-header__pill--overflow" type="button" (click)="onOpenHistory.emit()" title="Historique des transactions" i18n-title="@@pos.components.historique.des.transactions.690f9cb4" aria-label="Historique" i18n-aria-label="@@pos.components.historique.34f3a06a">
           <i class="pi pi-folder-open"></i>
           <span i18n="@@pos.components.historiques.feb0e8f3">Historiques</span>
         </button>
@@ -66,17 +66,17 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
             </button>
           }
           @if (registerSession.currentSession()) {
-            <button type="button" class="pos-header__pill pos-header__pill--overflow" (click)="onXReport.emit()" title="Rapport X" i18n-title="Rapport X" aria-label="Rapport X" i18n-aria-label="Rapport X">
+            <button type="button" class="pos-header__pill pos-header__pill--overflow" (click)="onXReport.emit()" title="Rapport X" i18n-title="@@pos.components.rapport.x.5a5924ab" aria-label="Rapport X" i18n-aria-label="@@pos.components.rapport.x.5a5924ab">
               <i class="pi pi-eye"></i>
               <span i18n="@@pos.components.x.c032adc1">X</span>
             </button>
-            <button type="button" class="pos-header__pill pos-header__pill--z" (click)="onCloseZ.emit()" title="Clôturer Z" i18n-title="Clôturer Z" aria-label="Clôturer Z" i18n-aria-label="Clôturer Z">
+            <button type="button" class="pos-header__pill pos-header__pill--z" (click)="onCloseZ.emit()" title="Clôturer Z" i18n-title="@@pos.components.cloturer.z.9bcddf02" aria-label="Clôturer Z" i18n-aria-label="@@pos.components.cloturer.z.9bcddf02">
               <i class="pi pi-book"></i>
               <span i18n="@@pos.components.cloturer.z.9bcddf02">Clôturer Z</span>
             </button>
           }
           @if (!registerSession.currentSession() && registerSession.requireOpenSession()) {
-            <button type="button" class="pos-header__pill pos-header__pill--active" (click)="onOpenRegister.emit()" title="Ouvrir la caisse" i18n-title="Ouvrir la caisse" aria-label="Ouvrir la caisse" i18n-aria-label="Ouvrir la caisse">
+            <button type="button" class="pos-header__pill pos-header__pill--active" (click)="onOpenRegister.emit()" title="Ouvrir la caisse" i18n-title="@@pos.components.ouvrir.la.caisse.7e98a335" aria-label="Ouvrir la caisse" i18n-aria-label="@@pos.components.ouvrir.la.caisse.7e98a335">
               <i class="pi pi-unlock"></i>
               <span i18n="@@pos.components.ouvrir.42c07747">Ouvrir</span>
             </button>
@@ -86,7 +86,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
 
       <div class="pos-header__right">
         @if (!offlineService.isOnline()) {
-          <span class="pos-header__offline" title="Hors ligne" i18n-title="Hors ligne">
+          <span class="pos-header__offline" title="Hors ligne" i18n-title="@@pos.components.hors.ligne.2b3e7dce">
             <i class="pi pi-wifi-off"></i>
             <span i18n="@@pos.components.hors.ligne.2b3e7dce">Hors ligne</span>
           </span>
@@ -113,8 +113,8 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
           [class.pos-header__pill--active]="isDualScreenOpen"
           type="button"
           (click)="onDualScreenToggle.emit()"
-          title="Ecran client" i18n-title="Ecran client"
-          aria-label="Ecran client" i18n-aria-label="Ecran client">
+          title="Ecran client" i18n-title="@@pos.components.ecran.client.1a2e7c98"
+          aria-label="Ecran client" i18n-aria-label="@@pos.components.ecran.client.1a2e7c98">
           <i class="pi pi-desktop"></i>
           <span i18n="@@pos.components.ecran.client.1a2e7c98">Ecran client</span>
         </button>
@@ -123,14 +123,14 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
           [class.pos-header__pill--active]="isQuickMode"
           type="button"
           (click)="onQuickModeToggle.emit()"
-          title="Mode rapide (F4)" i18n-title="Mode rapide (F4)"
-          aria-label="Mode rapide" i18n-aria-label="Mode rapide">
+          title="Mode rapide (F4)" i18n-title="@@pos.components.mode.rapide.f4.874b63b5"
+          aria-label="Mode rapide" i18n-aria-label="@@pos.components.mode.rapide.1c78b5f0">
           <i class="pi pi-bolt"></i>
           <span i18n="@@pos.components.mode.rapide.1c78b5f0">Mode rapide</span>
         </button>
 
         <div class="pos-header__theme pos-header__pill--overflow" (click)="$event.stopPropagation()">
-          <button type="button" class="pos-header__pill" title="Theme" i18n-title="Theme" aria-label="Changer le theme" i18n-aria-label="Changer le theme" (click)="toggleThemeMenu($event)">
+          <button type="button" class="pos-header__pill" title="Theme" i18n-title="@@pos.components.theme.a797e309" aria-label="Changer le theme" i18n-aria-label="@@pos.components.changer.le.theme.a3dc33f7" (click)="toggleThemeMenu($event)">
             <i class="pi pi-palette"></i>
             <span i18n="@@pos.components.theme.a797e309">Theme</span>
           </button>
@@ -144,7 +144,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
             </div>
           }
         </div>
-        <button class="pos-header__pill pos-header__pill--overflow" type="button" (click)="openShortcuts()" title="Raccourcis clavier" i18n-title="Raccourcis clavier" aria-label="Shortcuts" i18n-aria-label="Shortcuts">
+        <button class="pos-header__pill pos-header__pill--overflow" type="button" (click)="openShortcuts()" title="Raccourcis clavier" i18n-title="@@pos.components.raccourcis.clavier.8a7de23a" aria-label="Shortcuts" i18n-aria-label="@@pos.components.shortcuts.90c93523">
           <i class="pi pi-th-large"></i>
           <span i18n="@@pos.components.raccourcis.0e0d6404">Raccourcis</span>
         </button>
@@ -159,8 +159,8 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
             type="button"
             class="pos-header__pill pos-header__plus-trigger"
             (click)="togglePlusMenu($event)"
-            title="Plus d'actions" i18n-title="Plus d'actions"
-            aria-label="Plus d'actions" i18n-aria-label="Plus d'actions"
+            title="Plus d'actions" i18n-title="@@pos.components.plus.d.actions.ffe6be2a"
+            aria-label="Plus d'actions" i18n-aria-label="@@pos.components.plus.d.actions.ffe6be2a"
             [attr.aria-expanded]="showPlusMenu">
             <i class="pi pi-ellipsis-h"></i>
           </button>
@@ -203,7 +203,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
           }
         </div>
 
-        <button class="pos-header__new-order" (click)="onNewOrder.emit()" title="Nouvelle commande (F9)" i18n-title="Nouvelle commande (F9)">
+        <button class="pos-header__new-order" (click)="onNewOrder.emit()" title="Nouvelle commande (F9)" i18n-title="@@pos.components.nouvelle.commande.f9.0be2f15a">
           <i class="pi pi-plus"></i>
           <span i18n="@@pos.components.nouveau.b9676c8f">Nouveau</span>
         </button>
@@ -215,7 +215,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
             <div class="pos-header__shortcuts-header">
               <h3 i18n="@@pos.components.raccourcis.clavier.8a7de23a">Raccourcis clavier</h3>
               <p class="pos-header__shortcuts-desc" i18n="@@pos.components.accelerez.votre.saisie.avec.ces.raccourcis.d1431e65">Accelerez votre saisie avec ces raccourcis</p>
-              <button class="pos-header__shortcuts-close" (click)="showShortcuts = false" aria-label="Fermer" i18n-aria-label="Fermer">
+              <button class="pos-header__shortcuts-close" (click)="showShortcuts = false" aria-label="Fermer" i18n-aria-label="@@pos.components.fermer.5ab4ec64">
                 <i class="pi pi-times"></i>
               </button>
             </div>

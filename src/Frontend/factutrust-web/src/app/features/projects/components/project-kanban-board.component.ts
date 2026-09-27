@@ -41,7 +41,7 @@ export interface ProjectTaskMoveEvent {
     } @else if (!hasVisibleTasks) {
       <app-empty-state
         icon="pi-check-square"
-        title="Aucune tâche visible" i18n-title="Aucune tâche visible"
+        title="Aucune tâche visible" i18n-title="@@projects.components.aucune.tache.visible.2097ba88"
         description="Créez une tâche ou ajustez vos filtres pour alimenter le Kanban." />
     } @else {
       <div class="proj-kanban" [class.proj-kanban--readonly]="!canUpdateTask">

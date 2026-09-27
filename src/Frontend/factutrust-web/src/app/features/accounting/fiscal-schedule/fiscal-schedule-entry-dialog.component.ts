@@ -22,7 +22,7 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
       <form class="fiscal-modal" [formGroup]="form" (ngSubmit)="save.emit()">
         <header>
           <h2 id="fiscal-entry-dialog-title">{{ editing ? loc_ui_tern_modifier_une_echeance_02f156 : loc_ui_tern_nouvelle_echeance_fiscale_6a2c06 }}</h2>
-          <button class="square-button" type="button" title="Fermer" i18n-title="Fermer" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
+          <button class="square-button" type="button" title="Fermer" i18n-title="@@accounting.fiscal-schedule.fermer.5ab4ec64" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
         </header>
         <div class="fiscal-modal-grid">
           <label>

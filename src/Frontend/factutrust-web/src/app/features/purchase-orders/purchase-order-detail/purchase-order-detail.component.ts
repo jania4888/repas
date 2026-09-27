@@ -61,7 +61,7 @@ import {
             <ng-container *ngIf="po()!.status != PurchaseOrderStatus.Draft && po()!.status != PurchaseOrderStatus.Cancelled">
               <app-button variant="outline" icon="pi-envelope" iconPos="left"
                 [disabled]="sending() || !po()!.supplier.email"
-                pTooltip="Le fournisseur n'a pas d'adresse email." i18n-pTooltip="Le fournisseur n'a pas d'adresse email."
+                pTooltip="Le fournisseur n'a pas d'adresse email." i18n-pTooltip="@@purchase-orders.purchase-order-detail.le.fournisseur.n.a.pas.d.adresse.email.97a1b097"
                 [tooltipDisabled]="!!po()!.supplier.email"
                 tooltipPosition="bottom"
                 (click)="sendByEmail()">
@@ -75,7 +75,7 @@ import {
               <app-button variant="primary" icon="pi-check" iconPos="left"
                 (click)="confirmOrder()"
                 [disabled]="confirming()"
-                pTooltip="Confirmer la commande pour pouvoir recevoir les marchandises et créer des factures" i18n-pTooltip="Confirmer la commande pour pouvoir recevoir les marchandises et créer des factures"
+                pTooltip="Confirmer la commande pour pouvoir recevoir les marchandises et créer des factures" i18n-pTooltip="@@purchase-orders.purchase-order-detail.confirmer.la.commande.pour.pouvoir.recevoir.les.169ab29f"
                 tooltipPosition="bottom">
                 {{ confirming() ? loc_ui_tern_confirmation_a1e29f : loc_ui_tern_confirmer_80a664 }}
               </app-button>
@@ -312,7 +312,7 @@ import {
 
     <!-- Cancel order dialog -->
     <p-dialog
-      header="Annuler la commande" i18n-header="Annuler la commande"
+      header="Annuler la commande" i18n-header="@@purchase-orders.purchase-order-detail.annuler.la.commande.187515f7"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [style]="{ width: '450px' }"
@@ -323,7 +323,7 @@ import {
       <textarea
         pTextarea
         [(ngModel)]="cancellationReason"
-        placeholder="Motif d'annulation..." i18n-placeholder="Motif d'annulation..."
+        placeholder="Motif d'annulation..." i18n-placeholder="@@purchase-orders.purchase-order-detail.motif.d.annulation.2ecc7f3a"
         [rows]="4"
         class="w-full cancellation-reason-input">
       </textarea>

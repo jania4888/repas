@@ -24,7 +24,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Analyse fournisseurs" i18n-title="Analyse fournisseurs"
+      title="Analyse fournisseurs" i18n-title="@@reports.purchases-analytics.analyse.fournisseurs.496355ab"
       subtitle="Classement, part des achats et indicateurs par fournisseur">
       <app-button
         variant="secondary"
@@ -74,19 +74,19 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Fournisseurs actifs" i18n-label="Fournisseurs actifs"
+          label="Fournisseurs actifs" i18n-label="@@reports.purchases-analytics.fournisseurs.actifs.96b6dc58"
           [value]="data()!.activeSuppliersCount"
           icon="pi-building"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Dépenses totales" i18n-label="Dépenses totales"
+          label="Dépenses totales" i18n-label="@@reports.purchases-analytics.depenses.totales.7f280e4e"
           [value]="formatAmount(data()!.totalExpenses)"
           icon="pi-dollar"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Concentration top 5" i18n-label="Concentration top 5"
+          label="Concentration top 5" i18n-label="@@reports.purchases-analytics.concentration.top.5.63dca998"
           [value]="data()!.concentrationTop5Percent.toFixed(1) + ' %'"
           icon="pi-chart-pie"
           variant="warning">
@@ -117,7 +117,7 @@ import {
         <p-table
           [value]="data()!.topSuppliers"
           styleClass="p-datatable-sm analytics-table"
-          aria-label="Tableau des fournisseurs par montant" i18n-aria-label="Tableau des fournisseurs par montant">
+          aria-label="Tableau des fournisseurs par montant" i18n-aria-label="@@reports.purchases-analytics.tableau.des.fournisseurs.par.montant.5bd3cc08">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@reports.purchases-analytics.rang.dbb66acd">Rang</th>

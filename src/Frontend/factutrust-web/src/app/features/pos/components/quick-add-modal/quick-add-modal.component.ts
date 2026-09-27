@@ -18,7 +18,7 @@ import { ProductListItem } from '@core/services/product.service';
         aria-describedby="quick-add-product">
         <div class="quick-add__header">
           <h3 id="quick-add-title" class="quick-add__title" i18n="@@pos.components.quantite.09a38fda">Quantité</h3>
-          <button class="quick-add__close" (click)="onCancel()" type="button" aria-label="Fermer" i18n-aria-label="Fermer">
+          <button class="quick-add__close" (click)="onCancel()" type="button" aria-label="Fermer" i18n-aria-label="@@pos.components.fermer.5ab4ec64">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -39,7 +39,7 @@ import { ProductListItem } from '@core/services/product.service';
               min="0.001"
               step="0.001"
               class="quick-add__input"
-              aria-label="Quantité" i18n-aria-label="Quantité" />
+              aria-label="Quantité" i18n-aria-label="@@pos.components.quantite.09a38fda" />
           </div>
         </div>
         <div class="quick-add__actions">

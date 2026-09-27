@@ -50,7 +50,7 @@ export interface LabelPrintTarget {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p-dialog
-      header="Imprimer les étiquettes" i18n-header="Imprimer les étiquettes"
+      header="Imprimer les étiquettes" i18n-header="@@products.components.imprimer.les.etiquettes.ff40cf1e"
       [visible]="visible"
       (visibleChange)="onVisibleChange($event)"
       [modal]="true"
@@ -75,7 +75,7 @@ export interface LabelPrintTarget {
             [(ngModel)]="selectedLayout"
             optionLabel="label"
             optionValue="key"
-            placeholder="Choisir un gabarit" i18n-placeholder="Choisir un gabarit"
+            placeholder="Choisir un gabarit" i18n-placeholder="@@products.components.choisir.un.gabarit.8b120da1"
             styleClass="w-full">
           </p-select>
         </div>

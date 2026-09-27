@@ -42,7 +42,7 @@ const METHOD_LABELS: Record<PaymentMethod, string> = {
               min="0"
               step="0.001"
               class="split-payment__input" />
-            <button type="button" class="split-payment__remove" (click)="posState.removePaymentSplit(i)" aria-label="Supprimer" i18n-aria-label="Supprimer">
+            <button type="button" class="split-payment__remove" (click)="posState.removePaymentSplit(i)" aria-label="Supprimer" i18n-aria-label="@@pos.components.supprimer.1acfc1c7">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -55,7 +55,7 @@ const METHOD_LABELS: Record<PaymentMethod, string> = {
             <option [value]="m.value">{{ m.label }}</option>
           }
         </select>
-        <input #amountInput type="number" min="0" step="0.001" placeholder="Montant" i18n-placeholder="Montant" class="split-payment__input" />
+        <input #amountInput type="number" min="0" step="0.001" placeholder="Montant" i18n-placeholder="@@pos.components.montant.4adcd9fc" class="split-payment__input" />
         <button type="button" class="split-payment__add-btn" (click)="addSplit(methodSelect.value, amountInput.value)">
           <i class="pi pi-plus"></i> Ajouter
         </button>

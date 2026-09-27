@@ -28,7 +28,7 @@ import { PayrollAmountPipe } from '../shared';
   ],
   template: `
     <p-dialog
-      header="Enregistrer le versement CNSS" i18n-header="Enregistrer le versement CNSS"
+      header="Enregistrer le versement CNSS" i18n-header="@@payroll.declarations.enregistrer.le.versement.cnss.eeced899"
       [visible]="visible()"
       (visibleChange)="visibleChange.emit($event)"
       [modal]="true"
@@ -68,7 +68,7 @@ import { PayrollAmountPipe } from '../shared';
             [(ngModel)]="bankAccountId"
             optionLabel="label"
             optionValue="value"
-            placeholder="Sélectionner un compte" i18n-placeholder="Sélectionner un compte"
+            placeholder="Sélectionner un compte" i18n-placeholder="@@payroll.declarations.selectionner.un.compte.9009d2c1"
             styleClass="w-full" />
         </div>
       }

@@ -21,7 +21,7 @@ import { AgentSuggestionCategory } from '../../config/agent-scopes.config';
         #tabList
         class="suggestion-catalog-tabs"
         role="tablist"
-        aria-label="Thèmes de questions" i18n-aria-label="Thèmes de questions"
+        aria-label="Thèmes de questions" i18n-aria-label="@@ai-assistant.components.themes.de.questions.5cfda301"
         (keydown)="onKeydown($event)">
         @for (cat of categories(); track cat.id) {
           <button

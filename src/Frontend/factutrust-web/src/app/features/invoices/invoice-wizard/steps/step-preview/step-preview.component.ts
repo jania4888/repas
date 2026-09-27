@@ -82,7 +82,7 @@ import {
             <div class="invoice-header">
               <div class="invoice-header-left">
                 @if (seller?.logo) {
-                  <img [src]="seller!.logo" alt="Logo" i18n-alt="Logo" class="company-logo">
+                  <img [src]="seller!.logo" alt="Logo" i18n-alt="@@invoices.invoice-wizard.logo.83fce832" class="company-logo">
                 }
                 <div class="company-info">
                   <h3>{{ seller?.companyName }}</h3>
@@ -312,7 +312,7 @@ import {
                   type="button"
                   class="error-dismiss"
                   (click)="dismissError()"
-                  aria-label="Fermer" i18n-aria-label="Fermer">
+                  aria-label="Fermer" i18n-aria-label="@@invoices.invoice-wizard.fermer.5ab4ec64">
                   <i class="pi pi-times"></i>
                 </button>
               </div>
@@ -368,7 +368,7 @@ import {
               <div class="validation-details">
                 <p-accordion [multiple]="true">
                   <!-- Legal Checks -->
-                  <p-accordionTab header="Mentions légales" i18n-header="Mentions légales" [selected]="hasErrorsInCategory('LEGAL')">
+                  <p-accordionTab header="Mentions légales" i18n-header="@@invoices.invoice-wizard.mentions.legales.414291e0" [selected]="hasErrorsInCategory('LEGAL')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
                         <span i18n="@@invoices.invoice-wizard.mentions.legales.414291e0">Mentions légales</span>
@@ -387,7 +387,7 @@ import {
                   </p-accordionTab>
 
                   <!-- Fiscal Checks -->
-                  <p-accordionTab header="Conformité fiscale" i18n-header="Conformité fiscale" [selected]="hasErrorsInCategory('FISCAL')">
+                  <p-accordionTab header="Conformité fiscale" i18n-header="@@invoices.invoice-wizard.conformite.fiscale.f4dc5b52" [selected]="hasErrorsInCategory('FISCAL')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
                         <span i18n="@@invoices.invoice-wizard.conformite.fiscale.f4dc5b52">Conformité fiscale</span>
@@ -406,7 +406,7 @@ import {
                   </p-accordionTab>
 
                   <!-- Calculation Checks -->
-                  <p-accordionTab header="Calculs" i18n-header="Calculs" [selected]="hasErrorsInCategory('CALCULATION')">
+                  <p-accordionTab header="Calculs" i18n-header="@@invoices.invoice-wizard.calculs.009b0e4f" [selected]="hasErrorsInCategory('CALCULATION')">
                     <ng-template pTemplate="header">
                       <div class="accordion-header">
                         <span i18n="@@invoices.invoice-wizard.calculs.009b0e4f">Calculs</span>
@@ -425,7 +425,7 @@ import {
                   </p-accordionTab>
 
                   <!-- Format Checks -->
-                  <p-accordionTab header="Format" i18n-header="Format">
+                  <p-accordionTab header="Format" i18n-header="@@invoices.invoice-wizard.format.041a5dec">
                     @for (check of getChecksByCategory('FORMAT'); track check.id) {
                       <div class="check-item" [class]="check.status.toLowerCase()">
                         <i [class]="getCheckIcon(check)"></i>
@@ -461,7 +461,7 @@ import {
             type="button"
             class="error-dismiss"
             (click)="dismissError()"
-            aria-label="Fermer" i18n-aria-label="Fermer">
+            aria-label="Fermer" i18n-aria-label="@@invoices.invoice-wizard.fermer.5ab4ec64">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -518,7 +518,7 @@ import {
         @if (featureFlags.pdfPreview()) {
           <div class="actions-pdf">
             <p-button
-              label="Télécharger aperçu PDF" i18n-label="Télécharger aperçu PDF"
+              label="Télécharger aperçu PDF" i18n-label="@@invoices.invoice-wizard.telecharger.apercu.pdf.346b69f1"
               icon="pi pi-download"
               [text]="true"
               (click)="downloadPreview()">

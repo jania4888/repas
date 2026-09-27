@@ -52,7 +52,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
   ],
   providers: [ConfirmationService],
   template: `
-    <app-page-header title="Plan comptable" i18n-title="Plan comptable" subtitle="NCT 01 + overlay métier — comptes système verrouillés" />
+    <app-page-header title="Plan comptable" i18n-title="@@accounting.chart-of-accounts.plan.comptable.b3f54c09" subtitle="NCT 01 + overlay métier — comptes système verrouillés" />
     <p-confirmDialog />
     <div class="card coa-card">
       <app-accounting-filter-bar ariaLabel="Recherche et actualisation du plan comptable">
@@ -65,8 +65,8 @@ export function sceAccountDigitCount(accountNumber: string): number {
               class="coa-search-input"
               [(ngModel)]="searchTerm"
               (ngModelChange)="onSearchChange()"
-              placeholder="Rechercher par n° de compte ou libellé…" i18n-placeholder="Rechercher par n° de compte ou libellé…"
-              aria-label="Filtrer le plan comptable" i18n-aria-label="Filtrer le plan comptable" />
+              placeholder="Rechercher par n° de compte ou libellé…" i18n-placeholder="@@accounting.chart-of-accounts.rechercher.par.n.de.compte.ou.libelle.d5cc9f44"
+              aria-label="Filtrer le plan comptable" i18n-aria-label="@@accounting.chart-of-accounts.filtrer.le.plan.comptable.f9c60a07" />
           </span>
         </div>
         <div accountingFilterActions class="coa-toolbar-right">
@@ -125,7 +125,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
         [showCurrentPageReport]="true"
         [sortField]="'accountNumber'"
         [sortOrder]="1"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes" i18n-currentPageReportTemplate="@@accounting.chart-of-accounts.affichage.de.first.a.last.sur.totalrecords.compt.4470e3a3"
         styleClass="p-datatable-sm coa-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>
@@ -250,14 +250,14 @@ export function sceAccountDigitCount(accountNumber: string): number {
           <div class="coa-grid">
             <div class="coa-field">
               <label class="coa-lbl" for="coa-num" i18n="@@accounting.chart-of-accounts.compte.numero.f569fef7">Compte numéro</label>
-              <input id="coa-num" class="coa-inp" [(ngModel)]="form.accountNumber" (ngModelChange)="onAccountNumberChange()" [maxlength]="accountNumberMaxLength" placeholder="Ex. 428.3 ou 41100001" i18n-placeholder="Ex. 428.3 ou 41100001" />
+              <input id="coa-num" class="coa-inp" [(ngModel)]="form.accountNumber" (ngModelChange)="onAccountNumberChange()" [maxlength]="accountNumberMaxLength" placeholder="Ex. 428.3 ou 41100001" i18n-placeholder="@@accounting.chart-of-accounts.ex.428.3.ou.41100001.5e8b90c4" />
               @if (accountNumberError(); as numError) {
                 <p class="coa-create-error" role="alert">{{ numError }}</p>
               }
             </div>
             <div class="coa-field coa-field-wide">
               <label class="coa-lbl" for="coa-label" i18n="@@accounting.chart-of-accounts.libelle.f5485bba">Libellé</label>
-              <input id="coa-label" class="coa-inp" [(ngModel)]="form.label" placeholder="Ex. Client Société X" i18n-placeholder="Ex. Client Société X" />
+              <input id="coa-label" class="coa-inp" [(ngModel)]="form.label" placeholder="Ex. Client Société X" i18n-placeholder="@@accounting.chart-of-accounts.ex.client.societe.x.947766e4" />
             </div>
           </div>
 

@@ -39,7 +39,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
       subtitle="Déclenchez une action métier réelle (facture, dépense…) à partir d'un enregistrement de cette table."
       [breadcrumbs]="breadcrumbs()">
 
-      <button pButton type="button" label="Nouvelle automatisation" i18n-label="Nouvelle automatisation" icon="fa-solid fa-bolt" studioActions
+      <button pButton type="button" label="Nouvelle automatisation" i18n-label="@@studio.studio-automations.nouvelle.automatisation.929c673d" icon="fa-solid fa-bolt" studioActions
         (click)="openAdd()"></button>
 
       <p-table [value]="automations()" [loading]="loading()" styleClass="p-datatable-sm">
@@ -68,7 +68,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
       [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '46rem' }">
       <div class="ft-form">
         <label i18n="@@studio.studio-automations.nom.463a6959">Nom *</label>
-        <input pInputText [(ngModel)]="fName" placeholder="Ex. Facturer l'abonnement" i18n-placeholder="Ex. Facturer l'abonnement" />
+        <input pInputText [(ngModel)]="fName" placeholder="Ex. Facturer l'abonnement" i18n-placeholder="@@studio.studio-automations.ex.facturer.l.abonnement.a61cdb80" />
 
         <div class="ft-row">
           <div>
@@ -86,8 +86,8 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Annuler" i18n-label="Annuler" class="p-button-text" (click)="dialogVisible = false"></button>
-        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
+        <button pButton type="button" label="Annuler" i18n-label="@@studio.studio-automations.annuler.49ba3292" class="p-button-text" (click)="dialogVisible = false"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-automations.enregistrer.f7c8bcd8" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
       </ng-template>
     </p-dialog>
   `,

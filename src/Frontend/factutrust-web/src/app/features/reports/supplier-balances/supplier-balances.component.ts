@@ -35,7 +35,7 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Solde par fournisseur" i18n-title="Solde par fournisseur"
+      title="Solde par fournisseur" i18n-title="@@reports.supplier-balances.solde.par.fournisseur.7b26b81c"
       subtitle="Solde commercial (facturé − payé) par fournisseur">
       <app-button
         variant="secondary"
@@ -55,7 +55,7 @@ import {
       <div class="ft-filters__header">
         <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@reports.supplier-balances.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -67,10 +67,10 @@ import {
           <input
             type="text"
             class="filter-input"
-            placeholder="Rechercher un fournisseur..." i18n-placeholder="Rechercher un fournisseur..."
+            placeholder="Rechercher un fournisseur..." i18n-placeholder="@@reports.supplier-balances.rechercher.un.fournisseur.95eafd92"
             [ngModel]="search()"
             (ngModelChange)="search.set($event)"
-            aria-label="Rechercher un fournisseur" i18n-aria-label="Rechercher un fournisseur" />
+            aria-label="Rechercher un fournisseur" i18n-aria-label="@@reports.supplier-balances.rechercher.un.fournisseur.c3611217" />
         </span>
         <label class="filter-toggle">
           <input
@@ -90,7 +90,7 @@ import {
         [loading]="loading()"
         partyLabel="Fournisseur"
         [showActions]="true"
-        emptyMessage="Aucun solde fournisseur" i18n-emptyMessage="Aucun solde fournisseur"
+        emptyMessage="Aucun solde fournisseur" i18n-emptyMessage="@@reports.supplier-balances.aucun.solde.fournisseur.6ed70d5f"
         ariaLabel="Soldes par fournisseur"
         (viewInvoices)="onViewInvoices($event)"
         (viewParty)="onViewParty($event)">

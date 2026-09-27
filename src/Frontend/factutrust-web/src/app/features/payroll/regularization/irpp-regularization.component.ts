@@ -53,7 +53,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Régularisation IRPP" i18n-title="Régularisation IRPP"
+      title="Régularisation IRPP" i18n-title="@@payroll.regularization.regularisation.irpp.da08474d"
       [subtitle]="loc_ui_tern_periode_ed6eb6 + monthLabel(month) + ' ' + year">
       <app-button variant="outline" (click)="reset()" i18n="@@payroll.regularization.annuler.49ba3292">Annuler</app-button>
       @if (canManage()) {
@@ -74,13 +74,13 @@ import {
 
     <div class="reg-layout">
       <div class="reg-main">
-        <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-user" [number]="1">
+        <app-form-section title="Informations générales" i18n-title="@@payroll.regularization.informations.generales.be6ba6e5" icon="pi-user" [number]="1">
           <div class="payroll-form-row">
             <div class="payroll-form-group">
               <label for="regEmployee" i18n="@@payroll.regularization.salarie.27f97915">Salarié</label>
               <p-select inputId="regEmployee" [options]="employees()" optionLabel="fullName" optionValue="id"
                 [(ngModel)]="employeeId" (ngModelChange)="onEmployeeChange()" [filter]="true" filterBy="fullName"
-                placeholder="Sélectionner un salarié" i18n-placeholder="Sélectionner un salarié" appendTo="body" styleClass="w-full" />
+                placeholder="Sélectionner un salarié" i18n-placeholder="@@payroll.regularization.selectionner.un.salarie.f23a6ed1" appendTo="body" styleClass="w-full" />
             </div>
             <div class="payroll-form-group">
               <label for="regYear" i18n="@@payroll.regularization.exercice.e171e2b0">Exercice</label>
@@ -114,7 +114,7 @@ import {
         </app-form-section>
 
         @if (preview(); as p) {
-          <app-form-section title="Détail du calcul" i18n-title="Détail du calcul" icon="pi-list" [number]="2">
+          <app-form-section title="Détail du calcul" i18n-title="@@payroll.regularization.detail.du.calcul.51773f33" icon="pi-list" [number]="2">
             <div class="payroll-table-scroll">
               <p-table [value]="detailRows()" styleClass="p-datatable-sm">
                 <ng-template pTemplate="header">
@@ -145,9 +145,9 @@ import {
             </div>
           </app-form-section>
 
-          <app-form-section title="Notes" i18n-title="Notes" icon="pi-comment" [number]="3">
+          <app-form-section title="Notes" i18n-title="@@payroll.regularization.notes.70440046" icon="pi-comment" [number]="3">
             <textarea pTextarea [(ngModel)]="notes" rows="3" class="w-full" maxlength="1000"
-              placeholder="Saisir une note éventuelle…" i18n-placeholder="Saisir une note éventuelle…"></textarea>
+              placeholder="Saisir une note éventuelle…" i18n-placeholder="@@payroll.regularization.saisir.une.note.eventuelle.af7081d2"></textarea>
           </app-form-section>
         }
       </div>

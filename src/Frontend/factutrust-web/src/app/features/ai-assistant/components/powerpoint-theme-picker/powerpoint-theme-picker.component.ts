@@ -30,11 +30,11 @@ interface FilterChip {
             type="search"
             [value]="searchQuery()"
             (input)="onSearchInput($event)"
-            placeholder="Rechercher un thème…" i18n-placeholder="Rechercher un thème…"
+            placeholder="Rechercher un thème…" i18n-placeholder="@@ai-assistant.components.rechercher.un.theme.baed0dd4"
             autocomplete="off"
-            aria-label="Rechercher un thème" i18n-aria-label="Rechercher un thème" />
+            aria-label="Rechercher un thème" i18n-aria-label="@@ai-assistant.components.rechercher.un.theme.85517ba8" />
         </label>
-        <div class="ppt-theme-filters" role="toolbar" aria-label="Filtrer les thèmes" i18n-aria-label="Filtrer les thèmes">
+        <div class="ppt-theme-filters" role="toolbar" aria-label="Filtrer les thèmes" i18n-aria-label="@@ai-assistant.components.filtrer.les.themes.fab08028">
           @for (chip of filterChips; track chip.id) {
             <button
               type="button"
@@ -54,7 +54,7 @@ interface FilterChip {
         <div
           class="ppt-theme-grid"
           role="radiogroup"
-          aria-label="Thème visuel de la présentation" i18n-aria-label="Thème visuel de la présentation"
+          aria-label="Thème visuel de la présentation" i18n-aria-label="@@ai-assistant.components.theme.visuel.de.la.presentation.e9c297d1"
           (keydown)="onGridKeydown($event)">
           @for (tpl of filteredTemplates(); track tpl.id; let i = $index) {
             <button

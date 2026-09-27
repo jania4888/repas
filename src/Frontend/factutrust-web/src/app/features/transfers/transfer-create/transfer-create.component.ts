@@ -61,17 +61,17 @@ interface TransferLine {
     <p-confirmDialog></p-confirmDialog>
     <div class="page-container">
       <app-page-header
-        title="Nouveau transfert" i18n-title="Nouveau transfert"
+        title="Nouveau transfert" i18n-title="@@transfers.transfer-create.nouveau.transfert.c210ded9"
         subtitle="Déplacez des articles d’un entrepôt vers un autre en quelques étapes.">
         <app-button variant="outline" icon="pi-times" iconPos="left" routerLink="/transfers" i18n="@@transfers.transfer-create.annuler.49ba3292"> Annuler </app-button>
       </app-page-header>
 
-      <app-form-section title="Entrepôts" i18n-title="Entrepôts" icon="pi-building" [number]="1">
+      <app-form-section title="Entrepôts" i18n-title="@@transfers.transfer-create.entrepots.c0906d10" icon="pi-building" [number]="1">
         <div class="warehouse-flow">
           <div class="warehouse-flow-item">
             <app-warehouse-selector
               inputId="transfer-wh-source"
-              label="Entrepôt source" i18n-label="Entrepôt source"
+              label="Entrepôt source" i18n-label="@@transfers.transfer-create.entrepot.source.07ac9f4d"
               [required]="true"
               [activeOnly]="false"
               [value]="sourceWarehouseId"
@@ -84,7 +84,7 @@ interface TransferLine {
           <div class="warehouse-flow-item">
             <app-warehouse-selector
               inputId="transfer-wh-destination"
-              label="Entrepôt destination" i18n-label="Entrepôt destination"
+              label="Entrepôt destination" i18n-label="@@transfers.transfer-create.entrepot.destination.edbd85df"
               [required]="true"
               [activeOnly]="false"
               [value]="destinationWarehouseId"
@@ -105,7 +105,7 @@ interface TransferLine {
         }
       </app-form-section>
 
-      <app-form-section title="Informations" i18n-title="Informations" icon="pi-info-circle" [number]="2">
+      <app-form-section title="Informations" i18n-title="@@transfers.transfer-create.informations.54937b3a" icon="pi-info-circle" [number]="2">
         <div class="form-row">
           <div class="form-group">
             <label for="transfer-date"><ng-container i18n="@@transfers.transfer-create.date.de.transfert.e1a48aa3">Date de transfert </ng-container> <span class="required" i18n="@@transfers.transfer-create.text.df58248c">*</span></label>
@@ -124,7 +124,7 @@ interface TransferLine {
               id="transfer-reference"
               pInputText
               [(ngModel)]="reference"
-              placeholder="Référence optionnelle" i18n-placeholder="Référence optionnelle"
+              placeholder="Référence optionnelle" i18n-placeholder="@@transfers.transfer-create.reference.optionnelle.cd4d6800"
               class="w-full" />
           </div>
         </div>
@@ -135,13 +135,13 @@ interface TransferLine {
             pTextarea
             [(ngModel)]="notes"
             [rows]="3"
-            placeholder="Notes internes (optionnel)" i18n-placeholder="Notes internes (optionnel)"
+            placeholder="Notes internes (optionnel)" i18n-placeholder="@@transfers.transfer-create.notes.internes.optionnel.10eb967f"
             class="w-full">
           </textarea>
         </div>
       </app-form-section>
 
-      <app-form-section title="Produits à transférer" i18n-title="Produits à transférer" icon="pi-list" [number]="3">
+      <app-form-section title="Produits à transférer" i18n-title="@@transfers.transfer-create.produits.a.transferer.54c9d405" icon="pi-list" [number]="3">
         @if (sourceWarehouseId && stockLoading()) {
           <p class="stock-hint" role="status" aria-live="polite" i18n="@@transfers.transfer-create.chargement.des.stocks.de.l.entrepot.source.da6b29b5">Chargement des stocks de l'entrepôt source…</p>
         }
@@ -159,7 +159,7 @@ interface TransferLine {
                 [dropdown]="true"
                 [forceSelection]="true"
                 [minLength]="0"
-                placeholder="Rechercher par nom ou code…" i18n-placeholder="Rechercher par nom ou code…"
+                placeholder="Rechercher par nom ou code…" i18n-placeholder="@@transfers.transfer-create.rechercher.par.nom.ou.code.9c838cb7"
                 appendTo="body"
                 [style]="{ width: '100%' }"
                 [attr.aria-label]="'Rechercher un produit à ajouter au transfert'">
@@ -201,7 +201,7 @@ interface TransferLine {
                 [minFractionDigits]="0"
                 [maxFractionDigits]="3"
                 mode="decimal"
-                placeholder="Qté" i18n-placeholder="Qté"
+                placeholder="Qté" i18n-placeholder="@@transfers.transfer-create.qte.a4772129"
                 styleClass="qty-add-input"
                 [style]="{ width: '120px' }">
               </p-inputNumber>
@@ -221,7 +221,7 @@ interface TransferLine {
           @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
               <ft-barcode-scan-field
-                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
+                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@transfers.transfer-create.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
                 [autoFocus]="false"
                 (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -290,7 +290,7 @@ interface TransferLine {
                         pInputText
                         [(ngModel)]="line.notes"
                         [ngModelOptions]="{ standalone: true }"
-                        placeholder="Optionnel" i18n-placeholder="Optionnel"
+                        placeholder="Optionnel" i18n-placeholder="@@transfers.transfer-create.optionnel.879d6b16"
                         class="notes-input"
                         [attr.aria-label]="loc_ui_tern_notes_pour_la_ligne_c1c6dd + line.productName" />
                     </td>

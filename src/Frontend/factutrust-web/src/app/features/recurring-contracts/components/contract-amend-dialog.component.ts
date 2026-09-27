@@ -43,7 +43,7 @@ interface ProrationOption {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Créer un avenant" i18n-header="Créer un avenant"
+      header="Créer un avenant" i18n-header="@@recurring-contracts.components.creer.un.avenant.676020ba"
       [style]="{ width: '56rem' }"
       (onShow)="onShow()">
       <div class="grid">
@@ -86,7 +86,7 @@ interface ProrationOption {
           </div>
           <div class="grid">
             <label class="span-2">Description
-              <input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="Description (optionnelle)" [(ngModel)]="line.description" [name]="'amendDesc' + i" />
+              <input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="@@recurring-contracts.components.description.optionnelle.27856f3e" [(ngModel)]="line.description" [name]="'amendDesc' + i" />
             </label>
             <label>Qté
               <input class="ft-input" type="number" [(ngModel)]="line.quantity" [name]="'amendQty' + i" />
@@ -125,7 +125,7 @@ interface ProrationOption {
           rows="2"
           [(ngModel)]="notes"
           name="amendmentNotes"
-          placeholder="Motif de l'avenant (visible dans l'historique)…" i18n-placeholder="Motif de l'avenant (visible dans l'historique)…">
+          placeholder="Motif de l'avenant (visible dans l'historique)…" i18n-placeholder="@@recurring-contracts.components.motif.de.l.avenant.visible.dans.l.historique.1399d0f2">
         </textarea>
       </label>
 

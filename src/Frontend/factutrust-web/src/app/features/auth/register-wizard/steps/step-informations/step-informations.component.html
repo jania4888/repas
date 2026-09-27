@@ -12,7 +12,7 @@
         <label for="wiz-firstName" class="sr-only" i18n="@@auth.register-wizard.prenom.e4387ade">Prénom</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-user icon"></i>
-          <input pInputText id="wiz-firstName" formControlName="firstName" placeholder="Prénom *" i18n-placeholder="Prénom *"
+          <input pInputText id="wiz-firstName" formControlName="firstName" placeholder="Prénom *" i18n-placeholder="@@auth.register-wizard.prenom.72fe3505"
                  autocomplete="given-name"
                  [attr.aria-required]="true"
                  [class.ng-invalid]="isInvalid('firstName')"
@@ -29,7 +29,7 @@
         <label for="wiz-lastName" class="sr-only" i18n="@@auth.register-wizard.nom.7ff20370">Nom</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-user icon"></i>
-          <input pInputText id="wiz-lastName" formControlName="lastName" placeholder="Nom *" i18n-placeholder="Nom *"
+          <input pInputText id="wiz-lastName" formControlName="lastName" placeholder="Nom *" i18n-placeholder="@@auth.register-wizard.nom.463a6959"
                  autocomplete="family-name"
                  [attr.aria-required]="true"
                  [class.ng-invalid]="isInvalid('lastName')"
@@ -47,7 +47,7 @@
       <label for="wiz-email" class="sr-only" i18n="@@auth.register-wizard.adresse.email.professionnelle.5eaf7eb0">Adresse email professionnelle</label>
       <div class="input-icon-wrapper">
         <i class="pi pi-envelope icon"></i>
-        <input pInputText id="wiz-email" type="email" formControlName="email" placeholder="Adresse email professionnelle *" i18n-placeholder="Adresse email professionnelle *"
+        <input pInputText id="wiz-email" type="email" formControlName="email" placeholder="Adresse email professionnelle *" i18n-placeholder="@@auth.register-wizard.adresse.email.professionnelle.b9a65170"
                autocomplete="email"
                [attr.aria-required]="true"
                [class.ng-invalid]="isInvalid('email')"
@@ -68,7 +68,7 @@
           <div class="input-icon-wrapper p-password-wrapper">
             <i class="pi pi-lock icon"></i>
             <p-password id="wiz-password" formControlName="password" [toggleMask]="true" [feedback]="false"
-                      placeholder="Mot de passe *" i18n-placeholder="Mot de passe *" styleClass="w-full" inputStyleClass="w-full"
+                      placeholder="Mot de passe *" i18n-placeholder="@@auth.register-wizard.mot.de.passe.e20d20af" styleClass="w-full" inputStyleClass="w-full"
                       [attr.aria-required]="true"
                       [attr.aria-describedby]="passwordFieldAriaDescribedBy()"
                       autocomplete="new-password">
@@ -87,7 +87,7 @@
           <div class="input-icon-wrapper p-password-wrapper">
             <i class="pi pi-check-circle icon"></i>
             <p-password id="wiz-confirmPassword" formControlName="confirmPassword" [toggleMask]="true" [feedback]="false"
-                      placeholder="Confirmer mot de passe *" i18n-placeholder="Confirmer mot de passe *" styleClass="w-full" inputStyleClass="w-full"
+                      placeholder="Confirmer mot de passe *" i18n-placeholder="@@auth.register-wizard.confirmer.mot.de.passe.19885836" styleClass="w-full" inputStyleClass="w-full"
                       [class.ng-invalid]="isInvalid('confirmPassword') || passwordMismatch()"
                       [attr.aria-required]="true"
                       [attr.aria-describedby]="confirmPasswordAriaDescribedBy()"
@@ -157,7 +157,7 @@
       <label for="wiz-companyName" class="sr-only" i18n="@@auth.register-wizard.raison.sociale.28eaf8b0">Raison sociale</label>
       <div class="input-icon-wrapper">
         <i class="pi pi-building icon"></i>
-        <input pInputText id="wiz-companyName" formControlName="companyName" placeholder="Raison sociale *" i18n-placeholder="Raison sociale *"
+        <input pInputText id="wiz-companyName" formControlName="companyName" placeholder="Raison sociale *" i18n-placeholder="@@auth.register-wizard.raison.sociale.69e804e0"
                autocomplete="organization"
                [attr.aria-required]="true"
                [class.ng-invalid]="isInvalid('companyName')"
@@ -175,7 +175,7 @@
         <label for="wiz-nif" class="sr-only" i18n="@@auth.register-wizard.matricule.fiscal.nif.099b0268">Matricule fiscal (NIF)</label>
         <div class="input-icon-wrapper p-inputmask-wrapper">
           <i class="pi pi-hashtag icon"></i>
-          <p-inputMask id="wiz-nif" formControlName="nif" appNifMaskPaste mask="9999999a/a/a/999" placeholder="NIF : 1772793W/A/M/000" i18n-placeholder="NIF : 1772793W/A/M/000"
+          <p-inputMask id="wiz-nif" formControlName="nif" appNifMaskPaste mask="9999999a/a/a/999" placeholder="NIF : 1772793W/A/M/000" i18n-placeholder="@@auth.register-wizard.nif.1772793w.a.m.000.d609d8b8"
                        styleClass="w-full uppercase" (onBlur)="onNifBlur()"
                        [attr.aria-required]="true"
                        [class.ng-invalid]="isInvalid('nif')">
@@ -212,7 +212,7 @@
       <div class="form-group flex-1">
         <label for="wiz-taxRegime" class="sr-only" i18n="@@auth.register-wizard.regime.fiscal.ddf8b3c2">Régime fiscal</label>
         <p-select id="wiz-taxRegime" [options]="taxRegimes" formControlName="taxRegime"
-                    optionLabel="label" optionValue="value" placeholder="Régime fiscal *" i18n-placeholder="Régime fiscal *"
+                    optionLabel="label" optionValue="value" placeholder="Régime fiscal *" i18n-placeholder="@@auth.register-wizard.regime.fiscal.d8042f43"
                     appendTo="body"
                     styleClass="w-full custom-dropdown" [class.ng-invalid]="isInvalid('taxRegime')"
                     [attr.aria-required]="true">
@@ -235,7 +235,7 @@
         <label for="wiz-companyEmail" class="sr-only" i18n="@@auth.register-wizard.email.professionnel.0496fd95">Email professionnel</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-envelope icon"></i>
-          <input pInputText id="wiz-companyEmail" type="email" formControlName="companyEmail" placeholder="Email professionnel *" i18n-placeholder="Email professionnel *"
+          <input pInputText id="wiz-companyEmail" type="email" formControlName="companyEmail" placeholder="Email professionnel *" i18n-placeholder="@@auth.register-wizard.email.professionnel.26f8e47c"
                  autocomplete="email"
                  [attr.aria-required]="true"
                  [class.ng-invalid]="isInvalid('companyEmail')">
@@ -251,7 +251,7 @@
         <label for="wiz-phone" class="sr-only" i18n="@@auth.register-wizard.telephone.d3b023ea">Téléphone</label>
         <div class="input-icon-wrapper p-inputmask-wrapper">
           <i class="pi pi-phone icon"></i>
-          <p-inputMask id="wiz-phone" formControlName="phone" mask="99 999 999" placeholder="Téléphone *" i18n-placeholder="Téléphone *" styleClass="w-full"
+          <p-inputMask id="wiz-phone" formControlName="phone" mask="99 999 999" placeholder="Téléphone *" i18n-placeholder="@@auth.register-wizard.telephone.f846c67a" styleClass="w-full"
                        [attr.aria-required]="true"
                        [class.ng-invalid]="isInvalid('phone')">
           </p-inputMask>
@@ -270,7 +270,7 @@
         <label for="wiz-website" class="sr-only" i18n="@@auth.register-wizard.site.web.7e78af33">Site web</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-globe icon"></i>
-          <input pInputText id="wiz-website" formControlName="website" placeholder="Site web (optionnel)" i18n-placeholder="Site web (optionnel)">
+          <input pInputText id="wiz-website" formControlName="website" placeholder="Site web (optionnel)" i18n-placeholder="@@auth.register-wizard.site.web.optionnel.1a8425f6">
         </div>
         <small class="field-hint" i18n="@@auth.register-wizard.vous.pourrez.completer.plus.tard.483b386b">Vous pourrez compléter plus tard</small>
       </div>
@@ -279,7 +279,7 @@
         <label for="wiz-warehouseName" class="sr-only" i18n="@@auth.register-wizard.nom.de.l.entrepot.principal.2f77abf6">Nom de l'entrepôt principal</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-box icon"></i>
-          <input pInputText id="wiz-warehouseName" formControlName="warehouseName" placeholder="Entrepôt principal (optionnel)" i18n-placeholder="Entrepôt principal (optionnel)">
+          <input pInputText id="wiz-warehouseName" formControlName="warehouseName" placeholder="Entrepôt principal (optionnel)" i18n-placeholder="@@auth.register-wizard.entrepot.principal.optionnel.e0c7f550">
         </div>
         <small class="field-hint" i18n="@@auth.register-wizard.un.nom.par.defaut.adapte.a.votre.secteur.sera.ut.4c9c9e14">Un nom par défaut adapté à votre secteur sera utilisé si laissé vide — vous pourrez compléter plus tard</small>
       </div>

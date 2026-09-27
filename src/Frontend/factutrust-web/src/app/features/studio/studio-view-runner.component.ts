@@ -36,8 +36,8 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
             <h3 class="ft-filters__title"><i class="pi pi-search"></i> Recherche</h3>
           </div>
           <div class="studio-toolbar">
-            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="Rechercher…" class="studio-search-input" />
-            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" i18n-label="Rechercher" class="p-button-sm" (click)="reload()"></button>
+            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="@@studio.studio-view-runner.rechercher.1d12cdfb" class="studio-search-input" />
+            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" i18n-label="@@studio.studio-view-runner.rechercher.91f7d3e9" class="p-button-sm" (click)="reload()"></button>
           </div>
         </div>
       }

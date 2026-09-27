@@ -51,13 +51,13 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
 
           <div class="tpq-grid">
             <label class="tpq-field">
-              <span><ng-container i18n="@@accounting.manual-entry.nom.7ff20370">Nom </ng-container> <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
+              <span><ng-container i18n="@@accounting.manual-entry.nom.7ff20370">Nom </ng-container> <abbr title="obligatoire" i18n-title="@@accounting.manual-entry.obligatoire.3cef74c6" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.name" name="name" required />
             </label>
             <label class="tpq-field">
               <span i18n="@@accounting.manual-entry.matricule.fiscal.304096c4">Matricule fiscal</span>
               <input type="text" [(ngModel)]="form.nif" name="nif"
-                     placeholder="1772793W/A/M/000" i18n-placeholder="1772793W/A/M/000" />
+                     placeholder="1772793W/A/M/000" i18n-placeholder="@@accounting.manual-entry.1772793w.a.m.000.e4c6f482" />
             </label>
             <label class="tpq-field">
               <span i18n="@@accounting.manual-entry.e.mail.0d01e2e8">E-mail</span>
@@ -68,7 +68,7 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
               <input type="tel" [(ngModel)]="form.phone" name="phone" />
             </label>
             <label class="tpq-field tpq-field--wide">
-              <span><ng-container i18n="@@accounting.manual-entry.adresse.522e1466">Adresse </ng-container> <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
+              <span><ng-container i18n="@@accounting.manual-entry.adresse.522e1466">Adresse </ng-container> <abbr title="obligatoire" i18n-title="@@accounting.manual-entry.obligatoire.3cef74c6" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.street" name="street" required />
             </label>
             <label class="tpq-field">
@@ -76,11 +76,11 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
               <input type="text" [(ngModel)]="form.postalCode" name="postalCode" />
             </label>
             <label class="tpq-field">
-              <span><ng-container i18n="@@accounting.manual-entry.ville.97217611">Ville </ng-container> <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
+              <span><ng-container i18n="@@accounting.manual-entry.ville.97217611">Ville </ng-container> <abbr title="obligatoire" i18n-title="@@accounting.manual-entry.obligatoire.3cef74c6" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.city" name="city" required />
             </label>
             <label class="tpq-field">
-              <span><ng-container i18n="@@accounting.manual-entry.gouvernorat.b9cd1d99">Gouvernorat </ng-container> <abbr title="obligatoire" i18n-title="obligatoire" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
+              <span><ng-container i18n="@@accounting.manual-entry.gouvernorat.b9cd1d99">Gouvernorat </ng-container> <abbr title="obligatoire" i18n-title="@@accounting.manual-entry.obligatoire.3cef74c6" i18n="@@accounting.manual-entry.text.df58248c">*</abbr></span>
               <input type="text" [(ngModel)]="form.governorate" name="governorate" required />
             </label>
           </div>

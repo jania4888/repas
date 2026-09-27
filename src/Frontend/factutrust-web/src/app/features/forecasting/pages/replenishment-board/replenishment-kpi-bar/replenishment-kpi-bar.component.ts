@@ -14,7 +14,7 @@ import { QuantityFormatPipe } from '../../../pipes/quantity-format.pipe';
   imports: [CommonModule, QuantityFormatPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="kpi-bar" role="region" aria-label="Indicateurs clés du module Réapprovisionnement" i18n-aria-label="Indicateurs clés du module Réapprovisionnement">
+    <div class="kpi-bar" role="region" aria-label="Indicateurs clés du module Réapprovisionnement" i18n-aria-label="@@forecasting.pages.indicateurs.cles.du.module.reapprovisionnement.d6b7128e">
       @if (kpi; as k) {
         <div class="kpi-tile">
           <span class="label" i18n="@@forecasting.pages.en.attente.5231158f">En attente</span>

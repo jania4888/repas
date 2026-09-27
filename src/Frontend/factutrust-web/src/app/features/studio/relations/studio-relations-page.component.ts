@@ -28,7 +28,7 @@ import { DiagramModel, toDiagram } from './studio-relation-diagram.model';
     <app-studio-page-shell [title]="labels.relations.title" subtitle="Cartographie des liens entre tables" [breadcrumbs]="breadcrumbs">
       <div studioActions class="studio-head-actions">
         <p-select [options]="entityOptions()" [ngModel]="filterEntityId()" (ngModelChange)="filterEntityId.set($event)"
-          optionLabel="label" optionValue="value" [showClear]="true" placeholder="Filtrer par table" i18n-placeholder="Filtrer par table" appendTo="body"
+          optionLabel="label" optionValue="value" [showClear]="true" placeholder="Filtrer par table" i18n-placeholder="@@studio.relations.filtrer.par.table.462c26e0" appendTo="body"
           panelStyleClass="studio-theme" data-testid="relations-filter" />
       </div>
 

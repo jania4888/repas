@@ -23,7 +23,7 @@ interface JournalForm {
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingTableActionsComponent],
   template: `
-    <app-page-header title="Journaux & familles" i18n-title="Journaux & familles" subtitle="Gestion des journaux comptables et de leurs familles" />
+    <app-page-header title="Journaux & familles" i18n-title="@@accounting.journals.journaux.familles.31f7dca1" subtitle="Gestion des journaux comptables et de leurs familles" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -36,7 +36,7 @@ interface JournalForm {
       <div class="card jr-family-form">
         <h3 class="jr-form-title" i18n="@@accounting.journals.nouvelle.famille.7ce846aa">Nouvelle famille</h3>
         <div class="jr-fields">
-          <div class="jr-field"><label class="jr-lbl" i18n="@@accounting.journals.code.adac6937">Code</label><input class="jr-inp" [(ngModel)]="famCode" placeholder="Ex. DIV" i18n-placeholder="Ex. DIV" /></div>
+          <div class="jr-field"><label class="jr-lbl" i18n="@@accounting.journals.code.adac6937">Code</label><input class="jr-inp" [(ngModel)]="famCode" placeholder="Ex. DIV" i18n-placeholder="@@accounting.journals.ex.div.d8f73f47" /></div>
           <div class="jr-field jr-grow"><label class="jr-lbl" i18n="@@accounting.journals.libelle.f5485bba">Libellé</label><input class="jr-inp" [(ngModel)]="famLabel" /></div>
           <div class="jr-form-actions">
             <button type="button" class="btn btn-secondary" (click)="showFamily.set(false)" i18n="@@accounting.journals.annuler.49ba3292">Annuler</button>
@@ -50,7 +50,7 @@ interface JournalForm {
       <div class="card jr-form">
         <h3 class="jr-form-title">{{ f.id ? loc_ui_tern_modifier_le_journal_30515a : loc_ui_tern_nouveau_journal_a81ef7 }}</h3>
         <div class="jr-fields">
-          <div class="jr-field"><label class="jr-lbl" i18n="@@accounting.journals.code.adac6937">Code</label><input class="jr-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. JX" i18n-placeholder="Ex. JX" /></div>
+          <div class="jr-field"><label class="jr-lbl" i18n="@@accounting.journals.code.adac6937">Code</label><input class="jr-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. JX" i18n-placeholder="@@accounting.journals.ex.jx.ce96445c" /></div>
           <div class="jr-field jr-grow"><label class="jr-lbl" i18n="@@accounting.journals.libelle.f5485bba">Libellé</label><input class="jr-inp" [(ngModel)]="f.label" /></div>
           <div class="jr-field"><label class="jr-lbl" i18n="@@accounting.journals.famille.3b0121d3">Famille</label>
             <select class="jr-inp" [(ngModel)]="f.familyId">

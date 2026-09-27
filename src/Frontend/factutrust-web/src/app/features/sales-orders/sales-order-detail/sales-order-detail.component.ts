@@ -130,7 +130,7 @@ interface TimelineEvent {
                 <div class="document-badges">
                   <p-tag [severity]="statusSeverity(o.status)" [value]="o.statusDisplay | backendLabel"></p-tag>
                   @if (o.isStockReserved) {
-                    <span class="ft-chip" pTooltip="Le stock est réservé pour cette commande." i18n-pTooltip="Le stock est réservé pour cette commande.">
+                    <span class="ft-chip" pTooltip="Le stock est réservé pour cette commande." i18n-pTooltip="@@sales-orders.sales-order-detail.le.stock.est.reserve.pour.cette.commande.cfec9063">
                       <i class="pi pi-box"></i> Stock réservé
                     </span>
                   }
@@ -360,7 +360,7 @@ interface TimelineEvent {
 
         <!-- Sidebar -->
         <div class="sidebar">
-          <p-card header="Statut" i18n-header="Statut" styleClass="sidebar-card">
+          <p-card header="Statut" i18n-header="@@sales-orders.sales-order-detail.statut.659499f3" styleClass="sidebar-card">
             <div class="status-content">
               <p-tag [severity]="statusSeverity(o.status)" [value]="o.statusDisplay | backendLabel" styleClass="w-full"></p-tag>
               <div class="status-meta">
@@ -382,7 +382,7 @@ interface TimelineEvent {
             </div>
           </p-card>
 
-          <p-card header="Client" i18n-header="Client" styleClass="sidebar-card">
+          <p-card header="Client" i18n-header="@@sales-orders.sales-order-detail.client.1bdd79b1" styleClass="sidebar-card">
             <div class="client-card-content">
               <h3 class="client-name">{{ o.client.name }}</h3>
               @if (o.client.address) {
@@ -400,7 +400,7 @@ interface TimelineEvent {
             </div>
           </p-card>
 
-          <p-card header="Parcours de la commande" i18n-header="Parcours de la commande" styleClass="sidebar-card">
+          <p-card header="Parcours de la commande" i18n-header="@@sales-orders.sales-order-detail.parcours.de.la.commande.c454c4b9" styleClass="sidebar-card">
             <p-timeline [value]="timelineEvents()">
               <ng-template pTemplate="content" let-event>
                 <div class="timeline-content">
@@ -420,7 +420,7 @@ interface TimelineEvent {
     } @else {
       <app-empty-state
         icon="pi-exclamation-circle"
-        title="Commande introuvable" i18n-title="Commande introuvable"
+        title="Commande introuvable" i18n-title="@@sales-orders.sales-order-detail.commande.introuvable.ef74dfb8"
         message="Cette commande n'existe pas ou a été supprimée.">
       </app-empty-state>
     }
@@ -428,7 +428,7 @@ interface TimelineEvent {
 
     <!-- Annulation -->
     <p-dialog
-      header="Annuler la commande" i18n-header="Annuler la commande"
+      header="Annuler la commande" i18n-header="@@sales-orders.sales-order-detail.annuler.la.commande.187515f7"
       [(visible)]="cancelVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"
@@ -453,7 +453,7 @@ interface TimelineEvent {
 
     <!-- Remise de pied -->
     <p-dialog
-      header="Remise de pied de document" i18n-header="Remise de pied de document"
+      header="Remise de pied de document" i18n-header="@@sales-orders.sales-order-detail.remise.de.pied.de.document.ae016b90"
       [(visible)]="discountVisible"
       [modal]="true"
       [style]="{ width: '34rem' }"
@@ -499,7 +499,7 @@ interface TimelineEvent {
 
     <!-- Solde -->
     <p-dialog
-      header="Solder la commande" i18n-header="Solder la commande"
+      header="Solder la commande" i18n-header="@@sales-orders.sales-order-detail.solder.la.commande.2d97b963"
       [(visible)]="closeVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"
@@ -524,7 +524,7 @@ interface TimelineEvent {
 
     <!-- Génération d'un bon de livraison depuis la commande -->
     <p-dialog
-      header="Générer un bon de livraison" i18n-header="Générer un bon de livraison"
+      header="Générer un bon de livraison" i18n-header="@@sales-orders.sales-order-detail.generer.un.bon.de.livraison.1b94dce0"
       [(visible)]="deliveryNoteDialogVisible"
       [modal]="true"
       [style]="{ width: '44rem' }"
@@ -582,7 +582,7 @@ interface TimelineEvent {
 
     <!-- Génération d'une facture depuis la commande -->
     <p-dialog
-      header="Générer une facture" i18n-header="Générer une facture"
+      header="Générer une facture" i18n-header="@@sales-orders.sales-order-detail.generer.une.facture.9b204490"
       [(visible)]="invoiceDialogVisible"
       [modal]="true"
       [style]="{ width: '48rem' }"

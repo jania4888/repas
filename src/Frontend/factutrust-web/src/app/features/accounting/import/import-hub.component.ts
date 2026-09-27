@@ -21,7 +21,7 @@ import { ReferenceImportTarget } from '../services/accounting.service';
   imports: [CommonModule, TabsModule, PageHeaderComponent, ImportComponent, ReferenceImportComponent, DossierExportComponent, MigrationWizardComponent],
   template: `
     <app-page-header
-      title="Reprise de dossier" i18n-title="Reprise de dossier"
+      title="Reprise de dossier" i18n-title="@@accounting.import.reprise.de.dossier.08e505a8"
       subtitle="Importer écritures / référentiels, ou exporter l'archive du dossier" />
 
     <p-tabs [lazy]="true">

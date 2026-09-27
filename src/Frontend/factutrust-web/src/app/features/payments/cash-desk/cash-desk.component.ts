@@ -73,7 +73,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
   ],
   template: `
     <app-page-header
-      title="Caisse de trésorerie" i18n-title="Caisse de trésorerie"
+      title="Caisse de trésorerie" i18n-title="@@payments.cash-desk.caisse.de.tresorerie.eeba43e2"
       subtitle="Enregistrez et gérez vos opérations de caisse (encaissements et décaissements).">
       <app-analyze-with-ai-button
         screenId="cash-desk"
@@ -199,13 +199,13 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
             @if (auth.isFirmDelegatedReadonly()) {
               <app-empty-state
                 illustration="empty-payments.svg"
-                title="Aucune opération" i18n-title="Aucune opération"
+                title="Aucune opération" i18n-title="@@payments.cash-desk.aucune.operation.5e70746f"
                 description="Aucune opération trouvée pour la période sélectionnée.">
               </app-empty-state>
             } @else {
               <app-empty-state
                 illustration="empty-payments.svg"
-                title="Aucune opération" i18n-title="Aucune opération"
+                title="Aucune opération" i18n-title="@@payments.cash-desk.aucune.operation.5e70746f"
                 description="Aucune opération trouvée pour la période sélectionnée."
                 actionLabel="Enregistrer une opération"
                 (actionClick)="openAddDialog()">
@@ -302,7 +302,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                               icon="pi pi-trash"
                               [iconOnly]="true"
                               [iconAlwaysVisible]="true"
-                              pTooltip="Annuler l'opération" i18n-pTooltip="Annuler l'opération"
+                              pTooltip="Annuler l'opération" i18n-pTooltip="@@payments.cash-desk.annuler.l.operation.dbf1fd18"
                               ariaLabel="Annuler l'opération"
                               (click)="openCancelDialog(op); $event.stopPropagation()">
                             </app-button>
@@ -310,8 +310,8 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                             <span
                               class="perm-lock"
                               role="note"
-                              pTooltip="Autorisation « Trésorerie — mise à jour » requise." i18n-pTooltip="Autorisation « Trésorerie — mise à jour » requise."
-                              aria-label="Autorisation « Trésorerie — mise à jour » requise." i18n-aria-label="Autorisation « Trésorerie — mise à jour » requise.">
+                              pTooltip="Autorisation « Trésorerie — mise à jour » requise." i18n-pTooltip="@@payments.cash-desk.autorisation.tresorerie.mise.a.jour.requise.8574135e"
+                              aria-label="Autorisation « Trésorerie — mise à jour » requise." i18n-aria-label="@@payments.cash-desk.autorisation.tresorerie.mise.a.jour.requise.8574135e">
                               <i class="pi pi-lock" aria-hidden="true"></i>
                             </span>
                           }
@@ -325,7 +325,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                             [iconOnly]="true"
                             [iconAlwaysVisible]="true"
                             [disabled]="true"
-                            pTooltip="Géré via la facture" i18n-pTooltip="Géré via la facture"
+                            pTooltip="Géré via la facture" i18n-pTooltip="@@payments.cash-desk.gere.via.la.facture.940cb8fb"
                             ariaLabel="Opération gérée via la facture">
                           </app-button>
                         }
@@ -354,7 +354,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
 
     <!-- Cancel dialog -->
     <p-dialog
-      header="Annuler l'opération" i18n-header="Annuler l'opération"
+      header="Annuler l'opération" i18n-header="@@payments.cash-desk.annuler.l.operation.dbf1fd18"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [position]="dialogPosition"
@@ -372,7 +372,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
           rows="4"
           class="w-full"
           [maxLength]="500"
-          aria-label="Motif d'annulation" i18n-aria-label="Motif d'annulation">
+          aria-label="Motif d'annulation" i18n-aria-label="@@payments.cash-desk.motif.d.annulation.f627914d">
         </textarea>
         @if (cancelError()) {
           <div class="alert" role="alert">{{ cancelError() }}</div>

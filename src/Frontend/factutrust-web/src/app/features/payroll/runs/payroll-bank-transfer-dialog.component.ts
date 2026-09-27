@@ -37,7 +37,7 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
   ],
   template: `
     <p-dialog
-      header="Export virement bancaire" i18n-header="Export virement bancaire"
+      header="Export virement bancaire" i18n-header="@@payroll.runs.export.virement.bancaire.c7c80325"
       [(visible)]="visibleProxy"
       [modal]="true"
       [style]="{ width: '820px' }"
@@ -56,7 +56,7 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
             (ngModelChange)="reloadPreview()"
             optionLabel="label"
             optionValue="value"
-            placeholder="Compte par défaut" i18n-placeholder="Compte par défaut"
+            placeholder="Compte par défaut" i18n-placeholder="@@payroll.runs.compte.par.defaut.938477de"
             [showClear]="true"
             styleClass="w-full" />
         </div>

@@ -49,19 +49,19 @@ interface DesignColumn {
       subtitle="Configurez les colonnes affichées depuis une table SQL existante."
       [breadcrumbs]="breadcrumbs()">
       <div studioActions class="studio-head-actions">
-        <button pButton type="button" label="Aperçu" i18n-label="Aperçu" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
-        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
+        <button pButton type="button" label="Aperçu" i18n-label="@@studio.studio-view-designer.apercu.f0f53004" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-view-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
       </div>
 
       <app-studio-designer-shell previewTitle="Aperçu (lecture seule)">
         <div studioEditor>
           <label class="studio-lbl" i18n="@@studio.studio-view-designer.nom.de.la.vue.86ef855c">Nom de la vue *</label>
-          <input pInputText [(ngModel)]="displayName" class="studio-w-full" placeholder="Ex. Liste clients" i18n-placeholder="Ex. Liste clients" (ngModelChange)="schedulePreview()" />
+          <input pInputText [(ngModel)]="displayName" class="studio-w-full" placeholder="Ex. Liste clients" i18n-placeholder="@@studio.studio-view-designer.ex.liste.clients.509e94e2" (ngModelChange)="schedulePreview()" />
 
           <label class="studio-lbl" i18n="@@studio.studio-view-designer.table.sql.existante.69202119">Table SQL existante *</label>
           <p-select [options]="tables()" [(ngModel)]="sourceTable" (ngModelChange)="onTableChange()"
             optionLabel="name" optionValue="name" [filter]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="studio-w-full"
-            placeholder="Choisir une table" i18n-placeholder="Choisir une table"></p-select>
+            placeholder="Choisir une table" i18n-placeholder="@@studio.studio-view-designer.choisir.une.table.9ec20a6a"></p-select>
           <small class="studio-hint" i18n="@@studio.studio-view-designer.lecture.seule.aucune.donnee.n.est.modifiee.par.u.6baf5fab">Lecture seule : aucune donnée n'est modifiée par une vue.</small>
 
           <div class="studio-block-head" style="margin-top: 1rem">
@@ -82,12 +82,12 @@ interface DesignColumn {
                   <p-select [options]="formatOptions" [(ngModel)]="c.format" optionLabel="label" optionValue="value"
                     appendTo="body" panelStyleClass="studio-theme" [disabled]="!c.included" (ngModelChange)="schedulePreview()"></p-select>
                   @if (c.included && c.format === 'status') {
-                    <input pInputText [(ngModel)]="c.statusMapText" placeholder="1=Brouillon,3=Validé" i18n-placeholder="1=Brouillon,3=Validé"
+                    <input pInputText [(ngModel)]="c.statusMapText" placeholder="1=Brouillon,3=Validé" i18n-placeholder="@@studio.studio-view-designer.1.brouillon.3.valide.6e930b25"
                       class="studio-grow" (ngModelChange)="schedulePreview()" />
                   }
                   @if (c.included && c.format === 'fk') {
-                    <input pInputText [(ngModel)]="c.lookupTable" placeholder="Table" i18n-placeholder="Table" class="studio-grow" (ngModelChange)="schedulePreview()" />
-                    <input pInputText [(ngModel)]="c.lookupDisplayColumn" placeholder="Colonne" i18n-placeholder="Colonne" (ngModelChange)="schedulePreview()" />
+                    <input pInputText [(ngModel)]="c.lookupTable" placeholder="Table" i18n-placeholder="@@studio.studio-view-designer.table.0424f6e7" class="studio-grow" (ngModelChange)="schedulePreview()" />
+                    <input pInputText [(ngModel)]="c.lookupDisplayColumn" placeholder="Colonne" i18n-placeholder="@@studio.studio-view-designer.colonne.064b24f9" (ngModelChange)="schedulePreview()" />
                   }
                 </div>
               }

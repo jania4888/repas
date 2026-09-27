@@ -95,7 +95,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <p-table [value]="ledger()?.rows ?? []" [paginator]="true" [rows]="50" [rowsPerPageOptions]="[25, 50, 100]"
       [loading]="loading()" [rowHover]="true" [scrollable]="true" scrollHeight="flex"
       styleClass="p-datatable-sm accounting-datatable tpl-table"
-      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} mouvements" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} mouvements">
+      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} mouvements" i18n-currentPageReportTemplate="@@accounting.third-party-ledger.affichage.de.first.a.last.sur.totalrecords.mouve.9c08ea88">
       <ng-template pTemplate="header">
         <tr>
           <th i18n="@@accounting.third-party-ledger.date.eb9a4bc1">Date</th>

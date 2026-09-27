@@ -180,7 +180,7 @@ export interface PromotionFormValue {
 
 
 
-      <app-form-section title="Général" i18n-title="Général" icon="pi-file-edit" variant="compact">
+      <app-form-section title="Général" i18n-title="@@settings.promotions.general.5376df98" icon="pi-file-edit" variant="compact">
 
         <div class="ft-field ft-field--full">
 
@@ -220,7 +220,7 @@ export interface PromotionFormValue {
 
 
 
-      <app-form-section title="Portée" i18n-title="Portée" icon="pi-filter" variant="compact">
+      <app-form-section title="Portée" i18n-title="@@settings.promotions.portee.f42a1d5d" icon="pi-filter" variant="compact">
 
         <div class="ft-form-grid">
 
@@ -282,7 +282,7 @@ export interface PromotionFormValue {
 
               [showClear]="true"
 
-              placeholder="Toutes les catégories si vide" i18n-placeholder="Toutes les catégories si vide"
+              placeholder="Toutes les catégories si vide" i18n-placeholder="@@settings.promotions.toutes.les.categories.si.vide.c7293929"
 
               appendTo="body"
 
@@ -344,7 +344,7 @@ export interface PromotionFormValue {
 
 
 
-      <app-form-section title="Remise" i18n-title="Remise" icon="pi-percentage" variant="compact">
+      <app-form-section title="Remise" i18n-title="@@settings.promotions.remise.ce12d942" icon="pi-percentage" variant="compact">
 
         <div class="ft-form-grid">
 

@@ -52,7 +52,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
       </div>
     } @else {
     <form (ngSubmit)="save()">
-      <app-form-section [number]="1" title="Client et référence" i18n-title="Client et référence" icon="pi-user">
+      <app-form-section [number]="1" title="Client et référence" i18n-title="@@recurring-contracts.pages.client.et.reference.72896cf8" icon="pi-user">
         <div class="grid">
           <label>
             <span class="field-label required" i18n="@@recurring-contracts.pages.client.1bdd79b1">Client</span>
@@ -67,12 +67,12 @@ interface ContractLineForm extends ContractLinePayloadSource {
             }
           </label>
           <label>Référence
-            <input class="ft-input" [(ngModel)]="reference" name="reference" placeholder="Référence interne ou client" i18n-placeholder="Référence interne ou client" />
+            <input class="ft-input" [(ngModel)]="reference" name="reference" placeholder="Référence interne ou client" i18n-placeholder="@@recurring-contracts.pages.reference.interne.ou.client.b661bb17" />
           </label>
         </div>
       </app-form-section>
 
-      <app-form-section [number]="2" title="Facturation" i18n-title="Facturation" icon="pi-calendar">
+      <app-form-section [number]="2" title="Facturation" i18n-title="@@recurring-contracts.pages.facturation.04716c6b" icon="pi-calendar">
         <div class="grid">
           <label>Périodicité
             <select class="ft-input" [(ngModel)]="billingFrequency" name="billingFrequency">
@@ -102,7 +102,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
         </div>
       </app-form-section>
 
-      <app-form-section [number]="3" title="Renouvellement" i18n-title="Renouvellement" icon="pi-refresh">
+      <app-form-section [number]="3" title="Renouvellement" i18n-title="@@recurring-contracts.pages.renouvellement.5b961f3a" icon="pi-refresh">
         <div class="grid">
           <label class="checkbox-label">
             <input type="checkbox" [(ngModel)]="autoRenew" name="autoRenew" />
@@ -114,7 +114,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
         </div>
       </app-form-section>
 
-      <app-form-section [number]="4" title="Lignes du contrat" i18n-title="Lignes du contrat" icon="pi-list">
+      <app-form-section [number]="4" title="Lignes du contrat" i18n-title="@@recurring-contracts.pages.lignes.du.contrat.b39acc9e" icon="pi-list">
         @for (line of lines; track $index; let i = $index) {
           <div class="line-card">
             <div class="line-card__head">
@@ -129,7 +129,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
             </div>
             <div class="grid">
               <label class="span-2">Description
-                <input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="Description (optionnelle)" [(ngModel)]="line.description" [name]="'desc' + i" />
+                <input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="@@recurring-contracts.pages.description.optionnelle.27856f3e" [(ngModel)]="line.description" [name]="'desc' + i" />
               </label>
               @if (line.lineType !== 'OneTimeSetup') {
                 <label>
@@ -143,13 +143,13 @@ interface ContractLineForm extends ContractLinePayloadSource {
                 </label>
               }
               <label>Qté
-                <input class="ft-input" type="number" placeholder="Qté" i18n-placeholder="Qté" [(ngModel)]="line.quantity" [name]="'qty' + i" />
+                <input class="ft-input" type="number" placeholder="Qté" i18n-placeholder="@@recurring-contracts.pages.qte.a4772129" [(ngModel)]="line.quantity" [name]="'qty' + i" />
               </label>
               <label>Prix unitaire HT
-                <input class="ft-input" type="number" step="0.001" min="0" placeholder="Prix HT" i18n-placeholder="Prix HT" [(ngModel)]="line.unitPriceHT" [name]="'price' + i" />
+                <input class="ft-input" type="number" step="0.001" min="0" placeholder="Prix HT" i18n-placeholder="@@recurring-contracts.pages.prix.ht.362207ca" [(ngModel)]="line.unitPriceHT" [name]="'price' + i" />
               </label>
               <label>TVA %
-                <input class="ft-input" type="number" step="0.001" min="0" placeholder="TVA %" i18n-placeholder="TVA %" [(ngModel)]="line.vatRate" [name]="'vat' + i" />
+                <input class="ft-input" type="number" step="0.001" min="0" placeholder="TVA %" i18n-placeholder="@@recurring-contracts.pages.tva.b984d709" [(ngModel)]="line.vatRate" [name]="'vat' + i" />
               </label>
               @if (line.lineType === 'UsageMetered') {
                 <label>
@@ -176,7 +176,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
         <app-table-totals-bar [metrics]="totalsMetrics()"></app-table-totals-bar>
       </app-form-section>
 
-      <app-form-section [number]="5" title="Notes" i18n-title="Notes" icon="pi-comment">
+      <app-form-section [number]="5" title="Notes" i18n-title="@@recurring-contracts.pages.notes.70440046" icon="pi-comment">
         <label>Notes internes
           <textarea class="ft-input" rows="3" [(ngModel)]="notes" name="notes"></textarea>
         </label>

@@ -63,7 +63,7 @@ import { ToastService } from '@core/services/toast.service';
             <td>{{ row.salePriceTtc | number:'1.3-3' }}</td>
             <td>{{ row.quantityAvailable ?? '—' }}</td>
             <td>
-              <input pInputText [(ngModel)]="row.barcode" class="w-full" placeholder="EAN" i18n-placeholder="EAN" />
+              <input pInputText [(ngModel)]="row.barcode" class="w-full" placeholder="EAN" i18n-placeholder="@@shared.components.product-variant-matrix.product-variant-matrix.ean.057d1674" />
             </td>
             <td>
               <app-button type="button" variant="ghost" size="sm" icon="pi-external-link"

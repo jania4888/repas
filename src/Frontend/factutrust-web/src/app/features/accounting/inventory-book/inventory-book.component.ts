@@ -33,7 +33,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Livre d'inventaire" i18n-title="Livre d'inventaire"
+      title="Livre d'inventaire" i18n-title="@@accounting.inventory-book.livre.d.inventaire.a93c3a9a"
       subtitle="Édition légale figée de l'exercice — états financiers, provisions et balance de clôture" />
 
     <div class="card accounting-filters-card">

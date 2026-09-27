@@ -53,7 +53,7 @@ interface PeriodOption {
   ],
   template: `
     <app-page-header 
-      title="Rapports Ventes" i18n-title="Rapports Ventes" 
+      title="Rapports Ventes" i18n-title="@@reports.sales.rapports.ventes.5a196bd1" 
       subtitle="Analysez vos performances et suivez vos indicateurs clés de ventes">
       <app-button 
         variant="secondary"
@@ -76,7 +76,7 @@ interface PeriodOption {
           [(ngModel)]="selectedPeriod" 
           (ngModelChange)="onPeriodChange()"
           class="filter-select"
-          aria-label="Sélectionner la période des rapports" i18n-aria-label="Sélectionner la période des rapports">
+          aria-label="Sélectionner la période des rapports" i18n-aria-label="@@reports.sales.selectionner.la.periode.des.rapports.d6f7fa31">
           @for (period of periodOptions; track period.value) {
             <option [value]="period.value">{{ period.label }}</option>
           }
@@ -112,37 +112,37 @@ interface PeriodOption {
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Revenus totaux" i18n-label="Revenus totaux"
+          label="Revenus totaux" i18n-label="@@reports.sales.revenus.totaux.7ba0e02a"
           [value]="reportsData()!.totalRevenue"
           icon="pi-dollar"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Factures" i18n-label="Factures"
+          label="Factures" i18n-label="@@reports.sales.factures.da35e4f2"
           [value]="reportsData()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées" i18n-label="Factures payées"
+          label="Factures payées" i18n-label="@@reports.sales.factures.payees.587e5689"
           [value]="reportsData()!.paidInvoices"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Taux de paiement" i18n-label="Taux de paiement"
+          label="Taux de paiement" i18n-label="@@reports.sales.taux.de.paiement.813ba1e7"
           [value]="reportsData()!.paymentRate"
           icon="pi-percentage"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Montant à encaisser" i18n-label="Montant à encaisser"
+          label="Montant à encaisser" i18n-label="@@reports.sales.montant.a.encaisser.cee0ab24"
           [value]="reportsData()!.amountToCollect"
           icon="pi-wallet"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Factures en retard" i18n-label="Factures en retard"
+          label="Factures en retard" i18n-label="@@reports.sales.factures.en.retard.7fc4c2c8"
           [value]="reportsData()!.overdueInvoicesCount"
           icon="pi-exclamation-triangle"
           [variant]="reportsData()!.overdueInvoicesCount > 0 ? 'error' : 'success'">
@@ -255,7 +255,7 @@ interface PeriodOption {
             [rows]="10"
             [rowsPerPageOptions]="[10, 25, 50]"
             styleClass="p-datatable-sm reports-table"
-            aria-label="Tableau des meilleurs clients" i18n-aria-label="Tableau des meilleurs clients">
+            aria-label="Tableau des meilleurs clients" i18n-aria-label="@@reports.sales.tableau.des.meilleurs.clients.d678aea7">
             <ng-template pTemplate="header">
               <tr>
                 <th i18n="@@reports.sales.client.1bdd79b1">Client</th>
@@ -361,7 +361,7 @@ interface PeriodOption {
         </div>
         }
         <div class="crosstab-table-wrapper">
-          <table class="crosstab-table" aria-label="Tableau croisé des chiffres d'affaires par mois et année" i18n-aria-label="Tableau croisé des chiffres d'affaires par mois et année">
+          <table class="crosstab-table" aria-label="Tableau croisé des chiffres d'affaires par mois et année" i18n-aria-label="@@reports.sales.tableau.croise.des.chiffres.d.affaires.par.mois.dc33459c">
             <thead>
               <tr>
                 <th scope="col" i18n="@@reports.sales.annee.1f910d98">Année</th>
@@ -479,7 +479,7 @@ interface PeriodOption {
                 [rows]="25"
                 [rowsPerPageOptions]="[10, 25, 50]"
                 styleClass="p-datatable-sm reports-table"
-                aria-label="Performance produits" i18n-aria-label="Performance produits">
+                aria-label="Performance produits" i18n-aria-label="@@reports.sales.performance.produits.fc69303c">
                 <ng-template pTemplate="header">
                   <tr>
                     <th i18n="@@reports.sales.produit.ff673dc2">Produit</th>
@@ -527,7 +527,7 @@ interface PeriodOption {
                 [rows]="25"
                 [rowsPerPageOptions]="[10, 25, 50]"
                 styleClass="p-datatable-sm reports-table"
-                aria-label="Évolution ventes par produit" i18n-aria-label="Évolution ventes par produit">
+                aria-label="Évolution ventes par produit" i18n-aria-label="@@reports.sales.evolution.ventes.par.produit.703fd446">
                 <ng-template pTemplate="header">
                   <tr>
                     <th i18n="@@reports.sales.periode.de2110b7">Période</th>
@@ -565,25 +565,25 @@ interface PeriodOption {
             } @else {
               <div class="stats-grid">
                 <app-stat-card
-                  label="Panier moyen" i18n-label="Panier moyen"
+                  label="Panier moyen" i18n-label="@@reports.sales.panier.moyen.e9ce57ee"
                   [value]="formatCurrency(basketMetrics()!.averageBasket, basketMetrics()!.currency)"
                   icon="pi-shopping-cart"
                   variant="primary">
                 </app-stat-card>
                 <app-stat-card
-                  label="Lignes moy. / facture" i18n-label="Lignes moy. / facture"
+                  label="Lignes moy. / facture" i18n-label="@@reports.sales.lignes.moy.facture.471f033e"
                   [value]="(basketMetrics()!.averageLinesPerInvoice | number:'1.1-1') + ''"
                   icon="pi-list"
                   variant="success">
                 </app-stat-card>
                 <app-stat-card
-                  label="Factures" i18n-label="Factures"
+                  label="Factures" i18n-label="@@reports.sales.factures.da35e4f2"
                   [value]="basketMetrics()!.totalInvoices + ''"
                   icon="pi-file"
                   variant="primary">
                 </app-stat-card>
                 <app-stat-card
-                  label="CA total" i18n-label="CA total"
+                  label="CA total" i18n-label="@@reports.sales.ca.total.c324bfa2"
                   [value]="formatCurrency(basketMetrics()!.totalRevenue, basketMetrics()!.currency)"
                   icon="pi-dollar"
                   variant="success">
@@ -611,7 +611,7 @@ interface PeriodOption {
                 [rows]="25"
                 [rowsPerPageOptions]="[10, 25, 50]"
                 styleClass="p-datatable-sm reports-table"
-                aria-label="Produits jamais vendus" i18n-aria-label="Produits jamais vendus">
+                aria-label="Produits jamais vendus" i18n-aria-label="@@reports.sales.produits.jamais.vendus.607efbe9">
                 <ng-template pTemplate="header">
                   <tr>
                     <th i18n="@@reports.sales.produit.ff673dc2">Produit</th>
@@ -649,7 +649,7 @@ interface PeriodOption {
                 [rows]="25"
                 [rowsPerPageOptions]="[10, 25, 50]"
                 styleClass="p-datatable-sm reports-table"
-                aria-label="CA par catégorie" i18n-aria-label="CA par catégorie">
+                aria-label="CA par catégorie" i18n-aria-label="@@reports.sales.ca.par.categorie.e22fee46">
                 <ng-template pTemplate="header">
                   <tr>
                     <th i18n="@@reports.sales.categorie.6b38300a">Catégorie</th>
@@ -687,7 +687,7 @@ interface PeriodOption {
           [rows]="25"
           [rowsPerPageOptions]="[10, 25, 50]"
           styleClass="p-datatable-sm reports-table" 
-          aria-label="Transactions clients" i18n-aria-label="Transactions clients">
+          aria-label="Transactions clients" i18n-aria-label="@@reports.sales.transactions.clients.32259f49">
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="date"><ng-container i18n="@@reports.sales.date.eb9a4bc1">Date </ng-container> <p-sortIcon field="date"></p-sortIcon></th>
@@ -729,7 +729,7 @@ interface PeriodOption {
           [rows]="25"
           [rowsPerPageOptions]="[10, 25, 50]"
           styleClass="p-datatable-sm reports-table" 
-          aria-label="Détails ventes par ligne" i18n-aria-label="Détails ventes par ligne">
+          aria-label="Détails ventes par ligne" i18n-aria-label="@@reports.sales.details.ventes.par.ligne.2ed7995e">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@reports.sales.produit.ff673dc2">Produit</th>
@@ -773,7 +773,7 @@ interface PeriodOption {
           [rows]="10"
           [rowsPerPageOptions]="[10, 25, 50]"
           styleClass="p-datatable-sm reports-table" 
-          aria-label="TVA ventes" i18n-aria-label="TVA ventes">
+          aria-label="TVA ventes" i18n-aria-label="@@reports.sales.tva.ventes.117028f5">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@reports.sales.taux.tva.c0830fcc">Taux TVA</th>
@@ -811,7 +811,7 @@ interface PeriodOption {
           [rows]="10"
           [rowsPerPageOptions]="[10, 25, 50]"
           styleClass="p-datatable-sm reports-table"
-          aria-label="Retenues clients" i18n-aria-label="Retenues clients">
+          aria-label="Retenues clients" i18n-aria-label="@@reports.sales.retenues.clients.68c049c1">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@reports.sales.client.1bdd79b1">Client</th>

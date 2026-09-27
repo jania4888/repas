@@ -55,7 +55,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     `
   ],
   template: `
-    <app-page-header title="Balance âgée" i18n-title="Balance âgée" subtitle="Créances et dettes par tranche" />
+    <app-page-header title="Balance âgée" i18n-title="@@accounting.aging.balance.agee.f6b2095b" subtitle="Créances et dettes par tranche" />
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Actualisation balance âgée">
         <div accountingFilterActions>
@@ -79,11 +79,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             [payloadBuilder]="buildAgingAnalyzePayload"
             [disabled]="loadingClients() || loadingSuppliers()" />
           <app-accounting-export-menu
-            label="Exporter clients" i18n-label="Exporter clients"
+            label="Exporter clients" i18n-label="@@accounting.aging.exporter.clients.91e2ca94"
             [disabled]="loadingClients() || exportingClients() || clients().length === 0"
             (exportFormat)="onExportClients($event)" />
           <app-accounting-export-menu
-            label="Exporter fournisseurs" i18n-label="Exporter fournisseurs"
+            label="Exporter fournisseurs" i18n-label="@@accounting.aging.exporter.fournisseurs.94fcbb72"
             [disabled]="loadingSuppliers() || exportingSuppliers() || suppliers().length === 0"
             (exportFormat)="onExportSuppliers($event)" />
         </div>

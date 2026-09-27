@@ -26,7 +26,7 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="État budgétaire" i18n-title="État budgétaire" subtitle="Budget (Initial / Révisé) vs réalisé par poste — écart et taux de consommation" />
+    <app-page-header title="État budgétaire" i18n-title="@@accounting.budget-report.etat.budgetaire.a1eccfb3" subtitle="Budget (Initial / Révisé) vs réalisé par poste — écart et taux de consommation" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
 

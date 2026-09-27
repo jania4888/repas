@@ -26,7 +26,7 @@ import {
     ],
     template: `
     <app-page-header
-      title="Analyse clients" i18n-title="Analyse clients"
+      title="Analyse clients" i18n-title="@@reports.analytics.analyse.clients.f6f71bbe"
       subtitle="Identifiez vos meilleurs clients et ceux qui nécessitent votre attention">
       <app-button
         variant="secondary"
@@ -60,19 +60,19 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Clients total" i18n-label="Clients total"
+          label="Clients total" i18n-label="@@reports.analytics.clients.total.7c655b08"
           [value]="data()!.totalClients"
           icon="pi-users"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Clients actifs" i18n-label="Clients actifs"
+          label="Clients actifs" i18n-label="@@reports.analytics.clients.actifs.c6ec334f"
           [value]="data()!.activeCount"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Clients inactifs" i18n-label="Clients inactifs"
+          label="Clients inactifs" i18n-label="@@reports.analytics.clients.inactifs.995a475e"
           [value]="data()!.inactiveCount"
           icon="pi-user-minus"
           [variant]="data()!.inactiveCount > data()!.activeCount ? 'error' : 'warning'">
@@ -115,10 +115,10 @@ import {
           <input
             type="text"
             class="search-input"
-            placeholder="Rechercher un client..." i18n-placeholder="Rechercher un client..."
+            placeholder="Rechercher un client..." i18n-placeholder="@@reports.analytics.rechercher.un.client.37880794"
             [(ngModel)]="searchQuery"
             (ngModelChange)="onSearch()"
-            aria-label="Rechercher un client" i18n-aria-label="Rechercher un client">
+            aria-label="Rechercher un client" i18n-aria-label="@@reports.analytics.rechercher.un.client.723cebe6">
         </div>
         <div class="filter-tabs">
           <button class="filter-tab" [class.active]="filter === 'all'" (click)="onFilter('all')" i18n="@@reports.analytics.tous.b97ae3b4"> Tous </button>
@@ -154,13 +154,13 @@ import {
         </div>
       } @else {
         <div class="clients-table-wrapper">
-          <table class="clients-table" aria-label="Tableau de classement des clients" i18n-aria-label="Tableau de classement des clients">
+          <table class="clients-table" aria-label="Tableau de classement des clients" i18n-aria-label="@@reports.analytics.tableau.de.classement.des.clients.85685e36">
             <thead>
               <tr>
                 <th class="col-rank" i18n="@@reports.analytics.text.d08f88df">#</th>
                 <th i18n="@@reports.analytics.client.1bdd79b1">Client</th>
                 <th class="text-center" i18n="@@reports.analytics.statut.659499f3">Statut</th>
-                <th class="text-right" title="Nombre de factures" i18n-title="Nombre de factures" i18n="@@reports.analytics.nb.factures.973edc99">Nb factures</th>
+                <th class="text-right" title="Nombre de factures" i18n-title="@@reports.analytics.nombre.de.factures.53d3152f" i18n="@@reports.analytics.nb.factures.973edc99">Nb factures</th>
                 <th class="text-right" i18n="@@reports.analytics.chiffre.d.affaires.0a341b9f">Chiffre d'affaires</th>
                 @if (filter === 'unpaid' || filter === 'all') {
                   <th class="text-right" i18n="@@reports.analytics.impayes.1545a134">Impayés</th>

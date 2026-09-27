@@ -62,7 +62,7 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Devis" i18n-title="Devis"
+      title="Devis" i18n-title="@@quotes.quote-list.devis.f7622f90"
       subtitle="Créez, envoyez et transformez vos devis en factures">
       @if (canCreateQuote()) {
         <app-button
@@ -80,7 +80,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@quotes.quote-list.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -92,14 +92,14 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher..." i18n-placeholder="Rechercher..."
+            placeholder="Rechercher..." i18n-placeholder="@@quotes.quote-list.rechercher.8bd64daa"
             [(ngModel)]="searchTerm"
             (input)="onSearch()" />
         </span>
         <p-select
           [options]="statusOptions"
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@quotes.quote-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -107,7 +107,7 @@ interface StatusOption {
           [(ngModel)]="dateRange"
           selectionMode="range"
           [readonlyInput]="true"
-          placeholder="Période" i18n-placeholder="Période"
+          placeholder="Période" i18n-placeholder="@@quotes.quote-list.periode.de2110b7"
           dateFormat="dd/mm/yy"
           [showClear]="true"
           (onSelect)="onSearch()">
@@ -137,7 +137,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} devis" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} devis"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} devis" i18n-currentPageReportTemplate="@@quotes.quote-list.affichage.de.first.a.last.sur.totalrecords.devis.358c3a4c"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           styleClass="p-datatable-sm">
@@ -183,7 +183,7 @@ interface StatusOption {
                     icon="pi-eye"
                     [iconOnly]="true"
                     [iconAlwaysVisible]="true"
-                    pTooltip="Voir" i18n-pTooltip="Voir"
+                    pTooltip="Voir" i18n-pTooltip="@@quotes.quote-list.voir.8a754f1f"
                     [routerLink]="[quote.id]"
                     ariaLabel="Voir le devis">
                   </app-button>
@@ -193,7 +193,7 @@ interface StatusOption {
                     icon="pi-download"
                     [iconOnly]="true"
                     [iconAlwaysVisible]="true"
-                    pTooltip="Télécharger PDF" i18n-pTooltip="Télécharger PDF"
+                    pTooltip="Télécharger PDF" i18n-pTooltip="@@quotes.quote-list.telecharger.pdf.06b2eebe"
                     (click)="downloadPdf(quote)"
                     ariaLabel="Télécharger le PDF">
                   </app-button>
@@ -206,7 +206,7 @@ interface StatusOption {
               <td colspan="7" class="text-center p-6">
                 <app-empty-state
                   illustration="empty-quotes.svg"
-                  title="Aucun devis" i18n-title="Aucun devis"
+                  title="Aucun devis" i18n-title="@@quotes.quote-list.aucun.devis.a42220c2"
                   description="Créez votre premier devis pour vos clients."
                   [showAction]="canCreateQuote()"
                   actionLabel="Créer un devis"

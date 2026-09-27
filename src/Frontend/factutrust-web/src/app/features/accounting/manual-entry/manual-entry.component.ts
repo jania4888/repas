@@ -179,7 +179,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <p class="me-period-warning" role="alert" i18n="@@accounting.manual-entry.la.periode.comptable.de.cette.date.est.cloturee..1a09b6b7"> La période comptable de cette date est clôturée — modifiez la date pour enregistrer. </p>
     }
 
-    <details class="me-shortcuts" aria-label="Liste des raccourcis clavier" i18n-aria-label="Liste des raccourcis clavier">
+    <details class="me-shortcuts" aria-label="Liste des raccourcis clavier" i18n-aria-label="@@accounting.manual-entry.liste.des.raccourcis.clavier.00a4a087">
       <summary i18n="@@accounting.manual-entry.raccourcis.clavier.feaa1001">⌨ Raccourcis clavier</summary>
       <ul class="me-shortcuts-list">
         <li><kbd i18n="@@accounting.manual-entry.ctrl.dd6a02a5">Ctrl</kbd>+<kbd i18n="@@accounting.manual-entry.s.02aa629c">S</kbd> — Enregistrer l'écriture</li>

@@ -1,7 +1,7 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <app-page-header
-    title="Inventaire" i18n-title="Inventaire"
+    title="Inventaire" i18n-title="@@inventory.inventory-form.inventaire.10ad1a54"
     subtitle="Saisissez les quantités comptées et enregistrez. Vous pouvez reprendre plus tard."
 >
     <app-button
@@ -21,7 +21,7 @@
 } @else {
     <div class="inventory-form">
         <!-- Détails du document -->
-        <app-form-section title="Détails du document" i18n-title="Détails du document" icon="pi-file" [number]="1">
+        <app-form-section title="Détails du document" i18n-title="@@inventory.inventory-form.details.du.document.cf5994b1" icon="pi-file" [number]="1">
             <div class="document-details">
                 <div class="detail-row">
                     <span class="detail-label" i18n="@@inventory.inventory-form.date.eb9a4bc1">Date</span>
@@ -35,7 +35,7 @@
                         [ngModel]="selectedWarehouse()"
                         (ngModelChange)="onWarehouseChange($event)"
                         optionLabel="name"
-                        placeholder="Sélectionner un entrepôt" i18n-placeholder="Sélectionner un entrepôt"
+                        placeholder="Sélectionner un entrepôt" i18n-placeholder="@@inventory.inventory-form.selectionner.un.entrepot.2e4d1232"
                         styleClass="w-full dropdown-warehouse"
                         [disabled]="hasActiveInventory()"
                         ariaLabel="Choisir l'entrepôt"
@@ -50,7 +50,7 @@
                             pTextarea
                             [ngModel]="notes()"
                             (ngModelChange)="notes.set($event)"
-                            placeholder="Optionnel : précisions sur cet inventaire" i18n-placeholder="Optionnel : précisions sur cet inventaire"
+                            placeholder="Optionnel : précisions sur cet inventaire" i18n-placeholder="@@inventory.inventory-form.optionnel.precisions.sur.cet.inventaire.29924b94"
                             [rows]="2"
                             class="notes-input"
                         ></textarea>
@@ -74,7 +74,7 @@
                         class="btn btn-primary btn-lg"
                         [disabled]="!selectedWarehouse() || starting()"
                         (click)="startInventory()"
-                        aria-label="Démarrer l'inventaire pour l'entrepôt sélectionné" i18n-aria-label="Démarrer l'inventaire pour l'entrepôt sélectionné"
+                        aria-label="Démarrer l'inventaire pour l'entrepôt sélectionné" i18n-aria-label="@@inventory.inventory-form.demarrer.l.inventaire.pour.l.entrepot.selectionn.ea76d4c0"
                     >
                         @if (starting()) {
                             <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
@@ -91,13 +91,13 @@
             </div>
         } @else {
             <!-- Tableau des lignes -->
-            <app-form-section title="Lignes d'inventaire" i18n-title="Lignes d'inventaire" icon="pi-list" [number]="2">
+            <app-form-section title="Lignes d'inventaire" i18n-title="@@inventory.inventory-form.lignes.d.inventaire.454d192f" icon="pi-list" [number]="2">
                 @if (lastSavedAt()) {
                     <p class="last-saved" role="status">
                         Dernière sauvegarde à {{ lastSavedAt() | date:'shortTime' }}
                     </p>
                 }
-                <div class="table-wrapper" role="region" aria-label="Liste des produits à inventorier" i18n-aria-label="Liste des produits à inventorier">
+                <div class="table-wrapper" role="region" aria-label="Liste des produits à inventorier" i18n-aria-label="@@inventory.inventory-form.liste.des.produits.a.inventorier.60f430b1">
                     <table class="inventory-table">
                         <thead>
                             <tr>
@@ -130,7 +130,7 @@
                                                     class="lot-input"
                                                     [ngModel]="line.lotNumberInput"
                                                     (ngModelChange)="updateLineLotNumber(line, $event)"
-                                                    placeholder="N° de lot" i18n-placeholder="N° de lot"
+                                                    placeholder="N° de lot" i18n-placeholder="@@inventory.inventory-form.n.de.lot.f5d14bdd"
                                                     [attr.aria-required]="requiresLotNumberForLine(line)"
                                                     [attr.aria-label]="'Numéro de lot pour ' + line.productName" />
                                             } @else if (line.lotNumber) {
@@ -175,7 +175,7 @@
                             class="btn btn-secondary"
                             [disabled]="saving() || !hasDirtyLines()"
                             (click)="saveCounts()"
-                            aria-label="Enregistrer les comptages modifiés" i18n-aria-label="Enregistrer les comptages modifiés"
+                            aria-label="Enregistrer les comptages modifiés" i18n-aria-label="@@inventory.inventory-form.enregistrer.les.comptages.modifies.f3ec46ef"
                         >
                             @if (saving()) {
                                 <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
@@ -190,7 +190,7 @@
                             class="btn btn-primary"
                             [disabled]="validating() || !canValidate()"
                             (click)="validateInventory()"
-                            aria-label="Valider l'inventaire et ajuster le stock" i18n-aria-label="Valider l'inventaire et ajuster le stock"
+                            aria-label="Valider l'inventaire et ajuster le stock" i18n-aria-label="@@inventory.inventory-form.valider.l.inventaire.et.ajuster.le.stock.74e1eff7"
                         >
                             @if (validating()) {
                                 <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>

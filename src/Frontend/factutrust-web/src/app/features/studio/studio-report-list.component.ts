@@ -21,10 +21,10 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
   template: `
     <p-toast></p-toast>
     <app-studio-page-shell
-      title="Rapports" i18n-title="Rapports"
+      title="Rapports" i18n-title="@@studio.studio-report-list.rapports.db7d9fbb"
       subtitle="Analysez vos tables personnalisées et vos données existantes."
       [breadcrumbs]="breadcrumbs">
-      <button pButton type="button" label="Nouveau rapport" i18n-label="Nouveau rapport" icon="fa-solid fa-plus" studioActions routerLink="/studio/reports/new"></button>
+      <button pButton type="button" label="Nouveau rapport" i18n-label="@@studio.studio-report-list.nouveau.rapport.98bed007" icon="fa-solid fa-plus" studioActions routerLink="/studio/reports/new"></button>
 
       <div class="ft-table-card">
         <p-table [value]="reports()" [loading]="loading()" styleClass="p-datatable-sm">
@@ -40,15 +40,15 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
               </td>
               <td>{{ r.definition.grouping.length > 0 ? loc_ui_tern_agrege_a31b89 : loc_ui_tern_detail_7ce06a }}</td>
               <td class="studio-actions">
-                <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id, 'view']" pTooltip="Voir" i18n-pTooltip="Voir"></button>
-                <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id]" pTooltip="Modifier" i18n-pTooltip="Modifier"></button>
+                <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id, 'view']" pTooltip="Voir" i18n-pTooltip="@@studio.studio-report-list.voir.8a754f1f"></button>
+                <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm" [routerLink]="['/studio/reports', r.id]" pTooltip="Modifier" i18n-pTooltip="@@studio.studio-report-list.modifier.f260e757"></button>
                 <button pButton type="button" icon="fa-solid fa-trash" class="p-button-text p-button-sm p-button-danger" (click)="remove(r)"></button>
               </td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr><td colspan="4">
-              <app-empty-state icon="pi-chart-bar" title="Aucun rapport" i18n-title="Aucun rapport" description="Créez votre premier rapport analytique."
+              <app-empty-state icon="pi-chart-bar" title="Aucun rapport" i18n-title="@@studio.studio-report-list.aucun.rapport.9cd6890f" description="Créez votre premier rapport analytique."
                 actionLabel="Nouveau rapport" actionRoute="/studio/reports/new" [showAction]="true" />
             </td></tr>
           </ng-template>

@@ -17,7 +17,7 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, TableModule, SelectModule, PageHeaderComponent, ButtonComponent],
   template: `
-    <app-page-header title="Mes feuilles de temps" i18n-title="Mes feuilles de temps" subtitle="Vue grille — alignée Odoo Timesheets">
+    <app-page-header title="Mes feuilles de temps" i18n-title="@@timesheets.my-timesheets.mes.feuilles.de.temps.50923fd1" subtitle="Vue grille — alignée Odoo Timesheets">
       <app-button variant="secondary" routerLink="/timesheets/validation" i18n="@@timesheets.my-timesheets.validation.equipe.104ff195">Validation équipe</app-button>
     </app-page-header>
 

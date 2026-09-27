@@ -45,7 +45,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
             <h3 id="dismiss-modal-title" i18n="@@forecasting.components.ecarter.la.recommandation.e44fd9e5">Écarter la recommandation</h3>
             <span class="modal-subtitle" *ngIf="productName">{{ productName }}</span>
           </div>
-          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="Fermer">
+          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="@@forecasting.components.fermer.5ab4ec64">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </header>
@@ -75,7 +75,7 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
                 maxlength="500"
                 rows="3"
                 aria-required="true"
-                placeholder="Saisissez la raison du rejet (max 500 caractères)…" i18n-placeholder="Saisissez la raison du rejet (max 500 caractères)…">
+                placeholder="Saisissez la raison du rejet (max 500 caractères)…" i18n-placeholder="@@forecasting.components.saisissez.la.raison.du.rejet.max.500.caracteres.34c205a8">
               </textarea>
             </label>
           }

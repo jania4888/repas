@@ -53,7 +53,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-grid">
-          <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-tag" [number]="1">
+          <app-form-section title="Informations générales" i18n-title="@@product-categories.product-category-form.informations.generales.be6ba6e5" icon="pi-tag" [number]="1">
             @if (isEditMode()) {
               <div class="form-group">
                 <label for="code" i18n="@@product-categories.product-category-form.code.adac6937">Code</label>
@@ -73,7 +73,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   pInputText
                   id="code"
                   formControlName="code"
-                  placeholder="Ex: SERVICES" i18n-placeholder="Ex: SERVICES"
+                  placeholder="Ex: SERVICES" i18n-placeholder="@@product-categories.product-category-form.ex.services.14082c60"
                   maxlength="50"
                   class="w-full"
                   [class.ng-invalid]="isInvalid('code')">
@@ -93,7 +93,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 pInputText
                 id="name"
                 formControlName="name"
-                placeholder="Ex: Services" i18n-placeholder="Ex: Services"
+                placeholder="Ex: Services" i18n-placeholder="@@product-categories.product-category-form.ex.services.a72bb800"
                 maxlength="100"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('name')">
@@ -114,7 +114,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 [min]="0"
                 [max]="9999"
                 [showButtons]="false"
-                placeholder="0" i18n-placeholder="0"
+                placeholder="0" i18n-placeholder="@@product-categories.product-category-form.0.b6589fc6"
                 styleClass="w-full">
               </p-inputNumber>
               @if (isInvalid('displayOrder')) {

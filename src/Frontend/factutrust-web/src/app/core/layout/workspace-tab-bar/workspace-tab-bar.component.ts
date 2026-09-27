@@ -7,7 +7,7 @@ import type { WorkspacePane } from '@features/ai-assistant/services/ai-assistant
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="workspace-tab-bar" role="tablist" aria-label="Onglets de travail" i18n-aria-label="Onglets de travail">
+    <div class="workspace-tab-bar" role="tablist" aria-label="Onglets de travail" i18n-aria-label="@@core.layout.workspace-tab-bar.workspace-tab-bar.onglets.de.travail.56b70fa7">
       <button
         type="button"
         class="workspace-tab"
@@ -36,7 +36,7 @@ import type { WorkspacePane } from '@features/ai-assistant/services/ai-assistant
         <button
           type="button"
           class="workspace-tab__close"
-          aria-label="Fermer l'assistant IA" i18n-aria-label="Fermer l'assistant IA"
+          aria-label="Fermer l'assistant IA" i18n-aria-label="@@core.layout.workspace-tab-bar.workspace-tab-bar.fermer.l.assistant.ia.bd647d76"
           (click)="onCloseAi($event)">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>

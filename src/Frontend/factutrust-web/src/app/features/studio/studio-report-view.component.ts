@@ -25,7 +25,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
       [breadcrumbs]="breadcrumbs()">
       <div class="srv-actions">
         <button pButton type="button" class="p-button-outlined p-button-sm"
-          icon="fa-solid fa-file-pdf" label="Imprimer (PDF)" i18n-label="Imprimer (PDF)"
+          icon="fa-solid fa-file-pdf" label="Imprimer (PDF)" i18n-label="@@studio.studio-report-view.imprimer.pdf.279d3d23"
           [disabled]="loading() || exporting() || !result()" (click)="exportPdf()"></button>
       </div>
       <app-dynamic-report

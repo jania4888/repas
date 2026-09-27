@@ -73,7 +73,7 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
     } @else if (loadError()) {
       <app-empty-state
         icon="pi-exclamation-triangle"
-        title="Impossible de charger le contrat" i18n-title="Impossible de charger le contrat"
+        title="Impossible de charger le contrat" i18n-title="@@recurring-contracts.pages.impossible.de.charger.le.contrat.d4646382"
         description="Le contrat est introuvable ou une erreur est survenue."
         actionLabel="Réessayer"
         (actionClick)="reload()">

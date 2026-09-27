@@ -28,7 +28,7 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Brouillons récurrents à valider" i18n-title="Brouillons récurrents à valider"
+      title="Brouillons récurrents à valider" i18n-title="@@recurring-contracts.pages.brouillons.recurrents.a.valider.c7805948"
       subtitle="Factures générées automatiquement en attente d'émission">
       <div class="actions">
         <app-button variant="outline" icon="pi-arrow-left" routerLink="/recurring-contracts" i18n="@@recurring-contracts.pages.retour.aux.contrats.9ac8a08b"> Retour aux contrats </app-button>
@@ -49,7 +49,7 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
     } @else if (loadError()) {
       <app-empty-state
         icon="pi-exclamation-triangle"
-        title="Impossible de charger les brouillons" i18n-title="Impossible de charger les brouillons"
+        title="Impossible de charger les brouillons" i18n-title="@@recurring-contracts.pages.impossible.de.charger.les.brouillons.d7425042"
         description="Une erreur est survenue lors du chargement."
         actionLabel="Réessayer"
         (actionClick)="reload()">
@@ -57,7 +57,7 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
     } @else if (drafts().length === 0) {
       <app-empty-state
         icon="pi-check-circle"
-        title="Aucun brouillon en attente" i18n-title="Aucun brouillon en attente"
+        title="Aucun brouillon en attente" i18n-title="@@recurring-contracts.pages.aucun.brouillon.en.attente.35529f78"
         description="Les prochaines factures générées automatiquement apparaîtront ici."
         [showAction]="false">
       </app-empty-state>

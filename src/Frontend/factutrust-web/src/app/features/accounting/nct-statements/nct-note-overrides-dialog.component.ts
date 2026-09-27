@@ -36,7 +36,7 @@ interface NoteEditRow {
   imports: [CommonModule, FormsModule, DialogModule, ButtonComponent],
   template: `
     <p-dialog
-      header="Personnaliser les annexes" i18n-header="Personnaliser les annexes"
+      header="Personnaliser les annexes" i18n-header="@@accounting.nct-statements.personnaliser.les.annexes.05ae837d"
       [visible]="visible"
       (visibleChange)="onVisibleChange($event)"
       [modal]="true"
@@ -74,7 +74,7 @@ interface NoteEditRow {
                 rows="2"
                 [(ngModel)]="row.customDescription"
                 [disabled]="row.saving || row.isHidden"
-                placeholder="Texte narratif (facultatif)" i18n-placeholder="Texte narratif (facultatif)"></textarea>
+                placeholder="Texte narratif (facultatif)" i18n-placeholder="@@accounting.nct-statements.texte.narratif.facultatif.ca5e35a4"></textarea>
               <div class="nno-row-actions">
                 <app-button variant="secondary" size="sm" type="button"
                   (click)="save(row)" [disabled]="row.saving"

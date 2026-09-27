@@ -78,7 +78,7 @@ interface DraftLine extends LinePromotionPreview {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Nouvelle commande client" i18n-title="Nouvelle commande client"
+      title="Nouvelle commande client" i18n-title="@@sales-orders.sales-order-create.nouvelle.commande.client.8eb4415d"
       subtitle="Les prix sont ceux que le serveur appliquera : prix négocié, grille du client, ou catalogue.">
       <app-button variant="secondary" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-create.annuler.49ba3292">Annuler</app-button>
       <span
@@ -127,7 +127,7 @@ interface DraftLine extends LinePromotionPreview {
       </ul>
     </div>
 
-    <app-form-section title="Informations" i18n-title="Informations" icon="pi-user" [number]="1">
+    <app-form-section title="Informations" i18n-title="@@sales-orders.sales-order-create.informations.54937b3a" icon="pi-user" [number]="1">
       <div class="ft-form-grid ft-form-grid--compact">
         <div class="ft-field ft-field--full">
           <label for="so-client"><ng-container i18n="@@sales-orders.sales-order-create.client.1bdd79b1">Client </ng-container> <span class="ft-required" i18n="@@sales-orders.sales-order-create.text.df58248c">*</span></label>
@@ -141,7 +141,7 @@ interface DraftLine extends LinePromotionPreview {
             field="label"
             [forceSelection]="true"
             [dropdown]="true"
-            placeholder="Rechercher un client" i18n-placeholder="Rechercher un client"
+            placeholder="Rechercher un client" i18n-placeholder="@@sales-orders.sales-order-create.rechercher.un.client.723cebe6"
             styleClass="w-full"
             appendTo="body"></p-autoComplete>
           <small class="ft-hint" i18n="@@sales-orders.sales-order-create.le.client.determine.la.grille.tarifaire.applique.bd668e74"> Le client détermine la grille tarifaire appliquée aux lignes. </small>
@@ -179,7 +179,7 @@ interface DraftLine extends LinePromotionPreview {
             pInputText
             [(ngModel)]="reference"
             maxlength="100"
-            placeholder="Bon de commande du client" i18n-placeholder="Bon de commande du client" />
+            placeholder="Bon de commande du client" i18n-placeholder="@@sales-orders.sales-order-create.bon.de.commande.du.client.c9a91825" />
         </div>
 
         <div class="ft-field ft-field--half">
@@ -198,7 +198,7 @@ interface DraftLine extends LinePromotionPreview {
       id="section-lignes"
       class="lines-section-wrap"
       [class.lines-section-wrap--empty]="lines().length === 0">
-      <app-form-section title="Lignes" i18n-title="Lignes" icon="pi-list" [number]="2">
+      <app-form-section title="Lignes" i18n-title="@@sales-orders.sales-order-create.lignes.41c7025e" icon="pi-list" [number]="2">
         <div class="ft-form-grid ft-form-grid--inline">
           <div class="ft-field ft-field--grow">
             <label for="so-product" i18n="@@sales-orders.sales-order-create.produit.ff673dc2">Produit</label>
@@ -210,7 +210,7 @@ interface DraftLine extends LinePromotionPreview {
               field="label"
               [forceSelection]="true"
               [dropdown]="true"
-              placeholder="Rechercher par code ou nom" i18n-placeholder="Rechercher par code ou nom"
+              placeholder="Rechercher par code ou nom" i18n-placeholder="@@sales-orders.sales-order-create.rechercher.par.code.ou.nom.46838c72"
               styleClass="w-full"
               appendTo="body"></p-autoComplete>
           </div>
@@ -240,7 +240,7 @@ interface DraftLine extends LinePromotionPreview {
         @if (barcodeScanEnabled) {
           <div class="barcode-scan-row">
             <ft-barcode-scan-field
-              placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
+              placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@sales-orders.sales-order-create.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
               [autoFocus]="false"
               (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
           </div>
@@ -301,14 +301,14 @@ interface DraftLine extends LinePromotionPreview {
                   @if (linePricing.resolving()) {
                     <i
                       class="pi pi-spin pi-spinner ft-resolving"
-                      pTooltip="Résolution du prix en cours…" i18n-pTooltip="Résolution du prix en cours…"
+                      pTooltip="Résolution du prix en cours…" i18n-pTooltip="@@sales-orders.sales-order-create.resolution.du.prix.en.cours.9cec8ad3"
                       tooltipPosition="top"></i>
                   }
                   @if (line.priceOverridden) {
                     <p-tag
                       severity="warning"
                       value="Saisi"
-                      pTooltip="Prix imposé à la main : il remplace le prix résolu." i18n-pTooltip="Prix imposé à la main : il remplace le prix résolu."></p-tag>
+                      pTooltip="Prix imposé à la main : il remplace le prix résolu." i18n-pTooltip="@@sales-orders.sales-order-create.prix.impose.a.la.main.il.remplace.le.prix.resolu.739be845"></p-tag>
                   } @else if (line.priceSource === 'ClientPrice') {
                     <p-tag severity="success" value="Prix négocié"></p-tag>
                   } @else if (line.priceSource === 'PriceList') {
@@ -344,8 +344,8 @@ interface DraftLine extends LinePromotionPreview {
                     type="button"
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Retirer" i18n-pTooltip="Retirer"
-                    aria-label="Retirer la ligne" i18n-aria-label="Retirer la ligne"
+                    pTooltip="Retirer" i18n-pTooltip="@@sales-orders.sales-order-create.retirer.54ec24a1"
+                    aria-label="Retirer la ligne" i18n-aria-label="@@sales-orders.sales-order-create.retirer.la.ligne.d7b83e17"
                     (click)="removeLine(i)"></button>
                 </td>
               </tr>
@@ -363,7 +363,7 @@ interface DraftLine extends LinePromotionPreview {
     </div>
 
     @if (lines().length > 0) {
-      <div class="sticky-action-bar" role="region" aria-label="Actions de création" i18n-aria-label="Actions de création">
+      <div class="sticky-action-bar" role="region" aria-label="Actions de création" i18n-aria-label="@@sales-orders.sales-order-create.actions.de.creation.c4334038">
         <div class="sticky-action-bar__total">
           <span class="sticky-action-bar__label" i18n="@@sales-orders.sales-order-create.total.ht.2ca17ae6">Total HT</span>
           <span class="sticky-action-bar__amount">{{ totalHt() | number: '1.3-3' }} TND</span>

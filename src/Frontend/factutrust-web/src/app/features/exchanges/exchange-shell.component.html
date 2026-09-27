@@ -5,7 +5,7 @@
         <h2 i18n="@@exchanges.exchange-shell.societes.462e7896">Sociétés</h2>
         <input
           type="search"
-          placeholder="Rechercher une société..." i18n-placeholder="Rechercher une société..."
+          placeholder="Rechercher une société..." i18n-placeholder="@@exchanges.exchange-shell.rechercher.une.societe.e7d49537"
           [ngModel]="search()"
           (ngModelChange)="search.set($event)"
         />
@@ -45,7 +45,7 @@
 
   <section class="exchange-main">
     @if (loading() && !activeThread() && !emptyHint() && !error()) {
-      <div class="exchange-skeleton" role="status" aria-live="polite" aria-label="Chargement des échanges" i18n-aria-label="Chargement des échanges">
+      <div class="exchange-skeleton" role="status" aria-live="polite" aria-label="Chargement des échanges" i18n-aria-label="@@exchanges.exchange-shell.chargement.des.echanges.3dabb840">
         <header class="exchange-header exchange-header--skeleton">
           <div class="exchange-header__info">
             <div class="skeleton-line skeleton-line--title"></div>
@@ -74,7 +74,7 @@
       <div class="state empty-state-wrap">
         <app-empty-state
           icon="pi-comments"
-          title="Espace d'échange" i18n-title="Espace d'échange"
+          title="Espace d'échange" i18n-title="@@exchanges.exchange-shell.espace.d.echange.fe278289"
           [description]="emptyHint()!"
           [showAction]="!isFirm()"
           actionLabel="Configurer le cabinet"
@@ -127,7 +127,7 @@
           </div>
         </header>
 
-        <nav class="tabs" role="tablist" aria-label="Sections de l'échange" i18n-aria-label="Sections de l'échange">
+        <nav class="tabs" role="tablist" aria-label="Sections de l'échange" i18n-aria-label="@@exchanges.exchange-shell.sections.de.l.echange.6b707a6f">
           @for (t of tabs; track t.key) {
             <button
               type="button"
@@ -219,7 +219,7 @@
                 } @empty {
                   <app-empty-state
                     icon="pi-comments"
-                    title="Aucun message" i18n-title="Aucun message"
+                    title="Aucun message" i18n-title="@@exchanges.exchange-shell.aucun.message.35f8de34"
                     description="Démarrez la conversation avec votre interlocuteur."
                     [showAction]="false"
                   />
@@ -228,7 +228,7 @@
 
               @if (isOpen(thread.status)) {
                 <div class="composer">
-                  <div class="composer__tabs" role="group" aria-label="Type de message" i18n-aria-label="Type de message">
+                  <div class="composer__tabs" role="group" aria-label="Type de message" i18n-aria-label="@@exchanges.exchange-shell.type.de.message.6f60b53c">
                     <button
                       type="button"
                       [class.active]="composerMode() === 'message'"
@@ -246,7 +246,7 @@
                   <textarea
                     id="composer-draft"
                     rows="3"
-                    placeholder="Écrire un message…" i18n-placeholder="Écrire un message…"
+                    placeholder="Écrire un message…" i18n-placeholder="@@exchanges.exchange-shell.ecrire.un.message.79e61272"
                     [ngModel]="draft()"
                     (ngModelChange)="draft.set($event)"
                   ></textarea>
@@ -261,7 +261,7 @@
                     </ul>
                   }
                   <div class="composer__actions">
-                    <label class="btn ghost file-btn" title="Joindre un fichier" i18n-title="Joindre un fichier">
+                    <label class="btn ghost file-btn" title="Joindre un fichier" i18n-title="@@exchanges.exchange-shell.joindre.un.fichier.d0f75a43">
                       <i class="pi pi-paperclip" aria-hidden="true"></i>
                       <span class="sr-only" i18n="@@exchanges.exchange-shell.joindre.2ee36407">Joindre</span>
                       <input type="file" hidden (change)="onComposerFileSelected($event)" />
@@ -293,7 +293,7 @@
                 @if (documents().length === 0) {
                   <app-empty-state
                     icon="pi-folder-open"
-                    title="Aucun document" i18n-title="Aucun document"
+                    title="Aucun document" i18n-title="@@exchanges.exchange-shell.aucun.document.1e1d774d"
                     description="Partagez un fichier pour le rendre disponible dans cet échange."
                     [showAction]="isOpen(thread.status)"
                     actionLabel="Partager un document"
@@ -318,7 +318,7 @@
                         <button
                           type="button"
                           class="btn ghost"
-                          title="Télécharger" i18n-title="Télécharger"
+                          title="Télécharger" i18n-title="@@exchanges.exchange-shell.telecharger.b332d06d"
                           (click)="downloadDoc(d)"
                         >
                           <i class="pi pi-download" aria-hidden="true"></i>
@@ -392,7 +392,7 @@
                 @if (tasks().length === 0 && !showNewTask()) {
                   <app-empty-state
                     icon="pi-check-square"
-                    title="Aucune tâche" i18n-title="Aucune tâche"
+                    title="Aucune tâche" i18n-title="@@exchanges.exchange-shell.aucune.tache.5127b17d"
                     description="Planifiez une tâche ou un rendez-vous lié à cet échange."
                     [showAction]="isOpen(thread.status)"
                     actionLabel="Créer une tâche"
@@ -443,7 +443,7 @@
                 @if (history().length === 0) {
                   <app-empty-state
                     icon="pi-history"
-                    title="Aucun événement" i18n-title="Aucun événement"
+                    title="Aucun événement" i18n-title="@@exchanges.exchange-shell.aucun.evenement.6143177e"
                     description="L'activité de cet échange apparaîtra ici."
                     [showAction]="false"
                   />

@@ -71,10 +71,10 @@ interface FilterOption<T extends string> {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Promotions" i18n-title="Promotions"
+      title="Promotions" i18n-title="@@settings.promotions.promotions.086e09b4"
       subtitle="Remises temporaires appliquées après le prix. Elles ne remplacent pas les grilles : un document émis garde sa remise quand la promotion se termine.">
       <div class="header-actions">
-        <p-button label="Retour" i18n-label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
+        <p-button label="Retour" i18n-label="@@settings.promotions.retour.e5befb1f" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
         @if (canCreate()) {
           <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@settings.promotions.nouvelle.promotion.32d11180"> Nouvelle promotion </app-button>
         }
@@ -88,10 +88,10 @@ interface FilterOption<T extends string> {
           <input
             pInputText
             type="search"
-            placeholder="Rechercher par nom ou portée…" i18n-placeholder="Rechercher par nom ou portée…"
+            placeholder="Rechercher par nom ou portée…" i18n-placeholder="@@settings.promotions.rechercher.par.nom.ou.portee.1e787156"
             [(ngModel)]="searchQueryModel"
             (ngModelChange)="searchQuery.set($event)"
-            aria-label="Rechercher une promotion" i18n-aria-label="Rechercher une promotion" />
+            aria-label="Rechercher une promotion" i18n-aria-label="@@settings.promotions.rechercher.une.promotion.4dc198a1" />
         </p-iconfield>
         <p-select
           [options]="statusOptions"
@@ -99,7 +99,7 @@ interface FilterOption<T extends string> {
           (ngModelChange)="statusFilter.set($event)"
           optionLabel="label"
           optionValue="value"
-          placeholder="État" i18n-placeholder="État"
+          placeholder="État" i18n-placeholder="@@settings.promotions.etat.d3b28a2a"
           appendTo="body"></p-select>
         <p-select
           [options]="scopeOptions"
@@ -107,7 +107,7 @@ interface FilterOption<T extends string> {
           (ngModelChange)="scopeFilter.set($event)"
           optionLabel="label"
           optionValue="value"
-          placeholder="Portée" i18n-placeholder="Portée"
+          placeholder="Portée" i18n-placeholder="@@settings.promotions.portee.f42a1d5d"
           appendTo="body"></p-select>
         @if (hasActiveFilters()) {
           <button type="button" class="ft-filters__reset" (click)="resetFilters()">
@@ -123,13 +123,13 @@ interface FilterOption<T extends string> {
     } @else if (promotions().length === 0) {
       <app-empty-state
         icon="pi-megaphone"
-        title="Aucune promotion" i18n-title="Aucune promotion"
+        title="Aucune promotion" i18n-title="@@settings.promotions.aucune.promotion.99506024"
         message="Créez une promotion datée pour appliquer une remise temporaire.">
       </app-empty-state>
     } @else if (filteredPromotions().length === 0) {
       <app-empty-state
         icon="pi-filter-slash"
-        title="Aucun résultat" i18n-title="Aucun résultat"
+        title="Aucun résultat" i18n-title="@@settings.promotions.aucun.resultat.9e524fe1"
         message="Aucune promotion ne correspond à vos filtres.">
       </app-empty-state>
     } @else {
@@ -184,7 +184,7 @@ interface FilterOption<T extends string> {
                     type="button"
                     icon="pi pi-pencil"
                     class="p-button-text p-button-sm"
-                    pTooltip="Modifier" i18n-pTooltip="Modifier"
+                    pTooltip="Modifier" i18n-pTooltip="@@settings.promotions.modifier.f260e757"
                     (click)="openEdit(promo)"></button>
                 }
                 @if (canDelete()) {
@@ -193,7 +193,7 @@ interface FilterOption<T extends string> {
                     type="button"
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Supprimer" i18n-pTooltip="Supprimer"
+                    pTooltip="Supprimer" i18n-pTooltip="@@settings.promotions.supprimer.1acfc1c7"
                     (click)="confirmDelete(promo)"></button>
                 }
               </td>

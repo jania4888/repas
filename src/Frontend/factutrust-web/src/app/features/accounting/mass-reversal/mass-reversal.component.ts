@@ -37,7 +37,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Correction en lot par extourne" i18n-title="Correction en lot par extourne"
+      title="Correction en lot par extourne" i18n-title="@@accounting.mass-reversal.correction.en.lot.par.extourne.a8fc388a"
       subtitle="Contre-passer des écritures validées — la piste d'audit est préservée, rien n'est modifié" />
 
     <div class="card accounting-filters-card">
@@ -70,7 +70,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="mr-field mr-field-grow">
           <label class="accounting-filter-label" for="mr-reason" i18n="@@accounting.mass-reversal.motif.de.correction.obligatoire.10f7e33a">Motif de correction (obligatoire)</label>
           <input id="mr-reason" type="text" [(ngModel)]="reason" class="accounting-filter-input"
-            placeholder="Ex. erreur d'imputation sur le compte 607" i18n-placeholder="Ex. erreur d'imputation sur le compte 607" [disabled]="busy()" />
+            placeholder="Ex. erreur d'imputation sur le compte 607" i18n-placeholder="@@accounting.mass-reversal.ex.erreur.d.imputation.sur.le.compte.607.c37cab5a" [disabled]="busy()" />
         </div>
         <div class="mr-action-buttons">
           <app-button variant="danger" icon="pi pi-replay" type="button"
@@ -105,7 +105,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <ng-template pTemplate="header">
           <tr>
             <th style="width:3rem">
-              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" i18n-aria-label="Tout sélectionner" />
+              <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($event)" aria-label="Tout sélectionner" i18n-aria-label="@@accounting.mass-reversal.tout.selectionner.06f2c1c0" />
             </th>
             <th scope="col" i18n="@@accounting.mass-reversal.journal.57d7f743">Journal</th>
             <th scope="col" i18n="@@accounting.mass-reversal.n.754e6095">N°</th>

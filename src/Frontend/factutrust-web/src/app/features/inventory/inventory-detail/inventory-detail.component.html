@@ -58,7 +58,7 @@
       <div class="main-content inventory-detail-cards">
 
         <!-- KPI Stats Row -->
-        <div class="stats-row" role="region" aria-label="Statistiques de l'inventaire" i18n-aria-label="Statistiques de l'inventaire">
+        <div class="stats-row" role="region" aria-label="Statistiques de l'inventaire" i18n-aria-label="@@inventory.inventory-detail.statistiques.de.l.inventaire.04aad570">
           <div class="stat-card stat-card--primary">
             <div class="stat-card__icon">
               <i class="pi pi-box" aria-hidden="true"></i>
@@ -148,7 +148,7 @@
               }
             </div>
 
-            <div class="progress-block" role="status" [attr.aria-valuenow]="inventory()!.countedProducts" [attr.aria-valuemin]="0" [attr.aria-valuemax]="inventory()!.totalProducts" aria-label="Progression du comptage" i18n-aria-label="Progression du comptage">
+            <div class="progress-block" role="status" [attr.aria-valuenow]="inventory()!.countedProducts" [attr.aria-valuemin]="0" [attr.aria-valuemax]="inventory()!.totalProducts" aria-label="Progression du comptage" i18n-aria-label="@@inventory.inventory-detail.progression.du.comptage.b87098a6">
               <div class="progress-label">
                 <span>
                   <i class="pi pi-spinner" aria-hidden="true"></i>
@@ -177,12 +177,12 @@
               {{ inventory()!.lines.length }} {{ inventory()!.lines.length > 1 ? 'lignes' : 'ligne' }}
             </span>
           </div>
-          <div class="table-wrapper" role="region" aria-label="Lignes d'inventaire" i18n-aria-label="Lignes d'inventaire">
+          <div class="table-wrapper" role="region" aria-label="Lignes d'inventaire" i18n-aria-label="@@inventory.inventory-detail.lignes.d.inventaire.454d192f">
             <p-table
               [value]="inventory()!.lines"
               styleClass="p-datatable-sm p-datatable-striped"
               [tableStyle]="{ 'min-width': '50rem' }"
-              aria-label="Lignes d'inventaire" i18n-aria-label="Lignes d'inventaire">
+              aria-label="Lignes d'inventaire" i18n-aria-label="@@inventory.inventory-detail.lignes.d.inventaire.454d192f">
               <ng-template pTemplate="header">
                 <tr>
                   <th scope="col" i18n="@@inventory.inventory-detail.produit.ff673dc2">Produit</th>
@@ -241,7 +241,7 @@
                   <td colspan="6" role="status">
                     <app-empty-state
                       icon="pi-inbox"
-                      title="Aucune ligne d'inventaire" i18n-title="Aucune ligne d'inventaire"
+                      title="Aucune ligne d'inventaire" i18n-title="@@inventory.inventory-detail.aucune.ligne.d.inventaire.3854ee6e"
                       description="Aucun produit n'est associé à cet enregistrement."></app-empty-state>
                   </td>
                 </tr>

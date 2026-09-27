@@ -79,14 +79,14 @@ interface GovernorateOption {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-grid">
           <!-- General Information -->
-          <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-user" [number]="1">
+          <app-form-section title="Informations générales" i18n-title="@@clients.client-form.informations.generales.be6ba6e5" icon="pi-user" [number]="1">
             <div class="form-group">
               <label for="name"><ng-container i18n="@@clients.client-form.nom.ou.raison.sociale.2983b5c6">Nom ou raison sociale </ng-container> <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="name" 
                 formControlName="name"
-                placeholder="Ex. Jean Dupont ou ABC SARL" i18n-placeholder="Ex. Jean Dupont ou ABC SARL"
+                placeholder="Ex. Jean Dupont ou ABC SARL" i18n-placeholder="@@clients.client-form.ex.jean.dupont.ou.abc.sarl.92bd3a72"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('name')">
               @if (isInvalid('name')) {
@@ -106,7 +106,7 @@ interface GovernorateOption {
                   formControlName="type"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Sélectionner" i18n-placeholder="Sélectionner"
+                  placeholder="Sélectionner" i18n-placeholder="@@clients.client-form.selectionner.ab31a36f"
                   styleClass="w-full">
                 </p-select>
                 @if (isInvalid('type')) {
@@ -124,7 +124,7 @@ interface GovernorateOption {
                   formControlName="nif"
                   appNifMaskPaste
                   mask="9999999a/a/a/999"
-                  placeholder="Ex. 1772793W/A/M/000" i18n-placeholder="Ex. 1772793W/A/M/000"
+                  placeholder="Ex. 1772793W/A/M/000" i18n-placeholder="@@clients.client-form.ex.1772793w.a.m.000.f3190bfc"
                   styleClass="w-full"
                   [style]="{'text-transform': 'uppercase'}"
                   [class.ng-invalid]="isInvalid('nif')"
@@ -159,7 +159,7 @@ interface GovernorateOption {
           </app-form-section>
 
           <!-- Contact Information -->
-          <app-form-section title="Coordonnées" i18n-title="Coordonnées" icon="pi-envelope" [number]="2">
+          <app-form-section title="Coordonnées" i18n-title="@@clients.client-form.coordonnees.7c309d77" icon="pi-envelope" [number]="2">
             <div class="form-group">
               <label for="email" i18n="@@clients.client-form.adresse.email.bdf1cc95">Adresse email</label>
               <input 
@@ -167,7 +167,7 @@ interface GovernorateOption {
                 id="email" 
                 type="email"
                 formControlName="email"
-                placeholder="contact@exemple.tn" i18n-placeholder="contact@exemple.tn"
+                placeholder="contact@exemple.tn" i18n-placeholder="@@clients.client-form.contact.exemple.tn.c035c2ff"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('email')">
               @if (isInvalid('email')) {
@@ -184,7 +184,7 @@ interface GovernorateOption {
                 id="phone" 
                 formControlName="phone"
                 mask="99 999 999"
-                placeholder="+216 XX XXX XXX" i18n-placeholder="+216 XX XXX XXX"
+                placeholder="+216 XX XXX XXX" i18n-placeholder="@@clients.client-form.216.xx.xxx.xxx.e336394e"
                 styleClass="w-full">
               </p-inputMask>
             </div>
@@ -195,20 +195,20 @@ interface GovernorateOption {
                 pInputText 
                 id="contactPerson" 
                 formControlName="contactPerson"
-                placeholder="Nom du responsable" i18n-placeholder="Nom du responsable"
+                placeholder="Nom du responsable" i18n-placeholder="@@clients.client-form.nom.du.responsable.45818ee5"
                 class="w-full">
             </div>
           </app-form-section>
 
           <!-- Address -->
-          <app-form-section title="Adresse" i18n-title="Adresse" icon="pi-map-marker" [number]="3" class="address-card">
+          <app-form-section title="Adresse" i18n-title="@@clients.client-form.adresse.522e1466" icon="pi-map-marker" [number]="3" class="address-card">
             <div class="form-group">
               <label for="street"><ng-container i18n="@@clients.client-form.adresse.522e1466">Adresse </ng-container> <span class="required" i18n="@@clients.client-form.text.df58248c">*</span></label>
               <input 
                 pInputText 
                 id="street" 
                 formControlName="street"
-                placeholder="Numéro et nom de rue" i18n-placeholder="Numéro et nom de rue"
+                placeholder="Numéro et nom de rue" i18n-placeholder="@@clients.client-form.numero.et.nom.de.rue.a6fd8173"
                 maxlength="200"
                 class="w-full"
                 [class.ng-invalid]="isInvalid('street')">
@@ -226,7 +226,7 @@ interface GovernorateOption {
                 pInputText 
                 id="streetLine2" 
                 formControlName="streetLine2"
-                placeholder="Bâtiment, étage…" i18n-placeholder="Bâtiment, étage…"
+                placeholder="Bâtiment, étage…" i18n-placeholder="@@clients.client-form.batiment.etage.73c5abc1"
                 class="w-full">
             </div>
 
@@ -237,7 +237,7 @@ interface GovernorateOption {
                   pInputText 
                   id="city" 
                   formControlName="city"
-                  placeholder="Tunis" i18n-placeholder="Tunis"
+                  placeholder="Tunis" i18n-placeholder="@@clients.client-form.tunis.e58b2d54"
                   class="w-full"
                   [class.ng-invalid]="isInvalid('city')">
                 @if (isInvalid('city')) {
@@ -254,7 +254,7 @@ interface GovernorateOption {
                   id="postalCode" 
                   formControlName="postalCode"
                   mask="9999"
-                  placeholder="1000" i18n-placeholder="1000"
+                  placeholder="1000" i18n-placeholder="@@clients.client-form.1000.e3cbba88"
                   styleClass="w-full">
                 </p-inputMask>
               </div>
@@ -266,7 +266,7 @@ interface GovernorateOption {
                 id="governorate"
                 [options]="governorates" 
                 formControlName="governorate"
-                placeholder="Sélectionner" i18n-placeholder="Sélectionner"
+                placeholder="Sélectionner" i18n-placeholder="@@clients.client-form.selectionner.ab31a36f"
                 [filter]="true"
                 filterBy="label"
                 styleClass="w-full">
@@ -281,14 +281,14 @@ interface GovernorateOption {
           </app-form-section>
 
           <!-- Notes -->
-          <app-form-section title="Notes" i18n-title="Notes" icon="pi-file-edit" [number]="4" class="notes-card">
+          <app-form-section title="Notes" i18n-title="@@clients.client-form.notes.70440046" icon="pi-file-edit" [number]="4" class="notes-card">
             <div class="form-group">
               <label for="notes" i18n="@@clients.client-form.notes.internes.1a81fb4e">Notes internes</label>
               <textarea 
                 pTextarea 
                 id="notes" 
                 formControlName="notes"
-                placeholder="Préférences, instructions particulières…" i18n-placeholder="Préférences, instructions particulières…"
+                placeholder="Préférences, instructions particulières…" i18n-placeholder="@@clients.client-form.preferences.instructions.particulieres.7f4b138b"
                 [rows]="4"
                 class="w-full">
               </textarea>
@@ -297,7 +297,7 @@ interface GovernorateOption {
           </app-form-section>
 
           <!-- Conditions financières -->
-          <app-form-section title="Conditions financières" i18n-title="Conditions financières" icon="pi-wallet" [number]="5" class="finance-card">
+          <app-form-section title="Conditions financières" i18n-title="@@clients.client-form.conditions.financieres.ae9a6ff2" icon="pi-wallet" [number]="5" class="finance-card">
             <div class="form-row">
               <div class="form-group">
                 <label for="creditLimit" i18n="@@clients.client-form.plafond.d.encours.tnd.9a9150cb">Plafond d'encours (TND)</label>
@@ -310,7 +310,7 @@ interface GovernorateOption {
                   [maxFractionDigits]="3"
                   [useGrouping]="true"
                   locale="fr-TN"
-                  placeholder="Aucun plafond" i18n-placeholder="Aucun plafond"
+                  placeholder="Aucun plafond" i18n-placeholder="@@clients.client-form.aucun.plafond.d8c852de"
                   styleClass="w-full">
                 </p-inputNumber>
                 <small class="form-hint" i18n="@@clients.client-form.laisser.vide.pour.aucun.plafond.le.depassement.a.3de2a34c">Laisser vide pour aucun plafond. Le dépassement avertit sans bloquer les ventes.</small>
@@ -330,7 +330,7 @@ interface GovernorateOption {
                   [min]="0"
                   [max]="365"
                   [useGrouping]="false"
-                  placeholder="Ex. 30" i18n-placeholder="Ex. 30"
+                  placeholder="Ex. 30" i18n-placeholder="@@clients.client-form.ex.30.e155bc3a"
                   styleClass="w-full">
                 </p-inputNumber>
                 <small class="form-hint" i18n="@@clients.client-form.propose.a.la.saisie.des.factures.et.commandes.3b2e61c6">Proposé à la saisie des factures et commandes.</small>

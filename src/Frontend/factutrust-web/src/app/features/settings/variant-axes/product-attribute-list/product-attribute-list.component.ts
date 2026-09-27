@@ -38,7 +38,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Axes de variantes" i18n-title="Axes de variantes"
+      title="Axes de variantes" i18n-title="@@settings.variant-axes.axes.de.variantes.dcc95d91"
       subtitle="Définissez les axes (taille, couleur, etc.) et leurs valeurs pour générer les SKU.">
       <app-button variant="outline" icon="pi-arrow-left" iconPos="left" routerLink="/settings" i18n="@@settings.variant-axes.retour.e5befb1f"> Retour </app-button>
       @if (canCreate()) {
@@ -52,7 +52,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         <input
           pInputText
           type="text"
-          placeholder="Rechercher par code ou nom..." i18n-placeholder="Rechercher par code ou nom..."
+          placeholder="Rechercher par code ou nom..." i18n-placeholder="@@settings.variant-axes.rechercher.par.code.ou.nom.5764fbc6"
           [(ngModel)]="searchTerm"
           class="w-full" />
       </span>
@@ -65,7 +65,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
       } @else if (filteredAttributes().length === 0) {
         <app-empty-state
           icon="pi-th-large"
-          title="Aucun axe de variantes" i18n-title="Aucun axe de variantes"
+          title="Aucun axe de variantes" i18n-title="@@settings.variant-axes.aucun.axe.de.variantes.4eaf2472"
           description="Créez des axes (taille, couleur, etc.) pour générer des variantes de produits." />
       } @else {
         <p-table [value]="filteredAttributes()" [rowHover]="true" styleClass="p-datatable-sm">

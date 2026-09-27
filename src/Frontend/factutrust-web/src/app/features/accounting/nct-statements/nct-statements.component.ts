@@ -41,7 +41,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
     NctNoteOverridesDialogComponent
   ],
   template: `
-    <app-page-header title="États financiers NCT" i18n-title="États financiers NCT" subtitle="Liasse : bilan, résultat, flux de trésorerie, capitaux propres et notes" />
+    <app-page-header title="États financiers NCT" i18n-title="@@accounting.nct-statements.etats.financiers.nct.a11800a0" subtitle="Liasse : bilan, résultat, flux de trésorerie, capitaux propres et notes" />
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Exercice de la liasse NCT">

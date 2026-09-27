@@ -37,9 +37,9 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
       <!-- Signature -->
       <div *ngSwitchCase="'signature'" class="ft-file-col">
         <ng-container *ngIf="value && !editing">
-          <img [attr.src]="fileSrc$ | async" class="ft-sign-img" alt="signature" i18n-alt="signature" />
+          <img [attr.src]="fileSrc$ | async" class="ft-sign-img" alt="signature" i18n-alt="@@shared.studio-runtime.studio-file-field.signature.fab5f628" />
           <div class="ft-sign-actions">
-            <button pButton type="button" label="Refaire" i18n-label="Refaire" class="p-button-text p-button-sm" (click)="editing = true"></button>
+            <button pButton type="button" label="Refaire" i18n-label="@@shared.studio-runtime.studio-file-field.refaire.afd304f0" class="p-button-text p-button-sm" (click)="editing = true"></button>
             <button pButton type="button" icon="fa-solid fa-xmark" class="p-button-text p-button-sm p-button-danger" (click)="clear()"></button>
           </div>
         </ng-container>
@@ -47,8 +47,8 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
           <canvas #canvas width="320" height="120" class="ft-sign-pad"
             (pointerdown)="start($event)" (pointermove)="move($event)" (pointerup)="end()" (pointerleave)="end()"></canvas>
           <div class="ft-sign-actions">
-            <button pButton type="button" label="Effacer" i18n-label="Effacer" class="p-button-text p-button-sm" (click)="clearPad()"></button>
-            <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" class="p-button-sm" [disabled]="uploading" (click)="savePad()"></button>
+            <button pButton type="button" label="Effacer" i18n-label="@@shared.studio-runtime.studio-file-field.effacer.fe23de7b" class="p-button-text p-button-sm" (click)="clearPad()"></button>
+            <button pButton type="button" label="Enregistrer" i18n-label="@@shared.studio-runtime.studio-file-field.enregistrer.f7c8bcd8" class="p-button-sm" [disabled]="uploading" (click)="savePad()"></button>
           </div>
         </ng-container>
       </div>

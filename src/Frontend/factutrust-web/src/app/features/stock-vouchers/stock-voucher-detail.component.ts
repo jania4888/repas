@@ -62,23 +62,23 @@ import {
       <app-page-header [title]="v.kindDisplay + ' ' + v.number" [subtitle]="v.reasonDisplay">
         <div class="header-actions">
           <span class="status-badge" [ngClass]="v.statusCss">{{ v.statusDisplay | backendLabel }}</span>
-          <button pButton type="button" label="PDF" i18n-label="PDF" icon="pi pi-file-pdf" class="p-button-outlined"
+          <button pButton type="button" label="PDF" i18n-label="@@stock-vouchers.stock-voucher-detail.pdf.d613d88c" icon="pi pi-file-pdf" class="p-button-outlined"
                   (click)="downloadPdf()" [loading]="pdfLoading()"></button>
           @if (canUpdate() && isDraft(v.status)) {
             <app-button variant="outline" icon="pi-pencil" iconPos="left" [routerLink]="editRoute" i18n="@@stock-vouchers.stock-voucher-detail.modifier.f260e757"> Modifier </app-button>
-            <button pButton type="button" label="Valider" i18n-label="Valider" icon="pi pi-check"
+            <button pButton type="button" label="Valider" i18n-label="@@stock-vouchers.stock-voucher-detail.valider.be4220f7" icon="pi pi-check"
                     (click)="validate()" [loading]="processing()"></button>
           }
           @if (canCreate() && !isDraft(v.status)) {
-            <button pButton type="button" label="Dupliquer" i18n-label="Dupliquer" icon="pi pi-copy" class="p-button-outlined"
+            <button pButton type="button" label="Dupliquer" i18n-label="@@stock-vouchers.stock-voucher-detail.dupliquer.c5e1d3f1" icon="pi pi-copy" class="p-button-outlined"
                     (click)="duplicate()" [loading]="duplicating()"></button>
           }
           @if (canUpdate() && (isDraft(v.status) || isValidated(v.status))) {
-            <button pButton type="button" label="Annuler" i18n-label="Annuler" icon="pi pi-times"
+            <button pButton type="button" label="Annuler" i18n-label="@@stock-vouchers.stock-voucher-detail.annuler.49ba3292" icon="pi pi-times"
                     class="p-button-danger p-button-outlined" (click)="showCancelDialog = true"></button>
           }
           @if (canDelete() && isDraft(v.status)) {
-            <button pButton type="button" label="Supprimer" i18n-label="Supprimer" icon="pi pi-trash"
+            <button pButton type="button" label="Supprimer" i18n-label="@@stock-vouchers.stock-voucher-detail.supprimer.1acfc1c7" icon="pi pi-trash"
                     class="p-button-danger" (click)="confirmDelete()"></button>
           }
           <app-button variant="outline" icon="pi-arrow-left" iconPos="left" [routerLink]="listRoute" i18n="@@stock-vouchers.stock-voucher-detail.retour.e5befb1f"> Retour </app-button>
@@ -143,14 +143,14 @@ import {
         </table>
       </div>
 
-      <p-dialog header="Annuler le bon" i18n-header="Annuler le bon" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
+      <p-dialog header="Annuler le bon" i18n-header="@@stock-vouchers.stock-voucher-detail.annuler.le.bon.608615c8" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
         <div class="field">
           <label class="field-label" i18n="@@stock-vouchers.stock-voucher-detail.motif.d.annulation.f627914d">Motif d'annulation</label>
           <textarea pTextarea [(ngModel)]="cancelReason" rows="3" style="width:100%"></textarea>
         </div>
         <ng-template pTemplate="footer">
-          <button pButton type="button" label="Fermer" i18n-label="Fermer" class="p-button-text" (click)="showCancelDialog = false"></button>
-          <button pButton type="button" label="Confirmer l'annulation" i18n-label="Confirmer l'annulation" class="p-button-danger"
+          <button pButton type="button" label="Fermer" i18n-label="@@stock-vouchers.stock-voucher-detail.fermer.5ab4ec64" class="p-button-text" (click)="showCancelDialog = false"></button>
+          <button pButton type="button" label="Confirmer l'annulation" i18n-label="@@stock-vouchers.stock-voucher-detail.confirmer.l.annulation.92040a54" class="p-button-danger"
                   (click)="cancelVoucher()" [disabled]="!cancelReason.trim()" [loading]="processing()"></button>
         </ng-template>
       </p-dialog>

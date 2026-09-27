@@ -51,7 +51,7 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Bons de réception" i18n-title="Bons de réception"
+      title="Bons de réception" i18n-title="@@purchase-receipts.pages.bons.de.reception.84d6ebb5"
       subtitle="Enregistrez et validez les réceptions de marchandises fournisseurs.">
       @if (canCreate()) {
         <app-button
@@ -69,7 +69,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@purchase-receipts.pages.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -81,7 +81,7 @@ interface StatusOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par numéro, fournisseur ou référence…" i18n-placeholder="Rechercher par numéro, fournisseur ou référence…"
+            placeholder="Rechercher par numéro, fournisseur ou référence…" i18n-placeholder="@@purchase-receipts.pages.rechercher.par.numero.fournisseur.ou.reference.f62ac59c"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -92,7 +92,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@purchase-receipts.pages.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -102,7 +102,7 @@ interface StatusOption {
           [(ngModel)]="selectedSupplierId"
           optionLabel="name"
           optionValue="id"
-          placeholder="Tous les fournisseurs" i18n-placeholder="Tous les fournisseurs"
+          placeholder="Tous les fournisseurs" i18n-placeholder="@@purchase-receipts.pages.tous.les.fournisseurs.0e8a9fae"
           [showClear]="true"
           [filter]="true"
           filterBy="name"
@@ -116,7 +116,7 @@ interface StatusOption {
             [(ngModel)]="fromDate"
             dateFormat="dd/mm/yy"
             [showIcon]="true"
-            placeholder="Du" i18n-placeholder="Du"
+            placeholder="Du" i18n-placeholder="@@purchase-receipts.pages.du.84814985"
             [showButtonBar]="true"
             (onSelect)="onFilterChange()"
             (onClearClick)="onFilterChange()"
@@ -130,7 +130,7 @@ interface StatusOption {
             [(ngModel)]="toDate"
             dateFormat="dd/mm/yy"
             [showIcon]="true"
-            placeholder="Au" i18n-placeholder="Au"
+            placeholder="Au" i18n-placeholder="@@purchase-receipts.pages.au.7a1732d5"
             [showButtonBar]="true"
             (onSelect)="onFilterChange()"
             (onClearClick)="onFilterChange()"
@@ -235,7 +235,7 @@ interface StatusOption {
             <tr>
               <td colspan="9" class="text-center p-6">
                 <app-empty-state
-                  title="Aucun bon de réception" i18n-title="Aucun bon de réception"
+                  title="Aucun bon de réception" i18n-title="@@purchase-receipts.pages.aucun.bon.de.reception.8ae0bc37"
                   description="Créez votre premier bon de réception pour enregistrer les livraisons fournisseurs."
                   [showAction]="canCreate()"
                   actionLabel="Nouveau bon de réception"

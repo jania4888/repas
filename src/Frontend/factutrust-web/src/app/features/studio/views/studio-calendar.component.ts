@@ -60,11 +60,11 @@ interface LegendItem {
     <div class="cal">
       <div class="cal__toolbar">
         <div class="cal__nav">
-          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(-1)" aria-label="Période précédente" i18n-aria-label="Période précédente">
+          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(-1)" aria-label="Période précédente" i18n-aria-label="@@studio.views.periode.precedente.5e420e76">
             <i class="fa-solid fa-chevron-left"></i>
           </button>
           <button type="button" class="p-button p-button-text p-button-sm" (click)="goToday()">{{ labels.calendar.today }}</button>
-          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(1)" aria-label="Période suivante" i18n-aria-label="Période suivante">
+          <button type="button" class="p-button p-button-text p-button-sm" (click)="go(1)" aria-label="Période suivante" i18n-aria-label="@@studio.views.periode.suivante.0f0cc843">
             <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>

@@ -42,7 +42,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Nouvelle sortie de stock" i18n-title="Nouvelle sortie de stock" 
+      title="Nouvelle sortie de stock" i18n-title="@@stock.stock-exit-form.nouvelle.sortie.de.stock.8989c4d6" 
       subtitle="Enregistrez une sortie de marchandise de votre entrepôt">
       <app-button 
         variant="outline"
@@ -54,7 +54,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <!-- Section 1: Entrepôt & Produit -->
-        <app-form-section title="Détails du Stock" i18n-title="Détails du Stock" icon="pi-box" [number]="1">
+        <app-form-section title="Détails du Stock" i18n-title="@@stock.stock-exit-form.details.du.stock.04fbfd18" icon="pi-box" [number]="1">
           <div class="form-group">
             <label for="warehouse"><ng-container i18n="@@stock.stock-exit-form.entrepot.c349c0bc">Entrepôt </ng-container> <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
             <p-select 
@@ -62,7 +62,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
               [options]="warehouses" 
               formControlName="warehouse"
               optionLabel="name"
-              placeholder="Sélectionner un entrepôt" i18n-placeholder="Sélectionner un entrepôt"
+              placeholder="Sélectionner un entrepôt" i18n-placeholder="@@stock.stock-exit-form.selectionner.un.entrepot.2e4d1232"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('warehouse')">
             </p-select>
@@ -83,7 +83,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
               optionLabel="name"
               [filter]="true"
               filterBy="name,code"
-              placeholder="Chercher un produit" i18n-placeholder="Chercher un produit"
+              placeholder="Chercher un produit" i18n-placeholder="@@stock.stock-exit-form.chercher.un.produit.44ee94b8"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('product')">
             </p-select>
@@ -104,7 +104,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         </app-form-section>
 
         <!-- Section 2: Quantité -->
-        <app-form-section title="Quantité à Sortir" i18n-title="Quantité à Sortir" icon="pi-minus-circle" [number]="2">
+        <app-form-section title="Quantité à Sortir" i18n-title="@@stock.stock-exit-form.quantite.a.sortir.bab0682e" icon="pi-minus-circle" [number]="2">
            <div class="form-group">
               <label for="quantity"><ng-container i18n="@@stock.stock-exit-form.quantite.09a38fda">Quantité </ng-container> <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
               <p-inputNumber 
@@ -133,7 +133,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         </app-form-section>
         
         <!-- Section 3: Motif & Notes -->
-        <app-form-section title="Informations Complémentaires" i18n-title="Informations Complémentaires" icon="pi-file-edit" [number]="3">
+        <app-form-section title="Informations Complémentaires" i18n-title="@@stock.stock-exit-form.informations.complementaires.5ce46026" icon="pi-file-edit" [number]="3">
            <div class="form-group">
               <label for="reason"><ng-container i18n="@@stock.stock-exit-form.motif.2a198f47">Motif </ng-container> <span class="required" i18n="@@stock.stock-exit-form.text.df58248c">*</span></label>
               <p-select 
@@ -142,7 +142,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
                 formControlName="reason"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Raison de la sortie" i18n-placeholder="Raison de la sortie"
+                placeholder="Raison de la sortie" i18n-placeholder="@@stock.stock-exit-form.raison.de.la.sortie.23c4a027"
                 styleClass="w-full"
                 [class.ng-invalid]="isInvalid('reason')">
               </p-select>
@@ -160,7 +160,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
                 pTextarea 
                 id="notes" 
                 formControlName="notes"
-                placeholder="Ex: Ajustement inventaire" i18n-placeholder="Ex: Ajustement inventaire"
+                placeholder="Ex: Ajustement inventaire" i18n-placeholder="@@stock.stock-exit-form.ex.ajustement.inventaire.153b5f1e"
                 [rows]="3"
                 class="w-full">
               </textarea>

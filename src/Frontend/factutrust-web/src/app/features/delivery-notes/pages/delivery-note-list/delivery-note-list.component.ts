@@ -63,7 +63,7 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Bons de Livraison" i18n-title="Bons de Livraison" 
+      title="Bons de Livraison" i18n-title="@@delivery-notes.pages.bons.de.livraison.a42b9518" 
       subtitle="Créez, envoyez et transformez vos bons de livraison en factures">
       <app-button 
         variant="secondary"
@@ -89,7 +89,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@delivery-notes.pages.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -101,7 +101,7 @@ interface StatusOption {
           <input 
             pInputText 
             type="text" 
-            placeholder="Rechercher..." i18n-placeholder="Rechercher..." 
+            placeholder="Rechercher..." i18n-placeholder="@@delivery-notes.pages.rechercher.8bd64daa" 
             [(ngModel)]="searchTerm"
             (input)="onSearch()">
         </span>
@@ -109,7 +109,7 @@ interface StatusOption {
         <p-select 
           [options]="statusOptions" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@delivery-notes.pages.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -118,7 +118,7 @@ interface StatusOption {
           [(ngModel)]="dateRange" 
           selectionMode="range" 
           [readonlyInput]="true"
-          placeholder="Période" i18n-placeholder="Période"
+          placeholder="Période" i18n-placeholder="@@delivery-notes.pages.periode.de2110b7"
           dateFormat="dd/mm/yy"
           [showClear]="true"
           (onSelect)="onFilterChange()">
@@ -128,7 +128,7 @@ interface StatusOption {
           [options]="clientOptions" 
           [(ngModel)]="selectedClient"
           optionLabel="name"
-          placeholder="Tous les clients" i18n-placeholder="Tous les clients"
+          placeholder="Tous les clients" i18n-placeholder="@@delivery-notes.pages.tous.les.clients.56f5092c"
           [showClear]="true"
           [filter]="true"
           filterBy="name,code"
@@ -178,7 +178,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons de livraison" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons de livraison"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons de livraison" i18n-currentPageReportTemplate="@@delivery-notes.pages.affichage.de.first.a.last.sur.totalrecords.bons.a59b315a"
           (onLazyLoad)="onPageChange($event)"
           styleClass="p-datatable-sm">
         
@@ -230,7 +230,7 @@ interface StatusOption {
             <td colspan="6" class="text-center p-6">
               <app-empty-state
                 illustration="empty-invoices.svg"
-                title="Aucun bon de livraison" i18n-title="Aucun bon de livraison"
+                title="Aucun bon de livraison" i18n-title="@@delivery-notes.pages.aucun.bon.de.livraison.e7dcd4f7"
                 description="Créez votre premier bon de livraison pour gérer vos expéditions."
                 [showAction]="canCreateDeliveryNote()"
                 actionLabel="Créer un bon"

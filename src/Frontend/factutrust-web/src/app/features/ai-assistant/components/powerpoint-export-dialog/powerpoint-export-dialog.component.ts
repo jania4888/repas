@@ -74,7 +74,7 @@ interface ResponseLine {
   imports: [CommonModule, FormsModule, DialogModule, ButtonComponent, PowerPointThemePickerComponent],
   template: `
     <p-dialog
-      header="Exporter en PowerPoint" i18n-header="Exporter en PowerPoint"
+      header="Exporter en PowerPoint" i18n-header="@@ai-assistant.components.exporter.en.powerpoint.1032c468"
       [(visible)]="visibleInternal"
       [modal]="true"
       [style]="{ width: '900px', maxWidth: '96vw' }"
@@ -84,7 +84,7 @@ interface ResponseLine {
       (onHide)="onHide()"
       ariaLabel="Exporter en PowerPoint">
 
-      <nav class="ppt-stepper" aria-label="Étapes de l'export" i18n-aria-label="Étapes de l'export">
+      <nav class="ppt-stepper" aria-label="Étapes de l'export" i18n-aria-label="@@ai-assistant.components.etapes.de.l.export.5cbdb578">
         @for (s of stepDefs; track s.id) {
           <button
             type="button"
@@ -116,7 +116,7 @@ interface ResponseLine {
                     maxlength="200"
                     required
                     aria-required="true"
-                    placeholder="Synthèse hebdomadaire — Ventes Q4" i18n-placeholder="Synthèse hebdomadaire — Ventes Q4" />
+                    placeholder="Synthèse hebdomadaire — Ventes Q4" i18n-placeholder="@@ai-assistant.components.synthese.hebdomadaire.ventes.q4.4c4c43b5" />
                 </label>
                 <label class="ppt-field">
                   <span i18n="@@ai-assistant.components.sous.titre.optionnel.9e0b8fa9">Sous-titre (optionnel)</span>
@@ -217,7 +217,7 @@ interface ResponseLine {
                             [(ngModel)]="line.customTitle"
                             maxlength="200"
                             [name]="'cust-' + line.messageId"
-                            placeholder="Hériter du titre auto-détecté" i18n-placeholder="Hériter du titre auto-détecté" />
+                            placeholder="Hériter du titre auto-détecté" i18n-placeholder="@@ai-assistant.components.heriter.du.titre.auto.detecte.2ee69f9a" />
                         </label>
                         <div class="ppt-block-filters" role="group" [attr.aria-label]="loc_ui_tern_filtrer_le_contenu_pour_la_reponse_7da43f + (i + 1)">
                           <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeText" [name]="'txt-' + line.messageId" /> Texte</label>
@@ -253,9 +253,9 @@ interface ResponseLine {
                         }
                       </div>
                       <div class="ppt-response-actions">
-                        <button type="button" class="ppt-icon" (click)="moveUp(i)" [disabled]="i === 0" aria-label="Monter" i18n-aria-label="Monter" i18n="@@ai-assistant.components.text.9555ffd7"> ↑ </button>
-                        <button type="button" class="ppt-icon" (click)="moveDown(i)" [disabled]="i === responseLines().length - 1" aria-label="Descendre" i18n-aria-label="Descendre" i18n="@@ai-assistant.components.text.fc486696"> ↓ </button>
-                        <button type="button" class="ppt-icon ppt-icon-danger" (click)="removeLine(i)" aria-label="Retirer cette réponse" i18n-aria-label="Retirer cette réponse" i18n="@@ai-assistant.components.text.67fba2f3"> × </button>
+                        <button type="button" class="ppt-icon" (click)="moveUp(i)" [disabled]="i === 0" aria-label="Monter" i18n-aria-label="@@ai-assistant.components.monter.dd1b79d9" i18n="@@ai-assistant.components.text.9555ffd7"> ↑ </button>
+                        <button type="button" class="ppt-icon" (click)="moveDown(i)" [disabled]="i === responseLines().length - 1" aria-label="Descendre" i18n-aria-label="@@ai-assistant.components.descendre.383f2e3e" i18n="@@ai-assistant.components.text.fc486696"> ↓ </button>
+                        <button type="button" class="ppt-icon ppt-icon-danger" (click)="removeLine(i)" aria-label="Retirer cette réponse" i18n-aria-label="@@ai-assistant.components.retirer.cette.reponse.daf692c8" i18n="@@ai-assistant.components.text.67fba2f3"> × </button>
                       </div>
                     </li>
                   }

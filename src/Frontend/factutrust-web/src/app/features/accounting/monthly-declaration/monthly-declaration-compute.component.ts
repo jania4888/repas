@@ -58,7 +58,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Calcul DM" i18n-title="Calcul DM"
+      title="Calcul DM" i18n-title="@@accounting.monthly-declaration.calcul.dm.7af61bf4"
       subtitle="Évalue la configuration du dossier sur une période et rend le détail obtenu. Rien n’est déposé." />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -67,7 +67,7 @@ import {
       @if (!s.configurableLinesEnabled) {
         <app-accounting-status-banner
           variant="info"
-          title="Calcul paramétré non activé" i18n-title="Calcul paramétré non activé"
+          title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
           message="Le calcul et le changement de régime sont indisponibles pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité." />
       }
     }

@@ -21,7 +21,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Analyse des ventes" i18n-title="Analyse des ventes"
+      title="Analyse des ventes" i18n-title="@@reports.analytics.analyse.des.ventes.74e19454"
       subtitle="Comprenez vos performances commerciales en un coup d'œil">
       <app-button
         variant="secondary"
@@ -58,14 +58,14 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Taux de conversion" i18n-label="Taux de conversion"
+          label="Taux de conversion" i18n-label="@@reports.analytics.taux.de.conversion.296dbcee"
           [value]="data()!.conversionRate.toFixed(1) + ' %'"
           icon="pi-sync"
           [variant]="data()!.conversionRate >= 50 ? 'success' : data()!.conversionRate >= 30 ? 'warning' : 'error'">
         </app-stat-card>
         <div class="kpi-explained">
           <app-stat-card
-            label="Panier moyen" i18n-label="Panier moyen"
+            label="Panier moyen" i18n-label="@@reports.analytics.panier.moyen.e9ce57ee"
             [value]="formatAmount(data()!.averageBasket)"
             icon="pi-shopping-cart"
             variant="primary">
@@ -76,13 +76,13 @@ import {
           </span>
         </div>
         <app-stat-card
-          label="Devis convertis" i18n-label="Devis convertis"
+          label="Devis convertis" i18n-label="@@reports.analytics.devis.convertis.e8e2b1c5"
           [value]="data()!.convertedQuotes + ' / ' + data()!.totalQuotes"
           icon="pi-check-square"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées" i18n-label="Factures payées"
+          label="Factures payées" i18n-label="@@reports.analytics.factures.payees.587e5689"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">

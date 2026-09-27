@@ -23,7 +23,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
       </div>
       <div class="proj-dash-kpi-row">
         <app-stat-card
-          label="Projets actifs" i18n-label="Projets actifs"
+          label="Projets actifs" i18n-label="@@projects.components.projets.actifs.9a6cf9d6"
           [value]="String(data.activeProjects)"
           icon="fa-solid fa-briefcase"
           variant="primary"
@@ -34,7 +34,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
           [queryParams]="{ status: 'Active' }"
           navigationAriaLabel="Voir les projets actifs" />
         <app-stat-card
-          label="Tâches en cours" i18n-label="Tâches en cours"
+          label="Tâches en cours" i18n-label="@@projects.components.taches.en.cours.fde40a7b"
           [value]="String(data.openTasks)"
           icon="fa-solid fa-list-check"
           variant="primary"
@@ -44,7 +44,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
           routerLink="/projects"
           navigationAriaLabel="Voir les projets" />
         <app-stat-card
-          label="Tâches terminées" i18n-label="Tâches terminées"
+          label="Tâches terminées" i18n-label="@@projects.components.taches.terminees.f6a3e341"
           [value]="String(data.completedTasks)"
           icon="fa-solid fa-circle-check"
           variant="success"
@@ -54,7 +54,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
           routerLink="/projects"
           navigationAriaLabel="Voir les projets" />
         <app-stat-card
-          label="En retard" i18n-label="En retard"
+          label="En retard" i18n-label="@@projects.components.en.retard.40c1dde3"
           [value]="String(data.overdueTasks)"
           icon="fa-solid fa-clock"
           [variant]="data.overdueTasks > 0 ? 'error' : 'success'"
@@ -64,7 +64,7 @@ import { ProjectDashboardExtended } from '../project-api.service';
           routerLink="/projects"
           navigationAriaLabel="Voir les projets avec tâches en retard" />
         <app-stat-card
-          label="Heures à facturer" i18n-label="Heures à facturer"
+          label="Heures à facturer" i18n-label="@@projects.components.heures.a.facturer.7757d0a3"
           [value]="(data.uninvoicedBillableHours | number:'1.0-1') + ' h'"
           icon="fa-solid fa-hourglass-half"
           variant="warning"

@@ -56,7 +56,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
   imports: [CommonModule, FormsModule, RouterModule, ButtonModule, Textarea, StudioPageShellComponent, DynamicReportComponent],
   template: `
     <app-studio-page-shell
-      title="Assistant Studio (IA)" i18n-title="Assistant Studio (IA)"
+      title="Assistant Studio (IA)" i18n-title="@@studio.studio-ai-builder.assistant.studio.ia.b0a6b182"
       subtitle="Décrivez un système ou une table — l'IA crée tables, relations, formulaires et données de référence."
       [breadcrumbs]="breadcrumbs">
 
@@ -82,7 +82,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
                     <p class="sab-report__hint">Source : {{ report.sourceLabel }} — calculé à l'instant, rien n'est enregistré.</p>
                   </div>
                   <button pButton type="button" class="p-button-sm p-button-outlined" icon="fa-solid fa-floppy-disk"
-                    label="Enregistrer comme état" i18n-label="Enregistrer comme état" [disabled]="busy()" (click)="saveReportAsState(report)"></button>
+                    label="Enregistrer comme état" i18n-label="@@studio.studio-ai-builder.enregistrer.comme.etat.7fe75c33" [disabled]="busy()" (click)="saveReportAsState(report)"></button>
                 </div>
                 @for (w of report.warnings; track w) {
                   <p class="sab-plan__warning"><i class="fa-solid fa-triangle-exclamation"></i> {{ w }}</p>
@@ -120,7 +120,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
                 <div class="sab-failure__actions">
                   @if (failureView(failure).retryable) {
                     <button pButton type="button" class="p-button-sm p-button-outlined"
-                      icon="fa-solid fa-rotate-right" label="Réessayer" i18n-label="Réessayer"
+                      icon="fa-solid fa-rotate-right" label="Réessayer" i18n-label="@@studio.studio-ai-builder.reessayer.895d416b"
                       [disabled]="busy() || !lastUserMessage" (click)="retry()"></button>
                   }
                 </div>
@@ -175,7 +175,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
                   <button pButton type="button" icon="fa-solid fa-check"
                     [label]="p.summary.kind === 'Report' ? loc_ui_tern_valider_et_enregistrer_f19a56 : loc_ui_tern_valider_et_creer_bdef68"
                     (click)="confirmPlan()"></button>
-                  <button pButton type="button" class="p-button-text" icon="fa-solid fa-xmark" label="Annuler" i18n-label="Annuler"
+                  <button pButton type="button" class="p-button-text" icon="fa-solid fa-xmark" label="Annuler" i18n-label="@@studio.studio-ai-builder.annuler.49ba3292"
                     (click)="cancelPlan()"></button>
                 </div>
               }
@@ -201,10 +201,10 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
 
         <div class="sab-compose">
           <textarea pTextarea [(ngModel)]="prompt" rows="2" class="sab-input" [disabled]="busy()"
-            placeholder="Ex. : Créer un système de gestion de congés avec plusieurs tables..." i18n-placeholder="Ex. : Créer un système de gestion de congés avec plusieurs tables..."
+            placeholder="Ex. : Créer un système de gestion de congés avec plusieurs tables..." i18n-placeholder="@@studio.studio-ai-builder.ex.creer.un.systeme.de.gestion.de.conges.avec.pl.e9e06751"
             (keydown.enter)="onComposerEnter($event)"></textarea>
           <div class="sab-compose__actions">
-            <button pButton type="button" icon="fa-solid fa-paper-plane" label="Envoyer" i18n-label="Envoyer"
+            <button pButton type="button" icon="fa-solid fa-paper-plane" label="Envoyer" i18n-label="@@studio.studio-ai-builder.envoyer.e9ce243b"
               [disabled]="busy() || !prompt.trim()" (click)="send()"></button>
           </div>
         </div>

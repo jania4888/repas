@@ -22,7 +22,7 @@ const MONTHS = [
   standalone: true,
   imports: [AccountingAmountPipe, CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Réévaluation de clôture" i18n-title="Réévaluation de clôture"
+    <app-page-header title="Réévaluation de clôture" i18n-title="@@accounting.currencies.reevaluation.de.cloture.4e052044"
                      subtitle="Écarts de conversion sur les positions en devise, à la clôture d'une période" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -60,12 +60,12 @@ const MONTHS = [
       <div class="cr-grid">
         <div class="cr-field">
           <label class="cr-lbl" for="cr-gain" i18n="@@accounting.currencies.ecarts.de.conversion.passif.d0ac7c2b">Écarts de conversion — passif</label>
-          <input id="cr-gain" class="cr-inp" [(ngModel)]="gainAccount" placeholder="Ex. 185" i18n-placeholder="Ex. 185" />
+          <input id="cr-gain" class="cr-inp" [(ngModel)]="gainAccount" placeholder="Ex. 185" i18n-placeholder="@@accounting.currencies.ex.185.aa0d7e85" />
           <span class="cr-sub" i18n="@@accounting.currencies.gains.latents.dbd8c915">Gains latents</span>
         </div>
         <div class="cr-field">
           <label class="cr-lbl" for="cr-loss" i18n="@@accounting.currencies.ecarts.de.conversion.actif.5744833c">Écarts de conversion — actif</label>
-          <input id="cr-loss" class="cr-inp" [(ngModel)]="lossAccount" placeholder="Ex. 275" i18n-placeholder="Ex. 275" />
+          <input id="cr-loss" class="cr-inp" [(ngModel)]="lossAccount" placeholder="Ex. 275" i18n-placeholder="@@accounting.currencies.ex.275.0c5660b6" />
           <span class="cr-sub" i18n="@@accounting.currencies.pertes.latentes.7c4dbdbb">Pertes latentes</span>
         </div>
       </div>
@@ -77,11 +77,11 @@ const MONTHS = [
       <div class="cr-grid">
         <div class="cr-field">
           <label class="cr-lbl" for="cr-expense" i18n="@@accounting.currencies.dotation.aux.provisions.2a479425">Dotation aux provisions</label>
-          <input id="cr-expense" class="cr-inp" [(ngModel)]="provisionExpenseAccount" placeholder="Classe 6" i18n-placeholder="Classe 6" />
+          <input id="cr-expense" class="cr-inp" [(ngModel)]="provisionExpenseAccount" placeholder="Classe 6" i18n-placeholder="@@accounting.currencies.classe.6.4be770e5" />
         </div>
         <div class="cr-field">
           <label class="cr-lbl" for="cr-provision" i18n="@@accounting.currencies.provision.e11d5b69">Provision</label>
-          <input id="cr-provision" class="cr-inp" [(ngModel)]="provisionAccount" placeholder="Ex. 1515" i18n-placeholder="Ex. 1515" />
+          <input id="cr-provision" class="cr-inp" [(ngModel)]="provisionAccount" placeholder="Ex. 1515" i18n-placeholder="@@accounting.currencies.ex.1515.6f297269" />
         </div>
       </div>
 

@@ -46,7 +46,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Balance" i18n-title="Balance" subtitle="Balance générale — 8 colonnes avec soldes d'ouverture" />
+    <app-page-header title="Balance" i18n-title="@@accounting.balance.balance.90eef613" subtitle="Balance générale — 8 colonnes avec soldes d'ouverture" />
     <div class="card balance-filters-card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Période et filtre de classe">
         <div accountingFilterFields class="balance-toolbar-fields">
@@ -68,11 +68,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           @if (activeTabIndex !== 2) {
             <div class="accounting-filter-field">
               <label class="accounting-filter-label" for="bal-acc-from" i18n="@@accounting.balance.du.compte.e97591b0">Du compte</label>
-              <input id="bal-acc-from" type="text" class="accounting-filter-input" [(ngModel)]="accountFrom" placeholder="Début" i18n-placeholder="Début" />
+              <input id="bal-acc-from" type="text" class="accounting-filter-input" [(ngModel)]="accountFrom" placeholder="Début" i18n-placeholder="@@accounting.balance.debut.f0955314" />
             </div>
             <div class="accounting-filter-field">
               <label class="accounting-filter-label" for="bal-acc-to" i18n="@@accounting.balance.au.compte.42405969">Au compte</label>
-              <input id="bal-acc-to" type="text" class="accounting-filter-input" [(ngModel)]="accountTo" placeholder="Fin" i18n-placeholder="Fin" />
+              <input id="bal-acc-to" type="text" class="accounting-filter-input" [(ngModel)]="accountTo" placeholder="Fin" i18n-placeholder="@@accounting.balance.fin.4251065f" />
             </div>
           }
           @if (activeTabIndex === 0) {
@@ -138,20 +138,20 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <p-table [value]="filteredRows()" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100]"
           [loading]="loading()" [rowHover]="true" [scrollable]="true" scrollHeight="flex"
           styleClass="p-datatable-sm accounting-datatable balance-table"
-          [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes">
+          [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} comptes" i18n-currentPageReportTemplate="@@accounting.balance.affichage.de.first.a.last.sur.totalrecords.compt.4470e3a3">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@accounting.balance.compte.c45740bb">Compte</th>
               <th i18n="@@accounting.balance.libelle.f5485bba">Libellé</th>
               @if (hasForeignCurrency()) {
-                <th pTooltip="Devises presentes sur le compte — les montants restent en dinar" i18n-pTooltip="Devises presentes sur le compte — les montants restent en dinar" tooltipPosition="top" i18n="@@accounting.balance.devises.23dd4301">Devises</th>
+                <th pTooltip="Devises presentes sur le compte — les montants restent en dinar" i18n-pTooltip="@@accounting.balance.devises.presentes.sur.le.compte.les.montants.res.fb0f8bfa" tooltipPosition="top" i18n="@@accounting.balance.devises.23dd4301">Devises</th>
               }
-              <th class="text-right" pTooltip="Ouverture débit" i18n-pTooltip="Ouverture débit" tooltipPosition="top" i18n="@@accounting.balance.ouv.d.1a1c3306">Ouv. D</th>
-              <th class="text-right" pTooltip="Ouverture crédit" i18n-pTooltip="Ouverture crédit" tooltipPosition="top" i18n="@@accounting.balance.ouv.c.95e30fd9">Ouv. C</th>
-              <th class="text-right" pTooltip="Mouvement débit" i18n-pTooltip="Mouvement débit" tooltipPosition="top" i18n="@@accounting.balance.mouv.d.0f50458a">Mouv. D</th>
-              <th class="text-right" pTooltip="Mouvement crédit" i18n-pTooltip="Mouvement crédit" tooltipPosition="top" i18n="@@accounting.balance.mouv.c.87e48868">Mouv. C</th>
-              <th class="text-right" pTooltip="Clôture débit" i18n-pTooltip="Clôture débit" tooltipPosition="top" i18n="@@accounting.balance.cloture.d.edb6d923">Clôture D</th>
-              <th class="text-right" pTooltip="Clôture crédit" i18n-pTooltip="Clôture crédit" tooltipPosition="top" i18n="@@accounting.balance.cloture.c.2be08431">Clôture C</th>
+              <th class="text-right" pTooltip="Ouverture débit" i18n-pTooltip="@@accounting.balance.ouverture.debit.3235ca23" tooltipPosition="top" i18n="@@accounting.balance.ouv.d.1a1c3306">Ouv. D</th>
+              <th class="text-right" pTooltip="Ouverture crédit" i18n-pTooltip="@@accounting.balance.ouverture.credit.7b3ac906" tooltipPosition="top" i18n="@@accounting.balance.ouv.c.95e30fd9">Ouv. C</th>
+              <th class="text-right" pTooltip="Mouvement débit" i18n-pTooltip="@@accounting.balance.mouvement.debit.b7720deb" tooltipPosition="top" i18n="@@accounting.balance.mouv.d.0f50458a">Mouv. D</th>
+              <th class="text-right" pTooltip="Mouvement crédit" i18n-pTooltip="@@accounting.balance.mouvement.credit.ff1df20a" tooltipPosition="top" i18n="@@accounting.balance.mouv.c.87e48868">Mouv. C</th>
+              <th class="text-right" pTooltip="Clôture débit" i18n-pTooltip="@@accounting.balance.cloture.debit.c64629a9" tooltipPosition="top" i18n="@@accounting.balance.cloture.d.edb6d923">Clôture D</th>
+              <th class="text-right" pTooltip="Clôture crédit" i18n-pTooltip="@@accounting.balance.cloture.credit.b9f511f5" tooltipPosition="top" i18n="@@accounting.balance.cloture.c.2be08431">Clôture C</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>
@@ -161,7 +161,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   class="account-link"
                   [routerLink]="['/accounting/ledger']"
                   [queryParams]="{ account: r.accountNumber, from: fromStr, to: toStr }"
-                  title="Voir le grand livre de ce compte" i18n-title="Voir le grand livre de ce compte">
+                  title="Voir le grand livre de ce compte" i18n-title="@@accounting.balance.voir.le.grand.livre.de.ce.compte.e8e11847">
                   {{ r.accountNumber }}
                 </a>
               </td>

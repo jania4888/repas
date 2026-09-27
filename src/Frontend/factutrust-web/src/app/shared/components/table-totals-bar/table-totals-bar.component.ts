@@ -36,7 +36,7 @@ export interface TotalMetric {
   imports: [CommonModule],
   providers: [DecimalPipe],
   template: `
-    <section class="totals-bar" role="region" aria-label="Totaux du tableau" i18n-aria-label="Totaux du tableau">
+    <section class="totals-bar" role="region" aria-label="Totaux du tableau" i18n-aria-label="@@shared.components.table-totals-bar.table-totals-bar.totaux.du.tableau.a65d89c7">
       @if (loading) {
         @for (slot of skeletonSlots; track $index) {
           <div class="total-tile total-tile--skeleton" aria-hidden="true">

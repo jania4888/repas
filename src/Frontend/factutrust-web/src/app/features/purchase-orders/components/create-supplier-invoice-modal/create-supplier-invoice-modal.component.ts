@@ -161,7 +161,7 @@ interface LineClassificationRow {
                 [(ngModel)]="request.invoiceNumber"
                 name="invoiceNumber"
                 required
-                placeholder="FS-2026-000001" i18n-placeholder="FS-2026-000001"
+                placeholder="FS-2026-000001" i18n-placeholder="@@purchase-orders.components.fs.2026.000001.35a32054"
                 class="w-full"
                 (ngModelChange)="onInvoiceNumberEdited()">
               <app-button
@@ -215,7 +215,7 @@ interface LineClassificationRow {
               optionLabel="label"
               optionValue="value"
               [showClear]="true"
-              placeholder="Optionnel" i18n-placeholder="Optionnel"
+              placeholder="Optionnel" i18n-placeholder="@@purchase-orders.components.optionnel.879d6b16"
               class="w-full">
             </p-select>
           </div>
@@ -228,7 +228,7 @@ interface LineClassificationRow {
               id="externalReference"
               [(ngModel)]="request.externalReference"
               name="externalReference"
-              placeholder="Référence du fournisseur..." i18n-placeholder="Référence du fournisseur..."
+              placeholder="Référence du fournisseur..." i18n-placeholder="@@purchase-orders.components.reference.du.fournisseur.c097d08d"
               class="w-full">
           </div>
 
@@ -240,7 +240,7 @@ interface LineClassificationRow {
               id="notes"
               [(ngModel)]="request.notes"
               name="notes"
-              placeholder="Notes internes..." i18n-placeholder="Notes internes..."
+              placeholder="Notes internes..." i18n-placeholder="@@purchase-orders.components.notes.internes.1c700b68"
               [rows]="3"
               class="w-full">
             </textarea>
@@ -253,7 +253,7 @@ interface LineClassificationRow {
                 [(ngModel)]="request.sendEmail"
                 name="sendEmail"
                 binary="true"
-                label="Envoyer par email après création" i18n-label="Envoyer par email après création">
+                label="Envoyer par email après création" i18n-label="@@purchase-orders.components.envoyer.par.email.apres.creation.57b42d25">
               </p-checkbox>
               <i class="pi pi-envelope option-tile-icon"></i>
             </div>
@@ -289,7 +289,7 @@ interface LineClassificationRow {
                       [options]="rateCategories"
                       optionLabel="label"
                       optionValue="id"
-                      placeholder="Catégorie" i18n-placeholder="Catégorie"
+                      placeholder="Catégorie" i18n-placeholder="@@purchase-orders.components.categorie.6b38300a"
                       [style]="{ width: '100%' }"
                       (onChange)="onCategorySelected(row)">
                       <ng-template pTemplate="item" let-cat>

@@ -45,7 +45,7 @@ type JournalFlatRow = {
     AccountingJournalTabsComponent
   ],
   template: `
-    <app-page-header title="Journaux auxiliaires" i18n-title="Journaux auxiliaires" subtitle="Consultation par journal" />
+    <app-page-header title="Journaux auxiliaires" i18n-title="@@accounting.sub-journals.journaux.auxiliaires.a7120594" subtitle="Consultation par journal" />
 
     <div class="card sub-journals-filters-card">
       <div class="sub-journals-toolbar">
@@ -88,7 +88,7 @@ type JournalFlatRow = {
       role="tabpanel"
       [attr.id]="'sub-journal-panel-' + activeJournalCode"
       [attr.aria-labelledby]="'accounting-journal-tab-' + activeJournalCode">
-      <div class="accounting-kpi-row" aria-label="Totaux du journal" i18n-aria-label="Totaux du journal">
+      <div class="accounting-kpi-row" aria-label="Totaux du journal" i18n-aria-label="@@accounting.sub-journals.totaux.du.journal.e65826b3">
         <div class="accounting-kpi-item">
           <span class="accounting-kpi-label" i18n="@@accounting.sub-journals.total.debit.ea9c4853">Total débit</span>
           <span class="accounting-kpi-value">{{ tabTotals().debit | number : '1.3-3' }}</span>
@@ -114,7 +114,7 @@ type JournalFlatRow = {
         [loading]="loading()"
         [rowHover]="true"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.sub-journals.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824"
         styleClass="p-datatable-sm sub-journals-table accounting-datatable">
         <ng-template pTemplate="header">
           <tr>

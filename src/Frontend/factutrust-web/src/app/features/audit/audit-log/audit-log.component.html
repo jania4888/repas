@@ -1,4 +1,4 @@
-<app-page-header title="Journal d'audit" i18n-title="Journal d'audit" subtitle="Piste d'audit et vérification d'intégrité" />
+<app-page-header title="Journal d'audit" i18n-title="@@audit.audit-log.journal.d.audit.52309db1" subtitle="Piste d'audit et vérification d'intégrité" />
 
 <div class="audit-toolbar card-like">
   <button
@@ -42,7 +42,7 @@
   }
 </div>
 
-<div class="audit-filters card-like" role="search" aria-label="Filtres du journal d'audit" i18n-aria-label="Filtres du journal d'audit">
+<div class="audit-filters card-like" role="search" aria-label="Filtres du journal d'audit" i18n-aria-label="@@audit.audit-log.filtres.du.journal.d.audit.1e1405b2">
   <div class="audit-filters-grid">
     <label class="form-field" for="audit-from">
       <span class="field-label" i18n="@@audit.audit-log.du.84814985">Du</span>
@@ -74,7 +74,7 @@
         [options]="entityOptions"
         optionLabel="label"
         optionValue="value"
-        placeholder="Tous" i18n-placeholder="Tous"
+        placeholder="Tous" i18n-placeholder="@@audit.audit-log.tous.b97ae3b4"
         [showClear]="true"
         appendTo="body"
         styleClass="w-full"
@@ -88,7 +88,7 @@
         [options]="actionOptions"
         optionLabel="label"
         optionValue="value"
-        placeholder="Toutes" i18n-placeholder="Toutes"
+        placeholder="Toutes" i18n-placeholder="@@audit.audit-log.toutes.c5f641e4"
         [filter]="true"
         filterBy="label,value"
         [showClear]="true"
@@ -105,7 +105,7 @@
         [(ngModel)]="userIdFilter"
         class="w-full"
         autocomplete="off"
-        placeholder="Optionnel" i18n-placeholder="Optionnel"
+        placeholder="Optionnel" i18n-placeholder="@@audit.audit-log.optionnel.879d6b16"
       />
     </label>
   </div>
@@ -137,7 +137,7 @@
   [rowHover]="true"
   styleClass="p-datatable-sm"
   [showCurrentPageReport]="true"
-  currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} entrée(s)" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} entrée(s)"
+  currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} entrée(s)" i18n-currentPageReportTemplate="@@audit.audit-log.affichage.de.first.a.last.sur.totalrecords.entre.89cf60dc"
   [first]="first"
 >
   <ng-template pTemplate="header">
@@ -206,7 +206,7 @@
   [resizable]="false"
   [style]="{ width: 'min(720px, 96vw)' }"
   [breakpoints]="{ '960px': '95vw' }"
-  header="Détail de l'entrée d'audit" i18n-header="Détail de l'entrée d'audit"
+  header="Détail de l'entrée d'audit" i18n-header="@@audit.audit-log.detail.de.l.entree.d.audit.5e78aa6d"
   styleClass="audit-detail-dialog"
   [focusOnShow]="true"
   [closeOnEscape]="true"

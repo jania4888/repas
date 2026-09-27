@@ -79,7 +79,7 @@ import { ToastService } from '@core/services/toast.service';
                     [options]="bankOptions"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Sélectionnez une banque" i18n-placeholder="Sélectionnez une banque"
+                    placeholder="Sélectionnez une banque" i18n-placeholder="@@payments.bank-accounts.selectionnez.une.banque.078f3330"
                     [filter]="true"
                     filterBy="label"
                     [showClear]="false"
@@ -101,7 +101,7 @@ import { ToastService } from '@core/services/toast.service';
                     class="w-full"
                     [readOnly]="!isAutreBank()"
                     [attr.aria-readonly]="!isAutreBank()"
-                    placeholder="Nom de la banque" i18n-placeholder="Nom de la banque" />
+                    placeholder="Nom de la banque" i18n-placeholder="@@payments.bank-accounts.nom.de.la.banque.9848ce74" />
                   @if (form.controls.bankCode.value && !isAutreBank()) {
                     <small class="hint"><i class="pi pi-info-circle hint-icon" aria-hidden="true"></i> Renseigné automatiquement — modifiable si « Autre ».</small>
                   }
@@ -125,7 +125,7 @@ import { ToastService } from '@core/services/toast.service';
                     id="iban"
                     formControlName="iban"
                     class="w-full mono-input"
-                    placeholder="TN59 1000 0035 1835 8847 8831" i18n-placeholder="TN59 1000 0035 1835 8847 8831"
+                    placeholder="TN59 1000 0035 1835 8847 8831" i18n-placeholder="@@payments.bank-accounts.tn59.1000.0035.1835.8847.8831.b9af2b3b"
                     autocomplete="off"
                     (blur)="syncRibFromIban()" />
                   <small class="hint" i18n="@@payments.bank-accounts.exemple.nbsp.tn59.1000.0035.1835.8847.8831.6fe94886">Exemple&nbsp;: TN59 1000 0035 1835 8847 8831</small>
@@ -137,7 +137,7 @@ import { ToastService } from '@core/services/toast.service';
                     inputId="rib"
                     formControlName="rib"
                     mask="99 999 9999999999999 99"
-                    placeholder="XX XXX XXXXXXXXXXXXX XX" i18n-placeholder="XX XXX XXXXXXXXXXXXX XX"
+                    placeholder="XX XXX XXXXXXXXXXXXX XX" i18n-placeholder="@@payments.bank-accounts.xx.xxx.xxxxxxxxxxxxx.xx.88bae40a"
                     styleClass="w-full mono-input-mask">
                   </p-inputMask>
                   <small class="hint" i18n="@@payments.bank-accounts.20.chiffres.complete.depuis.l.iban.b167c224">20 chiffres — complété depuis l'IBAN</small>
@@ -150,7 +150,7 @@ import { ToastService } from '@core/services/toast.service';
                     id="swiftBic"
                     formControlName="swiftBic"
                     class="w-full mono-input"
-                    placeholder="Ex: BIATTNTT" i18n-placeholder="Ex: BIATTNTT"
+                    placeholder="Ex: BIATTNTT" i18n-placeholder="@@payments.bank-accounts.ex.biattntt.4404ffb2"
                     maxlength="11" />
                 </div>
               </div>
@@ -178,7 +178,7 @@ import { ToastService } from '@core/services/toast.service';
                       [options]="chartAccountOptions"
                       optionLabel="label"
                       optionValue="value"
-                      placeholder="5321…" i18n-placeholder="5321…"
+                      placeholder="5321…" i18n-placeholder="@@payments.bank-accounts.5321.8d5bc024"
                       [filter]="true"
                       filterBy="label"
                       [showClear]="true"
@@ -199,11 +199,11 @@ import { ToastService } from '@core/services/toast.service';
                 <div class="form-row">
                   <div class="form-group">
                     <label for="designation" i18n="@@payments.bank-accounts.libelle.du.compte.7200e54f">Libellé du compte</label>
-                    <input pInputText id="designation" formControlName="designation" class="w-full" placeholder="Ex: Compte principal" i18n-placeholder="Ex: Compte principal" />
+                    <input pInputText id="designation" formControlName="designation" class="w-full" placeholder="Ex: Compte principal" i18n-placeholder="@@payments.bank-accounts.ex.compte.principal.56f72496" />
                   </div>
                   <div class="form-group">
                     <label for="agencyName" i18n="@@payments.bank-accounts.agence.37c58081">Agence</label>
-                    <input pInputText id="agencyName" formControlName="agencyName" class="w-full" placeholder="Ex: Agence centre-ville" i18n-placeholder="Ex: Agence centre-ville" />
+                    <input pInputText id="agencyName" formControlName="agencyName" class="w-full" placeholder="Ex: Agence centre-ville" i18n-placeholder="@@payments.bank-accounts.ex.agence.centre.ville.77664fc3" />
                   </div>
                 </div>
 

@@ -46,8 +46,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             class="payment-actions__print-btn"
             [class.payment-actions__print-btn--active]="posState.printMode() === 'pdf'"
             (click)="posState.setPrintMode('pdf')"
-            title="PDF" i18n-title="PDF"
-            aria-label="Mode PDF" i18n-aria-label="Mode PDF">
+            title="PDF" i18n-title="@@pos.components.pdf.d613d88c"
+            aria-label="Mode PDF" i18n-aria-label="@@pos.components.mode.pdf.71aedaf4">
             <i class="pi pi-file-pdf"></i>
           </button>
           <button
@@ -55,8 +55,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             class="payment-actions__print-btn"
             [class.payment-actions__print-btn--active]="posState.printMode() === 'receipt'"
             (click)="posState.setPrintMode('receipt')"
-            title="Ticket thermique" i18n-title="Ticket thermique"
-            aria-label="Ticket thermique" i18n-aria-label="Ticket thermique">
+            title="Ticket thermique" i18n-title="@@pos.components.ticket.thermique.9012a27b"
+            aria-label="Ticket thermique" i18n-aria-label="@@pos.components.ticket.thermique.9012a27b">
             <i class="pi pi-list"></i>
           </button>
           <button
@@ -64,8 +64,8 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             class="payment-actions__print-btn"
             [class.payment-actions__print-btn--active]="posState.printMode() === 'both'"
             (click)="posState.setPrintMode('both')"
-            title="PDF + Ticket" i18n-title="PDF + Ticket"
-            aria-label="PDF et ticket" i18n-aria-label="PDF et ticket">
+            title="PDF + Ticket" i18n-title="@@pos.components.pdf.ticket.be8c87a4"
+            aria-label="PDF et ticket" i18n-aria-label="@@pos.components.pdf.et.ticket.a3f9d079">
             <i class="pi pi-print"></i>
           </button>
         </div>

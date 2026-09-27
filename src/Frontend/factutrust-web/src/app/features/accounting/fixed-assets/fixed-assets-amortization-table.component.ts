@@ -40,7 +40,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Tableau des amortissements" i18n-title="Tableau des amortissements"
+      title="Tableau des amortissements" i18n-title="@@accounting.fixed-assets.tableau.des.amortissements.c23d3f29"
       subtitle="État comptable complet de l'exercice (format Sage)" />
 
     <div class="card accounting-filters-card no-print">
@@ -48,7 +48,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <input
           type="search"
           class="accounting-filter-input"
-          placeholder="Rechercher (désignation, n° inventaire)" i18n-placeholder="Rechercher (désignation, n° inventaire)"
+          placeholder="Rechercher (désignation, n° inventaire)" i18n-placeholder="@@accounting.fixed-assets.rechercher.designation.n.inventaire.cc557d2d"
           [(ngModel)]="search"
           (keyup.enter)="reload()" />
         <select class="accounting-filter-input" [(ngModel)]="statusFilter" (ngModelChange)="reload()">
@@ -65,7 +65,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <input
           type="number"
           class="accounting-filter-input year-input"
-          placeholder="Exercice" i18n-placeholder="Exercice"
+          placeholder="Exercice" i18n-placeholder="@@accounting.fixed-assets.exercice.e171e2b0"
           min="2000"
           max="2100"
           [(ngModel)]="fiscalYearFilter"
@@ -91,7 +91,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="card" *ngIf="!loading() && !report()?.groups?.length">
       <app-empty-state
         icon="pi pi-table"
-        title="Aucune immobilisation" i18n-title="Aucune immobilisation"
+        title="Aucune immobilisation" i18n-title="@@accounting.fixed-assets.aucune.immobilisation.f9c26485"
         message="Aucune immobilisation ne correspond aux filtres pour cet exercice." />
     </div>
 

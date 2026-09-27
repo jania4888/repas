@@ -30,7 +30,7 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
-      title="Nouveau bon de retour" i18n-title="Nouveau bon de retour"
+      title="Nouveau bon de retour" i18n-title="@@sales-return-notes.pages.nouveau.bon.de.retour.362bee47"
       subtitle="Document logistique : réintègre le stock et réduit la quantité facturable du BL. Ce n'est pas un avoir.">
       <app-button variant="secondary" routerLink="/return-notes" i18n="@@sales-return-notes.pages.annuler.49ba3292">Annuler</app-button>
       <app-button variant="outline" [disabled]="saving() || !canSave()" (clicked)="save(false)" i18n="@@sales-return-notes.pages.enregistrer.le.brouillon.6a319595"> Enregistrer le brouillon </app-button>
@@ -70,7 +70,7 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
           [attr.aria-invalid]="showErrors() && !hasValidReason()"
           [ngModel]="reason()"
           (ngModelChange)="reason.set($event)"
-          placeholder="Ex. marchandise endommagée, erreur de commande" i18n-placeholder="Ex. marchandise endommagée, erreur de commande" />
+          placeholder="Ex. marchandise endommagée, erreur de commande" i18n-placeholder="@@sales-return-notes.pages.ex.marchandise.endommagee.erreur.de.commande.3bc77544" />
         @if (showErrors() && !hasValidReason()) {
           <p class="field-error" i18n="@@sales-return-notes.pages.indiquez.un.motif.d.au.moins.3.caracteres.f93a617f">Indiquez un motif d’au moins 3 caractères.</p>
         }

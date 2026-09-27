@@ -81,7 +81,7 @@ export function computeGlobalSearchDropdownPosition(
             role="combobox"
             aria-autocomplete="list"
             [attr.aria-expanded]="dropdownOpen() || paletteOpen()"
-            aria-label="Rechercher" i18n-aria-label="Rechercher" />
+            aria-label="Rechercher" i18n-aria-label="@@core.layout.global-search.global-search.rechercher.91f7d3e9" />
           @if (mode === 'header') {
             <kbd class="global-search__hint" aria-hidden="true" i18n="@@core.layout.global-search.global-search.ctrl.k.769b0d96">Ctrl+K</kbd>
           }
@@ -104,7 +104,7 @@ export function computeGlobalSearchDropdownPosition(
 
       @if (paletteOpen()) {
         <div class="global-search__backdrop" (click)="closeAll()" aria-hidden="true"></div>
-        <div class="global-search__palette" role="dialog" aria-modal="true" aria-label="Recherche globale" i18n-aria-label="Recherche globale">
+        <div class="global-search__palette" role="dialog" aria-modal="true" aria-label="Recherche globale" i18n-aria-label="@@core.layout.global-search.global-search.recherche.globale.5de4b3c4">
           <div class="global-search__palette-inner">
             <div class="global-search__input-wrap global-search__input-wrap--palette">
               <i class="fa-solid fa-magnifying-glass global-search__icon" aria-hidden="true"></i>
@@ -112,7 +112,7 @@ export function computeGlobalSearchDropdownPosition(
                 #paletteInput
                 type="search"
                 class="global-search__input global-search__input--palette"
-                placeholder="Rechercher une page, un document, un client…" i18n-placeholder="Rechercher une page, un document, un client…"
+                placeholder="Rechercher une page, un document, un client…" i18n-placeholder="@@core.layout.global-search.global-search.rechercher.une.page.un.document.un.client.b502d55c"
                 [(ngModel)]="query"
                 (input)="onQueryChange()"
                 (keydown)="onInputKeydown($event)"

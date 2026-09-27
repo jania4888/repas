@@ -106,25 +106,25 @@ import { PERMISSIONS } from '@core/config/permission-keys';
       <!-- Stats -->
       <div class="stats-grid">
         <app-stat-card
-          label="Total factures" i18n-label="Total factures"
+          label="Total factures" i18n-label="@@clients.client-detail.total.factures.4ef351ea"
           [value]="stats()?.totalInvoices || 0"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées" i18n-label="Factures payées"
+          label="Factures payées" i18n-label="@@clients.client-detail.factures.payees.587e5689"
           [value]="stats()?.paidInvoices || 0"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="En attente" i18n-label="En attente"
+          label="En attente" i18n-label="@@clients.client-detail.en.attente.5231158f"
           [value]="stats()?.pendingInvoices || 0"
           icon="pi-clock"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Chiffre d'affaires" i18n-label="Chiffre d'affaires"
+          label="Chiffre d'affaires" i18n-label="@@clients.client-detail.chiffre.d.affaires.0a341b9f"
           [value]="formatCurrency(stats()?.totalRevenue || 0)"
           icon="pi-wallet"
           variant="primary">
@@ -272,7 +272,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         </td>
                         <td>
                           <app-button variant="ghost" size="sm" icon="pi-eye" [iconOnly]="true"
-                            pTooltip="Voir" i18n-pTooltip="Voir" [routerLink]="['/quotes', quote.id]" ariaLabel="Voir le devis">
+                            pTooltip="Voir" i18n-pTooltip="@@clients.client-detail.voir.8a754f1f" [routerLink]="['/quotes', quote.id]" ariaLabel="Voir le devis">
                           </app-button>
                         </td>
                       </tr>
@@ -283,7 +283,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                           <app-empty-state
                             icon="pi-file-edit"
                             iconSize="2rem"
-                            title="Aucun devis" i18n-title="Aucun devis"
+                            title="Aucun devis" i18n-title="@@clients.client-detail.aucun.devis.a42220c2"
                             description="Créez un devis pour ce client."
                             actionLabel="Créer un devis"
                             (actionClick)="createQuoteForClient()">
@@ -352,7 +352,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                           size="sm"
                           icon="pi-eye"
                           [iconOnly]="true"
-                          pTooltip="Voir" i18n-pTooltip="Voir"
+                          pTooltip="Voir" i18n-pTooltip="@@clients.client-detail.voir.8a754f1f"
                           [routerLink]="['/invoices', invoice.id]"
                           ariaLabel="Voir la facture">
                         </app-button>
@@ -366,7 +366,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         <app-empty-state
                           icon="pi-file"
                           iconSize="2rem"
-                          title="Aucune facture" i18n-title="Aucune facture"
+                          title="Aucune facture" i18n-title="@@clients.client-detail.aucune.facture.72124217"
                           description="Créez une facture pour ce client."
                           actionLabel="Créer une facture"
                           (actionClick)="createInvoiceForClient()">
@@ -389,7 +389,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 
         <!-- Sidebar -->
         <div class="sidebar">
-          <p-card header="Statut" i18n-header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="@@clients.client-detail.statut.659499f3" styleClass="status-card">
             <div class="status-content">
               <app-status-badge 
                 [status]="client()!.isActive ? 'active' : 'inactive'"
@@ -407,7 +407,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             </div>
           </p-card>
 
-          <p-card header="Historique" i18n-header="Historique" styleClass="history-card">
+          <p-card header="Historique" i18n-header="@@clients.client-detail.historique.34f3a06a" styleClass="history-card">
             <div class="history-content">
               <div class="history-item">
                 <span class="label" i18n="@@clients.client-detail.cree.le.046c02a0">Créé le</span>
@@ -426,7 +426,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             </div>
           </p-card>
 
-          <p-card header="Actions rapides" i18n-header="Actions rapides" styleClass="actions-card">
+          <p-card header="Actions rapides" i18n-header="@@clients.client-detail.actions.rapides.abe69a9c" styleClass="actions-card">
             <div class="quick-actions">
               <app-button 
                 variant="outline"

@@ -26,7 +26,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Tableau d'amortissement" i18n-title="Tableau d'amortissement"
+      title="Tableau d'amortissement" i18n-title="@@accounting.loans.tableau.d.amortissement.2a7cef27"
       subtitle="Échéancier d'emprunt — capital, intérêts et solde restant dû" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />

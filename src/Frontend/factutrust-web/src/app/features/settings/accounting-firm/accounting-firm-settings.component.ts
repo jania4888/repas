@@ -43,7 +43,7 @@ const NOTES_MAX = 1000;
   ],
   template: `
     <app-page-header
-      title="Cabinet comptable" i18n-title="Cabinet comptable"
+      title="Cabinet comptable" i18n-title="@@settings.accounting-firm.cabinet.comptable.0b9c6d02"
       subtitle="Confiez la gestion comptable de votre société à un cabinet partenaire">
     </app-page-header>
 
@@ -152,7 +152,7 @@ const NOTES_MAX = 1000;
           <div class="af-filters" [class.af-filters--open]="filtersOpen()">
             <div class="af-field">
               <label for="firmSearch" i18n="@@settings.accounting-firm.nom.ville.ou.presentation.8204364c">Nom, ville ou présentation</label>
-              <input id="firmSearch" class="af-input" [(ngModel)]="searchText" (ngModelChange)="onFilterChange()" placeholder="Ex. TVA, Sousse, cabinet" i18n-placeholder="Ex. TVA, Sousse, cabinet" />
+              <input id="firmSearch" class="af-input" [(ngModel)]="searchText" (ngModelChange)="onFilterChange()" placeholder="Ex. TVA, Sousse, cabinet" i18n-placeholder="@@settings.accounting-firm.ex.tva.sousse.cabinet.3a049865" />
             </div>
             <div class="af-field">
               <label for="firmGovernorate" i18n="@@settings.accounting-firm.gouvernorat.b9cd1d99">Gouvernorat</label>
@@ -234,7 +234,7 @@ const NOTES_MAX = 1000;
             [maxlength]="NOTES_MAX"
             rows="3"
             class="af-textarea"
-            placeholder="Précisez votre demande (période, contexte, attentes...)" i18n-placeholder="Précisez votre demande (période, contexte, attentes...)"></textarea>
+            placeholder="Précisez votre demande (période, contexte, attentes...)" i18n-placeholder="@@settings.accounting-firm.precisez.votre.demande.periode.contexte.attentes.61f8a78c"></textarea>
           <small class="af-hint-inline">{{ notes.length }} / {{ NOTES_MAX }}</small>
         </div>
 

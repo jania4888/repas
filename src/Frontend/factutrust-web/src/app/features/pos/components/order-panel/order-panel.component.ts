@@ -49,7 +49,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             type="checkbox"
             [checked]="clientPrefService.getPreferReceiptByEmail(client.id)"
             (change)="clientPrefService.setPreferReceiptByEmail(client.id, $any($event.target).checked)"
-            aria-label="Toujours envoyer le recu par e-mail" i18n-aria-label="Toujours envoyer le recu par e-mail" />
+            aria-label="Toujours envoyer le recu par e-mail" i18n-aria-label="@@pos.components.toujours.envoyer.le.recu.par.e.mail.98f490b9" />
           <span i18n="@@pos.components.recu.par.e.mail.pour.ce.client.5c5d4ea6">Reçu par e-mail pour ce client</span>
         </label>
       </div>
@@ -87,9 +87,9 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
             class="order-panel__notes-input"
             [ngModel]="posState.orderNotes()"
             (ngModelChange)="posState.setOrderNotes($event)"
-            placeholder="Ex: A emporter, livraison 14h..." i18n-placeholder="Ex: A emporter, livraison 14h..."
+            placeholder="Ex: A emporter, livraison 14h..." i18n-placeholder="@@pos.components.ex.a.emporter.livraison.14h.1eb4a9e6"
             rows="2"
-            aria-label="Notes de commande" i18n-aria-label="Notes de commande"></textarea>
+            aria-label="Notes de commande" i18n-aria-label="@@pos.components.notes.de.commande.6d66940b"></textarea>
         }
       </div>
       }
@@ -107,7 +107,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       @if (posState.lines().length > 0 && showVisualCart) {
       <!-- Apercu visuel du panier (54) -->
       <div class="order-panel__visual-cart">
-        <button type="button" class="order-panel__visual-cart-toggle" (click)="showVisualCart = false" aria-label="Fermer apercu" i18n-aria-label="Fermer apercu" i18n="@@pos.components.9660.cb2e2b05">&#9660;</button>
+        <button type="button" class="order-panel__visual-cart-toggle" (click)="showVisualCart = false" aria-label="Fermer apercu" i18n-aria-label="@@pos.components.fermer.apercu.32412ecd" i18n="@@pos.components.9660.cb2e2b05">&#9660;</button>
         <div class="order-panel__visual-cart-scroll">
           @for (line of posState.lines(); track line.id) {
             <div class="order-panel__visual-cart-item" [title]="line.designation + ' x' + line.quantity">
@@ -132,7 +132,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
         <div class="order-panel__upsell">
           <div class="order-panel__upsell-header">
             <span class="order-panel__upsell-title" i18n="@@pos.components.suggestions.861edba0">Suggestions</span>
-            <button type="button" class="order-panel__upsell-close" (click)="upsellService.clearSuggestions()" aria-label="Fermer" i18n-aria-label="Fermer">
+            <button type="button" class="order-panel__upsell-close" (click)="upsellService.clearSuggestions()" aria-label="Fermer" i18n-aria-label="@@pos.components.fermer.5ab4ec64">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -206,7 +206,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
                   [min]="0"
                   [attr.max]="globalDiscountType === 'PERCENT' ? 100 : null"
                   step="0.001"
-                  placeholder="0" i18n-placeholder="0" />
+                  placeholder="0" i18n-placeholder="@@pos.components.0.b6589fc6" />
                 <button type="button" class="order-panel__discount-apply" (click)="applyGlobalDiscount()" i18n="@@pos.components.appliquer.a4d66139">Appliquer</button>
                 <button type="button" class="order-panel__discount-cancel" (click)="cancelGlobalDiscountForm()" i18n="@@pos.components.annuler.49ba3292">Annuler</button>
               </div>
@@ -279,7 +279,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
                 [class.order-panel__schedule-btn--active]="posState.paymentSchedule() === 'onAccount'"
                 [disabled]="!posState.client()"
                 (click)="posState.client() && posState.setPaymentSchedule('onAccount')"
-                title="Facture a terme — client identifie obligatoire" i18n-title="Facture a terme — client identifie obligatoire">
+                title="Facture a terme — client identifie obligatoire" i18n-title="@@pos.components.facture.a.terme.client.identifie.obligatoire.32f40c31">
                 <i class="pi pi-calendar order-panel__schedule-btn-icon"></i> A terme
               </button>
             </div>

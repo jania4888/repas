@@ -74,12 +74,12 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
 
     @if (loading()) {
       <div class="form-grid">
-        <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-box" [number]="1">
+        <app-form-section title="Informations générales" i18n-title="@@products.product-detail.informations.generales.be6ba6e5" icon="pi-box" [number]="1">
           <p-skeleton height="2.5rem" styleClass="mb-3"></p-skeleton>
           <p-skeleton height="2.5rem" styleClass="mb-3"></p-skeleton>
           <p-skeleton height="5rem" width="100%"></p-skeleton>
         </app-form-section>
-        <app-form-section title="Tarification" i18n-title="Tarification" icon="pi-dollar" [number]="2">
+        <app-form-section title="Tarification" i18n-title="@@products.product-detail.tarification.5dc310ae" icon="pi-dollar" [number]="2">
           <p-skeleton height="2.5rem" styleClass="mb-3"></p-skeleton>
           <p-skeleton height="8rem" width="100%"></p-skeleton>
         </app-form-section>
@@ -87,7 +87,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
     } @else {
       @if (product(); as p) {
       <div class="form-grid">
-        <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-box" [number]="1">
+        <app-form-section title="Informations générales" i18n-title="@@products.product-detail.informations.generales.be6ba6e5" icon="pi-box" [number]="1">
           <div class="form-row">
             <div class="form-group">
               <span class="field-label" i18n="@@products.product-detail.code.produit.60220afb">Code produit</span>
@@ -197,7 +197,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
           </div>
         </app-form-section>
 
-        <app-form-section title="Tarification" i18n-title="Tarification" icon="pi-dollar" [number]="2">
+        <app-form-section title="Tarification" i18n-title="@@products.product-detail.tarification.5dc310ae" icon="pi-dollar" [number]="2">
           <div class="pricing-block">
             <h4 class="pricing-block-title" i18n="@@products.product-detail.couts.d.achat.1efe6462">Coûts d'achat</h4>
             <div class="form-group">
@@ -262,7 +262,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
               </div>
             </div>
 
-            <div class="price-preview" aria-label="Récapitulatif des prix" i18n-aria-label="Récapitulatif des prix">
+            <div class="price-preview" aria-label="Récapitulatif des prix" i18n-aria-label="@@products.product-detail.recapitulatif.des.prix.3d69a8b0">
               <div class="preview-row">
                 <span i18n="@@products.product-detail.prix.ht.362207ca">Prix HT</span>
                 <span class="value">{{ p.unitPrice | number:'1.3-3' }} TND</span>
@@ -308,14 +308,14 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
 
       @if (p.isVariantTemplate) {
         <div class="form-grid-full">
-          <app-form-section title="SKU enfants" i18n-title="SKU enfants" icon="pi-th-large" [number]="3">
+          <app-form-section title="SKU enfants" i18n-title="@@products.product-detail.sku.enfants.922c9ec5" icon="pi-th-large" [number]="3">
             <app-product-variant-matrix [parentProductId]="p.id" />
           </app-form-section>
         </div>
       }
 
       <div class="form-grid-full">
-        <app-form-section title="Tarifs par client" i18n-title="Tarifs par client" icon="pi-users" [number]="4">
+        <app-form-section title="Tarifs par client" i18n-title="@@products.product-detail.tarifs.par.client.e47e033b" icon="pi-users" [number]="4">
           <app-product-client-prices
             [productId]="p.id"
             [catalogUnitPriceHT]="p.unitPrice"

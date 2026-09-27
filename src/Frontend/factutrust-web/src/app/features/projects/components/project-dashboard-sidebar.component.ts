@@ -18,7 +18,7 @@ import {
   template: `
     @if (data) {
       <div class="proj-dash-sidebar">
-        <app-dashboard-panel title="Tâches à venir" i18n-title="Tâches à venir">
+        <app-dashboard-panel title="Tâches à venir" i18n-title="@@projects.components.taches.a.venir.dc667529">
           @if (data.upcomingTasks.length) {
             <ul class="proj-dash-task-list">
               @for (t of data.upcomingTasks; track t.id) {
@@ -41,7 +41,7 @@ import {
           }
         </app-dashboard-panel>
 
-        <app-dashboard-panel title="Membres actifs" i18n-title="Membres actifs">
+        <app-dashboard-panel title="Membres actifs" i18n-title="@@projects.components.membres.actifs.10d36e2d">
           @if (data.activeMembers.length) {
             <ul class="proj-dash-member-list">
               @for (m of data.activeMembers; track m.userId) {

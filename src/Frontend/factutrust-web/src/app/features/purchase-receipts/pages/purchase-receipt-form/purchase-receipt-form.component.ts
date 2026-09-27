@@ -129,7 +129,7 @@ interface ReceiptLineRow {
     } @else {
       <div class="form-layout">
         <div class="form-main">
-          <app-form-section title="Informations générales" i18n-title="Informations générales" icon="pi-building" [number]="1">
+          <app-form-section title="Informations générales" i18n-title="@@purchase-receipts.pages.informations.generales.be6ba6e5" icon="pi-building" [number]="1">
             <div class="form-grid-3">
               <div class="form-group">
                 <label for="supplier">Fournisseur <span class="required" i18n="@@purchase-receipts.pages.text.df58248c">*</span></label>
@@ -139,7 +139,7 @@ interface ReceiptLineRow {
                   [(ngModel)]="selectedSupplierId"
                   optionLabel="name"
                   optionValue="id"
-                  placeholder="Sélectionnez un fournisseur" i18n-placeholder="Sélectionnez un fournisseur"
+                  placeholder="Sélectionnez un fournisseur" i18n-placeholder="@@purchase-receipts.pages.selectionnez.un.fournisseur.7351a0fb"
                   [filter]="true"
                   filterBy="name"
                   [showClear]="true"
@@ -157,7 +157,7 @@ interface ReceiptLineRow {
                   [(ngModel)]="selectedPurchaseOrderId"
                   optionLabel="label"
                   optionValue="id"
-                  placeholder="Sélectionnez un BC (optionnel)" i18n-placeholder="Sélectionnez un BC (optionnel)"
+                  placeholder="Sélectionnez un BC (optionnel)" i18n-placeholder="@@purchase-receipts.pages.selectionnez.un.bc.optionnel.418875b7"
                   [filter]="true"
                   filterBy="label"
                   [showClear]="true"
@@ -204,13 +204,13 @@ interface ReceiptLineRow {
                   pInputText
                   id="supplierRef"
                   [(ngModel)]="supplierReference"
-                  placeholder="N° BL fournisseur…" i18n-placeholder="N° BL fournisseur…"
+                  placeholder="N° BL fournisseur…" i18n-placeholder="@@purchase-receipts.pages.n.bl.fournisseur.56f543c6"
                   class="w-full">
               </div>
             </div>
           </app-form-section>
 
-          <app-form-section title="Articles" i18n-title="Articles" icon="pi-list" [number]="2">
+          <app-form-section title="Articles" i18n-title="@@purchase-receipts.pages.articles.7c422841" icon="pi-list" [number]="2">
             <div class="lines-actions">
               <app-button variant="secondary" icon="pi-plus" iconPos="left" size="sm"
                 (clicked)="addLine()" i18n="@@purchase-receipts.pages.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
@@ -229,7 +229,7 @@ interface ReceiptLineRow {
               <div class="barcode-scan-row">
                 <ft-barcode-scan-field
                   #barcodeField
-                  placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
+                  placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@purchase-receipts.pages.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
                   [autoFocus]="false"
                   [disabled]="barcodeLookingUp()"
                   (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
@@ -257,10 +257,10 @@ interface ReceiptLineRow {
                     <th class="col-article" i18n="@@purchase-receipts.pages.article.4360c2dc">Article</th>
                     <th class="col-designation" i18n="@@purchase-receipts.pages.designation.63a9062c">Désignation</th>
                     <th class="col-unit" i18n="@@purchase-receipts.pages.unite.388fd9c4">Unité</th>
-                    <th class="col-qty-ord" title="Quantité commandée" i18n-title="Quantité commandée" i18n="@@purchase-receipts.pages.qte.cmd.b39159f2">Qté cmd.</th>
-                    <th class="col-qty-rec" title="Quantité reçue" i18n-title="Quantité reçue" i18n="@@purchase-receipts.pages.qte.recue.ec07cbe1">Qté reçue</th>
-                    <th class="col-qty-pend" title="Quantité en attente" i18n-title="Quantité en attente" i18n="@@purchase-receipts.pages.qte.attente.6142616c">Qté attente</th>
-                    <th class="col-price" title="Prix unitaire HT" i18n-title="Prix unitaire HT" i18n="@@purchase-receipts.pages.p.u.ht.63f60414">P.U. HT</th>
+                    <th class="col-qty-ord" title="Quantité commandée" i18n-title="@@purchase-receipts.pages.quantite.commandee.0ebfdfe6" i18n="@@purchase-receipts.pages.qte.cmd.b39159f2">Qté cmd.</th>
+                    <th class="col-qty-rec" title="Quantité reçue" i18n-title="@@purchase-receipts.pages.quantite.recue.ed1e82c6" i18n="@@purchase-receipts.pages.qte.recue.ec07cbe1">Qté reçue</th>
+                    <th class="col-qty-pend" title="Quantité en attente" i18n-title="@@purchase-receipts.pages.quantite.en.attente.487f9a68" i18n="@@purchase-receipts.pages.qte.attente.6142616c">Qté attente</th>
+                    <th class="col-price" title="Prix unitaire HT" i18n-title="@@purchase-receipts.pages.prix.unitaire.ht.bb3f8e39" i18n="@@purchase-receipts.pages.p.u.ht.63f60414">P.U. HT</th>
                     <th class="col-disc" i18n="@@purchase-receipts.pages.remise.a39386b5">Remise %</th>
                     <th class="col-total" i18n="@@purchase-receipts.pages.total.ht.2ca17ae6">Total HT</th>
                     <th class="col-actions"></th>
@@ -285,7 +285,7 @@ interface ReceiptLineRow {
                           [panelStyle]="{ minWidth: '280px' }"
                           [ngModelOptions]="{ standalone: true }"
                           [disabled]="!!line.purchaseOrderLineId"
-                          placeholder="Rechercher…" i18n-placeholder="Rechercher…"
+                          placeholder="Rechercher…" i18n-placeholder="@@purchase-receipts.pages.rechercher.1d12cdfb"
                           styleClass="w-full"
                           inputStyleClass="w-full">
                           <ng-template let-product pTemplate="item">
@@ -356,7 +356,7 @@ interface ReceiptLineRow {
                           [minFractionDigits]="0"
                           [maxFractionDigits]="2"
                           mode="decimal"
-                          placeholder="0" i18n-placeholder="0"
+                          placeholder="0" i18n-placeholder="@@purchase-receipts.pages.0.b6589fc6"
                           (onInput)="recalculateTotals()"
                           styleClass="w-full"
                           inputStyleClass="text-center">
@@ -402,7 +402,7 @@ interface ReceiptLineRow {
             </div>
           </app-form-section>
 
-          <app-form-section title="Informations complémentaires" i18n-title="Informations complémentaires" icon="pi-file-edit" [number]="3">
+          <app-form-section title="Informations complémentaires" i18n-title="@@purchase-receipts.pages.informations.complementaires.805470ce" icon="pi-file-edit" [number]="3">
             <div class="form-grid-2">
               <div class="form-group">
                 <label for="transporter" i18n="@@purchase-receipts.pages.transporteur.7adadb36">Transporteur</label>
@@ -420,13 +420,13 @@ interface ReceiptLineRow {
                   [(ngModel)]="notes"
                   [rows]="3"
                   class="w-full"
-                  placeholder="Notes internes…" i18n-placeholder="Notes internes…">
+                  placeholder="Notes internes…" i18n-placeholder="@@purchase-receipts.pages.notes.internes.09e2ee05">
                 </textarea>
               </div>
             </div>
           </app-form-section>
 
-          <app-form-section title="Pièces jointes" i18n-title="Pièces jointes" icon="pi-paperclip" [number]="4">
+          <app-form-section title="Pièces jointes" i18n-title="@@purchase-receipts.pages.pieces.jointes.98d89a25" icon="pi-paperclip" [number]="4">
             @if (!savedId()) {
               <p class="attachments-hint" i18n="@@purchase-receipts.pages.enregistrez.d.abord.le.bon.de.reception.pour.ajo.d44608bf"> Enregistrez d'abord le bon de réception pour ajouter des pièces jointes (PDF, JPG, PNG — max 10 Mo). </p>
             } @else {
@@ -527,7 +527,7 @@ interface ReceiptLineRow {
         pInputText
         [(ngModel)]="importBlNumber"
         (keyup.enter)="applyImportBl()"
-        placeholder="Ex. BL-4587" i18n-placeholder="Ex. BL-4587"
+        placeholder="Ex. BL-4587" i18n-placeholder="@@purchase-receipts.pages.ex.bl.4587.25995f69"
         class="w-full"
         autofocus />
       <ng-template pTemplate="footer">

@@ -33,7 +33,7 @@ import { VatChartSegment, canSubmitDeclaration, formatDateFr, shouldShowFilingAl
             }
             @if (v2Enabled) {
               <button type="button" class="btn btn-secondary vat-action-btn" (click)="rectificative.emit()" [disabled]="loading"
-                title="Corriger une déclaration déjà déposée (rectificative)" i18n-title="Corriger une déclaration déjà déposée (rectificative)" i18n="@@accounting.vat-declaration.rectificative.4524a686"> Rectificative </button>
+                title="Corriger une déclaration déjà déposée (rectificative)" i18n-title="@@accounting.vat-declaration.corriger.une.declaration.deja.deposee.rectificat.5df469f5" i18n="@@accounting.vat-declaration.rectificative.4524a686"> Rectificative </button>
             }
           }
           <button type="button" class="btn btn-secondary vat-action-btn" (click)="exportPdf.emit()" [disabled]="loading">

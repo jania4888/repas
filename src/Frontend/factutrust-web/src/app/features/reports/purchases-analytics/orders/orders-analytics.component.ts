@@ -24,7 +24,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Analyse des commandes" i18n-title="Analyse des commandes"
+      title="Analyse des commandes" i18n-title="@@reports.purchases-analytics.analyse.des.commandes.575afd26"
       subtitle="Taux de conversion bons de commande → facture, délais et panier moyen">
       <app-button
         variant="secondary"
@@ -75,25 +75,25 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Taux de conversion" i18n-label="Taux de conversion"
+          label="Taux de conversion" i18n-label="@@reports.purchases-analytics.taux.de.conversion.296dbcee"
           [value]="data()!.conversionRate.toFixed(1) + ' %'"
           icon="pi-sync"
           [variant]="data()!.conversionRate >= 50 ? 'success' : data()!.conversionRate >= 30 ? 'warning' : 'primary'">
         </app-stat-card>
         <app-stat-card
-          label="Bons de commande" i18n-label="Bons de commande"
+          label="Bons de commande" i18n-label="@@reports.purchases-analytics.bons.de.commande.aae719f0"
           [value]="data()!.totalOrders"
           icon="pi-file-edit"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Facturés" i18n-label="Facturés"
+          label="Facturés" i18n-label="@@reports.purchases-analytics.factures.60d4818b"
           [value]="data()!.invoicedOrders"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Panier moyen (commande)" i18n-label="Panier moyen (commande)"
+          label="Panier moyen (commande)" i18n-label="@@reports.purchases-analytics.panier.moyen.commande.5b2d0d4c"
           [value]="formatAmount(data()!.averageOrderAmount)"
           icon="pi-shopping-cart"
           variant="warning">
@@ -172,7 +172,7 @@ import {
           <p-table
             [value]="data()!.topSuppliersByOrders"
             styleClass="p-datatable-sm analytics-table"
-            aria-label="Fournisseurs par nombre de commandes" i18n-aria-label="Fournisseurs par nombre de commandes">
+            aria-label="Fournisseurs par nombre de commandes" i18n-aria-label="@@reports.purchases-analytics.fournisseurs.par.nombre.de.commandes.4aaa9170">
             <ng-template pTemplate="header">
               <tr>
                 <th i18n="@@reports.purchases-analytics.fournisseur.97d91d89">Fournisseur</th>

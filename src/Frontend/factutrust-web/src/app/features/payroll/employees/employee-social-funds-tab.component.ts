@@ -43,7 +43,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   ],
   template: `
     <app-payroll-section
-      title="Mutuelles et caisses complémentaires" i18n-title="Mutuelles et caisses complémentaires"
+      title="Mutuelles et caisses complémentaires" i18n-title="@@payroll.employees.mutuelles.et.caisses.complementaires.cfa7ac0b"
       subtitle="Adhésions actives retenues au calcul du cycle de paie."
       icon="pi-heart">
       @if (!readOnly) {
@@ -102,11 +102,11 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       <div class="payroll-form-row">
         <div class="payroll-form-group">
           <label i18n="@@payroll.employees.part.salarie.override.957c1463">Part salarié (override)</label>
-          <p-inputNumber [(ngModel)]="formEmployeeOverride" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" placeholder="Barème caisse" i18n-placeholder="Barème caisse" />
+          <p-inputNumber [(ngModel)]="formEmployeeOverride" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" placeholder="Barème caisse" i18n-placeholder="@@payroll.employees.bareme.caisse.5e2e9792" />
         </div>
         <div class="payroll-form-group">
           <label i18n="@@payroll.employees.part.employeur.override.0fe0dbc4">Part employeur (override)</label>
-          <p-inputNumber [(ngModel)]="formEmployerOverride" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" placeholder="Barème caisse" i18n-placeholder="Barème caisse" />
+          <p-inputNumber [(ngModel)]="formEmployerOverride" [minFractionDigits]="3" [locale]="'fr-TN'" styleClass="w-full" placeholder="Barème caisse" i18n-placeholder="@@payroll.employees.bareme.caisse.5e2e9792" />
         </div>
       </div>
       <ng-template pTemplate="footer">

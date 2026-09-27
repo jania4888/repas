@@ -32,7 +32,7 @@ import {
     PayrollAmountPipe
   ],
   template: `
-    <app-payroll-section title="Prorata du mois" i18n-title="Prorata du mois" icon="pi-calendar-minus">
+    <app-payroll-section title="Prorata du mois" i18n-title="@@payroll.runs.prorata.du.mois.b192ed38" icon="pi-calendar-minus">
       <div class="payroll-toolbar mb-3">
         <app-button variant="primary" icon="pi-eye" iconPos="left" (click)="load()" [disabled]="loading()" i18n="@@payroll.runs.previsualiser.le.prorata.61ca30ac"> Prévisualiser le prorata </app-button>
       </div>
@@ -56,7 +56,7 @@ import {
         @if (preview()!.lines.length === 0) {
           <app-payroll-empty-state
             icon="pi-check-circle"
-            title="Aucune retenue prorata" i18n-title="Aucune retenue prorata"
+            title="Aucune retenue prorata" i18n-title="@@payroll.runs.aucune.retenue.prorata.c74d6508"
             description="Aucun salarié concerné par une absence, suspension ou sortie sur ce mois." />
         } @else {
           <p-table [value]="preview()!.lines" styleClass="p-datatable-sm">

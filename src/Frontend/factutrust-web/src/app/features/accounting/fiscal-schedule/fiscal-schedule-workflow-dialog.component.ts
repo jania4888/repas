@@ -20,7 +20,7 @@ export type FiscalWorkflowMode = 'deposit' | 'payment' | 'reminder' | 'validate'
       <form class="fiscal-modal fiscal-modal--narrow" (ngSubmit)="submit.emit()">
         <header>
           <h2 id="fiscal-workflow-dialog-title">{{ title }}</h2>
-          <button class="square-button" type="button" title="Fermer" i18n-title="Fermer" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
+          <button class="square-button" type="button" title="Fermer" i18n-title="@@accounting.fiscal-schedule.fermer.5ab4ec64" (click)="cancel.emit()"><i class="fa-solid fa-xmark"></i></button>
         </header>
         <label *ngIf="mode === 'deposit'">
           <ng-container i18n="@@accounting.fiscal-schedule.date.de.depot.a4aa4224"> Date de depot </ng-container>

@@ -30,7 +30,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   ],
   template: `
     <app-page-header
-      title="Contrôle d'intégrité" i18n-title="Contrôle d'intégrité"
+      title="Contrôle d'intégrité" i18n-title="@@accounting.health.controle.d.integrite.6a418f91"
       subtitle="Diagnostics comptables en lecture seule — aucune modification des données" />
 
     <div class="card accounting-filters-card">

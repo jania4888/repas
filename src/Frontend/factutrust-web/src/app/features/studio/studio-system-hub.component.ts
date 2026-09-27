@@ -49,9 +49,9 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
                 <h4><i [class]="e.icon || 'fa-solid fa-table'"></i> {{ e.displayName }}</h4>
                 <p>{{ e.fieldCount }} champ(s)</p>
                 <div class="hub-card__actions">
-                  <a pButton class="p-button-sm" icon="fa-solid fa-table" label="Données" i18n-label="Données"
+                  <a pButton class="p-button-sm" icon="fa-solid fa-table" label="Données" i18n-label="@@studio.studio-system-hub.donnees.e3e0c5ec"
                     [routerLink]="['/studio/d', e.key]"></a>
-                  <a pButton class="p-button-sm p-button-outlined" icon="fa-solid fa-wrench" label="Concevoir" i18n-label="Concevoir"
+                  <a pButton class="p-button-sm p-button-outlined" icon="fa-solid fa-wrench" label="Concevoir" i18n-label="@@studio.studio-system-hub.concevoir.0fef9efb"
                     [routerLink]="['/studio', e.id]"></a>
                 </div>
               </article>

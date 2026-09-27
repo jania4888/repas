@@ -99,7 +99,7 @@ interface LineRow extends LinePromotionPreview {
       <p class="page-hint" i18n="@@delivery-notes.pages.le.bon.de.livraison.sera.cree.en.brouillon.vous..375f0fce"> Le bon de livraison sera créé en brouillon. Vous pourrez le confirmer ensuite. </p>
 
       <form (ngSubmit)="onSubmit()" class="dn-form">
-        <app-form-section title="Client et informations" i18n-title="Client et informations" icon="pi-user" [number]="1">
+        <app-form-section title="Client et informations" i18n-title="@@delivery-notes.pages.client.et.informations.988a7c72" icon="pi-user" [number]="1">
           <div class="form-grid">
             <div class="field">
               <label for="client"><ng-container i18n="@@delivery-notes.pages.client.1bdd79b1">Client </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
@@ -112,7 +112,7 @@ interface LineRow extends LinePromotionPreview {
                     (onChange)="onClientChange()"
                     optionLabel="name"
                     optionValue="id"
-                    placeholder="Choisir un client" i18n-placeholder="Choisir un client"
+                    placeholder="Choisir un client" i18n-placeholder="@@delivery-notes.pages.choisir.un.client.6521f9cd"
                     [filter]="true"
                     filterBy="name"
                     [showClear]="true"
@@ -151,11 +151,11 @@ interface LineRow extends LinePromotionPreview {
           </div>
         </app-form-section>
 
-        <app-form-section title="Adresse de livraison" i18n-title="Adresse de livraison" icon="pi-map-marker" [number]="2">
+        <app-form-section title="Adresse de livraison" i18n-title="@@delivery-notes.pages.adresse.de.livraison.31eac756" icon="pi-map-marker" [number]="2">
           <div class="form-grid">
             <div class="field span-full">
               <label for="deliveryAddress"><ng-container i18n="@@delivery-notes.pages.adresse.522e1466">Adresse </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
-              <input pInputText id="deliveryAddress" [(ngModel)]="deliveryAddress" name="deliveryAddress" class="w-full" placeholder="Adresse complète" i18n-placeholder="Adresse complète" />
+              <input pInputText id="deliveryAddress" [(ngModel)]="deliveryAddress" name="deliveryAddress" class="w-full" placeholder="Adresse complète" i18n-placeholder="@@delivery-notes.pages.adresse.complete.ac51a43d" />
             </div>
             <div class="field">
               <label for="deliveryCity" i18n="@@delivery-notes.pages.ville.97217611">Ville</label>
@@ -168,14 +168,14 @@ interface LineRow extends LinePromotionPreview {
           </div>
         </app-form-section>
 
-        <app-form-section title="Lignes du bon de livraison" i18n-title="Lignes du bon de livraison" icon="pi-list" [number]="3">
+        <app-form-section title="Lignes du bon de livraison" i18n-title="@@delivery-notes.pages.lignes.du.bon.de.livraison.f2475b32" icon="pi-list" [number]="3">
           <div class="lines-actions">
             <app-button variant="secondary" icon="pi-plus" iconPos="left" (click)="addLine()" i18n="@@delivery-notes.pages.ajouter.une.ligne.ba241fd4">Ajouter une ligne</app-button>
           </div>
           @if (barcodeScanEnabled) {
             <div class="barcode-scan-row">
               <ft-barcode-scan-field
-                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
+                placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@delivery-notes.pages.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
                 [autoFocus]="false"
                 (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
             </div>
@@ -223,7 +223,7 @@ interface LineRow extends LinePromotionPreview {
                             [forceSelection]="true"
                             appendTo="body"
                             [ngModelOptions]="{ standalone: true }"
-                            placeholder="Rechercher un produit..." i18n-placeholder="Rechercher un produit..."
+                            placeholder="Rechercher un produit..." i18n-placeholder="@@delivery-notes.pages.rechercher.un.produit.0da008f6"
                             styleClass="w-full"
                             inputStyleClass="w-full">
                             <ng-template let-product pTemplate="item">
@@ -241,7 +241,7 @@ interface LineRow extends LinePromotionPreview {
                           [iconOnly]="true"
                           ariaLabel="Choisir une variante"
                           (click)="openVariantPicker($index)"
-                          title="Choisir une variante" i18n-title="Choisir une variante" />
+                          title="Choisir une variante" i18n-title="@@delivery-notes.pages.choisir.une.variante.c8ab137c" />
                         <app-button
                           variant="primary"
                           size="sm"
@@ -258,7 +258,7 @@ interface LineRow extends LinePromotionPreview {
                         [value]="line.designation"
                         [title]="line.designation"
                         disabled="true"
-                        placeholder="-" i18n-placeholder="-"
+                        placeholder="-" i18n-placeholder="@@delivery-notes.pages.text.3bc15c8a"
                         class="w-full bg-gray-50 line-readonly-input" />
                     </td>
                     <td>
@@ -280,7 +280,7 @@ interface LineRow extends LinePromotionPreview {
                         [value]="line.unit"
                         [title]="line.unit"
                         disabled="true"
-                        placeholder="-" i18n-placeholder="-"
+                        placeholder="-" i18n-placeholder="@@delivery-notes.pages.text.3bc15c8a"
                         class="w-full bg-gray-50 line-readonly-input" />
                     </td>
                     <td>
@@ -291,7 +291,7 @@ interface LineRow extends LinePromotionPreview {
                     <td class="cell-origin">
                       <div class="origin-stack">
                         @if (linePricing.resolving()) {
-                          <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…" i18n-pTooltip="Résolution du prix…"></i>
+                          <i class="pi pi-spin pi-spinner" pTooltip="Résolution du prix…" i18n-pTooltip="@@delivery-notes.pages.resolution.du.prix.38097b39"></i>
                         } @else if (line.priceSource === 'ClientPrice') {
                           <p-tag severity="success" value="Prix négocié"></p-tag>
                         } @else if (line.priceSource === 'PriceList') {
@@ -319,7 +319,7 @@ interface LineRow extends LinePromotionPreview {
                         [minFractionDigits]="0"
                         [maxFractionDigits]="2"
                         mode="decimal"
-                        placeholder="0" i18n-placeholder="0"
+                        placeholder="0" i18n-placeholder="@@delivery-notes.pages.0.b6589fc6"
                         class="w-full"
                         [inputStyle]="{ width: '100%' }">
                       </p-inputNumber>
@@ -347,7 +347,7 @@ interface LineRow extends LinePromotionPreview {
                           pInputText
                           [(ngModel)]="line.notes"
                           [ngModelOptions]="{ standalone: true }"
-                          placeholder="Notes internes pour cette ligne (optionnel)" i18n-placeholder="Notes internes pour cette ligne (optionnel)"
+                          placeholder="Notes internes pour cette ligne (optionnel)" i18n-placeholder="@@delivery-notes.pages.notes.internes.pour.cette.ligne.optionnel.5e6f0059"
                           class="w-full text-sm" />
                      </td>
                   </tr>
@@ -365,7 +365,7 @@ interface LineRow extends LinePromotionPreview {
           <p class="lines-hint">{{ lines.length }} ligne(s) ajoutée(s)</p>
         </app-form-section>
 
-        <app-form-section title="Options et notes (optionnel)" i18n-title="Options et notes (optionnel)" icon="pi-file-edit" [number]="4">
+        <app-form-section title="Options et notes (optionnel)" i18n-title="@@delivery-notes.pages.options.et.notes.optionnel.f9541c9b" icon="pi-file-edit" [number]="4">
           <div class="field">
             <label for="notes" i18n="@@delivery-notes.pages.notes.generales.3f6ad7ac">Notes générales</label>
             <textarea
@@ -383,15 +383,15 @@ interface LineRow extends LinePromotionPreview {
               [binary]="true"
               name="allowGroupInvoicing"
               inputId="allowGroupInvoicing"
-              label="Autoriser la facturation groupée" i18n-label="Autoriser la facturation groupée">
+              label="Autoriser la facturation groupée" i18n-label="@@delivery-notes.pages.autoriser.la.facturation.groupee.6f2f16c9">
             </p-checkbox>
             <small class="field-hint" i18n="@@delivery-notes.pages.si.active.ce.bon.de.livraison.pourra.etre.regrou.01efd4ff">Si activé, ce bon de livraison pourra être regroupé avec d'autres pour une facturation unique.</small>
           </div>
 
           <div class="field mt-3">
             <app-warehouse-selector
-              label="Entrepôt source" i18n-label="Entrepôt source"
-              placeholder="Entrepôt par défaut" i18n-placeholder="Entrepôt par défaut"
+              label="Entrepôt source" i18n-label="@@delivery-notes.pages.entrepot.source.07ac9f4d"
+              placeholder="Entrepôt par défaut" i18n-placeholder="@@delivery-notes.pages.entrepot.par.defaut.5dc0b8c6"
               [value]="selectedWarehouseId"
               (valueChange)="selectedWarehouseId = $event">
             </app-warehouse-selector>

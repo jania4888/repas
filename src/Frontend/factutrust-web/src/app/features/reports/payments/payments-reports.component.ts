@@ -34,7 +34,7 @@ interface PeriodOption {
   ],
   template: `
     <app-page-header 
-      title="Rapports Paiements" i18n-title="Rapports Paiements" 
+      title="Rapports Paiements" i18n-title="@@reports.payments.rapports.paiements.187514db" 
       subtitle="Encaissements, décaissements et trésorerie nette">
       <app-button 
         variant="secondary"
@@ -51,7 +51,7 @@ interface PeriodOption {
           [(ngModel)]="selectedPeriod" 
           (ngModelChange)="onPeriodChange()"
           class="filter-select"
-          aria-label="Sélectionner la période" i18n-aria-label="Sélectionner la période">
+          aria-label="Sélectionner la période" i18n-aria-label="@@reports.payments.selectionner.la.periode.1ab9797d">
           @for (period of periodOptions; track period.value) {
             <option [value]="period.value">{{ period.label }}</option>
           }
@@ -77,31 +77,31 @@ interface PeriodOption {
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Encaissements" i18n-label="Encaissements"
+          label="Encaissements" i18n-label="@@reports.payments.encaissements.598f53c9"
           [value]="reportsData()!.totalInflows"
           icon="pi-arrow-down"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Décaissements" i18n-label="Décaissements"
+          label="Décaissements" i18n-label="@@reports.payments.decaissements.566a79f1"
           [value]="reportsData()!.totalOutflows"
           icon="pi-arrow-up"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Trésorerie nette" i18n-label="Trésorerie nette"
+          label="Trésorerie nette" i18n-label="@@reports.payments.tresorerie.nette.bc09be1b"
           [value]="reportsData()!.netCashFlow"
           icon="pi-wallet"
           [variant]="getNetVariant()">
         </app-stat-card>
         <app-stat-card
-          label="Factures clients en attente" i18n-label="Factures clients en attente"
+          label="Factures clients en attente" i18n-label="@@reports.payments.factures.clients.en.attente.765cbddf"
           [value]="reportsData()!.pendingClientAmount"
           icon="pi-clock"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Factures fournisseurs en attente" i18n-label="Factures fournisseurs en attente"
+          label="Factures fournisseurs en attente" i18n-label="@@reports.payments.factures.fournisseurs.en.attente.707fd2df"
           [value]="reportsData()!.pendingSupplierAmount"
           icon="pi-clock"
           variant="warning">
@@ -122,7 +122,7 @@ interface PeriodOption {
           </div>
         </div>
       } @else if (reportsData()?.cashFlowChartData && reportsData()!.cashFlowChartData.length > 0) {
-        <div class="chart-container" role="img" aria-label="Graphique des flux de trésorerie" i18n-aria-label="Graphique des flux de trésorerie">
+        <div class="chart-container" role="img" aria-label="Graphique des flux de trésorerie" i18n-aria-label="@@reports.payments.graphique.des.flux.de.tresorerie.242e6656">
           <div class="chart-bars">
             @for (item of reportsData()!.cashFlowChartData; track item.label) {
               <div class="chart-bar-group">
@@ -132,8 +132,8 @@ interface PeriodOption {
                   <strong i18n="@@reports.payments.net.0bf95aa3">Net:</strong> {{ formatCurrency(item.net) }}
                 </div>
                 <div class="chart-bar-wrapper">
-                  <div class="chart-bar chart-bar-in" [style.height.%]="getBarHeight(item.inflows, 'in')" title="Encaissements" i18n-title="Encaissements"></div>
-                  <div class="chart-bar chart-bar-out" [style.height.%]="getBarHeight(item.outflows, 'out')" title="Décaissements" i18n-title="Décaissements"></div>
+                  <div class="chart-bar chart-bar-in" [style.height.%]="getBarHeight(item.inflows, 'in')" title="Encaissements" i18n-title="@@reports.payments.encaissements.598f53c9"></div>
+                  <div class="chart-bar chart-bar-out" [style.height.%]="getBarHeight(item.outflows, 'out')" title="Décaissements" i18n-title="@@reports.payments.decaissements.566a79f1"></div>
                 </div>
                 <span class="chart-label">{{ item.labelShort }}</span>
               </div>
@@ -174,7 +174,7 @@ interface PeriodOption {
         <p-table
           [value]="clientPayments()"
           styleClass="p-datatable-sm reports-table"
-          aria-label="Paiements clients" i18n-aria-label="Paiements clients">
+          aria-label="Paiements clients" i18n-aria-label="@@reports.payments.paiements.clients.79a7e359">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@reports.payments.date.eb9a4bc1">Date</th>
@@ -216,7 +216,7 @@ interface PeriodOption {
         <p-table
           [value]="supplierPayments()"
           styleClass="p-datatable-sm reports-table"
-          aria-label="Paiements fournisseurs" i18n-aria-label="Paiements fournisseurs">
+          aria-label="Paiements fournisseurs" i18n-aria-label="@@reports.payments.paiements.fournisseurs.416577a5">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@reports.payments.date.eb9a4bc1">Date</th>

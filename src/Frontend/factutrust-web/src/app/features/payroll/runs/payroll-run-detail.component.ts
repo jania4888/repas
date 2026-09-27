@@ -79,7 +79,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
 
       @if (run()!.status === 'Validated' || run()!.status === 'Closed') {
         <div class="mb-4">
-          <div class="treasury-banner" role="region" aria-label="État de trésorerie de la paie" i18n-aria-label="État de trésorerie de la paie">
+          <div class="treasury-banner" role="region" aria-label="État de trésorerie de la paie" i18n-aria-label="@@payroll.runs.etat.de.tresorerie.de.la.paie.8d202d49">
             <div class="treasury-banner__item">
               <span class="treasury-banner__label" i18n="@@payroll.runs.tresorerie.e0e75da7">Trésorerie</span>
               <strong [class]="loc_ui_tern_treasury_banner_value_74a94b + treasuryStatusClass()">
@@ -129,7 +129,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
           [readOnly]="!canRun()" />
       }
 
-      <app-payroll-section title="Bulletins de paie" i18n-title="Bulletins de paie" icon="pi-file">
+      <app-payroll-section title="Bulletins de paie" i18n-title="@@payroll.runs.bulletins.de.paie.c587c766" icon="pi-file">
         <div class="payroll-table-scroll">
         <p-table [value]="run()!.payslips" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
@@ -172,7 +172,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
       }
     }
 
-    <p-dialog header="Détail du bulletin" i18n-header="Détail du bulletin" [(visible)]="payslipDialogVisible" [modal]="true" [style]="{ width: '640px' }">
+    <p-dialog header="Détail du bulletin" i18n-header="@@payroll.runs.detail.du.bulletin.43ddb475" [(visible)]="payslipDialogVisible" [modal]="true" [style]="{ width: '640px' }">
       @if (selectedPayslip()) {
         <div class="mb-3">
           <strong>{{ selectedPayslip()!.employeeName }}</strong>

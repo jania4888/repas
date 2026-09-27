@@ -8,7 +8,7 @@ import { ProjectPerformanceSummary } from '../project-api.service';
   imports: [CommonModule],
   template: `
     @if (summary) {
-      <section class="proj-dash-performance" aria-label="Résumé de performance" i18n-aria-label="Résumé de performance">
+      <section class="proj-dash-performance" aria-label="Résumé de performance" i18n-aria-label="@@projects.components.resume.de.performance.da912a8b">
         <div class="proj-dash-performance__content">
           <div class="proj-dash-performance__title-row">
             <i class="fa-solid fa-trophy proj-dash-performance__icon" aria-hidden="true"></i>

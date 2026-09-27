@@ -45,12 +45,12 @@
   </ul>
 </div>
 
-<app-form-section title="En-tête" i18n-title="En-tête" icon="pi-info-circle" [number]="1">
+<app-form-section title="En-tête" i18n-title="@@stock-vouchers.stock-voucher-form.en.tete.c9ca802a" icon="pi-info-circle" [number]="1">
   <div class="ft-form-grid ft-form-grid--compact">
     <div class="ft-field">
       <app-warehouse-selector
         inputId="voucher-warehouse"
-        label="Dépôt" i18n-label="Dépôt"
+        label="Dépôt" i18n-label="@@stock-vouchers.stock-voucher-form.depot.4c1c61c7"
         [required]="true"
         [activeOnly]="true"
         [value]="warehouseId"
@@ -99,7 +99,7 @@
         pInputText
         [(ngModel)]="externalReference"
         maxlength="100"
-        placeholder="Référence document externe (optionnel)" i18n-placeholder="Référence document externe (optionnel)" />
+        placeholder="Référence document externe (optionnel)" i18n-placeholder="@@stock-vouchers.stock-voucher-form.reference.document.externe.optionnel.3be5d7e1" />
     </div>
     <div class="ft-field ft-field--full">
       <label for="voucher-notes" i18n="@@stock-vouchers.stock-voucher-form.notes.70440046">Notes</label>
@@ -112,7 +112,7 @@
   id="section-lignes"
   class="lines-section-wrap"
   [class.lines-section-wrap--empty]="lines.length === 0">
-  <app-form-section title="Lignes" i18n-title="Lignes" icon="pi-list" [number]="2">
+  <app-form-section title="Lignes" i18n-title="@@stock-vouchers.stock-voucher-form.lignes.41c7025e" icon="pi-list" [number]="2">
     <div class="ft-form-grid ft-form-grid--inline">
       <div class="ft-field ft-field--grow">
         <label for="voucher-product" i18n="@@stock-vouchers.stock-voucher-form.produit.gere.en.stock.c24b37d0">Produit (géré en stock)</label>
@@ -125,7 +125,7 @@
           [dropdown]="true"
           [forceSelection]="true"
           [minLength]="0"
-          placeholder="Rechercher par nom ou code…" i18n-placeholder="Rechercher par nom ou code…"
+          placeholder="Rechercher par nom ou code…" i18n-placeholder="@@stock-vouchers.stock-voucher-form.rechercher.par.nom.ou.code.9c838cb7"
           styleClass="w-full"
           appendTo="body">
           <ng-template let-product pTemplate="item">
@@ -186,7 +186,7 @@
       @if (barcodeScanEnabled) {
         <div class="ft-field barcode-scan-row">
           <ft-barcode-scan-field
-            placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="Scanner un code-barres pour ajouter une ligne"
+            placeholder="Scanner un code-barres pour ajouter une ligne" i18n-placeholder="@@stock-vouchers.stock-voucher-form.scanner.un.code.barres.pour.ajouter.une.ligne.3525ced5"
             [autoFocus]="false"
             (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
         </div>
@@ -262,7 +262,7 @@
                 }
                 <td class="ft-num">{{ (line.quantity * line.unitCost) | currency:'TND':'symbol':'1.3-3' }}</td>
                 <td class="ft-actions-col">
-                  <button type="button" class="btn-icon" (click)="removeLine(i)" aria-label="Retirer la ligne" i18n-aria-label="Retirer la ligne">
+                  <button type="button" class="btn-icon" (click)="removeLine(i)" aria-label="Retirer la ligne" i18n-aria-label="@@stock-vouchers.stock-voucher-form.retirer.la.ligne.d7b83e17">
                     <i class="pi pi-trash"></i>
                   </button>
                 </td>
@@ -294,7 +294,7 @@
 </div>
 
 @if (lines.length > 0) {
-  <div class="sticky-action-bar" role="region" aria-label="Actions d'enregistrement" i18n-aria-label="Actions d'enregistrement" aria-live="polite">
+  <div class="sticky-action-bar" role="region" aria-label="Actions d'enregistrement" i18n-aria-label="@@stock-vouchers.stock-voucher-form.actions.d.enregistrement.3230b1a5" aria-live="polite">
     <div class="sticky-action-bar__total">
       <span class="sticky-action-bar__label" i18n="@@stock-vouchers.stock-voucher-form.quantite.totale.142a3993">Quantité totale</span>
       <span class="sticky-action-bar__amount">{{ totalQuantity | number:'1.0-3' }}</span>

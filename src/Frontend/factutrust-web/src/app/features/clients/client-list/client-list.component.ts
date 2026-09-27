@@ -63,7 +63,7 @@ interface StatusOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Clients" i18n-title="Clients" 
+      title="Clients" i18n-title="@@clients.client-list.clients.28e22fe3" 
       subtitle="Gérez vos clients et facturez plus vite.">
       @if (canCreateClient()) {
         <app-button 
@@ -82,7 +82,7 @@ interface StatusOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@clients.client-list.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -94,7 +94,7 @@ interface StatusOption {
           <input 
             pInputText 
             type="text" 
-            placeholder="Rechercher par nom, email ou NIF…" i18n-placeholder="Rechercher par nom, email ou NIF…" 
+            placeholder="Rechercher par nom, email ou NIF…" i18n-placeholder="@@clients.client-list.rechercher.par.nom.email.ou.nif.e25e488c" 
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -105,7 +105,7 @@ interface StatusOption {
           [(ngModel)]="selectedType"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les types" i18n-placeholder="Tous les types"
+          placeholder="Tous les types" i18n-placeholder="@@clients.client-list.tous.les.types.5a6be24d"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -115,7 +115,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@clients.client-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -140,7 +140,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} clients" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} clients"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} clients" i18n-currentPageReportTemplate="@@clients.client-list.affichage.de.first.a.last.sur.totalrecords.clien.a4c2b3ad"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -244,7 +244,7 @@ interface StatusOption {
             <td colspan="9" class="text-center p-6">
               <app-empty-state
                 illustration="empty-clients.svg"
-                title="Aucun client" i18n-title="Aucun client"
+                title="Aucun client" i18n-title="@@clients.client-list.aucun.client.667e69de"
                 description="Ajoutez votre premier client pour créer des devis et des factures en quelques clics."
                 [showAction]="canCreateClient()"
                 actionLabel="Ajouter un client pour facturer plus vite"

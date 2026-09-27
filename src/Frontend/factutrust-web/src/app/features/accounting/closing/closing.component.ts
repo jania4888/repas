@@ -32,7 +32,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
   ],
   providers: [ConfirmationService],
   template: `
-    <app-page-header title="Clôture des périodes" i18n-title="Clôture des périodes" subtitle="Verrouillage mensuel des écritures" />
+    <app-page-header title="Clôture des périodes" i18n-title="@@accounting.closing.cloture.des.periodes.23eeb3ca" subtitle="Verrouillage mensuel des écritures" />
     <app-accounting-correction-banner />
     <p-confirmDialog />
 

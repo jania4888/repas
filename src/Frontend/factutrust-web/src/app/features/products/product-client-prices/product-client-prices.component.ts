@@ -68,7 +68,7 @@ interface ClientOption {
       } @else if (clientPrices().length === 0) {
         <app-empty-state
           icon="pi-users"
-          title="Aucun tarif client" i18n-title="Aucun tarif client"
+          title="Aucun tarif client" i18n-title="@@products.product-client-prices.aucun.tarif.client.ffe1127d"
           message="Définissez des prix spécifiques pour certains clients. Les autres restent au prix catalogue.">
         </app-empty-state>
       } @else {
@@ -109,7 +109,7 @@ interface ClientOption {
                         type="button"
                         icon="pi pi-pencil"
                         class="p-button-text p-button-sm"
-                        pTooltip="Modifier" i18n-pTooltip="Modifier"
+                        pTooltip="Modifier" i18n-pTooltip="@@products.product-client-prices.modifier.f260e757"
                         (click)="openEdit(item)"></button>
                     }
                     @if (canDelete()) {
@@ -118,7 +118,7 @@ interface ClientOption {
                         type="button"
                         icon="pi pi-trash"
                         class="p-button-text p-button-sm p-button-danger"
-                        pTooltip="Supprimer" i18n-pTooltip="Supprimer"
+                        pTooltip="Supprimer" i18n-pTooltip="@@products.product-client-prices.supprimer.1acfc1c7"
                         (click)="confirmDelete(item)"></button>
                     }
                   </td>
@@ -157,7 +157,7 @@ interface ClientOption {
             field="label"
             [forceSelection]="true"
             [dropdown]="true"
-            placeholder="Rechercher par nom" i18n-placeholder="Rechercher par nom"
+            placeholder="Rechercher par nom" i18n-placeholder="@@products.product-client-prices.rechercher.par.nom.88b5f2ab"
             appendTo="body"
             [disabled]="saving()">
           </p-autoComplete>

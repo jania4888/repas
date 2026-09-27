@@ -145,7 +145,7 @@ import {
                   field="number"
                   [dropdown]="false"
                   [minLength]="1"
-                  placeholder="Rechercher par numéro ou client..." i18n-placeholder="Rechercher par numéro ou client..."
+                  placeholder="Rechercher par numéro ou client..." i18n-placeholder="@@invoices.invoice-wizard.rechercher.par.numero.ou.client.32e33f20"
                   appendTo="body"
                   [inputStyle]="{ width: '100%' }"
                   [style]="{ width: '100%' }">
@@ -198,7 +198,7 @@ import {
           </div>
           <div 
             class="number-info"
-            pTooltip="Conformité légale: numérotation chronologique et inaltérable (Art. 18 Code TVA)" i18n-pTooltip="Conformité légale: numérotation chronologique et inaltérable (Art. 18 Code TVA)"
+            pTooltip="Conformité légale: numérotation chronologique et inaltérable (Art. 18 Code TVA)" i18n-pTooltip="@@invoices.invoice-wizard.conformite.legale.numerotation.chronologique.et.7b1d17cf"
             tooltipPosition="top">
             <i class="pi pi-lock"></i>
           </div>
@@ -224,7 +224,7 @@ import {
               [maxDate]="maxIssueDate"
               [showButtonBar]="true"
               [touchUI]="isMobile"
-              placeholder="Sélectionner une date" i18n-placeholder="Sélectionner une date"
+              placeholder="Sélectionner une date" i18n-placeholder="@@invoices.invoice-wizard.selectionner.une.date.6bf64255"
               appendTo="body"
               aria-describedby="issueDateHint">
             </p-datepicker>
@@ -242,7 +242,7 @@ import {
               [minDate]="issueDate"
               [showButtonBar]="true"
               [touchUI]="isMobile"
-              placeholder="Sélectionner une date" i18n-placeholder="Sélectionner une date"
+              placeholder="Sélectionner une date" i18n-placeholder="@@invoices.invoice-wizard.selectionner.une.date.6bf64255"
               appendTo="body"
               aria-describedby="dueDateHint">
             </p-datepicker>
@@ -306,7 +306,7 @@ import {
               id="internalRef"
               [(ngModel)]="internalReference"
               (ngModelChange)="onReferenceChange($event)"
-              placeholder="Ex: PROJ-2026-001" i18n-placeholder="Ex: PROJ-2026-001"
+              placeholder="Ex: PROJ-2026-001" i18n-placeholder="@@invoices.invoice-wizard.ex.proj.2026.001.f8de6160"
               maxlength="50"
               aria-describedby="internalRefHint">
             <small id="internalRefHint" class="form-hint" i18n="@@invoices.invoice-wizard.reference.projet.devis.ou.bon.de.commande.option.c6f2bd05"> Référence projet, devis ou bon de commande (optionnel) </small>
@@ -315,8 +315,8 @@ import {
           <div class="form-group">
             <app-warehouse-selector
               inputId="invoice-wizard-warehouse"
-              label="Entrepôt" i18n-label="Entrepôt"
-              placeholder="Entrepôt par défaut" i18n-placeholder="Entrepôt par défaut"
+              label="Entrepôt" i18n-label="@@invoices.invoice-wizard.entrepot.c349c0bc"
+              placeholder="Entrepôt par défaut" i18n-placeholder="@@invoices.invoice-wizard.entrepot.par.defaut.5dc0b8c6"
               [value]="metadata.warehouseId"
               (valueChange)="onWarehouseChange($event)">
             </app-warehouse-selector>

@@ -27,7 +27,7 @@ type GroupBy = 'Product' | 'Category' | 'ProductAndClient';
   ],
   template: `
     <app-page-header
-      title="Détails ventes par ligne produit" i18n-title="Détails ventes par ligne produit"
+      title="Détails ventes par ligne produit" i18n-title="@@reports.sales-by-line.details.ventes.par.ligne.produit.2fe7a584"
       subtitle="Chiffre d'affaires par produit, par catégorie et par client">
       <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" i18n="@@reports.sales-by-line.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
@@ -35,7 +35,7 @@ type GroupBy = 'Product' | 'Category' | 'ProductAndClient';
     <div class="filter-section">
       <div class="filter-group">
         <label for="period" class="filter-label" i18n="@@reports.sales-by-line.periode.de2110b7">Période</label>
-        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="Période">
+        <select id="period" [(ngModel)]="selectedPeriod" (ngModelChange)="onPeriodChange()" class="filter-select" aria-label="Période" i18n-aria-label="@@reports.sales-by-line.periode.de2110b7">
           @for (p of periodOptions; track p.value) {
             <option [value]="p.value">{{ p.label }}</option>
           }

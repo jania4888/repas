@@ -61,10 +61,10 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Mon entreprise" i18n-title="Mon entreprise" 
+      title="Mon entreprise" i18n-title="@@settings.company.mon.entreprise.e950c285" 
       subtitle="Informations légales et paramètres de facturation">
       <p-button 
-        label="Retour" i18n-label="Retour" 
+        label="Retour" i18n-label="@@settings.company.retour.e5befb1f" 
         icon="pi pi-arrow-left" 
         [outlined]="true"
         routerLink="/settings">
@@ -88,7 +88,7 @@ import {
           </div>
         </div>
         <p-button 
-          label="Réessayer" i18n-label="Réessayer" 
+          label="Réessayer" i18n-label="@@settings.company.reessayer.895d416b" 
           icon="pi pi-refresh"
           [disabled]="loading()"
           (onClick)="loadCompanyData()"
@@ -113,11 +113,11 @@ import {
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <!-- Company Identity -->
-        <p-card header="Identité de l'entreprise" i18n-header="Identité de l'entreprise" styleClass="form-card">
+        <p-card header="Identité de l'entreprise" i18n-header="@@settings.company.identite.de.l.entreprise.cd961dae" styleClass="form-card">
           <div class="logo-section">
             <div class="logo-preview">
               @if (logoUrl()) {
-                <img [src]="logoUrl()" alt="Logo" i18n-alt="Logo">
+                <img [src]="logoUrl()" alt="Logo" i18n-alt="@@settings.company.logo.83fce832">
               } @else {
                 <i class="pi pi-image"></i>
               }
@@ -152,7 +152,7 @@ import {
               pInputText 
               id="tradeName" 
               formControlName="tradeName"
-              placeholder="Si différent de la raison sociale" i18n-placeholder="Si différent de la raison sociale"
+              placeholder="Si différent de la raison sociale" i18n-placeholder="@@settings.company.si.different.de.la.raison.sociale.5e35b18c"
               class="w-full">
           </div>
 
@@ -164,7 +164,7 @@ import {
                 formControlName="nif"
                 appNifMaskPaste
                 mask="9999999a/a/a/999"
-                placeholder="1772793W/A/M/000" i18n-placeholder="1772793W/A/M/000"
+                placeholder="1772793W/A/M/000" i18n-placeholder="@@settings.company.1772793w.a.m.000.e4c6f482"
                 styleClass="w-full"
                 (onBlur)="onNifBlur()">
               </p-inputMask>
@@ -176,7 +176,7 @@ import {
                 pInputText 
                 id="commerceRegistry" 
                 formControlName="commerceRegistry"
-                placeholder="Ex: B123456789" i18n-placeholder="Ex: B123456789"
+                placeholder="Ex: B123456789" i18n-placeholder="@@settings.company.ex.b123456789.f5792375"
                 class="w-full">
             </div>
           </div>
@@ -192,7 +192,7 @@ import {
               pInputText
               id="cnssEmployerNumber"
               formControlName="cnssEmployerNumber"
-              placeholder="Numéro d'affiliation CNSS de l'entreprise" i18n-placeholder="Numéro d'affiliation CNSS de l'entreprise"
+              placeholder="Numéro d'affiliation CNSS de l'entreprise" i18n-placeholder="@@settings.company.numero.d.affiliation.cnss.de.l.entreprise.c7aa9548"
               class="w-full">
             <small class="form-hint" i18n="@@settings.company.requis.pour.generer.le.bordereau.mensuel.cnss.et.57c348d5">Requis pour générer le bordereau mensuel CNSS et enregistrer les versements de cotisations.</small>
           </div>
@@ -203,14 +203,14 @@ import {
               id="taxRegime"
               [options]="taxRegimes" 
               formControlName="taxRegime"
-              placeholder="Sélectionner" i18n-placeholder="Sélectionner"
+              placeholder="Sélectionner" i18n-placeholder="@@settings.company.selectionner.ab31a36f"
               styleClass="w-full">
             </p-select>
           </div>
         </p-card>
 
         <!-- Contact & Address -->
-        <p-card header="Coordonnées" i18n-header="Coordonnées" styleClass="form-card">
+        <p-card header="Coordonnées" i18n-header="@@settings.company.coordonnees.7c309d77" styleClass="form-card">
           <div class="form-group">
             <label for="street"><ng-container i18n="@@settings.company.adresse.522e1466">Adresse </ng-container> <span class="required" i18n="@@settings.company.text.df58248c">*</span></label>
             <input 
@@ -257,7 +257,7 @@ import {
               id="governorate"
               [options]="governorates" 
               formControlName="governorate"
-              placeholder="Sélectionner" i18n-placeholder="Sélectionner"
+              placeholder="Sélectionner" i18n-placeholder="@@settings.company.selectionner.ab31a36f"
               [filter]="true"
               styleClass="w-full">
             </p-select>
@@ -293,20 +293,20 @@ import {
               pInputText 
               id="website" 
               formControlName="website"
-              placeholder="https://www.exemple.tn" i18n-placeholder="https://www.exemple.tn"
+              placeholder="https://www.exemple.tn" i18n-placeholder="@@settings.company.https.www.exemple.tn.7362c7f7"
               class="w-full">
           </div>
         </p-card>
 
         <!-- Bank Information -->
-        <p-card header="Informations bancaires" i18n-header="Informations bancaires" styleClass="form-card bank-card">
+        <p-card header="Informations bancaires" i18n-header="@@settings.company.informations.bancaires.1a7496a8" styleClass="form-card bank-card">
           <div class="form-group">
             <label for="bankName" i18n="@@settings.company.nom.de.la.banque.9848ce74">Nom de la banque</label>
             <input 
               pInputText 
               id="bankName" 
               formControlName="bankName"
-              placeholder="Ex: Banque Internationale Arabe de Tunisie" i18n-placeholder="Ex: Banque Internationale Arabe de Tunisie"
+              placeholder="Ex: Banque Internationale Arabe de Tunisie" i18n-placeholder="@@settings.company.ex.banque.internationale.arabe.de.tunisie.bbdce49b"
               class="w-full">
           </div>
 
@@ -316,7 +316,7 @@ import {
               id="rib"
               formControlName="rib"
               mask="99 999 9999999999999 99"
-              placeholder="XX XXX XXXXXXXXXXXXX XX" i18n-placeholder="XX XXX XXXXXXXXXXXXX XX"
+              placeholder="XX XXX XXXXXXXXXXXXX XX" i18n-placeholder="@@settings.company.xx.xxx.xxxxxxxxxxxxx.xx.88bae40a"
               styleClass="w-full">
             </p-inputMask>
             <small class="form-hint" i18n="@@settings.company.releve.d.identite.bancaire.a.20.chiffres.604e850f">Relevé d'Identité Bancaire à 20 chiffres</small>
@@ -328,13 +328,13 @@ import {
               pInputText 
               id="iban" 
               formControlName="iban"
-              placeholder="TN59 XXXX XXXX XXXX XXXX XXXX" i18n-placeholder="TN59 XXXX XXXX XXXX XXXX XXXX"
+              placeholder="TN59 XXXX XXXX XXXX XXXX XXXX" i18n-placeholder="@@settings.company.tn59.xxxx.xxxx.xxxx.xxxx.xxxx.010b6a21"
               class="w-full">
           </div>
         </p-card>
 
         <!-- Invoice Settings -->
-        <p-card header="Paramètres de facturation" i18n-header="Paramètres de facturation" styleClass="form-card invoice-card">
+        <p-card header="Paramètres de facturation" i18n-header="@@settings.company.parametres.de.facturation.b89b8dd4" styleClass="form-card invoice-card">
           <div class="form-group numbering-link">
             <label i18n="@@settings.company.numerotation.des.documents.6857c7f1">Numérotation des documents</label>
             <p class="form-hint" i18n="@@settings.company.configurez.le.format.et.le.debut.de.numerotation.2d1005c7"> Configurez le format et le début de numérotation de vos factures et autres documents. </p>
@@ -350,7 +350,7 @@ import {
               pTextarea 
               id="defaultPaymentTerms" 
               formControlName="defaultPaymentTerms"
-              placeholder="Ex: Paiement à 30 jours" i18n-placeholder="Ex: Paiement à 30 jours"
+              placeholder="Ex: Paiement à 30 jours" i18n-placeholder="@@settings.company.ex.paiement.a.30.jours.7b0ae978"
               [rows]="2"
               class="w-full">
             </textarea>
@@ -362,14 +362,14 @@ import {
               pTextarea 
               id="invoiceFooter" 
               formControlName="invoiceFooter"
-              placeholder="Texte qui apparaîtra en bas de chaque facture" i18n-placeholder="Texte qui apparaîtra en bas de chaque facture"
+              placeholder="Texte qui apparaîtra en bas de chaque facture" i18n-placeholder="@@settings.company.texte.qui.apparaitra.en.bas.de.chaque.facture.348f766a"
               [rows]="3"
               class="w-full">
             </textarea>
           </div>
         </p-card>
 
-        <p-card header="Espace client" i18n-header="Espace client" styleClass="form-card">
+        <p-card header="Espace client" i18n-header="@@settings.company.espace.client.997229dc" styleClass="form-card">
           <div class="form-group">
             <label for="clientPortalEnabled" i18n="@@settings.company.activer.l.espace.client.d7a22239">Activer l’espace client</label>
             <p-inputSwitch inputId="clientPortalEnabled" formControlName="clientPortalEnabled"></p-inputSwitch>
@@ -378,14 +378,14 @@ import {
         </p-card>
 
         <!-- Stock Configuration -->
-        <p-card header="Configuration du Stock" i18n-header="Configuration du Stock" styleClass="form-card stock-card">
+        <p-card header="Configuration du Stock" i18n-header="@@settings.company.configuration.du.stock.d42e7f9c" styleClass="form-card stock-card">
           <div class="form-group">
             <label for="warehouseName" i18n="@@settings.company.nom.de.l.entrepot.principal.2f77abf6">Nom de l'entrepôt principal</label>
             <input 
               pInputText 
               id="warehouseName" 
               formControlName="warehouseName"
-              placeholder="Entrepôt Principal" i18n-placeholder="Entrepôt Principal"
+              placeholder="Entrepôt Principal" i18n-placeholder="@@settings.company.entrepot.principal.3a017cfb"
               class="w-full">
             <small class="form-hint" i18n="@@settings.company.ce.nom.sera.utilise.pour.votre.entrepot.par.defa.fcaa6d42">Ce nom sera utilisé pour votre entrepôt par défaut.</small>
             <small class="form-hint warehouse-link">
@@ -399,14 +399,14 @@ import {
       <!-- Actions -->
       <div class="form-actions">
         <p-button 
-          label="Annuler" i18n-label="Annuler" 
+          label="Annuler" i18n-label="@@settings.company.annuler.49ba3292" 
           icon="pi pi-times" 
           [outlined]="true"
           routerLink="/settings">
         </p-button>
         <p-button 
           type="submit" 
-          label="Enregistrer" i18n-label="Enregistrer" 
+          label="Enregistrer" i18n-label="@@settings.company.enregistrer.f7c8bcd8" 
           icon="pi pi-check"
           [loading]="saving()"
           [disabled]="form.invalid || saving()">
@@ -414,7 +414,7 @@ import {
       </div>
     </form>
 
-    <p-card header="Secteur d'activité" i18n-header="Secteur d'activité" styleClass="form-card sector-card" id="secteur">
+    <p-card header="Secteur d'activité" i18n-header="@@settings.company.secteur.d.activite.eb3e69af" styleClass="form-card sector-card" id="secteur">
       @if (sectorLoading()) {
         <div class="loading-container">
           <i class="pi pi-spin pi-spinner" style="font-size: 1.5rem"></i>
@@ -432,7 +432,7 @@ import {
               optionValue="code"
               [(ngModel)]="selectedSegmentCode"
               [ngModelOptions]="{standalone: true}"
-              placeholder="Sélectionnez un segment" i18n-placeholder="Sélectionnez un segment"
+              placeholder="Sélectionnez un segment" i18n-placeholder="@@settings.company.selectionnez.un.segment.fa750c19"
               class="w-full">
             </p-select>
           </div>
@@ -445,7 +445,7 @@ import {
               optionValue="code"
               [(ngModel)]="selectedDomainCode"
               [ngModelOptions]="{standalone: true}"
-              placeholder="Sélectionnez un domaine" i18n-placeholder="Sélectionnez un domaine"
+              placeholder="Sélectionnez un domaine" i18n-placeholder="@@settings.company.selectionnez.un.domaine.3aea32d3"
               class="w-full">
             </p-select>
           </div>
@@ -457,7 +457,7 @@ import {
         }
         <div class="sector-actions">
           <p-button
-            label="Prévisualiser les changements" i18n-label="Prévisualiser les changements"
+            label="Prévisualiser les changements" i18n-label="@@settings.company.previsualiser.les.changements.6df33362"
             icon="pi pi-eye"
             [outlined]="true"
             [disabled]="!isSectorChanged() || sectorPreviewLoading()"
@@ -469,7 +469,7 @@ import {
     </p-card>
 
     <p-dialog
-      header="Aperçu du changement de secteur" i18n-header="Aperçu du changement de secteur"
+      header="Aperçu du changement de secteur" i18n-header="@@settings.company.apercu.du.changement.de.secteur.50ee52dc"
       [(visible)]="previewDialogVisible"
       [modal]="true"
       [style]="{ width: 'min(480px, 95vw)' }"
@@ -506,9 +506,9 @@ import {
         </div>
       }
       <div class="dialog-actions">
-        <p-button label="Annuler" i18n-label="Annuler" [outlined]="true" severity="secondary" (onClick)="previewDialogVisible = false"></p-button>
+        <p-button label="Annuler" i18n-label="@@settings.company.annuler.49ba3292" [outlined]="true" severity="secondary" (onClick)="previewDialogVisible = false"></p-button>
         <p-button
-          label="Confirmer" i18n-label="Confirmer"
+          label="Confirmer" i18n-label="@@settings.company.confirmer.80a664c8"
           icon="pi pi-check"
           [loading]="sectorSaving()"
           (onClick)="confirmSectorChange()">

@@ -35,13 +35,13 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Modèles de documents" i18n-title="Modèles de documents"
+      title="Modèles de documents" i18n-title="@@settings.templates.modeles.de.documents.4875ffe8"
       subtitle="Choisissez le modèle visuel utilisé pour imprimer chaque type de document">
       <div class="header-actions">
-        <p-button label="Retour" i18n-label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
+        <p-button label="Retour" i18n-label="@@settings.templates.retour.e5befb1f" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
         @if (canUpdate()) {
           <p-button
-            label="Enregistrer" i18n-label="Enregistrer"
+            label="Enregistrer" i18n-label="@@settings.templates.enregistrer.f7c8bcd8"
             icon="pi pi-check"
             (onClick)="save()"
             [loading]="saving()"
@@ -96,7 +96,7 @@ import {
             @if (previewLoading()) { <i class="pi pi-spin pi-spinner"></i> }
           </div>
           @if (previewUrl()) {
-            <iframe [src]="previewUrl()" title="Aperçu du modèle" i18n-title="Aperçu du modèle" class="preview-frame"></iframe>
+            <iframe [src]="previewUrl()" title="Aperçu du modèle" i18n-title="@@settings.templates.apercu.du.modele.6826fd72" class="preview-frame"></iframe>
           } @else {
             <div class="preview-empty">
               <i class="pi pi-file-pdf"></i>

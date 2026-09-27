@@ -27,7 +27,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
   ],
   template: `
     <app-page-header 
-      title="Rapports Fiches" i18n-title="Rapports Fiches" 
+      title="Rapports Fiches" i18n-title="@@reports.fiches.rapports.fiches.e0b32117" 
       subtitle="Analysez vos clients et produits - CA par client, stock par produit">
       <app-button 
         variant="secondary"
@@ -44,13 +44,13 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Nombre de clients" i18n-label="Nombre de clients"
+          label="Nombre de clients" i18n-label="@@reports.fiches.nombre.de.clients.6540723d"
           [value]="reportsData()!.totalClients"
           icon="pi-users"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Nombre de produits" i18n-label="Nombre de produits"
+          label="Nombre de produits" i18n-label="@@reports.fiches.nombre.de.produits.aade46f3"
           [value]="reportsData()!.totalProducts"
           icon="pi-cube"
           variant="primary">
@@ -80,7 +80,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
                 <p-table 
                   [value]="reportsData()!.topClientsByRevenue" 
                   styleClass="p-datatable-sm reports-table"
-                  aria-label="Tableau des meilleurs clients" i18n-aria-label="Tableau des meilleurs clients">
+                  aria-label="Tableau des meilleurs clients" i18n-aria-label="@@reports.fiches.tableau.des.meilleurs.clients.d678aea7">
                   <ng-template pTemplate="header">
                     <tr>
                       <th i18n="@@reports.fiches.client.1bdd79b1">Client</th>
@@ -121,7 +121,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
                 [rows]="clientBalanceRows()"
                 [loading]="clientBalancesLoading()"
                 partyLabel="Client"
-                emptyMessage="Aucun solde client" i18n-emptyMessage="Aucun solde client"
+                emptyMessage="Aucun solde client" i18n-emptyMessage="@@reports.fiches.aucun.solde.client.adab3cf6"
                 ariaLabel="Soldes clients">
               </app-party-balances-table>
             </div>
@@ -145,7 +145,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
                 <p-table 
                   [value]="reportsData()!.productsWithStock" 
                   styleClass="p-datatable-sm reports-table"
-                  aria-label="Tableau des produits avec stock" i18n-aria-label="Tableau des produits avec stock">
+                  aria-label="Tableau des produits avec stock" i18n-aria-label="@@reports.fiches.tableau.des.produits.avec.stock.113eac7b">
                   <ng-template pTemplate="header">
                     <tr>
                       <th i18n="@@reports.fiches.produit.ff673dc2">Produit</th>

@@ -103,25 +103,25 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
     } @else {
       <div class="stats-grid">
         <app-stat-card
-          label="Total payé" i18n-label="Total payé"
+          label="Total payé" i18n-label="@@payments.payments.total.paye.57d30be5"
           [value]="totalPaid()"
           icon="pi-dollar"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="En attente" i18n-label="En attente"
+          label="En attente" i18n-label="@@payments.payments.en.attente.5231158f"
           [value]="pendingAmount()"
           icon="pi-clock"
           variant="warning">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées" i18n-label="Factures payées"
+          label="Factures payées" i18n-label="@@payments.payments.factures.payees.587e5689"
           [value]="paidCount()"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="En retard" i18n-label="En retard"
+          label="En retard" i18n-label="@@payments.payments.en.retard.40c1dde3"
           [value]="overdueCount()"
           icon="pi-exclamation-triangle"
           variant="error">
@@ -137,7 +137,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
           <button 
             class="filters-reset" 
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@payments.payments.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -157,7 +157,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
         <p-select 
           [options]="statusOptions()" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@payments.payments.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -166,7 +166,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
           [(ngModel)]="dateRange" 
           selectionMode="range"
           [readonlyInput]="true"
-          placeholder="Période" i18n-placeholder="Période"
+          placeholder="Période" i18n-placeholder="@@payments.payments.periode.de2110b7"
           dateFormat="dd/mm/yy"
           (onSelect)="onFilterChange()"
           [showClear]="true">
@@ -242,7 +242,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
                   icon="pi-list"
                   [iconOnly]="true"
                   [iconAlwaysVisible]="true"
-                  pTooltip="Voir les paiements" i18n-pTooltip="Voir les paiements"
+                  pTooltip="Voir les paiements" i18n-pTooltip="@@payments.payments.voir.les.paiements.ab67c668"
                   ariaLabel="Voir les paiements de la facture"
                   (click)="openPaymentsPanel(payment); $event.stopPropagation()">
                 </app-button>
@@ -252,7 +252,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
                     size="sm"
                     icon="pi-wallet"
                     [iconOnly]="true"
-                    pTooltip="Enregistrer un paiement" i18n-pTooltip="Enregistrer un paiement"
+                    pTooltip="Enregistrer un paiement" i18n-pTooltip="@@payments.payments.enregistrer.un.paiement.72dddba2"
                     ariaLabel="Enregistrer un paiement"
                     (click)="openRecordPaymentDialog(payment); $event.stopPropagation()">
                   </app-button>
@@ -264,7 +264,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
                   [iconOnly]="true"
                   [iconAlwaysVisible]="true"
                   [routerLink]="payment.detailRoute"
-                  pTooltip="Voir la facture" i18n-pTooltip="Voir la facture"
+                  pTooltip="Voir la facture" i18n-pTooltip="@@payments.payments.voir.la.facture.e4bddea0"
                   ariaLabel="Voir la facture"
                   (click)="$event.stopPropagation()">
                 </app-button>
@@ -277,7 +277,7 @@ const SUPPLIER_STATUS_OPTIONS: { label: string; value: string | null }[] = [
             <td [attr.colspan]="8" class="text-center p-4">
               <app-empty-state
                 illustration="empty-payments.svg"
-                title="Aucun paiement trouvé" i18n-title="Aucun paiement trouvé"
+                title="Aucun paiement trouvé" i18n-title="@@payments.payments.aucun.paiement.trouve.99ac3ffa"
                 description="Aucun paiement ne correspond à vos critères de recherche."
                 actionLabel="Voir toutes les factures"
                 [actionRoute]="emptyStateActionRoute()">

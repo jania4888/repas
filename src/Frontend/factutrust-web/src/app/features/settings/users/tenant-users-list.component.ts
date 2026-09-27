@@ -71,11 +71,11 @@ interface ModuleDraft extends UserModuleAccessItem {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Utilisateurs et rôles" i18n-title="Utilisateurs et rôles"
+      title="Utilisateurs et rôles" i18n-title="@@settings.users.utilisateurs.et.roles.57ee1f2a"
       subtitle="Gérez les accès de votre équipe">
-      <p-button label="Retour" i18n-label="Retour" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
-      <p-button label="Ajouter un utilisateur" i18n-label="Ajouter un utilisateur" icon="pi pi-user-plus" (onClick)="openCreate()"></p-button>
-      <p-button label="Ajouter plusieurs" i18n-label="Ajouter plusieurs" icon="pi pi-users" [outlined]="true" routerLink="/settings/users/add"></p-button>
+      <p-button label="Retour" i18n-label="@@settings.users.retour.e5befb1f" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
+      <p-button label="Ajouter un utilisateur" i18n-label="@@settings.users.ajouter.un.utilisateur.41e8fc45" icon="pi pi-user-plus" (onClick)="openCreate()"></p-button>
+      <p-button label="Ajouter plusieurs" i18n-label="@@settings.users.ajouter.plusieurs.437aba7d" icon="pi pi-users" [outlined]="true" routerLink="/settings/users/add"></p-button>
     </app-page-header>
 
     <app-table-totals-bar [metrics]="summaryMetrics()" [loading]="loading()"></app-table-totals-bar>
@@ -124,7 +124,7 @@ interface ModuleDraft extends UserModuleAccessItem {
       styleClass="user-form-dialog"
       [style]="{ width: 'min(700px, 96vw)' }"
       [contentStyle]="{ overflow: 'auto', maxHeight: 'min(62vh, 520px)', padding: 0 }"
-      header="Ajouter un utilisateur" i18n-header="Ajouter un utilisateur"
+      header="Ajouter un utilisateur" i18n-header="@@settings.users.ajouter.un.utilisateur.41e8fc45"
       (onHide)="resetCreateForm()">
       <div class="user-dialog-body">
         <div class="user-form-grid">
@@ -178,7 +178,7 @@ interface ModuleDraft extends UserModuleAccessItem {
           } @else if (createCatalogError()) {
             <div class="catalog-error">
               <p i18n="@@settings.users.impossible.de.charger.le.catalogue.des.modules.p.0ec32b10">Impossible de charger le catalogue des modules pour ce rôle. L’enregistrement est désactivé.</p>
-              <p-button label="Réessayer" i18n-label="Réessayer" [outlined]="true" (onClick)="onCreateRoleChange(createRole)"></p-button>
+              <p-button label="Réessayer" i18n-label="@@settings.users.reessayer.895d416b" [outlined]="true" (onClick)="onCreateRoleChange(createRole)"></p-button>
             </div>
           } @else {
             <div class="module-list">
@@ -224,9 +224,9 @@ interface ModuleDraft extends UserModuleAccessItem {
       </div>
       <ng-template pTemplate="footer">
         <div class="user-dialog-footer-actions">
-          <p-button label="Annuler" i18n-label="Annuler" [outlined]="true" type="button" (onClick)="closeCreate()"></p-button>
+          <p-button label="Annuler" i18n-label="@@settings.users.annuler.49ba3292" [outlined]="true" type="button" (onClick)="closeCreate()"></p-button>
           <p-button
-            label="Créer" i18n-label="Créer"
+            label="Créer" i18n-label="@@settings.users.creer.1a686172"
             icon="pi pi-check"
             type="button"
             (onClick)="saveCreate()"
@@ -243,7 +243,7 @@ interface ModuleDraft extends UserModuleAccessItem {
       styleClass="user-form-dialog"
       [style]="{ width: 'min(700px, 96vw)' }"
       [contentStyle]="{ overflow: 'auto', maxHeight: 'min(62vh, 520px)', padding: 0 }"
-      header="Modifier l'utilisateur" i18n-header="Modifier l'utilisateur"
+      header="Modifier l'utilisateur" i18n-header="@@settings.users.modifier.l.utilisateur.75ea88e1"
       (onHide)="closeEdit()">
       @if (editUser()) {
         <div class="user-dialog-body">
@@ -291,7 +291,7 @@ interface ModuleDraft extends UserModuleAccessItem {
             } @else if (editCatalogError()) {
               <div class="catalog-error">
                 <p i18n="@@settings.users.impossible.de.charger.le.catalogue.des.modules.p.0ec32b10">Impossible de charger le catalogue des modules pour ce rôle. L’enregistrement est désactivé.</p>
-                <p-button label="Réessayer" i18n-label="Réessayer" [outlined]="true" (onClick)="onEditRoleChange(editRole)"></p-button>
+                <p-button label="Réessayer" i18n-label="@@settings.users.reessayer.895d416b" [outlined]="true" (onClick)="onEditRoleChange(editRole)"></p-button>
               </div>
             } @else {
               <div class="module-list">
@@ -341,9 +341,9 @@ interface ModuleDraft extends UserModuleAccessItem {
       <ng-template pTemplate="footer">
         @if (editUser()) {
           <div class="user-dialog-footer-actions">
-            <p-button label="Annuler" i18n-label="Annuler" [outlined]="true" type="button" (onClick)="closeEdit()"></p-button>
+            <p-button label="Annuler" i18n-label="@@settings.users.annuler.49ba3292" [outlined]="true" type="button" (onClick)="closeEdit()"></p-button>
             <p-button
-              label="Enregistrer" i18n-label="Enregistrer"
+              label="Enregistrer" i18n-label="@@settings.users.enregistrer.f7c8bcd8"
               type="button"
               (onClick)="saveEdit()"
               [loading]="saving()"

@@ -72,7 +72,7 @@ export interface ChatInputSubmission {
           (keydown)="onTextareaKeydown($event)"
           (input)="onTextareaInput($event)"
           [disabled]="disabled"
-          placeholder="Posez une question sur vos données..." i18n-placeholder="Posez une question sur vos données..."
+          placeholder="Posez une question sur vos données..." i18n-placeholder="@@ai-assistant.components.posez.une.question.sur.vos.donnees.e5155ffe"
           rows="1"
           [attr.aria-busy]="speech.listening()"
           [attr.aria-describedby]="speech.listening() ? 'ft-ai-dictation-hint' : null"
@@ -82,7 +82,7 @@ export interface ChatInputSubmission {
           class="attach-btn"
           [disabled]="disabled || isStreaming"
           (click)="openFilePicker()"
-          aria-label="Joindre un document texte ou PDF pour extraction" i18n-aria-label="Joindre un document texte ou PDF pour extraction">
+          aria-label="Joindre un document texte ou PDF pour extraction" i18n-aria-label="@@ai-assistant.components.joindre.un.document.texte.ou.pdf.pour.extraction.e066082e">
           <i class="fa-solid fa-paperclip" aria-hidden="true"></i>
         </button>
         @if (speechSupported) {
@@ -103,7 +103,7 @@ export interface ChatInputSubmission {
             type="button"
             class="stop-btn"
             (click)="emitStop()"
-            aria-label="Arrêter la génération" i18n-aria-label="Arrêter la génération"
+            aria-label="Arrêter la génération" i18n-aria-label="@@ai-assistant.components.arreter.la.generation.4aaf99b4"
           >
             <i class="fa-solid fa-stop" aria-hidden="true"></i>
           </button>
@@ -113,7 +113,7 @@ export interface ChatInputSubmission {
             class="send-btn"
             [disabled]="disabled || (!text.trim() && pendingAttachments().length === 0)"
             (click)="send()"
-            aria-label="Envoyer le message" i18n-aria-label="Envoyer le message"
+            aria-label="Envoyer le message" i18n-aria-label="@@ai-assistant.components.envoyer.le.message.64990849"
           >
             <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
           </button>

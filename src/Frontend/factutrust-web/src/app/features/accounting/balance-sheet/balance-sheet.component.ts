@@ -28,7 +28,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Bilan" i18n-title="Bilan" subtitle="État de la situation patrimoniale — Actif et Passif" />
+    <app-page-header title="Bilan" i18n-title="@@accounting.balance-sheet.bilan.a80c4623" subtitle="État de la situation patrimoniale — Actif et Passif" />
 
     <div class="card bs-filters-card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Exercice fiscal">

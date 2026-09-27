@@ -79,7 +79,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
             <button 
               type="button" 
               class="back-button"
-              pTooltip="Retour aux factures" i18n-pTooltip="Retour aux factures"
+              pTooltip="Retour aux factures" i18n-pTooltip="@@invoices.invoice-wizard.retour.aux.factures.eed1cdaa"
               tooltipPosition="right"
               (click)="onCancel()">
               <i class="pi pi-arrow-left"></i>
@@ -127,7 +127,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
       </header>
 
       <!-- Stepper -->
-      <nav class="wizard-stepper" role="tablist" aria-label="Étapes de création de facture" i18n-aria-label="Étapes de création de facture">
+      <nav class="wizard-stepper" role="tablist" aria-label="Étapes de création de facture" i18n-aria-label="@@invoices.invoice-wizard.etapes.de.creation.de.facture.ab0ac46e">
         @for (step of wizardService.steps(); track step.key) {
           <button
             #stepItem
@@ -199,7 +199,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
         <div class="wizard-footer-content">
           <div class="footer-left">
             <p-button
-              label="Annuler" i18n-label="Annuler"
+              label="Annuler" i18n-label="@@invoices.invoice-wizard.annuler.49ba3292"
               [text]="true"
               severity="secondary"
               icon="pi pi-times"
@@ -210,7 +210,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
           <div class="footer-right">
             @if (wizardService.canGoPrev()) {
               <p-button
-                label="Précédent" i18n-label="Précédent"
+                label="Précédent" i18n-label="@@invoices.invoice-wizard.precedent.a527f171"
                 [outlined]="true"
                 icon="pi pi-arrow-left"
                 (click)="onPrevious()">
@@ -219,7 +219,7 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
 
             @if (!wizardService.isLastStep()) {
               <p-button
-                label="Suivant" i18n-label="Suivant"
+                label="Suivant" i18n-label="@@invoices.invoice-wizard.suivant.596d29a7"
                 icon="pi pi-arrow-right"
                 iconPos="right"
                 [disabled]="!wizardService.canGoNext()"

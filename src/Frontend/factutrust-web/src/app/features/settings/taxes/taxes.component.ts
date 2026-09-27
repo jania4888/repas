@@ -54,17 +54,17 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Taxes et TVA" i18n-title="Taxes et TVA"
+      title="Taxes et TVA" i18n-title="@@settings.taxes.taxes.et.tva.08d48b76"
       subtitle="Configurez les taxes applicables et les taux de TVA">
       <div class="header-actions">
         <p-button
-          label="Retour" i18n-label="Retour"
+          label="Retour" i18n-label="@@settings.taxes.retour.e5befb1f"
           icon="pi pi-arrow-left"
           [outlined]="true"
           routerLink="/settings">
         </p-button>
         <p-button
-          label="Ajouter" i18n-label="Ajouter"
+          label="Ajouter" i18n-label="@@settings.taxes.ajouter.87c57ed1"
           icon="pi pi-plus"
           (onClick)="openAddDialog()"
           [disabled]="loading()">
@@ -381,10 +381,10 @@ import {
         </div>
 
         <div class="dialog-actions">
-          <p-button type="button" label="Annuler" i18n-label="Annuler" [text]="true" (onClick)="dialogVisible = false"></p-button>
+          <p-button type="button" label="Annuler" i18n-label="@@settings.taxes.annuler.49ba3292" [text]="true" (onClick)="dialogVisible = false"></p-button>
           <p-button
             type="submit"
-            label="Enregistrer" i18n-label="Enregistrer"
+            label="Enregistrer" i18n-label="@@settings.taxes.enregistrer.f7c8bcd8"
             icon="pi pi-check"
             iconPos="right"
             [loading]="saving()"

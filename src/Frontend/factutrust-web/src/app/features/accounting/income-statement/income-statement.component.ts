@@ -33,7 +33,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Compte de résultat" i18n-title="Compte de résultat" subtitle="Produits et charges de l'exercice" />
+    <app-page-header title="Compte de résultat" i18n-title="@@accounting.income-statement.compte.de.resultat.a292527b" subtitle="Produits et charges de l'exercice" />
 
     <div class="card is-filters-card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Exercice fiscal">

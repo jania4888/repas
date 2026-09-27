@@ -33,7 +33,7 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
   imports: [DialogModule, ButtonComponent],
   template: `
     <p-dialog
-      header="Importer une facture" i18n-header="Importer une facture"
+      header="Importer une facture" i18n-header="@@invoices.components.importer.une.facture.66ed8807"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: '520px', maxWidth: '95vw' }"

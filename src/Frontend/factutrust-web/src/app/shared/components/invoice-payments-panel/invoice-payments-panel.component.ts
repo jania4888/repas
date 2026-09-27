@@ -63,7 +63,7 @@ interface PaymentRow {
             type="button"
             class="panel-close"
             (click)="onClose()"
-            aria-label="Fermer le panneau" i18n-aria-label="Fermer le panneau">
+            aria-label="Fermer le panneau" i18n-aria-label="@@shared.components.invoice-payments-panel.invoice-payments-panel.fermer.le.panneau.e1210a2f">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -127,7 +127,7 @@ interface PaymentRow {
                 variant="primary"
                 size="md"
                 icon="pi-plus"
-                label="Ajouter un paiement" i18n-label="Ajouter un paiement"
+                label="Ajouter un paiement" i18n-label="@@shared.components.invoice-payments-panel.invoice-payments-panel.ajouter.un.paiement.e23c30ff"
                 (click)="openRecordPaymentDialog()"
                 [disabled]="effectiveRemainingAmount() <= 0"
                 ariaLabel="Ajouter un paiement pour cette facture">

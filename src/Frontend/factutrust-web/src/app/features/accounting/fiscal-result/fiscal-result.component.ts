@@ -67,7 +67,7 @@ interface EditableModel {
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Détermination du résultat fiscal" i18n-title="Détermination du résultat fiscal"
+    <app-page-header title="Détermination du résultat fiscal" i18n-title="@@accounting.fiscal-result.determination.du.resultat.fiscal.72c4a438"
       subtitle="Passage du résultat comptable au résultat fiscal, imputation des reports et calcul de l'impôt (IS / IRPP)" />
 
     @if (isDirty()) {
@@ -102,9 +102,9 @@ interface EditableModel {
               [disabled]="loading() || saving() || readonly()"
               ariaLabel="Enregistrer et recalculer" i18n="@@accounting.fiscal-result.enregistrer.et.recalculer.0b6f2782">Enregistrer et recalculer</app-button>
           }
-          <app-accounting-export-menu label="Exporter la détermination" i18n-label="Exporter la détermination"
+          <app-accounting-export-menu label="Exporter la détermination" i18n-label="@@accounting.fiscal-result.exporter.la.determination.03b0da45"
             [disabled]="loading() || !data()" (exportFormat)="onExportDetermination($event)" />
-          <app-accounting-export-menu label="Exporter la liasse complète" i18n-label="Exporter la liasse complète"
+          <app-accounting-export-menu label="Exporter la liasse complète" i18n-label="@@accounting.fiscal-result.exporter.la.liasse.complete.1549c0dd"
             [disabled]="loading() || !data()" (exportFormat)="onExportLiasse($event)" />
           @if (canFinalize()) {
             <app-button variant="secondary" icon="pi pi-lock" type="button" (click)="finalize()"
@@ -192,7 +192,7 @@ interface EditableModel {
             }
             <div class="fr-input-row">
               <label i18n="@@accounting.fiscal-result.regime.de.minimum.d.impot.803fc406">Régime de minimum d'impôt</label>
-              <select [(ngModel)]="model.minimumTaxRegime" [disabled]="readonly()" aria-label="Régime de minimum d'impôt" i18n-aria-label="Régime de minimum d'impôt">
+              <select [(ngModel)]="model.minimumTaxRegime" [disabled]="readonly()" aria-label="Régime de minimum d'impôt" i18n-aria-label="@@accounting.fiscal-result.regime.de.minimum.d.impot.803fc406">
                 <option [ngValue]="0" i18n="@@accounting.fiscal-result.droit.commun.dda4790e">Droit commun</option>
                 <option [ngValue]="1" i18n="@@accounting.fiscal-result.reduit.1fb773e1">Réduit</option>
                 <option [ngValue]="2" i18n="@@accounting.fiscal-result.exonere.5d577ae9">Exonéré</option>
@@ -217,7 +217,7 @@ interface EditableModel {
             <div class="fr-card-head">
               <h3 class="fr-card-title"><ng-container i18n="@@accounting.fiscal-result.reintegrations.a09780f3">Réintégrations </ng-container> <span class="fr-sum">+{{ reintegrationsTotal() | number : '1.3-3' }}</span></h3>
               <div class="fr-add">
-                <select #reCat class="fr-cat-select" [disabled]="readonly()" aria-label="Ajouter une réintégration du catalogue" i18n-aria-label="Ajouter une réintégration du catalogue">
+                <select #reCat class="fr-cat-select" [disabled]="readonly()" aria-label="Ajouter une réintégration du catalogue" i18n-aria-label="@@accounting.fiscal-result.ajouter.une.reintegration.du.catalogue.6d58e5fc">
                   <option value="" i18n="@@accounting.fiscal-result.ajouter.du.catalogue.e2d6bfbf">Ajouter du catalogue…</option>
                   @for (c of catalogReintegrations(); track c.code) { <option [value]="c.code">{{ c.label }}</option> }
                 </select>
@@ -234,7 +234,7 @@ interface EditableModel {
             <div class="fr-card-head">
               <h3 class="fr-card-title"><ng-container i18n="@@accounting.fiscal-result.deductions.9690592b">Déductions </ng-container> <span class="fr-sum fr-sum--neg">−{{ deductionsTotal() | number : '1.3-3' }}</span></h3>
               <div class="fr-add">
-                <select #deCat class="fr-cat-select" [disabled]="readonly()" aria-label="Ajouter une déduction du catalogue" i18n-aria-label="Ajouter une déduction du catalogue">
+                <select #deCat class="fr-cat-select" [disabled]="readonly()" aria-label="Ajouter une déduction du catalogue" i18n-aria-label="@@accounting.fiscal-result.ajouter.une.deduction.du.catalogue.72f0d617">
                   <option value="" i18n="@@accounting.fiscal-result.ajouter.du.catalogue.e2d6bfbf">Ajouter du catalogue…</option>
                   @for (c of catalogDeductions(); track c.code) { <option [value]="c.code">{{ c.label }}</option> }
                 </select>
@@ -268,23 +268,23 @@ interface EditableModel {
                   @for (cf of model.carryForwards; track $index) {
                     <tr>
                       <td>
-                        <select [(ngModel)]="cf.kind" [disabled]="readonly()" aria-label="Type de report" i18n-aria-label="Type de report">
+                        <select [(ngModel)]="cf.kind" [disabled]="readonly()" aria-label="Type de report" i18n-aria-label="@@accounting.fiscal-result.type.de.report.fe6c2064">
                           <option [ngValue]="0" i18n="@@accounting.fiscal-result.deficit.3a860854">Déficit</option><option [ngValue]="1" i18n="@@accounting.fiscal-result.amort.differe.6bcbc045">Amort. différé</option>
                         </select>
                       </td>
                       <td>
                         <input type="number" class="fr-yr" [(ngModel)]="cf.originYear" [disabled]="readonly()"
-                          [max]="fiscalYear - 1" aria-label="Année d'origine" i18n-aria-label="Année d'origine" />
+                          [max]="fiscalYear - 1" aria-label="Année d'origine" i18n-aria-label="@@accounting.fiscal-result.annee.d.origine.1d5b5d49" />
                         @if (!isOriginYearValid(cf)) {
                           <span class="fr-yr-error" role="alert">Année d'origine invalide (doit être &lt; {{ fiscalYear }})</span>
                         }
                       </td>
-                      <td class="fr-num"><input type="number" step="0.001" [(ngModel)]="cf.initialAmount" [disabled]="readonly()" aria-label="Montant initial" i18n-aria-label="Montant initial" /></td>
-                      <td class="fr-num"><input type="number" step="0.001" [(ngModel)]="cf.imputedThisYear" [disabled]="readonly()" aria-label="Imputé cette année" i18n-aria-label="Imputé cette année" /></td>
+                      <td class="fr-num"><input type="number" step="0.001" [(ngModel)]="cf.initialAmount" [disabled]="readonly()" aria-label="Montant initial" i18n-aria-label="@@accounting.fiscal-result.montant.initial.1a127883" /></td>
+                      <td class="fr-num"><input type="number" step="0.001" [(ngModel)]="cf.imputedThisYear" [disabled]="readonly()" aria-label="Imputé cette année" i18n-aria-label="@@accounting.fiscal-result.impute.cette.annee.8ab9b926" /></td>
                       <td>
                         <input type="number" class="fr-yr" [value]="cf.expiryYear" disabled
-                          aria-label="Année d'expiration (calculée automatiquement)" i18n-aria-label="Année d'expiration (calculée automatiquement)"
-                          title="calculée automatiquement" i18n-title="calculée automatiquement" placeholder="calculée automatiquement" i18n-placeholder="calculée automatiquement" />
+                          aria-label="Année d'expiration (calculée automatiquement)" i18n-aria-label="@@accounting.fiscal-result.annee.d.expiration.calculee.automatiquement.22b048ad"
+                          title="calculée automatiquement" i18n-title="@@accounting.fiscal-result.calculee.automatiquement.8bc241b3" placeholder="calculée automatiquement" i18n-placeholder="@@accounting.fiscal-result.calculee.automatiquement.8bc241b3" />
                       </td>
                       <td><app-button variant="ghost" size="sm" icon="pi pi-trash" type="button" (click)="removeCarryForward($index)" [disabled]="readonly()" ariaLabel="Supprimer ce report" /></td>
                     </tr>
@@ -341,13 +341,13 @@ interface EditableModel {
             @for (line of linesFor(kind); track $index) {
               <tr>
                 <td>
-                  <input type="text" [(ngModel)]="line.label" [disabled]="readonly()" aria-label="Libellé de la ligne" i18n-aria-label="Libellé de la ligne" />
+                  <input type="text" [(ngModel)]="line.label" [disabled]="readonly()" aria-label="Libellé de la ligne" i18n-aria-label="@@accounting.fiscal-result.libelle.de.la.ligne.2ba2a332" />
                   @if (!isLabelValid(line)) {
                     <span class="fr-label-error" role="alert" i18n="@@accounting.fiscal-result.libelle.requis.ad23b5c7">Libellé requis</span>
                   }
-                  @if (line.isAutoSuggested) { <span class="fr-auto" title="Suggestion automatique" i18n-title="Suggestion automatique" i18n="@@accounting.fiscal-result.auto.0d612c12">auto</span> }
+                  @if (line.isAutoSuggested) { <span class="fr-auto" title="Suggestion automatique" i18n-title="@@accounting.fiscal-result.suggestion.automatique.7351a28b" i18n="@@accounting.fiscal-result.auto.0d612c12">auto</span> }
                 </td>
-                <td class="fr-num"><input type="number" step="0.001" [(ngModel)]="line.amount" [disabled]="readonly()" aria-label="Montant" i18n-aria-label="Montant" /></td>
+                <td class="fr-num"><input type="number" step="0.001" [(ngModel)]="line.amount" [disabled]="readonly()" aria-label="Montant" i18n-aria-label="@@accounting.fiscal-result.montant.4adcd9fc" /></td>
                 <td><app-button variant="ghost" size="sm" icon="pi pi-trash" type="button" (click)="removeLine(line)" [disabled]="readonly()" ariaLabel="Supprimer la ligne" /></td>
               </tr>
             }

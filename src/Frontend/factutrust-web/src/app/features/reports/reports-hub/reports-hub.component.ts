@@ -28,7 +28,7 @@ interface ReportCard {
   imports: [CommonModule, RouterModule, FormsModule, PageHeaderComponent],
   template: `
     <app-page-header
-      title="Rapports" i18n-title="Rapports"
+      title="Rapports" i18n-title="@@reports.reports-hub.rapports.db7d9fbb"
       subtitle="Accédez à tous les rapports et états de la plateforme">
     </app-page-header>
 
@@ -40,8 +40,8 @@ interface ReportCard {
           [(ngModel)]="searchQuery"
           (ngModelChange)="onSearchChange()"
           class="search-input"
-          placeholder="Rechercher un rapport..." i18n-placeholder="Rechercher un rapport..."
-          aria-label="Rechercher un rapport" i18n-aria-label="Rechercher un rapport">
+          placeholder="Rechercher un rapport..." i18n-placeholder="@@reports.reports-hub.rechercher.un.rapport.9cfd1f1d"
+          aria-label="Rechercher un rapport" i18n-aria-label="@@reports.reports-hub.rechercher.un.rapport.9bea5179">
       </div>
     </div>
 

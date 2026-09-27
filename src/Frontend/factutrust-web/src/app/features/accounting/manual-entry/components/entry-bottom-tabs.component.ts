@@ -52,7 +52,7 @@ const MAX_BYTES = 10 * 1024 * 1024;
         <label class="field-label" for="work-notes" i18n="@@accounting.manual-entry.note.de.travail.non.comptabilisee.b9b1000f">Note de travail (non comptabilisée)</label>
         <textarea id="work-notes" class="notes-area" rows="4"
                   [ngModel]="notes" (ngModelChange)="notesChange.emit($event)"
-                  placeholder="Notes internes pour cette saisie…" i18n-placeholder="Notes internes pour cette saisie…"></textarea>
+                  placeholder="Notes internes pour cette saisie…" i18n-placeholder="@@accounting.manual-entry.notes.internes.pour.cette.saisie.57ce68d7"></textarea>
       </p-tabpanel>
 
       <p-tabpanel [value]="2">

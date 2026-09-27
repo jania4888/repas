@@ -30,7 +30,7 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
   ],
   template: `
     <app-page-header
-      title="Comptes bancaires" i18n-title="Comptes bancaires"
+      title="Comptes bancaires" i18n-title="@@payments.bank-accounts.comptes.bancaires.3af6caeb"
       subtitle="Gérez vos comptes tunisiens (RIB / IBAN) pour la trésorerie.">
     </app-page-header>
 
@@ -42,7 +42,7 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
 
     <div class="content-card">
       @if (loading()) {
-        <div class="skeleton-grid" aria-busy="true" aria-label="Chargement" i18n-aria-label="Chargement">
+        <div class="skeleton-grid" aria-busy="true" aria-label="Chargement" i18n-aria-label="@@payments.bank-accounts.chargement.c7ac0481">
           @for (i of [1, 2, 3]; track i) {
             <p-skeleton height="180px" styleClass="skeleton-card"></p-skeleton>
           }
@@ -51,13 +51,13 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
         @if (auth.isFirmDelegatedReadonly()) {
           <app-empty-state
             icon="pi pi-building"
-            title="Vous n'avez pas encore de compte bancaire" i18n-title="Vous n'avez pas encore de compte bancaire"
+            title="Vous n'avez pas encore de compte bancaire" i18n-title="@@payments.bank-accounts.vous.n.avez.pas.encore.de.compte.bancaire.e6e57039"
             description="Aucun compte bancaire n'est configuré pour ce dossier.">
           </app-empty-state>
         } @else if (canCreate()) {
           <app-empty-state
             icon="pi pi-building"
-            title="Vous n'avez pas encore de compte bancaire" i18n-title="Vous n'avez pas encore de compte bancaire"
+            title="Vous n'avez pas encore de compte bancaire" i18n-title="@@payments.bank-accounts.vous.n.avez.pas.encore.de.compte.bancaire.e6e57039"
             description="Ajoutez un compte pour suivre vos virements et votre trésorerie."
             actionLabel="Ajouter un compte"
             (actionClick)="openCreate()">
@@ -65,7 +65,7 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
         } @else {
           <app-empty-state
             icon="pi pi-building"
-            title="Vous n'avez pas encore de compte bancaire" i18n-title="Vous n'avez pas encore de compte bancaire"
+            title="Vous n'avez pas encore de compte bancaire" i18n-title="@@payments.bank-accounts.vous.n.avez.pas.encore.de.compte.bancaire.e6e57039"
             description="Autorisation « Trésorerie — saisie » requise pour ajouter un compte.">
           </app-empty-state>
         }
@@ -113,7 +113,7 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
                       size="sm"
                       icon="pi pi-star"
                       (click)="setDefault(a)"
-                      pTooltip="Définir comme compte par défaut" i18n-pTooltip="Définir comme compte par défaut"
+                      pTooltip="Définir comme compte par défaut" i18n-pTooltip="@@payments.bank-accounts.definir.comme.compte.par.defaut.6a8425f5"
                       ariaLabel="Définir comme compte par défaut" i18n="@@payments.bank-accounts.defaut.47456751"> Défaut </app-button>
                   }
                   <app-button

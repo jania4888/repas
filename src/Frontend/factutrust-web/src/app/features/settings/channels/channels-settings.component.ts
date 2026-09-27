@@ -70,7 +70,7 @@ interface ChannelBridgeQrDto {
     <div class="channels-settings">
       <app-breadcrumb [items]="breadcrumbItems()" />
       <app-page-header
-        title="WhatsApp" i18n-title="WhatsApp"
+        title="WhatsApp" i18n-title="@@settings.channels.whatsapp.b336fc55"
         subtitle="Liez votre WhatsApp à l'assistant IA et recevez vos rappels fiscaux" />
 
       <p-confirmDialog />
@@ -112,7 +112,7 @@ interface ChannelBridgeQrDto {
               données n'est possible depuis WhatsApp.
             </p>
             <p-button
-              label="Délier ce numéro" i18n-label="Délier ce numéro"
+              label="Délier ce numéro" i18n-label="@@settings.channels.delier.ce.numero.3ba4ee59"
               icon="pi pi-times"
               severity="danger"
               [outlined]="true"
@@ -185,7 +185,7 @@ interface ChannelBridgeQrDto {
                 <div class="qr-panel">
                   <p i18n="@@settings.channels.scannez.ce.qr.code.avec.whatsapp.reglages.appare.f3091c68">Scannez ce QR code avec WhatsApp (Réglages → Appareils connectés → Connecter un appareil) :</p>
                   @if (qrDataUri(); as qr) {
-                    <img class="qr-image" [src]="qr" alt="QR code de connexion WhatsApp" i18n-alt="QR code de connexion WhatsApp" />
+                    <img class="qr-image" [src]="qr" alt="QR code de connexion WhatsApp" i18n-alt="@@settings.channels.qr.code.de.connexion.whatsapp.6bd0a005" />
                   } @else {
                     <p class="muted" i18n="@@settings.channels.generation.du.qr.code.ed811c14">Génération du QR code…</p>
                   }
@@ -206,13 +206,13 @@ interface ChannelBridgeQrDto {
 
             <div class="admin-actions">
               <p-button
-                label="Redémarrer" i18n-label="Redémarrer"
+                label="Redémarrer" i18n-label="@@settings.channels.redemarrer.cc714f46"
                 icon="pi pi-refresh"
                 [outlined]="true"
                 [loading]="bridgeWorking()"
                 (onClick)="restartBridge()" />
               <p-button
-                label="Déconnecter la session" i18n-label="Déconnecter la session"
+                label="Déconnecter la session" i18n-label="@@settings.channels.deconnecter.la.session.109a6de6"
                 icon="pi pi-sign-out"
                 severity="danger"
                 [outlined]="true"

@@ -38,7 +38,7 @@ import {
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
-      title="Bons de retour" i18n-title="Bons de retour"
+      title="Bons de retour" i18n-title="@@sales-return-notes.pages.bons.de.retour.d9f7ad6c"
       subtitle="Retournez des articles déjà livrés et non encore facturés — distinct d'un avoir fiscal">
       @if (canCreate()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@sales-return-notes.pages.nouveau.bon.de.retour.362bee47"> Nouveau bon de retour </app-button>
@@ -46,7 +46,7 @@ import {
     </app-page-header>
 
     <div class="filters">
-      <input class="form-control" type="search" placeholder="Rechercher (BRT, client, BL, motif)" i18n-placeholder="Rechercher (BRT, client, BL, motif)"
+      <input class="form-control" type="search" placeholder="Rechercher (BRT, client, BL, motif)" i18n-placeholder="@@sales-return-notes.pages.rechercher.brt.client.bl.motif.e72bab04"
              [ngModel]="search()" (ngModelChange)="search.set($event); reload()" />
       <select class="form-control" [ngModel]="status()" (ngModelChange)="status.set($event); reload()">
         <option [ngValue]="null" i18n="@@sales-return-notes.pages.tous.les.statuts.2d5088af">Tous les statuts</option>
@@ -63,7 +63,7 @@ import {
       <p class="muted" i18n="@@sales-return-notes.pages.chargement.01cba1df">Chargement…</p>
     } @else if (items().length === 0) {
       <app-empty-state
-        title="Aucun bon de retour" i18n-title="Aucun bon de retour"
+        title="Aucun bon de retour" i18n-title="@@sales-return-notes.pages.aucun.bon.de.retour.c3f6f252"
         description="Créez un bon de retour depuis un bon de livraison livré et non facturé.">
         @if (canCreate()) {
           <app-button variant="primary" routerLink="new" i18n="@@sales-return-notes.pages.nouveau.bon.de.retour.362bee47">Nouveau bon de retour</app-button>

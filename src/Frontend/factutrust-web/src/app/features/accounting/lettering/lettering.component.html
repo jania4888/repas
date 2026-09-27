@@ -1,5 +1,5 @@
 <app-page-header
-  title="Lettrage" i18n-title="Lettrage"
+  title="Lettrage" i18n-title="@@accounting.lettering.lettrage.cfcdd333"
   subtitle="Rapprochez les écritures débitrices et créditrices d'un même compte" />
 
 <app-accounting-correction-banner />
@@ -12,7 +12,7 @@
   <!-- Filters -->
   <p-card
     styleClass="p-card--static lettering-filters-card"
-    header="Critères de sélection" i18n-header="Critères de sélection"
+    header="Critères de sélection" i18n-header="@@accounting.lettering.criteres.de.selection.c512aace"
     subheader="Choisissez un compte et une période, puis chargez les écritures à lettrer.">
     <p-toolbar styleClass="lettering-toolbar accounting-prime-toolbar">
       <ng-template pTemplate="start">
@@ -25,7 +25,7 @@
               (completeMethod)="filterAccounts($event)"
               [minLength]="1"
               [forceSelection]="false"
-              placeholder="Ex: 4111 – Clients" i18n-placeholder="Ex: 4111 – Clients"
+              placeholder="Ex: 4111 – Clients" i18n-placeholder="@@accounting.lettering.ex.4111.clients.32d600da"
               inputId="lettering-account"
               [inputStyle]="{'width':'100%'}"
               [style]="{'width':'100%'}"
@@ -78,7 +78,7 @@
 
   <!-- Selection summary -->
   @if (selectedLines().length > 0) {
-    <div class="lettering-summary" role="region" aria-label="Résumé de la sélection" i18n-aria-label="Résumé de la sélection">
+    <div class="lettering-summary" role="region" aria-label="Résumé de la sélection" i18n-aria-label="@@accounting.lettering.resume.de.la.selection.d784aaed">
       <div class="lettering-summary-stats">
         <div class="lettering-summary-item">
           <span class="lettering-summary-label" i18n="@@accounting.lettering.lignes.selectionnees.e818a41b">Lignes sélectionnées</span>
@@ -121,13 +121,13 @@
             {{ selectionSummary().gap | number : '1.3-3' }} d'écart de change.
           </p>
           <p-button
-            label="Équilibrer" i18n-label="Équilibrer"
+            label="Équilibrer" i18n-label="@@accounting.lettering.equilibrer.320b5f90"
             icon="pi pi-sliders-h"
             severity="warn"
             [outlined]="true"
             [disabled]="settling()"
             (onClick)="openSettle()"
-            aria-label="Apurer l'écart de change puis lettrer" i18n-aria-label="Apurer l'écart de change puis lettrer" />
+            aria-label="Apurer l'écart de change puis lettrer" i18n-aria-label="@@accounting.lettering.apurer.l.ecart.de.change.puis.lettrer.0c7cad24" />
         }
         <p-button
           [label]="!selectionSummary().balanced && allowPartial ? 'Lettrer partiellement' : 'Lettrer la sélection'"
@@ -147,7 +147,7 @@
   <!-- Table -->
   <p-card
     styleClass="p-card--static lettering-table-card"
-    header="Écritures" i18n-header="Écritures"
+    header="Écritures" i18n-header="@@accounting.lettering.ecritures.7bfac2f6"
     subheader="Sélectionnez les lignes à rapprocher. Le lettrage n'est possible que si le total débit = total crédit.">
     @if (loading() && lines().length === 0) {
       <div class="lettering-loading" role="status" aria-live="polite">
@@ -157,7 +157,7 @@
     } @else if (showEmpty()) {
       <app-empty-state
         icon="pi-link"
-        title="Aucune écriture à afficher" i18n-title="Aucune écriture à afficher"
+        title="Aucune écriture à afficher" i18n-title="@@accounting.lettering.aucune.ecriture.a.afficher.2d513276"
         description="Saisissez un numéro de compte et cliquez sur Charger pour afficher les écritures à lettrer."
         [showAction]="false"
       />
@@ -172,7 +172,7 @@
           [rows]="25"
           [rowsPerPageOptions]="[15, 25, 50, 100]"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} lignes" i18n-currentPageReportTemplate="@@accounting.lettering.affichage.de.first.a.last.sur.totalrecords.ligne.3b382824"
           [rowHover]="true"
           [scrollable]="true"
           scrollHeight="min(56vh, 32rem)"
@@ -245,7 +245,7 @@
                       [disabled]="unlettering() === line.letteringCode"
                       (click)="unletter(line.letteringCode)"
                       [attr.aria-label]="'Délettrer le groupe ' + line.letteringCode"
-                      title="Délettrer ce groupe" i18n-title="Délettrer ce groupe">
+                      title="Délettrer ce groupe" i18n-title="@@accounting.lettering.delettrer.ce.groupe.210d5232">
                       <i class="pi pi-times" aria-hidden="true"></i>
                     </button>
                   </span>
@@ -276,14 +276,14 @@
 
     <label class="lettering-modal__label" for="settle-account" i18n="@@accounting.lettering.compte.d.imputation.de.l.ecart.5774ab5d">Compte d'imputation de l'écart</label>
     <input id="settle-account" class="lettering-modal__input" type="text"
-           [(ngModel)]="settleAccount" placeholder="Ex. 655 ou 756" i18n-placeholder="Ex. 655 ou 756" autocomplete="off" />
+           [(ngModel)]="settleAccount" placeholder="Ex. 655 ou 756" i18n-placeholder="@@accounting.lettering.ex.655.ou.756.e22b14a2" autocomplete="off" />
     <p class="lettering-modal__hint" i18n="@@accounting.lettering.charges.ou.produits.classe.6.ou.7.ou.ecarts.de.c.0ab34cdc"> Charges ou produits (classe 6 ou 7), ou écarts de conversion (185 / 275).
       Dans le plan NCT 01 : 655 pertes de change, 756 gains de change. </p>
 
     <div class="lettering-modal__actions">
-      <p-button label="Annuler" i18n-label="Annuler" severity="secondary" [outlined]="true"
+      <p-button label="Annuler" i18n-label="@@accounting.lettering.annuler.49ba3292" severity="secondary" [outlined]="true"
                 [disabled]="settling()" (onClick)="closeSettle()" />
-      <p-button label="Équilibrer et lettrer" i18n-label="Équilibrer et lettrer" icon="pi pi-check"
+      <p-button label="Équilibrer et lettrer" i18n-label="@@accounting.lettering.equilibrer.et.lettrer.9d7ad95d" icon="pi pi-check"
                 [disabled]="!settleAccount.trim() || settling()"
                 [loading]="settling()"
                 (onClick)="settleExchangeDifference()" />

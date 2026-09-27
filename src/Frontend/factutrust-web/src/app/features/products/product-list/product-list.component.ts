@@ -65,7 +65,7 @@ interface CategoryOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Produits & Services" i18n-title="Produits & Services" 
+      title="Produits & Services" i18n-title="@@products.product-list.produits.services.01d33b70" 
       subtitle="Gérez votre catalogue de produits et services">
       @if (canCreateProduct()) {
         <app-button 
@@ -84,7 +84,7 @@ interface CategoryOption {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@products.product-list.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -96,7 +96,7 @@ interface CategoryOption {
           <input 
             pInputText 
             type="text" 
-            placeholder="Rechercher par nom ou code..." i18n-placeholder="Rechercher par nom ou code..." 
+            placeholder="Rechercher par nom ou code..." i18n-placeholder="@@products.product-list.rechercher.par.nom.ou.code.23e048c2" 
             [(ngModel)]="searchTerm"
             (input)="onSearch()"
             class="w-full">
@@ -104,7 +104,7 @@ interface CategoryOption {
         @if (barcodeScanEnabled) {
           <span class="flex-1">
             <ft-barcode-scan-field
-              placeholder="Scanner un code-barres" i18n-placeholder="Scanner un code-barres"
+              placeholder="Scanner un code-barres" i18n-placeholder="@@products.product-list.scanner.un.code.barres.6f3f91b0"
               [autoFocus]="false"
               (scanned)="onBarcodeScanned($event)"></ft-barcode-scan-field>
           </span>
@@ -113,7 +113,7 @@ interface CategoryOption {
         <p-select 
           [options]="categoryOptions" 
           [(ngModel)]="selectedCategory"
-          placeholder="Toutes les types" i18n-placeholder="Toutes les types"
+          placeholder="Toutes les types" i18n-placeholder="@@products.product-list.toutes.les.types.946cc73a"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -121,7 +121,7 @@ interface CategoryOption {
         <p-select 
           [options]="statusOptions" 
           [(ngModel)]="selectedStatus"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@products.product-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -129,7 +129,7 @@ interface CategoryOption {
         <p-select
           [options]="variantFilterOptions"
           [(ngModel)]="selectedVariantFilter"
-          placeholder="Tous les produits" i18n-placeholder="Tous les produits"
+          placeholder="Tous les produits" i18n-placeholder="@@products.product-list.tous.les.produits.02d62f0a"
           [showClear]="true"
           (onChange)="onSearch()">
         </p-select>
@@ -227,7 +227,7 @@ interface CategoryOption {
                     [icon]="stockToggleLoading().has(product.id) ? 'pi-spin pi-spinner' : 'pi-box'"
                     [iconOnly]="true"
                     [disabled]="stockToggleLoading().has(product.id)"
-                    pTooltip="Activer la gestion de stock" i18n-pTooltip="Activer la gestion de stock"
+                    pTooltip="Activer la gestion de stock" i18n-pTooltip="@@products.product-list.activer.la.gestion.de.stock.38bf89fb"
                     tooltipPosition="top"
                     (click)="enableStockManagement(product)"
                     ariaLabel="Activer la gestion de stock">
@@ -240,7 +240,7 @@ interface CategoryOption {
                     icon="pi-eye"
                     [iconOnly]="true"
                     [routerLink]="[product.id, 'view']"
-                    pTooltip="Voir les détails du produit" i18n-pTooltip="Voir les détails du produit"
+                    pTooltip="Voir les détails du produit" i18n-pTooltip="@@products.product-list.voir.les.details.du.produit.155749a5"
                     tooltipPosition="top"
                     ariaLabel="Voir les détails du produit">
                   </app-button>
@@ -252,7 +252,7 @@ interface CategoryOption {
                     icon="pi-pencil"
                     [iconOnly]="true"
                     [routerLink]="[product.id, 'edit']"
-                    pTooltip="Modifier le produit" i18n-pTooltip="Modifier le produit"
+                    pTooltip="Modifier le produit" i18n-pTooltip="@@products.product-list.modifier.le.produit.aeaa8f8a"
                     tooltipPosition="top"
                     ariaLabel="Modifier le produit">
                   </app-button>
@@ -264,7 +264,7 @@ interface CategoryOption {
                     icon="pi-print"
                     [iconOnly]="true"
                     (clicked)="openLabelDialog(product)"
-                    pTooltip="Imprimer les étiquettes" i18n-pTooltip="Imprimer les étiquettes"
+                    pTooltip="Imprimer les étiquettes" i18n-pTooltip="@@products.product-list.imprimer.les.etiquettes.ff40cf1e"
                     tooltipPosition="top"
                     ariaLabel="Imprimer les étiquettes">
                   </app-button>
@@ -289,7 +289,7 @@ interface CategoryOption {
             <td colspan="10" class="text-center p-6">
               <app-empty-state
                 illustration="empty-products.svg"
-                title="Aucun produit" i18n-title="Aucun produit"
+                title="Aucun produit" i18n-title="@@products.product-list.aucun.produit.2cc33b12"
                 description="Ajoutez votre premier produit ou service pour commencer à créer des factures."
                 [showAction]="canCreateProduct()"
                 actionLabel="Ajouter un produit"

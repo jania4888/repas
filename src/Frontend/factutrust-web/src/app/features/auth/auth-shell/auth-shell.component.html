@@ -2,7 +2,7 @@
   <div class="auth-page__photo" [style.background-image]="photoLayer" aria-hidden="true"></div>
   <div class="auth-page__overlay" aria-hidden="true"></div>
 
-  <header class="auth-page-header" aria-label="En-tête InstaFact" i18n-aria-label="En-tête InstaFact">
+  <header class="auth-page-header" aria-label="En-tête InstaFact" i18n-aria-label="@@auth.auth-shell.en.tete.instafact.a9f8afa4">
     <div class="auth-page-header__brand">
       <app-logo size="medium" variant="lockup" routerLink="/"></app-logo>
       <span class="auth-page-header__tagline">{{ brand.taglineShort }}</span>
@@ -11,7 +11,7 @@
   </header>
 
   <div class="auth-page-body" [class.auth-page-body--wide]="config.wideFormCard">
-    <section class="auth-hero-panel" aria-label="Présentation InstaFact" i18n-aria-label="Présentation InstaFact">
+    <section class="auth-hero-panel" aria-label="Présentation InstaFact" i18n-aria-label="@@auth.auth-shell.presentation.instafact.aa9a006f">
       <div class="auth-hero-panel__content">
         <span [class]="badgeClass()">
           <i class="pi pi-shield" aria-hidden="true"></i>
@@ -41,7 +41,7 @@
         }
 
         @if (config.showAiHighlight) {
-          <div class="auth-ai-highlight" aria-label="Intelligence artificielle" i18n-aria-label="Intelligence artificielle">
+          <div class="auth-ai-highlight" aria-label="Intelligence artificielle" i18n-aria-label="@@auth.auth-shell.intelligence.artificielle.690739e5">
             <span class="auth-ai-highlight__mark" i18n="@@auth.auth-shell.ia.d41daf59">IA</span>
             <div class="auth-ai-highlight__text">
               <strong i18n="@@auth.auth-shell.l.intelligence.au.service.de.votre.gestion.5d08824b">L'intelligence au service de votre gestion.</strong>
@@ -65,7 +65,7 @@
   </div>
 
   @if (config.showTrustFooter !== false) {
-    <footer class="auth-trust-footer" aria-label="Garanties InstaFact" i18n-aria-label="Garanties InstaFact">
+    <footer class="auth-trust-footer" aria-label="Garanties InstaFact" i18n-aria-label="@@auth.auth-shell.garanties.instafact.42b12155">
       <div class="auth-trust-footer__item">
         <i class="pi pi-shield" aria-hidden="true"></i>
         <div class="auth-trust-footer__copy">

@@ -19,7 +19,7 @@ import {
   imports: [CommonModule, RouterModule],
   template: `
     @if (visible()) {
-      <section class="onboarding-checklist" data-tour="onboarding-checklist" aria-label="Premiers pas" i18n-aria-label="Premiers pas">
+      <section class="onboarding-checklist" data-tour="onboarding-checklist" aria-label="Premiers pas" i18n-aria-label="@@shared.onboarding.onboarding-checklist.premiers.pas.975acb5a">
         <header class="onboarding-checklist__header">
           <div>
             <h2 class="onboarding-checklist__title" i18n="@@shared.onboarding.onboarding-checklist.premiers.pas.975acb5a">Premiers pas</h2>

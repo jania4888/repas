@@ -37,7 +37,7 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Solde par client" i18n-title="Solde par client"
+      title="Solde par client" i18n-title="@@reports.client-balances.solde.par.client.dc39ad70"
       subtitle="Solde commercial (facturé − payé) par client">
       <app-button
         variant="secondary"
@@ -57,7 +57,7 @@ import {
       <div class="ft-filters__header">
         <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@reports.client-balances.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -70,10 +70,10 @@ import {
             type="text"
             pInputText
             class="filter-input"
-            placeholder="Rechercher un client..." i18n-placeholder="Rechercher un client..."
+            placeholder="Rechercher un client..." i18n-placeholder="@@reports.client-balances.rechercher.un.client.37880794"
             [ngModel]="search()"
             (ngModelChange)="search.set($event)"
-            aria-label="Rechercher un client" i18n-aria-label="Rechercher un client" />
+            aria-label="Rechercher un client" i18n-aria-label="@@reports.client-balances.rechercher.un.client.723cebe6" />
         </span>
         <label class="filter-toggle">
           <input
@@ -93,7 +93,7 @@ import {
         [loading]="loading()"
         partyLabel="Client"
         [showActions]="true"
-        emptyMessage="Aucun solde client" i18n-emptyMessage="Aucun solde client"
+        emptyMessage="Aucun solde client" i18n-emptyMessage="@@reports.client-balances.aucun.solde.client.adab3cf6"
         ariaLabel="Soldes par client"
         (viewInvoices)="onViewInvoices($event)"
         (viewParty)="onViewParty($event)">

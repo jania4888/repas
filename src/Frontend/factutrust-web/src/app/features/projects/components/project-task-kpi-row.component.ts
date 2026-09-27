@@ -11,7 +11,7 @@ export type TaskStatusChipKey = 'total' | 'todo' | 'done' | 'inProgress' | 'wait
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="proj-tasks-status-bar" role="list" aria-label="Répartition des tâches" i18n-aria-label="Répartition des tâches">
+    <div class="proj-tasks-status-bar" role="list" aria-label="Répartition des tâches" i18n-aria-label="@@projects.components.repartition.des.taches.709d2410">
       <button
         type="button"
         class="proj-tasks-status-chip"

@@ -41,7 +41,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      title="Nouvelle entrée de stock" i18n-title="Nouvelle entrée de stock" 
+      title="Nouvelle entrée de stock" i18n-title="@@stock.stock-entry-form.nouvelle.entree.de.stock.0d9ac600" 
       subtitle="Enregistrez une entrée de marchandise dans votre entrepôt">
       <app-button 
         variant="outline"
@@ -53,7 +53,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <!-- Section 1: Entrepôt & Produit -->
-        <app-form-section title="Détails du Stock" i18n-title="Détails du Stock" icon="pi-box" [number]="1">
+        <app-form-section title="Détails du Stock" i18n-title="@@stock.stock-entry-form.details.du.stock.04fbfd18" icon="pi-box" [number]="1">
           <div class="form-group">
             <label for="warehouse"><ng-container i18n="@@stock.stock-entry-form.entrepot.c349c0bc">Entrepôt </ng-container> <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
             <p-select 
@@ -61,7 +61,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
               [options]="warehouses" 
               formControlName="warehouse"
               optionLabel="name"
-              placeholder="Sélectionner un entrepôt" i18n-placeholder="Sélectionner un entrepôt"
+              placeholder="Sélectionner un entrepôt" i18n-placeholder="@@stock.stock-entry-form.selectionner.un.entrepot.2e4d1232"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('warehouse')">
             </p-select>
@@ -82,7 +82,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
               optionLabel="name"
               [filter]="true"
               filterBy="name,code"
-              placeholder="Chercher un produit" i18n-placeholder="Chercher un produit"
+              placeholder="Chercher un produit" i18n-placeholder="@@stock.stock-entry-form.chercher.un.produit.44ee94b8"
               styleClass="w-full"
               [class.ng-invalid]="isInvalid('product')">
             </p-select>
@@ -103,7 +103,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
         </app-form-section>
 
         <!-- Section 2: Quantité & Coût -->
-        <app-form-section title="Quantité & Valorisation" i18n-title="Quantité & Valorisation" icon="pi-dollar" [number]="2">
+        <app-form-section title="Quantité & Valorisation" i18n-title="@@stock.stock-entry-form.quantite.valorisation.905a2065" icon="pi-dollar" [number]="2">
            <div class="form-row">
             <div class="form-group">
               <label for="quantity"><ng-container i18n="@@stock.stock-entry-form.quantite.09a38fda">Quantité </ng-container> <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
@@ -156,7 +156,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
         </app-form-section>
         
         <!-- Section 3: Motif & Notes -->
-        <app-form-section title="Informations Complémentaires" i18n-title="Informations Complémentaires" icon="pi-file-edit" [number]="3">
+        <app-form-section title="Informations Complémentaires" i18n-title="@@stock.stock-entry-form.informations.complementaires.5ce46026" icon="pi-file-edit" [number]="3">
            <div class="form-group">
               <label for="reason"><ng-container i18n="@@stock.stock-entry-form.motif.2a198f47">Motif </ng-container> <span class="required" i18n="@@stock.stock-entry-form.text.df58248c">*</span></label>
               <p-select 
@@ -165,7 +165,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
                 formControlName="reason"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Raison de l'entrée" i18n-placeholder="Raison de l'entrée"
+                placeholder="Raison de l'entrée" i18n-placeholder="@@stock.stock-entry-form.raison.de.l.entree.31c00fbb"
                 styleClass="w-full"
                 [class.ng-invalid]="isInvalid('reason')">
               </p-select>
@@ -183,7 +183,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
                 pTextarea 
                 id="notes" 
                 formControlName="notes"
-                placeholder="Ex: BL-2024-001" i18n-placeholder="Ex: BL-2024-001"
+                placeholder="Ex: BL-2024-001" i18n-placeholder="@@stock.stock-entry-form.ex.bl.2024.001.b51e17b1"
                 [rows]="3"
                 class="w-full">
               </textarea>

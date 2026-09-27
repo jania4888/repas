@@ -33,7 +33,7 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
   ],
   template: `
     <app-page-header
-      title="Dotations immobilisations" i18n-title="Dotations immobilisations"
+      title="Dotations immobilisations" i18n-title="@@accounting.fixed-assets.dotations.immobilisations.a4c57aa0"
       subtitle="Comptabiliser les amortissements de l'exercice (écritures 681 / 281 — journal JIM)" />
 
     <app-accounting-correction-banner />
@@ -43,7 +43,7 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
         Si une dotation attendue n'apparaît pas, ouvrez la fiche de l'actif et générez son tableau. </p>
       <app-accounting-status-banner
         *ngIf="isOffset()"
-        title="Exercice décalé" i18n-title="Exercice décalé"
+        title="Exercice décalé" i18n-title="@@accounting.fixed-assets.exercice.decale.e52f5dfd"
         [message]="offsetHint"
         variant="warning" />
       <label>

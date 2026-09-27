@@ -36,7 +36,7 @@ export interface DynamicRow {
           [maxSelectedLabels]="3"
           appendTo="body"
           styleClass="dt-ms"
-          placeholder="Colonnes…" i18n-placeholder="Colonnes…" />
+          placeholder="Colonnes…" i18n-placeholder="@@shared.studio-runtime.dynamic-table.colonnes.972c1743" />
       </div>
     }
 
@@ -94,13 +94,13 @@ export interface DynamicRow {
                   <!-- 4.7 suite (D-47-94) : œil « Voir » pour un lecteur pur (showView sans showActions). -->
                   @if (showView) {
                     <button pButton type="button" icon="fa-solid fa-eye" class="p-button-text p-button-sm"
-                      pTooltip="Voir" i18n-pTooltip="Voir" (click)="viewRow.emit(row)"></button>
+                      pTooltip="Voir" i18n-pTooltip="@@shared.studio-runtime.dynamic-table.voir.8a754f1f" (click)="viewRow.emit(row)"></button>
                   }
                   @if (showActions) {
                     <button pButton type="button" icon="fa-solid fa-pen" class="p-button-text p-button-sm"
-                      pTooltip="Modifier" i18n-pTooltip="Modifier" (click)="editRow.emit(row)"></button>
+                      pTooltip="Modifier" i18n-pTooltip="@@shared.studio-runtime.dynamic-table.modifier.f260e757" (click)="editRow.emit(row)"></button>
                     <button pButton type="button" icon="fa-solid fa-trash" class="p-button-text p-button-sm p-button-danger"
-                      pTooltip="Supprimer" i18n-pTooltip="Supprimer" (click)="deleteRow.emit(row)"></button>
+                      pTooltip="Supprimer" i18n-pTooltip="@@shared.studio-runtime.dynamic-table.supprimer.1acfc1c7" (click)="deleteRow.emit(row)"></button>
                   }
                 </td>
               }
@@ -109,7 +109,7 @@ export interface DynamicRow {
           <ng-template pTemplate="emptymessage">
             <tr>
               <td [attr.colspan]="visibleColumns.length + (showActions || showView ? 1 : 0)">
-                <app-empty-state icon="pi-table" title="Aucun enregistrement" i18n-title="Aucun enregistrement" description="Aucune donnée ne correspond à votre recherche." />
+                <app-empty-state icon="pi-table" title="Aucun enregistrement" i18n-title="@@shared.studio-runtime.dynamic-table.aucun.enregistrement.4827291e" description="Aucune donnée ne correspond à votre recherche." />
               </td>
             </tr>
           </ng-template>

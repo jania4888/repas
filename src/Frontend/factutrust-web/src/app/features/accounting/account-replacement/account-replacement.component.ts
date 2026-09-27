@@ -14,7 +14,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Remplacement de compte" i18n-title="Remplacement de compte" subtitle="Remplacer un compte par un autre sur les écritures des périodes ouvertes" />
+    <app-page-header title="Remplacement de compte" i18n-title="@@accounting.account-replacement.remplacement.de.compte.2fb8886e" subtitle="Remplacer un compte par un autre sur les écritures des périodes ouvertes" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -27,12 +27,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <div class="ar-grid">
         <div class="ar-field">
           <label class="ar-lbl" for="ar-old" i18n="@@accounting.account-replacement.ancien.compte.b188eb3d">Ancien compte</label>
-          <input id="ar-old" class="ar-inp" [(ngModel)]="oldAccount" (ngModelChange)="onOldChange()" placeholder="Ex. 41100001" i18n-placeholder="Ex. 41100001" [disabled]="replacing()" />
+          <input id="ar-old" class="ar-inp" [(ngModel)]="oldAccount" (ngModelChange)="onOldChange()" placeholder="Ex. 41100001" i18n-placeholder="@@accounting.account-replacement.ex.41100001.d4119d77" [disabled]="replacing()" />
         </div>
         <div class="ar-arrow"><i class="pi pi-arrow-right" aria-hidden="true"></i></div>
         <div class="ar-field">
           <label class="ar-lbl" for="ar-new" i18n="@@accounting.account-replacement.nouveau.compte.9c08a4c7">Nouveau compte</label>
-          <input id="ar-new" class="ar-inp" [(ngModel)]="newAccount" placeholder="Ex. 41100002" i18n-placeholder="Ex. 41100002" [disabled]="replacing()" />
+          <input id="ar-new" class="ar-inp" [(ngModel)]="newAccount" placeholder="Ex. 41100002" i18n-placeholder="@@accounting.account-replacement.ex.41100002.96d21ae5" [disabled]="replacing()" />
         </div>
       </div>
 

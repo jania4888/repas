@@ -13,7 +13,7 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
   standalone: true,
   imports: [BackendLabelPipe, CommonModule, ButtonComponent, PayrollAmountPipe, PayrollSectionComponent],
   template: `
-    <app-payroll-section title="Paiements enregistrés" i18n-title="Paiements enregistrés" icon="pi-wallet">
+    <app-payroll-section title="Paiements enregistrés" i18n-title="@@payroll.runs.paiements.enregistres.1ae9a974" icon="pi-wallet">
       @if (loading()) {
         <p i18n="@@payroll.runs.chargement.01cba1df">Chargement…</p>
       } @else if (payments().length === 0) {

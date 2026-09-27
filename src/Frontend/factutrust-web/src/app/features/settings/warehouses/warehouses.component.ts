@@ -48,18 +48,18 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Entrepôts" i18n-title="Entrepôts"
+      title="Entrepôts" i18n-title="@@settings.warehouses.entrepots.c0906d10"
       subtitle="Lieux de stockage utilisés pour le stock, les transferts et les documents">
       <div class="header-actions">
         <p-button
-          label="Retour" i18n-label="Retour"
+          label="Retour" i18n-label="@@settings.warehouses.retour.e5befb1f"
           icon="pi pi-arrow-left"
           [outlined]="true"
           severity="secondary"
           routerLink="/settings">
         </p-button>
         <p-button
-          label="Ajouter" i18n-label="Ajouter"
+          label="Ajouter" i18n-label="@@settings.warehouses.ajouter.87c57ed1"
           icon="pi pi-plus"
           severity="primary"
           (onClick)="openCreateDialog()"
@@ -72,7 +72,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
       <div class="error-banner" role="alert">
         <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
         <p>{{ loadError() }}</p>
-        <p-button label="Réessayer" i18n-label="Réessayer" icon="pi pi-refresh" [outlined]="true" (onClick)="loadWarehouses()"></p-button>
+        <p-button label="Réessayer" i18n-label="@@settings.warehouses.reessayer.895d416b" icon="pi pi-refresh" [outlined]="true" (onClick)="loadWarehouses()"></p-button>
       </div>
     }
 
@@ -83,7 +83,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
       </div>
     } @else if (!loadError()) {
       <div class="warehouses-page">
-        <p-card header="Liste des entrepôts" i18n-header="Liste des entrepôts" styleClass="warehouses-card">
+        <p-card header="Liste des entrepôts" i18n-header="@@settings.warehouses.liste.des.entrepots.e4e1d3be" styleClass="warehouses-card">
           <div class="card-toolbar">
             <div class="search-field">
               <label class="sr-only" for="warehouse-search" i18n="@@settings.warehouses.rechercher.un.entrepot.80fc0c59">Rechercher un entrepôt</label>
@@ -94,7 +94,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
                   type="text"
                   pInputText
                   class="search-input"
-                  placeholder="Rechercher par code, nom ou adresse…" i18n-placeholder="Rechercher par code, nom ou adresse…"
+                  placeholder="Rechercher par code, nom ou adresse…" i18n-placeholder="@@settings.warehouses.rechercher.par.code.nom.ou.adresse.5be498b3"
                   [value]="searchQuery()"
                   (input)="onSearchInput($event)"
                   autocomplete="off" />
@@ -102,7 +102,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
               @if (searchQuery().trim()) {
                 <p-button
                   type="button"
-                  label="Effacer" i18n-label="Effacer"
+                  label="Effacer" i18n-label="@@settings.warehouses.effacer.fe23de7b"
                   icon="pi pi-times"
                   [text]="true"
                   (onClick)="clearSearch()"
@@ -116,7 +116,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
             <div class="filter-empty" role="status">
               <i class="pi pi-filter-slash" aria-hidden="true"></i>
               <p i18n="@@settings.warehouses.aucun.resultat.pour.cette.recherche.7e7f8c98">Aucun résultat pour cette recherche.</p>
-              <p-button label="Réinitialiser le filtre" i18n-label="Réinitialiser le filtre" [outlined]="true" (onClick)="clearSearch()"></p-button>
+              <p-button label="Réinitialiser le filtre" i18n-label="@@settings.warehouses.reinitialiser.le.filtre.d3da2f54" [outlined]="true" (onClick)="clearSearch()"></p-button>
             </div>
           } @else {
             <p-table
@@ -249,7 +249,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
             formControlName="address"
             class="w-full"
             [rows]="3"
-            placeholder="Rue, ville, code postal, pays…" i18n-placeholder="Rue, ville, code postal, pays…">
+            placeholder="Rue, ville, code postal, pays…" i18n-placeholder="@@settings.warehouses.rue.ville.code.postal.pays.d89c1b2e">
           </textarea>
         </label>
 
@@ -268,14 +268,14 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
         <div class="dialog-actions">
           <p-button
             type="button"
-            label="Annuler" i18n-label="Annuler"
+            label="Annuler" i18n-label="@@settings.warehouses.annuler.49ba3292"
             [outlined]="true"
             severity="secondary"
             (onClick)="dialogVisible = false">
           </p-button>
           <p-button
             type="submit"
-            label="Enregistrer" i18n-label="Enregistrer"
+            label="Enregistrer" i18n-label="@@settings.warehouses.enregistrer.f7c8bcd8"
             icon="pi pi-check"
             severity="primary"
             [loading]="saving()"
@@ -286,7 +286,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
     </p-dialog>
 
     <p-dialog
-      header="Caisses POS" i18n-header="Caisses POS"
+      header="Caisses POS" i18n-header="@@settings.warehouses.caisses.pos.4ec932cb"
       [(visible)]="registersDialogVisible"
       [modal]="true"
       [style]="{ width: 'min(560px, 95vw)' }"
@@ -324,8 +324,8 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
           <p-inputSwitch formControlName="isDefault"></p-inputSwitch>
         </div>
         <div class="dialog-actions">
-          <p-button type="button" label="Fermer" i18n-label="Fermer" [outlined]="true" (onClick)="registersDialogVisible = false"></p-button>
-          <p-button type="submit" label="Ajouter une caisse" i18n-label="Ajouter une caisse" icon="pi pi-plus" [loading]="registerSaving()"></p-button>
+          <p-button type="button" label="Fermer" i18n-label="@@settings.warehouses.fermer.5ab4ec64" [outlined]="true" (onClick)="registersDialogVisible = false"></p-button>
+          <p-button type="submit" label="Ajouter une caisse" i18n-label="@@settings.warehouses.ajouter.une.caisse.b0733ef1" icon="pi pi-plus" [loading]="registerSaving()"></p-button>
         </div>
       </form>
     </p-dialog>

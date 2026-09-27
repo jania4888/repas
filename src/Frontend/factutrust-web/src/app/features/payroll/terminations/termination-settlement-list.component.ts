@@ -18,7 +18,7 @@ import { PayrollAmountPipe } from '../shared';
   standalone: true,
   imports: [BackendLabelPipe, CommonModule, FormsModule, RouterModule, TableModule, TagModule, InputNumberModule, PageHeaderComponent, ButtonComponent, PayrollAmountPipe],
   template: `
-    <app-page-header title="Soldes de tout compte" i18n-title="Soldes de tout compte" subtitle="Indemnités de rupture et fin de contrat.">
+    <app-page-header title="Soldes de tout compte" i18n-title="@@payroll.terminations.soldes.de.tout.compte.afe34b92" subtitle="Indemnités de rupture et fin de contrat.">
       <app-button variant="primary" icon="pi-plus" routerLink="/payroll/terminations/new" i18n="@@payroll.terminations.nouveau.solde.5e1744e0">Nouveau solde</app-button>
     </app-page-header>
 

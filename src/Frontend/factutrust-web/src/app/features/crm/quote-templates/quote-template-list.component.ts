@@ -57,7 +57,7 @@ interface ActiveFilterOption {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Modèles de devis" i18n-title="Modèles de devis"
+      title="Modèles de devis" i18n-title="@@crm.quote-templates.modeles.de.devis.b90f004d"
       subtitle="Modèles réutilisables pour accélérer la création de devis et harmoniser vos offres.">
       @if (canCreate()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@crm.quote-templates.nouveau.modele.c5b99d5d"> Nouveau modèle </app-button>
@@ -72,7 +72,7 @@ interface ActiveFilterOption {
             type="button"
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@crm.quote-templates.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -84,7 +84,7 @@ interface ActiveFilterOption {
           <input
             pInputText
             type="text"
-            placeholder="Rechercher par nom ou description…" i18n-placeholder="Rechercher par nom ou description…"
+            placeholder="Rechercher par nom ou description…" i18n-placeholder="@@crm.quote-templates.rechercher.par.nom.ou.description.3049602b"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput()"
             class="w-full" />
@@ -94,7 +94,7 @@ interface ActiveFilterOption {
           [(ngModel)]="selectedActiveFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@crm.quote-templates.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="load()">
         </p-select>
@@ -112,7 +112,7 @@ interface ActiveFilterOption {
           [paginator]="true"
           [rows]="10"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} modèles" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} modèles"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} modèles" i18n-currentPageReportTemplate="@@crm.quote-templates.affichage.de.first.a.last.sur.totalrecords.model.e54cfcfb"
           [loading]="loading()"
           styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
@@ -157,7 +157,7 @@ interface ActiveFilterOption {
                       icon="pi-pencil"
                       [iconOnly]="true"
                       [iconAlwaysVisible]="true"
-                      pTooltip="Modifier" i18n-pTooltip="Modifier"
+                      pTooltip="Modifier" i18n-pTooltip="@@crm.quote-templates.modifier.f260e757"
                       [routerLink]="[t.id, 'edit']"
                       ariaLabel="Modifier le modèle">
                     </app-button>
@@ -169,7 +169,7 @@ interface ActiveFilterOption {
                       icon="pi-trash"
                       [iconOnly]="true"
                       [iconAlwaysVisible]="true"
-                      pTooltip="Supprimer" i18n-pTooltip="Supprimer"
+                      pTooltip="Supprimer" i18n-pTooltip="@@crm.quote-templates.supprimer.1acfc1c7"
                       (click)="confirmDelete(t)"
                       ariaLabel="Supprimer le modèle">
                     </app-button>
@@ -183,7 +183,7 @@ interface ActiveFilterOption {
               <td colspan="7" class="text-center p-6">
                 <app-empty-state
                   illustration="empty-quotes.svg"
-                  title="Aucun modèle de devis" i18n-title="Aucun modèle de devis"
+                  title="Aucun modèle de devis" i18n-title="@@crm.quote-templates.aucun.modele.de.devis.95a72ae4"
                   description="Créez un modèle pour préremplir lignes, notes et conditions lors de la création d'un devis."
                   [showAction]="canCreate()"
                   actionLabel="Créer un modèle"

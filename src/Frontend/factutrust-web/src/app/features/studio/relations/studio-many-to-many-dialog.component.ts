@@ -44,7 +44,7 @@ import { slugifyKey } from '../shared/studio-text.util';
 
         <label for="m2m-attribute" i18n="@@studio.relations.attribut.de.liaison.401d5ca6">Attribut de liaison</label>
         <input pInputText id="m2m-attribute" class="studio-w-full" [ngModel]="junctionAttribute()"
-          (ngModelChange)="junctionAttribute.set($event)" placeholder="Quantité" i18n-placeholder="Quantité" maxlength="120"
+          (ngModelChange)="junctionAttribute.set($event)" placeholder="Quantité" i18n-placeholder="@@studio.relations.quantite.09a38fda" maxlength="120"
           data-testid="m2m-attribute" />
         <small class="studio-hint">{{ labels.relations.junctionAttributeHint }}</small>
 
@@ -53,8 +53,8 @@ import { slugifyKey } from '../shared/studio-text.util';
         }
       </div>
       <ng-template pTemplate="footer">
-        <p-button label="Annuler" i18n-label="Annuler" [text]="true" (onClick)="visible.set(false)" />
-        <p-button label="Créer" i18n-label="Créer" icon="pi pi-check" [loading]="saving()" [disabled]="!canSubmit()" (onClick)="submit()" data-testid="m2m-submit" />
+        <p-button label="Annuler" i18n-label="@@studio.relations.annuler.49ba3292" [text]="true" (onClick)="visible.set(false)" />
+        <p-button label="Créer" i18n-label="@@studio.relations.creer.1a686172" icon="pi pi-check" [loading]="saving()" [disabled]="!canSubmit()" (onClick)="submit()" data-testid="m2m-submit" />
       </ng-template>
     </p-dialog>
   `,

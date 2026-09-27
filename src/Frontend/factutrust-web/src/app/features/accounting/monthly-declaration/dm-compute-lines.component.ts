@@ -77,7 +77,7 @@ import {
               <td>
                 {{ line.label }}
                 @if (line.requiresManualInput) {
-                  <span class="dm-chip dm-chip--warn" title="Rubrique « Fixe » sans constante enregistrée." i18n-title="Rubrique « Fixe » sans constante enregistrée." i18n="@@accounting.monthly-declaration.a.saisir.3e42af61"> à saisir </span>
+                  <span class="dm-chip dm-chip--warn" title="Rubrique « Fixe » sans constante enregistrée." i18n-title="@@accounting.monthly-declaration.rubrique.fixe.sans.constante.enregistree.bae9ebd1" i18n="@@accounting.monthly-declaration.a.saisir.3e42af61"> à saisir </span>
                 }
                 @for (d of diagnostics(line); track $index) {
                   <p class="dm-diag" [class.dm-diag--error]="severity(d) === 'error'">

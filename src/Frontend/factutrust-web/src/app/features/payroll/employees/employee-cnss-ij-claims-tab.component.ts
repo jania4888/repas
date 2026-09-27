@@ -59,7 +59,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </ng-template>
     </p-table>
 
-    <p-dialog header="Règlement IJ CNSS" i18n-header="Règlement IJ CNSS" [(visible)]="markPaidVisible" [modal]="true" [style]="{ width: '360px' }">
+    <p-dialog header="Règlement IJ CNSS" i18n-header="@@payroll.employees.reglement.ij.cnss.e76c2dfb" [(visible)]="markPaidVisible" [modal]="true" [style]="{ width: '360px' }">
       <div class="payroll-form-group">
         <label i18n="@@payroll.employees.date.de.reglement.65e1210f">Date de règlement</label>
         <p-datepicker [(ngModel)]="paidAt" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />

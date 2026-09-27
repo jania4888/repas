@@ -32,7 +32,7 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
   ],
   template: `
     <app-payroll-section
-      title="Régularisation IRPP annuelle" i18n-title="Régularisation IRPP annuelle"
+      title="Régularisation IRPP annuelle" i18n-title="@@payroll.runs.regularisation.irpp.annuelle.b7bb1560"
       subtitle="Compare l'impôt dû sur le cumul réel de l'exercice à l'impôt déjà retenu. Après génération, relancez le calcul du cycle pour porter les écarts sur les bulletins."
       icon="pi-calculator">
 

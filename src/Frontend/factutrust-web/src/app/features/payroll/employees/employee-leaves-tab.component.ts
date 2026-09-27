@@ -58,7 +58,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
         (ngModelChange)="reloadBalance()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Exercice" i18n-placeholder="Exercice"
+        placeholder="Exercice" i18n-placeholder="@@payroll.employees.exercice.e171e2b0"
         styleClass="w-10rem" />
     </div>
 
@@ -123,7 +123,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </ng-template>
     </p-table>
 
-    <p-dialog header="Nouveau congé" i18n-header="Nouveau congé" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
+    <p-dialog header="Nouveau congé" i18n-header="@@payroll.employees.nouveau.conge.8dae5ec1" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '480px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.type.3deb7456">Type</label>
         <p-select [options]="leaveTypeOptions" [(ngModel)]="formType" optionLabel="label" optionValue="value" appendTo="body" styleClass="w-full" />
@@ -221,7 +221,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </ng-template>
     </p-dialog>
 
-    <p-dialog header="Solde initial de congés" i18n-header="Solde initial de congés" [(visible)]="openingDialogVisible" [modal]="true" [style]="{ width: '400px' }">
+    <p-dialog header="Solde initial de congés" i18n-header="@@payroll.employees.solde.initial.de.conges.93761656" [(visible)]="openingDialogVisible" [modal]="true" [style]="{ width: '400px' }">
       <p class="payroll-info-text mb-2" i18n="@@payroll.employees.reprise.d.historique.ou.ajustement.du.solde.avan.a6bf5678">Reprise d'historique ou ajustement du solde avant la première validation de paie.</p>
       <div class="payroll-form-group">
         <label i18n="@@payroll.employees.jours.solde.initial.305cc84a">Jours (solde initial)</label>
@@ -233,7 +233,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       </ng-template>
     </p-dialog>
 
-    <p-dialog header="Déclarer une naissance" i18n-header="Déclarer une naissance" [(visible)]="birthDialogVisible" [modal]="true" [style]="{ width: '420px' }">
+    <p-dialog header="Déclarer une naissance" i18n-header="@@payroll.employees.declarer.une.naissance.34a8ae30" [(visible)]="birthDialogVisible" [modal]="true" [style]="{ width: '420px' }">
       <div class="payroll-form-group mb-2">
         <label i18n="@@payroll.employees.date.de.naissance.8851f385">Date de naissance</label>
         <p-datepicker [(ngModel)]="birthDate" dateFormat="dd/mm/yy" appendTo="body" styleClass="w-full" />

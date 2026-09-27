@@ -60,7 +60,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
   ],
   template: `
     <p-dialog
-      header="Enregistrer l'opération" i18n-header="Enregistrer l'opération"
+      header="Enregistrer l'opération" i18n-header="@@payments.cash-desk.enregistrer.l.operation.f94a3886"
       [(visible)]="visible"
       [modal]="true"
       [position]="dialogPosition"
@@ -82,7 +82,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
         <!-- Operation Type Toggle -->
         <div class="form-group">
           <label><ng-container i18n="@@payments.cash-desk.type.d.operation.265961ab">Type d'opération </ng-container> <span class="required" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
-          <div class="type-toggle" role="radiogroup" aria-label="Type d'opération" i18n-aria-label="Type d'opération">
+          <div class="type-toggle" role="radiogroup" aria-label="Type d'opération" i18n-aria-label="@@payments.cash-desk.type.d.operation.265961ab">
             <div
               class="type-card"
               [class.selected]="operationType === CashOperationType.Debit"
@@ -124,7 +124,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
               optionGroupLabel="label"
               optionGroupChildren="items"
               optionValue="value"
-              placeholder="Sélectionnez une catégorie" i18n-placeholder="Sélectionnez une catégorie"
+              placeholder="Sélectionnez une catégorie" i18n-placeholder="@@payments.cash-desk.selectionnez.une.categorie.8fd04bf3"
               [filter]="true"
               filterBy="label"
               [showClear]="false"
@@ -152,7 +152,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
               optionGroupLabel="label"
               optionGroupChildren="items"
               optionValue="value"
-              placeholder="Sélectionnez une catégorie" i18n-placeholder="Sélectionnez une catégorie"
+              placeholder="Sélectionnez une catégorie" i18n-placeholder="@@payments.cash-desk.selectionnez.une.categorie.8fd04bf3"
               [filter]="false"
               [showClear]="false"
               appendTo="body"
@@ -174,7 +174,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
         <!-- Payment Method -->
         <div class="form-group">
           <label for="method"><ng-container i18n="@@payments.cash-desk.methode.de.paiement.b111f83e">Méthode de paiement </ng-container> <span class="required" i18n="@@payments.cash-desk.text.df58248c">*</span></label>
-          <div class="method-toggle" role="radiogroup" aria-label="Méthode de paiement" i18n-aria-label="Méthode de paiement">
+          <div class="method-toggle" role="radiogroup" aria-label="Méthode de paiement" i18n-aria-label="@@payments.cash-desk.methode.de.paiement.b111f83e">
             @for (method of paymentMethodOptions; track method.value) {
               <div
                 class="method-card"
@@ -206,7 +206,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
                 [maxFractionDigits]="3"
                 [minFractionDigits]="3"
                 mode="decimal"
-                placeholder="0,000" i18n-placeholder="0,000"
+                placeholder="0,000" i18n-placeholder="@@payments.cash-desk.0.000.6f5ad69d"
                 styleClass="w-full">
               </p-inputNumber>
             </div>
@@ -220,7 +220,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
               [showIcon]="true"
               dateFormat="dd/mm/yy"
               [maxDate]="maxDate"
-              placeholder="Sélectionnez la date" i18n-placeholder="Sélectionnez la date"
+              placeholder="Sélectionnez la date" i18n-placeholder="@@payments.cash-desk.selectionnez.la.date.b9d5a16a"
               appendTo="body"
               styleClass="w-full">
             </p-datepicker>
@@ -237,13 +237,13 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
               [(ngModel)]="selectedVatRate"
               optionLabel="label"
               optionValue="value"
-              placeholder="Sélectionnez un taux" i18n-placeholder="Sélectionnez un taux"
+              placeholder="Sélectionnez un taux" i18n-placeholder="@@payments.cash-desk.selectionnez.un.taux.a9297d9e"
               [showClear]="false"
               appendTo="body"
               styleClass="w-full">
             </p-select>
             @if (vatPreview) {
-              <div class="vat-preview" role="note" aria-label="Détail HT / TVA" i18n-aria-label="Détail HT / TVA">
+              <div class="vat-preview" role="note" aria-label="Détail HT / TVA" i18n-aria-label="@@payments.cash-desk.detail.ht.tva.1f495c67">
                 <span>HT : {{ vatPreview.ht | number:'1.3-3' }} TND</span>
                 <span>TVA : {{ vatPreview.vat | number:'1.3-3' }} TND</span>
               </div>
@@ -258,10 +258,10 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
             id="label"
             pInputText
             [(ngModel)]="label"
-            placeholder="Ex: Achat fournitures" i18n-placeholder="Ex: Achat fournitures"
+            placeholder="Ex: Achat fournitures" i18n-placeholder="@@payments.cash-desk.ex.achat.fournitures.78820e11"
             class="w-full"
             [maxLength]="500"
-            aria-label="Libellé de l'opération" i18n-aria-label="Libellé de l'opération" />
+            aria-label="Libellé de l'opération" i18n-aria-label="@@payments.cash-desk.libelle.de.l.operation.3f2030d4" />
         </div>
 
         <!-- Reference -->
@@ -271,10 +271,10 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
             id="reference"
             pInputText
             [(ngModel)]="reference"
-            placeholder="Ex: N° chèque, virement n°…" i18n-placeholder="Ex: N° chèque, virement n°…"
+            placeholder="Ex: N° chèque, virement n°…" i18n-placeholder="@@payments.cash-desk.ex.n.cheque.virement.n.73a36d88"
             class="w-full"
             [maxLength]="100"
-            aria-label="Référence" i18n-aria-label="Référence" />
+            aria-label="Référence" i18n-aria-label="@@payments.cash-desk.reference.f8130bb0" />
         </div>
 
         <!-- Notes -->
@@ -284,11 +284,11 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
             id="notes"
             pTextarea
             [(ngModel)]="notes"
-            placeholder="Notes internes" i18n-placeholder="Notes internes"
+            placeholder="Notes internes" i18n-placeholder="@@payments.cash-desk.notes.internes.1a81fb4e"
             [rows]="3"
             class="w-full"
             [maxLength]="500"
-            aria-label="Notes" i18n-aria-label="Notes">
+            aria-label="Notes" i18n-aria-label="@@payments.cash-desk.notes.70440046">
           </textarea>
         </div>
       </div>

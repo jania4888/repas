@@ -45,7 +45,7 @@ const MONTH_NAMES_FR = [
     ButtonComponent
   ],
   template: `
-    <app-page-header title="Objectifs commerciaux" i18n-title="Objectifs commerciaux" subtitle="Suivi mensuel par commercial" />
+    <app-page-header title="Objectifs commerciaux" i18n-title="@@crm.targets.objectifs.commerciaux.48084d31" subtitle="Suivi mensuel par commercial" />
 
     <div class="card p-3 mb-3 targets-toolbar">
       <div class="toolbar-row">
@@ -63,7 +63,7 @@ const MONTH_NAMES_FR = [
           [(ngModel)]="filterMonth"
           optionLabel="label"
           optionValue="value"
-          placeholder="Mois" i18n-placeholder="Mois"
+          placeholder="Mois" i18n-placeholder="@@crm.targets.mois.0d304bea"
           [showClear]="true"
           inputId="tgtMonth"
           styleClass="toolbar-dropdown"
@@ -74,7 +74,7 @@ const MONTH_NAMES_FR = [
           [(ngModel)]="filterUserId"
           optionLabel="displayName"
           optionValue="id"
-          placeholder="Tous les commerciaux" i18n-placeholder="Tous les commerciaux"
+          placeholder="Tous les commerciaux" i18n-placeholder="@@crm.targets.tous.les.commerciaux.7a7d8012"
           [showClear]="true"
           [filter]="true"
           filterBy="displayName"
@@ -108,7 +108,7 @@ const MONTH_NAMES_FR = [
       [rows]="12"
       [rowsPerPageOptions]="[12, 24, 48]"
       [showCurrentPageReport]="true"
-      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} objectifs" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} objectifs"
+      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} objectifs" i18n-currentPageReportTemplate="@@crm.targets.affichage.de.first.a.last.sur.totalrecords.objec.abda057a"
       styleClass="p-datatable-sm targets-table">
       <ng-template pTemplate="header">
         <tr>
@@ -150,7 +150,7 @@ const MONTH_NAMES_FR = [
                   [iconOnly]="true"
                   icon="pi pi-pencil"
                   ariaLabel="Modifier l’objectif"
-                  title="Modifier" i18n-title="Modifier"
+                  title="Modifier" i18n-title="@@crm.targets.modifier.f260e757"
                   [iconAlwaysVisible]="true"
                   (click)="openEdit(t)"></app-button>
                 <app-button
@@ -159,7 +159,7 @@ const MONTH_NAMES_FR = [
                   [iconOnly]="true"
                   icon="pi pi-trash"
                   ariaLabel="Supprimer l’objectif"
-                  title="Supprimer" i18n-title="Supprimer"
+                  title="Supprimer" i18n-title="@@crm.targets.supprimer.1acfc1c7"
                   [iconAlwaysVisible]="true"
                   (click)="confirmDelete(t)"></app-button>
               </div>
@@ -220,7 +220,7 @@ const MONTH_NAMES_FR = [
               type="button"
               class="targets-panel-close"
               (click)="closeTargetsPanel()"
-              aria-label="Fermer le panneau" i18n-aria-label="Fermer le panneau">
+              aria-label="Fermer le panneau" i18n-aria-label="@@crm.targets.fermer.le.panneau.e1210a2f">
               <i class="pi pi-times" aria-hidden="true"></i>
             </button>
           </div>
@@ -258,7 +258,7 @@ const MONTH_NAMES_FR = [
                       [options]="assignableUsers()"
                       optionLabel="displayName"
                       optionValue="id"
-                      placeholder="Sélectionner" i18n-placeholder="Sélectionner"
+                      placeholder="Sélectionner" i18n-placeholder="@@crm.targets.selectionner.ab31a36f"
                       [filter]="true"
                       filterBy="displayName"
                       styleClass="w-full"

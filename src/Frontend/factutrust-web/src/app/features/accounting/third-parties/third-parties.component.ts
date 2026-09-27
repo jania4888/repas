@@ -45,7 +45,7 @@ interface ThirdPartyProfileForm {
     AccountingTableActionsComponent
   ],
   template: `
-    <app-page-header title="Plan tiers" i18n-title="Plan tiers" subtitle="Répertoire comptable des clients et fournisseurs — codes auxiliaires, comptes collectifs et soldes" />
+    <app-page-header title="Plan tiers" i18n-title="@@accounting.third-parties.plan.tiers.7dfd7c9a" subtitle="Répertoire comptable des clients et fournisseurs — codes auxiliaires, comptes collectifs et soldes" />
 
     <div class="card accounting-filters-card">
       <app-accounting-filter-bar ariaLabel="Recherche et filtres du plan tiers">
@@ -53,7 +53,7 @@ interface ThirdPartyProfileForm {
           <div class="accounting-filter-field tp-grow">
             <label class="accounting-filter-label" for="tp-search" i18n="@@accounting.third-parties.recherche.787b5492">Recherche</label>
             <input id="tp-search" [(ngModel)]="search" (keyup.enter)="load()" class="accounting-filter-input"
-              placeholder="Nom, e-mail ou code auxiliaire…" i18n-placeholder="Nom, e-mail ou code auxiliaire…" />
+              placeholder="Nom, e-mail ou code auxiliaire…" i18n-placeholder="@@accounting.third-parties.nom.e.mail.ou.code.auxiliaire.76d3dcd5" />
           </div>
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="tp-kind" i18n="@@accounting.third-parties.type.3deb7456">Type</label>
@@ -112,7 +112,7 @@ interface ThirdPartyProfileForm {
           <div class="tp-field tp-grow">
             <label class="tp-lbl" for="tp-f-notes" i18n="@@accounting.third-parties.notes.comptables.6ed06924">Notes comptables</label>
             <input id="tp-f-notes" class="tp-inp" [(ngModel)]="f.accountingNotes" maxlength="500"
-              placeholder="Observations internes (facultatif)" i18n-placeholder="Observations internes (facultatif)" />
+              placeholder="Observations internes (facultatif)" i18n-placeholder="@@accounting.third-parties.observations.internes.facultatif.96766768" />
           </div>
           <div class="tp-form-actions">
             <button type="button" class="btn btn-secondary" (click)="form.set(null)" [disabled]="saving()" i18n="@@accounting.third-parties.annuler.49ba3292">Annuler</button>
@@ -129,14 +129,14 @@ interface ThirdPartyProfileForm {
     <p-table [value]="rows()" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100]"
       [loading]="loading()" [rowHover]="true" [scrollable]="true" scrollHeight="flex"
       styleClass="p-datatable-sm accounting-datatable tp-table"
-      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers">
+      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} tiers" i18n-currentPageReportTemplate="@@accounting.third-parties.affichage.de.first.a.last.sur.totalrecords.tiers.05aff86a">
       <ng-template pTemplate="header">
         <tr>
           <th scope="col" i18n="@@accounting.third-parties.code.aux.2d39a431">Code aux.</th>
           <th scope="col" i18n="@@accounting.third-parties.nom.7ff20370">Nom</th>
           <th scope="col" i18n="@@accounting.third-parties.type.3deb7456">Type</th>
-          <th scope="col" pTooltip="Compte collectif de rattachement" i18n-pTooltip="Compte collectif de rattachement" tooltipPosition="top" i18n="@@accounting.third-parties.collectif.ba912701">Collectif</th>
-          <th scope="col" class="text-right" pTooltip="Délai de règlement (jours)" i18n-pTooltip="Délai de règlement (jours)" tooltipPosition="top" i18n="@@accounting.third-parties.delai.be9a9403">Délai</th>
+          <th scope="col" pTooltip="Compte collectif de rattachement" i18n-pTooltip="@@accounting.third-parties.compte.collectif.de.rattachement.afee6ebb" tooltipPosition="top" i18n="@@accounting.third-parties.collectif.ba912701">Collectif</th>
+          <th scope="col" class="text-right" pTooltip="Délai de règlement (jours)" i18n-pTooltip="@@accounting.third-parties.delai.de.reglement.jours.a445720b" tooltipPosition="top" i18n="@@accounting.third-parties.delai.be9a9403">Délai</th>
           <th scope="col" class="text-right" i18n="@@accounting.third-parties.solde.d.3f441081">Solde D</th>
           <th scope="col" class="text-right" i18n="@@accounting.third-parties.solde.c.81de0678">Solde C</th>
           <th scope="col" i18n="@@accounting.third-parties.actif.2eb75f84">Actif</th>
@@ -162,13 +162,13 @@ interface ThirdPartyProfileForm {
             <app-button variant="ghost" size="sm" icon="pi-book" [iconOnly]="true" [iconAlwaysVisible]="true"
               [routerLink]="['/accounting/third-party-ledger']"
               [queryParams]="{ thirdPartyId: r.thirdPartyId, kind: r.kind, name: r.name }"
-              pTooltip="Grand livre du tiers" i18n-pTooltip="Grand livre du tiers" tooltipPosition="top" ariaLabel="Grand livre du tiers" />
+              pTooltip="Grand livre du tiers" i18n-pTooltip="@@accounting.third-parties.grand.livre.du.tiers.7f18aec1" tooltipPosition="top" ariaLabel="Grand livre du tiers" />
             <app-button variant="ghost" size="sm" icon="pi-link" [iconOnly]="true" [iconAlwaysVisible]="true"
               [routerLink]="['/accounting/lettering']"
-              pTooltip="Lettrage" i18n-pTooltip="Lettrage" tooltipPosition="top" ariaLabel="Lettrage" />
+              pTooltip="Lettrage" i18n-pTooltip="@@accounting.third-parties.lettrage.cfcdd333" tooltipPosition="top" ariaLabel="Lettrage" />
             <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
               type="button" (click)="startEdit(r)"
-              pTooltip="Fiche comptable" i18n-pTooltip="Fiche comptable" tooltipPosition="top" ariaLabel="Modifier la fiche comptable" />
+              pTooltip="Fiche comptable" i18n-pTooltip="@@accounting.third-parties.fiche.comptable.825252a3" tooltipPosition="top" ariaLabel="Modifier la fiche comptable" />
             </app-accounting-table-actions>
           </td>
         </tr>

@@ -12,7 +12,7 @@
         <label for="wiz-street" class="sr-only" i18n="@@auth.register-wizard.adresse.principale.b7ab7b05">Adresse principale</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-map-marker icon"></i>
-          <input pInputText id="wiz-street" formControlName="street" placeholder="Adresse principale *" i18n-placeholder="Adresse principale *"
+          <input pInputText id="wiz-street" formControlName="street" placeholder="Adresse principale *" i18n-placeholder="@@auth.register-wizard.adresse.principale.58301af0"
                  autocomplete="street-address"
                  [attr.aria-required]="true"
                  [class.ng-invalid]="isInvalid('street')">
@@ -28,7 +28,7 @@
         <label for="wiz-streetLine2" class="sr-only" i18n="@@auth.register-wizard.complement.d.adresse.fba484a7">Complément d'adresse</label>
         <div class="input-icon-wrapper">
           <i class="pi pi-building icon"></i>
-          <input pInputText id="wiz-streetLine2" formControlName="streetLine2" placeholder="Complément d'adresse (optionnel)" i18n-placeholder="Complément d'adresse (optionnel)">
+          <input pInputText id="wiz-streetLine2" formControlName="streetLine2" placeholder="Complément d'adresse (optionnel)" i18n-placeholder="@@auth.register-wizard.complement.d.adresse.optionnel.96815464">
         </div>
         <small class="field-hint" i18n="@@auth.register-wizard.vous.pourrez.completer.plus.tard.483b386b">Vous pourrez compléter plus tard</small>
       </div>
@@ -38,7 +38,7 @@
           <label for="wiz-city" class="sr-only" i18n="@@auth.register-wizard.ville.97217611">Ville</label>
           <div class="input-icon-wrapper">
             <i class="pi pi-map icon"></i>
-            <input pInputText id="wiz-city" formControlName="city" placeholder="Ville *" i18n-placeholder="Ville *" class="w-full"
+            <input pInputText id="wiz-city" formControlName="city" placeholder="Ville *" i18n-placeholder="@@auth.register-wizard.ville.e23c3241" class="w-full"
                    autocomplete="address-level2"
                    [attr.aria-required]="true"
                    [class.ng-invalid]="isInvalid('city')">
@@ -52,7 +52,7 @@
 
         <div class="form-group flex-1">
           <label for="wiz-postalCode" class="sr-only" i18n="@@auth.register-wizard.code.postal.74779109">Code postal</label>
-          <p-inputMask id="wiz-postalCode" formControlName="postalCode" mask="9999" placeholder="Code postal" i18n-placeholder="Code postal" styleClass="w-full">
+          <p-inputMask id="wiz-postalCode" formControlName="postalCode" mask="9999" placeholder="Code postal" i18n-placeholder="@@auth.register-wizard.code.postal.74779109" styleClass="w-full">
           </p-inputMask>
           <small class="field-hint" i18n="@@auth.register-wizard.4.chiffres.592fb939">4 chiffres</small>
         </div>
@@ -61,7 +61,7 @@
       <div class="form-group">
         <label for="wiz-governorate" class="sr-only" i18n="@@auth.register-wizard.gouvernorat.b9cd1d99">Gouvernorat</label>
         <p-select id="wiz-governorate" [options]="governorates" formControlName="governorate"
-                    optionLabel="label" optionValue="value" placeholder="Gouvernorat *" i18n-placeholder="Gouvernorat *"
+                    optionLabel="label" optionValue="value" placeholder="Gouvernorat *" i18n-placeholder="@@auth.register-wizard.gouvernorat.9e0d8ac0"
                     [filter]="true" filterBy="label" appendTo="body"
                     styleClass="w-full custom-dropdown"
                     [class.ng-invalid]="isInvalid('governorate')"

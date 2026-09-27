@@ -273,9 +273,9 @@ import { formatLocalDate } from '@core/utils/date.util';
     </app-record-payment-dialog>
 
     <!-- Cancel dialog -->
-    <p-dialog header="Annuler la facture" i18n-header="Annuler la facture" [(visible)]="cancelDialogVisible" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" (onHide)="closeCancelDialog()">
+    <p-dialog header="Annuler la facture" i18n-header="@@supplier-invoices.supplier-invoice-detail.annuler.la.facture.eb27c2cb" [(visible)]="cancelDialogVisible" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" (onHide)="closeCancelDialog()">
       <p class="dialog-message" i18n="@@supplier-invoices.supplier-invoice-detail.indiquez.le.motif.d.annulation.obligatoire.ac8edb83">Indiquez le motif d'annulation (obligatoire).</p>
-      <textarea pTextarea [(ngModel)]="cancelReason" placeholder="Motif..." i18n-placeholder="Motif..." [rows]="4" class="w-full"></textarea>
+      <textarea pTextarea [(ngModel)]="cancelReason" placeholder="Motif..." i18n-placeholder="@@supplier-invoices.supplier-invoice-detail.motif.17487f89" [rows]="4" class="w-full"></textarea>
       <ng-template pTemplate="footer">
         <app-button variant="outline" (click)="closeCancelDialog()" i18n="@@supplier-invoices.supplier-invoice-detail.retour.e5befb1f">Retour</app-button>
         <app-button variant="danger" icon="pi-times" iconPos="left" [disabled]="!cancelReason.trim()" (click)="submitCancel()" i18n="@@supplier-invoices.supplier-invoice-detail.annuler.la.facture.eb27c2cb">Annuler la facture</app-button>

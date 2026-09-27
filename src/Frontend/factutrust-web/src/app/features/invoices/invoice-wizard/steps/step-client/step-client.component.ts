@@ -106,9 +106,9 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
               [dropdown]="true"
               [forceSelection]="true"
               field="name"
-              placeholder="Nom, matricule fiscal ou email..." i18n-placeholder="Nom, matricule fiscal ou email..."
+              placeholder="Nom, matricule fiscal ou email..." i18n-placeholder="@@invoices.invoice-wizard.nom.matricule.fiscal.ou.email.270e5b5e"
               [minLength]="2"
-              emptyMessage="Aucun client trouvé" i18n-emptyMessage="Aucun client trouvé"
+              emptyMessage="Aucun client trouvé" i18n-emptyMessage="@@invoices.invoice-wizard.aucun.client.trouve.ef55e6be"
               appendTo="body"
               [style]="{ width: '100%' }"
               [showEmptyMessage]="true">
@@ -145,7 +145,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                 <button 
                   type="button" 
                   class="clear-btn"
-                  pTooltip="Changer de client" i18n-pTooltip="Changer de client"
+                  pTooltip="Changer de client" i18n-pTooltip="@@invoices.invoice-wizard.changer.de.client.b170ee3b"
                   (click)="clearSelection()">
                   <i class="pi pi-times"></i>
                 </button>
@@ -220,7 +220,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   pInputText 
                   id="name" 
                   formControlName="name"
-                  placeholder="Ex: ABC Industries SARL" i18n-placeholder="Ex: ABC Industries SARL"
+                  placeholder="Ex: ABC Industries SARL" i18n-placeholder="@@invoices.invoice-wizard.ex.abc.industries.sarl.8d1bc722"
                   [class.ng-invalid]="isFieldInvalid('name')">
                 @if (isFieldInvalid('name')) {
                   <small class="form-error" i18n="@@invoices.invoice-wizard.la.raison.sociale.est.obligatoire.59e5aeb0">La raison sociale est obligatoire</small>
@@ -235,7 +235,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                     formControlName="nif"
                     appNifMaskPaste
                     mask="9999999a/a/a/999"
-                    placeholder="Ex. 1772793W/A/M/000" i18n-placeholder="Ex. 1772793W/A/M/000"
+                    placeholder="Ex. 1772793W/A/M/000" i18n-placeholder="@@invoices.invoice-wizard.ex.1772793w.a.m.000.f3190bfc"
                     styleClass="w-full"
                     [style]="{'text-transform': 'uppercase'}"
                     [class.ng-invalid]="isFieldInvalid('nif')"
@@ -261,7 +261,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   pInputText 
                   id="street" 
                   formControlName="street"
-                  placeholder="Numéro et nom de rue" i18n-placeholder="Numéro et nom de rue"
+                  placeholder="Numéro et nom de rue" i18n-placeholder="@@invoices.invoice-wizard.numero.et.nom.de.rue.a6fd8173"
                   [class.ng-invalid]="isFieldInvalid('street')">
               </div>
 
@@ -271,7 +271,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   pInputText 
                   id="streetLine2" 
                   formControlName="streetLine2"
-                  placeholder="Appartement, étage, bâtiment..." i18n-placeholder="Appartement, étage, bâtiment...">
+                  placeholder="Appartement, étage, bâtiment..." i18n-placeholder="@@invoices.invoice-wizard.appartement.etage.batiment.15503019">
               </div>
 
               <div class="form-group">
@@ -280,7 +280,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   pInputText 
                   id="postalCode" 
                   formControlName="postalCode"
-                  placeholder="1000" i18n-placeholder="1000"
+                  placeholder="1000" i18n-placeholder="@@invoices.invoice-wizard.1000.e3cbba88"
                   maxlength="5">
               </div>
 
@@ -290,7 +290,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   pInputText 
                   id="city" 
                   formControlName="city"
-                  placeholder="Tunis" i18n-placeholder="Tunis"
+                  placeholder="Tunis" i18n-placeholder="@@invoices.invoice-wizard.tunis.e58b2d54"
                   [class.ng-invalid]="isFieldInvalid('city')">
               </div>
 
@@ -302,7 +302,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   [options]="governorateOptions"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Sélectionner..." i18n-placeholder="Sélectionner..."
+                  placeholder="Sélectionner..." i18n-placeholder="@@invoices.invoice-wizard.selectionner.01ea04b3"
                   [filter]="true"
                   filterPlaceholder="Rechercher..."
                   appendTo="body"
@@ -324,7 +324,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   type="email"
                   id="email" 
                   formControlName="email"
-                  placeholder="contact@exemple.tn" i18n-placeholder="contact@exemple.tn"
+                  placeholder="contact@exemple.tn" i18n-placeholder="@@invoices.invoice-wizard.contact.exemple.tn.c035c2ff"
                   [class.ng-invalid]="isFieldInvalid('email')">
                 @if (isFieldInvalid('email')) {
                   <small class="form-error" i18n="@@invoices.invoice-wizard.email.invalide.e09b961a">Email invalide</small>
@@ -337,7 +337,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   id="phone"
                   formControlName="phone"
                   mask="+216 99 999 999"
-                  placeholder="+216 XX XXX XXX" i18n-placeholder="+216 XX XXX XXX">
+                  placeholder="+216 XX XXX XXX" i18n-placeholder="@@invoices.invoice-wizard.216.xx.xxx.xxx.e336394e">
                 </p-inputMask>
               </div>
 
@@ -347,7 +347,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   pInputText 
                   id="contactPerson" 
                   formControlName="contactPerson"
-                  placeholder="Nom du responsable" i18n-placeholder="Nom du responsable">
+                  placeholder="Nom du responsable" i18n-placeholder="@@invoices.invoice-wizard.nom.du.responsable.45818ee5">
               </div>
             </div>
           </form>

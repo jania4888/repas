@@ -36,12 +36,12 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
     PayrollSocialFundsSettingsComponent
   ],
   template: `
-    <app-page-header title="Paramètres de paie" i18n-title="Paramètres de paie" subtitle="Barème IRPP, taux légaux et conformité par exercice." />
+    <app-page-header title="Paramètres de paie" i18n-title="@@payroll.settings.parametres.de.paie.bdda7686" subtitle="Barème IRPP, taux légaux et conformité par exercice." />
 
     <div class="payroll-toolbar mb-3">
       <label for="fiscalYear" i18n="@@payroll.settings.exercice.e171e2b0">Exercice</label>
       <p-inputNumber id="fiscalYear" [(ngModel)]="fiscalYear" (ngModelChange)="load()" [useGrouping]="false" [min]="2000" [max]="2100" styleClass="w-8rem" />
-      <app-button type="button" variant="secondary" label="Recharger défauts LF" i18n-label="Recharger défauts LF" icon="pi pi-refresh" (clicked)="reloadLegalPreset()" class="ml-3" />
+      <app-button type="button" variant="secondary" label="Recharger défauts LF" i18n-label="@@payroll.settings.recharger.defauts.lf.0c7024bd" icon="pi pi-refresh" (clicked)="reloadLegalPreset()" class="ml-3" />
     </div>
 
     @if (accountingForm(); as acc) {
@@ -127,7 +127,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
           <app-button
             type="button"
             variant="primary"
-            label="Enregistrer l'imputation" i18n-label="Enregistrer l'imputation"
+            label="Enregistrer l'imputation" i18n-label="@@payroll.settings.enregistrer.l.imputation.12a551f1"
             icon="pi pi-save"
             [disabled]="savingAccounting()"
             (clicked)="saveAccountingSettings()" />
@@ -147,7 +147,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
           }
         </ul>
         <div class="preset-drift-banner__actions">
-          <app-button type="button" variant="secondary" label="Recharger défauts LF" i18n-label="Recharger défauts LF" icon="pi pi-refresh" (clicked)="reloadLegalPreset()" />
+          <app-button type="button" variant="secondary" label="Recharger défauts LF" i18n-label="@@payroll.settings.recharger.defauts.lf.0c7024bd" icon="pi pi-refresh" (clicked)="reloadLegalPreset()" />
         </div>
       </div>
     }
@@ -165,7 +165,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
           </p-tablist>
           <p-tabpanels>
           <p-tabpanel [value]="0">
-            <app-form-section title="CNSS" i18n-title="CNSS" icon="pi-building" variant="compact">
+            <app-form-section title="CNSS" i18n-title="@@payroll.settings.cnss.a04d171a" icon="pi-building" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-4">
                 <div class="payroll-form-group">
                   <label i18n="@@payroll.settings.cnss.salarie.b1cf7b5e">CNSS salarié (%)</label>
@@ -186,14 +186,14 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               </div>
             </app-form-section>
 
-            <app-form-section title="CSS" i18n-title="CSS" icon="pi-percentage" variant="compact">
+            <app-form-section title="CSS" i18n-title="@@payroll.settings.css.194e13da" icon="pi-percentage" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-3">
                 <div class="payroll-form-group">
                   <label i18n="@@payroll.settings.css.651e5f38">CSS (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.cssRate" name="cssRate" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label pTooltip="Seuil d'exonération CSS annuel" i18n-pTooltip="Seuil d'exonération CSS annuel" i18n="@@payroll.settings.seuil.exoneration.css.tnd.an.a37b383d">Seuil exonération CSS (TND/an)</label>
+                  <label pTooltip="Seuil d'exonération CSS annuel" i18n-pTooltip="@@payroll.settings.seuil.d.exoneration.css.annuel.0048d5a7" i18n="@@payroll.settings.seuil.exoneration.css.tnd.an.a37b383d">Seuil exonération CSS (TND/an)</label>
                   <p-inputNumber [(ngModel)]="params()!.cssAnnualExemptionThreshold" name="cssExemption" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
@@ -203,7 +203,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               </div>
             </app-form-section>
 
-            <app-form-section title="TFP &amp; FOPROLOS" i18n-title="TFP &amp; FOPROLOS" icon="pi-briefcase" variant="compact">
+            <app-form-section title="TFP &amp; FOPROLOS" i18n-title="@@payroll.settings.tfp.foprolos.64fa1b47" icon="pi-briefcase" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-3">
                 <div class="payroll-form-group">
                   <label i18n="@@payroll.settings.tfp.industrie.f955848c">TFP industrie (%)</label>
@@ -220,20 +220,20 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               </div>
             </app-form-section>
 
-            <app-form-section title="SMIG &amp; avantages" i18n-title="SMIG &amp; avantages" icon="pi-wallet" variant="compact">
+            <app-form-section title="SMIG &amp; avantages" i18n-title="@@payroll.settings.smig.avantages.1a084908" icon="pi-wallet" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
                   <label i18n="@@payroll.settings.smig.mensuel.tnd.81332ee6">SMIG mensuel (TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.monthlySmig" name="smig" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label pTooltip="Plafond exonération ticket restaurant / jour (TND)" i18n-pTooltip="Plafond exonération ticket restaurant / jour (TND)" i18n="@@payroll.settings.plafond.ticket.resto.jour.tnd.d6820062">Plafond ticket resto. / jour (TND)</label>
+                  <label pTooltip="Plafond exonération ticket restaurant / jour (TND)" i18n-pTooltip="@@payroll.settings.plafond.exoneration.ticket.restaurant.jour.tnd.42da821e" i18n="@@payroll.settings.plafond.ticket.resto.jour.tnd.d6820062">Plafond ticket resto. / jour (TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.mealVoucherDailyExemptionCap" name="mealVoucherCap" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <app-form-section title="Frais professionnels" i18n-title="Frais professionnels" icon="pi-calculator" variant="compact">
+            <app-form-section title="Frais professionnels" i18n-title="@@payroll.settings.frais.professionnels.21e6559e" icon="pi-calculator" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
                   <label i18n="@@payroll.settings.frais.pro.80090a41">Frais pro. (%)</label>
@@ -277,7 +277,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
           </p-tabpanel>
 
           <p-tabpanel [value]="2">
-            <app-form-section title="Déductions de base" i18n-title="Déductions de base" icon="pi-home" variant="compact">
+            <app-form-section title="Déductions de base" i18n-title="@@payroll.settings.deductions.de.base.954cfa41" icon="pi-home" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-3">
                 <div class="payroll-form-group">
                   <label i18n="@@payroll.settings.chef.de.famille.annuel.tnd.783f610d">Chef de famille (annuel, TND)</label>
@@ -294,23 +294,23 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               </div>
             </app-form-section>
 
-            <app-form-section title="Enfants à cas particulier" i18n-title="Enfants à cas particulier" icon="pi-user-plus" variant="compact">
+            <app-form-section title="Enfants à cas particulier" i18n-title="@@payroll.settings.enfants.a.cas.particulier.bb2e4f3f" icon="pi-user-plus" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
-                  <label pTooltip="Non boursier, âge &lt; 25 ans" i18n-pTooltip="Non boursier, âge &lt; 25 ans" i18n="@@payroll.settings.enfant.etudiant.annuel.tnd.6d3a6cad">Enfant étudiant (annuel, TND)</label>
+                  <label pTooltip="Non boursier, âge &lt; 25 ans" i18n-pTooltip="@@payroll.settings.non.boursier.age.25.ans.71c74648" i18n="@@payroll.settings.enfant.etudiant.annuel.tnd.6d3a6cad">Enfant étudiant (annuel, TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.studentChildAnnualDeduction" name="studentDeduction" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
-                  <label pTooltip="Hors plafond du nombre d'enfants déductibles" i18n-pTooltip="Hors plafond du nombre d'enfants déductibles" i18n="@@payroll.settings.enfant.infirme.annuel.tnd.cd3c0c1d">Enfant infirme (annuel, TND)</label>
+                  <label pTooltip="Hors plafond du nombre d'enfants déductibles" i18n-pTooltip="@@payroll.settings.hors.plafond.du.nombre.d.enfants.deductibles.a1cd7c51" i18n="@@payroll.settings.enfant.infirme.annuel.tnd.cd3c0c1d">Enfant infirme (annuel, TND)</label>
                   <p-inputNumber [(ngModel)]="params()!.disabledChildAnnualDeduction" name="disabledDeduction" [minFractionDigits]="3" [min]="0" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
               </div>
             </app-form-section>
 
-            <app-form-section title="Parents à charge" i18n-title="Parents à charge" icon="pi-users" variant="compact">
+            <app-form-section title="Parents à charge" i18n-title="@@payroll.settings.parents.a.charge.ce5fcb65" icon="pi-users" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
-                  <label pTooltip="Pourcentage du revenu net imposable" i18n-pTooltip="Pourcentage du revenu net imposable" i18n="@@payroll.settings.parent.a.charge.taux.15ff076b">Parent à charge — taux (%)</label>
+                  <label pTooltip="Pourcentage du revenu net imposable" i18n-pTooltip="@@payroll.settings.pourcentage.du.revenu.net.imposable.633aa3de" i18n="@@payroll.settings.parent.a.charge.taux.15ff076b">Parent à charge — taux (%)</label>
                   <p-inputNumber [(ngModel)]="params()!.parentDeductionRatePercent" name="parentRate" [minFractionDigits]="2" [maxFractionDigits]="4" [min]="0" [max]="100" [locale]="'fr-TN'" styleClass="w-full" />
                 </div>
                 <div class="payroll-form-group">
@@ -324,7 +324,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
           </p-tabpanel>
 
           <p-tabpanel [value]="3">
-            <app-form-section title="Options de calcul" i18n-title="Options de calcul" icon="pi-cog" variant="compact">
+            <app-form-section title="Options de calcul" i18n-title="@@payroll.settings.options.de.calcul.f82369cb" icon="pi-cog" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group switch-row">
                   <label for="enforceSmig" i18n="@@payroll.settings.controle.smig.sur.les.contrats.120f8cc7">Contrôle SMIG sur les contrats</label>
@@ -353,7 +353,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               </div>
             </app-form-section>
 
-            <app-form-section title="Exonération IRPP SMIG" i18n-title="Exonération IRPP SMIG" icon="pi-shield" variant="compact">
+            <app-form-section title="Exonération IRPP SMIG" i18n-title="@@payroll.settings.exoneration.irpp.smig.6ac040e7" icon="pi-shield" variant="compact">
               <div class="payroll-form-row payroll-form-row--cols-2">
                 <div class="payroll-form-group">
                   <label for="smigExemptionMode" i18n="@@payroll.settings.exoneration.irpp.smig.6ac040e7">Exonération IRPP SMIG</label>
@@ -377,7 +377,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
                       [min]="0"
                       [max]="100"
                       [locale]="'fr-TN'"
-                      placeholder="15 (barème)" i18n-placeholder="15 (barème)"
+                      placeholder="15 (barème)" i18n-placeholder="@@payroll.settings.15.bareme.cbb1f5b4"
                       styleClass="w-full" />
                     <small class="field-hint" i18n="@@payroll.settings.laisser.vide.pour.utiliser.le.premier.taux.non.n.e9efc786">Laisser vide pour utiliser le premier taux non nul du barème IRPP.</small>
                   </div>

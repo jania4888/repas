@@ -57,7 +57,7 @@ function parseDate(value: string): Date | null {
   ],
   template: `
     <app-page-header
-      title="Jours fériés" i18n-title="Jours fériés"
+      title="Jours fériés" i18n-title="@@payroll.settings.jours.feries.6ba43434"
       subtitle="Calendrier des fêtes légales tunisiennes pour le décompte des jours ouvrables." />
 
     <div class="payroll-toolbar mb-3">

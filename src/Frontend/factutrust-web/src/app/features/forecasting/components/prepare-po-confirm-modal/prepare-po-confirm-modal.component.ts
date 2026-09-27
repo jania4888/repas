@@ -72,7 +72,7 @@ export interface PreparePoLinePrice {
             <h3 id="prepare-modal-title" i18n="@@forecasting.components.creer.les.bons.de.commande.8e7effb0">Créer les bons de commande</h3>
             <span class="modal-subtitle">{{ recommendations.length }} recommandation(s) sélectionnée(s)</span>
           </div>
-          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="Fermer">
+          <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="@@forecasting.components.fermer.5ab4ec64">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </header>
@@ -110,7 +110,7 @@ export interface PreparePoLinePrice {
                         class="po-bulk-select"
                         [ngModel]="bulkSupplierId()"
                         (ngModelChange)="onBulkAssign($event)"
-                        aria-label="Assigner un fournisseur à toutes les lignes sans fournisseur" i18n-aria-label="Assigner un fournisseur à toutes les lignes sans fournisseur">
+                        aria-label="Assigner un fournisseur à toutes les lignes sans fournisseur" i18n-aria-label="@@forecasting.components.assigner.un.fournisseur.a.toutes.les.lignes.sans.dc01867b">
                         <option [ngValue]="null">— Assigner un fournisseur à toutes ces lignes ({{ g.recommendations.length }}) —</option>
                         @for (s of suppliers(); track s.id) {
                           <option [ngValue]="s.id">{{ s.name }}</option>
@@ -163,7 +163,7 @@ export interface PreparePoLinePrice {
                                 (ngModelChange)="setDraftPrice(r.id, $event)"
                                 [class.invalid]="priceInvalidForLinkable(r)"
                                 [attr.aria-label]="loc_ui_tern_prix_unitaire_ht_pour_083196 + r.productCode"
-                                placeholder="—" i18n-placeholder="—" />
+                                placeholder="—" i18n-placeholder="@@forecasting.components.text.1b93795b" />
                             </label>
                             <span class="po-price-suffix" i18n="@@forecasting.components.tnd.51da21a7">TND</span>
                           </div>
@@ -179,7 +179,7 @@ export interface PreparePoLinePrice {
                                 [class.invalid]="qtyInvalidFor(r.id)"
                                 [attr.aria-label]="loc_ui_tern_quantite_a_commander_pour_8e4c05 + r.productCode" />
                             </label>
-                            <span class="po-rec-hint" title="Quantité recommandée par le moteur" i18n-title="Quantité recommandée par le moteur">
+                            <span class="po-rec-hint" title="Quantité recommandée par le moteur" i18n-title="@@forecasting.components.quantite.recommandee.par.le.moteur.d20840f9">
                               Rec. {{ r.recommendedQty | qtyFmt: r.productUnit }}
                             </span>
                           </div>

@@ -62,7 +62,7 @@ interface StatusOption {
       <div class="ft-filters__header">
         <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="Réinitialiser les filtres">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@supplier-invoices.supplier-invoice-list.reinitialiser.les.filtres.d8915f02">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -72,7 +72,7 @@ interface StatusOption {
         <span class="p-input-icon-left flex-1">
           <i class="pi pi-search"></i>
           <input pInputText type="text"
-            placeholder="Rechercher par n° facture, fournisseur…" i18n-placeholder="Rechercher par n° facture, fournisseur…"
+            placeholder="Rechercher par n° facture, fournisseur…" i18n-placeholder="@@supplier-invoices.supplier-invoice-list.rechercher.par.n.facture.fournisseur.f88033f2"
             [(ngModel)]="searchTerm"
             (input)="onSearchInput($event)"
             class="w-full">
@@ -82,7 +82,7 @@ interface StatusOption {
           [(ngModel)]="selectedStatus"
           optionLabel="label"
           optionValue="value"
-          placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+          placeholder="Tous les statuts" i18n-placeholder="@@supplier-invoices.supplier-invoice-list.tous.les.statuts.2d5088af"
           [showClear]="true"
           (onChange)="onFilterChange()">
         </p-select>
@@ -91,7 +91,7 @@ interface StatusOption {
           [(ngModel)]="selectedSupplierId"
           optionLabel="name"
           optionValue="id"
-          placeholder="Tous les fournisseurs" i18n-placeholder="Tous les fournisseurs"
+          placeholder="Tous les fournisseurs" i18n-placeholder="@@supplier-invoices.supplier-invoice-list.tous.les.fournisseurs.0e8a9fae"
           [showClear]="true"
           [filter]="true"
           filterBy="name"
@@ -118,7 +118,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures" i18n-currentPageReportTemplate="@@supplier-invoices.supplier-invoice-list.affichage.de.first.a.last.sur.totalrecords.factu.5b810a90"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -171,14 +171,14 @@ interface StatusOption {
               <td colspan="9" class="text-center p-6">
                 @if (unpaidOnlyMode()) {
                   <app-empty-state
-                    title="Aucune facture impayée" i18n-title="Aucune facture impayée"
+                    title="Aucune facture impayée" i18n-title="@@supplier-invoices.supplier-invoice-list.aucune.facture.impayee.6da9b1d9"
                     description="Aucune facture fournisseur en attente de règlement."
                     actionLabel="Voir toutes les factures fournisseurs"
                     actionRoute="/supplier-invoices">
                   </app-empty-state>
                 } @else {
                   <app-empty-state
-                    title="Aucune facture fournisseur" i18n-title="Aucune facture fournisseur"
+                    title="Aucune facture fournisseur" i18n-title="@@supplier-invoices.supplier-invoice-list.aucune.facture.fournisseur.7b87b354"
                     description="Créez une facture depuis un bon de commande, un bon de réception, ou directement."
                     [showAction]="canCreateSupplierInvoice()"
                     actionLabel="Nouvelle facture"

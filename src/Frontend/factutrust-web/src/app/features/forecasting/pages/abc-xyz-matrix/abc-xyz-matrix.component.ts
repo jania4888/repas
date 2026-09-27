@@ -23,7 +23,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
   template: `
     <section class="abc-xyz">
       <app-page-header
-        title="Matrice ABC × XYZ" i18n-title="Matrice ABC × XYZ"
+        title="Matrice ABC × XYZ" i18n-title="@@forecasting.pages.matrice.abc.xyz.8f41fc5c"
         subtitle="Classification des produits par contribution au CA (ABC) et variabilité de la demande (XYZ).">
         @if (canManage()) {
           <button class="btn btn-secondary" (click)="recompute()" [disabled]="loading()">

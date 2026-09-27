@@ -23,7 +23,7 @@ import {
   ],
   template: `
     <app-page-header
-      title="Dépenses" i18n-title="Dépenses"
+      title="Dépenses" i18n-title="@@reports.purchases-analytics.depenses.fb667434"
       subtitle="Suivez l'évolution de vos dépenses et comparez par période">
       <app-button
         variant="secondary"
@@ -71,20 +71,20 @@ import {
     } @else if (data()) {
       <div class="kpi-grid">
         <app-stat-card
-          label="Dépenses totales" i18n-label="Dépenses totales"
+          label="Dépenses totales" i18n-label="@@reports.purchases-analytics.depenses.totales.7f280e4e"
           [value]="formatAmount(data()!.totalExpenses)"
           icon="pi-dollar"
           variant="primary"
           [change]="-data()!.comparison.changePercent">
         </app-stat-card>
         <app-stat-card
-          label="Factures fournisseurs" i18n-label="Factures fournisseurs"
+          label="Factures fournisseurs" i18n-label="@@reports.purchases-analytics.factures.fournisseurs.1dcbc2ed"
           [value]="data()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Période précédente" i18n-label="Période précédente"
+          label="Période précédente" i18n-label="@@reports.purchases-analytics.periode.precedente.5e420e76"
           [value]="formatAmount(data()!.comparison.previousValue)"
           icon="pi-history"
           variant="warning">
@@ -108,7 +108,7 @@ import {
           </div>
         </div>
       } @else if (data()?.chartData && hasChartData()) {
-        <div class="chart-container" role="img" aria-label="Graphique des dépenses" i18n-aria-label="Graphique des dépenses">
+        <div class="chart-container" role="img" aria-label="Graphique des dépenses" i18n-aria-label="@@reports.purchases-analytics.graphique.des.depenses.7f62dfb4">
           <div class="chart-y-axis">
             <span class="y-label">{{ formatAmountShort(maxAmount) }}</span>
             <span class="y-label">{{ formatAmountShort(maxAmount / 2) }}</span>

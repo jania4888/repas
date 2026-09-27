@@ -33,7 +33,7 @@ import { ClientOutstanding } from '@core/services/client.service';
       <div class="ft-panel encours-panel" [class.encours-panel--over]="outstanding.isOverLimit">
         <div class="ft-panel__header">
           <h3 class="ft-panel__title" i18n="@@clients.client-outstanding-panel.encours.ba3d7159">Encours</h3>
-          <a class="encours-edit-link" [routerLink]="editLink" aria-label="Modifier le plafond" i18n-aria-label="Modifier le plafond">
+          <a class="encours-edit-link" [routerLink]="editLink" aria-label="Modifier le plafond" i18n-aria-label="@@clients.client-outstanding-panel.modifier.le.plafond.b4fd857f">
             <i class="pi pi-pencil" aria-hidden="true"></i>
             Modifier le plafond
           </a>
@@ -62,7 +62,7 @@ import { ClientOutstanding } from '@core/services/client.service';
 
         <div class="encours-kpi-grid">
           <app-stat-card
-            label="Factures non soldées" i18n-label="Factures non soldées"
+            label="Factures non soldées" i18n-label="@@clients.client-outstanding-panel.factures.non.soldees.aa076d48"
             [value]="formatAmount(outstanding.unpaidInvoicesAmount) + ' ' + outstanding.currency"
             icon="pi-file"
             variant="primary">
@@ -70,14 +70,14 @@ import { ClientOutstanding } from '@core/services/client.service';
           </app-stat-card>
 
           <app-stat-card
-            label="Commandes non facturées" i18n-label="Commandes non facturées"
+            label="Commandes non facturées" i18n-label="@@clients.client-outstanding-panel.commandes.non.facturees.09643889"
             [value]="formatAmount(outstanding.confirmedOrdersAmount) + ' ' + outstanding.currency"
             icon="pi-shopping-cart"
             variant="warning">
           </app-stat-card>
 
           <app-stat-card
-            label="Encours total" i18n-label="Encours total"
+            label="Encours total" i18n-label="@@clients.client-outstanding-panel.encours.total.de6fe91a"
             [value]="formatAmount(outstanding.totalOutstanding) + ' ' + outstanding.currency"
             icon="pi-wallet"
             [variant]="outstanding.isOverLimit ? 'error' : 'primary'"
@@ -85,7 +85,7 @@ import { ClientOutstanding } from '@core/services/client.service';
           </app-stat-card>
 
           <app-stat-card
-            label="Marge restante" i18n-label="Marge restante"
+            label="Marge restante" i18n-label="@@clients.client-outstanding-panel.marge.restante.6f956963"
             [value]="marginDisplay"
             icon="pi-shield"
             [variant]="marginVariant">

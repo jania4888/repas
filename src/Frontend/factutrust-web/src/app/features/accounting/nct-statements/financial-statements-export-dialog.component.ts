@@ -27,7 +27,7 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
   imports: [CommonModule, FormsModule, DialogModule, CheckboxModule, DatePickerModule, ButtonComponent],
   template: `
     <p-dialog
-      header="États financiers" i18n-header="États financiers"
+      header="États financiers" i18n-header="@@accounting.nct-statements.etats.financiers.688bd4ed"
       [visible]="visible"
       (visibleChange)="onVisibleChange($event)"
       [modal]="true"
@@ -46,7 +46,7 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
             appendTo="body"
             [disabled]="busy()" />
         </div>
-        <div class="fs-radios" role="radiogroup" aria-label="Comparatif N-1" i18n-aria-label="Comparatif N-1">
+        <div class="fs-radios" role="radiogroup" aria-label="Comparatif N-1" i18n-aria-label="@@accounting.nct-statements.comparatif.n.1.cd3417a4">
           <label class="fs-radio">
             <input type="radio" name="n1Mode" [ngModel]="previousYearLabelMode" (ngModelChange)="setPreviousYearMode($event)" [value]="0" [disabled]="busy()" />
             N-1 arrêtée au 31/12

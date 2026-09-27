@@ -38,7 +38,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
       </div>
 
       <div class="card filters-card">
-        <div class="filters-grid" role="search" aria-label="Filtres des transferts" i18n-aria-label="Filtres des transferts">
+        <div class="filters-grid" role="search" aria-label="Filtres des transferts" i18n-aria-label="@@transfers.transfer-list.filtres.des.transferts.8aa7decf">
           <div class="filter-field">
             <label class="filter-label" id="filter-status-label" for="filter-status" i18n="@@transfers.transfer-list.statut.659499f3">Statut</label>
             <p-select inputId="filter-status"
@@ -46,7 +46,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
               [(ngModel)]="statusFilter"
               optionLabel="label"
               optionValue="value"
-              placeholder="Tous les statuts" i18n-placeholder="Tous les statuts"
+              placeholder="Tous les statuts" i18n-placeholder="@@transfers.transfer-list.tous.les.statuts.2d5088af"
               [showClear]="true"
               [style]="{ width: '100%' }"
               appendTo="body"
@@ -60,7 +60,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
               [(ngModel)]="warehouseFilter"
               optionLabel="label"
               optionValue="value"
-              placeholder="Tous les entrepôts" i18n-placeholder="Tous les entrepôts"
+              placeholder="Tous les entrepôts" i18n-placeholder="@@transfers.transfer-list.tous.les.entrepots.2c918ad1"
               [showClear]="true"
               [filter]="warehouseOptions.length > 20"
               filterBy="label"
@@ -80,8 +80,8 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
             <input id="filter-to" type="date" class="date-input" [(ngModel)]="toDate" />
           </div>
           <div class="filter-actions">
-            <button pButton type="button" label="Appliquer" i18n-label="Appliquer" icon="pi pi-filter" (click)="loadTransfers()"></button>
-            <button pButton type="button" label="Réinitialiser" i18n-label="Réinitialiser" class="p-button-outlined" (click)="resetFilters()"></button>
+            <button pButton type="button" label="Appliquer" i18n-label="@@transfers.transfer-list.appliquer.a4d66139" icon="pi pi-filter" (click)="loadTransfers()"></button>
+            <button pButton type="button" label="Réinitialiser" i18n-label="@@transfers.transfer-list.reinitialiser.e0e2ad54" class="p-button-outlined" (click)="resetFilters()"></button>
           </div>
         </div>
       </div>
@@ -92,7 +92,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
         <p-table [value]="transfers()" [paginator]="true" [rows]="20"
                  [loading]="loading()" styleClass="p-datatable-sm"
                  [rowHover]="true" [showCurrentPageReport]="true"
-                 currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} transferts" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} transferts">
+                 currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} transferts" i18n-currentPageReportTemplate="@@transfers.transfer-list.affichage.de.first.a.last.sur.totalrecords.trans.92fa6643">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@transfers.transfer-list.numero.15e73db0">Numéro</th>

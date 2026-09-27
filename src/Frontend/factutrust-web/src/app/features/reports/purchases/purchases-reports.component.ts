@@ -47,7 +47,7 @@ interface PeriodOption {
   ],
   template: `
     <app-page-header 
-      title="Rapports Achats" i18n-title="Rapports Achats" 
+      title="Rapports Achats" i18n-title="@@reports.purchases.rapports.achats.ac9a7abf" 
       subtitle="Analysez vos dépenses et suivez vos indicateurs d'achats">
       <app-button 
         variant="secondary"
@@ -69,7 +69,7 @@ interface PeriodOption {
           [(ngModel)]="selectedPeriod" 
           (ngModelChange)="onPeriodChange()"
           class="filter-select"
-          aria-label="Sélectionner la période des rapports" i18n-aria-label="Sélectionner la période des rapports">
+          aria-label="Sélectionner la période des rapports" i18n-aria-label="@@reports.purchases.selectionner.la.periode.des.rapports.d6f7fa31">
           @for (period of periodOptions; track period.value) {
             <option [value]="period.value">{{ period.label }}</option>
           }
@@ -95,31 +95,31 @@ interface PeriodOption {
     } @else if (reportsData()) {
       <div class="stats-grid">
         <app-stat-card
-          label="Dépenses totales" i18n-label="Dépenses totales"
+          label="Dépenses totales" i18n-label="@@reports.purchases.depenses.totales.7f280e4e"
           [value]="reportsData()!.totalExpenses"
           icon="pi-dollar"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Factures fournisseurs" i18n-label="Factures fournisseurs"
+          label="Factures fournisseurs" i18n-label="@@reports.purchases.factures.fournisseurs.1dcbc2ed"
           [value]="reportsData()!.totalInvoices"
           icon="pi-file"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Factures payées" i18n-label="Factures payées"
+          label="Factures payées" i18n-label="@@reports.purchases.factures.payees.587e5689"
           [value]="reportsData()!.paidInvoices"
           icon="pi-check-circle"
           variant="success">
         </app-stat-card>
         <app-stat-card
-          label="Taux de paiement" i18n-label="Taux de paiement"
+          label="Taux de paiement" i18n-label="@@reports.purchases.taux.de.paiement.813ba1e7"
           [value]="reportsData()!.paymentRate"
           icon="pi-percentage"
           variant="primary">
         </app-stat-card>
         <app-stat-card
-          label="Montant à payer" i18n-label="Montant à payer"
+          label="Montant à payer" i18n-label="@@reports.purchases.montant.a.payer.caf88629"
           [value]="reportsData()!.amountToPay"
           icon="pi-wallet"
           variant="warning">
@@ -157,7 +157,7 @@ interface PeriodOption {
             </div>
           </div>
         } @else if (reportsData()?.expenseChartData && reportsData()!.expenseChartData.length > 0) {
-          <div class="chart-container" role="img" aria-label="Graphique - évolution des dépenses" i18n-aria-label="Graphique - évolution des dépenses">
+          <div class="chart-container" role="img" aria-label="Graphique - évolution des dépenses" i18n-aria-label="@@reports.purchases.graphique.evolution.des.depenses.0949af3b">
             <div class="chart-bars">
               @for (item of reportsData()!.expenseChartData; track item.label) {
                 <div class="chart-bar-group">
@@ -208,7 +208,7 @@ interface PeriodOption {
           <p-table 
             [value]="reportsData()!.topSuppliers" 
             styleClass="p-datatable-sm reports-table"
-            aria-label="Tableau des principaux fournisseurs" i18n-aria-label="Tableau des principaux fournisseurs">
+            aria-label="Tableau des principaux fournisseurs" i18n-aria-label="@@reports.purchases.tableau.des.principaux.fournisseurs.3b1b86a4">
             <ng-template pTemplate="header">
               <tr>
                 <th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th>
@@ -241,7 +241,7 @@ interface PeriodOption {
       } @else if (!supplierTransactions().length) {
         <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.purchases.aucune.transaction.sur.cette.periode.2ed99811">Aucune transaction sur cette période</p></div>
       } @else {
-        <p-table [value]="supplierTransactions()" styleClass="p-datatable-sm reports-table" aria-label="Transactions fournisseurs" i18n-aria-label="Transactions fournisseurs">
+        <p-table [value]="supplierTransactions()" styleClass="p-datatable-sm reports-table" aria-label="Transactions fournisseurs" i18n-aria-label="@@reports.purchases.transactions.fournisseurs.83a34e96">
           <ng-template pTemplate="header">
             <tr><th i18n="@@reports.purchases.date.eb9a4bc1">Date</th><th i18n="@@reports.purchases.type.3deb7456">Type</th><th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th><th i18n="@@reports.purchases.reference.f8130bb0">Référence</th><th class="text-right" i18n="@@reports.purchases.montant.4adcd9fc">Montant</th></tr>
           </ng-template>
@@ -271,7 +271,7 @@ interface PeriodOption {
       } @else if (!purchasesByLine().length) {
         <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.purchases.aucune.ligne.d.achat.sur.cette.periode.fc546c63">Aucune ligne d'achat sur cette période</p></div>
       } @else {
-        <p-table [value]="purchasesByLine()" styleClass="p-datatable-sm reports-table" aria-label="Détails achats par ligne" i18n-aria-label="Détails achats par ligne">
+        <p-table [value]="purchasesByLine()" styleClass="p-datatable-sm reports-table" aria-label="Détails achats par ligne" i18n-aria-label="@@reports.purchases.details.achats.par.ligne.20c0118b">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@reports.purchases.produit.ff673dc2">Produit</th>
@@ -309,7 +309,7 @@ interface PeriodOption {
       } @else if (!purchasesVat().length) {
         <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.purchases.aucune.tva.achats.sur.cette.periode.cdd1f640">Aucune TVA achats sur cette période</p></div>
       } @else {
-        <p-table [value]="purchasesVat()" styleClass="p-datatable-sm reports-table" aria-label="TVA achats" i18n-aria-label="TVA achats">
+        <p-table [value]="purchasesVat()" styleClass="p-datatable-sm reports-table" aria-label="TVA achats" i18n-aria-label="@@reports.purchases.tva.achats.48719283">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@reports.purchases.taux.tva.c0830fcc">Taux TVA</th>
@@ -341,7 +341,7 @@ interface PeriodOption {
         [rows]="supplierBalanceRows()"
         [loading]="supplierBalancesLoading()"
         partyLabel="Fournisseur"
-        emptyMessage="Aucun solde fournisseur" i18n-emptyMessage="Aucun solde fournisseur"
+        emptyMessage="Aucun solde fournisseur" i18n-emptyMessage="@@reports.purchases.aucun.solde.fournisseur.6ed70d5f"
         ariaLabel="Soldes fournisseurs">
       </app-party-balances-table>
     </div>
@@ -362,7 +362,7 @@ interface PeriodOption {
       } @else if (!supplierWithholdings().length) {
         <div class="empty-placeholder"><i class="pi pi-info-circle"></i><p i18n="@@reports.purchases.aucune.retenue.fournisseur.sur.cette.periode.d024c0d1">Aucune retenue fournisseur sur cette période</p></div>
       } @else {
-        <p-table [value]="supplierWithholdings()" styleClass="p-datatable-sm reports-table" aria-label="Retenues fournisseurs" i18n-aria-label="Retenues fournisseurs">
+        <p-table [value]="supplierWithholdings()" styleClass="p-datatable-sm reports-table" aria-label="Retenues fournisseurs" i18n-aria-label="@@reports.purchases.retenues.fournisseurs.a6b3211f">
           <ng-template pTemplate="header">
             <tr>
               <th i18n="@@reports.purchases.fournisseur.97d91d89">Fournisseur</th>
@@ -497,7 +497,7 @@ interface PeriodOption {
         </div>
       } @else {
         <div class="crosstab-table-wrapper">
-          <table class="crosstab-table" aria-label="Tableau croisé des dépenses par mois et année" i18n-aria-label="Tableau croisé des dépenses par mois et année">
+          <table class="crosstab-table" aria-label="Tableau croisé des dépenses par mois et année" i18n-aria-label="@@reports.purchases.tableau.croise.des.depenses.par.mois.et.annee.ae18598c">
             <thead>
               <tr>
                 <th scope="col" i18n="@@reports.purchases.annee.1f910d98">Année</th>

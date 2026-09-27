@@ -47,7 +47,7 @@ import {
               [(ngModel)]="f.code"
               [disabled]="!!f.id || disabled"
               maxlength="20"
-              placeholder="Ex. F9_TCL" i18n-placeholder="Ex. F9_TCL" />
+              placeholder="Ex. F9_TCL" i18n-placeholder="@@accounting.monthly-declaration.ex.f9.tcl.0451422f" />
             @if (f.id) {
               <small class="dm-hint" i18n="@@accounting.monthly-declaration.le.code.relie.la.rubrique.aux.declarations.depos.68063285">Le code relie la rubrique aux déclarations déposées : il ne se modifie pas.</small>
             }
@@ -61,7 +61,7 @@ import {
               [(ngModel)]="f.label"
               [disabled]="disabled"
               maxlength="200"
-              placeholder="Ex. Taxe sur les établissements…" i18n-placeholder="Ex. Taxe sur les établissements…" />
+              placeholder="Ex. Taxe sur les établissements…" i18n-placeholder="@@accounting.monthly-declaration.ex.taxe.sur.les.etablissements.8f8a59d9" />
           </div>
 
           <div class="dm-field">
@@ -72,7 +72,7 @@ import {
               [(ngModel)]="f.reportCode"
               [disabled]="disabled"
               maxlength="16"
-              placeholder="17.2" i18n-placeholder="17.2" />
+              placeholder="17.2" i18n-placeholder="@@accounting.monthly-declaration.17.2.70b1b12e" />
             <small class="dm-hint" i18n="@@accounting.monthly-declaration.numero.d.article.du.formulaire.ou.aucune.case.de.8b9c53ce">Numéro d’article du formulaire, ou « * » (aucune case de détail).</small>
           </div>
 
@@ -119,7 +119,7 @@ import {
                   [ngModelOptions]="{ standalone: true }"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Choisir des comptes" i18n-placeholder="Choisir des comptes"
+                  placeholder="Choisir des comptes" i18n-placeholder="@@accounting.monthly-declaration.choisir.des.comptes.41dd7f27"
                   [filter]="true"
                   [disabled]="disabled"
                   display="chip"
@@ -133,7 +133,7 @@ import {
                   class="dm-inp dm-mono"
                   [(ngModel)]="f.grossAccounts.prefixes"
                   [disabled]="disabled"
-                  placeholder="Ex. 70;71" i18n-placeholder="Ex. 70;71" />
+                  placeholder="Ex. 70;71" i18n-placeholder="@@accounting.monthly-declaration.ex.70.71.70a9cf39" />
                 <small class="dm-hint" i18n="@@accounting.monthly-declaration.le.compte.et.toute.sa.descendance.separees.par.a2e82592">Le compte et toute sa descendance. Séparées par « ; ».</small>
               </div>
             }
@@ -160,7 +160,7 @@ import {
                   class="dm-inp"
                   [(ngModel)]="f.fixedGrossAmount"
                   [disabled]="disabled"
-                  placeholder="Laisser vide pour saisir au Calcul DM" i18n-placeholder="Laisser vide pour saisir au Calcul DM" />
+                  placeholder="Laisser vide pour saisir au Calcul DM" i18n-placeholder="@@accounting.monthly-declaration.laisser.vide.pour.saisir.au.calcul.dm.e9748ced" />
                 <small class="dm-hint" i18n="@@accounting.monthly-declaration.vide.ne.vaut.pas.zero.la.ligne.attendra.une.sais.49c6d03c">Vide ne vaut pas zéro : la ligne attendra une saisie.</small>
               </div>
             }
@@ -196,7 +196,7 @@ import {
                   [ngModelOptions]="{ standalone: true }"
                   optionLabel="label"
                   optionValue="value"
-                  placeholder="Choisir des comptes" i18n-placeholder="Choisir des comptes"
+                  placeholder="Choisir des comptes" i18n-placeholder="@@accounting.monthly-declaration.choisir.des.comptes.41dd7f27"
                   [filter]="true"
                   [disabled]="disabled"
                   display="chip"
@@ -210,7 +210,7 @@ import {
                   class="dm-inp dm-mono"
                   [(ngModel)]="f.withheldAccounts.prefixes"
                   [disabled]="disabled"
-                  placeholder="Ex. 436" i18n-placeholder="Ex. 436" />
+                  placeholder="Ex. 436" i18n-placeholder="@@accounting.monthly-declaration.ex.436.2ee608c3" />
                 <small class="dm-hint" i18n="@@accounting.monthly-declaration.le.compte.et.toute.sa.descendance.separees.par.a2e82592">Le compte et toute sa descendance. Séparées par « ; ».</small>
               </div>
             }
@@ -241,7 +241,7 @@ import {
                   class="dm-inp"
                   [(ngModel)]="f.fixedWithheldAmount"
                   [disabled]="disabled"
-                  placeholder="Laisser vide pour saisir au Calcul DM" i18n-placeholder="Laisser vide pour saisir au Calcul DM" />
+                  placeholder="Laisser vide pour saisir au Calcul DM" i18n-placeholder="@@accounting.monthly-declaration.laisser.vide.pour.saisir.au.calcul.dm.e9748ced" />
                 <small class="dm-hint" i18n="@@accounting.monthly-declaration.vide.ne.vaut.pas.zero.la.ligne.attendra.une.sais.49c6d03c">Vide ne vaut pas zéro : la ligne attendra une saisie.</small>
               </div>
             }

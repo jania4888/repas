@@ -41,7 +41,7 @@ const TVA_RATE = 0.19;
             type="button"
             class="btn-close-dialog"
             (click)="modal.dismiss()"
-            aria-label="Fermer" i18n-aria-label="Fermer"
+            aria-label="Fermer" i18n-aria-label="@@settings.subscription.fermer.5ab4ec64"
             [disabled]="submitting()">
             <i class="pi pi-times"></i>
           </button>

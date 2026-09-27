@@ -25,7 +25,7 @@ interface BudgetPostForm {
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingTableActionsComponent],
   template: `
-    <app-page-header title="Postes budgétaires" i18n-title="Postes budgétaires" subtitle="Regroupements de comptes (par préfixes) servant à la saisie des budgets et au suivi réalisé/budget" />
+    <app-page-header title="Postes budgétaires" i18n-title="@@accounting.budget-posts.postes.budgetaires.4debb5c4" subtitle="Regroupements de comptes (par préfixes) servant à la saisie des budgets et au suivi réalisé/budget" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -37,8 +37,8 @@ interface BudgetPostForm {
       <div class="card bp-form">
         <h3 class="bp-form-title">{{ f.id ? loc_ui_tern_modifier_le_poste_2a15b3 : loc_ui_tern_nouveau_poste_budgetaire_567237 }}</h3>
         <div class="bp-fields">
-          <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.code.adac6937">Code</label><input class="bp-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. 613" i18n-placeholder="Ex. 613" /></div>
-          <div class="bp-field bp-grow"><label class="bp-lbl" i18n="@@accounting.budget-posts.libelle.f5485bba">Libellé</label><input class="bp-inp" [(ngModel)]="f.label" placeholder="Ex. Locations et charges locatives" i18n-placeholder="Ex. Locations et charges locatives" /></div>
+          <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.code.adac6937">Code</label><input class="bp-inp" [(ngModel)]="f.code" [disabled]="!!f.id" placeholder="Ex. 613" i18n-placeholder="@@accounting.budget-posts.ex.613.64ede412" /></div>
+          <div class="bp-field bp-grow"><label class="bp-lbl" i18n="@@accounting.budget-posts.libelle.f5485bba">Libellé</label><input class="bp-inp" [(ngModel)]="f.label" placeholder="Ex. Locations et charges locatives" i18n-placeholder="@@accounting.budget-posts.ex.locations.et.charges.locatives.5b937552" /></div>
           <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.sens.55928a79">Sens</label>
             <select class="bp-inp" [(ngModel)]="f.kind">
               <option [ngValue]="0" i18n="@@accounting.budget-posts.charges.cfc370a2">Charges</option>
@@ -46,7 +46,7 @@ interface BudgetPostForm {
             </select>
           </div>
           <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.prefixes.de.comptes.255c5fc5">Préfixes de comptes</label>
-            <input class="bp-inp" [(ngModel)]="f.accountPrefixes" placeholder="Ex. 61;62" i18n-placeholder="Ex. 61;62" />
+            <input class="bp-inp" [(ngModel)]="f.accountPrefixes" placeholder="Ex. 61;62" i18n-placeholder="@@accounting.budget-posts.ex.61.62.e9af3341" />
           </div>
           <div class="bp-field"><label class="bp-lbl" i18n="@@accounting.budget-posts.ordre.5c32e631">Ordre</label><input type="number" class="bp-inp bp-narrow" [(ngModel)]="f.displayOrder" min="0" /></div>
           <div class="bp-form-actions">

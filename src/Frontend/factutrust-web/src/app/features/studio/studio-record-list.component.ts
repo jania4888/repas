@@ -65,15 +65,15 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
             <h3 class="ft-filters__title"><i class="pi pi-search"></i> Recherche</h3>
           </div>
           <div class="studio-toolbar">
-            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="Rechercher…" class="studio-search-input"
+            <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="@@studio.studio-record-list.rechercher.1d12cdfb" class="studio-search-input"
               [disabled]="searchDisabled()" [title]="searchDisabled() ? labels.views.searchDisabled : ''" />
-            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" i18n-label="Rechercher" class="p-button-sm" (click)="reload()"
+            <button pButton type="button" icon="fa-solid fa-magnifying-glass" label="Rechercher" i18n-label="@@studio.studio-record-list.rechercher.91f7d3e9" class="p-button-sm" (click)="reload()"
               [disabled]="searchDisabled()"></button>
             <span class="studio-toolbar__spacer"></span>
             @if (!activeView()) {
               <!-- Export masqué quand une vue enregistrée est active : il porterait sur les enregistrements
                    bruts (hors filtres de la vue). -->
-              <button pButton type="button" icon="fa-solid fa-download" label="Exporter" i18n-label="Exporter" class="p-button-sm p-button-outlined"
+              <button pButton type="button" icon="fa-solid fa-download" label="Exporter" i18n-label="@@studio.studio-record-list.exporter.0cd84bdc" class="p-button-sm p-button-outlined"
                 [disabled]="total() === 0" (click)="exportMenu.toggle($event)"></button>
               <p-menu #exportMenu [popup]="true" [model]="exportItems" appendTo="body" styleClass="studio-theme"></p-menu>
             }
@@ -88,7 +88,7 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
           <app-skeleton-table [columns]="skeletonCols" [rows]="5" />
         } @else {
           @if (activeView(); as v) {
-            <div id="studio-view-panel" role="tabpanel" aria-label="Vue active" i18n-aria-label="Vue active">
+            <div id="studio-view-panel" role="tabpanel" aria-label="Vue active" i18n-aria-label="@@studio.studio-record-list.vue.active.89414868">
               <app-studio-record-view-runner
                 [entityKey]="entityKey"
                 [view]="v"

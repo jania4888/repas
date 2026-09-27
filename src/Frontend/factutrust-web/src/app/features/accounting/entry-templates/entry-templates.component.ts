@@ -39,7 +39,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingTableActionsComponent, AccountingAmountInputComponent],
   template: `
-    <app-page-header title="Modèles d'écriture" i18n-title="Modèles d'écriture" subtitle="Modèles réutilisables pour la saisie manuelle" />
+    <app-page-header title="Modèles d'écriture" i18n-title="@@accounting.entry-templates.modeles.d.ecriture.a2fb584f" subtitle="Modèles réutilisables pour la saisie manuelle" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -196,7 +196,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
                   (click)="runNow(t)"
                   [disabled]="runningId() === t.id"
                   ariaLabel="Générer l'écriture maintenant"
-                  title="Générer l'écriture de la prochaine échéance maintenant" i18n-title="Générer l'écriture de la prochaine échéance maintenant" />
+                  title="Générer l'écriture de la prochaine échéance maintenant" i18n-title="@@accounting.entry-templates.generer.l.ecriture.de.la.prochaine.echeance.main.1334a720" />
               }
               <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
                 type="button" (click)="startEdit(t)" ariaLabel="Modifier" />

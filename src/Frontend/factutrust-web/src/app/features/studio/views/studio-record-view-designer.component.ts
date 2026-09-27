@@ -76,7 +76,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <i class="pi pi-exclamation-triangle studio-mr"></i>
             <span class="studio-grow">{{ err.message }}</span>
             @if (err.stale) {
-              <p-button label="Recharger" i18n-label="Recharger" icon="pi pi-refresh" size="small" [text]="true" (onClick)="reload()" data-testid="designer-reload" />
+              <p-button label="Recharger" i18n-label="@@studio.views.recharger.b10ee511" icon="pi pi-refresh" size="small" [text]="true" (onClick)="reload()" data-testid="designer-reload" />
             }
           </div>
         }
@@ -149,7 +149,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <div class="studio-block-head">
               <span class="studio-lbl">{{ labels.designer.columns }} ({{ columns().length }}/{{ limits.maxColumns }})</span>
               <p-select [options]="availableColumnOptions()" [ngModel]="null" (ngModelChange)="addColumn($event)"
-                optionLabel="label" optionValue="key" placeholder="Ajouter une colonne" i18n-placeholder="Ajouter une colonne" appendTo="body" panelStyleClass="studio-theme"
+                optionLabel="label" optionValue="key" placeholder="Ajouter une colonne" i18n-placeholder="@@studio.views.ajouter.une.colonne.7292e539" appendTo="body" panelStyleClass="studio-theme"
                 [disabled]="!canDesign() || columns().length >= limits.maxColumns" data-testid="designer-add-column" />
             </div>
             @if (columns().length >= limits.maxColumns) {
@@ -178,7 +178,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <div class="studio-block-head">
               <span class="studio-lbl">{{ labels.designer.sort }} ({{ sort().length }}/{{ limits.maxSorts }})</span>
               <p-select [options]="availableSortOptions()" [ngModel]="null" (ngModelChange)="addSort($event)"
-                optionLabel="label" optionValue="key" placeholder="Ajouter un tri" i18n-placeholder="Ajouter un tri" appendTo="body" panelStyleClass="studio-theme"
+                optionLabel="label" optionValue="key" placeholder="Ajouter un tri" i18n-placeholder="@@studio.views.ajouter.un.tri.74aa0d7e" appendTo="body" panelStyleClass="studio-theme"
                 [disabled]="!canDesign() || sort().length >= limits.maxSorts" data-testid="designer-add-sort" />
             </div>
             @if (sort().length >= limits.maxSorts) {
@@ -208,7 +208,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             </div>
 
             <div class="studio-form-actions">
-              <p-button label="Annuler" i18n-label="Annuler" [text]="true" (onClick)="backToList()" />
+              <p-button label="Annuler" i18n-label="@@studio.views.annuler.49ba3292" [text]="true" (onClick)="backToList()" />
               <p-button [label]="labels.designer.save" icon="pi pi-check" [loading]="saving()" [disabled]="!canSave()" (onClick)="save()" data-testid="designer-save" />
             </div>
           </section>
@@ -217,7 +217,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
             <div class="studio-block-head">
               <h3 class="studio-preview-title" i18n="@@studio.views.apercu.f0f53004">Aperçu</h3>
               @if (canDesign()) {
-                <p-button label="Actualiser l’aperçu" i18n-label="Actualiser l’aperçu" icon="pi pi-refresh" [text]="true" size="small"
+                <p-button label="Actualiser l’aperçu" i18n-label="@@studio.views.actualiser.l.apercu.a42e3c0b" icon="pi pi-refresh" [text]="true" size="small"
                   [disabled]="saving() || !previewEligible()" (onClick)="refreshPreview()" data-testid="designer-preview-refresh" />
               }
             </div>

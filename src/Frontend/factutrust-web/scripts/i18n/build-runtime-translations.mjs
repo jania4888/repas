@@ -69,14 +69,39 @@ for (const file of PHRASE_MAPS) {
   }
 }
 
+/**
+ * Mémoire issue des traductions par ID déjà valides : un texte français identique reçoit la même
+ * traduction sous un autre ID (même texte ⇒ mêmes placeholders). Texte le plus fréquent en cas d'écart.
+ */
+const normText = s => s.replace(/\s+/g, ' ').trim();
+const byIdText = new Map();
+{
+  const votes = new Map();
+  for (const [id, fr] of frById) {
+    const cand = byId.get(id);
+    if (!cand) continue;
+    const ar = stripIsolates(cand.ar).trim();
+    if (ar === fr.trim() || validateTranslation(fr, ar)) continue;
+    const key = normText(fr);
+    if (!votes.has(key)) votes.set(key, new Map());
+    const tally = votes.get(key);
+    tally.set(ar, (tally.get(ar) ?? 0) + 1);
+  }
+  for (const [key, tally] of votes) {
+    const [ar] = [...tally.entries()].sort((a, b) => b[1] - a[1])[0];
+    byIdText.set(key, { ar, source: 'mémoire (traductions par ID)' });
+  }
+}
+
 const translations = {};
 const rejected = [];
-const counts = { source: frById.size, byId: 0, byText: 0, identical: 0, missing: 0, rejected: 0, orphans: 0 };
+const counts = { source: frById.size, byId: 0, byText: 0, byIdText: 0, identical: 0, missing: 0, rejected: 0, orphans: 0 };
 
 for (const [id, fr] of frById) {
   const candidates = [
     byId.has(id) && { ...byId.get(id), kind: 'byId' },
-    byText.has(fr.trim()) && { ...byText.get(fr.trim()), kind: 'byText' }
+    byText.has(fr.trim()) && { ...byText.get(fr.trim()), kind: 'byText' },
+    byIdText.has(normText(fr)) && { ...byIdText.get(normText(fr)), kind: 'byIdText' }
   ].filter(Boolean);
   let outcome = 'missing';
   for (const cand of candidates) {
@@ -131,7 +156,7 @@ fs.writeFileSync(REPORT, JSON.stringify({ counts, bytes, rejected }, null, 2), '
 const kib = Math.round(bytes / 1024);
 console.log(
   `[i18n:build] ${Object.keys(translations).length}/${counts.source} messages traduits ` +
-    `(ID ${counts.byId}, mémoire ${counts.byText}) · identiques ${counts.identical} · manquants ${counts.missing} · ` +
+    `(ID ${counts.byId}, phrases ${counts.byText}, même texte ${counts.byIdText}) · identiques ${counts.identical} · manquants ${counts.missing} · ` +
     `rejetés ${counts.rejected} · orphelins ${counts.orphans} · ${kib} Kio → ${hashedName}`
 );
 for (const r of rejected.slice(0, 15)) console.warn(`  [rejet:${r.reason}] ${r.id} (${r.source})`);

@@ -25,7 +25,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <p-toast></p-toast>
     <p-confirmDialog></p-confirmDialog>
     <div *ngIf="initialLoading()" class="loading-state" role="status" aria-busy="true" aria-live="polite">
-      <p-progressSpinner strokeWidth="4" aria-label="Chargement du transfert en cours" i18n-aria-label="Chargement du transfert en cours"></p-progressSpinner>
+      <p-progressSpinner strokeWidth="4" aria-label="Chargement du transfert en cours" i18n-aria-label="@@transfers.transfer-detail.chargement.du.transfert.en.cours.a7c80f01"></p-progressSpinner>
     </div>
     <div class="page-container" *ngIf="!initialLoading() && transfer()">
       <div class="page-header">
@@ -34,21 +34,21 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <span class="status-badge" [ngClass]="transfer()!.statusCss">{{ transfer()!.statusDisplay | backendLabel }}</span>
         </div>
         <div class="actions">
-          <button pButton type="button" label="Télécharger PDF" i18n-label="Télécharger PDF" icon="pi pi-file-pdf" class="p-button-outlined"
+          <button pButton type="button" label="Télécharger PDF" i18n-label="@@transfers.transfer-detail.telecharger.pdf.06b2eebe" icon="pi pi-file-pdf" class="p-button-outlined"
                   (click)="downloadPdf()" [loading]="pdfLoading()" [disabled]="pdfLoading()"
-                  aria-label="Télécharger le transfert au format PDF" i18n-aria-label="Télécharger le transfert au format PDF"></button>
+                  aria-label="Télécharger le transfert au format PDF" i18n-aria-label="@@transfers.transfer-detail.telecharger.le.transfert.au.format.pdf.4d131d5e"></button>
           <button *ngIf="transfer()!.status === 'Draft' || transfer()!.status === '0'"
-                  pButton label="Confirmer" i18n-label="Confirmer" icon="pi pi-check" (click)="confirm()" [loading]="processing()"
-                  aria-label="Confirmer le transfert" i18n-aria-label="Confirmer le transfert"></button>
+                  pButton label="Confirmer" i18n-label="@@transfers.transfer-detail.confirmer.80a664c8" icon="pi pi-check" (click)="confirm()" [loading]="processing()"
+                  aria-label="Confirmer le transfert" i18n-aria-label="@@transfers.transfer-detail.confirmer.le.transfert.ab1a4adb"></button>
           <button *ngIf="isConfirmedNotInTransit()"
-                  pButton type="button" label="Mettre en transit" i18n-label="Mettre en transit" icon="pi pi-send" class="p-button-secondary"
+                  pButton type="button" label="Mettre en transit" i18n-label="@@transfers.transfer-detail.mettre.en.transit.e5316997" icon="pi pi-send" class="p-button-secondary"
                   (click)="startTransit()" [loading]="processing()"
-                  aria-label="Passer le transfert en statut en transit" i18n-aria-label="Passer le transfert en statut en transit"></button>
+                  aria-label="Passer le transfert en statut en transit" i18n-aria-label="@@transfers.transfer-detail.passer.le.transfert.en.statut.en.transit.07737adf"></button>
           <button *ngIf="transfer()!.status === 'Confirmed' || transfer()!.status === '1' || transfer()!.status === 'InTransit' || transfer()!.status === '2'"
-                  pButton label="Terminer" i18n-label="Terminer" icon="pi pi-check-circle" class="p-button-success" (click)="complete()" [loading]="processing()"
-                  aria-label="Terminer le transfert et mettre à jour les stocks" i18n-aria-label="Terminer le transfert et mettre à jour les stocks"></button>
+                  pButton label="Terminer" i18n-label="@@transfers.transfer-detail.terminer.6bf1bd74" icon="pi pi-check-circle" class="p-button-success" (click)="complete()" [loading]="processing()"
+                  aria-label="Terminer le transfert et mettre à jour les stocks" i18n-aria-label="@@transfers.transfer-detail.terminer.le.transfert.et.mettre.a.jour.les.stock.60c244a3"></button>
           <button *ngIf="transfer()!.status === 'Draft' || transfer()!.status === '0' || transfer()!.status === 'Confirmed' || transfer()!.status === '1'"
-                  pButton label="Annuler" i18n-label="Annuler" icon="pi pi-times" class="p-button-danger p-button-outlined" (click)="showCancelDialog = true"></button>
+                  pButton label="Annuler" i18n-label="@@transfers.transfer-detail.annuler.49ba3292" icon="pi pi-times" class="p-button-danger p-button-outlined" (click)="showCancelDialog = true"></button>
         </div>
       </div>
 
@@ -100,14 +100,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </table>
       </div>
 
-      <p-dialog header="Annuler le transfert" i18n-header="Annuler le transfert" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
+      <p-dialog header="Annuler le transfert" i18n-header="@@transfers.transfer-detail.annuler.le.transfert.9da732fd" [(visible)]="showCancelDialog" [modal]="true" [style]="{width:'450px'}">
         <div class="field">
           <label class="field-label" i18n="@@transfers.transfer-detail.motif.d.annulation.f627914d">Motif d'annulation</label>
           <textarea pTextarea [(ngModel)]="cancelReason" rows="3" style="width:100%"></textarea>
         </div>
         <ng-template pTemplate="footer">
-          <button pButton label="Annuler" i18n-label="Annuler" class="p-button-text" (click)="showCancelDialog = false"></button>
-          <button pButton label="Confirmer l'annulation" i18n-label="Confirmer l'annulation" class="p-button-danger" (click)="cancelTransfer()" [disabled]="!cancelReason.trim()"></button>
+          <button pButton label="Annuler" i18n-label="@@transfers.transfer-detail.annuler.49ba3292" class="p-button-text" (click)="showCancelDialog = false"></button>
+          <button pButton label="Confirmer l'annulation" i18n-label="@@transfers.transfer-detail.confirmer.l.annulation.92040a54" class="p-button-danger" (click)="cancelTransfer()" [disabled]="!cancelReason.trim()"></button>
         </ng-template>
       </p-dialog>
     </div>

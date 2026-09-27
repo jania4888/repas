@@ -44,7 +44,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Grilles tarifaires" i18n-title="Grilles tarifaires"
+      title="Grilles tarifaires" i18n-title="@@pricing.price-list-list.grilles.tarifaires.21b96006"
       subtitle="Définissez des jeux de prix par produit, puis affectez-les à vos clients. Un client sans grille reste au tarif catalogue.">
       @if (canCreate()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@pricing.price-list-list.nouvelle.grille.a8012b9e"> Nouvelle grille </app-button>
@@ -56,7 +56,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
     } @else if (priceLists().length === 0) {
       <app-empty-state
         icon="pi-tags"
-        title="Aucune grille tarifaire" i18n-title="Aucune grille tarifaire"
+        title="Aucune grille tarifaire" i18n-title="@@pricing.price-list-list.aucune.grille.tarifaire.0625f0f9"
         message="Créez une grille pour appliquer des prix négociés à un groupe de clients.">
       </app-empty-state>
     } @else {
@@ -88,7 +88,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   <p-tag
                     severity="warning"
                     value="Hors période"
-                    pTooltip="Grille active mais en dehors de sa période de validité : elle n'applique aucun prix aujourd'hui." i18n-pTooltip="Grille active mais en dehors de sa période de validité : elle n'applique aucun prix aujourd'hui."></p-tag>
+                    pTooltip="Grille active mais en dehors de sa période de validité : elle n'applique aucun prix aujourd'hui." i18n-pTooltip="@@pricing.price-list-list.grille.active.mais.en.dehors.de.sa.periode.de.va.77529196"></p-tag>
                 } @else {
                   <p-tag severity="success" value="Applicable"></p-tag>
                 }
@@ -99,7 +99,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   type="button"
                   icon="pi pi-pencil"
                   class="p-button-text p-button-sm"
-                  pTooltip="Ouvrir" i18n-pTooltip="Ouvrir"
+                  pTooltip="Ouvrir" i18n-pTooltip="@@pricing.price-list-list.ouvrir.42c07747"
                   [routerLink]="[row.id]"></button>
                 @if (canDelete()) {
                   <button
@@ -107,7 +107,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                     type="button"
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    pTooltip="Supprimer" i18n-pTooltip="Supprimer"
+                    pTooltip="Supprimer" i18n-pTooltip="@@pricing.price-list-list.supprimer.1acfc1c7"
                     (click)="confirmDelete(row)"></button>
                 }
               </td>
@@ -119,7 +119,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 
     <!-- Création -->
     <p-dialog
-      header="Nouvelle grille tarifaire" i18n-header="Nouvelle grille tarifaire"
+      header="Nouvelle grille tarifaire" i18n-header="@@pricing.price-list-list.nouvelle.grille.tarifaire.236ac2fe"
       [(visible)]="createVisible"
       [modal]="true"
       [style]="{ width: '32rem' }"

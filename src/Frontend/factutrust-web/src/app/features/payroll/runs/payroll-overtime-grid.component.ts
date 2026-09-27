@@ -33,7 +33,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
   ],
   template: `
     <app-payroll-section
-      title="Éléments variables — Heures supplémentaires" i18n-title="Éléments variables — Heures supplémentaires"
+      title="Éléments variables — Heures supplémentaires" i18n-title="@@payroll.runs.elements.variables.heures.supplementaires.d2df2e32"
       subtitle="Montant = (salaire base ÷ 208 en régime 48 h, ÷ 173,33 en régime 40 h) × heures × taux majoré. Override possible."
       icon="pi-clock">
       @if (!readOnly) {

@@ -37,15 +37,15 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Saisie des budgets" i18n-title="Saisie des budgets" subtitle="Budgets annuels mensualisés par poste — versions Initial puis Révisé après validation" />
+    <app-page-header title="Saisie des budgets" i18n-title="@@accounting.budget-entry.saisie.des.budgets.0b3e253e" subtitle="Budgets annuels mensualisés par poste — versions Initial puis Révisé après validation" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card be-toolbar">
       <div class="be-year">
-        <button type="button" class="be-year-btn" (click)="changeYear(-1)" [disabled]="busy()" aria-label="Exercice précédent" i18n-aria-label="Exercice précédent"><i class="pi pi-chevron-left"></i></button>
+        <button type="button" class="be-year-btn" (click)="changeYear(-1)" [disabled]="busy()" aria-label="Exercice précédent" i18n-aria-label="@@accounting.budget-entry.exercice.precedent.b34f8172"><i class="pi pi-chevron-left"></i></button>
         <span class="be-year-value">Exercice {{ fiscalYear() }}</span>
-        <button type="button" class="be-year-btn" (click)="changeYear(1)" [disabled]="busy()" aria-label="Exercice suivant" i18n-aria-label="Exercice suivant"><i class="pi pi-chevron-right"></i></button>
+        <button type="button" class="be-year-btn" (click)="changeYear(1)" [disabled]="busy()" aria-label="Exercice suivant" i18n-aria-label="@@accounting.budget-entry.exercice.suivant.b90eb269"><i class="pi pi-chevron-right"></i></button>
       </div>
 
       @if (grid(); as g) {
@@ -72,7 +72,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
     @if (distributeFor(); as row) {
       <div class="card be-distribute">
         <span><ng-container i18n="@@accounting.budget-entry.repartir.un.montant.annuel.sur.47f3b5e7">Répartir un montant annuel sur </ng-container> <strong>{{ row.code }} — {{ row.label }}</strong> (linéaire, reliquat sur décembre) :</span>
-        <input type="number" class="be-inp be-dist-inp" [(ngModel)]="distributeAmount" min="0" step="0.001" placeholder="Montant annuel" i18n-placeholder="Montant annuel" />
+        <input type="number" class="be-inp be-dist-inp" [(ngModel)]="distributeAmount" min="0" step="0.001" placeholder="Montant annuel" i18n-placeholder="@@accounting.budget-entry.montant.annuel.7f48f8e0" />
         <button type="button" class="btn btn-primary" (click)="applyDistribution()" i18n="@@accounting.budget-entry.repartir.d7593598">Répartir</button>
         <button type="button" class="btn btn-secondary" (click)="distributeFor.set(null)" i18n="@@accounting.budget-entry.annuler.49ba3292">Annuler</button>
       </div>
@@ -104,7 +104,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
             <td class="be-amt be-row-total">{{ rowTotal(row) | number : '1.3-3' }}</td>
             @if (grid()?.status === 1) { <td class="be-amt be-muted">{{ sum(row.initialMonths) | number : '1.3-3' }}</td> }
             <td>
-              <button type="button" class="be-icon" (click)="startDistribution(row)" [disabled]="busy()" title="Répartir un montant annuel" i18n-title="Répartir un montant annuel">
+              <button type="button" class="be-icon" (click)="startDistribution(row)" [disabled]="busy()" title="Répartir un montant annuel" i18n-title="@@accounting.budget-entry.repartir.un.montant.annuel.d176a745">
                 <i class="pi pi-calculator"></i>
               </button>
             </td>

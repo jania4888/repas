@@ -18,7 +18,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
         <i [class]="icon + loc_ui_tern_prompt_modal_icon_d0bfa1" aria-hidden="true"></i>
       }
       <h5 class="modal-title" id="promptModalTitle">{{ header }}</h5>
-      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer" i18n-aria-label="Fermer"></button>
+      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer" i18n-aria-label="@@shared.components.confirm-modal.prompt-modal.fermer.5ab4ec64"></button>
     </div>
     <div class="modal-body prompt-modal-body">
       @if (message) {

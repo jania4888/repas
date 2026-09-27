@@ -33,7 +33,7 @@ interface AggregationOption {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Gérer les métriques" i18n-header="Gérer les métriques"
+      header="Gérer les métriques" i18n-header="@@recurring-contracts.components.gerer.les.metriques.40a2721c"
       [style]="{ width: '46rem' }">
       <table class="metrics-table">
         <thead>
@@ -67,7 +67,7 @@ interface AggregationOption {
             <input class="ft-input" [(ngModel)]="form.name" name="metricName" />
           </label>
           <label>Unité *
-            <input class="ft-input" [(ngModel)]="form.unit" name="metricUnit" placeholder="ex. appels, Go, utilisateurs" i18n-placeholder="ex. appels, Go, utilisateurs" />
+            <input class="ft-input" [(ngModel)]="form.unit" name="metricUnit" placeholder="ex. appels, Go, utilisateurs" i18n-placeholder="@@recurring-contracts.components.ex.appels.go.utilisateurs.f6d48800" />
           </label>
           <label>Mode d'agrégation
             <select class="ft-input" [(ngModel)]="form.aggregationMode" name="metricAggregation">

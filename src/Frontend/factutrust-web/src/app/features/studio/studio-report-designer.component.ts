@@ -31,40 +31,40 @@ import { ToastModule } from 'primeng/toast';
       subtitle="Configurez source, filtres, agrégations et aperçu."
       [breadcrumbs]="breadcrumbs()">
       <div studioActions class="studio-head-actions">
-        <button pButton type="button" label="Aperçu" i18n-label="Aperçu" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
-        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
+        <button pButton type="button" label="Aperçu" i18n-label="@@studio.studio-report-designer.apercu.f0f53004" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>
+        <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-report-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" [disabled]="saving()" (click)="save()"></button>
       </div>
 
       <app-studio-designer-shell previewTitle="Aperçu du rapport">
         <div studioEditor>
           <label class="ft-lbl" i18n="@@studio.studio-report-designer.nom.du.rapport.b452b638">Nom du rapport *</label>
-          <input pInputText [(ngModel)]="displayName" class="ft-w-full" placeholder="Ex. Ventes par région" i18n-placeholder="Ex. Ventes par région" />
+          <input pInputText [(ngModel)]="displayName" class="ft-w-full" placeholder="Ex. Ventes par région" i18n-placeholder="@@studio.studio-report-designer.ex.ventes.par.region.97cf7e33" />
 
           <label class="ft-lbl" i18n="@@studio.studio-report-designer.source.de.donnees.ceb89bdd">Source de données *</label>
           <p-select [options]="sources()" [(ngModel)]="sourceId" (ngModelChange)="onSourceChange()"
             optionLabel="displayName" optionValue="id" [group]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full"
-            placeholder="Choisir une table ou source" i18n-placeholder="Choisir une table ou source"></p-select>
+            placeholder="Choisir une table ou source" i18n-placeholder="@@studio.studio-report-designer.choisir.une.table.ou.source.e274c851"></p-select>
 
           <ng-container *ngIf="selectedSource() as src">
             <label class="ft-lbl" i18n="@@studio.studio-report-designer.regrouper.par.ac0889e9">Regrouper par</label>
             <p-multiSelect [options]="fieldOptions()" [(ngModel)]="grouping" optionLabel="label" optionValue="value"
-              appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Aucun (rapport détaillé)" i18n-placeholder="Aucun (rapport détaillé)"></p-multiSelect>
+              appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Aucun (rapport détaillé)" i18n-placeholder="@@studio.studio-report-designer.aucun.rapport.detaille.18f2957d"></p-multiSelect>
 
             <ng-container *ngIf="grouping.length === 0">
               <label class="ft-lbl" i18n="@@studio.studio-report-designer.colonnes.affichees.9cedff9b">Colonnes affichées</label>
               <p-multiSelect [options]="fieldOptions()" [(ngModel)]="detailFields" optionLabel="label" optionValue="value"
-                appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Toutes les colonnes" i18n-placeholder="Toutes les colonnes"></p-multiSelect>
+                appendTo="body" panelStyleClass="studio-theme" styleClass="ft-w-full" placeholder="Toutes les colonnes" i18n-placeholder="@@studio.studio-report-designer.toutes.les.colonnes.dcaedd40"></p-multiSelect>
             </ng-container>
 
             <ng-container *ngIf="grouping.length > 0">
               <div class="ft-block-head">
                 <label class="ft-lbl" i18n="@@studio.studio-report-designer.calculs.agregations.2ad91593">Calculs (agrégations)</label>
-                <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" i18n-label="Ajouter" (click)="addAgg()"></button>
+                <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" i18n-label="@@studio.studio-report-designer.ajouter.87c57ed1" (click)="addAgg()"></button>
               </div>
               <div class="ft-line" *ngFor="let a of aggregations; let i = index">
                 <p-select [options]="fnOptions" [(ngModel)]="a.fn" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme"></p-select>
                 <p-select *ngIf="a.fn !== 'count'" [options]="numericFieldOptions()" [(ngModel)]="a.field" optionLabel="label" optionValue="value"
-                  appendTo="body" panelStyleClass="studio-theme" styleClass="ft-grow" placeholder="Champ" i18n-placeholder="Champ"></p-select>
+                  appendTo="body" panelStyleClass="studio-theme" styleClass="ft-grow" placeholder="Champ" i18n-placeholder="@@studio.studio-report-designer.champ.e1472010"></p-select>
                 <span *ngIf="a.fn === 'count'" class="ft-grow ft-muted" i18n="@@studio.studio-report-designer.tous.les.enregistrements.4e9454e2">tous les enregistrements</span>
                 <button pButton type="button" icon="fa-solid fa-xmark" class="p-button-text p-button-sm p-button-danger" (click)="removeAgg(i)"></button>
               </div>
@@ -72,18 +72,18 @@ import { ToastModule } from 'primeng/toast';
 
             <div class="ft-block-head">
               <label class="ft-lbl" i18n="@@studio.studio-report-designer.filtres.2a8e76e0">Filtres</label>
-              <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" i18n-label="Ajouter" (click)="addFilter()"></button>
+              <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" i18n-label="@@studio.studio-report-designer.ajouter.87c57ed1" (click)="addFilter()"></button>
             </div>
             <div class="ft-line" *ngFor="let f of filters; let i = index">
               <p-select [options]="fieldOptions()" [(ngModel)]="f.field" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-grow"></p-select>
               <p-select [options]="opOptions" [(ngModel)]="f.op" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme"></p-select>
-              <input pInputText [ngModel]="$any(f).value" (ngModelChange)="f.value = $event" placeholder="Valeur" i18n-placeholder="Valeur" class="ft-grow" />
+              <input pInputText [ngModel]="$any(f).value" (ngModelChange)="f.value = $event" placeholder="Valeur" i18n-placeholder="@@studio.studio-report-designer.valeur.68f92b0d" class="ft-grow" />
               <button pButton type="button" icon="fa-solid fa-xmark" class="p-button-text p-button-sm p-button-danger" (click)="removeFilter(i)"></button>
             </div>
 
             <div class="ft-block-head">
               <label class="ft-lbl" i18n="@@studio.studio-report-designer.tri.c05261e0">Tri</label>
-              <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" i18n-label="Ajouter" (click)="addSort()"></button>
+              <button pButton type="button" icon="fa-solid fa-plus" class="p-button-text p-button-sm" label="Ajouter" i18n-label="@@studio.studio-report-designer.ajouter.87c57ed1" (click)="addSort()"></button>
             </div>
             <div class="ft-line" *ngFor="let s of sort; let i = index">
               <p-select [options]="sortFieldOptions()" [(ngModel)]="s.field" optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="studio-theme" styleClass="ft-grow"></p-select>

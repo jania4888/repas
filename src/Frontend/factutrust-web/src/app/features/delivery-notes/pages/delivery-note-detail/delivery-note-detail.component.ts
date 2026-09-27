@@ -321,7 +321,7 @@ import {
         <!-- Sidebar -->
         <div class="sidebar">
           <!-- Status Card -->
-          <p-card header="Statut" i18n-header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="@@delivery-notes.pages.statut.659499f3" styleClass="status-card">
             <div class="status-content">
               <app-status-badge 
                 [status]="getStatusBadgeStatus(deliveryNote()!.status)"
@@ -330,7 +330,7 @@ import {
             </div>
           </p-card>
 
-          <p-card header="Entrepôt" i18n-header="Entrepôt" styleClass="status-card">
+          <p-card header="Entrepôt" i18n-header="@@delivery-notes.pages.entrepot.c349c0bc" styleClass="status-card">
             <div class="status-content">
               <span>{{ deliveryNote()!.warehouseName || 'Entrepôt par défaut' }}</span>
             </div>
@@ -338,7 +338,7 @@ import {
 
           <!-- Signature Info -->
           @if (deliveryNote()!.signedAt) {
-            <p-card header="Signature" i18n-header="Signature" styleClass="signature-card">
+            <p-card header="Signature" i18n-header="@@delivery-notes.pages.signature.2f32be1d" styleClass="signature-card">
               <div class="signature-info">
                 <div class="info-row">
                   <i class="pi pi-verified"></i>
@@ -356,7 +356,7 @@ import {
 
       <!-- Delivery Recording Dialog -->
       <p-dialog 
-        header="Enregistrer la livraison" i18n-header="Enregistrer la livraison" 
+        header="Enregistrer la livraison" i18n-header="@@delivery-notes.pages.enregistrer.la.livraison.689980db" 
         [(visible)]="showDeliveryDialog" 
         [modal]="true"
         styleClass="ft-dialog-scrollable"
@@ -420,7 +420,7 @@ import {
             <div class="delivery-form-group">
               <label for="recipientName"><ng-container i18n="@@delivery-notes.pages.nom.du.receptionnaire.9b14b159">Nom du réceptionnaire </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
               <input pInputText id="recipientName" [(ngModel)]="deliveryForm.recipientName" 
-                placeholder="Personne ayant signé la réception" i18n-placeholder="Personne ayant signé la réception" class="w-full delivery-header-input" />
+                placeholder="Personne ayant signé la réception" i18n-placeholder="@@delivery-notes.pages.personne.ayant.signe.la.reception.f5966786" class="w-full delivery-header-input" />
             </div>
             <div class="delivery-form-group">
               <label for="deliveryDate"><ng-container i18n="@@delivery-notes.pages.date.de.livraison.39361f0f">Date de livraison </ng-container> <span class="required" i18n="@@delivery-notes.pages.text.df58248c">*</span></label>
@@ -430,7 +430,7 @@ import {
                 name="deliveryDate"
                 dateFormat="dd/mm/yy"
                 [showIcon]="true"
-                placeholder="Date effective de réception" i18n-placeholder="Date effective de réception"
+                placeholder="Date effective de réception" i18n-placeholder="@@delivery-notes.pages.date.effective.de.reception.078d93ec"
                 styleClass="w-full delivery-header-datepicker"
                 appendTo="body">
               </p-datepicker>
@@ -472,7 +472,7 @@ import {
                     <td class="motif-col">
                       @if (lineForm.rejectedQuantity > 0) {
                         <input pInputText [(ngModel)]="lineForm.rejectionReason" 
-                          placeholder="Motif du refus" i18n-placeholder="Motif du refus" class="motif-input w-full" />
+                          placeholder="Motif du refus" i18n-placeholder="@@delivery-notes.pages.motif.du.refus.e4d6bc0b" class="motif-input w-full" />
                       } @else {
                         <span class="motif-empty" i18n="@@delivery-notes.pages.text.1b93795b">—</span>
                       }

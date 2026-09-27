@@ -65,7 +65,7 @@ const COMPANY_EMPTY_STATE_MESSAGE =
   ],
   template: `
     <app-page-header
-      title="Déclaration mensuelle des impôts et taxes" i18n-title="Déclaration mensuelle des impôts et taxes"
+      title="Déclaration mensuelle des impôts et taxes" i18n-title="@@accounting.vat-declaration.declaration.mensuelle.des.impots.et.taxes.2ab684d8"
       [subtitle]="isCompanyReadOnly
         ? loc_ui_tern_consultation_des_declarations_soumises_par_879645
         : loc_ui_tern_preremplissage_a_partir_des_ventes_et_acha_bb3884" />

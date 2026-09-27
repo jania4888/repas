@@ -13,7 +13,7 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
     <app-page-header
-      title="Documentation" i18n-title="Documentation"
+      title="Documentation" i18n-title="@@documentation.documentation.documentation.9e9cf322"
       subtitle="Guide utilisateur pour découvrir et maîtriser InstaFact">
     </app-page-header>
 

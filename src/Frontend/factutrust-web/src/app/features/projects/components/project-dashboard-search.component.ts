@@ -37,7 +37,7 @@ type ProjectSearchKind = 'Project' | 'Task' | 'Attachment';
           #searchInput
           type="search"
           class="proj-dash-search__input"
-          placeholder="Rechercher un projet, une tâche, un document…" i18n-placeholder="Rechercher un projet, une tâche, un document…"
+          placeholder="Rechercher un projet, une tâche, un document…" i18n-placeholder="@@projects.components.rechercher.un.projet.une.tache.un.document.3d5a34e8"
           [(ngModel)]="query"
           (focus)="onFocus()"
           (input)="onQueryInput()"
@@ -45,7 +45,7 @@ type ProjectSearchKind = 'Project' | 'Task' | 'Attachment';
           role="combobox"
           aria-autocomplete="list"
           [attr.aria-expanded]="dropdownOpen()"
-          aria-label="Rechercher un projet, une tâche ou un document" i18n-aria-label="Rechercher un projet, une tâche ou un document" />
+          aria-label="Rechercher un projet, une tâche ou un document" i18n-aria-label="@@projects.components.rechercher.un.projet.une.tache.ou.un.document.3ab9c426" />
         <kbd class="proj-dash-search__hint" aria-hidden="true" i18n="@@projects.components.ctrl.k.769b0d96">Ctrl+K</kbd>
       </div>
 

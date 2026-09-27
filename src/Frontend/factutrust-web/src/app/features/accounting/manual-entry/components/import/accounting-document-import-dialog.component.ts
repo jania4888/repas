@@ -44,7 +44,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
   providers: [AccountingDocumentImportService],
   template: `
     <p-dialog
-      header="Importer une facture" i18n-header="Importer une facture"
+      header="Importer une facture" i18n-header="@@accounting.manual-entry.importer.une.facture.66ed8807"
       [(visible)]="visible"
       [modal]="true"
       [style]="{ width: phase() === 'review' ? '1100px' : '560px', maxWidth: '98vw' }"
@@ -105,7 +105,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                     <span class="adi-card__hint">{{ p.directionReason }}</span>
                   }
                 </header>
-                <div class="adi-direction" role="radiogroup" aria-label="Sens de la pièce" i18n-aria-label="Sens de la pièce">
+                <div class="adi-direction" role="radiogroup" aria-label="Sens de la pièce" i18n-aria-label="@@accounting.manual-entry.sens.de.la.piece.cbc2df59">
                   <label class="adi-direction__option" [class.is-active]="p.direction === 'SALE'">
                     <input type="radio" name="adi-direction" value="SALE"
                            [checked]="p.direction === 'SALE'"

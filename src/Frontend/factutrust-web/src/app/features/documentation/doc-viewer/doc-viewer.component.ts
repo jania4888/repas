@@ -13,7 +13,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@shared/components/breadcru
     <app-breadcrumb [items]="breadcrumbItems()"></app-breadcrumb>
 
     <div class="doc-layout">
-      <nav class="doc-sidebar" aria-label="Navigation documentation" i18n-aria-label="Navigation documentation">
+      <nav class="doc-sidebar" aria-label="Navigation documentation" i18n-aria-label="@@documentation.doc-viewer.navigation.documentation.69061820">
         <a routerLink="/documentation" class="doc-sidebar-home">
           <i class="fa fa-home"></i>
           <span i18n="@@documentation.doc-viewer.guide.utilisateur.4808a56f">Guide utilisateur</span>

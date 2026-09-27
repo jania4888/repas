@@ -22,7 +22,7 @@ export interface ProjectStatusChangePayload {
     <p-dialog
       [(visible)]="visible"
       [modal]="true"
-      header="Modifier le statut de la tâche" i18n-header="Modifier le statut de la tâche"
+      header="Modifier le statut de la tâche" i18n-header="@@projects.components.modifier.le.statut.de.la.tache.21dd934f"
       [style]="{ width: '32rem' }"
       [draggable]="false"
       (onHide)="cancel.emit()">
@@ -51,7 +51,7 @@ export interface ProjectStatusChangePayload {
               [(ngModel)]="comment"
               rows="4"
               maxlength="500"
-              placeholder="Justification du changement…" i18n-placeholder="Justification du changement…"></textarea>
+              placeholder="Justification du changement…" i18n-placeholder="@@projects.components.justification.du.changement.37acd745"></textarea>
             <span class="status-change-comment__count">{{ comment.length }}/500</span>
           </div>
         </div>

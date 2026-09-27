@@ -60,7 +60,7 @@ import {
   template: `
     <div class="cash-forecast">
       <app-page-header
-        title="Trésorerie prévisionnelle par IA" i18n-title="Trésorerie prévisionnelle par IA"
+        title="Trésorerie prévisionnelle par IA" i18n-title="@@treasury.cash-forecast.tresorerie.previsionnelle.par.ia.a595f345"
         subtitle="Prévisions basées sur vos échéances clients, dettes fournisseurs, paie et obligations fiscales">
         <div class="header-actions">
           <label class="horizon">
@@ -103,9 +103,9 @@ import {
         </div>
       } @else if (forecast()) {
         <!-- KPI -->
-        <section class="kpi-row" aria-label="Indicateurs de trésorerie" i18n-aria-label="Indicateurs de trésorerie">
+        <section class="kpi-row" aria-label="Indicateurs de trésorerie" i18n-aria-label="@@treasury.cash-forecast.indicateurs.de.tresorerie.2281ae22">
           <app-stat-card
-            label="Solde de trésorerie" i18n-label="Solde de trésorerie"
+            label="Solde de trésorerie" i18n-label="@@treasury.cash-forecast.solde.de.tresorerie.2eb9bf52"
             [value]="amount(data().openingBalance)"
             icon="pi-wallet"
             variant="primary" />
@@ -115,22 +115,22 @@ import {
             icon="pi-chart-line"
             [variant]="data().closingBalance < 0 ? 'error' : 'primary'" />
           <app-stat-card
-            label="Encaissements prévus" i18n-label="Encaissements prévus"
+            label="Encaissements prévus" i18n-label="@@treasury.cash-forecast.encaissements.prevus.4c99e461"
             [value]="amount(data().totalInflows)"
             icon="pi-arrow-down-left"
             variant="success" />
           <app-stat-card
-            label="Décaissements prévus" i18n-label="Décaissements prévus"
+            label="Décaissements prévus" i18n-label="@@treasury.cash-forecast.decaissements.prevus.4541219d"
             [value]="amount(data().totalOutflows)"
             icon="pi-arrow-up-right"
             variant="warning" />
           <app-stat-card
-            label="Flux net prévisionnel" i18n-label="Flux net prévisionnel"
+            label="Flux net prévisionnel" i18n-label="@@treasury.cash-forecast.flux.net.previsionnel.aea44606"
             [value]="amount(data().netFlow)"
             icon="pi-arrows-v"
             [variant]="data().netFlow < 0 ? 'error' : 'success'" />
           <app-stat-card
-            label="Indice de confiance" i18n-label="Indice de confiance"
+            label="Indice de confiance" i18n-label="@@treasury.cash-forecast.indice.de.confiance.0dfd5098"
             [value]="(data().confidencePercent | number: '1.0-0') + ' %'"
             icon="pi-sparkles"
             variant="primary" />
@@ -139,7 +139,7 @@ import {
         <div class="main-grid">
           <div class="main-grid__left">
             <app-chart-card
-              title="Évolution de la trésorerie prévisionnelle" i18n-title="Évolution de la trésorerie prévisionnelle"
+              title="Évolution de la trésorerie prévisionnelle" i18n-title="@@treasury.cash-forecast.evolution.de.la.tresorerie.previsionnelle.d0cdb430"
               subtitle="Solde de fin de mois et intervalle de prévision">
               <div chart-actions>
                 <button
@@ -199,7 +199,7 @@ import {
             </app-chart-card>
 
             <app-dashboard-panel
-              title="Scénarios de prévision" i18n-title="Scénarios de prévision"
+              title="Scénarios de prévision" i18n-title="@@treasury.cash-forecast.scenarios.de.prevision.e330353d"
               [subtitle]="data().aiAdjustmentApplied
                 ? loc_ui_tern_probabilites_ponderees_par_l_ia_autour_des_42688a
                 : loc_ui_tern_probabilites_issues_du_moteur_deterministe_9e9fa3">
@@ -235,7 +235,7 @@ import {
             </app-dashboard-panel>
 
             <app-dashboard-panel
-              title="Facteurs d'influence détectés" i18n-title="Facteurs d'influence détectés"
+              title="Facteurs d'influence détectés" i18n-title="@@treasury.cash-forecast.facteurs.d.influence.detectes.c5abdb89"
               subtitle="Structure des flux de la période">
               @if (influenceFactors().length === 0) {
                 <p class="muted" i18n="@@treasury.cash-forecast.aucun.facteur.marquant.sur.la.periode.d70a6e1f">Aucun facteur marquant sur la période.</p>
@@ -265,14 +265,14 @@ import {
           </div>
 
           <aside class="main-grid__right">
-            <app-dashboard-panel title="Position de trésorerie" i18n-title="Position de trésorerie" subtitle="Solde projeté en fin d'horizon">
+            <app-dashboard-panel title="Position de trésorerie" i18n-title="@@treasury.cash-forecast.position.de.tresorerie.c8a0928a" subtitle="Solde projeté en fin d'horizon">
               <app-cash-position-gauge
                 [balance]="data().closingBalance"
                 [thresholds]="data().thresholds"
                 [currency]="data().currency" />
             </app-dashboard-panel>
 
-            <app-dashboard-panel title="Alertes & recommandations" i18n-title="Alertes & recommandations">
+            <app-dashboard-panel title="Alertes & recommandations" i18n-title="@@treasury.cash-forecast.alertes.recommandations.d9eac212">
               @if (alerts().length === 0 && advice().length === 0) {
                 <p class="muted" i18n="@@treasury.cash-forecast.aucune.tension.detectee.sur.la.periode.240256f7">Aucune tension détectée sur la période.</p>
               } @else {
@@ -302,7 +302,7 @@ import {
               }
             </app-dashboard-panel>
 
-            <app-dashboard-panel title="Encaissements à venir" i18n-title="Encaissements à venir" subtitle="Les cinq plus proches">
+            <app-dashboard-panel title="Encaissements à venir" i18n-title="@@treasury.cash-forecast.encaissements.a.venir.71835f34" subtitle="Les cinq plus proches">
               @if (data().upcomingInflows.length === 0) {
                 <p class="muted" i18n="@@treasury.cash-forecast.aucun.encaissement.attendu.sur.la.periode.49910747">Aucun encaissement attendu sur la période.</p>
               } @else {
@@ -330,7 +330,7 @@ import {
               }
             </app-dashboard-panel>
 
-            <app-dashboard-panel title="Actions rapides" i18n-title="Actions rapides">
+            <app-dashboard-panel title="Actions rapides" i18n-title="@@treasury.cash-forecast.actions.rapides.abe69a9c">
               <div class="quick-actions">
                 <button type="button" class="quick" (click)="goToBankImport()">
                   <i class="pi pi-upload" aria-hidden="true"></i>
@@ -367,7 +367,7 @@ import {
       } @else {
         <app-empty-state
           icon="pi-chart-line"
-          title="Aucune projection disponible" i18n-title="Aucune projection disponible"
+          title="Aucune projection disponible" i18n-title="@@treasury.cash-forecast.aucune.projection.disponible.3517bf5c"
           description="Lancez un premier calcul pour obtenir votre trésorerie prévisionnelle."
           [showAction]="canManage()"
           actionLabel="Calculer la prévision"

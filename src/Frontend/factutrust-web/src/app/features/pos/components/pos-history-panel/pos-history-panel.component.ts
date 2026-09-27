@@ -15,7 +15,7 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
       <div class="history-panel__content" (click)="$event.stopPropagation()">
         <div class="history-panel__header">
           <h3 class="history-panel__title" i18n="@@pos.components.historique.du.jour.d4f3dc0e">Historique du jour</h3>
-          <button class="history-panel__close" (click)="onClose.emit()" aria-label="Fermer" i18n-aria-label="Fermer">
+          <button class="history-panel__close" (click)="onClose.emit()" aria-label="Fermer" i18n-aria-label="@@pos.components.fermer.5ab4ec64">
             <i class="pi pi-times"></i>
           </button>
         </div>
@@ -48,7 +48,7 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
                   <span class="history-panel__item-amount">{{ formatAmount(inv.totalAmount) }} TND</span>
                 </div>
                 <div class="history-panel__item-actions">
-                  <button type="button" class="history-panel__btn" (click)="reprint(inv.id)" title="Reimprimer" i18n-title="Reimprimer">
+                  <button type="button" class="history-panel__btn" (click)="reprint(inv.id)" title="Reimprimer" i18n-title="@@pos.components.reimprimer.a5dc9e64">
                     <i class="pi pi-print"></i>
                   </button>
                 </div>

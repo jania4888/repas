@@ -47,7 +47,7 @@ import {
           <td>
             {{ r.label }}
             @if (unsupported(r)) {
-              <span class="dm-flag dm-flag--warn" title="Le moteur rendra 0 pour cette rubrique." i18n-title="Le moteur rendra 0 pour cette rubrique." i18n="@@accounting.monthly-declaration.non.pris.en.charge.0d01bf4b"> non pris en charge </span>
+              <span class="dm-flag dm-flag--warn" title="Le moteur rendra 0 pour cette rubrique." i18n-title="@@accounting.monthly-declaration.le.moteur.rendra.0.pour.cette.rubrique.a02d901c" i18n="@@accounting.monthly-declaration.non.pris.en.charge.0d01bf4b"> non pris en charge </span>
             }
             @if (unknownAccounts(r); as missing) {
               @if (missing.length) {

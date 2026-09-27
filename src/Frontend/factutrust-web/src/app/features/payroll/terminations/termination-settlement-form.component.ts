@@ -42,14 +42,14 @@ function toIsoDate(value: Date | null | undefined): string {
     PageHeaderComponent, ButtonComponent, FormSectionComponent, PayrollAmountPipe
   ],
   template: `
-    <app-page-header title="Solde de tout compte" i18n-title="Solde de tout compte" subtitle="Calcul et enregistrement des indemnités de rupture.">
+    <app-page-header title="Solde de tout compte" i18n-title="@@payroll.terminations.solde.de.tout.compte.93fc3ea6" subtitle="Calcul et enregistrement des indemnités de rupture.">
       <app-button variant="outline" (click)="back()" i18n="@@payroll.terminations.retour.e5befb1f">Retour</app-button>
       <app-button variant="outline" icon="pi-calculator" [disabled]="!employeeId" (click)="preview()" i18n="@@payroll.terminations.calculer.29705857">Calculer</app-button>
       <app-button variant="primary" icon="pi-save" [disabled]="!previewData()" (click)="save(false)" i18n="@@payroll.terminations.enregistrer.f7c8bcd8">Enregistrer</app-button>
       <app-button variant="primary" icon="pi-check" [disabled]="!previewData()" (click)="save(true)" i18n="@@payroll.terminations.enregistrer.et.approuver.c70c70df">Enregistrer et approuver</app-button>
     </app-page-header>
 
-    <app-form-section title="Informations" i18n-title="Informations" icon="pi-user" [number]="1">
+    <app-form-section title="Informations" i18n-title="@@payroll.terminations.informations.54937b3a" icon="pi-user" [number]="1">
       <div class="payroll-form-row">
         <div class="payroll-form-group">
           <label i18n="@@payroll.terminations.salarie.27f97915">Salarié</label>
@@ -67,7 +67,7 @@ function toIsoDate(value: Date | null | undefined): string {
     </app-form-section>
 
     @if (previewData(); as p) {
-      <app-form-section title="Prévisualisation (art. 22bis CDT)" i18n-title="Prévisualisation (art. 22bis CDT)" icon="pi-calculator" [number]="2">
+      <app-form-section title="Prévisualisation (art. 22bis CDT)" i18n-title="@@payroll.terminations.previsualisation.art.22bis.cdt.a60d1732" icon="pi-calculator" [number]="2">
         <dl class="payroll-detail-grid">
           <dt i18n="@@payroll.terminations.anciennete.166e0461">Ancienneté</dt><dd>{{ p.seniorityMonths }} mois ({{ p.indemnityDays }} jours)</dd>
           <dt i18n="@@payroll.terminations.salaire.de.reference.6998cec5">Salaire de référence</dt><dd>{{ p.grossMonthlyReference | payrollAmount }}</dd>

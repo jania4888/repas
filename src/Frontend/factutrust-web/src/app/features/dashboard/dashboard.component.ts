@@ -89,7 +89,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
   ],
   template: `
     <app-page-header 
-      title="Tableau de bord" i18n-title="Tableau de bord" 
+      title="Tableau de bord" i18n-title="@@dashboard.dashboard.tableau.de.bord.a524057f" 
       [subtitle]="greeting">
       <app-analyze-with-ai-button
         screenId="dashboard"
@@ -119,7 +119,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 
     <!-- Barre de personnalisation (mode édition) -->
     @if (editMode()) {
-      <div class="dash-edit-toolbar" role="region" aria-label="Personnalisation du tableau de bord" i18n-aria-label="Personnalisation du tableau de bord">
+      <div class="dash-edit-toolbar" role="region" aria-label="Personnalisation du tableau de bord" i18n-aria-label="@@dashboard.dashboard.personnalisation.du.tableau.de.bord.836b1c07">
         <span class="dash-edit-toolbar__hint">
           <i class="pi pi-arrows-alt" aria-hidden="true"></i>
           Glissez les sections (ou utilisez les flèches) pour réorganiser votre tableau de bord.
@@ -145,10 +145,10 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             <div class="dash-block__handle" cdkDragHandle>
               <span class="dash-block__handle-label"><i class="pi pi-bars" aria-hidden="true"></i> {{ block.label }}</span>
               <span class="dash-block__handle-controls">
-                <button type="button" class="dash-block__move" (click)="moveBlock(block.id, -1)" aria-label="Monter la section" i18n-aria-label="Monter la section">
+                <button type="button" class="dash-block__move" (click)="moveBlock(block.id, -1)" aria-label="Monter la section" i18n-aria-label="@@dashboard.dashboard.monter.la.section.b45f03c8">
                   <i class="pi pi-chevron-up" aria-hidden="true"></i>
                 </button>
-                <button type="button" class="dash-block__move" (click)="moveBlock(block.id, 1)" aria-label="Descendre la section" i18n-aria-label="Descendre la section">
+                <button type="button" class="dash-block__move" (click)="moveBlock(block.id, 1)" aria-label="Descendre la section" i18n-aria-label="@@dashboard.dashboard.descendre.la.section.0681c72e">
                   <i class="pi pi-chevron-down" aria-hidden="true"></i>
                 </button>
               </span>
@@ -186,7 +186,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="kpi-row" data-tour="dash-kpi">
         @if (canReadInvoices()) {
         <app-stat-card
-          label="Chiffre d'affaires" i18n-label="Chiffre d'affaires"
+          label="Chiffre d'affaires" i18n-label="@@dashboard.dashboard.chiffre.d.affaires.0a341b9f"
           [value]="totalRevenue()"
           icon="fa-solid fa-sack-dollar"
           variant="primary"
@@ -199,7 +199,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [navigationAriaLabel]="drillDown('totalRevenue')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="Ventes aujourd'hui" i18n-label="Ventes aujourd'hui"
+          label="Ventes aujourd'hui" i18n-label="@@dashboard.dashboard.ventes.aujourd.hui.d57f87e5"
           [value]="salesToday()"
           icon="fa-solid fa-cart-shopping"
           variant="primary"
@@ -211,7 +211,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [navigationAriaLabel]="drillDown('salesToday')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="CA du mois en cours" i18n-label="CA du mois en cours"
+          label="CA du mois en cours" i18n-label="@@dashboard.dashboard.ca.du.mois.en.cours.c561d920"
           [value]="currentMonthRevenue()"
           icon="fa-solid fa-calendar-check"
           variant="success"
@@ -224,7 +224,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [navigationAriaLabel]="drillDown('currentMonthRevenue')?.ariaLabel">
         </app-stat-card>
         <app-stat-card
-          label="Factures impayées" i18n-label="Factures impayées"
+          label="Factures impayées" i18n-label="@@dashboard.dashboard.factures.impayees.dc3cffa5"
           [value]="pendingInvoicesCount()"
           icon="fa-solid fa-clock"
           variant="warning"
@@ -239,7 +239,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         }
         @if (showStockUrgent()) {
         <app-stat-card
-          label="Produits en alerte" i18n-label="Produits en alerte"
+          label="Produits en alerte" i18n-label="@@dashboard.dashboard.produits.en.alerte.bb124592"
           [value]="stockAlertsCount()"
           icon="fa-solid fa-triangle-exclamation"
           [variant]="stockAlertsCount() > 0 ? 'error' : 'success'"
@@ -484,14 +484,14 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 
     <ng-template #accountingTpl>
     @if (hasAccountingModule() && accountingKpis()) {
-      <div class="section accounting-kpis-section" aria-label="Indicateurs comptables" i18n-aria-label="Indicateurs comptables">
+      <div class="section accounting-kpis-section" aria-label="Indicateurs comptables" i18n-aria-label="@@dashboard.dashboard.indicateurs.comptables.fd4900d5">
         <div class="section-header">
           <h2 class="section-title" i18n="@@dashboard.dashboard.comptabilite.20af7266">Comptabilité</h2>
           <a routerLink="/accounting/journal" class="section-link" i18n="@@dashboard.dashboard.voir.le.journal.2d6bf019">Voir le journal</a>
         </div>
         <div class="stats-grid">
           <app-stat-card
-            label="TVA due (estim.)" i18n-label="TVA due (estim.)"
+            label="TVA due (estim.)" i18n-label="@@dashboard.dashboard.tva.due.estim.fe3389ac"
             [value]="formatAccountingAmount(accountingKpis()!.vatDueEstimate)"
             icon="pi-percentage"
             variant="primary"
@@ -502,7 +502,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('accountingVat')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Créances +90 j." i18n-label="Créances +90 j."
+            label="Créances +90 j." i18n-label="@@dashboard.dashboard.creances.90.j.e06caa46"
             [value]="formatAccountingAmount(accountingKpis()!.overdueReceivablesOver90)"
             icon="pi-clock"
             variant="warning"
@@ -513,7 +513,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('accountingReceivables90')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Factures non comptabilisées" i18n-label="Factures non comptabilisées"
+            label="Factures non comptabilisées" i18n-label="@@dashboard.dashboard.factures.non.comptabilisees.add0b7d1"
             [value]="accountingKpis()!.unpostedInvoiceCount"
             icon="pi-file-excel"
             variant="primary"
@@ -524,7 +524,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('accountingUnposted')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Prochaine échéance TVA" i18n-label="Prochaine échéance TVA"
+            label="Prochaine échéance TVA" i18n-label="@@dashboard.dashboard.prochaine.echeance.tva.828513e5"
             [value]="formatVatDeadline(accountingKpis()!.nextVatDeadline)"
             icon="pi-calendar"
             variant="primary"
@@ -542,14 +542,14 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 
     <ng-template #crmTpl>
     @if (hasCrmModule()) {
-      <div class="section crm-kpis-section" aria-label="CRM" i18n-aria-label="CRM">
+      <div class="section crm-kpis-section" aria-label="CRM" i18n-aria-label="@@dashboard.dashboard.crm.2a13d05e">
         <div class="section-header">
           <h2 class="section-title" i18n="@@dashboard.dashboard.crm.commercial.96a9fcf3">CRM Commercial</h2>
           <a routerLink="/crm/dashboard" class="section-link" i18n="@@dashboard.dashboard.voir.le.crm.cef605de">Voir le CRM</a>
         </div>
         <div class="stats-grid">
           <app-stat-card
-            label="Mes relances" i18n-label="Mes relances"
+            label="Mes relances" i18n-label="@@dashboard.dashboard.mes.relances.05d28ed7"
             [value]="crmRemindersCount()"
             icon="pi-bell"
             [variant]="crmRemindersCount() > 0 ? 'warning' : 'success'"
@@ -560,7 +560,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
             [navigationAriaLabel]="drillDown('crmReminders')?.ariaLabel">
           </app-stat-card>
           <app-stat-card
-            label="Opportunités ouvertes" i18n-label="Opportunités ouvertes"
+            label="Opportunités ouvertes" i18n-label="@@dashboard.dashboard.opportunites.ouvertes.37ea7471"
             [value]="crmOpenOppsCount()"
             icon="pi-bullseye"
             variant="primary"
@@ -580,9 +580,9 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     <!-- Revenue Chart Section (Superieur chart-card + p-chart area) -->
     @if (!loading() && monthlyRevenue().length > 0) {
       <app-chart-card
-        title="Évolution du CA" i18n-title="Évolution du CA"
+        title="Évolution du CA" i18n-title="@@dashboard.dashboard.evolution.du.ca.ba7ac89b"
         subtitle="6 derniers mois"
-        aria-label="Évolution du chiffre d'affaires sur 6 mois" i18n-aria-label="Évolution du chiffre d'affaires sur 6 mois">
+        aria-label="Évolution du chiffre d'affaires sur 6 mois" i18n-aria-label="@@dashboard.dashboard.evolution.du.chiffre.d.affaires.sur.6.mois.b7b26b8f">
         <div chart-actions>
           @if (drillDown('totalRevenue'); as revenueTarget) {
             <a [routerLink]="revenueTarget.route" [queryParams]="revenueTarget.queryParams" class="section-link" [attr.aria-label]="revenueTarget.ariaLabel" i18n="@@dashboard.dashboard.details.aaa029e6"> Détails </a>
@@ -594,7 +594,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           [options]="revenueChartOptions"
           [style]="{ height: '280px' }" />
         <!-- Fallback CSS bars kept for accessibility drill-down months -->
-        <div class="chart-month-links" role="navigation" aria-label="Mois du graphique" i18n-aria-label="Mois du graphique">
+        <div class="chart-month-links" role="navigation" aria-label="Mois du graphique" i18n-aria-label="@@dashboard.dashboard.mois.du.graphique.720aac73">
           @for (month of monthlyRevenue(); track month.monthShort) {
             @if (drillDown('chartMonth', month); as monthTarget) {
               <button
@@ -619,7 +619,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="dashboard-col-left">
         <!-- Recent Invoices -->
         @if (canReadInvoices()) {
-        <app-dashboard-panel title="Factures récentes" i18n-title="Factures récentes" [hasActions]="true">
+        <app-dashboard-panel title="Factures récentes" i18n-title="@@dashboard.dashboard.factures.recentes.e272128e" [hasActions]="true">
           <a panel-actions routerLink="/invoices" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8">Voir tout</a>
 
           @if (initialLoad()) {
@@ -681,7 +681,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                 <td colspan="6" class="text-center p-4" data-tour="dash-empty-invoice">
                   <app-empty-state
                     illustration="empty-invoices.svg"
-                    title="Aucune facture" i18n-title="Aucune facture"
+                    title="Aucune facture" i18n-title="@@dashboard.dashboard.aucune.facture.72124217"
                     description="Créez votre première facture pour commencer à facturer vos clients."
                     [showAction]="canCreateInvoice()"
                     actionLabel="Créer votre première facture"
@@ -700,7 +700,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
       <div class="dashboard-col-right">
         <!-- Top Clients -->
         @if (!loading() && topClients().length > 0 && canReadClients()) {
-          <div class="section" aria-label="Top 5 clients par chiffre d'affaires" i18n-aria-label="Top 5 clients par chiffre d'affaires">
+          <div class="section" aria-label="Top 5 clients par chiffre d'affaires" i18n-aria-label="@@dashboard.dashboard.top.5.clients.par.chiffre.d.affaires.af9ec46c">
             <div class="section-header">
               <h2 class="section-title" i18n="@@dashboard.dashboard.top.clients.dd696714">Top clients</h2>
               <a routerLink="/clients" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8"> Voir tout </a>
@@ -727,7 +727,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 
         <!-- Recent Quotes -->
         @if (!loading() && canReadQuotes()) {
-          <div class="section" aria-label="Devis récents" i18n-aria-label="Devis récents">
+          <div class="section" aria-label="Devis récents" i18n-aria-label="@@dashboard.dashboard.devis.recents.4379bba9">
             <div class="section-header">
               <h2 class="section-title" i18n="@@dashboard.dashboard.devis.recents.4379bba9">Devis récents</h2>
               <a routerLink="/quotes" class="section-link" i18n="@@dashboard.dashboard.voir.tout.7b7d86e8"> Voir tout </a>
@@ -762,7 +762,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
 
         <!-- Activity Timeline -->
         @if (!loading() && recentActivity().length > 0) {
-          <div class="section" aria-label="Activité récente" i18n-aria-label="Activité récente">
+          <div class="section" aria-label="Activité récente" i18n-aria-label="@@dashboard.dashboard.activite.recente.524eaf8e">
             <div class="section-header">
               <h2 class="section-title" i18n="@@dashboard.dashboard.activite.recente.524eaf8e">Activité récente</h2>
             </div>

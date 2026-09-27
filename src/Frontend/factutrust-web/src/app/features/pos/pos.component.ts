@@ -165,9 +165,9 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
               type="password"
               [(ngModel)]="idleUnlockPassword"
               (keydown.enter)="unlockIdle()"
-              placeholder="Mot de passe" i18n-placeholder="Mot de passe"
+              placeholder="Mot de passe" i18n-placeholder="@@pos.pos.mot.de.passe.94e2f3ee"
               class="pos-idle-input"
-              aria-label="Mot de passe" i18n-aria-label="Mot de passe" />
+              aria-label="Mot de passe" i18n-aria-label="@@pos.pos.mot.de.passe.94e2f3ee" />
             @if (idleUnlockError) {
               <p class="pos-idle-error">{{ idleUnlockError }}</p>
             }

@@ -55,7 +55,7 @@ interface StatusFilterOption {
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="Activités" i18n-title="Activités" subtitle="Appels, rendez-vous, tâches et relances" />
+    <app-page-header title="Activités" i18n-title="@@crm.activities.activites.9c1f6186" subtitle="Appels, rendez-vous, tâches et relances" />
 
     <div class="card p-3 mb-3 activity-toolbar">
       <div class="toolbar-row">
@@ -66,16 +66,16 @@ interface StatusFilterOption {
             type="search"
             [(ngModel)]="searchInput"
             (ngModelChange)="onSearchInput($event)"
-            placeholder="Rechercher par sujet…" i18n-placeholder="Rechercher par sujet…"
+            placeholder="Rechercher par sujet…" i18n-placeholder="@@crm.activities.rechercher.par.sujet.4a4d26d9"
             class="w-full"
-            aria-label="Rechercher par sujet" i18n-aria-label="Rechercher par sujet" />
+            aria-label="Rechercher par sujet" i18n-aria-label="@@crm.activities.rechercher.par.sujet.3de067d0" />
         </span>
         <p-select
           [options]="statusFilterOptions"
           [(ngModel)]="statusFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Statut" i18n-placeholder="Statut"
+          placeholder="Statut" i18n-placeholder="@@crm.activities.statut.659499f3"
           inputId="actStatusFilter"
           styleClass="toolbar-dropdown"
           (onChange)="onFiltersChanged()"
@@ -85,7 +85,7 @@ interface StatusFilterOption {
           [(ngModel)]="typeFilter"
           optionLabel="label"
           optionValue="value"
-          placeholder="Type" i18n-placeholder="Type"
+          placeholder="Type" i18n-placeholder="@@crm.activities.type.3deb7456"
           [showClear]="true"
           inputId="actTypeFilter"
           styleClass="toolbar-dropdown"
@@ -95,7 +95,7 @@ interface StatusFilterOption {
           [options]="clients()"
           [(ngModel)]="selectedClient"
           optionLabel="name"
-          placeholder="Client" i18n-placeholder="Client"
+          placeholder="Client" i18n-placeholder="@@crm.activities.client.1bdd79b1"
           [showClear]="true"
           [filter]="true"
           filterBy="name,code"
@@ -107,7 +107,7 @@ interface StatusFilterOption {
           [options]="filteredOpportunities()"
           [(ngModel)]="selectedOpportunity"
           optionLabel="title"
-          placeholder="Opportunité" i18n-placeholder="Opportunité"
+          placeholder="Opportunité" i18n-placeholder="@@crm.activities.opportunite.d013f335"
           [showClear]="true"
           [filter]="true"
           filterBy="title"
@@ -123,7 +123,7 @@ interface StatusFilterOption {
             dateFormat="dd/mm/yy"
             [showIcon]="true"
             [showClear]="true"
-            placeholder="Échéance du" i18n-placeholder="Échéance du"
+            placeholder="Échéance du" i18n-placeholder="@@crm.activities.echeance.du.168e2cce"
             appendTo="body"
             (onSelect)="onFiltersChanged()"
             (onClearClick)="onDueClear()"></p-datepicker>
@@ -134,7 +134,7 @@ interface StatusFilterOption {
             dateFormat="dd/mm/yy"
             [showIcon]="true"
             [showClear]="true"
-            placeholder="Échéance au" i18n-placeholder="Échéance au"
+            placeholder="Échéance au" i18n-placeholder="@@crm.activities.echeance.au.89dc2a04"
             appendTo="body"
             (onSelect)="onFiltersChanged()"
             (onClearClick)="onDueClear()"></p-datepicker>
@@ -171,7 +171,7 @@ interface StatusFilterOption {
       [first]="firstIdx()"
       [totalRecords]="totalRecords()"
       [showCurrentPageReport]="true"
-      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} activités" i18n-currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} activités"
+      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} activités" i18n-currentPageReportTemplate="@@crm.activities.affichage.de.first.a.last.sur.totalrecords.activ.5875172a"
       [rowsPerPageOptions]="[15, 25, 50]"
       (onLazyLoad)="onLazyLoad($event)"
       styleClass="p-datatable-sm activity-table">
@@ -210,7 +210,7 @@ interface StatusFilterOption {
                   [iconOnly]="true"
                   icon="pi pi-check"
                   ariaLabel="Terminer l’activité"
-                  title="Terminer" i18n-title="Terminer"
+                  title="Terminer" i18n-title="@@crm.activities.terminer.6bf1bd74"
                   [iconAlwaysVisible]="true"
                   (click)="complete(a)"></app-button>
               }
@@ -221,7 +221,7 @@ interface StatusFilterOption {
                   [iconOnly]="true"
                   icon="pi pi-pencil"
                   ariaLabel="Modifier l’activité"
-                  title="Modifier" i18n-title="Modifier"
+                  title="Modifier" i18n-title="@@crm.activities.modifier.f260e757"
                   [iconAlwaysVisible]="true"
                   (click)="openEdit(a)"></app-button>
               }
@@ -232,7 +232,7 @@ interface StatusFilterOption {
                   [iconOnly]="true"
                   icon="pi pi-trash"
                   ariaLabel="Supprimer l’activité"
-                  title="Supprimer" i18n-title="Supprimer"
+                  title="Supprimer" i18n-title="@@crm.activities.supprimer.1acfc1c7"
                   [iconAlwaysVisible]="true"
                   (click)="confirmDelete(a)"></app-button>
               }
@@ -275,7 +275,7 @@ interface StatusFilterOption {
               type="button"
               class="activity-panel-close"
               (click)="closeActivityPanel()"
-              aria-label="Fermer le panneau" i18n-aria-label="Fermer le panneau">
+              aria-label="Fermer le panneau" i18n-aria-label="@@crm.activities.fermer.le.panneau.e1210a2f">
               <i class="pi pi-times" aria-hidden="true"></i>
             </button>
           </div>
@@ -294,7 +294,7 @@ interface StatusFilterOption {
                 [options]="typeOptions"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Type" i18n-placeholder="Type"
+                placeholder="Type" i18n-placeholder="@@crm.activities.type.3deb7456"
                 styleClass="w-full"
                 appendTo="body"
                 [overlayOptions]="activityPanelPrimeOverlayOptions"></p-select>
@@ -308,7 +308,7 @@ interface StatusFilterOption {
                   [options]="clients()"
                   optionLabel="name"
                   optionValue="id"
-                  placeholder="Sélectionner un client" i18n-placeholder="Sélectionner un client"
+                  placeholder="Sélectionner un client" i18n-placeholder="@@crm.activities.selectionner.un.client.20f49a7a"
                   [filter]="true"
                   filterBy="name,code"
                   styleClass="w-full"
@@ -330,7 +330,7 @@ interface StatusFilterOption {
                 class="w-full activity-desc-textarea"
                 rows="5"
                 formControlName="description"
-                placeholder="Détails, compte rendu, prochaine action…" i18n-placeholder="Détails, compte rendu, prochaine action…"
+                placeholder="Détails, compte rendu, prochaine action…" i18n-placeholder="@@crm.activities.details.compte.rendu.prochaine.action.39f02ee4"
                 aria-describedby="act-desc-hint"></textarea>
             </div>
           </section>
@@ -345,7 +345,7 @@ interface StatusFilterOption {
                 [options]="formOpportunityOptions()"
                 optionLabel="title"
                 optionValue="id"
-                placeholder="Aucune" i18n-placeholder="Aucune"
+                placeholder="Aucune" i18n-placeholder="@@crm.activities.aucune.e8f88273"
                 [showClear]="true"
                 [filter]="true"
                 filterBy="title"
@@ -361,7 +361,7 @@ interface StatusFilterOption {
                 [options]="assigneeDropdownOptions()"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Moi par défaut" i18n-placeholder="Moi par défaut"
+                placeholder="Moi par défaut" i18n-placeholder="@@crm.activities.moi.par.defaut.7fd82a51"
                 [showClear]="true"
                 styleClass="w-full"
                 appendTo="body"

@@ -36,16 +36,16 @@ type DesignerRow =
         [title]="loc_ui_tern_mise_en_page_a2cc30 + e.displayName"
         subtitle="Organisez les champs : ordre, sections, libellés, largeur."
         [breadcrumbs]="breadcrumbs()">
-        <button pButton type="button" label="Enregistrer" i18n-label="Enregistrer" icon="fa-solid fa-check" studioActions
+        <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-form-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" studioActions
           [disabled]="saving()" (click)="save()"></button>
 
         <app-studio-designer-shell previewTitle="Aperçu">
           <div studioEditor>
             <div class="studio-add-bar">
               <p-select [options]="availableFields()" [(ngModel)]="fieldToAdd" optionLabel="label" optionValue="id"
-                placeholder="Ajouter un champ" i18n-placeholder="Ajouter un champ" [showClear]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="studio-add-dd"></p-select>
-              <button pButton type="button" icon="fa-solid fa-plus" label="Champ" i18n-label="Champ" [disabled]="!fieldToAdd" (click)="addField()"></button>
-              <button pButton type="button" icon="fa-solid fa-heading" label="Section" i18n-label="Section" class="p-button-outlined" (click)="addSection()"></button>
+                placeholder="Ajouter un champ" i18n-placeholder="@@studio.studio-form-designer.ajouter.un.champ.b653a98c" [showClear]="true" appendTo="body" panelStyleClass="studio-theme" styleClass="studio-add-dd"></p-select>
+              <button pButton type="button" icon="fa-solid fa-plus" label="Champ" i18n-label="@@studio.studio-form-designer.champ.e1472010" [disabled]="!fieldToAdd" (click)="addField()"></button>
+              <button pButton type="button" icon="fa-solid fa-heading" label="Section" i18n-label="@@studio.studio-form-designer.section.f2c6b564" class="p-button-outlined" (click)="addSection()"></button>
             </div>
 
             <div cdkDropList (cdkDropListDropped)="drop($event)">
@@ -54,7 +54,7 @@ type DesignerRow =
                   <i class="fa-solid fa-grip-vertical studio-drag-handle" cdkDragHandle></i>
                   @if (r.kind === 'section') {
                     <i class="fa-solid fa-heading"></i>
-                    <input pInputText [(ngModel)]="r.title" placeholder="Titre de section" i18n-placeholder="Titre de section" class="studio-grow" />
+                    <input pInputText [(ngModel)]="r.title" placeholder="Titre de section" i18n-placeholder="@@studio.studio-form-designer.titre.de.section.fc6035c2" class="studio-grow" />
                   }
                   @if (r.kind === 'field') {
                     <code class="studio-cname">{{ r.field.key }}</code>

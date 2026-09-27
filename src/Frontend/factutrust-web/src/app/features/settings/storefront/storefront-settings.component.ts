@@ -235,7 +235,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
-      title="Vitrine publique & rue 3D" i18n-title="Vitrine publique & rue 3D"
+      title="Vitrine publique & rue 3D" i18n-title="@@settings.storefront.vitrine.publique.rue.3d.2f3995b8"
       subtitle="Exposez une vitrine modérée sur la Rue InstaFact (opt-in, données publiques uniquement).">
     </app-page-header>
 
@@ -246,7 +246,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
         <p-message severity="error" [text]="error()!" role="alert"></p-message>
       }
       @if (profile()) {
-        <p-card header="Vitrine configurée" i18n-header="Vitrine configurée">
+        <p-card header="Vitrine configurée" i18n-header="@@settings.storefront.vitrine.configuree.23f52efd">
           <p><strong i18n="@@settings.storefront.slug.c22372b0">Slug :</strong> {{ profile()!.slug }}</p>
           <p><strong i18n="@@settings.storefront.nom.public.3e9fc9db">Nom public :</strong> {{ profile()!.displayName }}</p>
           <p><strong i18n="@@settings.storefront.statut.b20e7fc2">Statut :</strong> {{ workflowStatusLabel(profile()!.workflowStatus) }}</p>
@@ -277,7 +277,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
           <div class="workflow-actions mt-3">
             @if (isDraft(profile()!.workflowStatus)) {
               <p-button
-                label="Soumettre à la modération" i18n-label="Soumettre à la modération"
+                label="Soumettre à la modération" i18n-label="@@settings.storefront.soumettre.a.la.moderation.1018d7e2"
                 icon="pi pi-send"
                 (onClick)="submitForReview()"
                 [loading]="workflowBusy()"
@@ -285,7 +285,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             }
             @if (isPublished(profile()!.workflowStatus)) {
               <p-button
-                label="Dépublier (retour brouillon)" i18n-label="Dépublier (retour brouillon)"
+                label="Dépublier (retour brouillon)" i18n-label="@@settings.storefront.depublier.retour.brouillon.1e94578c"
                 icon="pi pi-eye-slash"
                 severity="secondary"
                 [outlined]="true"
@@ -296,7 +296,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
         </p-card>
 
         @if (canEditProfileFields()) {
-          <p-card header="Contenu et habillage publics" i18n-header="Contenu et habillage publics" class="mt-3">
+          <p-card header="Contenu et habillage publics" i18n-header="@@settings.storefront.contenu.et.habillage.publics.482238e3" class="mt-3">
             <p class="lede mb-3">
               <ng-container i18n="@@settings.storefront.ces.champs.sont.visibles.apres.moderation.et.pub.77a89db2"> Ces champs sont visibles après modération et publication. Une </ng-container>
               <strong i18n="@@settings.storefront.description.cb329146">description</strong> et une <strong i18n="@@settings.storefront.url.de.logo.public.a9ca3375">URL de logo public</strong> sont obligatoires pour soumettre
@@ -395,11 +395,11 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
               <label for="sf-orders" i18n="@@settings.storefront.autoriser.les.commandes.depuis.la.vitrine.publiq.054fb621">Autoriser les commandes depuis la vitrine publique</label>
               <p-inputSwitch inputId="sf-orders" [(ngModel)]="editForm.orderSubmissionEnabled" />
             </div>
-            <p-button label="Enregistrer" i18n-label="Enregistrer" icon="pi pi-save" (onClick)="saveProfile()" [loading]="saveBusy()" />
+            <p-button label="Enregistrer" i18n-label="@@settings.storefront.enregistrer.f7c8bcd8" icon="pi pi-save" (onClick)="saveProfile()" [loading]="saveBusy()" />
           </p-card>
         }
       } @else if (!loading() && profile() === null && !invalidStatusFromServer()) {
-        <p-card header="Activer la vitrine (brouillon)" i18n-header="Activer la vitrine (brouillon)">
+        <p-card header="Activer la vitrine (brouillon)" i18n-header="@@settings.storefront.activer.la.vitrine.brouillon.c4b94584">
           <p class="mb-3">
             <ng-container i18n="@@settings.storefront.les.cgu.de.publication.version.1e109255"> Les CGU de publication version </ng-container> <strong>{{ termsVersion }}</strong> seront enregistrées pour votre
             entreprise.
@@ -424,7 +424,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             <label i18n="@@settings.storefront.theme.facade.8db2163f">Thème façade</label>
             <p-select [options]="themes" [(ngModel)]="draft.facadeTheme" optionLabel="label" optionValue="value" />
           </div>
-          <p-button label="Créer la vitrine (brouillon)" i18n-label="Créer la vitrine (brouillon)" (onClick)="optIn()" [loading]="saving()" />
+          <p-button label="Créer la vitrine (brouillon)" i18n-label="@@settings.storefront.creer.la.vitrine.brouillon.89285cd7" (onClick)="optIn()" [loading]="saving()" />
         </p-card>
       } @else if (!loading() && invalidStatusFromServer()) {
         <p class="sr-only" i18n="@@settings.storefront.reponse.serveur.incoherente.statut.vitrine.68d1e8a9">Réponse serveur incohérente (statut vitrine).</p>

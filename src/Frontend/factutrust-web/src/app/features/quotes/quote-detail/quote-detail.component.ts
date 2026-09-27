@@ -237,7 +237,7 @@ interface TimelineEvent {
         </div>
 
         <div class="sidebar">
-          <p-card header="Statut" i18n-header="Statut" styleClass="status-card">
+          <p-card header="Statut" i18n-header="@@quotes.quote-detail.statut.659499f3" styleClass="status-card">
             <app-status-badge
               [status]="getStatusBadgeStatus(quote()!.status)"
               [label]="quote()!.statusDisplay | backendLabel"
@@ -270,7 +270,7 @@ interface TimelineEvent {
             }
           </p-card>
 
-          <p-card header="Historique" i18n-header="Historique" styleClass="timeline-card">
+          <p-card header="Historique" i18n-header="@@quotes.quote-detail.historique.34f3a06a" styleClass="timeline-card">
             <p-timeline [value]="timeline" styleClass="custom-timeline">
               <ng-template pTemplate="content" let-event>
                 <div class="timeline-event">
@@ -288,7 +288,7 @@ interface TimelineEvent {
             </p-timeline>
           </p-card>
 
-          <p-card header="Actions" i18n-header="Actions" styleClass="actions-card">
+          <p-card header="Actions" i18n-header="@@quotes.quote-detail.actions.c3cd636a" styleClass="actions-card">
             <div class="quick-actions">
               <app-button
                 variant="outline"
@@ -340,7 +340,7 @@ interface TimelineEvent {
     }
 
     <p-dialog
-      header="Refuser ce devis" i18n-header="Refuser ce devis"
+      header="Refuser ce devis" i18n-header="@@quotes.quote-detail.refuser.ce.devis.b601cc3c"
       [(visible)]="rejectDialogVisible"
       [modal]="true"
       [style]="{ width: '420px' }"
@@ -355,7 +355,7 @@ interface TimelineEvent {
           id="reject-reason"
           [(ngModel)]="rejectReason"
           [rows]="3"
-          placeholder="Ex. : budget insuffisant, délais inadaptés…" i18n-placeholder="Ex. : budget insuffisant, délais inadaptés…"
+          placeholder="Ex. : budget insuffisant, délais inadaptés…" i18n-placeholder="@@quotes.quote-detail.ex.budget.insuffisant.delais.inadaptes.c7670e0e"
           class="w-full">
         </textarea>
       </div>
@@ -366,7 +366,7 @@ interface TimelineEvent {
     </p-dialog>
 
     <p-dialog
-      header="Annuler le devis" i18n-header="Annuler le devis"
+      header="Annuler le devis" i18n-header="@@quotes.quote-detail.annuler.le.devis.98b229a4"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [style]="{ width: '420px' }"
@@ -381,7 +381,7 @@ interface TimelineEvent {
           id="cancel-reason"
           [(ngModel)]="cancelReason"
           [rows]="3"
-          placeholder="Ex. : projet abandonné, commande annulée…" i18n-placeholder="Ex. : projet abandonné, commande annulée…"
+          placeholder="Ex. : projet abandonné, commande annulée…" i18n-placeholder="@@quotes.quote-detail.ex.projet.abandonne.commande.annulee.c262fa9b"
           class="w-full">
         </textarea>
         @if (cancelError()) {
