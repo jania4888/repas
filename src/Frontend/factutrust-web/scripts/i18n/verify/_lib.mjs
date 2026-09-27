@@ -199,7 +199,10 @@ export function staticTextFields(rel, source) {
       if (
         ts.isTaggedTemplateExpression(init) &&
         init.tag.getText(sf) === '$localize' &&
-        ts.isNoSubstitutionTemplateLiteral(init.template)
+        ts.isNoSubstitutionTemplateLiteral(init.template) &&
+        // Champs passés en $localize par le codemod TS (ID « … .ts.slug.hash8 ») : ils étaient des
+        // chaînes simples dans la référence, non résolues ; on les laisse donc non résolus aussi.
+        !/^:@@[^:]*\.ts\.[a-z0-9.]*\.[0-9a-f]{8}:/.test(init.template.text)
       ) {
         fields.set(node.name.text, init.template.text.replace(/^:[^:]*:/, ''));
       } else if (node.name.text.startsWith('loc_') && (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init))) {
