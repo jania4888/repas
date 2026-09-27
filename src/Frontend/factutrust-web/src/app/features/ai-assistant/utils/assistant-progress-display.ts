@@ -1,4 +1,5 @@
 /// <reference types="@angular/localize" />
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
 import {
   AssistantProgressStep,
   AssistantProgressTimeline,
@@ -8,7 +9,7 @@ import {
 const phaseLabels: Record<string, string> = {
   provider_availability: $localize`:@@ai-assistant.assistant-progress-display.ts.initialisation.de.l.assistant.80cecbaf:Initialisation de l'assistant`,
   conversation_load_or_create: $localize`:@@ai-assistant.assistant-progress-display.ts.preparation.de.l.echange.93148072:Préparation de l'échange`,
-  build_system_prompt: 'Analyse de votre contexte',
+  build_system_prompt: $localize`:@@ai-assistant.assistant-progress-display.ts.analyse.de.votre.contexte.1a117903:Analyse de votre contexte`,
   llm_stream_round: $localize`:@@ai-assistant.assistant-progress-display.ts.redaction.de.la.reponse.2717a9a2:Rédaction de la réponse`,
   ollama_queue_wait: $localize`:@@ai-assistant.assistant-progress-display.ts.file.d.attente.du.modele.local.cfa44a52:File d'attente du modèle local`,
   llm_forced_synthesis: $localize`:@@ai-assistant.assistant-progress-display.ts.synthese.de.la.reponse.33ef7ca1:Synthèse de la réponse`,
@@ -22,18 +23,18 @@ const toolLabels: Record<string, string> = {
   get_client_balances: $localize`:@@ai-assistant.assistant-progress-display.ts.calcul.des.soldes.clients.d237ee88:Calcul des soldes clients`,
   get_commercial_profit: $localize`:@@ai-assistant.assistant-progress-display.ts.analyse.des.marges.4b5ec940:Analyse des marges`,
   get_stock_snapshot: $localize`:@@ai-assistant.assistant-progress-display.ts.etat.du.stock.62ac65c5:État du stock`,
-  get_product_performance: 'Performance produits',
+  get_product_performance: $localize`:@@ai-assistant.assistant-progress-display.ts.performance.produits.fc69303c:Performance produits`,
   get_basket_metrics: $localize`:@@ai-assistant.assistant-progress-display.ts.metriques.panier.moyen.48d4fb3b:Métriques panier moyen`,
   get_accounting_dashboard: $localize`:@@ai-assistant.assistant-progress-display.ts.tableau.de.bord.comptable.18888eab:Tableau de bord comptable`,
   get_client_aging: $localize`:@@ai-assistant.assistant-progress-display.ts.balance.agee.clients.3cd4b5ab:Balance âgée clients`,
   get_product_sales_trend: $localize`:@@ai-assistant.assistant-progress-display.ts.tendances.des.ventes.666dfb86:Tendances des ventes`,
-  get_supplier_balances: 'Soldes fournisseurs',
+  get_supplier_balances: $localize`:@@ai-assistant.assistant-progress-display.ts.soldes.fournisseurs.b9bc801b:Soldes fournisseurs`,
   get_products_never_sold: $localize`:@@ai-assistant.assistant-progress-display.ts.produits.non.vendus.441c9561:Produits non vendus`,
   get_stock_movements: $localize`:@@ai-assistant.assistant-progress-display.ts.mouvements.de.stock.b5ee405b:Mouvements de stock`,
   generate_dashboard_config: $localize`:@@ai-assistant.assistant-progress-display.ts.generation.du.tableau.de.bord.cfe06101:Génération du tableau de bord`,
   resolve_reporting_period: $localize`:@@ai-assistant.assistant-progress-display.ts.resolution.de.la.periode.1cc29edb:Résolution de la période`,
   propose_client_actions: $localize`:@@ai-assistant.assistant-progress-display.ts.actions.de.navigation.296aaf7d:Actions de navigation`,
-  propose_follow_up_prompts: 'Suggestions de suite',
+  propose_follow_up_prompts: $localize`:@@ai-assistant.assistant-progress-display.ts.suggestions.de.suite.4ad5af58:Suggestions de suite`,
   compliance_check_invoice: $localize`:@@ai-assistant.assistant-progress-display.ts.controle.de.conformite.2a504799:Contrôle de conformité`,
   get_revenue: $localize`:@@ai-assistant.assistant-progress-display.ts.analyse.du.chiffre.d.affaires.410b1469:Analyse du chiffre d'affaires`,
   get_accounting_summary: $localize`:@@assistant-progress-display.summary.Synth_u00e8se_co:Synth\u00e8se comptable`,
@@ -218,10 +219,24 @@ export function getAssistantProgressSummary(
 
   const parts: string[] = [];
   if (completedSteps > 0) {
-    parts.push(`${completedSteps} \u00e9tape${completedSteps > 1 ? 's' : ''}`);
+    parts.push(erpPlural(completedSteps, {
+      zero: $localize`:@@ai-assistant.assistant-progress-display.etapes.zero:${completedSteps}:completedSteps: \u00e9tapes`,
+      one: $localize`:@@ai-assistant.assistant-progress-display.etapes.one:${completedSteps}:completedSteps: \u00e9tape`,
+      two: $localize`:@@ai-assistant.assistant-progress-display.etapes.two:${completedSteps}:completedSteps: \u00e9tapes`,
+      few: $localize`:@@ai-assistant.assistant-progress-display.etapes.few:${completedSteps}:completedSteps: \u00e9tapes`,
+      many: $localize`:@@ai-assistant.assistant-progress-display.etapes.many:${completedSteps}:completedSteps: \u00e9tapes`,
+      other: $localize`:@@ai-assistant.assistant-progress-display.etapes.other:${completedSteps}:completedSteps: \u00e9tapes`
+    }, erpPluralLocale()));
   }
   if (completedTools > 0) {
-    parts.push(`${completedTools} consultation${completedTools > 1 ? 's' : ''}`);
+    parts.push(erpPlural(completedTools, {
+      zero: $localize`:@@ai-assistant.assistant-progress-display.consultations.zero:${completedTools}:completedTools: consultations`,
+      one: $localize`:@@ai-assistant.assistant-progress-display.consultations.one:${completedTools}:completedTools: consultation`,
+      two: $localize`:@@ai-assistant.assistant-progress-display.consultations.two:${completedTools}:completedTools: consultations`,
+      few: $localize`:@@ai-assistant.assistant-progress-display.consultations.few:${completedTools}:completedTools: consultations`,
+      many: $localize`:@@ai-assistant.assistant-progress-display.consultations.many:${completedTools}:completedTools: consultations`,
+      other: $localize`:@@ai-assistant.assistant-progress-display.consultations.other:${completedTools}:completedTools: consultations`
+    }, erpPluralLocale()));
   }
   if (typeof lastElapsed === 'number') {
     const formatted = formatDurationMs(lastElapsed);
@@ -241,7 +256,7 @@ export function getAssistantStepMeta(step: AssistantProgressStep): string {
   }
 
   if (typeof step.round === 'number' && step.round > 1) {
-    parts.push(`it\u00e9ration ${step.round}`);
+    parts.push($localize`:@@ai-assistant.assistant-progress-display.ts.iteration.round.2b15445a:it\u00e9ration ${step.round}:round:`);
   }
 
   const elapsed = formatDurationMs(step.elapsedMs);
@@ -251,11 +266,11 @@ export function getAssistantStepMeta(step: AssistantProgressStep): string {
 
   const firstToken = formatDurationMs(step.firstTokenMs);
   if (firstToken) {
-    parts.push(`premiers mots en ${firstToken}`);
+    parts.push($localize`:@@ai-assistant.assistant-progress-display.premiers.mots.en:premiers mots en ${firstToken}:firstToken:`);
   }
 
   if (step.hadToolCalls === true) {
-    parts.push('avec consultations m\u00e9tier');
+    parts.push($localize`:@@ai-assistant.assistant-progress-display.ts.avec.consultations.metier.8bf87816:avec consultations métier`);
   }
 
   return parts.join(' \u00b7 ');

@@ -356,8 +356,8 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
 
       if (product.isStockManaged) {
         this.barcodeFeedback.failure(
-          'Cet article est géré en stock. Utilisez un bon de réception.',
-          'Stock'
+          $localize`:@@supplier-invoices.supplier-invoice-form.ts.cet.article.est.gere.en.stock.utilisez.u.1b1f4b8a:Cet article est géré en stock. Utilisez un bon de réception.`,
+          $localize`:@@supplier-invoices.supplier-invoice-form.ts.stock.bcecf456:Stock`
         );
         return;
       }

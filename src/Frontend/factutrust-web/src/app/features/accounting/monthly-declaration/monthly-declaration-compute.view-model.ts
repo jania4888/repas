@@ -374,31 +374,29 @@ export function validateModeForm(
   settings: MonthlyDeclarationSettingsDto
 ): string | null {
   if (form.mode === settings.mode && form.mode !== MonthlyDeclarationMode.Configured)
-    return 'Le dossier est déjà dans ce régime.';
+    return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.le.dossier.est.deja.dans.ce.regime.86e13a75:Le dossier est déjà dans ce régime.`;
 
   if (form.mode !== MonthlyDeclarationMode.Configured) return null;
 
   if (settings.mode === MonthlyDeclarationMode.Legacy) {
     return (
-      "Passez d'abord le dossier en contrôle de parité : la bascule directe ne permet aucune " +
-      'comparaison avec le calcul en place.'
+      $localize`:@@accounting.monthly-declaration-compute.view-model.ts.passez.d.abord.le.dossier.en.controle.de.482faec7:Passez d'abord le dossier en contrôle de parité : la bascule directe ne permet aucune comparaison avec le calcul en place.`
     );
   }
 
   const since = (form.configuredSince ?? '').trim();
-  if (!since) return "La date d'effet est requise pour passer en calcul paramétré.";
-  if (!/^\d{4}-\d{2}-01$/.test(since)) return "La date d'effet doit être le premier jour d'un mois.";
+  if (!since) return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.la.date.d.effet.est.requise.pour.passer.2764b6a8:La date d'effet est requise pour passer en calcul paramétré.`;
+  if (!/^\d{4}-\d{2}-01$/.test(since)) return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.la.date.d.effet.doit.etre.le.premier.jou.db8ff117:La date d'effet doit être le premier jour d'un mois.`;
 
   if (needsOverrideReason(form, settings)) {
     const reason = (form.overrideReason ?? '').trim();
     if (!reason) {
       return (
-        `${settings.requiredCleanParityPeriods} périodes consécutives sans écart sont requises ` +
-        `(série actuelle : ${settings.parityCleanStreak}). À défaut, un motif de dérogation est exigé.`
+        $localize`:@@accounting.monthly-declaration-compute.view-model.ts.requiredcleanparityperiods.periodes.cons.38919651:${settings.requiredCleanParityPeriods}:requiredCleanParityPeriods: périodes consécutives sans écart sont requises (série actuelle : ${settings.parityCleanStreak}:parityCleanStreak:). À défaut, un motif de dérogation est exigé.`
       );
     }
     if (reason.length > DM_MAX_OVERRIDE_REASON_LENGTH)
-      return `Le motif ne peut pas dépasser ${DM_MAX_OVERRIDE_REASON_LENGTH} caractères.`;
+      return $localize`:@@accounting.monthly-declaration-compute.view-model.ts.le.motif.ne.peut.pas.depasser.dm.max.ove.23459365:Le motif ne peut pas dépasser ${DM_MAX_OVERRIDE_REASON_LENGTH}:DM_MAX_OVERRIDE_REASON_LENGTH: caractères.`;
   }
 
   return null;

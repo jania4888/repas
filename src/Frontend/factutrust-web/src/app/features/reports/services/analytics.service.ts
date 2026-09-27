@@ -409,7 +409,7 @@ export class AnalyticsService {
             title: $localize`:@@reports.analytics.ts.taux.de.conversion.faible.eda966dc:Taux de conversion faible`,
             message: $localize`:@@reports.analytics.ts.seulement.tofixed.de.vos.devis.sont.tran.5a3c6d1c:Seulement ${conversionRate.toFixed(1)}:toFixed: % de vos devis sont transformés en factures. Pensez à relancer vos prospects.`
           });
-          recommendations.push('Relancez les devis en attente pour améliorer votre taux de conversion.');
+          recommendations.push($localize`:@@reports.analytics.ts.relancez.les.devis.en.attente.pour.ameli.986a4f8a:Relancez les devis en attente pour améliorer votre taux de conversion.`);
         }
 
         if (conversionRate >= 60) {
@@ -429,11 +429,11 @@ export class AnalyticsService {
             title: $localize`:@@reports.analytics.ts.marges.faibles.detectees.b836ff0e:Marges faibles détectées`,
             message: $localize`:@@reports.analytics.ts.length.produit.s.ont.une.marge.inferieur.a10ca376:${lowMarginProducts.length}:length: produit(s) ont une marge inférieure à 15 %. Vérifiez vos prix de vente.`
           });
-          recommendations.push('Revoyez les prix de vente des produits à faible marge pour améliorer votre rentabilité.');
+          recommendations.push($localize`:@@reports.analytics.ts.revoyez.les.prix.de.vente.des.produits.a.1a55053d:Revoyez les prix de vente des produits à faible marge pour améliorer votre rentabilité.`);
         }
 
         if (averageBasket > 0) {
-          recommendations.push(`Votre panier moyen est de ${this.fmt(averageBasket)} ${currency}. Proposez des produits complémentaires pour l'augmenter.`);
+          recommendations.push($localize`:@@reports.analytics.ts.votre.panier.moyen.est.de.fmt.currency.p.504f78fd:Votre panier moyen est de ${this.fmt(averageBasket)}:fmt: ${currency}:currency:. Proposez des produits complémentaires pour l'augmenter.`);
         }
 
         return {

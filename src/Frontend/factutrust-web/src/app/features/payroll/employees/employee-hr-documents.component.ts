@@ -130,7 +130,7 @@ export class EmployeeHrDocumentsComponent implements OnInit {
     this.download('employment', () =>
       this.payroll.downloadEmploymentCertificatePdf(this.employeeId),
       `certificat-travail-${this.employeeId}.pdf`,
-      'Certificat de travail'
+      $localize`:@@payroll.employee-hr-documents.ts.certificat.de.travail.02713183:Certificat de travail`
     );
   }
 
@@ -138,7 +138,7 @@ export class EmployeeHrDocumentsComponent implements OnInit {
     this.download(`salary-${months}`, () =>
       this.payroll.downloadSalaryCertificatePdf(this.employeeId, months),
       `attestation-salaire-${months}m-${this.employeeId}.pdf`,
-      `Attestation de salaire (${months} mois)`
+      $localize`:@@payroll.employee-hr-documents.ts.attestation.de.salaire.months.mois.cddcf792:Attestation de salaire (${months}:months: mois)`
     );
   }
 
@@ -146,7 +146,7 @@ export class EmployeeHrDocumentsComponent implements OnInit {
     this.download('stc', () =>
       this.payroll.downloadSoldeToutComptePdf(this.employeeId),
       `solde-tout-compte-${this.employeeId}.pdf`,
-      'Solde de tout compte'
+      $localize`:@@payroll.employee-hr-documents.ts.solde.de.tout.compte.93fc3ea6:Solde de tout compte`
     );
   }
 

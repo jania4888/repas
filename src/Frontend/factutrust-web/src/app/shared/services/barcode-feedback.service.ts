@@ -58,7 +58,7 @@ export class BarcodeFeedbackService {
   }
 
   /** Scan refusé : double bip grave, et le motif toujours affiché. */
-  failure(detail: string, summary = 'Scan refusé'): void {
+  failure(detail: string, summary = $localize`:@@shared.barcode-feedback.ts.scan.refuse.0b321781:Scan refusé`): void {
     this.beep(220, 0.12);
     setTimeout(() => this.beep(220, 0.12), 140);
     this.toastService.add({ severity: 'warn', summary, detail, life: 4000 });
@@ -76,7 +76,7 @@ export class BarcodeFeedbackService {
 
     this.failure(
       result.message,
-      result.status === 'not_found' ? 'Article introuvable' : 'Scan refusé'
+      result.status === 'not_found' ? 'Article introuvable' : $localize`:@@shared.barcode-feedback.ts.scan.refuse.0b321781:Scan refusé`
     );
     return false;
   }

@@ -492,14 +492,14 @@ export class EntryFormStore {
   validateSubmit(): EntryValidationResult {
     const label = this.entryLabel().trim();
     if (!label) {
-      return { valid: false, error: "Le libellé de l'écriture est obligatoire." };
+      return { valid: false, error: $localize`:@@accounting.entry-form.ts.le.libelle.de.l.ecriture.est.obligatoire.8872b5d4:Le libellé de l'écriture est obligatoire.` };
     }
 
     const linesWithAmount = this.getSubmittableLines();
     if (linesWithAmount.length < 2) {
       return {
         valid: false,
-        error: 'Au moins deux lignes avec un compte renseigné et un montant au débit ou au crédit sont requises.'
+        error: $localize`:@@accounting.entry-form.ts.au.moins.deux.lignes.avec.un.compte.rens.a63dabb7:Au moins deux lignes avec un compte renseigné et un montant au débit ou au crédit sont requises.`
       };
     }
 
@@ -511,16 +511,16 @@ export class EntryFormStore {
     if (invalidLine) {
       return {
         valid: false,
-        error: "Chaque ligne ne doit avoir qu'un montant au débit ou au crédit, pas les deux."
+        error: $localize`:@@accounting.entry-form.ts.chaque.ligne.ne.doit.avoir.qu.un.montant.aa4db616:Chaque ligne ne doit avoir qu'un montant au débit ou au crédit, pas les deux.`
       };
     }
 
     if (!this.isBalanced()) {
-      return { valid: false, error: "L'écriture n'est pas équilibrée." };
+      return { valid: false, error: $localize`:@@accounting.entry-form.ts.l.ecriture.n.est.pas.equilibree.e8e495d6:L'écriture n'est pas équilibrée.` };
     }
 
     if (this.periodClosed()) {
-      return { valid: false, error: 'La période comptable de cette date est clôturée.' };
+      return { valid: false, error: $localize`:@@accounting.entry-form.ts.la.periode.comptable.de.cette.date.est.c.9c7d9809:La période comptable de cette date est clôturée.` };
     }
 
     return { valid: true };

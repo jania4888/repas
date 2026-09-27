@@ -59,13 +59,13 @@ export function passwordPolicyMissingRules(password: string | null | undefined):
   const p = password ?? '';
   const criteria = passwordCriteria(p);
   const missing: string[] = [];
-  if (!criteria.minLength) missing.push(`${AUTH_PASSWORD_MIN_LENGTH} caractères minimum`);
-  if (!criteria.hasUpper) missing.push('une majuscule');
-  if (!criteria.hasLower) missing.push('une minuscule');
-  if (!criteria.hasDigit) missing.push('un chiffre');
-  if (!criteria.hasSpecial) missing.push('un caractère spécial');
+  if (!criteria.minLength) missing.push($localize`:@@auth.auth-password.helpers.ts.auth.password.min.length.caracteres.mini.a9533917:${AUTH_PASSWORD_MIN_LENGTH}:AUTH_PASSWORD_MIN_LENGTH: caractères minimum`);
+  if (!criteria.hasUpper) missing.push($localize`:@@auth.auth-password.helpers.ts.une.majuscule.707c869a:une majuscule`);
+  if (!criteria.hasLower) missing.push($localize`:@@auth.auth-password.helpers.ts.une.minuscule.39f40740:une minuscule`);
+  if (!criteria.hasDigit) missing.push($localize`:@@auth.auth-password.helpers.ts.un.chiffre.feda3574:un chiffre`);
+  if (!criteria.hasSpecial) missing.push($localize`:@@auth.auth-password.helpers.ts.un.caractere.special.3cddad47:un caractère spécial`);
   if (new Set(p.split('')).size < AUTH_PASSWORD_MIN_UNIQUE_CHARS) {
-    missing.push(`${AUTH_PASSWORD_MIN_UNIQUE_CHARS} caractères différents`);
+    missing.push($localize`:@@auth.auth-password.helpers.ts.auth.password.min.unique.chars.caractere.f8e71249:${AUTH_PASSWORD_MIN_UNIQUE_CHARS}:AUTH_PASSWORD_MIN_UNIQUE_CHARS: caractères différents`);
   }
   return missing;
 }

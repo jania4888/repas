@@ -573,9 +573,9 @@ export class FixedAssetsService {
 }
 
 export const FIXED_ASSET_STATUS_LABELS: Record<FixedAssetStatus, string> = {
-  [FixedAssetStatus.Draft]: 'Brouillon',
-  [FixedAssetStatus.InService]: 'En service',
-  [FixedAssetStatus.FullyDepreciated]: 'Totalement amorti',
+  [FixedAssetStatus.Draft]: $localize`:@@accounting.fixed-assets.ts.brouillon.57d2d7a7:Brouillon`,
+  [FixedAssetStatus.InService]: $localize`:@@accounting.fixed-assets.ts.en.service.0b067773:En service`,
+  [FixedAssetStatus.FullyDepreciated]: $localize`:@@accounting.fixed-assets.ts.totalement.amorti.ede655ed:Totalement amorti`,
   [FixedAssetStatus.Disposed]: $localize`:@@accounting.fixed-assets.ts.cede.51eca68c:Cédé`
 };
 

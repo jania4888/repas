@@ -15,7 +15,7 @@
 /** Mois de début d'exercice invalide (hors 1..12). */
 export class InvalidFiscalYearStartMonth extends RangeError {
   constructor(startMonth: number) {
-    super(`Le mois de début d'exercice doit être compris entre 1 et 12 (reçu : ${startMonth}).`);
+    super($localize`:@@accounting.fiscal-year.ts.le.mois.de.debut.d.exercice.doit.etre.co.468178e3:Le mois de début d'exercice doit être compris entre 1 et 12 (reçu : ${startMonth}:startMonth:).`);
     super.name = 'InvalidFiscalYearStartMonth';
   }
 }

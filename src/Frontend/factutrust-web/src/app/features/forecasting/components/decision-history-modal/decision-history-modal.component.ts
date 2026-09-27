@@ -156,11 +156,11 @@ export class DecisionHistoryModalComponent implements OnInit {
 
   statusLabel(s: ReplenishmentStatus): string {
     return ({
-      pending: 'En attente',
-      approved: 'Approuvée',
-      dismissed: 'Écartée',
-      ordered: 'Commandée',
-      superseded: 'Remplacée'
+      pending: $localize`:@@forecasting.decision-history-modal.ts.en.attente.5231158f:En attente`,
+      approved: $localize`:@@forecasting.decision-history-modal.ts.approuvee.7d606a51:Approuvée`,
+      dismissed: $localize`:@@forecasting.decision-history-modal.ts.ecartee.42bd51f7:Écartée`,
+      ordered: $localize`:@@forecasting.decision-history-modal.ts.commandee.15f2b9a3:Commandée`,
+      superseded: $localize`:@@forecasting.decision-history-modal.ts.remplacee.a82c0233:Remplacée`
     } as Record<ReplenishmentStatus, string>)[s] ?? s;
   }
 
@@ -171,7 +171,7 @@ export class DecisionHistoryModalComponent implements OnInit {
       case 'Override':    return $localize`:@@forecasting.decision-history-modal.ts.modifiee.69d9d54f:Modifiée`;
       case 'LinkPO':      return $localize`:@@forecasting.decision-history-modal.ts.bc.cree.c314b8c1:BC créé`;
       case 'Revert':      return $localize`:@@forecasting.decision-history-modal.ts.annulee.2776573b:Annulée`;
-      case 'AttachNotes': return 'Notes';
+      case 'AttachNotes': return $localize`:@@forecasting.decision-history-modal.ts.notes.70440046:Notes`;
       case 'Generate':    return $localize`:@@forecasting.decision-history-modal.ts.generee.0eaadba4:Générée`;
       default:            return actionType;
     }

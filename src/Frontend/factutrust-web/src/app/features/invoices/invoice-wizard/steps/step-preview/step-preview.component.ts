@@ -1466,7 +1466,7 @@ export class StepPreviewComponent implements OnInit {
     if (!this.validation) return '';
     if (this.validation.isValid) return $localize`:@@invoices.step-preview.ts.facture.conforme.cf5e698d:Facture conforme`;
     if (this.validation.canProceed) return $localize`:@@invoices.step-preview.ts.avertissements.detectes.043faaef:Avertissements détectés`;
-    return 'Erreurs bloquantes';
+    return $localize`:@@invoices.step-preview.ts.erreurs.bloquantes.f4604ece:Erreurs bloquantes`;
   }
 
   get validationSummaryMessage(): string {

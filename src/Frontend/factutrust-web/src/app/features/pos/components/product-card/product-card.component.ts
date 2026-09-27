@@ -507,7 +507,7 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy, After
       }
       let label = $localize`:@@pos.product-card.ts.base.stock.disponible.formatquantity.uni.a2bed4d7:${base}:base:, stock disponible : ${this.formatQuantity(n)}:formatQuantity:${unitPart}:unitPart:`;
       if (this.showLowStockBadge()) {
-        label += ', stock faible';
+        label += $localize`:@@pos.product-card.ts.stock.faible.280678dd:, stock faible`;
       }
       return label;
     }

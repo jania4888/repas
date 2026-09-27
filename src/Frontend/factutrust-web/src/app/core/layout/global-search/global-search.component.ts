@@ -412,7 +412,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
   groupedResults(): { label: string; items: GlobalSearchResult[] }[] {
     const groups = new Map<string, GlobalSearchResult[]>();
     for (const item of this.displayResults()) {
-      const label = item.group || 'Autres';
+      const label = item.group || $localize`:@@core.global-search.ts.autres.2f0dd042:Autres`;
       const list = groups.get(label) ?? [];
       list.push(item);
       groups.set(label, list);

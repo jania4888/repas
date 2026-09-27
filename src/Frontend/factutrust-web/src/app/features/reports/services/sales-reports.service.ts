@@ -4,6 +4,7 @@ import { map, catchError } from 'rxjs/operators';
 import { InvoiceService, InvoiceListItem } from '@core/services/invoice.service';
 import { QuoteService, QuoteListItem } from '@core/services/quote.service';
 import { formatLocalDate } from '@core/utils/date.util';
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
 
 export type ReportPeriod = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
@@ -405,10 +406,24 @@ export class SalesReportsService {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(amountToCollect);
-      parts.push(`Vous avez ${pendingCount} facture${pendingCount > 1 ? 's' : ''} à encaisser pour ${amountStr} ${currency}.`);
+      parts.push(erpPlural(pendingCount, {
+        zero: $localize`:@@reports.sales-reports.factures.a.encaisser.zero:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        one: $localize`:@@reports.sales-reports.factures.a.encaisser.one:Vous avez ${pendingCount}:pendingCount: facture à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        two: $localize`:@@reports.sales-reports.factures.a.encaisser.two:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        few: $localize`:@@reports.sales-reports.factures.a.encaisser.few:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        many: $localize`:@@reports.sales-reports.factures.a.encaisser.many:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`,
+        other: $localize`:@@reports.sales-reports.factures.a.encaisser.other:Vous avez ${pendingCount}:pendingCount: factures à encaisser pour ${amountStr}:amountStr: ${currency}:currency:.`
+      }, erpPluralLocale()));
     }
     if (overdueCount > 0) {
-      parts.push(`${overdueCount} facture${overdueCount > 1 ? 's' : ''} ${overdueCount > 1 ? 'sont' : 'est'} en retard.`);
+      parts.push(erpPlural(overdueCount, {
+        zero: $localize`:@@reports.sales-reports.factures.en.retard.zero:${overdueCount}:overdueCount: factures sont en retard.`,
+        one: $localize`:@@reports.sales-reports.factures.en.retard.one:${overdueCount}:overdueCount: facture est en retard.`,
+        two: $localize`:@@reports.sales-reports.factures.en.retard.two:${overdueCount}:overdueCount: factures sont en retard.`,
+        few: $localize`:@@reports.sales-reports.factures.en.retard.few:${overdueCount}:overdueCount: factures sont en retard.`,
+        many: $localize`:@@reports.sales-reports.factures.en.retard.many:${overdueCount}:overdueCount: factures sont en retard.`,
+        other: $localize`:@@reports.sales-reports.factures.en.retard.other:${overdueCount}:overdueCount: factures sont en retard.`
+      }, erpPluralLocale()));
     }
     if (parts.length === 0) {
       return $localize`:@@reports.sales-reports.ts.toutes.vos.factures.sont.a.jour.a34df1da:Toutes vos factures sont à jour.`;

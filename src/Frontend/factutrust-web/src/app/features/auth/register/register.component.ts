@@ -110,7 +110,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   errorMessageService = inject(ErrorMessageService);
 
   loading = signal(false);
-  loadingMessage = signal('Création de votre espace...');
+  loadingMessage = signal($localize`:@@auth.register.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
   error = signal<string | null>(null);
   currentStep = signal(0);
 
@@ -119,10 +119,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   /** Libellé ARIA pour le formulaire multi-étapes (progression + contexte). */
   registrationFormAriaLabel = computed(() => {
-    const stepNames = ['Compte', 'Entreprise', 'Adresse'];
+    const stepNames = [$localize`:@@auth.register.ts.compte.c45740bb:Compte`, $localize`:@@auth.register.ts.entreprise.d03e74b6:Entreprise`, $localize`:@@auth.register.ts.adresse.522e1466:Adresse`];
     const cur = this.currentStep();
     const prev = cur > 0 ? $localize`:@@ui.tern.etapes.precedentes.completees.b92c63:Étapes précédentes complétées. ` : '';
-    return `${prev}Étape ${cur + 1} sur 3 : ${stepNames[cur]}.`;
+    return $localize`:@@auth.register.ts.prev.etape.p.sur.3.p1.fed1fb4f:${prev}:prev:Étape ${cur + 1}:p: sur 3 : ${stepNames[cur]}:p1:.`;
   });
 
   steps: MenuItem[] = [

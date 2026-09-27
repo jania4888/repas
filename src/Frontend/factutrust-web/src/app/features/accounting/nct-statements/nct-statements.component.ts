@@ -237,7 +237,7 @@ export class NctStatementsComponent implements OnInit {
       .pipe(
         switchMap(year =>
           this.api.getNctStatements(year).pipe(
-            catchError(() => of<NctStatementsApiResponse>({ success: false, error: 'Erreur réseau' }))
+            catchError(() => of<NctStatementsApiResponse>({ success: false, error: $localize`:@@accounting.nct-statements.ts.erreur.reseau.0683007f:Erreur réseau` }))
           )
         ),
         takeUntilDestroyed()

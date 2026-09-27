@@ -304,9 +304,9 @@ export class EntryTemplatesComponent implements OnInit {
 
   frequencyLabel(freq: number): string {
     switch (freq) {
-      case 1: return 'Mensuelle';
-      case 2: return 'Trimestrielle';
-      case 3: return 'Annuelle';
+      case 1: return $localize`:@@accounting.entry-templates.ts.mensuelle.15af1be3:Mensuelle`;
+      case 2: return $localize`:@@accounting.entry-templates.ts.trimestrielle.9379d384:Trimestrielle`;
+      case 3: return $localize`:@@accounting.entry-templates.ts.annuelle.0e25612c:Annuelle`;
       default: return '—';
     }
   }

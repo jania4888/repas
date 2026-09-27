@@ -112,7 +112,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
   );
 
   loading = signal(false);
-  loadingMessage = signal('Création de votre espace...');
+  loadingMessage = signal($localize`:@@auth.register-wizard.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
   error = signal<string | null>(null);
   /**
    * Avertissements non bloquants renvoyés par le backend après une inscription
@@ -179,46 +179,46 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
   readonly stepsMeta: WizardStepMeta[] = [
     {
       name: 'Type de société',
-      desc: 'Segment et domaine',
+      desc: $localize`:@@auth.register-wizard.ts.segment.et.domaine.236abb94:Segment et domaine`,
       icon: 'pi-sitemap',
       why: [
-        'Configuration adaptée à votre activité',
-        'Plan comptable tunisien personnalisé',
-        'Modules et workflows sur mesure',
-        'Gain de temps dès le démarrage'
+        $localize`:@@auth.register-wizard.ts.configuration.adaptee.a.votre.activite.c6aac6bd:Configuration adaptée à votre activité`,
+        $localize`:@@auth.register-wizard.ts.plan.comptable.tunisien.personnalise.431a8ec2:Plan comptable tunisien personnalisé`,
+        $localize`:@@auth.register-wizard.ts.modules.et.workflows.sur.mesure.bae0ed18:Modules et workflows sur mesure`,
+        $localize`:@@auth.register-wizard.ts.gain.de.temps.des.le.demarrage.885c8c2f:Gain de temps dès le démarrage`
       ]
     },
     {
       name: 'Informations générales',
-      desc: 'Compte et société',
+      desc: $localize`:@@auth.register-wizard.ts.compte.et.societe.700362e3:Compte et société`,
       icon: 'pi-id-card',
       why: [
-        'Vos informations restent confidentielles',
-        'Un seul compte administrateur créé',
-        'Coordonnées utilisées pour les factures',
-        'Modifiable à tout moment plus tard'
+        $localize`:@@auth.register-wizard.ts.vos.informations.restent.confidentielles.322c07ae:Vos informations restent confidentielles`,
+        $localize`:@@auth.register-wizard.ts.un.seul.compte.administrateur.cree.af097d59:Un seul compte administrateur créé`,
+        $localize`:@@auth.register-wizard.ts.coordonnees.utilisees.pour.les.factures.bc36f615:Coordonnées utilisées pour les factures`,
+        $localize`:@@auth.register-wizard.ts.modifiable.a.tout.moment.plus.tard.5589ed4a:Modifiable à tout moment plus tard`
       ]
     },
     {
       name: 'Configuration',
-      desc: 'Modules recommandés',
+      desc: $localize`:@@auth.register-wizard.ts.modules.recommandes.53b9fc7a:Modules recommandés`,
       icon: 'pi-cog',
       why: [
-        'Modules déjà présélectionnés pour vous',
-        'Rien n’est figé : tout reste modifiable',
-        'Activez uniquement ce qui vous sert',
-        'Paramètres tunisiens préconfigurés'
+        $localize`:@@auth.register-wizard.ts.modules.deja.preselectionnes.pour.vous.b3dcbda6:Modules déjà présélectionnés pour vous`,
+        $localize`:@@auth.register-wizard.ts.rien.n.est.fige.tout.reste.modifiable.627a2f23:Rien n’est figé : tout reste modifiable`,
+        $localize`:@@auth.register-wizard.ts.activez.uniquement.ce.qui.vous.sert.73bd9600:Activez uniquement ce qui vous sert`,
+        $localize`:@@auth.register-wizard.ts.parametres.tunisiens.preconfigures.cb647e73:Paramètres tunisiens préconfigurés`
       ]
     },
     {
       name: 'Finalisation',
-      desc: 'Adresse et récapitulatif',
+      desc: $localize`:@@auth.register-wizard.ts.adresse.et.recapitulatif.d4bb7b00:Adresse et récapitulatif`,
       icon: 'pi-check-circle',
       why: [
-        'Vérifiez votre espace avant de le créer',
-        'Modifiez toute étape en un clic',
-        'Adresse utilisée pour vos documents',
-        'Votre espace est prêt en quelques secondes'
+        $localize`:@@auth.register-wizard.ts.verifiez.votre.espace.avant.de.le.creer.4fe0f690:Vérifiez votre espace avant de le créer`,
+        $localize`:@@auth.register-wizard.ts.modifiez.toute.etape.en.un.clic.cc6bee3b:Modifiez toute étape en un clic`,
+        $localize`:@@auth.register-wizard.ts.adresse.utilisee.pour.vos.documents.0214b555:Adresse utilisée pour vos documents`,
+        $localize`:@@auth.register-wizard.ts.votre.espace.est.pret.en.quelques.second.5a314732:Votre espace est prêt en quelques secondes`
       ]
     }
   ];
@@ -226,7 +226,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
   registrationFormAriaLabel = computed(() => {
     const cur = this.currentStep();
     const prev = cur > 0 ? $localize`:@@ui.tern.etapes.precedentes.completees.b92c63:Étapes précédentes complétées. ` : '';
-    return `${prev}Étape ${cur + 1} sur ${this.stepsMeta.length} : ${this.stepsMeta[cur].name}.`;
+    return $localize`:@@auth.register-wizard.ts.prev.etape.p.sur.length.name.07f58086:${prev}:prev:Étape ${cur + 1}:p: sur ${this.stepsMeta.length}:length: : ${this.stepsMeta[cur].name}:name:.`;
   });
 
   taxRegimes: TaxRegime[] = [

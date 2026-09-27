@@ -649,7 +649,7 @@ export class ClientFormComponent implements OnInit {
       return $localize`:@@clients.client-form.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29:Le matricule fiscal est obligatoire pour un client assujetti`;
     }
     if (control.errors['pattern']) {
-      return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';
+      return $localize`:@@clients.client-form.ts.matricule.fiscal.invalide.format.attendu.7da88009:Matricule fiscal invalide. Format attendu: 1772793W/A/M/000`;
     }
     return '';
   }

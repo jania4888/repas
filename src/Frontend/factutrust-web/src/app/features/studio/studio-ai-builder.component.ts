@@ -302,7 +302,7 @@ export class StudioAiBuilderComponent {
   readonly suggestions = signal<string[]>([]);
   readonly buildSteps = signal<BuildStep[]>([]);
   readonly state = signal<BuilderState>('idle');
-  readonly status = signal('Analyse…');
+  readonly status = signal($localize`:@@studio.studio-ai-builder.ts.analyse.458c82be:Analyse…`);
   readonly actions = signal<NavAction[]>([]);
   readonly error = signal<string | null>(null);
   readonly plan = signal<StudioPlanEvent | null>(null);
@@ -324,7 +324,7 @@ export class StudioAiBuilderComponent {
     this.lastUserMessage = message;
     this.prompt = '';
     this.state.set('planning');
-    this.status.set('Analyse de votre demande…');
+    this.status.set($localize`:@@studio.studio-ai-builder.ts.analyse.de.votre.demande.b8c1072a:Analyse de votre demande…`);
     this.actions.set([]);
     this.error.set(null);
     this.buildSteps.set([]);
@@ -352,7 +352,7 @@ export class StudioAiBuilderComponent {
     if (!current || this.state() !== 'awaiting_confirmation') return;
 
     this.state.set('executing');
-    this.status.set('Création en cours…');
+    this.status.set($localize`:@@studio.studio-ai-builder.ts.creation.en.cours.1488d01b:Création en cours…`);
     this.error.set(null);
     this.buildSteps.set([]);
 
@@ -389,7 +389,7 @@ export class StudioAiBuilderComponent {
   private handleEvent(ev: ChatStreamEvent): void {
     switch (ev.type) {
       case 'tool_call_start':
-        this.status.set('Préparation en cours…');
+        this.status.set($localize`:@@studio.studio-ai-builder.ts.preparation.en.cours.ccb86f49:Préparation en cours…`);
         break;
       case 'content':
         if (ev.content) this.assistantBuffer += ev.content;
@@ -466,7 +466,7 @@ export class StudioAiBuilderComponent {
       payload.summary.warnings ??= [];
       this.plan.set(payload);
       this.state.set('awaiting_confirmation');
-      this.status.set('En attente de votre validation…');
+      this.status.set($localize`:@@studio.studio-ai-builder.ts.en.attente.de.votre.validation.53bc9a47:En attente de votre validation…`);
     } catch {
       // Payload de plan illisible : on laisse le flux se terminer normalement.
     }

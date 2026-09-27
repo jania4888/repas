@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { erpPlural, erpPluralLocale } from '@core/i18n/erp-plural';
 import {
   StockService,
   StockItem,
@@ -108,10 +109,24 @@ export class StockReportsService {
     }
     const parts: string[] = [];
     if (outOfStockCount > 0) {
-      parts.push(`${outOfStockCount} produit${outOfStockCount > 1 ? 's' : ''} en rupture de stock.`);
+      parts.push(erpPlural(outOfStockCount, {
+        zero: $localize`:@@reports.stock-reports.produits.en.rupture.zero:${outOfStockCount}:outOfStockCount: produits en rupture de stock.`,
+        one: $localize`:@@reports.stock-reports.produits.en.rupture.one:${outOfStockCount}:outOfStockCount: produit en rupture de stock.`,
+        two: $localize`:@@reports.stock-reports.produits.en.rupture.two:${outOfStockCount}:outOfStockCount: produits en rupture de stock.`,
+        few: $localize`:@@reports.stock-reports.produits.en.rupture.few:${outOfStockCount}:outOfStockCount: produits en rupture de stock.`,
+        many: $localize`:@@reports.stock-reports.produits.en.rupture.many:${outOfStockCount}:outOfStockCount: produits en rupture de stock.`,
+        other: $localize`:@@reports.stock-reports.produits.en.rupture.other:${outOfStockCount}:outOfStockCount: produits en rupture de stock.`
+      }, erpPluralLocale()));
     }
     if (lowStockCount > 0) {
-      parts.push(`${lowStockCount} produit${lowStockCount > 1 ? 's' : ''} en stock faible.`);
+      parts.push(erpPlural(lowStockCount, {
+        zero: $localize`:@@reports.stock-reports.produits.en.stock.faible.zero:${lowStockCount}:lowStockCount: produits en stock faible.`,
+        one: $localize`:@@reports.stock-reports.produits.en.stock.faible.one:${lowStockCount}:lowStockCount: produit en stock faible.`,
+        two: $localize`:@@reports.stock-reports.produits.en.stock.faible.two:${lowStockCount}:lowStockCount: produits en stock faible.`,
+        few: $localize`:@@reports.stock-reports.produits.en.stock.faible.few:${lowStockCount}:lowStockCount: produits en stock faible.`,
+        many: $localize`:@@reports.stock-reports.produits.en.stock.faible.many:${lowStockCount}:lowStockCount: produits en stock faible.`,
+        other: $localize`:@@reports.stock-reports.produits.en.stock.faible.other:${lowStockCount}:lowStockCount: produits en stock faible.`
+      }, erpPluralLocale()));
     }
     return parts.join(' ');
   }

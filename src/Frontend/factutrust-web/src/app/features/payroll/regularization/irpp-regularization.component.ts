@@ -264,7 +264,7 @@ export class IrppRegularizationComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.title.setTitle('Régularisation IRPP - InstaFact');
+    this.title.setTitle($localize`:@@payroll.irpp-regularization.ts.regularisation.irpp.instafact.b170087e:Régularisation IRPP - InstaFact`);
 
     // Deep-link depuis le cycle de paie : ?year=2026&month=12
     const params = this.route.snapshot.queryParamMap;

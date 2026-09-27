@@ -202,12 +202,12 @@ export class ChatAttachmentCardComponent {
   get formatLabel(): string {
     switch (this.attachment.format) {
       case 'pdf': return 'PDF';
-      case 'image': return 'Image';
+      case 'image': return $localize`:@@ai-assistant.chat-attachment-card.ts.image.50e19fda:Image`;
       case 'docx': return 'Word';
       case 'xlsx': return 'Excel';
       case 'csv': return 'CSV';
-      case 'txt': return 'Texte';
-      default: return this.attachment.format?.toUpperCase() || 'Fichier';
+      case 'txt': return $localize`:@@ai-assistant.chat-attachment-card.ts.texte.ff9afef1:Texte`;
+      default: return this.attachment.format?.toUpperCase() || $localize`:@@ai-assistant.chat-attachment-card.ts.fichier.f0fa5745:Fichier`;
     }
   }
 

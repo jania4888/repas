@@ -67,7 +67,7 @@ export function render(
   for (const block of ordered) {
     const part = renderBlock(block, sequence, referenceDate, freeTextOverride);
     if (part === null) {
-      return { value: '', error: `Type de bloc inconnu: ${block.type}` };
+      return { value: '', error: $localize`:@@settings.numbering-format-renderer.ts.type.de.bloc.inconnu.type.290bd27d:Type de bloc inconnu: ${block.type}:type:` };
     }
     parts.push(part);
   }
@@ -76,7 +76,7 @@ export function render(
   if (rendered.length > MAX_RENDERED_LENGTH) {
     return {
       value: '',
-      error: `Le numéro généré dépasse ${MAX_RENDERED_LENGTH} caractères.`
+      error: $localize`:@@settings.numbering-format-renderer.ts.le.numero.genere.depasse.max.rendered.le.75804980:Le numéro généré dépasse ${MAX_RENDERED_LENGTH}:MAX_RENDERED_LENGTH: caractères.`
     };
   }
 
@@ -85,29 +85,29 @@ export function render(
 
 export function validateBlocks(blocks: NumberingBlock[]): RenderValidationResult {
   if (!blocks.length) {
-    return { valid: false, error: 'Le format de numérotation est vide.' };
+    return { valid: false, error: $localize`:@@settings.numbering-format-renderer.ts.le.format.de.numerotation.est.vide.bf6040e1:Le format de numérotation est vide.` };
   }
 
   if (!blocks.some((b) => isDocumentNumberBlock(b.type))) {
     return {
       valid: false,
-      error: 'Le format doit contenir au moins un bloc numéro de document.'
+      error: $localize`:@@settings.numbering-format-renderer.ts.le.format.doit.contenir.au.moins.un.bloc.ea747be6:Le format doit contenir au moins un bloc numéro de document.`
     };
   }
 
   for (const block of blocks) {
     if (block.type === NumberingBlockType.FreeText) {
       if (!block.value || !block.value.trim()) {
-        return { valid: false, error: 'Le texte libre est obligatoire.' };
+        return { valid: false, error: $localize`:@@settings.numbering-format-renderer.ts.le.texte.libre.est.obligatoire.248f1f10:Le texte libre est obligatoire.` };
       }
       if (block.value.trim().length > 20) {
-        return { valid: false, error: 'Le texte libre ne peut pas dépasser 20 caractères.' };
+        return { valid: false, error: $localize`:@@settings.numbering-format-renderer.ts.le.texte.libre.ne.peut.pas.depasser.20.c.9d88a149:Le texte libre ne peut pas dépasser 20 caractères.` };
       }
     }
 
     if (block.type === NumberingBlockType.Separator) {
       if (block.value !== '-' && block.value !== '/') {
-        return { valid: false, error: 'Le séparateur doit être « - » ou « / ».' };
+        return { valid: false, error: $localize`:@@settings.numbering-format-renderer.ts.le.separateur.doit.etre.ou.22cbf785:Le séparateur doit être « - » ou « / ».` };
       }
     }
   }

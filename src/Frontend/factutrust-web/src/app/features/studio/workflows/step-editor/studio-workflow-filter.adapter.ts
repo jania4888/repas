@@ -38,7 +38,7 @@ export function toWorkflowFilters(filters: readonly RecordViewFilter[]): Workflo
  */
 export function contextFieldOptions(fields: readonly CustomField[], steps: readonly WorkflowStepSpec[], currentIndex: number): CustomField[] {
   const active = fields.filter(f => f.isActive && !COMPUTED.has(f.fieldType));
-  const previous = active.map(f => synthetic(`_previous.${f.key}`, `Valeur précédente · ${f.label}`, f.fieldType));         // même type que le champ
+  const previous = active.map(f => synthetic(`_previous.${f.key}`, $localize`:@@studio.studio-workflow-filter.adapter.ts.valeur.precedente.label.e90b27f0:Valeur précédente · ${f.label}:label:`, f.fieldType));         // même type que le champ
   const before = steps.slice(0, currentIndex);
   const approvals = before.filter(s => s.type === 'approval')
     .flatMap(s => ['status', 'comment', 'decidedBy', 'decidedAt'].map(p => synthetic(`_approval.${s.key}.${p}`, `Approbation ${s.key} · ${p}`, CustomFieldType.Text)));
@@ -47,7 +47,7 @@ export function contextFieldOptions(fields: readonly CustomField[], steps: reado
     .flatMap(s => {
       const saveAs = s['saveResultAs'] as string;
       const props = s.type === 'create_record' ? ['recordId', 'entityKey'] : ['id'];
-      return props.map(p => synthetic(`_results.${saveAs}.${p}`, `Résultat ${saveAs} · ${p}`, CustomFieldType.Text));     // D-44-17
+      return props.map(p => synthetic(`_results.${saveAs}.${p}`, $localize`:@@studio.studio-workflow-filter.adapter.ts.resultat.saveas.p.078f3d89:Résultat ${saveAs}:saveAs: · ${p}:p:`, CustomFieldType.Text));     // D-44-17
     });
   return [...active, ...previous, ...approvals, ...results];
 }

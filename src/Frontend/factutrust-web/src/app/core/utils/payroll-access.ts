@@ -59,7 +59,7 @@ export function isPayrollConsultMode(auth: AuthService): boolean {
 }
 
 export const PAYROLL_FIRM_MANAGED_COMPANY_BANNER =
-  'La gestion des cycles de paie, du calcul, de la régularisation IRPP et des paramètres est assurée par votre cabinet comptable. Vous pouvez consulter les résultats et saisir les éléments variables.';
+  $localize`:@@core.payroll-access.ts.la.gestion.des.cycles.de.paie.du.calcul.6cf43fb7:La gestion des cycles de paie, du calcul, de la régularisation IRPP et des paramètres est assurée par votre cabinet comptable. Vous pouvez consulter les résultats et saisir les éléments variables.`;
 
 export const PAYROLL_FIRM_CONSULT_BANNER =
-  'Mode consultation — la gestion des dossiers salariés est réservée à la société cliente.';
+  $localize`:@@core.payroll-access.ts.mode.consultation.la.gestion.des.dossier.370ed62d:Mode consultation — la gestion des dossiers salariés est réservée à la société cliente.`;

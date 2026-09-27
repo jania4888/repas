@@ -1524,10 +1524,10 @@ export class PurchasesReportsComponent implements OnInit {
   }
 
   private readonly tabNames = [
-    'Dépenses et fournisseurs', 'Transactions fournisseurs',
-    'Détails achats par ligne', 'TVA achats',
-    'Soldes fournisseur', 'Retenues fournisseurs', 'Synthèse mensuelle',
-    'Répartition par statut', 'Dépenses par mois / Année'
+    $localize`:@@reports.purchases-reports.ts.depenses.et.fournisseurs.8acc873e:Dépenses et fournisseurs`, $localize`:@@reports.purchases-reports.ts.transactions.fournisseurs.83a34e96:Transactions fournisseurs`,
+    $localize`:@@reports.purchases-reports.ts.details.achats.par.ligne.20c0118b:Détails achats par ligne`, $localize`:@@reports.purchases-reports.ts.tva.achats.48719283:TVA achats`,
+    $localize`:@@reports.purchases-reports.ts.soldes.fournisseur.18c92c31:Soldes fournisseur`, $localize`:@@reports.purchases-reports.ts.retenues.fournisseurs.a6b3211f:Retenues fournisseurs`, $localize`:@@reports.purchases-reports.ts.synthese.mensuelle.bab5b563:Synthèse mensuelle`,
+    $localize`:@@reports.purchases-reports.ts.repartition.par.statut.05b7c49b:Répartition par statut`, $localize`:@@reports.purchases-reports.ts.depenses.par.mois.annee.a1932f50:Dépenses par mois / Année`
   ];
 
   get activeTabName(): string {

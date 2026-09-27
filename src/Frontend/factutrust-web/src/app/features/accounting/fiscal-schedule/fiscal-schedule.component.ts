@@ -346,7 +346,7 @@ export class FiscalScheduleComponent implements OnInit {
     if (!this.canCreate || !this.filters.fiscalYear) return;
     const companyId = this.firmWriteCompanyId;
     if (this.isFirmScope && !companyId) {
-      this.notify('warn', 'Selectionnez une societe pour generer l\'echeancier.');
+      this.notify('warn', $localize`:@@accounting.fiscal-schedule.ts.selectionnez.une.societe.pour.generer.l.80f481b7:Selectionnez une societe pour generer l'echeancier.`);
       return;
     }
     this.generating = true;
@@ -365,7 +365,7 @@ export class FiscalScheduleComponent implements OnInit {
           this.notify('success', response.message || `${response.data} echeance(s) generee(s).`);
           this.load();
         },
-        error: err => this.notify('error', this.httpErrorMessage(err, "L'echeancier n'a pas pu etre genere."))
+        error: err => this.notify('error', this.httpErrorMessage(err, $localize`:@@accounting.fiscal-schedule.ts.l.echeancier.n.a.pas.pu.etre.genere.7c111a30:L'echeancier n'a pas pu etre genere.`))
       });
   }
 
@@ -444,7 +444,7 @@ export class FiscalScheduleComponent implements OnInit {
   openCreate(): void {
     if (!this.canCreate) return;
     if (this.isFirmScope && !this.firmWriteCompanyId) {
-      this.notify('warn', 'Selectionnez une societe pour creer une echeance.');
+      this.notify('warn', $localize`:@@accounting.fiscal-schedule.ts.selectionnez.une.societe.pour.creer.une.ed6c5531:Selectionnez une societe pour creer une echeance.`);
       return;
     }
     this.editingId = null;
@@ -506,7 +506,7 @@ export class FiscalScheduleComponent implements OnInit {
           this.notify('success', wasEditing ? $localize`:@@ui.tern.echeance.mise.a.jour.2e09c8:Echeance mise a jour.` : $localize`:@@ui.tern.echeance.creee.13b4e8:Echeance creee.`);
           this.load();
         },
-        error: err => this.notify('error', this.httpErrorMessage(err, "L'echeance n'a pas pu etre enregistree."))
+        error: err => this.notify('error', this.httpErrorMessage(err, $localize`:@@accounting.fiscal-schedule.ts.l.echeance.n.a.pas.pu.etre.enregistree.22efd4bf:L'echeance n'a pas pu etre enregistree.`))
       });
   }
 
@@ -535,7 +535,7 @@ export class FiscalScheduleComponent implements OnInit {
             this.selected = null;
             this.load();
           },
-          error: err => this.notify('error', this.httpErrorMessage(err, "L'echeance n'a pas pu etre annulee."))
+          error: err => this.notify('error', this.httpErrorMessage(err, $localize`:@@accounting.fiscal-schedule.ts.l.echeance.n.a.pas.pu.etre.annulee.ba81ae13:L'echeance n'a pas pu etre annulee.`))
         });
       }
     });
@@ -544,7 +544,7 @@ export class FiscalScheduleComponent implements OnInit {
   openWorkflow(mode: FiscalWorkflowMode): void {
     if (!this.selected || !this.canCreate) return;
     if (this.isFirmScope && !this.firmWriteCompanyId) {
-      this.notify('warn', 'Selectionnez une societe pour effectuer cette action.');
+      this.notify('warn', $localize`:@@accounting.fiscal-schedule.ts.selectionnez.une.societe.pour.effectuer.96b03018:Selectionnez une societe pour effectuer cette action.`);
       return;
     }
     this.workflowMode = mode;
@@ -590,7 +590,7 @@ export class FiscalScheduleComponent implements OnInit {
           this.notify('success', 'Action fiscale enregistree.');
           this.load();
         },
-        error: err => this.notify('error', this.httpErrorMessage(err, "L'action fiscale n'a pas pu etre enregistree."))
+        error: err => this.notify('error', this.httpErrorMessage(err, $localize`:@@accounting.fiscal-schedule.ts.l.action.fiscale.n.a.pas.pu.etre.enregis.054682f3:L'action fiscale n'a pas pu etre enregistree.`))
       });
   }
 
@@ -631,7 +631,7 @@ export class FiscalScheduleComponent implements OnInit {
         this.notify('success', 'Piece jointe ajoutee.');
         this.loadSelectedDetails();
       },
-      error: () => this.notify('error', "La piece jointe n'a pas pu etre ajoutee.")
+      error: () => this.notify('error', $localize`:@@accounting.fiscal-schedule.ts.la.piece.jointe.n.a.pas.pu.etre.ajoutee.6cd1678b:La piece jointe n'a pas pu etre ajoutee.`)
     });
     input.value = '';
   }
@@ -670,7 +670,7 @@ export class FiscalScheduleComponent implements OnInit {
             this.notify('success', 'Piece jointe supprimee.');
             this.loadSelectedDetails();
           },
-          error: () => this.notify('error', "La piece jointe n'a pas pu etre supprimee.")
+          error: () => this.notify('error', $localize`:@@accounting.fiscal-schedule.ts.la.piece.jointe.n.a.pas.pu.etre.supprime.99097e44:La piece jointe n'a pas pu etre supprimee.`)
         });
       }
     });

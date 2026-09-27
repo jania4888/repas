@@ -30,7 +30,7 @@ interface EditableBudgetRow {
   initialMonths: number[];
 }
 
-const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+const MONTH_LABELS = [$localize`:@@accounting.budget-entry.ts.jan.efed3690:Jan`, $localize`:@@accounting.budget-entry.ts.fev.7b8852ec:Fév`, $localize`:@@accounting.budget-entry.ts.mar.c4ba0822:Mar`, $localize`:@@accounting.budget-entry.ts.avr.d648a3b7:Avr`, $localize`:@@accounting.budget-entry.ts.mai.afe526a6:Mai`, $localize`:@@accounting.budget-entry.ts.juin.8b1e84b6:Juin`, $localize`:@@accounting.budget-entry.ts.juil.190b5d60:Juil`, $localize`:@@accounting.budget-entry.ts.aout.460b6696:Août`, $localize`:@@accounting.budget-entry.ts.sep.fdd289e3:Sep`, $localize`:@@accounting.budget-entry.ts.oct.51327aef:Oct`, $localize`:@@accounting.budget-entry.ts.nov.bb9bfefd:Nov`, $localize`:@@accounting.budget-entry.ts.dec.2bc2249a:Déc`];
 
 @Component({
   selector: 'app-budget-entry',

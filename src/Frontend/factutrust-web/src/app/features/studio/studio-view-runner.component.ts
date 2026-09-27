@@ -65,7 +65,7 @@ export class StudioViewRunnerComponent implements OnInit {
   readonly result = signal<ReportResult | null>(null);
   readonly loading = signal(true);
   readonly totalRecords = signal(0);
-  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.viewRunner('Vue'));
+  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.viewRunner($localize`:@@studio.studio-view-runner.ts.vue.09237dba:Vue`));
 
   private id = '';
   search = '';

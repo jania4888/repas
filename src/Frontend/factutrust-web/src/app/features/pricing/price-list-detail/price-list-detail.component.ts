@@ -350,7 +350,7 @@ export class PriceListDetailComponent implements OnInit {
     const pl = this.priceList();
     if (!pl) return '';
     const count = pl.items.length;
-    return `${count} produit(s) tarifé(s) · devise ${pl.currency}. Les produits absents restent au prix catalogue.`;
+    return $localize`:@@pricing.price-list-detail.ts.count.produit.s.tarife.s.devise.currency.0163d28c:${count}:count: produit(s) tarifé(s) · devise ${pl.currency}:currency:. Les produits absents restent au prix catalogue.`;
   });
 
   /** Prix catalogue de référence dans la boîte de dialogue, pour situer la saisie. */

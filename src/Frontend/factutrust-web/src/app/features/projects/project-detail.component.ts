@@ -442,7 +442,7 @@ export class ProjectDetailComponent implements OnInit {
           }
         }
       },
-      error: err => this.fail(err, 'Chargement du projet')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.chargement.du.projet.ddfdc00f:Chargement du projet`)
     });
     this.api.budget(this.id).subscribe({
       next: r => { if (r.success && r.data) this.budget.set(r.data); },
@@ -474,7 +474,7 @@ export class ProjectDetailComponent implements OnInit {
           status: this.timeStatus
         }).subscribe({
           next: r => { if (r.success && r.data) this.timeEntries.set(r.data); },
-          error: err => this.fail(err, 'Temps')
+          error: err => this.fail(err, $localize`:@@projects.project-detail.ts.temps.2986a8c2:Temps`)
         });
         this.api.tasks(this.id).subscribe(r => { if (r.success && r.data) this.tasks.set(r.data); });
         break;
@@ -535,7 +535,7 @@ export class ProjectDetailComponent implements OnInit {
         this.billingRefreshToken.update(t => t + 1);
         this.api.billingReadiness(this.id).subscribe({
           next: r => { if (r.success && r.data) this.readiness.set(r.data); },
-          error: err => this.fail(err, 'Facturation')
+          error: err => this.fail(err, $localize`:@@projects.project-detail.ts.facturation.04716c6b:Facturation`)
         });
         this.api.milestones(this.id).subscribe(r => { if (r.success && r.data) this.milestones.set(r.data); });
         this.api.situations(this.id).subscribe(r => { if (r.success && r.data) this.situations.set(r.data); });
@@ -552,8 +552,8 @@ export class ProjectDetailComponent implements OnInit {
 
   activate(): void {
     this.api.activate(this.id).subscribe({
-      next: () => { this.ok('Projet activé', 'Vous pouvez saisir du temps.'); this.reloadProject(); this.loadTab(this.tab()); },
-      error: err => this.fail(err, 'Activation impossible')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.projet.active.403f7aff:Projet activé`, $localize`:@@projects.project-detail.ts.vous.pouvez.saisir.du.temps.93741395:Vous pouvez saisir du temps.`); this.reloadProject(); this.loadTab(this.tab()); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.activation.impossible.819a2a55:Activation impossible`)
     });
   }
 
@@ -563,7 +563,7 @@ export class ProjectDetailComponent implements OnInit {
       message: $localize`:@@projects.project-detail.ts.le.projet.ne.pourra.plus.recevoir.de.tem.1d586a98:Le projet ne pourra plus recevoir de temps tant qu’il est en pause. Continuer ?`,
       accept: () => this.api.hold(this.id).subscribe({
         next: () => { this.ok('Projet en pause'); this.reloadProject(); },
-        error: err => this.fail(err, 'Mise en pause impossible')
+        error: err => this.fail(err, $localize`:@@projects.project-detail.ts.mise.en.pause.impossible.5290422f:Mise en pause impossible`)
       })
     });
   }
@@ -573,8 +573,8 @@ export class ProjectDetailComponent implements OnInit {
       header: $localize`:@@projects.project-detail.ts.cloturer.le.projet.9fdfb3ff:Clôturer le projet`,
       message: $localize`:@@projects.project-detail.ts.validez.ou.annulez.les.temps.ouverts.ava.8dddb315:Validez ou annulez les temps ouverts avant de clôturer. Aucune nouvelle saisie de temps ne sera possible.`,
       accept: () => this.api.complete(this.id).subscribe({
-        next: () => { this.ok('Projet clôturé'); this.reloadProject(); },
-        error: err => this.fail(err, 'Clôture impossible')
+        next: () => { this.ok($localize`:@@projects.project-detail.ts.projet.cloture.428e3461:Projet clôturé`); this.reloadProject(); },
+        error: err => this.fail(err, $localize`:@@projects.project-detail.ts.cloture.impossible.9bf627fc:Clôture impossible`)
       })
     });
   }
@@ -584,8 +584,8 @@ export class ProjectDetailComponent implements OnInit {
       header: $localize`:@@projects.project-detail.ts.annuler.le.projet.492bf989:Annuler le projet`,
       message: $localize`:@@projects.project-detail.ts.cette.action.est.irreversible.le.projet.1543b7c7:Cette action est irréversible. Le projet passera au statut Annulé.`,
       accept: () => this.api.cancel(this.id).subscribe({
-        next: () => { this.ok('Projet annulé'); this.reloadProject(); },
-        error: err => this.fail(err, 'Annulation impossible')
+        next: () => { this.ok($localize`:@@projects.project-detail.ts.projet.annule.15dcb18a:Projet annulé`); this.reloadProject(); },
+        error: err => this.fail(err, $localize`:@@projects.project-detail.ts.annulation.impossible.54c16533:Annulation impossible`)
       })
     });
   }
@@ -620,10 +620,10 @@ export class ProjectDetailComponent implements OnInit {
       ownerUserId: this.editDraft.ownerUserId || null
     })).subscribe({
       next: r => {
-        if (r.success) { this.editVisible = false; this.ok('Projet mis à jour'); this.reloadProject(); }
+        if (r.success) { this.editVisible = false; this.ok($localize`:@@projects.project-detail.ts.projet.mis.a.jour.cc40b018:Projet mis à jour`); this.reloadProject(); }
         else this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Mise à jour :Mise à jour impossible`, detail: r.message || '' });
       },
-      error: err => this.fail(err, 'Mise à jour impossible')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.mise.a.jour.impossible.56d51741:Mise à jour impossible`)
     });
   }
 
@@ -650,14 +650,14 @@ export class ProjectDetailComponent implements OnInit {
     this.api.update(this.id, payload).subscribe({
       next: r => {
         if (r.success) {
-          this.ok('Paramètres enregistrés');
+          this.ok($localize`:@@projects.project-detail.ts.parametres.enregistres.904f75c6:Paramètres enregistrés`);
           this.reloadProject();
           this.loadTab('settings');
         } else {
           this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Enregistrement_i:Enregistrement impossible`, detail: r.message || '' });
         }
       },
-      error: err => this.fail(err, 'Enregistrement impossible')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.enregistrement.impossible.1e5e1075:Enregistrement impossible`)
     });
   }
 
@@ -675,20 +675,20 @@ export class ProjectDetailComponent implements OnInit {
 
   createTask(payload: UpsertTaskPayload): void {
     this.api.createTask(this.id, payload).subscribe({
-      next: () => { this.ok('Tâche créée'); this.loadTab('tasks'); this.reloadProject(); },
-      error: err => this.fail(err, 'Création de tâche')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.tache.creee.80944c5c:Tâche créée`); this.loadTab('tasks'); this.reloadProject(); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.creation.de.tache.bb7a1e72:Création de tâche`)
     });
   }
 
   moveTask(ev: { taskId: string; phaseId: string; status?: ProjectTaskStatusCode }): void {
     this.api.moveTask(ev.taskId, ev.phaseId, ev.status).subscribe({
       next: () => {
-        this.ok('Tâche déplacée');
+        this.ok($localize`:@@projects.project-detail.ts.tache.deplacee.940d5262:Tâche déplacée`);
         this.reloadTasks();
         this.reloadProject();
       },
       error: err => {
-        this.fail(err, 'Déplacement impossible');
+        this.fail(err, $localize`:@@projects.project-detail.ts.deplacement.impossible.bafa84d7:Déplacement impossible`);
         this.reloadTasks();
       }
     });
@@ -697,7 +697,7 @@ export class ProjectDetailComponent implements OnInit {
   createTime(payload: CreateTimePayload): void {
     this.api.createTime(payload).subscribe({
       next: () => {
-        this.ok('Temps enregistré');
+        this.ok($localize`:@@projects.project-detail.ts.temps.enregistre.24b97877:Temps enregistré`);
         if (this.tab() === 'tasks') {
           this.reloadTasks();
         } else {
@@ -705,7 +705,7 @@ export class ProjectDetailComponent implements OnInit {
         }
         this.reloadProject();
       },
-      error: err => this.fail(err, 'Saisie des temps')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.saisie.des.temps.86f92f4d:Saisie des temps`)
     });
   }
 
@@ -716,7 +716,7 @@ export class ProjectDetailComponent implements OnInit {
   reloadTasks(): void {
     this.api.tasks(this.id).subscribe({
       next: r => { if (r.success && r.data) this.tasks.set(r.data); },
-      error: err => this.fail(err, 'Actualisation des tâches')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.actualisation.des.taches.6f209c72:Actualisation des tâches`)
     });
   }
 
@@ -729,71 +729,71 @@ export class ProjectDetailComponent implements OnInit {
 
   updateTime(ev: { id: string; payload: CreateTimePayload }): void {
     this.api.updateTime(ev.id, ev.payload).subscribe({
-      next: () => { this.ok('Temps mis à jour'); this.loadTab('time'); },
-      error: err => this.fail(err, 'Mise à jour du temps')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.temps.mis.a.jour.72c2292d:Temps mis à jour`); this.loadTab('time'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.mise.a.jour.du.temps.b1bc9449:Mise à jour du temps`)
     });
   }
 
   submitTime(id: string): void {
     this.api.submitTime(id).subscribe({
-      next: () => { this.ok('Temps soumis'); this.loadTab('time'); },
-      error: err => this.fail(err, 'Soumission impossible')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.temps.soumis.106b6c0f:Temps soumis`); this.loadTab('time'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.soumission.impossible.fd1d13ac:Soumission impossible`)
     });
   }
 
   validateTime(id: string): void {
     this.api.validateTime(id).subscribe({
-      next: () => { this.ok('Temps validé'); this.loadTab('time'); this.reloadProject(); },
-      error: err => this.fail(err, 'Validation impossible')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.temps.valide.e19f0e51:Temps validé`); this.loadTab('time'); this.reloadProject(); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.validation.impossible.8b8efd73:Validation impossible`)
     });
   }
 
   deleteTime(id: string): void {
     this.api.deleteTime(id).subscribe({
-      next: () => { this.ok('Temps supprimé'); this.loadTab('time'); },
-      error: err => this.fail(err, 'Suppression impossible')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.temps.supprime.65a2ed13:Temps supprimé`); this.loadTab('time'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.suppression.impossible.55762ff2:Suppression impossible`)
     });
   }
 
   reopenTime(id: string): void {
     this.api.reopenTime(id).subscribe({
-      next: () => { this.ok('Temps rouvert en brouillon'); this.loadTab('time'); this.reloadProject(); },
-      error: err => this.fail(err, 'Réouverture impossible')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.temps.rouvert.en.brouillon.358ffbbe:Temps rouvert en brouillon`); this.loadTab('time'); this.reloadProject(); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.reouverture.impossible.a7bf0a97:Réouverture impossible`)
     });
   }
 
   addCost(payload: { description: string; amountHt: number; occurredOn: string }): void {
     this.api.addCost(this.id, payload).subscribe({
-      next: () => { this.ok('Coût ajouté'); this.loadTab('budget'); this.reloadProject(); },
-      error: err => this.fail(err, 'Coût')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.cout.ajoute.3cbd4c44:Coût ajouté`); this.loadTab('budget'); this.reloadProject(); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.cout.4a4aa395:Coût`)
     });
   }
 
   stockExit(payload: { productId: string; quantity: number; warehouseId?: string; notes?: string }): void {
     this.api.stockExit(this.id, payload).subscribe({
-      next: () => { this.ok('Sortie de stock'); this.loadTab('budget'); this.reloadProject(); },
-      error: err => this.fail(err, 'Sortie stock')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.sortie.de.stock.81497eb8:Sortie de stock`); this.loadTab('budget'); this.reloadProject(); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.sortie.stock.a8d04156:Sortie stock`)
     });
   }
 
   assignPurchaseOrder(purchaseOrderId: string): void {
     this.api.assignPurchaseOrder(this.id, purchaseOrderId).subscribe({
-      next: () => { this.ok('Bon de commande associé'); this.loadTab('budget'); },
-      error: err => this.fail(err, 'Association bon de commande')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.bon.de.commande.associe.17b33d38:Bon de commande associé`); this.loadTab('budget'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.association.bon.de.commande.a5fd8617:Association bon de commande`)
     });
   }
 
   addMember(payload: UpsertMemberPayload): void {
     this.api.addMember(this.id, payload).subscribe({
-      next: () => { this.ok('Membre ajouté'); this.loadTab('team'); },
-      error: err => this.fail(err, 'Équipe')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.membre.ajoute.59aa3977:Membre ajouté`); this.loadTab('team'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.equipe.1a7daffc:Équipe`)
     });
   }
 
   updateMember(ev: { id: string; payload: UpsertMemberPayload }): void {
     this.api.updateMember(ev.id, ev.payload).subscribe({
-      next: () => { this.ok('Membre mis à jour'); this.loadTab('team'); },
-      error: err => this.fail(err, 'Équipe')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.membre.mis.a.jour.fa733353:Membre mis à jour`); this.loadTab('team'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.equipe.1a7daffc:Équipe`)
     });
   }
 
@@ -802,16 +802,16 @@ export class ProjectDetailComponent implements OnInit {
       header: $localize`:@@projects.project-detail.ts.retirer.le.membre.609e13cf:Retirer le membre`,
       message: $localize`:@@projects.project-detail.ts.retirer.cette.personne.de.l.equipe.du.pr.2e97fa97:Retirer cette personne de l’équipe du projet ?`,
       accept: () => this.api.removeMember(id).subscribe({
-        next: () => { this.ok('Membre retiré'); this.loadTab('team'); },
-        error: err => this.fail(err, 'Équipe')
+        next: () => { this.ok($localize`:@@projects.project-detail.ts.membre.retire.1bbbee73:Membre retiré`); this.loadTab('team'); },
+        error: err => this.fail(err, $localize`:@@projects.project-detail.ts.equipe.1a7daffc:Équipe`)
       })
     });
   }
 
   uploadFile(file: File): void {
     this.api.uploadAttachment(this.id, file).subscribe({
-      next: () => { this.ok('Fichier ajouté'); this.loadTab('files'); },
-      error: err => this.fail(err, 'Téléversement')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.fichier.ajoute.a1c4743f:Fichier ajouté`); this.loadTab('files'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.televersement.02766189:Téléversement`)
     });
   }
 
@@ -825,21 +825,21 @@ export class ProjectDetailComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(url);
       },
-      error: err => this.fail(err, 'Téléchargement')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.telechargement.de2a6733:Téléchargement`)
     });
   }
 
   deleteFile(id: string): void {
     this.api.deleteAttachment(this.id, id).subscribe({
-      next: () => { this.ok('Fichier supprimé'); this.loadTab('files'); },
-      error: err => this.fail(err, 'Suppression')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.fichier.supprime.c57ed83a:Fichier supprimé`); this.loadTab('files'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.suppression.c3b592c0:Suppression`)
     });
   }
 
   addComment(body: string): void {
     this.api.addComment(this.id, body).subscribe({
       next: () => this.loadTab('files'),
-      error: err => this.fail(err, 'Commentaire')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.commentaire.bcb916ab:Commentaire`)
     });
   }
 
@@ -860,7 +860,7 @@ export class ProjectDetailComponent implements OnInit {
           this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Facturation_impo:Facturation impossible`, detail: r.message || '' });
         }
       },
-      error: err => this.fail(err, 'Facturation impossible')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.facturation.impossible.b7ff7da0:Facturation impossible`)
     });
   }
 
@@ -874,7 +874,7 @@ export class ProjectDetailComponent implements OnInit {
   loadBillableTasks(method: 'fixed' | 'hourly'): void {
     this.api.billableTasks(this.id, method).subscribe({
       next: r => { if (r.success && r.data) this.billableTasks.set(r.data); },
-      error: err => this.fail(err, 'Tâches facturables')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.taches.facturables.221e2ffd:Tâches facturables`)
     });
   }
 
@@ -888,7 +888,7 @@ export class ProjectDetailComponent implements OnInit {
           this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Facturation_par_:Facturation par tâche`, detail: r.message || '' });
         }
       },
-      error: err => this.fail(err, 'Facturation par tâche')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.facturation.par.tache.90c6a5e5:Facturation par tâche`)
     });
   }
 
@@ -896,20 +896,20 @@ export class ProjectDetailComponent implements OnInit {
     this.api.invoiceFixedPrice(this.id, ev.amountHt, ev.notes).subscribe({
       next: r => {
         if (r.success && r.data) {
-          this.ok('Forfait facturé');
+          this.ok($localize`:@@projects.project-detail.ts.forfait.facture.80798c53:Forfait facturé`);
           void this.router.navigate(['/invoices', r.data.invoiceId]);
         } else {
           this.toast.add({ severity: 'error', summary: $localize`:@@project-detail.component.summary.Facturation_forf:Facturation forfait`, detail: r.message || '' });
         }
       },
-      error: err => this.fail(err, 'Facturation forfait')
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.facturation.forfait.8b13aef4:Facturation forfait`)
     });
   }
 
   addMilestone(payload: { name: string; percent: number; amountHt: number; dueDate?: string | null }): void {
     this.api.addMilestone(this.id, payload).subscribe({
-      next: () => { this.ok('Jalon ajouté'); this.loadTab('billing'); },
-      error: err => this.fail(err, 'Jalon')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.jalon.ajoute.34f35689:Jalon ajouté`); this.loadTab('billing'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.jalon.6e891b2f:Jalon`)
     });
   }
 
@@ -925,7 +925,7 @@ export class ProjectDetailComponent implements OnInit {
     grossAmountHt: number; retainageAmountHt: number; vatRatePercent: number;
   }): void {
     this.api.createSituation(this.id, payload).subscribe({
-      next: () => { this.ok('Situation créée'); this.loadTab('billing'); },
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.situation.creee.fb6f4616:Situation créée`); this.loadTab('billing'); },
       error: err => this.fail(err, 'Situation')
     });
   }
@@ -935,7 +935,7 @@ export class ProjectDetailComponent implements OnInit {
       header: $localize`:@@projects.project-detail.ts.valider.la.situation.713df0b8:Valider la situation`,
       message: $localize`:@@projects.project-detail.ts.une.situation.validee.ne.pourra.plus.etr.186a9faa:Une situation validée ne pourra plus être modifiée. Continuer ?`,
       accept: () => this.api.validateSituation(id).subscribe({
-        next: () => { this.ok('Situation validée'); this.loadTab('billing'); },
+        next: () => { this.ok($localize`:@@projects.project-detail.ts.situation.validee.5d6e9925:Situation validée`); this.loadTab('billing'); },
         error: err => this.fail(err, 'Validation situation')
       })
     });
@@ -953,8 +953,8 @@ export class ProjectDetailComponent implements OnInit {
     };
   }): void {
     this.api.updateSituation(ev.id, ev.payload).subscribe({
-      next: () => { this.ok('Situation mise à jour'); this.loadTab('billing'); },
-      error: err => this.fail(err, 'Mise à jour situation')
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.situation.mise.a.jour.e7db861c:Situation mise à jour`); this.loadTab('billing'); },
+      error: err => this.fail(err, $localize`:@@projects.project-detail.ts.mise.a.jour.situation.09e24286:Mise à jour situation`)
     });
   }
 
@@ -967,7 +967,7 @@ export class ProjectDetailComponent implements OnInit {
 
   addSubcontractor(payload: { supplierId: string; contractReference?: string; amountHt: number; retainagePercent: number }): void {
     this.api.addSubcontractor(this.id, payload).subscribe({
-      next: () => { this.ok('Sous-traitant ajouté'); this.loadTab('billing'); },
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.sous.traitant.ajoute.02add446:Sous-traitant ajouté`); this.loadTab('billing'); },
       error: err => this.fail(err, 'Sous-traitant')
     });
   }
@@ -977,7 +977,7 @@ export class ProjectDetailComponent implements OnInit {
     payload: { contractReference?: string; amountHt: number; retainagePercent: number };
   }): void {
     this.api.updateSubcontractor(ev.id, ev.payload).subscribe({
-      next: () => { this.ok('Sous-traitant mis à jour'); this.loadTab('billing'); },
+      next: () => { this.ok($localize`:@@projects.project-detail.ts.sous.traitant.mis.a.jour.123f5880:Sous-traitant mis à jour`); this.loadTab('billing'); },
       error: err => this.fail(err, 'Sous-traitant')
     });
   }

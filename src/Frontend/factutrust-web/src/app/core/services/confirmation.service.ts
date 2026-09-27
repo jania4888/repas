@@ -109,7 +109,7 @@ export class ConfirmationService {
 
     // Configuration du composant modal
     ref.componentInstance.message = confirmation.message ?? $localize`:@@core.confirmation.ts.etes.vous.sur.25c63265:Êtes-vous sûr ?`;
-    ref.componentInstance.header = confirmation.header ?? 'Confirmation';
+    ref.componentInstance.header = confirmation.header ?? $localize`:@@core.confirmation.ts.confirmation.3424edc2:Confirmation`;
     ref.componentInstance.icon = confirmation.icon ?? '';
     ref.componentInstance.acceptLabel = confirmation.acceptLabel ?? $localize`:@@core.confirmation.ts.oui.eaa02f3f:Oui`;
     ref.componentInstance.rejectLabel = confirmation.rejectLabel ?? $localize`:@@core.confirmation.ts.non.a7219939:Non`;
@@ -161,7 +161,7 @@ export class ConfirmationService {
     });
 
     ref.componentInstance.message = config.message;
-    ref.componentInstance.header = config.header ?? 'Erreur';
+    ref.componentInstance.header = config.header ?? $localize`:@@core.confirmation.ts.erreur.ab546c23:Erreur`;
     ref.componentInstance.icon = config.icon ?? 'pi pi-exclamation-triangle';
     ref.componentInstance.acceptLabel = 'OK';
     ref.componentInstance.acceptButtonStyleClass = 'btn-primary';
@@ -200,7 +200,7 @@ export class ConfirmationService {
     });
 
     ref.componentInstance.message = config.message ?? '';
-    ref.componentInstance.header = config.header ?? 'Saisie';
+    ref.componentInstance.header = config.header ?? $localize`:@@core.confirmation.ts.saisie.3e86f8d7:Saisie`;
     ref.componentInstance.icon = config.icon ?? '';
     ref.componentInstance.placeholder = config.placeholder ?? '';
     ref.componentInstance.acceptLabel = config.acceptLabel ?? $localize`:@@core.confirmation.ts.confirmer.80a664c8:Confirmer`;

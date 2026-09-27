@@ -339,7 +339,7 @@ export class StockAllocationEditorComponent implements OnChanges {
 
   labelText(): string {
     if (this.serialMode()) return $localize`:@@shared.stock-allocation-editor.ts.n.de.serie.6b826381:N° de série`;
-    if (this.mode === 'entry') return 'Lots';
+    if (this.mode === 'entry') return $localize`:@@shared.stock-allocation-editor.ts.lots.79029175:Lots`;
     if (this.optionalOverride || !needsManualLotPicker(this.pickingPolicy)) {
       return 'Lots (optionnel — sinon FEFO)';
     }

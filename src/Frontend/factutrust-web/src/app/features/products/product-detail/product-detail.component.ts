@@ -570,7 +570,7 @@ export class ProductDetailComponent implements OnInit {
 
   pageSubtitle = computed(() => {
     const p = this.product();
-    if (this.loading() || !p) return 'Consultation des informations du produit';
+    if (this.loading() || !p) return $localize`:@@products.product-detail.ts.consultation.des.informations.du.produit.ce34dc99:Consultation des informations du produit`;
     return `${p.code} · ${p.name}`;
   });
 

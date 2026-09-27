@@ -311,7 +311,7 @@ export class EntryLinesGridComponent {
   readonly compactMode = input(false);
   readonly hideAnalyzeSlot = input(false);
   readonly functionalCurrency = FUNCTIONAL_CURRENCY;
-  readonly title = input('Lignes d\'écriture');
+  readonly title = input($localize`:@@accounting.entry-lines-grid.ts.lignes.d.ecriture.6e207f8b:Lignes d'écriture`);
 
   accountSuggestions: AccountSuggestion[] = [];
 

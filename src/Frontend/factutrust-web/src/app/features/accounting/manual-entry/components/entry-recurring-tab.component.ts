@@ -84,9 +84,9 @@ export class EntryRecurringTabComponent implements OnInit {
 
   freqLabel(f: number): string {
     switch (f) {
-      case 1: return 'Mensuelle';
-      case 2: return 'Trimestrielle';
-      case 3: return 'Annuelle';
+      case 1: return $localize`:@@accounting.entry-recurring-tab.ts.mensuelle.15af1be3:Mensuelle`;
+      case 2: return $localize`:@@accounting.entry-recurring-tab.ts.trimestrielle.9379d384:Trimestrielle`;
+      case 3: return $localize`:@@accounting.entry-recurring-tab.ts.annuelle.0e25612c:Annuelle`;
       default: return '—';
     }
   }

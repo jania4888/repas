@@ -70,28 +70,28 @@ export class VatDeclarationVatDetailTableComponent {
         }))
       : [
           { designation: 'Taux normal 19 %', taxableBase: null, vatAmount: d.collectedVat19 },
-          { designation: 'Taux réduit 13 %', taxableBase: null, vatAmount: d.collectedVat13 },
-          { designation: 'Taux réduit 7 %', taxableBase: null, vatAmount: d.collectedVat7 }
+          { designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.taux.reduit.13.b48b26d9:Taux réduit 13 %`, taxableBase: null, vatAmount: d.collectedVat13 },
+          { designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.taux.reduit.7.3e5d1b2b:Taux réduit 7 %`, taxableBase: null, vatAmount: d.collectedVat7 }
         ];
 
     const totalBase = hasBreakdown
       ? breakdown.reduce((s, b) => s + b.taxableBase, 0)
       : null;
     rows.push({
-      designation: 'Total TVA collectée',
+      designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.total.tva.collectee.bf91cd22:Total TVA collectée`,
       taxableBase: totalBase,
       vatAmount: computeTotalCollected(d),
       bold: true
     });
 
     rows.push({
-      designation: 'TVA déductible',
+      designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.tva.deductible.7d6d74f6:TVA déductible`,
       taxableBase: d.deductiblePurchasesTaxableBase ?? null,
       vatAmount: computeTotalDeductible(d)
     });
 
     rows.push({
-      designation: 'TVA à payer',
+      designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.tva.a.payer.2094edec:TVA à payer`,
       taxableBase: null,
       vatAmount: d.vatDue,
       highlight: true,
@@ -100,7 +100,7 @@ export class VatDeclarationVatDetailTableComponent {
 
     if (d.creditToCarry > 0) {
       rows.push({
-        designation: 'Crédit à reporter',
+        designation: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.credit.a.reporter.631d54c5:Crédit à reporter`,
         taxableBase: null,
         vatAmount: d.creditToCarry
       });

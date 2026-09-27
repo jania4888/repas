@@ -77,7 +77,7 @@ const COMPUTED: ReadonlySet<CustomFieldType> = new Set(COMPUTED_FIELD_TYPES);
 const DESIGNER_LABELS = {
   description: $localize`:@@studio.studio-workflow-designer.ts.description.55f8ebc8:Description`,
   tableFixed: $localize`:@@studio.studio-workflow-designer.ts.la.table.ne.peut.plus.etre.changee.apres.144a3110:La table ne peut plus être changée après la création.`,
-  saveError: 'Enregistrement impossible.',
+  saveError: $localize`:@@studio.studio-workflow-designer.ts.enregistrement.impossible.206044e2:Enregistrement impossible.`,
   triggerConfigTooLarge: $localize`:@@studio.studio-workflow-designer.ts.la.configuration.du.declencheur.depasse.aaf1c2d3:La configuration du déclencheur dépasse 2 Ko.`
 } as const;
 

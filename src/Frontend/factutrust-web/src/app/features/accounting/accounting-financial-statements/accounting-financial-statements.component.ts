@@ -78,7 +78,7 @@ export class AccountingFinancialStatementsComponent {
     ACCOUNTING_MODULES.find(m => m.id === COMPANY_ACCOUNTING_ETATS_MODULE_ID)
   );
 
-  readonly pageTitle = computed(() => 'États comptables');
+  readonly pageTitle = computed(() => $localize`:@@accounting.accounting-financial-statements.ts.etats.comptables.00e46d74:États comptables`);
   readonly pageSubtitle = computed(() => this.etatsModule()?.description ?? $localize`:@@ui.tern.journal.grand.livre.balance.et.bilans.94bb71:Journal, grand livre, balance et bilans`);
 
   readonly visibleLinks = computed<AccountingModuleLink[]>(() => {

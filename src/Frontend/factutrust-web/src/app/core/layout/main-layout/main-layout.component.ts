@@ -457,7 +457,7 @@ export class MainLayoutComponent implements OnInit {
 
   private updateWorkTabTitle(): void {
     const items = this.breadcrumb.items();
-    const last = items.length > 0 ? items[items.length - 1]?.label : 'Accueil';
+    const last = items.length > 0 ? items[items.length - 1]?.label : $localize`:@@core.main-layout.ts.accueil.a8ff8fd2:Accueil`;
     this.aiAssistantShell.setWorkTabTitle(last ?? $localize`:@@ui.tern.accueil.a8ff8f:Accueil`);
   }
 

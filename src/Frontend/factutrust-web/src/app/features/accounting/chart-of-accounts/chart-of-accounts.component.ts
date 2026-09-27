@@ -689,7 +689,7 @@ export class ChartOfAccountsComponent implements OnInit {
       },
       error: err => {
         this.creating.set(false);
-        this.createError.set(this.httpFailureMessage(err, 'Erreur réseau lors de la création du compte.'));
+        this.createError.set(this.httpFailureMessage(err, $localize`:@@accounting.chart-of-accounts.ts.erreur.reseau.lors.de.la.creation.du.com.5e2cfce1:Erreur réseau lors de la création du compte.`));
       }
     });
   }
@@ -740,7 +740,7 @@ export class ChartOfAccountsComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.togglingId.set(null);
-        this.error.set(this.httpFailureMessage(err, 'Erreur réseau lors du changement de statut du compte.'));
+        this.error.set(this.httpFailureMessage(err, $localize`:@@accounting.chart-of-accounts.ts.erreur.reseau.lors.du.changement.de.stat.63ef6bc0:Erreur réseau lors du changement de statut du compte.`));
       }
     });
   }

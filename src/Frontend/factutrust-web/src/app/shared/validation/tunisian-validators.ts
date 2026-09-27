@@ -574,7 +574,7 @@ export function getFirstValidationError(errors: ValidationErrors | null): string
     case 'max':
       return $localize`:@@shared.tunisian-validators.ts.la.valeur.maximum.est.max.4a02a3c7:La valeur maximum est ${error.max}:max:`;
     case 'email':
-      return 'Adresse email invalide';
+      return $localize`:@@shared.tunisian-validators.ts.adresse.email.invalide.393d7440:Adresse email invalide`;
     case 'pattern':
       return 'Format invalide';
     default:

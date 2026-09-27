@@ -193,15 +193,15 @@ export class AbcXyzMatrixComponent implements OnInit {
 
   strategyFor(abc: string, xyz: string): string {
     const map: Record<string, string> = {
-      AX: 'Stock élevé · auto-réappro',
-      AY: 'Stock élevé · alerte',
-      AZ: 'Stock élevé · suivi serré',
-      BX: 'Stock standard',
-      BY: 'Stock standard · alerte',
-      BZ: 'Réappro à la demande',
-      CX: 'Stock minimal',
-      CY: 'Réappro ponctuelle',
-      CZ: 'Candidat déstockage'
+      AX: $localize`:@@forecasting.abc-xyz-matrix.ts.stock.eleve.auto.reappro.5dda0fe7:Stock élevé · auto-réappro`,
+      AY: $localize`:@@forecasting.abc-xyz-matrix.ts.stock.eleve.alerte.02a487ba:Stock élevé · alerte`,
+      AZ: $localize`:@@forecasting.abc-xyz-matrix.ts.stock.eleve.suivi.serre.3e8a7c8b:Stock élevé · suivi serré`,
+      BX: $localize`:@@forecasting.abc-xyz-matrix.ts.stock.standard.8d0ced0e:Stock standard`,
+      BY: $localize`:@@forecasting.abc-xyz-matrix.ts.stock.standard.alerte.e41ca9b3:Stock standard · alerte`,
+      BZ: $localize`:@@forecasting.abc-xyz-matrix.ts.reappro.a.la.demande.775ec0fd:Réappro à la demande`,
+      CX: $localize`:@@forecasting.abc-xyz-matrix.ts.stock.minimal.13aa4825:Stock minimal`,
+      CY: $localize`:@@forecasting.abc-xyz-matrix.ts.reappro.ponctuelle.1e1665c9:Réappro ponctuelle`,
+      CZ: $localize`:@@forecasting.abc-xyz-matrix.ts.candidat.destockage.feb4ad98:Candidat déstockage`
     };
     return map[abc + xyz] ?? '';
   }

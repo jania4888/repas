@@ -124,7 +124,7 @@ export function formatFiscalAmount(amount: number, currency = 'TND'): string {
 }
 
 export function defaultObligationLabel(type: number): string {
-  return FISCAL_OBLIGATION_OPTIONS.find(o => o.value === Number(type))?.label ?? 'Autre obligation';
+  return FISCAL_OBLIGATION_OPTIONS.find(o => o.value === Number(type))?.label ?? $localize`:@@accounting.fiscal-schedule.view-model.ts.autre.obligation.5b94fdb0:Autre obligation`;
 }
 
 export function fiscalSourceRoute(entry: FiscalScheduleEntryDto): string | null {

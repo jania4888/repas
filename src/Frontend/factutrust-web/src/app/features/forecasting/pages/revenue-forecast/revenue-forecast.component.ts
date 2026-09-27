@@ -223,10 +223,10 @@ export class RevenueForecastComponent implements OnInit {
 
   readonly scopeEntityLabel = computed<string>(() => {
     switch (this.scope()) {
-      case 'category': return 'Catégorie';
-      case 'product': return 'Produit';
-      case 'client': return 'Client';
-      case 'warehouse': return 'Entrepôt';
+      case 'category': return $localize`:@@forecasting.revenue-forecast.ts.categorie.6b38300a:Catégorie`;
+      case 'product': return $localize`:@@forecasting.revenue-forecast.ts.produit.ff673dc2:Produit`;
+      case 'client': return $localize`:@@forecasting.revenue-forecast.ts.client.1bdd79b1:Client`;
+      case 'warehouse': return $localize`:@@forecasting.revenue-forecast.ts.entrepot.c349c0bc:Entrepôt`;
       default: return '';
     }
   });
@@ -250,10 +250,10 @@ export class RevenueForecastComponent implements OnInit {
 
   readonly horizonLabel = computed(() => {
     switch (this.horizon()) {
-      case 'week': return '7 jours';
-      case 'month': return '30 jours';
-      case 'quarter': return '90 jours';
-      default: return 'Personnalisé';
+      case 'week': return $localize`:@@forecasting.revenue-forecast.ts.7.jours.a0f70b5c:7 jours`;
+      case 'month': return $localize`:@@forecasting.revenue-forecast.ts.30.jours.c13f82c8:30 jours`;
+      case 'quarter': return $localize`:@@forecasting.revenue-forecast.ts.90.jours.b2506836:90 jours`;
+      default: return $localize`:@@forecasting.revenue-forecast.ts.personnalise.8504dffc:Personnalisé`;
     }
   });
 

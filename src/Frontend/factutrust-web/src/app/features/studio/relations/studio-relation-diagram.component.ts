@@ -62,7 +62,7 @@ export class StudioRelationDiagramComponent {
   protected readonly markerId = `srd-arrow-${++markerSeq}`;
   readonly model = input.required<DiagramModel>();
   readonly size = input<'compact' | 'full'>('full');
-  readonly emptyLabel = input('Relations non activées.');
+  readonly emptyLabel = input($localize`:@@studio.studio-relation-diagram.ts.relations.non.activees.eceb18c5:Relations non activées.`);
 
   readonly viewBox = computed(() => `0 0 ${this.model().width} ${this.model().height}`);
 

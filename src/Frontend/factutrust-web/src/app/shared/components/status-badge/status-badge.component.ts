@@ -60,9 +60,9 @@ export class StatusBadgeComponent {
   private static readonly labels: Record<StatusBadgeStatus, string> = {
     paid: $localize`:@@shared.status-badge.ts.payee.65b240e8:Payée`,
     partial: $localize`:@@shared.status-badge.ts.partiellement.payee.25cdcffb:Partiellement payée`,
-    pending: 'En attente',
-    overdue: 'En retard',
-    draft: 'Brouillon',
+    pending: $localize`:@@shared.status-badge.ts.en.attente.5231158f:En attente`,
+    overdue: $localize`:@@shared.status-badge.ts.en.retard.40c1dde3:En retard`,
+    draft: $localize`:@@shared.status-badge.ts.brouillon.57d2d7a7:Brouillon`,
     sent: $localize`:@@shared.status-badge.ts.envoyee.a1eb6342:Envoyée`,
     cancelled: $localize`:@@shared.status-badge.ts.annulee.2776573b:Annulée`,
     validated: $localize`:@@shared.status-badge.ts.validee.2cc6c327:Validée`,
@@ -70,9 +70,9 @@ export class StatusBadgeComponent {
     accepted: $localize`:@@shared.status-badge.ts.acceptee.8f379d6f:Acceptée`,
     rejected: $localize`:@@shared.status-badge.ts.rejetee.cf97717e:Rejetée`,
     expired: $localize`:@@shared.status-badge.ts.expiree.1f0808dc:Expirée`,
-    converted: 'Convertie',
-    active: 'Actif',
-    inactive: 'Inactif'
+    converted: $localize`:@@shared.status-badge.ts.convertie.584f5354:Convertie`,
+    active: $localize`:@@shared.status-badge.ts.actif.2eb75f84:Actif`,
+    inactive: $localize`:@@shared.status-badge.ts.inactif.d2e03387:Inactif`
   };
 
   getStatusIcon(): string {

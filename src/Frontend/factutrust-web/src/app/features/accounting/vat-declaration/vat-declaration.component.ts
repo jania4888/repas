@@ -40,11 +40,14 @@ import {
   shiftPeriod
 } from './vat-declaration.view-model';
 
-/** Message aligné sur VatDeclarationAccess.NotSubmittedMessage (backend). */
+/**
+ * Message aligné sur VatDeclarationAccess.NotSubmittedMessage (backend), jamais traduit par l'API
+ * (MessageLocalizerTests.Localize_RealCatalog_KeepsFrontMarkersInFrench) : ne pas passer en $localize.
+ */
 const COMPANY_NOT_SUBMITTED_MARKER = 'Aucune déclaration soumise';
 
 const COMPANY_EMPTY_STATE_MESSAGE =
-  'Aucune déclaration mensuelle soumise par le cabinet pour cette période. Vous pourrez consulter et exporter le PDF dès qu’elle aura été soumise.';
+  $localize`:@@accounting.vat-declaration.ts.aucune.declaration.mensuelle.soumise.par.016c14ba:Aucune déclaration mensuelle soumise par le cabinet pour cette période. Vous pourrez consulter et exporter le PDF dès qu’elle aura été soumise.`;
 
 @Component({
   selector: 'app-vat-declaration',
@@ -254,7 +257,7 @@ export class VatDeclarationComponent implements OnInit {
     const d = this.data();
     if (!d) return '';
     if (this.isCompanyReadOnly)
-      return 'Les montants déposés par le cabinet font foi. Rapprochez-vous de lui pour toute correction.';
+      return $localize`:@@accounting.vat-declaration.ts.les.montants.deposes.par.le.cabinet.font.fd505e4f:Les montants déposés par le cabinet font foi. Rapprochez-vous de lui pour toute correction.`;
     if (d.status === 0)
       return $localize`:@@accounting.vat-declaration.ts.les.montants.enregistres.font.foi.et.ne.292696d5:Les montants enregistrés font foi et ne sont jamais réalignés automatiquement. Resynchronisez puis enregistrez pour les mettre à jour.`;
     return $localize`:@@accounting.vat-declaration.ts.cette.declaration.a.ete.deposee.ses.mont.0eb66461:Cette déclaration a été déposée : ses montants restent ceux du dépôt. Pour la corriger, resynchronisez puis enregistrez une « Rectificative ».`;
@@ -288,7 +291,7 @@ export class VatDeclarationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.title.setTitle('Déclaration mensuelle - InstaFact');
+    this.title.setTitle($localize`:@@accounting.vat-declaration.ts.declaration.mensuelle.instafact.fcce90f2:Déclaration mensuelle - InstaFact`);
     // Deep-link depuis l'échéancier fiscal : ?year=2026&month=7 ouvre la bonne période.
     const params = this.route.snapshot.queryParamMap;
     const year = Number(params.get('year'));

@@ -878,7 +878,7 @@ export class ChatPanelComponent implements AfterViewInit, OnInit, OnChanges, OnD
   readonly welcomeDescription = computed(() => {
     const sc = this.scopeConfig();
     if (!sc) {
-      return 'Posez des questions sur vos données commerciales, financières ou de stock. Quelques exemples :';
+      return $localize`:@@ai-assistant.chat-panel.ts.posez.des.questions.sur.vos.donnees.comm.0a9a5c21:Posez des questions sur vos données commerciales, financières ou de stock. Quelques exemples :`;
     }
     const themed = (sc.suggestionCategories?.length ?? 0) > 0;
     return themed

@@ -568,7 +568,7 @@ export class StorefrontSettingsComponent implements OnInit {
       missing.push('description');
     }
     if (!(this.editForm.publicLogoUrl ?? '').trim()) {
-      missing.push('URL du logo public');
+      missing.push($localize`:@@settings.storefront-settings.ts.url.du.logo.public.a0b6ecd4:URL du logo public`);
     }
     return missing;
   }
@@ -627,30 +627,30 @@ export class StorefrontSettingsComponent implements OnInit {
   private validateEditFormBeforeSave(): string[] {
     const errs: string[] = [];
     if (!this.editForm.displayName?.trim()) {
-      errs.push('Le nom public est obligatoire.');
+      errs.push($localize`:@@settings.storefront-settings.ts.le.nom.public.est.obligatoire.15b89a36:Le nom public est obligatoire.`);
     }
     if (!this.editForm.publicContactEmail?.trim()) {
-      errs.push("L'email public de contact est obligatoire.");
+      errs.push($localize`:@@settings.storefront-settings.ts.l.email.public.de.contact.est.obligatoir.42388dd4:L'email public de contact est obligatoire.`);
     }
     const p1 = (this.editForm.brandPrimaryColorHex ?? '').trim();
     const p2 = (this.editForm.brandSecondaryColorHex ?? '').trim();
     if (!isValidStorefrontHexColor(p1)) {
-      errs.push('La couleur primaire doit être au format #RRGGBB.');
+      errs.push($localize`:@@settings.storefront-settings.ts.la.couleur.primaire.doit.etre.au.format.f9e8973f:La couleur primaire doit être au format #RRGGBB.`);
     }
     if (!isValidStorefrontHexColor(p2)) {
-      errs.push('La couleur secondaire doit être au format #RRGGBB.');
+      errs.push($localize`:@@settings.storefront-settings.ts.la.couleur.secondaire.doit.etre.au.forma.57f382a4:La couleur secondaire doit être au format #RRGGBB.`);
     }
     if ((this.editForm.publicLogoUrl ?? '').length > STOREFRONT_PUBLIC_URL_MAX_LENGTH) {
-      errs.push(`L'URL du logo ne peut pas dépasser ${STOREFRONT_PUBLIC_URL_MAX_LENGTH} caractères.`);
+      errs.push($localize`:@@settings.storefront-settings.ts.l.url.du.logo.ne.peut.pas.depasser.store.7508f463:L'URL du logo ne peut pas dépasser ${STOREFRONT_PUBLIC_URL_MAX_LENGTH}:STOREFRONT_PUBLIC_URL_MAX_LENGTH: caractères.`);
     }
     if ((this.editForm.publicCoverImageUrl ?? '').length > STOREFRONT_PUBLIC_URL_MAX_LENGTH) {
-      errs.push(`L'URL de couverture ne peut pas dépasser ${STOREFRONT_PUBLIC_URL_MAX_LENGTH} caractères.`);
+      errs.push($localize`:@@settings.storefront-settings.ts.l.url.de.couverture.ne.peut.pas.depasser.1a79955c:L'URL de couverture ne peut pas dépasser ${STOREFRONT_PUBLIC_URL_MAX_LENGTH}:STOREFRONT_PUBLIC_URL_MAX_LENGTH: caractères.`);
     }
     if ((this.editForm.tagline ?? '').length > STOREFRONT_TAGLINE_MAX_LENGTH) {
-      errs.push(`Le slogan ne peut pas dépasser ${STOREFRONT_TAGLINE_MAX_LENGTH} caractères.`);
+      errs.push($localize`:@@settings.storefront-settings.ts.le.slogan.ne.peut.pas.depasser.storefron.2ced7fc5:Le slogan ne peut pas dépasser ${STOREFRONT_TAGLINE_MAX_LENGTH}:STOREFRONT_TAGLINE_MAX_LENGTH: caractères.`);
     }
     if ((this.editForm.descriptionMarkdown ?? '').length > STOREFRONT_DESCRIPTION_MAX_LENGTH) {
-      errs.push(`La description ne peut pas dépasser ${STOREFRONT_DESCRIPTION_MAX_LENGTH} caractères.`);
+      errs.push($localize`:@@settings.storefront-settings.ts.la.description.ne.peut.pas.depasser.stor.990003b9:La description ne peut pas dépasser ${STOREFRONT_DESCRIPTION_MAX_LENGTH}:STOREFRONT_DESCRIPTION_MAX_LENGTH: caractères.`);
     }
     return errs;
   }

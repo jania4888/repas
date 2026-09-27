@@ -281,7 +281,7 @@ export class MigrationWizardComponent {
 
   readonly targets = ReferenceImportTarget;
   readonly origins = MigrationSuggestionOrigin;
-  readonly stepLabels = ['Dépôt', 'Analyse', 'Colonnes', 'Détail', 'Aperçu', 'Résultat'];
+  readonly stepLabels = [$localize`:@@accounting.migration-wizard.ts.depot.4c1c61c7:Dépôt`, $localize`:@@accounting.migration-wizard.ts.analyse.28b6dc31:Analyse`, $localize`:@@accounting.migration-wizard.ts.colonnes.53a2544c:Colonnes`, $localize`:@@accounting.migration-wizard.ts.detail.7ce06afc:Détail`, $localize`:@@accounting.migration-wizard.ts.apercu.f0f53004:Aperçu`, $localize`:@@accounting.migration-wizard.ts.resultat.7186e8ff:Résultat`];
 
   readonly step = signal(0);
   readonly busy = signal(false);
@@ -558,7 +558,7 @@ export class MigrationWizardComponent {
   originLabel(origin: MigrationSuggestionOrigin): string {
     switch (origin) {
       case MigrationSuggestionOrigin.Synonyme: return 'Standard';
-      case MigrationSuggestionOrigin.Catalogue: return 'Catalogue';
+      case MigrationSuggestionOrigin.Catalogue: return $localize`:@@accounting.migration-wizard.ts.catalogue.5a241023:Catalogue`;
       case MigrationSuggestionOrigin.Ia: return 'IA';
       case MigrationSuggestionOrigin.Identite: return 'Identique';
       case MigrationSuggestionOrigin.Prefixe: return $localize`:@@accounting.migration-wizard.ts.prefixe.2fe0a6db:Préfixe`;

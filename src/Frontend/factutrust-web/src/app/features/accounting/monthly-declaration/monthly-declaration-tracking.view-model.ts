@@ -58,9 +58,9 @@ export function stateLabel(state: DmTrackingState): string {
     case 'submitted':
       return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.deposee.8d55a917:Déposée`;
     case 'draft':
-      return 'Brouillon';
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.brouillon.57d2d7a7:Brouillon`;
     case 'late':
-      return 'En retard';
+      return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.en.retard.40c1dde3:En retard`;
     default:
       return $localize`:@@accounting.monthly-declaration-tracking.view-model.ts.a.deposer.a9c5ca9a:À déposer`;
   }

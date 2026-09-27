@@ -190,11 +190,11 @@ export class ClosingComponent implements OnInit {
         a.download = `FEC_${y}.txt`;
         a.click();
         URL.revokeObjectURL(url);
-        this.success.set(`Export FEC ${y} téléchargé.`);
+        this.success.set($localize`:@@accounting.closing.ts.export.fec.y.telecharge.2c478a46:Export FEC ${y}:y: téléchargé.`);
       },
       error: err => {
         this.exportingFec.set(false);
-        this.error.set(this.httpFailureMessage(err, 'Erreur réseau lors de l\'export FEC.'));
+        this.error.set(this.httpFailureMessage(err, $localize`:@@accounting.closing.ts.erreur.reseau.lors.de.l.export.fec.44e1be71:Erreur réseau lors de l'export FEC.`));
       }
     });
   }
@@ -215,7 +215,7 @@ export class ClosingComponent implements OnInit {
           next: res => {
             this.loading.set(false);
             if (res.success) {
-              this.success.set(`Ecritures d'a-nouveau generees pour l'exercice ${y + 1}.`);
+              this.success.set($localize`:@@accounting.closing.ts.ecritures.d.a.nouveau.generees.pour.l.ex.5c92efd1:Ecritures d'a-nouveau generees pour l'exercice ${y + 1}:p:.`);
             } else {
               this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
             }
@@ -223,7 +223,7 @@ export class ClosingComponent implements OnInit {
           error: err => {
             this.loading.set(false);
             this.error.set(
-              this.httpFailureMessage(err, 'Erreur réseau lors de la génération des à-nouveau.')
+              this.httpFailureMessage(err, $localize`:@@accounting.closing.ts.erreur.reseau.lors.de.la.generation.des.1efc02dc:Erreur réseau lors de la génération des à-nouveau.`)
             );
           }
         });
@@ -247,7 +247,7 @@ export class ClosingComponent implements OnInit {
           next: res => {
             this.loading.set(false);
             if (res.success) {
-              this.success.set(`Exercice ${y} clôturé.`);
+              this.success.set($localize`:@@accounting.closing.ts.exercice.y.cloture.78e5dcf1:Exercice ${y}:y: clôturé.`);
               this.refresh();
             } else {
               this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
@@ -256,7 +256,7 @@ export class ClosingComponent implements OnInit {
           error: err => {
             this.loading.set(false);
             this.error.set(
-              this.httpFailureMessage(err, 'Erreur réseau lors de la clôture de l\'exercice.')
+              this.httpFailureMessage(err, $localize`:@@accounting.closing.ts.erreur.reseau.lors.de.la.cloture.de.l.ex.4ca4d8b8:Erreur réseau lors de la clôture de l'exercice.`)
             );
           }
         });
@@ -276,7 +276,7 @@ export class ClosingComponent implements OnInit {
           else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
         error: err =>
-          this.error.set(this.httpFailureMessage(err, 'Erreur réseau. Impossible de charger les périodes.'))
+          this.error.set(this.httpFailureMessage(err, $localize`:@@accounting.closing.ts.erreur.reseau.impossible.de.charger.les.dcc3ca2a:Erreur réseau. Impossible de charger les périodes.`))
       });
     this.api.getFiscalYearLocks().subscribe({
       next: r => { if (r.success && r.data) this.lockedYears.set(r.data); }
@@ -299,7 +299,7 @@ export class ClosingComponent implements OnInit {
           next: res => {
             this.loading.set(false);
             if (res.success) {
-              this.success.set(`Exercice ${y} verrouillé définitivement.`);
+              this.success.set($localize`:@@accounting.closing.ts.exercice.y.verrouille.definitivement.949ff1c0:Exercice ${y}:y: verrouillé définitivement.`);
               this.refresh();
             } else {
               this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.verrouillage.0bbd74:Erreur lors du verrouillage.`);
@@ -307,7 +307,7 @@ export class ClosingComponent implements OnInit {
           },
           error: err => {
             this.loading.set(false);
-            this.error.set(this.httpFailureMessage(err, 'Erreur réseau lors du verrouillage.'));
+            this.error.set(this.httpFailureMessage(err, $localize`:@@accounting.closing.ts.erreur.reseau.lors.du.verrouillage.31827190:Erreur réseau lors du verrouillage.`));
           }
         });
       }
@@ -329,7 +329,7 @@ export class ClosingComponent implements OnInit {
           next: res => {
             this.loading.set(false);
             if (res.success) {
-              this.success.set(`Période ${month}/${year} clôturée.`);
+              this.success.set($localize`:@@accounting.closing.ts.periode.month.year.cloturee.b0561dc7:Période ${month}:month:/${year}:year: clôturée.`);
               this.refresh();
             } else {
               this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.cloture.e012f5:Erreur lors de la clôture.`);
@@ -337,7 +337,7 @@ export class ClosingComponent implements OnInit {
           },
           error: err => {
             this.loading.set(false);
-            this.error.set(this.httpFailureMessage(err, 'Erreur réseau lors de la clôture.'));
+            this.error.set(this.httpFailureMessage(err, $localize`:@@accounting.closing.ts.erreur.reseau.lors.de.la.cloture.9100a651:Erreur réseau lors de la clôture.`));
           }
         });
       }
@@ -359,7 +359,7 @@ export class ClosingComponent implements OnInit {
           next: res => {
             this.loading.set(false);
             if (res.success) {
-              this.success.set(`Période ${month}/${year} réouverte.`);
+              this.success.set($localize`:@@accounting.closing.ts.periode.month.year.reouverte.0059da14:Période ${month}:month:/${year}:year: réouverte.`);
               this.refresh();
             } else {
               this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.reouverture.d5e49a:Erreur lors de la réouverture.`);
@@ -367,7 +367,7 @@ export class ClosingComponent implements OnInit {
           },
           error: err => {
             this.loading.set(false);
-            this.error.set(this.httpFailureMessage(err, 'Erreur réseau lors de la réouverture.'));
+            this.error.set(this.httpFailureMessage(err, $localize`:@@accounting.closing.ts.erreur.reseau.lors.de.la.reouverture.5faacfd8:Erreur réseau lors de la réouverture.`));
           }
         });
       }

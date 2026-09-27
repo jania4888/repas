@@ -52,7 +52,7 @@ export class AnalyzeWithAiButtonComponent {
 
   readonly canUse = computed(() => canUseAiAssistant(this.auth));
 
-  readonly ariaLabelText = computed(() => `Analyser l'écran ${this.screenId()} avec l'assistant IA`);
+  readonly ariaLabelText = computed(() => $localize`:@@ai-assistant.analyze-with-ai-button.ts.analyser.l.ecran.screenid.avec.l.assista.acf5035d:Analyser l'écran ${this.screenId()}:screenId: avec l'assistant IA`);
 
   run(): void {
     if (!this.canUse() || this.disabled()) {

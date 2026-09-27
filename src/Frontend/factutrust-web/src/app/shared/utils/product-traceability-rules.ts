@@ -232,7 +232,7 @@ export function normalizeTraceabilityForm(
 
 export function formatTrackingModeLabel(mode: unknown): string {
   const m = coerceTrackingMode(mode);
-  if (m === TRACKING_MODE_LOT) return 'Lot';
+  if (m === TRACKING_MODE_LOT) return $localize`:@@shared.product-traceability-rules.ts.lot.4a211932:Lot`;
   if (m === TRACKING_MODE_SERIAL) return $localize`:@@shared.product-traceability-rules.ts.n.de.serie.6b826381:N° de série`;
   return $localize`:@@shared.product-traceability-rules.ts.aucun.suivi.25d943ac:Aucun suivi`;
 }
@@ -240,7 +240,7 @@ export function formatTrackingModeLabel(mode: unknown): string {
 export function formatPickingPolicyLabel(policy: unknown): string {
   const p = coercePickingPolicy(policy);
   if (p === PICKING_FEFO) return $localize`:@@shared.product-traceability-rules.ts.fefo.peremption.5413473d:FEFO (péremption)`;
-  if (p === PICKING_FIFO_PHYSICAL) return 'FIFO physique';
+  if (p === PICKING_FIFO_PHYSICAL) return $localize`:@@shared.product-traceability-rules.ts.fifo.physique.d9dcd776:FIFO physique`;
   if (p === PICKING_MANUAL || p === PICKING_NONE) return $localize`:@@shared.product-traceability-rules.ts.manuel.choix.du.lot.620f4076:Manuel (choix du lot)`;
   return '—';
 }

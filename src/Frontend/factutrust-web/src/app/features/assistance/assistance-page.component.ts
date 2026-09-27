@@ -10,8 +10,8 @@ import {
 import { CompanySupportBadgeService } from '@core/services/company-support-badge.service';
 
 const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
-  Question: 'Question',
-  Proposal: 'Proposition',
+  Question: $localize`:@@assistance.assistance-page.ts.question.002ff598:Question`,
+  Proposal: $localize`:@@assistance.assistance-page.ts.proposition.3e2cf2d2:Proposition`,
   Complaint: $localize`:@@assistance.assistance-page.ts.reclamation.33d37f8b:Réclamation`,
   Reply: $localize`:@@assistance.assistance-page.ts.reponse.e777631b:Réponse`
 };

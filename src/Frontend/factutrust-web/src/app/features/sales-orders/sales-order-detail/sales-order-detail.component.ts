@@ -780,24 +780,24 @@ export class SalesOrderDetailComponent implements OnInit {
 
     // Exclure les actions déjà exposées en primaire (header) ou en CTA statut (sidebar).
     add(
-      'Confirmer',
+      $localize`:@@sales-orders.sales-order-detail.ts.confirmer.80a664c8:Confirmer`,
       'pi-check',
       () => this.confirmOrder(),
       this.canConfirm() && !exposed.has(SalesOrderDetailComponent.ACTION_CONFIRM)
     );
     add(
-      'Générer un BL',
+      $localize`:@@sales-orders.sales-order-detail.ts.generer.un.bl.9045e1cf:Générer un BL`,
       'pi-truck',
       () => this.openGenerateDeliveryNote(),
       this.canGenerateDeliveryNote() && !exposed.has(SalesOrderDetailComponent.ACTION_GENERATE_BL)
     );
     add(
-      'Générer une facture',
+      $localize`:@@sales-orders.sales-order-detail.ts.generer.une.facture.9b204490:Générer une facture`,
       'pi-file-export',
       () => this.openGenerateInvoice(),
       this.canGenerateInvoice() && !exposed.has(SalesOrderDetailComponent.ACTION_GENERATE_INVOICE)
     );
-    add('Remise de pied', 'pi-percentage', () => this.openDiscount(), this.canEditDiscount());
+    add($localize`:@@sales-orders.sales-order-detail.ts.remise.de.pied.70ef8789:Remise de pied`, 'pi-percentage', () => this.openDiscount(), this.canEditDiscount());
 
     const canCloseInMenu = this.canClose() && !exposed.has(SalesOrderDetailComponent.ACTION_CLOSE);
     const canCancelInMenu = this.canCancel() && !exposed.has(SalesOrderDetailComponent.ACTION_CANCEL);
@@ -806,8 +806,8 @@ export class SalesOrderDetailComponent implements OnInit {
       items.push({ separator: true });
     }
 
-    add('Solder', 'pi-flag', () => this.openClose(), canCloseInMenu);
-    add('Annuler', 'pi-times', () => this.openCancel(), canCancelInMenu);
+    add($localize`:@@sales-orders.sales-order-detail.ts.solder.2663192f:Solder`, 'pi-flag', () => this.openClose(), canCloseInMenu);
+    add($localize`:@@sales-orders.sales-order-detail.ts.annuler.49ba3292:Annuler`, 'pi-times', () => this.openCancel(), canCancelInMenu);
 
     return items;
   });
@@ -973,9 +973,7 @@ export class SalesOrderDetailComponent implements OnInit {
 
     if (outstanding?.isOverLimit) {
       message +=
-        `\n\n⚠️ Encours du client : ${outstanding.totalOutstanding.toFixed(3)} ` +
-        `${outstanding.currency}, au-delà de son plafond de ` +
-        `${(outstanding.creditLimit ?? 0).toFixed(3)}. La commande reste confirmable.`;
+        $localize`:@@sales-orders.sales-order-detail.ts.encours.du.client.tofixed.currency.au.de.d9b2b37a:\n\n⚠️ Encours du client : ${outstanding.totalOutstanding.toFixed(3)}:toFixed: ${outstanding.currency}:currency:, au-delà de son plafond de ${(outstanding.creditLimit ?? 0).toFixed(3)}:toFixed1:. La commande reste confirmable.`;
     } else if (outstanding && outstanding.overdueAmount > 0) {
       message +=
         `\n\n⚠️ ${outstanding.overdueAmount.toFixed(3)} ${outstanding.currency} ` +

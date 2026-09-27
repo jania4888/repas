@@ -183,7 +183,7 @@ export class FiscalParametersComponent implements OnInit {
       .pipe(
         switchMap(year =>
           this.api.getIncomeTaxParameters(year).pipe(
-            catchError(() => of<FiscalParametersApiResponse>({ success: false, error: 'Erreur réseau' }))
+            catchError(() => of<FiscalParametersApiResponse>({ success: false, error: $localize`:@@accounting.fiscal-parameters.ts.erreur.reseau.0683007f:Erreur réseau` }))
           )
         ),
         takeUntilDestroyed()
@@ -252,10 +252,10 @@ export class FiscalParametersComponent implements OnInit {
   private validateIrppJsonSyntax(raw: string): string | null {
     try {
       const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return 'Le barème IRPP reçu du serveur est invalide (tableau attendu).';
+      if (!Array.isArray(parsed)) return $localize`:@@accounting.fiscal-parameters.ts.le.bareme.irpp.recu.du.serveur.est.inval.7ef58a26:Le barème IRPP reçu du serveur est invalide (tableau attendu).`;
       return null;
     } catch {
-      return 'Le barème IRPP reçu du serveur est illisible (JSON invalide) — vérifiez avant de sauvegarder.';
+      return $localize`:@@accounting.fiscal-parameters.ts.le.bareme.irpp.recu.du.serveur.est.illis.141f9d42:Le barème IRPP reçu du serveur est illisible (JSON invalide) — vérifiez avant de sauvegarder.`;
     }
   }
 
@@ -302,13 +302,13 @@ export class FiscalParametersComponent implements OnInit {
     if (!this.model) return null;
     const m = this.model;
     const rateFields: Array<[number, string]> = [
-      [m.isStandardRate, 'Taux IS de droit commun'],
-      [m.isReducedRate, 'Taux IS réduit'],
-      [m.isSectorRate, 'Taux IS sectoriel majoré'],
-      [m.minTaxRate, "Taux du minimum d'impôt"],
-      [m.minTaxReducedRate, "Taux réduit du minimum d'impôt"],
-      [m.cssRate, 'Taux CSS'],
-      [m.acompteRate, "Taux d'un acompte"]
+      [m.isStandardRate, $localize`:@@accounting.fiscal-parameters.ts.taux.is.de.droit.commun.d37f185c:Taux IS de droit commun`],
+      [m.isReducedRate, $localize`:@@accounting.fiscal-parameters.ts.taux.is.reduit.0bc7cf2d:Taux IS réduit`],
+      [m.isSectorRate, $localize`:@@accounting.fiscal-parameters.ts.taux.is.sectoriel.majore.4ec8a76f:Taux IS sectoriel majoré`],
+      [m.minTaxRate, $localize`:@@accounting.fiscal-parameters.ts.taux.du.minimum.d.impot.70af8e48:Taux du minimum d'impôt`],
+      [m.minTaxReducedRate, $localize`:@@accounting.fiscal-parameters.ts.taux.reduit.du.minimum.d.impot.80afdd6f:Taux réduit du minimum d'impôt`],
+      [m.cssRate, $localize`:@@accounting.fiscal-parameters.ts.taux.css.0070206d:Taux CSS`],
+      [m.acompteRate, $localize`:@@accounting.fiscal-parameters.ts.taux.d.un.acompte.17038508:Taux d'un acompte`]
     ];
     for (const [value, label] of rateFields) {
       const n = Number(value);
@@ -317,9 +317,9 @@ export class FiscalParametersComponent implements OnInit {
       }
     }
     const floorFields: Array<[number, string]> = [
-      [m.minTaxFloorTnd, "Plancher du minimum d'impôt"],
-      [m.minTaxFloorReducedTnd, "Plancher réduit du minimum d'impôt"],
-      [m.cssFloorTnd, 'Plancher CSS']
+      [m.minTaxFloorTnd, $localize`:@@accounting.fiscal-parameters.ts.plancher.du.minimum.d.impot.b293528b:Plancher du minimum d'impôt`],
+      [m.minTaxFloorReducedTnd, $localize`:@@accounting.fiscal-parameters.ts.plancher.reduit.du.minimum.d.impot.5bd56c4d:Plancher réduit du minimum d'impôt`],
+      [m.cssFloorTnd, $localize`:@@accounting.fiscal-parameters.ts.plancher.css.3c30a8cb:Plancher CSS`]
     ];
     for (const [value, label] of floorFields) {
       const n = Number(value);

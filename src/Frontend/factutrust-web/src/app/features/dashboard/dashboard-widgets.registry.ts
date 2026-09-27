@@ -47,7 +47,7 @@ export interface QuickActionWidgetDef {
 export const SECTOR_KPI_WIDGETS: readonly SectorKpiWidgetDef[] = [
   {
     widgetId: 'commerce-stock-ruptures',
-    labelFr: 'Ruptures / stock faible',
+    labelFr: $localize`:@@dashboard.dashboard-widgets.registry.ts.ruptures.stock.faible.4ebf4888:Ruptures / stock faible`,
     icon: 'fa-solid fa-triangle-exclamation',
     tone: 'sector-kpi--amber',
     requiredModules: [AppModule.Stock],
@@ -57,7 +57,7 @@ export const SECTOR_KPI_WIDGETS: readonly SectorKpiWidgetDef[] = [
   },
   {
     widgetId: 'commerce-purchases-pending',
-    labelFr: 'Achats en cours',
+    labelFr: $localize`:@@dashboard.dashboard-widgets.registry.ts.achats.en.cours.787b01be:Achats en cours`,
     icon: 'fa-solid fa-cart-shopping',
     tone: 'sector-kpi--purple',
     requiredModules: [AppModule.Purchases],
@@ -67,7 +67,7 @@ export const SECTOR_KPI_WIDGETS: readonly SectorKpiWidgetDef[] = [
   },
   {
     widgetId: 'services-btp-active-projects',
-    labelFr: 'Projets actifs',
+    labelFr: $localize`:@@dashboard.dashboard-widgets.registry.ts.projets.actifs.9a6cf9d6:Projets actifs`,
     icon: 'fa-solid fa-diagram-project',
     tone: 'sector-kpi--indigo',
     requiredModules: [AppModule.Projects],
@@ -77,7 +77,7 @@ export const SECTOR_KPI_WIDGETS: readonly SectorKpiWidgetDef[] = [
   },
   {
     widgetId: 'services-btp-recurring-contracts',
-    labelFr: 'Contrats récurrents actifs',
+    labelFr: $localize`:@@dashboard.dashboard-widgets.registry.ts.contrats.recurrents.actifs.60edacfd:Contrats récurrents actifs`,
     icon: 'fa-solid fa-arrows-rotate',
     tone: 'sector-kpi--teal',
     requiredModules: [AppModule.RecurringContracts],
@@ -87,7 +87,7 @@ export const SECTOR_KPI_WIDGETS: readonly SectorKpiWidgetDef[] = [
   },
   {
     widgetId: 'assoc-edu-membership-fees',
-    labelFr: 'Cotisations actives',
+    labelFr: $localize`:@@dashboard.dashboard-widgets.registry.ts.cotisations.actives.2ce7c1d2:Cotisations actives`,
     icon: 'fa-solid fa-id-card',
     tone: 'sector-kpi--teal',
     requiredModules: [AppModule.RecurringContracts],
@@ -105,7 +105,7 @@ export const SECTOR_KPI_WIDGETS: readonly SectorKpiWidgetDef[] = [
 export const QUICK_ACTION_WIDGETS: readonly QuickActionWidgetDef[] = [
   {
     widgetId: 'qa-stock-entry',
-    labelFr: 'Entrée de stock',
+    labelFr: $localize`:@@dashboard.dashboard-widgets.registry.ts.entree.de.stock.8c8e1df1:Entrée de stock`,
     icon: 'fa-solid fa-box',
     tone: 'qa-stock',
     requiredModules: [AppModule.Stock],
@@ -114,7 +114,7 @@ export const QUICK_ACTION_WIDGETS: readonly QuickActionWidgetDef[] = [
   },
   {
     widgetId: 'qa-new-opportunity',
-    labelFr: 'Nouvelle opportunité',
+    labelFr: $localize`:@@dashboard.dashboard-widgets.registry.ts.nouvelle.opportunite.ffadea57:Nouvelle opportunité`,
     icon: 'fa-solid fa-heart',
     tone: 'qa-crm',
     requiredModules: [AppModule.CRM],

@@ -1055,7 +1055,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
         } else {
           const errorMsg = response.errors?.join(', ') || $localize`:@@settings.company.ts.impossible.de.charger.les.informations.d.7b68d0c8:Impossible de charger les informations de l'entreprise`;
           this.errorMessage.set(errorMsg);
-          this.showErrorToast('Erreur', errorMsg);
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, errorMsg);
         }
         this.isLoadingInProgress = false;
         this.loading.set(false);
@@ -1077,7 +1077,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
           const errorMessage = this.errorHandler.extractErrorMessage(err) ||
             $localize`:@@settings.company.ts.une.erreur.est.survenue.lors.du.chargeme.d29a12c6:Une erreur est survenue lors du chargement des informations`;
           this.errorMessage.set(errorMessage);
-          this.showErrorToast('Erreur', errorMessage);
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, errorMessage);
         }
         this.errorHandler.logError('Failed to load company data', err);
       }
@@ -1193,7 +1193,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
             ).subscribe({
               error: (err) => {
                 console.error('Failed to update warehouse', err);
-                this.showErrorToast('Attention', 'Entreprise mise à jour mais erreur lors de la mise à jour de l\'entrepôt');
+                this.showErrorToast($localize`:@@settings.company.ts.attention.74e0b9c8:Attention`, $localize`:@@settings.company.ts.entreprise.mise.a.jour.mais.erreur.lors.ef14573f:Entreprise mise à jour mais erreur lors de la mise à jour de l'entrepôt`);
               }
             });
           }
@@ -1202,7 +1202,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
         } else {
           const errorMsg = response.errors?.join(', ') || $localize`:@@settings.company.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`;
           this.errorMessage.set(errorMsg);
-          this.showErrorToast('Erreur', errorMsg);
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, errorMsg);
         }
         this.saving.set(false);
       },
@@ -1222,7 +1222,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
           const errorMessage = this.errorHandler.extractErrorMessage(err) ||
             $localize`:@@settings.company.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`;
           this.errorMessage.set(errorMessage);
-          this.showErrorToast('Erreur', errorMessage);
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, errorMessage);
         }
         this.errorHandler.logError('Failed to update company', err);
       }
@@ -1286,12 +1286,12 @@ export class CompanyComponent implements OnInit, OnDestroy {
             this.sectorPreview.set(res.data);
             this.previewDialogVisible = true;
           } else {
-            this.showErrorToast('Erreur', res.message || 'Impossible de prévisualiser ce changement.');
+            this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, res.message || $localize`:@@settings.company.ts.impossible.de.previsualiser.ce.changemen.8831a95d:Impossible de prévisualiser ce changement.`);
           }
         },
         error: (err: HttpErrorResponse) => {
           this.sectorPreviewLoading.set(false);
-          this.showErrorToast('Erreur', this.errorHandler.extractErrorMessage(err));
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, this.errorHandler.extractErrorMessage(err));
         }
       });
   }
@@ -1315,7 +1315,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
           this.previewDialogVisible = false;
 
           if (!res.success || !res.data) {
-            this.showErrorToast('Erreur', res.message || 'Impossible de mettre à jour le secteur d\'activité.');
+            this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, res.message || $localize`:@@settings.company.ts.impossible.de.mettre.a.jour.le.secteur.d.3af3059a:Impossible de mettre à jour le secteur d'activité.`);
             return;
           }
 
@@ -1344,7 +1344,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
         },
         error: (err: HttpErrorResponse) => {
           this.sectorSaving.set(false);
-          this.showErrorToast('Erreur', this.errorHandler.extractErrorMessage(err));
+          this.showErrorToast($localize`:@@settings.company.ts.erreur.ab546c23:Erreur`, this.errorHandler.extractErrorMessage(err));
         }
       });
   }

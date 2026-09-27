@@ -123,13 +123,13 @@ export class EntrySubmitService {
 
     const wasEdit = !!store.editingEntryId();
     store.successMsg.set(wasEdit
-      ? 'Écriture mise à jour avec succès.'
-      : 'Écriture enregistrée avec succès.');
+      ? $localize`:@@accounting.entry-submit.ts.ecriture.mise.a.jour.avec.succes.8a72ce65:Écriture mise à jour avec succès.`
+      : $localize`:@@accounting.entry-submit.ts.ecriture.enregistree.avec.succes.099699d8:Écriture enregistrée avec succès.`);
     const detailSuffix = afterSuccess === 'reset'
-      ? ' Le formulaire est prêt pour une nouvelle saisie.'
+      ? $localize`:@@accounting.entry-submit.ts.le.formulaire.est.pret.pour.une.nouvelle.46aa27d6: Le formulaire est prêt pour une nouvelle saisie.`
       : afterSuccess === 'duplicate'
-        ? ' Les données sont conservées pour duplication.'
-        : ' Redirection vers le journal…';
+        ? $localize`:@@accounting.entry-submit.ts.les.donnees.sont.conservees.pour.duplica.048103e4: Les données sont conservées pour duplication.`
+        : $localize`:@@accounting.entry-submit.ts.redirection.vers.le.journal.4cfdb4cf: Redirection vers le journal…`;
 
     this.toast.add({
       severity: 'success',

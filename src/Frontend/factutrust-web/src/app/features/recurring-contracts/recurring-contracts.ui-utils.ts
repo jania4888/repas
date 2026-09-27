@@ -29,11 +29,11 @@ export function contractBadgeStatus(s: RecurringContractStatus): StatusBadgeStat
 
 export function contractStatusLabel(s: RecurringContractStatus, display?: string | null): string {
   return display ?? ({
-    Draft: 'Brouillon',
-    Active: 'Actif',
-    Suspended: 'Suspendu',
-    Cancelled: 'Résilié',
-    Expired: 'Expiré'
+    Draft: $localize`:@@recurring-contracts.recurring-contracts.ui-utils.ts.brouillon.57d2d7a7:Brouillon`,
+    Active: $localize`:@@recurring-contracts.recurring-contracts.ui-utils.ts.actif.2eb75f84:Actif`,
+    Suspended: $localize`:@@recurring-contracts.recurring-contracts.ui-utils.ts.suspendu.e9a8be4e:Suspendu`,
+    Cancelled: $localize`:@@recurring-contracts.recurring-contracts.ui-utils.ts.resilie.3578b2e9:Résilié`,
+    Expired: $localize`:@@recurring-contracts.recurring-contracts.ui-utils.ts.expire.57dde607:Expiré`
   } as const)[s];
 }
 
@@ -210,16 +210,16 @@ export function parseUsageRecordsCsv(text: string): UsageCsvParseResult {
     const [metricCode, rawFrom, rawTo] = cells;
     const periodFrom = parseUsageCsvDate(rawFrom);
     const periodTo = parseUsageCsvDate(rawTo);
-    if (!metricCode) return { rows: [], error: `Ligne ${i + 1} : code métrique manquant.` };
+    if (!metricCode) return { rows: [], error: $localize`:@@recurring-contracts.recurring-contracts.ui-utils.ts.ligne.p.code.metrique.manquant.b12247a3:Ligne ${i + 1}:p: : code métrique manquant.` };
     if (!periodFrom || !periodTo) {
-      return { rows: [], error: `Ligne ${i + 1} : dates invalides (attendu yyyy-MM-dd ou jj/MM/aaaa).` };
+      return { rows: [], error: $localize`:@@recurring-contracts.recurring-contracts.ui-utils.ts.ligne.p.dates.invalides.attendu.yyyy.mm.e2597064:Ligne ${i + 1}:p: : dates invalides (attendu yyyy-MM-dd ou jj/MM/aaaa).` };
     }
     if (Number.isNaN(quantity) || quantity <= 0) {
-      return { rows: [], error: `Ligne ${i + 1} : quantité invalide (« ${cells[3]} »).` };
+      return { rows: [], error: $localize`:@@recurring-contracts.recurring-contracts.ui-utils.ts.ligne.p.quantite.invalide.p1.1481b217:Ligne ${i + 1}:p: : quantité invalide (« ${cells[3]}:p1: »).` };
     }
     rows.push({ metricCode, periodFrom, periodTo, quantity, notes: cells[4] || null });
   }
 
-  if (rows.length === 0) return { rows: [], error: 'Le fichier ne contient aucune ligne exploitable.' };
+  if (rows.length === 0) return { rows: [], error: $localize`:@@recurring-contracts.recurring-contracts.ui-utils.ts.le.fichier.ne.contient.aucune.ligne.expl.9130bf5b:Le fichier ne contient aucune ligne exploitable.` };
   return { rows, error: null };
 }

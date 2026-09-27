@@ -46,8 +46,8 @@ export class StudioReportViewComponent implements OnInit {
   readonly result = signal<ReportResult | null>(null);
   readonly loading = signal(true);
   readonly exporting = signal(false);
-  readonly reportName = signal('Rapport');
-  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.reportView('Rapport'));
+  readonly reportName = signal($localize`:@@studio.studio-report-view.ts.rapport.f25c405b:Rapport`);
+  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.reportView($localize`:@@studio.studio-report-view.ts.rapport.f25c405b:Rapport`));
 
   private reportId = '';
 

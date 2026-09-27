@@ -1051,13 +1051,13 @@ export class PosComponent implements OnInit, OnDestroy {
     if (!this.registerSession.canSell()) {
       this.showOpenSessionModal = true;
       this.loadRegistersForOpen();
-      this.posState.setError('Ouvrez la caisse avant de vendre.');
+      this.posState.setError($localize`:@@pos.pos.ts.ouvrez.la.caisse.avant.de.vendre.ed6e5ad3:Ouvrez la caisse avant de vendre.`);
       this.audioService.beepError();
       return;
     }
 
     if (this.posState.paymentSchedule() === 'onAccount' && !this.posState.client()) {
-      this.posState.setError('Le paiement a terme exige un client identifie.');
+      this.posState.setError($localize`:@@pos.pos.ts.le.paiement.a.terme.exige.un.client.iden.10bb6820:Le paiement a terme exige un client identifie.`);
       this.audioService.beepError();
       return;
     }
@@ -1079,13 +1079,13 @@ export class PosComponent implements OnInit, OnDestroy {
     }
 
     if (this.posState.isDemoMode()) {
-      this.showToast('Mode demo : facture simulee (aucune ecriture)');
+      this.showToast($localize`:@@pos.pos.ts.mode.demo.facture.simulee.aucune.ecritur.8eef4513:Mode demo : facture simulee (aucune ecriture)`);
       this.audioService.beepSuccess();
       return;
     }
 
     if (!this.sellerLoaded) {
-      this.posState.setError('Chargement des informations entreprise en cours. Veuillez reessayer.');
+      this.posState.setError($localize`:@@pos.pos.ts.chargement.des.informations.entreprise.e.9c3691a0:Chargement des informations entreprise en cours. Veuillez reessayer.`);
       this.audioService.beepError();
       this.loadSeller();
       return;
@@ -1101,7 +1101,7 @@ export class PosComponent implements OnInit, OnDestroy {
           return;
         }
         if (!check) {
-          this.posState.setError('Impossible de vérifier le stock. Réessayez.');
+          this.posState.setError($localize`:@@pos.pos.ts.impossible.de.verifier.le.stock.reessaye.94c6d8e4:Impossible de vérifier le stock. Réessayez.`);
           this.audioService.beepError();
           this.posState.setProcessing(false);
           return;
@@ -1111,7 +1111,7 @@ export class PosComponent implements OnInit, OnDestroy {
             .filter(d => !d.isAvailable)
             .map(d => buildInsufficientStockMessage(d.productName, d.requestedQuantity, d.availableQuantity))
             .join('\n');
-          this.posState.setError(msg || 'Stock insuffisant pour certains produits.');
+          this.posState.setError(msg || $localize`:@@pos.pos.ts.stock.insuffisant.pour.certains.produits.358e5f63:Stock insuffisant pour certains produits.`);
           this.audioService.beepError();
           this.posState.setProcessing(false);
           return;
@@ -1119,7 +1119,7 @@ export class PosComponent implements OnInit, OnDestroy {
         this.doValidateAndPrint(false);
       },
       error: () => {
-        this.posState.setError('Impossible de vérifier le stock. Réessayez.');
+        this.posState.setError($localize`:@@pos.pos.ts.impossible.de.verifier.le.stock.reessaye.94c6d8e4:Impossible de vérifier le stock. Réessayez.`);
         this.audioService.beepError();
         this.posState.setProcessing(false);
       }
@@ -1153,7 +1153,7 @@ export class PosComponent implements OnInit, OnDestroy {
       next: () => {
         this.populatePosCartFromWizardLines();
         this.posState.setProcessing(false);
-        this.showToast('Panier pré-rempli — modifiez les quantités pour un avoir partiel');
+        this.showToast($localize`:@@pos.pos.ts.panier.pre.rempli.modifiez.les.quantites.e8e885fd:Panier pré-rempli — modifiez les quantités pour un avoir partiel`);
       },
       error: err => {
         this.posState.setProcessing(false);
@@ -1169,14 +1169,14 @@ export class PosComponent implements OnInit, OnDestroy {
     const linked = this.posState.linkedInvoice();
     if (!linked?.id) {
       this.posState.setProcessing(false);
-      this.posState.setError('Facture liée invalide. Veuillez sélectionner une facture.');
+      this.posState.setError($localize`:@@pos.pos.ts.facture.liee.invalide.veuillez.selection.5c545a48:Facture liée invalide. Veuillez sélectionner une facture.`);
       this.audioService.beepError();
       return;
     }
 
     if (this.posState.lines().length === 0) {
       this.posState.setProcessing(false);
-      this.posState.setError('Ajoutez au moins une ligne à rembourser.');
+      this.posState.setError($localize`:@@pos.pos.ts.ajoutez.au.moins.une.ligne.a.rembourser.59d6d169:Ajoutez au moins une ligne à rembourser.`);
       this.audioService.beepError();
       return;
     }
@@ -1443,7 +1443,7 @@ export class PosComponent implements OnInit, OnDestroy {
       this.maybeSendInvoiceEmail(sendEmail, invoiceId);
     } else {
       const label = invoiceNumber?.trim() || invoiceId.substring(0, 8);
-      this.showToast(`Facture a terme N° ${label}`);
+      this.showToast($localize`:@@pos.pos.ts.facture.a.terme.n.label.c547838f:Facture a terme N° ${label}:label:`);
       this.maybeSendInvoiceEmail(sendEmail, invoiceId);
     }
   }
@@ -1557,7 +1557,7 @@ export class PosComponent implements OnInit, OnDestroy {
           this.showChangeCalculator = false;
           this.changeCalculatorTotal = 0;
           this.isRecordingPayment = false;
-          this.showToast('Paiement enregistré');
+          this.showToast($localize`:@@pos.pos.ts.paiement.enregistre.caf52809:Paiement enregistré`);
         },
         error: err => {
           this.isRecordingPayment = false;
@@ -1593,7 +1593,7 @@ export class PosComponent implements OnInit, OnDestroy {
     this.invoiceService.recordPayments(invoiceId, requests).subscribe({
       next: () => {
         this.isRecordingPayment = false;
-        this.showToast(`Encaissement fractionné enregistré (${splits.length} règlements)`);
+        this.showToast($localize`:@@pos.pos.ts.encaissement.fractionne.enregistre.lengt.48305673:Encaissement fractionné enregistré (${splits.length}:length: règlements)`);
       },
       error: err => {
         this.isRecordingPayment = false;
@@ -1621,7 +1621,7 @@ export class PosComponent implements OnInit, OnDestroy {
       return;
     }
     this.checkoutService.sendInvoiceEmail(invoiceId).subscribe({
-      next: () => this.showToast('Facture envoyee par e-mail'),
+      next: () => this.showToast($localize`:@@pos.pos.ts.facture.envoyee.par.e.mail.0d173052:Facture envoyee par e-mail`),
       error: err => {
         const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.d.envoyer.la.facture.par.e.ma.2e9a3c5e:Impossible d'envoyer la facture par e-mail`);
         this.posState.setError(message);
@@ -1661,7 +1661,7 @@ export class PosComponent implements OnInit, OnDestroy {
     }).subscribe({
       next: () => {
         this.isRecordingPayment = false;
-        this.showToast('Paiement enregistré');
+        this.showToast($localize`:@@pos.pos.ts.paiement.enregistre.caf52809:Paiement enregistré`);
       },
       error: err => {
         this.isRecordingPayment = false;
@@ -1682,7 +1682,7 @@ export class PosComponent implements OnInit, OnDestroy {
     this.registerSession.open(warehouseId, floatValue, registerId).subscribe({
       next: () => {
         this.showOpenSessionModal = false;
-        this.showToast('Caisse ouverte');
+        this.showToast($localize`:@@pos.pos.ts.caisse.ouverte.72457d60:Caisse ouverte`);
       },
       error: err => {
         this.posState.setError(this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.d.ouvrir.la.caisse.1dc009cf:Impossible d'ouvrir la caisse`));

@@ -110,14 +110,14 @@ export class PaymentsReportsService {
 
     const summaryParts: string[] = [];
     if (pendingTotal > 0) {
-      summaryParts.push(`Vous avez ${pendingClientInvoices.length + pendingSupplierInvoices.length} facture(s) en attente pour ${fmt(pendingTotal)} ${currency}.`);
+      summaryParts.push($localize`:@@reports.payments-reports.ts.vous.avez.p.facture.s.en.attente.pour.fm.059de647:Vous avez ${pendingClientInvoices.length + pendingSupplierInvoices.length}:p: facture(s) en attente pour ${fmt(pendingTotal)}:fmt: ${currency}:currency:.`);
     }
     if (netCashFlow >= 0 && totalInflows + totalOutflows > 0) {
-      summaryParts.push(`Trésorerie nette positive : ${fmt(netCashFlow)} ${currency} sur la période.`);
+      summaryParts.push($localize`:@@reports.payments-reports.ts.tresorerie.nette.positive.fmt.currency.s.fba60240:Trésorerie nette positive : ${fmt(netCashFlow)}:fmt: ${currency}:currency: sur la période.`);
     } else if (netCashFlow < 0) {
-      summaryParts.push(`Trésorerie nette négative : ${fmt(netCashFlow)} ${currency} sur la période.`);
+      summaryParts.push($localize`:@@reports.payments-reports.ts.tresorerie.nette.negative.fmt.currency.s.4a9bbad2:Trésorerie nette négative : ${fmt(netCashFlow)}:fmt: ${currency}:currency: sur la période.`);
     }
-    const summaryText = summaryParts.length > 0 ? summaryParts.join(' ') : 'Aucun flux de trésorerie sur cette période.';
+    const summaryText = summaryParts.length > 0 ? summaryParts.join(' ') : $localize`:@@reports.payments-reports.ts.aucun.flux.de.tresorerie.sur.cette.perio.34f0f37c:Aucun flux de trésorerie sur cette période.`;
 
     return {
       totalInflows: fmt(totalInflows) + ' ' + currency,

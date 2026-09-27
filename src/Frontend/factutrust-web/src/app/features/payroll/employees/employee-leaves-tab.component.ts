@@ -353,14 +353,14 @@ export class EmployeeLeavesTabComponent implements OnInit {
 
     const leaveYear = new Date(leave.startDate).getFullYear();
     if (leaveYear !== this.balanceYear) {
-      return `Solde affiché pour l'exercice ${this.balanceYear}.`;
+      return $localize`:@@payroll.employee-leaves-tab.ts.solde.affiche.pour.l.exercice.balanceyea.2eccd668:Solde affiché pour l'exercice ${this.balanceYear}:balanceYear:.`;
     }
 
     const balance = this.balance();
     if (!balance) return 'Solde indisponible.';
 
     const availableForLeave = balance.available + leave.days;
-    return `Solde insuffisant : ${leave.days} j demandés, ${availableForLeave} j disponibles (${balance.pending} j en attente).`;
+    return $localize`:@@payroll.employee-leaves-tab.ts.solde.insuffisant.days.j.demandes.availa.d23fa9a1:Solde insuffisant : ${leave.days}:days: j demandés, ${availableForLeave}:availableForLeave: j disponibles (${balance.pending}:pending: j en attente).`;
   }
 
   ngOnInit(): void {

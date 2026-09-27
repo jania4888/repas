@@ -247,7 +247,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
   readonly errorMessage = signal<string | null>(null);
   readonly selectedFileName = signal<string | null>(null);
   readonly elapsedSeconds = signal(0);
-  readonly progressLabel = signal('Lecture du document…');
+  readonly progressLabel = signal($localize`:@@invoices.invoice-import-dialog.ts.lecture.du.document.f74989d0:Lecture du document…`);
   readonly modelReady = signal<boolean | null>(null);
   readonly warmUpMessage = signal<string | null>(null);
 

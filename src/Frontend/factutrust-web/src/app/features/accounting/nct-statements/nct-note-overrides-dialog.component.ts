@@ -185,7 +185,7 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
         row.saving = false;
         if (res.success) {
           row.hasOverride = true;
-          this.notify('success', `Note ${row.number} personnalisée.`);
+          this.notify('success', $localize`:@@accounting.nct-note-overrides-dialog.ts.note.number.personnalisee.053fa9f0:Note ${row.number}:number: personnalisée.`);
           this.changed.emit();
         } else {
           this.notify('error', res.error ?? $localize`:@@ui.tern.l.enregistrement.a.echoue.3f69ec:L'enregistrement a échoué.`);
@@ -207,7 +207,7 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
         row.customDescription = '';
         row.isHidden = false;
         row.hasOverride = false;
-        this.notify('success', `Note ${row.number} rétablie.`);
+        this.notify('success', $localize`:@@accounting.nct-note-overrides-dialog.ts.note.number.retablie.859d0b8b:Note ${row.number}:number: rétablie.`);
         this.changed.emit();
       },
       error: err => {

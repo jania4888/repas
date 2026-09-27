@@ -14,13 +14,13 @@ export const NIF_CATEGORY_PATTERN = /^[0-9]{7}([A-Z])\/[A-Z]\/[A-Z]\/[0-9]{3}$/;
 
 /** Mirrors `TaxpayerCategories.GetDescription()` (backend `NIF.cs`) — French labels, one per category. */
 export const NIF_CATEGORY_LABELS_FR: Record<NifTaxpayerCategory, string> = {
-  A: 'Personne physique',
-  B: 'Société de personnes',
-  C: 'Société de capitaux',
-  D: 'Association',
-  E: 'Établissement public',
-  F: 'Personne morale étrangère',
-  G: 'Autre'
+  A: $localize`:@@auth.auth-nif-category.helpers.ts.personne.physique.0c6ae712:Personne physique`,
+  B: $localize`:@@auth.auth-nif-category.helpers.ts.societe.de.personnes.5b8203b5:Société de personnes`,
+  C: $localize`:@@auth.auth-nif-category.helpers.ts.societe.de.capitaux.5980816f:Société de capitaux`,
+  D: $localize`:@@auth.auth-nif-category.helpers.ts.association.1948b8a7:Association`,
+  E: $localize`:@@auth.auth-nif-category.helpers.ts.etablissement.public.1f07cd1a:Établissement public`,
+  F: $localize`:@@auth.auth-nif-category.helpers.ts.personne.morale.etrangere.fb2da748:Personne morale étrangère`,
+  G: $localize`:@@auth.auth-nif-category.helpers.ts.autre.43dacf9e:Autre`
 };
 
 /**

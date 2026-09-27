@@ -385,10 +385,10 @@ export class StockVoucherFormComponent implements OnInit {
 
   submitBlockers(): string[] {
     const blockers: string[] = [];
-    if (!this.hasWarehouse()) blockers.push('Sélectionnez un dépôt');
-    if (!this.hasDate()) blockers.push('Indiquez la date');
-    if (!this.hasReason()) blockers.push('Sélectionnez un motif');
-    if (!this.hasLines()) blockers.push('Ajoutez au moins une ligne produit');
+    if (!this.hasWarehouse()) blockers.push($localize`:@@stock-vouchers.stock-voucher-form.ts.selectionnez.un.depot.30eab6e8:Sélectionnez un dépôt`);
+    if (!this.hasDate()) blockers.push($localize`:@@stock-vouchers.stock-voucher-form.ts.indiquez.la.date.c44f1641:Indiquez la date`);
+    if (!this.hasReason()) blockers.push($localize`:@@stock-vouchers.stock-voucher-form.ts.selectionnez.un.motif.7ae40cb5:Sélectionnez un motif`);
+    if (!this.hasLines()) blockers.push($localize`:@@stock-vouchers.stock-voucher-form.ts.ajoutez.au.moins.une.ligne.produit.bf3387b7:Ajoutez au moins une ligne produit`);
     if (this.submitting()) blockers.push('Enregistrement en cours');
     return blockers;
   }

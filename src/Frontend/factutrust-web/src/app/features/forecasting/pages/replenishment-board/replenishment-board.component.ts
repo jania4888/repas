@@ -548,11 +548,11 @@ export class ReplenishmentBoardComponent implements OnInit {
 
   statusLabel(s: ReplenishmentRecommendation['status']): string {
     return ({
-      pending: 'En attente',
-      approved: 'Approuvée',
-      dismissed: 'Écartée',
-      ordered: 'Commandée',
-      superseded: 'Remplacée'
+      pending: $localize`:@@forecasting.replenishment-board.ts.en.attente.5231158f:En attente`,
+      approved: $localize`:@@forecasting.replenishment-board.ts.approuvee.7d606a51:Approuvée`,
+      dismissed: $localize`:@@forecasting.replenishment-board.ts.ecartee.42bd51f7:Écartée`,
+      ordered: $localize`:@@forecasting.replenishment-board.ts.commandee.15f2b9a3:Commandée`,
+      superseded: $localize`:@@forecasting.replenishment-board.ts.remplacee.a82c0233:Remplacée`
     } as Record<string, string>)[s] ?? s;
   }
 
@@ -562,10 +562,10 @@ export class ReplenishmentBoardComponent implements OnInit {
 
   urgencyLabel(level: ReplenishmentUrgency): string {
     switch (level) {
-      case 'OutOfStock': return 'Rupture';
-      case 'Urgent':     return 'Urgent';
-      case 'Warning':    return 'Attention';
-      case 'Normal':     return 'Normal';
+      case 'OutOfStock': return $localize`:@@forecasting.replenishment-board.ts.rupture.fda77001:Rupture`;
+      case 'Urgent':     return $localize`:@@forecasting.replenishment-board.ts.urgent.ecb26f46:Urgent`;
+      case 'Warning':    return $localize`:@@forecasting.replenishment-board.ts.attention.74e0b9c8:Attention`;
+      case 'Normal':     return $localize`:@@forecasting.replenishment-board.ts.normal.45e118d0:Normal`;
     }
   }
 

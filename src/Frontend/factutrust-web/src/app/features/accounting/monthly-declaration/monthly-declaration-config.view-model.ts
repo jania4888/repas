@@ -114,7 +114,7 @@ export function familyTab(family: MonthlyDeclarationFamily): DmFamilyTab | undef
 }
 
 export function familyLabel(family: MonthlyDeclarationFamily): string {
-  return familyTab(family)?.label ?? `Famille ${family}`;
+  return familyTab(family)?.label ?? $localize`:@@accounting.monthly-declaration-config.view-model.ts.famille.family.e5385090:Famille ${family}:family:`;
 }
 
 /**
@@ -406,62 +406,62 @@ export function needsFixedWithheld(form: DmRubricForm): boolean {
 export function validateRubricForm(form: DmRubricForm): string | null {
   const code = form.code.trim().toUpperCase();
   if (!form.id && !code) {
-    return 'Le code de la rubrique est obligatoire.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.code.de.la.rubrique.est.obligatoire.b3ed4041:Le code de la rubrique est obligatoire.`;
   }
   if (!form.id && !DM_CODE_PATTERN.test(code)) {
-    return 'Le code est invalide : lettres majuscules, chiffres et « _ » uniquement, 20 caractères au plus.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.code.est.invalide.lettres.majuscules.37d55247:Le code est invalide : lettres majuscules, chiffres et « _ » uniquement, 20 caractères au plus.`;
   }
   if (!form.label.trim()) {
-    return 'Le libellé est obligatoire.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.libelle.est.obligatoire.e312d2ca:Le libellé est obligatoire.`;
   }
   if (form.label.trim().length > 200) {
-    return 'Le libellé ne peut pas dépasser 200 caractères.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.libelle.ne.peut.pas.depasser.200.cara.1c8b3c83:Le libellé ne peut pas dépasser 200 caractères.`;
   }
 
   const reportCode = form.reportCode.trim();
   if (!reportCode) {
-    return 'Le code rapport est obligatoire.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.code.rapport.est.obligatoire.060e5725:Le code rapport est obligatoire.`;
   }
   if (reportCode.length > 16 || !DM_REPORT_CODE_PATTERN.test(reportCode)) {
-    return 'Le code rapport doit être un numéro d’article (ex. « 17.2 »), ou « * » pour un repli de famille.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.code.rapport.doit.etre.un.numero.d.ar.68421715:Le code rapport doit être un numéro d’article (ex. « 17.2 »), ou « * » pour un repli de famille.`;
   }
 
   const rate = Number(form.ratePercent);
   if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
-    return 'Le taux doit être compris entre 0 et 100 %.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.le.taux.doit.etre.compris.entre.0.et.100.af09f376:Le taux doit être compris entre 0 et 100 %.`;
   }
 
   if (
     form.grossKind === RubricGrossKind.WithheldOverRate &&
     form.withheldKind === RubricWithheldKind.GrossTimesRate
   ) {
-    return 'Combinaison impossible : le brut serait déduit de la retenue et la retenue déduite du brut. Fixez l’une des deux colonnes.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.combinaison.impossible.le.brut.serait.de.dcf5c4fd:Combinaison impossible : le brut serait déduit de la retenue et la retenue déduite du brut. Fixez l’une des deux colonnes.`;
   }
   if (needsRate(form) && rate <= 0) {
-    return 'Ce mode de calcul exige un taux strictement positif.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.ce.mode.de.calcul.exige.un.taux.strictem.296fbdde:Ce mode de calcul exige un taux strictement positif.`;
   }
   if (needsPayrollComponent(form) && form.payrollComponent === null) {
-    return 'Un brut issu de la paie doit désigner la valeur du cycle à reprendre.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.un.brut.issu.de.la.paie.doit.designer.la.14453e3a:Un brut issu de la paie doit désigner la valeur du cycle à reprendre.`;
   }
   if (needsWithheldPayrollComponent(form) && form.withheldPayrollComponent === null) {
-    return 'Une retenue issue de la paie doit désigner la valeur du cycle à reprendre.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.une.retenue.issue.de.la.paie.doit.design.330f35c5:Une retenue issue de la paie doit désigner la valeur du cycle à reprendre.`;
   }
 
   if (needsGrossAccounts(form) && countSelectedAccounts(form.grossAccounts) === 0) {
-    return 'Un montant brut calculé sur comptes exige au moins un compte ou une racine.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.un.montant.brut.calcule.sur.comptes.exig.f0d240e9:Un montant brut calculé sur comptes exige au moins un compte ou une racine.`;
   }
   if (needsWithheldAccounts(form) && countSelectedAccounts(form.withheldAccounts) === 0) {
-    return 'Une retenue calculée sur comptes exige au moins un compte ou une racine.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.une.retenue.calculee.sur.comptes.exige.a.193f0d0b:Une retenue calculée sur comptes exige au moins un compte ou une racine.`;
   }
   if (countSelectedAccounts(form.grossAccounts) > DM_MAX_ACCOUNTS_PER_ROLE) {
-    return `La colonne brut ne peut pas retenir plus de ${DM_MAX_ACCOUNTS_PER_ROLE} comptes.`;
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.la.colonne.brut.ne.peut.pas.retenir.plus.24963b2e:La colonne brut ne peut pas retenir plus de ${DM_MAX_ACCOUNTS_PER_ROLE}:DM_MAX_ACCOUNTS_PER_ROLE: comptes.`;
   }
   if (countSelectedAccounts(form.withheldAccounts) > DM_MAX_ACCOUNTS_PER_ROLE) {
-    return `La colonne retenue ne peut pas retenir plus de ${DM_MAX_ACCOUNTS_PER_ROLE} comptes.`;
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.la.colonne.retenue.ne.peut.pas.retenir.p.815d9745:La colonne retenue ne peut pas retenir plus de ${DM_MAX_ACCOUNTS_PER_ROLE}:DM_MAX_ACCOUNTS_PER_ROLE: comptes.`;
   }
 
   if (form.effectiveFrom && form.effectiveTo && form.effectiveFrom > form.effectiveTo) {
-    return 'La date maximale d’application précède la date de début.';
+    return $localize`:@@accounting.monthly-declaration-config.view-model.ts.la.date.maximale.d.application.precede.l.7d934043:La date maximale d’application précède la date de début.`;
   }
 
   return null;
@@ -492,7 +492,7 @@ export function describeGross(rubric: MonthlyDeclarationRubricDto): string {
     case RubricGrossKind.Fixed:
       return rubric.fixedGrossAmount === null
         ? 'Saisie au Calcul DM'
-        : `Valeur fixe ${rubric.fixedGrossAmount}`;
+        : $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.fixe.fixedgrossamount.95780a00:Valeur fixe ${rubric.fixedGrossAmount}:fixedGrossAmount:`;
     case RubricGrossKind.Payroll:
       return `Paie — ${optionLabel(DM_PAYROLL_COMPONENT_OPTIONS, rubric.payrollComponent)}`;
     case RubricGrossKind.Account:
@@ -510,7 +510,7 @@ export function describeWithheld(rubric: MonthlyDeclarationRubricDto): string {
     case RubricWithheldKind.Fixed:
       return rubric.fixedWithheldAmount === null
         ? 'Saisie au Calcul DM'
-        : `Valeur fixe ${rubric.fixedWithheldAmount}`;
+        : $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.fixe.fixedwithheldamount.994a92e3:Valeur fixe ${rubric.fixedWithheldAmount}:fixedWithheldAmount:`;
     case RubricWithheldKind.Account:
       return $localize`:@@accounting.monthly-declaration-config.view-model.ts.sidelabel.de.accountssummary.9c9031a1:${sideLabel(rubric.withheldSide)}:sideLabel: de ${accountsSummary(rubric.accounts, RubricAccountRole.Withheld)}:accountsSummary:`;
     case RubricWithheldKind.GrossTimesRate:
@@ -591,7 +591,7 @@ export function modeLabel(mode: MonthlyDeclarationMode): string {
     case MonthlyDeclarationMode.Configured:
       return $localize`:@@accounting.monthly-declaration-config.view-model.ts.calcul.parametre.ff2c9c1a:Calcul paramétré`;
     default:
-      return 'Inconnu';
+      return $localize`:@@accounting.monthly-declaration-config.view-model.ts.inconnu.f3cfc645:Inconnu`;
   }
 }
 

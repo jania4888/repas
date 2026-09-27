@@ -723,7 +723,7 @@ export class AiChatSessionService {
         this.flushContentBatch();
         this.awaitingFirstToken.set(false);
         this.finalizeAssistantMessage(assistantMsgId, 'failed', {
-          content: event.error || 'Erreur inconnue',
+          content: event.error || $localize`:@@ai-assistant.ai-chat-session.ts.erreur.inconnue.c3ec7363:Erreur inconnue`,
           generationInterrupted: true
         });
         this.isStreaming.set(false);

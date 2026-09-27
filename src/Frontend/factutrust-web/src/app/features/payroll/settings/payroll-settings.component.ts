@@ -534,8 +534,8 @@ export class PayrollSettingsComponent implements OnInit {
         drift.push({ label, current: `${current.toFixed(2)} ${unit}`, expected: `${expected.toFixed(2)} ${unit}` });
       }
     };
-    rate('CNSS salarié', p.cnssEmployeeRate, preset.cnssEmployeeRate);
-    rate('CNSS employeur', p.cnssEmployerRate, preset.cnssEmployerRate);
+    rate($localize`:@@payroll.payroll-settings.ts.cnss.salarie.e8528052:CNSS salarié`, p.cnssEmployeeRate, preset.cnssEmployeeRate);
+    rate($localize`:@@payroll.payroll-settings.ts.cnss.employeur.ae3ac0eb:CNSS employeur`, p.cnssEmployerRate, preset.cnssEmployerRate);
     rate('CSS', p.cssRate, preset.cssRate);
     rate('SMIG mensuel', p.monthlySmig, preset.monthlySmig, 'TND');
     const pb = [...preset.irppBrackets].sort((a, b) => a.lowerBound - b.lowerBound);
@@ -757,14 +757,14 @@ export class PayrollSettingsComponent implements OnInit {
 
   /** Contrôle client du barème IRPP ; renvoie null si valide, sinon le message d'erreur. */
   private validateBrackets(brackets: { lowerBound: number; rate: number }[]): string | null {
-    if (!brackets.length) return 'Le barème IRPP doit comporter au moins une tranche.';
+    if (!brackets.length) return $localize`:@@payroll.payroll-settings.ts.le.bareme.irpp.doit.comporter.au.moins.u.810d955f:Le barème IRPP doit comporter au moins une tranche.`;
     const sorted = [...brackets].sort((a, b) => a.lowerBound - b.lowerBound);
-    if (sorted[0].lowerBound !== 0) return 'La première tranche IRPP doit démarrer à 0.';
+    if (sorted[0].lowerBound !== 0) return $localize`:@@payroll.payroll-settings.ts.la.premiere.tranche.irpp.doit.demarrer.a.94cefaa6:La première tranche IRPP doit démarrer à 0.`;
     for (let i = 1; i < sorted.length; i++) {
       if (sorted[i].lowerBound === sorted[i - 1].lowerBound)
-        return 'Deux tranches IRPP ne peuvent pas avoir le même seuil inférieur.';
+        return $localize`:@@payroll.payroll-settings.ts.deux.tranches.irpp.ne.peuvent.pas.avoir.79448c6a:Deux tranches IRPP ne peuvent pas avoir le même seuil inférieur.`;
     }
-    if (sorted.some(b => b.rate < 0 || b.rate > 100)) return 'Les taux IRPP doivent être compris entre 0 et 100 %.';
+    if (sorted.some(b => b.rate < 0 || b.rate > 100)) return $localize`:@@payroll.payroll-settings.ts.les.taux.irpp.doivent.etre.compris.entre.e09704e4:Les taux IRPP doivent être compris entre 0 et 100 %.`;
     return null;
   }
 

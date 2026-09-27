@@ -255,22 +255,22 @@ export class PromotionsBoardComponent implements OnInit {
 
   typeLabel(t: PromotionRecommendationType): string {
     return ({
-      destockage: 'Déstockage',
+      destockage: $localize`:@@forecasting.promotions-board.ts.destockage.36415cf3:Déstockage`,
       surstock: 'Surstock',
       crossSell: 'Cross-Sell',
-      prePic: 'Pré-pic',
+      prePic: $localize`:@@forecasting.promotions-board.ts.pre.pic.b4b0ee2c:Pré-pic`,
       saisonnier: 'Saisonnier',
-      margePush: 'Marge'
+      margePush: $localize`:@@forecasting.promotions-board.ts.marge.d9ef1a1d:Marge`
     } as Record<PromotionRecommendationType, string>)[t];
   }
 
   statusLabel(s: PromotionRecommendation['status']): string {
     return ({
-      pending: 'En attente',
-      accepted: 'Acceptée',
-      dismissed: 'Écartée',
-      activated: 'Activée',
-      expired: 'Expirée'
+      pending: $localize`:@@forecasting.promotions-board.ts.en.attente.5231158f:En attente`,
+      accepted: $localize`:@@forecasting.promotions-board.ts.acceptee.8f379d6f:Acceptée`,
+      dismissed: $localize`:@@forecasting.promotions-board.ts.ecartee.42bd51f7:Écartée`,
+      activated: $localize`:@@forecasting.promotions-board.ts.activee.9b4e7cfb:Activée`,
+      expired: $localize`:@@forecasting.promotions-board.ts.expiree.1f0808dc:Expirée`
     } as Record<PromotionRecommendation['status'], string>)[s];
   }
 

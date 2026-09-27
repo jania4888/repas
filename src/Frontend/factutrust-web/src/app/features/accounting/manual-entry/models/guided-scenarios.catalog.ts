@@ -177,8 +177,8 @@ export function buildScenarioLines(
 
 export function formatPeriodLabel(fiscalYear: number, month: number): string {
   const months = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    $localize`:@@accounting.guided-scenarios.catalog.ts.janvier.7a32ae0f:Janvier`, $localize`:@@accounting.guided-scenarios.catalog.ts.fevrier.63fc1803:Février`, $localize`:@@accounting.guided-scenarios.catalog.ts.mars.1778011d:Mars`, $localize`:@@accounting.guided-scenarios.catalog.ts.avril.4efeee46:Avril`, $localize`:@@accounting.guided-scenarios.catalog.ts.mai.afe526a6:Mai`, $localize`:@@accounting.guided-scenarios.catalog.ts.juin.8b1e84b6:Juin`,
+    $localize`:@@accounting.guided-scenarios.catalog.ts.juillet.e8e0920c:Juillet`, $localize`:@@accounting.guided-scenarios.catalog.ts.aout.460b6696:Août`, $localize`:@@accounting.guided-scenarios.catalog.ts.septembre.08d23f31:Septembre`, $localize`:@@accounting.guided-scenarios.catalog.ts.octobre.0ed28485:Octobre`, $localize`:@@accounting.guided-scenarios.catalog.ts.novembre.632580af:Novembre`, $localize`:@@accounting.guided-scenarios.catalog.ts.decembre.03bcd9b0:Décembre`
   ];
   return `${months[month - 1] ?? month} ${fiscalYear}`;
 }

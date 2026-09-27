@@ -126,7 +126,7 @@ export class PayrollRunListComponent implements OnInit {
     isCompanyPayrollReadOnly(this.auth) ? PAYROLL_FIRM_MANAGED_COMPANY_BANNER : PAYROLL_FIRM_CONSULT_BANNER);
   currentMonthExists = computed(() => this.currentMonthRun() !== null);
 
-  emptyDescription = computed(() => this.loading() ? undefined : 'Aucun cycle pour cet exercice.');
+  emptyDescription = computed(() => this.loading() ? undefined : $localize`:@@payroll.payroll-run-list.ts.aucun.cycle.pour.cet.exercice.d7a3e7cf:Aucun cycle pour cet exercice.`);
 
   ngOnInit(): void {
     const data = this.route.snapshot.data;

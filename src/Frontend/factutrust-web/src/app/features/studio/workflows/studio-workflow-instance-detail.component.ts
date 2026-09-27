@@ -37,19 +37,19 @@ import { StudioWorkflowsService } from './studio-workflows.service';
  * - les autres sont locaux ci-dessous. À centraliser si la partie B en a besoin.
  */
 const DETAIL_LABELS = {
-  notFound: 'Instance introuvable.',
+  notFound: $localize`:@@studio.studio-workflow-instance-detail.ts.instance.introuvable.8c24b2fc:Instance introuvable.`,
   forbidden: $localize`:@@studio.studio-workflow-instance-detail.ts.detail.indisponible.e834f2ce:Détail indisponible.`,
   loadError: $localize`:@@studio.studio-workflow-instance-detail.ts.chargement.du.detail.impossible.71c25e57:Chargement du détail impossible.`,
   retry: $localize`:@@studio.studio-workflow-instance-detail.ts.reessayer.895d416b:Réessayer`,
   remindHint: $localize`:@@studio.studio-workflow-instance-detail.ts.possible.quand.l.instance.attend.une.app.756783e7:Possible quand l'instance attend une approbation.`,
   readOnly: $localize`:@@studio.studio-workflow-instance-detail.ts.lecture.seule.votre.role.ne.permet.pas.d.a29ac6b4:Lecture seule : votre rôle ne permet pas d'agir sur cette instance.`,
-  actionError: 'Action impossible.',
+  actionError: $localize`:@@studio.studio-workflow-instance-detail.ts.action.impossible.cd57172c:Action impossible.`,
   system: $localize`:@@studio.studio-workflow-instance-detail.ts.systeme.62d09520:Système`,
   completedAt: $localize`:@@studio.studio-workflow-instance-detail.ts.termine.le.c07f32a6:Terminé le`,
-  origin: 'Instance d\'origine',
-  open: 'Ouvrir',
-  confirmCancel: 'Confirmer l\'annulation',
-  back: 'Retour'
+  origin: $localize`:@@studio.studio-workflow-instance-detail.ts.instance.d.origine.c6f91a5c:Instance d'origine`,
+  open: $localize`:@@studio.studio-workflow-instance-detail.ts.ouvrir.42c07747:Ouvrir`,
+  confirmCancel: $localize`:@@studio.studio-workflow-instance-detail.ts.confirmer.l.annulation.92040a54:Confirmer l'annulation`,
+  back: $localize`:@@studio.studio-workflow-instance-detail.ts.retour.e5befb1f:Retour`
 } as const;
 
 /**

@@ -110,7 +110,7 @@ const WAREHOUSE_FEATURES: AuthShellFeature[] = [
 ];
 
 export const LOGIN_AUTH_SHELL_CONFIG: AuthShellConfig = {
-  badge: 'Espace sécurisé',
+  badge: $localize`:@@auth.auth-shell.ts.espace.securise.7234897e:Espace sécurisé`,
   badgeVariant: 'secure',
   title: $localize`:@@auth.auth-shell.ts.pilotez.votre.activite.commerciale.en.to.9f40694b:Pilotez votre activité commerciale en toute sérénité`,
   description:
@@ -122,7 +122,7 @@ export const LOGIN_AUTH_SHELL_CONFIG: AuthShellConfig = {
 };
 
 export const REGISTER_AUTH_SHELL_CONFIG: AuthShellConfig = {
-  badge: 'Nouveau',
+  badge: $localize`:@@auth.auth-shell.ts.nouveau.b9676c8f:Nouveau`,
   badgeVariant: 'new',
   title: $localize`:@@auth.auth-shell.ts.simplifiez.votre.gestion.des.aujourd.hui.5bda5632:Simplifiez votre gestion dès aujourd'hui`,
   description:
@@ -135,7 +135,7 @@ export const REGISTER_AUTH_SHELL_CONFIG: AuthShellConfig = {
 };
 
 export const REGISTER_FIRM_AUTH_SHELL_CONFIG: AuthShellConfig = {
-  badge: 'Cabinet comptable',
+  badge: $localize`:@@auth.auth-shell.ts.cabinet.comptable.0b9c6d02:Cabinet comptable`,
   badgeVariant: 'firm',
   title: $localize`:@@auth.auth-shell.ts.pilotez.votre.cabinet.en.toute.serenite.48dbdf7c:Pilotez votre cabinet en toute sérénité`,
   description:
@@ -148,7 +148,7 @@ export const REGISTER_FIRM_AUTH_SHELL_CONFIG: AuthShellConfig = {
 };
 
 export const SELECT_WAREHOUSE_AUTH_SHELL_CONFIG: AuthShellConfig = {
-  badge: 'Contexte de travail',
+  badge: $localize`:@@auth.auth-shell.ts.contexte.de.travail.046d8b14:Contexte de travail`,
   badgeVariant: 'context',
   title: $localize`:@@auth.auth-shell.ts.choisissez.votre.entrepot.c4dadfab:Choisissez votre entrepôt`,
   description:
@@ -159,7 +159,7 @@ export const SELECT_WAREHOUSE_AUTH_SHELL_CONFIG: AuthShellConfig = {
 };
 
 export const FORGOT_PASSWORD_AUTH_SHELL_CONFIG: AuthShellConfig = {
-  badge: 'Sécurisé',
+  badge: $localize`:@@auth.auth-shell.ts.securise.85014ef6:Sécurisé`,
   badgeVariant: 'secure',
   title: $localize`:@@auth.auth-shell.ts.recuperez.l.acces.a.votre.espace.d3c0ad93:Récupérez l'accès à votre espace`,
   description:
@@ -169,7 +169,7 @@ export const FORGOT_PASSWORD_AUTH_SHELL_CONFIG: AuthShellConfig = {
 };
 
 export const RESET_PASSWORD_AUTH_SHELL_CONFIG: AuthShellConfig = {
-  badge: 'Sécurisé',
+  badge: $localize`:@@auth.auth-shell.ts.securise.85014ef6:Sécurisé`,
   badgeVariant: 'secure',
   title: $localize`:@@auth.auth-shell.ts.definissez.votre.nouveau.mot.de.passe.c179989d:Définissez votre nouveau mot de passe`,
   description:
@@ -179,7 +179,7 @@ export const RESET_PASSWORD_AUTH_SHELL_CONFIG: AuthShellConfig = {
 };
 
 export const PORTAL_INVITE_AUTH_SHELL_CONFIG: AuthShellConfig = {
-  badge: 'Espace client',
+  badge: $localize`:@@auth.auth-shell.ts.espace.client.997229dc:Espace client`,
   badgeVariant: 'secure',
   title: $localize`:@@auth.auth-shell.ts.activez.votre.espace.client.8987ab9c:Activez votre espace client`,
   description:

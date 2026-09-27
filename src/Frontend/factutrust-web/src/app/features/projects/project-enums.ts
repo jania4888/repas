@@ -540,12 +540,12 @@ export type TabKey = 'overview' | 'tasks' | 'time' | 'budget' | 'profitability' 
 
 export function projectUiProfile(kind: unknown): ProjectUiProfile {
   if (isBtp(kind)) {
-    return { kindLabel: 'BTP / Chantier', emphasizeTabs: ['budget', 'billing', 'tasks'], showSiteChip: true };
+    return { kindLabel: $localize`:@@projects.project-enums.ts.btp.chantier.061c47fa:BTP / Chantier`, emphasizeTabs: ['budget', 'billing', 'tasks'], showSiteChip: true };
   }
   if (isEsn(kind)) {
-    return { kindLabel: 'ESN / Services', emphasizeTabs: ['time', 'billing', 'team', 'tasks'], showSiteChip: false };
+    return { kindLabel: $localize`:@@projects.project-enums.ts.esn.services.cdac16db:ESN / Services`, emphasizeTabs: ['time', 'billing', 'team', 'tasks'], showSiteChip: false };
   }
-  return { kindLabel: 'Général', emphasizeTabs: ['overview', 'tasks'], showSiteChip: false };
+  return { kindLabel: $localize`:@@projects.project-enums.ts.general.5376df98:Général`, emphasizeTabs: ['overview', 'tasks'], showSiteChip: false };
 }
 
 export function computeProjectProgressPercent(completed: number, total: number): number {
@@ -596,7 +596,7 @@ export function daysUntilDue(dueDate: string | null | undefined): number | null 
 export function formatDaysUntilDue(dueDate: string | null | undefined): string | null {
   const days = daysUntilDue(dueDate);
   if (days === null) return null;
-  if (days === 0) return "Aujourd'hui";
+  if (days === 0) return $localize`:@@projects.project-enums.ts.aujourd.hui.baca97f6:Aujourd'hui`;
   if (days === 1) return 'Demain';
   if (days > 1) return $localize`:@@projects.project-enums.ts.dans.days.jours.e071d77e:Dans ${days}:days: jours`;
   if (days === -1) return $localize`:@@projects.project-enums.ts.en.retard.de.1.jour.a1d7110c:En retard de 1 jour`;

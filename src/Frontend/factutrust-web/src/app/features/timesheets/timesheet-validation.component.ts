@@ -49,7 +49,7 @@ export class TimesheetValidationComponent implements OnInit {
   load(): void {
     this.timesheets.getValidationQueue().subscribe({
       next: r => { if (r.success && r.data) this.entries.set(r.data); },
-      error: e => this.fail(e, 'File de validation')
+      error: e => this.fail(e, $localize`:@@timesheets.timesheet-validation.ts.file.de.validation.036786b1:File de validation`)
     });
   }
 
@@ -61,7 +61,7 @@ export class TimesheetValidationComponent implements OnInit {
           this.load();
         }
       },
-      error: e => this.fail(e, 'Validation impossible')
+      error: e => this.fail(e, $localize`:@@timesheets.timesheet-validation.ts.validation.impossible.8b8efd73:Validation impossible`)
     });
   }
 

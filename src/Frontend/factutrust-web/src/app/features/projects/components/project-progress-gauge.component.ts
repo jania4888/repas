@@ -66,7 +66,7 @@ export class ProjectProgressGaugeComponent {
   readonly target = input(90);
 
   readonly ariaLabel = computed(
-    () => `Avancement global ${this.value()} pour cent, objectif ${this.target()} pour cent`
+    () => $localize`:@@projects.project-progress-gauge.ts.avancement.global.value.pour.cent.object.82b5f2a4:Avancement global ${this.value()}:value: pour cent, objectif ${this.target()}:target: pour cent`
   );
 
   private readonly cx = 100;

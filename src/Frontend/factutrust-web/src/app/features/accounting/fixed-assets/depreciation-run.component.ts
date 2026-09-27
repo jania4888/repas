@@ -149,7 +149,7 @@ export class DepreciationRunComponent implements OnInit {
     if (!r) return null;
     const alreadyPosted = r.alreadyPostedCount ?? 0;
     if (r.postedCount === 0 && alreadyPosted > 0) {
-      return `Aucune nouvelle dotation — ${alreadyPosted} dotation(s) déjà comptabilisée(s) pour cet exercice.`;
+      return $localize`:@@accounting.depreciation-run.ts.aucune.nouvelle.dotation.alreadyposted.d.9441df74:Aucune nouvelle dotation — ${alreadyPosted}:alreadyPosted: dotation(s) déjà comptabilisée(s) pour cet exercice.`;
     }
     return null;
   });

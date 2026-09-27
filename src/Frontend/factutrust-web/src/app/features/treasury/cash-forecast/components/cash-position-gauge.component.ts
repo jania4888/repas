@@ -97,7 +97,7 @@ export class CashPositionGaugeComponent {
   });
 
   readonly ariaLabel = computed(
-    () => `Position de trésorerie : ${formatAmount(this.balance(), this.currency())}, zone ${this.zoneLabel()}`
+    () => $localize`:@@treasury.cash-position-gauge.ts.position.de.tresorerie.formatamount.zone.76ac27af:Position de trésorerie : ${formatAmount(this.balance(), this.currency())}:formatAmount:, zone ${this.zoneLabel()}:zoneLabel:`
   );
 
   /**

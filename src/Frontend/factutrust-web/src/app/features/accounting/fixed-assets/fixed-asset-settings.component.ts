@@ -265,7 +265,7 @@ export class FixedAssetSettingsComponent implements OnInit {
             fiscalYearStartMonth: res.data.fiscalYearStartMonth,
             fiscalYearLabelFormat: res.data.fiscalYearLabelFormat
           };
-          this.success.set('Paramètres d\'exercice enregistrés.');
+          this.success.set($localize`:@@accounting.fixed-asset-settings.ts.parametres.d.exercice.enregistres.c6642120:Paramètres d'exercice enregistrés.`);
         } else {
           this.error.set(res.message ?? $localize`:@@ui.tern.enregistrement.impossible.206044:Enregistrement impossible.`);
         }

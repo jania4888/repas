@@ -53,10 +53,10 @@ export class ProductTourService {
     const instance = driver({
       steps: driveSteps,
       showProgress: true,
-      progressText: 'Étape {{current}} / {{total}}',
-      nextBtnText: 'Suivant',
-      prevBtnText: 'Précédent',
-      doneBtnText: 'Terminer',
+      progressText: $localize`:@@core.product-tour.ts.etape.current.total.85fa23b7:Étape {{current}} / {{total}}`,
+      nextBtnText: $localize`:@@core.product-tour.ts.suivant.596d29a7:Suivant`,
+      prevBtnText: $localize`:@@core.product-tour.ts.precedent.a527f171:Précédent`,
+      doneBtnText: $localize`:@@core.product-tour.ts.terminer.6bf1bd74:Terminer`,
       showButtons: ['next', 'previous', 'close'],
       allowClose: true,
       overlayOpacity: 0.55,
@@ -72,12 +72,12 @@ export class ProductTourService {
         if (root) {
           root.setAttribute('role', 'dialog');
           root.setAttribute('aria-modal', 'true');
-          root.setAttribute('aria-label', 'Visite guidée');
+          root.setAttribute('aria-label', $localize`:@@core.product-tour.ts.visite.guidee.d7638488:Visite guidée`);
         }
         const closeBtn = popover.closeButton;
         if (closeBtn) {
-          closeBtn.textContent = 'Ignorer';
-          closeBtn.setAttribute('aria-label', 'Ignorer la visite');
+          closeBtn.textContent = $localize`:@@core.product-tour.ts.ignorer.b0d64e49:Ignorer`;
+          closeBtn.setAttribute('aria-label', $localize`:@@core.product-tour.ts.ignorer.la.visite.5b848b39:Ignorer la visite`);
           closeBtn.classList.add('ft-product-tour__skip');
         }
         const prev = popover.previousButton;

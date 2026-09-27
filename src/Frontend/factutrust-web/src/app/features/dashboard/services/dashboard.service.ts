@@ -59,13 +59,13 @@ export interface DashboardAggregatedData {
 }
 
 const MONTH_NAMES_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@dashboard.dashboard.ts.janvier.7a32ae0f:Janvier`, $localize`:@@dashboard.dashboard.ts.fevrier.63fc1803:Février`, $localize`:@@dashboard.dashboard.ts.mars.1778011d:Mars`, $localize`:@@dashboard.dashboard.ts.avril.4efeee46:Avril`, $localize`:@@dashboard.dashboard.ts.mai.afe526a6:Mai`, $localize`:@@dashboard.dashboard.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@dashboard.dashboard.ts.juillet.e8e0920c:Juillet`, $localize`:@@dashboard.dashboard.ts.aout.460b6696:Août`, $localize`:@@dashboard.dashboard.ts.septembre.08d23f31:Septembre`, $localize`:@@dashboard.dashboard.ts.octobre.0ed28485:Octobre`, $localize`:@@dashboard.dashboard.ts.novembre.632580af:Novembre`, $localize`:@@dashboard.dashboard.ts.decembre.03bcd9b0:Décembre`
 ];
 
 const MONTH_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
+  $localize`:@@dashboard.dashboard.ts.jan.efed3690:Jan`, $localize`:@@dashboard.dashboard.ts.fev.7b8852ec:Fév`, $localize`:@@dashboard.dashboard.ts.mar.c4ba0822:Mar`, $localize`:@@dashboard.dashboard.ts.avr.d648a3b7:Avr`, $localize`:@@dashboard.dashboard.ts.mai.afe526a6:Mai`, $localize`:@@dashboard.dashboard.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@dashboard.dashboard.ts.juil.190b5d60:Juil`, $localize`:@@dashboard.dashboard.ts.aout.460b6696:Août`, $localize`:@@dashboard.dashboard.ts.sep.fdd289e3:Sep`, $localize`:@@dashboard.dashboard.ts.oct.51327aef:Oct`, $localize`:@@dashboard.dashboard.ts.nov.bb9bfefd:Nov`, $localize`:@@dashboard.dashboard.ts.dec.2bc2249a:Déc`
 ];
 
 @Injectable({ providedIn: 'root' })

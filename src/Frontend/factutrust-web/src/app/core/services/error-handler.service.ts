@@ -295,7 +295,7 @@ export class ErrorHandlerService {
     // Add network-specific information
     if (error?.status === 0 || !error?.status) {
       errorDetails.networkError = true;
-      errorDetails.suggestion = 'Vérifiez que le backend est démarré et accessible sur https://localhost:7001';
+      errorDetails.suggestion = $localize`:@@core.error-handler.ts.verifiez.que.le.backend.est.demarre.et.a.66949b7f:Vérifiez que le backend est démarré et accessible sur https://localhost:7001`;
     }
 
     const level = options?.consoleLevel ?? 'error';

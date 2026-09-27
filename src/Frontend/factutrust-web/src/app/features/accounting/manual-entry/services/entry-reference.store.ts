@@ -117,10 +117,10 @@ export class EntryReferenceStore {
         map(({ clients, suppliers }) => {
           const out: ThirdPartyRef[] = [];
           for (const c of clients?.data?.items ?? []) {
-            out.push({ id: c.id, kind: 1, name: c.name, display: `Client — ${c.name}` });
+            out.push({ id: c.id, kind: 1, name: c.name, display: $localize`:@@accounting.entry-reference.ts.client.name.9124c16d:Client — ${c.name}:name:` });
           }
           for (const s of suppliers?.data?.items ?? []) {
-            out.push({ id: s.id, kind: 2, name: s.name, display: `Fournisseur — ${s.name}` });
+            out.push({ id: s.id, kind: 2, name: s.name, display: $localize`:@@accounting.entry-reference.ts.fournisseur.name.a20a36f3:Fournisseur — ${s.name}:name:` });
           }
           return out;
         })

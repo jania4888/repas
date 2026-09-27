@@ -87,7 +87,7 @@ export class StudioSystemHubComponent implements OnInit {
   protected readonly labels = STUDIO_AI_LABELS;
 
   readonly detail = signal<CustomSystemDetail | null>(null);
-  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.systemHub('Système'));
+  readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.systemHub($localize`:@@studio.studio-system-hub.ts.systeme.62d09520:Système`));
   readonly exportVisible = signal(false);
 
   /**

@@ -674,7 +674,7 @@ export class FixedAssetDetailComponent implements OnInit {
     }
     this.loadAsset(id);
     if (this.route.snapshot.queryParamMap.get('created') === '1') {
-      this.success.set('Brouillon créé — complétez la fiche puis procédez à la mise en service.');
+      this.success.set($localize`:@@accounting.fixed-asset-detail.ts.brouillon.cree.completez.la.fiche.puis.p.3afca311:Brouillon créé — complétez la fiche puis procédez à la mise en service.`);
       afterNextRender(() => this.scrollToPutInService());
     }
   }
@@ -834,7 +834,7 @@ export class FixedAssetDetailComponent implements OnInit {
   canDeactivate(): boolean {
     if (!this.isDirty()) return true;
     return window.confirm(
-      'Vous avez des modifications non enregistrées. Quitter cette page ? Les changements seront perdus.'
+      $localize`:@@accounting.fixed-asset-detail.ts.vous.avez.des.modifications.non.enregist.84457463:Vous avez des modifications non enregistrées. Quitter cette page ? Les changements seront perdus.`
     );
   }
 
@@ -842,7 +842,7 @@ export class FixedAssetDetailComponent implements OnInit {
   unloadNotification(event: BeforeUnloadEvent): void {
     if (this.isDirty()) {
       // Affecter returnValue déclenche la boîte de confirmation native du navigateur.
-      event.returnValue = 'Vous avez des modifications non enregistrées.';
+      event.returnValue = $localize`:@@accounting.fixed-asset-detail.ts.vous.avez.des.modifications.non.enregist.80479b8a:Vous avez des modifications non enregistrées.`;
     }
   }
 
@@ -903,18 +903,18 @@ export class FixedAssetDetailComponent implements OnInit {
 
   private validate(): boolean {
     const errors: Record<string, string> = {};
-    if (!this.form.label.trim()) errors['label'] = 'La désignation est obligatoire.';
-    if (!this.form.depreciationRateCategoryId) errors['category'] = 'La catégorie est obligatoire.';
-    if (!this.form.acquisitionDate) errors['acquisitionDate'] = "La date d'acquisition est obligatoire.";
+    if (!this.form.label.trim()) errors['label'] = $localize`:@@accounting.fixed-asset-detail.ts.la.designation.est.obligatoire.bdb532f0:La désignation est obligatoire.`;
+    if (!this.form.depreciationRateCategoryId) errors['category'] = $localize`:@@accounting.fixed-asset-detail.ts.la.categorie.est.obligatoire.33b95b04:La catégorie est obligatoire.`;
+    if (!this.form.acquisitionDate) errors['acquisitionDate'] = $localize`:@@accounting.fixed-asset-detail.ts.la.date.d.acquisition.est.obligatoire.53122395:La date d'acquisition est obligatoire.`;
     const total = (this.form.acquisitionCost || 0) + (this.form.capitalizedFees || 0);
-    if (total <= 0) errors['cost'] = "Le coût d'acquisition doit être positif.";
+    if (total <= 0) errors['cost'] = $localize`:@@accounting.fixed-asset-detail.ts.le.cout.d.acquisition.doit.etre.positif.294d9b47:Le coût d'acquisition doit être positif.`;
     if ((this.form.residualValue || 0) >= total && total > 0)
-      errors['residual'] = 'La valeur résiduelle doit être inférieure au coût total.';
+      errors['residual'] = $localize`:@@accounting.fixed-asset-detail.ts.la.valeur.residuelle.doit.etre.inferieur.ab484d23:La valeur résiduelle doit être inférieure au coût total.`;
     if (!this.isNonDepreciable()) {
       const rate = this.form.depreciationRatePercent;
-      if (rate !== null && (rate <= 0 || rate > 100)) errors['rate'] = 'Le taux doit être compris entre 0 et 100 %.';
+      if (rate !== null && (rate <= 0 || rate > 100)) errors['rate'] = $localize`:@@accounting.fixed-asset-detail.ts.le.taux.doit.etre.compris.entre.0.et.100.af09f376:Le taux doit être compris entre 0 et 100 %.`;
       if (this.form.depreciationMethod === DepreciationMethod.Accelerated && !ACCELERATION_COEFFICIENTS.includes(this.form.accelerationCoefficient))
-        errors['coefficient'] = 'Le coefficient accéléré doit être 1,5 ou 2 (Décret 2008-492 art. 2).';
+        errors['coefficient'] = $localize`:@@accounting.fixed-asset-detail.ts.le.coefficient.accelere.doit.etre.1.5.ou.dc27b9de:Le coefficient accéléré doit être 1,5 ou 2 (Décret 2008-492 art. 2).`;
     }
     // C1 — validation des comptes alignée serveur (FixedAssetAccountRules) : format, préfixes NCT
     // et cohérence corporel/incorporel. Affichage par champ via fieldErrors.
@@ -1009,7 +1009,7 @@ export class FixedAssetDetailComponent implements OnInit {
       next: () => {
         this.saving.set(false);
         this.error.set(null);
-        this.success.set('Modifications enregistrées.');
+        this.success.set($localize`:@@accounting.fixed-asset-detail.ts.modifications.enregistrees.563f985e:Modifications enregistrées.`);
         this.preview.set(null);
         this.loadAsset(id);
       },
@@ -1088,7 +1088,7 @@ export class FixedAssetDetailComponent implements OnInit {
       next: res => {
         this.schedule.set(res.data ?? null);
         this.saving.set(false);
-        this.success.set("Tableau d'amortissement généré.");
+        this.success.set($localize`:@@accounting.fixed-asset-detail.ts.tableau.d.amortissement.genere.73981911:Tableau d'amortissement généré.`);
       },
       error: err => {
         this.saving.set(false);
@@ -1107,7 +1107,7 @@ export class FixedAssetDetailComponent implements OnInit {
         this.saving.set(false);
         const label = this.asset()?.inventoryNumber ?? id;
         this.downloadBlob(blob, `tableau-amortissement-${label}.xlsx`);
-        this.success.set('Export Excel téléchargé.');
+        this.success.set($localize`:@@accounting.fixed-asset-detail.ts.export.excel.telecharge.08b3bed0:Export Excel téléchargé.`);
       },
       error: err => {
         this.saving.set(false);
@@ -1152,11 +1152,7 @@ export class FixedAssetDetailComponent implements OnInit {
           ? $localize`:@@ui.tern.a.terme.creance.ph.4d7fd9:À terme — créance ${this.receivableAccount || '452'}:p0:`
           : $localize`:@@ui.tern.comptant.tresorerie.ph.23ed5e:Comptant — trésorerie ${this.treasuryAccount || '5321'}:p0:`;
     return (
-      `Confirmer la cession de cette immobilisation ?\n` +
-      `Date de cession : ${this.disposalDate}\n` +
-      `Prix de cession : ${proceeds} TND\n` +
-      `Règlement : ${account}\n\n` +
-      `Cette action est irréversible.`
+      $localize`:@@accounting.fixed-asset-detail.ts.confirmer.la.cession.de.cette.immobilisa.bf7bb043:Confirmer la cession de cette immobilisation ?\nDate de cession : ${this.disposalDate}:disposalDate:\nPrix de cession : ${proceeds}:proceeds: TND\nRèglement : ${account}:account:\n\nCette action est irréversible.`
     );
   }
 
@@ -1187,7 +1183,7 @@ export class FixedAssetDetailComponent implements OnInit {
       .subscribe({
         next: () => {
           this.saving.set(false);
-          this.success.set('Cession enregistrée et écritures comptables générées.');
+          this.success.set($localize`:@@accounting.fixed-asset-detail.ts.cession.enregistree.et.ecritures.comptab.53b1d27c:Cession enregistrée et écritures comptables générées.`);
           this.loadAsset(id);
         },
         error: err => {

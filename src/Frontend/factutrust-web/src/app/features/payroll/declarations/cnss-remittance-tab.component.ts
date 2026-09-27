@@ -26,8 +26,8 @@ import { CnssRemittancePaymentDialogComponent } from './cnss-remittance-payment-
 
 const MONTH_LABELS = [
   '',
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@payroll.cnss-remittance-tab.ts.janvier.7a32ae0f:Janvier`, $localize`:@@payroll.cnss-remittance-tab.ts.fevrier.63fc1803:Février`, $localize`:@@payroll.cnss-remittance-tab.ts.mars.1778011d:Mars`, $localize`:@@payroll.cnss-remittance-tab.ts.avril.4efeee46:Avril`, $localize`:@@payroll.cnss-remittance-tab.ts.mai.afe526a6:Mai`, $localize`:@@payroll.cnss-remittance-tab.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@payroll.cnss-remittance-tab.ts.juillet.e8e0920c:Juillet`, $localize`:@@payroll.cnss-remittance-tab.ts.aout.460b6696:Août`, $localize`:@@payroll.cnss-remittance-tab.ts.septembre.08d23f31:Septembre`, $localize`:@@payroll.cnss-remittance-tab.ts.octobre.0ed28485:Octobre`, $localize`:@@payroll.cnss-remittance-tab.ts.novembre.632580af:Novembre`, $localize`:@@payroll.cnss-remittance-tab.ts.decembre.03bcd9b0:Décembre`
 ];
 
 @Component({

@@ -637,8 +637,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
 
                 if (index === -1) {
                     this.barcodeFeedback.failure(
-                        `« ${product.name} » ne fait pas partie du périmètre de cet inventaire.`,
-                        'Hors périmètre'
+                        $localize`:@@inventory.inventory-wizard.ts.name.ne.fait.pas.partie.du.perimetre.de.cd256e9f:« ${product.name}:name: » ne fait pas partie du périmètre de cet inventaire.`,
+                        $localize`:@@inventory.inventory-wizard.ts.hors.perimetre.c36885d4:Hors périmètre`
                     );
                     return;
                 }

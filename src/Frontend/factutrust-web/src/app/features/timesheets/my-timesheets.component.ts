@@ -130,7 +130,7 @@ export class MyTimesheetsComponent implements OnInit {
     this.reload();
     this.api.getActiveTimer().subscribe({
       next: r => { if (r.success && r.data) this.timer.set(r.data); },
-      error: e => this.fail(e, 'Chronomètre')
+      error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.chronometre.bd269631:Chronomètre`)
     });
   }
 
@@ -143,7 +143,7 @@ export class MyTimesheetsComponent implements OnInit {
         this.kpi.set(r.data.billingRateKpi ?? null);
         this.leaderboard.set(r.data.leaderboard ?? null);
       },
-      error: e => this.fail(e, 'Feuille de temps')
+      error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.feuille.de.temps.560597f1:Feuille de temps`)
     });
   }
 
@@ -158,7 +158,7 @@ export class MyTimesheetsComponent implements OnInit {
             this.reload();
           }
         },
-        error: e => this.fail(e, 'Arrêt du chronomètre')
+        error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.arret.du.chronometre.452ede41:Arrêt du chronomètre`)
       });
       return;
     }
@@ -175,7 +175,7 @@ export class MyTimesheetsComponent implements OnInit {
             this.toast.add({ severity: 'success', summary: $localize`:@@my-timesheets.component.summary.Chronom_tre_d_ma:Chronomètre démarré` });
           }
         },
-        error: e => this.fail(e, 'Démarrage du chronomètre')
+        error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.demarrage.du.chronometre.00c01d6a:Démarrage du chronomètre`)
       });
     });
   }
@@ -189,7 +189,7 @@ export class MyTimesheetsComponent implements OnInit {
           cb();
         }
       },
-      error: e => this.fail(e, 'Projets')
+      error: e => this.fail(e, $localize`:@@timesheets.my-timesheets.ts.projets.b1e8cd4d:Projets`)
     });
   }
 

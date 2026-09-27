@@ -426,17 +426,17 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
 
   pageTitle = computed(() => {
     switch (this.listMode()) {
-      case 'unpaid': return 'Factures impayées';
-      case 'creditNotes': return 'Avoirs de vente';
-      default: return 'Factures';
+      case 'unpaid': return $localize`:@@invoices.invoice-list.ts.factures.impayees.dc3cffa5:Factures impayées`;
+      case 'creditNotes': return $localize`:@@invoices.invoice-list.ts.avoirs.de.vente.63b21d70:Avoirs de vente`;
+      default: return $localize`:@@invoices.invoice-list.ts.factures.da35e4f2:Factures`;
     }
   });
 
   pageSubtitle = computed(() => {
     switch (this.listMode()) {
-      case 'unpaid': return 'Factures clients non réglées ou partiellement réglées.';
-      case 'creditNotes': return 'Gérez vos avoirs de vente';
-      default: return 'Gérez vos factures';
+      case 'unpaid': return $localize`:@@invoices.invoice-list.ts.factures.clients.non.reglees.ou.partiell.e3555d85:Factures clients non réglées ou partiellement réglées.`;
+      case 'creditNotes': return $localize`:@@invoices.invoice-list.ts.gerez.vos.avoirs.de.vente.4ef43a4a:Gérez vos avoirs de vente`;
+      default: return $localize`:@@invoices.invoice-list.ts.gerez.vos.factures.8f0170ed:Gérez vos factures`;
     }
   });
 

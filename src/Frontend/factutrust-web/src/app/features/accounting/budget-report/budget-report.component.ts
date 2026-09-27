@@ -10,7 +10,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
 import { AccountingService, BudgetReportDto } from '../services/accounting.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 
-const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+const MONTH_NAMES = [$localize`:@@accounting.budget-report.ts.janvier.7a32ae0f:Janvier`, $localize`:@@accounting.budget-report.ts.fevrier.63fc1803:Février`, $localize`:@@accounting.budget-report.ts.mars.1778011d:Mars`, $localize`:@@accounting.budget-report.ts.avril.4efeee46:Avril`, $localize`:@@accounting.budget-report.ts.mai.afe526a6:Mai`, $localize`:@@accounting.budget-report.ts.juin.8b1e84b6:Juin`, $localize`:@@accounting.budget-report.ts.juillet.e8e0920c:Juillet`, $localize`:@@accounting.budget-report.ts.aout.460b6696:Août`, $localize`:@@accounting.budget-report.ts.septembre.08d23f31:Septembre`, $localize`:@@accounting.budget-report.ts.octobre.0ed28485:Octobre`, $localize`:@@accounting.budget-report.ts.novembre.632580af:Novembre`, $localize`:@@accounting.budget-report.ts.decembre.03bcd9b0:Décembre`];
 
 @Component({
   selector: 'app-budget-report',

@@ -508,17 +508,17 @@ export class QuickCreateClientDialogComponent {
     return v.length === 0 ? $localize`:@@ui.tern.ce.champ.est.obligatoire.17061b:Ce champ est obligatoire` : $localize`:@@ui.tern.min.2.caracteres.af9507:Min. 2 caractères`;
   });
 
-  readonly emailErrorMessage = computed(() => 'Adresse email invalide');
+  readonly emailErrorMessage = computed(() => $localize`:@@shared.quick-create-client-dialog.ts.adresse.email.invalide.393d7440:Adresse email invalide`);
 
   readonly nifErrorMessage = computed(() => {
     const normalized = cleanNif(this.nif());
-    if (normalized.length === 0) return 'Le matricule fiscal est obligatoire pour une entreprise';
-    return 'Matricule fiscal invalide. Format attendu: 1772793W/A/M/000';
+    if (normalized.length === 0) return $localize`:@@shared.quick-create-client-dialog.ts.le.matricule.fiscal.est.obligatoire.pour.cc46d410:Le matricule fiscal est obligatoire pour une entreprise`;
+    return $localize`:@@shared.quick-create-client-dialog.ts.matricule.fiscal.invalide.format.attendu.7da88009:Matricule fiscal invalide. Format attendu: 1772793W/A/M/000`;
   });
 
   readonly missingFieldsMessage = computed(() => {
     const missing: string[] = [];
-    if (!this.nameValid()) missing.push('nom ou raison sociale');
+    if (!this.nameValid()) missing.push($localize`:@@shared.quick-create-client-dialog.ts.nom.ou.raison.sociale.7341f504:nom ou raison sociale`);
     if (!this.emailValid()) missing.push('email');
     if (!this.streetValid()) missing.push('rue');
     if (!this.cityValid()) missing.push('ville');
@@ -528,7 +528,7 @@ export class QuickCreateClientDialogComponent {
   });
 
   submitDisabledReason(): string {
-    if (this.submitting()) return 'Création en cours...';
+    if (this.submitting()) return $localize`:@@shared.quick-create-client-dialog.ts.creation.en.cours.cccfc6a4:Création en cours...`;
     if (!this.canSubmit()) {
       const fields = this.missingFieldsMessage().replace(/^ : /, '');
       return fields ? $localize`:@@ui.tern.champs.manquants.ou.invalides.ph.744911:Champs manquants ou invalides : ${fields}:p0:` : $localize`:@@ui.tern.completez.les.champs.obligatoires.703cef:Complétez les champs obligatoires`;

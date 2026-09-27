@@ -175,7 +175,7 @@ export class AccountingHealthComponent implements OnInit {
   severityLabel(c: PreClosingCheckDto): string {
     if (c.count === 0) return 'OK';
     if (c.severity === 2) return 'Bloquant';
-    if (c.severity === 1) return 'Avertissement';
+    if (c.severity === 1) return $localize`:@@accounting.health.ts.avertissement.1b3e2777:Avertissement`;
     return 'Info';
   }
 

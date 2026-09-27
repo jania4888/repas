@@ -1447,7 +1447,7 @@ export class ChatMessageComponent implements OnChanges {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'md-code-copy';
-      btn.setAttribute('aria-label', 'Copier le code');
+      btn.setAttribute('aria-label', $localize`:@@ai-assistant.chat-message.ts.copier.le.code.ffdfce13:Copier le code`);
       btn.textContent = 'Copier';
       btn.addEventListener('click', () => {
         void writeTextToClipboard(text, this.platformId);

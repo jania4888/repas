@@ -464,7 +464,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
         } else {
           // Gérer les erreurs de réponse API
           console.error('[ClientList] API returned success=false:', response.errors);
-          this.handleError(response.errors?.[0] || 'Impossible de charger les clients');
+          this.handleError(response.errors?.[0] || $localize`:@@clients.client-list.ts.impossible.de.charger.les.clients.9a6137e9:Impossible de charger les clients`);
         }
         this.loading.set(false);
         this.initialLoad.set(false);
@@ -476,7 +476,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
         
         // Gérer spécifiquement les erreurs 429 (rate limiting)
         if (error?.status === 429) {
-          this.handleError('Trop de requêtes. Veuillez patienter quelques instants avant de réessayer.');
+          this.handleError($localize`:@@clients.client-list.ts.trop.de.requetes.veuillez.patienter.quel.1b3f5597:Trop de requêtes. Veuillez patienter quelques instants avant de réessayer.`);
           // Ne pas bloquer l'affichage, juste afficher un message
           return;
         }

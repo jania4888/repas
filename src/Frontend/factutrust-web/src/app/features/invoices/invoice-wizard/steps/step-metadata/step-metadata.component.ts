@@ -789,10 +789,10 @@ export class StepMetadataComponent implements OnInit {
           if (res?.success && res.data) {
             this.linkedInvoiceDisplay.set(`${res.data.number} – ${res.data.client?.name || ''}`);
           } else {
-            this.linkedInvoiceDisplay.set('Facture sélectionnée');
+            this.linkedInvoiceDisplay.set($localize`:@@invoices.step-metadata.ts.facture.selectionnee.19892a03:Facture sélectionnée`);
           }
         },
-        error: () => this.linkedInvoiceDisplay.set('Facture sélectionnée')
+        error: () => this.linkedInvoiceDisplay.set($localize`:@@invoices.step-metadata.ts.facture.selectionnee.19892a03:Facture sélectionnée`)
       });
     }
   }

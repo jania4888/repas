@@ -412,7 +412,7 @@ export class ContractDetailComponent implements OnInit {
       icon: 'pi pi-play',
       acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Activer:Activer`,
       rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
-      accept: () => this.runAction('activate', 'Contrat activé', 'La facturation reprendra à la prochaine échéance.')
+      accept: () => this.runAction('activate', $localize`:@@recurring-contracts.contract-detail.ts.contrat.active.e63e8e4e:Contrat activé`, $localize`:@@recurring-contracts.contract-detail.ts.la.facturation.reprendra.a.la.prochaine.ddd9456c:La facturation reprendra à la prochaine échéance.`)
     });
   }
 
@@ -423,7 +423,7 @@ export class ContractDetailComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Suspendre:Suspendre`,
       rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
-      accept: () => this.runAction('suspend', 'Contrat suspendu', 'La génération de factures est interrompue.')
+      accept: () => this.runAction('suspend', 'Contrat suspendu', $localize`:@@recurring-contracts.contract-detail.ts.la.generation.de.factures.est.interrompu.9745ef9e:La génération de factures est interrompue.`)
     });
   }
 
@@ -434,7 +434,7 @@ export class ContractDetailComponent implements OnInit {
       icon: 'pi pi-play',
       acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Reprendre:Reprendre`,
       rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
-      accept: () => this.runAction('resume', 'Contrat repris', 'La facturation reprendra à la prochaine échéance.')
+      accept: () => this.runAction('resume', 'Contrat repris', $localize`:@@recurring-contracts.contract-detail.ts.la.facturation.reprendra.a.la.prochaine.ddd9456c:La facturation reprendra à la prochaine échéance.`)
     });
   }
 
@@ -447,7 +447,7 @@ export class ContractDetailComponent implements OnInit {
       rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
       size: 'md',
-      accept: () => this.runAction('cancel', 'Contrat résilié', 'Le contrat a été résilié.')
+      accept: () => this.runAction('cancel', $localize`:@@recurring-contracts.contract-detail.ts.contrat.resilie.5111febb:Contrat résilié`, $localize`:@@recurring-contracts.contract-detail.ts.le.contrat.a.ete.resilie.44a883e1:Le contrat a été résilié.`)
     });
   }
 

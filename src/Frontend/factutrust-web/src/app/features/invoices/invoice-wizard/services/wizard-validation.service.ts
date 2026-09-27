@@ -83,19 +83,19 @@ export class WizardValidationService {
 
     // Type validation
     if (!metadata.type) {
-      errors['type'] = [this.createError('REQUIRED', ERROR_MESSAGES.required('Le type de document'))];
+      errors['type'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.le.type.de.document.5fe3257f:Le type de document`))];
     }
 
     // Issue date validation
     if (!metadata.issueDate) {
-      errors['issueDate'] = [this.createError('REQUIRED', ERROR_MESSAGES.required("La date d'émission"))];
+      errors['issueDate'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.la.date.d.emission.7b93580a:La date d'émission`))];
     } else {
       const issueDate = new Date(metadata.issueDate);
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       
       if (issueDate > tomorrow) {
-        errors['issueDate'] = [this.createError('FUTURE_DATE', "La date d'émission ne peut pas être dans le futur")];
+        errors['issueDate'] = [this.createError('FUTURE_DATE', $localize`:@@invoices.wizard-validation.ts.la.date.d.emission.ne.peut.pas.etre.dans.4ddf0f4c:La date d'émission ne peut pas être dans le futur`)];
       }
     }
 
@@ -105,14 +105,14 @@ export class WizardValidationService {
       const issueDate = new Date(metadata.issueDate);
       
       if (dueDate < issueDate) {
-        errors['dueDate'] = [this.createError('DATE_RANGE', "La date d'échéance doit être postérieure à la date d'émission")];
+        errors['dueDate'] = [this.createError('DATE_RANGE', $localize`:@@invoices.wizard-validation.ts.la.date.d.echeance.doit.etre.posterieure.9663cae1:La date d'échéance doit être postérieure à la date d'émission`)];
       }
     }
 
     // Internal reference validation
     if (metadata.internalReference && metadata.internalReference.length > MAX_LENGTHS.internalReference) {
       errors['internalReference'] = [
-        this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength('La référence interne', MAX_LENGTHS.internalReference))
+        this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength($localize`:@@invoices.wizard-validation.ts.la.reference.interne.f731f7eb:La référence interne`, MAX_LENGTHS.internalReference))
       ];
     }
 
@@ -135,10 +135,10 @@ export class WizardValidationService {
     const { seller } = state;
 
     if (!seller) {
-      errors['seller'] = [this.createError('REQUIRED', ERROR_MESSAGES.required("L'émetteur"))];
+      errors['seller'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.l.emetteur.4f892b51:L'émetteur`))];
     } else {
       if (!seller.companyName) {
-        errors['companyName'] = [this.createError('REQUIRED', ERROR_MESSAGES.required('La raison sociale'))];
+        errors['companyName'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.la.raison.sociale.09e20b6c:La raison sociale`))];
       }
 
       if (!seller.nif || !isValidNif(seller.nif)) {
@@ -162,29 +162,29 @@ export class WizardValidationService {
     const { client } = state;
 
     if (!client) {
-      errors['client'] = [this.createError('REQUIRED', ERROR_MESSAGES.required('Le client'))];
+      errors['client'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.le.client.668175c9:Le client`))];
       this.updateStepErrors('client', errors);
       return { isValid: false, errors };
     }
 
     // Name validation
     if (!client.name) {
-      errors['name'] = [this.createError('REQUIRED', ERROR_MESSAGES.required('Le nom du client'))];
+      errors['name'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.le.nom.du.client.19db0b70:Le nom du client`))];
     } else if (client.name.length < MIN_LENGTHS.clientName) {
-      errors['name'] = [this.createError('MIN_LENGTH', ERROR_MESSAGES.minLength('Le nom', MIN_LENGTHS.clientName))];
+      errors['name'] = [this.createError('MIN_LENGTH', ERROR_MESSAGES.minLength($localize`:@@invoices.wizard-validation.ts.le.nom.82de3ed9:Le nom`, MIN_LENGTHS.clientName))];
     } else if (client.name.length > MAX_LENGTHS.clientName) {
-      errors['name'] = [this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength('Le nom', MAX_LENGTHS.clientName))];
+      errors['name'] = [this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength($localize`:@@invoices.wizard-validation.ts.le.nom.82de3ed9:Le nom`, MAX_LENGTHS.clientName))];
     }
 
     // Tax type validation
     if (!client.taxType) {
-      errors['taxType'] = [this.createError('REQUIRED', ERROR_MESSAGES.required('Le type de client'))];
+      errors['taxType'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.le.type.de.client.e6adef5f:Le type de client`))];
     }
 
     // NIF validation (required for TAX_SUBJECT)
     if (requiresNif(client.taxType)) {
       if (!client.nif) {
-        errors['nif'] = [this.createError('REQUIRED', 'Le matricule fiscal est obligatoire pour un client assujetti')];
+        errors['nif'] = [this.createError('REQUIRED', $localize`:@@invoices.wizard-validation.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29:Le matricule fiscal est obligatoire pour un client assujetti`)];
       } else if (!isValidNif(client.nif)) {
         errors['nif'] = [this.createError('INVALID_NIF', ERROR_MESSAGES.nif())];
       }
@@ -210,13 +210,13 @@ export class WizardValidationService {
     }
 
     if (!client.address?.city) {
-      errors['city'] = [this.createError('REQUIRED', ERROR_MESSAGES.required('La ville'))];
+      errors['city'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.la.ville.819c3a88:La ville`))];
     } else if (client.address.city.length > MAX_LENGTHS.city) {
-      errors['city'] = [this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength('La ville', MAX_LENGTHS.city))];
+      errors['city'] = [this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength($localize`:@@invoices.wizard-validation.ts.la.ville.819c3a88:La ville`, MAX_LENGTHS.city))];
     }
 
     if (!client.address?.governorate) {
-      errors['governorate'] = [this.createError('REQUIRED', ERROR_MESSAGES.required('Le gouvernorat'))];
+      errors['governorate'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.le.gouvernorat.9c3fa2c4:Le gouvernorat`))];
     } else if (!isValidGovernorate(client.address.governorate)) {
       errors['governorate'] = [this.createError('INVALID_GOVERNORATE', ERROR_MESSAGES.governorate())];
     }
@@ -238,7 +238,7 @@ export class WizardValidationService {
     const { lines } = state;
 
     if (!lines || lines.length === 0) {
-      errors['lines'] = [this.createError('REQUIRED', 'La facture doit contenir au moins une ligne')];
+      errors['lines'] = [this.createError('REQUIRED', $localize`:@@invoices.wizard-validation.ts.la.facture.doit.contenir.au.moins.une.li.dd6e3b9a:La facture doit contenir au moins une ligne`)];
       this.updateStepErrors('lines', errors);
       return { isValid: false, errors };
     }
@@ -251,11 +251,11 @@ export class WizardValidationService {
       // Designation validation
       const designation = normalizeDesignation(line.designation);
       if (!designation) {
-        lineErrors.push(this.createError('REQUIRED', `Ligne ${i + 1}: La désignation est obligatoire`));
+        lineErrors.push(this.createError('REQUIRED', $localize`:@@invoices.wizard-validation.ts.ligne.p.la.designation.est.obligatoire.6f317658:Ligne ${i + 1}:p:: La désignation est obligatoire`));
       } else if (designation.length < MIN_LENGTHS.designation) {
-        lineErrors.push(this.createError('MIN_LENGTH', `Ligne ${i + 1}: ${ERROR_MESSAGES.minLength('La désignation', MIN_LENGTHS.designation)}`));
+        lineErrors.push(this.createError('MIN_LENGTH', `Ligne ${i + 1}: ${ERROR_MESSAGES.minLength($localize`:@@invoices.wizard-validation.ts.la.designation.1246ec05:La désignation`, MIN_LENGTHS.designation)}`));
       } else if (designation.length > MAX_LENGTHS.designation) {
-        lineErrors.push(this.createError('MAX_LENGTH', `Ligne ${i + 1}: ${ERROR_MESSAGES.maxLength('La désignation', MAX_LENGTHS.designation)}`));
+        lineErrors.push(this.createError('MAX_LENGTH', `Ligne ${i + 1}: ${ERROR_MESSAGES.maxLength($localize`:@@invoices.wizard-validation.ts.la.designation.1246ec05:La désignation`, MAX_LENGTHS.designation)}`));
       }
 
       // Product matching is mandatory: POST /api/invoices rejects lines without productId.
@@ -263,20 +263,20 @@ export class WizardValidationService {
       if (!line.productId) {
         lineErrors.push(this.createError(
           'PRODUCT_REQUIRED',
-          `Ligne ${i + 1}: cette ligne doit être liée à un produit du catalogue. Sélectionnez un produit existant ou créez-en un nouveau.`
+          $localize`:@@invoices.wizard-validation.ts.ligne.p.cette.ligne.doit.etre.liee.a.un.fea33a34:Ligne ${i + 1}:p:: cette ligne doit être liée à un produit du catalogue. Sélectionnez un produit existant ou créez-en un nouveau.`
         ));
       }
 
       // Quantity validation
       if (line.quantity <= 0) {
-        lineErrors.push(this.createError('MIN_VALUE', `Ligne ${i + 1}: La quantité doit être supérieure à zéro`));
+        lineErrors.push(this.createError('MIN_VALUE', $localize`:@@invoices.wizard-validation.ts.ligne.p.la.quantite.doit.etre.superieure.18b26153:Ligne ${i + 1}:p:: La quantité doit être supérieure à zéro`));
       } else if (line.quantity < NUMERIC_LIMITS.minQuantity) {
-        lineErrors.push(this.createError('MIN_VALUE', `Ligne ${i + 1}: La quantité minimum est ${NUMERIC_LIMITS.minQuantity}`));
+        lineErrors.push(this.createError('MIN_VALUE', $localize`:@@invoices.wizard-validation.ts.ligne.p.la.quantite.minimum.est.minquant.d2328d5d:Ligne ${i + 1}:p:: La quantité minimum est ${NUMERIC_LIMITS.minQuantity}:minQuantity:`));
       }
 
       // Unit price validation
       if (line.unitPriceHT < 0) {
-        lineErrors.push(this.createError('MIN_VALUE', `Ligne ${i + 1}: Le prix unitaire ne peut pas être négatif`));
+        lineErrors.push(this.createError('MIN_VALUE', $localize`:@@invoices.wizard-validation.ts.ligne.p.le.prix.unitaire.ne.peut.pas.etr.78c21589:Ligne ${i + 1}:p:: Le prix unitaire ne peut pas être négatif`));
       }
 
       // VAT rate validation
@@ -287,7 +287,7 @@ export class WizardValidationService {
       // Discount validation
       if (line.discountType && line.discountValue !== null && line.discountValue !== undefined) {
         if (line.discountValue < 0) {
-          lineErrors.push(this.createError('MIN_VALUE', `Ligne ${i + 1}: La remise ne peut pas être négative`));
+          lineErrors.push(this.createError('MIN_VALUE', $localize`:@@invoices.wizard-validation.ts.ligne.p.la.remise.ne.peut.pas.etre.negat.b67bbf2f:Ligne ${i + 1}:p:: La remise ne peut pas être négative`));
         } else if (line.discountType === 'PERCENT') {
           const maxAllowed = line.productIsDiscountEnabled && line.productMaxDiscountPercent != null
             ? Math.min(line.productMaxDiscountPercent, NUMERIC_LIMITS.maxDiscountPercent)
@@ -296,8 +296,8 @@ export class WizardValidationService {
             lineErrors.push(this.createError(
               'MAX_VALUE',
               maxAllowed < NUMERIC_LIMITS.maxDiscountPercent
-                ? `Ligne ${i + 1}: La remise ne peut pas dépasser ${maxAllowed}% pour ce produit`
-                : `Ligne ${i + 1}: La remise ne peut pas dépasser 100%`
+                ? $localize`:@@invoices.wizard-validation.ts.ligne.p.la.remise.ne.peut.pas.depasser.m.27aefc9a:Ligne ${i + 1}:p:: La remise ne peut pas dépasser ${maxAllowed}:maxAllowed:% pour ce produit`
+                : $localize`:@@invoices.wizard-validation.ts.ligne.p.la.remise.ne.peut.pas.depasser.1.140565e4:Ligne ${i + 1}:p:: La remise ne peut pas dépasser 100%`
             ));
           }
         } else if (line.discountType === 'AMOUNT') {
@@ -326,14 +326,14 @@ export class WizardValidationService {
 
     // Payment method validation
     if (!payment.method) {
-      errors['method'] = [this.createError('REQUIRED', ERROR_MESSAGES.required('Le mode de paiement'))];
+      errors['method'] = [this.createError('REQUIRED', ERROR_MESSAGES.required($localize`:@@invoices.wizard-validation.ts.le.mode.de.paiement.6e11b4cd:Le mode de paiement`))];
     }
 
     // Days until due validation
     if (payment.daysUntilDue !== null && payment.daysUntilDue !== undefined) {
       if (payment.daysUntilDue < 0 || payment.daysUntilDue > NUMERIC_LIMITS.maxPaymentDays) {
         errors['daysUntilDue'] = [
-          this.createError('INVALID_FORMAT', `Le délai de paiement doit être entre 0 et ${NUMERIC_LIMITS.maxPaymentDays} jours`)
+          this.createError('INVALID_FORMAT', $localize`:@@invoices.wizard-validation.ts.le.delai.de.paiement.doit.etre.entre.0.e.ea140021:Le délai de paiement doit être entre 0 et ${NUMERIC_LIMITS.maxPaymentDays}:maxPaymentDays: jours`)
         ];
       }
     }
@@ -350,19 +350,19 @@ export class WizardValidationService {
 
     // Payment terms max length
     if (payment.terms && payment.terms.length > MAX_LENGTHS.paymentTerms) {
-      errors['terms'] = [this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength('Les conditions de paiement', MAX_LENGTHS.paymentTerms))];
+      errors['terms'] = [this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength($localize`:@@invoices.wizard-validation.ts.les.conditions.de.paiement.ecfab95a:Les conditions de paiement`, MAX_LENGTHS.paymentTerms))];
     }
 
     // VAT mention validation
     if (!legalMentions.vatMention) {
-      errors['vatMention'] = [this.createWarning('REQUIRED', 'La mention TVA est recommandée')];
+      errors['vatMention'] = [this.createWarning('REQUIRED', $localize`:@@invoices.wizard-validation.ts.la.mention.tva.est.recommandee.d90b26c6:La mention TVA est recommandée`)];
     }
 
     // Exemption mention validation for TAX_EXEMPT clients
     if (client && requiresExemptionMention(client.taxType)) {
       if (!legalMentions.exemptionMention) {
         errors['exemptionMention'] = [
-          this.createError('REQUIRED', "Une mention d'exonération est requise pour ce client")
+          this.createError('REQUIRED', $localize`:@@invoices.wizard-validation.ts.une.mention.d.exoneration.est.requise.po.e773ce77:Une mention d'exonération est requise pour ce client`)
         ];
       }
     }
@@ -370,7 +370,7 @@ export class WizardValidationService {
     // Custom mention max length
     if (legalMentions.customMention && legalMentions.customMention.length > MAX_LENGTHS.customMention) {
       errors['customMention'] = [
-        this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength('La mention personnalisée', MAX_LENGTHS.customMention))
+        this.createError('MAX_LENGTH', ERROR_MESSAGES.maxLength($localize`:@@invoices.wizard-validation.ts.la.mention.personnalisee.4c158626:La mention personnalisée`, MAX_LENGTHS.customMention))
       ];
     }
 

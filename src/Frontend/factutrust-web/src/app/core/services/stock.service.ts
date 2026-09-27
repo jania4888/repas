@@ -239,7 +239,7 @@ export class StockService {
                         success: false,
                         data: [],
                         message: $localize`:@@core.stock.ts.reponse.invalide.du.serveur.5068db26:Réponse invalide du serveur`,
-                        errors: ['Réponse invalide du serveur']
+                        errors: [$localize`:@@core.stock.ts.reponse.invalide.du.serveur.5068db26:Réponse invalide du serveur`]
                     } as ApiResponse<Warehouse[]>;
                 })
             );

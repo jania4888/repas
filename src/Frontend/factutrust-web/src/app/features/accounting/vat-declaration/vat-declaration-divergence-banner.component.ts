@@ -83,7 +83,7 @@ export class VatDeclarationDivergenceBannerComponent {
 
   get headline(): string {
     const n = this.rows.length;
-    if (n === 0) return 'Cycle de paie';
+    if (n === 0) return $localize`:@@accounting.vat-declaration-divergence-banner.ts.cycle.de.paie.523cf213:Cycle de paie`;
     return n === 1
       ? $localize`:@@ui.tern.1.ligne.s.ecarte.des.montants.calcules.par.9dca12:1 ligne s'écarte des montants calculés par les modules`
       : $localize`:@@ui.tern.ph.lignes.s.ecartent.des.montants.calcules.ee76fb:${n}:p0: lignes s'écartent des montants calculés par les modules`;

@@ -20,8 +20,8 @@ const UNSAVED_CHANGES_MESSAGE =
   $localize`:@@accounting.currency-edit.ts.des.taux.de.change.modifies.ne.sont.pas.15498845:Des taux de change modifiés ne sont pas enregistrés. Quitter cette page les abandonnera. Continuer ?`;
 
 const MONTH_LABELS = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@accounting.currency-edit.ts.janvier.7a32ae0f:Janvier`, $localize`:@@accounting.currency-edit.ts.fevrier.63fc1803:Février`, $localize`:@@accounting.currency-edit.ts.mars.1778011d:Mars`, $localize`:@@accounting.currency-edit.ts.avril.4efeee46:Avril`, $localize`:@@accounting.currency-edit.ts.mai.afe526a6:Mai`, $localize`:@@accounting.currency-edit.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@accounting.currency-edit.ts.juillet.e8e0920c:Juillet`, $localize`:@@accounting.currency-edit.ts.aout.460b6696:Août`, $localize`:@@accounting.currency-edit.ts.septembre.08d23f31:Septembre`, $localize`:@@accounting.currency-edit.ts.octobre.0ed28485:Octobre`, $localize`:@@accounting.currency-edit.ts.novembre.632580af:Novembre`, $localize`:@@accounting.currency-edit.ts.decembre.03bcd9b0:Décembre`
 ];
 
 interface RateRow {

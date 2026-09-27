@@ -447,7 +447,7 @@ export class FiscalResultComponent implements OnInit {
       .pipe(
         switchMap(year =>
           this.api.getFiscalResult(year).pipe(
-            catchError(() => of<FiscalResultApiResponse>({ success: false, error: 'Erreur réseau' }))
+            catchError(() => of<FiscalResultApiResponse>({ success: false, error: $localize`:@@accounting.fiscal-result.ts.erreur.reseau.0683007f:Erreur réseau` }))
           )
         ),
         takeUntilDestroyed()
@@ -536,7 +536,7 @@ export class FiscalResultComponent implements OnInit {
     const ratio = diff / suggested;
     if (ratio <= 0.05) return null;
     const pct = (ratio * 100).toFixed(1);
-    return `Le chiffre d'affaires saisi s'écarte de ${pct} % du CA comptable calculé.`;
+    return $localize`:@@accounting.fiscal-result.ts.le.chiffre.d.affaires.saisi.s.ecarte.de.01991841:Le chiffre d'affaires saisi s'écarte de ${pct}:pct: % du CA comptable calculé.`;
   }
 
   isLabelValid(line: FiscalAdjustmentLineDto): boolean {

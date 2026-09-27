@@ -142,8 +142,8 @@ import type { WorkspacePane } from '@features/ai-assistant/services/ai-assistant
   `]
 })
 export class WorkspaceTabBarComponent {
-  readonly workTitle = input('Accueil');
-  readonly aiTitle = input('Assistant IA');
+  readonly workTitle = input($localize`:@@core.workspace-tab-bar.ts.accueil.a8ff8fd2:Accueil`);
+  readonly aiTitle = input($localize`:@@core.workspace-tab-bar.ts.assistant.ia.94f6f208:Assistant IA`);
   readonly activePane = input<WorkspacePane>('work');
 
   readonly selectPane = output<WorkspacePane>();

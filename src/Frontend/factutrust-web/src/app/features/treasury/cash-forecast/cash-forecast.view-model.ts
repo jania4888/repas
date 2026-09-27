@@ -133,8 +133,8 @@ export function sourceLabel(source: CashFlowSourceType): string {
     fiscal_obligation: $localize`:@@treasury.cash-forecast.view-model.ts.echeance.fiscale.136a3c07:Échéance fiscale`,
     loan_installment: $localize`:@@treasury.cash-forecast.view-model.ts.echeance.d.emprunt.854ae80a:Échéance d’emprunt`,
     recurring_commitment: $localize`:@@treasury.cash-forecast.view-model.ts.engagement.recurrent.607377af:Engagement récurrent`,
-    recurring_journal_template: 'Écriture récurrente',
-    manual: 'Saisie manuelle'
+    recurring_journal_template: $localize`:@@treasury.cash-forecast.view-model.ts.ecriture.recurrente.898dbd99:Écriture récurrente`,
+    manual: $localize`:@@treasury.cash-forecast.view-model.ts.saisie.manuelle.da81002e:Saisie manuelle`
   };
   return labels[source] ?? 'Autre flux';
 }

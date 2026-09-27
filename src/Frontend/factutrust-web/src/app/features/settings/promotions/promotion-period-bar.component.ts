@@ -88,7 +88,7 @@ export class PromotionPeriodBarComponent {
 
   tooltip(): string {
     const p = this.progress();
-    return `${p.daysElapsed} jour(s) sur ${p.daysTotal} écoulé(s)`;
+    return $localize`:@@settings.promotion-period-bar.ts.dayselapsed.jour.s.sur.daystotal.ecoule.f5c8e6df:${p.daysElapsed}:daysElapsed: jour(s) sur ${p.daysTotal}:daysTotal: écoulé(s)`;
   }
 
   ariaLabel(): string {

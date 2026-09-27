@@ -13,8 +13,8 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 
 const MONTHS = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@accounting.closing-revaluation.ts.janvier.7a32ae0f:Janvier`, $localize`:@@accounting.closing-revaluation.ts.fevrier.63fc1803:Février`, $localize`:@@accounting.closing-revaluation.ts.mars.1778011d:Mars`, $localize`:@@accounting.closing-revaluation.ts.avril.4efeee46:Avril`, $localize`:@@accounting.closing-revaluation.ts.mai.afe526a6:Mai`, $localize`:@@accounting.closing-revaluation.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@accounting.closing-revaluation.ts.juillet.e8e0920c:Juillet`, $localize`:@@accounting.closing-revaluation.ts.aout.460b6696:Août`, $localize`:@@accounting.closing-revaluation.ts.septembre.08d23f31:Septembre`, $localize`:@@accounting.closing-revaluation.ts.octobre.0ed28485:Octobre`, $localize`:@@accounting.closing-revaluation.ts.novembre.632580af:Novembre`, $localize`:@@accounting.closing-revaluation.ts.decembre.03bcd9b0:Décembre`
 ];
 
 @Component({

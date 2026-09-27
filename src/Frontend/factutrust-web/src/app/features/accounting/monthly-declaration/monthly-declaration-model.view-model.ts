@@ -51,23 +51,23 @@ function emptySummary(error: string | null): DmModelSummary {
  */
 export function summariseModel(content: string | null | undefined): DmModelSummary {
   const text = (content ?? '').trim();
-  if (!text) return emptySummary('Le fichier est vide.');
+  if (!text) return emptySummary($localize`:@@accounting.monthly-declaration-model.view-model.ts.le.fichier.est.vide.7f34a234:Le fichier est vide.`);
   if (byteLength(text) > DM_MODEL_MAX_BYTES)
-    return emptySummary(`Le fichier dépasse ${DM_MODEL_MAX_BYTES / 1024} Ko.`);
+    return emptySummary($localize`:@@accounting.monthly-declaration-model.view-model.ts.le.fichier.depasse.p.ko.88b6b71c:Le fichier dépasse ${DM_MODEL_MAX_BYTES / 1024}:p: Ko.`);
 
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
   } catch {
-    return emptySummary("Le fichier n'est pas un JSON exploitable.");
+    return emptySummary($localize`:@@accounting.monthly-declaration-model.view-model.ts.le.fichier.n.est.pas.un.json.exploitable.0666a59b:Le fichier n'est pas un JSON exploitable.`);
   }
 
-  if (!parsed || typeof parsed !== 'object') return emptySummary("Le fichier n'est pas un modèle DM.");
+  if (!parsed || typeof parsed !== 'object') return emptySummary($localize`:@@accounting.monthly-declaration-model.view-model.ts.le.fichier.n.est.pas.un.modele.dm.692d4773:Le fichier n'est pas un modèle DM.`);
 
   const doc = parsed as Record<string, unknown>;
   const rubrics = Array.isArray(doc['rubrics']) ? (doc['rubrics'] as unknown[]) : null;
   if (!rubrics || rubrics.length === 0)
-    return emptySummary('Le fichier ne contient aucune rubrique.');
+    return emptySummary($localize`:@@accounting.monthly-declaration-model.view-model.ts.le.fichier.ne.contient.aucune.rubrique.90cccd06:Le fichier ne contient aucune rubrique.`);
 
   const families = Array.isArray(doc['families']) ? (doc['families'] as unknown[]) : null;
   const included: string[] = [];
@@ -119,10 +119,10 @@ export function looksLikeModelFile(fileName: string | null | undefined): boolean
  */
 export function describeImportOutcome(result: MonthlyDeclarationModelImportResultDto): string {
   const parts: string[] = [];
-  parts.push(`${result.inserted} rubrique(s) insérée(s)`);
-  parts.push(`${result.replaced} remplacée(s)`);
-  if (result.skippedCodes.length) parts.push(`${result.skippedCodes.length} ignorée(s)`);
-  if (result.familiesChanged) parts.push(`${result.familiesChanged} inclusion(s) de famille modifiée(s)`);
+  parts.push($localize`:@@accounting.monthly-declaration-model.view-model.ts.inserted.rubrique.s.inseree.s.4d5c629f:${result.inserted}:inserted: rubrique(s) insérée(s)`);
+  parts.push($localize`:@@accounting.monthly-declaration-model.view-model.ts.replaced.remplacee.s.e1e7cdb1:${result.replaced}:replaced: remplacée(s)`);
+  if (result.skippedCodes.length) parts.push($localize`:@@accounting.monthly-declaration-model.view-model.ts.length.ignoree.s.14c19e1e:${result.skippedCodes.length}:length: ignorée(s)`);
+  if (result.familiesChanged) parts.push($localize`:@@accounting.monthly-declaration-model.view-model.ts.familieschanged.inclusion.s.de.famille.m.3eb23f52:${result.familiesChanged}:familiesChanged: inclusion(s) de famille modifiée(s)`);
   return `${parts.join(', ')}.`;
 }
 

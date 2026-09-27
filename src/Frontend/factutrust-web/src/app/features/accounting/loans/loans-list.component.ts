@@ -224,7 +224,7 @@ export class LoansListComponent implements OnInit {
     switch (loan.status) {
       case 1: return $localize`:@@accounting.loans-list.ts.rembourse.8d7916c3:Remboursé`;
       case 2: return $localize`:@@accounting.loans-list.ts.annule.34cd87cc:Annulé`;
-      default: return 'Actif';
+      default: return $localize`:@@accounting.loans-list.ts.actif.2eb75f84:Actif`;
     }
   }
 

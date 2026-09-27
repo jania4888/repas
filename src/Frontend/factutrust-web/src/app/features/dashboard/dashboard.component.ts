@@ -2310,11 +2310,11 @@ export class DashboardComponent implements OnInit {
   get greeting(): string {
     const user = this.authService.user();
     const hour = new Date().getHours();
-    let greeting = 'Bonjour';
+    let greeting = $localize`:@@dashboard.dashboard.ts.bonjour.f30ecbf5:Bonjour`;
 
-    if (hour < 12) greeting = 'Bonjour';
-    else if (hour < 18) greeting = 'Bon après-midi';
-    else greeting = 'Bonsoir';
+    if (hour < 12) greeting = $localize`:@@dashboard.dashboard.ts.bonjour.f30ecbf5:Bonjour`;
+    else if (hour < 18) greeting = $localize`:@@dashboard.dashboard.ts.bon.apres.midi.d523da21:Bon après-midi`;
+    else greeting = $localize`:@@dashboard.dashboard.ts.bonsoir.29192c62:Bonsoir`;
 
     return user ? `${greeting}, ${user.firstName}` : greeting;
   }

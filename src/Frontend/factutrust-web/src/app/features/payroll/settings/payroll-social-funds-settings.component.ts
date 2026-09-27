@@ -258,8 +258,8 @@ export class PayrollSocialFundsSettingsComponent implements OnInit {
 
   accountError(): string | null {
     for (const [label, value] of [
-      ['salarié', this.formEmployeeAccount],
-      ['employeur', this.formEmployerAccount]
+      [$localize`:@@payroll.payroll-social-funds-settings.ts.salarie.3f14ff62:salarié`, this.formEmployeeAccount],
+      [$localize`:@@payroll.payroll-social-funds-settings.ts.employeur.45a9abd7:employeur`, this.formEmployerAccount]
     ] as const) {
       const num = value.trim();
       if (num.length === 0) continue;

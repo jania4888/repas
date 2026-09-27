@@ -21,8 +21,8 @@ import {
 
 const MONTH_LABELS = [
   '',
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@payroll.withholding-certificates-tab.ts.janvier.7a32ae0f:Janvier`, $localize`:@@payroll.withholding-certificates-tab.ts.fevrier.63fc1803:Février`, $localize`:@@payroll.withholding-certificates-tab.ts.mars.1778011d:Mars`, $localize`:@@payroll.withholding-certificates-tab.ts.avril.4efeee46:Avril`, $localize`:@@payroll.withholding-certificates-tab.ts.mai.afe526a6:Mai`, $localize`:@@payroll.withholding-certificates-tab.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@payroll.withholding-certificates-tab.ts.juillet.e8e0920c:Juillet`, $localize`:@@payroll.withholding-certificates-tab.ts.aout.460b6696:Août`, $localize`:@@payroll.withholding-certificates-tab.ts.septembre.08d23f31:Septembre`, $localize`:@@payroll.withholding-certificates-tab.ts.octobre.0ed28485:Octobre`, $localize`:@@payroll.withholding-certificates-tab.ts.novembre.632580af:Novembre`, $localize`:@@payroll.withholding-certificates-tab.ts.decembre.03bcd9b0:Décembre`
 ];
 
 @Component({
@@ -173,16 +173,16 @@ export class WithholdingCertificatesTabComponent implements OnInit {
     const b = this.batch();
     if (!b || b.isComplete) return '';
     const months = formatMonthList(b.missingMonths);
-    return `Exercice incomplet : cycles Validé/Clôturé manquants pour ${months}. Seuls les mois validés sont inclus.`;
+    return $localize`:@@payroll.withholding-certificates-tab.ts.exercice.incomplet.cycles.valide.cloture.885e015a:Exercice incomplet : cycles Validé/Clôturé manquants pour ${months}:months:. Seuls les mois validés sont inclus.`;
   });
 
   emptyDescription = computed(() => {
     const b = this.batch();
-    const base = 'Seuls les cycles de paie validés ou clôturés sont inclus.';
+    const base = $localize`:@@payroll.withholding-certificates-tab.ts.seuls.les.cycles.de.paie.valides.ou.clot.aa455691:Seuls les cycles de paie validés ou clôturés sont inclus.`;
     if (!b || b.isComplete || b.missingMonths.length === 0) {
-      return `${base} Aucun bulletin éligible pour cet exercice.`;
+      return $localize`:@@payroll.withholding-certificates-tab.ts.base.aucun.bulletin.eligible.pour.cet.ex.c6e20a50:${base}:base: Aucun bulletin éligible pour cet exercice.`;
     }
-    return `${base} Mois manquants : ${formatMonthList(b.missingMonths)}.`;
+    return $localize`:@@payroll.withholding-certificates-tab.ts.base.mois.manquants.formatmonthlist.74062777:${base}:base: Mois manquants : ${formatMonthList(b.missingMonths)}:formatMonthList:.`;
   });
 
   summaryStats = computed((): PayrollStatItem[] => {

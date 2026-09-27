@@ -375,16 +375,16 @@ export class ChannelsSettingsComponent implements OnInit, OnDestroy {
 
   readonly bridgeLabel = computed(() => {
     switch (this.bridgeStatus()?.state) {
-      case 'Ready': return 'Connecté';
-      case 'WaitingQr': return 'En attente de scan';
+      case 'Ready': return $localize`:@@settings.channels-settings.ts.connecte.ce09957c:Connecté`;
+      case 'WaitingQr': return $localize`:@@settings.channels-settings.ts.en.attente.de.scan.f024509e:En attente de scan`;
       case 'Initializing':
-      case 'Authenticated': return 'Démarrage…';
-      case 'Disconnected': return 'Déconnecté';
-      case 'AuthFailure': return 'Échec d’authentification';
-      case 'DependenciesMissing': return 'Dépendances manquantes';
+      case 'Authenticated': return $localize`:@@settings.channels-settings.ts.demarrage.76842104:Démarrage…`;
+      case 'Disconnected': return $localize`:@@settings.channels-settings.ts.deconnecte.3a67fd80:Déconnecté`;
+      case 'AuthFailure': return $localize`:@@settings.channels-settings.ts.echec.d.authentification.c4f14804:Échec d’authentification`;
+      case 'DependenciesMissing': return $localize`:@@settings.channels-settings.ts.dependances.manquantes.5923ad6f:Dépendances manquantes`;
       case 'NodeMissing': return 'Node.js introuvable';
-      case 'Stopped': return 'Arrêté';
-      default: return 'Inconnu';
+      case 'Stopped': return $localize`:@@settings.channels-settings.ts.arrete.e99c418b:Arrêté`;
+      default: return $localize`:@@settings.channels-settings.ts.inconnu.f3cfc645:Inconnu`;
     }
   });
 

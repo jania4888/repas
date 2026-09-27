@@ -1675,7 +1675,7 @@ export class ProductFormComponent implements OnInit {
               severity: 'error',
               summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
               detail: this.mapTraceabilityApiError(
-                response.errors?.join(', ') || 'Une erreur est survenue lors de la mise à jour',
+                response.errors?.join(', ') || $localize`:@@products.product-form.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`,
                 (response as { code?: string }).code
               )
             });
@@ -1684,7 +1684,7 @@ export class ProductFormComponent implements OnInit {
         },
         error: (error) => {
           const errorMessage = this.mapTraceabilityApiError(
-            this.errorHandler.extractErrorMessage(error) || 'Une erreur est survenue lors de la mise à jour',
+            this.errorHandler.extractErrorMessage(error) || $localize`:@@products.product-form.ts.une.erreur.est.survenue.lors.de.la.mise.0bf44f4f:Une erreur est survenue lors de la mise à jour`,
             this.errorHandler.getApiErrorCode(error)
           );
           this.toastService.add({
@@ -1766,7 +1766,7 @@ export class ProductFormComponent implements OnInit {
               severity: 'error',
               summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
               detail: this.mapTraceabilityApiError(
-                response.errors?.join(', ') || 'Une erreur est survenue lors de la création',
+                response.errors?.join(', ') || $localize`:@@products.product-form.ts.une.erreur.est.survenue.lors.de.la.creat.3f7d195c:Une erreur est survenue lors de la création`,
                 (response as { code?: string }).code
               )
             });
@@ -1775,7 +1775,7 @@ export class ProductFormComponent implements OnInit {
         },
         error: (error) => {
           const errorMessage = this.mapTraceabilityApiError(
-            this.errorHandler.extractErrorMessage(error) || 'Une erreur est survenue lors de la création',
+            this.errorHandler.extractErrorMessage(error) || $localize`:@@products.product-form.ts.une.erreur.est.survenue.lors.de.la.creat.3f7d195c:Une erreur est survenue lors de la création`,
             this.errorHandler.getApiErrorCode(error)
           );
           this.toastService.add({

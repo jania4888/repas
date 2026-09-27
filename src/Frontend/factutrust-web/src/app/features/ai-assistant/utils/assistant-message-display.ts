@@ -147,15 +147,15 @@ function humanizeJsonObject(obj: Record<string, unknown>): string | null {
   const parts: string[] = [];
   const amount = pickNumber(obj, ['ca', 'montant', 'amount', 'total', 'totalAmount', 'revenue']);
   if (amount !== null) {
-    parts.push(`Montant : **${formatTnd(amount)}**.`);
+    parts.push($localize`:@@ai-assistant.assistant-message-display.ts.montant.formattnd.464501b0:Montant : **${formatTnd(amount)}:formatTnd:**.`);
   }
   const period = pickString(obj, ['periode', 'period', 'periodLabel', 'label']);
   if (period) {
-    parts.push(`Période : ${period}.`);
+    parts.push($localize`:@@ai-assistant.assistant-message-display.ts.periode.period.018726d5:Période : ${period}:period:.`);
   }
   const count = pickNumber(obj, ['count', 'nombre', 'totalCount']);
   if (count !== null && amount === null) {
-    parts.push(`Nombre d'éléments : ${count}.`);
+    parts.push($localize`:@@ai-assistant.assistant-message-display.ts.nombre.d.elements.count.de004c86:Nombre d'éléments : ${count}:count:.`);
   }
   if (parts.length === 0) {
     const preview = Object.entries(obj)
@@ -196,7 +196,7 @@ function humanizeJsonArray(items: unknown[]): string | null {
     return null;
   }
   const suffix = items.length > HUMANIZE_MAX_ROWS
-    ? `\n\n… et ${items.length - HUMANIZE_MAX_ROWS} autre(s) ligne(s).`
+    ? $localize`:@@ai-assistant.assistant-message-display.ts.et.p.autre.s.ligne.s.d794c9ab:\n\n… et ${items.length - HUMANIZE_MAX_ROWS}:p: autre(s) ligne(s).`
     : '';
   return lines.join('\n') + suffix;
 }
@@ -702,7 +702,7 @@ export function resolveAssistantDisplayState(
   if (options?.hasParsedDashboard) {
     return {
       renderedMarkdown: '',
-      displayFallbackText: 'Analyse disponible dans le tableau de bord ci-dessus.'
+      displayFallbackText: $localize`:@@ai-assistant.assistant-message-display.ts.analyse.disponible.dans.le.tableau.de.bo.7e908280:Analyse disponible dans le tableau de bord ci-dessus.`
     };
   }
 

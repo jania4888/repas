@@ -288,7 +288,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
         title: $localize`:@@studio.studio-ai-failure.ts.votre.demande.doit.etre.precisee.5389d7ac:Votre demande doit être précisée`,
         message: cleaned || $localize`:@@studio.studio-ai-failure.ts.je.n.ai.pas.pu.determiner.quelles.donnee.4b0860e5:Je n'ai pas pu déterminer quelles données analyser.`,
         hint: $localize`:@@studio.studio-ai-failure.ts.indiquez.le.sujet.ventes.achats.encaisse.75e0c804:Indiquez le sujet (ventes, achats, encaissements…), la ventilation souhaitée (par année, par client, par produit…) et, si besoin, la période. Vous pouvez aussi partir d'un état prêt à l'emploi.`,
-        stage: 'Compréhension de la demande',
+        stage: $localize`:@@studio.studio-ai-failure.ts.comprehension.de.la.demande.dfcf0709:Compréhension de la demande`,
         retryable: false,
         showSuggestions: true
       };
@@ -300,7 +300,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
         title: $localize`:@@studio.studio-ai-failure.ts.vous.ne.pouvez.pas.consulter.cet.etat.8d00f46c:Vous ne pouvez pas consulter cet état`,
         message: cleaned || $localize`:@@studio.studio-ai-failure.ts.votre.compte.ne.dispose.pas.des.droits.n.dbaa1ce9:Votre compte ne dispose pas des droits nécessaires dans l'espace actif.`,
         hint: $localize`:@@studio.studio-ai-failure.ts.demandez.a.un.administrateur.de.verifier.081b7ced:Demandez à un administrateur de vérifier vos droits de consultation des états et des données concernées. Réessayer ou reformuler la demande ne modifie pas vos droits.`,
-        stage: 'Contrôle des autorisations',
+        stage: $localize`:@@studio.studio-ai-failure.ts.controle.des.autorisations.6d7316c5:Contrôle des autorisations`,
         retryable: false,
         showSuggestions: false
       };
@@ -312,7 +312,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
         title: $localize`:@@studio.studio-ai-failure.ts.la.preparation.de.la.demande.a.ete.inter.15137ea7:La préparation de la demande a été interrompue`,
         message: $localize`:@@studio.studio-ai-failure.ts.le.fournisseur.ia.est.momentanement.indi.305c864a:Le fournisseur IA est momentanément indisponible. Aucun état n'a été calculé et rien n'a été enregistré.`,
         hint: $localize`:@@studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.a.votre.i.33711c57:Vous pouvez réessayer une fois, à votre initiative. Sans l'assistant, le concepteur d'états reste disponible.`,
-        stage: 'Préparation de la demande',
+        stage: $localize`:@@studio.studio-ai-failure.ts.preparation.de.la.demande.27f93352:Préparation de la demande`,
         retryable: true,
         showSuggestions: false,
         // Le texte serveur est destiné à l'exploitant (clé API, service arrêté…) : il va au diagnostic.
@@ -326,7 +326,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
         title: $localize`:@@studio.studio-ai-failure.ts.le.calcul.de.l.etat.n.a.pas.abouti.dca8e126:Le calcul de l'état n'a pas abouti`,
         message: cleaned || $localize`:@@studio.studio-ai-failure.ts.le.calcul.de.l.etat.a.depasse.le.delai.i.86c79e73:Le calcul de l'état a dépassé le délai imparti. Aucun résultat partiel n'est présenté.`,
         hint: $localize`:@@studio.studio-ai-failure.ts.restreignez.la.periode.une.seule.annee.p.7663276d:Restreignez la période (une seule année, par exemple) ou le nombre de colonnes, puis relancez. Aucun nouvel appel à l'IA n'est nécessaire pour un état prêt à l'emploi.`,
-        stage: "Exécution de l'état",
+        stage: $localize`:@@studio.studio-ai-failure.ts.execution.de.l.etat.6202427a:Exécution de l'état`,
         retryable: true,
         showSuggestions: true
       };
@@ -338,7 +338,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
         title: $localize`:@@studio.studio-ai-failure.ts.les.etats.assistes.ne.sont.pas.disponibl.ff710646:Les états assistés ne sont pas disponibles ici`,
         message: cleaned || $localize`:@@studio.studio-ai-failure.ts.cette.fonction.n.est.pas.activee.sur.ce.4ab80f08:Cette fonction n'est pas activée sur ce serveur.`,
         hint: $localize`:@@studio.studio-ai-failure.ts.contactez.l.administrateur.de.la.platefo.16a42f23:Contactez l'administrateur de la plateforme, ou préparez votre état depuis le concepteur d'états.`,
-        stage: 'Vérification de la configuration',
+        stage: $localize`:@@studio.studio-ai-failure.ts.verification.de.la.configuration.01261104:Vérification de la configuration`,
         retryable: false,
         showSuggestions: false
       };
@@ -363,7 +363,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
           title: $localize`:@@studio.studio-ai-failure.ts.l.assistant.est.momentanement.sature.ab9bb9ce:L'assistant est momentanément saturé`,
           message: cleaned || $localize`:@@studio.studio-ai-failure.ts.trop.de.requetes.ont.ete.envoyees.a.l.as.1a32856d:Trop de requêtes ont été envoyées à l'assistant en peu de temps.`,
           hint: $localize`:@@studio.studio-ai-failure.ts.patientez.quelques.instants.avant.de.ree.e22fb2c3:Patientez quelques instants avant de réessayer. Rien n'a été enregistré.`,
-          stage: 'Envoi de la demande',
+          stage: $localize`:@@studio.studio-ai-failure.ts.envoi.de.la.demande.f47b08a8:Envoi de la demande`,
           retryable: true,
           showSuggestions: false
         };
@@ -374,7 +374,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
           title: $localize`:@@studio.studio-ai-failure.ts.la.liaison.avec.le.serveur.a.ete.coupee.3e87a2a2:La liaison avec le serveur a été coupée`,
           message: $localize`:@@studio.studio-ai-failure.ts.la.connexion.a.ete.interrompue.avant.la.63da23b4:La connexion a été interrompue avant la fin du traitement. Aucun résultat partiel n'est présenté.`,
           hint: $localize`:@@studio.studio-ai-failure.ts.verifiez.votre.connexion.puis.reessayez.0584b628:Vérifiez votre connexion, puis réessayez une fois.`,
-          stage: 'Transport de la réponse',
+          stage: $localize`:@@studio.studio-ai-failure.ts.transport.de.la.reponse.cc299a1d:Transport de la réponse`,
           retryable: true,
           showSuggestions: false
         };
@@ -385,7 +385,7 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
           title: $localize`:@@studio.studio-ai-failure.ts.l.etat.n.a.pas.pu.etre.calcule.d961ea39:L'état n'a pas pu être calculé`,
           message: cleaned || $localize`:@@studio.studio-ai-failure.ts.une.erreur.est.survenue.pendant.le.calcu.1dbaaab8:Une erreur est survenue pendant le calcul. Aucun résultat partiel n'est présenté et rien n'a été enregistré.`,
           hint: $localize`:@@studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.si.l.erre.0e53cd7d:Vous pouvez réessayer une fois. Si l'erreur persiste, transmettez le diagnostic au support.`,
-          stage: status !== null && status >= 500 ? 'Traitement serveur' : "Exécution de l'état",
+          stage: status !== null && status >= 500 ? $localize`:@@studio.studio-ai-failure.ts.traitement.serveur.03dbba30:Traitement serveur` : $localize`:@@studio.studio-ai-failure.ts.execution.de.l.etat.6202427a:Exécution de l'état`,
           retryable: true,
           showSuggestions: !!ctx.fromReportTool
         };

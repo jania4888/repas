@@ -61,7 +61,7 @@ export class BarcodeLookupService {
     const trimmed = code.trim();
 
     if (!trimmed) {
-      return of(this.failure('not_found', trimmed, 'Aucun code scanné.'));
+      return of(this.failure('not_found', trimmed, $localize`:@@shared.barcode-lookup.ts.aucun.code.scanne.58586527:Aucun code scanné.`));
     }
 
     return this.productService.getProductByBarcode(trimmed).pipe(
@@ -88,7 +88,7 @@ export class BarcodeLookupService {
     options: BarcodeLookupOptions
   ): Observable<BarcodeLookupResult> {
     if (options.fallbackToExactInternalCode === false) {
-      return of(this.failure('not_found', code, `Aucun article ne correspond au code « ${code} ».`));
+      return of(this.failure('not_found', code, $localize`:@@shared.barcode-lookup.ts.aucun.article.ne.correspond.au.code.code.841686ba:Aucun article ne correspond au code « ${code}:code: ».`));
     }
 
     return this.productService
@@ -102,7 +102,7 @@ export class BarcodeLookupService {
       .pipe(
         map(response => {
           if (!response.success || !response.data) {
-            return this.failure('not_found', code, `Aucun article ne correspond au code « ${code} ».`);
+            return this.failure('not_found', code, $localize`:@@shared.barcode-lookup.ts.aucun.article.ne.correspond.au.code.code.841686ba:Aucun article ne correspond au code « ${code}:code: ».`);
           }
 
           const normalized = code.toLowerCase();
@@ -115,13 +115,13 @@ export class BarcodeLookupService {
             return this.failure(
               'ambiguous',
               code,
-              `Plusieurs articles portent le code « ${code} ». Choisissez-le dans la liste.`
+              $localize`:@@shared.barcode-lookup.ts.plusieurs.articles.portent.le.code.code.0bdf0a92:Plusieurs articles portent le code « ${code}:code: ». Choisissez-le dans la liste.`
             );
           }
-          return this.failure('not_found', code, `Aucun article ne correspond au code « ${code} ».`);
+          return this.failure('not_found', code, $localize`:@@shared.barcode-lookup.ts.aucun.article.ne.correspond.au.code.code.841686ba:Aucun article ne correspond au code « ${code}:code: ».`);
         }),
         catchError(() =>
-          of(this.failure('not_found', code, `Aucun article ne correspond au code « ${code} ».`))
+          of(this.failure('not_found', code, $localize`:@@shared.barcode-lookup.ts.aucun.article.ne.correspond.au.code.code.841686ba:Aucun article ne correspond au code « ${code}:code: ».`))
         )
       );
   }
@@ -136,19 +136,19 @@ export class BarcodeLookupService {
       return this.failure(
         'template',
         code,
-        `« ${product.name} » est un modèle de variantes. Choisissez une variante (SKU).`
+        $localize`:@@shared.barcode-lookup.ts.name.est.un.modele.de.variantes.choisiss.5dad9e80:« ${product.name}:name: » est un modèle de variantes. Choisissez une variante (SKU).`
       );
     }
 
     if (options.requireActive !== false && !product.isActive) {
-      return this.failure('inactive', code, `L'article « ${product.name} » est désactivé.`);
+      return this.failure('inactive', code, $localize`:@@shared.barcode-lookup.ts.l.article.name.est.desactive.5439fdf7:L'article « ${product.name}:name: » est désactivé.`);
     }
 
     if (options.requireStockManaged === true && !product.isStockManaged) {
       return this.failure(
         'not_stock_managed',
         code,
-        `L'article « ${product.name} » n'est pas géré en stock.`
+        $localize`:@@shared.barcode-lookup.ts.l.article.name.n.est.pas.gere.en.stock.1508f36c:L'article « ${product.name}:name: » n'est pas géré en stock.`
       );
     }
 

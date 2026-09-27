@@ -21,8 +21,8 @@ import {
 
 const MONTH_LABELS = [
   '',
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  $localize`:@@payroll.dts-declaration-tab.ts.janvier.7a32ae0f:Janvier`, $localize`:@@payroll.dts-declaration-tab.ts.fevrier.63fc1803:Février`, $localize`:@@payroll.dts-declaration-tab.ts.mars.1778011d:Mars`, $localize`:@@payroll.dts-declaration-tab.ts.avril.4efeee46:Avril`, $localize`:@@payroll.dts-declaration-tab.ts.mai.afe526a6:Mai`, $localize`:@@payroll.dts-declaration-tab.ts.juin.8b1e84b6:Juin`,
+  $localize`:@@payroll.dts-declaration-tab.ts.juillet.e8e0920c:Juillet`, $localize`:@@payroll.dts-declaration-tab.ts.aout.460b6696:Août`, $localize`:@@payroll.dts-declaration-tab.ts.septembre.08d23f31:Septembre`, $localize`:@@payroll.dts-declaration-tab.ts.octobre.0ed28485:Octobre`, $localize`:@@payroll.dts-declaration-tab.ts.novembre.632580af:Novembre`, $localize`:@@payroll.dts-declaration-tab.ts.decembre.03bcd9b0:Décembre`
 ];
 
 @Component({
@@ -160,16 +160,16 @@ export class DtsDeclarationTabComponent implements OnInit {
     const d = this.dts();
     if (!d || d.isComplete) return '';
     const months = formatMonthList(d.missingMonths);
-    return `Trimestre incomplet : cycles Validé/Clôturé manquants pour ${months}. Seuls les mois validés sont inclus.`;
+    return $localize`:@@payroll.dts-declaration-tab.ts.trimestre.incomplet.cycles.valide.clotur.a2225814:Trimestre incomplet : cycles Validé/Clôturé manquants pour ${months}:months:. Seuls les mois validés sont inclus.`;
   });
 
   emptyDescription = computed(() => {
     const d = this.dts();
-    const base = 'Seuls les cycles de paie validés ou clôturés sont inclus.';
+    const base = $localize`:@@payroll.dts-declaration-tab.ts.seuls.les.cycles.de.paie.valides.ou.clot.aa455691:Seuls les cycles de paie validés ou clôturés sont inclus.`;
     if (!d || d.isComplete || d.missingMonths.length === 0) {
-      return `${base} Aucun bulletin éligible pour cette période.`;
+      return $localize`:@@payroll.dts-declaration-tab.ts.base.aucun.bulletin.eligible.pour.cette.837b474f:${base}:base: Aucun bulletin éligible pour cette période.`;
     }
-    return `${base} Mois manquants : ${formatMonthList(d.missingMonths)}.`;
+    return $localize`:@@payroll.dts-declaration-tab.ts.base.mois.manquants.formatmonthlist.74062777:${base}:base: Mois manquants : ${formatMonthList(d.missingMonths)}:formatMonthList:.`;
   });
 
   summaryStats = computed((): PayrollStatItem[] => {

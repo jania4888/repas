@@ -252,7 +252,7 @@ export class ManualEntryComponent implements OnInit {
 
   readonly pageTitle = computed(() => {
     if (!this.store.editingLocked()) {
-      return 'Saisie des écritures comptables';
+      return $localize`:@@accounting.manual-entry.ts.saisie.des.ecritures.comptables.977ce83d:Saisie des écritures comptables`;
     }
     const n = this.store.editingEntryNumber();
     const journal = this.store.journalCode();
@@ -449,7 +449,7 @@ export class ManualEntryComponent implements OnInit {
           }
           const entry = res.data;
           if (!entry.isDraft) {
-            this.leaveEditWithError("Seule une écriture en brouillon peut être modifiée.");
+            this.leaveEditWithError($localize`:@@accounting.manual-entry.ts.seule.une.ecriture.en.brouillon.peut.etr.93e55362:Seule une écriture en brouillon peut être modifiée.`);
             return;
           }
           this.store.loadFromEntry(entry);

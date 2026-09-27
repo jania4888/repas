@@ -17,7 +17,7 @@ export class HttpForbiddenDialogService {
    * @param dedupeKey Clé stable pour fusionner les 403 identiques (ex. méthode + URL).
    */
   showAccessDenied(message: string, dedupeKey: string): void {
-    const trimmed = (message || '').trim() || 'Accès non autorisé.';
+    const trimmed = (message || '').trim() || $localize`:@@core.http-forbidden-dialog.ts.acces.non.autorise.95c7fdf1:Accès non autorisé.`;
     const now = Date.now();
     if (dedupeKey === this.lastDedupeKey && now - this.lastShownAt < this.dedupWindowMs) {
       return;

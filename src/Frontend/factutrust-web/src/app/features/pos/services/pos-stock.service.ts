@@ -113,7 +113,7 @@ export class PosStockService {
         allAvailable,
         insufficientCount: details.filter(d => !d.isAvailable).length,
         details,
-        summaryMessage: allAvailable ? 'Stock disponible' : 'Stock insuffisant'
+        summaryMessage: allAvailable ? $localize`:@@pos.pos-stock.ts.stock.disponible.4b508081:Stock disponible` : $localize`:@@pos.pos-stock.ts.stock.insuffisant.995fd9ad:Stock insuffisant`
       });
     }
 

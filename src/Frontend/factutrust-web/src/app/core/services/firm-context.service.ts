@@ -86,7 +86,7 @@ export class FirmContextService {
       this.auth.applyAuthResponse(res.data);
       this.syncFromUser();
     } catch (error) {
-      this.showContextError('Impossible d\'ouvrir ce dossier client.', error);
+      this.showContextError($localize`:@@core.firm-context.ts.impossible.d.ouvrir.ce.dossier.client.4f4e0889:Impossible d'ouvrir ce dossier client.`, error);
       throw error;
     }
   }
@@ -106,19 +106,19 @@ export class FirmContextService {
         )
       );
       if (!res.success || !res.data) {
-        this.showContextError('Impossible de quitter le dossier client.');
+        this.showContextError($localize`:@@core.firm-context.ts.impossible.de.quitter.le.dossier.client.72ba52ae:Impossible de quitter le dossier client.`);
         return false;
       }
       this.auth.applyAuthResponse(res.data);
       this.syncFromUser();
       const updated = this.auth.user();
       if (updated?.accessMode === 'delegated' || updated?.contextTenantId) {
-        this.showContextError('Le contexte cabinet n\'a pas pu être restauré.');
+        this.showContextError($localize`:@@core.firm-context.ts.le.contexte.cabinet.n.a.pas.pu.etre.rest.d5cd64d6:Le contexte cabinet n'a pas pu être restauré.`);
         return false;
       }
       return true;
     } catch (error) {
-      this.showContextError('Impossible de quitter le dossier client.', error);
+      this.showContextError($localize`:@@core.firm-context.ts.impossible.de.quitter.le.dossier.client.72ba52ae:Impossible de quitter le dossier client.`, error);
       return false;
     }
   }

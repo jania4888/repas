@@ -898,7 +898,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   isEdit = signal(false);
   savedId = signal<string | null>(null);
   receiptNumber = signal<string | null>(null);
-  statusDisplay = signal<string | null>('Brouillon');
+  statusDisplay = signal<string | null>($localize`:@@purchase-receipts.purchase-receipt-form.ts.brouillon.57d2d7a7:Brouillon`);
   statusSeverity = signal<'secondary' | 'success' | 'danger'>('secondary');
 
   suppliers = signal<SupplierListItem[]>([]);

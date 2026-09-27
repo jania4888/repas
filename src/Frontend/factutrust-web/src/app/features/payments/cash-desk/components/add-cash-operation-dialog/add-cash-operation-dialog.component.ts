@@ -692,31 +692,31 @@ export class AddCashOperationDialogComponent implements OnChanges, OnInit {
 
   private validate(): string | null {
     if (this.operationType === CashOperationType.Debit && this.selectedExpenseCategory === null)
-      return 'Sélectionnez une catégorie de dépense.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.selectionnez.une.categorie.de.depense.b2412267:Sélectionnez une catégorie de dépense.`;
 
     if (this.operationType === CashOperationType.Credit && this.selectedRevenueCategory === null)
-      return 'Catégorie de revenu est obligatoire.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.categorie.de.revenu.est.obligatoire.13cf0733:Catégorie de revenu est obligatoire.`;
 
     if (this.selectedMethod === null)
-      return 'Sélectionnez une méthode de paiement.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.selectionnez.une.methode.de.paiement.9b6e1e03:Sélectionnez une méthode de paiement.`;
 
     if (this.amount <= 0)
-      return 'Le montant doit être strictement positif.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.le.montant.doit.etre.strictement.positif.199d1b27:Le montant doit être strictement positif.`;
 
     if (!this.operationDate)
-      return 'La date de règlement est obligatoire.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.la.date.de.reglement.est.obligatoire.61c0c3e7:La date de règlement est obligatoire.`;
 
     if (!this.label.trim())
-      return 'Le libellé est obligatoire.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.le.libelle.est.obligatoire.e312d2ca:Le libellé est obligatoire.`;
 
     if (this.label.trim().length > 500)
-      return 'Le libellé ne peut pas dépasser 500 caractères.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.le.libelle.ne.peut.pas.depasser.500.cara.c4d87466:Le libellé ne peut pas dépasser 500 caractères.`;
 
     if (this.reference?.trim() && this.reference.trim().length > 100)
-      return 'La référence ne peut pas dépasser 100 caractères.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.la.reference.ne.peut.pas.depasser.100.ca.36418b46:La référence ne peut pas dépasser 100 caractères.`;
 
     if (this.notes?.trim() && this.notes.trim().length > 500)
-      return 'Les notes ne peuvent pas dépasser 500 caractères.';
+      return $localize`:@@payments.add-cash-operation-dialog.ts.les.notes.ne.peuvent.pas.depasser.500.ca.5cd748fb:Les notes ne peuvent pas dépasser 500 caractères.`;
 
     return null;
   }

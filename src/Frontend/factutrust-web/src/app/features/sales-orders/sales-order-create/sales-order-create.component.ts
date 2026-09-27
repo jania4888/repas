@@ -452,10 +452,10 @@ export class SalesOrderCreateComponent {
 
   submitBlockers(): string[] {
     const blockers: string[] = [];
-    if (!this.hasClient()) blockers.push('Sélectionnez un client');
-    if (!this.hasOrderDate()) blockers.push('Indiquez la date de commande');
-    if (!this.hasLines()) blockers.push('Ajoutez au moins une ligne produit');
-    if (this.linePricing.resolving()) blockers.push('Résolution des prix en cours');
+    if (!this.hasClient()) blockers.push($localize`:@@sales-orders.sales-order-create.ts.selectionnez.un.client.fb1d3ea4:Sélectionnez un client`);
+    if (!this.hasOrderDate()) blockers.push($localize`:@@sales-orders.sales-order-create.ts.indiquez.la.date.de.commande.6f92819c:Indiquez la date de commande`);
+    if (!this.hasLines()) blockers.push($localize`:@@sales-orders.sales-order-create.ts.ajoutez.au.moins.une.ligne.produit.bf3387b7:Ajoutez au moins une ligne produit`);
+    if (this.linePricing.resolving()) blockers.push($localize`:@@sales-orders.sales-order-create.ts.resolution.des.prix.en.cours.c87ba068:Résolution des prix en cours`);
     return blockers;
   }
 

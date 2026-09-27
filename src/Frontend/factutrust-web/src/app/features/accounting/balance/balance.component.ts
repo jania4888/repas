@@ -368,7 +368,7 @@ export class BalanceComponent implements OnInit {
   groupLevel = 0;
   fiscalYear = new Date().getFullYear();
 
-  readonly monthLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+  readonly monthLabels = [$localize`:@@accounting.balance.ts.jan.efed3690:Jan`, $localize`:@@accounting.balance.ts.fev.7b8852ec:Fév`, $localize`:@@accounting.balance.ts.mar.c4ba0822:Mar`, $localize`:@@accounting.balance.ts.avr.d648a3b7:Avr`, $localize`:@@accounting.balance.ts.mai.afe526a6:Mai`, $localize`:@@accounting.balance.ts.juin.8b1e84b6:Juin`, $localize`:@@accounting.balance.ts.juil.190b5d60:Juil`, $localize`:@@accounting.balance.ts.aout.460b6696:Août`, $localize`:@@accounting.balance.ts.sep.fdd289e3:Sep`, $localize`:@@accounting.balance.ts.oct.51327aef:Oct`, $localize`:@@accounting.balance.ts.nov.bb9bfefd:Nov`, $localize`:@@accounting.balance.ts.dec.2bc2249a:Déc`];
   readonly monthIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
   readonly rows = signal<BalanceRowDto[]>([]);

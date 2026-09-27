@@ -1212,7 +1212,7 @@ export class ProjectBillingTabComponent implements OnChanges {
       next: res => {
         this.invoiceTargetLoading = false;
         if (!res.success) {
-          this.invoiceDraftLoadError.emit(res.message || 'Impossible de charger les factures brouillon.');
+          this.invoiceDraftLoadError.emit(res.message || $localize`:@@projects.project-billing.ts.impossible.de.charger.les.factures.broui.b9154541:Impossible de charger les factures brouillon.`);
           this.pendingInvoiceAction = null;
           return;
         }
@@ -1227,7 +1227,7 @@ export class ProjectBillingTabComponent implements OnChanges {
       error: () => {
         this.invoiceTargetLoading = false;
         this.pendingInvoiceAction = null;
-        this.invoiceDraftLoadError.emit('Impossible de charger les factures brouillon.');
+        this.invoiceDraftLoadError.emit($localize`:@@projects.project-billing.ts.impossible.de.charger.les.factures.broui.b9154541:Impossible de charger les factures brouillon.`);
       }
     });
   }

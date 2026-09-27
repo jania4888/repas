@@ -62,7 +62,7 @@ export class ProjectOverviewBudgetCardComponent {
     const consumed = Math.max(0, b.actualCostHt);
     const remainder = Math.max(0, b.budgetHt - consumed);
     return {
-      labels: ['Consommé', 'Reste'],
+      labels: [$localize`:@@projects.project-overview-budget-card.ts.consomme.a30080c3:Consommé`, $localize`:@@projects.project-overview-budget-card.ts.reste.68135bb8:Reste`],
       datasets: [{
         data: [consumed, remainder],
         backgroundColor: ['#2563eb', '#e2e8f0'],
