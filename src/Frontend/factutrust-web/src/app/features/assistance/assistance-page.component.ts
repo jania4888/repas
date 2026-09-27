@@ -12,8 +12,8 @@ import { CompanySupportBadgeService } from '@core/services/company-support-badge
 const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
   Question: 'Question',
   Proposal: 'Proposition',
-  Complaint: 'Réclamation',
-  Reply: 'Réponse'
+  Complaint: $localize`:@@assistance.assistance-page.ts.reclamation.33d37f8b:Réclamation`,
+  Reply: $localize`:@@assistance.assistance-page.ts.reponse.e777631b:Réponse`
 };
 
 @Component({

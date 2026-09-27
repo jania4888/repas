@@ -105,6 +105,29 @@ const NOT_DISPLAY_FN = /(Sheet|Csv|CSV|Excel|Xlsx|Export|File|Filename|Prompt|Pa
 /** Variables porteuses d'un texte affiché. */
 const DISPLAY_VAR = /^(error|err)?(Message|Msg)$|^(message|msg|header|detail|details|hint|hintMessage|label|title|subtitle|description|summary|caption|text|warning|notice|confirmMessage|successMessage|periodLabel|prevLabel|nextLabel|usageLabel|UNSAVED_CHANGES_MESSAGE)$/i;
 
+/** Dictionnaires de libellés : `const ACTION_LABELS = { create: 'Création', … }`, `toolLabels`, `messages`… */
+const LABEL_DICT = /(^|_)(LABELS?|MESSAGES|TRANSLATIONS|HINTS|TITLES|TEXTS)$|[a-z](Labels?|Messages|Translations|Hints|Titles|Texts)$|^(labels|messages|hints|titles)$/;
+/** Jamais : prompts IA, dictionnaires explicitement français, correspondances vers des valeurs. */
+const NOT_LABEL_DICT = /PROMPT|Prompt|_FR$|Fr$|TO_STEP|CANONICAL|NAME$|Name$|FIXTURE/;
+
+/**
+ * Nom du dictionnaire de libellés qui contient cette propriété (objets imbriqués compris),
+ * ou null. Le dictionnaire doit être la valeur d'une variable ou d'un champ au nom explicite.
+ */
+function labelDictionaryName(prop) {
+  let n = prop.parent;
+  while (n && (ts.isObjectLiteralExpression(n) || ts.isPropertyAssignment(n) || ts.isAsExpression(n) ||
+    ts.isParenthesizedExpression(n) || (ts.isSatisfiesExpression && ts.isSatisfiesExpression(n)))) {
+    const up = n.parent;
+    if (up && (ts.isVariableDeclaration(up) || ts.isPropertyDeclaration(up)) && up.initializer === n) {
+      const name = up.name.getText();
+      return LABEL_DICT.test(name) && !NOT_LABEL_DICT.test(name) ? name : null;
+    }
+    n = up;
+  }
+  return null;
+}
+
 /** `'A' | 'B'` ou `'A'` : type fait de littéraux chaîne. */
 function isLiteralUnionType(type) {
   if (ts.isLiteralTypeNode(type)) return true;
@@ -210,6 +233,11 @@ export function classify(node) {
       const payload = apiPayloadContext(parent);
       if (payload) return { kind: 'REVIEW', reason: `charge API (${payload})` };
       return { kind: 'DISPLAY', reason: `propriété ${key}` };
+    }
+    const dict = labelDictionaryName(parent);
+    // Un texte d'amorce de prompt (envoyé ensuite à l'IA) reste en français, même rangé dans un dictionnaire.
+    if (dict && !/prompt|example|template|sample/i.test(key ?? '') && frenchLooking(staticTextOf(node))) {
+      return { kind: 'DISPLAY', reason: `dictionnaire ${dict}` };
     }
     return { kind: 'REVIEW', reason: `propriété ${key}` };
   }

@@ -38,7 +38,7 @@ interface FieldOption { key: string; label: string; }
 /** Bandeau d'erreur métier (409 clé / vue périmée, 400 quota ou validation serveur). */
 interface DesignerError { message: string; stale: boolean; }
 
-const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé le', updatedAt: 'Modifié le' };
+const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: $localize`:@@studio.studio-record-view-designer.ts.cree.le.046c02a0:Créé le`, updatedAt: $localize`:@@studio.studio-record-view-designer.ts.modifie.le.8b181c38:Modifié le` };
 
 /**
  * Concepteur de vue enregistrée (2.5d) : routes `d/:key/views/new` (création) et

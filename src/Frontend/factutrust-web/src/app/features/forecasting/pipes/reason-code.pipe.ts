@@ -18,11 +18,11 @@ export class ReasonCodePipe implements PipeTransform {
   // Static dictionary of fixed translations. Add new entries as the backend grows the vocabulary.
   // Keys are case-sensitive on purpose to match the backend's PascalCase output.
   private static readonly STATIC_TRANSLATIONS: Readonly<Record<string, string>> = {
-    OutOfStock: 'Rupture de stock',
-    BelowSafetyStock: 'Sous le stock de sécurité',
-    AtOrBelowReorderPoint: 'Au point de commande',
-    BelowUserMinimumStock: 'Sous le stock min. configuré',
-    SeasonalUpcomingEvent: 'Événement saisonnier à venir'
+    OutOfStock: $localize`:@@forecasting.reason-code.pipe.ts.rupture.de.stock.7703fca2:Rupture de stock`,
+    BelowSafetyStock: $localize`:@@forecasting.reason-code.pipe.ts.sous.le.stock.de.securite.4d5df634:Sous le stock de sécurité`,
+    AtOrBelowReorderPoint: $localize`:@@forecasting.reason-code.pipe.ts.au.point.de.commande.03e1a203:Au point de commande`,
+    BelowUserMinimumStock: $localize`:@@forecasting.reason-code.pipe.ts.sous.le.stock.min.configure.d3d3b614:Sous le stock min. configuré`,
+    SeasonalUpcomingEvent: $localize`:@@forecasting.reason-code.pipe.ts.evenement.saisonnier.a.venir.287314ec:Événement saisonnier à venir`
   };
 
   transform(code: string | null | undefined): string {

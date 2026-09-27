@@ -1547,10 +1547,10 @@ export class InvoiceWizardService {
     const usableStatuses = ['active', 'trial'];
     if (!usableStatuses.includes(status)) {
       const statusMessages: Record<string, string> = {
-        cancelled: 'Votre abonnement est annulé. Réactivez ou changez de forfait dans Paramètres > Abonnement.',
-        suspended: 'Votre compte est suspendu. Régularisez votre abonnement dans Paramètres > Abonnement.',
-        expired: 'Votre abonnement a expiré. Renouvelez votre forfait dans Paramètres > Abonnement.',
-        pastdue: 'Votre paiement est en retard. Régularisez votre abonnement dans Paramètres > Abonnement.'
+        cancelled: $localize`:@@invoices.invoice-wizard.ts.votre.abonnement.est.annule.reactivez.ou.f57187e1:Votre abonnement est annulé. Réactivez ou changez de forfait dans Paramètres > Abonnement.`,
+        suspended: $localize`:@@invoices.invoice-wizard.ts.votre.compte.est.suspendu.regularisez.vo.00a5be14:Votre compte est suspendu. Régularisez votre abonnement dans Paramètres > Abonnement.`,
+        expired: $localize`:@@invoices.invoice-wizard.ts.votre.abonnement.a.expire.renouvelez.vot.e088bf9c:Votre abonnement a expiré. Renouvelez votre forfait dans Paramètres > Abonnement.`,
+        pastdue: $localize`:@@invoices.invoice-wizard.ts.votre.paiement.est.en.retard.regularisez.8930fd2c:Votre paiement est en retard. Régularisez votre abonnement dans Paramètres > Abonnement.`
       };
       const normalized = status.replace('_', '');
       const description = statusMessages[normalized] ?? statusMessages[status]

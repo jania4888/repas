@@ -7,14 +7,14 @@ import { STEP_DEFAULTS } from './studio-workflow-step-defaults';
 
 /** Libellés FR locaux de l'arbre : absents de `STUDIO_WORKFLOW_LABELS` (4.4a1, non modifié dans cette tranche). */
 const TREE_LABELS = {
-  trigger: 'Déclenchement',
+  trigger: $localize`:@@studio.studio-workflow-condition-tree.ts.declenchement.de91942a:Déclenchement`,
   onTrue: 'Vrai',
   onFalse: 'Faux',
-  approved: 'Approuvé',
-  rejected: 'Refusé',
-  timeout: 'Délai',
-  nextStep: 'étape suivante',
-  treeAria: 'Aperçu des branchements (lecture seule)'
+  approved: $localize`:@@studio.studio-workflow-condition-tree.ts.approuve.4a06a7fb:Approuvé`,
+  rejected: $localize`:@@studio.studio-workflow-condition-tree.ts.refuse.340218a5:Refusé`,
+  timeout: $localize`:@@studio.studio-workflow-condition-tree.ts.delai.be9a9403:Délai`,
+  nextStep: $localize`:@@studio.studio-workflow-condition-tree.ts.etape.suivante.5f7de659:étape suivante`,
+  treeAria: $localize`:@@studio.studio-workflow-condition-tree.ts.apercu.des.branchements.lecture.seule.459b956a:Aperçu des branchements (lecture seule)`
 } as const;
 
 function asText(value: unknown): string { return typeof value === 'string' ? value : ''; }

@@ -576,17 +576,17 @@ export const FIXED_ASSET_STATUS_LABELS: Record<FixedAssetStatus, string> = {
   [FixedAssetStatus.Draft]: 'Brouillon',
   [FixedAssetStatus.InService]: 'En service',
   [FixedAssetStatus.FullyDepreciated]: 'Totalement amorti',
-  [FixedAssetStatus.Disposed]: 'Cédé'
+  [FixedAssetStatus.Disposed]: $localize`:@@accounting.fixed-assets.ts.cede.51eca68c:Cédé`
 };
 
 export const DEPRECIATION_METHOD_LABELS: Record<DepreciationMethod, string> = {
-  [DepreciationMethod.Linear]: 'Linéaire',
-  [DepreciationMethod.Accelerated]: 'Accéléré',
-  [DepreciationMethod.Integral]: 'Intégral'
+  [DepreciationMethod.Linear]: $localize`:@@accounting.fixed-assets.ts.lineaire.a5db4cfe:Linéaire`,
+  [DepreciationMethod.Accelerated]: $localize`:@@accounting.fixed-assets.ts.accelere.064a76be:Accéléré`,
+  [DepreciationMethod.Integral]: $localize`:@@accounting.fixed-assets.ts.integral.02387577:Intégral`
 };
 
 export const CURRENT_YEAR_POSTING_STATUS_LABELS: Record<CurrentYearPostingStatus, string> = {
-  None: 'Non comptabilisée',
-  Partial: 'Partiellement comptabilisée',
-  FullyPosted: 'Totalement comptabilisée'
+  None: $localize`:@@accounting.fixed-assets.ts.non.comptabilisee.5e1470cc:Non comptabilisée`,
+  Partial: $localize`:@@accounting.fixed-assets.ts.partiellement.comptabilisee.abe82719:Partiellement comptabilisée`,
+  FullyPosted: $localize`:@@accounting.fixed-assets.ts.totalement.comptabilisee.3b53ccd8:Totalement comptabilisée`
 };

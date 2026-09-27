@@ -58,18 +58,18 @@ export class StatusBadgeComponent {
   };
 
   private static readonly labels: Record<StatusBadgeStatus, string> = {
-    paid: 'Payée',
-    partial: 'Partiellement payée',
+    paid: $localize`:@@shared.status-badge.ts.payee.65b240e8:Payée`,
+    partial: $localize`:@@shared.status-badge.ts.partiellement.payee.25cdcffb:Partiellement payée`,
     pending: 'En attente',
     overdue: 'En retard',
     draft: 'Brouillon',
-    sent: 'Envoyée',
-    cancelled: 'Annulée',
-    validated: 'Validée',
-    signed: 'Signée',
-    accepted: 'Acceptée',
-    rejected: 'Rejetée',
-    expired: 'Expirée',
+    sent: $localize`:@@shared.status-badge.ts.envoyee.a1eb6342:Envoyée`,
+    cancelled: $localize`:@@shared.status-badge.ts.annulee.2776573b:Annulée`,
+    validated: $localize`:@@shared.status-badge.ts.validee.2cc6c327:Validée`,
+    signed: $localize`:@@shared.status-badge.ts.signee.be13d5cd:Signée`,
+    accepted: $localize`:@@shared.status-badge.ts.acceptee.8f379d6f:Acceptée`,
+    rejected: $localize`:@@shared.status-badge.ts.rejetee.cf97717e:Rejetée`,
+    expired: $localize`:@@shared.status-badge.ts.expiree.1f0808dc:Expirée`,
     converted: 'Convertie',
     active: 'Actif',
     inactive: 'Inactif'

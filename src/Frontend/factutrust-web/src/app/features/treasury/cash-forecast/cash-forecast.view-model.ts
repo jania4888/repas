@@ -122,17 +122,17 @@ export function severityTone(severity: CashFlowInsightSeverity): 'danger' | 'war
 /** Libellé français d'une source de flux. */
 export function sourceLabel(source: CashFlowSourceType): string {
   const labels: Record<CashFlowSourceType, string> = {
-    client_invoice: 'Facture client',
-    client_effet: 'Effet client',
-    sales_order_backlog: 'Carnet de commandes',
-    supplier_invoice: 'Facture fournisseur',
-    supplier_effet: 'Effet fournisseur',
-    purchase_order_commitment: 'Engagement sur commande',
+    client_invoice: $localize`:@@treasury.cash-forecast.view-model.ts.facture.client.83ca8a70:Facture client`,
+    client_effet: $localize`:@@treasury.cash-forecast.view-model.ts.effet.client.bd4599d7:Effet client`,
+    sales_order_backlog: $localize`:@@treasury.cash-forecast.view-model.ts.carnet.de.commandes.ec641454:Carnet de commandes`,
+    supplier_invoice: $localize`:@@treasury.cash-forecast.view-model.ts.facture.fournisseur.37c58151:Facture fournisseur`,
+    supplier_effet: $localize`:@@treasury.cash-forecast.view-model.ts.effet.fournisseur.605c18bc:Effet fournisseur`,
+    purchase_order_commitment: $localize`:@@treasury.cash-forecast.view-model.ts.engagement.sur.commande.e06c2361:Engagement sur commande`,
     payroll: 'Salaires',
     payroll_contribution: 'Charges sociales',
-    fiscal_obligation: 'Échéance fiscale',
-    loan_installment: 'Échéance d’emprunt',
-    recurring_commitment: 'Engagement récurrent',
+    fiscal_obligation: $localize`:@@treasury.cash-forecast.view-model.ts.echeance.fiscale.136a3c07:Échéance fiscale`,
+    loan_installment: $localize`:@@treasury.cash-forecast.view-model.ts.echeance.d.emprunt.854ae80a:Échéance d’emprunt`,
+    recurring_commitment: $localize`:@@treasury.cash-forecast.view-model.ts.engagement.recurrent.607377af:Engagement récurrent`,
     recurring_journal_template: 'Écriture récurrente',
     manual: 'Saisie manuelle'
   };

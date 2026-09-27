@@ -393,17 +393,17 @@ export class ErrorHandlerService {
    */
   private getDefaultMessage(status: number): string {
     const messages: Record<number, string> = {
-      0: 'Impossible de se connecter au serveur. Vérifiez votre connexion.',
-      400: 'Requête invalide. Veuillez vérifier les données saisies.',
-      401: 'Authentification requise. Veuillez vous connecter.',
-      403: 'Accès non autorisé.',
-      404: 'Ressource non trouvée.',
-      422: 'Données invalides. Veuillez corriger les erreurs indiquées.',
-      429: 'Trop de requêtes. Veuillez patienter avant de réessayer.',
-      409: 'Conflit de données : une autre modification a eu lieu. Actualisez la page et réessayez.',
-      500: 'Erreur serveur. Veuillez réessayer plus tard.',
+      0: $localize`:@@core.error-handler.ts.impossible.de.se.connecter.au.serveur.ve.22688d66:Impossible de se connecter au serveur. Vérifiez votre connexion.`,
+      400: $localize`:@@core.error-handler.ts.requete.invalide.veuillez.verifier.les.d.72b57e48:Requête invalide. Veuillez vérifier les données saisies.`,
+      401: $localize`:@@core.error-handler.ts.authentification.requise.veuillez.vous.c.98c250c5:Authentification requise. Veuillez vous connecter.`,
+      403: $localize`:@@core.error-handler.ts.acces.non.autorise.95c7fdf1:Accès non autorisé.`,
+      404: $localize`:@@core.error-handler.ts.ressource.non.trouvee.7f2a5c41:Ressource non trouvée.`,
+      422: $localize`:@@core.error-handler.ts.donnees.invalides.veuillez.corriger.les.0fc73c93:Données invalides. Veuillez corriger les erreurs indiquées.`,
+      429: $localize`:@@core.error-handler.ts.trop.de.requetes.veuillez.patienter.avan.9523a9ea:Trop de requêtes. Veuillez patienter avant de réessayer.`,
+      409: $localize`:@@core.error-handler.ts.conflit.de.donnees.une.autre.modificatio.78d2d03f:Conflit de données : une autre modification a eu lieu. Actualisez la page et réessayez.`,
+      500: $localize`:@@core.error-handler.ts.erreur.serveur.veuillez.reessayer.plus.t.e12ec1fc:Erreur serveur. Veuillez réessayer plus tard.`,
       502: 'Service temporairement indisponible.',
-      503: 'Service en maintenance. Veuillez réessayer plus tard.'
+      503: $localize`:@@core.error-handler.ts.service.en.maintenance.veuillez.reessaye.de588a8d:Service en maintenance. Veuillez réessayer plus tard.`
     };
 
     return messages[status] || $localize`:@@core.error-handler.ts.erreur.status.veuillez.reessayer.6682a2c4:Erreur ${status}:status:. Veuillez réessayer.`;

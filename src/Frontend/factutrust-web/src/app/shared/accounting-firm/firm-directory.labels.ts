@@ -37,11 +37,11 @@ export const TEAM_SIZE_OPTIONS: FirmCodeOption[] = [
 
 export const MISSING_LABELS: Record<string, string> = {
   description: $localize`:@@shared.firm-directory.labels.ts.une.description.d.au.moins.80.caracteres.699c7794:Une description d’au moins 80 caractères`,
-  practiceAreas: 'Au moins un domaine d’intervention',
-  languages: 'Au moins une langue',
-  governorate: 'Un gouvernorat tunisien',
-  registration: 'Le numéro d’inscription professionnelle',
-  visibility: 'La visibilité dans l’annuaire'
+  practiceAreas: $localize`:@@shared.firm-directory.labels.ts.au.moins.un.domaine.d.intervention.7841882d:Au moins un domaine d’intervention`,
+  languages: $localize`:@@shared.firm-directory.labels.ts.au.moins.une.langue.5c89fe9d:Au moins une langue`,
+  governorate: $localize`:@@shared.firm-directory.labels.ts.un.gouvernorat.tunisien.9e8a9061:Un gouvernorat tunisien`,
+  registration: $localize`:@@shared.firm-directory.labels.ts.le.numero.d.inscription.professionnelle.da6497ae:Le numéro d’inscription professionnelle`,
+  visibility: $localize`:@@shared.firm-directory.labels.ts.la.visibilite.dans.l.annuaire.a90aa512:La visibilité dans l’annuaire`
 };
 
 export function firmCodeLabel(options: FirmCodeOption[], code: string): string {

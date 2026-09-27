@@ -289,20 +289,20 @@ const AUDIT_INT: Record<number, ExchangeAuditEventTypeCode> = {
 };
 
 const AUDIT_LABELS: Record<ExchangeAuditEventTypeCode, string> = {
-  ThreadOpened: 'Échange ouvert',
-  MessageSent: 'Message envoyé',
-  InternalNoteAdded: 'Note interne ajoutée',
-  RequestCreated: 'Demande créée',
-  RequestStatusChanged: 'Statut de demande modifié',
-  TaskCreated: 'Tâche créée',
-  TaskCompleted: 'Tâche terminée',
-  DocumentShared: 'Document partagé',
-  ThreadClosed: 'Échange clos',
-  ThreadReopened: 'Échange rouvert',
-  AppointmentSuggested: 'Rendez-vous suggéré',
-  TaskStatusChanged: 'Statut de tâche modifié',
-  RequestCommented: 'Commentaire sur une demande',
-  RequestAssigned: 'Demande assignée'
+  ThreadOpened: $localize`:@@exchanges.exchange-status.ts.echange.ouvert.09a217d7:Échange ouvert`,
+  MessageSent: $localize`:@@exchanges.exchange-status.ts.message.envoye.3414873e:Message envoyé`,
+  InternalNoteAdded: $localize`:@@exchanges.exchange-status.ts.note.interne.ajoutee.68b6b52b:Note interne ajoutée`,
+  RequestCreated: $localize`:@@exchanges.exchange-status.ts.demande.creee.a251dbcc:Demande créée`,
+  RequestStatusChanged: $localize`:@@exchanges.exchange-status.ts.statut.de.demande.modifie.862bd42a:Statut de demande modifié`,
+  TaskCreated: $localize`:@@exchanges.exchange-status.ts.tache.creee.80944c5c:Tâche créée`,
+  TaskCompleted: $localize`:@@exchanges.exchange-status.ts.tache.terminee.c076ace1:Tâche terminée`,
+  DocumentShared: $localize`:@@exchanges.exchange-status.ts.document.partage.7743e6ac:Document partagé`,
+  ThreadClosed: $localize`:@@exchanges.exchange-status.ts.echange.clos.0c2b7790:Échange clos`,
+  ThreadReopened: $localize`:@@exchanges.exchange-status.ts.echange.rouvert.2edbb79d:Échange rouvert`,
+  AppointmentSuggested: $localize`:@@exchanges.exchange-status.ts.rendez.vous.suggere.e7ba6e42:Rendez-vous suggéré`,
+  TaskStatusChanged: $localize`:@@exchanges.exchange-status.ts.statut.de.tache.modifie.00fb8356:Statut de tâche modifié`,
+  RequestCommented: $localize`:@@exchanges.exchange-status.ts.commentaire.sur.une.demande.ddea6460:Commentaire sur une demande`,
+  RequestAssigned: $localize`:@@exchanges.exchange-status.ts.demande.assignee.339a3efd:Demande assignée`
 };
 
 export function parseExchangeAuditEventType(raw: unknown): ExchangeAuditEventTypeCode | null {

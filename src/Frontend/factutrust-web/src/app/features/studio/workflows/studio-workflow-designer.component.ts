@@ -76,9 +76,9 @@ const COMPUTED: ReadonlySet<CustomFieldType> = new Set(COMPUTED_FIELD_TYPES);
  */
 const DESIGNER_LABELS = {
   description: $localize`:@@studio.studio-workflow-designer.ts.description.55f8ebc8:Description`,
-  tableFixed: 'La table ne peut plus être changée après la création.',
+  tableFixed: $localize`:@@studio.studio-workflow-designer.ts.la.table.ne.peut.plus.etre.changee.apres.144a3110:La table ne peut plus être changée après la création.`,
   saveError: 'Enregistrement impossible.',
-  triggerConfigTooLarge: 'La configuration du déclencheur dépasse 2 Ko.'
+  triggerConfigTooLarge: $localize`:@@studio.studio-workflow-designer.ts.la.configuration.du.declencheur.depasse.aaf1c2d3:La configuration du déclencheur dépasse 2 Ko.`
 } as const;
 
 /** Bannière d'erreur d'écriture (400/409) ; `reload` affiche le bouton « Recharger » (409 édition). */

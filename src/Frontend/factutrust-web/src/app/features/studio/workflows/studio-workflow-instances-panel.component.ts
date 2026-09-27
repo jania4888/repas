@@ -15,8 +15,8 @@ import { StudioWorkflowsService } from './studio-workflows.service';
  * tranche — même motif que `DESIGNER_LABELS` du concepteur, 4.4e1) : erreur et « Charger plus ».
  */
 const PANEL_LABELS = {
-  loadError: 'Chargement des instances impossible.',
-  retry: 'Réessayer',
+  loadError: $localize`:@@studio.studio-workflow-instances-panel.ts.chargement.des.instances.impossible.a21dea32:Chargement des instances impossible.`,
+  retry: $localize`:@@studio.studio-workflow-instances-panel.ts.reessayer.895d416b:Réessayer`,
   /** 4.7a2 / D-47-F01 : accumulation paginée — le total serveur fait foi (lève D-46-01). */
   more: 'Charger plus — encore {remaining}'
 } as const;

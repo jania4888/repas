@@ -79,8 +79,13 @@ export function validateTranslation(fr, ar) {
   if (/<\/?[a-z][a-z0-9-]*(\s[^>]*)?>/i.test(value)) return 'html';
   if (multiset(fr, PLACEHOLDER) !== multiset(value, PLACEHOLDER)) return 'placeholders';
   if (multiset(fr, ICU_VAR) !== multiset(value, ICU_VAR)) return 'icu';
+  // Jetons remplacés par le code (`{entity}`, `{0}`, `{first}` de PrimeNG) : mêmes jetons des deux côtés.
+  if (!isIcu && multiset(fr, CODE_TOKEN) !== multiset(value, CODE_TOKEN)) return 'jetons';
   return null;
 }
+
+/** `{nom}` / `{0}` remplacés par du code (hors placeholders `{$…}` et hors ICU). */
+const CODE_TOKEN = /\{([A-Za-z0-9_]+)\}/g;
 
 /** Isole les valeurs interpolées (nombres, codes latins) dans le texte arabe. */
 export function wrapIsolates(ar) {

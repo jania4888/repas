@@ -59,8 +59,8 @@ import { ProjectListKpiRowComponent } from './components/project-list-kpi-row.co
 import { ProjectFavoritesService } from './project-favorites.service';
 
 const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
-  Generic: 'Affaires générales',
-  Esn: 'Missions & régie',
+  Generic: $localize`:@@projects.project-list.ts.affaires.generales.cf7cec05:Affaires générales`,
+  Esn: $localize`:@@projects.project-list.ts.missions.regie.f9bc89f2:Missions & régie`,
   Btp: 'Chantiers BTP'
 };
 

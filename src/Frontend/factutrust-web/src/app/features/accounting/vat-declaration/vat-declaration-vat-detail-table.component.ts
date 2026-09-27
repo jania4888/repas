@@ -55,8 +55,8 @@ export class VatDeclarationVatDetailTableComponent {
 
     const rateLabels: Record<number, string> = {
       19: 'Taux normal 19 %',
-      13: 'Taux réduit 13 %',
-      7: 'Taux réduit 7 %'
+      13: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.taux.reduit.13.b48b26d9:Taux réduit 13 %`,
+      7: $localize`:@@accounting.vat-declaration-vat-detail-table.ts.taux.reduit.7.3e5d1b2b:Taux réduit 7 %`
     };
 
     const breakdown = d.collectedVatBreakdown ?? [];

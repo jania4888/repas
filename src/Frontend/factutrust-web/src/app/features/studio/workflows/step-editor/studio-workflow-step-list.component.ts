@@ -19,10 +19,10 @@ import { newStep, nextStepKey, referencingSteps } from './studio-workflow-step-d
  * modifié dans cette tranche) — à centraliser en 4.4e1 si un autre composant en a besoin.
  */
 const LIST_LABELS = {
-  listAria: 'Étapes du workflow',
-  rowActions: 'Actions de l\'étape {key}',
-  removeTitle: 'Supprimer l\'étape ?',
-  removeReferenced: 'L\'étape « {key} » est la cible d\'un branchement « Aller à » depuis : {refs}. La suppression retire aussi ces références.'
+  listAria: $localize`:@@studio.studio-workflow-step-list.ts.etapes.du.workflow.19cf37d0:Étapes du workflow`,
+  rowActions: $localize`:@@studio.studio-workflow-step-list.ts.actions.de.l.etape.key.9e26a4b4:Actions de l'étape {key}`,
+  removeTitle: $localize`:@@studio.studio-workflow-step-list.ts.supprimer.l.etape.adc772dc:Supprimer l'étape ?`,
+  removeReferenced: $localize`:@@studio.studio-workflow-step-list.ts.l.etape.key.est.la.cible.d.un.branchemen.3b868b6a:L'étape « {key} » est la cible d'un branchement « Aller à » depuis : {refs}. La suppression retire aussi ces références.`
 } as const;
 
 /** Ligne affichée : étape + position + nombre d'issues de validation + entrée de catalogue. */

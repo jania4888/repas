@@ -650,21 +650,21 @@ export class ManualEntryComponent implements OnInit {
 }
 
 const SOURCE_ENTITY_LABELS: Record<string, string> = {
-  Invoice: 'une facture de vente',
-  InvoiceCreditNote: 'un avoir',
-  Payment: 'un encaissement',
-  SupplierInvoice: 'une facture fournisseur',
-  SupplierPayment: 'un paiement fournisseur',
-  CashOperation: 'une opération de caisse',
-  BankDeposit: 'un versement banque',
-  PayrollRun: 'un cycle de paie',
-  PayrollPayment: 'un paiement de paie',
-  FixedAssetAcquisition: 'une immobilisation',
-  FixedAssetDepreciation: 'une dotation aux amortissements',
-  FixedAssetDisposal: 'une cession d\'immobilisation',
-  OpeningBalance: 'un à-nouveau',
-  Manual: 'une saisie manuelle',
-  BankReconciliation: 'un rapprochement bancaire'
+  Invoice: $localize`:@@accounting.manual-entry.ts.une.facture.de.vente.02a33a71:une facture de vente`,
+  InvoiceCreditNote: $localize`:@@accounting.manual-entry.ts.un.avoir.a7234c19:un avoir`,
+  Payment: $localize`:@@accounting.manual-entry.ts.un.encaissement.94339b4f:un encaissement`,
+  SupplierInvoice: $localize`:@@accounting.manual-entry.ts.une.facture.fournisseur.a2c632f1:une facture fournisseur`,
+  SupplierPayment: $localize`:@@accounting.manual-entry.ts.un.paiement.fournisseur.a2716793:un paiement fournisseur`,
+  CashOperation: $localize`:@@accounting.manual-entry.ts.une.operation.de.caisse.cca55421:une opération de caisse`,
+  BankDeposit: $localize`:@@accounting.manual-entry.ts.un.versement.banque.9a963d40:un versement banque`,
+  PayrollRun: $localize`:@@accounting.manual-entry.ts.un.cycle.de.paie.e2bff850:un cycle de paie`,
+  PayrollPayment: $localize`:@@accounting.manual-entry.ts.un.paiement.de.paie.01d182ea:un paiement de paie`,
+  FixedAssetAcquisition: $localize`:@@accounting.manual-entry.ts.une.immobilisation.4503d3c6:une immobilisation`,
+  FixedAssetDepreciation: $localize`:@@accounting.manual-entry.ts.une.dotation.aux.amortissements.a1494403:une dotation aux amortissements`,
+  FixedAssetDisposal: $localize`:@@accounting.manual-entry.ts.une.cession.d.immobilisation.23a24275:une cession d'immobilisation`,
+  OpeningBalance: $localize`:@@accounting.manual-entry.ts.un.a.nouveau.d577edd1:un à-nouveau`,
+  Manual: $localize`:@@accounting.manual-entry.ts.une.saisie.manuelle.79afaff1:une saisie manuelle`,
+  BankReconciliation: $localize`:@@accounting.manual-entry.ts.un.rapprochement.bancaire.349f7696:un rapprochement bancaire`
 };
 
 function sourceEntityLabel(source: string | null): string {

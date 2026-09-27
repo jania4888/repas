@@ -73,16 +73,16 @@ export interface PreviewNumberingResponse {
 
 export const BLOCK_TYPE_LABELS: Record<NumberingBlockType, string> = {
   [NumberingBlockType.FreeText]: 'Texte libre',
-  [NumberingBlockType.Separator]: 'Séparateur',
-  [NumberingBlockType.DocumentNumber]: 'Numéro de document',
-  [NumberingBlockType.DocumentNumberPadded3]: 'Numéro de document à 3 chiffres',
-  [NumberingBlockType.DocumentNumberPadded4]: 'Numéro de document à 4 chiffres',
-  [NumberingBlockType.DocumentNumberPadded5]: 'Numéro de document à 5 chiffres',
-  [NumberingBlockType.DocumentNumberPadded6]: 'Numéro de document à 6 chiffres',
-  [NumberingBlockType.Day]: 'Jour (JJ)',
-  [NumberingBlockType.Month]: 'Mois (MM)',
-  [NumberingBlockType.Year4]: 'Année (AAAA)',
-  [NumberingBlockType.Year2]: 'Année (AA)'
+  [NumberingBlockType.Separator]: $localize`:@@settings.numbering.ts.separateur.b9c2ee8d:Séparateur`,
+  [NumberingBlockType.DocumentNumber]: $localize`:@@settings.numbering.ts.numero.de.document.f65df140:Numéro de document`,
+  [NumberingBlockType.DocumentNumberPadded3]: $localize`:@@settings.numbering.ts.numero.de.document.a.3.chiffres.596b53d7:Numéro de document à 3 chiffres`,
+  [NumberingBlockType.DocumentNumberPadded4]: $localize`:@@settings.numbering.ts.numero.de.document.a.4.chiffres.a53e9484:Numéro de document à 4 chiffres`,
+  [NumberingBlockType.DocumentNumberPadded5]: $localize`:@@settings.numbering.ts.numero.de.document.a.5.chiffres.78d9d532:Numéro de document à 5 chiffres`,
+  [NumberingBlockType.DocumentNumberPadded6]: $localize`:@@settings.numbering.ts.numero.de.document.a.6.chiffres.f640c3ce:Numéro de document à 6 chiffres`,
+  [NumberingBlockType.Day]: $localize`:@@settings.numbering.ts.jour.jj.9e339227:Jour (JJ)`,
+  [NumberingBlockType.Month]: $localize`:@@settings.numbering.ts.mois.mm.9704b748:Mois (MM)`,
+  [NumberingBlockType.Year4]: $localize`:@@settings.numbering.ts.annee.aaaa.d05f8c31:Année (AAAA)`,
+  [NumberingBlockType.Year2]: $localize`:@@settings.numbering.ts.annee.aa.63239c04:Année (AA)`
 };
 
 export interface PaletteBlockTemplate {

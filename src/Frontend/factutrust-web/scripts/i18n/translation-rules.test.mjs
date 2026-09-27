@@ -29,3 +29,10 @@ test('hors ICU, « }} » reste du code refusé', () => {
   assert.equal(validateTranslation('Total : {$INTERPOLATION}', 'المجموع: {{ total }}'), 'code');
   assert.equal(validateTranslation('Total : {$INTERPOLATION}', 'المجموع: {$INTERPOLATION}'), null);
 });
+
+test('jetons remplacés par le code ({entity}, {0}, {first}) conservés', () => {
+  assert.equal(validateTranslation('Table « {entity} » ajoutée', 'تمت إضافة الجدول « {entity} »'), null);
+  assert.equal(validateTranslation('Table « {entity} » ajoutée', 'تمت إضافة الجدول'), 'jetons');
+  assert.equal(validateTranslation('Affichage de {first} à {last}', 'عرض {first} إلى {last}'), null);
+  assert.equal(validateTranslation('{0} champs', 'حقول'), 'jetons');
+});
