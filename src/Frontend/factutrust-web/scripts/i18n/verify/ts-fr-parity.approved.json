@@ -72,8 +72,8 @@
     "reason": "Tri via erpCollatorCompare : Intl.Collator('fr') en français, strictement équivalent à localeCompare(…, 'fr')."
   },
   "src/app/features/inventory/inventory-form/inventory-form.component.ts": {
-    "sha": "ba58f5dfe01f1093954250370fd15d2cf9884e8e557ca88b6c8cab65399af32d",
-    "reason": "Chaînes converties en $localize à placeholders nommés : rendu français identique."
+    "sha": "7c89f1e6c9ace27aada22d62bb57ba41140b58ea699e5cfe91e8934b3dcd74d7",
+    "reason": "Pluriel « ${n > 1 ? 's' : ''} » remplacé par erpPlural (une forme $localize par catégorie CLDR) : en français, 1 → forme « one » et sinon « other »/« many », textes rendus identiques (espace séparateur sorti des messages). L'arabe n'affiche plus le « s » français injecté par les placeholders."
   },
   "src/app/features/payroll/declarations/cnss-remittance-tab.component.ts": {
     "sha": "8a3bd02cd4cce2028726ac337beb24975acb8e3cd74b5fe1342a084688d78198",

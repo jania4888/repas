@@ -130,9 +130,9 @@ import {
             <div class="chart-bars">
               @for (item of getVisibleChartData(); track item.label) {
                 <div class="bar-group">
-                  <div class="bar-tooltip" i18n="@@reports.analytics.facture.a81448ce">
+                  <div class="bar-tooltip" i18n="@@reports.analytics.facture.a81448ce.pl">
                     <strong>{{ formatAmount(item.revenue) }}</strong><br>
-                    <small>{{ item.invoiceCount }} facture{{ item.invoiceCount > 1 ? 's' : '' }}</small>
+                    <small>{{ item.invoiceCount }} {item.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</small>
                   </div>
                   <div class="bar-wrapper">
                     <div
@@ -183,9 +183,9 @@ import {
                 <div class="rank-badge" [class]="'rank-' + (i < 3 ? i + 1 : 'default')">
                   {{ i + 1 }}
                 </div>
-                <div class="rank-info" i18n="@@reports.analytics.facture.e9fce0d2">
+                <div class="rank-info" i18n="@@reports.analytics.facture.e9fce0d2.pl">
                   <span class="rank-name">{{ client.clientName }}</span>
-                  <span class="rank-detail">{{ client.invoiceCount }} facture{{ client.invoiceCount > 1 ? 's' : '' }}</span>
+                  <span class="rank-detail">{{ client.invoiceCount }} {client.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</span>
                 </div>
                 <div class="rank-value">
                   <span class="rank-amount">{{ formatAmount(client.totalAmount) }}</span>

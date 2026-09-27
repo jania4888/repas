@@ -123,9 +123,9 @@ import {
             <div class="chart-bars">
               @for (item of getVisibleChartData(); track item.label) {
                 <div class="bar-group">
-                  <div class="bar-tooltip" i18n="@@reports.purchases-analytics.facture.32ef91f8">
+                  <div class="bar-tooltip" i18n="@@reports.purchases-analytics.facture.32ef91f8.pl">
                     <strong>{{ formatAmount(item.amount) }}</strong><br>
-                    <small>{{ item.invoiceCount }} facture{{ item.invoiceCount > 1 ? 's' : '' }}</small>
+                    <small>{{ item.invoiceCount }} {item.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</small>
                   </div>
                   <div class="bar-wrapper">
                     <div
@@ -174,9 +174,9 @@ import {
                 <div class="rank-badge" [class]="'rank-' + (i < 3 ? i + 1 : 'default')">
                   {{ i + 1 }}
                 </div>
-                <div class="rank-info" i18n="@@reports.purchases-analytics.facture.ae46de43">
+                <div class="rank-info" i18n="@@reports.purchases-analytics.facture.ae46de43.pl">
                   <span class="rank-name">{{ supplier.supplierName }}</span>
-                  <span class="rank-detail">{{ supplier.invoiceCount }} facture{{ supplier.invoiceCount > 1 ? 's' : '' }}</span>
+                  <span class="rank-detail">{{ supplier.invoiceCount }} {supplier.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</span>
                 </div>
                 <div class="rank-value">
                   <span class="rank-amount">{{ formatAmount(supplier.totalAmount) }}</span>

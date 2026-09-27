@@ -5,7 +5,9 @@ import {
     inject,
     signal,
     computed,
+    LOCALE_ID,
 } from '@angular/core';
+import { erpPlural } from '@core/i18n/erp-plural';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -74,6 +76,7 @@ export class InventoryFormComponent implements OnInit {
     private confirmationService = inject(ConfirmationService);
     private router = inject(Router);
     private route = inject(ActivatedRoute);
+    private localeId = inject(LOCALE_ID);
 
     loading = signal(true);
     starting = signal(false);
@@ -400,16 +403,33 @@ export class InventoryFormComponent implements OnInit {
             (l) => this.resolveCountedInput(l) !== l.theoreticalQuantity
         ).length;
 
+        // Une forme par catégorie CLDR : le français n'emploie que one/many/other, l'arabe toutes.
+        const implicitPlural = $localize`:@@inventory-form.validate.implicit.plural:${implicitCount}:count: articles non saisis seront confirmés à la quantité système.`;
         const implicitPart = implicitCount > 0
-            ? $localize`:@@ui.tern.ph.article.ph.non.saisi.ph.seront.confirme.023e2c:${implicitCount}:p0: article${implicitCount > 1 ? 's' : ''}:p1: non saisi${implicitCount > 1 ? 's' : ''}:p2: seront confirmés à la quantité système.`
+            ? erpPlural(implicitCount, {
+                zero: $localize`:@@inventory-form.validate.implicit.zero:${implicitCount}:count: articles non saisis seront confirmés à la quantité système.`,
+                one: $localize`:@@inventory-form.validate.implicit.one:${implicitCount}:count: article non saisi seront confirmés à la quantité système.`,
+                two: $localize`:@@inventory-form.validate.implicit.two:${implicitCount}:count: articles non saisis seront confirmés à la quantité système.`,
+                few: $localize`:@@inventory-form.validate.implicit.few:${implicitCount}:count: articles non saisis seront confirmés à la quantité système.`,
+                many: $localize`:@@inventory-form.validate.implicit.many:${implicitCount}:count: articles non saisis seront confirmés à la quantité système.`,
+                other: implicitPlural
+            }, this.localeId)
             : $localize`:@@ui.tern.tous.les.articles.saisis.seront.enregistre.fdf8dc:Tous les articles saisis seront enregistrés.`;
+        const variancePlural = $localize`:@@inventory-form.validate.variance.plural:${varianceCount}:count: écarts seront appliqués au stock.`;
         const variancePart = varianceCount > 0
-            ? ` ${varianceCount} écart${varianceCount > 1 ? 's' : ''} ${varianceCount > 1 ? $localize`:@@ui.tern.seront.appliques.cad5b3:seront appliqués` : $localize`:@@ui.tern.sera.applique.c08e44:sera appliqué`} au stock.`
-            : $localize`:@@ui.tern.aucun.ajustement.de.stock.6f28b5: Aucun ajustement de stock.`;
+            ? erpPlural(varianceCount, {
+                zero: $localize`:@@inventory-form.validate.variance.zero:${varianceCount}:count: écarts seront appliqués au stock.`,
+                one: $localize`:@@inventory-form.validate.variance.one:${varianceCount}:count: écart sera appliqué au stock.`,
+                two: $localize`:@@inventory-form.validate.variance.two:${varianceCount}:count: écarts seront appliqués au stock.`,
+                few: $localize`:@@inventory-form.validate.variance.few:${varianceCount}:count: écarts seront appliqués au stock.`,
+                many: $localize`:@@inventory-form.validate.variance.many:${varianceCount}:count: écarts seront appliqués au stock.`,
+                other: variancePlural
+            }, this.localeId)
+            : $localize`:@@ui.tern.aucun.ajustement.de.stock.6f28b5:Aucun ajustement de stock.`;
 
         this.confirmationService.confirm({
             header: 'Valider l\'inventaire',
-            message: `${implicitPart}${variancePart}`,
+            message: `${implicitPart} ${variancePart}`,
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: $localize`:@@inventory-form.component.acceptLabel.Valider:Valider`,
             rejectLabel: $localize`:@@inventory-form.component.rejectLabel.Retour:Retour`,

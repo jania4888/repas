@@ -44,7 +44,7 @@
     "i18n:values": "node scripts/i18n/gate/check-value-messages.mjs",
     "i18n:missing": "node scripts/i18n/dump-missing.mjs",
     "i18n:apply-batch": "node scripts/i18n/apply-translation-batch.mjs",
-    "i18n:gate": "npm run i18n:ids && npm run i18n:values && node scripts/i18n/build-runtime-translations.mjs --strict && npm run i18n:parity:template && npm run i18n:parity:ts",
+    "i18n:gate": "node --test scripts/i18n/translation-rules.test.mjs && npm run i18n:ids && npm run i18n:values && node scripts/i18n/build-runtime-translations.mjs --strict && npm run i18n:parity:template && npm run i18n:parity:ts",
     "i18n:extract": "node scripts/i18n/extract.mjs",
     "i18n:parity:template": "node scripts/i18n/verify/template-fr-parity.mjs",
     "i18n:parity:ts": "node scripts/i18n/verify/ts-fr-parity.mjs",

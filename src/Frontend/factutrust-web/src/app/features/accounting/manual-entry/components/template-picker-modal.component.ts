@@ -55,7 +55,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                     @if (t.description) {
                       <span class="tpm-item-desc">{{ t.description }}</span>
                     }
-                    <span class="tpm-item-meta" i18n="@@accounting.manual-entry.ligne.utilise.fois.510be3e7">{{ t.lines.length }} ligne{{ t.lines.length > 1 ? 's' : '' }} · utilisé {{ t.usageCount }} fois</span>
+                    <span class="tpm-item-meta" i18n="@@accounting.manual-entry.ligne.utilise.fois.510be3e7.pl">{{ t.lines.length }} {t.lines.length, plural, =0 {ligne} =1 {ligne} other {lignes}} · utilisé {{ t.usageCount }} fois</span>
                   </li>
                 }
               </ul>

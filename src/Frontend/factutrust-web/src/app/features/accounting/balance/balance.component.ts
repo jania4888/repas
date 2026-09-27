@@ -89,7 +89,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               <select id="bal-level" [(ngModel)]="groupLevel" class="accounting-filter-input">
                 <option [ngValue]="0" i18n="@@accounting.balance.detail.par.compte.f63634fc">Détail par compte</option>
                 @for (l of [1, 2, 3, 4, 5]; track l) {
-                  <option [ngValue]="l" i18n="@@accounting.balance.racine.a.chiffre.5f0c7097">Racine à {{ l }} chiffre{{ l > 1 ? 's' : '' }}</option>
+                  <option [ngValue]="l" i18n="@@accounting.balance.racine.a.chiffre.5f0c7097.pl">Racine à {{ l }} {l, plural, =0 {chiffre} =1 {chiffre} other {chiffres}}</option>
                 }
               </select>
             </div>

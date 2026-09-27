@@ -28,9 +28,9 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
       <div class="order-panel__header">
         <h2 class="order-panel__title" i18n="@@pos.components.commande.47844341">Commande</h2>
         @if (posState.lineCount() > 0) {
-          <span class="order-panel__badge order-panel__badge--animated" i18n="@@pos.components.article.7ad8e07d">
+          <span class="order-panel__badge order-panel__badge--animated" i18n="@@pos.components.article.7ad8e07d.pl">
             <i class="pi pi-shopping-cart order-panel__badge-icon"></i>
-            {{ posState.totalItemsQuantity() }} article{{ posState.totalItemsQuantity() > 1 ? 's' : '' }}
+            {{ posState.totalItemsQuantity() }} {posState.totalItemsQuantity(), plural, =0 {article} =1 {article} other {articles}}
           </span>
         }
       </div>

@@ -5882,10 +5882,18 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.balance.racine.a.chiffre.5f0c7097": "Racine à {$INTERPOLATION} chiffre{$INTERPOLATION_1}",
-  "@accounting.balance.racine.a.chiffre.5f0c7097": {
+  "accounting.balance.racine.a.chiffre.5f0c7097.pl": "Racine à {$INTERPOLATION} {$ICU}",
+  "@accounting.balance.racine.a.chiffre.5f0c7097.pl": {
     "x-files": [
       "src/app/features/accounting/balance/balance.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "4623951223266996405": "{VAR_PLURAL, plural, =0 {chiffre} =1 {chiffre} other {chiffres}}",
+  "@4623951223266996405": {
+    "x-files": [
+      "src/app/features/accounting/balance/balance.component.ts",
+      "src/app/features/accounting/ledger/ledger.component.html"
     ],
     "x-wave": "v7"
   },
@@ -15303,8 +15311,8 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.ledger.chiffre.232d7b60": "{$INTERPOLATION} chiffre{$INTERPOLATION_1}",
-  "@accounting.ledger.chiffre.232d7b60": {
+  "accounting.ledger.chiffre.232d7b60.pl": "{$INTERPOLATION} {$ICU}",
+  "@accounting.ledger.chiffre.232d7b60.pl": {
     "x-files": [
       "src/app/features/accounting/ledger/ledger.component.html"
     ],
@@ -18050,8 +18058,15 @@
     ],
     "x-wave": "v7"
   },
-  "accounting.manual-entry.ligne.utilise.fois.510be3e7": "{$INTERPOLATION} ligne{$INTERPOLATION_1} · utilisé {$INTERPOLATION_2} fois",
-  "@accounting.manual-entry.ligne.utilise.fois.510be3e7": {
+  "accounting.manual-entry.ligne.utilise.fois.510be3e7.pl": "{$INTERPOLATION} {$ICU} · utilisé {$INTERPOLATION_1} fois",
+  "@accounting.manual-entry.ligne.utilise.fois.510be3e7.pl": {
+    "x-files": [
+      "src/app/features/accounting/manual-entry/components/template-picker-modal.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "2245051417065635102": "{VAR_PLURAL, plural, =0 {ligne} =1 {ligne} other {lignes}}",
+  "@2245051417065635102": {
     "x-files": [
       "src/app/features/accounting/manual-entry/components/template-picker-modal.component.ts"
     ],
@@ -29375,10 +29390,21 @@
     ],
     "x-wave": "v3"
   },
-  "dashboard.dashboard.facture.ebb8b8ef": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION_1} facture{$INTERPOLATION_2}{$CLOSE_TAG_SPAN}",
-  "@dashboard.dashboard.facture.ebb8b8ef": {
+  "dashboard.dashboard.facture.ebb8b8ef.pl": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION_1} {$ICU}{$CLOSE_TAG_SPAN}",
+  "@dashboard.dashboard.facture.ebb8b8ef.pl": {
     "x-files": [
       "src/app/features/dashboard/dashboard.component.ts"
+    ],
+    "x-wave": "v3"
+  },
+  "8735766848915222980": "{VAR_PLURAL, plural, =0 {facture} =1 {facture} other {factures}}",
+  "@8735766848915222980": {
+    "x-files": [
+      "src/app/features/dashboard/dashboard.component.ts",
+      "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts",
+      "src/app/features/reports/purchases-analytics/expenses/expenses-analytics.component.ts",
+      "src/app/features/reports/purchases/purchases-reports.component.ts",
+      "src/app/features/reports/sales/sales-reports.component.ts"
     ],
     "x-wave": "v3"
   },
@@ -33929,8 +33955,43 @@
     ],
     "x-wave": "v5"
   },
-  "ui.tern.ph.article.ph.non.saisi.ph.seront.confirme.023e2c": "{$p0} article{$p1} non saisi{$p2} seront confirmés à la quantité système.",
-  "@ui.tern.ph.article.ph.non.saisi.ph.seront.confirme.023e2c": {
+  "inventory-form.validate.implicit.plural": "{$count} articles non saisis seront confirmés à la quantité système.",
+  "@inventory-form.validate.implicit.plural": {
+    "x-files": [
+      "src/app/features/inventory/inventory-form/inventory-form.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory-form.validate.implicit.zero": "{$count} articles non saisis seront confirmés à la quantité système.",
+  "@inventory-form.validate.implicit.zero": {
+    "x-files": [
+      "src/app/features/inventory/inventory-form/inventory-form.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory-form.validate.implicit.one": "{$count} article non saisi seront confirmés à la quantité système.",
+  "@inventory-form.validate.implicit.one": {
+    "x-files": [
+      "src/app/features/inventory/inventory-form/inventory-form.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory-form.validate.implicit.two": "{$count} articles non saisis seront confirmés à la quantité système.",
+  "@inventory-form.validate.implicit.two": {
+    "x-files": [
+      "src/app/features/inventory/inventory-form/inventory-form.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory-form.validate.implicit.few": "{$count} articles non saisis seront confirmés à la quantité système.",
+  "@inventory-form.validate.implicit.few": {
+    "x-files": [
+      "src/app/features/inventory/inventory-form/inventory-form.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory-form.validate.implicit.many": "{$count} articles non saisis seront confirmés à la quantité système.",
+  "@inventory-form.validate.implicit.many": {
     "x-files": [
       "src/app/features/inventory/inventory-form/inventory-form.component.ts"
     ],
@@ -33943,21 +34004,49 @@
     ],
     "x-wave": "v5"
   },
-  "ui.tern.seront.appliques.cad5b3": "seront appliqués",
-  "@ui.tern.seront.appliques.cad5b3": {
+  "inventory-form.validate.variance.plural": "{$count} écarts seront appliqués au stock.",
+  "@inventory-form.validate.variance.plural": {
     "x-files": [
       "src/app/features/inventory/inventory-form/inventory-form.component.ts"
     ],
     "x-wave": "v5"
   },
-  "ui.tern.sera.applique.c08e44": "sera appliqué",
-  "@ui.tern.sera.applique.c08e44": {
+  "inventory-form.validate.variance.zero": "{$count} écarts seront appliqués au stock.",
+  "@inventory-form.validate.variance.zero": {
     "x-files": [
       "src/app/features/inventory/inventory-form/inventory-form.component.ts"
     ],
     "x-wave": "v5"
   },
-  "ui.tern.aucun.ajustement.de.stock.6f28b5": " Aucun ajustement de stock.",
+  "inventory-form.validate.variance.one": "{$count} écart sera appliqué au stock.",
+  "@inventory-form.validate.variance.one": {
+    "x-files": [
+      "src/app/features/inventory/inventory-form/inventory-form.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory-form.validate.variance.two": "{$count} écarts seront appliqués au stock.",
+  "@inventory-form.validate.variance.two": {
+    "x-files": [
+      "src/app/features/inventory/inventory-form/inventory-form.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory-form.validate.variance.few": "{$count} écarts seront appliqués au stock.",
+  "@inventory-form.validate.variance.few": {
+    "x-files": [
+      "src/app/features/inventory/inventory-form/inventory-form.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "inventory-form.validate.variance.many": "{$count} écarts seront appliqués au stock.",
+  "@inventory-form.validate.variance.many": {
+    "x-files": [
+      "src/app/features/inventory/inventory-form/inventory-form.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "ui.tern.aucun.ajustement.de.stock.6f28b5": "Aucun ajustement de stock.",
   "@ui.tern.aucun.ajustement.de.stock.6f28b5": {
     "x-files": [
       "src/app/features/inventory/inventory-form/inventory-form.component.ts"
@@ -46545,8 +46634,15 @@
     ],
     "x-wave": "v5"
   },
-  "pos.components.article.7ad8e07d": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} {$INTERPOLATION} article{$INTERPOLATION_1} ",
-  "@pos.components.article.7ad8e07d": {
+  "pos.components.article.7ad8e07d.pl": "{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} {$INTERPOLATION} {$ICU} ",
+  "@pos.components.article.7ad8e07d.pl": {
+    "x-files": [
+      "src/app/features/pos/components/order-panel/order-panel.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "7798964670642733336": "{VAR_PLURAL, plural, =0 {article} =1 {article} other {articles}}",
+  "@7798964670642733336": {
     "x-files": [
       "src/app/features/pos/components/order-panel/order-panel.component.ts"
     ],
@@ -60765,8 +60861,15 @@
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.client.affiche.169b2144": " {$INTERPOLATION} client{$INTERPOLATION_1} affiché{$INTERPOLATION_1} ",
-  "@reports.analytics.client.affiche.169b2144": {
+  "reports.analytics.client.affiche.169b2144.pl": " {$INTERPOLATION} {$ICU} ",
+  "@reports.analytics.client.affiche.169b2144.pl": {
+    "x-files": [
+      "src/app/features/reports/analytics/clients/clients-analytics.component.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "6738329462005663240": "{VAR_PLURAL, plural, =0 {client affiché} =1 {client affiché} other {clients affichés}}",
+  "@6738329462005663240": {
     "x-files": [
       "src/app/features/reports/analytics/clients/clients-analytics.component.ts"
     ],
@@ -60900,8 +61003,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.facture.a81448ce": "{$START_TAG_STRONG}{$INTERPOLATION}{$CLOSE_TAG_STRONG}{$LINE_BREAK}{$START_SMALL_TEXT}{$INTERPOLATION_1} facture{$INTERPOLATION_2}{$CLOSE_SMALL_TEXT}",
-  "@reports.analytics.facture.a81448ce": {
+  "reports.analytics.facture.a81448ce.pl": "{$START_TAG_STRONG}{$INTERPOLATION}{$CLOSE_TAG_STRONG}{$LINE_BREAK}{$START_SMALL_TEXT}{$INTERPOLATION_1} {$ICU}{$CLOSE_SMALL_TEXT}",
+  "@reports.analytics.facture.a81448ce.pl": {
     "x-files": [
       "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
     ],
@@ -60942,8 +61045,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.analytics.facture.e9fce0d2": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION_1} facture{$INTERPOLATION_2}{$CLOSE_TAG_SPAN}",
-  "@reports.analytics.facture.e9fce0d2": {
+  "reports.analytics.facture.e9fce0d2.pl": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION_1} {$ICU}{$CLOSE_TAG_SPAN}",
+  "@reports.analytics.facture.e9fce0d2.pl": {
     "x-files": [
       "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts"
     ],
@@ -62252,8 +62355,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.purchases-analytics.facture.32ef91f8": "{$START_TAG_STRONG}{$INTERPOLATION}{$CLOSE_TAG_STRONG}{$LINE_BREAK}{$START_SMALL_TEXT}{$INTERPOLATION_1} facture{$INTERPOLATION_2}{$CLOSE_SMALL_TEXT}",
-  "@reports.purchases-analytics.facture.32ef91f8": {
+  "reports.purchases-analytics.facture.32ef91f8.pl": "{$START_TAG_STRONG}{$INTERPOLATION}{$CLOSE_TAG_STRONG}{$LINE_BREAK}{$START_SMALL_TEXT}{$INTERPOLATION_1} {$ICU}{$CLOSE_SMALL_TEXT}",
+  "@reports.purchases-analytics.facture.32ef91f8.pl": {
     "x-files": [
       "src/app/features/reports/purchases-analytics/expenses/expenses-analytics.component.ts"
     ],
@@ -62296,8 +62399,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.purchases-analytics.facture.ae46de43": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION_1} facture{$INTERPOLATION_2}{$CLOSE_TAG_SPAN}",
-  "@reports.purchases-analytics.facture.ae46de43": {
+  "reports.purchases-analytics.facture.ae46de43.pl": "{$START_TAG_SPAN}{$INTERPOLATION}{$CLOSE_TAG_SPAN}{$START_TAG_SPAN_1}{$INTERPOLATION_1} {$ICU}{$CLOSE_TAG_SPAN}",
+  "@reports.purchases-analytics.facture.ae46de43.pl": {
     "x-files": [
       "src/app/features/reports/purchases-analytics/expenses/expenses-analytics.component.ts"
     ],
@@ -62754,8 +62857,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.purchases.facture.f80b44a2": " {$INTERPOLATION}{$LINE_BREAK}{$START_SMALL_TEXT}{$INTERPOLATION_1} facture{$INTERPOLATION_2}{$CLOSE_SMALL_TEXT}",
-  "@reports.purchases.facture.f80b44a2": {
+  "reports.purchases.facture.f80b44a2.pl": " {$INTERPOLATION}{$LINE_BREAK}{$START_SMALL_TEXT}{$INTERPOLATION_1} {$ICU}{$CLOSE_SMALL_TEXT}",
+  "@reports.purchases.facture.f80b44a2.pl": {
     "x-files": [
       "src/app/features/reports/purchases/purchases-reports.component.ts"
     ],
@@ -63749,8 +63852,8 @@
     ],
     "x-wave": "v6"
   },
-  "reports.sales.facture.c015f55f": " {$INTERPOLATION}{$LINE_BREAK}{$START_SMALL_TEXT}{$INTERPOLATION_1} facture{$INTERPOLATION_2}{$CLOSE_SMALL_TEXT}",
-  "@reports.sales.facture.c015f55f": {
+  "reports.sales.facture.c015f55f.pl": " {$INTERPOLATION}{$LINE_BREAK}{$START_SMALL_TEXT}{$INTERPOLATION_1} {$ICU}{$CLOSE_SMALL_TEXT}",
+  "@reports.sales.facture.c015f55f.pl": {
     "x-files": [
       "src/app/features/reports/sales/sales-reports.component.ts"
     ],

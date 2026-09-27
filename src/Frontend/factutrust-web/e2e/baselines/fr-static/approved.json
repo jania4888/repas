@@ -11,6 +11,10 @@
     "sha": "5bbb3101685a8da0bcc09f8e330189beb39fbf9ed8ad194fe34dadcc9b01d12a",
     "reason": "Libellés via resolveNavLabel/resolveSubNavLabel (nav-labels.spec.ts) ; aria-label marque et badge via $localize (même texte, doublon d'interpolation corrigé)."
   },
+  "src/app/features/accounting/balance/balance.component.ts#BalanceComponent": {
+    "sha": "47237104018367066250425f55b3ea1ec105b60d5e5d9fe5a48e490597bc3607",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
   "src/app/features/accounting/bank-reconciliation/bank-reconciliation.component.ts#BankReconciliationComponent": {
     "sha": "bfaa4e6f8b968c2c47810f7e6c1f7f6aa40b8b2f672d4b033ba7c8f73da5ef16",
     "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
@@ -31,9 +35,17 @@
     "sha": "b4d0bdb6f7c44bbe75531bfd339de18263eed654e8f6bff10c145a6bb09f40cc",
     "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
   },
+  "src/app/features/accounting/ledger/ledger.component.html": {
+    "sha": "2d45417c2843e340de62b2ee32c715f37747b1025f69b4f46acfe83b6f21f86f",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
   "src/app/features/accounting/loans/loans-list.component.ts#LoansListComponent": {
     "sha": "09e469a0c14c0b06fc682a00eab850ecc18e0f42434e4be7aaac1341a7282426",
     "reason": "Écriture équivalente des chaînes (apostrophe échappée au lieu de guillemets) et/ou pipe backendLabel : rendu français identique."
+  },
+  "src/app/features/accounting/manual-entry/components/template-picker-modal.component.ts#TemplatePickerModalComponent": {
+    "sha": "70ec975e4d37ce148ad8bfe9b968372f7d9fcb7e55396eef7878e29fa9f63797",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
   },
   "src/app/features/accounting/vat-declaration/vat-declaration-general-info.component.ts#VatDeclarationGeneralInfoComponent": {
     "sha": "1eb3207edd122993181c652b28a2e4ba76cbc9f801a979ea42249f0e4706bed2",
@@ -46,6 +58,10 @@
   "src/app/features/clients/client-portal-contacts-panel.component.ts#ClientPortalContactsPanelComponent": {
     "sha": "56aeccb15df32c49e4d93fc2bc41e267c3f7a566e66dc887351a275655f9281a",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+  },
+  "src/app/features/dashboard/dashboard.component.ts#DashboardComponent": {
+    "sha": "200fcaf1e476006192ff49accf14724f770befb1248ab83ad6ec272089219733",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
   },
   "src/app/features/delivery-notes/pages/delivery-note-detail/delivery-note-detail.component.ts#DeliveryNoteDetailComponent": {
     "sha": "ac26e06502773ad9bc163fd2d2be3600d197a7b1ff33a84318fa14979d4ec5a8",
@@ -148,8 +164,8 @@
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
   "src/app/features/pos/components/order-panel/order-panel.component.ts#OrderPanelComponent": {
-    "sha": "7d063303bdaab783a8b54cd6b1ce87539f8b4a2a0d5b067332bfc27fbc9ec81d",
-    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+    "sha": "d13351ba6c26db13843210a6247234e359921445113f85f764ef8651cb26f57c",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres. Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
   "src/app/features/pos/components/pos-history-panel/pos-history-panel.component.ts#PosHistoryPanelComponent": {
     "sha": "c78e1cacb939c0f9d55e4fe4059635ff230e333674773e657ae787566f07cbb9",
@@ -271,17 +287,29 @@
     "sha": "3f1a348cb2db717cf58894ae9072d91c7dc3cc4824bb8f93e7cbe9ea62e45c9a",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
+  "src/app/features/reports/analytics/clients/clients-analytics.component.ts#ClientsAnalyticsComponent": {
+    "sha": "c2c090e17e12b6ffddd16444078fad8ee9df899c03131ceabd00f573cf9b42ae",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
+  "src/app/features/reports/analytics/revenue/revenue-analytics.component.ts#RevenueAnalyticsComponent": {
+    "sha": "5c1953558ca0a634a8e00926c20feb98a6e299d131d1b3d85123226d39545449",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
   "src/app/features/reports/payments/payments-reports.component.ts#PaymentsReportsComponent": {
     "sha": "545ae601e582a4c01a8fd6b4861b59e33895815b3f97a4ef6fc4997992e7a25a",
     "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
+  "src/app/features/reports/purchases-analytics/expenses/expenses-analytics.component.ts#ExpensesAnalyticsComponent": {
+    "sha": "59ebe140fc26bbd48c12b86290290c2ce8e118f466fd4d8833a96ddd2e8a19ce",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres."
+  },
   "src/app/features/reports/purchases/purchases-reports.component.ts#PurchasesReportsComponent": {
-    "sha": "310679c1f786377947476046b1b964f0d34cc2b3bd3ea7506fd4d452d144b120",
-    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+    "sha": "50398e69c16e02bc58ccd3003bf984ebc4e3f0a2b809aaccda020149508e40b5",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres. Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
   "src/app/features/reports/sales/sales-reports.component.ts#SalesReportsComponent": {
-    "sha": "36afdf201983ac98ff78b19223189b9f09d2751a5d97e55eb61291badc0f0d2f",
-    "reason": "Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
+    "sha": "a3162588be8dc762b895eb0dd9d1bed26f1b8054a79a8738d62c9f6c75cef874",
+    "reason": "Pluriel « {{ n > 1 ? 's' : '' }} » remplacé par un ICU plural (=0 et =1 au singulier, sinon pluriel) : rendu français identique, formes plurielles arabes propres. Ajout du pipe backendLabel : identité en français, null/undefined conservés (backend-label.pipe.spec.ts)."
   },
   "src/app/features/reports/stock/stock-reports.component.ts#StockReportsComponent": {
     "sha": "01b67c9c79f91fef4e149655ab22f2f72a67e17df63b0fbd9d2095ad7a395f9a",

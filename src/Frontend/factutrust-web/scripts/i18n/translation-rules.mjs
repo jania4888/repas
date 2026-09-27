@@ -24,13 +24,58 @@ export function stripIsolates(text) {
   return String(text).replace(/[⁨⁩]/g, '');
 }
 
+/** Catégories CLDR acceptées dans un ICU plural (l'arabe les emploie toutes). */
+const PLURAL_KEYS = /^(=\d+|zero|one|two|few|many|other)$/;
+
+/**
+ * Vérifie la syntaxe des ICU `{VAR, plural|select, clé {texte} …}` : accolades équilibrées,
+ * clés de pluriel valides et cas `other` présent.
+ * @returns {string|null} motif de rejet
+ */
+function icuProblem(text) {
+  let depth = 0;
+  for (const ch of text) {
+    if (ch === '{') depth++;
+    else if (ch === '}' && --depth < 0) return 'icu-accolades';
+  }
+  if (depth !== 0) return 'icu-accolades';
+  for (const m of text.matchAll(/\{VAR_[A-Z0-9_]+,\s*(plural|select)\s*,/g)) {
+    let i = m.index + m[0].length;
+    const keys = [];
+    for (;;) {
+      while (/\s/.test(text[i] ?? '')) i++;
+      if (text[i] === '}' || i >= text.length) break;
+      const start = i;
+      while (i < text.length && !/[\s{]/.test(text[i])) i++;
+      keys.push(text.slice(start, i));
+      while (/\s/.test(text[i] ?? '')) i++;
+      if (text[i] !== '{') return 'icu-syntaxe';
+      let d = 0;
+      do {
+        if (text[i] === '{') d++;
+        else if (text[i] === '}') d--;
+        i++;
+      } while (d > 0 && i < text.length);
+    }
+    if (!keys.includes('other')) return 'icu-other';
+    if (m[1] === 'plural' && keys.some(k => !PLURAL_KEYS.test(k))) return 'icu-cle';
+  }
+  return null;
+}
+
 /** @returns {string|null} motif de rejet, ou null si la traduction est valide. */
 export function validateTranslation(fr, ar) {
   const value = String(ar ?? '');
   if (!value.trim()) return 'vide';
   if (value.includes(FILLER)) return 'remplissage';
   if (BIDI_CONTROLS.test(value)) return 'bidi';
-  if (/\$\{|\{\{|\}\}/.test(value)) return 'code';
+  // Dans un ICU, « }} » ferme un cas et « {{$X} » l'ouvre : seules les interpolations Angular sont du code.
+  const isIcu = /\{VAR_[A-Z0-9_]+,\s*(plural|select)\s*,/.test(String(fr));
+  if ((isIcu ? /\$\{|\{\{(?!\$)/ : /\$\{|\{\{|\}\}/).test(value)) return 'code';
+  if (isIcu) {
+    const problem = icuProblem(value);
+    if (problem) return problem;
+  }
   if (/<\/?[a-z][a-z0-9-]*(\s[^>]*)?>/i.test(value)) return 'html';
   if (multiset(fr, PLACEHOLDER) !== multiset(value, PLACEHOLDER)) return 'placeholders';
   if (multiset(fr, ICU_VAR) !== multiset(value, ICU_VAR)) return 'icu';

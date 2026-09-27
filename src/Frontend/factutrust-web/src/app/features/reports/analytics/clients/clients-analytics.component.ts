@@ -221,8 +221,8 @@ import {
         </div>
 
         <!-- Results count -->
-        <div class="results-count" i18n="@@reports.analytics.client.affiche.169b2144">
-          {{ filteredClients().length }} client{{ filteredClients().length > 1 ? 's' : '' }} affiché{{ filteredClients().length > 1 ? 's' : '' }}
+        <div class="results-count" i18n="@@reports.analytics.client.affiche.169b2144.pl">
+          {{ filteredClients().length }} {filteredClients().length, plural, =0 {client affiché} =1 {client affiché} other {clients affichés}}
         </div>
       }
     </div>

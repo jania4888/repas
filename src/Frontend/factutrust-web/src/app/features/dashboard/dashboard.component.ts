@@ -709,9 +709,9 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
               @for (client of topClients(); track client.id; let i = $index) {
                 <a [routerLink]="['/clients', client.id]" class="top-client-item">
                   <div class="top-client-rank">{{ i + 1 }}</div>
-                  <div class="top-client-info" i18n="@@dashboard.dashboard.facture.ebb8b8ef">
+                  <div class="top-client-info" i18n="@@dashboard.dashboard.facture.ebb8b8ef.pl">
                     <span class="top-client-name">{{ client.name }}</span>
-                    <span class="top-client-meta">{{ client.invoiceCount }} facture{{ client.invoiceCount > 1 ? 's' : '' }}</span>
+                    <span class="top-client-meta">{{ client.invoiceCount }} {client.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</span>
                   </div>
                   <div class="top-client-revenue">
                     <span class="top-client-amount">{{ client.totalRevenue | number:'1.3-3' }} {{ client.currency }}</span>

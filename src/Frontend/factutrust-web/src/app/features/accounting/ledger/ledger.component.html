@@ -54,7 +54,7 @@
               <label class="ledger-label" for="ledger-level" i18n="@@accounting.ledger.racine.393755ab">Racine</label>
               <select id="ledger-level" class="p-inputtext" [(ngModel)]="recapLevel">
                 @for (l of [1, 2, 3, 4, 5, 6]; track l) {
-                  <option [ngValue]="l" i18n="@@accounting.ledger.chiffre.232d7b60">{{ l }} chiffre{{ l > 1 ? 's' : '' }}</option>
+                  <option [ngValue]="l" i18n="@@accounting.ledger.chiffre.232d7b60.pl">{{ l }} {l, plural, =0 {chiffre} =1 {chiffre} other {chiffres}}</option>
                 }
               </select>
             </div>

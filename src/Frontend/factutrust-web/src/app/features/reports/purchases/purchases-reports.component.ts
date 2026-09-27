@@ -161,9 +161,9 @@ interface PeriodOption {
             <div class="chart-bars">
               @for (item of reportsData()!.expenseChartData; track item.label) {
                 <div class="chart-bar-group">
-                  <div class="chart-tooltip" aria-hidden="true" i18n="@@reports.purchases.facture.f80b44a2">
+                  <div class="chart-tooltip" aria-hidden="true" i18n="@@reports.purchases.facture.f80b44a2.pl">
                     {{ formatCurrency(item.amount) }}<br>
-                    <small>{{ item.invoiceCount }} facture{{ item.invoiceCount > 1 ? 's' : '' }}</small>
+                    <small>{{ item.invoiceCount }} {item.invoiceCount, plural, =0 {facture} =1 {facture} other {factures}}</small>
                   </div>
                   <div class="chart-bar-wrapper">
                     <div
