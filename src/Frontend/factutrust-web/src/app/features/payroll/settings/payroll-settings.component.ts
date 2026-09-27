@@ -36,7 +36,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
     PayrollSocialFundsSettingsComponent
   ],
   template: `
-    <app-page-header title="Paramètres de paie" i18n-title="@@payroll.settings.parametres.de.paie.bdda7686" subtitle="Barème IRPP, taux légaux et conformité par exercice." />
+    <app-page-header title="Paramètres de paie" i18n-title="@@payroll.settings.parametres.de.paie.bdda7686" subtitle="Barème IRPP, taux légaux et conformité par exercice." i18n-subtitle="@@payroll.settings.bareme.irpp.taux.legaux.et.conformite.pa.88cf0295" />
 
     <div class="payroll-toolbar mb-3">
       <label for="fiscalYear" i18n="@@payroll.settings.exercice.e171e2b0">Exercice</label>
@@ -46,7 +46,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
 
     @if (accountingForm(); as acc) {
       <div class="sce-config-card mb-3">
-        <div class="sce-config-card__title">
+        <div class="sce-config-card__title" i18n="@@payroll.settings.comptabilisation.de.la.paie.imputation.c.897b3085">
           <i class="pi pi-calculator"></i>
           Comptabilisation de la paie — imputation comptable du dossier
         </div>
@@ -75,11 +75,11 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
               (ngModelChange)="onEffectiveMonthChange($event)"
               [min]="earliestMonth()" />
             <small class="sce-config-card__hint">
-              @if (accountingSettings()?.lastSettledPeriod) {
+              @if (accountingSettings()?.lastSettledPeriod) {<ng-container i18n="@@payroll.settings.dernier.cycle.arrete.1a01a895">
                 Dernier cycle arrêté : {{ accountingSettings()?.lastSettledPeriod }}.
-              } @else {
+              </ng-container>} @else {<ng-container i18n="@@payroll.settings.aucun.cycle.arrete.a.ce.jour.add4b7f7">
                 Aucun cycle arrêté à ce jour.
-              }
+              </ng-container>}
             </small>
           </div>
           <div>
@@ -115,14 +115,14 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
         }
 
         <p class="sce-config-card__note">
-          @if (accountingSettings()?.isTenantOverride) {
+          @if (accountingSettings()?.isTenantOverride) {<ng-container i18n="@@payroll.settings.reglage.propre.a.ce.dossier.4929cd5b">
             Réglage propre à ce dossier.
-          } @else {
+          </ng-container>} @else {<ng-container i18n="@@payroll.settings.ce.dossier.herite.de.la.configuration.gl.908301ef">
             Ce dossier hérite de la configuration globale ; enregistrer créera son réglage propre.
-          }
+          </ng-container>}<ng-container i18n="@@payroll.settings.les.cycles.anterieurs.a.la.date.de.bascu.9daa86dd">
           Les cycles antérieurs à la date de bascule conservent leur imputation d'origine.
           Les comptes SCE par régime de fonds social (part salarié / part employeur) sont configurés ci-dessous.
-        </p>
+        </ng-container></p>
         <div class="sce-config-card__actions">
           <app-button
             type="button"
@@ -137,13 +137,13 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
 
     @if (presetDrift().length > 0) {
       <div class="preset-drift-banner mb-3" role="alert" aria-live="polite">
-        <div class="preset-drift-banner__title">
+        <div class="preset-drift-banner__title" i18n="@@payroll.settings.ecart.preset.legal.les.parametres.de.l.e.9f1527d6">
           <i class="pi pi-exclamation-triangle"></i>
           Écart preset légal — les paramètres de l'exercice {{ fiscalYear }} divergent du défaut LF
         </div>
         <ul class="preset-drift-banner__list">
           @for (d of presetDrift(); track d.label) {
-            <li><strong>{{ d.label }}</strong> : tenant {{ d.current }} → LF {{ d.expected }}</li>
+            <li i18n="@@payroll.settings.tenant.lf.e603a191"><strong>{{ d.label }}</strong> : tenant {{ d.current }} → LF {{ d.expected }}</li>
           }
         </ul>
         <div class="preset-drift-banner__actions">
@@ -384,7 +384,7 @@ import { PayrollSocialFundsSettingsComponent } from './payroll-social-funds-sett
                 }
               </div>
               @if (params()!.smigIrppExemptionMode === 'SmigPortion') {
-                <p class="sce-warn-panel" role="alert">
+                <p class="sce-warn-panel" role="alert" i18n="@@payroll.settings.ce.mode.n.a.pas.de.base.legale.verifiee.d29a7204">
                   <i class="pi pi-exclamation-triangle"></i>
                   Ce mode n'a pas de base légale vérifiée et sous-déclare l'IRPP pour l'ensemble des salariés
                   lorsqu'il est actif. Pour la conformité, préférez le mode « Déduction annuelle 500 TND (SMIG/SMAG) »

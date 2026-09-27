@@ -41,7 +41,7 @@ interface StatusFilterOption {
   template: `
     <app-page-header
       title="Contrats récurrents" i18n-title="@@recurring-contracts.pages.contrats.recurrents.e773e54a"
-      subtitle="Abonnements et facturation périodique B2B">
+      subtitle="Abonnements et facturation périodique B2B" i18n-subtitle="@@recurring-contracts.pages.abonnements.et.facturation.periodique.b2.c67e5e30">
       <div class="actions">
         <app-button variant="outline" icon="pi-file-edit" routerLink="pending-drafts" i18n="@@recurring-contracts.pages.brouillons.a.valider.3fabaa45"> Brouillons à valider </app-button>
         @if (canCreate()) {
@@ -108,8 +108,8 @@ interface StatusFilterOption {
       <app-empty-state
         icon="pi-inbox"
         title="Aucun contrat" i18n-title="@@recurring-contracts.pages.aucun.contrat.355efb57"
-        description="Créez votre premier contrat récurrent ou ajustez vos filtres."
-        actionLabel="Nouveau contrat"
+        description="Créez votre premier contrat récurrent ou ajustez vos filtres." i18n-description="@@recurring-contracts.pages.creez.votre.premier.contrat.recurrent.ou.f5838c69"
+        actionLabel="Nouveau contrat" i18n-actionLabel="@@recurring-contracts.pages.nouveau.contrat.5cbb43f2"
         actionRoute="/recurring-contracts/new"
         [showAction]="canCreate()">
       </app-empty-state>
@@ -160,7 +160,7 @@ interface StatusFilterOption {
                   size="sm"
                   icon="pi-eye"
                   [routerLink]="[item.id]"
-                  ariaLabel="Voir le contrat" i18n="@@recurring-contracts.pages.voir.8a754f1f"> Voir </app-button>
+                  ariaLabel="Voir le contrat" i18n-ariaLabel="@@recurring-contracts.pages.voir.le.contrat.434d4b1f" i18n="@@recurring-contracts.pages.voir.8a754f1f"> Voir </app-button>
               </td>
             </tr>
           </ng-template>

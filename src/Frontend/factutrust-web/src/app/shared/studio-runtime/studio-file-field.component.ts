@@ -24,9 +24,9 @@ interface UploadResponse { success: boolean; data: string | null; message?: stri
       <div *ngSwitchCase="'attachment'" class="ft-file-row">
         <a *ngIf="value" role="button" tabindex="0" class="ft-file-link"
           (click)="openFile()" (keyup.enter)="openFile()">
-          <img *ngIf="isImage" [attr.src]="fileSrc$ | async" class="ft-file-thumb" alt="" />
+          <img *ngIf="isImage" [attr.src]="fileSrc$ | async" class="ft-file-thumb" alt="" /><ng-container i18n="@@shared.studio-runtime.studio-file-field.voir.le.fichier.fa2d36ec">
           <span *ngIf="!isImage"><i class="fa-solid fa-file"></i> Voir le fichier</span>
-        </a>
+        </ng-container></a>
         <input #fileInput type="file" (change)="onFile($event)" hidden />
         <button pButton type="button" class="p-button-outlined p-button-sm" icon="fa-solid fa-upload"
           [label]="value ? loc_ui_tern_remplacer_db2c67 : loc_ui_tern_televerser_e9e72d" [disabled]="uploading" (click)="fileInput.click()"></button>

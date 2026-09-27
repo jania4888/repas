@@ -49,7 +49,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
 
     <app-payroll-consult-banner
       [visible]="showConsultBanner()"
-      message="Mode consultation — la gestion des dossiers salariés est réservée à la société cliente." />
+      message="Mode consultation — la gestion des dossiers salariés est réservée à la société cliente." i18n-message="@@payroll.employees.mode.consultation.la.gestion.des.dossier.70b001ac" />
 
     <div class="payroll-toolbar">
       <input pInputText type="text" placeholder="Rechercher…" i18n-placeholder="@@payroll.employees.rechercher.1d12cdfb" [(ngModel)]="search" (ngModelChange)="load()" class="w-full md:w-20rem" />
@@ -71,7 +71,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
         title="Aucun salarié" i18n-title="@@payroll.employees.aucun.salarie.a1567c77"
         [description]="loading() ? undefined : 'Aucun salarié ne correspond à vos critères.'"
         [showAction]="canManage() && !loading()"
-        actionLabel="Nouveau salarié"
+        actionLabel="Nouveau salarié" i18n-actionLabel="@@payroll.employees.nouveau.salarie.04ef16d7"
         [actionRoute]="routeBase() + '/employees/new'" />
     }
 

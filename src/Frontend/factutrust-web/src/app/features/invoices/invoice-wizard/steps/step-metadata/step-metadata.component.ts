@@ -190,7 +190,7 @@ import {
             @if (metadata.invoiceNumber) {
               {{ metadata.invoiceNumber }}
             } @else {
-              <span class="loading">
+              <span class="loading" i18n="@@invoices.invoice-wizard.attribution.en.cours.4062528b">
                 <i class="pi pi-spin pi-spinner"></i>
                 Attribution en cours...
               </span>
@@ -332,15 +332,15 @@ import {
           <span i18n="@@invoices.invoice-wizard.conformite.legale.tunisienne.cbb85068">Conformité légale tunisienne</span>
         </div>
         <ul class="compliance-list">
-          <li>
+          <li i18n="@@invoices.invoice-wizard.numerotation.chronologique.et.sequentiel.5cbe12bc">
             <i class="pi pi-check-circle"></i>
             Numérotation chronologique et séquentielle
           </li>
-          <li>
+          <li i18n="@@invoices.invoice-wizard.date.d.emission.obligatoire.b0bf7c80">
             <i class="pi pi-check-circle"></i>
             Date d'émission obligatoire
           </li>
-          <li>
+          <li i18n="@@invoices.invoice-wizard.conservation.10.ans.garantie.f7ff50dd">
             <i class="pi pi-check-circle"></i>
             Conservation 10 ans garantie
           </li>

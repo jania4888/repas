@@ -2,7 +2,7 @@
 
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
-<app-page-header title="Mon Stock" i18n-title="@@stock.stock-simple.mon.stock.7d1adf31" subtitle="Vue d'ensemble simple de vos produits">
+<app-page-header title="Mon Stock" i18n-title="@@stock.stock-simple.mon.stock.7d1adf31" subtitle="Vue d'ensemble simple de vos produits" i18n-subtitle="@@stock.stock-simple.vue.d.ensemble.simple.de.vos.produits.42e5d6fa">
     <div class="header-actions">
         <div class="stock-simple-warehouse">
             <app-warehouse-selector
@@ -99,10 +99,10 @@
 
     <!-- Products Grid -->
     <div class="products-section">
-        <h3 class="section-title">Mes produits ({{ overview()!.totalProducts }})</h3>
+        <h3 class="section-title" i18n="@@stock.stock-simple.mes.produits.165eef85">Mes produits ({{ overview()!.totalProducts }})</h3>
 
         <app-empty-state *ngIf="overview()!.items.length === 0" title="Aucun produit trouvé" i18n-title="@@stock.stock-simple.aucun.produit.trouve.5edf7149"
-            message="Aucun produit ne correspond à votre recherche." icon="pi-box">
+            message="Aucun produit ne correspond à votre recherche." i18n-message="@@stock.stock-simple.aucun.produit.ne.correspond.a.votre.rech.fab371d5" icon="pi-box">
         </app-empty-state>
 
         <div class="products-grid" *ngIf="overview()!.items.length > 0">
@@ -178,7 +178,7 @@
             @if (actualQuantity !== selectedProduct.quantityAvailable) {
             <div class="quantity-delta"
                 [class.delta-positive]="actualQuantity > selectedProduct.quantityAvailable"
-                [class.delta-negative]="actualQuantity < selectedProduct.quantityAvailable">
+                [class.delta-negative]="actualQuantity < selectedProduct.quantityAvailable" i18n="@@stock.stock-simple.unites.fd41a57a">
                 <i [class]="actualQuantity > selectedProduct.quantityAvailable ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"></i>
                 <span>{{ actualQuantity > selectedProduct.quantityAvailable ? '+' : '' }}{{ actualQuantity - selectedProduct.quantityAvailable }} unités</span>
             </div>
@@ -200,12 +200,12 @@
         <p class="result-message">{{ countResult.humanMessage }}</p>
 
         <div class="result-details">
-            <div class="detail-row">
-                <span i18n="@@stock.stock-simple.avant.f5bdb313">Avant :</span>
+            <div class="detail-row" i18n="@@stock.stock-simple.avant.unites.6ec82f97">
+                <span>Avant :</span>
                 <strong>{{ countResult.previousQuantity }} unités</strong>
             </div>
-            <div class="detail-row">
-                <span i18n="@@stock.stock-simple.maintenant.fd9975a9">Maintenant :</span>
+            <div class="detail-row" i18n="@@stock.stock-simple.maintenant.unites.72610064">
+                <span>Maintenant :</span>
                 <strong>{{ countResult.newQuantity }} unités</strong>
             </div>
         </div>

@@ -145,11 +145,11 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
           <span class="field-hint" i18n="@@payroll.employees.calcul.en.cours.0721ac07">Calcul en cours…</span>
         }
         @if (createExceedsBalance()) {
-          <span class="field-hint field-hint--warning">
+          <span class="field-hint field-hint--warning"><ng-container i18n="@@payroll.employees.solde.insuffisant.j.demandes.j.disponibl.4da02d45">
             Solde insuffisant : {{ formDays }} j demandés, {{ balance()?.available ?? 0 }} j disponibles
-            @if ((balance()?.pending ?? 0) > 0) {
+            </ng-container>@if ((balance()?.pending ?? 0) > 0) {<ng-container i18n="@@payroll.employees.j.en.attente.2987c3e8">
               ({{ balance()?.pending }} j en attente)
-            }.
+            </ng-container>}.
           </span>
         }
       </div>

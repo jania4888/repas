@@ -28,10 +28,10 @@ import {
           <div class="dm-family__title">
             <h3>{{ view.label }}</h3>
             @if (view.errorCount) {
-              <span class="dm-chip dm-chip--error">{{ view.errorCount }} erreur(s)</span>
+              <span class="dm-chip dm-chip--error" i18n="@@accounting.monthly-declaration.erreur.s.857d2908">{{ view.errorCount }} erreur(s)</span>
             }
             @if (view.warningCount) {
-              <span class="dm-chip dm-chip--warn">{{ view.warningCount }} avertissement(s)</span>
+              <span class="dm-chip dm-chip--warn" i18n="@@accounting.monthly-declaration.avertissement.s.7beb8788">{{ view.warningCount }} avertissement(s)</span>
             }
             @if (view.hasManualInput) {
               <span class="dm-chip dm-chip--warn" i18n="@@accounting.monthly-declaration.saisie.manuelle.attendue.0b611312">saisie manuelle attendue</span>

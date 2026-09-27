@@ -52,7 +52,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
       [resizable]="false"
       [closable]="true"
       (onHide)="onHide()"
-      ariaLabel="Importer une facture de vente ou d'achat">
+      ariaLabel="Importer une facture de vente ou d'achat" i18n-ariaLabel="@@accounting.manual-entry.importer.une.facture.de.vente.ou.d.achat.14bcf5ca">
 
       <input
         #fileInput
@@ -67,20 +67,20 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
         @case ('extracting') {
           <div class="adi-state" role="status" aria-live="polite">
             <i class="pi pi-spin pi-spinner adi-spinner" aria-hidden="true"></i>
-            <p class="adi-title">Analyse de la pièce… ({{ elapsedSeconds() }} s)</p>
+            <p class="adi-title" i18n="@@accounting.manual-entry.analyse.de.la.piece.s.b321b13b">Analyse de la pièce… ({{ elapsedSeconds() }} s)</p>
             <p class="adi-text">
               @if (selectedFileName()) {
                 <span class="adi-filename">{{ selectedFileName() }}</span>
               }
-              @if (elapsedSeconds() < 20) {
+              @if (elapsedSeconds() < 20) {<ng-container i18n="@@accounting.manual-entry.lecture.du.document.et.detection.des.zon.71726a65">
                 Lecture du document et détection des zones…
-              } @else {
+              </ng-container>} @else {<ng-container i18n="@@accounting.manual-entry.le.document.n.est.pas.au.format.instafac.1a09b4ea">
                 Le document n'est pas au format InstaFact : l'analyse IA peut prendre
                 jusqu'à 3 minutes la première fois.
-              }
+              </ng-container>}
             </p>
             <app-button variant="secondary" icon="pi-times" iconPos="left"
-                        (click)="cancelImport()" ariaLabel="Annuler l'analyse" i18n="@@accounting.manual-entry.annuler.49ba3292"> Annuler </app-button>
+                        (click)="cancelImport()" ariaLabel="Annuler l'analyse" i18n-ariaLabel="@@accounting.manual-entry.annuler.l.analyse.f487f0e5" i18n="@@accounting.manual-entry.annuler.49ba3292"> Annuler </app-button>
           </div>
         }
 
@@ -90,7 +90,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
             <p class="adi-title" i18n="@@accounting.manual-entry.l.analyse.a.echoue.14b05060">L'analyse a échoué</p>
             <p class="adi-text">{{ errorMessage() }}</p>
             <app-button variant="primary" icon="pi-refresh" iconPos="left"
-                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n="@@accounting.manual-entry.reessayer.895d416b"> Réessayer </app-button>
+                        (click)="chooseFile()" ariaLabel="Choisir un autre fichier" i18n-ariaLabel="@@accounting.manual-entry.choisir.un.autre.fichier.c0cbec19" i18n="@@accounting.manual-entry.reessayer.895d416b"> Réessayer </app-button>
           </div>
         }
 
@@ -127,7 +127,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                     </span>
                   </label>
                   @if (reanalyzing()) {
-                    <span class="adi-reanalyzing" role="status">
+                    <span class="adi-reanalyzing" role="status" i18n="@@accounting.manual-entry.recalcul.e2a0a91b">
                       <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Recalcul…
                     </span>
                   }
@@ -151,12 +151,12 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                       <div><dt i18n="@@accounting.manual-entry.compte.collectif.f1c7e97c">Compte collectif</dt><dd><code>{{ tp.collectiveAccountNumber }}</code></dd></div>
                     </dl>
                     @if (tp.matchedId) {
-                      <p class="adi-badge adi-badge--ok">
+                      <p class="adi-badge adi-badge--ok" i18n="@@accounting.manual-entry.tiers.rapproche.9818df8a">
                         <i class="pi pi-check-circle" aria-hidden="true"></i>
                         Tiers rapproché{{ tp.matchedBy === 'nif' ? loc_ui_tern_par_matricule_fiscal_ef1940 : loc_ui_tern_par_nom_4c4de0 }}
                       </p>
                     } @else {
-                      <p class="adi-badge adi-badge--warn">
+                      <p class="adi-badge adi-badge--warn" i18n="@@accounting.manual-entry.tiers.non.rapproche.l.ecriture.restera.s.30dc87a4">
                         <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
                         Tiers non rapproché — l'écriture restera sans auxiliaire
                       </p>
@@ -177,7 +177,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
                     @for (b of p.extraction.vatBreakdown; track b.ratePercent) {
                       <div>
                         <dt>TVA {{ b.ratePercent }}%</dt>
-                        <dd>{{ amount(b.vatAmount) }} <small>(base {{ amount(b.baseAmount) }})</small></dd>
+                        <dd i18n="@@accounting.manual-entry.base.3756d9fc">{{ amount(b.vatAmount) }} <small>(base {{ amount(b.baseAmount) }})</small></dd>
                       </div>
                     }
                     @if (p.extraction.fodecAmount) {
@@ -232,7 +232,7 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
               Le système détecte les zones de la pièce et propose l'écriture selon le plan
               comptable tunisien. Vous relisez avant d'appliquer. </p>
             <app-button variant="primary" icon="pi-upload" iconPos="left"
-                        (click)="chooseFile()" ariaLabel="Choisir un fichier à importer" i18n="@@accounting.manual-entry.choisir.un.fichier.75c27e25"> Choisir un fichier </app-button>
+                        (click)="chooseFile()" ariaLabel="Choisir un fichier à importer" i18n-ariaLabel="@@accounting.manual-entry.choisir.un.fichier.a.importer.6d6c3a02" i18n="@@accounting.manual-entry.choisir.un.fichier.75c27e25"> Choisir un fichier </app-button>
             <p class="adi-hint" i18n="@@accounting.manual-entry.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
             @if (capabilityHint(); as hint) {
               <p class="adi-hint adi-hint-warn" role="status">{{ hint }}</p>
@@ -244,11 +244,11 @@ type ImportPhase = 'idle' | 'extracting' | 'review' | 'error';
       <ng-template pTemplate="footer">
         @if (phase() === 'review') {
           <div class="adi-footer">
-            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce" i18n="@@accounting.manual-entry.autre.piece.de18e3bf"> Autre pièce </app-button>
+            <app-button variant="secondary" (click)="chooseFile()" ariaLabel="Analyser une autre pièce" i18n-ariaLabel="@@accounting.manual-entry.analyser.une.autre.piece.09bd4d3a" i18n="@@accounting.manual-entry.autre.piece.de18e3bf"> Autre pièce </app-button>
             <app-button variant="primary" icon="pi-check" iconPos="left"
                         [disabled]="!canApplyNow()"
                         (click)="apply()"
-                        ariaLabel="Appliquer la proposition à la saisie" i18n="@@accounting.manual-entry.appliquer.a.la.saisie.1da9e067"> Appliquer à la saisie </app-button>
+                        ariaLabel="Appliquer la proposition à la saisie" i18n-ariaLabel="@@accounting.manual-entry.appliquer.la.proposition.a.la.saisie.be30f406" i18n="@@accounting.manual-entry.appliquer.a.la.saisie.1da9e067"> Appliquer à la saisie </app-button>
           </div>
         }
       </ng-template>

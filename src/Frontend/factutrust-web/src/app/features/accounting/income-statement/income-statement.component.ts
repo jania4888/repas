@@ -33,10 +33,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Compte de résultat" i18n-title="@@accounting.income-statement.compte.de.resultat.a292527b" subtitle="Produits et charges de l'exercice" />
+    <app-page-header title="Compte de résultat" i18n-title="@@accounting.income-statement.compte.de.resultat.a292527b" subtitle="Produits et charges de l'exercice" i18n-subtitle="@@accounting.income-statement.produits.et.charges.de.l.exercice.9b20c5dd" />
 
     <div class="card is-filters-card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice fiscal">
+      <app-accounting-filter-bar ariaLabel="Exercice fiscal" i18n-ariaLabel="@@accounting.income-statement.exercice.fiscal.7b79fa50">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="is-year" i18n="@@accounting.income-statement.exercice.fiscal.25ea5f92">Exercice fiscal</label>
@@ -51,7 +51,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le compte de résultat" i18n="@@accounting.income-statement.charger.8f860300"> Charger </app-button>
+            ariaLabel="Charger le compte de résultat" i18n-ariaLabel="@@accounting.income-statement.charger.le.compte.de.resultat.c3d41795" i18n="@@accounting.income-statement.charger.8f860300"> Charger </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-income-statement"
             density="toolbar"
@@ -68,14 +68,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.income-statement.reessayer.c4f78b12"
       (retry)="load()"
     />
 
     @if (data(); as d) {
       <!-- Produits -->
       <div class="card is-section-card">
-        <h3 class="is-section-title">
+        <h3 class="is-section-title" i18n="@@accounting.income-statement.produits.454348a9">
           <i class="pi pi-trending-up is-icon is-icon--revenue"></i>
           Produits
         </h3>
@@ -111,7 +111,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
       <!-- Charges -->
       <div class="card is-section-card">
-        <h3 class="is-section-title">
+        <h3 class="is-section-title" i18n="@@accounting.income-statement.charges.b2c0c69b">
           <i class="pi pi-trending-down is-icon is-icon--expenses"></i>
           Charges
         </h3>
@@ -153,7 +153,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             {{ d.netResult | number : '1.3-3' }}
           </span>
         </div>
-        <div class="is-result-badge-row">
+        <div class="is-result-badge-row" i18n="@@accounting.income-statement.produits.charges.58b0532c">
           <span class="is-result-badge" [class.is-badge--profit]="d.netResult >= 0" [class.is-badge--loss]="d.netResult < 0">
             {{ d.netResult >= 0 ? loc_ui_tern_benefice_111823 : loc_ui_tern_deficit_3a8608 }}
           </span>

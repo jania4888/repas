@@ -82,10 +82,10 @@ interface RenderSection {
               <p-select *ngSwitchCase="FT.RelationExisting" [formControlName]="cell.field.key" [options]="cell.field.options || []"
                 optionLabel="label" optionValue="value" [showClear]="true" [filter]="true" appendTo="body" styleClass="ft-w-full"></p-select>
               <input *ngSwitchDefault pInputText [formControlName]="cell.field.key" />
-            </ng-container>
+            </ng-container><ng-container i18n="@@shared.studio-runtime.dynamic-form.valeur.invalide.pour.a07843bb">
 
             <small class="ft-error" *ngIf="invalid(cell.field.key)">Valeur invalide pour « {{ cell.label }} ».</small>
-          </div>
+          </ng-container></div>
         </div>
       </div>
 

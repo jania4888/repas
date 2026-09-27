@@ -54,12 +54,12 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
   template: `
     <ng-template #formContent>
       <div class="modal-content">
-        <p class="dialog-intro" *ngIf="invoiceNumber">
+        <p class="dialog-intro" *ngIf="invoiceNumber"><ng-container i18n="@@shared.components.record-payment-dialog.record-payment-dialog.facture.montant.total.c109136d">
           Facture {{ invoiceNumber }} — Montant total : {{ totalAmount | number:'1.3-3' }} {{ currency }}
-          @if (totalPaid > 0) {
+          </ng-container>@if (totalPaid > 0) {<ng-container i18n="@@shared.components.record-payment-dialog.record-payment-dialog.restant.du.c4504295">
             <br>
             <span class="remaining-info">Restant dû : {{ remainingAmount | number:'1.3-3' }} {{ currency }}</span>
-          }
+          </ng-container>}
         </p>
 
         <div class="form-fields">
@@ -81,7 +81,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
           </div>
 
           <div class="form-group">
-            <label for="amount">Montant net encaissé ({{ currency }}) <span class="required" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.text.df58248c">*</span></label>
+            <label for="amount" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.montant.net.encaisse.336de827">Montant net encaissé ({{ currency }}) <span class="required">*</span></label>
             <p-inputNumber
               id="amount"
               [(ngModel)]="amount"
@@ -98,7 +98,7 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
 
           @if (invoiceType === 'client') {
             <div class="form-group">
-              <label for="whSubie">Retenue à la source subie ({{ currency }})</label>
+              <label for="whSubie" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.retenue.a.la.source.subie.df9bdc09">Retenue à la source subie ({{ currency }})</label>
               <p-inputNumber
                 id="whSubie"
                 [(ngModel)]="clientWithholdingAmount"
@@ -116,9 +116,9 @@ const ALLOWED_PAYMENT_METHOD_VALUES = new Set<number>(
           }
 
           <div class="form-group">
-            <label for="method">
+            <label for="method"><ng-container i18n="@@shared.components.record-payment-dialog.record-payment-dialog.mode.de.paiement.71aed79c">
               Mode de paiement
-              @if (invoiceType === 'client') {
+              </ng-container>@if (invoiceType === 'client') {
                 <span class="required" aria-hidden="true" i18n="@@shared.components.record-payment-dialog.record-payment-dialog.text.df58248c">*</span>
               }
             </label>

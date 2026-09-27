@@ -31,7 +31,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
           <p class="text-muted" i18n="@@transfers.transfer-list.gerez.les.transferts.de.stock.entre.vos.entrepot.13ea9820">Gérez les transferts de stock entre vos entrepôts</p>
         </div>
         @if (canCreateTransfer()) {
-          <a routerLink="create" class="btn-primary">
+          <a routerLink="create" class="btn-primary" i18n="@@transfers.transfer-list.nouveau.transfert.14626fa6">
             <i class="fas fa-plus"></i> Nouveau transfert
           </a>
         }
@@ -65,7 +65,7 @@ import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-t
               [filter]="warehouseOptions.length > 20"
               filterBy="label"
               [resetFilterOnHide]="true"
-              filterPlaceholder="Rechercher…"
+              filterPlaceholder="Rechercher…" i18n-filterPlaceholder="@@transfers.transfer-list.rechercher.ed75dcce"
               [style]="{ width: '100%' }"
               appendTo="body"
               ariaLabelledBy="filter-wh-label">

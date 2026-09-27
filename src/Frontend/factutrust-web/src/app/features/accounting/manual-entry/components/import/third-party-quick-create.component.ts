@@ -36,7 +36,7 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
         <form class="tpq" (ngSubmit)="submit()">
           @if (duplicates().length > 0) {
             <div class="tpq-duplicates" role="alert">
-              <p class="tpq-duplicates__title">
+              <p class="tpq-duplicates__title" i18n="@@accounting.manual-entry.un.tiers.proche.existe.deja.686e0759">
                 <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                 Un tiers proche existe déjà :
               </p>
@@ -90,10 +90,10 @@ import { ProposedThirdParty } from '../../models/accounting-document-import.mode
           }
 
           <div class="tpq-actions">
-            <app-button variant="secondary" (click)="expanded.set(false)" ariaLabel="Annuler la création" i18n="@@accounting.manual-entry.annuler.49ba3292"> Annuler </app-button>
+            <app-button variant="secondary" (click)="expanded.set(false)" ariaLabel="Annuler la création" i18n-ariaLabel="@@accounting.manual-entry.annuler.la.creation.506b2d1c" i18n="@@accounting.manual-entry.annuler.49ba3292"> Annuler </app-button>
             <app-button variant="primary" type="submit" icon="pi-check" iconPos="left"
                         [disabled]="!isValid() || saving()"
-                        ariaLabel="Enregistrer le tiers">
+                        ariaLabel="Enregistrer le tiers" i18n-ariaLabel="@@accounting.manual-entry.enregistrer.le.tiers.ddc05ea6">
               {{ saving() ? loc_ui_tern_creation_2a06d1 : loc_ui_tern_creer_et_rattacher_87edac }}
             </app-button>
           </div>

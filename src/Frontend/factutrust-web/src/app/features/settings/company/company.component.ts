@@ -62,7 +62,7 @@ import {
     
     <app-page-header 
       title="Mon entreprise" i18n-title="@@settings.company.mon.entreprise.e950c285" 
-      subtitle="Informations légales et paramètres de facturation">
+      subtitle="Informations légales et paramètres de facturation" i18n-subtitle="@@settings.company.informations.legales.et.parametres.de.fa.b16437d4">
       <p-button 
         label="Retour" i18n-label="@@settings.company.retour.e5befb1f" 
         icon="pi pi-arrow-left" 
@@ -101,7 +101,7 @@ import {
       <div class="profile-completion-banner" role="status" aria-live="polite">
         <div class="pcb-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></div>
         <div class="pcb-body">
-          <div class="pcb-title">Profil complété à {{ profileCompletionPct() }} %</div>
+          <div class="pcb-title" i18n="@@settings.company.profil.complete.a.b6bc7d50">Profil complété à {{ profileCompletionPct() }} %</div>
           <div class="pcb-bar">
             <div class="pcb-bar__fill" [style.width.%]="profileCompletionPct()"></div>
           </div>
@@ -127,7 +127,7 @@ import {
                 mode="basic"
                 accept="image/*"
                 [maxFileSize]="1000000"
-                chooseLabel="Choisir un logo"
+                chooseLabel="Choisir un logo" i18n-chooseLabel="@@settings.company.choisir.un.logo.846ee831"
                 (onSelect)="onLogoSelect($event)">
               </p-fileUpload>
               <small i18n="@@settings.company.png.jpg.max.1mb.recommande.200x200px.d501e6b5">PNG, JPG. Max 1MB. Recommandé: 200x200px</small>
@@ -338,7 +338,7 @@ import {
           <div class="form-group numbering-link">
             <label i18n="@@settings.company.numerotation.des.documents.6857c7f1">Numérotation des documents</label>
             <p class="form-hint" i18n="@@settings.company.configurez.le.format.et.le.debut.de.numerotation.2d1005c7"> Configurez le format et le début de numérotation de vos factures et autres documents. </p>
-            <a routerLink="/settings/numbering" class="numbering-settings-link">
+            <a routerLink="/settings/numbering" class="numbering-settings-link" i18n="@@settings.company.ouvrir.les.numerotations.09a179bb">
               <i class="pi pi-sort-numeric-down"></i>
               Ouvrir les numérotations
             </a>
@@ -478,7 +478,7 @@ import {
       @if (sectorPreview(); as preview) {
         <div class="preview-content">
           @if (preview.modulesToEnable.length > 0) {
-            <p class="preview-section-title"><i class="pi pi-th-large"></i> Ce changement activera :</p>
+            <p class="preview-section-title" i18n="@@settings.company.ce.changement.activera.069e56e7"><i class="pi pi-th-large"></i> Ce changement activera :</p>
             <ul class="preview-list">
               @for (m of preview.modulesToEnable; track m.id) {
                 <li>{{ m.labelFr }}</li>
@@ -486,7 +486,7 @@ import {
             </ul>
           }
           @if (preview.templates.length > 0) {
-            <p class="preview-section-title"><i class="pi pi-file"></i> Modèles pré-remplis :</p>
+            <p class="preview-section-title" i18n="@@settings.company.modeles.pre.remplis.9ad8ea20"><i class="pi pi-file"></i> Modèles pré-remplis :</p>
             <ul class="preview-list">
               @for (t of preview.templates; track t) {
                 <li>{{ t }}</li>

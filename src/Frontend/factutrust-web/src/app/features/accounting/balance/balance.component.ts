@@ -46,9 +46,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Balance" i18n-title="@@accounting.balance.balance.90eef613" subtitle="Balance générale — 8 colonnes avec soldes d'ouverture" />
+    <app-page-header title="Balance" i18n-title="@@accounting.balance.balance.90eef613" subtitle="Balance générale — 8 colonnes avec soldes d'ouverture" i18n-subtitle="@@accounting.balance.balance.generale.8.colonnes.avec.soldes.effa6ddf" />
     <div class="card balance-filters-card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Période et filtre de classe">
+      <app-accounting-filter-bar ariaLabel="Période et filtre de classe" i18n-ariaLabel="@@accounting.balance.periode.et.filtre.de.classe.ca3674a0">
         <div accountingFilterFields class="balance-toolbar-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="bal-from" i18n="@@accounting.balance.du.84814985">Du</label>
@@ -89,7 +89,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               <select id="bal-level" [(ngModel)]="groupLevel" class="accounting-filter-input">
                 <option [ngValue]="0" i18n="@@accounting.balance.detail.par.compte.f63634fc">Détail par compte</option>
                 @for (l of [1, 2, 3, 4, 5]; track l) {
-                  <option [ngValue]="l">Racine à {{ l }} chiffre{{ l > 1 ? 's' : '' }}</option>
+                  <option [ngValue]="l" i18n="@@accounting.balance.racine.a.chiffre.5f0c7097">Racine à {{ l }} chiffre{{ l > 1 ? 's' : '' }}</option>
                 }
               </select>
             </div>
@@ -109,7 +109,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser la balance pour la période sélectionnée" i18n="@@accounting.balance.actualiser.9d3b2a7d"> Actualiser </app-button>
+            ariaLabel="Actualiser la balance pour la période sélectionnée" i18n-ariaLabel="@@accounting.balance.actualiser.la.balance.pour.la.periode.se.e455e19f" i18n="@@accounting.balance.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-balance"
             density="toolbar"
@@ -125,7 +125,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.balance.reessayer.c4f78b12"
       (retry)="load()" />
     <p-tabs [(value)]="activeTabIndex" (valueChange)="onTabChange()" [lazy]="true">
       <p-tablist>
@@ -205,7 +205,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         @if (detailed(); as d) {
           @for (acc of d.accounts; track acc.balance.accountNumber) {
             <section class="bal-detail-block">
-              <h3 class="bal-detail-title">
+              <h3 class="bal-detail-title" i18n="@@accounting.balance.mouv.d.mouv.c.cloture.14664066">
                 <span class="bal-code">{{ acc.balance.accountNumber }}</span> {{ acc.balance.label }}
                 <span class="bal-detail-solde">
                   Mouv. D {{ acc.balance.movementDebit | number : '1.3-3' }} ·
@@ -245,7 +245,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           @if (d.accounts.length === 0) {
             <p class="bal-empty" i18n="@@accounting.balance.aucun.mouvement.sur.la.periode.9d40027a">Aucun mouvement sur la période.</p>
           } @else {
-            <p class="bal-grand-total">
+            <p class="bal-grand-total" i18n="@@accounting.balance.total.mouvements.debit.credit.6cf803cc">
               Total mouvements — débit {{ d.totalMovementDebit | number : '1.3-3' }} ·
               crédit {{ d.totalMovementCredit | number : '1.3-3' }}
             </p>
@@ -290,7 +290,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
               </tbody>
             </table>
           </div>
-          <p class="bal-grand-total">
+          <p class="bal-grand-total" i18n="@@accounting.balance.total.mouvements.debit.credit.75c7608b">
             Total mouvements — débit {{ p.totalDebit | number : '1.3-3' }} ·
             crédit {{ p.totalCredit | number : '1.3-3' }}
           </p>

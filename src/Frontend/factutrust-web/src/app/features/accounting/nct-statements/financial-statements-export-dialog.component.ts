@@ -48,22 +48,22 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
         </div>
         <div class="fs-radios" role="radiogroup" aria-label="Comparatif N-1" i18n-aria-label="@@accounting.nct-statements.comparatif.n.1.cd3417a4">
           <label class="fs-radio">
-            <input type="radio" name="n1Mode" [ngModel]="previousYearLabelMode" (ngModelChange)="setPreviousYearMode($event)" [value]="0" [disabled]="busy()" />
+            <input type="radio" name="n1Mode" [ngModel]="previousYearLabelMode" (ngModelChange)="setPreviousYearMode($event)" [value]="0" [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.n.1.arretee.au.31.12.a32b6d42">
             N-1 arrêtée au 31/12
-          </label>
+          </ng-container></label>
           <label class="fs-radio">
-            <input type="radio" name="n1Mode" [ngModel]="previousYearLabelMode" (ngModelChange)="setPreviousYearMode($event)" [value]="1" [disabled]="busy()" />
+            <input type="radio" name="n1Mode" [ngModel]="previousYearLabelMode" (ngModelChange)="setPreviousYearMode($event)" [value]="1" [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.n.1.arretee.a.la.periode.selectionnee.d13642a3">
             N-1 arrêtée à la période sélectionnée
-          </label>
+          </ng-container></label>
         </div>
       </div>
 
       <div class="fs-grid">
         <div class="fs-col">
-          <label class="fs-check"><p-checkbox [(ngModel)]="includeAssets" [binary]="true" inputId="fs-actif" [disabled]="busy()" /> Actif</label>
-          <label class="fs-check"><p-checkbox [(ngModel)]="includeLiabilities" [binary]="true" inputId="fs-passif" [disabled]="busy()" /> Passif</label>
-          <label class="fs-check"><p-checkbox [(ngModel)]="includeIncomeStatement" [binary]="true" inputId="fs-cdr" [disabled]="busy()" /> Comptes de résultat</label>
-          <label class="fs-check"><p-checkbox [(ngModel)]="includeCashFlow" [binary]="true" inputId="fs-flux" [disabled]="busy()" /> Flux de trésorerie</label>
+          <label class="fs-check"><p-checkbox [(ngModel)]="includeAssets" [binary]="true" inputId="fs-actif" [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.actif.2eb75f84"> Actif</ng-container></label>
+          <label class="fs-check"><p-checkbox [(ngModel)]="includeLiabilities" [binary]="true" inputId="fs-passif" [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.passif.1eede0cb"> Passif</ng-container></label>
+          <label class="fs-check"><p-checkbox [(ngModel)]="includeIncomeStatement" [binary]="true" inputId="fs-cdr" [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.comptes.de.resultat.039822fa"> Comptes de résultat</ng-container></label>
+          <label class="fs-check"><p-checkbox [(ngModel)]="includeCashFlow" [binary]="true" inputId="fs-flux" [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.flux.de.tresorerie.b60dc8b6"> Flux de trésorerie</ng-container></label>
         </div>
         <div class="fs-col">
           <label class="fs-check">
@@ -72,9 +72,9 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
               [binary]="true"
               inputId="fs-ann-actif"
               [disabled]="busy()"
-              (ngModelChange)="onAnnexToggle(FAMILY_ACTIF, $event)" />
+              (ngModelChange)="onAnnexToggle(FAMILY_ACTIF, $event)" /><ng-container i18n="@@accounting.nct-statements.annexes.actif.c4dff284">
             Annexes actif
-          </label>
+          </ng-container></label>
           @if (includeAnnexAssets) {
             <div class="fs-notes">
               @for (n of notesFor(FAMILY_ACTIF); track n.number) {
@@ -84,9 +84,9 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
                     (ngModelChange)="setNoteSelected(n.number, $event)"
                     [binary]="true"
                     [inputId]="'fs-note-' + n.number"
-                    [disabled]="busy()" />
+                    [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.note.5e087158">
                   Note {{ n.number }} — {{ n.title }}
-                </label>
+                </ng-container></label>
               }
             </div>
           }
@@ -97,9 +97,9 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
               [binary]="true"
               inputId="fs-ann-passif"
               [disabled]="busy()"
-              (ngModelChange)="onAnnexToggle(FAMILY_PASSIF, $event)" />
+              (ngModelChange)="onAnnexToggle(FAMILY_PASSIF, $event)" /><ng-container i18n="@@accounting.nct-statements.annexes.passif.235c78b0">
             Annexes passif
-          </label>
+          </ng-container></label>
           @if (includeAnnexLiabilities) {
             <div class="fs-notes">
               @for (n of notesFor(FAMILY_PASSIF); track n.number) {
@@ -109,9 +109,9 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
                     (ngModelChange)="setNoteSelected(n.number, $event)"
                     [binary]="true"
                     [inputId]="'fs-note-' + n.number"
-                    [disabled]="busy()" />
+                    [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.note.5e087158">
                   Note {{ n.number }} — {{ n.title }}
-                </label>
+                </ng-container></label>
               }
             </div>
           }
@@ -122,9 +122,9 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
               [binary]="true"
               inputId="fs-ann-cdr"
               [disabled]="busy()"
-              (ngModelChange)="onAnnexToggle(FAMILY_CDR, $event)" />
+              (ngModelChange)="onAnnexToggle(FAMILY_CDR, $event)" /><ng-container i18n="@@accounting.nct-statements.annexes.comptes.de.resultat.2bad8cb6">
             Annexes comptes de résultat
-          </label>
+          </ng-container></label>
           @if (includeAnnexIncomeStatement) {
             <div class="fs-notes">
               @for (n of notesFor(FAMILY_CDR); track n.number) {
@@ -134,9 +134,9 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
                     (ngModelChange)="setNoteSelected(n.number, $event)"
                     [binary]="true"
                     [inputId]="'fs-note-' + n.number"
-                    [disabled]="busy()" />
+                    [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.note.5e087158">
                   Note {{ n.number }} — {{ n.title }}
-                </label>
+                </ng-container></label>
               }
             </div>
           }
@@ -147,9 +147,9 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
               [binary]="true"
               inputId="fs-ann-flux"
               [disabled]="busy()"
-              (ngModelChange)="onAnnexToggle(FAMILY_FLUX, $event)" />
+              (ngModelChange)="onAnnexToggle(FAMILY_FLUX, $event)" /><ng-container i18n="@@accounting.nct-statements.annexes.flux.de.tresorerie.2712c7d4">
             Annexes flux de trésorerie
-          </label>
+          </ng-container></label>
           @if (includeAnnexCashFlow) {
             <div class="fs-notes">
               @for (n of notesFor(FAMILY_FLUX); track n.number) {
@@ -159,9 +159,9 @@ const FAMILY_FLUX: NctAnnexFamily = 'CashFlow';
                     (ngModelChange)="setNoteSelected(n.number, $event)"
                     [binary]="true"
                     [inputId]="'fs-note-' + n.number"
-                    [disabled]="busy()" />
+                    [disabled]="busy()" /><ng-container i18n="@@accounting.nct-statements.note.5e087158">
                   Note {{ n.number }} — {{ n.title }}
-                </label>
+                </ng-container></label>
               }
             </div>
           }

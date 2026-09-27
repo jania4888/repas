@@ -42,7 +42,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
       (onHide)="onHide()">
       <p-message
         severity="info"
-        text="La date de sortie sera enregistrée sur le dossier salarié. Le contrat actif peut être clôturé à cette date. Pensez à lancer la régularisation IRPP (solde de tout compte) si l'option est activée."
+        text="La date de sortie sera enregistrée sur le dossier salarié. Le contrat actif peut être clôturé à cette date. Pensez à lancer la régularisation IRPP (solde de tout compte) si l'option est activée." i18n-text="@@payroll.employees.la.date.de.sortie.sera.enregistree.sur.l.9779e2ae"
         styleClass="mb-3 w-full" />
 
       <div class="payroll-form-group mb-2">

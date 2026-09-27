@@ -46,7 +46,7 @@ interface DesignColumn {
     <p-toast></p-toast>
     <app-studio-page-shell
       [title]="(viewId ? loc_ui_tern_modifier_f260e7 : loc_ui_tern_nouvelle_3278b0) + loc_ui_tern_vue_lecture_seule_485638"
-      subtitle="Configurez les colonnes affichées depuis une table SQL existante."
+      subtitle="Configurez les colonnes affichées depuis une table SQL existante." i18n-subtitle="@@studio.studio-view-designer.configurez.les.colonnes.affichees.depuis.d412ac7a"
       [breadcrumbs]="breadcrumbs()">
       <div studioActions class="studio-head-actions">
         <button pButton type="button" label="Aperçu" i18n-label="@@studio.studio-view-designer.apercu.f0f53004" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>

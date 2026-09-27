@@ -58,7 +58,7 @@ interface ActiveFilterOption {
 
     <app-page-header
       title="Modèles de devis" i18n-title="@@crm.quote-templates.modeles.de.devis.b90f004d"
-      subtitle="Modèles réutilisables pour accélérer la création de devis et harmoniser vos offres.">
+      subtitle="Modèles réutilisables pour accélérer la création de devis et harmoniser vos offres." i18n-subtitle="@@crm.quote-templates.modeles.reutilisables.pour.accelerer.la.678a1373">
       @if (canCreate()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@crm.quote-templates.nouveau.modele.c5b99d5d"> Nouveau modèle </app-button>
       }
@@ -66,13 +66,13 @@ interface ActiveFilterOption {
 
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@crm.quote-templates.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             type="button"
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@crm.quote-templates.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@crm.quote-templates.reinitialiser.les.filtres.d8915f02" i18n="@@crm.quote-templates.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -159,7 +159,7 @@ interface ActiveFilterOption {
                       [iconAlwaysVisible]="true"
                       pTooltip="Modifier" i18n-pTooltip="@@crm.quote-templates.modifier.f260e757"
                       [routerLink]="[t.id, 'edit']"
-                      ariaLabel="Modifier le modèle">
+                      ariaLabel="Modifier le modèle" i18n-ariaLabel="@@crm.quote-templates.modifier.le.modele.afdb257e">
                     </app-button>
                   }
                   @if (canDelete()) {
@@ -171,7 +171,7 @@ interface ActiveFilterOption {
                       [iconAlwaysVisible]="true"
                       pTooltip="Supprimer" i18n-pTooltip="@@crm.quote-templates.supprimer.1acfc1c7"
                       (click)="confirmDelete(t)"
-                      ariaLabel="Supprimer le modèle">
+                      ariaLabel="Supprimer le modèle" i18n-ariaLabel="@@crm.quote-templates.supprimer.le.modele.15764507">
                     </app-button>
                   }
                 </div>
@@ -184,9 +184,9 @@ interface ActiveFilterOption {
                 <app-empty-state
                   illustration="empty-quotes.svg"
                   title="Aucun modèle de devis" i18n-title="@@crm.quote-templates.aucun.modele.de.devis.95a72ae4"
-                  description="Créez un modèle pour préremplir lignes, notes et conditions lors de la création d'un devis."
+                  description="Créez un modèle pour préremplir lignes, notes et conditions lors de la création d'un devis." i18n-description="@@crm.quote-templates.creez.un.modele.pour.preremplir.lignes.n.81e0c225"
                   [showAction]="canCreate()"
-                  actionLabel="Créer un modèle"
+                  actionLabel="Créer un modèle" i18n-actionLabel="@@crm.quote-templates.creer.un.modele.fcfb7216"
                   actionRoute="new">
                 </app-empty-state>
               </td>

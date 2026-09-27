@@ -66,7 +66,7 @@ interface BulkRow {
 
     <app-page-header
       title="Ajouter des utilisateurs" i18n-title="@@settings.users.ajouter.des.utilisateurs.0f065e3f"
-      subtitle="Créez plusieurs comptes avec rôle et modules pour chacun">
+      subtitle="Créez plusieurs comptes avec rôle et modules pour chacun" i18n-subtitle="@@settings.users.creez.plusieurs.comptes.avec.role.et.mod.4c9c7184">
       <p-button label="Retour à la liste" i18n-label="@@settings.users.retour.a.la.liste.7753f531" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings/users"></p-button>
     </app-page-header>
 
@@ -161,7 +161,7 @@ interface BulkRow {
                 [rounded]="true"
                 [text]="true"
                 severity="danger"
-                ariaLabel="Supprimer la ligne"
+                ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@settings.users.supprimer.la.ligne.7e5f9ae0"
                 (onClick)="removeRow(ri)"
                 [disabled]="rows().length <= 1"></p-button>
             </td>

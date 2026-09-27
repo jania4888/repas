@@ -96,19 +96,19 @@ import { LayoutRouteService } from '@core/layout/layout-route.service';
 
           <div class="wizard-actions-header">
             @if (wizardService.isDirty() && !wizardService.isSaving()) {
-              <span class="unsaved-indicator">
+              <span class="unsaved-indicator" i18n="@@invoices.invoice-wizard.non.enregistre.e830b5ce">
                 <i class="pi pi-circle-fill"></i>
                 Non enregistré
               </span>
             }
             @if (wizardService.isSaving()) {
-              <span class="saving-indicator">
+              <span class="saving-indicator" i18n="@@invoices.invoice-wizard.enregistrement.32f31357">
                 <i class="pi pi-spin pi-spinner"></i>
                 Enregistrement...
               </span>
             }
             @if (wizardService.wizardState().lastSaved) {
-              <span class="saved-indicator">
+              <span class="saved-indicator" i18n="@@invoices.invoice-wizard.progression.sauvegardee.a.6bdd2d71">
                 <i class="pi pi-check"></i>
                 Progression sauvegardée à {{ wizardService.wizardState().lastSaved | date:'HH:mm' }}
               </span>

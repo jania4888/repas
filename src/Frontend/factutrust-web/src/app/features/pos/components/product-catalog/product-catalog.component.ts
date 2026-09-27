@@ -135,15 +135,15 @@ interface CategoryTab {
             </div>
             <p class="catalog__empty-title" i18n="@@pos.components.aucun.produit.trouve.1537e5ac">Aucun produit trouve</p>
             <p class="catalog__empty-text">
-              @if (selectedCategory() === 'favorites') {
+              @if (selectedCategory() === 'favorites') {<ng-container i18n="@@pos.components.ajoutez.des.produits.aux.favoris.en.cliq.db1dea04">
                 Ajoutez des produits aux favoris en cliquant sur l'etoile.
-              } @else if (selectedCategory() === 'recents') {
+              </ng-container>} @else if (selectedCategory() === 'recents') {<ng-container i18n="@@pos.components.les.produits.recemment.ajoutes.apparaiss.e506c4d5">
                 Les produits recemment ajoutes apparaissent ici.
-              } @else if (searchQuery()) {
+              </ng-container>} @else if (searchQuery()) {<ng-container i18n="@@pos.components.essayez.avec.d.autres.termes.de.recherch.b5975444">
                 Essayez avec d'autres termes de recherche.
-              } @else {
+              </ng-container>} @else {<ng-container i18n="@@pos.components.aucun.produit.disponible.dans.cette.cate.e35ac279">
                 Aucun produit disponible dans cette categorie.
-              }
+              </ng-container>}
             </p>
             @if (searchQuery()) {
               <button class="catalog__empty-action" (click)="clearSearch()" i18n="@@pos.components.effacer.la.recherche.189351c0">Effacer la recherche</button>
@@ -169,9 +169,9 @@ interface CategoryTab {
               <button class="catalog__load-more-btn" (click)="loadMore()" [disabled]="loadingMore()">
                 @if (loadingMore()) {
                   <i class="pi pi-spin pi-spinner"></i>
-                } @else {
+                } @else {<ng-container i18n="@@pos.components.afficher.plus.de.produits.033e0d1f">
                   Afficher plus de produits
-                }
+                </ng-container>}
               </button>
             </div>
           }

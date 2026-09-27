@@ -41,14 +41,14 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
       <app-empty-state
         icon="pi-receipt"
         title="Factures indisponibles" i18n-title="@@projects.components.factures.indisponibles.d67140b4"
-        description="Impossible de charger la liste des factures pour ce projet."
+        description="Impossible de charger la liste des factures pour ce projet." i18n-description="@@projects.components.impossible.de.charger.la.liste.des.factu.145dc7b5"
         [showAction]="false">
       </app-empty-state>
     } @else if (invoices()!.length === 0) {
       <app-empty-state
         icon="pi-receipt"
         title="Aucune facture" i18n-title="@@projects.components.aucune.facture.72124217"
-        description="Aucune facture n'a encore été générée pour ce projet."
+        description="Aucune facture n'a encore été générée pour ce projet." i18n-description="@@projects.components.aucune.facture.n.a.encore.ete.generee.po.12477089"
         [showAction]="false">
       </app-empty-state>
     } @else {
@@ -98,7 +98,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
                       icon="pi-eye"
                       [iconOnly]="true"
                       [routerLink]="['/invoices', inv.invoiceId]"
-                      ariaLabel="Voir la facture">
+                      ariaLabel="Voir la facture" i18n-ariaLabel="@@projects.components.voir.la.facture.23283cea">
                     </app-button>
                     <app-button
                       variant="ghost"
@@ -107,7 +107,7 @@ import { invoiceBadgeStatus } from '../../recurring-contracts/recurring-contract
                       [iconOnly]="true"
                       [disabled]="downloadingId() === inv.invoiceId"
                       (click)="downloadPdf(inv)"
-                      ariaLabel="Télécharger le PDF">
+                      ariaLabel="Télécharger le PDF" i18n-ariaLabel="@@projects.components.telecharger.le.pdf.27f91e86">
                     </app-button>
                   </div>
                 }

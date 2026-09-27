@@ -37,7 +37,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
                   <button
                     class="held-panel__btn held-panel__btn--primary"
                     (click)="recallOrder(order)"
-                    type="button">
+                    type="button" i18n="@@pos.components.rappeler.4d1bad90">
                     <i class="pi pi-replay"></i> Rappeler
                   </button>
                   <button

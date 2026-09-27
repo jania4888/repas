@@ -26,7 +26,7 @@ import {
     template: `
     <app-page-header
       title="Chiffre d'affaires" i18n-title="@@reports.analytics.chiffre.d.affaires.0a341b9f"
-      subtitle="Suivez l'évolution de votre chiffre d'affaires au fil du temps">
+      subtitle="Suivez l'évolution de votre chiffre d'affaires au fil du temps" i18n-subtitle="@@reports.analytics.suivez.l.evolution.de.votre.chiffre.d.af.76e29594">
       <app-button
         variant="secondary"
         icon="pi-print"
@@ -101,7 +101,7 @@ import {
     <div class="section">
       <div class="section-header">
         <h2 class="section-title" i18n="@@reports.analytics.evolution.du.chiffre.d.affaires.59b2f451">Évolution du chiffre d'affaires</h2>
-        <span class="section-hint">
+        <span class="section-hint" i18n="@@reports.analytics.ce.graphique.montre.vos.revenus.sur.la.p.a0a9ea52">
           <i class="pi pi-info-circle"></i>
           Ce graphique montre vos revenus sur la période sélectionnée
         </span>
@@ -130,7 +130,7 @@ import {
             <div class="chart-bars">
               @for (item of getVisibleChartData(); track item.label) {
                 <div class="bar-group">
-                  <div class="bar-tooltip">
+                  <div class="bar-tooltip" i18n="@@reports.analytics.facture.a81448ce">
                     <strong>{{ formatAmount(item.revenue) }}</strong><br>
                     <small>{{ item.invoiceCount }} facture{{ item.invoiceCount > 1 ? 's' : '' }}</small>
                   </div>
@@ -163,7 +163,7 @@ import {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.analytics.ca.par.client.ffe5c6ae">CA par client</h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.vos.meilleurs.clients.par.montant.total.b23d587d">
             <i class="pi pi-info-circle"></i>
             Vos meilleurs clients par montant total des factures payées
           </span>
@@ -183,7 +183,7 @@ import {
                 <div class="rank-badge" [class]="'rank-' + (i < 3 ? i + 1 : 'default')">
                   {{ i + 1 }}
                 </div>
-                <div class="rank-info">
+                <div class="rank-info" i18n="@@reports.analytics.facture.e9fce0d2">
                   <span class="rank-name">{{ client.clientName }}</span>
                   <span class="rank-detail">{{ client.invoiceCount }} facture{{ client.invoiceCount > 1 ? 's' : '' }}</span>
                 </div>
@@ -204,7 +204,7 @@ import {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.analytics.resume.chiffre.682deb74">Résumé chiffré</h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.vue.d.ensemble.de.la.periode.selectionne.02b283eb">
             <i class="pi pi-info-circle"></i>
             Vue d'ensemble de la période sélectionnée
           </span>

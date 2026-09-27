@@ -16,7 +16,7 @@ import { AppModule } from '@core/models/app-module';
   standalone: true,
   imports: [CommonModule, RouterLink, PageHeaderComponent],
   template: `
-    <app-page-header title="Comptabilité" i18n-title="@@accounting.accounting-home.comptabilite.20af7266" subtitle="Modules et fonctions de la comptabilité générale" />
+    <app-page-header title="Comptabilité" i18n-title="@@accounting.accounting-home.comptabilite.20af7266" subtitle="Modules et fonctions de la comptabilité générale" i18n-subtitle="@@accounting.accounting-home.modules.et.fonctions.de.la.comptabilite.f7fee572" />
 
     <div class="acc-modules">
       @for (mod of visibleModules(); track mod.title) {

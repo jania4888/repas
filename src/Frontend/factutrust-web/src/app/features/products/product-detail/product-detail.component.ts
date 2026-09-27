@@ -134,21 +134,21 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
           @if (p.isStockManaged && showTraceabilitySummary(p)) {
             <div class="form-group">
               <span class="field-label" i18n="@@products.product-detail.tracabilite.et.valorisation.d1bd26b2">Traçabilité et valorisation</span>
-              <p class="field-value">
+              <p class="field-value" i18n="@@products.product-detail.suivi.valorisation.a42f59ec">
                 Suivi : {{ formatTrackingModeLabel(p.trackingMode) }}
                 · Valorisation : {{ formatCostingMethodLabel(p.costingMethod) }}
               </p>
               @if (p.trackingMode === trackingModeLot) {
-                <p class="field-value field-value-sub">
+                <p class="field-value field-value-sub" i18n="@@products.product-detail.prelevement.33661274">
                   Prélèvement : {{ formatPickingPolicyLabel(p.pickingPolicy) }}
                 </p>
               }
               @if (p.hasExpiryTracking) {
-                <p class="field-value field-value-sub">
+                <p class="field-value field-value-sub"><ng-container i18n="@@products.product-detail.dluo.active.4abe0f18">
                   DLUO : activé
-                  @if (p.expiryAlertDays != null) {
+                  </ng-container>@if (p.expiryAlertDays != null) {<ng-container i18n="@@products.product-detail.alerte.jour.s.bced4a5d">
                     · Alerte {{ p.expiryAlertDays }} jour(s)
-                  }
+                  </ng-container>}
                 </p>
               }
             </div>
@@ -206,7 +206,7 @@ const VAT_OPTIONS: { label: string; value: number }[] = [
             </div>
 
             <div class="pricing-readonly-group">
-              <p class="pricing-readonly-badge">
+              <p class="pricing-readonly-badge" i18n="@@products.product-detail.calcule.automatiquement.395afd28">
                 <i class="pi pi-lock" aria-hidden="true"></i>
                 Calculé automatiquement
               </p>

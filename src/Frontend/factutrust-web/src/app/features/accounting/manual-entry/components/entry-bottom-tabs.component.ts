@@ -21,7 +21,7 @@ const MAX_BYTES = 10 * 1024 * 1024;
   template: `
     <p-tabs class="ft-tabs entry-bottom-tabs" [lazy]="true">
       <p-tablist>
-        <p-tab [value]="0">Pièces jointes ({{ pendingFiles.length }})</p-tab>
+        <p-tab [value]="0" i18n="@@accounting.manual-entry.pieces.jointes.894a3774">Pièces jointes ({{ pendingFiles.length }})</p-tab>
         <p-tab [value]="1" i18n="@@accounting.manual-entry.notes.70440046">Notes</p-tab>
         <p-tab [value]="2" i18n="@@accounting.manual-entry.ventilation.analytique.779559f6">Ventilation analytique</p-tab>
         <p-tab [value]="3" i18n="@@accounting.manual-entry.historique.34f3a06a">Historique</p-tab>

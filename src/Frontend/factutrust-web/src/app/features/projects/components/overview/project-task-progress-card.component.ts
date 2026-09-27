@@ -29,11 +29,11 @@ import { computeTaskStatusBreakdown } from '../../project-detail.vm';
           }
         </div>
         <ul class="proj-detail-task-legend">
-          <li><span class="dot dot--todo"></span> À faire <strong>{{ breakdown.todo }}</strong></li>
-          <li><span class="dot dot--done"></span> Terminées <strong>{{ breakdown.done }}</strong></li>
-          <li><span class="dot dot--progress"></span> En cours <strong>{{ breakdown.inProgress }}</strong></li>
-          <li><span class="dot dot--waiting"></span> En attente <strong>{{ breakdown.waiting }}</strong></li>
-          <li><span class="dot dot--overdue"></span> En retard <strong>{{ breakdown.overdue }}</strong></li>
+          <li i18n="@@projects.components.a.faire.68be8950"><span class="dot dot--todo"></span> À faire <strong>{{ breakdown.todo }}</strong></li>
+          <li i18n="@@projects.components.terminees.eb847074"><span class="dot dot--done"></span> Terminées <strong>{{ breakdown.done }}</strong></li>
+          <li i18n="@@projects.components.en.cours.e3eac576"><span class="dot dot--progress"></span> En cours <strong>{{ breakdown.inProgress }}</strong></li>
+          <li i18n="@@projects.components.en.attente.98484715"><span class="dot dot--waiting"></span> En attente <strong>{{ breakdown.waiting }}</strong></li>
+          <li i18n="@@projects.components.en.retard.e99e239a"><span class="dot dot--overdue"></span> En retard <strong>{{ breakdown.overdue }}</strong></li>
         </ul>
         <div class="proj-detail-task-total">
           <span i18n="@@projects.components.total.b25928c6">Total</span>

@@ -39,7 +39,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingTableActionsComponent, AccountingAmountInputComponent],
   template: `
-    <app-page-header title="Modèles d'écriture" i18n-title="@@accounting.entry-templates.modeles.d.ecriture.a2fb584f" subtitle="Modèles réutilisables pour la saisie manuelle" />
+    <app-page-header title="Modèles d'écriture" i18n-title="@@accounting.entry-templates.modeles.d.ecriture.a2fb584f" subtitle="Modèles réutilisables pour la saisie manuelle" i18n-subtitle="@@accounting.entry-templates.modeles.reutilisables.pour.la.saisie.man.c128df52" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -123,7 +123,7 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
                     [compact]="true"
                     side="debit"
                     [inputId]="'tpl-debit-' + $index"
-                    ariaLabel="Débit fixe" />
+                    ariaLabel="Débit fixe" i18n-ariaLabel="@@accounting.entry-templates.debit.fixe.aedfb877" />
                 </td>
                 <td>
                   <app-accounting-amount-input
@@ -132,17 +132,17 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
                     [compact]="true"
                     side="credit"
                     [inputId]="'tpl-credit-' + $index"
-                    ariaLabel="Crédit fixe" />
+                    ariaLabel="Crédit fixe" i18n-ariaLabel="@@accounting.entry-templates.credit.fixe.4e494a32" />
                 </td>
                 <td>
                   <app-button variant="ghost" size="sm" icon="pi-trash" [iconOnly]="true" [iconAlwaysVisible]="true"
-                    type="button" (click)="removeLine($index)" [disabled]="saving()" ariaLabel="Supprimer la ligne" />
+                    type="button" (click)="removeLine($index)" [disabled]="saving()" ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@accounting.entry-templates.supprimer.la.ligne.7e5f9ae0" />
                 </td>
               </tr>
             }
           </tbody>
         </table>
-        <button type="button" class="tpl-add-line" (click)="addLine()" [disabled]="saving()"><i class="pi pi-plus"></i> Ajouter une ligne</button>
+        <button type="button" class="tpl-add-line" (click)="addLine()" [disabled]="saving()" i18n="@@accounting.entry-templates.ajouter.une.ligne.4ab97b5b"><i class="pi pi-plus"></i> Ajouter une ligne</button>
 
         <div class="tpl-form-actions">
           <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="saving()" i18n="@@accounting.entry-templates.annuler.49ba3292">Annuler</button>
@@ -195,13 +195,13 @@ const JOURNAL_CODES = ['JV', 'JA', 'JC', 'JB', 'JOD', 'JIM', 'JAN'];
                   type="button"
                   (click)="runNow(t)"
                   [disabled]="runningId() === t.id"
-                  ariaLabel="Générer l'écriture maintenant"
+                  ariaLabel="Générer l'écriture maintenant" i18n-ariaLabel="@@accounting.entry-templates.generer.l.ecriture.maintenant.5a587eab"
                   title="Générer l'écriture de la prochaine échéance maintenant" i18n-title="@@accounting.entry-templates.generer.l.ecriture.de.la.prochaine.echeance.main.1334a720" />
               }
               <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
-                type="button" (click)="startEdit(t)" ariaLabel="Modifier" />
+                type="button" (click)="startEdit(t)" ariaLabel="Modifier" i18n-ariaLabel="@@accounting.entry-templates.modifier.ead890f7" />
               <app-button variant="ghost" size="sm" icon="pi-trash" [iconOnly]="true" [iconAlwaysVisible]="true"
-                type="button" (click)="remove(t)" ariaLabel="Supprimer" />
+                type="button" (click)="remove(t)" ariaLabel="Supprimer" i18n-ariaLabel="@@accounting.entry-templates.supprimer.d9f6d96e" />
               </app-accounting-table-actions>
             </td>
           </tr>

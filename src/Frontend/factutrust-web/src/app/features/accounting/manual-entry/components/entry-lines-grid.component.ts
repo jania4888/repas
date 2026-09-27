@@ -62,11 +62,11 @@ import { FUNCTIONAL_CURRENCY, ThirdPartyRef } from '../models/entry-form.model';
               <th class="col-account" style="width:14%" i18n="@@accounting.manual-entry.compte.general.f5c91797">Compte général</th>
               <th class="col-label" style="width:22%" i18n="@@accounting.manual-entry.libelle.f5485bba">Libellé</th>
               <th class="col-aux" style="width:16%" i18n="@@accounting.manual-entry.auxiliaire.b8c6c266">Auxiliaire</th>
-              <th class="col-amount text-right" style="width:11%">Débit{{ currencySuffix() }}</th>
-              <th class="col-amount text-right" style="width:11%">Crédit{{ currencySuffix() }}</th>
+              <th class="col-amount text-right" style="width:11%" i18n="@@accounting.manual-entry.debit.05ab9217">Débit{{ currencySuffix() }}</th>
+              <th class="col-amount text-right" style="width:11%" i18n="@@accounting.manual-entry.credit.0404fe7c">Crédit{{ currencySuffix() }}</th>
               @if (store.isForeignCurrency()) {
-                <th class="col-amount text-right" style="width:11%">Débit ({{ functionalCurrency }})</th>
-                <th class="col-amount text-right" style="width:11%">Crédit ({{ functionalCurrency }})</th>
+                <th class="col-amount text-right" style="width:11%" i18n="@@accounting.manual-entry.debit.d1415ecb">Débit ({{ functionalCurrency }})</th>
+                <th class="col-amount text-right" style="width:11%" i18n="@@accounting.manual-entry.credit.0b8f82bc">Crédit ({{ functionalCurrency }})</th>
               }
               @if (store.columnVisibility().piece) {
                 <th style="width:8%"><ng-container i18n="@@accounting.manual-entry.piece.954bbc8c">Pièce </ng-container> <span class="assist-hint" title="Aide à la saisie — non comptabilisé" i18n-title="@@accounting.manual-entry.aide.a.la.saisie.non.comptabilise.17a2df8c" i18n="@@accounting.manual-entry.text.f77b6fef">ⓘ</span></th>

@@ -36,7 +36,7 @@ import {
         </div>
 
         @if (item.sameGovernorate) {
-          <p class="fdc__match">
+          <p class="fdc__match" i18n="@@shared.accounting-firm.firm-directory-card.meme.gouvernorat.a95a67ce">
             <i class="pi pi-check-circle" aria-hidden="true"></i>
             Même gouvernorat
           </p>
@@ -64,7 +64,7 @@ import {
             <span>{{ teamLabel(item.teamSizeBand) }}</span>
           }
           @if (item.yearsOfExperience != null) {
-            <span>{{ item.yearsOfExperience }} ans d’expérience</span>
+            <span i18n="@@shared.accounting-firm.firm-directory-card.ans.d.experience.50b3e410">{{ item.yearsOfExperience }} ans d’expérience</span>
           }
         </p>
 
@@ -73,7 +73,7 @@ import {
         }
 
         @if (item.professionalRegistrationNumber) {
-          <p class="fdc__reg">N° d’inscription : {{ item.professionalRegistrationNumber }}</p>
+          <p class="fdc__reg" i18n="@@shared.accounting-firm.firm-directory-card.n.d.inscription.3df22522">N° d’inscription : {{ item.professionalRegistrationNumber }}</p>
         }
 
         @if (selectable()) {

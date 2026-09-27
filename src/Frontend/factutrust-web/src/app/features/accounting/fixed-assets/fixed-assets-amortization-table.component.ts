@@ -41,7 +41,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <app-page-header
       title="Tableau des amortissements" i18n-title="@@accounting.fixed-assets.tableau.des.amortissements.c23d3f29"
-      subtitle="État comptable complet de l'exercice (format Sage)" />
+      subtitle="État comptable complet de l'exercice (format Sage)" i18n-subtitle="@@accounting.fixed-assets.etat.comptable.complet.de.l.exercice.for.727bbf56" />
 
     <div class="card accounting-filters-card no-print">
       <div class="accounting-filter-row">
@@ -92,7 +92,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <app-empty-state
         icon="pi pi-table"
         title="Aucune immobilisation" i18n-title="@@accounting.fixed-assets.aucune.immobilisation.f9c26485"
-        message="Aucune immobilisation ne correspond aux filtres pour cet exercice." />
+        message="Aucune immobilisation ne correspond aux filtres pour cet exercice." i18n-message="@@accounting.fixed-assets.aucune.immobilisation.ne.correspond.aux.bb33e4fa" />
     </div>
 
     <div class="card report-container" *ngIf="report() as r">
@@ -100,11 +100,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <header class="sage-report-header">
           <div class="sage-company">{{ displayCompanyName(r) }}</div>
           <h2 class="sage-title" i18n="@@accounting.fixed-assets.tableau.des.amortissements.44e28861">TABLEAU DES AMORTISSEMENTS</h2>
-          <div class="sage-period">
+          <div class="sage-period" i18n="@@accounting.fixed-assets.exercice.du.au.c4eb641a">
             Exercice du {{ r.header.periodStart | date: 'dd/MM/yyyy' }} au {{ r.header.periodEnd | date: 'dd/MM/yyyy' }}
           </div>
-          <div class="sage-meta">
-            <span i18n="@@accounting.fixed-assets.genere.le.date.heure">Le {{ r.header.generatedAtUtc | date: 'dd/MM/yyyy' }} à {{ r.header.generatedAtUtc | date: 'HH:mm' }}</span>
+          <div class="sage-meta" i18n="@@accounting.fixed-assets.le.a.exercice.8e2c09d4">
+            <span>Le {{ r.header.generatedAtUtc | date: 'dd/MM/yyyy' }} à {{ r.header.generatedAtUtc | date: 'HH:mm' }}</span>
             <span>Exercice : {{ fiscalYearDisplay(r.header.fiscalYear) }}</span>
           </div>
         </header>
@@ -119,11 +119,11 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 <th class="text-right" i18n="@@accounting.fixed-assets.valeur.d.origine.b74f9474">Valeur d'origine</th>
                 <th class="text-right" i18n="@@accounting.fixed-assets.duree.ans.21e6f820">Durée (ans)</th>
                 <th i18n="@@accounting.fixed-assets.mode.a7b93d21">Mode</th>
-                <th class="text-right">Amort. ant. 31/12/{{ priorYear() }}</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.amort.ant.31.12.0533f910">Amort. ant. 31/12/{{ priorYear() }}</th>
                 <th class="text-right" i18n="@@accounting.fixed-assets.dotation.calculee.3c1b6780">Dotation calculée</th>
                 <th class="text-right" i18n="@@accounting.fixed-assets.dotation.comptabilisee.03b8d6ab">Dotation comptabilisée</th>
                 <th class="text-right" i18n="@@accounting.fixed-assets.ecart.6ae8dce8">Écart</th>
-                <th class="text-right">Fin exercice 31/12/{{ r.header.fiscalYear }}</th>
+                <th class="text-right" i18n="@@accounting.fixed-assets.fin.exercice.31.12.881ce8e9">Fin exercice 31/12/{{ r.header.fiscalYear }}</th>
                 <th class="text-right">VNC 31/12/{{ r.header.fiscalYear }}</th>
                 <th i18n="@@accounting.fixed-assets.statut.compta.949575d9">Statut compta</th>
               </tr>
@@ -152,7 +152,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                   <td><span class="status-pill">{{ postingStatusLabel(row.postingStatus) }}</span></td>
                 </tr>
                 <tr class="subtotal-row">
-                  <td colspan="3"><strong>Total {{ group.groupLabel }}</strong></td>
+                  <td colspan="3" i18n="@@accounting.fixed-assets.total.0c8136b7"><strong>Total {{ group.groupLabel }}</strong></td>
                   <td class="text-right"><strong>{{ group.subtotal.originValue | number: '1.3-3' }}</strong></td>
                   <td colspan="2"></td>
                   <td class="text-right"><strong>{{ group.subtotal.priorAccumulatedDepreciation | number: '1.3-3' }}</strong></td>
@@ -188,8 +188,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                 <tr>
                   <th i18n="@@accounting.fixed-assets.nature.bddc7adb">Nature</th>
                   <th class="text-right" i18n="@@accounting.fixed-assets.valeur.d.origine.b74f9474">Valeur d'origine</th>
-                  <th class="text-right">Amort. cumulés 31/12/{{ priorYear() }}</th>
-                  <th class="text-right">Dotation {{ fiscalYearDisplay(r.header.fiscalYear) }}</th>
+                  <th class="text-right" i18n="@@accounting.fixed-assets.amort.cumules.31.12.1f75aaeb">Amort. cumulés 31/12/{{ priorYear() }}</th>
+                  <th class="text-right" i18n="@@accounting.fixed-assets.dotation.7590e696">Dotation {{ fiscalYearDisplay(r.header.fiscalYear) }}</th>
                   <th class="text-right">VNC 31/12/{{ r.header.fiscalYear }}</th>
                 </tr>
               </thead>
@@ -214,10 +214,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
           <div class="sage-info-panel">
             <h3 i18n="@@accounting.fixed-assets.informations.08c80be1">INFORMATIONS</h3>
-            <p><strong i18n="@@accounting.fixed-assets.lineaire.a5db4cfe">Linéaire</strong> : dotation constante sur la durée d'amortissement.</p>
-            <p><strong i18n="@@accounting.fixed-assets.accelere.064a76be">Accéléré</strong> : application du taux majoré fiscal.</p>
-            <p><strong i18n="@@accounting.fixed-assets.integral.02387577">Intégral</strong> : dotation unique l'année de mise en service.</p>
-            <p>Devise : {{ r.infoBox.currencyCode }}</p>
+            <p i18n="@@accounting.fixed-assets.lineaire.dotation.constante.sur.la.duree.c82164a5"><strong>Linéaire</strong> : dotation constante sur la durée d'amortissement.</p>
+            <p i18n="@@accounting.fixed-assets.accelere.application.du.taux.majore.fisc.8ef1d44b"><strong>Accéléré</strong> : application du taux majoré fiscal.</p>
+            <p i18n="@@accounting.fixed-assets.integral.dotation.unique.l.annee.de.mise.ba977829"><strong>Intégral</strong> : dotation unique l'année de mise en service.</p>
+            <p i18n="@@accounting.fixed-assets.devise.09c46e8b">Devise : {{ r.infoBox.currencyCode }}</p>
             <p i18n="@@accounting.fixed-assets.edite.le.date.heure">Édité le {{ r.infoBox.generatedAtUtc | date: 'dd/MM/yyyy' }} à {{ r.infoBox.generatedAtUtc | date: 'HH:mm' }}</p>
             <p>{{ r.infoBox.productName }}</p>
           </div>

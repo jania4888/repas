@@ -37,7 +37,7 @@ import { AuthService } from '@core/services/auth.service';
     
     <app-page-header 
       title="Mon profil" i18n-title="@@settings.profile.mon.profil.faa6d321" 
-      subtitle="Gérez vos informations personnelles">
+      subtitle="Gérez vos informations personnelles" i18n-subtitle="@@settings.profile.gerez.vos.informations.personnelles.add55929">
       <p-button 
         label="Retour" i18n-label="@@settings.profile.retour.e5befb1f" 
         icon="pi pi-arrow-left" 

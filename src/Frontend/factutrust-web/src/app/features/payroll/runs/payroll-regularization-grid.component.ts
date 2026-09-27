@@ -33,7 +33,7 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
   template: `
     <app-payroll-section
       title="Régularisation IRPP annuelle" i18n-title="@@payroll.runs.regularisation.irpp.annuelle.b7bb1560"
-      subtitle="Compare l'impôt dû sur le cumul réel de l'exercice à l'impôt déjà retenu. Après génération, relancez le calcul du cycle pour porter les écarts sur les bulletins."
+      subtitle="Compare l'impôt dû sur le cumul réel de l'exercice à l'impôt déjà retenu. Après génération, relancez le calcul du cycle pour porter les écarts sur les bulletins." i18n-subtitle="@@payroll.runs.compare.l.impot.du.sur.le.cumul.reel.de.271101e8"
       icon="pi-calculator">
 
       @if (!readOnly) {
@@ -45,7 +45,7 @@ import { outcomeLabel, outcomeSeverity, resolveOutcome } from '../regularization
 
       @if (lines().length > 0 && !readOnly) {
         <p-message severity="info"
-          text="Les montants ci-dessous ne sont pas encore portés sur les bulletins. Relancez le calcul du cycle pour les appliquer."
+          text="Les montants ci-dessous ne sont pas encore portés sur les bulletins. Relancez le calcul du cycle pour les appliquer." i18n-text="@@payroll.runs.les.montants.ci.dessous.ne.sont.pas.enco.90699e62"
           styleClass="mb-3 block" />
       }
 

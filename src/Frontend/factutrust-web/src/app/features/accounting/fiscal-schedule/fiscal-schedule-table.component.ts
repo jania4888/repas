@@ -75,7 +75,7 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
         </ng-template>
         <ng-template pTemplate="footer" *ngIf="list">
           <tr>
-            <td colspan="5">Nombre d'echeances : {{ list.totalCount }}</td>
+            <td colspan="5" i18n="@@accounting.fiscal-schedule.nombre.d.echeances.2348820f">Nombre d'echeances : {{ list.totalCount }}</td>
             <td class="amount-col">{{ amount(list.summary.totalAmount) }}</td>
             <td colspan="5"></td>
           </tr>
@@ -107,9 +107,9 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
             <option [ngValue]="25">25</option>
             <option [ngValue]="50">50</option>
             <option [ngValue]="100">100</option>
-          </select>
+          </select><ng-container i18n="@@accounting.fiscal-schedule.elements.6851b398">
           elements
-        </label>
+        </ng-container></label>
       </div>
     </div>
   `,

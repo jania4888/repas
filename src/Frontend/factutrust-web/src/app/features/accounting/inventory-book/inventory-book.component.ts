@@ -34,10 +34,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <app-page-header
       title="Livre d'inventaire" i18n-title="@@accounting.inventory-book.livre.d.inventaire.a93c3a9a"
-      subtitle="Édition légale figée de l'exercice — états financiers, provisions et balance de clôture" />
+      subtitle="Édition légale figée de l'exercice — états financiers, provisions et balance de clôture" i18n-subtitle="@@accounting.inventory-book.edition.legale.figee.de.l.exercice.etats.01d25abf" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice du livre d'inventaire">
+      <app-accounting-filter-bar ariaLabel="Exercice du livre d'inventaire" i18n-ariaLabel="@@accounting.inventory-book.exercice.du.livre.d.inventaire.78500264">
         <div accountingFilterFields class="ib-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="ib-year" i18n="@@accounting.inventory-book.exercice.e171e2b0">Exercice</label>
@@ -52,7 +52,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le livre d'inventaire" i18n="@@accounting.inventory-book.charger.8f860300"> Charger </app-button>
+            ariaLabel="Charger le livre d'inventaire" i18n-ariaLabel="@@accounting.inventory-book.charger.le.livre.d.inventaire.2236c5b1" i18n="@@accounting.inventory-book.charger.8f860300"> Charger </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !book()"
             (exportFormat)="onExport($event)" />
@@ -60,17 +60,17 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.inventory-book.reessayer.c4f78b12" (retry)="load()" />
 
     @if (book(); as b) {
       <div class="ib-lock" [class.ib-lock--locked]="b.isYearLocked" [class.ib-lock--provisional]="!b.isYearLocked" role="status">
         <i class="pi" [class.pi-lock]="b.isYearLocked" [class.pi-lock-open]="!b.isYearLocked" aria-hidden="true"></i>
         <span>
-          @if (b.isYearLocked) {
-            Exercice verrouillé définitivement@if (b.lockedAt) { le {{ b.lockedAt | date : 'shortDate' }} } — le livre d'inventaire est figé.
-          } @else {
-            Exercice non verrouillé — édition <strong i18n="@@accounting.inventory-book.provisoire.107ae9dc">provisoire</strong> (les données peuvent encore évoluer). Verrouillez l'exercice pour figer le livre.
-          }
+          @if (b.isYearLocked) {<ng-container i18n="@@accounting.inventory-book.exercice.verrouille.definitivement.72159d77">
+            Exercice verrouillé définitivement</ng-container>@if (b.lockedAt) {<ng-container i18n="@@accounting.inventory-book.le.008d7ff1"> le {{ b.lockedAt | date : 'shortDate' }} </ng-container>}<ng-container i18n="@@accounting.inventory-book.le.livre.d.inventaire.est.fige.54852660"> — le livre d'inventaire est figé.
+          </ng-container>} @else {<ng-container i18n="@@accounting.inventory-book.exercice.non.verrouille.edition.provisoi.61deeec9">
+            Exercice non verrouillé — édition <strong>provisoire</strong> (les données peuvent encore évoluer). Verrouillez l'exercice pour figer le livre.
+          </ng-container>}
         </span>
       </div>
 

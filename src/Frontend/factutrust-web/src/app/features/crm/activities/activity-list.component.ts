@@ -55,7 +55,7 @@ interface StatusFilterOption {
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="Activités" i18n-title="@@crm.activities.activites.9c1f6186" subtitle="Appels, rendez-vous, tâches et relances" />
+    <app-page-header title="Activités" i18n-title="@@crm.activities.activites.9c1f6186" subtitle="Appels, rendez-vous, tâches et relances" i18n-subtitle="@@crm.activities.appels.rendez.vous.taches.et.relances.450f20fd" />
 
     <div class="card p-3 mb-3 activity-toolbar">
       <div class="toolbar-row">
@@ -148,9 +148,9 @@ interface StatusFilterOption {
             (ngModelChange)="onFiltersChanged()"></p-checkbox>
           <label for="actMineOnly" i18n="@@crm.activities.mes.activites.ed4435e5">Mes activités</label>
         </div>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="reload()" ariaLabel="Actualiser la liste" i18n="@@crm.activities.actualiser.9d3b2a7d"> Actualiser </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="reload()" ariaLabel="Actualiser la liste" i18n-ariaLabel="@@crm.activities.actualiser.la.liste.fefe8aed" i18n="@@crm.activities.actualiser.9d3b2a7d"> Actualiser </app-button>
         @if (canCreate()) {
-          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle activité" i18n="@@crm.activities.nouvelle.activite.1b50af31"> Nouvelle activité </app-button>
+          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle activité" i18n-ariaLabel="@@crm.activities.nouvelle.activite.327e655c" i18n="@@crm.activities.nouvelle.activite.1b50af31"> Nouvelle activité </app-button>
         }
       </div>
     </div>
@@ -209,7 +209,7 @@ interface StatusFilterOption {
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-check"
-                  ariaLabel="Terminer l’activité"
+                  ariaLabel="Terminer l’activité" i18n-ariaLabel="@@crm.activities.terminer.l.activite.99839a51"
                   title="Terminer" i18n-title="@@crm.activities.terminer.6bf1bd74"
                   [iconAlwaysVisible]="true"
                   (click)="complete(a)"></app-button>
@@ -220,7 +220,7 @@ interface StatusFilterOption {
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-pencil"
-                  ariaLabel="Modifier l’activité"
+                  ariaLabel="Modifier l’activité" i18n-ariaLabel="@@crm.activities.modifier.l.activite.53659408"
                   title="Modifier" i18n-title="@@crm.activities.modifier.f260e757"
                   [iconAlwaysVisible]="true"
                   (click)="openEdit(a)"></app-button>
@@ -231,7 +231,7 @@ interface StatusFilterOption {
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-trash"
-                  ariaLabel="Supprimer l’activité"
+                  ariaLabel="Supprimer l’activité" i18n-ariaLabel="@@crm.activities.supprimer.l.activite.f2e5f591"
                   title="Supprimer" i18n-title="@@crm.activities.supprimer.1acfc1c7"
                   [iconAlwaysVisible]="true"
                   (click)="confirmDelete(a)"></app-button>
@@ -247,7 +247,7 @@ interface StatusFilterOption {
               <p class="empty-title" i18n="@@crm.activities.aucune.activite.pour.ces.criteres.888fb490">Aucune activité pour ces critères</p>
               <p class="empty-hint" i18n="@@crm.activities.creez.une.relance.un.rendez.vous.ou.une.tache.po.5460a53e">Créez une relance, un rendez-vous ou une tâche pour suivre votre prospection.</p>
               @if (canCreate()) {
-                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une activité" i18n="@@crm.activities.nouvelle.activite.1b50af31"> Nouvelle activité </app-button>
+                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une activité" i18n-ariaLabel="@@crm.activities.creer.une.activite.1f8ccf44" i18n="@@crm.activities.nouvelle.activite.1b50af31"> Nouvelle activité </app-button>
               }
             </div>
           </td>
@@ -267,7 +267,7 @@ interface StatusFilterOption {
           <div class="activity-panel-header">
             <div class="activity-panel-header-text">
               <h2 id="activity-panel-title">{{ editingId() ? loc_ui_tern_modifier_l_activite_0681d2 : loc_ui_tern_nouvelle_activite_1b50af }}</h2>
-              <p class="activity-panel-subtitle">
+              <p class="activity-panel-subtitle" i18n="@@crm.activities.suivi.commercial.et.relances.227f714d">
                 {{ editingId() ? loc_ui_tern_edition_b8056d : loc_ui_tern_creation_b50615 }} · Suivi commercial et relances
               </p>
             </div>
@@ -418,7 +418,7 @@ interface StatusFilterOption {
           </div>
           <div class="activity-panel-footer">
             <div class="activity-dialog-footer-actions">
-              <app-button variant="ghost" size="sm" type="button" (click)="closeActivityPanel()" ariaLabel="Annuler" i18n="@@crm.activities.annuler.49ba3292"> Annuler </app-button>
+              <app-button variant="ghost" size="sm" type="button" (click)="closeActivityPanel()" ariaLabel="Annuler" i18n-ariaLabel="@@crm.activities.annuler.e063e8ff" i18n="@@crm.activities.annuler.49ba3292"> Annuler </app-button>
               <app-button
                 variant="primary"
                 [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"

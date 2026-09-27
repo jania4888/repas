@@ -90,10 +90,10 @@ type JournalFlatRow = {
     AccountingCorrectionBannerComponent
   ],
   template: `
-    <app-page-header title="Journal comptable" i18n-title="@@accounting.journal.journal.comptable.cc13c236" subtitle="Écritures par période" />
+    <app-page-header title="Journal comptable" i18n-title="@@accounting.journal.journal.comptable.cc13c236" subtitle="Écritures par période" i18n-subtitle="@@accounting.journal.ecritures.par.periode.03078ddc" />
     <app-accounting-correction-banner />
     <div class="card journal-filters-card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Période et journal">
+      <app-accounting-filter-bar ariaLabel="Période et journal" i18n-ariaLabel="@@accounting.journal.periode.et.journal.2147fcf5">
         <div accountingFilterFields class="journal-toolbar-fields">
           <div class="form-field journal-field-date">
             <label class="field-label" for="jrn-from" i18n="@@accounting.journal.du.84814985">Du</label>
@@ -137,7 +137,7 @@ type JournalFlatRow = {
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser le journal comptable pour la période sélectionnée" i18n="@@accounting.journal.actualiser.9d3b2a7d"> Actualiser </app-button>
+            ariaLabel="Actualiser le journal comptable pour la période sélectionnée" i18n-ariaLabel="@@accounting.journal.actualiser.le.journal.comptable.pour.la.455578ca" i18n="@@accounting.journal.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-journal"
             density="toolbar"
@@ -166,11 +166,11 @@ type JournalFlatRow = {
       <div class="journal-draft-banner" role="status" aria-live="polite">
         <i class="pi pi-pencil" aria-hidden="true"></i>
         <span>
-          @if (canValidate()) {
+          @if (canValidate()) {<ng-container i18n="@@accounting.journal.ecriture.en.brouillard.sur.la.periode.a.0ba1cf47">
             {{ draftEntryCount() }} écriture{{ draftEntryCount() === 1 ? '' : 's' }} en brouillard sur la période — à valider avant clôture ou export.
-          } @else {
+          </ng-container>} @else {<ng-container i18n="@@accounting.journal.ecriture.en.brouillard.en.attente.de.val.70e53073">
             {{ draftEntryCount() }} écriture{{ draftEntryCount() === 1 ? '' : 's' }} en brouillard — en attente de validation par votre cabinet comptable.
-          }
+          </ng-container>}
         </span>
       </div>
     }
@@ -179,7 +179,7 @@ type JournalFlatRow = {
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.journal.reessayer.c4f78b12"
       (retry)="load()" />
 
     <div class="card journal-table-card">
@@ -195,7 +195,7 @@ type JournalFlatRow = {
             placeholder="Filtrer journal, libellé, compte, date…" i18n-placeholder="@@accounting.journal.filtrer.journal.libelle.compte.date.a3d2e50b"
             aria-label="Filtrer les lignes du journal" i18n-aria-label="@@accounting.journal.filtrer.les.lignes.du.journal.7d436ef3" />
         </span>
-        <p class="journal-count" aria-live="polite">
+        <p class="journal-count" aria-live="polite" i18n="@@accounting.journal.ligne.sur.la.periode.3219962d">
           <span class="journal-count-value">{{ flatRows().length }}</span>
           <span class="journal-count-label"> ligne{{ flatRows().length === 1 ? '' : 's' }} sur la période</span>
         </p>
@@ -236,7 +236,7 @@ type JournalFlatRow = {
             <td data-label="Libellé">
               {{ r.label }}
               @if (r.firstOfEntry && r.pieceRef) {
-                <span class="journal-piece-ref" [title]="loc_ui_tern_piece_aa1746 + r.pieceRef">Pièce {{ r.pieceRef }}</span>
+                <span class="journal-piece-ref" [title]="loc_ui_tern_piece_aa1746 + r.pieceRef" i18n="@@accounting.journal.piece.f865dfce">Pièce {{ r.pieceRef }}</span>
               }
             </td>
             <td class="journal-col-account" data-label="Compte">
@@ -349,7 +349,7 @@ type JournalFlatRow = {
     @if (reverseTarget(); as target) {
       <div class="journal-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="reverse-title">
         <div class="journal-modal">
-          <h2 id="reverse-title" class="journal-modal-title">
+          <h2 id="reverse-title" class="journal-modal-title" i18n="@@accounting.journal.extourner.l.ecriture.n.54418c84">
             Extourner l'écriture {{ target.journal }} n° {{ target.piece }}
           </h2>
           <p class="journal-modal-desc" i18n="@@accounting.journal.une.ecriture.inverse.contre.passation.sera.creee.fe29588f"> Une écriture inverse (contre-passation) sera créée dans la période d'origine si elle est ouverte,
@@ -383,7 +383,7 @@ type JournalFlatRow = {
     @if (attachTarget(); as target) {
       <div class="journal-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="attach-title">
         <div class="journal-modal journal-attach-modal">
-          <h2 id="attach-title" class="journal-modal-title">
+          <h2 id="attach-title" class="journal-modal-title" i18n="@@accounting.journal.pieces.justificatives.n.b1fc0889">
             Pièces justificatives — {{ target.journal }} n° {{ target.piece }}
           </h2>
           <p class="journal-modal-desc" i18n="@@accounting.journal.pdf.images.excel.ou.word.10.mo.maximum.les.piece.da269237"> PDF, images, Excel ou Word — 10 Mo maximum. Les pièces d'une période clôturée

@@ -22,10 +22,10 @@ import { budgetUsedPercent, buildBudgetDonutSlices } from '../../project-detail.
               </div>
             </div>
             <ul class="proj-detail-budget__legend">
-              <li><span class="dot" style="background:#2563eb"></span> Budget total <strong>{{ budget.budgetHt | number:'1.3-3' }} {{ project.currency }}</strong></li>
-              <li><span class="dot" style="background:#7c3aed"></span> Coûts réalisés <strong>{{ budget.actualCostHt | number:'1.3-3' }}</strong></li>
-              <li><span class="dot" style="background:#d97706"></span> Coût temps <strong>{{ budget.timeCostHt | number:'1.3-3' }}</strong></li>
-              <li><span class="dot" style="background:#e2e8f0"></span> Reste <strong>{{ budget.remainingHt | number:'1.3-3' }}</strong></li>
+              <li i18n="@@projects.components.budget.total.57d6a2c9"><span class="dot" style="background:#2563eb"></span> Budget total <strong>{{ budget.budgetHt | number:'1.3-3' }} {{ project.currency }}</strong></li>
+              <li i18n="@@projects.components.couts.realises.0f4b76be"><span class="dot" style="background:#7c3aed"></span> Coûts réalisés <strong>{{ budget.actualCostHt | number:'1.3-3' }}</strong></li>
+              <li i18n="@@projects.components.cout.temps.28111c8c"><span class="dot" style="background:#d97706"></span> Coût temps <strong>{{ budget.timeCostHt | number:'1.3-3' }}</strong></li>
+              <li i18n="@@projects.components.reste.c5822c3d"><span class="dot" style="background:#e2e8f0"></span> Reste <strong>{{ budget.remainingHt | number:'1.3-3' }}</strong></li>
             </ul>
           </div>
           <button type="button" class="proj-detail-link" (click)="viewBudget.emit()" i18n="@@projects.components.voir.le.detail.du.budget.52c64769">Voir le détail du budget →</button>

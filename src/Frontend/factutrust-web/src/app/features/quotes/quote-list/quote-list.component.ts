@@ -63,7 +63,7 @@ interface StatusOption {
 
     <app-page-header
       title="Devis" i18n-title="@@quotes.quote-list.devis.f7622f90"
-      subtitle="Créez, envoyez et transformez vos devis en factures">
+      subtitle="Créez, envoyez et transformez vos devis en factures" i18n-subtitle="@@quotes.quote-list.creez.envoyez.et.transformez.vos.devis.e.28fd542f">
       @if (canCreateQuote()) {
         <app-button
           variant="primary"
@@ -75,12 +75,12 @@ interface StatusOption {
 
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@quotes.quote-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@quotes.quote-list.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@quotes.quote-list.reinitialiser.les.filtres.d8915f02" i18n="@@quotes.quote-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -185,7 +185,7 @@ interface StatusOption {
                     [iconAlwaysVisible]="true"
                     pTooltip="Voir" i18n-pTooltip="@@quotes.quote-list.voir.8a754f1f"
                     [routerLink]="[quote.id]"
-                    ariaLabel="Voir le devis">
+                    ariaLabel="Voir le devis" i18n-ariaLabel="@@quotes.quote-list.voir.le.devis.50894eed">
                   </app-button>
                   <app-button
                     variant="ghost"
@@ -195,7 +195,7 @@ interface StatusOption {
                     [iconAlwaysVisible]="true"
                     pTooltip="Télécharger PDF" i18n-pTooltip="@@quotes.quote-list.telecharger.pdf.06b2eebe"
                     (click)="downloadPdf(quote)"
-                    ariaLabel="Télécharger le PDF">
+                    ariaLabel="Télécharger le PDF" i18n-ariaLabel="@@quotes.quote-list.telecharger.le.pdf.27f91e86">
                   </app-button>
                 </div>
               </td>
@@ -207,9 +207,9 @@ interface StatusOption {
                 <app-empty-state
                   illustration="empty-quotes.svg"
                   title="Aucun devis" i18n-title="@@quotes.quote-list.aucun.devis.a42220c2"
-                  description="Créez votre premier devis pour vos clients."
+                  description="Créez votre premier devis pour vos clients." i18n-description="@@quotes.quote-list.creez.votre.premier.devis.pour.vos.clien.7eb1ad98"
                   [showAction]="canCreateQuote()"
-                  actionLabel="Créer un devis"
+                  actionLabel="Créer un devis" i18n-actionLabel="@@quotes.quote-list.creer.un.devis.3a56a7d7"
                   actionRoute="new">
                 </app-empty-state>
               </td>

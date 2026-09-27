@@ -71,7 +71,7 @@ import {
                 type="button"
                 [disabled]="readOnly"
                 (click)="edit.emit(r)"
-                ariaLabel="Modifier" />
+                ariaLabel="Modifier" i18n-ariaLabel="@@accounting.monthly-declaration.modifier.ead890f7" />
               <app-button
                 variant="ghost"
                 size="sm"
@@ -91,7 +91,7 @@ import {
                 type="button"
                 [disabled]="readOnly"
                 (click)="remove.emit(r)"
-                ariaLabel="Supprimer" />
+                ariaLabel="Supprimer" i18n-ariaLabel="@@accounting.monthly-declaration.supprimer.d9f6d96e" />
             </app-accounting-table-actions>
           </td>
         </tr>

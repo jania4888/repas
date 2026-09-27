@@ -22,7 +22,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
     <p-toast></p-toast>
     <app-studio-page-shell
       title="Formulaires & vues" i18n-title="@@studio.studio-form-hub.formulaires.vues.b08f8230"
-      subtitle="Concevez le formulaire de saisie ou une vue lecture seule sur une table SQL."
+      subtitle="Concevez le formulaire de saisie ou une vue lecture seule sur une table SQL." i18n-subtitle="@@studio.studio-form-hub.concevez.le.formulaire.de.saisie.ou.une.302ba94b"
       [breadcrumbs]="breadcrumbs">
       <button pButton type="button" label="Nouvelle vue" i18n-label="@@studio.studio-form-hub.nouvelle.vue.5c1894bc" icon="fa-solid fa-database" class="p-button-outlined"
         studioActions routerLink="/studio/views/new"></button>
@@ -48,8 +48,8 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr><td colspan="3">
-                <app-empty-state icon="pi-table" title="Aucune table" i18n-title="@@studio.studio-form-hub.aucune.table.05210918" description="Créez une table personnalisée pour concevoir son formulaire."
-                  actionLabel="Créer une table" actionRoute="/studio" [showAction]="true" />
+                <app-empty-state icon="pi-table" title="Aucune table" i18n-title="@@studio.studio-form-hub.aucune.table.05210918" description="Créez une table personnalisée pour concevoir son formulaire." i18n-description="@@studio.studio-form-hub.creez.une.table.personnalisee.pour.conce.9030295d"
+                  actionLabel="Créer une table" i18n-actionLabel="@@studio.studio-form-hub.creer.une.table.15efa9ae" actionRoute="/studio" [showAction]="true" />
               </td></tr>
             </ng-template>
           </p-table>
@@ -76,8 +76,8 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr><td colspan="3">
-                <app-empty-state icon="pi-database" title="Aucune vue" i18n-title="@@studio.studio-form-hub.aucune.vue.6f4edeb8" description="Créez une vue lecture seule sur une table existante."
-                  actionLabel="Nouvelle vue" actionRoute="/studio/views/new" [showAction]="true" />
+                <app-empty-state icon="pi-database" title="Aucune vue" i18n-title="@@studio.studio-form-hub.aucune.vue.6f4edeb8" description="Créez une vue lecture seule sur une table existante." i18n-description="@@studio.studio-form-hub.creez.une.vue.lecture.seule.sur.une.tabl.99d1ed07"
+                  actionLabel="Nouvelle vue" i18n-actionLabel="@@studio.studio-form-hub.nouvelle.vue.1753324a" actionRoute="/studio/views/new" [showAction]="true" />
               </td></tr>
             </ng-template>
           </p-table>

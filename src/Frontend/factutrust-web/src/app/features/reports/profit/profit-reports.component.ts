@@ -26,7 +26,7 @@ import { ProfitTableComponent } from './profit-table.component';
   template: `
     <app-page-header
       title="Rapport Bénéfices" i18n-title="@@reports.profit.rapport.benefices.245eba08"
-      subtitle="Bénéfice commercial par pièce, mensuel, par ligne et par produit">
+      subtitle="Bénéfice commercial par pièce, mensuel, par ligne et par produit" i18n-subtitle="@@reports.profit.benefice.commercial.par.piece.mensuel.pa.129c3976">
       <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" [disabled]="loading()" i18n="@@reports.profit.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 

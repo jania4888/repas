@@ -132,7 +132,7 @@ interface ReceiptLineRow {
           <app-form-section title="Informations générales" i18n-title="@@purchase-receipts.pages.informations.generales.be6ba6e5" icon="pi-building" [number]="1">
             <div class="form-grid-3">
               <div class="form-group">
-                <label for="supplier">Fournisseur <span class="required" i18n="@@purchase-receipts.pages.text.df58248c">*</span></label>
+                <label for="supplier" i18n="@@purchase-receipts.pages.fournisseur.bc374fa5">Fournisseur <span class="required">*</span></label>
                 <p-select
                   id="supplier"
                   [options]="suppliers()"
@@ -170,7 +170,7 @@ interface ReceiptLineRow {
               <div class="form-group">
                 <app-warehouse-selector
                   inputId="receipt-warehouse"
-                  label="Entrepôt"
+                  label="Entrepôt" i18n-label="@@purchase-receipts.pages.entrepot.64a6a11c"
                   [required]="true"
                   [value]="selectedWarehouseId"
                   (valueChange)="onWarehouseSelected($event)">
@@ -188,7 +188,7 @@ interface ReceiptLineRow {
               </div>
 
               <div class="form-group">
-                <label for="receiptDate">Date de réception <span class="required" i18n="@@purchase-receipts.pages.text.df58248c">*</span></label>
+                <label for="receiptDate" i18n="@@purchase-receipts.pages.date.de.reception.9a9c1f22">Date de réception <span class="required">*</span></label>
                 <p-datepicker
                   id="receiptDate"
                   [(ngModel)]="receiptDate"
@@ -289,7 +289,7 @@ interface ReceiptLineRow {
                           styleClass="w-full"
                           inputStyleClass="w-full">
                           <ng-template let-product pTemplate="item">
-                            <div class="product-item">
+                            <div class="product-item" i18n="@@purchase-receipts.pages.dt.cbd698ad">
                               <span class="product-item__code">{{ product.code }}</span>
                               <span class="product-item__name">{{ product.name }}</span>
                               <span class="product-item__price">
@@ -372,7 +372,7 @@ interface ReceiptLineRow {
                           icon="pi-trash"
                           [iconOnly]="true"
                           (clicked)="removeLine(i)"
-                          ariaLabel="Supprimer la ligne">
+                          ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@purchase-receipts.pages.supprimer.la.ligne.7e5f9ae0">
                         </app-button>
                       </td>
                     </tr>
@@ -432,7 +432,7 @@ interface ReceiptLineRow {
             } @else {
               <p-fileUpload
                 mode="basic"
-                chooseLabel="Ajouter un fichier"
+                chooseLabel="Ajouter un fichier" i18n-chooseLabel="@@purchase-receipts.pages.ajouter.un.fichier.02b74bc9"
                 [auto]="true"
                 accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                 [maxFileSize]="10000000"
@@ -454,7 +454,7 @@ interface ReceiptLineRow {
                         icon="pi-trash"
                         [iconOnly]="true"
                         (clicked)="deleteAttachment(att.id)"
-                        ariaLabel="Supprimer la pièce jointe">
+                        ariaLabel="Supprimer la pièce jointe" i18n-ariaLabel="@@purchase-receipts.pages.supprimer.la.piece.jointe.9b073c7b">
                       </app-button>
                     </li>
                   }
@@ -516,7 +516,7 @@ interface ReceiptLineRow {
     }
 
     <p-dialog
-      header="Importer depuis BL fournisseur"
+      header="Importer depuis BL fournisseur" i18n-header="@@purchase-receipts.pages.importer.depuis.bl.fournisseur.3e304217"
       [(visible)]="importBlDialogVisible"
       [modal]="true"
       [style]="{ width: '420px' }"

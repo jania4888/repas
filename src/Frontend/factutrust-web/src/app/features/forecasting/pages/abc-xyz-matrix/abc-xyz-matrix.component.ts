@@ -24,7 +24,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
     <section class="abc-xyz">
       <app-page-header
         title="Matrice ABC × XYZ" i18n-title="@@forecasting.pages.matrice.abc.xyz.8f41fc5c"
-        subtitle="Classification des produits par contribution au CA (ABC) et variabilité de la demande (XYZ).">
+        subtitle="Classification des produits par contribution au CA (ABC) et variabilité de la demande (XYZ)." i18n-subtitle="@@forecasting.pages.classification.des.produits.par.contribu.e9fbda82">
         @if (canManage()) {
           <button class="btn btn-secondary" (click)="recompute()" [disabled]="loading()">
             <i class="pi pi-refresh"></i>
@@ -41,7 +41,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
         <div class="state" i18n="@@forecasting.pages.chargement.01cba1df">Chargement…</div>
       } @else if (matrix()) {
         @if (matrix(); as m) {
-        <p class="info">
+        <p class="info" i18n="@@forecasting.pages.produit.s.classifie.s.calcule.le.ca.de.r.2f0f7345">
           {{ m.totalProducts }} produit(s) classifié(s) — calculé le {{ m.computedAt | date:'dd/MM/yyyy HH:mm' }}.
           CA de référence : {{ m.totalReferenceRevenue | number:'1.3-3' }} TND (12 derniers mois).
         </p>

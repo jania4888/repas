@@ -39,7 +39,7 @@ export interface ProjectInvoiceTargetChoice {
       } @else {
         <p class="intro" i18n="@@projects.components.selectionnez.une.facture.brouillon.du.meme.clien.522bcb6f">Sélectionnez une facture brouillon du même client et du même projet.</p>
         @if (!drafts.length) {
-          <p-message severity="warn" text="Aucune facture brouillon compatible." styleClass="w-full" />
+          <p-message severity="warn" text="Aucune facture brouillon compatible." i18n-text="@@projects.components.aucune.facture.brouillon.compatible.06ca82e6" styleClass="w-full" />
         } @else {
           <div class="draft-list">
             @for (d of drafts; track d.invoiceId) {
@@ -49,7 +49,7 @@ export interface ProjectInvoiceTargetChoice {
                   [value]="d.invoiceId"
                   [(ngModel)]="selectedDraftId"
                   [inputId]="'draft-' + d.invoiceId" />
-                <label [for]="'draft-' + d.invoiceId">
+                <label [for]="'draft-' + d.invoiceId" i18n="@@projects.components.ht.ligne.s.a3a0b7c1">
                   <span class="draft-number">{{ d.number }}</span>
                   <span class="draft-meta">{{ d.issueDate | date:'dd/MM/yyyy' }} — {{ d.amountHT | number:'1.3-3' }} HT — {{ d.lineCount }} ligne(s)</span>
                 </label>

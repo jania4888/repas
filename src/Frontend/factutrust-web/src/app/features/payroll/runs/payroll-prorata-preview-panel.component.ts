@@ -44,7 +44,7 @@ import {
       @if (preview() && !preview()!.isEnabled) {
         <p-message
           severity="warn"
-          text="Le prorata automatique est désactivé sur l'exercice. Activez-le dans Paramètres de paie → Conformité."
+          text="Le prorata automatique est désactivé sur l'exercice. Activez-le dans Paramètres de paie → Conformité." i18n-text="@@payroll.runs.le.prorata.automatique.est.desactive.sur.f8e73ffd"
           styleClass="mb-3 w-full" />
       }
 
@@ -57,7 +57,7 @@ import {
           <app-payroll-empty-state
             icon="pi-check-circle"
             title="Aucune retenue prorata" i18n-title="@@payroll.runs.aucune.retenue.prorata.c74d6508"
-            description="Aucun salarié concerné par une absence, suspension ou sortie sur ce mois." />
+            description="Aucun salarié concerné par une absence, suspension ou sortie sur ce mois." i18n-description="@@payroll.runs.aucun.salarie.concerne.par.une.absence.s.b434247d" />
         } @else {
           <p-table [value]="preview()!.lines" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">

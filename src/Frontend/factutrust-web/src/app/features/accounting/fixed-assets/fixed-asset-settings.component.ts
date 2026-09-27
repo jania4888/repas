@@ -54,7 +54,7 @@ function toFrDate(d: Date): string {
   template: `
     <app-page-header
       title="Exercice comptable — Immobilisations" i18n-title="@@accounting.fixed-assets.exercice.comptable.immobilisations.37874f47"
-      subtitle="Définir la frontière d'exercice du dossier pour les dotations et le tableau d'amortissement" />
+      subtitle="Définir la frontière d'exercice du dossier pour les dotations et le tableau d'amortissement" i18n-subtitle="@@accounting.fixed-assets.definir.la.frontiere.d.exercice.du.dossi.a5120d48" />
 
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
     <app-accounting-status-banner [message]="success() ?? ''" variant="success" *ngIf="success()" />
@@ -91,24 +91,24 @@ function toFrDate(d: Date): string {
               name="labelFormat"
               value="N/N+1"
               [ngModel]="form.fiscalYearLabelFormat"
-              (ngModelChange)="onLabelFormatChange($event)" />
+              (ngModelChange)="onLabelFormatChange($event)" /><ng-container i18n="@@accounting.fixed-assets.n.n.1.ex.b05131eb">
             N/N+1 — ex. « {{ sampleFor('N/N+1') }} »
-          </label>
+          </ng-container></label>
           <label class="radio-option">
             <input
               type="radio"
               name="labelFormat"
               value="N"
               [ngModel]="form.fiscalYearLabelFormat"
-              (ngModelChange)="onLabelFormatChange($event)" />
+              (ngModelChange)="onLabelFormatChange($event)" /><ng-container i18n="@@accounting.fixed-assets.n.ex.17b2425e">
             N — ex. « {{ sampleFor('N') }} »
-          </label>
+          </ng-container></label>
         </fieldset>
       </div>
 
       <div class="preview">
-        <p>
-          <strong i18n="@@accounting.fixed-assets.apercu.33c24358">Aperçu :</strong> exercice courant affiché « {{ currentSample() }} »<ng-container *ngIf="isOffset()"> (frontière {{ offsetBoundary() }})</ng-container>.
+        <p i18n="@@accounting.fixed-assets.apercu.exercice.courant.affiche.frontier.8274168a">
+          <strong>Aperçu :</strong> exercice courant affiché « {{ currentSample() }} »<ng-container *ngIf="isOffset()"> (frontière {{ offsetBoundary() }})</ng-container>.
         </p>
       </div>
 

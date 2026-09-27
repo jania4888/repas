@@ -26,7 +26,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
   template: `
     <app-page-header 
       title="Rapports Stock" i18n-title="@@reports.stock.rapports.stock.00f72cdf" 
-      subtitle="Vue d'ensemble de votre stock, sa valeur et les alertes de rupture">
+      subtitle="Vue d'ensemble de votre stock, sa valeur et les alertes de rupture" i18n-subtitle="@@reports.stock.vue.d.ensemble.de.votre.stock.sa.valeur.088e4413">
       <app-button 
         variant="secondary"
         icon="pi-download"
@@ -253,7 +253,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
           </ng-template>
         </p-table>
         <div class="pagination-row">
-          <span class="pagination-info">Page {{ stockMovementsResult()!.page }} / {{ totalMovementPages() }}</span>
+          <span class="pagination-info" i18n="@@reports.stock.page.35d494ca">Page {{ stockMovementsResult()!.page }} / {{ totalMovementPages() }}</span>
           <div class="pagination-btns">
             <button type="button" class="pagination-btn" [disabled]="stockMovementsResult()!.page <= 1" (click)="movementsPagePrev()" i18n="@@reports.stock.prec.92be5b53">Préc.</button>
             <button type="button" class="pagination-btn" [disabled]="stockMovementsResult()!.page >= totalMovementPages()" (click)="movementsPageNext()" i18n="@@reports.stock.suiv.284b830f">Suiv.</button>
@@ -304,7 +304,7 @@ import { ReportsApiService, StockMovementReportRow, StockMovementsReportResult, 
         <div class="empty-placeholder">
           <i class="pi pi-info-circle"></i>
           <p i18n="@@reports.stock.aucun.stock.a.cette.date.c7e91d37">Aucun stock à cette date</p>
-          <p class="empty-hint">Aucun mouvement enregistré avant le {{ snapshotDate | date:'dd/MM/yyyy' }} pour les critères choisis.</p>
+          <p class="empty-hint" i18n="@@reports.stock.aucun.mouvement.enregistre.avant.le.pour.6dc47f0c">Aucun mouvement enregistré avant le {{ snapshotDate | date:'dd/MM/yyyy' }} pour les critères choisis.</p>
         </div>
       } @else if (snapshotRows() !== null && snapshotRows()!.length > 0) {
         <p-table

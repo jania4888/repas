@@ -132,7 +132,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="toolbar-btn"
                     (click)="copyFullMessage()"
                     [disabled]="copyInProgress"
-                    aria-label="Copier la r&#233;ponse (texte brut)" i18n-aria-label="@@ai-assistant.components.copier.la.reponse.texte.brut.31f51cb3">
+                    aria-label="Copier la r&#233;ponse (texte brut)" i18n-aria-label="@@ai-assistant.components.copier.la.reponse.texte.brut.31f51cb3" i18n="@@ai-assistant.components.copier.037cfe77">
                     <i class="fa-regular fa-copy" aria-hidden="true"></i>
                     Copier
                   </button>
@@ -170,7 +170,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     class="toolbar-btn"
                     (click)="exportSingleToPowerPoint()"
                     [disabled]="exportBusy"
-                    aria-label="Exporter en PowerPoint (cette réponse uniquement)" i18n-aria-label="@@ai-assistant.components.exporter.en.powerpoint.cette.reponse.uniquement.2e373cca">
+                    aria-label="Exporter en PowerPoint (cette réponse uniquement)" i18n-aria-label="@@ai-assistant.components.exporter.en.powerpoint.cette.reponse.uniquement.2e373cca" i18n="@@ai-assistant.components.ppt.4176ead5">
                     <i class="fa-solid fa-file-powerpoint" aria-hidden="true"></i>
                     PPT
                   </button>
@@ -211,7 +211,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                         type="button"
                         class="retry-btn"
                         (click)="resendOriginalQuestion()"
-                        aria-label="R&#233;essayer la consultation des donn&#233;es du cabinet" i18n-aria-label="@@ai-assistant.components.reessayer.la.consultation.des.donnees.du.cabinet.925f6861">
+                        aria-label="R&#233;essayer la consultation des donn&#233;es du cabinet" i18n-aria-label="@@ai-assistant.components.reessayer.la.consultation.des.donnees.du.cabinet.925f6861" i18n="@@ai-assistant.components.reessayer.la.consultation.ed96c318">
                         <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
                         R&#233;essayer la consultation
                       </button>
@@ -251,13 +251,13 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                   </div>
                   <div>
                     <div class="confirm-title" id="reminder-confirm-title" i18n="@@ai-assistant.components.relance.envoy.233.e.1b4202d6">Relance envoy&#233;e</div>
-                    <div class="confirm-subtitle">Rappel &#8212; {{ message.firmReminderAction.preview.dossier }}</div>
+                    <div class="confirm-subtitle" i18n="@@ai-assistant.components.rappel.f9151427">Rappel &#8212; {{ message.firmReminderAction.preview.dossier }}</div>
                   </div>
                 </div>
-                <div class="confirmed-status" role="status" aria-live="polite">
+                <div class="confirmed-status" role="status" aria-live="polite" i18n="@@ai-assistant.components.e.mail.envoye.a.consigne.dans.l.historiq.d1c500d1">
                   <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                   E-mail envoy&#233; &#224; {{ message.firmReminderAction.preview.responsable }}
-                  <span class="meta" i18n="@@ai-assistant.components.183.consign.233.dans.l.historique.du.dossier.681a352f">&#183; consign&#233; dans l'historique du dossier</span>
+                  <span class="meta">&#183; consign&#233; dans l'historique du dossier</span>
                 </div>
               } @else {
                 <div class="confirm-header">
@@ -266,7 +266,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                   </div>
                   <div>
                     <div class="confirm-title" id="reminder-confirm-title" i18n="@@ai-assistant.components.confirmation.requise.8212.relance.d.233.ch.233.a.f75c8d7f">Confirmation requise &#8212; relance d'&#233;ch&#233;ance</div>
-                    <div class="confirm-subtitle">
+                    <div class="confirm-subtitle" i18n="@@ai-assistant.components.rappel.a.bdf3a41d">
                       Rappel &#224; {{ message.firmReminderAction.preview.responsable }} &#183; {{ message.firmReminderAction.preview.dossier }}
                     </div>
                   </div>
@@ -303,7 +303,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                     [disabled]="message.firmReminderConfirming"
                     aria-label="Confirmer l'envoi de la relance" i18n-aria-label="@@ai-assistant.components.confirmer.l.envoi.de.la.relance.423e342c">
                     <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-                    @if (message.firmReminderConfirming) { Envoi&#8230; } @else { Confirmer l'envoi }
+                    @if (message.firmReminderConfirming) {<ng-container i18n="@@ai-assistant.components.envoi.8b2fd282"> Envoi&#8230; </ng-container>} @else {<ng-container i18n="@@ai-assistant.components.confirmer.l.envoi.7aacdc81"> Confirmer l'envoi </ng-container>}
                   </button>
                   <button
                     type="button"
@@ -363,7 +363,7 @@ const FIRM_UNGROUNDED_FALLBACK_PREFIX = "Je n'ai pas pu consulter les données d
                 type="button"
                 class="regenerate-btn"
                 (click)="resendOriginalQuestion()"
-                aria-label="Relancer la question avec consultation des donn&#233;es du cabinet" i18n-aria-label="@@ai-assistant.components.relancer.la.question.avec.consultation.des.donne.6ccf3543">
+                aria-label="Relancer la question avec consultation des donn&#233;es du cabinet" i18n-aria-label="@@ai-assistant.components.relancer.la.question.avec.consultation.des.donne.6ccf3543" i18n="@@ai-assistant.components.relancer.avec.consultation.des.donnees.e466c9e5">
                 <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
                 Relancer avec consultation des donn&#233;es
               </button>

@@ -53,7 +53,7 @@ interface StatusOption {
 
     <app-page-header
       title="Catégories" i18n-title="@@product-categories.product-category-list.categories.d463d7d2"
-      subtitle="Gérez les catégories de vos produits pour les classer dans le catalogue.">
+      subtitle="Gérez les catégories de vos produits pour les classer dans le catalogue." i18n-subtitle="@@product-categories.product-category-list.gerez.les.categories.de.vos.produits.pou.cb58d006">
       @if (canCreateCategory()) {
         <app-button
           variant="primary"
@@ -66,12 +66,12 @@ interface StatusOption {
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@product-categories.product-category-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@product-categories.product-category-list.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@product-categories.product-category-list.reinitialiser.les.filtres.d8915f02" i18n="@@product-categories.product-category-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -167,7 +167,7 @@ interface StatusOption {
                       icon="pi-pencil"
                       [iconOnly]="true"
                       [routerLink]="[cat.id, 'edit']"
-                      ariaLabel="Modifier la catégorie">
+                      ariaLabel="Modifier la catégorie" i18n-ariaLabel="@@product-categories.product-category-list.modifier.la.categorie.23404212">
                     </app-button>
                   }
                 </div>
@@ -181,9 +181,9 @@ interface StatusOption {
                 <app-empty-state
                   [icon]="'pi-tags'"
                   title="Aucune catégorie" i18n-title="@@product-categories.product-category-list.aucune.categorie.33bf71cf"
-                  description="Créez des catégories pour classer vos produits (ex. General, Services, Marchandises)."
+                  description="Créez des catégories pour classer vos produits (ex. General, Services, Marchandises)." i18n-description="@@product-categories.product-category-list.creez.des.categories.pour.classer.vos.pr.bdc32a9f"
                   [showAction]="canCreateCategory()"
-                  actionLabel="Nouvelle catégorie"
+                  actionLabel="Nouvelle catégorie" i18n-actionLabel="@@product-categories.product-category-list.nouvelle.categorie.6f837723"
                   actionRoute="new">
                 </app-empty-state>
               </td>

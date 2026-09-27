@@ -21,7 +21,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
     <p-toast></p-toast>
     <app-studio-page-shell
       [title]="reportName()"
-      subtitle="Rapport analytique — consultation et export."
+      subtitle="Rapport analytique — consultation et export." i18n-subtitle="@@studio.studio-report-view.rapport.analytique.consultation.et.expor.5c5a2337"
       [breadcrumbs]="breadcrumbs()">
       <div class="srv-actions">
         <button pButton type="button" class="p-button-outlined p-button-sm"

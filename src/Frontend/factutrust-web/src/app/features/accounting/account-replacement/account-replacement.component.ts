@@ -14,14 +14,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Remplacement de compte" i18n-title="@@accounting.account-replacement.remplacement.de.compte.2fb8886e" subtitle="Remplacer un compte par un autre sur les écritures des périodes ouvertes" />
+    <app-page-header title="Remplacement de compte" i18n-title="@@accounting.account-replacement.remplacement.de.compte.2fb8886e" subtitle="Remplacer un compte par un autre sur les écritures des périodes ouvertes" i18n-subtitle="@@accounting.account-replacement.remplacer.un.compte.par.un.autre.sur.les.3d9696c5" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card ar-card">
-      <div class="ar-warn" role="note">
+      <div class="ar-warn" role="note" i18n="@@accounting.account-replacement.operation.de.maintenance.seules.les.ecri.41153326">
         <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-        <span><ng-container i18n="@@accounting.account-replacement.operation.de.maintenance.seules.les.ecritures.de.2fc19dc1">Opération de maintenance. Seules les écritures des </ng-container> <strong i18n="@@accounting.account-replacement.periodes.ouvertes.83adb1a3">périodes ouvertes</strong> sont modifiées ; l'action est journalisée.</span>
+        <span><ng-container>Opération de maintenance. Seules les écritures des </ng-container> <strong>périodes ouvertes</strong> sont modifiées ; l'action est journalisée.</span>
       </div>
 
       <div class="ar-grid">
@@ -45,7 +45,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       </div>
 
       @if (previewCount() !== null) {
-        <p class="ar-preview">
+        <p class="ar-preview" i18n="@@accounting.account-replacement.ligne.s.d.ecriture.porteraient.l.ancien.2fd3fffd">
           <strong>{{ previewCount() }}</strong> ligne(s) d'écriture porteraient l'ancien compte
           <code>{{ previewedAccount() }}</code> dans les périodes ouvertes.
         </p>

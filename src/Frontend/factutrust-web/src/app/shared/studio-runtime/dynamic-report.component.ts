@@ -23,16 +23,16 @@ type ChartType = 'bar' | 'line' | 'pie';
   ],
   template: `
     @if (loading && !result) {
-      <div class="dr-loading"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
+      <div class="dr-loading" i18n="@@shared.studio-runtime.dynamic-report.chargement.fbee6e98"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
     } @else if (!result || result.rows.length === 0) {
       <app-empty-state
         icon="pi-chart-bar"
         title="Aucune donnée" i18n-title="@@shared.studio-runtime.dynamic-report.aucune.donnee.434e5488"
-        description="Aucune donnée pour ce rapport ou cette vue."
+        description="Aucune donnée pour ce rapport ou cette vue." i18n-description="@@shared.studio-runtime.dynamic-report.aucune.donnee.pour.ce.rapport.ou.cette.v.10fb24b3"
       />
     } @else {
       @if (result.truncated) {
-        <div class="dr-truncated" role="status">
+        <div class="dr-truncated" role="status" i18n="@@shared.studio-runtime.dynamic-report.resultat.tronque.a.ligne.s.sur.les.totau.740818f2">
           <i class="fa-solid fa-triangle-exclamation"></i>
           Résultat tronqué à {{ result.rows.length }} ligne(s) sur {{ result.totalRows }}.
           Les totaux ne portent pas sur la totalité des données — affinez la période ou les filtres.
@@ -89,7 +89,7 @@ type ChartType = 'bar' | 'line' | 'pie';
             </ng-template>
           </p-table>
         </div>
-        <p class="dr-count">{{ result.totalRows }} ligne(s)</p>
+        <p class="dr-count" i18n="@@shared.studio-runtime.dynamic-report.ligne.s.6df35b9f">{{ result.totalRows }} ligne(s)</p>
       }
 
       @if (view === 'chart' && chartable()) {

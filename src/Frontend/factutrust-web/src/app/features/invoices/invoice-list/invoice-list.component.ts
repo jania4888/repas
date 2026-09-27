@@ -92,7 +92,7 @@ interface StatusOption {
           icon="pi-file-import"
           iconPos="left"
           (click)="openImportDialog()"
-          ariaLabel="Importer une facture depuis un fichier (PDF, image, Word ou Excel)" i18n="@@invoices.invoice-list.importer.une.facture.66ed8807"> Importer une facture </app-button>
+          ariaLabel="Importer une facture depuis un fichier (PDF, image, Word ou Excel)" i18n-ariaLabel="@@invoices.invoice-list.importer.une.facture.depuis.un.fichier.p.01937b6a" i18n="@@invoices.invoice-list.importer.une.facture.66ed8807"> Importer une facture </app-button>
       }
       @if (canCreateInvoice() && creditNotesOnlyMode()) {
         <app-button 
@@ -112,12 +112,12 @@ interface StatusOption {
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@invoices.invoice-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@invoices.invoice-list.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@invoices.invoice-list.reinitialiser.les.filtres.d8915f02" i18n="@@invoices.invoice-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -275,7 +275,7 @@ interface StatusOption {
                   [iconOnly]="true"
                   [iconAlwaysVisible]="true"
                   (click)="downloadPdf(invoice)"
-                  ariaLabel="Télécharger le PDF">
+                  ariaLabel="Télécharger le PDF" i18n-ariaLabel="@@invoices.invoice-list.telecharger.le.pdf.27f91e86">
                 </app-button>
               </div>
             </td>
@@ -289,26 +289,26 @@ interface StatusOption {
                 <app-empty-state
                   illustration="empty-invoices.svg"
                   title="Aucune facture impayée" i18n-title="@@invoices.invoice-list.aucune.facture.impayee.6da9b1d9"
-                  description="Aucune facture client en attente de règlement."
-                  actionLabel="Voir toutes les factures"
+                  description="Aucune facture client en attente de règlement." i18n-description="@@invoices.invoice-list.aucune.facture.client.en.attente.de.regl.e4ddd34c"
+                  actionLabel="Voir toutes les factures" i18n-actionLabel="@@invoices.invoice-list.voir.toutes.les.factures.17662051"
                   actionRoute="/invoices">
                 </app-empty-state>
               } @else if (creditNotesOnlyMode()) {
                 <app-empty-state
                   illustration="empty-invoices.svg"
                   title="Aucun avoir" i18n-title="@@invoices.invoice-list.aucun.avoir.41d83a3a"
-                  description="Créez votre premier avoir à partir d'une facture existante."
+                  description="Créez votre premier avoir à partir d'une facture existante." i18n-description="@@invoices.invoice-list.creez.votre.premier.avoir.a.partir.d.une.580fe2da"
                   [showAction]="canCreateInvoice()"
-                  actionLabel="Créer un avoir"
+                  actionLabel="Créer un avoir" i18n-actionLabel="@@invoices.invoice-list.creer.un.avoir.0c8c075d"
                   (actionClick)="openNewCreditNote()">
                 </app-empty-state>
               } @else {
                 <app-empty-state
                   illustration="empty-invoices.svg"
                   title="Aucune facture" i18n-title="@@invoices.invoice-list.aucune.facture.72124217"
-                  description="Créez votre première facture pour commencer à facturer vos clients."
+                  description="Créez votre première facture pour commencer à facturer vos clients." i18n-description="@@invoices.invoice-list.creez.votre.premiere.facture.pour.commen.b84348c3"
                   [showAction]="canCreateInvoice()"
-                  actionLabel="Créer une facture"
+                  actionLabel="Créer une facture" i18n-actionLabel="@@invoices.invoice-list.creer.une.facture.a3863c70"
                   actionRoute="/invoices/new">
                 </app-empty-state>
               }

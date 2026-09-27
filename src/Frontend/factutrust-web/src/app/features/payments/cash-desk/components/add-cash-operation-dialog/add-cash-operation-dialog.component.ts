@@ -128,7 +128,7 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
               [filter]="true"
               filterBy="label"
               [showClear]="false"
-              filterPlaceholder="Rechercher…"
+              filterPlaceholder="Rechercher…" i18n-filterPlaceholder="@@payments.cash-desk.rechercher.ed75dcce"
               appendTo="body"
               styleClass="w-full category-dropdown">
               <ng-template let-item pTemplate="selectedItem">
@@ -299,14 +299,14 @@ function splitTtcVat(ttcAmount: number, ratePercent: number): { ht: number; vat:
             variant="outline"
             [disabled]="submitting()"
             (click)="onHide()"
-            ariaLabel="Annuler" i18n="@@payments.cash-desk.annuler.49ba3292"> Annuler </app-button>
+            ariaLabel="Annuler" i18n-ariaLabel="@@payments.cash-desk.annuler.e063e8ff" i18n="@@payments.cash-desk.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [disabled]="submitting()"
             icon="pi pi-check"
             iconPos="right"
             (click)="submit()"
-            ariaLabel="Valider l'opération">
+            ariaLabel="Valider l'opération" i18n-ariaLabel="@@payments.cash-desk.valider.l.operation.b4f660f7">
             {{ submitting() ? loc_ui_tern_enregistrement_9bf105 : loc_ui_tern_valider_be4220 }}
           </app-button>
         </div>

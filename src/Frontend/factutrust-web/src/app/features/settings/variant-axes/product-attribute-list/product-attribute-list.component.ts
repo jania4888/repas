@@ -39,7 +39,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
 
     <app-page-header
       title="Axes de variantes" i18n-title="@@settings.variant-axes.axes.de.variantes.dcc95d91"
-      subtitle="Définissez les axes (taille, couleur, etc.) et leurs valeurs pour générer les SKU.">
+      subtitle="Définissez les axes (taille, couleur, etc.) et leurs valeurs pour générer les SKU." i18n-subtitle="@@settings.variant-axes.definissez.les.axes.taille.couleur.etc.e.296792cc">
       <app-button variant="outline" icon="pi-arrow-left" iconPos="left" routerLink="/settings" i18n="@@settings.variant-axes.retour.e5befb1f"> Retour </app-button>
       @if (canCreate()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@settings.variant-axes.nouvel.axe.09ff15dd"> Nouvel axe </app-button>
@@ -66,7 +66,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         <app-empty-state
           icon="pi-th-large"
           title="Aucun axe de variantes" i18n-title="@@settings.variant-axes.aucun.axe.de.variantes.4eaf2472"
-          description="Créez des axes (taille, couleur, etc.) pour générer des variantes de produits." />
+          description="Créez des axes (taille, couleur, etc.) pour générer des variantes de produits." i18n-description="@@settings.variant-axes.creez.des.axes.taille.couleur.etc.pour.g.6a52ece6" />
       } @else {
         <p-table [value]="filteredAttributes()" [rowHover]="true" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
@@ -81,7 +81,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
             <tr>
               <td><code>{{ attr.code }}</code></td>
               <td>{{ attr.name }}</td>
-              <td>{{ attr.values.length }} valeur(s)</td>
+              <td i18n="@@settings.variant-axes.valeur.s.7b227d5c">{{ attr.values.length }} valeur(s)</td>
               <td class="actions-col">
                 @if (canUpdate()) {
                   <app-button variant="ghost" size="sm" icon="pi-pencil" [routerLink]="[attr.id, 'edit']" i18n="@@settings.variant-axes.modifier.f260e757"> Modifier </app-button>

@@ -6,17 +6,17 @@
       <span class="sec-num">1</span>
       <h4 i18n="@@auth.register-wizard.modules.recommandes.pour.votre.profil.164b1c25">Modules recommandés pour votre profil</h4>
       @if (profileLabel) {
-        <span class="based-chip"><i class="pi pi-bolt" aria-hidden="true"></i> Basé sur : {{ profileLabel }}</span>
+        <span class="based-chip" i18n="@@auth.register-wizard.base.sur.3292241b"><i class="pi pi-bolt" aria-hidden="true"></i> Basé sur : {{ profileLabel }}</span>
       }
       @if (usedStaticFallback) {
-        <span class="based-chip based-chip--fallback" pTooltip="Le catalogue de recommandations en ligne est momentanément indisponible ; nous utilisons une liste par défaut." i18n-pTooltip="@@auth.register-wizard.le.catalogue.de.recommandations.en.ligne.est.mom.45b86f8a" tooltipPosition="top">
+        <span class="based-chip based-chip--fallback" pTooltip="Le catalogue de recommandations en ligne est momentanément indisponible ; nous utilisons une liste par défaut." i18n-pTooltip="@@auth.register-wizard.le.catalogue.de.recommandations.en.ligne.est.mom.45b86f8a" tooltipPosition="top" i18n="@@auth.register-wizard.recommandations.par.defaut.d96f671b">
           <i class="pi pi-info-circle" aria-hidden="true"></i> Recommandations par défaut
         </span>
       }
     </div>
 
     <div class="profiling-block">
-      <p class="profiling-intro">
+      <p class="profiling-intro" i18n="@@auth.register-wizard.quelques.precisions.pour.affiner.la.sele.01288c01">
         <i class="pi pi-sparkles" aria-hidden="true"></i>
         Quelques précisions pour affiner la sélection. Tout est facultatif, et rien n'est figé.
       </p>
@@ -72,7 +72,7 @@
     </div>
 
     <div class="mod-group">
-      <p class="mod-group-title"><i class="pi pi-lock" aria-hidden="true"></i> Inclus dans votre espace</p>
+      <p class="mod-group-title" i18n="@@auth.register-wizard.inclus.dans.votre.espace.986bd600"><i class="pi pi-lock" aria-hidden="true"></i> Inclus dans votre espace</p>
       <div class="mod-grid">
         @for (module of coreModules; track module.id) {
           <div class="mod-card on locked" aria-disabled="true">
@@ -87,7 +87,7 @@
     </div>
 
     <div class="mod-group">
-      <p class="mod-group-title"><i class="pi pi-star" aria-hidden="true"></i> Recommandés pour votre secteur</p>
+      <p class="mod-group-title" i18n="@@auth.register-wizard.recommandes.pour.votre.secteur.f0505ca9"><i class="pi pi-star" aria-hidden="true"></i> Recommandés pour votre secteur</p>
       <div class="mod-grid">
         @for (module of recommendedModules; track module.id) {
           <div class="mod-card" [class.on]="isModuleEnabled(module.id)" [class.locked-dep]="isLockedByDependency(module.id)">
@@ -103,10 +103,10 @@
                   [attr.aria-label]="'Activer ' + module.label">
                 </p-inputSwitch>
               </span>
-            </div>
+            </div><ng-container i18n="@@auth.register-wizard.recommande.pour.votre.secteur.eb291dec">
             <span class="mod-name">{{ module.label }}</span>
             <span class="mod-badge"><i class="pi pi-check" aria-hidden="true"></i> Recommandé pour votre secteur</span>
-            @if (isLockedByDependency(module.id)) {
+            </ng-container>@if (isLockedByDependency(module.id)) {
               <span class="mod-badge dep"><i class="pi pi-link" aria-hidden="true"></i> {{ dependencyLockLabel(module.id) }}</span>
             }
             @if (wasAutoEnabled(module.id)) {
@@ -118,7 +118,7 @@
     </div>
 
     <div class="mod-group">
-      <p class="mod-group-title"><i class="pi pi-th-large" aria-hidden="true"></i> Autres modules</p>
+      <p class="mod-group-title" i18n="@@auth.register-wizard.autres.modules.674706fc"><i class="pi pi-th-large" aria-hidden="true"></i> Autres modules</p>
       <div class="mod-grid">
         @for (module of optionalModules; track module.id) {
           <div class="mod-card" [class.on]="isModuleEnabled(module.id)" [class.locked-dep]="isLockedByDependency(module.id)">
@@ -148,11 +148,11 @@
 
     @if (premiumModules.length) {
       <div class="mod-group">
-        <p class="mod-group-title"><i class="pi pi-lock" aria-hidden="true"></i> Plan supérieur</p>
+        <p class="mod-group-title" i18n="@@auth.register-wizard.plan.superieur.bc3a2d10"><i class="pi pi-lock" aria-hidden="true"></i> Plan supérieur</p>
         <div class="mod-grid">
           @for (module of premiumModules; track module.id) {
             <div class="mod-card locked-plan" aria-disabled="true">
-              <div class="mod-top">
+              <div class="mod-top" i18n="@@auth.register-wizard.plan.superieur.4e03436f">
                 <span class="mod-ico tone-indigo"><i class="pi pi-bolt" aria-hidden="true"></i></span>
                 <span class="mod-locked-badge mod-locked-badge--plan"><i class="pi pi-lock" aria-hidden="true"></i> Plan supérieur</span>
               </div>
@@ -164,7 +164,7 @@
       </div>
     }
 
-    <button type="button" class="btn-reset" (click)="onReset()">
+    <button type="button" class="btn-reset" (click)="onReset()" i18n="@@auth.register-wizard.reinitialiser.aux.recommandations.d0515867">
       <i class="pi pi-refresh" aria-hidden="true"></i> Réinitialiser aux recommandations
     </button>
 

@@ -55,7 +55,7 @@ import {
 
     <app-page-header
       title="Taxes et TVA" i18n-title="@@settings.taxes.taxes.et.tva.08d48b76"
-      subtitle="Configurez les taxes applicables et les taux de TVA">
+      subtitle="Configurez les taxes applicables et les taux de TVA" i18n-subtitle="@@settings.taxes.configurez.les.taxes.applicables.et.les.fea90a6b">
       <div class="header-actions">
         <p-button
           label="Retour" i18n-label="@@settings.taxes.retour.e5befb1f"
@@ -223,9 +223,9 @@ import {
             role="region"
             aria-labelledby="tax-system-info-title">
             <span id="tax-system-info-title" class="hint-banner__title" i18n="@@settings.taxes.taxe.systeme.cce09290">Taxe système</span>
-            <p class="hint-banner__text">
-              <ng-container i18n="@@settings.taxes.les.champs.862577e6"> Les champs </ng-container> <strong i18n="@@settings.taxes.type.3deb7456">Type</strong>, <strong i18n="@@settings.taxes.mode.de.calcul.803843c7">Mode de calcul</strong>, <strong i18n="@@settings.taxes.valeur.68f92b0d">Valeur</strong> et
-              <strong i18n="@@settings.taxes.contexte.8112e9eb">Contexte</strong> sont en lecture seule. Vous pouvez modifier le libellé, l’ordre d’affichage et
+            <p class="hint-banner__text" i18n="@@settings.taxes.les.champs.type.mode.de.calcul.valeur.et.b5b73647">
+              <ng-container> Les champs </ng-container> <strong>Type</strong>, <strong>Mode de calcul</strong>, <strong>Valeur</strong> et
+              <strong>Contexte</strong> sont en lecture seule. Vous pouvez modifier le libellé, l’ordre d’affichage et
               l’application sur les produits.
             </p>
           </div>

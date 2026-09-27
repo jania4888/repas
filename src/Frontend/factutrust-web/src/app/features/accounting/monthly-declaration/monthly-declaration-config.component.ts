@@ -73,7 +73,7 @@ import {
   template: `
     <app-page-header
       title="Configuration DM" i18n-title="@@accounting.monthly-declaration.configuration.dm.b438b9c2"
-      subtitle="Calcul de chaque rubrique de la déclaration mensuelle : comptes, valeurs de paie, taux et période d’application" />
+      subtitle="Calcul de chaque rubrique de la déclaration mensuelle : comptes, valeurs de paie, taux et période d’application" i18n-subtitle="@@accounting.monthly-declaration.calcul.de.chaque.rubrique.de.la.declarat.8c09a978" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -82,7 +82,7 @@ import {
         <app-accounting-status-banner
           variant="info"
           title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
-          message="La configuration reste consultable. Sa modification sera possible dès l’activation par l’administrateur de la plateforme ; aucun montant n’en dépend pour l’instant." />
+          message="La configuration reste consultable. Sa modification sera possible dès l’activation par l’administrateur de la plateforme ; aucun montant n’en dépend pour l’instant." i18n-message="@@accounting.monthly-declaration.la.configuration.reste.consultable.sa.mo.dea661f7" />
       }
 
       <div class="card dm-state">
@@ -104,7 +104,7 @@ import {
       @if (!canWrite()) {
         <app-accounting-status-banner
           variant="info"
-          message="Configuration en lecture seule : sa modification est réservée au cabinet comptable ouvrant le dossier." />
+          message="Configuration en lecture seule : sa modification est réservée au cabinet comptable ouvrant le dossier." i18n-message="@@accounting.monthly-declaration.configuration.en.lecture.seule.sa.modifi.698a149c" />
       }
 
       <div class="card dm-panel">
@@ -142,13 +142,13 @@ import {
             @if (outOfEngineScope()) {
               <app-accounting-status-banner
                 variant="info"
-                message="La T.V.A reste calculée depuis les factures et le chaînage de crédit : ces rubriques s’enregistrent mais ne déplacent aucun montant." />
+                message="La T.V.A reste calculée depuis les factures et le chaînage de crédit : ces rubriques s’enregistrent mais ne déplacent aucun montant." i18n-message="@@accounting.monthly-declaration.la.t.v.a.reste.calculee.depuis.les.factu.2910b91f" />
             }
 
             @if (needsAttention(tab.family)) {
               <app-accounting-status-banner
                 variant="warning"
-                message="Famille incluse sans rubrique active : en mode paramétré, l’enregistrement de la déclaration sera refusé plutôt que de produire un zéro silencieux." />
+                message="Famille incluse sans rubrique active : en mode paramétré, l’enregistrement de la déclaration sera refusé plutôt que de produire un zéro silencieux." i18n-message="@@accounting.monthly-declaration.famille.incluse.sans.rubrique.active.en.dd389647" />
             }
 
             <div class="dm-family__toolbar">
@@ -159,7 +159,7 @@ import {
                 type="button"
                 [disabled]="!editable() || loading()"
                 (click)="startCreate()" i18n="@@accounting.monthly-declaration.nouvelle.rubrique.f16710ee"> Nouvelle rubrique </app-button>
-              <span class="dm-family__count">{{ activeCount() }} rubrique(s) active(s)</span>
+              <span class="dm-family__count" i18n="@@accounting.monthly-declaration.rubrique.s.active.s.2f5fcdaa">{{ activeCount() }} rubrique(s) active(s)</span>
             </div>
 
             @if (form(); as draft) {

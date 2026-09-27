@@ -100,11 +100,11 @@
               <i class="pi pi-info-circle"></i> {{ errorMessageService.getErrorMessage(form.get('confirmPassword')) }}
             </div>
           } @else if (passwordMismatch()) {
-            <div class="field-error" id="wiz-confirmPassword-error" role="alert" @fadeInOut>
+            <div class="field-error" id="wiz-confirmPassword-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.les.mots.de.passe.ne.correspondent.pas.ba67f6c5">
               <i class="pi pi-info-circle"></i> Les mots de passe ne correspondent pas.
             </div>
           } @else if (passwordMatches() && form.get('confirmPassword')?.value) {
-            <div class="field-success" id="wiz-confirmPassword-success" role="status" @fadeInOut>
+            <div class="field-success" id="wiz-confirmPassword-success" role="status" @fadeInOut i18n="@@auth.register-wizard.correspondance.exacte.f72c9dd2">
               <i class="pi pi-check-circle"></i> Correspondance exacte
             </div>
           }
@@ -125,7 +125,7 @@
             <span class="password-strength-segment" [class.filled]="passwordStrengthMetCount() >= seg" [attr.data-level]="passwordStrengthLevel()"></span>
           }
         </div>
-        <div class="criteria-grid">
+        <div class="criteria-grid" i18n="@@auth.register-wizard.12.caracteres.majuscule.minuscule.chiffr.4f5fb930">
           <span class="criterion" [class.met]="passwordCriteria().minLength" [class.unmet]="!passwordCriteria().minLength && form.get('password')?.value">
             <i class="pi" [class.pi-check-circle]="passwordCriteria().minLength" [class.pi-circle]="!passwordCriteria().minLength"></i> 12+ caractères
           </span>
@@ -182,12 +182,12 @@
           </p-inputMask>
         </div>
         @if (isInvalid('nif')) {
-          <div class="field-error" id="wiz-nif-error" role="alert" @fadeInOut>
+          <div class="field-error" id="wiz-nif-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.format.attendu.1772793w.a.m.000.513ef2e7">
             <i class="pi pi-info-circle"></i> Format attendu: 1772793W/A/M/000
           </div>
         }
         @if (nifSegmentSuggestion()?.category) {
-          <small class="field-hint nif-category-hint">
+          <small class="field-hint nif-category-hint" i18n="@@auth.register-wizard.nif.detecte.categorie.38366eb9">
             NIF détecté : catégorie {{ nifSegmentSuggestion()!.category.categoryLabelFr }}
           </small>
         }
@@ -199,7 +199,7 @@
               <!-- Le cas miroir (segment « Association » + catégorie NIF autre) n'a pas de segment
                    cible à proposer : on n'affiche alors que la confirmation. -->
               @if (nifSegmentSuggestion()?.category?.suggestedSegmentCode) {
-                <button type="button" class="btn-link" (click)="applySuggestedSegmentFromNif()">
+                <button type="button" class="btn-link" (click)="applySuggestedSegmentFromNif()" i18n="@@auth.register-wizard.changer.pour.14c32bf7">
                   Changer pour {{ suggestedSegmentLabelFromNif() }}
                 </button>
               }
@@ -218,12 +218,12 @@
                     [attr.aria-required]="true">
         </p-select>
         @if (isInvalid('taxRegime')) {
-          <div class="field-error" id="wiz-taxRegime-error" role="alert" @fadeInOut>
+          <div class="field-error" id="wiz-taxRegime-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.le.regime.fiscal.est.requis.15a8d12f">
             <i class="pi pi-info-circle"></i> Le régime fiscal est requis
           </div>
         }
         @if (isSuggestedTaxRegimeActive()) {
-          <small class="field-hint suggestion-hint">
+          <small class="field-hint suggestion-hint" i18n="@@auth.register-wizard.suggere.pour.votre.secteur.b2dd1a94">
             <i class="pi pi-sparkles"></i> Suggéré pour votre secteur — {{ suggestedTaxRegime!.noteFr }}
           </small>
         }
@@ -241,7 +241,7 @@
                  [class.ng-invalid]="isInvalid('companyEmail')">
         </div>
         @if (isInvalid('companyEmail')) {
-          <div class="field-error" role="alert" @fadeInOut>
+          <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.email.invalide.991ed190">
             <i class="pi pi-info-circle"></i> Email invalide
           </div>
         }
@@ -258,7 +258,7 @@
         </div>
         <small class="field-hint" i18n="@@auth.register-wizard.8.chiffres.commence.par.2.3.4.5.7.ou.9.e854f61f">8 chiffres — commence par 2, 3, 4, 5, 7 ou 9</small>
         @if (isInvalid('phone')) {
-          <div class="field-error" role="alert" @fadeInOut>
+          <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.le.telephone.est.requis.8168e3d7">
             <i class="pi pi-info-circle"></i> Le téléphone est requis
           </div>
         }

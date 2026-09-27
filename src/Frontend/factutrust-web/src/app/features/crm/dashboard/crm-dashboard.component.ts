@@ -15,7 +15,7 @@ import { ToastService } from '@core/services/toast.service';
   providers: [DecimalPipe],
   imports: [CommonModule, RouterModule, PageHeaderComponent, StatCardComponent, DashboardPanelComponent],
   template: `
-    <app-page-header title="CRM Commercial" i18n-title="@@crm.dashboard.crm.commercial.96a9fcf3" subtitle="Tableau de bord" />
+    <app-page-header title="CRM Commercial" i18n-title="@@crm.dashboard.crm.commercial.96a9fcf3" subtitle="Tableau de bord" i18n-subtitle="@@crm.dashboard.tableau.de.bord.d776a08d" />
 
     <div class="stats-wrapper">
       <div class="stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.5rem;">

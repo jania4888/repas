@@ -53,8 +53,8 @@ interface ClientOption {
       <div class="client-prices-header">
         <div>
           <h4 class="pricing-block-title" i18n="@@products.product-client-prices.tarifs.par.client.e47e033b">Tarifs par client</h4>
-          <p class="client-prices-subtitle">
-            <ng-container i18n="@@products.product-client-prices.prix.catalogue.dff80c05"> Prix catalogue : </ng-container> <strong>{{ catalogUnitPriceHT() | number: '1.3-3' }} {{ currency() }}</strong>
+          <p class="client-prices-subtitle" i18n="@@products.product-client-prices.prix.catalogue.les.clients.absents.conse.bdc76c4e">
+            <ng-container> Prix catalogue : </ng-container> <strong>{{ catalogUnitPriceHT() | number: '1.3-3' }} {{ currency() }}</strong>
             — les clients absents conservent ce tarif.
           </p>
         </div>
@@ -69,7 +69,7 @@ interface ClientOption {
         <app-empty-state
           icon="pi-users"
           title="Aucun tarif client" i18n-title="@@products.product-client-prices.aucun.tarif.client.ffe1127d"
-          message="Définissez des prix spécifiques pour certains clients. Les autres restent au prix catalogue.">
+          message="Définissez des prix spécifiques pour certains clients. Les autres restent au prix catalogue." i18n-message="@@products.product-client-prices.definissez.des.prix.specifiques.pour.cer.02b8e16f">
         </app-empty-state>
       } @else {
         <div class="ft-table-card">
@@ -138,8 +138,8 @@ interface ClientOption {
       [style]="{ width: '32rem', maxWidth: '95vw' }"
       [breakpoints]="{ '640px': '95vw' }"
       [draggable]="false">
-      <p class="ft-dialog-intro">
-        <ng-container i18n="@@products.product-client-prices.prix.catalogue.dff80c05"> Prix catalogue : </ng-container>
+      <p class="ft-dialog-intro" i18n="@@products.product-client-prices.prix.catalogue.ce.tarif.s.applique.uniqu.d9ed9b12">
+        <ng-container> Prix catalogue : </ng-container>
         <strong>{{ catalogUnitPriceHT() | number: '1.3-3' }} {{ currency() }}</strong>.
         Ce tarif s'applique uniquement à ce client ; les autres conservent le catalogue.
       </p>
@@ -165,7 +165,7 @@ interface ClientOption {
       </div>
 
       <div class="ft-field ft-field--full client-price-dialog__price">
-        <label for="cp-price">Prix HT ({{ currency() }}) <span class="ft-required" i18n="@@products.product-client-prices.text.df58248c">*</span></label>
+        <label for="cp-price" i18n="@@products.product-client-prices.prix.ht.8d5f1e98">Prix HT ({{ currency() }}) <span class="ft-required">*</span></label>
         <p-inputNumber
           inputId="cp-price"
           [(ngModel)]="formPrice"
@@ -176,12 +176,12 @@ interface ClientOption {
           [disabled]="saving()">
         </p-inputNumber>
         @if (catalogUnitPriceHT() > 0) {
-          <small class="ft-hint">
+          <small class="ft-hint"><ng-container i18n="@@products.product-client-prices.prix.catalogue.da7a8470">
             Prix catalogue : {{ catalogUnitPriceHT() | number: '1.3-3' }} {{ currency() }}
-            @if (formPriceDeltaLabel()) {
+            </ng-container>@if (formPriceDeltaLabel()) {<ng-container i18n="@@products.product-client-prices.ecart.94b88477">
               — Écart :
               <span [class]="formPriceDeltaClass()">{{ formPriceDeltaLabel() }}</span>
-            }
+            </ng-container>}
           </small>
         }
       </div>

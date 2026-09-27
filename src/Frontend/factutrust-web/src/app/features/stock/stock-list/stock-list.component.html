@@ -4,7 +4,7 @@
 <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
 <!-- Page Header -->
-<app-page-header title="Gestion du Stock" i18n-title="@@stock.stock-list.gestion.du.stock.72df5586" subtitle="Suivez l'état de vos stocks en temps réel">
+<app-page-header title="Gestion du Stock" i18n-title="@@stock.stock-list.gestion.du.stock.72df5586" subtitle="Suivez l'état de vos stocks en temps réel" i18n-subtitle="@@stock.stock-list.suivez.l.etat.de.vos.stocks.en.temps.ree.0283255f">
   <div class="stock-actions">
     @if (canCreateStockVoucher()) {
       <a routerLink="/stock/entries/new" class="stock-btn stock-btn-entry">
@@ -67,7 +67,7 @@
   <div class="filters-header">
     <h3 class="filters-title" i18n="@@stock.stock-list.filtres.2a8e76e0">Filtres</h3>
     @if (hasActiveFilters()) {
-    <button class="filters-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@stock.stock-list.reinitialiser.les.filtres.d8915f02">
+    <button class="filters-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@stock.stock-list.reinitialiser.les.filtres.d8915f02" i18n="@@stock.stock-list.reinitialiser.9637f51e">
       <i class="pi pi-times"></i>
       Réinitialiser ({{ activeFiltersCount() }})
     </button>
@@ -98,7 +98,7 @@
   <h3 class="filters-title" i18n="@@stock.stock-list.alertes.dluo.351b62de">Alertes DLUO</h3>
   <ul>
     @for (alert of expiryAlerts(); track alert.lotNumber + alert.productId) {
-      <li>{{ alert.productName }} — lot {{ alert.lotNumber }} ({{ alert.daysRemaining }} j, {{ alert.quantityOnHand }} u.)</li>
+      <li i18n="@@stock.stock-list.lot.j.u.fb2faa0d">{{ alert.productName }} — lot {{ alert.lotNumber }} ({{ alert.daysRemaining }} j, {{ alert.quantityOnHand }} u.)</li>
     }
   </ul>
 </div>
@@ -148,7 +148,7 @@
             <span class="stock-value">{{ item.quantityOnHand }} <span class="text-gray-500 text-xs" i18n="@@stock.stock-list.u.b2c7c0ca">U</span></span>
             <p-progressBar [value]="getStockPercentage(item)" [showValue]="false" [style]="{'height': '6px'}">
             </p-progressBar>
-            <span class="text-xs text-gray-500">Min: {{ item.minimumStock }}</span>
+            <span class="text-xs text-gray-500" i18n="@@stock.stock-list.min.485471ea">Min: {{ item.minimumStock }}</span>
           </div>
         </td>
         <td class="value-cell">{{ item.averageCost | currency:'TND':'symbol':'1.3-3' }}</td>
@@ -165,20 +165,20 @@
         <td>
           <div class="actions-cell">
             <app-button variant="ghost" size="sm" icon="pi-history" [iconOnly]="true" pTooltip="Historique mouvements" i18n-pTooltip="@@stock.stock-list.historique.mouvements.ad6facc6"
-              tooltipPosition="top" [routerLink]="[item.id, 'history']" ariaLabel="Voir l'historique">
+              tooltipPosition="top" [routerLink]="[item.id, 'history']" ariaLabel="Voir l'historique" i18n-ariaLabel="@@stock.stock-list.voir.l.historique.2397c32a">
             </app-button>
             @if (lotTrackingEnabled()) {
             <app-button variant="ghost" size="sm" icon="pi-tags" [iconOnly]="true" pTooltip="Lots" i18n-pTooltip="@@stock.stock-list.lots.79029175"
-              tooltipPosition="top" (click)="toggleLots(item)" ariaLabel="Voir les lots">
+              tooltipPosition="top" (click)="toggleLots(item)" ariaLabel="Voir les lots" i18n-ariaLabel="@@stock.stock-list.voir.les.lots.2c6a9c48">
             </app-button>
             }
             @if (fifoLifoValuationEnabled() && (item.costingMethod === 1 || item.costingMethod === 2)) {
             <app-button variant="ghost" size="sm" icon="pi-list" [iconOnly]="true" pTooltip="Couches FIFO/LIFO" i18n-pTooltip="@@stock.stock-list.couches.fifo.lifo.cf47038e"
-              tooltipPosition="top" (click)="toggleLayers(item)" ariaLabel="Voir les couches de valorisation">
+              tooltipPosition="top" (click)="toggleLayers(item)" ariaLabel="Voir les couches de valorisation" i18n-ariaLabel="@@stock.stock-list.voir.les.couches.de.valorisation.e1a6f43f">
             </app-button>
             }
             <app-button variant="ghost" size="sm" icon="pi-sliders-h" [iconOnly]="true" pTooltip="Ajuster le stock" i18n-pTooltip="@@stock.stock-list.ajuster.le.stock.b3559cfb"
-              tooltipPosition="top" (click)="openAdjustDialog(item)" ariaLabel="Ajuster le stock">
+              tooltipPosition="top" (click)="openAdjustDialog(item)" ariaLabel="Ajuster le stock" i18n-ariaLabel="@@stock.stock-list.ajuster.le.stock.79899bad">
             </app-button>
           </div>
         </td>
@@ -253,8 +253,8 @@
       <tr>
         <td colspan="7" class="text-center p-6">
           <app-empty-state illustration="empty-box.svg" title="Aucun article en stock" i18n-title="@@stock.stock-list.aucun.article.en.stock.5a3a8111"
-            description="Ajoutez votre première entrée de stock pour commencer à gérer votre inventaire."
-            actionLabel="Ajouter une entrée de stock" actionRoute="entry">
+            description="Ajoutez votre première entrée de stock pour commencer à gérer votre inventaire." i18n-description="@@stock.stock-list.ajoutez.votre.premiere.entree.de.stock.p.ffbbcd1e"
+            actionLabel="Ajouter une entrée de stock" i18n-actionLabel="@@stock.stock-list.ajouter.une.entree.de.stock.d41de046" actionRoute="entry">
           </app-empty-state>
         </td>
       </tr>
@@ -298,7 +298,7 @@
       @if (selectedItemForAdjust && adjustmentForm.newQuantity !== selectedItemForAdjust.quantityOnHand) {
       <div class="quantity-delta"
         [class.delta-positive]="adjustmentForm.newQuantity > selectedItemForAdjust.quantityOnHand"
-        [class.delta-negative]="adjustmentForm.newQuantity < selectedItemForAdjust.quantityOnHand">
+        [class.delta-negative]="adjustmentForm.newQuantity < selectedItemForAdjust.quantityOnHand" i18n="@@stock.stock-list.unites.a30d2c1d">
         <i
           [class]="adjustmentForm.newQuantity > selectedItemForAdjust.quantityOnHand ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"></i>
         <span>{{ adjustmentForm.newQuantity > selectedItemForAdjust.quantityOnHand ? '+' : '' }}{{

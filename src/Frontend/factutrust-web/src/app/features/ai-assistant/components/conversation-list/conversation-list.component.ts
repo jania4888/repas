@@ -29,7 +29,7 @@ import { ConversationDto } from '../../models/ai-chat.models';
             [class.active]="conv.id === activeConversationId"
             (click)="conversationSelected.emit(conv.id)">
             <div class="conv-title">{{ conv.title }}</div>
-            <div class="conv-meta">
+            <div class="conv-meta" i18n="@@ai-assistant.components.messages.f0e56a4a">
               {{ conv.messageCount }} messages &middot; {{ formatDate(conv.lastMessageAt) }}
             </div>
             <button

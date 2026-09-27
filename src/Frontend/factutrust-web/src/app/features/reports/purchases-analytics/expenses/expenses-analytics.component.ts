@@ -24,7 +24,7 @@ import {
   template: `
     <app-page-header
       title="Dépenses" i18n-title="@@reports.purchases-analytics.depenses.fb667434"
-      subtitle="Suivez l'évolution de vos dépenses et comparez par période">
+      subtitle="Suivez l'évolution de vos dépenses et comparez par période" i18n-subtitle="@@reports.purchases-analytics.suivez.l.evolution.de.vos.depenses.et.co.06cdb173">
       <app-button
         variant="secondary"
         icon="pi-print"
@@ -95,7 +95,7 @@ import {
     <div class="section">
       <div class="section-header">
         <h2 class="section-title" i18n="@@reports.purchases-analytics.evolution.des.depenses.55b93cad">Évolution des dépenses</h2>
-        <span class="section-hint">
+        <span class="section-hint" i18n="@@reports.purchases-analytics.depenses.factures.payees.sur.la.periode.365d7f1b">
           <i class="pi pi-info-circle"></i>
           Dépenses (factures payées) sur la période sélectionnée
         </span>
@@ -123,7 +123,7 @@ import {
             <div class="chart-bars">
               @for (item of getVisibleChartData(); track item.label) {
                 <div class="bar-group">
-                  <div class="bar-tooltip">
+                  <div class="bar-tooltip" i18n="@@reports.purchases-analytics.facture.32ef91f8">
                     <strong>{{ formatAmount(item.amount) }}</strong><br>
                     <small>{{ item.invoiceCount }} facture{{ item.invoiceCount > 1 ? 's' : '' }}</small>
                   </div>
@@ -155,7 +155,7 @@ import {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.purchases-analytics.depenses.par.fournisseur.e216e654">Dépenses par fournisseur</h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.purchases-analytics.top.fournisseurs.par.montant.total.factu.4b22797c">
             <i class="pi pi-info-circle"></i>
             Top fournisseurs par montant total (factures payées)
           </span>
@@ -174,7 +174,7 @@ import {
                 <div class="rank-badge" [class]="'rank-' + (i < 3 ? i + 1 : 'default')">
                   {{ i + 1 }}
                 </div>
-                <div class="rank-info">
+                <div class="rank-info" i18n="@@reports.purchases-analytics.facture.ae46de43">
                   <span class="rank-name">{{ supplier.supplierName }}</span>
                   <span class="rank-detail">{{ supplier.invoiceCount }} facture{{ supplier.invoiceCount > 1 ? 's' : '' }}</span>
                 </div>
@@ -193,7 +193,7 @@ import {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.purchases-analytics.resume.9fb58963">Résumé</h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.purchases-analytics.vue.d.ensemble.de.la.periode.8048985e">
             <i class="pi pi-info-circle"></i>
             Vue d'ensemble de la période
           </span>

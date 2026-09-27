@@ -49,10 +49,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="ri-actions">
           <app-button variant="secondary" icon="pi pi-search" type="button"
             (click)="runPreview()" [disabled]="!selectedFile() || busy()"
-            ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.apercu.f0f53004"> Aperçu </app-button>
+            ariaLabel="Analyser le fichier sans rien enregistrer" i18n-ariaLabel="@@accounting.import.analyser.le.fichier.sans.rien.enregistre.d298afee" i18n="@@accounting.import.apercu.f0f53004"> Aperçu </app-button>
         </div>
       </div>
-      <p class="ri-help"><ng-container i18n="@@accounting.import.colonnes.attendues.512b88dd">Colonnes attendues : </ng-container> <code>{{ expectedColumns }}</code>. Création <strong i18n="@@accounting.import.additive.62d12306">additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
+      <p class="ri-help" i18n="@@accounting.import.colonnes.attendues.creation.additive.un.f2ed5399"><ng-container>Colonnes attendues : </ng-container> <code>{{ expectedColumns }}</code>. Création <strong>additive</strong> : un élément déjà présent est ignoré, jamais écrasé.</p>
     </div>
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
@@ -74,15 +74,15 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
 
         @if (p.unusedMappings.length > 0) {
-          <p class="ri-help">
+          <p class="ri-help"><ng-container i18n="@@accounting.import.correspondance.s.jamais.rencontree.s.26021dc9">
             {{ p.unusedMappings.length }} correspondance(s) jamais rencontrée(s) :
-            <code>{{ p.unusedMappings.slice(0, 10).join(', ') }}</code>@if (p.unusedMappings.length > 10) { … }
+            <code>{{ p.unusedMappings.slice(0, 10).join(', ') }}</code></ng-container>@if (p.unusedMappings.length > 10) { … }
           </p>
         }
 
         @if (p.issues.length > 0) {
           <div class="ri-issues">
-            <h3 class="ri-issues-title">{{ p.issues.length }} anomalie(s) — à corriger avant l'import</h3>
+            <h3 class="ri-issues-title" i18n="@@accounting.import.anomalie.s.a.corriger.avant.l.import.16553fe9">{{ p.issues.length }} anomalie(s) — à corriger avant l'import</h3>
             <ul class="ri-issues-list">
               @for (issue of p.issues.slice(0, 100); track $index) {
                 <li><span class="ri-issue-ref">{{ issue.ref }}</span> {{ issue.message }}</li>
@@ -92,7 +92,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         }
 
         @if (p.sample.length > 0) {
-          <h3 class="ri-sample-title">Aperçu ({{ p.sample.length }} première(s) ligne(s))</h3>
+          <h3 class="ri-sample-title" i18n="@@accounting.import.apercu.premiere.s.ligne.s.3f341043">Aperçu ({{ p.sample.length }} première(s) ligne(s))</h3>
           <p-table [value]="p.sample" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
             <ng-template pTemplate="header"><tr><th scope="col" i18n="@@accounting.import.ref.7f0a8d72">Réf.</th><th scope="col" i18n="@@accounting.import.resume.9fb58963">Résumé</th></tr></ng-template>
             <ng-template pTemplate="body" let-r><tr><td>{{ r.ref }}</td><td>{{ r.summary }}</td></tr></ng-template>
@@ -101,13 +101,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
         <div class="ri-commit-bar">
           @if (p.canCommit) {
-            <span class="ri-commit-hint">Prêt à importer ({{ p.existingRows }} déjà présent(s) seront ignorés).</span>
+            <span class="ri-commit-hint" i18n="@@accounting.import.pret.a.importer.deja.present.s.seront.ig.a78966c9">Prêt à importer ({{ p.existingRows }} déjà présent(s) seront ignorés).</span>
           } @else {
             <span class="ri-commit-hint ri-err" i18n="@@accounting.import.corrigez.les.anomalies.bloquantes.avant.d.import.127ebca3">Corrigez les anomalies bloquantes avant d'importer.</span>
           }
           <app-button variant="primary" icon="pi pi-upload" type="button"
             (click)="runCommit()" [disabled]="!p.canCommit || busy()"
-            ariaLabel="Importer le référentiel">
+            ariaLabel="Importer le référentiel" i18n-ariaLabel="@@accounting.import.importer.le.referentiel.4d2aefcf">
             {{ committing() ? loc_ui_tern_import_4834ca : loc_ui_tern_importer_f54cfe }}
           </app-button>
         </div>

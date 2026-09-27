@@ -72,7 +72,7 @@ interface FilterOption<T extends string> {
 
     <app-page-header
       title="Promotions" i18n-title="@@settings.promotions.promotions.086e09b4"
-      subtitle="Remises temporaires appliquées après le prix. Elles ne remplacent pas les grilles : un document émis garde sa remise quand la promotion se termine.">
+      subtitle="Remises temporaires appliquées après le prix. Elles ne remplacent pas les grilles : un document émis garde sa remise quand la promotion se termine." i18n-subtitle="@@settings.promotions.remises.temporaires.appliquees.apres.le.ab36b931">
       <div class="header-actions">
         <p-button label="Retour" i18n-label="@@settings.promotions.retour.e5befb1f" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
         @if (canCreate()) {
@@ -110,7 +110,7 @@ interface FilterOption<T extends string> {
           placeholder="Portée" i18n-placeholder="@@settings.promotions.portee.f42a1d5d"
           appendTo="body"></p-select>
         @if (hasActiveFilters()) {
-          <button type="button" class="ft-filters__reset" (click)="resetFilters()">
+          <button type="button" class="ft-filters__reset" (click)="resetFilters()" i18n="@@settings.promotions.reinitialiser.319b1817">
             <i class="pi pi-times" aria-hidden="true"></i>
             Réinitialiser
           </button>
@@ -124,13 +124,13 @@ interface FilterOption<T extends string> {
       <app-empty-state
         icon="pi-megaphone"
         title="Aucune promotion" i18n-title="@@settings.promotions.aucune.promotion.99506024"
-        message="Créez une promotion datée pour appliquer une remise temporaire.">
+        message="Créez une promotion datée pour appliquer une remise temporaire." i18n-message="@@settings.promotions.creez.une.promotion.datee.pour.appliquer.258e6e1d">
       </app-empty-state>
     } @else if (filteredPromotions().length === 0) {
       <app-empty-state
         icon="pi-filter-slash"
         title="Aucun résultat" i18n-title="@@settings.promotions.aucun.resultat.9e524fe1"
-        message="Aucune promotion ne correspond à vos filtres.">
+        message="Aucune promotion ne correspond à vos filtres." i18n-message="@@settings.promotions.aucune.promotion.ne.correspond.a.vos.fil.fc656f39">
       </app-empty-state>
     } @else {
       <div class="ft-table-card">

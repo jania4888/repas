@@ -32,7 +32,7 @@ import { VatDeclarationExtras, VatExtrasKey, VatTaxTableRow, hasSuggestionMismat
                 <input type="number" class="vat-edit" [ngModel]="getExtra(row.editableKey)" (ngModelChange)="onExtraChange(row.editableKey, $event)" />
                 @if (row.suggestedAmount != null) {
                   <div class="vat-suggest" [class.vat-suggest--mismatch]="isMismatch(row)">
-                    <span>Suggéré : {{ formatAmount(row.suggestedAmount) }}</span>
+                    <span i18n="@@accounting.vat-declaration.suggere.02df3744">Suggéré : {{ formatAmount(row.suggestedAmount) }}</span>
                     @if (isMismatch(row)) {
                       <button type="button" class="vat-suggest-apply" (click)="applySuggestion(row)"
                         title="Aligner le montant sur la valeur calculée par les modules" i18n-title="@@accounting.vat-declaration.aligner.le.montant.sur.la.valeur.calculee.par.le.1e7ca34d" i18n="@@accounting.vat-declaration.aligner.4a0642db">Aligner</button>

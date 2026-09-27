@@ -142,7 +142,7 @@ interface LineRow extends LinePromotionPreview {
                     size="sm"
                     icon="pi-plus"
                     [iconOnly]="true"
-                    ariaLabel="Créer un client"
+                    ariaLabel="Créer un client" i18n-ariaLabel="@@quotes.quote-form.creer.un.client.2a38dd4a"
                     (click)="openQuickCreateClient()"
                     class="btn-add-client-circle" />
                 }
@@ -238,7 +238,7 @@ interface LineRow extends LinePromotionPreview {
                           size="sm"
                           icon="pi-th-large"
                           [iconOnly]="true"
-                          ariaLabel="Choisir une variante"
+                          ariaLabel="Choisir une variante" i18n-ariaLabel="@@quotes.quote-form.choisir.une.variante.8e914309"
                           (click)="openVariantPicker($index)"
                           title="Choisir une variante" i18n-title="@@quotes.quote-form.choisir.une.variante.c8ab137c" />
                         <app-button
@@ -246,7 +246,7 @@ interface LineRow extends LinePromotionPreview {
                           size="sm"
                           icon="pi-plus"
                           [iconOnly]="true"
-                          ariaLabel="Créer un produit"
+                          ariaLabel="Créer un produit" i18n-ariaLabel="@@quotes.quote-form.creer.un.produit.1ff296f3"
                           (click)="openQuickCreateProduct($index)"
                           class="btn-add-product-circle" />
                       </div>
@@ -305,7 +305,7 @@ interface LineRow extends LinePromotionPreview {
                       @if (line.promotionEligible && line.promotionName) {
                         <p-tag severity="success" [value]="loc_ui_tern_promo_84ac35 + line.promotionName"></p-tag>
                       } @else if (line.promotionMinQuantityRequired && line.promotionName) {
-                        <small class="promo-hint">{{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}</small>
+                        <small class="promo-hint" i18n="@@quotes.quote-form.qty.min.881e3445">{{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}</small>
                       }
                     </td>
                     <td>
@@ -343,7 +343,7 @@ interface LineRow extends LinePromotionPreview {
                         [iconOnly]="true"
                         (click)="removeLine($index)"
                         [disabled]="lines.length <= 1"
-                        ariaLabel="Supprimer la ligne">
+                        ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@quotes.quote-form.supprimer.la.ligne.7e5f9ae0">
                       </app-button>
                     </td>
                   </tr>
@@ -368,7 +368,7 @@ interface LineRow extends LinePromotionPreview {
               </tfoot>
             </table>
           </div>
-          <p class="lines-hint">{{ lines.length }} ligne(s) ajoutée(s)</p>
+          <p class="lines-hint" i18n="@@quotes.quote-form.ligne.s.ajoutee.s.2f58c459">{{ lines.length }} ligne(s) ajoutée(s)</p>
           <div class="totals-panel">
             <div class="totals-row">
               <span i18n="@@quotes.quote-form.total.ht.2ca17ae6">Total HT</span>

@@ -44,7 +44,7 @@ const NOTES_MAX = 1000;
   template: `
     <app-page-header
       title="Cabinet comptable" i18n-title="@@settings.accounting-firm.cabinet.comptable.0b9c6d02"
-      subtitle="Confiez la gestion comptable de votre société à un cabinet partenaire">
+      subtitle="Confiez la gestion comptable de votre société à un cabinet partenaire" i18n-subtitle="@@settings.accounting-firm.confiez.la.gestion.comptable.de.votre.so.13e62730">
     </app-page-header>
 
     @if (loading()) {
@@ -67,11 +67,11 @@ const NOTES_MAX = 1000;
             </div>
 
             @if (isActive(assignment.status)) {
-              <button type="button" class="af-btn af-btn--danger" (click)="revoke()" [disabled]="acting()">
+              <button type="button" class="af-btn af-btn--danger" (click)="revoke()" [disabled]="acting()" i18n="@@settings.accounting-firm.revoquer.l.affectation.398e894c">
                 <i class="pi pi-times-circle"></i> Révoquer l'affectation
               </button>
             } @else if (isPending(assignment.status)) {
-              <button type="button" class="af-btn af-btn--danger-outline" (click)="cancelPending()" [disabled]="acting()">
+              <button type="button" class="af-btn af-btn--danger-outline" (click)="cancelPending()" [disabled]="acting()" i18n="@@settings.accounting-firm.annuler.la.demande.05ba01cd">
                 <i class="pi pi-ban"></i> Annuler la demande
               </button>
             }
@@ -116,7 +116,7 @@ const NOTES_MAX = 1000;
           </dl>
 
           @if (isPending(assignment.status)) {
-            <p class="af-hint">
+            <p class="af-hint" i18n="@@settings.accounting-firm.votre.demande.a.ete.transmise.au.cabinet.10c3ff89">
               <i class="pi pi-info-circle"></i>
               Votre demande a été transmise au cabinet. Vous serez notifié dès qu'elle sera acceptée ou refusée.
             </p>
@@ -133,7 +133,7 @@ const NOTES_MAX = 1000;
             <strong>{{ closed.firmDisplayName }} — {{ statusView(closed.status).label }}</strong>
             <span class="af-banner__date">{{ (closed.respondedAt || closed.revokedAt || closed.requestedAt) | date: 'dd/MM/yyyy' }}</span>
             @if (closed.rejectionReason) {
-              <p class="af-banner__reason">Motif : {{ closed.rejectionReason }}</p>
+              <p class="af-banner__reason" i18n="@@settings.accounting-firm.motif.ac1c6c0e">Motif : {{ closed.rejectionReason }}</p>
             }
             <span class="af-banner__cta" i18n="@@settings.accounting-firm.vous.pouvez.adresser.une.nouvelle.demande.a.un.c.20d16262">Vous pouvez adresser une nouvelle demande à un cabinet ci-dessous.</span>
           </div>
@@ -144,7 +144,7 @@ const NOTES_MAX = 1000;
         <h2 class="af-card__title" i18n="@@settings.accounting-firm.rechercher.un.cabinet.77bb1df8">Rechercher un cabinet</h2>
         <p class="af-card__subtitle" i18n="@@settings.accounting-firm.comparez.les.cabinets.puis.envoyez.une.seule.dem.8d99a9af">Comparez les cabinets, puis envoyez une seule demande.</p>
 
-        <button type="button" class="af-filters__toggle" (click)="filtersOpen.set(!filtersOpen())">
+        <button type="button" class="af-filters__toggle" (click)="filtersOpen.set(!filtersOpen())" i18n="@@settings.accounting-firm.filtres.0e268f4a">
           <i class="pi" [ngClass]="filtersOpen() ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
           Filtres
         </button>
@@ -191,9 +191,9 @@ const NOTES_MAX = 1000;
               </select>
             </div>
             <label class="af-check" for="firmRemote">
-              <input id="firmRemote" type="checkbox" [(ngModel)]="remoteOnly" (ngModelChange)="onFilterChange()" />
+              <input id="firmRemote" type="checkbox" [(ngModel)]="remoteOnly" (ngModelChange)="onFilterChange()" /><ng-container i18n="@@settings.accounting-firm.accepte.le.distanciel.eabce959">
               Accepte le distanciel
-            </label>
+            </ng-container></label>
             <button type="button" class="af-btn af-btn--ghost" (click)="resetFilters()" i18n="@@settings.accounting-firm.reinitialiser.e0e2ad54">Réinitialiser</button>
           </div>
 
@@ -243,7 +243,7 @@ const NOTES_MAX = 1000;
             type="button"
             class="af-btn af-btn--primary"
             (click)="confirmAndSubmit()"
-            [disabled]="!selectedFirm || acting()">
+            [disabled]="!selectedFirm || acting()" i18n="@@settings.accounting-firm.envoyer.la.demande.b3cb4a78">
             <i class="pi pi-send"></i> Envoyer la demande
           </button>
         </div>
@@ -252,7 +252,7 @@ const NOTES_MAX = 1000;
 
       @if (history().length > 0) {
         <div class="af-card">
-          <button type="button" class="af-history__toggle" (click)="historyOpen.set(!historyOpen())">
+          <button type="button" class="af-history__toggle" (click)="historyOpen.set(!historyOpen())" i18n="@@settings.accounting-firm.historique.des.demandes.e82eff43">
             <i class="pi" [ngClass]="historyOpen() ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
             Historique des demandes ({{ history().length }})
           </button>
@@ -267,7 +267,7 @@ const NOTES_MAX = 1000;
                   <div class="af-history__side">
                     <span class="af-history__date">{{ h.requestedAt | date: 'dd/MM/yyyy' }}</span>
                     @if (h.rejectionReason) {
-                      <span class="af-history__reason">Motif : {{ h.rejectionReason }}</span>
+                      <span class="af-history__reason" i18n="@@settings.accounting-firm.motif.8d3d4b69">Motif : {{ h.rejectionReason }}</span>
                     }
                   </div>
                 </li>

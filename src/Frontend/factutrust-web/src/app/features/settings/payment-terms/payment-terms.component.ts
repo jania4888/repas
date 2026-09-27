@@ -60,7 +60,7 @@ interface DueModeOption {
 
     <app-page-header
       title="Conditions de règlement" i18n-title="@@settings.payment-terms.conditions.de.reglement.84c9c451"
-      subtitle="Délai, échéance et escompte. La condition produit le texte imprimé sur le document et une échéance exploitable pour la balance âgée.">
+      subtitle="Délai, échéance et escompte. La condition produit le texte imprimé sur le document et une échéance exploitable pour la balance âgée." i18n-subtitle="@@settings.payment-terms.delai.echeance.et.escompte.la.condition.b9c07798">
       <div class="header-actions">
         <p-button
           label="Retour" i18n-label="@@settings.payment-terms.retour.e5befb1f"
@@ -80,7 +80,7 @@ interface DueModeOption {
       <app-empty-state
         icon="pi-calendar-clock"
         title="Aucune condition de règlement" i18n-title="@@settings.payment-terms.aucune.condition.de.reglement.5a451783"
-        message="Créez une condition pour proposer un délai et calculer l'échéance automatiquement.">
+        message="Créez une condition pour proposer un délai et calculer l'échéance automatiquement." i18n-message="@@settings.payment-terms.creez.une.condition.pour.proposer.un.del.22f38b99">
       </app-empty-state>
     } @else {
       <div class="ft-table-card">

@@ -61,7 +61,7 @@ interface StatusOption {
 
     <app-page-header
       title="Commandes clients" i18n-title="@@sales-orders.sales-order-list.commandes.clients.928f824a"
-      subtitle="L'engagement ferme entre le devis et la livraison. Le carnet mesure ce qui reste à livrer.">
+      subtitle="L'engagement ferme entre le devis et la livraison. Le carnet mesure ce qui reste à livrer." i18n-subtitle="@@sales-orders.sales-order-list.l.engagement.ferme.entre.le.devis.et.la.6c0250a2">
       <app-button variant="secondary" icon="pi-list" iconPos="left" routerLink="backlog" i18n="@@sales-orders.sales-order-list.carnet.de.commandes.ec641454"> Carnet de commandes </app-button>
       @if (canCreate()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@sales-orders.sales-order-list.nouvelle.commande.061f365b"> Nouvelle commande </app-button>
@@ -71,7 +71,7 @@ interface StatusOption {
     <!-- Filtres -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@sales-orders.sales-order-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
       </div>
 
       <div class="ft-filters__row">
@@ -134,7 +134,7 @@ interface StatusOption {
       <app-empty-state
         icon="pi-shopping-cart"
         title="Aucune commande" i18n-title="@@sales-orders.sales-order-list.aucune.commande.3dfe8fbd"
-        message="Créez une commande client, ou convertissez un devis accepté.">
+        message="Créez une commande client, ou convertissez un devis accepté." i18n-message="@@sales-orders.sales-order-list.creez.une.commande.client.ou.convertisse.0f1ffc08">
       </app-empty-state>
     } @else {
       <div class="ft-table-card">

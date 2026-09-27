@@ -25,7 +25,7 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
           <div class="card__badges">
             <span class="badge badge--neutral">{{ formatLabel }}</span>
             @if (attachment.pageCount > 1) {
-              <span class="badge badge--neutral">{{ attachment.pageCount }} pages</span>
+              <span class="badge badge--neutral" i18n="@@ai-assistant.components.pages.fcdf352b">{{ attachment.pageCount }} pages</span>
             }
             <span class="badge badge--neutral">{{ sizeLabel }}</span>
             @if (attachment.ocrApplied) {
@@ -42,7 +42,7 @@ import type { ChatAttachment } from '../../models/ai-chat.models';
             class="btn-ghost"
             (click)="toggleExpanded()"
             [attr.aria-expanded]="expanded()"
-            [attr.aria-label]="expanded() ? loc_ui_tern_masquer_le_texte_extrait_9e2022 : loc_ui_tern_voir_le_texte_extrait_f7e1e7"
+            [attr.aria-label]="expanded() ? loc_ui_tern_masquer_le_texte_extrait_9e2022 : loc_ui_tern_voir_le_texte_extrait_f7e1e7" i18n="@@ai-assistant.components.le.texte.a74f9f09"
           >
             <i class="fa-solid" [class.fa-chevron-down]="!expanded()" [class.fa-chevron-up]="expanded()" aria-hidden="true"></i>
             <span>{{ expanded() ? loc_ui_tern_masquer_adb05f : loc_ui_tern_voir_8a754f }} le texte</span>

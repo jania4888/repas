@@ -56,7 +56,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
   template: `
     <app-page-header
       title="Journal de paie" i18n-title="@@payroll.reports.journal.de.paie.240f3575"
-      subtitle="Détail mensuel par salarié et ventilation comptable de l'écriture de paie.">
+      subtitle="Détail mensuel par salarié et ventilation comptable de l'écriture de paie." i18n-subtitle="@@payroll.reports.detail.mensuel.par.salarie.et.ventilatio.23eaf8bb">
       @if (canExport()) {
         <app-accounting-export-menu
           [disabled]="loading() || exporting() || !journal()"
@@ -72,7 +72,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
         optionValue="value"
         placeholder="Année" i18n-placeholder="@@payroll.reports.annee.1f910d98"
         styleClass="w-10rem"
-        ariaLabel="Année" />
+        ariaLabel="Année" i18n-ariaLabel="@@payroll.reports.annee.64155901" />
       <p-select
         [options]="months"
         [(ngModel)]="month"
@@ -80,7 +80,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
         optionValue="value"
         placeholder="Mois" i18n-placeholder="@@payroll.reports.mois.0d304bea"
         styleClass="w-10rem"
-        ariaLabel="Mois" />
+        ariaLabel="Mois" i18n-ariaLabel="@@payroll.reports.mois.cb4e6ce5" />
       <label class="payroll-report-check">
         <p-checkbox [(ngModel)]="includeCalculated" [binary]="true" inputId="includeCalculatedJournal" />
         <span i18n="@@payroll.reports.inclure.les.cycles.calcules.provisoire.316e039e">Inclure les cycles calculés (provisoire)</span>
@@ -96,13 +96,13 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
       @if (j.isProvisional) {
         <p-message
           severity="error"
-          text="État provisoire : le cycle est calculé mais pas encore validé."
+          text="État provisoire : le cycle est calculé mais pas encore validé." i18n-text="@@payroll.reports.etat.provisoire.le.cycle.est.calcule.mai.4708047b"
           styleClass="mb-3 w-full" />
       }
       @if (!j.isBalanced) {
         <p-message
           severity="error"
-          text="Contrôle : total débit ≠ total crédit sur la ventilation comptable. Vérifiez les totaux du cycle."
+          text="Contrôle : total débit ≠ total crédit sur la ventilation comptable. Vérifiez les totaux du cycle." i18n-text="@@payroll.reports.controle.total.debit.total.credit.sur.la.7e476a59"
           styleClass="mb-3 w-full" />
       }
     }
@@ -115,7 +115,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
         title="Aucun journal disponible" i18n-title="@@payroll.reports.aucun.journal.disponible.690b5900"
         [description]="error() ?? 'Sélectionnez une période disposant d\\'un cycle de paie.'"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.reports.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else {
       <app-payroll-stat-grid [items]="summaryStats()" class="mb-4" />
@@ -161,7 +161,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
               </ng-template>
               <ng-template pTemplate="footer">
                 <tr class="acc-totals-row">
-                  <td colspan="2">Totaux — {{ journal()!.employeeCount }} salarié(s)</td>
+                  <td colspan="2" i18n="@@payroll.reports.totaux.salarie.s.a3f99c62">Totaux — {{ journal()!.employeeCount }} salarié(s)</td>
                   <td class="text-right">{{ journal()!.totalGross | payrollAmount }}</td>
                   <td class="text-right">{{ journal()!.totalCnssEmployee | payrollAmount }}</td>
                   <td class="text-right">{{ journal()!.totalNetTaxable | payrollAmount }}</td>
@@ -187,7 +187,7 @@ const VIEW_BY_TAB: PayrollJournalView[] = ['ByEmployee', 'Accounting'];
             <app-payroll-empty-state
               icon="pi-book"
               title="Aucune ventilation comptable" i18n-title="@@payroll.reports.aucune.ventilation.comptable.d850aeb3"
-              description="Le cycle ne produit pas d'écriture exploitable." />
+              description="Le cycle ne produit pas d'écriture exploitable." i18n-description="@@payroll.reports.le.cycle.ne.produit.pas.d.ecriture.explo.b26f7314" />
           } @else {
             <div class="payroll-table-scroll">
               <p-table [value]="journal()!.accountingLines" styleClass="p-datatable-sm" [rowHover]="true">

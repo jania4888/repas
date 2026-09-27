@@ -32,7 +32,7 @@ import { PaymentMethod } from '../../models/invoice-wizard.models';
           [class.expanded]="paymentExpanded()"
           [attr.aria-expanded]="paymentExpanded()"
           aria-controls="billing-payment-panel"
-          (click)="togglePayment()">
+          (click)="togglePayment()" i18n="@@invoices.invoice-wizard.paiement.mentions.legales.d00b53d3">
           <i class="pi" [class.pi-chevron-right]="!paymentExpanded()" [class.pi-chevron-down]="paymentExpanded()"></i>
           <span class="payment-toggle-label">
             <i class="pi pi-money-bill"></i>

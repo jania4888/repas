@@ -39,7 +39,7 @@ import {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
       title="Bons de retour" i18n-title="@@sales-return-notes.pages.bons.de.retour.d9f7ad6c"
-      subtitle="Retournez des articles déjà livrés et non encore facturés — distinct d'un avoir fiscal">
+      subtitle="Retournez des articles déjà livrés et non encore facturés — distinct d'un avoir fiscal" i18n-subtitle="@@sales-return-notes.pages.retournez.des.articles.deja.livres.et.no.d6ada805">
       @if (canCreate()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" routerLink="new" i18n="@@sales-return-notes.pages.nouveau.bon.de.retour.362bee47"> Nouveau bon de retour </app-button>
       }
@@ -64,7 +64,7 @@ import {
     } @else if (items().length === 0) {
       <app-empty-state
         title="Aucun bon de retour" i18n-title="@@sales-return-notes.pages.aucun.bon.de.retour.c3f6f252"
-        description="Créez un bon de retour depuis un bon de livraison livré et non facturé.">
+        description="Créez un bon de retour depuis un bon de livraison livré et non facturé." i18n-description="@@sales-return-notes.pages.creez.un.bon.de.retour.depuis.un.bon.de.505e3f54">
         @if (canCreate()) {
           <app-button variant="primary" routerLink="new" i18n="@@sales-return-notes.pages.nouveau.bon.de.retour.362bee47">Nouveau bon de retour</app-button>
         }

@@ -51,7 +51,7 @@ interface OrderLine {
 
     <app-page-header
       title="Nouveau bon de commande" i18n-title="@@purchase-orders.purchase-order-create.nouveau.bon.de.commande.589cb8eb"
-      subtitle="Créez une commande fournisseur en sélectionnant les produits et quantités.">
+      subtitle="Créez une commande fournisseur en sélectionnant les produits et quantités." i18n-subtitle="@@purchase-orders.purchase-order-create.creez.une.commande.fournisseur.en.select.800125ed">
       <app-button 
         variant="outline"
         icon="pi-times"

@@ -22,7 +22,7 @@ import {
   template: `
     <app-page-header
       title="Analyse des ventes" i18n-title="@@reports.analytics.analyse.des.ventes.74e19454"
-      subtitle="Comprenez vos performances commerciales en un coup d'œil">
+      subtitle="Comprenez vos performances commerciales en un coup d'œil" i18n-subtitle="@@reports.analytics.comprenez.vos.performances.commerciales.ddb60141">
       <app-button
         variant="secondary"
         icon="pi-print"
@@ -70,7 +70,7 @@ import {
             icon="pi-shopping-cart"
             variant="primary">
           </app-stat-card>
-          <span class="kpi-definition">
+          <span class="kpi-definition" i18n="@@reports.analytics.le.panier.moyen.correspond.au.montant.mo.087ab05b">
             <i class="pi pi-info-circle"></i>
             Le panier moyen correspond au montant moyen dépensé par client.
           </span>
@@ -95,7 +95,7 @@ import {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.analytics.taux.de.transformation.devis.facture.cdf4fcd5">Taux de transformation devis → facture</h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.ce.pourcentage.montre.combien.de.vos.dev.fa88b98f">
             <i class="pi pi-info-circle"></i>
             Ce pourcentage montre combien de vos devis sont devenus des factures
           </span>
@@ -109,11 +109,11 @@ import {
             </div>
           </div>
           <div class="conversion-legend">
-            <div class="legend-item">
+            <div class="legend-item" i18n="@@reports.analytics.convertis.421c3384">
               <span class="legend-dot converted"></span>
               <span>Convertis ({{ data()!.convertedQuotes }})</span>
             </div>
-            <div class="legend-item">
+            <div class="legend-item" i18n="@@reports.analytics.non.convertis.ca946e69">
               <span class="legend-dot not-converted"></span>
               <span>Non convertis ({{ data()!.totalQuotes - data()!.convertedQuotes }})</span>
             </div>
@@ -127,11 +127,11 @@ import {
       <!-- Top Products -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@reports.analytics.produits.avec.les.meilleures.marges.139de499">
             <i class="pi pi-star-fill" style="color: #fbbf24; font-size: 0.9rem;"></i>
             Produits avec les meilleures marges
           </h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.classement.de.vos.produits.par.marge.ben.816b22a2">
             <i class="pi pi-info-circle"></i>
             Classement de vos produits par marge bénéficiaire
           </span>
@@ -159,7 +159,7 @@ import {
                 <div class="product-prices">
                   <span class="product-sell">{{ formatAmountRaw(product.unitPrice) }}</span>
                   @if (product.purchasePrice !== null) {
-                    <span class="product-buy">Achat : {{ formatAmountRaw(product.purchasePrice) }}</span>
+                    <span class="product-buy" i18n="@@reports.analytics.achat.1dd67f0c">Achat : {{ formatAmountRaw(product.purchasePrice) }}</span>
                   }
                 </div>
                 <div class="product-margin">
@@ -185,11 +185,11 @@ import {
       <!-- Worst Products -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@reports.analytics.marges.les.plus.faibles.e68f1976">
             <i class="pi pi-exclamation-triangle" style="color: var(--color-warning-500); font-size: 0.9rem;"></i>
             Marges les plus faibles
           </h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.produits.dont.la.marge.est.la.plus.basse.1dbb478a">
             <i class="pi pi-info-circle"></i>
             Produits dont la marge est la plus basse — à surveiller
           </span>
@@ -228,11 +228,11 @@ import {
     @if (!loading() && data()?.recommendations?.length) {
       <div class="section recommendations-section">
         <div class="section-header">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@reports.analytics.recommandations.78fe9c34">
             <i class="pi pi-lightbulb" style="color: #fbbf24; font-size: 0.9rem;"></i>
             Recommandations
           </h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.suggestions.pour.ameliorer.vos.performan.88c8d7f8">
             <i class="pi pi-info-circle"></i>
             Suggestions pour améliorer vos performances
           </span>

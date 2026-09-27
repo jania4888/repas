@@ -42,7 +42,7 @@ function toIsoDate(value: Date | null | undefined): string {
     PageHeaderComponent, ButtonComponent, FormSectionComponent, PayrollAmountPipe
   ],
   template: `
-    <app-page-header title="Solde de tout compte" i18n-title="@@payroll.terminations.solde.de.tout.compte.93fc3ea6" subtitle="Calcul et enregistrement des indemnités de rupture.">
+    <app-page-header title="Solde de tout compte" i18n-title="@@payroll.terminations.solde.de.tout.compte.93fc3ea6" subtitle="Calcul et enregistrement des indemnités de rupture." i18n-subtitle="@@payroll.terminations.calcul.et.enregistrement.des.indemnites.bb3c1bbe">
       <app-button variant="outline" (click)="back()" i18n="@@payroll.terminations.retour.e5befb1f">Retour</app-button>
       <app-button variant="outline" icon="pi-calculator" [disabled]="!employeeId" (click)="preview()" i18n="@@payroll.terminations.calculer.29705857">Calculer</app-button>
       <app-button variant="primary" icon="pi-save" [disabled]="!previewData()" (click)="save(false)" i18n="@@payroll.terminations.enregistrer.f7c8bcd8">Enregistrer</app-button>
@@ -69,7 +69,7 @@ function toIsoDate(value: Date | null | undefined): string {
     @if (previewData(); as p) {
       <app-form-section title="Prévisualisation (art. 22bis CDT)" i18n-title="@@payroll.terminations.previsualisation.art.22bis.cdt.a60d1732" icon="pi-calculator" [number]="2">
         <dl class="payroll-detail-grid">
-          <dt i18n="@@payroll.terminations.anciennete.166e0461">Ancienneté</dt><dd>{{ p.seniorityMonths }} mois ({{ p.indemnityDays }} jours)</dd>
+          <dt i18n="@@payroll.terminations.anciennete.166e0461">Ancienneté</dt><dd i18n="@@payroll.terminations.mois.jours.b8e7ca69">{{ p.seniorityMonths }} mois ({{ p.indemnityDays }} jours)</dd>
           <dt i18n="@@payroll.terminations.salaire.de.reference.6998cec5">Salaire de référence</dt><dd>{{ p.grossMonthlyReference | payrollAmount }}</dd>
           <dt i18n="@@payroll.terminations.indemnite.legale.54c7c286">Indemnité légale</dt><dd>{{ p.legalIndemnityAmount | payrollAmount }}</dd>
         </dl>

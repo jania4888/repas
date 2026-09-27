@@ -9,9 +9,9 @@ import { SalesRevenueReportRow } from '@core/services/reports-api.service';
   imports: [CommonModule, TableModule],
   template: `
     @if (loading) {
-      <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
+      <div class="loading-placeholder" i18n="@@reports.sales-by-line.chargement.4bf1fb6b"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
     } @else if (!rows.length) {
-      <div class="empty-placeholder"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
+      <div class="empty-placeholder" i18n="@@reports.sales-by-line.aucune.donnee.pour.cette.periode.174260ce"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
     } @else {
       <div role="region" [attr.aria-label]="showClientColumn ? loc_ui_tern_ca_par_produit_et_client_ea218a : 'CA'">
         <p-table [value]="rows" styleClass="p-datatable-sm reports-table">

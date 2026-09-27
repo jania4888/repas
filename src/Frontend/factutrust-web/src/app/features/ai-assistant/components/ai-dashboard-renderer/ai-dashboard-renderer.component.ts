@@ -22,7 +22,7 @@ import { dashboardFullConfigToCsv, dashboardTableSectionToCsv, downloadCsv } fro
                 type="button"
                 class="csv-btn"
                 (click)="exportFullDashboard()"
-                [attr.aria-label]="loc_ui_tern_exporter_tout_le_tableau_de_bord_77b356 + config.title + loc_ui_tern_en_csv_7e6f95">
+                [attr.aria-label]="loc_ui_tern_exporter_tout_le_tableau_de_bord_77b356 + config.title + loc_ui_tern_en_csv_7e6f95" i18n="@@ai-assistant.components.tout.exporter.csv.e9c1a36c">
                 <i class="fa-solid fa-file-csv" aria-hidden="true"></i>
                 Tout exporter (CSV)
               </button>

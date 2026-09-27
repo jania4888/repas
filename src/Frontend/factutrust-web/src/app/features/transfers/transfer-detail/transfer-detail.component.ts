@@ -30,7 +30,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <div class="page-container" *ngIf="!initialLoading() && transfer()">
       <div class="page-header">
         <div>
-          <h1>Transfert {{ transfer()!.number }}</h1>
+          <h1 i18n="@@transfers.transfer-detail.transfert.c883bed3">Transfert {{ transfer()!.number }}</h1>
           <span class="status-badge" [ngClass]="transfer()!.statusCss">{{ transfer()!.statusDisplay | backendLabel }}</span>
         </div>
         <div class="actions">

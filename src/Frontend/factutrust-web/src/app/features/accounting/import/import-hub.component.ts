@@ -22,7 +22,7 @@ import { ReferenceImportTarget } from '../services/accounting.service';
   template: `
     <app-page-header
       title="Reprise de dossier" i18n-title="@@accounting.import.reprise.de.dossier.08e505a8"
-      subtitle="Importer écritures / référentiels, ou exporter l'archive du dossier" />
+      subtitle="Importer écritures / référentiels, ou exporter l'archive du dossier" i18n-subtitle="@@accounting.import.importer.ecritures.referentiels.ou.expor.91668784" />
 
     <p-tabs [lazy]="true">
       <p-tablist>

@@ -34,7 +34,7 @@ type DesignerRow =
     @if (entity(); as e) {
       <app-studio-page-shell
         [title]="loc_ui_tern_mise_en_page_a2cc30 + e.displayName"
-        subtitle="Organisez les champs : ordre, sections, libellés, largeur."
+        subtitle="Organisez les champs : ordre, sections, libellés, largeur." i18n-subtitle="@@studio.studio-form-designer.organisez.les.champs.ordre.sections.libe.121c06d3"
         [breadcrumbs]="breadcrumbs()">
         <button pButton type="button" label="Enregistrer" i18n-label="@@studio.studio-form-designer.enregistrer.f7c8bcd8" icon="fa-solid fa-check" studioActions
           [disabled]="saving()" (click)="save()"></button>

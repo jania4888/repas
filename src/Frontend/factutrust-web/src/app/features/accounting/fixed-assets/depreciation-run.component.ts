@@ -34,7 +34,7 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
   template: `
     <app-page-header
       title="Dotations immobilisations" i18n-title="@@accounting.fixed-assets.dotations.immobilisations.a4c57aa0"
-      subtitle="Comptabiliser les amortissements de l'exercice (écritures 681 / 281 — journal JIM)" />
+      subtitle="Comptabiliser les amortissements de l'exercice (écritures 681 / 281 — journal JIM)" i18n-subtitle="@@accounting.fixed-assets.comptabiliser.les.amortissements.de.l.ex.0b28d56d" />
 
     <app-accounting-correction-banner />
 
@@ -69,7 +69,7 @@ import { AccountingAmountPipe } from '../shared/accounting-amount.pipe';
     <app-accounting-status-banner [message]="error() ?? ''" variant="error" *ngIf="error()" />
 
     <div class="card result" *ngIf="result()">
-      <h3>Résultat — exercice {{ resultLabel() }}</h3>
+      <h3 i18n="@@accounting.fixed-assets.resultat.exercice.ff1bbdd3">Résultat — exercice {{ resultLabel() }}</h3>
       <p *ngIf="rerunMessage() as msg"><strong>{{ msg }}</strong></p>
       <ng-container *ngIf="!rerunMessage()">
         <p><strong i18n="@@accounting.fixed-assets.dotations.comptabilisees.c94eb1ab">Dotations comptabilisées :</strong> {{ result()!.postedCount }}</p>

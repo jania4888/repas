@@ -14,12 +14,12 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
 
     <app-page-header
       title="Documentation" i18n-title="@@documentation.documentation.documentation.9e9cf322"
-      subtitle="Guide utilisateur pour découvrir et maîtriser InstaFact">
+      subtitle="Guide utilisateur pour découvrir et maîtriser InstaFact" i18n-subtitle="@@documentation.documentation.guide.utilisateur.pour.decouvrir.et.mait.b0bd4973">
     </app-page-header>
 
     <div class="doc-intro">
-      <p>
-        <ng-container i18n="@@documentation.documentation.ce.guide.est.concu.pour.les.c5fa5126"> Ce guide est conçu pour les </ng-container> <strong i18n="@@documentation.documentation.utilisateurs.novices.4eb3b140">utilisateurs novices</strong> et les personnes non-informaticiennes.
+      <p i18n="@@documentation.documentation.ce.guide.est.concu.pour.les.utilisateurs.21f88867">
+        <ng-container> Ce guide est conçu pour les </ng-container> <strong>utilisateurs novices</strong> et les personnes non-informaticiennes.
         Chaque action est expliquée simplement, avec des captures d'écran pour vous guider.
       </p>
     </div>

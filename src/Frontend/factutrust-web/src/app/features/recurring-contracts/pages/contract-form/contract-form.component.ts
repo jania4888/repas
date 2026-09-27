@@ -41,7 +41,7 @@ interface ContractLineForm extends ContractLinePayloadSource {
 
     <app-page-header
       [title]="isEdit() ? loc_ui_tern_modifier_le_contrat_2ed431 : loc_ui_tern_nouveau_contrat_recurrent_811d0c"
-      subtitle="Définissez la périodicité, les lignes et les conditions de facturation">
+      subtitle="Définissez la périodicité, les lignes et les conditions de facturation" i18n-subtitle="@@recurring-contracts.pages.definissez.la.periodicite.les.lignes.et.69faf224">
     </app-page-header>
 
     @if (pageLoading()) {
@@ -66,33 +66,33 @@ interface ContractLineForm extends ContractLinePayloadSource {
               <span class="field-hint" i18n="@@recurring-contracts.pages.client.et.lignes.repris.du.devis.d.origine.ajust.674eda11">Client et lignes repris du devis d'origine (ajustables avant enregistrement).</span>
             }
           </label>
-          <label>Référence
-            <input class="ft-input" [(ngModel)]="reference" name="reference" placeholder="Référence interne ou client" i18n-placeholder="@@recurring-contracts.pages.reference.interne.ou.client.b661bb17" />
+          <label><ng-container i18n="@@recurring-contracts.pages.reference.f8130bb0">Référence
+            </ng-container><input class="ft-input" [(ngModel)]="reference" name="reference" placeholder="Référence interne ou client" i18n-placeholder="@@recurring-contracts.pages.reference.interne.ou.client.b661bb17" />
           </label>
         </div>
       </app-form-section>
 
       <app-form-section [number]="2" title="Facturation" i18n-title="@@recurring-contracts.pages.facturation.04716c6b" icon="pi-calendar">
         <div class="grid">
-          <label>Périodicité
-            <select class="ft-input" [(ngModel)]="billingFrequency" name="billingFrequency">
+          <label><ng-container i18n="@@recurring-contracts.pages.periodicite.0eb1b4d4">Périodicité
+            </ng-container><select class="ft-input" [(ngModel)]="billingFrequency" name="billingFrequency">
               <option [ngValue]="'Monthly'" i18n="@@recurring-contracts.pages.mensuel.272c1b22">Mensuel</option>
               <option [ngValue]="'Quarterly'" i18n="@@recurring-contracts.pages.trimestriel.d6432184">Trimestriel</option>
               <option [ngValue]="'Annual'" i18n="@@recurring-contracts.pages.annuel.11aad2fa">Annuel</option>
             </select>
           </label>
-          <label>Jour de facturation
-            <input class="ft-input" type="number" min="1" max="31" [(ngModel)]="billingDayOfMonth" name="billingDay" />
+          <label><ng-container i18n="@@recurring-contracts.pages.jour.de.facturation.307796ba">Jour de facturation
+            </ng-container><input class="ft-input" type="number" min="1" max="31" [(ngModel)]="billingDayOfMonth" name="billingDay" />
           </label>
           <label>
             <span class="field-label required" i18n="@@recurring-contracts.pages.date.de.debut.706438ab">Date de début</span>
             <input class="ft-input" type="date" [(ngModel)]="startDate" name="startDate" required />
           </label>
-          <label>Date de fin
-            <input class="ft-input" type="date" [(ngModel)]="endDate" name="endDate" />
+          <label><ng-container i18n="@@recurring-contracts.pages.date.de.fin.716a6d8d">Date de fin
+            </ng-container><input class="ft-input" type="date" [(ngModel)]="endDate" name="endDate" />
           </label>
-          <label>Condition de règlement
-            <select class="ft-input" [(ngModel)]="paymentTermTemplateId" name="paymentTermTemplateId">
+          <label><ng-container i18n="@@recurring-contracts.pages.condition.de.reglement.33241b25">Condition de règlement
+            </ng-container><select class="ft-input" [(ngModel)]="paymentTermTemplateId" name="paymentTermTemplateId">
               <option [ngValue]="null" i18n="@@recurring-contracts.pages.par.defaut.84534de7">— Par défaut —</option>
               @for (pt of paymentTerms(); track pt.id) {
                 <option [ngValue]="pt.id">{{ pt.name }}</option>
@@ -105,11 +105,11 @@ interface ContractLineForm extends ContractLinePayloadSource {
       <app-form-section [number]="3" title="Renouvellement" i18n-title="@@recurring-contracts.pages.renouvellement.5b961f3a" icon="pi-refresh">
         <div class="grid">
           <label class="checkbox-label">
-            <input type="checkbox" [(ngModel)]="autoRenew" name="autoRenew" />
+            <input type="checkbox" [(ngModel)]="autoRenew" name="autoRenew" /><ng-container i18n="@@recurring-contracts.pages.renouvellement.automatique.ebd3fe7f">
             Renouvellement automatique
-          </label>
-          <label>Préavis (jours)
-            <input class="ft-input" type="number" min="0" [(ngModel)]="noticePeriodDays" name="noticePeriodDays" />
+          </ng-container></label>
+          <label><ng-container i18n="@@recurring-contracts.pages.preavis.jours.f309bb60">Préavis (jours)
+            </ng-container><input class="ft-input" type="number" min="0" [(ngModel)]="noticePeriodDays" name="noticePeriodDays" />
           </label>
         </div>
       </app-form-section>
@@ -118,8 +118,8 @@ interface ContractLineForm extends ContractLinePayloadSource {
         @for (line of lines; track $index; let i = $index) {
           <div class="line-card">
             <div class="line-card__head">
-              <label>Type
-                <select class="ft-input" [(ngModel)]="line.lineType" [name]="'lineType' + i">
+              <label><ng-container i18n="@@recurring-contracts.pages.type.3deb7456">Type
+                </ng-container><select class="ft-input" [(ngModel)]="line.lineType" [name]="'lineType' + i">
                   <option [ngValue]="'FixedRecurring'" i18n="@@recurring-contracts.pages.recurrent.fixe.9f36de5c">Récurrent fixe</option>
                   <option [ngValue]="'UsageMetered'" i18n="@@recurring-contracts.pages.a.la.consommation.a9497352">À la consommation</option>
                   <option [ngValue]="'OneTimeSetup'" i18n="@@recurring-contracts.pages.frais.d.installation.f39459df">Frais d'installation</option>
@@ -128,8 +128,8 @@ interface ContractLineForm extends ContractLinePayloadSource {
               <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.pages.supprimer.1acfc1c7"> Supprimer </app-button>
             </div>
             <div class="grid">
-              <label class="span-2">Description
-                <input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="@@recurring-contracts.pages.description.optionnelle.27856f3e" [(ngModel)]="line.description" [name]="'desc' + i" />
+              <label class="span-2"><ng-container i18n="@@recurring-contracts.pages.description.55f8ebc8">Description
+                </ng-container><input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="@@recurring-contracts.pages.description.optionnelle.27856f3e" [(ngModel)]="line.description" [name]="'desc' + i" />
               </label>
               @if (line.lineType !== 'OneTimeSetup') {
                 <label>
@@ -142,11 +142,11 @@ interface ContractLineForm extends ContractLinePayloadSource {
                   </select>
                 </label>
               }
-              <label>Qté
-                <input class="ft-input" type="number" placeholder="Qté" i18n-placeholder="@@recurring-contracts.pages.qte.a4772129" [(ngModel)]="line.quantity" [name]="'qty' + i" />
+              <label><ng-container i18n="@@recurring-contracts.pages.qte.a4772129">Qté
+                </ng-container><input class="ft-input" type="number" placeholder="Qté" i18n-placeholder="@@recurring-contracts.pages.qte.a4772129" [(ngModel)]="line.quantity" [name]="'qty' + i" />
               </label>
-              <label>Prix unitaire HT
-                <input class="ft-input" type="number" step="0.001" min="0" placeholder="Prix HT" i18n-placeholder="@@recurring-contracts.pages.prix.ht.362207ca" [(ngModel)]="line.unitPriceHT" [name]="'price' + i" />
+              <label><ng-container i18n="@@recurring-contracts.pages.prix.unitaire.ht.bb3f8e39">Prix unitaire HT
+                </ng-container><input class="ft-input" type="number" step="0.001" min="0" placeholder="Prix HT" i18n-placeholder="@@recurring-contracts.pages.prix.ht.362207ca" [(ngModel)]="line.unitPriceHT" [name]="'price' + i" />
               </label>
               <label>TVA %
                 <input class="ft-input" type="number" step="0.001" min="0" placeholder="TVA %" i18n-placeholder="@@recurring-contracts.pages.tva.b984d709" [(ngModel)]="line.vatRate" [name]="'vat' + i" />
@@ -161,11 +161,11 @@ interface ContractLineForm extends ContractLinePayloadSource {
                     }
                   </select>
                 </label>
-                <label>Quantité incluse
-                  <input class="ft-input" type="number" min="0" [(ngModel)]="line.includedQuantity" [name]="'includedQty' + i" />
+                <label><ng-container i18n="@@recurring-contracts.pages.quantite.incluse.a142ba58">Quantité incluse
+                  </ng-container><input class="ft-input" type="number" min="0" [(ngModel)]="line.includedQuantity" [name]="'includedQty' + i" />
                 </label>
-                <label>Prix unitaire dépassement HT
-                  <input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.overageUnitPriceHT" [name]="'overagePrice' + i" />
+                <label><ng-container i18n="@@recurring-contracts.pages.prix.unitaire.depassement.ht.dcf9e7f7">Prix unitaire dépassement HT
+                  </ng-container><input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.overageUnitPriceHT" [name]="'overagePrice' + i" />
                 </label>
               }
             </div>
@@ -177,8 +177,8 @@ interface ContractLineForm extends ContractLinePayloadSource {
       </app-form-section>
 
       <app-form-section [number]="5" title="Notes" i18n-title="@@recurring-contracts.pages.notes.70440046" icon="pi-comment">
-        <label>Notes internes
-          <textarea class="ft-input" rows="3" [(ngModel)]="notes" name="notes"></textarea>
+        <label><ng-container i18n="@@recurring-contracts.pages.notes.internes.1a81fb4e">Notes internes
+          </ng-container><textarea class="ft-input" rows="3" [(ngModel)]="notes" name="notes"></textarea>
         </label>
       </app-form-section>
 

@@ -45,7 +45,7 @@ type JournalFlatRow = {
     AccountingJournalTabsComponent
   ],
   template: `
-    <app-page-header title="Journaux auxiliaires" i18n-title="@@accounting.sub-journals.journaux.auxiliaires.a7120594" subtitle="Consultation par journal" />
+    <app-page-header title="Journaux auxiliaires" i18n-title="@@accounting.sub-journals.journaux.auxiliaires.a7120594" subtitle="Consultation par journal" i18n-subtitle="@@accounting.sub-journals.consultation.par.journal.47ac69a9" />
 
     <div class="card sub-journals-filters-card">
       <div class="sub-journals-toolbar">
@@ -103,7 +103,7 @@ type JournalFlatRow = {
         variant="error"
         [message]="error() ?? ''"
         [showRetry]="!!error()"
-        retryLabel="Réessayer"
+        retryLabel="Réessayer" i18n-retryLabel="@@accounting.sub-journals.reessayer.c4f78b12"
         (retry)="loadJournal(activeJournalCode)" />
 
       <p-table
@@ -144,7 +144,7 @@ type JournalFlatRow = {
           <tr>
             <td colspan="7" class="sub-journals-empty">
               <p class="sub-journals-empty-title" i18n="@@accounting.sub-journals.aucune.ecriture.c5660ccc">Aucune écriture</p>
-              <p class="sub-journals-empty-hint">
+              <p class="sub-journals-empty-hint" i18n="@@accounting.sub-journals.aucune.ecriture.trouvee.pour.le.journal.af67fd0a">
                 Aucune écriture trouvée pour le journal {{ activeJournalCode }} sur la période sélectionnée.
               </p>
             </td>

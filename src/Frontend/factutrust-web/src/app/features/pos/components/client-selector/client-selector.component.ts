@@ -34,14 +34,14 @@ import { POS_PASSENGER_CLIENT_EMAIL } from '../../constants/pos-client.constants
               <span class="client-selector__client-nif">{{ client.nif }}</span>
             }
             @if (posState.clientOutstanding(); as out) {
-              <span class="client-selector__outstanding" [class.client-selector__outstanding--over]="out.isOverLimit">
+              <span class="client-selector__outstanding" [class.client-selector__outstanding--over]="out.isOverLimit"><ng-container i18n="@@pos.components.encours.tnd.41261043">
                 Encours {{ posState.formatAmount(out.totalOutstanding) }} TND
-                @if (out.creditLimit != null) {
+                </ng-container>@if (out.creditLimit != null) {<ng-container i18n="@@pos.components.plafond.61dd3dd1">
                   / plafond {{ posState.formatAmount(out.creditLimit) }}
-                }
-                @if (out.isOverLimit) {
+                </ng-container>}
+                @if (out.isOverLimit) {<ng-container i18n="@@pos.components.plafond.depasse.e83bd54a">
                   — plafond dépassé
-                }
+                </ng-container>}
               </span>
             }
           </div>

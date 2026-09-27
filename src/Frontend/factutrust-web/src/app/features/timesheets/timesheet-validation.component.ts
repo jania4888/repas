@@ -15,7 +15,7 @@ import { TimesheetApiService } from './timesheet-api.service';
   standalone: true,
   imports: [CommonModule, RouterLink, TableModule, PageHeaderComponent, ButtonComponent],
   template: `
-    <app-page-header title="Validation des feuilles de temps" i18n-title="@@timesheets.timesheet-validation.validation.des.feuilles.de.temps.f1b5d02e" subtitle="File manageriale centralisée" />
+    <app-page-header title="Validation des feuilles de temps" i18n-title="@@timesheets.timesheet-validation.validation.des.feuilles.de.temps.f1b5d02e" subtitle="File manageriale centralisée" i18n-subtitle="@@timesheets.timesheet-validation.file.manageriale.centralisee.c721256e" />
     <p-table [value]="entries()" [paginator]="true" [rows]="20">
       <ng-template pTemplate="header">
         <tr>

@@ -183,9 +183,9 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                   <div class="info-row">
                     <span class="label" i18n="@@clients.client-detail.delai.de.reglement.052e3d66">Délai de règlement</span>
                     <span class="value">
-                      @if (client()!.defaultPaymentTermDays != null) {
+                      @if (client()!.defaultPaymentTermDays != null) {<ng-container i18n="@@clients.client-detail.jours.9970d523">
                         {{ client()!.defaultPaymentTermDays }} jours
-                      } @else {
+                      </ng-container>} @else {
                         —
                       }
                     </span>
@@ -195,9 +195,9 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                     <span class="value">
                       @if (outstanding()?.creditLimit != null) {
                         {{ formatCurrency(outstanding()!.creditLimit!) }}
-                      } @else {
+                      } @else {<ng-container i18n="@@clients.client-detail.aucun.b2ed82f1">
                         Aucun
-                      }
+                      </ng-container>}
                     </span>
                   </div>
                   <div class="info-row">
@@ -272,7 +272,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                         </td>
                         <td>
                           <app-button variant="ghost" size="sm" icon="pi-eye" [iconOnly]="true"
-                            pTooltip="Voir" i18n-pTooltip="@@clients.client-detail.voir.8a754f1f" [routerLink]="['/quotes', quote.id]" ariaLabel="Voir le devis">
+                            pTooltip="Voir" i18n-pTooltip="@@clients.client-detail.voir.8a754f1f" [routerLink]="['/quotes', quote.id]" ariaLabel="Voir le devis" i18n-ariaLabel="@@clients.client-detail.voir.le.devis.50894eed">
                           </app-button>
                         </td>
                       </tr>
@@ -284,8 +284,8 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                             icon="pi-file-edit"
                             iconSize="2rem"
                             title="Aucun devis" i18n-title="@@clients.client-detail.aucun.devis.a42220c2"
-                            description="Créez un devis pour ce client."
-                            actionLabel="Créer un devis"
+                            description="Créez un devis pour ce client." i18n-description="@@clients.client-detail.creez.un.devis.pour.ce.client.029c1a1c"
+                            actionLabel="Créer un devis" i18n-actionLabel="@@clients.client-detail.creer.un.devis.3a56a7d7"
                             (actionClick)="createQuoteForClient()">
                           </app-empty-state>
                         </td>
@@ -354,7 +354,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                           [iconOnly]="true"
                           pTooltip="Voir" i18n-pTooltip="@@clients.client-detail.voir.8a754f1f"
                           [routerLink]="['/invoices', invoice.id]"
-                          ariaLabel="Voir la facture">
+                          ariaLabel="Voir la facture" i18n-ariaLabel="@@clients.client-detail.voir.la.facture.23283cea">
                         </app-button>
                       </td>
                     </tr>
@@ -367,8 +367,8 @@ import { PERMISSIONS } from '@core/config/permission-keys';
                           icon="pi-file"
                           iconSize="2rem"
                           title="Aucune facture" i18n-title="@@clients.client-detail.aucune.facture.72124217"
-                          description="Créez une facture pour ce client."
-                          actionLabel="Créer une facture"
+                          description="Créez une facture pour ce client." i18n-description="@@clients.client-detail.creez.une.facture.pour.ce.client.91a6001c"
+                          actionLabel="Créer une facture" i18n-actionLabel="@@clients.client-detail.creer.une.facture.a3863c70"
                           (actionClick)="createInvoiceForClient()">
                         </app-empty-state>
                       </td>

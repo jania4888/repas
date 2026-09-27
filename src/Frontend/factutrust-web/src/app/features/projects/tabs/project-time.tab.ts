@@ -140,7 +140,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
       <p-message severity="warn" styleClass="w-full mb-3"
         [text]="timeLoggingBlockedMessage()" />
       @if (canActivate && isDraftProject(project)) {
-        <app-button class="mb-3" variant="primary" (click)="activate.emit()">Activer le projet</app-button>
+        <app-button class="mb-3" variant="primary" (click)="activate.emit()" i18n="@@projects.tabs.activer.le.projet.1aa2449c">Activer le projet</app-button>
       }
     }
 
@@ -148,15 +148,15 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
     <div class="proj-field-row mb-3">
 
-      <label>Période
+      <label><ng-container i18n="@@projects.tabs.periode.de2110b7">Période
 
-        <p-datepicker [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" placeholder="Filtrer" [showClear]="true" (onSelect)="applyFilters()" (onClear)="applyFilters()" />
+        </ng-container><p-datepicker [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" placeholder="Filtrer" i18n-placeholder="@@projects.tabs.filtrer.91561998" [showClear]="true" (onSelect)="applyFilters()" (onClear)="applyFilters()" />
 
       </label>
 
-      <label>Statut
+      <label><ng-container i18n="@@projects.tabs.statut.659499f3">Statut
 
-        <p-select [options]="statusFilterOptions" [(ngModel)]="statusFilter" optionLabel="label" optionValue="value" placeholder="Tous" [showClear]="true" (onChange)="applyFilters()" />
+        </ng-container><p-select [options]="statusFilterOptions" [(ngModel)]="statusFilter" optionLabel="label" optionValue="value" placeholder="Tous" i18n-placeholder="@@projects.tabs.tous.44ef5eb5" [showClear]="true" (onChange)="applyFilters()" />
 
       </label>
 
@@ -168,25 +168,25 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
       <div class="card p-3 mb-3">
 
-        <h3 class="mt-0">Nouvelle ligne</h3>
+        <h3 class="mt-0" i18n="@@projects.tabs.nouvelle.ligne.21957286">Nouvelle ligne</h3>
 
         <div class="proj-field-row">
 
-          <label>Date
+          <label><ng-container i18n="@@projects.tabs.date.eb9a4bc1">Date
 
-            <p-datepicker [(ngModel)]="workDate" dateFormat="dd/mm/yy" />
-
-          </label>
-
-          <label>Tâche
-
-            <p-select [options]="tasks" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" [showClear]="true" />
+            </ng-container><p-datepicker [(ngModel)]="workDate" dateFormat="dd/mm/yy" />
 
           </label>
 
-          <label>Heures
+          <label><ng-container i18n="@@projects.tabs.tache.43c8425c">Tâche
 
-            <p-inputNumber [(ngModel)]="hours" [min]="0.25" [max]="24" [step]="0.25" />
+            </ng-container><p-select [options]="tasks" [(ngModel)]="taskId" optionLabel="title" optionValue="id" placeholder="Tâche" i18n-placeholder="@@projects.tabs.tache.0ee45862" [showClear]="true" />
+
+          </label>
+
+          <label><ng-container i18n="@@projects.tabs.heures.b4448c06">Heures
+
+            </ng-container><p-inputNumber [(ngModel)]="hours" [min]="0.25" [max]="24" [step]="0.25" />
 
           </label>
 
@@ -194,17 +194,17 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
             <p-checkbox [(ngModel)]="isBillable" [binary]="true" inputId="billableTab" />
 
-            <span for="billableTab">Facturable</span>
+            <span for="billableTab" i18n="@@projects.tabs.facturable.1a246798">Facturable</span>
 
           </label>
 
-          <label>Notes
+          <label><ng-container i18n="@@projects.tabs.notes.70440046">Notes
 
-            <input pInputText [(ngModel)]="notes" />
+            </ng-container><input pInputText [(ngModel)]="notes" />
 
           </label>
 
-          <app-button variant="primary" [disabled]="!canSaveLine" (click)="submit()">Enregistrer</app-button>
+          <app-button variant="primary" [disabled]="!canSaveLine" (click)="submit()" i18n="@@projects.tabs.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
         </div>
 
@@ -218,7 +218,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
       <ng-template pTemplate="header">
 
-        <tr><th>Date</th><th>Personne</th><th>Tâche</th><th>Heures</th><th>Facturable</th><th>Statut</th><th></th></tr>
+        <tr><th i18n="@@projects.tabs.date.eb9a4bc1">Date</th><th i18n="@@projects.tabs.personne.6691d67a">Personne</th><th i18n="@@projects.tabs.tache.43c8425c">Tâche</th><th i18n="@@projects.tabs.heures.b4448c06">Heures</th><th i18n="@@projects.tabs.facturable.63134237">Facturable</th><th i18n="@@projects.tabs.statut.659499f3">Statut</th><th></th></tr>
 
       </ng-template>
 
@@ -244,38 +244,38 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
             @if (canEditTimeEntry(e) && canCreate) {
               <app-button size="sm" variant="ghost" icon="pi-pencil" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Modifier" tooltipPosition="top"
-                ariaLabel="Modifier" (click)="openEdit(e)" />
+                [iconAlwaysVisible]="true" pTooltip="Modifier" i18n-pTooltip="@@projects.tabs.modifier.99f59cf6" tooltipPosition="top"
+                ariaLabel="Modifier" i18n-ariaLabel="@@projects.tabs.modifier.ead890f7" (click)="openEdit(e)" />
             }
 
             @if (canDeleteTimeEntry(e) && canCreate) {
               <app-button size="sm" variant="ghost" icon="pi-trash" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Supprimer" tooltipPosition="top"
-                ariaLabel="Supprimer" (click)="deleteEntry.emit(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Supprimer" i18n-pTooltip="@@projects.tabs.supprimer.afe959c2" tooltipPosition="top"
+                ariaLabel="Supprimer" i18n-ariaLabel="@@projects.tabs.supprimer.d9f6d96e" (click)="deleteEntry.emit(e.id)" />
             }
 
             @if (canSubmitTimeEntry(e) && canSubmit) {
               <app-button size="sm" variant="ghost" icon="pi-send" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Soumettre" tooltipPosition="top"
-                ariaLabel="Soumettre" (click)="submitEntry.emit(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Soumettre" i18n-pTooltip="@@projects.tabs.soumettre.ea813e98" tooltipPosition="top"
+                ariaLabel="Soumettre" i18n-ariaLabel="@@projects.tabs.soumettre.6557d5be" (click)="submitEntry.emit(e.id)" />
             }
 
             @if (canValidateTimeEntry(e) && canValidate) {
               <app-button size="sm" variant="primary" icon="pi-check" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Valider" tooltipPosition="top"
-                ariaLabel="Valider" (click)="validateEntry.emit(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Valider" i18n-pTooltip="@@projects.tabs.valider.ccecc0b2" tooltipPosition="top"
+                ariaLabel="Valider" i18n-ariaLabel="@@projects.tabs.valider.8ef67b67" (click)="validateEntry.emit(e.id)" />
             }
 
             @if (canReopenSubmittedTimeEntry(e) && canSubmit) {
               <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" tooltipPosition="top"
-                ariaLabel="Rouvrir en brouillon" (click)="reopenEntry.emit(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.tabs.rouvrir.en.brouillon.3f1983a1" tooltipPosition="top"
+                ariaLabel="Rouvrir en brouillon" i18n-ariaLabel="@@projects.tabs.rouvrir.en.brouillon.000b775a" (click)="reopenEntry.emit(e.id)" />
             }
 
             @if (canReopenValidatedTimeEntry(e) && canValidate) {
               <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" tooltipPosition="top"
-                ariaLabel="Rouvrir en brouillon" (click)="reopenEntry.emit(e.id)" />
+                [iconAlwaysVisible]="true" pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.tabs.rouvrir.en.brouillon.3f1983a1" tooltipPosition="top"
+                ariaLabel="Rouvrir en brouillon" i18n-ariaLabel="@@projects.tabs.rouvrir.en.brouillon.000b775a" (click)="reopenEntry.emit(e.id)" />
             }
 
             @if (e.invoicedInvoiceId) {
@@ -287,9 +287,9 @@ const TIME_STATUS_FILTER_OPTIONS = [
                 [iconOnly]="true"
                 [iconAlwaysVisible]="true"
                 [routerLink]="['/invoices', e.invoicedInvoiceId]"
-                pTooltip="Voir la facture"
+                pTooltip="Voir la facture" i18n-pTooltip="@@projects.tabs.voir.la.facture.cd2665e8"
                 tooltipPosition="top"
-                ariaLabel="Voir la facture" />
+                ariaLabel="Voir la facture" i18n-ariaLabel="@@projects.tabs.voir.la.facture.23283cea" />
 
             }
 
@@ -303,7 +303,7 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
         <tr><td colspan="7">
 
-          <app-empty-state icon="pi-clock" title="Aucun temps saisi" description="Les temps projet sont indépendants des feuilles cabinet." [showAction]="false" />
+          <app-empty-state icon="pi-clock" title="Aucun temps saisi" i18n-title="@@projects.tabs.aucun.temps.saisi.954bf30b" description="Les temps projet sont indépendants des feuilles cabinet." i18n-description="@@projects.tabs.les.temps.projet.sont.independants.des.f.98ed5db8" [showAction]="false" />
 
         </td></tr>
 
@@ -313,33 +313,33 @@ const TIME_STATUS_FILTER_OPTIONS = [
 
 
 
-    <p-dialog [(visible)]="editVisible" header="Modifier le temps" [modal]="true" [style]="{ width: '28rem' }">
+    <p-dialog [(visible)]="editVisible" header="Modifier le temps" i18n-header="@@projects.tabs.modifier.le.temps.7b614c8c" [modal]="true" [style]="{ width: '28rem' }">
 
       <div class="proj-field-stack">
 
-        <label>Date <p-datepicker [(ngModel)]="editWorkDate" dateFormat="dd/mm/yy" /></label>
+        <label><ng-container i18n="@@projects.tabs.date.eb9a4bc1">Date </ng-container><p-datepicker [(ngModel)]="editWorkDate" dateFormat="dd/mm/yy" /></label>
 
-        <label>Tâche <p-select [options]="tasks" [(ngModel)]="editTaskId" optionLabel="title" optionValue="id" [showClear]="true" /></label>
+        <label><ng-container i18n="@@projects.tabs.tache.43c8425c">Tâche </ng-container><p-select [options]="tasks" [(ngModel)]="editTaskId" optionLabel="title" optionValue="id" [showClear]="true" /></label>
 
-        <label>Heures <p-inputNumber [(ngModel)]="editHours" [min]="0.25" [max]="24" [step]="0.25" /></label>
+        <label><ng-container i18n="@@projects.tabs.heures.b4448c06">Heures </ng-container><p-inputNumber [(ngModel)]="editHours" [min]="0.25" [max]="24" [step]="0.25" /></label>
 
         <label class="proj-field-stack__check">
 
           <p-checkbox [(ngModel)]="editBillable" [binary]="true" inputId="editBillable" />
 
-          <span>Facturable</span>
+          <span i18n="@@projects.tabs.facturable.db9bbbb2">Facturable</span>
 
         </label>
 
-        <label>Notes <input pInputText class="w-full" [(ngModel)]="editNotes" /></label>
+        <label><ng-container i18n="@@projects.tabs.notes.70440046">Notes </ng-container><input pInputText class="w-full" [(ngModel)]="editNotes" /></label>
 
       </div>
 
       <ng-template pTemplate="footer">
 
-        <app-button variant="secondary" (click)="editVisible = false">Annuler</app-button>
+        <app-button variant="secondary" (click)="editVisible = false" i18n="@@projects.tabs.annuler.49ba3292">Annuler</app-button>
 
-        <app-button variant="primary" [disabled]="!canSaveEditLine" (click)="saveEdit()">Enregistrer</app-button>
+        <app-button variant="primary" [disabled]="!canSaveEditLine" (click)="saveEdit()" i18n="@@projects.tabs.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
       </ng-template>
 

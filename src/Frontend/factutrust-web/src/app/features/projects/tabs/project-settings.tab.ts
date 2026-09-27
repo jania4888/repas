@@ -30,20 +30,20 @@ import {
   template: `
     @if (project) {
       <div class="proj-settings">
-        <div class="proj-meta-chips" aria-label="Paramètres actifs">
+        <div class="proj-meta-chips" aria-label="Paramètres actifs" i18n-aria-label="@@projects.tabs.parametres.actifs.cf9bcff9">
           @if (project.timesheetsEnabled) {
-            <span class="proj-chip"><i class="pi pi-clock"></i> Feuilles de temps</span>
+            <span class="proj-chip" i18n="@@projects.tabs.feuilles.de.temps.5ad1d040"><i class="pi pi-clock"></i> Feuilles de temps</span>
           }
           @if (project.milestonesEnabled) {
-            <span class="proj-chip"><i class="pi pi-flag"></i> Jalons</span>
+            <span class="proj-chip" i18n="@@projects.tabs.jalons.fafd37b5"><i class="pi pi-flag"></i> Jalons</span>
           }
           <span class="proj-chip"><i class="pi pi-wallet"></i> {{ project.billingModeDisplay }}</span>
         </div>
 
-        <app-form-section title="Facturation" icon="pi-sliders-h" variant="compact">
+        <app-form-section title="Facturation" i18n-title="@@projects.tabs.facturation.0a55d22e" icon="pi-sliders-h" variant="compact">
           <div class="ft-form-grid">
             <div class="ft-field ft-field--full">
-              <label for="settingsBillingMode">Mode de facturation</label>
+              <label for="settingsBillingMode" i18n="@@projects.tabs.mode.de.facturation.d797aff0">Mode de facturation</label>
               <p-select
                 inputId="settingsBillingMode"
                 class="w-full"
@@ -56,7 +56,7 @@ import {
           </div>
         </app-form-section>
 
-        <app-form-section title="Temps & suivi" icon="pi-clock" variant="compact">
+        <app-form-section title="Temps & suivi" i18n-title="@@projects.tabs.temps.suivi.44a27d1d" icon="pi-clock" variant="compact">
           <div class="ft-form-grid">
             <div class="ft-field ft-field--full">
               <div class="proj-create-options">
@@ -66,7 +66,7 @@ import {
                     [binary]="true"
                     inputId="settingsTimesheets"
                     [disabled]="!canUpdate" />
-                  <label for="settingsTimesheets">
+                  <label for="settingsTimesheets" i18n="@@projects.tabs.feuilles.de.temps.active.la.saisie.et.le.80690e9c">
                     <strong>Feuilles de temps</strong>
                     <span class="text-sm text-color-secondary">Active la saisie et le suivi du temps sur ce projet.</span>
                   </label>
@@ -78,7 +78,7 @@ import {
                       [binary]="true"
                       inputId="settingsMilestones"
                       [disabled]="!canUpdate" />
-                    <label for="settingsMilestones">
+                    <label for="settingsMilestones" i18n="@@projects.tabs.jalons.active.le.suivi.et.la.facturation.88e00fdb">
                       <strong>Jalons</strong>
                       <span class="text-sm text-color-secondary">Active le suivi et la facturation par jalons.</span>
                     </label>
@@ -87,7 +87,7 @@ import {
               </div>
             </div>
             <div class="ft-field">
-              <label for="settingsAllocatedHours">Heures allouées</label>
+              <label for="settingsAllocatedHours" i18n="@@projects.tabs.heures.allouees.8070df86">Heures allouées</label>
               <p-inputNumber
                 inputId="settingsAllocatedHours"
                 class="w-full"
@@ -108,12 +108,12 @@ import {
               variant="primary"
               icon="pi-save"
               [disabled]="!hasChanges()"
-              (click)="onSave()">
+              (click)="onSave()" i18n="@@projects.tabs.enregistrer.les.parametres.f1ccef8d">
               Enregistrer les paramètres
             </app-button>
           </div>
         } @else {
-          <p class="proj-settings__readonly text-sm text-color-secondary m-0">
+          <p class="proj-settings__readonly text-sm text-color-secondary m-0" i18n="@@projects.tabs.vous.n.avez.pas.la.permission.de.modifie.0fc57c4b">
             Vous n'avez pas la permission de modifier les paramètres de ce projet.
           </p>
         }

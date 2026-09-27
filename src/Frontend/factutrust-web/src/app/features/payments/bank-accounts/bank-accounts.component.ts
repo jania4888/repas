@@ -31,12 +31,12 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
   template: `
     <app-page-header
       title="Comptes bancaires" i18n-title="@@payments.bank-accounts.comptes.bancaires.3af6caeb"
-      subtitle="Gérez vos comptes tunisiens (RIB / IBAN) pour la trésorerie.">
+      subtitle="Gérez vos comptes tunisiens (RIB / IBAN) pour la trésorerie." i18n-subtitle="@@payments.bank-accounts.gerez.vos.comptes.tunisiens.rib.iban.pou.21e878c1">
     </app-page-header>
 
     @if (!auth.isFirmDelegatedReadonly() && canCreate()) {
       <div class="page-actions">
-        <app-button variant="primary" icon="pi pi-plus" (click)="openCreate()" ariaLabel="Ajouter un compte bancaire" i18n="@@payments.bank-accounts.ajouter.un.compte.351ab0a7"> Ajouter un compte </app-button>
+        <app-button variant="primary" icon="pi pi-plus" (click)="openCreate()" ariaLabel="Ajouter un compte bancaire" i18n-ariaLabel="@@payments.bank-accounts.ajouter.un.compte.bancaire.64427e80" i18n="@@payments.bank-accounts.ajouter.un.compte.351ab0a7"> Ajouter un compte </app-button>
       </div>
     }
 
@@ -52,21 +52,21 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
           <app-empty-state
             icon="pi pi-building"
             title="Vous n'avez pas encore de compte bancaire" i18n-title="@@payments.bank-accounts.vous.n.avez.pas.encore.de.compte.bancaire.e6e57039"
-            description="Aucun compte bancaire n'est configuré pour ce dossier.">
+            description="Aucun compte bancaire n'est configuré pour ce dossier." i18n-description="@@payments.bank-accounts.aucun.compte.bancaire.n.est.configure.po.09887b0b">
           </app-empty-state>
         } @else if (canCreate()) {
           <app-empty-state
             icon="pi pi-building"
             title="Vous n'avez pas encore de compte bancaire" i18n-title="@@payments.bank-accounts.vous.n.avez.pas.encore.de.compte.bancaire.e6e57039"
-            description="Ajoutez un compte pour suivre vos virements et votre trésorerie."
-            actionLabel="Ajouter un compte"
+            description="Ajoutez un compte pour suivre vos virements et votre trésorerie." i18n-description="@@payments.bank-accounts.ajoutez.un.compte.pour.suivre.vos.vireme.ff8b3076"
+            actionLabel="Ajouter un compte" i18n-actionLabel="@@payments.bank-accounts.ajouter.un.compte.f478ef40"
             (actionClick)="openCreate()">
           </app-empty-state>
         } @else {
           <app-empty-state
             icon="pi pi-building"
             title="Vous n'avez pas encore de compte bancaire" i18n-title="@@payments.bank-accounts.vous.n.avez.pas.encore.de.compte.bancaire.e6e57039"
-            description="Autorisation « Trésorerie — saisie » requise pour ajouter un compte.">
+            description="Autorisation « Trésorerie — saisie » requise pour ajouter un compte." i18n-description="@@payments.bank-accounts.autorisation.tresorerie.saisie.requise.p.7dad37ab">
           </app-empty-state>
         }
       } @else {
@@ -114,20 +114,20 @@ import { AddBankAccountDialogComponent } from './components/add-bank-account-dia
                       icon="pi pi-star"
                       (click)="setDefault(a)"
                       pTooltip="Définir comme compte par défaut" i18n-pTooltip="@@payments.bank-accounts.definir.comme.compte.par.defaut.6a8425f5"
-                      ariaLabel="Définir comme compte par défaut" i18n="@@payments.bank-accounts.defaut.47456751"> Défaut </app-button>
+                      ariaLabel="Définir comme compte par défaut" i18n-ariaLabel="@@payments.bank-accounts.definir.comme.compte.par.defaut.ed2b1b7f" i18n="@@payments.bank-accounts.defaut.47456751"> Défaut </app-button>
                   }
                   <app-button
                     variant="outline"
                     size="sm"
                     icon="pi pi-pencil"
                     (click)="openEdit(a)"
-                    ariaLabel="Modifier le compte" i18n="@@payments.bank-accounts.modifier.f260e757"> Modifier </app-button>
+                    ariaLabel="Modifier le compte" i18n-ariaLabel="@@payments.bank-accounts.modifier.le.compte.78ea5a74" i18n="@@payments.bank-accounts.modifier.f260e757"> Modifier </app-button>
                   <app-button
                     variant="danger"
                     size="sm"
                     icon="pi pi-trash"
                     (click)="confirmDelete(a)"
-                    ariaLabel="Supprimer le compte" i18n="@@payments.bank-accounts.supprimer.1acfc1c7"> Supprimer </app-button>
+                    ariaLabel="Supprimer le compte" i18n-ariaLabel="@@payments.bank-accounts.supprimer.le.compte.c0b3f815" i18n="@@payments.bank-accounts.supprimer.1acfc1c7"> Supprimer </app-button>
                 </div>
               }
             </article>

@@ -58,7 +58,7 @@ function parseDate(value: string): Date | null {
   template: `
     <app-page-header
       title="Jours fériés" i18n-title="@@payroll.settings.jours.feries.6ba43434"
-      subtitle="Calendrier des fêtes légales tunisiennes pour le décompte des jours ouvrables." />
+      subtitle="Calendrier des fêtes légales tunisiennes pour le décompte des jours ouvrables." i18n-subtitle="@@payroll.settings.calendrier.des.fetes.legales.tunisiennes.7f9dcb75" />
 
     <div class="payroll-toolbar mb-3">
       <label for="holidayYear" i18n="@@payroll.settings.exercice.e171e2b0">Exercice</label>

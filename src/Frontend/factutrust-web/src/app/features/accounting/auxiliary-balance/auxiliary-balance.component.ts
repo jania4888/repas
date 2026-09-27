@@ -39,9 +39,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Balance auxiliaire" i18n-title="@@accounting.auxiliary-balance.balance.auxiliaire.e2a90270" subtitle="Soldes par tiers — clients ou fournisseurs" />
+    <app-page-header title="Balance auxiliaire" i18n-title="@@accounting.auxiliary-balance.balance.auxiliaire.e2a90270" subtitle="Soldes par tiers — clients ou fournisseurs" i18n-subtitle="@@accounting.auxiliary-balance.soldes.par.tiers.clients.ou.fournisseurs.0bc362c1" />
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Type de tiers et période">
+      <app-accounting-filter-bar ariaLabel="Type de tiers et période" i18n-ariaLabel="@@accounting.auxiliary-balance.type.de.tiers.et.periode.a209f6c9">
         <div accountingFilterFields class="auxbal-toolbar-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="auxbal-kind" i18n="@@accounting.auxiliary-balance.tiers.435080ba">Tiers</label>
@@ -67,7 +67,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser la balance auxiliaire" i18n="@@accounting.auxiliary-balance.actualiser.9d3b2a7d"> Actualiser </app-button>
+            ariaLabel="Actualiser la balance auxiliaire" i18n-ariaLabel="@@accounting.auxiliary-balance.actualiser.la.balance.auxiliaire.70fe9de8" i18n="@@accounting.auxiliary-balance.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || rows().length === 0"
             (exportFormat)="onExport($event)" />
@@ -78,7 +78,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.auxiliary-balance.reessayer.c4f78b12"
       (retry)="load()" />
     <p-table [value]="rows()" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100]"
       [loading]="loading()" [rowHover]="true" [scrollable]="true" scrollHeight="flex"
@@ -116,7 +116,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       </ng-template>
       <ng-template pTemplate="footer">
         <tr class="acc-totals-row">
-          <td>Totaux ({{ rows().length }} tiers)</td>
+          <td i18n="@@accounting.auxiliary-balance.totaux.tiers.7c4dc209">Totaux ({{ rows().length }} tiers)</td>
           <td class="text-right auxbal-num">{{ totals().openingDebit | number : '1.3-3' }}</td>
           <td class="text-right auxbal-num">{{ totals().openingCredit | number : '1.3-3' }}</td>
           <td class="text-right auxbal-num">{{ totals().movementDebit | number : '1.3-3' }}</td>

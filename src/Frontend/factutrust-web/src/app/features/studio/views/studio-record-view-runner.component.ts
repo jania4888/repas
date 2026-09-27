@@ -53,7 +53,7 @@ interface RunRequestParams {
         icon="pi-exclamation-triangle"
         [title]="labels.views.error"
         [showAction]="true"
-        actionLabel="Réessayer"
+        actionLabel="Réessayer" i18n-actionLabel="@@studio.views.reessayer.b885e20c"
         (actionClick)="run()" />
     } @else {
       @switch (view()?.mode) {

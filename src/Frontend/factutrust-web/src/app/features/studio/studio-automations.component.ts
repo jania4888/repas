@@ -36,7 +36,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
   template: `
     <app-studio-page-shell
       [title]="loc_ui_tern_pont_erp_6f90c2 + (entity()?.displayName ?? '…')"
-      subtitle="Déclenchez une action métier réelle (facture, dépense…) à partir d'un enregistrement de cette table."
+      subtitle="Déclenchez une action métier réelle (facture, dépense…) à partir d'un enregistrement de cette table." i18n-subtitle="@@studio.studio-automations.declenchez.une.action.metier.reelle.fact.c40e6823"
       [breadcrumbs]="breadcrumbs()">
 
       <button pButton type="button" label="Nouvelle automatisation" i18n-label="@@studio.studio-automations.nouvelle.automatisation.929c673d" icon="fa-solid fa-bolt" studioActions

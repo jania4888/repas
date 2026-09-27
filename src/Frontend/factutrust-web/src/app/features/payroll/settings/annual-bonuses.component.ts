@@ -21,7 +21,7 @@ import { ToastService } from '@core/services/toast.service';
     InputSwitchModule, SelectModule, PageHeaderComponent, ButtonComponent
   ],
   template: `
-    <app-page-header title="Primes annuelles" i18n-title="@@payroll.settings.primes.annuelles.c20c4756" subtitle="Règles de 13e mois, ancienneté et vacances." />
+    <app-page-header title="Primes annuelles" i18n-title="@@payroll.settings.primes.annuelles.c20c4756" subtitle="Règles de 13e mois, ancienneté et vacances." i18n-subtitle="@@payroll.settings.regles.de.13e.mois.anciennete.et.vacance.a109acd4" />
 
     <div class="payroll-toolbar mb-3">
       <label i18n="@@payroll.settings.exercice.e171e2b0">Exercice</label>

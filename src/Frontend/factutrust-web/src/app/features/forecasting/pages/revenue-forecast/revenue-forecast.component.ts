@@ -62,7 +62,7 @@ import { StockService } from '@core/services/stock.service';
       </header>
 
       @if (needsScopeId() && !scopeId()) {
-        <div class="state hint">
+        <div class="state hint" i18n="@@forecasting.pages.selectionnez.un.e.pour.calculer.la.previ.4dc6ecfd">
           Sélectionnez un(e) {{ scopeEntityLabel() | lowercase }} pour calculer la prévision.
         </div>
       } @else if (loading()) {
@@ -71,13 +71,13 @@ import { StockService } from '@core/services/stock.service';
         <div class="state error">{{ errorMessage() }}</div>
       } @else if (forecast() !== null) {
         <div class="kpi-row">
-          <div class="kpi">
-            <span class="label" i18n="@@forecasting.pages.ca.prevu.d4e47a65">CA prévu</span>
+          <div class="kpi" i18n="@@forecasting.pages.ca.prevu.sur.01837ca5">
+            <span class="label">CA prévu</span>
             <span class="value">{{ forecast()!.expected | number:'1.3-3' }} {{ forecast()!.currency }}</span>
             <span class="hint">Sur {{ forecast()!.periodStart | date:'dd/MM/yyyy' }} → {{ forecast()!.periodEnd | date:'dd/MM/yyyy' }}</span>
           </div>
-          <div class="kpi">
-            <span class="label" i18n="@@forecasting.pages.intervalle.95.05aaeb06">Intervalle 95 %</span>
+          <div class="kpi" i18n="@@forecasting.pages.intervalle.95.confiance.fe2a140f">
+            <span class="label">Intervalle 95 %</span>
             <span class="value small">{{ forecast()!.low | number:'1.3-3' }} – {{ forecast()!.high | number:'1.3-3' }} {{ forecast()!.currency }}</span>
             <span class="hint">Confiance {{ forecast()!.confidencePercent | number:'1.0-1' }} %</span>
           </div>
@@ -94,7 +94,7 @@ import { StockService } from '@core/services/stock.service';
 
         @if (forecast()!.breakdown.length > 0) {
           <div class="chart-card">
-            <div class="chart-header">
+            <div class="chart-header" i18n="@@forecasting.pages.tendance.ic.95.attendu.f39be920">
               <span class="chart-title">Tendance — {{ horizonLabel() }}</span>
               <span class="chart-legend">
                 <span class="legend-ci"></span> IC 95 %

@@ -36,26 +36,26 @@ import {
 
     <app-page-header
       title="Solde par fournisseur" i18n-title="@@reports.supplier-balances.solde.par.fournisseur.7b26b81c"
-      subtitle="Solde commercial (facturé − payé) par fournisseur">
+      subtitle="Solde commercial (facturé − payé) par fournisseur" i18n-subtitle="@@reports.supplier-balances.solde.commercial.facture.paye.par.fourni.7c604f20">
       <app-button
         variant="secondary"
         icon="pi-print"
         iconPos="left"
         (click)="onPrint()"
-        ariaLabel="Imprimer les soldes fournisseurs" i18n="@@reports.supplier-balances.imprimer.5382c09d"> Imprimer </app-button>
+        ariaLabel="Imprimer les soldes fournisseurs" i18n-ariaLabel="@@reports.supplier-balances.imprimer.les.soldes.fournisseurs.70d0790d" i18n="@@reports.supplier-balances.imprimer.5382c09d"> Imprimer </app-button>
       <app-button
         variant="secondary"
         icon="pi-download"
         iconPos="left"
         (click)="onExport()"
-        ariaLabel="Exporter les soldes fournisseurs en CSV" i18n="@@reports.supplier-balances.exporter.0cd84bdc"> Exporter </app-button>
+        ariaLabel="Exporter les soldes fournisseurs en CSV" i18n-ariaLabel="@@reports.supplier-balances.exporter.les.soldes.fournisseurs.en.csv.eb2336eb" i18n="@@reports.supplier-balances.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@reports.supplier-balances.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@reports.supplier-balances.reinitialiser.les.filtres.d8915f02">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@reports.supplier-balances.reinitialiser.les.filtres.d8915f02" i18n="@@reports.supplier-balances.reinitialiser.c77ef305">
             <i class="pi pi-times"></i>
             Réinitialiser
           </button>
@@ -76,9 +76,9 @@ import {
           <input
             type="checkbox"
             [ngModel]="hideZeroBalances()"
-            (ngModelChange)="hideZeroBalances.set($event)" />
+            (ngModelChange)="hideZeroBalances.set($event)" /><ng-container i18n="@@reports.supplier-balances.masquer.les.soldes.a.zero.f97078e9">
           Masquer les soldes à zéro
-        </label>
+        </ng-container></label>
       </div>
     </div>
 
@@ -91,7 +91,7 @@ import {
         partyLabel="Fournisseur"
         [showActions]="true"
         emptyMessage="Aucun solde fournisseur" i18n-emptyMessage="@@reports.supplier-balances.aucun.solde.fournisseur.6ed70d5f"
-        ariaLabel="Soldes par fournisseur"
+        ariaLabel="Soldes par fournisseur" i18n-ariaLabel="@@reports.supplier-balances.soldes.par.fournisseur.590d3a47"
         (viewInvoices)="onViewInvoices($event)"
         (viewParty)="onViewParty($event)">
       </app-party-balances-table>

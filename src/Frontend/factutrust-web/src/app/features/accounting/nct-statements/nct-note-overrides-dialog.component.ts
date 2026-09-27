@@ -44,9 +44,9 @@ interface NoteEditRow {
       [draggable]="false"
       [closable]="true"
       styleClass="nno-dialog">
-      <p class="nno-help">
-        <ng-container i18n="@@accounting.nct-statements.exercice.e171e2b0"> Exercice </ng-container> <strong>{{ fiscalYear }}</strong>. Un champ laissé vide conserve le libellé du
-        catalogue. Une note masquée disparaît de la liasse <em i18n="@@accounting.nct-statements.et.a5bc1d9b">et</em> de l'export PDF.
+      <p class="nno-help" i18n="@@accounting.nct-statements.exercice.un.champ.laisse.vide.conserve.l.2867cbec">
+        <ng-container> Exercice </ng-container> <strong>{{ fiscalYear }}</strong>. Un champ laissé vide conserve le libellé du
+        catalogue. Une note masquée disparaît de la liasse <em>et</em> de l'export PDF.
       </p>
 
       @if (loading()) {
@@ -55,13 +55,13 @@ interface NoteEditRow {
         <div class="nno-list">
           @for (row of rows(); track row.number) {
             <div class="nno-row" [class.nno-row--hidden]="row.isHidden">
-              <div class="nno-row-head">
+              <div class="nno-row-head"><ng-container i18n="@@accounting.nct-statements.note.a098cd6f">
                 <span class="nno-num">Note {{ row.number }}</span>
                 <span class="nno-default">{{ row.defaultTitle }}</span>
-                <label class="nno-hide">
-                  <input type="checkbox" [(ngModel)]="row.isHidden" [disabled]="row.saving" />
+                </ng-container><label class="nno-hide">
+                  <input type="checkbox" [(ngModel)]="row.isHidden" [disabled]="row.saving" /><ng-container i18n="@@accounting.nct-statements.masquer.adb05f2b">
                   Masquer
-                </label>
+                </ng-container></label>
               </div>
               <input
                 type="text"

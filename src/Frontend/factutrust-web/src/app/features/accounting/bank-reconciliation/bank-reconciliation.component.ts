@@ -55,7 +55,7 @@ interface WizardStepDef {
   template: `
     <app-page-header
       title="Rapprochement bancaire" i18n-title="@@accounting.bank-reconciliation.rapprochement.bancaire.b6463429"
-      subtitle="Assistant d'importation de relevé et de rapprochement — Import, association automatique, rapprochement manuel, résultat" />
+      subtitle="Assistant d'importation de relevé et de rapprochement — Import, association automatique, rapprochement manuel, résultat" i18n-subtitle="@@accounting.bank-reconciliation.assistant.d.importation.de.releve.et.de.a85665d9" />
 
     <app-accounting-correction-banner />
 
@@ -88,7 +88,7 @@ interface WizardStepDef {
     <!-- ── Liste des relevés (accueil) ───────────────────────────────────── -->
     @if (!wizardActive()) {
       <div class="card br-card">
-        <app-accounting-filter-bar ariaLabel="Filtres des relevés bancaires">
+        <app-accounting-filter-bar ariaLabel="Filtres des relevés bancaires" i18n-ariaLabel="@@accounting.bank-reconciliation.filtres.des.releves.bancaires.9f25f289">
           <div accountingFilterFields class="br-toolbar-fields">
             <div class="form-field">
               <label class="field-label" for="br-account" i18n="@@accounting.bank-reconciliation.compte.bancaire.485b42ca">Compte bancaire</label>
@@ -129,7 +129,7 @@ interface WizardStepDef {
               <td data-label="Période">{{ s.periodStart | date : 'shortDate' }} → {{ s.periodEnd | date : 'shortDate' }}</td>
               <td data-label="Solde initial" class="br-amt">{{ s.openingBalance | number : '1.3-3' }}</td>
               <td data-label="Solde final" class="br-amt">{{ s.closingBalance | number : '1.3-3' }}</td>
-              <td data-label="Avancement">
+              <td data-label="Avancement" i18n="@@accounting.bank-reconciliation.rapprochee.s.1f9f5e71">
                 <span class="br-badge" [class.br-badge-done]="reconciledCount(s) === s.lines.length" [class.br-badge-partial]="reconciledCount(s) < s.lines.length">
                   {{ reconciledCount(s) }}/{{ s.lines.length }} rapprochée(s)
                 </span>
@@ -155,7 +155,7 @@ interface WizardStepDef {
       @if (reconStatement(); as rs) {
         <div class="card br-card br-recon-card">
           <div class="br-detail-head">
-            <h2 class="br-section-title">État de rapprochement — {{ rs.bankName }} · {{ rs.accountNumber }}</h2>
+            <h2 class="br-section-title" i18n="@@accounting.bank-reconciliation.etat.de.rapprochement.42af3d10">État de rapprochement — {{ rs.bankName }} · {{ rs.accountNumber }}</h2>
             <div class="br-recon-actions">
               <app-accounting-export-menu
                 [disabled]="exportingRecon()"
@@ -163,7 +163,7 @@ interface WizardStepDef {
               <button type="button" class="br-link-btn" (click)="closeReconciliationStatement()" i18n="@@accounting.bank-reconciliation.fermer.5ab4ec64">Fermer</button>
             </div>
           </div>
-          <p class="br-help">
+          <p class="br-help" i18n="@@accounting.bank-reconciliation.compte.banque.periode.625007b5">
             Compte banque {{ rs.chartOfAccountNumber }} · période {{ rs.periodStart | date : 'shortDate' }}
             → {{ rs.periodEnd | date : 'shortDate' }}
           </p>
@@ -217,7 +217,7 @@ interface WizardStepDef {
             <div><span class="br-recon-lbl" i18n="@@accounting.bank-reconciliation.solde.releve.corrige.37a6a51e">Solde relevé corrigé</span><span class="br-recon-val">{{ rs.adjustedStatementBalance | number : '1.3-3' }}</span></div>
             <div><span class="br-recon-lbl" i18n="@@accounting.bank-reconciliation.solde.comptable.corrige.baedc64d">Solde comptable corrigé</span><span class="br-recon-val">{{ rs.adjustedAccountingBalance | number : '1.3-3' }}</span></div>
           </div>
-          <p class="br-recon-diff" [class.br-recon-ok]="rs.isReconciled" [class.br-recon-ko]="!rs.isReconciled">
+          <p class="br-recon-diff" [class.br-recon-ok]="rs.isReconciled" [class.br-recon-ko]="!rs.isReconciled" i18n="@@accounting.bank-reconciliation.ecart.2bfe792f">
             Écart : {{ rs.difference | number : '1.3-3' }}
             <span>{{ rs.isReconciled ? loc_ui_tern_rapproche_06101d : loc_ui_tern_a_justifier_d719d3 }}</span>
           </p>
@@ -243,7 +243,7 @@ interface WizardStepDef {
               }
             </select>
             @if (preview()?.detectedRib && !preview()?.matchedBankAccountId) {
-              <small class="br-help br-rib-hint">
+              <small class="br-help br-rib-hint" i18n="@@accounting.bank-reconciliation.rib.detecte.creez.un.compte.bancaire.ou.17e867bf">
                 RIB détecté {{ formatRib(preview()!.detectedRib!) }} — créez un compte bancaire ou sélectionnez-le manuellement.
               </small>
             }
@@ -303,17 +303,17 @@ interface WizardStepDef {
           </div>
         </div>
 
-        <p class="br-help">
-          <ng-container i18n="@@accounting.bank-reconciliation.colonnes.attendues.pour.csv.excel.1.c3518416"> Colonnes attendues pour CSV/Excel (1</ng-container><sup i18n="@@accounting.bank-reconciliation.re.c387c982">re</sup> ligne = en-têtes) : <code i18n="@@accounting.bank-reconciliation.date.libelle.reference.ab34493e">date, libelle, [reference]</code> puis
-          <code i18n="@@accounting.bank-reconciliation.debit.credit.89843df7">debit/credit</code> ou une colonne <code i18n="@@accounting.bank-reconciliation.montant.aa2789fc">montant</code> signée. OFX/MT940 sont lus automatiquement.
+        <p class="br-help" i18n="@@accounting.bank-reconciliation.colonnes.attendues.pour.csv.excel.1.re.l.8023ec2c">
+          <ng-container> Colonnes attendues pour CSV/Excel (1</ng-container><sup>re</sup> ligne = en-têtes) : <code>date, libelle, [reference]</code> puis
+          <code>debit/credit</code> ou une colonne <code>montant</code> signée. OFX/MT940 sont lus automatiquement.
         </p>
 
         @if (preview(); as p) {
           @if (p.extractionMethod !== undefined && p.extractionMethod !== null && p.extractionMethod !== 0) {
-            <p class="br-help br-extract-banner">
+            <p class="br-help br-extract-banner"><ng-container i18n="@@accounting.bank-reconciliation.extraction.8a1adcfb">
               Extraction : {{ extractionLabel(p.extractionMethod) }}
-              @if (p.confidenceScore !== undefined && p.confidenceScore !== null) { — confiance {{ p.confidenceScore }} % }
-              @if (p.matchedChartOfAccountNumber) { — compte comptable {{ p.matchedChartOfAccountNumber }} }
+              </ng-container>@if (p.confidenceScore !== undefined && p.confidenceScore !== null) {<ng-container i18n="@@accounting.bank-reconciliation.confiance.d8da4bc0"> — confiance {{ p.confidenceScore }} % </ng-container>}
+              @if (p.matchedChartOfAccountNumber) {<ng-container i18n="@@accounting.bank-reconciliation.compte.comptable.42b761b0"> — compte comptable {{ p.matchedChartOfAccountNumber }} </ng-container>}
             </p>
           }
           <div class="br-summary">
@@ -325,7 +325,7 @@ interface WizardStepDef {
 
           @if (p.issues.length > 0) {
             <div class="br-issues">
-              <h3 class="br-issues-title">{{ p.issues.length }} anomalie(s)</h3>
+              <h3 class="br-issues-title" i18n="@@accounting.bank-reconciliation.anomalie.s.e802e12e">{{ p.issues.length }} anomalie(s)</h3>
               <ul class="br-issues-list">
                 @for (issue of p.issues.slice(0, 50); track $index) {
                   <li><span class="br-issue-ref">{{ issue.ref }}</span> {{ issue.message }}</li>
@@ -386,7 +386,7 @@ interface WizardStepDef {
               </div>
             </div>
             <div class="br-commit-bar">
-              <span class="br-commit-hint">{{ p.validLines }} ligne(s) prête(s) à être importée(s).</span>
+              <span class="br-commit-hint" i18n="@@accounting.bank-reconciliation.ligne.s.prete.s.a.etre.importee.s.e8f2abee">{{ p.validLines }} ligne(s) prête(s) à être importée(s).</span>
               <app-button variant="primary" icon="pi pi-arrow-right" type="button"
                 (click)="runImport()" [disabled]="!canSubmitImport() || busy()">
                 {{ importing() ? loc_ui_tern_import_4834ca : loc_ui_tern_importer_et_continuer_135d02 }}
@@ -404,7 +404,7 @@ interface WizardStepDef {
       <div class="br-two-col">
         <div class="card br-card br-col-main">
           <div class="br-detail-head">
-            <h2 class="br-section-title">2 · Association automatique — {{ s.bankName }} · {{ s.accountNumber }}</h2>
+            <h2 class="br-section-title" i18n="@@accounting.bank-reconciliation.2.association.automatique.c80a6cb1">2 · Association automatique — {{ s.bankName }} · {{ s.accountNumber }}</h2>
             <div class="br-head-actions">
               <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="runAutoAssociate()" [disabled]="autoAssociating() || applying()" i18n="@@accounting.bank-reconciliation.relancer.l.association.3c42e685"> Relancer l'association </app-button>
               <app-button variant="primary" icon="pi pi-check-circle" type="button" (click)="applySelectedAssociations()"
@@ -450,7 +450,7 @@ interface WizardStepDef {
                 </td>
                 <td class="br-proposed">
                   @if (a.status === 2) { {{ a.proposedEntryRef }} }
-                  @else if (a.status === 1) { <span class="br-muted">{{ a.candidateCount }} candidat(s)</span> }
+                  @else if (a.status === 1) { <span class="br-muted" i18n="@@accounting.bank-reconciliation.candidat.s.0c6feb0a">{{ a.candidateCount }} candidat(s)</span> }
                   @else { <span class="br-muted" i18n="@@accounting.bank-reconciliation.text.1b93795b">—</span> }
                 </td>
                 <td data-label="Actions">
@@ -490,7 +490,7 @@ interface WizardStepDef {
             <p class="br-help" i18n="@@accounting.bank-reconciliation.lancez.l.association.pour.afficher.le.recapitula.bbcfee1a">Lancez l'association pour afficher le récapitulatif.</p>
           }
           @if ((s.skippedDuplicateCount ?? 0) > 0) {
-            <p class="br-help br-dup-hint">{{ s.skippedDuplicateCount }} ligne(s) déjà importée(s) ont été ignorées.</p>
+            <p class="br-help br-dup-hint" i18n="@@accounting.bank-reconciliation.ligne.s.deja.importee.s.ont.ete.ignorees.2d764e72">{{ s.skippedDuplicateCount }} ligne(s) déjà importée(s) ont été ignorées.</p>
           }
         </aside>
       </div>
@@ -500,10 +500,10 @@ interface WizardStepDef {
     @if (wizardActive() && step() === 3 && selected(); as s) {
       <div class="card br-card">
         <div class="br-detail-head">
-          <h2 class="br-section-title">3 · Rapprochement manuel — {{ s.bankName }} · {{ s.accountNumber }}</h2>
-          <span class="br-detail-period">{{ unreconciledLines(s).length }} ligne(s) restante(s)</span>
+          <h2 class="br-section-title" i18n="@@accounting.bank-reconciliation.3.rapprochement.manuel.ffe78be3">3 · Rapprochement manuel — {{ s.bankName }} · {{ s.accountNumber }}</h2>
+          <span class="br-detail-period" i18n="@@accounting.bank-reconciliation.ligne.s.restante.s.49255e1e">{{ unreconciledLines(s).length }} ligne(s) restante(s)</span>
         </div>
-        <p class="br-help">Compte banque {{ reconcileAccountLabel() }}. Choisissez une écriture candidate ou comptabilisez directement la ligne.</p>
+        <p class="br-help" i18n="@@accounting.bank-reconciliation.compte.banque.choisissez.une.ecriture.ca.09d811a8">Compte banque {{ reconcileAccountLabel() }}. Choisissez une écriture candidate ou comptabilisez directement la ligne.</p>
 
         <p-table [value]="s.lines" [loading]="loadingDetail()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
           <ng-template pTemplate="header">
@@ -554,13 +554,13 @@ interface WizardStepDef {
       @if (activeLine(); as line) {
         <div class="card br-card">
           <div class="br-detail-head">
-            <h2 class="br-section-title">
+            <h2 class="br-section-title" i18n="@@accounting.bank-reconciliation.candidats.pour.0514086e">
               Candidats pour « {{ line.description }} » — {{ line.amount | number : '1.3-3' }}
               {{ line.isDebit ? loc_ui_tern_decaissement_e2ba8f : loc_ui_tern_encaissement_44a988 }}
             </h2>
             <button type="button" class="br-link-btn" (click)="closeCandidates()" i18n="@@accounting.bank-reconciliation.fermer.5ab4ec64">Fermer</button>
           </div>
-          <p class="br-help">Lignes du compte banque {{ reconcileAccountLabel() }} au même montant, à ±10 jours. Les brouillons sont exclus.</p>
+          <p class="br-help" i18n="@@accounting.bank-reconciliation.lignes.du.compte.banque.au.meme.montant.1b08acdc">Lignes du compte banque {{ reconcileAccountLabel() }} au même montant, à ±10 jours. Les brouillons sont exclus.</p>
           <p-table [value]="candidates()" [loading]="loadingCandidates()" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
             <ng-template pTemplate="header">
               <tr>
@@ -593,7 +593,7 @@ interface WizardStepDef {
     <!-- ══ ÉTAPE 4 — Résultat ════════════════════════════════════════════ -->
     @if (wizardActive() && step() === 4 && selected(); as s) {
       <div class="card br-card">
-        <h2 class="br-section-title">4 · Résultat — {{ s.bankName }} · {{ s.accountNumber }}</h2>
+        <h2 class="br-section-title" i18n="@@accounting.bank-reconciliation.4.resultat.d9bfda09">4 · Résultat — {{ s.bankName }} · {{ s.accountNumber }}</h2>
         <div class="br-summary">
           <div class="br-kpi"><span class="br-kpi-label" i18n="@@accounting.bank-reconciliation.lignes.41c7025e">Lignes</span><span class="br-kpi-value">{{ s.lines.length }}</span></div>
           <div class="br-kpi"><span class="br-kpi-label" i18n="@@accounting.bank-reconciliation.rapprochees.c5ab1770">Rapprochées</span><span class="br-kpi-value br-ok">{{ reconciledCount(s) }}</span></div>
@@ -625,7 +625,7 @@ interface WizardStepDef {
     @if (createLine(); as cl) {
       <div class="card br-card br-create-panel">
         <div class="br-detail-head">
-          <h2 class="br-section-title">Comptabiliser « {{ cl.description }} » — {{ cl.amount | number : '1.3-3' }} {{ cl.isDebit ? loc_ui_tern_decaissement_e2ba8f : loc_ui_tern_encaissement_44a988 }}</h2>
+          <h2 class="br-section-title" i18n="@@accounting.bank-reconciliation.comptabiliser.d5681f71">Comptabiliser « {{ cl.description }} » — {{ cl.amount | number : '1.3-3' }} {{ cl.isDebit ? loc_ui_tern_decaissement_e2ba8f : loc_ui_tern_encaissement_44a988 }}</h2>
           <button type="button" class="br-link-btn" (click)="cancelCreateEntry()" i18n="@@accounting.bank-reconciliation.fermer.5ab4ec64">Fermer</button>
         </div>
         <div class="br-import-fields">
@@ -642,7 +642,7 @@ interface WizardStepDef {
             <input id="ce-label" class="br-input" [(ngModel)]="createForm.label" [disabled]="creatingEntry()" />
           </div>
         </div>
-        <p class="br-help">
+        <p class="br-help" i18n="@@accounting.bank-reconciliation.ecriture.equilibree.compte.banque.contre.f27e7c9a">
           Écriture équilibrée compte banque {{ reconcileAccountLabel() }} ↔ contrepartie, puis rapprochement automatique de la ligne
           (selon le paramétrage brouillard).
         </p>

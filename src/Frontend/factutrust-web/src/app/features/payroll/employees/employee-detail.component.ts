@@ -73,7 +73,7 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
 
       <app-payroll-consult-banner
         [visible]="showConsultBanner()"
-        message="Mode consultation — la gestion des dossiers salariés est réservée à la société cliente." />
+        message="Mode consultation — la gestion des dossiers salariés est réservée à la société cliente." i18n-message="@@payroll.employees.mode.consultation.la.gestion.des.dossier.70b001ac" />
 
       @if (alerts().length) {
         <div class="payroll-alert-list">
@@ -225,9 +225,9 @@ import { PayrollConsultBannerComponent, PayrollAmountPipe, formatPayrollAmount }
                   </span>
                 }
               </div>
-              <p>Du {{ c.startDate | date:'dd/MM/yyyy' }} @if (c.endDate) { au {{ c.endDate | date:'dd/MM/yyyy' }} }</p>
-              <p>Salaire base : {{ c.baseSalary | payrollAmount }} — AT : {{ c.workAccidentRate }} %</p>
-              @if (c.jobTitle) { <p>Poste : {{ c.jobTitle }}</p> }
+              <p><ng-container i18n="@@payroll.employees.du.71a2b148">Du {{ c.startDate | date:'dd/MM/yyyy' }} </ng-container>@if (c.endDate) {<ng-container i18n="@@payroll.employees.au.a6c23617"> au {{ c.endDate | date:'dd/MM/yyyy' }} </ng-container>}</p>
+              <p i18n="@@payroll.employees.salaire.base.at.c78d0616">Salaire base : {{ c.baseSalary | payrollAmount }} — AT : {{ c.workAccidentRate }} %</p>
+              @if (c.jobTitle) { <p i18n="@@payroll.employees.poste.4d4e64e1">Poste : {{ c.jobTitle }}</p> }
               @if (c.allowances.length) {
                 <p-table [value]="c.allowances" styleClass="p-datatable-sm mt-2">
                   <ng-template pTemplate="header">

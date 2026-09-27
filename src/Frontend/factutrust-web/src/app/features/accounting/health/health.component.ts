@@ -31,10 +31,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <app-page-header
       title="Contrôle d'intégrité" i18n-title="@@accounting.health.controle.d.integrite.6a418f91"
-      subtitle="Diagnostics comptables en lecture seule — aucune modification des données" />
+      subtitle="Diagnostics comptables en lecture seule — aucune modification des données" i18n-subtitle="@@accounting.health.diagnostics.comptables.en.lecture.seule.f4929265" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Portée du diagnostic">
+      <app-accounting-filter-bar ariaLabel="Portée du diagnostic" i18n-ariaLabel="@@accounting.health.portee.du.diagnostic.d8564c44">
         <div accountingFilterFields class="hc-toolbar-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="hc-scope" i18n="@@accounting.health.portee.f42a1d5d">Portée</label>
@@ -58,20 +58,20 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="run()"
             [disabled]="loading()"
-            ariaLabel="Lancer les contrôles d'intégrité" i18n="@@accounting.health.lancer.les.controles.521d27dd"> Lancer les contrôles </app-button>
+            ariaLabel="Lancer les contrôles d'intégrité" i18n-ariaLabel="@@accounting.health.lancer.les.controles.d.integrite.aa8ed997" i18n="@@accounting.health.lancer.les.controles.521d27dd"> Lancer les contrôles </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="run()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.health.reessayer.c4f78b12" (retry)="run()" />
 
     @if (report(); as rep) {
       <div class="hc-summary" [class.hc-summary--anomaly]="rep.hasAnomalies" [class.hc-summary--ok]="!rep.hasAnomalies" role="status">
         <i class="pi" [class.pi-exclamation-triangle]="rep.hasAnomalies" [class.pi-check-circle]="!rep.hasAnomalies" aria-hidden="true"></i>
         <span>
-          @if (rep.hasAnomalies) {
+          @if (rep.hasAnomalies) {<ng-container i18n="@@accounting.health.controle.s.signalent.des.anomalies.a.exa.875e860a">
             {{ anomalyCount() }} contrôle(s) signalent des anomalies à examiner. Ce centre est en lecture seule : corrigez depuis les écrans liés.
-          } @else {
+          </ng-container>} @else {
             {{ noAnomalyMessage(rep.fiscalYear) }}
           }
         </span>

@@ -79,7 +79,7 @@ interface DraftLine extends LinePromotionPreview {
 
     <app-page-header
       title="Nouvelle commande client" i18n-title="@@sales-orders.sales-order-create.nouvelle.commande.client.8eb4415d"
-      subtitle="Les prix sont ceux que le serveur appliquera : prix négocié, grille du client, ou catalogue.">
+      subtitle="Les prix sont ceux que le serveur appliquera : prix négocié, grille du client, ou catalogue." i18n-subtitle="@@sales-orders.sales-order-create.les.prix.sont.ceux.que.le.serveur.appliq.51498028">
       <app-button variant="secondary" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-create.annuler.49ba3292">Annuler</app-button>
       <span
         class="create-btn-wrap"
@@ -119,7 +119,7 @@ interface DraftLine extends LinePromotionPreview {
         <li [class.submit-readiness__item--done]="hasLines()">
           <i class="pi" [class.pi-check-circle]="hasLines()" [class.pi-circle]="!hasLines()"></i>
           @if (hasLines()) {
-            <span>{{ lines().length }} ligne(s) produit ajoutée(s)</span>
+            <span i18n="@@sales-orders.sales-order-create.ligne.s.produit.ajoutee.s.58d8dbac">{{ lines().length }} ligne(s) produit ajoutée(s)</span>
           } @else {
             <button type="button" class="submit-readiness__link" (click)="scrollToLines()" i18n="@@sales-orders.sales-order-create.ajoutez.au.moins.une.ligne.produit.section.ligne.d5f1dfd9"> Ajoutez au moins une ligne produit (section Lignes) </button>
           }
@@ -322,7 +322,7 @@ interface DraftLine extends LinePromotionPreview {
                       [value]="loc_ui_tern_promo_84ac35 + line.promotionName + ' (-' + line.promotionDiscountPercent + ' %)'"
                       class="promo-tag"></p-tag>
                   } @else if (line.promotionMinQuantityRequired && line.promotionName) {
-                    <small class="promo-hint">
+                    <small class="promo-hint" i18n="@@sales-orders.sales-order-create.qty.min.b392f9d2">
                       {{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}
                     </small>
                   }

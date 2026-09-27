@@ -34,7 +34,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     
     <app-page-header 
-      [title]="'Historique des Mouvements'"
+      title="Historique des Mouvements" i18n-title="@@stock.stock-history.historique.des.mouvements.37a95095"
       [subtitle]="productName() ? loc_ui_tern_produit_fe4d4d + productName() : loc_ui_tern_chargement_a209b6">
       <app-button 
         variant="outline"
@@ -50,8 +50,8 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <app-empty-state
           illustration="empty-box.svg"
           title="Aucun mouvement" i18n-title="@@stock.stock-history.aucun.mouvement.e4e42303"
-          description="Aucun mouvement de stock n'a été enregistré pour ce produit."
-          actionLabel="Retour au stock"
+          description="Aucun mouvement de stock n'a été enregistré pour ce produit." i18n-description="@@stock.stock-history.aucun.mouvement.de.stock.n.a.ete.enregis.f39f4f75"
+          actionLabel="Retour au stock" i18n-actionLabel="@@stock.stock-history.retour.au.stock.298e4e65"
           actionRoute="/stock">
         </app-empty-state>
       } @else {

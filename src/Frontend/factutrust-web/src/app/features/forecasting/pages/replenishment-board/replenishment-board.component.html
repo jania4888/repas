@@ -12,7 +12,7 @@
 
   <!-- Bulk actions / utilities -->
   <header class="actions-bar" role="toolbar" aria-label="Actions du module Réapprovisionnement" i18n-aria-label="@@forecasting.pages.actions.du.module.reapprovisionnement.ca82d967">
-    <div class="selection-info" aria-live="polite">
+    <div class="selection-info" aria-live="polite" i18n="@@forecasting.pages.selectionnee.s.a46386d0">
       <strong>{{ selectionCount() }}</strong> / {{ totalCount() }} sélectionnée(s)
     </div>
 
@@ -43,7 +43,7 @@
         class="btn btn-primary"
         [disabled]="selectionCount() === 0 || bulkActionInFlight()"
         (click)="openPreparePoModal()"
-        aria-label="Créer les bons de commande à partir de la sélection" i18n-aria-label="@@forecasting.pages.creer.les.bons.de.commande.a.partir.de.la.select.e3c29eaa">
+        aria-label="Créer les bons de commande à partir de la sélection" i18n-aria-label="@@forecasting.pages.creer.les.bons.de.commande.a.partir.de.la.select.e3c29eaa" i18n="@@forecasting.pages.creer.les.bc.72dbafe0">
         <i class="pi pi-shopping-cart" aria-hidden="true"></i>
         Créer les BC ({{ selectionCount() }})
       </button>
@@ -79,15 +79,15 @@
 
   <!-- Body: loading / empty / table -->
   @if (loading()) {
-    <div class="state loading" aria-live="polite">
+    <div class="state loading" aria-live="polite" i18n="@@forecasting.pages.chargement.f8c7a9cd">
       <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Chargement…
     </div>
   } @else if (rows().length === 0) {
-    <div class="state empty">
+    <div class="state empty"><ng-container i18n="@@forecasting.pages.aucune.recommandation.pour.ces.filtres.84d8713a">
       <i class="pi pi-info-circle" aria-hidden="true"></i>
       Aucune recommandation pour ces filtres.
-      @if (filters().status === 'pending' && canManage()) {
-        <span><ng-container i18n="@@forecasting.pages.cliquez.sur.487bfa49">Cliquez sur </ng-container> <strong i18n="@@forecasting.pages.regenerer.af5d1d73">Régénérer</strong> pour relancer le calcul.</span>
+      </ng-container>@if (filters().status === 'pending' && canManage()) {
+        <span i18n="@@forecasting.pages.cliquez.sur.regenerer.pour.relancer.le.c.7ee035f1"><ng-container>Cliquez sur </ng-container> <strong>Régénérer</strong> pour relancer le calcul.</span>
       }
     </div>
   } @else {
@@ -104,25 +104,25 @@
             <th scope="col" i18n="@@forecasting.pages.entrepot.c349c0bc">Entrepôt</th>
             <th scope="col" i18n="@@forecasting.pages.fournisseur.97d91d89">Fournisseur</th>
             <th scope="col" class="num">
-              <button type="button" class="th-sort" (click)="toggleSort('rop')" [attr.aria-sort]="sortBy() === 'rop' ? (sortDesc() ? 'descending' : 'ascending') : 'none'">
+              <button type="button" class="th-sort" (click)="toggleSort('rop')" [attr.aria-sort]="sortBy() === 'rop' ? (sortDesc() ? 'descending' : 'ascending') : 'none'"><ng-container i18n="@@forecasting.pages.stock.rop.861515b6">
                 Stock / ROP
-                @if (sortBy() === 'rop') {
+                </ng-container>@if (sortBy() === 'rop') {
                   <i class="pi" [class.pi-sort-down]="sortDesc()" [class.pi-sort-up]="!sortDesc()" aria-hidden="true"></i>
                 }
               </button>
             </th>
             <th scope="col" class="num">
-              <button type="button" class="th-sort" (click)="toggleSort('qty')" [attr.aria-sort]="sortBy() === 'qty' ? (sortDesc() ? 'descending' : 'ascending') : 'none'">
+              <button type="button" class="th-sort" (click)="toggleSort('qty')" [attr.aria-sort]="sortBy() === 'qty' ? (sortDesc() ? 'descending' : 'ascending') : 'none'"><ng-container i18n="@@forecasting.pages.qte.a4772129">
                 Qté
-                @if (sortBy() === 'qty') {
+                </ng-container>@if (sortBy() === 'qty') {
                   <i class="pi" [class.pi-sort-down]="sortDesc()" [class.pi-sort-up]="!sortDesc()" aria-hidden="true"></i>
                 }
               </button>
             </th>
             <th scope="col" class="num">
-              <button type="button" class="th-sort" (click)="toggleSort('days')" [attr.aria-sort]="sortBy() === 'days' ? (sortDesc() ? 'descending' : 'ascending') : 'none'">
+              <button type="button" class="th-sort" (click)="toggleSort('days')" [attr.aria-sort]="sortBy() === 'days' ? (sortDesc() ? 'descending' : 'ascending') : 'none'"><ng-container i18n="@@forecasting.pages.jours.stock.9818c885">
                 Jours stock
-                @if (sortBy() === 'days') {
+                </ng-container>@if (sortBy() === 'days') {
                   <i class="pi" [class.pi-sort-down]="sortDesc()" [class.pi-sort-up]="!sortDesc()" aria-hidden="true"></i>
                 }
               </button>
@@ -160,14 +160,14 @@
                   <span class="supplier">{{ r.preferredSupplierName }}</span>
                 } @else {
                   <span class="supplier-missing"
-                        title="Aucun fournisseur : indispensable pour créer un bon de commande. Utilisez « Modifier » ou assignez-en un dans la fenêtre de création des BC." i18n-title="@@forecasting.pages.aucun.fournisseur.indispensable.pour.creer.un.bo.1b67f284">
+                        title="Aucun fournisseur : indispensable pour créer un bon de commande. Utilisez « Modifier » ou assignez-en un dans la fenêtre de création des BC." i18n-title="@@forecasting.pages.aucun.fournisseur.indispensable.pour.creer.un.bo.1b67f284" i18n="@@forecasting.pages.non.renseigne.e84aead7">
                     <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                     — Non renseigné —
                   </span>
                 }
               </td>
               <td class="num">
-                <div class="stock">
+                <div class="stock" i18n="@@forecasting.pages.rop.7357e3b2">
                   <span class="onhand" [class.zero]="r.currentStockOnHand === 0">
                     {{ r.currentStockOnHand | qtyFmt: r.productUnit }}
                   </span>
@@ -239,7 +239,7 @@
         <button type="button" class="btn btn-secondary"
                 [disabled]="page() === 1"
                 (click)="goToPage(page() - 1)"
-                aria-label="Page précédente" i18n-aria-label="@@forecasting.pages.page.precedente.9e15ded9">
+                aria-label="Page précédente" i18n-aria-label="@@forecasting.pages.page.precedente.9e15ded9" i18n="@@forecasting.pages.precedent.12e3cf6e">
           <i class="pi pi-angle-left" aria-hidden="true"></i> Précédent
         </button>
         <span class="page-info" aria-live="polite">
@@ -248,7 +248,7 @@
         <button type="button" class="btn btn-secondary"
                 [disabled]="page() === pageCount()"
                 (click)="goToPage(page() + 1)"
-                aria-label="Page suivante" i18n-aria-label="@@forecasting.pages.page.suivante.86b1be40">
+                aria-label="Page suivante" i18n-aria-label="@@forecasting.pages.page.suivante.86b1be40" i18n="@@forecasting.pages.suivant.664e15fc">
           Suivant <i class="pi pi-angle-right" aria-hidden="true"></i>
         </button>
       </nav>

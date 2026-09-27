@@ -43,9 +43,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <app-page-header
       [title]="loc_ui_tern_grand_livre_tiers_a3b44e + (ledger()?.thirdPartyName ? ' — ' + ledger()!.thirdPartyName : '')"
-      subtitle="Mouvements d'un tiers avec solde progressif" />
+      subtitle="Mouvements d'un tiers avec solde progressif" i18n-subtitle="@@accounting.third-party-ledger.mouvements.d.un.tiers.avec.solde.progres.285a277f" />
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Période du grand livre tiers">
+      <app-accounting-filter-bar ariaLabel="Période du grand livre tiers" i18n-ariaLabel="@@accounting.third-party-ledger.periode.du.grand.livre.tiers.2a2472f0">
         <div accountingFilterFields class="tpl-toolbar-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="tpl-from" i18n="@@accounting.third-party-ledger.du.84814985">Du</label>
@@ -63,7 +63,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             iconPos="left"
             type="button"
             [routerLink]="['/accounting/auxiliary-balance']"
-            ariaLabel="Retour à la balance auxiliaire" i18n="@@accounting.third-party-ledger.balance.auxiliaire.e2a90270"> Balance auxiliaire </app-button>
+            ariaLabel="Retour à la balance auxiliaire" i18n-ariaLabel="@@accounting.third-party-ledger.retour.a.la.balance.auxiliaire.9855a346" i18n="@@accounting.third-party-ledger.balance.auxiliaire.e2a90270"> Balance auxiliaire </app-button>
           <app-button
             variant="secondary"
             icon="pi pi-refresh"
@@ -71,7 +71,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading() || !thirdPartyId"
-            ariaLabel="Actualiser le grand livre du tiers" i18n="@@accounting.third-party-ledger.actualiser.9d3b2a7d"> Actualiser </app-button>
+            ariaLabel="Actualiser le grand livre du tiers" i18n-ariaLabel="@@accounting.third-party-ledger.actualiser.le.grand.livre.du.tiers.4b66dffd" i18n="@@accounting.third-party-ledger.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !thirdPartyId || (ledger()?.rows?.length ?? 0) === 0"
             (exportFormat)="onExport($event)" />
@@ -82,10 +82,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.third-party-ledger.reessayer.c4f78b12"
       (retry)="load()" />
     @if (ledger(); as l) {
-      <div class="tpl-opening" role="note">
+      <div class="tpl-opening" role="note" i18n="@@accounting.third-party-ledger.solde.d.ouverture.au.3f4dc63e">
         <span class="tpl-opening-label">Solde d'ouverture au {{ fromStr }} :</span>
         <span class="tpl-opening-value" [class.tpl-negative]="l.openingBalance < 0">
           {{ l.openingBalance | number : '1.3-3' }}
@@ -142,7 +142,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr><td [attr.colspan]="hasForeignCurrency() ? 11 : 10" style="text-align:center;padding:2rem">
-          @if (thirdPartyId) { Aucun mouvement sur la période. } @else { Sélectionnez un tiers depuis la balance auxiliaire. }
+          @if (thirdPartyId) {<ng-container i18n="@@accounting.third-party-ledger.aucun.mouvement.sur.la.periode.9d40027a"> Aucun mouvement sur la période. </ng-container>} @else {<ng-container i18n="@@accounting.third-party-ledger.selectionnez.un.tiers.depuis.la.balance.4350652a"> Sélectionnez un tiers depuis la balance auxiliaire. </ng-container>}
         </td></tr>
       </ng-template>
     </p-table>

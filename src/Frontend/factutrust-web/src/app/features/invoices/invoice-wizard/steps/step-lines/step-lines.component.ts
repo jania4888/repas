@@ -103,7 +103,7 @@ interface WizardProductSuggestion {
       <section class="section">
         <div class="section-header">
           <div>
-            <h2 class="section-title">
+            <h2 class="section-title" i18n="@@invoices.invoice-wizard.lignes.de.facturation.73e92d24">
               <i class="pi pi-list"></i>
               Lignes de facturation
             </h2>
@@ -141,7 +141,7 @@ interface WizardProductSuggestion {
         <div class="unmatched-banner" role="alert">
           <i class="pi pi-exclamation-triangle"></i>
           <div class="unmatched-content">
-            <strong>{{ unmatchedLines().length }} ligne(s) à associer à un produit</strong>
+            <strong i18n="@@invoices.invoice-wizard.ligne.s.a.associer.a.un.produit.291ee553">{{ unmatchedLines().length }} ligne(s) à associer à un produit</strong>
             <p i18n="@@invoices.invoice-wizard.ces.articles.ne.sont.pas.relies.a.votre.catalogu.77ca4c77">Ces articles ne sont pas reliés à votre catalogue. Liez chaque ligne à un produit existant ou créez un nouveau produit pour pouvoir émettre la facture.</p>
           </div>
           <p-button
@@ -231,7 +231,7 @@ interface WizardProductSuggestion {
                                       size="sm"
                                       icon="pi-plus"
                                       [iconOnly]="true"
-                                      ariaLabel="Créer un produit"
+                                      ariaLabel="Créer un produit" i18n-ariaLabel="@@invoices.invoice-wizard.creer.un.produit.1ff296f3"
                                       (click)="openQuickCreateProduct(); $event.stopPropagation()"
                                       class="btn-add-product-circle btn-add-product-circle--dropdown" />
                                   </div>
@@ -244,7 +244,7 @@ interface WizardProductSuggestion {
                           variant="outline"
                           size="sm"
                           icon="pi-th-large"
-                          ariaLabel="Choisir une variante"
+                          ariaLabel="Choisir une variante" i18n-ariaLabel="@@invoices.invoice-wizard.choisir.une.variante.8e914309"
                           (click)="variantPickerVisible = true; $event.stopPropagation()"
                           title="Choisir une variante" i18n-title="@@invoices.invoice-wizard.choisir.une.variante.c8ab137c" />
                         <app-button
@@ -252,7 +252,7 @@ interface WizardProductSuggestion {
                           size="sm"
                           icon="pi-plus"
                           [iconOnly]="true"
-                          ariaLabel="Créer un produit"
+                          ariaLabel="Créer un produit" i18n-ariaLabel="@@invoices.invoice-wizard.creer.un.produit.1ff296f3"
                           (click)="openQuickCreateProduct(); $event.stopPropagation()"
                           class="btn-add-product-circle" />
                       </div>
@@ -269,7 +269,7 @@ interface WizardProductSuggestion {
                       <div class="designation-main-row">
                         <span class="designation-main">{{ line.designation }}</span>
                         @if (!line.productId) {
-                          <span class="unmatched-badge" pTooltip="Cette ligne n'est pas associée à un produit du catalogue" i18n-pTooltip="@@invoices.invoice-wizard.cette.ligne.n.est.pas.associee.a.un.produit.du.c.051aa385">
+                          <span class="unmatched-badge" pTooltip="Cette ligne n'est pas associée à un produit du catalogue" i18n-pTooltip="@@invoices.invoice-wizard.cette.ligne.n.est.pas.associee.a.un.produit.du.c.051aa385" i18n="@@invoices.invoice-wizard.a.lier.7027e5e5">
                             <i class="pi pi-exclamation-circle"></i> À lier
                           </span>
                         }

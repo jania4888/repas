@@ -38,10 +38,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <app-page-header
       title="Correction en lot par extourne" i18n-title="@@accounting.mass-reversal.correction.en.lot.par.extourne.a8fc388a"
-      subtitle="Contre-passer des écritures validées — la piste d'audit est préservée, rien n'est modifié" />
+      subtitle="Contre-passer des écritures validées — la piste d'audit est préservée, rien n'est modifié" i18n-subtitle="@@accounting.mass-reversal.contre.passer.des.ecritures.validees.la.61e35c3b" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Période des écritures à corriger">
+      <app-accounting-filter-bar ariaLabel="Période des écritures à corriger" i18n-ariaLabel="@@accounting.mass-reversal.periode.des.ecritures.a.corriger.fb377df4">
         <div accountingFilterFields class="mr-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="mr-from" i18n="@@accounting.mass-reversal.du.84814985">Du</label>
@@ -54,12 +54,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Charger les écritures validées" i18n="@@accounting.mass-reversal.charger.8f860300"> Charger </app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Charger les écritures validées" i18n-ariaLabel="@@accounting.mass-reversal.charger.les.ecritures.validees.36cc82a5" i18n="@@accounting.mass-reversal.charger.8f860300"> Charger </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.mass-reversal.reessayer.c4f78b12" (retry)="load()" />
 
     @if (successMessage(); as msg) {
       <div class="mr-success" role="status"><i class="pi pi-check-circle" aria-hidden="true"></i><span>{{ msg }}</span></div>
@@ -75,22 +75,22 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="mr-action-buttons">
           <app-button variant="danger" icon="pi pi-replay" type="button"
             (click)="confirmReversal()" [disabled]="busy() || selectedIds().length === 0 || !reason.trim()"
-            ariaLabel="Extourner les écritures sélectionnées">
+            ariaLabel="Extourner les écritures sélectionnées" i18n-ariaLabel="@@accounting.mass-reversal.extourner.les.ecritures.selectionnees.096d149f" i18n="@@accounting.mass-reversal.extourner.92243f6c">
             Extourner ({{ selectedIds().length }})
           </app-button>
         </div>
       </div>
-      <p class="mr-help">
-        <ng-container i18n="@@accounting.mass-reversal.chaque.ecriture.selectionnee.recoit.une.700e8092"> Chaque écriture sélectionnée reçoit une </ng-container> <strong i18n="@@accounting.mass-reversal.ecriture.miroir.85100fdb">écriture miroir</strong> qui l'annule ; l'originale
+      <p class="mr-help" i18n="@@accounting.mass-reversal.chaque.ecriture.selectionnee.recoit.une.7552cf93">
+        <ng-container> Chaque écriture sélectionnée reçoit une </ng-container> <strong>écriture miroir</strong> qui l'annule ; l'originale
         reste intacte et marquée « extournée ». Les brouillons et les écritures déjà extournées sont ignorés.
       </p>
     </div>
 
     @if (pendingConfirm()) {
       <div class="card mr-confirm" role="alertdialog">
-        <p class="mr-confirm-text">
-          <ng-container i18n="@@accounting.mass-reversal.extourner.8884c9cd"> Extourner </ng-container> <strong>{{ selectedIds().length }}</strong> écriture(s) avec le motif
-          « {{ reason.trim() }} » ? <strong i18n="@@accounting.mass-reversal.cette.operation.n.est.pas.annulable.75f0df4d">Cette opération n'est pas annulable.</strong>
+        <p class="mr-confirm-text" i18n="@@accounting.mass-reversal.extourner.ecriture.s.avec.le.motif.cette.19fb813e">
+          <ng-container> Extourner </ng-container> <strong>{{ selectedIds().length }}</strong> écriture(s) avec le motif
+          « {{ reason.trim() }} » ? <strong>Cette opération n'est pas annulable.</strong>
         </p>
         <div class="mr-confirm-actions">
           <app-button variant="secondary" type="button" (click)="pendingConfirm.set(false)" [disabled]="busy()" i18n="@@accounting.mass-reversal.annuler.49ba3292">Annuler</app-button>

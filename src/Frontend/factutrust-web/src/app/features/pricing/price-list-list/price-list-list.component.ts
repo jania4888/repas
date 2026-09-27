@@ -45,7 +45,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
 
     <app-page-header
       title="Grilles tarifaires" i18n-title="@@pricing.price-list-list.grilles.tarifaires.21b96006"
-      subtitle="Définissez des jeux de prix par produit, puis affectez-les à vos clients. Un client sans grille reste au tarif catalogue.">
+      subtitle="Définissez des jeux de prix par produit, puis affectez-les à vos clients. Un client sans grille reste au tarif catalogue." i18n-subtitle="@@pricing.price-list-list.definissez.des.jeux.de.prix.par.produit.1a213349">
       @if (canCreate()) {
         <app-button variant="primary" icon="pi-plus" iconPos="left" (clicked)="openCreate()" i18n="@@pricing.price-list-list.nouvelle.grille.a8012b9e"> Nouvelle grille </app-button>
       }
@@ -57,7 +57,7 @@ import { PERMISSIONS } from '@core/config/permission-keys';
       <app-empty-state
         icon="pi-tags"
         title="Aucune grille tarifaire" i18n-title="@@pricing.price-list-list.aucune.grille.tarifaire.0625f0f9"
-        message="Créez une grille pour appliquer des prix négociés à un groupe de clients.">
+        message="Créez une grille pour appliquer des prix négociés à un groupe de clients." i18n-message="@@pricing.price-list-list.creez.une.grille.pour.appliquer.des.prix.f422ab1c">
       </app-empty-state>
     } @else {
       <div class="ft-table-card">

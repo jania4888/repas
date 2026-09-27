@@ -61,7 +61,7 @@ import {
     <div class="cash-forecast">
       <app-page-header
         title="Trésorerie prévisionnelle par IA" i18n-title="@@treasury.cash-forecast.tresorerie.previsionnelle.par.ia.a595f345"
-        subtitle="Prévisions basées sur vos échéances clients, dettes fournisseurs, paie et obligations fiscales">
+        subtitle="Prévisions basées sur vos échéances clients, dettes fournisseurs, paie et obligations fiscales" i18n-subtitle="@@treasury.cash-forecast.previsions.basees.sur.vos.echeances.clie.a41baaad">
         <div class="header-actions">
           <label class="horizon">
             <span i18n="@@treasury.cash-forecast.horizon.de.prevision.c1cfc9dd">Horizon de prévision</span>
@@ -140,20 +140,20 @@ import {
           <div class="main-grid__left">
             <app-chart-card
               title="Évolution de la trésorerie prévisionnelle" i18n-title="@@treasury.cash-forecast.evolution.de.la.tresorerie.previsionnelle.d0cdb430"
-              subtitle="Solde de fin de mois et intervalle de prévision">
+              subtitle="Solde de fin de mois et intervalle de prévision" i18n-subtitle="@@treasury.cash-forecast.solde.de.fin.de.mois.et.intervalle.de.pr.b50ffd57">
               <div chart-actions>
                 <button
                   type="button"
                   class="toggle"
                   [class.toggle--active]="view() === 'chart'"
-                  (click)="view.set('chart')">
+                  (click)="view.set('chart')" i18n="@@treasury.cash-forecast.graphique.295411c5">
                   <i class="pi pi-chart-line" aria-hidden="true"></i> Graphique
                 </button>
                 <button
                   type="button"
                   class="toggle"
                   [class.toggle--active]="view() === 'table'"
-                  (click)="view.set('table')">
+                  (click)="view.set('table')" i18n="@@treasury.cash-forecast.tableau.1bae17dd">
                   <i class="pi pi-table" aria-hidden="true"></i> Tableau
                 </button>
               </div>
@@ -236,7 +236,7 @@ import {
 
             <app-dashboard-panel
               title="Facteurs d'influence détectés" i18n-title="@@treasury.cash-forecast.facteurs.d.influence.detectes.c5abdb89"
-              subtitle="Structure des flux de la période">
+              subtitle="Structure des flux de la période" i18n-subtitle="@@treasury.cash-forecast.structure.des.flux.de.la.periode.d229a647">
               @if (influenceFactors().length === 0) {
                 <p class="muted" i18n="@@treasury.cash-forecast.aucun.facteur.marquant.sur.la.periode.d70a6e1f">Aucun facteur marquant sur la période.</p>
               } @else {
@@ -265,7 +265,7 @@ import {
           </div>
 
           <aside class="main-grid__right">
-            <app-dashboard-panel title="Position de trésorerie" i18n-title="@@treasury.cash-forecast.position.de.tresorerie.c8a0928a" subtitle="Solde projeté en fin d'horizon">
+            <app-dashboard-panel title="Position de trésorerie" i18n-title="@@treasury.cash-forecast.position.de.tresorerie.c8a0928a" subtitle="Solde projeté en fin d'horizon" i18n-subtitle="@@treasury.cash-forecast.solde.projete.en.fin.d.horizon.8768ac9b">
               <app-cash-position-gauge
                 [balance]="data().closingBalance"
                 [thresholds]="data().thresholds"
@@ -283,7 +283,7 @@ import {
                         <strong>{{ a.title }}</strong>
                         @if (a.detail) { <p class="muted">{{ a.detail }}</p> }
                         @if (a.estimatedBalance !== null && a.estimatedBalance !== undefined) {
-                          <p class="muted">Solde estimé : {{ amount(a.estimatedBalance) }}</p>
+                          <p class="muted" i18n="@@treasury.cash-forecast.solde.estime.c7f638fa">Solde estimé : {{ amount(a.estimatedBalance) }}</p>
                         }
                       </div>
                       <p-tag [value]="severityLabel(a.severity)" [severity]="tone(a.severity)" />
@@ -302,7 +302,7 @@ import {
               }
             </app-dashboard-panel>
 
-            <app-dashboard-panel title="Encaissements à venir" i18n-title="@@treasury.cash-forecast.encaissements.a.venir.71835f34" subtitle="Les cinq plus proches">
+            <app-dashboard-panel title="Encaissements à venir" i18n-title="@@treasury.cash-forecast.encaissements.a.venir.71835f34" subtitle="Les cinq plus proches" i18n-subtitle="@@treasury.cash-forecast.les.cinq.plus.proches.6ddf55c7">
               @if (data().upcomingInflows.length === 0) {
                 <p class="muted" i18n="@@treasury.cash-forecast.aucun.encaissement.attendu.sur.la.periode.49910747">Aucun encaissement attendu sur la période.</p>
               } @else {
@@ -360,7 +360,7 @@ import {
 
             <p class="computed-at">
               <ng-container i18n="@@treasury.cash-forecast.calcule.le.date.heure"> Calculé le {{ data().computedAt | date: 'dd/MM/yyyy' }} à {{ data().computedAt | date: 'HH:mm' }} </ng-container>
-              @if (data().aiAdjustmentApplied) { · pondéré par l'IA }
+              @if (data().aiAdjustmentApplied) {<ng-container i18n="@@treasury.cash-forecast.pondere.par.l.ia.f657428b"> · pondéré par l'IA </ng-container>}
             </p>
           </aside>
         </div>
@@ -368,9 +368,9 @@ import {
         <app-empty-state
           icon="pi-chart-line"
           title="Aucune projection disponible" i18n-title="@@treasury.cash-forecast.aucune.projection.disponible.3517bf5c"
-          description="Lancez un premier calcul pour obtenir votre trésorerie prévisionnelle."
+          description="Lancez un premier calcul pour obtenir votre trésorerie prévisionnelle." i18n-description="@@treasury.cash-forecast.lancez.un.premier.calcul.pour.obtenir.vo.3d10a879"
           [showAction]="canManage()"
-          actionLabel="Calculer la prévision"
+          actionLabel="Calculer la prévision" i18n-actionLabel="@@treasury.cash-forecast.calculer.la.prevision.0f653c00"
           (actionClick)="recompute()" />
       }
     </div>

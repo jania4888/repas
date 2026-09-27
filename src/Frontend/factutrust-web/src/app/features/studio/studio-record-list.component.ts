@@ -62,7 +62,7 @@ import { STUDIO_RUNTIME_LABELS } from './shared/studio-runtime-labels';
 
         <div class="ft-filters">
           <div class="ft-filters__header">
-            <h3 class="ft-filters__title"><i class="pi pi-search"></i> Recherche</h3>
+            <h3 class="ft-filters__title" i18n="@@studio.studio-record-list.recherche.5d0766ce"><i class="pi pi-search"></i> Recherche</h3>
           </div>
           <div class="studio-toolbar">
             <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="@@studio.studio-record-list.rechercher.1d12cdfb" class="studio-search-input"

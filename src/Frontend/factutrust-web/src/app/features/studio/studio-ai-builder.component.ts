@@ -57,7 +57,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
   template: `
     <app-studio-page-shell
       title="Assistant Studio (IA)" i18n-title="@@studio.studio-ai-builder.assistant.studio.ia.b0a6b182"
-      subtitle="Décrivez un système ou une table — l'IA crée tables, relations, formulaires et données de référence."
+      subtitle="Décrivez un système ou une table — l'IA crée tables, relations, formulaires et données de référence." i18n-subtitle="@@studio.studio-ai-builder.decrivez.un.systeme.ou.une.table.l.ia.cr.9570ea01"
       [breadcrumbs]="breadcrumbs">
 
       <div class="sab-layout">
@@ -79,7 +79,7 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
                 <div class="sab-report__head">
                   <div>
                     <h4>{{ report.title }}</h4>
-                    <p class="sab-report__hint">Source : {{ report.sourceLabel }} — calculé à l'instant, rien n'est enregistré.</p>
+                    <p class="sab-report__hint" i18n="@@studio.studio-ai-builder.source.calcule.a.l.instant.rien.n.est.en.157af0be">Source : {{ report.sourceLabel }} — calculé à l'instant, rien n'est enregistré.</p>
                   </div>
                   <button pButton type="button" class="p-button-sm p-button-outlined" icon="fa-solid fa-floppy-disk"
                     label="Enregistrer comme état" i18n-label="@@studio.studio-ai-builder.enregistrer.comme.etat.7fe75c33" [disabled]="busy()" (click)="saveReportAsState(report)"></button>
@@ -101,10 +101,10 @@ type BuilderState = 'idle' | 'planning' | 'awaiting_confirmation' | 'executing';
                   </div>
                 </div>
                 @if (failure.title || failure.periodLabel) {
-                  <p class="sab-failure__attempt">
+                  <p class="sab-failure__attempt"><ng-container i18n="@@studio.studio-ai-builder.tente.cdd7ff8b">
                     Tenté :
-                    @if (failure.title) { <strong>{{ failure.title }}</strong> }
-                    @if (failure.periodLabel) { <span> — période : {{ failure.periodLabel }}</span> }
+                    </ng-container>@if (failure.title) { <strong>{{ failure.title }}</strong> }
+                    @if (failure.periodLabel) { <span i18n="@@studio.studio-ai-builder.periode.a4dff3ed"> — période : {{ failure.periodLabel }}</span> }
                   </p>
                 }
                 <p class="sab-failure__hint">{{ failureView(failure).hint }}</p>

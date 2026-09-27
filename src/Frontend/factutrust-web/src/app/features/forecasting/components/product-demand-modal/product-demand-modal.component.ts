@@ -35,11 +35,11 @@ import { ProductDemandForecast } from '../../models/forecasting.models';
                 <span class="label" i18n="@@forecasting.components.stock.actuel.294a897a">Stock actuel</span>
                 <span class="value" [class.low-stock]="isLowStock(f)">{{ f.currentStockOnHand | number:'1.0-2' }}</span>
                 @if (f.daysOfStockRemaining !== null) {
-                  <span class="hint">{{ f.daysOfStockRemaining | number:'1.0-0' }} jour(s) de stock</span>
+                  <span class="hint" i18n="@@forecasting.components.jour.s.de.stock.1d02a123">{{ f.daysOfStockRemaining | number:'1.0-0' }} jour(s) de stock</span>
                 }
               </div>
-              <div class="kpi">
-                <span class="label" i18n="@@forecasting.components.reappro.suggere.0611eb76">Réappro suggéré</span>
+              <div class="kpi" i18n="@@forecasting.components.reappro.suggere.confiance.de7d70b4">
+                <span class="label">Réappro suggéré</span>
                 <span class="value accent">{{ f.suggestedReplenishmentQty | number:'1.0-2' }}</span>
                 <span class="hint">Confiance {{ f.confidencePercent | number:'1.0-1' }} %</span>
               </div>
@@ -51,7 +51,7 @@ import { ProductDemandForecast } from '../../models/forecasting.models';
             </div>
 
             @if (isLowStock(f)) {
-              <div class="alert">
+              <div class="alert" i18n="@@forecasting.components.le.stock.actuel.est.inferieur.a.la.deman.7c6d1578">
                 <i class="pi pi-exclamation-triangle"></i>
                 Le stock actuel est inférieur à la demande prévue. Un réapprovisionnement est recommandé.
               </div>

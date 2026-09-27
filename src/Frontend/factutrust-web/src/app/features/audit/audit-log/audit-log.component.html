@@ -1,4 +1,4 @@
-<app-page-header title="Journal d'audit" i18n-title="@@audit.audit-log.journal.d.audit.52309db1" subtitle="Piste d'audit et vérification d'intégrité" />
+<app-page-header title="Journal d'audit" i18n-title="@@audit.audit-log.journal.d.audit.52309db1" subtitle="Piste d'audit et vérification d'intégrité" i18n-subtitle="@@audit.audit-log.piste.d.audit.et.verification.d.integrit.b4ca5015" />
 
 <div class="audit-toolbar card-like">
   <button
@@ -12,9 +12,9 @@
       <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
     } @else {
       <i class="pi pi-shield" aria-hidden="true"></i>
-    }
+    }<ng-container i18n="@@audit.audit-log.verifier.la.chaine.sha.256.71b0e68f">
     Vérifier la chaîne SHA-256
-  </button>
+  </ng-container></button>
   @if (verifyError()) {
     <p-message severity="error" [text]="verifyError()!" styleClass="audit-verify-msg" />
   }
@@ -110,11 +110,11 @@
     </label>
   </div>
   <div class="audit-filters-actions">
-    <button type="button" class="btn btn-secondary" (click)="applyFilters()">
+    <button type="button" class="btn btn-secondary" (click)="applyFilters()" i18n="@@audit.audit-log.appliquer.les.filtres.573ba568">
       <i class="pi pi-filter" aria-hidden="true"></i>
       Appliquer les filtres
     </button>
-    <button type="button" class="btn btn-outline-secondary" (click)="resetFilters()">
+    <button type="button" class="btn btn-outline-secondary" (click)="resetFilters()" i18n="@@audit.audit-log.reinitialiser.319b1817">
       <i class="pi pi-times" aria-hidden="true"></i>
       Réinitialiser
     </button>

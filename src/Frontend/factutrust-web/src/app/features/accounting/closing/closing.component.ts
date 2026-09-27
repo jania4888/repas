@@ -32,15 +32,15 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
   ],
   providers: [ConfirmationService],
   template: `
-    <app-page-header title="Clôture des périodes" i18n-title="@@accounting.closing.cloture.des.periodes.23eeb3ca" subtitle="Verrouillage mensuel des écritures" />
+    <app-page-header title="Clôture des périodes" i18n-title="@@accounting.closing.cloture.des.periodes.23eeb3ca" subtitle="Verrouillage mensuel des écritures" i18n-subtitle="@@accounting.closing.verrouillage.mensuel.des.ecritures.9b3a6eed" />
     <app-accounting-correction-banner />
     <p-confirmDialog />
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="refresh()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.closing.reessayer.c4f78b12" (retry)="refresh()" />
     <app-accounting-status-banner variant="success" [message]="success() ?? ''" />
 
     @if (lockedYears().length > 0) {
-      <div class="closing-locks" role="note">
+      <div class="closing-locks" role="note" i18n="@@accounting.closing.exercice.s.verrouille.s.definitivement.c.77083646">
         <i class="pi pi-lock" aria-hidden="true"></i>
         <span>Exercice(s) verrouillé(s) définitivement : {{ lockedYearsLabel() }}. Ces exercices ne peuvent plus être rouverts ni modifiés.</span>
       </div>
@@ -51,12 +51,12 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
         <label class="field-label" for="fy-close" i18n="@@accounting.closing.exercice.e171e2b0">Exercice</label>
         <input id="fy-close" type="number" [(ngModel)]="fiscalYearInput" min="2000" max="2100"
           class="closing-input" />
-        <a class="btn btn-outline-secondary" [routerLink]="['/accounting/pre-closing']" [queryParams]="{ }">
+        <a class="btn btn-outline-secondary" [routerLink]="['/accounting/pre-closing']" [queryParams]="{ }" i18n="@@accounting.closing.controles.de.pre.cloture.bb15f8fd">
           <i class="pi pi-list-check" aria-hidden="true"></i> Contrôles de pré-clôture
         </a>
         <button type="button" class="btn btn-warning" (click)="confirmCloseYear()" [disabled]="loading() || isYearLocked(fiscalYearInput)" i18n="@@accounting.closing.cloturer.l.exercice.cd0d9b56"> Clôturer l'exercice </button>
         <button type="button" class="btn btn-primary" (click)="confirmGenerateOpeningEntries()" [disabled]="loading() || isYearLocked(fiscalYearInput)" i18n="@@accounting.closing.ecritures.d.a.nouveau.d0348a61"> Ecritures d'a-nouveau </button>
-        <button type="button" class="btn btn-outline-danger" (click)="confirmLockYear()" [disabled]="loading() || isYearLocked(fiscalYearInput)">
+        <button type="button" class="btn btn-outline-danger" (click)="confirmLockYear()" [disabled]="loading() || isYearLocked(fiscalYearInput)" i18n="@@accounting.closing.verrouiller.definitivement.a87416b3">
           <i class="pi pi-lock" aria-hidden="true"></i> Verrouiller définitivement
         </button>
         <button type="button" class="btn btn-outline-primary" (click)="exportFec()" [disabled]="loading() || exportingFec()">
@@ -64,9 +64,9 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
             <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
           } @else {
             <i class="pi pi-download" aria-hidden="true"></i>
-          }
+          }<ng-container i18n="@@accounting.closing.exporter.fec.088bf139">
           Exporter FEC
-        </button>
+        </ng-container></button>
         <app-analyze-with-ai-button
           screenId="accounting-closing"
           [payloadBuilder]="buildClosingAnalyzePayload"
@@ -97,7 +97,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
             @if (!p.isClosed) {
               <button type="button" class="btn btn-sm btn-outline-danger" (click)="confirmClose(p.id, p.month, p.fiscalYear)" [disabled]="loading()" i18n="@@accounting.closing.cloturer.e9f075c1">Clôturer</button>
             } @else if (isYearLocked(p.fiscalYear)) {
-              <span class="closing-locked-tag"><i class="pi pi-lock" aria-hidden="true"></i> Verrouillé</span>
+              <span class="closing-locked-tag" i18n="@@accounting.closing.verrouille.e63b99c3"><i class="pi pi-lock" aria-hidden="true"></i> Verrouillé</span>
             } @else {
               <button type="button" class="btn btn-sm btn-outline-secondary" (click)="confirmReopen(p.id, p.month, p.fiscalYear)" [disabled]="loading()" i18n="@@accounting.closing.reouvrir.10968fea">Réouvrir</button>
             }

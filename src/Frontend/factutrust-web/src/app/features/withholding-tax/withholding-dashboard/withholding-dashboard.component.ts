@@ -21,28 +21,28 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
               <option [ngValue]="y">{{ y }}</option>
             }
           </select>
-          <a routerLink="/withholding-tax/tej-export" class="btn btn-primary">
+          <a routerLink="/withholding-tax/tej-export" class="btn btn-primary" i18n="@@withholding-tax.withholding-dashboard.export.tej.81f73e03">
             <i class="fa-solid fa-file-export"></i> Export TEJ
           </a>
         </div>
       </div>
 
       @if (loading) {
-        <div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
+        <div class="loading-state" i18n="@@withholding-tax.withholding-dashboard.chargement.fbee6e98"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
       }
 
       @if (data) {
         <!-- KPI row -->
         <div class="kpi-row">
-          <div class="kpi-card">
+          <div class="kpi-card" i18n="@@withholding-tax.withholding-dashboard.total.retenues.tnd.3b3de9ab">
             <span class="kpi-label">Total retenues ({{ data.dashboardYear }})</span>
             <span class="kpi-value">{{ data.totalWithheldForYear | number:'1.3-3' }}</span>
-            <span class="kpi-unit" i18n="@@withholding-tax.withholding-dashboard.tnd.51da21a7">TND</span>
+            <span class="kpi-unit">TND</span>
           </div>
-          <div class="kpi-card">
+          <div class="kpi-card" i18n="@@withholding-tax.withholding-dashboard.ff.soldees.avec.rs.base.sur.la.date.de.s.ae8af87e">
             <span class="kpi-label">FF soldées avec RS ({{ data.dashboardYear }})</span>
             <span class="kpi-value">{{ data.totalCertificatesForYear }}</span>
-            <span class="kpi-hint" i18n="@@withholding-tax.withholding-dashboard.base.sur.la.date.de.solde.paidat.agrege.pour.le..7bf088bb">Basé sur la date de solde (PaidAt), agrégé pour le tableau</span>
+            <span class="kpi-hint">Basé sur la date de solde (PaidAt), agrégé pour le tableau</span>
           </div>
           <div class="kpi-card kpi-card-muted">
             <span class="kpi-label" i18n="@@withholding-tax.withholding-dashboard.retenues.subies.ventes.8d65f638">Retenues subies (ventes)</span>
@@ -63,7 +63,7 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
         <!-- Monthly breakdown -->
         @if (data.monthlyBreakdown.length) {
           <div class="card">
-            <h3>Répartition mensuelle ({{ data.dashboardYear }})</h3>
+            <h3 i18n="@@withholding-tax.withholding-dashboard.repartition.mensuelle.5e9671af">Répartition mensuelle ({{ data.dashboardYear }})</h3>
             <div class="table-wrapper">
               <table>
                 <thead>
@@ -102,7 +102,7 @@ import { WithholdingTaxService, WithholdingDashboardDto } from '@core/services/w
 
         @if (data.clientWithholdingSubieByMonth.length) {
           <div class="card card-muted">
-            <h3>Retenues subies par mois ({{ data.dashboardYear }})</h3>
+            <h3 i18n="@@withholding-tax.withholding-dashboard.retenues.subies.par.mois.e1c7fb56">Retenues subies par mois ({{ data.dashboardYear }})</h3>
             <div class="table-wrapper">
               <table>
                 <thead>

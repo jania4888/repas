@@ -45,7 +45,7 @@ const MONTH_NAMES_FR = [
     ButtonComponent
   ],
   template: `
-    <app-page-header title="Objectifs commerciaux" i18n-title="@@crm.targets.objectifs.commerciaux.48084d31" subtitle="Suivi mensuel par commercial" />
+    <app-page-header title="Objectifs commerciaux" i18n-title="@@crm.targets.objectifs.commerciaux.48084d31" subtitle="Suivi mensuel par commercial" i18n-subtitle="@@crm.targets.suivi.mensuel.par.commercial.05064619" />
 
     <div class="card p-3 mb-3 targets-toolbar">
       <div class="toolbar-row">
@@ -82,9 +82,9 @@ const MONTH_NAMES_FR = [
           styleClass="toolbar-dropdown"
           (onChange)="load()"
           [attr.aria-label]="'Filtrer par commercial'"></p-select>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser" i18n="@@crm.targets.actualiser.9d3b2a7d"> Actualiser </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser" i18n-ariaLabel="@@crm.targets.actualiser.e78a27c1" i18n="@@crm.targets.actualiser.9d3b2a7d"> Actualiser </app-button>
         @if (canManage()) {
-          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvel objectif" i18n="@@crm.targets.nouvel.objectif.3f57fc8a"> Nouvel objectif </app-button>
+          <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvel objectif" i18n-ariaLabel="@@crm.targets.nouvel.objectif.5aa4938b" i18n="@@crm.targets.nouvel.objectif.3f57fc8a"> Nouvel objectif </app-button>
         }
         <app-button
           variant="outline"
@@ -93,7 +93,7 @@ const MONTH_NAMES_FR = [
           type="button"
           (click)="exportCsv()"
           [disabled]="items().length === 0"
-          ariaLabel="Exporter en CSV" i18n="@@crm.targets.export.csv.5755f9ac"> Export CSV </app-button>
+          ariaLabel="Exporter en CSV" i18n-ariaLabel="@@crm.targets.exporter.en.csv.91e4444f" i18n="@@crm.targets.export.csv.5755f9ac"> Export CSV </app-button>
       </div>
     </div>
 
@@ -149,7 +149,7 @@ const MONTH_NAMES_FR = [
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-pencil"
-                  ariaLabel="Modifier l’objectif"
+                  ariaLabel="Modifier l’objectif" i18n-ariaLabel="@@crm.targets.modifier.l.objectif.08b951b1"
                   title="Modifier" i18n-title="@@crm.targets.modifier.f260e757"
                   [iconAlwaysVisible]="true"
                   (click)="openEdit(t)"></app-button>
@@ -158,7 +158,7 @@ const MONTH_NAMES_FR = [
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-trash"
-                  ariaLabel="Supprimer l’objectif"
+                  ariaLabel="Supprimer l’objectif" i18n-ariaLabel="@@crm.targets.supprimer.l.objectif.73af10e2"
                   title="Supprimer" i18n-title="@@crm.targets.supprimer.1acfc1c7"
                   [iconAlwaysVisible]="true"
                   (click)="confirmDelete(t)"></app-button>
@@ -188,7 +188,7 @@ const MONTH_NAMES_FR = [
               <p class="empty-title" i18n="@@crm.targets.aucun.objectif.pour.ces.criteres.5b8e7098">Aucun objectif pour ces critères</p>
               <p class="empty-hint" i18n="@@crm.targets.definissez.un.objectif.de.vente.par.commercial.e.9246bfad">Définissez un objectif de vente par commercial et par mois pour suivre la performance.</p>
               @if (canManage()) {
-                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer un objectif" i18n="@@crm.targets.nouvel.objectif.3f57fc8a"> Nouvel objectif </app-button>
+                <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer un objectif" i18n-ariaLabel="@@crm.targets.creer.un.objectif.975f8619" i18n="@@crm.targets.nouvel.objectif.3f57fc8a"> Nouvel objectif </app-button>
               }
             </div>
           </td>
@@ -209,11 +209,11 @@ const MONTH_NAMES_FR = [
             <div class="targets-panel-header-text">
               <h2 id="targets-panel-title">{{ editingTarget() ? loc_ui_tern_modifier_l_objectif_009458 : loc_ui_tern_nouvel_objectif_3f57fc }}</h2>
               <p class="targets-panel-subtitle">
-                @if (editingTarget()) {
+                @if (editingTarget()) {<ng-container i18n="@@crm.targets.edition.2af621e7">
                   Édition · {{ editingTarget()!.userName }} — {{ monthLabel(editingTarget()!.month) }} {{ editingTarget()!.year }}
-                } @else {
+                </ng-container>} @else {<ng-container i18n="@@crm.targets.creation.objectif.mensuel.par.commercial.b7f12b70">
                   Création · Objectif mensuel par commercial
-                }
+                </ng-container>}
               </p>
             </div>
             <button
@@ -311,7 +311,7 @@ const MONTH_NAMES_FR = [
           </div>
           <div class="targets-panel-footer">
             <div class="targets-panel-footer-actions">
-              <app-button variant="ghost" size="sm" type="button" (click)="closeTargetsPanel()" ariaLabel="Annuler" i18n="@@crm.targets.annuler.49ba3292">Annuler</app-button>
+              <app-button variant="ghost" size="sm" type="button" (click)="closeTargetsPanel()" ariaLabel="Annuler" i18n-ariaLabel="@@crm.targets.annuler.e063e8ff" i18n="@@crm.targets.annuler.49ba3292">Annuler</app-button>
               @if (editingTarget()) {
                 <app-button
                   variant="primary"

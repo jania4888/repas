@@ -36,7 +36,7 @@ import {
 
     <app-page-header
       title="Modèles de documents" i18n-title="@@settings.templates.modeles.de.documents.4875ffe8"
-      subtitle="Choisissez le modèle visuel utilisé pour imprimer chaque type de document">
+      subtitle="Choisissez le modèle visuel utilisé pour imprimer chaque type de document" i18n-subtitle="@@settings.templates.choisissez.le.modele.visuel.utilise.pour.c824d73f">
       <div class="header-actions">
         <p-button label="Retour" i18n-label="@@settings.templates.retour.e5befb1f" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
         @if (canUpdate()) {
@@ -92,7 +92,7 @@ import {
         <!-- Aperçu live -->
         <div class="preview-pane">
           <div class="preview-toolbar">
-            <span>Aperçu — {{ selectedTemplateName() }}</span>
+            <span i18n="@@settings.templates.apercu.d125936c">Aperçu — {{ selectedTemplateName() }}</span>
             @if (previewLoading()) { <i class="pi pi-spin pi-spinner"></i> }
           </div>
           @if (previewUrl()) {

@@ -37,7 +37,7 @@ import { firstValueFrom } from 'rxjs';
         </div>
       </header>
 
-      <nav class="tabs" role="tablist">
+      <nav class="tabs" role="tablist"><ng-container i18n="@@forecasting.pages.prevision.ca.reapprovisionnement.promoti.71a1b88c">
         <a routerLink="revenue" routerLinkActive="active" role="tab">
           <i class="pi pi-chart-line"></i> Prévision CA
         </a>
@@ -50,28 +50,28 @@ import { firstValueFrom } from 'rxjs';
         <a routerLink="abc-xyz" routerLinkActive="active" role="tab">
           <i class="pi pi-th-large"></i> ABC / XYZ
         </a>
-        @if (canViewTreasuryForecast()) {
-          <a routerLink="treasury" routerLinkActive="active" role="tab">
+        </ng-container>@if (canViewTreasuryForecast()) {
+          <a routerLink="treasury" routerLinkActive="active" role="tab" i18n="@@forecasting.pages.tresorerie.c2aca9f4">
             <i class="pi pi-wallet"></i> Trésorerie
           </a>
         }
       </nav>
 
       @if (audit(); as a) {
-        <div class="audit-bar" [class.audit-error]="!a.success">
+        <div class="audit-bar" [class.audit-error]="!a.success"><ng-container i18n="@@forecasting.pages.dernier.calcul.s.classif.reappros.promos.f7f068fe">
           <i class="pi" [class.pi-check-circle]="a.success" [class.pi-exclamation-circle]="!a.success"></i>
           <span>Dernier calcul : {{ a.startedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
+          <span class="audit-sep">·</span>
           <span>{{ (a.durationMs / 1000).toFixed(1) }}s</span>
-          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
+          <span class="audit-sep">·</span>
           <span>{{ a.classificationsUpdated }} classif.</span>
-          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
+          <span class="audit-sep">·</span>
           <span>{{ a.replenishmentsGenerated }} réappros</span>
-          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
+          <span class="audit-sep">·</span>
           <span>{{ a.promotionsGenerated }} promos</span>
-          <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
+          <span class="audit-sep">·</span>
           <span>{{ a.triggerType === 'manual' ? loc_ui_tern_manuel_6c1cc0 : loc_ui_tern_automatique_f8a3c3 }}</span>
-          @if (!a.success && a.errorMessage) {
+          </ng-container>@if (!a.success && a.errorMessage) {
             <span class="audit-sep" i18n="@@forecasting.pages.text.1fdf0d90">·</span>
             <span class="audit-err-msg">{{ a.errorMessage }}</span>
           }

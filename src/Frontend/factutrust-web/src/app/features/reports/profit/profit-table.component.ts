@@ -9,9 +9,9 @@ import { CommercialProfitReportRow } from '@core/services/reports-api.service';
   imports: [CommonModule, TableModule],
   template: `
     @if (loading) {
-      <div class="loading-placeholder"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
+      <div class="loading-placeholder" i18n="@@reports.profit.chargement.4bf1fb6b"><i class="pi pi-spin pi-spinner"></i> Chargement...</div>
     } @else if (!rows.length) {
-      <div class="empty-placeholder"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
+      <div class="empty-placeholder" i18n="@@reports.profit.aucune.donnee.pour.cette.periode.174260ce"><i class="pi pi-info-circle"></i> Aucune donnée pour cette période.</div>
     } @else {
       <div role="region" [attr.aria-label]="mode === 'line' ? loc_ui_tern_benefice_par_ligne_fbe640 : mode === 'piece' ? loc_ui_tern_benefice_par_piece_929041 : mode === 'product' ? loc_ui_tern_benefice_par_produit_2e34eb : loc_ui_tern_benefice_mensuel_65f82a">
         <p-table [value]="rows" styleClass="p-datatable-sm reports-table">

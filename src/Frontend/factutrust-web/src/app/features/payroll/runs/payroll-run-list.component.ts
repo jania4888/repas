@@ -65,7 +65,7 @@ import { PayrollConsultBannerComponent, PayrollEmptyStateComponent, PayrollAmoun
         title="Aucun cycle de paie" i18n-title="@@payroll.runs.aucun.cycle.de.paie.a0557f41"
         [description]="emptyDescription()"
         [showAction]="canRun() && !loading() && !currentMonthExists()"
-        actionLabel="Créer le cycle du mois courant"
+        actionLabel="Créer le cycle du mois courant" i18n-actionLabel="@@payroll.runs.creer.le.cycle.du.mois.courant.98f6496d"
         (actionClick)="createCurrentMonth()" />
     }
 

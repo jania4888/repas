@@ -28,7 +28,7 @@ import { ToastModule } from 'primeng/toast';
     <p-toast></p-toast>
     <app-studio-page-shell
       [title]="(reportId ? loc_ui_tern_modifier_f260e7 : loc_ui_tern_nouveau_b9676c) + loc_ui_tern_rapport_fe9579"
-      subtitle="Configurez source, filtres, agrégations et aperçu."
+      subtitle="Configurez source, filtres, agrégations et aperçu." i18n-subtitle="@@studio.studio-report-designer.configurez.source.filtres.agregations.et.d5f4c2e5"
       [breadcrumbs]="breadcrumbs()">
       <div studioActions class="studio-head-actions">
         <button pButton type="button" label="Aperçu" i18n-label="@@studio.studio-report-designer.apercu.f0f53004" icon="fa-solid fa-play" class="p-button-outlined" (click)="preview()"></button>

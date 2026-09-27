@@ -60,24 +60,24 @@ interface AggregationOption {
       <div class="edit-block">
         <h4>{{ editingId ? loc_ui_tern_modifier_la_metrique_4071da : loc_ui_tern_nouvelle_metrique_e1b093 }}</h4>
         <div class="grid">
-          <label>Code *
-            <input class="ft-input" [(ngModel)]="form.code" name="metricCode" [disabled]="!!editingId" />
+          <label><ng-container i18n="@@recurring-contracts.components.code.35c17344">Code *
+            </ng-container><input class="ft-input" [(ngModel)]="form.code" name="metricCode" [disabled]="!!editingId" />
           </label>
-          <label>Nom *
-            <input class="ft-input" [(ngModel)]="form.name" name="metricName" />
+          <label><ng-container i18n="@@recurring-contracts.components.nom.463a6959">Nom *
+            </ng-container><input class="ft-input" [(ngModel)]="form.name" name="metricName" />
           </label>
-          <label>Unité *
-            <input class="ft-input" [(ngModel)]="form.unit" name="metricUnit" placeholder="ex. appels, Go, utilisateurs" i18n-placeholder="@@recurring-contracts.components.ex.appels.go.utilisateurs.f6d48800" />
+          <label><ng-container i18n="@@recurring-contracts.components.unite.99101743">Unité *
+            </ng-container><input class="ft-input" [(ngModel)]="form.unit" name="metricUnit" placeholder="ex. appels, Go, utilisateurs" i18n-placeholder="@@recurring-contracts.components.ex.appels.go.utilisateurs.f6d48800" />
           </label>
-          <label>Mode d'agrégation
-            <select class="ft-input" [(ngModel)]="form.aggregationMode" name="metricAggregation">
+          <label><ng-container i18n="@@recurring-contracts.components.mode.d.agregation.8270dc3f">Mode d'agrégation
+            </ng-container><select class="ft-input" [(ngModel)]="form.aggregationMode" name="metricAggregation">
               @for (opt of aggregationOptions; track opt.value) {
                 <option [ngValue]="opt.value">{{ opt.label }}</option>
               }
             </select>
           </label>
-          <label>Produit lié
-            <select class="ft-input" [(ngModel)]="form.productId" name="metricProduct">
+          <label><ng-container i18n="@@recurring-contracts.components.produit.lie.141ee81e">Produit lié
+            </ng-container><select class="ft-input" [(ngModel)]="form.productId" name="metricProduct">
               <option [ngValue]="null" i18n="@@recurring-contracts.components.aucun.67323ce2">— Aucun —</option>
               @for (p of products; track p.id) {
                 <option [ngValue]="p.id">{{ p.code }} — {{ p.name }}</option>
@@ -85,9 +85,9 @@ interface AggregationOption {
             </select>
           </label>
           <label class="checkbox-label">
-            <input type="checkbox" [(ngModel)]="form.isActive" name="metricActive" />
+            <input type="checkbox" [(ngModel)]="form.isActive" name="metricActive" /><ng-container i18n="@@recurring-contracts.components.metrique.active.83bddb37">
             Métrique active
-          </label>
+          </ng-container></label>
         </div>
       </div>
 

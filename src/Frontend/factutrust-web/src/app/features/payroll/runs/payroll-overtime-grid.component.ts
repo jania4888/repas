@@ -34,7 +34,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
   template: `
     <app-payroll-section
       title="Éléments variables — Heures supplémentaires" i18n-title="@@payroll.runs.elements.variables.heures.supplementaires.d2df2e32"
-      subtitle="Montant = (salaire base ÷ 208 en régime 48 h, ÷ 173,33 en régime 40 h) × heures × taux majoré. Override possible."
+      subtitle="Montant = (salaire base ÷ 208 en régime 48 h, ÷ 173,33 en régime 40 h) × heures × taux majoré. Override possible." i18n-subtitle="@@payroll.runs.montant.salaire.base.208.en.regime.48.h.1c8e5c74"
       icon="pi-clock">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">
@@ -100,7 +100,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
         <label i18n="@@payroll.runs.montant.override.optionnel.2e151738">Montant override (optionnel)</label>
         <p-inputNumber [(ngModel)]="formOverride" [minFractionDigits]="3" [maxFractionDigits]="3" [locale]="'fr-TN'" (ngModelChange)="refreshPreview()" styleClass="w-full" />
       </div>
-      <p class="payroll-info-text">Formule : (salaire base ÷ {{ divisorLabel }}) × heures × (taux % ÷ 100)</p>
+      <p class="payroll-info-text" i18n="@@payroll.runs.formule.salaire.base.heures.taux.100.3368a5ee">Formule : (salaire base ÷ {{ divisorLabel }}) × heures × (taux % ÷ 100)</p>
       @if (previewAmount() !== null) {
         <p><ng-container i18n="@@payroll.runs.montant.applique.b4674e8b">Montant appliqué : </ng-container> <strong>{{ previewAmount() | payrollAmount }}</strong></p>
       }

@@ -99,16 +99,16 @@ function escapeHtml(text: string): string {
                 <tr>
                   <td class="pos-receipt__td-qty">{{ line.quantity }}</td>
                   <td class="pos-receipt__td-art">{{ line.designation }}</td>
-                  <td class="pos-receipt__td-num">{{ formatAmount(line.unitPriceTTC) }} DT</td>
-                  <td class="pos-receipt__td-num">{{ formatAmount(line.lineTotalTTC) }} DT</td>
+                  <td class="pos-receipt__td-num" i18n="@@pos.components.dt.21cd369f">{{ formatAmount(line.unitPriceTTC) }} DT</td>
+                  <td class="pos-receipt__td-num" i18n="@@pos.components.dt.645d6176">{{ formatAmount(line.lineTotalTTC) }} DT</td>
                 </tr>
               }
             </tbody>
           </table>
           <div class="pos-receipt__rule"></div>
           <div class="pos-receipt__totals">
-            <div class="pos-receipt__total-row">
-              <span i18n="@@pos.components.sous.total.b0825e9a">Sous-Total:</span>
+            <div class="pos-receipt__total-row" i18n="@@pos.components.sous.total.dt.d0754699">
+              <span>Sous-Total:</span>
               <span>{{ formatAmount(receipt.subTotalHT) }} DT</span>
             </div>
             <div class="pos-receipt__total-row">
@@ -116,37 +116,37 @@ function escapeHtml(text: string): string {
               <span>{{ formatAmount(receipt.remise) }}</span>
             </div>
             <div class="pos-receipt__rule pos-receipt__rule--short"></div>
-            <div class="pos-receipt__total-row">
-              <span i18n="@@pos.components.base.tva.2cc97a84">BASE TVA:</span>
+            <div class="pos-receipt__total-row" i18n="@@pos.components.base.tva.dt.4bde2f1e">
+              <span>BASE TVA:</span>
               <span>{{ formatAmount(receipt.baseTVA) }} DT</span>
             </div>
-            <div class="pos-receipt__total-row">
-              <span i18n="@@pos.components.total.tva.fb5256bd">TOTAL TVA:</span>
+            <div class="pos-receipt__total-row" i18n="@@pos.components.total.tva.dt.9a313b86">
+              <span>TOTAL TVA:</span>
               <span>{{ formatAmount(receipt.totalTVA) }} DT</span>
             </div>
             @if (receipt.vatDetails.length > 1) {
               @for (d of receipt.vatDetails; track d.rateDisplay) {
-                <div class="pos-receipt__total-row pos-receipt__total-row--sub">
+                <div class="pos-receipt__total-row pos-receipt__total-row--sub" i18n="@@pos.components.dont.tva.dt.f0cd4361">
                   <span> dont TVA {{ d.rateDisplay }}</span>
                   <span>{{ formatAmount(d.vatAmount) }} DT</span>
                 </div>
               }
             }
-            <div class="pos-receipt__total-row">
-              <span i18n="@@pos.components.timbre.fiscal.48e05d3b">Timbre fiscal:</span>
+            <div class="pos-receipt__total-row" i18n="@@pos.components.timbre.fiscal.dt.1cb8d8d4">
+              <span>Timbre fiscal:</span>
               <span>{{ formatAmount(receipt.timbreFiscal) }} DT</span>
             </div>
             <div class="pos-receipt__rule pos-receipt__rule--short"></div>
-            <div class="pos-receipt__total-row">
-              <span i18n="@@pos.components.facture.totale.0d86366c">Facture totale:</span>
+            <div class="pos-receipt__total-row" i18n="@@pos.components.facture.totale.dt.d4ad2517">
+              <span>Facture totale:</span>
               <span>{{ formatAmount(receipt.grandTotal) }} DT</span>
             </div>
-            <div class="pos-receipt__total-row">
-              <span i18n="@@pos.components.payable.392b9d8a">Payable :</span>
+            <div class="pos-receipt__total-row" i18n="@@pos.components.payable.dt.5c80cdad">
+              <span>Payable :</span>
               <span>{{ formatAmount(receipt.grandTotal) }} DT</span>
             </div>
-            <div class="pos-receipt__total-row pos-receipt__total-row--strong">
-              <span i18n="@@pos.components.total.a.payer.081059ba">Total à payer:</span>
+            <div class="pos-receipt__total-row pos-receipt__total-row--strong" i18n="@@pos.components.total.a.payer.dt.2158b743">
+              <span>Total à payer:</span>
               <span>{{ formatAmount(receipt.grandTotal) }} DT</span>
             </div>
           </div>

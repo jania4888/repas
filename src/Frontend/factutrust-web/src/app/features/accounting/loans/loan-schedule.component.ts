@@ -27,9 +27,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <app-page-header
       title="Tableau d'amortissement" i18n-title="@@accounting.loans.tableau.d.amortissement.2a7cef27"
-      subtitle="Échéancier d'emprunt — capital, intérêts et solde restant dû" />
+      subtitle="Échéancier d'emprunt — capital, intérêts et solde restant dû" i18n-subtitle="@@accounting.loans.echeancier.d.emprunt.capital.interets.et.d25aaa8c" />
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.loans.reessayer.c4f78b12" (retry)="load()" />
 
     @if (schedule(); as s) {
       <div class="card ls-head-card">
@@ -39,7 +39,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             <p class="ls-lender">{{ s.loan.lenderName }}</p>
           </div>
           <div class="ls-actions">
-            <a class="ls-back" routerLink="/accounting/loans"><i class="pi pi-angle-left" aria-hidden="true"></i> Registre</a>
+            <a class="ls-back" routerLink="/accounting/loans" i18n="@@accounting.loans.registre.74e24ec2"><i class="pi pi-angle-left" aria-hidden="true"></i> Registre</a>
             <app-accounting-export-menu [disabled]="loading() || exporting()" (exportFormat)="onExport($event)" />
           </div>
         </div>
@@ -53,14 +53,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           <div class="ls-kpi"><span class="ls-kpi-label" i18n="@@accounting.loans.total.rembourse.81bf5cbd">Total remboursé</span><span class="ls-kpi-value">{{ s.totalInstallments | number : '1.3-3' }}</span></div>
         </div>
 
-        <p class="ls-notice">
+        <p class="ls-notice" i18n="@@accounting.loans.echeancier.indicatif.les.echeances.ne.so.f6dffc37">
           <i class="pi pi-info-circle" aria-hidden="true"></i>
-          Échéancier <strong i18n="@@accounting.loans.indicatif.9854cb05">indicatif</strong> : les échéances ne sont pas comptabilisées automatiquement.
+          Échéancier <strong>indicatif</strong> : les échéances ne sont pas comptabilisées automatiquement.
         </p>
 
         @if (!s.isSettled) {
           <app-accounting-status-banner variant="warning"
-            message="Contrôle : l'échéancier ne solde pas exactement le capital emprunté." />
+            message="Contrôle : l'échéancier ne solde pas exactement le capital emprunté." i18n-message="@@accounting.loans.controle.l.echeancier.ne.solde.pas.exact.53db8b55" />
         }
       </div>
 

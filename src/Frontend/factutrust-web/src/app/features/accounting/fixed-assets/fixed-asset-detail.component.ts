@@ -93,7 +93,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
     <app-accounting-status-banner [message]="success() ?? ''" variant="success" *ngIf="success()" />
     <app-accounting-status-banner
       *ngIf="isDraftAsset()"
-      message="Immobilisation en brouillon — enregistrez vos modifications puis mettez en service dans la section ci-dessous."
+      message="Immobilisation en brouillon — enregistrez vos modifications puis mettez en service dans la section ci-dessous." i18n-message="@@accounting.fixed-assets.immobilisation.en.brouillon.enregistrez.3f7bc795"
       variant="info" />
 
     <!-- ============ Fiche immobilisation (création / brouillon / consultation) ============ -->
@@ -240,7 +240,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                 [disabled]="readonly()"
                 side="debit"
                 inputId="acquisitionCost"
-                ariaLabel="Prix d'achat HT" />
+                ariaLabel="Prix d'achat HT" i18n-ariaLabel="@@accounting.fixed-assets.prix.d.achat.ht.5cc09c1b" />
               <span class="field-error" *ngIf="fieldErrors()['cost']">{{ fieldErrors()['cost'] }}</span>
             </label>
             <label>
@@ -250,7 +250,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                 [disabled]="readonly()"
                 side="debit"
                 inputId="vatAmount"
-                ariaLabel="Montant TVA" />
+                ariaLabel="Montant TVA" i18n-ariaLabel="@@accounting.fixed-assets.montant.tva.d1afc4f8" />
             </label>
             <label>
               <ng-container i18n="@@accounting.fixed-assets.frais.capitalises.a20d3797"> Frais capitalisés </ng-container>
@@ -259,7 +259,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                 [disabled]="readonly()"
                 side="debit"
                 inputId="capitalizedFees"
-                ariaLabel="Frais capitalisés" />
+                ariaLabel="Frais capitalisés" i18n-ariaLabel="@@accounting.fixed-assets.frais.capitalises.6f02250a" />
             </label>
             <label>
               <ng-container i18n="@@accounting.fixed-assets.valeur.residuelle.98da787c"> Valeur résiduelle </ng-container>
@@ -268,7 +268,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
                 [disabled]="readonly()"
                 side="debit"
                 inputId="residualValue"
-                ariaLabel="Valeur résiduelle" />
+                ariaLabel="Valeur résiduelle" i18n-ariaLabel="@@accounting.fixed-assets.valeur.residuelle.ca8b8ac3" />
               <span class="field-error" *ngIf="fieldErrors()['residual']">{{ fieldErrors()['residual'] }}</span>
             </label>
             <label>
@@ -333,7 +333,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
       <div class="schedule-header">
         <h3 i18n="@@accounting.fixed-assets.tableau.d.amortissement.2a7cef27">Tableau d'amortissement</h3>
         <div class="actions-inline" *ngIf="canShowScheduleActions()">
-          <app-button variant="secondary" type="button" (click)="generateSchedule()" [disabled]="saving() || hasPostedLines()">
+          <app-button variant="secondary" type="button" (click)="generateSchedule()" [disabled]="saving() || hasPostedLines()" i18n="@@accounting.fixed-assets.le.tableau.a77889ab">
             {{ schedule()?.lines?.length ? loc_ui_tern_regenerer_2486f4 : loc_ui_tern_generer_bd221c }} le tableau
           </app-button>
           <app-button
@@ -386,10 +386,10 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
         <div><strong i18n="@@accounting.fixed-assets.nature.du.bien.3cc65233">Nature du bien :</strong> {{ s.label }}</div>
         <div><strong i18n="@@accounting.fixed-assets.montant.amortissable.44db17e0">Montant amortissable :</strong> {{ s.depreciableBase | accountingAmount }}</div>
         <div><strong i18n="@@accounting.fixed-assets.date.de.mise.en.service.ec568998">Date de mise en service :</strong> {{ s.inServiceDate ? (s.inServiceDate | date: 'dd/MM/yyyy') : '—' }}</div>
-        <div><strong i18n="@@accounting.fixed-assets.duree.de.vie.474d074b">Durée de vie :</strong> {{ s.usefulLifeYears | number: '1.0-2' }} ans</div>
+        <div i18n="@@accounting.fixed-assets.duree.de.vie.ans.5116d2de"><strong>Durée de vie :</strong> {{ s.usefulLifeYears | number: '1.0-2' }} ans</div>
         <div><strong i18n="@@accounting.fixed-assets.taux.d.amortissement.9e76b4fd">Taux d'amortissement :</strong> {{ s.depreciationRatePercent | number: '1.2-2' }} %</div>
-        <div>
-          <strong i18n="@@accounting.fixed-assets.methode.ff371e1b">Méthode :</strong> {{ methodLabel(s.depreciationMethod) }}
+        <div i18n="@@accounting.fixed-assets.methode.coefficient.70f02144">
+          <strong>Méthode :</strong> {{ methodLabel(s.depreciationMethod) }}
           <ng-container *ngIf="s.depreciationMethod === DepreciationMethod.Accelerated"> (coefficient {{ s.accelerationCoefficient | number: '1.1-2' }})</ng-container>
         </div>
       </div>
@@ -438,7 +438,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
             [disabled]="disposalMode === 'scrap'"
             side="debit"
             inputId="disposalProceeds"
-            ariaLabel="Prix de cession" />
+            ariaLabel="Prix de cession" i18n-ariaLabel="@@accounting.fixed-assets.prix.de.cession.c1619878" />
         </label>
       </div>
 
@@ -446,25 +446,25 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
         <legend i18n="@@accounting.fixed-assets.mode.de.reglement.c82ec4a6">Mode de règlement</legend>
         <div class="disposal-mode-grid">
           <label class="radio-option">
-            <input type="radio" name="disposalMode" value="cash" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
+            <input type="radio" name="disposalMode" value="cash" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" /><ng-container i18n="@@accounting.fixed-assets.comptant.compte.de.tresorerie.5321.5411.ebcb7c50">
             Comptant — compte de trésorerie (5321, 5411…)
-          </label>
+          </ng-container></label>
           <label *ngIf="disposalMode === 'cash'">
             <ng-container i18n="@@accounting.fixed-assets.compte.tresorerie.d0134786"> Compte trésorerie * </ng-container>
             <input class="accounting-filter-input" [(ngModel)]="treasuryAccount" placeholder="5321" i18n-placeholder="@@accounting.fixed-assets.5321.c17ece1e" />
           </label>
           <label class="radio-option">
-            <input type="radio" name="disposalMode" value="receivable" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
+            <input type="radio" name="disposalMode" value="receivable" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" /><ng-container i18n="@@accounting.fixed-assets.a.terme.creance.sur.cession.prerempli.45.3db03bad">
             À terme — créance sur cession (prérempli 452)
-          </label>
+          </ng-container></label>
           <label *ngIf="disposalMode === 'receivable'">
             <ng-container i18n="@@accounting.fixed-assets.compte.creance.f64b8a52"> Compte créance * </ng-container>
             <input class="accounting-filter-input" [(ngModel)]="receivableAccount" placeholder="452" i18n-placeholder="@@accounting.fixed-assets.452.3af0af21" />
           </label>
           <label class="radio-option">
-            <input type="radio" name="disposalMode" value="scrap" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" />
+            <input type="radio" name="disposalMode" value="scrap" [ngModel]="disposalMode" (ngModelChange)="onDisposalModeChange($event)" /><ng-container i18n="@@accounting.fixed-assets.mise.au.rebut.produit.nul.aucun.compte.d.cecce5c9">
             Mise au rebut — produit nul, aucun compte de règlement
-          </label>
+          </ng-container></label>
         </div>
         <p class="hint" *ngIf="disposalMode === 'scrap'" i18n="@@accounting.fixed-assets.la.mise.au.rebut.force.un.prix.de.cession.nul.au.3560e640"> La mise au rebut force un prix de cession nul : aucune écriture de règlement n'est générée (sortie 2xx / 28x / 636 uniquement). </p>
       </fieldset>
@@ -475,7 +475,7 @@ type DisposalMode = 'cash' | 'receivable' | 'scrap';
     <!-- ============ Méta ============ -->
     <div class="card meta" *ngIf="asset()">
       <p><strong i18n="@@accounting.fixed-assets.statut.b20e7fc2">Statut :</strong> {{ statusLabel(asset()!) }}</p>
-      <p><strong i18n="@@accounting.fixed-assets.methode.ff371e1b">Méthode :</strong> {{ methodLabel(asset()!.depreciationMethod) }}
+      <p i18n="@@accounting.fixed-assets.methode.coefficient.afbaed33"><strong>Méthode :</strong> {{ methodLabel(asset()!.depreciationMethod) }}
         <ng-container *ngIf="asset()!.depreciationMethod === DepreciationMethod.Accelerated"> (coefficient {{ asset()!.accelerationCoefficient | number: '1.1-2' }})</ng-container>
       </p>
       <p><strong i18n="@@accounting.fixed-assets.comptes.d35dab21">Comptes :</strong> {{ asset()!.assetAccountNumber }} / {{ asset()!.depreciationAccountNumber }} / {{ asset()!.expenseAccountNumber }}</p>

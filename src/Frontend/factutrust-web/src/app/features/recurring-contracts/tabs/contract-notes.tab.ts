@@ -20,13 +20,13 @@ import { PERMISSIONS } from '@core/config/permission-keys';
   imports: [CommonModule, FormsModule, ButtonComponent],
   template: `
     <section class="ft-card-block">
-      <h3 class="block-title"><i class="pi pi-comment"></i> Notes internes</h3>
+      <h3 class="block-title" i18n="@@recurring-contracts.tabs.notes.internes.8ecf0a7e"><i class="pi pi-comment"></i> Notes internes</h3>
 
       @if (readOnly()) {
         @if (notes) {
           <p class="notes">{{ notes }}</p>
         } @else {
-          <p class="placeholder-note">Aucune note sur ce contrat.</p>
+          <p class="placeholder-note" i18n="@@recurring-contracts.tabs.aucune.note.sur.ce.contrat.e39987c0">Aucune note sur ce contrat.</p>
         }
       } @else {
         <textarea

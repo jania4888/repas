@@ -64,21 +64,21 @@ interface ProductOption {
 
       <!-- Bandeau d'état : une grille inapplicable ne sert aucun prix, il faut le dire fort. -->
       @if (!pl.isActive) {
-        <div class="ft-alert ft-alert--muted">
+        <div class="ft-alert ft-alert--muted" i18n="@@pricing.price-list-detail.cette.grille.est.desactivee.aucun.prix.n.7c86f095">
           <i class="pi pi-info-circle"></i>
-          Cette grille est <strong i18n="@@pricing.price-list-detail.desactivee.72423e84">désactivée</strong> : aucun prix n'en est tiré. Les documents
+          Cette grille est <strong>désactivée</strong> : aucun prix n'en est tiré. Les documents
           déjà émis conservent leur prix, qui a été figé à leur création.
         </div>
       } @else if (!pl.isApplicableToday) {
-        <div class="ft-alert ft-alert--warning">
+        <div class="ft-alert ft-alert--warning" i18n="@@pricing.price-list-detail.grille.active.mais.hors.de.sa.periode.de.04d8d6a2">
           <i class="pi pi-exclamation-triangle"></i>
-          Grille active mais <strong i18n="@@pricing.price-list-detail.hors.de.sa.periode.de.validite.60c30c45">hors de sa période de validité</strong> : elle n'applique
+          Grille active mais <strong>hors de sa période de validité</strong> : elle n'applique
           aucun prix aujourd'hui.
         </div>
       }
 
       @if (pl.assignedClientCount > 0) {
-        <div class="ft-alert ft-alert--info">
+        <div class="ft-alert ft-alert--info" i18n="@@pricing.price-list-detail.affectee.a.client.s.0fec0274">
           <i class="pi pi-users"></i>
           Affectée à <strong>{{ pl.assignedClientCount }}</strong> client(s).
         </div>
@@ -88,7 +88,7 @@ interface ProductOption {
         <app-empty-state
           icon="pi-tags"
           title="Aucun prix dans cette grille" i18n-title="@@pricing.price-list-detail.aucun.prix.dans.cette.grille.fa1b4a0a"
-          message="Ajoutez des produits : ceux qui n'y figurent pas restent au prix catalogue.">
+          message="Ajoutez des produits : ceux qui n'y figurent pas restent au prix catalogue." i18n-message="@@pricing.price-list-detail.ajoutez.des.produits.ceux.qui.n.y.figure.446be17b">
         </app-empty-state>
       } @else {
         <div class="ft-table-card">
@@ -166,7 +166,7 @@ interface ProductOption {
       <app-empty-state
         icon="pi-exclamation-circle"
         title="Grille introuvable" i18n-title="@@pricing.price-list-detail.grille.introuvable.56e220cc"
-        message="Cette grille tarifaire n'existe pas ou a été supprimée.">
+        message="Cette grille tarifaire n'existe pas ou a été supprimée." i18n-message="@@pricing.price-list-detail.cette.grille.tarifaire.n.existe.pas.ou.a.fc7d8a6b">
       </app-empty-state>
     }
 
@@ -239,7 +239,7 @@ interface ProductOption {
         }
 
         <div class="ft-field">
-          <label for="pl-price">Prix HT ({{ priceList()?.currency }}) <span class="ft-required" i18n="@@pricing.price-list-detail.text.df58248c">*</span></label>
+          <label for="pl-price" i18n="@@pricing.price-list-detail.prix.ht.08db238f">Prix HT ({{ priceList()?.currency }}) <span class="ft-required">*</span></label>
           <p-inputNumber
             inputId="pl-price"
             [(ngModel)]="itemPrice"
@@ -248,7 +248,7 @@ interface ProductOption {
             [maxFractionDigits]="3"
             [min]="0"></p-inputNumber>
           @if (catalogReference() !== null) {
-            <small class="ft-hint">Prix catalogue : {{ catalogReference() | number: '1.3-3' }}</small>
+            <small class="ft-hint" i18n="@@pricing.price-list-detail.prix.catalogue.bba7af9e">Prix catalogue : {{ catalogReference() | number: '1.3-3' }}</small>
           }
         </div>
       </div>
@@ -267,7 +267,7 @@ interface ProductOption {
       [style]="{ width: '32rem' }"
       [draggable]="false">
       @if (tierTarget) {
-        <p class="ft-dialog-intro">
+        <p class="ft-dialog-intro" i18n="@@pricing.price-list-detail.prix.de.base.le.palier.remplace.ce.prix.d35e3b1e">
           <strong>{{ tierTarget.productCode }}</strong> — prix de base
           {{ tierTarget.unitPriceHT | number: '1.3-3' }}. Le palier remplace ce prix à partir
           de la quantité indiquée.

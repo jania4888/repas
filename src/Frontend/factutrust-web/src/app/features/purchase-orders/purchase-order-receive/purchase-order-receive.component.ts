@@ -99,7 +99,7 @@ interface ReceptionLine {
 
       <!-- Reception Lines -->
       <div class="reception-card">
-        <h3 class="card-title"><i class="pi pi-box"></i> Lignes à réceptionner</h3>
+        <h3 class="card-title" i18n="@@purchase-orders.purchase-order-receive.lignes.a.receptionner.f5a46758"><i class="pi pi-box"></i> Lignes à réceptionner</h3>
 
         <div class="reception-table">
           <table>
@@ -146,7 +146,7 @@ interface ReceptionLine {
                         inputStyleClass="text-center">
                       </p-inputNumber>
                     } @else {
-                      <span class="fully-badge"><i class="pi pi-check-circle"></i> Complète</span>
+                      <span class="fully-badge" i18n="@@purchase-orders.purchase-order-receive.complete.dad7d442"><i class="pi pi-check-circle"></i> Complète</span>
                     }
                   </td>
                   <td class="text-center">

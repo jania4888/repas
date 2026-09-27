@@ -124,8 +124,8 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
           <p-tabs [value]="tab()" (valueChange)="tab.set($any($event))">
             <p-tablist>
               <p-tab value="overview" i18n="@@projects.project-task-detail.apercu.f0f53004">Aperçu</p-tab>
-              <p-tab value="subtasks">Sous-tâches {{ doneSubtasks() }}/{{ subtasks().length }}</p-tab>
-              <p-tab value="files">Fichiers {{ taskFiles().length }}</p-tab>
+              <p-tab value="subtasks" i18n="@@projects.project-task-detail.sous.taches.454c93dd">Sous-tâches {{ doneSubtasks() }}/{{ subtasks().length }}</p-tab>
+              <p-tab value="files" i18n="@@projects.project-task-detail.fichiers.a41fa3d0">Fichiers {{ taskFiles().length }}</p-tab>
               @if (showTaskTimeTab(project(), t)) {
               <p-tab value="time" i18n="@@projects.project-task-detail.temps.passe.94914a53">Temps passé</p-tab>
               }
@@ -148,7 +148,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   <div class="mt-3">
                     <strong>{{ t.progressPercent }} %</strong>
                     <p-progressBar [value]="t.progressPercent" />
-                    <p class="text-sm text-color-secondary m-0">{{ doneSubtasks() }}/{{ subtasks().length }} sous-tâches terminées</p>
+                    <p class="text-sm text-color-secondary m-0" i18n="@@projects.project-task-detail.sous.taches.terminees.329a08ad">{{ doneSubtasks() }}/{{ subtasks().length }} sous-tâches terminées</p>
                   </div>
                   <div class="flex gap-3 mt-3">
                     <div class="proj-kpi-card flex-1">
@@ -219,7 +219,7 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                 <div class="card p-3">
                   @if (!canReadTime) {
                     <p-message severity="info" styleClass="w-full mb-3"
-                      text="Vous n'avez pas l'accès aux feuilles de temps." />
+                      text="Vous n'avez pas l'accès aux feuilles de temps." i18n-text="@@projects.project-task-detail.vous.n.avez.pas.l.acces.aux.feuilles.de.a10f480b" />
                   }
                   @if (project() && !canCreateTimeEntry && !editTimeId) {
                     <p-message severity="warn" styleClass="w-full mb-3"
@@ -229,11 +229,11 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                   @if (canCreateTimeEntry || editTimeId) {
                     <div class="task-create-form mb-3">
                       <p class="task-create-intro">
-                        @if (editTimeId) {
+                        @if (editTimeId) {<ng-container i18n="@@projects.project-task-detail.modifier.la.ligne.de.temps.54da75bf">
                           Modifier la ligne de temps
-                        } @else {
+                        </ng-container>} @else {<ng-container i18n="@@projects.project-task-detail.nouvelle.ligne.de.temps.7a865326">
                           Nouvelle ligne de temps
-                        }
+                        </ng-container>}
                       </p>
                       <div class="task-create-field">
                         <label for="task-time-date"><ng-container i18n="@@projects.project-task-detail.date.eb9a4bc1">Date </ng-container> <span class="ft-required" i18n="@@projects.project-task-detail.text.df58248c">*</span></label>
@@ -308,27 +308,27 @@ type TaskTab = 'overview' | 'subtasks' | 'files' | 'time' | 'history';
                           }
                           @if (canDeleteTimeEntry(e) && canCreateTime) {
                             <app-button size="sm" variant="ghost" icon="pi-trash" [iconOnly]="true"
-                              pTooltip="Supprimer" i18n-pTooltip="@@projects.project-task-detail.supprimer.1acfc1c7" tooltipPosition="top" ariaLabel="Supprimer"
+                              pTooltip="Supprimer" i18n-pTooltip="@@projects.project-task-detail.supprimer.1acfc1c7" tooltipPosition="top" ariaLabel="Supprimer" i18n-ariaLabel="@@projects.project-task-detail.supprimer.d9f6d96e"
                               (click)="deleteTimeEntry(e.id)" />
                           }
                           @if (canSubmitTimeEntry(e) && canSubmitTime) {
                             <app-button size="sm" variant="ghost" icon="pi-send" [iconOnly]="true"
-                              pTooltip="Soumettre" i18n-pTooltip="@@projects.project-task-detail.soumettre.5597a63d" tooltipPosition="top" ariaLabel="Soumettre"
+                              pTooltip="Soumettre" i18n-pTooltip="@@projects.project-task-detail.soumettre.5597a63d" tooltipPosition="top" ariaLabel="Soumettre" i18n-ariaLabel="@@projects.project-task-detail.soumettre.6557d5be"
                               (click)="submitTimeEntry(e.id)" />
                           }
                           @if (canValidateTimeEntry(e) && canValidateTime) {
                             <app-button size="sm" variant="primary" icon="pi-check" [iconOnly]="true"
-                              pTooltip="Valider" i18n-pTooltip="@@projects.project-task-detail.valider.be4220f7" tooltipPosition="top" ariaLabel="Valider"
+                              pTooltip="Valider" i18n-pTooltip="@@projects.project-task-detail.valider.be4220f7" tooltipPosition="top" ariaLabel="Valider" i18n-ariaLabel="@@projects.project-task-detail.valider.8ef67b67"
                               (click)="validateTimeEntry(e.id)" />
                           }
                           @if (canReopenSubmittedTimeEntry(e) && canSubmitTime) {
                             <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-task-detail.rouvrir.en.brouillon.7acbda14" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
+                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-task-detail.rouvrir.en.brouillon.7acbda14" tooltipPosition="top" ariaLabel="Rouvrir en brouillon" i18n-ariaLabel="@@projects.project-task-detail.rouvrir.en.brouillon.000b775a"
                               (click)="reopenTimeEntry(e.id)" />
                           }
                           @if (canReopenValidatedTimeEntry(e) && canValidateTime) {
                             <app-button size="sm" variant="ghost" icon="pi-undo" [iconOnly]="true"
-                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-task-detail.rouvrir.en.brouillon.7acbda14" tooltipPosition="top" ariaLabel="Rouvrir en brouillon"
+                              pTooltip="Rouvrir en brouillon" i18n-pTooltip="@@projects.project-task-detail.rouvrir.en.brouillon.7acbda14" tooltipPosition="top" ariaLabel="Rouvrir en brouillon" i18n-ariaLabel="@@projects.project-task-detail.rouvrir.en.brouillon.000b775a"
                               (click)="reopenTimeEntry(e.id)" />
                           }
                         </td>

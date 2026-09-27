@@ -33,25 +33,25 @@ import { ClientOutstanding } from '@core/services/client.service';
       <div class="ft-panel encours-panel" [class.encours-panel--over]="outstanding.isOverLimit">
         <div class="ft-panel__header">
           <h3 class="ft-panel__title" i18n="@@clients.client-outstanding-panel.encours.ba3d7159">Encours</h3>
-          <a class="encours-edit-link" [routerLink]="editLink" aria-label="Modifier le plafond" i18n-aria-label="@@clients.client-outstanding-panel.modifier.le.plafond.b4fd857f">
+          <a class="encours-edit-link" [routerLink]="editLink" aria-label="Modifier le plafond" i18n-aria-label="@@clients.client-outstanding-panel.modifier.le.plafond.b4fd857f" i18n="@@clients.client-outstanding-panel.modifier.le.plafond.04a7025f">
             <i class="pi pi-pencil" aria-hidden="true"></i>
             Modifier le plafond
           </a>
         </div>
 
         @if (outstanding.isOverLimit) {
-          <div class="ft-alert ft-alert--warning">
+          <div class="ft-alert ft-alert--warning" i18n="@@clients.client-outstanding-panel.encours.de.au.dela.du.plafond.de.informa.5f1ee5f6">
             <i class="pi pi-exclamation-triangle"></i>
             <span>
-              <ng-container i18n="@@clients.client-outstanding-panel.encours.de.df77802b"> Encours de </ng-container> <strong>{{ formatAmount(outstanding.totalOutstanding) }} {{ outstanding.currency }}</strong>
+              <ng-container> Encours de </ng-container> <strong>{{ formatAmount(outstanding.totalOutstanding) }} {{ outstanding.currency }}</strong>
               au-delà du plafond de {{ formatAmount(outstanding.creditLimit!) }} {{ outstanding.currency }}.
-              <span class="ft-muted" i18n="@@clients.client-outstanding-panel.information.seulement.aucune.vente.n.est.bloquee.bab57933">Information seulement : aucune vente n'est bloquée.</span>
+              <span class="ft-muted">Information seulement : aucune vente n'est bloquée.</span>
             </span>
           </div>
         }
 
         @if (outstanding.overdueAmount > 0) {
-          <div class="ft-alert ft-alert--danger">
+          <div class="ft-alert ft-alert--danger" i18n="@@clients.client-outstanding-panel.echus.depuis.plus.de.30.jours.49d412ed">
             <i class="pi pi-clock"></i>
             <span>
               <strong>{{ formatAmount(outstanding.overdueAmount) }} {{ outstanding.currency }}</strong>
@@ -65,7 +65,7 @@ import { ClientOutstanding } from '@core/services/client.service';
             label="Factures non soldées" i18n-label="@@clients.client-outstanding-panel.factures.non.soldees.aa076d48"
             [value]="formatAmount(outstanding.unpaidInvoicesAmount) + ' ' + outstanding.currency"
             icon="pi-file"
-            variant="primary">
+            variant="primary" i18n="@@clients.client-outstanding-panel.facture.s.33f7f1a0">
             <span class="encours-kpi-sub">{{ outstanding.unpaidInvoiceCount }} facture(s)</span>
           </app-stat-card>
 
@@ -99,8 +99,8 @@ import { ClientOutstanding } from '@core/services/client.service';
               <a class="encours-edit-link" [routerLink]="editLink" i18n="@@clients.client-outstanding-panel.definir.un.plafond.75174fc0">Définir un plafond</a>
             </div>
           } @else {
-            <div class="encours-plafond__meta">
-              <span class="ft-info__label" i18n="@@clients.client-outstanding-panel.plafond.527e038e">Plafond</span>
+            <div class="encours-plafond__meta" i18n="@@clients.client-outstanding-panel.plafond.utilise.63212816">
+              <span class="ft-info__label">Plafond</span>
               <span class="encours-plafond__value ft-mono">
                 {{ formatAmount(outstanding.creditLimit) }} {{ outstanding.currency }}
                 <span class="encours-plafond__pct" [class.ft-amount--danger]="outstanding.isOverLimit">

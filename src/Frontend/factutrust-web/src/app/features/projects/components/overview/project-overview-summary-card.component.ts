@@ -25,7 +25,7 @@ import {
           @if (budget && budget.budgetHt > 0) {
             <li class="proj-detail-summary-list__bar">
               <p-progressBar [value]="usedPercent" [showValue]="false" />
-              <span>{{ usedPercent }} % consommé</span>
+              <span i18n="@@projects.components.consomme.3f287fa0">{{ usedPercent }} % consommé</span>
             </li>
           }
           <li>

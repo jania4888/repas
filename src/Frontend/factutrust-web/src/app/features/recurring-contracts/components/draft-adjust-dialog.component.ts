@@ -61,18 +61,18 @@ interface EditableDraftLine {
           @for (line of lines; track line.index; let i = $index) {
             <div class="line-card">
               <div class="grid">
-                <label>Produit
-                  <input class="ft-input" [value]="line.productName || '— Aucun —'" disabled />
+                <label><ng-container i18n="@@recurring-contracts.components.produit.ff673dc2">Produit
+                  </ng-container><input class="ft-input" [value]="line.productName || '— Aucun —'" disabled />
                 </label>
-                <label class="span-2">Description
-                  <input
+                <label class="span-2"><ng-container i18n="@@recurring-contracts.components.description.55f8ebc8">Description
+                  </ng-container><input
                     class="ft-input"
                     placeholder="Description" i18n-placeholder="@@recurring-contracts.components.description.55f8ebc8"
                     [(ngModel)]="line.designation"
                     [name]="'adjDesc' + i" />
                 </label>
-                <label>Qté
-                  <input
+                <label><ng-container i18n="@@recurring-contracts.components.qte.a4772129">Qté
+                  </ng-container><input
                     class="ft-input"
                     type="number"
                     min="0.001"
@@ -80,8 +80,8 @@ interface EditableDraftLine {
                     [(ngModel)]="line.quantity"
                     [name]="'adjQty' + i" />
                 </label>
-                <label>Prix unitaire HT
-                  <input
+                <label><ng-container i18n="@@recurring-contracts.components.prix.unitaire.ht.bb3f8e39">Prix unitaire HT
+                  </ng-container><input
                     class="ft-input"
                     type="number"
                     min="0"

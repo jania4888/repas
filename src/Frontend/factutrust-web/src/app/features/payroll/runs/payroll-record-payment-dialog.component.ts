@@ -93,7 +93,7 @@ interface PayslipPaymentRow {
 
       <div class="toolbar mb-2">
         <app-button variant="ghost" size="sm" (click)="selectAll()" i18n="@@payroll.runs.tout.selectionner.06f2c1c0">Tout sélectionner</app-button>
-        <strong>Total : {{ totalSelected() | payrollAmount }}</strong>
+        <strong i18n="@@payroll.runs.total.a86e9581">Total : {{ totalSelected() | payrollAmount }}</strong>
       </div>
 
       <div class="payroll-table-scroll">

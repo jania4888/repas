@@ -53,25 +53,25 @@ import { FISCAL_SCHEDULE_SHARED_STYLES } from './fiscal-schedule-shared.styles';
         <button class="quick-action" type="button" (click)="openSource.emit()">
           <i class="fa-solid fa-arrow-up-right-from-square"></i>{{ isFirmScope ? loc_ui_tern_ouvrir_le_dossier_48592a : loc_ui_tern_ouvrir_la_declaration_666cb2 }}
         </button>
-        <button class="quick-action" type="button" (click)="deposit.emit()" [disabled]="!canMutate">
+        <button class="quick-action" type="button" (click)="deposit.emit()" [disabled]="!canMutate" i18n="@@accounting.fiscal-schedule.marquer.comme.deposee.d6a17793">
           <i class="fa-regular fa-circle-check"></i>Marquer comme deposee
         </button>
-        <button class="quick-action" type="button" (click)="validate.emit()" [disabled]="!canMutate || !canValidate">
+        <button class="quick-action" type="button" (click)="validate.emit()" [disabled]="!canMutate || !canValidate" i18n="@@accounting.fiscal-schedule.marquer.comme.validee.cd9dc991">
           <i class="fa-solid fa-stamp"></i>Marquer comme validee
         </button>
-        <button class="quick-action" type="button" (click)="payment.emit()" [disabled]="!canMutate">
+        <button class="quick-action" type="button" (click)="payment.emit()" [disabled]="!canMutate" i18n="@@accounting.fiscal-schedule.saisir.le.paiement.d04c4a55">
           <i class="fa-solid fa-coins"></i>Saisir le paiement
         </button>
-        <button class="quick-action" type="button" (click)="reminder.emit()" [disabled]="!canMutate">
+        <button class="quick-action" type="button" (click)="reminder.emit()" [disabled]="!canMutate" i18n="@@accounting.fiscal-schedule.planifier.un.rappel.3af1b877">
           <i class="fa-regular fa-bell"></i>Planifier un rappel
         </button>
       </div>
       <div class="detail-group">
         <h2 i18n="@@accounting.fiscal-schedule.historique.34f3a06a">Historique</h2>
         <div class="meta-history">
-          <div>Créé le : {{ date(selected.createdAt) }} par {{ selected.createdBy || '-' }}</div>
-          <div>Modifié le : {{ date(selected.updatedAt) }} par {{ selected.updatedBy || '-' }}</div>
-          <div>Dernier rappel : {{ date(selected.lastReminderAt) }} via {{ reminderChannelLabel(selected.lastReminderChannel) }}</div>
+          <div i18n="@@accounting.fiscal-schedule.cree.le.par.70571777">Créé le : {{ date(selected.createdAt) }} par {{ selected.createdBy || '-' }}</div>
+          <div i18n="@@accounting.fiscal-schedule.modifie.le.par.bc4f07f2">Modifié le : {{ date(selected.updatedAt) }} par {{ selected.updatedBy || '-' }}</div>
+          <div i18n="@@accounting.fiscal-schedule.dernier.rappel.via.73ebd817">Dernier rappel : {{ date(selected.lastReminderAt) }} via {{ reminderChannelLabel(selected.lastReminderChannel) }}</div>
         </div>
         <div class="history-row" *ngFor="let item of history">
           <strong>{{ date(item.createdAt) }}</strong>

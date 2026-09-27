@@ -60,9 +60,9 @@ interface StatusOption {
 
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@supplier-invoices.supplier-invoice-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
-          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@supplier-invoices.supplier-invoice-list.reinitialiser.les.filtres.d8915f02">
+          <button class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@supplier-invoices.supplier-invoice-list.reinitialiser.les.filtres.d8915f02" i18n="@@supplier-invoices.supplier-invoice-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -162,7 +162,7 @@ interface StatusOption {
               <td><span class="amount">{{ inv.totalTTC | currency:'TND':'symbol':'1.3-3' }}</span></td>
               <td><p-tag [value]="inv.statusDisplay | backendLabel" [severity]="getStatusSeverity(inv.status)"></p-tag></td>
               <td>
-                <app-button variant="ghost" size="sm" icon="pi-eye" [iconOnly]="true" [routerLink]="inv.id" ariaLabel="Voir"></app-button>
+                <app-button variant="ghost" size="sm" icon="pi-eye" [iconOnly]="true" [routerLink]="inv.id" ariaLabel="Voir" i18n-ariaLabel="@@supplier-invoices.supplier-invoice-list.voir.f2dabbea"></app-button>
               </td>
             </tr>
           </ng-template>
@@ -172,16 +172,16 @@ interface StatusOption {
                 @if (unpaidOnlyMode()) {
                   <app-empty-state
                     title="Aucune facture impayée" i18n-title="@@supplier-invoices.supplier-invoice-list.aucune.facture.impayee.6da9b1d9"
-                    description="Aucune facture fournisseur en attente de règlement."
-                    actionLabel="Voir toutes les factures fournisseurs"
+                    description="Aucune facture fournisseur en attente de règlement." i18n-description="@@supplier-invoices.supplier-invoice-list.aucune.facture.fournisseur.en.attente.de.5775edcb"
+                    actionLabel="Voir toutes les factures fournisseurs" i18n-actionLabel="@@supplier-invoices.supplier-invoice-list.voir.toutes.les.factures.fournisseurs.8c337291"
                     actionRoute="/supplier-invoices">
                   </app-empty-state>
                 } @else {
                   <app-empty-state
                     title="Aucune facture fournisseur" i18n-title="@@supplier-invoices.supplier-invoice-list.aucune.facture.fournisseur.7b87b354"
-                    description="Créez une facture depuis un bon de commande, un bon de réception, ou directement."
+                    description="Créez une facture depuis un bon de commande, un bon de réception, ou directement." i18n-description="@@supplier-invoices.supplier-invoice-list.creez.une.facture.depuis.un.bon.de.comma.804f26c6"
                     [showAction]="canCreateSupplierInvoice()"
-                    actionLabel="Nouvelle facture"
+                    actionLabel="Nouvelle facture" i18n-actionLabel="@@supplier-invoices.supplier-invoice-list.nouvelle.facture.dd11a962"
                     actionRoute="/supplier-invoices/new">
                   </app-empty-state>
                 }

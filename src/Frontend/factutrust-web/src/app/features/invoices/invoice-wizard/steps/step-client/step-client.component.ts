@@ -64,7 +64,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
     <div class="step-client">
       <!-- Mode Selection -->
       <section class="section">
-        <h2 class="section-title">
+        <h2 class="section-title" i18n="@@invoices.invoice-wizard.client.destinataire.4bd7d212">
           <i class="pi pi-user"></i>
           Client destinataire
         </h2>
@@ -304,7 +304,7 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
                   optionValue="value"
                   placeholder="Sélectionner..." i18n-placeholder="@@invoices.invoice-wizard.selectionner.01ea04b3"
                   [filter]="true"
-                  filterPlaceholder="Rechercher..."
+                  filterPlaceholder="Rechercher..." i18n-filterPlaceholder="@@invoices.invoice-wizard.rechercher.a3c28969"
                   appendTo="body"
                   [class.ng-invalid]="isFieldInvalid('governorate')">
                 </p-select>
@@ -381,21 +381,21 @@ import { NifMaskPasteDirective } from '@shared/validation/nif-mask-paste.directi
             }
           </div>
           <ul class="compliance-list">
-            <li [class.valid]="hasClientName()" [class.invalid]="!hasClientName()">
+            <li [class.valid]="hasClientName()" [class.invalid]="!hasClientName()" i18n="@@invoices.invoice-wizard.raison.sociale.presente.c56c3a50">
               <i [class]="hasClientName() ? 'pi pi-check' : 'pi pi-times'"></i>
               Raison sociale présente
             </li>
-            <li [class.valid]="hasClientAddress()" [class.invalid]="!hasClientAddress()">
+            <li [class.valid]="hasClientAddress()" [class.invalid]="!hasClientAddress()" i18n="@@invoices.invoice-wizard.adresse.complete.f8e9dd2a">
               <i [class]="hasClientAddress() ? 'pi pi-check' : 'pi pi-times'"></i>
               Adresse complète
             </li>
             @if (isTaxSubjectSelected()) {
-              <li [class.valid]="hasValidNif()" [class.invalid]="!hasValidNif()">
+              <li [class.valid]="hasValidNif()" [class.invalid]="!hasValidNif()" i18n="@@invoices.invoice-wizard.matricule.fiscal.valide.obligatoire.pour.3497d6d2">
                 <i [class]="hasValidNif() ? 'pi pi-check' : 'pi pi-times'"></i>
                 Matricule fiscal valide (obligatoire pour assujetti)
               </li>
             } @else {
-              <li class="valid">
+              <li class="valid" i18n="@@invoices.invoice-wizard.matricule.fiscal.non.requis.e3ad5393">
                 <i class="pi pi-check"></i>
                 Matricule fiscal non requis
               </li>

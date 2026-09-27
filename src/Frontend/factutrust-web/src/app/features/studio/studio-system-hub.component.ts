@@ -47,7 +47,7 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
             @for (e of d.entities; track e.id) {
               <article class="hub-card">
                 <h4><i [class]="e.icon || 'fa-solid fa-table'"></i> {{ e.displayName }}</h4>
-                <p>{{ e.fieldCount }} champ(s)</p>
+                <p i18n="@@studio.studio-system-hub.champ.s.a4c262b8">{{ e.fieldCount }} champ(s)</p>
                 <div class="hub-card__actions">
                   <a pButton class="p-button-sm" icon="fa-solid fa-table" label="Données" i18n-label="@@studio.studio-system-hub.donnees.e3e0c5ec"
                     [routerLink]="['/studio/d', e.key]"></a>

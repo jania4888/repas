@@ -41,10 +41,10 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
     NctNoteOverridesDialogComponent
   ],
   template: `
-    <app-page-header title="États financiers NCT" i18n-title="@@accounting.nct-statements.etats.financiers.nct.a11800a0" subtitle="Liasse : bilan, résultat, flux de trésorerie, capitaux propres et notes" />
+    <app-page-header title="États financiers NCT" i18n-title="@@accounting.nct-statements.etats.financiers.nct.a11800a0" subtitle="Liasse : bilan, résultat, flux de trésorerie, capitaux propres et notes" i18n-subtitle="@@accounting.nct-statements.liasse.bilan.resultat.flux.de.tresorerie.5fbd0222" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice de la liasse NCT">
+      <app-accounting-filter-bar ariaLabel="Exercice de la liasse NCT" i18n-ariaLabel="@@accounting.nct-statements.exercice.de.la.liasse.nct.d3042351">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="nct-year" i18n="@@accounting.nct-statements.exercice.e171e2b0">Exercice</label>
@@ -58,13 +58,13 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="load()" [disabled]="loading() || !isYearValid()"
-            ariaLabel="Charger la liasse NCT" i18n="@@accounting.nct-statements.charger.8f860300">Charger</app-button>
+            ariaLabel="Charger la liasse NCT" i18n-ariaLabel="@@accounting.nct-statements.charger.la.liasse.nct.f6fc09c9" i18n="@@accounting.nct-statements.charger.8f860300">Charger</app-button>
           <app-button variant="secondary" icon="pi pi-eye" type="button" (click)="openExportDialog()" [disabled]="loading() || !data()"
-            ariaLabel="Aperçu et impression des états financiers" i18n="@@accounting.nct-statements.apercu.impression.b2018ec0">Aperçu / Impression</app-button>
+            ariaLabel="Aperçu et impression des états financiers" i18n-ariaLabel="@@accounting.nct-statements.apercu.et.impression.des.etats.financier.c7ea131c" i18n="@@accounting.nct-statements.apercu.impression.b2018ec0">Aperçu / Impression</app-button>
           <app-button variant="secondary" icon="pi pi-file-pdf" type="button" (click)="exportPdf()" [disabled]="loading() || !data()"
-            ariaLabel="Exporter la liasse NCT en PDF" i18n="@@accounting.nct-statements.exporter.pdf.9a2c3956">Exporter PDF</app-button>
+            ariaLabel="Exporter la liasse NCT en PDF" i18n-ariaLabel="@@accounting.nct-statements.exporter.la.liasse.nct.en.pdf.0b15784e" i18n="@@accounting.nct-statements.exporter.pdf.9a2c3956">Exporter PDF</app-button>
           <app-button variant="secondary" icon="pi pi-pencil" type="button" (click)="overridesDialogVisible = true" [disabled]="loading()"
-            ariaLabel="Personnaliser les notes annexes" i18n="@@accounting.nct-statements.personnaliser.les.annexes.05ae837d">Personnaliser les annexes</app-button>
+            ariaLabel="Personnaliser les notes annexes" i18n-ariaLabel="@@accounting.nct-statements.personnaliser.les.notes.annexes.4acec9c1" i18n="@@accounting.nct-statements.personnaliser.les.annexes.05ae837d">Personnaliser les annexes</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
@@ -79,7 +79,7 @@ const CASH_FLOW_RECONCILIATION_CODE = 'CFECART';
       [fiscalYear]="fiscalYear"
       (changed)="load()" />
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.nct-statements.reessayer.c4f78b12" (retry)="load()" />
 
     @if (data(); as d) {
       @if (!d.nctStatementsEnabled) {

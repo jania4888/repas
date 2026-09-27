@@ -33,7 +33,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
   ],
   template: `
     <div class="section-header">
-      <h3>Échéancier prévisionnel</h3>
+      <h3 i18n="@@recurring-contracts.tabs.echeancier.previsionnel.634c7287">Échéancier prévisionnel</h3>
       @if (canGenerate()) {
         <app-button
           variant="primary"
@@ -51,15 +51,15 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
     } @else if (entries() === null) {
       <app-empty-state
         icon="pi-calendar"
-        title="Échéancier disponible prochainement"
-        description="L'échéancier prévisionnel sera disponible après la mise à jour du serveur."
+        title="Échéancier disponible prochainement" i18n-title="@@recurring-contracts.tabs.echeancier.disponible.prochainement.4db0027e"
+        description="L'échéancier prévisionnel sera disponible après la mise à jour du serveur." i18n-description="@@recurring-contracts.tabs.l.echeancier.previsionnel.sera.disponibl.b5ed1082"
         [showAction]="false">
       </app-empty-state>
     } @else if (entries()!.length === 0) {
       <app-empty-state
         icon="pi-calendar-times"
-        title="Aucune échéance à venir"
-        description="Ce contrat est terminé ou résilié : aucune occurrence future."
+        title="Aucune échéance à venir" i18n-title="@@recurring-contracts.tabs.aucune.echeance.a.venir.7a395640"
+        description="Ce contrat est terminé ou résilié : aucune occurrence future." i18n-description="@@recurring-contracts.tabs.ce.contrat.est.termine.ou.resilie.aucune.62f7803f"
         [showAction]="false">
       </app-empty-state>
     } @else {
@@ -67,11 +67,11 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
         <p-table [value]="entries()!" styleClass="p-datatable-sm" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 120px">Échéance</th>
-              <th>Période</th>
-              <th style="width: 140px">Montant estimé HT</th>
-              <th style="width: 140px">Statut</th>
-              <th style="width: 240px">Action</th>
+              <th style="width: 120px" i18n="@@recurring-contracts.tabs.echeance.f9a77ff6">Échéance</th>
+              <th i18n="@@recurring-contracts.tabs.periode.de2110b7">Période</th>
+              <th style="width: 140px" i18n="@@recurring-contracts.tabs.montant.estime.ht.69c78901">Montant estimé HT</th>
+              <th style="width: 140px" i18n="@@recurring-contracts.tabs.statut.659499f3">Statut</th>
+              <th style="width: 240px" i18n="@@recurring-contracts.tabs.action.97c89a4d">Action</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-e>
@@ -85,7 +85,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
               </td>
               <td>
                 @if (e.invoiceId) {
-                  <app-button variant="ghost" size="sm" icon="pi-receipt" [routerLink]="['/invoices', e.invoiceId]">
+                  <app-button variant="ghost" size="sm" icon="pi-receipt" [routerLink]="['/invoices', e.invoiceId]" i18n="@@recurring-contracts.tabs.voir.la.facture.e4bddea0">
                     Voir la facture
                   </app-button>
                 } @else if (e.billingRunId && e.invoiceDraftId) {
@@ -103,7 +103,7 @@ import { DraftAdjustDialogComponent } from '../components/draft-adjust-dialog.co
                         variant="ghost"
                         size="sm"
                         icon="pi-file-edit"
-                        (clicked)="openAdjust(e)">
+                        (clicked)="openAdjust(e)" i18n="@@recurring-contracts.tabs.ajuster.b65f8ead">
                         Ajuster
                       </app-button>
                     }

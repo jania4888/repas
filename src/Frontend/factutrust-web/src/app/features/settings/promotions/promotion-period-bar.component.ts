@@ -25,7 +25,7 @@ import { periodLabel, promotionPeriodProgress } from './promotions.utils';
         <span class="period-bar__percent">{{ progress().percent }} %</span>
         <span class="period-bar__dates">{{ periodText() }}</span>
         @if (progress().daysRemaining > 0 && progress().tone !== 'secondary') {
-          <span class="period-bar__remaining">{{ progress().daysRemaining }} j restants</span>
+          <span class="period-bar__remaining" i18n="@@settings.promotions.j.restants.20b22806">{{ progress().daysRemaining }} j restants</span>
         }
       </div>
     </div>

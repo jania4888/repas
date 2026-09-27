@@ -24,7 +24,7 @@ function downloadBlob(blob: Blob, filename: string): void {
   template: `
     <app-payroll-section
       title="Documents RH" i18n-title="@@payroll.employees.documents.rh.57cc3bb8"
-      subtitle="Certificats et attestations issus des bulletins de paie figés (cycles validés ou clôturés)."
+      subtitle="Certificats et attestations issus des bulletins de paie figés (cycles validés ou clôturés)." i18n-subtitle="@@payroll.employees.certificats.et.attestations.issus.des.bu.9e867f0e"
       icon="pi-file-pdf">
       @if (!featureReady()) {
         <p i18n="@@payroll.employees.chargement.des.options.520e652e">Chargement des options…</p>
@@ -50,7 +50,7 @@ function downloadBlob(blob: Blob, filename: string): void {
                   icon="pi-download"
                   iconPos="left"
                   [disabled]="downloading() !== null"
-                  (click)="downloadSalaryCertificate(months)">
+                  (click)="downloadSalaryCertificate(months)" i18n="@@payroll.employees.mois.5d638f01">
                   {{ months }} mois
                 </app-button>
               }

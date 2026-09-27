@@ -28,12 +28,12 @@ import { BreadcrumbItem } from '@shared/components/breadcrumb/breadcrumb.compone
     <p-toast></p-toast>
     <app-studio-page-shell
       [title]="view()?.displayName ?? loc_ui_tern_vue_lecture_seule_8649da"
-      subtitle="Consultation en lecture seule des données SQL."
+      subtitle="Consultation en lecture seule des données SQL." i18n-subtitle="@@studio.studio-view-runner.consultation.en.lecture.seule.des.donnee.43b49f5a"
       [breadcrumbs]="breadcrumbs()">
       @if (view()?.definition?.search !== false) {
         <div class="ft-filters">
           <div class="ft-filters__header">
-            <h3 class="ft-filters__title"><i class="pi pi-search"></i> Recherche</h3>
+            <h3 class="ft-filters__title" i18n="@@studio.studio-view-runner.recherche.5d0766ce"><i class="pi pi-search"></i> Recherche</h3>
           </div>
           <div class="studio-toolbar">
             <input pInputText [(ngModel)]="search" (keyup.enter)="reload()" placeholder="Rechercher…" i18n-placeholder="@@studio.studio-view-runner.rechercher.1d12cdfb" class="studio-search-input" />

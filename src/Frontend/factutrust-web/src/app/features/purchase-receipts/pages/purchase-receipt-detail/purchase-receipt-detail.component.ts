@@ -91,7 +91,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
       <div class="detail-grid">
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-file"></i> Informations générales</h3>
+          <h3 class="card-title" i18n="@@purchase-receipts.pages.informations.generales.b89a6e35"><i class="pi pi-file"></i> Informations générales</h3>
           <div class="info-grid">
             <div class="info-item">
               <span class="label" i18n="@@purchase-receipts.pages.numero.15e73db0">Numéro</span>
@@ -136,7 +136,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
         </div>
 
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-building"></i> Fournisseur</h3>
+          <h3 class="card-title" i18n="@@purchase-receipts.pages.fournisseur.35691c73"><i class="pi pi-building"></i> Fournisseur</h3>
           <div class="info-grid">
             <div class="info-item">
               <span class="label" i18n="@@purchase-receipts.pages.nom.7ff20370">Nom</span>
@@ -168,7 +168,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
         </div>
 
         <div class="detail-card full-width">
-          <h3 class="card-title"><i class="pi pi-list"></i> Articles reçus</h3>
+          <h3 class="card-title" i18n="@@purchase-receipts.pages.articles.recus.728eb9ac"><i class="pi pi-list"></i> Articles reçus</h3>
           <p-table [value]="receipt()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
             <ng-template pTemplate="header">
               <tr>
@@ -223,14 +223,14 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
         @if (receipt()!.notes) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-file-edit"></i> Notes</h3>
+            <h3 class="card-title" i18n="@@purchase-receipts.pages.notes.e4c25cd5"><i class="pi pi-file-edit"></i> Notes</h3>
             <p class="notes-text">{{ receipt()!.notes }}</p>
           </div>
         }
 
         @if (receipt()!.attachments.length) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-paperclip"></i> Pièces jointes</h3>
+            <h3 class="card-title" i18n="@@purchase-receipts.pages.pieces.jointes.85090279"><i class="pi pi-paperclip"></i> Pièces jointes</h3>
             <ul class="attachments-list">
               @for (att of receipt()!.attachments; track att.id) {
                 <li>
@@ -245,7 +245,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
         @if (receipt()!.linkedSupplierInvoices && receipt()!.linkedSupplierInvoices!.length > 0) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-money-bill"></i> Factures fournisseur liées</h3>
+            <h3 class="card-title" i18n="@@purchase-receipts.pages.factures.fournisseur.liees.7d6114da"><i class="pi pi-money-bill"></i> Factures fournisseur liées</h3>
             <ul class="linked-invoices">
               @for (inv of receipt()!.linkedSupplierInvoices!; track inv.id) {
                 <li>
@@ -261,10 +261,10 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
 
         @if (receipt()!.cancellationReason) {
           <div class="detail-card full-width cancelled-card">
-            <h3 class="card-title"><i class="pi pi-exclamation-triangle"></i> Motif d'annulation</h3>
+            <h3 class="card-title" i18n="@@purchase-receipts.pages.motif.d.annulation.8ea42493"><i class="pi pi-exclamation-triangle"></i> Motif d'annulation</h3>
             <p class="notes-text">{{ receipt()!.cancellationReason }}</p>
             @if (receipt()!.cancelledAt) {
-              <p class="cancelled-date">Annulé le {{ receipt()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              <p class="cancelled-date" i18n="@@purchase-receipts.pages.annule.le.947527e8">Annulé le {{ receipt()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
             }
           </div>
         }
@@ -272,7 +272,7 @@ import { TRACKING_MODE_LOT, TRACKING_MODE_SERIAL } from '@shared/utils/stock-tra
     }
 
     <p-dialog
-      header="Annuler le bon de réception"
+      header="Annuler le bon de réception" i18n-header="@@purchase-receipts.pages.annuler.le.bon.de.reception.8e64ea8c"
       [(visible)]="cancelDialogVisible"
       [modal]="true"
       [style]="{ width: '450px' }"

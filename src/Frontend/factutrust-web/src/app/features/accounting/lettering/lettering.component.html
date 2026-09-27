@@ -1,11 +1,11 @@
 <app-page-header
   title="Lettrage" i18n-title="@@accounting.lettering.lettrage.cfcdd333"
-  subtitle="Rapprochez les écritures débitrices et créditrices d'un même compte" />
+  subtitle="Rapprochez les écritures débitrices et créditrices d'un même compte" i18n-subtitle="@@accounting.lettering.rapprochez.les.ecritures.debitrices.et.c.d58e33ee" />
 
 <app-accounting-correction-banner />
 
 @if (accountHint) {
-  <p class="lettering-hint" role="note">Vous pouvez aussi consulter le compte {{ accountHint }}.</p>
+  <p class="lettering-hint" role="note" i18n="@@accounting.lettering.vous.pouvez.aussi.consulter.le.compte.adf6a9f4">Vous pouvez aussi consulter le compte {{ accountHint }}.</p>
 }
 
 <div class="lettering-page accounting-page">
@@ -13,7 +13,7 @@
   <p-card
     styleClass="p-card--static lettering-filters-card"
     header="Critères de sélection" i18n-header="@@accounting.lettering.criteres.de.selection.c512aace"
-    subheader="Choisissez un compte et une période, puis chargez les écritures à lettrer.">
+    subheader="Choisissez un compte et une période, puis chargez les écritures à lettrer." i18n-subheader="@@accounting.lettering.choisissez.un.compte.et.une.periode.puis.a61a930e">
     <p-toolbar styleClass="lettering-toolbar accounting-prime-toolbar">
       <ng-template pTemplate="start">
         <div class="lettering-filters-grid accounting-filters-grid">
@@ -85,11 +85,11 @@
           <span class="lettering-summary-value">{{ selectionSummary().count }}</span>
         </div>
         @if (selectionSummary().foreign) {
-          <div class="lettering-summary-item">
+          <div class="lettering-summary-item" i18n="@@accounting.lettering.total.debit.5125e43d">
             <span class="lettering-summary-label">Total débit {{ selectionSummary().currency }}</span>
             <span class="lettering-summary-value lettering-amount">{{ selectionSummary().debitCurrency | number : '1.3-3' }}</span>
           </div>
-          <div class="lettering-summary-item">
+          <div class="lettering-summary-item" i18n="@@accounting.lettering.total.credit.ff28b1c8">
             <span class="lettering-summary-label">Total crédit {{ selectionSummary().currency }}</span>
             <span class="lettering-summary-value lettering-amount">{{ selectionSummary().creditCurrency | number : '1.3-3' }}</span>
           </div>
@@ -116,7 +116,7 @@
           </label>
         }
         @if (selectionSummary().hasExchangeDifference) {
-          <p class="lettering-exchange-hint" role="status">
+          <p class="lettering-exchange-hint" role="status" i18n="@@accounting.lettering.selection.soldee.en.mais.pas.en.dinars.d.9413fc0c">
             Sélection soldée en {{ selectionSummary().currency }} mais pas en dinars :
             {{ selectionSummary().gap | number : '1.3-3' }} d'écart de change.
           </p>
@@ -148,7 +148,7 @@
   <p-card
     styleClass="p-card--static lettering-table-card"
     header="Écritures" i18n-header="@@accounting.lettering.ecritures.7bfac2f6"
-    subheader="Sélectionnez les lignes à rapprocher. Le lettrage n'est possible que si le total débit = total crédit.">
+    subheader="Sélectionnez les lignes à rapprocher. Le lettrage n'est possible que si le total débit = total crédit." i18n-subheader="@@accounting.lettering.selectionnez.les.lignes.a.rapprocher.le.5454d78a">
     @if (loading() && lines().length === 0) {
       <div class="lettering-loading" role="status" aria-live="polite">
         <p-progressSpinner strokeWidth="4" />
@@ -158,7 +158,7 @@
       <app-empty-state
         icon="pi-link"
         title="Aucune écriture à afficher" i18n-title="@@accounting.lettering.aucune.ecriture.a.afficher.2d513276"
-        description="Saisissez un numéro de compte et cliquez sur Charger pour afficher les écritures à lettrer."
+        description="Saisissez un numéro de compte et cliquez sur Charger pour afficher les écritures à lettrer." i18n-description="@@accounting.lettering.saisissez.un.numero.de.compte.et.cliquez.097e5113"
         [showAction]="false"
       />
     } @else {
@@ -268,7 +268,7 @@
   <div class="lettering-modal" role="dialog" aria-modal="true" aria-labelledby="settle-title">
     <h2 id="settle-title" class="lettering-modal__title" i18n="@@accounting.lettering.equilibrer.l.ecart.de.change.37fe00be">Équilibrer l'écart de change</h2>
 
-    <p class="lettering-modal__intro">
+    <p class="lettering-modal__intro" i18n="@@accounting.lettering.la.selection.est.soldee.en.mais.laisse.e.2d3b428b">
       La sélection est soldée en {{ selectionSummary().currency }} mais laisse
       <strong>{{ selectionSummary().gap | number : '1.3-3' }}</strong> en dinars. Une écriture
       d'opérations diverses apurera cet écart, puis le lettrage sera effectué.

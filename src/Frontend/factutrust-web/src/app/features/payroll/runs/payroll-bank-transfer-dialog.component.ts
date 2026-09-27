@@ -73,15 +73,15 @@ import { downloadBlob } from '../../accounting/shared/accounting-download.util';
           <p-message severity="warn" [text]="w.message" styleClass="mb-2 w-full" />
         }
 
-        <div class="summary mb-3">
+        <div class="summary mb-3" i18n="@@payroll.runs.virement.s.total.f3fda0b7">
           <span><strong>{{ preview()!.eligibleCount }}</strong> virement(s)</span>
-          <span><ng-container i18n="@@payroll.runs.total.45b5a72b">Total : </ng-container> <strong>{{ preview()!.totalAmount | payrollAmount }}</strong></span>
+          <span><ng-container>Total : </ng-container> <strong>{{ preview()!.totalAmount | payrollAmount }}</strong></span>
         </div>
 
         <p-tabs [lazy]="true">
           <p-tablist>
-            <p-tab [value]="0">Inclus ({{ preview()!.eligibleCount }})</p-tab>
-            <p-tab [value]="1">Exclus ({{ preview()!.excludedLines.length }})</p-tab>
+            <p-tab [value]="0" i18n="@@payroll.runs.inclus.93602bdc">Inclus ({{ preview()!.eligibleCount }})</p-tab>
+            <p-tab [value]="1" i18n="@@payroll.runs.exclus.818519f4">Exclus ({{ preview()!.excludedLines.length }})</p-tab>
           </p-tablist>
           <p-tabpanels>
           <p-tabpanel [value]="0">

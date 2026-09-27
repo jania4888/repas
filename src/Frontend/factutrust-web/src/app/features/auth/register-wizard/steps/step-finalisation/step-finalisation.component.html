@@ -18,7 +18,7 @@
                  [class.ng-invalid]="isInvalid('street')">
         </div>
         @if (isInvalid('street')) {
-          <div class="field-error" role="alert" @fadeInOut>
+          <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.l.adresse.est.requise.8cb87bb0">
             <i class="pi pi-info-circle"></i> L'adresse est requise
           </div>
         }
@@ -44,7 +44,7 @@
                    [class.ng-invalid]="isInvalid('city')">
           </div>
           @if (isInvalid('city')) {
-            <div class="field-error" role="alert" @fadeInOut>
+            <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.requis.b67a214e">
               <i class="pi pi-info-circle"></i> Requis
             </div>
           }
@@ -69,7 +69,7 @@
         </p-select>
         <small class="field-hint" i18n="@@auth.register-wizard.24.gouvernorats.tunisiens.disponibles.11f67c7e">24 gouvernorats tunisiens disponibles</small>
         @if (isInvalid('governorate')) {
-          <div class="field-error" role="alert" @fadeInOut>
+          <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.le.gouvernorat.est.requis.28928588">
             <i class="pi pi-info-circle"></i> Le gouvernorat est requis
           </div>
         }
@@ -78,12 +78,12 @@
       <div class="cgu-box">
         <div class="terms-group">
           <p-checkbox inputId="wiz-acceptTerms" formControlName="acceptTerms" [binary]="true"></p-checkbox>
-          <label for="wiz-acceptTerms">
-            <ng-container i18n="@@auth.register-wizard.en.continuant.j.accepte.les.a41cc7a3"> En continuant, j'accepte les </ng-container> <a routerLink="/legal/terms" target="_blank" class="link-primary" i18n="@@auth.register-wizard.conditions.d.utilisation.17c85066">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary" i18n="@@auth.register-wizard.politique.de.confidentialite.a8ebb0b8">Politique de Confidentialité</a>.
+          <label for="wiz-acceptTerms" i18n="@@auth.register-wizard.en.continuant.j.accepte.les.conditions.d.70e3f50c">
+            <ng-container> En continuant, j'accepte les </ng-container> <a routerLink="/legal/terms" target="_blank" class="link-primary">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary">Politique de Confidentialité</a>.
           </label>
         </div>
         @if (isInvalid('acceptTerms')) {
-          <div class="field-error block mt-2" role="alert" @fadeInOut>
+          <div class="field-error block mt-2" role="alert" @fadeInOut i18n="@@auth.register-wizard.vous.devez.accepter.les.conditions.pour.b557635d">
             <i class="pi pi-info-circle"></i> Vous devez accepter les conditions pour continuer.
           </div>
         }
@@ -103,7 +103,7 @@
             <div class="rec-label" i18n="@@auth.register-wizard.segment.44986cef">Segment</div>
             <div class="rec-value">{{ recapSegment() }}</div>
           </div>
-          <button type="button" class="rec-edit" (click)="goTo(0)">
+          <button type="button" class="rec-edit" (click)="goTo(0)" i18n="@@auth.register-wizard.modifier.8a27b14f">
             <i class="pi pi-pencil"></i> Modifier
           </button>
         </div>
@@ -114,7 +114,7 @@
             <div class="rec-label" i18n="@@auth.register-wizard.domaine.d.activite.2582f8ea">Domaine d'activité</div>
             <div class="rec-value">{{ recapDomain() }}</div>
           </div>
-          <button type="button" class="rec-edit" (click)="goTo(0)">
+          <button type="button" class="rec-edit" (click)="goTo(0)" i18n="@@auth.register-wizard.modifier.8a27b14f">
             <i class="pi pi-pencil"></i> Modifier
           </button>
         </div>
@@ -125,7 +125,7 @@
             <div class="rec-label" i18n="@@auth.register-wizard.regime.fiscal.ddf8b3c2">Régime fiscal</div>
             <div class="rec-value">{{ recapTaxRegime() }}</div>
           </div>
-          <button type="button" class="rec-edit" (click)="goTo(1)">
+          <button type="button" class="rec-edit" (click)="goTo(1)" i18n="@@auth.register-wizard.modifier.8a27b14f">
             <i class="pi pi-pencil"></i> Modifier
           </button>
         </div>
@@ -140,7 +140,7 @@
               }
             </div>
           </div>
-          <button type="button" class="rec-edit" (click)="goTo(2)">
+          <button type="button" class="rec-edit" (click)="goTo(2)" i18n="@@auth.register-wizard.modifier.8a27b14f">
             <i class="pi pi-pencil"></i> Modifier
           </button>
         </div>

@@ -120,7 +120,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     <!-- Barre de personnalisation (mode édition) -->
     @if (editMode()) {
       <div class="dash-edit-toolbar" role="region" aria-label="Personnalisation du tableau de bord" i18n-aria-label="@@dashboard.dashboard.personnalisation.du.tableau.de.bord.836b1c07">
-        <span class="dash-edit-toolbar__hint">
+        <span class="dash-edit-toolbar__hint" i18n="@@dashboard.dashboard.glissez.les.sections.ou.utilisez.les.fle.71f34524">
           <i class="pi pi-arrows-alt" aria-hidden="true"></i>
           Glissez les sections (ou utilisez les flèches) pour réorganiser votre tableau de bord.
         </span>
@@ -273,10 +273,10 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         </div>
       }
       <div class="modules-block">
-        <div class="modules-block__header">
+        <div class="modules-block__header" i18n="@@dashboard.dashboard.modules.actifs.gerer.mes.modules.47ef2061">
           <span class="modules-block__title"><i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i> Modules actifs</span>
           <a routerLink="/settings/modules" class="modules-block__link">
-            <ng-container i18n="@@dashboard.dashboard.gerer.mes.modules.f9e7eea3"> Gérer mes modules </ng-container> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            <ng-container> Gérer mes modules </ng-container> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
         <div class="modules-block__pills">
@@ -292,7 +292,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     <!-- Recommandé pour vous (plan §3.3) — cartes d'activation en un clic -->
     @if (moduleRecommendations().length > 0) {
       <div class="recommendations-block">
-        <div class="recommendations-block__header">
+        <div class="recommendations-block__header" i18n="@@dashboard.dashboard.recommande.pour.vous.61462dbf">
           <span class="recommendations-block__title"><i class="pi pi-sparkles" aria-hidden="true"></i> Recommandé pour vous</span>
         </div>
         <div class="recommendations-block__cards">
@@ -307,11 +307,11 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                 <button type="button" class="btn-activate"
                         (click)="activateRecommendation(rec.moduleId)"
                         [disabled]="activatingModuleId() !== null">
-                  @if (activatingModuleId() === rec.moduleId) {
+                  @if (activatingModuleId() === rec.moduleId) {<ng-container i18n="@@dashboard.dashboard.activation.f3af979a">
                     <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Activation…
-                  } @else {
+                  </ng-container>} @else {<ng-container i18n="@@dashboard.dashboard.activer.46b0b64d">
                     <i class="pi pi-check" aria-hidden="true"></i> Activer
-                  }
+                  </ng-container>}
                 </button>
                 <button type="button" class="btn-dismiss" (click)="dismissRecommendation(rec.moduleId)" i18n="@@dashboard.dashboard.masquer.adb05f2b"> Masquer </button>
               </div>
@@ -333,7 +333,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
         <div class="urgent-items">
           @if (showStockUrgent() && stockAlertsCount() > 0) {
             @if (drillDown('urgentStock'); as stockTarget) {
-              <a [routerLink]="stockTarget.route" [queryParams]="stockTarget.queryParams" class="urgent-item urgent-danger" [attr.aria-label]="stockTarget.ariaLabel">
+              <a [routerLink]="stockTarget.route" [queryParams]="stockTarget.queryParams" class="urgent-item urgent-danger" [attr.aria-label]="stockTarget.ariaLabel" i18n="@@dashboard.dashboard.produit.s.en.rupture.ou.stock.faible.bbb6cd77">
                 <i class="pi pi-exclamation-triangle"></i>
                 <span>{{ stockAlertsCount() }} produit(s) en rupture ou stock faible</span>
                 <i class="pi pi-arrow-right urgent-arrow"></i>
@@ -342,7 +342,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           }
           @if (showDeliveryUrgent() && pendingDeliveriesCount() > 0) {
             @if (drillDown('urgentDeliveries'); as deliveryTarget) {
-              <a [routerLink]="deliveryTarget.route" [queryParams]="deliveryTarget.queryParams" class="urgent-item urgent-warning" [attr.aria-label]="deliveryTarget.ariaLabel">
+              <a [routerLink]="deliveryTarget.route" [queryParams]="deliveryTarget.queryParams" class="urgent-item urgent-warning" [attr.aria-label]="deliveryTarget.ariaLabel" i18n="@@dashboard.dashboard.livraison.s.en.attente.ba752255">
                 <i class="pi pi-truck"></i>
                 <span>{{ pendingDeliveriesCount() }} livraison(s) en attente</span>
                 <i class="pi pi-arrow-right urgent-arrow"></i>
@@ -351,7 +351,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
           }
           @if (showInvoiceUrgent() && overdueInvoicesCount() > 0) {
             @if (drillDown('urgentOverdueInvoices'); as invoiceTarget) {
-              <a [routerLink]="invoiceTarget.route" [queryParams]="invoiceTarget.queryParams" class="urgent-item urgent-danger" [attr.aria-label]="invoiceTarget.ariaLabel">
+              <a [routerLink]="invoiceTarget.route" [queryParams]="invoiceTarget.queryParams" class="urgent-item urgent-danger" [attr.aria-label]="invoiceTarget.ariaLabel" i18n="@@dashboard.dashboard.facture.s.en.retard.c771d77d">
                 <i class="pi pi-exclamation-circle"></i>
                 <span>{{ overdueInvoicesCount() }} facture(s) en retard</span>
                 <i class="pi pi-arrow-right urgent-arrow"></i>
@@ -368,7 +368,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     <!-- Actions rapides + cartes latérales (style maquette) -->
     <div class="dash-actions-row">
       <div class="section quick-actions-card" data-tour="dash-quick-actions">
-        <h3 class="qa-title"><i class="fa-solid fa-bolt"></i> Actions rapides</h3>
+        <h3 class="qa-title" i18n="@@dashboard.dashboard.actions.rapides.b29e3136"><i class="fa-solid fa-bolt"></i> Actions rapides</h3>
         @if (hasAnyQuickAction()) {
         <div class="quick-actions">
           @if (canCreateInvoice()) {
@@ -581,7 +581,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
     @if (!loading() && monthlyRevenue().length > 0) {
       <app-chart-card
         title="Évolution du CA" i18n-title="@@dashboard.dashboard.evolution.du.ca.ba7ac89b"
-        subtitle="6 derniers mois"
+        subtitle="6 derniers mois" i18n-subtitle="@@dashboard.dashboard.6.derniers.mois.d1f0b2a7"
         aria-label="Évolution du chiffre d'affaires sur 6 mois" i18n-aria-label="@@dashboard.dashboard.evolution.du.chiffre.d.affaires.sur.6.mois.b7b26b8f">
         <div chart-actions>
           @if (drillDown('totalRevenue'); as revenueTarget) {
@@ -670,7 +670,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                     icon="pi-eye"
                     [iconOnly]="true"
                     [routerLink]="['/invoices', invoice.id]"
-                    ariaLabel="Voir la facture"
+                    ariaLabel="Voir la facture" i18n-ariaLabel="@@dashboard.dashboard.voir.la.facture.23283cea"
                     (click)="$event.stopPropagation()">
                   </app-button>
                 </td>
@@ -682,9 +682,9 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
                   <app-empty-state
                     illustration="empty-invoices.svg"
                     title="Aucune facture" i18n-title="@@dashboard.dashboard.aucune.facture.72124217"
-                    description="Créez votre première facture pour commencer à facturer vos clients."
+                    description="Créez votre première facture pour commencer à facturer vos clients." i18n-description="@@dashboard.dashboard.creez.votre.premiere.facture.pour.commen.b84348c3"
                     [showAction]="canCreateInvoice()"
-                    actionLabel="Créer votre première facture"
+                    actionLabel="Créer votre première facture" i18n-actionLabel="@@dashboard.dashboard.creer.votre.premiere.facture.dc3ed09f"
                     actionRoute="/invoices/new">
                   </app-empty-state>
                 </td>
@@ -709,7 +709,7 @@ import { MODULE_ICON_BY_ID } from '@core/utils/module-icon.util';
               @for (client of topClients(); track client.id; let i = $index) {
                 <a [routerLink]="['/clients', client.id]" class="top-client-item">
                   <div class="top-client-rank">{{ i + 1 }}</div>
-                  <div class="top-client-info">
+                  <div class="top-client-info" i18n="@@dashboard.dashboard.facture.ebb8b8ef">
                     <span class="top-client-name">{{ client.name }}</span>
                     <span class="top-client-meta">{{ client.invoiceCount }} facture{{ client.invoiceCount > 1 ? 's' : '' }}</span>
                   </div>

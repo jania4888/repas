@@ -14,19 +14,19 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
           <h1 i18n="@@withholding-tax.withholding-types-settings.types.de.retenue.a.la.source.0fd2fb62">Types de retenue à la source</h1>
           <p class="subtitle" i18n="@@withholding-tax.withholding-types-settings.catalogue.des.codes.d.operation.conformes.aux.ar.3137d8c5">Catalogue des codes d'opération conformes aux articles 52 et 53 du Code IRPP/IS</p>
         </div>
-        <a routerLink="/withholding-tax/dashboard" class="btn btn-outline">
+        <a routerLink="/withholding-tax/dashboard" class="btn btn-outline" i18n="@@withholding-tax.withholding-types-settings.tableau.de.bord.817f7ae6">
           <i class="fa-solid fa-arrow-left"></i> Tableau de bord
         </a>
       </div>
 
       @if (loading) {
-        <div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
+        <div class="loading-state" i18n="@@withholding-tax.withholding-types-settings.chargement.fbee6e98"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
       }
 
       @if (!loading) {
         <!-- Summary -->
         <div class="summary-bar">
-          <span>{{ types.length }} type(s) configuré(s)</span>
+          <span i18n="@@withholding-tax.withholding-types-settings.type.s.configure.s.781cc5e5">{{ types.length }} type(s) configuré(s)</span>
           <div class="filter-group">
             <button class="chip" [class.active]="filter === ''" (click)="filter = ''" i18n="@@withholding-tax.withholding-types-settings.tous.b97ae3b4">Tous</button>
             @for (cat of categories; track cat) {
@@ -90,7 +90,7 @@ import { WithholdingTaxService, WithholdingTaxTypeDto } from '@core/services/wit
 
         <!-- Info card -->
         <div class="info-card">
-          <h3><i class="fa-solid fa-info-circle"></i> Référentiel fiscal</h3>
+          <h3 i18n="@@withholding-tax.withholding-types-settings.referentiel.fiscal.e7de616f"><i class="fa-solid fa-info-circle"></i> Référentiel fiscal</h3>
           <p i18n="@@withholding-tax.withholding-types-settings.les.codes.d.operation.sont.definis.par.l.adminis.3dec3bd1"> Les codes d'opération sont définis par l'administration fiscale tunisienne et correspondent aux
             catégories prévues par les articles 52 et 53 du Code de l'IRPP et de l'IS.
             Les taux affichés sont les taux par défaut ; un taux réduit ou une exonération peut s'appliquer

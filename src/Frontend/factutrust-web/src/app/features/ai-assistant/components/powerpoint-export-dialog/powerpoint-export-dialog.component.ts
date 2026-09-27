@@ -82,7 +82,7 @@ interface ResponseLine {
       [resizable]="false"
       [closable]="!isGenerating()"
       (onHide)="onHide()"
-      ariaLabel="Exporter en PowerPoint">
+      ariaLabel="Exporter en PowerPoint" i18n-ariaLabel="@@ai-assistant.components.exporter.en.powerpoint.ac2ac00f">
 
       <nav class="ppt-stepper" aria-label="Étapes de l'export" i18n-aria-label="@@ai-assistant.components.etapes.de.l.export.5cbdb578">
         @for (s of stepDefs; track s.id) {
@@ -195,7 +195,7 @@ interface ResponseLine {
           @case ('review') {
             <div class="ppt-card ppt-review">
               <header class="ppt-review-header">
-                <h4>Réponses sélectionnées ({{ responseLines().length }})</h4>
+                <h4 i18n="@@ai-assistant.components.reponses.selectionnees.2ae928a8">Réponses sélectionnées ({{ responseLines().length }})</h4>
                 <small class="ppt-muted" i18n="@@ai-assistant.components.personnalisez.le.titre.filtrez.les.blocs.ou.reti.2c6a8200"> Personnalisez le titre, filtrez les blocs ou retirez une réponse avant l'export. </small>
               </header>
 
@@ -220,11 +220,11 @@ interface ResponseLine {
                             placeholder="Hériter du titre auto-détecté" i18n-placeholder="@@ai-assistant.components.heriter.du.titre.auto.detecte.2ee69f9a" />
                         </label>
                         <div class="ppt-block-filters" role="group" [attr.aria-label]="loc_ui_tern_filtrer_le_contenu_pour_la_reponse_7da43f + (i + 1)">
-                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeText" [name]="'txt-' + line.messageId" /> Texte</label>
+                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeText" [name]="'txt-' + line.messageId" /><ng-container i18n="@@ai-assistant.components.texte.ff9afef1"> Texte</ng-container></label>
                           <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeKpis" [name]="'kpi-' + line.messageId" /> KPI</label>
-                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeTables" [name]="'tbl-' + line.messageId" /> Tableaux</label>
-                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeCharts" [name]="'cht-' + line.messageId" /> Graphiques</label>
-                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeSources" [name]="'src-' + line.messageId" /> Sources</label>
+                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeTables" [name]="'tbl-' + line.messageId" /><ng-container i18n="@@ai-assistant.components.tableaux.c0501eb6"> Tableaux</ng-container></label>
+                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeCharts" [name]="'cht-' + line.messageId" /><ng-container i18n="@@ai-assistant.components.graphiques.a5050c7d"> Graphiques</ng-container></label>
+                          <label class="ppt-mini-check"><input type="checkbox" [(ngModel)]="line.includeSources" [name]="'src-' + line.messageId" /><ng-container i18n="@@ai-assistant.components.sources.2eb56be3"> Sources</ng-container></label>
                         </div>
                         @if (line.previewMeta) {
                           <div class="ppt-preview-badges" [attr.aria-describedby]="'preview-desc-' + line.messageId">
@@ -232,13 +232,13 @@ interface ResponseLine {
                               <span class="ppt-badge">{{ line.previewMeta.kpiCount }} KPI</span>
                             }
                             @if (line.previewMeta.tableCount) {
-                              <span class="ppt-badge">{{ line.previewMeta.tableCount }} tableau(x)</span>
+                              <span class="ppt-badge" i18n="@@ai-assistant.components.tableau.x.994346ac">{{ line.previewMeta.tableCount }} tableau(x)</span>
                             }
                             @if (line.previewMeta.chartCount) {
-                              <span class="ppt-badge">{{ line.previewMeta.chartCount }} graphique(s)</span>
+                              <span class="ppt-badge" i18n="@@ai-assistant.components.graphique.s.12fab29d">{{ line.previewMeta.chartCount }} graphique(s)</span>
                             }
                             @if (line.previewMeta.sectionCount) {
-                              <span class="ppt-badge">{{ line.previewMeta.sectionCount }} section(s)</span>
+                              <span class="ppt-badge" i18n="@@ai-assistant.components.section.s.6377fc71">{{ line.previewMeta.sectionCount }} section(s)</span>
                             }
                           </div>
                           @if (line.previewMeta.slideOutline.length) {
@@ -268,7 +268,7 @@ interface ResponseLine {
             <div class="ppt-loading" role="status" aria-live="polite">
               <div class="ppt-spinner" aria-hidden="true"></div>
               <p class="ppt-loading-title" i18n="@@ai-assistant.components.generation.de.la.presentation.a17c3590">Génération de la présentation…</p>
-              <p class="ppt-muted">
+              <p class="ppt-muted" i18n="@@ai-assistant.components.pour.une.presentation.contenant.reponse.2be441ec">
                 Pour une présentation contenant {{ responseLines().length }} réponse(s), comptez quelques secondes.
               </p>
             </div>
@@ -296,7 +296,7 @@ interface ResponseLine {
                   <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                   <div>
                     <strong>{{ lastResult()!.fileName }}</strong>
-                    <p>{{ lastResult()!.slideCount }} slide(s) générée(s). Le lien de téléchargement expire après une heure.</p>
+                    <p i18n="@@ai-assistant.components.slide.s.generee.s.le.lien.de.telechargem.76da2a07">{{ lastResult()!.slideCount }} slide(s) générée(s). Le lien de téléchargement expire après une heure.</p>
                   </div>
                 </div>
               }

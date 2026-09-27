@@ -30,7 +30,7 @@
       </div>
 
       @if (form.get('companySegment')?.invalid && form.get('companySegment')?.touched) {
-        <div class="field-error" role="alert" @fadeInOut>
+        <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.veuillez.choisir.un.segment.de.societe.bd688761">
           <i class="pi pi-info-circle"></i> Veuillez choisir un segment de société
         </div>
       }
@@ -57,8 +57,8 @@
       @if (domainClearedNotice) {
         <div class="domain-notice" role="status" aria-live="polite" @fadeInOut>
           <span class="notice-ico"><i class="pi pi-info-circle" aria-hidden="true"></i></span>
-          <p>
-            <b i18n="@@auth.register-wizard.votre.domaine.precedent.n.est.plus.propose.pour..885a30a8">Votre domaine précédent n'est plus proposé pour ce segment.</b>
+          <p i18n="@@auth.register-wizard.votre.domaine.precedent.n.est.plus.propo.0912f227">
+            <b>Votre domaine précédent n'est plus proposé pour ce segment.</b>
             Votre sélection a été effacée — choisissez un domaine adapté au segment {{ selectedSegmentLabel }} ci-dessous.
           </p>
         </div>
@@ -103,7 +103,7 @@
       }
 
       @if (form.get('businessDomain')?.invalid && form.get('businessDomain')?.touched) {
-        <div class="field-error" role="alert" @fadeInOut>
+        <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register-wizard.veuillez.choisir.un.domaine.d.activite.69cdab85">
           <i class="pi pi-info-circle"></i> Veuillez choisir un domaine d'activité
         </div>
       }
@@ -111,7 +111,7 @@
       <div class="smart-callout">
         <span class="smart-ico"><i class="pi pi-sparkles" aria-hidden="true"></i></span>
         <div>
-          <div class="smart-title"><i class="pi pi-bolt" aria-hidden="true"></i> Configuration intelligente</div>
+          <div class="smart-title" i18n="@@auth.register-wizard.configuration.intelligente.699dc027"><i class="pi pi-bolt" aria-hidden="true"></i> Configuration intelligente</div>
           <p i18n="@@auth.register-wizard.en.fonction.de.votre.choix.nous.activons.automat.b021b04e">En fonction de votre choix, nous activons automatiquement les modules et paramètres adaptés à votre secteur.</p>
         </div>
       </div>

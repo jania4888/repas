@@ -104,7 +104,7 @@
           </div>
         </div>
         @if (previewNumber) {
-          <p class="hint mono">Prochain n° système : {{ previewNumber }}</p>
+          <p class="hint mono" i18n="@@payments.cash-desk.prochain.n.systeme.6b020bc8">Prochain n° système : {{ previewNumber }}</p>
         }
       </div>
     }
@@ -168,9 +168,9 @@
             <dt i18n="@@payments.cash-desk.type.3deb7456">Type</dt>
             <dd>
               @switch (depositType) {
-                @case (BankDepositType.Cash) { En espèces }
-                @case (BankDepositType.Check) { Chèques }
-                @case (BankDepositType.Draft) { Traites }
+                @case (BankDepositType.Cash) {<ng-container i18n="@@payments.cash-desk.en.especes.ea92ad54"> En espèces </ng-container>}
+                @case (BankDepositType.Check) {<ng-container i18n="@@payments.cash-desk.cheques.e01849ae"> Chèques </ng-container>}
+                @case (BankDepositType.Draft) {<ng-container i18n="@@payments.cash-desk.traites.740213ed"> Traites </ng-container>}
               }
             </dd>
             <dt i18n="@@payments.cash-desk.numero.de.la.remise.039254ac">Numéro de la remise</dt>

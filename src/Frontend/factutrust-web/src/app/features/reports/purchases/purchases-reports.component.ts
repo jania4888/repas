@@ -48,7 +48,7 @@ interface PeriodOption {
   template: `
     <app-page-header 
       title="Rapports Achats" i18n-title="@@reports.purchases.rapports.achats.ac9a7abf" 
-      subtitle="Analysez vos dépenses et suivez vos indicateurs d'achats">
+      subtitle="Analysez vos dépenses et suivez vos indicateurs d'achats" i18n-subtitle="@@reports.purchases.analysez.vos.depenses.et.suivez.vos.indi.86c24497">
       <app-button 
         variant="secondary"
         icon="pi-download"
@@ -161,7 +161,7 @@ interface PeriodOption {
             <div class="chart-bars">
               @for (item of reportsData()!.expenseChartData; track item.label) {
                 <div class="chart-bar-group">
-                  <div class="chart-tooltip" aria-hidden="true">
+                  <div class="chart-tooltip" aria-hidden="true" i18n="@@reports.purchases.facture.f80b44a2">
                     {{ formatCurrency(item.amount) }}<br>
                     <small>{{ item.invoiceCount }} facture{{ item.invoiceCount > 1 ? 's' : '' }}</small>
                   </div>
@@ -342,7 +342,7 @@ interface PeriodOption {
         [loading]="supplierBalancesLoading()"
         partyLabel="Fournisseur"
         emptyMessage="Aucun solde fournisseur" i18n-emptyMessage="@@reports.purchases.aucun.solde.fournisseur.6ed70d5f"
-        ariaLabel="Soldes fournisseurs">
+        ariaLabel="Soldes fournisseurs" i18n-ariaLabel="@@reports.purchases.soldes.fournisseurs.8cbd3b13">
       </app-party-balances-table>
     </div>
         </div>
@@ -546,15 +546,15 @@ interface PeriodOption {
           <div class="print-header__left">
             <h1 class="print-header__title" i18n="@@reports.purchases.rapport.achats.32ba4625">RAPPORT ACHATS</h1>
             <p class="print-header__subtitle">{{ activeTabName }}</p>
-            <p class="print-header__period">Période : {{ periodOptions[selectedPeriodIndex].label || 'Tout' }}
-              @if (periodDateRangeLabel()) {
+            <p class="print-header__period"><ng-container i18n="@@reports.purchases.periode.9a1e2cab">Période : {{ periodOptions[selectedPeriodIndex].label || 'Tout' }}
+              </ng-container>@if (periodDateRangeLabel()) {
                 <span> — {{ periodDateRangeLabel() }}</span>
               }
             </p>
           </div>
           <div class="print-header__right">
             <p class="print-header__app" i18n="@@reports.purchases.instafact.ff6221f4">InstaFact</p>
-            <p class="print-header__date">Généré le {{ printDate }}</p>
+            <p class="print-header__date" i18n="@@reports.purchases.genere.le.2948908d">Généré le {{ printDate }}</p>
           </div>
         </div>
       </div>

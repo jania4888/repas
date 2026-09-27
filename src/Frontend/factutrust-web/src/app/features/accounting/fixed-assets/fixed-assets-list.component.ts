@@ -33,7 +33,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <app-page-header
       title="Immobilisations" i18n-title="@@accounting.fixed-assets.immobilisations.1e4cbe01"
-      subtitle="Registre des actifs et suivi des amortissements (norme tunisienne)" />
+      subtitle="Registre des actifs et suivi des amortissements (norme tunisienne)" i18n-subtitle="@@accounting.fixed-assets.registre.des.actifs.et.suivi.des.amortis.087acaf5" />
 
     <div class="card accounting-filters-card">
       <div class="accounting-filter-row">
@@ -76,7 +76,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <app-empty-state
         icon="pi pi-building"
         title="Aucune immobilisation" i18n-title="@@accounting.fixed-assets.aucune.immobilisation.f9c26485"
-        message="Créez votre premier actif pour générer un tableau d'amortissement." />
+        message="Créez votre premier actif pour générer un tableau d'amortissement." i18n-message="@@accounting.fixed-assets.creez.votre.premier.actif.pour.generer.u.09ff9ba8" />
     </div>
 
     <div class="card" *ngIf="items().length > 0">
@@ -113,7 +113,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </ng-template>
         <ng-template pTemplate="footer">
           <tr class="totals-row">
-            <td colspan="4"><strong>Totaux page {{ page() }} / {{ totalPages() }}</strong></td>
+            <td colspan="4" i18n="@@accounting.fixed-assets.totaux.page.bab590e3"><strong>Totaux page {{ page() }} / {{ totalPages() }}</strong></td>
             <td class="text-right"><strong>{{ totals().origin | number: '1.3-3' }}</strong></td>
             <td class="text-right"><strong>{{ totals().accumulated | number: '1.3-3' }}</strong></td>
             <td class="text-right"><strong>{{ totals().nbv | number: '1.3-3' }}</strong></td>
@@ -123,7 +123,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       </p-table>
 
       <div class="pagination-bar">
-        <span class="page-info">
+        <span class="page-info" i18n="@@accounting.fixed-assets.immobilisation.s.page.5e90e05f">
           {{ totalCount() }} immobilisation(s) — page {{ page() }} / {{ totalPages() }}
         </span>
         <div class="page-actions">

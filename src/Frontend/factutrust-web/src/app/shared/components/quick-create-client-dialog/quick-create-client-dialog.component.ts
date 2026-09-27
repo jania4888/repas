@@ -120,9 +120,9 @@ const FIELD_IDS = {
                   styleClass="w-full" />
               </div>
               <div class="form-group">
-                <label for="quick-client-nif">
+                <label for="quick-client-nif"><ng-container i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.nif.matricule.fiscal.a5458ed7">
                   NIF / Matricule fiscal
-                  @if (type() === ClientType.Business) {
+                  </ng-container>@if (type() === ClientType.Business) {
                     <span class="required" i18n="@@shared.components.quick-create-client-dialog.quick-create-client-dialog.text.df58248c">*</span>
                   }
                 </label>

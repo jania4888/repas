@@ -6,7 +6,7 @@
 </app-page-header>
 
 <div class="submit-readiness" role="status" aria-live="polite">
-  <p class="submit-readiness__title">
+  <p class="submit-readiness__title" i18n="@@stock-vouchers.stock-voucher-form.etapes.pour.le.bon.0a9dd0fa">
     Étapes pour {{ editId ? 'modifier' : 'enregistrer' }} le bon
   </p>
   <ul class="submit-readiness__list">
@@ -37,7 +37,7 @@
     <li [class.submit-readiness__item--done]="hasLines()">
       <i class="pi" [class.pi-check-circle]="hasLines()" [class.pi-circle]="!hasLines()"></i>
       @if (hasLines()) {
-        <span>{{ lines.length }} ligne(s) produit ajoutée(s)</span>
+        <span i18n="@@stock-vouchers.stock-voucher-form.ligne.s.produit.ajoutee.s.3b12a276">{{ lines.length }} ligne(s) produit ajoutée(s)</span>
       } @else {
         <button type="button" class="submit-readiness__link" (click)="scrollToLines()" i18n="@@stock-vouchers.stock-voucher-form.ajoutez.au.moins.une.ligne.produit.section.ligne.d5f1dfd9"> Ajoutez au moins une ligne produit (section Lignes) </button>
       }
@@ -84,8 +84,8 @@
       <div class="ft-field ft-field--full purchase-alert" role="note">
         <div class="ft-alert ft-alert--info">
           <i class="pi pi-info-circle"></i>
-          <p>
-            <ng-container i18n="@@stock-vouchers.stock-voucher-form.pour.un.achat.fournisseur.utilisez.730b264d"> Pour un achat fournisseur, utilisez </ng-container> <strong i18n="@@stock-vouchers.stock-voucher-form.achats.gt.bons.de.reception.bf1f61b8">Achats &gt; Bons de réception</strong>.
+          <p i18n="@@stock-vouchers.stock-voucher-form.pour.un.achat.fournisseur.utilisez.achat.00e7f59a">
+            <ng-container> Pour un achat fournisseur, utilisez </ng-container> <strong>Achats &gt; Bons de réception</strong>.
             Ce motif enregistre une entrée de stock sans BR, sans commande et sans facture.
           </p>
         </div>
@@ -198,11 +198,11 @@
         <i class="pi pi-box"></i>
         <p i18n="@@stock-vouchers.stock-voucher-form.aucune.ligne.ajoutee.2b6077b4">Aucune ligne ajoutée.</p>
         <p class="ft-hint">
-          @if (isEntry) {
+          @if (isEntry) {<ng-container i18n="@@stock-vouchers.stock-voucher-form.recherchez.un.produit.gere.en.stock.sais.53213a10">
             Recherchez un produit géré en stock, saisissez la quantité et le coût unitaire, puis cliquez sur « Ajouter ».
-          } @else {
+          </ng-container>} @else {<ng-container i18n="@@stock-vouchers.stock-voucher-form.recherchez.un.produit.gere.en.stock.sais.3b8f8dc2">
             Recherchez un produit géré en stock, saisissez la quantité (ne doit pas dépasser le disponible), puis cliquez sur « Ajouter ».
-          }
+          </ng-container>}
         </p>
       </div>
     } @else {
@@ -245,7 +245,7 @@
                     styleClass="ft-inline-input">
                   </p-inputNumber>
                   @if (!isEntry && qtyExceedsAvailable(line)) {
-                    <span class="qty-warning"><i class="pi pi-exclamation-triangle"></i> Supérieur au disponible</span>
+                    <span class="qty-warning" i18n="@@stock-vouchers.stock-voucher-form.superieur.au.disponible.06a5773e"><i class="pi pi-exclamation-triangle"></i> Supérieur au disponible</span>
                   }
                 </td>
                 @if (isEntry) {

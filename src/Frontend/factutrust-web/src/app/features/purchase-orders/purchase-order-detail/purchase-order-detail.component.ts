@@ -151,7 +151,7 @@ import {
       <div class="detail-grid">
         <!-- Order Info -->
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-file"></i> Informations commande</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.informations.commande.f79edb19"><i class="pi pi-file"></i> Informations commande</h3>
           <div class="info-grid">
             <div class="info-item">
               <span class="label" i18n="@@purchase-orders.purchase-order-detail.numero.15e73db0">Numéro</span>
@@ -181,7 +181,7 @@ import {
 
         <!-- Supplier Info -->
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-building"></i> Fournisseur</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.fournisseur.35691c73"><i class="pi pi-building"></i> Fournisseur</h3>
           <div class="info-grid">
             <div class="info-item">
               <span class="label" i18n="@@purchase-orders.purchase-order-detail.nom.7ff20370">Nom</span>
@@ -208,7 +208,7 @@ import {
 
         <!-- Lines -->
         <div class="detail-card full-width">
-          <h3 class="card-title"><i class="pi pi-list"></i> Lignes de commande</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.lignes.de.commande.7ce0f6c8"><i class="pi pi-list"></i> Lignes de commande</h3>
           <p-table [value]="po()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
             <ng-template pTemplate="header">
               <tr>
@@ -263,14 +263,14 @@ import {
 
         @if (po()!.notes) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-file-edit"></i> Notes</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.notes.e4c25cd5"><i class="pi pi-file-edit"></i> Notes</h3>
             <p class="notes-text">{{ po()!.notes }}</p>
           </div>
         }
 
         @if (linkedReceipts().length > 0) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-box"></i> Bons de réception liés</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.bons.de.reception.lies.7618fa87"><i class="pi pi-box"></i> Bons de réception liés</h3>
             <ul class="linked-receipts">
               @for (br of linkedReceipts(); track br.id) {
                 <li>
@@ -286,7 +286,7 @@ import {
 
         @if (po()!.linkedSupplierInvoices && po()!.linkedSupplierInvoices!.length > 0) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-money-bill"></i> Factures fournisseur liées</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.factures.fournisseur.liees.7d6114da"><i class="pi pi-money-bill"></i> Factures fournisseur liées</h3>
             <ul class="linked-receipts">
               @for (inv of po()!.linkedSupplierInvoices!; track inv.id) {
                 <li>
@@ -302,9 +302,9 @@ import {
 
         @if (po()!.cancellationReason) {
           <div class="detail-card full-width cancelled-card">
-            <h3 class="card-title"><i class="pi pi-exclamation-triangle"></i> Motif d'annulation</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-detail.motif.d.annulation.8ea42493"><i class="pi pi-exclamation-triangle"></i> Motif d'annulation</h3>
             <p class="notes-text">{{ po()!.cancellationReason }}</p>
-            <p class="cancelled-date">Annulée le {{ po()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p class="cancelled-date" i18n="@@purchase-orders.purchase-order-detail.annulee.le.7a735486">Annulée le {{ po()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
           </div>
         }
       </div>

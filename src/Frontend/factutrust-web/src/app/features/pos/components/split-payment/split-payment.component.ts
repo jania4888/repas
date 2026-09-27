@@ -23,7 +23,7 @@ const METHOD_LABELS: Record<PaymentMethod, string> = {
           <span class="split-payment__title" i18n="@@pos.components.paiement.fractionne.fe60f8f8">Paiement fractionné</span>
           <span class="split-payment__hint" i18n="@@pos.components.repartir.le.montant.entre.plusieurs.moyens.de.pa.7454250d">Répartir le montant entre plusieurs moyens de paiement</span>
         </div>
-        <span class="split-payment__remaining" [class.split-payment__remaining--ok]="posState.remainingAmount() <= 0">
+        <span class="split-payment__remaining" [class.split-payment__remaining--ok]="posState.remainingAmount() <= 0" i18n="@@pos.components.reste.b47d15f8">
           Reste : {{ posState.formatAmountWithCurrency(maxRemaining()) }}
         </span>
       </div>
@@ -56,7 +56,7 @@ const METHOD_LABELS: Record<PaymentMethod, string> = {
           }
         </select>
         <input #amountInput type="number" min="0" step="0.001" placeholder="Montant" i18n-placeholder="@@pos.components.montant.4adcd9fc" class="split-payment__input" />
-        <button type="button" class="split-payment__add-btn" (click)="addSplit(methodSelect.value, amountInput.value)">
+        <button type="button" class="split-payment__add-btn" (click)="addSplit(methodSelect.value, amountInput.value)" i18n="@@pos.components.ajouter.33e2b019">
           <i class="pi pi-plus"></i> Ajouter
         </button>
       </div>

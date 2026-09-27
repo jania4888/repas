@@ -48,7 +48,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
     <div class="step-seller">
       <!-- Company Selector -->
       <section class="section">
-        <h2 class="section-title">
+        <h2 class="section-title" i18n="@@invoices.invoice-wizard.entreprise.emettrice.b1bda858">
           <i class="pi pi-building"></i>
           Entreprise émettrice
         </h2>
@@ -120,7 +120,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
         <p-divider></p-divider>
 
         <section class="section selected-details">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@invoices.invoice-wizard.informations.de.l.emetteur.13c5904b">
             <i class="pi pi-info-circle"></i>
             Informations de l'émetteur
           </h2>
@@ -149,7 +149,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
             <div class="details-grid">
               <!-- Address -->
               <div class="detail-item">
-                <label>
+                <label i18n="@@invoices.invoice-wizard.adresse.3959f649">
                   <i class="pi pi-map-marker"></i>
                   Adresse
                 </label>
@@ -169,11 +169,11 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
 
               <!-- Fiscal Info -->
               <div class="detail-item">
-                <label>
+                <label i18n="@@invoices.invoice-wizard.matricule.fiscal.89286662">
                   <i class="pi pi-id-card"></i>
                   Matricule fiscal
                 </label>
-                <div class="detail-value fiscal">
+                <div class="detail-value fiscal" i18n="@@invoices.invoice-wizard.valide.72d23735">
                   <code>{{ selectedSeller.nif }}</code>
                   <span 
                     class="nif-valid"
@@ -188,7 +188,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
               <!-- Commerce Registry -->
               @if (selectedSeller.commerceRegistry) {
                 <div class="detail-item">
-                  <label>
+                  <label i18n="@@invoices.invoice-wizard.registre.de.commerce.18d16050">
                     <i class="pi pi-book"></i>
                     Registre de commerce
                   </label>
@@ -201,7 +201,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
               <!-- VAT Code -->
               @if (selectedSeller.vatCode) {
                 <div class="detail-item">
-                  <label>
+                  <label i18n="@@invoices.invoice-wizard.code.tva.160294d6">
                     <i class="pi pi-percentage"></i>
                     Code TVA
                   </label>
@@ -213,7 +213,7 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
 
               <!-- Contact -->
               <div class="detail-item">
-                <label>
+                <label i18n="@@invoices.invoice-wizard.contact.d472ee2a">
                   <i class="pi pi-envelope"></i>
                   Contact
                 </label>
@@ -235,25 +235,25 @@ import { SellerInfo } from '../../models/invoice-wizard.models';
             <span i18n="@@invoices.invoice-wizard.informations.conformes.7517e50f">Informations conformes</span>
           </div>
           <ul class="compliance-list">
-            <li class="valid">
+            <li class="valid" i18n="@@invoices.invoice-wizard.raison.sociale.presente.b6704e9e">
               <i class="pi pi-check"></i>
               Raison sociale présente
             </li>
-            <li class="valid">
+            <li class="valid" i18n="@@invoices.invoice-wizard.adresse.complete.1c46405c">
               <i class="pi pi-check"></i>
               Adresse complète
             </li>
-            <li class="valid">
+            <li class="valid" i18n="@@invoices.invoice-wizard.matricule.fiscal.valide.format.tunisien.e4a0ae46">
               <i class="pi pi-check"></i>
               Matricule fiscal valide (format tunisien)
             </li>
             @if (selectedSeller.commerceRegistry) {
-              <li class="valid">
+              <li class="valid" i18n="@@invoices.invoice-wizard.registre.de.commerce.renseigne.6c28992e">
                 <i class="pi pi-check"></i>
                 Registre de commerce renseigné
               </li>
             } @else {
-              <li class="warning">
+              <li class="warning" i18n="@@invoices.invoice-wizard.registre.de.commerce.non.renseigne.recom.44b78b5c">
                 <i class="pi pi-exclamation-triangle"></i>
                 Registre de commerce non renseigné (recommandé)
               </li>

@@ -44,7 +44,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   template: `
     <app-payroll-section
       title="Mutuelles et caisses complémentaires" i18n-title="@@payroll.employees.mutuelles.et.caisses.complementaires.cfa7ac0b"
-      subtitle="Adhésions actives retenues au calcul du cycle de paie."
+      subtitle="Adhésions actives retenues au calcul du cycle de paie." i18n-subtitle="@@payroll.employees.adhesions.actives.retenues.au.calcul.du.f62bb078"
       icon="pi-heart">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">

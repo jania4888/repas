@@ -71,7 +71,7 @@ interface ChannelBridgeQrDto {
       <app-breadcrumb [items]="breadcrumbItems()" />
       <app-page-header
         title="WhatsApp" i18n-title="@@settings.channels.whatsapp.b336fc55"
-        subtitle="Liez votre WhatsApp à l'assistant IA et recevez vos rappels fiscaux" />
+        subtitle="Liez votre WhatsApp à l'assistant IA et recevez vos rappels fiscaux" i18n-subtitle="@@settings.channels.liez.votre.whatsapp.a.l.assistant.ia.et.0d4c7975" />
 
       <p-confirmDialog />
 
@@ -97,18 +97,18 @@ interface ChannelBridgeQrDto {
               <i class="pi pi-whatsapp wa-icon"></i>
               <div>
                 <h3><ng-container i18n="@@settings.channels.whatsapp.lie.3a496fda">WhatsApp lié </ng-container> <p-tag severity="success" value="Actif" /></h3>
-                <p class="muted">
+                <p class="muted"><ng-container i18n="@@settings.channels.numero.47277583">
                   Numéro {{ status()?.linkedNumberMasked || 'lié' }}
-                  @if (status()?.verifiedAtUtc) {
+                  </ng-container>@if (status()?.verifiedAtUtc) {
                     <ng-container i18n="@@settings.channels.lie.le.date.heure"> — lié le {{ status()?.verifiedAtUtc | date: 'dd/MM/yyyy' }} à {{ status()?.verifiedAtUtc | date: 'HH:mm' }} </ng-container>
                   }
                 </p>
               </div>
             </div>
-            <p>
+            <p i18n="@@settings.channels.envoyez.vos.questions.en.francais.au.num.c10571d5">
               Envoyez vos questions en français au numéro WhatsApp de l'assistant :
               « Quel est mon chiffre d'affaires ce mois-ci ? », « Mes factures impayées ? »…
-              L'assistant répond en <strong i18n="@@settings.channels.lecture.seule.a9a41b71">lecture seule</strong> : aucune modification de vos
+              L'assistant répond en <strong>lecture seule</strong> : aucune modification de vos
               données n'est possible depuis WhatsApp.
             </p>
             <p-button
@@ -132,18 +132,18 @@ interface ChannelBridgeQrDto {
             </div>
 
             @if (issuedCode(); as issued) {
-              <div class="code-panel">
+              <div class="code-panel"><ng-container i18n="@@settings.channels.votre.code.de.liaison.valable.min.ccb980dd">
                 <span class="code-label">Votre code de liaison (valable {{ issued.ttlMinutes }} min)&nbsp;:</span>
                 <span class="code-value">{{ issued.code }}</span>
-                @if (remainingSeconds() > 0) {
-                  <span class="code-countdown">Expire dans {{ remainingLabel() }}</span>
+                </ng-container>@if (remainingSeconds() > 0) {
+                  <span class="code-countdown" i18n="@@settings.channels.expire.dans.cba92d14">Expire dans {{ remainingLabel() }}</span>
                 } @else {
                   <span class="code-countdown expired" i18n="@@settings.channels.code.expire.generez.en.un.nouveau.1f6b8b63">Code expiré — générez-en un nouveau.</span>
                 }
                 <ol class="steps">
                   <li i18n="@@settings.channels.ouvrez.whatsapp.sur.votre.telephone.d0dae8e9">Ouvrez WhatsApp sur votre téléphone.</li>
                   <li i18n="@@settings.channels.ecrivez.au.numero.whatsapp.de.l.assistant.de.vot.20c18f53">Écrivez au numéro WhatsApp de l'assistant de votre entreprise.</li>
-                  <li><ng-container i18n="@@settings.channels.envoyez.le.message.4239ecfc">Envoyez le message : </ng-container> <code>LIER {{ issued.code }}</code></li>
+                  <li i18n="@@settings.channels.envoyez.le.message.lier.21d5dd80"><ng-container>Envoyez le message : </ng-container> <code>LIER {{ issued.code }}</code></li>
                   <li i18n="@@settings.channels.vous.recevrez.une.confirmation.puis.posez.vos.qu.d30b2a24">Vous recevrez une confirmation, puis posez vos questions librement.</li>
                 </ol>
               </div>
@@ -157,7 +157,7 @@ interface ChannelBridgeQrDto {
 
             <p-message
               severity="info"
-              text="Lecture seule : l'assistant WhatsApp consulte vos données mais ne peut jamais les modifier." />
+              text="Lecture seule : l'assistant WhatsApp consulte vos données mais ne peut jamais les modifier." i18n-text="@@settings.channels.lecture.seule.l.assistant.whatsapp.consu.59875e12" />
           </div>
         </p-card>
       }
@@ -192,15 +192,15 @@ interface ChannelBridgeQrDto {
                 </div>
               }
               @case ('Ready') {
-                <p-message severity="success" text="Le bot est connecté et opérationnel." />
+                <p-message severity="success" text="Le bot est connecté et opérationnel." i18n-text="@@settings.channels.le.bot.est.connecte.et.operationnel.dcf7a491" />
               }
               @case ('DependenciesMissing') {
                 <p-message severity="error"
-                  text="Dépendances Node manquantes : exécutez « npm ci » dans le dossier WhatsAppBridge du serveur, puis redémarrez." />
+                  text="Dépendances Node manquantes : exécutez « npm ci » dans le dossier WhatsAppBridge du serveur, puis redémarrez." i18n-text="@@settings.channels.dependances.node.manquantes.executez.npm.b3e7e192" />
               }
               @case ('NodeMissing') {
                 <p-message severity="error"
-                  text="Node.js est introuvable sur le serveur. Installez Node.js puis redémarrez le bot." />
+                  text="Node.js est introuvable sur le serveur. Installez Node.js puis redémarrez le bot." i18n-text="@@settings.channels.node.js.est.introuvable.sur.le.serveur.i.e0a7044e" />
               }
             }
 

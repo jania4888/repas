@@ -2,7 +2,7 @@
 
 <app-page-header
   title="Inventaire" i18n-title="@@inventory.inventory-list.inventaire.10ad1a54"
-  subtitle="Consultez l'historique des inventaires physiques et lancez un nouveau comptage">
+  subtitle="Consultez l'historique des inventaires physiques et lancez un nouveau comptage" i18n-subtitle="@@inventory.inventory-list.consultez.l.historique.des.inventaires.p.090b654b">
   @if (canCreateInventory()) {
     <app-button
       variant="outline"
@@ -25,7 +25,7 @@
       <button
         class="filters-reset"
         (click)="resetFilters()"
-        aria-label="Réinitialiser les filtres" i18n-aria-label="@@inventory.inventory-list.reinitialiser.les.filtres.d8915f02">
+        aria-label="Réinitialiser les filtres" i18n-aria-label="@@inventory.inventory-list.reinitialiser.les.filtres.d8915f02" i18n="@@inventory.inventory-list.reinitialiser.9637f51e">
         <i class="pi pi-times"></i>
         Réinitialiser ({{ activeFiltersCount() }})
       </button>
@@ -135,7 +135,7 @@
                 icon="pi-eye"
                 [iconOnly]="true"
                 [routerLink]="inv.id"
-                ariaLabel="Voir l'inventaire">
+                ariaLabel="Voir l'inventaire" i18n-ariaLabel="@@inventory.inventory-list.voir.l.inventaire.83e04d6e">
               </app-button>
               @if (inv.status === 1 && canUpdateInventory()) {
                 <app-button
@@ -145,7 +145,7 @@
                   [iconOnly]="true"
                   routerLink="new"
                   [queryParams]="{ warehouseId: inv.warehouseId }"
-                  ariaLabel="Continuer l'inventaire">
+                  ariaLabel="Continuer l'inventaire" i18n-ariaLabel="@@inventory.inventory-list.continuer.l.inventaire.6793d4c5">
                 </app-button>
               }
             </div>
@@ -158,9 +158,9 @@
             <app-empty-state
               illustration="empty-invoices.svg"
               title="Aucun inventaire" i18n-title="@@inventory.inventory-list.aucun.inventaire.54f77b75"
-              description="Lancez votre premier inventaire physique pour recenser les produits en stock."
+              description="Lancez votre premier inventaire physique pour recenser les produits en stock." i18n-description="@@inventory.inventory-list.lancez.votre.premier.inventaire.physique.f81c47ec"
               [showAction]="canCreateInventory()"
-              actionLabel="Ajouter Inventaire"
+              actionLabel="Ajouter Inventaire" i18n-actionLabel="@@inventory.inventory-list.ajouter.inventaire.fc816425"
               actionRoute="new">
             </app-empty-state>
           </td>

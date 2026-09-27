@@ -35,7 +35,7 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
             <p>{{ historyService.activeFilter() === 'session' ? loc_ui_tern_aucune_transaction_dans_cette_session_689382 : loc_ui_tern_aucune_transaction_aujourd_hui_0c1e49 }}</p>
           </div>
         } @else {
-          <div class="history-panel__summary">
+          <div class="history-panel__summary" i18n="@@pos.components.facture.s.tnd.f1163523">
             <span>{{ historyService.todayCount() }} facture(s)</span>
             <span class="history-panel__total">{{ formatAmount(historyService.todayTotal()) }} TND</span>
           </div>
@@ -57,7 +57,7 @@ import { WarehouseContextService } from '@core/services/warehouse-context.servic
           </div>
         }
 
-        <button type="button" class="history-panel__refresh" (click)="historyService.refreshHistory()">
+        <button type="button" class="history-panel__refresh" (click)="historyService.refreshHistory()" i18n="@@pos.components.actualiser.54447ba9">
           <i class="pi pi-refresh"></i> Actualiser
         </button>
 

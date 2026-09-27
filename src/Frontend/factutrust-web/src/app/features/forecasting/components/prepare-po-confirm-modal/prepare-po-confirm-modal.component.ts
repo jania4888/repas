@@ -70,7 +70,7 @@ export interface PreparePoLinePrice {
         <header class="modal-header">
           <div>
             <h3 id="prepare-modal-title" i18n="@@forecasting.components.creer.les.bons.de.commande.8e7effb0">Créer les bons de commande</h3>
-            <span class="modal-subtitle">{{ recommendations.length }} recommandation(s) sélectionnée(s)</span>
+            <span class="modal-subtitle" i18n="@@forecasting.components.recommandation.s.selectionnee.s.89aa030e">{{ recommendations.length }} recommandation(s) sélectionnée(s)</span>
           </div>
           <button class="close-btn" type="button" (click)="onCancel()" aria-label="Fermer" i18n-aria-label="@@forecasting.components.fermer.5ab4ec64">
             <i class="pi pi-times" aria-hidden="true"></i>
@@ -79,9 +79,9 @@ export interface PreparePoLinePrice {
 
         <div class="modal-body">
           @if (groups().length > 0) {
-            <p class="hint">
+            <p class="hint" i18n="@@forecasting.components.verifiez.les.quantites.et.les.fournisseu.0e0b021c">
               Vérifiez les quantités et les fournisseurs ci-dessous.
-              {{ linkableCount() }} bon(s) de commande sera(seront) créé(s) en statut <strong i18n="@@forecasting.components.brouillon.57d2d7a7">Brouillon</strong>,
+              {{ linkableCount() }} bon(s) de commande sera(seront) créé(s) en statut <strong>Brouillon</strong>,
               regroupé(s) par fournisseur. Vous pourrez les valider ensuite depuis le module Achats.
             </p>
             <ul class="supplier-groups">
@@ -92,12 +92,12 @@ export interface PreparePoLinePrice {
                       @if (g.supplierId) {
                         <i class="pi pi-truck" aria-hidden="true"></i>
                         {{ g.supplierName }}
-                      } @else {
+                      } @else {<ng-container i18n="@@forecasting.components.sans.fournisseur.849f6b64">
                         <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                         Sans fournisseur
-                      }
+                      </ng-container>}
                     </span>
-                    <span class="group-count">
+                    <span class="group-count" i18n="@@forecasting.components.ligne.s.total.u.61c817f2">
                       {{ g.recommendations.length }} ligne(s) — total
                       {{ g.totalQty | qtyFmt: groupFormatUnit(g) }} u.
                     </span>
@@ -111,7 +111,7 @@ export interface PreparePoLinePrice {
                         [ngModel]="bulkSupplierId()"
                         (ngModelChange)="onBulkAssign($event)"
                         aria-label="Assigner un fournisseur à toutes les lignes sans fournisseur" i18n-aria-label="@@forecasting.components.assigner.un.fournisseur.a.toutes.les.lignes.sans.dc01867b">
-                        <option [ngValue]="null">— Assigner un fournisseur à toutes ces lignes ({{ g.recommendations.length }}) —</option>
+                        <option [ngValue]="null" i18n="@@forecasting.components.assigner.un.fournisseur.a.toutes.ces.lig.f6149a60">— Assigner un fournisseur à toutes ces lignes ({{ g.recommendations.length }}) —</option>
                         @for (s of suppliers(); track s.id) {
                           <option [ngValue]="s.id">{{ s.name }}</option>
                         }
@@ -179,7 +179,7 @@ export interface PreparePoLinePrice {
                                 [class.invalid]="qtyInvalidFor(r.id)"
                                 [attr.aria-label]="loc_ui_tern_quantite_a_commander_pour_8e4c05 + r.productCode" />
                             </label>
-                            <span class="po-rec-hint" title="Quantité recommandée par le moteur" i18n-title="@@forecasting.components.quantite.recommandee.par.le.moteur.d20840f9">
+                            <span class="po-rec-hint" title="Quantité recommandée par le moteur" i18n-title="@@forecasting.components.quantite.recommandee.par.le.moteur.d20840f9" i18n="@@forecasting.components.rec.b95cb5dc">
                               Rec. {{ r.recommendedQty | qtyFmt: r.productUnit }}
                             </span>
                           </div>
@@ -200,13 +200,13 @@ export interface PreparePoLinePrice {
             }
 
             @if (skippedCount() > 0) {
-              <div class="warning" role="alert">
+              <div class="warning" role="alert" i18n="@@forecasting.components.recommandation.s.sans.fournisseur.ne.ser.beb606ad">
                 <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                 <span>
                   <strong>{{ skippedCount() }} recommandation(s) sans fournisseur</strong>
                   ne seront pas liées à un bon de commande. Choisissez un fournisseur ci-dessus
                   (par ligne, ou pour toutes les lignes en une fois). Astuce : définissez un
-                  <strong i18n="@@forecasting.components.fournisseur.prefere.11a9a98f">fournisseur préféré</strong> sur la fiche produit pour que les prochaines
+                  <strong>fournisseur préféré</strong> sur la fiche produit pour que les prochaines
                   recommandations arrivent déjà rattachées.
                 </span>
               </div>
@@ -222,7 +222,7 @@ export interface PreparePoLinePrice {
             class="btn btn-primary"
             type="button"
             (click)="onConfirm()"
-            [disabled]="!canConfirm()">
+            [disabled]="!canConfirm()" i18n="@@forecasting.components.confirmer.la.creation.bc.28f0aedb">
             <i class="pi pi-check" aria-hidden="true"></i>
             Confirmer la création ({{ linkableCount() }} BC)
           </button>

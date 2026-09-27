@@ -173,7 +173,7 @@ interface TemplateLineRow {
                         type="button"
                         (click)="removeLine($index)"
                         [disabled]="lines.length <= 1"
-                        ariaLabel="Supprimer la ligne">
+                        ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@crm.quote-templates.supprimer.la.ligne.7e5f9ae0">
                       </app-button>
                     </td>
                   </tr>

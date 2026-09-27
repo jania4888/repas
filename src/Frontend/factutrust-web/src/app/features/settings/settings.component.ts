@@ -32,7 +32,7 @@ interface SettingItem {
     
     <app-page-header 
       title="Paramètres" i18n-title="@@settings.settings.parametres.ef8f0121" 
-      subtitle="Configurez votre compte et votre entreprise">
+      subtitle="Configurez votre compte et votre entreprise" i18n-subtitle="@@settings.settings.configurez.votre.compte.et.votre.entrepr.e7a5b642">
     </app-page-header>
 
     <div class="settings-grid">

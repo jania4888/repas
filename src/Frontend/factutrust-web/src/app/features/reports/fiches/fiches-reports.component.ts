@@ -28,7 +28,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
   template: `
     <app-page-header 
       title="Rapports Fiches" i18n-title="@@reports.fiches.rapports.fiches.e0b32117" 
-      subtitle="Analysez vos clients et produits - CA par client, stock par produit">
+      subtitle="Analysez vos clients et produits - CA par client, stock par produit" i18n-subtitle="@@reports.fiches.analysez.vos.clients.et.produits.ca.par.bbf10197">
       <app-button 
         variant="secondary"
         icon="pi-download"
@@ -103,7 +103,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
                           icon="pi-eye" 
                           [iconOnly]="true"
                           [routerLink]="['/clients', client.id]"
-                          ariaLabel="Voir le client">
+                          ariaLabel="Voir le client" i18n-ariaLabel="@@reports.fiches.voir.le.client.fd1e4588">
                         </app-button>
                       </td>
                     </tr>
@@ -122,7 +122,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
                 [loading]="clientBalancesLoading()"
                 partyLabel="Client"
                 emptyMessage="Aucun solde client" i18n-emptyMessage="@@reports.fiches.aucun.solde.client.adab3cf6"
-                ariaLabel="Soldes clients">
+                ariaLabel="Soldes clients" i18n-ariaLabel="@@reports.fiches.soldes.clients.e8313ea0">
               </app-party-balances-table>
             </div>
           </div>
@@ -170,7 +170,7 @@ import { mapClientBalanceRows } from '../shared/party-balances.util';
                           icon="pi-eye" 
                           [iconOnly]="true"
                           [routerLink]="['/products', product.id, 'edit']"
-                          ariaLabel="Voir le produit">
+                          ariaLabel="Voir le produit" i18n-ariaLabel="@@reports.fiches.voir.le.produit.90a3f052">
                         </app-button>
                       </td>
                     </tr>

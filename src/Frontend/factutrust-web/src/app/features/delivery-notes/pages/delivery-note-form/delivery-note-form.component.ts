@@ -127,7 +127,7 @@ interface LineRow extends LinePromotionPreview {
                     size="sm"
                     icon="pi-plus"
                     [iconOnly]="true"
-                    ariaLabel="Créer un client"
+                    ariaLabel="Créer un client" i18n-ariaLabel="@@delivery-notes.pages.creer.un.client.2a38dd4a"
                     (click)="openQuickCreateClient()"
                     class="btn-add-client-circle" />
                 }
@@ -240,7 +240,7 @@ interface LineRow extends LinePromotionPreview {
                           size="sm"
                           icon="pi-th-large"
                           [iconOnly]="true"
-                          ariaLabel="Choisir une variante"
+                          ariaLabel="Choisir une variante" i18n-ariaLabel="@@delivery-notes.pages.choisir.une.variante.8e914309"
                           (click)="openVariantPicker($index)"
                           title="Choisir une variante" i18n-title="@@delivery-notes.pages.choisir.une.variante.c8ab137c" />
                         <app-button
@@ -248,7 +248,7 @@ interface LineRow extends LinePromotionPreview {
                           size="sm"
                           icon="pi-plus"
                           [iconOnly]="true"
-                          ariaLabel="Créer un produit"
+                          ariaLabel="Créer un produit" i18n-ariaLabel="@@delivery-notes.pages.creer.un.produit.1ff296f3"
                           (click)="openQuickCreateProduct($index)"
                           class="btn-add-product-circle" />
                       </div>
@@ -305,7 +305,7 @@ interface LineRow extends LinePromotionPreview {
                         } @else if (line.promotionMinQuantityRequired && line.promotionName) {
                           <small
                             class="promo-hint"
-                            [pTooltip]="line.promotionName + loc_ui_tern_qty_min_f7ccc3 + line.promotionMinQuantityRequired">
+                            [pTooltip]="line.promotionName + loc_ui_tern_qty_min_f7ccc3 + line.promotionMinQuantityRequired" i18n="@@delivery-notes.pages.qty.min.aac0b192">
                             {{ line.promotionName }} : qty min. {{ line.promotionMinQuantityRequired }}
                           </small>
                         }
@@ -338,7 +338,7 @@ interface LineRow extends LinePromotionPreview {
                         [iconOnly]="true"
                         (click)="removeLine($index)"
                         [disabled]="lines.length <= 1"
-                        ariaLabel="Supprimer la ligne">
+                        ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@delivery-notes.pages.supprimer.la.ligne.7e5f9ae0">
                       </app-button>
                     </td>
                   </tr>
@@ -363,7 +363,7 @@ interface LineRow extends LinePromotionPreview {
               </tfoot>
             </table>
           </div>
-          <p class="lines-hint">{{ lines.length }} ligne(s) ajoutée(s)</p>
+          <p class="lines-hint" i18n="@@delivery-notes.pages.ligne.s.ajoutee.s.2f58c459">{{ lines.length }} ligne(s) ajoutée(s)</p>
         </app-form-section>
 
         <app-form-section title="Options et notes (optionnel)" i18n-title="@@delivery-notes.pages.options.et.notes.optionnel.f9541c9b" icon="pi-file-edit" [number]="4">

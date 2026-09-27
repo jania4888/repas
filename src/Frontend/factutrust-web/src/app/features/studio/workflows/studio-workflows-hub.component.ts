@@ -63,7 +63,7 @@ type HubWorkflow = WorkflowDefinitionDto & { entityName: string };
           [ngModel]="search()" (ngModelChange)="onSearchInput($event)" [attr.aria-label]="L.hub.search" />
         <span class="studio-toolbar__spacer"></span>
         @if (!loading()) {
-          <span class="studio-muted">{{ counter() }} workflow(s)</span>
+          <span class="studio-muted" i18n="@@studio.workflows.workflow.s.9031ff2f">{{ counter() }} workflow(s)</span>
         }
       </div>
 

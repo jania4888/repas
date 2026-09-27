@@ -39,19 +39,19 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="import-actions">
           <app-button variant="secondary" icon="pi pi-search" type="button"
             (click)="runPreview()" [disabled]="!selectedFile() || busy()"
-            ariaLabel="Analyser le fichier sans rien enregistrer" i18n="@@accounting.import.apercu.f0f53004"> Aperçu </app-button>
+            ariaLabel="Analyser le fichier sans rien enregistrer" i18n-ariaLabel="@@accounting.import.analyser.le.fichier.sans.rien.enregistre.d298afee" i18n="@@accounting.import.apercu.f0f53004"> Aperçu </app-button>
         </div>
       </div>
 
-      <p class="import-help">
-        <ng-container i18n="@@accounting.import.colonnes.attendues.csv.excel.1.7e34c840"> Colonnes attendues (CSV/Excel, 1</ng-container><sup i18n="@@accounting.import.re.c387c982">re</sup> ligne = en-têtes) : <code i18n="@@accounting.import.journal.numero.date.compte.libelle.debit.credit.edfd9ab6">journal, numero, date, compte, libelle, debit, credit</code>.
-        Les lignes de même <code i18n="@@accounting.import.journal.4954ccf5">journal</code>+<code i18n="@@accounting.import.numero.53b2ed9f">numero</code> forment une pièce. Pour une balance d'ouverture,
-        utilisez le journal <code i18n="@@accounting.import.jan.521ad2c9">JAN</code>. Les écritures importées arrivent <strong i18n="@@accounting.import.en.brouillard.70db7a42">en brouillard</strong> et devront être validées.
+      <p class="import-help" i18n="@@accounting.import.colonnes.attendues.csv.excel.1.re.ligne.8738dd4f">
+        <ng-container> Colonnes attendues (CSV/Excel, 1</ng-container><sup>re</sup> ligne = en-têtes) : <code>journal, numero, date, compte, libelle, debit, credit</code>.
+        Les lignes de même <code>journal</code>+<code>numero</code> forment une pièce. Pour une balance d'ouverture,
+        utilisez le journal <code>JAN</code>. Les écritures importées arrivent <strong>en brouillard</strong> et devront être validées.
       </p>
-      <p class="import-help">
-        <strong i18n="@@accounting.import.table.de.correspondance.6c2a2f21">Table de correspondance</strong> (reprise depuis un autre progiciel) : colonnes
-        <code i18n="@@accounting.import.source.cible.0d98abf1">source, cible</code>. Chaque compte listé est traduit vers le plan comptable local avant
-        contrôle ; un compte absent de la table passe <strong i18n="@@accounting.import.inchange.f94c4f7d">inchangé</strong>.
+      <p class="import-help" i18n="@@accounting.import.table.de.correspondance.reprise.depuis.u.426db73a">
+        <strong>Table de correspondance</strong> (reprise depuis un autre progiciel) : colonnes
+        <code>source, cible</code>. Chaque compte listé est traduit vers le plan comptable local avant
+        contrôle ; un compte absent de la table passe <strong>inchangé</strong>.
       </p>
     </div>
 
@@ -79,28 +79,28 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
 
         @if (p.unusedMappings.length > 0) {
-          <p class="import-help import-unused">
+          <p class="import-help import-unused"><ng-container i18n="@@accounting.import.correspondance.s.jamais.rencontree.s.26021dc9">
             {{ p.unusedMappings.length }} correspondance(s) jamais rencontrée(s) :
-            <code>{{ p.unusedMappings.slice(0, 10).join(', ') }}</code>@if (p.unusedMappings.length > 10) { … }
+            <code>{{ p.unusedMappings.slice(0, 10).join(', ') }}</code></ng-container>@if (p.unusedMappings.length > 10) { … }
           </p>
         }
 
         @if (p.issues.length > 0) {
           <div class="import-issues">
-            <h3 class="import-issues-title">{{ p.issues.length }} anomalie(s) — à corriger avant l'import</h3>
+            <h3 class="import-issues-title" i18n="@@accounting.import.anomalie.s.a.corriger.avant.l.import.16553fe9">{{ p.issues.length }} anomalie(s) — à corriger avant l'import</h3>
             <ul class="import-issues-list">
               @for (issue of p.issues.slice(0, 100); track $index) {
                 <li><span class="import-issue-ref">{{ issue.ref }}</span> {{ issue.message }}</li>
               }
             </ul>
             @if (p.issues.length > 100) {
-              <p class="import-issues-more">… et {{ p.issues.length - 100 }} autre(s).</p>
+              <p class="import-issues-more" i18n="@@accounting.import.et.autre.s.4e567bfc">… et {{ p.issues.length - 100 }} autre(s).</p>
             }
           </div>
         }
 
         @if (p.sample.length > 0) {
-          <h3 class="import-sample-title">Aperçu ({{ p.sample.length }} première(s) écriture(s))</h3>
+          <h3 class="import-sample-title" i18n="@@accounting.import.apercu.premiere.s.ecriture.s.bd265427">Aperçu ({{ p.sample.length }} première(s) écriture(s))</h3>
           <p-table [value]="p.sample" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
             <ng-template pTemplate="header">
               <tr>
@@ -133,13 +133,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
         <div class="import-commit-bar">
           @if (p.canCommit) {
-            <span class="import-commit-hint">Prêt à importer {{ p.totalEntries }} écriture(s) en brouillard.</span>
+            <span class="import-commit-hint" i18n="@@accounting.import.pret.a.importer.ecriture.s.en.brouillard.7ebdad8e">Prêt à importer {{ p.totalEntries }} écriture(s) en brouillard.</span>
           } @else {
             <span class="import-commit-hint import-err" i18n="@@accounting.import.corrigez.les.anomalies.bloquantes.avant.d.import.127ebca3">Corrigez les anomalies bloquantes avant d'importer.</span>
           }
           <app-button variant="primary" icon="pi pi-upload" type="button"
             (click)="runCommit()" [disabled]="!p.canCommit || busy()"
-            ariaLabel="Importer les écritures en brouillard">
+            ariaLabel="Importer les écritures en brouillard" i18n-ariaLabel="@@accounting.import.importer.les.ecritures.en.brouillard.7cf75604">
             {{ committing() ? loc_ui_tern_import_4834ca : loc_ui_tern_importer_en_brouillard_347e35 }}
           </app-button>
         </div>

@@ -28,10 +28,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     AccountingExportMenuComponent
   ],
   template: `
-    <app-page-header title="Bilan" i18n-title="@@accounting.balance-sheet.bilan.a80c4623" subtitle="État de la situation patrimoniale — Actif et Passif" />
+    <app-page-header title="Bilan" i18n-title="@@accounting.balance-sheet.bilan.a80c4623" subtitle="État de la situation patrimoniale — Actif et Passif" i18n-subtitle="@@accounting.balance-sheet.etat.de.la.situation.patrimoniale.actif.2c43e3c8" />
 
     <div class="card bs-filters-card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice fiscal">
+      <app-accounting-filter-bar ariaLabel="Exercice fiscal" i18n-ariaLabel="@@accounting.balance-sheet.exercice.fiscal.7b79fa50">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="bs-year" i18n="@@accounting.balance-sheet.exercice.fiscal.25ea5f92">Exercice fiscal</label>
@@ -46,7 +46,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Charger le bilan" i18n="@@accounting.balance-sheet.charger.8f860300"> Charger </app-button>
+            ariaLabel="Charger le bilan" i18n-ariaLabel="@@accounting.balance-sheet.charger.le.bilan.21c04e99" i18n="@@accounting.balance-sheet.charger.8f860300"> Charger </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-balance-sheet"
             density="toolbar"
@@ -63,7 +63,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.balance-sheet.reessayer.c4f78b12"
       (retry)="load()"
     />
 
@@ -71,7 +71,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <div class="bs-grid">
         <!-- Actif -->
         <div class="card bs-section-card">
-          <h3 class="bs-section-title">
+          <h3 class="bs-section-title" i18n="@@accounting.balance-sheet.actif.0fff68ca">
             <i class="pi pi-arrow-up-right bs-icon bs-icon--assets"></i>
             Actif
           </h3>
@@ -107,7 +107,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
         <!-- Passif -->
         <div class="card bs-section-card">
-          <h3 class="bs-section-title">
+          <h3 class="bs-section-title" i18n="@@accounting.balance-sheet.passif.69f4aee9">
             <i class="pi pi-arrow-down-left bs-icon bs-icon--liabilities"></i>
             Passif
           </h3>

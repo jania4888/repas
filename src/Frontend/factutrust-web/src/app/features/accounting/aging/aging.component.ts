@@ -55,9 +55,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     `
   ],
   template: `
-    <app-page-header title="Balance âgée" i18n-title="@@accounting.aging.balance.agee.f6b2095b" subtitle="Créances et dettes par tranche" />
+    <app-page-header title="Balance âgée" i18n-title="@@accounting.aging.balance.agee.f6b2095b" subtitle="Créances et dettes par tranche" i18n-subtitle="@@accounting.aging.creances.et.dettes.par.tranche.37569f57" />
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Actualisation balance âgée">
+      <app-accounting-filter-bar ariaLabel="Actualisation balance âgée" i18n-ariaLabel="@@accounting.aging.actualisation.balance.agee.eaf82668">
         <div accountingFilterActions>
           <app-button
             variant="secondary"
@@ -66,12 +66,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="loadAll()"
             [disabled]="loadingClients() || loadingSuppliers()"
-            ariaLabel="Actualiser les balances clients et fournisseurs">
+            ariaLabel="Actualiser les balances clients et fournisseurs" i18n-ariaLabel="@@accounting.aging.actualiser.les.balances.clients.et.fourn.8e04ed28">
             @if (loadingClients() || loadingSuppliers()) {
               <p-progressSpinner strokeWidth="4" [style]="{ width: '1.1rem', height: '1.1rem', display: 'inline-block', verticalAlign: 'middle' }" />
-            } @else {
+            } @else {<ng-container i18n="@@accounting.aging.actualiser.9d3b2a7d">
               Actualiser
-            }
+            </ng-container>}
           </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-aging"
@@ -101,7 +101,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           variant="error"
           [message]="errClients() ?? ''"
           [showRetry]="!!errClients()"
-          retryLabel="Réessayer"
+          retryLabel="Réessayer" i18n-retryLabel="@@accounting.aging.reessayer.c4f78b12"
           (retry)="loadClients()"
         />
         <p-table
@@ -157,7 +157,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           variant="error"
           [message]="errSup() ?? ''"
           [showRetry]="!!errSup()"
-          retryLabel="Réessayer"
+          retryLabel="Réessayer" i18n-retryLabel="@@accounting.aging.reessayer.c4f78b12"
           (retry)="loadSuppliers()"
         />
         <p-table

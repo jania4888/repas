@@ -31,7 +31,7 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
       title="Nouveau bon de retour" i18n-title="@@sales-return-notes.pages.nouveau.bon.de.retour.362bee47"
-      subtitle="Document logistique : réintègre le stock et réduit la quantité facturable du BL. Ce n'est pas un avoir.">
+      subtitle="Document logistique : réintègre le stock et réduit la quantité facturable du BL. Ce n'est pas un avoir." i18n-subtitle="@@sales-return-notes.pages.document.logistique.reintegre.le.stock.e.ab800030">
       <app-button variant="secondary" routerLink="/return-notes" i18n="@@sales-return-notes.pages.annuler.49ba3292">Annuler</app-button>
       <app-button variant="outline" [disabled]="saving() || !canSave()" (clicked)="save(false)" i18n="@@sales-return-notes.pages.enregistrer.le.brouillon.6a319595"> Enregistrer le brouillon </app-button>
       @if (canConfirm()) {
@@ -39,9 +39,9 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
       }
     </app-page-header>
 
-    <p class="help">
-      <ng-container i18n="@@sales-return-notes.pages.un.bon.de.retour.s.applique.uniquement.aux.artic.7e041ab8"> Un bon de retour s'applique uniquement aux articles </ng-container> <strong i18n="@@sales-return-notes.pages.livres.et.non.encore.factures.7ba9aca6">livrés et non encore facturés</strong>.
-      Après facture, utilisez un <strong i18n="@@sales-return-notes.pages.avoir.de.vente.cfb2d993">avoir de vente</strong>.
+    <p class="help" i18n="@@sales-return-notes.pages.un.bon.de.retour.s.applique.uniquement.a.5a69b9d7">
+      <ng-container> Un bon de retour s'applique uniquement aux articles </ng-container> <strong>livrés et non encore facturés</strong>.
+      Après facture, utilisez un <strong>avoir de vente</strong>.
       Le stock n’est réintégré qu’après confirmation sur la fiche.
     </p>
 
@@ -50,7 +50,7 @@ interface EditableLine extends SalesReturnNotePrefillLineDto {
       <select class="form-control" [ngModel]="selectedBlId()" (ngModelChange)="onBlSelected($event)">
         <option value="" i18n="@@sales-return-notes.pages.choisir.un.bl.livre.non.facture.948c909d">— Choisir un BL livré non facturé —</option>
         @for (bl of eligible(); track bl.id) {
-          <option [value]="bl.id">{{ bl.number }} — {{ bl.clientName }} (reste {{ bl.totalInvoiceableQuantity }})</option>
+          <option [value]="bl.id" i18n="@@sales-return-notes.pages.reste.953dfa53">{{ bl.number }} — {{ bl.clientName }} (reste {{ bl.totalInvoiceableQuantity }})</option>
         }
       </select>
     </section>

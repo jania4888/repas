@@ -118,7 +118,7 @@ interface GovernorateOption {
               </div>
 
               <div class="form-group">
-                <label for="nif">NIF / Matricule fiscal @if (form.get('type')?.value === ClientType.Business) {<span class="required" i18n="@@clients.client-form.text.df58248c">*</span>}</label>
+                <label for="nif"><ng-container i18n="@@clients.client-form.nif.matricule.fiscal.a5458ed7">NIF / Matricule fiscal </ng-container>@if (form.get('type')?.value === ClientType.Business) {<span class="required" i18n="@@clients.client-form.text.df58248c">*</span>}</label>
                 <p-inputMask
                   id="nif"
                   formControlName="nif"

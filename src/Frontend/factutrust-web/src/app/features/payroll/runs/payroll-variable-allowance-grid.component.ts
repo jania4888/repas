@@ -38,7 +38,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
   template: `
     <app-payroll-section
       title="Éléments variables — Primes mensuelles" i18n-title="@@payroll.runs.elements.variables.primes.mensuelles.819b5295"
-      subtitle="Primes saisies pour ce mois uniquement. Pensez à recalculer le cycle pour mettre à jour les bulletins."
+      subtitle="Primes saisies pour ce mois uniquement. Pensez à recalculer le cycle pour mettre à jour les bulletins." i18n-subtitle="@@payroll.runs.primes.saisies.pour.ce.mois.uniquement.p.a3803405"
       icon="pi-gift">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">

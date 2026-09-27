@@ -74,7 +74,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
   template: `
     <app-page-header
       title="Caisse de trésorerie" i18n-title="@@payments.cash-desk.caisse.de.tresorerie.eeba43e2"
-      subtitle="Enregistrez et gérez vos opérations de caisse (encaissements et décaissements).">
+      subtitle="Enregistrez et gérez vos opérations de caisse (encaissements et décaissements)." i18n-subtitle="@@payments.cash-desk.enregistrez.et.gerez.vos.operations.de.c.077842dd">
       <app-analyze-with-ai-button
         screenId="cash-desk"
         [payloadBuilder]="buildCashDeskAnalyzePayload"
@@ -120,12 +120,12 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                   variant="outline"
                   icon="pi pi-building"
                   (click)="openBankDepositWizard()"
-                  ariaLabel="Remise en banque" i18n="@@payments.cash-desk.remise.en.banque.f42e5169"> Remise en banque </app-button>
+                  ariaLabel="Remise en banque" i18n-ariaLabel="@@payments.cash-desk.remise.en.banque.50f823a1" i18n="@@payments.cash-desk.remise.en.banque.f42e5169"> Remise en banque </app-button>
                 <app-button
                   variant="primary"
                   icon="pi pi-plus"
                   (click)="openAddDialog()"
-                  ariaLabel="Enregistrer une opération" i18n="@@payments.cash-desk.enregistrer.une.operation.f45e95b6"> Enregistrer une opération </app-button>
+                  ariaLabel="Enregistrer une opération" i18n-ariaLabel="@@payments.cash-desk.enregistrer.une.operation.ffa51487" i18n="@@payments.cash-desk.enregistrer.une.operation.f45e95b6"> Enregistrer une opération </app-button>
               } @else {
                 <span class="perm-hint" role="note" i18n="@@payments.cash-desk.autorisation.tresorerie.saisie.requise.93829a0d">Autorisation « Trésorerie — saisie » requise.</span>
               }
@@ -200,14 +200,14 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
               <app-empty-state
                 illustration="empty-payments.svg"
                 title="Aucune opération" i18n-title="@@payments.cash-desk.aucune.operation.5e70746f"
-                description="Aucune opération trouvée pour la période sélectionnée.">
+                description="Aucune opération trouvée pour la période sélectionnée." i18n-description="@@payments.cash-desk.aucune.operation.trouvee.pour.la.periode.cd290cb0">
               </app-empty-state>
             } @else {
               <app-empty-state
                 illustration="empty-payments.svg"
                 title="Aucune opération" i18n-title="@@payments.cash-desk.aucune.operation.5e70746f"
-                description="Aucune opération trouvée pour la période sélectionnée."
-                actionLabel="Enregistrer une opération"
+                description="Aucune opération trouvée pour la période sélectionnée." i18n-description="@@payments.cash-desk.aucune.operation.trouvee.pour.la.periode.cd290cb0"
+                actionLabel="Enregistrer une opération" i18n-actionLabel="@@payments.cash-desk.enregistrer.une.operation.afe7362d"
                 (actionClick)="openAddDialog()">
               </app-empty-state>
             }
@@ -303,7 +303,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                               [iconOnly]="true"
                               [iconAlwaysVisible]="true"
                               pTooltip="Annuler l'opération" i18n-pTooltip="@@payments.cash-desk.annuler.l.operation.dbf1fd18"
-                              ariaLabel="Annuler l'opération"
+                              ariaLabel="Annuler l'opération" i18n-ariaLabel="@@payments.cash-desk.annuler.l.operation.c17440af"
                               (click)="openCancelDialog(op); $event.stopPropagation()">
                             </app-button>
                           } @else {
@@ -326,7 +326,7 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
                             [iconAlwaysVisible]="true"
                             [disabled]="true"
                             pTooltip="Géré via la facture" i18n-pTooltip="@@payments.cash-desk.gere.via.la.facture.940cb8fb"
-                            ariaLabel="Opération gérée via la facture">
+                            ariaLabel="Opération gérée via la facture" i18n-ariaLabel="@@payments.cash-desk.operation.geree.via.la.facture.75edfd7d">
                           </app-button>
                         }
                       </div>
@@ -381,13 +381,13 @@ const MONTH_OPTIONS: { label: string; value: number }[] = [
 
       <ng-template pTemplate="footer">
         <div class="dialog-footer">
-          <app-button variant="outline" (click)="closeCancelDialog()" ariaLabel="Retour" i18n="@@payments.cash-desk.retour.e5befb1f">Retour</app-button>
+          <app-button variant="outline" (click)="closeCancelDialog()" ariaLabel="Retour" i18n-ariaLabel="@@payments.cash-desk.retour.3179a2b1" i18n="@@payments.cash-desk.retour.e5befb1f">Retour</app-button>
           <app-button
             variant="danger"
             icon="pi pi-times"
             iconPos="left"
             [disabled]="!cancelReason.trim() || cancelling()"
-            (click)="submitCancel()" ariaLabel="Annuler l'opération" i18n="@@payments.cash-desk.annuler.49ba3292"> Annuler </app-button>
+            (click)="submitCancel()" ariaLabel="Annuler l'opération" i18n-ariaLabel="@@payments.cash-desk.annuler.l.operation.c17440af" i18n="@@payments.cash-desk.annuler.49ba3292"> Annuler </app-button>
         </div>
       </ng-template>
     </p-dialog>

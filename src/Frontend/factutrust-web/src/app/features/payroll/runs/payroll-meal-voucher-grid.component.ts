@@ -69,7 +69,7 @@ import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
       title="Tickets restaurant" i18n-title="@@payroll.runs.tickets.restaurant.72ed5294"
 
-      subtitle="Saisie mensuelle par salarié. Recalculez le cycle pour intégrer les retenues au bulletin."
+      subtitle="Saisie mensuelle par salarié. Recalculez le cycle pour intégrer les retenues au bulletin." i18n-subtitle="@@payroll.runs.saisie.mensuelle.par.salarie.recalculez.fa59ee0c"
 
       icon="pi-shopping-bag">
 

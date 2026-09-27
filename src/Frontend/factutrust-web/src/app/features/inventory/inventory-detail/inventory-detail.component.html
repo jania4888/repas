@@ -7,7 +7,7 @@
     </div>
     <h2 i18n="@@inventory.inventory-detail.inventaire.introuvable.58ba8c22">Inventaire introuvable</h2>
     <p i18n="@@inventory.inventory-detail.l.inventaire.demande.n.existe.pas.ou.vous.n.avez.02e353aa">L'inventaire demandé n'existe pas ou vous n'avez pas les droits pour le consulter.</p>
-    <app-button variant="primary" icon="pi-arrow-left" iconPos="left" (click)="goToList()" ariaLabel="Retour à la liste des inventaires" i18n="@@inventory.inventory-detail.retour.a.la.liste.7753f531"> Retour à la liste </app-button>
+    <app-button variant="primary" icon="pi-arrow-left" iconPos="left" (click)="goToList()" ariaLabel="Retour à la liste des inventaires" i18n-ariaLabel="@@inventory.inventory-detail.retour.a.la.liste.des.inventaires.9efba5fd" i18n="@@inventory.inventory-detail.retour.a.la.liste.7753f531"> Retour à la liste </app-button>
   </div>
 } @else {
   <app-page-header
@@ -18,7 +18,7 @@
       icon="pi-arrow-left"
       iconPos="left"
       routerLink="/inventory"
-      ariaLabel="Retour à la liste des inventaires" i18n="@@inventory.inventory-detail.retour.e5befb1f"> Retour </app-button>
+      ariaLabel="Retour à la liste des inventaires" i18n-ariaLabel="@@inventory.inventory-detail.retour.a.la.liste.des.inventaires.9efba5fd" i18n="@@inventory.inventory-detail.retour.e5befb1f"> Retour </app-button>
     @if (inventory()?.status === 1) {
       <app-button
         variant="primary"
@@ -26,7 +26,7 @@
         iconPos="left"
         routerLink="/inventory/new"
         [queryParams]="{ warehouseId: inventory()?.warehouseId }"
-        ariaLabel="Continuer le comptage de cet inventaire" i18n="@@inventory.inventory-detail.continuer.l.inventaire.9964ec39"> Continuer l'inventaire </app-button>
+        ariaLabel="Continuer le comptage de cet inventaire" i18n-ariaLabel="@@inventory.inventory-detail.continuer.le.comptage.de.cet.inventaire.065e6eea" i18n="@@inventory.inventory-detail.continuer.l.inventaire.9964ec39"> Continuer l'inventaire </app-button>
     }
   </app-page-header>
 
@@ -95,7 +95,7 @@
             role="region"
             aria-labelledby="inventory-summary-heading">
             <div class="card-header-row">
-              <h3 class="card-section-title">
+              <h3 class="card-section-title" i18n="@@inventory.inventory-detail.resume.de.l.inventaire.620c282a">
                 <i class="pi pi-info-circle" aria-hidden="true"></i>
                 Résumé de l'inventaire
               </h3>
@@ -149,7 +149,7 @@
             </div>
 
             <div class="progress-block" role="status" [attr.aria-valuenow]="inventory()!.countedProducts" [attr.aria-valuemin]="0" [attr.aria-valuemax]="inventory()!.totalProducts" aria-label="Progression du comptage" i18n-aria-label="@@inventory.inventory-detail.progression.du.comptage.b87098a6">
-              <div class="progress-label">
+              <div class="progress-label" i18n="@@inventory.inventory-detail.produits.comptes.ab793b07">
                 <span>
                   <i class="pi pi-spinner" aria-hidden="true"></i>
                   {{ inventory()!.countedProducts }} / {{ inventory()!.totalProducts }} produits comptés
@@ -169,7 +169,7 @@
         <!-- Inventory Lines Card -->
         <p-card styleClass="lines-card p-card--static">
           <div class="card-header-row">
-            <h3 class="card-section-title">
+            <h3 class="card-section-title" i18n="@@inventory.inventory-detail.lignes.d.inventaire.d0c5534f">
               <i class="pi pi-list" aria-hidden="true"></i>
               Lignes d'inventaire
             </h3>
@@ -198,7 +198,7 @@
                   <td [attr.data-label]="'Produit'">
                     <span class="product-name">{{ line.productName }}</span>
                     @if (line.lotNumber) {
-                      <span class="lot-label">Lot {{ line.lotNumber }}</span>
+                      <span class="lot-label" i18n="@@inventory.inventory-detail.lot.f7358f58">Lot {{ line.lotNumber }}</span>
                     }
                   </td>
                   <td [attr.data-label]="'Code'">
@@ -242,7 +242,7 @@
                     <app-empty-state
                       icon="pi-inbox"
                       title="Aucune ligne d'inventaire" i18n-title="@@inventory.inventory-detail.aucune.ligne.d.inventaire.3854ee6e"
-                      description="Aucun produit n'est associé à cet enregistrement."></app-empty-state>
+                      description="Aucun produit n'est associé à cet enregistrement." i18n-description="@@inventory.inventory-detail.aucun.produit.n.est.associe.a.cet.enregi.8f14de07"></app-empty-state>
                   </td>
                 </tr>
               </ng-template>

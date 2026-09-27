@@ -17,12 +17,12 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, TableModule, SelectModule, PageHeaderComponent, ButtonComponent],
   template: `
-    <app-page-header title="Mes feuilles de temps" i18n-title="@@timesheets.my-timesheets.mes.feuilles.de.temps.50923fd1" subtitle="Vue grille — alignée Odoo Timesheets">
+    <app-page-header title="Mes feuilles de temps" i18n-title="@@timesheets.my-timesheets.mes.feuilles.de.temps.50923fd1" subtitle="Vue grille — alignée Odoo Timesheets" i18n-subtitle="@@timesheets.my-timesheets.vue.grille.alignee.odoo.timesheets.6995411d">
       <app-button variant="secondary" routerLink="/timesheets/validation" i18n="@@timesheets.my-timesheets.validation.equipe.104ff195">Validation équipe</app-button>
     </app-page-header>
 
     @if (kpi(); as k) {
-      <div class="kpi-banner" [class.reached]="k.targetReached">
+      <div class="kpi-banner" [class.reached]="k.targetReached" i18n="@@timesheets.my-timesheets.h.h.objectif.facturable.total.periode.h.8e69ad34">
         <strong>{{ k.billableLoggedHours | number:'1.2-2' }} h</strong>
         <span>/ {{ k.targetHours | number:'1.2-2' }} h objectif facturable</span>
         <span class="pct">({{ k.completionPercent | number:'1.0-0' }} %)</span>
@@ -47,10 +47,10 @@ import { ProjectApiService, ProjectListItem } from '../projects/project-api.serv
     <div class="toolbar">
       <app-button (clicked)="toggleTimer()">{{ timer() ? loc_ui_tern_stop_timer_4e04d8 : loc_ui_tern_start_timer_4f207a }}</app-button>
       @if (timer(); as t) {
-        <span class="timer-info">{{ t.projectName }} — depuis {{ t.startedAtUtc | date:'HH:mm' }}</span>
+        <span class="timer-info" i18n="@@timesheets.my-timesheets.depuis.8109461d">{{ t.projectName }} — depuis {{ t.startedAtUtc | date:'HH:mm' }}</span>
       }
-      <label>Période
-        <select [(ngModel)]="periodMode" (ngModelChange)="reload()">
+      <label><ng-container i18n="@@timesheets.my-timesheets.periode.de2110b7">Période
+        </ng-container><select [(ngModel)]="periodMode" (ngModelChange)="reload()">
           <option value="week" i18n="@@timesheets.my-timesheets.semaine.33703a8c">Semaine</option>
           <option value="month" i18n="@@timesheets.my-timesheets.mois.0d304bea">Mois</option>
         </select>

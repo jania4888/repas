@@ -173,13 +173,13 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
         <p-message severity="warn" styleClass="w-full mb-3"
 
-          text="Activez le projet (statut Brouillon) avant de facturer. La facturation est réservée aux projets Actif ou Terminé." />
+          text="Activez le projet (statut Brouillon) avant de facturer. La facturation est réservée aux projets Actif ou Terminé." i18n-text="@@projects.tabs.activez.le.projet.statut.brouillon.avant.45a8ed34" />
 
       }
 
       @if (canActivate(project.status) && canUpdate) {
 
-        <app-button class="mb-3" variant="primary" (click)="activate.emit()">Activer le projet</app-button>
+        <app-button class="mb-3" variant="primary" (click)="activate.emit()" i18n="@@projects.tabs.activer.le.projet.1aa2449c">Activer le projet</app-button>
 
       }
 
@@ -191,7 +191,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
       <div class="card p-3 mb-3">
 
-        <h3 class="mt-0">Prérequis de facturation</h3>
+        <h3 class="mt-0" i18n="@@projects.tabs.prerequis.de.facturation.ded03f12">Prérequis de facturation</h3>
 
         @if (readiness.blockers.length) {
 
@@ -209,17 +209,17 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
         <ul class="m-0 pl-3">
 
-          <li>Statut : {{ readiness.statusDisplay | backendLabel }} {{ readiness.canBill ? '✓' : '✗' }}</li>
+          <li i18n="@@projects.tabs.statut.120dd2cf">Statut : {{ readiness.statusDisplay | backendLabel }} {{ readiness.canBill ? '✓' : '✗' }}</li>
 
-          <li>Temps validés non facturés : {{ readiness.validatedUninvoicedHours | number:'1.0-1' }} h</li>
+          <li i18n="@@projects.tabs.temps.valides.non.factures.h.f21297d8">Temps validés non facturés : {{ readiness.validatedUninvoicedHours | number:'1.0-1' }} h</li>
 
-          <li>Équipe sans tarif de vente :
+          <li><ng-container i18n="@@projects.tabs.equipe.sans.tarif.de.vente.b3c061fc">Équipe sans tarif de vente :
 
-            @if (readiness.membersWithoutRate.length) {
+            </ng-container>@if (readiness.membersWithoutRate.length) {
 
               {{ readiness.membersWithoutRate.join(', ') }}
 
-            } @else { aucun }
+            } @else {<ng-container i18n="@@projects.tabs.aucun.6bcf7eeb"> aucun </ng-container>}
 
           </li>
 
@@ -235,25 +235,25 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
       <div class="card p-3 mb-3">
 
-        <h3 class="mt-0">Facturation régie</h3>
+        <h3 class="mt-0" i18n="@@projects.tabs.facturation.regie.c756b217">Facturation régie</h3>
 
         <div class="proj-field-row">
 
-          <label>Grouper par
+          <label><ng-container i18n="@@projects.tabs.grouper.par.48438b59">Grouper par
 
-            <p-select [options]="groupOptions" [(ngModel)]="timeGroupBy" optionLabel="label" optionValue="value" (ngModelChange)="onTimeGroupByChange()" />
+            </ng-container><p-select [options]="groupOptions" [(ngModel)]="timeGroupBy" optionLabel="label" optionValue="value" (ngModelChange)="onTimeGroupByChange()" />
 
           </label>
 
           @if (timeGroupBy === 'member') {
 
-            <label>Notes
+            <label><ng-container i18n="@@projects.tabs.notes.70440046">Notes
 
-              <input pInputText [(ngModel)]="timeNotes" placeholder="Notes facture" />
+              </ng-container><input pInputText [(ngModel)]="timeNotes" placeholder="Notes facture" i18n-placeholder="@@projects.tabs.notes.facture.8eafdc1b" />
 
             </label>
 
-            <app-button variant="primary" [disabled]="!canInvoiceSelectedTime || invoiceTargetLoading" (click)="openInvoiceTargetDialog('time')">Facturer la sélection</app-button>
+            <app-button variant="primary" [disabled]="!canInvoiceSelectedTime || invoiceTargetLoading" (click)="openInvoiceTargetDialog('time')" i18n="@@projects.tabs.facturer.la.selection.37788e00">Facturer la sélection</app-button>
 
           }
 
@@ -265,13 +265,13 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
           @if (!billableTimeEntries.length) {
 
-            <p class="text-muted mt-2 mb-0">Aucun temps éligible à la facturation.</p>
+            <p class="text-muted mt-2 mb-0" i18n="@@projects.tabs.aucun.temps.eligible.a.la.facturation.7b718dfb">Aucun temps éligible à la facturation.</p>
 
           } @else {
 
             @if (selectedTimeSummary.hours > 0) {
 
-              <p class="time-selection-summary mt-2 mb-2">
+              <p class="time-selection-summary mt-2 mb-2" i18n="@@projects.tabs.h.selectionnees.ht.92777045">
 
                 {{ selectedTimeSummary.hours | number:'1.0-2' }} h sélectionnées ·
 
@@ -303,17 +303,17 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
                   </th>
 
-                  <th>Date</th>
+                  <th i18n="@@projects.tabs.date.eb9a4bc1">Date</th>
 
-                  <th>Membre</th>
+                  <th i18n="@@projects.tabs.membre.bbc7e799">Membre</th>
 
-                  <th>Tâche</th>
+                  <th i18n="@@projects.tabs.tache.43c8425c">Tâche</th>
 
-                  <th>Heures</th>
+                  <th i18n="@@projects.tabs.heures.b4448c06">Heures</th>
 
-                  <th>Tarif h</th>
+                  <th i18n="@@projects.tabs.tarif.h.4b2597c3">Tarif h</th>
 
-                  <th>Montant HT</th>
+                  <th i18n="@@projects.tabs.montant.ht.3df1d6fe">Montant HT</th>
 
                 </tr>
 
@@ -377,19 +377,19 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
           <div class="proj-field-row mt-2">
 
-            <label>Mode de facturation
+            <label><ng-container i18n="@@projects.tabs.mode.de.facturation.d797aff0">Mode de facturation
 
-              <p-select [options]="taskBillingMethodOptions" [(ngModel)]="taskBillingMethod" optionLabel="label" optionValue="value" (ngModelChange)="onTaskBillingMethodChange()" />
-
-            </label>
-
-            <label>Notes
-
-              <input pInputText [(ngModel)]="timeNotes" placeholder="Notes facture" />
+              </ng-container><p-select [options]="taskBillingMethodOptions" [(ngModel)]="taskBillingMethod" optionLabel="label" optionValue="value" (ngModelChange)="onTaskBillingMethodChange()" />
 
             </label>
 
-            <app-button variant="primary" [disabled]="!canInvoiceTasks || invoiceTargetLoading" (click)="openInvoiceTargetDialog('tasks')">Facturer les tâches sélectionnées</app-button>
+            <label><ng-container i18n="@@projects.tabs.notes.70440046">Notes
+
+              </ng-container><input pInputText [(ngModel)]="timeNotes" placeholder="Notes facture" i18n-placeholder="@@projects.tabs.notes.facture.8eafdc1b" />
+
+            </label>
+
+            <app-button variant="primary" [disabled]="!canInvoiceTasks || invoiceTargetLoading" (click)="openInvoiceTargetDialog('tasks')" i18n="@@projects.tabs.facturer.les.taches.selectionnees.ec248c1c">Facturer les tâches sélectionnées</app-button>
 
           </div>
 
@@ -397,7 +397,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
           @if (!billableTasks.length) {
 
-            <p class="text-muted mt-2 mb-0">Aucune tâche facturable pour ce mode.</p>
+            <p class="text-muted mt-2 mb-0" i18n="@@projects.tabs.aucune.tache.facturable.pour.ce.mode.70fb424e">Aucune tâche facturable pour ce mode.</p>
 
           } @else {
 
@@ -409,19 +409,19 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
                   <th style="width: 3rem"></th>
 
-                  <th>Tâche</th>
+                  <th i18n="@@projects.tabs.tache.43c8425c">Tâche</th>
 
                   @if (taskBillingMethod === 'hourly') {
 
-                    <th>Heures</th>
+                    <th i18n="@@projects.tabs.heures.b4448c06">Heures</th>
 
-                    <th>Tarif h</th>
+                    <th i18n="@@projects.tabs.tarif.h.4b2597c3">Tarif h</th>
 
-                    <th>Montant HT</th>
+                    <th i18n="@@projects.tabs.montant.ht.3df1d6fe">Montant HT</th>
 
                   } @else {
 
-                    <th>Montant HT</th>
+                    <th i18n="@@projects.tabs.montant.ht.3df1d6fe">Montant HT</th>
 
                   }
 
@@ -479,7 +479,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
                           [min]="0"
 
-                          placeholder="Tarif h" />
+                          placeholder="Tarif h" i18n-placeholder="@@projects.tabs.tarif.h.c48d565c" />
 
                       } @else {
 
@@ -507,7 +507,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
                           [min]="0"
 
-                          placeholder="Montant HT" />
+                          placeholder="Montant HT" i18n-placeholder="@@projects.tabs.montant.ht.31afcc24" />
 
                       } @else {
 
@@ -539,23 +539,23 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
       <div class="card p-3 mb-3">
 
-        <h3 class="mt-0">Forfait</h3>
+        <h3 class="mt-0" i18n="@@projects.tabs.forfait.e1dca3c1">Forfait</h3>
 
         <div class="proj-field-row">
 
-          <label>Montant HT
+          <label><ng-container i18n="@@projects.tabs.montant.ht.3df1d6fe">Montant HT
 
-            <p-inputNumber [(ngModel)]="fixedPriceAmount" mode="decimal" [minFractionDigits]="3" />
-
-          </label>
-
-          <label>Notes
-
-            <input pInputText [(ngModel)]="fixedPriceNotes" />
+            </ng-container><p-inputNumber [(ngModel)]="fixedPriceAmount" mode="decimal" [minFractionDigits]="3" />
 
           </label>
 
-          <app-button variant="primary" [disabled]="fixedPriceInvoiced" (click)="emitFixedPrice()">Facturer le forfait</app-button>
+          <label><ng-container i18n="@@projects.tabs.notes.70440046">Notes
+
+            </ng-container><input pInputText [(ngModel)]="fixedPriceNotes" />
+
+          </label>
+
+          <app-button variant="primary" [disabled]="fixedPriceInvoiced" (click)="emitFixedPrice()" i18n="@@projects.tabs.facturer.le.forfait.c7f92c2b">Facturer le forfait</app-button>
 
         </div>
 
@@ -567,21 +567,21 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
     @if (project && showMilestones(project.kind, project.billingMode)) {
 
-      <h3>Jalons</h3>
+      <h3 i18n="@@projects.tabs.jalons.4bb628c9">Jalons</h3>
 
       @if (canBill) {
 
         <div class="proj-field-row mb-2">
 
-          <label>Nom <input pInputText [(ngModel)]="milestoneName" /></label>
+          <label><ng-container i18n="@@projects.tabs.nom.7ff20370">Nom </ng-container><input pInputText [(ngModel)]="milestoneName" /></label>
 
           <label>% <p-inputNumber [(ngModel)]="milestonePercent" [min]="0" [max]="100" /></label>
 
-          <label>Montant HT <p-inputNumber [(ngModel)]="milestoneAmount" /></label>
+          <label><ng-container i18n="@@projects.tabs.montant.ht.3df1d6fe">Montant HT </ng-container><p-inputNumber [(ngModel)]="milestoneAmount" /></label>
 
-          <label>Échéance <p-datepicker [(ngModel)]="milestoneDue" dateFormat="dd/mm/yy" [showClear]="true" /></label>
+          <label><ng-container i18n="@@projects.tabs.echeance.f9a77ff6">Échéance </ng-container><p-datepicker [(ngModel)]="milestoneDue" dateFormat="dd/mm/yy" [showClear]="true" /></label>
 
-          <app-button (click)="addMs()">Ajouter</app-button>
+          <app-button (click)="addMs()" i18n="@@projects.tabs.ajouter.87c57ed1">Ajouter</app-button>
 
         </div>
 
@@ -589,7 +589,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
       <p-table [value]="milestones" styleClass="p-datatable-sm">
 
-        <ng-template pTemplate="header"><tr><th>Jalon</th><th>%</th><th>Montant</th><th>Échéance</th><th></th></tr></ng-template>
+        <ng-template pTemplate="header"><tr><th i18n="@@projects.tabs.jalon.6e891b2f">Jalon</th><th>%</th><th i18n="@@projects.tabs.montant.4adcd9fc">Montant</th><th i18n="@@projects.tabs.echeance.f9a77ff6">Échéance</th><th></th></tr></ng-template>
 
         <ng-template pTemplate="body" let-m>
 
@@ -607,11 +607,11 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
               @if (!m.invoicedInvoiceId && canBill && project && canBeBilled(project.status)) {
 
-                <app-button size="sm" (click)="invoiceMilestone.emit(m.id)">Facturer</app-button>
+                <app-button size="sm" (click)="invoiceMilestone.emit(m.id)" i18n="@@projects.tabs.facturer.98d65a13">Facturer</app-button>
 
               } @else if (m.invoicedInvoiceId) {
 
-                <a [routerLink]="['/invoices', m.invoicedInvoiceId]">Facture</a>
+                <a [routerLink]="['/invoices', m.invoicedInvoiceId]" i18n="@@projects.tabs.facture.31828596">Facture</a>
 
               }
 
@@ -633,7 +633,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
         <div class="card p-3 mb-3">
 
-          <h3 class="mt-0">Avancement cumulé chantier</h3>
+          <h3 class="mt-0" i18n="@@projects.tabs.avancement.cumule.chantier.a77c3879">Avancement cumulé chantier</h3>
 
           <p-progressBar [value]="latestSituationPercent" [showValue]="true" />
 
@@ -641,21 +641,21 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
       }
 
-      <h3>Situations de travaux</h3>
+      <h3 i18n="@@projects.tabs.situations.de.travaux.0d67835b">Situations de travaux</h3>
 
       @if (canBill) {
 
         <div class="proj-field-row mb-2">
 
-          <label>Début <p-datepicker [(ngModel)]="sitStart" dateFormat="dd/mm/yy" /></label>
+          <label><ng-container i18n="@@projects.tabs.debut.f0955314">Début </ng-container><p-datepicker [(ngModel)]="sitStart" dateFormat="dd/mm/yy" /></label>
 
-          <label>Fin <p-datepicker [(ngModel)]="sitEnd" dateFormat="dd/mm/yy" /></label>
+          <label><ng-container i18n="@@projects.tabs.fin.4251065f">Fin </ng-container><p-datepicker [(ngModel)]="sitEnd" dateFormat="dd/mm/yy" /></label>
 
-          <label>% cumulé <p-inputNumber [(ngModel)]="sitPercent" /></label>
+          <label><ng-container i18n="@@projects.tabs.cumule.1c3be77d">% cumulé </ng-container><p-inputNumber [(ngModel)]="sitPercent" /></label>
 
-          <label>Brut HT <p-inputNumber [(ngModel)]="sitGross" /></label>
+          <label><ng-container i18n="@@projects.tabs.brut.ht.1988da69">Brut HT </ng-container><p-inputNumber [(ngModel)]="sitGross" /></label>
 
-          <label>Retenue <p-inputNumber [(ngModel)]="sitRetainage" /></label>
+          <label><ng-container i18n="@@projects.tabs.retenue.88cf18f4">Retenue </ng-container><p-inputNumber [(ngModel)]="sitRetainage" /></label>
 
           <label>TVA
 
@@ -663,7 +663,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
           </label>
 
-          <app-button (click)="addSit()">Nouvelle situation</app-button>
+          <app-button (click)="addSit()" i18n="@@projects.tabs.nouvelle.situation.c39ab90e">Nouvelle situation</app-button>
 
         </div>
 
@@ -671,7 +671,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
       <p-table [value]="situations" styleClass="p-datatable-sm">
 
-        <ng-template pTemplate="header"><tr><th>N°</th><th>%</th><th>Net HT</th><th>Retenue</th><th>TTC</th><th>Statut</th><th></th></tr></ng-template>
+        <ng-template pTemplate="header"><tr><th>N°</th><th>%</th><th i18n="@@projects.tabs.net.ht.8d95a22f">Net HT</th><th i18n="@@projects.tabs.retenue.88cf18f4">Retenue</th><th>TTC</th><th i18n="@@projects.tabs.statut.659499f3">Statut</th><th></th></tr></ng-template>
 
         <ng-template pTemplate="body" let-s>
 
@@ -693,21 +693,21 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
               @if (parseProjectSituationStatus(s.status) === 'Draft' && canBill) {
 
-                <app-button size="sm" variant="outline" (click)="openEditSituation(s)">Modifier</app-button>
+                <app-button size="sm" variant="outline" (click)="openEditSituation(s)" i18n="@@projects.tabs.modifier.f260e757">Modifier</app-button>
 
-                <app-button size="sm" (click)="validateSituation.emit(s.id)">Valider</app-button>
+                <app-button size="sm" (click)="validateSituation.emit(s.id)" i18n="@@projects.tabs.valider.be4220f7">Valider</app-button>
 
               }
 
               @if (parseProjectSituationStatus(s.status) === 'Validated' && !s.invoiceId && canBill && project && canBeBilled(project.status)) {
 
-                <app-button size="sm" (click)="invoiceSituation.emit(s.id)">Facturer</app-button>
+                <app-button size="sm" (click)="invoiceSituation.emit(s.id)" i18n="@@projects.tabs.facturer.98d65a13">Facturer</app-button>
 
               }
 
               @if (s.invoiceId) {
 
-                <a [routerLink]="['/invoices', s.invoiceId]">Facture</a>
+                <a [routerLink]="['/invoices', s.invoiceId]" i18n="@@projects.tabs.facture.93d3ce90">Facture</a>
 
               }
 
@@ -719,21 +719,21 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
       </p-table>
 
-      <h3>Sous-traitants</h3>
+      <h3 i18n="@@projects.tabs.sous.traitants.4193cfad">Sous-traitants</h3>
 
       @if (canUpdate) {
 
         <div class="proj-field-row mb-2">
 
-          <label>Fournisseur <p-select [options]="suppliers" [(ngModel)]="subSupplierId" optionLabel="name" optionValue="id" placeholder="Fournisseur" /></label>
+          <label><ng-container i18n="@@projects.tabs.fournisseur.97d91d89">Fournisseur </ng-container><p-select [options]="suppliers" [(ngModel)]="subSupplierId" optionLabel="name" optionValue="id" placeholder="Fournisseur" i18n-placeholder="@@projects.tabs.fournisseur.c366796b" /></label>
 
-          <label>Marché <input pInputText [(ngModel)]="subRef" /></label>
+          <label><ng-container i18n="@@projects.tabs.marche.eb9aa674">Marché </ng-container><input pInputText [(ngModel)]="subRef" /></label>
 
-          <label>Montant HT <p-inputNumber [(ngModel)]="subAmount" /></label>
+          <label><ng-container i18n="@@projects.tabs.montant.ht.3df1d6fe">Montant HT </ng-container><p-inputNumber [(ngModel)]="subAmount" /></label>
 
-          <label>Retenue % <p-inputNumber [(ngModel)]="subRetainage" /></label>
+          <label><ng-container i18n="@@projects.tabs.retenue.5558c11d">Retenue % </ng-container><p-inputNumber [(ngModel)]="subRetainage" /></label>
 
-          <app-button (click)="addSub()">Ajouter</app-button>
+          <app-button (click)="addSub()" i18n="@@projects.tabs.ajouter.87c57ed1">Ajouter</app-button>
 
         </div>
 
@@ -741,7 +741,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
       <p-table [value]="subs" styleClass="p-datatable-sm">
 
-        <ng-template pTemplate="header"><tr><th>Fournisseur</th><th>Marché</th><th>Montant</th><th>Retenue %</th>@if (canUpdate) { <th></th> }</tr></ng-template>
+        <ng-template pTemplate="header"><tr><th i18n="@@projects.tabs.fournisseur.97d91d89">Fournisseur</th><th i18n="@@projects.tabs.marche.eb9aa674">Marché</th><th i18n="@@projects.tabs.montant.4adcd9fc">Montant</th><th i18n="@@projects.tabs.retenue.5558c11d">Retenue %</th>@if (canUpdate) { <th></th> }</tr></ng-template>
 
         <ng-template pTemplate="body" let-s>
 
@@ -757,7 +757,7 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
             @if (canUpdate) {
 
-              <td><app-button size="sm" variant="outline" (click)="openEditSub(s)">Modifier</app-button></td>
+              <td><app-button size="sm" variant="outline" (click)="openEditSub(s)" i18n="@@projects.tabs.modifier.f260e757">Modifier</app-button></td>
 
             }
 
@@ -771,19 +771,19 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
 
 
-    <p-dialog [(visible)]="sitEditVisible" header="Modifier la situation" [modal]="true" [style]="{ width: '32rem' }">
+    <p-dialog [(visible)]="sitEditVisible" header="Modifier la situation" i18n-header="@@projects.tabs.modifier.la.situation.05ee825b" [modal]="true" [style]="{ width: '32rem' }">
 
       <div class="proj-field-stack">
 
-        <label>Début <p-datepicker [(ngModel)]="editSitStart" dateFormat="dd/mm/yy" /></label>
+        <label><ng-container i18n="@@projects.tabs.debut.f0955314">Début </ng-container><p-datepicker [(ngModel)]="editSitStart" dateFormat="dd/mm/yy" /></label>
 
-        <label>Fin <p-datepicker [(ngModel)]="editSitEnd" dateFormat="dd/mm/yy" /></label>
+        <label><ng-container i18n="@@projects.tabs.fin.4251065f">Fin </ng-container><p-datepicker [(ngModel)]="editSitEnd" dateFormat="dd/mm/yy" /></label>
 
-        <label>% cumulé <p-inputNumber [(ngModel)]="editSitPercent" /></label>
+        <label><ng-container i18n="@@projects.tabs.cumule.1c3be77d">% cumulé </ng-container><p-inputNumber [(ngModel)]="editSitPercent" /></label>
 
-        <label>Brut HT <p-inputNumber [(ngModel)]="editSitGross" /></label>
+        <label><ng-container i18n="@@projects.tabs.brut.ht.1988da69">Brut HT </ng-container><p-inputNumber [(ngModel)]="editSitGross" /></label>
 
-        <label>Retenue <p-inputNumber [(ngModel)]="editSitRetainage" /></label>
+        <label><ng-container i18n="@@projects.tabs.retenue.88cf18f4">Retenue </ng-container><p-inputNumber [(ngModel)]="editSitRetainage" /></label>
 
         <label>TVA <p-select [options]="vatOptions" [(ngModel)]="editSitVat" optionLabel="label" optionValue="value" /></label>
 
@@ -791,9 +791,9 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
       <ng-template pTemplate="footer">
 
-        <app-button variant="secondary" (click)="sitEditVisible = false">Annuler</app-button>
+        <app-button variant="secondary" (click)="sitEditVisible = false" i18n="@@projects.tabs.annuler.49ba3292">Annuler</app-button>
 
-        <app-button variant="primary" (click)="saveSituation()">Enregistrer</app-button>
+        <app-button variant="primary" (click)="saveSituation()" i18n="@@projects.tabs.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
       </ng-template>
 
@@ -801,23 +801,23 @@ const TASK_BILLING_METHOD_OPTIONS = [
 
 
 
-    <p-dialog [(visible)]="subEditVisible" header="Modifier le sous-traitant" [modal]="true" [style]="{ width: '28rem' }">
+    <p-dialog [(visible)]="subEditVisible" header="Modifier le sous-traitant" i18n-header="@@projects.tabs.modifier.le.sous.traitant.6f8cd804" [modal]="true" [style]="{ width: '28rem' }">
 
       <div class="proj-field-stack">
 
-        <label>Marché <input pInputText class="w-full" [(ngModel)]="editSubRef" /></label>
+        <label><ng-container i18n="@@projects.tabs.marche.eb9aa674">Marché </ng-container><input pInputText class="w-full" [(ngModel)]="editSubRef" /></label>
 
-        <label>Montant HT <p-inputNumber [(ngModel)]="editSubAmount" /></label>
+        <label><ng-container i18n="@@projects.tabs.montant.ht.3df1d6fe">Montant HT </ng-container><p-inputNumber [(ngModel)]="editSubAmount" /></label>
 
-        <label>Retenue % <p-inputNumber [(ngModel)]="editSubRetainage" /></label>
+        <label><ng-container i18n="@@projects.tabs.retenue.5558c11d">Retenue % </ng-container><p-inputNumber [(ngModel)]="editSubRetainage" /></label>
 
       </div>
 
       <ng-template pTemplate="footer">
 
-        <app-button variant="secondary" (click)="subEditVisible = false">Annuler</app-button>
+        <app-button variant="secondary" (click)="subEditVisible = false" i18n="@@projects.tabs.annuler.49ba3292">Annuler</app-button>
 
-        <app-button variant="primary" (click)="saveSub()">Enregistrer</app-button>
+        <app-button variant="primary" (click)="saveSub()" i18n="@@projects.tabs.enregistrer.f7c8bcd8">Enregistrer</app-button>
 
       </ng-template>
 

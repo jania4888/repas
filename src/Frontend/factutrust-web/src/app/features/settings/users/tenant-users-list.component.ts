@@ -72,7 +72,7 @@ interface ModuleDraft extends UserModuleAccessItem {
 
     <app-page-header
       title="Utilisateurs et rôles" i18n-title="@@settings.users.utilisateurs.et.roles.57ee1f2a"
-      subtitle="Gérez les accès de votre équipe">
+      subtitle="Gérez les accès de votre équipe" i18n-subtitle="@@settings.users.gerez.les.acces.de.votre.equipe.6b3b4aa7">
       <p-button label="Retour" i18n-label="@@settings.users.retour.e5befb1f" icon="pi pi-arrow-left" [outlined]="true" routerLink="/settings"></p-button>
       <p-button label="Ajouter un utilisateur" i18n-label="@@settings.users.ajouter.un.utilisateur.41e8fc45" icon="pi pi-user-plus" (onClick)="openCreate()"></p-button>
       <p-button label="Ajouter plusieurs" i18n-label="@@settings.users.ajouter.plusieurs.437aba7d" icon="pi pi-users" [outlined]="true" routerLink="/settings/users/add"></p-button>
@@ -105,7 +105,7 @@ interface ModuleDraft extends UserModuleAccessItem {
               <p-tag [severity]="row.isActive ? 'success' : 'danger'" [value]="row.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"></p-tag>
             </td>
             <td>
-              <p-button icon="pi pi-cog" [rounded]="true" [text]="true" (onClick)="openEdit(row)" ariaLabel="Configurer"></p-button>
+              <p-button icon="pi pi-cog" [rounded]="true" [text]="true" (onClick)="openEdit(row)" ariaLabel="Configurer" i18n-ariaLabel="@@settings.users.configurer.4f91fd6e"></p-button>
             </td>
           </tr>
         </ng-template>

@@ -38,7 +38,7 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
 
     <app-page-header
       title="Mon abonnement" i18n-title="@@settings.subscription.mon.abonnement.d248414d"
-      subtitle="Gérez votre forfait et suivez votre consommation">
+      subtitle="Gérez votre forfait et suivez votre consommation" i18n-subtitle="@@settings.subscription.gerez.votre.forfait.et.suivez.votre.cons.86ff45d8">
       <p-button
         label="Retour" i18n-label="@@settings.subscription.retour.e5befb1f"
         icon="pi pi-arrow-left"
@@ -84,13 +84,13 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
           </p>
           <p class="renewal-info">
             <i class="pi pi-calendar"></i>
-            @if (subscription()!.endDate) {
+            @if (subscription()!.endDate) {<ng-container i18n="@@settings.subscription.prochain.renouvellement.b6e9e41c">
               Prochain renouvellement : {{ subscription()!.endDate | date:'dd/MM/yyyy' }}
-            } @else if (subscription()!.plan === 'Free') {
+            </ng-container>} @else if (subscription()!.plan === 'Free') {<ng-container i18n="@@settings.subscription.forfait.gratuit.aucune.date.d.expiration.f0060395">
               Forfait gratuit — aucune date d'expiration
-            } @else {
+            </ng-container>} @else {<ng-container i18n="@@settings.subscription.actif.depuis.le.18a7117f">
               Actif depuis le {{ subscription()!.startDate | date:'dd/MM/yyyy' }}
-            }
+            </ng-container>}
           </p>
         </div>
         <div class="plan-actions">
@@ -134,9 +134,9 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
               <div class="usage-header">
                 <span class="usage-label">{{ item.label }}</span>
                 <span class="usage-value">
-                  @if (item.isUnlimited) {
+                  @if (item.isUnlimited) {<ng-container i18n="@@settings.subscription.illimite.6b1c8359">
                     {{ item.used }} / Illimité
-                  } @else {
+                  </ng-container>} @else {
                     {{ item.used }} / {{ item.limit }}
                   }
                 </span>
@@ -179,12 +179,12 @@ import { ChangePlanDialogComponent } from './change-plan-dialog/change-plan-dial
                 <span class="period">/ {{ plan.period }}</span>
               </p>
               @if (plan.priceAnnual) {
-                <p class="plan-annual-note">
+                <p class="plan-annual-note" i18n="@@settings.subscription.facture.tnd.an.92930197">
                   Facturé {{ plan.priceAnnual | number:'1.0-0' }} TND/an
                 </p>
               }
               @if (plan.savePercentage) {
-                <div class="save-badge">
+                <div class="save-badge" i18n="@@settings.subscription.economisez.bb74433e">
                   <i class="pi pi-bolt"></i>
                   Économisez {{ plan.savePercentage }}%
                 </div>

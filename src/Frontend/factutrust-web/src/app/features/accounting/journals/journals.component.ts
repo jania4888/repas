@@ -23,7 +23,7 @@ interface JournalForm {
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingTableActionsComponent],
   template: `
-    <app-page-header title="Journaux & familles" i18n-title="@@accounting.journals.journaux.familles.31f7dca1" subtitle="Gestion des journaux comptables et de leurs familles" />
+    <app-page-header title="Journaux & familles" i18n-title="@@accounting.journals.journaux.familles.31f7dca1" subtitle="Gestion des journaux comptables et de leurs familles" i18n-subtitle="@@accounting.journals.gestion.des.journaux.comptables.et.de.le.116c09bf" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -83,7 +83,7 @@ interface JournalForm {
             <td>
               <app-accounting-table-actions>
               <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
-                type="button" (click)="startEdit(j)" ariaLabel="Modifier" />
+                type="button" (click)="startEdit(j)" ariaLabel="Modifier" i18n-ariaLabel="@@accounting.journals.modifier.ead890f7" />
               @if (!j.isSystem) {
                 <app-button variant="ghost" size="sm"
                   [icon]="j.isActive ? 'pi-eye-slash' : 'pi-eye'"

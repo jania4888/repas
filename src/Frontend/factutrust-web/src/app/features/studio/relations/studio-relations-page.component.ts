@@ -25,7 +25,7 @@ import { DiagramModel, toDiagram } from './studio-relation-diagram.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, TableModule, SelectModule, StudioPageShellComponent, StudioRelationDiagramComponent],
   template: `
-    <app-studio-page-shell [title]="labels.relations.title" subtitle="Cartographie des liens entre tables" [breadcrumbs]="breadcrumbs">
+    <app-studio-page-shell [title]="labels.relations.title" subtitle="Cartographie des liens entre tables" i18n-subtitle="@@studio.relations.cartographie.des.liens.entre.tables.13a4fb5c" [breadcrumbs]="breadcrumbs">
       <div studioActions class="studio-head-actions">
         <p-select [options]="entityOptions()" [ngModel]="filterEntityId()" (ngModelChange)="filterEntityId.set($event)"
           optionLabel="label" optionValue="value" [showClear]="true" placeholder="Filtrer par table" i18n-placeholder="@@studio.relations.filtrer.par.table.462c26e0" appendTo="body"

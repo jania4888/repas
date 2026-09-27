@@ -39,10 +39,10 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <app-page-header
       title="Écritures en brouillard — édition en lot" i18n-title="@@accounting.draft-batch.ecritures.en.brouillard.edition.en.lot.d092258e"
-      subtitle="Corriger journal, date ou libellé d'un lot de brouillons, ou les supprimer. Le validé n'est jamais touché." />
+      subtitle="Corriger journal, date ou libellé d'un lot de brouillons, ou les supprimer. Le validé n'est jamais touché." i18n-subtitle="@@accounting.draft-batch.corriger.journal.date.ou.libelle.d.un.lo.182b70e7" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Période des brouillons">
+      <app-accounting-filter-bar ariaLabel="Période des brouillons" i18n-ariaLabel="@@accounting.draft-batch.periode.des.brouillons.5ffeef2b">
         <div accountingFilterFields class="db-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="db-from" i18n="@@accounting.draft-batch.du.84814985">Du</label>
@@ -55,12 +55,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Charger les brouillons" i18n="@@accounting.draft-batch.charger.8f860300"> Charger </app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Charger les brouillons" i18n-ariaLabel="@@accounting.draft-batch.charger.les.brouillons.8a9a3755" i18n="@@accounting.draft-batch.charger.8f860300"> Charger </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.draft-batch.reessayer.c4f78b12" (retry)="load()" />
 
     @if (successMessage(); as msg) {
       <div class="db-success" role="status"><i class="pi pi-check-circle" aria-hidden="true"></i><span>{{ msg }}</span></div>
@@ -86,12 +86,12 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         <div class="db-action-buttons">
           <app-button variant="primary" icon="pi pi-pencil" type="button"
             (click)="applyUpdate()" [disabled]="busy() || selectedIds().length === 0 || !hasChange()"
-            ariaLabel="Appliquer les modifications aux brouillons sélectionnés">
+            ariaLabel="Appliquer les modifications aux brouillons sélectionnés" i18n-ariaLabel="@@accounting.draft-batch.appliquer.les.modifications.aux.brouillo.35b429e2" i18n="@@accounting.draft-batch.modifier.30c76365">
             Modifier ({{ selectedIds().length }})
           </app-button>
           <app-button variant="danger" icon="pi pi-trash" type="button"
             (click)="applyDelete()" [disabled]="busy() || selectedIds().length === 0 || !canDelete()"
-            [attr.ariaLabel]="canDelete() ? loc_ui_tern_supprimer_les_brouillons_selectionnes_1ccce3 : loc_ui_tern_suppression_reservee_au_cabinet_en_mode_de_27d9cd">
+            [attr.ariaLabel]="canDelete() ? loc_ui_tern_supprimer_les_brouillons_selectionnes_1ccce3 : loc_ui_tern_suppression_reservee_au_cabinet_en_mode_de_27d9cd" i18n="@@accounting.draft-batch.supprimer.56e7b49a">
             Supprimer ({{ selectedIds().length }})
           </app-button>
         </div>

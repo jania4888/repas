@@ -59,9 +59,9 @@ function linkedTabKey(r: { junctionEntityKey?: string | null; targetEntityKey: s
                   (formCancel)="cancel()" />
               </div>
             } @else {
-              <p class="studio-hint">
-                <ng-container i18n="@@studio.studio-record-form.cette.table.n.a.pas.encore.de.champ.3f4c207c"> Cette table n'a pas encore de champ. </ng-container>
-                <a [routerLink]="['/studio', e.id]" i18n="@@studio.studio-record-form.ajoutez.des.champs.84c59ea6">Ajoutez des champs</a> avant de saisir des données.
+              <p class="studio-hint" i18n="@@studio.studio-record-form.cette.table.n.a.pas.encore.de.champ.ajou.fe4d19a5">
+                <ng-container> Cette table n'a pas encore de champ. </ng-container>
+                <a [routerLink]="['/studio', e.id]">Ajoutez des champs</a> avant de saisir des données.
               </p>
             }
             @if (recordId) {

@@ -16,7 +16,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingCorrectionBannerComponent],
   template: `
-    <app-page-header title="Recherche d'écriture" i18n-title="@@accounting.entry-search.recherche.d.ecriture.0a69c5f4" subtitle="Recherche multicritère des lignes d'écriture" />
+    <app-page-header title="Recherche d'écriture" i18n-title="@@accounting.entry-search.recherche.d.ecriture.0a69c5f4" subtitle="Recherche multicritère des lignes d'écriture" i18n-subtitle="@@accounting.entry-search.recherche.multicritere.des.lignes.d.ecri.7d2014a1" />
 
     <app-accounting-correction-banner />
 
@@ -55,7 +55,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
     @if (searched()) {
       <div class="card es-results">
-        <p class="es-count">{{ rows().length }} ligne(s) — limité à 200</p>
+        <p class="es-count" i18n="@@accounting.entry-search.ligne.s.limite.a.200.4e76c127">{{ rows().length }} ligne(s) — limité à 200</p>
         <p-table [value]="rows()" [loading]="loading()" [paginator]="rows().length > 25" [rows]="25" styleClass="p-datatable-sm accounting-datatable" [rowHover]="true">
           <ng-template pTemplate="header">
             <tr>

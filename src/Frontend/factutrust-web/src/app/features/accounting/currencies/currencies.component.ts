@@ -39,7 +39,7 @@ const MAX_FISCAL_YEAR = 2100;
   ],
   template: `
     <app-page-header title="Gestion des devises" i18n-title="@@accounting.currencies.gestion.des.devises.d97aadcb"
-                     subtitle="Devises utilisables en comptabilité et taux de change par exercice" />
+                     subtitle="Devises utilisables en comptabilité et taux de change par exercice" i18n-subtitle="@@accounting.currencies.devises.utilisables.en.comptabilite.et.t.ac880e8f" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -141,11 +141,11 @@ const MAX_FISCAL_YEAR = 2100;
               <app-accounting-table-actions>
                 @if (!c.isFunctional) {
                   <app-button variant="ghost" size="sm" icon="pi-sliders-h" [iconOnly]="true" [iconAlwaysVisible]="true"
-                              type="button" (click)="openRates(c)" ariaLabel="Taux de change" />
+                              type="button" (click)="openRates(c)" ariaLabel="Taux de change" i18n-ariaLabel="@@accounting.currencies.taux.de.change.99c07e9c" />
                 }
                 @if (canManage()) {
                   <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
-                              type="button" (click)="startEdit(c)" ariaLabel="Modifier" />
+                              type="button" (click)="startEdit(c)" ariaLabel="Modifier" i18n-ariaLabel="@@accounting.currencies.modifier.ead890f7" />
                   @if (!c.isFunctional) {
                     <app-button variant="ghost" size="sm"
                                 [icon]="c.isActive ? 'pi-eye-slash' : 'pi-eye'"

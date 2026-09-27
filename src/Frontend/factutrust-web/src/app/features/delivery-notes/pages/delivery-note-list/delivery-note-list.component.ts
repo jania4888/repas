@@ -64,14 +64,14 @@ interface StatusOption {
     
     <app-page-header 
       title="Bons de Livraison" i18n-title="@@delivery-notes.pages.bons.de.livraison.a42b9518" 
-      subtitle="Créez, envoyez et transformez vos bons de livraison en factures">
+      subtitle="Créez, envoyez et transformez vos bons de livraison en factures" i18n-subtitle="@@delivery-notes.pages.creez.envoyez.et.transformez.vos.bons.de.b8671c0b">
       <app-button 
         variant="secondary"
         icon="pi-print"
         iconPos="left"
         [disabled]="printingReport()"
         (click)="printDeliveryNoteReport()"
-        ariaLabel="Imprimer l'état des bons de livraison (période et client optionnels)" i18n="@@delivery-notes.pages.imprimer.l.etat.389e5da9"> Imprimer l'état </app-button>
+        ariaLabel="Imprimer l'état des bons de livraison (période et client optionnels)" i18n-ariaLabel="@@delivery-notes.pages.imprimer.l.etat.des.bons.de.livraison.pe.5e9a3cfc" i18n="@@delivery-notes.pages.imprimer.l.etat.389e5da9"> Imprimer l'état </app-button>
       @if (canCreateDeliveryNote()) {
         <app-button 
           variant="primary"
@@ -84,12 +84,12 @@ interface StatusOption {
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@delivery-notes.pages.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@delivery-notes.pages.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@delivery-notes.pages.reinitialiser.les.filtres.d8915f02" i18n="@@delivery-notes.pages.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -218,7 +218,7 @@ interface StatusOption {
                   [iconOnly]="true"
                   [iconAlwaysVisible]="true"
                   [routerLink]="note.id"
-                  ariaLabel="Voir le bon de livraison">
+                  ariaLabel="Voir le bon de livraison" i18n-ariaLabel="@@delivery-notes.pages.voir.le.bon.de.livraison.5047463f">
                 </app-button>
               </div>
             </td>
@@ -231,9 +231,9 @@ interface StatusOption {
               <app-empty-state
                 illustration="empty-invoices.svg"
                 title="Aucun bon de livraison" i18n-title="@@delivery-notes.pages.aucun.bon.de.livraison.e7dcd4f7"
-                description="Créez votre premier bon de livraison pour gérer vos expéditions."
+                description="Créez votre premier bon de livraison pour gérer vos expéditions." i18n-description="@@delivery-notes.pages.creez.votre.premier.bon.de.livraison.pou.9c2a06e6"
                 [showAction]="canCreateDeliveryNote()"
-                actionLabel="Créer un bon"
+                actionLabel="Créer un bon" i18n-actionLabel="@@delivery-notes.pages.creer.un.bon.da06defa"
                 actionRoute="new">
               </app-empty-state>
             </td>

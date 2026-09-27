@@ -1,5 +1,5 @@
 <app-auth-shell [config]="shellConfig">
-      <div class="form-top-bar">
+      <div class="form-top-bar" i18n="@@auth.register.deja.un.compte.connexion.2f694382">
         <span class="form-top-bar__spacer" aria-hidden="true"></span>
         <a routerLink="/auth/login" class="form-top-bar__link">
           <i class="pi pi-sign-in" aria-hidden="true"></i>
@@ -136,11 +136,11 @@
                         <i class="pi pi-info-circle"></i> {{ errorMessageService.getErrorMessage(form.get('confirmPassword')) }}
                       </div>
                     } @else if (passwordMismatch()) {
-                      <div class="field-error" id="confirmPassword-error" role="alert" @fadeInOut>
+                      <div class="field-error" id="confirmPassword-error" role="alert" @fadeInOut i18n="@@auth.register.les.mots.de.passe.ne.correspondent.pas.ba67f6c5">
                         <i class="pi pi-info-circle"></i> Les mots de passe ne correspondent pas.
                       </div>
                     } @else if (passwordMatches() && form.get('confirmPassword')?.value) {
-                      <div class="field-success" id="confirmPassword-success" role="status" @fadeInOut>
+                      <div class="field-success" id="confirmPassword-success" role="status" @fadeInOut i18n="@@auth.register.correspondance.exacte.f72c9dd2">
                         <i class="pi pi-check-circle"></i> Correspondance exacte
                       </div>
                     }
@@ -161,7 +161,7 @@
                       <span class="password-strength-segment" [class.filled]="passwordStrengthMetCount() >= seg" [attr.data-level]="passwordStrengthLevel()"></span>
                     }
                   </div>
-                  <div class="criteria-grid">
+                  <div class="criteria-grid" i18n="@@auth.register.12.caracteres.majuscule.minuscule.chiffr.4f5fb930">
                     <span class="criterion" [class.met]="passwordCriteria().minLength" [class.unmet]="!passwordCriteria().minLength && form.get('password')?.value">
                       <i class="pi" [class.pi-check-circle]="passwordCriteria().minLength" [class.pi-circle]="!passwordCriteria().minLength"></i> 12+ caractères
                     </span>
@@ -183,12 +183,12 @@
 
               <div class="terms-group">
                 <p-checkbox inputId="acceptTerms" formControlName="acceptTerms" [binary]="true"></p-checkbox>
-                <label for="acceptTerms">
-                  <ng-container i18n="@@auth.register.en.continuant.j.accepte.les.a41cc7a3"> En continuant, j'accepte les </ng-container> <a routerLink="/legal/terms" target="_blank" class="link-primary" i18n="@@auth.register.conditions.d.utilisation.17c85066">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary" i18n="@@auth.register.politique.de.confidentialite.a8ebb0b8">Politique de Confidentialité</a>.
+                <label for="acceptTerms" i18n="@@auth.register.en.continuant.j.accepte.les.conditions.d.eb081765">
+                  <ng-container> En continuant, j'accepte les </ng-container> <a routerLink="/legal/terms" target="_blank" class="link-primary">Conditions d'Utilisation</a> et la <a routerLink="/legal/privacy" target="_blank" class="link-primary">Politique de Confidentialité</a>.
                 </label>
               </div>
               @if (form.get('acceptTerms')?.invalid && form.get('acceptTerms')?.touched) {
-                <div class="field-error block mt-2" role="alert" @fadeInOut>
+                <div class="field-error block mt-2" role="alert" @fadeInOut i18n="@@auth.register.vous.devez.accepter.les.conditions.pour.b557635d">
                   <i class="pi pi-info-circle"></i> Vous devez accepter les conditions pour continuer.
                 </div>
               }
@@ -229,7 +229,7 @@
                     </p-inputMask>
                   </div>
                   @if (isInvalid('nif')) {
-                    <div class="field-error" id="nif-error" role="alert" @fadeInOut>
+                    <div class="field-error" id="nif-error" role="alert" @fadeInOut i18n="@@auth.register.format.attendu.1772793w.a.m.000.513ef2e7">
                       <i class="pi pi-info-circle"></i> Format attendu: 1772793W/A/M/000
                     </div>
                   }
@@ -244,7 +244,7 @@
                               [attr.aria-required]="true">
                   </p-select>
                   @if (isInvalid('taxRegime')) {
-                    <div class="field-error" id="taxRegime-error" role="alert" @fadeInOut>
+                    <div class="field-error" id="taxRegime-error" role="alert" @fadeInOut i18n="@@auth.register.le.regime.fiscal.est.requis.15a8d12f">
                       <i class="pi pi-info-circle"></i> Le régime fiscal est requis
                     </div>
                   }
@@ -262,7 +262,7 @@
                            [class.ng-invalid]="isInvalid('companyEmail')">
                   </div>
                   @if (isInvalid('companyEmail')) {
-                    <div class="field-error" role="alert" @fadeInOut>
+                    <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register.email.invalide.991ed190">
                       <i class="pi pi-info-circle"></i> Email invalide
                     </div>
                   }
@@ -278,7 +278,7 @@
                     </p-inputMask>
                   </div>
                   @if (isInvalid('phone')) {
-                    <div class="field-error" role="alert" @fadeInOut>
+                    <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register.le.telephone.est.requis.8168e3d7">
                       <i class="pi pi-info-circle"></i> Le téléphone est requis
                     </div>
                   }
@@ -320,7 +320,7 @@
                          [class.ng-invalid]="isInvalid('street')">
                 </div>
                 @if (isInvalid('street')) {
-                  <div class="field-error" role="alert" @fadeInOut>
+                  <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register.l.adresse.est.requise.8cb87bb0">
                     <i class="pi pi-info-circle"></i> L'adresse est requise
                   </div>
                 }
@@ -345,7 +345,7 @@
                            [class.ng-invalid]="isInvalid('city')">
                   </div>
                   @if (isInvalid('city')) {
-                    <div class="field-error" role="alert" @fadeInOut>
+                    <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register.requis.b67a214e">
                       <i class="pi pi-info-circle"></i> Requis
                     </div>
                   }
@@ -368,7 +368,7 @@
                             [attr.aria-required]="true">
                 </p-select>
                 @if (isInvalid('governorate')) {
-                  <div class="field-error" role="alert" @fadeInOut>
+                  <div class="field-error" role="alert" @fadeInOut i18n="@@auth.register.le.gouvernorat.est.requis.28928588">
                     <i class="pi pi-info-circle"></i> Le gouvernorat est requis
                   </div>
                 }
@@ -379,28 +379,28 @@
 
         <div class="navigation-footer">
           @if (currentStep() > 0) {
-            <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente" i18n-aria-label="@@auth.register.etape.precedente.4b2bab32">
+            <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente" i18n-aria-label="@@auth.register.etape.precedente.4b2bab32" i18n="@@auth.register.retour.c9dd9148">
               <i class="pi pi-arrow-left" aria-hidden="true"></i> Retour
             </button>
           } @else {
             <div class="spacer"></div>
           }
 
-          <p class="step-indicator" aria-live="polite">
-            <ng-container i18n="@@auth.register.etape.13146b48"> Étape </ng-container> <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur 3
+          <p class="step-indicator" aria-live="polite" i18n="@@auth.register.etape.sur.3.c36f5d3d">
+            <ng-container> Étape </ng-container> <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur 3
           </p>
           
           @if (currentStep() < 2) {
-            <button type="button" class="btn-next" [class.btn-next--ready]="isCurrentStepValid()" [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante" i18n-aria-label="@@auth.register.etape.suivante.992dbd53">
+            <button type="button" class="btn-next" [class.btn-next--ready]="isCurrentStepValid()" [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante" i18n-aria-label="@@auth.register.etape.suivante.992dbd53" i18n="@@auth.register.continuer.db48292c">
               Continuer <i class="pi pi-arrow-right" aria-hidden="true"></i>
             </button>
           } @else {
             <button type="submit" class="btn-submit" [disabled]="form.invalid || loading()" [class.is-loading]="loading()">
               @if (loading()) {
                 <i class="pi pi-spin pi-spinner mr-2" aria-hidden="true"></i> {{ loadingMessage() }}
-              } @else {
+              } @else {<ng-container i18n="@@auth.register.terminer.dcd16be1">
                 <i class="pi pi-check mr-2" aria-hidden="true"></i> Terminer
-              }
+              </ng-container>}
             </button>
           }
         </div>

@@ -64,7 +64,7 @@ interface StatusOption {
     
     <app-page-header 
       title="Clients" i18n-title="@@clients.client-list.clients.28e22fe3" 
-      subtitle="Gérez vos clients et facturez plus vite.">
+      subtitle="Gérez vos clients et facturez plus vite." i18n-subtitle="@@clients.client-list.gerez.vos.clients.et.facturez.plus.vite.fb45edba">
       @if (canCreateClient()) {
         <app-button 
           variant="primary"
@@ -77,12 +77,12 @@ interface StatusOption {
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@clients.client-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@clients.client-list.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@clients.client-list.reinitialiser.les.filtres.d8915f02" i18n="@@clients.client-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -212,7 +212,7 @@ interface StatusOption {
                   icon="pi-eye"
                   [iconOnly]="true"
                   [routerLink]="client.id"
-                  ariaLabel="Voir le client">
+                  ariaLabel="Voir le client" i18n-ariaLabel="@@clients.client-list.voir.le.client.fd1e4588">
                 </app-button>
                 @if (canEditClient()) {
                   <app-button 
@@ -221,7 +221,7 @@ interface StatusOption {
                     icon="pi-pencil"
                     [iconOnly]="true"
                     [routerLink]="[client.id, 'edit']"
-                    ariaLabel="Modifier le client">
+                    ariaLabel="Modifier le client" i18n-ariaLabel="@@clients.client-list.modifier.le.client.4eab4088">
                   </app-button>
                 }
                 @if (canDeleteClient()) {
@@ -231,7 +231,7 @@ interface StatusOption {
                     icon="pi-trash"
                     [iconOnly]="true"
                     (click)="confirmDelete(client)"
-                    ariaLabel="Supprimer le client">
+                    ariaLabel="Supprimer le client" i18n-ariaLabel="@@clients.client-list.supprimer.le.client.ecd5c5e1">
                   </app-button>
                 }
               </div>
@@ -245,9 +245,9 @@ interface StatusOption {
               <app-empty-state
                 illustration="empty-clients.svg"
                 title="Aucun client" i18n-title="@@clients.client-list.aucun.client.667e69de"
-                description="Ajoutez votre premier client pour créer des devis et des factures en quelques clics."
+                description="Ajoutez votre premier client pour créer des devis et des factures en quelques clics." i18n-description="@@clients.client-list.ajoutez.votre.premier.client.pour.creer.7fe662ba"
                 [showAction]="canCreateClient()"
-                actionLabel="Ajouter un client pour facturer plus vite"
+                actionLabel="Ajouter un client pour facturer plus vite" i18n-actionLabel="@@clients.client-list.ajouter.un.client.pour.facturer.plus.vit.63aedb21"
                 actionRoute="new">
               </app-empty-state>
             </td>

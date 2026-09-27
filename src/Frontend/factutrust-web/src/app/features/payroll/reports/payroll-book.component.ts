@@ -49,7 +49,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
   template: `
     <app-page-header
       title="Livre de paie simplifié" i18n-title="@@payroll.reports.livre.de.paie.simplifie.ebb59e66"
-      subtitle="Registre des salaires par salarié sur une plage de mois. Seuls les cycles validés ou clôturés sont inclus par défaut.">
+      subtitle="Registre des salaires par salarié sur une plage de mois. Seuls les cycles validés ou clôturés sont inclus par défaut." i18n-subtitle="@@payroll.reports.registre.des.salaires.par.salarie.sur.un.d2f5c3c8">
       @if (canExport()) {
         <app-accounting-export-menu
           [disabled]="loading() || exporting() || !hasResults()"
@@ -65,7 +65,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         optionValue="value"
         placeholder="Année" i18n-placeholder="@@payroll.reports.annee.1f910d98"
         styleClass="w-10rem"
-        ariaLabel="Année" />
+        ariaLabel="Année" i18n-ariaLabel="@@payroll.reports.annee.64155901" />
       <p-select
         [options]="months"
         [(ngModel)]="fromMonth"
@@ -73,7 +73,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         optionValue="value"
         placeholder="Mois de" i18n-placeholder="@@payroll.reports.mois.de.c0799d11"
         styleClass="w-10rem"
-        ariaLabel="Mois de début" />
+        ariaLabel="Mois de début" i18n-ariaLabel="@@payroll.reports.mois.de.debut.85a9ee33" />
       <p-select
         [options]="months"
         [(ngModel)]="toMonth"
@@ -81,7 +81,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
         optionValue="value"
         placeholder="Mois à" i18n-placeholder="@@payroll.reports.mois.a.876a05e9"
         styleClass="w-10rem"
-        ariaLabel="Mois de fin" />
+        ariaLabel="Mois de fin" i18n-ariaLabel="@@payroll.reports.mois.de.fin.1673df66" />
       <label class="payroll-report-check">
         <p-checkbox [(ngModel)]="includeCalculated" [binary]="true" inputId="includeCalculated" />
         <span i18n="@@payroll.reports.inclure.les.cycles.calcules.provisoire.316e039e">Inclure les cycles calculés (provisoire)</span>
@@ -114,17 +114,17 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
         title="Impossible de charger le livre de paie" i18n-title="@@payroll.reports.impossible.de.charger.le.livre.de.paie.526ad9d1"
-        description="Une erreur est survenue. Réessayez ou vérifiez vos droits."
+        description="Une erreur est survenue. Réessayez ou vérifiez vos droits." i18n-description="@@payroll.reports.une.erreur.est.survenue.reessayez.ou.ver.3a7d12f4"
         [showAction]="true"
-        actionLabel="Réessayer"
+        actionLabel="Réessayer" i18n-actionLabel="@@payroll.reports.reessayer.b885e20c"
         (actionClick)="load()" />
     } @else if (book()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-book"
         title="Aucun bulletin sur la période" i18n-title="@@payroll.reports.aucun.bulletin.sur.la.periode.f2265bfb"
-        description="Aucun cycle validé ou clôturé sur la plage sélectionnée."
+        description="Aucun cycle validé ou clôturé sur la plage sélectionnée." i18n-description="@@payroll.reports.aucun.cycle.valide.ou.cloture.sur.la.pla.26a68769"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.reports.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else {
       <app-payroll-stat-grid [items]="summaryStats()" class="mb-4" />
@@ -165,7 +165,7 @@ import { MONTH_OPTIONS, formatMonthList, yearOptions } from './payroll-report-op
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="acc-totals-row">
-              <td colspan="3">Totaux — {{ book()!.employeeCount }} salarié(s)</td>
+              <td colspan="3" i18n="@@payroll.reports.totaux.salarie.s.c7237d86">Totaux — {{ book()!.employeeCount }} salarié(s)</td>
               <td class="text-right" i18n="@@payroll.reports.text.1b93795b">—</td>
               <td class="text-right">{{ book()!.totalGross | payrollAmount }}</td>
               <td class="text-right">{{ book()!.totalCnssableGross | payrollAmount }}</td>

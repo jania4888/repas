@@ -2,7 +2,7 @@
 
 <app-page-header
   title="Nouvelle facture fournisseur" i18n-title="@@supplier-invoices.supplier-invoice-form.nouvelle.facture.fournisseur.9342d116"
-  subtitle="Saisissez une facture de charges ou de services. Le stock n'est pas mis à jour.">
+  subtitle="Saisissez une facture de charges ou de services. Le stock n'est pas mis à jour." i18n-subtitle="@@supplier-invoices.supplier-invoice-form.saisissez.une.facture.de.charges.ou.de.s.b5196fd5">
   <app-button variant="outline" icon="pi-times" iconPos="left" (click)="cancel()" i18n="@@supplier-invoices.supplier-invoice-form.annuler.49ba3292">Annuler</app-button>
   <app-button
     variant="primary"
@@ -63,7 +63,7 @@
           optionLabel="label"
           optionValue="value">
         </p-select>
-        <small class="ft-hint">Échéance : {{ dueDate() | date:'dd/MM/yyyy' }}</small>
+        <small class="ft-hint" i18n="@@supplier-invoices.supplier-invoice-form.echeance.73be045b">Échéance : {{ dueDate() | date:'dd/MM/yyyy' }}</small>
       </div>
 
       <div class="ft-field ft-field--span2">
@@ -93,9 +93,9 @@
             [binary]="true"
             inputId="useSuggestedNumber"
             (ngModelChange)="onUseSuggestedChange()">
-          </p-checkbox>
+          </p-checkbox><ng-container i18n="@@supplier-invoices.supplier-invoice-form.utiliser.le.n.suggere.14d87bb1">
           Utiliser le n° suggéré
-        </label>
+        </ng-container></label>
       </div>
 
       <div class="ft-field">

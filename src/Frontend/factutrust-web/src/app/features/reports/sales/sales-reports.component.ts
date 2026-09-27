@@ -54,7 +54,7 @@ interface PeriodOption {
   template: `
     <app-page-header 
       title="Rapports Ventes" i18n-title="@@reports.sales.rapports.ventes.5a196bd1" 
-      subtitle="Analysez vos performances et suivez vos indicateurs clés de ventes">
+      subtitle="Analysez vos performances et suivez vos indicateurs clés de ventes" i18n-subtitle="@@reports.sales.analysez.vos.performances.et.suivez.vos.54a1d16c">
       <app-button 
         variant="secondary"
         icon="pi-download"
@@ -182,7 +182,7 @@ interface PeriodOption {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.sales.evolution.des.revenus.4d28fd3c">Évolution des revenus</h2>
-          <span class="section-subtitle">Revenus des factures payées sur la période{{ periodDateRangeLabel() ? ' (' + periodDateRangeLabel() + ')' : '' }}</span>
+          <span class="section-subtitle" i18n="@@reports.sales.revenus.des.factures.payees.sur.la.perio.2867bea9">Revenus des factures payées sur la période{{ periodDateRangeLabel() ? ' (' + periodDateRangeLabel() + ')' : '' }}</span>
         </div>
         @if (loading()) {
           <div class="chart-placeholder">
@@ -204,7 +204,7 @@ interface PeriodOption {
             <div class="chart-bars">
               @for (item of reportsData()!.revenueChartData; track item.label) {
                 <div class="chart-bar-group">
-                  <div class="chart-tooltip" aria-hidden="true">
+                  <div class="chart-tooltip" aria-hidden="true" i18n="@@reports.sales.facture.c015f55f">
                     {{ formatCurrency(item.revenue, reportsData()?.currency) }}<br>
                     <small>{{ item.invoiceCount }} facture{{ item.invoiceCount > 1 ? 's' : '' }}</small>
                   </div>
@@ -879,7 +879,7 @@ interface PeriodOption {
                   icon="pi-eye" 
                   [iconOnly]="true"
                   [routerLink]="['/invoices', invoice.id]"
-                  ariaLabel="Voir la facture">
+                  ariaLabel="Voir la facture" i18n-ariaLabel="@@reports.sales.voir.la.facture.23283cea">
                 </app-button>
               </td>
             </tr>
@@ -909,15 +909,15 @@ interface PeriodOption {
           <div class="print-header__left">
             <h1 class="print-header__title" i18n="@@reports.sales.rapport.ventes.1438231f">RAPPORT VENTES</h1>
             <p class="print-header__subtitle">{{ activeTabName }}</p>
-            <p class="print-header__period">Période : {{ periodOptions[selectedPeriodIndex].label || 'Tout' }}
-              @if (periodDateRangeLabel()) {
+            <p class="print-header__period"><ng-container i18n="@@reports.sales.periode.9a1e2cab">Période : {{ periodOptions[selectedPeriodIndex].label || 'Tout' }}
+              </ng-container>@if (periodDateRangeLabel()) {
                 <span> — {{ periodDateRangeLabel() }}</span>
               }
             </p>
           </div>
           <div class="print-header__right">
             <p class="print-header__app" i18n="@@reports.sales.instafact.ff6221f4">InstaFact</p>
-            <p class="print-header__date">Généré le {{ printDate }}</p>
+            <p class="print-header__date" i18n="@@reports.sales.genere.le.2948908d">Généré le {{ printDate }}</p>
           </div>
         </div>
       </div>

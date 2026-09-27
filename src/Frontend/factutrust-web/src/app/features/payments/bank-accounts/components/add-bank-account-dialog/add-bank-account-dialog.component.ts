@@ -103,7 +103,7 @@ import { ToastService } from '@core/services/toast.service';
                     [attr.aria-readonly]="!isAutreBank()"
                     placeholder="Nom de la banque" i18n-placeholder="@@payments.bank-accounts.nom.de.la.banque.9848ce74" />
                   @if (form.controls.bankCode.value && !isAutreBank()) {
-                    <small class="hint"><i class="pi pi-info-circle hint-icon" aria-hidden="true"></i> Renseigné automatiquement — modifiable si « Autre ».</small>
+                    <small class="hint" i18n="@@payments.bank-accounts.renseigne.automatiquement.modifiable.si.3ab4fd64"><i class="pi pi-info-circle hint-icon" aria-hidden="true"></i> Renseigné automatiquement — modifiable si « Autre ».</small>
                   }
                   @if (form.controls.bankName.touched && form.controls.bankName.hasError('required')) {
                     <small class="error-text" i18n="@@payments.bank-accounts.le.nom.de.la.banque.est.obligatoire.77516c5c">Le nom de la banque est obligatoire</small>
@@ -227,13 +227,13 @@ import { ToastService } from '@core/services/toast.service';
 
       <ng-template pTemplate="footer">
         <div class="dialog-footer">
-          <app-button type="button" variant="ghost" (click)="close()" ariaLabel="Annuler" i18n="@@payments.bank-accounts.annuler.49ba3292">Annuler</app-button>
+          <app-button type="button" variant="ghost" (click)="close()" ariaLabel="Annuler" i18n-ariaLabel="@@payments.bank-accounts.annuler.e063e8ff" i18n="@@payments.bank-accounts.annuler.49ba3292">Annuler</app-button>
           <app-button
             type="button"
             variant="primary"
             icon="pi pi-check"
             [disabled]="saving() || form.invalid"
-            ariaLabel="Valider"
+            ariaLabel="Valider" i18n-ariaLabel="@@payments.bank-accounts.valider.8ef67b67"
             (click)="submit()">
             {{ saving() ? loc_ui_tern_enregistrement_e7d5f2 : loc_ui_tern_valider_be4220 }}
           </app-button>

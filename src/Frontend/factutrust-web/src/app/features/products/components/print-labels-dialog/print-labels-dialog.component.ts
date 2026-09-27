@@ -61,7 +61,7 @@ export interface LabelPrintTarget {
         <p class="target-name">{{ target.name }}</p>
 
         @if (!target.hasBarcode) {
-          <p class="hint hint--warn">
+          <p class="hint hint--warn" i18n="@@products.components.cet.article.n.a.pas.de.code.barres.l.eti.86e730f4">
             <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
             Cet article n'a pas de code-barres : l'étiquette portera son code interne en clair.
           </p>

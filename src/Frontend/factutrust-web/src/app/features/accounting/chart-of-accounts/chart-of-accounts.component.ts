@@ -52,10 +52,10 @@ export function sceAccountDigitCount(accountNumber: string): number {
   ],
   providers: [ConfirmationService],
   template: `
-    <app-page-header title="Plan comptable" i18n-title="@@accounting.chart-of-accounts.plan.comptable.b3f54c09" subtitle="NCT 01 + overlay métier — comptes système verrouillés" />
+    <app-page-header title="Plan comptable" i18n-title="@@accounting.chart-of-accounts.plan.comptable.b3f54c09" subtitle="NCT 01 + overlay métier — comptes système verrouillés" i18n-subtitle="@@accounting.chart-of-accounts.nct.01.overlay.metier.comptes.systeme.ve.7c97c14f" />
     <p-confirmDialog />
     <div class="card coa-card">
-      <app-accounting-filter-bar ariaLabel="Recherche et actualisation du plan comptable">
+      <app-accounting-filter-bar ariaLabel="Recherche et actualisation du plan comptable" i18n-ariaLabel="@@accounting.chart-of-accounts.recherche.et.actualisation.du.plan.compt.9e032a53">
         <div accountingFilterFields class="chart-accounts-toolbar-main">
           <span class="p-input-icon-left coa-search-wrap">
             <i class="pi pi-search" aria-hidden="true"></i>
@@ -77,7 +77,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
               iconPos="left"
               type="button"
               (click)="openCreate()"
-              ariaLabel="Créer un nouveau compte comptable" i18n="@@accounting.chart-of-accounts.nouveau.compte.9c08a4c7"> Nouveau compte </app-button>
+              ariaLabel="Créer un nouveau compte comptable" i18n-ariaLabel="@@accounting.chart-of-accounts.creer.un.nouveau.compte.comptable.717dd6d9" i18n="@@accounting.chart-of-accounts.nouveau.compte.9c08a4c7"> Nouveau compte </app-button>
           }
           <app-button
             variant="secondary"
@@ -85,7 +85,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
             iconPos="left"
             type="button"
             (click)="load()"
-            ariaLabel="Actualiser le plan comptable" i18n="@@accounting.chart-of-accounts.actualiser.9d3b2a7d"> Actualiser </app-button>
+            ariaLabel="Actualiser le plan comptable" i18n-ariaLabel="@@accounting.chart-of-accounts.actualiser.le.plan.comptable.1eacb0f3" i18n="@@accounting.chart-of-accounts.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-analyze-with-ai-button
             screenId="accounting-chart"
             density="toolbar"
@@ -98,10 +98,10 @@ export function sceAccountDigitCount(accountNumber: string): number {
                 [ngModel]="hideAuxiliary()"
                 (ngModelChange)="hideAuxiliary.set($event)"
                 [ngModelOptions]="{ standalone: true }" />
-              <span>Masquer les comptes auxiliaires ({{ auxiliaryCount() }})</span>
+              <span i18n="@@accounting.chart-of-accounts.masquer.les.comptes.auxiliaires.ca6a40b1">Masquer les comptes auxiliaires ({{ auxiliaryCount() }})</span>
             </label>
           }
-          <p class="coa-count" aria-live="polite">
+          <p class="coa-count" aria-live="polite" i18n="@@accounting.chart-of-accounts.compte.87c3614c">
             <span class="coa-count-value">{{ visibleRows().length }}</span>
             <span class="coa-count-label"> compte{{ visibleRows().length === 1 ? '' : 's' }}</span>
           </p>
@@ -111,7 +111,7 @@ export function sceAccountDigitCount(accountNumber: string): number {
         variant="error"
         [message]="error() ?? ''"
         [showRetry]="!!error()"
-        retryLabel="Réessayer"
+        retryLabel="Réessayer" i18n-retryLabel="@@accounting.chart-of-accounts.reessayer.c4f78b12"
         (retry)="load()" />
       <p-table
         #dt
@@ -210,9 +210,9 @@ export function sceAccountDigitCount(accountNumber: string): number {
 
           <h3 class="coa-sec" i18n="@@accounting.chart-of-accounts.type.de.compte.b6544864">Type de compte</h3>
           <div class="coa-type-row">
-            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 2" (click)="setType(2)"><i class="pi pi-truck"></i> Fournisseur</button>
-            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 1" (click)="setType(1)"><i class="pi pi-user"></i> Client</button>
-            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 3 || form.accountType === 0" (click)="setType(3)"><i class="pi pi-ellipsis-h"></i> Autre</button>
+            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 2" (click)="setType(2)" i18n="@@accounting.chart-of-accounts.fournisseur.a1324303"><i class="pi pi-truck"></i> Fournisseur</button>
+            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 1" (click)="setType(1)" i18n="@@accounting.chart-of-accounts.client.e9ef2d15"><i class="pi pi-user"></i> Client</button>
+            <button type="button" class="coa-type" [class.coa-type--on]="form.accountType === 3 || form.accountType === 0" (click)="setType(3)" i18n="@@accounting.chart-of-accounts.autre.9211ea87"><i class="pi pi-ellipsis-h"></i> Autre</button>
           </div>
 
           <h3 class="coa-sec" i18n="@@accounting.chart-of-accounts.hierarchie.du.compte.edd80076">Hiérarchie du compte</h3>

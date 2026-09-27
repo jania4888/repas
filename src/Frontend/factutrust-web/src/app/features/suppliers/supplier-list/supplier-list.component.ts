@@ -60,7 +60,7 @@ interface StatusOption {
 
     <app-page-header
       title="Fournisseurs" i18n-title="@@suppliers.supplier-list.fournisseurs.06b6d88c"
-      subtitle="Gérez vos fournisseurs pour les bons de commande.">
+      subtitle="Gérez vos fournisseurs pour les bons de commande." i18n-subtitle="@@suppliers.supplier-list.gerez.vos.fournisseurs.pour.les.bons.de.561fe7a4">
       @if (canCreateSupplier()) {
         <app-button
           variant="primary"
@@ -73,12 +73,12 @@ interface StatusOption {
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@suppliers.supplier-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@suppliers.supplier-list.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@suppliers.supplier-list.reinitialiser.les.filtres.d8915f02" i18n="@@suppliers.supplier-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -205,7 +205,7 @@ interface StatusOption {
                   icon="pi-eye"
                   [iconOnly]="true"
                   [routerLink]="supplier.id"
-                  ariaLabel="Voir le fournisseur">
+                  ariaLabel="Voir le fournisseur" i18n-ariaLabel="@@suppliers.supplier-list.voir.le.fournisseur.f9af0e37">
                 </app-button>
                 @if (canEditSupplier()) {
                   <app-button
@@ -214,7 +214,7 @@ interface StatusOption {
                     icon="pi-pencil"
                     [iconOnly]="true"
                     [routerLink]="[supplier.id, 'edit']"
-                    ariaLabel="Modifier le fournisseur">
+                    ariaLabel="Modifier le fournisseur" i18n-ariaLabel="@@suppliers.supplier-list.modifier.le.fournisseur.df265ac3">
                   </app-button>
                 }
               </div>
@@ -227,9 +227,9 @@ interface StatusOption {
             <td colspan="8" class="text-center p-6">
               <app-empty-state
                 title="Aucun fournisseur" i18n-title="@@suppliers.supplier-list.aucun.fournisseur.44a1e39f"
-                description="Ajoutez votre premier fournisseur pour créer des bons de commande."
+                description="Ajoutez votre premier fournisseur pour créer des bons de commande." i18n-description="@@suppliers.supplier-list.ajoutez.votre.premier.fournisseur.pour.c.a43e54d7"
                 [showAction]="canCreateSupplier()"
-                actionLabel="Ajouter un fournisseur"
+                actionLabel="Ajouter un fournisseur" i18n-actionLabel="@@suppliers.supplier-list.ajouter.un.fournisseur.e17d0606"
                 actionRoute="new">
               </app-empty-state>
             </td>

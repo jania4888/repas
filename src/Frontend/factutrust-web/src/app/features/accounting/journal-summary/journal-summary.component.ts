@@ -66,10 +66,10 @@ const FILE_BASE_BY_TAB: readonly string[] = [
   template: `
     <app-page-header
       title="Récapitulatifs de journaux" i18n-title="@@accounting.journal-summary.recapitulatifs.de.journaux.39863c76"
-      subtitle="Centralisateur, récapitulation et totaux journaux" />
+      subtitle="Centralisateur, récapitulation et totaux journaux" i18n-subtitle="@@accounting.journal-summary.centralisateur.recapitulation.et.totaux.a68ca626" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Période et journal">
+      <app-accounting-filter-bar ariaLabel="Période et journal" i18n-ariaLabel="@@accounting.journal-summary.periode.et.journal.2147fcf5">
         <div accountingFilterFields class="js-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="js-from" i18n="@@accounting.journal-summary.du.84814985">Du</label>
@@ -97,7 +97,7 @@ const FILE_BASE_BY_TAB: readonly string[] = [
             type="button"
             (click)="load()"
             [disabled]="loading()"
-            ariaLabel="Actualiser le récapitulatif pour la période sélectionnée" i18n="@@accounting.journal-summary.actualiser.9d3b2a7d"> Actualiser </app-button>
+            ariaLabel="Actualiser le récapitulatif pour la période sélectionnée" i18n-ariaLabel="@@accounting.journal-summary.actualiser.le.recapitulatif.pour.la.peri.cfc22773" i18n="@@accounting.journal-summary.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-accounting-export-menu
             [disabled]="loading() || exporting() || !summary()"
             (exportFormat)="onExport($event)" />
@@ -109,14 +109,14 @@ const FILE_BASE_BY_TAB: readonly string[] = [
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.journal-summary.reessayer.c4f78b12"
       (retry)="load()" />
 
     @if (summary(); as s) {
       @if (!s.isBalanced) {
         <app-accounting-status-banner
           variant="warning"
-          message="Contrôle : total débit ≠ total crédit sur la période. Vérifiez les écritures avant d'exploiter cet état." />
+          message="Contrôle : total débit ≠ total crédit sur la période. Vérifiez les écritures avant d'exploiter cet état." i18n-message="@@accounting.journal-summary.controle.total.debit.total.credit.sur.la.1ea8752a" />
       }
     }
 

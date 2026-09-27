@@ -40,7 +40,7 @@ interface ThirdPartyCard {
           <p class="tp-panel__detail"><strong i18n="@@accounting.manual-entry.collectif.66626f9f">Collectif :</strong> {{ card()!.collectiveAccount }}</p>
         }
         @if (card()!.paymentTermDays != null) {
-          <p class="tp-panel__detail"><strong i18n="@@accounting.manual-entry.delai.9b5d1eb0">Délai :</strong> {{ card()!.paymentTermDays }} jours</p>
+          <p class="tp-panel__detail" i18n="@@accounting.manual-entry.delai.jours.05ef8b72"><strong>Délai :</strong> {{ card()!.paymentTermDays }} jours</p>
         }
         @if (card()!.profileRoute) {
           <a [routerLink]="card()!.profileRoute" class="tp-panel__link" i18n="@@accounting.manual-entry.voir.la.fiche.622736cd">Voir la fiche →</a>

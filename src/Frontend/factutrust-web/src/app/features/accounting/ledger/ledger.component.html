@@ -1,10 +1,10 @@
-<app-page-header title="Grand livre" i18n-title="@@accounting.ledger.grand.livre.7eef7547" subtitle="Mouvements et solde progressif par compte" />
+<app-page-header title="Grand livre" i18n-title="@@accounting.ledger.grand.livre.7eef7547" subtitle="Mouvements et solde progressif par compte" i18n-subtitle="@@accounting.ledger.mouvements.et.solde.progressif.par.compt.e1474893" />
 
 <div class="ledger-page accounting-page">
   <p-card
     styleClass="p-card--static ledger-filters-card"
     header="Critères de consultation" i18n-header="@@accounting.ledger.criteres.de.consultation.92faee0d"
-    subheader="Compte et période — les mêmes paramètres déclenchent l’appel au serveur qu’auparavant.">
+    subheader="Compte et période — les mêmes paramètres déclenchent l’appel au serveur qu’auparavant." i18n-subheader="@@accounting.ledger.compte.et.periode.les.memes.parametres.d.79712846">
     <p-toolbar styleClass="ledger-toolbar accounting-prime-toolbar">
       <ng-template pTemplate="start">
         <div class="ledger-filters-grid accounting-filters-grid">
@@ -44,9 +44,9 @@
             </div>
             <div class="ledger-field ledger-field-check">
               <label class="ledger-label" for="ledger-unmoved">
-                <input id="ledger-unmoved" type="checkbox" [(ngModel)]="includeUnmoved" />
+                <input id="ledger-unmoved" type="checkbox" [(ngModel)]="includeUnmoved" /><ng-container i18n="@@accounting.ledger.comptes.non.mouvementes.805a7e09">
                 Comptes non mouvementés
-              </label>
+              </ng-container></label>
             </div>
           }
           @if (mode === 'recap') {
@@ -54,7 +54,7 @@
               <label class="ledger-label" for="ledger-level" i18n="@@accounting.ledger.racine.393755ab">Racine</label>
               <select id="ledger-level" class="p-inputtext" [(ngModel)]="recapLevel">
                 @for (l of [1, 2, 3, 4, 5, 6]; track l) {
-                  <option [ngValue]="l">{{ l }} chiffre{{ l > 1 ? 's' : '' }}</option>
+                  <option [ngValue]="l" i18n="@@accounting.ledger.chiffre.232d7b60">{{ l }} chiffre{{ l > 1 ? 's' : '' }}</option>
                 }
               </select>
             </div>
@@ -110,14 +110,14 @@
     variant="error"
     [message]="error() ?? ''"
     [showRetry]="!!error()"
-    retryLabel="Réessayer"
+    retryLabel="Réessayer" i18n-retryLabel="@@accounting.ledger.reessayer.c4f78b12"
     (retry)="load()"
   />
 
   <p-card
     styleClass="p-card--static ledger-table-card"
     header="Mouvements" i18n-header="@@accounting.ledger.mouvements.604505fb"
-    subheader="Écritures et solde progressif sur la période sélectionnée.">
+    subheader="Écritures et solde progressif sur la période sélectionnée." i18n-subheader="@@accounting.ledger.ecritures.et.solde.progressif.sur.la.per.104d1050">
     @if (mode === 'range') {
       <!-- Grand livre général : les comptes en séquence, chacun avec report et sous-total. -->
       @if (generalLedger(); as gl) {
@@ -161,7 +161,7 @@
                   <td class="text-right ledger-amount">{{ acc.openingBalance | number : '1.3-3' }}</td>
                 </tr>
                 <tr class="acc-totals-row">
-                  <td colspan="4">Total {{ acc.accountNumber }}</td>
+                  <td colspan="4" i18n="@@accounting.ledger.total.9da975f9">Total {{ acc.accountNumber }}</td>
                   <td class="text-right ledger-amount">{{ acc.totalDebit | number : '1.3-3' }}</td>
                   <td class="text-right ledger-amount">{{ acc.totalCredit | number : '1.3-3' }}</td>
                   <td class="text-right ledger-amount"
@@ -177,10 +177,10 @@
           <app-empty-state
             icon="pi-book"
             title="Aucun compte mouvementé sur la période" i18n-title="@@accounting.ledger.aucun.compte.mouvemente.sur.la.periode.32d11b75"
-            description="Élargissez la plage de comptes ou les dates, puis cliquez sur Afficher."
+            description="Élargissez la plage de comptes ou les dates, puis cliquez sur Afficher." i18n-description="@@accounting.ledger.elargissez.la.plage.de.comptes.ou.les.da.6373ddf2"
             [showAction]="false" />
         } @else {
-          <p class="ledger-grand-total">
+          <p class="ledger-grand-total" i18n="@@accounting.ledger.total.general.debit.credit.d4cf09dd">
             Total général — débit {{ gl.totalDebit | number : '1.3-3' }} ·
             crédit {{ gl.totalCredit | number : '1.3-3' }}
           </p>
@@ -227,7 +227,7 @@
       <app-empty-state
         icon="pi-book"
         title="Aucun mouvement sur la période" i18n-title="@@accounting.ledger.aucun.mouvement.sur.la.periode.0c965385"
-        description="Vérifiez le numéro de compte ou élargissez les dates, puis cliquez sur Afficher."
+        description="Vérifiez le numéro de compte ou élargissez les dates, puis cliquez sur Afficher." i18n-description="@@accounting.ledger.verifiez.le.numero.de.compte.ou.elargiss.dcc61d4e"
         [showAction]="false"
       />
     } @else {

@@ -79,7 +79,7 @@ import { catchError } from 'rxjs/operators';
                     placeholder="Lot" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.lot.4a211932"
                     [filter]="true"
                     filterBy="label"
-                    filterPlaceholder="Rechercher un lot…"
+                    filterPlaceholder="Rechercher un lot…" i18n-filterPlaceholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.rechercher.un.lot.c23d8d0f"
                     [showClear]="true"
                     appendTo="body"
                     (onChange)="onLotPicked(alloc, $event.value)">
@@ -105,11 +105,11 @@ import { catchError } from 'rxjs/operators';
               <app-button type="button" variant="ghost" size="sm" icon="pi-plus" iconPos="left" (clicked)="addLotRow()" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.ajouter.un.lot.5e4bc959"> Ajouter un lot </app-button>
             } @else if (lotsLoaded()) {
               <span class="alloc-empty">
-                @if (excludedExpiredCount() > 0) {
+                @if (excludedExpiredCount() > 0) {<ng-container i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.tous.les.lots.de.cet.entrepot.sont.perim.041b1395">
                   Tous les lots de cet entrepôt sont périmés et ne peuvent pas sortir.
-                } @else {
+                </ng-container>} @else {<ng-container i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.aucun.lot.disponible.dans.cet.entrepot.r.1323495e">
                   Aucun lot disponible dans cet entrepôt. Réceptionnez d'abord le stock avec un n° de lot.
-                }
+                </ng-container>}
               </span>
             }
           } @else {
@@ -161,7 +161,7 @@ import { catchError } from 'rxjs/operators';
                     placeholder="N° série" i18n-placeholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.n.serie.8c333421"
                     [filter]="true"
                     filterBy="label"
-                    filterPlaceholder="Rechercher un n° de série…"
+                    filterPlaceholder="Rechercher un n° de série…" i18n-filterPlaceholder="@@shared.components.stock-allocation-editor.stock-allocation-editor.rechercher.un.n.de.serie.4d58c90c"
                     [showClear]="true"
                     appendTo="body"
                     (onChange)="onSerialPicked(alloc, $event.value)">
@@ -188,17 +188,17 @@ import { catchError } from 'rxjs/operators';
         }
 
         @if (excludedExpiredCount() > 0 && lotOptions().length > 0) {
-          <span class="alloc-hint">
+          <span class="alloc-hint" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.lot.s.perime.s.exclus.de.la.sortie.fad026b7">
             {{ excludedExpiredCount() }} lot(s) périmé(s) exclus de la sortie
           </span>
         }
         @if (lotStockWarning(); as warn) {
-          <span class="alloc-over">
+          <span class="alloc-over" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.quantite.superieure.au.disponible.du.lot.125e0aee">
             Quantité supérieure au disponible du lot ({{ warn.available | number:'1.0-3' }})
           </span>
         }
         @if (showSumWarning()) {
-          <span class="alloc-warning">
+          <span class="alloc-warning" i18n="@@shared.components.stock-allocation-editor.stock-allocation-editor.somme.quantite.ligne.33c3cef0">
             Somme {{ allocationSum(allocations) | number:'1.0-3' }} ≠ quantité ligne {{ lineQuantity | number:'1.0-3' }}
           </span>
         }

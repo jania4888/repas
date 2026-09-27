@@ -31,15 +31,15 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   template: `
     <app-page-header
       title="Emprunts" i18n-title="@@accounting.loans.emprunts.1b7f68cc"
-      subtitle="Registre des emprunts et tableaux d'amortissement" />
+      subtitle="Registre des emprunts et tableaux d'amortissement" i18n-subtitle="@@accounting.loans.registre.des.emprunts.et.tableaux.d.amor.69441470" />
 
-    <div class="ln-notice" role="note">
+    <div class="ln-notice" role="note" i18n="@@accounting.loans.echeanciers.indicatifs.les.echeances.ne.6f1dc668">
       <i class="pi pi-info-circle" aria-hidden="true"></i>
-      <span><ng-container i18n="@@accounting.loans.echeanciers.d752ca1d">Échéanciers </ng-container> <strong i18n="@@accounting.loans.indicatifs.5a70502c">indicatifs</strong> : les échéances ne sont pas comptabilisées automatiquement.</span>
+      <span><ng-container>Échéanciers </ng-container> <strong>indicatifs</strong> : les échéances ne sont pas comptabilisées automatiquement.</span>
     </div>
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Recherche d'emprunt">
+      <app-accounting-filter-bar ariaLabel="Recherche d'emprunt" i18n-ariaLabel="@@accounting.loans.recherche.d.emprunt.dc2db34b">
         <div accountingFilterFields class="ln-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="ln-search" i18n="@@accounting.loans.recherche.787b5492">Recherche</label>
@@ -49,14 +49,14 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button"
-            (click)="load()" [disabled]="busy()" ariaLabel="Actualiser le registre des emprunts" i18n="@@accounting.loans.actualiser.9d3b2a7d"> Actualiser </app-button>
+            (click)="load()" [disabled]="busy()" ariaLabel="Actualiser le registre des emprunts" i18n-ariaLabel="@@accounting.loans.actualiser.le.registre.des.emprunts.2631b2ae" i18n="@@accounting.loans.actualiser.9d3b2a7d"> Actualiser </app-button>
           <app-button variant="primary" icon="pi pi-plus" type="button"
-            (click)="showForm.set(!showForm())" [disabled]="busy()" ariaLabel="Créer un emprunt" i18n="@@accounting.loans.nouvel.emprunt.9ef02dcf"> Nouvel emprunt </app-button>
+            (click)="showForm.set(!showForm())" [disabled]="busy()" ariaLabel="Créer un emprunt" i18n-ariaLabel="@@accounting.loans.creer.un.emprunt.5ac7c529" i18n="@@accounting.loans.nouvel.emprunt.9ef02dcf"> Nouvel emprunt </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.loans.reessayer.c4f78b12" (retry)="load()" />
 
     @if (successMessage(); as msg) {
       <div class="ln-success" role="status"><i class="pi pi-check-circle" aria-hidden="true"></i><span>{{ msg }}</span></div>
@@ -120,9 +120,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
           </div>
         </div>
         <div class="ln-form-actions">
-          <app-button variant="secondary" type="button" (click)="showForm.set(false)" [disabled]="busy()" ariaLabel="Annuler" i18n="@@accounting.loans.annuler.49ba3292"> Annuler </app-button>
+          <app-button variant="secondary" type="button" (click)="showForm.set(false)" [disabled]="busy()" ariaLabel="Annuler" i18n-ariaLabel="@@accounting.loans.annuler.e063e8ff" i18n="@@accounting.loans.annuler.49ba3292"> Annuler </app-button>
           <app-button variant="primary" icon="pi pi-check" type="button"
-            (click)="create()" [disabled]="busy() || !canSubmit()" ariaLabel="Créer l'emprunt et générer l'échéancier">
+            (click)="create()" [disabled]="busy() || !canSubmit()" ariaLabel="Créer l'emprunt et générer l'échéancier" i18n-ariaLabel="@@accounting.loans.creer.l.emprunt.et.generer.l.echeancier.3ac7d956">
             {{ creating() ? loc_ui_tern_creation_2a06d1 : loc_ui_tern_creer_et_generer_l_echeancier_c92a2a }}
           </app-button>
         </div>

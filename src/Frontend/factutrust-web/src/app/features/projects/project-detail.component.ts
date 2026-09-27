@@ -135,38 +135,38 @@ import { ProjectFavoritesService } from './project-favorites.service';
         <div class="proj-detail-tabs-wrap">
       <p-tabs class="ft-tabs proj-detail-tabs" [value]="tab()" [lazy]="true" (valueChange)="onTab($event)">
         <p-tablist>
-          <p-tab value="overview" [class.proj-tab-emphasis]="isEmphasizedTab('overview')">
+          <p-tab value="overview" [class.proj-tab-emphasis]="isEmphasizedTab('overview')" i18n="@@projects.project-detail.apercu.047586dd">
             <i class="pi pi-th-large"></i> Aperçu
           </p-tab>
-          <p-tab value="tasks" [class.proj-tab-emphasis]="isEmphasizedTab('tasks')">
+          <p-tab value="tasks" [class.proj-tab-emphasis]="isEmphasizedTab('tasks')" i18n="@@projects.project-detail.taches.4108188a">
             <i class="pi pi-check-square"></i> Tâches
           </p-tab>
           @if (showTimeTab(p)) {
-          <p-tab value="time" [class.proj-tab-emphasis]="isEmphasizedTab('time')">
+          <p-tab value="time" [class.proj-tab-emphasis]="isEmphasizedTab('time')" i18n="@@projects.project-detail.temps.d4c14181">
             <i class="pi pi-clock"></i> Temps
           </p-tab>
           }
-          <p-tab value="budget" [class.proj-tab-emphasis]="isEmphasizedTab('budget')">
+          <p-tab value="budget" [class.proj-tab-emphasis]="isEmphasizedTab('budget')" i18n="@@projects.project-detail.budget.17ebfd3e">
             <i class="pi pi-wallet"></i> Budget
           </p-tab>
           @if (showProfitabilityTab(p)) {
-          <p-tab value="profitability" [class.proj-tab-emphasis]="isEmphasizedTab('profitability')">
+          <p-tab value="profitability" [class.proj-tab-emphasis]="isEmphasizedTab('profitability')" i18n="@@projects.project-detail.rentabilite.77f947d4">
             <i class="pi pi-chart-line"></i> Rentabilité
           </p-tab>
           }
-          <p-tab value="team" [class.proj-tab-emphasis]="isEmphasizedTab('team')">
+          <p-tab value="team" [class.proj-tab-emphasis]="isEmphasizedTab('team')" i18n="@@projects.project-detail.equipe.b7cb3db3">
             <i class="pi pi-users"></i> Équipe
           </p-tab>
-          <p-tab value="files" [class.proj-tab-emphasis]="isEmphasizedTab('files')">
+          <p-tab value="files" [class.proj-tab-emphasis]="isEmphasizedTab('files')" i18n="@@projects.project-detail.fichiers.5ff136ad">
             <i class="pi pi-folder"></i> Fichiers
           </p-tab>
-          <p-tab value="billing" [class.proj-tab-emphasis]="isEmphasizedTab('billing')">
+          <p-tab value="billing" [class.proj-tab-emphasis]="isEmphasizedTab('billing')" i18n="@@projects.project-detail.facturation.2e05f350">
             <i class="pi pi-file"></i> Facturation
           </p-tab>
-          <p-tab value="activity" [class.proj-tab-emphasis]="isEmphasizedTab('activity')">
+          <p-tab value="activity" [class.proj-tab-emphasis]="isEmphasizedTab('activity')" i18n="@@projects.project-detail.activite.79339f80">
             <i class="pi pi-history"></i> Activité
           </p-tab>
-          <p-tab value="settings">
+          <p-tab value="settings" i18n="@@projects.project-detail.parametres.2de39beb">
             <i class="pi pi-cog"></i> Paramètres
           </p-tab>
         </p-tablist>
@@ -269,12 +269,12 @@ import { ProjectFavoritesService } from './project-favorites.service';
       <app-form-section title="Identité" i18n-title="@@projects.project-detail.identite.3138be1c" icon="pi-id-card" variant="compact">
         <div class="flex flex-column gap-3">
           <label><ng-container i18n="@@projects.project-detail.nom.7ff20370">Nom </ng-container> <input pInputText class="w-full" [(ngModel)]="editDraft.name" /></label>
-          <label>Type
-            <input pInputText class="w-full" [value]="project()?.kindDisplay" readonly />
+          <label><ng-container i18n="@@projects.project-detail.type.3deb7456">Type
+            </ng-container><input pInputText class="w-full" [value]="project()?.kindDisplay" readonly />
           </label>
           <label><ng-container i18n="@@projects.project-detail.description.55f8ebc8">Description </ng-container> <textarea pTextarea class="w-full" rows="2" [(ngModel)]="editDraft.description"></textarea></label>
-          <label>Chef de projet
-            <p-select class="w-full" [options]="users()" [(ngModel)]="editDraft.ownerUserId" optionLabel="displayName" optionValue="id" [showClear]="true" />
+          <label><ng-container i18n="@@projects.project-detail.chef.de.projet.7a1d6008">Chef de projet
+            </ng-container><p-select class="w-full" [options]="users()" [(ngModel)]="editDraft.ownerUserId" optionLabel="displayName" optionValue="id" [showClear]="true" />
           </label>
           <div class="flex gap-2">
             <label class="flex-1"><ng-container i18n="@@projects.project-detail.debut.f0955314">Début </ng-container> <p-datepicker class="w-full" [(ngModel)]="editStart" dateFormat="dd/mm/yy" /></label>

@@ -89,9 +89,9 @@
         <app-empty-state
           icon="pi-clipboard"
           title="Aucune demande" i18n-title="@@exchanges.exchange-requests-panel.aucune.demande.8c11b950"
-          description="Créez une demande ou une réclamation pour suivre un besoin."
+          description="Créez une demande ou une réclamation pour suivre un besoin." i18n-description="@@exchanges.exchange-requests-panel.creez.une.demande.ou.une.reclamation.pou.99f75674"
           [showAction]="threadIsOpen"
-          actionLabel="Nouvelle demande"
+          actionLabel="Nouvelle demande" i18n-actionLabel="@@exchanges.exchange-requests-panel.nouvelle.demande.53076aef"
           (actionClick)="openCreate()"
         />
       } @else if (filteredRequests().length === 0 && requests.length > 0) {
@@ -139,7 +139,7 @@
 
     @if (selectedRequest(); as req) {
       <article class="req-detail" [attr.aria-label]="'Demande #' + req.number">
-        <button type="button" class="req-detail__back" (click)="selectRequest(null)">
+        <button type="button" class="req-detail__back" (click)="selectRequest(null)" i18n="@@exchanges.exchange-requests-panel.retour.aux.demandes.172840a9">
           <i class="pi pi-arrow-left" aria-hidden="true"></i>
           Retour aux demandes
         </button>

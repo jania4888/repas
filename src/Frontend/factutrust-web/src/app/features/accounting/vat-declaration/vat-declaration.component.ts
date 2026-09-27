@@ -96,7 +96,7 @@ const COMPANY_EMPTY_STATE_MESSAGE =
       variant="error"
       [message]="error() ?? ''"
       [showRetry]="!!error()"
-      retryLabel="Réessayer"
+      retryLabel="Réessayer" i18n-retryLabel="@@accounting.vat-declaration.reessayer.c4f78b12"
       (retry)="load()" />
 
     @if (unavailableReason(); as reason) {

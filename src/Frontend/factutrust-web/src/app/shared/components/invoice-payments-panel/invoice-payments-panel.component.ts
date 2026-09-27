@@ -56,7 +56,7 @@ interface PaymentRow {
         [attr.aria-label]="loc_ui_tern_paiements_de_la_facture_c5d629 + (invoice?.number ?? '')"
         [attr.aria-modal]="'true'">
         <div class="panel-header">
-          <h2 class="panel-title" id="invoice-payments-panel-title">
+          <h2 class="panel-title" id="invoice-payments-panel-title" i18n="@@shared.components.invoice-payments-panel.invoice-payments-panel.paiements.facture.d90f5199">
             Paiements — Facture {{ invoice?.number ?? '' }}
           </h2>
           <button
@@ -130,7 +130,7 @@ interface PaymentRow {
                 label="Ajouter un paiement" i18n-label="@@shared.components.invoice-payments-panel.invoice-payments-panel.ajouter.un.paiement.e23c30ff"
                 (click)="openRecordPaymentDialog()"
                 [disabled]="effectiveRemainingAmount() <= 0"
-                ariaLabel="Ajouter un paiement pour cette facture">
+                ariaLabel="Ajouter un paiement pour cette facture" i18n-ariaLabel="@@shared.components.invoice-payments-panel.invoice-payments-panel.ajouter.un.paiement.pour.cette.facture.bd9afee3">
               </app-button>
             </div>
           }

@@ -35,7 +35,7 @@ interface PeriodOption {
   template: `
     <app-page-header 
       title="Rapports Paiements" i18n-title="@@reports.payments.rapports.paiements.187514db" 
-      subtitle="Encaissements, décaissements et trésorerie nette">
+      subtitle="Encaissements, décaissements et trésorerie nette" i18n-subtitle="@@reports.payments.encaissements.decaissements.et.tresoreri.fecd254b">
       <app-button 
         variant="secondary"
         icon="pi-download"
@@ -139,7 +139,7 @@ interface PeriodOption {
               </div>
             }
           </div>
-          <div class="chart-legend">
+          <div class="chart-legend" i18n="@@reports.payments.encaissements.decaissements.65b382de">
             <span class="legend-item"><span class="legend-color in"></span> Encaissements</span>
             <span class="legend-item"><span class="legend-color out"></span> Décaissements</span>
           </div>

@@ -74,8 +74,8 @@ type ContractAction = 'activate' | 'suspend' | 'resume' | 'cancel' | 'renew' | '
       <app-empty-state
         icon="pi-exclamation-triangle"
         title="Impossible de charger le contrat" i18n-title="@@recurring-contracts.pages.impossible.de.charger.le.contrat.d4646382"
-        description="Le contrat est introuvable ou une erreur est survenue."
-        actionLabel="Réessayer"
+        description="Le contrat est introuvable ou une erreur est survenue." i18n-description="@@recurring-contracts.pages.le.contrat.est.introuvable.ou.une.erreur.7fdf9198"
+        actionLabel="Réessayer" i18n-actionLabel="@@recurring-contracts.pages.reessayer.b885e20c"
         (actionClick)="reload()">
       </app-empty-state>
     } @else {

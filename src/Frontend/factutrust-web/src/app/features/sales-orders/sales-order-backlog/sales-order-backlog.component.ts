@@ -42,7 +42,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
     <app-page-header
       title="Carnet de commandes" i18n-title="@@sales-orders.sales-order-backlog.carnet.de.commandes.ec641454"
-      subtitle="Ce qui est engagé et pas encore livré, ligne par ligne. Seules les commandes confirmées ou partiellement livrées y figurent.">
+      subtitle="Ce qui est engagé et pas encore livré, ligne par ligne. Seules les commandes confirmées ou partiellement livrées y figurent." i18n-subtitle="@@sales-orders.sales-order-backlog.ce.qui.est.engage.et.pas.encore.livre.li.73c66779">
       <app-button variant="secondary" icon="pi-arrow-left" iconPos="left" routerLink="/sales-orders" i18n="@@sales-orders.sales-order-backlog.retour.aux.commandes.68a21472"> Retour aux commandes </app-button>
     </app-page-header>
 
@@ -70,7 +70,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
       <app-empty-state
         icon="pi-check-circle"
         title="Carnet vide" i18n-title="@@sales-orders.sales-order-backlog.carnet.vide.28ec78c4"
-        message="Aucune quantité engagée ne reste à livrer.">
+        message="Aucune quantité engagée ne reste à livrer." i18n-message="@@sales-orders.sales-order-backlog.aucune.quantite.engagee.ne.reste.a.livre.238594a0">
       </app-empty-state>
     } @else {
       <div class="ft-table-card">

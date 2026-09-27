@@ -14,7 +14,7 @@ import { RouterLink } from '@angular/router';
         <path [attr.d]="valuePath()" class="proj-dash-gauge__fill" />
         <circle [attr.cx]="targetDot().x" [attr.cy]="targetDot().y" r="4" class="proj-dash-gauge__target-dot" />
       </svg>
-      <div class="proj-dash-gauge__readout">
+      <div class="proj-dash-gauge__readout" i18n="@@projects.components.objectif.d07f894b">
         <strong class="proj-dash-gauge__value">{{ value() }} %</strong>
         <span class="proj-dash-gauge__target">Objectif : {{ target() }} %</span>
       </div>

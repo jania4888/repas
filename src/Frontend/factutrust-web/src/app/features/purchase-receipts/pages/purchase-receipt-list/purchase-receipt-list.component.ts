@@ -52,7 +52,7 @@ interface StatusOption {
 
     <app-page-header
       title="Bons de réception" i18n-title="@@purchase-receipts.pages.bons.de.reception.84d6ebb5"
-      subtitle="Enregistrez et validez les réceptions de marchandises fournisseurs.">
+      subtitle="Enregistrez et validez les réceptions de marchandises fournisseurs." i18n-subtitle="@@purchase-receipts.pages.enregistrez.et.validez.les.receptions.de.25825b29">
       @if (canCreate()) {
         <app-button
           variant="primary"
@@ -64,12 +64,12 @@ interface StatusOption {
 
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@purchase-receipts.pages.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@purchase-receipts.pages.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@purchase-receipts.pages.reinitialiser.les.filtres.d8915f02" i18n="@@purchase-receipts.pages.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -159,7 +159,7 @@ interface StatusOption {
           [rows]="pageSize"
           [totalRecords]="totalRecords()"
           [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons de réception"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} bons de réception" i18n-currentPageReportTemplate="@@purchase-receipts.pages.affichage.de.first.a.last.sur.totalrecor.1d355587"
           (onLazyLoad)="onPageChange($event)"
           [loading]="loading()"
           [first]="(page - 1) * pageSize"
@@ -224,7 +224,7 @@ interface StatusOption {
                     icon="pi-eye"
                     [iconOnly]="true"
                     [routerLink]="receipt.id"
-                    ariaLabel="Voir le bon de réception">
+                    ariaLabel="Voir le bon de réception" i18n-ariaLabel="@@purchase-receipts.pages.voir.le.bon.de.reception.7b8895f5">
                   </app-button>
                 </div>
               </td>
@@ -236,9 +236,9 @@ interface StatusOption {
               <td colspan="9" class="text-center p-6">
                 <app-empty-state
                   title="Aucun bon de réception" i18n-title="@@purchase-receipts.pages.aucun.bon.de.reception.8ae0bc37"
-                  description="Créez votre premier bon de réception pour enregistrer les livraisons fournisseurs."
+                  description="Créez votre premier bon de réception pour enregistrer les livraisons fournisseurs." i18n-description="@@purchase-receipts.pages.creez.votre.premier.bon.de.reception.pou.12491aa9"
                   [showAction]="canCreate()"
-                  actionLabel="Nouveau bon de réception"
+                  actionLabel="Nouveau bon de réception" i18n-actionLabel="@@purchase-receipts.pages.nouveau.bon.de.reception.5db3fe90"
                   actionRoute="new">
                 </app-empty-state>
               </td>

@@ -67,7 +67,7 @@ import { FUNCTIONAL_CURRENCY } from '../models/entry-form.model';
         @if (store.isForeignCurrency()) {
           <!-- Contre-valeur : indicative. Le serveur recalcule et absorbe le résidu d'arrondi. -->
           <div class="summary-row summary-row--highlight">
-            <dt>Solde {{ functionalCurrency }}</dt>
+            <dt i18n="@@accounting.manual-entry.solde.92b840e4">Solde {{ functionalCurrency }}</dt>
             <dd class="mono">{{ store.localBalance() | number:'1.3-3' }} {{ functionalCurrency }}</dd>
           </div>
         }

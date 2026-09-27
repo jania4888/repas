@@ -97,8 +97,8 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
 
     <app-page-header
       title="Projets" i18n-title="@@projects.project-list.projets.b1e8cd4d"
-      subtitle="Affaires, chantiers et missions"
-      hint="Affaires, chantiers ESN et missions BTP : suivez avancement, tâches et heures à facturer.">
+      subtitle="Affaires, chantiers et missions" i18n-subtitle="@@projects.project-list.affaires.chantiers.et.missions.5344cbce"
+      hint="Affaires, chantiers ESN et missions BTP : suivez avancement, tâches et heures à facturer." i18n-hint="@@projects.project-list.affaires.chantiers.esn.et.missions.btp.s.645f358b">
       <p-menu #exportMenu [popup]="true" [model]="exportMenuItems" appendTo="body" />
       <app-button
         variant="secondary"
@@ -107,8 +107,8 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
         type="button"
         [disabled]="exporting()"
         (click)="exportMenu.toggle($event)"
-        ariaLabel="Exporter la liste des projets" i18n="@@projects.project-list.exporter.0cd84bdc"> Exporter </app-button>
-      <a routerLink="/projects/dashboard" class="p-button p-button-outlined p-button-sm">
+        ariaLabel="Exporter la liste des projets" i18n-ariaLabel="@@projects.project-list.exporter.la.liste.des.projets.33c176f5" i18n="@@projects.project-list.exporter.0cd84bdc"> Exporter </app-button>
+      <a routerLink="/projects/dashboard" class="p-button p-button-outlined p-button-sm" i18n="@@projects.project-list.tableau.de.bord.cb1cc88a">
         <i class="pi pi-chart-bar" aria-hidden="true"></i> Tableau de bord
       </a>
       @if (canCreate) {
@@ -160,17 +160,17 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
           placeholder="Tous les clients" i18n-placeholder="@@projects.project-list.tous.les.clients.56f5092c"
           [showClear]="true"
           [filter]="true"
-          filterPlaceholder="Rechercher…"
+          filterPlaceholder="Rechercher…" i18n-filterPlaceholder="@@projects.project-list.rechercher.ed75dcce"
           (onChange)="onFilterChange()" />
 
         <button
           type="button"
           class="proj-list-more-filters"
           (click)="advancedPanel.toggle($event)"
-          aria-label="Plus de filtres" i18n-aria-label="@@projects.project-list.plus.de.filtres.51cff4a1">
+          aria-label="Plus de filtres" i18n-aria-label="@@projects.project-list.plus.de.filtres.51cff4a1"><ng-container i18n="@@projects.project-list.plus.de.filtres.a91c9068">
           <i class="pi pi-filter" aria-hidden="true"></i>
           Plus de filtres
-          @if (extraFiltersCount() > 0) {
+          </ng-container>@if (extraFiltersCount() > 0) {
             <span class="proj-list-more-filters__badge">{{ extraFiltersCount() }}</span>
           }
         </button>
@@ -223,7 +223,7 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
 
         <div class="proj-list-filters__actions">
           @if (hasActiveFilters()) {
-            <button type="button" class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@projects.project-list.reinitialiser.les.filtres.d8915f02">
+            <button type="button" class="ft-filters__reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres" i18n-aria-label="@@projects.project-list.reinitialiser.les.filtres.d8915f02" i18n="@@projects.project-list.reinitialiser.9637f51e">
               <i class="pi pi-times"></i>
               Réinitialiser ({{ activeFiltersCount() }})
             </button>
@@ -326,9 +326,9 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
               </td>
               <td>
                 <div class="proj-list-tasks">
-                  <span>{{ p.openTaskCount }} ouvertes</span>
+                  <span i18n="@@projects.project-list.ouvertes.51a56e9c">{{ p.openTaskCount }} ouvertes</span>
                   @if (p.overdueTaskCount) {
-                    <span class="proj-list-tasks__late">{{ p.overdueTaskCount }} retard</span>
+                    <span class="proj-list-tasks__late" i18n="@@projects.project-list.retard.a24d2f37">{{ p.overdueTaskCount }} retard</span>
                   }
                 </div>
               </td>
@@ -349,9 +349,9 @@ const KIND_CARD_HINTS: Record<ProjectKindCode, string> = {
                 <app-empty-state
                   icon="pi-briefcase"
                   title="Aucun projet" i18n-title="@@projects.project-list.aucun.projet.c77f3894"
-                  description="Créez-en un pour démarrer le suivi d'affaire, de mission ESN ou de chantier BTP."
+                  description="Créez-en un pour démarrer le suivi d'affaire, de mission ESN ou de chantier BTP." i18n-description="@@projects.project-list.creez.en.un.pour.demarrer.le.suivi.d.aff.f22e7fc5"
                   [showAction]="canCreate"
-                  actionLabel="Nouveau projet"
+                  actionLabel="Nouveau projet" i18n-actionLabel="@@projects.project-list.nouveau.projet.dcbfdaf5"
                   (actionClick)="openCreate()" />
               </td>
             </tr>

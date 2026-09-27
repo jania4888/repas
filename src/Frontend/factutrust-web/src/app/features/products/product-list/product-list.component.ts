@@ -66,7 +66,7 @@ interface CategoryOption {
     
     <app-page-header 
       title="Produits & Services" i18n-title="@@products.product-list.produits.services.01d33b70" 
-      subtitle="Gérez votre catalogue de produits et services">
+      subtitle="Gérez votre catalogue de produits et services" i18n-subtitle="@@products.product-list.gerez.votre.catalogue.de.produits.et.ser.33a68e21">
       @if (canCreateProduct()) {
         <app-button 
           variant="primary"
@@ -79,12 +79,12 @@ interface CategoryOption {
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@products.product-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@products.product-list.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@products.product-list.reinitialiser.les.filtres.d8915f02" i18n="@@products.product-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -230,7 +230,7 @@ interface CategoryOption {
                     pTooltip="Activer la gestion de stock" i18n-pTooltip="@@products.product-list.activer.la.gestion.de.stock.38bf89fb"
                     tooltipPosition="top"
                     (click)="enableStockManagement(product)"
-                    ariaLabel="Activer la gestion de stock">
+                    ariaLabel="Activer la gestion de stock" i18n-ariaLabel="@@products.product-list.activer.la.gestion.de.stock.90a2c1f9">
                   </app-button>
                 }
                 @if (canViewProduct()) {
@@ -242,7 +242,7 @@ interface CategoryOption {
                     [routerLink]="[product.id, 'view']"
                     pTooltip="Voir les détails du produit" i18n-pTooltip="@@products.product-list.voir.les.details.du.produit.155749a5"
                     tooltipPosition="top"
-                    ariaLabel="Voir les détails du produit">
+                    ariaLabel="Voir les détails du produit" i18n-ariaLabel="@@products.product-list.voir.les.details.du.produit.3819c890">
                   </app-button>
                 }
                 @if (canEditProduct()) {
@@ -254,7 +254,7 @@ interface CategoryOption {
                     [routerLink]="[product.id, 'edit']"
                     pTooltip="Modifier le produit" i18n-pTooltip="@@products.product-list.modifier.le.produit.aeaa8f8a"
                     tooltipPosition="top"
-                    ariaLabel="Modifier le produit">
+                    ariaLabel="Modifier le produit" i18n-ariaLabel="@@products.product-list.modifier.le.produit.525c4ebe">
                   </app-button>
                 }
                 @if (labelPrintingEnabled) {
@@ -266,7 +266,7 @@ interface CategoryOption {
                     (clicked)="openLabelDialog(product)"
                     pTooltip="Imprimer les étiquettes" i18n-pTooltip="@@products.product-list.imprimer.les.etiquettes.ff40cf1e"
                     tooltipPosition="top"
-                    ariaLabel="Imprimer les étiquettes">
+                    ariaLabel="Imprimer les étiquettes" i18n-ariaLabel="@@products.product-list.imprimer.les.etiquettes.af1e0f60">
                   </app-button>
                 }
                 @if (canDeleteProduct()) {
@@ -276,7 +276,7 @@ interface CategoryOption {
                     icon="pi-trash"
                     [iconOnly]="true"
                     (click)="confirmDelete(product)"
-                    ariaLabel="Supprimer le produit">
+                    ariaLabel="Supprimer le produit" i18n-ariaLabel="@@products.product-list.supprimer.le.produit.b683c9f4">
                   </app-button>
                 }
               </div>
@@ -290,9 +290,9 @@ interface CategoryOption {
               <app-empty-state
                 illustration="empty-products.svg"
                 title="Aucun produit" i18n-title="@@products.product-list.aucun.produit.2cc33b12"
-                description="Ajoutez votre premier produit ou service pour commencer à créer des factures."
+                description="Ajoutez votre premier produit ou service pour commencer à créer des factures." i18n-description="@@products.product-list.ajoutez.votre.premier.produit.ou.service.fdbc6d41"
                 [showAction]="canCreateProduct()"
-                actionLabel="Ajouter un produit"
+                actionLabel="Ajouter un produit" i18n-actionLabel="@@products.product-list.ajouter.un.produit.580cdfb5"
                 actionRoute="new">
               </app-empty-state>
             </td>

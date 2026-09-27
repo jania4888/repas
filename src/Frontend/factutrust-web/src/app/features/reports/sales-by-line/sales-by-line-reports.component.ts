@@ -28,7 +28,7 @@ type GroupBy = 'Product' | 'Category' | 'ProductAndClient';
   template: `
     <app-page-header
       title="Détails ventes par ligne produit" i18n-title="@@reports.sales-by-line.details.ventes.par.ligne.produit.2fe7a584"
-      subtitle="Chiffre d'affaires par produit, par catégorie et par client">
+      subtitle="Chiffre d'affaires par produit, par catégorie et par client" i18n-subtitle="@@reports.sales-by-line.chiffre.d.affaires.par.produit.par.categ.966dcabe">
       <app-button variant="secondary" icon="pi-download" iconPos="left" (click)="onExport()" i18n="@@reports.sales-by-line.exporter.0cd84bdc"> Exporter </app-button>
     </app-page-header>
 

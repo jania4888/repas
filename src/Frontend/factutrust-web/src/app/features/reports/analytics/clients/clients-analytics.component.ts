@@ -27,7 +27,7 @@ import {
     template: `
     <app-page-header
       title="Analyse clients" i18n-title="@@reports.analytics.analyse.clients.f6f71bbe"
-      subtitle="Identifiez vos meilleurs clients et ceux qui nécessitent votre attention">
+      subtitle="Identifiez vos meilleurs clients et ceux qui nécessitent votre attention" i18n-subtitle="@@reports.analytics.identifiez.vos.meilleurs.clients.et.ceux.3f3be040">
       <app-button
         variant="secondary"
         icon="pi-print"
@@ -83,7 +83,7 @@ import {
       <div class="section activity-section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.analytics.repartition.actifs.inactifs.8882d0b8">Répartition actifs / inactifs</h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.analytics.un.client.actif.est.un.client.qui.est.ma.1c3a352e">
             <i class="pi pi-info-circle"></i>
             Un client actif est un client qui est marqué comme actif dans votre base
           </span>
@@ -91,16 +91,16 @@ import {
         <div class="activity-bar-bg">
           <div class="activity-bar-active" [style.width.%]="data()!.activePercent">
             @if (data()!.activePercent > 15) {
-              <span class="activity-label">{{ data()!.activeCount }} actifs</span>
+              <span class="activity-label" i18n="@@reports.analytics.actifs.990ea293">{{ data()!.activeCount }} actifs</span>
             }
           </div>
           <div class="activity-bar-inactive" [style.width.%]="100 - data()!.activePercent">
             @if ((100 - data()!.activePercent) > 15) {
-              <span class="activity-label">{{ data()!.inactiveCount }} inactifs</span>
+              <span class="activity-label" i18n="@@reports.analytics.inactifs.e1cd6d2b">{{ data()!.inactiveCount }} inactifs</span>
             }
           </div>
         </div>
-        <div class="activity-legend">
+        <div class="activity-legend" i18n="@@reports.analytics.actifs.inactifs.86cbc346">
           <span class="legend-item"><span class="legend-dot active"></span> Actifs ({{ data()!.activePercent | number:'1.0-0' }} %)</span>
           <span class="legend-item"><span class="legend-dot inactive"></span> Inactifs ({{ 100 - data()!.activePercent | number:'1.0-0' }} %)</span>
         </div>
@@ -124,7 +124,7 @@ import {
           <button class="filter-tab" [class.active]="filter === 'all'" (click)="onFilter('all')" i18n="@@reports.analytics.tous.b97ae3b4"> Tous </button>
           <button class="filter-tab" [class.active]="filter === 'active'" (click)="onFilter('active')" i18n="@@reports.analytics.actifs.4fc3a980"> Actifs </button>
           <button class="filter-tab" [class.active]="filter === 'inactive'" (click)="onFilter('inactive')" i18n="@@reports.analytics.inactifs.41c2d03e"> Inactifs </button>
-          <button class="filter-tab" [class.active]="filter === 'unpaid'" (click)="onFilter('unpaid')">
+          <button class="filter-tab" [class.active]="filter === 'unpaid'" (click)="onFilter('unpaid')" i18n="@@reports.analytics.impayes.7aa7551c">
             <i class="pi pi-exclamation-circle" style="font-size: 0.7rem;"></i>
             Impayés
           </button>
@@ -212,7 +212,7 @@ import {
                       icon="pi-eye"
                       [routerLink]="['/invoices']"
                       [queryParams]="{ search: client.name }"
-                      ariaLabel="Voir les factures de ce client" i18n="@@reports.analytics.factures.da35e4f2"> Factures </app-button>
+                      ariaLabel="Voir les factures de ce client" i18n-ariaLabel="@@reports.analytics.voir.les.factures.de.ce.client.558dcfb3" i18n="@@reports.analytics.factures.da35e4f2"> Factures </app-button>
                   </td>
                 </tr>
               }
@@ -221,7 +221,7 @@ import {
         </div>
 
         <!-- Results count -->
-        <div class="results-count">
+        <div class="results-count" i18n="@@reports.analytics.client.affiche.169b2144">
           {{ filteredClients().length }} client{{ filteredClients().length > 1 ? 's' : '' }} affiché{{ filteredClients().length > 1 ? 's' : '' }}
         </div>
       }

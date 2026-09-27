@@ -112,15 +112,15 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
                 <p-select inputId="rvd-kanban-title" class="studio-w-full" [options]="fieldOptions()" [ngModel]="kanban().titleFieldKey"
                   (ngModelChange)="patchKanban({ titleFieldKey: $event })" optionLabel="label" optionValue="key" [showClear]="true"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" />
-                <label class="studio-lbl">Champs de la carte ({{ kanban().cardFieldKeys?.length ?? 0 }}/{{ limits.maxCardFields }})</label>
+                <label class="studio-lbl" i18n="@@studio.views.champs.de.la.carte.788c8204">Champs de la carte ({{ kanban().cardFieldKeys?.length ?? 0 }}/{{ limits.maxCardFields }})</label>
                 <p-multiSelect class="studio-w-full" [options]="fieldOptions()" [ngModel]="kanban().cardFieldKeys ?? []"
                   (ngModelChange)="patchKanban({ cardFieldKeys: ($event ?? []).slice(0, limits.maxCardFields) })"
-                  optionLabel="label" optionValue="key" [maxSelectedLabels]="3" [selectedItemsLabel]="'{0} champs'"
+                  optionLabel="label" optionValue="key" [maxSelectedLabels]="3" selectedItemsLabel="{0} champs" i18n-selectedItemsLabel="@@studio.views.0.champs.5a68afcf"
                   [disabled]="!canDesign()" appendTo="body" panelStyleClass="studio-theme" data-testid="designer-kanban-cards" />
                 <div class="studio-line">
                   <p-inputSwitch inputId="rvd-kanban-empty" [ngModel]="kanban().showEmptyGroup"
                     (ngModelChange)="patchKanban({ showEmptyGroup: $event })" [disabled]="!canDesign()" />
-                  <label for="rvd-kanban-empty">Afficher la colonne « {{ labels.kanban.emptyGroup }} »</label>
+                  <label for="rvd-kanban-empty" i18n="@@studio.views.afficher.la.colonne.0f3cc32c">Afficher la colonne « {{ labels.kanban.emptyGroup }} »</label>
                 </div>
               </div>
             }
@@ -161,12 +161,12 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
                 <div class="studio-col-row" [class.studio-col-row--off]="col.hidden" [attr.data-testid]="'designer-column-' + i">
                   <span class="studio-grow">{{ fieldLabel(col.fieldKey) }}</span>
                   <span class="studio-row-move">
-                    <p-button icon="pi pi-chevron-up" [text]="true" size="small" [disabled]="first" (onClick)="moveColumn(i, -1)" ariaLabel="Monter" />
-                    <p-button icon="pi pi-chevron-down" [text]="true" size="small" [disabled]="last" (onClick)="moveColumn(i, 1)" ariaLabel="Descendre" />
+                    <p-button icon="pi pi-chevron-up" [text]="true" size="small" [disabled]="first" (onClick)="moveColumn(i, -1)" ariaLabel="Monter" i18n-ariaLabel="@@studio.views.monter.98a777fa" />
+                    <p-button icon="pi pi-chevron-down" [text]="true" size="small" [disabled]="last" (onClick)="moveColumn(i, 1)" ariaLabel="Descendre" i18n-ariaLabel="@@studio.views.descendre.0cd390e4" />
                   </span>
                   <p-button [icon]="col.hidden ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" size="small"
                     (onClick)="toggleColumnHidden(i)" [ariaLabel]="col.hidden ? loc_ui_tern_afficher_5e8020 : loc_ui_tern_masquer_adb05f" />
-                  <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeColumn(i)" ariaLabel="Retirer" />
+                  <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeColumn(i)" ariaLabel="Retirer" i18n-ariaLabel="@@studio.views.retirer.46cb56a8" />
                 </div>
               } @empty {
                 <p class="studio-muted" i18n="@@studio.views.aucune.colonne.toutes.les.colonnes.actives.seron.62985248">Aucune colonne : toutes les colonnes actives seront affichées.</p>
@@ -190,7 +190,7 @@ const PERSISTED_LABELS: Readonly<Record<string, string>> = { createdAt: 'Créé 
                 <span class="studio-grow">{{ fieldLabel(s.fieldKey) }}</span>
                 <p-button [label]="s.descending ? loc_ui_tern_decroissant_7e8886 : loc_ui_tern_croissant_c4f64a" [icon]="s.descending ? 'pi pi-sort-amount-down' : 'pi pi-sort-amount-up'"
                   [text]="true" size="small" (onClick)="toggleSortDirection(i)" />
-                <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeSort(i)" ariaLabel="Retirer" />
+                <p-button icon="pi pi-times" [text]="true" size="small" severity="danger" (onClick)="removeSort(i)" ariaLabel="Retirer" i18n-ariaLabel="@@studio.views.retirer.46cb56a8" />
               </div>
             }
 

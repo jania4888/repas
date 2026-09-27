@@ -36,7 +36,7 @@ import { LinkedInvoiceRef } from '@core/services/invoice-reference-resolver.serv
         <button
           type="button"
           class="payment-actions__split-toggle"
-          (click)="posState.enableSplitPayment()">
+          (click)="posState.enableSplitPayment()" i18n="@@pos.components.paiement.fractionne.10e17a92">
           <i class="pi pi-wallet"></i> Paiement fractionné
         </button>
         }

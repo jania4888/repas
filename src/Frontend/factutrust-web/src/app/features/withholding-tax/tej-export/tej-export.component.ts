@@ -22,7 +22,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
           <h1 i18n="@@withholding-tax.tej-export.export.tej.declaration.xml.77169891">Export TEJ — Déclaration XML</h1>
           <p class="subtitle" i18n="@@withholding-tax.tej-export.generez.le.fichier.xml.pour.preparer.la.declarat.647cd798">Générez le fichier XML pour préparer la déclaration ; la soumission officielle se fait sur le portail TEJ (connexion OIDC).</p>
         </div>
-        <a routerLink="/withholding-tax/dashboard" class="btn btn-outline">
+        <a routerLink="/withholding-tax/dashboard" class="btn btn-outline" i18n="@@withholding-tax.tej-export.tableau.de.bord.817f7ae6">
           <i class="fa-solid fa-arrow-left"></i> Tableau de bord
         </a>
       </div>
@@ -64,8 +64,8 @@ import { ConfirmationService } from '@core/services/confirmation.service';
             [disabled]="previewing || exportActionsBlocked"
             [attr.title]="exportActionsBlocked ? exportBlockedTitle : null">
             @if (previewing) { <i class="fa-solid fa-spinner fa-spin"></i> }
-            <i class="fa-solid fa-eye"></i> Prévisualiser XML
-          </button>
+            <ng-container i18n="@@withholding-tax.tej-export.previsualiser.xml.03563d34"><i class="fa-solid fa-eye"></i> Prévisualiser XML
+          </ng-container></button>
           <button
             type="button"
             class="btn btn-primary"
@@ -73,8 +73,8 @@ import { ConfirmationService } from '@core/services/confirmation.service';
             [disabled]="generating || exportActionsBlocked"
             [attr.title]="exportActionsBlocked ? exportBlockedTitle : null">
             @if (generating) { <i class="fa-solid fa-spinner fa-spin"></i> }
-            <i class="fa-solid fa-download"></i> Générer et télécharger
-          </button>
+            <ng-container i18n="@@withholding-tax.tej-export.generer.et.telecharger.9ecfe4a7"><i class="fa-solid fa-download"></i> Générer et télécharger
+          </ng-container></button>
         </div>
       </div>
 
@@ -83,12 +83,12 @@ import { ConfirmationService } from '@core/services/confirmation.service';
       }
       @if (!periodHintLoading && periodEligibleCount === 0) {
         <div class="card card-warning" role="status">
-          <h3><i class="fa-solid fa-circle-info"></i> Aucune facture fournisseur éligible pour cette période</h3>
-          <p class="hint-p"><ng-container i18n="@@withholding-tax.tej-export.une.facture.n.apparait.dans.le.fichier.que.si.0f177b98">Une facture n’apparaît dans le fichier que si </ng-container> <strong i18n="@@withholding-tax.tej-export.toutes.12a46cad">toutes</strong> les conditions suivantes sont remplies :</p>
+          <h3 i18n="@@withholding-tax.tej-export.aucune.facture.fournisseur.eligible.pour.be0022a5"><i class="fa-solid fa-circle-info"></i> Aucune facture fournisseur éligible pour cette période</h3>
+          <p class="hint-p" i18n="@@withholding-tax.tej-export.une.facture.n.apparait.dans.le.fichier.q.69270d77"><ng-container>Une facture n’apparaît dans le fichier que si </ng-container> <strong>toutes</strong> les conditions suivantes sont remplies :</p>
           <ul class="hint-list">
-            <li><ng-container i18n="@@withholding-tax.tej-export.statut.a1aecf38">statut </ng-container> <strong i18n="@@withholding-tax.tej-export.payee.65b240e8">Payée</strong> (soldée) ;</li>
-            <li><ng-container i18n="@@withholding-tax.tej-export.retenue.calculee.et.enregistree.sur.la.facture.f.2fc4efb9">retenue calculée et enregistrée sur la facture (fournisseur </ng-container> <strong i18n="@@withholding-tax.tej-export.assujetti.a.la.rs.6c46f7d3">assujetti à la RS</strong>, type d’opération RS, montant &gt; 0) ;</li>
-            <li><ng-container i18n="@@withholding-tax.tej-export.date.de.solde.5ff96ef6">date de solde (</ng-container><strong i18n="@@withholding-tax.tej-export.payee.le.9c5c2137">Payée le</strong>) dans le <strong i18n="@@withholding-tax.tej-export.mois.et.l.annee.68ceb441">mois et l’année</strong> sélectionnés.</li>
+            <li i18n="@@withholding-tax.tej-export.statut.payee.soldee.8c1cd5c5"><ng-container>statut </ng-container> <strong>Payée</strong> (soldée) ;</li>
+            <li i18n="@@withholding-tax.tej-export.retenue.calculee.et.enregistree.sur.la.f.d011a67c"><ng-container>retenue calculée et enregistrée sur la facture (fournisseur </ng-container> <strong>assujetti à la RS</strong>, type d’opération RS, montant &gt; 0) ;</li>
+            <li i18n="@@withholding-tax.tej-export.date.de.solde.payee.le.dans.le.mois.et.l.ad9c1f09"><ng-container>date de solde (</ng-container><strong>Payée le</strong>) dans le <strong>mois et l’année</strong> sélectionnés.</li>
           </ul>
           <p class="hint-p muted-hint" i18n="@@withholding-tax.tej-export.un.montant.ttc.superieur.au.seuil.rs7.achats.ne..f60823e9">Un montant TTC supérieur au seuil RS7 (achats) ne suffit pas si le fournisseur n’est pas paramétré comme assujetti ou si la facture n’est pas encore soldée.</p>
           <a routerLink="/withholding-tax/dashboard" class="btn btn-outline btn-sm" i18n="@@withholding-tax.tej-export.tableau.de.bord.retenue.a.la.source.fa7f4511">Tableau de bord retenue à la source</a>
@@ -97,7 +97,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
 
       @if (apiError) {
         <div class="card card-error" role="alert">
-          <h3><i class="fa-solid fa-circle-xmark"></i> Action impossible</h3>
+          <h3 i18n="@@withholding-tax.tej-export.action.impossible.617d5932"><i class="fa-solid fa-circle-xmark"></i> Action impossible</h3>
           <p class="hint-p">{{ apiError }}</p>
         </div>
       }
@@ -105,7 +105,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
       <!-- Validation results -->
       @if (validationErrors.length) {
         <div class="card card-error">
-          <h3><i class="fa-solid fa-triangle-exclamation"></i> Erreurs de validation</h3>
+          <h3 i18n="@@withholding-tax.tej-export.erreurs.de.validation.79ec8ae9"><i class="fa-solid fa-triangle-exclamation"></i> Erreurs de validation</h3>
           <ul>
             @for (err of validationErrors; track $index) {
               <li>{{ err }}</li>
@@ -117,7 +117,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
 
       @if (validationSuccess) {
         <div class="card card-success">
-          <h3><i class="fa-solid fa-check-circle"></i> Validation réussie</h3>
+          <h3 i18n="@@withholding-tax.tej-export.validation.reussie.71d082b3"><i class="fa-solid fa-check-circle"></i> Validation réussie</h3>
           <p i18n="@@withholding-tax.tej-export.le.fichier.xml.est.pret.pour.controle.verifiez.l.631e4ea3">Le fichier XML est prêt pour contrôle ; vérifiez-le sur le portail avant envoi définitif.</p>
         </div>
       }
@@ -127,7 +127,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
         <div class="card">
           <div class="preview-header">
             <h3 i18n="@@withholding-tax.tej-export.previsualisation.xml.871ea180">Prévisualisation XML</h3>
-            <button type="button" class="btn btn-outline btn-sm" (click)="copyXml()">
+            <button type="button" class="btn btn-outline btn-sm" (click)="copyXml()" i18n="@@withholding-tax.tej-export.copier.0246a8b8">
               <i class="fa-solid fa-copy"></i> Copier
             </button>
           </div>
@@ -174,7 +174,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
 
       <!-- Help section -->
       <div class="card help-card">
-        <h3><i class="fa-solid fa-info-circle"></i> Portail TEJ et sécurité</h3>
+        <h3 i18n="@@withholding-tax.tej-export.portail.tej.et.securite.edf9c6c2"><i class="fa-solid fa-info-circle"></i> Portail TEJ et sécurité</h3>
         <div class="help-grid help-grid-3">
           <div>
             <h4 i18n="@@withholding-tax.tej-export.format.du.fichier.6d4c98d7">Format du fichier</h4>
@@ -187,7 +187,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
           </div>
           <div>
             <h4 i18n="@@withholding-tax.tej-export.connexion.au.portail.a1d7376f">Connexion au portail</h4>
-            <p class="help-p"><ng-container i18n="@@withholding-tax.tej-export.l.authentification.se.fait.via.3db24eef">L’authentification se fait via </ng-container> <strong i18n="@@withholding-tax.tej-export.openid.connect.15d13e02">OpenID Connect</strong> sur le domaine dédié (ex. <code i18n="@@withholding-tax.tej-export.login.tej.finances.gov.tn.5bb724cb">login-tej.finances.gov.tn</code>). InstaFact ne stocke <strong i18n="@@withholding-tax.tej-export.aucun.mot.de.passe.f9bc0251">aucun mot de passe</strong> du portail TEJ.</p>
+            <p class="help-p" i18n="@@withholding-tax.tej-export.l.authentification.se.fait.via.openid.co.f8f74ae5"><ng-container>L’authentification se fait via </ng-container> <strong>OpenID Connect</strong> sur le domaine dédié (ex. <code>login-tej.finances.gov.tn</code>). InstaFact ne stocke <strong>aucun mot de passe</strong> du portail TEJ.</p>
             <ol>
               <li i18n="@@withholding-tax.tej-export.generez.le.fichier.xml.dans.instafact.2f619d44">Générez le fichier XML dans InstaFact</li>
               <li i18n="@@withholding-tax.tej-export.ouvrez.une.session.sur.le.portail.tej.avec.vos.i.cb605efe">Ouvrez une session sur le portail TEJ avec vos identifiants institutionnels</li>

@@ -75,9 +75,9 @@ export interface DynamicRow {
                           (click)="openFile(v)" (keyup.enter)="openFile(v)">
                           @if (isImageValue(row, f)) {
                             <img [attr.src]="fileSrc(v) | async" class="dt-file-thumb" alt="" />
-                          } @else {
+                          } @else {<ng-container i18n="@@shared.studio-runtime.dynamic-table.fichier.146240ba">
                             <i class="fa-solid fa-paperclip"></i> Fichier
-                          }
+                          </ng-container>}
                         </a>
                       } @else {
                         —
@@ -109,7 +109,7 @@ export interface DynamicRow {
           <ng-template pTemplate="emptymessage">
             <tr>
               <td [attr.colspan]="visibleColumns.length + (showActions || showView ? 1 : 0)">
-                <app-empty-state icon="pi-table" title="Aucun enregistrement" i18n-title="@@shared.studio-runtime.dynamic-table.aucun.enregistrement.4827291e" description="Aucune donnée ne correspond à votre recherche." />
+                <app-empty-state icon="pi-table" title="Aucun enregistrement" i18n-title="@@shared.studio-runtime.dynamic-table.aucun.enregistrement.4827291e" description="Aucune donnée ne correspond à votre recherche." i18n-description="@@shared.studio-runtime.dynamic-table.aucune.donnee.ne.correspond.a.votre.rech.4fe7228a" />
               </td>
             </tr>
           </ng-template>

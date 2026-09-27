@@ -183,7 +183,7 @@ interface TimelineEvent {
                 <p class="party-name">{{ invoice()!.client.name }}</p>
                 <p class="party-address">{{ invoice()!.client.address }}</p>
                 @if (invoice()!.client.nif) {
-                  <p class="party-nif">MF: {{ invoice()!.client.nif }}</p>
+                  <p class="party-nif" i18n="@@invoices.invoice-detail.mf.2a9352ea">MF: {{ invoice()!.client.nif }}</p>
                 }
                 <p class="party-email">{{ invoice()!.client.email }}</p>
               </div>
@@ -332,18 +332,18 @@ interface TimelineEvent {
                       }
                     </div>
                     @if (payment.clientWithholdingAmount && payment.clientWithholdingAmount > 0) {
-                      <div class="payment-withholding">
+                      <div class="payment-withholding" i18n="@@invoices.invoice-detail.rs.subie.0bdf3ab6">
                         <i class="pi pi-percentage"></i>
                         <span>RS subie : {{ payment.clientWithholdingAmount | number:'1.3-3' }} {{ payment.currency }}</span>
                       </div>
                     }
                     @if (payment.effetStatus !== null && payment.effetStatus !== undefined) {
                       <div class="payment-effet">
-                        <span class="effet-badge" [class.en-portefeuille]="payment.effetStatus === 0" [class.encaisse]="payment.effetStatus === 1" [class.impaye]="payment.effetStatus === 2">
+                        <span class="effet-badge" [class.en-portefeuille]="payment.effetStatus === 0" [class.encaisse]="payment.effetStatus === 1" [class.impaye]="payment.effetStatus === 2"><ng-container i18n="@@invoices.invoice-detail.effet.7886390e">
                           <i class="pi pi-file"></i>
                           Effet {{ payment.effetStatusDisplay | backendLabel }}
-                          @if (payment.effetDueDate) {
-                            <span class="effet-due"> · échéance {{ payment.effetDueDate | date:'dd/MM/yyyy' }}</span>
+                          </ng-container>@if (payment.effetDueDate) {
+                            <span class="effet-due" i18n="@@invoices.invoice-detail.echeance.bbacaaa0"> · échéance {{ payment.effetDueDate | date:'dd/MM/yyyy' }}</span>
                           }
                         </span>
                         @if (payment.effetStatus === 0 && !payment.isRefunded && canSettleEffet()) {
@@ -416,7 +416,7 @@ interface TimelineEvent {
                 <div class="hash-display">
                   <code>{{ invoice()!.signatureHash!.substring(0, 20) }}...</code>
                 </div>
-                <small>Signé le {{ invoice()!.signedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                <small i18n="@@invoices.invoice-detail.signe.le.fe9c830c">Signé le {{ invoice()!.signedAt | date:'dd/MM/yyyy HH:mm' }}</small>
               </div>
             </p-card>
           }
@@ -431,7 +431,7 @@ interface TimelineEvent {
         [style]="{ width: '920px', maxWidth: '95vw' }"
         [draggable]="false"
         [resizable]="false">
-        <p class="validate-dialog-hint">
+        <p class="validate-dialog-hint" i18n="@@invoices.invoice-detail.confirmez.la.validation.de.selectionnez.7e7b3fe4">
           Confirmez la validation de {{ invoice()!.number }}. Sélectionnez les lots ou numéros de série si nécessaire.
         </p>
         @if (!invoice()!.isCreditNote) {
@@ -444,7 +444,7 @@ interface TimelineEvent {
             </p>
           }
           @if (validateContextLoading()) {
-            <p class="validate-loading muted">
+            <p class="validate-loading muted" i18n="@@invoices.invoice-detail.verification.du.stock.0ae6d17a">
               <i class="pi pi-spin pi-spinner"></i>
               Vérification du stock…
             </p>
@@ -511,11 +511,11 @@ interface TimelineEvent {
                         <td class="validate-line-impact"
                             [class.validate-impact-error]="impact.tone === 'error'"
                             [class.validate-impact-warning]="impact.tone === 'warning'">
-                          @if (impact.quantityKind === 'remaining') {
+                          @if (impact.quantityKind === 'remaining') {<ng-container i18n="@@invoices.invoice-detail.restera.1e3f4e9a">
                             Restera {{ impact.quantity | number:'1.0-3' }}
-                          } @else if (impact.quantityKind === 'available') {
+                          </ng-container>} @else if (impact.quantityKind === 'available') {<ng-container i18n="@@invoices.invoice-detail.stock.insuffisant.dispo.ff2cbce8">
                             Stock insuffisant ({{ impact.quantity | number:'1.0-3' }} dispo)
-                          } @else {
+                          </ng-container>} @else {
                             {{ impact.text }}
                           }
                         </td>

@@ -93,7 +93,7 @@ const MONTH_LABELS = [
       <div class="cnss-matricule-banner mb-3">
         <p-message
           severity="warn"
-          text="Le matricule employeur CNSS est manquant. Configurez-le pour exporter le bordereau ou enregistrer un versement."
+          text="Le matricule employeur CNSS est manquant. Configurez-le pour exporter le bordereau ou enregistrer un versement." i18n-text="@@payroll.declarations.le.matricule.employeur.cnss.est.manquant.fc66b845"
           styleClass="w-full" />
         <app-button variant="ghost" routerLink="/settings/company" icon="pi-cog" iconPos="left" i18n="@@payroll.declarations.configurer.le.matricule.189aecce"> Configurer le matricule </app-button>
       </div>
@@ -116,9 +116,9 @@ const MONTH_LABELS = [
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
         title="Impossible de charger le bordereau" i18n-title="@@payroll.declarations.impossible.de.charger.le.bordereau.ea4207e2"
-        description="Vérifiez que la fonctionnalité est activée et que vous disposez des droits nécessaires."
+        description="Vérifiez que la fonctionnalité est activée et que vous disposez des droits nécessaires." i18n-description="@@payroll.declarations.verifiez.que.la.fonctionnalite.est.activ.5b85bac5"
         [showAction]="true"
-        actionLabel="Réessayer"
+        actionLabel="Réessayer" i18n-actionLabel="@@payroll.declarations.reessayer.b885e20c"
         (actionClick)="load()" />
     } @else if (!remittance()!.isEligible) {
       <app-payroll-empty-state
@@ -126,15 +126,15 @@ const MONTH_LABELS = [
         title="Cycle de paie non disponible" i18n-title="@@payroll.declarations.cycle.de.paie.non.disponible.e1468b8a"
         [description]="loc_ui_tern_aucun_cycle_valide_ou_cloture_pour_172d01 + monthLabel() + '.'"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.declarations.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else if (remittance()!.lines.length === 0) {
       <app-payroll-empty-state
         icon="pi-file"
         title="Aucun salarié" i18n-title="@@payroll.declarations.aucun.salarie.a1567c77"
-        description="Le cycle ne contient aucun bulletin."
+        description="Le cycle ne contient aucun bulletin." i18n-description="@@payroll.declarations.le.cycle.ne.contient.aucun.bulletin.c15507c9"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.declarations.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else {
       <app-payroll-stat-grid [items]="summaryStats()" class="mb-4" />

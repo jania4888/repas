@@ -12,21 +12,21 @@ export type PeriodStatus = 'open' | 'closed' | 'none';
     @switch (status()) {
       @case ('open') {
         <span class="me-period-badge me-period-open" role="status"
-              [attr.title]="'Cette date appartient à une période comptable ouverte'">
+              [attr.title]="'Cette date appartient à une période comptable ouverte'" i18n="@@accounting.manual-entry.periode.ouverte.5919f319">
           <span class="me-period-dot" aria-hidden="true"></span>
           Période ouverte
         </span>
       }
       @case ('closed') {
         <span class="me-period-badge me-period-closed" role="status"
-              [attr.title]="'Cette date appartient à une période comptable clôturée — l’enregistrement sera refusé'">
+              [attr.title]="'Cette date appartient à une période comptable clôturée — l’enregistrement sera refusé'" i18n="@@accounting.manual-entry.periode.fermee.640f9aa5">
           <span class="me-period-dot" aria-hidden="true"></span>
           Période fermée
         </span>
       }
       @default {
         <span class="me-period-badge me-period-none" role="status"
-              [attr.title]="'Aucune période comptable n’existe pour cette date — elle sera créée automatiquement à l’enregistrement'">
+              [attr.title]="'Aucune période comptable n’existe pour cette date — elle sera créée automatiquement à l’enregistrement'" i18n="@@accounting.manual-entry.aucune.periode.e4c0fc05">
           <span class="me-period-dot" aria-hidden="true"></span>
           Aucune période
         </span>

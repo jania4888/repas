@@ -60,12 +60,12 @@ export interface DmDuplicateSource {
 
       @if (result; as r) {
         <div class="dm-dup__result" role="status">
-          <p class="dm-dup__counts">{{ r.inserted }} rubrique(s) insérée(s), {{ r.replaced }} remplacée(s).</p>
+          <p class="dm-dup__counts" i18n="@@accounting.monthly-declaration.rubrique.s.inseree.s.remplacee.s.3f1d24de">{{ r.inserted }} rubrique(s) insérée(s), {{ r.replaced }} remplacée(s).</p>
           @if (r.skippedCodes.length) {
-            <p class="dm-hint">Codes déjà présents et laissés intacts : {{ r.skippedCodes.join(', ') }}</p>
+            <p class="dm-hint" i18n="@@accounting.monthly-declaration.codes.deja.presents.et.laisses.intacts.c085a617">Codes déjà présents et laissés intacts : {{ r.skippedCodes.join(', ') }}</p>
           }
           @if (r.unknownAccounts.length) {
-            <p class="dm-hint dm-hint--warn">
+            <p class="dm-hint dm-hint--warn" i18n="@@accounting.monthly-declaration.comptes.absents.du.plan.de.ce.dossier.co.43c2e109">
               Comptes absents du plan de ce dossier, copiés tels quels :
               {{ r.unknownAccounts.join(', ') }}
             </p>

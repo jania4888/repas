@@ -123,7 +123,7 @@ interface LegendItem {
                     </button>
                   }
                   @if (day.overflow > 0) {
-                    <button type="button" class="cal-day__more" (click)="toggleExpand(day.iso)">
+                    <button type="button" class="cal-day__more" (click)="toggleExpand(day.iso)" i18n="@@studio.views.autre.s.7e168178">
                       +{{ day.overflow }} autre(s)
                     </button>
                   }
@@ -156,7 +156,7 @@ interface LegendItem {
                   </button>
                 }
                 @if (day.overflow > 0) {
-                  <button type="button" class="cal-day__more" (click)="toggleExpand(day.iso)">
+                  <button type="button" class="cal-day__more" (click)="toggleExpand(day.iso)" i18n="@@studio.views.autre.s.7e168178">
                     +{{ day.overflow }} autre(s)
                   </button>
                 }

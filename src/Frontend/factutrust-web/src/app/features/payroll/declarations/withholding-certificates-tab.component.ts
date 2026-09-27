@@ -79,9 +79,9 @@ const MONTH_LABELS = [
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
         title="Impossible de charger les certificats" i18n-title="@@payroll.declarations.impossible.de.charger.les.certificats.9e902ae6"
-        description="Une erreur est survenue lors de la génération. Vérifiez le NIF de la société et vos droits."
+        description="Une erreur est survenue lors de la génération. Vérifiez le NIF de la société et vos droits." i18n-description="@@payroll.declarations.une.erreur.est.survenue.lors.de.la.gener.5f296646"
         [showAction]="true"
-        actionLabel="Réessayer"
+        actionLabel="Réessayer" i18n-actionLabel="@@payroll.declarations.reessayer.b885e20c"
         (actionClick)="load()" />
     } @else if (batch()!.lines.length === 0) {
       <app-payroll-empty-state
@@ -89,7 +89,7 @@ const MONTH_LABELS = [
         title="Aucun certificat à générer" i18n-title="@@payroll.declarations.aucun.certificat.a.generer.2997d642"
         [description]="emptyDescription()"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.declarations.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else {
       <app-payroll-stat-grid [items]="summaryStats()" class="mb-4" />

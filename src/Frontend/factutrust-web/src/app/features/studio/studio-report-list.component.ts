@@ -22,7 +22,7 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
     <p-toast></p-toast>
     <app-studio-page-shell
       title="Rapports" i18n-title="@@studio.studio-report-list.rapports.db7d9fbb"
-      subtitle="Analysez vos tables personnalisées et vos données existantes."
+      subtitle="Analysez vos tables personnalisées et vos données existantes." i18n-subtitle="@@studio.studio-report-list.analysez.vos.tables.personnalisees.et.vo.9e2d26cf"
       [breadcrumbs]="breadcrumbs">
       <button pButton type="button" label="Nouveau rapport" i18n-label="@@studio.studio-report-list.nouveau.rapport.98bed007" icon="fa-solid fa-plus" studioActions routerLink="/studio/reports/new"></button>
 
@@ -48,8 +48,8 @@ import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr><td colspan="4">
-              <app-empty-state icon="pi-chart-bar" title="Aucun rapport" i18n-title="@@studio.studio-report-list.aucun.rapport.9cd6890f" description="Créez votre premier rapport analytique."
-                actionLabel="Nouveau rapport" actionRoute="/studio/reports/new" [showAction]="true" />
+              <app-empty-state icon="pi-chart-bar" title="Aucun rapport" i18n-title="@@studio.studio-report-list.aucun.rapport.9cd6890f" description="Créez votre premier rapport analytique." i18n-description="@@studio.studio-report-list.creez.votre.premier.rapport.analytique.af78b670"
+                actionLabel="Nouveau rapport" i18n-actionLabel="@@studio.studio-report-list.nouveau.rapport.ffe9db40" actionRoute="/studio/reports/new" [showAction]="true" />
             </td></tr>
           </ng-template>
         </p-table>

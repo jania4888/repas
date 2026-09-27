@@ -47,7 +47,7 @@ import {
 
       <div class="detail-grid">
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-user"></i> Informations</h3>
+          <h3 class="card-title" i18n="@@suppliers.supplier-detail.informations.47db4ff5"><i class="pi pi-user"></i> Informations</h3>
           <div class="info-grid">
             <div class="info-item">
               <span class="label" i18n="@@suppliers.supplier-detail.type.3deb7456">Type</span>
@@ -63,15 +63,15 @@ import {
               <p-tag [value]="supplier()!.isActive ? loc_ui_tern_actif_2eb75f : loc_ui_tern_inactif_d2e033"
                 [severity]="supplier()!.isActive ? 'success' : 'secondary'"></p-tag>
             </div>
-            <div class="info-item">
-              <span class="label" i18n="@@suppliers.supplier-detail.delai.paiement.bfca1de5">Délai paiement</span>
+            <div class="info-item" i18n="@@suppliers.supplier-detail.delai.paiement.jours.6763f071">
+              <span class="label">Délai paiement</span>
               <span class="value">{{ supplier()!.paymentTermDays }} jours</span>
             </div>
           </div>
         </div>
 
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-envelope"></i> Contact</h3>
+          <h3 class="card-title" i18n="@@suppliers.supplier-detail.contact.d472ee2a"><i class="pi pi-envelope"></i> Contact</h3>
           <div class="info-grid">
             <div class="info-item">
               <span class="label" i18n="@@suppliers.supplier-detail.email.84add5b2">Email</span>
@@ -93,12 +93,12 @@ import {
         </div>
 
         <div class="detail-card full-width">
-          <h3 class="card-title"><i class="pi pi-map-marker"></i> Adresse</h3>
+          <h3 class="card-title" i18n="@@suppliers.supplier-detail.adresse.3959f649"><i class="pi pi-map-marker"></i> Adresse</h3>
           <p class="address-text">{{ supplier()!.address.fullAddress }}</p>
         </div>
 
         <div class="detail-card full-width">
-          <h3 class="card-title"><i class="pi pi-percentage"></i> Retenue à la source &amp; TEJ</h3>
+          <h3 class="card-title" i18n="@@suppliers.supplier-detail.retenue.a.la.source.tej.80fd887a"><i class="pi pi-percentage"></i> Retenue à la source &amp; TEJ</h3>
           <div class="info-grid">
             <div class="info-item">
               <span class="label" i18n="@@suppliers.supplier-detail.soumis.a.la.rs.6a5c753b">Soumis à la RS</span>
@@ -127,7 +127,7 @@ import {
 
         @if (supplier()!.notes) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-file-edit"></i> Notes</h3>
+            <h3 class="card-title" i18n="@@suppliers.supplier-detail.notes.e4c25cd5"><i class="pi pi-file-edit"></i> Notes</h3>
             <p class="notes-text">{{ supplier()!.notes }}</p>
           </div>
         }

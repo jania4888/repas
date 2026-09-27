@@ -63,8 +63,8 @@ import { FocusTrapDirective } from '../../directives/focus-trap.directive';
                       <i class="pi pi-arrow-right" aria-hidden="true"></i>
                       <span class="status status-{{ row.toStatus }}">{{ statusLabel(row.toStatus) }}</span>
                     </div>
-                    <div class="who">
-                      <ng-container i18n="@@forecasting.components.par.e79113f5"> par </ng-container> <strong>{{ row.actorUserId }}</strong>
+                    <div class="who" i18n="@@forecasting.components.par.le.a8d26bad">
+                      <ng-container> par </ng-container> <strong>{{ row.actorUserId }}</strong>
                       <span class="when">le {{ row.actedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
                     </div>
                     @if (row.reason) {

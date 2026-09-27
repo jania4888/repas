@@ -42,7 +42,7 @@ import { ErrorMessageService } from '@core/services/error-message.service';
     
     <app-page-header 
       title="Nouvelle entrée de stock" i18n-title="@@stock.stock-entry-form.nouvelle.entree.de.stock.0d9ac600" 
-      subtitle="Enregistrez une entrée de marchandise dans votre entrepôt">
+      subtitle="Enregistrez une entrée de marchandise dans votre entrepôt" i18n-subtitle="@@stock.stock-entry-form.enregistrez.une.entree.de.marchandise.da.21b5c260">
       <app-button 
         variant="outline"
         icon="pi-times"
@@ -93,10 +93,10 @@ import { ErrorMessageService } from '@core/services/error-message.service';
               </div>
             }
             @if (productsLoaded && products.length === 0) {
-              <small class="form-hint">
-                <ng-container i18n="@@stock.stock-entry-form.aucun.produit.avec.gestion.de.stock.7ebe6e80"> Aucun produit avec gestion de stock. </ng-container>
-                <a routerLink="/products" i18n="@@stock.stock-entry-form.activer.sur.un.produit.existant.8bb7a382">Activer sur un produit existant</a> ou
-                <a routerLink="/products/new" i18n="@@stock.stock-entry-form.creer.un.produit.f389562a">créer un produit</a>.
+              <small class="form-hint" i18n="@@stock.stock-entry-form.aucun.produit.avec.gestion.de.stock.acti.249d40d8">
+                <ng-container> Aucun produit avec gestion de stock. </ng-container>
+                <a routerLink="/products">Activer sur un produit existant</a> ou
+                <a routerLink="/products/new">créer un produit</a>.
               </small>
             }
           </div>

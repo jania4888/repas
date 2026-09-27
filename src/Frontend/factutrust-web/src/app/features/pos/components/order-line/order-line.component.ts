@@ -26,7 +26,7 @@ import { PosOrderLine } from '../../services/pos-state.service';
           <span class="order-line__unit-price">{{ formatPrice(line.unitPriceHT) }} / {{ line.unit }}</span>
           }
           @if (!quickMode && line.discountAmount > 0) {
-            <span class="order-line__discount">-{{ formatPrice(line.discountAmount) }} remise</span>
+            <span class="order-line__discount" i18n="@@pos.components.remise.757a6cf3">-{{ formatPrice(line.discountAmount) }} remise</span>
           }
           @if (showDiscountForm) {
             <div class="order-line__discount-form">

@@ -78,7 +78,7 @@ import { SupplierService, SupplierListItem } from '@core/services/supplier.servi
                 [(ngModel)]="qtyInput"
                 (ngModelChange)="qtyInput.set($event)"
                 placeholder="Laisser vide pour conserver la quantité recommandée" i18n-placeholder="@@forecasting.components.laisser.vide.pour.conserver.la.quantite.recomman.04dec656" />
-              <small class="hint">Doit être &gt; 0. Vide = utiliser {{ r.recommendedQty | qtyFmt: r.productUnit }} u.</small>
+              <small class="hint" i18n="@@forecasting.components.doit.etre.0.vide.utiliser.u.f739ed25">Doit être &gt; 0. Vide = utiliser {{ r.recommendedQty | qtyFmt: r.productUnit }} u.</small>
             </label>
 
             <label class="field">
@@ -94,7 +94,7 @@ import { SupplierService, SupplierListItem } from '@core/services/supplier.servi
                 </select>
               }
               @if (r.preferredSupplierName) {
-                <small class="hint">Préféré : {{ r.preferredSupplierName }}</small>
+                <small class="hint" i18n="@@forecasting.components.prefere.36977a03">Préféré : {{ r.preferredSupplierName }}</small>
               }
             </label>
 
@@ -110,7 +110,7 @@ import { SupplierService, SupplierListItem } from '@core/services/supplier.servi
             class="btn btn-primary"
             type="button"
             (click)="onConfirm()"
-            [disabled]="qtyInvalid()">
+            [disabled]="qtyInvalid()" i18n="@@forecasting.components.enregistrer.6c57ce9b">
             <i class="pi pi-check" aria-hidden="true"></i>
             Enregistrer
           </button>

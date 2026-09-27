@@ -3,7 +3,7 @@
 } @else {
   <app-page-header
     title="Contrôle d'intégrité & Détection des anomalies" i18n-title="@@accounting.audit-control.controle.d.integrite.detection.des.anomalies.aa3f478a"
-    subtitle="Analyse complète de vos données comptables pour garantir la fiabilité et la conformité">
+    subtitle="Analyse complète de vos données comptables pour garantir la fiabilité et la conformité" i18n-subtitle="@@accounting.audit-control.analyse.complete.de.vos.donnees.comptabl.cdc432ee">
     <div class="ac-header-actions">
       <app-button variant="secondary" icon="pi pi-file" type="button" (click)="exportReport('csv')" i18n="@@accounting.audit-control.exporter.csv.d4fc31cb">Exporter CSV</app-button>
       <app-button variant="secondary" icon="pi pi-file-pdf" type="button" (click)="exportReport('pdf')" i18n="@@accounting.audit-control.exporter.pdf.9a2c3956">Exporter PDF</app-button>
@@ -12,7 +12,7 @@
   </app-page-header>
 
   <div class="card accounting-filters-card">
-    <app-accounting-filter-bar ariaLabel="Filtres du contrôle">
+    <app-accounting-filter-bar ariaLabel="Filtres du contrôle" i18n-ariaLabel="@@accounting.audit-control.filtres.du.controle.d8be6938">
       <div accountingFilterFields class="ac-toolbar-fields">
         <div class="accounting-filter-field">
           <label class="accounting-filter-label" for="ac-year" i18n="@@accounting.audit-control.exercice.e171e2b0">Exercice</label>
@@ -29,7 +29,7 @@
     </app-accounting-filter-bar>
   </div>
 
-  <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="refreshAll()" />
+  <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.audit-control.reessayer.c4f78b12" (retry)="refreshAll()" />
 
   @if (dashboard(); as dash) {
     <div class="ac-kpi-grid">

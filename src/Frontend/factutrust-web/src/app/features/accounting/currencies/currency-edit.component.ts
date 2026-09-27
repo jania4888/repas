@@ -36,7 +36,7 @@ interface RateRow {
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header [title]="pageTitle()" subtitle="Configuration de la devise et de ses taux de change">
+    <app-page-header [title]="pageTitle()" subtitle="Configuration de la devise et de ses taux de change" i18n-subtitle="@@accounting.currencies.configuration.de.la.devise.et.de.ses.tau.63a3ece1">
       <app-button variant="secondary" icon="pi pi-arrow-left" type="button" (click)="back()" i18n="@@accounting.currencies.retour.e5befb1f">Retour</app-button>
       @if (canManage()) {
         <app-button variant="primary" icon="pi pi-save" type="button"
@@ -87,8 +87,8 @@ interface RateRow {
           </div>
         </div>
 
-        <p class="ce-direction">
-          <ng-container i18n="@@accounting.currencies.un.taux.exprime.le.nombre.de.dinars.pour.5a2da916"> Un taux exprime le nombre de dinars pour </ng-container> <strong i18n="@@accounting.currencies.une.e3bae98d">une</strong> unité de {{ c.code }}.
+        <p class="ce-direction" i18n="@@accounting.currencies.un.taux.exprime.le.nombre.de.dinars.pour.00c85efc">
+          <ng-container> Un taux exprime le nombre de dinars pour </ng-container> <strong>une</strong> unité de {{ c.code }}.
           Exemple : 1 {{ c.code }} = 3,31420 TND se saisit <code>3,31420</code>.
         </p>
 

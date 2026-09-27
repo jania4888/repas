@@ -131,11 +131,11 @@ export function computeGlobalSearchDropdownPosition(
         <div class="global-search__empty" i18n="@@core.layout.global-search.global-search.recherche.en.cours.a16747f0">Recherche en cours…</div>
       } @else if (displayResults().length === 0) {
         <div class="global-search__empty">
-          @if (query.trim().length >= 2) {
+          @if (query.trim().length >= 2) {<ng-container i18n="@@core.layout.global-search.global-search.aucun.resultat.pour.5191921e">
             Aucun résultat pour « {{ query.trim() }} »
-          } @else {
+          </ng-container>} @else {<ng-container i18n="@@core.layout.global-search.global-search.tapez.pour.rechercher.ou.parcourez.les.r.967f77a8">
             Tapez pour rechercher ou parcourez les raccourcis
-          }
+          </ng-container>}
         </div>
       } @else {
         @for (group of groupedResults(); track group.label) {

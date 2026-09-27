@@ -26,7 +26,7 @@
     </nav>
 
     <div class="side-box why-box">
-      <div class="why-head">
+      <div class="why-head" i18n="@@auth.register-wizard.pourquoi.cette.etape.5e594b6a">
         <span class="why-ico"><i class="pi pi-question-circle"></i></span>
         Pourquoi cette étape&nbsp;?
       </div>
@@ -186,28 +186,28 @@
 
         <div class="navigation-footer">
           @if (currentStep() > 0) {
-            <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente" i18n-aria-label="@@auth.register-wizard.etape.precedente.4b2bab32">
+            <button type="button" class="btn-back" (click)="previousStep()" aria-label="Étape précédente" i18n-aria-label="@@auth.register-wizard.etape.precedente.4b2bab32" i18n="@@auth.register-wizard.precedent.a4f23d23">
               <i class="pi pi-arrow-left" aria-hidden="true"></i> Précédent
             </button>
           } @else {
             <div class="spacer"></div>
           }
 
-          <p class="step-indicator" aria-live="polite">
-            <ng-container i18n="@@auth.register-wizard.etape.13146b48"> Étape </ng-container> <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur {{ stepCount() }}
+          <p class="step-indicator" aria-live="polite" i18n="@@auth.register-wizard.etape.sur.dfd976b7">
+            <ng-container> Étape </ng-container> <span class="step-indicator__num">{{ stepHumanIndex() }}</span> sur {{ stepCount() }}
           </p>
 
           @if (currentStep() < stepCount() - 1) {
-            <button type="button" class="btn-next" [class.btn-next--ready]="isCurrentStepValid()" [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante" i18n-aria-label="@@auth.register-wizard.etape.suivante.992dbd53">
+            <button type="button" class="btn-next" [class.btn-next--ready]="isCurrentStepValid()" [disabled]="!isCurrentStepValid()" (click)="nextStep()" aria-label="Étape suivante" i18n-aria-label="@@auth.register-wizard.etape.suivante.992dbd53" i18n="@@auth.register-wizard.continuer.db48292c">
               Continuer <i class="pi pi-arrow-right" aria-hidden="true"></i>
             </button>
           } @else {
             <button type="submit" class="btn-submit" [disabled]="form.invalid || loading()" [class.is-loading]="loading()">
               @if (loading()) {
                 <i class="pi pi-spin pi-spinner mr-2" aria-hidden="true"></i> {{ loadingMessage() }}
-              } @else {
+              } @else {<ng-container i18n="@@auth.register-wizard.creer.mon.espace.e3feb87a">
                 <i class="pi pi-check mr-2" aria-hidden="true"></i> Créer mon espace
-              }
+              </ng-container>}
             </button>
           }
         </div>

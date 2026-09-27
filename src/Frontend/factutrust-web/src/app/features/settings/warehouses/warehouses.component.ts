@@ -49,7 +49,7 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
 
     <app-page-header
       title="Entrepôts" i18n-title="@@settings.warehouses.entrepots.c0906d10"
-      subtitle="Lieux de stockage utilisés pour le stock, les transferts et les documents">
+      subtitle="Lieux de stockage utilisés pour le stock, les transferts et les documents" i18n-subtitle="@@settings.warehouses.lieux.de.stockage.utilises.pour.le.stock.0b3fad57">
       <div class="header-actions">
         <p-button
           label="Retour" i18n-label="@@settings.warehouses.retour.e5befb1f"
@@ -192,9 +192,9 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
       (onHide)="onDialogHide()"
       [attr.aria-modal]="true"
       styleClass="warehouses-dialog">
-      <p class="dialog-intro">
-        <ng-container i18n="@@settings.warehouses.indiquez.un.519e5287"> Indiquez un </ng-container> <strong i18n="@@settings.warehouses.nom.8d406e3d">nom</strong> court (libellé interne : magasin, dépôt principal, etc.).
-        L’<strong i18n="@@settings.warehouses.adresse.6c35df8a">adresse</strong>, facultative, peut reprendre rue, ville, code postal et pays sur plusieurs lignes.
+      <p class="dialog-intro" i18n="@@settings.warehouses.indiquez.un.nom.court.libelle.interne.ma.1653cc24">
+        <ng-container> Indiquez un </ng-container> <strong>nom</strong> court (libellé interne : magasin, dépôt principal, etc.).
+        L’<strong>adresse</strong>, facultative, peut reprendre rue, ville, code postal et pays sur plusieurs lignes.
       </p>
       <form [formGroup]="form" (ngSubmit)="onSubmitForm()" class="wh-form">
         @if (isEditMode()) {
@@ -292,8 +292,8 @@ import { CashRegisterDto, PosRegisterSessionService } from '../../pos/services/p
       [style]="{ width: 'min(560px, 95vw)' }"
       [draggable]="false"
       [dismissableMask]="true">
-      <p class="dialog-intro">
-        <ng-container i18n="@@settings.warehouses.caisses.du.magasin.211c3917"> Caisses du magasin </ng-container> <strong>{{ registersWarehouse()?.name }}</strong>. Une seule caisse est
+      <p class="dialog-intro" i18n="@@settings.warehouses.caisses.du.magasin.une.seule.caisse.est.baee9d8d">
+        <ng-container> Caisses du magasin </ng-container> <strong>{{ registersWarehouse()?.name }}</strong>. Une seule caisse est
         marquée défaut (utilisée si aucune caisse n'est choisie).
       </p>
       @if (registersLoading()) {

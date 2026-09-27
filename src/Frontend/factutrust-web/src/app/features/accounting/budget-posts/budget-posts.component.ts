@@ -25,7 +25,7 @@ interface BudgetPostForm {
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent, AccountingTableActionsComponent],
   template: `
-    <app-page-header title="Postes budgétaires" i18n-title="@@accounting.budget-posts.postes.budgetaires.4debb5c4" subtitle="Regroupements de comptes (par préfixes) servant à la saisie des budgets et au suivi réalisé/budget" />
+    <app-page-header title="Postes budgétaires" i18n-title="@@accounting.budget-posts.postes.budgetaires.4debb5c4" subtitle="Regroupements de comptes (par préfixes) servant à la saisie des budgets et au suivi réalisé/budget" i18n-subtitle="@@accounting.budget-posts.regroupements.de.comptes.par.prefixes.se.70b80064" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -80,7 +80,7 @@ interface BudgetPostForm {
             <td>
               <app-accounting-table-actions>
                 <app-button variant="ghost" size="sm" icon="pi-pencil" [iconOnly]="true" [iconAlwaysVisible]="true"
-                  type="button" (click)="startEdit(p)" ariaLabel="Modifier" />
+                  type="button" (click)="startEdit(p)" ariaLabel="Modifier" i18n-ariaLabel="@@accounting.budget-posts.modifier.ead890f7" />
                 <app-button variant="ghost" size="sm"
                   [icon]="p.isActive ? 'pi-eye-slash' : 'pi-eye'"
                   [iconOnly]="true" [iconAlwaysVisible]="true"

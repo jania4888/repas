@@ -29,9 +29,9 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
     ButtonComponent
   ],
   template: `
-    <app-page-header title="Contrôles de pré-clôture" i18n-title="@@accounting.pre-closing.controles.de.pre.cloture.e6b9bc87" subtitle="Diagnostic de révision avant clôture de l'exercice" />
+    <app-page-header title="Contrôles de pré-clôture" i18n-title="@@accounting.pre-closing.controles.de.pre.cloture.e6b9bc87" subtitle="Diagnostic de révision avant clôture de l'exercice" i18n-subtitle="@@accounting.pre-closing.diagnostic.de.revision.avant.cloture.de.4cbd828d" />
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice à contrôler">
+      <app-accounting-filter-bar ariaLabel="Exercice à contrôler" i18n-ariaLabel="@@accounting.pre-closing.exercice.a.controler.67a9f4c0">
         <div accountingFilterFields class="pc-toolbar-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="pc-year" i18n="@@accounting.pre-closing.exercice.e171e2b0">Exercice</label>
@@ -46,22 +46,22 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
             type="button"
             (click)="run()"
             [disabled]="loading()"
-            ariaLabel="Lancer les contrôles de pré-clôture" i18n="@@accounting.pre-closing.lancer.les.controles.521d27dd"> Lancer les contrôles </app-button>
+            ariaLabel="Lancer les contrôles de pré-clôture" i18n-ariaLabel="@@accounting.pre-closing.lancer.les.controles.de.pre.cloture.ee200e15" i18n="@@accounting.pre-closing.lancer.les.controles.521d27dd"> Lancer les contrôles </app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="run()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.pre-closing.reessayer.c4f78b12" (retry)="run()" />
 
     @if (checklist(); as cl) {
       <div class="pc-summary" [class.pc-summary--blocking]="cl.hasBlocking" [class.pc-summary--ok]="!cl.hasBlocking" role="status">
         <i class="pi" [class.pi-times-circle]="cl.hasBlocking" [class.pi-check-circle]="!cl.hasBlocking" aria-hidden="true"></i>
         <span>
-          @if (cl.hasBlocking) {
-            Des contrôles <strong i18n="@@accounting.pre-closing.bloquants.3b3fd092">bloquants</strong> subsistent : la clôture annuelle et le verrouillage définitif sont refusés tant qu'ils ne sont pas résolus.
-          } @else {
+          @if (cl.hasBlocking) {<ng-container i18n="@@accounting.pre-closing.des.controles.bloquants.subsistent.la.cl.1ee3c6cc">
+            Des contrôles <strong>bloquants</strong> subsistent : la clôture annuelle et le verrouillage définitif sont refusés tant qu'ils ne sont pas résolus.
+          </ng-container>} @else {<ng-container i18n="@@accounting.pre-closing.aucun.controle.bloquant.la.cloture.de.l.bcefdbb7">
             Aucun contrôle bloquant. La clôture de l'exercice {{ cl.fiscalYear }} est autorisée
-            @if (warningCount() > 0) { (mais {{ warningCount() }} avertissement(s) à examiner). }
+            </ng-container>@if (warningCount() > 0) {<ng-container i18n="@@accounting.pre-closing.mais.avertissement.s.a.examiner.7f2bb318"> (mais {{ warningCount() }} avertissement(s) à examiner). </ng-container>}
           }
         </span>
       </div>

@@ -49,7 +49,7 @@ interface StatusOption {
 
     <app-page-header
       title="Bons de commande" i18n-title="@@purchase-orders.purchase-order-list.bons.de.commande.aae719f0"
-      subtitle="Gérez vos commandes fournisseurs et suivez les réceptions.">
+      subtitle="Gérez vos commandes fournisseurs et suivez les réceptions." i18n-subtitle="@@purchase-orders.purchase-order-list.gerez.vos.commandes.fournisseurs.et.suiv.4ecce812">
       @if (canCreatePurchaseOrder()) {
         <app-button
           variant="primary"
@@ -62,12 +62,12 @@ interface StatusOption {
     <!-- Filters -->
     <div class="ft-filters">
       <div class="ft-filters__header">
-        <h3 class="ft-filters__title"><i class="pi pi-filter"></i> Filtres</h3>
+        <h3 class="ft-filters__title" i18n="@@purchase-orders.purchase-order-list.filtres.a2a5c940"><i class="pi pi-filter"></i> Filtres</h3>
         @if (hasActiveFilters()) {
           <button
             class="ft-filters__reset"
             (click)="resetFilters()"
-            aria-label="Réinitialiser les filtres" i18n-aria-label="@@purchase-orders.purchase-order-list.reinitialiser.les.filtres.d8915f02">
+            aria-label="Réinitialiser les filtres" i18n-aria-label="@@purchase-orders.purchase-order-list.reinitialiser.les.filtres.d8915f02" i18n="@@purchase-orders.purchase-order-list.reinitialiser.9637f51e">
             <i class="pi pi-times"></i>
             Réinitialiser ({{ activeFiltersCount() }})
           </button>
@@ -217,7 +217,7 @@ interface StatusOption {
                   icon="pi-eye"
                   [iconOnly]="true"
                   [routerLink]="order.id"
-                  ariaLabel="Voir la commande">
+                  ariaLabel="Voir la commande" i18n-ariaLabel="@@purchase-orders.purchase-order-list.voir.la.commande.a44478c1">
                 </app-button>
               </div>
             </td>
@@ -229,9 +229,9 @@ interface StatusOption {
             <td colspan="9" class="text-center p-6">
               <app-empty-state
                 title="Aucun bon de commande" i18n-title="@@purchase-orders.purchase-order-list.aucun.bon.de.commande.3805e106"
-                description="Créez votre première commande fournisseur pour approvisionner votre stock."
+                description="Créez votre première commande fournisseur pour approvisionner votre stock." i18n-description="@@purchase-orders.purchase-order-list.creez.votre.premiere.commande.fournisseu.129169b6"
                 [showAction]="canCreatePurchaseOrder()"
-                actionLabel="Nouvelle commande"
+                actionLabel="Nouvelle commande" i18n-actionLabel="@@purchase-orders.purchase-order-list.nouvelle.commande.3b7f4b55"
                 actionRoute="new">
               </app-empty-state>
             </td>

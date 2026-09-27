@@ -33,14 +33,14 @@ const UNSAVED_CHANGES_MESSAGE =
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingFilterBarComponent, AccountingStatusBannerComponent],
   template: `
     <app-page-header title="Paramètres fiscaux" i18n-title="@@accounting.fiscal-parameters.parametres.fiscaux.ec3397a0"
-      subtitle="Taux IS, minimum d'impôt, CSS, acomptes et barème IRPP — par exercice" />
+      subtitle="Taux IS, minimum d'impôt, CSS, acomptes et barème IRPP — par exercice" i18n-subtitle="@@accounting.fiscal-parameters.taux.is.minimum.d.impot.css.acomptes.et.420bfe73" />
 
     @if (isDirty()) {
-      <p class="fp-dirty-indicator" role="status"><i class="pi pi-circle-fill" aria-hidden="true"></i> Modifications non enregistrées</p>
+      <p class="fp-dirty-indicator" role="status" i18n="@@accounting.fiscal-parameters.modifications.non.enregistrees.af44fff0"><i class="pi pi-circle-fill" aria-hidden="true"></i> Modifications non enregistrées</p>
     }
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice des paramètres fiscaux">
+      <app-accounting-filter-bar ariaLabel="Exercice des paramètres fiscaux" i18n-ariaLabel="@@accounting.fiscal-parameters.exercice.des.parametres.fiscaux.6b8e7d5a">
         <div accountingFilterFields>
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="fp-year" i18n="@@accounting.fiscal-parameters.exercice.e171e2b0">Exercice</label>
@@ -54,22 +54,22 @@ const UNSAVED_CHANGES_MESSAGE =
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="load()" [disabled]="loading() || !isYearValid()"
-            ariaLabel="Charger les paramètres de l'exercice" i18n="@@accounting.fiscal-parameters.charger.8f860300">Charger</app-button>
+            ariaLabel="Charger les paramètres de l'exercice" i18n-ariaLabel="@@accounting.fiscal-parameters.charger.les.parametres.de.l.exercice.c853e85c" i18n="@@accounting.fiscal-parameters.charger.8f860300">Charger</app-button>
           <app-button variant="primary" icon="pi pi-save" type="button" (click)="save()" [disabled]="loading() || saving() || !model"
-            ariaLabel="Enregistrer les paramètres fiscaux" i18n="@@accounting.fiscal-parameters.enregistrer.f7c8bcd8">Enregistrer</app-button>
+            ariaLabel="Enregistrer les paramètres fiscaux" i18n-ariaLabel="@@accounting.fiscal-parameters.enregistrer.les.parametres.fiscaux.cc33ee82" i18n="@@accounting.fiscal-parameters.enregistrer.f7c8bcd8">Enregistrer</app-button>
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <div class="fp-validate-banner" role="status">
+    <div class="fp-validate-banner" role="status" i18n="@@accounting.fiscal-parameters.valeurs.indicatives.a.valider.selon.la.l.bb0471cd">
       <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
       <span>
-        <strong i18n="@@accounting.fiscal-parameters.valeurs.indicatives.210e8c14">Valeurs indicatives</strong> — à valider selon la loi de finances de l'exercice.
+        <strong>Valeurs indicatives</strong> — à valider selon la loi de finances de l'exercice.
         Le droit fiscal tunisien évolue chaque année : contrôlez les taux avant d'établir la liasse.
       </span>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.fiscal-parameters.reessayer.c4f78b12" (retry)="load()" />
 
     @if (jsonError(); as jerr) {
       <div class="fp-json-error-banner" role="alert">
@@ -129,7 +129,7 @@ const UNSAVED_CHANGES_MESSAGE =
 
         <div class="card fp-card fp-card--wide">
           <h3 class="fp-title" i18n="@@accounting.fiscal-parameters.bareme.irpp.bic.regime.reel.0fc0c501">Barème IRPP (BIC — régime réel)</h3>
-          <p class="fp-hint"><ng-container i18n="@@accounting.fiscal-parameters.tableau.json.4da684ec">Tableau JSON : </ng-container> <code>[{{ '{' }}"lower":0,"rate":0{{ '}' }}, …]</code> — <em i18n="@@accounting.fiscal-parameters.lower.346e3ee1">lower</em> = borne inférieure annuelle (TND), <em i18n="@@accounting.fiscal-parameters.rate.1e01d215">rate</em> = taux en %.</p>
+          <p class="fp-hint" i18n="@@accounting.fiscal-parameters.tableau.json.lower.0.rate.0.lower.borne.f242ddb0"><ng-container>Tableau JSON : </ng-container> <code>[{{ '{' }}"lower":0,"rate":0{{ '}' }}, …]</code> — <em>lower</em> = borne inférieure annuelle (TND), <em>rate</em> = taux en %.</p>
           <textarea rows="4" class="fp-json" [class.fp-json--invalid]="!!irppValidationError()" [(ngModel)]="m.irppBracketsJson" aria-label="Barème IRPP en JSON" i18n-aria-label="@@accounting.fiscal-parameters.bareme.irpp.en.json.bef0cbaa"></textarea>
           @if (irppValidationError(); as verr) {
             <span class="fp-json-inline-error" role="alert">{{ verr }}</span>

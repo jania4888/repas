@@ -25,7 +25,7 @@ import {
   template: `
     <app-page-header
       title="Analyse fournisseurs" i18n-title="@@reports.purchases-analytics.analyse.fournisseurs.496355ab"
-      subtitle="Classement, part des achats et indicateurs par fournisseur">
+      subtitle="Classement, part des achats et indicateurs par fournisseur" i18n-subtitle="@@reports.purchases-analytics.classement.part.des.achats.et.indicateur.9bf312a8">
       <app-button
         variant="secondary"
         icon="pi-print"
@@ -97,7 +97,7 @@ import {
     <div class="section">
       <div class="section-header">
         <h2 class="section-title" i18n="@@reports.purchases-analytics.classement.des.fournisseurs.bfaacd1a">Classement des fournisseurs</h2>
-        <span class="section-hint">
+        <span class="section-hint" i18n="@@reports.purchases-analytics.par.montant.total.des.achats.factures.pa.c2877cb7">
           <i class="pi pi-info-circle"></i>
           Par montant total des achats (factures payées) sur la période
         </span>

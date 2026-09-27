@@ -130,12 +130,12 @@ interface TimelineEvent {
                 <div class="document-badges">
                   <p-tag [severity]="statusSeverity(o.status)" [value]="o.statusDisplay | backendLabel"></p-tag>
                   @if (o.isStockReserved) {
-                    <span class="ft-chip" pTooltip="Le stock est réservé pour cette commande." i18n-pTooltip="@@sales-orders.sales-order-detail.le.stock.est.reserve.pour.cette.commande.cfec9063">
+                    <span class="ft-chip" pTooltip="Le stock est réservé pour cette commande." i18n-pTooltip="@@sales-orders.sales-order-detail.le.stock.est.reserve.pour.cette.commande.cfec9063" i18n="@@sales-orders.sales-order-detail.stock.reserve.8465f093">
                       <i class="pi pi-box"></i> Stock réservé
                     </span>
                   }
                   @if (o.sourceQuoteId) {
-                    <a [routerLink]="['/quotes', o.sourceQuoteId]" class="ft-chip ft-chip--link">
+                    <a [routerLink]="['/quotes', o.sourceQuoteId]" class="ft-chip ft-chip--link" i18n="@@sales-orders.sales-order-detail.issue.du.devis.a434b0eb">
                       <i class="pi pi-file-import"></i>
                       Issue du devis {{ o.sourceQuoteNumber ?? '' }}
                     </a>
@@ -163,7 +163,7 @@ interface TimelineEvent {
               <span class="ft-icon-badge ft-icon-badge--primary"><i class="pi pi-truck"></i></span>
               <div class="kpi-content">
                 <div class="kpi-label" i18n="@@sales-orders.sales-order-detail.livraison.5755a8fa">Livraison</div>
-                <div class="kpi-value">
+                <div class="kpi-value" i18n="@@sales-orders.sales-order-detail.reste.a.livrer.382eea6a">
                   {{ deliveryProgress() }} %
                   <small>· {{ o.totalPendingDeliveryQuantity | number: '1.0-4' }} reste à livrer</small>
                 </div>
@@ -177,7 +177,7 @@ interface TimelineEvent {
               <span class="ft-icon-badge ft-icon-badge--violet"><i class="pi pi-file-export"></i></span>
               <div class="kpi-content">
                 <div class="kpi-label" i18n="@@sales-orders.sales-order-detail.facturation.04716c6b">Facturation</div>
-                <div class="kpi-value">
+                <div class="kpi-value" i18n="@@sales-orders.sales-order-detail.reste.a.facturer.4ce1ce7d">
                   {{ invoiceProgress() }} %
                   <small>· {{ o.totalPendingInvoiceQuantity | number: '1.0-4' }} reste à facturer</small>
                 </div>
@@ -199,39 +199,39 @@ interface TimelineEvent {
 
           <!-- Informations -->
           <div class="info-section">
-            <h2 class="section-title"><i class="pi pi-info-circle"></i> Informations</h2>
+            <h2 class="section-title" i18n="@@sales-orders.sales-order-detail.informations.740810f3"><i class="pi pi-info-circle"></i> Informations</h2>
             <div class="info-grid">
               <div class="info-item full-width">
-                <div class="info-label"><i class="pi pi-user"></i> Client</div>
+                <div class="info-label" i18n="@@sales-orders.sales-order-detail.client.e9ef2d15"><i class="pi pi-user"></i> Client</div>
                 <div class="info-value">
                   <a [routerLink]="['/clients', o.clientId]" class="ft-link">{{ o.client.name }}</a>
                 </div>
               </div>
               <div class="info-item">
-                <div class="info-label"><i class="pi pi-calendar"></i> Date de commande</div>
+                <div class="info-label" i18n="@@sales-orders.sales-order-detail.date.de.commande.789c8ef5"><i class="pi pi-calendar"></i> Date de commande</div>
                 <div class="info-value">{{ o.orderDate | date: 'dd/MM/yyyy' }}</div>
               </div>
               <div class="info-item">
-                <div class="info-label"><i class="pi pi-clock"></i> Livraison prévue</div>
+                <div class="info-label" i18n="@@sales-orders.sales-order-detail.livraison.prevue.6146b958"><i class="pi pi-clock"></i> Livraison prévue</div>
                 <div class="info-value" [class.empty]="!o.expectedDeliveryDate">
                   {{ o.expectedDeliveryDate ? (o.expectedDeliveryDate | date: 'dd/MM/yyyy') : '—' }}
                 </div>
               </div>
               <div class="info-item">
-                <div class="info-label"><i class="pi pi-tag"></i> Référence</div>
+                <div class="info-label" i18n="@@sales-orders.sales-order-detail.reference.9e62b230"><i class="pi pi-tag"></i> Référence</div>
                 <div class="info-value" [class.empty]="!o.reference">{{ o.reference || '—' }}</div>
               </div>
               <div class="info-item">
-                <div class="info-label"><i class="pi pi-warehouse"></i> Dépôt</div>
+                <div class="info-label" i18n="@@sales-orders.sales-order-detail.depot.04b56297"><i class="pi pi-warehouse"></i> Dépôt</div>
                 <div class="info-value" [class.empty]="!o.warehouseName">{{ o.warehouseName || '—' }}</div>
               </div>
               <div class="info-item full-width">
-                <div class="info-label"><i class="pi pi-credit-card"></i> Conditions de règlement</div>
+                <div class="info-label" i18n="@@sales-orders.sales-order-detail.conditions.de.reglement.bd84de97"><i class="pi pi-credit-card"></i> Conditions de règlement</div>
                 <div class="info-value" [class.empty]="!o.paymentTerms">{{ o.paymentTerms || '—' }}</div>
               </div>
               @if (o.notes) {
                 <div class="info-item full-width">
-                  <div class="info-label"><i class="pi pi-comment"></i> Notes</div>
+                  <div class="info-label" i18n="@@sales-orders.sales-order-detail.notes.3f02048c"><i class="pi pi-comment"></i> Notes</div>
                   <div class="content">{{ o.notes }}</div>
                 </div>
               }
@@ -242,7 +242,7 @@ interface TimelineEvent {
           <div class="table-card">
             <div class="card-header">
               <h3 i18n="@@sales-orders.sales-order-detail.lignes.de.commande.ca1d2a94">Lignes de commande</h3>
-              <span class="ft-chip">{{ o.lines.length }} ligne(s)</span>
+              <span class="ft-chip" i18n="@@sales-orders.sales-order-detail.ligne.s.aeaa47ea">{{ o.lines.length }} ligne(s)</span>
             </div>
             <table class="lines-table">
               <thead>
@@ -320,9 +320,9 @@ interface TimelineEvent {
                   <span class="mono">{{ o.subTotalBeforeGlobalDiscount | number: '1.3-3' }}</span>
                 </div>
                 <div class="total-row discount">
-                  <span>
+                  <span><ng-container i18n="@@sales-orders.sales-order-detail.remise.de.pied.70ef8789">
                     Remise de pied
-                    @if (o.globalDiscountPercent) {
+                    </ng-container>@if (o.globalDiscountPercent) {
                       ({{ o.globalDiscountPercent }} %)
                     }
                   </span>
@@ -364,9 +364,9 @@ interface TimelineEvent {
             <div class="status-content">
               <p-tag [severity]="statusSeverity(o.status)" [value]="o.statusDisplay | backendLabel" styleClass="w-full"></p-tag>
               <div class="status-meta">
-                <div>Commande du {{ o.orderDate | date: 'dd/MM/yyyy' }}</div>
+                <div i18n="@@sales-orders.sales-order-detail.commande.du.790ed8e7">Commande du {{ o.orderDate | date: 'dd/MM/yyyy' }}</div>
                 @if (o.sourceQuoteNumber) {
-                  <div class="source-quote">
+                  <div class="source-quote" i18n="@@sales-orders.sales-order-detail.issue.du.devis.19ded35c">
                     <i class="pi pi-file-import"></i>
                     Issue du devis <a [routerLink]="['/quotes', o.sourceQuoteId]">{{ o.sourceQuoteNumber }}</a>
                   </div>
@@ -389,12 +389,12 @@ interface TimelineEvent {
                 <p class="client-detail">{{ o.client.address }}</p>
               }
               @if (o.client.nif) {
-                <p class="client-detail">MF : {{ o.client.nif }}</p>
+                <p class="client-detail" i18n="@@sales-orders.sales-order-detail.mf.479da3ee">MF : {{ o.client.nif }}</p>
               }
               @if (o.client.email) {
                 <p class="client-detail">{{ o.client.email }}</p>
               }
-              <a [routerLink]="['/clients', o.clientId]" class="client-link">
+              <a [routerLink]="['/clients', o.clientId]" class="client-link" i18n="@@sales-orders.sales-order-detail.voir.la.fiche.client.8929f9c3">
                 <i class="pi pi-external-link"></i> Voir la fiche client
               </a>
             </div>
@@ -421,7 +421,7 @@ interface TimelineEvent {
       <app-empty-state
         icon="pi-exclamation-circle"
         title="Commande introuvable" i18n-title="@@sales-orders.sales-order-detail.commande.introuvable.ef74dfb8"
-        message="Cette commande n'existe pas ou a été supprimée.">
+        message="Cette commande n'existe pas ou a été supprimée." i18n-message="@@sales-orders.sales-order-detail.cette.commande.n.existe.pas.ou.a.ete.sup.6abbc452">
       </app-empty-state>
     }
   }
@@ -587,8 +587,8 @@ interface TimelineEvent {
       [modal]="true"
       [style]="{ width: '48rem' }"
       [draggable]="false">
-      <p class="ft-dialog-intro">
-        <ng-container i18n="@@sales-orders.sales-order-detail.par.defaut.seul.le.4e6144db"> Par défaut, seul le </ng-container> <strong i18n="@@sales-orders.sales-order-detail.livre.non.facture.eb209e11">livré-non-facturé</strong> est facturé. Activez la facturation
+      <p class="ft-dialog-intro" i18n="@@sales-orders.sales-order-detail.par.defaut.seul.le.livre.non.facture.est.55753df8">
+        <ng-container> Par défaut, seul le </ng-container> <strong>livré-non-facturé</strong> est facturé. Activez la facturation
         d'avance pour facturer le reste à facturer indépendamment des livraisons.
       </p>
 
@@ -605,9 +605,9 @@ interface TimelineEvent {
 
       <div class="ft-field" style="margin-top: var(--spacing-3);">
         <label class="ft-checkbox-label">
-          <input type="checkbox" [(ngModel)]="advanceBilling" (change)="onAdvanceBillingChange()" />
+          <input type="checkbox" [(ngModel)]="advanceBilling" (change)="onAdvanceBillingChange()" /><ng-container i18n="@@sales-orders.sales-order-detail.facturation.d.avance.dd022f98">
           Facturation d'avance
-        </label>
+        </ng-container></label>
       </div>
 
       @if (advanceBilling) {

@@ -42,7 +42,7 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
   template: `
     <app-payroll-section
       title="Avances sur salaire" i18n-title="@@payroll.employees.avances.sur.salaire.6e2ebd50"
-      subtitle="Les avances en cours sont retenues au calcul du cycle et soldées à la validation."
+      subtitle="Les avances en cours sont retenues au calcul du cycle et soldées à la validation." i18n-subtitle="@@payroll.employees.les.avances.en.cours.sont.retenues.au.ca.a9e0027e"
       icon="pi-wallet">
       @if (!readOnly) {
         <div class="payroll-toolbar mb-3">

@@ -2,14 +2,14 @@
 
 <app-page-header
     title="Inventaire" i18n-title="@@inventory.inventory-form.inventaire.10ad1a54"
-    subtitle="Saisissez les quantités comptées et enregistrez. Vous pouvez reprendre plus tard."
+    subtitle="Saisissez les quantités comptées et enregistrez. Vous pouvez reprendre plus tard." i18n-subtitle="@@inventory.inventory-form.saisissez.les.quantites.comptees.et.enre.092ceac4"
 >
     <app-button
         variant="outline"
         icon="pi-arrow-left"
         iconPos="left"
         routerLink="/stock"
-        ariaLabel="Retour au stock"
+        ariaLabel="Retour au stock" i18n-ariaLabel="@@inventory.inventory-form.retour.au.stock.f9604a93"
      i18n="@@inventory.inventory-form.retour.e5befb1f"> Retour </app-button>
 </app-page-header>
 
@@ -38,7 +38,7 @@
                         placeholder="Sélectionner un entrepôt" i18n-placeholder="@@inventory.inventory-form.selectionner.un.entrepot.2e4d1232"
                         styleClass="w-full dropdown-warehouse"
                         [disabled]="hasActiveInventory()"
-                        ariaLabel="Choisir l'entrepôt"
+                        ariaLabel="Choisir l'entrepôt" i18n-ariaLabel="@@inventory.inventory-form.choisir.l.entrepot.bc5f453b"
                     >
                     </p-select>
                 </div>
@@ -93,7 +93,7 @@
             <!-- Tableau des lignes -->
             <app-form-section title="Lignes d'inventaire" i18n-title="@@inventory.inventory-form.lignes.d.inventaire.454d192f" icon="pi-list" [number]="2">
                 @if (lastSavedAt()) {
-                    <p class="last-saved" role="status">
+                    <p class="last-saved" role="status" i18n="@@inventory.inventory-form.derniere.sauvegarde.a.08ec1f57">
                         Dernière sauvegarde à {{ lastSavedAt() | date:'shortTime' }}
                     </p>
                 }
@@ -115,10 +115,10 @@
                                     <td>
                                         <span class="product-name">{{ line.productName }}</span>
                                         @if (line.productCode) {
-                                            <span class="product-code">REF: {{ line.productCode }}</span>
+                                            <span class="product-code" i18n="@@inventory.inventory-form.ref.d5dd798d">REF: {{ line.productCode }}</span>
                                         }
                                         @if (line.lotNumber && line.productLotId) {
-                                            <span class="lot-label">Lot {{ line.lotNumber }}</span>
+                                            <span class="lot-label" i18n="@@inventory.inventory-form.lot.f7358f58">Lot {{ line.lotNumber }}</span>
                                         }
                                     </td>
                                     @if (hasOpeningLotLines()) {
@@ -167,7 +167,7 @@
                         iconPos="left"
                         (click)="cancelInventory()"
                         [disabled]="cancelling()"
-                        ariaLabel="Annuler l'inventaire"
+                        ariaLabel="Annuler l'inventaire" i18n-ariaLabel="@@inventory.inventory-form.annuler.l.inventaire.b255066b"
                      i18n="@@inventory.inventory-form.annuler.l.inventaire.a78bf0e5"> Annuler l'inventaire </app-button>
                     <div class="actions-group">
                         <button

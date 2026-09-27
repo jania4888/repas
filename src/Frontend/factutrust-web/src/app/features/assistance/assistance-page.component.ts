@@ -74,7 +74,7 @@ const CATEGORY_LABEL: Record<CompanySupportCategory, string> = {
           <input type="file" multiple (change)="onFiles($event)" />
         </label>
         @if (files.length) {
-          <p class="files">{{ files.length }} fichier(s) sélectionné(s)</p>
+          <p class="files" i18n="@@assistance.assistance-page.fichier.s.selectionne.s.d143cce6">{{ files.length }} fichier(s) sélectionné(s)</p>
         }
         <button type="submit" [disabled]="!canSend() || sending()" i18n="@@assistance.assistance-page.envoyer.e9ce243b">Envoyer</button>
       </form>

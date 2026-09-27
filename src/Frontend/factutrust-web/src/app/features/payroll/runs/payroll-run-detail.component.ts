@@ -181,13 +181,13 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
             <span class="ml-2 text-secondary">CIN {{ selectedPayslip()!.cin }}</span>
           }
           @if (selectedPayslip()!.leaveBalanceRemaining != null) {
-            <span class="ml-2 text-secondary">Solde congés : {{ selectedPayslip()!.leaveBalanceRemaining }} j</span>
+            <span class="ml-2 text-secondary" i18n="@@payroll.runs.solde.conges.j.a2edfee2">Solde congés : {{ selectedPayslip()!.leaveBalanceRemaining }} j</span>
           }
         </div>
         @if ((selectedPayslip()!.prorataDeductionAmount ?? 0) > 0) {
           <div class="prorata-summary mb-3">
             <strong i18n="@@payroll.runs.prorata.du.mois.b192ed38">Prorata du mois</strong>
-            <div class="prorata-grid">
+            <div class="prorata-grid" i18n="@@payroll.runs.jours.travailles.jours.non.travailles.re.2ce340fd">
               <span>Jours travaillés : {{ selectedPayslip()!.prorataWorkedDays }}</span>
               <span>Jours non travaillés : {{ selectedPayslip()!.prorataNonWorkedDays }}</span>
               <span>Retenue : {{ selectedPayslip()!.prorataDeductionAmount | payrollAmount }}</span>
@@ -212,7 +212,7 @@ import { FirmGovernanceService } from '@core/services/firm-governance.service';
             </tr>
           </ng-template>
         </p-table>
-        <div class="mt-3 text-right">
+        <div class="mt-3 text-right" i18n="@@payroll.runs.net.a.payer.cd1383cb">
           <strong>Net à payer : {{ selectedPayslip()!.netSalary | payrollAmount }}</strong>
         </div>
       }

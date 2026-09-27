@@ -26,12 +26,12 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="État budgétaire" i18n-title="@@accounting.budget-report.etat.budgetaire.a1eccfb3" subtitle="Budget (Initial / Révisé) vs réalisé par poste — écart et taux de consommation" />
+    <app-page-header title="État budgétaire" i18n-title="@@accounting.budget-report.etat.budgetaire.a1eccfb3" subtitle="Budget (Initial / Révisé) vs réalisé par poste — écart et taux de consommation" i18n-subtitle="@@accounting.budget-report.budget.initial.revise.vs.realise.par.pos.ace42c72" />
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.budget-report.reessayer.c4f78b12" (retry)="load()" />
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Filtres de l'état budgétaire">
+      <app-accounting-filter-bar ariaLabel="Filtres de l'état budgétaire" i18n-ariaLabel="@@accounting.budget-report.filtres.de.l.etat.budgetaire.84d566ab">
         <div accountingFilterFields class="br-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="br-year" i18n="@@accounting.budget-report.exercice.e171e2b0">Exercice</label>
@@ -56,7 +56,7 @@ const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Jui
 
     @if (report(); as r) {
       @if (!r.isValidated) {
-        <div class="card br-hint-card">
+        <div class="card br-hint-card" i18n="@@accounting.budget-report.budget.initial.non.valide.pour.cet.exerc.a77b1310">
           <i class="pi pi-info-circle"></i>
           Budget initial non validé pour cet exercice : les colonnes « Révisé » reprennent le budget initial.
         </div>

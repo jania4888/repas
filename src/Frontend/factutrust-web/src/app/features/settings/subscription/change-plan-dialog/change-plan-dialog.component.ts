@@ -32,7 +32,7 @@ const TVA_RATE = 0.19;
               type="button"
               class="btn-back"
               (click)="goBack()"
-              [disabled]="submitting()">
+              [disabled]="submitting()" i18n="@@settings.subscription.retour.08094583">
               <i class="pi pi-arrow-left"></i>
               Retour
             </button>
@@ -100,12 +100,12 @@ const TVA_RATE = 0.19;
                     <span class="plan-period">/ {{ plan.period }}</span>
                   </div>
                   @if (plan.priceAnnual) {
-                    <div class="plan-annual-info">
+                    <div class="plan-annual-info" i18n="@@settings.subscription.facture.tnd.par.an.2f2cded4">
                       Facturé {{ plan.priceAnnual | number:'1.0-0' }} TND par an
                     </div>
                   }
                   @if (plan.savePercentage) {
-                    <div class="plan-save-badge">
+                    <div class="plan-save-badge" i18n="@@settings.subscription.economisez.bb74433e">
                       <i class="pi pi-bolt"></i>
                       Économisez {{ plan.savePercentage }}%
                     </div>
@@ -200,15 +200,15 @@ const TVA_RATE = 0.19;
             <div class="pricing-table">
               <div class="pricing-row">
                 <span class="pricing-label" i18n="@@settings.subscription.designation.63a9062c">Désignation</span>
-                <span class="pricing-value">
+                <span class="pricing-value"><ng-container i18n="@@settings.subscription.abonnement.7253b021">
                   Abonnement {{ selectedPlanDisplay() }}
-                  @if (selectedPlan()?.priceAnnual) {
+                  </ng-container>@if (selectedPlan()?.priceAnnual) {<ng-container i18n="@@settings.subscription.12.mois.33d6f272">
                     (12 mois)
-                  }
+                  </ng-container>}
                 </span>
               </div>
-              <div class="pricing-row">
-                <span class="pricing-label" i18n="@@settings.subscription.prix.unitaire.3e848c96">Prix unitaire</span>
+              <div class="pricing-row" i18n="@@settings.subscription.prix.unitaire.tnd.mois.f9e8a1cd">
+                <span class="pricing-label">Prix unitaire</span>
                 <span class="pricing-value">{{ selectedPlan()?.priceMonthly | number:'1.3-3' }} TND / mois</span>
               </div>
               @if (selectedPlan()?.priceAnnual) {
@@ -323,15 +323,15 @@ const TVA_RATE = 0.19;
               class="btn-primary confirm-btn"
               [disabled]="submitting()"
               (click)="confirmChange()">
-              @if (submitting()) {
+              @if (submitting()) {<ng-container i18n="@@settings.subscription.traitement.en.cours.07b95961">
                 <i class="pi pi-spin pi-spinner"></i>
                 Traitement en cours...
-              } @else if (isDowngradeToFree()) {
+              </ng-container>} @else if (isDowngradeToFree()) {<ng-container i18n="@@settings.subscription.confirmer.le.changement.58e2f7cb">
                 Confirmer le changement
-              } @else {
+              </ng-container>} @else {<ng-container i18n="@@settings.subscription.confirmer.tnd.e6fc32e7">
                 <i class="pi pi-check"></i>
                 Confirmer — {{ priceTTC() | number:'1.3-3' }} TND
-              }
+              </ng-container>}
             </button>
           </div>
         </div>

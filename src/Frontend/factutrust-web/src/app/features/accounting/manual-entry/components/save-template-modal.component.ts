@@ -24,7 +24,7 @@ export interface SaveTemplatePayload {
           </header>
 
           <div class="stm-body">
-            <p class="stm-intro">
+            <p class="stm-intro" i18n="@@accounting.manual-entry.sauvegardez.les.comptes.et.libelles.de.c.db826c62">
               Sauvegardez les comptes et libellés de cette écriture pour les réutiliser rapidement.
               L'écriture en cours sera enregistrée comme modèle <strong>{{ defaultName() || '(sans nom)' }}</strong>.
             </p>
@@ -67,9 +67,9 @@ export interface SaveTemplatePayload {
             <div class="form-field">
               <label class="stm-checkbox">
                 <input type="checkbox"
-                       [ngModel]="keepAmounts()" (ngModelChange)="keepAmounts.set($event)" />
+                       [ngModel]="keepAmounts()" (ngModelChange)="keepAmounts.set($event)" /><ng-container i18n="@@accounting.manual-entry.conserver.les.montants.actuels.comme.val.7da1ad77">
                 Conserver les montants actuels comme valeurs par défaut du modèle
-              </label>
+              </ng-container></label>
               <p class="stm-hint" i18n="@@accounting.manual-entry.decoche.seuls.les.comptes.et.libelles.sont.sauve.3d8cd4e8"> Décoché : seuls les comptes et libellés sont sauvegardés (montants vides à l'application).
                 Coché : les montants actuels seront pré-remplis. </p>
             </div>

@@ -25,31 +25,31 @@ import { isCompanyAccountingRestricted } from '@core/config/company-accounting-n
           </div>
         </div>
         <div class="vat-toolbar-actions">
-          <app-button variant="secondary" icon="pi pi-chevron-left" type="button" (click)="prevPeriod.emit()" [disabled]="loading" ariaLabel="Période précédente" />
-          <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" type="button" (click)="refresh.emit()" [disabled]="loading" ariaLabel="Actualiser la déclaration" i18n="@@accounting.vat-declaration.actualiser.9d3b2a7d"> Actualiser </app-button>
+          <app-button variant="secondary" icon="pi pi-chevron-left" type="button" (click)="prevPeriod.emit()" [disabled]="loading" ariaLabel="Période précédente" i18n-ariaLabel="@@accounting.vat-declaration.periode.precedente.feb6127e" />
+          <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" type="button" (click)="refresh.emit()" [disabled]="loading" ariaLabel="Actualiser la déclaration" i18n-ariaLabel="@@accounting.vat-declaration.actualiser.la.declaration.b25f247b" i18n="@@accounting.vat-declaration.actualiser.9d3b2a7d"> Actualiser </app-button>
           @if (showAiAnalyze) {
             <app-analyze-with-ai-button screenId="accounting-vat-declaration" density="toolbar" [payloadBuilder]="payloadBuilder" [disabled]="loading" />
           }
           @if (showPreview) {
-            <app-button variant="secondary" icon="pi pi-eye" iconPos="left" type="button" (click)="previewPdf.emit()" [disabled]="loading || !hasData" ariaLabel="Aperçu avant impression" i18n="@@accounting.vat-declaration.apercu.f0f53004"> Aperçu </app-button>
+            <app-button variant="secondary" icon="pi pi-eye" iconPos="left" type="button" (click)="previewPdf.emit()" [disabled]="loading || !hasData" ariaLabel="Aperçu avant impression" i18n-ariaLabel="@@accounting.vat-declaration.apercu.avant.impression.cb4b2106" i18n="@@accounting.vat-declaration.apercu.f0f53004"> Aperçu </app-button>
           }
           @if (showExportPdf) {
-            <app-button variant="secondary" icon="pi pi-file-pdf" iconPos="left" type="button" (click)="exportPdf.emit()" [disabled]="loading || !hasData" ariaLabel="Exporter en PDF" i18n="@@accounting.vat-declaration.exporter.pdf.9a2c3956"> Exporter PDF </app-button>
+            <app-button variant="secondary" icon="pi pi-file-pdf" iconPos="left" type="button" (click)="exportPdf.emit()" [disabled]="loading || !hasData" ariaLabel="Exporter en PDF" i18n-ariaLabel="@@accounting.vat-declaration.exporter.en.pdf.416c9bfe" i18n="@@accounting.vat-declaration.exporter.pdf.9a2c3956"> Exporter PDF </app-button>
           }
           @if (showOfficialForm) {
-            <app-button variant="secondary" icon="pi pi-file-export" iconPos="left" type="button" (click)="exportOfficialForm.emit()" [disabled]="loading || !hasData" ariaLabel="Exporter le formulaire officiel DGI" i18n="@@accounting.vat-declaration.formulaire.officiel.285536d7"> Formulaire officiel </app-button>
+            <app-button variant="secondary" icon="pi pi-file-export" iconPos="left" type="button" (click)="exportOfficialForm.emit()" [disabled]="loading || !hasData" ariaLabel="Exporter le formulaire officiel DGI" i18n-ariaLabel="@@accounting.vat-declaration.exporter.le.formulaire.officiel.dgi.c8da01d4" i18n="@@accounting.vat-declaration.formulaire.officiel.285536d7"> Formulaire officiel </app-button>
           }
           @if (showPreClosingControls) {
-            <a class="vat-toolbar-link" routerLink="/accounting/pre-closing" aria-label="Contrôles de pré-clôture" i18n-aria-label="@@accounting.vat-declaration.controles.de.pre.cloture.e6b9bc87">
+            <a class="vat-toolbar-link" routerLink="/accounting/pre-closing" aria-label="Contrôles de pré-clôture" i18n-aria-label="@@accounting.vat-declaration.controles.de.pre.cloture.e6b9bc87" i18n="@@accounting.vat-declaration.controles.39d98131">
               <i class="pi pi-shield" aria-hidden="true"></i> Contrôles
             </a>
           }
           @if (showCompanySettings) {
-            <a class="vat-toolbar-link" routerLink="/settings/company" aria-label="Paramètres société" i18n-aria-label="@@accounting.vat-declaration.parametres.societe.94798218">
+            <a class="vat-toolbar-link" routerLink="/settings/company" aria-label="Paramètres société" i18n-aria-label="@@accounting.vat-declaration.parametres.societe.94798218" i18n="@@accounting.vat-declaration.parametres.2b702108">
               <i class="pi pi-cog" aria-hidden="true"></i> Paramètres
             </a>
           }
-          <app-button variant="secondary" icon="pi pi-chevron-right" type="button" (click)="nextPeriod.emit()" [disabled]="loading" ariaLabel="Période suivante" />
+          <app-button variant="secondary" icon="pi pi-chevron-right" type="button" (click)="nextPeriod.emit()" [disabled]="loading" ariaLabel="Période suivante" i18n-ariaLabel="@@accounting.vat-declaration.periode.suivante.2c4b41ab" />
         </div>
       </div>
     </div>

@@ -125,7 +125,7 @@ interface GovernorateOption {
               </div>
 
               <div class="form-group">
-                <label for="nif">NIF / Matricule fiscal @if (form.get('type')?.value === SupplierType.Business) {<span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span>}</label>
+                <label for="nif"><ng-container i18n="@@suppliers.supplier-form.nif.matricule.fiscal.a5458ed7">NIF / Matricule fiscal </ng-container>@if (form.get('type')?.value === SupplierType.Business) {<span class="required" i18n="@@suppliers.supplier-form.text.df58248c">*</span>}</label>
                 <p-inputMask
                   id="nif"
                   formControlName="nif"
@@ -297,15 +297,15 @@ interface GovernorateOption {
           <app-form-section title="Retenue à la source (TEJ)" i18n-title="@@suppliers.supplier-form.retenue.a.la.source.tej.da317399" icon="pi-percentage" [number]="4" class="tej-card">
             <div class="form-group checkbox-row">
               <label class="checkbox-label">
-                <input type="checkbox" formControlName="isSubjectToWithholding" />
+                <input type="checkbox" formControlName="isSubjectToWithholding" /><ng-container i18n="@@suppliers.supplier-form.fournisseur.concerne.par.la.retenue.a.la.21915fda">
                 Fournisseur concerné par la retenue à la source sur les achats
-              </label>
+              </ng-container></label>
             </div>
             @if (form.get('isSubjectToWithholding')?.value) {
               <p-message
                 severity="info"
                 styleClass="tej-info-msg"
-                text="Choisissez soit la Tranche IS (RS7 achats), soit un Type RS explicite du catalogue — pas les deux.">
+                text="Choisissez soit la Tranche IS (RS7 achats), soit un Type RS explicite du catalogue — pas les deux." i18n-text="@@suppliers.supplier-form.choisissez.soit.la.tranche.is.rs7.achats.2487d980">
               </p-message>
             }
             <div class="form-row">
@@ -354,9 +354,9 @@ interface GovernorateOption {
               </div>
               <div class="form-group checkbox-row align-end">
                 <label class="checkbox-label">
-                  <input type="checkbox" formControlName="isResident" />
+                  <input type="checkbox" formControlName="isResident" /><ng-container i18n="@@suppliers.supplier-form.resident.fiscal.tunisien.6e1aa37c">
                   Résident fiscal tunisien
-                </label>
+                </ng-container></label>
               </div>
             </div>
             <div class="form-row">

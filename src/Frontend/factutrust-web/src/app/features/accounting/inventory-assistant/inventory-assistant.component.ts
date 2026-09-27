@@ -25,7 +25,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
   standalone: true,
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Assistant d'écritures d'inventaire" i18n-title="@@accounting.inventory-assistant.assistant.d.ecritures.d.inventaire.fb2e8311" subtitle="Régularisations de fin d'exercice (CCA/PCA, provisions…)" />
+    <app-page-header title="Assistant d'écritures d'inventaire" i18n-title="@@accounting.inventory-assistant.assistant.d.ecritures.d.inventaire.fb2e8311" subtitle="Régularisations de fin d'exercice (CCA/PCA, provisions…)" i18n-subtitle="@@accounting.inventory-assistant.regularisations.de.fin.d.exercice.cca.pc.7f604940" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -85,13 +85,13 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
         @if (previewValid()) {
           <div class="inv-preview" role="note">
             <h4 class="inv-preview-title" i18n="@@accounting.inventory-assistant.apercu.f0f53004">Aperçu</h4>
-            <p class="inv-preview-line">
-              <strong i18n="@@accounting.inventory-assistant.ecriture.d5d8c87d">Écriture</strong> ({{ form.entryDate }}) :
+            <p class="inv-preview-line" i18n="@@accounting.inventory-assistant.ecriture.debit.credit.f2e4efb9">
+              <strong>Écriture</strong> ({{ form.entryDate }}) :
               débit {{ form.debitAccount }} / crédit {{ form.creditAccount }} — {{ form.amount | number : '1.3-3' }}
             </p>
             @if (form.autoReverse) {
-              <p class="inv-preview-line inv-preview-reversal">
-                <strong i18n="@@accounting.inventory-assistant.extourne.715f4ddc">Extourne</strong> (au nouvel exercice) :
+              <p class="inv-preview-line inv-preview-reversal" i18n="@@accounting.inventory-assistant.extourne.au.nouvel.exercice.debit.credit.3a30111c">
+                <strong>Extourne</strong> (au nouvel exercice) :
                 débit {{ form.creditAccount }} / crédit {{ form.debitAccount }} — {{ form.amount | number : '1.3-3' }}
               </p>
             }

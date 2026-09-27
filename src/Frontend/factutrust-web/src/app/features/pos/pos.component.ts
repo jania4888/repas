@@ -160,7 +160,7 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
           <div class="pos-idle-box">
             <i class="pi pi-lock"></i>
             <h2 i18n="@@pos.pos.session.verrouillee.f1549c06">Session verrouillee</h2>
-            <p>Inactivite de {{ idleService.idleMinutes() }} min. Saisissez votre mot de passe pour reprendre.</p>
+            <p i18n="@@pos.pos.inactivite.de.min.saisissez.votre.mot.de.939f220f">Inactivite de {{ idleService.idleMinutes() }} min. Saisissez votre mot de passe pour reprendre.</p>
             <input
               type="password"
               [(ngModel)]="idleUnlockPassword"
@@ -232,13 +232,13 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
             @if (closePreview) {
               <p><ng-container i18n="@@pos.pos.theorique.especes.4b60f776">Théorique espèces : </ng-container> <strong>{{ formatSessionAmount(closePreview.expectedCash) }} TND</strong></p>
               @if (closePreview.heldTicketCount > 0) {
-                <p>Attention : {{ closePreview.heldTicketCount }} ticket(s) encore en attente. Ils ne bloquent pas la clôture.</p>
+                <p i18n="@@pos.pos.attention.ticket.s.encore.en.attente.ils.68530859">Attention : {{ closePreview.heldTicketCount }} ticket(s) encore en attente. Ils ne bloquent pas la clôture.</p>
               }
             }
             <label class="pos-modal-label" for="pos-counted-cash" i18n="@@pos.pos.comptage.especes.tnd.9cc856ec">Comptage espèces (TND)</label>
             <input id="pos-counted-cash" type="number" min="0" step="0.001" class="pos-idle-input" [(ngModel)]="countedCashInput" />
             @if (closePreview) {
-              <p [class.pos-variance-zero]="closeVariance() === 0" [class.pos-variance-nonzero]="closeVariance() !== 0">
+              <p [class.pos-variance-zero]="closeVariance() === 0" [class.pos-variance-nonzero]="closeVariance() !== 0" i18n="@@pos.pos.ecart.tnd.c1be9fa3">
                 Écart : {{ formatSessionAmount(closeVariance()) }} TND
               </p>
             }
@@ -254,11 +254,11 @@ import { toApiPaymentMethod } from './services/pos-payment.mapper';
         <div class="pos-modal-overlay" (click)="sessionReport = null">
           <div class="pos-modal pos-modal--wide pos-z-print" (click)="$event.stopPropagation()">
             <h3>{{ sessionReport.zReportNumber ? (loc_ui_tern_cloture_248bfe + sessionReport.zReportNumber) : loc_ui_tern_rapport_x_5a5924 }}</h3>
-            <p>{{ sessionReport.cashRegisterName }} — fond {{ formatSessionAmount(sessionReport.openingFloat) }} TND</p>
-            <p>Tickets : {{ sessionReport.invoiceCount }} — Avoirs : {{ sessionReport.creditNoteCount }}</p>
-            <p>Théorique : {{ formatSessionAmount(sessionReport.expectedCash) }} TND</p>
+            <p i18n="@@pos.pos.fond.tnd.bd9049a4">{{ sessionReport.cashRegisterName }} — fond {{ formatSessionAmount(sessionReport.openingFloat) }} TND</p>
+            <p i18n="@@pos.pos.tickets.avoirs.5780f599">Tickets : {{ sessionReport.invoiceCount }} — Avoirs : {{ sessionReport.creditNoteCount }}</p>
+            <p i18n="@@pos.pos.theorique.tnd.ce72c0f1">Théorique : {{ formatSessionAmount(sessionReport.expectedCash) }} TND</p>
             @if (sessionReport.countedCash != null) {
-              <p>Compté : {{ formatSessionAmount(sessionReport.countedCash) }} TND — écart {{ formatSessionAmount(sessionReport.cashVariance ?? 0) }} TND</p>
+              <p i18n="@@pos.pos.compte.tnd.ecart.tnd.5ad109bb">Compté : {{ formatSessionAmount(sessionReport.countedCash) }} TND — écart {{ formatSessionAmount(sessionReport.cashVariance ?? 0) }} TND</p>
             }
             <ul>
               @for (row of sessionReport.totalsByMethod; track row.method) {

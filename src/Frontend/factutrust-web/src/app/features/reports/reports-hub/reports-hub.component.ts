@@ -29,7 +29,7 @@ interface ReportCard {
   template: `
     <app-page-header
       title="Rapports" i18n-title="@@reports.reports-hub.rapports.db7d9fbb"
-      subtitle="Accédez à tous les rapports et états de la plateforme">
+      subtitle="Accédez à tous les rapports et états de la plateforme" i18n-subtitle="@@reports.reports-hub.accedez.a.tous.les.rapports.et.etats.de.aa0bb5d1">
     </app-page-header>
 
     <div class="hub-search" *ngIf="showSearch">

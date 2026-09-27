@@ -228,9 +228,9 @@ import {
                         @if (line.description) {
                           <br><small class="line-desc">{{ line.description }}</small>
                         }
-                        @if (line.productCode) {
+                        @if (line.productCode) {<ng-container i18n="@@delivery-notes.pages.code.229d37db">
                           <br><small class="line-code">Code: {{ line.productCode }}</small>
-                        }
+                        </ng-container>}
                       </td>
                       <td class="text-right mono">{{ line.unitPriceHT | number:'1.3-3' }} TND / {{ line.unit }}</td>
                       <td class="text-right mono">{{ line.orderedQuantity | number:'1.0-3' }}</td>
@@ -292,7 +292,7 @@ import {
                 <h4 i18n="@@delivery-notes.pages.bons.de.retour.lies.fedece91">Bons de retour liés</h4>
                 <ul class="return-notes-list">
                   @for (rtn of deliveryNote()!.returnNotes!; track rtn.id) {
-                    <li>
+                    <li i18n="@@delivery-notes.pages.qte.777e87ad">
                       <a [routerLink]="['/return-notes', rtn.id]">{{ rtn.number }}</a>
                       <span> — {{ rtn.statusDisplay | backendLabel }} · {{ rtn.returnDate | date:'dd/MM/yyyy' }} · qté {{ rtn.totalReturnedQuantity | number:'1.0-3' }}</span>
                     </li>
@@ -345,9 +345,9 @@ import {
                   <i class="pi pi-verified"></i>
                   <span i18n="@@delivery-notes.pages.livraison.signee.9fb4ab89">Livraison signée</span>
                 </div>
-                <small>Signé le {{ deliveryNote()!.signedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                <small i18n="@@delivery-notes.pages.signe.le.71c9e3e1">Signé le {{ deliveryNote()!.signedAt | date:'dd/MM/yyyy HH:mm' }}</small>
                 @if (deliveryNote()!.recipientName) {
-                  <small>Par: {{ deliveryNote()!.recipientName }}</small>
+                  <small i18n="@@delivery-notes.pages.par.4a4180cc">Par: {{ deliveryNote()!.recipientName }}</small>
                 }
               </div>
             </p-card>
@@ -377,7 +377,7 @@ import {
             }
           </div>
           @if (deliveryContextLoading()) {
-            <p class="delivery-loading muted">
+            <p class="delivery-loading muted" i18n="@@delivery-notes.pages.verification.du.stock.0ae6d17a">
               <i class="pi pi-spin pi-spinner"></i>
               Vérification du stock…
             </p>

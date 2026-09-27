@@ -47,19 +47,19 @@ interface ProrationOption {
       [style]="{ width: '56rem' }"
       (onShow)="onShow()">
       <div class="grid">
-        <label>Type d'avenant
-          <select class="ft-input" [(ngModel)]="amendmentType" name="amendmentType">
+        <label><ng-container i18n="@@recurring-contracts.components.type.d.avenant.2cd4f6cf">Type d'avenant
+          </ng-container><select class="ft-input" [(ngModel)]="amendmentType" name="amendmentType">
             @for (opt of typeOptions; track opt.value) {
               <option [ngValue]="opt.value">{{ opt.label }}</option>
             }
           </select>
         </label>
-        <label>Date d'effet
-          <input class="ft-input" [value]="today | date:'dd/MM/yyyy'" disabled />
+        <label><ng-container i18n="@@recurring-contracts.components.date.d.effet.45032d85">Date d'effet
+          </ng-container><input class="ft-input" [value]="today | date:'dd/MM/yyyy'" disabled />
           <span class="field-hint" i18n="@@recurring-contracts.components.effet.immediat.jour.meme.non.modifiable.71bcc4a8">Effet immédiat (jour même) — non modifiable.</span>
         </label>
-        <label>Politique de prorata
-          <select class="ft-input" [(ngModel)]="prorationPolicy" name="prorationPolicy">
+        <label><ng-container i18n="@@recurring-contracts.components.politique.de.prorata.d2e9fad2">Politique de prorata
+          </ng-container><select class="ft-input" [(ngModel)]="prorationPolicy" name="prorationPolicy">
             @for (opt of prorationOptions; track opt.value) {
               <option [ngValue]="opt.value">{{ opt.label }}</option>
             }
@@ -67,7 +67,7 @@ interface ProrationOption {
         </label>
       </div>
 
-      <p class="info-line">
+      <p class="info-line" i18n="@@recurring-contracts.components.les.modifications.prennent.effet.immedia.02fe5f16">
         <i class="pi pi-info-circle"></i>
         Les modifications prennent effet immédiatement ; les lignes actuelles sont clôturées à la veille.
         Si un brouillon existe déjà pour la période en cours, il n'est pas modifié.
@@ -85,14 +85,14 @@ interface ProrationOption {
             <app-button type="button" variant="ghost" size="sm" icon="pi-trash" (clicked)="removeLine(i)" i18n="@@recurring-contracts.components.retirer.54ec24a1"> Retirer </app-button>
           </div>
           <div class="grid">
-            <label class="span-2">Description
-              <input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="@@recurring-contracts.components.description.optionnelle.27856f3e" [(ngModel)]="line.description" [name]="'amendDesc' + i" />
+            <label class="span-2"><ng-container i18n="@@recurring-contracts.components.description.55f8ebc8">Description
+              </ng-container><input class="ft-input" placeholder="Description (optionnelle)" i18n-placeholder="@@recurring-contracts.components.description.optionnelle.27856f3e" [(ngModel)]="line.description" [name]="'amendDesc' + i" />
             </label>
-            <label>Qté
-              <input class="ft-input" type="number" [(ngModel)]="line.quantity" [name]="'amendQty' + i" />
+            <label><ng-container i18n="@@recurring-contracts.components.qte.a4772129">Qté
+              </ng-container><input class="ft-input" type="number" [(ngModel)]="line.quantity" [name]="'amendQty' + i" />
             </label>
-            <label>Prix unitaire HT
-              <input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.unitPriceHT" [name]="'amendPrice' + i" />
+            <label><ng-container i18n="@@recurring-contracts.components.prix.unitaire.ht.bb3f8e39">Prix unitaire HT
+              </ng-container><input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.unitPriceHT" [name]="'amendPrice' + i" />
             </label>
             <label>TVA %
               <input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.vatRate" [name]="'amendVat' + i" />
@@ -107,11 +107,11 @@ interface ProrationOption {
                   }
                 </select>
               </label>
-              <label>Quantité incluse
-                <input class="ft-input" type="number" min="0" [(ngModel)]="line.includedQuantity" [name]="'amendIncluded' + i" />
+              <label><ng-container i18n="@@recurring-contracts.components.quantite.incluse.a142ba58">Quantité incluse
+                </ng-container><input class="ft-input" type="number" min="0" [(ngModel)]="line.includedQuantity" [name]="'amendIncluded' + i" />
               </label>
-              <label>Prix dépassement HT
-                <input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.overageUnitPriceHT" [name]="'amendOverage' + i" />
+              <label><ng-container i18n="@@recurring-contracts.components.prix.depassement.ht.a0225a75">Prix dépassement HT
+                </ng-container><input class="ft-input" type="number" step="0.001" min="0" [(ngModel)]="line.overageUnitPriceHT" [name]="'amendOverage' + i" />
               </label>
             }
           </div>
@@ -119,8 +119,8 @@ interface ProrationOption {
       }
       <app-button type="button" variant="outline" size="sm" icon="pi-plus" (clicked)="addLine()" i18n="@@recurring-contracts.components.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
 
-      <label class="notes-label">Notes
-        <textarea
+      <label class="notes-label"><ng-container i18n="@@recurring-contracts.components.notes.70440046">Notes
+        </ng-container><textarea
           class="ft-input"
           rows="2"
           [(ngModel)]="notes"

@@ -34,20 +34,20 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
   ],
   template: `
     <section class="ft-card-block">
-      <h3 class="block-title"><i class="pi pi-list"></i> Lignes du contrat</h3>
+      <h3 class="block-title" i18n="@@recurring-contracts.tabs.lignes.du.contrat.0cb8049f"><i class="pi pi-list"></i> Lignes du contrat</h3>
       @if (contract.lines.length === 0) {
-        <p class="placeholder-note">Aucune ligne de service.</p>
+        <p class="placeholder-note" i18n="@@recurring-contracts.tabs.aucune.ligne.de.service.3a4de59d">Aucune ligne de service.</p>
       } @else {
         <p-table [value]="contract.lines" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Type</th>
-              <th>Produit</th>
-              <th>Description</th>
-              <th style="width: 70px">Qté</th>
-              <th style="width: 120px">Prix HT</th>
+              <th i18n="@@recurring-contracts.tabs.type.3deb7456">Type</th>
+              <th i18n="@@recurring-contracts.tabs.produit.ff673dc2">Produit</th>
+              <th i18n="@@recurring-contracts.tabs.description.55f8ebc8">Description</th>
+              <th style="width: 70px" i18n="@@recurring-contracts.tabs.qte.a4772129">Qté</th>
+              <th style="width: 120px" i18n="@@recurring-contracts.tabs.prix.ht.362207ca">Prix HT</th>
               <th style="width: 70px">TVA</th>
-              <th>Métrique / Inclus / Dépassement</th>
+              <th i18n="@@recurring-contracts.tabs.metrique.inclus.depassement.792ca199">Métrique / Inclus / Dépassement</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-line>
@@ -55,7 +55,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
               <td>
                 {{ (line.lineTypeDisplay | backendLabel) || line.lineType }}
                 @if (line.isActive === false) {
-                  <span class="closed-tag">Clôturée</span>
+                  <span class="closed-tag" i18n="@@recurring-contracts.tabs.cloturee.d9addf51">Clôturée</span>
                 }
               </td>
               <td>{{ line.productName || '—' }}</td>
@@ -76,7 +76,7 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
           </ng-template>
           <ng-template pTemplate="footer">
             <tr class="lines-total">
-              <td colspan="7">
+              <td colspan="7" i18n="@@recurring-contracts.tabs.estimation.mensuelle.lignes.fixes.1e7d8676">
                 Estimation mensuelle (lignes fixes) :
                 <strong>{{ monthlyEstimate != null ? formatContractAmount(monthlyEstimate, contract.currency) : '—' }}</strong>
               </td>
@@ -88,9 +88,9 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
 
     <section class="ft-card-block">
       <div class="block-head">
-        <h3 class="block-title"><i class="pi pi-chart-bar"></i> Consommations</h3>
+        <h3 class="block-title" i18n="@@recurring-contracts.tabs.consommations.c76ecbd0"><i class="pi pi-chart-bar"></i> Consommations</h3>
         @if (canManage()) {
-          <app-button variant="outline" size="sm" icon="pi-sliders-h" (clicked)="metricsDialogVisible = true">
+          <app-button variant="outline" size="sm" icon="pi-sliders-h" (clicked)="metricsDialogVisible = true" i18n="@@recurring-contracts.tabs.gerer.les.metriques.40a2721c">
             Gérer les métriques
           </app-button>
         }
@@ -98,28 +98,28 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
 
       @if (canRecordUsage()) {
         <form class="usage-form" (ngSubmit)="submitUsage()">
-          <label>Métrique
-            <select class="ft-input" [(ngModel)]="usageMetricId" name="usageMetric" required>
-              <option value="">— Métrique —</option>
+          <label><ng-container i18n="@@recurring-contracts.tabs.metrique.066ebc60">Métrique
+            </ng-container><select class="ft-input" [(ngModel)]="usageMetricId" name="usageMetric" required>
+              <option value="" i18n="@@recurring-contracts.tabs.metrique.7ea96f47">— Métrique —</option>
               @for (m of activeMetrics(); track m.id) {
                 <option [value]="m.id">{{ m.name }} ({{ m.unit }})</option>
               }
             </select>
           </label>
-          <label>Du
-            <input class="ft-input" type="date" [(ngModel)]="usagePeriodFrom" name="usageFrom" required />
+          <label><ng-container i18n="@@recurring-contracts.tabs.du.84814985">Du
+            </ng-container><input class="ft-input" type="date" [(ngModel)]="usagePeriodFrom" name="usageFrom" required />
           </label>
-          <label>Au
-            <input class="ft-input" type="date" [(ngModel)]="usagePeriodTo" name="usageTo" required />
+          <label><ng-container i18n="@@recurring-contracts.tabs.au.7a1732d5">Au
+            </ng-container><input class="ft-input" type="date" [(ngModel)]="usagePeriodTo" name="usageTo" required />
           </label>
-          <label>Quantité
-            <input class="ft-input" type="number" min="0" step="any" [(ngModel)]="usageQuantity" name="usageQty" required />
+          <label><ng-container i18n="@@recurring-contracts.tabs.quantite.09a38fda">Quantité
+            </ng-container><input class="ft-input" type="number" min="0" step="any" [(ngModel)]="usageQuantity" name="usageQty" required />
           </label>
-          <label>Notes
-            <input class="ft-input" [(ngModel)]="usageNotes" name="usageNotes" placeholder="Optionnel" />
+          <label><ng-container i18n="@@recurring-contracts.tabs.notes.70440046">Notes
+            </ng-container><input class="ft-input" [(ngModel)]="usageNotes" name="usageNotes" placeholder="Optionnel" i18n-placeholder="@@recurring-contracts.tabs.optionnel.fcdd2927" />
           </label>
           <div class="usage-actions">
-            <app-button type="submit" variant="primary" size="sm" icon="pi-check" [disabled]="savingUsage()">
+            <app-button type="submit" variant="primary" size="sm" icon="pi-check" [disabled]="savingUsage()" i18n="@@recurring-contracts.tabs.enregistrer.f7c8bcd8">
               Enregistrer
             </app-button>
             <app-button
@@ -139,32 +139,32 @@ import { UsageMetricDialogComponent } from '../components/usage-metric-dialog.co
               (change)="onImportFile($event)" />
           </div>
         </form>
-        <p class="csv-hint">CSV « code métrique ; du ; au ; quantité ; notes » (séparateur « ; », dates ISO ou jj/mm/aaaa).</p>
+        <p class="csv-hint" i18n="@@recurring-contracts.tabs.csv.code.metrique.du.au.quantite.notes.s.cbe79360">CSV « code métrique ; du ; au ; quantité ; notes » (séparateur « ; », dates ISO ou jj/mm/aaaa).</p>
       }
 
       <div class="history-filter">
-        <label>Historique du
-          <input class="ft-input" type="date" [(ngModel)]="filterFrom" name="filterFrom" />
+        <label><ng-container i18n="@@recurring-contracts.tabs.historique.du.57b32314">Historique du
+          </ng-container><input class="ft-input" type="date" [(ngModel)]="filterFrom" name="filterFrom" />
         </label>
-        <label>au
-          <input class="ft-input" type="date" [(ngModel)]="filterTo" name="filterTo" />
+        <label><ng-container i18n="@@recurring-contracts.tabs.au.f095160c">au
+          </ng-container><input class="ft-input" type="date" [(ngModel)]="filterTo" name="filterTo" />
         </label>
-        <app-button variant="outline" size="sm" icon="pi-filter" (clicked)="loadRecords()">Filtrer</app-button>
+        <app-button variant="outline" size="sm" icon="pi-filter" (clicked)="loadRecords()" i18n="@@recurring-contracts.tabs.filtrer.a7a02ef5">Filtrer</app-button>
       </div>
 
       @if (loadingRecords()) {
         <app-skeleton-table [rows]="4" [columns]="recordsSkeletonColumns"></app-skeleton-table>
       } @else if (usageRecords().length === 0) {
-        <p class="placeholder-note">Aucune saisie de consommation sur la période.</p>
+        <p class="placeholder-note" i18n="@@recurring-contracts.tabs.aucune.saisie.de.consommation.sur.la.per.95810cdb">Aucune saisie de consommation sur la période.</p>
       } @else {
         <p-table [value]="usageRecords()" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
             <tr>
-              <th>Métrique</th>
-              <th>Période</th>
-              <th style="width: 100px">Quantité</th>
-              <th style="width: 110px">Source</th>
-              <th>Notes</th>
+              <th i18n="@@recurring-contracts.tabs.metrique.066ebc60">Métrique</th>
+              <th i18n="@@recurring-contracts.tabs.periode.de2110b7">Période</th>
+              <th style="width: 100px" i18n="@@recurring-contracts.tabs.quantite.09a38fda">Quantité</th>
+              <th style="width: 110px" i18n="@@recurring-contracts.tabs.source.6da13add">Source</th>
+              <th i18n="@@recurring-contracts.tabs.notes.70440046">Notes</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-r>

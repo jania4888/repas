@@ -50,7 +50,7 @@ import {
           @if (canUpdate && canEditProject(project.status)) {
             <app-button variant="primary" icon="pi-pencil" (click)="edit.emit()" i18n="@@projects.components.modifier.le.projet.64e99f20">Modifier le projet</app-button>
           }
-          <app-document-actions-menu [items]="menuItems" label="" ariaLabel="Actions du projet" />
+          <app-document-actions-menu [items]="menuItems" label="" ariaLabel="Actions du projet" i18n-ariaLabel="@@projects.components.actions.du.projet.dfe2e4d4" />
         </div>
       </header>
     }

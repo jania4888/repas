@@ -21,7 +21,7 @@ import { CnssRemittanceTabComponent } from './cnss-remittance-tab.component';
   template: `
     <app-page-header
       title="Déclarations paie" i18n-title="@@payroll.declarations.declarations.paie.135c2aa8"
-      subtitle="DTS CNSS trimestrielle, bordereau mensuel CNSS et certificats de retenue à la source (IRPP/CSS). Seuls les cycles validés ou clôturés sont inclus." />
+      subtitle="DTS CNSS trimestrielle, bordereau mensuel CNSS et certificats de retenue à la source (IRPP/CSS). Seuls les cycles validés ou clôturés sont inclus." i18n-subtitle="@@payroll.declarations.dts.cnss.trimestrielle.bordereau.mensuel.05d7c7bd" />
 
     <p-tabs class="ft-tabs" [(value)]="activeTabIndex" [lazy]="true">
       <p-tablist>

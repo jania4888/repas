@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
     <div class="change-calc">
       <div class="change-calc__content">
         <h3 class="change-calc__title" i18n="@@pos.components.rendu.de.monnaie.96ba5322">Rendu de monnaie</h3>
-        <p class="change-calc__total">Total a payer : {{ formatAmount(totalToPay) }} TND</p>
+        <p class="change-calc__total" i18n="@@pos.components.total.a.payer.tnd.625c5f14">Total a payer : {{ formatAmount(totalToPay) }} TND</p>
 
         <div class="change-calc__field">
           <label for="amount-received" i18n="@@pos.components.montant.recu.236b7f76">Montant recu</label>
@@ -50,11 +50,11 @@ import { FormsModule } from '@angular/forms';
         </div>
 
         <button type="button" class="change-calc__close" [disabled]="disableFinish" (click)="onClose.emit()">
-          @if (disableFinish) {
+          @if (disableFinish) {<ng-container i18n="@@pos.components.enregistrement.73d259dd">
             <i class="pi pi-spin pi-spinner"></i> Enregistrement...
-          } @else {
+          </ng-container>} @else {<ng-container i18n="@@pos.components.terminer.f02d27e4">
             <i class="pi pi-check"></i> Terminer
-          }
+          </ng-container>}
         </button>
       </div>
     </div>

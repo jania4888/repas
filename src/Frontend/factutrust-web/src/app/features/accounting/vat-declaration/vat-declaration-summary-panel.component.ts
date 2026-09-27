@@ -15,7 +15,7 @@ import { VatChartSegment, canSubmitDeclaration, formatDateFr, shouldShowFilingAl
         @if (chartData) {
           <p-chart type="doughnut" [data]="chartData" [options]="chartOptions" [style]="{ height: '220px' }" />
         }
-        <div class="vat-total-block">
+        <div class="vat-total-block" i18n="@@accounting.vat-declaration.total.a.payer.31bcbfa8">
           <span class="vat-total-label">TOTAL À PAYER ({{ currency }})</span>
           <span class="vat-total-value">{{ totalToPay | number:'1.3-3' }}</span>
         </div>
@@ -36,7 +36,7 @@ import { VatChartSegment, canSubmitDeclaration, formatDateFr, shouldShowFilingAl
                 title="Corriger une déclaration déjà déposée (rectificative)" i18n-title="@@accounting.vat-declaration.corriger.une.declaration.deja.deposee.rectificat.5df469f5" i18n="@@accounting.vat-declaration.rectificative.4524a686"> Rectificative </button>
             }
           }
-          <button type="button" class="btn btn-secondary vat-action-btn" (click)="exportPdf.emit()" [disabled]="loading">
+          <button type="button" class="btn btn-secondary vat-action-btn" (click)="exportPdf.emit()" [disabled]="loading" i18n="@@accounting.vat-declaration.exporter.pdf.79d328a2">
             <i class="pi pi-file-pdf" aria-hidden="true"></i> Exporter PDF
           </button>
         </div>

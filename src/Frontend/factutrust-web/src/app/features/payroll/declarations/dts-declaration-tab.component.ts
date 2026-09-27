@@ -81,9 +81,9 @@ const MONTH_LABELS = [
       <app-payroll-empty-state
         icon="pi-exclamation-circle"
         title="Impossible de charger la DTS" i18n-title="@@payroll.declarations.impossible.de.charger.la.dts.27caee45"
-        description="Une erreur est survenue lors de la génération. Réessayez ou vérifiez vos droits."
+        description="Une erreur est survenue lors de la génération. Réessayez ou vérifiez vos droits." i18n-description="@@payroll.declarations.une.erreur.est.survenue.lors.de.la.gener.c7df6784"
         [showAction]="true"
-        actionLabel="Réessayer"
+        actionLabel="Réessayer" i18n-actionLabel="@@payroll.declarations.reessayer.b885e20c"
         (actionClick)="load()" />
     } @else if (dts()!.lines.length === 0) {
       <app-payroll-empty-state
@@ -91,7 +91,7 @@ const MONTH_LABELS = [
         title="Aucun salarié déclaré" i18n-title="@@payroll.declarations.aucun.salarie.declare.8fdf57d6"
         [description]="emptyDescription()"
         [showAction]="true"
-        actionLabel="Voir les cycles de paie"
+        actionLabel="Voir les cycles de paie" i18n-actionLabel="@@payroll.declarations.voir.les.cycles.de.paie.fd141467"
         actionRoute="/payroll/runs" />
     } @else {
       <app-payroll-stat-grid [items]="summaryStats()" class="mb-4" />

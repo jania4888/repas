@@ -30,7 +30,7 @@ import { ToastService } from '@core/services/toast.service';
   ],
   template: `
     @if (loading()) {
-      <p class="form-hint"><i class="pi pi-spin pi-spinner"></i> Chargement des SKU…</p>
+      <p class="form-hint" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.chargement.des.sku.4f181a40"><i class="pi pi-spin pi-spinner"></i> Chargement des SKU…</p>
     } @else if (variants().length === 0) {
       <p class="form-hint" i18n="@@shared.components.product-variant-matrix.product-variant-matrix.aucun.sku.enfant.genere.pour.ce.modele.b60126e5">Aucun SKU enfant généré pour ce modèle.</p>
     } @else {

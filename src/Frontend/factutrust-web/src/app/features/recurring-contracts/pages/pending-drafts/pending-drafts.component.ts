@@ -29,7 +29,7 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
 
     <app-page-header
       title="Brouillons récurrents à valider" i18n-title="@@recurring-contracts.pages.brouillons.recurrents.a.valider.c7805948"
-      subtitle="Factures générées automatiquement en attente d'émission">
+      subtitle="Factures générées automatiquement en attente d'émission" i18n-subtitle="@@recurring-contracts.pages.factures.generees.automatiquement.en.att.6d6311e5">
       <div class="actions">
         <app-button variant="outline" icon="pi-arrow-left" routerLink="/recurring-contracts" i18n="@@recurring-contracts.pages.retour.aux.contrats.9ac8a08b"> Retour aux contrats </app-button>
         @if (canTriggerBilling()) {
@@ -50,15 +50,15 @@ import { DraftAdjustDialogComponent } from '../../components/draft-adjust-dialog
       <app-empty-state
         icon="pi-exclamation-triangle"
         title="Impossible de charger les brouillons" i18n-title="@@recurring-contracts.pages.impossible.de.charger.les.brouillons.d7425042"
-        description="Une erreur est survenue lors du chargement."
-        actionLabel="Réessayer"
+        description="Une erreur est survenue lors du chargement." i18n-description="@@recurring-contracts.pages.une.erreur.est.survenue.lors.du.chargeme.1e0a5d6a"
+        actionLabel="Réessayer" i18n-actionLabel="@@recurring-contracts.pages.reessayer.b885e20c"
         (actionClick)="reload()">
       </app-empty-state>
     } @else if (drafts().length === 0) {
       <app-empty-state
         icon="pi-check-circle"
         title="Aucun brouillon en attente" i18n-title="@@recurring-contracts.pages.aucun.brouillon.en.attente.35529f78"
-        description="Les prochaines factures générées automatiquement apparaîtront ici."
+        description="Les prochaines factures générées automatiquement apparaîtront ici." i18n-description="@@recurring-contracts.pages.les.prochaines.factures.generees.automat.b4a66b17"
         [showAction]="false">
       </app-empty-state>
     } @else {

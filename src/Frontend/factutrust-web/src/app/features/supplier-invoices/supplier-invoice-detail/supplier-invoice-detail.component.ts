@@ -58,7 +58,7 @@ import { formatLocalDate } from '@core/utils/date.util';
 
       <div class="detail-grid">
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-file"></i> Informations</h3>
+          <h3 class="card-title" i18n="@@supplier-invoices.supplier-invoice-detail.informations.c0a7c3ae"><i class="pi pi-file"></i> Informations</h3>
           <div class="info-grid">
             <div class="info-item"><span class="label" i18n="@@supplier-invoices.supplier-invoice-detail.n.facture.7543385a">N° facture</span><span class="value mono">{{ inv()!.invoiceNumber }}</span></div>
             <div class="info-item"><span class="label" i18n="@@supplier-invoices.supplier-invoice-detail.date.eb9a4bc1">Date</span><span class="value">{{ inv()!.invoiceDate | date:'dd/MM/yyyy' }}</span></div>
@@ -101,7 +101,7 @@ import { formatLocalDate } from '@core/utils/date.util';
         </div>
 
         <div class="detail-card">
-          <h3 class="card-title"><i class="pi pi-building"></i> Fournisseur</h3>
+          <h3 class="card-title" i18n="@@supplier-invoices.supplier-invoice-detail.fournisseur.35691c73"><i class="pi pi-building"></i> Fournisseur</h3>
           <div class="info-grid">
             <div class="info-item"><span class="label" i18n="@@supplier-invoices.supplier-invoice-detail.nom.7ff20370">Nom</span><a [routerLink]="['/suppliers', inv()!.supplier.id]" class="value link">{{ inv()!.supplier.name }}</a></div>
             @if (inv()!.supplier.email) {
@@ -115,11 +115,11 @@ import { formatLocalDate } from '@core/utils/date.util';
         </div>
 
         <div class="detail-card full-width">
-          <h3 class="card-title"><i class="pi pi-list"></i> Lignes</h3>
+          <h3 class="card-title" i18n="@@supplier-invoices.supplier-invoice-detail.lignes.a1f1c9f6"><i class="pi pi-list"></i> Lignes</h3>
           @if (hasFixedAssetLines()) {
-            <div class="asset-banner" role="status">
+            <div class="asset-banner" role="status" i18n="@@supplier-invoices.supplier-invoice-detail.cette.facture.comporte.des.lignes.classe.dc3e735d">
               <i class="pi pi-building"></i>
-              <span><ng-container i18n="@@supplier-invoices.supplier-invoice-detail.cette.facture.comporte.des.lignes.classees.en.689e314d">Cette facture comporte des lignes classées en </ng-container> <strong i18n="@@supplier-invoices.supplier-invoice-detail.immobilisations.872a2f64">immobilisations</strong> (comptes 21x / TVA 43662).</span>
+              <span><ng-container>Cette facture comporte des lignes classées en </ng-container> <strong>immobilisations</strong> (comptes 21x / TVA 43662).</span>
             </div>
           }
           <p-table [value]="inv()!.lines" styleClass="p-datatable-sm" [rowHover]="true">
@@ -167,9 +167,9 @@ import { formatLocalDate } from '@core/utils/date.util';
             @if (!inv()!.isSubjectToWithholding && inv()!.totalTTC >= rs7TtcThresholdTnd) {
               <div class="rs-threshold-banner" role="alert">
                 <p class="rs-threshold-title" i18n="@@supplier-invoices.supplier-invoice-detail.retenue.a.la.source.achats.a0145f06">Retenue à la source (achats)</p>
-                <p class="rs-threshold-text">
+                <p class="rs-threshold-text" i18n="@@supplier-invoices.supplier-invoice-detail.le.total.ttc.depasse.le.seuil.indicatif.1404b4ab">
                   Le total TTC dépasse le seuil indicatif de {{ rs7TtcThresholdTnd | number:'1.0-0' }}&nbsp;TND (RS7), mais aucune retenue n’est calculée tant que le fournisseur n’est pas marqué comme
-                  <strong i18n="@@supplier-invoices.supplier-invoice-detail.assujetti.a.la.retenue.a.la.source.f5216cd5">assujetti à la retenue à la source</strong> sur sa fiche.
+                  <strong>assujetti à la retenue à la source</strong> sur sa fiche.
                 </p>
                 <a [routerLink]="['/suppliers', inv()!.supplier.id]" class="rs-threshold-link" i18n="@@supplier-invoices.supplier-invoice-detail.ouvrir.la.fiche.fournisseur.735fd96f">Ouvrir la fiche fournisseur</a>
               </div>
@@ -184,9 +184,9 @@ import { formatLocalDate } from '@core/utils/date.util';
               <div class="total-row"><span i18n="@@supplier-invoices.supplier-invoice-detail.net.apres.rs.indicatif.0f008ebb">Net après RS (indicatif)</span><span class="amount">{{ inv()!.netAmountAfterWithholding | currency:'TND':'symbol':'1.3-3' }}</span></div>
             }
             @if (inv()!.isSubjectToWithholding) {
-              <p class="tej-hint">
-                <ng-container i18n="@@supplier-invoices.supplier-invoice-detail.la.declaration.a8180f35"> La déclaration </ng-container> <strong i18n="@@supplier-invoices.supplier-invoice-detail.tej.e20f8646">TEJ</strong> regroupe automatiquement les factures fournisseurs <strong i18n="@@supplier-invoices.supplier-invoice-detail.soldees.7bfb62ea">soldées</strong> avec retenue, selon le mois de la date de solde.
-                <a routerLink="/withholding-tax/tej-export" class="link-inline" i18n="@@supplier-invoices.supplier-invoice-detail.export.tej.c237f45b">Export TEJ</a>
+              <p class="tej-hint" i18n="@@supplier-invoices.supplier-invoice-detail.la.declaration.tej.regroupe.automatiquem.7839deca">
+                <ng-container> La déclaration </ng-container> <strong>TEJ</strong> regroupe automatiquement les factures fournisseurs <strong>soldées</strong> avec retenue, selon le mois de la date de solde.
+                <a routerLink="/withholding-tax/tej-export" class="link-inline">Export TEJ</a>
               </p>
             }
           </div>
@@ -194,14 +194,14 @@ import { formatLocalDate } from '@core/utils/date.util';
 
         @if (inv()!.notes) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-file-edit"></i> Notes</h3>
+            <h3 class="card-title" i18n="@@supplier-invoices.supplier-invoice-detail.notes.e4c25cd5"><i class="pi pi-file-edit"></i> Notes</h3>
             <p class="notes-text">{{ inv()!.notes }}</p>
           </div>
         }
 
         @if (inv()!.payments && inv()!.payments.length > 0) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-wallet"></i> Historique des paiements</h3>
+            <h3 class="card-title" i18n="@@supplier-invoices.supplier-invoice-detail.historique.des.paiements.ddade87b"><i class="pi pi-wallet"></i> Historique des paiements</h3>
             <p-table [value]="inv()!.payments" styleClass="p-datatable-sm" [rowHover]="true">
               <ng-template pTemplate="header">
                 <tr>
@@ -221,7 +221,7 @@ import { formatLocalDate } from '@core/utils/date.util';
                   <td>
                     @if (payment.effetStatus !== null && payment.effetStatus !== undefined) {
                       <span class="effet-badge" [class.en-portefeuille]="payment.effetStatus === 0" [class.encaisse]="payment.effetStatus === 1" [class.impaye]="payment.effetStatus === 2">
-                        {{ payment.effetStatusDisplay | backendLabel }}@if (payment.effetDueDate) { · éch. {{ payment.effetDueDate | date:'dd/MM/yyyy' }} }
+                        {{ payment.effetStatusDisplay | backendLabel }}@if (payment.effetDueDate) {<ng-container i18n="@@supplier-invoices.supplier-invoice-detail.ech.81d3a3bd"> · éch. {{ payment.effetDueDate | date:'dd/MM/yyyy' }} </ng-container>}
                       </span>
                       @if (payment.effetStatus === 0 && canSettleEffet()) {
                         <button type="button" class="effet-btn" [disabled]="settlingEffetId() === payment.id" (click)="onSettleSupplierEffet(payment.id)" i18n="@@supplier-invoices.supplier-invoice-detail.payer.l.effet.cf208e58">Payer l'effet</button>
@@ -234,9 +234,9 @@ import { formatLocalDate } from '@core/utils/date.util';
               </ng-template>
             </p-table>
             <div class="payment-summary">
-              <span class="payment-total">Total payé : {{ inv()!.totalPaid | number:'1.3-3' }} TND</span>
+              <span class="payment-total" i18n="@@supplier-invoices.supplier-invoice-detail.total.paye.tnd.2a1ae47f">Total payé : {{ inv()!.totalPaid | number:'1.3-3' }} TND</span>
               @if (inv()!.remainingAmount > 0) {
-                <span class="payment-remaining">Restant dû : {{ inv()!.remainingAmount | number:'1.3-3' }} TND</span>
+                <span class="payment-remaining" i18n="@@supplier-invoices.supplier-invoice-detail.restant.du.tnd.c7e4f669">Restant dû : {{ inv()!.remainingAmount | number:'1.3-3' }} TND</span>
               }
             </div>
           </div>
@@ -244,16 +244,16 @@ import { formatLocalDate } from '@core/utils/date.util';
 
         @if (isSupplierInvoicePaid(inv()!.status) && inv()!.paidAt && (!inv()!.payments || inv()!.payments.length === 0)) {
           <div class="detail-card full-width">
-            <h3 class="card-title"><i class="pi pi-check-circle"></i> Paiement</h3>
-            <p class="notes-text">Payée le {{ inv()!.paidAt | date:'dd/MM/yyyy HH:mm' }}@if (inv()!.paymentReference) { — Réf. {{ inv()!.paymentReference }}}.</p>
+            <h3 class="card-title" i18n="@@supplier-invoices.supplier-invoice-detail.paiement.71e341ee"><i class="pi pi-check-circle"></i> Paiement</h3>
+            <p class="notes-text"><ng-container i18n="@@supplier-invoices.supplier-invoice-detail.payee.le.1f2531d4">Payée le {{ inv()!.paidAt | date:'dd/MM/yyyy HH:mm' }}</ng-container>@if (inv()!.paymentReference) {<ng-container i18n="@@supplier-invoices.supplier-invoice-detail.ref.cbd76ffa"> — Réf. {{ inv()!.paymentReference }}</ng-container>}.</p>
           </div>
         }
 
         @if (inv()!.cancellationReason) {
           <div class="detail-card full-width cancelled-card">
-            <h3 class="card-title"><i class="pi pi-exclamation-triangle"></i> Annulation</h3>
+            <h3 class="card-title" i18n="@@supplier-invoices.supplier-invoice-detail.annulation.272cfecb"><i class="pi pi-exclamation-triangle"></i> Annulation</h3>
             <p class="notes-text">{{ inv()!.cancellationReason }}</p>
-            <p class="cancelled-date">Annulée le {{ inv()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p class="cancelled-date" i18n="@@supplier-invoices.supplier-invoice-detail.annulee.le.dda4325a">Annulée le {{ inv()!.cancelledAt | date:'dd/MM/yyyy HH:mm' }}</p>
           </div>
         }
       </div>

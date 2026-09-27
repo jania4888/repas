@@ -60,7 +60,7 @@ import {
     <div class="step-legal">
       <!-- Payment Method -->
       <section class="section">
-        <h2 class="section-title">
+        <h2 class="section-title" i18n="@@invoices.invoice-wizard.mode.de.paiement.3559799b">
           <i class="pi pi-money-bill"></i>
           Mode de paiement
         </h2>
@@ -87,7 +87,7 @@ import {
 
       <!-- Payment Terms -->
       <section class="section">
-        <h2 class="section-title">
+        <h2 class="section-title" i18n="@@invoices.invoice-wizard.conditions.de.paiement.55b90ddd">
           <i class="pi pi-calendar"></i>
           Conditions de paiement
         </h2>
@@ -139,7 +139,7 @@ import {
         <p-divider></p-divider>
 
         <section class="section">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@invoices.invoice-wizard.coordonnees.bancaires.d28ffc8e">
             <i class="pi pi-building"></i>
             Coordonnées bancaires
           </h2>
@@ -187,7 +187,7 @@ import {
 
       <!-- Purchase Order Reference -->
       <section class="section">
-        <h2 class="section-title">
+        <h2 class="section-title" i18n="@@invoices.invoice-wizard.reference.de.commande.0401dd40">
           <i class="pi pi-file"></i>
           Référence de commande
         </h2>
@@ -208,7 +208,7 @@ import {
 
       <!-- Legal Mentions -->
       <section class="section">
-        <h2 class="section-title">
+        <h2 class="section-title" i18n="@@invoices.invoice-wizard.mentions.legales.86ed0d3e">
           <i class="pi pi-shield"></i>
           Mentions légales
         </h2>
@@ -276,22 +276,22 @@ import {
           <span i18n="@@invoices.invoice-wizard.conformite.reglementaire.300ae573">Conformité réglementaire</span>
         </div>
         <ul class="compliance-checklist">
-          <li class="valid">
+          <li class="valid" i18n="@@invoices.invoice-wizard.mention.tva.presente.5d20d0ce">
             <i class="pi pi-check"></i>
             Mention TVA présente
           </li>
-          <li [class.valid]="payment.method" [class.pending]="!payment.method">
+          <li [class.valid]="payment.method" [class.pending]="!payment.method" i18n="@@invoices.invoice-wizard.mode.de.paiement.specifie.7cb27fe5">
             <i [class]="payment.method ? 'pi pi-check' : 'pi pi-clock'"></i>
             Mode de paiement spécifié
           </li>
           @if (showExemptionMention()) {
-            <li [class.valid]="legalMentions.exemptionMention" [class.invalid]="!legalMentions.exemptionMention">
+            <li [class.valid]="legalMentions.exemptionMention" [class.invalid]="!legalMentions.exemptionMention" i18n="@@invoices.invoice-wizard.mention.d.exoneration.357a0f09">
               <i [class]="legalMentions.exemptionMention ? 'pi pi-check' : 'pi pi-times'"></i>
               Mention d'exonération {{ legalMentions.exemptionMention ? loc_ui_tern_renseignee_14ff83 : 'obligatoire' }}
             </li>
           }
           @if (payment.method === 'BANK_TRANSFER') {
-            <li [class.valid]="payment.rib || payment.iban" [class.pending]="!payment.rib && !payment.iban">
+            <li [class.valid]="payment.rib || payment.iban" [class.pending]="!payment.rib && !payment.iban" i18n="@@invoices.invoice-wizard.coordonnees.bancaires.59c16813">
               <i [class]="payment.rib || payment.iban ? 'pi pi-check' : 'pi pi-clock'"></i>
               Coordonnées bancaires {{ payment.rib || payment.iban ? loc_ui_tern_renseignees_a5ced9 : loc_ui_tern_recommandees_0c1370 }}
             </li>

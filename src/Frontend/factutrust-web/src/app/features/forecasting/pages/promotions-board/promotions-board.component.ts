@@ -64,13 +64,13 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
               </div>
 
               <p class="reasoning">{{ p.reasoningSummary }}</p>
-              <p class="period">
+              <p class="period" i18n="@@forecasting.pages.validite.dc819e24">
                 Validité : {{ p.validFrom | date:'dd/MM/yyyy' }} → {{ p.validUntil | date:'dd/MM/yyyy' }}
               </p>
 
               @if (canManage() && p.status === 'pending') {
                 <footer class="card-footer">
-                  <button class="btn btn-primary" (click)="prepareDraft(p)">
+                  <button class="btn btn-primary" (click)="prepareDraft(p)" i18n="@@forecasting.pages.preparer.la.remise.134a12e8">
                     <i class="pi pi-tag"></i> Préparer la remise
                   </button>
                   <button class="btn btn-link" (click)="dismiss(p)" i18n="@@forecasting.pages.ecarter.0559f961">Écarter</button>
@@ -104,7 +104,7 @@ import { wrapLegacyAnalyzePayload } from '@features/ai-assistant/utils/ai-screen
         </div>
         @if (simResult(); as r) {
           <div class="sim-result">
-            <p><strong>{{ r.productName }}</strong> — élasticité approchée {{ r.approxElasticity }}</p>
+            <p i18n="@@forecasting.pages.elasticite.approchee.66cc318e"><strong>{{ r.productName }}</strong> — élasticité approchée {{ r.approxElasticity }}</p>
             <ul>
               <li><ng-container i18n="@@forecasting.pages.ca.sans.promo.8d2ab7ef">CA sans promo : </ng-container> <b>{{ r.projectedRevenueWithoutPromo | number:'1.3-3' }} TND</b></li>
               <li><ng-container i18n="@@forecasting.pages.ca.avec.promo.09fcce53">CA avec promo : </ng-container> <b>{{ r.projectedRevenueWithPromo | number:'1.3-3' }} TND</b></li>

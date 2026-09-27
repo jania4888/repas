@@ -19,30 +19,30 @@ import { PERMISSIONS } from '@core/config/permission-keys';
             <div class="dropdown-menu show" (click)="$event.stopPropagation()">
               <label class="dropdown-item-check">
                 <input type="checkbox" [checked]="store.columnVisibility().piece"
-                       (change)="toggleColumn('piece', $event)" />
+                       (change)="toggleColumn('piece', $event)" /><ng-container i18n="@@accounting.manual-entry.colonne.piece.aide.a.la.saisie.55833660">
                 Colonne Pièce (aide à la saisie)
-              </label>
+              </ng-container></label>
               <label class="dropdown-item-check">
                 <input type="checkbox" [checked]="store.columnVisibility().dueDate"
-                       (change)="toggleColumn('dueDate', $event)" />
+                       (change)="toggleColumn('dueDate', $event)" /><ng-container i18n="@@accounting.manual-entry.colonne.echeance.aide.a.la.saisie.c462753a">
                 Colonne Échéance (aide à la saisie)
-              </label>
+              </ng-container></label>
               <label class="dropdown-item-check">
                 <input type="checkbox" [checked]="store.columnVisibility().lettering"
-                       (change)="toggleColumn('lettering', $event)" />
+                       (change)="toggleColumn('lettering', $event)" /><ng-container i18n="@@accounting.manual-entry.colonne.lettrage.apres.enregistrement.e93f6aae">
                 Colonne Lettrage (après enregistrement)
-              </label>
+              </ng-container></label>
               <label class="dropdown-item-check">
                 <input type="checkbox" [checked]="store.columnVisibility().vat"
-                       (change)="toggleColumn('vat', $event)" />
+                       (change)="toggleColumn('vat', $event)" /><ng-container i18n="@@accounting.manual-entry.colonne.tva.aide.a.la.saisie.8023c1f7">
                 Colonne TVA (aide à la saisie)
-              </label>
+              </ng-container></label>
               <div class="dropdown-divider"></div>
               <label class="dropdown-item-check">
                 <input type="checkbox" [checked]="store.propagateLabelToLines()"
-                       (change)="store.propagateLabelToLines.set($any($event.target).checked)" />
+                       (change)="store.propagateLabelToLines.set($any($event.target).checked)" /><ng-container i18n="@@accounting.manual-entry.reporter.le.libelle.sur.les.lignes.vides.76f0e538">
                 Reporter le libellé sur les lignes vides
-              </label>
+              </ng-container></label>
               <button type="button" class="dropdown-item" (click)="reset.emit()">
                 {{ store.editingLocked() ? loc_ui_tern_recharger_depuis_le_serveur_5ca0cd : loc_ui_tern_reinitialiser_le_formulaire_36c3e7 }}
               </button>

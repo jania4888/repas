@@ -314,7 +314,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                     mode="basic"
                     accept="image/*"
                     [maxFileSize]="2000000"
-                    chooseLabel="Choisir une image"
+                    chooseLabel="Choisir une image" i18n-chooseLabel="@@products.product-form.choisir.une.image.994ddf80"
                     (onSelect)="onProductImageSelect($event)"
                     [disabled]="saving()"
                     aria-label="Choisir une image pour le produit" i18n-aria-label="@@products.product-form.choisir.une.image.pour.le.produit.498fe514">
@@ -358,11 +358,11 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
               <div class="status-switch">
                 <p-inputSwitch id="isVariantTemplate" formControlName="isVariantTemplate"></p-inputSwitch>
                 <span [class.active]="form.get('isVariantTemplate')?.value">
-                  @if (form.get('isVariantTemplate')?.value) {
+                  @if (form.get('isVariantTemplate')?.value) {<ng-container i18n="@@products.product-form.oui.le.parent.n.est.pas.vendable.1a2b10db">
                     Oui — le parent n'est pas vendable
-                  } @else {
+                  </ng-container>} @else {<ng-container i18n="@@products.product-form.non.a7219939">
                     Non
-                  }
+                  </ng-container>}
                 </span>
               </div>
               <small class="form-hint" i18n="@@products.product-form.genere.des.sku.enfants.taille.couleur.le.modele..2a28a372">Génère des SKU enfants (taille, couleur…). Le modèle est exclu des factures, du POS et du stock.</small>
@@ -389,17 +389,17 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
                 }
                 @if (attributes().length === 0) {
                   @if (canConfigureVariantAxes()) {
-                    <p class="form-hint">
-                      <a [routerLink]="variantAxesNewLink" i18n="@@products.product-form.creer.un.axe.de.variantes.c66b8dfd">Créer un axe de variantes</a> (ex. Taille, Couleur) avant de générer les SKU.
+                    <p class="form-hint" i18n="@@products.product-form.creer.un.axe.de.variantes.ex.taille.coul.011f4bd5">
+                      <a [routerLink]="variantAxesNewLink">Créer un axe de variantes</a> (ex. Taille, Couleur) avant de générer les SKU.
                     </p>
                   } @else {
                     <p class="form-hint" i18n="@@products.product-form.aucun.axe.de.variantes.n.est.defini.un.administr.4fdc29c8"> Aucun axe de variantes n'est défini. Un administrateur peut les configurer dans Paramètres → Axes de variantes. </p>
                   }
                 }
                 @if (previewCombinationCount() > 0) {
-                  <p class="form-hint">
+                  <p class="form-hint"><ng-container i18n="@@products.product-form.apercu.combinaison.s.seront.creees.eb30c002">
                     Aperçu : {{ previewCombinationCount() }} combinaison(s) seront créées.
-                    @if (previewCombinationCount() > 50) {
+                    </ng-container>@if (previewCombinationCount() > 50) {
                       <strong i18n="@@products.product-form.plus.de.50.sku.confirmez.avant.de.generer.c2047ba3"> Plus de 50 SKU — confirmez avant de générer.</strong>
                     }
                   </p>
@@ -493,7 +493,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
             </div>
 
             <div class="pricing-readonly-group">
-              <p class="pricing-readonly-badge">
+              <p class="pricing-readonly-badge" i18n="@@products.product-form.calcule.automatiquement.395afd28">
                 <i class="pi pi-lock" aria-hidden="true"></i>
                 Calculé automatiquement
               </p>
@@ -707,7 +707,7 @@ const DEFAULT_PRODUCT_CATEGORY_NAME = 'General';
         </div>
       } @else if (!isEditMode()) {
         <div class="form-grid-full">
-          <div class="ft-alert ft-alert--info">
+          <div class="ft-alert ft-alert--info" i18n="@@products.product-form.enregistrez.le.produit.pour.definir.des.84be94ac">
             <i class="pi pi-info-circle"></i>
             Enregistrez le produit pour définir des tarifs par client.
           </div>

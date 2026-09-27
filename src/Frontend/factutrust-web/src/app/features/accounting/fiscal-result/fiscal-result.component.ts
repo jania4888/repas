@@ -68,14 +68,14 @@ interface EditableModel {
   ],
   template: `
     <app-page-header title="Détermination du résultat fiscal" i18n-title="@@accounting.fiscal-result.determination.du.resultat.fiscal.72c4a438"
-      subtitle="Passage du résultat comptable au résultat fiscal, imputation des reports et calcul de l'impôt (IS / IRPP)" />
+      subtitle="Passage du résultat comptable au résultat fiscal, imputation des reports et calcul de l'impôt (IS / IRPP)" i18n-subtitle="@@accounting.fiscal-result.passage.du.resultat.comptable.au.resulta.82bcc745" />
 
     @if (isDirty()) {
-      <p class="fr-dirty-indicator" role="status"><i class="pi pi-circle-fill" aria-hidden="true"></i> Modifications non enregistrées</p>
+      <p class="fr-dirty-indicator" role="status" i18n="@@accounting.fiscal-result.modifications.non.enregistrees.af44fff0"><i class="pi pi-circle-fill" aria-hidden="true"></i> Modifications non enregistrées</p>
     }
 
     <div class="card accounting-filters-card">
-      <app-accounting-filter-bar ariaLabel="Exercice et type de contribuable">
+      <app-accounting-filter-bar ariaLabel="Exercice et type de contribuable" i18n-ariaLabel="@@accounting.fiscal-result.exercice.et.type.de.contribuable.16a6757f">
         <div accountingFilterFields class="fr-fields">
           <div class="accounting-filter-field">
             <label class="accounting-filter-label" for="fr-year" i18n="@@accounting.fiscal-result.exercice.e171e2b0">Exercice</label>
@@ -96,11 +96,11 @@ interface EditableModel {
         </div>
         <div accountingFilterActions>
           <app-button variant="secondary" icon="pi pi-refresh" type="button" (click)="load()" [disabled]="loading() || !isYearValid()"
-            ariaLabel="Charger la feuille de détermination" i18n="@@accounting.fiscal-result.charger.8f860300">Charger</app-button>
+            ariaLabel="Charger la feuille de détermination" i18n-ariaLabel="@@accounting.fiscal-result.charger.la.feuille.de.determination.63e2d09f" i18n="@@accounting.fiscal-result.charger.8f860300">Charger</app-button>
           @if (canMutate()) {
             <app-button variant="primary" icon="pi pi-save" type="button" (click)="save()"
               [disabled]="loading() || saving() || readonly()"
-              ariaLabel="Enregistrer et recalculer" i18n="@@accounting.fiscal-result.enregistrer.et.recalculer.0b6f2782">Enregistrer et recalculer</app-button>
+              ariaLabel="Enregistrer et recalculer" i18n-ariaLabel="@@accounting.fiscal-result.enregistrer.et.recalculer.4dd2112b" i18n="@@accounting.fiscal-result.enregistrer.et.recalculer.0b6f2782">Enregistrer et recalculer</app-button>
           }
           <app-accounting-export-menu label="Exporter la détermination" i18n-label="@@accounting.fiscal-result.exporter.la.determination.03b0da45"
             [disabled]="loading() || !data()" (exportFormat)="onExportDetermination($event)" />
@@ -109,13 +109,13 @@ interface EditableModel {
           @if (canFinalize()) {
             <app-button variant="secondary" icon="pi pi-lock" type="button" (click)="finalize()"
               [disabled]="loading() || saving() || readonly()"
-              ariaLabel="Finaliser la feuille (cabinet en mode dossier délégué)" i18n="@@accounting.fiscal-result.finaliser.ad181d5f">Finaliser</app-button>
+              ariaLabel="Finaliser la feuille (cabinet en mode dossier délégué)" i18n-ariaLabel="@@accounting.fiscal-result.finaliser.la.feuille.cabinet.en.mode.dos.93a2e40b" i18n="@@accounting.fiscal-result.finaliser.ad181d5f">Finaliser</app-button>
           }
         </div>
       </app-accounting-filter-bar>
     </div>
 
-    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" (retry)="load()" />
+    <app-accounting-status-banner variant="error" [message]="error() ?? ''" [showRetry]="!!error()" retryLabel="Réessayer" i18n-retryLabel="@@accounting.fiscal-result.reessayer.c4f78b12" (retry)="load()" />
 
     @if (info(); as msg) {
       <div class="fr-info-banner" role="status"><i class="pi pi-check-circle" aria-hidden="true"></i><span>{{ msg }}</span></div>
@@ -129,7 +129,7 @@ interface EditableModel {
         </div>
       }
       @if (d.isFinalized) {
-        <div class="fr-lock-banner" role="status">
+        <div class="fr-lock-banner" role="status" i18n="@@accounting.fiscal-result.feuille.finalisee.lecture.seule.622c43f5">
           <i class="pi pi-lock" aria-hidden="true"></i>
           <span>Feuille finalisée{{ d.finalizedAt ? ' le ' + (d.finalizedAt | date : 'shortDate') : '' }} — lecture seule.</span>
         </div>
@@ -159,10 +159,10 @@ interface EditableModel {
             <p class="fr-formula" i18n="@@accounting.fiscal-result.resultat.comptable.resultat.avant.impot.is.compt.a7664da8">Résultat comptable = résultat avant impôt − IS comptabilisé</p>
             @if (suggestedAccountingResult() != null) {
               <div class="fr-suggest-row">
-                <span class="fr-hint">Résultat comptable calculé : {{ suggestedAccountingResult() | number : '1.3-3' }}</span>
+                <span class="fr-hint" i18n="@@accounting.fiscal-result.resultat.comptable.calcule.e5323181">Résultat comptable calculé : {{ suggestedAccountingResult() | number : '1.3-3' }}</span>
                 <app-button variant="ghost" size="sm" icon="pi pi-arrow-down-left" type="button"
                   (click)="applySuggestedAccountingResult()" [disabled]="readonly()"
-                  ariaLabel="Reprendre le résultat comptable calculé" i18n="@@accounting.fiscal-result.reprendre.1c56710b">Reprendre</app-button>
+                  ariaLabel="Reprendre le résultat comptable calculé" i18n-ariaLabel="@@accounting.fiscal-result.reprendre.le.resultat.comptable.calcule.4305db95" i18n="@@accounting.fiscal-result.reprendre.1c56710b">Reprendre</app-button>
               </div>
             }
             @if (model.taxpayerKind === 0) {
@@ -179,10 +179,10 @@ interface EditableModel {
             </div>
             @if (suggestedTurnover() > 0) {
               <div class="fr-suggest-row">
-                <span class="fr-hint">CA comptable calculé : {{ suggestedTurnover() | number : '1.3-3' }}</span>
+                <span class="fr-hint" i18n="@@accounting.fiscal-result.ca.comptable.calcule.08d13414">CA comptable calculé : {{ suggestedTurnover() | number : '1.3-3' }}</span>
                 <app-button variant="ghost" size="sm" icon="pi pi-arrow-down-left" type="button"
                   (click)="applySuggestedTurnover()" [disabled]="readonly()"
-                  ariaLabel="Reprendre le chiffre d'affaires comptable" i18n="@@accounting.fiscal-result.reprendre.1c56710b">Reprendre</app-button>
+                  ariaLabel="Reprendre le chiffre d'affaires comptable" i18n-ariaLabel="@@accounting.fiscal-result.reprendre.le.chiffre.d.affaires.comptabl.35c7e4b6" i18n="@@accounting.fiscal-result.reprendre.1c56710b">Reprendre</app-button>
               </div>
             }
             @if (caVarianceWarning(); as w) {
@@ -222,9 +222,9 @@ interface EditableModel {
                   @for (c of catalogReintegrations(); track c.code) { <option [value]="c.code">{{ c.label }}</option> }
                 </select>
                 <app-button variant="ghost" size="sm" icon="pi pi-plus" type="button" (click)="addFromCatalog(reCat.value, 0); reCat.value=''"
-                  [disabled]="readonly()" ariaLabel="Ajouter la réintégration sélectionnée" i18n="@@accounting.fiscal-result.catalogue.5a241023">Catalogue</app-button>
+                  [disabled]="readonly()" ariaLabel="Ajouter la réintégration sélectionnée" i18n-ariaLabel="@@accounting.fiscal-result.ajouter.la.reintegration.selectionnee.cccc5b49" i18n="@@accounting.fiscal-result.catalogue.5a241023">Catalogue</app-button>
                 <app-button variant="ghost" size="sm" icon="pi pi-plus" type="button" (click)="addLine(0)" [disabled]="readonly()"
-                  ariaLabel="Ajouter une ligne libre de réintégration" i18n="@@accounting.fiscal-result.ligne.libre.b78b7032">Ligne libre</app-button>
+                  ariaLabel="Ajouter une ligne libre de réintégration" i18n-ariaLabel="@@accounting.fiscal-result.ajouter.une.ligne.libre.de.reintegration.50b60139" i18n="@@accounting.fiscal-result.ligne.libre.b78b7032">Ligne libre</app-button>
               </div>
             </div>
             <ng-container [ngTemplateOutlet]="linesTpl" [ngTemplateOutletContext]="{ kind: 0 }"></ng-container>
@@ -239,9 +239,9 @@ interface EditableModel {
                   @for (c of catalogDeductions(); track c.code) { <option [value]="c.code">{{ c.label }}</option> }
                 </select>
                 <app-button variant="ghost" size="sm" icon="pi pi-plus" type="button" (click)="addFromCatalog(deCat.value, 1); deCat.value=''"
-                  [disabled]="readonly()" ariaLabel="Ajouter la déduction sélectionnée" i18n="@@accounting.fiscal-result.catalogue.5a241023">Catalogue</app-button>
+                  [disabled]="readonly()" ariaLabel="Ajouter la déduction sélectionnée" i18n-ariaLabel="@@accounting.fiscal-result.ajouter.la.deduction.selectionnee.01a693d4" i18n="@@accounting.fiscal-result.catalogue.5a241023">Catalogue</app-button>
                 <app-button variant="ghost" size="sm" icon="pi pi-plus" type="button" (click)="addLine(1)" [disabled]="readonly()"
-                  ariaLabel="Ajouter une ligne libre de déduction" i18n="@@accounting.fiscal-result.ligne.libre.b78b7032">Ligne libre</app-button>
+                  ariaLabel="Ajouter une ligne libre de déduction" i18n-ariaLabel="@@accounting.fiscal-result.ajouter.une.ligne.libre.de.deduction.d7628953" i18n="@@accounting.fiscal-result.ligne.libre.b78b7032">Ligne libre</app-button>
               </div>
             </div>
             <ng-container [ngTemplateOutlet]="linesTpl" [ngTemplateOutletContext]="{ kind: 1 }"></ng-container>
@@ -252,9 +252,9 @@ interface EditableModel {
               <h3 class="fr-card-title" i18n="@@accounting.fiscal-result.deficits.amortissements.differes.reportables.bd922f05">Déficits & amortissements différés reportables</h3>
               <div class="fr-add">
                 <app-button variant="ghost" size="sm" icon="pi pi-plus" type="button" (click)="addCarryForward(0)" [disabled]="readonly()"
-                  ariaLabel="Ajouter un déficit reportable" i18n="@@accounting.fiscal-result.deficit.3a860854">Déficit</app-button>
+                  ariaLabel="Ajouter un déficit reportable" i18n-ariaLabel="@@accounting.fiscal-result.ajouter.un.deficit.reportable.7a80915b" i18n="@@accounting.fiscal-result.deficit.3a860854">Déficit</app-button>
                 <app-button variant="ghost" size="sm" icon="pi pi-plus" type="button" (click)="addCarryForward(1)" [disabled]="readonly()"
-                  ariaLabel="Ajouter un amortissement différé" i18n="@@accounting.fiscal-result.amort.differe.6bcbc045">Amort. différé</app-button>
+                  ariaLabel="Ajouter un amortissement différé" i18n-ariaLabel="@@accounting.fiscal-result.ajouter.un.amortissement.differe.98e3a2ea" i18n="@@accounting.fiscal-result.amort.differe.6bcbc045">Amort. différé</app-button>
               </div>
             </div>
             @if (model.carryForwards.length === 0) {
@@ -276,7 +276,7 @@ interface EditableModel {
                         <input type="number" class="fr-yr" [(ngModel)]="cf.originYear" [disabled]="readonly()"
                           [max]="fiscalYear - 1" aria-label="Année d'origine" i18n-aria-label="@@accounting.fiscal-result.annee.d.origine.1d5b5d49" />
                         @if (!isOriginYearValid(cf)) {
-                          <span class="fr-yr-error" role="alert">Année d'origine invalide (doit être &lt; {{ fiscalYear }})</span>
+                          <span class="fr-yr-error" role="alert" i18n="@@accounting.fiscal-result.annee.d.origine.invalide.doit.etre.6b2d3ac6">Année d'origine invalide (doit être &lt; {{ fiscalYear }})</span>
                         }
                       </td>
                       <td class="fr-num"><input type="number" step="0.001" [(ngModel)]="cf.initialAmount" [disabled]="readonly()" aria-label="Montant initial" i18n-aria-label="@@accounting.fiscal-result.montant.initial.1a127883" /></td>
@@ -286,7 +286,7 @@ interface EditableModel {
                           aria-label="Année d'expiration (calculée automatiquement)" i18n-aria-label="@@accounting.fiscal-result.annee.d.expiration.calculee.automatiquement.22b048ad"
                           title="calculée automatiquement" i18n-title="@@accounting.fiscal-result.calculee.automatiquement.8bc241b3" placeholder="calculée automatiquement" i18n-placeholder="@@accounting.fiscal-result.calculee.automatiquement.8bc241b3" />
                       </td>
-                      <td><app-button variant="ghost" size="sm" icon="pi pi-trash" type="button" (click)="removeCarryForward($index)" [disabled]="readonly()" ariaLabel="Supprimer ce report" /></td>
+                      <td><app-button variant="ghost" size="sm" icon="pi pi-trash" type="button" (click)="removeCarryForward($index)" [disabled]="readonly()" ariaLabel="Supprimer ce report" i18n-ariaLabel="@@accounting.fiscal-result.supprimer.ce.report.2538bc39" /></td>
                     </tr>
                   }
                 </tbody>
@@ -312,7 +312,7 @@ interface EditableModel {
                 @if (d.computation.deficitGeneratedThisYear > 0) {
                   <tr class="fr-deficit"><td i18n="@@accounting.fiscal-result.deficit.genere.reportable.bae87c7e">Déficit généré (reportable)</td><td class="fr-num">{{ d.computation.deficitGeneratedThisYear | number : '1.3-3' }}</td></tr>
                 }
-                <tr><td>Impôt sur le résultat{{ d.computation.taxpayerKind === 0 ? ' (IS ' + (d.computation.appliedIsRate * 100 | number : '1.0-2') + ' %)' : loc_ui_tern_bareme_irpp_a5d313 }}</td><td class="fr-num">{{ d.computation.taxOnResult | number : '1.3-3' }}</td></tr>
+                <tr><td i18n="@@accounting.fiscal-result.impot.sur.le.resultat.7419068e">Impôt sur le résultat{{ d.computation.taxpayerKind === 0 ? ' (IS ' + (d.computation.appliedIsRate * 100 | number : '1.0-2') + ' %)' : loc_ui_tern_bareme_irpp_a5d313 }}</td><td class="fr-num">{{ d.computation.taxOnResult | number : '1.3-3' }}</td></tr>
                 <tr><td i18n="@@accounting.fiscal-result.minimum.d.impot.8689385e">Minimum d'impôt</td><td class="fr-num">{{ d.computation.minimumTax | number : '1.3-3' }}</td></tr>
                 <tr class="fr-sub"><td i18n="@@accounting.fiscal-result.impot.du.max.68b3784b">= Impôt dû (max)</td><td class="fr-num">{{ d.computation.taxDue | number : '1.3-3' }}</td></tr>
                 <tr><td i18n="@@accounting.fiscal-result.contribution.sociale.de.solidarite.css.40731cb7">+ Contribution sociale de solidarité (CSS)</td><td class="fr-num">{{ d.computation.css | number : '1.3-3' }}</td></tr>
@@ -348,7 +348,7 @@ interface EditableModel {
                   @if (line.isAutoSuggested) { <span class="fr-auto" title="Suggestion automatique" i18n-title="@@accounting.fiscal-result.suggestion.automatique.7351a28b" i18n="@@accounting.fiscal-result.auto.0d612c12">auto</span> }
                 </td>
                 <td class="fr-num"><input type="number" step="0.001" [(ngModel)]="line.amount" [disabled]="readonly()" aria-label="Montant" i18n-aria-label="@@accounting.fiscal-result.montant.4adcd9fc" /></td>
-                <td><app-button variant="ghost" size="sm" icon="pi pi-trash" type="button" (click)="removeLine(line)" [disabled]="readonly()" ariaLabel="Supprimer la ligne" /></td>
+                <td><app-button variant="ghost" size="sm" icon="pi pi-trash" type="button" (click)="removeLine(line)" [disabled]="readonly()" ariaLabel="Supprimer la ligne" i18n-ariaLabel="@@accounting.fiscal-result.supprimer.la.ligne.7e5f9ae0" /></td>
               </tr>
             }
           </tbody>

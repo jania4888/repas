@@ -236,11 +236,11 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
     <app-page-header
       title="Vitrine publique & rue 3D" i18n-title="@@settings.storefront.vitrine.publique.rue.3d.2f3995b8"
-      subtitle="Exposez une vitrine modérée sur la Rue InstaFact (opt-in, données publiques uniquement).">
+      subtitle="Exposez une vitrine modérée sur la Rue InstaFact (opt-in, données publiques uniquement)." i18n-subtitle="@@settings.storefront.exposez.une.vitrine.moderee.sur.la.rue.i.cf1cc278">
     </app-page-header>
 
     @if (!enabled) {
-      <p-message severity="warn" text="La fonctionnalité est désactivée côté client (environment)."></p-message>
+      <p-message severity="warn" text="La fonctionnalité est désactivée côté client (environment)." i18n-text="@@settings.storefront.la.fonctionnalite.est.desactivee.cote.cl.05346ca8"></p-message>
     } @else {
       @if (error()) {
         <p-message severity="error" [text]="error()!" role="alert"></p-message>
@@ -257,7 +257,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
             <p-message
               class="block mt-3"
               severity="info"
-              text="Votre vitrine a été transmise à la modération plateforme. Vous serez informé après décision (publication ou retour en brouillon avec motif)." />
+              text="Votre vitrine a été transmise à la modération plateforme. Vous serez informé après décision (publication ou retour en brouillon avec motif)." i18n-text="@@settings.storefront.votre.vitrine.a.ete.transmise.a.la.moder.93edffec" />
           }
           <p class="mt-3">
             @if (isPublished(profile()!.workflowStatus)) {
@@ -297,9 +297,9 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
 
         @if (canEditProfileFields()) {
           <p-card header="Contenu et habillage publics" i18n-header="@@settings.storefront.contenu.et.habillage.publics.482238e3" class="mt-3">
-            <p class="lede mb-3">
-              <ng-container i18n="@@settings.storefront.ces.champs.sont.visibles.apres.moderation.et.pub.77a89db2"> Ces champs sont visibles après modération et publication. Une </ng-container>
-              <strong i18n="@@settings.storefront.description.cb329146">description</strong> et une <strong i18n="@@settings.storefront.url.de.logo.public.a9ca3375">URL de logo public</strong> sont obligatoires pour soumettre
+            <p class="lede mb-3" i18n="@@settings.storefront.ces.champs.sont.visibles.apres.moderatio.eb75ca47">
+              <ng-container> Ces champs sont visibles après modération et publication. Une </ng-container>
+              <strong>description</strong> et une <strong>URL de logo public</strong> sont obligatoires pour soumettre
               la vitrine.
             </p>
             @if (moderationChecklistItems().length > 0) {
@@ -320,7 +320,7 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
               <input id="sf-displayName" pInputText [(ngModel)]="editForm.displayName" autocomplete="organization" />
             </div>
             <div class="field">
-              <label for="sf-tagline">Slogan (optionnel, max. {{ taglineMax }} car.)</label>
+              <label for="sf-tagline" i18n="@@settings.storefront.slogan.optionnel.max.car.8ef9ab4c">Slogan (optionnel, max. {{ taglineMax }} car.)</label>
               <input
                 id="sf-tagline"
                 pInputText
@@ -366,11 +366,11 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
               </div>
             </div>
             <div class="field">
-              <label for="sf-logo">URL du logo public (obligatoire pour soumission, max. {{ urlMax }} car.)</label>
+              <label for="sf-logo" i18n="@@settings.storefront.url.du.logo.public.obligatoire.pour.soum.e74984d1">URL du logo public (obligatoire pour soumission, max. {{ urlMax }} car.)</label>
               <input id="sf-logo" pInputText [(ngModel)]="editForm.publicLogoUrl" [maxlength]="urlMax" />
             </div>
             <div class="field">
-              <label for="sf-cover">URL image de couverture (optionnel, max. {{ urlMax }} car.)</label>
+              <label for="sf-cover" i18n="@@settings.storefront.url.image.de.couverture.optionnel.max.ca.1e3e25bc">URL image de couverture (optionnel, max. {{ urlMax }} car.)</label>
               <input id="sf-cover" pInputText [(ngModel)]="editForm.publicCoverImageUrl" [maxlength]="urlMax" />
             </div>
             <div class="field">
@@ -400,8 +400,8 @@ function editFormFromView(v: StorefrontProfileView): StorefrontEditForm {
         }
       } @else if (!loading() && profile() === null && !invalidStatusFromServer()) {
         <p-card header="Activer la vitrine (brouillon)" i18n-header="@@settings.storefront.activer.la.vitrine.brouillon.c4b94584">
-          <p class="mb-3">
-            <ng-container i18n="@@settings.storefront.les.cgu.de.publication.version.1e109255"> Les CGU de publication version </ng-container> <strong>{{ termsVersion }}</strong> seront enregistrées pour votre
+          <p class="mb-3" i18n="@@settings.storefront.les.cgu.de.publication.version.seront.en.c4be9557">
+            <ng-container> Les CGU de publication version </ng-container> <strong>{{ termsVersion }}</strong> seront enregistrées pour votre
             entreprise.
           </p>
           <div class="field">

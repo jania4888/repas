@@ -92,7 +92,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
           </span>
         }
         @if (heldCount > 0) {
-          <button class="pos-header__pill pos-header__pill--held" type="button" (click)="onOpenHeld.emit()" [title]="loc_ui_tern_en_attente_5baac0 + heldCount + ')'" [attr.aria-label]="loc_ui_tern_en_attente_b9cac2 + heldCount + loc_ui_tern_commandes_4f2b74">
+          <button class="pos-header__pill pos-header__pill--held" type="button" (click)="onOpenHeld.emit()" [title]="loc_ui_tern_en_attente_5baac0 + heldCount + ')'" [attr.aria-label]="loc_ui_tern_en_attente_b9cac2 + heldCount + loc_ui_tern_commandes_4f2b74" i18n="@@pos.components.en.attente.a6fb92ee">
             <i class="pi pi-pause"></i>
             <span>En attente ({{ heldCount }})</span>
           </button>
@@ -189,7 +189,7 @@ import { PosRegisterSessionService } from '../../services/pos-register-session.s
                   type="button"
                   class="pos-header__plus-item"
                   [class.pos-header__plus-item--active]="themeService.currentTheme() === t.id"
-                  (click)="setTheme(t.id); closeMenus()">
+                  (click)="setTheme(t.id); closeMenus()" i18n="@@pos.components.theme.3b1902f0">
                   <i class="pi pi-palette"></i>
                   <span>Theme : {{ t.label }}</span>
                 </button>

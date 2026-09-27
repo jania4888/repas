@@ -59,7 +59,7 @@ import {
   template: `
     <app-page-header
       title="Calcul DM" i18n-title="@@accounting.monthly-declaration.calcul.dm.7af61bf4"
-      subtitle="Évalue la configuration du dossier sur une période et rend le détail obtenu. Rien n’est déposé." />
+      subtitle="Évalue la configuration du dossier sur une période et rend le détail obtenu. Rien n’est déposé." i18n-subtitle="@@accounting.monthly-declaration.evalue.la.configuration.du.dossier.sur.u.9ae8e552" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -68,14 +68,14 @@ import {
         <app-accounting-status-banner
           variant="info"
           title="Calcul paramétré non activé" i18n-title="@@accounting.monthly-declaration.calcul.parametre.non.active.504c61d8"
-          message="Le calcul et le changement de régime sont indisponibles pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité." />
+          message="Le calcul et le changement de régime sont indisponibles pour tous les dossiers tant que l’administrateur de la plateforme n’a pas activé cette fonctionnalité." i18n-message="@@accounting.monthly-declaration.le.calcul.et.le.changement.de.regime.son.04a1c379" />
       }
     }
 
     @if (!canWrite()) {
       <app-accounting-status-banner
         variant="info"
-        message="Calcul réservé au cabinet comptable ouvrant le dossier : une société ne recalcule pas sa propre déclaration." />
+        message="Calcul réservé au cabinet comptable ouvrant le dossier : une société ne recalcule pas sa propre déclaration." i18n-message="@@accounting.monthly-declaration.calcul.reserve.au.cabinet.comptable.ouvr.febfac41" />
     }
 
     <div class="card dm-period">
@@ -126,8 +126,8 @@ import {
       @if (diagnostics(r); as list) {
         @if (list.length) {
           <section class="card dm-diags">
-            <h3 class="dm-diags__title">
-              <ng-container i18n="@@accounting.monthly-declaration.signalements.du.calcul.0119b230"> Signalements du calcul </ng-container>
+            <h3 class="dm-diags__title" i18n="@@accounting.monthly-declaration.signalements.du.calcul.erreur.s.avertiss.dacdbbf8">
+              <ng-container> Signalements du calcul </ng-container>
               <span class="dm-diags__counts">
                 {{ errorCount(r) }} erreur(s), {{ warningCount(r) }} avertissement(s)
               </span>

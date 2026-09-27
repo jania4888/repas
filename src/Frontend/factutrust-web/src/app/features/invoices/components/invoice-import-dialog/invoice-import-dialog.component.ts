@@ -41,7 +41,7 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
       [resizable]="false"
       [closable]="true"
       (onHide)="onHide()"
-      ariaLabel="Importer une facture depuis un fichier">
+      ariaLabel="Importer une facture depuis un fichier" i18n-ariaLabel="@@invoices.components.importer.une.facture.depuis.un.fichier.95405877">
 
       <input
         #fileInput
@@ -62,18 +62,18 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
                 @if (selectedFileName()) {
                   <span class="iid-filename">{{ selectedFileName() }}</span>
                 }
-                @if (elapsedSeconds() < 30) {
+                @if (elapsedSeconds() < 30) {<ng-container i18n="@@invoices.components.lecture.et.preparation.du.document.80e2b53a">
                   Lecture et préparation du document…
-                } @else {
+                </ng-container>} @else {<ng-container i18n="@@invoices.components.l.analyse.peut.prendre.jusqu.a.3.minutes.7ca553dc">
                   L'analyse peut prendre jusqu'à 3 minutes la première fois.
-                }
+                </ng-container>}
               </p>
               <app-button
                 variant="secondary"
                 icon="pi-times"
                 iconPos="left"
                 (click)="cancelImport()"
-                ariaLabel="Annuler l'import" i18n="@@invoices.components.annuler.49ba3292"> Annuler </app-button>
+                ariaLabel="Annuler l'import" i18n-ariaLabel="@@invoices.components.annuler.l.import.8c2b45d2" i18n="@@invoices.components.annuler.49ba3292"> Annuler </app-button>
             </div>
           }
           @case ('error') {
@@ -86,7 +86,7 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
                 icon="pi-refresh"
                 iconPos="left"
                 (click)="chooseFile()"
-                ariaLabel="Choisir un autre fichier" i18n="@@invoices.components.reessayer.895d416b"> Réessayer </app-button>
+                ariaLabel="Choisir un autre fichier" i18n-ariaLabel="@@invoices.components.choisir.un.autre.fichier.c0cbec19" i18n="@@invoices.components.reessayer.895d416b"> Réessayer </app-button>
             </div>
           }
           @default {
@@ -100,10 +100,10 @@ type ImportPhase = 'idle' | 'extracting' | 'error';
                 icon="pi-upload"
                 iconPos="left"
                 (click)="chooseFile()"
-                ariaLabel="Choisir un fichier à importer" i18n="@@invoices.components.choisir.un.fichier.75c27e25"> Choisir un fichier </app-button>
+                ariaLabel="Choisir un fichier à importer" i18n-ariaLabel="@@invoices.components.choisir.un.fichier.a.importer.6d6c3a02" i18n="@@invoices.components.choisir.un.fichier.75c27e25"> Choisir un fichier </app-button>
               <p class="iid-hint" i18n="@@invoices.components.taille.maximale.10.mo.8166532b">Taille maximale : 10 Mo</p>
               @if (modelReady() === true) {
-                <p class="iid-hint iid-hint-ready">
+                <p class="iid-hint iid-hint-ready" i18n="@@invoices.components.modele.ia.pret.ff2820a1">
                   <i class="pi pi-check-circle" aria-hidden="true"></i> Modèle IA prêt
                 </p>
               } @else if (modelReady() === false && warmUpMessage()) {

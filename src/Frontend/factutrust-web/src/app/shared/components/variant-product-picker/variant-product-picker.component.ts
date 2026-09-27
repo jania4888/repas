@@ -72,9 +72,9 @@ export type VariantPickerSelection = ProductSuggestion;
           </div>
           @if (selectedTemplate()) {
             <div class="grouped-step">
-              <label>Variantes ({{ childVariants().length }})</label>
+              <label i18n="@@shared.components.variant-product-picker.variant-product-picker.variantes.5bda7413">Variantes ({{ childVariants().length }})</label>
               @if (loadingChildren()) {
-                <p class="form-hint"><i class="pi pi-spin pi-spinner"></i> Chargement…</p>
+                <p class="form-hint" i18n="@@shared.components.variant-product-picker.variant-product-picker.chargement.73a97d98"><i class="pi pi-spin pi-spinner"></i> Chargement…</p>
               } @else {
                 <div class="variant-pills">
                   @for (child of childVariants(); track child.id) {

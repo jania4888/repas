@@ -43,7 +43,7 @@ import {
             </strong>
             @if (usedPercent > 0 || (budget?.budgetHt ?? project.budgetHt) > 0) {
               <p-progressBar [value]="usedPercent" [showValue]="false" styleClass="proj-detail-kpi-bar" />
-              <span class="proj-detail-kpi-sub">{{ usedPercent }} % consommé</span>
+              <span class="proj-detail-kpi-sub" i18n="@@projects.components.consomme.ad87ae4b">{{ usedPercent }} % consommé</span>
             }
           </div>
         </div>

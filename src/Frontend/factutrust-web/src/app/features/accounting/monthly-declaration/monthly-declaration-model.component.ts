@@ -41,7 +41,7 @@ import {
   template: `
     <app-page-header
       title="Modèle Intégration DM" i18n-title="@@accounting.monthly-declaration.modele.integration.dm.bf548515"
-      subtitle="Emporter la configuration d’un dossier dans un fichier, et l’appliquer à un autre" />
+      subtitle="Emporter la configuration d’un dossier dans un fichier, et l’appliquer à un autre" i18n-subtitle="@@accounting.monthly-declaration.emporter.la.configuration.d.un.dossier.d.f378c695" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
@@ -68,13 +68,13 @@ import {
       @if (!canWrite()) {
         <app-accounting-status-banner
           variant="info"
-          message="Import réservé au cabinet comptable ouvrant le dossier. L’export reste disponible." />
+          message="Import réservé au cabinet comptable ouvrant le dossier. L’export reste disponible." i18n-message="@@accounting.monthly-declaration.import.reserve.au.cabinet.comptable.ouvr.7a678a48" />
       }
 
       @if (canWrite() && linesDisabled()) {
         <app-accounting-status-banner
           variant="info"
-          message="Import indisponible : la déclaration mensuelle paramétrable est désactivée sur la plateforme. L’export reste disponible." />
+          message="Import indisponible : la déclaration mensuelle paramétrable est désactivée sur la plateforme. L’export reste disponible." i18n-message="@@accounting.monthly-declaration.import.indisponible.la.declaration.mensu.c9763f87" />
       }
 
       <p class="dm-block__text" i18n="@@accounting.monthly-declaration.les.rubriques.dont.le.code.est.absent.du.dossier.3eb61e10"> Les rubriques dont le code est absent du dossier sont créées. Une rubrique du dossier qui
@@ -119,14 +119,14 @@ import {
             <p class="dm-hint" i18n="@@accounting.monthly-declaration.ce.fichier.ne.dit.rien.des.familles.aucune.inclu.0ce77b0a"> Ce fichier ne dit rien des familles : aucune inclusion du dossier ne sera modifiée. </p>
           } @else {
             @if (s.includedFamilies.length) {
-              <p class="dm-hint dm-hint--flag">
-                <ng-container i18n="@@accounting.monthly-declaration.familles.que.le.fichier.demande.d.f9d37ab2"> Familles que le fichier demande d’</ng-container><strong i18n="@@accounting.monthly-declaration.inclure.9d9a2c10">inclure</strong> :
+              <p class="dm-hint dm-hint--flag" i18n="@@accounting.monthly-declaration.familles.que.le.fichier.demande.d.inclur.856a4115">
+                <ng-container> Familles que le fichier demande d’</ng-container><strong>inclure</strong> :
                 {{ s.includedFamilies.join(', ') }}. Leur inclusion change les montants déclarés dès
                 que le dossier calcule en mode paramétré.
               </p>
             }
             @if (s.excludedFamilies.length) {
-              <p class="dm-hint">
+              <p class="dm-hint" i18n="@@accounting.monthly-declaration.familles.que.le.fichier.demande.d.exclur.57049f11">
                 Familles que le fichier demande d’exclure : {{ s.excludedFamilies.join(', ') }}.
               </p>
             }
@@ -138,9 +138,9 @@ import {
         <input
           type="checkbox"
           [(ngModel)]="overwrite"
-          [disabled]="!canImport() || importing()" />
+          [disabled]="!canImport() || importing()" /><ng-container i18n="@@accounting.monthly-declaration.remplacer.les.rubriques.de.meme.code.au.ba00883f">
         Remplacer les rubriques de même code au lieu de les ignorer
-      </label>
+      </ng-container></label>
 
       <div class="dm-actions">
         <app-button
@@ -161,10 +161,10 @@ import {
               appliquer sa version. </p>
           }
           @if (r.skippedCodes.length) {
-            <p class="dm-hint">Codes déjà présents, laissés intacts : {{ r.skippedCodes.join(', ') }}</p>
+            <p class="dm-hint" i18n="@@accounting.monthly-declaration.codes.deja.presents.laisses.intacts.76ddabb0">Codes déjà présents, laissés intacts : {{ r.skippedCodes.join(', ') }}</p>
           }
           @if (r.unknownAccounts.length) {
-            <p class="dm-hint dm-hint--flag">
+            <p class="dm-hint dm-hint--flag" i18n="@@accounting.monthly-declaration.comptes.absents.du.plan.du.dossier.enreg.84328d0a">
               Comptes absents du plan du dossier, enregistrés quand même :
               {{ r.unknownAccounts.join(', ') }}
             </p>

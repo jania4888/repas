@@ -123,9 +123,9 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
             class="selection-bar"
             role="toolbar"
             aria-label="Barre d'actions pour la sélection multi-réponses" i18n-aria-label="@@ai-assistant.components.barre.d.actions.pour.la.selection.multi.reponses.3ffb0105">
-            <span class="selection-count">
+            <span class="selection-count"><ng-container i18n="@@ai-assistant.components.reponse.s.selectionnee.s.272c8013">
               {{ selection.count() }} réponse(s) sélectionnée(s)
-              @if (selection.atLimit()) {
+              </ng-container>@if (selection.atLimit()) {
                 <em class="selection-limit" i18n="@@ai-assistant.components.limite.atteinte.206cd640">— limite atteinte</em>
               }
             </span>
@@ -141,7 +141,7 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                 class="selection-btn primary"
                 (click)="openExportDialog()"
                 [disabled]="!selection.hasSelection()"
-                aria-label="Exporter en PowerPoint" i18n-aria-label="@@ai-assistant.components.exporter.en.powerpoint.1032c468">
+                aria-label="Exporter en PowerPoint" i18n-aria-label="@@ai-assistant.components.exporter.en.powerpoint.1032c468" i18n="@@ai-assistant.components.exporter.powerpoint.c0a138d4">
                 <i class="fa-solid fa-file-powerpoint" aria-hidden="true"></i>
                 Exporter PowerPoint
               </button>
@@ -187,8 +187,8 @@ import { AI_ASSISTANT_MARK_SRC } from '@core/constants/ai-assistant-brand';
                           <ng-container i18n="@@ai-assistant.components.relances.a.venir.7.j.b31a456b"> Relances à venir (7 j.) : </ng-container>
                           <strong>{{ b.upcomingRemindersCount }}</strong>
                         </li>
-                        <li>
-                          <ng-container i18n="@@ai-assistant.components.soldes.clients.616b2f83"> Soldes clients : </ng-container>
+                        <li i18n="@@ai-assistant.components.soldes.clients.comptes.7f786698">
+                          <ng-container> Soldes clients : </ng-container>
                           <strong>{{ b.totalClientBalances | number: '1.3-3' }} {{ b.currency }}</strong>
                           ({{ b.clientsWithBalanceCount }} comptes)
                         </li>

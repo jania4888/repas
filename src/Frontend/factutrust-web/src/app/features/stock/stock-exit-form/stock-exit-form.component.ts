@@ -43,7 +43,7 @@ import { ConfirmationService } from '@core/services/confirmation.service';
     
     <app-page-header 
       title="Nouvelle sortie de stock" i18n-title="@@stock.stock-exit-form.nouvelle.sortie.de.stock.8989c4d6" 
-      subtitle="Enregistrez une sortie de marchandise de votre entrepôt">
+      subtitle="Enregistrez une sortie de marchandise de votre entrepôt" i18n-subtitle="@@stock.stock-exit-form.enregistrez.une.sortie.de.marchandise.de.954f60f4">
       <app-button 
         variant="outline"
         icon="pi-times"
@@ -94,10 +94,10 @@ import { ConfirmationService } from '@core/services/confirmation.service';
               </div>
             }
             @if (productsLoaded && products.length === 0) {
-              <small class="form-hint">
-                <ng-container i18n="@@stock.stock-exit-form.aucun.produit.avec.gestion.de.stock.7ebe6e80"> Aucun produit avec gestion de stock. </ng-container>
-                <a routerLink="/products" i18n="@@stock.stock-exit-form.activer.sur.un.produit.existant.8bb7a382">Activer sur un produit existant</a> ou
-                <a routerLink="/products/new" i18n="@@stock.stock-exit-form.creer.un.produit.f389562a">créer un produit</a>.
+              <small class="form-hint" i18n="@@stock.stock-exit-form.aucun.produit.avec.gestion.de.stock.acti.792ada2c">
+                <ng-container> Aucun produit avec gestion de stock. </ng-container>
+                <a routerLink="/products">Activer sur un produit existant</a> ou
+                <a routerLink="/products/new">créer un produit</a>.
               </small>
             }
           </div>

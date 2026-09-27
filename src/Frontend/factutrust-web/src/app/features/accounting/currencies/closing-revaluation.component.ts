@@ -23,16 +23,16 @@ const MONTHS = [
   imports: [AccountingAmountPipe, CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
     <app-page-header title="Réévaluation de clôture" i18n-title="@@accounting.currencies.reevaluation.de.cloture.4e052044"
-                     subtitle="Écarts de conversion sur les positions en devise, à la clôture d'une période" />
+                     subtitle="Écarts de conversion sur les positions en devise, à la clôture d'une période" i18n-subtitle="@@accounting.currencies.ecarts.de.conversion.sur.les.positions.e.dbcde668" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card cr-block">
-      <p class="cr-doctrine">
+      <p class="cr-doctrine" i18n="@@accounting.currencies.les.positions.en.devise.encore.ouvertes.0ef911ac">
         Les positions en devise encore ouvertes — comptes de tiers et de trésorerie non lettrés —
-        sont réévaluées au taux de clôture. L'écart va en <strong i18n="@@accounting.currencies.ecarts.de.conversion.724cde27">écarts de conversion</strong>,
+        sont réévaluées au taux de clôture. L'écart va en <strong>écarts de conversion</strong>,
         comptes de régularisation du bilan, et l'écriture est
-        <strong i18n="@@accounting.currencies.contre.passee.automatiquement.au.premier.jour.de.51efa181">contre-passée automatiquement au premier jour de la période suivante</strong> :
+        <strong>contre-passée automatiquement au premier jour de la période suivante</strong> :
         sans cela, la réévaluation du mois d'après se cumulerait à celle-ci.
       </p>
 
@@ -104,7 +104,7 @@ const MONTHS = [
           <div class="cr-result-row"><dt i18n="@@accounting.currencies.positions.reevaluees.3b1cbe6d">Positions réévaluées</dt><dd>{{ res.positionCount }}</dd></div>
           <div class="cr-result-row"><dt i18n="@@accounting.currencies.total.gains.latents.2c087428">Total gains latents</dt><dd class="cr-mono">{{ res.totalLatentGain | accountingAmount }}</dd></div>
           <div class="cr-result-row"><dt i18n="@@accounting.currencies.total.pertes.latentes.ec6f82b1">Total pertes latentes</dt><dd class="cr-mono">{{ res.totalLatentLoss | accountingAmount }}</dd></div>
-          <div class="cr-result-row"><dt i18n="@@accounting.currencies.ecriture.de.contre.passation.cca3e2a8">Écriture de contre-passation</dt><dd>générée au {{ nextPeriodStart() | date : 'shortDate' }}</dd></div>
+          <div class="cr-result-row"><dt i18n="@@accounting.currencies.ecriture.de.contre.passation.cca3e2a8">Écriture de contre-passation</dt><dd i18n="@@accounting.currencies.generee.au.4d5d70ac">générée au {{ nextPeriodStart() | date : 'shortDate' }}</dd></div>
           @if (res.provisionEntryId) {
             <div class="cr-result-row"><dt i18n="@@accounting.currencies.provision.e11d5b69">Provision</dt><dd i18n="@@accounting.currencies.constatee.b4961337">constatée</dd></div>
           }

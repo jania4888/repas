@@ -11,10 +11,10 @@ import { formatDateTimeFr, statusClass, statusLabel } from './vat-declaration.vi
     @if (declaration; as d) {
       <div class="card vat-zone-card">
         <h3 class="vat-zone-title" i18n="@@accounting.vat-declaration.2.statut.de.la.declaration.8455bb1d">2. Statut de la déclaration</h3>
-        <div class="vat-status-header">
+        <div class="vat-status-header"><ng-container i18n="@@accounting.vat-declaration.version.77603db3">
           <span class="vat-status-badge" [class]="badgeClass">{{ badgeLabel }}</span>
           <span class="vat-version">Version {{ d.version }}</span>
-          @if (d.isRectificative) {
+          </ng-container>@if (d.isRectificative) {
             <span class="vat-rectificative" i18n="@@accounting.vat-declaration.rectificative.886aa2ba">RECTIFICATIVE</span>
           }
         </div>

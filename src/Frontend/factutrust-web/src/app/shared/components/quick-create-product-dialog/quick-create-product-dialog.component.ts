@@ -297,14 +297,14 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
               icon="pi-times"
               iconPos="left"
               (click)="close()"
-              ariaLabel="Annuler" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292"> Annuler </app-button>
+              ariaLabel="Annuler" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.e063e8ff" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292"> Annuler </app-button>
             <app-button
               variant="primary"
               icon="pi-plus"
               iconPos="left"
               [disabled]="submitting() || !canSubmit()"
               (click)="submit()"
-              ariaLabel="Créer et ajouter">
+              ariaLabel="Créer et ajouter" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.et.ajouter.e972f565">
               {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_et_ajouter_b6333d }}
             </app-button>
           </div>
@@ -322,7 +322,7 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
         [closable]="true"
         (onHide)="onHide()"
         [contentStyle]="{ overflow: 'visible' }"
-        ariaLabel="Créer un nouveau produit">
+        ariaLabel="Créer un nouveau produit" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.un.nouveau.produit.e51cec1d">
         <ng-container *ngTemplateOutlet="formContent"></ng-container>
         <ng-template pTemplate="footer">
           <div class="dialog-footer">
@@ -331,14 +331,14 @@ const VAT_OPTIONS: VatOption[] = PRODUCT_VAT_OPTIONS;
               icon="pi-times"
               iconPos="left"
               (click)="close()"
-              ariaLabel="Annuler" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292"> Annuler </app-button>
+              ariaLabel="Annuler" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.e063e8ff" i18n="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.annuler.49ba3292"> Annuler </app-button>
             <app-button
               variant="primary"
               icon="pi-plus"
               iconPos="left"
               [disabled]="submitting() || !canSubmit()"
               (click)="submit()"
-              ariaLabel="Créer et ajouter">
+              ariaLabel="Créer et ajouter" i18n-ariaLabel="@@shared.components.quick-create-product-dialog.quick-create-product-dialog.creer.et.ajouter.e972f565">
               {{ submitting() ? loc_ui_tern_creation_dca950 : loc_ui_tern_creer_et_ajouter_b6333d }}
             </app-button>
           </div>

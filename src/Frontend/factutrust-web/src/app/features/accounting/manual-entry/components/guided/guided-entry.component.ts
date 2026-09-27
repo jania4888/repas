@@ -172,7 +172,7 @@ const PAYMENT_METHODS = [
                   side="debit"
                   [fractionDigits]="store.currencyDecimals()"
                   inputId="guided-amount-ttc"
-                  ariaLabel="Montant TTC" />
+                  ariaLabel="Montant TTC" i18n-ariaLabel="@@accounting.manual-entry.montant.ttc.237411f5" />
               </div>
               <div class="form-field">
                 <label i18n="@@accounting.manual-entry.montant.ht.3df1d6fe">Montant HT</label>
@@ -182,7 +182,7 @@ const PAYMENT_METHODS = [
                   side="debit"
                   [fractionDigits]="store.currencyDecimals()"
                   inputId="guided-amount-ht"
-                  ariaLabel="Montant HT" />
+                  ariaLabel="Montant HT" i18n-ariaLabel="@@accounting.manual-entry.montant.ht.b95914cb" />
               </div>
               <div class="form-field">
                 <label i18n="@@accounting.manual-entry.montant.tva.f0c1b7cc">Montant TVA</label>
@@ -192,13 +192,13 @@ const PAYMENT_METHODS = [
                   side="credit"
                   [fractionDigits]="store.currencyDecimals()"
                   inputId="guided-amount-vat"
-                  ariaLabel="Montant TVA" />
+                  ariaLabel="Montant TVA" i18n-ariaLabel="@@accounting.manual-entry.montant.tva.d1afc4f8" />
               </div>
             </div>
             <div class="guided-options">
-              <label><input type="checkbox" [checked]="store.isBalanced()" disabled /> Écriture équilibrée (vérification auto)</label>
-              <label><input type="checkbox" [checked]="store.autoSuggestAccounts()" (change)="store.autoSuggestAccounts.set($any($event.target).checked)" /> Proposition automatique des comptes</label>
-              <label><input type="checkbox" [checked]="store.rememberGuidedPrefs()" (change)="store.rememberGuidedPrefs.set($any($event.target).checked)" /> Mémoriser ces informations</label>
+              <label><input type="checkbox" [checked]="store.isBalanced()" disabled /><ng-container i18n="@@accounting.manual-entry.ecriture.equilibree.verification.auto.255148e6"> Écriture équilibrée (vérification auto)</ng-container></label>
+              <label><input type="checkbox" [checked]="store.autoSuggestAccounts()" (change)="store.autoSuggestAccounts.set($any($event.target).checked)" /><ng-container i18n="@@accounting.manual-entry.proposition.automatique.des.comptes.8776cce0"> Proposition automatique des comptes</ng-container></label>
+              <label><input type="checkbox" [checked]="store.rememberGuidedPrefs()" (change)="store.rememberGuidedPrefs.set($any($event.target).checked)" /><ng-container i18n="@@accounting.manual-entry.memoriser.ces.informations.087e4f98"> Mémoriser ces informations</ng-container></label>
             </div>
             <div class="guided-actions">
               <button type="button" class="btn btn-outline-secondary" (click)="prevStep()" i18n="@@accounting.manual-entry.precedent.a527f171">Précédent</button>

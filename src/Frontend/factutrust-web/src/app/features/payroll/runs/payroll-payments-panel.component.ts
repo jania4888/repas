@@ -33,7 +33,7 @@ import { PayrollAmountPipe, PayrollSectionComponent } from '../shared';
                 <strong>{{ p.amount | payrollAmount }}</strong>
               </div>
               @if (p.reference) {
-                <div class="text-secondary">Réf. {{ p.reference }}</div>
+                <div class="text-secondary" i18n="@@payroll.runs.ref.ed57a16b">Réf. {{ p.reference }}</div>
               }
               <ul class="lines">
                 @for (l of p.lines; track l.id) {

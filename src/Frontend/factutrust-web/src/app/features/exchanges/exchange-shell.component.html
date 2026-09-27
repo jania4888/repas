@@ -77,7 +77,7 @@
           title="Espace d'échange" i18n-title="@@exchanges.exchange-shell.espace.d.echange.fe278289"
           [description]="emptyHint()!"
           [showAction]="!isFirm()"
-          actionLabel="Configurer le cabinet"
+          actionLabel="Configurer le cabinet" i18n-actionLabel="@@exchanges.exchange-shell.configurer.le.cabinet.3a8f4e65"
           actionRoute="/settings/accounting-firm"
         />
       </div>
@@ -111,7 +111,7 @@
                 [status]="threadBadge(thread.status)"
                 [label]="statusLabel(thread.status)"
               />
-              <span class="secure-tag">
+              <span class="secure-tag" i18n="@@exchanges.exchange-shell.echange.securise.e947cbf6">
                 <i class="pi pi-lock" aria-hidden="true"></i>
                 Échange sécurisé
               </span>
@@ -170,12 +170,12 @@
                       [disabled]="loadingOlder()"
                       (click)="loadOlderMessages()"
                     >
-                      @if (loadingOlder()) {
+                      @if (loadingOlder()) {<ng-container i18n="@@exchanges.exchange-shell.chargement.f8c7a9cd">
                         <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
                         Chargement…
-                      } @else {
+                      </ng-container>} @else {<ng-container i18n="@@exchanges.exchange-shell.charger.les.messages.precedents.fb66fa12">
                         Charger les messages précédents
-                      }
+                      </ng-container>}
                     </button>
                   </div>
                 }
@@ -209,7 +209,7 @@
                         @if (item.message.readReceipts.length) {
                           <div class="receipts">
                             @for (r of item.message.readReceipts; track r.userId) {
-                              <span>Lu par {{ r.displayName || 'utilisateur' }} à {{ r.readAt | date: 'HH:mm' }}</span>
+                              <span i18n="@@exchanges.exchange-shell.lu.par.a.c37da89f">Lu par {{ r.displayName || 'utilisateur' }} à {{ r.readAt | date: 'HH:mm' }}</span>
                             }
                           </div>
                         }
@@ -220,7 +220,7 @@
                   <app-empty-state
                     icon="pi-comments"
                     title="Aucun message" i18n-title="@@exchanges.exchange-shell.aucun.message.35f8de34"
-                    description="Démarrez la conversation avec votre interlocuteur."
+                    description="Démarrez la conversation avec votre interlocuteur." i18n-description="@@exchanges.exchange-shell.demarrez.la.conversation.avec.votre.inte.92e39be5"
                     [showAction]="false"
                   />
                 }
@@ -283,10 +283,10 @@
                 <div class="panel__toolbar">
                   <h3 i18n="@@exchanges.exchange-shell.documents.partages.3c2cdfbc">Documents partagés</h3>
                   @if (isOpen(thread.status)) {
-                    <label class="btn primary file-btn">
+                    <label class="btn primary file-btn"><ng-container i18n="@@exchanges.exchange-shell.partager.un.document.61c101a3">
                       <i class="pi pi-upload" aria-hidden="true"></i>
                       Partager un document
-                      <input type="file" hidden (change)="onShareDocumentSelected($event)" />
+                      </ng-container><input type="file" hidden (change)="onShareDocumentSelected($event)" />
                     </label>
                   }
                 </div>
@@ -294,9 +294,9 @@
                   <app-empty-state
                     icon="pi-folder-open"
                     title="Aucun document" i18n-title="@@exchanges.exchange-shell.aucun.document.1e1d774d"
-                    description="Partagez un fichier pour le rendre disponible dans cet échange."
+                    description="Partagez un fichier pour le rendre disponible dans cet échange." i18n-description="@@exchanges.exchange-shell.partagez.un.fichier.pour.le.rendre.dispo.5eb95a6d"
                     [showAction]="isOpen(thread.status)"
-                    actionLabel="Partager un document"
+                    actionLabel="Partager un document" i18n-actionLabel="@@exchanges.exchange-shell.partager.un.document.5b395068"
                     (actionClick)="shareDocTrigger.click()"
                   />
                   <input #shareDocTrigger type="file" hidden (change)="onShareDocumentSelected($event)" />
@@ -393,9 +393,9 @@
                   <app-empty-state
                     icon="pi-check-square"
                     title="Aucune tâche" i18n-title="@@exchanges.exchange-shell.aucune.tache.5127b17d"
-                    description="Planifiez une tâche ou un rendez-vous lié à cet échange."
+                    description="Planifiez une tâche ou un rendez-vous lié à cet échange." i18n-description="@@exchanges.exchange-shell.planifiez.une.tache.ou.un.rendez.vous.li.bfa65dd6"
                     [showAction]="isOpen(thread.status)"
-                    actionLabel="Créer une tâche"
+                    actionLabel="Créer une tâche" i18n-actionLabel="@@exchanges.exchange-shell.creer.une.tache.dec548b3"
                     (actionClick)="showNewTask.set(true)"
                   />
                 } @else {
@@ -411,10 +411,10 @@
                             />
                           </div>
                           @if (t.dueDate) {
-                            <div class="meta" [class.overdue]="isTaskOverdue(t)">
+                            <div class="meta" [class.overdue]="isTaskOverdue(t)"><ng-container i18n="@@exchanges.exchange-shell.echeance.1aedf761">
                               <i class="pi pi-calendar" aria-hidden="true"></i>
                               Échéance {{ t.dueDate | date: 'dd/MM/yyyy' }}
-                              @if (isTaskOverdue(t)) {
+                              </ng-container>@if (isTaskOverdue(t)) {
                                 <span class="overdue-label" i18n="@@exchanges.exchange-shell.en.retard.40c1dde3">En retard</span>
                               }
                             </div>
@@ -444,7 +444,7 @@
                   <app-empty-state
                     icon="pi-history"
                     title="Aucun événement" i18n-title="@@exchanges.exchange-shell.aucun.evenement.6143177e"
-                    description="L'activité de cet échange apparaîtra ici."
+                    description="L'activité de cet échange apparaîtra ici." i18n-description="@@exchanges.exchange-shell.l.activite.de.cet.echange.apparaitra.ici.a100e893"
                     [showAction]="false"
                   />
                 } @else {
@@ -531,10 +531,10 @@
                   icon="pi-plus"
                   (clicked)="showNewRequest.set(true); setTab('demandes')"
                  i18n="@@exchanges.exchange-shell.nouvelle.demande.0a6e5d2f"> Nouvelle demande </app-button>
-                <label class="btn file-btn quick-file">
+                <label class="btn file-btn quick-file"><ng-container i18n="@@exchanges.exchange-shell.partager.un.document.61c101a3">
                   <i class="pi pi-upload" aria-hidden="true"></i>
                   Partager un document
-                  <input type="file" hidden (change)="onShareDocumentSelected($event)" />
+                  </ng-container><input type="file" hidden (change)="onShareDocumentSelected($event)" />
                 </label>
                 <app-button
                   variant="ghost"

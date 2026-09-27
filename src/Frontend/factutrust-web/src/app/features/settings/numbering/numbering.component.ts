@@ -244,16 +244,16 @@ import { NumberingDocTabsComponent } from './components/numbering-doc-tabs.compo
             styleClass="start-number-field">
           </p-inputNumber>
           @if (!startNumberValid()) {
-            <p class="start-number-error">
+            <p class="start-number-error" i18n="@@settings.numbering.le.numero.de.depart.doit.etre.au.minimum.5cb7b6fa">
               Le numéro de départ doit être au minimum {{ minimumStartNumber() }}.
             </p>
           }
           <p class="panel-hint">
-            @if (hasIssuedDocuments() || isFormatLocked()) {
+            @if (hasIssuedDocuments() || isFormatLocked()) {<ng-container i18n="@@settings.numbering.des.documents.existent.deja.le.numero.de.1c1ca836">
               Des documents existent déjà : le numéro de départ doit être supérieur au dernier numéro émis.
-            } @else {
+            </ng-container>} @else {<ng-container i18n="@@settings.numbering.le.prochain.document.utilisera.au.minimu.b339b381">
               Le prochain document utilisera au minimum ce numéro de départ.
-            }
+            </ng-container>}
           </p>
         </div>
       </div>

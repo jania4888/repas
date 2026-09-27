@@ -50,7 +50,7 @@ import { formatDateTimeFr } from '../vat-declaration/vat-declaration.view-model'
         </dl>
 
         @if (s.parityOverrideReason) {
-          <p class="dm-mode__override">
+          <p class="dm-mode__override" i18n="@@accounting.monthly-declaration.bascule.par.derogation.de.ee695e54">
             Bascule par dérogation de {{ s.parityOverrideBy }} : « {{ s.parityOverrideReason }} »
           </p>
         }

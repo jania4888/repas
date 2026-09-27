@@ -67,7 +67,7 @@ const REVEAL_STEP = 25;
             [cdkDropListDisabled]="!canDragDrop()"
             (cdkDropListDropped)="drop($event, col.value)">
             @if (col.visibleItems.length === 0) {
-              <div class="kanban-empty">
+              <div class="kanban-empty" i18n="@@studio.views.aucune.fiche.dans.cette.colonne.a9f5fca9">
                 <i class="fa-solid fa-inbox"></i>
                 Aucune fiche dans cette colonne
               </div>
@@ -108,7 +108,7 @@ const REVEAL_STEP = 25;
 
           @if (col.remaining > 0) {
             <div class="kanban-col__more">
-              <button type="button" class="p-button p-button-text" (click)="showMore(col.value)">
+              <button type="button" class="p-button p-button-text" (click)="showMore(col.value)" i18n="@@studio.views.afficher.plus.restantes.f6a64e2c">
                 Afficher plus ({{ col.remaining }} restantes)
               </button>
             </div>

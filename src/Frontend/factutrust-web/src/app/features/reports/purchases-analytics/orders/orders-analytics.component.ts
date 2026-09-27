@@ -25,7 +25,7 @@ import {
   template: `
     <app-page-header
       title="Analyse des commandes" i18n-title="@@reports.purchases-analytics.analyse.des.commandes.575afd26"
-      subtitle="Taux de conversion bons de commande → facture, délais et panier moyen">
+      subtitle="Taux de conversion bons de commande → facture, délais et panier moyen" i18n-subtitle="@@reports.purchases-analytics.taux.de.conversion.bons.de.commande.fact.09fdb607">
       <app-button
         variant="secondary"
         icon="pi-print"
@@ -105,7 +105,7 @@ import {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.purchases-analytics.transformation.bon.de.commande.facture.c5de5897">Transformation bon de commande → facture</h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.purchases-analytics.proportion.des.commandes.ayant.donne.lie.72aff46f">
             <i class="pi pi-info-circle"></i>
             Proportion des commandes ayant donné lieu à une facture fournisseur
           </span>
@@ -121,7 +121,7 @@ import {
               role="progressbar">
             </div>
           </div>
-          <p class="conversion-label">{{ data()!.invoicedOrders }} / {{ data()!.totalOrders }} commandes facturées</p>
+          <p class="conversion-label" i18n="@@reports.purchases-analytics.commandes.facturees.39d48d06">{{ data()!.invoicedOrders }} / {{ data()!.totalOrders }} commandes facturées</p>
         </div>
       </div>
     }
@@ -130,7 +130,7 @@ import {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.purchases-analytics.commandes.par.statut.0f600a16">Commandes par statut</h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.purchases-analytics.repartition.des.bons.de.commande.sur.la.3b40df17">
             <i class="pi pi-info-circle"></i>
             Répartition des bons de commande sur la période
           </span>
@@ -156,7 +156,7 @@ import {
       <div class="section">
         <div class="section-header">
           <h2 class="section-title" i18n="@@reports.purchases-analytics.top.fournisseurs.commandes.68ee4399">Top fournisseurs (commandes)</h2>
-          <span class="section-hint">
+          <span class="section-hint" i18n="@@reports.purchases-analytics.par.nombre.de.bons.de.commande.957d13f8">
             <i class="pi pi-info-circle"></i>
             Par nombre de bons de commande
           </span>

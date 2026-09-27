@@ -59,9 +59,9 @@ import { PosStateService } from '../../services/pos-state.service';
         <span class="product-card__name" [title]="product.name">{{ product.name }}</span>
         <span class="product-card__code">{{ product.code }}</span>
         @if (product.isStockManaged && product.quantityAvailable != null) {
-          <span class="product-card__stock-line" aria-hidden="true">
+          <span class="product-card__stock-line" aria-hidden="true"><ng-container i18n="@@pos.components.dispo.47531188">
             Dispo : {{ formatQuantity(product.quantityAvailable) }}
-            @if (product.unit) {
+            </ng-container>@if (product.unit) {
               <span class="product-card__stock-unit">{{ product.unit }}</span>
             }
           </span>

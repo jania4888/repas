@@ -58,13 +58,13 @@ interface EditOrderLine {
     } @else if (po()) {
       <app-page-header
         [title]="loc_ui_tern_modifier_042082 + po()!.number"
-        subtitle="Modifiez les informations et les lignes de cette commande brouillon.">
+        subtitle="Modifiez les informations et les lignes de cette commande brouillon." i18n-subtitle="@@purchase-orders.purchase-order-edit.modifiez.les.informations.et.les.lignes.aa5689c1">
       </app-page-header>
 
       <div class="form-container">
         <!-- Section 1: Header -->
         <div class="form-card">
-          <h3 class="card-title"><i class="pi pi-building"></i> En-tête de commande</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-edit.en.tete.de.commande.0b2e4158"><i class="pi pi-building"></i> En-tête de commande</h3>
           <div class="form-grid">
             <div class="form-group">
               <label i18n="@@purchase-orders.purchase-order-edit.fournisseur.97d91d89">Fournisseur</label>
@@ -102,7 +102,7 @@ interface EditOrderLine {
         <!-- Section 2: Lines -->
         <div class="form-card">
           <div class="card-header">
-            <h3 class="card-title"><i class="pi pi-list"></i> Lignes de commande</h3>
+            <h3 class="card-title" i18n="@@purchase-orders.purchase-order-edit.lignes.de.commande.7ce0f6c8"><i class="pi pi-list"></i> Lignes de commande</h3>
             <app-button variant="secondary" icon="pi-plus" iconPos="left" size="sm"
               (click)="addLine()" i18n="@@purchase-orders.purchase-order-edit.ajouter.une.ligne.ba241fd4"> Ajouter une ligne </app-button>
           </div>
@@ -202,7 +202,7 @@ interface EditOrderLine {
 
         <!-- Section 3: Summary -->
         <div class="form-card">
-          <h3 class="card-title"><i class="pi pi-calculator"></i> Récapitulatif</h3>
+          <h3 class="card-title" i18n="@@purchase-orders.purchase-order-edit.recapitulatif.fc426033"><i class="pi pi-calculator"></i> Récapitulatif</h3>
 
           <div class="summary-layout">
             <div class="notes-section">

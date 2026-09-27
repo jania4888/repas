@@ -42,7 +42,7 @@ interface StageOption {
     TableTotalsBarComponent
   ],
   template: `
-    <app-page-header title="Opportunités" i18n-title="@@crm.opportunities.opportunites.0dbfa3c5" subtitle="Pipeline commercial" />
+    <app-page-header title="Opportunités" i18n-title="@@crm.opportunities.opportunites.0dbfa3c5" subtitle="Pipeline commercial" i18n-subtitle="@@crm.opportunities.pipeline.commercial.01e507ba" />
     <div class="card p-3 mb-3 opportunity-toolbar">
       <div class="toolbar-row">
         <p-select
@@ -64,8 +64,8 @@ interface StageOption {
             (ngModelChange)="load()"></p-checkbox>
           <label for="oppMineOnly" i18n="@@crm.opportunities.mes.opportunites.a7f22363">Mes opportunités</label>
         </div>
-        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser la liste" i18n="@@crm.opportunities.actualiser.9d3b2a7d"> Actualiser </app-button>
-        <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle opportunité" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57"> Nouvelle opportunité </app-button>
+        <app-button variant="secondary" icon="pi pi-refresh" iconPos="left" (click)="load()" ariaLabel="Actualiser la liste" i18n-ariaLabel="@@crm.opportunities.actualiser.la.liste.fefe8aed" i18n="@@crm.opportunities.actualiser.9d3b2a7d"> Actualiser </app-button>
+        <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Nouvelle opportunité" i18n-ariaLabel="@@crm.opportunities.nouvelle.opportunite.a3db79da" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57"> Nouvelle opportunité </app-button>
       </div>
     </div>
     @if (error()) {
@@ -102,7 +102,7 @@ interface StageOption {
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-angle-right"
-                  ariaLabel="Avancer l’opportunité"
+                  ariaLabel="Avancer l’opportunité" i18n-ariaLabel="@@crm.opportunities.avancer.l.opportunite.bca2a08d"
                   title="Avancer" i18n-title="@@crm.opportunities.avancer.ddc5c41f"
                   [iconAlwaysVisible]="true"
                   (click)="advance(o.id)"></app-button>
@@ -111,7 +111,7 @@ interface StageOption {
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-check"
-                  ariaLabel="Marquer comme gagnée"
+                  ariaLabel="Marquer comme gagnée" i18n-ariaLabel="@@crm.opportunities.marquer.comme.gagnee.ff0cfe6d"
                   title="Gagnée" i18n-title="@@crm.opportunities.gagnee.7dffc692"
                   [iconAlwaysVisible]="true"
                   (click)="win(o.id)"></app-button>
@@ -120,7 +120,7 @@ interface StageOption {
                   size="sm"
                   [iconOnly]="true"
                   icon="pi pi-times"
-                  ariaLabel="Marquer comme perdue"
+                  ariaLabel="Marquer comme perdue" i18n-ariaLabel="@@crm.opportunities.marquer.comme.perdue.b62a03f3"
                   title="Perdue" i18n-title="@@crm.opportunities.perdue.2b13797b"
                   [iconAlwaysVisible]="true"
                   (click)="openLose(o)"></app-button>
@@ -130,7 +130,7 @@ interface StageOption {
                 size="sm"
                 [iconOnly]="true"
                 icon="pi pi-pencil"
-                ariaLabel="Modifier l’opportunité"
+                ariaLabel="Modifier l’opportunité" i18n-ariaLabel="@@crm.opportunities.modifier.l.opportunite.ae33501b"
                 title="Modifier" i18n-title="@@crm.opportunities.modifier.f260e757"
                 (click)="openEdit(o)"></app-button>
             </div>
@@ -143,7 +143,7 @@ interface StageOption {
             <div class="empty-state">
               <p class="empty-title" i18n="@@crm.opportunities.aucune.opportunite.pour.ces.criteres.56b4694e">Aucune opportunité pour ces critères</p>
               <p class="empty-hint" i18n="@@crm.opportunities.creez.une.opportunite.pour.suivre.un.deal.dans.l.5ed28c3c">Créez une opportunité pour suivre un deal dans le pipeline.</p>
-              <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une opportunité" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57"> Nouvelle opportunité </app-button>
+              <app-button variant="primary" icon="pi pi-plus" iconPos="left" (click)="openCreate()" ariaLabel="Créer une opportunité" i18n-ariaLabel="@@crm.opportunities.creer.une.opportunite.2cbd295d" i18n="@@crm.opportunities.nouvelle.opportunite.ffadea57"> Nouvelle opportunité </app-button>
             </div>
           </td>
         </tr>
@@ -267,7 +267,7 @@ interface StageOption {
       </div>
       <ng-template pTemplate="footer">
         <div class="opp-dialog-footer-actions">
-          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" (click)="formDialogVisible = false" ariaLabel="Annuler" i18n="@@crm.opportunities.annuler.49ba3292"> Annuler </app-button>
+          <app-button variant="outline" icon="pi-times" iconPos="left" type="button" (click)="formDialogVisible = false" ariaLabel="Annuler" i18n-ariaLabel="@@crm.opportunities.annuler.e063e8ff" i18n="@@crm.opportunities.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="saving() ? 'pi-spin pi-spinner' : 'pi-check'"
@@ -317,7 +317,7 @@ interface StageOption {
       </div>
       <ng-template pTemplate="footer">
         <div class="opp-dialog-footer-actions opp-dialog-footer-actions--lose">
-          <app-button variant="ghost" size="sm" type="button" (click)="loseDialogVisible = false" ariaLabel="Annuler" i18n="@@crm.opportunities.annuler.49ba3292"> Annuler </app-button>
+          <app-button variant="ghost" size="sm" type="button" (click)="loseDialogVisible = false" ariaLabel="Annuler" i18n-ariaLabel="@@crm.opportunities.annuler.e063e8ff" i18n="@@crm.opportunities.annuler.49ba3292"> Annuler </app-button>
           <app-button
             variant="primary"
             [icon]="loseSaving() ? 'pi-spin pi-spinner' : 'pi-check'"
@@ -325,7 +325,7 @@ interface StageOption {
             type="button"
             (click)="confirmLose()"
             [disabled]="loseForm.invalid || loseSaving()"
-            ariaLabel="Confirmer la perte du deal">
+            ariaLabel="Confirmer la perte du deal" i18n-ariaLabel="@@crm.opportunities.confirmer.la.perte.du.deal.0d88db6e">
             {{ loseSaving() ? loc_ui_tern_envoi_5a377e : loc_ui_tern_confirmer_80a664 }}
           </app-button>
         </div>

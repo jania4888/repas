@@ -58,7 +58,7 @@ export interface ChatInputSubmission {
       }
 
       @if (extractingFileName()) {
-        <div class="extracting" role="status" aria-live="polite">
+        <div class="extracting" role="status" aria-live="polite" i18n="@@ai-assistant.components.extraction.de.1fd182f6">
           <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
           Extraction de {{ extractingFileName() }}…
         </div>
@@ -129,11 +129,11 @@ export interface ChatInputSubmission {
         <div class="speech-error" role="status" aria-live="polite">{{ extractError() }}</div>
       }
       <div class="input-hint">
-        @if (isStreaming) {
+        @if (isStreaming) {<ng-container i18n="@@ai-assistant.components.generation.en.cours.echap.pour.arreter.336f3a2c">
           Génération en cours &middot; Échap pour arrêter
-        } @else {
+        </ng-container>} @else {<ng-container i18n="@@ai-assistant.components.entree.pour.envoyer.shift.entree.pour.un.a8e85099">
           Entrée pour envoyer &middot; Shift+Entrée pour un retour à la ligne
-          @if (speechSupported) {
+          </ng-container>@if (speechSupported) {
             <span i18n="@@ai-assistant.components.middot.dictee.via.le.micro.chrome.edge.recommand.32a2d645"> &middot; Dictée via le micro (Chrome / Edge recommandés)</span>
           }
         }

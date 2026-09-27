@@ -61,7 +61,7 @@ import {
       <!-- Header -->
       <section class="preview-header">
         <div class="header-content">
-          <h2 class="section-title">
+          <h2 class="section-title" i18n="@@invoices.invoice-wizard.apercu.et.validation.5df3ee96">
             <i class="pi pi-eye"></i>
             Aperçu et validation
           </h2>
@@ -344,19 +344,19 @@ import {
                 </div>
                 <div class="summary-stats">
                   @if (validation.errorCount > 0) {
-                    <span class="stat error">
+                    <span class="stat error" i18n="@@invoices.invoice-wizard.erreur.s.1ad840e4">
                       <i class="pi pi-times"></i>
                       {{ validation.errorCount }} erreur(s)
                     </span>
                   }
                   @if (validation.warningCount > 0) {
-                    <span class="stat warning">
+                    <span class="stat warning" i18n="@@invoices.invoice-wizard.avertissement.s.b4e98bfe">
                       <i class="pi pi-exclamation-triangle"></i>
                       {{ validation.warningCount }} avertissement(s)
                     </span>
                   }
                   @if (validation.isValid) {
-                    <span class="stat success">
+                    <span class="stat success" i18n="@@invoices.invoice-wizard.tout.est.conforme.a06a751f">
                       <i class="pi pi-check"></i>
                       Tout est conforme
                     </span>
@@ -487,10 +487,10 @@ import {
 
       <!-- Final Actions : émission unique -->
       <div class="final-actions">
-        <div class="actions-warning">
+        <div class="actions-warning" i18n="@@invoices.invoice-wizard.attention.une.fois.emise.cette.facture.n.fd20dbe7">
           <i class="pi pi-exclamation-triangle"></i>
           <span>
-            <strong i18n="@@invoices.invoice-wizard.attention.4d951ea1">Attention :</strong> Une fois émise, cette facture ne pourra plus être modifiée.
+            <strong>Attention :</strong> Une fois émise, cette facture ne pourra plus être modifiée.
             Seule une facture d'avoir permettra d'effectuer des corrections.
           </span>
         </div>

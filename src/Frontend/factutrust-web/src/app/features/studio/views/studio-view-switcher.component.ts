@@ -36,7 +36,7 @@ interface ViewSwitcherOption {
         appendTo="body"
         panelStyleClass="studio-theme"
         styleClass="view-switcher-select"
-        [ariaLabel]="'Vue active'">
+        ariaLabel="Vue active" i18n-ariaLabel="@@studio.views.vue.active.b656cdb6">
         <ng-template let-opt pTemplate="selectedItem">
           <span class="view-switcher__mode">{{ opt.label }}</span>
           @if (opt.isDefault) {

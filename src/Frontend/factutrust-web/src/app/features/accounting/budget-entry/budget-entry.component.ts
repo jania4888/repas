@@ -37,14 +37,14 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, PageHeaderComponent, ButtonComponent, AccountingStatusBannerComponent],
   template: `
-    <app-page-header title="Saisie des budgets" i18n-title="@@accounting.budget-entry.saisie.des.budgets.0b3e253e" subtitle="Budgets annuels mensualisés par poste — versions Initial puis Révisé après validation" />
+    <app-page-header title="Saisie des budgets" i18n-title="@@accounting.budget-entry.saisie.des.budgets.0b3e253e" subtitle="Budgets annuels mensualisés par poste — versions Initial puis Révisé après validation" i18n-subtitle="@@accounting.budget-entry.budgets.annuels.mensualises.par.poste.ve.c818a7b7" />
 
     <app-accounting-status-banner variant="error" [message]="error() ?? ''" />
 
     <div class="card be-toolbar">
       <div class="be-year">
         <button type="button" class="be-year-btn" (click)="changeYear(-1)" [disabled]="busy()" aria-label="Exercice précédent" i18n-aria-label="@@accounting.budget-entry.exercice.precedent.b34f8172"><i class="pi pi-chevron-left"></i></button>
-        <span class="be-year-value">Exercice {{ fiscalYear() }}</span>
+        <span class="be-year-value" i18n="@@accounting.budget-entry.exercice.019abec6">Exercice {{ fiscalYear() }}</span>
         <button type="button" class="be-year-btn" (click)="changeYear(1)" [disabled]="busy()" aria-label="Exercice suivant" i18n-aria-label="@@accounting.budget-entry.exercice.suivant.b90eb269"><i class="pi pi-chevron-right"></i></button>
       </div>
 
@@ -53,8 +53,8 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
           {{ g.status === 1 ? loc_ui_tern_initial_valide_39455a : loc_ui_tern_brouillon_budgetaire_3977e5 }}
         </span>
         @if (g.status === 1) {
-          <span class="be-validated-info">
-            validé le {{ g.validatedAt | date : 'shortDate' }} par {{ g.validatedBy }} — vous modifiez le <strong i18n="@@accounting.budget-entry.budget.revise.3da55912">budget révisé</strong>
+          <span class="be-validated-info" i18n="@@accounting.budget-entry.valide.le.par.vous.modifiez.le.budget.re.1dd95663">
+            validé le {{ g.validatedAt | date : 'shortDate' }} par {{ g.validatedBy }} — vous modifiez le <strong>budget révisé</strong>
           </span>
         }
       }
@@ -71,7 +71,7 @@ const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août
 
     @if (distributeFor(); as row) {
       <div class="card be-distribute">
-        <span><ng-container i18n="@@accounting.budget-entry.repartir.un.montant.annuel.sur.47f3b5e7">Répartir un montant annuel sur </ng-container> <strong>{{ row.code }} — {{ row.label }}</strong> (linéaire, reliquat sur décembre) :</span>
+        <span i18n="@@accounting.budget-entry.repartir.un.montant.annuel.sur.lineaire.f141d51e"><ng-container>Répartir un montant annuel sur </ng-container> <strong>{{ row.code }} — {{ row.label }}</strong> (linéaire, reliquat sur décembre) :</span>
         <input type="number" class="be-inp be-dist-inp" [(ngModel)]="distributeAmount" min="0" step="0.001" placeholder="Montant annuel" i18n-placeholder="@@accounting.budget-entry.montant.annuel.7f48f8e0" />
         <button type="button" class="btn btn-primary" (click)="applyDistribution()" i18n="@@accounting.budget-entry.repartir.d7593598">Répartir</button>
         <button type="button" class="btn btn-secondary" (click)="distributeFor.set(null)" i18n="@@accounting.budget-entry.annuler.49ba3292">Annuler</button>

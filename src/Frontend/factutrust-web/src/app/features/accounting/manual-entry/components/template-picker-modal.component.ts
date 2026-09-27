@@ -55,7 +55,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
                     @if (t.description) {
                       <span class="tpm-item-desc">{{ t.description }}</span>
                     }
-                    <span class="tpm-item-meta">{{ t.lines.length }} ligne{{ t.lines.length > 1 ? 's' : '' }} · utilisé {{ t.usageCount }} fois</span>
+                    <span class="tpm-item-meta" i18n="@@accounting.manual-entry.ligne.utilise.fois.510be3e7">{{ t.lines.length }} ligne{{ t.lines.length > 1 ? 's' : '' }} · utilisé {{ t.usageCount }} fois</span>
                   </li>
                 }
               </ul>
@@ -64,7 +64,7 @@ import { ErrorHandlerService } from '@core/services/error-handler.service';
 
           @if (selected(); as sel) {
             <div class="tpm-preview" aria-label="Aperçu du modèle sélectionné" i18n-aria-label="@@accounting.manual-entry.apercu.du.modele.selectionne.6503af4e">
-              <h3 class="tpm-preview-title">Aperçu : {{ sel.name }}</h3>
+              <h3 class="tpm-preview-title" i18n="@@accounting.manual-entry.apercu.5d4eb34b">Aperçu : {{ sel.name }}</h3>
               @if (sel.labelTemplate) {
                 <p class="tpm-preview-label"><em i18n="@@accounting.manual-entry.libelle.par.defaut.2bc34c67">Libellé par défaut :</em> {{ sel.labelTemplate }}</p>
               }

@@ -62,7 +62,7 @@ interface TransferLine {
     <div class="page-container">
       <app-page-header
         title="Nouveau transfert" i18n-title="@@transfers.transfer-create.nouveau.transfert.c210ded9"
-        subtitle="Déplacez des articles d’un entrepôt vers un autre en quelques étapes.">
+        subtitle="Déplacez des articles d’un entrepôt vers un autre en quelques étapes." i18n-subtitle="@@transfers.transfer-create.deplacez.des.articles.d.un.entrepot.vers.c120cee8">
         <app-button variant="outline" icon="pi-times" iconPos="left" routerLink="/transfers" i18n="@@transfers.transfer-create.annuler.49ba3292"> Annuler </app-button>
       </app-page-header>
 
@@ -175,7 +175,7 @@ interface TransferLine {
                         <span class="badge-non-stock" i18n="@@transfers.transfer-create.non.gere.en.stock.6431e5e0">Non géré en stock</span>
                       }
                       @if (sourceWarehouseId) {
-                        <span class="product-dispo">Dispo source : {{ formatAvailability(product.id) }}</span>
+                        <span class="product-dispo" i18n="@@transfers.transfer-create.dispo.source.da57f0ae">Dispo source : {{ formatAvailability(product.id) }}</span>
                       }
                     </div>
                   </div>
@@ -214,7 +214,7 @@ interface TransferLine {
                 iconPos="left"
                 (click)="addLine()"
                 [disabled]="!selectedProduct || selectedQuantity <= 0"
-                ariaLabel="Ajouter le produit sélectionné au transfert" i18n="@@transfers.transfer-create.ajouter.87c57ed1"> Ajouter </app-button>
+                ariaLabel="Ajouter le produit sélectionné au transfert" i18n-ariaLabel="@@transfers.transfer-create.ajouter.le.produit.selectionne.au.transf.96108f47" i18n="@@transfers.transfer-create.ajouter.87c57ed1"> Ajouter </app-button>
             </div>
           </div>
 
@@ -277,7 +277,7 @@ interface TransferLine {
                           [inputId]="'transfer-line-qty-' + i">
                         </p-inputNumber>
                         @if (qtyExceedsSource(line)) {
-                          <span class="qty-warning" role="status">
+                          <span class="qty-warning" role="status" i18n="@@transfers.transfer-create.depasse.la.disponibilite.43003386">
                             <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                             Dépasse la disponibilité
                           </span>
