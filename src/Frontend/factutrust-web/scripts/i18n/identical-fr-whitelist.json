@@ -95,6 +95,16 @@
     "DSO",
     "DPO",
     "VNC",
-    "BETA"
+    "BETA",
+    "TSV",
+    "User-Agent",
+    "AT",
+    "DTS",
+    "CIN",
+    "CIVP",
+    "CIVP / SIVP",
+    "FOPROLOS (%)",
+    "DTS CNSS",
+    "OCR"
   ]
 }

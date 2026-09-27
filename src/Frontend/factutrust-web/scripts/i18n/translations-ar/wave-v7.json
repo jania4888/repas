@@ -1,9 +1,20 @@
 {
+  "accounting.fiscal-schedule.au.f095160c": "إلى",
+  "accounting.fiscal-schedule.page.suivante.86b1be40": "الصفحة الموالية",
+  "accounting.fiscal-schedule.trimestre.13116972": "الثلاثي",
+  "accounting.fixed-assets.comptabilisation.87cf8493": "المحاسبة",
   "accounting.manual-entry.dupliquer.c5e1d3f1": "نسخ",
   "accounting.manual-entry.raccourcis.0e0d6404": "الاختصارات",
   "accounting.manual-entry.rechercher.un.modele.57af3d5f": "البحث عن نموذج…",
+  "accounting.third-parties.inactifs.41c2d03e": "غير نشطين",
+  "accounting.vat-declaration.soumettre.5597a63d": "إرسال",
+  "studio-report-designer.component.summary.Nom requis": "الاسم مطلوب",
+  "studio-view-designer.component.summary.Nom requis": "الاسم مطلوب",
+  "studio.approvals.indicateurs.bc7196d0": "المؤشرات",
+  "studio.studio-automations.active.a733b809": "نشطة",
   "studio.studio-record-list.rechercher.1d12cdfb": "بحث…",
   "studio.studio-view-runner.rechercher.1d12cdfb": "بحث…",
+  "studio.views.periode.precedente.5e420e76": "الفترة السابقة",
   "ui.tern.appliquer.a4d661": "تطبيق",
   "ui.tern.dupliquer.c5e1d3": "نسخ"
 }

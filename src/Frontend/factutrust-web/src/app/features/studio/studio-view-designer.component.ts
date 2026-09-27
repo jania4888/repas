@@ -227,7 +227,7 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
       format: saved?.format ?? c.suggestedFormat ?? 'auto',
       statusMapText: Object.entries(statusMap).map(([k, v]) => `${k}=${v}`).join(','),
       lookupTable: saved?.formatOptions?.lookupTable ?? c.foreignKey?.referencedTable ?? '',
-      lookupDisplayColumn: saved?.formatOptions?.lookupDisplayColumn ?? $localize`:@@ui.tern.name.709a23:Name`,
+      lookupDisplayColumn: saved?.formatOptions?.lookupDisplayColumn ?? 'Name',
       suggestedFormat: c.suggestedFormat
     };
   }

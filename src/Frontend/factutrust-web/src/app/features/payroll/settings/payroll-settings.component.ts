@@ -685,7 +685,7 @@ export class PayrollSettingsComponent implements OnInit {
             ...data,
             enableIrppRegularization: data.enableIrppRegularization ?? false,
             enableAutomaticProrata: data.enableAutomaticProrata ?? false,
-            smigIrppExemptionMode: data.smigIrppExemptionMode ?? $localize`:@@ui.tern.none.6eef66:None`,
+            smigIrppExemptionMode: data.smigIrppExemptionMode ?? 'None',
             smigIrppExemptionModeDisplay: data.smigIrppExemptionModeDisplay ?? $localize`:@@ui.tern.desactivee.74cc3b:Désactivée`,
             smigIrppExemptionRateOverride: data.smigIrppExemptionRateOverride ?? null,
             mealVoucherDailyExemptionCap: data.mealVoucherDailyExemptionCap ?? 0,

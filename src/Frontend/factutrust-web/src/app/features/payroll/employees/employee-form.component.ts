@@ -414,7 +414,7 @@ export class EmployeeFormComponent implements OnInit {
   private createParentClaimGroup(claim?: DependentParentClaim): FormGroup {
     return this.fb.group({
       parentCin: [claim?.parentCin ?? '', [Validators.required, tunisianPayrollValidators.cin]],
-      kinship: [claim?.kinship ?? $localize`:@@ui.tern.father.922561:Father`, Validators.required],
+      kinship: [claim?.kinship ?? 'Father', Validators.required],
       firstName: [claim?.firstName ?? ''],
       lastName: [claim?.lastName ?? '']
     });
@@ -436,7 +436,7 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   private populateForm(e: EmployeeDetail): void {
-    this.parentClaimsStatus.set(e.parentClaimsStatus ?? $localize`:@@ui.tern.none.6eef66:None`);
+    this.parentClaimsStatus.set(e.parentClaimsStatus ?? 'None');
     this.legacyDependentParents.set(e.dependentParents ?? 0);
     this.dependentParentClaims.clear();
     for (const claim of e.dependentParentClaims ?? []) {
