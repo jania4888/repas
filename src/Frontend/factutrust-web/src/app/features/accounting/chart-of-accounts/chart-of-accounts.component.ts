@@ -760,7 +760,7 @@ export class ChartOfAccountsComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errorHandler.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errorHandler.extractErrorMessage(err, $localize`:@@accounting.chart-of-accounts.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }

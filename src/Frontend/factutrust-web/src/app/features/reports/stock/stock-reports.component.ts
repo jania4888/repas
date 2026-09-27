@@ -577,7 +577,7 @@ export class StockReportsComponent implements OnInit {
     this.snapshotError.set(null);
     const dateStr = this.snapshotDate?.trim();
     if (!dateStr) {
-      this.snapshotError.set('Choisissez une date.');
+      this.snapshotError.set($localize`:@@reports.stock-reports.ts.choisissez.une.date.2e7cd53c:Choisissez une date.`);
       return;
     }
     const chosen = new Date(dateStr);
@@ -585,7 +585,7 @@ export class StockReportsComponent implements OnInit {
     today.setHours(23, 59, 59, 999);
     chosen.setHours(23, 59, 59, 999);
     if (chosen > today) {
-      this.snapshotError.set('Choisissez une date antérieure ou égale à aujourd\'hui.');
+      this.snapshotError.set($localize`:@@reports.stock-reports.ts.choisissez.une.date.anterieure.ou.egale.387306b7:Choisissez une date antérieure ou égale à aujourd'hui.`);
       return;
     }
     this.snapshotLoading.set(true);
@@ -603,7 +603,7 @@ export class StockReportsComponent implements OnInit {
       },
       error: () => {
         this.snapshotRows.set(null);
-        this.snapshotError.set('Impossible de charger le rapport. Réessayez plus tard.');
+        this.snapshotError.set($localize`:@@reports.stock-reports.ts.impossible.de.charger.le.rapport.reessay.9d506e66:Impossible de charger le rapport. Réessayez plus tard.`);
         this.snapshotLoading.set(false);
       }
     });

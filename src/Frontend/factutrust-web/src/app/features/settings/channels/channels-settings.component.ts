@@ -356,8 +356,8 @@ export class ChannelsSettingsComponent implements OnInit, OnDestroy {
   private bridgePollHandle: ReturnType<typeof setInterval> | null = null;
 
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
+    { label: $localize`:@@settings.channels-settings.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.channels-settings.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
     { label: 'WhatsApp' }
   ]);
 
@@ -450,8 +450,8 @@ export class ChannelsSettingsComponent implements OnInit, OnDestroy {
 
   confirmUnlink(): void {
     this.confirmation.confirm({
-      header: 'Délier ce numéro ?',
-      message: 'Votre WhatsApp ne pourra plus interroger l’assistant ni recevoir de rappels. Vous pourrez le relier à tout moment.',
+      header: $localize`:@@settings.channels-settings.ts.delier.ce.numero.d5d38f60:Délier ce numéro ?`,
+      message: $localize`:@@settings.channels-settings.ts.votre.whatsapp.ne.pourra.plus.interroger.0d149580:Votre WhatsApp ne pourra plus interroger l’assistant ni recevoir de rappels. Vous pourrez le relier à tout moment.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@channels-settings.component.acceptLabel.Délier:Délier`,
       rejectLabel: $localize`:@@channels-settings.component.rejectLabel.Annuler:Annuler`,
@@ -517,8 +517,8 @@ export class ChannelsSettingsComponent implements OnInit, OnDestroy {
 
   confirmLogoutBridge(): void {
     this.confirmation.confirm({
-      header: 'Déconnecter la session WhatsApp ?',
-      message: 'Le bot cessera de répondre jusqu’à ce qu’un nouveau QR code soit scanné. Continuer ?',
+      header: $localize`:@@settings.channels-settings.ts.deconnecter.la.session.whatsapp.f95fb199:Déconnecter la session WhatsApp ?`,
+      message: $localize`:@@settings.channels-settings.ts.le.bot.cessera.de.repondre.jusqu.a.ce.qu.91fbddbe:Le bot cessera de répondre jusqu’à ce qu’un nouveau QR code soit scanné. Continuer ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@channels-settings.component.acceptLabel.D_connecter:Déconnecter`,
       rejectLabel: $localize`:@@channels-settings.component.rejectLabel.Annuler:Annuler`,

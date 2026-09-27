@@ -99,14 +99,14 @@ export class EntryRecurringTabComponent implements OnInit {
         next: res => {
           this.runningId.set(null);
           if (res.success) {
-            this.toast.add({ severity: 'success', summary: $localize`:@@entry-recurring-tab.component.summary._criture_g_n_r_e:Écriture générée`, detail: `Le modèle « ${t.name} » a été exécuté.`, life: 5000 });
+            this.toast.add({ severity: 'success', summary: $localize`:@@entry-recurring-tab.component.summary._criture_g_n_r_e:Écriture générée`, detail: $localize`:@@accounting.entry-recurring-tab.ts.le.modele.name.a.ete.execute.82ce2b4a:Le modèle « ${t.name}:name: » a été exécuté.`, life: 5000 });
           } else {
             this.toast.add({ severity: 'error', summary: $localize`:@@entry-recurring-tab.component.summary.Échec:Échec`, detail: res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`, life: 6000 });
           }
         },
         error: err => {
           this.runningId.set(null);
-          this.toast.add({ severity: 'error', summary: $localize`:@@entry-recurring-tab.component.summary.Impossible_de_g_:Impossible de générer l'écriture.`, detail: this.errors.extractErrorMessage(err, 'Erreur réseau'), life: 6000 });
+          this.toast.add({ severity: 'error', summary: $localize`:@@entry-recurring-tab.component.summary.Impossible_de_g_:Impossible de générer l'écriture.`, detail: this.errors.extractErrorMessage(err, $localize`:@@accounting.entry-recurring-tab.ts.erreur.reseau.0683007f:Erreur réseau`), life: 6000 });
         }
       });
   }

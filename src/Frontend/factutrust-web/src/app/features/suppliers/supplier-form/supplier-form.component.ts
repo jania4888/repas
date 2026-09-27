@@ -600,19 +600,19 @@ export class SupplierFormComponent implements OnInit {
   withholdingTypes: WithholdingTaxTypeDto[] = [];
 
   rs7BracketOptions = [
-    { label: 'Non défini (autre code RS ou catalogue)', value: SupplierRs7IsBracket.Unspecified },
-    { label: 'RS7 — IS 25 % (retenue 1,5 %)', value: SupplierRs7IsBracket.Normal25 },
-    { label: 'RS7 — IS 15 % (retenue 1 %)', value: SupplierRs7IsBracket.Reduced15 },
-    { label: 'RS7 — IS 10 % (retenue 0,5 %)', value: SupplierRs7IsBracket.Reduced10 }
+    { label: $localize`:@@suppliers.supplier-form.ts.non.defini.autre.code.rs.ou.catalogue.cf203fd0:Non défini (autre code RS ou catalogue)`, value: SupplierRs7IsBracket.Unspecified },
+    { label: $localize`:@@suppliers.supplier-form.ts.rs7.is.25.retenue.1.5.fd7fd1c4:RS7 — IS 25 % (retenue 1,5 %)`, value: SupplierRs7IsBracket.Normal25 },
+    { label: $localize`:@@suppliers.supplier-form.ts.rs7.is.15.retenue.1.94efe5d9:RS7 — IS 15 % (retenue 1 %)`, value: SupplierRs7IsBracket.Reduced15 },
+    { label: $localize`:@@suppliers.supplier-form.ts.rs7.is.10.retenue.0.5.5a70b267:RS7 — IS 10 % (retenue 0,5 %)`, value: SupplierRs7IsBracket.Reduced10 }
   ];
 
   tejIdTypeOptions = [
     { label: '—', value: null },
-    { label: 'Matricule fiscal', value: IdentificationType.MatriculeFiscal },
+    { label: $localize`:@@suppliers.supplier-form.ts.matricule.fiscal.304096c4:Matricule fiscal`, value: IdentificationType.MatriculeFiscal },
     { label: 'CIN', value: IdentificationType.CIN },
-    { label: 'Passeport', value: IdentificationType.Passport },
-    { label: 'Carte de séjour', value: IdentificationType.CarteSejour },
-    { label: 'Autre identifiant', value: IdentificationType.Autre }
+    { label: $localize`:@@suppliers.supplier-form.ts.passeport.0d7912ad:Passeport`, value: IdentificationType.Passport },
+    { label: $localize`:@@suppliers.supplier-form.ts.carte.de.sejour.21cd02f7:Carte de séjour`, value: IdentificationType.CarteSejour },
+    { label: $localize`:@@suppliers.supplier-form.ts.autre.identifiant.f4b025c7:Autre identifiant`, value: IdentificationType.Autre }
   ];
 
   loading = signal(false);
@@ -625,35 +625,35 @@ export class SupplierFormComponent implements OnInit {
   breadcrumbItems: BreadcrumbItem[] = [];
 
   typeOptions = [
-    { label: 'Particulier', value: SupplierType.Individual },
-    { label: 'Entreprise', value: SupplierType.Business }
+    { label: $localize`:@@suppliers.supplier-form.ts.particulier.281680dd:Particulier`, value: SupplierType.Individual },
+    { label: $localize`:@@suppliers.supplier-form.ts.entreprise.d03e74b6:Entreprise`, value: SupplierType.Business }
   ];
 
   governorates: GovernorateOption[] = [
-    { label: 'Ariana', value: 'Ariana' },
-    { label: 'Béja', value: 'Béja' },
-    { label: 'Ben Arous', value: 'Ben Arous' },
-    { label: 'Bizerte', value: 'Bizerte' },
-    { label: 'Gabès', value: 'Gabès' },
-    { label: 'Gafsa', value: 'Gafsa' },
-    { label: 'Jendouba', value: 'Jendouba' },
-    { label: 'Kairouan', value: 'Kairouan' },
-    { label: 'Kasserine', value: 'Kasserine' },
-    { label: 'Kébili', value: 'Kébili' },
-    { label: 'Le Kef', value: 'Le Kef' },
-    { label: 'Mahdia', value: 'Mahdia' },
-    { label: 'La Manouba', value: 'La Manouba' },
-    { label: 'Médenine', value: 'Médenine' },
-    { label: 'Monastir', value: 'Monastir' },
-    { label: 'Nabeul', value: 'Nabeul' },
-    { label: 'Sfax', value: 'Sfax' },
-    { label: 'Sidi Bouzid', value: 'Sidi Bouzid' },
-    { label: 'Siliana', value: 'Siliana' },
-    { label: 'Sousse', value: 'Sousse' },
-    { label: 'Tataouine', value: 'Tataouine' },
-    { label: 'Tozeur', value: 'Tozeur' },
-    { label: 'Tunis', value: 'Tunis' },
-    { label: 'Zaghouan', value: 'Zaghouan' }
+    { label: $localize`:@@suppliers.supplier-form.ts.ariana.4787a016:Ariana`, value: 'Ariana' },
+    { label: $localize`:@@suppliers.supplier-form.ts.beja.603d1fac:Béja`, value: 'Béja' },
+    { label: $localize`:@@suppliers.supplier-form.ts.ben.arous.3fab69ae:Ben Arous`, value: 'Ben Arous' },
+    { label: $localize`:@@suppliers.supplier-form.ts.bizerte.2e83a969:Bizerte`, value: 'Bizerte' },
+    { label: $localize`:@@suppliers.supplier-form.ts.gabes.e4b74f5d:Gabès`, value: 'Gabès' },
+    { label: $localize`:@@suppliers.supplier-form.ts.gafsa.eae1e5d1:Gafsa`, value: 'Gafsa' },
+    { label: $localize`:@@suppliers.supplier-form.ts.jendouba.c6f39067:Jendouba`, value: 'Jendouba' },
+    { label: $localize`:@@suppliers.supplier-form.ts.kairouan.62201cff:Kairouan`, value: 'Kairouan' },
+    { label: $localize`:@@suppliers.supplier-form.ts.kasserine.2ac4b4c3:Kasserine`, value: 'Kasserine' },
+    { label: $localize`:@@suppliers.supplier-form.ts.kebili.5c50d601:Kébili`, value: 'Kébili' },
+    { label: $localize`:@@suppliers.supplier-form.ts.le.kef.6dfe486f:Le Kef`, value: 'Le Kef' },
+    { label: $localize`:@@suppliers.supplier-form.ts.mahdia.00f1b39b:Mahdia`, value: 'Mahdia' },
+    { label: $localize`:@@suppliers.supplier-form.ts.la.manouba.25ff50d2:La Manouba`, value: 'La Manouba' },
+    { label: $localize`:@@suppliers.supplier-form.ts.medenine.0e0d3c6a:Médenine`, value: 'Médenine' },
+    { label: $localize`:@@suppliers.supplier-form.ts.monastir.aef3b69f:Monastir`, value: 'Monastir' },
+    { label: $localize`:@@suppliers.supplier-form.ts.nabeul.43036f00:Nabeul`, value: 'Nabeul' },
+    { label: $localize`:@@suppliers.supplier-form.ts.sfax.7f5b35de:Sfax`, value: 'Sfax' },
+    { label: $localize`:@@suppliers.supplier-form.ts.sidi.bouzid.923cd336:Sidi Bouzid`, value: 'Sidi Bouzid' },
+    { label: $localize`:@@suppliers.supplier-form.ts.siliana.279c3c64:Siliana`, value: 'Siliana' },
+    { label: $localize`:@@suppliers.supplier-form.ts.sousse.e45910eb:Sousse`, value: 'Sousse' },
+    { label: $localize`:@@suppliers.supplier-form.ts.tataouine.d3f11bd9:Tataouine`, value: 'Tataouine' },
+    { label: $localize`:@@suppliers.supplier-form.ts.tozeur.0c755425:Tozeur`, value: 'Tozeur' },
+    { label: $localize`:@@suppliers.supplier-form.ts.tunis.e58b2d54:Tunis`, value: 'Tunis' },
+    { label: $localize`:@@suppliers.supplier-form.ts.zaghouan.65a3dc81:Zaghouan`, value: 'Zaghouan' }
   ];
 
   form: FormGroup = this.fb.group({
@@ -686,9 +686,9 @@ export class SupplierFormComponent implements OnInit {
     this.isEditMode = !!this.supplierId;
 
     this.breadcrumbItems = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Fournisseurs', route: '/suppliers' },
-      this.isEditMode ? { label: 'Modifier' } : { label: 'Nouveau' }
+      { label: $localize`:@@suppliers.supplier-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@suppliers.supplier-form.ts.fournisseurs.06b6d88c:Fournisseurs`, route: '/suppliers' },
+      this.isEditMode ? { label: $localize`:@@suppliers.supplier-form.ts.modifier.f260e757:Modifier` } : { label: $localize`:@@suppliers.supplier-form.ts.nouveau.b9676c8f:Nouveau` }
     ];
 
     this.form.get('type')?.valueChanges.subscribe(() => this.updateNifValidators());
@@ -952,7 +952,7 @@ export class SupplierFormComponent implements OnInit {
             this.toastService.add({ severity: 'success', summary: $localize`:@@supplier-form.component.summary.Succès:Succès`, detail: $localize`:@@supplier-form.component.detail.Fournisseur_mis_:Fournisseur mis à jour` });
             this.router.navigate(['/suppliers', this.supplierId]);
           } else {
-            this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-form.component.summary.Erreur:Erreur`, detail: response.errors?.[0] || 'Erreur' });
+            this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-form.component.summary.Erreur:Erreur`, detail: response.errors?.[0] || $localize`:@@suppliers.supplier-form.ts.erreur.ab546c23:Erreur` });
           }
         },
         error: (err) => {
@@ -986,7 +986,7 @@ export class SupplierFormComponent implements OnInit {
             this.toastService.add({ severity: 'success', summary: $localize`:@@supplier-form.component.summary.Succès:Succès`, detail: $localize`:@@supplier-form.component.detail.Fournisseur_cr_:Fournisseur créé avec succès` });
             this.router.navigate(['/suppliers']);
           } else {
-            this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-form.component.summary.Erreur:Erreur`, detail: response.errors?.[0] || 'Erreur' });
+            this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-form.component.summary.Erreur:Erreur`, detail: response.errors?.[0] || $localize`:@@suppliers.supplier-form.ts.erreur.ab546c23:Erreur` });
           }
         },
         error: (err) => {

@@ -84,11 +84,11 @@ export class PromptModalComponent {
   readonly loc_ui_tern_prompt_modal_icon_d0bfa1 = " prompt-modal-icon";
   readonly loc_ui_tern_btn_6a21bb = "btn ";
   @Input() message = '';
-  @Input() header = 'Saisie';
+  @Input() header = $localize`:@@shared.prompt-modal.ts.saisie.3e86f8d7:Saisie`;
   @Input() icon = '';
   @Input() placeholder = '';
-  @Input() acceptLabel = 'Confirmer';
-  @Input() rejectLabel = 'Annuler';
+  @Input() acceptLabel = $localize`:@@shared.prompt-modal.ts.confirmer.80a664c8:Confirmer`;
+  @Input() rejectLabel = $localize`:@@shared.prompt-modal.ts.annuler.49ba3292:Annuler`;
   @Input() acceptButtonStyleClass = 'btn-primary';
   @Input() required = true;
   @Input() maxLength = 500;

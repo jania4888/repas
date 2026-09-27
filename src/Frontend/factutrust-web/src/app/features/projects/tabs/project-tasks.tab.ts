@@ -558,7 +558,7 @@ export class ProjectTasksTabComponent implements OnInit {
 
   get phaseMenuItems(): MenuItem[] {
     return (this.project?.phases ?? []).map(p => ({
-      label: `Dans ${p.name}`,
+      label: $localize`:@@projects.project-tasks.ts.dans.name.260e4e47:Dans ${p.name}:name:`,
       command: () => this.openCreate(p.id)
     }));
   }
@@ -708,14 +708,14 @@ export class ProjectTasksTabComponent implements OnInit {
     this.rowMenuTask = task;
     const items: MenuItem[] = [
       {
-        label: 'Ouvrir',
+        label: $localize`:@@projects.project-tasks.ts.ouvrir.42c07747:Ouvrir`,
         icon: 'pi pi-external-link',
         command: () => this.openTask(task)
       }
     ];
     if (this.canLogTime) {
       items.push({
-        label: 'Saisir du temps',
+        label: $localize`:@@projects.project-tasks.ts.saisir.du.temps.829487f5:Saisir du temps`,
         icon: 'pi pi-clock',
         command: () => this.openLogTime(task)
       });

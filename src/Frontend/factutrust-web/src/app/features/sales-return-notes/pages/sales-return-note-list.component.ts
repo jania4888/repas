@@ -115,8 +115,8 @@ export class SalesReturnNoteListComponent implements OnInit {
   private readonly auth = inject(AuthService);
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de retour' }
+    { label: $localize`:@@sales-return-notes.sales-return-note-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@sales-return-notes.sales-return-note-list.ts.bons.de.retour.d9f7ad6c:Bons de retour` }
   ];
 
   readonly Status = SalesReturnNoteStatus;
@@ -133,10 +133,10 @@ export class SalesReturnNoteListComponent implements OnInit {
     const s = this.summary();
     if (!s) return [];
     return [
-      { label: 'Documents', value: s.count, format: 'number' },
-      { label: 'Brouillons', value: s.draftCount, format: 'number' },
-      { label: 'Confirmés', value: s.confirmedCount, format: 'number' },
-      { label: 'Total TTC', value: s.totalTtc, format: 'currency', currency: s.currency }
+      { label: $localize`:@@sales-return-notes.sales-return-note-list.ts.documents.687c8286:Documents`, value: s.count, format: 'number' },
+      { label: $localize`:@@sales-return-notes.sales-return-note-list.ts.brouillons.a55f3cd9:Brouillons`, value: s.draftCount, format: 'number' },
+      { label: $localize`:@@sales-return-notes.sales-return-note-list.ts.confirmes.8a484038:Confirmés`, value: s.confirmedCount, format: 'number' },
+      { label: $localize`:@@sales-return-notes.sales-return-note-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s.totalTtc, format: 'currency', currency: s.currency }
     ];
   });
 

@@ -384,19 +384,19 @@ export class StudioEntityDesignerComponent implements OnInit {
   readonly allEntities = signal<CustomEntity[]>([]);
   readonly otherEntities = computed(() => this.allEntities().filter(e => e.id !== this.entityId));
   readonly existingRelationSources = [
-    { label: 'Clients', value: 'clients' },
-    { label: 'Produits', value: 'products' }
+    { label: $localize`:@@studio.studio-entity-designer.ts.clients.28e22fe3:Clients`, value: 'clients' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.produits.48000473:Produits`, value: 'products' }
   ];
   readonly barcodeFormats = [
-    { label: 'CODE128 (texte)', value: 'code128' },
-    { label: 'EAN-13 (chiffres)', value: 'ean13' }
+    { label: $localize`:@@studio.studio-entity-designer.ts.code128.texte.3862d703:CODE128 (texte)`, value: 'code128' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.ean.13.chiffres.9cc2dfc2:EAN-13 (chiffres)`, value: 'ean13' }
   ];
   readonly aggOptions = [
-    { label: 'Nombre (count)', value: 'count' },
-    { label: 'Somme (sum)', value: 'sum' },
-    { label: 'Moyenne (avg)', value: 'avg' },
-    { label: 'Minimum (min)', value: 'min' },
-    { label: 'Maximum (max)', value: 'max' }
+    { label: $localize`:@@studio.studio-entity-designer.ts.nombre.count.2067339c:Nombre (count)`, value: 'count' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.somme.sum.c9535c2f:Somme (sum)`, value: 'sum' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.moyenne.avg.7ee6e623:Moyenne (avg)`, value: 'avg' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.minimum.min.195a7eab:Minimum (min)`, value: 'min' },
+    { label: $localize`:@@studio.studio-entity-designer.ts.maximum.max.c5c3dc0a:Maximum (max)`, value: 'max' }
   ];
   private entityId = '';
 
@@ -695,8 +695,8 @@ export class StudioEntityDesignerComponent implements OnInit {
 
   remove(f: CustomField): void {
     this.confirmation.confirm({
-      message: `Supprimer le champ « ${f.label} » ? Les données existantes sont conservées.`,
-      header: 'Confirmation',
+      message: $localize`:@@studio.studio-entity-designer.ts.supprimer.le.champ.label.les.donnees.exi.6918565e:Supprimer le champ « ${f.label}:label: » ? Les données existantes sont conservées.`,
+      header: $localize`:@@studio.studio-entity-designer.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@studio-entity-designer.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@studio-entity-designer.component.rejectLabel.Annuler:Annuler`,
       accept: () => {

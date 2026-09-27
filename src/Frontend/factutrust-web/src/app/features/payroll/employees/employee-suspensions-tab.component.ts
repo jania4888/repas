@@ -235,8 +235,8 @@ export class EmployeeSuspensionsTabComponent implements OnInit {
   confirmDelete(suspension: EmployeePayrollSuspension): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Supprimer la suspension du ${suspension.startDate} ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.employee-suspensions-tab.ts.supprimer.la.suspension.du.startdate.72e8077a:Supprimer la suspension du ${suspension.startDate}:startDate: ?`,
+      header: $localize`:@@payroll.employee-suspensions-tab.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@employee-suspensions-tab.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@employee-suspensions-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

@@ -241,7 +241,7 @@ export class CurrenciesComponent implements OnInit {
         if (res.success && res.data) this.currencies.set(res.data);
         else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
-      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.currencies.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 
@@ -286,21 +286,21 @@ export class CurrenciesComponent implements OnInit {
         label: f.label.trim(),
         decimalPlaces: f.decimalPlaces,
         ratePeriodicity: f.ratePeriodicity
-      }).subscribe({ next: r => done(r.success, r.error), error: err => done(false, this.errors.extractErrorMessage(err, 'Erreur réseau')) });
+      }).subscribe({ next: r => done(r.success, r.error), error: err => done(false, this.errors.extractErrorMessage(err, $localize`:@@accounting.currencies.ts.erreur.reseau.0683007f:Erreur réseau`)) });
     } else {
       this.api.createCurrency({
         code: f.code.trim().toUpperCase(),
         label: f.label.trim(),
         decimalPlaces: f.decimalPlaces,
         ratePeriodicity: f.ratePeriodicity
-      }).subscribe({ next: r => done(r.success, r.error), error: err => done(false, this.errors.extractErrorMessage(err, 'Erreur réseau')) });
+      }).subscribe({ next: r => done(r.success, r.error), error: err => done(false, this.errors.extractErrorMessage(err, $localize`:@@accounting.currencies.ts.erreur.reseau.0683007f:Erreur réseau`)) });
     }
   }
 
   toggle(c: CurrencyDto): void {
     this.api.toggleCurrency(c.id).subscribe({
       next: r => { if (r.success) this.load(); else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`); },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.currencies.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 }

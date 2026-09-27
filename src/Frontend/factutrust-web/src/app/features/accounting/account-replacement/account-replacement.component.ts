@@ -100,7 +100,7 @@ export class AccountReplacementComponent {
           this.previewCount.set(res.data);
         } else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.account-replacement.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 
@@ -114,13 +114,13 @@ export class AccountReplacementComponent {
       next: res => {
         this.replacing.set(false);
         if (res.success) {
-          this.toast.add({ severity: 'success', summary: $localize`:@@account-replacement.component.summary.Compte rempl:Compte remplacé`, detail: `${res.data} ligne(s) — ${o} → ${n}`, life: 5000 });
+          this.toast.add({ severity: 'success', summary: $localize`:@@account-replacement.component.summary.Compte rempl:Compte remplacé`, detail: $localize`:@@accounting.account-replacement.ts.data.ligne.s.o.n.e86d414d:${res.data}:data: ligne(s) — ${o}:o: → ${n}:n:`, life: 5000 });
           this.previewCount.set(null);
           this.oldAccount = '';
           this.newAccount = '';
         } else this.error.set(res.error ?? $localize`:@@ui.tern.le.remplacement.a.echoue.cdb82e:Le remplacement a échoué.`);
       },
-      error: err => { this.replacing.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.replacing.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.account-replacement.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 }

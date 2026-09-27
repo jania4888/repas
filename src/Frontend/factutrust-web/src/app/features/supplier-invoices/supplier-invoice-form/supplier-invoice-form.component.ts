@@ -75,10 +75,10 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
   private readonly search$ = new Subject<string>();
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/', icon: 'pi-home' },
-    { label: 'Achats' },
-    { label: 'Factures fournisseurs', route: '/supplier-invoices' },
-    { label: 'Nouvelle facture' }
+    { label: $localize`:@@supplier-invoices.supplier-invoice-form.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' },
+    { label: $localize`:@@supplier-invoices.supplier-invoice-form.ts.achats.ee5b078c:Achats` },
+    { label: $localize`:@@supplier-invoices.supplier-invoice-form.ts.factures.fournisseurs.1dcbc2ed:Factures fournisseurs`, route: '/supplier-invoices' },
+    { label: $localize`:@@supplier-invoices.supplier-invoice-form.ts.nouvelle.facture.cdf7e09c:Nouvelle facture` }
   ];
 
   suppliers = signal<SupplierListItem[]>([]);
@@ -291,7 +291,7 @@ export class SupplierInvoiceFormComponent implements OnInit, OnDestroy {
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@supplier-invoice-form.component.summary.Facture créé:Facture créée`,
-          detail: `${res.data.invoiceNumber} — joignez le scan à l’écriture comptable d’achat.`
+          detail: $localize`:@@supplier-invoices.supplier-invoice-form.ts.invoicenumber.joignez.le.scan.a.l.ecritu.7975bf55:${res.data.invoiceNumber}:invoiceNumber: — joignez le scan à l’écriture comptable d’achat.`
         });
         void this.router.navigate(['/supplier-invoices', res.data.id]);
       },

@@ -149,16 +149,16 @@ export class StockVoucherFormComponent implements OnInit {
 
   readonly reasonOptions = this.isEntry
     ? [
-        { label: 'Stock initial', value: 'InitialStock' },
-        { label: 'Retour client (hors BRT / avoir)', value: 'CustomerReturn' },
-        { label: 'Achat hors réception', value: 'Purchase' },
-        { label: 'Trouvé / autre', value: 'FoundOrOther' }
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.stock.initial.99fd1599:Stock initial`, value: 'InitialStock' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.retour.client.hors.brt.avoir.325560a5:Retour client (hors BRT / avoir)`, value: 'CustomerReturn' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.achat.hors.reception.09085b94:Achat hors réception`, value: 'Purchase' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.trouve.autre.4666fcbc:Trouvé / autre`, value: 'FoundOrOther' }
       ]
     : [
-        { label: 'Dommage / perte', value: 'Damage' },
-        { label: 'Retour fournisseur (hors flux achat)', value: 'SupplierReturn' },
-        { label: 'Consommation interne', value: 'InternalUse' },
-        { label: 'Don / échantillon', value: 'GiftOrSample' }
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.dommage.perte.e616c1da:Dommage / perte`, value: 'Damage' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.retour.fournisseur.hors.flux.achat.47160484:Retour fournisseur (hors flux achat)`, value: 'SupplierReturn' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.consommation.interne.d1e627e1:Consommation interne`, value: 'InternalUse' },
+        { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.don.echantillon.01c5b7a7:Don / échantillon`, value: 'GiftOrSample' }
       ];
 
   get totalQuantity(): number {
@@ -172,8 +172,8 @@ export class StockVoucherFormComponent implements OnInit {
   ngOnInit(): void {
     this.editId = this.route.snapshot.paramMap.get('id');
     this.breadcrumbItems = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Stock', route: '/stock' },
+      { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@stock-vouchers.stock-voucher-form.ts.stock.bcecf456:Stock`, route: '/stock' },
       { label: this.isEntry ? $localize`:@@ui.tern.bons.d.entree.c04705:Bons d'entrée` : $localize`:@@ui.tern.bons.de.sortie.ccd59b:Bons de sortie`, route: this.listRoute },
       { label: this.editId ? $localize`:@@ui.tern.modifier.f260e7:Modifier` : $localize`:@@ui.tern.nouveau.b9676c:Nouveau` }
     ];

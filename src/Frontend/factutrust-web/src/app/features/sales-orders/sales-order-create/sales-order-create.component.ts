@@ -420,9 +420,9 @@ export class SalesOrderCreateComponent {
   newQuantity: number | null = 1;
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Ventes' },
-    { label: 'Commandes clients', route: '/sales-orders' },
-    { label: 'Nouvelle' }
+    { label: $localize`:@@sales-orders.sales-order-create.ts.ventes.9087fc4f:Ventes` },
+    { label: $localize`:@@sales-orders.sales-order-create.ts.commandes.clients.928f824a:Commandes clients`, route: '/sales-orders' },
+    { label: $localize`:@@sales-orders.sales-order-create.ts.nouvelle.3278b098:Nouvelle` }
   ];
 
   readonly totalHt = computed(() =>
@@ -666,7 +666,7 @@ export class SalesOrderCreateComponent {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@sales-order-create.component.summary.Erreur:Erreur`,
-            detail: msg || 'Création impossible'
+            detail: msg || $localize`:@@sales-orders.sales-order-create.ts.creation.impossible.e15c59e7:Création impossible`
           });
           this.errorHandler.logError('Create sales order failed', err);
           this.saving.set(false);

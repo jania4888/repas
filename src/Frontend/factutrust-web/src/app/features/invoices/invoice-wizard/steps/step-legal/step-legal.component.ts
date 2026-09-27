@@ -578,12 +578,12 @@ export class StepLegalComponent implements OnInit {
   // Options
   paymentMethodOptions = PAYMENT_METHOD_OPTIONS;
   paymentTermsOptions = [
-    { label: 'Paiement comptant', value: 'Paiement comptant' },
-    { label: 'Paiement à 30 jours', value: 'Paiement à 30 jours' },
-    { label: 'Paiement à 60 jours', value: 'Paiement à 60 jours' },
-    { label: 'Paiement à 90 jours', value: 'Paiement à 90 jours' },
-    { label: 'Paiement à réception', value: 'Paiement à réception de facture' },
-    { label: 'Personnalisé', value: '' }
+    { label: $localize`:@@invoices.step-legal.ts.paiement.comptant.38d6b6bb:Paiement comptant`, value: 'Paiement comptant' },
+    { label: $localize`:@@invoices.step-legal.ts.paiement.a.30.jours.bb6473dc:Paiement à 30 jours`, value: 'Paiement à 30 jours' },
+    { label: $localize`:@@invoices.step-legal.ts.paiement.a.60.jours.de7681b0:Paiement à 60 jours`, value: 'Paiement à 60 jours' },
+    { label: $localize`:@@invoices.step-legal.ts.paiement.a.90.jours.7e68cef4:Paiement à 90 jours`, value: 'Paiement à 90 jours' },
+    { label: $localize`:@@invoices.step-legal.ts.paiement.a.reception.578d3a0b:Paiement à réception`, value: 'Paiement à réception de facture' },
+    { label: $localize`:@@invoices.step-legal.ts.personnalise.8504dffc:Personnalisé`, value: '' }
   ];
 
   selectedPaymentTerms: string = 'Paiement à 30 jours';

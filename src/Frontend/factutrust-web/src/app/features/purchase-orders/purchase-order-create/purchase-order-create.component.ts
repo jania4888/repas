@@ -522,9 +522,9 @@ export class PurchaseOrderCreateComponent implements OnInit {
   totalTTC = 0;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de commande', route: '/purchase-orders' },
-    { label: 'Nouveau' }
+    { label: $localize`:@@purchase-orders.purchase-order-create.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-orders.purchase-order-create.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
+    { label: $localize`:@@purchase-orders.purchase-order-create.ts.nouveau.b9676c8f:Nouveau` }
   ];
 
   ngOnInit(): void {
@@ -640,7 +640,7 @@ export class PurchaseOrderCreateComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@purchase-order-create.component.summary.Erreur:Erreur`,
-          detail: err?.error?.errors?.[0] || 'Erreur lors de la création'
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-create.ts.erreur.lors.de.la.creation.18def0de:Erreur lors de la création`
         });
       }
     });

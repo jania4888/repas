@@ -92,8 +92,8 @@ export class PayrollPaymentsPanelComponent implements OnInit {
 
   async cancelOne(p: PayrollPayment): Promise<void> {
     const reason = await this.confirmation.prompt({
-      header: 'Annuler le paiement',
-      message: 'Saisissez le motif d\'annulation du paiement :',
+      header: $localize`:@@payroll.payroll-payments-panel.ts.annuler.le.paiement.6a672eb2:Annuler le paiement`,
+      message: $localize`:@@payroll.payroll-payments-panel.ts.saisissez.le.motif.d.annulation.du.paiem.e9153bbd:Saisissez le motif d'annulation du paiement :`,
       acceptLabel: $localize`:@@payroll-payments-panel.component.acceptLabel.Annuler_le_paiem:Annuler le paiement`,
       rejectLabel: $localize`:@@payroll-payments-panel.component.rejectLabel.Conserver:Conserver`,
       acceptButtonStyleClass: 'btn-danger',

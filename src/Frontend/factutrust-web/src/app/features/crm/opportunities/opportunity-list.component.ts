@@ -601,11 +601,11 @@ export class OpportunityListComponent implements OnInit {
   readonly summaryMetrics = computed<TotalMetric[]>(() => {
     const rows = this.items();
     return [
-      { label: 'Opportunités', value: rows.length, format: 'number', icon: 'pi-briefcase', tone: 'primary' },
-      { label: 'Montant attendu', value: rows.reduce((acc, o) => acc + (o.expectedAmount ?? 0), 0), format: 'currency', icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Pondéré', value: rows.reduce((acc, o) => acc + (o.weightedAmount ?? 0), 0), format: 'currency', icon: 'pi-percentage', tone: 'cyan' },
-      { label: 'Ouvertes', value: rows.filter(o => o.stage < 4).length, format: 'number', icon: 'pi-clock', tone: 'amber' },
-      { label: 'Gagnées', value: rows.filter(o => o.stage === 4).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' }
+      { label: $localize`:@@crm.opportunity-list.ts.opportunites.0dbfa3c5:Opportunités`, value: rows.length, format: 'number', icon: 'pi-briefcase', tone: 'primary' },
+      { label: $localize`:@@crm.opportunity-list.ts.montant.attendu.1826d86f:Montant attendu`, value: rows.reduce((acc, o) => acc + (o.expectedAmount ?? 0), 0), format: 'currency', icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@crm.opportunity-list.ts.pondere.c48371c8:Pondéré`, value: rows.reduce((acc, o) => acc + (o.weightedAmount ?? 0), 0), format: 'currency', icon: 'pi-percentage', tone: 'cyan' },
+      { label: $localize`:@@crm.opportunity-list.ts.ouvertes.b8fe259a:Ouvertes`, value: rows.filter(o => o.stage < 4).length, format: 'number', icon: 'pi-clock', tone: 'amber' },
+      { label: $localize`:@@crm.opportunity-list.ts.gagnees.97d1ec76:Gagnées`, value: rows.filter(o => o.stage === 4).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' }
     ];
   });
 
@@ -617,13 +617,13 @@ export class OpportunityListComponent implements OnInit {
   loseTargetId: string | null = null;
 
   stageOptions: StageOption[] = [
-    { label: 'Tous les stages', value: null },
-    { label: 'Prospection', value: 0 },
-    { label: 'Qualification', value: 1 },
-    { label: 'Proposition', value: 2 },
-    { label: 'Négociation', value: 3 },
-    { label: 'Gagnée', value: 4 },
-    { label: 'Perdue', value: 5 }
+    { label: $localize`:@@crm.opportunity-list.ts.tous.les.stages.59d7f5a1:Tous les stages`, value: null },
+    { label: $localize`:@@crm.opportunity-list.ts.prospection.2f8b56f9:Prospection`, value: 0 },
+    { label: $localize`:@@crm.opportunity-list.ts.qualification.2ffe44e5:Qualification`, value: 1 },
+    { label: $localize`:@@crm.opportunity-list.ts.proposition.3e2cf2d2:Proposition`, value: 2 },
+    { label: $localize`:@@crm.opportunity-list.ts.negociation.bcc6c081:Négociation`, value: 3 },
+    { label: $localize`:@@crm.opportunity-list.ts.gagnee.7dffc692:Gagnée`, value: 4 },
+    { label: $localize`:@@crm.opportunity-list.ts.perdue.2b13797b:Perdue`, value: 5 }
   ];
   selectedStageOption: StageOption | null = this.stageOptions[0];
 
@@ -677,7 +677,7 @@ export class OpportunityListComponent implements OnInit {
           this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
-      error: () => this.error.set('Erreur réseau')
+      error: () => this.error.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`)
     });
   }
 
@@ -733,12 +733,12 @@ export class OpportunityListComponent implements OnInit {
     const v = this.oppForm.getRawValue();
     const title = (v.title ?? '').trim();
     if (!title) {
-      this.formError.set('Le titre est obligatoire.');
+      this.formError.set($localize`:@@crm.opportunity-list.ts.le.titre.est.obligatoire.27415fac:Le titre est obligatoire.`);
       return;
     }
     const close = v.expectedCloseDate;
     if (!close) {
-      this.formError.set('La date de clôture est obligatoire.');
+      this.formError.set($localize`:@@crm.opportunity-list.ts.la.date.de.cloture.est.obligatoire.2cc53478:La date de clôture est obligatoire.`);
       return;
     }
     const iso = close instanceof Date ? close.toISOString() : new Date(close).toISOString();
@@ -766,7 +766,7 @@ export class OpportunityListComponent implements OnInit {
           },
           error: () => {
             this.saving.set(false);
-            this.formError.set('Erreur réseau');
+            this.formError.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`);
           }
         });
       return;
@@ -775,7 +775,7 @@ export class OpportunityListComponent implements OnInit {
     const clientId = v.clientId?.trim();
     if (!clientId) {
       this.saving.set(false);
-      this.formError.set('Sélectionnez un client.');
+      this.formError.set($localize`:@@crm.opportunity-list.ts.selectionnez.un.client.8fb40ef8:Sélectionnez un client.`);
       return;
     }
 
@@ -801,7 +801,7 @@ export class OpportunityListComponent implements OnInit {
         },
         error: () => {
           this.saving.set(false);
-          this.formError.set('Erreur réseau');
+          this.formError.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`);
         }
       });
   }
@@ -814,7 +814,7 @@ export class OpportunityListComponent implements OnInit {
         }
         this.load();
       },
-      error: () => this.error.set('Erreur réseau')
+      error: () => this.error.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`)
     });
   }
 
@@ -826,7 +826,7 @@ export class OpportunityListComponent implements OnInit {
         }
         this.load();
       },
-      error: () => this.error.set('Erreur réseau')
+      error: () => this.error.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`)
     });
   }
 
@@ -863,7 +863,7 @@ export class OpportunityListComponent implements OnInit {
       },
       error: () => {
         this.loseSaving.set(false);
-        this.loseError.set('Erreur réseau');
+        this.loseError.set($localize`:@@crm.opportunity-list.ts.erreur.reseau.0683007f:Erreur réseau`);
       }
     });
   }

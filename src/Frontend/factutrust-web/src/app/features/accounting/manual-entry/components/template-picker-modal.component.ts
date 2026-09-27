@@ -198,7 +198,7 @@ export class TemplatePickerModalComponent implements OnInit {
         },
         error: err => {
           this.loading.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du chargement des modèles.'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.template-picker-modal.ts.erreur.reseau.lors.du.chargement.des.mod.7cd95bf0:Erreur réseau lors du chargement des modèles.`));
         }
       });
   }
@@ -226,8 +226,8 @@ export class TemplatePickerModalComponent implements OnInit {
     const sel = this.selected();
     if (!sel) return;
     this.confirmationService.confirm({
-      message: `Voulez-vous vraiment supprimer le modèle « ${sel.name} » ? Cette action est irréversible.`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@accounting.template-picker-modal.ts.voulez.vous.vraiment.supprimer.le.modele.b2477773:Voulez-vous vraiment supprimer le modèle « ${sel.name}:name: » ? Cette action est irréversible.`,
+      header: $localize`:@@accounting.template-picker-modal.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@template-picker-modal.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@template-picker-modal.component.rejectLabel.Annuler:Annuler`,
@@ -243,7 +243,7 @@ export class TemplatePickerModalComponent implements OnInit {
                 this.toast.add({
                   severity: 'success',
                   summary: $localize`:@@template-picker-modal.component.summary.Modèle suppr:Modèle supprimé`,
-                  detail: `Le modèle « ${sel.name} » a été supprimé.`,
+                  detail: $localize`:@@accounting.template-picker-modal.ts.le.modele.name.a.ete.supprime.c1d4c11d:Le modèle « ${sel.name}:name: » a été supprimé.`,
                   life: 4000
                 });
                 this.templates.update(list => list.filter(t => t.id !== sel.id));
@@ -262,7 +262,7 @@ export class TemplatePickerModalComponent implements OnInit {
               this.toast.add({
                 severity: 'error',
                 summary: $localize`:@@template-picker-modal.component.summary.Impossible d:Impossible de supprimer le modèle.`,
-                detail: this.errors.extractErrorMessage(err, 'Erreur réseau'),
+                detail: this.errors.extractErrorMessage(err, $localize`:@@accounting.template-picker-modal.ts.erreur.reseau.0683007f:Erreur réseau`),
                 life: 6000
               });
             }

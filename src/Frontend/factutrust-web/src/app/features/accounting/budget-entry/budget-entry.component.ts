@@ -255,7 +255,7 @@ export class BudgetEntryComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du chargement de la grille budgétaire.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.budget-entry.ts.erreur.reseau.lors.du.chargement.de.la.g.d3ea77ca:Erreur réseau lors du chargement de la grille budgétaire.`));
       }
     });
   }
@@ -294,12 +294,12 @@ export class BudgetEntryComponent implements OnInit {
           this.error.set(res.error ?? $localize`:@@ui.tern.l.enregistrement.du.budget.a.echoue.7cabe0:L'enregistrement du budget a échoué.`);
           return;
         }
-        this.toast.add({ severity: 'success', summary: $localize`:@@budget-entry.component.summary.Budget_enregistr:Budget enregistré`, detail: `Exercice ${this.fiscalYear()}`, life: 4000 });
+        this.toast.add({ severity: 'success', summary: $localize`:@@budget-entry.component.summary.Budget_enregistr:Budget enregistré`, detail: $localize`:@@accounting.budget-entry.ts.exercice.fiscalyear.ed73b957:Exercice ${this.fiscalYear()}:fiscalYear:`, life: 4000 });
         this.load();
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'enregistrement du budget."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.budget-entry.ts.erreur.reseau.lors.de.l.enregistrement.d.b976f45a:Erreur réseau lors de l'enregistrement du budget.`));
       }
     });
   }
@@ -309,9 +309,9 @@ export class BudgetEntryComponent implements OnInit {
     if (this.busy()) return;
     this.confirmationService.confirm({
       message:
-        `Valider le budget initial ${this.fiscalYear()} ?\n\n` +
+        $localize`:@@accounting.budget-entry.ts.valider.le.budget.initial.fiscalyear.d6af6bff:Valider le budget initial ${this.fiscalYear()}:fiscalYear: ?\n\n` +
         $localize`:@@ui.tern.le.budget.initial.sera.fige.copie.vers.le..8d6f06:Le budget initial sera figé (copié vers le budget révisé, seule version modifiable ensuite). Cette action est irréversible.`,
-      header: 'Confirmation',
+      header: $localize`:@@accounting.budget-entry.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@budget-entry.component.acceptLabel.Valider:Valider`,
       rejectLabel: $localize`:@@budget-entry.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
@@ -324,12 +324,12 @@ export class BudgetEntryComponent implements OnInit {
               this.error.set(res.error ?? $localize`:@@ui.tern.la.validation.du.budget.initial.a.echoue.d3cadb:La validation du budget initial a échoué.`);
               return;
             }
-            this.toast.add({ severity: 'success', summary: $localize`:@@budget-entry.component.summary.Budget_initial_v:Budget initial validé`, detail: `Exercice ${this.fiscalYear()}`, life: 4000 });
+            this.toast.add({ severity: 'success', summary: $localize`:@@budget-entry.component.summary.Budget_initial_v:Budget initial validé`, detail: $localize`:@@accounting.budget-entry.ts.exercice.fiscalyear.ed73b957:Exercice ${this.fiscalYear()}:fiscalYear:`, life: 4000 });
             this.load();
           },
           error: err => {
             this.validating.set(false);
-            this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la validation du budget initial.'));
+            this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.budget-entry.ts.erreur.reseau.lors.de.la.validation.du.b.d1b484aa:Erreur réseau lors de la validation du budget initial.`));
           }
         });
       }

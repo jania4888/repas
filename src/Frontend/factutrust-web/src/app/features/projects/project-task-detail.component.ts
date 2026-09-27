@@ -471,9 +471,9 @@ export class ProjectTaskDetailComponent implements OnInit {
 
   crumbs(t: ProjectTask): BreadcrumbItem[] {
     return [
-      { label: 'Accueil', route: '/' },
-      { label: 'Projets', route: '/projects' },
-      { label: 'Projet', route: `/projects/${t.projectId}` },
+      { label: $localize`:@@projects.project-task-detail.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+      { label: $localize`:@@projects.project-task-detail.ts.projets.b1e8cd4d:Projets`, route: '/projects' },
+      { label: $localize`:@@projects.project-task-detail.ts.projet.a9de3a26:Projet`, route: `/projects/${t.projectId}` },
       { label: t.title }
     ];
   }
@@ -739,8 +739,8 @@ export class ProjectTaskDetailComponent implements OnInit {
     const t = this.task();
     if (!t) return;
     this.confirm.confirm({
-      header: 'Supprimer la tâche',
-      message: 'Cette action est irréversible. Supprimer cette tâche ?',
+      header: $localize`:@@projects.project-task-detail.ts.supprimer.la.tache.3ca1ed4e:Supprimer la tâche`,
+      message: $localize`:@@projects.project-task-detail.ts.cette.action.est.irreversible.supprimer.f57f310e:Cette action est irréversible. Supprimer cette tâche ?`,
       accept: () => this.api.deleteTask(t.id).subscribe({
         next: () => {
           this.toast.add({ severity: 'success', summary: $localize`:@@project-task-detail.component.summary.Tâche suppri:Tâche supprimée` });

@@ -149,7 +149,7 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
       },
       error: err => {
         this.loading.set(false);
-        this.notify('error', this.errors.extractErrorMessage(err, 'Impossible de charger le catalogue des annexes.'));
+        this.notify('error', this.errors.extractErrorMessage(err, $localize`:@@accounting.nct-note-overrides-dialog.ts.impossible.de.charger.le.catalogue.des.a.db589247:Impossible de charger le catalogue des annexes.`));
       }
     });
   }
@@ -193,7 +193,7 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
       },
       error: err => {
         row.saving = false;
-        this.notify('error', this.errors.extractErrorMessage(err, "Erreur réseau lors de l'enregistrement."));
+        this.notify('error', this.errors.extractErrorMessage(err, $localize`:@@accounting.nct-note-overrides-dialog.ts.erreur.reseau.lors.de.l.enregistrement.e5ca0048:Erreur réseau lors de l'enregistrement.`));
       }
     });
   }
@@ -212,7 +212,7 @@ export class NctNoteOverridesDialogComponent implements OnChanges {
       },
       error: err => {
         row.saving = false;
-        this.notify('error', this.errors.extractErrorMessage(err, 'Erreur réseau lors du rétablissement.'));
+        this.notify('error', this.errors.extractErrorMessage(err, $localize`:@@accounting.nct-note-overrides-dialog.ts.erreur.reseau.lors.du.retablissement.75f7b2c9:Erreur réseau lors du rétablissement.`));
       }
     });
   }

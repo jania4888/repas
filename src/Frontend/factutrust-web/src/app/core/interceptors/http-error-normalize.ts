@@ -15,7 +15,7 @@ export function normalizeHttpErrorResponse(error: HttpErrorResponse): Observable
           new HttpErrorResponse({
             error: {
               success: false,
-              message: 'Erreur lors de la lecture de la réponse du serveur.'
+              message: $localize`:@@core.http-error-normalize.ts.erreur.lors.de.la.lecture.de.la.reponse.8884787e:Erreur lors de la lecture de la réponse du serveur.`
             },
             status: error.status,
             statusText: error.statusText,

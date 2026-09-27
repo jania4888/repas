@@ -264,7 +264,7 @@ export class PayrollBankTransferDialogComponent implements OnInit {
           this.toast.add({
             severity: 'success',
             summary: $localize`:@@payroll-bank-transfer-dialog.component.summary.Virement:Virement`,
-            detail: `Fichier téléchargé (${run.eligibleCount} virement(s), ${formatPayrollAmount(run.totalAmount)}).`
+            detail: $localize`:@@payroll.payroll-bank-transfer-dialog.ts.fichier.telecharge.eligiblecount.viremen.44bc711f:Fichier téléchargé (${run.eligibleCount}:eligibleCount: virement(s), ${formatPayrollAmount(run.totalAmount)}:formatPayrollAmount:).`
           });
           this.close();
         },

@@ -19,28 +19,28 @@ export const STOCK_ROUTES: Routes = [
         canActivate: [permissionGuard],
         data: { permissions: [PERMISSIONS.stockVouchers.create], kind: 'Entry' },
         loadComponent: () => import('../stock-vouchers/stock-voucher-form.component').then(m => m.StockVoucherFormComponent),
-        title: "Nouveau bon d'entrée - InstaFact"
+        title: $localize`:@@stock.stock.routes.ts.nouveau.bon.d.entree.instafact.ebf9619a:Nouveau bon d'entrée - InstaFact`
     },
     {
         path: 'entries/:id/edit',
         canActivate: [permissionGuard],
         data: { permissions: [PERMISSIONS.stockVouchers.update], kind: 'Entry' },
         loadComponent: () => import('../stock-vouchers/stock-voucher-form.component').then(m => m.StockVoucherFormComponent),
-        title: "Modifier bon d'entrée - InstaFact"
+        title: $localize`:@@stock.stock.routes.ts.modifier.bon.d.entree.instafact.021b4a5b:Modifier bon d'entrée - InstaFact`
     },
     {
         path: 'entries/:id',
         canActivate: [permissionGuard],
         data: { permissions: [PERMISSIONS.stockVouchers.read], kind: 'Entry' },
         loadComponent: () => import('../stock-vouchers/stock-voucher-detail.component').then(m => m.StockVoucherDetailComponent),
-        title: "Détail bon d'entrée - InstaFact"
+        title: $localize`:@@stock.stock.routes.ts.detail.bon.d.entree.instafact.0cd21d64:Détail bon d'entrée - InstaFact`
     },
     {
         path: 'entries',
         canActivate: [permissionGuard],
         data: { permissions: [PERMISSIONS.stockVouchers.read], kind: 'Entry' },
         loadComponent: () => import('../stock-vouchers/stock-voucher-list.component').then(m => m.StockVoucherListComponent),
-        title: "Bons d'entrée - InstaFact"
+        title: $localize`:@@stock.stock.routes.ts.bons.d.entree.instafact.b6e6ec34:Bons d'entrée - InstaFact`
     },
     {
         path: 'issues/new',

@@ -824,8 +824,8 @@ export class TransferCreateComponent implements OnInit {
     const line = this.lines[index];
     if (!line) return;
     this.confirmationService.confirm({
-      header: 'Retirer la ligne',
-      message: `Retirer « ${line.productName} » de ce transfert ?`,
+      header: $localize`:@@transfers.transfer-create.ts.retirer.la.ligne.d7b83e17:Retirer la ligne`,
+      message: $localize`:@@transfers.transfer-create.ts.retirer.productname.de.ce.transfert.9ccdb2a1:Retirer « ${line.productName}:productName: » de ce transfert ?`,
       icon: 'pi pi-trash',
       acceptLabel: $localize`:@@transfer-create.component.acceptLabel.Retirer:Retirer`,
       rejectLabel: $localize`:@@transfer-create.component.rejectLabel.Annuler:Annuler`,
@@ -875,7 +875,7 @@ export class TransferCreateComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: $localize`:@@transfer-create.component.summary.Erreur:Erreur`,
-          detail: err.error?.error || 'Erreur lors de la création',
+          detail: err.error?.error || $localize`:@@transfers.transfer-create.ts.erreur.lors.de.la.creation.18def0de:Erreur lors de la création`,
         });
       },
     });

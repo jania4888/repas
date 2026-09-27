@@ -109,8 +109,8 @@ export class InventoryListComponent implements OnInit, OnDestroy {
   private readonly SEARCH_DEBOUNCE_MS = 500;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Inventaire' }
+    { label: $localize`:@@inventory.inventory-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@inventory.inventory-list.ts.inventaire.10ad1a54:Inventaire` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [

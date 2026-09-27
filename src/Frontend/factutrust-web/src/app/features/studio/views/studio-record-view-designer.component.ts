@@ -254,7 +254,7 @@ export class StudioRecordViewDesignerComponent implements OnInit {
   readonly labels = STUDIO_RUNTIME_LABELS;
   readonly limits = RECORD_VIEW_LIMITS;
   readonly modeOptions: { label: string; value: RecordViewMode }[] = [
-    { label: 'Liste', value: 'List' }, { label: 'Kanban', value: 'Kanban' }, { label: 'Calendrier', value: 'Calendar' }
+    { label: $localize`:@@studio.studio-record-view-designer.ts.liste.4231be17:Liste`, value: 'List' }, { label: $localize`:@@studio.studio-record-view-designer.ts.kanban.38955467:Kanban`, value: 'Kanban' }, { label: $localize`:@@studio.studio-record-view-designer.ts.calendrier.4c83736b:Calendrier`, value: 'Calendar' }
   ];
 
   readonly entityKey = this.route.snapshot.paramMap.get('key') ?? '';
@@ -352,7 +352,7 @@ export class StudioRecordViewDesignerComponent implements OnInit {
     return {
       id: this.viewId ?? 'apercu',
       key: this.key() || current?.key || 'apercu',
-      displayName: this.displayName().trim() || current?.displayName || 'Aperçu',
+      displayName: this.displayName().trim() || current?.displayName || $localize`:@@studio.studio-record-view-designer.ts.apercu.f0f53004:Aperçu`,
       mode: this.mode(),
       definition: this.definition(),
       isDefault: this.isDefault(),
@@ -577,8 +577,8 @@ export class StudioRecordViewDesignerComponent implements OnInit {
   delete(): void {
     if (!this.editing || !this.canDesign()) return;
     this.confirmation.confirm({
-      message: 'Supprimer cette vue ? Cette action est irréversible.',
-      header: 'Confirmation',
+      message: $localize`:@@studio.studio-record-view-designer.ts.supprimer.cette.vue.cette.action.est.irr.598ead70:Supprimer cette vue ? Cette action est irréversible.`,
+      header: $localize`:@@studio.studio-record-view-designer.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: this.labels.designer.delete,
       rejectLabel: $localize`:@@studio-record-view-designer.component.rejectLabel.Annuler:Annuler`,
       accept: () => {

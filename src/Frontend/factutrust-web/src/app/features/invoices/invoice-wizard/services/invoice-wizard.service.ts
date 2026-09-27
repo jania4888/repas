@@ -259,19 +259,19 @@ export class InvoiceWizardService {
 
   private initializeSteps(): WizardStep[] {
     const legacyConfigs: { key: WizardStepKey; label: string; description: string; icon: string }[] = [
-      { key: 'metadata', label: 'Type & Date', description: 'Type de document et métadonnées', icon: 'pi pi-file' },
-      { key: 'seller', label: 'Émetteur', description: 'Informations du vendeur', icon: 'pi pi-building' },
-      { key: 'client', label: 'Client', description: 'Informations du destinataire', icon: 'pi pi-user' },
-      { key: 'lines', label: 'Articles', description: 'Lignes de facturation', icon: 'pi pi-list' },
-      { key: 'legal', label: 'Paiement', description: 'Mentions légales & paiement', icon: 'pi pi-money-bill' },
-      { key: 'preview', label: 'Validation', description: 'Aperçu et émission', icon: 'pi pi-check-circle' }
+      { key: 'metadata', label: $localize`:@@invoices.invoice-wizard.ts.type.date.98c6992c:Type & Date`, description: $localize`:@@invoices.invoice-wizard.ts.type.de.document.et.metadonnees.160afbef:Type de document et métadonnées`, icon: 'pi pi-file' },
+      { key: 'seller', label: $localize`:@@invoices.invoice-wizard.ts.emetteur.0291ff4e:Émetteur`, description: $localize`:@@invoices.invoice-wizard.ts.informations.du.vendeur.1c75ef39:Informations du vendeur`, icon: 'pi pi-building' },
+      { key: 'client', label: $localize`:@@invoices.invoice-wizard.ts.client.1bdd79b1:Client`, description: $localize`:@@invoices.invoice-wizard.ts.informations.du.destinataire.867dab5b:Informations du destinataire`, icon: 'pi pi-user' },
+      { key: 'lines', label: $localize`:@@invoices.invoice-wizard.ts.articles.7c422841:Articles`, description: $localize`:@@invoices.invoice-wizard.ts.lignes.de.facturation.5896ee38:Lignes de facturation`, icon: 'pi pi-list' },
+      { key: 'legal', label: $localize`:@@invoices.invoice-wizard.ts.paiement.0564e9ba:Paiement`, description: $localize`:@@invoices.invoice-wizard.ts.mentions.legales.paiement.e23893bd:Mentions légales & paiement`, icon: 'pi pi-money-bill' },
+      { key: 'preview', label: $localize`:@@invoices.invoice-wizard.ts.validation.dd74d182:Validation`, description: $localize`:@@invoices.invoice-wizard.ts.apercu.et.emission.121aebe7:Aperçu et émission`, icon: 'pi pi-check-circle' }
     ];
 
     const simplifiedConfigs: { key: WizardStepKey; label: string; description: string; icon: string }[] = [
-      { key: 'document', label: 'Document', description: 'Type, dates et émetteur', icon: 'pi pi-file' },
-      { key: 'client', label: 'Client', description: 'Informations du destinataire', icon: 'pi pi-user' },
-      { key: 'billing', label: 'Facturation', description: 'Articles et paiement', icon: 'pi pi-list' },
-      { key: 'review', label: 'Récap & Émission', description: 'Aperçu et soumission', icon: 'pi pi-check-circle' }
+      { key: 'document', label: $localize`:@@invoices.invoice-wizard.ts.document.e214b8a2:Document`, description: $localize`:@@invoices.invoice-wizard.ts.type.dates.et.emetteur.7a32b9e8:Type, dates et émetteur`, icon: 'pi pi-file' },
+      { key: 'client', label: $localize`:@@invoices.invoice-wizard.ts.client.1bdd79b1:Client`, description: $localize`:@@invoices.invoice-wizard.ts.informations.du.destinataire.867dab5b:Informations du destinataire`, icon: 'pi pi-user' },
+      { key: 'billing', label: $localize`:@@invoices.invoice-wizard.ts.facturation.04716c6b:Facturation`, description: $localize`:@@invoices.invoice-wizard.ts.articles.et.paiement.9c5d0635:Articles et paiement`, icon: 'pi pi-list' },
+      { key: 'review', label: $localize`:@@invoices.invoice-wizard.ts.recap.emission.6d6fc1a1:Récap & Émission`, description: $localize`:@@invoices.invoice-wizard.ts.apercu.et.soumission.82a8ea57:Aperçu et soumission`, icon: 'pi pi-check-circle' }
     ];
 
     const stepConfigs = this.isSimplifiedFlow() ? simplifiedConfigs : legacyConfigs;
@@ -1259,8 +1259,8 @@ export class InvoiceWizardService {
       return {
         id: 'invoice-number',
         category: 'LEGAL',
-        label: 'Numéro de facture',
-        description: 'Le numéro de facture est obligatoire et doit être séquentiel',
+        label: $localize`:@@invoices.invoice-wizard.ts.numero.de.facture.a19ac308:Numéro de facture`,
+        description: $localize`:@@invoices.invoice-wizard.ts.le.numero.de.facture.est.obligatoire.et.35fb4297:Le numéro de facture est obligatoire et doit être séquentiel`,
         status: 'ERROR',
         isBlocking: true,
         field: 'invoiceNumber'
@@ -1277,12 +1277,12 @@ export class InvoiceWizardService {
     return {
       id: 'invoice-number',
       category: 'LEGAL',
-      label: 'Numéro de facture',
+      label: $localize`:@@invoices.invoice-wizard.ts.numero.de.facture.a19ac308:Numéro de facture`,
       description: hasValidFormat
-        ? `Numéro séquentiel valide: ${number}`
+        ? $localize`:@@invoices.invoice-wizard.ts.numero.sequentiel.valide.number.1268a4cf:Numéro séquentiel valide: ${number}:number:`
         : containsTemp
-          ? 'Le numéro sera généré automatiquement lors de la validation'
-          : 'Le numéro de facture doit respecter le format configuré dans les numérotations',
+          ? $localize`:@@invoices.invoice-wizard.ts.le.numero.sera.genere.automatiquement.lo.471884c8:Le numéro sera généré automatiquement lors de la validation`
+          : $localize`:@@invoices.invoice-wizard.ts.le.numero.de.facture.doit.respecter.le.f.3f12caac:Le numéro de facture doit respecter le format configuré dans les numérotations`,
       status: isValid ? 'VALID' : 'ERROR',
       isBlocking: false, // Plus bloquant - génération automatique lors de la soumission
       field: 'invoiceNumber'
@@ -1296,10 +1296,10 @@ export class InvoiceWizardService {
     return {
       id: 'issue-date',
       category: 'LEGAL',
-      label: "Date d'émission",
+      label: $localize`:@@invoices.invoice-wizard.ts.date.d.emission.99f68857:Date d'émission`,
       description: isValid 
-        ? `Date: ${new Date(date).toLocaleDateString('fr-TN')}` 
-        : "La date d'émission est obligatoire",
+        ? $localize`:@@invoices.invoice-wizard.ts.date.tolocaledatestring.35910f2f:Date: ${new Date(date).toLocaleDateString('fr-TN')}:toLocaleDateString:` 
+        : $localize`:@@invoices.invoice-wizard.ts.la.date.d.emission.est.obligatoire.b8bfb9d9:La date d'émission est obligatoire`,
       status: isValid ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'issueDate'
@@ -1313,10 +1313,10 @@ export class InvoiceWizardService {
     return {
       id: 'seller-info',
       category: 'LEGAL',
-      label: 'Informations émetteur',
+      label: $localize`:@@invoices.invoice-wizard.ts.informations.emetteur.17adfe24:Informations émetteur`,
       description: isValid 
-        ? `Émetteur: ${seller!.companyName}` 
-        : "Les informations de l'émetteur sont incomplètes",
+        ? $localize`:@@invoices.invoice-wizard.ts.emetteur.companyname.a14007d0:Émetteur: ${seller!.companyName}:companyName:` 
+        : $localize`:@@invoices.invoice-wizard.ts.les.informations.de.l.emetteur.sont.inco.4de9bcb6:Les informations de l'émetteur sont incomplètes`,
       status: isValid ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'seller'
@@ -1331,10 +1331,10 @@ export class InvoiceWizardService {
     return {
       id: 'seller-nif',
       category: 'FISCAL',
-      label: "Matricule fiscal émetteur",
+      label: $localize`:@@invoices.invoice-wizard.ts.matricule.fiscal.emetteur.f1181797:Matricule fiscal émetteur`,
       description: isValid 
         ? `NIF: ${nif}` 
-        : "Le matricule fiscal de l'émetteur est invalide ou manquant",
+        : $localize`:@@invoices.invoice-wizard.ts.le.matricule.fiscal.de.l.emetteur.est.in.df30f39a:Le matricule fiscal de l'émetteur est invalide ou manquant`,
       status: isValid ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'seller.nif'
@@ -1352,10 +1352,10 @@ export class InvoiceWizardService {
     return {
       id: 'client-info',
       category: 'LEGAL',
-      label: 'Informations client',
+      label: $localize`:@@invoices.invoice-wizard.ts.informations.client.179987af:Informations client`,
       description: isValid
-        ? `Client: ${client!.name}`
-        : 'Les informations du client sont incomplètes (nom, adresse, ville et gouvernorat requis)',
+        ? $localize`:@@invoices.invoice-wizard.ts.client.name.6f485dcb:Client: ${client!.name}:name:`
+        : $localize`:@@invoices.invoice-wizard.ts.les.informations.du.client.sont.incomple.f1d91037:Les informations du client sont incomplètes (nom, adresse, ville et gouvernorat requis)`,
       status: isValid ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'client'
@@ -1371,8 +1371,8 @@ export class InvoiceWizardService {
       return {
         id: 'client-identity',
         category: 'LEGAL',
-        label: 'Rattachement client',
-        description: 'Non applicable',
+        label: $localize`:@@invoices.invoice-wizard.ts.rattachement.client.5a8e02fb:Rattachement client`,
+        description: $localize`:@@invoices.invoice-wizard.ts.non.applicable.16ed38d0:Non applicable`,
         status: 'VALID',
         isBlocking: false,
         field: 'client'
@@ -1385,10 +1385,10 @@ export class InvoiceWizardService {
     return {
       id: 'client-identity',
       category: 'LEGAL',
-      label: 'Rattachement client',
+      label: $localize`:@@invoices.invoice-wizard.ts.rattachement.client.5a8e02fb:Rattachement client`,
       description: ok
-        ? (client.isNewClient ? 'Nouveau client — sera créé à l\'émission' : `Client enregistré (${client.id})`)
-        : 'Sélectionnez un client dans la liste ou utilisez l\'onglet « Nouveau client ». Si le problème persiste, resélectionnez le client.',
+        ? (client.isNewClient ? $localize`:@@invoices.invoice-wizard.ts.nouveau.client.sera.cree.a.l.emission.a51a77c3:Nouveau client — sera créé à l'émission` : $localize`:@@invoices.invoice-wizard.ts.client.enregistre.id.4058f56f:Client enregistré (${client.id}:id:)`)
+        : $localize`:@@invoices.invoice-wizard.ts.selectionnez.un.client.dans.la.liste.ou.7e038a7f:Sélectionnez un client dans la liste ou utilisez l'onglet « Nouveau client ». Si le problème persiste, resélectionnez le client.`,
       status: ok ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'client'
@@ -1404,8 +1404,8 @@ export class InvoiceWizardService {
       return {
         id: 'client-nif',
         category: 'FISCAL',
-        label: 'Matricule fiscal client',
-        description: 'Non requis pour ce type de client',
+        label: $localize`:@@invoices.invoice-wizard.ts.matricule.fiscal.client.a6352da1:Matricule fiscal client`,
+        description: $localize`:@@invoices.invoice-wizard.ts.non.requis.pour.ce.type.de.client.0a836f2d:Non requis pour ce type de client`,
         status: 'VALID',
         isBlocking: false,
         field: 'client.nif'
@@ -1415,10 +1415,10 @@ export class InvoiceWizardService {
     return {
       id: 'client-nif',
       category: 'FISCAL',
-      label: 'Matricule fiscal client',
+      label: $localize`:@@invoices.invoice-wizard.ts.matricule.fiscal.client.a6352da1:Matricule fiscal client`,
       description: hasValidNIF 
         ? `NIF: ${client!.nif}` 
-        : 'Le matricule fiscal est obligatoire pour un client assujetti',
+        : $localize`:@@invoices.invoice-wizard.ts.le.matricule.fiscal.est.obligatoire.pour.51ef6b29:Le matricule fiscal est obligatoire pour un client assujetti`,
       status: hasValidNIF ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'client.nif'
@@ -1433,10 +1433,10 @@ export class InvoiceWizardService {
     return {
       id: 'vat-rates',
       category: 'FISCAL',
-      label: 'Taux de TVA',
+      label: $localize`:@@invoices.invoice-wizard.ts.taux.de.tva.e704ceaf:Taux de TVA`,
       description: allValid 
-        ? 'Tous les taux TVA sont conformes' 
-        : 'Certains taux TVA ne sont pas conformes à la législation tunisienne',
+        ? $localize`:@@invoices.invoice-wizard.ts.tous.les.taux.tva.sont.conformes.81e5176c:Tous les taux TVA sont conformes` 
+        : $localize`:@@invoices.invoice-wizard.ts.certains.taux.tva.ne.sont.pas.conformes.582ab736:Certains taux TVA ne sont pas conformes à la législation tunisienne`,
       status: allValid ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'lines.vatRate'
@@ -1450,10 +1450,10 @@ export class InvoiceWizardService {
     return {
       id: 'vat-mention',
       category: 'LEGAL',
-      label: 'Mention TVA',
+      label: $localize`:@@invoices.invoice-wizard.ts.mention.tva.0fb27cc0:Mention TVA`,
       description: isValid 
-        ? 'Mention TVA présente' 
-        : 'La mention "TVA due par le vendeur" est obligatoire',
+        ? $localize`:@@invoices.invoice-wizard.ts.mention.tva.presente.9e85c920:Mention TVA présente` 
+        : $localize`:@@invoices.invoice-wizard.ts.la.mention.tva.due.par.le.vendeur.est.ob.c6f879f2:La mention "TVA due par le vendeur" est obligatoire`,
       status: isValid ? 'VALID' : 'WARNING',
       isBlocking: false,
       field: 'legalMentions.vatMention'
@@ -1470,8 +1470,8 @@ export class InvoiceWizardService {
       return {
         id: 'exemption-mention',
         category: 'FISCAL',
-        label: "Mention d'exonération",
-        description: 'Non applicable',
+        label: $localize`:@@invoices.invoice-wizard.ts.mention.d.exoneration.0df903f7:Mention d'exonération`,
+        description: $localize`:@@invoices.invoice-wizard.ts.non.applicable.16ed38d0:Non applicable`,
         status: 'VALID',
         isBlocking: false,
         field: null
@@ -1481,10 +1481,10 @@ export class InvoiceWizardService {
     return {
       id: 'exemption-mention',
       category: 'FISCAL',
-      label: "Mention d'exonération",
+      label: $localize`:@@invoices.invoice-wizard.ts.mention.d.exoneration.0df903f7:Mention d'exonération`,
       description: hasExemption 
-        ? "Mention d'exonération présente" 
-        : "Une mention d'exonération est requise pour ce client",
+        ? $localize`:@@invoices.invoice-wizard.ts.mention.d.exoneration.presente.463fbd71:Mention d'exonération présente` 
+        : $localize`:@@invoices.invoice-wizard.ts.une.mention.d.exoneration.est.requise.po.e773ce77:Une mention d'exonération est requise pour ce client`,
       status: hasExemption ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'legalMentions.exemptionMention'
@@ -1502,8 +1502,8 @@ export class InvoiceWizardService {
       return {
         id: 'invoice-quota',
         category: 'CALCULATION',
-        label: 'Quota factures',
-        description: 'Quota non vérifié (chargement en cours ou indisponible)',
+        label: $localize`:@@invoices.invoice-wizard.ts.quota.factures.dfc0fe56:Quota factures`,
+        description: $localize`:@@invoices.invoice-wizard.ts.quota.non.verifie.chargement.en.cours.ou.22625b8a:Quota non vérifié (chargement en cours ou indisponible)`,
         status: 'VALID',
         isBlocking: false,
         field: 'subscription'
@@ -1522,7 +1522,7 @@ export class InvoiceWizardService {
         return {
           id: 'invoice-quota',
           category: 'CALCULATION',
-          label: 'Quota factures',
+          label: $localize`:@@invoices.invoice-wizard.ts.quota.factures.dfc0fe56:Quota factures`,
           description: usageLabel,
           status: 'VALID',
           isBlocking: false,
@@ -1533,9 +1533,9 @@ export class InvoiceWizardService {
       return {
         id: 'invoice-quota',
         category: 'CALCULATION',
-        label: 'Quota factures',
+        label: $localize`:@@invoices.invoice-wizard.ts.quota.factures.dfc0fe56:Quota factures`,
         description: sub.invoiceBlockMessage
-          ?? `Statut d'abonnement « ${sub.statusDisplay} » : émission de facture indisponible.`,
+          ?? $localize`:@@invoices.invoice-wizard.ts.statut.d.abonnement.statusdisplay.emissi.f6c66860:Statut d'abonnement « ${sub.statusDisplay}:statusDisplay: » : émission de facture indisponible.`,
         status: 'ERROR',
         isBlocking: true,
         field: 'subscription'
@@ -1559,7 +1559,7 @@ export class InvoiceWizardService {
       return {
         id: 'invoice-quota',
         category: 'CALCULATION',
-        label: 'Quota factures',
+        label: $localize`:@@invoices.invoice-wizard.ts.quota.factures.dfc0fe56:Quota factures`,
         description,
         status: 'ERROR',
         isBlocking: true,
@@ -1571,10 +1571,10 @@ export class InvoiceWizardService {
       return {
         id: 'invoice-quota',
         category: 'CALCULATION',
-        label: 'Quota factures',
+        label: $localize`:@@invoices.invoice-wizard.ts.quota.factures.dfc0fe56:Quota factures`,
         description:
-          `Limite mensuelle atteinte (${invoices.used}/${invoices.limit} factures). ` +
-          'Passez à un forfait supérieur dans Paramètres > Abonnement ou attendez le prochain cycle.',
+          $localize`:@@invoices.invoice-wizard.ts.limite.mensuelle.atteinte.used.limit.fac.ba6485b6:Limite mensuelle atteinte (${invoices.used}:used:/${invoices.limit}:limit: factures). ` +
+          $localize`:@@invoices.invoice-wizard.ts.passez.a.un.forfait.superieur.dans.param.98c1d038:Passez à un forfait supérieur dans Paramètres > Abonnement ou attendez le prochain cycle.`,
         status: 'ERROR',
         isBlocking: true,
         field: 'subscription'
@@ -1584,7 +1584,7 @@ export class InvoiceWizardService {
     return {
       id: 'invoice-quota',
       category: 'CALCULATION',
-      label: 'Quota factures',
+      label: $localize`:@@invoices.invoice-wizard.ts.quota.factures.dfc0fe56:Quota factures`,
       description: usageLabel,
       status: 'VALID',
       isBlocking: false,
@@ -1669,13 +1669,13 @@ export class InvoiceWizardService {
     } else if (err.message) {
       errorMessage = err.message;
     } else if (err.status === 0) {
-      errorMessage = 'Erreur de connexion. Vérifiez votre connexion réseau.';
+      errorMessage = $localize`:@@invoices.invoice-wizard.ts.erreur.de.connexion.verifiez.votre.conne.f8b5d2b7:Erreur de connexion. Vérifiez votre connexion réseau.`;
     } else if (err.status && err.status >= 500) {
-      errorMessage = 'Erreur serveur. Veuillez réessayer plus tard.';
+      errorMessage = $localize`:@@invoices.invoice-wizard.ts.erreur.serveur.veuillez.reessayer.plus.t.e12ec1fc:Erreur serveur. Veuillez réessayer plus tard.`;
     } else if (err.status === 400) {
-      errorMessage = 'Les données de la facture sont invalides.';
+      errorMessage = $localize`:@@invoices.invoice-wizard.ts.les.donnees.de.la.facture.sont.invalides.38e2b3f3:Les données de la facture sont invalides.`;
     } else if (err.status === 401 || err.status === 403) {
-      errorMessage = 'Vous n\'êtes pas autorisé à effectuer cette action.';
+      errorMessage = $localize`:@@invoices.invoice-wizard.ts.vous.n.etes.pas.autorise.a.effectuer.cet.3dfa60c6:Vous n'êtes pas autorisé à effectuer cette action.`;
     }
 
     return { message: errorMessage, code: errorCode };
@@ -1694,10 +1694,10 @@ export class InvoiceWizardService {
     return {
       id: 'calculations',
       category: 'CALCULATION',
-      label: 'Vérification des calculs',
+      label: $localize`:@@invoices.invoice-wizard.ts.verification.des.calculs.68a4d18c:Vérification des calculs`,
       description: isValid 
-        ? 'Tous les calculs sont cohérents' 
-        : 'Incohérence détectée dans les calculs',
+        ? $localize`:@@invoices.invoice-wizard.ts.tous.les.calculs.sont.coherents.1f7d5957:Tous les calculs sont cohérents` 
+        : $localize`:@@invoices.invoice-wizard.ts.incoherence.detectee.dans.les.calculs.fd9ab997:Incohérence détectée dans les calculs`,
       status: isValid ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'totals'
@@ -1713,8 +1713,8 @@ export class InvoiceWizardService {
       return {
         id: 'amounts-positive',
         category: 'CALCULATION',
-        label: 'Montants',
-        description: "Facture d'avoir - montants vérifiés",
+        label: $localize`:@@invoices.invoice-wizard.ts.montants.6b312baa:Montants`,
+        description: $localize`:@@invoices.invoice-wizard.ts.facture.d.avoir.montants.verifies.e678bb1e:Facture d'avoir - montants vérifiés`,
         status: 'VALID',
         isBlocking: false,
         field: null
@@ -1726,10 +1726,10 @@ export class InvoiceWizardService {
     return {
       id: 'amounts-positive',
       category: 'CALCULATION',
-      label: 'Montants positifs',
+      label: $localize`:@@invoices.invoice-wizard.ts.montants.positifs.d5089c18:Montants positifs`,
       description: isValid 
-        ? 'Tous les montants sont positifs' 
-        : 'Les montants doivent être positifs pour une facture standard',
+        ? $localize`:@@invoices.invoice-wizard.ts.tous.les.montants.sont.positifs.e3f5fc38:Tous les montants sont positifs` 
+        : $localize`:@@invoices.invoice-wizard.ts.les.montants.doivent.etre.positifs.pour.0d0e6741:Les montants doivent être positifs pour une facture standard`,
       status: isValid ? 'VALID' : 'ERROR',
       isBlocking: true,
       field: 'totals'
@@ -1743,10 +1743,10 @@ export class InvoiceWizardService {
     return {
       id: 'number-format',
       category: 'FORMAT',
-      label: 'Format du numéro',
+      label: $localize`:@@invoices.invoice-wizard.ts.format.du.numero.ed424764:Format du numéro`,
       description: isValid 
-        ? 'Format conforme' 
-        : 'Le format du numéro doit correspondre à la numérotation configurée',
+        ? $localize`:@@invoices.invoice-wizard.ts.format.conforme.2f9c1bfd:Format conforme` 
+        : $localize`:@@invoices.invoice-wizard.ts.le.format.du.numero.doit.correspondre.a.8886ba9b:Le format du numéro doit correspondre à la numérotation configurée`,
       status: isValid ? 'VALID' : 'WARNING',
       isBlocking: false,
       field: 'invoiceNumber'

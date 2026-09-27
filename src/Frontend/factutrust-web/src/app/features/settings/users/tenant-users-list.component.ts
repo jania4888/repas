@@ -605,9 +605,9 @@ export class TenantUsersListComponent implements OnInit {
   readonly isSubFeatureOn = isSubFeatureOn;
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Utilisateurs' }
+    { label: $localize`:@@settings.tenant-users-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.tenant-users-list.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.tenant-users-list.ts.utilisateurs.c661b3bc:Utilisateurs` }
   ];
 
   users = signal<TenantUserListItem[]>([]);
@@ -619,9 +619,9 @@ export class TenantUsersListComponent implements OnInit {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const rows = this.users();
     return [
-      { label: 'Utilisateurs', value: rows.length, format: 'number', icon: 'pi-users', tone: 'primary' },
-      { label: 'Actifs', value: rows.filter(u => u.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Inactifs', value: rows.filter(u => !u.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' }
+      { label: $localize`:@@settings.tenant-users-list.ts.utilisateurs.c661b3bc:Utilisateurs`, value: rows.length, format: 'number', icon: 'pi-users', tone: 'primary' },
+      { label: $localize`:@@settings.tenant-users-list.ts.actifs.4fc3a980:Actifs`, value: rows.filter(u => u.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@settings.tenant-users-list.ts.inactifs.41c2d03e:Inactifs`, value: rows.filter(u => !u.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' }
     ];
   });
 
@@ -656,16 +656,16 @@ export class TenantUsersListComponent implements OnInit {
   private editInitialGrants = new Map<AppModule, { enabled: boolean; featureKeys: string[] | null }>();
 
   readonly roleOptions = [
-    { label: 'Administrateur', value: 'Administrator' as UserRole },
-    { label: 'Comptable', value: 'Accountant' as UserRole },
-    { label: 'Commercial', value: 'SalesRep' as UserRole },
-    { label: 'Responsable Commercial', value: 'SalesManager' as UserRole },
-    { label: 'Magasinier', value: 'Warehouse' as UserRole },
-    { label: 'Acheteur', value: 'Purchaser' as UserRole },
-    { label: 'Caissier', value: 'Cashier' as UserRole },
-    { label: 'Auditeur', value: 'Auditor' as UserRole },
-    { label: 'Superviseur', value: 'Supervisor' as UserRole },
-    { label: 'Développeur', value: 'Developer' as UserRole }
+    { label: $localize`:@@settings.tenant-users-list.ts.administrateur.1d8141b2:Administrateur`, value: 'Administrator' as UserRole },
+    { label: $localize`:@@settings.tenant-users-list.ts.comptable.36cf0a9e:Comptable`, value: 'Accountant' as UserRole },
+    { label: $localize`:@@settings.tenant-users-list.ts.commercial.b48513e4:Commercial`, value: 'SalesRep' as UserRole },
+    { label: $localize`:@@settings.tenant-users-list.ts.responsable.commercial.faf99310:Responsable Commercial`, value: 'SalesManager' as UserRole },
+    { label: $localize`:@@settings.tenant-users-list.ts.magasinier.c61a86f7:Magasinier`, value: 'Warehouse' as UserRole },
+    { label: $localize`:@@settings.tenant-users-list.ts.acheteur.0afc4f6e:Acheteur`, value: 'Purchaser' as UserRole },
+    { label: $localize`:@@settings.tenant-users-list.ts.caissier.8d597a37:Caissier`, value: 'Cashier' as UserRole },
+    { label: $localize`:@@settings.tenant-users-list.ts.auditeur.eac73f9c:Auditeur`, value: 'Auditor' as UserRole },
+    { label: $localize`:@@settings.tenant-users-list.ts.superviseur.27e5f8da:Superviseur`, value: 'Supervisor' as UserRole },
+    { label: $localize`:@@settings.tenant-users-list.ts.developpeur.4819232b:Développeur`, value: 'Developer' as UserRole }
   ];
 
   ngOnInit(): void {

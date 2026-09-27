@@ -318,9 +318,9 @@ export class OrdersAnalyticsComponent implements OnInit {
   selectedPeriod: PurchasesAnalyticsPeriod = 'month';
 
   periodOptions: { label: string; value: PurchasesAnalyticsPeriod }[] = [
-    { label: 'Jour', value: 'day' },
-    { label: 'Mois', value: 'month' },
-    { label: 'Année', value: 'year' }
+    { label: $localize`:@@reports.orders-analytics.ts.jour.240ce85d:Jour`, value: 'day' },
+    { label: $localize`:@@reports.orders-analytics.ts.mois.0d304bea:Mois`, value: 'month' },
+    { label: $localize`:@@reports.orders-analytics.ts.annee.1f910d98:Année`, value: 'year' }
   ];
 
   ngOnInit(): void {

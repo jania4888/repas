@@ -251,10 +251,10 @@ export class ProductSalesAnalyticsComponent implements OnInit {
   activeTabIndex = 0;
 
   periodOptions = [
-    { label: 'Ce mois', value: 'month' },
-    { label: 'Ce trimestre', value: 'quarter' },
-    { label: 'Cette année', value: 'year' },
-    { label: 'Tout', value: 'all' }
+    { label: $localize`:@@reports.product-sales-analytics.ts.ce.mois.db74c560:Ce mois`, value: 'month' },
+    { label: $localize`:@@reports.product-sales-analytics.ts.ce.trimestre.4d9d129d:Ce trimestre`, value: 'quarter' },
+    { label: $localize`:@@reports.product-sales-analytics.ts.cette.annee.052507a0:Cette année`, value: 'year' },
+    { label: $localize`:@@reports.product-sales-analytics.ts.tout.6b0b09b8:Tout`, value: 'all' }
   ];
 
   private getPeriodDates(): { fromDate: string; toDate: string } {

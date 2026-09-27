@@ -148,7 +148,7 @@ export class StudioFileFieldComponent {
 
   savePad(): void {
     const canvas = this.canvasRef?.nativeElement;
-    if (!canvas || !this.hasInk) { this.error = 'Veuillez signer avant d\'enregistrer.'; return; }
+    if (!canvas || !this.hasInk) { this.error = $localize`:@@shared.studio-file-field.ts.veuillez.signer.avant.d.enregistrer.480a8e85:Veuillez signer avant d'enregistrer.`; return; }
     canvas.toBlob(blob => {
       if (!blob) return;
       this.upload(new File([blob], 'signature.png', { type: 'image/png' }));
@@ -161,7 +161,7 @@ export class StudioFileFieldComponent {
 
   // ---- Upload ----
   private upload(file: File): void {
-    if (!this.entityKey) { this.error = 'Table inconnue.'; return; }
+    if (!this.entityKey) { this.error = $localize`:@@shared.studio-file-field.ts.table.inconnue.dabdd009:Table inconnue.`; return; }
     this.uploading = true;
     this.error = null;
     const form = new FormData();

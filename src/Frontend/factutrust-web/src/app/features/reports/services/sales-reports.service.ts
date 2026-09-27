@@ -312,7 +312,7 @@ export class SalesReportsService {
         const monthShort = weekStart.toLocaleDateString('fr-FR', { month: 'short' });
         const labelShort = `${d1}-${d2} ${monthShort}`;
         result.push({
-          label: `Semaine du ${weekStart.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} au ${weekEnd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}`,
+          label: $localize`:@@reports.sales-reports.ts.semaine.du.tolocaledatestring.au.tolocal.f7dcfdfa:Semaine du ${weekStart.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}:toLocaleDateString: au ${weekEnd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}:toLocaleDateString1:`,
           labelShort,
           revenue,
           invoiceCount,
@@ -444,9 +444,9 @@ export class SalesReportsService {
       : `${crossTab.years[0]} - ${crossTab.years[crossTab.years.length - 1]}`;
     insights.push({
       type: 'period',
-      label: 'Période couverte',
+      label: $localize`:@@reports.sales-reports.ts.periode.couverte.e1083b69:Période couverte`,
       value: periodValue,
-      detail: `${CROSS_TAB_YEARS_WINDOW} dernières années`
+      detail: $localize`:@@reports.sales-reports.ts.cross.tab.years.window.dernieres.annees.a0329585:${CROSS_TAB_YEARS_WINDOW}:CROSS_TAB_YEARS_WINDOW: dernières années`
     });
 
     const monthsWithData = crossTab.columnTotals
@@ -457,15 +457,15 @@ export class SalesReportsService {
       const worst = monthsWithData.reduce((a, b) => (a.total <= b.total ? a : b));
       insights.push({
         type: 'best_month',
-        label: 'Meilleur mois',
+        label: $localize`:@@reports.sales-reports.ts.meilleur.mois.2a7d82b0:Meilleur mois`,
         value: crossTab.monthLabels[best.month],
-        detail: `${fmt(best.total)} ${crossTab.currency} (total cumulé)`
+        detail: $localize`:@@reports.sales-reports.ts.fmt.currency.total.cumule.b3eb82a2:${fmt(best.total)}:fmt: ${crossTab.currency}:currency: (total cumulé)`
       });
       insights.push({
         type: 'worst_month',
-        label: 'Mois le plus faible',
+        label: $localize`:@@reports.sales-reports.ts.mois.le.plus.faible.ca012fe9:Mois le plus faible`,
         value: crossTab.monthLabels[worst.month],
-        detail: `${fmt(worst.total)} ${crossTab.currency} (total cumulé)`
+        detail: $localize`:@@reports.sales-reports.ts.fmt.currency.total.cumule.b3eb82a2:${fmt(worst.total)}:fmt: ${crossTab.currency}:currency: (total cumulé)`
       });
     }
 
@@ -480,9 +480,9 @@ export class SalesReportsService {
       const sign = growth >= 0 ? '+' : '';
       insights.push({
         type: 'yoy_growth',
-        label: `Évolution ${prevYear} → ${lastYear}`,
+        label: $localize`:@@reports.sales-reports.ts.evolution.prevyear.lastyear.af131747:Évolution ${prevYear}:prevYear: → ${lastYear}:lastYear:`,
         value: `${sign}${growth.toFixed(1)}%`,
-        detail: `${fmt(lastTotal)} vs ${fmt(prevTotal)} ${crossTab.currency}`
+        detail: $localize`:@@reports.sales-reports.ts.fmt.vs.fmt1.currency.f10e4d91:${fmt(lastTotal)}:fmt: vs ${fmt(prevTotal)}:fmt1: ${crossTab.currency}:currency:`
       });
     }
 
@@ -497,9 +497,9 @@ export class SalesReportsService {
         .join(', ');
       insights.push({
         type: 'seasonality',
-        label: 'Saisonnalité (top 3 mois)',
+        label: $localize`:@@reports.sales-reports.ts.saisonnalite.top.3.mois.a6c7b50a:Saisonnalité (top 3 mois)`,
         value: seasonalityText,
-        detail: `Part du CA par mois sur les ${CROSS_TAB_YEARS_WINDOW} dernières années`
+        detail: $localize`:@@reports.sales-reports.ts.part.du.ca.par.mois.sur.les.cross.tab.ye.bb7791cd:Part du CA par mois sur les ${CROSS_TAB_YEARS_WINDOW}:CROSS_TAB_YEARS_WINDOW: dernières années`
       });
     }
 

@@ -507,9 +507,9 @@ export class PurchaseReceiptDetailComponent implements OnInit {
   createSupplierInvoiceModal?: CreateSupplierInvoiceModalComponent;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de réception', route: '/purchase-receipts' },
-    { label: 'Détail' }
+    { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.bons.de.reception.84d6ebb5:Bons de réception`, route: '/purchase-receipts' },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.detail.7ce06afc:Détail` }
   ];
 
   canEdit = computed(() => {
@@ -592,8 +592,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
 
         this.receipt.set(mapped);
         this.breadcrumbItems = [
-          { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-          { label: 'Bons de réception', route: '/purchase-receipts' },
+          { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+          { label: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.bons.de.reception.84d6ebb5:Bons de réception`, route: '/purchase-receipts' },
           { label: mapped.number }
         ];
         this.loading.set(false);
@@ -650,8 +650,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
     }
 
     this.confirmationService.confirm({
-      message: 'Valider cette réception ? Le stock sera mis à jour et les quantités du bon de commande seront imputées.',
-      header: 'Valider la réception',
+      message: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.valider.cette.reception.le.stock.sera.mi.6c3a9af0:Valider cette réception ? Le stock sera mis à jour et les quantités du bon de commande seront imputées.`,
+      header: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.valider.la.reception.7e156958:Valider la réception`,
       icon: 'pi pi-verified',
       acceptLabel: $localize`:@@purchase-receipt-detail.component.acceptLabel.Valider:Valider`,
       rejectLabel: $localize`:@@purchase-receipt-detail.component.rejectLabel.Annuler:Annuler`,
@@ -674,7 +674,7 @@ export class PurchaseReceiptDetailComponent implements OnInit {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
-              detail: this.errorHandler.extractErrorMessage(err) || 'Échec de la validation'
+              detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.echec.de.la.validation.d6fffafe:Échec de la validation`
             });
           }
         });
@@ -717,7 +717,7 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
-          detail: err?.error?.errors?.[0] || 'Échec de l\'annulation'
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.echec.de.l.annulation.897a46f6:Échec de l'annulation`
         });
       }
     });
@@ -728,8 +728,8 @@ export class PurchaseReceiptDetailComponent implements OnInit {
     if (!r) return;
 
     this.confirmationService.confirm({
-      message: 'Supprimer définitivement ce brouillon ?',
-      header: 'Supprimer',
+      message: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.supprimer.definitivement.ce.brouillon.c9471a55:Supprimer définitivement ce brouillon ?`,
+      header: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.supprimer.1acfc1c7:Supprimer`,
       icon: 'pi pi-trash',
       acceptLabel: $localize`:@@purchase-receipt-detail.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@purchase-receipt-detail.component.rejectLabel.Annuler:Annuler`,
@@ -750,7 +750,7 @@ export class PurchaseReceiptDetailComponent implements OnInit {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
-              detail: err?.error?.errors?.[0] || 'Échec de la suppression'
+              detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.echec.de.la.suppression.bfcbda57:Échec de la suppression`
             });
           }
         });
@@ -768,7 +768,7 @@ export class PurchaseReceiptDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
-            detail: prefillRes.message || 'Impossible de préparer la facture'
+            detail: prefillRes.message || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.impossible.de.preparer.la.facture.a10c22ae:Impossible de préparer la facture`
           });
           return;
         }
@@ -785,7 +785,7 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@purchase-receipt-detail.component.summary.Erreur:Erreur`,
-          detail: err?.error?.errors?.[0] || 'Impossible de préparer la facture'
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-detail.ts.impossible.de.preparer.la.facture.a10c22ae:Impossible de préparer la facture`
         });
       }
     });
@@ -828,7 +828,7 @@ export class PurchaseReceiptDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'success',
             summary: $localize`:@@purchase-receipt-detail.component.summary.Succès:Succès`,
-            detail: `Facture fournisseur ${response.data.invoiceNumber} créée`
+            detail: $localize`:@@purchase-receipts.purchase-receipt-detail.ts.facture.fournisseur.invoicenumber.creee.0fa763be:Facture fournisseur ${response.data.invoiceNumber}:invoiceNumber: créée`
           });
           void this.router.navigate(['/supplier-invoices', response.data.id]);
         }
@@ -847,9 +847,9 @@ export class PurchaseReceiptDetailComponent implements OnInit {
         const errorMsg = err?.error?.errors?.[0] ?? err?.error?.message ?? 'Erreur lors de la création';
         this.toastService.add({
           severity: 'error',
-          summary: isDuplicate ? 'Numéro en doublon' : 'Erreur',
+          summary: isDuplicate ? $localize`:@@purchase-receipts.purchase-receipt-detail.ts.numero.en.doublon.9aeb86ca:Numéro en doublon` : $localize`:@@purchase-receipts.purchase-receipt-detail.ts.erreur.ab546c23:Erreur`,
           detail: isDuplicate
-            ? 'Impossible de créer la facture : le numéro proposé est également indisponible. Réessayez ou saisissez un numéro.'
+            ? $localize`:@@purchase-receipts.purchase-receipt-detail.ts.impossible.de.creer.la.facture.le.numero.379737f7:Impossible de créer la facture : le numéro proposé est également indisponible. Réessayez ou saisissez un numéro.`
             : errorMsg
         });
       }

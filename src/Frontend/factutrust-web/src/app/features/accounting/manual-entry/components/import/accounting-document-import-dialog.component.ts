@@ -366,14 +366,14 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       next: (caps) => {
         if (!caps.aiFallbackAvailable) {
           this.capabilityHint.set(
-            "Analyse IA indisponible pour votre compte : seules les factures émises par "
+            $localize`:@@accounting.accounting-document-import-dialog.ts.analyse.ia.indisponible.pour.votre.compt.2a1357aa:Analyse IA indisponible pour votre compte : seules les factures émises par `
             + $localize`:@@ui.tern.instafact.pourront.etre.lues.dc81c8:InstaFact pourront être lues.`);
           return;
         }
         if (caps.visionModel && caps.visionModelReady === false) {
           this.capabilityHint.set(
-            `Le modèle vision d'import (${caps.visionModel}) n'est pas prêt sur le serveur. `
-            + "Les photos de factures pourraient échouer — contactez l'administrateur InstaFact.");
+            $localize`:@@accounting.accounting-document-import-dialog.ts.le.modele.vision.d.import.visionmodel.n.408356a2:Le modèle vision d'import (${caps.visionModel}:visionModel:) n'est pas prêt sur le serveur. `
+            + $localize`:@@accounting.accounting-document-import-dialog.ts.les.photos.de.factures.pourraient.echoue.45785b89:Les photos de factures pourraient échouer — contactez l'administrateur InstaFact.`);
           return;
         }
         this.capabilityHint.set(null);
@@ -490,8 +490,8 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
 
   private confirmDiscardEdits(onConfirm: () => void): void {
     this.confirmationService.confirm({
-      message: 'Vos modifications sur l\'écriture proposée seront perdues. Continuer ?',
-      header: 'Confirmation',
+      message: $localize`:@@accounting.accounting-document-import-dialog.ts.vos.modifications.sur.l.ecriture.propose.61542b1a:Vos modifications sur l'écriture proposée seront perdues. Continuer ?`,
+      header: $localize`:@@accounting.accounting-document-import-dialog.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@accounting-document-import-dialog.component.acceptLabel.Continuer:Continuer`,
       rejectLabel: $localize`:@@accounting-document-import-dialog.component.rejectLabel.Annuler:Annuler`,
       accept: onConfirm
@@ -537,7 +537,7 @@ export class AccountingDocumentImportDialogComponent implements OnChanges, OnDes
       },
       error: (err: Error) => {
         this.stopTimer();
-        this.errorMessage.set(err.message || "L'analyse de la pièce a échoué.");
+        this.errorMessage.set(err.message || $localize`:@@accounting.accounting-document-import-dialog.ts.l.analyse.de.la.piece.a.echoue.b308ea32:L'analyse de la pièce a échoué.`);
         this.phase.set('error');
       }
     });

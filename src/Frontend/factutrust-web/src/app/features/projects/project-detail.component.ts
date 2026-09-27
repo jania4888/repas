@@ -385,8 +385,8 @@ export class ProjectDetailComponent implements OnInit {
 
   breadcrumbItems(): BreadcrumbItem[] {
     return [
-      { label: 'Accueil', route: '/' },
-      { label: 'Projets', route: '/projects' },
+      { label: $localize`:@@projects.project-detail.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+      { label: $localize`:@@projects.project-detail.ts.projets.b1e8cd4d:Projets`, route: '/projects' },
       { label: this.project()?.name ?? $localize`:@@ui.tern.fiche.6ad303:Fiche` }
     ];
   }
@@ -559,8 +559,8 @@ export class ProjectDetailComponent implements OnInit {
 
   hold(): void {
     this.confirm.confirm({
-      header: 'Mettre en pause',
-      message: 'Le projet ne pourra plus recevoir de temps tant qu’il est en pause. Continuer ?',
+      header: $localize`:@@projects.project-detail.ts.mettre.en.pause.4515da4b:Mettre en pause`,
+      message: $localize`:@@projects.project-detail.ts.le.projet.ne.pourra.plus.recevoir.de.tem.1d586a98:Le projet ne pourra plus recevoir de temps tant qu’il est en pause. Continuer ?`,
       accept: () => this.api.hold(this.id).subscribe({
         next: () => { this.ok('Projet en pause'); this.reloadProject(); },
         error: err => this.fail(err, 'Mise en pause impossible')
@@ -570,8 +570,8 @@ export class ProjectDetailComponent implements OnInit {
 
   complete(): void {
     this.confirm.confirm({
-      header: 'Clôturer le projet',
-      message: 'Validez ou annulez les temps ouverts avant de clôturer. Aucune nouvelle saisie de temps ne sera possible.',
+      header: $localize`:@@projects.project-detail.ts.cloturer.le.projet.9fdfb3ff:Clôturer le projet`,
+      message: $localize`:@@projects.project-detail.ts.validez.ou.annulez.les.temps.ouverts.ava.8dddb315:Validez ou annulez les temps ouverts avant de clôturer. Aucune nouvelle saisie de temps ne sera possible.`,
       accept: () => this.api.complete(this.id).subscribe({
         next: () => { this.ok('Projet clôturé'); this.reloadProject(); },
         error: err => this.fail(err, 'Clôture impossible')
@@ -581,8 +581,8 @@ export class ProjectDetailComponent implements OnInit {
 
   cancel(): void {
     this.confirm.confirm({
-      header: 'Annuler le projet',
-      message: 'Cette action est irréversible. Le projet passera au statut Annulé.',
+      header: $localize`:@@projects.project-detail.ts.annuler.le.projet.492bf989:Annuler le projet`,
+      message: $localize`:@@projects.project-detail.ts.cette.action.est.irreversible.le.projet.1543b7c7:Cette action est irréversible. Le projet passera au statut Annulé.`,
       accept: () => this.api.cancel(this.id).subscribe({
         next: () => { this.ok('Projet annulé'); this.reloadProject(); },
         error: err => this.fail(err, 'Annulation impossible')
@@ -799,8 +799,8 @@ export class ProjectDetailComponent implements OnInit {
 
   removeMember(id: string): void {
     this.confirm.confirm({
-      header: 'Retirer le membre',
-      message: 'Retirer cette personne de l’équipe du projet ?',
+      header: $localize`:@@projects.project-detail.ts.retirer.le.membre.609e13cf:Retirer le membre`,
+      message: $localize`:@@projects.project-detail.ts.retirer.cette.personne.de.l.equipe.du.pr.2e97fa97:Retirer cette personne de l’équipe du projet ?`,
       accept: () => this.api.removeMember(id).subscribe({
         next: () => { this.ok('Membre retiré'); this.loadTab('team'); },
         error: err => this.fail(err, 'Équipe')
@@ -932,8 +932,8 @@ export class ProjectDetailComponent implements OnInit {
 
   validateSituation(id: string): void {
     this.confirm.confirm({
-      header: 'Valider la situation',
-      message: 'Une situation validée ne pourra plus être modifiée. Continuer ?',
+      header: $localize`:@@projects.project-detail.ts.valider.la.situation.713df0b8:Valider la situation`,
+      message: $localize`:@@projects.project-detail.ts.une.situation.validee.ne.pourra.plus.etr.186a9faa:Une situation validée ne pourra plus être modifiée. Continuer ?`,
       accept: () => this.api.validateSituation(id).subscribe({
         next: () => { this.ok('Situation validée'); this.loadTab('billing'); },
         error: err => this.fail(err, 'Validation situation')

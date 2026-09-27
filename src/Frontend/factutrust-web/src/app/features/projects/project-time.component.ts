@@ -360,11 +360,11 @@ export class ProjectTimeComponent implements OnInit {
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
 
-    { label: 'Accueil', route: '/' },
+    { label: $localize`:@@projects.project-time.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
 
-    { label: 'Projets', route: '/projects' },
+    { label: $localize`:@@projects.project-time.ts.projets.b1e8cd4d:Projets`, route: '/projects' },
 
-    { label: 'Saisie des temps' }
+    { label: $localize`:@@projects.project-time.ts.saisie.des.temps.86f92f4d:Saisie des temps` }
 
   ];
 
@@ -535,7 +535,7 @@ export class ProjectTimeComponent implements OnInit {
 
     if (!this.projectId) {
 
-      this.error.set('Choisissez un projet');
+      this.error.set($localize`:@@projects.project-time.ts.choisissez.un.projet.533bb444:Choisissez un projet`);
 
       return;
 
@@ -573,7 +573,7 @@ export class ProjectTimeComponent implements OnInit {
 
           this.load();
 
-        } else this.error.set(r.message || 'Enregistrement impossible');
+        } else this.error.set(r.message || $localize`:@@projects.project-time.ts.enregistrement.impossible.1e5e1075:Enregistrement impossible`);
 
       },
 

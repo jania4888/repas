@@ -35,18 +35,18 @@ import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 const MONTH_OPTIONS: { label: string; value: number }[] = [
-  { label: 'Janvier', value: 1 },
-  { label: 'Février', value: 2 },
-  { label: 'Mars', value: 3 },
-  { label: 'Avril', value: 4 },
-  { label: 'Mai', value: 5 },
-  { label: 'Juin', value: 6 },
-  { label: 'Juillet', value: 7 },
-  { label: 'Août', value: 8 },
-  { label: 'Septembre', value: 9 },
-  { label: 'Octobre', value: 10 },
-  { label: 'Novembre', value: 11 },
-  { label: 'Décembre', value: 12 }
+  { label: $localize`:@@payments.cash-desk.ts.janvier.7a32ae0f:Janvier`, value: 1 },
+  { label: $localize`:@@payments.cash-desk.ts.fevrier.63fc1803:Février`, value: 2 },
+  { label: $localize`:@@payments.cash-desk.ts.mars.1778011d:Mars`, value: 3 },
+  { label: $localize`:@@payments.cash-desk.ts.avril.4efeee46:Avril`, value: 4 },
+  { label: $localize`:@@payments.cash-desk.ts.mai.afe526a6:Mai`, value: 5 },
+  { label: $localize`:@@payments.cash-desk.ts.juin.8b1e84b6:Juin`, value: 6 },
+  { label: $localize`:@@payments.cash-desk.ts.juillet.e8e0920c:Juillet`, value: 7 },
+  { label: $localize`:@@payments.cash-desk.ts.aout.460b6696:Août`, value: 8 },
+  { label: $localize`:@@payments.cash-desk.ts.septembre.08d23f31:Septembre`, value: 9 },
+  { label: $localize`:@@payments.cash-desk.ts.octobre.0ed28485:Octobre`, value: 10 },
+  { label: $localize`:@@payments.cash-desk.ts.novembre.632580af:Novembre`, value: 11 },
+  { label: $localize`:@@payments.cash-desk.ts.decembre.03bcd9b0:Décembre`, value: 12 }
 ];
 
 @Component({
@@ -558,10 +558,10 @@ export class CashDeskComponent implements OnInit {
     const b = this.balances();
     const currency = b?.currency ?? 'TND';
     return [
-      { label: 'Solde caisse (mois)', value: b?.primaryTotal, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Encaissements', value: b?.primaryCreditsTotal, format: 'currency', currency, icon: 'pi-arrow-down-left', tone: 'emerald' },
-      { label: 'Décaissements', value: b?.primaryDebitsTotal, format: 'currency', currency, icon: 'pi-arrow-up-right', tone: 'rose' },
-      { label: 'Opérations', value: this.totalRecords(), format: 'number', icon: 'pi-list', tone: 'cyan' }
+      { label: $localize`:@@payments.cash-desk.ts.solde.caisse.mois.1596003c:Solde caisse (mois)`, value: b?.primaryTotal, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@payments.cash-desk.ts.encaissements.598f53c9:Encaissements`, value: b?.primaryCreditsTotal, format: 'currency', currency, icon: 'pi-arrow-down-left', tone: 'emerald' },
+      { label: $localize`:@@payments.cash-desk.ts.decaissements.566a79f1:Décaissements`, value: b?.primaryDebitsTotal, format: 'currency', currency, icon: 'pi-arrow-up-right', tone: 'rose' },
+      { label: $localize`:@@payments.cash-desk.ts.operations.8d02bd5b:Opérations`, value: this.totalRecords(), format: 'number', icon: 'pi-list', tone: 'cyan' }
     ];
   });
 
@@ -752,13 +752,13 @@ export class CashDeskComponent implements OnInit {
         ? [
             {
               type: 'top' as const,
-              label: 'Solde caisse primaire',
+              label: $localize`:@@payments.cash-desk.ts.solde.caisse.primaire.870f7a24:Solde caisse primaire`,
               value: b.primaryTotal,
               context: b.currency
             },
             {
               type: 'top' as const,
-              label: 'Solde banque secondaire',
+              label: $localize`:@@payments.cash-desk.ts.solde.banque.secondaire.6562e61a:Solde banque secondaire`,
               value: b.secondaryTotal,
               context: b.currency
             }
@@ -803,7 +803,7 @@ export class CashDeskComponent implements OnInit {
 
     const reason = this.cancelReason.trim();
     if (!reason) {
-      this.cancelError.set('Le motif d\u2019annulation est obligatoire.');
+      this.cancelError.set($localize`:@@payments.cash-desk.ts.le.motif.d.annulation.est.obligatoire.82fbaf81:Le motif d’annulation est obligatoire.`);
       return;
     }
 
@@ -822,7 +822,7 @@ export class CashDeskComponent implements OnInit {
           this.loadAll();
           this.cancelDialogVisible = false;
         } else {
-          this.cancelError.set(res.message ?? 'Impossible d\u2019annuler l\u2019opération.');
+          this.cancelError.set(res.message ?? $localize`:@@payments.cash-desk.ts.impossible.d.annuler.l.operation.7a3e0387:Impossible d’annuler l’opération.`);
         }
         this.cancelling.set(false);
       },

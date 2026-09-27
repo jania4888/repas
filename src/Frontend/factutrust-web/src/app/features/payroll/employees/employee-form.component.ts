@@ -317,8 +317,8 @@ export class EmployeeFormComponent implements OnInit {
   readonly maritalStatusOptions = MARITAL_STATUS_OPTIONS;
   readonly governorateOptions = TUNISIAN_GOVERNORATE_OPTIONS;
   readonly kinshipOptions = [
-    { label: 'Père', value: 'Father' },
-    { label: 'Mère', value: 'Mother' }
+    { label: $localize`:@@payroll.employee-form.ts.pere.3b0ae0ae:Père`, value: 'Father' },
+    { label: $localize`:@@payroll.employee-form.ts.mere.0c653389:Mère`, value: 'Mother' }
   ];
   loading = signal(false);
   saving = signal(false);
@@ -362,7 +362,7 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   breadcrumbItems = computed((): BreadcrumbItem[] => [
-    { label: 'Salariés', route: `${this.routeBase()}/employees` },
+    { label: $localize`:@@payroll.employee-form.ts.salaries.ce68387d:Salariés`, route: `${this.routeBase()}/employees` },
     { label: this.isEditMode() ? $localize`:@@ui.tern.modifier.f260e7:Modifier` : $localize`:@@ui.tern.nouveau.b9676c:Nouveau` }
   ]);
 

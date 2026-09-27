@@ -159,20 +159,20 @@ export class StockHistoryComponent implements OnInit {
   stockItemId: string | null = null;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Gestion du Stock', route: '/stock' },
-    { label: 'Historique' }
+    { label: $localize`:@@stock.stock-history.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@stock.stock-history.ts.gestion.du.stock.72df5586:Gestion du Stock`, route: '/stock' },
+    { label: $localize`:@@stock.stock-history.ts.historique.34f3a06a:Historique` }
   ];
 
   skeletonColumns = [
-    { header: 'Date', width: '15%' },
-    { header: 'Type', width: '10%' },
-    { header: 'Motif', width: '15%' },
-    { header: 'Quantité', width: '12%' },
-    { header: 'Coût', width: '12%' },
-    { header: 'Avant', width: '10%' },
-    { header: 'Après', width: '10%' },
-    { header: 'Référence', width: '16%' }
+    { header: $localize`:@@stock.stock-history.ts.date.eb9a4bc1:Date`, width: '15%' },
+    { header: $localize`:@@stock.stock-history.ts.type.3deb7456:Type`, width: '10%' },
+    { header: $localize`:@@stock.stock-history.ts.motif.2a198f47:Motif`, width: '15%' },
+    { header: $localize`:@@stock.stock-history.ts.quantite.09a38fda:Quantité`, width: '12%' },
+    { header: $localize`:@@stock.stock-history.ts.cout.4a4aa395:Coût`, width: '12%' },
+    { header: $localize`:@@stock.stock-history.ts.avant.5315d949:Avant`, width: '10%' },
+    { header: $localize`:@@stock.stock-history.ts.apres.546e1c41:Après`, width: '10%' },
+    { header: $localize`:@@stock.stock-history.ts.reference.f8130bb0:Référence`, width: '16%' }
   ];
 
   ngOnInit() {

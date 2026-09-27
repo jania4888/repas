@@ -113,8 +113,8 @@ export class PayrollProrataPreviewPanelComponent {
     const p = this.preview();
     if (!p) return [];
     return [
-      { label: 'Salariés', value: p.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'Total retenues', value: formatPayrollAmount(p.totalDeduction, false), icon: 'pi-minus-circle', variant: 'warning', featured: true }
+      { label: $localize`:@@payroll.payroll-prorata-preview-panel.ts.salaries.ce68387d:Salariés`, value: p.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-prorata-preview-panel.ts.total.retenues.b2cd335c:Total retenues`, value: formatPayrollAmount(p.totalDeduction, false), icon: 'pi-minus-circle', variant: 'warning', featured: true }
     ];
   });
 

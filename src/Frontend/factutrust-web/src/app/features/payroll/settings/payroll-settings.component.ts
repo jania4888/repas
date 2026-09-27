@@ -499,8 +499,8 @@ export class PayrollSettingsComponent implements OnInit {
   savingAccounting = signal(false);
 
   readonly accountProfileOptions = [
-    { label: 'Legacy (historique)', value: 'Legacy' },
-    { label: 'SCE 2026 (comptes NCT 01)', value: 'Sce2026' }
+    { label: $localize`:@@payroll.payroll-settings.ts.legacy.historique.72367461:Legacy (historique)`, value: 'Legacy' },
+    { label: $localize`:@@payroll.payroll-settings.ts.sce.2026.comptes.nct.01.1fd32824:SCE 2026 (comptes NCT 01)`, value: 'Sce2026' }
   ];
 
   /** Date de bascule au format `yyyy-MM` attendu par l'input `type="month"`. */
@@ -517,10 +517,10 @@ export class PayrollSettingsComponent implements OnInit {
   /** Preset légal officiel de l'exercice (pour la bannière de dérive preset vs tenant). */
   legalPreset = signal<PayrollLegalPreset | null>(null);
   readonly smigExemptionModeOptions = [
-    { label: 'Désactivée', value: 'None' },
-    { label: 'Déduction annuelle 500 TND (SMIG/SMAG)', value: 'SmigAnnualDeduction' },
-    { label: 'Portion SMIG exonérée', value: 'SmigPortion' },
-    { label: 'Exonération totale si salaire ≤ SMIG', value: 'FullIfBelow' }
+    { label: $localize`:@@payroll.payroll-settings.ts.desactivee.74cc3b9b:Désactivée`, value: 'None' },
+    { label: $localize`:@@payroll.payroll-settings.ts.deduction.annuelle.500.tnd.smig.smag.be5a5e54:Déduction annuelle 500 TND (SMIG/SMAG)`, value: 'SmigAnnualDeduction' },
+    { label: $localize`:@@payroll.payroll-settings.ts.portion.smig.exoneree.7222d0c1:Portion SMIG exonérée`, value: 'SmigPortion' },
+    { label: $localize`:@@payroll.payroll-settings.ts.exoneration.totale.si.salaire.smig.683cacaa:Exonération totale si salaire ≤ SMIG`, value: 'FullIfBelow' }
   ];
 
   /** Écarts entre les paramètres persistés du tenant et le preset légal de l'exercice (plan §4 WS-3). */
@@ -543,7 +543,7 @@ export class PayrollSettingsComponent implements OnInit {
     const bracketsDiffer = cb.length !== pb.length
       || cb.some((b, i) => Math.abs(b.lowerBound - pb[i].lowerBound) > 0.01 || Math.abs(b.rate - pb[i].rate) > 0.0001);
     if (bracketsDiffer) {
-      drift.push({ label: 'Barème IRPP', current: `${cb.length} tranche(s)`, expected: `${pb.length} tranche(s) LF` });
+      drift.push({ label: $localize`:@@payroll.payroll-settings.ts.bareme.irpp.b6da2fe0:Barème IRPP`, current: `${cb.length} tranche(s)`, expected: `${pb.length} tranche(s) LF` });
     }
     return drift;
   });
@@ -620,11 +620,11 @@ export class PayrollSettingsComponent implements OnInit {
         ? new Date(form.accountProfileEffectiveDate).toLocaleDateString('fr-TN')
         : '—';
       this.confirmation.confirm({
-        header: 'Basculer en imputation SCE 2026',
+        header: $localize`:@@payroll.payroll-settings.ts.basculer.en.imputation.sce.2026.a017cae0:Basculer en imputation SCE 2026`,
         message:
-          `À partir du ${from}, les écritures de paie utiliseront les comptes NCT 01 : TFP en 6611, `
-          + 'FOPROLOS en 6612, taxes patronales en 437, indemnités de rupture en 64602. Les cycles '
-          + 'antérieurs à cette date conservent leur imputation actuelle et ne sont pas réécrits. Continuer ?',
+          $localize`:@@payroll.payroll-settings.ts.a.partir.du.from.les.ecritures.de.paie.u.9b0f5df4:À partir du ${from}:from:, les écritures de paie utiliseront les comptes NCT 01 : TFP en 6611, `
+          + $localize`:@@payroll.payroll-settings.ts.foprolos.en.6612.taxes.patronales.en.437.4d50cea1:FOPROLOS en 6612, taxes patronales en 437, indemnités de rupture en 64602. Les cycles `
+          + $localize`:@@payroll.payroll-settings.ts.anterieurs.a.cette.date.conservent.leur.935befaa:antérieurs à cette date conservent leur imputation actuelle et ne sont pas réécrits. Continuer ?`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: $localize`:@@payroll-settings.component.acceptLabel.Basculer:Basculer`,
         rejectLabel: $localize`:@@payroll-settings.component.rejectLabel.Annuler:Annuler`,
@@ -787,7 +787,7 @@ export class PayrollSettingsComponent implements OnInit {
         this.toast.add({
           severity: 'info',
           summary: $localize`:@@payroll-settings.component.summary.Preset LF:Preset LF`,
-          detail: `${preset.label} chargé — enregistrez pour appliquer.`
+          detail: $localize`:@@payroll.payroll-settings.ts.label.charge.enregistrez.pour.appliquer.f1753a4f:${preset.label}:label: chargé — enregistrez pour appliquer.`
         });
       },
       error: () => this.toast.add({ severity: 'error', summary: $localize`:@@payroll-settings.component.summary.Preset LF:Preset LF`, detail: $localize`:@@payroll-settings.component.detail.Chargement_impos:Chargement impossible.` })

@@ -308,9 +308,9 @@ export class ProfileComponent implements OnInit {
   errorMessageService = inject(ErrorMessageService);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Mon profil' }
+    { label: $localize`:@@settings.profile.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.profile.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.profile.ts.mon.profil.faa6d321:Mon profil` }
   ];
 
   user = this.authService.user;

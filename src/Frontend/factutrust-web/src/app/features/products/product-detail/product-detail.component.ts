@@ -30,10 +30,10 @@ import {
 import { TRACKING_MODE_LOT } from '@shared/utils/stock-traceability.utils';
 
 const VAT_OPTIONS: { label: string; value: number }[] = [
-  { label: '19% - Taux normal', value: 19 },
-  { label: '13% - Taux intermédiaire', value: 13 },
-  { label: '7% - Taux réduit', value: 7 },
-  { label: '0% - Exonéré', value: 0 }
+  { label: $localize`:@@products.product-detail.ts.19.taux.normal.1dc12a7c:19% - Taux normal`, value: 19 },
+  { label: $localize`:@@products.product-detail.ts.13.taux.intermediaire.f50bb2e0:13% - Taux intermédiaire`, value: 13 },
+  { label: $localize`:@@products.product-detail.ts.7.taux.reduit.e464d7cf:7% - Taux réduit`, value: 7 },
+  { label: $localize`:@@products.product-detail.ts.0.exonere.45b95f13:0% - Exonéré`, value: 0 }
 ];
 
 @Component({
@@ -559,9 +559,9 @@ export class ProductDetailComponent implements OnInit {
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const items: BreadcrumbItem[] = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Produits & Services', route: '/products' },
-      { label: 'Détails' }
+      { label: $localize`:@@products.product-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@products.product-detail.ts.produits.services.01d33b70:Produits & Services`, route: '/products' },
+      { label: $localize`:@@products.product-detail.ts.details.aaa029e6:Détails` }
     ];
     return items;
   });
@@ -648,7 +648,7 @@ export class ProductDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@product-detail.component.summary.Erreur:Erreur`,
-            detail: response.errors?.join(', ') || 'Impossible de charger le produit'
+            detail: response.errors?.join(', ') || $localize`:@@products.product-detail.ts.impossible.de.charger.le.produit.7a00d1a4:Impossible de charger le produit`
           });
           void this.router.navigate(['/products']);
         }
@@ -659,7 +659,7 @@ export class ProductDetailComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@product-detail.component.summary.Erreur:Erreur`,
-          detail: errorMessage || 'Impossible de charger le produit'
+          detail: errorMessage || $localize`:@@products.product-detail.ts.impossible.de.charger.le.produit.7a00d1a4:Impossible de charger le produit`
         });
         this.errorHandler.logError('Failed to load product', error);
         void this.router.navigate(['/products']);

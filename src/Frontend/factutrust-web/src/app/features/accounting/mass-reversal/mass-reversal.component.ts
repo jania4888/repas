@@ -227,7 +227,7 @@ export class MassReversalComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.mass-reversal.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -248,7 +248,7 @@ export class MassReversalComponent implements OnInit {
         this.acting.set(false);
         this.pendingConfirm.set(false);
         if (res.success && res.data) {
-          this.successMessage.set(`${res.data.reversed} écriture(s) extournée(s), ${res.data.skipped} ignorée(s).`);
+          this.successMessage.set($localize`:@@accounting.mass-reversal.ts.reversed.ecriture.s.extournee.s.skipped.63901506:${res.data.reversed}:reversed: écriture(s) extournée(s), ${res.data.skipped}:skipped: ignorée(s).`);
           this.reason = '';
           this.load();
         } else {
@@ -258,7 +258,7 @@ export class MassReversalComponent implements OnInit {
       error: err => {
         this.acting.set(false);
         this.pendingConfirm.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'extourne."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.mass-reversal.ts.erreur.reseau.lors.de.l.extourne.f214327e:Erreur réseau lors de l'extourne.`));
       }
     });
   }

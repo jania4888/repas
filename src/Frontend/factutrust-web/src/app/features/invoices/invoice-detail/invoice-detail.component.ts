@@ -1342,14 +1342,14 @@ export class InvoiceDetailComponent implements OnInit {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const inv = this.invoice();
     const base: BreadcrumbItem[] = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' }
+      { label: $localize`:@@invoices.invoice-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' }
     ];
     if (this.creditNotesOnlyFromRoute) {
-      base.push({ label: 'Avoirs de vente', route: '/invoices/credit-notes' });
+      base.push({ label: $localize`:@@invoices.invoice-detail.ts.avoirs.de.vente.63b21d70:Avoirs de vente`, route: '/invoices/credit-notes' });
     } else {
-      base.push({ label: 'Factures', route: '/invoices' });
+      base.push({ label: $localize`:@@invoices.invoice-detail.ts.factures.da35e4f2:Factures`, route: '/invoices' });
       if (this.unpaidOnlyFromRoute) {
-        base.push({ label: 'Factures impayées', route: '/invoices/unpaid' });
+        base.push({ label: $localize`:@@invoices.invoice-detail.ts.factures.impayees.dc3cffa5:Factures impayées`, route: '/invoices/unpaid' });
       }
     }
     base.push({ label: inv?.number || (this.creditNotesOnlyFromRoute ? $localize`:@@ui.tern.avoir.8ee247:Avoir` : $localize`:@@ui.tern.facture.3953b9:Facture`) });
@@ -1361,10 +1361,10 @@ export class InvoiceDetailComponent implements OnInit {
     const inv = this.invoice();
     if (!inv) return null;
     if (inv.status === 'Draft') {
-      return { label: 'Valider', icon: 'pi-check', variant: 'primary' as const, command: () => this.validateInvoice() };
+      return { label: $localize`:@@invoices.invoice-detail.ts.valider.be4220f7:Valider`, icon: 'pi-check', variant: 'primary' as const, command: () => this.validateInvoice() };
     }
     if (inv.status === 'Validated') {
-      return { label: 'Signer', icon: 'pi-pencil', variant: 'primary' as const, command: () => this.signInvoice() };
+      return { label: $localize`:@@invoices.invoice-detail.ts.signer.362166e4:Signer`, icon: 'pi-pencil', variant: 'primary' as const, command: () => this.signInvoice() };
     }
     return null;
   });
@@ -1431,7 +1431,7 @@ export class InvoiceDetailComponent implements OnInit {
   private buildMenu(invoice: InvoiceDetail): void {
     this.menuItems = [
       {
-        label: 'Télécharger PDF',
+        label: $localize`:@@invoices.invoice-detail.ts.telecharger.pdf.06b2eebe:Télécharger PDF`,
         icon: 'pi pi-download',
         command: () => this.downloadPdf()
       },
@@ -1442,19 +1442,19 @@ export class InvoiceDetailComponent implements OnInit {
         command: () => this.sendByEmail()
       },
       {
-        label: 'Enregistrer un paiement',
+        label: $localize`:@@invoices.invoice-detail.ts.enregistrer.un.paiement.72dddba2:Enregistrer un paiement`,
         icon: 'pi pi-wallet',
         visible: this.canRecordPayment(invoice),
         command: () => this.openRecordPaymentDialog()
       },
       { separator: true },
       {
-        label: 'Dupliquer',
+        label: $localize`:@@invoices.invoice-detail.ts.dupliquer.c5e1d3f1:Dupliquer`,
         icon: 'pi pi-copy',
         command: () => this.duplicateInvoice()
       },
       {
-        label: "Créer un avoir",
+        label: $localize`:@@invoices.invoice-detail.ts.creer.un.avoir.d6e9259a:Créer un avoir`,
         icon: 'pi pi-replay',
         visible: this.canCreateCreditNote(invoice.status),
         routerLink: ['/invoices', invoice.id, 'credit-note']
@@ -1684,9 +1684,9 @@ export class InvoiceDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
-            detail: (response as any).message || 'Impossible de valider la facture'
+            detail: (response as any).message || $localize`:@@invoices.invoice-detail.ts.impossible.de.valider.la.facture.3ebd9ae4:Impossible de valider la facture`
           });
-          this.validateSubmitError.set((response as any).message || 'Impossible de valider la facture');
+          this.validateSubmitError.set((response as any).message || $localize`:@@invoices.invoice-detail.ts.impossible.de.valider.la.facture.3ebd9ae4:Impossible de valider la facture`);
         }
       },
       error: (err) => {
@@ -1821,7 +1821,7 @@ export class InvoiceDetailComponent implements OnInit {
           if (!warehouse) {
             if (loadSeq !== this.validateLoadSeq) return EMPTY;
             this.validateContextError.set(
-              'Aucun entrepôt n\'est configuré. Impossible de vérifier le stock.'
+              $localize`:@@invoices.invoice-detail.ts.aucun.entrepot.n.est.configure.impossibl.e521608b:Aucun entrepôt n'est configuré. Impossible de vérifier le stock.`
             );
             this.validateContextLoading.set(false);
             return EMPTY;
@@ -1923,7 +1923,7 @@ export class InvoiceDetailComponent implements OnInit {
         },
         error: () => {
           if (loadSeq !== this.validateLoadSeq) return;
-          this.validateContextError.set('Impossible de vérifier le stock.');
+          this.validateContextError.set($localize`:@@invoices.invoice-detail.ts.impossible.de.verifier.le.stock.ae1fcaab:Impossible de vérifier le stock.`);
           this.validateContextLoading.set(false);
         }
       });
@@ -2043,8 +2043,8 @@ export class InvoiceDetailComponent implements OnInit {
     }
 
     this.confirmationService.confirm({
-      message: `Envoyer la facture ${invoice.number} par email à ${invoice.client.email} ?`,
-      header: 'Envoi par email',
+      message: $localize`:@@invoices.invoice-detail.ts.envoyer.la.facture.number.par.email.a.em.2de4be96:Envoyer la facture ${invoice.number}:number: par email à ${invoice.client.email}:email: ?`,
+      header: $localize`:@@invoices.invoice-detail.ts.envoi.par.email.65d7d5ad:Envoi par email`,
       icon: 'pi pi-envelope',
       acceptLabel: $localize`:@@invoice-detail.component.acceptLabel.Envoyer:Envoyer`,
       rejectLabel: $localize`:@@invoice-detail.component.rejectLabel.Annuler:Annuler`,
@@ -2057,7 +2057,7 @@ export class InvoiceDetailComponent implements OnInit {
               this.toastService.add({
                 severity: 'success',
                 summary: $localize`:@@invoice-detail.component.summary.Envoy_:Envoyé`,
-                detail: `Email envoyé à ${invoice.client.email}`
+                detail: $localize`:@@invoices.invoice-detail.ts.email.envoye.a.email.855da228:Email envoyé à ${invoice.client.email}:email:`
               });
               this.loadInvoice(invoice.id);
             }
@@ -2067,7 +2067,7 @@ export class InvoiceDetailComponent implements OnInit {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@invoice-detail.component.summary.Erreur:Erreur`,
-              detail: err?.error?.errors?.[0] || 'Erreur lors de l\'envoi'
+              detail: err?.error?.errors?.[0] || $localize`:@@invoices.invoice-detail.ts.erreur.lors.de.l.envoi.f5a1c0f0:Erreur lors de l'envoi`
             });
           }
         });

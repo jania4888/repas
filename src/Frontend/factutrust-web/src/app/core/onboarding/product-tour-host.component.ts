@@ -156,7 +156,7 @@ export class ProductTourHostComponent {
         return {
           ...step,
           description:
-            'Bienvenue dans votre espace cabinet. Voici les fonctions essentielles — 2 minutes.'
+            $localize`:@@core.product-tour-host.ts.bienvenue.dans.votre.espace.cabinet.voic.6bceb745:Bienvenue dans votre espace cabinet. Voici les fonctions essentielles — 2 minutes.`
         };
       }
       if (!companyName) {
@@ -164,7 +164,7 @@ export class ProductTourHostComponent {
       }
       return {
         ...step,
-        description: `Bienvenue dans ${companyName}. Voici les fonctions essentielles — 2 minutes.`
+        description: $localize`:@@core.product-tour-host.ts.bienvenue.dans.companyname.voici.les.fon.f12dd394:Bienvenue dans ${companyName}:companyName:. Voici les fonctions essentielles — 2 minutes.`
       };
     });
   }

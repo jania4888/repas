@@ -150,7 +150,7 @@ export class ProductVariantMatrixComponent implements OnChanges {
           this.toastService.add({
             severity: 'success',
             summary: $localize`:@@product-variant-matrix.component.summary.Prix:Prix`,
-            detail: `${res.data ?? 0} variante(s) mise(s) à jour.`
+            detail: $localize`:@@shared.product-variant-matrix.ts.p.variante.s.mise.s.a.jour.5947452a:${res.data ?? 0}:p: variante(s) mise(s) à jour.`
           });
           this.load();
           return;
@@ -162,7 +162,7 @@ export class ProductVariantMatrixComponent implements OnChanges {
         this.toastService.add({
           severity: 'warn',
           summary: $localize`:@@product-variant-matrix.component.summary.Enregistrement_r:Enregistrement refusé`,
-          detail: res.message || res.errors?.[0] || 'Vérifiez les prix et les codes-barres saisis.'
+          detail: res.message || res.errors?.[0] || $localize`:@@shared.product-variant-matrix.ts.verifiez.les.prix.et.les.codes.barres.sa.e1f0fba8:Vérifiez les prix et les codes-barres saisis.`
         });
       },
       error: (err: unknown) => {

@@ -80,7 +80,7 @@ import { PartyBalanceRow } from './party-balances-table.component';
 export class AgingTableComponent {
   readonly loc_ui_tern_balance_agee_b5ee79 = $localize`:@@ui.tern.balance.agee.b5ee79:Balance agee `;
   @Input() rows: PartyBalanceRow[] = [];
-  @Input() partyLabel = 'Client';
+  @Input() partyLabel = $localize`:@@reports.aging-table.ts.client.1bdd79b1:Client`;
 
   /** Balance agee non disponible sur toutes les lignes = on n'affiche rien. */
   get visibleRows(): PartyBalanceRow[] {

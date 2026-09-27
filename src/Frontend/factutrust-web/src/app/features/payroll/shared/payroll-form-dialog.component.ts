@@ -33,7 +33,7 @@ export class PayrollFormDialogComponent {
   @Input({ required: true }) title = '';
   @Input() visible = false;
   @Input() width = '32rem';
-  @Input() saveLabel = 'Enregistrer';
+  @Input() saveLabel = $localize`:@@payroll.payroll-form-dialog.ts.enregistrer.f7c8bcd8:Enregistrer`;
   @Input() saveDisabled = false;
   @Input() saving = false;
   @Output() visibleChange = new EventEmitter<boolean>();

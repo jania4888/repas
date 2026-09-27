@@ -171,18 +171,18 @@ export function buildDivergenceRows(d: VatDeclarationDto): VatDivergenceRow[] {
   if (!s || !d.monthlyDeclarationV2Enabled) return [];
 
   const candidates: VatDivergenceRow[] = [
-    { label: 'TVA collectée 19 %', declared: d.collectedVat19, computed: s.collectedVat19 },
-    { label: 'TVA collectée 13 %', declared: d.collectedVat13, computed: s.collectedVat13 },
-    { label: 'TVA collectée 7 %', declared: d.collectedVat7, computed: s.collectedVat7 },
-    { label: 'TVA déductible — biens et services', declared: d.deductibleVatGoods, computed: s.deductibleVatGoods },
-    { label: 'TVA déductible — immobilisations', declared: d.deductibleVatAssets, computed: s.deductibleVatAssets },
-    { label: 'Crédit antérieur', declared: d.previousCredit, computed: s.previousCredit },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.collectee.19.4fb0b2e4:TVA collectée 19 %`, declared: d.collectedVat19, computed: s.collectedVat19 },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.collectee.13.4a1e8169:TVA collectée 13 %`, declared: d.collectedVat13, computed: s.collectedVat13 },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.collectee.7.f619e8c4:TVA collectée 7 %`, declared: d.collectedVat7, computed: s.collectedVat7 },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.deductible.biens.et.services.1af09997:TVA déductible — biens et services`, declared: d.deductibleVatGoods, computed: s.deductibleVatGoods },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.deductible.immobilisations.4bb099e3:TVA déductible — immobilisations`, declared: d.deductibleVatAssets, computed: s.deductibleVatAssets },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.credit.anterieur.cd16b0d7:Crédit antérieur`, declared: d.previousCredit, computed: s.previousCredit },
     { label: 'FODEC', declared: d.fodec, computed: s.fodec },
-    { label: 'Droit de timbre', declared: d.droitTimbre, computed: s.droitTimbre },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.droit.de.timbre.01f26054:Droit de timbre`, declared: d.droitTimbre, computed: s.droitTimbre },
     { label: 'TCL', declared: d.tcl, computed: s.tcl },
     { label: 'TFP', declared: d.tfp, computed: s.tfp },
     { label: 'FOPROLOS', declared: d.foprolos, computed: s.foprolos },
-    { label: 'Retenues à la source (RS)', declared: d.withholdingTax, computed: s.withholdingTax }
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.retenues.a.la.source.rs.04dda5ef:Retenues à la source (RS)`, declared: d.withholdingTax, computed: s.withholdingTax }
   ];
 
   return candidates.filter(r => hasSuggestionMismatch(r.declared, r.computed));
@@ -390,12 +390,12 @@ export function buildChartSegments(
   totalToPay: number
 ): VatChartSegment[] {
   if (!d.monthlyDeclarationV2Enabled) {
-    return [{ label: 'TVA due', value: d.vatDue }];
+    return [{ label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.due.dcfce644:TVA due`, value: d.vatDue }];
   }
   const segments: VatChartSegment[] = [
-    { label: 'TVA due', value: d.vatDue },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.tva.due.dcfce644:TVA due`, value: d.vatDue },
     { label: 'FODEC', value: extras.fodec },
-    { label: 'Droit de timbre', value: extras.droitTimbre },
+    { label: $localize`:@@accounting.vat-declaration.view-model.ts.droit.de.timbre.01f26054:Droit de timbre`, value: extras.droitTimbre },
     { label: 'TCL', value: extras.tcl },
     { label: 'TFP', value: extras.tfp },
     { label: 'FOPROLOS', value: extras.foprolos },
@@ -403,7 +403,7 @@ export function buildChartSegments(
   ];
   return segments.filter(s => s.value > 0).length > 0
     ? segments.filter(s => s.value > 0)
-    : [{ label: 'Total', value: totalToPay }];
+    : [{ label: $localize`:@@accounting.vat-declaration.view-model.ts.total.b25928c6:Total`, value: totalToPay }];
 }
 
 export function buildDocLinks(d: VatDeclarationDto, year: number, month: number): VatDocLinkRow[] {
@@ -413,34 +413,34 @@ export function buildDocLinks(d: VatDeclarationDto, year: number, month: number)
 
   return [
     {
-      label: 'Journal des ventes',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.journal.des.ventes.923d6129:Journal des ventes`,
       route: '/accounting/journal',
       queryParams: { from: range.from, to: range.to },
       status: totalCollected > 0 ? 'ok' : 'neutral',
       statusLabel: totalCollected > 0 ? 'OK' : '—'
     },
     {
-      label: 'Journal des achats',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.journal.des.achats.c6758504:Journal des achats`,
       route: '/accounting/journal',
       queryParams: { from: range.from, to: range.to },
       status: hasPurchases ? 'ok' : 'neutral',
       statusLabel: hasPurchases ? 'OK' : '—'
     },
     {
-      label: 'Retenues à la source',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.retenues.a.la.source.d52de9c1:Retenues à la source`,
       route: '/withholding-tax',
       status: d.withholdingTax > 0 ? 'ok' : 'neutral',
       statusLabel: d.withholdingTax > 0 ? 'OK' : '—'
     },
     {
-      label: 'Échéancier fiscal',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.echeancier.fiscal.193d9cef:Échéancier fiscal`,
       route: '/accounting/fiscal-schedule',
       queryParams: { fiscalYear: String(year), periodMonth: String(month) },
       status: d.status === 1 ? 'ok' : 'neutral',
       statusLabel: d.status === 1 ? 'Déposée' : 'À suivre'
     },
     {
-      label: 'Contrôles de pré-clôture',
+      label: $localize`:@@accounting.vat-declaration.view-model.ts.controles.de.pre.cloture.e6b9bc87:Contrôles de pré-clôture`,
       route: '/accounting/pre-closing',
       status: 'neutral',
       statusLabel: 'Info'

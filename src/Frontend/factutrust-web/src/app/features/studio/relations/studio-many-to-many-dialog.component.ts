@@ -115,14 +115,14 @@ export class StudioManyToManyDialogComponent {
     }).subscribe({
       next: res => {
         this.saving.set(false);
-        if (!res.success) { this.error.set(res.message || 'Création impossible.'); return; }
+        if (!res.success) { this.error.set(res.message || $localize`:@@studio.studio-many-to-many-dialog.ts.creation.impossible.5661a598:Création impossible.`); return; }
         this.created.emit(res.data);
         this.visible.set(false);
       },
       error: (err: HttpErrorResponse) => {
         this.saving.set(false);
         if (err.status === 409) { this.error.set(this.labels.relations.duplicateKey); return; }
-        this.error.set(typeof err.error?.message === 'string' ? err.error.message : 'Création impossible.');
+        this.error.set(typeof err.error?.message === 'string' ? err.error.message : $localize`:@@studio.studio-many-to-many-dialog.ts.creation.impossible.5661a598:Création impossible.`);
       }
     });
   }

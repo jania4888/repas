@@ -215,7 +215,7 @@ export class ThirdPartyQuickCreateComponent {
         this.expanded.set(false);
         this.created.emit(res.data);
       } else {
-        this.error.set(res?.message || "La création du tiers a échoué.");
+        this.error.set(res?.message || $localize`:@@accounting.third-party-quick-create.ts.la.creation.du.tiers.a.echoue.ddde35ef:La création du tiers a échoué.`);
       }
     };
     const onError = (err: {

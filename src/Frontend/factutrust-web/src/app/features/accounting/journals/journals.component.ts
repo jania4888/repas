@@ -155,7 +155,7 @@ export class JournalsComponent implements OnInit {
         if (res.success && res.data) this.journals.set(res.data);
         else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
-      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journals.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 
@@ -172,16 +172,16 @@ export class JournalsComponent implements OnInit {
       else this.error.set(err ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
     };
     if (f.id) {
-      this.api.updateJournal(f.id, { label: f.label.trim(), familyId: f.familyId }).subscribe({ next: r => done(r.success, r.error), error: err => done(false, this.errors.extractErrorMessage(err, 'Erreur réseau')) });
+      this.api.updateJournal(f.id, { label: f.label.trim(), familyId: f.familyId }).subscribe({ next: r => done(r.success, r.error), error: err => done(false, this.errors.extractErrorMessage(err, $localize`:@@accounting.journals.ts.erreur.reseau.0683007f:Erreur réseau`)) });
     } else {
-      this.api.createJournal({ code: f.code.trim().toUpperCase(), label: f.label.trim(), familyId: f.familyId }).subscribe({ next: r => done(r.success, r.error), error: err => done(false, this.errors.extractErrorMessage(err, 'Erreur réseau')) });
+      this.api.createJournal({ code: f.code.trim().toUpperCase(), label: f.label.trim(), familyId: f.familyId }).subscribe({ next: r => done(r.success, r.error), error: err => done(false, this.errors.extractErrorMessage(err, $localize`:@@accounting.journals.ts.erreur.reseau.0683007f:Erreur réseau`)) });
     }
   }
 
   toggle(j: JournalDto): void {
     this.api.toggleJournal(j.id).subscribe({
       next: r => { if (r.success) this.load(); else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`); },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journals.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 
@@ -192,7 +192,7 @@ export class JournalsComponent implements OnInit {
         if (r.success) { this.toast.add({ severity: 'success', summary: $localize`:@@journals.component.summary.Famille créé:Famille créée`, detail: this.famLabel, life: 4000 }); this.famCode = ''; this.famLabel = ''; this.showFamily.set(false); this.load(); }
         else this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journals.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 }

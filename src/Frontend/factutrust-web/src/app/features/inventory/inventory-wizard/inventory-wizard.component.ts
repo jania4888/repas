@@ -189,18 +189,18 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
     wizardSteps = computed(() => {
         const current = this.step();
         return [
-            { key: 'start' as const, label: 'Lancement', active: current === 'start', done: current !== 'start' },
-            { key: 'count' as const, label: 'Comptage', active: current === 'count', done: current === 'summary' || current === 'success' },
-            { key: 'summary' as const, label: 'Résumé', active: current === 'summary', done: current === 'success' },
-            { key: 'success' as const, label: 'Terminé', active: current === 'success', done: false }
+            { key: 'start' as const, label: $localize`:@@inventory.inventory-wizard.ts.lancement.975bbd19:Lancement`, active: current === 'start', done: current !== 'start' },
+            { key: 'count' as const, label: $localize`:@@inventory.inventory-wizard.ts.comptage.f5a1bc8e:Comptage`, active: current === 'count', done: current === 'summary' || current === 'success' },
+            { key: 'summary' as const, label: $localize`:@@inventory.inventory-wizard.ts.resume.9fb58963:Résumé`, active: current === 'summary', done: current === 'success' },
+            { key: 'success' as const, label: $localize`:@@inventory.inventory-wizard.ts.termine.3bc59720:Terminé`, active: current === 'success', done: false }
         ];
     });
 
     // Breadcrumb
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Mon Stock', route: '/stock' },
-        { label: 'Inventaire physique' }
+        { label: $localize`:@@inventory.inventory-wizard.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@inventory.inventory-wizard.ts.mon.stock.7d1adf31:Mon Stock`, route: '/stock' },
+        { label: $localize`:@@inventory.inventory-wizard.ts.inventaire.physique.38b526c7:Inventaire physique` }
     ];
 
     constructor() {
@@ -555,8 +555,8 @@ export class InventoryWizardComponent implements OnInit, AfterViewChecked {
 
     confirmCancelInventory(): void {
         this.confirmationService.confirm({
-            header: 'Annuler l\'inventaire',
-            message: 'Les comptages non validés seront perdus. Voulez-vous vraiment annuler cet inventaire ?',
+            header: $localize`:@@inventory.inventory-wizard.ts.annuler.l.inventaire.a78bf0e5:Annuler l'inventaire`,
+            message: $localize`:@@inventory.inventory-wizard.ts.les.comptages.non.valides.seront.perdus.6104bd6f:Les comptages non validés seront perdus. Voulez-vous vraiment annuler cet inventaire ?`,
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: $localize`:@@inventory-wizard.component.acceptLabel.Annuler_l_invent:Annuler l'inventaire`,
             rejectLabel: $localize`:@@inventory-wizard.component.rejectLabel.Continuer_le_com:Continuer le comptage`,

@@ -1121,9 +1121,9 @@ export class DeliveryNoteDetailComponent implements OnInit {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const note = this.deliveryNote();
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Bons de Livraison', route: '/delivery-notes' },
-      { label: note?.number || 'Bon de livraison' }
+      { label: $localize`:@@delivery-notes.delivery-note-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@delivery-notes.delivery-note-detail.ts.bons.de.livraison.a42b9518:Bons de Livraison`, route: '/delivery-notes' },
+      { label: note?.number || $localize`:@@delivery-notes.delivery-note-detail.ts.bon.de.livraison.1a60dc44:Bon de livraison` }
     ];
   });
 
@@ -1132,16 +1132,16 @@ export class DeliveryNoteDetailComponent implements OnInit {
     const note = this.deliveryNote();
     if (!note) return null;
     if (note.status === DeliveryNoteStatus.Draft) {
-      return { label: 'Valider', icon: 'pi-check', variant: 'primary' as const, command: () => this.confirmDeliveryNote() };
+      return { label: $localize`:@@delivery-notes.delivery-note-detail.ts.valider.be4220f7:Valider`, icon: 'pi-check', variant: 'primary' as const, command: () => this.confirmDeliveryNote() };
     }
     if (note.status === DeliveryNoteStatus.Confirmed) {
-      return { label: 'Démarrer livraison', icon: 'pi-truck', variant: 'primary' as const, command: () => this.startDelivery() };
+      return { label: $localize`:@@delivery-notes.delivery-note-detail.ts.demarrer.livraison.c36c79cb:Démarrer livraison`, icon: 'pi-truck', variant: 'primary' as const, command: () => this.startDelivery() };
     }
     if (note.status === DeliveryNoteStatus.InTransit) {
-      return { label: 'Enregistrer livraison', icon: 'pi-check-circle', variant: 'primary' as const, command: () => this.openRecordDeliveryDialog() };
+      return { label: $localize`:@@delivery-notes.delivery-note-detail.ts.enregistrer.livraison.537b2e28:Enregistrer livraison`, icon: 'pi-check-circle', variant: 'primary' as const, command: () => this.openRecordDeliveryDialog() };
     }
     if (canGenerateInvoiceFromDeliveryNote(note)) {
-      return { label: 'Générer facture', icon: 'pi-file', variant: 'primary' as const, command: () => this.generateInvoice() };
+      return { label: $localize`:@@delivery-notes.delivery-note-detail.ts.generer.facture.ef238ac2:Générer facture`, icon: 'pi-file', variant: 'primary' as const, command: () => this.generateInvoice() };
     }
     return null;
   });
@@ -1200,7 +1200,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
 
     if (note.status === DeliveryNoteStatus.Draft || note.status === DeliveryNoteStatus.Confirmed) {
       this.menuItems.push({
-        label: 'Annuler',
+        label: $localize`:@@delivery-notes.delivery-note-detail.ts.annuler.49ba3292:Annuler`,
         icon: 'pi pi-times',
         command: () => this.cancelDeliveryNote()
       });
@@ -1219,7 +1219,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
       && canCreateReturnNoteFromDeliveryNote(note)
     ) {
       this.menuItems.push({
-        label: 'Créer un bon de retour',
+        label: $localize`:@@delivery-notes.delivery-note-detail.ts.creer.un.bon.de.retour.a9261008:Créer un bon de retour`,
         icon: 'pi pi-replay',
         command: () => this.createReturnNote()
       });
@@ -1237,8 +1237,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
     if (!note || this.workflowActionInProgress() || note.status !== DeliveryNoteStatus.Draft) return;
 
     this.confirmationService.confirm({
-      header: 'Confirmer le bon de livraison',
-      message: `Êtes-vous sûr de vouloir confirmer le bon de livraison ${note.number} ?`,
+      header: $localize`:@@delivery-notes.delivery-note-detail.ts.confirmer.le.bon.de.livraison.dba10848:Confirmer le bon de livraison`,
+      message: $localize`:@@delivery-notes.delivery-note-detail.ts.etes.vous.sur.de.vouloir.confirmer.le.bo.5b854320:Êtes-vous sûr de vouloir confirmer le bon de livraison ${note.number}:number: ?`,
       acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.Confirmer:Confirmer`,
       rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Annuler:Annuler`,
       icon: 'pi pi-check-circle',
@@ -1258,7 +1258,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
               this.toastService.add({
                 severity: 'error',
                 summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
-                detail: (response as any).message || 'Impossible de confirmer le bon de livraison'
+                detail: (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.de.confirmer.le.bon.de.livrai.da23e28d:Impossible de confirmer le bon de livraison`
               });
             }
           },
@@ -1290,8 +1290,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
     if (!note || this.workflowActionInProgress() || note.status !== DeliveryNoteStatus.Confirmed) return;
 
     this.confirmationService.confirm({
-      header: 'Démarrer la livraison',
-      message: `Êtes-vous sûr de vouloir démarrer la livraison du bon ${note.number} ?`,
+      header: $localize`:@@delivery-notes.delivery-note-detail.ts.demarrer.la.livraison.03cb1e3f:Démarrer la livraison`,
+      message: $localize`:@@delivery-notes.delivery-note-detail.ts.etes.vous.sur.de.vouloir.demarrer.la.liv.31f3da9e:Êtes-vous sûr de vouloir démarrer la livraison du bon ${note.number}:number: ?`,
       acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.Démarrer:Démarrer`,
       rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Annuler:Annuler`,
       icon: 'pi pi-truck',
@@ -1311,7 +1311,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
               this.toastService.add({
                 severity: 'error',
                 summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
-                detail: (response as any).message || 'Impossible de démarrer la livraison'
+                detail: (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.de.demarrer.la.livraison.4bd0d101:Impossible de démarrer la livraison`
               });
             }
           },
@@ -1418,7 +1418,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
 
           if (!warehouse) {
             this.deliveryContextError.set(
-              'Aucun entrepôt n\'est configuré. Impossible de vérifier le stock.'
+              $localize`:@@delivery-notes.delivery-note-detail.ts.aucun.entrepot.n.est.configure.impossibl.e521608b:Aucun entrepôt n'est configuré. Impossible de vérifier le stock.`
             );
             this.deliveryContextLoading.set(false);
             return EMPTY;
@@ -1520,7 +1520,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
         },
         error: () => {
           if (loadSeq !== this.deliveryLoadSeq) return;
-          this.deliveryContextError.set('Impossible de vérifier le stock.');
+          this.deliveryContextError.set($localize`:@@delivery-notes.delivery-note-detail.ts.impossible.de.verifier.le.stock.ae1fcaab:Impossible de vérifier le stock.`);
           this.deliveryContextLoading.set(false);
         }
       });
@@ -1718,8 +1718,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
     ) return;
 
     this.confirmationService.confirm({
-      header: 'Annuler le bon de livraison',
-      message: `Êtes-vous sûr de vouloir annuler le bon de livraison ${note.number} ?`,
+      header: $localize`:@@delivery-notes.delivery-note-detail.ts.annuler.le.bon.de.livraison.f42c4ca4:Annuler le bon de livraison`,
+      message: $localize`:@@delivery-notes.delivery-note-detail.ts.etes.vous.sur.de.vouloir.annuler.le.bon.10898243:Êtes-vous sûr de vouloir annuler le bon de livraison ${note.number}:number: ?`,
       acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.Annuler_le_bon:Annuler le bon`,
       rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Retour:Retour`,
       icon: 'pi pi-exclamation-triangle',
@@ -1740,7 +1740,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
               this.toastService.add({
                 severity: 'error',
                 summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
-                detail: (response as any).message || 'Impossible d\'annuler le bon de livraison'
+                detail: (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.d.annuler.le.bon.de.livraison.a0913741:Impossible d'annuler le bon de livraison`
               });
             }
           },
@@ -1770,8 +1770,8 @@ export class DeliveryNoteDetailComponent implements OnInit {
     }
 
     this.confirmationService.confirm({
-      header: 'Générer facture',
-      message: `Voulez-vous générer une facture pour le bon de livraison ${note.number} ?`,
+      header: $localize`:@@delivery-notes.delivery-note-detail.ts.generer.facture.ef238ac2:Générer facture`,
+      message: $localize`:@@delivery-notes.delivery-note-detail.ts.voulez.vous.generer.une.facture.pour.le.2e3983d9:Voulez-vous générer une facture pour le bon de livraison ${note.number}:number: ?`,
       acceptLabel: $localize`:@@delivery-note-detail.component.acceptLabel.G_n_rer:Générer`,
       rejectLabel: $localize`:@@delivery-note-detail.component.rejectLabel.Annuler:Annuler`,
       icon: 'pi pi-file',
@@ -1794,7 +1794,7 @@ export class DeliveryNoteDetailComponent implements OnInit {
               this.toastService.add({
                 severity: 'error',
                 summary: $localize`:@@delivery-note-detail.component.summary.Erreur:Erreur`,
-                detail: (response as any).message || 'Impossible de générer la facture'
+                detail: (response as any).message || $localize`:@@delivery-notes.delivery-note-detail.ts.impossible.de.generer.la.facture.56d8d59c:Impossible de générer la facture`
               });
             }
           },

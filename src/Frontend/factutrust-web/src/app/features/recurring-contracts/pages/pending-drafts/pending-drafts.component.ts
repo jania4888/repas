@@ -164,9 +164,9 @@ export class PendingDraftsComponent implements OnInit {
   readonly canValidateInvoice = computed(() => this.auth.hasPermission(PERMISSIONS.invoices.create));
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/', icon: 'pi-home' },
-    { label: 'Contrats récurrents', route: '/recurring-contracts' },
-    { label: 'Brouillons à valider' }
+    { label: $localize`:@@recurring-contracts.pending-drafts.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' },
+    { label: $localize`:@@recurring-contracts.pending-drafts.ts.contrats.recurrents.e773e54a:Contrats récurrents`, route: '/recurring-contracts' },
+    { label: $localize`:@@recurring-contracts.pending-drafts.ts.brouillons.a.valider.3fabaa45:Brouillons à valider` }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -209,8 +209,8 @@ export class PendingDraftsComponent implements OnInit {
 
   confirmIssue(draft: PendingRecurringDraft): void {
     this.confirmation.confirm({
-      header: 'Confirmer l\'émission',
-      message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
+      header: $localize`:@@recurring-contracts.pending-drafts.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
+      message: $localize`:@@recurring-contracts.pending-drafts.ts.une.fois.validee.cette.facture.ne.pourra.acdbf6bb:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@pending-drafts.component.acceptLabel.Émettre la f:Émettre la facture`,
       rejectLabel: $localize`:@@pending-drafts.component.rejectLabel.Annuler:Annuler`,
@@ -228,7 +228,7 @@ export class PendingDraftsComponent implements OnInit {
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@pending-drafts.component.summary.G_n_ration_termi:Génération terminée`,
-          detail: `${count} brouillon(s) généré(s).`
+          detail: $localize`:@@recurring-contracts.pending-drafts.ts.count.brouillon.s.genere.s.54b29e4d:${count}:count: brouillon(s) généré(s).`
         });
         this.reload();
       },
@@ -252,7 +252,7 @@ export class PendingDraftsComponent implements OnInit {
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@pending-drafts.component.summary.Facture émis:Facture émise`,
-          detail: `Facture ${issued.invoiceNumber} émise.`
+          detail: $localize`:@@recurring-contracts.pending-drafts.ts.facture.invoicenumber.emise.07d601c8:Facture ${issued.invoiceNumber}:invoiceNumber: émise.`
         });
         this.reload();
       },

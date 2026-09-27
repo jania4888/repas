@@ -229,7 +229,7 @@ export class DraftBatchComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.draft-batch.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -248,7 +248,7 @@ export class DraftBatchComponent implements OnInit {
       next: res => {
         this.acting.set(false);
         if (res.success && res.data) {
-          this.successMessage.set(`${res.data.updated} brouillon(s) modifié(s), ${res.data.skipped} ignoré(s).`);
+          this.successMessage.set($localize`:@@accounting.draft-batch.ts.updated.brouillon.s.modifie.s.skipped.ig.04036066:${res.data.updated}:updated: brouillon(s) modifié(s), ${res.data.skipped}:skipped: ignoré(s).`);
           this.resetChangeForm();
           this.load();
         } else {
@@ -257,7 +257,7 @@ export class DraftBatchComponent implements OnInit {
       },
       error: err => {
         this.acting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la modification.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.draft-batch.ts.erreur.reseau.lors.de.la.modification.078d1520:Erreur réseau lors de la modification.`));
       }
     });
   }
@@ -272,7 +272,7 @@ export class DraftBatchComponent implements OnInit {
       next: res => {
         this.acting.set(false);
         if (res.success && res.data) {
-          this.successMessage.set(`${res.data.deleted} brouillon(s) supprimé(s), ${res.data.skipped} ignoré(s).`);
+          this.successMessage.set($localize`:@@accounting.draft-batch.ts.deleted.brouillon.s.supprime.s.skipped.i.5454860e:${res.data.deleted}:deleted: brouillon(s) supprimé(s), ${res.data.skipped}:skipped: ignoré(s).`);
           this.load();
         } else {
           this.error.set(res.error ?? $localize`:@@ui.tern.la.suppression.a.echoue.2be4e0:La suppression a échoué.`);
@@ -280,7 +280,7 @@ export class DraftBatchComponent implements OnInit {
       },
       error: err => {
         this.acting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la suppression.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.draft-batch.ts.erreur.reseau.lors.de.la.suppression.4d591e3c:Erreur réseau lors de la suppression.`));
       }
     });
   }

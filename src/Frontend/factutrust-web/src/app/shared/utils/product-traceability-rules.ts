@@ -67,11 +67,11 @@ export function getTrackingModeOptions(
   currentMode?: number
 ): SelectOption[] {
   const mode = coerceTrackingMode(currentMode);
-  const options: SelectOption[] = [{ label: 'Aucun', value: TRACKING_MODE_NONE }];
+  const options: SelectOption[] = [{ label: $localize`:@@shared.product-traceability-rules.ts.aucun.b2ed82f1:Aucun`, value: TRACKING_MODE_NONE }];
 
   if (features?.lotTrackingEnabled || mode === TRACKING_MODE_LOT) {
     options.push({
-      label: 'Lot',
+      label: $localize`:@@shared.product-traceability-rules.ts.lot.4a211932:Lot`,
       value: TRACKING_MODE_LOT,
       disabled: !features?.lotTrackingEnabled
     });
@@ -79,7 +79,7 @@ export function getTrackingModeOptions(
 
   if (features?.serialTrackingEnabled || mode === TRACKING_MODE_SERIAL) {
     options.push({
-      label: 'N° de série',
+      label: $localize`:@@shared.product-traceability-rules.ts.n.de.serie.6b826381:N° de série`,
       value: TRACKING_MODE_SERIAL,
       disabled: !features?.serialTrackingEnabled
     });
@@ -108,13 +108,13 @@ export function getPickingPolicyOptions(
   if (!showPickingField(trackingMode)) return [];
 
   return [
-    { label: 'Manuel (choix du lot à la sortie)', value: PICKING_NONE },
+    { label: $localize`:@@shared.product-traceability-rules.ts.manuel.choix.du.lot.a.la.sortie.9adf0874:Manuel (choix du lot à la sortie)`, value: PICKING_NONE },
     {
-      label: 'FEFO (péremption)',
+      label: $localize`:@@shared.product-traceability-rules.ts.fefo.peremption.5413473d:FEFO (péremption)`,
       value: PICKING_FEFO,
       disabled: !hasExpiryTracking
     },
-    { label: 'FIFO physique', value: PICKING_FIFO_PHYSICAL }
+    { label: $localize`:@@shared.product-traceability-rules.ts.fifo.physique.d9dcd776:FIFO physique`, value: PICKING_FIFO_PHYSICAL }
   ];
 }
 
@@ -133,7 +133,7 @@ export function getCostingMethodOptions(
   return [
     { label: 'CMUP', value: COSTING_AVERAGE, disabled: lockAverage },
     { label: 'FIFO', value: COSTING_FIFO },
-    { label: 'LIFO (attention comptes statutaires)', value: COSTING_LIFO }
+    { label: $localize`:@@shared.product-traceability-rules.ts.lifo.attention.comptes.statutaires.52268aff:LIFO (attention comptes statutaires)`, value: COSTING_LIFO }
   ];
 }
 

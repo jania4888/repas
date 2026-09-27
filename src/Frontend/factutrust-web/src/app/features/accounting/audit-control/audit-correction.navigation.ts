@@ -70,21 +70,21 @@ export function buildFallbackCorrectionLink(
       return {
         route: '/accounting/entry-search',
         queryParams: { ...queryParams, status: '0', autoSearch: '1' },
-        label: 'Voir les brouillards'
+        label: $localize`:@@accounting.audit-correction.navigation.ts.voir.les.brouillards.fe0405fb:Voir les brouillards`
       };
     case 'unlettered': {
       const account = item.accountRef?.includes('4011') && !item.accountRef.includes('4111') ? '4011' : '4111';
       return {
         route: '/accounting/lettering',
         queryParams: { account, from, to, unletteredOnly: '1', autoLoad: '1' },
-        label: 'Ouvrir le lettrage'
+        label: $localize`:@@accounting.audit-correction.navigation.ts.ouvrir.le.lettrage.8d45c420:Ouvrir le lettrage`
       };
     }
     case 'entry-missing-attachment':
       return {
         route: '/accounting/journal',
         queryParams: { from, to, missingAttachment: '1', autoLoad: '1' },
-        label: 'Voir les écritures sans justificatif'
+        label: $localize`:@@accounting.audit-correction.navigation.ts.voir.les.ecritures.sans.justificatif.7f114e42:Voir les écritures sans justificatif`
       };
     case 'health-piece-duplicates':
     case 'sequence-gaps':
@@ -93,41 +93,41 @@ export function buildFallbackCorrectionLink(
       return {
         route: '/accounting/entry-search',
         queryParams: { ...queryParams, autoSearch: '1' },
-        label: 'Rechercher les écritures'
+        label: $localize`:@@accounting.audit-correction.navigation.ts.rechercher.les.ecritures.45de8733:Rechercher les écritures`
       };
     case 'vat':
     case 'vat-deductible-no-proof':
       return {
         route: '/accounting/vat-declaration',
         queryParams: { fiscalYear: String(fiscalYear) },
-        label: 'Ouvrir la TVA'
+        label: $localize`:@@accounting.audit-correction.navigation.ts.ouvrir.la.tva.6041aa7a:Ouvrir la TVA`
       };
     case 'open-periods':
     case 'health-out-of-period':
       return {
         route: '/accounting/closing',
         queryParams: { fiscalYear: String(fiscalYear) },
-        label: 'Gérer les périodes'
+        label: $localize`:@@accounting.audit-correction.navigation.ts.gerer.les.periodes.43a9e7f2:Gérer les périodes`
       };
     case 'depreciation':
       return {
         route: '/accounting/fixed-assets/depreciation-run',
         queryParams: { fiscalYear: String(fiscalYear) },
-        label: 'Dotations'
+        label: $localize`:@@accounting.audit-correction.navigation.ts.dotations.751a01e7:Dotations`
       };
     case 'recon-bank-incomplete':
       return {
         route: '/accounting/bank-reconciliation',
         queryParams: { fiscalYear: String(fiscalYear), unmatchedOnly: '1' },
-        label: 'Rapprochement bancaire'
+        label: $localize`:@@accounting.audit-correction.navigation.ts.rapprochement.bancaire.b6463429:Rapprochement bancaire`
       };
     case 'suspense':
       return {
         route: '/accounting/balance',
         queryParams: { account: item.accountRef ?? firstLine?.accountNumber ?? '471', from, to },
-        label: 'Consulter la balance'
+        label: $localize`:@@accounting.audit-correction.navigation.ts.consulter.la.balance.3a4480d6:Consulter la balance`
       };
     default:
-      return { route, queryParams, label: 'Corriger' };
+      return { route, queryParams, label: $localize`:@@accounting.audit-correction.navigation.ts.corriger.3447eb7c:Corriger` };
   }
 }

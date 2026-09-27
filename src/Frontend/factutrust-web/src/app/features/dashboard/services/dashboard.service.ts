@@ -243,17 +243,17 @@ export class DashboardService {
       let iconClass: string;
 
       if (status.includes('payé') || status.includes('paid')) {
-        description = `Paiement reçu pour ${inv.number}`;
+        description = $localize`:@@dashboard.dashboard.ts.paiement.recu.pour.number.aa5e2d5f:Paiement reçu pour ${inv.number}:number:`;
         iconClass = 'activity-success';
       } else if (status.includes('validé') || status.includes('validated') ||
                  status.includes('signé') || status.includes('signed')) {
-        description = `Facture ${inv.number} validée`;
+        description = $localize`:@@dashboard.dashboard.ts.facture.number.validee.fac00f06:Facture ${inv.number}:number: validée`;
         iconClass = 'activity-primary';
       } else if (status.includes('envoyé') || status.includes('sent')) {
-        description = `Facture ${inv.number} envoyée à ${inv.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.facture.number.envoyee.a.clientname.0bc8ea33:Facture ${inv.number}:number: envoyée à ${inv.clientName}:clientName:`;
         iconClass = 'activity-info';
       } else {
-        description = `Facture ${inv.number} créée pour ${inv.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.facture.number.creee.pour.clientname.af9541d5:Facture ${inv.number}:number: créée pour ${inv.clientName}:clientName:`;
         iconClass = 'activity-neutral';
       }
 
@@ -275,16 +275,16 @@ export class DashboardService {
       let iconClass: string;
 
       if (status.includes('accepté') || status.includes('accepted')) {
-        description = `Devis ${q.number} accepté par ${q.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.devis.number.accepte.par.clientname.fb9003ef:Devis ${q.number}:number: accepté par ${q.clientName}:clientName:`;
         iconClass = 'activity-success';
       } else if (status.includes('envoyé') || status.includes('sent')) {
-        description = `Devis ${q.number} envoyé à ${q.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.devis.number.envoye.a.clientname.311bc806:Devis ${q.number}:number: envoyé à ${q.clientName}:clientName:`;
         iconClass = 'activity-info';
       } else if (status.includes('converti') || status.includes('converted')) {
-        description = `Devis ${q.number} converti en facture`;
+        description = $localize`:@@dashboard.dashboard.ts.devis.number.converti.en.facture.d1ddf45a:Devis ${q.number}:number: converti en facture`;
         iconClass = 'activity-primary';
       } else {
-        description = `Devis ${q.number} créé pour ${q.clientName}`;
+        description = $localize`:@@dashboard.dashboard.ts.devis.number.cree.pour.clientname.254a3e71:Devis ${q.number}:number: créé pour ${q.clientName}:clientName:`;
         iconClass = 'activity-neutral';
       }
 

@@ -30,7 +30,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     path: 'entry-templates',
     loadComponent: () =>
       import('./entry-templates/entry-templates.component').then(m => m.EntryTemplatesComponent),
-    title: "Modèles d'écriture - InstaFact"
+    title: $localize`:@@accounting.accounting.routes.ts.modeles.d.ecriture.instafact.47339b68:Modèles d'écriture - InstaFact`
   },
   {
     path: 'journals',
@@ -185,7 +185,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     path: 'health',
     loadComponent: () =>
       import('./audit-control/audit-control-page.component').then(m => m.AuditControlPageComponent),
-    title: "Contrôle d'intégrité - InstaFact"
+    title: $localize`:@@accounting.accounting.routes.ts.controle.d.integrite.instafact.03b2cb78:Contrôle d'intégrité - InstaFact`
   },
   {
     path: 'draft-batch',
@@ -203,7 +203,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     path: 'inventory-assistant',
     loadComponent: () =>
       import('./inventory-assistant/inventory-assistant.component').then(m => m.InventoryAssistantComponent),
-    title: "Assistant d'inventaire - InstaFact"
+    title: $localize`:@@accounting.accounting.routes.ts.assistant.d.inventaire.instafact.11159708:Assistant d'inventaire - InstaFact`
   },
   {
     path: 'closing',
@@ -245,7 +245,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     data: { permissions: [PERMISSIONS.accounting.read] },
     loadComponent: () =>
       import('./inventory-book/inventory-book.component').then(m => m.InventoryBookComponent),
-    title: "Livre d'inventaire - InstaFact"
+    title: $localize`:@@accounting.accounting.routes.ts.livre.d.inventaire.instafact.2840c0a0:Livre d'inventaire - InstaFact`
   },
   {
     path: 'fiscal-result',
@@ -306,7 +306,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     path: 'entry-search',
     loadComponent: () =>
       import('./entry-search/entry-search.component').then(m => m.EntrySearchComponent),
-    title: "Recherche d'écriture - InstaFact"
+    title: $localize`:@@accounting.accounting.routes.ts.recherche.d.ecriture.instafact.37a36a84:Recherche d'écriture - InstaFact`
   },
   {
     path: 'account-replacement',
@@ -367,7 +367,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     path: 'loans/:id',
     loadComponent: () =>
       import('./loans/loan-schedule.component').then(m => m.LoanScheduleComponent),
-    title: "Tableau d'amortissement d'emprunt - InstaFact"
+    title: $localize`:@@accounting.accounting.routes.ts.tableau.d.amortissement.d.emprunt.instaf.d0b0a6a5:Tableau d'amortissement d'emprunt - InstaFact`
   },
   {
     path: 'fixed-assets/:id',

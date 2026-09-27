@@ -934,9 +934,9 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
   importBlNumber = '';
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de réception', route: '/purchase-receipts' },
-    { label: 'Nouveau' }
+    { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.bons.de.reception.84d6ebb5:Bons de réception`, route: '/purchase-receipts' },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.nouveau.b9676c8f:Nouveau` }
   ];
 
   ngOnInit(): void {
@@ -959,9 +959,9 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
       this.isEdit.set(true);
       this.savedId.set(id);
       this.breadcrumbItems = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Bons de réception', route: '/purchase-receipts' },
-        { label: 'Modifier' }
+        { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.bons.de.reception.84d6ebb5:Bons de réception`, route: '/purchase-receipts' },
+        { label: $localize`:@@purchase-receipts.purchase-receipt-form.ts.modifier.f260e757:Modifier` }
       ];
       this.loadReceipt(id);
     } else if (poId) {
@@ -1147,7 +1147,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
-            detail: res.message || 'Impossible de préremplir depuis le bon de commande'
+            detail: res.message || $localize`:@@purchase-receipts.purchase-receipt-form.ts.impossible.de.preremplir.depuis.le.bon.d.0b96b652:Impossible de préremplir depuis le bon de commande`
           });
           this.loading.set(false);
           return;
@@ -1212,7 +1212,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
-          detail: err?.error?.errors?.[0] || 'Impossible de préremplir depuis le bon de commande'
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-form.ts.impossible.de.preremplir.depuis.le.bon.d.0b96b652:Impossible de préremplir depuis le bon de commande`
         });
       }
     });
@@ -1543,7 +1543,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
             summary: $localize`:@@purchase-receipt-form.component.summary.Enregistr_:Enregistré`,
             detail: error
               ? this.errorHandler.extractErrorMessage(error)
-              : 'Enregistré, mais la validation a échoué'
+              : $localize`:@@purchase-receipts.purchase-receipt-form.ts.enregistre.mais.la.validation.a.echoue.93d8c18d:Enregistré, mais la validation a échoué`
           });
           this.ensureEditUrl(id);
           return;
@@ -1567,7 +1567,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
-          detail: this.errorHandler.extractErrorMessage(err) || 'Erreur lors de l\'enregistrement'
+          detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@purchase-receipts.purchase-receipt-form.ts.erreur.lors.de.l.enregistrement.28411a5e:Erreur lors de l'enregistrement`
         });
       }
     });
@@ -1599,7 +1599,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
     this.toastService.add({
       severity: 'success',
       summary: $localize`:@@purchase-receipt-form.component.summary.BL importé:BL importé`,
-      detail: `Référence fournisseur : ${bl}`
+      detail: $localize`:@@purchase-receipts.purchase-receipt-form.ts.reference.fournisseur.bl.cfc63ba2:Référence fournisseur : ${bl}:bl:`
     });
   }
 
@@ -1668,7 +1668,7 @@ export class PurchaseReceiptFormComponent implements OnInit, OnDestroy {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@purchase-receipt-form.component.summary.Erreur:Erreur`,
-          detail: err?.error?.errors?.[0] || 'Échec de l\'upload'
+          detail: err?.error?.errors?.[0] || $localize`:@@purchase-receipts.purchase-receipt-form.ts.echec.de.l.upload.68e0c9ab:Échec de l'upload`
         });
       }
     });

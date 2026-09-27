@@ -184,9 +184,9 @@ export class FixedAssetSettingsComponent implements OnInit {
   readonly monthOptions = MONTH_LABELS_FR.map((label, idx) => ({ value: idx + 1, label }));
 
   readonly offsetLimitationMessage =
-    "L'exercice est décalé : le Grand-Livre, les périodes et les verrous comptables restent en année civile. " +
-    "Seul le module Immobilisations (dotations, tableau CP17, exports) applique la frontière d'exercice. " +
-    "Le bascule complète du socle est planifiée séparément.";
+    $localize`:@@accounting.fixed-asset-settings.ts.l.exercice.est.decale.le.grand.livre.les.9898eb90:L'exercice est décalé : le Grand-Livre, les périodes et les verrous comptables restent en année civile. ` +
+    $localize`:@@accounting.fixed-asset-settings.ts.seul.le.module.immobilisations.dotations.2d454ff9:Seul le module Immobilisations (dotations, tableau CP17, exports) applique la frontière d'exercice. ` +
+    $localize`:@@accounting.fixed-asset-settings.ts.le.bascule.complete.du.socle.est.planifi.603ef40d:Le bascule complète du socle est planifiée séparément.`;
 
   readonly loading = signal(true);
   readonly saving = signal(false);
@@ -235,7 +235,7 @@ export class FixedAssetSettingsComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Impossible de charger les paramètres d\'exercice.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.fixed-asset-settings.ts.impossible.de.charger.les.parametres.d.e.10b79ca6:Impossible de charger les paramètres d'exercice.`));
       }
     });
   }

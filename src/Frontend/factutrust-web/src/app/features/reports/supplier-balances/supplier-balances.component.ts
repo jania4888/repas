@@ -135,9 +135,9 @@ export class SupplierBalancesComponent implements OnInit {
   private readonly router = inject(Router);
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/' },
-    { label: 'Achats', route: '/supplier-invoices' },
-    { label: 'Solde par fournisseur' }
+    { label: $localize`:@@reports.supplier-balances.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+    { label: $localize`:@@reports.supplier-balances.ts.achats.ee5b078c:Achats`, route: '/supplier-invoices' },
+    { label: $localize`:@@reports.supplier-balances.ts.solde.par.fournisseur.7b26b81c:Solde par fournisseur` }
   ];
 
   loading = signal(true);

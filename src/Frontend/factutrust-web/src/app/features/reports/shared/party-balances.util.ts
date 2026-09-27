@@ -59,11 +59,11 @@ export function buildPartyBalanceSummaryMetrics(rows: PartyBalanceRow[]): TotalM
   const positiveCount = rows.filter((r) => r.balance > 0).length;
 
   const metrics: TotalMetric[] = [
-    { label: 'Tiers', value: rows.length, format: 'number', icon: 'pi-users', tone: 'primary' },
-    { label: 'Total facturé', value: totalInvoiced, format: 'currency', currency, icon: 'pi-file', tone: 'cyan' },
-    { label: 'Total payé', value: totalPaid, format: 'currency', currency, icon: 'pi-check', tone: 'emerald' },
-    { label: 'Solde total', value: totalBalance, format: 'currency', currency, icon: 'pi-wallet', tone: 'amber' },
-    { label: 'Soldes > 0', value: positiveCount, format: 'number', icon: 'pi-exclamation-circle', tone: 'rose' }
+    { label: $localize`:@@reports.party-balances.ts.tiers.435080ba:Tiers`, value: rows.length, format: 'number', icon: 'pi-users', tone: 'primary' },
+    { label: $localize`:@@reports.party-balances.ts.total.facture.ea06ae9d:Total facturé`, value: totalInvoiced, format: 'currency', currency, icon: 'pi-file', tone: 'cyan' },
+    { label: $localize`:@@reports.party-balances.ts.total.paye.57d30be5:Total payé`, value: totalPaid, format: 'currency', currency, icon: 'pi-check', tone: 'emerald' },
+    { label: $localize`:@@reports.party-balances.ts.solde.total.e8f8a268:Solde total`, value: totalBalance, format: 'currency', currency, icon: 'pi-wallet', tone: 'amber' },
+    { label: $localize`:@@reports.party-balances.ts.soldes.0.2fef81aa:Soldes > 0`, value: positiveCount, format: 'number', icon: 'pi-exclamation-circle', tone: 'rose' }
   ];
 
   // Echu > 90 j : la valeur qui appelle une action ferme, mise en avant si le rapport
@@ -72,13 +72,13 @@ export function buildPartyBalanceSummaryMetrics(rows: PartyBalanceRow[]): TotalM
   if (hasAging) {
     const over90 = rows.reduce((sum, r) => sum + (r.bucketOver90 ?? 0), 0);
     metrics.push({
-      label: 'Échu > 90 j',
+      label: $localize`:@@reports.party-balances.ts.echu.90.j.f355b0aa:Échu > 90 j`,
       value: over90,
       format: 'currency',
       currency,
       icon: 'pi-clock',
       tone: over90 > 0 ? 'rose' : 'emerald',
-      hint: 'À relancer en priorité'
+      hint: $localize`:@@reports.party-balances.ts.a.relancer.en.priorite.44d22202:À relancer en priorité`
     });
   }
 

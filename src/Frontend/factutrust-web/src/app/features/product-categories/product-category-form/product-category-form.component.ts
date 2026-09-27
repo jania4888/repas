@@ -281,13 +281,13 @@ export class ProductCategoryFormComponent implements OnInit {
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const base: BreadcrumbItem[] = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Catégories', route: '/product-categories' }
+      { label: $localize`:@@product-categories.product-category-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@product-categories.product-category-form.ts.categories.d463d7d2:Catégories`, route: '/product-categories' }
     ];
     if (this.isEditMode()) {
-      base.push({ label: 'Modifier la catégorie' });
+      base.push({ label: $localize`:@@product-categories.product-category-form.ts.modifier.la.categorie.b9c31a75:Modifier la catégorie` });
     } else {
-      base.push({ label: 'Nouvelle catégorie' });
+      base.push({ label: $localize`:@@product-categories.product-category-form.ts.nouvelle.categorie.8c5f928e:Nouvelle catégorie` });
     }
     return base;
   });
@@ -335,7 +335,7 @@ export class ProductCategoryFormComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
-          detail: msg || 'Impossible de charger la catégorie'
+          detail: msg || $localize`:@@product-categories.product-category-form.ts.impossible.de.charger.la.categorie.e756ad05:Impossible de charger la catégorie`
         });
         this.router.navigate(['/product-categories']);
         this.loading.set(false);
@@ -369,14 +369,14 @@ export class ProductCategoryFormComponent implements OnInit {
             this.toastService.add({
               severity: 'success',
               summary: $localize`:@@product-category-form.component.summary.Succès:Succès`,
-              detail: response.message || 'Catégorie mise à jour.'
+              detail: response.message || $localize`:@@product-categories.product-category-form.ts.categorie.mise.a.jour.6c887ee2:Catégorie mise à jour.`
             });
             this.router.navigate(['/product-categories']);
           } else {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
-              detail: response.errors?.join(', ') || response.message || 'Impossible de mettre à jour la catégorie'
+              detail: response.errors?.join(', ') || response.message || $localize`:@@product-categories.product-category-form.ts.impossible.de.mettre.a.jour.la.categorie.25dbddc0:Impossible de mettre à jour la catégorie`
             });
           }
           this.saving.set(false);
@@ -386,7 +386,7 @@ export class ProductCategoryFormComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
-            detail: msg || 'Impossible de mettre à jour la catégorie'
+            detail: msg || $localize`:@@product-categories.product-category-form.ts.impossible.de.mettre.a.jour.la.categorie.25dbddc0:Impossible de mettre à jour la catégorie`
           });
           this.saving.set(false);
         }
@@ -404,14 +404,14 @@ export class ProductCategoryFormComponent implements OnInit {
             this.toastService.add({
               severity: 'success',
               summary: $localize`:@@product-category-form.component.summary.Succès:Succès`,
-              detail: response.message || 'Catégorie créée avec succès.'
+              detail: response.message || $localize`:@@product-categories.product-category-form.ts.categorie.creee.avec.succes.1cd52beb:Catégorie créée avec succès.`
             });
             this.router.navigate(['/product-categories']);
           } else {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
-              detail: response.errors?.join(', ') || response.message || 'Impossible de créer la catégorie'
+              detail: response.errors?.join(', ') || response.message || $localize`:@@product-categories.product-category-form.ts.impossible.de.creer.la.categorie.1ee25d75:Impossible de créer la catégorie`
             });
           }
           this.saving.set(false);
@@ -423,13 +423,13 @@ export class ProductCategoryFormComponent implements OnInit {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@product-category-form.component.summary.Conflit:Conflit`,
-              detail: msg || 'Une catégorie existe déjà avec ce code.'
+              detail: msg || $localize`:@@product-categories.product-category-form.ts.une.categorie.existe.deja.avec.ce.code.f3791d5d:Une catégorie existe déjà avec ce code.`
             });
           } else {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@product-category-form.component.summary.Erreur:Erreur`,
-              detail: msg || 'Impossible de créer la catégorie'
+              detail: msg || $localize`:@@product-categories.product-category-form.ts.impossible.de.creer.la.categorie.1ee25d75:Impossible de créer la catégorie`
             });
           }
           this.saving.set(false);

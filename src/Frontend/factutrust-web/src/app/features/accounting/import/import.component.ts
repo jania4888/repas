@@ -281,7 +281,7 @@ export class ImportComponent {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'aperçu."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.import.ts.erreur.reseau.lors.de.l.apercu.37b653a5:Erreur réseau lors de l'aperçu.`));
       }
     });
   }
@@ -300,7 +300,7 @@ export class ImportComponent {
           return;
         }
         this.successMessage.set(
-          `${res.data.importedEntries} écriture(s) et ${res.data.importedLines} ligne(s) importées en brouillard. Validez-les depuis le journal.`
+          $localize`:@@accounting.import.ts.importedentries.ecriture.s.et.importedli.3ba5c35e:${res.data.importedEntries}:importedEntries: écriture(s) et ${res.data.importedLines}:importedLines: ligne(s) importées en brouillard. Validez-les depuis le journal.`
         );
         this.preview.set(null);
         this.selectedFile.set(null);
@@ -308,7 +308,7 @@ export class ImportComponent {
       },
       error: err => {
         this.committing.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'import."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.import.ts.erreur.reseau.lors.de.l.import.085abb90:Erreur réseau lors de l'import.`));
       }
     });
   }

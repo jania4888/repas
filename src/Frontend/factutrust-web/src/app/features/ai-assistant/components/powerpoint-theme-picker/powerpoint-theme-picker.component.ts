@@ -121,11 +121,11 @@ export class PowerPointThemePickerComponent implements OnChanges {
   private readonly failedThumbnailKeys = signal<ReadonlySet<string>>(new Set());
 
   protected readonly filterChips: FilterChip[] = [
-    { id: 'all', label: 'Tous' },
-    { id: PowerPointThemeCategory.Light, label: 'Clair' },
-    { id: PowerPointThemeCategory.Dark, label: 'Sombre' },
-    { id: PowerPointThemeCategory.Premium, label: 'Premium' },
-    { id: PowerPointThemeCategory.Vibrant, label: 'Coloré' }
+    { id: 'all', label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.tous.b97ae3b4:Tous` },
+    { id: PowerPointThemeCategory.Light, label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.clair.1c50949a:Clair` },
+    { id: PowerPointThemeCategory.Dark, label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.sombre.b1fa84a3:Sombre` },
+    { id: PowerPointThemeCategory.Premium, label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.premium.6c2f2888:Premium` },
+    { id: PowerPointThemeCategory.Vibrant, label: $localize`:@@ai-assistant.powerpoint-theme-picker.ts.colore.e6ae1fc7:Coloré` }
   ];
 
   protected readonly filteredTemplates = computed(() => {

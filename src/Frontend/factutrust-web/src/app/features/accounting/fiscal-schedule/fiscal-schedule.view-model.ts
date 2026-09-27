@@ -6,55 +6,55 @@ import {
 } from '../services/fiscal-schedule.service';
 
 export const FISCAL_OBLIGATION_OPTIONS = [
-  { value: FiscalObligationType.MonthlyDeclaration, label: 'Declaration mensuelle' },
-  { value: FiscalObligationType.ProvisionalCorporateTaxInstallment, label: 'Acompte provisionnel IS' },
-  { value: FiscalObligationType.WithholdingTax, label: 'Retenue a la source' },
+  { value: FiscalObligationType.MonthlyDeclaration, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.declaration.mensuelle.39fc41f1:Declaration mensuelle` },
+  { value: FiscalObligationType.ProvisionalCorporateTaxInstallment, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.acompte.provisionnel.is.e88e5f0f:Acompte provisionnel IS` },
+  { value: FiscalObligationType.WithholdingTax, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.retenue.a.la.source.c237b496:Retenue a la source` },
   { value: FiscalObligationType.Fodec, label: 'FODEC' },
-  { value: FiscalObligationType.QuarterlyVat, label: 'TVA trimestrielle' },
-  { value: FiscalObligationType.FinancialStatements, label: 'Etats financiers' },
-  { value: FiscalObligationType.SemiAnnualFinancialStatements, label: 'Etats financiers semestriels' },
-  { value: FiscalObligationType.PersonalIncomeTaxInstallment, label: 'IRPP - Acompte' },
-  { value: FiscalObligationType.CnssDtsQuarterly, label: 'DTS CNSS trimestrielle' },
-  { value: FiscalObligationType.PayrollIrppWithholding, label: 'Retenues IRPP paie' },
-  { value: FiscalObligationType.Other, label: 'Autre obligation' }
+  { value: FiscalObligationType.QuarterlyVat, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.tva.trimestrielle.7d36aac5:TVA trimestrielle` },
+  { value: FiscalObligationType.FinancialStatements, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.etats.financiers.46e0b54c:Etats financiers` },
+  { value: FiscalObligationType.SemiAnnualFinancialStatements, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.etats.financiers.semestriels.bfd4c924:Etats financiers semestriels` },
+  { value: FiscalObligationType.PersonalIncomeTaxInstallment, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.irpp.acompte.842969fe:IRPP - Acompte` },
+  { value: FiscalObligationType.CnssDtsQuarterly, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.dts.cnss.trimestrielle.5d8122b7:DTS CNSS trimestrielle` },
+  { value: FiscalObligationType.PayrollIrppWithholding, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.retenues.irpp.paie.13c44993:Retenues IRPP paie` },
+  { value: FiscalObligationType.Other, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.autre.obligation.5b94fdb0:Autre obligation` }
 ];
 
 export const FISCAL_STATUS_OPTIONS = [
-  { value: FiscalScheduleStatus.UpcomingWithin7Days, label: 'A venir (<= 7 j)' },
-  { value: FiscalScheduleStatus.UpcomingAfter7Days, label: 'A venir (> 7 j)' },
-  { value: FiscalScheduleStatus.Overdue, label: 'En retard' },
-  { value: FiscalScheduleStatus.Deposited, label: 'Deposee' },
-  { value: FiscalScheduleStatus.Validated, label: 'Validee' },
-  { value: FiscalScheduleStatus.Paid, label: 'Payee' },
-  { value: FiscalScheduleStatus.Cancelled, label: 'Annulee' }
+  { value: FiscalScheduleStatus.UpcomingWithin7Days, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.a.venir.7.j.db3e1dce:A venir (<= 7 j)` },
+  { value: FiscalScheduleStatus.UpcomingAfter7Days, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.a.venir.7.j.313ecbe1:A venir (> 7 j)` },
+  { value: FiscalScheduleStatus.Overdue, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.en.retard.40c1dde3:En retard` },
+  { value: FiscalScheduleStatus.Deposited, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.deposee.2e14b7a3:Deposee` },
+  { value: FiscalScheduleStatus.Validated, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.validee.ddb05630:Validee` },
+  { value: FiscalScheduleStatus.Paid, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.payee.dde5f980:Payee` },
+  { value: FiscalScheduleStatus.Cancelled, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.annulee.41da1848:Annulee` }
 ];
 
 export const QUARTER_OPTIONS = [
-  { value: 1, label: 'Trimestre 1' },
-  { value: 2, label: 'Trimestre 2' },
-  { value: 3, label: 'Trimestre 3' },
-  { value: 4, label: 'Trimestre 4' }
+  { value: 1, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.trimestre.1.88ddb608:Trimestre 1` },
+  { value: 2, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.trimestre.2.3349b906:Trimestre 2` },
+  { value: 3, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.trimestre.3.d38bffd3:Trimestre 3` },
+  { value: 4, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.trimestre.4.2ae307d0:Trimestre 4` }
 ];
 
 export const FISCAL_REMINDER_CHANNEL_OPTIONS = [
   { value: FiscalReminderChannel.Email, label: 'Email' },
-  { value: FiscalReminderChannel.InApp, label: 'Notification' },
+  { value: FiscalReminderChannel.InApp, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.notification.c18f8f25:Notification` },
   { value: FiscalReminderChannel.Sms, label: 'SMS' }
 ];
 
 export const MONTH_OPTIONS = [
-  { value: 1, label: 'Janvier' },
-  { value: 2, label: 'Fevrier' },
-  { value: 3, label: 'Mars' },
-  { value: 4, label: 'Avril' },
-  { value: 5, label: 'Mai' },
-  { value: 6, label: 'Juin' },
-  { value: 7, label: 'Juillet' },
-  { value: 8, label: 'Aout' },
-  { value: 9, label: 'Septembre' },
-  { value: 10, label: 'Octobre' },
-  { value: 11, label: 'Novembre' },
-  { value: 12, label: 'Decembre' }
+  { value: 1, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.janvier.7a32ae0f:Janvier` },
+  { value: 2, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.fevrier.e1115e15:Fevrier` },
+  { value: 3, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.mars.1778011d:Mars` },
+  { value: 4, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.avril.4efeee46:Avril` },
+  { value: 5, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.mai.afe526a6:Mai` },
+  { value: 6, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.juin.8b1e84b6:Juin` },
+  { value: 7, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.juillet.e8e0920c:Juillet` },
+  { value: 8, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.aout.de526f76:Aout` },
+  { value: 9, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.septembre.08d23f31:Septembre` },
+  { value: 10, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.octobre.0ed28485:Octobre` },
+  { value: 11, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.novembre.632580af:Novembre` },
+  { value: 12, label: $localize`:@@accounting.fiscal-schedule.view-model.ts.decembre.e0d2c417:Decembre` }
 ];
 
 export function statusClass(status: number): string {

@@ -1265,13 +1265,13 @@ export class ProductFormComponent implements OnInit {
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const base: BreadcrumbItem[] = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Produits & Services', route: '/products' }
+      { label: $localize`:@@products.product-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@products.product-form.ts.produits.services.01d33b70:Produits & Services`, route: '/products' }
     ];
     if (this.isEditMode()) {
-      base.push({ label: 'Modifier' });
+      base.push({ label: $localize`:@@products.product-form.ts.modifier.f260e757:Modifier` });
     } else {
-      base.push({ label: 'Nouveau produit' });
+      base.push({ label: $localize`:@@products.product-form.ts.nouveau.produit.c31ca342:Nouveau produit` });
     }
     return base;
   });
@@ -1556,7 +1556,7 @@ export class ProductFormComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
-            detail: response.errors?.join(', ') || 'Impossible de charger le produit'
+            detail: response.errors?.join(', ') || $localize`:@@products.product-form.ts.impossible.de.charger.le.produit.7a00d1a4:Impossible de charger le produit`
           });
           this.router.navigate(['/products']);
         }
@@ -1566,7 +1566,7 @@ export class ProductFormComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@product-form.component.summary.Erreur:Erreur`,
-          detail: errorMessage || 'Impossible de charger le produit'
+          detail: errorMessage || $localize`:@@products.product-form.ts.impossible.de.charger.le.produit.7a00d1a4:Impossible de charger le produit`
         });
         this.errorHandler.logError('Failed to load product', error);
         this.router.navigate(['/products']);
@@ -1634,7 +1634,7 @@ export class ProductFormComponent implements OnInit {
             this.toastService.add({
               severity: 'success',
               summary: $localize`:@@product-form.component.summary.Succès:Succès`,
-              detail: response.message || 'Produit mis à jour avec succès'
+              detail: response.message || $localize`:@@products.product-form.ts.produit.mis.a.jour.avec.succes.c367beef:Produit mis à jour avec succès`
             });
             const id = this.productId()!;
             const file = this.selectedImageFile();
@@ -1731,7 +1731,7 @@ export class ProductFormComponent implements OnInit {
             this.toastService.add({
               severity: 'success',
               summary: $localize`:@@product-form.component.summary.Succès:Succès`,
-              detail: response.message || 'Produit créé avec succès'
+              detail: response.message || $localize`:@@products.product-form.ts.produit.cree.avec.succes.0fed3c0d:Produit créé avec succès`
             });
             const file = this.selectedImageFile();
             if (file) {
@@ -1831,7 +1831,7 @@ export class ProductFormComponent implements OnInit {
     if (!productId) return;
 
     const count = this.previewCombinationCount();
-    if (count > 50 && !confirm(`Générer ${count} SKU ? Cette opération peut prendre un moment.`)) {
+    if (count > 50 && !confirm($localize`:@@products.product-form.ts.generer.count.sku.cette.operation.peut.p.701f6b43:Générer ${count}:count: SKU ? Cette opération peut prendre un moment.`)) {
       return;
     }
 
@@ -1849,7 +1849,7 @@ export class ProductFormComponent implements OnInit {
           this.toastService.add({
             severity: 'success',
             summary: $localize`:@@product-form.component.summary.Variantes:Variantes`,
-            detail: `${res.data?.length ?? 0} SKU enfant(s) créé(s)`
+            detail: $localize`:@@products.product-form.ts.p.sku.enfant.s.cree.s.606d0d64:${res.data?.length ?? 0}:p: SKU enfant(s) créé(s)`
           });
           this.loadVariantAxes(productId);
           this.variantMatrix?.load();
@@ -1884,7 +1884,7 @@ export class ProductFormComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@product-form.component.summary.Valorisation:Valorisation`,
-            detail: res.message || res.errors?.join(', ') || 'Impossible de créer la couche d\'ouverture.'
+            detail: res.message || res.errors?.join(', ') || $localize`:@@products.product-form.ts.impossible.de.creer.la.couche.d.ouvertur.35397855:Impossible de créer la couche d'ouverture.`
           });
         }
       },

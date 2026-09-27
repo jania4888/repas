@@ -452,7 +452,7 @@ export class FixedAssetsAmortizationTableComponent implements OnInit {
           this.loading.set(false);
         },
         error: err => {
-          this.error.set(this.errors.extractErrorMessage(err, "Impossible de charger le tableau des amortissements de l'exercice."));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.fixed-assets-amortization-table.ts.impossible.de.charger.le.tableau.des.amo.1292a2dd:Impossible de charger le tableau des amortissements de l'exercice.`));
           this.loading.set(false);
         }
       });
@@ -503,7 +503,7 @@ export class FixedAssetsAmortizationTableComponent implements OnInit {
       .subscribe({
         next: blob =>
           this.downloadBlob(blob, `tableau-amortissements-sage-${this.fiscalYearFilter}.xlsx`),
-        error: () => this.error.set("Export XLSX impossible pour le tableau des amortissements.")
+        error: () => this.error.set($localize`:@@accounting.fixed-assets-amortization-table.ts.export.xlsx.impossible.pour.le.tableau.d.3157935a:Export XLSX impossible pour le tableau des amortissements.`)
       });
   }
 

@@ -29,13 +29,13 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
 }
 
 const GARNISHMENT_TYPE_OPTIONS = [
-  { label: 'Saisie sur salaire', value: 'Garnishment' },
-  { label: 'Pension alimentaire', value: 'Alimony' }
+  { label: $localize`:@@payroll.employee-garnishments-tab.ts.saisie.sur.salaire.199fc266:Saisie sur salaire`, value: 'Garnishment' },
+  { label: $localize`:@@payroll.employee-garnishments-tab.ts.pension.alimentaire.bcdd775d:Pension alimentaire`, value: 'Alimony' }
 ];
 
 const GARNISHMENT_KIND_OPTIONS = [
-  { label: 'Montant fixe', value: 'FixedAmount' },
-  { label: 'Pourcentage du net', value: 'PercentOfNet' }
+  { label: $localize`:@@payroll.employee-garnishments-tab.ts.montant.fixe.b4a2ce45:Montant fixe`, value: 'FixedAmount' },
+  { label: $localize`:@@payroll.employee-garnishments-tab.ts.pourcentage.du.net.15ab28ad:Pourcentage du net`, value: 'PercentOfNet' }
 ];
 
 @Component({
@@ -307,8 +307,8 @@ export class EmployeeGarnishmentsTabComponent implements OnInit {
   confirmCancel(g: EmployeeGarnishment): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Annuler la saisie « ${g.reference} » ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.employee-garnishments-tab.ts.annuler.la.saisie.reference.8035d65e:Annuler la saisie « ${g.reference}:reference: » ?`,
+      header: $localize`:@@payroll.employee-garnishments-tab.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@employee-garnishments-tab.component.acceptLabel.Annuler_la_saisi:Annuler la saisie`,
       rejectLabel: $localize`:@@employee-garnishments-tab.component.rejectLabel.Fermer:Fermer`,
       acceptButtonStyleClass: 'btn-danger',

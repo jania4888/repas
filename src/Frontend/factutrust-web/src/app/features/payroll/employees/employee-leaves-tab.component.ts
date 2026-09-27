@@ -312,16 +312,16 @@ export class EmployeeLeavesTabComponent implements OnInit {
     const pending = b?.pending ?? 0;
     const available = b?.available ?? 0;
     return [
-      { label: 'Acquis', value: b ? `${b.totalAcquired} j` : '—', icon: 'pi-calendar-plus', variant: 'primary' },
-      { label: 'Consommés', value: b ? `${b.consumed} j` : '—', icon: 'pi-calendar-minus', variant: 'warning' },
+      { label: $localize`:@@payroll.employee-leaves-tab.ts.acquis.b37de487:Acquis`, value: b ? `${b.totalAcquired} j` : '—', icon: 'pi-calendar-plus', variant: 'primary' },
+      { label: $localize`:@@payroll.employee-leaves-tab.ts.consommes.36c894ab:Consommés`, value: b ? `${b.consumed} j` : '—', icon: 'pi-calendar-minus', variant: 'warning' },
       {
-        label: 'En attente',
+        label: $localize`:@@payroll.employee-leaves-tab.ts.en.attente.5231158f:En attente`,
         value: b ? `${pending} j` : '—',
         icon: 'pi-clock',
         variant: pending > 0 ? 'warning' : 'primary'
       },
       {
-        label: 'Disponibles',
+        label: $localize`:@@payroll.employee-leaves-tab.ts.disponibles.61af94f7:Disponibles`,
         value: b ? `${available} j` : '—',
         icon: 'pi-calendar',
         variant: available <= 0 ? 'error' : 'success',
@@ -436,7 +436,7 @@ export class EmployeeLeavesTabComponent implements OnInit {
       this.toast.add({
         severity: 'error',
         summary: $localize`:@@employee-leaves-tab.component.summary.Cong_s:Congés`,
-        detail: `Solde insuffisant : ${this.formDays} j demandés, ${this.balance()?.available ?? 0} j disponibles.`
+        detail: $localize`:@@payroll.employee-leaves-tab.ts.solde.insuffisant.formdays.j.demandes.p.42c894ee:Solde insuffisant : ${this.formDays}:formDays: j demandés, ${this.balance()?.available ?? 0}:p: j disponibles.`
       });
       return;
     }
@@ -481,8 +481,8 @@ export class EmployeeLeavesTabComponent implements OnInit {
   confirmDelete(leave: LeaveRequest): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Supprimer le congé du ${leave.startDate} ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.employee-leaves-tab.ts.supprimer.le.conge.du.startdate.2035f430:Supprimer le congé du ${leave.startDate}:startDate: ?`,
+      header: $localize`:@@payroll.employee-leaves-tab.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@employee-leaves-tab.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@employee-leaves-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

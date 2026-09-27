@@ -68,7 +68,7 @@ import { InputTextModule } from 'primeng/inputtext';
   ]
 })
 export class BarcodeScanFieldComponent implements AfterViewInit {
-  @Input() placeholder = 'Scanner ou saisir un code-barres';
+  @Input() placeholder = $localize`:@@shared.barcode-scan-field.ts.scanner.ou.saisir.un.code.barres.21a87d05:Scanner ou saisir un code-barres`;
   @Input() autoFocus = true;
   @Input() disabled = false;
   /** Vider le champ après chaque scan. Défaut `true`. */

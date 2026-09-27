@@ -339,9 +339,9 @@ export class PayrollRunDetailComponent implements OnInit {
     const r = this.run();
     if (!r) return [];
     return [
-      { label: 'Brut', value: formatPayrollAmount(r.totalGross, false), icon: 'pi-money-bill', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-run-detail.ts.brut.8fc72d21:Brut`, value: formatPayrollAmount(r.totalGross, false), icon: 'pi-money-bill', variant: 'primary' },
       {
-        label: 'Net',
+        label: $localize`:@@payroll.payroll-run-detail.ts.net.9bb81c2e:Net`,
         value: formatPayrollAmount(r.totalNet, false),
         valueTitle: formatPayrollAmount(r.totalNet, true),
         icon: 'pi-wallet',
@@ -350,13 +350,13 @@ export class PayrollRunDetailComponent implements OnInit {
       },
       { label: 'IRPP', value: formatPayrollAmount(r.totalIrpp, false), icon: 'pi-percentage', variant: 'warning' },
       ...(r.totalIrppSmigExemption && r.totalIrppSmigExemption > 0
-        ? [{ label: 'Exon. IRPP SMIG', value: formatPayrollAmount(r.totalIrppSmigExemption, false), icon: 'pi-shield', variant: 'success' as const }]
+        ? [{ label: $localize`:@@payroll.payroll-run-detail.ts.exon.irpp.smig.2b5fcb00:Exon. IRPP SMIG`, value: formatPayrollAmount(r.totalIrppSmigExemption, false), icon: 'pi-shield', variant: 'success' as const }]
         : []),
-      { label: 'CNSS sal.', value: formatPayrollAmount(r.totalCnssEmployee, false), icon: 'pi-user', variant: 'primary' },
-      { label: 'CNSS pat.', value: formatPayrollAmount(r.totalCnssEmployer, false), icon: 'pi-building', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-run-detail.ts.cnss.sal.5d831d27:CNSS sal.`, value: formatPayrollAmount(r.totalCnssEmployee, false), icon: 'pi-user', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-run-detail.ts.cnss.pat.1d666774:CNSS pat.`, value: formatPayrollAmount(r.totalCnssEmployer, false), icon: 'pi-building', variant: 'primary' },
       { label: 'TFP', value: formatPayrollAmount(r.totalTfp, false), icon: 'pi-chart-line', variant: 'warning' },
       { label: 'FOPROLOS', value: formatPayrollAmount(r.totalFoprolos, false), icon: 'pi-briefcase', variant: 'warning' },
-      { label: 'CSS patronale', value: formatPayrollAmount(r.totalCssEmployer, false), icon: 'pi-shield', variant: 'warning' }
+      { label: $localize`:@@payroll.payroll-run-detail.ts.css.patronale.4130ab0d:CSS patronale`, value: formatPayrollAmount(r.totalCssEmployer, false), icon: 'pi-shield', variant: 'warning' }
     ];
   });
 
@@ -388,8 +388,8 @@ export class PayrollRunDetailComponent implements OnInit {
   async cancelAllPayments(): Promise<void> {
     if (this.actionInProgress()) return;
     const reason = await this.confirmation.prompt({
-      header: 'Annuler tous les paiements',
-      message: 'Saisissez le motif d\'annulation de tous les paiements du cycle :',
+      header: $localize`:@@payroll.payroll-run-detail.ts.annuler.tous.les.paiements.7fdf7565:Annuler tous les paiements`,
+      message: $localize`:@@payroll.payroll-run-detail.ts.saisissez.le.motif.d.annulation.de.tous.2933c1d1:Saisissez le motif d'annulation de tous les paiements du cycle :`,
       acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Annuler_les_paie:Annuler les paiements`,
       rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Conserver_les_pa:Conserver les paiements`,
       acceptButtonStyleClass: 'btn-danger',
@@ -460,8 +460,8 @@ export class PayrollRunDetailComponent implements OnInit {
   validate(): void {
     if (!this.canValidate() || this.actionInProgress()) return;
     this.confirmation.confirm({
-      header: 'Valider le cycle',
-      message: 'Confirmer la validation du cycle de paie ? Les écritures comptables seront générées et les avances/échéances soldées.',
+      header: $localize`:@@payroll.payroll-run-detail.ts.valider.le.cycle.944a5d0b:Valider le cycle`,
+      message: $localize`:@@payroll.payroll-run-detail.ts.confirmer.la.validation.du.cycle.de.paie.8a61d101:Confirmer la validation du cycle de paie ? Les écritures comptables seront générées et les avances/échéances soldées.`,
       acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Valider:Valider`,
       rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-primary',
@@ -484,7 +484,7 @@ export class PayrollRunDetailComponent implements OnInit {
                 this.toast.add({
                   severity: 'info',
                   summary: $localize`:@@payroll-run-detail.component.summary.Coûts collab:Coûts collaborateurs`,
-                  detail: `${imported} coût(s) mis à jour depuis la paie validée.`
+                  detail: $localize`:@@payroll.payroll-run-detail.ts.imported.cout.s.mis.a.jour.depuis.la.pai.6e2c6a2e:${imported}:imported: coût(s) mis à jour depuis la paie validée.`
                 });
               }
             }
@@ -502,8 +502,8 @@ export class PayrollRunDetailComponent implements OnInit {
   reopen(): void {
     if (!this.canValidate() || this.actionInProgress()) return;
     this.confirmation.confirm({
-      header: 'Rouvrir le cycle',
-      message: 'Confirmer la réouverture du cycle ? Les écritures seront extournées et les avances/échéances dé-soldées.',
+      header: $localize`:@@payroll.payroll-run-detail.ts.rouvrir.le.cycle.056d0cfc:Rouvrir le cycle`,
+      message: $localize`:@@payroll.payroll-run-detail.ts.confirmer.la.reouverture.du.cycle.les.ec.58920ace:Confirmer la réouverture du cycle ? Les écritures seront extournées et les avances/échéances dé-soldées.`,
       acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Rouvrir:Rouvrir`,
       rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-primary',
@@ -522,8 +522,8 @@ export class PayrollRunDetailComponent implements OnInit {
   close(): void {
     if (!this.canValidate() || this.actionInProgress()) return;
     this.confirmation.confirm({
-      header: 'Clôturer le cycle',
-      message: 'Confirmer la clôture définitive du cycle ? Cette opération est IRRÉVERSIBLE : la période sera verrouillée et ne pourra plus être rouverte.',
+      header: $localize`:@@payroll.payroll-run-detail.ts.cloturer.le.cycle.d17ca05c:Clôturer le cycle`,
+      message: $localize`:@@payroll.payroll-run-detail.ts.confirmer.la.cloture.definitive.du.cycle.d38602a0:Confirmer la clôture définitive du cycle ? Cette opération est IRRÉVERSIBLE : la période sera verrouillée et ne pourra plus être rouverte.`,
       acceptLabel: $localize`:@@payroll-run-detail.component.acceptLabel.Clôturer:Clôturer`,
       rejectLabel: $localize`:@@payroll-run-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

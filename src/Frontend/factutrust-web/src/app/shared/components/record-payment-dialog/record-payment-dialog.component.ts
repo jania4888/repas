@@ -21,13 +21,13 @@ import { formatLocalDate } from '@core/utils/date.util';
 const TRAITE_METHOD_VALUE = 5;
 
 const PAYMENT_METHOD_OPTIONS = [
-  { label: 'Espèces', value: 0 },
-  { label: 'Virement bancaire', value: 1 },
-  { label: 'Chèque', value: 2 },
-  { label: 'Carte bancaire', value: 3 },
-  { label: 'Paiement mobile', value: 4 },
-  { label: 'Traite (effet de commerce)', value: TRAITE_METHOD_VALUE },
-  { label: 'Autre', value: 99 }
+  { label: $localize`:@@shared.record-payment-dialog.ts.especes.b7679d62:Espèces`, value: 0 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.virement.bancaire.8306f08e:Virement bancaire`, value: 1 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.cheque.8bbb89a9:Chèque`, value: 2 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.carte.bancaire.9e3d9bfa:Carte bancaire`, value: 3 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.paiement.mobile.fdc8f501:Paiement mobile`, value: 4 },
+  { label: $localize`:@@shared.record-payment-dialog.ts.traite.effet.de.commerce.b1384467:Traite (effet de commerce)`, value: TRAITE_METHOD_VALUE },
+  { label: $localize`:@@shared.record-payment-dialog.ts.autre.43dacf9e:Autre`, value: 99 }
 ];
 
 /** Aligné sur InstaFact.Domain.Enums.PaymentMethod.Cash — défaut facture client (UI). */
@@ -604,13 +604,13 @@ export class RecordPaymentDialogComponent {
 
     if (this.invoiceType === 'client') {
       if (this.selectedMethod === null || !ALLOWED_PAYMENT_METHOD_VALUES.has(this.selectedMethod)) {
-        this.errorMessage.set('Veuillez sélectionner un mode de paiement.');
+        this.errorMessage.set($localize`:@@shared.record-payment-dialog.ts.veuillez.selectionner.un.mode.de.paiemen.861ed82e:Veuillez sélectionner un mode de paiement.`);
         return;
       }
     }
 
     if (this.isTraite && !this.effetDueDate) {
-      this.errorMessage.set('Veuillez saisir l\'échéance de la traite.');
+      this.errorMessage.set($localize`:@@shared.record-payment-dialog.ts.veuillez.saisir.l.echeance.de.la.traite.e0de6fff:Veuillez saisir l'échéance de la traite.`);
       return;
     }
 
@@ -645,12 +645,12 @@ export class RecordPaymentDialogComponent {
           this.paymentRecorded.emit();
           this.close();
         } else {
-          this.errorMessage.set(this.getErrorMessage({ error: response }, 'Erreur lors de l\'enregistrement du paiement'));
+          this.errorMessage.set(this.getErrorMessage({ error: response }, $localize`:@@shared.record-payment-dialog.ts.erreur.lors.de.l.enregistrement.du.paiem.e23b0f61:Erreur lors de l'enregistrement du paiement`));
         }
       },
       error: (err) => {
         this.submitting.set(false);
-        this.errorMessage.set(this.getErrorMessage(err, 'Erreur lors de l\'enregistrement du paiement'));
+        this.errorMessage.set(this.getErrorMessage(err, $localize`:@@shared.record-payment-dialog.ts.erreur.lors.de.l.enregistrement.du.paiem.e23b0f61:Erreur lors de l'enregistrement du paiement`));
       }
     });
   }
@@ -672,12 +672,12 @@ export class RecordPaymentDialogComponent {
           this.paymentRecorded.emit();
           this.close();
         } else {
-          this.errorMessage.set(this.getErrorMessage({ error: response }, 'Erreur lors de l\'enregistrement'));
+          this.errorMessage.set(this.getErrorMessage({ error: response }, $localize`:@@shared.record-payment-dialog.ts.erreur.lors.de.l.enregistrement.28411a5e:Erreur lors de l'enregistrement`));
         }
       },
       error: (err) => {
         this.submitting.set(false);
-        this.errorMessage.set(this.getErrorMessage(err, 'Erreur lors de l\'enregistrement'));
+        this.errorMessage.set(this.getErrorMessage(err, $localize`:@@shared.record-payment-dialog.ts.erreur.lors.de.l.enregistrement.28411a5e:Erreur lors de l'enregistrement`));
       }
     });
   }

@@ -71,12 +71,12 @@ export class FiscalScheduleToolbarComponent implements OnChanges {
 
   ngOnChanges(_changes: SimpleChanges): void {
     this.printItems = [
-      { label: 'Vue courante', icon: 'fa-solid fa-table', command: () => this.printCurrent.emit() },
-      { label: 'Echeance selectionnee', icon: 'fa-solid fa-file-lines', command: () => this.printSelected.emit(), disabled: !this.hasSelection }
+      { label: $localize`:@@accounting.fiscal-schedule-toolbar.ts.vue.courante.13d0e46e:Vue courante`, icon: 'fa-solid fa-table', command: () => this.printCurrent.emit() },
+      { label: $localize`:@@accounting.fiscal-schedule-toolbar.ts.echeance.selectionnee.c4312235:Echeance selectionnee`, icon: 'fa-solid fa-file-lines', command: () => this.printSelected.emit(), disabled: !this.hasSelection }
     ];
     this.exportItems = [
-      { label: 'CSV filtres courants', icon: 'fa-solid fa-filter', command: () => this.exportFiltered.emit() },
-      { label: 'CSV page courante', icon: 'fa-solid fa-file-csv', command: () => this.exportPage.emit() }
+      { label: $localize`:@@accounting.fiscal-schedule-toolbar.ts.csv.filtres.courants.f0d39d5c:CSV filtres courants`, icon: 'fa-solid fa-filter', command: () => this.exportFiltered.emit() },
+      { label: $localize`:@@accounting.fiscal-schedule-toolbar.ts.csv.page.courante.778f488e:CSV page courante`, icon: 'fa-solid fa-file-csv', command: () => this.exportPage.emit() }
     ];
   }
 }

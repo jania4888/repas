@@ -140,9 +140,9 @@ export class EmployeeListComponent implements OnInit {
   items = signal<EmployeeListItem[]>([]);
 
   readonly statusOptions = [
-    { value: 'all' as const, label: 'Tous' },
-    { value: 'active' as const, label: 'Actifs' },
-    { value: 'inactive' as const, label: 'Inactifs' }
+    { value: 'all' as const, label: $localize`:@@payroll.employee-list.ts.tous.b97ae3b4:Tous` },
+    { value: 'active' as const, label: $localize`:@@payroll.employee-list.ts.actifs.4fc3a980:Actifs` },
+    { value: 'inactive' as const, label: $localize`:@@payroll.employee-list.ts.inactifs.41c2d03e:Inactifs` }
   ];
 
   canManage = computed(() => canManagePayrollEmployees(this.auth));

@@ -486,11 +486,11 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
     const creditNotes = this.creditNotesOnlyMode();
     return [
       { label: creditNotes ? $localize`:@@ui.tern.avoirs.38b0e7:Avoirs` : $localize`:@@ui.tern.factures.da35e4:Factures`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
-      { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+      { label: $localize`:@@invoices.invoice-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@invoices.invoice-list.ts.total.ht.2ca17ae6:Total HT`, value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
       { label: creditNotes ? $localize`:@@ui.tern.total.rembourse.81bf5c:Total remboursé` : $localize`:@@ui.tern.total.paye.57d30b:Total payé`, value: s?.totalPaid, format: 'currency', currency, icon: 'pi-check-circle', tone: 'emerald' },
       { label: creditNotes ? $localize`:@@ui.tern.reste.a.rembourser.551580:Reste à rembourser` : $localize`:@@ui.tern.reste.a.payer.968444:Reste à payer`, value: s?.totalRemaining, format: 'currency', currency, icon: 'pi-clock', tone: 'amber' },
-      { label: 'En retard', value: s?.overdueCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
+      { label: $localize`:@@invoices.invoice-list.ts.en.retard.40c1dde3:En retard`, value: s?.overdueCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
     ];
   });
 
@@ -516,14 +516,14 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const base: BreadcrumbItem[] = [
-      { label: 'Accueil', route: '/', icon: 'pi-home' }
+      { label: $localize`:@@invoices.invoice-list.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' }
     ];
     if (this.creditNotesOnlyMode()) {
-      base.push({ label: 'Avoirs de vente' });
+      base.push({ label: $localize`:@@invoices.invoice-list.ts.avoirs.de.vente.63b21d70:Avoirs de vente` });
     } else {
-      base.push({ label: 'Factures', route: '/invoices' });
+      base.push({ label: $localize`:@@invoices.invoice-list.ts.factures.da35e4f2:Factures`, route: '/invoices' });
       if (this.unpaidOnlyMode()) {
-        base.push({ label: 'Factures impayées' });
+        base.push({ label: $localize`:@@invoices.invoice-list.ts.factures.impayees.dc3cffa5:Factures impayées` });
       }
     }
     return base;
@@ -860,7 +860,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
           key: 'invoice-list-print',
           severity: 'error',
           summary: $localize`:@@invoice-list.component.summary.Erreur:Erreur`,
-          detail: error.message || 'Impossible de générer le rapport PDF',
+          detail: error.message || $localize`:@@invoices.invoice-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a:Impossible de générer le rapport PDF`,
           life: 5000
         });
       }

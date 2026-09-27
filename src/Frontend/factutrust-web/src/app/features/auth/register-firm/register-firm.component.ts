@@ -132,9 +132,9 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
   });
 
   readonly steps: MenuItem[] = [
-    { label: 'Compte' },
-    { label: 'Cabinet' },
-    { label: 'Adresse & visibilité' }
+    { label: $localize`:@@auth.register-firm.ts.compte.c45740bb:Compte` },
+    { label: $localize`:@@auth.register-firm.ts.cabinet.6c41e7bb:Cabinet` },
+    { label: $localize`:@@auth.register-firm.ts.adresse.visibilite.a6b1953b:Adresse & visibilité` }
   ];
 
   readonly strengthSegments: readonly number[] = [1, 2, 3, 4, 5];
@@ -293,14 +293,14 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
     }
 
     if (this.passwordMismatch()) {
-      this.error.set('Les mots de passe ne correspondent pas');
+      this.error.set($localize`:@@auth.register-firm.ts.les.mots.de.passe.ne.correspondent.pas.c1a3d196:Les mots de passe ne correspondent pas`);
       this.form.get('confirmPassword')?.markAsTouched();
       return;
     }
 
     this.loading.set(true);
     this.error.set(null);
-    this.loadingMessage.set('Création de votre espace cabinet...');
+    this.loadingMessage.set($localize`:@@auth.register-firm.ts.creation.de.votre.espace.cabinet.f3d579a9:Création de votre espace cabinet...`);
     this.loadingStartedAt = Date.now();
     this.startLoadingMessageTimer();
 
@@ -354,7 +354,7 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
             if (err instanceof TimeoutError) {
               return throwError(() => ({
                 status: 0,
-                message: 'La création du cabinet prend plus de temps que prévu.'
+                message: $localize`:@@auth.register-firm.ts.la.creation.du.cabinet.prend.plus.de.tem.a8f7fa39:La création du cabinet prend plus de temps que prévu.`
               }));
             }
             return throwError(() => err);
@@ -366,7 +366,7 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
             if (result.success && result.tenantId && this.firmMode.onFirmSuccess) {
               this.firmMode.onFirmSuccess(result.tenantId);
             } else if (result.success) {
-              this.error.set('Cabinet créé mais identifiant tenant manquant.');
+              this.error.set($localize`:@@auth.register-firm.ts.cabinet.cree.mais.identifiant.tenant.man.719bc995:Cabinet créé mais identifiant tenant manquant.`);
             } else {
               this.error.set(result.errors?.join(', ') ?? result.message ?? $localize`:@@ui.tern.creation.impossible.5661a5:Création impossible.`);
             }
@@ -385,7 +385,7 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
         if (err instanceof TimeoutError) {
           return throwError(() => ({
             status: 0,
-            message: 'La création du cabinet prend plus de temps que prévu. Veuillez patienter ou réessayer dans quelques instants.'
+            message: $localize`:@@auth.register-firm.ts.la.creation.du.cabinet.prend.plus.de.tem.b316beae:La création du cabinet prend plus de temps que prévu. Veuillez patienter ou réessayer dans quelques instants.`
           }));
         }
         return throwError(() => err);
@@ -414,9 +414,9 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
         if (!errorMessage || errorMessage === 'undefined' || errorMessage.trim() === '') {
           const status = 'status' in err ? err.status : (err as HttpErrorResponse)?.status;
           if (!status) {
-            errorMessage = 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré.';
+            errorMessage = $localize`:@@auth.register-firm.ts.impossible.de.se.connecter.au.serveur.ve.c65885a3:Impossible de se connecter au serveur. Vérifiez que le backend est démarré.`;
           } else {
-            errorMessage = `Une erreur est survenue lors de l'inscription (${status}). Veuillez réessayer.`;
+            errorMessage = $localize`:@@auth.register-firm.ts.une.erreur.est.survenue.lors.de.l.inscri.d06203db:Une erreur est survenue lors de l'inscription (${status}:status:). Veuillez réessayer.`;
           }
         }
         this.error.set(errorMessage);
@@ -431,11 +431,11 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
     this.loadingMessageTimer = setInterval(() => {
       const elapsed = Date.now() - this.loadingStartedAt;
       if (elapsed < 5_000) {
-        this.loadingMessage.set('Création de votre espace cabinet...');
+        this.loadingMessage.set($localize`:@@auth.register-firm.ts.creation.de.votre.espace.cabinet.f3d579a9:Création de votre espace cabinet...`);
       } else if (elapsed < 30_000) {
-        this.loadingMessage.set('Configuration de la base de données, cela peut prendre une minute...');
+        this.loadingMessage.set($localize`:@@auth.register-firm.ts.configuration.de.la.base.de.donnees.cela.6fb93f3b:Configuration de la base de données, cela peut prendre une minute...`);
       } else {
-        this.loadingMessage.set('Finalisation en cours, merci de patienter...');
+        this.loadingMessage.set($localize`:@@auth.register-firm.ts.finalisation.en.cours.merci.de.patienter.d4489dba:Finalisation en cours, merci de patienter...`);
       }
     }, 1_000);
   }
@@ -448,7 +448,7 @@ export class RegisterFirmComponent implements OnInit, OnDestroy {
           ? err.message
           : this.errorHandler.extractErrorMessage(err as HttpErrorResponse);
     if (!errorMessage || errorMessage === 'undefined' || errorMessage.trim() === '') {
-      errorMessage = 'La création du cabinet a échoué. Veuillez réessayer.';
+      errorMessage = $localize`:@@auth.register-firm.ts.la.creation.du.cabinet.a.echoue.veuillez.9873ca64:La création du cabinet a échoué. Veuillez réessayer.`;
     }
     return errorMessage;
   }

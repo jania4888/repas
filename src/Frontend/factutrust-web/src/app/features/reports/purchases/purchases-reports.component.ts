@@ -1290,11 +1290,11 @@ export class PurchasesReportsComponent implements OnInit {
   private maxAmount = 0;
 
   periodOptions: PeriodOption[] = [
-    { label: 'Cette semaine', value: 'week' },
-    { label: 'Ce mois', value: 'month' },
-    { label: 'Ce trimestre', value: 'quarter' },
-    { label: 'Cette année', value: 'year' },
-    { label: 'Tout', value: 'all' }
+    { label: $localize`:@@reports.purchases-reports.ts.cette.semaine.af7dc0a9:Cette semaine`, value: 'week' },
+    { label: $localize`:@@reports.purchases-reports.ts.ce.mois.db74c560:Ce mois`, value: 'month' },
+    { label: $localize`:@@reports.purchases-reports.ts.ce.trimestre.4d9d129d:Ce trimestre`, value: 'quarter' },
+    { label: $localize`:@@reports.purchases-reports.ts.cette.annee.052507a0:Cette année`, value: 'year' },
+    { label: $localize`:@@reports.purchases-reports.ts.tout.6b0b09b8:Tout`, value: 'all' }
   ];
 
   ngOnInit(): void {

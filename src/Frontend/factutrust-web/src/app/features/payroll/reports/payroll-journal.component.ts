@@ -268,11 +268,11 @@ export class PayrollJournalComponent implements OnInit {
     const j = this.journal();
     if (!j) return [];
     return [
-      { label: 'Salariés', value: j.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'Masse brute', value: formatPayrollAmount(j.totalGross, false), icon: 'pi-chart-bar', variant: 'primary' },
-      { label: 'Net à payer', value: formatPayrollAmount(j.totalNetSalary, false), icon: 'pi-wallet', variant: 'success', featured: true },
-      { label: 'Charges patronales', value: formatPayrollAmount(j.totalEmployerCharges, false), icon: 'pi-building', variant: 'warning' },
-      { label: 'Coût employeur', value: formatPayrollAmount(j.totalEmployerCost, false), icon: 'pi-briefcase', variant: 'warning' }
+      { label: $localize`:@@payroll.payroll-journal.ts.salaries.ce68387d:Salariés`, value: j.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-journal.ts.masse.brute.4700a550:Masse brute`, value: formatPayrollAmount(j.totalGross, false), icon: 'pi-chart-bar', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-journal.ts.net.a.payer.7835df38:Net à payer`, value: formatPayrollAmount(j.totalNetSalary, false), icon: 'pi-wallet', variant: 'success', featured: true },
+      { label: $localize`:@@payroll.payroll-journal.ts.charges.patronales.a7e5e0ee:Charges patronales`, value: formatPayrollAmount(j.totalEmployerCharges, false), icon: 'pi-building', variant: 'warning' },
+      { label: $localize`:@@payroll.payroll-journal.ts.cout.employeur.99313d1f:Coût employeur`, value: formatPayrollAmount(j.totalEmployerCost, false), icon: 'pi-briefcase', variant: 'warning' }
     ];
   });
 
@@ -298,7 +298,7 @@ export class PayrollJournalComponent implements OnInit {
         error: err => {
           this.journal.set(null);
           this.error.set(
-            this.errorHandler.extractErrorMessage(err) || 'Impossible de générer le journal de paie.'
+            this.errorHandler.extractErrorMessage(err) || $localize`:@@payroll.payroll-journal.ts.impossible.de.generer.le.journal.de.paie.780d573a:Impossible de générer le journal de paie.`
           );
         }
       });
@@ -327,7 +327,7 @@ export class PayrollJournalComponent implements OnInit {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@payroll-journal.component.summary.Journal_de_paie:Journal de paie`,
-            detail: this.errorHandler.extractErrorMessage(err) || 'Export impossible.'
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@payroll.payroll-journal.ts.export.impossible.a061adcb:Export impossible.`
           })
       });
   }

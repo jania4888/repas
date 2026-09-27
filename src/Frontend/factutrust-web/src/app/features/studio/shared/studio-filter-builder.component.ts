@@ -118,7 +118,7 @@ export class StudioFilterBuilderComponent {
   readonly disabled = input(false);
 
   protected readonly labels = STUDIO_RUNTIME_LABELS;
-  protected readonly booleanOptions = [{ label: 'Oui', value: true }, { label: 'Non', value: false }];
+  protected readonly booleanOptions = [{ label: $localize`:@@studio.studio-filter-builder.ts.oui.eaa02f3f:Oui`, value: true }, { label: $localize`:@@studio.studio-filter-builder.ts.non.a7219939:Non`, value: false }];
 
   readonly fieldOptions = computed(() => this.fields().filter(f => f.isActive).map(f => ({ key: f.key, label: f.label })));
   readonly canAdd = computed(() => this.filters().length < RECORD_VIEW_LIMITS.maxFilters);

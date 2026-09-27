@@ -719,9 +719,9 @@ export class QuoteFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Devis', route: '/quotes' },
-    { label: 'Nouveau devis' },
+    { label: $localize`:@@quotes.quote-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@quotes.quote-form.ts.devis.f7622f90:Devis`, route: '/quotes' },
+    { label: $localize`:@@quotes.quote-form.ts.nouveau.devis.4c3f0159:Nouveau devis` },
   ];
 
   clientOptions = signal<ClientListItem[]>([]);
@@ -1072,7 +1072,7 @@ export class QuoteFormComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@quote-form.component.summary.Remise_invalide:Remise invalide`,
-          detail: `La remise ne peut pas dépasser ${maxAllowed}% pour « ${line.designation} ».`,
+          detail: $localize`:@@quotes.quote-form.ts.la.remise.ne.peut.pas.depasser.maxallowe.e2ad1763:La remise ne peut pas dépasser ${maxAllowed}:maxAllowed:% pour « ${line.designation}:designation: ».`,
         });
         return;
       }

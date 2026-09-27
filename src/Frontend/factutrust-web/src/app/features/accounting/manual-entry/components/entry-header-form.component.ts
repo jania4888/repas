@@ -358,7 +358,7 @@ export class EntryHeaderFormComponent {
         },
         error: () => {
           if (!this.store.isHydratedRate(code, date)) this.store.exchangeRate.set(null);
-          this.rateError.set('Taux indisponible');
+          this.rateError.set($localize`:@@accounting.entry-header-form.ts.taux.indisponible.29ec7740:Taux indisponible`);
         }
       });
     });

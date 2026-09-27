@@ -354,9 +354,9 @@ export class ManualEntryComponent implements OnInit {
     if (letteredCodes.length > 0) {
       this.confirmationService.confirm({
         message:
-          `Enregistrer délettrera le(s) groupe(s) ${letteredCodes.join(', ')} : toutes leurs lignes ` +
-          'redeviendront lettrables, y compris celles d\'autres écritures. Continuer ?',
-        header: 'Écriture lettrée',
+          $localize`:@@accounting.manual-entry.ts.enregistrer.delettrera.le.s.groupe.s.joi.a07593c3:Enregistrer délettrera le(s) groupe(s) ${letteredCodes.join(', ')}:join: : toutes leurs lignes ` +
+          $localize`:@@accounting.manual-entry.ts.redeviendront.lettrables.y.compris.celle.b7a448a6:redeviendront lettrables, y compris celles d'autres écritures. Continuer ?`,
+        header: $localize`:@@accounting.manual-entry.ts.ecriture.lettree.5a8d7b8b:Écriture lettrée`,
         acceptLabel: $localize`:@@manual-entry.component.acceptLabel.D_lettrer_et_enr:Délettrer et enregistrer`,
         rejectLabel: $localize`:@@manual-entry.component.rejectLabel.Annuler:Annuler`,
         accept: () => this.confirmWorkNotesThenSubmit(afterSuccess)
@@ -369,8 +369,8 @@ export class ManualEntryComponent implements OnInit {
   private confirmWorkNotesThenSubmit(afterSuccess: 'navigate' | 'reset' | 'duplicate'): void {
     if (this.store.workNotes().trim() && afterSuccess !== 'duplicate') {
       this.confirmationService.confirm({
-        message: 'La note de travail ne sera pas enregistrée en comptabilité. Continuer ?',
-        header: 'Confirmation',
+        message: $localize`:@@accounting.manual-entry.ts.la.note.de.travail.ne.sera.pas.enregistr.c9659a70:La note de travail ne sera pas enregistrée en comptabilité. Continuer ?`,
+        header: $localize`:@@accounting.manual-entry.ts.confirmation.3424edc2:Confirmation`,
         acceptLabel: $localize`:@@manual-entry.component.acceptLabel.Continuer:Continuer`,
         rejectLabel: $localize`:@@manual-entry.component.rejectLabel.Annuler:Annuler`,
         accept: () => this.executeSubmit(afterSuccess)
@@ -420,7 +420,7 @@ export class ManualEntryComponent implements OnInit {
     this.toast.add({
       severity: 'success',
       summary: $localize`:@@manual-entry.component.summary.Proposition_appl:Proposition appliquée`,
-      detail: `${lineCount} ligne(s) posée(s). Vérifiez avant d'enregistrer.`
+      detail: $localize`:@@accounting.manual-entry.ts.linecount.ligne.s.posee.s.verifiez.avant.40ef825e:${lineCount}:lineCount: ligne(s) posée(s). Vérifiez avant d'enregistrer.`
     });
   }
 
@@ -458,7 +458,7 @@ export class ManualEntryComponent implements OnInit {
         },
         error: err => {
           this.store.loading.set(false);
-          this.leaveEditWithError(this.errors.extractErrorMessage(err, "Erreur réseau lors du chargement de l'écriture."));
+          this.leaveEditWithError(this.errors.extractErrorMessage(err, $localize`:@@accounting.manual-entry.ts.erreur.reseau.lors.du.chargement.de.l.ec.95899b6b:Erreur réseau lors du chargement de l'écriture.`));
         }
       });
   }
@@ -509,8 +509,8 @@ export class ManualEntryComponent implements OnInit {
       return;
     }
     this.confirmationService.confirm({
-      message: 'Voulez-vous vraiment vider le formulaire ? Toutes les saisies en cours seront perdues.',
-      header: 'Confirmation',
+      message: $localize`:@@accounting.manual-entry.ts.voulez.vous.vraiment.vider.le.formulaire.1468e31a:Voulez-vous vraiment vider le formulaire ? Toutes les saisies en cours seront perdues.`,
+      header: $localize`:@@accounting.manual-entry.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@manual-entry.component.acceptLabel.Vider:Vider`,
       rejectLabel: $localize`:@@manual-entry.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
@@ -529,8 +529,8 @@ export class ManualEntryComponent implements OnInit {
   onTemplateSelected(template: JournalEntryTemplateDto): void {
     if (this.store.hasUserInput()) {
       this.confirmationService.confirm({
-        message: `Charger le modèle « ${template.name} » va remplacer la saisie en cours. Voulez-vous continuer ?`,
-        header: 'Confirmation',
+        message: $localize`:@@accounting.manual-entry.ts.charger.le.modele.name.va.remplacer.la.s.b83b7385:Charger le modèle « ${template.name}:name: » va remplacer la saisie en cours. Voulez-vous continuer ?`,
+        header: $localize`:@@accounting.manual-entry.ts.confirmation.3424edc2:Confirmation`,
         acceptLabel: $localize`:@@manual-entry.component.acceptLabel.Continuer:Continuer`,
         rejectLabel: $localize`:@@manual-entry.component.rejectLabel.Annuler:Annuler`,
         accept: () => this.applySelectedTemplate(template)
@@ -562,7 +562,7 @@ export class ManualEntryComponent implements OnInit {
     this.toast.add({
       severity: 'info',
       summary: $localize`:@@manual-entry.component.summary.Modèle charg:Modèle chargé`,
-      detail: `Le modèle « ${template.name} » a été chargé.`,
+      detail: $localize`:@@accounting.manual-entry.ts.le.modele.name.a.ete.charge.5981e51c:Le modèle « ${template.name}:name: » a été chargé.`,
       life: 4000
     });
   }
@@ -608,14 +608,14 @@ export class ManualEntryComponent implements OnInit {
           this.savingTemplate.set(false);
           if (res.success) {
             this.closeSaveTemplate();
-            this.toast.add({ severity: 'success', summary: $localize`:@@manual-entry.component.summary.Modèle sauve:Modèle sauvegardé`, detail: `Le modèle « ${payload.name} » est disponible.`, life: 5000 });
+            this.toast.add({ severity: 'success', summary: $localize`:@@manual-entry.component.summary.Modèle sauve:Modèle sauvegardé`, detail: $localize`:@@accounting.manual-entry.ts.le.modele.name.est.disponible.c091e7ab:Le modèle « ${payload.name}:name: » est disponible.`, life: 5000 });
           } else {
             this.toast.add({ severity: 'error', summary: $localize`:@@manual-entry.component.summary.Échec:Échec`, detail: res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`, life: 6000 });
           }
         },
         error: err => {
           this.savingTemplate.set(false);
-          this.toast.add({ severity: 'error', summary: $localize`:@@manual-entry.component.summary.Impossible d:Impossible de sauvegarder.`, detail: this.errors.extractErrorMessage(err, 'Erreur réseau'), life: 6000 });
+          this.toast.add({ severity: 'error', summary: $localize`:@@manual-entry.component.summary.Impossible d:Impossible de sauvegarder.`, detail: this.errors.extractErrorMessage(err, $localize`:@@accounting.manual-entry.ts.erreur.reseau.0683007f:Erreur réseau`), life: 6000 });
         }
       });
   }

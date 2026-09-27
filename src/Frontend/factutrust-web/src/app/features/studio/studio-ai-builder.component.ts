@@ -374,7 +374,7 @@ export class StudioAiBuilderComponent {
       next: () => {
         this.plan.set(null);
         this.state.set('idle');
-        this.lines.update(l => [...l, { kind: 'text', role: 'assistant', text: 'Plan annulé. Rien n\'a été créé.' }]);
+        this.lines.update(l => [...l, { kind: 'text', role: 'assistant', text: $localize`:@@studio.studio-ai-builder.ts.plan.annule.rien.n.a.ete.cree.e2dad3a0:Plan annulé. Rien n'a été créé.` }]);
       },
       error: () => {
         // L'annulation serveur a échoué (plan déjà traité) : on referme quand même l'aperçu local.
@@ -436,7 +436,7 @@ export class StudioAiBuilderComponent {
         break;
       case 'studio_result':
         this.plan.set(null);
-        this.lines.update(l => [...l, { kind: 'text', role: 'assistant', text: 'Création terminée.' }]);
+        this.lines.update(l => [...l, { kind: 'text', role: 'assistant', text: $localize`:@@studio.studio-ai-builder.ts.creation.terminee.e7697b24:Création terminée.` }]);
         break;
       case 'error':
         this.failExecution(ev.error ?? $localize`:@@ui.tern.echec.de.l.execution.du.plan.b3595f:Échec de l'exécution du plan.`);

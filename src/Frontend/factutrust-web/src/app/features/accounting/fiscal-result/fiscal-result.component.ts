@@ -551,17 +551,17 @@ export class FiscalResultComponent implements OnInit {
   save(): void {
     if (this.readonly() || !this.canMutate()) return;
     if (!this.isYearValid()) {
-      this.error.set('Exercice invalide : doit être compris entre 2000 et 2100.');
+      this.error.set($localize`:@@accounting.fiscal-result.ts.exercice.invalide.doit.etre.compris.entr.db4c8a16:Exercice invalide : doit être compris entre 2000 et 2100.`);
       return;
     }
     const invalidLabel = this.model.adjustments.find(a => !this.isLabelValid(a));
     if (invalidLabel) {
-      this.error.set('Toutes les lignes de réintégration/déduction doivent avoir un libellé.');
+      this.error.set($localize`:@@accounting.fiscal-result.ts.toutes.les.lignes.de.reintegration.deduc.9e21ee00:Toutes les lignes de réintégration/déduction doivent avoir un libellé.`);
       return;
     }
     const invalidOrigin = this.model.carryForwards.find(c => !this.isOriginYearValid(c));
     if (invalidOrigin) {
-      this.error.set("Année d'origine invalide sur un report (doit être antérieure à l'exercice).");
+      this.error.set($localize`:@@accounting.fiscal-result.ts.annee.d.origine.invalide.sur.un.report.d.ed19e6ca:Année d'origine invalide sur un report (doit être antérieure à l'exercice).`);
       return;
     }
     this.saving.set(true);
@@ -598,28 +598,28 @@ export class FiscalResultComponent implements OnInit {
           this.data.set(res.data);
           this.model = this.toModel(res.data);
           this.snapshot = this.toModel(res.data);
-          this.info.set('Feuille enregistrée et recalculée.');
+          this.info.set($localize`:@@accounting.fiscal-result.ts.feuille.enregistree.et.recalculee.e4350c9c:Feuille enregistrée et recalculée.`);
         } else {
           this.error.set(res.error ?? $localize`:@@ui.tern.l.enregistrement.a.echoue.3f69ec:L'enregistrement a échoué.`);
         }
       },
       error: () => {
         this.saving.set(false);
-        this.error.set("L'enregistrement a échoué.");
+        this.error.set($localize`:@@accounting.fiscal-result.ts.l.enregistrement.a.echoue.3f69ec30:L'enregistrement a échoué.`);
       }
     });
   }
 
   finalize(): void {
     if (this.readonly() || !this.canFinalize()) return;
-    if (!confirm('Finaliser la feuille de détermination ? Elle deviendra non modifiable.')) return;
+    if (!confirm($localize`:@@accounting.fiscal-result.ts.finaliser.la.feuille.de.determination.el.fc3b7475:Finaliser la feuille de détermination ? Elle deviendra non modifiable.`)) return;
     this.saving.set(true);
     this.error.set(null);
     this.api.finalizeFiscalResult(this.fiscalYear).subscribe({
       next: res => {
         this.saving.set(false);
         if (res.success) {
-          this.info.set('Feuille finalisée.');
+          this.info.set($localize`:@@accounting.fiscal-result.ts.feuille.finalisee.20a97ec0:Feuille finalisée.`);
           this.load();
         } else {
           this.error.set(res.error ?? $localize`:@@ui.tern.la.finalisation.a.echoue.81aa71:La finalisation a échoué.`);
@@ -627,7 +627,7 @@ export class FiscalResultComponent implements OnInit {
       },
       error: () => {
         this.saving.set(false);
-        this.error.set('La finalisation a échoué (réservée au cabinet en mode dossier délégué).');
+        this.error.set($localize`:@@accounting.fiscal-result.ts.la.finalisation.a.echoue.reservee.au.cab.0fec5751:La finalisation a échoué (réservée au cabinet en mode dossier délégué).`);
       }
     });
   }
@@ -655,13 +655,13 @@ export class FiscalResultComponent implements OnInit {
   onExportDetermination(format: AccountingExportFormat): void {
     this.api.exportFiscalResult(this.fiscalYear, format).subscribe({
       next: blob => downloadBlob(blob, `determination_fiscale_${this.fiscalYear}.${exportExtension(format)}`),
-      error: () => this.error.set("L'export a échoué.")
+      error: () => this.error.set($localize`:@@accounting.fiscal-result.ts.l.export.a.echoue.d3506fe9:L'export a échoué.`)
     });
   }
   onExportLiasse(format: AccountingExportFormat): void {
     this.api.exportConsolidatedLiasse(this.fiscalYear, format).subscribe({
       next: blob => downloadBlob(blob, `liasse_fiscale_${this.fiscalYear}.${exportExtension(format)}`),
-      error: () => this.error.set("L'export a échoué.")
+      error: () => this.error.set($localize`:@@accounting.fiscal-result.ts.l.export.a.echoue.d3506fe9:L'export a échoué.`)
     });
   }
 

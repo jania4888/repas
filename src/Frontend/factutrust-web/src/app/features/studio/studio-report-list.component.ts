@@ -82,8 +82,8 @@ export class StudioReportListComponent implements OnInit {
 
   remove(r: CustomReport): void {
     this.confirmation.confirm({
-      message: `Supprimer le rapport « ${r.displayName} » ?`,
-      header: 'Confirmation',
+      message: $localize`:@@studio.studio-report-list.ts.supprimer.le.rapport.displayname.c93ff24a:Supprimer le rapport « ${r.displayName}:displayName: » ?`,
+      header: $localize`:@@studio.studio-report-list.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@studio-report-list.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@studio-report-list.component.rejectLabel.Annuler:Annuler`,
       accept: () => {

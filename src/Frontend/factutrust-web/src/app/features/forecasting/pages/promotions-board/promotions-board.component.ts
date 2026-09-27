@@ -207,7 +207,7 @@ export class PromotionsBoardComponent implements OnInit {
     this.generating.set(true);
     try {
       const count = await firstValueFrom(this.forecastingService.generatePromotionsNow());
-      this.toast.add({ severity: 'success', summary: $localize`:@@promotions-board.component.summary.R_g_n_ration_ter:Régénération terminée`, detail: `${count} recommandation(s).` });
+      this.toast.add({ severity: 'success', summary: $localize`:@@promotions-board.component.summary.R_g_n_ration_ter:Régénération terminée`, detail: $localize`:@@forecasting.promotions-board.ts.count.recommandation.s.d20ca4bc:${count}:count: recommandation(s).` });
       await this.load();
     } catch (err: any) {
       this.toast.add({ severity: 'error', summary: $localize`:@@promotions-board.component.summary.Échec:Échec`, detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.2f49e3:Erreur inconnue.` });
@@ -222,7 +222,7 @@ export class PromotionsBoardComponent implements OnInit {
       this.toast.add({
         severity: 'success',
         summary: $localize`:@@promotions-board.component.summary.Brouillon_pr_t:Brouillon prêt`,
-        detail: `Remise ${result.suggestedDiscountPercent}% préparée du ${new Date(result.validFrom).toLocaleDateString('fr-FR')} au ${new Date(result.validUntil).toLocaleDateString('fr-FR')}. ${result.notes}`,
+        detail: $localize`:@@forecasting.promotions-board.ts.remise.suggesteddiscountpercent.preparee.cf63c23c:Remise ${result.suggestedDiscountPercent}:suggestedDiscountPercent:% préparée du ${new Date(result.validFrom).toLocaleDateString('fr-FR')}:toLocaleDateString: au ${new Date(result.validUntil).toLocaleDateString('fr-FR')}:toLocaleDateString1:. ${result.notes}:notes:`,
         life: 8000
       });
       await this.load();

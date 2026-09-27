@@ -249,7 +249,7 @@ export function computeGlobalSearchDropdownPosition(
 })
 export class GlobalSearchComponent implements OnInit, OnDestroy {
   @Input() mode: 'header' | 'mobile' = 'header';
-  @Input() placeholder = 'Rechercher…';
+  @Input() placeholder = $localize`:@@core.global-search.ts.rechercher.1d12cdfb:Rechercher…`;
   @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
   @ViewChild('paletteInput') paletteInput?: ElementRef<HTMLInputElement>;
   @ViewChild('inputWrap') inputWrap?: ElementRef<HTMLElement>;

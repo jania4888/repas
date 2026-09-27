@@ -257,7 +257,7 @@ export class MonthlyDeclarationTrackingComponent implements OnInit {
       error: err => {
         this.loading.set(false);
         this.tracking.set(null);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-tracking.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }

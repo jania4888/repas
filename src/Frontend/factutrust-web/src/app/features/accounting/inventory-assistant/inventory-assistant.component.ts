@@ -161,7 +161,7 @@ export class InventoryAssistantComponent implements OnInit {
   ngOnInit(): void {
     this.api.getInventoryKinds().subscribe({
       next: res => { if (res.success && res.data) this.kinds.set(res.data); },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur de chargement des types.'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.inventory-assistant.ts.erreur.de.chargement.des.types.4e51a839:Erreur de chargement des types.`))
     });
     this.api.getChartOfAccounts().subscribe({
       next: res => { if (res.success && res.data) this.accounts.set(res.data.filter(a => a.isActive)); }
@@ -206,7 +206,7 @@ export class InventoryAssistantComponent implements OnInit {
       },
       error: err => {
         this.saving.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.inventory-assistant.ts.erreur.reseau.a65da40b:Erreur réseau.`));
       }
     });
   }

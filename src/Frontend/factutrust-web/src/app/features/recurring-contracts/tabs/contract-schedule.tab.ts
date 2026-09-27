@@ -217,7 +217,7 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@contract-schedule.tab.summary.G_n_ration_termi:Génération terminée`,
-          detail: `${count} brouillon(s) généré(s).`
+          detail: $localize`:@@recurring-contracts.contract-schedule.ts.count.brouillon.s.genere.s.54b29e4d:${count}:count: brouillon(s) généré(s).`
         });
         this.load();
       },
@@ -238,8 +238,8 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
   confirmIssue(entry: ContractScheduleEntry): void {
     if (!entry.billingRunId) return;
     this.confirmation.confirm({
-      header: 'Confirmer l\'émission',
-      message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
+      header: $localize`:@@recurring-contracts.contract-schedule.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
+      message: $localize`:@@recurring-contracts.contract-schedule.ts.une.fois.validee.cette.facture.ne.pourra.acdbf6bb:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@contract-schedule.tab.acceptLabel.Émettre la f:Émettre la facture`,
       rejectLabel: $localize`:@@contract-schedule.tab.rejectLabel.Annuler:Annuler`,
@@ -257,7 +257,7 @@ export class ContractScheduleTabComponent implements OnInit, OnChanges {
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@contract-schedule.tab.summary.Facture émis:Facture émise`,
-          detail: `Facture ${issued.invoiceNumber} émise.`
+          detail: $localize`:@@recurring-contracts.contract-schedule.ts.facture.invoicenumber.emise.07d601c8:Facture ${issued.invoiceNumber}:invoiceNumber: émise.`
         });
         this.load();
         this.draftChanged.emit();

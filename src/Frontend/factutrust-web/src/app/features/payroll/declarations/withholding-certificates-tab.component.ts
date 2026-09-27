@@ -189,11 +189,11 @@ export class WithholdingCertificatesTabComponent implements OnInit {
     const b = this.batch();
     if (!b) return [];
     return [
-      { label: 'Salariés', value: b.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'Net imposable', value: formatPayrollAmount(b.totalAnnualNetTaxable, false), icon: 'pi-chart-bar', variant: 'primary' },
-      { label: 'IRPP retenu', value: formatPayrollAmount(b.totalIrppWithheld, false), icon: 'pi-percentage', variant: 'warning' },
-      { label: 'CSS retenue', value: formatPayrollAmount(b.totalCssWithheld, false), icon: 'pi-percentage', variant: 'warning' },
-      { label: 'Total retenues', value: formatPayrollAmount(b.totalWithholding, false), icon: 'pi-wallet', variant: 'success', featured: true }
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.salaries.ce68387d:Salariés`, value: b.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.net.imposable.2439110f:Net imposable`, value: formatPayrollAmount(b.totalAnnualNetTaxable, false), icon: 'pi-chart-bar', variant: 'primary' },
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.irpp.retenu.7cc73d3d:IRPP retenu`, value: formatPayrollAmount(b.totalIrppWithheld, false), icon: 'pi-percentage', variant: 'warning' },
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.css.retenue.034ee1f0:CSS retenue`, value: formatPayrollAmount(b.totalCssWithheld, false), icon: 'pi-percentage', variant: 'warning' },
+      { label: $localize`:@@payroll.withholding-certificates-tab.ts.total.retenues.b2cd335c:Total retenues`, value: formatPayrollAmount(b.totalWithholding, false), icon: 'pi-wallet', variant: 'success', featured: true }
     ];
   });
 

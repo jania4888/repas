@@ -222,8 +222,8 @@ export class PayrollVariableAllowanceGridComponent implements OnInit {
   confirmDelete(line: PayrollVariableAllowanceLine): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Supprimer la prime « ${line.label} » pour ${line.employeeName} ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.payroll-variable-allowance-grid.ts.supprimer.la.prime.label.pour.employeena.3c136ad0:Supprimer la prime « ${line.label}:label: » pour ${line.employeeName}:employeeName: ?`,
+      header: $localize`:@@payroll.payroll-variable-allowance-grid.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@payroll-variable-allowance-grid.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@payroll-variable-allowance-grid.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

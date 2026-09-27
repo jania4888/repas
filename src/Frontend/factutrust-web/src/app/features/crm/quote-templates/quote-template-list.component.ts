@@ -245,9 +245,9 @@ export class QuoteTemplateListComponent implements OnInit, OnDestroy {
   readonly summaryMetrics = computed<TotalMetric[]>(() => {
     const rows = this.items();
     return [
-      { label: 'Modèles', value: rows.length, format: 'number', icon: 'pi-copy', tone: 'primary' },
-      { label: 'Actifs', value: rows.filter(t => t.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Utilisations', value: rows.reduce((acc, t) => acc + (t.usageCount ?? 0), 0), format: 'number', icon: 'pi-chart-line', tone: 'cyan' }
+      { label: $localize`:@@crm.quote-template-list.ts.modeles.0f7183be:Modèles`, value: rows.length, format: 'number', icon: 'pi-copy', tone: 'primary' },
+      { label: $localize`:@@crm.quote-template-list.ts.actifs.4fc3a980:Actifs`, value: rows.filter(t => t.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@crm.quote-template-list.ts.utilisations.67a8be8f:Utilisations`, value: rows.reduce((acc, t) => acc + (t.usageCount ?? 0), 0), format: 'number', icon: 'pi-chart-line', tone: 'cyan' }
     ];
   });
 
@@ -255,14 +255,14 @@ export class QuoteTemplateListComponent implements OnInit, OnDestroy {
   selectedActiveFilter: boolean | null = null;
 
   readonly activeFilterOptions: ActiveFilterOption[] = [
-    { label: 'Actifs uniquement', value: true },
-    { label: 'Inactifs uniquement', value: false },
+    { label: $localize`:@@crm.quote-template-list.ts.actifs.uniquement.b698a1b1:Actifs uniquement`, value: true },
+    { label: $localize`:@@crm.quote-template-list.ts.inactifs.uniquement.72e5b91f:Inactifs uniquement`, value: false },
   ];
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'CRM Commercial', route: '/crm/dashboard' },
-    { label: 'Modèles de devis' },
+    { label: $localize`:@@crm.quote-template-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@crm.quote-template-list.ts.crm.commercial.96a9fcf3:CRM Commercial`, route: '/crm/dashboard' },
+    { label: $localize`:@@crm.quote-template-list.ts.modeles.de.devis.b90f004d:Modèles de devis` },
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -370,8 +370,8 @@ export class QuoteTemplateListComponent implements OnInit, OnDestroy {
 
   confirmDelete(t: QuoteTemplateDto): void {
     this.confirm.confirm({
-      header: 'Supprimer le modèle',
-      message: `Supprimer « ${t.name} » ? Cette action est irréversible.`,
+      header: $localize`:@@crm.quote-template-list.ts.supprimer.le.modele.0407a835:Supprimer le modèle`,
+      message: $localize`:@@crm.quote-template-list.ts.supprimer.name.cette.action.est.irrevers.6e402fb0:Supprimer « ${t.name}:name: » ? Cette action est irréversible.`,
       acceptLabel: $localize`:@@quote-template-list.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@quote-template-list.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

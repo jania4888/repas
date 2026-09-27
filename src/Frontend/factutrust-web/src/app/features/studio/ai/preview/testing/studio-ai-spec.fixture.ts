@@ -16,57 +16,57 @@ import {
 export function studioAiSpecFixture(): StudioSystemSpec {
   return {
     system: {
-      displayName: 'Gestion des congés',
+      displayName: $localize`:@@studio.studio-ai-spec.fixture.ts.gestion.des.conges.1e949b7b:Gestion des congés`,
       icon: 'fa-solid fa-umbrella-beach',
-      description: 'Suivi des demandes de congés et de leurs validations.',
+      description: $localize`:@@studio.studio-ai-spec.fixture.ts.suivi.des.demandes.de.conges.et.de.leurs.c32f8908:Suivi des demandes de congés et de leurs validations.`,
       onboarding: ['Créer les types de congés', 'Saisir une première demande']
     },
     entities: [
       {
         ref: 'employes',
-        displayName: 'Employé',
+        displayName: $localize`:@@studio.studio-ai-spec.fixture.ts.employe.7700787d:Employé`,
         displayNamePlural: 'Employés',
         icon: 'fa-solid fa-user',
-        description: 'Personnel concerné par les congés.',
+        description: $localize`:@@studio.studio-ai-spec.fixture.ts.personnel.concerne.par.les.conges.99bfd1f5:Personnel concerné par les congés.`,
         fields: [
-          { key: 'matricule', label: 'Matricule', type: 'text', required: true, unique: true },
-          { key: 'nom', label: 'Nom', type: 'text', required: true, unique: false },
+          { key: 'matricule', label: $localize`:@@studio.studio-ai-spec.fixture.ts.matricule.8f74c132:Matricule`, type: 'text', required: true, unique: true },
+          { key: 'nom', label: $localize`:@@studio.studio-ai-spec.fixture.ts.nom.7ff20370:Nom`, type: 'text', required: true, unique: false },
           {
             key: 'statut',
-            label: 'Statut',
+            label: $localize`:@@studio.studio-ai-spec.fixture.ts.statut.659499f3:Statut`,
             type: 'select',
             required: false,
             unique: false,
             options: [
-              { value: 'actif', label: 'Actif' },
-              { value: 'inactif', label: 'Inactif' }
+              { value: 'actif', label: $localize`:@@studio.studio-ai-spec.fixture.ts.actif.2eb75f84:Actif` },
+              { value: 'inactif', label: $localize`:@@studio.studio-ai-spec.fixture.ts.inactif.d2e03387:Inactif` }
             ]
           }
         ]
       },
       {
         ref: 'demandes',
-        displayName: 'Demande de congé',
+        displayName: $localize`:@@studio.studio-ai-spec.fixture.ts.demande.de.conge.b61a4449:Demande de congé`,
         displayNamePlural: 'Demandes de congés',
         icon: 'fa-solid fa-calendar-days',
         fields: [
-          { key: 'employe_id', label: 'Employé', type: 'relation', required: true, unique: false, relationTo: 'employes' },
-          { key: 'client_id', label: 'Client concerné', type: 'relation', required: false, unique: false, relationTo: 'clients' },
-          { key: 'date_debut', label: 'Date de début', type: 'date', required: true, unique: false },
-          { key: 'nb_jours', label: 'Nombre de jours', type: 'number', required: true, unique: false },
-          { key: 'montant', label: 'Indemnité', type: 'money', required: false, unique: false, config: { currency: 'EUR' } }
+          { key: 'employe_id', label: $localize`:@@studio.studio-ai-spec.fixture.ts.employe.7700787d:Employé`, type: 'relation', required: true, unique: false, relationTo: 'employes' },
+          { key: 'client_id', label: $localize`:@@studio.studio-ai-spec.fixture.ts.client.concerne.6c713176:Client concerné`, type: 'relation', required: false, unique: false, relationTo: 'clients' },
+          { key: 'date_debut', label: $localize`:@@studio.studio-ai-spec.fixture.ts.date.de.debut.706438ab:Date de début`, type: 'date', required: true, unique: false },
+          { key: 'nb_jours', label: $localize`:@@studio.studio-ai-spec.fixture.ts.nombre.de.jours.9d71f859:Nombre de jours`, type: 'number', required: true, unique: false },
+          { key: 'montant', label: $localize`:@@studio.studio-ai-spec.fixture.ts.indemnite.3698a284:Indemnité`, type: 'money', required: false, unique: false, config: { currency: 'EUR' } }
         ],
         form: {
           sections: [
             {
-              title: 'Demandeur',
+              title: $localize`:@@studio.studio-ai-spec.fixture.ts.demandeur.624ec474:Demandeur`,
               fields: [
                 { field: 'employe_id', width: 'half' },
                 { field: 'client_id', width: 'half' }
               ]
             },
             {
-              title: 'Période',
+              title: $localize`:@@studio.studio-ai-spec.fixture.ts.periode.de2110b7:Période`,
               fields: [
                 { field: 'date_debut', width: 'half' },
                 { field: 'nb_jours', width: 'half' },
@@ -76,7 +76,7 @@ export function studioAiSpecFixture(): StudioSystemSpec {
           ]
         },
         report: {
-          displayName: 'État des congés',
+          displayName: $localize`:@@studio.studio-ai-spec.fixture.ts.etat.des.conges.64bc94d8:État des congés`,
           groupBy: ['employe_id'],
           measures: [{ fn: 'sum', field: 'nb_jours' }, { fn: 'count' }],
           columns: ['employe_id', 'date_debut', 'nb_jours'],
@@ -112,14 +112,14 @@ export function studioAiSpecWithViewsFixture(): StudioSystemSpec {
       ...demandes.fields,
       {
         key: 'statut',
-        label: 'Statut',
+        label: $localize`:@@studio.studio-ai-spec.fixture.ts.statut.659499f3:Statut`,
         type: 'select',
         required: false,
         unique: false,
         options: [
-          { value: 'soumise', label: 'Soumise' },
-          { value: 'validee', label: 'Validée' },
-          { value: 'refusee', label: 'Refusée' }
+          { value: 'soumise', label: $localize`:@@studio.studio-ai-spec.fixture.ts.soumise.4e6697f7:Soumise` },
+          { value: 'validee', label: $localize`:@@studio.studio-ai-spec.fixture.ts.validee.2cc6c327:Validée` },
+          { value: 'refusee', label: $localize`:@@studio.studio-ai-spec.fixture.ts.refusee.ce45da5d:Refusée` }
         ]
       }
     ];
@@ -141,16 +141,16 @@ export function studioAiPlanPreviewFixture(): StudioAiPlanPreviewDto {
     planId: 'p-preview-1',
     kind: 'CreateSystem',
     status: 'Pending',
-    title: 'Gestion des congés',
+    title: $localize`:@@studio.studio-ai-spec.fixture.ts.gestion.des.conges.1e949b7b:Gestion des congés`,
     entities: [
       {
         ref: 'employes',
-        displayName: 'Employé',
+        displayName: $localize`:@@studio.studio-ai-spec.fixture.ts.employe.7700787d:Employé`,
         existingKey: null,
         fields: [
-          { key: 'matricule', label: 'Matricule', fieldType: 'Text', required: true, unique: true, options: null, relationToRef: null },
-          { key: 'nom', label: 'Nom', fieldType: 'Text', required: true, unique: false, options: null, relationToRef: null },
-          { key: 'statut', label: 'Statut', fieldType: 'Select', required: false, unique: false, options: ['Actif', 'Inactif'], relationToRef: null }
+          { key: 'matricule', label: $localize`:@@studio.studio-ai-spec.fixture.ts.matricule.8f74c132:Matricule`, fieldType: 'Text', required: true, unique: true, options: null, relationToRef: null },
+          { key: 'nom', label: $localize`:@@studio.studio-ai-spec.fixture.ts.nom.7ff20370:Nom`, fieldType: 'Text', required: true, unique: false, options: null, relationToRef: null },
+          { key: 'statut', label: $localize`:@@studio.studio-ai-spec.fixture.ts.statut.659499f3:Statut`, fieldType: 'Select', required: false, unique: false, options: ['Actif', 'Inactif'], relationToRef: null }
         ],
         formLayout: null,
         views: [],
@@ -162,20 +162,20 @@ export function studioAiPlanPreviewFixture(): StudioAiPlanPreviewDto {
       },
       {
         ref: 'demandes',
-        displayName: 'Demande de congé',
+        displayName: $localize`:@@studio.studio-ai-spec.fixture.ts.demande.de.conge.b61a4449:Demande de congé`,
         existingKey: null,
         fields: [
-          { key: 'employe_id', label: 'Employé', fieldType: 'RelationCustom', required: true, unique: false, options: null, relationToRef: 'employes' },
-          { key: 'client_id', label: 'Client concerné', fieldType: 'RelationExisting', required: false, unique: false, options: null, relationToRef: null },
-          { key: 'date_debut', label: 'Date de début', fieldType: 'Date', required: true, unique: false, options: null, relationToRef: null },
-          { key: 'nb_jours', label: 'Nombre de jours', fieldType: 'Number', required: true, unique: false, options: null, relationToRef: null },
-          { key: 'montant', label: 'Indemnité', fieldType: 'Money', required: false, unique: false, options: null, relationToRef: null }
+          { key: 'employe_id', label: $localize`:@@studio.studio-ai-spec.fixture.ts.employe.7700787d:Employé`, fieldType: 'RelationCustom', required: true, unique: false, options: null, relationToRef: 'employes' },
+          { key: 'client_id', label: $localize`:@@studio.studio-ai-spec.fixture.ts.client.concerne.6c713176:Client concerné`, fieldType: 'RelationExisting', required: false, unique: false, options: null, relationToRef: null },
+          { key: 'date_debut', label: $localize`:@@studio.studio-ai-spec.fixture.ts.date.de.debut.706438ab:Date de début`, fieldType: 'Date', required: true, unique: false, options: null, relationToRef: null },
+          { key: 'nb_jours', label: $localize`:@@studio.studio-ai-spec.fixture.ts.nombre.de.jours.9d71f859:Nombre de jours`, fieldType: 'Number', required: true, unique: false, options: null, relationToRef: null },
+          { key: 'montant', label: $localize`:@@studio.studio-ai-spec.fixture.ts.indemnite.3698a284:Indemnité`, fieldType: 'Money', required: false, unique: false, options: null, relationToRef: null }
         ],
         formLayout: {
           sections: [
-            { title: 'Demandeur', fields: [{ key: 'employe_id', width: 'half', labelOverride: null }, { key: 'client_id', width: 'half', labelOverride: null }] },
+            { title: $localize`:@@studio.studio-ai-spec.fixture.ts.demandeur.624ec474:Demandeur`, fields: [{ key: 'employe_id', width: 'half', labelOverride: null }, { key: 'client_id', width: 'half', labelOverride: null }] },
             {
-              title: 'Période',
+              title: $localize`:@@studio.studio-ai-spec.fixture.ts.periode.de2110b7:Période`,
               fields: [
                 { key: 'date_debut', width: 'half', labelOverride: null },
                 { key: 'nb_jours', width: 'half', labelOverride: null },
@@ -184,7 +184,7 @@ export function studioAiPlanPreviewFixture(): StudioAiPlanPreviewDto {
             }
           ]
         },
-        views: [{ mode: 'kanban', displayName: 'Par statut' }],
+        views: [{ mode: 'kanban', displayName: $localize`:@@studio.studio-ai-spec.fixture.ts.par.statut.28038fdd:Par statut` }],
         seedCount: 0,
         seedSample: []
       }
@@ -203,7 +203,7 @@ export function studioAiPlanListItemFixture(overrides: Partial<StudioAiPlanListI
     id: 'p-list-1',
     kind: 'CreateSystem',
     status: 'Completed',
-    title: 'Gestion des congés',
+    title: $localize`:@@studio.studio-ai-spec.fixture.ts.gestion.des.conges.1e949b7b:Gestion des congés`,
     entityCount: 2,
     createdAt: '2026-09-15T10:00:00Z',
     expiresAt: '2026-09-15T10:15:00Z',

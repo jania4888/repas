@@ -277,7 +277,7 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
       },
       error: err => {
         if (clearError) {
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-compute.ts.erreur.reseau.0683007f:Erreur réseau`));
         }
       }
     });
@@ -305,7 +305,7 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
       error: err => {
         this.computing.set(false);
         this.result.set(null);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-compute.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -342,7 +342,7 @@ export class MonthlyDeclarationComputeComponent implements OnInit {
       },
       error: err => {
         this.savingMode.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-compute.ts.erreur.reseau.0683007f:Erreur réseau`));
         this.loadSettings(false);
       }
     });

@@ -96,7 +96,7 @@ export class AccountingAmountInputComponent implements ControlValueAccessor {
   @Input() fractionDigits = ACCOUNTING_AMOUNT_FRACTION_DIGITS;
 
   @Input() inputId = '';
-  @Input() ariaLabel = 'Montant';
+  @Input() ariaLabel = $localize`:@@accounting.accounting-amount-input.ts.montant.4adcd9fc:Montant`;
   @Input() disabled = false;
   @Input() side: AccountingAmountSide = 'debit';
   @Input() compact = false;

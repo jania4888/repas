@@ -139,9 +139,9 @@ export class PayrollRegularizationGridComponent implements OnInit {
   confirmGenerate(): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: 'Générer les régularisations IRPP de tous les salariés éligibles ? '
-        + 'Les cumuls seront rafraîchis et les montants ajustés manuellement seront conservés.',
-      header: 'Régularisation IRPP',
+      message: $localize`:@@payroll.payroll-regularization-grid.ts.generer.les.regularisations.irpp.de.tous.19783084:Générer les régularisations IRPP de tous les salariés éligibles ? `
+        + $localize`:@@payroll.payroll-regularization-grid.ts.les.cumuls.seront.rafraichis.et.les.mont.0eeb48d3:Les cumuls seront rafraîchis et les montants ajustés manuellement seront conservés.`,
+      header: $localize`:@@payroll.payroll-regularization-grid.ts.regularisation.irpp.da08474d:Régularisation IRPP`,
       acceptLabel: $localize`:@@payroll-regularization-grid.component.acceptLabel.G_n_rer:Générer`,
       rejectLabel: $localize`:@@payroll-regularization-grid.component.rejectLabel.Annuler:Annuler`,
       accept: () => this.generate()
@@ -175,8 +175,8 @@ export class PayrollRegularizationGridComponent implements OnInit {
   confirmDelete(line: IrppRegularization): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Supprimer la régularisation de ${line.employeeName} ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.payroll-regularization-grid.ts.supprimer.la.regularisation.de.employeen.903df98a:Supprimer la régularisation de ${line.employeeName}:employeeName: ?`,
+      header: $localize`:@@payroll.payroll-regularization-grid.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@payroll-regularization-grid.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@payroll-regularization-grid.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

@@ -36,8 +36,8 @@ export interface GuidedScenario {
 export const GUIDED_SCENARIOS: readonly GuidedScenario[] = [
   {
     id: 'achats',
-    label: 'Achats',
-    description: 'Enregistrer une facture fournisseur, un avoir ou un règlement.',
+    label: $localize`:@@accounting.guided-scenarios.catalog.ts.achats.ee5b078c:Achats`,
+    description: $localize`:@@accounting.guided-scenarios.catalog.ts.enregistrer.une.facture.fournisseur.un.a.5b3766db:Enregistrer une facture fournisseur, un avoir ou un règlement.`,
     icon: 'pi pi-shopping-cart',
     defaultJournalCode: 'JA',
     thirdPartyKind: 2,
@@ -50,8 +50,8 @@ export const GUIDED_SCENARIOS: readonly GuidedScenario[] = [
   },
   {
     id: 'ventes',
-    label: 'Ventes',
-    description: 'Enregistrer une facture client, un avoir ou un règlement.',
+    label: $localize`:@@accounting.guided-scenarios.catalog.ts.ventes.9087fc4f:Ventes`,
+    description: $localize`:@@accounting.guided-scenarios.catalog.ts.enregistrer.une.facture.client.un.avoir.197c0c64:Enregistrer une facture client, un avoir ou un règlement.`,
     icon: 'pi pi-shopping-bag',
     defaultJournalCode: 'JV',
     thirdPartyKind: 1,
@@ -64,8 +64,8 @@ export const GUIDED_SCENARIOS: readonly GuidedScenario[] = [
   },
   {
     id: 'banque',
-    label: 'Banque',
-    description: 'Enregistrer un paiement, un encaissement ou un virement bancaire.',
+    label: $localize`:@@accounting.guided-scenarios.catalog.ts.banque.2a7302cd:Banque`,
+    description: $localize`:@@accounting.guided-scenarios.catalog.ts.enregistrer.un.paiement.un.encaissement.a1babf9e:Enregistrer un paiement, un encaissement ou un virement bancaire.`,
     icon: 'pi pi-building',
     defaultJournalCode: 'JB',
     thirdPartyKind: null,
@@ -77,8 +77,8 @@ export const GUIDED_SCENARIOS: readonly GuidedScenario[] = [
   },
   {
     id: 'caisse',
-    label: 'Caisse',
-    description: 'Enregistrer une opération de caisse.',
+    label: $localize`:@@accounting.guided-scenarios.catalog.ts.caisse.ce5a5c98:Caisse`,
+    description: $localize`:@@accounting.guided-scenarios.catalog.ts.enregistrer.une.operation.de.caisse.65afbd4e:Enregistrer une opération de caisse.`,
     icon: 'pi pi-money-bill',
     defaultJournalCode: 'JC',
     thirdPartyKind: null,
@@ -90,8 +90,8 @@ export const GUIDED_SCENARIOS: readonly GuidedScenario[] = [
   },
   {
     id: 'od',
-    label: 'Opérations diverses',
-    description: 'Saisir une écriture manuelle (OD diverse).',
+    label: $localize`:@@accounting.guided-scenarios.catalog.ts.operations.diverses.1735f774:Opérations diverses`,
+    description: $localize`:@@accounting.guided-scenarios.catalog.ts.saisir.une.ecriture.manuelle.od.diverse.d35b3283:Saisir une écriture manuelle (OD diverse).`,
     icon: 'pi pi-pencil',
     defaultJournalCode: 'JOD',
     thirdPartyKind: null,
@@ -103,8 +103,8 @@ export const GUIDED_SCENARIOS: readonly GuidedScenario[] = [
   },
   {
     id: 'immobilisations',
-    label: 'Immobilisations',
-    description: "Enregistrer l'acquisition, la mise en service ou la cession d'un bien.",
+    label: $localize`:@@accounting.guided-scenarios.catalog.ts.immobilisations.1e4cbe01:Immobilisations`,
+    description: $localize`:@@accounting.guided-scenarios.catalog.ts.enregistrer.l.acquisition.la.mise.en.ser.37aa25c4:Enregistrer l'acquisition, la mise en service ou la cession d'un bien.`,
     icon: 'pi pi-building-columns',
     defaultJournalCode: 'JIM',
     thirdPartyKind: 2,
@@ -117,8 +117,8 @@ export const GUIDED_SCENARIOS: readonly GuidedScenario[] = [
   },
   {
     id: 'paie',
-    label: 'Paie',
-    description: 'Enregistrer les écritures de paie et charges sociales.',
+    label: $localize`:@@accounting.guided-scenarios.catalog.ts.paie.6ca885f3:Paie`,
+    description: $localize`:@@accounting.guided-scenarios.catalog.ts.enregistrer.les.ecritures.de.paie.et.cha.de8fdd9a:Enregistrer les écritures de paie et charges sociales.`,
     icon: 'pi pi-users',
     defaultJournalCode: 'JOD',
     thirdPartyKind: null,
@@ -130,8 +130,8 @@ export const GUIDED_SCENARIOS: readonly GuidedScenario[] = [
   },
   {
     id: 'od-regularisation',
-    label: 'OD de régularisation',
-    description: 'Enregistrer les écritures de régularisation (frais, produits, etc.).',
+    label: $localize`:@@accounting.guided-scenarios.catalog.ts.od.de.regularisation.7d97d767:OD de régularisation`,
+    description: $localize`:@@accounting.guided-scenarios.catalog.ts.enregistrer.les.ecritures.de.regularisat.d33b1a72:Enregistrer les écritures de régularisation (frais, produits, etc.).`,
     icon: 'pi pi-sync',
     defaultJournalCode: 'JOD',
     thirdPartyKind: null,

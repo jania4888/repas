@@ -16,14 +16,14 @@ import { ToastService } from '@core/services/toast.service';
 import { PayrollAmountPipe } from '../shared';
 
 const TERMINATION_REASONS = [
-  { label: 'Licenciement', value: 'Dismissal' },
-  { label: 'Démission', value: 'Resignation' },
-  { label: 'Retraite', value: 'Retirement' },
-  { label: 'Rupture conventionnelle', value: 'MutualAgreement' },
-  { label: 'Faute grave', value: 'GrossMisconduct' },
-  { label: 'Fin de CDD', value: 'EndOfCdd' },
-  { label: 'Fin de SIVP', value: 'EndOfSivp' },
-  { label: 'Décès', value: 'Death' }
+  { label: $localize`:@@payroll.termination-settlement-form.ts.licenciement.98b453ba:Licenciement`, value: 'Dismissal' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.demission.d349fc6a:Démission`, value: 'Resignation' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.retraite.016b1837:Retraite`, value: 'Retirement' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.rupture.conventionnelle.2411a14a:Rupture conventionnelle`, value: 'MutualAgreement' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.faute.grave.4defb954:Faute grave`, value: 'GrossMisconduct' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.fin.de.cdd.f9698c6a:Fin de CDD`, value: 'EndOfCdd' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.fin.de.sivp.5d4d37f3:Fin de SIVP`, value: 'EndOfSivp' },
+  { label: $localize`:@@payroll.termination-settlement-form.ts.deces.acee1bf3:Décès`, value: 'Death' }
 ];
 
 function toIsoDate(value: Date | null | undefined): string {

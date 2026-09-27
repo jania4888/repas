@@ -50,9 +50,9 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Modules' }
+    { label: $localize`:@@settings.modules-settings.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.modules-settings.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.modules-settings.ts.modules.04e9462c:Modules` }
   ];
 
   readonly loading = signal(true);
@@ -116,7 +116,7 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
           this.modules.set(res.data.modules);
           this.selectedIds.set(res.data.modules.filter(m => m.isEnabled).map(m => m.id));
         } else {
-          this.loadError.set(res.message || 'Impossible de charger les modules.');
+          this.loadError.set(res.message || $localize`:@@settings.modules-settings.ts.impossible.de.charger.les.modules.e56b7f1e:Impossible de charger les modules.`);
         }
         this.loading.set(false);
       },
@@ -275,7 +275,7 @@ export class ModulesSettingsComponent implements OnInit, OnDestroy {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@modules-settings.component.summary.Échec de la :Échec de la mise à jour`,
-            detail: res.message || 'Impossible de mettre à jour les modules.'
+            detail: res.message || $localize`:@@settings.modules-settings.ts.impossible.de.mettre.a.jour.les.modules.dc20d027:Impossible de mettre à jour les modules.`
           });
           return;
         }

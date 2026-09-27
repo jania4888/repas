@@ -230,9 +230,9 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
   });
 
   taxRegimes: TaxRegime[] = [
-    { label: 'Régime réel', value: 0 },
-    { label: 'Régime forfaitaire', value: 1 },
-    { label: 'Exonéré', value: 2 }
+    { label: $localize`:@@auth.register-wizard.ts.regime.reel.ef6ee424:Régime réel`, value: 0 },
+    { label: $localize`:@@auth.register-wizard.ts.regime.forfaitaire.a1dc2f7b:Régime forfaitaire`, value: 1 },
+    { label: $localize`:@@auth.register-wizard.ts.exonere.5d577ae9:Exonéré`, value: 2 }
   ];
 
   readonly governorates = GOVERNORATE_OPTIONS;
@@ -587,7 +587,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
     }
 
     if (this.passwordMismatch()) {
-      this.error.set('Les mots de passe ne correspondent pas');
+      this.error.set($localize`:@@auth.register-wizard.ts.les.mots.de.passe.ne.correspondent.pas.c1a3d196:Les mots de passe ne correspondent pas`);
       this.form.get('confirmPassword')?.markAsTouched();
       return;
     }
@@ -596,7 +596,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
     this.error.set(null);
     // Sans cela, une nouvelle tentative affichait encore le bandeau « espace créé » de la précédente.
     this.registrationWarningDetails.set([]);
-    this.loadingMessage.set('Création de votre espace...');
+    this.loadingMessage.set($localize`:@@auth.register-wizard.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
     this.loadingStartedAt = Date.now();
     this.startLoadingMessageTimer();
 
@@ -645,7 +645,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
         if (err instanceof TimeoutError) {
           return throwError(() => ({
             status: 0,
-            message: 'La création du compte prend plus de temps que prévu. Veuillez patienter ou réessayer dans quelques instants.'
+            message: $localize`:@@auth.register-wizard.ts.la.creation.du.compte.prend.plus.de.temp.b880214b:La création du compte prend plus de temps que prévu. Veuillez patienter ou réessayer dans quelques instants.`
           }));
         }
         return throwError(() => err);
@@ -682,7 +682,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
   private submitPlatformCompany(request: RegisterRequest): void {
     const handler = this.wizardMode.submitCompany;
     if (!handler) {
-      this.error.set('Configuration plateforme manquante pour la création d\'entreprise.');
+      this.error.set($localize`:@@auth.register-wizard.ts.configuration.plateforme.manquante.pour.f373acda:Configuration plateforme manquante pour la création d'entreprise.`);
       this.stopLoading();
       return;
     }
@@ -695,7 +695,7 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
           if (err instanceof TimeoutError) {
             return throwError(() => ({
               status: 0,
-              message: 'La création prend plus de temps que prévu. Veuillez patienter ou réessayer.'
+              message: $localize`:@@auth.register-wizard.ts.la.creation.prend.plus.de.temps.que.prev.f9d6475f:La création prend plus de temps que prévu. Veuillez patienter ou réessayer.`
             }));
           }
           return throwError(() => err);
@@ -774,11 +774,11 @@ export class RegisterWizardComponent implements OnInit, OnDestroy {
     this.loadingMessageTimer = setInterval(() => {
       const elapsed = Date.now() - this.loadingStartedAt;
       if (elapsed < 5_000) {
-        this.loadingMessage.set('Création de votre espace...');
+        this.loadingMessage.set($localize`:@@auth.register-wizard.ts.creation.de.votre.espace.07866544:Création de votre espace...`);
       } else if (elapsed < 30_000) {
-        this.loadingMessage.set('Configuration de la base de données, cela peut prendre une minute...');
+        this.loadingMessage.set($localize`:@@auth.register-wizard.ts.configuration.de.la.base.de.donnees.cela.6fb93f3b:Configuration de la base de données, cela peut prendre une minute...`);
       } else {
-        this.loadingMessage.set('Finalisation en cours, merci de patienter...');
+        this.loadingMessage.set($localize`:@@auth.register-wizard.ts.finalisation.en.cours.merci.de.patienter.d4489dba:Finalisation en cours, merci de patienter...`);
       }
     }, 1_000);
   }

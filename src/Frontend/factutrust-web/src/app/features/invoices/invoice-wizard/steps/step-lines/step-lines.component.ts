@@ -1482,8 +1482,8 @@ export class StepLinesComponent implements OnInit, OnDestroy {
 
   deleteLine(line: InvoiceLine): void {
     this.confirmationService.confirm({
-      message: `Supprimer la ligne "${line.designation}" ?`,
-      header: 'Confirmation',
+      message: $localize`:@@invoices.step-lines.ts.supprimer.la.ligne.designation.9a640b5f:Supprimer la ligne "${line.designation}:designation:" ?`,
+      header: $localize`:@@invoices.step-lines.ts.confirmation.3424edc2:Confirmation`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@step-lines.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@step-lines.component.rejectLabel.Annuler:Annuler`,

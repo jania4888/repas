@@ -185,14 +185,14 @@ export class ClosingRevaluationComponent {
           this.toast.add({
             severity: 'success',
             summary: $localize`:@@closing-revaluation.component.summary.R_valuation_eff:Réévaluation effectuée`,
-            detail: `${res.data.positionCount} position(s) réévaluée(s)`,
+            detail: $localize`:@@accounting.closing-revaluation.ts.positioncount.position.s.reevaluee.s.b74b20ba:${res.data.positionCount}:positionCount: position(s) réévaluée(s)`,
             life: 5000
           });
         } else {
           this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
-      error: err => { this.running.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.running.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.closing-revaluation.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 }

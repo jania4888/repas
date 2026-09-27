@@ -130,18 +130,18 @@ export class StudioViewDesignerComponent implements OnInit, OnDestroy {
   searchEnabled = true;
 
   readonly formatOptions = [
-    { label: 'Auto', value: 'auto' },
-    { label: 'Texte', value: 'text' },
-    { label: 'Date', value: 'date' },
-    { label: 'Date/heure', value: 'datetime' },
-    { label: 'Nombre', value: 'number' },
-    { label: 'Monétaire', value: 'money' },
-    { label: 'Booléen', value: 'boolean' },
-    { label: 'Statut', value: 'status' },
-    { label: 'Clé étrangère', value: 'fk' },
+    { label: $localize`:@@studio.studio-view-designer.ts.auto.c614ba7c:Auto`, value: 'auto' },
+    { label: $localize`:@@studio.studio-view-designer.ts.texte.ff9afef1:Texte`, value: 'text' },
+    { label: $localize`:@@studio.studio-view-designer.ts.date.eb9a4bc1:Date`, value: 'date' },
+    { label: $localize`:@@studio.studio-view-designer.ts.date.heure.3c4dd1be:Date/heure`, value: 'datetime' },
+    { label: $localize`:@@studio.studio-view-designer.ts.nombre.e68491e9:Nombre`, value: 'number' },
+    { label: $localize`:@@studio.studio-view-designer.ts.monetaire.5b9130b4:Monétaire`, value: 'money' },
+    { label: $localize`:@@studio.studio-view-designer.ts.booleen.76d7ac23:Booléen`, value: 'boolean' },
+    { label: $localize`:@@studio.studio-view-designer.ts.statut.659499f3:Statut`, value: 'status' },
+    { label: $localize`:@@studio.studio-view-designer.ts.cle.etrangere.57b1da1f:Clé étrangère`, value: 'fk' },
   ];
 
-  readonly widthOptions = [{ label: 'Pleine', value: 'full' }, { label: 'Demi', value: 'half' }];
+  readonly widthOptions = [{ label: $localize`:@@studio.studio-view-designer.ts.pleine.7c970f6b:Pleine`, value: 'full' }, { label: $localize`:@@studio.studio-view-designer.ts.demi.2afabf13:Demi`, value: 'half' }];
 
   ngOnInit(): void {
     this.previewTrigger$.pipe(debounceTime(300), takeUntil(this.destroy$)).subscribe(() => this.preview());

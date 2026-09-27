@@ -290,7 +290,7 @@ export class AgingComponent implements OnInit {
       },
       error: err => {
         this.loadingClients.set(false);
-        this.errClients.set(this.errors.extractErrorMessage(err, 'Erreur réseau. Réessayez plus tard.'));
+        this.errClients.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.aging.ts.erreur.reseau.reessayez.plus.tard.8e5647cd:Erreur réseau. Réessayez plus tard.`));
       }
     });
   }
@@ -306,7 +306,7 @@ export class AgingComponent implements OnInit {
       },
       error: err => {
         this.loadingSuppliers.set(false);
-        this.errSup.set(this.errors.extractErrorMessage(err, 'Erreur réseau. Réessayez plus tard.'));
+        this.errSup.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.aging.ts.erreur.reseau.reessayez.plus.tard.8e5647cd:Erreur réseau. Réessayez plus tard.`));
       }
     });
   }
@@ -320,7 +320,7 @@ export class AgingComponent implements OnInit {
       },
       error: err => {
         this.exportingClients.set(false);
-        this.errClients.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.errClients.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.aging.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }
@@ -334,7 +334,7 @@ export class AgingComponent implements OnInit {
       },
       error: err => {
         this.exportingSuppliers.set(false);
-        this.errSup.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.errSup.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.aging.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

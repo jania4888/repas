@@ -481,7 +481,7 @@ export class CashForecastComponent implements OnInit {
       labels: buckets.map(bucketLabel),
       datasets: [
         {
-          label: 'Solde prévisionnel',
+          label: $localize`:@@treasury.cash-forecast.ts.solde.previsionnel.eafdf1d7:Solde prévisionnel`,
           data: buckets.map(b => b.closingBalance),
           borderColor: '#3862f5',
           backgroundColor: 'rgba(56, 98, 245, 0.08)',
@@ -489,7 +489,7 @@ export class CashForecastComponent implements OnInit {
           tension: 0.35
         },
         {
-          label: 'Prévision basse',
+          label: $localize`:@@treasury.cash-forecast.ts.prevision.basse.f82d736b:Prévision basse`,
           data: buckets.map(b => b.lowClosingBalance),
           borderColor: '#ef4444',
           borderDash: [5, 4],
@@ -498,7 +498,7 @@ export class CashForecastComponent implements OnInit {
           tension: 0.35
         },
         {
-          label: 'Prévision haute',
+          label: $localize`:@@treasury.cash-forecast.ts.prevision.haute.3119ac6d:Prévision haute`,
           data: buckets.map(b => b.highClosingBalance),
           borderColor: '#10b981',
           borderDash: [5, 4],
@@ -577,7 +577,7 @@ export class CashForecastComponent implements OnInit {
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@cash-forecast.component.summary.Projection_recal:Projection recalculée`,
-          detail: `Solde prévisionnel : ${this.amount(data.closingBalance)}`
+          detail: $localize`:@@treasury.cash-forecast.ts.solde.previsionnel.amount.159288fd:Solde prévisionnel : ${this.amount(data.closingBalance)}:amount:`
         });
       },
       error: err => {

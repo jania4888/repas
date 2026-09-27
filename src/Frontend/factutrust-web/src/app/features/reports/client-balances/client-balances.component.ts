@@ -163,9 +163,9 @@ export class ClientBalancesComponent implements OnInit {
   private readonly router = inject(Router);
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/' },
-    { label: 'Ventes', route: '/invoices' },
-    { label: 'Solde par client' }
+    { label: $localize`:@@reports.client-balances.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+    { label: $localize`:@@reports.client-balances.ts.ventes.9087fc4f:Ventes`, route: '/invoices' },
+    { label: $localize`:@@reports.client-balances.ts.solde.par.client.dc39ad70:Solde par client` }
   ];
 
   loading = signal(true);

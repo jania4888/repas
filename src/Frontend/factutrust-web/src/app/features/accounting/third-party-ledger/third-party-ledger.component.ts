@@ -197,7 +197,7 @@ export class ThirdPartyLedgerComponent implements OnInit {
 
   load(): void {
     if (!this.thirdPartyId) {
-      this.error.set('Aucun tiers sélectionné — passez par la balance auxiliaire.');
+      this.error.set($localize`:@@accounting.third-party-ledger.ts.aucun.tiers.selectionne.passez.par.la.ba.e840b960:Aucun tiers sélectionné — passez par la balance auxiliaire.`);
       return;
     }
     this.error.set(null);
@@ -217,7 +217,7 @@ export class ThirdPartyLedgerComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.third-party-ledger.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -239,7 +239,7 @@ export class ThirdPartyLedgerComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.third-party-ledger.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

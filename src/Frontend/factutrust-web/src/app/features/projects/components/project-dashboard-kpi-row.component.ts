@@ -78,8 +78,8 @@ import { ProjectDashboardExtended } from '../project-api.service';
 })
 export class ProjectDashboardKpiRowComponent {
   readonly periodOptions = [
-    { label: 'Cette semaine', value: 'week' as const },
-    { label: 'Ce mois', value: 'month' as const }
+    { label: $localize`:@@projects.project-dashboard-kpi-row.ts.cette.semaine.af7dc0a9:Cette semaine`, value: 'week' as const },
+    { label: $localize`:@@projects.project-dashboard-kpi-row.ts.ce.mois.db74c560:Ce mois`, value: 'month' as const }
   ];
 
   @Input() data: ProjectDashboardExtended | null = null;

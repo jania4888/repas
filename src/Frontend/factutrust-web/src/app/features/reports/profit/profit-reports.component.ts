@@ -119,10 +119,10 @@ export class ProfitReportsComponent implements OnInit {
   private requestSeq = 0;
 
   periodOptions = [
-    { label: 'Ce mois', value: 'month' },
-    { label: 'Ce trimestre', value: 'quarter' },
-    { label: 'Cette année', value: 'year' },
-    { label: 'Tout', value: 'all' }
+    { label: $localize`:@@reports.profit-reports.ts.ce.mois.db74c560:Ce mois`, value: 'month' },
+    { label: $localize`:@@reports.profit-reports.ts.ce.trimestre.4d9d129d:Ce trimestre`, value: 'quarter' },
+    { label: $localize`:@@reports.profit-reports.ts.cette.annee.052507a0:Cette année`, value: 'year' },
+    { label: $localize`:@@reports.profit-reports.ts.tout.6b0b09b8:Tout`, value: 'all' }
   ];
 
   private getPeriodDates(): { fromDate: string; toDate: string } {

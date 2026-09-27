@@ -30,7 +30,7 @@ export const STUDIO_RUNTIME_LABELS = {
     truncated: 'Affichage limité à 1000 événements ; affinez les filtres.'
   },
   designer: {
-    title: 'Concepteur de vue',
+    title: $localize`:@@studio.studio-runtime-labels.ts.concepteur.de.vue.15ece176:Concepteur de vue`,
     previewDraft: 'Aperçu du brouillon en cours (20 premiers enregistrements).',
     previewInvalid: 'Complétez la définition pour voir l’aperçu.',
     previewDesignOnly: 'L’aperçu en direct est réservé aux concepteurs.',
@@ -56,7 +56,7 @@ export const STUDIO_RUNTIME_LABELS = {
     saved: 'Vue enregistrée.'
   },
   relations: {
-    title: 'Relations',
+    title: $localize`:@@studio.studio-runtime-labels.ts.relations.6519fe11:Relations`,
     addManyToMany: 'Ajouter une relation plusieurs-à-plusieurs',
     junctionAttributeHint: 'Un champ numérique est ajouté à la table de liaison (ex. quantité par fiche liée).',
     empty: 'Relations non activées.',
@@ -77,7 +77,7 @@ export const STUDIO_RUNTIME_LABELS = {
   },
   history: {
     tabLabel: 'Historique',
-    hint: 'Créations, modifications et suppression de cet enregistrement, du plus récent au plus ancien.',
+    hint: $localize`:@@studio.studio-runtime-labels.ts.creations.modifications.et.suppression.d.36a12eac:Créations, modifications et suppression de cet enregistrement, du plus récent au plus ancien.`,
     colDate: 'Date',
     colAction: 'Action',
     colUser: 'Utilisateur',
@@ -104,7 +104,7 @@ export const STUDIO_RUNTIME_LABELS = {
     hideJunctions: 'Masquer les jonctions'
   },
   filters: {
-    title: 'Filtres',
+    title: $localize`:@@studio.studio-runtime-labels.ts.filtres.2a8e76e0:Filtres`,
     add: 'Ajouter un filtre',
     remove: 'Retirer ce filtre',
     field: 'Champ',

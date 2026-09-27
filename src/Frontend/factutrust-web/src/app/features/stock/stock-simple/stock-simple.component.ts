@@ -84,8 +84,8 @@ export class StockSimpleComponent implements OnInit {
 
     // Breadcrumb
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Mon Stock' }
+        { label: $localize`:@@stock.stock-simple.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@stock.stock-simple.ts.mon.stock.7d1adf31:Mon Stock` }
     ];
 
     private pendingAlertsScroll = false;

@@ -83,11 +83,11 @@ export class PosStockService {
           return;
         }
         (data.outOfStockItems ?? []).forEach(item => {
-          next.set(item.productId, { alertLevel: 'insufficient', message: 'Rupture' });
+          next.set(item.productId, { alertLevel: 'insufficient', message: $localize`:@@pos.pos-stock.ts.rupture.fda77001:Rupture` });
         });
         (data.lowStockItems ?? []).forEach(item => {
           if (!next.has(item.productId)) {
-            next.set(item.productId, { alertLevel: 'warning', message: 'Stock faible' });
+            next.set(item.productId, { alertLevel: 'warning', message: $localize`:@@pos.pos-stock.ts.stock.faible.051fbda0:Stock faible` });
           }
         });
         this.catalogAlertsMap.set(next);

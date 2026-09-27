@@ -374,10 +374,10 @@ export class QuoteTemplateFormComponent implements OnInit {
   readonly templateId = signal<string | null>(null);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'CRM Commercial', route: '/crm/dashboard' },
-    { label: 'Modèles de devis', route: '/crm/quote-templates' },
-    { label: 'Nouveau modèle' },
+    { label: $localize`:@@crm.quote-template-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@crm.quote-template-form.ts.crm.commercial.96a9fcf3:CRM Commercial`, route: '/crm/dashboard' },
+    { label: $localize`:@@crm.quote-template-form.ts.modeles.de.devis.b90f004d:Modèles de devis`, route: '/crm/quote-templates' },
+    { label: $localize`:@@crm.quote-template-form.ts.nouveau.modele.c5b99d5d:Nouveau modèle` },
   ];
 
   name = '';
@@ -401,10 +401,10 @@ export class QuoteTemplateFormComponent implements OnInit {
       this.isEdit.set(true);
       this.templateId.set(id);
       this.breadcrumbItems = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'CRM Commercial', route: '/crm/dashboard' },
-        { label: 'Modèles de devis', route: '/crm/quote-templates' },
-        { label: 'Modifier le modèle' },
+        { label: $localize`:@@crm.quote-template-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@crm.quote-template-form.ts.crm.commercial.96a9fcf3:CRM Commercial`, route: '/crm/dashboard' },
+        { label: $localize`:@@crm.quote-template-form.ts.modeles.de.devis.b90f004d:Modèles de devis`, route: '/crm/quote-templates' },
+        { label: $localize`:@@crm.quote-template-form.ts.modifier.le.modele.840a7ce4:Modifier le modèle` },
       ];
       this.loadTemplate(id);
     }

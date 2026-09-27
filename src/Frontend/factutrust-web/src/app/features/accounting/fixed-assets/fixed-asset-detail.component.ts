@@ -628,7 +628,7 @@ export class FixedAssetDetailComponent implements OnInit {
   readonly ACCELERATION_COEFFICIENTS = ACCELERATION_COEFFICIENTS;
   readonly LOW_VALUE_ASSET_CEILING_TND = LOW_VALUE_ASSET_CEILING_TND;
   readonly integralSuggestionMessage =
-    `Base amortissable ≤ ${LOW_VALUE_ASSET_CEILING_TND} DT : l'amortissement intégral est recommandé (Décret 2008-492 art. 4).`;
+    $localize`:@@accounting.fixed-asset-detail.ts.base.amortissable.low.value.asset.ceilin.bd5644b4:Base amortissable ≤ ${LOW_VALUE_ASSET_CEILING_TND}:LOW_VALUE_ASSET_CEILING_TND: DT : l'amortissement intégral est recommandé (Décret 2008-492 art. 4).`;
 
   readonly isNew = signal(false);
   readonly asset = signal<FixedAssetDto | null>(null);
@@ -938,7 +938,7 @@ export class FixedAssetDetailComponent implements OnInit {
     this.error.set(null);
     this.success.set(null);
     if (!this.validate()) {
-      this.error.set('Veuillez corriger les champs en erreur.');
+      this.error.set($localize`:@@accounting.fixed-asset-detail.ts.veuillez.corriger.les.champs.en.erreur.85783828:Veuillez corriger les champs en erreur.`);
       return;
     }
     if (this.isNew()) this.create();
@@ -1062,7 +1062,7 @@ export class FixedAssetDetailComponent implements OnInit {
         const body = err?.error;
         if (body?.code === 'CONCURRENCY_CONFLICT') {
           this.error.set(
-            'Les données ont été modifiées entre-temps. La fiche a été actualisée — vérifiez le statut puis réessayez si nécessaire.'
+            $localize`:@@accounting.fixed-asset-detail.ts.les.donnees.ont.ete.modifiees.entre.temp.6e498430:Les données ont été modifiées entre-temps. La fiche a été actualisée — vérifiez le statut puis réessayez si nécessaire.`
           );
         } else {
           this.error.set(body?.message ?? $localize`:@@ui.tern.erreur.mise.en.service.e7b505:Erreur mise en service.`);
@@ -1167,7 +1167,7 @@ export class FixedAssetDetailComponent implements OnInit {
     this.error.set(null);
     this.success.set(null);
     this.confirmation.confirm({
-      header: 'Enregistrer la cession',
+      header: $localize`:@@accounting.fixed-asset-detail.ts.enregistrer.la.cession.9bdc21df:Enregistrer la cession`,
       message: this.disposalRecap(),
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@fixed-asset-detail.component.acceptLabel.Enregistrer_la_c:Enregistrer la cession`,
@@ -1226,7 +1226,7 @@ export class FixedAssetDetailComponent implements OnInit {
           this.api.getSchedule(id).subscribe(s => this.schedule.set(s.data ?? null));
         }
       },
-      error: () => this.error.set('Immobilisation introuvable.')
+      error: () => this.error.set($localize`:@@accounting.fixed-asset-detail.ts.immobilisation.introuvable.cd4a3ada:Immobilisation introuvable.`)
     });
   }
 

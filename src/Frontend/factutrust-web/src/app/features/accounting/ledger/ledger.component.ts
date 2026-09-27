@@ -196,7 +196,7 @@ export class LedgerComponent implements OnInit {
       },
       highlights: [
         ...(imbalance > 0.001
-          ? [{ type: 'warning' as const, label: 'Écart débit/crédit', value: imbalance, context: 'Vérifier l\'équilibre' }]
+          ? [{ type: 'warning' as const, label: $localize`:@@accounting.ledger.ts.ecart.debit.credit.c4e76936:Écart débit/crédit`, value: imbalance, context: 'Vérifier l\'équilibre' }]
           : []),
         ...detectBasicAnomalies(
           rows.map(r => ({ label: r.label, debit: r.debit, credit: r.credit })),
@@ -251,7 +251,7 @@ export class LedgerComponent implements OnInit {
     if (!this.account.trim()) {
       this.loading.set(false);
       this.rows.set([]);
-      this.error.set('Saisissez un numéro de compte pour afficher le grand livre.');
+      this.error.set($localize`:@@accounting.ledger.ts.saisissez.un.numero.de.compte.pour.affic.a85beef0:Saisissez un numéro de compte pour afficher le grand livre.`);
       return;
     }
     const from = parseLocalDateString(this.fromStr);
@@ -276,7 +276,7 @@ export class LedgerComponent implements OnInit {
             this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.reseau.0683007f:Erreur réseau`))
       });
   }
 
@@ -294,7 +294,7 @@ export class LedgerComponent implements OnInit {
           if (res.success && res.data) this.generalLedger.set(res.data);
           else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.reseau.0683007f:Erreur réseau`))
       });
   }
 
@@ -312,7 +312,7 @@ export class LedgerComponent implements OnInit {
           if (res.success && res.data) this.recapRows.set(res.data);
           else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.reseau.0683007f:Erreur réseau`))
       });
   }
 
@@ -341,7 +341,7 @@ export class LedgerComponent implements OnInit {
 
     const account = this.account.trim();
     if (!account) {
-      this.error.set('Saisissez un numéro de compte avant d\'exporter.');
+      this.error.set($localize`:@@accounting.ledger.ts.saisissez.un.numero.de.compte.avant.d.ex.0325b027:Saisissez un numéro de compte avant d'exporter.`);
       return;
     }
     const from = parseLocalDateString(this.fromStr);
@@ -359,7 +359,7 @@ export class LedgerComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }
@@ -385,7 +385,7 @@ export class LedgerComponent implements OnInit {
         },
         error: err => {
           this.exporting.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
         }
       });
   }
@@ -405,7 +405,7 @@ export class LedgerComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.ledger.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

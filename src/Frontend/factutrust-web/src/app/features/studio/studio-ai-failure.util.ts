@@ -284,12 +284,12 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
     case 'clarification':
       view = {
         kind, code,
-        eyebrow: 'Précision nécessaire',
-        title: 'Votre demande doit être précisée',
-        message: cleaned || "Je n'ai pas pu déterminer quelles données analyser.",
-        hint: 'Indiquez le sujet (ventes, achats, encaissements…), la ventilation souhaitée '
-          + '(par année, par client, par produit…) et, si besoin, la période. '
-          + "Vous pouvez aussi partir d'un état prêt à l'emploi.",
+        eyebrow: $localize`:@@studio.studio-ai-failure.ts.precision.necessaire.b552b373:Précision nécessaire`,
+        title: $localize`:@@studio.studio-ai-failure.ts.votre.demande.doit.etre.precisee.5389d7ac:Votre demande doit être précisée`,
+        message: cleaned || $localize`:@@studio.studio-ai-failure.ts.je.n.ai.pas.pu.determiner.quelles.donnee.4b0860e5:Je n'ai pas pu déterminer quelles données analyser.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.indiquez.le.sujet.ventes.achats.encaisse.355a3d14:Indiquez le sujet (ventes, achats, encaissements…), la ventilation souhaitée `
+          + $localize`:@@studio.studio-ai-failure.ts.par.annee.par.client.par.produit.et.si.b.972e045a:(par année, par client, par produit…) et, si besoin, la période. `
+          + $localize`:@@studio.studio-ai-failure.ts.vous.pouvez.aussi.partir.d.un.etat.pret.81e501d7:Vous pouvez aussi partir d'un état prêt à l'emploi.`,
         stage: 'Compréhension de la demande',
         retryable: false,
         showSuggestions: true
@@ -298,11 +298,11 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
     case 'forbidden':
       view = {
         kind, code,
-        eyebrow: 'Accès non autorisé',
-        title: 'Vous ne pouvez pas consulter cet état',
-        message: cleaned || "Votre compte ne dispose pas des droits nécessaires dans l'espace actif.",
-        hint: 'Demandez à un administrateur de vérifier vos droits de consultation des états et des '
-          + 'données concernées. Réessayer ou reformuler la demande ne modifie pas vos droits.',
+        eyebrow: $localize`:@@studio.studio-ai-failure.ts.acces.non.autorise.951229a5:Accès non autorisé`,
+        title: $localize`:@@studio.studio-ai-failure.ts.vous.ne.pouvez.pas.consulter.cet.etat.8d00f46c:Vous ne pouvez pas consulter cet état`,
+        message: cleaned || $localize`:@@studio.studio-ai-failure.ts.votre.compte.ne.dispose.pas.des.droits.n.dbaa1ce9:Votre compte ne dispose pas des droits nécessaires dans l'espace actif.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.demandez.a.un.administrateur.de.verifier.18ac6c21:Demandez à un administrateur de vérifier vos droits de consultation des états et des `
+          + $localize`:@@studio.studio-ai-failure.ts.donnees.concernees.reessayer.ou.reformul.8fbfd6e3:données concernées. Réessayer ou reformuler la demande ne modifie pas vos droits.`,
         stage: 'Contrôle des autorisations',
         retryable: false,
         showSuggestions: false
@@ -311,11 +311,11 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
     case 'provider':
       view = {
         kind, code,
-        eyebrow: 'Service IA indisponible',
-        title: 'La préparation de la demande a été interrompue',
-        message: "Le fournisseur IA est momentanément indisponible. Aucun état n'a été calculé et rien n'a été enregistré.",
-        hint: "Vous pouvez réessayer une fois, à votre initiative. Sans l'assistant, le concepteur d'états "
-          + 'reste disponible.',
+        eyebrow: $localize`:@@studio.studio-ai-failure.ts.service.ia.indisponible.1b49af44:Service IA indisponible`,
+        title: $localize`:@@studio.studio-ai-failure.ts.la.preparation.de.la.demande.a.ete.inter.15137ea7:La préparation de la demande a été interrompue`,
+        message: $localize`:@@studio.studio-ai-failure.ts.le.fournisseur.ia.est.momentanement.indi.305c864a:Le fournisseur IA est momentanément indisponible. Aucun état n'a été calculé et rien n'a été enregistré.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.a.votre.i.8817db8a:Vous pouvez réessayer une fois, à votre initiative. Sans l'assistant, le concepteur d'états `
+          + $localize`:@@studio.studio-ai-failure.ts.reste.disponible.bdc6c5e7:reste disponible.`,
         stage: 'Préparation de la demande',
         retryable: true,
         showSuggestions: false,
@@ -326,11 +326,11 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
     case 'timeout':
       view = {
         kind, code,
-        eyebrow: 'Moteur de calcul · délai dépassé',
-        title: "Le calcul de l'état n'a pas abouti",
-        message: cleaned || "Le calcul de l'état a dépassé le délai imparti. Aucun résultat partiel n'est présenté.",
-        hint: 'Restreignez la période (une seule année, par exemple) ou le nombre de colonnes, puis relancez. '
-          + "Aucun nouvel appel à l'IA n'est nécessaire pour un état prêt à l'emploi.",
+        eyebrow: $localize`:@@studio.studio-ai-failure.ts.moteur.de.calcul.delai.depasse.30dcb5a2:Moteur de calcul · délai dépassé`,
+        title: $localize`:@@studio.studio-ai-failure.ts.le.calcul.de.l.etat.n.a.pas.abouti.dca8e126:Le calcul de l'état n'a pas abouti`,
+        message: cleaned || $localize`:@@studio.studio-ai-failure.ts.le.calcul.de.l.etat.a.depasse.le.delai.i.86c79e73:Le calcul de l'état a dépassé le délai imparti. Aucun résultat partiel n'est présenté.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.restreignez.la.periode.une.seule.annee.p.4daa7098:Restreignez la période (une seule année, par exemple) ou le nombre de colonnes, puis relancez. `
+          + $localize`:@@studio.studio-ai-failure.ts.aucun.nouvel.appel.a.l.ia.n.est.necessai.bed39f7b:Aucun nouvel appel à l'IA n'est nécessaire pour un état prêt à l'emploi.`,
         stage: "Exécution de l'état",
         retryable: true,
         showSuggestions: true
@@ -339,10 +339,10 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
     case 'disabled':
       view = {
         kind, code,
-        eyebrow: 'Fonction non disponible',
-        title: 'Les états assistés ne sont pas disponibles ici',
-        message: cleaned || "Cette fonction n'est pas activée sur ce serveur.",
-        hint: "Contactez l'administrateur de la plateforme, ou préparez votre état depuis le concepteur d'états.",
+        eyebrow: $localize`:@@studio.studio-ai-failure.ts.fonction.non.disponible.9f74ecbf:Fonction non disponible`,
+        title: $localize`:@@studio.studio-ai-failure.ts.les.etats.assistes.ne.sont.pas.disponibl.ff710646:Les états assistés ne sont pas disponibles ici`,
+        message: cleaned || $localize`:@@studio.studio-ai-failure.ts.cette.fonction.n.est.pas.activee.sur.ce.4ab80f08:Cette fonction n'est pas activée sur ce serveur.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.contactez.l.administrateur.de.la.platefo.16a42f23:Contactez l'administrateur de la plateforme, ou préparez votre état depuis le concepteur d'états.`,
         stage: 'Vérification de la configuration',
         retryable: false,
         showSuggestions: false
@@ -351,10 +351,10 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
     case 'session':
       view = {
         kind, code,
-        eyebrow: 'Session expirée',
-        title: 'Reconnectez-vous pour continuer',
-        message: cleaned || 'Votre session a expiré avant que la demande soit traitée.',
-        hint: 'Votre demande reste dans le fil : reconnectez-vous, puis renvoyez-la.',
+        eyebrow: $localize`:@@studio.studio-ai-failure.ts.session.expiree.6344d1b8:Session expirée`,
+        title: $localize`:@@studio.studio-ai-failure.ts.reconnectez.vous.pour.continuer.af454362:Reconnectez-vous pour continuer`,
+        message: cleaned || $localize`:@@studio.studio-ai-failure.ts.votre.session.a.expire.avant.que.la.dema.df944348:Votre session a expiré avant que la demande soit traitée.`,
+        hint: $localize`:@@studio.studio-ai-failure.ts.votre.demande.reste.dans.le.fil.reconnec.757ee80f:Votre demande reste dans le fil : reconnectez-vous, puis renvoyez-la.`,
         stage: 'Authentification',
         retryable: false,
         showSuggestions: false
@@ -364,10 +364,10 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
       if (status === 429) {
         view = {
           kind, code: explicitCode && CODE_KINDS[explicitCode] ? code : 'RATE_LIMITED',
-          eyebrow: 'Trop de demandes',
-          title: "L'assistant est momentanément saturé",
-          message: cleaned || "Trop de requêtes ont été envoyées à l'assistant en peu de temps.",
-          hint: 'Patientez quelques instants avant de réessayer. Rien n\'a été enregistré.',
+          eyebrow: $localize`:@@studio.studio-ai-failure.ts.trop.de.demandes.7afdec59:Trop de demandes`,
+          title: $localize`:@@studio.studio-ai-failure.ts.l.assistant.est.momentanement.sature.ab9bb9ce:L'assistant est momentanément saturé`,
+          message: cleaned || $localize`:@@studio.studio-ai-failure.ts.trop.de.requetes.ont.ete.envoyees.a.l.as.1a32856d:Trop de requêtes ont été envoyées à l'assistant en peu de temps.`,
+          hint: $localize`:@@studio.studio-ai-failure.ts.patientez.quelques.instants.avant.de.ree.e22fb2c3:Patientez quelques instants avant de réessayer. Rien n'a été enregistré.`,
           stage: 'Envoi de la demande',
           retryable: true,
           showSuggestions: false
@@ -375,10 +375,10 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
       } else if (status === null && isNetworkMessage(ctx.message)) {
         view = {
           kind, code: 'NETWORK_ERROR',
-          eyebrow: 'Connexion interrompue',
-          title: 'La liaison avec le serveur a été coupée',
-          message: 'La connexion a été interrompue avant la fin du traitement. Aucun résultat partiel n\'est présenté.',
-          hint: 'Vérifiez votre connexion, puis réessayez une fois.',
+          eyebrow: $localize`:@@studio.studio-ai-failure.ts.connexion.interrompue.696e9399:Connexion interrompue`,
+          title: $localize`:@@studio.studio-ai-failure.ts.la.liaison.avec.le.serveur.a.ete.coupee.3e87a2a2:La liaison avec le serveur a été coupée`,
+          message: $localize`:@@studio.studio-ai-failure.ts.la.connexion.a.ete.interrompue.avant.la.63da23b4:La connexion a été interrompue avant la fin du traitement. Aucun résultat partiel n'est présenté.`,
+          hint: $localize`:@@studio.studio-ai-failure.ts.verifiez.votre.connexion.puis.reessayez.0584b628:Vérifiez votre connexion, puis réessayez une fois.`,
           stage: 'Transport de la réponse',
           retryable: true,
           showSuggestions: false
@@ -386,10 +386,10 @@ export function classifyStudioFailure(ctx: StudioFailureContext): StudioFailureV
       } else {
         view = {
           kind, code,
-          eyebrow: 'Erreur de calcul',
-          title: "L'état n'a pas pu être calculé",
-          message: cleaned || "Une erreur est survenue pendant le calcul. Aucun résultat partiel n'est présenté et rien n'a été enregistré.",
-          hint: "Vous pouvez réessayer une fois. Si l'erreur persiste, transmettez le diagnostic au support.",
+          eyebrow: $localize`:@@studio.studio-ai-failure.ts.erreur.de.calcul.abb6ad49:Erreur de calcul`,
+          title: $localize`:@@studio.studio-ai-failure.ts.l.etat.n.a.pas.pu.etre.calcule.d961ea39:L'état n'a pas pu être calculé`,
+          message: cleaned || $localize`:@@studio.studio-ai-failure.ts.une.erreur.est.survenue.pendant.le.calcu.1dbaaab8:Une erreur est survenue pendant le calcul. Aucun résultat partiel n'est présenté et rien n'a été enregistré.`,
+          hint: $localize`:@@studio.studio-ai-failure.ts.vous.pouvez.reessayer.une.fois.si.l.erre.0e53cd7d:Vous pouvez réessayer une fois. Si l'erreur persiste, transmettez le diagnostic au support.`,
           stage: status !== null && status >= 500 ? 'Traitement serveur' : "Exécution de l'état",
           retryable: true,
           showSuggestions: !!ctx.fromReportTool

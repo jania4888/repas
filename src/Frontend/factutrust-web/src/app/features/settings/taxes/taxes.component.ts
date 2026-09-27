@@ -553,9 +553,9 @@ export class TaxesComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Taxes et TVA' }
+    { label: $localize`:@@settings.taxes.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.taxes.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.taxes.ts.taxes.et.tva.08d48b76:Taxes et TVA` }
   ];
 
   loading = signal(false);
@@ -571,22 +571,22 @@ export class TaxesComponent implements OnInit, OnDestroy {
   readonly isEditingSystemTax = computed(() => !!this.editingTax()?.isSystem);
 
   valueTypeOptions = [
-    { label: 'Pourcentage', value: TaxValueType.Percentage },
-    { label: 'Montant fixe (TND)', value: TaxValueType.FixedAmount }
+    { label: $localize`:@@settings.taxes.ts.pourcentage.e34218e3:Pourcentage`, value: TaxValueType.Percentage },
+    { label: $localize`:@@settings.taxes.ts.montant.fixe.tnd.1ef73ffc:Montant fixe (TND)`, value: TaxValueType.FixedAmount }
   ];
 
   contextOptions = [
-    { label: 'Tous', value: TaxContext.All },
-    { label: 'Ventes', value: TaxContext.Sales },
-    { label: 'Achats', value: TaxContext.Purchases }
+    { label: $localize`:@@settings.taxes.ts.tous.b97ae3b4:Tous`, value: TaxContext.All },
+    { label: $localize`:@@settings.taxes.ts.ventes.9087fc4f:Ventes`, value: TaxContext.Sales },
+    { label: $localize`:@@settings.taxes.ts.achats.ee5b078c:Achats`, value: TaxContext.Purchases }
   ];
 
   private allTypeOptions = [
     { label: 'TVA', value: TaxType.VAT },
-    { label: 'Timbre', value: TaxType.Stamp },
+    { label: $localize`:@@settings.taxes.ts.timbre.8deaa200:Timbre`, value: TaxType.Stamp },
     { label: 'FODEC', value: TaxType.FODEC },
-    { label: 'Droit de consommation', value: TaxType.Consumption },
-    { label: 'Autre', value: TaxType.Other }
+    { label: $localize`:@@settings.taxes.ts.droit.de.consommation.97da36c0:Droit de consommation`, value: TaxType.Consumption },
+    { label: $localize`:@@settings.taxes.ts.autre.43dacf9e:Autre`, value: TaxType.Other }
   ];
 
   typeOptions = computed(() => {
@@ -641,7 +641,7 @@ export class TaxesComponent implements OnInit, OnDestroy {
           if (res.success && res.data) {
             this.taxes.set(res.data);
           } else {
-            this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Chargement impossible' });
+            this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || $localize`:@@settings.taxes.ts.chargement.impossible.4c82ffbe:Chargement impossible` });
           }
           this.loading.set(false);
         },
@@ -650,7 +650,7 @@ export class TaxesComponent implements OnInit, OnDestroy {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
-            detail: this.errorHandler.extractErrorMessage(err) || 'Impossible de charger les taxes'
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.taxes.ts.impossible.de.charger.les.taxes.ba2a04d5:Impossible de charger les taxes`
           });
           this.loading.set(false);
         }
@@ -731,11 +731,11 @@ export class TaxesComponent implements OnInit, OnDestroy {
           next: (res) => {
             this.saving.set(false);
             if (res.success && res.data) {
-              this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: res.message || 'Taxe mise à jour' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: res.message || $localize`:@@settings.taxes.ts.taxe.mise.a.jour.91630268:Taxe mise à jour` });
               this.dialogVisible = false;
               this.loadTaxes();
             } else {
-              this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Échec' });
+              this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || $localize`:@@settings.taxes.ts.echec.0ff45fa6:Échec` });
             }
           },
           error: (err) => {
@@ -743,7 +743,7 @@ export class TaxesComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'error',
               summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
-              detail: this.errorHandler.extractErrorMessage(err) || 'Échec de la mise à jour'
+              detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.taxes.ts.echec.de.la.mise.a.jour.4b4c25e2:Échec de la mise à jour`
             });
           }
         });
@@ -755,11 +755,11 @@ export class TaxesComponent implements OnInit, OnDestroy {
           next: (res) => {
             this.saving.set(false);
             if (res.success && res.data) {
-              this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: res.message || 'Taxe créée' });
+              this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: res.message || $localize`:@@settings.taxes.ts.taxe.creee.e25646c1:Taxe créée` });
               this.dialogVisible = false;
               this.loadTaxes();
             } else {
-              this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Échec' });
+              this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || $localize`:@@settings.taxes.ts.echec.0ff45fa6:Échec` });
             }
           },
           error: (err) => {
@@ -767,7 +767,7 @@ export class TaxesComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'error',
               summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
-              detail: this.errorHandler.extractErrorMessage(err) || 'Échec de la création'
+              detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.taxes.ts.echec.de.la.creation.4fa1704e:Échec de la création`
             });
           }
         });
@@ -785,7 +785,7 @@ export class TaxesComponent implements OnInit, OnDestroy {
             this.taxes.update((list) => list.map((t) => (t.id === tax.id ? res.data! : t)));
             this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: $localize`:@@taxes.component.detail.État mis à j:État mis à jour` });
           } else {
-            this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Échec' });
+            this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || $localize`:@@settings.taxes.ts.echec.0ff45fa6:Échec` });
             this.loadTaxes();
           }
         },
@@ -793,7 +793,7 @@ export class TaxesComponent implements OnInit, OnDestroy {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
-            detail: this.errorHandler.extractErrorMessage(err) || 'Échec'
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.taxes.ts.echec.0ff45fa6:Échec`
           });
           this.loadTaxes();
         }
@@ -802,8 +802,8 @@ export class TaxesComponent implements OnInit, OnDestroy {
 
   confirmDelete(tax: Tax): void {
     this.confirmation.confirm({
-      header: 'Supprimer la taxe',
-      message: `Supprimer « ${tax.name} » ? Cette action est irréversible.`,
+      header: $localize`:@@settings.taxes.ts.supprimer.la.taxe.a8d300f6:Supprimer la taxe`,
+      message: $localize`:@@settings.taxes.ts.supprimer.name.cette.action.est.irrevers.6e402fb0:Supprimer « ${tax.name}:name: » ? Cette action est irréversible.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@taxes.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@taxes.component.rejectLabel.Annuler:Annuler`,
@@ -818,14 +818,14 @@ export class TaxesComponent implements OnInit, OnDestroy {
                 this.toast.add({ severity: 'success', summary: $localize`:@@taxes.component.summary.Succès:Succès`, detail: $localize`:@@taxes.component.detail.Taxe supprim:Taxe supprimée` });
                 this.loadTaxes();
               } else {
-                this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Échec' });
+                this.toast.add({ severity: 'error', summary: $localize`:@@taxes.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || $localize`:@@settings.taxes.ts.echec.0ff45fa6:Échec` });
               }
             },
             error: (err) => {
               this.toast.add({
                 severity: 'error',
                 summary: $localize`:@@taxes.component.summary.Erreur:Erreur`,
-                detail: this.errorHandler.extractErrorMessage(err) || 'Échec de la suppression'
+                detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.taxes.ts.echec.de.la.suppression.bfcbda57:Échec de la suppression`
               });
             }
           });

@@ -413,7 +413,7 @@ export class JournalSummaryComponent implements OnInit {
         },
         error: err => {
           this.loading.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal-summary.ts.erreur.reseau.0683007f:Erreur réseau`));
         }
       });
   }
@@ -439,7 +439,7 @@ export class JournalSummaryComponent implements OnInit {
         },
         error: err => {
           this.exporting.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal-summary.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
         }
       });
   }

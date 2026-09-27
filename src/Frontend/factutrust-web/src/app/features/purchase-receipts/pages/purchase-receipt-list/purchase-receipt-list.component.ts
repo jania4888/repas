@@ -347,11 +347,11 @@ export class PurchaseReceiptListComponent implements OnInit, OnDestroy {
     const s = this.summary();
     const currency = s?.currency ?? 'TND';
     return [
-      { label: 'Réceptions', value: s?.count, format: 'number', icon: 'pi-box', tone: 'primary' },
-      { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
-      { label: 'Validés', value: s?.validatedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Brouillons', value: s?.draftCount, format: 'number', icon: 'pi-file-edit', tone: 'amber' }
+      { label: $localize`:@@purchase-receipts.purchase-receipt-list.ts.receptions.c22fafbd:Réceptions`, value: s?.count, format: 'number', icon: 'pi-box', tone: 'primary' },
+      { label: $localize`:@@purchase-receipts.purchase-receipt-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@purchase-receipts.purchase-receipt-list.ts.total.ht.2ca17ae6:Total HT`, value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+      { label: $localize`:@@purchase-receipts.purchase-receipt-list.ts.valides.f9664fcf:Validés`, value: s?.validatedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@purchase-receipts.purchase-receipt-list.ts.brouillons.a55f3cd9:Brouillons`, value: s?.draftCount, format: 'number', icon: 'pi-file-edit', tone: 'amber' }
     ];
   });
 
@@ -364,9 +364,9 @@ export class PurchaseReceiptListComponent implements OnInit, OnDestroy {
   pageSize = 20;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Achats' },
-    { label: 'Bons de réception' }
+    { label: $localize`:@@purchase-receipts.purchase-receipt-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-list.ts.achats.ee5b078c:Achats` },
+    { label: $localize`:@@purchase-receipts.purchase-receipt-list.ts.bons.de.reception.84d6ebb5:Bons de réception` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [

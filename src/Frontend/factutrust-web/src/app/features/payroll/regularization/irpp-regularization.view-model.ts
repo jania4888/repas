@@ -88,7 +88,7 @@ export function buildDetailRows(months: IrppRegularizationMonth[]): Regularizati
   }));
 
   rows.push({
-    label: 'Total',
+    label: $localize`:@@payroll.irpp-regularization.view-model.ts.total.b25928c6:Total`,
     netTaxable: sum(months, m => m.monthlyNetTaxable),
     irpp: sum(months, m => m.irpp),
     css: sum(months, m => m.css),
@@ -101,12 +101,12 @@ export function buildDetailRows(months: IrppRegularizationMonth[]): Regularizati
 /** Carte « Récapitulatif » : du cumul jusqu’à l’écart à porter. */
 export function buildSummaryRows(preview: IrppRegularizationPreview): RegularizationSummaryRow[] {
   return [
-    { label: 'Cumul net imposable', value: preview.cumulNetTaxable },
-    { label: 'IRPP dû sur le cumul', value: preview.irppDue },
-    { label: 'IRPP déjà retenu', value: preview.cumulIrppWithheld },
-    { label: 'Écart IRPP', value: preview.irppDelta, separator: true },
-    { label: 'Écart CSS', value: preview.cssDelta },
-    { label: 'Régularisation à porter', value: preview.totalDelta, highlight: true, separator: true }
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.cumul.net.imposable.c17a5048:Cumul net imposable`, value: preview.cumulNetTaxable },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.irpp.du.sur.le.cumul.43a5b88d:IRPP dû sur le cumul`, value: preview.irppDue },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.irpp.deja.retenu.52296423:IRPP déjà retenu`, value: preview.cumulIrppWithheld },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.ecart.irpp.b4e086c7:Écart IRPP`, value: preview.irppDelta, separator: true },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.ecart.css.367c8a47:Écart CSS`, value: preview.cssDelta },
+    { label: $localize`:@@payroll.irpp-regularization.view-model.ts.regularisation.a.porter.1cf4ad8a:Régularisation à porter`, value: preview.totalDelta, highlight: true, separator: true }
   ];
 }
 

@@ -329,11 +329,11 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
         const s = this.summary();
         const currency = s?.currency ?? 'TND';
         return [
-            { label: 'Commandes', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
-            { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-            { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
-            { label: 'Reçus', value: s?.receivedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-            { label: 'En attente', value: s?.pendingCount, format: 'number', icon: 'pi-clock', tone: 'amber' }
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.commandes.17275970:Commandes`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.total.ht.2ca17ae6:Total HT`, value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.recus.51ec6e5e:Reçus`, value: s?.receivedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+            { label: $localize`:@@purchase-orders.purchase-order-list.ts.en.attente.5231158f:En attente`, value: s?.pendingCount, format: 'number', icon: 'pi-clock', tone: 'amber' }
         ];
     });
 
@@ -346,9 +346,9 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
     pageSize = 20;
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Achats' },
-        { label: 'Bons de commande' }
+        { label: $localize`:@@purchase-orders.purchase-order-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@purchase-orders.purchase-order-list.ts.achats.ee5b078c:Achats` },
+        { label: $localize`:@@purchase-orders.purchase-order-list.ts.bons.de.commande.aae719f0:Bons de commande` }
     ];
 
     skeletonColumns: SkeletonColumn[] = [
@@ -433,7 +433,7 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
                 this.toastService.add({
                     severity: 'error',
                     summary: $localize`:@@purchase-order-list.component.summary.Erreur:Erreur`,
-                    detail: error?.error?.errors?.[0] || 'Impossible de charger les commandes'
+                    detail: error?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-list.ts.impossible.de.charger.les.commandes.3f390147:Impossible de charger les commandes`
                 });
             }
         });

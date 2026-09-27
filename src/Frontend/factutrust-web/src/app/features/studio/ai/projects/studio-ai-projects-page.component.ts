@@ -223,7 +223,7 @@ export class StudioAiProjectsPageComponent {
   readonly labels = STUDIO_AI_LABELS.history;
   readonly retryLabel = STUDIO_AI_LABELS.conversation.retry;
   readonly replayLabels = STUDIO_AI_LABELS.replay;
-  readonly breadcrumbs = studioBreadcrumb({ label: 'Assistant IA', route: '/studio/ai' }, { label: STUDIO_AI_LABELS.history.title });
+  readonly breadcrumbs = studioBreadcrumb({ label: $localize`:@@studio.studio-ai-projects-page.ts.assistant.ia.94f6f208:Assistant IA`, route: '/studio/ai' }, { label: STUDIO_AI_LABELS.history.title });
   readonly pageSize = STUDIO_AI_PROJECTS_PAGE_SIZE;
 
   readonly statusOptions: FilterOption<StudioAiPlanStatus>[] = [

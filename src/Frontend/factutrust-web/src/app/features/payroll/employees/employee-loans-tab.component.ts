@@ -22,10 +22,10 @@ import { ConfirmationService } from '@core/services/confirmation.service';
 import { PayrollSectionComponent, PayrollAmountPipe } from '../shared';
 
 const MONTH_OPTIONS = [
-  { label: 'Janvier', value: 1 }, { label: 'Février', value: 2 }, { label: 'Mars', value: 3 },
-  { label: 'Avril', value: 4 }, { label: 'Mai', value: 5 }, { label: 'Juin', value: 6 },
-  { label: 'Juillet', value: 7 }, { label: 'Août', value: 8 }, { label: 'Septembre', value: 9 },
-  { label: 'Octobre', value: 10 }, { label: 'Novembre', value: 11 }, { label: 'Décembre', value: 12 }
+  { label: $localize`:@@payroll.employee-loans-tab.ts.janvier.7a32ae0f:Janvier`, value: 1 }, { label: $localize`:@@payroll.employee-loans-tab.ts.fevrier.63fc1803:Février`, value: 2 }, { label: $localize`:@@payroll.employee-loans-tab.ts.mars.1778011d:Mars`, value: 3 },
+  { label: $localize`:@@payroll.employee-loans-tab.ts.avril.4efeee46:Avril`, value: 4 }, { label: $localize`:@@payroll.employee-loans-tab.ts.mai.afe526a6:Mai`, value: 5 }, { label: $localize`:@@payroll.employee-loans-tab.ts.juin.8b1e84b6:Juin`, value: 6 },
+  { label: $localize`:@@payroll.employee-loans-tab.ts.juillet.e8e0920c:Juillet`, value: 7 }, { label: $localize`:@@payroll.employee-loans-tab.ts.aout.460b6696:Août`, value: 8 }, { label: $localize`:@@payroll.employee-loans-tab.ts.septembre.08d23f31:Septembre`, value: 9 },
+  { label: $localize`:@@payroll.employee-loans-tab.ts.octobre.0ed28485:Octobre`, value: 10 }, { label: $localize`:@@payroll.employee-loans-tab.ts.novembre.632580af:Novembre`, value: 11 }, { label: $localize`:@@payroll.employee-loans-tab.ts.decembre.03bcd9b0:Décembre`, value: 12 }
 ];
 
 @Component({
@@ -254,8 +254,8 @@ export class EmployeeLoansTabComponent implements OnInit {
   confirmCancel(loan: EmployeeLoan): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Annuler le prêt « ${loan.reference} » ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.employee-loans-tab.ts.annuler.le.pret.reference.04f467ce:Annuler le prêt « ${loan.reference}:reference: » ?`,
+      header: $localize`:@@payroll.employee-loans-tab.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@employee-loans-tab.component.acceptLabel.Annuler_le_pr_t:Annuler le prêt`,
       rejectLabel: $localize`:@@employee-loans-tab.component.rejectLabel.Fermer:Fermer`,
       acceptButtonStyleClass: 'btn-danger',

@@ -318,15 +318,15 @@ export class StockEntryFormComponent implements OnInit {
     productsLoaded = false;
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Gestion du Stock', route: '/stock' },
-        { label: 'Nouvelle Entrée' }
+        { label: $localize`:@@stock.stock-entry-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@stock.stock-entry-form.ts.gestion.du.stock.72df5586:Gestion du Stock`, route: '/stock' },
+        { label: $localize`:@@stock.stock-entry-form.ts.nouvelle.entree.cdf0001c:Nouvelle Entrée` }
     ];
 
     entryReasons = [
-        { label: 'Achat hors réception', value: MovementReason.Purchase },
-        { label: 'Retour Client', value: MovementReason.CustomerReturn },
-        { label: 'Stock Initial', value: MovementReason.InitialStock }
+        { label: $localize`:@@stock.stock-entry-form.ts.achat.hors.reception.09085b94:Achat hors réception`, value: MovementReason.Purchase },
+        { label: $localize`:@@stock.stock-entry-form.ts.retour.client.3f562cfa:Retour Client`, value: MovementReason.CustomerReturn },
+        { label: $localize`:@@stock.stock-entry-form.ts.stock.initial.3a397b7d:Stock Initial`, value: MovementReason.InitialStock }
     ];
 
     form: FormGroup = this.fb.group({
@@ -409,7 +409,7 @@ export class StockEntryFormComponent implements OnInit {
                     this.router.navigate(['/stock']);
                 } else {
                     this.toastService.add({
-                        severity: 'error', summary: $localize`:@@stock-entry-form.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || 'Erreur'
+                        severity: 'error', summary: $localize`:@@stock-entry-form.component.summary.Erreur:Erreur`, detail: res.errors?.join(', ') || $localize`:@@stock.stock-entry-form.ts.erreur.ab546c23:Erreur`
                     });
                     this.saving.set(false);
                 }
@@ -419,7 +419,7 @@ export class StockEntryFormComponent implements OnInit {
                 this.toastService.add({
                     severity: 'error',
                     summary: $localize`:@@stock-entry-form.component.summary.Erreur:Erreur`,
-                    detail: errorMessage || 'Une erreur est survenue'
+                    detail: errorMessage || $localize`:@@stock.stock-entry-form.ts.une.erreur.est.survenue.0419f56e:Une erreur est survenue`
                 });
                 this.errorHandler.logError('Stock entry failed', err);
                 this.saving.set(false);

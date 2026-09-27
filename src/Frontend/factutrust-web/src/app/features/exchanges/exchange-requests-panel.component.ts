@@ -82,13 +82,13 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
   @Output() uploaded = new EventEmitter<ExchangeDocument>();
 
   readonly filters: { id: RequestListFilter; label: string }[] = [
-    { id: 'all', label: 'Toutes' },
-    { id: 'active', label: 'Actives' },
-    { id: 'open', label: 'Ouvertes' },
-    { id: 'inProgress', label: 'En cours' },
-    { id: 'waiting', label: 'En attente' },
-    { id: 'resolved', label: 'Résolues' },
-    { id: 'closed', label: 'Clôturées' }
+    { id: 'all', label: $localize`:@@exchanges.exchange-requests-panel.ts.toutes.c5f641e4:Toutes` },
+    { id: 'active', label: $localize`:@@exchanges.exchange-requests-panel.ts.actives.f13a33c0:Actives` },
+    { id: 'open', label: $localize`:@@exchanges.exchange-requests-panel.ts.ouvertes.b8fe259a:Ouvertes` },
+    { id: 'inProgress', label: $localize`:@@exchanges.exchange-requests-panel.ts.en.cours.bc9b533a:En cours` },
+    { id: 'waiting', label: $localize`:@@exchanges.exchange-requests-panel.ts.en.attente.5231158f:En attente` },
+    { id: 'resolved', label: $localize`:@@exchanges.exchange-requests-panel.ts.resolues.9a8f8098:Résolues` },
+    { id: 'closed', label: $localize`:@@exchanges.exchange-requests-panel.ts.cloturees.d73cc147:Clôturées` }
   ];
 
   readonly filter = signal<RequestListFilter>('all');
@@ -206,7 +206,7 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
   createRequest(): void {
     const title = this.newTitle().trim();
     if (!title) {
-      this.titleError.set('Le titre est obligatoire');
+      this.titleError.set($localize`:@@exchanges.exchange-requests-panel.ts.le.titre.est.obligatoire.7dc17696:Le titre est obligatoire`);
       return;
     }
     if (!this.thread || this.creating()) return;
@@ -226,7 +226,7 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
             this.toast.add({
               severity: 'error',
               summary: $localize`:@@exchange-requests-panel.component.summary.Demande:Demande`,
-              detail: r.message || 'Impossible de créer la demande'
+              detail: r.message || $localize`:@@exchanges.exchange-requests-panel.ts.impossible.de.creer.la.demande.8937c995:Impossible de créer la demande`
             });
             return;
           }
@@ -277,8 +277,8 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
   changeStatus(req: ExchangeRequest, status: ExchangeRequestStatus): void {
     if (status === 'Closed') {
       this.confirm.confirm({
-        header: `Clôturer la demande #${req.number}`,
-        message: 'Cette action est irréversible. La demande ne pourra plus changer de statut.',
+        header: $localize`:@@exchanges.exchange-requests-panel.ts.cloturer.la.demande.number.2bd80229:Clôturer la demande #${req.number}:number:`,
+        message: $localize`:@@exchanges.exchange-requests-panel.ts.cette.action.est.irreversible.la.demande.f15b5197:Cette action est irréversible. La demande ne pourra plus changer de statut.`,
         acceptLabel: $localize`:@@exchange-requests-panel.component.acceptLabel.Clôturer:Clôturer`,
         rejectLabel: $localize`:@@exchange-requests-panel.component.rejectLabel.Annuler:Annuler`,
         acceptButtonStyleClass: 'btn-danger',
@@ -300,7 +300,7 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@exchange-requests-panel.component.summary.Assignation:Assignation`,
-            detail: r.message || 'Impossible d’assigner la demande'
+            detail: r.message || $localize`:@@exchanges.exchange-requests-panel.ts.impossible.d.assigner.la.demande.e4bb5479:Impossible d’assigner la demande`
           });
           return;
         }
@@ -331,7 +331,7 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@exchange-requests-panel.component.summary.Pi_ce_jointe:Pièce jointe`,
-            detail: r.message || 'Upload impossible'
+            detail: r.message || $localize`:@@exchanges.exchange-requests-panel.ts.upload.impossible.2976179d:Upload impossible`
           });
           return;
         }
@@ -380,7 +380,7 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@exchange-requests-panel.component.summary.Commentaire:Commentaire`,
-            detail: r.message || 'Impossible d’ajouter le commentaire'
+            detail: r.message || $localize`:@@exchanges.exchange-requests-panel.ts.impossible.d.ajouter.le.commentaire.b97f1011:Impossible d’ajouter le commentaire`
           });
           return;
         }
@@ -408,14 +408,14 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@exchange-requests-panel.component.summary.Statut:Statut`,
-            detail: r.message || 'Impossible de mettre à jour le statut'
+            detail: r.message || $localize`:@@exchanges.exchange-requests-panel.ts.impossible.de.mettre.a.jour.le.statut.12e6a130:Impossible de mettre à jour le statut`
           });
           return;
         }
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@exchange-requests-panel.component.summary.Statut:Statut`,
-          detail: `Demande ${requestStatusLabel(status).toLowerCase()}`
+          detail: $localize`:@@exchanges.exchange-requests-panel.ts.demande.tolowercase.44a043d7:Demande ${requestStatusLabel(status).toLowerCase()}:toLowerCase:`
         });
         this.statusChanged.emit(r.data);
       },
@@ -445,7 +445,7 @@ export class ExchangeRequestsPanelComponent implements OnChanges {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@exchange-requests-panel.component.summary.Commentaires:Commentaires`,
-            detail: r.message || 'Impossible de charger les commentaires'
+            detail: r.message || $localize`:@@exchanges.exchange-requests-panel.ts.impossible.de.charger.les.commentaires.194ee1cf:Impossible de charger les commentaires`
           });
           return;
         }

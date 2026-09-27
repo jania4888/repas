@@ -714,9 +714,9 @@ export class ClientDetailComponent implements OnInit {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const cli = this.client();
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Clients', route: '/clients' },
-      { label: cli?.name || 'Client' }
+      { label: $localize`:@@clients.client-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@clients.client-detail.ts.clients.28e22fe3:Clients`, route: '/clients' },
+      { label: cli?.name || $localize`:@@clients.client-detail.ts.client.1bdd79b1:Client` }
     ];
   });
 
@@ -897,8 +897,8 @@ export class ClientDetailComponent implements OnInit {
     if (!client) return;
 
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir supprimer le client "${client.name}" ? Cette action est irréversible.`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@clients.client-detail.ts.etes.vous.sur.de.vouloir.supprimer.le.cl.df704d5e:Êtes-vous sûr de vouloir supprimer le client "${client.name}:name:" ? Cette action est irréversible.`,
+      header: $localize`:@@clients.client-detail.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@client-detail.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@client-detail.component.rejectLabel.Annuler:Annuler`,
@@ -926,7 +926,7 @@ export class ClientDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@client-detail.component.summary.Erreur:Erreur`,
-            detail: response.errors[0] || 'Impossible de supprimer le client'
+            detail: response.errors[0] || $localize`:@@clients.client-detail.ts.impossible.de.supprimer.le.client.bd4e32c4:Impossible de supprimer le client`
           });
         }
       },
@@ -934,8 +934,8 @@ export class ClientDetailComponent implements OnInit {
         const errorMessage = this.errorHandler.extractErrorMessage(error);
         this.errorHandler.logError('Failed to delete client', error);
         this.confirmationService.alert({
-          message: errorMessage || 'Impossible de supprimer le client',
-          header: 'Impossible de supprimer',
+          message: errorMessage || $localize`:@@clients.client-detail.ts.impossible.de.supprimer.le.client.bd4e32c4:Impossible de supprimer le client`,
+          header: $localize`:@@clients.client-detail.ts.impossible.de.supprimer.0300380e:Impossible de supprimer`,
           icon: 'pi pi-exclamation-triangle'
         });
       }

@@ -264,7 +264,7 @@ export class PurchasesReportsService {
           return invDate >= weekStart && invDate <= weekEnd;
         }).length;
         result.push({
-          label: `Sem. ${i + 1}`,
+          label: $localize`:@@reports.purchases-reports.ts.sem.p.884bf8ca:Sem. ${i + 1}:p:`,
           labelShort: `S${i + 1}`,
           amount,
           invoiceCount,

@@ -241,8 +241,8 @@ export class SalesOrderListComponent implements OnInit {
   readonly canCreate = computed(() => this.auth.hasPermission(PERMISSIONS.salesOrders.create));
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Ventes' },
-    { label: 'Commandes clients' }
+    { label: $localize`:@@sales-orders.sales-order-list.ts.ventes.9087fc4f:Ventes` },
+    { label: $localize`:@@sales-orders.sales-order-list.ts.commandes.clients.928f824a:Commandes clients` }
   ];
 
   readonly statusOptions: StatusOption[] = [
@@ -276,19 +276,19 @@ export class SalesOrderListComponent implements OnInit {
     if (!s) return [];
 
     return [
-      { label: 'Commandes', value: s.count, format: 'number', icon: 'pi-shopping-cart' },
-      { label: 'Total HT', value: s.totalHt, format: 'currency', currency: s.currency },
-      { label: 'Total TTC', value: s.totalTtc, format: 'currency', currency: s.currency },
+      { label: $localize`:@@sales-orders.sales-order-list.ts.commandes.17275970:Commandes`, value: s.count, format: 'number', icon: 'pi-shopping-cart' },
+      { label: $localize`:@@sales-orders.sales-order-list.ts.total.ht.2ca17ae6:Total HT`, value: s.totalHt, format: 'currency', currency: s.currency },
+      { label: $localize`:@@sales-orders.sales-order-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s.totalTtc, format: 'currency', currency: s.currency },
       {
-        label: 'Carnet',
+        label: $localize`:@@sales-orders.sales-order-list.ts.carnet.5e843afe:Carnet`,
         value: s.backlogAmountHt,
         format: 'currency',
         currency: s.currency,
         tone: 'amber',
         icon: 'pi-clock',
-        hint: 'Reste à livrer HT'
+        hint: $localize`:@@sales-orders.sales-order-list.ts.reste.a.livrer.ht.7864f5dd:Reste à livrer HT`
       },
-      { label: 'En cours', value: s.openCount, format: 'number', tone: 'cyan' }
+      { label: $localize`:@@sales-orders.sales-order-list.ts.en.cours.bc9b533a:En cours`, value: s.openCount, format: 'number', tone: 'cyan' }
     ];
   });
 
@@ -319,7 +319,7 @@ export class SalesOrderListComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.showError(err, 'Impossible de charger les commandes');
+        this.showError(err, $localize`:@@sales-orders.sales-order-list.ts.impossible.de.charger.les.commandes.3f390147:Impossible de charger les commandes`);
         this.errorHandler.logError('Failed to load sales orders', err);
         this.orders.set([]);
         this.totalCount.set(0);

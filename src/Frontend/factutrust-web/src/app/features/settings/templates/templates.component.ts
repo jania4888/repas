@@ -170,9 +170,9 @@ export class DocumentTemplatesComponent implements OnInit, OnDestroy {
 
   readonly tabs = DOCUMENT_TYPE_TABS;
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Modèles de documents' }
+    { label: $localize`:@@settings.templates.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.templates.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.templates.ts.modeles.de.documents.4875ffe8:Modèles de documents` }
   ];
 
   loading = signal(true);
@@ -299,7 +299,7 @@ export class DocumentTemplatesComponent implements OnInit, OnDestroy {
         this.saving.set(false);
         if (res.success && res.data) {
           this.preferences.update(m => ({ ...m, [type]: res.data!.templateKey }));
-          this.toast.add({ severity: 'success', summary: $localize`:@@templates.component.summary.Mod_le_enregistr:Modèle enregistré`, detail: `Modèle « ${res.data.templateName} » appliqué.` });
+          this.toast.add({ severity: 'success', summary: $localize`:@@templates.component.summary.Mod_le_enregistr:Modèle enregistré`, detail: $localize`:@@settings.templates.ts.modele.templatename.applique.176ebd2c:Modèle « ${res.data.templateName}:templateName: » appliqué.` });
         } else {
           this.toast.add({ severity: 'error', summary: $localize`:@@templates.component.summary.Erreur:Erreur`, detail: res.message ?? $localize`:@@ui.tern.echec.de.l.enregistrement.92ba0d:Échec de l'enregistrement.` });
         }

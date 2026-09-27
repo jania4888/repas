@@ -73,7 +73,7 @@ export const INVOICES_ROUTES: Routes = [
     path: ':id/credit-note',
     canActivate: [permissionGuard],
     loadComponent: () => import('./invoice-wizard/invoice-wizard.component').then(m => m.InvoiceWizardComponent),
-    title: "Facture d'avoir - InstaFact",
+    title: $localize`:@@invoices.invoices.routes.ts.facture.d.avoir.instafact.66f2c9ee:Facture d'avoir - InstaFact`,
     data: {
       fullWidth: true,
       hideLayout: true,

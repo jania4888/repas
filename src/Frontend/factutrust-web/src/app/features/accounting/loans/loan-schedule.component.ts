@@ -156,7 +156,7 @@ export class LoanScheduleComponent implements OnInit {
 
   load(): void {
     if (!this.loanId) {
-      this.error.set('Emprunt introuvable.');
+      this.error.set($localize`:@@accounting.loan-schedule.ts.emprunt.introuvable.55fc0f0a:Emprunt introuvable.`);
       return;
     }
     this.error.set(null);
@@ -169,7 +169,7 @@ export class LoanScheduleComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.loan-schedule.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -185,7 +185,7 @@ export class LoanScheduleComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.loan-schedule.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

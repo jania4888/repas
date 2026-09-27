@@ -153,11 +153,11 @@ export class PurchasesAnalyticsService {
 
     let message: string;
     if (direction === 'up') {
-      message = `Vos dépenses ont augmenté de ${Math.abs(changePercent).toFixed(1)} % ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.purchases-analytics.ts.vos.depenses.ont.augmente.de.tofixed.per.9c5d089b:Vos dépenses ont augmenté de ${Math.abs(changePercent).toFixed(1)}:toFixed: % ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     } else if (direction === 'down') {
-      message = `Vos dépenses ont diminué de ${Math.abs(changePercent).toFixed(1)} % ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.purchases-analytics.ts.vos.depenses.ont.diminue.de.tofixed.peri.8ee99686:Vos dépenses ont diminué de ${Math.abs(changePercent).toFixed(1)}:toFixed: % ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     } else {
-      message = `Vos dépenses sont stables ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.purchases-analytics.ts.vos.depenses.sont.stables.periodlabel.pa.90f1d63b:Vos dépenses sont stables ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     }
 
     return { currentValue: current, previousValue: previous, changePercent, changeDirection: direction, message };
@@ -347,8 +347,8 @@ export class PurchasesAnalyticsService {
           alerts.push({
             type: 'danger',
             icon: 'pi-exclamation-circle',
-            title: 'Factures en retard',
-            message: `${overdueInvoices.length} facture(s) en retard concernant ${overdueSuppliers.size} fournisseur(s).`
+            title: $localize`:@@reports.purchases-analytics.ts.factures.en.retard.7fc4c2c8:Factures en retard`,
+            message: $localize`:@@reports.purchases-analytics.ts.length.facture.s.en.retard.concernant.si.4be2dacd:${overdueInvoices.length}:length: facture(s) en retard concernant ${overdueSuppliers.size}:size: fournisseur(s).`
           });
         }
 
@@ -428,16 +428,16 @@ export class PurchasesAnalyticsService {
           alerts.push({
             type: 'warning',
             icon: 'pi-exclamation-triangle',
-            title: 'Taux de conversion faible',
-            message: `Seulement ${conversionRate.toFixed(1)} % de vos bons de commande sont passés en facture. Vérifiez les commandes en attente.`
+            title: $localize`:@@reports.purchases-analytics.ts.taux.de.conversion.faible.eda966dc:Taux de conversion faible`,
+            message: $localize`:@@reports.purchases-analytics.ts.seulement.tofixed.de.vos.bons.de.command.1654c482:Seulement ${conversionRate.toFixed(1)}:toFixed: % de vos bons de commande sont passés en facture. Vérifiez les commandes en attente.`
           });
         }
         if (conversionRate >= 70 && totalOrders > 0) {
           alerts.push({
             type: 'success',
             icon: 'pi-check-circle',
-            title: 'Bon taux de conversion',
-            message: `${conversionRate.toFixed(1)} % de vos bons de commande ont été facturés.`
+            title: $localize`:@@reports.purchases-analytics.ts.bon.taux.de.conversion.209bee0b:Bon taux de conversion`,
+            message: $localize`:@@reports.purchases-analytics.ts.tofixed.de.vos.bons.de.commande.ont.ete.a068af2e:${conversionRate.toFixed(1)}:toFixed: % de vos bons de commande ont été facturés.`
           });
         }
 

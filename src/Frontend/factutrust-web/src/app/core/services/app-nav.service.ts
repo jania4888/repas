@@ -207,7 +207,7 @@ export class AppNavService {
     if (clients.length > 0) {
       dossierChildren.push({
         id: CONTEXT_NAV_ID.allDossiers,
-        label: 'Voir tous les dossiers',
+        label: $localize`:@@core.app-nav.ts.voir.tous.les.dossiers.1c370e1e:Voir tous les dossiers`,
         route: '/firm/clients',
         icon: 'fa-solid fa-list'
       });
@@ -238,14 +238,14 @@ export class AppNavService {
       dashboard,
       {
         id: CONTEXT_NAV_ID.myDossiers,
-        label: 'Mes dossiers clients',
+        label: $localize`:@@core.app-nav.ts.mes.dossiers.clients.7ad4d1c3:Mes dossiers clients`,
         icon: 'fa-solid fa-briefcase',
         children: dossierChildren.length
           ? dossierChildren
           : [{
               label: this.auth.isFirmAccountant()
-                ? 'Aucun dossier affecté'
-                : 'Aucun dossier actif',
+                ? $localize`:@@core.app-nav.ts.aucun.dossier.affecte.48bb6111:Aucun dossier affecté`
+                : $localize`:@@core.app-nav.ts.aucun.dossier.actif.4214c9a3:Aucun dossier actif`,
               route: '/firm/clients',
               icon: 'fa-solid fa-inbox'
             }]
@@ -325,7 +325,7 @@ export class AppNavService {
       // Remplace la section Comptabilité : même id, pour que les règles par section s'appliquent.
       const comptaHub: NavItem = {
         id: NAV_ID.accounting,
-        label: 'Comptabilité',
+        label: $localize`:@@core.app-nav.ts.comptabilite.20af7266:Comptabilité`,
         icon: 'fa-solid fa-table-cells-large',
         route: '/accounting/home',
         modules: [AppModule.Accounting],
@@ -342,18 +342,18 @@ export class AppNavService {
 
     const contextHeader: NavItem = {
       id: CONTEXT_NAV_ID.firmDossierHeader,
-      label: client ? `Dossier : ${client.companyName}` : 'Dossier client',
+      label: client ? $localize`:@@core.app-nav.ts.dossier.companyname.f0a59ef1:Dossier : ${client.companyName}:companyName:` : $localize`:@@core.app-nav.ts.dossier.client.52cd904a:Dossier client`,
       icon: 'fa-solid fa-folder-open',
       children: [
         {
           id: CONTEXT_NAV_ID.returnToFirm,
-          label: 'Retour au cabinet',
+          label: $localize`:@@core.app-nav.ts.retour.au.cabinet.ea23ac22:Retour au cabinet`,
           icon: 'fa-solid fa-arrow-left',
           action: 'returnToFirm'
         },
         {
           id: CONTEXT_NAV_ID.changeDossier,
-          label: 'Changer de dossier',
+          label: $localize`:@@core.app-nav.ts.changer.de.dossier.c849871f:Changer de dossier`,
           icon: 'fa-solid fa-right-left',
           action: 'changeDossier'
         }
@@ -377,7 +377,7 @@ export class AppNavService {
     const children: NavSubItem[] = [
       {
         id: STUDIO_CHILD_NAV_ID.tables,
-        label: 'Concepteur de tables',
+        label: $localize`:@@core.app-nav.ts.concepteur.de.tables.26aa941d:Concepteur de tables`,
         route: '/studio',
         icon: 'fa-solid fa-screwdriver-wrench',
         modules: [AppModule.Studio],
@@ -385,7 +385,7 @@ export class AppNavService {
       },
       {
         id: STUDIO_CHILD_NAV_ID.forms,
-        label: 'Formulaires',
+        label: $localize`:@@core.app-nav.ts.formulaires.edb3637f:Formulaires`,
         route: '/studio/forms',
         icon: 'fa-solid fa-table-cells-large',
         modules: [AppModule.Studio],
@@ -393,7 +393,7 @@ export class AppNavService {
       },
       {
         id: STUDIO_CHILD_NAV_ID.reports,
-        label: 'Rapports',
+        label: $localize`:@@core.app-nav.ts.rapports.db7d9fbb:Rapports`,
         route: '/studio/reports',
         icon: 'fa-solid fa-chart-column',
         modules: [AppModule.Studio],
@@ -401,7 +401,7 @@ export class AppNavService {
       },
       {
         id: STUDIO_CHILD_NAV_ID.ai,
-        label: 'Assistant IA',
+        label: $localize`:@@core.app-nav.ts.assistant.ia.94f6f208:Assistant IA`,
         route: '/studio/ai',
         icon: 'fa-solid fa-wand-magic-sparkles',
         modules: [AppModule.Studio],
@@ -411,7 +411,7 @@ export class AppNavService {
         ? ([
             {
               id: STUDIO_CHILD_NAV_ID.workflows,
-              label: 'Workflows',
+              label: $localize`:@@core.app-nav.ts.workflows.825ce9e9:Workflows`,
               route: '/studio/workflows',
               icon: 'fa-solid fa-route',
               modules: [AppModule.Studio],
@@ -423,7 +423,7 @@ export class AppNavService {
         ? ([
             {
               id: STUDIO_CHILD_NAV_ID.approvals,
-              label: 'Mes approbations',
+              label: $localize`:@@core.app-nav.ts.mes.approbations.8f2a2f56:Mes approbations`,
               route: '/studio/approvals',
               icon: 'fa-solid fa-inbox',
               modules: [AppModule.Studio],
@@ -441,6 +441,6 @@ export class AppNavService {
         permissionsAll: [PERMISSIONS.customData.recordsRead]
       }))
     ];
-    return { id: NAV_ID.studio, label: 'Studio', icon: 'fa-solid fa-shapes', children };
+    return { id: NAV_ID.studio, label: $localize`:@@core.app-nav.ts.studio.5b23bd71:Studio`, icon: 'fa-solid fa-shapes', children };
   }
 }

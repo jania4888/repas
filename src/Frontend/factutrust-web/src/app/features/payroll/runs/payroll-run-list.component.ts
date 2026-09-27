@@ -179,7 +179,7 @@ export class PayrollRunListComponent implements OnInit {
       error: err => this.toast.add({
         severity: 'error',
         summary: $localize`:@@payroll-run-list.component.summary.Paie:Paie`,
-        detail: this.errorHandler.extractErrorMessage(err) || 'Création impossible.'
+        detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@payroll.payroll-run-list.ts.creation.impossible.5661a598:Création impossible.`
       })
     });
   }

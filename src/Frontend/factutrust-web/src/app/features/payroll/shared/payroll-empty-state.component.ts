@@ -25,7 +25,7 @@ import { SkeletonTableComponent, type SkeletonColumn } from '@shared/components/
 export class PayrollEmptyStateComponent {
   @Input() loading = false;
   @Input() icon = 'pi-inbox';
-  @Input() title = 'Aucune donnée';
+  @Input() title = $localize`:@@payroll.payroll-empty-state.ts.aucune.donnee.434e5488:Aucune donnée`;
   @Input() description?: string;
   @Input() showAction = false;
   @Input() actionLabel?: string;

@@ -108,11 +108,11 @@ export class ConfirmationService {
     });
 
     // Configuration du composant modal
-    ref.componentInstance.message = confirmation.message ?? 'Êtes-vous sûr ?';
+    ref.componentInstance.message = confirmation.message ?? $localize`:@@core.confirmation.ts.etes.vous.sur.25c63265:Êtes-vous sûr ?`;
     ref.componentInstance.header = confirmation.header ?? 'Confirmation';
     ref.componentInstance.icon = confirmation.icon ?? '';
-    ref.componentInstance.acceptLabel = confirmation.acceptLabel ?? 'Oui';
-    ref.componentInstance.rejectLabel = confirmation.rejectLabel ?? 'Non';
+    ref.componentInstance.acceptLabel = confirmation.acceptLabel ?? $localize`:@@core.confirmation.ts.oui.eaa02f3f:Oui`;
+    ref.componentInstance.rejectLabel = confirmation.rejectLabel ?? $localize`:@@core.confirmation.ts.non.a7219939:Non`;
     ref.componentInstance.acceptButtonStyleClass = normalizeConfirmButtonClass(confirmation.acceptButtonStyleClass) ?? 'btn-primary';
 
     // Gestion des résultats
@@ -203,8 +203,8 @@ export class ConfirmationService {
     ref.componentInstance.header = config.header ?? 'Saisie';
     ref.componentInstance.icon = config.icon ?? '';
     ref.componentInstance.placeholder = config.placeholder ?? '';
-    ref.componentInstance.acceptLabel = config.acceptLabel ?? 'Confirmer';
-    ref.componentInstance.rejectLabel = config.rejectLabel ?? 'Annuler';
+    ref.componentInstance.acceptLabel = config.acceptLabel ?? $localize`:@@core.confirmation.ts.confirmer.80a664c8:Confirmer`;
+    ref.componentInstance.rejectLabel = config.rejectLabel ?? $localize`:@@core.confirmation.ts.annuler.49ba3292:Annuler`;
     ref.componentInstance.acceptButtonStyleClass = normalizeConfirmButtonClass(config.acceptButtonStyleClass) ?? 'btn-primary';
     ref.componentInstance.required = config.required ?? true;
     ref.componentInstance.maxLength = config.maxLength ?? 500;

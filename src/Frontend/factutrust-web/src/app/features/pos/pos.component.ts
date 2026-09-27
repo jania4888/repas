@@ -724,16 +724,16 @@ export class PosComponent implements OnInit, OnDestroy {
       if (!result) return;
       this.barcodeToastType = result;
       if (result === 'added') {
-        this.barcodeToastMessage = 'Produit ajoute par scan';
+        this.barcodeToastMessage = $localize`:@@pos.pos.ts.produit.ajoute.par.scan.ace05abe:Produit ajoute par scan`;
         this.audioService.beepScan();
       } else if (result === 'not_found') {
         this.audioService.beepError();
-        this.barcodeToastMessage = 'Produit non trouve';
+        this.barcodeToastMessage = $localize`:@@pos.pos.ts.produit.non.trouve.91e3db45:Produit non trouve`;
       } else if (result === 'out_of_stock') {
         this.audioService.beepError();
-        this.barcodeToastMessage = 'Produit en rupture de stock';
+        this.barcodeToastMessage = $localize`:@@pos.pos.ts.produit.en.rupture.de.stock.e9dbdcda:Produit en rupture de stock`;
       } else {
-        this.barcodeToastMessage = 'Plusieurs produits correspondent - selectionnez dans le catalogue';
+        this.barcodeToastMessage = $localize`:@@pos.pos.ts.plusieurs.produits.correspondent.selecti.1667c366:Plusieurs produits correspondent - selectionnez dans le catalogue`;
         const code = this.barcodeService.lastScannedCode();
         if (code) {
           setTimeout(() => this.catalogComponent?.searchWithCode(code), 0);
@@ -904,7 +904,7 @@ export class PosComponent implements OnInit, OnDestroy {
     const email = this.authService.user()?.email?.trim();
     const password = this.idleUnlockPassword;
     if (!email || !password) {
-      this.idleUnlockError = 'Saisissez votre mot de passe.';
+      this.idleUnlockError = $localize`:@@pos.pos.ts.saisissez.votre.mot.de.passe.1916c0ee:Saisissez votre mot de passe.`;
       return;
     }
     this.idleUnlockError = '';
@@ -915,10 +915,10 @@ export class PosComponent implements OnInit, OnDestroy {
           this.idleUnlockPassword = '';
           return;
         }
-        this.idleUnlockError = res.message || 'Mot de passe incorrect.';
+        this.idleUnlockError = res.message || $localize`:@@pos.pos.ts.mot.de.passe.incorrect.c4b8638f:Mot de passe incorrect.`;
       },
       error: () => {
-        this.idleUnlockError = 'Mot de passe incorrect.';
+        this.idleUnlockError = $localize`:@@pos.pos.ts.mot.de.passe.incorrect.c4b8638f:Mot de passe incorrect.`;
       }
     });
   }
@@ -1003,8 +1003,8 @@ export class PosComponent implements OnInit, OnDestroy {
   newOrder(): void {
     if (this.posState.isDirty() && this.posState.lines().length > 0) {
       this.confirmationService.confirm({
-        header: 'Abandonner la commande ?',
-        message: 'La commande en cours sera perdue. Voulez-vous continuer ?',
+        header: $localize`:@@pos.pos.ts.abandonner.la.commande.39b13386:Abandonner la commande ?`,
+        message: $localize`:@@pos.pos.ts.la.commande.en.cours.sera.perdue.voulez.ec0bd7d3:La commande en cours sera perdue. Voulez-vous continuer ?`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: $localize`:@@pos.component.acceptLabel.Abandonner:Abandonner`,
         rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
@@ -1065,8 +1065,8 @@ export class PosComponent implements OnInit, OnDestroy {
     const outstanding = this.posState.clientOutstanding();
     if (outstanding?.isOverLimit && !this.posState.overLimitAcknowledged()) {
       this.confirmationService.confirm({
-        header: 'Plafond d\'encours depasse',
-        message: 'Le plafond client est depasse. Continuer quand meme ? (avertissement, la vente n\'est pas bloquee)',
+        header: $localize`:@@pos.pos.ts.plafond.d.encours.depasse.182d2a10:Plafond d'encours depasse`,
+        message: $localize`:@@pos.pos.ts.le.plafond.client.est.depasse.continuer.992db4af:Le plafond client est depasse. Continuer quand meme ? (avertissement, la vente n'est pas bloquee)`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: $localize`:@@pos.component.acceptLabel.Continuer_quand_:Continuer quand meme`,
         rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
@@ -1131,8 +1131,8 @@ export class PosComponent implements OnInit, OnDestroy {
 
     if (this.posState.lines().length > 0) {
       this.confirmationService.confirm({
-        header: 'Remplacer le panier ?',
-        message: 'Le panier actuel sera remplacé par les lignes de la facture sélectionnée.',
+        header: $localize`:@@pos.pos.ts.remplacer.le.panier.4f7abe74:Remplacer le panier ?`,
+        message: $localize`:@@pos.pos.ts.le.panier.actuel.sera.remplace.par.les.l.84680c56:Le panier actuel sera remplacé par les lignes de la facture sélectionnée.`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: $localize`:@@pos.component.acceptLabel.Continuer:Continuer`,
         rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
@@ -1158,7 +1158,7 @@ export class PosComponent implements OnInit, OnDestroy {
       error: err => {
         this.posState.setProcessing(false);
         this.posState.disableCreditNoteMode();
-        const message = this.extractErrorMessage(err, 'Impossible de charger la facture liée.');
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.de.charger.la.facture.liee.53f3a0f5:Impossible de charger la facture liée.`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1186,7 +1186,7 @@ export class PosComponent implements OnInit, OnDestroy {
       switchMap(() => this.checkoutService.submitCurrentDraft()),
       catchError(err => {
         this.posState.setProcessing(false);
-        const message = this.extractErrorMessage(err, 'Erreur lors de la création de l\'avoir');
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.la.creation.de.l.avoir.1c0f4923:Erreur lors de la création de l'avoir`);
         this.posState.setError(message);
         this.audioService.beepError();
         return throwError(() => err);
@@ -1234,7 +1234,7 @@ export class PosComponent implements OnInit, OnDestroy {
       this.checkoutService.submitCurrentDraft().pipe(
         catchError(err => {
           this.posState.setProcessing(false);
-          const message = this.extractErrorMessage(err, 'Erreur lors de la creation de la facture');
+          const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.la.creation.de.la.facture.01f7e6d5:Erreur lors de la creation de la facture`);
           this.posState.setError(message);
           this.audioService.beepError();
           return throwError(() => err);
@@ -1276,8 +1276,8 @@ export class PosComponent implements OnInit, OnDestroy {
 
     if (this.posState.lines().length > 0) {
       this.confirmationService.confirm({
-        header: 'Changer de magasin ?',
-        message: 'Le panier est lie au magasin precedent. Continuer videra le panier.',
+        header: $localize`:@@pos.pos.ts.changer.de.magasin.33744235:Changer de magasin ?`,
+        message: $localize`:@@pos.pos.ts.le.panier.est.lie.au.magasin.precedent.c.20de7d7f:Le panier est lie au magasin precedent. Continuer videra le panier.`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: $localize`:@@pos.component.acceptLabel.Vider_et_continu:Vider et continuer`,
         rejectLabel: $localize`:@@pos.component.rejectLabel.Annuler:Annuler`,
@@ -1364,7 +1364,7 @@ export class PosComponent implements OnInit, OnDestroy {
       },
       error: err => {
         this.posState.setProcessing(false);
-        const message = this.extractErrorMessage(err, 'Erreur lors de la sauvegarde');
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.la.sauvegarde.4a2bbdd4:Erreur lors de la sauvegarde`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1561,7 +1561,7 @@ export class PosComponent implements OnInit, OnDestroy {
         },
         error: err => {
           this.isRecordingPayment = false;
-          const message = this.extractErrorMessage(err, "Erreur lors de l'enregistrement du paiement");
+          const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.l.enregistrement.du.paiem.e23b0f61:Erreur lors de l'enregistrement du paiement`);
           this.posState.setError(message);
           this.audioService.beepError();
         }
@@ -1598,7 +1598,7 @@ export class PosComponent implements OnInit, OnDestroy {
       error: err => {
         this.isRecordingPayment = false;
         const message = this.extractErrorMessage(
-          err, "Erreur lors de l'enregistrement de l'encaissement fractionné");
+          err, $localize`:@@pos.pos.ts.erreur.lors.de.l.enregistrement.de.l.enc.64664de1:Erreur lors de l'enregistrement de l'encaissement fractionné`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1609,7 +1609,7 @@ export class PosComponent implements OnInit, OnDestroy {
     this.invoiceService.downloadPdf(invoiceId).subscribe({
       next: blob => this.printPreviewService.openPdfForPrintPreview(blob, `facture-${invoiceId}.pdf`),
       error: err => {
-        const message = this.extractErrorMessage(err, 'Impossible de telecharger le PDF');
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.de.telecharger.le.pdf.1944a2e7:Impossible de telecharger le PDF`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1623,7 +1623,7 @@ export class PosComponent implements OnInit, OnDestroy {
     this.checkoutService.sendInvoiceEmail(invoiceId).subscribe({
       next: () => this.showToast('Facture envoyee par e-mail'),
       error: err => {
-        const message = this.extractErrorMessage(err, "Impossible d'envoyer la facture par e-mail");
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.d.envoyer.la.facture.par.e.ma.2e9a3c5e:Impossible d'envoyer la facture par e-mail`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1665,7 +1665,7 @@ export class PosComponent implements OnInit, OnDestroy {
       },
       error: err => {
         this.isRecordingPayment = false;
-        const message = this.extractErrorMessage(err, "Erreur lors de l'enregistrement du paiement");
+        const message = this.extractErrorMessage(err, $localize`:@@pos.pos.ts.erreur.lors.de.l.enregistrement.du.paiem.e23b0f61:Erreur lors de l'enregistrement du paiement`);
         this.posState.setError(message);
         this.audioService.beepError();
       }
@@ -1685,7 +1685,7 @@ export class PosComponent implements OnInit, OnDestroy {
         this.showToast('Caisse ouverte');
       },
       error: err => {
-        this.posState.setError(this.extractErrorMessage(err, "Impossible d'ouvrir la caisse"));
+        this.posState.setError(this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.d.ouvrir.la.caisse.1dc009cf:Impossible d'ouvrir la caisse`));
         this.audioService.beepError();
       }
     });
@@ -1701,7 +1701,7 @@ export class PosComponent implements OnInit, OnDestroy {
         this.sessionReport = report;
       },
       error: err => {
-        this.posState.setError(this.extractErrorMessage(err, 'Rapport X indisponible'));
+        this.posState.setError(this.extractErrorMessage(err, $localize`:@@pos.pos.ts.rapport.x.indisponible.c1080668:Rapport X indisponible`));
       }
     });
   }
@@ -1718,7 +1718,7 @@ export class PosComponent implements OnInit, OnDestroy {
         this.showCloseZModal = true;
       },
       error: err => {
-        this.posState.setError(this.extractErrorMessage(err, 'Impossible de préparer la clôture Z'));
+        this.posState.setError(this.extractErrorMessage(err, $localize`:@@pos.pos.ts.impossible.de.preparer.la.cloture.z.9eb8ddf2:Impossible de préparer la clôture Z`));
       }
     });
   }
@@ -1743,7 +1743,7 @@ export class PosComponent implements OnInit, OnDestroy {
         this.showToast(report.zReportNumber ? $localize`:@@ui.tern.cloture.ph.fba751:Clôture ${report.zReportNumber}:p0:` : $localize`:@@ui.tern.caisse.cloturee.6b484e:Caisse clôturée`);
       },
       error: err => {
-        this.posState.setError(this.extractErrorMessage(err, 'Clôture Z impossible'));
+        this.posState.setError(this.extractErrorMessage(err, $localize`:@@pos.pos.ts.cloture.z.impossible.8bbab029:Clôture Z impossible`));
         this.audioService.beepError();
       }
     });

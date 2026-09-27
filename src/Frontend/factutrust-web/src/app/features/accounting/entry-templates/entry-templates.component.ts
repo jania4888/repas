@@ -275,7 +275,7 @@ export class EntryTemplatesComponent implements OnInit {
         if (res.success && res.data) this.templates.set(res.data);
         else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
-      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.entry-templates.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 
@@ -332,7 +332,7 @@ export class EntryTemplatesComponent implements OnInit {
     const f = this.form();
     if (!f || this.saving()) return;
     if (f.recurrenceFrequency > 0 && !f.recurrenceStartDate) {
-      this.error.set('La date de début est obligatoire pour une récurrence.');
+      this.error.set($localize`:@@accounting.entry-templates.ts.la.date.de.debut.est.obligatoire.pour.un.2e89bbcc:La date de début est obligatoire pour une récurrence.`);
       return;
     }
     this.saving.set(true);
@@ -355,11 +355,11 @@ export class EntryTemplatesComponent implements OnInit {
     };
     if (f.id) {
       this.api.updateJournalTemplate(f.id, { ...request, isActive: f.isActive }).subscribe({
-        next: res => done(res.success, res.error), error: err => done(false, this.errors.extractErrorMessage(err, 'Erreur réseau'))
+        next: res => done(res.success, res.error), error: err => done(false, this.errors.extractErrorMessage(err, $localize`:@@accounting.entry-templates.ts.erreur.reseau.0683007f:Erreur réseau`))
       });
     } else {
       this.api.createJournalTemplate(request).subscribe({
-        next: res => done(res.success, res.error), error: err => done(false, this.errors.extractErrorMessage(err, 'Erreur réseau'))
+        next: res => done(res.success, res.error), error: err => done(false, this.errors.extractErrorMessage(err, $localize`:@@accounting.entry-templates.ts.erreur.reseau.0683007f:Erreur réseau`))
       });
     }
   }
@@ -367,8 +367,8 @@ export class EntryTemplatesComponent implements OnInit {
   /** Génère l'écriture de la prochaine échéance immédiatement (l'échéance suivante est avancée). */
   runNow(t: JournalEntryTemplateDto): void {
     this.confirmationService.confirm({
-      message: `Générer maintenant l'écriture du modèle « ${t.name} » (échéance du ${t.nextRunDate?.substring(0, 10)}) ?`,
-      header: 'Confirmation',
+      message: $localize`:@@accounting.entry-templates.ts.generer.maintenant.l.ecriture.du.modele.0fe1f936:Générer maintenant l'écriture du modèle « ${t.name}:name: » (échéance du ${t.nextRunDate?.substring(0, 10)}:substring:) ?`,
+      header: $localize`:@@accounting.entry-templates.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@entry-templates.component.acceptLabel.G_n_rer:Générer`,
       rejectLabel: $localize`:@@entry-templates.component.rejectLabel.Annuler:Annuler`,
       accept: () => {
@@ -378,11 +378,11 @@ export class EntryTemplatesComponent implements OnInit {
           next: res => {
             this.runningId.set(null);
             if (res.success) {
-              this.toast.add({ severity: 'success', summary: $localize`:@@entry-templates.component.summary._criture_g_n_r_e:Écriture générée`, detail: `Le modèle « ${t.name} » a généré son écriture.`, life: 4000 });
+              this.toast.add({ severity: 'success', summary: $localize`:@@entry-templates.component.summary._criture_g_n_r_e:Écriture générée`, detail: $localize`:@@accounting.entry-templates.ts.le.modele.name.a.genere.son.ecriture.8922ad2b:Le modèle « ${t.name}:name: » a généré son écriture.`, life: 4000 });
               this.load();
             } else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.generation.a98600:Erreur lors de la génération.`);
           },
-          error: err => { this.runningId.set(null); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la génération.')); }
+          error: err => { this.runningId.set(null); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.entry-templates.ts.erreur.reseau.lors.de.la.generation.691b7fcb:Erreur réseau lors de la génération.`)); }
         });
       }
     });
@@ -394,7 +394,7 @@ export class EntryTemplatesComponent implements OnInit {
         if (res.success) { this.toast.add({ severity: 'success', summary: $localize`:@@entry-templates.component.summary.Modèle suppr:Modèle supprimé`, detail: t.name, life: 4000 }); this.load(); }
         else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.entry-templates.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 }

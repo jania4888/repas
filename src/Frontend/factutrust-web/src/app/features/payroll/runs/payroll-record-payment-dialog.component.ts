@@ -171,11 +171,11 @@ export class PayrollRecordPaymentDialogComponent implements OnInit {
   accountOptions = signal<{ label: string; value: string }[]>([]);
 
   readonly methodOptions = [
-    { label: 'Virement', value: 1 },
-    { label: 'Chèque', value: 2 },
-    { label: 'Espèces', value: 0 },
-    { label: 'Carte', value: 3 },
-    { label: 'Autre', value: 99 }
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.virement.afbaf950:Virement`, value: 1 },
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.cheque.8bbb89a9:Chèque`, value: 2 },
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.especes.b7679d62:Espèces`, value: 0 },
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.carte.8bb68357:Carte`, value: 3 },
+    { label: $localize`:@@payroll.payroll-record-payment-dialog.ts.autre.43dacf9e:Autre`, value: 99 }
   ];
 
   totalSelected = computed(() =>

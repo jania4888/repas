@@ -2235,11 +2235,11 @@ export class SalesReportsComponent implements OnInit {
   private maxRevenue = 0;
 
   periodOptions: PeriodOption[] = [
-    { label: 'Cette semaine', value: 'week' },
-    { label: 'Ce mois', value: 'month' },
-    { label: 'Ce trimestre', value: 'quarter' },
-    { label: 'Cette année', value: 'year' },
-    { label: 'Tout', value: 'all' }
+    { label: $localize`:@@reports.sales-reports.ts.cette.semaine.af7dc0a9:Cette semaine`, value: 'week' },
+    { label: $localize`:@@reports.sales-reports.ts.ce.mois.db74c560:Ce mois`, value: 'month' },
+    { label: $localize`:@@reports.sales-reports.ts.ce.trimestre.4d9d129d:Ce trimestre`, value: 'quarter' },
+    { label: $localize`:@@reports.sales-reports.ts.cette.annee.052507a0:Cette année`, value: 'year' },
+    { label: $localize`:@@reports.sales-reports.ts.tout.6b0b09b8:Tout`, value: 'all' }
   ];
 
   ngOnInit(): void {

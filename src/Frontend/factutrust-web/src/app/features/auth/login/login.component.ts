@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
     );
   }
   readonly rememberMeHint =
-    'Sans cette option, chaque fenêtre garde sa propre session. Avec cette option, la session est partagée entre tous les onglets de ce navigateur.';
+    $localize`:@@auth.login.ts.sans.cette.option.chaque.fenetre.garde.s.ccaf6685:Sans cette option, chaque fenêtre garde sa propre session. Avec cette option, la session est partagée entre tous les onglets de ce navigateur.`;
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (this.route.snapshot.queryParams['registration'] === 'closed') {
       this.registrationClosedNotice.set(
-        'L’inscription en ligne est temporairement fermée. Contactez le support InstaFact.'
+        $localize`:@@auth.login.ts.l.inscription.en.ligne.est.temporairemen.9650865d:L’inscription en ligne est temporairement fermée. Contactez le support InstaFact.`
       );
     }
     if (this.route.snapshot.queryParams['reset'] === 'success') {
@@ -119,13 +119,13 @@ export class LoginComponent implements OnInit {
           const returnUrl = this.route.snapshot.queryParams['returnUrl'] || defaultUrl;
           this.warehouseContext.navigateAfterSuccessfulAuth(returnUrl);
         } else {
-          this.error.set(response.errors[0] || 'Une erreur est survenue');
+          this.error.set(response.errors[0] || $localize`:@@auth.login.ts.une.erreur.est.survenue.0419f56e:Une erreur est survenue`);
         }
         this.loading.set(false);
       },
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
-        this.error.set(err.error?.errors?.[0] || err.error?.message || 'Connexion impossible');
+        this.error.set(err.error?.errors?.[0] || err.error?.message || $localize`:@@auth.login.ts.connexion.impossible.d33a4d6f:Connexion impossible`);
       }
     });
   }

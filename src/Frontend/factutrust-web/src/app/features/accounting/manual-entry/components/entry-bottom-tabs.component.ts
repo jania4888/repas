@@ -110,11 +110,11 @@ export class EntryBottomTabsComponent {
     const valid: File[] = [];
     for (const f of files) {
       if (f.size > MAX_BYTES) {
-        this.attachError = `${f.name} dépasse 10 Mo.`;
+        this.attachError = $localize`:@@accounting.entry-bottom-tabs.ts.name.depasse.10.mo.8052874c:${f.name}:name: dépasse 10 Mo.`;
         continue;
       }
       if (!ALLOWED_TYPES.includes(f.type) && !f.name.match(/\.(pdf|jpe?g|png|webp|xlsx|docx)$/i)) {
-        this.attachError = `Type non autorisé : ${f.name}`;
+        this.attachError = $localize`:@@accounting.entry-bottom-tabs.ts.type.non.autorise.name.8ababe02:Type non autorisé : ${f.name}:name:`;
         continue;
       }
       valid.push(f);

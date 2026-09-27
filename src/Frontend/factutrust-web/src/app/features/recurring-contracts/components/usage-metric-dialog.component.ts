@@ -199,9 +199,9 @@ export class UsageMetricDialogComponent {
   form: UpsertUsageMetricPayload = this.emptyForm();
 
   readonly aggregationOptions: AggregationOption[] = [
-    { label: 'Somme', value: 'Sum' },
-    { label: 'Maximum', value: 'Max' },
-    { label: 'Dernière valeur', value: 'Last' }
+    { label: $localize`:@@recurring-contracts.usage-metric-dialog.ts.somme.f38fb915:Somme`, value: 'Sum' },
+    { label: $localize`:@@recurring-contracts.usage-metric-dialog.ts.maximum.a8df2fec:Maximum`, value: 'Max' },
+    { label: $localize`:@@recurring-contracts.usage-metric-dialog.ts.derniere.valeur.b7c67051:Dernière valeur`, value: 'Last' }
   ];
 
   aggregationLabel(mode: UsageAggregationMode): string {
@@ -244,7 +244,7 @@ export class UsageMetricDialogComponent {
         this.toast.add({
           severity: 'success',
           summary: this.editingId ? $localize`:@@ui.tern.metrique.modifiee.174890:Métrique modifiée` : $localize`:@@ui.tern.metrique.creee.86b599:Métrique créée`,
-          detail: `La métrique « ${this.form.name} » a été enregistrée.`
+          detail: $localize`:@@recurring-contracts.usage-metric-dialog.ts.la.metrique.name.a.ete.enregistree.a18dafdf:La métrique « ${this.form.name}:name: » a été enregistrée.`
         });
         this.resetForm();
         this.saved.emit();

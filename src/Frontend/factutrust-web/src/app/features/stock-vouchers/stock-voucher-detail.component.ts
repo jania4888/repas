@@ -233,8 +233,8 @@ export class StockVoucherDetailComponent implements OnInit {
         if (data) {
           const listLabel = isStockVoucherEntry(data.kind) ? $localize`:@@ui.tern.bons.d.entree.c04705:Bons d'entrée` : $localize`:@@ui.tern.bons.de.sortie.ccd59b:Bons de sortie`;
           this.breadcrumbItems = [
-            { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-            { label: 'Stock', route: '/stock' },
+            { label: $localize`:@@stock-vouchers.stock-voucher-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+            { label: $localize`:@@stock-vouchers.stock-voucher-detail.ts.stock.bcecf456:Stock`, route: '/stock' },
             { label: listLabel, route: this.listRoute },
             { label: data.number }
           ];
@@ -257,8 +257,8 @@ export class StockVoucherDetailComponent implements OnInit {
     const v = this.voucher();
     if (!v) return;
     this.confirmationService.confirm({
-      header: 'Valider le bon',
-      message: 'Le stock sera mis à jour. Continuer ?',
+      header: $localize`:@@stock-vouchers.stock-voucher-detail.ts.valider.le.bon.d6de966e:Valider le bon`,
+      message: $localize`:@@stock-vouchers.stock-voucher-detail.ts.le.stock.sera.mis.a.jour.continuer.614f0abf:Le stock sera mis à jour. Continuer ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@stock-voucher-detail.component.acceptLabel.Valider:Valider`,
       rejectLabel: $localize`:@@stock-voucher-detail.component.rejectLabel.Retour:Retour`,
@@ -309,8 +309,8 @@ export class StockVoucherDetailComponent implements OnInit {
     const v = this.voucher();
     if (!v) return;
     this.confirmationService.confirm({
-      header: 'Supprimer le brouillon',
-      message: `Supprimer définitivement ${v.number} ?`,
+      header: $localize`:@@stock-vouchers.stock-voucher-detail.ts.supprimer.le.brouillon.15c633f2:Supprimer le brouillon`,
+      message: $localize`:@@stock-vouchers.stock-voucher-detail.ts.supprimer.definitivement.number.da3c726b:Supprimer définitivement ${v.number}:number: ?`,
       icon: 'pi pi-trash',
       acceptLabel: $localize`:@@stock-voucher-detail.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@stock-voucher-detail.component.rejectLabel.Annuler:Annuler`,

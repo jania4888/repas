@@ -124,7 +124,7 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
 export class DocumentationComponent {
   readonly chapters = DOC_CHAPTERS;
   readonly breadcrumbItems = [
-    { label: 'Accueil', route: '/dashboard' },
-    { label: 'Documentation', route: undefined }
+    { label: $localize`:@@documentation.documentation.ts.accueil.a8ff8fd2:Accueil`, route: '/dashboard' },
+    { label: $localize`:@@documentation.documentation.ts.documentation.9e9cf322:Documentation`, route: undefined }
   ];
 }

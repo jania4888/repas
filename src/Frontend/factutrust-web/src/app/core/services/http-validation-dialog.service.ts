@@ -30,7 +30,7 @@ export class HttpValidationDialogService {
 
     this.confirmation.alert({
       message,
-      header: 'Erreur de validation',
+      header: $localize`:@@core.http-validation-dialog.ts.erreur.de.validation.ccce3082:Erreur de validation`,
       icon: 'pi pi-exclamation-circle',
       size: 'md',
       scrollable: true

@@ -585,7 +585,7 @@ export class CreateSupplierInvoiceModalComponent implements OnInit {
   regenerating = false;
   invoiceNumberManuallyEdited = false;
   sourceDocumentNumber = '';
-  sourceTypeLabel = 'Document';
+  sourceTypeLabel = $localize`:@@purchase-orders.create-supplier-invoice-modal.ts.document.e214b8a2:Document`;
   selectedTotalTTC = 0;
   showAssetClassification = false;
   invoiceLines: InvoiceLineRow[] = [];

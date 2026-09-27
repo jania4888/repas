@@ -705,9 +705,9 @@ export class SubscriptionComponent implements OnInit {
   plans = signal<PlanOption[]>([]);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Subscription' }
+    { label: $localize`:@@settings.subscription.ts.accueil.a8ff8fd2:Accueil`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.subscription.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.subscription.ts.subscription.8fde48f3:Subscription` }
   ];
 
   billingHistory: BillingHistoryItem[] = [];
@@ -736,7 +736,7 @@ export class SubscriptionComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.error.set('Impossible de contacter le serveur. Vérifiez votre connexion.');
+        this.error.set($localize`:@@settings.subscription.ts.impossible.de.contacter.le.serveur.verif.56ab13d5:Impossible de contacter le serveur. Vérifiez votre connexion.`);
         this.loading.set(false);
       }
     });

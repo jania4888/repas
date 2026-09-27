@@ -135,9 +135,9 @@ export class SalesReturnNoteFormComponent implements OnInit {
   private readonly auth = inject(AuthService);
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de retour', route: '/return-notes' },
-    { label: 'Nouveau' }
+    { label: $localize`:@@sales-return-notes.sales-return-note-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@sales-return-notes.sales-return-note-form.ts.bons.de.retour.d9f7ad6c:Bons de retour`, route: '/return-notes' },
+    { label: $localize`:@@sales-return-notes.sales-return-note-form.ts.nouveau.b9676c8f:Nouveau` }
   ];
 
   eligible = signal<EligibleDeliveryNoteDto[]>([]);
@@ -225,7 +225,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@sales-return-note-form.component.summary.Enregistrement_i:Enregistrement impossible`,
-            detail: res.message || 'Le brouillon n’a pas pu être créé.'
+            detail: res.message || $localize`:@@sales-return-notes.sales-return-note-form.ts.le.brouillon.n.a.pas.pu.etre.cree.36627d9b:Le brouillon n’a pas pu être créé.`
           });
           return;
         }
@@ -249,7 +249,7 @@ export class SalesReturnNoteFormComponent implements OnInit {
               this.toast.add({
                 severity: 'warn',
                 summary: $localize`:@@sales-return-note-form.component.summary.Brouillon_enregi:Brouillon enregistré, confirmation refusée`,
-                detail: confirmRes.message || 'Ouvrez la fiche pour réessayer.'
+                detail: confirmRes.message || $localize`:@@sales-return-notes.sales-return-note-form.ts.ouvrez.la.fiche.pour.reessayer.8bd5b0fb:Ouvrez la fiche pour réessayer.`
               });
             }
             this.router.navigate(['/return-notes', id]);

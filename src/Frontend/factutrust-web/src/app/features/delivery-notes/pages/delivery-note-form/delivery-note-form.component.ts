@@ -710,9 +710,9 @@ export class DeliveryNoteFormComponent implements OnInit {
   readonly linePricing = inject(DocumentLinePricingService);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de Livraison', route: '/delivery-notes' },
-    { label: 'Nouveau bon de livraison' },
+    { label: $localize`:@@delivery-notes.delivery-note-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@delivery-notes.delivery-note-form.ts.bons.de.livraison.a42b9518:Bons de Livraison`, route: '/delivery-notes' },
+    { label: $localize`:@@delivery-notes.delivery-note-form.ts.nouveau.bon.de.livraison.85eb7bab:Nouveau bon de livraison` },
   ];
 
   clientOptions = signal<ClientListItem[]>([]);

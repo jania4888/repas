@@ -101,7 +101,7 @@ export class ResetPasswordComponent implements OnInit {
               queryParams: { reset: 'success' },
             });
           } else {
-            this.error.set(response.errors[0] || 'Une erreur est survenue');
+            this.error.set(response.errors[0] || $localize`:@@auth.reset-password.ts.une.erreur.est.survenue.0419f56e:Une erreur est survenue`);
           }
           this.loading.set(false);
         },

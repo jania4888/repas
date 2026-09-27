@@ -29,9 +29,9 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
 }
 
 const BENEFIT_TYPE_OPTIONS = [
-  { label: 'Véhicule de fonction', value: 'CompanyVehicle' },
-  { label: 'Logement de fonction', value: 'Housing' },
-  { label: 'Autre avantage en nature', value: 'Other' }
+  { label: $localize`:@@payroll.employee-in-kind-benefits-tab.ts.vehicule.de.fonction.9f9af16c:Véhicule de fonction`, value: 'CompanyVehicle' },
+  { label: $localize`:@@payroll.employee-in-kind-benefits-tab.ts.logement.de.fonction.2eb3e9bf:Logement de fonction`, value: 'Housing' },
+  { label: $localize`:@@payroll.employee-in-kind-benefits-tab.ts.autre.avantage.en.nature.26946801:Autre avantage en nature`, value: 'Other' }
 ];
 
 @Component({
@@ -222,8 +222,8 @@ export class EmployeeInKindBenefitsTabComponent implements OnInit {
   confirmDelete(b: EmployeeInKindBenefit): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Supprimer l'avantage « ${b.label} » ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.employee-in-kind-benefits-tab.ts.supprimer.l.avantage.label.5fdaf255:Supprimer l'avantage « ${b.label}:label: » ?`,
+      header: $localize`:@@payroll.employee-in-kind-benefits-tab.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@employee-in-kind-benefits-tab.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@employee-in-kind-benefits-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

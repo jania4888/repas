@@ -21,12 +21,12 @@ import { DestroyRef } from '@angular/core';
 type GuidedStep = 1 | 2 | 3 | 4;
 
 const PAYMENT_METHODS = [
-  { value: 1, label: 'Virement bancaire' },
-  { value: 0, label: 'Espèces' },
-  { value: 2, label: 'Chèque' },
-  { value: 3, label: 'Carte bancaire' },
-  { value: 4, label: 'Paiement mobile' },
-  { value: 5, label: 'Traite' }
+  { value: 1, label: $localize`:@@accounting.guided-entry.ts.virement.bancaire.8306f08e:Virement bancaire` },
+  { value: 0, label: $localize`:@@accounting.guided-entry.ts.especes.b7679d62:Espèces` },
+  { value: 2, label: $localize`:@@accounting.guided-entry.ts.cheque.8bbb89a9:Chèque` },
+  { value: 3, label: $localize`:@@accounting.guided-entry.ts.carte.bancaire.9e3d9bfa:Carte bancaire` },
+  { value: 4, label: $localize`:@@accounting.guided-entry.ts.paiement.mobile.fdc8f501:Paiement mobile` },
+  { value: 5, label: $localize`:@@accounting.guided-entry.ts.traite.511ec106:Traite` }
 ];
 
 @Component({
@@ -288,10 +288,10 @@ export class GuidedEntryComponent {
   readonly scenarios = GUIDED_SCENARIOS;
   readonly paymentMethods = PAYMENT_METHODS;
   readonly steps = [
-    { num: 1 as GuidedStep, label: 'Type d\'écriture' },
-    { num: 2 as GuidedStep, label: 'Informations générales' },
-    { num: 3 as GuidedStep, label: 'Saisie des lignes' },
-    { num: 4 as GuidedStep, label: 'Récapitulatif' }
+    { num: 1 as GuidedStep, label: $localize`:@@accounting.guided-entry.ts.type.d.ecriture.23a10bdd:Type d'écriture` },
+    { num: 2 as GuidedStep, label: $localize`:@@accounting.guided-entry.ts.informations.generales.be6ba6e5:Informations générales` },
+    { num: 3 as GuidedStep, label: $localize`:@@accounting.guided-entry.ts.saisie.des.lignes.b1deca2e:Saisie des lignes` },
+    { num: 4 as GuidedStep, label: $localize`:@@accounting.guided-entry.ts.recapitulatif.d5b5de6d:Récapitulatif` }
   ];
 
   readonly step = signal<GuidedStep>(1);

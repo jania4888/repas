@@ -30,9 +30,9 @@ function toIsoDate(value: Date | null | undefined): string | undefined {
 }
 
 const BASE_OPTIONS = [
-  { label: 'Brut cotisable CNSS', value: 'GrossCnssable' },
-  { label: 'Net imposable', value: 'NetTaxable' },
-  { label: 'Montant fixe', value: 'FixedAmount' }
+  { label: $localize`:@@payroll.payroll-social-funds-settings.ts.brut.cotisable.cnss.d798fa28:Brut cotisable CNSS`, value: 'GrossCnssable' },
+  { label: $localize`:@@payroll.payroll-social-funds-settings.ts.net.imposable.2439110f:Net imposable`, value: 'NetTaxable' },
+  { label: $localize`:@@payroll.payroll-social-funds-settings.ts.montant.fixe.b4a2ce45:Montant fixe`, value: 'FixedAmount' }
 ];
 
 @Component({
@@ -312,8 +312,8 @@ export class PayrollSocialFundsSettingsComponent implements OnInit {
 
   confirmDelete(s: SocialFundScheme): void {
     this.confirmation.confirm({
-      message: `Supprimer la caisse « ${s.name} » ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.payroll-social-funds-settings.ts.supprimer.la.caisse.name.495826a8:Supprimer la caisse « ${s.name}:name: » ?`,
+      header: $localize`:@@payroll.payroll-social-funds-settings.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@payroll-social-funds-settings.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@payroll-social-funds-settings.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

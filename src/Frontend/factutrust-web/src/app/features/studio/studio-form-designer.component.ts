@@ -99,8 +99,8 @@ export class StudioFormDesignerComponent implements OnInit {
   entityId = '';
   fieldToAdd: string | null = null;
   readonly widthOptions = [
-    { label: 'Pleine largeur', value: 'full' },
-    { label: 'Demi-largeur', value: 'half' }
+    { label: $localize`:@@studio.studio-form-designer.ts.pleine.largeur.be28aeb3:Pleine largeur`, value: 'full' },
+    { label: $localize`:@@studio.studio-form-designer.ts.demi.largeur.314b362e:Demi-largeur`, value: 'half' }
   ];
 
   readonly availableFields = computed(() => {

@@ -62,7 +62,11 @@ function segments(rel, source) {
         add(tpl.text.replace(/^:[^:]*:/, ''));
       } else {
         add(tpl.head.text.replace(/^:[^:]*:/, ''));
-        for (const span of tpl.templateSpans) add(span.literal.text.replace(/^:[^:]*:/, ''));
+        for (const span of tpl.templateSpans) {
+          // Les littéraux des expressions ${…} (locale, format, repli) restent des segments.
+          visit(span.expression);
+          add(span.literal.text.replace(/^:[^:]*:/, ''));
+        }
       }
       return;
     }

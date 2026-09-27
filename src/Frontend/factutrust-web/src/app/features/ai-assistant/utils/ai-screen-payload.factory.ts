@@ -107,7 +107,7 @@ export function detectBasicAnomalies(
     if (amount >= threshold) {
       highlights.push({
         type: 'anomaly',
-        label: row.label ?? 'Écriture',
+        label: row.label ?? $localize`:@@ai-assistant.ai-screen-payload.factory.ts.ecriture.d5d8c87d:Écriture`,
         value: amount,
         context: 'Montant élevé'
       });

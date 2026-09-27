@@ -122,9 +122,9 @@ export class CnssRemittancePaymentDialogComponent implements OnInit {
   accounts = signal<BankAccountDto[]>([]);
 
   methodOptions = [
-    { value: 1, label: 'Virement bancaire' },
-    { value: 2, label: 'Chèque' },
-    { value: 0, label: 'Espèces' }
+    { value: 1, label: $localize`:@@payroll.cnss-remittance-payment-dialog.ts.virement.bancaire.8306f08e:Virement bancaire` },
+    { value: 2, label: $localize`:@@payroll.cnss-remittance-payment-dialog.ts.cheque.8bbb89a9:Chèque` },
+    { value: 0, label: $localize`:@@payroll.cnss-remittance-payment-dialog.ts.especes.b7679d62:Espèces` }
   ];
 
   accountOptions = computed(() =>

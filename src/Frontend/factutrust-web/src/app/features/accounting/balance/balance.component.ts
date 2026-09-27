@@ -429,7 +429,7 @@ export class BalanceComponent implements OnInit {
       const root = r.accountNumber.length <= level ? r.accountNumber : r.accountNumber.slice(0, level);
       const acc = byRoot.get(root);
       if (!acc) {
-        byRoot.set(root, { ...r, accountNumber: root, label: `Racine ${root}` });
+        byRoot.set(root, { ...r, accountNumber: root, label: $localize`:@@accounting.balance.ts.racine.root.5f078eb7:Racine ${root}:root:` });
         continue;
       }
       const openingNet =
@@ -438,7 +438,7 @@ export class BalanceComponent implements OnInit {
         acc.closingDebit - acc.closingCredit + (r.closingDebit - r.closingCredit);
       byRoot.set(root, {
         accountNumber: root,
-        label: `Racine ${root}`,
+        label: $localize`:@@accounting.balance.ts.racine.root.5f078eb7:Racine ${root}:root:`,
         openingDebit: openingNet > 0 ? openingNet : 0,
         openingCredit: openingNet < 0 ? -openingNet : 0,
         movementDebit: acc.movementDebit + r.movementDebit,
@@ -530,7 +530,7 @@ export class BalanceComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.balance.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -551,7 +551,7 @@ export class BalanceComponent implements OnInit {
         },
         error: err => {
           this.loading.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.balance.ts.erreur.reseau.0683007f:Erreur réseau`));
         }
       });
   }
@@ -567,7 +567,7 @@ export class BalanceComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.balance.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -609,7 +609,7 @@ export class BalanceComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.balance.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }
@@ -634,7 +634,7 @@ export class BalanceComponent implements OnInit {
         },
         error: err => {
           this.exporting.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.balance.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
         }
       });
   }
@@ -648,7 +648,7 @@ export class BalanceComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.balance.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }

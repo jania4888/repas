@@ -79,7 +79,7 @@ export class BreadcrumbService {
   private updateFromRoute(url: string): void {
     const path = url.split('?')[0];
     const segments = path.split('/').filter(Boolean);
-    const items: BreadcrumbItem[] = [{ label: 'Accueil', route: '/' }];
+    const items: BreadcrumbItem[] = [{ label: $localize`:@@core.breadcrumb.ts.accueil.a8ff8fd2:Accueil`, route: '/' }];
 
     let routeSoFar = '';
     for (let i = 0; i < segments.length; i++) {
@@ -92,10 +92,10 @@ export class BreadcrumbService {
       if (i > 0 && prevSegment === 'reports' && REPORTS_CHILD_LABELS[segmentLower]) {
         label = REPORTS_CHILD_LABELS[segmentLower];
       } else if (segmentLower === 'stock' && prevSegment !== 'reports') {
-        label = 'Stock';
+        label = $localize`:@@core.breadcrumb.ts.stock.bcecf456:Stock`;
       } else if (i > 0 && prevSegment === 'payments') {
-        if (segmentLower === 'clients') label = 'Paiements clients';
-        else if (segmentLower === 'suppliers') label = 'Paiements fournisseurs';
+        if (segmentLower === 'clients') label = $localize`:@@core.breadcrumb.ts.paiements.clients.79a7e359:Paiements clients`;
+        else if (segmentLower === 'suppliers') label = $localize`:@@core.breadcrumb.ts.paiements.fournisseurs.416577a5:Paiements fournisseurs`;
         else label = SEGMENT_LABELS[segmentLower] ?? this.formatSegment(segment);
       } else {
         label = SEGMENT_LABELS[segmentLower] ?? this.formatSegment(segment);

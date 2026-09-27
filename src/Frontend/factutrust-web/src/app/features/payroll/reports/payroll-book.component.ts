@@ -226,11 +226,11 @@ export class PayrollBookComponent implements OnInit {
       + b.totalCss + b.totalCssRegularization + b.totalOtherDeductions;
 
     return [
-      { label: 'Salariés', value: b.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'Masse brute', value: formatPayrollAmount(b.totalGross, false), icon: 'pi-chart-bar', variant: 'primary' },
-      { label: 'Total retenues', value: formatPayrollAmount(totalDeductions, false), icon: 'pi-minus-circle', variant: 'warning' },
-      { label: 'Net à payer', value: formatPayrollAmount(b.totalNetSalary, false), icon: 'pi-wallet', variant: 'success', featured: true },
-      { label: 'Coût employeur', value: formatPayrollAmount(b.totalEmployerCost, false), icon: 'pi-building', variant: 'warning' }
+      { label: $localize`:@@payroll.payroll-book.ts.salaries.ce68387d:Salariés`, value: b.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-book.ts.masse.brute.4700a550:Masse brute`, value: formatPayrollAmount(b.totalGross, false), icon: 'pi-chart-bar', variant: 'primary' },
+      { label: $localize`:@@payroll.payroll-book.ts.total.retenues.b2cd335c:Total retenues`, value: formatPayrollAmount(totalDeductions, false), icon: 'pi-minus-circle', variant: 'warning' },
+      { label: $localize`:@@payroll.payroll-book.ts.net.a.payer.7835df38:Net à payer`, value: formatPayrollAmount(b.totalNetSalary, false), icon: 'pi-wallet', variant: 'success', featured: true },
+      { label: $localize`:@@payroll.payroll-book.ts.cout.employeur.99313d1f:Coût employeur`, value: formatPayrollAmount(b.totalEmployerCost, false), icon: 'pi-building', variant: 'warning' }
     ];
   });
 
@@ -248,7 +248,7 @@ export class PayrollBookComponent implements OnInit {
 
   load(): void {
     if (this.fromMonth > this.toMonth) {
-      this.rangeError.set('Le mois de fin ne peut pas précéder le mois de début.');
+      this.rangeError.set($localize`:@@payroll.payroll-book.ts.le.mois.de.fin.ne.peut.pas.preceder.le.m.bbce61a0:Le mois de fin ne peut pas précéder le mois de début.`);
       return;
     }
     this.rangeError.set(null);

@@ -170,8 +170,8 @@ export class PriceListListComponent implements OnInit {
   readonly canDelete = computed(() => this.auth.hasPermission(PERMISSIONS.pricing.delete));
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Ventes' },
-    { label: 'Grilles tarifaires' }
+    { label: $localize`:@@pricing.price-list-list.ts.ventes.9087fc4f:Ventes` },
+    { label: $localize`:@@pricing.price-list-list.ts.grilles.tarifaires.21b96006:Grilles tarifaires` }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -195,7 +195,7 @@ export class PriceListListComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.showError(err, 'Impossible de charger les grilles tarifaires');
+        this.showError(err, $localize`:@@pricing.price-list-list.ts.impossible.de.charger.les.grilles.tarifa.0668bab1:Impossible de charger les grilles tarifaires`);
         this.errorHandler.logError('Failed to load price lists', err);
         this.priceLists.set([]);
         this.loading.set(false);
@@ -235,7 +235,7 @@ export class PriceListListComponent implements OnInit {
           this.load();
         },
         error: err => {
-          this.showError(err, 'Impossible de créer la grille');
+          this.showError(err, $localize`:@@pricing.price-list-list.ts.impossible.de.creer.la.grille.292f9062:Impossible de créer la grille`);
           this.errorHandler.logError('Create price list failed', err);
           this.saving.set(false);
         }
@@ -244,8 +244,8 @@ export class PriceListListComponent implements OnInit {
 
   confirmDelete(row: PriceListListItem): void {
     this.confirmationService.confirm({
-      header: 'Supprimer la grille',
-      message: `Supprimer définitivement la grille « ${row.name} » ?`,
+      header: $localize`:@@pricing.price-list-list.ts.supprimer.la.grille.5dc9e31f:Supprimer la grille`,
+      message: $localize`:@@pricing.price-list-list.ts.supprimer.definitivement.la.grille.name.85f0cd97:Supprimer définitivement la grille « ${row.name}:name: » ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@price-list-list.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@price-list-list.component.rejectLabel.Annuler:Annuler`,
@@ -267,7 +267,7 @@ export class PriceListListComponent implements OnInit {
       // Le serveur refuse la suppression d'une grille encore affectée : son message dit
       // quoi faire (retirer l'affectation, ou désactiver plutôt que supprimer).
       error: err => {
-        this.showError(err, 'Suppression impossible');
+        this.showError(err, $localize`:@@pricing.price-list-list.ts.suppression.impossible.55762ff2:Suppression impossible`);
         this.errorHandler.logError('Delete price list failed', err);
       }
     });

@@ -209,8 +209,8 @@ export const STUDIO_SPEC_LIMITS = {
 
 /** Cibles ERP autorisées pour une relation vers des données existantes (`ExistingRelationSources.Targets`). */
 export const ERP_RELATION_TARGETS: readonly { ref: string; label: string }[] = [
-  { ref: 'clients', label: 'Clients' },
-  { ref: 'products', label: 'Produits' }
+  { ref: 'clients', label: $localize`:@@studio.studio-ai.ts.clients.28e22fe3:Clients` },
+  { ref: 'products', label: $localize`:@@studio.studio-ai.ts.produits.48000473:Produits` }
 ];
 
 export function isErpRelationTarget(ref: string | undefined | null): boolean {

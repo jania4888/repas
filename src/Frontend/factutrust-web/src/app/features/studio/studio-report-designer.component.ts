@@ -132,21 +132,21 @@ export class StudioReportDesignerComponent implements OnInit {
   sort: ReportSort[] = [];
 
   readonly fnOptions: { label: string; value: ReportAggFn }[] = [
-    { label: 'Nombre', value: 'count' },
-    { label: 'Somme', value: 'sum' },
-    { label: 'Moyenne', value: 'avg' },
-    { label: 'Min', value: 'min' },
-    { label: 'Max', value: 'max' }
+    { label: $localize`:@@studio.studio-report-designer.ts.nombre.e68491e9:Nombre`, value: 'count' },
+    { label: $localize`:@@studio.studio-report-designer.ts.somme.f38fb915:Somme`, value: 'sum' },
+    { label: $localize`:@@studio.studio-report-designer.ts.moyenne.ef33304d:Moyenne`, value: 'avg' },
+    { label: $localize`:@@studio.studio-report-designer.ts.min.7eb0cee8:Min`, value: 'min' },
+    { label: $localize`:@@studio.studio-report-designer.ts.max.a95e85ae:Max`, value: 'max' }
   ];
   // `in` et `between` étaient déjà gérés côté serveur mais absents de l'interface.
   readonly opOptions: { label: string; value: ReportFilterOp }[] = [
     { label: '=', value: 'eq' }, { label: '≠', value: 'neq' },
     { label: '>', value: 'gt' }, { label: '≥', value: 'gte' },
     { label: '<', value: 'lt' }, { label: '≤', value: 'lte' },
-    { label: 'contient', value: 'contains' },
-    { label: 'parmi', value: 'in' }, { label: 'entre', value: 'between' }
+    { label: $localize`:@@studio.studio-report-designer.ts.contient.207c5ba4:contient`, value: 'contains' },
+    { label: $localize`:@@studio.studio-report-designer.ts.parmi.874b76e3:parmi`, value: 'in' }, { label: $localize`:@@studio.studio-report-designer.ts.entre.ed7ad1f6:entre`, value: 'between' }
   ];
-  readonly dirOptions = [{ label: 'Croissant', value: 'asc' }, { label: 'Décroissant', value: 'desc' }];
+  readonly dirOptions = [{ label: $localize`:@@studio.studio-report-designer.ts.croissant.c4f64a87:Croissant`, value: 'asc' }, { label: $localize`:@@studio.studio-report-designer.ts.decroissant.7e888644:Décroissant`, value: 'desc' }];
 
   /**
    * Grouped dropdown: custom tables, whitelisted existing sources, then the tenant's real tables
@@ -157,8 +157,8 @@ export class StudioReportDesignerComponent implements OnInit {
     const custom = all.filter(s => s.kind === 'custom').map(this.toOption);
     const existing = all.filter(s => s.kind === 'existing').map(this.toOption);
     const groups: { label: string; items: { displayName: string; id: string }[] }[] = [];
-    if (custom.length) groups.push({ label: 'Mes tables', items: custom });
-    if (existing.length) groups.push({ label: 'Données existantes (lecture seule)', items: existing });
+    if (custom.length) groups.push({ label: $localize`:@@studio.studio-report-designer.ts.mes.tables.303981a7:Mes tables`, items: custom });
+    if (existing.length) groups.push({ label: $localize`:@@studio.studio-report-designer.ts.donnees.existantes.lecture.seule.9c053270:Données existantes (lecture seule)`, items: existing });
 
     // Un groupe par domaine métier : 80 tables à plat seraient inutilisables.
     const byDomain = new Map<string, { displayName: string; id: string }[]>();

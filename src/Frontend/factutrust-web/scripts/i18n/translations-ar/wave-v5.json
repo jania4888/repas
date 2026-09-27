@@ -309,6 +309,7 @@
   "pos.pos.saisissez.le.fond.de.caisse.declare.especes.ce.m.c250b8be": "أدخلوا رصيد الصندوق المصرّح به (نقدًا). لا يسجّل هذا المبلغ أي عملية خزينة.",
   "pos.pos.theorique.tnd.ce72c0f1": "النظري: {$INTERPOLATION} TND",
   "pos.pos.tickets.avoirs.5780f599": "الوصولات: {$INTERPOLATION} — إشعارات الدائن: {$INTERPOLATION_1}",
+  "pos.pos.ts.erreur.lors.de.l.enregistrement.du.paiem.e23b0f61": "خطأ أثناء تسجيل الدفع",
   "quote-template-form.component.detail.Modèle créé.": "تم إنشاء النموذج.",
   "quote-template-form.component.detail.Modèle mis à": "تم تحديث النموذج.",
   "quote-template-list.component.detail.Modèle suppr": "تم حذف النموذج.",

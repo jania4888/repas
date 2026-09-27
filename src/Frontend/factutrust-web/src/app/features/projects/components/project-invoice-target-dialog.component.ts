@@ -155,7 +155,7 @@ export class ProjectInvoiceTargetDialogComponent {
     this.step = 'pick';
     this.drafts = [...this.preloadedDrafts];
     if (!this.drafts.length) {
-      this.error = 'Aucune facture brouillon compatible pour ce projet.';
+      this.error = $localize`:@@projects.project-invoice-target-dialog.ts.aucune.facture.brouillon.compatible.pour.a3f7da14:Aucune facture brouillon compatible pour ce projet.`;
     }
   }
 

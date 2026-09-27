@@ -2447,7 +2447,7 @@ export class DashboardComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@dashboard.component.summary._chec_de_l_activ:Échec de l’activation`,
-            detail: res.message || 'Impossible d’activer ce module.'
+            detail: res.message || $localize`:@@dashboard.dashboard.ts.impossible.d.activer.ce.module.c4ca3c26:Impossible d’activer ce module.`
           });
           return;
         }
@@ -2793,7 +2793,7 @@ export class DashboardComponent implements OnInit {
       labels: months.map(m => m.monthShort),
       datasets: [
         {
-          label: 'CA (TND)',
+          label: $localize`:@@dashboard.dashboard.ts.ca.tnd.2da09e4f:CA (TND)`,
           data: months.map(m => m.revenue),
           fill: true,
           borderColor: '#3862f5',

@@ -494,9 +494,9 @@ export class StorefrontSettingsComponent implements OnInit {
   readonly urlMax = STOREFRONT_PUBLIC_URL_MAX_LENGTH;
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Vitrine publique' }
+    { label: $localize`:@@settings.storefront-settings.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.storefront-settings.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.storefront-settings.ts.vitrine.publique.6c85a709:Vitrine publique` }
   ];
 
   readonly profile = signal<StorefrontProfileView | null | undefined>(undefined);
@@ -526,22 +526,22 @@ export class StorefrontSettingsComponent implements OnInit {
   };
 
   categories = [
-    { label: 'Commerce général', value: 0 },
-    { label: 'Alimentation', value: 1 },
-    { label: 'Mode', value: 2 },
-    { label: 'Livres', value: 3 },
-    { label: 'Électronique', value: 4 },
-    { label: 'Services', value: 5 },
-    { label: 'Artisanat', value: 6 },
-    { label: 'Autre', value: 99 }
+    { label: $localize`:@@settings.storefront-settings.ts.commerce.general.ab2303a3:Commerce général`, value: 0 },
+    { label: $localize`:@@settings.storefront-settings.ts.alimentation.fa6170f4:Alimentation`, value: 1 },
+    { label: $localize`:@@settings.storefront-settings.ts.mode.a7b93d21:Mode`, value: 2 },
+    { label: $localize`:@@settings.storefront-settings.ts.livres.612cda92:Livres`, value: 3 },
+    { label: $localize`:@@settings.storefront-settings.ts.electronique.15ff3d0d:Électronique`, value: 4 },
+    { label: $localize`:@@settings.storefront-settings.ts.services.5cbd5840:Services`, value: 5 },
+    { label: $localize`:@@settings.storefront-settings.ts.artisanat.c045fdd5:Artisanat`, value: 6 },
+    { label: $localize`:@@settings.storefront-settings.ts.autre.43dacf9e:Autre`, value: 99 }
   ];
 
   themes = [
-    { label: 'Classique', value: 0 },
-    { label: 'Moderne', value: 1 },
-    { label: 'Vintage', value: 2 },
-    { label: 'Minimal', value: 3 },
-    { label: 'Artisan', value: 4 }
+    { label: $localize`:@@settings.storefront-settings.ts.classique.21d58b2b:Classique`, value: 0 },
+    { label: $localize`:@@settings.storefront-settings.ts.moderne.1c491805:Moderne`, value: 1 },
+    { label: $localize`:@@settings.storefront-settings.ts.vintage.eceabeee:Vintage`, value: 2 },
+    { label: $localize`:@@settings.storefront-settings.ts.minimal.a711cca9:Minimal`, value: 3 },
+    { label: $localize`:@@settings.storefront-settings.ts.artisan.fd2f8eb2:Artisan`, value: 4 }
   ];
 
   ngOnInit(): void {
@@ -587,7 +587,7 @@ export class StorefrontSettingsComponent implements OnInit {
         }
         const view = mapApiDtoToView(raw);
         if (!view) {
-          this.error.set('Réponse serveur inattendue (statut vitrine). Contactez le support.');
+          this.error.set($localize`:@@settings.storefront-settings.ts.reponse.serveur.inattendue.statut.vitrin.5f691abe:Réponse serveur inattendue (statut vitrine). Contactez le support.`);
           this.profile.set(null);
           this.invalidStatusFromServer.set(true);
           this.editForm = emptyEditForm();
@@ -615,7 +615,7 @@ export class StorefrontSettingsComponent implements OnInit {
   private applyProfileFromApiDto(dto: StorefrontProfileApiDto): boolean {
     const view = mapApiDtoToView(dto);
     if (!view) {
-      this.error.set('Réponse serveur inattendue (statut vitrine). Contactez le support.');
+      this.error.set($localize`:@@settings.storefront-settings.ts.reponse.serveur.inattendue.statut.vitrin.5f691abe:Réponse serveur inattendue (statut vitrine). Contactez le support.`);
       this.invalidStatusFromServer.set(true);
       return false;
     }

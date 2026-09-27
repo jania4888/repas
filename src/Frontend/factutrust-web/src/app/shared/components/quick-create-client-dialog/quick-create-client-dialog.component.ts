@@ -49,8 +49,8 @@ interface GovernorateOption {
 }
 
 const TYPE_OPTIONS: TypeOption[] = [
-  { label: 'Particulier', value: ClientType.Individual },
-  { label: 'Entreprise', value: ClientType.Business },
+  { label: $localize`:@@shared.quick-create-client-dialog.ts.particulier.281680dd:Particulier`, value: ClientType.Individual },
+  { label: $localize`:@@shared.quick-create-client-dialog.ts.entreprise.d03e74b6:Entreprise`, value: ClientType.Business },
 ];
 
 const GOVERNORATE_OPTIONS: GovernorateOption[] = TUNISIAN_GOVERNORATES.map((g) => ({
@@ -636,7 +636,7 @@ export class QuickCreateClientDialogComponent {
       switchMap((response) => {
         if (!response.success || !response.data) {
           this.submitting.set(false);
-          this.errorMessage.set(response.message || 'Impossible de créer le client.');
+          this.errorMessage.set(response.message || $localize`:@@shared.quick-create-client-dialog.ts.impossible.de.creer.le.client.8c980488:Impossible de créer le client.`);
           return of(null);
         }
         return this.clientService.getClient(response.data);
@@ -656,18 +656,18 @@ export class QuickCreateClientDialogComponent {
           return;
         }
         this.errorMessage.set(
-          getResponse.message || 'Le client a été créé mais n\'a pas pu être chargé. Réessayez la sélection.'
+          getResponse.message || $localize`:@@shared.quick-create-client-dialog.ts.le.client.a.ete.cree.mais.n.a.pas.pu.etr.64e36dbf:Le client a été créé mais n'a pas pu être chargé. Réessayez la sélection.`
         );
       },
       error: (err: HttpErrorResponse) => {
         this.submitting.set(false);
         if (err.status === 409) {
-          this.errorMessage.set('Un client existe déjà avec cet email ou ce matricule fiscal.');
+          this.errorMessage.set($localize`:@@shared.quick-create-client-dialog.ts.un.client.existe.deja.avec.cet.email.ou.6506038c:Un client existe déjà avec cet email ou ce matricule fiscal.`);
         } else if (err.status === 403) {
-          this.errorMessage.set("Vous n'avez pas la permission de créer un client.");
+          this.errorMessage.set($localize`:@@shared.quick-create-client-dialog.ts.vous.n.avez.pas.la.permission.de.creer.u.98c5dfe5:Vous n'avez pas la permission de créer un client.`);
         } else {
           const message = this.errorHandler.extractErrorMessage(err);
-          this.errorMessage.set(message || 'Impossible de créer le client.');
+          this.errorMessage.set(message || $localize`:@@shared.quick-create-client-dialog.ts.impossible.de.creer.le.client.8c980488:Impossible de créer le client.`);
         }
       },
     });

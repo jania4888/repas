@@ -535,9 +535,9 @@ export class NumberingComponent implements OnInit, OnDestroy {
   readonly blockTypeEnum = NumberingBlockType;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Numérotations' }
+    { label: $localize`:@@settings.numbering.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.numbering.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.numbering.ts.numerotations.f8fd8b5e:Numérotations` }
   ];
 
   loading = signal(false);
@@ -612,7 +612,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'error',
               summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
-              detail: res.errors?.join(', ') || 'Chargement impossible'
+              detail: res.errors?.join(', ') || $localize`:@@settings.numbering.ts.chargement.impossible.4c82ffbe:Chargement impossible`
             });
           }
           this.loading.set(false);
@@ -624,7 +624,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
             summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
             detail:
               this.errorHandler.extractErrorMessage(err) ||
-              'Impossible de charger les numérotations'
+              $localize`:@@settings.numbering.ts.impossible.de.charger.les.numerotations.6f52d8ae:Impossible de charger les numérotations`
           });
           this.loading.set(false);
         }
@@ -783,7 +783,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'success',
               summary: $localize`:@@numbering.component.summary.Succès:Succès`,
-              detail: res.message || 'Numérotation enregistrée'
+              detail: res.message || $localize`:@@settings.numbering.ts.numerotation.enregistree.8368ad19:Numérotation enregistrée`
             });
             this.schemes.update((list) => {
               const idx = list.findIndex((s) => s.documentType === res.data!.documentType);
@@ -799,7 +799,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'error',
               summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
-              detail: res.errors?.join(', ') || 'Échec de l\'enregistrement'
+              detail: res.errors?.join(', ') || $localize`:@@settings.numbering.ts.echec.de.l.enregistrement.f21d2b1c:Échec de l'enregistrement`
             });
           }
         },
@@ -810,7 +810,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
             summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
             detail:
               this.errorHandler.extractErrorMessage(err) ||
-              'Échec de l\'enregistrement'
+              $localize`:@@settings.numbering.ts.echec.de.l.enregistrement.f21d2b1c:Échec de l'enregistrement`
           });
         }
       });
@@ -818,9 +818,9 @@ export class NumberingComponent implements OnInit, OnDestroy {
 
   confirmReset(): void {
     this.confirmation.confirm({
-      header: 'Réinitialiser la numérotation',
+      header: $localize`:@@settings.numbering.ts.reinitialiser.la.numerotation.32c2252c:Réinitialiser la numérotation`,
       message:
-        'Réinitialiser le format et le numéro de départ pour ce type de document ? Cette action est irréversible si des documents existent.',
+        $localize`:@@settings.numbering.ts.reinitialiser.le.format.et.le.numero.de.9094a778:Réinitialiser le format et le numéro de départ pour ce type de document ? Cette action est irréversible si des documents existent.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@numbering.component.acceptLabel.R_initialiser:Réinitialiser`,
       rejectLabel: $localize`:@@numbering.component.rejectLabel.Annuler:Annuler`,
@@ -841,7 +841,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'success',
               summary: $localize`:@@numbering.component.summary.Succès:Succès`,
-              detail: res.message || 'Numérotation réinitialisée'
+              detail: res.message || $localize`:@@settings.numbering.ts.numerotation.reinitialisee.bb77b239:Numérotation réinitialisée`
             });
             this.schemes.update((list) => {
               const idx = list.findIndex((s) => s.documentType === res.data!.documentType);
@@ -857,7 +857,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'error',
               summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
-              detail: res.errors?.join(', ') || 'Échec de la réinitialisation'
+              detail: res.errors?.join(', ') || $localize`:@@settings.numbering.ts.echec.de.la.reinitialisation.7b376ac0:Échec de la réinitialisation`
             });
           }
         },
@@ -868,7 +868,7 @@ export class NumberingComponent implements OnInit, OnDestroy {
             summary: $localize`:@@numbering.component.summary.Erreur:Erreur`,
             detail:
               this.errorHandler.extractErrorMessage(err) ||
-              'Échec de la réinitialisation'
+              $localize`:@@settings.numbering.ts.echec.de.la.reinitialisation.7b376ac0:Échec de la réinitialisation`
           });
         }
       });

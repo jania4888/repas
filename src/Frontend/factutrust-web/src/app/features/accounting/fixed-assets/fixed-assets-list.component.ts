@@ -259,7 +259,7 @@ export class FixedAssetsListComponent implements OnInit {
           this.loading.set(false);
         },
         error: err => {
-          this.error.set(this.errors.extractErrorMessage(err, 'Impossible de charger le registre des immobilisations.'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.fixed-assets-list.ts.impossible.de.charger.le.registre.des.im.82b892b0:Impossible de charger le registre des immobilisations.`));
           this.loading.set(false);
         }
       });

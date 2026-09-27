@@ -341,8 +341,8 @@ export class PriceListDetailComponent implements OnInit {
   readonly canUpdate = computed(() => this.auth.hasPermission(PERMISSIONS.pricing.update));
 
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    { label: 'Ventes' },
-    { label: 'Grilles tarifaires', route: '/pricing' },
+    { label: $localize`:@@pricing.price-list-detail.ts.ventes.9087fc4f:Ventes` },
+    { label: $localize`:@@pricing.price-list-detail.ts.grilles.tarifaires.21b96006:Grilles tarifaires`, route: '/pricing' },
     { label: this.priceList()?.name ?? $localize`:@@ui.tern.detail.7ce06a:Détail` }
   ]);
 
@@ -372,7 +372,7 @@ export class PriceListDetailComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.showError(err, 'Impossible de charger la grille');
+        this.showError(err, $localize`:@@pricing.price-list-detail.ts.impossible.de.charger.la.grille.936a09ae:Impossible de charger la grille`);
         this.errorHandler.logError('Failed to load price list', err);
         this.priceList.set(null);
         this.loading.set(false);
@@ -428,7 +428,7 @@ export class PriceListDetailComponent implements OnInit {
           this.load();
         },
         error: err => {
-          this.showError(err, 'Mise à jour impossible');
+          this.showError(err, $localize`:@@pricing.price-list-detail.ts.mise.a.jour.impossible.56d51741:Mise à jour impossible`);
           this.errorHandler.logError('Update price list failed', err);
           this.saving.set(false);
         }
@@ -489,7 +489,7 @@ export class PriceListDetailComponent implements OnInit {
         this.load();
       },
       error: err => {
-        this.showError(err, 'Enregistrement impossible');
+        this.showError(err, $localize`:@@pricing.price-list-detail.ts.enregistrement.impossible.1e5e1075:Enregistrement impossible`);
         this.errorHandler.logError('Set price list item failed', err);
         this.saving.set(false);
       }
@@ -498,8 +498,8 @@ export class PriceListDetailComponent implements OnInit {
 
   confirmRemove(item: PriceListItem): void {
     this.confirmationService.confirm({
-      header: 'Retirer de la grille',
-      message: `Retirer « ${item.productName} » de cette grille ? Il repassera au prix catalogue.`,
+      header: $localize`:@@pricing.price-list-detail.ts.retirer.de.la.grille.92c887ff:Retirer de la grille`,
+      message: $localize`:@@pricing.price-list-detail.ts.retirer.productname.de.cette.grille.il.r.e0441554:Retirer « ${item.productName}:productName: » de cette grille ? Il repassera au prix catalogue.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@price-list-detail.component.acceptLabel.Retirer:Retirer`,
       rejectLabel: $localize`:@@price-list-detail.component.rejectLabel.Annuler:Annuler`,
@@ -519,7 +519,7 @@ export class PriceListDetailComponent implements OnInit {
         this.load();
       },
       error: err => {
-        this.showError(err, 'Retrait impossible');
+        this.showError(err, $localize`:@@pricing.price-list-detail.ts.retrait.impossible.d23945f6:Retrait impossible`);
         this.errorHandler.logError('Remove price list item failed', err);
       }
     });
@@ -576,7 +576,7 @@ export class PriceListDetailComponent implements OnInit {
           this.load();
         },
         error: err => {
-          this.showError(err, 'Enregistrement du palier impossible');
+          this.showError(err, $localize`:@@pricing.price-list-detail.ts.enregistrement.du.palier.impossible.105b11f6:Enregistrement du palier impossible`);
           this.errorHandler.logError('Set price list tier failed', err);
           this.saving.set(false);
         }
@@ -585,9 +585,9 @@ export class PriceListDetailComponent implements OnInit {
 
   confirmRemoveTier(item: PriceListItem, tier: PriceListTier): void {
     this.confirmationService.confirm({
-      header: 'Retirer le palier',
+      header: $localize`:@@pricing.price-list-detail.ts.retirer.le.palier.19beafcf:Retirer le palier`,
       message:
-        `Retirer le palier « à partir de ${tier.minQuantity} » sur ${item.productCode} ? ` +
+        $localize`:@@pricing.price-list-detail.ts.retirer.le.palier.a.partir.de.minquantit.b25c5888:Retirer le palier « à partir de ${tier.minQuantity}:minQuantity: » sur ${item.productCode}:productCode: ? ` +
         $localize`:@@ui.tern.ces.quantites.retomberont.sur.le.palier.in.5636c0:Ces quantités retomberont sur le palier inférieur, ou sur le prix de base.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@price-list-detail.component.acceptLabel.Retirer:Retirer`,
@@ -610,7 +610,7 @@ export class PriceListDetailComponent implements OnInit {
           this.load();
         },
         error: err => {
-          this.showError(err, 'Retrait du palier impossible');
+          this.showError(err, $localize`:@@pricing.price-list-detail.ts.retrait.du.palier.impossible.9e414de5:Retrait du palier impossible`);
           this.errorHandler.logError('Remove price list tier failed', err);
         }
       });

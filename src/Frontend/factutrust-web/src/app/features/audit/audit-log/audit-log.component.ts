@@ -153,7 +153,7 @@ export class AuditLogComponent implements OnInit {
         },
         error: () => {
           this.loading.set(false);
-          this.error.set('Erreur réseau. Réessayez plus tard.');
+          this.error.set($localize`:@@audit.audit-log.ts.erreur.reseau.reessayez.plus.tard.8e5647cd:Erreur réseau. Réessayez plus tard.`);
         }
       });
   }
@@ -178,7 +178,7 @@ export class AuditLogComponent implements OnInit {
       },
       error: () => {
         this.verifyLoading.set(false);
-        this.verifyError.set('Erreur réseau lors de la vérification.');
+        this.verifyError.set($localize`:@@audit.audit-log.ts.erreur.reseau.lors.de.la.verification.ffea3b50:Erreur réseau lors de la vérification.`);
       }
     });
   }

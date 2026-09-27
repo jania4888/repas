@@ -841,9 +841,9 @@ export class QuickCreateProductDialogComponent {
         this.submitting.set(false);
         const message = this.errorHandler.extractErrorMessage(err);
         if (err.status === 409) {
-          this.errorMessage.set('Un produit avec ce code existe déjà.');
+          this.errorMessage.set($localize`:@@shared.quick-create-product-dialog.ts.un.produit.avec.ce.code.existe.deja.1e699ac3:Un produit avec ce code existe déjà.`);
         } else {
-          this.errorMessage.set(message || 'Impossible de créer le produit.');
+          this.errorMessage.set(message || $localize`:@@shared.quick-create-product-dialog.ts.impossible.de.creer.le.produit.12c9376c:Impossible de créer le produit.`);
         }
       },
     });

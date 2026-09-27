@@ -213,11 +213,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class ConfirmModalComponent {
   readonly loc_ui_tern_confirm_modal_icon_e3a84f = " confirm-modal-icon";
   readonly loc_ui_tern_btn_confirm_modal_btn_accept_23fde5 = "btn confirm-modal-btn-accept ";
-  @Input() message = 'Êtes-vous sûr ?';
-  @Input() header = 'Confirmation';
+  @Input() message = $localize`:@@shared.confirm-modal.ts.etes.vous.sur.25c63265:Êtes-vous sûr ?`;
+  @Input() header = $localize`:@@shared.confirm-modal.ts.confirmation.3424edc2:Confirmation`;
   @Input() icon = '';
-  @Input() acceptLabel = 'Oui';
-  @Input() rejectLabel = 'Non';
+  @Input() acceptLabel = $localize`:@@shared.confirm-modal.ts.oui.eaa02f3f:Oui`;
+  @Input() rejectLabel = $localize`:@@shared.confirm-modal.ts.non.a7219939:Non`;
   @Input() acceptButtonStyleClass = 'btn-primary';
   /** When false, only the accept button is shown (alert mode). */
   @Input() showRejectButton = true;

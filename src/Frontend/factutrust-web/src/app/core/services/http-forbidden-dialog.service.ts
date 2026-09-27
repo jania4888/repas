@@ -27,7 +27,7 @@ export class HttpForbiddenDialogService {
 
     this.confirmation.alert({
       message: trimmed,
-      header: 'Accès refusé',
+      header: $localize`:@@core.http-forbidden-dialog.ts.acces.refuse.db4ecaf4:Accès refusé`,
       icon: 'pi pi-exclamation-triangle'
     });
   }

@@ -108,14 +108,14 @@ export function getDrillDownTarget(
         // Dashboard card is the cumulative total → open the matching "Cumulé" view.
         queryParams: { period: 'all' },
         requiredPermission: PERMISSIONS.reports.view,
-        ariaLabel: 'Voir le detail du chiffre d affaires'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.du.chiffre.d.affaires.069bd230:Voir le detail du chiffre d affaires`
       };
     case 'salesToday':
       return {
         route: '/invoices',
         queryParams: { fromDate: todayIso, toDate: todayIso },
         requiredPermission: PERMISSIONS.invoices.read,
-        ariaLabel: 'Voir le detail des ventes du jour'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.ventes.du.jour.469ef93f:Voir le detail des ventes du jour`
       };
     case 'currentMonthRevenue': {
       const bounds = currentMonthBounds(now);
@@ -123,14 +123,14 @@ export function getDrillDownTarget(
         route: '/invoices',
         queryParams: bounds,
         requiredPermission: PERMISSIONS.invoices.read,
-        ariaLabel: 'Voir le detail du chiffre d affaires du mois en cours'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.du.chiffre.d.affaires.du.64dfc081:Voir le detail du chiffre d affaires du mois en cours`
       };
     }
     case 'pendingInvoices':
       return {
         route: '/invoices/unpaid',
         requiredPermission: PERMISSIONS.invoices.read,
-        ariaLabel: 'Voir le detail des factures impayees'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.factures.impayees.730d7951:Voir le detail des factures impayees`
       };
     case 'stockAlerts':
     case 'urgentStock':
@@ -139,7 +139,7 @@ export function getDrillDownTarget(
         queryParams: { alerts: '1' },
         requiredPermission: PERMISSIONS.stock.read,
         requiredModule: AppModule.Stock,
-        ariaLabel: 'Voir le detail des produits en alerte stock'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.produits.en.alerte.st.a1c30000:Voir le detail des produits en alerte stock`
       };
     case 'urgentDeliveries':
     case 'pendingDeliveriesSide':
@@ -147,28 +147,28 @@ export function getDrillDownTarget(
         route: '/delivery-notes',
         queryParams: { status: DeliveryNoteStatus.Confirmed },
         requiredPermission: PERMISSIONS.deliveryNotes.read,
-        ariaLabel: 'Voir le detail des livraisons en attente'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.livraisons.en.attente.da5ca72e:Voir le detail des livraisons en attente`
       };
     case 'urgentOverdueInvoices':
       return {
         route: '/invoices',
         queryParams: { status: String(INVOICE_STATUS_OVERDUE) },
         requiredPermission: PERMISSIONS.invoices.read,
-        ariaLabel: 'Voir le detail des factures en retard'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.factures.en.retard.3a0537c2:Voir le detail des factures en retard`
       };
     case 'activeQuotesSide':
       return {
         route: '/quotes',
         queryParams: { activeOnly: '1' },
         requiredPermission: PERMISSIONS.quotes.read,
-        ariaLabel: 'Voir le detail des devis en cours'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.devis.en.cours.695217fc:Voir le detail des devis en cours`
       };
     case 'chartMonth': {
       if (!context.month) {
         return {
           route: '/reports/analytics/revenue',
           requiredPermission: PERMISSIONS.reports.view,
-          ariaLabel: 'Voir le detail du chiffre d affaires'
+          ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.du.chiffre.d.affaires.069bd230:Voir le detail du chiffre d affaires`
         };
       }
       const bounds = monthBoundsFromRevenueData(context.month);
@@ -176,7 +176,7 @@ export function getDrillDownTarget(
         route: '/invoices',
         queryParams: bounds ?? undefined,
         requiredPermission: PERMISSIONS.invoices.read,
-        ariaLabel: `Voir le detail des factures de ${context.month.month} ${context.month.year}`
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.factures.de.month.yea.c608c550:Voir le detail des factures de ${context.month.month}:month: ${context.month.year}:year:`
       };
     }
     case 'accountingVat':
@@ -185,21 +185,21 @@ export function getDrillDownTarget(
         route: '/accounting/vat-declaration',
         requiredPermission: PERMISSIONS.accounting.read,
         requiredModule: AppModule.Accounting,
-        ariaLabel: 'Voir le detail de la TVA'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.de.la.tva.3000fd1d:Voir le detail de la TVA`
       };
     case 'accountingReceivables90':
       return {
         route: '/accounting/aging',
         requiredPermission: PERMISSIONS.accounting.read,
         requiredModule: AppModule.Accounting,
-        ariaLabel: 'Voir le detail des creances de plus de 90 jours'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.creances.de.plus.de.9.b9c0be04:Voir le detail des creances de plus de 90 jours`
       };
     case 'accountingUnposted':
       return {
         route: '/accounting/journal',
         requiredPermission: PERMISSIONS.accounting.read,
         requiredModule: AppModule.Accounting,
-        ariaLabel: 'Voir le journal comptable'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.journal.comptable.95cc2fb4:Voir le journal comptable`
       };
     case 'crmReminders':
       return {
@@ -207,14 +207,14 @@ export function getDrillDownTarget(
         queryParams: { mine: '1', completed: 'false' },
         requiredPermission: PERMISSIONS.crm.read,
         requiredModule: AppModule.CRM,
-        ariaLabel: 'Voir le detail de mes relances CRM'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.de.mes.relances.crm.5c9f1690:Voir le detail de mes relances CRM`
       };
     case 'crmOpenOpportunities':
       return {
         route: '/crm/opportunities',
         requiredPermission: PERMISSIONS.crm.read,
         requiredModule: AppModule.CRM,
-        ariaLabel: 'Voir le detail des opportunites ouvertes'
+        ariaLabel: $localize`:@@dashboard.dashboard-drill-down.ts.voir.le.detail.des.opportunites.ouvertes.797fdfd8:Voir le detail des opportunites ouvertes`
       };
     default: {
       const _exhaustive: never = id;

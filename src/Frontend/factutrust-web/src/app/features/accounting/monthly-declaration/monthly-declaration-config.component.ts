@@ -326,7 +326,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -419,7 +419,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
     // booléen) : on branche l'abonnement plutôt que d'unir deux observables inconciliables.
     const handlers = {
       next: (res: { success: boolean; error?: string }) => done(res.success, res.error),
-      error: (err: unknown) => done(false, this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: (err: unknown) => done(false, this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`))
     };
 
     if (draft.id) {
@@ -452,7 +452,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
         },
         error: err => {
           this.savingFamily.set(false);
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`));
           this.load(false);
         }
       });
@@ -470,7 +470,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
           this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.changement.d.etat.de.la.rub.3fdf4d:Erreur lors du changement d’état de la rubrique.`);
         }
       },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 
@@ -479,8 +479,8 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
       return;
     }
     this.confirmation.confirm({
-      header: 'Supprimer la rubrique',
-      message: `Supprimer définitivement « ${rubric.code} — ${rubric.label} » ? Les déclarations déjà déposées gardent leurs lignes ; les périodes suivantes ne la calculeront plus.`,
+      header: $localize`:@@accounting.monthly-declaration-config.ts.supprimer.la.rubrique.3c14cf90:Supprimer la rubrique`,
+      message: $localize`:@@accounting.monthly-declaration-config.ts.supprimer.definitivement.code.label.les.fadf16cc:Supprimer définitivement « ${rubric.code}:code: — ${rubric.label}:label: » ? Les déclarations déjà déposées gardent leurs lignes ; les périodes suivantes ne la calculeront plus.`,
       acceptLabel: $localize`:@@monthly-declaration-config.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@monthly-declaration-config.component.rejectLabel.Annuler:Annuler`,
       size: 'md',
@@ -504,7 +504,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
           this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.la.suppression.de.la.rubriq.389719:Erreur lors de la suppression de la rubrique.`);
         }
       },
-      error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'))
+      error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`))
     });
   }
 
@@ -523,7 +523,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
           this.toast.add({
             severity: 'success',
             summary: $localize`:@@monthly-declaration-config.component.summary.Configuration_du:Configuration dupliquée`,
-            detail: `${res.data.inserted} insérée(s), ${res.data.replaced} remplacée(s)`,
+            detail: $localize`:@@accounting.monthly-declaration-config.ts.inserted.inseree.s.replaced.remplacee.s.79085127:${res.data.inserted}:inserted: insérée(s), ${res.data.replaced}:replaced: remplacée(s)`,
             life: 5000
           });
           this.load();
@@ -533,7 +533,7 @@ export class MonthlyDeclarationConfigComponent implements OnInit {
       },
       error: err => {
         this.duplicating.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-config.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }

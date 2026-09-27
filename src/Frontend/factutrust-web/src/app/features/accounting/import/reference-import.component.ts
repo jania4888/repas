@@ -210,7 +210,7 @@ export class ReferenceImportComponent {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'aperçu."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.reference-import.ts.erreur.reseau.lors.de.l.apercu.37b653a5:Erreur réseau lors de l'aperçu.`));
       }
     });
   }
@@ -228,14 +228,14 @@ export class ReferenceImportComponent {
           this.error.set(res.error ?? $localize`:@@ui.tern.l.import.a.echoue.2e84df:L'import a échoué.`);
           return;
         }
-        this.successMessage.set(`${res.data.createdCount} élément(s) créé(s), ${res.data.skippedCount} ignoré(s).`);
+        this.successMessage.set($localize`:@@accounting.reference-import.ts.createdcount.element.s.cree.s.skippedcou.955c971f:${res.data.createdCount}:createdCount: élément(s) créé(s), ${res.data.skippedCount}:skippedCount: ignoré(s).`);
         this.preview.set(null);
         this.selectedFile.set(null);
         this.mappingFile.set(null);
       },
       error: err => {
         this.committing.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'import."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.reference-import.ts.erreur.reseau.lors.de.l.import.085abb90:Erreur réseau lors de l'import.`));
       }
     });
   }

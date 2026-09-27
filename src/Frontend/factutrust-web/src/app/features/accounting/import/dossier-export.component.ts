@@ -78,11 +78,11 @@ export class DossierExportComponent {
       next: blob => {
         this.exporting.set(false);
         downloadBlob(blob, `dossier_${this.fiscalYear}.zip`);
-        this.successMessage.set(`Archive du dossier ${this.fiscalYear} téléchargée.`);
+        this.successMessage.set($localize`:@@accounting.dossier-export.ts.archive.du.dossier.fiscalyear.telecharge.b9692329:Archive du dossier ${this.fiscalYear}:fiscalYear: téléchargée.`);
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de la préparation de l'archive."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.dossier-export.ts.erreur.lors.de.la.preparation.de.l.archi.ae349217:Erreur lors de la préparation de l'archive.`));
       }
     });
   }

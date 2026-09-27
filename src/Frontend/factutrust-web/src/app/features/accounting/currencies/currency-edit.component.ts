@@ -227,7 +227,7 @@ export class CurrencyEditComponent implements OnInit {
             }))
           : [{
               month: null,
-              label: `Taux de l'exercice ${detail.fiscalYear}`,
+              label: $localize`:@@accounting.currency-edit.ts.taux.de.l.exercice.fiscalyear.13fa1dc1:Taux de l'exercice ${detail.fiscalYear}:fiscalYear:`,
               value: detail.rates.find(r => r.month === null)?.rate ?? null
             }];
 
@@ -235,7 +235,7 @@ export class CurrencyEditComponent implements OnInit {
         this.baseline = this.fingerprint(rows);
         this.dirty.set(false);
       },
-      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.currency-edit.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 
@@ -256,7 +256,7 @@ export class CurrencyEditComponent implements OnInit {
           this.error.set(r.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
         }
       },
-      error: err => { this.saving.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.saving.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.currency-edit.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 

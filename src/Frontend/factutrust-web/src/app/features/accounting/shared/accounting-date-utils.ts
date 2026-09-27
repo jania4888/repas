@@ -17,10 +17,10 @@ export function parseLocalDateString(ymd: string): Date {
 
 export function validateDateRange(from: Date, to: Date): { valid: boolean; message?: string } {
   if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
-    return { valid: false, message: 'Dates invalides.' };
+    return { valid: false, message: $localize`:@@accounting.accounting-date-utils.ts.dates.invalides.d5c40044:Dates invalides.` };
   }
   if (from.getTime() > to.getTime()) {
-    return { valid: false, message: 'La date de début doit être antérieure ou égale à la date de fin.' };
+    return { valid: false, message: $localize`:@@accounting.accounting-date-utils.ts.la.date.de.debut.doit.etre.anterieure.ou.709070bf:La date de début doit être antérieure ou égale à la date de fin.` };
   }
   return { valid: true };
 }

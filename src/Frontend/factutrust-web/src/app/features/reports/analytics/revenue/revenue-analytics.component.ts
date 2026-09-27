@@ -940,10 +940,10 @@ export class RevenueAnalyticsComponent implements OnInit {
     maxRevenue = 0;
 
     periodOptions = [
-        { label: 'Aujourd\'hui', value: 'day' as AnalyticsPeriod },
-        { label: 'Ce mois', value: 'month' as AnalyticsPeriod },
-        { label: 'Cette année', value: 'year' as AnalyticsPeriod },
-        { label: 'Cumulé', value: 'all' as AnalyticsPeriod }
+        { label: $localize`:@@reports.revenue-analytics.ts.aujourd.hui.baca97f6:Aujourd'hui`, value: 'day' as AnalyticsPeriod },
+        { label: $localize`:@@reports.revenue-analytics.ts.ce.mois.db74c560:Ce mois`, value: 'month' as AnalyticsPeriod },
+        { label: $localize`:@@reports.revenue-analytics.ts.cette.annee.052507a0:Cette année`, value: 'year' as AnalyticsPeriod },
+        { label: $localize`:@@reports.revenue-analytics.ts.cumule.39d4fcc6:Cumulé`, value: 'all' as AnalyticsPeriod }
     ];
 
     ngOnInit(): void {

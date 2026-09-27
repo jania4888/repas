@@ -161,7 +161,7 @@ export class EmployeeHrDocumentsComponent implements OnInit {
     request().subscribe({
       next: blob => {
         downloadBlob(blob, filename);
-        this.toast.add({ severity: 'success', summary: $localize`:@@employee-hr-documents.component.summary.Documents_RH:Documents RH`, detail: `${label} téléchargé.` });
+        this.toast.add({ severity: 'success', summary: $localize`:@@employee-hr-documents.component.summary.Documents_RH:Documents RH`, detail: $localize`:@@payroll.employee-hr-documents.ts.label.telecharge.e366aafe:${label}:label: téléchargé.` });
         this.downloading.set(null);
       },
       error: err => {

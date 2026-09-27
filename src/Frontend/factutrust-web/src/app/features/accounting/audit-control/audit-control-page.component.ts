@@ -76,11 +76,11 @@ export class AuditControlPageComponent implements OnInit {
   selectedModuleCode: string | null = null;
 
   readonly tabs: { key: SeverityTab; label: string }[] = [
-    { key: 'all', label: 'Toutes' },
-    { key: 'blocking', label: 'Erreurs bloquantes' },
-    { key: 'warning', label: 'Avertissements' },
-    { key: 'info', label: 'Informations' },
-    { key: 'ignored', label: 'Ignorées' }
+    { key: 'all', label: $localize`:@@accounting.audit-control-page.ts.toutes.c5f641e4:Toutes` },
+    { key: 'blocking', label: $localize`:@@accounting.audit-control-page.ts.erreurs.bloquantes.f4604ece:Erreurs bloquantes` },
+    { key: 'warning', label: $localize`:@@accounting.audit-control-page.ts.avertissements.0fc072a7:Avertissements` },
+    { key: 'info', label: $localize`:@@accounting.audit-control-page.ts.informations.54937b3a:Informations` },
+    { key: 'ignored', label: $localize`:@@accounting.audit-control-page.ts.ignorees.a4347cb7:Ignorées` }
   ];
 
   readonly donutData = computed(() => {
@@ -98,9 +98,9 @@ export class AuditControlPageComponent implements OnInit {
     return {
       labels: a.trend.map(t => t.label),
       datasets: [
-        { label: 'Bloquants', data: a.trend.map(t => t.blocking), borderColor: '#ef4444', tension: 0.3 },
-        { label: 'Avertissements', data: a.trend.map(t => t.warning), borderColor: '#f97316', tension: 0.3 },
-        { label: 'Infos', data: a.trend.map(t => t.info), borderColor: '#3b82f6', tension: 0.3 }
+        { label: $localize`:@@accounting.audit-control-page.ts.bloquants.ef4ed4be:Bloquants`, data: a.trend.map(t => t.blocking), borderColor: '#ef4444', tension: 0.3 },
+        { label: $localize`:@@accounting.audit-control-page.ts.avertissements.0fc072a7:Avertissements`, data: a.trend.map(t => t.warning), borderColor: '#f97316', tension: 0.3 },
+        { label: $localize`:@@accounting.audit-control-page.ts.infos.df9161f6:Infos`, data: a.trend.map(t => t.info), borderColor: '#3b82f6', tension: 0.3 }
       ]
     };
   });
@@ -139,7 +139,7 @@ export class AuditControlPageComponent implements OnInit {
       error: err => {
         this.loading.set(false);
         if (err?.status === 400) this.dashboardEnabled.set(false);
-        else this.error.set('Erreur réseau');
+        else this.error.set($localize`:@@accounting.audit-control-page.ts.erreur.reseau.0683007f:Erreur réseau`);
       }
     });
   }
@@ -158,7 +158,7 @@ export class AuditControlPageComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur lors du contrôle'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.audit-control-page.ts.erreur.lors.du.controle.567e41cd:Erreur lors du contrôle`));
       }
     });
   }

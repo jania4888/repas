@@ -210,7 +210,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
       this.elapsedSeconds.set(0);
       this.modelReady.set(null);
       this.warmUpMessage.set(null);
-      this.progressLabel.set('Lecture du document…');
+      this.progressLabel.set($localize`:@@invoices.invoice-import-dialog.ts.lecture.du.document.f74989d0:Lecture du document…`);
       this.warmUpSub?.unsubscribe();
       this.warmUpSub = this.importService.warmUpModel().subscribe({
         next: (res) => {
@@ -221,7 +221,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
             this.warmUpMessage.set(res.error);
           } else {
             this.warmUpMessage.set(
-              'Le préchauffage du modèle IA a échoué. L\'import peut être plus long.');
+              $localize`:@@invoices.invoice-import-dialog.ts.le.prechauffage.du.modele.ia.a.echoue.l.64220d3e:Le préchauffage du modèle IA a échoué. L'import peut être plus long.`);
           }
         },
         error: (err) => {
@@ -281,7 +281,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
   private startImport(file: File): void {
     if (file.size > InvoiceImportDialogComponent.MaxBytes) {
       this.phase.set('error');
-      this.errorMessage.set('Fichier trop volumineux (maximum 10 Mo).');
+      this.errorMessage.set($localize`:@@invoices.invoice-import-dialog.ts.fichier.trop.volumineux.maximum.10.mo.717ddc82:Fichier trop volumineux (maximum 10 Mo).`);
       return;
     }
 
@@ -323,7 +323,7 @@ export class InvoiceImportDialogComponent implements OnDestroy {
     this.stopElapsedTimer();
     this.phase.set('idle');
     this.selectedFileName.set(null);
-    this.progressLabel.set('Lecture du document…');
+    this.progressLabel.set($localize`:@@invoices.invoice-import-dialog.ts.lecture.du.document.f74989d0:Lecture du document…`);
   }
 
   private stopElapsedTimer(): void {

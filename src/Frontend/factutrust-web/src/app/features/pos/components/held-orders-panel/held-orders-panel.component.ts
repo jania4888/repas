@@ -234,8 +234,8 @@ export class HeldOrdersPanelComponent {
 
     if (this.posState.isDirty() && this.posState.lines().length > 0) {
       this.confirmationService.confirm({
-        header: 'Remplacer la commande ?',
-        message: 'La commande en cours sera remplacée. Continuer ?',
+        header: $localize`:@@pos.held-orders-panel.ts.remplacer.la.commande.53d35914:Remplacer la commande ?`,
+        message: $localize`:@@pos.held-orders-panel.ts.la.commande.en.cours.sera.remplacee.cont.3908d784:La commande en cours sera remplacée. Continuer ?`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: $localize`:@@held-orders-panel.component.acceptLabel.Continuer:Continuer`,
         rejectLabel: $localize`:@@held-orders-panel.component.rejectLabel.Annuler:Annuler`,
@@ -248,8 +248,8 @@ export class HeldOrdersPanelComponent {
 
   deleteOrder(id: string): void {
     this.confirmationService.confirm({
-      header: 'Supprimer la commande ?',
-      message: 'Supprimer cette commande en attente ?',
+      header: $localize`:@@pos.held-orders-panel.ts.supprimer.la.commande.ef175a35:Supprimer la commande ?`,
+      message: $localize`:@@pos.held-orders-panel.ts.supprimer.cette.commande.en.attente.4cfc8238:Supprimer cette commande en attente ?`,
       icon: 'pi pi-trash',
       acceptButtonStyleClass: 'btn-danger',
       acceptLabel: $localize`:@@held-orders-panel.component.acceptLabel.Supprimer:Supprimer`,

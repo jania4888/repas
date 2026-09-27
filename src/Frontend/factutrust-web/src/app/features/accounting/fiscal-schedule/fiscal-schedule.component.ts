@@ -397,7 +397,7 @@ export class FiscalScheduleComponent implements OnInit {
           this.selected = this.list.items.find(item => item.id === previousId) ?? this.list.items[0] ?? null;
           this.loadSelectedDetails();
         },
-        error: err => this.errorMessage = this.errors.extractErrorMessage(err, "Impossible de charger l'echeancier fiscal.")
+        error: err => this.errorMessage = this.errors.extractErrorMessage(err, $localize`:@@accounting.fiscal-schedule.ts.impossible.de.charger.l.echeancier.fisca.939d8ac8:Impossible de charger l'echeancier fiscal.`)
       });
   }
 
@@ -513,8 +513,8 @@ export class FiscalScheduleComponent implements OnInit {
   deleteSelected(): void {
     if (!this.selected || !this.canDelete) return;
     this.confirmationService.confirm({
-      message: 'Annuler cette echeance fiscale ?',
-      header: 'Confirmation de suppression',
+      message: $localize`:@@accounting.fiscal-schedule.ts.annuler.cette.echeance.fiscale.48b4f62b:Annuler cette echeance fiscale ?`,
+      header: $localize`:@@accounting.fiscal-schedule.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@fiscal-schedule.component.acceptLabel.Annuler_l_ch_an:Annuler l'échéance`,
       rejectLabel: $localize`:@@fiscal-schedule.component.rejectLabel.Retour:Retour`,
@@ -649,8 +649,8 @@ export class FiscalScheduleComponent implements OnInit {
   deleteAttachment(attachment: FiscalScheduleAttachmentDto): void {
     if (!this.selected) return;
     this.confirmationService.confirm({
-      message: 'Supprimer cette piece jointe ?',
-      header: 'Confirmation de suppression',
+      message: $localize`:@@accounting.fiscal-schedule.ts.supprimer.cette.piece.jointe.aca50184:Supprimer cette piece jointe ?`,
+      header: $localize`:@@accounting.fiscal-schedule.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@fiscal-schedule.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@fiscal-schedule.component.rejectLabel.Annuler:Annuler`,

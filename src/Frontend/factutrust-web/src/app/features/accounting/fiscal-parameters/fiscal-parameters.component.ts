@@ -341,7 +341,7 @@ export class FiscalParametersComponent implements OnInit {
   save(): void {
     if (!this.model) return;
     if (!this.isYearValid()) {
-      this.error.set('Exercice invalide : doit être compris entre 2000 et 2100.');
+      this.error.set($localize`:@@accounting.fiscal-parameters.ts.exercice.invalide.doit.etre.compris.entr.db4c8a16:Exercice invalide : doit être compris entre 2000 et 2100.`);
       return;
     }
     const irppError = this.irppValidationError();
@@ -364,14 +364,14 @@ export class FiscalParametersComponent implements OnInit {
           this.model = { ...res.data };
           this.snapshot = { ...res.data };
           this.jsonError.set(this.validateIrppJsonSyntax(res.data.irppBracketsJson));
-          this.info.set('Paramètres enregistrés — ils ne seront plus réinitialisés automatiquement.');
+          this.info.set($localize`:@@accounting.fiscal-parameters.ts.parametres.enregistres.ils.ne.seront.plu.a92b4346:Paramètres enregistrés — ils ne seront plus réinitialisés automatiquement.`);
         } else {
           this.error.set(res.error ?? $localize`:@@ui.tern.l.enregistrement.a.echoue.3f69ec:L'enregistrement a échoué.`);
         }
       },
       error: () => {
         this.saving.set(false);
-        this.error.set("L'enregistrement a échoué.");
+        this.error.set($localize`:@@accounting.fiscal-parameters.ts.l.enregistrement.a.echoue.3f69ec30:L'enregistrement a échoué.`);
       }
     });
   }

@@ -50,7 +50,7 @@ export class ProjectActivityTimelineComponent {
   @Input() limit = 5;
   @Input() compact = false;
   @Input() showTitle = true;
-  @Input() title = 'Activité récente';
+  @Input() title = $localize`:@@projects.project-activity-timeline.ts.activite.recente.524eaf8e:Activité récente`;
   @Output() viewAll = new EventEmitter<void>();
 
   readonly visual = activityVisual;

@@ -364,9 +364,9 @@ export class PurchaseOrderReceiveComponent implements OnInit {
   receptionLines: ReceptionLine[] = [];
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de commande', route: '/purchase-orders' },
-    { label: 'Réception' }
+    { label: $localize`:@@purchase-orders.purchase-order-receive.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-orders.purchase-order-receive.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
+    { label: $localize`:@@purchase-orders.purchase-order-receive.ts.reception.36e23897:Réception` }
   ];
 
   ngOnInit(): void {
@@ -406,11 +406,11 @@ export class PurchaseOrderReceiveComponent implements OnInit {
             order.status !== PurchaseOrderStatus.PartiallyReceived) {
             let message = 'Cette commande ne peut pas recevoir de marchandise';
             if (order.status === PurchaseOrderStatus.Draft) {
-              message = 'Cette commande est en brouillon. Veuillez d\'abord la confirmer avant de pouvoir recevoir des marchandises.';
+              message = $localize`:@@purchase-orders.purchase-order-receive.ts.cette.commande.est.en.brouillon.veuillez.865b261e:Cette commande est en brouillon. Veuillez d'abord la confirmer avant de pouvoir recevoir des marchandises.`;
             } else if (order.status === PurchaseOrderStatus.Received) {
-              message = 'Cette commande a déjà été entièrement reçue.';
+              message = $localize`:@@purchase-orders.purchase-order-receive.ts.cette.commande.a.deja.ete.entierement.re.68fd90fc:Cette commande a déjà été entièrement reçue.`;
             } else if (order.status === PurchaseOrderStatus.Cancelled) {
-              message = 'Cette commande a été annulée.';
+              message = $localize`:@@purchase-orders.purchase-order-receive.ts.cette.commande.a.ete.annulee.fb0854cf:Cette commande a été annulée.`;
             }
 
             this.toastService.add({
@@ -437,10 +437,10 @@ export class PurchaseOrderReceiveComponent implements OnInit {
           }));
 
           this.breadcrumbItems = [
-            { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-            { label: 'Bons de commande', route: '/purchase-orders' },
+            { label: $localize`:@@purchase-orders.purchase-order-receive.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+            { label: $localize`:@@purchase-orders.purchase-order-receive.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
             { label: order.number, route: '/purchase-orders/' + order.id },
-            { label: 'Réception' }
+            { label: $localize`:@@purchase-orders.purchase-order-receive.ts.reception.36e23897:Réception` }
           ];
         }
         this.loading.set(false);

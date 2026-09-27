@@ -75,7 +75,7 @@ const COMPUTED: ReadonlySet<CustomFieldType> = new Set(COMPUTED_FIELD_TYPES);
  * n'existent pas : remplacés par `saveError` et `L.instances.history` (4.7a2).
  */
 const DESIGNER_LABELS = {
-  description: 'Description',
+  description: $localize`:@@studio.studio-workflow-designer.ts.description.55f8ebc8:Description`,
   tableFixed: 'La table ne peut plus être changée après la création.',
   saveError: 'Enregistrement impossible.',
   triggerConfigTooLarge: 'La configuration du déclencheur dépasse 2 Ko.'

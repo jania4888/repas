@@ -53,8 +53,8 @@ export class InventoryDetailComponent implements OnInit {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const inv = this.inventory();
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Inventaire', route: '/inventory' },
+      { label: $localize`:@@inventory.inventory-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@inventory.inventory-detail.ts.inventaire.10ad1a54:Inventaire`, route: '/inventory' },
       { label: inv?.reference ?? $localize`:@@ui.tern.detail.7ce06a:Détail` }
     ];
   });

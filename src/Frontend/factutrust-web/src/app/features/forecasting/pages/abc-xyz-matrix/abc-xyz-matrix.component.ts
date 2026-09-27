@@ -172,7 +172,7 @@ export class AbcXyzMatrixComponent implements OnInit {
     this.loading.set(true);
     try {
       const count = await firstValueFrom(this.forecastingService.recomputeAbcXyz());
-      this.toast.add({ severity: 'success', summary: $localize`:@@abc-xyz-matrix.component.summary.Recalcul_termin_:Recalcul terminé`, detail: `${count} produit(s) classifiés.` });
+      this.toast.add({ severity: 'success', summary: $localize`:@@abc-xyz-matrix.component.summary.Recalcul_termin_:Recalcul terminé`, detail: $localize`:@@forecasting.abc-xyz-matrix.ts.count.produit.s.classifies.272b6600:${count}:count: produit(s) classifiés.` });
       await this.load();
     } catch (err: any) {
       this.toast.add({ severity: 'error', summary: $localize`:@@abc-xyz-matrix.component.summary.Échec:Échec`, detail: err?.error?.message ?? $localize`:@@ui.tern.erreur.inconnue.2f49e3:Erreur inconnue.` });

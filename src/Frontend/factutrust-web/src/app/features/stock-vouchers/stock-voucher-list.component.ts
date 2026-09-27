@@ -223,8 +223,8 @@ export class StockVoucherListComponent implements OnInit {
     : $localize`:@@ui.tern.les.ventes.et.livraisons.sortent.le.stock..41667a:Les ventes et livraisons sortent le stock via la facture ou le bon de livraison.`;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Stock', route: '/stock' },
+    { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.stock.bcecf456:Stock`, route: '/stock' },
     { label: this.title }
   ];
 
@@ -239,10 +239,10 @@ export class StockVoucherListComponent implements OnInit {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
     return [
-      { label: 'Bons', value: s?.count ?? 0, format: 'number', icon: 'pi-box', tone: 'primary' },
-      { label: 'Brouillons', value: s?.draftCount ?? 0, format: 'number', icon: 'pi-pencil', tone: 'cyan' },
-      { label: 'Validés', value: s?.validatedCount ?? 0, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Valorisation', value: s?.totalValue ?? 0, format: 'currency', icon: 'pi-wallet', tone: 'primary' }
+      { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.bons.050c19c5:Bons`, value: s?.count ?? 0, format: 'number', icon: 'pi-box', tone: 'primary' },
+      { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.brouillons.a55f3cd9:Brouillons`, value: s?.draftCount ?? 0, format: 'number', icon: 'pi-pencil', tone: 'cyan' },
+      { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.valides.f9664fcf:Validés`, value: s?.validatedCount ?? 0, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@stock-vouchers.stock-voucher-list.ts.valorisation.61fcd7cd:Valorisation`, value: s?.totalValue ?? 0, format: 'currency', icon: 'pi-wallet', tone: 'primary' }
     ];
   });
 

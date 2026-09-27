@@ -125,7 +125,7 @@ export class StudioViewSwitcherComponent {
   private readonly focusedIndex = signal<number | null>(null);
 
   protected readonly options = computed<ViewSwitcherOption[]>(() => [
-    { id: null, label: 'Liste', isDefault: false },
+    { id: null, label: $localize`:@@studio.studio-view-switcher.ts.liste.4231be17:Liste`, isDefault: false },
     ...this.views().map(v => ({ id: v.id, label: v.displayName, isDefault: v.isDefault }))
   ]);
 

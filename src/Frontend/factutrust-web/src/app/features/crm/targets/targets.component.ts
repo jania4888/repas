@@ -639,7 +639,7 @@ export class TargetsComponent implements OnInit {
     for (let yr = 2020; yr <= y + 1; yr++) {
       this.yearOptions.push({ label: String(yr), value: yr });
     }
-    this.monthFilterOptions = [{ label: 'Tous les mois', value: null }];
+    this.monthFilterOptions = [{ label: $localize`:@@crm.targets.ts.tous.les.mois.95bedf98:Tous les mois`, value: null }];
     for (let m = 1; m <= 12; m++) {
       this.monthFilterOptions.push({ label: MONTH_NAMES_FR[m], value: m });
     }
@@ -674,7 +674,7 @@ export class TargetsComponent implements OnInit {
 
   load(): void {
     if (!this.canRead()) {
-      this.error.set('Vous n’avez pas accès aux objectifs commerciaux.');
+      this.error.set($localize`:@@crm.targets.ts.vous.n.avez.pas.acces.aux.objectifs.comm.973488a0:Vous n’avez pas accès aux objectifs commerciaux.`);
       return;
     }
     this.loading.set(true);
@@ -690,7 +690,7 @@ export class TargetsComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.error.set('Erreur réseau');
+        this.error.set($localize`:@@crm.targets.ts.erreur.reseau.0683007f:Erreur réseau`);
       }
     });
   }
@@ -741,7 +741,7 @@ export class TargetsComponent implements OnInit {
     const v = this.createForm.getRawValue();
     const user = this.assignableUsers().find(u => u.id === v.userId);
     if (!user) {
-      this.formError.set('Sélectionnez un commercial valide.');
+      this.formError.set($localize`:@@crm.targets.ts.selectionnez.un.commercial.valide.2eb29ddc:Sélectionnez un commercial valide.`);
       return;
     }
     this.saving.set(true);
@@ -767,7 +767,7 @@ export class TargetsComponent implements OnInit {
         },
         error: () => {
           this.saving.set(false);
-          this.formError.set('Erreur réseau');
+          this.formError.set($localize`:@@crm.targets.ts.erreur.reseau.0683007f:Erreur réseau`);
         }
       });
   }
@@ -794,15 +794,15 @@ export class TargetsComponent implements OnInit {
       },
       error: () => {
         this.saving.set(false);
-        this.formError.set('Erreur réseau');
+        this.formError.set($localize`:@@crm.targets.ts.erreur.reseau.0683007f:Erreur réseau`);
       }
     });
   }
 
   confirmDelete(t: SalesTargetDto): void {
     this.confirm.confirm({
-      header: 'Supprimer l’objectif',
-      message: `Supprimer l’objectif ${this.monthLabel(t.month)} ${t.year} pour ${t.userName} ?`,
+      header: $localize`:@@crm.targets.ts.supprimer.l.objectif.34956c09:Supprimer l’objectif`,
+      message: $localize`:@@crm.targets.ts.supprimer.l.objectif.monthlabel.year.pou.8a53fefb:Supprimer l’objectif ${this.monthLabel(t.month)}:monthLabel: ${t.year}:year: pour ${t.userName}:userName: ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@targets.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@targets.component.rejectLabel.Annuler:Annuler`,

@@ -290,7 +290,7 @@ export class NctStatementsComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(url);
       },
-      error: () => this.error.set("L'export PDF a échoué.")
+      error: () => this.error.set($localize`:@@accounting.nct-statements.ts.l.export.pdf.a.echoue.fd0face2:L'export PDF a échoué.`)
     });
   }
 

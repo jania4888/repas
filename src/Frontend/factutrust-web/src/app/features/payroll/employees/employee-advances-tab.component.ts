@@ -164,8 +164,8 @@ export class EmployeeAdvancesTabComponent implements OnInit {
   confirmDelete(advance: EmployeeAdvance): void {
     if (this.readOnly || advance.isSettled) return;
     this.confirmation.confirm({
-      message: `Supprimer l'avance de ${advance.amount} TND ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.employee-advances-tab.ts.supprimer.l.avance.de.amount.tnd.ef871a93:Supprimer l'avance de ${advance.amount}:amount: TND ?`,
+      header: $localize`:@@payroll.employee-advances-tab.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@employee-advances-tab.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@employee-advances-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

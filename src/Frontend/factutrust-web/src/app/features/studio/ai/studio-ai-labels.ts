@@ -27,8 +27,8 @@ export interface StudioAiTabDef {
 /** Libellés français centralisés de l'atelier Studio IA (P1). */
 export const STUDIO_AI_LABELS = {
   page: {
-    title: 'Studio IA',
-    subtitle: 'Décrivez votre besoin métier : l’IA propose une structure complète, vous la vérifiez, l’ajustez et l’intégrez dans l’ERP.',
+    title: $localize`:@@studio.studio-ai-labels.ts.studio.ia.04d04eb2:Studio IA`,
+    subtitle: $localize`:@@studio.studio-ai-labels.ts.decrivez.votre.besoin.metier.l.ia.propos.886e66a1:Décrivez votre besoin métier : l’IA propose une structure complète, vous la vérifiez, l’ajustez et l’intégrez dans l’ERP.`,
     heroTitle: 'Décrivez le système que vous souhaitez créer',
     heroHint: 'Exemple : « Créer un système de gestion des congés avec employés, types de congés, demandes, validations et rapports. »',
     composerPlaceholder: 'Décrivez le système, la table ou le rapport à créer…',
@@ -82,7 +82,7 @@ export const STUDIO_AI_LABELS = {
 
   /** Bandeau doublons (PR 1.3 côté serveur, R21 côté atelier). */
   duplicates: {
-    title: 'La table « {specDisplayName} » existe déjà',
+    title: $localize`:@@studio.studio-ai-labels.ts.la.table.specdisplayname.existe.deja.4349fb28:La table « {specDisplayName} » existe déjà`,
     item: 'Une table existante « {existingDisplayName} » (clé {existingKey}) semble équivalente.',
     question: 'Voulez-vous la réutiliser ou créer une nouvelle table « {suggestedName} » ?',
     reuse: 'Réutiliser la table existante',
@@ -101,56 +101,56 @@ export const STUDIO_AI_LABELS = {
   intents: [
     {
       intent: 'system',
-      title: 'Système complet',
-      description: 'Tables, relations, formulaires, données de référence et rapports en une fois.',
+      title: $localize`:@@studio.studio-ai-labels.ts.systeme.complet.88f1bb84:Système complet`,
+      description: $localize`:@@studio.studio-ai-labels.ts.tables.relations.formulaires.donnees.de.cf8acd75:Tables, relations, formulaires, données de référence et rapports en une fois.`,
       icon: 'fa-solid fa-layer-group',
       prompt: 'Créer un système de gestion de … avec les tables, relations, formulaires, données de référence et rapports nécessaires.',
       available: true
     },
     {
       intent: 'table',
-      title: 'Table',
-      description: 'Une table personnalisée avec ses champs et son formulaire.',
+      title: $localize`:@@studio.studio-ai-labels.ts.table.0424f6e7:Table`,
+      description: $localize`:@@studio.studio-ai-labels.ts.une.table.personnalisee.avec.ses.champs.93358b6c:Une table personnalisée avec ses champs et son formulaire.`,
       icon: 'fa-solid fa-table',
       prompt: 'Créer une table « … » avec les champs : ….',
       available: true
     },
     {
       intent: 'relations',
-      title: 'Relations',
-      description: 'Relier des tables entre elles ou aux données de l’ERP.',
+      title: $localize`:@@studio.studio-ai-labels.ts.relations.6519fe11:Relations`,
+      description: $localize`:@@studio.studio-ai-labels.ts.relier.des.tables.entre.elles.ou.aux.don.d9fe1431:Relier des tables entre elles ou aux données de l’ERP.`,
       icon: 'fa-solid fa-diagram-project',
       prompt: 'Relier la table « … » à la table « … » (une … a plusieurs …).',
       available: true
     },
     {
       intent: 'form',
-      title: 'Formulaire',
-      description: 'Une mise en page de saisie pour une table existante.',
+      title: $localize`:@@studio.studio-ai-labels.ts.formulaire.87e4e76f:Formulaire`,
+      description: $localize`:@@studio.studio-ai-labels.ts.une.mise.en.page.de.saisie.pour.une.tabl.eba16e3a:Une mise en page de saisie pour une table existante.`,
       icon: 'fa-solid fa-file-lines',
       prompt: 'Générer un formulaire de saisie pour la table « … » organisé en sections : ….',
       available: true
     },
     {
       intent: 'reference_data',
-      title: 'Données de référence',
-      description: 'Listes de valeurs et données initiales.',
+      title: $localize`:@@studio.studio-ai-labels.ts.donnees.de.reference.90a59413:Données de référence`,
+      description: $localize`:@@studio.studio-ai-labels.ts.listes.de.valeurs.et.donnees.initiales.217a666a:Listes de valeurs et données initiales.`,
       icon: 'fa-solid fa-database',
       prompt: 'Charger les valeurs initiales de la table « … » : ….',
       available: true
     },
     {
       intent: 'report',
-      title: 'Rapport',
-      description: 'Un état regroupé, filtré et trié.',
+      title: $localize`:@@studio.studio-ai-labels.ts.rapport.f25c405b:Rapport`,
+      description: $localize`:@@studio.studio-ai-labels.ts.un.etat.regroupe.filtre.et.trie.38f7a291:Un état regroupé, filtré et trié.`,
       icon: 'fa-solid fa-chart-column',
       prompt: 'Créer un rapport « … » regroupé par … avec le total de ….',
       available: true
     },
     {
       intent: 'workflow',
-      title: 'Workflow',
-      description: 'États, transitions et automatisations.',
+      title: $localize`:@@studio.studio-ai-labels.ts.workflow.d7a48414:Workflow`,
+      description: $localize`:@@studio.studio-ai-labels.ts.etats.transitions.et.automatisations.02b83e05:États, transitions et automatisations.`,
       icon: 'fa-solid fa-sitemap',
       prompt: '',
       available: false,
@@ -158,8 +158,8 @@ export const STUDIO_AI_LABELS = {
     },
     {
       intent: 'page',
-      title: 'Page / Interface',
-      description: 'Tableaux de bord et pages personnalisées.',
+      title: $localize`:@@studio.studio-ai-labels.ts.page.interface.e348326c:Page / Interface`,
+      description: $localize`:@@studio.studio-ai-labels.ts.tableaux.de.bord.et.pages.personnalisees.5a587af7:Tableaux de bord et pages personnalisées.`,
       icon: 'fa-solid fa-display',
       prompt: '',
       available: false,
@@ -182,22 +182,22 @@ export const STUDIO_AI_LABELS = {
   } satisfies Record<StudioAiIntent, string>,
 
   tabs: [
-    { id: 'overview', label: 'Vue d’ensemble', icon: 'fa-solid fa-sitemap', available: true },
-    { id: 'tables', label: 'Tables', icon: 'fa-solid fa-table', available: true },
-    { id: 'relations', label: 'Relations', icon: 'fa-solid fa-diagram-project', available: true },
-    { id: 'forms', label: 'Formulaires', icon: 'fa-solid fa-file-lines', available: true },
-    { id: 'seed', label: 'Données de référence', icon: 'fa-solid fa-database', available: true },
-    { id: 'reports', label: 'Rapports', icon: 'fa-solid fa-chart-column', available: true },
-    { id: 'views', label: 'Vues', icon: 'fa-solid fa-eye', available: true },
-    { id: 'workflow', label: 'Workflow', icon: 'fa-solid fa-route', available: true },
+    { id: 'overview', label: $localize`:@@studio.studio-ai-labels.ts.vue.d.ensemble.de0d9643:Vue d’ensemble`, icon: 'fa-solid fa-sitemap', available: true },
+    { id: 'tables', label: $localize`:@@studio.studio-ai-labels.ts.tables.193daf13:Tables`, icon: 'fa-solid fa-table', available: true },
+    { id: 'relations', label: $localize`:@@studio.studio-ai-labels.ts.relations.6519fe11:Relations`, icon: 'fa-solid fa-diagram-project', available: true },
+    { id: 'forms', label: $localize`:@@studio.studio-ai-labels.ts.formulaires.edb3637f:Formulaires`, icon: 'fa-solid fa-file-lines', available: true },
+    { id: 'seed', label: $localize`:@@studio.studio-ai-labels.ts.donnees.de.reference.90a59413:Données de référence`, icon: 'fa-solid fa-database', available: true },
+    { id: 'reports', label: $localize`:@@studio.studio-ai-labels.ts.rapports.db7d9fbb:Rapports`, icon: 'fa-solid fa-chart-column', available: true },
+    { id: 'views', label: $localize`:@@studio.studio-ai-labels.ts.vues.ff576f2b:Vues`, icon: 'fa-solid fa-eye', available: true },
+    { id: 'workflow', label: $localize`:@@studio.studio-ai-labels.ts.workflow.d7a48414:Workflow`, icon: 'fa-solid fa-route', available: true },
     {
       id: 'pages',
-      label: 'Pages',
+      label: $localize`:@@studio.studio-ai-labels.ts.pages.600584c2:Pages`,
       icon: 'fa-solid fa-display',
       available: false,
       soonTooltip: 'Disponible dans une prochaine version (pages et tableaux de bord).'
     },
-    { id: 'menu', label: 'Menu', icon: 'fa-solid fa-bars', available: true }
+    { id: 'menu', label: $localize`:@@studio.studio-ai-labels.ts.menu.57f5f5ef:Menu`, icon: 'fa-solid fa-bars', available: true }
   ] as readonly StudioAiTabDef[],
 
   soon: 'Bientôt',
@@ -233,8 +233,8 @@ export const STUDIO_AI_LABELS = {
   },
 
   preview: {
-    title: 'Aperçu de la solution générée',
-    emptyTitle: 'Aucune proposition pour le moment',
+    title: $localize`:@@studio.studio-ai-labels.ts.apercu.de.la.solution.generee.be249df4:Aperçu de la solution générée`,
+    emptyTitle: $localize`:@@studio.studio-ai-labels.ts.aucune.proposition.pour.le.moment.b71d86cc:Aucune proposition pour le moment`,
     emptyHint: 'Décrivez votre besoin ci-dessus pour voir la proposition ici. Rien n’est créé avant votre validation.',
     generatedAt: 'Proposition générée à',
     nothingCreated: 'Rien n’est encore créé — vérifiez puis validez.',
@@ -315,7 +315,7 @@ export const STUDIO_AI_LABELS = {
   },
 
   confirm: {
-    title: 'Intégrer « {name} » dans l’ERP',
+    title: $localize`:@@studio.studio-ai-labels.ts.integrer.name.dans.l.erp.8a759fd6:Intégrer « {name} » dans l’ERP`,
     intro: 'Les éléments suivants vont être créés dans votre espace :',
     irreversible: 'La création est définitive ; rien n’est supprimé ; les champs pourront être désactivés ensuite.',
     checkbox: 'J’ai vérifié la structure proposée',
@@ -325,7 +325,7 @@ export const STUDIO_AI_LABELS = {
   },
 
   progress: {
-    title: 'Construction en cours',
+    title: $localize`:@@studio.studio-ai-labels.ts.construction.en.cours.a38b45b6:Construction en cours`,
     step: 'Étape en cours :',
     dontClose: 'Ne fermez pas cette page.',
     of: 'sur',
@@ -366,7 +366,7 @@ export const STUDIO_AI_LABELS = {
   },
 
   conversation: {
-    title: 'Conversation avec l’assistant',
+    title: $localize`:@@studio.studio-ai-labels.ts.conversation.avec.l.assistant.4a1a23ea:Conversation avec l’assistant`,
     show: 'Afficher la conversation',
     hide: 'Masquer la conversation',
     preparing: 'Préparation en cours…',
@@ -419,10 +419,10 @@ export const STUDIO_AI_LABELS = {
 
   /** Page « Mes projets » (`/studio/ai/projects`). */
   history: {
-    title: 'Mes projets',
-    subtitle: 'Toutes les générations Studio IA de votre espace : propositions à valider, systèmes créés, échecs.',
+    title: $localize`:@@studio.studio-ai-labels.ts.mes.projets.d3d45a70:Mes projets`,
+    subtitle: $localize`:@@studio.studio-ai-labels.ts.toutes.les.generations.studio.ia.de.votr.5b7df51a:Toutes les générations Studio IA de votre espace : propositions à valider, systèmes créés, échecs.`,
     columns: {
-      title: 'Titre',
+      title: $localize`:@@studio.studio-ai-labels.ts.titre.eb97899a:Titre`,
       kind: 'Genre',
       status: 'Statut',
       createdAt: 'Créé',
@@ -450,8 +450,8 @@ export const STUDIO_AI_LABELS = {
 
   /** Page « Bibliothèque de modèles » (`/studio/ai/templates`). */
   templates: {
-    title: 'Bibliothèque de modèles',
-    subtitle: 'Des systèmes prêts à l’emploi à adapter à votre activité : l’atelier prépare une proposition que vous validez.',
+    title: $localize`:@@studio.studio-ai-labels.ts.bibliotheque.de.modeles.a3242a66:Bibliothèque de modèles`,
+    subtitle: $localize`:@@studio.studio-ai-labels.ts.des.systemes.prets.a.l.emploi.a.adapter.b4d93a66:Des systèmes prêts à l’emploi à adapter à votre activité : l’atelier prépare une proposition que vous validez.`,
     use: 'Utiliser ce modèle',
     empty: 'Aucun modèle disponible pour le moment.',
     loadFailed: 'Impossible de charger la bibliothèque de modèles.',
@@ -485,7 +485,7 @@ export const STUDIO_AI_LABELS = {
   } as Record<string, string>,
 
   fieldTypes: {
-    text: 'Texte',
+    text: $localize`:@@studio.studio-ai-labels.ts.texte.ff9afef1:Texte`,
     multilinetext: 'Texte long',
     number: 'Nombre entier',
     decimal: 'Nombre décimal',
@@ -556,7 +556,7 @@ export const STUDIO_AI_LABELS = {
 
   /** Onglet « Vues » (3.4d). */
   views: {
-    title: 'Vues',
+    title: $localize`:@@studio.studio-ai-labels.ts.vues.ff576f2b:Vues`,
     empty: 'Aucune vue proposée.',
     list: 'Liste',
     kanban: 'Kanban',
@@ -575,8 +575,8 @@ export const STUDIO_AI_LABELS = {
 
   /** Onglet « Workflows » de l'aperçu (cartes depuis `summary.workflows[]`, 4.4k1 ; état vide sinon). */
   workflows: {
-    title: 'Workflows',
-    emptyTitle: 'Aucun workflow dans cette proposition',
+    title: $localize`:@@studio.studio-ai-labels.ts.workflows.825ce9e9:Workflows`,
+    emptyTitle: $localize`:@@studio.studio-ai-labels.ts.aucun.workflow.dans.cette.proposition.6db3b1ed:Aucun workflow dans cette proposition`,
     emptyHint: 'Décrivez le circuit souhaité (déclencheur, étapes, approbation) pour obtenir une proposition.',
     steps: '{count} étapes',
     trigger: 'Déclencheur',
@@ -638,8 +638,8 @@ export const STUDIO_AI_LABELS = {
 
   /** Import CSV des données de départ (panneau inline, D20 — 3.4h). */
   csv: {
-    title: 'Importer un CSV',
-    hint: 'Fichier ≤ 512 Ko, 500 lignes maximum ; les colonnes sont rapprochées des champs.',
+    title: $localize`:@@studio.studio-ai-labels.ts.importer.un.csv.b3a257d6:Importer un CSV`,
+    hint: $localize`:@@studio.studio-ai-labels.ts.fichier.512.ko.500.lignes.maximum.les.co.9d39c292:Fichier ≤ 512 Ko, 500 lignes maximum ; les colonnes sont rapprochées des champs.`,
     choose: 'Choisir un fichier',
     drop: 'Déposez un fichier CSV ici',
     paste: 'ou collez le texte',
@@ -667,7 +667,7 @@ export const STUDIO_AI_LABELS = {
     invalidJson: 'JSON invalide.',
     badVersion: 'specVersion non pris en charge (1 attendu).',
     counters: '{entities} tables · {relations} relations · {views} vues',
-    displayName: 'Nom du système (optionnel)',
+    displayName: $localize`:@@studio.studio-ai-labels.ts.nom.du.systeme.optionnel.0d002dad:Nom du système (optionnel)`,
     import: 'Importer',
     duplicateTitle: 'Dupliquer un système',
     duplicate: 'Dupliquer',

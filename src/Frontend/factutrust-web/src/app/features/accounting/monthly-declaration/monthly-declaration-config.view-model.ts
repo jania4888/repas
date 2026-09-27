@@ -43,69 +43,69 @@ export interface DmFamilyTab {
 export const DM_FAMILY_TABS: readonly DmFamilyTab[] = [
   {
     family: MonthlyDeclarationFamily.Withholding,
-    label: 'Retenue à la source',
-    title: 'Retenue à la source',
-    hint: 'Articles 1 à 31 du formulaire officiel. Le code rapport porte le numéro d’article (ex. « 17.2 »).'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.340b5d5f:Retenue à la source`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.a.la.source.340b5d5f:Retenue à la source`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.articles.1.a.31.du.formulaire.officiel.l.b4f0f9c2:Articles 1 à 31 du formulaire officiel. Le code rapport porte le numéro d’article (ex. « 17.2 »).`
   },
   {
     family: MonthlyDeclarationFamily.Tfp,
     label: 'T.F.P',
-    title: 'Taxe de formation professionnelle',
-    hint: 'Assiette et taux repris du cycle de paie du mois, ou des comptes de charges de personnel.'
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.de.formation.professionnelle.70811e15:Taxe de formation professionnelle`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.assiette.et.taux.repris.du.cycle.de.paie.560851c3:Assiette et taux repris du cycle de paie du mois, ou des comptes de charges de personnel.`
   },
   {
     family: MonthlyDeclarationFamily.Foprolos,
     label: 'FOPROLOS',
-    title: 'Fonds de promotion des logements pour salariés',
-    hint: 'Même assiette que la T.F.P dans le cas général.'
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.fonds.de.promotion.des.logements.pour.sa.837ea8d6:Fonds de promotion des logements pour salariés`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.meme.assiette.que.la.t.f.p.dans.le.cas.g.aa5b5210:Même assiette que la T.F.P dans le cas général.`
   },
   {
     family: MonthlyDeclarationFamily.ConsumptionDuty,
-    label: 'Droit de consommation',
-    title: 'Droit de consommation',
-    hint: 'Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.consommation.97da36c0:Droit de consommation`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.consommation.97da36c0:Droit de consommation`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucune.case.de.detail.cartographiee.en.2.58f44eac:Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.`
   },
   {
     family: MonthlyDeclarationFamily.Vat,
     label: 'T.V.A',
-    title: 'Taxe sur la valeur ajoutée',
-    hint: 'Affichée pour mémoire : la T.V.A reste dérivée des factures et du chaînage de crédit, hors moteur paramétré.'
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.sur.la.valeur.ajoutee.46687b10:Taxe sur la valeur ajoutée`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.affichee.pour.memoire.la.t.v.a.reste.der.094084ef:Affichée pour mémoire : la T.V.A reste dérivée des factures et du chaînage de crédit, hors moteur paramétré.`
   },
   {
     family: MonthlyDeclarationFamily.OtherTurnoverTaxes,
-    label: 'Autres taxes C.A',
-    title: 'Autres taxes sur le chiffre d’affaires',
-    hint: 'FODEC et assimilées.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.autres.taxes.c.a.50a65ce8:Autres taxes C.A`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.autres.taxes.sur.le.chiffre.d.affaires.1775df3d:Autres taxes sur le chiffre d’affaires`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.fodec.et.assimilees.faa4d057:FODEC et assimilées.`
   },
   {
     family: MonthlyDeclarationFamily.StampDuty,
-    label: 'Droit de timbre',
-    title: 'Droit de timbre',
-    hint: 'Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.timbre.01f26054:Droit de timbre`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.timbre.01f26054:Droit de timbre`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucune.case.de.detail.cartographiee.en.2.58f44eac:Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.`
   },
   {
     family: MonthlyDeclarationFamily.HotelTax,
-    label: 'Taxe hôtelière',
-    title: 'Taxe hôtelière',
-    hint: 'Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.hoteliere.90f43822:Taxe hôtelière`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.hoteliere.90f43822:Taxe hôtelière`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucune.case.de.detail.cartographiee.en.2.58f44eac:Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.`
   },
   {
     family: MonthlyDeclarationFamily.Tcl,
     label: 'T.C.L',
-    title: 'Taxe sur les établissements à caractère industriel, commercial ou professionnel',
-    hint: 'Typiquement « brut = comptes de produits, sens créditeur » et « retenue = brut × taux ».'
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.taxe.sur.les.etablissements.a.caractere.416445d7:Taxe sur les établissements à caractère industriel, commercial ou professionnel`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.typiquement.brut.comptes.de.produits.sen.647d289b:Typiquement « brut = comptes de produits, sens créditeur » et « retenue = brut × taux ».`
   },
   {
     family: MonthlyDeclarationFamily.LicenceFee,
-    label: 'Droit de licence',
-    title: 'Droit de licence',
-    hint: 'Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.licence.925640a2:Droit de licence`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.droit.de.licence.925640a2:Droit de licence`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.aucune.case.de.detail.cartographiee.en.2.58f44eac:Aucune case de détail cartographiée en 2026 : le montant ne rejoint que le récapitulatif.`
   },
   {
     family: MonthlyDeclarationFamily.OtherInformation,
-    label: 'Autres informations',
-    title: 'Autres informations',
-    hint: 'Déclaratif : achats en suspension, exportations, chiffre d’affaires exonéré… Aucun montant à payer.'
+    label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.autres.informations.ac5ce77d:Autres informations`,
+    title: $localize`:@@accounting.monthly-declaration-config.view-model.ts.autres.informations.ac5ce77d:Autres informations`,
+    hint: $localize`:@@accounting.monthly-declaration-config.view-model.ts.declaratif.achats.en.suspension.exportat.467f6b3a:Déclaratif : achats en suspension, exportations, chiffre d’affaires exonéré… Aucun montant à payer.`
   }
 ];
 
@@ -133,34 +133,34 @@ export interface DmOption<T> {
 }
 
 export const DM_GROSS_KIND_OPTIONS: readonly DmOption<RubricGrossKind>[] = [
-  { label: 'Valeur fixe / saisie', value: RubricGrossKind.Fixed },
-  { label: 'Valeur de paie', value: RubricGrossKind.Payroll },
-  { label: 'Solde de comptes', value: RubricGrossKind.Account },
-  { label: 'Retenue ÷ taux', value: RubricGrossKind.WithheldOverRate }
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.fixe.saisie.5355f54c:Valeur fixe / saisie`, value: RubricGrossKind.Fixed },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.de.paie.00856faf:Valeur de paie`, value: RubricGrossKind.Payroll },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.solde.de.comptes.095ae5f3:Solde de comptes`, value: RubricGrossKind.Account },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.taux.53769d11:Retenue ÷ taux`, value: RubricGrossKind.WithheldOverRate }
 ];
 
 export const DM_WITHHELD_KIND_OPTIONS: readonly DmOption<RubricWithheldKind>[] = [
-  { label: 'Valeur fixe / saisie', value: RubricWithheldKind.Fixed },
-  { label: 'Solde de comptes', value: RubricWithheldKind.Account },
-  { label: 'Brut × taux', value: RubricWithheldKind.GrossTimesRate },
-  { label: 'Valeur de paie', value: RubricWithheldKind.Payroll },
-  { label: 'Retenue ÷ taux (non pris en charge)', value: RubricWithheldKind.WithheldOverRate }
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.fixe.saisie.5355f54c:Valeur fixe / saisie`, value: RubricWithheldKind.Fixed },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.solde.de.comptes.095ae5f3:Solde de comptes`, value: RubricWithheldKind.Account },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.brut.taux.adedfda6:Brut × taux`, value: RubricWithheldKind.GrossTimesRate },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.valeur.de.paie.00856faf:Valeur de paie`, value: RubricWithheldKind.Payroll },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.retenue.taux.non.pris.en.charge.180ce782:Retenue ÷ taux (non pris en charge)`, value: RubricWithheldKind.WithheldOverRate }
 ];
 
 export const DM_SIDE_OPTIONS: readonly DmOption<AccountBalanceSide>[] = [
-  { label: 'Débiteur', value: AccountBalanceSide.Debit },
-  { label: 'Créditeur', value: AccountBalanceSide.Credit }
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.debiteur.53ef5606:Débiteur`, value: AccountBalanceSide.Debit },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.crediteur.7bdc1af0:Créditeur`, value: AccountBalanceSide.Credit }
 ];
 
 export const DM_PAYROLL_COMPONENT_OPTIONS: readonly DmOption<PayrollContributionComponent>[] = [
-  { label: 'Masse salariale brute', value: PayrollContributionComponent.SalariesGrossBase },
-  { label: 'Net imposable', value: PayrollContributionComponent.SalariesNetTaxableBase },
-  { label: 'Assiette taxes sur salaires', value: PayrollContributionComponent.PayrollTaxBase },
-  { label: 'IRPP retenu', value: PayrollContributionComponent.WithholdingIrpp },
-  { label: 'CSS retenue', value: PayrollContributionComponent.WithholdingCss },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.masse.salariale.brute.7083b525:Masse salariale brute`, value: PayrollContributionComponent.SalariesGrossBase },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.net.imposable.2439110f:Net imposable`, value: PayrollContributionComponent.SalariesNetTaxableBase },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.assiette.taxes.sur.salaires.2f68e583:Assiette taxes sur salaires`, value: PayrollContributionComponent.PayrollTaxBase },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.irpp.retenu.7cc73d3d:IRPP retenu`, value: PayrollContributionComponent.WithholdingIrpp },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.css.retenue.034ee1f0:CSS retenue`, value: PayrollContributionComponent.WithholdingCss },
   { label: 'IRPP + CSS', value: PayrollContributionComponent.WithholdingTotal },
-  { label: 'T.F.P du cycle', value: PayrollContributionComponent.Tfp },
-  { label: 'FOPROLOS du cycle', value: PayrollContributionComponent.Foprolos }
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.t.f.p.du.cycle.d85aaf4d:T.F.P du cycle`, value: PayrollContributionComponent.Tfp },
+  { label: $localize`:@@accounting.monthly-declaration-config.view-model.ts.foprolos.du.cycle.3fa66678:FOPROLOS du cycle`, value: PayrollContributionComponent.Foprolos }
 ];
 
 function optionLabel<T>(options: readonly DmOption<T>[], value: T | null | undefined): string {

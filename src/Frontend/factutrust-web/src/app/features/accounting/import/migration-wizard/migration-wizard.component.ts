@@ -468,7 +468,7 @@ export class MigrationWizardComponent {
       next: (r) => {
         this.busy.set(false);
         if (r.success && r.data) {
-          this.successMessage.set(`${r.data.createdCount} élément(s) créé(s), ${r.data.skippedCount} ignoré(s).`);
+          this.successMessage.set($localize`:@@accounting.migration-wizard.ts.createdcount.element.s.cree.s.skippedcou.955c971f:${r.data.createdCount}:createdCount: élément(s) créé(s), ${r.data.skippedCount}:skippedCount: ignoré(s).`);
           this.step.set(5);
         } else {
           this.error.set(r.error ?? $localize`:@@ui.tern.import.refuse.b4f285:Import refusé.`);

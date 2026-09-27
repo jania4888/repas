@@ -169,7 +169,7 @@ export class EntrySearchComponent implements OnInit {
         if (res.success && res.data) this.rows.set(res.data);
         else this.error.set(res.error ?? $localize`:@@ui.tern.erreur.ab546c:Erreur`);
       },
-      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau')); }
+      error: err => { this.loading.set(false); this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.entry-search.ts.erreur.reseau.0683007f:Erreur réseau`)); }
     });
   }
 

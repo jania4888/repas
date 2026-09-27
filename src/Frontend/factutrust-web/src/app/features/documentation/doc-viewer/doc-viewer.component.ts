@@ -192,8 +192,8 @@ export class DocViewerComponent implements OnInit {
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const chapter = this.currentChapter();
     const items: BreadcrumbItem[] = [
-      { label: 'Accueil', route: '/dashboard' },
-      { label: 'Documentation', route: '/documentation' }
+      { label: $localize`:@@documentation.doc-viewer.ts.accueil.a8ff8fd2:Accueil`, route: '/dashboard' },
+      { label: $localize`:@@documentation.doc-viewer.ts.documentation.9e9cf322:Documentation`, route: '/documentation' }
     ];
     if (chapter) {
       items.push({ label: chapter.title });
@@ -216,7 +216,7 @@ export class DocViewerComponent implements OnInit {
     const chapter = getChapterById(id);
     if (!chapter) {
       this.loading.set(false);
-      this.error.set('Chapitre non trouvé.');
+      this.error.set($localize`:@@documentation.doc-viewer.ts.chapitre.non.trouve.aac43b19:Chapitre non trouvé.`);
       this.currentChapter.set(null);
       return;
     }
@@ -232,7 +232,7 @@ export class DocViewerComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Impossible de charger ce document.');
+        this.error.set($localize`:@@documentation.doc-viewer.ts.impossible.de.charger.ce.document.2cf67ef2:Impossible de charger ce document.`);
         this.loading.set(false);
       }
     });

@@ -167,24 +167,24 @@ export class PurchasesAnalyticsHubComponent {
   tabs = [
     {
       id: 'expenses',
-      label: 'Dépenses',
-      description: 'Évolution des dépenses et comparaison par période',
+      label: $localize`:@@reports.purchases-analytics-hub.ts.depenses.fb667434:Dépenses`,
+      description: $localize`:@@reports.purchases-analytics-hub.ts.evolution.des.depenses.et.comparaison.pa.5ffbe878:Évolution des dépenses et comparaison par période`,
       icon: 'pi-dollar',
       route: '/reports/purchases-analytics/expenses',
       exact: false
     },
     {
       id: 'suppliers',
-      label: 'Analyse fournisseurs',
-      description: 'Classement, part des achats et indicateurs par fournisseur',
+      label: $localize`:@@reports.purchases-analytics-hub.ts.analyse.fournisseurs.496355ab:Analyse fournisseurs`,
+      description: $localize`:@@reports.purchases-analytics-hub.ts.classement.part.des.achats.et.indicateur.3cbbbd58:Classement, part des achats et indicateurs par fournisseur`,
       icon: 'pi-building',
       route: '/reports/purchases-analytics/suppliers',
       exact: false
     },
     {
       id: 'orders',
-      label: 'Analyse des commandes',
-      description: 'Taux de conversion bons de commande → facture, délais et panier moyen',
+      label: $localize`:@@reports.purchases-analytics-hub.ts.analyse.des.commandes.575afd26:Analyse des commandes`,
+      description: $localize`:@@reports.purchases-analytics-hub.ts.taux.de.conversion.bons.de.commande.fact.d22aedce:Taux de conversion bons de commande → facture, délais et panier moyen`,
       icon: 'pi-shopping-cart',
       route: '/reports/purchases-analytics/orders',
       exact: false

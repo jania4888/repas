@@ -343,9 +343,9 @@ export class ClientListComponent implements OnInit, OnDestroy {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
     return [
-      { label: 'Clients', value: s?.count, format: 'number', icon: 'pi-users', tone: 'primary' },
-      { label: 'Actifs', value: s?.activeCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Inactifs', value: s?.inactiveCount, format: 'number', icon: 'pi-ban', tone: 'neutral' }
+      { label: $localize`:@@clients.client-list.ts.clients.28e22fe3:Clients`, value: s?.count, format: 'number', icon: 'pi-users', tone: 'primary' },
+      { label: $localize`:@@clients.client-list.ts.actifs.4fc3a980:Actifs`, value: s?.activeCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@clients.client-list.ts.inactifs.41c2d03e:Inactifs`, value: s?.inactiveCount, format: 'number', icon: 'pi-ban', tone: 'neutral' }
     ];
   });
 
@@ -356,8 +356,8 @@ export class ClientListComponent implements OnInit, OnDestroy {
   pageSize = 20;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Clients' }
+    { label: $localize`:@@clients.client-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@clients.client-list.ts.clients.28e22fe3:Clients` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -373,13 +373,13 @@ export class ClientListComponent implements OnInit, OnDestroy {
   ];
 
   typeOptions: TypeOption[] = [
-    { label: 'Particulier', value: ClientType.Individual },
-    { label: 'Entreprise', value: ClientType.Business }
+    { label: $localize`:@@clients.client-list.ts.particulier.281680dd:Particulier`, value: ClientType.Individual },
+    { label: $localize`:@@clients.client-list.ts.entreprise.d03e74b6:Entreprise`, value: ClientType.Business }
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Actifs', value: true },
-    { label: 'Inactifs', value: false }
+    { label: $localize`:@@clients.client-list.ts.actifs.4fc3a980:Actifs`, value: true },
+    { label: $localize`:@@clients.client-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
   ];
 
   ngOnInit(): void {
@@ -558,8 +558,8 @@ export class ClientListComponent implements OnInit, OnDestroy {
 
   confirmDelete(client: ClientListItem): void {
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir supprimer le client "${client.name}" ?`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@clients.client-list.ts.etes.vous.sur.de.vouloir.supprimer.le.cl.68d22a96:Êtes-vous sûr de vouloir supprimer le client "${client.name}:name:" ?`,
+      header: $localize`:@@clients.client-list.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@client-list.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@client-list.component.rejectLabel.Annuler:Annuler`,
@@ -584,7 +584,7 @@ export class ClientListComponent implements OnInit, OnDestroy {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@client-list.component.summary.Erreur:Erreur`,
-            detail: response.errors[0] || 'Impossible de supprimer le client'
+            detail: response.errors[0] || $localize`:@@clients.client-list.ts.impossible.de.supprimer.le.client.bd4e32c4:Impossible de supprimer le client`
           });
         }
       },
@@ -592,8 +592,8 @@ export class ClientListComponent implements OnInit, OnDestroy {
         const errorMessage = this.errorHandler.extractErrorMessage(error);
         this.errorHandler.logError('Failed to delete client', error);
         this.confirmationService.alert({
-          message: errorMessage || 'Impossible de supprimer le client',
-          header: 'Impossible de supprimer',
+          message: errorMessage || $localize`:@@clients.client-list.ts.impossible.de.supprimer.le.client.bd4e32c4:Impossible de supprimer le client`,
+          header: $localize`:@@clients.client-list.ts.impossible.de.supprimer.0300380e:Impossible de supprimer`,
           icon: 'pi pi-exclamation-triangle'
         });
       }

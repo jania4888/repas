@@ -676,8 +676,8 @@ export class QuoteDetailComponent implements OnInit {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const q = this.quote();
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Devis', route: '/quotes' },
+      { label: $localize`:@@quotes.quote-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@quotes.quote-detail.ts.devis.f7622f90:Devis`, route: '/quotes' },
       { label: q?.number ?? $localize`:@@ui.tern.devis.f7622f:Devis` },
     ];
   });
@@ -815,9 +815,9 @@ export class QuoteDetailComponent implements OnInit {
 
   confirmConvertToRecurringContract(): void {
     this.confirmationService.confirm({
-      header: 'Créer un contrat récurrent',
+      header: $localize`:@@quotes.quote-detail.ts.creer.un.contrat.recurrent.705884e7:Créer un contrat récurrent`,
       message:
-        'Un contrat récurrent sera créé à partir de ce devis (lignes et client repris). Vous pourrez ajuster la périodicité avant activation.',
+        $localize`:@@quotes.quote-detail.ts.un.contrat.recurrent.sera.cree.a.partir.2dd6fe44:Un contrat récurrent sera créé à partir de ce devis (lignes et client repris). Vous pourrez ajuster la périodicité avant activation.`,
       icon: 'pi pi-refresh',
       acceptLabel: $localize`:@@quote-detail.component.acceptLabel.Cr_er_le_contrat:Créer le contrat`,
       rejectLabel: $localize`:@@quote-detail.component.rejectLabel.Annuler:Annuler`,
@@ -859,9 +859,9 @@ export class QuoteDetailComponent implements OnInit {
 
   confirmConvertToInvoice(): void {
     this.confirmationService.confirm({
-      header: 'Créer la facture finale',
+      header: $localize`:@@quotes.quote-detail.ts.creer.la.facture.finale.a86b9a9e:Créer la facture finale`,
       message:
-        'Une facture définitive sera créée à partir de ce devis. Elle aura un nouveau numéro et ne pourra plus être modifiée après signature. Souhaitez-vous continuer ?',
+        $localize`:@@quotes.quote-detail.ts.une.facture.definitive.sera.creee.a.part.8306f0dd:Une facture définitive sera créée à partir de ce devis. Elle aura un nouveau numéro et ne pourra plus être modifiée après signature. Souhaitez-vous continuer ?`,
       icon: 'pi pi-file-export',
       acceptLabel: $localize`:@@quote-detail.component.acceptLabel.Créer la fac:Créer la facture`,
       rejectLabel: $localize`:@@quote-detail.component.rejectLabel.Annuler:Annuler`,
@@ -872,9 +872,9 @@ export class QuoteDetailComponent implements OnInit {
 
   confirmConvertToSalesOrder(): void {
     this.confirmationService.confirm({
-      header: 'Transformer en commande',
+      header: $localize`:@@quotes.quote-detail.ts.transformer.en.commande.cd762203:Transformer en commande`,
       message:
-        'Une commande client sera créée à partir de ce devis. Le devis sera ensuite verrouillé et ne pourra plus être converti. Souhaitez-vous continuer ?',
+        $localize`:@@quotes.quote-detail.ts.une.commande.client.sera.creee.a.partir.233127fe:Une commande client sera créée à partir de ce devis. Le devis sera ensuite verrouillé et ne pourra plus être converti. Souhaitez-vous continuer ?`,
       icon: 'pi pi-shopping-cart',
       acceptLabel: $localize`:@@quote-detail.component.acceptLabel.Cr_er_la_command:Créer la commande`,
       rejectLabel: $localize`:@@quote-detail.component.rejectLabel.Annuler:Annuler`,
@@ -900,7 +900,7 @@ export class QuoteDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
-            detail: res.message || 'Impossible de créer la facture à partir du devis.',
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.de.creer.la.facture.a.partir.697f599a:Impossible de créer la facture à partir du devis.`,
           });
         }
       },
@@ -931,7 +931,7 @@ export class QuoteDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
-            detail: res.message || 'Impossible de créer la commande à partir du devis.',
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.de.creer.la.commande.a.partir.c1d66ecd:Impossible de créer la commande à partir du devis.`,
           });
         }
       },
@@ -961,7 +961,7 @@ export class QuoteDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
-            detail: res.message || 'Impossible d\'envoyer le devis.',
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.d.envoyer.le.devis.43be5fd2:Impossible d'envoyer le devis.`,
           });
         }
       },
@@ -991,7 +991,7 @@ export class QuoteDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
-            detail: res.message || 'Impossible d\'accepter le devis.',
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.d.accepter.le.devis.be2fea5d:Impossible d'accepter le devis.`,
           });
         }
       },
@@ -1028,7 +1028,7 @@ export class QuoteDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
-            detail: res.message || 'Impossible de refuser le devis.',
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.de.refuser.le.devis.46e4735d:Impossible de refuser le devis.`,
           });
         }
       },
@@ -1053,7 +1053,7 @@ export class QuoteDetailComponent implements OnInit {
     if (!q) return;
     const reason = this.cancelReason?.trim();
     if (!reason) {
-      this.cancelError.set('Le motif d\'annulation est obligatoire.');
+      this.cancelError.set($localize`:@@quotes.quote-detail.ts.le.motif.d.annulation.est.obligatoire.5393301d:Le motif d'annulation est obligatoire.`);
       return;
     }
     this.cancelError.set(null);
@@ -1068,7 +1068,7 @@ export class QuoteDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
-            detail: res.message || 'Impossible d\'annuler le devis.',
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.d.annuler.le.devis.6eb8e49c:Impossible d'annuler le devis.`,
           });
         }
       },
@@ -1098,7 +1098,7 @@ export class QuoteDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@quote-detail.component.summary.Erreur:Erreur`,
-            detail: res.message || 'Impossible de dupliquer le devis.',
+            detail: res.message || $localize`:@@quotes.quote-detail.ts.impossible.de.dupliquer.le.devis.08875edc:Impossible de dupliquer le devis.`,
           });
         }
       },

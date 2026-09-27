@@ -125,8 +125,8 @@ export class DepreciationRunComponent implements OnInit {
   readonly isOffset = computed(() => this.settings().fiscalYearStartMonth !== 1);
 
   readonly offsetHint =
-    "Le dossier est en exercice décalé : les dotations sont rattachées à l'exercice sélectionné " +
-    "(clé = année de début). Le Grand-Livre reste en année civile (limitation transitoire).";
+    $localize`:@@accounting.depreciation-run.ts.le.dossier.est.en.exercice.decale.les.do.9e94cb87:Le dossier est en exercice décalé : les dotations sont rattachées à l'exercice sélectionné ` +
+    $localize`:@@accounting.depreciation-run.ts.cle.annee.de.debut.le.grand.livre.reste.84dd6e0c:(clé = année de début). Le Grand-Livre reste en année civile (limitation transitoire).`;
 
   /** Liste des exercices proposés au sélecteur (calculée côté client depuis le paramétrage). */
   readonly fiscalYearOptions = computed<FiscalYearOption[]>(() => {

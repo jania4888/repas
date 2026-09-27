@@ -614,8 +614,8 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const isCreditNote = this.wizardService.metadata().type === 'CREDIT_NOTE';
     return [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Factures', route: '/invoices' },
+      { label: $localize`:@@invoices.invoice-wizard.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@invoices.invoice-wizard.ts.factures.da35e4f2:Factures`, route: '/invoices' },
       { label: isCreditNote ? $localize`:@@ui.tern.facture.d.avoir.541e44:Facture d'avoir` : $localize`:@@ui.tern.nouvelle.facture.cdf7e0:Nouvelle facture` }
     ];
   });
@@ -804,7 +804,7 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
           message: isCreditNote
             ? $localize`:@@ui.tern.avoir.confirm.emission:Une fois validée, cette facture d'avoir ne pourra plus être modifiée. Confirmer l'émission ?`
             : $localize`:@@ui.tern.une.fois.validee.cette.facture.ne.pourra.p.acdbf6:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
-          header: 'Confirmer l\'émission',
+          header: $localize`:@@invoices.invoice-wizard.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
           icon: 'pi pi-exclamation-triangle',
           acceptLabel: isCreditNote ? $localize`:@@ui.tern.emettre.l.avoir.4155eb:Émettre l'avoir` : $localize`:@@ui.tern.emettre.la.facture.9ba0dd:Émettre la facture`,
           rejectLabel: $localize`:@@invoice-wizard.component.rejectLabel.Annuler:Annuler`,
@@ -852,8 +852,8 @@ export class InvoiceWizardComponent implements OnInit, OnDestroy {
   onCancel(): void {
     if (this.wizardService.isDirty()) {
       this.confirmationService.confirm({
-        message: 'Vous avez des modifications non enregistrées. Voulez-vous quitter sans sauvegarder ?',
-        header: 'Quitter le wizard',
+        message: $localize`:@@invoices.invoice-wizard.ts.vous.avez.des.modifications.non.enregist.409fb864:Vous avez des modifications non enregistrées. Voulez-vous quitter sans sauvegarder ?`,
+        header: $localize`:@@invoices.invoice-wizard.ts.quitter.le.wizard.74fe7dc7:Quitter le wizard`,
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: $localize`:@@invoice-wizard.component.acceptLabel.Quitter:Quitter`,
         rejectLabel: $localize`:@@invoice-wizard.component.rejectLabel.Rester:Rester`,

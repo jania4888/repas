@@ -339,7 +339,7 @@ export class RefundInvoiceIdDialogComponent implements AfterViewInit {
 
     const query = this.searchText?.trim();
     if (!query) {
-      this.errorMessage.set('Veuillez saisir ou sélectionner une facture.');
+      this.errorMessage.set($localize`:@@shared.refund-invoice-id-dialog.ts.veuillez.saisir.ou.selectionner.une.fact.5ce9103e:Veuillez saisir ou sélectionner une facture.`);
       return;
     }
 

@@ -753,7 +753,7 @@ export class AddCashOperationDialogComponent implements OnChanges, OnInit {
           this.toastService.add({
             severity: 'success',
             summary: $localize`:@@add-cash-operation-dialog.component.summary.Succès:Succès`,
-            detail: `${typeLabel} enregistré avec succès`
+            detail: $localize`:@@payments.add-cash-operation-dialog.ts.typelabel.enregistre.avec.succes.018d1291:${typeLabel}:typeLabel: enregistré avec succès`
           });
           this.operationCreated.emit(res.data);
           this.onHide();

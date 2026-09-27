@@ -117,8 +117,8 @@ export class StudioFormHubComponent implements OnInit {
 
   removeView(v: CustomView): void {
     this.confirmation.confirm({
-      message: `Supprimer la vue « ${v.displayName} » ?`,
-      header: 'Confirmation',
+      message: $localize`:@@studio.studio-form-hub.ts.supprimer.la.vue.displayname.493ea5a6:Supprimer la vue « ${v.displayName}:displayName: » ?`,
+      header: $localize`:@@studio.studio-form-hub.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@studio-form-hub.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@studio-form-hub.component.rejectLabel.Annuler:Annuler`,
       accept: () => {

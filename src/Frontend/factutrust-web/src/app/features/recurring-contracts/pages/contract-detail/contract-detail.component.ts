@@ -289,8 +289,8 @@ export class ContractDetailComponent implements OnInit {
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const c = this.contract();
     return [
-      { label: 'Accueil', route: '/', icon: 'pi-home' },
-      { label: 'Contrats récurrents', route: '/recurring-contracts' },
+      { label: $localize`:@@recurring-contracts.contract-detail.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' },
+      { label: $localize`:@@recurring-contracts.contract-detail.ts.contrats.recurrents.e773e54a:Contrats récurrents`, route: '/recurring-contracts' },
       { label: c?.number ? $localize`:@@ui.tern.contrat.ph.396b9e:Contrat ${c.number}:p0:` : $localize`:@@ui.tern.contrat.d008bd:Contrat` }
     ];
   });
@@ -354,20 +354,20 @@ export class ContractDetailComponent implements OnInit {
     if (!c) return [];
     return [
       {
-        label: 'Créer un avenant',
+        label: $localize`:@@recurring-contracts.contract-detail.ts.creer.un.avenant.676020ba:Créer un avenant`,
         icon: 'pi pi-file-plus',
         visible: c.status === 'Active' && this.canManage(),
         command: () => { this.amendDialogVisible = true; }
       },
       {
-        label: 'Cloner',
+        label: $localize`:@@recurring-contracts.contract-detail.ts.cloner.1a9fa729:Cloner`,
         icon: 'pi pi-copy',
         visible: this.canCreate(),
         command: () => this.cloneContract()
       },
       { separator: true },
       {
-        label: 'Voir les brouillons',
+        label: $localize`:@@recurring-contracts.contract-detail.ts.voir.les.brouillons.c69e12e7:Voir les brouillons`,
         icon: 'pi pi-file-edit',
         routerLink: '/recurring-contracts/pending-drafts'
       }
@@ -407,8 +407,8 @@ export class ContractDetailComponent implements OnInit {
 
   confirmActivate(): void {
     this.confirmationService.confirm({
-      header: 'Activer le contrat',
-      message: 'Le contrat sera activé et la facturation démarrera à la prochaine échéance.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.activer.le.contrat.9474c318:Activer le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.le.contrat.sera.active.et.la.facturation.2bb33b68:Le contrat sera activé et la facturation démarrera à la prochaine échéance.`,
       icon: 'pi pi-play',
       acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Activer:Activer`,
       rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
@@ -418,8 +418,8 @@ export class ContractDetailComponent implements OnInit {
 
   confirmSuspend(): void {
     this.confirmationService.confirm({
-      header: 'Suspendre le contrat',
-      message: 'Les prochaines factures ne seront plus générées tant que le contrat est suspendu.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.suspendre.le.contrat.d43dfca2:Suspendre le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.les.prochaines.factures.ne.seront.plus.g.cfe433df:Les prochaines factures ne seront plus générées tant que le contrat est suspendu.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Suspendre:Suspendre`,
       rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
@@ -429,8 +429,8 @@ export class ContractDetailComponent implements OnInit {
 
   confirmResume(): void {
     this.confirmationService.confirm({
-      header: 'Reprendre le contrat',
-      message: 'Le contrat redeviendra actif et la facturation reprendra.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.reprendre.le.contrat.edff7e03:Reprendre le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.le.contrat.redeviendra.actif.et.la.factu.aef399a7:Le contrat redeviendra actif et la facturation reprendra.`,
       icon: 'pi pi-play',
       acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Reprendre:Reprendre`,
       rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
@@ -440,8 +440,8 @@ export class ContractDetailComponent implements OnInit {
 
   confirmCancel(): void {
     this.confirmationService.confirm({
-      header: 'Résilier le contrat',
-      message: 'Cette action est irréversible : le contrat sera définitivement résilié.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.resilier.le.contrat.aa98822d:Résilier le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.cette.action.est.irreversible.le.contrat.ebe87177:Cette action est irréversible : le contrat sera définitivement résilié.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Résilier:Résilier`,
       rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
@@ -453,8 +453,8 @@ export class ContractDetailComponent implements OnInit {
 
   confirmRenew(): void {
     this.confirmationService.confirm({
-      header: 'Renouveler le contrat',
-      message: 'Le contrat sera prolongé d\'une durée identique à la durée initiale.',
+      header: $localize`:@@recurring-contracts.contract-detail.ts.renouveler.le.contrat.1e20cca2:Renouveler le contrat`,
+      message: $localize`:@@recurring-contracts.contract-detail.ts.le.contrat.sera.prolonge.d.une.duree.ide.57797cfd:Le contrat sera prolongé d'une durée identique à la durée initiale.`,
       icon: 'pi pi-refresh',
       acceptLabel: $localize`:@@contract-detail.component.acceptLabel.Renouveler:Renouveler`,
       rejectLabel: $localize`:@@contract-detail.component.rejectLabel.Annuler:Annuler`,
@@ -466,7 +466,7 @@ export class ContractDetailComponent implements OnInit {
             this.toast.add({
               severity: 'success',
               summary: $localize`:@@contract-detail.component.summary.Contrat_renouvel:Contrat renouvelé`,
-              detail: `Nouvelle date de fin : ${new Date(result.newEndDate).toLocaleDateString('fr-FR')}.`
+              detail: $localize`:@@recurring-contracts.contract-detail.ts.nouvelle.date.de.fin.tolocaledatestring.61aefc26:Nouvelle date de fin : ${new Date(result.newEndDate).toLocaleDateString('fr-FR')}:toLocaleDateString:.`
             });
             this.reload();
             this.refreshToken.update(t => t + 1);
@@ -497,7 +497,7 @@ export class ContractDetailComponent implements OnInit {
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@contract-detail.component.summary.G_n_ration_termi:Génération terminée`,
-          detail: `${count} brouillon(s) généré(s) — visibles dans « Brouillons à valider ».`
+          detail: $localize`:@@recurring-contracts.contract-detail.ts.count.brouillon.s.genere.s.visibles.dans.0c88fdb0:${count}:count: brouillon(s) généré(s) — visibles dans « Brouillons à valider ».`
         });
         this.refreshToken.update(t => t + 1);
       },

@@ -173,10 +173,10 @@ export class BudgetReportComponent implements OnInit {
     if (!r) return [];
     const expenseVariance = r.totals.expenseActual - r.totals.expenseRevised;
     return [
-      { label: 'Budget charges (révisé)', value: r.totals.expenseRevised, format: 'currency', currency: 'TND', icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Réalisé charges', value: r.totals.expenseActual, format: 'currency', currency: 'TND', icon: 'pi-chart-line', tone: expenseVariance > 0 ? 'rose' : 'emerald' },
-      { label: 'Écart charges', value: expenseVariance, format: 'currency', currency: 'TND', icon: 'pi-arrows-v', tone: expenseVariance > 0 ? 'rose' : 'emerald' },
-      { label: 'Réalisé produits', value: r.totals.revenueActual, format: 'currency', currency: 'TND', icon: 'pi-money-bill', tone: 'emerald' }
+      { label: $localize`:@@accounting.budget-report.ts.budget.charges.revise.ec32aa60:Budget charges (révisé)`, value: r.totals.expenseRevised, format: 'currency', currency: 'TND', icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@accounting.budget-report.ts.realise.charges.db088570:Réalisé charges`, value: r.totals.expenseActual, format: 'currency', currency: 'TND', icon: 'pi-chart-line', tone: expenseVariance > 0 ? 'rose' : 'emerald' },
+      { label: $localize`:@@accounting.budget-report.ts.ecart.charges.f14e5c1d:Écart charges`, value: expenseVariance, format: 'currency', currency: 'TND', icon: 'pi-arrows-v', tone: expenseVariance > 0 ? 'rose' : 'emerald' },
+      { label: $localize`:@@accounting.budget-report.ts.realise.produits.a65e581c:Réalisé produits`, value: r.totals.revenueActual, format: 'currency', currency: 'TND', icon: 'pi-money-bill', tone: 'emerald' }
     ];
   });
 
@@ -198,7 +198,7 @@ export class BudgetReportComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors du chargement de l'état budgétaire."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.budget-report.ts.erreur.reseau.lors.du.chargement.de.l.et.1416b1ac:Erreur réseau lors du chargement de l'état budgétaire.`));
       }
     });
   }
@@ -218,7 +218,7 @@ export class BudgetReportComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export de l'état budgétaire."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.budget-report.ts.erreur.lors.de.l.export.de.l.etat.budget.6cf284d4:Erreur lors de l'export de l'état budgétaire.`));
       }
     });
   }

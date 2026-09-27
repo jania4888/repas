@@ -667,9 +667,9 @@ export class PurchaseOrderDetailComponent implements OnInit {
   createSupplierInvoiceModal?: CreateSupplierInvoiceModalComponent;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de commande', route: '/purchase-orders' },
-    { label: 'Détail' }
+    { label: $localize`:@@purchase-orders.purchase-order-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@purchase-orders.purchase-order-detail.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
+    { label: $localize`:@@purchase-orders.purchase-order-detail.ts.detail.7ce06afc:Détail` }
   ];
 
   ngOnInit(): void {
@@ -698,8 +698,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
 
           this.po.set(normalizedData);
           this.breadcrumbItems = [
-            { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-            { label: 'Bons de commande', route: '/purchase-orders' },
+            { label: $localize`:@@purchase-orders.purchase-order-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+            { label: $localize`:@@purchase-orders.purchase-order-detail.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
             { label: response.data.number }
           ];
           this.loadLinkedReceipts(normalizedData.id);
@@ -766,8 +766,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
     if (!order || this.confirming() || order.status !== PurchaseOrderStatus.Draft) return;
 
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir confirmer la commande ${order.number} ? Cette action est irréversible.`,
-      header: 'Confirmer la commande',
+      message: $localize`:@@purchase-orders.purchase-order-detail.ts.etes.vous.sur.de.vouloir.confirmer.la.co.fe2ec3e1:Êtes-vous sûr de vouloir confirmer la commande ${order.number}:number: ? Cette action est irréversible.`,
+      header: $localize`:@@purchase-orders.purchase-order-detail.ts.confirmer.la.commande.3af7f44c:Confirmer la commande`,
       icon: 'pi pi-check-circle',
       acceptLabel: $localize`:@@purchase-order-detail.component.acceptLabel.Confirmer:Confirmer`,
       rejectLabel: $localize`:@@purchase-order-detail.component.rejectLabel.Annuler:Annuler`,
@@ -813,7 +813,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || 'Erreur' });
+        this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-detail.ts.erreur.ab546c23:Erreur` });
       }
     });
   }
@@ -851,8 +851,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
     }
 
     this.confirmationService.confirm({
-      message: `Envoyer le bon de commande ${order.number} par email à ${order.supplier.email} ?`,
-      header: 'Envoi par email',
+      message: $localize`:@@purchase-orders.purchase-order-detail.ts.envoyer.le.bon.de.commande.number.par.em.0711897f:Envoyer le bon de commande ${order.number}:number: par email à ${order.supplier.email}:email: ?`,
+      header: $localize`:@@purchase-orders.purchase-order-detail.ts.envoi.par.email.65d7d5ad:Envoi par email`,
       icon: 'pi pi-envelope',
       acceptLabel: $localize`:@@purchase-order-detail.component.acceptLabel.Envoyer:Envoyer`,
       rejectLabel: $localize`:@@purchase-order-detail.component.rejectLabel.Annuler:Annuler`,
@@ -862,12 +862,12 @@ export class PurchaseOrderDetailComponent implements OnInit {
           next: (response) => {
             this.sending.set(false);
             if (response.success) {
-              this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Envoy_:Envoyé`, detail: `Email envoyé à ${order.supplier.email}` });
+              this.toastService.add({ severity: 'success', summary: $localize`:@@purchase-order-detail.component.summary.Envoy_:Envoyé`, detail: $localize`:@@purchase-orders.purchase-order-detail.ts.email.envoye.a.email.855da228:Email envoyé à ${order.supplier.email}:email:` });
             }
           },
           error: (err) => {
             this.sending.set(false);
-            this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || 'Erreur lors de l\'envoi' });
+            this.toastService.add({ severity: 'error', summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-detail.ts.erreur.lors.de.l.envoi.f5a1c0f0:Erreur lors de l'envoi` });
           }
         });
       }
@@ -884,7 +884,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
-            detail: prefillRes.message || 'Impossible de préparer la facture'
+            detail: prefillRes.message || $localize`:@@purchase-orders.purchase-order-detail.ts.impossible.de.preparer.la.facture.a10c22ae:Impossible de préparer la facture`
           });
           return;
         }
@@ -901,7 +901,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
-          detail: err?.error?.errors?.[0] || err?.error?.message || 'Impossible de préparer la facture'
+          detail: err?.error?.errors?.[0] || err?.error?.message || $localize`:@@purchase-orders.purchase-order-detail.ts.impossible.de.preparer.la.facture.a10c22ae:Impossible de préparer la facture`
         });
       }
     });
@@ -941,7 +941,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
           this.toastService.add({
             severity: 'success',
             summary: $localize`:@@purchase-order-detail.component.summary.Succès:Succès`,
-            detail: `Facture fournisseur ${response.data.invoiceNumber} créée`
+            detail: $localize`:@@purchase-orders.purchase-order-detail.ts.facture.fournisseur.invoicenumber.creee.0fa763be:Facture fournisseur ${response.data.invoiceNumber}:invoiceNumber: créée`
           });
           void this.router.navigate(['/supplier-invoices', response.data.id]);
         }
@@ -1022,8 +1022,8 @@ export class PurchaseOrderDetailComponent implements OnInit {
     if (!order) return;
 
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir supprimer définitivement la commande brouillon ${order.number} ? Cette action est irréversible.`,
-      header: 'Supprimer la commande',
+      message: $localize`:@@purchase-orders.purchase-order-detail.ts.etes.vous.sur.de.vouloir.supprimer.defin.00e8751d:Êtes-vous sûr de vouloir supprimer définitivement la commande brouillon ${order.number}:number: ? Cette action est irréversible.`,
+      header: $localize`:@@purchase-orders.purchase-order-detail.ts.supprimer.la.commande.aa625d48:Supprimer la commande`,
       icon: 'pi pi-trash',
       acceptLabel: $localize`:@@purchase-order-detail.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@purchase-order-detail.component.rejectLabel.Annuler:Annuler`,
@@ -1040,7 +1040,7 @@ export class PurchaseOrderDetailComponent implements OnInit {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@purchase-order-detail.component.summary.Erreur:Erreur`,
-              detail: err?.error?.errors?.[0] || 'Impossible de supprimer cette commande'
+              detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-detail.ts.impossible.de.supprimer.cette.commande.e4d56c73:Impossible de supprimer cette commande`
             });
           }
         });

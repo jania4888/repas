@@ -392,23 +392,23 @@ export class TenantUsersBulkComponent {
   readonly isSubFeatureOn = isSubFeatureOn;
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Utilisateurs', route: '/settings/users' },
-    { label: 'Ajout groupé' }
+    { label: $localize`:@@settings.tenant-users-bulk.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.utilisateurs.c661b3bc:Utilisateurs`, route: '/settings/users' },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.ajout.groupe.f72bec29:Ajout groupé` }
   ];
 
   readonly roleOptions = [
-    { label: 'Administrateur', value: 'Administrator' as UserRole },
-    { label: 'Comptable', value: 'Accountant' as UserRole },
-    { label: 'Commercial', value: 'SalesRep' as UserRole },
-    { label: 'Responsable Commercial', value: 'SalesManager' as UserRole },
-    { label: 'Magasinier', value: 'Warehouse' as UserRole },
-    { label: 'Acheteur', value: 'Purchaser' as UserRole },
-    { label: 'Caissier', value: 'Cashier' as UserRole },
-    { label: 'Auditeur', value: 'Auditor' as UserRole },
-    { label: 'Superviseur', value: 'Supervisor' as UserRole },
-    { label: 'Développeur', value: 'Developer' as UserRole }
+    { label: $localize`:@@settings.tenant-users-bulk.ts.administrateur.1d8141b2:Administrateur`, value: 'Administrator' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.comptable.36cf0a9e:Comptable`, value: 'Accountant' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.commercial.b48513e4:Commercial`, value: 'SalesRep' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.responsable.commercial.faf99310:Responsable Commercial`, value: 'SalesManager' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.magasinier.c61a86f7:Magasinier`, value: 'Warehouse' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.acheteur.0afc4f6e:Acheteur`, value: 'Purchaser' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.caissier.8d597a37:Caissier`, value: 'Cashier' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.auditeur.eac73f9c:Auditeur`, value: 'Auditor' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.superviseur.27e5f8da:Superviseur`, value: 'Supervisor' as UserRole },
+    { label: $localize`:@@settings.tenant-users-bulk.ts.developpeur.4819232b:Développeur`, value: 'Developer' as UserRole }
   ];
 
   rows = signal<BulkRow[]>([this.emptyRow()]);
@@ -646,7 +646,7 @@ export class TenantUsersBulkComponent {
           this.toast.add({
             severity: 'warn',
             summary: $localize`:@@tenant-users-bulk.component.summary.Modules copi:Modules copiés`,
-            detail: `Configuration appliquée. ${dropped} module(s) non disponible(s) pour certains rôles ont été écartés.`
+            detail: $localize`:@@settings.tenant-users-bulk.ts.configuration.appliquee.dropped.module.s.edb9d430:Configuration appliquée. ${dropped}:dropped: module(s) non disponible(s) pour certains rôles ont été écartés.`
           });
         } else {
           this.toast.add({

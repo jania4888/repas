@@ -154,8 +154,8 @@ export class ForecastingHubComponent implements OnInit {
           summary: $localize`:@@forecasting-hub.component.summary.Recalcul_termin_:Recalcul terminé`,
           detail:
             `${(result.durationMs / 1000).toFixed(1)}s — ` +
-            `${result.classificationsUpdated} classifications, ` +
-            `${result.replenishmentsGenerated} réappros, ${result.promotionsGenerated} promos.`
+            $localize`:@@forecasting.forecasting-hub.ts.classificationsupdated.classifications.be67c722:${result.classificationsUpdated}:classificationsUpdated: classifications, ` +
+            $localize`:@@forecasting.forecasting-hub.ts.replenishmentsgenerated.reappros.promoti.e8a44b9a:${result.replenishmentsGenerated}:replenishmentsGenerated: réappros, ${result.promotionsGenerated}:promotionsGenerated: promos.`
         });
         this.forecastingService.notifyRecomputeCompleted();
         await this.loadAudit();

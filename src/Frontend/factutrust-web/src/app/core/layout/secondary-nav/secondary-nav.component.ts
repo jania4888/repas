@@ -145,7 +145,7 @@ export class SecondaryNavComponent {
   /** Hub overview link prepended in nested flyouts. */
   nestedHubItem(child: NavSubItem): NavSubItem {
     return {
-      label: 'Tous les états',
+      label: $localize`:@@core.secondary-nav.ts.tous.les.etats.7da63670:Tous les états`,
       route: child.route,
       icon: child.icon
     };

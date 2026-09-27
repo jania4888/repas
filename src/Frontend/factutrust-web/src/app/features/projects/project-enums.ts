@@ -24,30 +24,30 @@ export const PROJECT_STATUS_OPTIONS = [
 ];
 
 export const PROJECT_KIND_OPTIONS = [
-  { label: 'Général', value: 'Generic' },
-  { label: 'ESN / Services', value: 'Esn' },
-  { label: 'BTP / Chantier', value: 'Btp' }
+  { label: $localize`:@@projects.project-enums.ts.general.5376df98:Général`, value: 'Generic' },
+  { label: $localize`:@@projects.project-enums.ts.esn.services.cdac16db:ESN / Services`, value: 'Esn' },
+  { label: $localize`:@@projects.project-enums.ts.btp.chantier.061c47fa:BTP / Chantier`, value: 'Btp' }
 ];
 
 export const PROJECT_BILLING_OPTIONS = [
-  { label: 'Aucune', value: 'None' },
-  { label: 'Régie (temps)', value: 'TimeAndMaterials' },
-  { label: 'Forfait', value: 'FixedPrice' },
-  { label: 'Jalons', value: 'Milestone' },
-  { label: 'Situations de travaux', value: 'ProgressSituations' }
+  { label: $localize`:@@projects.project-enums.ts.aucune.e8f88273:Aucune`, value: 'None' },
+  { label: $localize`:@@projects.project-enums.ts.regie.temps.22f435c8:Régie (temps)`, value: 'TimeAndMaterials' },
+  { label: $localize`:@@projects.project-enums.ts.forfait.e1dca3c1:Forfait`, value: 'FixedPrice' },
+  { label: $localize`:@@projects.project-enums.ts.jalons.4bb628c9:Jalons`, value: 'Milestone' },
+  { label: $localize`:@@projects.project-enums.ts.situations.de.travaux.0d67835b:Situations de travaux`, value: 'ProgressSituations' }
 ];
 
 export const PROJECT_ROLE_OPTIONS = [
-  { label: 'Lecteur', value: 'Viewer' },
-  { label: 'Membre', value: 'Member' },
-  { label: 'Responsable', value: 'Manager' }
+  { label: $localize`:@@projects.project-enums.ts.lecteur.f620206b:Lecteur`, value: 'Viewer' },
+  { label: $localize`:@@projects.project-enums.ts.membre.bbc7e799:Membre`, value: 'Member' },
+  { label: $localize`:@@projects.project-enums.ts.responsable.44b58814:Responsable`, value: 'Manager' }
 ];
 
 export const PROJECT_PRIORITY_OPTIONS = [
-  { label: 'Basse', value: 'Low' },
-  { label: 'Normale', value: 'Normal' },
-  { label: 'Haute', value: 'High' },
-  { label: 'Urgente', value: 'Urgent' }
+  { label: $localize`:@@projects.project-enums.ts.basse.66ecf01a:Basse`, value: 'Low' },
+  { label: $localize`:@@projects.project-enums.ts.normale.c82c13b2:Normale`, value: 'Normal' },
+  { label: $localize`:@@projects.project-enums.ts.haute.ab500e10:Haute`, value: 'High' },
+  { label: $localize`:@@projects.project-enums.ts.urgente.690da266:Urgente`, value: 'Urgent' }
 ];
 
 export const PROJECT_TASK_STATUS_OPTIONS = [

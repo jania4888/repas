@@ -176,11 +176,11 @@ export class DtsDeclarationTabComponent implements OnInit {
     const d = this.dts();
     if (!d) return [];
     return [
-      { label: 'Salariés', value: d.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'Masse CNSSable', value: formatPayrollAmount(d.totalCnssableGross, false), icon: 'pi-chart-bar', variant: 'primary' },
-      { label: 'CNSS salarié', value: formatPayrollAmount(d.totalCnssEmployee, false), icon: 'pi-user', variant: 'warning' },
-      { label: 'CNSS employeur', value: formatPayrollAmount(d.totalCnssEmployer, false), icon: 'pi-building', variant: 'warning' },
-      { label: 'Cotisations CNSS', value: formatPayrollAmount(d.totalContributions, false), icon: 'pi-wallet', variant: 'success', featured: true }
+      { label: $localize`:@@payroll.dts-declaration-tab.ts.salaries.ce68387d:Salariés`, value: d.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.dts-declaration-tab.ts.masse.cnssable.a55bfc7e:Masse CNSSable`, value: formatPayrollAmount(d.totalCnssableGross, false), icon: 'pi-chart-bar', variant: 'primary' },
+      { label: $localize`:@@payroll.dts-declaration-tab.ts.cnss.salarie.e8528052:CNSS salarié`, value: formatPayrollAmount(d.totalCnssEmployee, false), icon: 'pi-user', variant: 'warning' },
+      { label: $localize`:@@payroll.dts-declaration-tab.ts.cnss.employeur.ae3ac0eb:CNSS employeur`, value: formatPayrollAmount(d.totalCnssEmployer, false), icon: 'pi-building', variant: 'warning' },
+      { label: $localize`:@@payroll.dts-declaration-tab.ts.cotisations.cnss.5b806e8b:Cotisations CNSS`, value: formatPayrollAmount(d.totalContributions, false), icon: 'pi-wallet', variant: 'success', featured: true }
     ];
   });
 

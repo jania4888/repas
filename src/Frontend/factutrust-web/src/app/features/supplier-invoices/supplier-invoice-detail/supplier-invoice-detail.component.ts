@@ -360,9 +360,9 @@ export class SupplierInvoiceDetailComponent implements OnInit {
     cancelReason = '';
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Factures fournisseurs', route: '/supplier-invoices' },
-        { label: 'Détail' }
+        { label: $localize`:@@supplier-invoices.supplier-invoice-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@supplier-invoices.supplier-invoice-detail.ts.factures.fournisseurs.1dcbc2ed:Factures fournisseurs`, route: '/supplier-invoices' },
+        { label: $localize`:@@supplier-invoices.supplier-invoice-detail.ts.detail.7ce06afc:Détail` }
     ];
 
     private get unpaidOnlyFromRoute(): boolean {
@@ -380,11 +380,11 @@ export class SupplierInvoiceDetailComponent implements OnInit {
 
     private buildBreadcrumb(invoiceNumber: string): BreadcrumbItem[] {
         const base: BreadcrumbItem[] = [
-            { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-            { label: 'Factures fournisseurs', route: '/supplier-invoices' }
+            { label: $localize`:@@supplier-invoices.supplier-invoice-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+            { label: $localize`:@@supplier-invoices.supplier-invoice-detail.ts.factures.fournisseurs.1dcbc2ed:Factures fournisseurs`, route: '/supplier-invoices' }
         ];
         if (this.unpaidOnlyFromRoute) {
-            base.push({ label: 'Factures impayées', route: '/supplier-invoices/unpaid' });
+            base.push({ label: $localize`:@@supplier-invoices.supplier-invoice-detail.ts.factures.impayees.dc3cffa5:Factures impayées`, route: '/supplier-invoices/unpaid' });
         }
         base.push({ label: invoiceNumber });
         return base;
@@ -501,7 +501,7 @@ export class SupplierInvoiceDetailComponent implements OnInit {
                     this.loadInvoice(invoice.id);
                 }
             },
-            error: (err) => this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-invoice-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || 'Erreur' })
+            error: (err) => this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-invoice-detail.component.summary.Erreur:Erreur`, detail: err?.error?.errors?.[0] || $localize`:@@supplier-invoices.supplier-invoice-detail.ts.erreur.ab546c23:Erreur` })
         });
     }
 }

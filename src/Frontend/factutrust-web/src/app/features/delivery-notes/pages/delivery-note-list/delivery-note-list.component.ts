@@ -328,11 +328,11 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
     const s = this.summary();
     const currency = s?.currency ?? 'TND';
     return [
-      { label: 'Bons', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
-      { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
-      { label: 'Livrés', value: s?.deliveredCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Facturés', value: s?.invoicedCount, format: 'number', icon: 'pi-money-bill', tone: 'violet' }
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.bons.050c19c5:Bons`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.total.ht.2ca17ae6:Total HT`, value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.livres.e0602de9:Livrés`, value: s?.deliveredCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@delivery-notes.delivery-note-list.ts.factures.60d4818b:Facturés`, value: s?.invoicedCount, format: 'number', icon: 'pi-money-bill', tone: 'violet' }
     ];
   });
 
@@ -352,8 +352,8 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
   private readonly SEARCH_DEBOUNCE_MS = 500;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Bons de Livraison' }
+    { label: $localize`:@@delivery-notes.delivery-note-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@delivery-notes.delivery-note-list.ts.bons.de.livraison.a42b9518:Bons de Livraison` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -528,7 +528,7 @@ export class DeliveryNoteListComponent implements OnInit, OnDestroy {
           key: 'delivery-note-list-print',
           severity: 'error',
           summary: $localize`:@@delivery-note-list.component.summary.Erreur:Erreur`,
-          detail: error.message || 'Impossible de générer le rapport PDF',
+          detail: error.message || $localize`:@@delivery-notes.delivery-note-list.ts.impossible.de.generer.le.rapport.pdf.e2243d7a:Impossible de générer le rapport PDF`,
           life: 5000
         });
       }

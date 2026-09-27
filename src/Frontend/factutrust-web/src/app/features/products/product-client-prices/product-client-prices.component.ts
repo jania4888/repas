@@ -449,8 +449,8 @@ export class ProductClientPricesComponent implements OnInit, OnChanges {
 
   confirmDelete(item: ProductClientPrice): void {
     this.confirmation.confirm({
-      message: `Supprimer le tarif de « ${item.clientName} » ? Le client repassera au prix catalogue.`,
-      header: 'Confirmation',
+      message: $localize`:@@products.product-client-prices.ts.supprimer.le.tarif.de.clientname.le.clie.12d20884:Supprimer le tarif de « ${item.clientName}:clientName: » ? Le client repassera au prix catalogue.`,
+      header: $localize`:@@products.product-client-prices.ts.confirmation.3424edc2:Confirmation`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@product-client-prices.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@product-client-prices.component.rejectLabel.Annuler:Annuler`,

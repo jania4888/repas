@@ -243,7 +243,7 @@ export class LoansListComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.loans-list.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -257,7 +257,7 @@ export class LoansListComponent implements OnInit {
       next: res => {
         this.creating.set(false);
         if (res.success && res.data) {
-          this.successMessage.set('Emprunt créé et échéancier généré.');
+          this.successMessage.set($localize`:@@accounting.loans-list.ts.emprunt.cree.et.echeancier.genere.979ee03a:Emprunt créé et échéancier généré.`);
           this.showForm.set(false);
           this.form = this.emptyForm();
           this.router.navigate(['/accounting/loans', res.data]);
@@ -267,7 +267,7 @@ export class LoansListComponent implements OnInit {
       },
       error: err => {
         this.creating.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la création.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.loans-list.ts.erreur.reseau.lors.de.la.creation.0d5f3a95:Erreur réseau lors de la création.`));
       }
     });
   }

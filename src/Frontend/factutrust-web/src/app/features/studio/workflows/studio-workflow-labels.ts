@@ -14,8 +14,8 @@ export const STUDIO_WORKFLOW_LABELS = {
   },
 
   hub: {
-    title: 'Workflows',
-    subtitle: 'Automatisez les traitements de vos tables.',
+    title: $localize`:@@studio.studio-workflow-labels.ts.workflows.825ce9e9:Workflows`,
+    subtitle: $localize`:@@studio.studio-workflow-labels.ts.automatisez.les.traitements.de.vos.table.53a6b52e:Automatisez les traitements de vos tables.`,
     newWorkflow: 'Nouveau workflow',
     allTables: 'Toutes les tables',
     search: 'Rechercher un workflow…',
@@ -30,7 +30,7 @@ export const STUDIO_WORKFLOW_LABELS = {
       actions: 'Actions'
     },
     neverRun: 'Jamais exécuté',
-    emptyTitle: 'Aucun workflow pour cette table',
+    emptyTitle: $localize`:@@studio.studio-workflow-labels.ts.aucun.workflow.pour.cette.table.9509fd20:Aucun workflow pour cette table`,
     emptyHint: 'Créez votre premier workflow pour automatiser les traitements de cette table.',
     deleteConfirm: 'Supprimer « {name} » ? {count} instance(s) ouverte(s) seront annulées.',
     deleted: '{count} instance(s) annulée(s).',
@@ -66,7 +66,7 @@ export const STUDIO_WORKFLOW_LABELS = {
   },
 
   designer: {
-    title: 'Workflow',
+    title: $localize`:@@studio.studio-workflow-labels.ts.workflow.d7a48414:Workflow`,
     newTitle: 'Nouveau workflow',
     name: 'Nom',
     key: 'Clé',
@@ -110,7 +110,7 @@ export const STUDIO_WORKFLOW_LABELS = {
     moveDown: 'Descendre',
     remove: 'Supprimer',
     key: 'Clé',
-    label: 'Libellé',
+    label: $localize`:@@studio.studio-workflow-labels.ts.libelle.f5485bba:Libellé`,
     keyInvalid: 'Clé invalide : minuscule initiale, puis lettres, chiffres ou « _ » (2 à 64 caractères).',
     keyDuplicate: 'Cette clé est déjà utilisée par une autre étape.',
     conditionPreview: 'Aperçu de la condition',
@@ -225,8 +225,8 @@ export const STUDIO_WORKFLOW_LABELS = {
   },
 
   approvals: {
-    title: 'Mes approbations',
-    subtitle: 'Approbations qui vous sont assignées ou assignées à votre rôle.',
+    title: $localize`:@@studio.studio-workflow-labels.ts.mes.approbations.8f2a2f56:Mes approbations`,
+    subtitle: $localize`:@@studio.studio-workflow-labels.ts.approbations.qui.vous.sont.assignees.ou.a86f2602:Approbations qui vous sont assignées ou assignées à votre rôle.`,
     kpiPending: 'À traiter',
     kpiLate: 'En retard',
     kpiSoon: 'Sous 24 h',
@@ -322,7 +322,7 @@ export const STUDIO_WORKFLOW_LABELS = {
   },
 
   recordTab: {
-    label: 'Workflows',
+    label: $localize`:@@studio.studio-workflow-labels.ts.workflows.825ce9e9:Workflows`,
     launch: 'Lancer un workflow',
     launchPick: 'Choisir un workflow',
     run: 'Lancer',
@@ -334,8 +334,8 @@ export const STUDIO_WORKFLOW_LABELS = {
     // gardent leur libellé d'origine ; l'onglet n'utilise que les clés plates ci-dessous
     // (même motif que les `colXxx` de `approvals` en 4.4g2).
     tabLabel: 'Workflows',
-    title: 'Workflows',
-    hint: 'Instances de workflow liées à cet enregistrement.',
+    title: $localize`:@@studio.studio-workflow-labels.ts.workflows.825ce9e9:Workflows`,
+    hint: $localize`:@@studio.studio-workflow-labels.ts.instances.de.workflow.liees.a.cet.enregi.fa40a0f8:Instances de workflow liées à cet enregistrement.`,
     runTitle: 'Lancer un workflow',
     runPlaceholder: 'Choisir un workflow',
     runEmpty: 'Aucun workflow actif à lancement manuel pour cette table.',

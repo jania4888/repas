@@ -445,9 +445,9 @@ export class PayrollMealVoucherGridComponent implements OnInit {
 
     this.confirmation.confirm({
 
-      message: `Supprimer les tickets restaurant de ${line.employeeName} ?`,
+      message: $localize`:@@payroll.payroll-meal-voucher-grid.ts.supprimer.les.tickets.restaurant.de.empl.6860ad45:Supprimer les tickets restaurant de ${line.employeeName}:employeeName: ?`,
 
-      header: 'Confirmation',
+      header: $localize`:@@payroll.payroll-meal-voucher-grid.ts.confirmation.3424edc2:Confirmation`,
 
       acceptLabel: $localize`:@@payroll-meal-voucher-grid.component.acceptLabel.Supprimer:Supprimer`,
 

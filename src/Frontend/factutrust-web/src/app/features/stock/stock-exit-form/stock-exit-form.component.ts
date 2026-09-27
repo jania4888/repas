@@ -301,14 +301,14 @@ export class StockExitFormComponent implements OnInit {
   productsLoaded = false;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Gestion du Stock', route: '/stock' },
-    { label: 'Nouvelle Sortie' }
+    { label: $localize`:@@stock.stock-exit-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@stock.stock-exit-form.ts.gestion.du.stock.72df5586:Gestion du Stock`, route: '/stock' },
+    { label: $localize`:@@stock.stock-exit-form.ts.nouvelle.sortie.dd4db0bf:Nouvelle Sortie` }
   ];
 
   exitReasons = [
-    { label: 'Retour Fournisseur', value: MovementReason.SupplierReturn },
-    { label: 'Dommage / Perte', value: MovementReason.Damage }
+    { label: $localize`:@@stock.stock-exit-form.ts.retour.fournisseur.371de2a8:Retour Fournisseur`, value: MovementReason.SupplierReturn },
+    { label: $localize`:@@stock.stock-exit-form.ts.dommage.perte.4a8ecd42:Dommage / Perte`, value: MovementReason.Damage }
   ];
 
   form: FormGroup = this.fb.group({
@@ -384,7 +384,7 @@ export class StockExitFormComponent implements OnInit {
         } else {
           const detail = res.errors?.join(', ') || res.message || 'Erreur';
           this.confirmationService.alert({
-            header: 'Sortie de stock impossible',
+            header: $localize`:@@stock.stock-exit-form.ts.sortie.de.stock.impossible.803e3955:Sortie de stock impossible`,
             message: detail,
             icon: 'pi pi-exclamation-triangle'
           });
@@ -394,8 +394,8 @@ export class StockExitFormComponent implements OnInit {
       error: (err) => {
         const errorMessage = this.errorHandler.extractErrorMessage(err);
         this.confirmationService.alert({
-          header: 'Sortie de stock impossible',
-          message: errorMessage || 'Une erreur est survenue',
+          header: $localize`:@@stock.stock-exit-form.ts.sortie.de.stock.impossible.803e3955:Sortie de stock impossible`,
+          message: errorMessage || $localize`:@@stock.stock-exit-form.ts.une.erreur.est.survenue.0419f56e:Une erreur est survenue`,
           icon: 'pi pi-exclamation-triangle'
         });
         this.errorHandler.logError('Stock exit failed', err, { consoleLevel: 'warn' });

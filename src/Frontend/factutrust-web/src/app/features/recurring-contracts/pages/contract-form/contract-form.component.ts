@@ -307,8 +307,8 @@ export class ContractFormComponent implements OnInit {
 
   get breadcrumbItems(): BreadcrumbItem[] {
     return [
-      { label: 'Accueil', route: '/', icon: 'pi-home' },
-      { label: 'Contrats récurrents', route: '/recurring-contracts' },
+      { label: $localize`:@@recurring-contracts.contract-form.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' },
+      { label: $localize`:@@recurring-contracts.contract-form.ts.contrats.recurrents.e773e54a:Contrats récurrents`, route: '/recurring-contracts' },
       { label: this.isEdit() ? $localize`:@@ui.tern.modifier.le.contrat.2ed431:Modifier le contrat` : $localize`:@@ui.tern.nouveau.contrat.13fabd:Nouveau contrat` }
     ];
   }
@@ -334,10 +334,10 @@ export class ContractFormComponent implements OnInit {
 
   totalsMetrics(): TotalMetric[] {
     return [
-      { label: 'Total HT', value: this.totalHT, format: 'currency', currency: 'TND', icon: 'pi-calculator', tone: 'primary' },
+      { label: $localize`:@@recurring-contracts.contract-form.ts.total.ht.2ca17ae6:Total HT`, value: this.totalHT, format: 'currency', currency: 'TND', icon: 'pi-calculator', tone: 'primary' },
       { label: 'TVA', value: this.totalVAT, format: 'currency', currency: 'TND', icon: 'pi-percentage', tone: 'cyan' },
-      { label: 'Total TTC', value: this.totalHT + this.totalVAT, format: 'currency', currency: 'TND', icon: 'pi-wallet', tone: 'emerald' },
-      { label: 'Estimation mensuelle', value: this.monthlyEstimate, format: 'currency', currency: 'TND', icon: 'pi-sync', tone: 'violet', hint: 'Lignes fixes ramenées au mois' }
+      { label: $localize`:@@recurring-contracts.contract-form.ts.total.ttc.9e80ff7c:Total TTC`, value: this.totalHT + this.totalVAT, format: 'currency', currency: 'TND', icon: 'pi-wallet', tone: 'emerald' },
+      { label: $localize`:@@recurring-contracts.contract-form.ts.estimation.mensuelle.6c79e54e:Estimation mensuelle`, value: this.monthlyEstimate, format: 'currency', currency: 'TND', icon: 'pi-sync', tone: 'violet', hint: $localize`:@@recurring-contracts.contract-form.ts.lignes.fixes.ramenees.au.mois.6efa031c:Lignes fixes ramenées au mois` }
     ];
   }
 

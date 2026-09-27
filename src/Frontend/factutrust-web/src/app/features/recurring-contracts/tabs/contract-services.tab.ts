@@ -452,7 +452,7 @@ export class ContractServicesTabComponent implements OnInit, OnChanges {
             this.toast.add({
               severity: 'success',
               summary: $localize`:@@contract-services.tab.summary.Import_termin_:Import terminé`,
-              detail: `${count} ligne(s) importée(s).`
+              detail: $localize`:@@recurring-contracts.contract-services.ts.count.ligne.s.importee.s.ded96cc4:${count}:count: ligne(s) importée(s).`
             });
             this.loadRecords();
           },

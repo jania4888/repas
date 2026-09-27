@@ -87,14 +87,14 @@ export class ProjectDetailHeroComponent {
       },
       { separator: true },
       {
-        label: 'Retour à la liste',
+        label: $localize`:@@projects.project-detail-hero.ts.retour.a.la.liste.7753f531:Retour à la liste`,
         icon: 'pi pi-arrow-left',
         command: () => this.goList.emit()
       }
     ];
     if (this.canUpdate && p && canCancel(p.status)) {
       items.unshift({
-        label: 'Annuler le projet',
+        label: $localize`:@@projects.project-detail-hero.ts.annuler.le.projet.492bf989:Annuler le projet`,
         icon: 'pi pi-times-circle',
         command: () => this.cancel.emit()
       });

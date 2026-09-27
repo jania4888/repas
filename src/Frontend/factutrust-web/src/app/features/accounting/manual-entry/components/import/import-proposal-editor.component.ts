@@ -56,7 +56,7 @@ export class ImportProposalEditorComponent implements OnChanges, OnInit {
   /** Émis quand l'état éditable change (diagnostics, équilibre, éditions manuelles). */
   @Output() readonly stateChange = new EventEmitter<void>();
 
-  linesTitle = 'Écriture proposée';
+  linesTitle = $localize`:@@accounting.import-proposal-editor.ts.ecriture.proposee.3b3b973e:Écriture proposée`;
   lockJournal = true;
   vatSide: 'deductible' | 'collected' = 'deductible';
 
@@ -120,7 +120,7 @@ export class ImportProposalEditorComponent implements OnChanges, OnInit {
     this.baselineProposal = proposal;
     this.lockJournal = true;
     this.vatSide = proposal.direction === 'SALE' ? 'collected' : 'deductible';
-    this.linesTitle = `Écriture proposée — journal ${proposal.journalCode}`;
+    this.linesTitle = $localize`:@@accounting.import-proposal-editor.ts.ecriture.proposee.journal.journalcode.468e90e1:Écriture proposée — journal ${proposal.journalCode}:journalCode:`;
 
     this.store.columnVisibility.set({
       ...DEFAULT_COLUMN_VISIBILITY,

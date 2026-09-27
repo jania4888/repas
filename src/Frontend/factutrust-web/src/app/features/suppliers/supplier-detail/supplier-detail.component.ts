@@ -253,9 +253,9 @@ export class SupplierDetailComponent implements OnInit {
   supplier = signal<Supplier | null>(null);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Fournisseurs', route: '/suppliers' },
-    { label: 'Détail' }
+    { label: $localize`:@@suppliers.supplier-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@suppliers.supplier-detail.ts.fournisseurs.06b6d88c:Fournisseurs`, route: '/suppliers' },
+    { label: $localize`:@@suppliers.supplier-detail.ts.detail.7ce06afc:Détail` }
   ];
 
   ngOnInit(): void {
@@ -271,8 +271,8 @@ export class SupplierDetailComponent implements OnInit {
         if (response.success && response.data) {
           this.supplier.set(response.data);
           this.breadcrumbItems = [
-            { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-            { label: 'Fournisseurs', route: '/suppliers' },
+            { label: $localize`:@@suppliers.supplier-detail.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+            { label: $localize`:@@suppliers.supplier-detail.ts.fournisseurs.06b6d88c:Fournisseurs`, route: '/suppliers' },
             { label: response.data.name }
           ];
         }

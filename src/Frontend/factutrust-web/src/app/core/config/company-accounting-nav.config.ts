@@ -59,7 +59,7 @@ export const COMPANY_ACCOUNTING_SIDEBAR_CHILDREN: NavSubItem[] = [
   ...(CONFIGURATION_ASSISTANT_LINK ? [accountingModuleLinkToNavSubItem(CONFIGURATION_ASSISTANT_LINK)] : []),
   {
     id: 'company-acct--financial-statements-hub',
-    label: 'États comptables',
+    label: $localize`:@@core.company-accounting-nav.ts.etats.comptables.00e46d74:États comptables`,
     route: '/accounting/financial-statements',
     icon: 'fa-solid fa-table-list',
     modules: [M.Accounting],
@@ -68,7 +68,7 @@ export const COMPANY_ACCOUNTING_SIDEBAR_CHILDREN: NavSubItem[] = [
   },
   {
     id: 'company-acct--vat-declaration',
-    label: 'Déclaration mensuelle',
+    label: $localize`:@@core.company-accounting-nav.ts.declaration.mensuelle.5b42e43d:Déclaration mensuelle`,
     route: '/accounting/vat-declaration',
     icon: 'fa-solid fa-file-invoice',
     modules: [M.Accounting],
@@ -76,7 +76,7 @@ export const COMPANY_ACCOUNTING_SIDEBAR_CHILDREN: NavSubItem[] = [
   },
   {
     id: 'company-acct--fixed-assets-list',
-    label: 'Liste des immobilisations',
+    label: $localize`:@@core.company-accounting-nav.ts.liste.des.immobilisations.3a26cdfd:Liste des immobilisations`,
     route: COMPANY_ACCOUNTING_FIXED_ASSETS_ROUTE,
     icon: 'fa-solid fa-building',
     modules: [M.Accounting],

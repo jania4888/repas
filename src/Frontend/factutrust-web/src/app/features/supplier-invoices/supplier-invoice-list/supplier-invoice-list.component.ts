@@ -236,25 +236,25 @@ export class SupplierInvoiceListComponent implements OnInit, OnDestroy {
         const s = this.summary();
         const currency = s?.currency ?? 'TND';
         return [
-            { label: 'Factures', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
-            { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-            { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
-            { label: 'Total payé', value: s?.totalPaid, format: 'currency', currency, icon: 'pi-check-circle', tone: 'emerald' },
-            { label: 'Reste à payer', value: s?.totalRemaining, format: 'currency', currency, icon: 'pi-clock', tone: 'amber' },
-            { label: 'En retard', value: s?.overdueCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
+            { label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.factures.da35e4f2:Factures`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
+            { label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+            { label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.total.ht.2ca17ae6:Total HT`, value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+            { label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.total.paye.57d30be5:Total payé`, value: s?.totalPaid, format: 'currency', currency, icon: 'pi-check-circle', tone: 'emerald' },
+            { label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.reste.a.payer.968444fc:Reste à payer`, value: s?.totalRemaining, format: 'currency', currency, icon: 'pi-clock', tone: 'amber' },
+            { label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.en.retard.40c1dde3:En retard`, value: s?.overdueCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
         ];
     });
 
     breadcrumbItems = computed<BreadcrumbItem[]>(() => {
         const base: BreadcrumbItem[] = [
-            { label: 'Accueil', route: '/', icon: 'pi-home' },
-            { label: 'Achats' }
+            { label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.accueil.a8ff8fd2:Accueil`, route: '/', icon: 'pi-home' },
+            { label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.achats.ee5b078c:Achats` }
         ];
         if (this.unpaidOnlyMode()) {
-            base.push({ label: 'Factures fournisseurs', route: '/supplier-invoices' });
-            base.push({ label: 'Factures impayées' });
+            base.push({ label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.factures.fournisseurs.1dcbc2ed:Factures fournisseurs`, route: '/supplier-invoices' });
+            base.push({ label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.factures.impayees.dc3cffa5:Factures impayées` });
         } else {
-            base.push({ label: 'Factures fournisseurs' });
+            base.push({ label: $localize`:@@supplier-invoices.supplier-invoice-list.ts.factures.fournisseurs.1dcbc2ed:Factures fournisseurs` });
         }
         return base;
     });
@@ -345,7 +345,7 @@ export class SupplierInvoiceListComponent implements OnInit, OnDestroy {
             error: (error) => {
                 this.loading.set(false);
         this.initialLoad.set(false);
-                this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-invoice-list.component.summary.Erreur:Erreur`, detail: error?.error?.errors?.[0] || 'Impossible de charger les factures' });
+                this.toastService.add({ severity: 'error', summary: $localize`:@@supplier-invoice-list.component.summary.Erreur:Erreur`, detail: error?.error?.errors?.[0] || $localize`:@@supplier-invoices.supplier-invoice-list.ts.impossible.de.charger.les.factures.583c2251:Impossible de charger les factures` });
             }
         });
     }

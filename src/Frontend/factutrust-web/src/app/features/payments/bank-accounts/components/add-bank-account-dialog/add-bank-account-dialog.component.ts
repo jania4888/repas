@@ -695,15 +695,15 @@ export class AddBankAccountDialogComponent implements OnChanges {
     const ribDigits = this.stripRib(v.rib);
     const ibanNorm = this.normalizeIban(v.iban);
     if (ribDigits.length !== 20) {
-      this.errorMessage.set('Le RIB doit contenir 20 chiffres.');
+      this.errorMessage.set($localize`:@@payments.add-bank-account-dialog.ts.le.rib.doit.contenir.20.chiffres.e2c5d79e:Le RIB doit contenir 20 chiffres.`);
       return;
     }
     if (!/^TN\d{22}$/.test(ibanNorm)) {
-      this.errorMessage.set("L'IBAN tunisien est invalide (TN + 22 chiffres).");
+      this.errorMessage.set($localize`:@@payments.add-bank-account-dialog.ts.l.iban.tunisien.est.invalide.tn.22.chiff.188cc4e7:L'IBAN tunisien est invalide (TN + 22 chiffres).`);
       return;
     }
     if (ibanNorm.slice(4) !== ribDigits) {
-      this.errorMessage.set("Le RIB ne correspond pas à l'IBAN.");
+      this.errorMessage.set($localize`:@@payments.add-bank-account-dialog.ts.le.rib.ne.correspond.pas.a.l.iban.ac6f47f4:Le RIB ne correspond pas à l'IBAN.`);
       return;
     }
 

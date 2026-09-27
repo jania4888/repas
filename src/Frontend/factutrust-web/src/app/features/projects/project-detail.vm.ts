@@ -127,22 +127,22 @@ export function computeProjectHealth(
 ): ProjectHealthLabel {
   const overdue = countOverdueTasks(tasks);
   if (overdue > 0) {
-    return { text: 'En retard', tone: 'danger' };
+    return { text: $localize`:@@projects.project-detail.ts.en.retard.40c1dde3:En retard`, tone: 'danger' };
   }
 
   const progress = computeTaskProgressPercent(tasks);
   const schedule = elapsedSchedulePercent(project?.startDate, project?.endDate);
 
   if (schedule === null || progress >= schedule) {
-    return { text: 'En bonne voie', tone: 'good' };
+    return { text: $localize`:@@projects.project-detail.ts.en.bonne.voie.3425f307:En bonne voie`, tone: 'good' };
   }
 
   const gap = schedule - progress;
   if (gap >= 15) {
-    return { text: 'Attention', tone: 'warning' };
+    return { text: $localize`:@@projects.project-detail.ts.attention.74e0b9c8:Attention`, tone: 'warning' };
   }
 
-  return { text: 'En bonne voie', tone: 'good' };
+  return { text: $localize`:@@projects.project-detail.ts.en.bonne.voie.3425f307:En bonne voie`, tone: 'good' };
 }
 
 export function computeTaskStatusBreakdown(tasks: ProjectTask[]): TaskStatusBreakdown {
@@ -187,9 +187,9 @@ export function buildBudgetDonutSlices(budget: ProjectBudget | null, currency: s
   }
   const remainder = Math.max(0, budget.budgetHt - budget.actualCostHt);
   const slices: BudgetDonutSlice[] = [
-    { key: 'actual', label: 'Coûts réalisés', value: budget.actualCostHt, color: '#2563eb' },
-    { key: 'time', label: 'Coût temps', value: budget.timeCostHt, color: '#7c3aed' },
-    { key: 'remaining', label: 'Reste', value: remainder, color: '#e2e8f0' }
+    { key: 'actual', label: $localize`:@@projects.project-detail.ts.couts.realises.ec3348c9:Coûts réalisés`, value: budget.actualCostHt, color: '#2563eb' },
+    { key: 'time', label: $localize`:@@projects.project-detail.ts.cout.temps.91eada0d:Coût temps`, value: budget.timeCostHt, color: '#7c3aed' },
+    { key: 'remaining', label: $localize`:@@projects.project-detail.ts.reste.68135bb8:Reste`, value: remainder, color: '#e2e8f0' }
   ];
   return slices.filter(s => s.value > 0 || s.key === 'remaining');
 }

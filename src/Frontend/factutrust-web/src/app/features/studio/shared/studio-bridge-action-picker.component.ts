@@ -10,8 +10,8 @@ interface BridgeRowState { source: BridgeParamMapping['source']; value: string; 
 
 /** Sources proposées par défaut (copie de l'ancien `sourceOptions` d'Automations). */
 const BASE_SOURCES: ReadonlyArray<{ label: string; value: BridgeParamMapping['source'] }> = [
-  { label: 'Champ', value: 'field' },
-  { label: 'Constante', value: 'const' }
+  { label: $localize`:@@studio.studio-bridge-action-picker.ts.champ.e1472010:Champ`, value: 'field' },
+  { label: $localize`:@@studio.studio-bridge-action-picker.ts.constante.685c7c8f:Constante`, value: 'const' }
 ];
 
 /**
@@ -70,7 +70,7 @@ export class StudioBridgeActionPickerComponent {
 
   protected readonly selectedAction = computed(() => this.actions().find(a => a.name === this.action()) ?? null);
   protected readonly sourceOptions = computed(() =>
-    this.allowTemplate() ? [...BASE_SOURCES, { label: 'Modèle de texte', value: 'template' as const }] : [...BASE_SOURCES]);
+    this.allowTemplate() ? [...BASE_SOURCES, { label: $localize`:@@studio.studio-bridge-action-picker.ts.modele.de.texte.95807c98:Modèle de texte`, value: 'template' as const }] : [...BASE_SOURCES]);
   protected readonly fieldOptions = computed(() =>
     this.fields().filter(f => f.isActive).map(f => ({ label: `${f.label} (${f.key})`, value: f.key })));
 

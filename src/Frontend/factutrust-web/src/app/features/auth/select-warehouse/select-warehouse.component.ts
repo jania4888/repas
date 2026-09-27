@@ -49,12 +49,12 @@ export class SelectWarehouseComponent implements OnInit {
           const def = list.find((w) => w.isDefault);
           this.selectedId = def?.id ?? list[0].id;
         } else {
-          this.error.set('Aucun entrepôt actif trouvé. Contactez votre administrateur.');
+          this.error.set($localize`:@@auth.select-warehouse.ts.aucun.entrepot.actif.trouve.contactez.vo.cc3a5c0a:Aucun entrepôt actif trouvé. Contactez votre administrateur.`);
         }
       },
       error: () => {
         this.loading.set(false);
-        this.error.set('Impossible de charger les entrepôts. Réessayez plus tard.');
+        this.error.set($localize`:@@auth.select-warehouse.ts.impossible.de.charger.les.entrepots.rees.5b5d2271:Impossible de charger les entrepôts. Réessayez plus tard.`);
       }
     });
   }

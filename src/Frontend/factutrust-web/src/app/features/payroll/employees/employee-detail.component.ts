@@ -371,15 +371,15 @@ export class EmployeeDetailComponent implements OnInit {
     if (!e) return [];
     const items: { severity: 'warn' | 'error' | 'info'; text: string }[] = [];
     if (!e.cnssNumber?.trim()) {
-      items.push({ severity: 'warn', text: 'Numéro CNSS manquant — requis pour la déclaration sociale et la paie.' });
+      items.push({ severity: 'warn', text: $localize`:@@payroll.employee-detail.ts.numero.cnss.manquant.requis.pour.la.decl.d509b7b4:Numéro CNSS manquant — requis pour la déclaration sociale et la paie.` });
     }
     const activeContract = e.contracts.find(c => c.isActive);
     if (!activeContract) {
-      items.push({ severity: 'warn', text: 'Aucun contrat actif — impossible de calculer la paie pour ce salarié.' });
+      items.push({ severity: 'warn', text: $localize`:@@payroll.employee-detail.ts.aucun.contrat.actif.impossible.de.calcul.11b9f20a:Aucun contrat actif — impossible de calculer la paie pour ce salarié.` });
     } else {
       const smig = this.monthlySmig();
       if (smig != null && activeContract.baseSalary < smig) {
-        items.push({ severity: 'error', text: `Salaire de base (${formatPayrollAmount(activeContract.baseSalary)}) inférieur au SMIG mensuel (${formatPayrollAmount(smig)}).` });
+        items.push({ severity: 'error', text: $localize`:@@payroll.employee-detail.ts.salaire.de.base.formatpayrollamount.infe.a26e96b4:Salaire de base (${formatPayrollAmount(activeContract.baseSalary)}:formatPayrollAmount:) inférieur au SMIG mensuel (${formatPayrollAmount(smig)}:formatPayrollAmount1:).` });
       }
     }
     return items;
@@ -436,8 +436,8 @@ export class EmployeeDetailComponent implements OnInit {
   confirmDeleteContract(c: EmploymentContract): void {
     if (!this.canManage()) return;
     this.confirmation.confirm({
-      message: `Supprimer le contrat ${c.typeDisplay} ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.employee-detail.ts.supprimer.le.contrat.typedisplay.7c214dac:Supprimer le contrat ${c.typeDisplay}:typeDisplay: ?`,
+      header: $localize`:@@payroll.employee-detail.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@employee-detail.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@employee-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',
@@ -467,8 +467,8 @@ export class EmployeeDetailComponent implements OnInit {
   confirmDelete(): void {
     if (!this.canManage() || !this.employee()) return;
     this.confirmation.confirm({
-      message: `Supprimer le salarié « ${this.employee()!.fullName} » ?`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@payroll.employee-detail.ts.supprimer.le.salarie.fullname.b6d83592:Supprimer le salarié « ${this.employee()!.fullName}:fullName: » ?`,
+      header: $localize`:@@payroll.employee-detail.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       acceptLabel: $localize`:@@employee-detail.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@employee-detail.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

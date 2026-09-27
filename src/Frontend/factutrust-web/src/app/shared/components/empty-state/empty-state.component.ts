@@ -129,7 +129,7 @@ export class EmptyStateComponent {
   @Input() icon = 'pi-inbox';
   @Input() iconSize = '3rem';
   @Input() illustration?: string;
-  @Input() title = 'Aucun élément';
+  @Input() title = $localize`:@@shared.empty-state.ts.aucun.element.03196fc9:Aucun élément`;
   @Input() description?: string;
   /** When false, primary CTA (link or button) is not rendered (e.g. read-only user). */
   @Input() showAction = true;

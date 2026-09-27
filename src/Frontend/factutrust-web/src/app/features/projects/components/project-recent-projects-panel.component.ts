@@ -159,9 +159,9 @@ export class ProjectRecentProjectsPanelComponent {
     const p = this.activeRow();
     if (!p) return [];
     return [
-      { label: 'Voir le projet', icon: 'pi pi-eye', routerLink: ['/projects', p.id] },
-      { label: 'Tâches', icon: 'pi pi-list', routerLink: ['/projects', p.id], fragment: 'tasks' },
-      { label: 'Liste des projets', icon: 'pi pi-briefcase', routerLink: ['/projects'] }
+      { label: $localize`:@@projects.project-recent-projects-panel.ts.voir.le.projet.4dfb4818:Voir le projet`, icon: 'pi pi-eye', routerLink: ['/projects', p.id] },
+      { label: $localize`:@@projects.project-recent-projects-panel.ts.taches.1b018f86:Tâches`, icon: 'pi pi-list', routerLink: ['/projects', p.id], fragment: 'tasks' },
+      { label: $localize`:@@projects.project-recent-projects-panel.ts.liste.des.projets.7f394c5f:Liste des projets`, icon: 'pi pi-briefcase', routerLink: ['/projects'] }
     ];
   });
 }

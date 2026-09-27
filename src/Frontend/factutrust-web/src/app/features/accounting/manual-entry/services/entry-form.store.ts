@@ -29,13 +29,13 @@ import {
 } from '../models/entry-form.model';
 
 const DEFAULT_JOURNAL_OPTIONS: { code: string; label: string }[] = [
-  { code: 'JOD', label: 'Opérations diverses' },
-  { code: 'JV', label: 'Ventes' },
-  { code: 'JA', label: 'Achats' },
-  { code: 'JC', label: 'Caisse' },
-  { code: 'JB', label: 'Banque' },
-  { code: 'JIM', label: 'Immobilisations' },
-  { code: 'JAN', label: 'À-Nouveaux' }
+  { code: 'JOD', label: $localize`:@@accounting.entry-form.ts.operations.diverses.1735f774:Opérations diverses` },
+  { code: 'JV', label: $localize`:@@accounting.entry-form.ts.ventes.9087fc4f:Ventes` },
+  { code: 'JA', label: $localize`:@@accounting.entry-form.ts.achats.ee5b078c:Achats` },
+  { code: 'JC', label: $localize`:@@accounting.entry-form.ts.caisse.ce5a5c98:Caisse` },
+  { code: 'JB', label: $localize`:@@accounting.entry-form.ts.banque.2a7302cd:Banque` },
+  { code: 'JIM', label: $localize`:@@accounting.entry-form.ts.immobilisations.1e4cbe01:Immobilisations` },
+  { code: 'JAN', label: $localize`:@@accounting.entry-form.ts.a.nouveaux.c6206161:À-Nouveaux` }
 ];
 
 @Injectable()

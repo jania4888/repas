@@ -301,7 +301,7 @@ export class FinancialStatementsExportDialogComponent implements OnChanges {
 
   private runExport(onBlob: (blob: Blob) => void): void {
     if (!this.hasSelection()) {
-      this.localError.set('Sélectionnez au moins un état ou une note annexe.');
+      this.localError.set($localize`:@@accounting.financial-statements-export-dialog.ts.selectionnez.au.moins.un.etat.ou.une.not.1b840170:Sélectionnez au moins un état ou une note annexe.`);
       return;
     }
     this.localError.set(null);
@@ -314,7 +314,7 @@ export class FinancialStatementsExportDialogComponent implements OnChanges {
       },
       error: () => {
         this.busy.set(false);
-        this.localError.set("La génération du PDF a échoué.");
+        this.localError.set($localize`:@@accounting.financial-statements-export-dialog.ts.la.generation.du.pdf.a.echoue.d36dc216:La génération du PDF a échoué.`);
         this.toast.add({
           severity: 'error',
           summary: $localize`:@@financial-statements-export-dialog.component.summary._tats_financiers:États financiers`,
@@ -334,7 +334,7 @@ export class FinancialStatementsExportDialogComponent implements OnChanges {
       this.asOfDate.getFullYear() <= 2100;
     if (!isValidAsOfDate) {
       this.localError.set(
-        `Date d'arrêt invalide : repli sur le 31/12/${this.fiscalYear}.`
+        $localize`:@@accounting.financial-statements-export-dialog.ts.date.d.arret.invalide.repli.sur.le.31.12.723ef309:Date d'arrêt invalide : repli sur le 31/12/${this.fiscalYear}:fiscalYear:.`
       );
     }
     const d = isValidAsOfDate ? this.asOfDate : fallback;

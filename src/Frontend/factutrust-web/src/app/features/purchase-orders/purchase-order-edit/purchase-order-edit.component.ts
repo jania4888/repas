@@ -505,9 +505,9 @@ export class PurchaseOrderEditComponent implements OnInit {
     totalTTC = 0;
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Bons de commande', route: '/purchase-orders' },
-        { label: 'Modifier' }
+        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
+        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.modifier.f260e757:Modifier` }
     ];
 
     ngOnInit(): void {
@@ -583,10 +583,10 @@ export class PurchaseOrderEditComponent implements OnInit {
                     this.recalculateTotals();
 
                     this.breadcrumbItems = [
-                        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-                        { label: 'Bons de commande', route: '/purchase-orders' },
+                        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+                        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.bons.de.commande.aae719f0:Bons de commande`, route: '/purchase-orders' },
                         { label: order.number, route: '/purchase-orders/' + order.id },
-                        { label: 'Modifier' }
+                        { label: $localize`:@@purchase-orders.purchase-order-edit.ts.modifier.f260e757:Modifier` }
                     ];
                 }
                 this.loading.set(false);
@@ -683,7 +683,7 @@ export class PurchaseOrderEditComponent implements OnInit {
                 this.toastService.add({
                     severity: 'error',
                     summary: $localize`:@@purchase-order-edit.component.summary.Erreur:Erreur`,
-                    detail: err?.error?.errors?.[0] || 'Erreur lors de la mise à jour'
+                    detail: err?.error?.errors?.[0] || $localize`:@@purchase-orders.purchase-order-edit.ts.erreur.lors.de.la.mise.a.jour.29a27975:Erreur lors de la mise à jour`
                 });
             }
         });

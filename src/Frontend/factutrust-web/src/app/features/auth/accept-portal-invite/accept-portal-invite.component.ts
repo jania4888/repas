@@ -54,7 +54,7 @@ export class AcceptPortalInviteComponent implements OnInit {
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
     if (!this.token) {
-      this.error.set('Lien d’invitation incomplet.');
+      this.error.set($localize`:@@auth.accept-portal-invite.ts.lien.d.invitation.incomplet.f6e4023d:Lien d’invitation incomplet.`);
     }
   }
 
@@ -62,7 +62,7 @@ export class AcceptPortalInviteComponent implements OnInit {
     if (this.form.invalid || !this.token) return;
     const { password, confirmPassword } = this.form.getRawValue();
     if (password !== confirmPassword) {
-      this.error.set('Les mots de passe ne correspondent pas.');
+      this.error.set($localize`:@@auth.accept-portal-invite.ts.les.mots.de.passe.ne.correspondent.pas.bf6e97ae:Les mots de passe ne correspondent pas.`);
       return;
     }
     this.loading.set(true);
@@ -73,7 +73,7 @@ export class AcceptPortalInviteComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(err?.error?.errors?.[0] || err?.error?.message || 'Invitation invalide ou expirée.');
+        this.error.set(err?.error?.errors?.[0] || err?.error?.message || $localize`:@@auth.accept-portal-invite.ts.invitation.invalide.ou.expiree.68db77e5:Invitation invalide ou expirée.`);
       }
     });
   }

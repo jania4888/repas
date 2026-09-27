@@ -260,25 +260,25 @@ export class PromotionsPageComponent implements OnInit {
   readonly canDelete = computed(() => this.auth.hasPermission(PERMISSIONS.pricing.delete));
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Promotions' }
+    { label: $localize`:@@settings.promotions-page.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.promotions-page.ts.promotions.086e09b4:Promotions` }
   ];
 
   readonly statusOptions: FilterOption<PromotionStatusFilter>[] = [
-    { label: 'Tous les états', value: 'all' },
-    { label: 'En cours', value: 'running' },
-    { label: 'À venir', value: 'upcoming' },
-    { label: 'Expirées', value: 'expired' },
-    { label: 'Désactivées', value: 'disabled' },
-    { label: 'Hors période', value: 'outOfWindow' }
+    { label: $localize`:@@settings.promotions-page.ts.tous.les.etats.7da63670:Tous les états`, value: 'all' },
+    { label: $localize`:@@settings.promotions-page.ts.en.cours.bc9b533a:En cours`, value: 'running' },
+    { label: $localize`:@@settings.promotions-page.ts.a.venir.5ae4e587:À venir`, value: 'upcoming' },
+    { label: $localize`:@@settings.promotions-page.ts.expirees.a8e7929a:Expirées`, value: 'expired' },
+    { label: $localize`:@@settings.promotions-page.ts.desactivees.c29edddb:Désactivées`, value: 'disabled' },
+    { label: $localize`:@@settings.promotions-page.ts.hors.periode.eb84848b:Hors période`, value: 'outOfWindow' }
   ];
 
   readonly scopeOptions: FilterOption<PromotionScopeFilter>[] = [
-    { label: 'Toutes les portées', value: 'all' },
-    { label: 'Produit ciblé', value: 'product' },
-    { label: 'Catégorie ciblée', value: 'category' },
-    { label: 'Client ciblé', value: 'client' },
-    { label: 'Globale', value: 'global' }
+    { label: $localize`:@@settings.promotions-page.ts.toutes.les.portees.649e382b:Toutes les portées`, value: 'all' },
+    { label: $localize`:@@settings.promotions-page.ts.produit.cible.c6d2e59c:Produit ciblé`, value: 'product' },
+    { label: $localize`:@@settings.promotions-page.ts.categorie.ciblee.252ed895:Catégorie ciblée`, value: 'category' },
+    { label: $localize`:@@settings.promotions-page.ts.client.cible.1cadea0b:Client ciblé`, value: 'client' },
+    { label: $localize`:@@settings.promotions-page.ts.globale.45a263e9:Globale`, value: 'global' }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -341,7 +341,7 @@ export class PromotionsPageComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.showError(err, 'Impossible de charger les promotions');
+        this.showError(err, $localize`:@@settings.promotions-page.ts.impossible.de.charger.les.promotions.d4f19af0:Impossible de charger les promotions`);
         this.errorHandler.logError('Failed to load promotions', err);
         this.promotions.set([]);
         this.loading.set(false);
@@ -374,7 +374,7 @@ export class PromotionsPageComponent implements OnInit {
         this.load();
       },
       error: (err: unknown) => {
-        this.showError(err, 'Enregistrement impossible');
+        this.showError(err, $localize`:@@settings.promotions-page.ts.enregistrement.impossible.1e5e1075:Enregistrement impossible`);
         this.errorHandler.logError('Save promotion failed', err);
         this.saving.set(false);
       }
@@ -389,8 +389,8 @@ export class PromotionsPageComponent implements OnInit {
 
   confirmDelete(promo: Promotion): void {
     this.confirmationService.confirm({
-      header: 'Supprimer la promotion',
-      message: `Supprimer « ${promo.name} » ? Les documents déjà émis gardent leur remise.`,
+      header: $localize`:@@settings.promotions-page.ts.supprimer.la.promotion.60855324:Supprimer la promotion`,
+      message: $localize`:@@settings.promotions-page.ts.supprimer.name.les.documents.deja.emis.g.96fdfab5:Supprimer « ${promo.name}:name: » ? Les documents déjà émis gardent leur remise.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@promotions-page.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@promotions-page.component.rejectLabel.Annuler:Annuler`,
@@ -406,7 +406,7 @@ export class PromotionsPageComponent implements OnInit {
         this.load();
       },
       error: err => {
-        this.showError(err, 'Suppression impossible');
+        this.showError(err, $localize`:@@settings.promotions-page.ts.suppression.impossible.55762ff2:Suppression impossible`);
         this.errorHandler.logError('Delete promotion failed', err);
       }
     });

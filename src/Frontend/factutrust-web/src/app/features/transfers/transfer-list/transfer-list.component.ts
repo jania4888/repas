@@ -175,10 +175,10 @@ export class TransferListComponent implements OnInit {
     const rows = this.transfers();
     const statusLower = (t: StockTransferListDto) => (t.status || '').toLowerCase();
     return [
-      { label: 'Transferts', value: rows.length, format: 'number', icon: 'pi-arrows-h', tone: 'primary' },
-      { label: 'Lignes', value: rows.reduce((acc, t) => acc + t.lineCount, 0), format: 'number', icon: 'pi-list', tone: 'cyan' },
-      { label: 'En transit', value: rows.filter(t => statusLower(t).includes('transit')).length, format: 'number', icon: 'pi-truck', tone: 'amber' },
-      { label: 'Terminés', value: rows.filter(t => statusLower(t).includes('complet')).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' }
+      { label: $localize`:@@transfers.transfer-list.ts.transferts.f2783f95:Transferts`, value: rows.length, format: 'number', icon: 'pi-arrows-h', tone: 'primary' },
+      { label: $localize`:@@transfers.transfer-list.ts.lignes.41c7025e:Lignes`, value: rows.reduce((acc, t) => acc + t.lineCount, 0), format: 'number', icon: 'pi-list', tone: 'cyan' },
+      { label: $localize`:@@transfers.transfer-list.ts.en.transit.5b090eba:En transit`, value: rows.filter(t => statusLower(t).includes('transit')).length, format: 'number', icon: 'pi-truck', tone: 'amber' },
+      { label: $localize`:@@transfers.transfer-list.ts.termines.3f49918f:Terminés`, value: rows.filter(t => statusLower(t).includes('complet')).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' }
     ];
   });
 
@@ -247,7 +247,7 @@ export class TransferListComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: $localize`:@@transfer-list.component.summary.Erreur:Erreur`,
-          detail: err.error?.error || err.error?.message || 'Impossible de charger les transferts'
+          detail: err.error?.error || err.error?.message || $localize`:@@transfers.transfer-list.ts.impossible.de.charger.les.transferts.064e2937:Impossible de charger les transferts`
         });
       }
     });

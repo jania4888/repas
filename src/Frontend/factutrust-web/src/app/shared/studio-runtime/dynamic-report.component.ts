@@ -146,10 +146,10 @@ export class DynamicReportComponent {
   };
 
   readonly exportItems: MenuItem[] = [
-    { label: 'CSV — page courante', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(false) },
-    { label: 'Excel — page courante', icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(false) },
-    { label: 'CSV — toutes les lignes', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(true) },
-    { label: 'Excel — toutes les lignes', icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(true) },
+    { label: $localize`:@@shared.dynamic-report.ts.csv.page.courante.2f0e6273:CSV — page courante`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(false) },
+    { label: $localize`:@@shared.dynamic-report.ts.excel.page.courante.84d32d06:Excel — page courante`, icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(false) },
+    { label: $localize`:@@shared.dynamic-report.ts.csv.toutes.les.lignes.42fbba25:CSV — toutes les lignes`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(true) },
+    { label: $localize`:@@shared.dynamic-report.ts.excel.toutes.les.lignes.084ab1f3:Excel — toutes les lignes`, icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(true) },
   ];
 
   private readonly palette = [

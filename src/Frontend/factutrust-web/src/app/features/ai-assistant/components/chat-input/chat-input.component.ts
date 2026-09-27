@@ -487,7 +487,7 @@ export class ChatInputComponent implements OnDestroy, OnChanges, AfterViewChecke
       },
       error: () => {
         this.extractingFileName.set(null);
-        this.extractError.set("Impossible d'extraire le document. Formats acceptés : .txt, .csv, .pdf, .png, .jpg, .jpeg, .webp, .docx, .xlsx (max 10 Mo).");
+        this.extractError.set($localize`:@@ai-assistant.chat-input.ts.impossible.d.extraire.le.document.format.f1f4397a:Impossible d'extraire le document. Formats acceptés : .txt, .csv, .pdf, .png, .jpg, .jpeg, .webp, .docx, .xlsx (max 10 Mo).`);
       }
     });
   }

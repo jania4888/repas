@@ -838,10 +838,10 @@ export class PosHeaderComponent implements OnInit, OnDestroy {
   readonly registerSession = inject(PosRegisterSessionService);
 
   themeOptions: { id: PosThemeId; label: string }[] = [
-    { id: 'default', label: 'Defaut' },
-    { id: 'christmas', label: 'Noel' },
-    { id: 'ramadan', label: 'Ramadan' },
-    { id: 'sales', label: 'Soldes' }
+    { id: 'default', label: $localize`:@@pos.pos-header.ts.defaut.daa6795d:Defaut` },
+    { id: 'christmas', label: $localize`:@@pos.pos-header.ts.noel.93fa067b:Noel` },
+    { id: 'ramadan', label: $localize`:@@pos.pos-header.ts.ramadan.8a7b0140:Ramadan` },
+    { id: 'sales', label: $localize`:@@pos.pos-header.ts.soldes.e1c7ce3a:Soldes` }
   ];
   showThemeMenu = false;
   showPlusMenu = false;

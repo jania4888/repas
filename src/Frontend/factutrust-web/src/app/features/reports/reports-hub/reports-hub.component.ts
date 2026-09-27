@@ -229,93 +229,93 @@ export class ReportsHubComponent {
 
   private readonly allCards: ReportCard[] = [
     {
-      title: 'Rapport de vente',
+      title: $localize`:@@reports.reports-hub.ts.rapport.de.vente.47952545:Rapport de vente`,
       icon: 'pi-chart-line',
       modules: [AppModule.Reports, AppModule.Sales],
       links: [
-        { label: 'Vente par client', route: '/reports/sales' },
-        { label: 'Détails ventes par ligne produit', route: '/reports/sales' },
-        { label: 'Transactions clients', route: '/reports/sales' },
-        { label: 'TVA ventes', route: '/reports/sales' },
-        { label: 'Total des retenues pour les clients', route: '/reports/sales', queryParams: { tab: 'retenues-clients' } }
+        { label: $localize`:@@reports.reports-hub.ts.vente.par.client.b9eed164:Vente par client`, route: '/reports/sales' },
+        { label: $localize`:@@reports.reports-hub.ts.details.ventes.par.ligne.produit.2fe7a584:Détails ventes par ligne produit`, route: '/reports/sales' },
+        { label: $localize`:@@reports.reports-hub.ts.transactions.clients.32259f49:Transactions clients`, route: '/reports/sales' },
+        { label: $localize`:@@reports.reports-hub.ts.tva.ventes.117028f5:TVA ventes`, route: '/reports/sales' },
+        { label: $localize`:@@reports.reports-hub.ts.total.des.retenues.pour.les.clients.040735f7:Total des retenues pour les clients`, route: '/reports/sales', queryParams: { tab: 'retenues-clients' } }
       ]
     },
     {
-      title: 'Rapport d\'achat',
+      title: $localize`:@@reports.reports-hub.ts.rapport.d.achat.18888a98:Rapport d'achat`,
       icon: 'pi-shopping-cart',
       modules: [AppModule.Reports, AppModule.Purchases],
       links: [
-        { label: 'Achat par fournisseur', route: '/reports/purchases' },
-        { label: 'Détails d\'achat par ligne produit', route: '/reports/purchases' },
-        { label: 'Transactions fournisseurs', route: '/reports/purchases' },
-        { label: 'TVA achats', route: '/reports/purchases' },
-        { label: 'Total des retenues pour les fournisseurs', route: '/reports/purchases', queryParams: { tab: 'retenues-fournisseurs' } }
+        { label: $localize`:@@reports.reports-hub.ts.achat.par.fournisseur.aad87ab5:Achat par fournisseur`, route: '/reports/purchases' },
+        { label: $localize`:@@reports.reports-hub.ts.details.d.achat.par.ligne.produit.6d58e43d:Détails d'achat par ligne produit`, route: '/reports/purchases' },
+        { label: $localize`:@@reports.reports-hub.ts.transactions.fournisseurs.83a34e96:Transactions fournisseurs`, route: '/reports/purchases' },
+        { label: $localize`:@@reports.reports-hub.ts.tva.achats.48719283:TVA achats`, route: '/reports/purchases' },
+        { label: $localize`:@@reports.reports-hub.ts.total.des.retenues.pour.les.fournisseurs.754a9b6d:Total des retenues pour les fournisseurs`, route: '/reports/purchases', queryParams: { tab: 'retenues-fournisseurs' } }
       ]
     },
     {
-      title: 'Détails ventes par ligne produit',
+      title: $localize`:@@reports.reports-hub.ts.details.ventes.par.ligne.produit.2fe7a584:Détails ventes par ligne produit`,
       icon: 'pi-list',
       modules: [AppModule.Reports, AppModule.Sales],
       links: [
-        { label: 'Chiffre d\'affaires par produit', route: '/reports/sales-by-line' },
-        { label: 'Chiffre d\'affaires par Catégorie', route: '/reports/sales-by-line' },
-        { label: 'Chiffre d\'affaires par produit par client', route: '/reports/sales-by-line' }
+        { label: $localize`:@@reports.reports-hub.ts.chiffre.d.affaires.par.produit.38290f0c:Chiffre d'affaires par produit`, route: '/reports/sales-by-line' },
+        { label: $localize`:@@reports.reports-hub.ts.chiffre.d.affaires.par.categorie.9f4f5932:Chiffre d'affaires par Catégorie`, route: '/reports/sales-by-line' },
+        { label: $localize`:@@reports.reports-hub.ts.chiffre.d.affaires.par.produit.par.clien.15c9310e:Chiffre d'affaires par produit par client`, route: '/reports/sales-by-line' }
       ]
     },
     {
-      title: 'Rapport Clients',
+      title: $localize`:@@reports.reports-hub.ts.rapport.clients.f2f8882b:Rapport Clients`,
       icon: 'pi-users',
       modules: [AppModule.Reports, AppModule.Clients],
       links: [
-        { label: 'Soldes client', route: '/reports/client-balances' },
-        { label: 'Chiffre d\'affaires par client', route: '/reports/fiches' }
+        { label: $localize`:@@reports.reports-hub.ts.soldes.client.ef2e0f4b:Soldes client`, route: '/reports/client-balances' },
+        { label: $localize`:@@reports.reports-hub.ts.chiffre.d.affaires.par.client.658a87bd:Chiffre d'affaires par client`, route: '/reports/fiches' }
       ]
     },
     {
-      title: 'Rapport Fournisseur',
+      title: $localize`:@@reports.reports-hub.ts.rapport.fournisseur.01de0ca6:Rapport Fournisseur`,
       icon: 'pi-truck',
       modules: [AppModule.Reports, AppModule.Purchases],
       links: [
-        { label: 'Soldes fournisseur', route: '/reports/supplier-balances' },
-        { label: 'Chiffre d\'affaires par fournisseur', route: '/reports/purchases' }
+        { label: $localize`:@@reports.reports-hub.ts.soldes.fournisseur.18c92c31:Soldes fournisseur`, route: '/reports/supplier-balances' },
+        { label: $localize`:@@reports.reports-hub.ts.chiffre.d.affaires.par.fournisseur.5c976fe0:Chiffre d'affaires par fournisseur`, route: '/reports/purchases' }
       ]
     },
     {
-      title: 'Rapport Stock',
+      title: $localize`:@@reports.reports-hub.ts.rapport.stock.9fb51cd8:Rapport Stock`,
       icon: 'pi-box',
       modules: [AppModule.Reports, AppModule.Stock],
       links: [
-        { label: 'Mouvement détaillé de stock', route: '/reports/stock' },
-        { label: 'Etat de stock à une date antérieure', route: '/reports/stock', queryParams: { section: 'snapshot' } }
+        { label: $localize`:@@reports.reports-hub.ts.mouvement.detaille.de.stock.89c0156d:Mouvement détaillé de stock`, route: '/reports/stock' },
+        { label: $localize`:@@reports.reports-hub.ts.etat.de.stock.a.une.date.anterieure.c5bc857a:Etat de stock à une date antérieure`, route: '/reports/stock', queryParams: { section: 'snapshot' } }
       ]
     },
     {
-      title: 'Rapport Paiement',
+      title: $localize`:@@reports.reports-hub.ts.rapport.paiement.e715c660:Rapport Paiement`,
       icon: 'pi-wallet',
       modules: [AppModule.Reports, AppModule.Treasury],
       links: [
-        { label: 'Paiement Clients', route: '/reports/payments' },
-        { label: 'Paiements fournisseurs', route: '/reports/payments' },
-        { label: 'Facture clients non payées depuis plus d\'un mois', route: '/reports/sales' }
+        { label: $localize`:@@reports.reports-hub.ts.paiement.clients.c116986f:Paiement Clients`, route: '/reports/payments' },
+        { label: $localize`:@@reports.reports-hub.ts.paiements.fournisseurs.416577a5:Paiements fournisseurs`, route: '/reports/payments' },
+        { label: $localize`:@@reports.reports-hub.ts.facture.clients.non.payees.depuis.plus.d.31c0c5fc:Facture clients non payées depuis plus d'un mois`, route: '/reports/sales' }
       ]
     },
     {
-      title: 'Rapport Bénéfices',
+      title: $localize`:@@reports.reports-hub.ts.rapport.benefices.245eba08:Rapport Bénéfices`,
       icon: 'pi-percentage',
       modules: [AppModule.Reports, AppModule.Sales],
       links: [
-        { label: 'Bénéfice commerciale par pièce', route: '/reports/profit' },
-        { label: 'Bénéfice commerciale mensuel', route: '/reports/profit' },
-        { label: 'Bénéfice commercial par ligne', route: '/reports/profit' },
-        { label: 'Bénéfice commercial par produit', route: '/reports/profit' }
+        { label: $localize`:@@reports.reports-hub.ts.benefice.commerciale.par.piece.65fb8f10:Bénéfice commerciale par pièce`, route: '/reports/profit' },
+        { label: $localize`:@@reports.reports-hub.ts.benefice.commerciale.mensuel.059fe55d:Bénéfice commerciale mensuel`, route: '/reports/profit' },
+        { label: $localize`:@@reports.reports-hub.ts.benefice.commercial.par.ligne.ba5f79b4:Bénéfice commercial par ligne`, route: '/reports/profit' },
+        { label: $localize`:@@reports.reports-hub.ts.benefice.commercial.par.produit.3894ac09:Bénéfice commercial par produit`, route: '/reports/profit' }
       ]
     },
     {
-      title: 'Rapports décisionnels ventes produits',
+      title: $localize`:@@reports.reports-hub.ts.rapports.decisionnels.ventes.produits.3f8c6fdc:Rapports décisionnels ventes produits`,
       icon: 'pi-chart-bar',
       modules: [AppModule.Reports, AppModule.Sales],
       links: [
-        { label: 'Performance produits, tendances, panier, produits jamais vendus, CA par catégorie', route: '/reports/product-sales-analytics' }
+        { label: $localize`:@@reports.reports-hub.ts.performance.produits.tendances.panier.pr.03789ee4:Performance produits, tendances, panier, produits jamais vendus, CA par catégorie`, route: '/reports/product-sales-analytics' }
       ]
     }
   ];

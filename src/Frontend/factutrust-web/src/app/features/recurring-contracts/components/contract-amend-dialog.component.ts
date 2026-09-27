@@ -241,16 +241,16 @@ export class ContractAmendDialogComponent {
   readonly today = new Date();
 
   readonly typeOptions: AmendmentTypeOption[] = [
-    { label: 'Mise à niveau', value: 'Upgrade' },
-    { label: 'Déclassement', value: 'Downgrade' },
-    { label: 'Ajout de ligne', value: 'AddLine' },
-    { label: 'Retrait de ligne', value: 'RemoveLine' },
-    { label: 'Changement de prix', value: 'PriceChange' }
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.mise.a.niveau.bf143a5a:Mise à niveau`, value: 'Upgrade' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.declassement.8785fc4d:Déclassement`, value: 'Downgrade' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.ajout.de.ligne.f090cae8:Ajout de ligne`, value: 'AddLine' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.retrait.de.ligne.7baead4b:Retrait de ligne`, value: 'RemoveLine' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.changement.de.prix.6838c14d:Changement de prix`, value: 'PriceChange' }
   ];
 
   readonly prorationOptions: ProrationOption[] = [
-    { label: 'Prorata journalier', value: 'DailyProration' },
-    { label: 'Aucun', value: 'None' }
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.prorata.journalier.a5f54d21:Prorata journalier`, value: 'DailyProration' },
+    { label: $localize`:@@recurring-contracts.contract-amend-dialog.ts.aucun.b2ed82f1:Aucun`, value: 'None' }
   ];
 
   // Initialisation uniquement via (onShow) de p-dialog : après un avenant réussi le parent

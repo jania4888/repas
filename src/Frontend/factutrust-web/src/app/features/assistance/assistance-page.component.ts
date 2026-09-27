@@ -119,7 +119,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
       next: r => {
         this.loading.set(false);
         if (!r.success || !r.data) {
-          this.error.set('Impossible de charger la conversation.');
+          this.error.set($localize`:@@assistance.assistance-page.ts.impossible.de.charger.la.conversation.46fe4578:Impossible de charger la conversation.`);
           return;
         }
         this.messages.set(r.data.messages ?? []);
@@ -128,7 +128,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.loading.set(false);
-        this.error.set('Impossible de charger la conversation.');
+        this.error.set($localize`:@@assistance.assistance-page.ts.impossible.de.charger.la.conversation.46fe4578:Impossible de charger la conversation.`);
       }
     });
 
@@ -176,7 +176,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
         link.click();
         URL.revokeObjectURL(url);
       },
-      error: () => this.error.set('Téléchargement impossible.')
+      error: () => this.error.set($localize`:@@assistance.assistance-page.ts.telechargement.impossible.49e7d29d:Téléchargement impossible.`)
     });
   }
 
@@ -189,7 +189,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
       next: r => {
         this.sending.set(false);
         if (!r.success || !r.data) {
-          this.error.set(r.message || 'Envoi impossible.');
+          this.error.set(r.message || $localize`:@@assistance.assistance-page.ts.envoi.impossible.87446704:Envoi impossible.`);
           return;
         }
         this.messages.update(list => list.some(m => m.id === r.data.id) ? list : [...list, r.data]);
@@ -200,7 +200,7 @@ export class AssistancePageComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.sending.set(false);
-        this.error.set('Envoi impossible.');
+        this.error.set($localize`:@@assistance.assistance-page.ts.envoi.impossible.87446704:Envoi impossible.`);
       }
     });
   }

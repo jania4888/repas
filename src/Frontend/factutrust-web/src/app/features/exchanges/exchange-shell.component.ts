@@ -251,7 +251,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
       next: eRes => {
         if (!eRes.success) {
           this.loading.set(false);
-          this.error.set(eRes.message || 'Impossible de créer l’échange');
+          this.error.set(eRes.message || $localize`:@@exchanges.exchange-shell.ts.impossible.de.creer.l.echange.387e08c0:Impossible de créer l’échange`);
           return;
         }
         this.selectThread(eRes.data.id);
@@ -259,7 +259,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.loading.set(false);
-        this.error.set('Impossible de créer l’échange');
+        this.error.set($localize`:@@exchanges.exchange-shell.ts.impossible.de.creer.l.echange.387e08c0:Impossible de créer l’échange`);
       }
     });
   }
@@ -312,7 +312,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
       next: r => {
         if (!r.success) {
           this.sending.set(false);
-          this.error.set(r.message || 'Envoi impossible');
+          this.error.set(r.message || $localize`:@@exchanges.exchange-shell.ts.envoi.impossible.5a35fc85:Envoi impossible`);
           return;
         }
         const messageId = r.data.id;
@@ -349,7 +349,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
               if (remaining === 0) {
                 this.messages.update(m => [...m, r.data]);
                 this.sending.set(false);
-                this.error.set('Message envoyé, mais une pièce jointe a échoué');
+                this.error.set($localize`:@@exchanges.exchange-shell.ts.message.envoye.mais.une.piece.jointe.a.e.f9e59c54:Message envoyé, mais une pièce jointe a échoué`);
                 this.badge.invalidate();
               }
             }
@@ -358,7 +358,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.sending.set(false);
-        this.error.set('Envoi impossible');
+        this.error.set($localize`:@@exchanges.exchange-shell.ts.envoi.impossible.5a35fc85:Envoi impossible`);
       }
     });
   }
@@ -386,12 +386,12 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
           this.documents.update(d => [r.data, ...d]);
           this.setTab('documents');
         } else {
-          this.error.set(r.message || 'Upload impossible');
+          this.error.set(r.message || $localize`:@@exchanges.exchange-shell.ts.upload.impossible.2976179d:Upload impossible`);
         }
         input.value = '';
       },
       error: () => {
-        this.error.set('Upload impossible');
+        this.error.set($localize`:@@exchanges.exchange-shell.ts.upload.impossible.2976179d:Upload impossible`);
         input.value = '';
       }
     });
@@ -591,7 +591,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
           if (!res.success) {
             this.loading.set(false);
             this.contentLoading.set(false);
-            this.error.set(res.message || 'Impossible de charger les échanges');
+            this.error.set(res.message || $localize`:@@exchanges.exchange-shell.ts.impossible.de.charger.les.echanges.41f2d19e:Impossible de charger les échanges`);
             return;
           }
           this.applyBootstrap(res.data, threadId);
@@ -628,7 +628,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
     if (!active) {
       this.loading.set(false);
       this.contentLoading.set(false);
-      this.emptyHint.set(data.emptyHint || 'Aucun échange disponible.');
+      this.emptyHint.set(data.emptyHint || $localize`:@@exchanges.exchange-shell.ts.aucun.echange.disponible.af81cd4b:Aucun échange disponible.`);
       return;
     }
 
@@ -669,7 +669,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
         if (clients.length === 0 && threadList.length === 0) {
           this.loading.set(false);
           this.contentLoading.set(false);
-          this.emptyHint.set('Aucun dossier client actif pour démarrer un échange.');
+          this.emptyHint.set($localize`:@@exchanges.exchange-shell.ts.aucun.dossier.client.actif.pour.demarrer.5fea9658:Aucun dossier client actif pour démarrer un échange.`);
           return;
         }
 
@@ -696,7 +696,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
       error: () => {
         this.loading.set(false);
         this.contentLoading.set(false);
-        this.error.set('Impossible de charger les échanges');
+        this.error.set($localize`:@@exchanges.exchange-shell.ts.impossible.de.charger.les.echanges.41f2d19e:Impossible de charger les échanges`);
       }
     });
   }
@@ -745,7 +745,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
           this.loading.set(false);
           this.contentLoading.set(false);
           this.emptyHint.set(
-            'Liez un cabinet comptable dans Paramètres → Cabinet comptable pour ouvrir les échanges.'
+            $localize`:@@exchanges.exchange-shell.ts.liez.un.cabinet.comptable.dans.parametre.2b4a741b:Liez un cabinet comptable dans Paramètres → Cabinet comptable pour ouvrir les échanges.`
           );
           return;
         }
@@ -753,7 +753,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
           this.loading.set(false);
           this.contentLoading.set(false);
           this.emptyHint.set(
-            'Votre demande de liaison est en attente d’acceptation par le cabinet.'
+            $localize`:@@exchanges.exchange-shell.ts.votre.demande.de.liaison.est.en.attente.8146fcd5:Votre demande de liaison est en attente d’acceptation par le cabinet.`
           );
           return;
         }
@@ -761,7 +761,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
           this.loading.set(false);
           this.contentLoading.set(false);
           this.emptyHint.set(
-            'Liez un cabinet comptable dans Paramètres → Cabinet comptable pour ouvrir les échanges.'
+            $localize`:@@exchanges.exchange-shell.ts.liez.un.cabinet.comptable.dans.parametre.2b4a741b:Liez un cabinet comptable dans Paramètres → Cabinet comptable pour ouvrir les échanges.`
           );
           return;
         }
@@ -770,7 +770,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
             if (!eRes.success) {
               this.loading.set(false);
               this.contentLoading.set(false);
-              this.error.set(eRes.message || 'Impossible d’ouvrir l’échange');
+              this.error.set(eRes.message || $localize`:@@exchanges.exchange-shell.ts.impossible.d.ouvrir.l.echange.ec0e745b:Impossible d’ouvrir l’échange`);
               return;
             }
             this.activeThread.set(eRes.data);
@@ -781,14 +781,14 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
           error: () => {
             this.loading.set(false);
             this.contentLoading.set(false);
-            this.error.set('Impossible d’ouvrir l’échange');
+            this.error.set($localize`:@@exchanges.exchange-shell.ts.impossible.d.ouvrir.l.echange.ec0e745b:Impossible d’ouvrir l’échange`);
           }
         });
       },
       error: () => {
         this.loading.set(false);
         this.contentLoading.set(false);
-        this.emptyHint.set('Impossible de vérifier la liaison cabinet.');
+        this.emptyHint.set($localize`:@@exchanges.exchange-shell.ts.impossible.de.verifier.la.liaison.cabine.04367599:Impossible de vérifier la liaison cabinet.`);
       }
     });
   }
@@ -801,7 +801,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
         if (!r.success) {
           this.loading.set(false);
           this.contentLoading.set(false);
-          this.error.set(r.message || 'Échange introuvable');
+          this.error.set(r.message || $localize`:@@exchanges.exchange-shell.ts.echange.introuvable.ca18cfa1:Échange introuvable`);
           return;
         }
         this.activeThread.set(r.data);
@@ -811,7 +811,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
       error: () => {
         this.loading.set(false);
         this.contentLoading.set(false);
-        this.error.set('Échange introuvable');
+        this.error.set($localize`:@@exchanges.exchange-shell.ts.echange.introuvable.ca18cfa1:Échange introuvable`);
       }
     });
   }
@@ -825,7 +825,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
         } else {
           this.messages.set([]);
           this.messagesHasMore.set(false);
-          this.error.set(res.message || 'Impossible de charger les messages');
+          this.error.set(res.message || $localize`:@@exchanges.exchange-shell.ts.impossible.de.charger.les.messages.f65a948a:Impossible de charger les messages`);
         }
         this.loading.set(false);
         this.contentLoading.set(false);
@@ -870,7 +870,7 @@ export class ExchangeShellComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'error',
               summary: $localize`:@@exchange-shell.component.summary.Demandes:Demandes`,
-              detail: requests.message || 'Impossible de charger les demandes'
+              detail: requests.message || $localize`:@@exchanges.exchange-shell.ts.impossible.de.charger.les.demandes.c8260e0d:Impossible de charger les demandes`
             });
           if (documents.success) this.documents.set(documents.data);
           if (history.success) this.history.set(history.data);

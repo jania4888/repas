@@ -745,10 +745,10 @@ export class ActivityListComponent implements OnInit, OnDestroy {
   readonly summaryMetrics = computed<TotalMetric[]>(() => {
     const s = this.summary();
     return [
-      { label: 'Activités', value: s?.count, format: 'number', icon: 'pi-calendar', tone: 'primary' },
-      { label: 'Ouvertes', value: s?.openCount, format: 'number', icon: 'pi-clock', tone: 'amber' },
-      { label: 'Terminées', value: s?.completedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'En retard', value: s?.overdueCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
+      { label: $localize`:@@crm.activity-list.ts.activites.9c1f6186:Activités`, value: s?.count, format: 'number', icon: 'pi-calendar', tone: 'primary' },
+      { label: $localize`:@@crm.activity-list.ts.ouvertes.b8fe259a:Ouvertes`, value: s?.openCount, format: 'number', icon: 'pi-clock', tone: 'amber' },
+      { label: $localize`:@@crm.activity-list.ts.terminees.7d7f40ab:Terminées`, value: s?.completedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@crm.activity-list.ts.en.retard.40c1dde3:En retard`, value: s?.overdueCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
     ];
   });
 
@@ -767,27 +767,27 @@ export class ActivityListComponent implements OnInit, OnDestroy {
 
   statusFilter: StatusFilter = 'all';
   statusFilterOptions: StatusFilterOption[] = [
-    { label: 'Toutes', value: 'all' },
-    { label: 'En cours', value: 'open' },
-    { label: 'Terminées', value: 'done' }
+    { label: $localize`:@@crm.activity-list.ts.toutes.c5f641e4:Toutes`, value: 'all' },
+    { label: $localize`:@@crm.activity-list.ts.en.cours.bc9b533a:En cours`, value: 'open' },
+    { label: $localize`:@@crm.activity-list.ts.terminees.7d7f40ab:Terminées`, value: 'done' }
   ];
 
   typeFilter: number | null = null;
   typeFilterOptions = [
-    { label: 'Appel', value: 0 },
+    { label: $localize`:@@crm.activity-list.ts.appel.7c53229a:Appel`, value: 0 },
     { label: 'Email', value: 1 },
-    { label: 'Rendez-vous', value: 2 },
-    { label: 'Tâche', value: 3 },
-    { label: 'Note', value: 4 }
+    { label: $localize`:@@crm.activity-list.ts.rendez.vous.59342b57:Rendez-vous`, value: 2 },
+    { label: $localize`:@@crm.activity-list.ts.tache.43c8425c:Tâche`, value: 3 },
+    { label: $localize`:@@crm.activity-list.ts.note.2c924e30:Note`, value: 4 }
   ];
 
   typeOptions = this.typeFilterOptions;
 
   priorityOptions = [
-    { label: 'Basse', value: 0 },
-    { label: 'Moyenne', value: 1 },
-    { label: 'Haute', value: 2 },
-    { label: 'Urgente', value: 3 }
+    { label: $localize`:@@crm.activity-list.ts.basse.66ecf01a:Basse`, value: 0 },
+    { label: $localize`:@@crm.activity-list.ts.moyenne.ef33304d:Moyenne`, value: 1 },
+    { label: $localize`:@@crm.activity-list.ts.haute.ab500e10:Haute`, value: 2 },
+    { label: $localize`:@@crm.activity-list.ts.urgente.690da266:Urgente`, value: 3 }
   ];
 
   selectedClient: ClientListItem | null = null;
@@ -832,7 +832,7 @@ export class ActivityListComponent implements OnInit, OnDestroy {
   }
 
   assigneeDropdownOptions(): { label: string; value: string }[] {
-    const opts = [{ label: 'Moi par défaut', value: '' }];
+    const opts = [{ label: $localize`:@@crm.activity-list.ts.moi.par.defaut.7fd82a51:Moi par défaut`, value: '' }];
     for (const u of this.assignableUsers()) {
       opts.push({ label: u.displayName, value: u.id });
     }
@@ -976,7 +976,7 @@ export class ActivityListComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.loading.set(false);
-        this.error.set('Erreur réseau');
+        this.error.set($localize`:@@crm.activity-list.ts.erreur.reseau.0683007f:Erreur réseau`);
       }
     });
   }
@@ -1084,7 +1084,7 @@ export class ActivityListComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.saving.set(false);
-          this.formError.set('Erreur réseau');
+          this.formError.set($localize`:@@crm.activity-list.ts.erreur.reseau.0683007f:Erreur réseau`);
         }
       });
       return;
@@ -1117,7 +1117,7 @@ export class ActivityListComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.saving.set(false);
-        this.formError.set('Erreur réseau');
+        this.formError.set($localize`:@@crm.activity-list.ts.erreur.reseau.0683007f:Erreur réseau`);
       }
     });
   }
@@ -1141,8 +1141,8 @@ export class ActivityListComponent implements OnInit, OnDestroy {
 
   confirmDelete(a: SalesActivityDto): void {
     this.confirm.confirm({
-      header: 'Supprimer l’activité',
-      message: `Supprimer « ${a.subject} » ? Cette action est définitive.`,
+      header: $localize`:@@crm.activity-list.ts.supprimer.l.activite.7ac6a864:Supprimer l’activité`,
+      message: $localize`:@@crm.activity-list.ts.supprimer.subject.cette.action.est.defin.e346caeb:Supprimer « ${a.subject}:subject: » ? Cette action est définitive.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@activity-list.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@activity-list.component.rejectLabel.Annuler:Annuler`,

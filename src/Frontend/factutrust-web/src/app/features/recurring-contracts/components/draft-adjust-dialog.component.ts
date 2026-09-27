@@ -205,17 +205,17 @@ export class DraftAdjustDialogComponent {
     const currency = this.draft()?.currency ?? 'TND';
     const live = this.computeLiveTotals();
     return [
-      { label: 'Total HT', value: live.ht, format: 'currency', currency, icon: 'pi-calculator', tone: 'primary' },
+      { label: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.total.ht.2ca17ae6:Total HT`, value: live.ht, format: 'currency', currency, icon: 'pi-calculator', tone: 'primary' },
       { label: 'TVA', value: live.vat, format: 'currency', currency, icon: 'pi-percentage', tone: 'cyan' },
-      { label: 'Total TTC', value: live.ttc, format: 'currency', currency, icon: 'pi-wallet', tone: 'emerald' },
+      { label: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.total.ttc.9e80ff7c:Total TTC`, value: live.ttc, format: 'currency', currency, icon: 'pi-wallet', tone: 'emerald' },
       {
-        label: 'Estimation mensuelle',
+        label: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.estimation.mensuelle.6c79e54e:Estimation mensuelle`,
         value: live.monthly,
         format: 'currency',
         currency,
         icon: 'pi-sync',
         tone: 'violet',
-        hint: 'Montant de cette échéance ramené au mois'
+        hint: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.montant.de.cette.echeance.ramene.au.mois.83763ed7:Montant de cette échéance ramené au mois`
       }
     ];
   }
@@ -254,8 +254,8 @@ export class DraftAdjustDialogComponent {
   confirmIssue(): void {
     if (!this.canPersist() || !this.billingRunId) return;
     this.confirmation.confirm({
-      header: 'Confirmer l\'émission',
-      message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
+      header: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
+      message: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.une.fois.validee.cette.facture.ne.pourra.acdbf6bb:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@draft-adjust-dialog.component.acceptLabel.Émettre la f:Émettre la facture`,
       rejectLabel: $localize`:@@draft-adjust-dialog.component.rejectLabel.Annuler:Annuler`,
@@ -267,7 +267,7 @@ export class DraftAdjustDialogComponent {
 
   private load(): void {
     if (!this.billingRunId) {
-      this.loadError.set('Échéance introuvable.');
+      this.loadError.set($localize`:@@recurring-contracts.draft-adjust-dialog.ts.echeance.introuvable.9b5c4726:Échéance introuvable.`);
       return;
     }
 
@@ -325,7 +325,7 @@ export class DraftAdjustDialogComponent {
           this.toast.add({
             severity: 'success',
             summary: $localize`:@@draft-adjust-dialog.component.summary.Facture émis:Facture émise`,
-            detail: `Facture ${issued.invoiceNumber} émise.`
+            detail: $localize`:@@recurring-contracts.draft-adjust-dialog.ts.facture.invoicenumber.emise.07d601c8:Facture ${issued.invoiceNumber}:invoiceNumber: émise.`
           });
           this.close();
           this.issued.emit(issued);

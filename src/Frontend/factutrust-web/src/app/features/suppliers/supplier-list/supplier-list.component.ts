@@ -327,9 +327,9 @@ export class SupplierListComponent implements OnInit, OnDestroy {
     summaryMetrics = computed<TotalMetric[]>(() => {
         const s = this.summary();
         return [
-            { label: 'Fournisseurs', value: s?.count, format: 'number', icon: 'pi-truck', tone: 'primary' },
-            { label: 'Actifs', value: s?.activeCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-            { label: 'Inactifs', value: s?.inactiveCount, format: 'number', icon: 'pi-ban', tone: 'neutral' }
+            { label: $localize`:@@suppliers.supplier-list.ts.fournisseurs.06b6d88c:Fournisseurs`, value: s?.count, format: 'number', icon: 'pi-truck', tone: 'primary' },
+            { label: $localize`:@@suppliers.supplier-list.ts.actifs.4fc3a980:Actifs`, value: s?.activeCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+            { label: $localize`:@@suppliers.supplier-list.ts.inactifs.41c2d03e:Inactifs`, value: s?.inactiveCount, format: 'number', icon: 'pi-ban', tone: 'neutral' }
         ];
     });
 
@@ -340,9 +340,9 @@ export class SupplierListComponent implements OnInit, OnDestroy {
     pageSize = 20;
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Achats' },
-        { label: 'Fournisseurs' }
+        { label: $localize`:@@suppliers.supplier-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@suppliers.supplier-list.ts.achats.ee5b078c:Achats` },
+        { label: $localize`:@@suppliers.supplier-list.ts.fournisseurs.06b6d88c:Fournisseurs` }
     ];
 
     skeletonColumns: SkeletonColumn[] = [
@@ -357,13 +357,13 @@ export class SupplierListComponent implements OnInit, OnDestroy {
     ];
 
     typeOptions: TypeOption[] = [
-        { label: 'Particulier', value: SupplierType.Individual },
-        { label: 'Entreprise', value: SupplierType.Business }
+        { label: $localize`:@@suppliers.supplier-list.ts.particulier.281680dd:Particulier`, value: SupplierType.Individual },
+        { label: $localize`:@@suppliers.supplier-list.ts.entreprise.d03e74b6:Entreprise`, value: SupplierType.Business }
     ];
 
     statusOptions: StatusOption[] = [
-        { label: 'Actifs', value: true },
-        { label: 'Inactifs', value: false }
+        { label: $localize`:@@suppliers.supplier-list.ts.actifs.4fc3a980:Actifs`, value: true },
+        { label: $localize`:@@suppliers.supplier-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
     ];
 
     ngOnInit(): void {
@@ -439,7 +439,7 @@ export class SupplierListComponent implements OnInit, OnDestroy {
                 this.toastService.add({
                     severity: 'error',
                     summary: $localize`:@@supplier-list.component.summary.Erreur:Erreur`,
-                    detail: error?.error?.errors?.[0] || 'Impossible de charger les fournisseurs'
+                    detail: error?.error?.errors?.[0] || $localize`:@@suppliers.supplier-list.ts.impossible.de.charger.les.fournisseurs.33d5b97f:Impossible de charger les fournisseurs`
                 });
             }
         });

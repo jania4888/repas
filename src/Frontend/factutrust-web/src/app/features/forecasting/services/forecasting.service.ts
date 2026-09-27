@@ -112,7 +112,7 @@ export class ForecastingService {
     const trimmed = reason?.trim();
     if (!trimmed) {
       return throwError(() => ({
-        error: { message: 'La raison du rejet est obligatoire.', code: 'ReasonRequired' }
+        error: { message: $localize`:@@forecasting.forecasting.ts.la.raison.du.rejet.est.obligatoire.fa12793d:La raison du rejet est obligatoire.`, code: 'ReasonRequired' }
       }));
     }
     return this.http

@@ -401,10 +401,10 @@ export class ProductListComponent implements OnInit {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const rows = this.products();
     return [
-      { label: 'Produits', value: rows.length, format: 'number', icon: 'pi-box', tone: 'primary' },
-      { label: 'Actifs', value: rows.filter(p => p.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Inactifs', value: rows.filter(p => !p.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' },
-      { label: 'Gérés en stock', value: rows.filter(p => p.isStockManaged).length, format: 'number', icon: 'pi-database', tone: 'cyan' }
+      { label: $localize`:@@products.product-list.ts.produits.48000473:Produits`, value: rows.length, format: 'number', icon: 'pi-box', tone: 'primary' },
+      { label: $localize`:@@products.product-list.ts.actifs.4fc3a980:Actifs`, value: rows.filter(p => p.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@products.product-list.ts.inactifs.41c2d03e:Inactifs`, value: rows.filter(p => !p.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' },
+      { label: $localize`:@@products.product-list.ts.geres.en.stock.869a3287:Gérés en stock`, value: rows.filter(p => p.isStockManaged).length, format: 'number', icon: 'pi-database', tone: 'cyan' }
     ];
   });
 
@@ -414,8 +414,8 @@ export class ProductListComponent implements OnInit {
   selectedVariantFilter: string | null = null;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Produits & Services' }
+    { label: $localize`:@@products.product-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@products.product-list.ts.produits.services.01d33b70:Produits & Services` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -432,21 +432,21 @@ export class ProductListComponent implements OnInit {
   ];
 
   categoryOptions: CategoryOption[] = [
-    { label: 'Produits', value: 'Produit' },
-    { label: 'Services', value: 'Service' },
-    { label: 'Abonnements', value: 'Abonnement' }
+    { label: $localize`:@@products.product-list.ts.produits.48000473:Produits`, value: 'Produit' },
+    { label: $localize`:@@products.product-list.ts.services.5cbd5840:Services`, value: 'Service' },
+    { label: $localize`:@@products.product-list.ts.abonnements.da06ab9a:Abonnements`, value: 'Abonnement' }
   ];
 
   statusOptions = [
-    { label: 'Actifs', value: true },
-    { label: 'Inactifs', value: false }
+    { label: $localize`:@@products.product-list.ts.actifs.4fc3a980:Actifs`, value: true },
+    { label: $localize`:@@products.product-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
   ];
 
   variantFilterOptions = [
-    { label: 'Masquer les modèles', value: 'hideTemplates' },
-    { label: 'Modèles uniquement', value: 'templates' },
-    { label: 'Variantes (SKU)', value: 'variants' },
-    { label: 'Produits simples', value: 'simple' }
+    { label: $localize`:@@products.product-list.ts.masquer.les.modeles.d0f1732d:Masquer les modèles`, value: 'hideTemplates' },
+    { label: $localize`:@@products.product-list.ts.modeles.uniquement.9c4bbd0f:Modèles uniquement`, value: 'templates' },
+    { label: $localize`:@@products.product-list.ts.variantes.sku.7eac26ca:Variantes (SKU)`, value: 'variants' },
+    { label: $localize`:@@products.product-list.ts.produits.simples.f2dc61d3:Produits simples`, value: 'simple' }
   ];
 
   hasActiveFilters = computed(() => {
@@ -522,7 +522,7 @@ export class ProductListComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
-            detail: response.errors?.join(', ') || 'Impossible de charger les produits'
+            detail: response.errors?.join(', ') || $localize`:@@products.product-list.ts.impossible.de.charger.les.produits.a97081a2:Impossible de charger les produits`
           });
           this.products.set([]);
         }
@@ -534,7 +534,7 @@ export class ProductListComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
-          detail: errorMessage || 'Impossible de charger les produits'
+          detail: errorMessage || $localize`:@@products.product-list.ts.impossible.de.charger.les.produits.a97081a2:Impossible de charger les produits`
         });
         this.errorHandler.logError('Failed to load products', error);
         this.products.set([]);
@@ -562,8 +562,8 @@ export class ProductListComponent implements OnInit {
 
   enableStockManagement(product: ProductListItem): void {
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir activer la gestion de stock pour le produit "${product.name}" ? Il n'est pas possible de désactiver cette fonctionnalité une fois activée.`,
-      header: 'Confirmation d\'activation',
+      message: $localize`:@@products.product-list.ts.etes.vous.sur.de.vouloir.activer.la.gest.3652c0ec:Êtes-vous sûr de vouloir activer la gestion de stock pour le produit "${product.name}:name:" ? Il n'est pas possible de désactiver cette fonctionnalité une fois activée.`,
+      header: $localize`:@@products.product-list.ts.confirmation.d.activation.e200cba4:Confirmation d'activation`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@product-list.component.acceptLabel.Oui, activer:Oui, activer`,
       rejectLabel: $localize`:@@product-list.component.rejectLabel.Non_annuler:Non, annuler`,
@@ -604,7 +604,7 @@ export class ProductListComponent implements OnInit {
               this.toastService.add({
                 severity: 'error',
                 summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
-                detail: response.errors?.join(', ') || 'Impossible d\'activer la gestion de stock'
+                detail: response.errors?.join(', ') || $localize`:@@products.product-list.ts.impossible.d.activer.la.gestion.de.stock.49710ff2:Impossible d'activer la gestion de stock`
               });
             }
           },
@@ -617,7 +617,7 @@ export class ProductListComponent implements OnInit {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
-              detail: errorMessage || 'Impossible d\'activer la gestion de stock'
+              detail: errorMessage || $localize`:@@products.product-list.ts.impossible.d.activer.la.gestion.de.stock.49710ff2:Impossible d'activer la gestion de stock`
             });
             this.errorHandler.logError('Failed to enable stock management', error);
           }
@@ -628,8 +628,8 @@ export class ProductListComponent implements OnInit {
 
   confirmDelete(product: ProductListItem): void {
     this.confirmationService.confirm({
-      message: `Êtes-vous sûr de vouloir supprimer le produit "${product.name}" ?`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@products.product-list.ts.etes.vous.sur.de.vouloir.supprimer.le.pr.23339b70:Êtes-vous sûr de vouloir supprimer le produit "${product.name}:name:" ?`,
+      header: $localize`:@@products.product-list.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@product-list.component.acceptLabel.Oui, supprim:Oui, supprimer`,
       rejectLabel: $localize`:@@product-list.component.rejectLabel.Non_annuler:Non, annuler`,
@@ -648,7 +648,7 @@ export class ProductListComponent implements OnInit {
               this.toastService.add({
                 severity: 'error',
                 summary: $localize`:@@product-list.component.summary.Erreur:Erreur`,
-                detail: response.errors?.join(', ') || 'Impossible de supprimer le produit'
+                detail: response.errors?.join(', ') || $localize`:@@products.product-list.ts.impossible.de.supprimer.le.produit.80de49b9:Impossible de supprimer le produit`
               });
             }
           },
@@ -656,8 +656,8 @@ export class ProductListComponent implements OnInit {
             const errorMessage = this.errorHandler.extractErrorMessage(error);
             this.errorHandler.logError('Failed to delete product', error);
             this.confirmationService.alert({
-              message: errorMessage || 'Impossible de supprimer le produit',
-              header: 'Impossible de supprimer',
+              message: errorMessage || $localize`:@@products.product-list.ts.impossible.de.supprimer.le.produit.80de49b9:Impossible de supprimer le produit`,
+              header: $localize`:@@products.product-list.ts.impossible.de.supprimer.0300380e:Impossible de supprimer`,
               icon: 'pi pi-exclamation-triangle'
             });
           }

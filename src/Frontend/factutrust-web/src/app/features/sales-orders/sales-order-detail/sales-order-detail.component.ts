@@ -687,8 +687,8 @@ export class SalesOrderDetailComponent implements OnInit {
   private orderId = '';
 
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    { label: 'Ventes' },
-    { label: 'Commandes clients', route: '/sales-orders' },
+    { label: $localize`:@@sales-orders.sales-order-detail.ts.ventes.9087fc4f:Ventes` },
+    { label: $localize`:@@sales-orders.sales-order-detail.ts.commandes.clients.928f824a:Commandes clients`, route: '/sales-orders' },
     { label: this.order()?.number ?? $localize`:@@ui.tern.detail.7ce06a:Détail` }
   ]);
 
@@ -714,7 +714,7 @@ export class SalesOrderDetailComponent implements OnInit {
     if (this.canConfirm()) {
       return {
         id: SalesOrderDetailComponent.ACTION_CONFIRM,
-        label: 'Confirmer',
+        label: $localize`:@@sales-orders.sales-order-detail.ts.confirmer.80a664c8:Confirmer`,
         icon: 'pi-check',
         variant: 'primary' as const,
         command: () => this.confirmOrder()
@@ -723,7 +723,7 @@ export class SalesOrderDetailComponent implements OnInit {
     if (this.canGenerateDeliveryNote()) {
       return {
         id: SalesOrderDetailComponent.ACTION_GENERATE_BL,
-        label: 'Générer un BL',
+        label: $localize`:@@sales-orders.sales-order-detail.ts.generer.un.bl.9045e1cf:Générer un BL`,
         icon: 'pi-truck',
         variant: 'primary' as const,
         command: () => this.openGenerateDeliveryNote()
@@ -737,7 +737,7 @@ export class SalesOrderDetailComponent implements OnInit {
     if (this.canGenerateInvoice()) {
       return {
         id: SalesOrderDetailComponent.ACTION_GENERATE_INVOICE,
-        label: 'Générer une facture',
+        label: $localize`:@@sales-orders.sales-order-detail.ts.generer.une.facture.9b204490:Générer une facture`,
         icon: 'pi-file-export',
         variant: 'primary' as const,
         command: () => this.openGenerateInvoice()
@@ -746,7 +746,7 @@ export class SalesOrderDetailComponent implements OnInit {
     if (this.canClose()) {
       return {
         id: SalesOrderDetailComponent.ACTION_CLOSE,
-        label: 'Solder',
+        label: $localize`:@@sales-orders.sales-order-detail.ts.solder.2663192f:Solder`,
         icon: 'pi-flag',
         variant: 'secondary' as const,
         command: () => this.openClose()
@@ -755,7 +755,7 @@ export class SalesOrderDetailComponent implements OnInit {
     if (this.canCancel()) {
       return {
         id: SalesOrderDetailComponent.ACTION_CANCEL,
-        label: 'Annuler',
+        label: $localize`:@@sales-orders.sales-order-detail.ts.annuler.49ba3292:Annuler`,
         icon: 'pi-times',
         variant: 'danger' as const,
         command: () => this.openCancel()
@@ -906,7 +906,7 @@ export class SalesOrderDetailComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.showError(err, 'Impossible de charger la commande');
+        this.showError(err, $localize`:@@sales-orders.sales-order-detail.ts.impossible.de.charger.la.commande.bcc63a71:Impossible de charger la commande`);
         this.errorHandler.logError('Failed to load sales order', err);
         this.order.set(null);
         this.loading.set(false);
@@ -984,7 +984,7 @@ export class SalesOrderDetailComponent implements OnInit {
     }
 
     this.confirmationService.confirm({
-      header: 'Confirmer la commande',
+      header: $localize`:@@sales-orders.sales-order-detail.ts.confirmer.la.commande.3af7f44c:Confirmer la commande`,
       message,
       icon: 'pi pi-check-circle',
       acceptLabel: $localize`:@@sales-order-detail.component.acceptLabel.Confirmer:Confirmer`,
@@ -1002,7 +1002,7 @@ export class SalesOrderDetailComponent implements OnInit {
         this.load();
       },
       error: err => {
-        this.showError(err, 'Confirmation impossible');
+        this.showError(err, $localize`:@@sales-orders.sales-order-detail.ts.confirmation.impossible.fde41ea5:Confirmation impossible`);
         this.errorHandler.logError('Confirm sales order failed', err);
         this.acting.set(false);
       }
@@ -1042,7 +1042,7 @@ export class SalesOrderDetailComponent implements OnInit {
           this.load();
         },
         error: err => {
-          this.showError(err, 'Enregistrement de la remise impossible');
+          this.showError(err, $localize`:@@sales-orders.sales-order-detail.ts.enregistrement.de.la.remise.impossible.ebd883d2:Enregistrement de la remise impossible`);
           this.errorHandler.logError('Set global discount failed', err);
           this.acting.set(false);
         }
@@ -1064,7 +1064,7 @@ export class SalesOrderDetailComponent implements OnInit {
         this.load();
       },
       error: err => {
-        this.showError(err, 'Annulation impossible');
+        this.showError(err, $localize`:@@sales-orders.sales-order-detail.ts.annulation.impossible.54c16533:Annulation impossible`);
         this.errorHandler.logError('Cancel sales order failed', err);
         this.acting.set(false);
       }
@@ -1086,7 +1086,7 @@ export class SalesOrderDetailComponent implements OnInit {
         this.load();
       },
       error: err => {
-        this.showError(err, 'Solde impossible');
+        this.showError(err, $localize`:@@sales-orders.sales-order-detail.ts.solde.impossible.28d2747d:Solde impossible`);
         this.errorHandler.logError('Close sales order failed', err);
         this.acting.set(false);
       }
@@ -1138,12 +1138,12 @@ export class SalesOrderDetailComponent implements OnInit {
           this.toastService.add({ severity: 'success', summary: $localize`:@@sales-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@sales-order-detail.component.detail.Bon_de_livraison:Bon de livraison généré.` });
           this.router.navigate(['/delivery-notes', res.data]);
         } else {
-          this.toastService.add({ severity: 'error', summary: $localize`:@@sales-order-detail.component.summary.Erreur:Erreur`, detail: res.message || 'Génération impossible.' });
+          this.toastService.add({ severity: 'error', summary: $localize`:@@sales-order-detail.component.summary.Erreur:Erreur`, detail: res.message || $localize`:@@sales-orders.sales-order-detail.ts.generation.impossible.0031b83e:Génération impossible.` });
         }
       },
       error: err => {
         this.acting.set(false);
-        this.showError(err, 'Génération du bon de livraison impossible');
+        this.showError(err, $localize`:@@sales-orders.sales-order-detail.ts.generation.du.bon.de.livraison.impossibl.7cf4f9a2:Génération du bon de livraison impossible`);
       }
     });
   }
@@ -1208,12 +1208,12 @@ export class SalesOrderDetailComponent implements OnInit {
           this.toastService.add({ severity: 'success', summary: $localize`:@@sales-order-detail.component.summary.Succès:Succès`, detail: $localize`:@@sales-order-detail.component.detail.Facture_g_n_r_e_:Facture générée.` });
           this.router.navigate(['/invoices', res.data]);
         } else {
-          this.toastService.add({ severity: 'error', summary: $localize`:@@sales-order-detail.component.summary.Erreur:Erreur`, detail: res.message || 'Génération impossible.' });
+          this.toastService.add({ severity: 'error', summary: $localize`:@@sales-order-detail.component.summary.Erreur:Erreur`, detail: res.message || $localize`:@@sales-orders.sales-order-detail.ts.generation.impossible.0031b83e:Génération impossible.` });
         }
       },
       error: err => {
         this.acting.set(false);
-        this.showError(err, 'Génération de la facture impossible');
+        this.showError(err, $localize`:@@sales-orders.sales-order-detail.ts.generation.de.la.facture.impossible.255bb677:Génération de la facture impossible`);
       }
     });
   }

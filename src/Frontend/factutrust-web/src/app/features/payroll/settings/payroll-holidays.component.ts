@@ -21,8 +21,8 @@ import { ToastService } from '@core/services/toast.service';
 import { ConfirmationService } from '@core/services/confirmation.service';
 
 const KIND_OPTIONS = [
-  { label: 'Fixe', value: 'Fixed' },
-  { label: 'Islamique', value: 'Islamic' }
+  { label: $localize`:@@payroll.payroll-holidays.ts.fixe.95d72643:Fixe`, value: 'Fixed' },
+  { label: $localize`:@@payroll.payroll-holidays.ts.islamique.d167a27e:Islamique`, value: 'Islamic' }
 ];
 
 function toIsoDate(value: Date | null | undefined): string {
@@ -182,8 +182,8 @@ export class PayrollHolidaysComponent implements OnInit {
 
   seedDefaults(): void {
     this.confirmation.confirm({
-      message: 'Charger les jours fériés tunisiens (fixes + islamiques estimés) pour 2024 à 2028 ? Les dates déjà présentes seront conservées.',
-      header: 'Amorçage calendrier',
+      message: $localize`:@@payroll.payroll-holidays.ts.charger.les.jours.feries.tunisiens.fixes.9bb79370:Charger les jours fériés tunisiens (fixes + islamiques estimés) pour 2024 à 2028 ? Les dates déjà présentes seront conservées.`,
+      header: $localize`:@@payroll.payroll-holidays.ts.amorcage.calendrier.d2294100:Amorçage calendrier`,
       accept: () => {
         this.payroll.seedPublicHolidays([2024, 2025, 2026, 2027, 2028], false).subscribe({
           next: res => {
@@ -264,8 +264,8 @@ export class PayrollHolidaysComponent implements OnInit {
   confirmDelete(h: PayrollPublicHoliday): void {
     const dateLabel = h.date ? h.date.split('T')[0] : '';
     this.confirmation.confirm({
-      message: `Supprimer « ${h.label} » (${dateLabel}) ?`,
-      header: 'Suppression',
+      message: $localize`:@@payroll.payroll-holidays.ts.supprimer.label.datelabel.97afe02b:Supprimer « ${h.label}:label: » (${dateLabel}:dateLabel:) ?`,
+      header: $localize`:@@payroll.payroll-holidays.ts.suppression.c3b592c0:Suppression`,
       accept: () => {
         this.payroll.deletePublicHoliday(h.id).subscribe({
           next: () => {

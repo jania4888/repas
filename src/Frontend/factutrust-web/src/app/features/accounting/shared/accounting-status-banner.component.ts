@@ -96,6 +96,6 @@ export class AccountingStatusBannerComponent {
   @Input() title = '';
   @Input() message = '';
   @Input() showRetry = false;
-  @Input() retryLabel = 'Réessayer';
+  @Input() retryLabel = $localize`:@@accounting.accounting-status-banner.ts.reessayer.895d416b:Réessayer`;
   @Output() readonly retry = new EventEmitter<void>();
 }

@@ -131,7 +131,7 @@ export class StudioRecordFormComponent implements OnInit {
   /** 4.7h5 / D-B2 : toute fiche existante porte la barre d'onglets (l'onglet « Historique » est toujours présent en édition). */
   readonly showTabs = computed(() => !!this.recordId);
   readonly tabs = computed<StudioRecordTab[]>(() => [
-    { key: 'form', label: 'Fiche' },
+    { key: 'form', label: $localize`:@@studio.studio-record-form.ts.fiche.6ad30343:Fiche` },
     ...this.manyToMany().map(r => ({
       key: linkedTabKey(r),
       label: `${this.runtimeLabels.linked.tabLabel} — ${r.targetLabel}`

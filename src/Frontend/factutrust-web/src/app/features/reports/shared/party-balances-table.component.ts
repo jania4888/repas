@@ -149,8 +149,8 @@ export class PartyBalancesTableComponent {
   @Input() loading = false;
   @Input() partyLabel: 'Client' | 'Fournisseur' = 'Client';
   @Input() showActions = false;
-  @Input() emptyMessage = 'Aucun solde';
-  @Input() ariaLabel = 'Soldes';
+  @Input() emptyMessage = $localize`:@@reports.party-balances-table.ts.aucun.solde.64a726da:Aucun solde`;
+  @Input() ariaLabel = $localize`:@@reports.party-balances-table.ts.soldes.e1c7ce3a:Soldes`;
 
   @Output() viewParty = new EventEmitter<PartyBalanceRow>();
   @Output() viewInvoices = new EventEmitter<PartyBalanceRow>();

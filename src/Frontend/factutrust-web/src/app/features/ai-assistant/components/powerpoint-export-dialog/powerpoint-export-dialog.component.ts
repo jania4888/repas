@@ -358,11 +358,11 @@ export class PowerPointExportDialogComponent implements OnInit, OnChanges {
   protected readonly PowerPointTemplate = PowerPointTemplate;
 
   protected readonly stepDefs: ReadonlyArray<{ id: DialogStep; index: number; label: string }> = [
-    { id: 'configure', index: 1, label: 'Configurer' },
-    { id: 'theme', index: 2, label: 'Thème' },
-    { id: 'review', index: 3, label: 'Réponses' },
-    { id: 'generating', index: 4, label: 'Générer' },
-    { id: 'done', index: 5, label: 'Terminer' }
+    { id: 'configure', index: 1, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.configurer.382efbe9:Configurer` },
+    { id: 'theme', index: 2, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.theme.f366ea6e:Thème` },
+    { id: 'review', index: 3, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.reponses.9b8e2c96:Réponses` },
+    { id: 'generating', index: 4, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.generer.bd221c07:Générer` },
+    { id: 'done', index: 5, label: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.terminer.6bf1bd74:Terminer` }
   ];
 
   protected readonly currentStep = signal<DialogStep>('configure');
@@ -712,7 +712,7 @@ export class PowerPointExportDialogComponent implements OnInit, OnChanges {
       return e as PowerPointExportError;
     }
     if (e instanceof Error) return { status: 0, message: e.message };
-    return { status: 0, message: 'Erreur inattendue.' };
+    return { status: 0, message: $localize`:@@ai-assistant.powerpoint-export-dialog.ts.erreur.inattendue.f815b77e:Erreur inattendue.` };
   }
 
   protected onHide(): void {

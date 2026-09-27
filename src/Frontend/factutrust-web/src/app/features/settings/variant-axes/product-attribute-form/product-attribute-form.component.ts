@@ -206,9 +206,9 @@ export class ProductAttributeFormComponent implements OnInit {
   );
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Axes de variantes', route: VARIANT_AXES_PATH },
+    { label: $localize`:@@settings.product-attribute-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.product-attribute-form.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.product-attribute-form.ts.axes.de.variantes.dcc95d91:Axes de variantes`, route: VARIANT_AXES_PATH },
     { label: this.isEditMode() ? $localize`:@@ui.tern.modifier.l.axe.de.variantes.08ffd6:Modifier l'axe de variantes` : $localize`:@@ui.tern.nouvel.axe.de.variantes.4610a3:Nouvel axe de variantes` }
   ]);
 
@@ -307,8 +307,8 @@ export class ProductAttributeFormComponent implements OnInit {
     if (!id) return;
 
     this.confirmationService.confirm({
-      header: 'Supprimer la valeur',
-      message: `Supprimer « ${value.name} » ?`,
+      header: $localize`:@@settings.product-attribute-form.ts.supprimer.la.valeur.1d19860c:Supprimer la valeur`,
+      message: $localize`:@@settings.product-attribute-form.ts.supprimer.name.6978d779:Supprimer « ${value.name}:name: » ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@product-attribute-form.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@product-attribute-form.component.rejectLabel.Annuler:Annuler`,

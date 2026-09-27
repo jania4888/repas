@@ -216,8 +216,8 @@ export class EmployeeSocialFundsTabComponent implements OnInit {
   confirmDelete(e: EmployeeSocialFundEnrollment): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Supprimer l'adhésion à « ${e.schemeName ?? e.schemeCode} » ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.employee-social-funds-tab.ts.supprimer.l.adhesion.a.p.5f4763a1:Supprimer l'adhésion à « ${e.schemeName ?? e.schemeCode}:p: » ?`,
+      header: $localize`:@@payroll.employee-social-funds-tab.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@employee-social-funds-tab.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@employee-social-funds-tab.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

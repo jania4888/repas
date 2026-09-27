@@ -819,10 +819,10 @@ export class BankReconciliationComponent implements OnInit {
   unmatchedOnly = false;
 
   readonly steps: WizardStepDef[] = [
-    { index: 1, label: 'Import', hint: 'Charger le relevé' },
-    { index: 2, label: 'Association auto', hint: 'Propositions + récap' },
-    { index: 3, label: 'Rapprochement manuel', hint: 'Lignes restantes' },
-    { index: 4, label: 'Résultat', hint: 'Synthèse' }
+    { index: 1, label: $localize`:@@accounting.bank-reconciliation.ts.import.d6fbc9d2:Import`, hint: $localize`:@@accounting.bank-reconciliation.ts.charger.le.releve.f291ecbe:Charger le relevé` },
+    { index: 2, label: $localize`:@@accounting.bank-reconciliation.ts.association.auto.02f66e5d:Association auto`, hint: $localize`:@@accounting.bank-reconciliation.ts.propositions.recap.d21112d4:Propositions + récap` },
+    { index: 3, label: $localize`:@@accounting.bank-reconciliation.ts.rapprochement.manuel.476a4125:Rapprochement manuel`, hint: $localize`:@@accounting.bank-reconciliation.ts.lignes.restantes.88fe6e9b:Lignes restantes` },
+    { index: 4, label: $localize`:@@accounting.bank-reconciliation.ts.resultat.7186e8ff:Résultat`, hint: $localize`:@@accounting.bank-reconciliation.ts.synthese.ab761b35:Synthèse` }
   ];
 
   // Wizard
@@ -983,7 +983,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.loadingList.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du chargement des relevés.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.du.chargement.des.rel.9f816010:Erreur réseau lors du chargement des relevés.`));
       }
     });
   }
@@ -1039,7 +1039,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.loadingDetail.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du chargement du relevé.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.du.chargement.du.rele.6043868d:Erreur réseau lors du chargement du relevé.`));
       }
     });
   }
@@ -1054,7 +1054,7 @@ export class BankReconciliationComponent implements OnInit {
         if (res.success && res.data) this.reconStatement.set(res.data);
         else this.reconError.set(res.error ?? $localize`:@@ui.tern.impossible.d.etablir.l.etat.de.rapprocheme.86ce87:Impossible d'établir l'état de rapprochement.`);
       },
-      error: err => this.reconError.set(this.errors.extractErrorMessage(err, "Erreur réseau lors du chargement de l'état de rapprochement."))
+      error: err => this.reconError.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.du.chargement.de.l.et.626d3dd3:Erreur réseau lors du chargement de l'état de rapprochement.`))
     });
   }
 
@@ -1075,7 +1075,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.exportingRecon.set(false);
-        this.toast.add({ severity: 'error', summary: this.errors.extractErrorMessage(err, "Erreur lors de l'export de l'état de rapprochement."), life: 4000 });
+        this.toast.add({ severity: 'error', summary: this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.lors.de.l.export.de.l.etat.de.rap.6d8d923c:Erreur lors de l'export de l'état de rapprochement.`), life: 4000 });
       }
     });
   }
@@ -1147,7 +1147,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.previewing.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'aperçu du relevé."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.l.apercu.du.releve.170cebcd:Erreur réseau lors de l'aperçu du relevé.`));
       }
     });
   }
@@ -1194,7 +1194,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.importing.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'import du relevé."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.l.import.du.releve.60473acb:Erreur réseau lors de l'import du relevé.`));
       }
     });
   }
@@ -1251,7 +1251,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.autoAssociating.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'association automatique."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.l.association.auto.c7f891d3:Erreur réseau lors de l'association automatique.`));
       }
     });
   }
@@ -1288,7 +1288,7 @@ export class BankReconciliationComponent implements OnInit {
         const r = res.data;
         this.toast.add({
           severity: r.failures.length > 0 ? 'warn' : 'success',
-          summary: `${r.appliedCount} rapprochement(s) appliqué(s)`,
+          summary: $localize`:@@accounting.bank-reconciliation.ts.appliedcount.rapprochement.s.applique.s.e28d32b2:${r.appliedCount}:appliedCount: rapprochement(s) appliqué(s)`,
           detail: r.failures.length > 0 ? $localize`:@@ui.tern.ph.echec.s.ba006c:${r.failures.length}:p0: échec(s)` : undefined,
           life: 4000
         });
@@ -1296,7 +1296,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.applying.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du rapprochement en lot.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.du.rapprochement.en.l.925121a1:Erreur réseau lors du rapprochement en lot.`));
       }
     });
   }
@@ -1347,7 +1347,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.loadingCandidates.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la recherche de candidats.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.la.recherche.de.ca.01e56031:Erreur réseau lors de la recherche de candidats.`));
       }
     });
   }
@@ -1374,7 +1374,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.reconciling.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du rapprochement.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.du.rapprochement.ff993f79:Erreur réseau lors du rapprochement.`));
       }
     });
   }
@@ -1395,7 +1395,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.reconciling.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du dé-rapprochement.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.du.de.rapprochement.847704b5:Erreur réseau lors du dé-rapprochement.`));
       }
     });
   }
@@ -1443,7 +1443,7 @@ export class BankReconciliationComponent implements OnInit {
       },
       error: err => {
         this.creatingEntry.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la comptabilisation.'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.bank-reconciliation.ts.erreur.reseau.lors.de.la.comptabilisatio.118cf68f:Erreur réseau lors de la comptabilisation.`));
       }
     });
   }

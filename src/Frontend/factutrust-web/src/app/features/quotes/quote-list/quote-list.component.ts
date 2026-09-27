@@ -268,11 +268,11 @@ export class QuoteListComponent implements OnInit {
     const s = this.summary();
     const currency = s?.currency ?? 'TND';
     return [
-      { label: 'Devis', value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
-      { label: 'Total TTC', value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
-      { label: 'Total HT', value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
-      { label: 'Acceptés', value: s?.acceptedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Expirés', value: s?.expiredCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
+      { label: $localize`:@@quotes.quote-list.ts.devis.f7622f90:Devis`, value: s?.count, format: 'number', icon: 'pi-file', tone: 'primary' },
+      { label: $localize`:@@quotes.quote-list.ts.total.ttc.9e80ff7c:Total TTC`, value: s?.totalTtc, format: 'currency', currency, icon: 'pi-wallet', tone: 'primary' },
+      { label: $localize`:@@quotes.quote-list.ts.total.ht.2ca17ae6:Total HT`, value: s?.totalHt, format: 'currency', currency, icon: 'pi-calculator', tone: 'cyan' },
+      { label: $localize`:@@quotes.quote-list.ts.acceptes.8a72194f:Acceptés`, value: s?.acceptedCount, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@quotes.quote-list.ts.expires.4b4940d1:Expirés`, value: s?.expiredCount, format: 'number', icon: 'pi-exclamation-triangle', tone: 'rose' }
     ];
   });
 
@@ -284,8 +284,8 @@ export class QuoteListComponent implements OnInit {
   pageSize = 20;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Devis' },
+    { label: $localize`:@@quotes.quote-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@quotes.quote-list.ts.devis.f7622f90:Devis` },
   ];
 
   skeletonColumns: SkeletonColumn[] = [

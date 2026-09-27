@@ -150,10 +150,10 @@ export class StudioRecordListComponent implements OnInit {
   readonly skeletonCols = [{ width: '20%' }, { width: '30%' }, { width: '20%' }, { width: '15%' }];
 
   exportItems: MenuItem[] = [
-    { label: 'CSV — page courante', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(false) },
-    { label: 'Excel — page courante', icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(false) },
-    { label: 'CSV — toutes les lignes', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(true) },
-    { label: 'Excel — toutes les lignes', icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(true) },
+    { label: $localize`:@@studio.studio-record-list.ts.csv.page.courante.2f0e6273:CSV — page courante`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(false) },
+    { label: $localize`:@@studio.studio-record-list.ts.excel.page.courante.84d32d06:Excel — page courante`, icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(false) },
+    { label: $localize`:@@studio.studio-record-list.ts.csv.toutes.les.lignes.42fbba25:CSV — toutes les lignes`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv(true) },
+    { label: $localize`:@@studio.studio-record-list.ts.excel.toutes.les.lignes.084ab1f3:Excel — toutes les lignes`, icon: 'fa-solid fa-file-excel', command: () => this.exportXlsx(true) },
   ];
 
   entityKey = '';
@@ -327,8 +327,8 @@ export class StudioRecordListComponent implements OnInit {
 
   remove(row: DynamicRow): void {
     this.confirmation.confirm({
-      message: 'Supprimer cet enregistrement ? Cette action est irréversible.',
-      header: 'Confirmation',
+      message: $localize`:@@studio.studio-record-list.ts.supprimer.cet.enregistrement.cette.actio.c9b5b5c6:Supprimer cet enregistrement ? Cette action est irréversible.`,
+      header: $localize`:@@studio.studio-record-list.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@studio-record-list.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@studio-record-list.component.rejectLabel.Annuler:Annuler`,
       accept: () => {

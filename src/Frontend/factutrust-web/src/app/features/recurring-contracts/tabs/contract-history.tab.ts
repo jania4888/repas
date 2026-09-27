@@ -350,8 +350,8 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
 
   confirmIssue(run: RecurringContractBillingRun): void {
     this.confirmation.confirm({
-      header: 'Confirmer l\'émission',
-      message: 'Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l\'émission ?',
+      header: $localize`:@@recurring-contracts.contract-history.ts.confirmer.l.emission.15b190af:Confirmer l'émission`,
+      message: $localize`:@@recurring-contracts.contract-history.ts.une.fois.validee.cette.facture.ne.pourra.acdbf6bb:Une fois validée, cette facture ne pourra plus être modifiée. Confirmer l'émission ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@contract-history.tab.acceptLabel.Émettre la f:Émettre la facture`,
       rejectLabel: $localize`:@@contract-history.tab.rejectLabel.Annuler:Annuler`,
@@ -369,7 +369,7 @@ export class ContractHistoryTabComponent implements OnInit, OnChanges {
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@contract-history.tab.summary.Facture émis:Facture émise`,
-          detail: `Facture ${issued.invoiceNumber} émise.`
+          detail: $localize`:@@recurring-contracts.contract-history.ts.facture.invoicenumber.emise.07d601c8:Facture ${issued.invoiceNumber}:invoiceNumber: émise.`
         });
         this.loadRuns();
         this.draftChanged.emit();

@@ -121,9 +121,9 @@ export class StudioAutomationsComponent implements OnInit {
   readonly breadcrumbs = signal<BreadcrumbItem[]>(STUDIO_BREADCRUMBS.entities());
 
   readonly triggerOptions = [
-    { label: 'À la création', value: AutomationTrigger.OnCreate },
-    { label: 'À la modification', value: AutomationTrigger.OnUpdate },
-    { label: 'Manuel (bouton)', value: AutomationTrigger.Manual }
+    { label: $localize`:@@studio.studio-automations.ts.a.la.creation.368f826d:À la création`, value: AutomationTrigger.OnCreate },
+    { label: $localize`:@@studio.studio-automations.ts.a.la.modification.6c3aed88:À la modification`, value: AutomationTrigger.OnUpdate },
+    { label: $localize`:@@studio.studio-automations.ts.manuel.bouton.8b0a7c8b:Manuel (bouton)`, value: AutomationTrigger.Manual }
   ];
 
   private entityId = '';
@@ -212,7 +212,7 @@ export class StudioAutomationsComponent implements OnInit {
   }
 
   remove(a: Automation): void {
-    if (!confirm(`Supprimer l'automatisation « ${a.name} » ?`)) return;
+    if (!confirm($localize`:@@studio.studio-automations.ts.supprimer.l.automatisation.name.72e0b823:Supprimer l'automatisation « ${a.name}:name: » ?`)) return;
     this.studio.deleteAutomation(a.id).subscribe({
       next: res => { if (res.success) this.loadAutomations(); },
       error: () => this.toast.add({ severity: 'error', summary: $localize`:@@studio-automations.component.summary.Erreur:Erreur`, detail: $localize`:@@studio-automations.component.detail.Suppression_impo:Suppression impossible.` })

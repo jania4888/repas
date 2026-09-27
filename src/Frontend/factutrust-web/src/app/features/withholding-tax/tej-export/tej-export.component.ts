@@ -266,7 +266,7 @@ export class TejExportComponent implements OnInit {
   readonly loc_ui_tern_non_a72199 = $localize`:@@ui.tern.non.a72199:Non`;
   /** Aligné sur `Error.Validation` côté API (ExportTejXml / preview). */
   private static readonly tejNoEligibleInvoicesApiMessage =
-    'Aucune facture fournisseur soldée avec retenue à la source pour cette période';
+    $localize`:@@withholding-tax.tej-export.ts.aucune.facture.fournisseur.soldee.avec.r.45d95c40:Aucune facture fournisseur soldée avec retenue à la source pour cette période`;
 
   private service = inject(WithholdingTaxService);
   private errorHandler = inject(ErrorHandlerService);
@@ -294,10 +294,10 @@ export class TejExportComponent implements OnInit {
 
   years = Array.from({ length: 7 }, (_, i) => new Date().getFullYear() - i);
   months = [
-    { value: 1, label: 'Janvier' }, { value: 2, label: 'Février' }, { value: 3, label: 'Mars' },
-    { value: 4, label: 'Avril' }, { value: 5, label: 'Mai' }, { value: 6, label: 'Juin' },
-    { value: 7, label: 'Juillet' }, { value: 8, label: 'Août' }, { value: 9, label: 'Septembre' },
-    { value: 10, label: 'Octobre' }, { value: 11, label: 'Novembre' }, { value: 12, label: 'Décembre' }
+    { value: 1, label: $localize`:@@withholding-tax.tej-export.ts.janvier.7a32ae0f:Janvier` }, { value: 2, label: $localize`:@@withholding-tax.tej-export.ts.fevrier.63fc1803:Février` }, { value: 3, label: $localize`:@@withholding-tax.tej-export.ts.mars.1778011d:Mars` },
+    { value: 4, label: $localize`:@@withholding-tax.tej-export.ts.avril.4efeee46:Avril` }, { value: 5, label: $localize`:@@withholding-tax.tej-export.ts.mai.afe526a6:Mai` }, { value: 6, label: $localize`:@@withholding-tax.tej-export.ts.juin.8b1e84b6:Juin` },
+    { value: 7, label: $localize`:@@withholding-tax.tej-export.ts.juillet.e8e0920c:Juillet` }, { value: 8, label: $localize`:@@withholding-tax.tej-export.ts.aout.460b6696:Août` }, { value: 9, label: $localize`:@@withholding-tax.tej-export.ts.septembre.08d23f31:Septembre` },
+    { value: 10, label: $localize`:@@withholding-tax.tej-export.ts.octobre.0ed28485:Octobre` }, { value: 11, label: $localize`:@@withholding-tax.tej-export.ts.novembre.632580af:Novembre` }, { value: 12, label: $localize`:@@withholding-tax.tej-export.ts.decembre.03bcd9b0:Décembre` }
   ];
 
   ngOnInit(): void {
@@ -353,9 +353,9 @@ export class TejExportComponent implements OnInit {
 
   private showNoEligibleInvoicesModal(): void {
     this.confirmation.alert({
-      header: 'Aucune facture éligible pour cette période',
+      header: $localize`:@@withholding-tax.tej-export.ts.aucune.facture.eligible.pour.cette.perio.712a5264:Aucune facture éligible pour cette période`,
       message:
-        'L’export TEJ inclut uniquement les factures fournisseurs payées avec retenue enregistrée (fournisseur assujetti, montant et type RS), pour la date de solde (mois/année) sélectionnés.\n\n' +
+        $localize`:@@withholding-tax.tej-export.ts.l.export.tej.inclut.uniquement.les.factu.aec54e21:L’export TEJ inclut uniquement les factures fournisseurs payées avec retenue enregistrée (fournisseur assujetti, montant et type RS), pour la date de solde (mois/année) sélectionnés.\n\n` +
         $localize`:@@ui.tern.verifiez.le.parametrage.fournisseur.le.sta.0c248d:Vérifiez le paramétrage fournisseur, le statut Payée et que la date de solde tombe dans la période.`,
       icon: 'pi pi-exclamation-triangle',
       size: 'md',

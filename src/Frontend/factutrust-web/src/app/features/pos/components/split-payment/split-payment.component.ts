@@ -206,10 +206,10 @@ export class SplitPaymentComponent {
   readonly METHOD_LABELS = METHOD_LABELS;
 
   readonly availableMethods = [
-    { value: PaymentMethod.Cash, label: 'Especes' },
-    { value: PaymentMethod.Card, label: 'Carte' },
-    { value: PaymentMethod.BankTransfer, label: 'Virement' },
-    { value: PaymentMethod.Check, label: 'Cheque' }
+    { value: PaymentMethod.Cash, label: $localize`:@@pos.split-payment.ts.especes.958d74b6:Especes` },
+    { value: PaymentMethod.Card, label: $localize`:@@pos.split-payment.ts.carte.8bb68357:Carte` },
+    { value: PaymentMethod.BankTransfer, label: $localize`:@@pos.split-payment.ts.virement.afbaf950:Virement` },
+    { value: PaymentMethod.Check, label: $localize`:@@pos.split-payment.ts.cheque.6c0a1363:Cheque` }
   ];
 
   maxRemaining(): number {

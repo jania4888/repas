@@ -118,9 +118,9 @@ export class ProductAttributeListComponent implements OnInit {
   searchTerm = '';
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Axes de variantes' }
+    { label: $localize`:@@settings.product-attribute-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.product-attribute-list.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.product-attribute-list.ts.axes.de.variantes.dcc95d91:Axes de variantes` }
   ];
 
   filteredAttributes = computed(() => {
@@ -160,8 +160,8 @@ export class ProductAttributeListComponent implements OnInit {
 
   confirmDelete(attr: ProductAttributeDto): void {
     this.confirmationService.confirm({
-      header: 'Supprimer l\'axe',
-      message: `Supprimer l'axe « ${attr.name} » ? Cette action est irréversible.`,
+      header: $localize`:@@settings.product-attribute-list.ts.supprimer.l.axe.0c38a872:Supprimer l'axe`,
+      message: $localize`:@@settings.product-attribute-list.ts.supprimer.l.axe.name.cette.action.est.ir.69a23600:Supprimer l'axe « ${attr.name}:name: » ? Cette action est irréversible.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@product-attribute-list.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@product-attribute-list.component.rejectLabel.Annuler:Annuler`,

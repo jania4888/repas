@@ -665,9 +665,9 @@ export class PromotionFormDialogComponent implements OnInit, OnChanges {
 
   readonly discountTypes: DiscountTypeOption[] = [
 
-    { label: 'Pourcentage', value: 'Percentage' },
+    { label: $localize`:@@settings.promotion-form-dialog.ts.pourcentage.e34218e3:Pourcentage`, value: 'Percentage' },
 
-    { label: 'Montant par unité', value: 'Amount' }
+    { label: $localize`:@@settings.promotion-form-dialog.ts.montant.par.unite.800d8a4e:Montant par unité`, value: 'Amount' }
 
   ];
 

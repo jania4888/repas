@@ -345,7 +345,7 @@ export class SubJournalsComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.sub-journals.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }

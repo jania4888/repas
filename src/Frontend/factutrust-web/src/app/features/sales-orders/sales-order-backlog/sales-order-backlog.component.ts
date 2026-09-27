@@ -131,9 +131,9 @@ export class SalesOrderBacklogComponent implements OnInit {
   dueBefore = '';
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Ventes' },
-    { label: 'Commandes clients', route: '/sales-orders' },
-    { label: 'Carnet' }
+    { label: $localize`:@@sales-orders.sales-order-backlog.ts.ventes.9087fc4f:Ventes` },
+    { label: $localize`:@@sales-orders.sales-order-backlog.ts.commandes.clients.928f824a:Commandes clients`, route: '/sales-orders' },
+    { label: $localize`:@@sales-orders.sales-order-backlog.ts.carnet.5e843afe:Carnet` }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -155,17 +155,17 @@ export class SalesOrderBacklogComponent implements OnInit {
     const lateValue = late.reduce((sum, r) => sum + r.pendingAmountHt, 0);
 
     return [
-      { label: 'Lignes en attente', value: all.length, format: 'number', icon: 'pi-list' },
-      { label: 'Valeur du carnet', value: totalValue, format: 'currency', tone: 'primary' },
+      { label: $localize`:@@sales-orders.sales-order-backlog.ts.lignes.en.attente.a7206ff9:Lignes en attente`, value: all.length, format: 'number', icon: 'pi-list' },
+      { label: $localize`:@@sales-orders.sales-order-backlog.ts.valeur.du.carnet.681b29e1:Valeur du carnet`, value: totalValue, format: 'currency', tone: 'primary' },
       {
-        label: 'Lignes en retard',
+        label: $localize`:@@sales-orders.sales-order-backlog.ts.lignes.en.retard.93f7ff67:Lignes en retard`,
         value: late.length,
         format: 'number',
         tone: late.length > 0 ? 'rose' : 'emerald',
         icon: 'pi-exclamation-triangle'
       },
       {
-        label: 'Valeur en retard',
+        label: $localize`:@@sales-orders.sales-order-backlog.ts.valeur.en.retard.b4c148a0:Valeur en retard`,
         value: lateValue,
         format: 'currency',
         tone: lateValue > 0 ? 'rose' : 'emerald'
@@ -189,7 +189,7 @@ export class SalesOrderBacklogComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@sales-order-backlog.component.summary.Erreur:Erreur`,
-          detail: msg || 'Impossible de charger le carnet de commandes'
+          detail: msg || $localize`:@@sales-orders.sales-order-backlog.ts.impossible.de.charger.le.carnet.de.comma.ddb2d8de:Impossible de charger le carnet de commandes`
         });
         this.errorHandler.logError('Failed to load sales order backlog', err);
         this.rows.set([]);

@@ -73,91 +73,91 @@ export interface CashRevenueCategoryGroup {
 
 export const CASH_EXPENSE_CATEGORY_GROUPS: CashExpenseCategoryGroup[] = [
   {
-    label: 'Locaux & immobilier',
+    label: $localize`:@@core.cash-desk.ts.locaux.immobilier.3ca8e940:Locaux & immobilier`,
     items: [
-      { label: 'Paiement des loyers', value: CashExpenseCategory.RentPayment, icon: 'pi pi-building' },
+      { label: $localize`:@@core.cash-desk.ts.paiement.des.loyers.ebf924d2:Paiement des loyers`, value: CashExpenseCategory.RentPayment, icon: 'pi pi-building' },
       {
-        label: 'Charges locatives et énergie (eau, électricité, gaz)',
+        label: $localize`:@@core.cash-desk.ts.charges.locatives.et.energie.eau.electri.82d0d349:Charges locatives et énergie (eau, électricité, gaz)`,
         value: CashExpenseCategory.UtilitiesAndEnergy,
         icon: 'pi pi-bolt'
       }
     ]
   },
   {
-    label: 'Achats & exploitation',
+    label: $localize`:@@core.cash-desk.ts.achats.exploitation.fa5f8b4e:Achats & exploitation`,
     items: [
       {
-        label: "Règlement des factures d'achats de fournitures et consommables",
+        label: $localize`:@@core.cash-desk.ts.reglement.des.factures.d.achats.de.fourn.7770e534:Règlement des factures d'achats de fournitures et consommables`,
         value: CashExpenseCategory.SuppliesAndConsumables,
         icon: 'pi pi-shopping-cart'
       },
       {
-        label: 'Règlement facture fournisseur',
+        label: $localize`:@@core.cash-desk.ts.reglement.facture.fournisseur.8a8eebc2:Règlement facture fournisseur`,
         value: CashExpenseCategory.SupplierInvoicePayment,
         icon: 'pi pi-file-import'
       },
       {
-        label: "Paiement des factures d'entretien et réparation",
+        label: $localize`:@@core.cash-desk.ts.paiement.des.factures.d.entretien.et.rep.50fa4e38:Paiement des factures d'entretien et réparation`,
         value: CashExpenseCategory.MaintenanceAndRepair,
         icon: 'pi pi-wrench'
       }
     ]
   },
   {
-    label: 'Ressources humaines',
-    items: [{ label: 'Paiement des salaires nets', value: CashExpenseCategory.NetSalaries, icon: 'pi pi-users' }]
+    label: $localize`:@@core.cash-desk.ts.ressources.humaines.5f3cf89d:Ressources humaines`,
+    items: [{ label: $localize`:@@core.cash-desk.ts.paiement.des.salaires.nets.3f30baa6:Paiement des salaires nets`, value: CashExpenseCategory.NetSalaries, icon: 'pi pi-users' }]
   },
   {
-    label: 'Transport & véhicules',
+    label: $localize`:@@core.cash-desk.ts.transport.vehicules.51cf21ea:Transport & véhicules`,
     items: [
-      { label: 'Paiement des frais de transport', value: CashExpenseCategory.TransportCosts, icon: 'pi pi-car' },
-      { label: 'Voyages et déplacements', value: CashExpenseCategory.TravelAndTrips, icon: 'pi pi-map' },
+      { label: $localize`:@@core.cash-desk.ts.paiement.des.frais.de.transport.43817daf:Paiement des frais de transport`, value: CashExpenseCategory.TransportCosts, icon: 'pi pi-car' },
+      { label: $localize`:@@core.cash-desk.ts.voyages.et.deplacements.2e9ba9fc:Voyages et déplacements`, value: CashExpenseCategory.TravelAndTrips, icon: 'pi pi-map' },
       {
-        label: 'Véhicule (réparation, entretien)',
+        label: $localize`:@@core.cash-desk.ts.vehicule.reparation.entretien.18959cd1:Véhicule (réparation, entretien)`,
         value: CashExpenseCategory.VehicleRepairMaintenance,
         icon: 'pi pi-cog'
       },
       {
-        label: 'Location véhicules et transport',
+        label: $localize`:@@core.cash-desk.ts.location.vehicules.et.transport.210b15fe:Location véhicules et transport`,
         value: CashExpenseCategory.VehicleRentalAndTransport,
         icon: 'pi pi-truck'
       }
     ]
   },
   {
-    label: 'Fiscalité & services',
+    label: $localize`:@@core.cash-desk.ts.fiscalite.services.58c61dac:Fiscalité & services`,
     items: [
-      { label: 'Honoraires et prestations externes', value: CashExpenseCategory.ProfessionalFees, icon: 'pi pi-briefcase' },
-      { label: 'Assurances', value: CashExpenseCategory.Insurance, icon: 'pi pi-shield' },
-      { label: 'Impôts, taxes et redevances', value: CashExpenseCategory.TaxesAndDuties, icon: 'pi pi-percentage' }
+      { label: $localize`:@@core.cash-desk.ts.honoraires.et.prestations.externes.2863df82:Honoraires et prestations externes`, value: CashExpenseCategory.ProfessionalFees, icon: 'pi pi-briefcase' },
+      { label: $localize`:@@core.cash-desk.ts.assurances.7011b97e:Assurances`, value: CashExpenseCategory.Insurance, icon: 'pi pi-shield' },
+      { label: $localize`:@@core.cash-desk.ts.impots.taxes.et.redevances.b0100f28:Impôts, taxes et redevances`, value: CashExpenseCategory.TaxesAndDuties, icon: 'pi pi-percentage' }
     ]
   },
   {
-    label: 'Commercial & digital',
+    label: $localize`:@@core.cash-desk.ts.commercial.digital.79ecb7a5:Commercial & digital`,
     items: [
-      { label: 'Marketing et publicité', value: CashExpenseCategory.MarketingAdvertising, icon: 'pi pi-megaphone' },
-      { label: 'Informatique et logiciels', value: CashExpenseCategory.ITAndSoftware, icon: 'pi pi-desktop' }
+      { label: $localize`:@@core.cash-desk.ts.marketing.et.publicite.6249d9f3:Marketing et publicité`, value: CashExpenseCategory.MarketingAdvertising, icon: 'pi pi-megaphone' },
+      { label: $localize`:@@core.cash-desk.ts.informatique.et.logiciels.0d40e9e7:Informatique et logiciels`, value: CashExpenseCategory.ITAndSoftware, icon: 'pi pi-desktop' }
     ]
   },
   {
-    label: 'Trésorerie',
-    items: [{ label: 'Remise en banque', value: CashExpenseCategory.BankDeposit, icon: 'pi pi-building' }]
+    label: $localize`:@@core.cash-desk.ts.tresorerie.e0e75da7:Trésorerie`,
+    items: [{ label: $localize`:@@core.cash-desk.ts.remise.en.banque.f42e5169:Remise en banque`, value: CashExpenseCategory.BankDeposit, icon: 'pi pi-building' }]
   },
   {
-    label: 'Autres',
-    items: [{ label: 'Autre', value: CashExpenseCategory.Other, icon: 'pi pi-ellipsis-h' }]
+    label: $localize`:@@core.cash-desk.ts.autres.2f0dd042:Autres`,
+    items: [{ label: $localize`:@@core.cash-desk.ts.autre.43dacf9e:Autre`, value: CashExpenseCategory.Other, icon: 'pi pi-ellipsis-h' }]
   }
 ];
 
 export const CASH_REVENUE_CATEGORY_GROUPS: CashRevenueCategoryGroup[] = [
   {
-    label: 'Encaissements',
+    label: $localize`:@@core.cash-desk.ts.encaissements.598f53c9:Encaissements`,
     items: [
-      { label: 'Encaissement ventes au comptant', value: CashRevenueCategory.CashSalesReceipt, icon: 'pi pi-shopping-bag' },
-      { label: 'Encaissement créances clients', value: CashRevenueCategory.ClientReceivablesReceipt, icon: 'pi pi-users' },
-      { label: 'Encaissements reçus des associés', value: CashRevenueCategory.PartnerContributionsReceipt, icon: 'pi pi-sitemap' },
-      { label: 'Encaissement crédit bancaire', value: CashRevenueCategory.BankCreditReceipt, icon: 'pi pi-building' },
-      { label: 'Autres encaissements', value: CashRevenueCategory.Other, icon: 'pi pi-ellipsis-h' }
+      { label: $localize`:@@core.cash-desk.ts.encaissement.ventes.au.comptant.9a9c0123:Encaissement ventes au comptant`, value: CashRevenueCategory.CashSalesReceipt, icon: 'pi pi-shopping-bag' },
+      { label: $localize`:@@core.cash-desk.ts.encaissement.creances.clients.cb5ad0fc:Encaissement créances clients`, value: CashRevenueCategory.ClientReceivablesReceipt, icon: 'pi pi-users' },
+      { label: $localize`:@@core.cash-desk.ts.encaissements.recus.des.associes.c817c5a5:Encaissements reçus des associés`, value: CashRevenueCategory.PartnerContributionsReceipt, icon: 'pi pi-sitemap' },
+      { label: $localize`:@@core.cash-desk.ts.encaissement.credit.bancaire.30d2a61d:Encaissement crédit bancaire`, value: CashRevenueCategory.BankCreditReceipt, icon: 'pi pi-building' },
+      { label: $localize`:@@core.cash-desk.ts.autres.encaissements.a0755a9d:Autres encaissements`, value: CashRevenueCategory.Other, icon: 'pi pi-ellipsis-h' }
     ]
   }
 ];
@@ -289,8 +289,8 @@ export interface VatRateOption {
 }
 
 export const VAT_RATE_OPTIONS: VatRateOption[] = [
-  { label: 'Non renseignée', value: null },
-  { label: '0 % Exonéré', value: 0 },
+  { label: $localize`:@@core.cash-desk.ts.non.renseignee.d6a3c5fe:Non renseignée`, value: null },
+  { label: $localize`:@@core.cash-desk.ts.0.exonere.077b7639:0 % Exonéré`, value: 0 },
   { label: '7 %', value: 7 },
   { label: '13 %', value: 13 },
   { label: '19 %', value: 19 }

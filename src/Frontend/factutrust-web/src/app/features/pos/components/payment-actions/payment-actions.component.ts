@@ -674,11 +674,11 @@ export class PaymentActionsComponent {
   private readonly ngbModal = inject(NgbModal);
 
   readonly paymentMethods = [
-    { value: PaymentMethod.Cash, label: 'Espèces', shortLabel: 'Espèces', icon: 'pi pi-money-bill' },
-    { value: PaymentMethod.Card, label: 'Carte bancaire', shortLabel: 'Carte', icon: 'pi pi-credit-card' },
-    { value: PaymentMethod.BankTransfer, label: 'Virement', shortLabel: 'Virement', icon: 'pi pi-building' },
-    { value: PaymentMethod.Check, label: 'Chèque', shortLabel: 'Chèque', icon: 'pi pi-file' },
-    { value: PaymentMethod.Effect, label: 'Effet', shortLabel: 'Effet', icon: 'pi pi-book' }
+    { value: PaymentMethod.Cash, label: $localize`:@@pos.payment-actions.ts.especes.b7679d62:Espèces`, shortLabel: $localize`:@@pos.payment-actions.ts.especes.b7679d62:Espèces`, icon: 'pi pi-money-bill' },
+    { value: PaymentMethod.Card, label: $localize`:@@pos.payment-actions.ts.carte.bancaire.9e3d9bfa:Carte bancaire`, shortLabel: $localize`:@@pos.payment-actions.ts.carte.8bb68357:Carte`, icon: 'pi pi-credit-card' },
+    { value: PaymentMethod.BankTransfer, label: $localize`:@@pos.payment-actions.ts.virement.afbaf950:Virement`, shortLabel: $localize`:@@pos.payment-actions.ts.virement.afbaf950:Virement`, icon: 'pi pi-building' },
+    { value: PaymentMethod.Check, label: $localize`:@@pos.payment-actions.ts.cheque.8bbb89a9:Chèque`, shortLabel: $localize`:@@pos.payment-actions.ts.cheque.8bbb89a9:Chèque`, icon: 'pi pi-file' },
+    { value: PaymentMethod.Effect, label: $localize`:@@pos.payment-actions.ts.effet.3b25c07d:Effet`, shortLabel: $localize`:@@pos.payment-actions.ts.effet.3b25c07d:Effet`, icon: 'pi pi-book' }
   ];
 
   openRefundInvoiceIdDialog(): void {

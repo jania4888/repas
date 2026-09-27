@@ -202,8 +202,8 @@ export class ClosingComponent implements OnInit {
   confirmGenerateOpeningEntries(): void {
     const y = this.fiscalYearInput;
     this.confirmService.confirm({
-      message: `Generer les ecritures d'a-nouveau pour l'exercice ${y + 1} a partir des soldes de ${y} ?`,
-      header: 'Ecritures d\'a-nouveau',
+      message: $localize`:@@accounting.closing.ts.generer.les.ecritures.d.a.nouveau.pour.l.7bd2b52b:Generer les ecritures d'a-nouveau pour l'exercice ${y + 1}:p: a partir des soldes de ${y}:y: ?`,
+      header: $localize`:@@accounting.closing.ts.ecritures.d.a.nouveau.d0348a61:Ecritures d'a-nouveau`,
       icon: 'pi pi-book',
       acceptLabel: $localize`:@@closing.component.acceptLabel.Generer:Generer`,
       rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,
@@ -234,8 +234,8 @@ export class ClosingComponent implements OnInit {
   confirmCloseYear(): void {
     const y = this.fiscalYearInput;
     this.confirmService.confirm({
-      message: `Clôturer tous les mois enregistrés pour l'exercice ${y} ?`,
-      header: 'Confirmation',
+      message: $localize`:@@accounting.closing.ts.cloturer.tous.les.mois.enregistres.pour.9c9cdfb7:Clôturer tous les mois enregistrés pour l'exercice ${y}:y: ?`,
+      header: $localize`:@@accounting.closing.ts.confirmation.3424edc2:Confirmation`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@closing.component.acceptLabel.Clôturer:Clôturer`,
       rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,
@@ -286,8 +286,8 @@ export class ClosingComponent implements OnInit {
   confirmLockYear(): void {
     const y = this.fiscalYearInput;
     this.confirmService.confirm({
-      message: `Verrouiller DÉFINITIVEMENT l'exercice ${y} ? Cette action est IRRÉVERSIBLE : aucune écriture ne pourra plus y être enregistrée et ses périodes ne pourront plus être rouvertes. Assurez-vous d'avoir résolu les contrôles de pré-clôture et généré les à-nouveaux.`,
-      header: 'Verrouillage définitif',
+      message: $localize`:@@accounting.closing.ts.verrouiller.definitivement.l.exercice.y.81e541ec:Verrouiller DÉFINITIVEMENT l'exercice ${y}:y: ? Cette action est IRRÉVERSIBLE : aucune écriture ne pourra plus y être enregistrée et ses périodes ne pourront plus être rouvertes. Assurez-vous d'avoir résolu les contrôles de pré-clôture et généré les à-nouveaux.`,
+      header: $localize`:@@accounting.closing.ts.verrouillage.definitif.1aef2d75:Verrouillage définitif`,
       icon: 'pi pi-lock',
       acceptLabel: $localize`:@@closing.component.acceptLabel.Verrouiller_d_fi:Verrouiller définitivement`,
       rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,
@@ -316,8 +316,8 @@ export class ClosingComponent implements OnInit {
 
   confirmClose(id: string, month: number, year: number): void {
     this.confirmService.confirm({
-      message: `Clôturer la période ${month}/${year} ?`,
-      header: 'Confirmation',
+      message: $localize`:@@accounting.closing.ts.cloturer.la.periode.month.year.3afeb2b7:Clôturer la période ${month}:month:/${year}:year: ?`,
+      header: $localize`:@@accounting.closing.ts.confirmation.3424edc2:Confirmation`,
       icon: 'pi pi-lock',
       acceptLabel: $localize`:@@closing.component.acceptLabel.Clôturer:Clôturer`,
       rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,
@@ -346,8 +346,8 @@ export class ClosingComponent implements OnInit {
 
   confirmReopen(id: string, month: number, year: number): void {
     this.confirmService.confirm({
-      message: `Réouvrir la période ${month}/${year} ? Les écritures pourront à nouveau être modifiées.`,
-      header: 'Confirmation',
+      message: $localize`:@@accounting.closing.ts.reouvrir.la.periode.month.year.les.ecrit.d2ef9bb5:Réouvrir la période ${month}:month:/${year}:year: ? Les écritures pourront à nouveau être modifiées.`,
+      header: $localize`:@@accounting.closing.ts.confirmation.3424edc2:Confirmation`,
       icon: 'pi pi-unlock',
       acceptLabel: $localize`:@@closing.component.acceptLabel.Réouvrir:Réouvrir`,
       rejectLabel: $localize`:@@closing.component.rejectLabel.Annuler:Annuler`,

@@ -261,8 +261,8 @@ export class PayrollOvertimeGridComponent implements OnInit {
   confirmDelete(line: PayrollOvertimeLine): void {
     if (this.readOnly) return;
     this.confirmation.confirm({
-      message: `Supprimer les heures sup. de ${line.employeeName} ?`,
-      header: 'Confirmation',
+      message: $localize`:@@payroll.payroll-overtime-grid.ts.supprimer.les.heures.sup.de.employeename.be884383:Supprimer les heures sup. de ${line.employeeName}:employeeName: ?`,
+      header: $localize`:@@payroll.payroll-overtime-grid.ts.confirmation.3424edc2:Confirmation`,
       acceptLabel: $localize`:@@payroll-overtime-grid.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@payroll-overtime-grid.component.rejectLabel.Annuler:Annuler`,
       acceptButtonStyleClass: 'btn-danger',

@@ -212,8 +212,8 @@ export class TransferDetailComponent implements OnInit {
 
   confirm() {
     this.confirmationService.confirm({
-      header: 'Confirmer le transfert',
-      message: 'Confirmer ce transfert ? La disponibilité des stocks à la source sera contrôlée.',
+      header: $localize`:@@transfers.transfer-detail.ts.confirmer.le.transfert.ab1a4adb:Confirmer le transfert`,
+      message: $localize`:@@transfers.transfer-detail.ts.confirmer.ce.transfert.la.disponibilite.956c462b:Confirmer ce transfert ? La disponibilité des stocks à la source sera contrôlée.`,
       icon: 'pi pi-info-circle',
       acceptLabel: $localize`:@@transfer-detail.component.acceptLabel.Confirmer:Confirmer`,
       rejectLabel: $localize`:@@transfer-detail.component.rejectLabel.Annuler:Annuler`,
@@ -244,8 +244,8 @@ export class TransferDetailComponent implements OnInit {
 
   complete() {
     this.confirmationService.confirm({
-      header: 'Terminer le transfert',
-      message: 'Cette action est irréversible : les stocks seront débités à la source et crédités à destination. Continuer ?',
+      header: $localize`:@@transfers.transfer-detail.ts.terminer.le.transfert.96a04cf2:Terminer le transfert`,
+      message: $localize`:@@transfers.transfer-detail.ts.cette.action.est.irreversible.les.stocks.e8628322:Cette action est irréversible : les stocks seront débités à la source et crédités à destination. Continuer ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@transfer-detail.component.acceptLabel.Terminer:Terminer`,
       rejectLabel: $localize`:@@transfer-detail.component.rejectLabel.Annuler:Annuler`,

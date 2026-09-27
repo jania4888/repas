@@ -588,9 +588,9 @@ export class WarehousesComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Entrepôts' }
+    { label: $localize`:@@settings.warehouses.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.warehouses.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.warehouses.ts.entrepots.c0906d10:Entrepôts` }
   ];
 
   loading = signal(false);
@@ -684,7 +684,7 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@warehouses.component.summary.Erreur:Erreur`,
-            detail: this.errorHandler.extractErrorMessage(err) || 'Création de caisse impossible'
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.warehouses.ts.creation.de.caisse.impossible.49a448a0:Création de caisse impossible`
           });
         }
       });
@@ -719,14 +719,14 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           if (res.success && res.data) {
             this.warehouses.set([...res.data].sort((a, b) => erpCollatorCompare(a.name, b.name)));
           } else {
-            this.loadError.set(res.errors?.join(', ') || res.message || 'Chargement impossible');
+            this.loadError.set(res.errors?.join(', ') || res.message || $localize`:@@settings.warehouses.ts.chargement.impossible.4c82ffbe:Chargement impossible`);
           }
           this.loading.set(false);
         },
         error: (err: HttpErrorResponse) => {
           this.errorHandler.logError('Failed to load warehouses', err);
           this.loadError.set(
-            this.errorHandler.extractErrorMessage(err) || 'Impossible de charger les entrepôts'
+            this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.warehouses.ts.impossible.de.charger.les.entrepots.3492459c:Impossible de charger les entrepôts`
           );
           this.loading.set(false);
         }
@@ -816,7 +816,7 @@ export class WarehousesComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'success',
               summary: $localize`:@@warehouses.component.summary.Succès:Succès`,
-              detail: res.message || 'Entrepôt créé',
+              detail: res.message || $localize`:@@settings.warehouses.ts.entrepot.cree.506e2410:Entrepôt créé`,
               life: 3000
             });
             this.dialogVisible = false;
@@ -825,7 +825,7 @@ export class WarehousesComponent implements OnInit, OnDestroy {
             this.toast.add({
               severity: 'error',
               summary: $localize`:@@warehouses.component.summary.Erreur:Erreur`,
-              detail: res.errors?.join(', ') || res.message || 'Création impossible'
+              detail: res.errors?.join(', ') || res.message || $localize`:@@settings.warehouses.ts.creation.impossible.e15c59e7:Création impossible`
             });
           }
         },
@@ -835,7 +835,7 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@warehouses.component.summary.Erreur:Erreur`,
-            detail: this.errorHandler.extractErrorMessage(err) || 'Création impossible'
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.warehouses.ts.creation.impossible.e15c59e7:Création impossible`
           });
         }
       });
@@ -878,7 +878,7 @@ export class WarehousesComponent implements OnInit, OnDestroy {
           this.toast.add({
             severity: 'error',
             summary: $localize`:@@warehouses.component.summary.Erreur:Erreur`,
-            detail: this.errorHandler.extractErrorMessage(err) || 'Mise à jour impossible'
+            detail: this.errorHandler.extractErrorMessage(err) || $localize`:@@settings.warehouses.ts.mise.a.jour.impossible.56d51741:Mise à jour impossible`
           });
         }
       });

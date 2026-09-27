@@ -93,9 +93,9 @@ export interface SupplierOption {
 
 const TIME_GROUP_OPTIONS = [
 
-  { label: 'Par membre', value: 'member' },
+  { label: $localize`:@@projects.project-billing.ts.par.membre.c6ebe5de:Par membre`, value: 'member' },
 
-  { label: 'Par tâche', value: 'task' }
+  { label: $localize`:@@projects.project-billing.ts.par.tache.df47b881:Par tâche`, value: 'task' }
 
 ];
 
@@ -103,9 +103,9 @@ const TIME_GROUP_OPTIONS = [
 
 const TASK_BILLING_METHOD_OPTIONS = [
 
-  { label: 'Forfaitaire', value: 'fixed' },
+  { label: $localize`:@@projects.project-billing.ts.forfaitaire.4d28efbd:Forfaitaire`, value: 'fixed' },
 
-  { label: 'À l\'heure', value: 'hourly' }
+  { label: $localize`:@@projects.project-billing.ts.a.l.heure.9d6f7161:À l'heure`, value: 'hourly' }
 
 ];
 

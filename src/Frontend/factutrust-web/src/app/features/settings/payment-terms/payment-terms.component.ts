@@ -252,15 +252,15 @@ export class PaymentTermsComponent implements OnInit {
   readonly canDelete = computed(() => this.auth.hasPermission(PERMISSIONS.settings.update));
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Conditions de règlement' }
+    { label: $localize`:@@settings.payment-terms.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.payment-terms.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.payment-terms.ts.conditions.de.reglement.84c9c451:Conditions de règlement` }
   ];
 
   readonly dueModes: DueModeOption[] = [
-    { label: 'Net (date + délai)', value: 'NetDays' },
-    { label: 'Fin de mois', value: 'EndOfMonth' },
-    { label: 'Fin de mois, le N', value: 'EndOfMonthOnDay' }
+    { label: $localize`:@@settings.payment-terms.ts.net.date.delai.40bfbcad:Net (date + délai)`, value: 'NetDays' },
+    { label: $localize`:@@settings.payment-terms.ts.fin.de.mois.db654234:Fin de mois`, value: 'EndOfMonth' },
+    { label: $localize`:@@settings.payment-terms.ts.fin.de.mois.le.n.cd740fb5:Fin de mois, le N`, value: 'EndOfMonthOnDay' }
   ];
 
   readonly skeletonColumns: SkeletonColumn[] = [
@@ -284,7 +284,7 @@ export class PaymentTermsComponent implements OnInit {
         this.loading.set(false);
       },
       error: err => {
-        this.showError(err, 'Impossible de charger les conditions de règlement');
+        this.showError(err, $localize`:@@settings.payment-terms.ts.impossible.de.charger.les.conditions.de.098252b2:Impossible de charger les conditions de règlement`);
         this.errorHandler.logError('Failed to load payment terms', err);
         this.terms.set([]);
         this.loading.set(false);
@@ -359,7 +359,7 @@ export class PaymentTermsComponent implements OnInit {
           this.load();
         },
         error: err => {
-          this.showError(err, 'Enregistrement impossible');
+          this.showError(err, $localize`:@@settings.payment-terms.ts.enregistrement.impossible.1e5e1075:Enregistrement impossible`);
           this.errorHandler.logError('Save payment term failed', err);
           this.saving.set(false);
         }
@@ -368,9 +368,9 @@ export class PaymentTermsComponent implements OnInit {
 
   confirmDelete(term: PaymentTermTemplate): void {
     this.confirmationService.confirm({
-      header: 'Supprimer la condition',
+      header: $localize`:@@settings.payment-terms.ts.supprimer.la.condition.bd432d9d:Supprimer la condition`,
       message:
-        `Supprimer « ${term.name} » ? Les documents déjà émis conservent leur texte et leur ` +
+        $localize`:@@settings.payment-terms.ts.supprimer.name.les.documents.deja.emis.c.b5285595:Supprimer « ${term.name}:name: » ? Les documents déjà émis conservent leur texte et leur ` +
         $localize`:@@ui.tern.echeance.ils.ne.referencent.pas.le.modele.da0a27:échéance : ils ne référencent pas le modèle.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@payment-terms.component.acceptLabel.Supprimer:Supprimer`,
@@ -387,7 +387,7 @@ export class PaymentTermsComponent implements OnInit {
         this.load();
       },
       error: err => {
-        this.showError(err, 'Suppression impossible');
+        this.showError(err, $localize`:@@settings.payment-terms.ts.suppression.impossible.55762ff2:Suppression impossible`);
         this.errorHandler.logError('Delete payment term failed', err);
       }
     });

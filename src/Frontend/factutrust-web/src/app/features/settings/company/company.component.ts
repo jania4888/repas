@@ -878,9 +878,9 @@ export class CompanyComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Paramètres', route: '/settings' },
-    { label: 'Mon entreprise' }
+    { label: $localize`:@@settings.company.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@settings.company.ts.parametres.ef8f0121:Paramètres`, route: '/settings' },
+    { label: $localize`:@@settings.company.ts.mon.entreprise.e950c285:Mon entreprise` }
   ];
 
   saving = signal(false);
@@ -918,9 +918,9 @@ export class CompanyComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   taxRegimes = [
-    { label: 'Régime réel', value: 0 },
-    { label: 'Régime forfaitaire', value: 1 },
-    { label: 'Exonéré', value: 2 }
+    { label: $localize`:@@settings.company.ts.regime.reel.ef6ee424:Régime réel`, value: 0 },
+    { label: $localize`:@@settings.company.ts.regime.forfaitaire.a1dc2f7b:Régime forfaitaire`, value: 1 },
+    { label: $localize`:@@settings.company.ts.exonere.5d577ae9:Exonéré`, value: 2 }
   ];
 
   governorates = TUNISIAN_GOVERNORATE_OPTIONS;
@@ -1170,7 +1170,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
           this.toastService.add({
             severity: 'success',
             summary: $localize`:@@company.component.summary.Succès:Succès`,
-            detail: response.message || 'Informations de l\'entreprise mises à jour',
+            detail: response.message || $localize`:@@settings.company.ts.informations.de.l.entreprise.mises.a.jou.194ab89e:Informations de l'entreprise mises à jour`,
             life: 3000
           });
 
@@ -1246,7 +1246,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
           this.selectedSegmentCode = res.data.companySegment;
           this.selectedDomainCode = res.data.businessDomain;
         } else {
-          this.sectorError.set(res.message || 'Impossible de charger le secteur d\'activité.');
+          this.sectorError.set(res.message || $localize`:@@settings.company.ts.impossible.de.charger.le.secteur.d.activ.b438ff44:Impossible de charger le secteur d'activité.`);
         }
       },
       error: (err: HttpErrorResponse) => {

@@ -530,47 +530,47 @@ export class ClientFormComponent implements OnInit {
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const base: BreadcrumbItem[] = [
-      { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-      { label: 'Clients', route: '/clients' }
+      { label: $localize`:@@clients.client-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+      { label: $localize`:@@clients.client-form.ts.clients.28e22fe3:Clients`, route: '/clients' }
     ];
     if (this.isEditMode()) {
-      base.push({ label: 'Modifier' });
+      base.push({ label: $localize`:@@clients.client-form.ts.modifier.f260e757:Modifier` });
     } else {
-      base.push({ label: 'Nouveau client' });
+      base.push({ label: $localize`:@@clients.client-form.ts.nouveau.client.9e7edfed:Nouveau client` });
     }
     return base;
   });
 
   typeOptions: TypeOption[] = [
-    { label: 'Particulier', value: ClientType.Individual },
-    { label: 'Entreprise', value: ClientType.Business }
+    { label: $localize`:@@clients.client-form.ts.particulier.281680dd:Particulier`, value: ClientType.Individual },
+    { label: $localize`:@@clients.client-form.ts.entreprise.d03e74b6:Entreprise`, value: ClientType.Business }
   ];
 
   governorates: GovernorateOption[] = [
-    { label: 'Ariana', value: 'Ariana' },
-    { label: 'Béja', value: 'Béja' },
-    { label: 'Ben Arous', value: 'Ben Arous' },
-    { label: 'Bizerte', value: 'Bizerte' },
-    { label: 'Gabès', value: 'Gabès' },
-    { label: 'Gafsa', value: 'Gafsa' },
-    { label: 'Jendouba', value: 'Jendouba' },
-    { label: 'Kairouan', value: 'Kairouan' },
-    { label: 'Kasserine', value: 'Kasserine' },
-    { label: 'Kébili', value: 'Kébili' },
-    { label: 'Le Kef', value: 'Le Kef' },
-    { label: 'Mahdia', value: 'Mahdia' },
-    { label: 'La Manouba', value: 'La Manouba' },
-    { label: 'Médenine', value: 'Médenine' },
-    { label: 'Monastir', value: 'Monastir' },
-    { label: 'Nabeul', value: 'Nabeul' },
-    { label: 'Sfax', value: 'Sfax' },
-    { label: 'Sidi Bouzid', value: 'Sidi Bouzid' },
-    { label: 'Siliana', value: 'Siliana' },
-    { label: 'Sousse', value: 'Sousse' },
-    { label: 'Tataouine', value: 'Tataouine' },
-    { label: 'Tozeur', value: 'Tozeur' },
-    { label: 'Tunis', value: 'Tunis' },
-    { label: 'Zaghouan', value: 'Zaghouan' }
+    { label: $localize`:@@clients.client-form.ts.ariana.4787a016:Ariana`, value: 'Ariana' },
+    { label: $localize`:@@clients.client-form.ts.beja.603d1fac:Béja`, value: 'Béja' },
+    { label: $localize`:@@clients.client-form.ts.ben.arous.3fab69ae:Ben Arous`, value: 'Ben Arous' },
+    { label: $localize`:@@clients.client-form.ts.bizerte.2e83a969:Bizerte`, value: 'Bizerte' },
+    { label: $localize`:@@clients.client-form.ts.gabes.e4b74f5d:Gabès`, value: 'Gabès' },
+    { label: $localize`:@@clients.client-form.ts.gafsa.eae1e5d1:Gafsa`, value: 'Gafsa' },
+    { label: $localize`:@@clients.client-form.ts.jendouba.c6f39067:Jendouba`, value: 'Jendouba' },
+    { label: $localize`:@@clients.client-form.ts.kairouan.62201cff:Kairouan`, value: 'Kairouan' },
+    { label: $localize`:@@clients.client-form.ts.kasserine.2ac4b4c3:Kasserine`, value: 'Kasserine' },
+    { label: $localize`:@@clients.client-form.ts.kebili.5c50d601:Kébili`, value: 'Kébili' },
+    { label: $localize`:@@clients.client-form.ts.le.kef.6dfe486f:Le Kef`, value: 'Le Kef' },
+    { label: $localize`:@@clients.client-form.ts.mahdia.00f1b39b:Mahdia`, value: 'Mahdia' },
+    { label: $localize`:@@clients.client-form.ts.la.manouba.25ff50d2:La Manouba`, value: 'La Manouba' },
+    { label: $localize`:@@clients.client-form.ts.medenine.0e0d3c6a:Médenine`, value: 'Médenine' },
+    { label: $localize`:@@clients.client-form.ts.monastir.aef3b69f:Monastir`, value: 'Monastir' },
+    { label: $localize`:@@clients.client-form.ts.nabeul.43036f00:Nabeul`, value: 'Nabeul' },
+    { label: $localize`:@@clients.client-form.ts.sfax.7f5b35de:Sfax`, value: 'Sfax' },
+    { label: $localize`:@@clients.client-form.ts.sidi.bouzid.923cd336:Sidi Bouzid`, value: 'Sidi Bouzid' },
+    { label: $localize`:@@clients.client-form.ts.siliana.279c3c64:Siliana`, value: 'Siliana' },
+    { label: $localize`:@@clients.client-form.ts.sousse.e45910eb:Sousse`, value: 'Sousse' },
+    { label: $localize`:@@clients.client-form.ts.tataouine.d3f11bd9:Tataouine`, value: 'Tataouine' },
+    { label: $localize`:@@clients.client-form.ts.tozeur.0c755425:Tozeur`, value: 'Tozeur' },
+    { label: $localize`:@@clients.client-form.ts.tunis.e58b2d54:Tunis`, value: 'Tunis' },
+    { label: $localize`:@@clients.client-form.ts.zaghouan.65a3dc81:Zaghouan`, value: 'Zaghouan' }
   ];
 
   form: FormGroup = this.fb.group({
@@ -748,7 +748,7 @@ export class ClientFormComponent implements OnInit {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@client-form.component.summary.Erreur:Erreur`,
-              detail: response.errors[0] || 'Impossible de mettre à jour le client'
+              detail: response.errors[0] || $localize`:@@clients.client-form.ts.impossible.de.mettre.a.jour.le.client.fe6146f9:Impossible de mettre à jour le client`
             });
           }
           this.saving.set(false);
@@ -758,7 +758,7 @@ export class ClientFormComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@client-form.component.summary.Erreur:Erreur`,
-            detail: err.error?.errors?.[0] || 'Impossible de mettre à jour le client'
+            detail: err.error?.errors?.[0] || $localize`:@@clients.client-form.ts.impossible.de.mettre.a.jour.le.client.fe6146f9:Impossible de mettre à jour le client`
           });
         }
       });
@@ -796,7 +796,7 @@ export class ClientFormComponent implements OnInit {
             this.toastService.add({
               severity: 'error',
               summary: $localize`:@@client-form.component.summary.Erreur:Erreur`,
-              detail: response.errors[0] || 'Impossible de créer le client'
+              detail: response.errors[0] || $localize`:@@clients.client-form.ts.impossible.de.creer.le.client.027d8009:Impossible de créer le client`
             });
           }
           this.saving.set(false);
@@ -812,11 +812,11 @@ export class ClientFormComponent implements OnInit {
           } else if (err.error?.message) {
             errorMessage = err.error.message;
           } else if (err.status === 400) {
-            errorMessage = 'Les données fournies sont invalides. Veuillez vérifier les champs obligatoires et le format du matricule fiscal (NIF).';
+            errorMessage = $localize`:@@clients.client-form.ts.les.donnees.fournies.sont.invalides.veui.4905785a:Les données fournies sont invalides. Veuillez vérifier les champs obligatoires et le format du matricule fiscal (NIF).`;
           } else if (err.status === 409) {
-            errorMessage = 'Un client existe déjà avec cet email ou ce matricule fiscal.';
+            errorMessage = $localize`:@@clients.client-form.ts.un.client.existe.deja.avec.cet.email.ou.6506038c:Un client existe déjà avec cet email ou ce matricule fiscal.`;
           } else if (err.status === 0) {
-            errorMessage = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
+            errorMessage = $localize`:@@clients.client-form.ts.impossible.de.contacter.le.serveur.verif.56ab13d5:Impossible de contacter le serveur. Vérifiez votre connexion.`;
           }
           
           this.toastService.add({

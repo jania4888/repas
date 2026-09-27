@@ -276,7 +276,7 @@ export class ReplenishmentBoardComponent implements OnInit {
     this.dismissModal.set(null);
     try {
       await firstValueFrom(this.forecastingService.dismissReplenishment(rec.id, reason));
-      this.toast.add({ severity: 'info', summary: $localize`:@@replenishment-board.component.summary.Écartée:Écartée`, detail: `${rec.productName} écartée.` });
+      this.toast.add({ severity: 'info', summary: $localize`:@@replenishment-board.component.summary.Écartée:Écartée`, detail: $localize`:@@forecasting.replenishment-board.ts.productname.ecartee.0227caee:${rec.productName}:productName: écartée.` });
       this.rows.update(rows => rows.filter(x => x.id !== rec.id));
       this.unselect(rec.id);
       void this.refreshKpi();
@@ -297,7 +297,7 @@ export class ReplenishmentBoardComponent implements OnInit {
       this.toast.add({
         severity: 'success',
         summary: $localize`:@@replenishment-board.component.summary.Approuvée:Approuvée`,
-        detail: `${r.productName} approuvée.`
+        detail: $localize`:@@forecasting.replenishment-board.ts.productname.approuvee.ab8867f3:${r.productName}:productName: approuvée.`
       });
       // If the current filter is "pending", the row exits the view immediately.
       if (this.filters().status === 'pending') {
@@ -330,7 +330,7 @@ export class ReplenishmentBoardComponent implements OnInit {
       this.toast.add({
         severity: 'success',
         summary: $localize`:@@replenishment-board.component.summary.Modifié:Modifié`,
-        detail: `${rec.productName} mis à jour.`
+        detail: $localize`:@@forecasting.replenishment-board.ts.productname.mis.a.jour.bd1287ec:${rec.productName}:productName: mis à jour.`
       });
       this.rows.update(rows => rows.map(x => x.id === updated.id ? updated : x));
     } catch (err: any) {
@@ -348,7 +348,7 @@ export class ReplenishmentBoardComponent implements OnInit {
       this.toast.add({
         severity: 'success',
         summary: $localize`:@@replenishment-board.component.summary.Annul_e:Annulée`,
-        detail: `Décision sur ${r.productName} annulée.`
+        detail: $localize`:@@forecasting.replenishment-board.ts.decision.sur.productname.annulee.22caf756:Décision sur ${r.productName}:productName: annulée.`
       });
       this.rows.update(rows => rows.map(x => x.id === updated.id ? updated : x));
       void this.refreshKpi();
@@ -377,7 +377,7 @@ export class ReplenishmentBoardComponent implements OnInit {
       this.toast.add({
         severity: 'info',
         summary: $localize`:@@replenishment-board.component.summary.S_lection_partie:Sélection partielle`,
-        detail: `${ignored} recommandation(s) déjà traitée(s) (non-Pending) seront ignorée(s).`
+        detail: $localize`:@@forecasting.replenishment-board.ts.ignored.recommandation.s.deja.traitee.s.b7f382c3:${ignored}:ignored: recommandation(s) déjà traitée(s) (non-Pending) seront ignorée(s).`
       });
     }
     if (targets.length === 0) return;
@@ -396,20 +396,20 @@ export class ReplenishmentBoardComponent implements OnInit {
         this.toast.add({
           severity: 'success',
           summary: $localize`:@@replenishment-board.component.summary.Approbations:Approbations`,
-          detail: `${ok} recommandation(s) approuvée(s).`
+          detail: $localize`:@@forecasting.replenishment-board.ts.ok.recommandation.s.approuvee.s.e3d59858:${ok}:ok: recommandation(s) approuvée(s).`
         });
       } else if (ok > 0 && ko > 0) {
         this.toast.add({
           severity: 'warn',
           summary: $localize`:@@replenishment-board.component.summary.Approbations_par:Approbations partielles`,
-          detail: `${ok} approuvée(s), ${ko} en échec.`,
+          detail: $localize`:@@forecasting.replenishment-board.ts.ok.approuvee.s.ko.en.echec.9ed9dff3:${ok}:ok: approuvée(s), ${ko}:ko: en échec.`,
           life: 6000
         });
       } else {
         this.toast.add({
           severity: 'error',
           summary: $localize`:@@replenishment-board.component.summary.Échec:Échec`,
-          detail: `Aucune approbation n'a réussi (${ko} échec(s)).`
+          detail: $localize`:@@forecasting.replenishment-board.ts.aucune.approbation.n.a.reussi.ko.echec.s.1b2f14c1:Aucune approbation n'a réussi (${ko}:ko: échec(s)).`
         });
       }
     } finally {
@@ -453,7 +453,7 @@ export class ReplenishmentBoardComponent implements OnInit {
           this.toast.add({
             severity: 'warn',
             summary: $localize`:@@replenishment-board.component.summary.Enregistrement_p:Enregistrement partiel`,
-            detail: `${failed} ligne(s) : quantité ou fournisseur non enregistré(s) — vérifiez avant de renvoyer.`,
+            detail: $localize`:@@forecasting.replenishment-board.ts.failed.ligne.s.quantite.ou.fournisseur.n.19ab2b5f:${failed}:failed: ligne(s) : quantité ou fournisseur non enregistré(s) — vérifiez avant de renvoyer.`,
             life: 6000
           });
         }
@@ -509,7 +509,7 @@ export class ReplenishmentBoardComponent implements OnInit {
       this.toast.add({
         severity: 'success',
         summary: $localize`:@@replenishment-board.component.summary.R_g_n_ration_ter:Régénération terminée`,
-        detail: `${count} recommandation(s).`
+        detail: $localize`:@@forecasting.replenishment-board.ts.count.recommandation.s.d20ca4bc:${count}:count: recommandation(s).`
       });
       await this.load();
       void this.refreshKpi();
@@ -531,7 +531,7 @@ export class ReplenishmentBoardComponent implements OnInit {
       this.toast.add({
         severity: 'success',
         summary: $localize`:@@replenishment-board.component.summary.Export:Export`,
-        detail: `Fichier ${fileName} téléchargé.`
+        detail: $localize`:@@forecasting.replenishment-board.ts.fichier.filename.telecharge.5979ed5f:Fichier ${fileName}:fileName: téléchargé.`
       });
     } catch (err: any) {
       this.toast.add({

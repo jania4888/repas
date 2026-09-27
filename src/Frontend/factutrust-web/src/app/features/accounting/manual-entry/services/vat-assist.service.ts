@@ -62,7 +62,7 @@ export class VatAssistService {
     const vatAmount = this.computeVatAmount(base, ratePercent);
     const { account, warning } = this.resolveVatAccount(side, line.accountNumber, accounts);
     if (!account) {
-      store.error.set(warning ?? 'Compte TVA introuvable.');
+      store.error.set(warning ?? $localize`:@@accounting.vat-assist.ts.compte.tva.introuvable.850afb98:Compte TVA introuvable.`);
       return;
     }
 

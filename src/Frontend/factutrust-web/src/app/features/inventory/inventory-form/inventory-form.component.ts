@@ -95,9 +95,9 @@ export class InventoryFormComponent implements OnInit {
     lastSavedAt = signal<Date | null>(null);
 
     breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-        { label: 'Mon Stock', route: '/stock' },
-        { label: 'Inventaire' },
+        { label: $localize`:@@inventory.inventory-form.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+        { label: $localize`:@@inventory.inventory-form.ts.mon.stock.7d1adf31:Mon Stock`, route: '/stock' },
+        { label: $localize`:@@inventory.inventory-form.ts.inventaire.10ad1a54:Inventaire` },
     ];
 
     hasActiveInventory = computed(() => this.activeInventory() !== null);
@@ -343,7 +343,7 @@ export class InventoryFormComponent implements OnInit {
                 this.toastService.add({
                     severity: 'success',
                     summary: $localize`:@@inventory-form.component.summary.Enregistrement_t:Enregistrement terminé`,
-                    detail: `${queue.length} comptage(s) enregistré(s). Dernière sauvegarde à ${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`,
+                    detail: $localize`:@@inventory.inventory-form.ts.length.comptage.s.enregistre.s.derniere.ce357c66:${queue.length}:length: comptage(s) enregistré(s). Dernière sauvegarde à ${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}:toLocaleTimeString:`,
                 });
                 this.loadActiveInventory(inv.warehouseId);
                 return;
@@ -384,7 +384,7 @@ export class InventoryFormComponent implements OnInit {
         this.toastService.add({
             severity: 'warn',
             summary: $localize`:@@inventory-form.component.summary.N° de lot re:N° de lot requis`,
-            detail: `Saisissez un numéro de lot pour « ${line.productName} » (article suivi avec écart).`,
+            detail: $localize`:@@inventory.inventory-form.ts.saisissez.un.numero.de.lot.pour.productn.8cf3f558:Saisissez un numéro de lot pour « ${line.productName}:productName: » (article suivi avec écart).`,
         });
     }
 
@@ -428,7 +428,7 @@ export class InventoryFormComponent implements OnInit {
             : $localize`:@@ui.tern.aucun.ajustement.de.stock.6f28b5:Aucun ajustement de stock.`;
 
         this.confirmationService.confirm({
-            header: 'Valider l\'inventaire',
+            header: $localize`:@@inventory.inventory-form.ts.valider.l.inventaire.85adc87d:Valider l'inventaire`,
             message: `${implicitPart} ${variancePart}`,
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: $localize`:@@inventory-form.component.acceptLabel.Valider:Valider`,

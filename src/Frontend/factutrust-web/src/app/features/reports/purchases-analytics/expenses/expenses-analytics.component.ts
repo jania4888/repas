@@ -344,9 +344,9 @@ export class ExpensesAnalyticsComponent implements OnInit {
   private readonly maxBars = 31;
 
   periodOptions: { label: string; value: PurchasesAnalyticsPeriod }[] = [
-    { label: 'Jour', value: 'day' },
-    { label: 'Mois', value: 'month' },
-    { label: 'Année', value: 'year' }
+    { label: $localize`:@@reports.expenses-analytics.ts.jour.240ce85d:Jour`, value: 'day' },
+    { label: $localize`:@@reports.expenses-analytics.ts.mois.0d304bea:Mois`, value: 'month' },
+    { label: $localize`:@@reports.expenses-analytics.ts.annee.1f910d98:Année`, value: 'year' }
   ];
 
   ngOnInit(): void {

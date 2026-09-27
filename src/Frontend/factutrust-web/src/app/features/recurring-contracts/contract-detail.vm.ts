@@ -132,7 +132,7 @@ export function evolutionChartData(points: ContractEvolutionPoint[]): { labels: 
     labels: points.map(p => evolutionMonthLabel(p.month)),
     datasets: [
       {
-        label: 'Montant facturé',
+        label: $localize`:@@recurring-contracts.contract-detail.ts.montant.facture.5129f82a:Montant facturé`,
         data: points.map(p => p.amount),
         borderColor: '#3862f5',
         backgroundColor: 'rgba(56, 98, 245, 0.08)',

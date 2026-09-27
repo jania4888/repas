@@ -213,7 +213,7 @@ export class LetteringComponent implements OnInit {
   load(): void {
     const acct = this.account.trim();
     if (!acct) {
-      this.error.set('Veuillez saisir un numéro de compte.');
+      this.error.set($localize`:@@accounting.lettering.ts.veuillez.saisir.un.numero.de.compte.7beae1c2:Veuillez saisir un numéro de compte.`);
       return;
     }
     this.error.set(null);
@@ -243,7 +243,7 @@ export class LetteringComponent implements OnInit {
             this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.chargement.des.ecritures.872dad:Erreur lors du chargement des écritures.`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau. Vérifiez votre connexion.'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.verifiez.votre.connexion.39472e00:Erreur réseau. Vérifiez votre connexion.`))
       });
   }
 
@@ -301,7 +301,7 @@ export class LetteringComponent implements OnInit {
         next: res => {
           if (res.success) {
             this.successMessage.set(
-              `Écart de change apuré sur le compte ${account}, puis lettrage effectué.`);
+              $localize`:@@accounting.lettering.ts.ecart.de.change.apure.sur.le.compte.acco.662b4773:Écart de change apuré sur le compte ${account}:account:, puis lettrage effectué.`);
             this.settleOpen.set(false);
             this.selectedLines.set([]);
             this.load();
@@ -309,7 +309,7 @@ export class LetteringComponent implements OnInit {
             this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.de.l.equilibrage.564a12:Erreur lors de l'équilibrage.`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'équilibrage."))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.de.l.equilibrage.86743867:Erreur réseau lors de l'équilibrage.`))
       });
   }
 
@@ -338,7 +338,7 @@ export class LetteringComponent implements OnInit {
             this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.lettrage.8e822f:Erreur lors du lettrage.`);
           }
         },
-        error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du lettrage.'))
+        error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.lettrage.1358d80e:Erreur réseau lors du lettrage.`))
       });
   }
 
@@ -346,8 +346,8 @@ export class LetteringComponent implements OnInit {
   unletter(code: string): void {
     if (!code) return;
     this.confirmationService.confirm({
-      message: `Délettrer le groupe ${code} ? Toutes ses lignes redeviendront lettrables.`,
-      header: 'Confirmation de délettrage',
+      message: $localize`:@@accounting.lettering.ts.delettrer.le.groupe.code.toutes.ses.lign.aa9895a9:Délettrer le groupe ${code}:code: ? Toutes ses lignes redeviendront lettrables.`,
+      header: $localize`:@@accounting.lettering.ts.confirmation.de.delettrage.db4ca457:Confirmation de délettrage`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@lettering.component.acceptLabel.Délettrer:Délettrer`,
       rejectLabel: $localize`:@@lettering.component.rejectLabel.Annuler:Annuler`,
@@ -363,14 +363,14 @@ export class LetteringComponent implements OnInit {
           .subscribe({
             next: res => {
               if (res.success) {
-                this.successMessage.set(`Groupe ${code} délettré.`);
+                this.successMessage.set($localize`:@@accounting.lettering.ts.groupe.code.delettre.7a5b5fd3:Groupe ${code}:code: délettré.`);
                 this.selectedLines.set([]);
                 this.load();
               } else {
                 this.error.set(res.error ?? $localize`:@@ui.tern.erreur.lors.du.delettrage.a7b9e5:Erreur lors du délettrage.`);
               }
             },
-            error: err => this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du délettrage.'))
+            error: err => this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.lettering.ts.erreur.reseau.lors.du.delettrage.ae259626:Erreur réseau lors du délettrage.`))
           });
       }
     });

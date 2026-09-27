@@ -332,8 +332,8 @@ export class BankAccountsComponent implements OnInit {
   confirmDelete(a: BankAccountDto): void {
     if (this.auth.isFirmDelegatedReadonly() || !this.canUpdate()) return;
     this.confirmation.confirm({
-      header: 'Supprimer le compte',
-      message: `Supprimer le compte ${a.designation || a.bankName} ? Cette action est irréversible.`,
+      header: $localize`:@@payments.bank-accounts.ts.supprimer.le.compte.ced10049:Supprimer le compte`,
+      message: $localize`:@@payments.bank-accounts.ts.supprimer.le.compte.p.cette.action.est.i.43c54a18:Supprimer le compte ${a.designation || a.bankName}:p: ? Cette action est irréversible.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@bank-accounts.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@bank-accounts.component.rejectLabel.Annuler:Annuler`,

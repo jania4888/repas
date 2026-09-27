@@ -177,24 +177,24 @@ export class AnalyticsHubComponent {
     tabs = [
         {
             id: 'revenue',
-            label: 'Chiffre d\'affaires',
-            description: 'Suivez l\'évolution de votre CA par période, client et produit',
+            label: $localize`:@@reports.analytics-hub.ts.chiffre.d.affaires.0a341b9f:Chiffre d'affaires`,
+            description: $localize`:@@reports.analytics-hub.ts.suivez.l.evolution.de.votre.ca.par.perio.184c9c39:Suivez l'évolution de votre CA par période, client et produit`,
             icon: 'pi-dollar',
             route: '/reports/analytics/revenue',
             exact: false
         },
         {
             id: 'sales',
-            label: 'Analyse des ventes',
-            description: 'Top produits, marges, panier moyen et taux de conversion',
+            label: $localize`:@@reports.analytics-hub.ts.analyse.des.ventes.74e19454:Analyse des ventes`,
+            description: $localize`:@@reports.analytics-hub.ts.top.produits.marges.panier.moyen.et.taux.665663cf:Top produits, marges, panier moyen et taux de conversion`,
             icon: 'pi-chart-bar',
             route: '/reports/analytics/sales',
             exact: false
         },
         {
             id: 'clients',
-            label: 'Analyse clients',
-            description: 'Classement clients, actifs/inactifs et impayés',
+            label: $localize`:@@reports.analytics-hub.ts.analyse.clients.f6f71bbe:Analyse clients`,
+            description: $localize`:@@reports.analytics-hub.ts.classement.clients.actifs.inactifs.et.im.c38a2257:Classement clients, actifs/inactifs et impayés`,
             icon: 'pi-users',
             route: '/reports/analytics/clients',
             exact: false

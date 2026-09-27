@@ -651,8 +651,8 @@ export class AccountingFirmSettingsComponent implements OnInit {
     const firm = this.selectedFirm;
     if (!firm) return;
     this.confirmation.confirm({
-      header: 'Envoyer la demande',
-      message: `Confirmez-vous l'envoi d'une demande de liaison au cabinet « ${firm.displayName} » ?`,
+      header: $localize`:@@settings.accounting-firm-settings.ts.envoyer.la.demande.345e1b6d:Envoyer la demande`,
+      message: $localize`:@@settings.accounting-firm-settings.ts.confirmez.vous.l.envoi.d.une.demande.de.85d90471:Confirmez-vous l'envoi d'une demande de liaison au cabinet « ${firm.displayName}:displayName: » ?`,
       icon: 'pi pi-send',
       acceptLabel: $localize`:@@accounting-firm-settings.component.acceptLabel.Envoyer:Envoyer`,
       rejectLabel: $localize`:@@accounting-firm-settings.component.rejectLabel.Annuler:Annuler`,
@@ -668,7 +668,7 @@ export class AccountingFirmSettingsComponent implements OnInit {
       next: r => {
         this.acting.set(false);
         if (r.success) {
-          this.toast.add({ severity: 'success', summary: $localize`:@@accounting-firm-settings.component.summary.Demande_envoy_e:Demande envoyée`, detail: `Votre demande a été transmise à ${firm.displayName}.` });
+          this.toast.add({ severity: 'success', summary: $localize`:@@accounting-firm-settings.component.summary.Demande_envoy_e:Demande envoyée`, detail: $localize`:@@settings.accounting-firm-settings.ts.votre.demande.a.ete.transmise.a.displayn.594ac70f:Votre demande a été transmise à ${firm.displayName}:displayName:.` });
           this.selectedFirm = null;
           this.notes = '';
           this.current.set(r.data);
@@ -685,8 +685,8 @@ export class AccountingFirmSettingsComponent implements OnInit {
 
   cancelPending(): void {
     this.confirmation.confirm({
-      header: 'Annuler la demande',
-      message: 'Voulez-vous vraiment annuler votre demande en attente ? Le cabinet en sera informé.',
+      header: $localize`:@@settings.accounting-firm-settings.ts.annuler.la.demande.dafe7e62:Annuler la demande`,
+      message: $localize`:@@settings.accounting-firm-settings.ts.voulez.vous.vraiment.annuler.votre.deman.7165d248:Voulez-vous vraiment annuler votre demande en attente ? Le cabinet en sera informé.`,
       icon: 'pi pi-ban',
       acceptLabel: $localize`:@@accounting-firm-settings.component.acceptLabel.Annuler_la_deman:Annuler la demande`,
       rejectLabel: $localize`:@@accounting-firm-settings.component.rejectLabel.Retour:Retour`,
@@ -714,8 +714,8 @@ export class AccountingFirmSettingsComponent implements OnInit {
 
   revoke(): void {
     this.confirmation.confirm({
-      header: "Révoquer l'affectation",
-      message: 'Voulez-vous vraiment révoquer la liaison avec ce cabinet ? Il perdra l\'accès à votre comptabilité.',
+      header: $localize`:@@settings.accounting-firm-settings.ts.revoquer.l.affectation.0dbc1d1c:Révoquer l'affectation`,
+      message: $localize`:@@settings.accounting-firm-settings.ts.voulez.vous.vraiment.revoquer.la.liaison.a4a5b8c5:Voulez-vous vraiment révoquer la liaison avec ce cabinet ? Il perdra l'accès à votre comptabilité.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@accounting-firm-settings.component.acceptLabel.Révoquer:Révoquer`,
       rejectLabel: $localize`:@@accounting-firm-settings.component.rejectLabel.Annuler:Annuler`,

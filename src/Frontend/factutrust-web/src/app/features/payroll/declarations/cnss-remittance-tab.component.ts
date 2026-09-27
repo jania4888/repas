@@ -256,11 +256,11 @@ export class CnssRemittanceTabComponent implements OnInit {
     const r = this.remittance();
     if (!r) return [];
     return [
-      { label: 'Salariés', value: r.employeeCount, icon: 'pi-users', variant: 'primary' },
-      { label: 'CNSS salarié', value: formatPayrollAmount(r.totalCnssEmployee, false), icon: 'pi-user', variant: 'warning' },
-      { label: 'CNSS patronale', value: formatPayrollAmount(r.totalCnssEmployer, false), icon: 'pi-building', variant: 'warning' },
-      { label: 'Accident travail', value: formatPayrollAmount(r.totalWorkAccident, false), icon: 'pi-shield', variant: 'primary' },
-      { label: 'Total à verser', value: formatPayrollAmount(r.totalDue, false), icon: 'pi-wallet', variant: 'success', featured: true }
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.salaries.ce68387d:Salariés`, value: r.employeeCount, icon: 'pi-users', variant: 'primary' },
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.cnss.salarie.e8528052:CNSS salarié`, value: formatPayrollAmount(r.totalCnssEmployee, false), icon: 'pi-user', variant: 'warning' },
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.cnss.patronale.607c8ea5:CNSS patronale`, value: formatPayrollAmount(r.totalCnssEmployer, false), icon: 'pi-building', variant: 'warning' },
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.accident.travail.d28f22ff:Accident travail`, value: formatPayrollAmount(r.totalWorkAccident, false), icon: 'pi-shield', variant: 'primary' },
+      { label: $localize`:@@payroll.cnss-remittance-tab.ts.total.a.verser.70ce9db0:Total à verser`, value: formatPayrollAmount(r.totalDue, false), icon: 'pi-wallet', variant: 'success', featured: true }
     ];
   });
 

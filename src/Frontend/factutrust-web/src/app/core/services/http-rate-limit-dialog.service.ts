@@ -27,7 +27,7 @@ export class HttpRateLimitDialogService {
 
     this.confirmation.alert({
       message: trimmed,
-      header: 'Limite atteinte',
+      header: $localize`:@@core.http-rate-limit-dialog.ts.limite.atteinte.df38c459:Limite atteinte`,
       icon: 'pi pi-clock',
       size: 'sm'
     });

@@ -58,7 +58,7 @@
     "pretest": "npm run i18n:build",
     "prebuild": "npm run i18n:build",
     "prebuild:prod": "npm run i18n:build",
-    "i18n:codemod:test": "node scripts/i18n/codemod/mark-templates.fixture.test.mjs && node --test scripts/i18n/codemod/mark-untagged.test.mjs scripts/i18n/codemod/ternary-to-select.test.mjs",
+    "i18n:codemod:test": "node scripts/i18n/codemod/mark-templates.fixture.test.mjs && node --test scripts/i18n/codemod/mark-untagged.test.mjs scripts/i18n/codemod/ternary-to-select.test.mjs scripts/i18n/codemod/localize-ts-ast.test.mjs",
     "i18n:codemod:check": "node scripts/i18n/codemod/mark-templates.mjs src/app/shared/components --check",
     "i18n:codemod:assign": "node scripts/i18n/codemod/assign-i18n-ids.mjs src/app/features && node scripts/i18n/codemod/assign-i18n-ids.mjs src/app/shared",
     "i18n:codemod:mark": "node scripts/i18n/codemod/mark-templates.mjs src/app/features && node scripts/i18n/codemod/mark-templates.mjs src/app/shared && node scripts/i18n/codemod/mark-templates.mjs src/app/core/layout",

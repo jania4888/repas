@@ -484,15 +484,15 @@ export class ProjectListComponent implements OnInit {
   private readonly search$ = new Subject<string>();
 
   readonly breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Accueil', route: '/' },
-    { label: 'Projets' }
+    { label: $localize`:@@projects.project-list.ts.accueil.a8ff8fd2:Accueil`, route: '/' },
+    { label: $localize`:@@projects.project-list.ts.projets.b1e8cd4d:Projets` }
   ];
   readonly skeletonCols: SkeletonColumn[] = [
     { width: '18%' }, { width: '12%' }, { width: '12%' }, { width: '10%' },
     { width: '10%' }, { width: '11%' }, { width: '10%' }, { width: '10%' }, { width: '7%' }
   ];
   readonly exportMenuItems: MenuItem[] = [
-    { label: 'CSV — liste filtrée', icon: 'fa-solid fa-file-csv', command: () => this.exportCsv() }
+    { label: $localize`:@@projects.project-list.ts.csv.liste.filtree.0a556cad:CSV — liste filtrée`, icon: 'fa-solid fa-file-csv', command: () => this.exportCsv() }
   ];
   readonly billingFilterOptions = PROJECT_BILLING_OPTIONS;
 
@@ -550,9 +550,9 @@ export class ProjectListComponent implements OnInit {
     if (!p) return [];
     const favLabel = this.isFavorite(p.id) ? $localize`:@@ui.tern.retirer.des.favoris.dcaac8:Retirer des favoris` : $localize`:@@ui.tern.ajouter.aux.favoris.721554:Ajouter aux favoris`;
     return [
-      { label: 'Voir le projet', icon: 'pi pi-eye', command: () => this.open(p) },
-      { label: 'Tâches', icon: 'pi pi-list', command: () => void this.router.navigate(['/projects', p.id], { fragment: 'tasks' }) },
-      { label: 'Temps', icon: 'pi pi-clock', command: () => void this.router.navigate(['/projects', p.id], { fragment: 'time' }) },
+      { label: $localize`:@@projects.project-list.ts.voir.le.projet.4dfb4818:Voir le projet`, icon: 'pi pi-eye', command: () => this.open(p) },
+      { label: $localize`:@@projects.project-list.ts.taches.1b018f86:Tâches`, icon: 'pi pi-list', command: () => void this.router.navigate(['/projects', p.id], { fragment: 'tasks' }) },
+      { label: $localize`:@@projects.project-list.ts.temps.2986a8c2:Temps`, icon: 'pi pi-clock', command: () => void this.router.navigate(['/projects', p.id], { fragment: 'time' }) },
       { label: favLabel, icon: 'pi pi-star', command: () => this.favorites.toggle(p.id) }
     ];
   });
@@ -766,7 +766,7 @@ export class ProjectListComponent implements OnInit {
           this.totalRecords.set(r.data.totalCount);
           this.page = r.data.page;
         } else {
-          this.error.set(r.message || 'Chargement impossible');
+          this.error.set(r.message || $localize`:@@projects.project-list.ts.chargement.impossible.4c82ffbe:Chargement impossible`);
         }
       },
       error: err => {
@@ -859,7 +859,7 @@ export class ProjectListComponent implements OnInit {
           this.toast.add({ severity: 'success', summary: $localize`:@@project-list.component.summary.Projet créé:Projet créé`, detail: $localize`:@@project-list.component.detail.Pensez_l_activ:Pensez à l’activer pour saisir du temps.` });
           void this.router.navigate(['/projects', r.data]);
         } else {
-          this.toast.add({ severity: 'error', summary: $localize`:@@project-list.component.summary.Cr_ation_impossi:Création impossible`, detail: r.message || 'Erreur' });
+          this.toast.add({ severity: 'error', summary: $localize`:@@project-list.component.summary.Cr_ation_impossi:Création impossible`, detail: r.message || $localize`:@@projects.project-list.ts.erreur.ab546c23:Erreur` });
         }
       },
       error: err => this.toast.add({ severity: 'error', summary: $localize`:@@project-list.component.summary.Cr_ation_impossi:Création impossible`, detail: this.errors.extractErrorMessage(err) })

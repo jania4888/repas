@@ -852,7 +852,7 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, "Erreur lors de l'export."));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.lors.de.l.export.cd90f787:Erreur lors de l'export.`));
       }
     });
   }
@@ -912,7 +912,7 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.loading.set(false);
-        this.error.set('Erreur réseau');
+        this.error.set($localize`:@@accounting.journal.ts.erreur.reseau.0683007f:Erreur réseau`);
         this.monitoring.logError('journal.load', err);
       }
     });
@@ -973,7 +973,7 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.validatingId.set(null);
-        this.error.set('Erreur réseau lors de la validation.');
+        this.error.set($localize`:@@accounting.journal.ts.erreur.reseau.lors.de.la.validation.1f8828e9:Erreur réseau lors de la validation.`);
         this.monitoring.logError('journal.validate', err);
       }
     });
@@ -983,8 +983,8 @@ export class JournalComponent implements OnInit {
   deleteEntry(entryId: string, journal: string, piece: number): void {
     if (!this.canDelete()) return;
     this.confirmationService.confirm({
-      message: `Supprimer l'écriture ${journal} n° ${piece} ? Cette action est irréversible.`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@accounting.journal.ts.supprimer.l.ecriture.journal.n.piece.cet.e71472eb:Supprimer l'écriture ${journal}:journal: n° ${piece}:piece: ? Cette action est irréversible.`,
+      header: $localize`:@@accounting.journal.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@journal.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@journal.component.rejectLabel.Annuler:Annuler`,
@@ -1003,7 +1003,7 @@ export class JournalComponent implements OnInit {
           },
           error: err => {
             this.deletingId.set(null);
-            this.error.set('Erreur réseau lors de la suppression.');
+            this.error.set($localize`:@@accounting.journal.ts.erreur.reseau.lors.de.la.suppression.4d591e3c:Erreur réseau lors de la suppression.`);
             this.monitoring.logError('journal.delete', err);
           }
         });
@@ -1037,7 +1037,7 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.attachLoading.set(false);
-        this.attachError.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors du chargement des pièces.'));
+        this.attachError.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.reseau.lors.du.chargement.des.pie.483577d6:Erreur réseau lors du chargement des pièces.`));
       }
     });
   }
@@ -1059,7 +1059,7 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.uploading.set(false);
-        this.attachError.set(this.errors.extractErrorMessage(err, "Erreur réseau lors de l'ajout de la pièce."));
+        this.attachError.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.reseau.lors.de.l.ajout.de.la.piec.dc42512e:Erreur réseau lors de l'ajout de la pièce.`));
       }
     });
   }
@@ -1078,15 +1078,15 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.attachBusyId.set(null);
-        this.attachError.set(this.errors.extractErrorMessage(err, 'Erreur lors du téléchargement.'));
+        this.attachError.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.lors.du.telechargement.614ed7c3:Erreur lors du téléchargement.`));
       }
     });
   }
 
   deleteAttachment(a: JournalEntryAttachmentDto): void {
     this.confirmationService.confirm({
-      message: `Supprimer la pièce « ${a.fileName} » ?`,
-      header: 'Confirmation de suppression',
+      message: $localize`:@@accounting.journal.ts.supprimer.la.piece.filename.1be166be:Supprimer la pièce « ${a.fileName}:fileName: » ?`,
+      header: $localize`:@@accounting.journal.ts.confirmation.de.suppression.6a082d0b:Confirmation de suppression`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: $localize`:@@journal.component.acceptLabel.Supprimer:Supprimer`,
       rejectLabel: $localize`:@@journal.component.rejectLabel.Annuler:Annuler`,
@@ -1102,7 +1102,7 @@ export class JournalComponent implements OnInit {
           },
           error: err => {
             this.attachBusyId.set(null);
-            this.attachError.set(this.errors.extractErrorMessage(err, 'Erreur réseau lors de la suppression.'));
+            this.attachError.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.journal.ts.erreur.reseau.lors.de.la.suppression.4d591e3c:Erreur réseau lors de la suppression.`));
           }
         });
       }
@@ -1132,7 +1132,7 @@ export class JournalComponent implements OnInit {
     if (!target || this.reversing()) return;
     const reason = this.reverseReason.trim();
     if (!reason) {
-      this.error.set("Le motif de l'extourne est obligatoire.");
+      this.error.set($localize`:@@accounting.journal.ts.le.motif.de.l.extourne.est.obligatoire.5fa82ae0:Le motif de l'extourne est obligatoire.`);
       return;
     }
     this.reversing.set(true);
@@ -1149,7 +1149,7 @@ export class JournalComponent implements OnInit {
       },
       error: err => {
         this.reversing.set(false);
-        this.error.set("Erreur réseau lors de l'extourne.");
+        this.error.set($localize`:@@accounting.journal.ts.erreur.reseau.lors.de.l.extourne.f214327e:Erreur réseau lors de l'extourne.`);
         this.monitoring.logError('journal.reverse', err);
       }
     });

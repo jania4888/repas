@@ -277,7 +277,7 @@ export class MonthlyDeclarationModelComponent implements OnInit {
       },
       error: err => {
         this.exporting.set(false);
-        this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+        this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-model.ts.erreur.reseau.0683007f:Erreur réseau`));
       }
     });
   }
@@ -298,7 +298,7 @@ export class MonthlyDeclarationModelComponent implements OnInit {
     if (!looksLikeModelFile(file.name)) {
       this.content.set(null);
       this.summary.set(null);
-      this.error.set('Choisissez un fichier .json produit par l’export du modèle.');
+      this.error.set($localize`:@@accounting.monthly-declaration-model.ts.choisissez.un.fichier.json.produit.par.l.4ee3476e:Choisissez un fichier .json produit par l’export du modèle.`);
       return;
     }
 
@@ -310,7 +310,7 @@ export class MonthlyDeclarationModelComponent implements OnInit {
       () => {
         this.content.set(null);
         this.summary.set(null);
-        this.error.set('Le fichier n’a pas pu être lu.');
+        this.error.set($localize`:@@accounting.monthly-declaration-model.ts.le.fichier.n.a.pas.pu.etre.lu.49597327:Le fichier n’a pas pu être lu.`);
       }
     );
   }
@@ -344,7 +344,7 @@ export class MonthlyDeclarationModelComponent implements OnInit {
         error: err => {
           this.importing.set(false);
           this.result.set(null);
-          this.error.set(this.errors.extractErrorMessage(err, 'Erreur réseau'));
+          this.error.set(this.errors.extractErrorMessage(err, $localize`:@@accounting.monthly-declaration-model.ts.erreur.reseau.0683007f:Erreur réseau`));
         }
       });
   }

@@ -100,10 +100,10 @@ export class ProjectDashboardChartsComponent {
     return {
       labels: trend.map(p => new Date(p.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })),
       datasets: [
-        { label: 'Créées', data: trend.map(p => p.created), borderColor: '#2563eb', tension: 0.3 },
-        { label: 'Terminées', data: trend.map(p => p.completed), borderColor: '#16a34a', tension: 0.3 },
-        { label: 'En attente', data: trend.map(p => p.pending ?? 0), borderColor: '#d97706', tension: 0.3 },
-        { label: 'En retard', data: trend.map(p => p.overdue), borderColor: '#dc2626', tension: 0.3 }
+        { label: $localize`:@@projects.project-dashboard-charts.ts.creees.4b3f024a:Créées`, data: trend.map(p => p.created), borderColor: '#2563eb', tension: 0.3 },
+        { label: $localize`:@@projects.project-dashboard-charts.ts.terminees.7d7f40ab:Terminées`, data: trend.map(p => p.completed), borderColor: '#16a34a', tension: 0.3 },
+        { label: $localize`:@@projects.project-dashboard-charts.ts.en.attente.5231158f:En attente`, data: trend.map(p => p.pending ?? 0), borderColor: '#d97706', tension: 0.3 },
+        { label: $localize`:@@projects.project-dashboard-charts.ts.en.retard.40c1dde3:En retard`, data: trend.map(p => p.overdue), borderColor: '#dc2626', tension: 0.3 }
       ]
     };
   });

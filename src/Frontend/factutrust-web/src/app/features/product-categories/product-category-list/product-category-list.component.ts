@@ -244,8 +244,8 @@ export class ProductCategoryListComponent implements OnInit {
   selectedStatus: boolean | null = null;
 
   breadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'pi-home' },
-    { label: 'Catégories' }
+    { label: $localize`:@@product-categories.product-category-list.ts.tableau.de.bord.a524057f:Tableau de bord`, route: '/dashboard', icon: 'pi-home' },
+    { label: $localize`:@@product-categories.product-category-list.ts.categories.d463d7d2:Catégories` }
   ];
 
   skeletonColumns: SkeletonColumn[] = [
@@ -257,8 +257,8 @@ export class ProductCategoryListComponent implements OnInit {
   ];
 
   statusOptions: StatusOption[] = [
-    { label: 'Actifs', value: true },
-    { label: 'Inactifs', value: false }
+    { label: $localize`:@@product-categories.product-category-list.ts.actifs.4fc3a980:Actifs`, value: true },
+    { label: $localize`:@@product-categories.product-category-list.ts.inactifs.41c2d03e:Inactifs`, value: false }
   ];
 
   hasActiveFilters = computed(() => {
@@ -291,9 +291,9 @@ export class ProductCategoryListComponent implements OnInit {
   summaryMetrics = computed<TotalMetric[]>(() => {
     const rows = this.filteredCategories();
     return [
-      { label: 'Catégories', value: rows.length, format: 'number', icon: 'pi-tags', tone: 'primary' },
-      { label: 'Actives', value: rows.filter(c => c.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
-      { label: 'Inactives', value: rows.filter(c => !c.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' }
+      { label: $localize`:@@product-categories.product-category-list.ts.categories.d463d7d2:Catégories`, value: rows.length, format: 'number', icon: 'pi-tags', tone: 'primary' },
+      { label: $localize`:@@product-categories.product-category-list.ts.actives.f13a33c0:Actives`, value: rows.filter(c => c.isActive).length, format: 'number', icon: 'pi-check-circle', tone: 'emerald' },
+      { label: $localize`:@@product-categories.product-category-list.ts.inactives.c316433a:Inactives`, value: rows.filter(c => !c.isActive).length, format: 'number', icon: 'pi-ban', tone: 'neutral' }
     ];
   });
 
@@ -311,7 +311,7 @@ export class ProductCategoryListComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
-            detail: response.errors?.join(', ') || 'Impossible de charger les catégories'
+            detail: response.errors?.join(', ') || $localize`:@@product-categories.product-category-list.ts.impossible.de.charger.les.categories.cd231434:Impossible de charger les catégories`
           });
           this.categories.set([]);
         }
@@ -322,7 +322,7 @@ export class ProductCategoryListComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
-          detail: msg || 'Impossible de charger les catégories'
+          detail: msg || $localize`:@@product-categories.product-category-list.ts.impossible.de.charger.les.categories.cd231434:Impossible de charger les catégories`
         });
         this.errorHandler.logError('Failed to load product categories', err);
         this.categories.set([]);
@@ -362,7 +362,7 @@ export class ProductCategoryListComponent implements OnInit {
           this.toastService.add({
             severity: 'error',
             summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
-            detail: response.errors?.join(', ') || response.message || 'Action impossible'
+            detail: response.errors?.join(', ') || response.message || $localize`:@@product-categories.product-category-list.ts.action.impossible.f9002b5e:Action impossible`
           });
         }
         this.toggleLoading.update(s => { const n = new Set(s); n.delete(cat.id); return n; });
@@ -372,7 +372,7 @@ export class ProductCategoryListComponent implements OnInit {
         this.toastService.add({
           severity: 'error',
           summary: $localize`:@@product-category-list.component.summary.Erreur:Erreur`,
-          detail: msg || 'Action impossible'
+          detail: msg || $localize`:@@product-categories.product-category-list.ts.action.impossible.f9002b5e:Action impossible`
         });
         this.errorHandler.logError('Toggle category active failed', err);
         this.toggleLoading.update(s => { const n = new Set(s); n.delete(cat.id); return n; });

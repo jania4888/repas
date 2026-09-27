@@ -219,7 +219,7 @@ export class AnalyticsService {
         previousValue: 0,
         changePercent: 0,
         changeDirection: 'stable',
-        message: 'Chiffre d\'affaires cumulé depuis l\'origine.'
+        message: $localize`:@@reports.analytics.ts.chiffre.d.affaires.cumule.depuis.l.origi.11ee98f2:Chiffre d'affaires cumulé depuis l'origine.`
       };
     }
 
@@ -238,11 +238,11 @@ export class AnalyticsService {
 
     let message: string;
     if (direction === 'up') {
-      message = `Votre chiffre d'affaires a augmenté de ${Math.abs(changePercent).toFixed(1)} % ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.analytics.ts.votre.chiffre.d.affaires.a.augmente.de.t.14e75341:Votre chiffre d'affaires a augmenté de ${Math.abs(changePercent).toFixed(1)}:toFixed: % ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     } else if (direction === 'down') {
-      message = `Votre chiffre d'affaires a baissé de ${Math.abs(changePercent).toFixed(1)} % ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.analytics.ts.votre.chiffre.d.affaires.a.baisse.de.tof.bc243bee:Votre chiffre d'affaires a baissé de ${Math.abs(changePercent).toFixed(1)}:toFixed: % ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     } else {
-      message = `Votre chiffre d'affaires est stable ${periodLabel} par rapport à ${prevLabel}.`;
+      message = $localize`:@@reports.analytics.ts.votre.chiffre.d.affaires.est.stable.peri.85052562:Votre chiffre d'affaires est stable ${periodLabel}:periodLabel: par rapport à ${prevLabel}:prevLabel:.`;
     }
 
     return { currentValue: current, previousValue: previous, changePercent, changeDirection: direction, message };
@@ -406,8 +406,8 @@ export class AnalyticsService {
           alerts.push({
             type: 'warning',
             icon: 'pi-exclamation-triangle',
-            title: 'Taux de conversion faible',
-            message: `Seulement ${conversionRate.toFixed(1)} % de vos devis sont transformés en factures. Pensez à relancer vos prospects.`
+            title: $localize`:@@reports.analytics.ts.taux.de.conversion.faible.eda966dc:Taux de conversion faible`,
+            message: $localize`:@@reports.analytics.ts.seulement.tofixed.de.vos.devis.sont.tran.5a3c6d1c:Seulement ${conversionRate.toFixed(1)}:toFixed: % de vos devis sont transformés en factures. Pensez à relancer vos prospects.`
           });
           recommendations.push('Relancez les devis en attente pour améliorer votre taux de conversion.');
         }
@@ -416,8 +416,8 @@ export class AnalyticsService {
           alerts.push({
             type: 'success',
             icon: 'pi-check-circle',
-            title: 'Excellent taux de conversion',
-            message: `${conversionRate.toFixed(1)} % de vos devis deviennent des factures. Continuez ainsi !`
+            title: $localize`:@@reports.analytics.ts.excellent.taux.de.conversion.45a62af6:Excellent taux de conversion`,
+            message: $localize`:@@reports.analytics.ts.tofixed.de.vos.devis.deviennent.des.fact.debd51c4:${conversionRate.toFixed(1)}:toFixed: % de vos devis deviennent des factures. Continuez ainsi !`
           });
         }
 
@@ -426,8 +426,8 @@ export class AnalyticsService {
           alerts.push({
             type: 'danger',
             icon: 'pi-exclamation-circle',
-            title: 'Marges faibles détectées',
-            message: `${lowMarginProducts.length} produit(s) ont une marge inférieure à 15 %. Vérifiez vos prix de vente.`
+            title: $localize`:@@reports.analytics.ts.marges.faibles.detectees.b836ff0e:Marges faibles détectées`,
+            message: $localize`:@@reports.analytics.ts.length.produit.s.ont.une.marge.inferieur.a10ca376:${lowMarginProducts.length}:length: produit(s) ont une marge inférieure à 15 %. Vérifiez vos prix de vente.`
           });
           recommendations.push('Revoyez les prix de vente des produits à faible marge pour améliorer votre rentabilité.');
         }
@@ -511,8 +511,8 @@ export class AnalyticsService {
           alerts.push({
             type: 'danger',
             icon: 'pi-exclamation-circle',
-            title: 'Impayés détectés',
-            message: `${clientsWithUnpaid.length} client(s) ont des factures impayées pour un total de ${this.fmt(totalUnpaid)} ${currency}.`
+            title: $localize`:@@reports.analytics.ts.impayes.detectes.f85261c0:Impayés détectés`,
+            message: $localize`:@@reports.analytics.ts.length.client.s.ont.des.factures.impayee.d65918cd:${clientsWithUnpaid.length}:length: client(s) ont des factures impayées pour un total de ${this.fmt(totalUnpaid)}:fmt: ${currency}:currency:.`
           });
         }
 
@@ -520,8 +520,8 @@ export class AnalyticsService {
           alerts.push({
             type: 'warning',
             icon: 'pi-exclamation-triangle',
-            title: 'Beaucoup de clients inactifs',
-            message: `${inactiveCount} de vos clients sont inactifs. Pensez à les relancer.`
+            title: $localize`:@@reports.analytics.ts.beaucoup.de.clients.inactifs.8a0e4af1:Beaucoup de clients inactifs`,
+            message: $localize`:@@reports.analytics.ts.inactivecount.de.vos.clients.sont.inacti.1576e3ff:${inactiveCount}:inactiveCount: de vos clients sont inactifs. Pensez à les relancer.`
           });
         }
 
