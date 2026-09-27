@@ -32455,8 +32455,43 @@
     ],
     "x-wave": "v2"
   },
-  "auth.step-company-type.ts.count.domaine.plural.adapte.plural1.a.vo.5b44df27": "{$count} domaine{$plural} adapté{$plural1} à votre segment : {$selectedSegmentLabel}",
-  "@auth.step-company-type.ts.count.domaine.plural.adapte.plural1.a.vo.5b44df27": {
+  "auth.step-company-type.domaines.adaptes.zero": "{$count} domaines adaptés à votre segment : {$segment}",
+  "@auth.step-company-type.domaines.adaptes.zero": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/steps/step-company-type/step-company-type.component.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.step-company-type.domaines.adaptes.one": "{$count} domaine adapté à votre segment : {$segment}",
+  "@auth.step-company-type.domaines.adaptes.one": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/steps/step-company-type/step-company-type.component.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.step-company-type.domaines.adaptes.two": "{$count} domaines adaptés à votre segment : {$segment}",
+  "@auth.step-company-type.domaines.adaptes.two": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/steps/step-company-type/step-company-type.component.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.step-company-type.domaines.adaptes.few": "{$count} domaines adaptés à votre segment : {$segment}",
+  "@auth.step-company-type.domaines.adaptes.few": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/steps/step-company-type/step-company-type.component.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.step-company-type.domaines.adaptes.many": "{$count} domaines adaptés à votre segment : {$segment}",
+  "@auth.step-company-type.domaines.adaptes.many": {
+    "x-files": [
+      "src/app/features/auth/register-wizard/steps/step-company-type/step-company-type.component.ts"
+    ],
+    "x-wave": "v2"
+  },
+  "auth.step-company-type.domaines.adaptes.other": "{$count} domaines adaptés à votre segment : {$segment}",
+  "@auth.step-company-type.domaines.adaptes.other": {
     "x-files": [
       "src/app/features/auth/register-wizard/steps/step-company-type/step-company-type.component.ts"
     ],
@@ -66020,15 +66055,85 @@
     ],
     "x-wave": "v6"
   },
-  "projects.project-detail.ts.days.jour.p.restant.p1.19a5f41c": "{$days} jour{$p} restant{$p1}",
-  "@projects.project-detail.ts.days.jour.p.restant.p1.19a5f41c": {
+  "projects.project-detail.jours.restants.zero": "{$days} jours restants",
+  "@projects.project-detail.jours.restants.zero": {
     "x-files": [
       "src/app/features/projects/project-detail.vm.ts"
     ],
     "x-wave": "v6"
   },
-  "projects.project-detail.ts.late.jour.p.de.retard.1d0925d2": "{$late} jour{$p} de retard",
-  "@projects.project-detail.ts.late.jour.p.de.retard.1d0925d2": {
+  "projects.project-detail.jours.restants.one": "{$days} jour restant",
+  "@projects.project-detail.jours.restants.one": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.restants.two": "{$days} jours restants",
+  "@projects.project-detail.jours.restants.two": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.restants.few": "{$days} jours restants",
+  "@projects.project-detail.jours.restants.few": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.restants.many": "{$days} jours restants",
+  "@projects.project-detail.jours.restants.many": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.restants.other": "{$days} jours restants",
+  "@projects.project-detail.jours.restants.other": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.de.retard.zero": "{$late} jours de retard",
+  "@projects.project-detail.jours.de.retard.zero": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.de.retard.one": "{$late} jour de retard",
+  "@projects.project-detail.jours.de.retard.one": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.de.retard.two": "{$late} jours de retard",
+  "@projects.project-detail.jours.de.retard.two": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.de.retard.few": "{$late} jours de retard",
+  "@projects.project-detail.jours.de.retard.few": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.de.retard.many": "{$late} jours de retard",
+  "@projects.project-detail.jours.de.retard.many": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.jours.de.retard.other": "{$late} jours de retard",
+  "@projects.project-detail.jours.de.retard.other": {
     "x-files": [
       "src/app/features/projects/project-detail.vm.ts"
     ],
@@ -66083,8 +66188,43 @@
     ],
     "x-wave": "v6"
   },
-  "projects.project-detail.ts.il.y.a.days.jour.p.c89f5093": "il y a {$days} jour{$p}",
-  "@projects.project-detail.ts.il.y.a.days.jour.p.c89f5093": {
+  "projects.project-detail.il.y.a.jours.zero": "il y a {$days} jours",
+  "@projects.project-detail.il.y.a.jours.zero": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.il.y.a.jours.one": "il y a {$days} jour",
+  "@projects.project-detail.il.y.a.jours.one": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.il.y.a.jours.two": "il y a {$days} jours",
+  "@projects.project-detail.il.y.a.jours.two": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.il.y.a.jours.few": "il y a {$days} jours",
+  "@projects.project-detail.il.y.a.jours.few": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.il.y.a.jours.many": "il y a {$days} jours",
+  "@projects.project-detail.il.y.a.jours.many": {
+    "x-files": [
+      "src/app/features/projects/project-detail.vm.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "projects.project-detail.il.y.a.jours.other": "il y a {$days} jours",
+  "@projects.project-detail.il.y.a.jours.other": {
     "x-files": [
       "src/app/features/projects/project-detail.vm.ts"
     ],
@@ -81498,8 +81638,43 @@
     ],
     "x-wave": "v6"
   },
-  "reports.purchases-reports.ts.vous.avez.pendingcount.facture.p.fournis.838f5c6e": "Vous avez {$pendingCount} facture{$p} fournisseur{$p1} à payer pour {$amountStr} {$currency}.",
-  "@reports.purchases-reports.ts.vous.avez.pendingcount.facture.p.fournis.838f5c6e": {
+  "reports.purchases-reports.factures.a.payer.zero": "Vous avez {$pendingCount} factures fournisseurs à payer pour {$amountStr} {$currency}.",
+  "@reports.purchases-reports.factures.a.payer.zero": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-reports.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-reports.factures.a.payer.one": "Vous avez {$pendingCount} facture fournisseur à payer pour {$amountStr} {$currency}.",
+  "@reports.purchases-reports.factures.a.payer.one": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-reports.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-reports.factures.a.payer.two": "Vous avez {$pendingCount} factures fournisseurs à payer pour {$amountStr} {$currency}.",
+  "@reports.purchases-reports.factures.a.payer.two": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-reports.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-reports.factures.a.payer.few": "Vous avez {$pendingCount} factures fournisseurs à payer pour {$amountStr} {$currency}.",
+  "@reports.purchases-reports.factures.a.payer.few": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-reports.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-reports.factures.a.payer.many": "Vous avez {$pendingCount} factures fournisseurs à payer pour {$amountStr} {$currency}.",
+  "@reports.purchases-reports.factures.a.payer.many": {
+    "x-files": [
+      "src/app/features/reports/services/purchases-reports.service.ts"
+    ],
+    "x-wave": "v6"
+  },
+  "reports.purchases-reports.factures.a.payer.other": "Vous avez {$pendingCount} factures fournisseurs à payer pour {$amountStr} {$currency}.",
+  "@reports.purchases-reports.factures.a.payer.other": {
     "x-files": [
       "src/app/features/reports/services/purchases-reports.service.ts"
     ],

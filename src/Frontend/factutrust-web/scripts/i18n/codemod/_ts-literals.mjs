@@ -135,6 +135,7 @@ export function looksTechnical(text) {
   if (/^var\(--/.test(t) || /^#[0-9a-f]{3,8}$/i.test(t) || /^(rgb|hsl)a?\(/.test(t)) return true;
   if (/^[dMyHhms\/.:\s,-]+$/.test(t) && /[dMyHh]{2}/.test(t)) return true; // format de date
   if (/^\s*[{[<]/.test(t)) return true; // JSON / HTML / SQL embarqué
+  if (/^[^;\n]+(;[^;\n]+){2,}$/.test(t)) return true; // en-tête CSV (exports : restent en français)
   if (/\b(SELECT|INSERT|UPDATE|DELETE)\b.*\b(FROM|INTO|SET)\b/.test(t)) return true;
   return false;
 }
