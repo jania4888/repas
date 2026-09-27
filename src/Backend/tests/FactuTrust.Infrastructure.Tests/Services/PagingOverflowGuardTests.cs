@@ -1,4 +1,5 @@
 using FactuTrust.Infrastructure.Persistence;
+using FactuTrust.Infrastructure.Tests;
 using FactuTrust.Infrastructure.Services;
 using FactuTrust.Infrastructure.Services.Billing;
 using Hangfire;
@@ -39,7 +40,7 @@ public sealed class PagingOverflowGuardTests
     public async Task NotificationService_GetListAsync_bounds_page()
     {
         await using var db = BuildMaster();
-        var r = await new NotificationService(db).GetListAsync(Guid.NewGuid(), null, false, int.MaxValue, 50, null, CancellationToken.None);
+        var r = await new NotificationService(db, new PassthroughMessageLocalizer()).GetListAsync(Guid.NewGuid(), null, false, int.MaxValue, 50, null, CancellationToken.None);
         Assert.Equal(0, r.TotalCount);
         Assert.Empty(r.Items);
     }

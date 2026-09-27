@@ -4,6 +4,7 @@ import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { environment } from '@environments/environment';
 import { SKIP_AUTH_HEADER } from '../http-context';
+
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const authService = inject(AuthService);
 
@@ -20,18 +21,19 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   }
 
   // Skip auth header for login/register/password-reset endpoints
-  const isAnonymousAuth =
+  if (
     req.url.includes('/auth/login') ||
     req.url.includes('/auth/register') ||
     req.url.includes('/auth/forgot-password') ||
-    req.url.includes('/auth/reset-password');
+    req.url.includes('/auth/reset-password')
+  ) {
+    return next(req);
+  }
 
   const token = authService.getAccessToken();
-
+  
   if (token) {
     req = addAuthHeader(req, token);
-  } else if (isAnonymousAuth) {
-    return next(req);
   }
 
   return next(req).pipe(
