@@ -11637,6 +11637,13 @@
     ],
     "x-wave": "v7"
   },
+  "accounting.fixed-assets.genere.le.date.heure": "Le {$INTERPOLATION} à {$INTERPOLATION_1}",
+  "@accounting.fixed-assets.genere.le.date.heure": {
+    "x-files": [
+      "src/app/features/accounting/fixed-assets/fixed-assets-amortization-table.component.ts"
+    ],
+    "x-wave": "v7"
+  },
   "accounting.fixed-assets.code.immobilisation.4463772b": "Code immobilisation",
   "@accounting.fixed-assets.code.immobilisation.4463772b": {
     "x-files": [
@@ -11730,6 +11737,13 @@
   },
   "accounting.fixed-assets.informations.08c80be1": "INFORMATIONS",
   "@accounting.fixed-assets.informations.08c80be1": {
+    "x-files": [
+      "src/app/features/accounting/fixed-assets/fixed-assets-amortization-table.component.ts"
+    ],
+    "x-wave": "v7"
+  },
+  "accounting.fixed-assets.edite.le.date.heure": "Édité le {$INTERPOLATION} à {$INTERPOLATION_1}",
+  "@accounting.fixed-assets.edite.le.date.heure": {
     "x-files": [
       "src/app/features/accounting/fixed-assets/fixed-assets-amortization-table.component.ts"
     ],
@@ -43803,6 +43817,13 @@
     ],
     "x-wave": "v3"
   },
+  "products.product-form.opening-layer-hint": "{$message} Utilisez le bouton « Créer la couche d'ouverture FIFO/LIFO » si le stock est à zéro.",
+  "@products.product-form.opening-layer-hint": {
+    "x-files": [
+      "src/app/features/products/product-form/product-form.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "product-form.component.summary.Code_barres_enge": "Code-barres engendré",
   "@product-form.component.summary.Code_barres_enge": {
     "x-files": [
@@ -57109,6 +57130,13 @@
     ],
     "x-wave": "v3"
   },
+  "settings.channels.lie.le.date.heure": " — lié le {$INTERPOLATION} à {$INTERPOLATION_1} ",
+  "@settings.channels.lie.le.date.heure": {
+    "x-files": [
+      "src/app/features/settings/channels/channels-settings.component.ts"
+    ],
+    "x-wave": "v3"
+  },
   "settings.channels.lecture.seule.a9a41b71": "lecture seule",
   "@settings.channels.lecture.seule.a9a41b71": {
     "x-files": [
@@ -68469,6 +68497,13 @@
   },
   "treasury.cash-forecast.csv.des.flux.attendus.ce934820": "CSV des flux attendus",
   "@treasury.cash-forecast.csv.des.flux.attendus.ce934820": {
+    "x-files": [
+      "src/app/features/treasury/cash-forecast/cash-forecast.component.ts"
+    ],
+    "x-wave": "v5"
+  },
+  "treasury.cash-forecast.calcule.le.date.heure": " Calculé le {$INTERPOLATION} à {$INTERPOLATION_1} ",
+  "@treasury.cash-forecast.calcule.le.date.heure": {
     "x-files": [
       "src/app/features/treasury/cash-forecast/cash-forecast.component.ts"
     ],

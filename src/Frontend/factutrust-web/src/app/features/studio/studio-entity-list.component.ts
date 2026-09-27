@@ -106,7 +106,7 @@ import { slugifyKey } from './shared/studio-text.util';
         <input pInputText [(ngModel)]="draftKey" placeholder="ex. contrat" i18n-placeholder="@@studio.studio-entity-list.ex.contrat.170e996f" />
         <small class="studio-hint" i18n="@@studio.studio-entity-list.minuscules.chiffres.et.commence.par.une.lettre.0af1388f">Minuscules, chiffres et « _ », commence par une lettre.</small>
         <label i18n="@@studio.studio-entity-list.icone.fontawesome.b25e133d">Icône (FontAwesome)</label>
-        <input pInputText [(ngModel)]="draftIcon" placeholder="fa-solid fa-file-contract" i18n-placeholder="@@studio.studio-entity-list.fa.solid.fa.file.contract.883c019b" />
+        <input pInputText [(ngModel)]="draftIcon" placeholder="fa-solid fa-file-contract" />
         <label i18n="@@studio.studio-entity-list.description.55f8ebc8">Description</label>
         <textarea pTextarea [(ngModel)]="draftDescription" rows="2"></textarea>
       </div>

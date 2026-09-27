@@ -851,7 +851,7 @@ export class InvoiceListComponent implements OnInit, OnDestroy {
       next: (blob) => {
         this.printingReport.set(false);
         if (!blob || blob.size === 0) return;
-        const prefix = this.creditNotesOnlyMode() ? $localize`:@@ui.tern.etat.avoirs.ventes.07ebfb:Etat_avoirs_ventes` : $localize`:@@ui.tern.etat.factures.ventes.44039a:Etat_factures_ventes`;
+        const prefix = this.creditNotesOnlyMode() ? 'Etat_avoirs_ventes' : 'Etat_factures_ventes';
         this.printPreviewService.openPdfForPrintPreview(blob, `${prefix}_${fromDate}_${toDate}.pdf`);
       },
       error: (error: Error) => {

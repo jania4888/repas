@@ -1411,19 +1411,19 @@ export class InvoiceDetailComponent implements OnInit {
         status: 'Validée',
         date: invoice.status !== 'Draft' ? invoice.createdAt : null,
         icon: 'pi pi-check',
-        color: invoice.status !== 'Draft' ? $localize`:@@ui.tern.var.color.primary.500.135495:var(--color-primary-500)` : $localize`:@@ui.tern.var.color.neutral.300.711144:var(--color-neutral-300)`
+        color: invoice.status !== 'Draft' ? 'var(--color-primary-500)' : 'var(--color-neutral-300)'
       },
       {
         status: 'Signée',
         date: invoice.signedAt,
         icon: 'pi pi-pencil',
-        color: invoice.signedAt ? $localize`:@@ui.tern.var.color.success.500.6e3aad:var(--color-success-500)` : $localize`:@@ui.tern.var.color.neutral.300.711144:var(--color-neutral-300)`
+        color: invoice.signedAt ? 'var(--color-success-500)' : 'var(--color-neutral-300)'
       },
       {
         status: 'Payée',
         date: invoice.paidAt,
         icon: 'pi pi-wallet',
-        color: invoice.paidAt ? $localize`:@@ui.tern.var.color.success.600.129c92:var(--color-success-600)` : $localize`:@@ui.tern.var.color.neutral.300.711144:var(--color-neutral-300)`
+        color: invoice.paidAt ? 'var(--color-success-600)' : 'var(--color-neutral-300)'
       }
     ];
   }

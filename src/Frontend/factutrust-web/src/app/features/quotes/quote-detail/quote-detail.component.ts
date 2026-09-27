@@ -720,7 +720,7 @@ export class QuoteDetailComponent implements OnInit {
         status: 'Envoyé',
         date: q.sentAt,
         icon: 'pi pi-send',
-        color: q.sentAt ? $localize`:@@ui.tern.var.color.info.500.4c0427:var(--color-info-500)` : $localize`:@@ui.tern.var.color.neutral.300.711144:var(--color-neutral-300)`,
+        color: q.sentAt ? 'var(--color-info-500)' : 'var(--color-neutral-300)',
       },
       {
         status: q.status === 'Rejected' ? $localize`:@@ui.tern.refuse.340218:Refusé` : $localize`:@@ui.tern.accepte.8cf098:Accepté`,
@@ -729,15 +729,15 @@ export class QuoteDetailComponent implements OnInit {
         color:
           q.acceptedAt || q.rejectedAt
             ? q.status === 'Rejected'
-              ? $localize`:@@ui.tern.var.color.error.500.602ff0:var(--color-error-500)`
-              : $localize`:@@ui.tern.var.color.success.500.6e3aad:var(--color-success-500)`
-            : $localize`:@@ui.tern.var.color.neutral.300.711144:var(--color-neutral-300)`,
+              ? 'var(--color-error-500)'
+              : 'var(--color-success-500)'
+            : 'var(--color-neutral-300)',
       },
       {
         status: q.convertedSalesOrderId ? $localize`:@@ui.tern.commande.creee.99c2a3:Commande créée` : $localize`:@@ui.tern.facture.creee.a77fc4:Facture créée`,
         date: q.convertedAt ?? null,
         icon: q.convertedSalesOrderId ? 'pi pi-shopping-cart' : 'pi pi-file-export',
-        color: q.convertedInvoiceId || q.convertedSalesOrderId ? $localize`:@@ui.tern.var.color.primary.500.135495:var(--color-primary-500)` : $localize`:@@ui.tern.var.color.neutral.300.711144:var(--color-neutral-300)`,
+        color: q.convertedInvoiceId || q.convertedSalesOrderId ? 'var(--color-primary-500)' : 'var(--color-neutral-300)',
       },
     ];
   }
