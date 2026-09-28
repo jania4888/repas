@@ -44,7 +44,7 @@
     "reason": "Navigation par identifiant stable (NAV_ID / id d'entrée) au lieu du libellé ; libellés français inchangés (nav-labels.spec.ts, nav-item-ids.spec.ts, specs sidebar/secondary-nav)."
   },
   "src/app/core/services/error-handler.service.ts": {
-    "sha": "6dd6fa0ab6277816c27976b960540328606728dcffd3868f291238f0133eb24e",
+    "sha": "1d8bae6f0b3cf1d9a61de088d58f9e6d7e928f1c7aab9e4b3744eb8b7553bc43",
     "reason": "Constantes de codes d’erreur API (TENANT_CONTEXT_INVALID, DELEGATED_CONTEXT_INVALID) désormais tirées de core/utils/api-error-code ; lecture du code factorisée (apiErrorCode) ; aucun texte affiché modifié."
   },
   "src/app/core/services/error-message.service.ts": {

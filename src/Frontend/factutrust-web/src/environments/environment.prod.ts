@@ -51,8 +51,8 @@ export const environment = {
   publicSiteOrigin: 'https://instafact.shop',
   /** Landing publique (`features/home`). */
   erp: {
-    /** OFF en production jusqu'à recette arabe complète (plan i18n ERP). */
-    arabicEnabled: false
+    /** Interface arabe + RTL (espace société). Repli prod : repasser à false. */
+    arabicEnabled: true
   },
   landing: {
     /** OFF tant que le texte arabe n'a pas été validé par le client (plan § 8.4). */

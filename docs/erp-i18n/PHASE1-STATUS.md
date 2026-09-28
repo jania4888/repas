@@ -3,8 +3,9 @@
 Dernière mise à jour : 2026-09-28 — lots 0 à 7 livrés sur `i18n/erp-arabe` (worktree `C:\wt\ar`) :
 traduction, mise en page RTL, balayage des fuites sur toutes les routes société, revue de sécurité,
 recette sur API réelle avec données (109 écrans).
-Les drapeaux arabes restent **OFF** en production (`environment.erp.arabicEnabled`,
-`Localization:ArabicMessagesEnabled`).
+Les drapeaux arabes en production : **ERP activé** (`environment.erp.arabicEnabled`),
+**API messages** (`Localization:ArabicMessagesEnabled` dans appsettings) ; **landing** toujours OFF
+(`environment.landing.arabicEnabled`).
 
 ## Portes (base `fr-reference` = `32a2f4c1`)
 

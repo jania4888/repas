@@ -93,6 +93,12 @@ export class LetteringComponent implements OnInit {
     return $localize`:@@accounting.lettering.tpl.delettrer.le.groupe.letteringcode.0aecd2b5:Délettrer le groupe ${p0}:letteringCode:`;
   }
 
+  protected letterSelectedAriaLabel(): string {
+    return this.canLetter()
+      ? this.loc_lettrer_les_count_lignes_selectionne_2f8a67(this.selectionSummary().count)
+      : this.loc_selection_non_equilibree_cochez_lett_b9e132;
+  }
+
   private readonly errors = inject(ErrorHandlerService);
   private readonly api = inject(AccountingService);
   private readonly route = inject(ActivatedRoute);
